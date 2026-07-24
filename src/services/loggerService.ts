@@ -10,6 +10,9 @@ export interface LogEntry {
   user_id?: string;
 }
 
+// P3-066: correlation_id por sessão (UUID gerado no boot).
+const SESSION_ID = crypto.randomUUID();
+
 const MAX_LOGS_BUFFER = 50;
 const logBuffer: LogEntry[] = [];
 let flushTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -20,6 +23,35 @@ const PERSIST_LEVELS = new Set<LogLevel>(['warn', 'error', 'fatal']);
 
 // Levels that must flush immediately (no buffering delay).
 const IMMEDIATE_LEVELS = new Set<LogLevel>(['error', 'fatal']);
+
+/**
+ * P3-066: emite JSON estruturado por linha (Datadog/Sentry/BetterStack ready).
+ * Em DEV usa console.* para legibilidade; em PROD usa JSON.
+ */
+function emitStructured(entry: LogEntry): void {
+  const payload = {
+    ts: entry.created_at,
+    level: entry.nivel,
+    session_id: SESSION_ID,
+    mensagem: entry.mensagem,
+    contexto: entry.contexto,
+    user_id: entry.user_id,
+  };
+  if (import.meta.env.DEV) {
+    // Em dev, console formatado para legibilidade
+    const tag = `[${entry.nivel.toUpperCase()}]`;
+    if (entry.nivel === 'error' || entry.nivel === 'fatal') {
+      console.error(tag, entry.mensagem, entry.contexto);
+    } else if (entry.nivel === 'warn') {
+      console.warn(tag, entry.mensagem, entry.contexto);
+    } else {
+      console.debug(tag, entry.mensagem, entry.contexto);
+    }
+  } else {
+    // Em prod, JSON puro para ingestão
+    console.log(JSON.stringify(payload));
+  }
+}
 
 export const loggerService = {
   async log(nivel: LogLevel, mensagem: string, contexto: Record<string, unknown> = {}, stackTrace?: string) {
@@ -40,20 +72,13 @@ export const loggerService = {
     logBuffer.push(logEntry);
 
     if (IMMEDIATE_LEVELS.has(nivel)) {
-      if (import.meta.env.DEV) {
-        console.error(`[${nivel.toUpperCase()}] ${mensagem}`, contexto);
-      }
+      emitStructured(logEntry);
       void this.flush();
     } else if (nivel === 'warn') {
-      if (import.meta.env.DEV) {
-        console.warn(`[WARN] ${mensagem}`, contexto);
-      }
+      emitStructured(logEntry);
       // Warn logs flush immediately to preserve security audit trail
       void this.flush();
     } else {
-      if (import.meta.env.DEV) {
-        console.debug(`[${nivel.toUpperCase()}] ${mensagem}`, contexto);
-      }
       if (logBuffer.length >= MAX_LOGS_BUFFER) {
         void this.flush();
       } else if (!flushTimeout) {
