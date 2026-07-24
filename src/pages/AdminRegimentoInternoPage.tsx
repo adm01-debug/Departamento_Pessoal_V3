@@ -11,7 +11,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { Loader2, FileText, ShieldCheck, Users, CheckCircle2, Plus, Send, Bell, UserX, Download } from 'lucide-react';
-import { todayLocalISO } from '@/utils/dateLocal';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 type Documento = {
