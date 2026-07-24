@@ -652,7 +652,17 @@ Deno.serve(async (req) => {
         recordCount: Array.isArray(rpcData) ? rpcData.length : rpcData ? 1 : 0,
         error: error?.message, userId: user?.id,
       });
-      if (error) { console.error('[bridge] RPC_ERROR:', error.message); return jsonError(400, "RPC_ERROR", "Falha na chamada RPC"); }
+      // P1-017: inclui details e hint no log do backend (NUNCA retorna ao cliente).
+      if (error) {
+        console.error(
+          '[bridge] RPC_ERROR: %s | details=%s | hint=%s | code=%s',
+          error.message,
+          error.details ?? 'n/a',
+          error.hint ?? 'n/a',
+          error.code ?? 'n/a'
+        );
+        return jsonError(400, "RPC_ERROR", "Falha na chamada RPC");
+      }
       return jsonOk({ data: rpcData, duration_ms: durationMs });
     }
 
