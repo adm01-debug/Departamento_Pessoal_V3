@@ -46,7 +46,6 @@ export default function PontoKioskPage() {
       if (navigator.onLine && !isSyncing && pontoOfflineService.getQueueSize() > 0) {
         handleSync();
       }
-      /* eslint-enable react-hooks/set-state-in-effect */
     }, 10000);
     return () => clearInterval(interval);
   }, [isSyncing, handleSync]);

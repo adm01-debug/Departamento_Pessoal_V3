@@ -155,12 +155,10 @@ export default function AdminAgendamentoExamesPage() {
     onError: (e: any) => toast.error(safeErrorMessage(e, 'Falha ao agendar exame.')),
   });
 
-  /* eslint-disable react-hooks/purity */
   const kpis = useMemo(() => {
     const total = agendamentos?.length ?? 0;
     const agendados = agendamentos?.filter((a) => a.status === 'agendado').length ?? 0;
     const realizados = agendamentos?.filter((a) => a.status === 'realizado').length ?? 0;
-    const now = Date.now();
     const proximos7d = agendamentos?.filter((a) => {
       const d = new Date(a.data_agendada);
       // eslint-disable-next-line react-hooks/purity
@@ -169,7 +167,6 @@ export default function AdminAgendamentoExamesPage() {
     }).length ?? 0;
     return { total, agendados, realizados, proximos7d };
   }, [agendamentos]);
-  /* eslint-enable react-hooks/purity */
 
   const statusColor = (s: string) =>
     s === 'realizado' ? 'default' : s === 'cancelado' || s === 'faltou' ? 'destructive' : 'secondary';

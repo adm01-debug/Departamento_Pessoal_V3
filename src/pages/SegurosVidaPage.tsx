@@ -223,7 +223,7 @@ export default function SegurosVidaPage() {
                         <TableCell>{fmt(r.premio_mensal)}</TableCell>
                         <TableCell>{r.data_inicio && r.data_fim ? `${new Date(r.data_inicio).toLocaleDateString('pt-BR')} - ${new Date(r.data_fim).toLocaleDateString('pt-BR')}` : '-'}</TableCell>
                         <TableCell><Button variant="ghost" size="sm"><Users className="h-4 w-4 mr-1" /> Ver</Button></TableCell>
-                        <TableCell><Button variant="ghost" size="icon" aria-label="Excluir" onClick={(e) => { e.stopPropagation(); excluir.mutate(r.id); }}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
+                        <TableCell><Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); excluir.mutate(r.id); }}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
                       </TableRow>
                       {expandedSeguro === r.id && (
                         <TableRow key={`${r.id}-ben`}>

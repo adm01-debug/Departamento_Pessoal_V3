@@ -53,7 +53,6 @@ export default function DocumentosPage() {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setColaboradorFilter(urlColaboradorId);
       setColaboradorId(urlColaboradorId);
-      /* eslint-enable react-hooks/set-state-in-effect */
     }
   }, [urlColaboradorId]);
 
@@ -281,19 +280,19 @@ export default function DocumentosPage() {
                   <TableCell className="font-body text-xs">{doc.created_at ? new Date(doc.created_at).toLocaleDateString('pt-BR') : '-'}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex gap-1">
-                      <Button variant="ghost" size="icon" aria-label="Analisar com IA" className="rounded-xl hover:bg-primary/10 text-primary" onClick={() => handleOCR(doc)} title="Analisar com IA">
+                      <Button variant="ghost" size="icon" className="rounded-xl hover:bg-primary/10 text-primary" onClick={() => handleOCR(doc)} title="Analisar com IA">
                         <Sparkles className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" aria-label="Visualizar" className="rounded-xl hover:bg-info/10" onClick={() => handleView(doc)} title="Visualizar">
+                      <Button variant="ghost" size="icon" className="rounded-xl hover:bg-info/10" onClick={() => handleView(doc)} title="Visualizar">
                         <Eye className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" aria-label="Histórico" className="rounded-xl hover:bg-success/10" onClick={() => setSelectedDocForTimeline(doc)} title="Histórico">
+                      <Button variant="ghost" size="icon" className="rounded-xl hover:bg-success/10" onClick={() => setSelectedDocForTimeline(doc)} title="Histórico">
                         <History className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" aria-label="Baixar" className="rounded-xl hover:bg-success/10" onClick={() => handleDownload(doc)} title="Download">
+                      <Button variant="ghost" size="icon" className="rounded-xl hover:bg-success/10" onClick={() => handleDownload(doc)} title="Download">
                         <Download className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" aria-label="Excluir" className="rounded-xl hover:bg-destructive/10" onClick={() => deleteMutation.mutate(doc)} title="Excluir">
+                      <Button variant="ghost" size="icon" className="rounded-xl hover:bg-destructive/10" onClick={() => deleteMutation.mutate(doc)} title="Excluir">
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>

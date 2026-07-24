@@ -36,7 +36,6 @@ export function NovoDepartamentoDialog({ open, onOpenChange, departamento }: Pro
         });
       } else {
         setForm({ nome: '', descricao: '', ativo: true });
-        /* eslint-enable react-hooks/set-state-in-effect */
       }
     }
   }, [departamento, open]);

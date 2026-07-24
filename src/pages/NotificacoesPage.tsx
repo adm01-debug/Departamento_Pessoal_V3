@@ -217,11 +217,11 @@ export default function NotificacoesPage() {
                           </div>
                           <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             {!n.lida && (
-                              <Button variant="ghost" size="icon" aria-label="Marcar como lida" className="rounded-lg h-8 w-8" onClick={() => marcarLida.mutate(n.id)} title="Marcar como lida">
+                              <Button variant="ghost" size="icon" className="rounded-lg h-8 w-8" onClick={() => marcarLida.mutate(n.id)} title="Marcar como lida">
                                 <Check className="h-4 w-4" />
                               </Button>
                             )}
-                            <Button variant="ghost" size="icon" aria-label="Excluir" className="rounded-lg h-8 w-8 text-destructive" onClick={() => excluirNotificacao.mutate(n.id)} title="Excluir">
+                            <Button variant="ghost" size="icon" className="rounded-lg h-8 w-8 text-destructive" onClick={() => excluirNotificacao.mutate(n.id)} title="Excluir">
                               <Trash2 className="h-3.5 w-3.5" />
                             </Button>
                           </div>

@@ -80,7 +80,6 @@ export default function PerfilPage() {
       setTelefone(profile.telefone || '');
       setCargo(profile.cargo || '');
       setDepartamento(profile.departamento || '');
-      /* eslint-enable react-hooks/set-state-in-effect */
     } else if (user?.name) {
       setNome(user.name);
     }

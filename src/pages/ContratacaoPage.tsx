@@ -200,7 +200,6 @@ function ContratacaoWorkflow({ token }: { token: string }) {
       uf: addr.uf,
     }));
   };
-  /* eslint-disable react-hooks/purity */
   const handleFileUpload = async (docId: string, docType: string, file: File) => {
     setUploadedDocs((prev) => ({ ...prev, [docId]: { name: file.name, status: 'uploading' } }));
 
@@ -252,7 +251,6 @@ function ContratacaoWorkflow({ token }: { token: string }) {
       toast.error(safeErrorMessage(error, 'Erro no upload do documento.'));
     }
   };
-  /* eslint-enable react-hooks/purity */
 
   if (isLoading)
     return (

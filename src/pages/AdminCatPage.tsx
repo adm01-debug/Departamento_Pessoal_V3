@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -76,7 +76,7 @@ export default function AdminCatPage() {
 
   const empresaId = empresaAtual?.id;
 
-  const carregar = useCallback(async () => {
+  const carregar = async () => {
     if (!empresaId) return;
     setLoading(true);
     try {
@@ -99,7 +99,7 @@ export default function AdminCatPage() {
     } finally {
       setLoading(false);
     }
-  }, [empresaId]);
+  };
 
   // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps
   useEffect(() => { void carregar(); }, [empresaId]);

@@ -63,7 +63,6 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
   const watchFim = watch('data_fim_prevista');
   const watchTipo = watch('tipo');
   const watchColaboradorId = watch('colaborador_id');
-  /* eslint-enable react-hooks/incompatible-library */
 
   useEffect(() => {
     const carregarHistorico = async () => {

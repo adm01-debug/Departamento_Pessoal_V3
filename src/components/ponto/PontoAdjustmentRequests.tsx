@@ -287,7 +287,7 @@ export function PontoAdjustmentRequests() {
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button size="icon" variant="ghost" aria-label="Histórico" className="h-8 w-8 text-muted-foreground hover:text-primary" onClick={() => showDetails(s)}>
+                              <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-primary" onClick={() => showDetails(s)}>
                                 <History className="h-4 w-4" />
                               </Button>
                             </TooltipTrigger>
@@ -297,10 +297,10 @@ export function PontoAdjustmentRequests() {
 
                         {s.status === 'pendente' && (
                           <>
-                            <Button size="icon" variant="ghost" aria-label="Aprovar" className="h-8 w-8 text-success hover:bg-success/10" onClick={() => mutation.mutate({ id: s.id, status: 'aprovado' })}>
+                            <Button size="icon" variant="ghost" className="h-8 w-8 text-success hover:bg-success/10" onClick={() => mutation.mutate({ id: s.id, status: 'aprovado' })}>
                               <CheckCircle2 className="h-4 w-4" />
                             </Button>
-                            <Button size="icon" variant="ghost" aria-label="Rejeitar" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={() => mutation.mutate({ id: s.id, status: 'recusado' })}>
+                            <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={() => mutation.mutate({ id: s.id, status: 'recusado' })}>
                               <XCircle className="h-4 w-4" />
                             </Button>
                           </>
