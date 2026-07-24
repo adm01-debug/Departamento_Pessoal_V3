@@ -409,7 +409,12 @@ Deno.serve(async (req) => {
   if (serviceKey) {
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rlClient = createClient(supabaseUrl, serviceKey);
-    const rlIdentity = user?.id ?? (req.headers.get('cf-connecting-ip') || req.headers.get('x-real-ip') || 'anon');
+    // P3-062: rate limit composto por user_id + IP.
+    // Hierarquia: user_id (autenticado) > IP (anon).
+    // IP entra como segundo fator — evita que um usuário autenticado abuse
+    // da cota se compartilhar IP (NAT, VPN compartilhada, escritório).
+    const ip = req.headers.get('cf-connecting-ip') || req.headers.get('x-real-ip') || 'anon';
+    const rlIdentity = user ? `${user.id}|${ip}` : ip;
     const rlKey = isWrite ? `bridge-write:${rlIdentity}` : `bridge-read:${rlIdentity}`;
     const rlLimit = isWrite ? 30 : (user ? 100 : 20);
     const rl = await checkRateLimit(rlClient as any, { key: rlKey, limit: rlLimit, windowSec: 60 });
