@@ -39,8 +39,15 @@ export default function DocumentosPage() {
   const [colaboradorId, setColaboradorId] = useState(urlColaboradorId || '');
   const [file, setFile] = useState<File | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
-  const [selectedDocForOcr, setSelectedDocForOcr] = useState<any>(null);
-  const [ocrResult, setOcrResult] = useState<any>(null);
+  // P2-050: tipo concreto para OCR result (era any, escondia bugs)
+  interface OcrResult {
+    text: string;
+    confidence?: number;
+    fields?: Record<string, string>;
+    raw?: unknown;
+  }
+  const [selectedDocForOcr, setSelectedDocForOcr] = useState<unknown>(null);
+  const [ocrResult, setOcrResult] = useState<OcrResult | null>(null);
   const [isProcessingOcr, setIsProcessingOcr] = useState(false);
   const [selectedDocForTimeline, setSelectedDocForTimeline] = useState<any>(null);
   const [selectedDocForPreview, setSelectedDocForPreview] = useState<any>(null);
