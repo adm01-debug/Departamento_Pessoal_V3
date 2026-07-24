@@ -5,19 +5,16 @@ import type { Database } from './types';
 import { secureJsonParse } from '@/utils/secureJson';
 
 
-// Projeto ativo pós-cutover: frjbfeamybqsejlvmqbl.
-// Guard fail-fast: se as env vars faltarem no build, gritamos alto no console
-// (o client Supabase silenciosamente iria para "undefined.supabase.co").
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://frjbfeamybqsejlvmqbl.supabase.co';
+// Projeto ativo: variáveis de ambiente são obrigatórias (P0-008).
+// Sem fallback hardcoded — qualquer ausência falha o build com mensagem clara.
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY =
-  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
-  import.meta.env.VITE_SUPABASE_ANON_KEY ||
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZyamJmZWFteWJxc2VqbHZtcWJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NDA3NTYsImV4cCI6MjEwMDIxNjc1Nn0.yrnnKshNB_89tmJtHbyaZGnsOHuAEV6x5OFrcepBYIU';
+  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY) {
-  console.error(
-    '⚠️ [SUPABASE] VITE_SUPABASE_URL/VITE_SUPABASE_PUBLISHABLE_KEY ausentes no .env. ' +
-    'Usando fallback embutido — verifique o build.',
+if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+  throw new Error(
+    '[SUPABASE] VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY (ou VITE_SUPABASE_ANON_KEY) ' +
+      'são obrigatórias. Configure no .env antes do build. Veja .env.example.',
   );
 }
 

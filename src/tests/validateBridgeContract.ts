@@ -1,7 +1,15 @@
-import { createClient } from '@supabase/supabase-js';
+// Bridge contract validator (P0-008: zero hardcoded secrets).
+// Lê credenciais exclusivamente de variáveis de ambiente.
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_PUBLISHABLE_KEY =
+  process.env.SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY;
 
-const SUPABASE_URL = 'https://hncgwjbzdajfdztqgefe.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhuY2d3amJ6ZGFqZmR6dHFnZWZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NjQ4ODIsImV4cCI6MjA4OTI0MDg4Mn0.B9ml1sHPkPHoTEWBapO3z1y1RNVpMQfT9Ws0srULlzE';
+if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+  throw new Error(
+    '[validateBridgeContract] Defina SUPABASE_URL e SUPABASE_PUBLISHABLE_KEY ' +
+      '(ou SUPABASE_ANON_KEY) no ambiente antes de executar.',
+  );
+}
 
 const bridgeUrl = `${SUPABASE_URL}/functions/v1/external-db-bridge`;
 
