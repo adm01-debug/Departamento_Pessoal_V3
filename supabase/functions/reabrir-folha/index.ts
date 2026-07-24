@@ -1,5 +1,5 @@
 // reabrir-folha — Onda 40: hardening completo
-// - CSRF fail-closed + JWT via getClaims()
+// - CSRF fail-closed + JWT via getUser()
 // - Zod strict: motivo obrigatório (10..500), override_esocial opcional
 // - Tenant scope obrigatório via user_belongs_to_empresa / is_admin
 // - Optimistic locking via coluna `version`
@@ -61,7 +61,7 @@ serve(async (req: Request): Promise<Response> => {
     const csrf = await verifyCsrf(req.clone());
     if (!csrf.ok) return csrf.response!;
 
-    // 2) JWT via getClaims()
+    // 2) JWT (getUser — validação server-side da sessão)
     const authHeader = req.headers.get('Authorization') ?? '';
     const jwt = authHeader.replace(/^Bearer\s+/i, '').trim();
     if (!jwt) return createErrorResponse('Não autenticado', 401, 'UNAUTHORIZED');
@@ -70,12 +70,12 @@ serve(async (req: Request): Promise<Response> => {
       global: { headers: { Authorization: `Bearer ${jwt}` } },
       auth: { persistSession: false, autoRefreshToken: false },
     });
-    const { data: claimsData, error: claimsErr } = await userClient.auth.getClaims(jwt);
-    if (claimsErr || !claimsData?.claims?.sub) {
+    const { data: claimsData, error: claimsErr } = await userClient.auth.getUser();
+    if (claimsErr || !claimsData?.user?.id) {
       return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
     }
-    const userId = String(claimsData.claims.sub);
-    const userEmail = String(claimsData.claims.email ?? '');
+    const userId = claimsData.user.id;
+    const userEmail = (claimsData.user.email ?? '');
 
     // 3) Validação Zod strict
     const { data: body, errorResponse } = await validateRequest(req, BodySchema);

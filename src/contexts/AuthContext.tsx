@@ -158,10 +158,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // server-side — unreachable by attackers calling the Supabase Auth REST
       // API directly (which would bypass the React UI checks entirely).
       const SUPABASE_URL = (supabase as unknown as { supabaseUrl?: string }).supabaseUrl
-        ?? import.meta.env.VITE_SUPABASE_URL
-        ?? 'https://ciziytrrjjotlsjzshnm.supabase.co';
-      const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
-        ?? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpeml5dHJyampvdGxzanpzaG5tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0NzU5NjQsImV4cCI6MjA5NDA1MTk2NH0.Ld9R1Rf5CH06IMUxDYvOXZoIqNmrGlwrpdO-eBrVMRQ';
+        ?? import.meta.env.VITE_SUPABASE_URL;
+      const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      if (!SUPABASE_URL || !ANON_KEY) {
+        throw new Error('VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are required');
+      }
 
       const res = await fetch(`${SUPABASE_URL}/functions/v1/auth-login`, {
         method: 'POST',

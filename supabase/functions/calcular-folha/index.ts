@@ -250,11 +250,10 @@ Deno.serve(async (req) => {
 
       for (const c of colabs) {
         const bruto = Number(c.salario_base) || 0;
-        const deps = Number(c.dependentes_irrf) || 0;
         const inss = calcINSS(bruto);
         const dependentes = dependentesPorColaborador.get(c.id as string) ?? 0;
         const irrf = calcIRRF(bruto, dependentes);
-        const fgts = round2(bruto * 0.08);
+        const fgts = trunc2(bruto * 0.08);
         const descontos = round2(inss + irrf);
         const liquido = round2(bruto - descontos);
 

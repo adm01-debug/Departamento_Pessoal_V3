@@ -1,5 +1,5 @@
 // relatorio — Onda 38: hardening completo
-// - CSRF fail-closed + JWT via getClaims()
+// - CSRF fail-closed + JWT via getUser()
 // - Zod strict com discriminated union por tipo de relatório (rejeita campos extras)
 // - Tenant scope obrigatório em toda ação: empresaId validado via
 //   user_belongs_to_empresa / is_admin
@@ -137,7 +137,7 @@ serve(async (req: Request): Promise<Response> => {
     const csrf = await verifyCsrf(req.clone());
     if (!csrf.ok) return csrf.response!;
 
-    // 2) JWT (getClaims — verificação criptográfica local)
+    // 2) JWT (getUser — validação server-side da sessão)
     const authHeader = req.headers.get('Authorization') ?? '';
     const jwt = authHeader.replace(/^Bearer\s+/i, '').trim();
     if (!jwt) return createErrorResponse('Não autenticado', 401, 'UNAUTHORIZED');
@@ -146,11 +146,11 @@ serve(async (req: Request): Promise<Response> => {
       global: { headers: { Authorization: `Bearer ${jwt}` } },
       auth: { persistSession: false, autoRefreshToken: false },
     });
-    const { data: claimsData, error: claimsErr } = await userClient.auth.getClaims(jwt);
-    if (claimsErr || !claimsData?.claims?.sub) {
+    const { data: claimsData, error: claimsErr } = await userClient.auth.getUser();
+    if (claimsErr || !claimsData?.user?.id) {
       return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
     }
-    const userId = String(claimsData.claims.sub);
+    const userId = claimsData.user.id;
 
     // 3) Rate-limit
     const admin = createClient(SUPABASE_URL, SERVICE_KEY, {

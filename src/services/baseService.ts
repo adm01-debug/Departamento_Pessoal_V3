@@ -7,7 +7,7 @@ export interface ListOptions {
   pageSize?: number;
   orderBy?: string;
   orderAscending?: boolean;
-  filters?: Record<string, any>;
+  filters?: Record<string, unknown>;
   searchColumn?: string;
   empresaId?: string;
 }

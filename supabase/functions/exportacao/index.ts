@@ -77,9 +77,9 @@ serve(async (req) => {
       global: { headers: { Authorization: authHeader } },
       auth: { persistSession: false, autoRefreshToken: false },
     });
-    const { data: claimsData, error: claimsErr } = await userClient.auth.getClaims(authHeader.replace(/^Bearer\s+/i, ''));
-    if (claimsErr || !claimsData?.claims?.sub) return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
-    const userId = String(claimsData.claims.sub);
+    const { data: claimsData, error: claimsErr } = await userClient.auth.getUser();
+    if (claimsErr || !claimsData?.user?.id) return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
+    const userId = claimsData.user.id;
 
     let raw: unknown;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);

@@ -1,4 +1,18 @@
 
+-- ciencia_rate_limits must exist before the index below; 20260723152450 may
+-- have already applied without it (plpgsql body is not validated at create
+-- time), so we ensure it idempotently here as well.
+CREATE TABLE IF NOT EXISTS public.ciencia_rate_limits (
+  id            BIGSERIAL PRIMARY KEY,
+  identificador TEXT,
+  identifier    TEXT,
+  acao          TEXT,
+  rpc_name      TEXT,
+  ip_address    INET,
+  success       BOOLEAN DEFAULT true,
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 CREATE OR REPLACE FUNCTION public.contrato_verificar_autenticidade_v2(
   p_hash text,
   p_ip text DEFAULT NULL

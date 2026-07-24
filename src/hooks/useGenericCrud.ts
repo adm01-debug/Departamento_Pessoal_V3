@@ -22,7 +22,7 @@ interface UseGenericCrudOptions<T> {
     update?: string;
     delete?: string;
   };
-  filters?: Record<string, any>;
+  filters?: Record<string, unknown>;
   searchColumn?: string;
   empresaId?: string;
 }

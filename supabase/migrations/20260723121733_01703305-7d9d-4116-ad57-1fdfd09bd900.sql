@@ -1,3 +1,11 @@
+-- Idempotent: 003_folha_ferias_ponto.sql creates ferias without valor_terco/terco_abono/descontos.
+-- 20251216170845 CREATE TABLE IF NOT EXISTS was a NO-OP in preview. Add missing columns.
+ALTER TABLE public.ferias
+  ADD COLUMN IF NOT EXISTS valor_terco        NUMERIC(12,2) DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS valor_terco_abono  NUMERIC(12,2) DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS descontos_inss     NUMERIC(12,2) DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS descontos_irrf     NUMERIC(12,2) DEFAULT 0;
+
 CREATE OR REPLACE VIEW public.v_ferias_folha_reconciliacao
 WITH (security_invoker = true) AS
 SELECT

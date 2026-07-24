@@ -41,12 +41,11 @@ serve(async (req: Request): Promise<Response> => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
-    const jwtToken = jwt;
-    const { data: claimsData, error: userErr } = await userClient.auth.getClaims(jwtToken);
-    if (userErr || !claimsData?.claims?.sub) {
+    const { data: claimsData, error: userErr } = await userClient.auth.getUser();
+    if (userErr || !claimsData?.user?.id) {
       return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
     }
-    const user = { id: claimsData.claims.sub as string };
+    const user = { id: claimsData.user.id };
 
     // 3) Validação
     const { body: _pb } = await parseJsonBody(req);

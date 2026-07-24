@@ -1,5 +1,5 @@
 // external-db-bridge — Hardened gateway (Onda 36)
-// Segurança: JWT via getClaims() para writes, tenant scope (empresa_id),
+// Segurança: JWT via getUser() para writes, tenant scope (empresa_id),
 // denylist de tabelas sensíveis, allowlist de RPC e operadores, validação
 // estrita de identificadores, CSRF fail-closed, no-store, payload cap.
 //
@@ -128,6 +128,8 @@ function getServiceClient() {
   return createClient(localUrl, serviceKey);
 }
 
+const TELEMETRY_BUFFER_CAP = 500; // evita crescimento ilimitado em modo degradado
+
 async function flushTelemetry(): Promise<void> {
   if (telemetryBuffer.length === 0) return;
   if (telemetryFlushInFlight) return telemetryFlushInFlight;
@@ -135,14 +137,26 @@ async function flushTelemetry(): Promise<void> {
   const batch = telemetryBuffer.splice(0, telemetryBuffer.length);
   telemetryLastFlush = Date.now();
   const client = getServiceClient();
-  if (!client) return;
+  if (!client) {
+    // Sem client disponível — devolve itens ao buffer (com cap para evitar OOM)
+    const keep = batch.slice(0, TELEMETRY_BUFFER_CAP - telemetryBuffer.length);
+    telemetryBuffer.unshift(...keep);
+    return;
+  }
 
   telemetryFlushInFlight = (async () => {
     try {
       const { error } = await client.from("query_telemetry").insert(batch);
-      if (error) console.warn("[telemetry-batch] persist falhou:", error.message);
+      if (error) {
+        console.warn("[telemetry-batch] persist falhou:", error.message);
+        // Devolve ao buffer para nova tentativa (com cap para evitar OOM)
+        const keep = batch.slice(0, Math.max(0, TELEMETRY_BUFFER_CAP - telemetryBuffer.length));
+        telemetryBuffer.unshift(...keep);
+      }
     } catch (e) {
       console.warn("[telemetry-batch] exceção:", (e as Error).message);
+      const keep = batch.slice(0, Math.max(0, TELEMETRY_BUFFER_CAP - telemetryBuffer.length));
+      telemetryBuffer.unshift(...keep);
     } finally {
       telemetryFlushInFlight = null;
     }
@@ -317,10 +331,11 @@ Deno.serve(async (req) => {
       try {
         const localClient = createClient(supabaseUrl, supabaseAnonKey, {
           global: { headers: { Authorization: authHeader } },
+          auth: { persistSession: false, autoRefreshToken: false },
         });
-        const { data, error } = await (localClient.auth as unknown as { getClaims: (t: string) => Promise<{ data: { claims?: { sub?: string } } | null; error: unknown }> }).getClaims(token);
-        if (!error && data?.claims?.sub) {
-          user = { id: String(data.claims.sub) };
+        const { data, error } = await localClient.auth.getUser();
+        if (!error && data?.user?.id) {
+          user = { id: data.user.id };
         }
       } catch { /* segue anônimo */ }
     }
@@ -370,10 +385,20 @@ Deno.serve(async (req) => {
     .map((f) => ({ ...f, value: sanitizeData(f.value) }))
     .filter((f) => f.op === "or" || (f.value !== null && f.value !== undefined && f.value !== "" && f.value !== "all"));
 
-  // Validação: writes exigem auth
+  // Validação: writes e RPCs protegidas exigem auth
   const isWrite = action === "insert" || action === "update" || action === "delete" || action === "upsert";
-  if (isWrite && !user) {
-    return jsonError(401, "UNAUTHORIZED", "Authentication required for write operations");
+  // RPCs públicas: chamadas antes/fora de sessão de usuário (login protection + onboarding).
+  // Todos os demais RPCs do allowlist operam sobre dados tenant-scoped e requerem auth.
+  const PUBLIC_RPCS = new Set<string>([
+    "check_login_lock", "record_failed_login", "reset_login_attempts",
+    "check_account_lockout", "record_login_attempt", "reset_account_lockout",
+    "check_brute_force", "check_rate_limit", "is_ip_blocked", "is_ip_whitelisted",
+    "is_country_allowed",
+    "get_admissao_por_token",
+  ]);
+  const isProtectedRpc = action === "rpc" && rpcName != null && !PUBLIC_RPCS.has(rpcName);
+  if ((isWrite || isProtectedRpc) && !user) {
+    return jsonError(401, "UNAUTHORIZED", "Authentication required for this operation");
   }
 
   // Rate limit — bridge é o endpoint mais genérico: 100 req/min para reads, 30 req/min para writes

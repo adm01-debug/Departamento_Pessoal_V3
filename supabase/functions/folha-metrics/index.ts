@@ -31,10 +31,10 @@ Deno.serve(async (req: Request) => {
       global: { headers: { Authorization: `Bearer ${jwt}` } },
       auth: { persistSession: false, autoRefreshToken: false },
     });
-    const { data: claims, error: claimsErr } = await userClient.auth.getClaims(jwt);
-    if (claimsErr || !claims?.claims?.sub) return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
+    const { data: claims, error: claimsErr } = await userClient.auth.getUser();
+    if (claimsErr || !claims?.user?.id) return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
 
-    const userId = String(claims.claims.sub);
+    const userId = claims.user.id;
     const admin = createClient(SUPABASE_URL, SERVICE_KEY, {
       auth: { persistSession: false, autoRefreshToken: false },
     });

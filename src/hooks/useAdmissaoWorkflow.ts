@@ -44,13 +44,14 @@ export function useAdmissaoWorkflow(admissaoId?: string) {
 
       // Atualiza o status da admissão para 'documentos' (etapa inicial comum)
       if (admissaoId) {
-        await supabase
+        const { error: admissaoUpdateError } = await supabase
           .from('admissoes')
           .update({
             etapa: 'documentos' as any
           })
           .eq('id', admissaoId)
           .eq('empresa_id', empresaAtualId!);
+        if (admissaoUpdateError) throw admissaoUpdateError;
       }
 
       // Automatically send link to candidate if email is present
@@ -68,7 +69,7 @@ export function useAdmissaoWorkflow(admissaoId?: string) {
         const expiracao = new Date();
         expiracao.setDate(expiracao.getDate() + 7);
 
-        await supabase
+        const { error: tokenError } = await supabase
           .from('admissao_tokens')
           .insert({
             admissao_id: admissaoId || '',
@@ -76,6 +77,7 @@ export function useAdmissaoWorkflow(admissaoId?: string) {
             email_candidato: admissao.email,
             data_expiracao: expiracao.toISOString(),
           });
+        if (tokenError) throw tokenError;
       }
 
       // Registra o início no histórico

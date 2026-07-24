@@ -5,9 +5,10 @@ import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 
-const GOVBR_AUTH_URL = 'https://sso.staging.acesso.gov.br/authorize';
-const GOVBR_TOKEN_URL = 'https://sso.staging.acesso.gov.br/token';
-const GOVBR_USERINFO_URL = 'https://sso.staging.acesso.gov.br/userinfo';
+const GOVBR_BASE_URL = Deno.env.get('GOVBR_BASE_URL') ?? 'https://sso.acesso.gov.br';
+const GOVBR_AUTH_URL = `${GOVBR_BASE_URL}/authorize`;
+const GOVBR_TOKEN_URL = `${GOVBR_BASE_URL}/token`;
+const GOVBR_USERINFO_URL = `${GOVBR_BASE_URL}/userinfo`;
 
 const DEFAULT_ALLOWED_REDIRECT_ORIGINS = [
   'https://sistema-dp.lovable.app',

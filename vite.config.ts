@@ -73,7 +73,7 @@ export default defineConfig(({ mode }) => ({
     dedupe: ["react", "react-dom", "react/jsx-runtime"],
   },
   optimizeDeps: {
-    force: true,
+    // force: true foi removido — forçar re-otimização a cada dev start prejudica a DX
   },
   build: {
     // Vite 8 usa o minifier oxc. O código do app não emite console cru (usa

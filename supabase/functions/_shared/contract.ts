@@ -11,9 +11,17 @@ export type StandardErrorResponse = {
   };
 };
 
+// EXTRA_ALLOWED_ORIGINS permite adicionar origens via env sem alterar código.
+// Formato: lista separada por vírgulas, ex: "https://app.exemplo.com,https://staging.exemplo.com"
+const _extraOrigins = (Deno.env.get('EXTRA_ALLOWED_ORIGINS') ?? '')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+
 const ALLOWED_ORIGINS = [
   'https://sistema-dp.lovable.app',
   'https://unified-harmony-hub.lovable.app',
+  ..._extraOrigins,
 ];
 const LOVABLE_HOST_RE = /\.lovable\.(app|dev)$/;
 
@@ -98,7 +106,8 @@ export function createErrorResponse(
   message: string,
   status: number = 400,
   code: string = 'BAD_REQUEST',
-  fields?: Array<{ field: string; message: string }>
+  fields?: Array<{ field: string; message: string }>,
+  req?: Request,
 ): Response {
   return new Response(
     JSON.stringify({
@@ -110,12 +119,12 @@ export function createErrorResponse(
     }),
     {
       status,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     }
   );
 }
 
-export function createValidationErrorResponse(zodError: z.ZodError): Response {
+export function createValidationErrorResponse(zodError: z.ZodError, req?: Request): Response {
   const fields = zodError.errors.map((err) => ({
     field: err.path.join('.'),
     message: err.message,
@@ -125,7 +134,8 @@ export function createValidationErrorResponse(zodError: z.ZodError): Response {
     'Erro de validação nos dados fornecidos',
     422,
     'VALIDATION_ERROR',
-    fields
+    fields,
+    req,
   );
 }
 

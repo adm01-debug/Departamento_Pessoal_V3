@@ -1,5 +1,5 @@
 // Onda 35 — Hardening crítico:
-// • JWT via getClaims() + CSRF fail-closed
+// • JWT via getUser() + CSRF fail-closed
 // • Ignora usuario_id/ip vindos do cliente (fraude); usa claims + IP real do request
 // • Tenant scope obrigatório para empresa_id em todas as ações
 // • Cap de payload em campos JSON (dados_anteriores/novos ≤ 64KB serializado)
@@ -80,13 +80,12 @@ serve(async (req: Request): Promise<Response> => {
       global: { headers: { Authorization: authHeader } },
       auth: { persistSession: false, autoRefreshToken: false },
     });
-    const token = authHeader.replace(/^Bearer\s+/i, '').trim();
-    const { data: claims, error: claimsErr } = await userClient.auth.getClaims(token);
-    if (claimsErr || !claims?.claims?.sub) {
+    const { data: claims, error: claimsErr } = await userClient.auth.getUser();
+    if (claimsErr || !claims?.user?.id) {
       return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
     }
-    const userId = claims.claims.sub as string;
-    const userEmail = (claims.claims.email as string | undefined) ?? null;
+    const userId = claims.user.id;
+    const userEmail = (claims.user.email as string | undefined) ?? null;
 
     let raw: unknown;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);

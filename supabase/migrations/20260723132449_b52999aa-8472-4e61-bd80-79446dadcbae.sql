@@ -212,7 +212,7 @@ BEGIN
   WHERE id = _medida_id
   RETURNING * INTO v_row;
 
-  INSERT INTO public.medidas_disciplinares_workflow_log(medida_id, empresa_id, actor_user_id, from_status, to_status, acao, observacao)
+  INSERT INTO public.medidas_disciplinares_workflow_log(medida_id, empresa_id, ator_id, de_status, para_status, acao, observacao)
   VALUES (_medida_id, v_row.empresa_id, v_user, 'aplicada', 'contestada', 'contestar', left(_texto, 500));
 
   RETURN v_row;
@@ -267,7 +267,7 @@ BEGIN
   WHERE id = _medida_id
   RETURNING * INTO v_row;
 
-  INSERT INTO public.medidas_disciplinares_workflow_log(medida_id, empresa_id, actor_user_id, from_status, to_status, acao, observacao)
+  INSERT INTO public.medidas_disciplinares_workflow_log(medida_id, empresa_id, ator_id, de_status, para_status, acao, observacao)
   VALUES (_medida_id, v_row.empresa_id, v_user, 'contestada', v_row.status_workflow,
     CASE WHEN _aceita THEN 'contestacao_aceita' ELSE 'contestacao_rejeitada' END,
     left(_resposta, 500));

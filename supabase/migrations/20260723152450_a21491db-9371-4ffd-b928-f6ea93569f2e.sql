@@ -1,4 +1,17 @@
 
+-- Table was never created in any migration; both v1 (identificador/acao) and
+-- v2 (identifier/rpc_name/success) functions reference it.
+CREATE TABLE IF NOT EXISTS public.ciencia_rate_limits (
+  id            BIGSERIAL PRIMARY KEY,
+  identificador TEXT,                         -- v1 function column name
+  identifier    TEXT,                         -- v2 function column name
+  acao          TEXT,                         -- v1 function
+  rpc_name      TEXT,                         -- v2 function
+  ip_address    INET,
+  success       BOOLEAN DEFAULT true,
+  created_at    TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 CREATE OR REPLACE FUNCTION public.contrato_verificar_autenticidade_v2(
   p_hash text,
   p_ip text DEFAULT NULL

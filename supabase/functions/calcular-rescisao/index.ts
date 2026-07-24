@@ -57,8 +57,9 @@ function calcIRRF(bruto: number, dependentes = 0): number {
   const baseSimplificada = bruto - DEDUCAO_SIMPLIFICADA_IRRF;
   const base = Math.max(0, Math.min(baseLegal, baseSimplificada));
   if (base <= 0) return 0;
+  // IN RFB 2110/2022: truncar (não arredondar) na 2ª casa decimal
   for (const f of FAIXAS_IRRF) {
-    if (base <= f.l) return Math.max(0, round2(base * f.a - f.d));
+    if (base <= f.l) return Math.max(0, trunc2(base * f.a - f.d));
   }
   return 0;
 }
@@ -134,9 +135,10 @@ Deno.serve(async (req) => {
       saldo_fgts, ferias_vencidas, dependentes_irrf, colaborador_id, empresa_id,
     } = parsed.data;
 
-    // Sanity de datas
-    const adm = new Date(data_admissao);
-    const desl = new Date(data_desligamento);
+    // Sanity de datas — força interpretação local (sem timezone) para evitar
+    // off-by-one em ambientes UTC (e.g. 2024-03-01 → 2024-02-29 em UTC-3).
+    const adm = new Date(data_admissao + 'T00:00:00');
+    const desl = new Date(data_desligamento + 'T00:00:00');
     if (isNaN(adm.getTime()) || isNaN(desl.getTime())) {
       return json({ error: 'Datas inválidas', code: 'VALIDATION_ERROR' }, 422);
     }
@@ -240,8 +242,14 @@ Deno.serve(async (req) => {
     //    salário e 13º (bases distintas, cada um com sua própria dedução
     //    simplificada); férias/aviso indenizados são isentos.
     const totalProventos = round2(saldoSalario + avisoIndenizado + feriasVencidasValor + feriasProporcional + tercoFerias + decimoTerceiro);
-    const inss = round2(calcINSS(saldoSalario) + calcINSS(decimoTerceiro));
-    const irrf = round2(calcIRRF(saldoSalario, dependentes_irrf) + calcIRRF(decimoTerceiro, 0));
+    // IN RFB 2110/2022: truncar na 2ª casa por base. Soma em inteiros de centavos
+    // para evitar underflow IEEE754 (ex: 0.1+0.7=0.7999... → trunc2 droparia 1 centavo).
+    const inssA = calcINSS(saldoSalario);
+    const inssB = calcINSS(decimoTerceiro);
+    const inss = (Math.round(inssA * 100) + Math.round(inssB * 100)) / 100;
+    const irrfA = calcIRRF(saldoSalario, dependentes_irrf);
+    const irrfB = calcIRRF(decimoTerceiro, 0);
+    const irrf = (Math.round(irrfA * 100) + Math.round(irrfB * 100)) / 100;
     const totalDescontos = round2(inss + irrf);
     const totalLiquido = round2(totalProventos - totalDescontos + multaFGTS);
 

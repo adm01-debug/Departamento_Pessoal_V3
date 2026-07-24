@@ -7,17 +7,24 @@ import { bitrixBreaker, resendBreaker, genericBreaker } from '@/lib/circuitBreak
 // Um header fora dessa lista faz o preflight (OPTIONS) cross-origin falhar e
 // derruba TODAS as chamadas no browser. Correlação, se necessária, deve ir no body.
 
-const handleInvoke = async <T>(name: string, options: any, breaker = genericBreaker): Promise<T> => {
+interface InvokeOptions {
+  body?: unknown;
+  headers?: Record<string, string>;
+  method?: string;
+}
+
+const handleInvoke = async <T>(name: string, options: InvokeOptions, breaker = genericBreaker): Promise<T> => {
   try {
     return await breaker.execute(async () => {
-      const { data, error } = await supabase.functions.invoke(name, options);
+      const { data, error } = await supabase.functions.invoke(name, options as Parameters<typeof supabase.functions.invoke>[1]);
       if (error) {
         throw new Error(error.message || `Erro ao chamar função ${name}`);
       }
       return data as T;
     });
-  } catch (e: any) {
-    throw new Error(e.message || `Falha crítica na comunicação com ${name}`, { cause: e });
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : `Falha crítica na comunicação com ${name}`;
+    throw new Error(msg, { cause: e });
   }
 };
 
@@ -49,6 +56,7 @@ export const edgeFunctionsService = {
     salario_base: number;
     dias_ferias?: number;
     dias_abono?: number;
+    dependentes_irrf?: number;
     colaborador_id?: string;
   }) => handleInvoke('calcular-ferias', { body: params }),
 
@@ -77,7 +85,7 @@ export const edgeFunctionsService = {
   }) => handleInvoke('calcular-rescisao', { body: params }),
 
   /** Exportação server-side */
-  exportarDados: async (params: { tabela: string; formato: 'csv' | 'json'; filtros?: Record<string, any> }) =>
+  exportarDados: async (params: { tabela: string; formato: 'csv' | 'json'; filtros?: Record<string, unknown> }) =>
     handleInvoke('exportacao', { body: params }),
 
   /** Health check do sistema */
@@ -131,13 +139,13 @@ export const edgeFunctionsService = {
     key?: string;
     ttlSeconds?: number;
     table?: string;
-    query?: Record<string, any>;
+    query?: Record<string, unknown>;
   }) => handleInvoke('cache', { body: params }),
 
   /** Criptografia */
   criptografia: async (params: {
     action: 'encrypt' | 'decrypt' | 'hash' | 'generate_token';
-    data?: any;
+    data?: unknown;
     password?: string;
   }) => handleInvoke('criptografia', { body: params }),
 
@@ -147,7 +155,7 @@ export const edgeFunctionsService = {
     tabela: string;
     formato?: 'csv' | 'json';
     csvContent?: string;
-    dados?: any;
+    dados?: unknown;
     empresaId?: string;
   }) => handleInvoke('importacao', { body: params }),
 

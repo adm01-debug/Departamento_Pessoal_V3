@@ -3,16 +3,19 @@ export type CircuitState = 'CLOSED' | 'OPEN' | 'HALF_OPEN';
 interface CircuitOptions {
   failureThreshold: number;
   resetTimeout: number;
+  /** Nº de sucessos consecutivos em HALF_OPEN antes de fechar o circuito (default: 2) */
+  successThreshold?: number;
 }
 
 export class CircuitBreaker {
   private state: CircuitState = 'CLOSED';
   private failureCount = 0;
+  private halfOpenSuccessCount = 0;
   private lastFailureTime?: number;
-  private options: CircuitOptions;
+  private options: Required<CircuitOptions>;
 
   constructor(options: CircuitOptions = { failureThreshold: 5, resetTimeout: 30000 }) {
-    this.options = options;
+    this.options = { successThreshold: 2, ...options };
   }
 
   async execute<T>(fn: () => Promise<T>): Promise<T> {
@@ -35,14 +38,24 @@ export class CircuitBreaker {
   }
 
   private onSuccess() {
-    this.state = 'CLOSED';
-    this.failureCount = 0;
+    if (this.state === 'HALF_OPEN') {
+      this.halfOpenSuccessCount++;
+      if (this.halfOpenSuccessCount >= this.options.successThreshold) {
+        this.state = 'CLOSED';
+        this.failureCount = 0;
+        this.halfOpenSuccessCount = 0;
+      }
+    } else {
+      this.state = 'CLOSED';
+      this.failureCount = 0;
+    }
   }
 
   private onFailure() {
+    this.halfOpenSuccessCount = 0;
     this.failureCount++;
     this.lastFailureTime = Date.now();
-    if (this.failureCount >= this.options.failureThreshold) {
+    if (this.failureCount >= this.options.failureThreshold || this.state === 'HALF_OPEN') {
       this.state = 'OPEN';
     }
   }
@@ -56,8 +69,10 @@ export class CircuitBreaker {
     return {
       state: this.state,
       failureCount: this.failureCount,
+      halfOpenSuccessCount: this.halfOpenSuccessCount,
       lastFailureTime: this.lastFailureTime ?? null,
       threshold: this.options.failureThreshold,
+      successThreshold: this.options.successThreshold,
       resetTimeoutMs: this.options.resetTimeout,
     };
   }
@@ -66,6 +81,7 @@ export class CircuitBreaker {
   reset() {
     this.state = 'CLOSED';
     this.failureCount = 0;
+    this.halfOpenSuccessCount = 0;
     this.lastFailureTime = undefined;
   }
 }

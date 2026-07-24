@@ -1,6 +1,6 @@
 // notificacao — Onda 37: hardening completo
 // - CSRF fail-closed
-// - JWT via getClaims() (verificação criptográfica local)
+// - JWT via getUser() (validação server-side da sessão)
 // - Zod strict com discriminated union por action (rejeita campos extras)
 // - Tenant scope obrigatório: empresaId sempre validado, e cada destinatário
 //   é verificado como pertencente à mesma empresa (previne cross-tenant leak)
@@ -50,7 +50,7 @@ serve(async (req: Request): Promise<Response> => {
     const csrf = await verifyCsrf(req.clone());
     if (!csrf.ok) return csrf.response!;
 
-    // 2) JWT via getClaims (verificação criptográfica sem round-trip ao Auth)
+    // 2) JWT (getUser — validação server-side da sessão)
     const authHeader = req.headers.get('Authorization') ?? '';
     const jwt = authHeader.replace(/^Bearer\s+/i, '').trim();
     if (!jwt) return createErrorResponse('Não autenticado', 401, 'UNAUTHORIZED');
@@ -59,11 +59,11 @@ serve(async (req: Request): Promise<Response> => {
       global: { headers: { Authorization: `Bearer ${jwt}` } },
       auth: { persistSession: false, autoRefreshToken: false },
     });
-    const { data: claimsData, error: claimsErr } = await userClient.auth.getClaims(jwt);
-    if (claimsErr || !claimsData?.claims?.sub) {
+    const { data: claimsData, error: claimsErr } = await userClient.auth.getUser();
+    if (claimsErr || !claimsData?.user?.id) {
       return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
     }
-    const userId = String(claimsData.claims.sub);
+    const userId = claimsData.user.id;
 
     // 3) Validação Zod strict (discriminated union bloqueia campos extras)
     const { data, errorResponse } = await validateRequest(req, notificacaoSchema);

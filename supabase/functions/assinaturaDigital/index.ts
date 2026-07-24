@@ -148,11 +148,10 @@ serve(async (req: Request): Promise<Response> => {
       global: { headers: { Authorization: authHeader } },
       auth: { persistSession: false, autoRefreshToken: false },
     });
-    const token = authHeader.replace(/^Bearer\s+/i, '').trim();
-    const { data: claimsData, error: claimsErr } = await userClient.auth.getClaims(token);
-    if (claimsErr || !claimsData?.claims?.sub) return json({ success: false, error: 'Sessão inválida' }, 401);
+    const { data: claimsData, error: claimsErr } = await userClient.auth.getUser();
+    if (claimsErr || !claimsData?.user?.id) return json({ success: false, error: 'Sessão inválida' }, 401);
 
-    const { data: isAdm } = await supabase.rpc('is_admin', { _user_id: claimsData.claims.sub });
+    const { data: isAdm } = await supabase.rpc('is_admin', { _user_id: claimsData.user.id });
     if (!isAdm) return json({ success: false, error: 'Requer perfil administrador' }, 403);
 
     const { data: tokens, error } = await supabase

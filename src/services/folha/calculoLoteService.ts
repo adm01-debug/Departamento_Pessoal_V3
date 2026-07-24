@@ -3,6 +3,7 @@ import { folhaCalc } from '@/utils/folhaCalc';
 import { toast } from 'sonner';
 import { pontoIntegracaoUtils } from '@/utils/folha/pontoIntegracaoUtils';
 import { safeErrorMessage } from '@/utils/safeError';
+import { formatDateLocalISO } from '@/utils/dateLocal';
 
 export interface BatchProgress {
   total: number;
@@ -23,7 +24,7 @@ export const calculoLoteService = {
     try {
       const [ano, mes] = competencia.split('-');
       const dataInicio = `${ano}-${mes}-01`;
-      const dataFim = `${ano}-${mes}-31`; // Simplificado para busca
+      const dataFim = formatDateLocalISO(new Date(Number(ano), Number(mes), 0));
 
       // 1. Buscar colaboradores ativos da empresa
       const { data: colaboradores, error: colabError } = await (supabase as any)

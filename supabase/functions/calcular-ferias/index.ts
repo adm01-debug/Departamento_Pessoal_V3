@@ -16,6 +16,8 @@ const noStore = { ...corsHeaders, 'Content-Type': 'application/json', 'Cache-Con
 const round2 = (n: number): number => Math.round((n + Number.EPSILON) * 100) / 100;
 const trunc2 = (n: number): number => Math.trunc(n * 100) / 100;
 const TETO_INSS = 8157.41;
+const DEDUCAO_SIMPLIFICADA_IRRF = 564.80; // Lei 14.663/2023
+const DEDUCAO_DEPENDENTE_IRRF = 189.59;
 
 const FAIXAS_INSS = [
   { l: 1518.00, a: 0.075 },
@@ -45,10 +47,15 @@ function calcINSS(sal: number): number {
   return trunc2(desc);
 }
 
-function calcIRRF(b: number): number {
-  if (!Number.isFinite(b) || b <= 0) return 0;
+function calcIRRF(bruto: number, dependentes = 0): number {
+  if (!Number.isFinite(bruto) || bruto <= 0) return 0;
+  const inss = calcINSS(bruto);
+  const baseLegal = bruto - inss - dependentes * DEDUCAO_DEPENDENTE_IRRF;
+  const baseSimplificada = bruto - DEDUCAO_SIMPLIFICADA_IRRF;
+  const base = Math.max(0, Math.min(baseLegal, baseSimplificada));
+  if (base <= 0) return 0;
   for (const f of FAIXAS_IRRF) {
-    if (b <= f.l) return Math.max(0, trunc2(b * f.a - f.d));
+    if (base <= f.l) return Math.max(0, trunc2(base * f.a - f.d));
   }
   return 0;
 }
@@ -57,6 +64,7 @@ const BodySchema = z.object({
   salario_base: z.number().positive().max(1_000_000),
   dias_ferias: z.number().int().min(1).max(30).default(30),
   dias_abono: z.number().int().min(0).max(10).default(0), // Art. 143 CLT
+  dependentes_irrf: z.number().int().min(0).max(30).optional().default(0),
   colaborador_id: z.string().uuid().optional(),
   empresa_id: z.string().uuid().optional(),
 }).refine((d) => d.dias_ferias + d.dias_abono <= 30, {
@@ -84,13 +92,11 @@ Deno.serve(async (req) => {
       global: { headers: { Authorization: authHeader } },
       auth: { persistSession: false, autoRefreshToken: false },
     });
-    const { data: claims, error: claimsErr } = await userClient.auth.getClaims(
-      authHeader.replace('Bearer ', ''),
-    );
-    if (claimsErr || !claims?.claims?.sub) {
+    const { data: claims, error: claimsErr } = await userClient.auth.getUser();
+    if (claimsErr || !claims?.user?.id) {
       return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
     }
-    const userId = claims.claims.sub as string;
+    const userId = claims.user.id;
 
     let raw: unknown;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
@@ -99,7 +105,7 @@ Deno.serve(async (req) => {
 
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) return createValidationErrorResponse(parsed.error);
-    const { salario_base, dias_ferias, dias_abono, colaborador_id, empresa_id } = parsed.data;
+    const { salario_base, dias_ferias, dias_abono, dependentes_irrf, colaborador_id, empresa_id } = parsed.data;
 
     const admin = createClient(supabaseUrl, serviceKey, {
       auth: { persistSession: false, autoRefreshToken: false },
@@ -141,7 +147,7 @@ Deno.serve(async (req) => {
     // INSS/IRRF incidem sobre férias + 1/3, NÃO sobre abono pecuniário (art. 7º § único Lei 8.212)
     const baseTributavel = round2(vf + tc);
     const inss = calcINSS(baseTributavel);
-    const irrf = calcIRRF(round2(baseTributavel - inss));
+    const irrf = calcIRRF(baseTributavel, dependentes_irrf);
     const liquido = round2(bruto - inss - irrf);
 
     // Auditoria (não-bloqueante)
@@ -152,7 +158,7 @@ Deno.serve(async (req) => {
       user_id: userId,
       dados_novos: {
         empresa_id: empresaIdFinal ?? null,
-        dias_ferias, dias_abono,
+        dias_ferias, dias_abono, dependentes_irrf,
         bruto, inss, irrf, liquido,
       },
     }).then(() => {}, () => {});

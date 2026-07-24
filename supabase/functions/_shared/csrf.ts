@@ -4,9 +4,17 @@
 //   const csrf = await verifyCsrf(req);
 //   if (!csrf.ok) return csrf.response;
 
+// EXTRA_ALLOWED_ORIGINS permite adicionar origens via env sem alterar código.
+// Formato: lista separada por vírgulas, ex: "https://app.exemplo.com,https://staging.exemplo.com"
+const _extraOrigins = (Deno.env.get('EXTRA_ALLOWED_ORIGINS') ?? '')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+
 const ALLOWED_ORIGINS = [
   'https://sistema-dp.lovable.app',
   'https://unified-harmony-hub.lovable.app',
+  ..._extraOrigins,
 ];
 
 const LOVABLE_HOST_RE = /\.lovable\.(app|dev)$/;

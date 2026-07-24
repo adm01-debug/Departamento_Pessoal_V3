@@ -1,4 +1,12 @@
 
+-- Idempotent: 005_esocial_auditoria.sql created notificacoes with a different schema
+-- (usuario_id, no user_id/entidade_tipo/entidade_id/data_referencia). Add missing columns.
+ALTER TABLE public.notificacoes
+  ADD COLUMN IF NOT EXISTS user_id         UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  ADD COLUMN IF NOT EXISTS entidade_tipo   TEXT,
+  ADD COLUMN IF NOT EXISTS entidade_id     UUID,
+  ADD COLUMN IF NOT EXISTS data_referencia DATE;
+
 -- Índice único parcial para deduplicação diária de notificações Art.145
 CREATE UNIQUE INDEX IF NOT EXISTS uq_notif_ferias_d5_dia
   ON public.notificacoes (user_id, entidade_tipo, entidade_id, data_referencia)

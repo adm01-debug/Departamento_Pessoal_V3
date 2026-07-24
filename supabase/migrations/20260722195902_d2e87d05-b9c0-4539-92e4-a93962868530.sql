@@ -1,4 +1,9 @@
 
+-- Idempotent: ferias may have been created without periodo_aquisitivo_id by 003_folha_ferias_ponto.sql
+-- when the CREATE TABLE IF NOT EXISTS in 20251216170845 was a no-op.
+ALTER TABLE public.ferias
+  ADD COLUMN IF NOT EXISTS periodo_aquisitivo_id UUID REFERENCES public.periodos_aquisitivos(id);
+
 CREATE OR REPLACE FUNCTION public.validar_split_ferias(
   p_colaborador_id uuid,
   p_periodo_aquisitivo_id uuid,

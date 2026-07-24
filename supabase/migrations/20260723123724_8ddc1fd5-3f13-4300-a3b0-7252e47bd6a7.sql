@@ -1,4 +1,12 @@
 
+-- ferias_reconciliacao_logs was created in 20260723122004 without empresa_id;
+-- this function queries by empresa_id, so we add it here idempotently.
+ALTER TABLE public.ferias_reconciliacao_logs
+  ADD COLUMN IF NOT EXISTS empresa_id uuid REFERENCES public.empresas(id);
+
+CREATE INDEX IF NOT EXISTS idx_ferias_reconciliacao_logs_empresa
+  ON public.ferias_reconciliacao_logs(empresa_id, executado_em DESC);
+
 CREATE OR REPLACE FUNCTION public.notificar_ferias_reconciliacao_sla_baixo()
 RETURNS jsonb
 LANGUAGE plpgsql

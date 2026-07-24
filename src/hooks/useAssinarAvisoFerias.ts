@@ -19,7 +19,11 @@ export function useAssinarAvisoFerias() {
   const qc = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: async (payload: { ferias: any; colaborador: any; empresa: any }) => {
+    mutationFn: async (payload: {
+      ferias: { id: string };
+      colaborador: object;
+      empresa: { id?: string };
+    }) => {
       const empresaId = empresaAtual?.id || payload.empresa?.id;
       if (!empresaId) throw new Error('Empresa não selecionada');
       if (!payload.ferias?.id) throw new Error('Férias sem ID');
@@ -61,7 +65,7 @@ export function useAssinarAvisoFerias() {
       qc.invalidateQueries({ queryKey: ['ferias'] });
       toast.success('Aviso de férias assinado eletronicamente e RH aprovado.');
     },
-    onError: (e: any) => toast.error(safeErrorMessage(e, 'Erro ao assinar aviso de férias.')),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao assinar aviso de férias.')),
   });
 
   const baixarAvisoAssinado = async (empresaId: string, feriasId: string) => {

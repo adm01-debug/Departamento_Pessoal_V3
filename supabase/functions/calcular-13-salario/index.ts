@@ -55,8 +55,10 @@ function calcularINSSCents(baseCents: bigint): bigint {
   let inss: bigint;
   if (b <= F1) inss = (b * 75n) / 1000n;
   else if (b <= F2) inss = 11_385n + ((b - F1) * 90n) / 1000n;
-  else if (b <= F3) inss = 22_868n + ((b - F2) * 120n) / 1000n;
-  else inss = 39_631n + ((b - F3) * 140n) / 1000n;
+  // 22_867n = 11_385 + floor((279_388-151_800)*90/1000) — BigInt division truncates per IN RFB 2110/2022
+  else if (b <= F3) inss = 22_867n + ((b - F2) * 120n) / 1000n;
+  // 39_630n = 22_867 + floor((419_083-279_388)*120/1000)
+  else inss = 39_630n + ((b - F3) * 140n) / 1000n;
   const TETO_DESC = 95_163n; // R$ 951,63
   return inss < TETO_DESC ? inss : TETO_DESC;
 }
@@ -64,7 +66,10 @@ function calcularINSSCents(baseCents: bigint): bigint {
 // IRRF progressivo (retorna centavos)
 function calcularIRRFCents(baseCents: bigint, dependentes: number): bigint {
   const deducaoDep = BigInt(dependentes) * 18_959n; // R$ 189,59
-  const b = baseCents - deducaoDep;
+  const bLegal = baseCents - deducaoDep;
+  // Desconto simplificado R$564,80 = 56_480 centavos (Art. 1°, Lei 13.149/2015)
+  const bSimplificado = baseCents - 56_480n;
+  const b = bLegal < bSimplificado ? bLegal : bSimplificado;
   if (b <= 225_920n) return 0n;
   if (b <= 282_665n) { const v = (b * 75n) / 1000n - 16_944n; return v > 0n ? v : 0n; }
   if (b <= 375_105n) { const v = (b * 150n) / 1000n - 38_144n; return v > 0n ? v : 0n; }
@@ -100,12 +105,11 @@ serve(async (req: Request): Promise<Response> => {
       global: { headers: { Authorization: authHeader } },
       auth: { persistSession: false, autoRefreshToken: false },
     });
-    const token = authHeader.replace('Bearer ', '');
-    const { data: claimsData, error: claimsErr } = await userClient.auth.getClaims(token);
-    if (claimsErr || !claimsData?.claims?.sub) {
+    const { data: userData, error: userErr } = await userClient.auth.getUser();
+    if (userErr || !userData?.user?.id) {
       return json({ success: false, error: 'Sessão inválida', code: 'UNAUTHORIZED' }, 401);
     }
-    const userId = claimsData.claims.sub as string;
+    const userId = userData.user.id;
 
     const supabase = createClient(supabaseUrl, serviceKey, {
       auth: { persistSession: false, autoRefreshToken: false },
