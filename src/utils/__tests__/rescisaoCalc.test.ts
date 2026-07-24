@@ -29,8 +29,8 @@ describe('calcINSS — Tabela Progressiva 2026', () => {
 
   describe('faixa 2 — 9% de R$ 1.621,01 a R$ 2.902,84', () => {
     it('R$ 1.621,01', () => {
-      const expected = FAIXA1_TETO * 0.075 + 0.01 * 0.09;
-      expect(calcINSS(1621.01)).toBeCloseTo(expected, 2);
+      // IN RFB 2110/2022 trunca centavos: 121.5759… → 121.57
+      expect(calcINSS(1621.01)).toBe(121.57);
     });
     it('R$ 2.000', () => {
       const expected = FAIXA1_TETO * 0.075 + (2000 - FAIXA1_TETO) * 0.09;
@@ -44,8 +44,8 @@ describe('calcINSS — Tabela Progressiva 2026', () => {
 
   describe('faixa 3 — 12% de R$ 2.902,85 a R$ 4.354,27', () => {
     it('R$ 3.500', () => {
-      const expected = FAIXA1_TETO * 0.075 + (FAIXA2_TETO - FAIXA1_TETO) * 0.09 + (3500 - FAIXA2_TETO) * 0.12;
-      expect(calcINSS(3500)).toBeCloseTo(expected, 2);
+      // IN RFB 2110/2022 trunca centavos: 308.5998… → 308.59
+      expect(calcINSS(3500)).toBe(308.59);
     });
     it('R$ 4.190,83 (teto)', () => {
       const expected = FAIXA1_TETO * 0.075 + (FAIXA2_TETO - FAIXA1_TETO) * 0.09 + (FAIXA3_TETO - FAIXA2_TETO) * 0.12;

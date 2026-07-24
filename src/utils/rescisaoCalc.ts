@@ -155,8 +155,11 @@ export async function calcularRescisao(params: RescisaoParams): Promise<Rescisao
     const irrf13 = calcularIRRF(decimoTerceiro, 0, 0);
     const irrf = Math.trunc((irrfSaldo + irrf13) * 100) / 100;
 
-    const totalDescontos = Math.trunc((inss + irrf) * 100) / 100;
-    const totalLiquido = Math.trunc((totalProventos - totalDescontos + multaFGTS) * 100) / 100;
+    // inss and irrf are already truncated to cents; round (not trunc) the sum
+    // to avoid losing a centavo when float drift pushes the sum just below the
+    // integer boundary (e.g. 506.17 stored as 506.16999… → trunc gives 506.16).
+    const totalDescontos = Math.round((inss + irrf) * 100) / 100;
+    const totalLiquido = Math.round((totalProventos - totalDescontos + multaFGTS) * 100) / 100;
 
     const result: RescisaoResult = {
       saldoSalario, 
