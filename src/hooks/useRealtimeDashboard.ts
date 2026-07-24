@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -26,7 +26,8 @@ export function useRealtimeDashboard() {
   const queryClient = useQueryClient();
   const timeouts = useRef<Record<string, NodeJS.Timeout>>({});
 
-  const debounceInvalidate = (keys: string[][], delay = 2000) => {
+  // P2-051: useCallback estabiliza a referência, evitando re-execução do useEffect.
+  const debounceInvalidate = useCallback((keys: string[][], delay = 2000) => {
     const keyString = JSON.stringify(keys);
     if (timeouts.current[keyString]) {
       clearTimeout(timeouts.current[keyString]);
@@ -35,7 +36,7 @@ export function useRealtimeDashboard() {
       keys.forEach(key => void queryClient.invalidateQueries({ queryKey: key }));
       delete timeouts.current[keyString];
     }, delay);
-  };
+  }, [queryClient]);
 
   useEffect(() => {
     // Captura a referência atual para uso seguro no cleanup (evita ref defasada)
@@ -66,8 +67,8 @@ export function useRealtimeDashboard() {
       void supabase.removeChannel(channel);
       Object.values(pendingTimeouts).forEach(clearTimeout);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queryClient, empresaAtualId]);
+  // P2-051: deps agora estáveis (debounceInvalidate via useCallback).
+  }, [empresaAtualId, debounceInvalidate]);
 
   return { empresaAtualId };
 }
