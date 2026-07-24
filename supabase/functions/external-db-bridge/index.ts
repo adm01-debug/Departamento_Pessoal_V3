@@ -202,13 +202,17 @@ function emitTelemetry(meta: TelemetryMeta) {
     user_id: meta.userId || null,
   };
 
-  // Erros vão direto (não podem ser perdidos em cold-start).
+  // P1-019: erros também são bufferizados, mas com flush IMEDIATO
+  // (max 10 erros ou 500ms, o que vier primeiro) para evitar write storm
+  // em cenários de erro em massa. Isso resolve o gap 9 do BRIDGE_PERFORMANCE.md.
   if (meta.status === "error") {
-    const client = getServiceClient();
-    if (client) {
-      client.from("query_telemetry").insert(row).then(
-        ({ error }) => { if (error) console.warn("[telemetry-persist]", error.message); },
-      );
+    // Marca como alta prioridade no buffer
+    (row as TelemetryRow & { _priority?: string })._priority = "high";
+    telemetryBuffer.push(row);
+    const sizeReady = telemetryBuffer.length >= 10;
+    const timeReady = Date.now() - telemetryLastFlush >= 500;
+    if (sizeReady || timeReady) {
+      flushTelemetry().catch(() => {});
     }
     return;
   }
