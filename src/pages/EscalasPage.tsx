@@ -100,7 +100,7 @@ export default function EscalasPage() {
                   <TableCell>{r.dias_folga ?? '-'}</TableCell>
                   <TableCell>{r.horario_entrada && r.horario_saida ? `${r.horario_entrada} - ${r.horario_saida}` : '-'}</TableCell>
                   <TableCell><Badge variant={r.ativo ? 'default' : 'secondary'}>{r.ativo ? 'Ativa' : 'Inativa'}</Badge></TableCell>
-                  <TableCell><Button variant="ghost" size="icon" onClick={() => excluir.mutate(r.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
+                  <TableCell><Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => excluir.mutate(r.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
                 </TableRow>
               ))}
               {!data?.length && <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">Nenhuma escala cadastrada</TableCell></TableRow>}

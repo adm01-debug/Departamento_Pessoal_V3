@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
+const DISABLED_BACK_PATHS = ['/', '/dashboard', '/login'] as const;
+
 /**
  * Hook para implementar gesto de swipe para voltar em dispositivos mobile.
  * Baseado no padrão de UX do iOS/Android para navegação intuitiva.
@@ -11,11 +13,8 @@ export function useBackGesture() {
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
 
-  // Define rotas onde o gesto não deve atuar (ex: dashboard root)
-  const disabledPaths = ['/', '/dashboard', '/login'];
-
   useEffect(() => {
-    if (disabledPaths.includes(location.pathname)) return;
+    if (DISABLED_BACK_PATHS.includes(location.pathname as (typeof DISABLED_BACK_PATHS)[number])) return;
 
     const handleTouchStart = (e: TouchEvent) => {
       // Inicia apenas se o toque for próximo à borda esquerda (UX padrão)

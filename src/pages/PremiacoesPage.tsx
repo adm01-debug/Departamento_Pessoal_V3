@@ -359,7 +359,7 @@ export default function PremiacoesPage() {
                             </div>
                           </td>
                           <td className="p-4 text-right">
-                            <Button variant="ghost" size="icon" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button variant="ghost" size="icon" aria-label="Histórico" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity">
                               <History className="h-3 w-3" />
                             </Button>
                           </td>

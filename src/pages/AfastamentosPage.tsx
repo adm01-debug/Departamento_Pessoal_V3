@@ -188,7 +188,7 @@ export default function AfastamentosPage() {
             </DropdownMenu>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon" className="shadow-xs" title="Exportar Dados">
+                <Button variant="outline" size="icon" aria-label="Baixar" className="shadow-xs" title="Exportar Dados">
                   <Download className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>

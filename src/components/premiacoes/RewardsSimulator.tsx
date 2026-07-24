@@ -212,7 +212,7 @@ export function RewardsSimulator() {
                   <History className="h-3 w-3 text-muted-foreground" />
                   <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Snapshots (Auditoria)</CardTitle>
                 </div>
-                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => {}}>
+                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => {}} aria-label="Excluir snapshots">
                   <Trash2 className="h-3 w-3 text-muted-foreground" />
                 </Button>
               </CardHeader>
@@ -235,7 +235,7 @@ export function RewardsSimulator() {
                         <li>Salário Médio: {formatCurrency(s.configuracoes.avgSalary)}</li>
                       </ul>
                     </div>
-                    <Button variant="ghost" size="icon" className="absolute -right-2 -top-2 h-5 w-5 bg-background border border-border rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button variant="ghost" size="icon" className="absolute -right-2 -top-2 h-5 w-5 bg-background border border-border rounded-full opacity-0 group-hover:opacity-100 transition-opacity" aria-label="Copiar cenário">
                       <Copy className="h-2 w-2" />
                     </Button>
                   </div>

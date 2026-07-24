@@ -231,10 +231,10 @@ export function CamposCustomizadosTab() {
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
-                        <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => handleEdit(c)}>
+                        <Button size="icon" variant="ghost" aria-label="Editar" className="h-7 w-7" onClick={() => handleEdit(c)}>
                           <Edit2 className="h-3.5 w-3.5" />
                         </Button>
-                        <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => excluir.mutate(c.id)}>
+                        <Button size="icon" variant="ghost" aria-label="Excluir" className="h-7 w-7 text-destructive" onClick={() => excluir.mutate(c.id)}>
                           <Trash2 className="h-3.5 w-3.5" />
                         </Button>
                       </div>

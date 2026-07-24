@@ -33,12 +33,20 @@ export default defineConfig({
     navigationTimeout: 20_000,
   },
   projects: [
-    // 1) Setup global de autenticação (admin)
+    // 1) Setup global de autenticação (desktop)
     {
       name: 'setup',
       testMatch: /auth\.setup\.ts/,
+      grep: /autentica usuário de teste$/,
     },
-    // 1b) Setup de usuário não-admin (para specs RBAC)
+    // 1b) Setup mobile — sessão Supabase SEPARADA para evitar revogação de token
+    // (refresh tokens são single-use; partilhar user.json com mobile-smoke revoga a família)
+    {
+      name: 'setup-mobile',
+      testMatch: /auth\.setup\.ts/,
+      grep: /autentica usuário de teste \(mobile\)/,
+    },
+    // 1c) Setup de usuário não-admin (para specs RBAC)
     {
       name: 'setup-non-admin',
       testMatch: /auth-non-admin\.setup\.ts/,
@@ -70,13 +78,15 @@ export default defineConfig({
       },
     },
     // 4) Smoke mobile crítico (ponto offline, portal colaborador)
+    // Usa storageState próprio: refresh tokens Supabase são single-use.
+    // Partilhar user.json com desktop faz o GoTrue revogar a sessão.
     {
       name: 'mobile-smoke',
       testMatch: /mobile\/.*\.spec\.ts/,
-      dependencies: ['setup'],
+      dependencies: ['setup-mobile'],
       use: {
         ...devices['Pixel 7'],
-        storageState: 'e2e/.auth/user.json',
+        storageState: 'e2e/.auth/user-mobile.json',
       },
     },
     // 5) Cleanup — logout roda POR ÚLTIMO (depende de authenticated + mobile-smoke).

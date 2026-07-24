@@ -312,6 +312,7 @@ export default function ColaboradoresPage() {
               <Button
                 variant="ghost"
                 size="icon"
+                aria-label="Visualizar"
                 className="h-9 w-9 rounded-xl hover:bg-info/10 text-info"
                 onClick={(e) => { e.stopPropagation(); navigate(`/colaboradores/${c.id}`); }}
                 title="Ver Perfil"
@@ -321,6 +322,7 @@ export default function ColaboradoresPage() {
               <Button
                 variant="ghost"
                 size="icon"
+                aria-label="Editar"
                 className="h-9 w-9 rounded-xl hover:bg-primary/10 text-primary"
                 onClick={(e) => { e.stopPropagation(); navigate(`/colaboradores/editar/${c.id}`); }}
                 title="Editar"

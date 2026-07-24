@@ -44,6 +44,7 @@ import { useRealTimeSubscription } from '@/hooks/useRealTimeSubscription';
  * arquivo e permite reuso/teste isolado. Re-exportados aqui para preservar
  * qualquer import antigo que aponte para `AnalyticsSection`.
  */
+/* eslint-disable react-refresh/only-export-components */
 export {
   MotionCard,
   // eslint-disable-next-line react-refresh/only-export-components
@@ -55,6 +56,7 @@ export {
   CadastroIncompletoWidget,
   ESocialMonitorWidget,
 } from './analytics/widgets';
+/* eslint-enable react-refresh/only-export-components */
 import {
   MotionCard,
   donutColors,
@@ -363,7 +365,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
               </div>
               Evolução Headcount
             </CardTitle>
-            <Button variant="ghost" size="icon" onClick={() => navigate('/relatorios')} className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+            <Button variant="ghost" size="icon" aria-label="Ver relatórios" onClick={() => navigate('/relatorios')} className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
                <ChevronRight className="h-4 w-4" />
             </Button>
           </CardHeader>
@@ -400,7 +402,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
                   Lidas
                 </Button>
               )}
-              <Button variant="ghost" size="icon" onClick={() => setIsNotifOpen(true)} className="h-8 w-8 rounded-lg">
+              <Button variant="ghost" size="icon" aria-label="Ver notificações" onClick={() => setIsNotifOpen(true)} className="h-8 w-8 rounded-lg">
                 <ExternalLink className="h-4 w-4" />
               </Button>
             </div>
@@ -438,7 +440,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
               </div>
               Monitor eSocial
             </CardTitle>
-            <Button variant="ghost" size="icon" onClick={() => navigate('/esocial')} className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+            <Button variant="ghost" size="icon" aria-label="Ver eSocial" onClick={() => navigate('/esocial')} className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
                <ChevronRight className="h-4 w-4" />
             </Button>
           </CardHeader>
@@ -461,7 +463,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
               </div>
               Passivo (Risco)
             </CardTitle>
-            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+            <Button variant="ghost" size="icon" aria-label="Próximo" className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
                <ChevronRight className="h-4 w-4" />
             </Button>
           </CardHeader>
@@ -740,9 +742,10 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
                           </div>
 
                           <div className="flex gap-2 shrink-0">
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              aria-label="Visualizar"
                               className="h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
                               onClick={() => window.open(`/detalhes/${item.referencia_id || item.id}`, '_blank', 'noopener')}
                             >
@@ -751,7 +754,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
                             
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl">
+                                <Button variant="ghost" size="icon" aria-label="Mais opções" className="h-10 w-10 rounded-xl">
                                   <MoreHorizontal className="h-4 w-4" />
                                 </Button>
                               </DropdownMenuTrigger>
@@ -979,7 +982,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
                         <p className="text-xs text-muted-foreground">{n.mensagem}</p>
                       </div>
                       {!n.lida && (
-                        <Button variant="ghost" size="icon" onClick={() => markNotifRead(n.id)} className="h-8 w-8 hover:bg-primary/10 hover:text-primary">
+                        <Button variant="ghost" size="icon" aria-label="Marcar como lida" onClick={() => markNotifRead(n.id)} className="h-8 w-8 hover:bg-primary/10 hover:text-primary">
                           <Check className="h-4 w-4" />
                         </Button>
                       )}

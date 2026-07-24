@@ -183,7 +183,7 @@ export function IPBlockingTab() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Button size="icon" variant="ghost" className="h-7 w-7 text-success" onClick={() => desbloquear.mutate(ip.id)}>
+                        <Button size="icon" variant="ghost" aria-label="Remover" className="h-7 w-7 text-success" onClick={() => desbloquear.mutate(ip.id)}>
                           <Trash2 className="h-3.5 w-3.5" />
                         </Button>
                       </TableCell>

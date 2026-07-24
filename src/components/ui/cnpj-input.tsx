@@ -108,7 +108,7 @@ export function CNPJInput({ value: controlledValue, onChange, onValidate, onComp
   return (
     <div className="flex gap-2">
       <Input value={displayValue} onChange={handleChange} onKeyDown={handleKeyDown} placeholder="00.000.000/0000-00" className={cn(found && 'border-green-500', className)} disabled={disabled} maxLength={18} />
-      <Button type="button" variant="outline" size="icon" onClick={searchCNPJ} disabled={disabled || loading || displayValue.replace(/\D/g, '').length !== 14}>
+      <Button type="button" variant="outline" size="icon" onClick={searchCNPJ} disabled={disabled || loading || displayValue.replace(/\D/g, '').length !== 14} aria-label="Buscar CNPJ">
         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : found ? <CheckCircle2 className="h-4 w-4 text-green-500" /> : <Search className="h-4 w-4" />}
       </Button>
     </div>

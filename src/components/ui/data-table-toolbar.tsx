@@ -60,11 +60,12 @@ export function DataTableToolbar({
                 exit={{ opacity: 0, scale: 0.8 }}
                 className="absolute right-2 top-1/2 -translate-y-1/2"
               >
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="h-7 w-7 rounded-lg hover:bg-muted" 
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 rounded-lg hover:bg-muted"
                   onClick={() => onSearchChange?.('')}
+                  aria-label="Limpar pesquisa"
                 >
                   <X className="h-4 w-4" />
                 </Button>

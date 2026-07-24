@@ -400,7 +400,7 @@ export function GestaoRegistrosPonto() {
                         </TableCell>
 
                         <TableCell className="text-right">
-                          <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg hover:bg-info/10 text-info" onClick={() => toast.info(`Visualizando auditoria de ${r.colaborador?.nome_completo}...`)}>
+                          <Button variant="ghost" size="icon" aria-label="Histórico" className="h-7 w-7 rounded-lg hover:bg-info/10 text-info" onClick={() => toast.info(`Visualizando auditoria de ${r.colaborador?.nome_completo}...`)}>
                             <History className="h-4 w-4" />
                           </Button>
                         </TableCell>

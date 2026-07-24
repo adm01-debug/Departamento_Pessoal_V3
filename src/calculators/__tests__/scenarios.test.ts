@@ -38,7 +38,7 @@ const isFiniteNum = (n: number) => typeof n === 'number' && Number.isFinite(n);
  * (zero, negativo, NaN, teto, divisão por zero) para prever falhas e gaps.
  */
 
-describe('Simulação — INSS (progressivo 2026, teto R$ 8.157,41)', () => {
+describe('Simulação — INSS (progressivo 2026, teto R$ 8.475,55)', () => {
   it('zero e negativos retornam 0', () => {
     expect(calcularINSS(0)).toBe(0);
     expect(calcularINSS(-1000)).toBe(0);
@@ -49,10 +49,10 @@ describe('Simulação — INSS (progressivo 2026, teto R$ 8.157,41)', () => {
   it('piso (salário mínimo 1518) => 113,85', () => {
     expect(calcularINSS(1518)).toBeCloseTo(113.85, 2);
   });
-  it('teto e acima => contribuição máxima 951,63', () => {
-    expect(calcularINSS(8157.41)).toBeCloseTo(951.63, 2);
-    expect(calcularINSS(20000)).toBeCloseTo(951.63, 2);
-    expect(calcularINSS(1_000_000)).toBeCloseTo(951.63, 2);
+  it('teto e acima => contribuição máxima 988,09', () => {
+    expect(calcularINSS(8475.55)).toBeCloseTo(988.09, 2);
+    expect(calcularINSS(20000)).toBeCloseTo(988.09, 2);
+    expect(calcularINSS(1_000_000)).toBeCloseTo(988.09, 2);
   });
   it('nunca excede o teto de contribuição e é monotônico não-decrescente', () => {
     let anterior = 0;
@@ -60,7 +60,7 @@ describe('Simulação — INSS (progressivo 2026, teto R$ 8.157,41)', () => {
       const v = calcularINSS(s);
       expect(isFiniteNum(v)).toBe(true);
       expect(v).toBeGreaterThanOrEqual(0);
-      expect(v).toBeLessThanOrEqual(951.64);
+      expect(v).toBeLessThanOrEqual(988.10);
       expect(v).toBeGreaterThanOrEqual(anterior - 0.001);
       anterior = v;
     }

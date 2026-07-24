@@ -100,14 +100,14 @@ export default function TimesPage() {
                 <TableCell>{t.descricao || '—'}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-1">
-                    <Button size="icon" variant="ghost" onClick={() => {
+                    <Button size="icon" variant="ghost" aria-label="Editar" onClick={() => {
                       setEditingItem(t);
                       setForm({ nome: t.nome, descricao: t.descricao || '' });
                       setOpen(true);
                     }}>
                       <Edit2 className="h-4 w-4 text-muted-foreground" />
                     </Button>
-                    <Button size="icon" variant="ghost" onClick={() => {
+                    <Button size="icon" variant="ghost" aria-label="Excluir" onClick={() => {
                       if (confirm('Deseja excluir este time?')) excluir.mutate(t.id);
                     }}>
                       <Trash2 className="h-4 w-4 text-destructive" />

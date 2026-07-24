@@ -107,7 +107,7 @@ export default function JornadasPage() {
                   <TableCell>{j.horario_entrada} — {j.horario_saida}</TableCell>
                   <TableCell>{j.carga_horaria_semanal}h/sem</TableCell>
                   <TableCell>{j.intervalo_minutos}min</TableCell>
-                  <TableCell><Button size="icon" variant="ghost" onClick={() => excluir.mutate(j.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
+                  <TableCell><Button size="icon" variant="ghost" aria-label="Excluir" onClick={() => excluir.mutate(j.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
                 </TableRow>
               ))}
               {jornadas.length === 0 && <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground">Nenhuma jornada cadastrada</TableCell></TableRow>}

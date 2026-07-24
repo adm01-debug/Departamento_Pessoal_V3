@@ -19,7 +19,7 @@ export function PageHeader({ title, description, backUrl, actions, children, cla
     <div className={cn('flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6', className)}>
       <div className="flex items-center gap-4">
         {backUrl && (
-          <Button variant="ghost" size="icon" onClick={() => navigate(backUrl)}>
+          <Button variant="ghost" size="icon" onClick={() => navigate(backUrl)} aria-label="Voltar">
             <ChevronLeft className="h-5 w-5" />
           </Button>
         )}

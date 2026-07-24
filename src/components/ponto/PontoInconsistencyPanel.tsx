@@ -214,7 +214,7 @@ export function PontoInconsistencyPanel({ registros }: { registros: any[] }) {
                     </Button>
                   )}
                   <div className="flex-1" />
-                  <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg hover:bg-success/10 hover:text-success" onClick={() => handleResolve(inc.id, 'Ignorar')}>
+                  <Button variant="ghost" size="icon" aria-label="Ignorar" className="h-7 w-7 rounded-lg hover:bg-success/10 hover:text-success" onClick={() => handleResolve(inc.id, 'Ignorar')}>
                     <ArrowRight className="h-3 w-3" />
                   </Button>
                 </div>

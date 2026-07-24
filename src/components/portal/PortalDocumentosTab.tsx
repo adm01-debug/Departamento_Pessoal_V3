@@ -216,14 +216,14 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
                   </div>
                   <div className="flex gap-1">
                     {doc.tipo === 'Contrato' && doc.status !== 'assinado' && (
-                      <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-warning hover:bg-warning/10" onClick={() => setDocToSign(doc)} title="Assinar">
+                      <Button variant="ghost" size="icon" aria-label="Assinar" className="h-8 w-8 rounded-lg text-warning hover:bg-warning/10" onClick={() => setDocToSign(doc)} title="Assinar">
                         <PenTool className="h-4 w-4" />
                       </Button>
                     )}
-                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" onClick={() => handleDownload(doc)} title="Baixar">
+                    <Button variant="ghost" size="icon" aria-label="Baixar" className="h-8 w-8 rounded-lg" onClick={() => handleDownload(doc)} title="Baixar">
                       <Download className="h-4 w-4 text-muted-foreground hover:text-success" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" onClick={() => deleteMutation.mutate(doc)} title="Excluir">
+                    <Button variant="ghost" size="icon" aria-label="Excluir" className="h-8 w-8 rounded-lg" onClick={() => deleteMutation.mutate(doc)} title="Excluir">
                       <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
                     </Button>
                   </div>

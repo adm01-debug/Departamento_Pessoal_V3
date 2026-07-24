@@ -34,6 +34,7 @@ export function DataTablePagination({
           className="h-8 w-8 rounded-lg"
           onClick={() => onPageChange(1)}
           disabled={currentPage === 1}
+          aria-label="Primeira página"
         >
           <ChevronsLeft className="h-4 w-4" />
         </Button>
@@ -43,6 +44,7 @@ export function DataTablePagination({
           className="h-8 w-8 rounded-lg"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
+          aria-label="Página anterior"
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
@@ -66,6 +68,8 @@ export function DataTablePagination({
               size="icon"
               className={`h-8 w-8 rounded-lg text-xs ${page === currentPage ? 'shadow-[0_0_12px_hsl(68_100%_48%/0.2)]' : ''}`}
               onClick={() => onPageChange(page)}
+              aria-label={`Página ${page}`}
+              aria-current={page === currentPage ? 'page' : undefined}
             >
               {page}
             </Button>
@@ -78,6 +82,7 @@ export function DataTablePagination({
           className="h-8 w-8 rounded-lg"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
+          aria-label="Próxima página"
         >
           <ChevronRight className="h-4 w-4" />
         </Button>
@@ -87,6 +92,7 @@ export function DataTablePagination({
           className="h-8 w-8 rounded-lg"
           onClick={() => onPageChange(totalPages)}
           disabled={currentPage === totalPages}
+          aria-label="Última página"
         >
           <ChevronsRight className="h-4 w-4" />
         </Button>

@@ -269,11 +269,12 @@ export default function ESocialPage() {
                       {isSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                       Transmitir Lote
                     </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       className="h-9 w-9 rounded-xl text-muted-foreground hover:text-destructive"
                       onClick={() => setSelectedIds([])}
+                      aria-label="Limpar seleção"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -453,7 +454,7 @@ export default function ESocialPage() {
                           <div className="flex gap-1">
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" onClick={() => setSelectedEvento(e)}>
+                                <Button variant="ghost" size="icon" aria-label="Visualizar" className="h-8 w-8 rounded-lg" onClick={() => setSelectedEvento(e)}>
                                   <Eye className="h-4 w-4" />
                                 </Button>
                               </TooltipTrigger>
@@ -463,7 +464,7 @@ export default function ESocialPage() {
                             {e.xml && (
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-primary" onClick={() => handleExportXML(e)}>
+                                  <Button variant="ghost" size="icon" aria-label="Baixar" className="h-8 w-8 rounded-lg text-primary" onClick={() => handleExportXML(e)}>
                                     <Download className="h-4 w-4" />
                                   </Button>
                                 </TooltipTrigger>
@@ -474,10 +475,11 @@ export default function ESocialPage() {
                             {e.status === 'pendente' && (
                               <Tooltip>
                                 <TooltipTrigger asChild>
-                                  <Button 
-                                    variant="ghost" 
-                                    size="icon" 
-                                    className="h-8 w-8 rounded-lg text-warning" 
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    aria-label="Validar"
+                                    className="h-8 w-8 rounded-lg text-warning"
                                     onClick={() => handleValidar(e)}
                                     disabled={isValidating === e.id}
                                   >

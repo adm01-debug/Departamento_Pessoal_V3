@@ -138,9 +138,10 @@ export default function LocaisTrabalhoPage() {
             </Badge>
           </TableCell>
           <TableCell className="text-right pr-6">
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Excluir"
               onClick={() => excluir(l.id)}
               className="h-8 w-8 rounded-lg text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-opacity"
             >

@@ -114,7 +114,7 @@ export function SignatureCanvas({ onSave, onCancel, className }: SignatureCanvas
         <Button variant="outline" className="flex-1 rounded-xl" onClick={onCancel}>
           Cancelar
         </Button>
-        <Button variant="outline" size="icon" className="rounded-xl h-10 w-10 text-muted-foreground" onClick={clear}>
+        <Button variant="outline" size="icon" className="rounded-xl h-10 w-10 text-muted-foreground" onClick={clear} aria-label="Limpar assinatura">
           <Eraser className="h-4 w-4" />
         </Button>
         <Button 

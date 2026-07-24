@@ -65,10 +65,9 @@ export default function SSTPage() {
     },
   });
 
-  const hoje = new Date();
-  const em30dias = new Date(hoje.getTime() + 30 * 24 * 60 * 60 * 1000);
-
   const stats = useMemo(() => {
+    const hoje = new Date();
+    const em30dias = new Date(hoje.getTime() + 30 * 24 * 60 * 60 * 1000);
     const vencidos = asos.filter((a: any) => a.data_validade && new Date(a.data_validade) < hoje).length;
     const vencendo = asos.filter((a: any) => {
       if (!a.data_validade) return false;

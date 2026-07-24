@@ -322,12 +322,13 @@ export default function AdminClinicasPartnersPage() {
                         <Badge variant={c.status === 'ativo' ? 'default' : 'secondary'}>{c.status}</Badge>
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button size="icon" variant="ghost" onClick={() => openEdit(c)}>
+                        <Button size="icon" variant="ghost" aria-label="Editar" onClick={() => openEdit(c)}>
                           <Pencil className="h-4 w-4" />
                         </Button>
                         <Button
                           size="icon"
                           variant="ghost"
+                          aria-label="Excluir"
                           onClick={() => {
                             if (confirm(`Remover ${c.razao_social}?`)) deleteMutation.mutate(c.id);
                           }}

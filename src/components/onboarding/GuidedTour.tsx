@@ -130,7 +130,7 @@ export const GuidedTour = memo(function GuidedTour() {
                       Passo {currentStep + 1} de {tourSteps.length}
                     </span>
                   </div>
-                  <Button variant="ghost" size="icon" onClick={close} className="h-7 w-7 rounded-lg">
+                  <Button variant="ghost" size="icon" aria-label="Fechar" onClick={close} className="h-7 w-7 rounded-lg">
                     <X className="h-3.5 w-3.5" />
                   </Button>
                 </div>

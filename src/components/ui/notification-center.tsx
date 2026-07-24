@@ -37,7 +37,12 @@ export function NotificationCenter() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative hover:bg-accent/50 rounded-xl">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="relative hover:bg-accent/50 rounded-xl"
+          aria-label={naoLidas > 0 ? `Notificações (${naoLidas} não lidas)` : 'Notificações'}
+        >
           <Bell className="h-5 w-5" />
           {naoLidas > 0 && (
             <motion.span
@@ -122,6 +127,7 @@ export function NotificationCenter() {
                         size="icon"
                         onClick={(e) => { e.stopPropagation(); excluirNotificacao(notif.id); }}
                         className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity shrink-0 hover:bg-destructive/10 hover:text-destructive"
+                        aria-label="Excluir notificação"
                       >
                         <X className="h-3 w-3" />
                       </Button>

@@ -75,7 +75,7 @@ export default function LotacoesPage() {
                   <TableCell>{r.codigo || '-'}</TableCell>
                   <TableCell>{r.endereco || '-'}</TableCell>
                   <TableCell><Badge variant={r.ativa ? 'default' : 'secondary'}>{r.ativa ? 'Ativa' : 'Inativa'}</Badge></TableCell>
-                  <TableCell><Button variant="ghost" size="icon" onClick={() => excluir.mutate(r.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
+                  <TableCell><Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => excluir.mutate(r.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
                 </TableRow>
               ))}
               {!data?.length && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">Nenhuma lotação cadastrada</TableCell></TableRow>}

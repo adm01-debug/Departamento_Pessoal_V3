@@ -116,9 +116,9 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
 
         <div className="space-y-4 mt-2">
           <div>
-            <Label className="font-body text-xs">Colaborador *</Label>
+            <Label htmlFor="desl-colaborador" className="font-body text-xs">Colaborador *</Label>
             <Select value={form.colaborador_id} onValueChange={(v) => set('colaborador_id', v)}>
-              <SelectTrigger className="rounded-xl">
+              <SelectTrigger id="desl-colaborador" className="rounded-xl">
                 <SelectValue placeholder={loadingColab ? 'Carregando...' : 'Selecione o colaborador'} />
               </SelectTrigger>
               <SelectContent>
@@ -133,13 +133,13 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label className="font-body text-xs">Data Desligamento *</Label>
-              <Input type="date" value={form.data_desligamento} onChange={(e) => set('data_desligamento', e.target.value)} className="rounded-xl" />
+              <Label htmlFor="desl-data" className="font-body text-xs">Data Desligamento *</Label>
+              <Input id="desl-data" type="date" value={form.data_desligamento} onChange={(e) => set('data_desligamento', e.target.value)} className="rounded-xl" />
             </div>
             <div>
-              <Label className="font-body text-xs">Tipo de Rescisão *</Label>
+              <Label htmlFor="desl-tipo" className="font-body text-xs">Tipo de Rescisão *</Label>
               <Select value={form.tipo} onValueChange={(v) => set('tipo', v)}>
-                <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
+                <SelectTrigger id="desl-tipo" className="rounded-xl"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="sem_justa_causa">Sem Justa Causa</SelectItem>
                   <SelectItem value="com_justa_causa">Com Justa Causa</SelectItem>
@@ -153,34 +153,34 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label className="font-body text-xs">Aviso Prévio Trabalhado?</Label>
+              <Label htmlFor="desl-aviso-trabalhado" className="font-body text-xs">Aviso Prévio Trabalhado?</Label>
               <div className="flex items-center h-10">
-                <Switch checked={form.aviso_trabalhado} onCheckedChange={(v) => set('aviso_trabalhado', v)} />
+                <Switch id="desl-aviso-trabalhado" checked={form.aviso_trabalhado} onCheckedChange={(v) => set('aviso_trabalhado', v)} />
               </div>
             </div>
             <div>
-              <Label className="font-body text-xs">Saldo FGTS Estimado (R$)</Label>
-              <Input type="number" value={form.saldo_fgts} onChange={(e) => set('saldo_fgts', e.target.value)} className="rounded-xl" placeholder="0.00" />
+              <Label htmlFor="desl-saldo-fgts" className="font-body text-xs">Saldo FGTS Estimado (R$)</Label>
+              <Input id="desl-saldo-fgts" type="number" value={form.saldo_fgts} onChange={(e) => set('saldo_fgts', e.target.value)} className="rounded-xl" placeholder="0.00" />
             </div>
           </div>
 
           <div>
-            <Label className="font-body text-xs">Data Aviso Prévio</Label>
-            <Input type="date" value={form.data_aviso_previo} onChange={(e) => set('data_aviso_previo', e.target.value)} className="rounded-xl" />
+            <Label htmlFor="desl-aviso-previo" className="font-body text-xs">Data Aviso Prévio</Label>
+            <Input id="desl-aviso-previo" type="date" value={form.data_aviso_previo} onChange={(e) => set('data_aviso_previo', e.target.value)} className="rounded-xl" />
           </div>
 
           <div>
-            <Label className="font-body text-xs">Motivo</Label>
-            <Textarea value={form.motivo} onChange={(e) => set('motivo', e.target.value)} className="rounded-xl resize-none" rows={2} placeholder="Descreva o motivo do desligamento..." />
+            <Label htmlFor="desl-motivo" className="font-body text-xs">Motivo</Label>
+            <Textarea id="desl-motivo" value={form.motivo} onChange={(e) => set('motivo', e.target.value)} className="rounded-xl resize-none" rows={2} placeholder="Descreva o motivo do desligamento..." />
           </div>
 
           <div className="flex items-center justify-between">
-            <Label className="font-body text-xs">Quebra de contrato?</Label>
-            <Switch checked={form.quebra_contrato} onCheckedChange={(v) => set('quebra_contrato', v)} />
+            <Label htmlFor="desl-quebra" className="font-body text-xs">Quebra de contrato?</Label>
+            <Switch id="desl-quebra" checked={form.quebra_contrato} onCheckedChange={(v) => set('quebra_contrato', v)} />
           </div>
           <div className="flex items-center justify-between">
-            <Label className="font-body text-xs">Remover benefícios automaticamente?</Label>
-            <Switch checked={form.remover_beneficios} onCheckedChange={(v) => set('remover_beneficios', v)} />
+            <Label htmlFor="desl-remover-beneficios" className="font-body text-xs">Remover benefícios automaticamente?</Label>
+            <Switch id="desl-remover-beneficios" checked={form.remover_beneficios} onCheckedChange={(v) => set('remover_beneficios', v)} />
           </div>
 
           <Button onClick={handleSubmit} disabled={loading} className="w-full rounded-xl bg-gradient-to-r from-destructive to-destructive/70 font-body">

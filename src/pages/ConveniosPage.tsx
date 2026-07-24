@@ -142,7 +142,7 @@ export default function ConveniosPage() {
                       <TableCell className="capitalize">{r.tipo || '-'}</TableCell>
                       <TableCell>{r.limite_global ? fmt(Number(r.limite_global)) : '-'}</TableCell>
                       <TableCell><Badge variant={r.ativo ? 'default' : 'secondary'}>{r.ativo ? 'Ativo' : 'Inativo'}</Badge></TableCell>
-                      <TableCell><Button variant="ghost" size="icon" onClick={() => excluir.mutate(r.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
+                      <TableCell><Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => excluir.mutate(r.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
                     </TableRow>
                   ))}
                   {!data?.length && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">Nenhum convênio cadastrado</TableCell></TableRow>}
@@ -189,7 +189,7 @@ export default function ConveniosPage() {
                       <TableCell>{v.limite_individual ? fmt(v.limite_individual) : '-'}</TableCell>
                       <TableCell>{v.saldo_utilizado ? fmt(v.saldo_utilizado) : 'R$ 0,00'}</TableCell>
                       <TableCell><Badge variant={v.ativo ? 'default' : 'secondary'}>{v.ativo ? 'Ativo' : 'Inativo'}</Badge></TableCell>
-                      <TableCell><Button variant="ghost" size="icon" onClick={() => excluirVinculo.mutate(v.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
+                      <TableCell><Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => excluirVinculo.mutate(v.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
                     </TableRow>
                   ))}
                   {vinculos.length === 0 && <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">Nenhum colaborador vinculado a convênios</TableCell></TableRow>}

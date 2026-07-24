@@ -261,7 +261,7 @@ export function MFASetup() {
                   <code className="flex-1 p-2 bg-muted/50 rounded-lg text-xs font-mono break-all select-all">
                     {enrollData.secret}
                   </code>
-                  <Button variant="ghost" size="icon" onClick={() => copySecret(enrollData.secret)} className="shrink-0">
+                  <Button variant="ghost" size="icon" onClick={() => copySecret(enrollData.secret)} className="shrink-0" aria-label="Copiar chave secreta">
                     <Copy className="h-4 w-4" />
                   </Button>
                 </div>

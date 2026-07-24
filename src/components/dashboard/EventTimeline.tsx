@@ -147,9 +147,10 @@ export const EventTimeline = memo(function EventTimeline({ events: initialEvents
             </Badge>
           ))}
         </div>
-        <Button 
-          variant="ghost" 
-          size="icon" 
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Ordenar"
           className="h-6 w-6 shrink-0"
           onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')}
         >

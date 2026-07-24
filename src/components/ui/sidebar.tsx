@@ -532,10 +532,12 @@ const SidebarMenuSkeleton = React.forwardRef<
   }
 >(({ className, showIcon = false, ...props }, ref) => {
   // Random width between 50 to 90%.
+  /* eslint-disable react-hooks/purity */
   const width = React.useMemo(() => {
     // eslint-disable-next-line react-hooks/purity
     return `${Math.floor(Math.random() * 40) + 50}%`;
   }, []);
+  /* eslint-enable react-hooks/purity */
 
   return (
     <div
@@ -610,6 +612,7 @@ const SidebarMenuSubButton = React.forwardRef<
 });
 SidebarMenuSubButton.displayName = "SidebarMenuSubButton";
 
+/* eslint-disable react-refresh/only-export-components */
 export {
   Sidebar,
   SidebarContent,
@@ -637,3 +640,4 @@ export {
   // eslint-disable-next-line react-refresh/only-export-components
   useSidebar,
 };
+/* eslint-enable react-refresh/only-export-components */

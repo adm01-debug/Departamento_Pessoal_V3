@@ -289,6 +289,7 @@ export function RubricasDialog() {
                             <Button
                               variant="ghost"
                               size="icon"
+                              aria-label="Visualizar XML"
                               className="h-8 w-8 text-info hover:text-info hover:bg-info/10"
                               title="Ver XML eSocial"
                               onClick={() => {
@@ -300,6 +301,7 @@ export function RubricasDialog() {
                             <Button
                               variant="ghost"
                               size="icon"
+                              aria-label="Corrigir"
                               className="h-8 w-8 text-warning hover:text-warning hover:bg-warning/10"
                               title="Corrigir divergência eSocial"
                               onClick={() => {
@@ -319,6 +321,7 @@ export function RubricasDialog() {
                         <Button
                           variant="ghost"
                           size="icon"
+                          aria-label="Excluir"
                           className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-opacity"
                           onClick={() => {
                             if (confirm('Deseja realmente excluir esta rubrica?')) {

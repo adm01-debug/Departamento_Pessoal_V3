@@ -68,7 +68,7 @@ export function HistoricoContratosTab({ colaboradorId }: Props) {
                 <TableCell>{h.salario ? Number(h.salario).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '—'}</TableCell>
                 <TableCell>{h.carga_horaria_semanal ? `${h.carga_horaria_semanal}h` : '—'}</TableCell>
                 <TableCell>{h.motivo_alteracao || '—'}</TableCell>
-                <TableCell><Button variant="ghost" size="icon" onClick={() => excluir(h.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
+                <TableCell><Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => excluir(h.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -172,7 +172,7 @@ export function RelatoriosAgendadosTab({ empresaId }: { empresaId: string }) {
                         {a.proximo_envio ? new Date(a.proximo_envio).toLocaleString('pt-BR') : 'Aguardando...'}
                       </p>
                     </div>
-                    <Button variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10 rounded-xl" onClick={() => excluir.mutate(a.id)}>
+                    <Button variant="ghost" size="icon" aria-label="Excluir" className="text-destructive hover:bg-destructive/10 rounded-xl" onClick={() => excluir.mutate(a.id)}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>

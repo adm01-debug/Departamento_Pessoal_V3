@@ -82,7 +82,7 @@ function BeneficiariosPlanoSection({ planoId }: { planoId: string }) {
             <div key={b.id} className="flex items-center gap-2 text-sm p-1.5 rounded bg-background">
               <span className="flex-1">{b.nome} {b.cpf ? `(${b.cpf})` : ''}</span>
               <Badge variant="outline" className="text-xs">{b.tipo || b.parentesco || '—'}</Badge>
-              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => excluir.mutate(b.id)}><Trash2 className="h-3 w-3 text-destructive" /></Button>
+              <Button variant="ghost" size="icon" aria-label="Excluir" className="h-6 w-6" onClick={() => excluir.mutate(b.id)}><Trash2 className="h-3 w-3 text-destructive" /></Button>
             </div>
           ))}
         </div>

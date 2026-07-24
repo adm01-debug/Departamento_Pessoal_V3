@@ -207,7 +207,7 @@ export default function DesligamentosPage() {
                               <td className="px-4 py-3 text-right">
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                                    <Button variant="ghost" size="icon" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Button variant="ghost" size="icon" aria-label="Mais opções" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity">
                                       <MoreHorizontal className="h-4 w-4" />
                                     </Button>
                                   </DropdownMenuTrigger>

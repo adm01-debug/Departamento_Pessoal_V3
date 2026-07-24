@@ -105,7 +105,7 @@ export default function PensoesPage() {
                   <TableCell className="capitalize">{r.tipo || '-'}</TableCell>
                   <TableCell>{r.percentual ? `${r.percentual}%` : r.valor_fixo ? `R$ ${Number(r.valor_fixo).toLocaleString('pt-BR')}` : '-'}</TableCell>
                   <TableCell><Badge variant={r.ativo ? 'default' : 'secondary'}>{r.ativo ? 'Ativa' : 'Inativa'}</Badge></TableCell>
-                  <TableCell><Button variant="ghost" size="icon" onClick={() => excluir.mutate(r.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
+                  <TableCell><Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => excluir.mutate(r.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
                 </TableRow>
               ))}
               {!data?.length && <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">Nenhuma pensão cadastrada</TableCell></TableRow>}

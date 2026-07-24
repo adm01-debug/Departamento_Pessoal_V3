@@ -172,7 +172,7 @@ export default function RecrutamentoPage() {
                                   </div>
                                   
                                   <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={e => e.stopPropagation()}>
-                                    <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg hover:bg-blue-50 hover:text-blue-600">
+                                    <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg hover:bg-blue-50 hover:text-blue-600" aria-label="Contatar candidato">
                                       <Mail className="h-3.5 w-3.5" />
                                     </Button>
                                     <Select 
@@ -218,8 +218,8 @@ export default function RecrutamentoPage() {
                               {vaga.status}
                             </Badge>
                             <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5"><BarChart3 className="h-4 w-4" /></Button>
-                              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/5"><Trash2 className="h-4 w-4" /></Button>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5" aria-label="Ver análises"><BarChart3 className="h-4 w-4" /></Button>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/5" aria-label="Excluir vaga"><Trash2 className="h-4 w-4" /></Button>
                             </div>
                           </div>
                           <CardTitle className="text-xl font-display font-bold leading-tight group-hover:text-primary transition-colors">{vaga.titulo}</CardTitle>
@@ -310,7 +310,7 @@ export default function RecrutamentoPage() {
                                    {cand.pretensao_salarial ? `R$ ${cand.pretensao_salarial.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : 'N/D'}
                                  </td>
                                  <td className="px-6 py-4 text-right">
-                                   <Button variant="ghost" size="icon" className="rounded-xl hover:bg-primary/10 text-primary opacity-0 group-hover:opacity-100 transition-all"><Plus className="h-4 w-4" /></Button>
+                                   <Button variant="ghost" size="icon" aria-label="Adicionar" className="rounded-xl hover:bg-primary/10 text-primary opacity-0 group-hover:opacity-100 transition-all"><Plus className="h-4 w-4" /></Button>
                                  </td>
                                </tr>
                              ))}

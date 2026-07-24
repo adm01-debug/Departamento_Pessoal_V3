@@ -161,9 +161,10 @@ export function ConfiguracoesGeraisTab() {
                         {c.updated_at ? new Date(c.updated_at).toLocaleDateString('pt-BR') : '-'}
                       </TableCell>
                       <TableCell className="text-right pr-6">
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          aria-label="Excluir"
                           onClick={() => excluir.mutate(c.id)}
                           className="h-8 w-8 rounded-lg text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-opacity"
                         >

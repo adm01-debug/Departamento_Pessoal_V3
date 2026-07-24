@@ -251,7 +251,7 @@ export function AlertasKpiTab() {
                         {new Date(a.updated_at).toLocaleDateString('pt-BR')}
                       </TableCell>
                       <TableCell className="text-right pr-6">
-                        <Button variant="ghost" size="icon" onClick={() => excluir.mutate(a.id)} className="h-8 w-8 rounded-lg text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => excluir.mutate(a.id)} className="h-8 w-8 rounded-lg text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-opacity">
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </TableCell>
@@ -403,7 +403,7 @@ export function IntegracoesTab() {
                         {i.ultima_sync ? new Date(i.ultima_sync).toLocaleString('pt-BR') : 'Nunca sincronizado'}
                       </TableCell>
                       <TableCell>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button variant="ghost" size="icon" aria-label="Configurações" className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
                           <Settings className="h-4 w-4" />
                         </Button>
                       </TableCell>

@@ -75,7 +75,7 @@ export default function DesignSystemPage() {
         animate={{ opacity: 1, y: 0 }}
         className="flex items-center gap-4"
       >
-        <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard')} className="rounded-xl">
+        <Button variant="ghost" size="icon" aria-label="Voltar" onClick={() => navigate('/dashboard')} className="rounded-xl">
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
@@ -180,7 +180,7 @@ export default function DesignSystemPage() {
                 <Button size="default">Default</Button>
                 <Button size="lg">Large</Button>
                 <Button size="xl">Extra Large</Button>
-                <Button size="icon"><Zap className="h-4 w-4" /></Button>
+                <Button size="icon" aria-label="Ação"><Zap className="h-4 w-4" /></Button>
               </div>
             </div>
           </CardContent>

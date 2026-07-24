@@ -37,10 +37,10 @@ export function AdiantamentosTable({ adiantamentos, fmt, onUpdateStatus, cn }: a
             <TableCell className="text-right">
               {a.status === 'pendente' && (
                 <div className="flex justify-end gap-2">
-                  <Button size="icon" variant="ghost" className="h-8 w-8 text-success hover:bg-success/10" onClick={() => onUpdateStatus({ id: a.id, status: 'aprovado' })}>
+                  <Button size="icon" variant="ghost" aria-label="Aprovar" className="h-8 w-8 text-success hover:bg-success/10" onClick={() => onUpdateStatus({ id: a.id, status: 'aprovado' })}>
                     <CheckCircle2 className="h-4 w-4" />
                   </Button>
-                  <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={() => onUpdateStatus({ id: a.id, status: 'rejeitado' })}>
+                  <Button size="icon" variant="ghost" aria-label="Rejeitar" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={() => onUpdateStatus({ id: a.id, status: 'rejeitado' })}>
                     <XCircle className="h-4 w-4" />
                   </Button>
                 </div>

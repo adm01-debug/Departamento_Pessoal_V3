@@ -215,9 +215,10 @@ export default function HoleritesPage() {
                                   {formatCurrency(Number(h.total_liquido))}
                                 </TableCell>
                                 <TableCell className="text-center">
-                                  <Button 
-                                    size="icon" 
-                                    variant="ghost" 
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    aria-label="Baixar"
                                     className="h-9 w-9 rounded-xl hover:bg-primary hover:text-white transition-all shadow-xs group-hover:scale-110"
                                     onClick={() => handleDownload(h)}
                                     title="Baixar Holerite PDF"

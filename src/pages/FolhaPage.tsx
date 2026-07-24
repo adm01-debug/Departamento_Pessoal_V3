@@ -176,7 +176,7 @@ export default function FolhaPage() {
                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <Dialog>
                           <DialogTrigger asChild>
-                            <Button variant="ghost" size="icon" className="rounded-xl hover:bg-primary/10" title="Auditoria e Conferência">
+                            <Button variant="ghost" size="icon" aria-label="Auditoria e Conferência" className="rounded-xl hover:bg-primary/10" title="Auditoria e Conferência">
                               <ClipboardList className="h-4 w-4" />
                             </Button>
                           </DialogTrigger>

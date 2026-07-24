@@ -83,7 +83,7 @@ export default function SindicatosPage() {
                 <TableCell>{s.cnpj || '—'}</TableCell>
                 <TableCell>{s.email || s.telefone || '—'}</TableCell>
                 <TableCell>{s.data_base || '—'}</TableCell>
-                <TableCell><Button size="icon" variant="ghost" onClick={() => excluir.mutate(s.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
+                <TableCell><Button size="icon" variant="ghost" aria-label="Excluir" onClick={() => excluir.mutate(s.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
               </TableRow>
             ))}
             {sindicatos.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">Nenhum sindicato cadastrado</TableCell></TableRow>}

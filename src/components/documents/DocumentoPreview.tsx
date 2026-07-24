@@ -34,7 +34,7 @@ export function DocumentoPreview({ documento, isOpen, onClose }: DocumentoPrevie
             <Button variant="ghost" size="sm" className="rounded-xl h-8 text-xs" onClick={() => window.open(url, '_blank', 'noopener')}>
               <ExternalLink className="h-3.5 w-3.5 mr-1.5" /> Abrir Original
             </Button>
-            <Button variant="outline" size="icon" className="rounded-xl h-8 w-8" onClick={onClose}>
+            <Button variant="outline" size="icon" aria-label="Fechar" className="rounded-xl h-8 w-8" onClick={onClose}>
               <X className="h-4 w-4" />
             </Button>
           </div>

@@ -85,7 +85,7 @@ export default function CentrosCustoPage() {
                   <TableCell>{c.codigo || '—'}</TableCell>
                   <TableCell className="max-w-[200px] truncate">{c.descricao || '—'}</TableCell>
                   <TableCell><Badge variant={c.ativo !== false ? 'default' : 'secondary'}>{c.ativo !== false ? 'Ativo' : 'Inativo'}</Badge></TableCell>
-                  <TableCell><Button size="icon" variant="ghost" onClick={() => excluir.mutate(c.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
+                  <TableCell><Button size="icon" variant="ghost" aria-label="Excluir" onClick={() => excluir.mutate(c.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
                 </TableRow>
               ))}
               {centros.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">Nenhum centro cadastrado</TableCell></TableRow>}

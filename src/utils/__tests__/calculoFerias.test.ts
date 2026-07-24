@@ -21,20 +21,20 @@ describe('calculoFerias', () => {
     expect(result.bruto).toBe(4000);
     
     // INSS 2026 (Progressivo)
-    // 1518 * 0.075 = 113.85
-    // (2793.88 - 1518) * 0.09 = 1275.88 * 0.09 = 114.83
-    // (4000 - 2793.88) * 0.12 = 1206.12 * 0.12 = 144.73
-    // Total INSS: 113.85 + 114.83 + 144.73 = 373.41
-    expect(result.inss).toBe(373.41);
-    
+    // 1621 * 0.075 = 121.575
+    // (2902.84 - 1621) * 0.09 = 1281.84 * 0.09 = 115.3656
+    // (4000 - 2902.84) * 0.12 = 1097.16 * 0.12 = 131.6592
+    // Total INSS: 121.575 + 115.3656 + 131.6592 = 368.5998 → rounds to 368.60
+    expect(result.inss).toBe(368.60);
+
     // IRRF — usa a base mais benéfica (desconto simplificado vs. deduções legais).
-    // Base legal:        4000 - 373.41 (INSS) = 3626.59 → imposto 162.55
+    // Base legal:        4000 - 368.60 (INSS) = 3631.40 → imposto 163.27
     // Base simplificada: 4000 - 564.80 (desconto) = 3435.20 → imposto 133.84
     // A Receita aplica a MENOR (133.84), conforme regra 2026.
     expect(result.irrf).toBe(133.84);
 
-    // Líquido: 4000 - 373.41 - 133.84 = 3492.75
-    expect(result.liquido).toBe(3492.75);
+    // Líquido: 4000 - 368.60 - 133.84 = 3497.56
+    expect(result.liquido).toBe(3497.56);
   });
 
   it('deve calcular férias com abono pecuniário (20 dias férias + 10 dias abono)', () => {
@@ -72,6 +72,54 @@ describe('calculoFerias', () => {
 
     // Limite é 10 dias
     // Valor dia: 100
-    expect(result.valorAbono).toBe(1000); 
+    expect(result.valorAbono).toBe(1000);
+  });
+
+  it('salário mínimo (1518) sem abono — resultado estrutural', () => {
+    const result = calculoFerias.calcular({ salarioBase: 1518, diasFerias: 30, diasAbono: 0 });
+    expect(result.valorFerias).toBe(1518);
+    expect(result.tercoConstitucional).toBe(506);
+    expect(result.bruto).toBe(2024);
+    // INSS sobre bruto de 2024 — first bracket only (1518 * 7.5% = 113.85, rest 9%)
+    expect(result.inss).toBeGreaterThan(0);
+    // Líquido deve ser positivo
+    expect(result.liquido).toBeGreaterThan(0);
+  });
+
+  it('abono pecuniário zero quando diasAbono omitido', () => {
+    const result = calculoFerias.calcular({ salarioBase: 4000, diasFerias: 30 });
+    expect(result.valorAbono).toBe(0);
+    expect(result.tercoAbono).toBe(0);
+  });
+
+  it('retorna estrutura correta com todas as propriedades', () => {
+    const result = calculoFerias.calcular({ salarioBase: 3000, diasFerias: 30 });
+    expect(result).toHaveProperty('valorFerias');
+    expect(result).toHaveProperty('tercoConstitucional');
+    expect(result).toHaveProperty('valorAbono');
+    expect(result).toHaveProperty('tercoAbono');
+    expect(result).toHaveProperty('bruto');
+    expect(result).toHaveProperty('inss');
+    expect(result).toHaveProperty('irrf');
+    expect(result).toHaveProperty('liquido');
+  });
+
+  it('líquido = bruto - inss - irrf (balanço contábil)', () => {
+    const result = calculoFerias.calcular({ salarioBase: 5000, diasFerias: 30 });
+    expect(result.liquido).toBeCloseTo(result.bruto - result.inss - result.irrf, 2);
+  });
+
+  it('alto salário — incide alíquota máxima de INSS e IRRF', () => {
+    const result = calculoFerias.calcular({ salarioBase: 20000, diasFerias: 30 });
+    expect(result.inss).toBeGreaterThan(0);
+    expect(result.irrf).toBeGreaterThan(0);
+    expect(result.liquido).toBeLessThan(result.bruto);
+  });
+
+  it('isenção de IRRF para salário muito baixo', () => {
+    // Salário abaixo da faixa isenta de IRRF
+    const result = calculoFerias.calcular({ salarioBase: 1320, diasFerias: 30 });
+    // Bruto = 1320 + 440 = 1760 — abaixo da faixa tributável
+    expect(result.irrf).toBe(0);
   });
 });

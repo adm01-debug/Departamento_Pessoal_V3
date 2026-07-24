@@ -120,7 +120,7 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
                   setRules(rules.map((r, i) => (i === idx ? { ...r, ...changes } : r)));
                 return (
                 <div key={idx} className="p-3 border rounded-xl space-y-3 relative group">
-                  <Button variant="ghost" size="icon" className="h-6 w-6 absolute right-2 top-2 text-destructive opacity-0 group-hover:opacity-100" onClick={() => setRules(rules.filter((_, i) => i !== idx))}>
+                  <Button variant="ghost" size="icon" aria-label="Excluir" className="h-6 w-6 absolute right-2 top-2 text-destructive opacity-0 group-hover:opacity-100" onClick={() => setRules(rules.filter((_, i) => i !== idx))}>
                     <Trash2 className="h-3 w-3" />
                   </Button>
                   <div className="grid grid-cols-2 gap-3">

@@ -197,9 +197,10 @@ export default function VinculosPromoPage() {
                         {v.quantidade_alocada}
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button 
-                          size="icon" 
-                          variant="ghost" 
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          aria-label="Excluir"
                           onClick={() => { if(confirm('Remover este vínculo?')) removerVinculo.mutate(v.id); }}
                         >
                           <Trash2 className="h-4 w-4 text-destructive" />

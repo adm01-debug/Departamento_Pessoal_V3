@@ -51,13 +51,13 @@ export function CalendarioFerias() {
             Calendário de Férias
           </CardTitle>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" onClick={prevMonth} className="h-8 w-8 rounded-full">
+            <Button variant="outline" size="icon" aria-label="Mês anterior" onClick={prevMonth} className="h-8 w-8 rounded-full">
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <span className="text-sm font-display font-medium min-w-[120px] text-center capitalize">
               {format(currentDate, 'MMMM yyyy', { locale: ptBR })}
             </span>
-            <Button variant="outline" size="icon" onClick={nextMonth} className="h-8 w-8 rounded-full">
+            <Button variant="outline" size="icon" aria-label="Próximo mês" onClick={nextMonth} className="h-8 w-8 rounded-full">
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>

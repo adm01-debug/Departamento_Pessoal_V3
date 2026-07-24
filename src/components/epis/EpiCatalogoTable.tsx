@@ -83,7 +83,7 @@ export function EpiCatalogoTable({ data, onExcluir }: EpiCatalogoTableProps) {
                     <TableCell className="pr-6">
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Button size="icon" variant="ghost" className="h-7 w-7 rounded-lg" onClick={() => onExcluir(e.id)}>
+                          <Button size="icon" variant="ghost" aria-label="Excluir" className="h-7 w-7 rounded-lg" onClick={() => onExcluir(e.id)}>
                             <Trash2 className="h-3.5 w-3.5 text-destructive" />
                           </Button>
                         </TooltipTrigger>
@@ -137,7 +137,7 @@ export function EpiCatalogoTable({ data, onExcluir }: EpiCatalogoTableProps) {
                       Estoque: {e.estoque_atual}
                     </span>
                   </div>
-                  <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => onExcluir(e.id)}>
+                  <Button size="icon" variant="ghost" aria-label="Excluir" className="h-7 w-7" onClick={() => onExcluir(e.id)}>
                     <Trash2 className="h-3.5 w-3.5 text-destructive" />
                   </Button>
                 </div>

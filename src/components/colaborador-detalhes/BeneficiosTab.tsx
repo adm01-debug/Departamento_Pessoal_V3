@@ -154,9 +154,10 @@ export function BeneficiosTab({ colaboradorId }: BeneficiosTabProps) {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label="Excluir"
                         className="rounded-xl text-destructive hover:bg-destructive/10 h-8 w-8"
                         onClick={() => desvincularBeneficio(b.id)}
                         title="Remover Benefício"

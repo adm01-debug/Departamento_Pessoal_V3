@@ -15,7 +15,12 @@ export function NotificationBell() {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative rounded-xl">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="relative rounded-xl"
+          aria-label={naoLidas > 0 ? `Notificações (${naoLidas} não lidas)` : 'Notificações'}
+        >
           <Bell className="h-5 w-5" />
           {naoLidas > 0 && (
             <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-lg">

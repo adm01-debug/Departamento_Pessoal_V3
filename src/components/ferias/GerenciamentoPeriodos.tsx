@@ -245,12 +245,13 @@ export function GerenciamentoPeriodos({ colaboradorId: initialColaboradorId }: G
                     <TableCell>{getStatusBadge(p.status || '')}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button variant="ghost" size="icon" onClick={() => openEdit(p)} className="h-8 w-8">
+                        <Button variant="ghost" size="icon" aria-label="Editar" onClick={() => openEdit(p)} className="h-8 w-8">
                           <Edit2 className="h-3.5 w-3.5" />
                         </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          aria-label="Excluir"
                           onClick={() => deleteMutation.mutate(p.id)}
                           className="h-8 w-8 text-destructive"
                         >

@@ -102,7 +102,7 @@ export function ExameTable({ data, onExcluir }: ExameTableProps) {
                       <TableCell className="pr-6">
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Button size="icon" variant="ghost" className="h-7 w-7 rounded-lg" onClick={() => onExcluir(r.id)}>
+                            <Button size="icon" variant="ghost" aria-label="Excluir" className="h-7 w-7 rounded-lg" onClick={() => onExcluir(r.id)}>
                               <Trash2 className="h-3.5 w-3.5 text-destructive" />
                             </Button>
                           </TooltipTrigger>
@@ -151,7 +151,7 @@ export function ExameTable({ data, onExcluir }: ExameTableProps) {
                     <span className="text-[10px] text-muted-foreground">
                       {r.medico || '—'} {r.crm ? `(CRM: ${r.crm})` : ''}
                     </span>
-                    <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => onExcluir(r.id)}>
+                    <Button size="icon" variant="ghost" aria-label="Excluir" className="h-7 w-7" onClick={() => onExcluir(r.id)}>
                       <Trash2 className="h-3.5 w-3.5 text-destructive" />
                     </Button>
                   </div>

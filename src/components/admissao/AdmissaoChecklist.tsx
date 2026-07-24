@@ -84,9 +84,10 @@ export function AdmissaoChecklist({ documentos, onValidate, isAdmin = false }: A
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              aria-label="Aprovar"
                               className="w-7 h-7 rounded-lg text-success hover:bg-success/10"
                               onClick={() => onValidate?.(doc.tipo || doc.id, 'validado')}
                             >
@@ -98,9 +99,10 @@ export function AdmissaoChecklist({ documentos, onValidate, isAdmin = false }: A
                         
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              aria-label="Rejeitar"
                               className="w-7 h-7 rounded-lg text-destructive hover:bg-destructive/10"
                               onClick={() => onValidate?.(doc.tipo || doc.id, 'rejeitado')}
                             >

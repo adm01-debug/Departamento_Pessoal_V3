@@ -17,7 +17,7 @@ export function ThemeToggle({ className }: { className?: string }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className={cn("relative hover:bg-accent/50 rounded-xl overflow-hidden", className)}>
+        <Button variant="ghost" size="icon" className={cn("relative hover:bg-accent/50 rounded-xl overflow-hidden", className)} aria-label="Alternar tema">
           <AnimatePresence mode="wait">
             {resolvedTheme === 'dark' ? (
               <motion.div

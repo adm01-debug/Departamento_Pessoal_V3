@@ -149,7 +149,7 @@ export default function ComunicacaoInternaPage() {
                   {isLido && <span className="text-[11px] text-success flex items-center gap-1"><CheckCircle className="h-3 w-3" />Lido</span>}
                 </div>
               </div>
-              <Button size="icon" variant="ghost" className="h-8 w-8 opacity-0 group-hover:opacity-100 text-destructive rounded-lg" onClick={() => excluirCom.mutate(c.id)}>
+              <Button size="icon" variant="ghost" aria-label="Excluir" className="h-8 w-8 opacity-0 group-hover:opacity-100 text-destructive rounded-lg" onClick={() => excluirCom.mutate(c.id)}>
                 <Trash2 className="h-3.5 w-3.5" />
               </Button>
             </div>

@@ -71,7 +71,7 @@ export function MobileQuickActions({ open, onOpenChange }: { open: boolean; onOp
                   <p className="text-caption text-muted-foreground">O que você deseja fazer agora?</p>
                 </div>
               </div>
-              <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="rounded-full bg-muted/30">
+              <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="rounded-full bg-muted/30" aria-label="Fechar">
                 <X className="h-5 w-5" />
               </Button>
             </div>

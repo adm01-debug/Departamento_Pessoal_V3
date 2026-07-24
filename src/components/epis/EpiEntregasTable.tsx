@@ -102,7 +102,7 @@ export function EpiEntregasTable({ data, onDevolver }: EpiEntregasTableProps) {
                           {!isDevolvido && (
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button size="icon" variant="ghost" className="h-7 w-7 rounded-lg" onClick={() => onDevolver(e.id)}>
+                                <Button size="icon" variant="ghost" aria-label="Registrar devolução" className="h-7 w-7 rounded-lg" onClick={() => onDevolver(e.id)}>
                                   <RotateCcw className="h-3.5 w-3.5 text-muted-foreground" />
                                 </Button>
                               </TooltipTrigger>

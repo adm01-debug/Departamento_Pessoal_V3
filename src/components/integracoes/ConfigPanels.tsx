@@ -226,7 +226,7 @@ export function WebhookConfigPanel() {
                           </div>
                           <div className="flex items-center gap-3">
                              <Badge variant="outline" className="bg-success/10 text-success border-0">Ativo</Badge>
-                             <Button variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10"><XCircle className="h-4 w-4" /></Button>
+                             <Button variant="ghost" size="icon" aria-label="Remover" className="text-destructive hover:bg-destructive/10"><XCircle className="h-4 w-4" /></Button>
                           </div>
                        </CardContent>
                     </Card>

@@ -101,7 +101,7 @@ export function FGTSDigitalDashboard() {
                 </div>
                 <div className="flex items-center gap-2">
                     <Badge variant="outline" className="bg-success/10 text-success border-success/20 text-[10px]">Pago</Badge>
-                    <Button variant="ghost" size="icon" className="h-7 w-7"><History className="h-3.5 w-3.5" /></Button>
+                    <Button variant="ghost" size="icon" aria-label="Histórico" className="h-7 w-7"><History className="h-3.5 w-3.5" /></Button>
                 </div>
             </div>
         </div>

@@ -41,7 +41,7 @@ export default function AssinaturasPage(): React.ReactElement {
         icon={<PenTool className="w-6 h-6 text-primary" />}
         actions={
           <div className="flex gap-2">
-            <Button variant="outline" size="icon" onClick={() => refetch()}>
+            <Button variant="outline" size="icon" onClick={() => refetch()} aria-label="Atualizar">
               <RefreshCw className="w-4 h-4" />
             </Button>
             <Button><Send className="w-4 h-4 mr-2" /> Enviar para Assinatura</Button>
@@ -138,8 +138,8 @@ export default function AssinaturasPage(): React.ReactElement {
                       <StatusIcon className="w-3 h-3 mr-1" />{sc.label}
                     </Badge>
                     <div className="flex gap-1 shrink-0">
-                      <Button variant="ghost" size="icon" className="h-8 w-8"><Eye className="w-4 h-4" /></Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8"><Download className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Visualizar documento"><Eye className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Baixar documento"><Download className="w-4 h-4" /></Button>
                     </div>
                   </CardContent>
                 </Card>

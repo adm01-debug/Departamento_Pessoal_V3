@@ -143,10 +143,11 @@ function TrilhaCursosSection({ trilhaId, cursos }: { trilhaId: string; cursos: a
                   <p className="text-[10px] text-muted-foreground">{(v as any).curso?.carga_horaria || 0} horas de conteúdo</p>
                 </div>
               </div>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10 hover:text-destructive" 
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Excluir"
+                className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10 hover:text-destructive"
                 onClick={() => desvincular.mutate(v.id)}
               >
                 <Trash2 className="h-3.5 w-3.5" />
@@ -266,7 +267,7 @@ export default function TreinamentosPage() {
                         <TableCell>{t.data || '—'}</TableCell>
                         <TableCell>{t.carga_horaria ? `${t.carga_horaria}h` : '—'}</TableCell>
                         <TableCell className="max-w-[200px] truncate">{t.descricao || '—'}</TableCell>
-                        <TableCell><Button variant="ghost" size="icon" onClick={() => excluirTrein.mutate(t.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
+                        <TableCell><Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => excluirTrein.mutate(t.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
                       </TableRow>
                     ))
                   }
@@ -365,7 +366,7 @@ export default function TreinamentosPage() {
                         <TableCell>{c.modalidade || '—'}</TableCell>
                         <TableCell>{c.carga_horaria ? `${c.carga_horaria}h` : '—'}</TableCell>
                         <TableCell><Badge variant={c.obrigatorio ? 'default' : 'secondary'}>{c.obrigatorio ? 'Sim' : 'Não'}</Badge></TableCell>
-                        <TableCell><Button variant="ghost" size="icon" onClick={() => excluirCurso.mutate(c.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
+                        <TableCell><Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => excluirCurso.mutate(c.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
                       </TableRow>
                     ))
                   }
@@ -403,7 +404,7 @@ export default function TreinamentosPage() {
                       <p className="font-medium">{t.titulo}</p>
                       <p className="text-xs text-muted-foreground">{t.nivel || '—'} • {t.descricao || 'Sem descrição'}</p>
                     </div>
-                    <Button variant="ghost" size="icon" onClick={() => excluirTrilha.mutate(t.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                    <Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => excluirTrilha.mutate(t.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                   </div>
                   <TrilhaCursosSection trilhaId={t.id} cursos={cursos} />
                 </CardContent>

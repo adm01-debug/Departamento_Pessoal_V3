@@ -82,11 +82,11 @@ export default function HorasExtrasPage() {
                   <TableCell className="flex gap-1">
                     {s.status === 'pendente' && (
                       <>
-                        <Button size="icon" variant="ghost" onClick={() => aprovar({ id: s.id })} title="Aprovar"><Check className="h-4 w-4 text-primary" /></Button>
-                        <Button size="icon" variant="ghost" onClick={() => rejeitar({ id: s.id })} title="Rejeitar"><X className="h-4 w-4 text-destructive" /></Button>
+                        <Button size="icon" variant="ghost" aria-label="Aprovar" onClick={() => aprovar({ id: s.id })} title="Aprovar"><Check className="h-4 w-4 text-primary" /></Button>
+                        <Button size="icon" variant="ghost" aria-label="Rejeitar" onClick={() => rejeitar({ id: s.id })} title="Rejeitar"><X className="h-4 w-4 text-destructive" /></Button>
                       </>
                     )}
-                    <Button size="icon" variant="ghost" onClick={() => excluir(s.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                    <Button size="icon" variant="ghost" aria-label="Excluir" onClick={() => excluir(s.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                   </TableCell>
                 </TableRow>
               ))}

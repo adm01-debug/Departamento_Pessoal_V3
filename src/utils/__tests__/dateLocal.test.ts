@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { formatDateLocalISO, todayLocalISO, addDaysLocal } from '../dateLocal';
+import { formatDateLocalISO, todayLocalISO, addDaysLocal, formatCompetenciaLocal, currentCompetenciaLocal } from '../dateLocal';
 
 describe('dateLocal', () => {
   afterEach(() => {
@@ -42,5 +42,48 @@ describe('dateLocal', () => {
   it('addDaysLocal aceita valores negativos', () => {
     const base = new Date(2026, 0, 3, 12, 0, 0);
     expect(formatDateLocalISO(addDaysLocal(base, -5))).toBe('2025-12-29');
+  });
+});
+
+describe('formatCompetenciaLocal', () => {
+  it('formata YYYY-MM no fuso local', () => {
+    const d = new Date(2026, 6, 1, 12, 0, 0); // julho 2026
+    expect(formatCompetenciaLocal(d)).toBe('2026-07');
+  });
+
+  it('usa zero-padding para meses < 10', () => {
+    const d = new Date(2026, 2, 15, 12, 0, 0); // março 2026
+    expect(formatCompetenciaLocal(d)).toBe('2026-03');
+  });
+
+  it('retorna string vazia para data inválida', () => {
+    expect(formatCompetenciaLocal(new Date('invalid'))).toBe('');
+  });
+
+  it('não sofre shift em cruzamento de fim de mês (23:30 local)', () => {
+    // 31/07 às 23:30 em UTC-3 seria 01/08 em UTC — competência deve ser 07
+    const d = new Date(2026, 6, 31, 23, 30, 0); // julho
+    const result = formatCompetenciaLocal(d);
+    const [year, month] = result.split('-');
+    expect(year).toBe('2026');
+    expect(month).toBe('07');
+  });
+});
+
+describe('currentCompetenciaLocal', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('retorna a competência atual usando data mockada', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 4, 15, 10)); // maio 2026
+    expect(currentCompetenciaLocal()).toBe('2026-05');
+  });
+
+  it('formato YYYY-MM (8 chars)', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 11, 1)); // dezembro 2026
+    expect(currentCompetenciaLocal()).toMatch(/^\d{4}-\d{2}$/);
   });
 });

@@ -277,20 +277,20 @@ export default function FaltasPage() {
                     <div className="flex gap-1">
                       {(!f.status || f.status === 'registrada') && (
                         <>
-                          <Button size="icon" variant="ghost" className="h-7 w-7 rounded-lg hover:bg-success/10 text-success" onClick={() => aprovar.mutate(f.id)} title="Aprovar">
+                          <Button size="icon" variant="ghost" aria-label="Aprovar" className="h-7 w-7 rounded-lg hover:bg-success/10 text-success" onClick={() => aprovar.mutate(f.id)} title="Aprovar">
                             <Check className="h-3.5 w-3.5" />
                           </Button>
-                          <Button size="icon" variant="ghost" className="h-7 w-7 rounded-lg hover:bg-destructive/10 text-destructive" onClick={() => rejeitar.mutate(f.id)} title="Rejeitar">
+                          <Button size="icon" variant="ghost" aria-label="Rejeitar" className="h-7 w-7 rounded-lg hover:bg-destructive/10 text-destructive" onClick={() => rejeitar.mutate(f.id)} title="Rejeitar">
                             <X className="h-3.5 w-3.5" />
                           </Button>
                         </>
                       )}
                       {f.tipo === 'injustificada' && !f.desconto_aplicado && f.status !== 'rejeitada' && (
-                        <Button size="icon" variant="ghost" className="h-7 w-7 rounded-lg hover:bg-warning/10 text-warning" onClick={() => marcarDesconto.mutate(f.id)} title="Aplicar desconto">
+                        <Button size="icon" variant="ghost" aria-label="Aplicar desconto" className="h-7 w-7 rounded-lg hover:bg-warning/10 text-warning" onClick={() => marcarDesconto.mutate(f.id)} title="Aplicar desconto">
                           <FileText className="h-3.5 w-3.5" />
                         </Button>
                       )}
-                      <Button size="icon" variant="ghost" className="h-7 w-7 rounded-lg" onClick={() => excluir.mutate(f.id)}>
+                      <Button size="icon" variant="ghost" aria-label="Excluir" className="h-7 w-7 rounded-lg" onClick={() => excluir.mutate(f.id)}>
                         <Trash2 className="h-3.5 w-3.5 text-destructive" />
                       </Button>
                     </div>

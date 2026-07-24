@@ -106,10 +106,11 @@ export function FolhaESocialSync({ competencia }: { competencia: string }) {
           </div>
           Integração eSocial
         </CardTitle>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="rounded-xl h-8 w-8" 
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Atualizar"
+          className="rounded-xl h-8 w-8"
           onClick={handleSync}
           disabled={isSyncing}
         >

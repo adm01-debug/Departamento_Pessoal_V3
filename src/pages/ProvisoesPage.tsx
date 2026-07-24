@@ -9,7 +9,7 @@ import { EmptyList, EmptyState } from '@/components/ui/empty-state';
 import { Spinner } from '@/components/ui/spinner';
 import { Button } from '@/components/ui/button';
 import { provisaoService } from '@/services';
-import { Calculator, Wallet, TrendingUp, Landmark, PieChart, Info, Download, FileText, FileSpreadsheet, History, BarChart3, ShieldCheck, Activity, AlertCircle } from 'lucide-react';
+import { Calculator, Wallet, TrendingUp, Landmark, PieChart, Info, Download, FileText, FileSpreadsheet, History, BarChart3, ShieldCheck, Activity, AlertCircle, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
   BarChart,
@@ -398,7 +398,7 @@ export default function ProvisoesPage() {
                 <h3 className="font-display font-bold flex items-center gap-2">
                   <ShieldCheck className="h-4 w-4 text-primary" /> Detalhes da Auditoria
                 </h3>
-                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => setSelectedLog(null)}>×</Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => setSelectedLog(null)} aria-label="Fechar"><X className="h-4 w-4" /></Button>
               </div>
               <div className="p-6 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
