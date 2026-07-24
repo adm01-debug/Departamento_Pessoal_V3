@@ -76,10 +76,11 @@ export default defineConfig(({ mode }) => ({
     // force: true foi removido — forçar re-otimização a cada dev start prejudica a DX
   },
   build: {
-    // Vite 8 usa o minifier oxc. O código do app não emite console cru (usa
-    // loggerService); o `esbuild.drop` da config antiga era ignorado pelo Vite 8
-    // e por isso foi removido. O console remanescente no bundle vem apenas de
-    // libs de terceiros (jspdf, html2canvas, etc.) e é preservado de propósito.
+    // P2-038: Vite 8 usa minifier oxc (mais rápido que terser). esbuild.drop
+    // da config antiga era ignorado pelo Vite 8. oxc tem opção própria:
+    // `minify: { compress: { drop_console: true } }` — habilitada abaixo.
+    // console.error/warn são MANTIDOS para integração com Sentry (P3-053).
+    minify: 'oxc',
     rollupOptions: {
       output: {
         // Forma de função exigida pelo Vite 8 (rolldown). A forma de objeto
