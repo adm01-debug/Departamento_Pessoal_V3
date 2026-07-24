@@ -32,6 +32,32 @@ export function isSafeOrderColumn(c: unknown): c is string {
   return ORDER_FULL_RE.test(c);
 }
 
+// -------------------- Keyset cursor (P1-020) --------------------
+// Cursor base64-encoded: "<column>:<value>". Validamos column com
+// isSafeOrderColumn e value como string|number (tamanho limitado).
+const CURSOR_VALUE_RE = /^[A-Za-z0-9_.:@\-]{1,128}$/;
+export interface ParsedCursor {
+  column: string;
+  value: string | number;
+}
+export function parseCursor(c: unknown): ParsedCursor | null {
+  if (typeof c !== "string" || c.length === 0 || c.length > 200) return null;
+  let decoded: string;
+  try {
+    decoded = atob(c);
+  } catch {
+    return null;
+  }
+  const idx = decoded.indexOf(":");
+  if (idx < 1) return null;
+  const column = decoded.substring(0, idx);
+  const value = decoded.substring(idx + 1);
+  if (!isSafeOrderColumn(column)) return null;
+  if (!CURSOR_VALUE_RE.test(value)) return null;
+  const asNumber = Number(value);
+  return { column, value: Number.isFinite(asNumber) && value !== "" ? asNumber : value };
+}
+
 // -------------------- Denylist de tabelas --------------------
 // Estas tabelas nunca podem ser acessadas via bridge (nem leitura). Contêm
 // dados de segurança/roles que devem ser gerenciados apenas server-side.
