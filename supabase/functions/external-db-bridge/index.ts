@@ -316,6 +316,11 @@ Deno.serve(async (req) => {
   const csrf = await verifyCsrf(req);
   if (!csrf.ok && csrf.response) return csrf.response;
 
+  // P4-073: descomprime body se cliente enviar Content-Encoding: gzip.
+  // Threshold: só descomprime se content-length > 64KB.
+  const contentEncoding = req.headers.get('content-encoding')?.toLowerCase();
+  const acceptGzip = req.headers.get('accept-encoding')?.toLowerCase().includes('gzip');
+
   // Cap payload
   const contentLength = Number(req.headers.get("content-length") || "0");
   if (contentLength > MAX_PAYLOAD_BYTES) {
@@ -367,7 +372,34 @@ Deno.serve(async (req) => {
       const buf = new Uint8Array(total);
       let off = 0;
       for (const c of chunks) { buf.set(c, off); off += c.byteLength; }
-      const text = new TextDecoder().decode(buf);
+      // P4-073: descomprime se Content-Encoding: gzip.
+      // Threshold: só descomprime se total > 64KB (overhead de inflate
+      // não compensa para payloads pequenos).
+      let text: string;
+      if (contentEncoding === 'gzip' && total > 64 * 1024) {
+        try {
+          const ds = new DecompressionStream('gzip');
+          const decompressedStream = new Response(buf).body!.pipeThrough(ds);
+          const decompressedChunks: Uint8Array[] = [];
+          let decompressedTotal = 0;
+          for await (const chunk of decompressedStream as unknown as AsyncIterable<Uint8Array>) {
+            decompressedTotal += chunk.byteLength;
+            if (decompressedTotal > MAX_PAYLOAD_BYTES * 4) {
+              // Compressão ratio alta demais: gzip bomb?
+              return jsonError(413, "PAYLOAD_TOO_LARGE", "Decompressed payload too large (gzip bomb?)");
+            }
+            decompressedChunks.push(chunk);
+          }
+          const decompressed = new Uint8Array(decompressedTotal);
+          let dOff = 0;
+          for (const c of decompressedChunks) { decompressed.set(c, dOff); dOff += c.byteLength; }
+          text = new TextDecoder().decode(decompressed);
+        } catch {
+          return jsonError(400, "INVALID_GZIP", "Failed to decompress gzip body");
+        }
+      } else {
+        text = new TextDecoder().decode(buf);
+      }
       rawBody = text.length ? JSON.parse(text) : {};
     }
   } catch {
