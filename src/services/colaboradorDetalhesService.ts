@@ -1,8 +1,8 @@
 import { supabase } from '@/integrations/supabase/client';
 
 // Tipos locais para este módulo
-type DadosInsert = Record<string, unknown>;
-type DadosUpdate = Record<string, unknown>;
+type DadosInsert = any;
+type DadosUpdate = any;
 
 // =============================================
 // Dependentes
