@@ -24,3 +24,6 @@ e2e/.auth
 # OS
 Thumbs.db
 .DS_Store
+
+# Lint-staged legado (mantemos apenas .lintstagedrc.json)
+.lintstagedrc
