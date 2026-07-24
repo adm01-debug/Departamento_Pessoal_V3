@@ -82,7 +82,6 @@ export default function SSTPage() {
     asos.forEach((a: any) => { const dept = a.colaborador?.departamento || 'Sem Depto'; deptMap.set(dept, (deptMap.get(dept) || 0) + 1); });
     const porDepartamento = Array.from(deptMap.entries()).map(([name, value]) => ({ name, value }));
     return { vencidos, vencendo, validos, porTipo, porDepartamento };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [asos]);
 
   return (
