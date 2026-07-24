@@ -560,7 +560,11 @@ Deno.serve(async (req) => {
     // -------- INSERT --------
     if (action === "insert") {
       const t0 = performance.now();
-      const { data: r, error } = await externalClient.from(table!).insert(data as any).select();
+      // P1-018: tipa data como Record<string, unknown> | array. Validação
+      // forte (Zod) ficaria em iteração futura; por ora mantemos o cast
+      // do SDK do Supabase, mas explicitamente tipado.
+      const insertData = (Array.isArray(data) ? data : [data]) as Record<string, unknown>[];
+      const { data: r, error } = await externalClient.from(table!).insert(insertData).select();
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({ operation: "insert", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id });
       if (error) { console.error('[bridge] INSERT_ERROR:', error.message, error.hint); return jsonError(400, "INSERT_ERROR", "Falha na inserção"); }
@@ -570,7 +574,8 @@ Deno.serve(async (req) => {
     // -------- UPSERT --------
     if (action === "upsert") {
       const t0 = performance.now();
-      const { data: r, error } = await externalClient.from(table!).upsert(data as any).select();
+      const upsertData = (Array.isArray(data) ? data : [data]) as Record<string, unknown>[];
+      const { data: r, error } = await externalClient.from(table!).upsert(upsertData).select();
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({ operation: "upsert", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id });
       if (error) { console.error('[bridge] UPSERT_ERROR:', error.message, error.hint); return jsonError(400, "UPSERT_ERROR", "Falha no upsert"); }
@@ -582,12 +587,12 @@ Deno.serve(async (req) => {
       if (filters.length === 0) {
         return jsonError(400, "UPDATE_REQUIRES_FILTER", "UPDATE requires at least one filter");
       }
-      // Require at least one eq filter to prevent overly-broad updates
       if (!filters.some((f) => f.op === "eq")) {
         return jsonError(400, "UPDATE_REQUIRES_EQ", "UPDATE requires at least one 'eq' filter for safety");
       }
       const t0 = performance.now();
-      let query = externalClient.from(table!).update(data as any);
+      const updateData = (data ?? {}) as Record<string, unknown>;
+      let query = externalClient.from(table!).update(updateData);
       for (const f of filters) {
         if (f.op === "eq") query = query.eq(f.column, f.value);
         else if (f.op === "neq") query = query.neq(f.column, f.value);
