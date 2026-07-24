@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { loggerService } from './loggerService';
 
 export const premiacoesService = {
   async listarCampanhas(empresaId: string) {
@@ -230,7 +231,7 @@ export const premiacoesService = {
       metadata: { ...payload, modulo: 'premiacoes' }
     } as any);
     
-    if (error) console.error("Erro ao registrar notificação:", error);
+    if (error) loggerService.error('Erro ao registrar notificação crítica', { tipo, payload }, error as Error);
     return true;
   }
 };
