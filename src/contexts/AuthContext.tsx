@@ -109,6 +109,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     markReady();
   }, [enrichUserWithRoles, markReady]);
 
+  // P1-028: ref estável para o callback, evita re-execução do useEffect a cada render.
+  const applySessionRef = useRef(applySession);
+  useEffect(() => { applySessionRef.current = applySession; }, [applySession]);
+
   useEffect(() => {
     let isMounted = true;
 
