@@ -2,14 +2,15 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 const { MockJsPDF, mockSave, mockToastSuccess } = vi.hoisted(() => {
   const mockSave = vi.fn();
-  const MockJsPDF = vi.fn().mockImplementation(() => ({
-    setFontSize: vi.fn(), setTextColor: vi.fn(), setFont: vi.fn(),
-    setFillColor: vi.fn(), rect: vi.fn(), text: vi.fn(), line: vi.fn(),
-    save: mockSave, splitTextToSize: vi.fn((t: string) => [t]),
-    internal: { pageSize: { getWidth: () => 210 } },
-    lastAutoTable: { finalY: 100 },
-    autoTable: vi.fn().mockImplementation(function(this: any) { this.lastAutoTable = { finalY: 100 }; }),
-  }));
+  // Vitest 4 requires 'function' or 'class' (not arrow) for constructor mocks
+  const MockJsPDF = vi.fn().mockImplementation(function(this: any) {
+    this.setFontSize = vi.fn(); this.setTextColor = vi.fn(); this.setFont = vi.fn();
+    this.setFillColor = vi.fn(); this.rect = vi.fn(); this.text = vi.fn(); this.line = vi.fn();
+    this.save = mockSave; this.splitTextToSize = vi.fn((t: string) => [t]);
+    this.internal = { pageSize: { getWidth: () => 210 } };
+    this.lastAutoTable = { finalY: 100 };
+    this.autoTable = vi.fn().mockImplementation(function(this: any) { this.lastAutoTable = { finalY: 100 }; });
+  });
   return { MockJsPDF, mockSave, mockToastSuccess: vi.fn() };
 });
 
@@ -60,15 +61,14 @@ const sampleResult = {
 describe('gerarPDFRescisao', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    const docMock = {
-      setFontSize: vi.fn(), setTextColor: vi.fn(), setFont: vi.fn(),
-      setFillColor: vi.fn(), rect: vi.fn(), text: vi.fn(), line: vi.fn(),
-      save: mockSave, splitTextToSize: vi.fn((t: string) => [t]),
-      internal: { pageSize: { getWidth: () => 210 } },
-      lastAutoTable: { finalY: 100 },
-      autoTable: vi.fn().mockImplementation(function(this: any) { this.lastAutoTable = { finalY: 100 }; }),
-    };
-    MockJsPDF.mockReturnValue(docMock as any);
+    MockJsPDF.mockImplementation(function(this: any) {
+      this.setFontSize = vi.fn(); this.setTextColor = vi.fn(); this.setFont = vi.fn();
+      this.setFillColor = vi.fn(); this.rect = vi.fn(); this.text = vi.fn(); this.line = vi.fn();
+      this.save = mockSave; this.splitTextToSize = vi.fn((t: string) => [t]);
+      this.internal = { pageSize: { getWidth: () => 210 } };
+      this.lastAutoTable = { finalY: 100 };
+      this.autoTable = vi.fn().mockImplementation(function(this: any) { this.lastAutoTable = { finalY: 100 }; });
+    });
   });
 
   it('creates a jsPDF instance and saves the PDF', async () => {

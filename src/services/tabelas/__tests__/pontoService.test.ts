@@ -10,7 +10,10 @@ function makeChain(data: any = [], error: any = null) {
   const result = { data, error };
   const order = vi.fn().mockResolvedValue(result);
   const eq = vi.fn().mockReturnValue({ order, then: (fn: any) => Promise.resolve(result).then(fn) });
-  const update = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue(result) });
+  const updateEqResult: any = { then: (fn: any) => Promise.resolve(result).then(fn) };
+  const updateEq = vi.fn().mockReturnValue(updateEqResult);
+  updateEqResult.eq = updateEq;
+  const update = vi.fn().mockReturnValue({ eq: updateEq });
   const insert = vi.fn().mockResolvedValue(result);
   const in_ = vi.fn().mockReturnValue({ order, then: (fn: any) => Promise.resolve(result).then(fn) });
   const select = vi.fn().mockReturnValue({ order, eq, in: in_, then: (fn: any) => Promise.resolve(result).then(fn) });
@@ -25,7 +28,7 @@ describe('ajustesPontoService', () => {
   it('listar queries ajustes_ponto', async () => {
     const chain = makeChain([{ id: 'ap1' }]);
     mockFrom.mockReturnValue(chain);
-    const result = await ajustesPontoService.listar();
+    const result = await ajustesPontoService.listar('emp-1');
     expect(mockFrom).toHaveBeenCalledWith('ajustes_ponto');
     expect(Array.isArray(result)).toBe(true);
   });
@@ -33,7 +36,7 @@ describe('ajustesPontoService', () => {
   it('listar returns [] when data is null', async () => {
     const chain = makeChain(null);
     mockFrom.mockReturnValue(chain);
-    const result = await ajustesPontoService.listar();
+    const result = await ajustesPontoService.listar('emp-1');
     expect(result).toEqual([]);
   });
 
@@ -47,7 +50,7 @@ describe('ajustesPontoService', () => {
   it('aprovar calls update with status=aprovado', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await ajustesPontoService.aprovar('ap-1', 'user-1');
+    await ajustesPontoService.aprovar('col-1', 'ap-1', 'user-1');
     expect(chain.update).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'aprovado', aprovado_por: 'user-1' })
     );
@@ -82,7 +85,7 @@ describe('periodosPontoService', () => {
   it('fechar calls update with status=fechado', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await periodosPontoService.fechar('pp-1');
+    await periodosPontoService.fechar('emp-1', 'pp-1');
     expect(chain.update).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'fechado' })
     );

@@ -9,7 +9,9 @@ vi.mock('@/integrations/supabase/client', () => ({
 function makeChain(data: any = [], error: any = null) {
   const result = { data, error };
   const order = vi.fn().mockResolvedValue(result);
-  const eq = vi.fn().mockReturnValue({ order, then: (fn: any) => Promise.resolve(result).then(fn) });
+  const eqResult: any = { order, then: (fn: any) => Promise.resolve(result).then(fn) };
+  const eq = vi.fn().mockReturnValue(eqResult);
+  eqResult.eq = eq;
   const insert = vi.fn().mockResolvedValue(result);
   const select = vi.fn().mockReturnValue({ order, eq, then: (fn: any) => Promise.resolve(result).then(fn) });
   return { select, eq, order, insert };
@@ -111,7 +113,7 @@ describe('documentosColaboradorService', () => {
   it('listar queries documentos_colaborador by colaborador_id', async () => {
     const chain = makeChain([{ id: 'dc1' }]);
     mockFrom.mockReturnValue(chain);
-    const result = await documentosColaboradorService.listar('col-1');
+    const result = await documentosColaboradorService.listar('col-1', 'emp-1');
     expect(mockFrom).toHaveBeenCalledWith('documentos_colaborador');
     expect(Array.isArray(result)).toBe(true);
   });
@@ -119,7 +121,7 @@ describe('documentosColaboradorService', () => {
   it('listar returns [] when data is null', async () => {
     const chain = makeChain(null);
     mockFrom.mockReturnValue(chain);
-    const result = await documentosColaboradorService.listar('col-1');
+    const result = await documentosColaboradorService.listar('col-1', 'emp-1');
     expect(result).toEqual([]);
   });
 

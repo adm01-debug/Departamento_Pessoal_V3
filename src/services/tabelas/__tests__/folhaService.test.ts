@@ -9,9 +9,17 @@ vi.mock('@/integrations/supabase/client', () => ({
 function makeChain(data: any = [], error: any = null) {
   const result = { data, error };
   const order = vi.fn().mockResolvedValue(result);
-  const eq = vi.fn().mockReturnValue({ order, then: (fn: any) => Promise.resolve(result).then(fn) });
-  const delete_ = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue(result) });
-  const update = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue(result) });
+  const eqResult: any = { order, then: (fn: any) => Promise.resolve(result).then(fn) };
+  const eq = vi.fn().mockReturnValue(eqResult);
+  eqResult.eq = eq;
+  const deleteEqResult: any = { then: (fn: any) => Promise.resolve(result).then(fn) };
+  const deleteEq = vi.fn().mockReturnValue(deleteEqResult);
+  deleteEqResult.eq = deleteEq;
+  const delete_ = vi.fn().mockReturnValue({ eq: deleteEq });
+  const updateEqResult: any = { then: (fn: any) => Promise.resolve(result).then(fn) };
+  const updateEq = vi.fn().mockReturnValue(updateEqResult);
+  updateEqResult.eq = updateEq;
+  const update = vi.fn().mockReturnValue({ eq: updateEq });
   const insert = vi.fn().mockResolvedValue(result);
   const select = vi.fn().mockReturnValue({ order, eq, then: (fn: any) => Promise.resolve(result).then(fn) });
   return { select, eq, order, insert, delete: delete_, update };
@@ -57,7 +65,7 @@ describe('eventosVariaveisService', () => {
   it('listar queries eventos_variaveis', async () => {
     const chain = makeChain([{ id: 'ev1' }]);
     mockFrom.mockReturnValue(chain);
-    const result = await eventosVariaveisService.listar();
+    const result = await eventosVariaveisService.listar('emp-1');
     expect(mockFrom).toHaveBeenCalledWith('eventos_variaveis');
     expect(Array.isArray(result)).toBe(true);
   });
@@ -72,7 +80,7 @@ describe('eventosVariaveisService', () => {
   it('excluir calls delete on eventos_variaveis', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await eventosVariaveisService.excluir('ev-1');
+    await eventosVariaveisService.excluir('ev-1', 'emp-1');
     expect(chain.delete).toHaveBeenCalled();
   });
 });
@@ -109,7 +117,7 @@ describe('rubricasFolhaService', () => {
   it('listar queries rubricas_folha', async () => {
     const chain = makeChain([{ id: 'rf1', codigo: '1000' }]);
     mockFrom.mockReturnValue(chain);
-    const result = await rubricasFolhaService.listar();
+    const result = await rubricasFolhaService.listar('emp-1');
     expect(mockFrom).toHaveBeenCalledWith('rubricas_folha');
     expect(Array.isArray(result)).toBe(true);
   });
@@ -124,7 +132,7 @@ describe('rubricasFolhaService', () => {
   it('atualizar calls update on rubricas_folha', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await rubricasFolhaService.atualizar('rf-1', { descricao: 'Atualizado' });
+    await rubricasFolhaService.atualizar('rf-1', { descricao: 'Atualizado' }, 'emp-1');
     expect(chain.update).toHaveBeenCalled();
   });
 });

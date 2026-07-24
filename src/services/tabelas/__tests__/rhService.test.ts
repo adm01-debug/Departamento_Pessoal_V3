@@ -11,7 +11,10 @@ function makeChain(data: any = [], error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue(result);
   const limit = vi.fn().mockResolvedValue(result);
   const order = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue(result), maybeSingle, limit, then: (fn: any) => Promise.resolve(result).then(fn) });
-  const eq = vi.fn().mockReturnValue({ order, maybeSingle, then: (fn: any) => Promise.resolve(result).then(fn) });
+  // eqResult needs a self-reference so multiple .eq().eq() chains work
+  const eqResult: any = { order, maybeSingle, then: (fn: any) => Promise.resolve(result).then(fn) };
+  const eq = vi.fn().mockReturnValue(eqResult);
+  eqResult.eq = eq;
   const upsert = vi.fn().mockResolvedValue(result);
   const insert = vi.fn().mockReturnValue({ select: vi.fn().mockReturnValue({ maybeSingle }), then: (fn: any) => Promise.resolve(result).then(fn) });
   const update = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue(result) });
@@ -61,14 +64,14 @@ describe('feriasSolicitacoesService', () => {
     const data = [{ id: 'f1' }];
     const chain = makeChain(data);
     mockFrom.mockReturnValue(chain);
-    const result = await feriasSolicitacoesService.listar();
+    const result = await feriasSolicitacoesService.listar('emp-1');
     expect(Array.isArray(result)).toBe(true);
   });
 
   it('listar returns empty array when data is null', async () => {
     const chain = makeChain(null);
     mockFrom.mockReturnValue(chain);
-    const result = await feriasSolicitacoesService.listar();
+    const result = await feriasSolicitacoesService.listar('emp-1');
     expect(result).toEqual([]);
   });
 
@@ -86,7 +89,7 @@ describe('historicoCargoService', () => {
   it('listar queries historico_cargo', async () => {
     const chain = makeChain([]);
     mockFrom.mockReturnValue(chain);
-    await historicoCargoService.listar('col-1');
+    await historicoCargoService.listar('col-1', 'emp-1');
     expect(mockFrom).toHaveBeenCalledWith('historico_cargo');
   });
 });

@@ -12,7 +12,10 @@ function makeChain(data: any = [], error: any = null) {
   const limit = vi.fn().mockReturnValue({ maybeSingle, then: (fn: any) => Promise.resolve(result).then(fn) });
   const order = vi.fn().mockReturnValue({ limit, eq: vi.fn().mockResolvedValue(result), then: (fn: any) => Promise.resolve(result).then(fn) });
   const eq = vi.fn().mockReturnValue({ order, maybeSingle, then: (fn: any) => Promise.resolve(result).then(fn) });
-  const delete_ = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue(result) });
+  const deleteEqResult: any = { then: (fn: any) => Promise.resolve(result).then(fn) };
+  const deleteEq = vi.fn().mockReturnValue(deleteEqResult);
+  deleteEqResult.eq = deleteEq;
+  const delete_ = vi.fn().mockReturnValue({ eq: deleteEq });
   const upsert = vi.fn().mockResolvedValue(result);
   const insert = vi.fn().mockResolvedValue(result);
   const select = vi.fn().mockReturnValue({ order, eq, maybeSingle, limit, then: (fn: any) => Promise.resolve(result).then(fn) });
@@ -76,7 +79,7 @@ describe('relatoriosAgendadosService', () => {
   it('excluir calls delete.eq on relatorios_agendados', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await relatoriosAgendadosService.excluir('id-1');
+    await relatoriosAgendadosService.excluir('id-1', 'emp-1');
     expect(mockFrom).toHaveBeenCalledWith('relatorios_agendados');
     expect(chain.delete).toHaveBeenCalled();
   });
@@ -103,7 +106,7 @@ describe('savedFiltersService', () => {
   it('excluir calls delete on saved_filters', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await savedFiltersService.excluir('filter-1');
+    await savedFiltersService.excluir('filter-1', 'user-1');
     expect(chain.delete).toHaveBeenCalled();
   });
 });

@@ -11,9 +11,17 @@ vi.mock('@/utils/dateLocal', () => ({ todayLocalISO: () => '2024-07-24' }));
 function makeChain(data: any = [], error: any = null) {
   const result = { data, error };
   const order = vi.fn().mockResolvedValue(result);
-  const eq = vi.fn().mockReturnValue({ order, then: (fn: any) => Promise.resolve(result).then(fn) });
-  const delete_ = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue(result) });
-  const update = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue(result) });
+  const eqResult: any = { order, then: (fn: any) => Promise.resolve(result).then(fn) };
+  const eq = vi.fn().mockReturnValue(eqResult);
+  eqResult.eq = eq;
+  const deleteEqResult: any = { then: (fn: any) => Promise.resolve(result).then(fn) };
+  const deleteEq = vi.fn().mockReturnValue(deleteEqResult);
+  deleteEqResult.eq = deleteEq;
+  const delete_ = vi.fn().mockReturnValue({ eq: deleteEq });
+  const updateEqResult: any = { then: (fn: any) => Promise.resolve(result).then(fn) };
+  const updateEq = vi.fn().mockReturnValue(updateEqResult);
+  updateEqResult.eq = updateEq;
+  const update = vi.fn().mockReturnValue({ eq: updateEq });
   const insert = vi.fn().mockResolvedValue(result);
   const select = vi.fn().mockReturnValue({ eq, order, then: (fn: any) => Promise.resolve(result).then(fn) });
   return { select, eq, order, insert, delete: delete_, update };
@@ -54,7 +62,7 @@ describe('beneficiariosPlanoService', () => {
   it('excluir calls update with status=excluido', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await beneficiariosPlanoService.excluir('bp-1');
+    await beneficiariosPlanoService.excluir('plano-1', 'bp-1');
     expect(chain.update).toHaveBeenCalledWith(expect.objectContaining({ status: 'excluido' }));
   });
 });
@@ -79,7 +87,7 @@ describe('beneficiariosSeguroService', () => {
   it('excluir calls update with status=inativo', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await beneficiariosSeguroService.excluir('bs-1');
+    await beneficiariosSeguroService.excluir('seguro-1', 'bs-1');
     expect(chain.update).toHaveBeenCalledWith({ status: 'inativo' });
   });
 });
@@ -90,7 +98,7 @@ describe('colaboradorBeneficiosService', () => {
   it('listar queries colaborador_beneficios by colaborador_id', async () => {
     const chain = makeChain([{ id: 'cb1' }]);
     mockFrom.mockReturnValue(chain);
-    const result = await colaboradorBeneficiosService.listar('col-1');
+    const result = await colaboradorBeneficiosService.listar('col-1', 'emp-1');
     expect(mockFrom).toHaveBeenCalledWith('colaborador_beneficios');
     expect(Array.isArray(result)).toBe(true);
   });
@@ -98,7 +106,7 @@ describe('colaboradorBeneficiosService', () => {
   it('listar returns [] when data is null', async () => {
     const chain = makeChain(null);
     mockFrom.mockReturnValue(chain);
-    const result = await colaboradorBeneficiosService.listar('col-1');
+    const result = await colaboradorBeneficiosService.listar('col-1', 'emp-1');
     expect(result).toEqual([]);
   });
 });
@@ -124,7 +132,7 @@ describe('segurosColaboradoresService', () => {
   it('desvincular calls delete on seguros_colaboradores', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await segurosColaboradoresService.desvincular('sc-1');
+    await segurosColaboradoresService.desvincular('seguro-1', 'sc-1');
     expect(chain.delete).toHaveBeenCalled();
   });
 });
