@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { beneficioService } from '../beneficioService';
 
+const EMPRESA_ID = 'test-empresa-id';
+
 // ─── hoisted mocks ────────────────────────────────────────────────────────────
 
 const { mockFrom, mockLog, mockLoggerError } = vi.hoisted(() => ({
@@ -62,14 +64,18 @@ function makeBuscarMock(data: any, error: any = null) {
 function makeUpdateMaybeSingleMock(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
-  const eqFn = vi.fn().mockReturnValue({ select: selectFn });
+  const eqFn = vi.fn();
+  const __eqChain = { select: selectFn, eq: eqFn };
+  eqFn.mockReturnValue(__eqChain);
   const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
   return { updateFn, eqFn, selectFn, maybeSingle };
 }
 
 // delete → eq → resolvedValue (used by BaseService.excluir)
 function makeDeleteEqMock(error: any = null) {
-  const eqFn = vi.fn().mockResolvedValue({ error });
+  const eqFn = vi.fn();
+  const __delChain = { then: (r) => Promise.resolve({ error }).then(r), catch: (r) => Promise.resolve({ error }).catch(r), finally: (r) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   return { deleteFn, eqFn };
 }
@@ -212,7 +218,7 @@ describe('beneficioService.atualizar', () => {
       .mockReturnValueOnce({ select: buscarMock.selectFn })
       .mockReturnValueOnce({ update: updateMock.updateFn });
 
-    const result = await beneficioService.atualizar('b1', { nome: 'VT Plus' });
+    const result = await beneficioService.atualizar('b1', { nome: 'VT Plus' }, EMPRESA_ID);
     expect(result).toEqual(updated);
     expect(mockLog).toHaveBeenCalledWith(expect.objectContaining({
       tabela: 'beneficios',
@@ -225,7 +231,7 @@ describe('beneficioService.atualizar', () => {
   it('throws wrapped error when buscarPorId fails', async () => {
     const buscarMock = makeBuscarMock(null, { message: 'not found' });
     mockFrom.mockReturnValue({ select: buscarMock.selectFn });
-    await expect(beneficioService.atualizar('b1', {})).rejects.toThrow();
+    await expect(beneficioService.atualizar('b1', {}, EMPRESA_ID)).rejects.toThrow();
   });
 });
 
@@ -243,7 +249,7 @@ describe('beneficioService.excluir', () => {
       .mockReturnValueOnce({ select: buscarMock.selectFn })
       .mockReturnValueOnce({ delete: deleteMock.deleteFn });
 
-    await beneficioService.excluir('b1');
+    await beneficioService.excluir('b1', EMPRESA_ID);
     expect(deleteMock.eqFn).toHaveBeenCalledWith('id', 'b1');
     expect(mockLog).toHaveBeenCalledWith(expect.objectContaining({
       tabela: 'beneficios',
@@ -255,7 +261,7 @@ describe('beneficioService.excluir', () => {
   it('throws wrapped error on DB failure', async () => {
     const buscarMock = makeBuscarMock(null, { message: 'fail' });
     mockFrom.mockReturnValue({ select: buscarMock.selectFn });
-    await expect(beneficioService.excluir('b1')).rejects.toThrow();
+    await expect(beneficioService.excluir('b1', EMPRESA_ID)).rejects.toThrow();
   });
 });
 
@@ -269,7 +275,7 @@ describe('beneficioService.vincularColaborador', () => {
     const { insertFn, singleFn } = makeInsertSingleMock(vinculo);
     mockFrom.mockReturnValue({ insert: insertFn });
 
-    const result = await beneficioService.vincularColaborador('b1', 'c1', { valor: 100 });
+    const result = await beneficioService.vincularColaborador('b1', 'c1', { valor: 100 }, EMPRESA_ID);
     expect(insertFn).toHaveBeenCalledWith(expect.objectContaining({
       beneficio_id: 'b1',
       colaborador_id: 'c1',
@@ -281,7 +287,7 @@ describe('beneficioService.vincularColaborador', () => {
   it('throws on DB error', async () => {
     const { insertFn } = makeInsertSingleMock(null, { message: 'fail' });
     mockFrom.mockReturnValue({ insert: insertFn });
-    await expect(beneficioService.vincularColaborador('b1', 'c1', {})).rejects.toBeDefined();
+    await expect(beneficioService.vincularColaborador('b1', 'c1', {}, EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -296,7 +302,7 @@ describe('beneficioService.listarPorColaborador', () => {
     const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockReturnValue({ select: selectFn });
 
-    const result = await beneficioService.listarPorColaborador('c1');
+    const result = await beneficioService.listarPorColaborador('c1', EMPRESA_ID);
     expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
     expect(result).toEqual(records);
   });
@@ -305,14 +311,14 @@ describe('beneficioService.listarPorColaborador', () => {
     const eqFn = vi.fn().mockResolvedValue({ data: null, error: null });
     const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockReturnValue({ select: selectFn });
-    expect(await beneficioService.listarPorColaborador('c1')).toEqual([]);
+    expect(await beneficioService.listarPorColaborador('c1', EMPRESA_ID)).toEqual([]);
   });
 
   it('throws on DB error', async () => {
     const eqFn = vi.fn().mockResolvedValue({ data: null, error: { message: 'fail' } });
     const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockReturnValue({ select: selectFn });
-    await expect(beneficioService.listarPorColaborador('c1')).rejects.toBeDefined();
+    await expect(beneficioService.listarPorColaborador('c1', EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 

@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { batidasPontoService } from '../batidasPontoService';
 
+const EMPRESA_ID = 'test-empresa-id';
+
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -47,44 +49,44 @@ describe('batidasPontoService.listar', () => {
   it('returns batidas for colaborador', async () => {
     const records = [{ id: 'b1', colaborador_id: 'c1', data: '2026-07-24' }];
     setupListChain(records);
-    const result = await batidasPontoService.listar('c1');
+    const result = await batidasPontoService.listar('c1', EMPRESA_ID);
     expect(result).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
     setupListChain(null as any);
-    const result = await batidasPontoService.listar('c1');
+    const result = await batidasPontoService.listar('c1', EMPRESA_ID);
     expect(result).toEqual([]);
   });
 
   it('filters by colaborador_id', async () => {
     const { chain } = setupListChain([]);
-    await batidasPontoService.listar('colab-42');
+    await batidasPontoService.listar('colab-42', EMPRESA_ID);
     expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'colab-42');
   });
 
   it('applies gte filter when dataInicio provided', async () => {
     const { chain } = setupListChain([]);
-    await batidasPontoService.listar('c1', '2026-07-01');
+    await batidasPontoService.listar('c1', '2026-07-01', EMPRESA_ID);
     expect(chain.gte).toHaveBeenCalledWith('data', '2026-07-01');
   });
 
   it('applies lte filter when dataFim provided', async () => {
     const { chain } = setupListChain([]);
-    await batidasPontoService.listar('c1', undefined, '2026-07-31');
+    await batidasPontoService.listar('c1', undefined, '2026-07-31', EMPRESA_ID);
     expect(chain.lte).toHaveBeenCalledWith('data', '2026-07-31');
   });
 
   it('orders by data and ordem', async () => {
     const { chain } = setupListChain([]);
-    await batidasPontoService.listar('c1');
+    await batidasPontoService.listar('c1', EMPRESA_ID);
     expect(chain.order).toHaveBeenCalledWith('data');
     expect(chain.order).toHaveBeenCalledWith('ordem');
   });
 
   it('throws on DB error', async () => {
     setupListChain([], { message: 'fail' });
-    await expect(batidasPontoService.listar('c1')).rejects.toBeDefined();
+    await expect(batidasPontoService.listar('c1', EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -96,19 +98,19 @@ describe('batidasPontoService.listarPorData', () => {
   it('returns batidas for given date', async () => {
     const records = [{ id: 'b1', data: '2026-07-24' }];
     setupListChain(records);
-    const result = await batidasPontoService.listarPorData('2026-07-24');
+    const result = await batidasPontoService.listarPorData('2026-07-24', EMPRESA_ID);
     expect(result).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
     setupListChain(null as any);
-    const result = await batidasPontoService.listarPorData('2026-07-24');
+    const result = await batidasPontoService.listarPorData('2026-07-24', EMPRESA_ID);
     expect(result).toEqual([]);
   });
 
   it('filters by data', async () => {
     const { chain } = setupListChain([]);
-    await batidasPontoService.listarPorData('2026-07-24');
+    await batidasPontoService.listarPorData('2026-07-24', EMPRESA_ID);
     expect(chain.eq).toHaveBeenCalledWith('data', '2026-07-24');
   });
 
@@ -120,7 +122,7 @@ describe('batidasPontoService.listarPorData', () => {
 
   it('includes colaborador join in select', async () => {
     const { selectFn } = setupListChain([]);
-    await batidasPontoService.listarPorData('2026-07-24');
+    await batidasPontoService.listarPorData('2026-07-24', EMPRESA_ID);
     expect(selectFn).toHaveBeenCalledWith(
       expect.stringContaining('colaborador:colaboradores')
     );
@@ -128,7 +130,7 @@ describe('batidasPontoService.listarPorData', () => {
 
   it('throws on DB error', async () => {
     setupListChain([], { message: 'fail' });
-    await expect(batidasPontoService.listarPorData('2026-07-24')).rejects.toBeDefined();
+    await expect(batidasPontoService.listarPorData('2026-07-24', EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -180,7 +182,7 @@ describe('batidasPontoService.ajustar', () => {
       .mockReturnValueOnce({ select: selectFn1 })
       .mockReturnValueOnce({ update: updateFn });
 
-    const result = await batidasPontoService.ajustar('b1', { hora: '08:00' });
+    const result = await batidasPontoService.ajustar('b1', { hora: '08:00' }, EMPRESA_ID);
     expect(updateFn).toHaveBeenCalledWith({ hora: '08:00', ajustado: true });
     expect(eqUpdate).toHaveBeenCalledWith('id', 'b1');
     expect(result).toEqual(updated);
@@ -200,7 +202,7 @@ describe('batidasPontoService.ajustar', () => {
       .mockReturnValueOnce({ select: selectFn1 })
       .mockReturnValueOnce({ update: updateFn });
 
-    await expect(batidasPontoService.ajustar('b1', {})).rejects.toThrow(
+    await expect(batidasPontoService.ajustar('b1', {}, EMPRESA_ID)).rejects.toThrow(
       'Falha ao ajustar batida de ponto'
     );
   });

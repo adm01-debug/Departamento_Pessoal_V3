@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { controleAcessoService } from '../controleAcessoService';
 
+const EMPRESA_ID = 'test-empresa-id';
+
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -27,13 +29,13 @@ describe('controleAcessoService.listar', () => {
   it('returns all records without filter', async () => {
     const records = [{ id: 'ca1', colaborador: { nome_completo: 'João' } }];
     setupListarChain(records);
-    const result = await controleAcessoService.listar();
+    const result = await controleAcessoService.listar(EMPRESA_ID);
     expect(result).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
     setupListarChain(null as any);
-    expect(await controleAcessoService.listar()).toEqual([]);
+    expect(await controleAcessoService.listar(EMPRESA_ID)).toEqual([]);
   });
 
   it('applies empresa_id filter when provided', async () => {
@@ -44,7 +46,7 @@ describe('controleAcessoService.listar', () => {
 
   it('throws on DB error', async () => {
     setupListarChain([], { message: 'fail' });
-    await expect(controleAcessoService.listar()).rejects.toBeDefined();
+    await expect(controleAcessoService.listar(EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -87,7 +89,7 @@ describe('controleAcessoService.excluir', () => {
     const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockReturnValue({ delete: deleteFn });
 
-    await controleAcessoService.excluir('ca1');
+    await controleAcessoService.excluir('ca1', EMPRESA_ID);
     expect(eqFn).toHaveBeenCalledWith('id', 'ca1');
   });
 
@@ -95,6 +97,6 @@ describe('controleAcessoService.excluir', () => {
     const eqFn = vi.fn().mockResolvedValue({ error: { message: 'fail' } });
     const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockReturnValue({ delete: deleteFn });
-    await expect(controleAcessoService.excluir('ca1')).rejects.toBeDefined();
+    await expect(controleAcessoService.excluir('ca1', EMPRESA_ID)).rejects.toBeDefined();
   });
 });

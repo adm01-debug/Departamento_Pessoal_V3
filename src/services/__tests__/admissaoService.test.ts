@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { admissaoService } from '../admissaoService';
 
+const EMPRESA_ID = 'test-empresa-id';
+
 // ─── shared mock setup ────────────────────────────────────────────────────────
 
 const { mockFrom, mockLoggerError } = vi.hoisted(() => ({
@@ -44,7 +46,9 @@ function setupCriarChain(data: any, error: any = null) {
 function setupAtualizarChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
-  const eqFn = vi.fn().mockReturnValue({ select: selectFn });
+  const eqFn = vi.fn();
+  const __eqChain = { select: selectFn, eq: eqFn };
+  eqFn.mockReturnValue(__eqChain);
   const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ update: updateFn });
   return { updateFn, eqFn, selectFn, maybeSingle };
@@ -58,14 +62,14 @@ describe('admissaoService.listarAdmissoes', () => {
   it('returns all admissoes when no empresaId', async () => {
     const records = [{ id: 'adm-1', nome_candidato: 'João' }];
     const { chain } = setupListarAdmissoesChain(records);
-    const result = await admissaoService.listarAdmissoes();
+    const result = await admissaoService.listarAdmissoes(EMPRESA_ID);
     expect(result).toEqual(records);
     expect(chain.eq).not.toHaveBeenCalled();
   });
 
   it('returns empty array when supabase returns null', async () => {
     setupListarAdmissoesChain(null as any);
-    const result = await admissaoService.listarAdmissoes();
+    const result = await admissaoService.listarAdmissoes(EMPRESA_ID);
     expect(result).toEqual([]);
   });
 
@@ -77,13 +81,13 @@ describe('admissaoService.listarAdmissoes', () => {
 
   it('orders by data_prevista descending', async () => {
     const { orderFn } = setupListarAdmissoesChain([]);
-    await admissaoService.listarAdmissoes();
+    await admissaoService.listarAdmissoes(EMPRESA_ID);
     expect(orderFn).toHaveBeenCalledWith('data_prevista', { ascending: false });
   });
 
   it('throws on DB error', async () => {
     setupListarAdmissoesChain([], { message: 'DB fail' });
-    await expect(admissaoService.listarAdmissoes()).rejects.toBeDefined();
+    await expect(admissaoService.listarAdmissoes(EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -151,13 +155,13 @@ describe('admissaoService.concluir', () => {
   it('calls update with etapa=concluida', async () => {
     const updated = { id: 'adm-1', etapa: 'concluida' };
     const { updateFn } = setupAtualizarChain(updated);
-    await admissaoService.concluir('adm-1');
+    await admissaoService.concluir('adm-1', EMPRESA_ID);
     expect(updateFn).toHaveBeenCalledWith({ etapa: 'concluida' });
   });
 
   it('throws on DB error', async () => {
     setupAtualizarChain(null, { message: 'fail' });
-    await expect(admissaoService.concluir('adm-1')).rejects.toBeDefined();
+    await expect(admissaoService.concluir('adm-1', EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -169,12 +173,12 @@ describe('admissaoService.cancelar', () => {
   it('calls update with etapa=cancelada', async () => {
     const updated = { id: 'adm-1', etapa: 'cancelada' };
     const { updateFn } = setupAtualizarChain(updated);
-    await admissaoService.cancelar('adm-1');
+    await admissaoService.cancelar('adm-1', EMPRESA_ID);
     expect(updateFn).toHaveBeenCalledWith({ etapa: 'cancelada' });
   });
 
   it('throws on DB error', async () => {
     setupAtualizarChain(null, { message: 'fail' });
-    await expect(admissaoService.cancelar('adm-1')).rejects.toBeDefined();
+    await expect(admissaoService.cancelar('adm-1', EMPRESA_ID)).rejects.toBeDefined();
   });
 });

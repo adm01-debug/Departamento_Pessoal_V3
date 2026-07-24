@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { recrutamentoService } from '../recrutamentoService';
 
+const EMPRESA_ID = 'test-empresa-id';
+
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -31,14 +33,18 @@ function setupInsertChain(data: any, error: any = null) {
 function setupUpdateChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
-  const eqFn = vi.fn().mockReturnValue({ select: selectFn });
+  const eqFn = vi.fn();
+  const __eqChain = { select: selectFn, eq: eqFn };
+  eqFn.mockReturnValue(__eqChain);
   const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ update: updateFn });
   return { updateFn, eqFn, selectFn, maybeSingle };
 }
 
 function setupDeleteChain(error: any = null) {
-  const eqFn = vi.fn().mockResolvedValue({ error });
+  const eqFn = vi.fn();
+  const __delChain = { then: (r) => Promise.resolve({ error }).then(r), catch: (r) => Promise.resolve({ error }).catch(r), finally: (r) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
   return { deleteFn, eqFn };
@@ -52,12 +58,12 @@ describe('recrutamentoService.listarVagas', () => {
   it('returns vagas without empresa filter', async () => {
     const records = [{ id: 'v1', titulo: 'Dev Senior' }];
     setupListChain(records);
-    expect(await recrutamentoService.listarVagas()).toEqual(records);
+    expect(await recrutamentoService.listarVagas(EMPRESA_ID)).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
     setupListChain(null as any);
-    expect(await recrutamentoService.listarVagas()).toEqual([]);
+    expect(await recrutamentoService.listarVagas(EMPRESA_ID)).toEqual([]);
   });
 
   it('filters by empresa_id when provided', async () => {
@@ -68,7 +74,7 @@ describe('recrutamentoService.listarVagas', () => {
 
   it('throws on DB error', async () => {
     setupListChain([], { message: 'fail' });
-    await expect(recrutamentoService.listarVagas()).rejects.toBeDefined();
+    await expect(recrutamentoService.listarVagas(EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -95,7 +101,7 @@ describe('recrutamentoService.atualizarVaga', () => {
   it('updates and returns vaga', async () => {
     const updated = { id: 'v1', status: 'fechada' };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    const result = await recrutamentoService.atualizarVaga('v1', { status: 'fechada' });
+    const result = await recrutamentoService.atualizarVaga('v1', { status: 'fechada' }, EMPRESA_ID);
     expect(updateFn).toHaveBeenCalledWith({ status: 'fechada' });
     expect(eqFn).toHaveBeenCalledWith('id', 'v1');
     expect(result).toEqual(updated);
@@ -103,7 +109,7 @@ describe('recrutamentoService.atualizarVaga', () => {
 
   it('throws when data is null', async () => {
     setupUpdateChain(null);
-    await expect(recrutamentoService.atualizarVaga('v1', {})).rejects.toThrow();
+    await expect(recrutamentoService.atualizarVaga('v1', {}, EMPRESA_ID)).rejects.toThrow();
   });
 });
 
@@ -112,7 +118,7 @@ describe('recrutamentoService.excluirVaga', () => {
 
   it('deletes vaga by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await recrutamentoService.excluirVaga('v1');
+    await recrutamentoService.excluirVaga('v1', EMPRESA_ID);
     expect(eqFn).toHaveBeenCalledWith('id', 'v1');
   });
 });
@@ -125,7 +131,7 @@ describe('recrutamentoService.listarCandidatos', () => {
   it('returns candidatos without empresa filter', async () => {
     const records = [{ id: 'ca1', nome: 'João' }];
     setupListChain(records);
-    expect(await recrutamentoService.listarCandidatos()).toEqual(records);
+    expect(await recrutamentoService.listarCandidatos(EMPRESA_ID)).toEqual(records);
   });
 
   it('filters by empresa_id when provided', async () => {
@@ -136,7 +142,7 @@ describe('recrutamentoService.listarCandidatos', () => {
 
   it('returns empty array when data is null', async () => {
     setupListChain(null as any);
-    expect(await recrutamentoService.listarCandidatos()).toEqual([]);
+    expect(await recrutamentoService.listarCandidatos(EMPRESA_ID)).toEqual([]);
   });
 });
 
@@ -162,7 +168,7 @@ describe('recrutamentoService.atualizarCandidato', () => {
   it('updates and returns candidato', async () => {
     const updated = { id: 'ca1', status: 'aprovado' };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    const result = await recrutamentoService.atualizarCandidato('ca1', { status: 'aprovado' });
+    const result = await recrutamentoService.atualizarCandidato('ca1', { status: 'aprovado' }, EMPRESA_ID);
     expect(updateFn).toHaveBeenCalledWith({ status: 'aprovado' });
     expect(eqFn).toHaveBeenCalledWith('id', 'ca1');
     expect(result).toEqual(updated);
@@ -174,7 +180,7 @@ describe('recrutamentoService.excluirCandidato', () => {
 
   it('deletes candidato by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await recrutamentoService.excluirCandidato('ca1');
+    await recrutamentoService.excluirCandidato('ca1', EMPRESA_ID);
     expect(eqFn).toHaveBeenCalledWith('id', 'ca1');
   });
 });
@@ -225,7 +231,7 @@ describe('recrutamentoService.atualizarCandidatura', () => {
   it('updates and returns candidatura', async () => {
     const updated = { id: 'cu1', etapa: 'entrevista' };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    const result = await recrutamentoService.atualizarCandidatura('cu1', { etapa: 'entrevista' });
+    const result = await recrutamentoService.atualizarCandidatura('cu1', { etapa: 'entrevista' }, EMPRESA_ID);
     expect(updateFn).toHaveBeenCalledWith({ etapa: 'entrevista' });
     expect(eqFn).toHaveBeenCalledWith('id', 'cu1');
     expect(result).toEqual(updated);
@@ -237,7 +243,7 @@ describe('recrutamentoService.excluirCandidatura', () => {
 
   it('deletes candidatura by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await recrutamentoService.excluirCandidatura('cu1');
+    await recrutamentoService.excluirCandidatura('cu1', EMPRESA_ID);
     expect(eqFn).toHaveBeenCalledWith('id', 'cu1');
   });
 });

@@ -134,13 +134,13 @@ describe('desligamentoService', () => {
 
   describe('atualizar — validation', () => {
     it('should throw if id is empty', async () => {
-      await expect(desligamentoService.atualizar('', {})).rejects.toThrow('ID é obrigatório');
+      await expect(desligamentoService.atualizar('', {}, EMPRESA_ID)).rejects.toThrow('ID é obrigatório');
     });
   });
 
   describe('excluir — validation', () => {
     it('should throw if id is empty', async () => {
-      await expect(desligamentoService.excluir('')).rejects.toThrow('ID é obrigatório');
+      await expect(desligamentoService.excluir('', EMPRESA_ID)).rejects.toThrow('ID é obrigatório');
     });
   });
 });

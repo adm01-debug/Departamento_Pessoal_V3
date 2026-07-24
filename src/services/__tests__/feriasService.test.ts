@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { feriasService } from '../feriasService';
 
+const EMPRESA_ID = 'test-empresa-id';
+
 // ─── shared mock setup ────────────────────────────────────────────────────────
 
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
@@ -24,7 +26,9 @@ function setupListChain(data: any[], count: number, error: any = null) {
 
 // Helper: build a simple update → eq chain (resolves to { error })
 function setupUpdateChain(error: any = null) {
-  const eqFn = vi.fn().mockResolvedValue({ error });
+  const eqFn = vi.fn();
+  const __delChain = { then: (r) => Promise.resolve({ error }).then(r), catch: (r) => Promise.resolve({ error }).catch(r), finally: (r) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  eqFn.mockReturnValue(__delChain);
   const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ update: updateFn });
   return { updateFn, eqFn };
@@ -119,14 +123,14 @@ describe('feriasService.aprovar', () => {
 
   it('calls update with status aprovada and eq on id', async () => {
     const { updateFn, eqFn } = setupUpdateChain();
-    await feriasService.aprovar('ferias-1');
+    await feriasService.aprovar('ferias-1', EMPRESA_ID);
     expect(updateFn).toHaveBeenCalledWith({ status: 'aprovada' });
     expect(eqFn).toHaveBeenCalledWith('id', 'ferias-1');
   });
 
   it('throws on DB error', async () => {
     setupUpdateChain({ message: 'fail' });
-    await expect(feriasService.aprovar('ferias-1')).rejects.toBeDefined();
+    await expect(feriasService.aprovar('ferias-1', EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -137,13 +141,13 @@ describe('feriasService.rejeitar', () => {
 
   it('calls update with status rejeitada', async () => {
     const { updateFn } = setupUpdateChain();
-    await feriasService.rejeitar('ferias-2');
+    await feriasService.rejeitar('ferias-2', EMPRESA_ID);
     expect(updateFn).toHaveBeenCalledWith({ status: 'rejeitada' });
   });
 
   it('throws on DB error', async () => {
     setupUpdateChain({ message: 'fail' });
-    await expect(feriasService.rejeitar('ferias-2')).rejects.toBeDefined();
+    await expect(feriasService.rejeitar('ferias-2', EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -287,11 +291,13 @@ describe('feriasService.atualizarPeriodoAquisitivo', () => {
     const updated = { id: 'pa-1', status: 'usado' };
     const maybeSingle = vi.fn().mockResolvedValue({ data: updated, error: null });
     const selectFn = vi.fn().mockReturnValue({ maybeSingle });
-    const eqFn = vi.fn().mockReturnValue({ select: selectFn });
+    const eqFn = vi.fn();
+  const __eqChain = { select: selectFn, eq: eqFn };
+  eqFn.mockReturnValue(__eqChain);
     const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockReturnValue({ update: updateFn });
 
-    const result = await feriasService.atualizarPeriodoAquisitivo('pa-1', { status: 'usado' });
+    const result = await feriasService.atualizarPeriodoAquisitivo('pa-1', { status: 'usado' }, EMPRESA_ID);
     expect(result).toEqual(updated);
     expect(eqFn).toHaveBeenCalledWith('id', 'pa-1');
   });
@@ -299,11 +305,13 @@ describe('feriasService.atualizarPeriodoAquisitivo', () => {
   it('throws on DB error', async () => {
     const maybeSingle = vi.fn().mockResolvedValue({ data: null, error: { message: 'fail' } });
     const selectFn = vi.fn().mockReturnValue({ maybeSingle });
-    const eqFn = vi.fn().mockReturnValue({ select: selectFn });
+    const eqFn = vi.fn();
+  const __eqChain = { select: selectFn, eq: eqFn };
+  eqFn.mockReturnValue(__eqChain);
     const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockReturnValue({ update: updateFn });
 
-    await expect(feriasService.atualizarPeriodoAquisitivo('pa-1', {})).rejects.toBeDefined();
+    await expect(feriasService.atualizarPeriodoAquisitivo('pa-1', {}, EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -317,7 +325,7 @@ describe('feriasService.excluirPeriodoAquisitivo', () => {
     const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockReturnValue({ delete: deleteFn });
 
-    await feriasService.excluirPeriodoAquisitivo('pa-2');
+    await feriasService.excluirPeriodoAquisitivo('pa-2', EMPRESA_ID);
     expect(deleteFn).toHaveBeenCalled();
     expect(eqFn).toHaveBeenCalledWith('id', 'pa-2');
   });
@@ -327,6 +335,6 @@ describe('feriasService.excluirPeriodoAquisitivo', () => {
     const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockReturnValue({ delete: deleteFn });
 
-    await expect(feriasService.excluirPeriodoAquisitivo('pa-2')).rejects.toBeDefined();
+    await expect(feriasService.excluirPeriodoAquisitivo('pa-2', EMPRESA_ID)).rejects.toBeDefined();
   });
 });

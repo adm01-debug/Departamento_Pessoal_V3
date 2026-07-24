@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { contratoService } from '../contratoService';
 
+const EMPRESA_ID = 'test-empresa-id';
+
 // ─── shared mock setup ────────────────────────────────────────────────────────
 
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
@@ -36,7 +38,9 @@ function setupInsertChain(data: any, error: any = null) {
 function setupUpdateChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
-  const eqFn = vi.fn().mockReturnValue({ select: selectFn });
+  const eqFn = vi.fn();
+  const __eqChain = { select: selectFn, eq: eqFn };
+  eqFn.mockReturnValue(__eqChain);
   const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ update: updateFn });
   return { updateFn, eqFn, selectFn, maybeSingle };
@@ -50,13 +54,13 @@ describe('contratoService.listar', () => {
   it('returns all contratos without empresa filter', async () => {
     const records = [{ id: 'c1', tipo: 'clt' }];
     setupListChain(records);
-    const result = await contratoService.listar();
+    const result = await contratoService.listar(EMPRESA_ID);
     expect(result).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
     setupListChain(null as any);
-    const result = await contratoService.listar();
+    const result = await contratoService.listar(EMPRESA_ID);
     expect(result).toEqual([]);
   });
 
@@ -68,13 +72,13 @@ describe('contratoService.listar', () => {
 
   it('orders by data_inicio descending', async () => {
     const { chain } = setupListChain([]);
-    await contratoService.listar();
+    await contratoService.listar(EMPRESA_ID);
     expect(chain.order).toHaveBeenCalledWith('data_inicio', { ascending: false });
   });
 
   it('selects with colaborador join', async () => {
     const { selectFn } = setupListChain([]);
-    await contratoService.listar();
+    await contratoService.listar(EMPRESA_ID);
     expect(selectFn).toHaveBeenCalledWith(
       expect.stringContaining('colaborador:colaboradores')
     );
@@ -82,7 +86,7 @@ describe('contratoService.listar', () => {
 
   it('throws on DB error', async () => {
     setupListChain([], { message: 'fail' });
-    await expect(contratoService.listar()).rejects.toBeDefined();
+    await expect(contratoService.listar(EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -98,7 +102,7 @@ describe('contratoService.buscarPorId', () => {
     const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockReturnValue({ select: selectFn });
 
-    const result = await contratoService.buscarPorId('c1');
+    const result = await contratoService.buscarPorId('c1', EMPRESA_ID);
     expect(result).toEqual(contrato);
     expect(eqFn).toHaveBeenCalledWith('id', 'c1');
   });
@@ -109,7 +113,7 @@ describe('contratoService.buscarPorId', () => {
     const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockReturnValue({ select: selectFn });
 
-    const result = await contratoService.buscarPorId('unknown');
+    const result = await contratoService.buscarPorId('unknown', EMPRESA_ID);
     expect(result).toBeNull();
   });
 
@@ -119,7 +123,7 @@ describe('contratoService.buscarPorId', () => {
     const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockReturnValue({ select: selectFn });
 
-    await expect(contratoService.buscarPorId('c1')).rejects.toBeDefined();
+    await expect(contratoService.buscarPorId('c1', EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -131,14 +135,14 @@ describe('contratoService.buscarPorColaborador', () => {
   it('returns contratos for given colaboradorId', async () => {
     const records = [{ id: 'c1', colaborador_id: 'col-1' }];
     const { chain } = setupListChain(records);
-    const result = await contratoService.buscarPorColaborador('col-1');
+    const result = await contratoService.buscarPorColaborador('col-1', EMPRESA_ID);
     expect(result).toEqual(records);
     expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'col-1');
   });
 
   it('returns empty array when no contratos', async () => {
     setupListChain(null as any);
-    const result = await contratoService.buscarPorColaborador('col-x');
+    const result = await contratoService.buscarPorColaborador('col-x', EMPRESA_ID);
     expect(result).toEqual([]);
   });
 });
@@ -175,7 +179,7 @@ describe('contratoService.atualizar', () => {
   it('updates and returns the updated contrato', async () => {
     const updated = { id: 'c1', status: 'ativo' };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    const result = await contratoService.atualizar('c1', { status: 'ativo' });
+    const result = await contratoService.atualizar('c1', { status: 'ativo' }, EMPRESA_ID);
     expect(updateFn).toHaveBeenCalledWith({ status: 'ativo' });
     expect(eqFn).toHaveBeenCalledWith('id', 'c1');
     expect(result).toEqual(updated);
@@ -183,7 +187,7 @@ describe('contratoService.atualizar', () => {
 
   it('throws when data is null', async () => {
     setupUpdateChain(null);
-    await expect(contratoService.atualizar('c1', {})).rejects.toThrow();
+    await expect(contratoService.atualizar('c1', {}, EMPRESA_ID)).rejects.toThrow();
   });
 });
 
@@ -194,7 +198,7 @@ describe('contratoService.encerrar', () => {
 
   it('calls atualizar with status=encerrado and motivo as observacoes', async () => {
     const { updateFn } = setupUpdateChain({ id: 'c1', status: 'encerrado' });
-    await contratoService.encerrar('c1', 'Demissão sem justa causa');
+    await contratoService.encerrar('c1', 'Demissão sem justa causa', EMPRESA_ID);
     const updateArgs = (updateFn as any).mock.calls[0][0];
     expect(updateArgs.status).toBe('encerrado');
     expect(updateArgs.observacoes).toBe('Demissão sem justa causa');
@@ -208,7 +212,7 @@ describe('contratoService.renovar', () => {
 
   it('calls atualizar with new data_fim and status=ativo', async () => {
     const { updateFn, eqFn } = setupUpdateChain({ id: 'c1', status: 'ativo' });
-    await contratoService.renovar('c1', '2027-12-31');
+    await contratoService.renovar('c1', '2027-12-31', EMPRESA_ID);
     const updateArgs = (updateFn as any).mock.calls[0][0];
     expect(updateArgs.data_fim).toBe('2027-12-31');
     expect(updateArgs.status).toBe('ativo');

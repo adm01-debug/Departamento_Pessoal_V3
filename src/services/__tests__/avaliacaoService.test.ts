@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { avaliacaoService } from '../avaliacaoService';
 
+const EMPRESA_ID = 'test-empresa-id';
+
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -29,7 +31,9 @@ function setupInsertChain(data: any, error: any = null) {
 }
 
 function setupDeleteChain(error: any = null) {
-  const eqFn = vi.fn().mockResolvedValue({ error });
+  const eqFn = vi.fn();
+  const __delChain = { then: (r) => Promise.resolve({ error }).then(r), catch: (r) => Promise.resolve({ error }).catch(r), finally: (r) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
   return { deleteFn, eqFn };
@@ -43,7 +47,7 @@ describe('avaliacaoService.listarCiclos', () => {
   it('returns ciclos without empresa filter', async () => {
     const records = [{ id: 'ci1', nome: 'Q1 2026' }];
     setupListChain(records);
-    const result = await avaliacaoService.listarCiclos();
+    const result = await avaliacaoService.listarCiclos(EMPRESA_ID);
     expect(result).toEqual(records);
   });
 
@@ -55,12 +59,12 @@ describe('avaliacaoService.listarCiclos', () => {
 
   it('returns empty array when data is null', async () => {
     setupListChain(null as any);
-    expect(await avaliacaoService.listarCiclos()).toEqual([]);
+    expect(await avaliacaoService.listarCiclos(EMPRESA_ID)).toEqual([]);
   });
 
   it('throws on DB error', async () => {
     setupListChain([], { message: 'fail' });
-    await expect(avaliacaoService.listarCiclos()).rejects.toBeDefined();
+    await expect(avaliacaoService.listarCiclos(EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -86,7 +90,7 @@ describe('avaliacaoService.excluirCiclo', () => {
 
   it('deletes ciclo by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();
-    await avaliacaoService.excluirCiclo('ci1');
+    await avaliacaoService.excluirCiclo('ci1', EMPRESA_ID);
     expect(deleteFn).toHaveBeenCalled();
     expect(eqFn).toHaveBeenCalledWith('id', 'ci1');
   });
@@ -100,7 +104,7 @@ describe('avaliacaoService.listarMetas', () => {
   it('returns metas with colaborador join', async () => {
     const records = [{ id: 'm1', titulo: 'Aumentar vendas' }];
     const { selectFn } = setupListChain(records);
-    const result = await avaliacaoService.listarMetas();
+    const result = await avaliacaoService.listarMetas(EMPRESA_ID);
     expect(result).toEqual(records);
     expect(selectFn).toHaveBeenCalledWith(
       expect.stringContaining('colaborador:colaboradores')
@@ -115,7 +119,7 @@ describe('avaliacaoService.listarMetas', () => {
 
   it('returns empty when null', async () => {
     setupListChain(null as any);
-    expect(await avaliacaoService.listarMetas()).toEqual([]);
+    expect(await avaliacaoService.listarMetas(EMPRESA_ID)).toEqual([]);
   });
 });
 
@@ -136,7 +140,7 @@ describe('avaliacaoService.excluirMeta', () => {
 
   it('deletes meta by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await avaliacaoService.excluirMeta('m1');
+    await avaliacaoService.excluirMeta('m1', EMPRESA_ID);
     expect(eqFn).toHaveBeenCalledWith('id', 'm1');
   });
 });
@@ -149,7 +153,7 @@ describe('avaliacaoService.listarPDIs', () => {
   it('returns PDIs with colaborador join', async () => {
     const records = [{ id: 'p1' }];
     const { selectFn } = setupListChain(records);
-    const result = await avaliacaoService.listarPDIs();
+    const result = await avaliacaoService.listarPDIs(EMPRESA_ID);
     expect(result).toEqual(records);
     expect(selectFn).toHaveBeenCalledWith(
       expect.stringContaining('colaborador:colaboradores')
@@ -158,7 +162,7 @@ describe('avaliacaoService.listarPDIs', () => {
 
   it('returns empty when null', async () => {
     setupListChain(null as any);
-    expect(await avaliacaoService.listarPDIs()).toEqual([]);
+    expect(await avaliacaoService.listarPDIs(EMPRESA_ID)).toEqual([]);
   });
 });
 
@@ -178,7 +182,7 @@ describe('avaliacaoService.excluirPDI', () => {
 
   it('deletes PDI by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await avaliacaoService.excluirPDI('p1');
+    await avaliacaoService.excluirPDI('p1', EMPRESA_ID);
     expect(eqFn).toHaveBeenCalledWith('id', 'p1');
   });
 });
@@ -191,7 +195,7 @@ describe('avaliacaoService.listarFeedbacks', () => {
   it('returns feedbacks with avaliado/avaliador joins', async () => {
     const records = [{ id: 'fb1' }];
     const { selectFn } = setupListChain(records);
-    const result = await avaliacaoService.listarFeedbacks();
+    const result = await avaliacaoService.listarFeedbacks(EMPRESA_ID);
     expect(result).toEqual(records);
     expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('avaliado'));
     expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('avaliador'));
@@ -220,7 +224,7 @@ describe('avaliacaoService.excluirFeedback', () => {
 
   it('deletes feedback by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await avaliacaoService.excluirFeedback('fb1');
+    await avaliacaoService.excluirFeedback('fb1', EMPRESA_ID);
     expect(eqFn).toHaveBeenCalledWith('id', 'fb1');
   });
 });
@@ -233,7 +237,7 @@ describe('avaliacaoService.listarCompetencias', () => {
   it('returns competencias ordered by nome', async () => {
     const records = [{ id: 'co1', nome: 'Liderança' }];
     const { chain } = setupListChain(records);
-    const result = await avaliacaoService.listarCompetencias();
+    const result = await avaliacaoService.listarCompetencias(EMPRESA_ID);
     expect(result).toEqual(records);
     expect(chain.order).toHaveBeenCalledWith('nome');
   });
@@ -261,7 +265,7 @@ describe('avaliacaoService.excluirCompetencia', () => {
 
   it('deletes competencia by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await avaliacaoService.excluirCompetencia('co1');
+    await avaliacaoService.excluirCompetencia('co1', EMPRESA_ID);
     expect(eqFn).toHaveBeenCalledWith('id', 'co1');
   });
 });

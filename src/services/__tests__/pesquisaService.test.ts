@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { pesquisaService } from '../pesquisaService';
 
+const EMPRESA_ID = 'test-empresa-id';
+
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -31,14 +33,18 @@ function setupInsertChain(data: any, error: any = null) {
 function setupUpdateChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
-  const eqFn = vi.fn().mockReturnValue({ select: selectFn });
+  const eqFn = vi.fn();
+  const __eqChain = { select: selectFn, eq: eqFn };
+  eqFn.mockReturnValue(__eqChain);
   const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ update: updateFn });
   return { updateFn, eqFn, selectFn, maybeSingle };
 }
 
 function setupDeleteChain(error: any = null) {
-  const eqFn = vi.fn().mockResolvedValue({ error });
+  const eqFn = vi.fn();
+  const __delChain = { then: (r) => Promise.resolve({ error }).then(r), catch: (r) => Promise.resolve({ error }).catch(r), finally: (r) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
   return { deleteFn, eqFn };
@@ -69,12 +75,12 @@ describe('pesquisaService.listar', () => {
   it('returns pesquisas without empresa filter', async () => {
     const records = [{ id: 'p1', titulo: 'Clima Org' }];
     setupListChain(records);
-    expect(await pesquisaService.listar()).toEqual(records);
+    expect(await pesquisaService.listar(EMPRESA_ID)).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
     setupListChain(null as any);
-    expect(await pesquisaService.listar()).toEqual([]);
+    expect(await pesquisaService.listar(EMPRESA_ID)).toEqual([]);
   });
 
   it('filters by empresa_id when provided', async () => {
@@ -85,7 +91,7 @@ describe('pesquisaService.listar', () => {
 
   it('throws on DB error', async () => {
     setupListChain([], { message: 'fail' });
-    await expect(pesquisaService.listar()).rejects.toBeDefined();
+    await expect(pesquisaService.listar(EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -116,7 +122,7 @@ describe('pesquisaService.atualizar', () => {
   it('updates and returns pesquisa', async () => {
     const updated = { id: 'p1', status: 'publicada' };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    const result = await pesquisaService.atualizar('p1', { status: 'publicada' });
+    const result = await pesquisaService.atualizar('p1', { status: 'publicada' }, EMPRESA_ID);
     expect(updateFn).toHaveBeenCalledWith({ status: 'publicada' });
     expect(eqFn).toHaveBeenCalledWith('id', 'p1');
     expect(result).toEqual(updated);
@@ -124,7 +130,7 @@ describe('pesquisaService.atualizar', () => {
 
   it('throws when data is null', async () => {
     setupUpdateChain(null);
-    await expect(pesquisaService.atualizar('p1', {})).rejects.toThrow();
+    await expect(pesquisaService.atualizar('p1', {}, EMPRESA_ID)).rejects.toThrow();
   });
 });
 
@@ -135,7 +141,7 @@ describe('pesquisaService.excluir', () => {
 
   it('deletes pesquisa by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();
-    await pesquisaService.excluir('p1');
+    await pesquisaService.excluir('p1', EMPRESA_ID);
     expect(deleteFn).toHaveBeenCalled();
     expect(eqFn).toHaveBeenCalledWith('id', 'p1');
   });
@@ -191,7 +197,7 @@ describe('pesquisaService.excluirPergunta', () => {
 
   it('deletes pergunta by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await pesquisaService.excluirPergunta('q1');
+    await pesquisaService.excluirPergunta('q1', EMPRESA_ID);
     expect(eqFn).toHaveBeenCalledWith('id', 'q1');
   });
 });

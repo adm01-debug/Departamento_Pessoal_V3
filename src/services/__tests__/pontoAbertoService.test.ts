@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { pontoAbertoService } from '../pontoAbertoService';
 
+const EMPRESA_ID = 'test-empresa-id';
+
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -25,12 +27,12 @@ describe('pontoAbertoService.listar', () => {
   it('returns pontos without filter', async () => {
     const records = [{ id: 'p1', colaborador_id: 'c1' }];
     setupChain(records);
-    expect(await pontoAbertoService.listar()).toEqual(records);
+    expect(await pontoAbertoService.listar(EMPRESA_ID)).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
     setupChain(null as any);
-    expect(await pontoAbertoService.listar()).toEqual([]);
+    expect(await pontoAbertoService.listar(EMPRESA_ID)).toEqual([]);
   });
 
   it('filters by empresa_id when provided', async () => {
@@ -41,6 +43,6 @@ describe('pontoAbertoService.listar', () => {
 
   it('throws on DB error', async () => {
     setupChain([], { message: 'fail' });
-    await expect(pontoAbertoService.listar()).rejects.toBeDefined();
+    await expect(pontoAbertoService.listar(EMPRESA_ID)).rejects.toBeDefined();
   });
 });

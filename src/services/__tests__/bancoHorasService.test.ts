@@ -2,6 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { bancoHorasService } from '../bancoHorasService';
 import { bancoHorasConfigService } from '../bancoHorasConfigService';
 
+const EMPRESA_ID = 'test-empresa-id';
+
 // ─── shared mock setup ────────────────────────────────────────────────────────
 
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
@@ -27,7 +29,7 @@ describe('bancoHorasService', () => {
 
     it('queries banco_horas for the given colaboradorId', async () => {
       const { eq } = setupList([]);
-      await bancoHorasService.listarPorColaborador('colab-1');
+      await bancoHorasService.listarPorColaborador('colab-1', EMPRESA_ID);
       expect(eq).toHaveBeenCalledWith('colaborador_id', 'colab-1');
     });
 
@@ -37,19 +39,19 @@ describe('bancoHorasService', () => {
         { id: '2', tipo: 'debito', horas: '03:00:00' },
       ];
       setupList(records);
-      const result = await bancoHorasService.listarPorColaborador('colab-1');
+      const result = await bancoHorasService.listarPorColaborador('colab-1', EMPRESA_ID);
       expect(result).toEqual(records);
     });
 
     it('returns empty array when data is null', async () => {
       setupList(null as any);
-      const result = await bancoHorasService.listarPorColaborador('colab-1');
+      const result = await bancoHorasService.listarPorColaborador('colab-1', EMPRESA_ID);
       expect(result).toEqual([]);
     });
 
     it('throws when supabase returns error', async () => {
       setupList([], { message: 'DB error' });
-      await expect(bancoHorasService.listarPorColaborador('colab-1')).rejects.toBeDefined();
+      await expect(bancoHorasService.listarPorColaborador('colab-1', EMPRESA_ID)).rejects.toBeDefined();
     });
   });
 
@@ -64,19 +66,19 @@ describe('bancoHorasService', () => {
 
     it('selects tipo and horas columns (not quantidade_horas)', async () => {
       const { select } = setupSaldo([]);
-      await bancoHorasService.getSaldo('colab-1');
+      await bancoHorasService.getSaldo('colab-1', EMPRESA_ID);
       expect(select).toHaveBeenCalledWith('tipo, horas');
     });
 
     it('returns 0 when no records exist (null)', async () => {
       setupSaldo(null);
-      const saldo = await bancoHorasService.getSaldo('colab-1');
+      const saldo = await bancoHorasService.getSaldo('colab-1', EMPRESA_ID);
       expect(saldo).toBe(0);
     });
 
     it('returns 0 when data is empty array', async () => {
       setupSaldo([]);
-      const saldo = await bancoHorasService.getSaldo('colab-1');
+      const saldo = await bancoHorasService.getSaldo('colab-1', EMPRESA_ID);
       expect(saldo).toBe(0);
     });
 
@@ -85,7 +87,7 @@ describe('bancoHorasService', () => {
         { tipo: 'credito', horas: '08:00:00' },
         { tipo: 'credito', horas: '02:00:00' },
       ]);
-      const saldo = await bancoHorasService.getSaldo('colab-1');
+      const saldo = await bancoHorasService.getSaldo('colab-1', EMPRESA_ID);
       expect(saldo).toBe(10);
     });
 
@@ -94,7 +96,7 @@ describe('bancoHorasService', () => {
         { tipo: 'debito', horas: '05:00:00' },
         { tipo: 'debito', horas: '03:00:00' },
       ]);
-      const saldo = await bancoHorasService.getSaldo('colab-1');
+      const saldo = await bancoHorasService.getSaldo('colab-1', EMPRESA_ID);
       expect(saldo).toBe(-8);
     });
 
@@ -104,7 +106,7 @@ describe('bancoHorasService', () => {
         { tipo: 'debito', horas: '04:00:00' },
         { tipo: 'credito', horas: '02:00:00' },
       ]);
-      const saldo = await bancoHorasService.getSaldo('colab-1');
+      const saldo = await bancoHorasService.getSaldo('colab-1', EMPRESA_ID);
       expect(saldo).toBe(8); // 10 - 4 + 2
     });
 
@@ -113,7 +115,7 @@ describe('bancoHorasService', () => {
         { tipo: 'credito', horas: '10:00:00' },
         { tipo: 'outro', horas: '03:00:00' },
       ]);
-      const saldo = await bancoHorasService.getSaldo('colab-1');
+      const saldo = await bancoHorasService.getSaldo('colab-1', EMPRESA_ID);
       expect(saldo).toBe(7);
     });
 
@@ -122,7 +124,7 @@ describe('bancoHorasService', () => {
         { tipo: 'credito', horas: '01:30:00' },
         { tipo: 'debito', horas: '00:30:00' },
       ]);
-      const saldo = await bancoHorasService.getSaldo('colab-1');
+      const saldo = await bancoHorasService.getSaldo('colab-1', EMPRESA_ID);
       expect(saldo).toBeCloseTo(1.0, 5);
     });
 
@@ -131,7 +133,7 @@ describe('bancoHorasService', () => {
         { tipo: 'credito', horas: 'invalid' },
         { tipo: 'credito', horas: '05:00:00' },
       ]);
-      const saldo = await bancoHorasService.getSaldo('colab-1');
+      const saldo = await bancoHorasService.getSaldo('colab-1', EMPRESA_ID);
       expect(saldo).toBe(5); // 0 + 5
     });
 
@@ -140,7 +142,7 @@ describe('bancoHorasService', () => {
         { tipo: 'credito', horas: '1 day 02:00:00' }, // 26h
         { tipo: 'debito', horas: '2:00:00' },          // 2h
       ]);
-      const saldo = await bancoHorasService.getSaldo('colab-1');
+      const saldo = await bancoHorasService.getSaldo('colab-1', EMPRESA_ID);
       expect(saldo).toBeCloseTo(24, 5); // 26 - 2
     });
 
@@ -148,13 +150,13 @@ describe('bancoHorasService', () => {
       setupSaldo([
         { tipo: 'credito', horas: '2 days' }, // 48h
       ]);
-      const saldo = await bancoHorasService.getSaldo('colab-1');
+      const saldo = await bancoHorasService.getSaldo('colab-1', EMPRESA_ID);
       expect(saldo).toBe(48);
     });
 
     it('throws when supabase returns error', async () => {
       setupSaldo(null, { message: 'DB error' });
-      await expect(bancoHorasService.getSaldo('colab-1')).rejects.toBeDefined();
+      await expect(bancoHorasService.getSaldo('colab-1', EMPRESA_ID)).rejects.toBeDefined();
     });
   });
 

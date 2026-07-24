@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { episService, episEntregasService } from '../episService';
 
+const EMPRESA_ID = 'test-empresa-id';
+
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -43,7 +45,9 @@ function setupInsertChain(data: any, error: any = null) {
 function setupUpdateChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
-  const eqFn = vi.fn().mockReturnValue({ select: selectFn });
+  const eqFn = vi.fn();
+  const __eqChain = { select: selectFn, eq: eqFn };
+  eqFn.mockReturnValue(__eqChain);
   const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ update: updateFn });
   return { updateFn, eqFn, maybeSingle };
@@ -51,7 +55,9 @@ function setupUpdateChain(data: any, error: any = null) {
 
 // delete.eq → resolvedValue
 function setupDeleteChain(error: any = null) {
-  const eqFn = vi.fn().mockResolvedValue({ error });
+  const eqFn = vi.fn();
+  const __delChain = { then: (r) => Promise.resolve({ error }).then(r), catch: (r) => Promise.resolve({ error }).catch(r), finally: (r) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
   return { deleteFn, eqFn };
@@ -65,12 +71,12 @@ describe('episService.listar', () => {
   it('returns EPIs without empresa filter', async () => {
     const records = [{ id: 'e1', nome: 'Capacete' }];
     setupListChain(records);
-    expect(await episService.listar()).toEqual(records);
+    expect(await episService.listar(EMPRESA_ID)).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
     setupListChain(null as any);
-    expect(await episService.listar()).toEqual([]);
+    expect(await episService.listar(EMPRESA_ID)).toEqual([]);
   });
 
   it('filters by empresa_id when provided', async () => {
@@ -81,7 +87,7 @@ describe('episService.listar', () => {
 
   it('throws on DB error', async () => {
     setupListChain([], { message: 'fail' });
-    await expect(episService.listar()).rejects.toBeDefined();
+    await expect(episService.listar(EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -108,7 +114,7 @@ describe('episService.atualizar', () => {
   it('updates and returns EPI', async () => {
     const updated = { id: 'e1', nome: 'Capacete Atualizado' };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    const result = await episService.atualizar('e1', { nome: 'Capacete Atualizado' });
+    const result = await episService.atualizar('e1', { nome: 'Capacete Atualizado' }, EMPRESA_ID);
     expect(updateFn).toHaveBeenCalledWith({ nome: 'Capacete Atualizado' });
     expect(eqFn).toHaveBeenCalledWith('id', 'e1');
     expect(result).toEqual(updated);
@@ -116,7 +122,7 @@ describe('episService.atualizar', () => {
 
   it('throws when data is null', async () => {
     setupUpdateChain(null);
-    await expect(episService.atualizar('e1', {})).rejects.toThrow('Nenhum registro de EPI foi retornado.');
+    await expect(episService.atualizar('e1', {}, EMPRESA_ID)).rejects.toThrow('Nenhum registro de EPI foi retornado.');
   });
 });
 
@@ -125,14 +131,14 @@ describe('episService.excluir', () => {
 
   it('deletes EPI by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();
-    await episService.excluir('e1');
+    await episService.excluir('e1', EMPRESA_ID);
     expect(deleteFn).toHaveBeenCalled();
     expect(eqFn).toHaveBeenCalledWith('id', 'e1');
   });
 
   it('throws on DB error', async () => {
     setupDeleteChain({ message: 'fail' });
-    await expect(episService.excluir('e1')).rejects.toBeDefined();
+    await expect(episService.excluir('e1', EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -144,7 +150,7 @@ describe('episEntregasService.listar', () => {
   it('returns entregas without empresa filter', async () => {
     const records = [{ id: 'ee1' }];
     setupListChain(records);
-    expect(await episEntregasService.listar()).toEqual(records);
+    expect(await episEntregasService.listar(EMPRESA_ID)).toEqual(records);
   });
 
   it('filters by empresa_id when provided', async () => {
@@ -155,7 +161,7 @@ describe('episEntregasService.listar', () => {
 
   it('returns empty array when data is null', async () => {
     setupListChain(null as any);
-    expect(await episEntregasService.listar()).toEqual([]);
+    expect(await episEntregasService.listar(EMPRESA_ID)).toEqual([]);
   });
 });
 
@@ -165,7 +171,7 @@ describe('episEntregasService.buscarPorColaborador', () => {
   it('filters by colaborador_id', async () => {
     const records = [{ id: 'ee1', colaborador_id: 'c1' }];
     const { eqFn } = setupEqOrderChain(records);
-    const result = await episEntregasService.buscarPorColaborador('c1');
+    const result = await episEntregasService.buscarPorColaborador('c1', EMPRESA_ID);
     expect(result).toEqual(records);
     expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
   });
@@ -193,7 +199,7 @@ describe('episEntregasService.registrarDevolucao', () => {
   it('updates data_devolucao and returns result', async () => {
     const updated = { id: 'ee1', data_devolucao: '2026-07-01' };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    const result = await episEntregasService.registrarDevolucao('ee1', '2026-07-01');
+    const result = await episEntregasService.registrarDevolucao('ee1', '2026-07-01', EMPRESA_ID);
     expect(updateFn).toHaveBeenCalledWith({ data_devolucao: '2026-07-01' });
     expect(eqFn).toHaveBeenCalledWith('id', 'ee1');
     expect(result).toEqual(updated);
@@ -205,7 +211,7 @@ describe('episEntregasService.excluir', () => {
 
   it('deletes entrega by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();
-    await episEntregasService.excluir('ee1');
+    await episEntregasService.excluir('ee1', EMPRESA_ID);
     expect(deleteFn).toHaveBeenCalled();
     expect(eqFn).toHaveBeenCalledWith('id', 'ee1');
   });

@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { historicoContratoService } from '../historicoContratoService';
 
+const EMPRESA_ID = 'test-empresa-id';
+
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -24,7 +26,9 @@ function setupInsertChain(data: any, error: any = null) {
 }
 
 function setupDeleteChain(error: any = null) {
-  const eqFn = vi.fn().mockResolvedValue({ error });
+  const eqFn = vi.fn();
+  const __delChain = { then: (r) => Promise.resolve({ error }).then(r), catch: (r) => Promise.resolve({ error }).catch(r), finally: (r) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
   return { deleteFn, eqFn };
@@ -38,30 +42,30 @@ describe('historicoContratoService.listar', () => {
   it('returns historico for given colaboradorId', async () => {
     const records = [{ id: 'h1', colaborador_id: 'c1', data_inicio: '2020-01-01' }];
     setupListChain(records);
-    const result = await historicoContratoService.listar('c1');
+    const result = await historicoContratoService.listar('c1', EMPRESA_ID);
     expect(result).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
     setupListChain(null as any);
-    expect(await historicoContratoService.listar('c1')).toEqual([]);
+    expect(await historicoContratoService.listar('c1', EMPRESA_ID)).toEqual([]);
   });
 
   it('filters by colaborador_id', async () => {
     const { eqFn } = setupListChain([]);
-    await historicoContratoService.listar('colab-42');
+    await historicoContratoService.listar('colab-42', EMPRESA_ID);
     expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'colab-42');
   });
 
   it('orders by data_inicio descending', async () => {
     const { orderFn } = setupListChain([]);
-    await historicoContratoService.listar('c1');
+    await historicoContratoService.listar('c1', EMPRESA_ID);
     expect(orderFn).toHaveBeenCalledWith('data_inicio', { ascending: false });
   });
 
   it('throws on DB error', async () => {
     setupListChain([], { message: 'fail' });
-    await expect(historicoContratoService.listar('c1')).rejects.toBeDefined();
+    await expect(historicoContratoService.listar('c1', EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 

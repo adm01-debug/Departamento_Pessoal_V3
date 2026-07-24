@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { cnabService, webhookService } from '../integracaoService';
 
+const EMPRESA_ID = 'test-empresa-id';
+
 // ─── shared mock setup ────────────────────────────────────────────────────────
 
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
@@ -20,7 +22,9 @@ function setupMaybeSingleChain(data: any, error: any = null) {
 
 // upsert / insert / delete → await
 function setupDirectChain(error: any = null) {
-  const eqFn = vi.fn().mockResolvedValue({ error });
+  const eqFn = vi.fn();
+  const __delChain = { then: (r) => Promise.resolve({ error }).then(r), catch: (r) => Promise.resolve({ error }).catch(r), finally: (r) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   const upsertFn = vi.fn().mockResolvedValue({ error });
   const insertFn = vi.fn().mockResolvedValue({ error });
@@ -55,19 +59,19 @@ describe('cnabService.getConfig', () => {
   it('returns config when found', async () => {
     const config = { id: 'c1', banco_nome: 'Bradesco' };
     setupMaybeSingleChain(config);
-    const result = await cnabService.getConfig();
+    const result = await cnabService.getConfig(EMPRESA_ID);
     expect(result).toEqual(config);
   });
 
   it('returns null when no config exists', async () => {
     setupMaybeSingleChain(null);
-    const result = await cnabService.getConfig();
+    const result = await cnabService.getConfig(EMPRESA_ID);
     expect(result).toBeNull();
   });
 
   it('queries cnab_configuracoes with limit 1', async () => {
     const { selectFn, limitFn } = setupMaybeSingleChain(null);
-    await cnabService.getConfig();
+    await cnabService.getConfig(EMPRESA_ID);
     expect(mockFrom).toHaveBeenCalledWith('cnab_configuracoes');
     expect(selectFn).toHaveBeenCalledWith('*');
     expect(limitFn).toHaveBeenCalledWith(1);
@@ -75,7 +79,7 @@ describe('cnabService.getConfig', () => {
 
   it('throws on DB error', async () => {
     setupMaybeSingleChain(null, { message: 'fail' });
-    await expect(cnabService.getConfig()).rejects.toBeDefined();
+    await expect(cnabService.getConfig(EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -107,19 +111,19 @@ describe('cnabService.getRemessas', () => {
   it('returns remessas list', async () => {
     const records = [{ id: 'r1' }, { id: 'r2' }];
     setupOrderLimitChain(records);
-    const result = await cnabService.getRemessas();
+    const result = await cnabService.getRemessas(EMPRESA_ID);
     expect(result).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
     setupOrderLimitChain(null as any);
-    const result = await cnabService.getRemessas();
+    const result = await cnabService.getRemessas(EMPRESA_ID);
     expect(result).toEqual([]);
   });
 
   it('queries cnab_remessas ordered by created_at desc with limit 50', async () => {
     const { selectFn, orderFn, limitFn } = setupOrderLimitChain([]);
-    await cnabService.getRemessas();
+    await cnabService.getRemessas(EMPRESA_ID);
     expect(mockFrom).toHaveBeenCalledWith('cnab_remessas');
     expect(selectFn).toHaveBeenCalledWith('*');
     expect(orderFn).toHaveBeenCalledWith('created_at', { ascending: false });
@@ -128,7 +132,7 @@ describe('cnabService.getRemessas', () => {
 
   it('throws on DB error', async () => {
     setupOrderLimitChain([], { message: 'fail' });
-    await expect(cnabService.getRemessas()).rejects.toBeDefined();
+    await expect(cnabService.getRemessas(EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -140,19 +144,19 @@ describe('webhookService.listar', () => {
   it('returns webhooks list', async () => {
     const records = [{ id: 'w1', nome: 'Admissão Hook' }];
     setupOrderChain(records);
-    const result = await webhookService.listar();
+    const result = await webhookService.listar(EMPRESA_ID);
     expect(result).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
     setupOrderChain(null as any);
-    const result = await webhookService.listar();
+    const result = await webhookService.listar(EMPRESA_ID);
     expect(result).toEqual([]);
   });
 
   it('queries webhooks_config ordered by created_at desc', async () => {
     const { selectFn, orderFn } = setupOrderChain([]);
-    await webhookService.listar();
+    await webhookService.listar(EMPRESA_ID);
     expect(mockFrom).toHaveBeenCalledWith('webhooks_config');
     expect(selectFn).toHaveBeenCalledWith('*');
     expect(orderFn).toHaveBeenCalledWith('created_at', { ascending: false });
@@ -160,7 +164,7 @@ describe('webhookService.listar', () => {
 
   it('throws on DB error', async () => {
     setupOrderChain([], { message: 'fail' });
-    await expect(webhookService.listar()).rejects.toBeDefined();
+    await expect(webhookService.listar(EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -216,19 +220,19 @@ describe('webhookService.getLogs', () => {
   it('returns logs list', async () => {
     const records = [{ id: 'l1', status: 200 }];
     setupOrderLimitChain(records);
-    const result = await webhookService.getLogs();
+    const result = await webhookService.getLogs(EMPRESA_ID);
     expect(result).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
     setupOrderLimitChain(null as any);
-    const result = await webhookService.getLogs();
+    const result = await webhookService.getLogs(EMPRESA_ID);
     expect(result).toEqual([]);
   });
 
   it('queries webhook_logs ordered by created_at desc with limit 50', async () => {
     const { selectFn, orderFn, limitFn } = setupOrderLimitChain([]);
-    await webhookService.getLogs();
+    await webhookService.getLogs(EMPRESA_ID);
     expect(mockFrom).toHaveBeenCalledWith('webhook_logs');
     expect(selectFn).toHaveBeenCalledWith('*');
     expect(orderFn).toHaveBeenCalledWith('created_at', { ascending: false });
@@ -237,6 +241,6 @@ describe('webhookService.getLogs', () => {
 
   it('throws on DB error', async () => {
     setupOrderLimitChain([], { message: 'fail' });
-    await expect(webhookService.getLogs()).rejects.toBeDefined();
+    await expect(webhookService.getLogs(EMPRESA_ID)).rejects.toBeDefined();
   });
 });

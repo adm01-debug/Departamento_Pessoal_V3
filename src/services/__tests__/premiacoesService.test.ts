@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { premiacoesService } from '../premiacoesService';
 
+const EMPRESA_ID = 'test-empresa-id';
+
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -79,7 +81,9 @@ function makeFetchSingleMock(data: any, error: any = null) {
 function makeUpdateSingleMock(data: any, error: any = null) {
   const singleFn = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ single: singleFn });
-  const eqFn = vi.fn().mockReturnValue({ select: selectFn });
+  const eqFn = vi.fn();
+  const __eqChain = { select: selectFn, eq: eqFn };
+  eqFn.mockReturnValue(__eqChain);
   const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
   return { updateFn, eqFn, selectFn, singleFn };
 }
@@ -92,12 +96,12 @@ describe('premiacoesService.listarCampanhas', () => {
   it('returns campanhas without empresa filter', async () => {
     const records = [{ id: 'c1', nome: 'Campanha Q1' }];
     setupOrderChain(records);
-    expect(await premiacoesService.listarCampanhas()).toEqual(records);
+    expect(await premiacoesService.listarCampanhas(EMPRESA_ID)).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
     setupOrderChain(null as any);
-    expect(await premiacoesService.listarCampanhas()).toEqual([]);
+    expect(await premiacoesService.listarCampanhas(EMPRESA_ID)).toEqual([]);
   });
 
   it('filters by empresa_id when provided', async () => {
@@ -108,7 +112,7 @@ describe('premiacoesService.listarCampanhas', () => {
 
   it('throws on DB error', async () => {
     setupOrderChain([], { message: 'fail' });
-    await expect(premiacoesService.listarCampanhas()).rejects.toBeDefined();
+    await expect(premiacoesService.listarCampanhas(EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -120,14 +124,14 @@ describe('premiacoesService.listarRegras', () => {
   it('returns regras for campanha', async () => {
     const records = [{ id: 'r1', campanha_id: 'c1' }];
     const { eqFn } = setupEqResolveChain(records);
-    const result = await premiacoesService.listarRegras('c1');
+    const result = await premiacoesService.listarRegras('c1', EMPRESA_ID);
     expect(result).toEqual(records);
     expect(eqFn).toHaveBeenCalledWith('campanha_id', 'c1');
   });
 
   it('returns empty array when data is null', async () => {
     setupEqResolveChain(null as any);
-    expect(await premiacoesService.listarRegras('c1')).toEqual([]);
+    expect(await premiacoesService.listarRegras('c1', EMPRESA_ID)).toEqual([]);
   });
 });
 
@@ -139,12 +143,12 @@ describe('premiacoesService.listarPagamentos', () => {
   it('returns pagamentos without filters', async () => {
     const records = [{ id: 'pg1' }];
     setupPagamentosChain(records);
-    expect(await premiacoesService.listarPagamentos()).toEqual(records);
+    expect(await premiacoesService.listarPagamentos(EMPRESA_ID)).toEqual(records);
   });
 
   it('filters by campanha_id when provided', async () => {
     const { chain } = setupPagamentosChain([]);
-    await premiacoesService.listarPagamentos('c1');
+    await premiacoesService.listarPagamentos('c1', EMPRESA_ID);
     expect(chain.eq).toHaveBeenCalledWith('campanha_id', 'c1');
   });
 
@@ -156,7 +160,7 @@ describe('premiacoesService.listarPagamentos', () => {
 
   it('returns empty array when data is null', async () => {
     setupPagamentosChain(null as any);
-    expect(await premiacoesService.listarPagamentos()).toEqual([]);
+    expect(await premiacoesService.listarPagamentos(EMPRESA_ID)).toEqual([]);
   });
 });
 
@@ -268,12 +272,12 @@ describe('premiacoesService.listarAuditoria', () => {
   it('returns auditoria records', async () => {
     const records = [{ id: 'a1', acao: 'INSERT' }];
     setupOrderChain(records);
-    expect(await premiacoesService.listarAuditoria()).toEqual(records);
+    expect(await premiacoesService.listarAuditoria(EMPRESA_ID)).toEqual(records);
   });
 
   it('filters by entidade_id when provided', async () => {
     const { chain } = setupOrderChain([]);
-    await premiacoesService.listarAuditoria('pg1');
+    await premiacoesService.listarAuditoria('pg1', EMPRESA_ID);
     expect(chain.eq).toHaveBeenCalledWith('entidade_id', 'pg1');
   });
 });
@@ -297,14 +301,14 @@ describe('premiacoesService.salvarCenarioROI', () => {
       savings: 10000,
       roi: 20,
     };
-    const result = await premiacoesService.salvarCenarioROI(cenario);
+    const result = await premiacoesService.salvarCenarioROI(cenario, EMPRESA_ID);
     expect(insertFn).toHaveBeenCalled();
     expect(result).toEqual(created);
   });
 
   it('throws on DB error', async () => {
     setupInsertSingleChain(null, { message: 'fail' });
-    await expect(premiacoesService.salvarCenarioROI({})).rejects.toBeDefined();
+    await expect(premiacoesService.salvarCenarioROI({}, EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -316,7 +320,7 @@ describe('premiacoesService.listarCenariosROI', () => {
   it('returns cenarios ordered by created_at desc', async () => {
     const records = [{ id: 'roi1' }];
     const { orderFn } = setupSelectOrderChain(records);
-    const result = await premiacoesService.listarCenariosROI();
+    const result = await premiacoesService.listarCenariosROI(EMPRESA_ID);
     expect(result).toEqual(records);
     expect(orderFn).toHaveBeenCalledWith('created_at', { ascending: false });
   });

@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { faltasService } from '../faltasService';
 
+const EMPRESA_ID = 'test-empresa-id';
+
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -32,14 +34,18 @@ function setupInsertChain(data: any, error: any = null) {
 function setupUpdateChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
-  const eqFn = vi.fn().mockReturnValue({ select: selectFn });
+  const eqFn = vi.fn();
+  const __eqChain = { select: selectFn, eq: eqFn };
+  eqFn.mockReturnValue(__eqChain);
   const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ update: updateFn });
   return { updateFn, eqFn, selectFn, maybeSingle };
 }
 
 function setupDeleteChain(error: any = null) {
-  const eqFn = vi.fn().mockResolvedValue({ error });
+  const eqFn = vi.fn();
+  const __delChain = { then: (r) => Promise.resolve({ error }).then(r), catch: (r) => Promise.resolve({ error }).catch(r), finally: (r) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
   return { deleteFn, eqFn };
@@ -53,13 +59,13 @@ describe('faltasService.listar', () => {
   it('returns all faltas without empresa filter', async () => {
     const records = [{ id: 'f1', data: '2026-07-01' }];
     setupListChain(records);
-    const result = await faltasService.listar();
+    const result = await faltasService.listar(EMPRESA_ID);
     expect(result).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
     setupListChain(null as any);
-    const result = await faltasService.listar();
+    const result = await faltasService.listar(EMPRESA_ID);
     expect(result).toEqual([]);
   });
 
@@ -71,13 +77,13 @@ describe('faltasService.listar', () => {
 
   it('orders by data descending', async () => {
     const { chain } = setupListChain([]);
-    await faltasService.listar();
+    await faltasService.listar(EMPRESA_ID);
     expect(chain.order).toHaveBeenCalledWith('data', { ascending: false });
   });
 
   it('includes colaborador join in select', async () => {
     const { selectFn } = setupListChain([]);
-    await faltasService.listar();
+    await faltasService.listar(EMPRESA_ID);
     expect(selectFn).toHaveBeenCalledWith(
       expect.stringContaining('colaborador:colaboradores')
     );
@@ -85,7 +91,7 @@ describe('faltasService.listar', () => {
 
   it('throws on DB error', async () => {
     setupListChain([], { message: 'fail' });
-    await expect(faltasService.listar()).rejects.toBeDefined();
+    await expect(faltasService.listar(EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -97,20 +103,20 @@ describe('faltasService.buscarPorColaborador', () => {
   it('returns faltas for given colaboradorId', async () => {
     const records = [{ id: 'f1', colaborador_id: 'c1' }];
     const { chain } = setupListChain(records);
-    const result = await faltasService.buscarPorColaborador('c1');
+    const result = await faltasService.buscarPorColaborador('c1', EMPRESA_ID);
     expect(result).toEqual(records);
     expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'c1');
   });
 
   it('returns empty array when no faltas', async () => {
     setupListChain(null as any);
-    const result = await faltasService.buscarPorColaborador('c-x');
+    const result = await faltasService.buscarPorColaborador('c-x', EMPRESA_ID);
     expect(result).toEqual([]);
   });
 
   it('orders by data descending', async () => {
     const { chain } = setupListChain([]);
-    await faltasService.buscarPorColaborador('c1');
+    await faltasService.buscarPorColaborador('c1', EMPRESA_ID);
     expect(chain.order).toHaveBeenCalledWith('data', { ascending: false });
   });
 });
@@ -147,7 +153,7 @@ describe('faltasService.atualizar', () => {
   it('updates and returns falta', async () => {
     const updated = { id: 'f1', justificada: true };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    const result = await faltasService.atualizar('f1', { justificada: true });
+    const result = await faltasService.atualizar('f1', { justificada: true }, EMPRESA_ID);
     expect(updateFn).toHaveBeenCalledWith({ justificada: true });
     expect(eqFn).toHaveBeenCalledWith('id', 'f1');
     expect(result).toEqual(updated);
@@ -155,12 +161,12 @@ describe('faltasService.atualizar', () => {
 
   it('throws when data is null', async () => {
     setupUpdateChain(null);
-    await expect(faltasService.atualizar('f1', {})).rejects.toThrow();
+    await expect(faltasService.atualizar('f1', {}, EMPRESA_ID)).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
     setupUpdateChain(null, { message: 'fail' });
-    await expect(faltasService.atualizar('f1', {})).rejects.toBeDefined();
+    await expect(faltasService.atualizar('f1', {}, EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -171,13 +177,13 @@ describe('faltasService.excluir', () => {
 
   it('deletes falta by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();
-    await faltasService.excluir('f1');
+    await faltasService.excluir('f1', EMPRESA_ID);
     expect(deleteFn).toHaveBeenCalled();
     expect(eqFn).toHaveBeenCalledWith('id', 'f1');
   });
 
   it('throws on DB error', async () => {
     setupDeleteChain({ message: 'fail' });
-    await expect(faltasService.excluir('f1')).rejects.toBeDefined();
+    await expect(faltasService.excluir('f1', EMPRESA_ID)).rejects.toBeDefined();
   });
 });

@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { workflowService } from '../workflowService';
 
+const EMPRESA_ID = 'test-empresa-id';
+
 // ─── shared mock setup ────────────────────────────────────────────────────────
 
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
@@ -39,14 +41,18 @@ function setupInsertChain(data: any, error: any = null) {
 
 function setupUpdateChain(data: any, error: any = null) {
   const { maybeSingle, selectFn } = setupWriteChain(data, error);
-  const eqFn = vi.fn().mockReturnValue({ select: selectFn });
+  const eqFn = vi.fn();
+  const __eqChain = { select: selectFn, eq: eqFn };
+  eqFn.mockReturnValue(__eqChain);
   const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ update: updateFn });
   return { updateFn, eqFn, selectFn, maybeSingle };
 }
 
 function setupDeleteChain(error: any = null) {
-  const eqFn = vi.fn().mockResolvedValue({ error });
+  const eqFn = vi.fn();
+  const __delChain = { then: (r) => Promise.resolve({ error }).then(r), catch: (r) => Promise.resolve({ error }).catch(r), finally: (r) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
   return { deleteFn, eqFn };
@@ -60,13 +66,13 @@ describe('workflowService.listarDefinicoes', () => {
   it('returns definitions without empresa filter', async () => {
     const records = [{ id: 'wf-1', nome: 'Admissão' }];
     setupListChain(records);
-    const result = await workflowService.listarDefinicoes();
+    const result = await workflowService.listarDefinicoes(EMPRESA_ID);
     expect(result).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
     setupListChain(null as any);
-    const result = await workflowService.listarDefinicoes();
+    const result = await workflowService.listarDefinicoes(EMPRESA_ID);
     expect(result).toEqual([]);
   });
 
@@ -78,13 +84,13 @@ describe('workflowService.listarDefinicoes', () => {
 
   it('orders by created_at descending', async () => {
     const { chain } = setupListChain([]);
-    await workflowService.listarDefinicoes();
+    await workflowService.listarDefinicoes(EMPRESA_ID);
     expect(chain.order).toHaveBeenCalledWith('created_at', { ascending: false });
   });
 
   it('throws on DB error', async () => {
     setupListChain([], { message: 'fail' });
-    await expect(workflowService.listarDefinicoes()).rejects.toBeDefined();
+    await expect(workflowService.listarDefinicoes(EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -120,7 +126,7 @@ describe('workflowService.atualizarDefinicao', () => {
   it('updates with id eq and returns updated definition', async () => {
     const updated = { id: 'wf-1', nome: 'Atualizado' };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    const result = await workflowService.atualizarDefinicao('wf-1', { nome: 'Atualizado' });
+    const result = await workflowService.atualizarDefinicao('wf-1', { nome: 'Atualizado' }, EMPRESA_ID);
     expect(updateFn).toHaveBeenCalledWith({ nome: 'Atualizado' });
     expect(eqFn).toHaveBeenCalledWith('id', 'wf-1');
     expect(result).toEqual(updated);
@@ -128,12 +134,12 @@ describe('workflowService.atualizarDefinicao', () => {
 
   it('throws when data is null', async () => {
     setupUpdateChain(null);
-    await expect(workflowService.atualizarDefinicao('wf-1', {})).rejects.toThrow();
+    await expect(workflowService.atualizarDefinicao('wf-1', {}, EMPRESA_ID)).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
     setupUpdateChain(null, { message: 'fail' });
-    await expect(workflowService.atualizarDefinicao('wf-1', {})).rejects.toBeDefined();
+    await expect(workflowService.atualizarDefinicao('wf-1', {}, EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -144,14 +150,14 @@ describe('workflowService.excluirDefinicao', () => {
 
   it('calls delete with given id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();
-    await workflowService.excluirDefinicao('wf-1');
+    await workflowService.excluirDefinicao('wf-1', EMPRESA_ID);
     expect(deleteFn).toHaveBeenCalled();
     expect(eqFn).toHaveBeenCalledWith('id', 'wf-1');
   });
 
   it('throws on DB error', async () => {
     setupDeleteChain({ message: 'fail' });
-    await expect(workflowService.excluirDefinicao('wf-1')).rejects.toBeDefined();
+    await expect(workflowService.excluirDefinicao('wf-1', EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -224,7 +230,7 @@ describe('workflowService.listarExecucoes', () => {
   it('returns execucoes with workflow join', async () => {
     const records = [{ id: 'ex-1', workflow: { nome: 'Admissão' } }];
     const { selectFn } = setupListChain(records);
-    const result = await workflowService.listarExecucoes();
+    const result = await workflowService.listarExecucoes(EMPRESA_ID);
     expect(result).toEqual(records);
     expect(selectFn).toHaveBeenCalledWith(
       expect.stringContaining('workflow:workflows_definicoes')
@@ -239,7 +245,7 @@ describe('workflowService.listarExecucoes', () => {
 
   it('throws on DB error', async () => {
     setupListChain([], { message: 'fail' });
-    await expect(workflowService.listarExecucoes()).rejects.toBeDefined();
+    await expect(workflowService.listarExecucoes(EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -270,7 +276,7 @@ describe('workflowService.atualizarExecucao', () => {
   it('updates execution and returns updated record', async () => {
     const updated = { id: 'ex-1', status: 'concluida' };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    const result = await workflowService.atualizarExecucao('ex-1', { status: 'concluida' });
+    const result = await workflowService.atualizarExecucao('ex-1', { status: 'concluida' }, EMPRESA_ID);
     expect(updateFn).toHaveBeenCalledWith({ status: 'concluida' });
     expect(eqFn).toHaveBeenCalledWith('id', 'ex-1');
     expect(result).toEqual(updated);
@@ -278,7 +284,7 @@ describe('workflowService.atualizarExecucao', () => {
 
   it('throws when data is null', async () => {
     setupUpdateChain(null);
-    await expect(workflowService.atualizarExecucao('ex-1', {})).rejects.toThrow();
+    await expect(workflowService.atualizarExecucao('ex-1', {}, EMPRESA_ID)).rejects.toThrow();
   });
 });
 

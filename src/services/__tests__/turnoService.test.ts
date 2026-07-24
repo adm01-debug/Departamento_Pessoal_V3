@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { turnoService } from '../turnoService';
 
+const EMPRESA_ID = 'test-empresa-id';
+
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -25,7 +27,9 @@ function setupListChain(data: any[], error: any = null) {
 function setupWriteChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
-  const eqFn = vi.fn().mockReturnValue({ select: selectFn });
+  const eqFn = vi.fn();
+  const __eqChain = { select: selectFn, eq: eqFn };
+  eqFn.mockReturnValue(__eqChain);
   return { maybeSingle, selectFn, eqFn };
 }
 
@@ -44,7 +48,9 @@ function setupUpdateChain(data: any, error: any = null) {
 }
 
 function setupDeleteChain(error: any = null) {
-  const eqFn = vi.fn().mockResolvedValue({ error });
+  const eqFn = vi.fn();
+  const __delChain = { then: (r) => Promise.resolve({ error }).then(r), catch: (r) => Promise.resolve({ error }).catch(r), finally: (r) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
   return { deleteFn, eqFn };
@@ -58,13 +64,13 @@ describe('turnoService.listarTurnos', () => {
   it('returns all turnos without empresa filter', async () => {
     const records = [{ id: 't1', nome: 'Manhã' }];
     setupListChain(records);
-    const result = await turnoService.listarTurnos();
+    const result = await turnoService.listarTurnos(EMPRESA_ID);
     expect(result).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
     setupListChain(null as any);
-    const result = await turnoService.listarTurnos();
+    const result = await turnoService.listarTurnos(EMPRESA_ID);
     expect(result).toEqual([]);
   });
 
@@ -76,13 +82,13 @@ describe('turnoService.listarTurnos', () => {
 
   it('orders by nome', async () => {
     const { chain } = setupListChain([]);
-    await turnoService.listarTurnos();
+    await turnoService.listarTurnos(EMPRESA_ID);
     expect(chain.order).toHaveBeenCalledWith('nome');
   });
 
   it('throws on DB error', async () => {
     setupListChain([], { message: 'fail' });
-    await expect(turnoService.listarTurnos()).rejects.toBeDefined();
+    await expect(turnoService.listarTurnos(EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -118,7 +124,7 @@ describe('turnoService.atualizarTurno', () => {
   it('updates and returns the turno', async () => {
     const updated = { id: 't1', nome: 'Tarde' };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    const result = await turnoService.atualizarTurno('t1', { nome: 'Tarde' });
+    const result = await turnoService.atualizarTurno('t1', { nome: 'Tarde' }, EMPRESA_ID);
     expect(updateFn).toHaveBeenCalledWith({ nome: 'Tarde' });
     expect(eqFn).toHaveBeenCalledWith('id', 't1');
     expect(result).toEqual(updated);
@@ -126,7 +132,7 @@ describe('turnoService.atualizarTurno', () => {
 
   it('throws when data is null', async () => {
     setupUpdateChain(null);
-    await expect(turnoService.atualizarTurno('t1', {})).rejects.toThrow();
+    await expect(turnoService.atualizarTurno('t1', {}, EMPRESA_ID)).rejects.toThrow();
   });
 });
 
@@ -137,14 +143,14 @@ describe('turnoService.excluirTurno', () => {
 
   it('deletes turno by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();
-    await turnoService.excluirTurno('t1');
+    await turnoService.excluirTurno('t1', EMPRESA_ID);
     expect(deleteFn).toHaveBeenCalled();
     expect(eqFn).toHaveBeenCalledWith('id', 't1');
   });
 
   it('throws on DB error', async () => {
     setupDeleteChain({ message: 'fail' });
-    await expect(turnoService.excluirTurno('t1')).rejects.toBeDefined();
+    await expect(turnoService.excluirTurno('t1', EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -221,13 +227,13 @@ describe('turnoService.excluirEscala', () => {
 
   it('deletes escala by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();
-    await turnoService.excluirEscala('e1');
+    await turnoService.excluirEscala('e1', EMPRESA_ID);
     expect(deleteFn).toHaveBeenCalled();
     expect(eqFn).toHaveBeenCalledWith('id', 'e1');
   });
 
   it('throws on DB error', async () => {
     setupDeleteChain({ message: 'fail' });
-    await expect(turnoService.excluirEscala('e1')).rejects.toBeDefined();
+    await expect(turnoService.excluirEscala('e1', EMPRESA_ID)).rejects.toBeDefined();
   });
 });

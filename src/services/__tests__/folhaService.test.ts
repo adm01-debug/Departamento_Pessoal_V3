@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { folhaService } from '../folhaService';
 
+const EMPRESA_ID = 'test-empresa-id';
+
 // ─── shared mock setup ────────────────────────────────────────────────────────
 
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
@@ -32,13 +34,13 @@ describe('folhaService.list', () => {
   it('returns folhas from supabase', async () => {
     const records = [{ id: 'f1', competencia: '2026-01' }];
     setupListChain(records);
-    const result = await folhaService.list();
+    const result = await folhaService.list(EMPRESA_ID);
     expect(result).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
     setupListChain(null as any);
-    const result = await folhaService.list();
+    const result = await folhaService.list(EMPRESA_ID);
     expect(result).toEqual([]);
   });
 
@@ -50,7 +52,7 @@ describe('folhaService.list', () => {
 
   it('filters by competencia when provided', async () => {
     const { chain } = setupListChain([]);
-    await folhaService.list('2026-01');
+    await folhaService.list('2026-01', EMPRESA_ID);
     expect(chain.eq).toHaveBeenCalledWith('competencia', '2026-01');
   });
 
@@ -63,19 +65,19 @@ describe('folhaService.list', () => {
 
   it('orders by competencia descending', async () => {
     const { chain } = setupListChain([]);
-    await folhaService.list();
+    await folhaService.list(EMPRESA_ID);
     expect(chain.order).toHaveBeenCalledWith('competencia', { ascending: false });
   });
 
   it('limits to 500 records', async () => {
     const { chain } = setupListChain([]);
-    await folhaService.list();
+    await folhaService.list(EMPRESA_ID);
     expect(chain.limit).toHaveBeenCalledWith(500);
   });
 
   it('throws on DB error', async () => {
     setupListChain([], { message: 'fail' });
-    await expect(folhaService.list()).rejects.toBeDefined();
+    await expect(folhaService.list(EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 

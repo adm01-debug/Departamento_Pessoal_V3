@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { horaExtraService } from '../horaExtraService';
 
+const EMPRESA_ID = 'test-empresa-id';
+
 // ─── shared mock setup ────────────────────────────────────────────────────────
 
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
@@ -27,7 +29,9 @@ function setupListarChain(data: any[], error: any = null) {
 function setupUpdateChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
-  const eqFn = vi.fn().mockReturnValue({ select: selectFn });
+  const eqFn = vi.fn();
+  const __eqChain = { select: selectFn, eq: eqFn };
+  eqFn.mockReturnValue(__eqChain);
   const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ update: updateFn });
   return { updateFn, eqFn, selectFn, maybeSingle };
@@ -41,13 +45,13 @@ describe('horaExtraService.listar', () => {
   it('returns records without empresa filter', async () => {
     const records = [{ id: 'he-1', status: 'pendente' }];
     setupListarChain(records);
-    const result = await horaExtraService.listar();
+    const result = await horaExtraService.listar(EMPRESA_ID);
     expect(result).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
     setupListarChain(null as any);
-    const result = await horaExtraService.listar();
+    const result = await horaExtraService.listar(EMPRESA_ID);
     expect(result).toEqual([]);
   });
 
@@ -59,19 +63,19 @@ describe('horaExtraService.listar', () => {
 
   it('does not call eq when empresaId is undefined', async () => {
     const { chain } = setupListarChain([]);
-    await horaExtraService.listar();
+    await horaExtraService.listar(EMPRESA_ID);
     expect(chain.eq).not.toHaveBeenCalled();
   });
 
   it('orders by created_at descending', async () => {
     const { chain } = setupListarChain([]);
-    await horaExtraService.listar();
+    await horaExtraService.listar(EMPRESA_ID);
     expect(chain.order).toHaveBeenCalledWith('created_at', { ascending: false });
   });
 
   it('selects with colaborador join', async () => {
     const { selectFn } = setupListarChain([]);
-    await horaExtraService.listar();
+    await horaExtraService.listar(EMPRESA_ID);
     expect(selectFn).toHaveBeenCalledWith(
       expect.stringContaining('colaborador:colaboradores')
     );
@@ -79,7 +83,7 @@ describe('horaExtraService.listar', () => {
 
   it('throws on DB error', async () => {
     setupListarChain([], { message: 'fail' });
-    await expect(horaExtraService.listar()).rejects.toBeDefined();
+    await expect(horaExtraService.listar(EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -193,7 +197,7 @@ describe('horaExtraService.excluir', () => {
     const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockReturnValue({ delete: deleteFn });
 
-    await horaExtraService.excluir('he-1');
+    await horaExtraService.excluir('he-1', EMPRESA_ID);
     expect(deleteFn).toHaveBeenCalled();
     expect(eqFn).toHaveBeenCalledWith('id', 'he-1');
   });
@@ -203,6 +207,6 @@ describe('horaExtraService.excluir', () => {
     const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockReturnValue({ delete: deleteFn });
 
-    await expect(horaExtraService.excluir('he-1')).rejects.toBeDefined();
+    await expect(horaExtraService.excluir('he-1', EMPRESA_ID)).rejects.toBeDefined();
   });
 });

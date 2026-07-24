@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { medidasDisciplinaresService } from '../medidasDisciplinaresService';
 
+const EMPRESA_ID = 'test-empresa-id';
+
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -31,14 +33,18 @@ function setupInsertChain(data: any, error: any = null) {
 function setupUpdateChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
-  const eqFn = vi.fn().mockReturnValue({ select: selectFn });
+  const eqFn = vi.fn();
+  const __eqChain = { select: selectFn, eq: eqFn };
+  eqFn.mockReturnValue(__eqChain);
   const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ update: updateFn });
   return { updateFn, eqFn, selectFn, maybeSingle };
 }
 
 function setupDeleteChain(error: any = null) {
-  const eqFn = vi.fn().mockResolvedValue({ error });
+  const eqFn = vi.fn();
+  const __delChain = { then: (r) => Promise.resolve({ error }).then(r), catch: (r) => Promise.resolve({ error }).catch(r), finally: (r) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
   return { deleteFn, eqFn };
@@ -52,13 +58,13 @@ describe('medidasDisciplinaresService.listar', () => {
   it('returns all medidas without empresa filter', async () => {
     const records = [{ id: 'm1', tipo: 'advertencia' }];
     setupListChain(records);
-    const result = await medidasDisciplinaresService.listar();
+    const result = await medidasDisciplinaresService.listar(EMPRESA_ID);
     expect(result).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
     setupListChain(null as any);
-    const result = await medidasDisciplinaresService.listar();
+    const result = await medidasDisciplinaresService.listar(EMPRESA_ID);
     expect(result).toEqual([]);
   });
 
@@ -70,13 +76,13 @@ describe('medidasDisciplinaresService.listar', () => {
 
   it('orders by data_ocorrencia descending', async () => {
     const { chain } = setupListChain([]);
-    await medidasDisciplinaresService.listar();
+    await medidasDisciplinaresService.listar(EMPRESA_ID);
     expect(chain.order).toHaveBeenCalledWith('data_ocorrencia', { ascending: false });
   });
 
   it('includes colaborador join', async () => {
     const { selectFn } = setupListChain([]);
-    await medidasDisciplinaresService.listar();
+    await medidasDisciplinaresService.listar(EMPRESA_ID);
     expect(selectFn).toHaveBeenCalledWith(
       expect.stringContaining('colaborador:colaboradores')
     );
@@ -84,7 +90,7 @@ describe('medidasDisciplinaresService.listar', () => {
 
   it('throws on DB error', async () => {
     setupListChain([], { message: 'fail' });
-    await expect(medidasDisciplinaresService.listar()).rejects.toBeDefined();
+    await expect(medidasDisciplinaresService.listar(EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -96,20 +102,20 @@ describe('medidasDisciplinaresService.buscarPorColaborador', () => {
   it('returns medidas for given colaboradorId', async () => {
     const records = [{ id: 'm1', colaborador_id: 'c1' }];
     const { chain } = setupListChain(records);
-    const result = await medidasDisciplinaresService.buscarPorColaborador('c1');
+    const result = await medidasDisciplinaresService.buscarPorColaborador('c1', EMPRESA_ID);
     expect(result).toEqual(records);
     expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'c1');
   });
 
   it('returns empty array when no medidas', async () => {
     setupListChain(null as any);
-    const result = await medidasDisciplinaresService.buscarPorColaborador('c-x');
+    const result = await medidasDisciplinaresService.buscarPorColaborador('c-x', EMPRESA_ID);
     expect(result).toEqual([]);
   });
 
   it('orders by data_ocorrencia descending', async () => {
     const { chain } = setupListChain([]);
-    await medidasDisciplinaresService.buscarPorColaborador('c1');
+    await medidasDisciplinaresService.buscarPorColaborador('c1', EMPRESA_ID);
     expect(chain.order).toHaveBeenCalledWith('data_ocorrencia', { ascending: false });
   });
 });
@@ -146,7 +152,7 @@ describe('medidasDisciplinaresService.atualizar', () => {
   it('updates and returns medida', async () => {
     const updated = { id: 'm1', status: 'concluida' };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    const result = await medidasDisciplinaresService.atualizar('m1', { status: 'concluida' });
+    const result = await medidasDisciplinaresService.atualizar('m1', { status: 'concluida' }, EMPRESA_ID);
     expect(updateFn).toHaveBeenCalledWith({ status: 'concluida' });
     expect(eqFn).toHaveBeenCalledWith('id', 'm1');
     expect(result).toEqual(updated);
@@ -154,12 +160,12 @@ describe('medidasDisciplinaresService.atualizar', () => {
 
   it('throws when data is null', async () => {
     setupUpdateChain(null);
-    await expect(medidasDisciplinaresService.atualizar('m1', {})).rejects.toThrow();
+    await expect(medidasDisciplinaresService.atualizar('m1', {}, EMPRESA_ID)).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
     setupUpdateChain(null, { message: 'fail' });
-    await expect(medidasDisciplinaresService.atualizar('m1', {})).rejects.toBeDefined();
+    await expect(medidasDisciplinaresService.atualizar('m1', {}, EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -170,13 +176,13 @@ describe('medidasDisciplinaresService.excluir', () => {
 
   it('deletes medida by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();
-    await medidasDisciplinaresService.excluir('m1');
+    await medidasDisciplinaresService.excluir('m1', EMPRESA_ID);
     expect(deleteFn).toHaveBeenCalled();
     expect(eqFn).toHaveBeenCalledWith('id', 'm1');
   });
 
   it('throws on DB error', async () => {
     setupDeleteChain({ message: 'fail' });
-    await expect(medidasDisciplinaresService.excluir('m1')).rejects.toBeDefined();
+    await expect(medidasDisciplinaresService.excluir('m1', EMPRESA_ID)).rejects.toBeDefined();
   });
 });

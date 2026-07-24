@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { catalogoCursoService } from '../catalogoCursoService';
 
+const EMPRESA_ID = 'test-empresa-id';
+
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -31,14 +33,18 @@ function setupInsertChain(data: any, error: any = null) {
 function setupUpdateChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
-  const eqFn = vi.fn().mockReturnValue({ select: selectFn });
+  const eqFn = vi.fn();
+  const __eqChain = { select: selectFn, eq: eqFn };
+  eqFn.mockReturnValue(__eqChain);
   const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ update: updateFn });
   return { updateFn, eqFn, selectFn, maybeSingle };
 }
 
 function setupDeleteChain(error: any = null) {
-  const eqFn = vi.fn().mockResolvedValue({ error });
+  const eqFn = vi.fn();
+  const __delChain = { then: (r) => Promise.resolve({ error }).then(r), catch: (r) => Promise.resolve({ error }).catch(r), finally: (r) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
   return { deleteFn, eqFn };
@@ -52,12 +58,12 @@ describe('catalogoCursoService.listarCursos', () => {
   it('returns cursos without empresa filter', async () => {
     const records = [{ id: 'c1', nome: 'Excel Avançado' }];
     setupListChain(records);
-    expect(await catalogoCursoService.listarCursos()).toEqual(records);
+    expect(await catalogoCursoService.listarCursos(EMPRESA_ID)).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
     setupListChain(null as any);
-    expect(await catalogoCursoService.listarCursos()).toEqual([]);
+    expect(await catalogoCursoService.listarCursos(EMPRESA_ID)).toEqual([]);
   });
 
   it('filters by empresa_id when provided', async () => {
@@ -68,13 +74,13 @@ describe('catalogoCursoService.listarCursos', () => {
 
   it('orders by nome', async () => {
     const { chain } = setupListChain([]);
-    await catalogoCursoService.listarCursos();
+    await catalogoCursoService.listarCursos(EMPRESA_ID);
     expect(chain.order).toHaveBeenCalledWith('nome');
   });
 
   it('throws on DB error', async () => {
     setupListChain([], { message: 'fail' });
-    await expect(catalogoCursoService.listarCursos()).rejects.toBeDefined();
+    await expect(catalogoCursoService.listarCursos(EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -101,7 +107,7 @@ describe('catalogoCursoService.atualizarCurso', () => {
   it('updates and returns curso', async () => {
     const updated = { id: 'c1', carga_horaria: 20 };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    const result = await catalogoCursoService.atualizarCurso('c1', { carga_horaria: 20 });
+    const result = await catalogoCursoService.atualizarCurso('c1', { carga_horaria: 20 }, EMPRESA_ID);
     expect(updateFn).toHaveBeenCalledWith({ carga_horaria: 20 });
     expect(eqFn).toHaveBeenCalledWith('id', 'c1');
     expect(result).toEqual(updated);
@@ -109,7 +115,7 @@ describe('catalogoCursoService.atualizarCurso', () => {
 
   it('throws when data is null', async () => {
     setupUpdateChain(null);
-    await expect(catalogoCursoService.atualizarCurso('c1', {})).rejects.toThrow();
+    await expect(catalogoCursoService.atualizarCurso('c1', {}, EMPRESA_ID)).rejects.toThrow();
   });
 });
 
@@ -118,7 +124,7 @@ describe('catalogoCursoService.excluirCurso', () => {
 
   it('deletes curso by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await catalogoCursoService.excluirCurso('c1');
+    await catalogoCursoService.excluirCurso('c1', EMPRESA_ID);
     expect(eqFn).toHaveBeenCalledWith('id', 'c1');
   });
 });
@@ -131,7 +137,7 @@ describe('catalogoCursoService.listarTrilhas', () => {
   it('returns trilhas without empresa filter', async () => {
     const records = [{ id: 't1', titulo: 'Trilha Dev' }];
     setupListChain(records);
-    expect(await catalogoCursoService.listarTrilhas()).toEqual(records);
+    expect(await catalogoCursoService.listarTrilhas(EMPRESA_ID)).toEqual(records);
   });
 
   it('filters by empresa_id when provided', async () => {
@@ -142,7 +148,7 @@ describe('catalogoCursoService.listarTrilhas', () => {
 
   it('orders by titulo', async () => {
     const { chain } = setupListChain([]);
-    await catalogoCursoService.listarTrilhas();
+    await catalogoCursoService.listarTrilhas(EMPRESA_ID);
     expect(chain.order).toHaveBeenCalledWith('titulo');
   });
 });
@@ -168,7 +174,7 @@ describe('catalogoCursoService.excluirTrilha', () => {
 
   it('deletes trilha by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await catalogoCursoService.excluirTrilha('t1');
+    await catalogoCursoService.excluirTrilha('t1', EMPRESA_ID);
     expect(eqFn).toHaveBeenCalledWith('id', 't1');
   });
 });
@@ -230,7 +236,7 @@ describe('catalogoCursoService.atualizarInscricao', () => {
   it('updates and returns inscricao', async () => {
     const updated = { id: 'i1', status: 'concluida' };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    const result = await catalogoCursoService.atualizarInscricao('i1', { status: 'concluida' });
+    const result = await catalogoCursoService.atualizarInscricao('i1', { status: 'concluida' }, EMPRESA_ID);
     expect(updateFn).toHaveBeenCalledWith({ status: 'concluida' });
     expect(eqFn).toHaveBeenCalledWith('id', 'i1');
     expect(result).toEqual(updated);
