@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { safeErrorMessage } from "@/utils/safeError";
 
 import type { RegimeTributario } from "@/constants/regimes";
 
@@ -205,13 +206,17 @@ export function useEmpresas(): UseEmpresasReturn {
       toast.success("Empresa criada com sucesso!");
     },
     onError: (error: Error) => {
-      toast.error(`Erro ao criar empresa: ${error.message}`);
+      toast.error(safeErrorMessage(error, 'Erro ao criar empresa.'));
     },
   });
 
   // Atualizar empresa
   const atualizarEmpresa = useMutation({
     mutationFn: async ({ id, ...dados }: Partial<Empresa> & { id: string }) => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Sessão expirada. Faça login novamente.');
+      const { data: membership } = await supabase.from("user_empresas").select("id").eq("user_id", user.id).eq("empresa_id", id).maybeSingle();
+      if (!membership) throw new Error('Sem permissão para atualizar esta empresa.');
       const { data, error } = await supabase.from("empresas").update(dados).eq("id", id).select().maybeSingle();
 
       if (error) throw error;
@@ -223,7 +228,7 @@ export function useEmpresas(): UseEmpresasReturn {
       toast.success("Empresa atualizada!");
     },
     onError: (error: Error) => {
-      toast.error(`Erro ao atualizar: ${error.message}`);
+      toast.error(safeErrorMessage(error, 'Erro ao atualizar empresa.'));
     },
   });
 
@@ -256,7 +261,7 @@ export function useEmpresas(): UseEmpresasReturn {
       toast.success("Usuário associado à empresa!");
     },
     onError: (error: Error) => {
-      toast.error(`Erro: ${error.message}`);
+      toast.error(safeErrorMessage(error, 'Erro ao associar usuário.'));
     },
   });
 

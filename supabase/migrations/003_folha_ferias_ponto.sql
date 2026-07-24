@@ -50,6 +50,7 @@ CREATE TABLE IF NOT EXISTS folha_itens (
 CREATE TABLE IF NOT EXISTS ferias (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   colaborador_id UUID NOT NULL REFERENCES colaboradores(id) ON DELETE CASCADE,
+  empresa_id UUID REFERENCES empresas(id) ON DELETE CASCADE,
   periodo_aquisitivo_inicio DATE NOT NULL,
   periodo_aquisitivo_fim DATE NOT NULL,
   periodo_gozo_inicio DATE,

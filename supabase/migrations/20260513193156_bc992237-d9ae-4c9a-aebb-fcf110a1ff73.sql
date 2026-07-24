@@ -14,10 +14,12 @@ CREATE TABLE IF NOT EXISTS public.treinamento_certificados (
 -- RLS para Certificados
 ALTER TABLE public.treinamento_certificados ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Colaboradores veem seus próprios certificados" ON public.treinamento_certificados;
 CREATE POLICY "Colaboradores veem seus próprios certificados"
 ON public.treinamento_certificados FOR SELECT
 USING (auth.uid() = (SELECT user_id FROM public.profiles WHERE id = colaborador_id));
 
+DROP POLICY IF EXISTS "RH e Gestores veem todos os certificados" ON public.treinamento_certificados;
 CREATE POLICY "RH e Gestores veem todos os certificados"
 ON public.treinamento_certificados FOR SELECT
 USING (auth.uid() IN (
@@ -38,6 +40,7 @@ CREATE TABLE IF NOT EXISTS public.treinamento_feedbacks (
 -- RLS para Feedbacks
 ALTER TABLE public.treinamento_feedbacks ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Usuários criam feedbacks de suas inscrições" ON public.treinamento_feedbacks;
 CREATE POLICY "Usuários criam feedbacks de suas inscrições"
 ON public.treinamento_feedbacks FOR INSERT
 WITH CHECK (EXISTS (

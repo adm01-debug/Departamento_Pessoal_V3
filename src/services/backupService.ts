@@ -26,10 +26,11 @@ const BACKUP_TABLES = [
 
 type BackupTable = typeof BACKUP_TABLES[number];
 
-async function fetchTableData(table: string) {
+async function fetchTableData(table: string, empresaId: string) {
   const { data, error } = await supabase
     .from(table as any)
     .select('*')
+    .eq('empresa_id', empresaId)
     .limit(10000);
 
   if (error) throw new Error(`Erro ao exportar ${table}: ${error.message}`);
@@ -43,10 +44,12 @@ function formatBytes(bytes: number): string {
 }
 
 export async function exportarBackupCSV(
+  empresaId: string,
   tables?: string[]
 ): Promise<{ blob: Blob; fileName: string; stats: { tabelas: number; registros: number; tamanho: string } }> {
+  if (!empresaId) throw new Error('empresaId é obrigatório para exportação');
   const targetTables = tables || [...BACKUP_TABLES];
-  const results = await Promise.allSettled(targetTables.map(fetchTableData));
+  const results = await Promise.allSettled(targetTables.map(t => fetchTableData(t, empresaId)));
 
   let csvContent = '';
   let totalRecords = 0;
@@ -72,7 +75,7 @@ export async function exportarBackupCSV(
     }
   }
 
-  const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const blob = new Blob(['﻿' + csvContent], { type: 'text/csv;charset=utf-8;' });
   const now = new Date();
   const fileName = `backup_dp_${formatDateLocalISO(now)}_${now.toTimeString().slice(0, 5).replace(':', 'h')}.csv`;
 
@@ -88,10 +91,12 @@ export async function exportarBackupCSV(
 }
 
 export async function exportarBackupJSON(
+  empresaId: string,
   tables?: string[]
 ): Promise<{ blob: Blob; fileName: string; stats: { tabelas: number; registros: number; tamanho: string } }> {
+  if (!empresaId) throw new Error('empresaId é obrigatório para exportação');
   const targetTables = tables || [...BACKUP_TABLES];
-  const results = await Promise.allSettled(targetTables.map(fetchTableData));
+  const results = await Promise.allSettled(targetTables.map(t => fetchTableData(t, empresaId)));
 
   const output: Record<string, any[]> = {};
   let totalRecords = 0;
@@ -106,6 +111,7 @@ export async function exportarBackupJSON(
   const json = JSON.stringify({
     metadata: {
       gerado_em: new Date().toISOString(),
+      empresa_id: empresaId,
       tabelas: Object.keys(output).length,
       total_registros: totalRecords,
     },

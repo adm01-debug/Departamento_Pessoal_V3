@@ -31,10 +31,10 @@ Deno.serve(async (req: Request) => {
       global: { headers: { Authorization: `Bearer ${jwt}` } },
       auth: { persistSession: false, autoRefreshToken: false },
     });
-    const { data: claims, error: claimsErr } = await userClient.auth.getClaims(jwt);
-    if (claimsErr || !claims?.claims?.sub) return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
+    const { data: claims, error: claimsErr } = await userClient.auth.getUser();
+    if (claimsErr || !claims?.user?.id) return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
 
-    const userId = String(claims.claims.sub);
+    const userId = claims.user.id;
     const admin = createClient(SUPABASE_URL, SERVICE_KEY, {
       auth: { persistSession: false, autoRefreshToken: false },
     });
@@ -43,6 +43,10 @@ Deno.serve(async (req: Request) => {
     const { data: roles } = await admin.rpc('get_user_roles', { _user_id: userId });
     const allowed = Array.isArray(roles) && roles.some((r: string) => r === 'admin' || r === 'rh');
     if (!allowed) return createErrorResponse('Sem permissão', 403, 'FORBIDDEN');
+
+    const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
+    const rl = await checkRateLimit(admin, { key: `folha-metrics:${userId}`, limit: 30, windowSec: 60 });
+    if (!rl.allowed) return rateLimitResponse(rl);
 
     const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 

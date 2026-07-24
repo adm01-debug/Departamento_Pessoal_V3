@@ -42,9 +42,10 @@ export function usePontoOffline() {
     }
   };
 
-  const sync = useCallback(async () => {
-    if (isSyncingRef.current || !navigator.onLine) return;
-    isSyncingRef.current = true;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const sync = async () => {
+    if (isSyncing || !navigator.onLine) return;
+    
     setIsSyncing(true);
     try {
       const result = await pontoOfflineService.syncOfflineQueue();
@@ -66,8 +67,11 @@ export function usePontoOffline() {
   useEffect(() => {
     const handleOnline = () => sync();
     window.addEventListener('online', handleOnline);
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (navigator.onLine) { sync(); }
+    // Tenta sincronizar se já estiver online ao montar
+    if (navigator.onLine) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      sync();
+    }
     return () => window.removeEventListener('online', handleOnline);
   }, [sync]);
 

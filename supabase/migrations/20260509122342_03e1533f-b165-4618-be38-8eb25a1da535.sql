@@ -16,12 +16,14 @@ CREATE TABLE IF NOT EXISTS public.personnel_budget (
 ALTER TABLE public.personnel_budget ENABLE ROW LEVEL SECURITY;
 
 -- Policies (Simplified)
+DROP POLICY IF EXISTS "Users can view budgets of their own company" ON public.personnel_budget;
 CREATE POLICY "Users can view budgets of their own company"
     ON public.personnel_budget FOR SELECT
     USING (EXISTS (
         SELECT 1 FROM public.profiles WHERE id = auth.uid() AND empresa_id = personnel_budget.empresa_id
     ));
 
+DROP POLICY IF EXISTS "Users can manage budgets of their own company" ON public.personnel_budget;
 CREATE POLICY "Users can manage budgets of their own company"
     ON public.personnel_budget FOR ALL
     USING (EXISTS (

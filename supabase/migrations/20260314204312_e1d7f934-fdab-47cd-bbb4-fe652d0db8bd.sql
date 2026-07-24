@@ -4,6 +4,7 @@ DROP POLICY IF EXISTS "Authenticated users can insert notifications" ON public.n
 DROP POLICY IF EXISTS "Authenticated users can update notifications" ON public.notificacoes;
 DROP POLICY IF EXISTS "Authenticated users can delete notifications" ON public.notificacoes;
 
+DROP POLICY IF EXISTS "Users can manage scoped notifications" ON public.notificacoes;
 CREATE POLICY "Users can manage scoped notifications"
 ON public.notificacoes
 FOR ALL
@@ -28,6 +29,7 @@ WITH CHECK (
 -- Harden periodos_aquisitivos RLS by company membership through collaborator
 DROP POLICY IF EXISTS "Authenticated users can manage periodos_aquisitivos" ON public.periodos_aquisitivos;
 
+DROP POLICY IF EXISTS "Users can manage periodos by empresa" ON public.periodos_aquisitivos;
 CREATE POLICY "Users can manage periodos by empresa"
 ON public.periodos_aquisitivos
 FOR ALL

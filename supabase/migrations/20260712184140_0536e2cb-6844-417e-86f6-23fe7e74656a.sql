@@ -21,6 +21,7 @@ GRANT ALL ON public.idempotency_keys TO service_role;
 
 ALTER TABLE public.idempotency_keys ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "idempotency service role only" ON public.idempotency_keys;
 CREATE POLICY "idempotency service role only"
   ON public.idempotency_keys
   FOR ALL

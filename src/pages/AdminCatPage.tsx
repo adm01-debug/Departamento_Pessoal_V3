@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { AlertTriangle, FileText, Plus, Send, ShieldAlert, Clock, Skull } from 'lucide-react';
 
 const catSchema = z.object({
@@ -100,7 +101,8 @@ export default function AdminCatPage() {
     }
   }, [empresaId]);
 
-  useEffect(() => { void carregar(); }, [carregar]); // eslint-disable-line react-hooks/set-state-in-effect
+  // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps
+  useEffect(() => { void carregar(); }, [empresaId]);
 
   const onSubmit = async (values: CatForm) => {
     if (!empresaId) return;
@@ -116,7 +118,7 @@ export default function AdminCatPage() {
       form.reset();
       void carregar();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Erro ao salvar');
+      toast.error(safeErrorMessage(e, 'Erro ao salvar CAT.'));
     }
   };
 

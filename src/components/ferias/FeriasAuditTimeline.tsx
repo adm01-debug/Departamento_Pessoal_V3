@@ -1,6 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { auditoriaService, feriasService } from '@/services';
+import { useEmpresas } from '@/hooks/useEmpresas';
 import { 
   CheckCircle2, 
   Clock, 
@@ -29,15 +30,17 @@ interface FeriasAuditTimelineProps {
 
 export function FeriasAuditTimeline({ solicitacaoId }: FeriasAuditTimelineProps) {
   const [filtro, setFiltro] = React.useState<string>('all');
-  
+  const { empresaAtual } = useEmpresas();
+  const empresaId = empresaAtual?.id || '';
+
   const { data: logs, isLoading: loadingAudit } = useQuery({
-    queryKey: ['ferias-audit', solicitacaoId],
-    queryFn: () => auditoriaService.listar({ 
+    queryKey: ['ferias-audit', solicitacaoId, empresaId],
+    queryFn: () => auditoriaService.listar(empresaId, {
       registro_id: solicitacaoId,
       tabela: 'ferias',
-      limite: 50 
+      limite: 50
     }),
-    enabled: !!solicitacaoId
+    enabled: !!solicitacaoId && !!empresaId
   });
 
   const { data: aprovacoes, isLoading: loadingAprov } = useQuery({
@@ -51,7 +54,7 @@ export function FeriasAuditTimeline({ solicitacaoId }: FeriasAuditTimelineProps)
   const filteredLogs = React.useMemo(() => {
     if (!logs) return [];
     if (filtro === 'all') return logs;
-    return logs.filter(log => {
+    return logs.filter((log: any) => {
       const dados = (log.dados_novos as any) || {};
       if (filtro === 'aprovacao') return dados.aprovado_rh || dados.aprovado_gestor;
       if (filtro === 'criacao') return log.acao === 'INSERT';
@@ -132,7 +135,7 @@ export function FeriasAuditTimeline({ solicitacaoId }: FeriasAuditTimelineProps)
             ))}
 
             {/* Logs de Auditoria de Sistema */}
-            {filteredLogs.map((log, i) => {
+            {filteredLogs.map((log: any, i: number) => {
               const dados = (log.dados_novos as any) || {};
               return (
                 <div key={log.id} className="relative pl-12">

@@ -1,6 +1,7 @@
 -- Garantir RLS na tabela de rubricas
 ALTER TABLE public.rubricas_folha ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Empresas podem ver suas rubricas" ON public.rubricas_folha;
 CREATE POLICY "Empresas podem ver suas rubricas"
 ON public.rubricas_folha
 FOR SELECT

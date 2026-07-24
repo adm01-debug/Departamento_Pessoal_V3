@@ -11,8 +11,8 @@ export const beneficiariosPlanoService = {
     const { error } = await supabase.from('beneficiarios_plano').insert(d);
     if (error) throw error;
   },
-  excluir: async (id: string) => {
-    const { error } = await supabase.from('beneficiarios_plano').update({ status: 'excluido', data_exclusao: todayLocalISO() }).eq('id', id);
+  excluir: async (planoId: string, id: string) => {
+    const { error } = await supabase.from('beneficiarios_plano').update({ status: 'excluido', data_exclusao: todayLocalISO() }).eq('id', id).eq('plano_saude_id', planoId);
     if (error) throw error;
   },
 };
@@ -27,15 +27,16 @@ export const beneficiariosSeguroService = {
     const { error } = await supabase.from('beneficiarios_seguro').insert(d);
     if (error) throw error;
   },
-  excluir: async (id: string) => {
-    const { error } = await supabase.from('beneficiarios_seguro').update({ status: 'inativo' }).eq('id', id);
+  excluir: async (seguroId: string, id: string) => {
+    const { error } = await supabase.from('beneficiarios_seguro').update({ status: 'inativo' }).eq('id', id).eq('seguro_vida_id', seguroId);
     if (error) throw error;
   },
 };
 
 export const colaboradorBeneficiosService = {
-  listar: async (colaboradorId: string) => {
-    const { data, error } = await supabase.from('colaborador_beneficios').select('*').eq('colaborador_id', colaboradorId);
+  listar: async (colaboradorId: string, empresaId: string) => {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { data, error } = await (supabase as any).from('colaborador_beneficios').select('*').eq('colaborador_id', colaboradorId).eq('empresa_id', empresaId);
     if (error) throw error;
     return data || [];
   },
@@ -53,8 +54,9 @@ export const segurosColaboradoresService = {
     const { error } = await supabase.from('seguros_colaboradores').insert(d);
     if (error) throw error;
   },
-  desvincular: async (id: string) => {
-    const { error } = await supabase.from('seguros_colaboradores').delete().eq('id', id);
+  desvincular: async (seguroVidaId: string, id: string) => {
+    if (!seguroVidaId) throw new Error('seguro_vida_id obrigatório para isolamento de tenant');
+    const { error } = await supabase.from('seguros_colaboradores').delete().eq('id', id).eq('seguro_vida_id', seguroVidaId);
     if (error) throw error;
   },
 };

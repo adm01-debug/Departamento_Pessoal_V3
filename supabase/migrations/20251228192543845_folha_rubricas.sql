@@ -12,12 +12,15 @@ CREATE TABLE IF NOT EXISTS folha_rubricas (
 -- Add RLS Policies
 ALTER TABLE folha_rubricas ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "folha_rubricas_select" ON public.folha_rubricas;
 CREATE POLICY "folha_rubricas_select" ON folha_rubricas
   FOR SELECT USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "folha_rubricas_insert" ON public.folha_rubricas;
 CREATE POLICY "folha_rubricas_insert" ON folha_rubricas
   FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "folha_rubricas_update" ON public.folha_rubricas;
 CREATE POLICY "folha_rubricas_update" ON folha_rubricas
   FOR UPDATE USING (auth.role() = 'authenticated');
 
@@ -33,6 +36,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_folha_rubricas_updated_at ON public.folha_rubricas;
 CREATE TRIGGER trigger_folha_rubricas_updated_at
   BEFORE UPDATE ON folha_rubricas
   FOR EACH ROW

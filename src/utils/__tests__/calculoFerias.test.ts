@@ -50,8 +50,8 @@ describe('calculoFerias', () => {
     // Valor dia: 100
     // 20 dias férias: 2000
     expect(result.valorFerias).toBe(2000);
-    // 1/3 de 2000: 666.67
-    expect(result.tercoConstitucional).toBe(666.67);
+    // 1/3 de 2000 truncado a centavos: 666.66 (Math.trunc, não Math.round)
+    expect(result.tercoConstitucional).toBe(666.66);
     // 10 dias abono: 1000
     expect(result.valorAbono).toBe(1000);
     // 1/3 abono: 333.33

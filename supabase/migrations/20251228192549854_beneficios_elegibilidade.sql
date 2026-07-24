@@ -12,12 +12,15 @@ CREATE TABLE IF NOT EXISTS beneficios_elegibilidade (
 -- Add RLS Policies
 ALTER TABLE beneficios_elegibilidade ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "beneficios_elegibilidade_select" ON public.beneficios_elegibilidade;
 CREATE POLICY "beneficios_elegibilidade_select" ON beneficios_elegibilidade
   FOR SELECT USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "beneficios_elegibilidade_insert" ON public.beneficios_elegibilidade;
 CREATE POLICY "beneficios_elegibilidade_insert" ON beneficios_elegibilidade
   FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "beneficios_elegibilidade_update" ON public.beneficios_elegibilidade;
 CREATE POLICY "beneficios_elegibilidade_update" ON beneficios_elegibilidade
   FOR UPDATE USING (auth.role() = 'authenticated');
 
@@ -33,6 +36,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_beneficios_elegibilidade_updated_at ON public.beneficios_elegibilidade;
 CREATE TRIGGER trigger_beneficios_elegibilidade_updated_at
   BEFORE UPDATE ON beneficios_elegibilidade
   FOR EACH ROW

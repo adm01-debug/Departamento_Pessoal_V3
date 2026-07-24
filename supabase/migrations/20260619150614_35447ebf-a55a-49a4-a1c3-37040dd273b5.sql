@@ -1,10 +1,12 @@
 -- ============================================================
 -- 1) Restaurar políticas em tabelas que ficaram sem RLS após drops
 -- ============================================================
+DROP POLICY IF EXISTS "Simulacoes scoped by empresa" ON public.simulacoes_fiscais;
 CREATE POLICY "Simulacoes scoped by empresa" ON public.simulacoes_fiscais FOR ALL TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())))
   WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
 
+DROP POLICY IF EXISTS "GovBR state service only" ON public.govbr_auth_state;
 CREATE POLICY "GovBR state service only" ON public.govbr_auth_state FOR ALL TO service_role
   USING (true) WITH CHECK (true);
 
@@ -12,6 +14,7 @@ CREATE POLICY "GovBR state service only" ON public.govbr_auth_state FOR ALL TO s
 -- 2) Restringir política de telemetria
 -- ============================================================
 DROP POLICY IF EXISTS "Telemetria inserível por service_role" ON public.query_telemetry;
+DROP POLICY IF EXISTS "Telemetria insert service role" ON public.query_telemetry;
 CREATE POLICY "Telemetria insert service role" ON public.query_telemetry FOR INSERT TO service_role
   WITH CHECK (true);
 

@@ -1,5 +1,7 @@
 // V25: Auth Service - Result Pattern & Enhanced Security
 import { supabase } from '@/integrations/supabase/client';
+import { validatePasswordFull } from '@/utils/passwordPolicy';
+
 export const authService = {
   /**
    * Solicita recuperação de senha
@@ -19,15 +21,19 @@ export const authService = {
   },
 
   /**
-   * Reseta a senha do usuário
+   * Reseta a senha do usuário (with HIBP breach check)
    */
-  async resetPassword(newPassword: string): Promise<{ success: boolean }> {
+  async resetPassword(newPassword: string): Promise<{ success: boolean; warnings?: string[] }> {
+    const pwCheck = await validatePasswordFull(newPassword);
+    if (!pwCheck.valid) {
+      throw new Error(`Senha fraca: ${pwCheck.errors.join('; ')}`);
+    }
     try {
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) {
         throw new Error(error.message || 'Falha ao atualizar senha');
       }
-      return ({ success: true });
+      return ({ success: true, warnings: pwCheck.warnings });
     } catch (e: any) {
       throw new Error(e.message || 'Erro inesperado ao redefinir senha', { cause: e });
     }

@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS public.seguros_colaboradores (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.seguros_colaboradores ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage seguros_colaboradores" ON public.seguros_colaboradores;
 CREATE POLICY "Auth users manage seguros_colaboradores" ON public.seguros_colaboradores FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- beneficiarios_seguro (seguroVidaService.ts)
@@ -24,6 +25,7 @@ CREATE TABLE IF NOT EXISTS public.beneficiarios_seguro (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.beneficiarios_seguro ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage beneficiarios_seguro" ON public.beneficiarios_seguro;
 CREATE POLICY "Auth users manage beneficiarios_seguro" ON public.beneficiarios_seguro FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- sinistros_seguro (seguroVidaService.ts)
@@ -38,4 +40,5 @@ CREATE TABLE IF NOT EXISTS public.sinistros_seguro (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.sinistros_seguro ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage sinistros_seguro" ON public.sinistros_seguro;
 CREATE POLICY "Auth users manage sinistros_seguro" ON public.sinistros_seguro FOR ALL TO authenticated USING (true) WITH CHECK (true);

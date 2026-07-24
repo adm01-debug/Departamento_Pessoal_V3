@@ -4,16 +4,19 @@ VALUES ('ponto-biometria', 'ponto-biometria', false)
 ON CONFLICT (id) DO NOTHING;
 
 -- 2. Políticas de Storage para Biometria
+DROP POLICY IF EXISTS "Colaboradores podem dar upload de sua própria biometria" ON storage.objects;
 CREATE POLICY "Colaboradores podem dar upload de sua própria biometria"
 ON storage.objects FOR INSERT
 TO authenticated
 WITH CHECK (bucket_id = 'ponto-biometria' AND (storage.foldername(name))[1] = auth.uid()::text);
 
+DROP POLICY IF EXISTS "Colaboradores podem ver sua própria biometria" ON storage.objects;
 CREATE POLICY "Colaboradores podem ver sua própria biometria"
 ON storage.objects FOR SELECT
 TO authenticated
 USING (bucket_id = 'ponto-biometria' AND (storage.foldername(name))[1] = auth.uid()::text);
 
+DROP POLICY IF EXISTS "Gestores podem ver todas as biometrias" ON storage.objects;
 CREATE POLICY "Gestores podem ver todas as biometrias"
 ON storage.objects FOR SELECT
 TO authenticated

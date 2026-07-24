@@ -43,6 +43,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON public.clinicas_partners TO authenticate
 GRANT ALL ON public.clinicas_partners TO service_role;
 ALTER TABLE public.clinicas_partners ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "clinicas_partners_select_empresa" ON public.clinicas_partners;
 CREATE POLICY "clinicas_partners_select_empresa"
   ON public.clinicas_partners FOR SELECT TO authenticated
   USING (
@@ -52,6 +53,7 @@ CREATE POLICY "clinicas_partners_select_empresa"
     )
   );
 
+DROP POLICY IF EXISTS "clinicas_partners_manage_admin_rh" ON public.clinicas_partners;
 CREATE POLICY "clinicas_partners_manage_admin_rh"
   ON public.clinicas_partners FOR ALL TO authenticated
   USING (
@@ -71,9 +73,9 @@ CREATE POLICY "clinicas_partners_manage_admin_rh"
     )
   );
 
-CREATE INDEX idx_clinicas_partners_empresa_status ON public.clinicas_partners (empresa_id, status);
-CREATE INDEX idx_clinicas_partners_cidade_uf ON public.clinicas_partners (uf, cidade);
-CREATE INDEX idx_clinicas_partners_geo ON public.clinicas_partners (geo_lat, geo_lng) WHERE geo_lat IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_clinicas_partners_empresa_status ON public.clinicas_partners (empresa_id, status);
+CREATE INDEX IF NOT EXISTS idx_clinicas_partners_cidade_uf ON public.clinicas_partners (uf, cidade);
+CREATE INDEX IF NOT EXISTS idx_clinicas_partners_geo ON public.clinicas_partners (geo_lat, geo_lng) WHERE geo_lat IS NOT NULL;
 
 -- 2) SERVIÇOS OFERECIDOS -------------------------------------
 CREATE TABLE IF NOT EXISTS public.clinicas_partners_servicos (
@@ -92,6 +94,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON public.clinicas_partners_servicos TO aut
 GRANT ALL ON public.clinicas_partners_servicos TO service_role;
 ALTER TABLE public.clinicas_partners_servicos ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "clinicas_servicos_via_clinica" ON public.clinicas_partners_servicos;
 CREATE POLICY "clinicas_servicos_via_clinica"
   ON public.clinicas_partners_servicos FOR ALL TO authenticated
   USING (
@@ -113,7 +116,7 @@ CREATE POLICY "clinicas_servicos_via_clinica"
     )
   );
 
-CREATE INDEX idx_clinicas_servicos_clinica ON public.clinicas_partners_servicos (clinica_id, ativo);
+CREATE INDEX IF NOT EXISTS idx_clinicas_servicos_clinica ON public.clinicas_partners_servicos (clinica_id, ativo);
 
 -- 3) HORÁRIOS ------------------------------------------------
 CREATE TABLE IF NOT EXISTS public.clinicas_partners_horarios (
@@ -135,6 +138,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON public.clinicas_partners_horarios TO aut
 GRANT ALL ON public.clinicas_partners_horarios TO service_role;
 ALTER TABLE public.clinicas_partners_horarios ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "clinicas_horarios_via_clinica" ON public.clinicas_partners_horarios;
 CREATE POLICY "clinicas_horarios_via_clinica"
   ON public.clinicas_partners_horarios FOR ALL TO authenticated
   USING (
@@ -156,17 +160,20 @@ CREATE POLICY "clinicas_horarios_via_clinica"
     )
   );
 
-CREATE INDEX idx_clinicas_horarios_clinica_dia ON public.clinicas_partners_horarios (clinica_id, dia_semana);
+CREATE INDEX IF NOT EXISTS idx_clinicas_horarios_clinica_dia ON public.clinicas_partners_horarios (clinica_id, dia_semana);
 
 -- 4) TRIGGERS updated_at -------------------------------------
+DROP TRIGGER IF EXISTS trg_clinicas_partners_upd ON public.clinicas_partners;
 CREATE TRIGGER trg_clinicas_partners_upd
   BEFORE UPDATE ON public.clinicas_partners
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
+DROP TRIGGER IF EXISTS trg_clinicas_servicos_upd ON public.clinicas_partners_servicos;
 CREATE TRIGGER trg_clinicas_servicos_upd
   BEFORE UPDATE ON public.clinicas_partners_servicos
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
+DROP TRIGGER IF EXISTS trg_clinicas_horarios_upd ON public.clinicas_partners_horarios;
 CREATE TRIGGER trg_clinicas_horarios_upd
   BEFORE UPDATE ON public.clinicas_partners_horarios
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();

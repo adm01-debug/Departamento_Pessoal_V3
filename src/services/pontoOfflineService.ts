@@ -2,7 +2,31 @@ import { supabase } from '@/integrations/supabase/client';
 import CryptoJS from 'crypto-js';
 
 const PONTO_OFFLINE_STORAGE_KEY = 'ponto_offline_queue';
-const CRYPTO_KEY = 'lovable-ponto-secure-v1';
+
+function getCryptoKey(): string {
+  const sessionData = sessionStorage.getItem('sb-session-id') || '';
+  const userAgent = navigator.userAgent || '';
+  return CryptoJS.SHA256(`ponto-offline:${sessionData}:${userAgent}`).toString().slice(0, 32);
+}
+const LEGACY_KEY = 'lovable-ponto-secure-v1';
+
+function decryptQueue(stored: string): OfflineRegistro[] {
+  try {
+    const bytes = CryptoJS.AES.decrypt(stored, getCryptoKey());
+    return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+  } catch {
+    try {
+      const bytes = CryptoJS.AES.decrypt(stored, LEGACY_KEY);
+      return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    } catch {
+      return [];
+    }
+  }
+}
+
+function encryptQueue(queue: OfflineRegistro[]): string {
+  return CryptoJS.AES.encrypt(JSON.stringify(queue), getCryptoKey()).toString();
+}
 
 export interface OfflineRegistro {
   id: string;
@@ -63,15 +87,14 @@ export const pontoOfflineService = {
     
     if (stored) {
       try {
-        const bytes = CryptoJS.AES.decrypt(stored, CRYPTO_KEY);
-        queue = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+        queue = decryptQueue(stored);
       } catch (e) {
         queue = [];
       }
     }
     
     queue.push(entryWithId);
-    const encrypted = CryptoJS.AES.encrypt(JSON.stringify(queue), CRYPTO_KEY).toString();
+    const encrypted = encryptQueue(queue);
     localStorage.setItem(PONTO_OFFLINE_STORAGE_KEY, encrypted);
     
     // Disparar evento customizado para notificar abas
@@ -86,8 +109,8 @@ export const pontoOfflineService = {
 
     let queue: OfflineRegistro[];
     try {
-      const bytes = CryptoJS.AES.decrypt(stored, CRYPTO_KEY);
-      queue = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      queue = decryptQueue(stored);
+      if (!queue.length && stored) throw new Error('empty');
     } catch (e) {
       localStorage.removeItem(PONTO_OFFLINE_STORAGE_KEY);
       return { synced: 0, errors: 1 };
@@ -155,7 +178,7 @@ export const pontoOfflineService = {
           await db.delete('photos', item.id);
         }
       }
-      const encrypted = CryptoJS.AES.encrypt(JSON.stringify(remaining), CRYPTO_KEY).toString();
+      const encrypted = encryptQueue(remaining);
       localStorage.setItem(PONTO_OFFLINE_STORAGE_KEY, encrypted);
     }
     return { synced, errors };
@@ -165,8 +188,7 @@ export const pontoOfflineService = {
     const stored = localStorage.getItem(PONTO_OFFLINE_STORAGE_KEY);
     if (!stored) return 0;
     try {
-      const bytes = CryptoJS.AES.decrypt(stored, CRYPTO_KEY);
-      const queue = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      const queue = decryptQueue(stored);
       return queue.length;
     } catch (e) {
       return 0;

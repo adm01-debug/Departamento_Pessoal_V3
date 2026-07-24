@@ -32,6 +32,7 @@ CREATE INDEX IF NOT EXISTS idx_epis_status ON public.epis(status);
 -- RLS
 ALTER TABLE public.epis ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "epis_all" ON public.epis;
 CREATE POLICY "epis_all" ON public.epis
   USING (auth.uid() IS NOT NULL)
   WITH CHECK (auth.uid() IS NOT NULL);

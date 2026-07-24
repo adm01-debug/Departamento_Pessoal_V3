@@ -33,9 +33,11 @@ ALTER TABLE public.provisoes_mensais ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.provisao_logs ENABLE ROW LEVEL SECURITY;
 
 -- 4. Políticas de Acesso
+DROP POLICY IF EXISTS "RH pode gerenciar provisoes" ON public.provisoes_mensais;
 CREATE POLICY "RH pode gerenciar provisoes" ON public.provisoes_mensais
 FOR ALL TO authenticated USING (true);
 
+DROP POLICY IF EXISTS "RH pode ver logs de provisao" ON public.provisao_logs;
 CREATE POLICY "RH pode ver logs de provisao" ON public.provisao_logs
 FOR ALL TO authenticated USING (true);
 

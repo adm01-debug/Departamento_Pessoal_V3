@@ -12,26 +12,29 @@ class ColaboradorService extends BaseService<Colaborador> {
   }
 
   async listar(options: ListOptions = {}): Promise<ListResponse<Colaborador>> {
-    const { 
-      search, 
-      page = 1, 
-      pageSize = 25, 
+    const {
+      search,
+      page = 1,
+      pageSize = 25,
       filters = {}
     } = options;
-    
+
     const { status, departamento, cargo, empresaId } = filters;
+
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
     // Explicit column selection to prevent failures on missing optional columns in external DB
     const columns = 'id, nome_completo, cpf, email, status, data_admissao, empresa_id, matricula, foto_url, telefone';
     let query = this.getQuery().select(columns, { count: 'exact' });
 
-    if (empresaId) query = query.eq('empresa_id', empresaId);
+    query = query.eq('empresa_id', empresaId);
     if (status && status !== 'all') query = query.eq('status', status);
     if (departamento && departamento !== 'all') query = query.eq('departamento', departamento);
     if (cargo && cargo !== 'all') query = query.eq('cargo', cargo);
 
     if (search) {
-      query = query.or(`nome_completo.ilike.%${search}%,cpf.ilike.%${search}%,email.ilike.%${search}%`);
+      const s = search.replace(/[%_.,()]/g, '');
+      if (s) query = query.or(`nome_completo.ilike.%${s}%,cpf.ilike.%${s}%,email.ilike.%${s}%`);
     }
 
     const from = (page - 1) * pageSize;
@@ -45,18 +48,20 @@ class ColaboradorService extends BaseService<Colaborador> {
     return { data: (data as Colaborador[]) || [], total: count || 0 };
   }
 
-  async getSummary(empresaId?: string, filters: any = {}) {
+  async getSummary(empresaId: string, filters: any = {}) {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+
     // Optimized: Run counts in parallel using Supabase count feature
     const { departamento, cargo } = filters;
     const statuses = ['ativo', 'desligado', 'afastado', 'ferias'] as const;
-    
+
     const countPromises = statuses.map(async (status) => {
       let query = supabase
         .from('colaboradores')
         .select('id', { count: 'exact', head: true })
         .eq('status', status);
-      
-      if (empresaId) query = query.eq('empresa_id', empresaId);
+
+      query = query.eq('empresa_id', empresaId);
       if (departamento && departamento !== 'all') query = query.eq('departamento', departamento);
       if (cargo && cargo !== 'all') query = query.eq('cargo', cargo);
       
@@ -81,13 +86,17 @@ class ColaboradorService extends BaseService<Colaborador> {
   }
 
   // Alias for backward compatibility
-  async list(empresaId?: string) {
+  async list(empresaId: string) {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     return (await this.listar({ filters: { empresaId }, pageSize: 1000 })).data;
   }
 
   async getById(id: string) { return this.buscarPorId(id); }
   async create(d: any) { return this.criar(d); }
-  async update(id: string, d: any) { return this.atualizar(id, d); }
+  async update(id: string, d: any, empresaId: string) {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    return this.atualizar(id, d, empresaId);
+  }
 
 }
 

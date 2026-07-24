@@ -12,12 +12,15 @@ CREATE TABLE IF NOT EXISTS colaboradores_historico (
 -- Add RLS Policies
 ALTER TABLE colaboradores_historico ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "colaboradores_historico_select" ON public.colaboradores_historico;
 CREATE POLICY "colaboradores_historico_select" ON colaboradores_historico
   FOR SELECT USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "colaboradores_historico_insert" ON public.colaboradores_historico;
 CREATE POLICY "colaboradores_historico_insert" ON colaboradores_historico
   FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "colaboradores_historico_update" ON public.colaboradores_historico;
 CREATE POLICY "colaboradores_historico_update" ON colaboradores_historico
   FOR UPDATE USING (auth.role() = 'authenticated');
 
@@ -33,6 +36,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_colaboradores_historico_updated_at ON public.colaboradores_historico;
 CREATE TRIGGER trigger_colaboradores_historico_updated_at
   BEFORE UPDATE ON colaboradores_historico
   FOR EACH ROW

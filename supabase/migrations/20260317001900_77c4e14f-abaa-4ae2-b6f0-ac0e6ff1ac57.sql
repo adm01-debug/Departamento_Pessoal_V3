@@ -25,12 +25,16 @@ CREATE TABLE IF NOT EXISTS public.faltas (
 );
 
 ALTER TABLE public.faltas ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "faltas_select" ON public.faltas;
 CREATE POLICY "faltas_select" ON public.faltas FOR SELECT TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "faltas_insert" ON public.faltas;
 CREATE POLICY "faltas_insert" ON public.faltas FOR INSERT TO authenticated
   WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "faltas_update" ON public.faltas;
 CREATE POLICY "faltas_update" ON public.faltas FOR UPDATE TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "faltas_delete" ON public.faltas;
 CREATE POLICY "faltas_delete" ON public.faltas FOR DELETE TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
 
@@ -55,12 +59,16 @@ CREATE TABLE IF NOT EXISTS public.medidas_disciplinares (
 );
 
 ALTER TABLE public.medidas_disciplinares ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "medidas_disciplinares_select" ON public.medidas_disciplinares;
 CREATE POLICY "medidas_disciplinares_select" ON public.medidas_disciplinares FOR SELECT TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "medidas_disciplinares_insert" ON public.medidas_disciplinares;
 CREATE POLICY "medidas_disciplinares_insert" ON public.medidas_disciplinares FOR INSERT TO authenticated
   WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "medidas_disciplinares_update" ON public.medidas_disciplinares;
 CREATE POLICY "medidas_disciplinares_update" ON public.medidas_disciplinares FOR UPDATE TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "medidas_disciplinares_delete" ON public.medidas_disciplinares;
 CREATE POLICY "medidas_disciplinares_delete" ON public.medidas_disciplinares FOR DELETE TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
 
@@ -79,12 +87,16 @@ CREATE TABLE IF NOT EXISTS public.epis (
 );
 
 ALTER TABLE public.epis ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "epis_select" ON public.epis;
 CREATE POLICY "epis_select" ON public.epis FOR SELECT TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "epis_insert" ON public.epis;
 CREATE POLICY "epis_insert" ON public.epis FOR INSERT TO authenticated
   WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "epis_update" ON public.epis;
 CREATE POLICY "epis_update" ON public.epis FOR UPDATE TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "epis_delete" ON public.epis;
 CREATE POLICY "epis_delete" ON public.epis FOR DELETE TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
 
@@ -105,12 +117,16 @@ CREATE TABLE IF NOT EXISTS public.epis_entregas (
 );
 
 ALTER TABLE public.epis_entregas ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "epis_entregas_select" ON public.epis_entregas;
 CREATE POLICY "epis_entregas_select" ON public.epis_entregas FOR SELECT TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "epis_entregas_insert" ON public.epis_entregas;
 CREATE POLICY "epis_entregas_insert" ON public.epis_entregas FOR INSERT TO authenticated
   WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "epis_entregas_update" ON public.epis_entregas;
 CREATE POLICY "epis_entregas_update" ON public.epis_entregas FOR UPDATE TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "epis_entregas_delete" ON public.epis_entregas;
 CREATE POLICY "epis_entregas_delete" ON public.epis_entregas FOR DELETE TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
 
@@ -128,7 +144,9 @@ CREATE TABLE IF NOT EXISTS public.banco_horas_config (
 );
 
 ALTER TABLE public.banco_horas_config ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "banco_horas_config_select" ON public.banco_horas_config;
 CREATE POLICY "banco_horas_config_select" ON public.banco_horas_config FOR SELECT TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "banco_horas_config_modify" ON public.banco_horas_config;
 CREATE POLICY "banco_horas_config_modify" ON public.banco_horas_config FOR ALL TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));

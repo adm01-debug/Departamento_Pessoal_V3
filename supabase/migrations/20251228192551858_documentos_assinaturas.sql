@@ -12,12 +12,15 @@ CREATE TABLE IF NOT EXISTS documentos_assinaturas (
 -- Add RLS Policies
 ALTER TABLE documentos_assinaturas ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "documentos_assinaturas_select" ON public.documentos_assinaturas;
 CREATE POLICY "documentos_assinaturas_select" ON documentos_assinaturas
   FOR SELECT USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "documentos_assinaturas_insert" ON public.documentos_assinaturas;
 CREATE POLICY "documentos_assinaturas_insert" ON documentos_assinaturas
   FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "documentos_assinaturas_update" ON public.documentos_assinaturas;
 CREATE POLICY "documentos_assinaturas_update" ON documentos_assinaturas
   FOR UPDATE USING (auth.role() = 'authenticated');
 
@@ -33,6 +36,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_documentos_assinaturas_updated_at ON public.documentos_assinaturas;
 CREATE TRIGGER trigger_documentos_assinaturas_updated_at
   BEFORE UPDATE ON documentos_assinaturas
   FOR EACH ROW

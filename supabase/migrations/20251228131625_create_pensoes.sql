@@ -29,15 +29,19 @@ CREATE INDEX IF NOT EXISTS idx_pensoes_created ON public.pensoes(created_at);
 -- RLS
 ALTER TABLE public.pensoes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "pensoes_select" ON public.pensoes;
 CREATE POLICY "pensoes_select" ON public.pensoes
   FOR SELECT USING (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "pensoes_insert" ON public.pensoes;
 CREATE POLICY "pensoes_insert" ON public.pensoes
   FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "pensoes_update" ON public.pensoes;
 CREATE POLICY "pensoes_update" ON public.pensoes
   FOR UPDATE USING (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "pensoes_delete" ON public.pensoes;
 CREATE POLICY "pensoes_delete" ON public.pensoes
   FOR DELETE USING (auth.uid() IS NOT NULL);
 
@@ -50,6 +54,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_pensoes_updated_at ON public.pensoes;
 CREATE TRIGGER trigger_pensoes_updated_at
   BEFORE UPDATE ON public.pensoes
   FOR EACH ROW EXECUTE FUNCTION update_pensoes_updated_at();

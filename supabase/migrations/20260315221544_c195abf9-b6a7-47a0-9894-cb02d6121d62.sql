@@ -22,11 +22,15 @@ CREATE POLICY "competencias_insert" ON public.competencias_matriz FOR INSERT TO 
 
 -- Fix 2: Legacy 'escalas' table has USING(true) - replace with tenant isolation
 DROP POLICY IF EXISTS "Auth users manage escalas" ON public.escalas;
+DROP POLICY IF EXISTS "escalas_select" ON public.escalas;
 CREATE POLICY "escalas_select" ON public.escalas FOR SELECT TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "escalas_insert" ON public.escalas;
 CREATE POLICY "escalas_insert" ON public.escalas FOR INSERT TO authenticated
   WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "escalas_update" ON public.escalas;
 CREATE POLICY "escalas_update" ON public.escalas FOR UPDATE TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "escalas_delete" ON public.escalas;
 CREATE POLICY "escalas_delete" ON public.escalas FOR DELETE TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));

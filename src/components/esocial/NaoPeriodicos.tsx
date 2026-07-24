@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { User, Calendar, Briefcase, Banknote, ShieldCheck, Clock, MapPin, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { maskCpfDisplay } from '@/utils/piiMask';
 
 export function S2200Admissao({ dados }: { dados: any }) {
   const formatCurrency = (val: number) => {
@@ -18,7 +19,7 @@ export function S2200Admissao({ dados }: { dados: any }) {
             <div>
               <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">Identificação do Trabalhador</Label>
               <p className="font-display font-bold text-sm">{dados.nmTrab || 'Não informado'}</p>
-              <p className="text-[10px] text-muted-foreground mt-0.5 font-medium">CPF: {dados.cpfTrab}</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5 font-medium">CPF: {maskCpfDisplay(dados.cpfTrab)}</p>
               <div className="flex gap-1.5 mt-2">
                 <Badge variant="secondary" className="text-[9px] h-4 rounded-md">Matrícula: {dados.matricula || '-'}</Badge>
                 <Badge variant="outline" className="text-[9px] h-4 rounded-md">Cat: {dados.codCateg || '-'}</Badge>
@@ -80,7 +81,7 @@ export function S2230Afastamento({ dados }: { dados: any }) {
             <User className="h-4 w-4 text-primary mt-1" />
             <div>
               <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">Identificação do Trabalhador</Label>
-              <p className="font-display font-bold text-sm">CPF: {dados.cpfTrab}</p>
+              <p className="font-display font-bold text-sm">CPF: {maskCpfDisplay(dados.cpfTrab)}</p>
               <p className="text-[10px] text-muted-foreground mt-0.5">Afastamento Temporário</p>
             </div>
           </CardContent>

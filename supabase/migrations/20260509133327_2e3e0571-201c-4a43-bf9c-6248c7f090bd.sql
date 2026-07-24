@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS public.govbr_auth_state (
 
 -- Habilitar RLS e criar políticas
 ALTER TABLE public.govbr_auth_state ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Serviço pode gerenciar states" ON public.govbr_auth_state;
 CREATE POLICY "Serviço pode gerenciar states" ON public.govbr_auth_state FOR ALL USING (true) WITH CHECK (true);
 
 -- Adicionar campos de integração Gov.br ao perfil do usuário
@@ -32,6 +33,7 @@ CREATE TABLE IF NOT EXISTS public.integracao_logs (
 );
 
 ALTER TABLE public.integracao_logs ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Apenas admin pode ver logs de integração" ON public.integracao_logs;
 CREATE POLICY "Apenas admin pode ver logs de integração" ON public.integracao_logs FOR SELECT USING (true); -- Ajustar conforme roles futuras
 
 -- Limpeza automática de states expirados

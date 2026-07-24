@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS public.guias_fgts_digital (
 -- RLS
 ALTER TABLE public.guias_fgts_digital ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Gestores e RH veem guias FGTS" ON public.guias_fgts_digital;
 CREATE POLICY "Gestores e RH veem guias FGTS"
 ON public.guias_fgts_digital FOR SELECT
 USING (auth.uid() IN (
@@ -37,6 +38,7 @@ CREATE TABLE IF NOT EXISTS public.fgts_digital_logs (
 
 ALTER TABLE public.fgts_digital_logs ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Gestores veem logs FGTS" ON public.fgts_digital_logs;
 CREATE POLICY "Gestores veem logs FGTS"
 ON public.fgts_digital_logs FOR SELECT
 USING (auth.uid() IN (

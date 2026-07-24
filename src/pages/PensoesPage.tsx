@@ -34,7 +34,7 @@ export default function PensoesPage() {
 
   const { data: colaboradores } = useQuery({
     queryKey: ['colaboradores', empresaAtual?.id],
-    queryFn: () => colaboradorService.list(empresaAtual?.id),
+    queryFn: () => colaboradorService.list(empresaAtual!.id),
     enabled: !!empresaAtual?.id,
   });
 

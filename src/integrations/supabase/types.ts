@@ -3215,6 +3215,56 @@ export type Database = {
           },
         ]
       }
+      catalogo_infracoes: {
+        Row: {
+          artigo_clt_sugerido: string | null
+          ativo: boolean
+          codigo: string
+          created_at: string
+          descricao: string
+          dias_suspensao_sugerido: number | null
+          empresa_id: string
+          gravidade: string
+          id: string
+          tipo_sugerido: string
+          updated_at: string
+        }
+        Insert: {
+          artigo_clt_sugerido?: string | null
+          ativo?: boolean
+          codigo: string
+          created_at?: string
+          descricao: string
+          dias_suspensao_sugerido?: number | null
+          empresa_id: string
+          gravidade: string
+          id?: string
+          tipo_sugerido: string
+          updated_at?: string
+        }
+        Update: {
+          artigo_clt_sugerido?: string | null
+          ativo?: boolean
+          codigo?: string
+          created_at?: string
+          descricao?: string
+          dias_suspensao_sugerido?: number | null
+          empresa_id?: string
+          gravidade?: string
+          id?: string
+          tipo_sugerido?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalogo_infracoes_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categorias_trabalhador: {
         Row: {
           codigo_esocial: string | null
@@ -3409,6 +3459,33 @@ export type Database = {
           created_at?: string | null
           descricao?: string
           id?: string
+        }
+        Relationships: []
+      }
+      ciencia_rate_limits: {
+        Row: {
+          created_at: string
+          id: string
+          identifier: string | null
+          ip_address: unknown
+          rpc_name: string
+          success: boolean
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          identifier?: string | null
+          ip_address: unknown
+          rpc_name: string
+          success?: boolean
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          identifier?: string | null
+          ip_address?: unknown
+          rpc_name?: string
+          success?: boolean
         }
         Relationships: []
       }
@@ -5369,6 +5446,245 @@ export type Database = {
           },
         ]
       }
+      contrato_assinatura_tokens: {
+        Row: {
+          assinado_ip: unknown
+          assinado_ua: string | null
+          assinatura_hash: string | null
+          contrato_id: string
+          cpf_esperado: string | null
+          created_at: string
+          created_by: string | null
+          email_destinatario: string | null
+          empresa_id: string
+          expira_em: string
+          id: string
+          reminders_enviados: number
+          revogacao_motivo: string | null
+          revogado_em: string | null
+          revogado_por: string | null
+          tentativas: number
+          token_hash: string
+          ultimo_reminder_at: string | null
+          usado_em: string | null
+        }
+        Insert: {
+          assinado_ip?: unknown
+          assinado_ua?: string | null
+          assinatura_hash?: string | null
+          contrato_id: string
+          cpf_esperado?: string | null
+          created_at?: string
+          created_by?: string | null
+          email_destinatario?: string | null
+          empresa_id: string
+          expira_em: string
+          id?: string
+          reminders_enviados?: number
+          revogacao_motivo?: string | null
+          revogado_em?: string | null
+          revogado_por?: string | null
+          tentativas?: number
+          token_hash: string
+          ultimo_reminder_at?: string | null
+          usado_em?: string | null
+        }
+        Update: {
+          assinado_ip?: unknown
+          assinado_ua?: string | null
+          assinatura_hash?: string | null
+          contrato_id?: string
+          cpf_esperado?: string | null
+          created_at?: string
+          created_by?: string | null
+          email_destinatario?: string | null
+          empresa_id?: string
+          expira_em?: string
+          id?: string
+          reminders_enviados?: number
+          revogacao_motivo?: string | null
+          revogado_em?: string | null
+          revogado_por?: string | null
+          tentativas?: number
+          token_hash?: string
+          ultimo_reminder_at?: string | null
+          usado_em?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contrato_assinatura_tokens_contrato_id_fkey"
+            columns: ["contrato_id"]
+            isOneToOne: false
+            referencedRelation: "contratos_gerados"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contrato_assinatura_tokens_contrato_id_fkey"
+            columns: ["contrato_id"]
+            isOneToOne: false
+            referencedRelation: "v_contratos_vencendo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contrato_assinatura_tokens_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contrato_templates: {
+        Row: {
+          ativo: boolean
+          cargo_id: string | null
+          clausulas_condicionais: Json
+          corpo_html: string
+          created_at: string
+          created_by: string | null
+          departamento_id: string | null
+          descricao: string | null
+          empresa_id: string
+          id: string
+          nome: string
+          tipo_contrato: string
+          updated_at: string
+          variaveis_schema: Json
+          versao: number
+        }
+        Insert: {
+          ativo?: boolean
+          cargo_id?: string | null
+          clausulas_condicionais?: Json
+          corpo_html: string
+          created_at?: string
+          created_by?: string | null
+          departamento_id?: string | null
+          descricao?: string | null
+          empresa_id: string
+          id?: string
+          nome: string
+          tipo_contrato: string
+          updated_at?: string
+          variaveis_schema?: Json
+          versao?: number
+        }
+        Update: {
+          ativo?: boolean
+          cargo_id?: string | null
+          clausulas_condicionais?: Json
+          corpo_html?: string
+          created_at?: string
+          created_by?: string | null
+          departamento_id?: string | null
+          descricao?: string | null
+          empresa_id?: string
+          id?: string
+          nome?: string
+          tipo_contrato?: string
+          updated_at?: string
+          variaveis_schema?: Json
+          versao?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contrato_templates_cargo_id_fkey"
+            columns: ["cargo_id"]
+            isOneToOne: false
+            referencedRelation: "cargos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contrato_templates_departamento_id_fkey"
+            columns: ["departamento_id"]
+            isOneToOne: false
+            referencedRelation: "departamentos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contrato_templates_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contrato_token_eventos: {
+        Row: {
+          ator_id: string | null
+          contrato_id: string
+          created_at: string
+          detalhes: Json
+          empresa_id: string
+          evento: string
+          id: string
+          ip: unknown
+          token_id: string
+          user_agent: string | null
+        }
+        Insert: {
+          ator_id?: string | null
+          contrato_id: string
+          created_at?: string
+          detalhes?: Json
+          empresa_id: string
+          evento: string
+          id?: string
+          ip?: unknown
+          token_id: string
+          user_agent?: string | null
+        }
+        Update: {
+          ator_id?: string | null
+          contrato_id?: string
+          created_at?: string
+          detalhes?: Json
+          empresa_id?: string
+          evento?: string
+          id?: string
+          ip?: unknown
+          token_id?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contrato_token_eventos_contrato_id_fkey"
+            columns: ["contrato_id"]
+            isOneToOne: false
+            referencedRelation: "contratos_gerados"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contrato_token_eventos_contrato_id_fkey"
+            columns: ["contrato_id"]
+            isOneToOne: false
+            referencedRelation: "v_contratos_vencendo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contrato_token_eventos_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contrato_token_eventos_token_id_fkey"
+            columns: ["token_id"]
+            isOneToOne: false
+            referencedRelation: "contrato_assinatura_tokens"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contrato_token_eventos_token_id_fkey"
+            columns: ["token_id"]
+            isOneToOne: false
+            referencedRelation: "v_contratos_tokens_pendentes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contratos: {
         Row: {
           colaborador_id: string | null
@@ -5475,6 +5791,142 @@ export type Database = {
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contratos_gerados: {
+        Row: {
+          admissao_id: string | null
+          alerta_vencimento_enviado_em: string | null
+          assinado_em: string | null
+          assinatura_metadata: Json | null
+          colaborador_id: string | null
+          contrato_anterior_id: string | null
+          created_at: string
+          data_fim: string | null
+          data_inicio: string | null
+          empresa_id: string
+          gerado_por: string | null
+          html_final: string | null
+          id: string
+          prorrogado: boolean
+          sha256: string | null
+          status: string
+          storage_path: string | null
+          template_id: string
+          template_versao: number
+          updated_at: string
+          variaveis_snapshot: Json
+        }
+        Insert: {
+          admissao_id?: string | null
+          alerta_vencimento_enviado_em?: string | null
+          assinado_em?: string | null
+          assinatura_metadata?: Json | null
+          colaborador_id?: string | null
+          contrato_anterior_id?: string | null
+          created_at?: string
+          data_fim?: string | null
+          data_inicio?: string | null
+          empresa_id: string
+          gerado_por?: string | null
+          html_final?: string | null
+          id?: string
+          prorrogado?: boolean
+          sha256?: string | null
+          status?: string
+          storage_path?: string | null
+          template_id: string
+          template_versao: number
+          updated_at?: string
+          variaveis_snapshot?: Json
+        }
+        Update: {
+          admissao_id?: string | null
+          alerta_vencimento_enviado_em?: string | null
+          assinado_em?: string | null
+          assinatura_metadata?: Json | null
+          colaborador_id?: string | null
+          contrato_anterior_id?: string | null
+          created_at?: string
+          data_fim?: string | null
+          data_inicio?: string | null
+          empresa_id?: string
+          gerado_por?: string | null
+          html_final?: string | null
+          id?: string
+          prorrogado?: boolean
+          sha256?: string | null
+          status?: string
+          storage_path?: string | null
+          template_id?: string
+          template_versao?: number
+          updated_at?: string
+          variaveis_snapshot?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contratos_gerados_admissao_id_fkey"
+            columns: ["admissao_id"]
+            isOneToOne: false
+            referencedRelation: "admissoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contratos_gerados_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contratos_gerados_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_cadastro_incompleto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contratos_gerados_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_colaboradores_completo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contratos_gerados_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_passivo_trabalhista_consolidado"
+            referencedColumns: ["colaborador_id"]
+          },
+          {
+            foreignKeyName: "contratos_gerados_contrato_anterior_id_fkey"
+            columns: ["contrato_anterior_id"]
+            isOneToOne: false
+            referencedRelation: "contratos_gerados"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contratos_gerados_contrato_anterior_id_fkey"
+            columns: ["contrato_anterior_id"]
+            isOneToOne: false
+            referencedRelation: "v_contratos_vencendo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contratos_gerados_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contratos_gerados_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "contrato_templates"
             referencedColumns: ["id"]
           },
         ]
@@ -6579,6 +7031,7 @@ export type Database = {
           checklist_pagamento: boolean | null
           checklist_revogacao_acessos: boolean | null
           colaborador_id: string
+          comprovante_pagamento_url: string | null
           created_at: string
           created_by: string | null
           data_assinatura_colaborador: string | null
@@ -6587,6 +7040,7 @@ export type Database = {
           data_aviso_previo: string | null
           data_contabilidade: string | null
           data_desligamento: string
+          data_pagamento: string | null
           data_remocao_acesso: string | null
           decimo_terceiro: number | null
           empresa_id: string | null
@@ -6627,6 +7081,7 @@ export type Database = {
           checklist_pagamento?: boolean | null
           checklist_revogacao_acessos?: boolean | null
           colaborador_id: string
+          comprovante_pagamento_url?: string | null
           created_at?: string
           created_by?: string | null
           data_assinatura_colaborador?: string | null
@@ -6635,6 +7090,7 @@ export type Database = {
           data_aviso_previo?: string | null
           data_contabilidade?: string | null
           data_desligamento: string
+          data_pagamento?: string | null
           data_remocao_acesso?: string | null
           decimo_terceiro?: number | null
           empresa_id?: string | null
@@ -6675,6 +7131,7 @@ export type Database = {
           checklist_pagamento?: boolean | null
           checklist_revogacao_acessos?: boolean | null
           colaborador_id?: string
+          comprovante_pagamento_url?: string | null
           created_at?: string
           created_by?: string | null
           data_assinatura_colaborador?: string | null
@@ -6683,6 +7140,7 @@ export type Database = {
           data_aviso_previo?: string | null
           data_contabilidade?: string | null
           data_desligamento?: string
+          data_pagamento?: string | null
           data_remocao_acesso?: string | null
           decimo_terceiro?: number | null
           empresa_id?: string | null
@@ -8504,8 +8962,10 @@ export type Database = {
           competencia: string
           created_at: string
           created_by: string | null
+          empresa_id: string | null
           id: string
           observacao: string | null
+          origem_ferias_id: string | null
           referencia: number | null
           rubrica_id: string
           valor: number
@@ -8515,8 +8975,10 @@ export type Database = {
           competencia: string
           created_at?: string
           created_by?: string | null
+          empresa_id?: string | null
           id?: string
           observacao?: string | null
+          origem_ferias_id?: string | null
           referencia?: number | null
           rubrica_id: string
           valor: number
@@ -8526,8 +8988,10 @@ export type Database = {
           competencia?: string
           created_at?: string
           created_by?: string | null
+          empresa_id?: string | null
           id?: string
           observacao?: string | null
+          origem_ferias_id?: string | null
           referencia?: number | null
           rubrica_id?: string
           valor?: number
@@ -8560,6 +9024,41 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "vw_passivo_trabalhista_consolidado"
             referencedColumns: ["colaborador_id"]
+          },
+          {
+            foreignKeyName: "eventos_variaveis_origem_ferias_id_fkey"
+            columns: ["origem_ferias_id"]
+            isOneToOne: false
+            referencedRelation: "ferias"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eventos_variaveis_origem_ferias_id_fkey"
+            columns: ["origem_ferias_id"]
+            isOneToOne: false
+            referencedRelation: "v_ferias_adiant13_elegibilidade"
+            referencedColumns: ["ferias_id"]
+          },
+          {
+            foreignKeyName: "eventos_variaveis_origem_ferias_id_fkey"
+            columns: ["origem_ferias_id"]
+            isOneToOne: false
+            referencedRelation: "v_ferias_alerta_pagamento_d2"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "eventos_variaveis_origem_ferias_id_fkey"
+            columns: ["origem_ferias_id"]
+            isOneToOne: false
+            referencedRelation: "v_ferias_folha_reconciliacao"
+            referencedColumns: ["ferias_id"]
+          },
+          {
+            foreignKeyName: "eventos_variaveis_origem_ferias_id_fkey"
+            columns: ["origem_ferias_id"]
+            isOneToOne: false
+            referencedRelation: "vw_ferias_resumo"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "eventos_variaveis_rubrica_id_fkey"
@@ -9105,6 +9604,9 @@ export type Database = {
         Row: {
           abono_pecuniario: boolean | null
           adiantamento_13: boolean | null
+          adiantamento_13_ano_exercicio: number | null
+          adiantamento_13_solicitado_em: string | null
+          adiantamento_13_solicitado_por: string | null
           adiantamento_13o: boolean | null
           aprovado_em: string | null
           aprovado_gestor: boolean | null
@@ -9114,6 +9616,13 @@ export type Database = {
           aprovado_rh: boolean | null
           aprovado_rh_em: string | null
           aprovado_rh_por: string | null
+          aviso_assinatura_em: string | null
+          aviso_assinatura_hash: string | null
+          aviso_assinatura_ip: unknown
+          aviso_assinatura_por: string | null
+          aviso_assinatura_user_agent: string | null
+          aviso_gerado_em: string | null
+          aviso_pdf_url: string | null
           cancelado: boolean | null
           cancelado_em: string | null
           cancelado_por: string | null
@@ -9138,8 +9647,12 @@ export type Database = {
           justificativa: string | null
           motivo_cancelamento: string | null
           observacoes: string | null
+          pagamento_comprovante_path: string | null
+          pagamento_confirmado_em: string | null
+          pagamento_confirmado_por: string | null
+          pagamento_valor: number | null
           periodo_aquisitivo_fim: string | null
-          periodo_aquisitivo_id: string | null
+          periodo_aquisitivo_id: string
           periodo_aquisitivo_inicio: string | null
           salario_base: number
           saldo_gasto: number | null
@@ -9161,6 +9674,9 @@ export type Database = {
         Insert: {
           abono_pecuniario?: boolean | null
           adiantamento_13?: boolean | null
+          adiantamento_13_ano_exercicio?: number | null
+          adiantamento_13_solicitado_em?: string | null
+          adiantamento_13_solicitado_por?: string | null
           adiantamento_13o?: boolean | null
           aprovado_em?: string | null
           aprovado_gestor?: boolean | null
@@ -9170,6 +9686,13 @@ export type Database = {
           aprovado_rh?: boolean | null
           aprovado_rh_em?: string | null
           aprovado_rh_por?: string | null
+          aviso_assinatura_em?: string | null
+          aviso_assinatura_hash?: string | null
+          aviso_assinatura_ip?: unknown
+          aviso_assinatura_por?: string | null
+          aviso_assinatura_user_agent?: string | null
+          aviso_gerado_em?: string | null
+          aviso_pdf_url?: string | null
           cancelado?: boolean | null
           cancelado_em?: string | null
           cancelado_por?: string | null
@@ -9194,8 +9717,12 @@ export type Database = {
           justificativa?: string | null
           motivo_cancelamento?: string | null
           observacoes?: string | null
+          pagamento_comprovante_path?: string | null
+          pagamento_confirmado_em?: string | null
+          pagamento_confirmado_por?: string | null
+          pagamento_valor?: number | null
           periodo_aquisitivo_fim?: string | null
-          periodo_aquisitivo_id?: string | null
+          periodo_aquisitivo_id: string
           periodo_aquisitivo_inicio?: string | null
           salario_base: number
           saldo_gasto?: number | null
@@ -9217,6 +9744,9 @@ export type Database = {
         Update: {
           abono_pecuniario?: boolean | null
           adiantamento_13?: boolean | null
+          adiantamento_13_ano_exercicio?: number | null
+          adiantamento_13_solicitado_em?: string | null
+          adiantamento_13_solicitado_por?: string | null
           adiantamento_13o?: boolean | null
           aprovado_em?: string | null
           aprovado_gestor?: boolean | null
@@ -9226,6 +9756,13 @@ export type Database = {
           aprovado_rh?: boolean | null
           aprovado_rh_em?: string | null
           aprovado_rh_por?: string | null
+          aviso_assinatura_em?: string | null
+          aviso_assinatura_hash?: string | null
+          aviso_assinatura_ip?: unknown
+          aviso_assinatura_por?: string | null
+          aviso_assinatura_user_agent?: string | null
+          aviso_gerado_em?: string | null
+          aviso_pdf_url?: string | null
           cancelado?: boolean | null
           cancelado_em?: string | null
           cancelado_por?: string | null
@@ -9250,8 +9787,12 @@ export type Database = {
           justificativa?: string | null
           motivo_cancelamento?: string | null
           observacoes?: string | null
+          pagamento_comprovante_path?: string | null
+          pagamento_confirmado_em?: string | null
+          pagamento_confirmado_por?: string | null
+          pagamento_valor?: number | null
           periodo_aquisitivo_fim?: string | null
-          periodo_aquisitivo_id?: string | null
+          periodo_aquisitivo_id?: string
           periodo_aquisitivo_inicio?: string | null
           salario_base?: number
           saldo_gasto?: number | null
@@ -9396,6 +9937,27 @@ export type Database = {
             foreignKeyName: "ferias_aprovacoes_ferias_id_fkey"
             columns: ["ferias_id"]
             isOneToOne: false
+            referencedRelation: "v_ferias_adiant13_elegibilidade"
+            referencedColumns: ["ferias_id"]
+          },
+          {
+            foreignKeyName: "ferias_aprovacoes_ferias_id_fkey"
+            columns: ["ferias_id"]
+            isOneToOne: false
+            referencedRelation: "v_ferias_alerta_pagamento_d2"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ferias_aprovacoes_ferias_id_fkey"
+            columns: ["ferias_id"]
+            isOneToOne: false
+            referencedRelation: "v_ferias_folha_reconciliacao"
+            referencedColumns: ["ferias_id"]
+          },
+          {
+            foreignKeyName: "ferias_aprovacoes_ferias_id_fkey"
+            columns: ["ferias_id"]
+            isOneToOne: false
             referencedRelation: "vw_ferias_resumo"
             referencedColumns: ["id"]
           },
@@ -9441,6 +10003,27 @@ export type Database = {
             foreignKeyName: "ferias_aprovacoes_log_ferias_id_fkey"
             columns: ["ferias_id"]
             isOneToOne: false
+            referencedRelation: "v_ferias_adiant13_elegibilidade"
+            referencedColumns: ["ferias_id"]
+          },
+          {
+            foreignKeyName: "ferias_aprovacoes_log_ferias_id_fkey"
+            columns: ["ferias_id"]
+            isOneToOne: false
+            referencedRelation: "v_ferias_alerta_pagamento_d2"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ferias_aprovacoes_log_ferias_id_fkey"
+            columns: ["ferias_id"]
+            isOneToOne: false
+            referencedRelation: "v_ferias_folha_reconciliacao"
+            referencedColumns: ["ferias_id"]
+          },
+          {
+            foreignKeyName: "ferias_aprovacoes_log_ferias_id_fkey"
+            columns: ["ferias_id"]
+            isOneToOne: false
             referencedRelation: "vw_ferias_resumo"
             referencedColumns: ["id"]
           },
@@ -9481,6 +10064,27 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ferias"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ferias_arquivos_ferias_id_fkey"
+            columns: ["ferias_id"]
+            isOneToOne: false
+            referencedRelation: "v_ferias_adiant13_elegibilidade"
+            referencedColumns: ["ferias_id"]
+          },
+          {
+            foreignKeyName: "ferias_arquivos_ferias_id_fkey"
+            columns: ["ferias_id"]
+            isOneToOne: false
+            referencedRelation: "v_ferias_alerta_pagamento_d2"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ferias_arquivos_ferias_id_fkey"
+            columns: ["ferias_id"]
+            isOneToOne: false
+            referencedRelation: "v_ferias_folha_reconciliacao"
+            referencedColumns: ["ferias_id"]
           },
           {
             foreignKeyName: "ferias_arquivos_ferias_id_fkey"
@@ -9541,6 +10145,13 @@ export type Database = {
       ferias_coletivas: {
         Row: {
           aprovado_por: string | null
+          comunicado_gerado_em: string | null
+          comunicado_gerado_por: string | null
+          comunicado_mte_hash: string | null
+          comunicado_mte_path: string | null
+          comunicado_sindicato_hash: string | null
+          comunicado_sindicato_nome: string | null
+          comunicado_sindicato_path: string | null
           created_at: string
           created_by: string | null
           data_fim: string
@@ -9555,6 +10166,13 @@ export type Database = {
         }
         Insert: {
           aprovado_por?: string | null
+          comunicado_gerado_em?: string | null
+          comunicado_gerado_por?: string | null
+          comunicado_mte_hash?: string | null
+          comunicado_mte_path?: string | null
+          comunicado_sindicato_hash?: string | null
+          comunicado_sindicato_nome?: string | null
+          comunicado_sindicato_path?: string | null
           created_at?: string
           created_by?: string | null
           data_fim: string
@@ -9569,6 +10187,13 @@ export type Database = {
         }
         Update: {
           aprovado_por?: string | null
+          comunicado_gerado_em?: string | null
+          comunicado_gerado_por?: string | null
+          comunicado_mte_hash?: string | null
+          comunicado_mte_path?: string | null
+          comunicado_sindicato_hash?: string | null
+          comunicado_sindicato_nome?: string | null
+          comunicado_sindicato_path?: string | null
           created_at?: string
           created_by?: string | null
           data_fim?: string
@@ -9591,6 +10216,200 @@ export type Database = {
           },
           {
             foreignKeyName: "fk_ferias_coletivas_empresa"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ferias_programacao: {
+        Row: {
+          ano: number
+          aprovado_gestor_em: string | null
+          aprovado_gestor_por: string | null
+          aprovado_rh_em: string | null
+          aprovado_rh_por: string | null
+          colaborador_id: string
+          created_at: string
+          criado_por: string | null
+          data_fim_prevista: string | null
+          data_inicio_prevista: string | null
+          dias_previstos: number
+          empresa_id: string
+          ferias_id: string | null
+          id: string
+          mes_previsto: number
+          observacoes: string | null
+          periodo_aquisitivo_id: string | null
+          rejeitado_em: string | null
+          rejeitado_motivo: string | null
+          rejeitado_por: string | null
+          status: Database["public"]["Enums"]["programacao_ferias_status"]
+          updated_at: string
+        }
+        Insert: {
+          ano: number
+          aprovado_gestor_em?: string | null
+          aprovado_gestor_por?: string | null
+          aprovado_rh_em?: string | null
+          aprovado_rh_por?: string | null
+          colaborador_id: string
+          created_at?: string
+          criado_por?: string | null
+          data_fim_prevista?: string | null
+          data_inicio_prevista?: string | null
+          dias_previstos?: number
+          empresa_id: string
+          ferias_id?: string | null
+          id?: string
+          mes_previsto: number
+          observacoes?: string | null
+          periodo_aquisitivo_id?: string | null
+          rejeitado_em?: string | null
+          rejeitado_motivo?: string | null
+          rejeitado_por?: string | null
+          status?: Database["public"]["Enums"]["programacao_ferias_status"]
+          updated_at?: string
+        }
+        Update: {
+          ano?: number
+          aprovado_gestor_em?: string | null
+          aprovado_gestor_por?: string | null
+          aprovado_rh_em?: string | null
+          aprovado_rh_por?: string | null
+          colaborador_id?: string
+          created_at?: string
+          criado_por?: string | null
+          data_fim_prevista?: string | null
+          data_inicio_prevista?: string | null
+          dias_previstos?: number
+          empresa_id?: string
+          ferias_id?: string | null
+          id?: string
+          mes_previsto?: number
+          observacoes?: string | null
+          periodo_aquisitivo_id?: string | null
+          rejeitado_em?: string | null
+          rejeitado_motivo?: string | null
+          rejeitado_por?: string | null
+          status?: Database["public"]["Enums"]["programacao_ferias_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ferias_programacao_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ferias_programacao_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_cadastro_incompleto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ferias_programacao_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_colaboradores_completo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ferias_programacao_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_passivo_trabalhista_consolidado"
+            referencedColumns: ["colaborador_id"]
+          },
+          {
+            foreignKeyName: "ferias_programacao_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ferias_programacao_ferias_id_fkey"
+            columns: ["ferias_id"]
+            isOneToOne: false
+            referencedRelation: "ferias"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ferias_programacao_ferias_id_fkey"
+            columns: ["ferias_id"]
+            isOneToOne: false
+            referencedRelation: "v_ferias_adiant13_elegibilidade"
+            referencedColumns: ["ferias_id"]
+          },
+          {
+            foreignKeyName: "ferias_programacao_ferias_id_fkey"
+            columns: ["ferias_id"]
+            isOneToOne: false
+            referencedRelation: "v_ferias_alerta_pagamento_d2"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ferias_programacao_ferias_id_fkey"
+            columns: ["ferias_id"]
+            isOneToOne: false
+            referencedRelation: "v_ferias_folha_reconciliacao"
+            referencedColumns: ["ferias_id"]
+          },
+          {
+            foreignKeyName: "ferias_programacao_ferias_id_fkey"
+            columns: ["ferias_id"]
+            isOneToOne: false
+            referencedRelation: "vw_ferias_resumo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ferias_programacao_periodo_aquisitivo_id_fkey"
+            columns: ["periodo_aquisitivo_id"]
+            isOneToOne: false
+            referencedRelation: "periodos_aquisitivos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ferias_reconciliacao_logs: {
+        Row: {
+          corrigidas: number
+          detalhes: Json
+          duracao_ms: number
+          empresa_id: string | null
+          executado_em: string
+          id: string
+          restantes: number
+          verificadas: number
+        }
+        Insert: {
+          corrigidas?: number
+          detalhes?: Json
+          duracao_ms?: number
+          empresa_id?: string | null
+          executado_em?: string
+          id?: string
+          restantes?: number
+          verificadas?: number
+        }
+        Update: {
+          corrigidas?: number
+          detalhes?: Json
+          duracao_ms?: number
+          empresa_id?: string | null
+          executado_em?: string
+          id?: string
+          restantes?: number
+          verificadas?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ferias_reconciliacao_logs_empresa_id_fkey"
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
@@ -10942,6 +11761,27 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ferias"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "historico_ferias_ferias_id_fkey"
+            columns: ["ferias_id"]
+            isOneToOne: false
+            referencedRelation: "v_ferias_adiant13_elegibilidade"
+            referencedColumns: ["ferias_id"]
+          },
+          {
+            foreignKeyName: "historico_ferias_ferias_id_fkey"
+            columns: ["ferias_id"]
+            isOneToOne: false
+            referencedRelation: "v_ferias_alerta_pagamento_d2"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "historico_ferias_ferias_id_fkey"
+            columns: ["ferias_id"]
+            isOneToOne: false
+            referencedRelation: "v_ferias_folha_reconciliacao"
+            referencedColumns: ["ferias_id"]
           },
           {
             foreignKeyName: "historico_ferias_ferias_id_fkey"
@@ -12786,29 +13626,120 @@ export type Database = {
           },
         ]
       }
+      medidas_ciencia_tokens: {
+        Row: {
+          acao: string | null
+          assinatura_hash: string | null
+          colaborador_id: string
+          created_at: string
+          created_by: string | null
+          empresa_id: string
+          expires_at: string
+          geolocation: Json | null
+          id: string
+          ip_address: string | null
+          medida_id: string
+          motivo_recusa: string | null
+          token: string
+          used_at: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          acao?: string | null
+          assinatura_hash?: string | null
+          colaborador_id: string
+          created_at?: string
+          created_by?: string | null
+          empresa_id: string
+          expires_at?: string
+          geolocation?: Json | null
+          id?: string
+          ip_address?: string | null
+          medida_id: string
+          motivo_recusa?: string | null
+          token: string
+          used_at?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          acao?: string | null
+          assinatura_hash?: string | null
+          colaborador_id?: string
+          created_at?: string
+          created_by?: string | null
+          empresa_id?: string
+          expires_at?: string
+          geolocation?: Json | null
+          id?: string
+          ip_address?: string | null
+          medida_id?: string
+          motivo_recusa?: string | null
+          token?: string
+          used_at?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medidas_ciencia_tokens_medida_id_fkey"
+            columns: ["medida_id"]
+            isOneToOne: false
+            referencedRelation: "medidas_disciplinares"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       medidas_disciplinares: {
         Row: {
           aplicado_por: string | null
+          aprovado_gestor_em: string | null
+          aprovado_gestor_por: string | null
+          aprovado_juridico_em: string | null
+          aprovado_juridico_por: string | null
+          aprovado_rh_em: string | null
+          aprovado_rh_por: string | null
+          aprovador_id: string | null
+          arquivado_em: string | null
+          arquivado_por: string | null
           artigo_clt: string | null
           assinado_em: string | null
           colaborador_ciente: boolean | null
           colaborador_id: string
+          contestacao_aceita: boolean | null
+          contestacao_data: string | null
+          contestacao_prazo_ate: string | null
+          contestacao_prazo_horas: number
+          contestacao_respondida_em: string | null
+          contestacao_respondida_por: string | null
+          contestacao_resposta: string | null
+          contestacao_texto: string | null
           created_at: string | null
+          data_aprovacao: string | null
           data_ciencia: string | null
+          data_conhecimento_fato: string | null
+          data_inicio_efeito: string | null
           data_ocorrencia: string
           descricao: string
           dias_suspensao: number | null
           documento_url: string | null
           empresa_id: string | null
           evidenciado_por: Json | null
+          gravidade: string | null
           hash_integridade: string | null
           id: string
           id_registro_anterior: string | null
           motivo_recusa: string | null
+          motivo_rejeicao: string | null
           numero_sequencial: number | null
+          pdf_gerado_em: string | null
+          pdf_hash_sha256: string | null
+          pdf_url: string | null
+          prazo_ciencia_dias: number | null
           recorrencia_infrafacao: boolean | null
           recusa_assinatura: boolean | null
+          rejeitado_em: string | null
+          rejeitado_por: string | null
           status: string | null
+          status_workflow: string | null
           testemunha_1: string | null
           testemunha_1_cpf: string | null
           testemunha_1_nome: string | null
@@ -12820,26 +13751,55 @@ export type Database = {
         }
         Insert: {
           aplicado_por?: string | null
+          aprovado_gestor_em?: string | null
+          aprovado_gestor_por?: string | null
+          aprovado_juridico_em?: string | null
+          aprovado_juridico_por?: string | null
+          aprovado_rh_em?: string | null
+          aprovado_rh_por?: string | null
+          aprovador_id?: string | null
+          arquivado_em?: string | null
+          arquivado_por?: string | null
           artigo_clt?: string | null
           assinado_em?: string | null
           colaborador_ciente?: boolean | null
           colaborador_id: string
+          contestacao_aceita?: boolean | null
+          contestacao_data?: string | null
+          contestacao_prazo_ate?: string | null
+          contestacao_prazo_horas?: number
+          contestacao_respondida_em?: string | null
+          contestacao_respondida_por?: string | null
+          contestacao_resposta?: string | null
+          contestacao_texto?: string | null
           created_at?: string | null
+          data_aprovacao?: string | null
           data_ciencia?: string | null
+          data_conhecimento_fato?: string | null
+          data_inicio_efeito?: string | null
           data_ocorrencia: string
           descricao: string
           dias_suspensao?: number | null
           documento_url?: string | null
           empresa_id?: string | null
           evidenciado_por?: Json | null
+          gravidade?: string | null
           hash_integridade?: string | null
           id?: string
           id_registro_anterior?: string | null
           motivo_recusa?: string | null
+          motivo_rejeicao?: string | null
           numero_sequencial?: number | null
+          pdf_gerado_em?: string | null
+          pdf_hash_sha256?: string | null
+          pdf_url?: string | null
+          prazo_ciencia_dias?: number | null
           recorrencia_infrafacao?: boolean | null
           recusa_assinatura?: boolean | null
+          rejeitado_em?: string | null
+          rejeitado_por?: string | null
           status?: string | null
+          status_workflow?: string | null
           testemunha_1?: string | null
           testemunha_1_cpf?: string | null
           testemunha_1_nome?: string | null
@@ -12851,26 +13811,55 @@ export type Database = {
         }
         Update: {
           aplicado_por?: string | null
+          aprovado_gestor_em?: string | null
+          aprovado_gestor_por?: string | null
+          aprovado_juridico_em?: string | null
+          aprovado_juridico_por?: string | null
+          aprovado_rh_em?: string | null
+          aprovado_rh_por?: string | null
+          aprovador_id?: string | null
+          arquivado_em?: string | null
+          arquivado_por?: string | null
           artigo_clt?: string | null
           assinado_em?: string | null
           colaborador_ciente?: boolean | null
           colaborador_id?: string
+          contestacao_aceita?: boolean | null
+          contestacao_data?: string | null
+          contestacao_prazo_ate?: string | null
+          contestacao_prazo_horas?: number
+          contestacao_respondida_em?: string | null
+          contestacao_respondida_por?: string | null
+          contestacao_resposta?: string | null
+          contestacao_texto?: string | null
           created_at?: string | null
+          data_aprovacao?: string | null
           data_ciencia?: string | null
+          data_conhecimento_fato?: string | null
+          data_inicio_efeito?: string | null
           data_ocorrencia?: string
           descricao?: string
           dias_suspensao?: number | null
           documento_url?: string | null
           empresa_id?: string | null
           evidenciado_por?: Json | null
+          gravidade?: string | null
           hash_integridade?: string | null
           id?: string
           id_registro_anterior?: string | null
           motivo_recusa?: string | null
+          motivo_rejeicao?: string | null
           numero_sequencial?: number | null
+          pdf_gerado_em?: string | null
+          pdf_hash_sha256?: string | null
+          pdf_url?: string | null
+          prazo_ciencia_dias?: number | null
           recorrencia_infrafacao?: boolean | null
           recusa_assinatura?: boolean | null
+          rejeitado_em?: string | null
+          rejeitado_por?: string | null
           status?: string | null
+          status_workflow?: string | null
           testemunha_1?: string | null
           testemunha_1_cpf?: string | null
           testemunha_1_nome?: string | null
@@ -12958,8 +13947,11 @@ export type Database = {
           created_at: string | null
           id: string
           medida_id: string | null
+          mime_type: string | null
           nome_arquivo: string
           storage_path: string
+          tamanho_bytes: number | null
+          tipo: string | null
           tipo_arquivo: string | null
           uploaded_by: string | null
         }
@@ -12967,8 +13959,11 @@ export type Database = {
           created_at?: string | null
           id?: string
           medida_id?: string | null
+          mime_type?: string | null
           nome_arquivo: string
           storage_path: string
+          tamanho_bytes?: number | null
+          tipo?: string | null
           tipo_arquivo?: string | null
           uploaded_by?: string | null
         }
@@ -12976,14 +13971,199 @@ export type Database = {
           created_at?: string | null
           id?: string
           medida_id?: string | null
+          mime_type?: string | null
           nome_arquivo?: string
           storage_path?: string
+          tamanho_bytes?: number | null
+          tipo?: string | null
           tipo_arquivo?: string | null
           uploaded_by?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "medidas_disciplinares_anexos_medida_id_fkey"
+            columns: ["medida_id"]
+            isOneToOne: false
+            referencedRelation: "medidas_disciplinares"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      medidas_disciplinares_contestacao_anexos: {
+        Row: {
+          created_at: string
+          empresa_id: string
+          hash_sha256: string | null
+          id: string
+          medida_id: string
+          mime_type: string | null
+          nome_arquivo: string
+          storage_path: string
+          tamanho_bytes: number | null
+          uploaded_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          empresa_id: string
+          hash_sha256?: string | null
+          id?: string
+          medida_id: string
+          mime_type?: string | null
+          nome_arquivo: string
+          storage_path: string
+          tamanho_bytes?: number | null
+          uploaded_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          empresa_id?: string
+          hash_sha256?: string | null
+          id?: string
+          medida_id?: string
+          mime_type?: string | null
+          nome_arquivo?: string
+          storage_path?: string
+          tamanho_bytes?: number | null
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medidas_disciplinares_contestacao_anexos_medida_id_fkey"
+            columns: ["medida_id"]
+            isOneToOne: false
+            referencedRelation: "medidas_disciplinares"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      medidas_disciplinares_integracao: {
+        Row: {
+          colaborador_id: string
+          competencia: string | null
+          created_at: string
+          detalhes: Json | null
+          dias: number | null
+          empresa_id: string
+          id: string
+          medida_id: string
+          ref_id: string | null
+          status: string
+          tipo_integracao: string
+          updated_at: string
+          valor: number | null
+        }
+        Insert: {
+          colaborador_id: string
+          competencia?: string | null
+          created_at?: string
+          detalhes?: Json | null
+          dias?: number | null
+          empresa_id: string
+          id?: string
+          medida_id: string
+          ref_id?: string | null
+          status?: string
+          tipo_integracao: string
+          updated_at?: string
+          valor?: number | null
+        }
+        Update: {
+          colaborador_id?: string
+          competencia?: string | null
+          created_at?: string
+          detalhes?: Json | null
+          dias?: number | null
+          empresa_id?: string
+          id?: string
+          medida_id?: string
+          ref_id?: string | null
+          status?: string
+          tipo_integracao?: string
+          updated_at?: string
+          valor?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medidas_disciplinares_integracao_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "medidas_disciplinares_integracao_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_cadastro_incompleto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "medidas_disciplinares_integracao_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_colaboradores_completo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "medidas_disciplinares_integracao_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_passivo_trabalhista_consolidado"
+            referencedColumns: ["colaborador_id"]
+          },
+          {
+            foreignKeyName: "medidas_disciplinares_integracao_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "medidas_disciplinares_integracao_medida_id_fkey"
+            columns: ["medida_id"]
+            isOneToOne: false
+            referencedRelation: "medidas_disciplinares"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      medidas_disciplinares_workflow_log: {
+        Row: {
+          acao: string
+          ator_id: string | null
+          created_at: string
+          de_status: string | null
+          empresa_id: string
+          id: string
+          medida_id: string
+          observacao: string | null
+          para_status: string
+        }
+        Insert: {
+          acao: string
+          ator_id?: string | null
+          created_at?: string
+          de_status?: string | null
+          empresa_id: string
+          id?: string
+          medida_id: string
+          observacao?: string | null
+          para_status: string
+        }
+        Update: {
+          acao?: string
+          ator_id?: string | null
+          created_at?: string
+          de_status?: string | null
+          empresa_id?: string
+          id?: string
+          medida_id?: string
+          observacao?: string | null
+          para_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medidas_disciplinares_workflow_log_medida_id_fkey"
             columns: ["medida_id"]
             isOneToOne: false
             referencedRelation: "medidas_disciplinares"
@@ -14240,11 +15420,15 @@ export type Database = {
           created_at: string
           data_fim: string
           data_inicio: string
+          data_limite_concessao: string | null
           dias_descontados: number | null
           dias_direito: number
+          em_dobra: boolean
           faltas_periodo: number | null
           id: string
+          motivo_perda: string | null
           numero_periodo: number
+          perdeu_direito: boolean
           status: string | null
         }
         Insert: {
@@ -14252,11 +15436,15 @@ export type Database = {
           created_at?: string
           data_fim: string
           data_inicio: string
+          data_limite_concessao?: string | null
           dias_descontados?: number | null
           dias_direito?: number
+          em_dobra?: boolean
           faltas_periodo?: number | null
           id?: string
+          motivo_perda?: string | null
           numero_periodo?: number
+          perdeu_direito?: boolean
           status?: string | null
         }
         Update: {
@@ -14264,11 +15452,15 @@ export type Database = {
           created_at?: string
           data_fim?: string
           data_inicio?: string
+          data_limite_concessao?: string | null
           dias_descontados?: number | null
           dias_direito?: number
+          em_dobra?: boolean
           faltas_periodo?: number | null
           id?: string
+          motivo_perda?: string | null
           numero_periodo?: number
+          perdeu_direito?: boolean
           status?: string | null
         }
         Relationships: [
@@ -21769,6 +22961,54 @@ export type Database = {
         }
         Relationships: []
       }
+      v_audit_legacy: {
+        Row: {
+          action: string | null
+          empresa_id: string | null
+          entity: string | null
+          entity_id: string | null
+          id: string | null
+          ingested_at: string | null
+          ip_address: unknown
+          occurred_at: string | null
+          payload: Json | null
+          source_id: string | null
+          source_table: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action?: string | null
+          empresa_id?: string | null
+          entity?: string | null
+          entity_id?: string | null
+          id?: string | null
+          ingested_at?: string | null
+          ip_address?: unknown
+          occurred_at?: string | null
+          payload?: Json | null
+          source_id?: string | null
+          source_table?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string | null
+          empresa_id?: string | null
+          entity?: string | null
+          entity_id?: string | null
+          id?: string | null
+          ingested_at?: string | null
+          ip_address?: unknown
+          occurred_at?: string | null
+          payload?: Json | null
+          source_id?: string | null
+          source_table?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       v_audit_trail: {
         Row: {
           acao: string | null
@@ -21786,6 +23026,525 @@ export type Database = {
           user_nome: string | null
         }
         Relationships: []
+      }
+      v_contrato_token_timeline: {
+        Row: {
+          ator_id: string | null
+          ator_nome: string | null
+          contrato_id: string | null
+          created_at: string | null
+          detalhes: Json | null
+          empresa_id: string | null
+          evento: string | null
+          id: string | null
+          ip: unknown
+          token_id: string | null
+          user_agent: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contrato_token_eventos_contrato_id_fkey"
+            columns: ["contrato_id"]
+            isOneToOne: false
+            referencedRelation: "contratos_gerados"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contrato_token_eventos_contrato_id_fkey"
+            columns: ["contrato_id"]
+            isOneToOne: false
+            referencedRelation: "v_contratos_vencendo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contrato_token_eventos_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contrato_token_eventos_token_id_fkey"
+            columns: ["token_id"]
+            isOneToOne: false
+            referencedRelation: "contrato_assinatura_tokens"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contrato_token_eventos_token_id_fkey"
+            columns: ["token_id"]
+            isOneToOne: false
+            referencedRelation: "v_contratos_tokens_pendentes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_contratos_assinatura_kpi: {
+        Row: {
+          empresa_id: string | null
+          taxa_conversao_pct: number | null
+          tempo_medio_assinatura_h: number | null
+          tokens_assinados: number | null
+          tokens_expirados: number | null
+          tokens_gerados: number | null
+          tokens_pendentes: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contrato_assinatura_tokens_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_contratos_tokens_pendentes: {
+        Row: {
+          colaborador_id: string | null
+          colaborador_nome: string | null
+          contrato_id: string | null
+          contrato_status: string | null
+          created_at: string | null
+          data_fim: string | null
+          data_inicio: string | null
+          dias_desde_geracao: number | null
+          dias_para_expirar: number | null
+          email_destinatario: string | null
+          empresa_id: string | null
+          expira_em: string | null
+          id: string | null
+          reminders_enviados: number | null
+          tipo_contrato: string | null
+          ultimo_reminder_at: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contrato_assinatura_tokens_contrato_id_fkey"
+            columns: ["contrato_id"]
+            isOneToOne: false
+            referencedRelation: "contratos_gerados"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contrato_assinatura_tokens_contrato_id_fkey"
+            columns: ["contrato_id"]
+            isOneToOne: false
+            referencedRelation: "v_contratos_vencendo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contrato_assinatura_tokens_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contratos_gerados_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contratos_gerados_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_cadastro_incompleto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contratos_gerados_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_colaboradores_completo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contratos_gerados_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_passivo_trabalhista_consolidado"
+            referencedColumns: ["colaborador_id"]
+          },
+        ]
+      }
+      v_contratos_vencendo: {
+        Row: {
+          admissao_id: string | null
+          colaborador_id: string | null
+          data_fim: string | null
+          data_inicio: string | null
+          dias_para_vencer: number | null
+          empresa_id: string | null
+          id: string | null
+          prorrogado: boolean | null
+          severidade: string | null
+          status: string | null
+          template_nome: string | null
+          tipo_contrato: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contratos_gerados_admissao_id_fkey"
+            columns: ["admissao_id"]
+            isOneToOne: false
+            referencedRelation: "admissoes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contratos_gerados_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contratos_gerados_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_cadastro_incompleto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contratos_gerados_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_colaboradores_completo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contratos_gerados_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_passivo_trabalhista_consolidado"
+            referencedColumns: ["colaborador_id"]
+          },
+          {
+            foreignKeyName: "contratos_gerados_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_ferias_adiant13_elegibilidade: {
+        Row: {
+          ano_exercicio: number | null
+          colaborador_id: string | null
+          data_inicio: string | null
+          dentro_do_prazo: boolean | null
+          empresa_id: string | null
+          ferias_id: string | null
+          ja_solicitado: boolean | null
+          sem_duplicidade: boolean | null
+        }
+        Insert: {
+          ano_exercicio?: never
+          colaborador_id?: string | null
+          data_inicio?: string | null
+          dentro_do_prazo?: never
+          empresa_id?: string | null
+          ferias_id?: string | null
+          ja_solicitado?: boolean | null
+          sem_duplicidade?: never
+        }
+        Update: {
+          ano_exercicio?: never
+          colaborador_id?: string | null
+          data_inicio?: string | null
+          dentro_do_prazo?: never
+          empresa_id?: string | null
+          ferias_id?: string | null
+          ja_solicitado?: boolean | null
+          sem_duplicidade?: never
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ferias_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ferias_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_cadastro_incompleto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ferias_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_colaboradores_completo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ferias_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_passivo_trabalhista_consolidado"
+            referencedColumns: ["colaborador_id"]
+          },
+          {
+            foreignKeyName: "ferias_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_ferias_colaborador"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_ferias_colaborador"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_cadastro_incompleto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_ferias_colaborador"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_colaboradores_completo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_ferias_colaborador"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_passivo_trabalhista_consolidado"
+            referencedColumns: ["colaborador_id"]
+          },
+          {
+            foreignKeyName: "fk_ferias_empresa"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_ferias_alerta_pagamento_d2: {
+        Row: {
+          colaborador_id: string | null
+          data_inicio: string | null
+          data_pagamento: string | null
+          dias_ate_inicio: number | null
+          empresa_id: string | null
+          id: string | null
+          pagamento_confirmado_em: string | null
+          severidade: string | null
+          status: string | null
+        }
+        Insert: {
+          colaborador_id?: string | null
+          data_inicio?: string | null
+          data_pagamento?: string | null
+          dias_ate_inicio?: never
+          empresa_id?: string | null
+          id?: string | null
+          pagamento_confirmado_em?: string | null
+          severidade?: never
+          status?: string | null
+        }
+        Update: {
+          colaborador_id?: string | null
+          data_inicio?: string | null
+          data_pagamento?: string | null
+          dias_ate_inicio?: never
+          empresa_id?: string | null
+          id?: string | null
+          pagamento_confirmado_em?: string | null
+          severidade?: never
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ferias_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ferias_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_cadastro_incompleto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ferias_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_colaboradores_completo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ferias_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_passivo_trabalhista_consolidado"
+            referencedColumns: ["colaborador_id"]
+          },
+          {
+            foreignKeyName: "ferias_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_ferias_colaborador"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_ferias_colaborador"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_cadastro_incompleto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_ferias_colaborador"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_colaboradores_completo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_ferias_colaborador"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_passivo_trabalhista_consolidado"
+            referencedColumns: ["colaborador_id"]
+          },
+          {
+            foreignKeyName: "fk_ferias_empresa"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_ferias_alertas_criticos: {
+        Row: {
+          aquisitivo_fim: string | null
+          aquisitivo_inicio: string | null
+          colaborador: string | null
+          colaborador_id: string | null
+          data_limite_concessao: string | null
+          dias_direito: number | null
+          dias_para_limite: number | null
+          em_dobra: boolean | null
+          empresa_id: string | null
+          perdeu_direito: boolean | null
+          periodo_aquisitivo_id: string | null
+          severidade: string | null
+        }
+        Relationships: []
+      }
+      v_ferias_folha_reconciliacao: {
+        Row: {
+          colaborador_id: string | null
+          colaborador_nome: string | null
+          competencia: string | null
+          data_fim: string | null
+          data_inicio: string | null
+          empresa_id: string | null
+          enviado_contabilidade: boolean | null
+          ferias_id: string | null
+          rubricas_esperadas: number | null
+          rubricas_geradas: number | null
+          situacao: string | null
+          status: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ferias_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ferias_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_cadastro_incompleto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ferias_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_colaboradores_completo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ferias_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_passivo_trabalhista_consolidado"
+            referencedColumns: ["colaborador_id"]
+          },
+          {
+            foreignKeyName: "ferias_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_ferias_colaborador"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_ferias_colaborador"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_cadastro_incompleto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_ferias_colaborador"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_colaboradores_completo"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_ferias_colaborador"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "vw_passivo_trabalhista_consolidado"
+            referencedColumns: ["colaborador_id"]
+          },
+          {
+            foreignKeyName: "fk_ferias_empresa"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       v_idempotency_metrics: {
         Row: {
@@ -21811,6 +23570,18 @@ export type Database = {
           rows: number | null
           stddev_ms: number | null
           total_ms: number | null
+        }
+        Relationships: []
+      }
+      v_system_health: {
+        Row: {
+          audit_events_total: number | null
+          audit_last_event_at: string | null
+          fks_without_index: number | null
+          security_alerts_open: number | null
+          snapshot_at: string | null
+          tables_total: number | null
+          tables_with_rls: number | null
         }
         Relationships: []
       }
@@ -22965,9 +24736,39 @@ export type Database = {
       _is_admin_bypass: { Args: never; Returns: boolean }
       _purge_audit_log_internal: { Args: { _dias?: number }; Returns: number }
       _scan_status_anomalies_global: { Args: never; Returns: number }
+      admin_list_security_definer_rpcs: {
+        Args: never
+        Returns: {
+          arguments: string
+          executable_by_anon: boolean
+          executable_by_authenticated: boolean
+          function_name: string
+          return_type: string
+        }[]
+      }
+      admin_list_user_roles: {
+        Args: never
+        Returns: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }[]
+      }
+      admin_set_user_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _target_user_id: string
+        }
+        Returns: boolean
+      }
       anonimizar_dados_pessoais: {
         Args: { target_id: string }
         Returns: undefined
+      }
+      aplicar_medida_folha_ponto: {
+        Args: { p_medida_id: string }
+        Returns: Json
       }
       aprovar_despesa: {
         Args: { _despesa_id: string; _observacoes?: string }
@@ -22999,6 +24800,20 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      assinar_aviso_ferias: {
+        Args: {
+          p_ferias_id: string
+          p_hash: string
+          p_ip?: unknown
+          p_pdf_url: string
+          p_ua?: string
+        }
+        Returns: Json
+      }
+      assinar_desligamento: {
+        Args: { _desligamento_id: string; _parte: string }
+        Returns: boolean
+      }
       assinar_espelho_ponto: {
         Args: {
           _colaborador_id: string
@@ -23012,6 +24827,10 @@ export type Database = {
         Args: { _colaborador_id: string; _divergencia_id: string }
         Returns: undefined
       }
+      calcular_dias_direito_ferias: {
+        Args: { p_faltas: number }
+        Returns: number
+      }
       calcular_dias_ferias: { Args: { faltas: number }; Returns: number }
       calculate_lockout_duration: {
         Args: { attempts: number }
@@ -23020,6 +24839,15 @@ export type Database = {
       check_brute_force: {
         Args: { check_email: string; check_ip: string }
         Returns: Json
+      }
+      check_ciencia_rate_limit: {
+        Args: {
+          p_identifier?: string
+          p_max_requests?: number
+          p_rpc_name: string
+          p_window_minutes?: number
+        }
+        Returns: boolean
       }
       check_idempotency_anomalies: {
         Args: never
@@ -23044,6 +24872,7 @@ export type Database = {
         }
         Returns: Json
       }
+      cleanup_ciencia_rate_limits: { Args: never; Returns: undefined }
       cleanup_security_logs: { Args: never; Returns: undefined }
       clinicas_proximas: {
         Args: {
@@ -23066,6 +24895,87 @@ export type Database = {
           uf: string
         }[]
       }
+      consumir_pendencias_medida_no_holerite: {
+        Args: {
+          p_colaborador_id: string
+          p_competencia: string
+          p_holerite_id: string
+        }
+        Returns: number
+      }
+      contrato_assinar_por_token: {
+        Args: {
+          p_cpf: string
+          p_ip?: unknown
+          p_nome_completo: string
+          p_token: string
+          p_user_agent?: string
+        }
+        Returns: Json
+      }
+      contrato_consultar_por_token: { Args: { p_token: string }; Returns: Json }
+      contrato_estender_expiracao: {
+        Args: { p_dias?: number; p_token_id: string }
+        Returns: {
+          expira_em: string
+          id: string
+        }[]
+      }
+      contrato_gerar_token_assinatura: {
+        Args: {
+          p_contrato_id: string
+          p_cpf?: string
+          p_email?: string
+          p_validade_dias?: number
+        }
+        Returns: {
+          expira_em: string
+          token: string
+        }[]
+      }
+      contrato_lembretes_pendentes: {
+        Args: never
+        Returns: {
+          notificados: number
+          processados: number
+        }[]
+      }
+      contrato_montar_variaveis: {
+        Args: { p_admissao_id: string }
+        Returns: Json
+      }
+      contrato_preview_url_por_token: {
+        Args: { p_token: string }
+        Returns: Json
+      }
+      contrato_resolver_template: {
+        Args: { p_admissao_id: string }
+        Returns: string
+      }
+      contrato_revogar_token: {
+        Args: { p_motivo?: string; p_token_id: string }
+        Returns: undefined
+      }
+      contrato_token_evento_registrar: {
+        Args: {
+          p_detalhes?: Json
+          p_evento: string
+          p_ip?: unknown
+          p_token_id: string
+          p_ua?: string
+        }
+        Returns: string
+      }
+      contrato_verificar_autenticidade: {
+        Args: { p_hash: string }
+        Returns: Json
+      }
+      contrato_verificar_autenticidade_v2: {
+        Args: { p_hash: string; p_ip?: string }
+        Returns: Json
+      }
+      contratos_alertar_vencimentos: { Args: never; Returns: number }
+      contratos_enviar_lembretes_assinatura: { Args: never; Returns: number }
       criar_batida_da_divergencia_afdt: {
         Args: { _divergencia_id: string; _tipo?: string }
         Returns: string
@@ -23084,6 +24994,17 @@ export type Database = {
         Args: { lat1: number; lat2: number; lng1: number; lng2: number }
         Returns: number
       }
+      eh_dia_valido_inicio_ferias: {
+        Args: { p_data: string; p_empresa_id: string }
+        Returns: {
+          motivo: string
+          ok: boolean
+        }[]
+      }
+      enfileirar_esocial_medida_disciplinar: {
+        Args: { p_medida_id: string }
+        Returns: Json
+      }
       enforce_log_retention: { Args: never; Returns: Json }
       fn_calculate_periodo_aquisitivo: {
         Args: { _colaborador_id: string }
@@ -23097,6 +25018,7 @@ export type Database = {
         Args: { _cpf: string; _nivel: string; _user_id: string }
         Returns: undefined
       }
+      fn_recalcular_dobra_e_alertas: { Args: never; Returns: number }
       folha_conflict_stats: {
         Args: { _days?: number }
         Returns: {
@@ -23105,10 +25027,22 @@ export type Database = {
           ultimo_em: string
         }[]
       }
+      garantir_rubrica_suspensao: {
+        Args: { p_empresa_id: string }
+        Returns: string
+      }
       gerar_alertas_preditivos_ia: { Args: never; Returns: undefined }
       gerar_canonical_espelho_ponto: {
         Args: { _colaborador_id: string; _competencia: string }
         Returns: Json
+      }
+      gerar_rubricas_ferias: { Args: { p_ferias_id: string }; Returns: number }
+      get_admissao_por_token: {
+        Args: { _token: string }
+        Returns: {
+          admissao: Json
+          token_row: Database["public"]["Tables"]["admissao_tokens"]["Row"]
+        }[]
       }
       get_audit_trail_by_entity: {
         Args: { _entidade: string; _entidade_id: string; _limit?: number }
@@ -23227,6 +25161,10 @@ export type Database = {
       is_ip_blocked: { Args: { check_ip: string }; Returns: boolean }
       is_ip_whitelisted: { Args: { check_ip: string }; Returns: boolean }
       limpar_govbr_states_expirados: { Args: never; Returns: undefined }
+      log_frontend_error: {
+        Args: { p_contexto?: Json; p_mensagem: string; p_nivel: string }
+        Returns: undefined
+      }
       maintenance_archive_old_audit: {
         Args: { _batch?: number; _days?: number }
         Returns: {
@@ -23235,6 +25173,186 @@ export type Database = {
         }[]
       }
       maintenance_weekly_analyze: { Args: never; Returns: undefined }
+      medida_aprovar: {
+        Args: { _medida_id: string; _observacao?: string }
+        Returns: Json
+      }
+      medida_arquivar: {
+        Args: { _medida_id: string; _observacao?: string }
+        Returns: Json
+      }
+      medida_consultar_por_token: { Args: { p_token: string }; Returns: Json }
+      medida_contestar: {
+        Args: { _medida_id: string; _texto: string }
+        Returns: {
+          aplicado_por: string | null
+          aprovado_gestor_em: string | null
+          aprovado_gestor_por: string | null
+          aprovado_juridico_em: string | null
+          aprovado_juridico_por: string | null
+          aprovado_rh_em: string | null
+          aprovado_rh_por: string | null
+          aprovador_id: string | null
+          arquivado_em: string | null
+          arquivado_por: string | null
+          artigo_clt: string | null
+          assinado_em: string | null
+          colaborador_ciente: boolean | null
+          colaborador_id: string
+          contestacao_aceita: boolean | null
+          contestacao_data: string | null
+          contestacao_prazo_ate: string | null
+          contestacao_prazo_horas: number
+          contestacao_respondida_em: string | null
+          contestacao_respondida_por: string | null
+          contestacao_resposta: string | null
+          contestacao_texto: string | null
+          created_at: string | null
+          data_aprovacao: string | null
+          data_ciencia: string | null
+          data_conhecimento_fato: string | null
+          data_inicio_efeito: string | null
+          data_ocorrencia: string
+          descricao: string
+          dias_suspensao: number | null
+          documento_url: string | null
+          empresa_id: string | null
+          evidenciado_por: Json | null
+          gravidade: string | null
+          hash_integridade: string | null
+          id: string
+          id_registro_anterior: string | null
+          motivo_recusa: string | null
+          motivo_rejeicao: string | null
+          numero_sequencial: number | null
+          pdf_gerado_em: string | null
+          pdf_hash_sha256: string | null
+          pdf_url: string | null
+          prazo_ciencia_dias: number | null
+          recorrencia_infrafacao: boolean | null
+          recusa_assinatura: boolean | null
+          rejeitado_em: string | null
+          rejeitado_por: string | null
+          status: string | null
+          status_workflow: string | null
+          testemunha_1: string | null
+          testemunha_1_cpf: string | null
+          testemunha_1_nome: string | null
+          testemunha_2: string | null
+          testemunha_2_cpf: string | null
+          testemunha_2_nome: string | null
+          tipo: string
+          updated_at: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "medidas_disciplinares"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      medida_enviar_aprovacao: { Args: { _medida_id: string }; Returns: Json }
+      medida_gerar_link_ciencia: {
+        Args: { p_medida_id: string }
+        Returns: Json
+      }
+      medida_registrar_ciencia_publica: {
+        Args: {
+          p_acao: string
+          p_geo?: Json
+          p_ip?: string
+          p_motivo_recusa?: string
+          p_token: string
+          p_user_agent?: string
+        }
+        Returns: Json
+      }
+      medida_rejeitar: {
+        Args: { _medida_id: string; _motivo: string }
+        Returns: Json
+      }
+      medida_responder_contestacao: {
+        Args: { _aceita: boolean; _medida_id: string; _resposta: string }
+        Returns: {
+          aplicado_por: string | null
+          aprovado_gestor_em: string | null
+          aprovado_gestor_por: string | null
+          aprovado_juridico_em: string | null
+          aprovado_juridico_por: string | null
+          aprovado_rh_em: string | null
+          aprovado_rh_por: string | null
+          aprovador_id: string | null
+          arquivado_em: string | null
+          arquivado_por: string | null
+          artigo_clt: string | null
+          assinado_em: string | null
+          colaborador_ciente: boolean | null
+          colaborador_id: string
+          contestacao_aceita: boolean | null
+          contestacao_data: string | null
+          contestacao_prazo_ate: string | null
+          contestacao_prazo_horas: number
+          contestacao_respondida_em: string | null
+          contestacao_respondida_por: string | null
+          contestacao_resposta: string | null
+          contestacao_texto: string | null
+          created_at: string | null
+          data_aprovacao: string | null
+          data_ciencia: string | null
+          data_conhecimento_fato: string | null
+          data_inicio_efeito: string | null
+          data_ocorrencia: string
+          descricao: string
+          dias_suspensao: number | null
+          documento_url: string | null
+          empresa_id: string | null
+          evidenciado_por: Json | null
+          gravidade: string | null
+          hash_integridade: string | null
+          id: string
+          id_registro_anterior: string | null
+          motivo_recusa: string | null
+          motivo_rejeicao: string | null
+          numero_sequencial: number | null
+          pdf_gerado_em: string | null
+          pdf_hash_sha256: string | null
+          pdf_url: string | null
+          prazo_ciencia_dias: number | null
+          recorrencia_infrafacao: boolean | null
+          recusa_assinatura: boolean | null
+          rejeitado_em: string | null
+          rejeitado_por: string | null
+          status: string | null
+          status_workflow: string | null
+          testemunha_1: string | null
+          testemunha_1_cpf: string | null
+          testemunha_1_nome: string | null
+          testemunha_2: string | null
+          testemunha_2_cpf: string | null
+          testemunha_2_nome: string | null
+          tipo: string
+          updated_at: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "medidas_disciplinares"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      medida_verificar_ciencia_hash: { Args: { p_hash: string }; Returns: Json }
+      medidas_analytics_reincidencia: {
+        Args: {
+          p_data_fim: string
+          p_data_inicio: string
+          p_empresa_id: string
+        }
+        Returns: Json
+      }
+      next_cnab_sequencial: {
+        Args: { p_banco_codigo: string; p_empresa_id: string }
+        Returns: number
+      }
       notificar_divergencias_afdt: {
         Args: { _importacao_id: string }
         Returns: {
@@ -23243,11 +25361,258 @@ export type Database = {
           notificacoes_criadas: number
         }[]
       }
+      notificar_ferias_pagamento_d5: { Args: never; Returns: number }
+      notificar_ferias_reconciliacao_sla_baixo: { Args: never; Returns: Json }
+      pagar_desligamento: {
+        Args: { _comprovante_url?: string; _desligamento_id: string }
+        Returns: {
+          assinado_colaborador: boolean | null
+          assinado_empresa: boolean | null
+          aviso_previo: number | null
+          checklist_calculo_rescisao: boolean | null
+          checklist_comunicacao: boolean | null
+          checklist_devolucao_equipamentos: boolean | null
+          checklist_documentacao: boolean | null
+          checklist_esocial: boolean | null
+          checklist_homologacao: boolean | null
+          checklist_pagamento: boolean | null
+          checklist_revogacao_acessos: boolean | null
+          colaborador_id: string
+          comprovante_pagamento_url: string | null
+          created_at: string
+          created_by: string | null
+          data_assinatura_colaborador: string | null
+          data_assinatura_empresa: string | null
+          data_aviso: string | null
+          data_aviso_previo: string | null
+          data_contabilidade: string | null
+          data_desligamento: string
+          data_pagamento: string | null
+          data_remocao_acesso: string | null
+          decimo_terceiro: number | null
+          empresa_id: string | null
+          etapa: string | null
+          ferias_proporcionais: number | null
+          ferias_vencidas: number | null
+          hash_assinatura_colaborador: string | null
+          hash_assinatura_empresa: string | null
+          hash_integridade: string | null
+          id: string
+          motivo: string | null
+          multa_fgts: number | null
+          novo_supervisor_id: string | null
+          quebra_contrato: boolean | null
+          remover_beneficios: boolean | null
+          salario_base: number
+          saldo_salario: number | null
+          status: string
+          terco_constitucional: number | null
+          tipo: Database["public"]["Enums"]["tipo_desligamento"]
+          tipo_aviso_previo_id: number | null
+          tipo_desligamento_id: number | null
+          total_descontos: number | null
+          total_proventos: number | null
+          updated_at: string
+          valor_liquido: number | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "desligamentos"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       process_lgpd_cleanup_queue: { Args: never; Returns: number }
       processar_ajuste_aprovado: {
         Args: { p_solicitacao_id: string }
         Returns: undefined
       }
+      programacao_ferias_aprovar_gestor: {
+        Args: { _id: string }
+        Returns: {
+          ano: number
+          aprovado_gestor_em: string | null
+          aprovado_gestor_por: string | null
+          aprovado_rh_em: string | null
+          aprovado_rh_por: string | null
+          colaborador_id: string
+          created_at: string
+          criado_por: string | null
+          data_fim_prevista: string | null
+          data_inicio_prevista: string | null
+          dias_previstos: number
+          empresa_id: string
+          ferias_id: string | null
+          id: string
+          mes_previsto: number
+          observacoes: string | null
+          periodo_aquisitivo_id: string | null
+          rejeitado_em: string | null
+          rejeitado_motivo: string | null
+          rejeitado_por: string | null
+          status: Database["public"]["Enums"]["programacao_ferias_status"]
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "ferias_programacao"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      programacao_ferias_aprovar_rh: {
+        Args: { _id: string }
+        Returns: {
+          ano: number
+          aprovado_gestor_em: string | null
+          aprovado_gestor_por: string | null
+          aprovado_rh_em: string | null
+          aprovado_rh_por: string | null
+          colaborador_id: string
+          created_at: string
+          criado_por: string | null
+          data_fim_prevista: string | null
+          data_inicio_prevista: string | null
+          dias_previstos: number
+          empresa_id: string
+          ferias_id: string | null
+          id: string
+          mes_previsto: number
+          observacoes: string | null
+          periodo_aquisitivo_id: string | null
+          rejeitado_em: string | null
+          rejeitado_motivo: string | null
+          rejeitado_por: string | null
+          status: Database["public"]["Enums"]["programacao_ferias_status"]
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "ferias_programacao"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      programacao_ferias_converter: {
+        Args: { _id: string }
+        Returns: {
+          abono_pecuniario: boolean | null
+          adiantamento_13: boolean | null
+          adiantamento_13_ano_exercicio: number | null
+          adiantamento_13_solicitado_em: string | null
+          adiantamento_13_solicitado_por: string | null
+          adiantamento_13o: boolean | null
+          aprovado_em: string | null
+          aprovado_gestor: boolean | null
+          aprovado_gestor_em: string | null
+          aprovado_gestor_por: string | null
+          aprovado_por: string | null
+          aprovado_rh: boolean | null
+          aprovado_rh_em: string | null
+          aprovado_rh_por: string | null
+          aviso_assinatura_em: string | null
+          aviso_assinatura_hash: string | null
+          aviso_assinatura_ip: unknown
+          aviso_assinatura_por: string | null
+          aviso_assinatura_user_agent: string | null
+          aviso_gerado_em: string | null
+          aviso_pdf_url: string | null
+          cancelado: boolean | null
+          cancelado_em: string | null
+          cancelado_por: string | null
+          colaborador_id: string
+          created_at: string
+          created_by: string | null
+          data_fim: string
+          data_inicio: string
+          data_pagamento: string | null
+          descontos_inss: number | null
+          descontos_irrf: number | null
+          dias_abono: number | null
+          dias_gozo: number
+          documento_url: string | null
+          empresa_id: string | null
+          enviado_contabilidade: boolean | null
+          enviado_contabilidade_em: string | null
+          enviado_contabilidade_por: string | null
+          ferias_coletiva_id: string | null
+          hash_integridade: string | null
+          id: string
+          justificativa: string | null
+          motivo_cancelamento: string | null
+          observacoes: string | null
+          pagamento_comprovante_path: string | null
+          pagamento_confirmado_em: string | null
+          pagamento_confirmado_por: string | null
+          pagamento_valor: number | null
+          periodo_aquisitivo_fim: string | null
+          periodo_aquisitivo_id: string
+          periodo_aquisitivo_inicio: string | null
+          salario_base: number
+          saldo_gasto: number | null
+          status: string | null
+          status_aprovacao_contabilidade: string | null
+          status_aprovacao_gestor: string | null
+          status_aprovacao_rh: string | null
+          updated_at: string
+          valor_abono: number | null
+          valor_abono_pecuniario: number | null
+          valor_adiantamento_13: number | null
+          valor_ferias: number
+          valor_liquido: number
+          valor_terco: number
+          valor_terco_abono: number | null
+          valor_total: number
+          vender_abono: boolean | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "ferias"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      programacao_ferias_mover: {
+        Args: { _id: string; _nova_data_inicio?: string; _novo_mes: number }
+        Returns: {
+          aviso: string
+          programacao: Database["public"]["Tables"]["ferias_programacao"]["Row"]
+        }[]
+      }
+      programacao_ferias_rejeitar: {
+        Args: { _id: string; _motivo: string }
+        Returns: {
+          ano: number
+          aprovado_gestor_em: string | null
+          aprovado_gestor_por: string | null
+          aprovado_rh_em: string | null
+          aprovado_rh_por: string | null
+          colaborador_id: string
+          created_at: string
+          criado_por: string | null
+          data_fim_prevista: string | null
+          data_inicio_prevista: string | null
+          dias_previstos: number
+          empresa_id: string
+          ferias_id: string | null
+          id: string
+          mes_previsto: number
+          observacoes: string | null
+          periodo_aquisitivo_id: string | null
+          rejeitado_em: string | null
+          rejeitado_motivo: string | null
+          rejeitado_por: string | null
+          status: Database["public"]["Enums"]["programacao_ferias_status"]
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "ferias_programacao"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      purgar_ferias_reconciliacao_logs_antigos: { Args: never; Returns: number }
       purge_audit_log_old: { Args: { _dias?: number }; Returns: number }
       purge_expired_idempotency_keys: { Args: never; Returns: number }
       purge_expired_security_data: { Args: never; Returns: Json }
@@ -23261,6 +25626,25 @@ export type Database = {
           total: number
         }[]
       }
+      reconciliar_ferias_folha_batch: {
+        Args: never
+        Returns: {
+          corrigidas: number
+          detalhes: Json
+          duracao_ms: number
+          empresa_id: string | null
+          executado_em: string
+          id: string
+          restantes: number
+          verificadas: number
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "ferias_reconciliacao_logs"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       record_failed_login: {
         Args: { p_identifier: string; p_identifier_type?: string }
         Returns: {
@@ -23270,6 +25654,191 @@ export type Database = {
         }[]
       }
       refresh_dashboard_mvs: { Args: never; Returns: Json }
+      registrar_batida_ponto: {
+        Args: {
+          p_colaborador_id: string
+          p_data: string
+          p_dentro_raio?: boolean
+          p_dispositivo_id?: string
+          p_empresa_id: string
+          p_foto_biometria_url?: string
+          p_hash_integridade?: string
+          p_hora: string
+          p_latitude?: number
+          p_longitude?: number
+          p_metadata?: Json
+          p_origem?: string
+          p_precisao_metros?: number
+          p_timezone?: string
+          p_tipo: string
+        }
+        Returns: {
+          ajustado: boolean | null
+          ajustado_por: string | null
+          anomalia_detectada: boolean | null
+          biometria_score: number | null
+          biometria_status: string | null
+          colaborador_id: string
+          created_at: string | null
+          data: string
+          dentro_raio: boolean | null
+          device_metadata: Json | null
+          dispositivo_id: string | null
+          distancia_local_metros: number | null
+          empresa_id: string | null
+          foto_biometria_url: string | null
+          hash_biometrico: string | null
+          hash_comprovante: string | null
+          hash_digital: string | null
+          hash_integridade: string | null
+          hora: string
+          id: string
+          id_fiscal_ponto: string | null
+          ip_address: string | null
+          is_offline: boolean | null
+          justificativa_anomalia: string | null
+          latitude: number | null
+          longitude: number | null
+          motivo_ajuste: string | null
+          offline: boolean | null
+          offset_timezone: number | null
+          ordem: number
+          origem: string | null
+          precisao_metros: number | null
+          sync_at: string | null
+          timestamp_dispositivo: string | null
+          timezone: string | null
+          tipo: string
+          updated_at: string | null
+          versao_app: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "batidas_ponto"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      registrar_comunicado_ferias_coletivas: {
+        Args: {
+          _coletiva_id: string
+          _mte_hash: string
+          _mte_path: string
+          _sindicato_hash: string
+          _sindicato_nome: string
+          _sindicato_path: string
+        }
+        Returns: {
+          aprovado_por: string | null
+          comunicado_gerado_em: string | null
+          comunicado_gerado_por: string | null
+          comunicado_mte_hash: string | null
+          comunicado_mte_path: string | null
+          comunicado_sindicato_hash: string | null
+          comunicado_sindicato_nome: string | null
+          comunicado_sindicato_path: string | null
+          created_at: string
+          created_by: string | null
+          data_fim: string
+          data_inicio: string
+          departamentos: string[] | null
+          dias: number
+          empresa_id: string
+          id: string
+          justificativa: string | null
+          status: string | null
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "ferias_coletivas"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      registrar_pagamento_ferias: {
+        Args: {
+          p_comprovante_path?: string
+          p_ferias_id: string
+          p_valor: number
+        }
+        Returns: {
+          abono_pecuniario: boolean | null
+          adiantamento_13: boolean | null
+          adiantamento_13_ano_exercicio: number | null
+          adiantamento_13_solicitado_em: string | null
+          adiantamento_13_solicitado_por: string | null
+          adiantamento_13o: boolean | null
+          aprovado_em: string | null
+          aprovado_gestor: boolean | null
+          aprovado_gestor_em: string | null
+          aprovado_gestor_por: string | null
+          aprovado_por: string | null
+          aprovado_rh: boolean | null
+          aprovado_rh_em: string | null
+          aprovado_rh_por: string | null
+          aviso_assinatura_em: string | null
+          aviso_assinatura_hash: string | null
+          aviso_assinatura_ip: unknown
+          aviso_assinatura_por: string | null
+          aviso_assinatura_user_agent: string | null
+          aviso_gerado_em: string | null
+          aviso_pdf_url: string | null
+          cancelado: boolean | null
+          cancelado_em: string | null
+          cancelado_por: string | null
+          colaborador_id: string
+          created_at: string
+          created_by: string | null
+          data_fim: string
+          data_inicio: string
+          data_pagamento: string | null
+          descontos_inss: number | null
+          descontos_irrf: number | null
+          dias_abono: number | null
+          dias_gozo: number
+          documento_url: string | null
+          empresa_id: string | null
+          enviado_contabilidade: boolean | null
+          enviado_contabilidade_em: string | null
+          enviado_contabilidade_por: string | null
+          ferias_coletiva_id: string | null
+          hash_integridade: string | null
+          id: string
+          justificativa: string | null
+          motivo_cancelamento: string | null
+          observacoes: string | null
+          pagamento_comprovante_path: string | null
+          pagamento_confirmado_em: string | null
+          pagamento_confirmado_por: string | null
+          pagamento_valor: number | null
+          periodo_aquisitivo_fim: string | null
+          periodo_aquisitivo_id: string
+          periodo_aquisitivo_inicio: string | null
+          salario_base: number
+          saldo_gasto: number | null
+          status: string | null
+          status_aprovacao_contabilidade: string | null
+          status_aprovacao_gestor: string | null
+          status_aprovacao_rh: string | null
+          updated_at: string
+          valor_abono: number | null
+          valor_abono_pecuniario: number | null
+          valor_adiantamento_13: number | null
+          valor_ferias: number
+          valor_liquido: number
+          valor_terco: number
+          valor_terco_abono: number | null
+          valor_total: number
+          vender_abono: boolean | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "ferias"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       rejeitar_despesa: {
         Args: { _despesa_id: string; _motivo: string }
         Returns: {
@@ -23364,6 +25933,10 @@ export type Database = {
           user_id: string
         }[]
       }
+      solicitar_adiantamento_13_ferias: {
+        Args: { p_ferias_id: string }
+        Returns: Json
+      }
       sst_cat_dashboard: { Args: { p_empresa_id: string }; Returns: Json }
       sst_dashboard_sla: { Args: { p_empresa_id: string }; Returns: Json }
       sst_extintores_dashboard: {
@@ -23404,9 +25977,29 @@ export type Database = {
         Args: { p_documento_id: string }
         Returns: Json
       }
+      sugerir_proxima_medida: {
+        Args: { p_colaborador_id: string; p_empresa_id: string }
+        Returns: {
+          historico_12m: Json
+          justificativa: string
+          tipo_sugerido: string
+        }[]
+      }
       user_belongs_to_empresa: {
         Args: { _empresa_id: string; _user_id: string }
         Returns: boolean
+      }
+      validar_split_ferias: {
+        Args: {
+          p_colaborador_id: string
+          p_dias_novo: number
+          p_ferias_id?: string
+          p_periodo_aquisitivo_id: string
+        }
+        Returns: {
+          motivo: string
+          ok: boolean
+        }[]
       }
       validate_status_transition: {
         Args: { _allowed: Json; _new: string; _old: string; _table: string }
@@ -23442,6 +26035,14 @@ export type Database = {
         | "contrato"
         | "assinatura"
         | "esocial"
+      programacao_ferias_status:
+        | "rascunho"
+        | "sugerido_gestor"
+        | "aprovado_gestor"
+        | "aprovado_rh"
+        | "convertido"
+        | "rejeitado"
+        | "cancelado"
       regime_tributario:
         | "simples_nacional"
         | "lucro_presumido"
@@ -23641,6 +26242,15 @@ export const Constants = {
         "contrato",
         "assinatura",
         "esocial",
+      ],
+      programacao_ferias_status: [
+        "rascunho",
+        "sugerido_gestor",
+        "aprovado_gestor",
+        "aprovado_rh",
+        "convertido",
+        "rejeitado",
+        "cancelado",
       ],
       regime_tributario: [
         "simples_nacional",

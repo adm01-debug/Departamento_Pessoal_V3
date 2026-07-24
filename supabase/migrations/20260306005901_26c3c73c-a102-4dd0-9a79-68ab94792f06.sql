@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS public.beneficiarios_plano (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.beneficiarios_plano ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage beneficiarios_plano" ON public.beneficiarios_plano;
 CREATE POLICY "Auth users manage beneficiarios_plano" ON public.beneficiarios_plano FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- vales_transporte (valeTransporteService.ts)
@@ -32,6 +33,7 @@ CREATE TABLE IF NOT EXISTS public.vales_transporte (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.vales_transporte ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage vales_transporte" ON public.vales_transporte;
 CREATE POLICY "Auth users manage vales_transporte" ON public.vales_transporte FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- linhas_transporte (valeTransporteService.ts)
@@ -45,6 +47,7 @@ CREATE TABLE IF NOT EXISTS public.linhas_transporte (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.linhas_transporte ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage linhas_transporte" ON public.linhas_transporte;
 CREATE POLICY "Auth users manage linhas_transporte" ON public.linhas_transporte FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- audit_logs (auditLogService.ts uses audit_logs, DB has audit_log)
@@ -62,4 +65,5 @@ CREATE TABLE IF NOT EXISTS public.audit_logs (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.audit_logs ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users read audit_logs" ON public.audit_logs;
 CREATE POLICY "Auth users read audit_logs" ON public.audit_logs FOR ALL TO authenticated USING (true) WITH CHECK (true);

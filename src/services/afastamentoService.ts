@@ -1,6 +1,7 @@
 import { BaseService, ListOptions, ListResponse } from './baseService';
 import { supabase } from '@/integrations/supabase/client';
 import { formatDateLocalISO } from '@/utils/dateLocal';
+import { validateUploadFile } from '@/utils/uploadValidation';
 
 class AfastamentoService extends BaseService<any> {
   constructor() {
@@ -12,43 +13,48 @@ class AfastamentoService extends BaseService<any> {
   async listar(options: ListOptions = {}): Promise<ListResponse<any>> {
     const { filters, empresaId } = options as any;
     const empId = empresaId || (filters as any)?.empresa_id;
+    if (!empId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
     const selectStr = `
       *,
       colaborador:colaboradores!fk_afastamentos_colaborador(nome_completo, departamento)
     `;
-    
+
     let query = this.getQuery().select(selectStr, { count: 'exact' });
-    
-    if (empId) query = query.eq('empresa_id', empId);
+
+    query = query.eq('empresa_id', empId);
     if (filters?.status) query = query.eq('status', filters.status);
-    
+
     const { data, count, error } = await query.order('data_inicio', { ascending: false });
     if (error) throw error;
     return { data: data || [], total: count || 0 };
   }
 
-  async listarHistoricoRecente(colaboradorId: string, dias: number = 60): Promise<any[]> {
+  async listarHistoricoRecente(colaboradorId: string, empresaId: string, dias: number = 60): Promise<any[]> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const dataLimite = new Date();
     dataLimite.setDate(dataLimite.getDate() - dias);
-    
+
     const { data, error } = await this.getQuery()
       .select('*')
       .eq('colaborador_id', colaboradorId)
+      .eq('empresa_id', empresaId)
       .gte('data_inicio', formatDateLocalISO(dataLimite))
       .order('data_inicio', { ascending: false });
-      
+
     if (error) throw error;
     return data || [];
   }
 
   // CID-10 search
   async buscarCID(termo: string): Promise<any[]> {
+    const safe = termo.replace(/[%_.,()]/g, '');
+    if (!safe || safe.length < 2) return [];
     const { data, error } = await this.getQuery()
       .select('*')
-      .or(`codigo.ilike.%${termo}%,descricao.ilike.%${termo}%`)
+      .or(`codigo.ilike.%${safe}%,descricao.ilike.%${safe}%`)
       .limit(10);
-    
+
     if (error) throw error;
     return data || [];
   }
@@ -76,15 +82,15 @@ class AfastamentoService extends BaseService<any> {
 
   async uploadDocumento(afastamentoId: string, file: File, tipo: string): Promise<any> {
     try {
+      validateUploadFile(file);
       const fileExt = file.name.split('.').pop();
       const fileName = `${afastamentoId}/${crypto.randomUUID()}.${fileExt}`;
-      
-      if (file.size > 10 * 1024 * 1024) throw new Error('Arquivo excede o limite de 10MB');
 
       const { error: uploadError } = await supabase.storage.from('afastamentos').upload(fileName, file);
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage.from('afastamentos').getPublicUrl(fileName);
+      const { data: signedUrlData } = await supabase.storage.from('afastamentos').createSignedUrl(fileName, 60 * 60 * 24 * 365);
+      const fileUrl = signedUrlData?.signedUrl || fileName;
 
       const { data, error } = await (supabase as any)
         .from('documentos_afastamento')
@@ -92,7 +98,7 @@ class AfastamentoService extends BaseService<any> {
           afastamento_id: afastamentoId,
           tipo,
           nome_arquivo: file.name,
-          url: publicUrl,
+          url: fileUrl,
           metadados: {
             size: file.size,
             type: file.type,
@@ -110,44 +116,55 @@ class AfastamentoService extends BaseService<any> {
     }
   }
 
-  async validarDocumento(id: string, validado: boolean): Promise<any> {
+  async validarDocumento(id: string, validado: boolean, empresaId: string): Promise<any> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    // documentos_afastamento does not carry empresa_id directly; scope through parent — fail closed
+    const { data: doc } = await (supabase as any).from('documentos_afastamento').select('afastamento_id').eq('id', id).maybeSingle();
+    if (!doc?.afastamento_id) throw new Error('Documento não encontrado');
+    const { data: af } = await this.getQuery().select('empresa_id').eq('id', doc.afastamento_id).maybeSingle();
+    if (!af || af.empresa_id !== empresaId) throw new Error('Acesso negado: documento pertence a outro tenant');
     const { data, error } = await (supabase as any)
       .from('documentos_afastamento')
       .update({ validado } as any)
       .eq('id', id)
+      .eq('afastamento_id', doc.afastamento_id)
       .select()
       .maybeSingle();
-    
+
     if (error) throw error;
     return data;
   }
 
-  async listarProrrogacoes(afastamentoId?: string): Promise<any[]> {
+  async listarProrrogacoes(afastamentoId?: string, empresaId?: string): Promise<any[]> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    // !inner forces an INNER JOIN enabling empresa_id filter on the joined afastamentos row
     let query = (supabase as any)
       .from('prorrogacoes_afastamento')
-      .select('*, afastamento:afastamentos!fk_afastamentos_colaborador(*, colaborador:colaboradores!fk_afastamentos_colaborador(nome_completo))');
-    
+      .select('*, afastamento:afastamentos!inner(*, colaborador:colaboradores(nome_completo))');
+
     if (afastamentoId) query = query.eq('afastamento_id', afastamentoId);
-    
+    query = query.eq('afastamento.empresa_id', empresaId);
+
     const { data, error } = await query.order('created_at', { ascending: false });
     if (error) throw error;
     return data || [];
   }
 
-  async criarProrrogacao(d: any): Promise<any> {
+  async criarProrrogacao(d: any, empresaId: string): Promise<any> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     try {
       const { data, error } = await (supabase as any)
         .from('prorrogacoes_afastamento')
         .insert(d)
         .select()
         .maybeSingle();
-      
+
       if (error) throw error;
 
       await this.atualizar(d.afastamento_id, {
         data_fim_prevista: d.data_fim_nova,
         status: 'prorrogado'
-      });
+      }, empresaId);
 
       return data;
     } catch (e: any) {

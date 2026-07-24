@@ -18,7 +18,8 @@ class FeriasService extends BaseService<Ferias> {
     return { data: res.data, total: res.count };
   }
 
-  async listSolicitacoes(empresaId?: string, params?: { page?: number; limit?: number; search?: string; status?: string }): Promise<{ data: Ferias[]; count: number }> {
+  async listSolicitacoes(empresaId: string, params?: { page?: number; limit?: number; search?: string; status?: string }): Promise<{ data: Ferias[]; count: number }> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
     const { page = 1, limit = 10, search, status } = params || {};
     const from = (page - 1) * limit;
@@ -27,11 +28,12 @@ class FeriasService extends BaseService<Ferias> {
     let query = this.getQuery()
       .select('*, colaborador:colaboradores!fk_ferias_colaborador(nome_completo, foto_url)', { count: 'exact' });
 
-    if (empresaId) query = query.eq('empresa_id', empresaId);
+    query = query.eq('empresa_id', empresaId);
     if (status && status !== 'all') query = query.eq('status', status);
     
     if (search && search.length >= 3) {
-      query = query.ilike('colaborador_nome', `%${search}%`);
+      const escapedSearch = search.replace(/[%_\\]/g, '\\$&');
+      query = query.ilike('colaborador_nome', `%${escapedSearch}%`);
     }
 
     const { data, error, count } = await query
@@ -42,23 +44,18 @@ class FeriasService extends BaseService<Ferias> {
     return { data: (data as any[]) || [], count: count || 0 };
   }
 
-  async syncWithHub(empresaId: string): Promise<any> {
-    const { data, error } = await (supabase as any)
+  async syncWithHub(empresaId: string): Promise<{ success: boolean; lastSync: string; recordsUpdated: number }> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { error } = await (supabase as any)
       .from('ferias')
-      .select('id, updated_at')
+      .select('id')
       .eq('empresa_id', empresaId)
-      .order('updated_at', { ascending: false })
       .limit(1);
-    
     if (error) throw error;
-    
-    const hasChanges = Math.random() > 0.7; 
-    await new Promise(resolve => setTimeout(resolve, 800)); 
-    
-    return { 
-      success: true, 
+    return {
+      success: true,
       lastSync: new Date().toISOString(),
-      recordsUpdated: hasChanges ? Math.floor(Math.random() * 3) + 1 : 0 
+      recordsUpdated: 0,
     };
   }
 
@@ -79,75 +76,84 @@ class FeriasService extends BaseService<Ferias> {
     return data;
   }
 
-  async atualizarPeriodoAquisitivo(id: string, d: any): Promise<any> {
-    const { data, error } = await (supabase as any).from('periodos_aquisitivos').update(d).eq('id', id).select().maybeSingle();
+  async atualizarPeriodoAquisitivo(id: string, d: any, empresaId: string): Promise<any> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { data, error } = await (supabase as any).from('periodos_aquisitivos').update(d).eq('id', id).eq('empresa_id', empresaId).select().maybeSingle();
     if (error) throw error;
     return data;
   }
 
-  async excluirPeriodoAquisitivo(id: string): Promise<void> {
-    const { error } = await (supabase as any).from('periodos_aquisitivos').delete().eq('id', id);
+  async excluirPeriodoAquisitivo(id: string, empresaId: string): Promise<void> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { error } = await (supabase as any).from('periodos_aquisitivos').delete().eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   }
 
-  async enviarContabilidade(id: string, userId?: string): Promise<void> {
+  async enviarContabilidade(id: string, empresaId: string, userId?: string): Promise<void> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { error } = await this.getQuery().update({
       enviado_contabilidade: true,
       enviado_contabilidade_em: new Date().toISOString(),
       enviado_contabilidade_por: userId || null,
-    } as any).eq('id', id);
+    } as any).eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   }
 
-
-  async aprovar(id: string): Promise<void> {
-    const { error } = await this.getQuery().update({ status: 'aprovada' } as Record<string, unknown>).eq('id', id);
+  async aprovar(id: string, empresaId: string): Promise<void> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { error } = await this.getQuery().update({ status: 'aprovada' } as Record<string, unknown>).eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   }
 
-  async aprovarGestor(id: string, userId?: string): Promise<void> {
+  async aprovarGestor(id: string, empresaId: string, userId?: string): Promise<void> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { error } = await this.getQuery().update({
       status_aprovacao_gestor: 'aprovado',
       aprovado_gestor: true,
       aprovado_gestor_em: new Date().toISOString(),
       aprovado_gestor_por: userId || null,
-    } as any).eq('id', id);
+    } as any).eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   }
 
-  async aprovarRH(id: string, userId?: string): Promise<void> {
+  async aprovarRH(id: string, empresaId: string, userId?: string): Promise<void> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { error } = await this.getQuery().update({
       status_aprovacao_rh: 'aprovado',
       aprovado_rh: true,
       aprovado_rh_em: new Date().toISOString(),
       aprovado_rh_por: userId || null,
       status: 'aprovada',
-    } as any).eq('id', id);
+    } as any).eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   }
 
-  async listPeriodosAquisitivos(colaboradorId: string): Promise<any[]> {
+  async listPeriodosAquisitivos(colaboradorId: string, empresaId: string): Promise<any[]> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await (supabase as any)
       .from('periodos_aquisitivos')
       .select('*')
       .eq('colaborador_id', colaboradorId)
+      .eq('empresa_id', empresaId)
       .order('data_inicio', { ascending: false });
     if (error) throw error;
     return data || [];
   }
 
-  async rejeitar(id: string): Promise<void> {
-    const { error } = await this.getQuery().update({ status: 'rejeitada' } as Record<string, unknown>).eq('id', id);
+  async rejeitar(id: string, empresaId: string): Promise<void> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { error } = await this.getQuery().update({ status: 'rejeitada' } as Record<string, unknown>).eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   }
 
-  async cancelar(id: string, userId?: string): Promise<void> {
+  async cancelar(id: string, empresaId: string, userId?: string): Promise<void> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { error } = await this.getQuery().update({
       cancelado: true,
       cancelado_em: new Date().toISOString(),
       cancelado_por: userId || null,
       status: 'cancelada',
-    } as any).eq('id', id);
+    } as any).eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   }
 }

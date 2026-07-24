@@ -32,6 +32,7 @@ CREATE INDEX IF NOT EXISTS idx_cas_status ON public.cas(status);
 -- RLS
 ALTER TABLE public.cas ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "cas_all" ON public.cas;
 CREATE POLICY "cas_all" ON public.cas
   USING (auth.uid() IS NOT NULL)
   WITH CHECK (auth.uid() IS NOT NULL);

@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS public.ferias_aprovacoes_log (
 -- Habilitar RLS
 ALTER TABLE public.ferias_aprovacoes_log ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Acesso aos logs de aprovação" ON public.ferias_aprovacoes_log;
 CREATE POLICY "Acesso aos logs de aprovação"
 ON public.ferias_aprovacoes_log FOR SELECT
 USING (auth.uid() IN (

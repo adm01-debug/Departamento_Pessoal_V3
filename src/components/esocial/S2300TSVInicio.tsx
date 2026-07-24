@@ -1,6 +1,7 @@
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { User, Calendar, Briefcase, Contact } from 'lucide-react';
+import { maskCpfDisplay } from '@/utils/piiMask';
 
 export function S2300TSVInicio({ dados }: { dados: any }) {
   return (
@@ -12,7 +13,7 @@ export function S2300TSVInicio({ dados }: { dados: any }) {
             <div>
               <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">Identificação do Trabalhador</Label>
               <p className="font-display font-bold text-sm">{dados.nmTrab || '-'}</p>
-              <p className="text-[10px] text-muted-foreground italic">CPF: {dados.cpfTrab || '-'}</p>
+              <p className="text-[10px] text-muted-foreground italic">CPF: {maskCpfDisplay(dados.cpfTrab) || '-'}</p>
             </div>
           </CardContent>
         </Card>

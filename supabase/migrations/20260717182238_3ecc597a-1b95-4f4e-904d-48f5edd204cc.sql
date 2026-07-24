@@ -38,6 +38,7 @@ GRANT ALL ON public.ponto_espelhos_revogacoes TO service_role;
 
 ALTER TABLE public.ponto_espelhos_revogacoes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Admins/RH visualizam revogações da sua empresa" ON public.ponto_espelhos_revogacoes;
 CREATE POLICY "Admins/RH visualizam revogações da sua empresa"
   ON public.ponto_espelhos_revogacoes FOR SELECT
   TO authenticated
@@ -50,6 +51,7 @@ CREATE POLICY "Admins/RH visualizam revogações da sua empresa"
     )
   );
 
+DROP POLICY IF EXISTS "Admins inserem revogações" ON public.ponto_espelhos_revogacoes;
 CREATE POLICY "Admins inserem revogações"
   ON public.ponto_espelhos_revogacoes FOR INSERT
   TO authenticated
@@ -58,7 +60,7 @@ CREATE POLICY "Admins inserem revogações"
     AND public.has_role(auth.uid(), 'admin')
   );
 
-CREATE INDEX idx_revogacoes_espelho ON public.ponto_espelhos_revogacoes(espelho_id);
+CREATE INDEX IF NOT EXISTS idx_revogacoes_espelho ON public.ponto_espelhos_revogacoes(espelho_id);
 
 -- 4) RPC: gerar JSON canônico determinístico do espelho
 CREATE OR REPLACE FUNCTION public.gerar_canonical_espelho_ponto(

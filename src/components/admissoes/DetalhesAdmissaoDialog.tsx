@@ -27,6 +27,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useESocial } from "@/hooks/useESocial";
 import { useEmpresas } from "@/hooks/useEmpresas";
+import { maskCpfDisplay } from "@/utils/piiMask";
 
 interface DetalhesAdmissaoDialogProps {
   admissao: any;
@@ -171,7 +172,7 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">CPF:</span>
-                        <span className="font-medium text-foreground">{admissao.cpf || 'Não informado'}</span>
+                        <span className="font-medium text-foreground">{admissao.cpf ? maskCpfDisplay(admissao.cpf) : 'Não informado'}</span>
                       </div>
                     </div>
                   </div>

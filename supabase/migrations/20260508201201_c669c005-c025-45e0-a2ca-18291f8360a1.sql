@@ -19,4 +19,5 @@ CREATE TABLE IF NOT EXISTS public.certificados_digitais (
 
 -- RLS
 ALTER TABLE public.certificados_digitais ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can manage certificates" ON public.certificados_digitais;
 CREATE POLICY "Users can manage certificates" ON public.certificados_digitais FOR ALL USING (true);

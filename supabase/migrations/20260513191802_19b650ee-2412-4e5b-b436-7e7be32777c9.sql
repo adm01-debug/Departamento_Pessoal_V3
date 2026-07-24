@@ -4,6 +4,7 @@ VALUES ('recrutamento-curriculos', 'recrutamento-curriculos', false)
 ON CONFLICT (id) DO NOTHING;
 
 -- 2. Políticas de Storage
+DROP POLICY IF EXISTS "Gestores e RH podem ver currículos" ON storage.objects;
 CREATE POLICY "Gestores e RH podem ver currículos"
 ON storage.objects FOR SELECT
 TO authenticated
@@ -11,6 +12,7 @@ USING (bucket_id = 'recrutamento-curriculos' AND (
     SELECT public.has_role(auth.uid(), 'admin') OR public.has_role(auth.uid(), 'rh') OR public.has_role(auth.uid(), 'gestor')
 ));
 
+DROP POLICY IF EXISTS "Upload de currículos por usuários autenticados" ON storage.objects;
 CREATE POLICY "Upload de currículos por usuários autenticados"
 ON storage.objects FOR INSERT
 TO authenticated
@@ -42,6 +44,7 @@ CREATE TABLE IF NOT EXISTS public.recrutamento_agendamentos (
 -- RLS para Agendamentos
 ALTER TABLE public.recrutamento_agendamentos ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Gestores veem seus agendamentos" ON public.recrutamento_agendamentos;
 CREATE POLICY "Gestores veem seus agendamentos"
 ON public.recrutamento_agendamentos FOR SELECT
 USING (auth.uid() IN (

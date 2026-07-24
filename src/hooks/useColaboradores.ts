@@ -15,7 +15,7 @@ export function useColaboradores() {
 
   const { data: summary, isLoading: isLoadingSummary } = useQuery({
     queryKey: ['colaboradores-summary', empresaId, departamento, cargo],
-    queryFn: () => colaboradorService.getSummary(empresaId, { departamento, cargo }),
+    queryFn: () => colaboradorService.getSummary(empresaId!, { departamento, cargo }),
     enabled: !!empresaId,
   });
 

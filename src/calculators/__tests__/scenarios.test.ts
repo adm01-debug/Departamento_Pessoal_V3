@@ -191,6 +191,80 @@ describe('Simulação — Rescisão (4 tipos × múltiplos tempos de casa)', () 
       expect(r.diasAvisoPrevio).toBeLessThanOrEqual(90);
     }
   });
+
+  it('C34 — múltiplo exato de 12 meses: férias proporcionais = 0 (período aquisitivo completo, não 12)', () => {
+    // 24 meses exatos: avosTotal=24, 24%12=0 → feriasProporcional deve ser 0
+    const r = calcularRescisao({
+      salarioBase: 3000,
+      dataAdmissao: '2024-03-20',
+      dataDesligamento: '2026-03-20',
+      tipoRescisao: 'sem_justa_causa',
+    });
+    expect(r.feriasProporcional).toBe(0);
+  });
+
+  it('C34 — 12 meses exatos: férias proporcionais = 0', () => {
+    const r = calcularRescisao({
+      salarioBase: 3000,
+      dataAdmissao: '2025-03-20',
+      dataDesligamento: '2026-03-20',
+      tipoRescisao: 'sem_justa_causa',
+    });
+    expect(r.feriasProporcional).toBe(0);
+  });
+
+  it('C34 — 11 meses e 16 dias: avos=12 (≥15 dias), férias prop = 0 (período completo)', () => {
+    // Admissão 2025-04-04, desligamento 2026-03-20 → 11 meses + 16 dias → avos=12 → prop=0
+    const r = calcularRescisao({
+      salarioBase: 3000,
+      dataAdmissao: '2025-04-04',
+      dataDesligamento: '2026-03-20',
+      tipoRescisao: 'sem_justa_causa',
+    });
+    expect(r.feriasProporcional).toBe(0);
+    expect(r.diasAvisoPrevio).toBe(30); // C35: < 1 ano completo → sem bônus
+  });
+
+  it('C35 — 11 meses e 16 dias: aviso prévio = 30 dias (< 1 ano de serviço real)', () => {
+    // Com avosTotal=12 o bug antigo calculava 1 ano → 33 dias; correto é 30 dias
+    const r = calcularRescisao({
+      salarioBase: 3000,
+      dataAdmissao: '2025-04-04',
+      dataDesligamento: '2026-03-20',
+      tipoRescisao: 'sem_justa_causa',
+    });
+    expect(r.diasAvisoPrevio).toBe(30);
+  });
+
+  it('C35 — exatamente 1 ano: aviso prévio = 33 dias (30 + 1×3)', () => {
+    const r = calcularRescisao({
+      salarioBase: 3000,
+      dataAdmissao: '2025-03-20',
+      dataDesligamento: '2026-03-20',
+      tipoRescisao: 'sem_justa_causa',
+    });
+    expect(r.diasAvisoPrevio).toBe(33);
+  });
+
+  it('C35 — 10 anos de serviço: aviso prévio = 60 dias (30 + 10×3)', () => {
+    const r = calcularRescisao({
+      salarioBase: 3000,
+      dataAdmissao: '2016-03-20',
+      dataDesligamento: '2026-03-20',
+      tipoRescisao: 'sem_justa_causa',
+    });
+    expect(r.diasAvisoPrevio).toBe(60);
+  });
+
+  it('C35 — 20 anos de serviço: aviso prévio cap em 90 dias', () => {
+    const r = calcularRescisao({
+      salarioBase: 3000,
+      dataAdmissao: '2006-03-20',
+      dataDesligamento: '2026-03-20',
+      tipoRescisao: 'sem_justa_causa',
+    });
+    expect(r.diasAvisoPrevio).toBe(90);
+  });
 });
 
 describe('Simulação — Férias', () => {

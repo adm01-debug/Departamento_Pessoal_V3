@@ -15,10 +15,10 @@ describe('calcINSS — Tabela Progressiva 2026', () => {
   describe('edge cases', () => {
     it('salary = 0 → INSS = 0', () => expect(calcINSS(0)).toBe(0));
     it('salary = -100 → INSS = 0', () => expect(calcINSS(-100)).toBe(0));
-    // INSS é arredondado a centavos (R$). Para salários ínfimos o arredondamento domina:
-    // 0.01 × 7.5% = 0.00075 → R$ 0.00 ; 1 × 7.5% = 0.075 → R$ 0.08.
-    it('salary = 0.01 → INSS arredondado a centavos = 0', () => expect(calcINSS(0.01)).toBe(0));
-    it('salary = 1 → 1 × 7.5% arredondado = 0.08', () => expect(calcINSS(1)).toBe(0.08));
+    // INSS é truncado a centavos (IN RFB 2110/2022). Para salários ínfimos o truncamento domina:
+    // 0.01 × 7.5% = 0.00075 → R$ 0.00 ; 1 × 7.5% = 0.075 → Math.trunc(7.5)/100 = R$ 0.07.
+    it('salary = 0.01 → INSS truncado a centavos = 0', () => expect(calcINSS(0.01)).toBe(0));
+    it('salary = 1 → 1 × 7.5% truncado = 0.07', () => expect(calcINSS(1)).toBe(0.07));
   });
 
   describe('faixa 1 — 7.5% até R$ 1.621,00', () => {
@@ -129,7 +129,7 @@ describe('calcularRescisao — Sem Justa Causa', () => {
 
   it('saldo de salário = (salário / dias_no_mês) × dia_desligamento', async () => {
     const r = await calcularRescisao(base);
-    expect(r.saldoSalario).toBeCloseTo((5000 / 31) * 22, 2);
+    expect(r.saldoSalario).toBe(Math.trunc((5000 / 31) * 22 * 100) / 100);
     expect(r.diasTrabalhados).toBe(22);
   });
 
@@ -166,13 +166,13 @@ describe('calcularRescisao — Sem Justa Causa', () => {
 
   it('1/3 constitucional = (férias vencidas + proporcionais) / 3', async () => {
     const r = await calcularRescisao({ ...base, feriasVencidas: true });
-    expect(r.tercoFerias).toBeCloseTo((r.feriasVencidas + r.feriasProporcionais) / 3, 2);
+    expect(r.tercoFerias).toBe(Math.trunc((r.feriasVencidas + r.feriasProporcionais) / 3 * 100) / 100);
   });
 
   it('13º proporcional: decimoTerceiro = (salário/12) × meses13', async () => {
     const r = await calcularRescisao(base);
     expect(r.meses13).toBeGreaterThan(0);
-    expect(r.decimoTerceiro).toBeCloseTo((5000 / 12) * r.meses13, 2);
+    expect(r.decimoTerceiro).toBe(Math.trunc((5000 / 12) * r.meses13 * 100) / 100);
   });
 
   it('FGTS sobre rescisão = 8% do (saldo salário + aviso + 13º)', async () => {
@@ -490,7 +490,7 @@ describe('calcularRescisao — Edge Cases', () => {
     });
     expect(r.feriasVencidas).toBe(4000);
     expect(r.feriasProporcionais).toBeGreaterThan(0);
-    expect(r.tercoFerias).toBeCloseTo((r.feriasVencidas + r.feriasProporcionais) / 3, 2);
+    expect(r.tercoFerias).toBe(Math.trunc((r.feriasVencidas + r.feriasProporcionais) / 3 * 100) / 100);
   });
 });
 

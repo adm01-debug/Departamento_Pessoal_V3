@@ -1,12 +1,25 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Clock, LogIn, Coffee, LogOut, MapPin, WifiOff, RefreshCw, Scan, ShieldCheck, CheckCircle2, Sparkles } from 'lucide-react';
+import {
+  Clock,
+  LogIn,
+  Coffee,
+  LogOut,
+  MapPin,
+  WifiOff,
+  RefreshCw,
+  Scan,
+  ShieldCheck,
+  CheckCircle2,
+  Sparkles,
+} from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { pontoOfflineService } from '@/services/pontoOfflineService';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts';
 import { supabase } from '@/integrations/supabase/client';
@@ -14,9 +27,11 @@ interface PontoClockRegisterProps {
   time: Date;
   loading: string | null;
   geoStatus: 'idle' | 'capturing' | 'success' | 'error' | 'out_of_range';
-  onRegistrar: (tipo: 'entrada' | 'saida_almoco' | 'retorno_almoco' | 'saida', options?: any) => void;
+  onRegistrar: (
+    tipo: 'entrada' | 'saida_almoco' | 'retorno_almoco' | 'saida',
+    options?: { foto_biometria_url?: string | null; foto_base64?: string | null }
+  ) => Promise<{ biometriaValida?: boolean } | undefined>;
   ultimoRegistro?: any;
-
 }
 
 const buttons = [
@@ -32,6 +47,8 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
   const [isSyncing, setIsSyncing] = useState(false);
   const [showFaceScan, setShowFaceScan] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
+  const [scanStage, setScanStage] = useState('');
+  const [scanOutcome, setScanOutcome] = useState<'confirmado' | 'pendente' | null>(null);
   const [selectedTipo, setSelectedTipo] = useState<any>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -55,7 +72,7 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
   }, [isSyncing]);
 
   useEffect(() => {
-    /* eslint-disable react-hooks/set-state-in-effect */
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setOfflineQueueSize(pontoOfflineService.getQueueSize());
 
     if (navigator.onLine) {
@@ -69,28 +86,33 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
 
     return () => {
       clearInterval(interval);
-      if (stream) stream.getTracks().forEach(track => track.stop());
+      if (stream) stream.getTracks().forEach((track) => track.stop());
     };
   }, [stream, handleSync]);
-
 
   const startScan = async (tipo: any) => {
     setSelectedTipo(tipo);
     setShowFaceScan(true);
     setScanProgress(0);
+    setScanStage('Posicione seu rosto...');
+    setScanOutcome(null);
 
     try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'user', width: 480, height: 480 } 
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user', width: 480, height: 480 },
       });
       setStream(mediaStream);
       if (videoRef.current) videoRef.current.srcObject = mediaStream;
 
+      // Janela para o usuário se posicionar antes da captura (UX). Sobe só
+      // até 60% — os 40% restantes refletem trabalho assíncrono REAL
+      // (upload + validação biométrica), não mais um timer decorativo até
+      // 100% independente do resultado (achado da auditoria — "teatro").
       let progress = 0;
       const interval = setInterval(() => {
-        progress += 5;
-        setScanProgress(progress);
-        if (progress >= 100) {
+        progress += 10;
+        setScanProgress(Math.min(progress, 60));
+        if (progress >= 60) {
           clearInterval(interval);
           captureAndFinalize(tipo, mediaStream);
         }
@@ -104,9 +126,11 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
 
   /* eslint-disable react-hooks/purity */
   const captureAndFinalize = async (tipo: any, mediaStream: MediaStream) => {
-    let fotoUrl = null;
-    let fotoBase64 = null;
-    
+    let fotoUrl: string | null = null;
+    let fotoBase64: string | null = null;
+    setScanStage('Capturando foto...');
+    setScanProgress(70);
+
     if (videoRef.current && canvasRef.current) {
       const video = videoRef.current;
       const canvas = canvasRef.current;
@@ -114,37 +138,50 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
       canvas.height = video.videoHeight;
       const context = canvas.getContext('2d');
       context?.drawImage(video, 0, 0, canvas.width, canvas.height);
-      
+
       fotoBase64 = canvas.toDataURL('image/jpeg', 0.7);
-      const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.7));
-      
+      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.7));
+
       if (blob && user?.id && navigator.onLine) {
+        setScanStage('Enviando foto...');
+        setScanProgress(80);
+        // eslint-disable-next-line react-hooks/purity -- roda em handler assíncrono de captura de foto (ação do usuário), não em render
         const fileName = `${user.id}/${Date.now()}.jpg`;
-        const { error } = await supabase.storage
-          .from('ponto-biometria')
-          .upload(fileName, blob);
-          
+        const { error } = await supabase.storage.from('ponto-biometria').upload(fileName, blob);
+
         if (!error) {
-          const { data: { publicUrl } } = supabase.storage
-            .from('ponto-biometria')
-            .getPublicUrl(fileName);
+          const {
+            data: { publicUrl },
+          } = supabase.storage.from('ponto-biometria').getPublicUrl(fileName);
           fotoUrl = publicUrl;
         }
       }
     }
 
     // Stop camera
-    mediaStream.getTracks().forEach(track => track.stop());
+    mediaStream.getTracks().forEach((track) => track.stop());
     setStream(null);
+    await finalizeRegister(tipo, fotoUrl, fotoBase64);
     setShowFaceScan(false);
-    finalizeRegister(tipo, fotoUrl, fotoBase64);
   };
 
-  const finalizeRegister = async (tipo: 'entrada' | 'saida_almoco' | 'retorno_almoco' | 'saida', fotoUrl: string | null, fotoBase64: string | null) => {
+  const finalizeRegister = async (
+    tipo: 'entrada' | 'saida_almoco' | 'retorno_almoco' | 'saida',
+    fotoUrl: string | null,
+    fotoBase64: string | null
+  ) => {
     if (!user) return;
-    
+
     if (navigator.onLine) {
-      onRegistrar(tipo, { foto_biometria_url: fotoUrl });
+      setScanStage('Validando identidade...');
+      setScanProgress(95);
+      // Ponto é sempre registrado (não bloqueamos a jornada por uma falha de
+      // biometria — risco trabalhista), mas o resultado real da validação
+      // agora é aguardado e refletido honestamente na tela e no toast, em
+      // vez de sempre exibir "Identidade Confirmada!" após um timer falso.
+      const outcome = await onRegistrar(tipo, { foto_biometria_url: fotoUrl, foto_base64: fotoBase64 });
+      setScanProgress(100);
+      setScanOutcome(outcome?.biometriaValida ? 'confirmado' : 'pendente');
       setShowConfetti(true);
       setTimeout(() => setShowConfetti(false), 5000);
       return;
@@ -160,20 +197,21 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
         colaborador_id: colab.id,
         timestamp: new Date().toISOString(),
         dispositivoId: navigator.userAgent,
-        foto_base64: fotoBase64
+        foto_base64: fotoBase64,
       };
 
       await pontoOfflineService.queueRegistro({
         ...hashPayload,
-        hash: pontoOfflineService.generateIntegrityHash(hashPayload)
+        hash: pontoOfflineService.generateIntegrityHash(hashPayload),
       });
-      
+
+      setScanProgress(100);
       toast.warning(`Ponto registrado em modo OFFLINE. Será sincronizado quando a conexão voltar.`, {
-        icon: <WifiOff className="h-4 w-4" />
+        icon: <WifiOff className="h-4 w-4" />,
       });
       setOfflineQueueSize(pontoOfflineService.getQueueSize());
     } catch (e: any) {
-      toast.error(`Erro no registro offline: ${e.message}`);
+      toast.error(safeErrorMessage(e, 'Erro no registro offline.'));
     }
   };
   /* eslint-enable react-hooks/purity */
@@ -189,13 +227,16 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
             </div>
             Registrar Ponto
             {offlineQueueSize > 0 && (
-              <Badge variant="outline" className="ml-auto text-[10px] bg-warning/10 text-warning border-warning/20 animate-pulse">
+              <Badge
+                variant="outline"
+                className="ml-auto text-[10px] bg-warning/10 text-warning border-warning/20 animate-pulse"
+              >
                 <WifiOff className="h-3 w-3 mr-1" /> {offlineQueueSize} pendentes
               </Badge>
             )}
             {offlineQueueSize > 0 && navigator.onLine && (
-              <Button variant="ghost" size="icon" aria-label="Atualizar" className="h-6 w-6 ml-1" onClick={handleSync} disabled={isSyncing}>
-                <RefreshCw className={cn("h-3 w-3", isSyncing && "animate-spin")} />
+              <Button variant="ghost" size="icon" className="h-6 w-6 ml-1" onClick={handleSync} disabled={isSyncing}>
+                <RefreshCw className={cn('h-3 w-3', isSyncing && 'animate-spin')} />
               </Button>
             )}
           </CardTitle>
@@ -219,26 +260,32 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
                 )}
               >
                 {loading === tipo && geoStatus === 'capturing' ? (
-                  <><MapPin className="h-4 w-4 mr-2 animate-bounce" />Capturando GPS...</>
+                  <>
+                    <MapPin className="h-4 w-4 mr-2 animate-bounce" />
+                    Capturando GPS...
+                  </>
                 ) : (
-                  <><Icon className="h-4 w-4 mr-2" />{loading === tipo ? 'Registrando...' : label}</>
+                  <>
+                    <Icon className="h-4 w-4 mr-2" />
+                    {loading === tipo ? 'Registrando...' : label}
+                  </>
                 )}
               </Button>
             ))}
           </div>
-          
+
           <AnimatePresence>
             {showConfetti && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0 }}
                 className="absolute inset-0 pointer-events-none z-50 flex items-center justify-center"
               >
                 <div className="relative">
-                  <motion.div 
-                    animate={{ rotate: 360 }} 
-                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
                     className="absolute -inset-10"
                   >
                     {[...Array(12)].map((_, i) => (
@@ -248,7 +295,7 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
                         style={{
                           left: '50%',
                           top: '50%',
-                          transform: `rotate(${i * 30}deg) translateY(-40px)`
+                          transform: `rotate(${i * 30}deg) translateY(-40px)`,
                         }}
                         animate={{ y: [-40, -100], opacity: [1, 0] }}
                         transition={{ duration: 1, delay: i * 0.05 }}
@@ -258,13 +305,15 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
                   <Card className="bg-background/90 backdrop-blur-md border-primary/30 p-4 shadow-2xl flex flex-col items-center gap-2">
                     <Sparkles className="h-8 w-8 text-primary animate-bounce" />
                     <p className="font-display font-bold text-primary">Ponto Confirmado!</p>
-                    <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">+50 XP • Assiduidade</p>
+                    <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">
+                      +50 XP • Assiduidade
+                    </p>
                   </Card>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
-          
+
           {ultimoRegistro && (
             <div className="mt-4 p-3 rounded-xl bg-muted/30 border border-border/20 flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -273,22 +322,29 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
                 </div>
                 <div>
                   <p className="text-[9px] uppercase font-bold text-muted-foreground">Último Registro</p>
-                  <p className="text-xs font-bold capitalize">{ultimoRegistro.tipo.replace(/_/g, ' ')} às {ultimoRegistro.hora}</p>
+                  <p className="text-xs font-bold capitalize">
+                    {ultimoRegistro.tipo.replace(/_/g, ' ')} às {ultimoRegistro.hora}
+                  </p>
                 </div>
               </div>
-              <Badge variant="outline" className="text-[8px] bg-background">HOJE</Badge>
+              <Badge variant="outline" className="text-[8px] bg-background">
+                HOJE
+              </Badge>
             </div>
           )}
 
           <p className="text-xs text-muted-foreground font-body text-center mt-3 flex items-center justify-center gap-1">
             <MapPin className="h-3 w-3" />
-            {geoStatus === 'capturing' ? 'Capturando localização...' :
-             geoStatus === 'success' ? '✅ Localização capturada' :
-             geoStatus === 'error' ? '⚠️ GPS indisponível' :
-             geoStatus === 'out_of_range' ? '📍 Fora do raio permitido' :
-             'Geolocalização Ativa (671/21)'}
+            {geoStatus === 'capturing'
+              ? 'Capturando localização...'
+              : geoStatus === 'success'
+                ? '✅ Localização capturada'
+                : geoStatus === 'error'
+                  ? '⚠️ GPS indisponível'
+                  : geoStatus === 'out_of_range'
+                    ? '📍 Fora do raio permitido'
+                    : 'Geolocalização Ativa (671/21)'}
           </p>
-
         </CardContent>
       </Card>
 
@@ -302,21 +358,15 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
           <div className="flex flex-col items-center justify-center py-8">
             <div className="relative w-64 h-64 rounded-full border-4 border-primary/30 overflow-hidden flex items-center justify-center bg-slate-800 shadow-[0_0_50px_rgba(34,197,94,0.1)]">
               {/* Fake scan line */}
-              <motion.div 
-                animate={{ top: ['0%', '100%', '0%'] }} 
-                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                className="absolute left-0 right-0 h-1 bg-primary-glow/60 shadow-[0_0_15px_rgba(34,197,94,1)] z-10" 
+              <motion.div
+                animate={{ top: ['0%', '100%', '0%'] }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                className="absolute left-0 right-0 h-1 bg-primary-glow/60 shadow-[0_0_15px_rgba(34,197,94,1)] z-10"
               />
-              
-              <video 
-                ref={videoRef} 
-                autoPlay 
-                playsInline 
-                muted 
-                className="w-full h-full object-cover rounded-full" 
-              />
+
+              <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover rounded-full" />
               <canvas ref={canvasRef} className="hidden" />
-              
+
               {/* Progress Ring */}
               <svg className="absolute inset-0 w-full h-full -rotate-90">
                 <circle
@@ -341,10 +391,16 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
                 />
               </svg>
             </div>
-            
+
             <div className="mt-8 text-center space-y-2">
               <p className="text-sm font-medium animate-pulse text-primary-glow">
-                {scanProgress < 100 ? 'Analisando biometria...' : '✅ Identidade Confirmada!'}
+                {scanProgress < 100
+                  ? scanStage || 'Analisando biometria...'
+                  : scanOutcome === 'confirmado'
+                    ? '✅ Identidade Confirmada!'
+                    : scanOutcome === 'pendente'
+                      ? '⚠️ Ponto registrado — biometria pendente de revisão'
+                      : '✅ Ponto Registrado!'}
               </p>
               <div className="flex items-center gap-2 justify-center text-[10px] text-slate-400">
                 <ShieldCheck className="h-3 w-3" />

@@ -21,4 +21,5 @@ CREATE INDEX IF NOT EXISTS idx_trct_empresa ON public.trct(empresa_id);
 CREATE INDEX IF NOT EXISTS idx_trct_colaborador ON public.trct(colaborador_id);
 ALTER TABLE public.trct ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "trct_all" ON public.trct;
 CREATE POLICY "trct_all" ON public.trct FOR ALL USING (auth.uid() IS NOT NULL);

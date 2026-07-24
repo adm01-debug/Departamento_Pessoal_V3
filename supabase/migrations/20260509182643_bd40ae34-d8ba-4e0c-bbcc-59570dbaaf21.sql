@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS public.conformidade_ponto_logs (
 
 ALTER TABLE public.conformidade_ponto_logs ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "View logs by company" ON public.conformidade_ponto_logs;
 CREATE POLICY "View logs by company" ON public.conformidade_ponto_logs
 FOR SELECT USING (empresa_id IN (SELECT id FROM empresas));
 

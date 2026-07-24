@@ -4,12 +4,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://esm.sh/zod@3.23.8';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
+import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 
 const BodySchema = z.object({
   action: z.enum(['sync_departamentos', 'sync_colaboradores', 'sync_cargos', 'sync_all', 'status']),
@@ -55,7 +50,9 @@ serve(async (req: Request): Promise<Response> => {
 
     // 3) Validação Zod
     let raw: unknown;
-    try { raw = await req.json(); } catch { return jsonResponse({ success: false, error: 'JSON inválido' }, 400); }
+    const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
+    if (_pe) return _pe;
+    raw = _pb;
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) {
       return jsonResponse({ success: false, error: 'Payload inválido', details: parsed.error.flatten() }, 400);
@@ -69,6 +66,10 @@ serve(async (req: Request): Promise<Response> => {
       });
       if (!belongs) return jsonResponse({ success: false, error: 'Sem acesso a esta empresa' }, 403);
     }
+
+    const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
+    const rl = await checkRateLimit(admin, { key: `bitrix:${userId}`, limit: 10, windowSec: 60 });
+    if (!rl.allowed) return rateLimitResponse(rl);
 
     // 5) Buscar config Bitrix
     let cfgQuery = admin.from('bitrix24_config').select('*').limit(1);

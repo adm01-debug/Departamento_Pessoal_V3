@@ -1,5 +1,5 @@
 -- Tabela para whitelist de países permitidos
-CREATE TABLE public.geo_allowed_countries (
+CREATE TABLE IF NOT EXISTS public.geo_allowed_countries (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     country_code VARCHAR(2) NOT NULL UNIQUE,
     country_name VARCHAR(100) NOT NULL,
@@ -8,7 +8,7 @@ CREATE TABLE public.geo_allowed_countries (
 );
 
 -- Configuração do bloqueio geográfico
-CREATE TABLE public.geo_blocking_config (
+CREATE TABLE IF NOT EXISTS public.geo_blocking_config (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     enabled BOOLEAN DEFAULT false,
     block_unknown_countries BOOLEAN DEFAULT true,
@@ -18,7 +18,7 @@ CREATE TABLE public.geo_blocking_config (
 );
 
 -- Log de tentativas bloqueadas
-CREATE TABLE public.geo_blocked_attempts (
+CREATE TABLE IF NOT EXISTS public.geo_blocked_attempts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     ip_address VARCHAR(45) NOT NULL,
     country_code VARCHAR(2),
@@ -37,12 +37,15 @@ ALTER TABLE public.geo_blocking_config ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.geo_blocked_attempts ENABLE ROW LEVEL SECURITY;
 
 -- Políticas para admins
+DROP POLICY IF EXISTS "Admins can manage geo_allowed_countries" ON public.geo_allowed_countries;
 CREATE POLICY "Admins can manage geo_allowed_countries" ON public.geo_allowed_countries
     FOR ALL TO authenticated USING (public.is_admin(auth.uid()));
 
+DROP POLICY IF EXISTS "Admins can manage geo_blocking_config" ON public.geo_blocking_config;
 CREATE POLICY "Admins can manage geo_blocking_config" ON public.geo_blocking_config
     FOR ALL TO authenticated USING (public.is_admin(auth.uid()));
 
+DROP POLICY IF EXISTS "Admins can view geo_blocked_attempts" ON public.geo_blocked_attempts;
 CREATE POLICY "Admins can view geo_blocked_attempts" ON public.geo_blocked_attempts
     FOR SELECT TO authenticated USING (public.is_admin(auth.uid()));
 

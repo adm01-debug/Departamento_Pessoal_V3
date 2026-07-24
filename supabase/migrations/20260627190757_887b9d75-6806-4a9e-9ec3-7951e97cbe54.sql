@@ -8,6 +8,7 @@ DROP POLICY IF EXISTS "Public Access" ON storage.objects;
 DROP POLICY IF EXISTS "Avatars public read" ON storage.objects;
 
 -- Allow users to upload/update/delete only their own avatar (folder = uid).
+DROP POLICY IF EXISTS "Users manage own avatar" ON storage.objects;
 CREATE POLICY "Users manage own avatar"
   ON storage.objects FOR ALL
   TO authenticated

@@ -1,6 +1,7 @@
 
 DROP POLICY IF EXISTS "Admins can manage employees" ON public.colaboradores;
 
+DROP POLICY IF EXISTS "Admins manage employees in their empresas" ON public.colaboradores;
 CREATE POLICY "Admins manage employees in their empresas"
 ON public.colaboradores
 FOR ALL

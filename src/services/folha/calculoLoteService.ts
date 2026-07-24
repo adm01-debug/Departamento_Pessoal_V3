@@ -2,6 +2,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { folhaCalc } from '@/utils/folhaCalc';
 import { toast } from 'sonner';
 import { pontoIntegracaoUtils } from '@/utils/folha/pontoIntegracaoUtils';
+import { safeErrorMessage } from '@/utils/safeError';
+import { formatDateLocalISO } from '@/utils/dateLocal';
 
 export interface BatchProgress {
   total: number;
@@ -22,7 +24,7 @@ export const calculoLoteService = {
     try {
       const [ano, mes] = competencia.split('-');
       const dataInicio = `${ano}-${mes}-01`;
-      const dataFim = `${ano}-${mes}-31`; // Simplificado para busca
+      const dataFim = formatDateLocalISO(new Date(Number(ano), Number(mes), 0));
 
       // 1. Buscar colaboradores ativos da empresa
       const { data: colaboradores, error: colabError } = await (supabase as any)
@@ -129,7 +131,7 @@ export const calculoLoteService = {
                       codigo: '5010',
                       descricao: 'Desconto Vale Transporte (Portaria 671)',
                       tipo: 'desconto',
-                      valor: Math.round(valorDescontoVT * 100) / 100
+                      valor: Math.trunc(valorDescontoVT * 100) / 100
                     });
                   }
                 }
@@ -161,7 +163,7 @@ export const calculoLoteService = {
                   codigo: '5010',
                   descricao: 'Desconto Vale Transporte (Legacy)',
                   tipo: 'desconto',
-                  valor: Math.round(valorDescontoVT * 100) / 100
+                  valor: Math.trunc(valorDescontoVT * 100) / 100
                 });
               }
             }
@@ -180,7 +182,7 @@ export const calculoLoteService = {
                     codigo: '5020',
                     descricao: `Coparticipação ${v.tipo || 'Ticket'} (Legacy)`,
                     tipo: 'desconto',
-                    valor: Math.round(desc * 100) / 100
+                    valor: Math.trunc(desc * 100) / 100
                   });
                 }
               });
@@ -231,7 +233,7 @@ export const calculoLoteService = {
           progress.success++;
           onProgress?.({ ...progress });
         } catch (err: any) {
-          console.error(`Erro no colaborador ${colab.nome_completo}:`, err);
+          console.error(`Erro no processamento de colaborador id=${colab.id}:`, safeErrorMessage(err, 'erro desconhecido'));
           progress.errors++;
           onProgress?.({ ...progress });
         }
@@ -241,7 +243,7 @@ export const calculoLoteService = {
 
       return progress;
     } catch (error: any) {
-      toast.error(`Falha no processamento em lote: ${error.message}`);
+      toast.error(safeErrorMessage(error, 'Falha no processamento em lote.'));
       throw error;
     }
   }

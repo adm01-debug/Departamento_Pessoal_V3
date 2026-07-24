@@ -1,8 +1,10 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { Session, AuthError } from '@supabase/supabase-js';
-import DOMPurify from 'dompurify';
+import { sanitizePlainText } from '@/utils/sanitizeHtml';
 import { loggerService } from '@/services/loggerService';
+import { queryClient } from '@/lib/queryClient';
+import { validatePasswordFull } from '@/utils/passwordPolicy';
 
 export type AppRole = 'admin' | 'moderator' | 'user';
 
@@ -151,11 +153,63 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = useCallback(async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+      // H20: Route all logins through the auth-login edge function so that
+      // IP-level + per-email rate limits and account lockout are enforced
+      // server-side — unreachable by attackers calling the Supabase Auth REST
+      // API directly (which would bypass the React UI checks entirely).
+      const SUPABASE_URL = (supabase as unknown as { supabaseUrl?: string }).supabaseUrl
+        ?? import.meta.env.VITE_SUPABASE_URL;
+      const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      if (!SUPABASE_URL || !ANON_KEY) {
+        throw new Error('VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are required');
+      }
+
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/auth-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const body = await res.json().catch(() => ({})) as {
+        success?: boolean;
+        code?: string;
+        error?: string;
+        locked_until?: string;
+        session?: { access_token: string; refresh_token: string };
+      };
+
+      if (!res.ok || !body.success) {
+        const code = body.code ?? '';
+        if (code === 'ACCOUNT_LOCKED' || res.status === 429) {
+          const msg = body.error ?? 'Conta temporariamente bloqueada por excesso de tentativas.';
+          loggerService.warn('Login blocked - account locked or rate limited', { email, code });
+          throw new Error(msg);
+        }
+        throw new Error(body.error ?? 'Credenciais inválidas.');
+      }
+
+      // Hydrate the Supabase client session from the token returned by the edge function.
+      const session = body.session!;
+      const { error: sessionErr } = await supabase.auth.setSession({
+        access_token: session.access_token,
+        refresh_token: session.refresh_token,
+      });
+      if (sessionErr) throw sessionErr;
+
+      // Check if MFA challenge is required (user enrolled TOTP → nextLevel = aal2)
+      const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      if (aalData?.nextLevel === 'aal2' && aalData.currentLevel !== 'aal2') {
+        const { data: factorsData } = await supabase.auth.mfa.listFactors();
+        const totpFactor = factorsData?.totp?.[0];
+        const mfaErr = new Error('Autenticação de dois fatores necessária.');
+        (mfaErr as Error & { code: string; factorId: string }).code = 'mfa_required';
+        (mfaErr as Error & { code: string; factorId: string }).factorId = totpFactor?.id || '';
+        throw mfaErr;
+      }
+
       loggerService.info('User signed in', { email });
     } catch (e) {
-      const err = e as AuthError;
+      const err = e as AuthError | Error;
       loggerService.warn('Sign in failed', { email, message: err.message });
       throw err;
     }
@@ -165,20 +219,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      loggerService.info('User signed out');
     } catch (e) {
       loggerService.error('Sign out error', {}, e as Error);
-      throw e;
+    } finally {
+      queryClient.clear();
+      try { localStorage.clear(); } catch { /* private browsing */ }
+      try { sessionStorage.clear(); } catch { /* private browsing */ }
+      try { indexedDB.deleteDatabase('ponto-offline-db'); } catch { /* ignore */ }
+      try {
+        if ('caches' in window) {
+          const keys = await caches.keys();
+          await Promise.all(keys.map(k => caches.delete(k)));
+        }
+      } catch { /* caches API unavailable */ }
+      setUser(null);
+      setSession(null);
+      loggerService.info('User signed out - all local state cleared');
     }
   }, []);
 
   const signUp = useCallback(async (email: string, password: string, name: string) => {
+    const pwCheck = await validatePasswordFull(password);
+    if (!pwCheck.valid) {
+      throw new Error(`Senha fraca: ${pwCheck.errors.join('; ')}`);
+    }
+    if (pwCheck.warnings?.length) {
+      loggerService.warn('Password breach warning on signup', { email, warnings: pwCheck.warnings });
+    }
     try {
-      const sanitizedName = DOMPurify.sanitize(name.trim());
-      const { error } = await supabase.auth.signUp({ 
-        email, 
-        password, 
-        options: { data: { name: sanitizedName } } 
+      const sanitizedName = sanitizePlainText(name.trim(), 100);
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { name: sanitizedName } }
       });
       if (error) throw error;
       loggerService.info('User signed up', { email });

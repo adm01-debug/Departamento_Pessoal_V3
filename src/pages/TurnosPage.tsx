@@ -24,13 +24,13 @@ export default function TurnosPage() {
 
   const { data: turnos = [], isLoading } = useQuery({
     queryKey: ['turnos', empresaAtual?.id],
-    queryFn: () => turnoService.listarTurnos(empresaAtual?.id),
+    queryFn: () => turnoService.listarTurnos(empresaAtual!.id),
     enabled: !!empresaAtual?.id,
   });
 
   const { data: escalas = [] } = useQuery({
     queryKey: ['escalas_trabalho', empresaAtual?.id],
-    queryFn: () => turnoService.listarEscalas(empresaAtual?.id),
+    queryFn: () => turnoService.listarEscalas(empresaAtual!.id),
     enabled: !!empresaAtual?.id,
   });
 
@@ -41,7 +41,7 @@ export default function TurnosPage() {
   });
 
   const excluir = useMutation({
-    mutationFn: (id: string) => turnoService.excluirTurno(id),
+    mutationFn: (id: string) => turnoService.excluirTurno(id, empresaAtual!.id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['turnos'] }); toast.success('Turno excluído'); },
   });
 

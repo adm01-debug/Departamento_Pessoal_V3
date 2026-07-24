@@ -13,6 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { AlertCircle, Flame, ShieldCheck, Timer, Plus, ClipboardCheck, QrCode } from 'lucide-react';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { z } from 'zod';
 
 interface Dashboard {
@@ -106,7 +107,8 @@ export default function AdminExtintoresPage() {
     }
   }, [empresaAtual?.id]);
 
-  useEffect(() => { carregar(); }, [carregar]); // eslint-disable-line react-hooks/set-state-in-effect
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { carregar(); }, [carregar]);
 
   const criarExtintor = async () => {
     if (!empresaAtual?.id) return;
@@ -119,7 +121,7 @@ export default function AdminExtintoresPage() {
       ...parsed.data,
       empresa_id: empresaAtual.id,
     });
-    if (error) { toast.error(error.message); return; }
+    if (error) { toast.error(safeErrorMessage(error, 'Erro ao salvar extintor.')); return; }
     toast.success('Extintor cadastrado');
     setOpenNovo(false);
     setForm({ codigo_patrimonio: '', tipo: 'PO_QUIMICO_ABC', capacidade_kg: 6, localizacao: '', data_proxima_recarga: '', data_proximo_teste_hidrostatico: '' });
@@ -139,7 +141,7 @@ export default function AdminExtintoresPage() {
       ...insp,
       resultado: conforme ? 'CONFORME' : 'NAO_CONFORME',
     });
-    if (error) { toast.error(error.message); return; }
+    if (error) { toast.error(safeErrorMessage(error, 'Erro ao salvar extintor.')); return; }
     toast.success('Inspeção registrada');
     setOpenInsp(null);
     setInsp({ lacre_ok: true, pressao_ok: true, mangueira_ok: true, sinalizacao_ok: true, acesso_desobstruido: true, altura_correta: true, corpo_integro: true, observacoes: '' });

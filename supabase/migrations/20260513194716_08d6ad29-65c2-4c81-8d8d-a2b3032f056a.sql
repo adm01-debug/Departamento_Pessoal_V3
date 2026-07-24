@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS public.ia_provisoes_alertas (
 
 -- Habilitar RLS
 ALTER TABLE public.ia_provisoes_alertas ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Gestores podem ver alertas de IA" ON public.ia_provisoes_alertas;
 CREATE POLICY "Gestores podem ver alertas de IA" ON public.ia_provisoes_alertas FOR SELECT USING (true);
 
 -- Função para popular alertas (Simulada para rodar via cron)

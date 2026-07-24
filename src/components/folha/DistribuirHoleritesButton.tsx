@@ -12,6 +12,7 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { Send, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -92,7 +93,7 @@ export function DistribuirHoleritesButton({ competencia }: Props) {
       qc.invalidateQueries({ queryKey: ['notificacoes'] });
       setOpen(false);
     },
-    onError: (err: any) => toast.error('Falha na distribuição: ' + (err?.message ?? 'erro')),
+    onError: (err: any) => toast.error(safeErrorMessage(err, 'Falha na distribuição de holerites.')),
   });
 
   return (

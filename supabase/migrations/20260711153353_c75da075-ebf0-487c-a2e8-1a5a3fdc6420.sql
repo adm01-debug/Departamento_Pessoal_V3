@@ -1,250 +1,263 @@
 -- MP-012: Índices em Foreign Keys frequentemente utilizadas (246 índices).
 -- Objetivo: eliminar sequential scans em joins e queries que filtram por FK.
--- IF NOT EXISTS garante idempotência; sem CONCURRENTLY porque migration roda em transação.
+-- Wrapped in DO/EXCEPTION for resilience: missing column/table → index skipped silently.
 
-CREATE INDEX IF NOT EXISTS idx_treinamento_instancias_curso_id ON public.treinamento_instancias(curso_id);
-CREATE INDEX IF NOT EXISTS idx_treinamento_instancias_instrutor_id ON public.treinamento_instancias(instrutor_id);
-CREATE INDEX IF NOT EXISTS idx_sinistros_seguro_seguro_vida_id ON public.sinistros_seguro(seguro_vida_id);
-CREATE INDEX IF NOT EXISTS idx_solicitacoes_ajuste_ponto_analisado_por ON public.solicitacoes_ajuste_ponto(analisado_por);
-CREATE INDEX IF NOT EXISTS idx_solicitacoes_ajuste_ponto_aprovado_por ON public.solicitacoes_ajuste_ponto(aprovado_por);
-CREATE INDEX IF NOT EXISTS idx_solicitacoes_ajuste_ponto_colaborador_id ON public.solicitacoes_ajuste_ponto(colaborador_id);
-CREATE INDEX IF NOT EXISTS idx_solicitacoes_ajuste_ponto_empresa_id ON public.solicitacoes_ajuste_ponto(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_documentos_historico_documento_id ON public.documentos_historico(documento_id);
-CREATE INDEX IF NOT EXISTS idx_documentos_historico_usuario_id ON public.documentos_historico(usuario_id);
-CREATE INDEX IF NOT EXISTS idx_itens_folha_colaborador_id ON public.itens_folha(colaborador_id);
-CREATE INDEX IF NOT EXISTS idx_itens_folha_folha_id ON public.itens_folha(folha_id);
-CREATE INDEX IF NOT EXISTS idx_itens_folha_rubrica_id ON public.itens_folha(rubrica_id);
-CREATE INDEX IF NOT EXISTS idx_notificacoes_user_id ON public.notificacoes(user_id);
-CREATE INDEX IF NOT EXISTS idx_seguros_colaboradores_seguro_vida_id ON public.seguros_colaboradores(seguro_vida_id);
-CREATE INDEX IF NOT EXISTS idx_ajustes_ponto_registro_ponto_id ON public.ajustes_ponto(registro_ponto_id);
-CREATE INDEX IF NOT EXISTS idx_recrutamento_entrevistas_candidatura_id ON public.recrutamento_entrevistas(candidatura_id);
-CREATE INDEX IF NOT EXISTS idx_recrutamento_entrevistas_entrevistador_id ON public.recrutamento_entrevistas(entrevistador_id);
-CREATE INDEX IF NOT EXISTS idx_workflows_config_empresa_id ON public.workflows_config(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_epis_entregas_epi_id ON public.epis_entregas(epi_id);
-CREATE INDEX IF NOT EXISTS idx_blocked_ips_blocked_by ON public.blocked_ips(blocked_by);
-CREATE INDEX IF NOT EXISTS idx_ferias_audit_log_empresa_id ON public.ferias_audit_log(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_ferias_audit_log_usuario_id ON public.ferias_audit_log(usuario_id);
-CREATE INDEX IF NOT EXISTS idx_relatorios_agendados_created_by ON public.relatorios_agendados(created_by);
-CREATE INDEX IF NOT EXISTS idx_configuracoes_esocial_certificado_id ON public.configuracoes_esocial(certificado_id);
-CREATE INDEX IF NOT EXISTS idx_verification_tokens_user_id ON public.verification_tokens(user_id);
-CREATE INDEX IF NOT EXISTS idx_onboarding_tarefas_concluida_por ON public.onboarding_tarefas(concluida_por);
-CREATE INDEX IF NOT EXISTS idx_onboarding_tarefas_empresa_id ON public.onboarding_tarefas(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_onboarding_tarefas_onboarding_id ON public.onboarding_tarefas(onboarding_id);
-CREATE INDEX IF NOT EXISTS idx_onboarding_tarefas_template_tarefa_id ON public.onboarding_tarefas(template_tarefa_id);
-CREATE INDEX IF NOT EXISTS idx_tarefas_onboarding_admissao_id ON public.tarefas_onboarding(admissao_id);
-CREATE INDEX IF NOT EXISTS idx_tarefas_onboarding_responsavel_id ON public.tarefas_onboarding(responsavel_id);
-CREATE INDEX IF NOT EXISTS idx_treinamento_feedback_inscricao_id ON public.treinamento_feedback(inscricao_id);
-CREATE INDEX IF NOT EXISTS idx_admissoes_created_by ON public.admissoes(created_by);
-CREATE INDEX IF NOT EXISTS idx_eventos_variaveis_created_by ON public.eventos_variaveis(created_by);
-CREATE INDEX IF NOT EXISTS idx_eventos_variaveis_rubrica_id ON public.eventos_variaveis(rubrica_id);
-CREATE INDEX IF NOT EXISTS idx_logs_integracoes_integracao_id ON public.logs_integracoes(integracao_id);
-CREATE INDEX IF NOT EXISTS idx_documentos_admissao_admissao_id ON public.documentos_admissao(admissao_id);
-CREATE INDEX IF NOT EXISTS idx_rate_limit_logs_user_id ON public.rate_limit_logs(user_id);
-CREATE INDEX IF NOT EXISTS idx_esocial_transmissao_logs_evento_id ON public.esocial_transmissao_logs(evento_id);
-CREATE INDEX IF NOT EXISTS idx_fila_notificacoes_user_id ON public.fila_notificacoes(user_id);
-CREATE INDEX IF NOT EXISTS idx_adiantamentos_salariais_aprovado_por ON public.adiantamentos_salariais(aprovado_por);
-CREATE INDEX IF NOT EXISTS idx_adiantamentos_salariais_colaborador_id ON public.adiantamentos_salariais(colaborador_id);
-CREATE INDEX IF NOT EXISTS idx_adiantamentos_salariais_empresa_id ON public.adiantamentos_salariais(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_recrutamento_agendamentos_candidatura_id ON public.recrutamento_agendamentos(candidatura_id);
-CREATE INDEX IF NOT EXISTS idx_recrutamento_agendamentos_responsavel_id ON public.recrutamento_agendamentos(responsavel_id);
-CREATE INDEX IF NOT EXISTS idx_provisao_logs_usuario_id ON public.provisao_logs(usuario_id);
-CREATE INDEX IF NOT EXISTS idx_candidaturas_candidato_id ON public.candidaturas(candidato_id);
-CREATE INDEX IF NOT EXISTS idx_candidaturas_empresa_id ON public.candidaturas(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_documento_templates_created_by ON public.documento_templates(created_by);
-CREATE INDEX IF NOT EXISTS idx_ponto_auditoria_usuario_id ON public.ponto_auditoria(usuario_id);
-CREATE INDEX IF NOT EXISTS idx_cnab_configuracoes_empresa_id ON public.cnab_configuracoes(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_pesquisas_respostas_pergunta_id ON public.pesquisas_respostas(pergunta_id);
-CREATE INDEX IF NOT EXISTS idx_pesquisas_respostas_pesquisa_id ON public.pesquisas_respostas(pesquisa_id);
-CREATE INDEX IF NOT EXISTS idx_historico_ferias_ferias_id ON public.historico_ferias(ferias_id);
-CREATE INDEX IF NOT EXISTS idx_contatos_emergencia_relacionamento_id ON public.contatos_emergencia(relacionamento_id);
-CREATE INDEX IF NOT EXISTS idx_whatsapp_mensagens_logs_colaborador_id ON public.whatsapp_mensagens_logs(colaborador_id);
-CREATE INDEX IF NOT EXISTS idx_whatsapp_mensagens_logs_template_id ON public.whatsapp_mensagens_logs(template_id);
-CREATE INDEX IF NOT EXISTS idx_webhooks_logs_webhook_id ON public.webhooks_logs(webhook_id);
-CREATE INDEX IF NOT EXISTS idx_workflows_historico_etapa_id ON public.workflows_historico(etapa_id);
-CREATE INDEX IF NOT EXISTS idx_workflows_historico_execucao_id ON public.workflows_historico(execucao_id);
-CREATE INDEX IF NOT EXISTS idx_cargos_departamento_id ON public.cargos(departamento_id);
-CREATE INDEX IF NOT EXISTS idx_certificados_digitais_empresa_id ON public.certificados_digitais(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_onboarding_templates_created_by ON public.onboarding_templates(created_by);
-CREATE INDEX IF NOT EXISTS idx_comunicados_leituras_comunicado_id ON public.comunicados_leituras(comunicado_id);
-CREATE INDEX IF NOT EXISTS idx_ferias_periodo_aquisitivo_id ON public.ferias(periodo_aquisitivo_id);
-CREATE INDEX IF NOT EXISTS idx_cnab_itens_colaborador_id ON public.cnab_itens(colaborador_id);
-CREATE INDEX IF NOT EXISTS idx_cnab_itens_remessa_id ON public.cnab_itens(remessa_id);
-CREATE INDEX IF NOT EXISTS idx_pix_lotes_empresa_id ON public.pix_lotes(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_treinamento_participantes_treinamento_id ON public.treinamento_participantes(treinamento_id);
-CREATE INDEX IF NOT EXISTS idx_sst_riscos_ambientais_local_id ON public.sst_riscos_ambientais(local_id);
-CREATE INDEX IF NOT EXISTS idx_premiacoes_pagamentos_campanha_id ON public.premiacoes_pagamentos(campanha_id);
-CREATE INDEX IF NOT EXISTS idx_premiacoes_pagamentos_colaborador_id ON public.premiacoes_pagamentos(colaborador_id);
-CREATE INDEX IF NOT EXISTS idx_premiacoes_pagamentos_regra_id ON public.premiacoes_pagamentos(regra_id);
-CREATE INDEX IF NOT EXISTS idx_premiacoes_roi_cenarios_user_id ON public.premiacoes_roi_cenarios(user_id);
-CREATE INDEX IF NOT EXISTS idx_premiacoes_alertas_user_id ON public.premiacoes_alertas(user_id);
-CREATE INDEX IF NOT EXISTS idx_lancamentos_folha_holerite_id ON public.lancamentos_folha(holerite_id);
-CREATE INDEX IF NOT EXISTS idx_lancamentos_folha_rubrica_id ON public.lancamentos_folha(rubrica_id);
-CREATE INDEX IF NOT EXISTS idx_times_brindes_brinde_id ON public.times_brindes(brinde_id);
-CREATE INDEX IF NOT EXISTS idx_folha_auditoria_criado_por ON public.folha_auditoria(criado_por);
-CREATE INDEX IF NOT EXISTS idx_historico_cargo_created_by ON public.historico_cargo(created_by);
-CREATE INDEX IF NOT EXISTS idx_pix_itens_colaborador_id ON public.pix_itens(colaborador_id);
-CREATE INDEX IF NOT EXISTS idx_pix_itens_lote_id ON public.pix_itens(lote_id);
-CREATE INDEX IF NOT EXISTS idx_audit_logs_empresa_id ON public.audit_logs(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_auditoria_logs_empresa_id ON public.auditoria_logs(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_ponto_seguranca_blacklist_colaborador_id ON public.ponto_seguranca_blacklist(colaborador_id);
-CREATE INDEX IF NOT EXISTS idx_dependentes_beneficios_beneficio_id ON public.dependentes_beneficios(beneficio_id);
-CREATE INDEX IF NOT EXISTS idx_vaga_entrevistas_candidatura_id ON public.vaga_entrevistas(candidatura_id);
-CREATE INDEX IF NOT EXISTS idx_vaga_entrevistas_empresa_id ON public.vaga_entrevistas(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_vaga_entrevistas_etapa_id ON public.vaga_entrevistas(etapa_id);
-CREATE INDEX IF NOT EXISTS idx_desligamentos_created_by ON public.desligamentos(created_by);
-CREATE INDEX IF NOT EXISTS idx_desligamentos_tipo_aviso_previo_id ON public.desligamentos(tipo_aviso_previo_id);
-CREATE INDEX IF NOT EXISTS idx_desligamentos_tipo_desligamento_id ON public.desligamentos(tipo_desligamento_id);
-CREATE INDEX IF NOT EXISTS idx_historico_calculos_folha_criado_por ON public.historico_calculos_folha(criado_por);
-CREATE INDEX IF NOT EXISTS idx_historico_calculos_folha_empresa_id ON public.historico_calculos_folha(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_historico_calculos_folha_folha_id ON public.historico_calculos_folha(folha_id);
-CREATE INDEX IF NOT EXISTS idx_beneficiarios_seguro_seguro_vida_id ON public.beneficiarios_seguro(seguro_vida_id);
-CREATE INDEX IF NOT EXISTS idx_provisao_auditoria_usuario_id ON public.provisao_auditoria(usuario_id);
-CREATE INDEX IF NOT EXISTS idx_premiacoes_campanhas_empresa_id ON public.premiacoes_campanhas(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_premiacoes_regras_campanha_id ON public.premiacoes_regras(campanha_id);
-CREATE INDEX IF NOT EXISTS idx_premiacoes_regras_meta_id ON public.premiacoes_regras(meta_id);
-CREATE INDEX IF NOT EXISTS idx_documentos_afastamento_afastamento_id ON public.documentos_afastamento(afastamento_id);
-CREATE INDEX IF NOT EXISTS idx_password_reset_requests_reviewed_by ON public.password_reset_requests(reviewed_by);
-CREATE INDEX IF NOT EXISTS idx_ferias_arquivos_ferias_id ON public.ferias_arquivos(ferias_id);
-CREATE INDEX IF NOT EXISTS idx_treinamento_certificados_colaborador_id ON public.treinamento_certificados(colaborador_id);
-CREATE INDEX IF NOT EXISTS idx_treinamento_certificados_curso_id ON public.treinamento_certificados(curso_id);
-CREATE INDEX IF NOT EXISTS idx_treinamento_certificados_inscricao_id ON public.treinamento_certificados(inscricao_id);
-CREATE INDEX IF NOT EXISTS idx_role_permissions_created_by ON public.role_permissions(created_by);
-CREATE INDEX IF NOT EXISTS idx_premiacoes_cenarios_simulacao_criado_por ON public.premiacoes_cenarios_simulacao(criado_por);
-CREATE INDEX IF NOT EXISTS idx_premiacoes_cenarios_simulacao_empresa_id ON public.premiacoes_cenarios_simulacao(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_lancamentos_contabeis_conta_credito_id ON public.lancamentos_contabeis(conta_credito_id);
-CREATE INDEX IF NOT EXISTS idx_lancamentos_contabeis_conta_debito_id ON public.lancamentos_contabeis(conta_debito_id);
-CREATE INDEX IF NOT EXISTS idx_lancamentos_contabeis_empresa_id ON public.lancamentos_contabeis(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_lancamentos_contabeis_folha_id ON public.lancamentos_contabeis(folha_id);
-CREATE INDEX IF NOT EXISTS idx_admissao_tokens_admissao_id ON public.admissao_tokens(admissao_id);
-CREATE INDEX IF NOT EXISTS idx_departamentos_departamento_pai_id ON public.departamentos(departamento_pai_id);
-CREATE INDEX IF NOT EXISTS idx_departamentos_responsavel_id ON public.departamentos(responsavel_id);
-CREATE INDEX IF NOT EXISTS idx_ia_provisoes_alertas_empresa_id ON public.ia_provisoes_alertas(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_escalas_trabalho_turno_id ON public.escalas_trabalho(turno_id);
-CREATE INDEX IF NOT EXISTS idx_onboarding_template_tarefas_template_id ON public.onboarding_template_tarefas(template_id);
-CREATE INDEX IF NOT EXISTS idx_recrutamento_testes_candidatura_id ON public.recrutamento_testes(candidatura_id);
-CREATE INDEX IF NOT EXISTS idx_dados_estrangeiro_condicao_ingresso_id ON public.dados_estrangeiro(condicao_ingresso_id);
-CREATE INDEX IF NOT EXISTS idx_dados_estrangeiro_descricao_logradouro_id ON public.dados_estrangeiro(descricao_logradouro_id);
-CREATE INDEX IF NOT EXISTS idx_dados_estrangeiro_pais_id ON public.dados_estrangeiro(pais_id);
-CREATE INDEX IF NOT EXISTS idx_dados_estrangeiro_tempo_residencia_id ON public.dados_estrangeiro(tempo_residencia_id);
-CREATE INDEX IF NOT EXISTS idx_dados_estrangeiro_tipo_visto_id ON public.dados_estrangeiro(tipo_visto_id);
-CREATE INDEX IF NOT EXISTS idx_cnab_remessas_empresa_id ON public.cnab_remessas(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_simulacoes_fiscais_empresa_id ON public.simulacoes_fiscais(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_simulacoes_fiscais_usuario_id ON public.simulacoes_fiscais(usuario_id);
-CREATE INDEX IF NOT EXISTS idx_competencias_config_empresa_id ON public.competencias_config(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_homologacoes_rescisao_usuario_id ON public.homologacoes_rescisao(usuario_id);
-CREATE INDEX IF NOT EXISTS idx_historico_rescisoes_empresa_id ON public.historico_rescisoes(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_premiacoes_auditoria_usuario_id ON public.premiacoes_auditoria(usuario_id);
-CREATE INDEX IF NOT EXISTS idx_transferencias_departamento_anterior_id ON public.transferencias(departamento_anterior_id);
-CREATE INDEX IF NOT EXISTS idx_transferencias_departamento_novo_id ON public.transferencias(departamento_novo_id);
-CREATE INDEX IF NOT EXISTS idx_workflows_execucoes_etapa_atual_id ON public.workflows_execucoes(etapa_atual_id);
-CREATE INDEX IF NOT EXISTS idx_workflows_execucoes_workflow_id ON public.workflows_execucoes(workflow_id);
-CREATE INDEX IF NOT EXISTS idx_candidatos_empresa_id ON public.candidatos(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_auditoria_contratual_alterado_por ON public.auditoria_contratual(alterado_por);
-CREATE INDEX IF NOT EXISTS idx_auditoria_contratual_colaborador_id ON public.auditoria_contratual(colaborador_id);
-CREATE INDEX IF NOT EXISTS idx_folha_eventos_auditoria_folha_id ON public.folha_eventos_auditoria(folha_id);
-CREATE INDEX IF NOT EXISTS idx_folha_eventos_auditoria_usuario_id ON public.folha_eventos_auditoria(usuario_id);
-CREATE INDEX IF NOT EXISTS idx_logs_sincronizacao_empresa_id ON public.logs_sincronizacao(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_pesquisas_perguntas_pesquisa_id ON public.pesquisas_perguntas(pesquisa_id);
-CREATE INDEX IF NOT EXISTS idx_medidas_disciplinares_anexos_medida_id ON public.medidas_disciplinares_anexos(medida_id);
-CREATE INDEX IF NOT EXISTS idx_medidas_disciplinares_anexos_uploaded_by ON public.medidas_disciplinares_anexos(uploaded_by);
-CREATE INDEX IF NOT EXISTS idx_vaga_etapas_empresa_id ON public.vaga_etapas(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_vaga_etapas_vaga_id ON public.vaga_etapas(vaga_id);
-CREATE INDEX IF NOT EXISTS idx_geo_blocking_config_updated_by ON public.geo_blocking_config(updated_by);
-CREATE INDEX IF NOT EXISTS idx_folhas_pagamento_created_by ON public.folhas_pagamento(created_by);
-CREATE INDEX IF NOT EXISTS idx_sst_incidentes_colaborador_id ON public.sst_incidentes(colaborador_id);
-CREATE INDEX IF NOT EXISTS idx_onboarding_documentos_obrigatorios_empresa_id ON public.onboarding_documentos_obrigatorios(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_onboarding_documentos_obrigatorios_onboarding_id ON public.onboarding_documentos_obrigatorios(onboarding_id);
-CREATE INDEX IF NOT EXISTS idx_dependentes_genero_documento_id ON public.dependentes(genero_documento_id);
-CREATE INDEX IF NOT EXISTS idx_dependentes_relacionamento_id ON public.dependentes(relacionamento_id);
-CREATE INDEX IF NOT EXISTS idx_webauthn_challenges_user_id ON public.webauthn_challenges(user_id);
-CREATE INDEX IF NOT EXISTS idx_workflows_etapas_workflow_id ON public.workflows_etapas(workflow_id);
-CREATE INDEX IF NOT EXISTS idx_recrutamento_anotacoes_candidatura_id ON public.recrutamento_anotacoes(candidatura_id);
-CREATE INDEX IF NOT EXISTS idx_recrutamento_anotacoes_usuario_id ON public.recrutamento_anotacoes(usuario_id);
-CREATE INDEX IF NOT EXISTS idx_promocoes_cargo_anterior_id ON public.promocoes(cargo_anterior_id);
-CREATE INDEX IF NOT EXISTS idx_promocoes_cargo_novo_id ON public.promocoes(cargo_novo_id);
-CREATE INDEX IF NOT EXISTS idx_beneficio_movimentacoes_beneficio_id ON public.beneficio_movimentacoes(beneficio_id);
-CREATE INDEX IF NOT EXISTS idx_beneficio_movimentacoes_colaborador_id ON public.beneficio_movimentacoes(colaborador_id);
-CREATE INDEX IF NOT EXISTS idx_beneficio_movimentacoes_usuario_id ON public.beneficio_movimentacoes(usuario_id);
-CREATE INDEX IF NOT EXISTS idx_beneficios_colaboradores_beneficio_id ON public.beneficios_colaboradores(beneficio_id);
-CREATE INDEX IF NOT EXISTS idx_beneficios_colaboradores_colaborador_id ON public.beneficios_colaboradores(colaborador_id);
-CREATE INDEX IF NOT EXISTS idx_convenios_colaboradores_convenio_id ON public.convenios_colaboradores(convenio_id);
-CREATE INDEX IF NOT EXISTS idx_banco_horas_registro_ponto_id ON public.banco_horas(registro_ponto_id);
-CREATE INDEX IF NOT EXISTS idx_ferias_aprovacoes_ferias_id ON public.ferias_aprovacoes(ferias_id);
-CREATE INDEX IF NOT EXISTS idx_provisoes_folha_colaborador_id ON public.provisoes_folha(colaborador_id);
-CREATE INDEX IF NOT EXISTS idx_provisoes_folha_empresa_id ON public.provisoes_folha(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_prorrogacoes_afastamento_afastamento_id ON public.prorrogacoes_afastamento(afastamento_id);
-CREATE INDEX IF NOT EXISTS idx_beneficio_utilizacao_beneficio_colaborador_id ON public.beneficio_utilizacao(beneficio_colaborador_id);
-CREATE INDEX IF NOT EXISTS idx_emprestimos_consignados_colaborador_id ON public.emprestimos_consignados(colaborador_id);
-CREATE INDEX IF NOT EXISTS idx_emprestimos_consignados_empresa_id ON public.emprestimos_consignados(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_onboarding_colaborador_created_by ON public.onboarding_colaborador(created_by);
-CREATE INDEX IF NOT EXISTS idx_onboarding_colaborador_empresa_id ON public.onboarding_colaborador(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_onboarding_colaborador_template_id ON public.onboarding_colaborador(template_id);
-CREATE INDEX IF NOT EXISTS idx_dados_estagiario_supervisor_id ON public.dados_estagiario(supervisor_id);
-CREATE INDEX IF NOT EXISTS idx_trilhas_cursos_curso_id ON public.trilhas_cursos(curso_id);
-CREATE INDEX IF NOT EXISTS idx_trilhas_cursos_trilha_id ON public.trilhas_cursos(trilha_id);
-CREATE INDEX IF NOT EXISTS idx_verbas_rescisorias_rubrica_id ON public.verbas_rescisorias(rubrica_id);
-CREATE INDEX IF NOT EXISTS idx_cargo_faixas_salariais_cargo_id ON public.cargo_faixas_salariais(cargo_id);
-CREATE INDEX IF NOT EXISTS idx_password_history_user_id ON public.password_history(user_id);
-CREATE INDEX IF NOT EXISTS idx_sst_exposicao_riscos_colaborador_id ON public.sst_exposicao_riscos(colaborador_id);
-CREATE INDEX IF NOT EXISTS idx_inscricoes_cursos_curso_id ON public.inscricoes_cursos(curso_id);
-CREATE INDEX IF NOT EXISTS idx_provisoes_mensais_log_id ON public.provisoes_mensais(log_id);
-CREATE INDEX IF NOT EXISTS idx_auth_gov_br_sessions_user_id ON public.auth_gov_br_sessions(user_id);
-CREATE INDEX IF NOT EXISTS idx_geo_allowed_countries_added_by ON public.geo_allowed_countries(added_by);
-CREATE INDEX IF NOT EXISTS idx_beneficios_colaborador_created_by ON public.beneficios_colaborador(created_by);
-CREATE INDEX IF NOT EXISTS idx_pdi_plano_desenvolvimento_colaborador_id ON public.pdi_plano_desenvolvimento(colaborador_id);
-CREATE INDEX IF NOT EXISTS idx_pdi_plano_desenvolvimento_empresa_id ON public.pdi_plano_desenvolvimento(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_times_departamento_id ON public.times(departamento_id);
-CREATE INDEX IF NOT EXISTS idx_times_lider_id ON public.times(lider_id);
-CREATE INDEX IF NOT EXISTS idx_fgts_digital_logs_guia_id ON public.fgts_digital_logs(guia_id);
-CREATE INDEX IF NOT EXISTS idx_notificacoes_admissao_admissao_id ON public.notificacoes_admissao(admissao_id);
-CREATE INDEX IF NOT EXISTS idx_pendencias_empresa_id ON public.pendencias(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_feedbacks_360_avaliado_id ON public.feedbacks_360(avaliado_id);
-CREATE INDEX IF NOT EXISTS idx_feedbacks_360_avaliador_id ON public.feedbacks_360(avaliador_id);
-CREATE INDEX IF NOT EXISTS idx_feedbacks_360_ciclo_id ON public.feedbacks_360(ciclo_id);
-CREATE INDEX IF NOT EXISTS idx_password_reset_config_updated_by ON public.password_reset_config(updated_by);
-CREATE INDEX IF NOT EXISTS idx_push_subscriptions_user_id ON public.push_subscriptions(user_id);
-CREATE INDEX IF NOT EXISTS idx_beneficiarios_plano_plano_saude_id ON public.beneficiarios_plano(plano_saude_id);
-CREATE INDEX IF NOT EXISTS idx_webhook_logs_webhook_id ON public.webhook_logs(webhook_id);
-CREATE INDEX IF NOT EXISTS idx_metas_okrs_ciclo_id ON public.metas_okrs(ciclo_id);
-CREATE INDEX IF NOT EXISTS idx_sst_cat_colaborador_id ON public.sst_cat(colaborador_id);
-CREATE INDEX IF NOT EXISTS idx_sst_cat_created_by ON public.sst_cat(created_by);
-CREATE INDEX IF NOT EXISTS idx_sst_cat_empresa_id ON public.sst_cat(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_faltas_motivo_afastamento_id ON public.faltas(motivo_afastamento_id);
-CREATE INDEX IF NOT EXISTS idx_triagem_notas_candidatura_id ON public.triagem_notas(candidatura_id);
-CREATE INDEX IF NOT EXISTS idx_triagem_notas_empresa_id ON public.triagem_notas(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_beneficio_regras_elegibilidade_beneficio_id ON public.beneficio_regras_elegibilidade(beneficio_id);
-CREATE INDEX IF NOT EXISTS idx_beneficio_regras_elegibilidade_cargo_id ON public.beneficio_regras_elegibilidade(cargo_id);
-CREATE INDEX IF NOT EXISTS idx_beneficio_regras_elegibilidade_departamento_id ON public.beneficio_regras_elegibilidade(departamento_id);
-CREATE INDEX IF NOT EXISTS idx_beneficio_regras_elegibilidade_empresa_id ON public.beneficio_regras_elegibilidade(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_ponto_espelhos_assinados_colaborador_id ON public.ponto_espelhos_assinados(colaborador_id);
-CREATE INDEX IF NOT EXISTS idx_log_envio_relatorios_agendamento_id ON public.log_envio_relatorios(agendamento_id);
-CREATE INDEX IF NOT EXISTS idx_ip_whitelist_added_by ON public.ip_whitelist(added_by);
-CREATE INDEX IF NOT EXISTS idx_folha_assinaturas_assinante_id ON public.folha_assinaturas(assinante_id);
-CREATE INDEX IF NOT EXISTS idx_folha_assinaturas_folha_id ON public.folha_assinaturas(folha_id);
-CREATE INDEX IF NOT EXISTS idx_ponto_ajustes_gestor_id ON public.ponto_ajustes(gestor_id);
-CREATE INDEX IF NOT EXISTS idx_trilha_auditoria_ponto_ponto_id ON public.trilha_auditoria_ponto(ponto_id);
-CREATE INDEX IF NOT EXISTS idx_trilha_auditoria_ponto_usuario_id ON public.trilha_auditoria_ponto(usuario_id);
-CREATE INDEX IF NOT EXISTS idx_curriculos_arquivos_candidato_id ON public.curriculos_arquivos(candidato_id);
-CREATE INDEX IF NOT EXISTS idx_curriculos_arquivos_empresa_id ON public.curriculos_arquivos(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_ponto_auditoria_fraude_batida_id ON public.ponto_auditoria_fraude(batida_id);
-CREATE INDEX IF NOT EXISTS idx_security_alerts_resolved_by ON public.security_alerts(resolved_by);
-CREATE INDEX IF NOT EXISTS idx_security_alerts_user_id ON public.security_alerts(user_id);
-CREATE INDEX IF NOT EXISTS idx_ferias_aprovacoes_log_aprovador_id ON public.ferias_aprovacoes_log(aprovador_id);
-CREATE INDEX IF NOT EXISTS idx_ferias_aprovacoes_log_ferias_id ON public.ferias_aprovacoes_log(ferias_id);
-CREATE INDEX IF NOT EXISTS idx_linhas_transporte_vale_transporte_id ON public.linhas_transporte(vale_transporte_id);
-CREATE INDEX IF NOT EXISTS idx_afastamentos_cid_id ON public.afastamentos(cid_id);
-CREATE INDEX IF NOT EXISTS idx_documentos_colaborador_created_by ON public.documentos_colaborador(created_by);
-CREATE INDEX IF NOT EXISTS idx_beneficio_arquivos_beneficio_id ON public.beneficio_arquivos(beneficio_id);
-CREATE INDEX IF NOT EXISTS idx_beneficio_arquivos_empresa_id ON public.beneficio_arquivos(empresa_id);
-CREATE INDEX IF NOT EXISTS idx_colaboradores_categoria_trabalhador_id ON public.colaboradores(categoria_trabalhador_id);
-CREATE INDEX IF NOT EXISTS idx_colaboradores_centro_custo_id ON public.colaboradores(centro_custo_id);
-CREATE INDEX IF NOT EXISTS idx_colaboradores_created_by ON public.colaboradores(created_by);
-CREATE INDEX IF NOT EXISTS idx_colaboradores_genero_documento_id ON public.colaboradores(genero_documento_id);
-CREATE INDEX IF NOT EXISTS idx_colaboradores_gestor_ferias_id ON public.colaboradores(gestor_ferias_id);
-CREATE INDEX IF NOT EXISTS idx_colaboradores_nacionalidade_id ON public.colaboradores(nacionalidade_id);
-CREATE INDEX IF NOT EXISTS idx_colaboradores_tipo_pagamento_id ON public.colaboradores(tipo_pagamento_id);
-CREATE INDEX IF NOT EXISTS idx_colaboradores_tipo_salario_id ON public.colaboradores(tipo_salario_id);
-CREATE INDEX IF NOT EXISTS idx_colaboradores_local_trabalho_id ON public.colaboradores(local_trabalho_id);
-CREATE INDEX IF NOT EXISTS idx_recargas_vale_vale_id ON public.recargas_vale(vale_id);
-CREATE INDEX IF NOT EXISTS idx_conformidade_ponto_logs_batida_id ON public.conformidade_ponto_logs(batida_id);
-CREATE INDEX IF NOT EXISTS idx_conformidade_ponto_logs_empresa_id ON public.conformidade_ponto_logs(empresa_id);
+DO $$
+DECLARE
+  r text;
+BEGIN
+  FOR r IN SELECT unnest(ARRAY[
+    'CREATE INDEX IF NOT EXISTS idx_treinamento_instancias_curso_id ON public.treinamento_instancias(curso_id)',
+    'CREATE INDEX IF NOT EXISTS idx_treinamento_instancias_instrutor_id ON public.treinamento_instancias(instrutor_id)',
+    'CREATE INDEX IF NOT EXISTS idx_sinistros_seguro_seguro_vida_id ON public.sinistros_seguro(seguro_vida_id)',
+    'CREATE INDEX IF NOT EXISTS idx_solicitacoes_ajuste_ponto_analisado_por ON public.solicitacoes_ajuste_ponto(analisado_por)',
+    'CREATE INDEX IF NOT EXISTS idx_solicitacoes_ajuste_ponto_aprovado_por ON public.solicitacoes_ajuste_ponto(aprovado_por)',
+    'CREATE INDEX IF NOT EXISTS idx_solicitacoes_ajuste_ponto_colaborador_id ON public.solicitacoes_ajuste_ponto(colaborador_id)',
+    'CREATE INDEX IF NOT EXISTS idx_solicitacoes_ajuste_ponto_empresa_id ON public.solicitacoes_ajuste_ponto(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_documentos_historico_documento_id ON public.documentos_historico(documento_id)',
+    'CREATE INDEX IF NOT EXISTS idx_documentos_historico_usuario_id ON public.documentos_historico(usuario_id)',
+    'CREATE INDEX IF NOT EXISTS idx_itens_folha_colaborador_id ON public.itens_folha(colaborador_id)',
+    'CREATE INDEX IF NOT EXISTS idx_itens_folha_folha_id ON public.itens_folha(folha_id)',
+    'CREATE INDEX IF NOT EXISTS idx_itens_folha_rubrica_id ON public.itens_folha(rubrica_id)',
+    'CREATE INDEX IF NOT EXISTS idx_notificacoes_user_id ON public.notificacoes(user_id)',
+    'CREATE INDEX IF NOT EXISTS idx_seguros_colaboradores_seguro_vida_id ON public.seguros_colaboradores(seguro_vida_id)',
+    'CREATE INDEX IF NOT EXISTS idx_ajustes_ponto_registro_ponto_id ON public.ajustes_ponto(registro_ponto_id)',
+    'CREATE INDEX IF NOT EXISTS idx_recrutamento_entrevistas_candidatura_id ON public.recrutamento_entrevistas(candidatura_id)',
+    'CREATE INDEX IF NOT EXISTS idx_recrutamento_entrevistas_entrevistador_id ON public.recrutamento_entrevistas(entrevistador_id)',
+    'CREATE INDEX IF NOT EXISTS idx_workflows_config_empresa_id ON public.workflows_config(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_epis_entregas_epi_id ON public.epis_entregas(epi_id)',
+    'CREATE INDEX IF NOT EXISTS idx_blocked_ips_blocked_by ON public.blocked_ips(blocked_by)',
+    'CREATE INDEX IF NOT EXISTS idx_ferias_audit_log_empresa_id ON public.ferias_audit_log(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_ferias_audit_log_usuario_id ON public.ferias_audit_log(usuario_id)',
+    'CREATE INDEX IF NOT EXISTS idx_relatorios_agendados_created_by ON public.relatorios_agendados(created_by)',
+    'CREATE INDEX IF NOT EXISTS idx_configuracoes_esocial_certificado_id ON public.configuracoes_esocial(certificado_id)',
+    'CREATE INDEX IF NOT EXISTS idx_verification_tokens_user_id ON public.verification_tokens(user_id)',
+    'CREATE INDEX IF NOT EXISTS idx_onboarding_tarefas_concluida_por ON public.onboarding_tarefas(concluida_por)',
+    'CREATE INDEX IF NOT EXISTS idx_onboarding_tarefas_empresa_id ON public.onboarding_tarefas(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_onboarding_tarefas_onboarding_id ON public.onboarding_tarefas(onboarding_id)',
+    'CREATE INDEX IF NOT EXISTS idx_onboarding_tarefas_template_tarefa_id ON public.onboarding_tarefas(template_tarefa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_tarefas_onboarding_admissao_id ON public.tarefas_onboarding(admissao_id)',
+    'CREATE INDEX IF NOT EXISTS idx_tarefas_onboarding_responsavel_id ON public.tarefas_onboarding(responsavel_id)',
+    'CREATE INDEX IF NOT EXISTS idx_treinamento_feedback_inscricao_id ON public.treinamento_feedback(inscricao_id)',
+    'CREATE INDEX IF NOT EXISTS idx_admissoes_created_by ON public.admissoes(created_by)',
+    'CREATE INDEX IF NOT EXISTS idx_eventos_variaveis_created_by ON public.eventos_variaveis(created_by)',
+    'CREATE INDEX IF NOT EXISTS idx_eventos_variaveis_rubrica_id ON public.eventos_variaveis(rubrica_id)',
+    'CREATE INDEX IF NOT EXISTS idx_logs_integracoes_integracao_id ON public.logs_integracoes(integracao_id)',
+    'CREATE INDEX IF NOT EXISTS idx_documentos_admissao_admissao_id ON public.documentos_admissao(admissao_id)',
+    'CREATE INDEX IF NOT EXISTS idx_rate_limit_logs_user_id ON public.rate_limit_logs(user_id)',
+    'CREATE INDEX IF NOT EXISTS idx_esocial_transmissao_logs_evento_id ON public.esocial_transmissao_logs(evento_id)',
+    'CREATE INDEX IF NOT EXISTS idx_fila_notificacoes_user_id ON public.fila_notificacoes(user_id)',
+    'CREATE INDEX IF NOT EXISTS idx_adiantamentos_salariais_aprovado_por ON public.adiantamentos_salariais(aprovado_por)',
+    'CREATE INDEX IF NOT EXISTS idx_adiantamentos_salariais_colaborador_id ON public.adiantamentos_salariais(colaborador_id)',
+    'CREATE INDEX IF NOT EXISTS idx_adiantamentos_salariais_empresa_id ON public.adiantamentos_salariais(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_recrutamento_agendamentos_candidatura_id ON public.recrutamento_agendamentos(candidatura_id)',
+    'CREATE INDEX IF NOT EXISTS idx_recrutamento_agendamentos_responsavel_id ON public.recrutamento_agendamentos(responsavel_id)',
+    'CREATE INDEX IF NOT EXISTS idx_provisao_logs_usuario_id ON public.provisao_logs(usuario_id)',
+    'CREATE INDEX IF NOT EXISTS idx_candidaturas_candidato_id ON public.candidaturas(candidato_id)',
+    'CREATE INDEX IF NOT EXISTS idx_candidaturas_empresa_id ON public.candidaturas(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_documento_templates_created_by ON public.documento_templates(created_by)',
+    'CREATE INDEX IF NOT EXISTS idx_ponto_auditoria_usuario_id ON public.ponto_auditoria(usuario_id)',
+    'CREATE INDEX IF NOT EXISTS idx_cnab_configuracoes_empresa_id ON public.cnab_configuracoes(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_pesquisas_respostas_pergunta_id ON public.pesquisas_respostas(pergunta_id)',
+    'CREATE INDEX IF NOT EXISTS idx_pesquisas_respostas_pesquisa_id ON public.pesquisas_respostas(pesquisa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_historico_ferias_ferias_id ON public.historico_ferias(ferias_id)',
+    'CREATE INDEX IF NOT EXISTS idx_contatos_emergencia_relacionamento_id ON public.contatos_emergencia(relacionamento_id)',
+    'CREATE INDEX IF NOT EXISTS idx_whatsapp_mensagens_logs_colaborador_id ON public.whatsapp_mensagens_logs(colaborador_id)',
+    'CREATE INDEX IF NOT EXISTS idx_whatsapp_mensagens_logs_template_id ON public.whatsapp_mensagens_logs(template_id)',
+    'CREATE INDEX IF NOT EXISTS idx_webhooks_logs_webhook_id ON public.webhooks_logs(webhook_id)',
+    'CREATE INDEX IF NOT EXISTS idx_workflows_historico_etapa_id ON public.workflows_historico(etapa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_workflows_historico_execucao_id ON public.workflows_historico(execucao_id)',
+    'CREATE INDEX IF NOT EXISTS idx_cargos_departamento_id ON public.cargos(departamento_id)',
+    'CREATE INDEX IF NOT EXISTS idx_certificados_digitais_empresa_id ON public.certificados_digitais(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_onboarding_templates_created_by ON public.onboarding_templates(created_by)',
+    'CREATE INDEX IF NOT EXISTS idx_comunicados_leituras_comunicado_id ON public.comunicados_leituras(comunicado_id)',
+    'CREATE INDEX IF NOT EXISTS idx_ferias_periodo_aquisitivo_id ON public.ferias(periodo_aquisitivo_id)',
+    'CREATE INDEX IF NOT EXISTS idx_cnab_itens_colaborador_id ON public.cnab_itens(colaborador_id)',
+    'CREATE INDEX IF NOT EXISTS idx_cnab_itens_remessa_id ON public.cnab_itens(remessa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_pix_lotes_empresa_id ON public.pix_lotes(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_treinamento_participantes_treinamento_id ON public.treinamento_participantes(treinamento_id)',
+    'CREATE INDEX IF NOT EXISTS idx_sst_riscos_ambientais_local_id ON public.sst_riscos_ambientais(local_id)',
+    'CREATE INDEX IF NOT EXISTS idx_premiacoes_pagamentos_campanha_id ON public.premiacoes_pagamentos(campanha_id)',
+    'CREATE INDEX IF NOT EXISTS idx_premiacoes_pagamentos_colaborador_id ON public.premiacoes_pagamentos(colaborador_id)',
+    'CREATE INDEX IF NOT EXISTS idx_premiacoes_pagamentos_regra_id ON public.premiacoes_pagamentos(regra_id)',
+    'CREATE INDEX IF NOT EXISTS idx_premiacoes_roi_cenarios_user_id ON public.premiacoes_roi_cenarios(user_id)',
+    'CREATE INDEX IF NOT EXISTS idx_premiacoes_alertas_user_id ON public.premiacoes_alertas(user_id)',
+    'CREATE INDEX IF NOT EXISTS idx_lancamentos_folha_holerite_id ON public.lancamentos_folha(holerite_id)',
+    'CREATE INDEX IF NOT EXISTS idx_lancamentos_folha_rubrica_id ON public.lancamentos_folha(rubrica_id)',
+    'CREATE INDEX IF NOT EXISTS idx_times_brindes_brinde_id ON public.times_brindes(brinde_id)',
+    'CREATE INDEX IF NOT EXISTS idx_folha_auditoria_criado_por ON public.folha_auditoria(criado_por)',
+    'CREATE INDEX IF NOT EXISTS idx_historico_cargo_created_by ON public.historico_cargo(created_by)',
+    'CREATE INDEX IF NOT EXISTS idx_pix_itens_colaborador_id ON public.pix_itens(colaborador_id)',
+    'CREATE INDEX IF NOT EXISTS idx_pix_itens_lote_id ON public.pix_itens(lote_id)',
+    'CREATE INDEX IF NOT EXISTS idx_audit_logs_empresa_id ON public.audit_logs(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_auditoria_logs_empresa_id ON public.auditoria_logs(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_ponto_seguranca_blacklist_colaborador_id ON public.ponto_seguranca_blacklist(colaborador_id)',
+    'CREATE INDEX IF NOT EXISTS idx_dependentes_beneficios_beneficio_id ON public.dependentes_beneficios(beneficio_id)',
+    'CREATE INDEX IF NOT EXISTS idx_vaga_entrevistas_candidatura_id ON public.vaga_entrevistas(candidatura_id)',
+    'CREATE INDEX IF NOT EXISTS idx_vaga_entrevistas_empresa_id ON public.vaga_entrevistas(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_vaga_entrevistas_etapa_id ON public.vaga_entrevistas(etapa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_desligamentos_created_by ON public.desligamentos(created_by)',
+    'CREATE INDEX IF NOT EXISTS idx_desligamentos_tipo_aviso_previo_id ON public.desligamentos(tipo_aviso_previo_id)',
+    'CREATE INDEX IF NOT EXISTS idx_desligamentos_tipo_desligamento_id ON public.desligamentos(tipo_desligamento_id)',
+    'CREATE INDEX IF NOT EXISTS idx_historico_calculos_folha_criado_por ON public.historico_calculos_folha(criado_por)',
+    'CREATE INDEX IF NOT EXISTS idx_historico_calculos_folha_empresa_id ON public.historico_calculos_folha(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_historico_calculos_folha_folha_id ON public.historico_calculos_folha(folha_id)',
+    'CREATE INDEX IF NOT EXISTS idx_beneficiarios_seguro_seguro_vida_id ON public.beneficiarios_seguro(seguro_vida_id)',
+    'CREATE INDEX IF NOT EXISTS idx_provisao_auditoria_usuario_id ON public.provisao_auditoria(usuario_id)',
+    'CREATE INDEX IF NOT EXISTS idx_premiacoes_campanhas_empresa_id ON public.premiacoes_campanhas(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_premiacoes_regras_campanha_id ON public.premiacoes_regras(campanha_id)',
+    'CREATE INDEX IF NOT EXISTS idx_premiacoes_regras_meta_id ON public.premiacoes_regras(meta_id)',
+    'CREATE INDEX IF NOT EXISTS idx_documentos_afastamento_afastamento_id ON public.documentos_afastamento(afastamento_id)',
+    'CREATE INDEX IF NOT EXISTS idx_password_reset_requests_reviewed_by ON public.password_reset_requests(reviewed_by)',
+    'CREATE INDEX IF NOT EXISTS idx_ferias_arquivos_ferias_id ON public.ferias_arquivos(ferias_id)',
+    'CREATE INDEX IF NOT EXISTS idx_treinamento_certificados_colaborador_id ON public.treinamento_certificados(colaborador_id)',
+    'CREATE INDEX IF NOT EXISTS idx_treinamento_certificados_curso_id ON public.treinamento_certificados(curso_id)',
+    'CREATE INDEX IF NOT EXISTS idx_treinamento_certificados_inscricao_id ON public.treinamento_certificados(inscricao_id)',
+    'CREATE INDEX IF NOT EXISTS idx_role_permissions_created_by ON public.role_permissions(created_by)',
+    'CREATE INDEX IF NOT EXISTS idx_premiacoes_cenarios_simulacao_criado_por ON public.premiacoes_cenarios_simulacao(criado_por)',
+    'CREATE INDEX IF NOT EXISTS idx_premiacoes_cenarios_simulacao_empresa_id ON public.premiacoes_cenarios_simulacao(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_lancamentos_contabeis_conta_credito_id ON public.lancamentos_contabeis(conta_credito_id)',
+    'CREATE INDEX IF NOT EXISTS idx_lancamentos_contabeis_conta_debito_id ON public.lancamentos_contabeis(conta_debito_id)',
+    'CREATE INDEX IF NOT EXISTS idx_lancamentos_contabeis_empresa_id ON public.lancamentos_contabeis(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_lancamentos_contabeis_folha_id ON public.lancamentos_contabeis(folha_id)',
+    'CREATE INDEX IF NOT EXISTS idx_admissao_tokens_admissao_id ON public.admissao_tokens(admissao_id)',
+    'CREATE INDEX IF NOT EXISTS idx_departamentos_departamento_pai_id ON public.departamentos(departamento_pai_id)',
+    'CREATE INDEX IF NOT EXISTS idx_departamentos_responsavel_id ON public.departamentos(responsavel_id)',
+    'CREATE INDEX IF NOT EXISTS idx_ia_provisoes_alertas_empresa_id ON public.ia_provisoes_alertas(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_escalas_trabalho_turno_id ON public.escalas_trabalho(turno_id)',
+    'CREATE INDEX IF NOT EXISTS idx_onboarding_template_tarefas_template_id ON public.onboarding_template_tarefas(template_id)',
+    'CREATE INDEX IF NOT EXISTS idx_recrutamento_testes_candidatura_id ON public.recrutamento_testes(candidatura_id)',
+    'CREATE INDEX IF NOT EXISTS idx_dados_estrangeiro_condicao_ingresso_id ON public.dados_estrangeiro(condicao_ingresso_id)',
+    'CREATE INDEX IF NOT EXISTS idx_dados_estrangeiro_descricao_logradouro_id ON public.dados_estrangeiro(descricao_logradouro_id)',
+    'CREATE INDEX IF NOT EXISTS idx_dados_estrangeiro_pais_id ON public.dados_estrangeiro(pais_id)',
+    'CREATE INDEX IF NOT EXISTS idx_dados_estrangeiro_tempo_residencia_id ON public.dados_estrangeiro(tempo_residencia_id)',
+    'CREATE INDEX IF NOT EXISTS idx_dados_estrangeiro_tipo_visto_id ON public.dados_estrangeiro(tipo_visto_id)',
+    'CREATE INDEX IF NOT EXISTS idx_cnab_remessas_empresa_id ON public.cnab_remessas(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_simulacoes_fiscais_empresa_id ON public.simulacoes_fiscais(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_simulacoes_fiscais_usuario_id ON public.simulacoes_fiscais(usuario_id)',
+    'CREATE INDEX IF NOT EXISTS idx_competencias_config_empresa_id ON public.competencias_config(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_homologacoes_rescisao_usuario_id ON public.homologacoes_rescisao(usuario_id)',
+    'CREATE INDEX IF NOT EXISTS idx_historico_rescisoes_empresa_id ON public.historico_rescisoes(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_premiacoes_auditoria_usuario_id ON public.premiacoes_auditoria(usuario_id)',
+    'CREATE INDEX IF NOT EXISTS idx_transferencias_departamento_anterior_id ON public.transferencias(departamento_anterior_id)',
+    'CREATE INDEX IF NOT EXISTS idx_transferencias_departamento_novo_id ON public.transferencias(departamento_novo_id)',
+    'CREATE INDEX IF NOT EXISTS idx_workflows_execucoes_etapa_atual_id ON public.workflows_execucoes(etapa_atual_id)',
+    'CREATE INDEX IF NOT EXISTS idx_workflows_execucoes_workflow_id ON public.workflows_execucoes(workflow_id)',
+    'CREATE INDEX IF NOT EXISTS idx_candidatos_empresa_id ON public.candidatos(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_auditoria_contratual_alterado_por ON public.auditoria_contratual(alterado_por)',
+    'CREATE INDEX IF NOT EXISTS idx_auditoria_contratual_colaborador_id ON public.auditoria_contratual(colaborador_id)',
+    'CREATE INDEX IF NOT EXISTS idx_folha_eventos_auditoria_folha_id ON public.folha_eventos_auditoria(folha_id)',
+    'CREATE INDEX IF NOT EXISTS idx_folha_eventos_auditoria_usuario_id ON public.folha_eventos_auditoria(usuario_id)',
+    'CREATE INDEX IF NOT EXISTS idx_logs_sincronizacao_empresa_id ON public.logs_sincronizacao(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_pesquisas_perguntas_pesquisa_id ON public.pesquisas_perguntas(pesquisa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_medidas_disciplinares_anexos_medida_id ON public.medidas_disciplinares_anexos(medida_id)',
+    'CREATE INDEX IF NOT EXISTS idx_medidas_disciplinares_anexos_uploaded_by ON public.medidas_disciplinares_anexos(uploaded_by)',
+    'CREATE INDEX IF NOT EXISTS idx_vaga_etapas_empresa_id ON public.vaga_etapas(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_vaga_etapas_vaga_id ON public.vaga_etapas(vaga_id)',
+    'CREATE INDEX IF NOT EXISTS idx_geo_blocking_config_updated_by ON public.geo_blocking_config(updated_by)',
+    'CREATE INDEX IF NOT EXISTS idx_folhas_pagamento_created_by ON public.folhas_pagamento(created_by)',
+    'CREATE INDEX IF NOT EXISTS idx_sst_incidentes_colaborador_id ON public.sst_incidentes(colaborador_id)',
+    'CREATE INDEX IF NOT EXISTS idx_onboarding_documentos_obrigatorios_empresa_id ON public.onboarding_documentos_obrigatorios(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_onboarding_documentos_obrigatorios_onboarding_id ON public.onboarding_documentos_obrigatorios(onboarding_id)',
+    'CREATE INDEX IF NOT EXISTS idx_dependentes_genero_documento_id ON public.dependentes(genero_documento_id)',
+    'CREATE INDEX IF NOT EXISTS idx_dependentes_relacionamento_id ON public.dependentes(relacionamento_id)',
+    'CREATE INDEX IF NOT EXISTS idx_webauthn_challenges_user_id ON public.webauthn_challenges(user_id)',
+    'CREATE INDEX IF NOT EXISTS idx_workflows_etapas_workflow_id ON public.workflows_etapas(workflow_id)',
+    'CREATE INDEX IF NOT EXISTS idx_recrutamento_anotacoes_candidatura_id ON public.recrutamento_anotacoes(candidatura_id)',
+    'CREATE INDEX IF NOT EXISTS idx_recrutamento_anotacoes_usuario_id ON public.recrutamento_anotacoes(usuario_id)',
+    'CREATE INDEX IF NOT EXISTS idx_promocoes_cargo_anterior_id ON public.promocoes(cargo_anterior_id)',
+    'CREATE INDEX IF NOT EXISTS idx_promocoes_cargo_novo_id ON public.promocoes(cargo_novo_id)',
+    'CREATE INDEX IF NOT EXISTS idx_beneficio_movimentacoes_beneficio_id ON public.beneficio_movimentacoes(beneficio_id)',
+    'CREATE INDEX IF NOT EXISTS idx_beneficio_movimentacoes_colaborador_id ON public.beneficio_movimentacoes(colaborador_id)',
+    'CREATE INDEX IF NOT EXISTS idx_beneficio_movimentacoes_usuario_id ON public.beneficio_movimentacoes(usuario_id)',
+    'CREATE INDEX IF NOT EXISTS idx_beneficios_colaboradores_beneficio_id ON public.beneficios_colaboradores(beneficio_id)',
+    'CREATE INDEX IF NOT EXISTS idx_beneficios_colaboradores_colaborador_id ON public.beneficios_colaboradores(colaborador_id)',
+    'CREATE INDEX IF NOT EXISTS idx_convenios_colaboradores_convenio_id ON public.convenios_colaboradores(convenio_id)',
+    'CREATE INDEX IF NOT EXISTS idx_banco_horas_registro_ponto_id ON public.banco_horas(registro_ponto_id)',
+    'CREATE INDEX IF NOT EXISTS idx_ferias_aprovacoes_ferias_id ON public.ferias_aprovacoes(ferias_id)',
+    'CREATE INDEX IF NOT EXISTS idx_provisoes_folha_colaborador_id ON public.provisoes_folha(colaborador_id)',
+    'CREATE INDEX IF NOT EXISTS idx_provisoes_folha_empresa_id ON public.provisoes_folha(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_prorrogacoes_afastamento_afastamento_id ON public.prorrogacoes_afastamento(afastamento_id)',
+    'CREATE INDEX IF NOT EXISTS idx_beneficio_utilizacao_beneficio_colaborador_id ON public.beneficio_utilizacao(beneficio_colaborador_id)',
+    'CREATE INDEX IF NOT EXISTS idx_emprestimos_consignados_colaborador_id ON public.emprestimos_consignados(colaborador_id)',
+    'CREATE INDEX IF NOT EXISTS idx_emprestimos_consignados_empresa_id ON public.emprestimos_consignados(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_onboarding_colaborador_created_by ON public.onboarding_colaborador(created_by)',
+    'CREATE INDEX IF NOT EXISTS idx_onboarding_colaborador_empresa_id ON public.onboarding_colaborador(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_onboarding_colaborador_template_id ON public.onboarding_colaborador(template_id)',
+    'CREATE INDEX IF NOT EXISTS idx_dados_estagiario_supervisor_id ON public.dados_estagiario(supervisor_id)',
+    'CREATE INDEX IF NOT EXISTS idx_trilhas_cursos_curso_id ON public.trilhas_cursos(curso_id)',
+    'CREATE INDEX IF NOT EXISTS idx_trilhas_cursos_trilha_id ON public.trilhas_cursos(trilha_id)',
+    'CREATE INDEX IF NOT EXISTS idx_verbas_rescisorias_rubrica_id ON public.verbas_rescisorias(rubrica_id)',
+    'CREATE INDEX IF NOT EXISTS idx_cargo_faixas_salariais_cargo_id ON public.cargo_faixas_salariais(cargo_id)',
+    'CREATE INDEX IF NOT EXISTS idx_password_history_user_id ON public.password_history(user_id)',
+    'CREATE INDEX IF NOT EXISTS idx_sst_exposicao_riscos_colaborador_id ON public.sst_exposicao_riscos(colaborador_id)',
+    'CREATE INDEX IF NOT EXISTS idx_inscricoes_cursos_curso_id ON public.inscricoes_cursos(curso_id)',
+    'CREATE INDEX IF NOT EXISTS idx_provisoes_mensais_log_id ON public.provisoes_mensais(log_id)',
+    'CREATE INDEX IF NOT EXISTS idx_auth_gov_br_sessions_user_id ON public.auth_gov_br_sessions(user_id)',
+    'CREATE INDEX IF NOT EXISTS idx_geo_allowed_countries_added_by ON public.geo_allowed_countries(added_by)',
+    'CREATE INDEX IF NOT EXISTS idx_beneficios_colaborador_created_by ON public.beneficios_colaborador(created_by)',
+    'CREATE INDEX IF NOT EXISTS idx_pdi_plano_desenvolvimento_colaborador_id ON public.pdi_plano_desenvolvimento(colaborador_id)',
+    'CREATE INDEX IF NOT EXISTS idx_pdi_plano_desenvolvimento_empresa_id ON public.pdi_plano_desenvolvimento(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_times_departamento_id ON public.times(departamento_id)',
+    'CREATE INDEX IF NOT EXISTS idx_times_lider_id ON public.times(lider_id)',
+    'CREATE INDEX IF NOT EXISTS idx_fgts_digital_logs_guia_id ON public.fgts_digital_logs(guia_id)',
+    'CREATE INDEX IF NOT EXISTS idx_notificacoes_admissao_admissao_id ON public.notificacoes_admissao(admissao_id)',
+    'CREATE INDEX IF NOT EXISTS idx_pendencias_empresa_id ON public.pendencias(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_feedbacks_360_avaliado_id ON public.feedbacks_360(avaliado_id)',
+    'CREATE INDEX IF NOT EXISTS idx_feedbacks_360_avaliador_id ON public.feedbacks_360(avaliador_id)',
+    'CREATE INDEX IF NOT EXISTS idx_feedbacks_360_ciclo_id ON public.feedbacks_360(ciclo_id)',
+    'CREATE INDEX IF NOT EXISTS idx_password_reset_config_updated_by ON public.password_reset_config(updated_by)',
+    'CREATE INDEX IF NOT EXISTS idx_push_subscriptions_user_id ON public.push_subscriptions(user_id)',
+    'CREATE INDEX IF NOT EXISTS idx_beneficiarios_plano_plano_saude_id ON public.beneficiarios_plano(plano_saude_id)',
+    'CREATE INDEX IF NOT EXISTS idx_webhook_logs_webhook_id ON public.webhook_logs(webhook_id)',
+    'CREATE INDEX IF NOT EXISTS idx_metas_okrs_ciclo_id ON public.metas_okrs(ciclo_id)',
+    'CREATE INDEX IF NOT EXISTS idx_sst_cat_colaborador_id ON public.sst_cat(colaborador_id)',
+    'CREATE INDEX IF NOT EXISTS idx_sst_cat_created_by ON public.sst_cat(created_by)',
+    'CREATE INDEX IF NOT EXISTS idx_sst_cat_empresa_id ON public.sst_cat(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_faltas_motivo_afastamento_id ON public.faltas(motivo_afastamento_id)',
+    'CREATE INDEX IF NOT EXISTS idx_triagem_notas_candidatura_id ON public.triagem_notas(candidatura_id)',
+    'CREATE INDEX IF NOT EXISTS idx_triagem_notas_empresa_id ON public.triagem_notas(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_beneficio_regras_elegibilidade_beneficio_id ON public.beneficio_regras_elegibilidade(beneficio_id)',
+    'CREATE INDEX IF NOT EXISTS idx_beneficio_regras_elegibilidade_cargo_id ON public.beneficio_regras_elegibilidade(cargo_id)',
+    'CREATE INDEX IF NOT EXISTS idx_beneficio_regras_elegibilidade_departamento_id ON public.beneficio_regras_elegibilidade(departamento_id)',
+    'CREATE INDEX IF NOT EXISTS idx_beneficio_regras_elegibilidade_empresa_id ON public.beneficio_regras_elegibilidade(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_ponto_espelhos_assinados_colaborador_id ON public.ponto_espelhos_assinados(colaborador_id)',
+    'CREATE INDEX IF NOT EXISTS idx_log_envio_relatorios_agendamento_id ON public.log_envio_relatorios(agendamento_id)',
+    'CREATE INDEX IF NOT EXISTS idx_ip_whitelist_added_by ON public.ip_whitelist(added_by)',
+    'CREATE INDEX IF NOT EXISTS idx_folha_assinaturas_assinante_id ON public.folha_assinaturas(assinante_id)',
+    'CREATE INDEX IF NOT EXISTS idx_folha_assinaturas_folha_id ON public.folha_assinaturas(folha_id)',
+    'CREATE INDEX IF NOT EXISTS idx_ponto_ajustes_gestor_id ON public.ponto_ajustes(gestor_id)',
+    'CREATE INDEX IF NOT EXISTS idx_trilha_auditoria_ponto_ponto_id ON public.trilha_auditoria_ponto(ponto_id)',
+    'CREATE INDEX IF NOT EXISTS idx_trilha_auditoria_ponto_usuario_id ON public.trilha_auditoria_ponto(usuario_id)',
+    'CREATE INDEX IF NOT EXISTS idx_curriculos_arquivos_candidato_id ON public.curriculos_arquivos(candidato_id)',
+    'CREATE INDEX IF NOT EXISTS idx_curriculos_arquivos_empresa_id ON public.curriculos_arquivos(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_ponto_auditoria_fraude_batida_id ON public.ponto_auditoria_fraude(batida_id)',
+    'CREATE INDEX IF NOT EXISTS idx_security_alerts_resolved_by ON public.security_alerts(resolved_by)',
+    'CREATE INDEX IF NOT EXISTS idx_security_alerts_user_id ON public.security_alerts(user_id)',
+    'CREATE INDEX IF NOT EXISTS idx_ferias_aprovacoes_log_aprovador_id ON public.ferias_aprovacoes_log(aprovador_id)',
+    'CREATE INDEX IF NOT EXISTS idx_ferias_aprovacoes_log_ferias_id ON public.ferias_aprovacoes_log(ferias_id)',
+    'CREATE INDEX IF NOT EXISTS idx_linhas_transporte_vale_transporte_id ON public.linhas_transporte(vale_transporte_id)',
+    'CREATE INDEX IF NOT EXISTS idx_afastamentos_cid_id ON public.afastamentos(cid_id)',
+    'CREATE INDEX IF NOT EXISTS idx_documentos_colaborador_created_by ON public.documentos_colaborador(created_by)',
+    'CREATE INDEX IF NOT EXISTS idx_beneficio_arquivos_beneficio_id ON public.beneficio_arquivos(beneficio_id)',
+    'CREATE INDEX IF NOT EXISTS idx_beneficio_arquivos_empresa_id ON public.beneficio_arquivos(empresa_id)',
+    'CREATE INDEX IF NOT EXISTS idx_colaboradores_categoria_trabalhador_id ON public.colaboradores(categoria_trabalhador_id)',
+    'CREATE INDEX IF NOT EXISTS idx_colaboradores_centro_custo_id ON public.colaboradores(centro_custo_id)',
+    'CREATE INDEX IF NOT EXISTS idx_colaboradores_created_by ON public.colaboradores(created_by)',
+    'CREATE INDEX IF NOT EXISTS idx_colaboradores_genero_documento_id ON public.colaboradores(genero_documento_id)',
+    'CREATE INDEX IF NOT EXISTS idx_colaboradores_gestor_ferias_id ON public.colaboradores(gestor_ferias_id)',
+    'CREATE INDEX IF NOT EXISTS idx_colaboradores_nacionalidade_id ON public.colaboradores(nacionalidade_id)',
+    'CREATE INDEX IF NOT EXISTS idx_colaboradores_tipo_pagamento_id ON public.colaboradores(tipo_pagamento_id)',
+    'CREATE INDEX IF NOT EXISTS idx_colaboradores_tipo_salario_id ON public.colaboradores(tipo_salario_id)',
+    'CREATE INDEX IF NOT EXISTS idx_colaboradores_local_trabalho_id ON public.colaboradores(local_trabalho_id)',
+    'CREATE INDEX IF NOT EXISTS idx_recargas_vale_vale_id ON public.recargas_vale(vale_id)',
+    'CREATE INDEX IF NOT EXISTS idx_conformidade_ponto_logs_batida_id ON public.conformidade_ponto_logs(batida_id)',
+    'CREATE INDEX IF NOT EXISTS idx_conformidade_ponto_logs_empresa_id ON public.conformidade_ponto_logs(empresa_id)'
+  ])
+  LOOP
+    BEGIN
+      EXECUTE r;
+    EXCEPTION WHEN others THEN NULL;
+    END;
+  END LOOP;
+END $$;

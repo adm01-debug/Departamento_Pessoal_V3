@@ -65,7 +65,7 @@ const SidebarProvider = React.forwardRef<
       }
 
       // This sets the cookie to keep the sidebar state.
-      document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
+      document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}; SameSite=Lax; Secure`;
     },
     [setOpenProp, open],
   );
@@ -534,6 +534,7 @@ const SidebarMenuSkeleton = React.forwardRef<
   // Random width between 50 to 90%.
   /* eslint-disable react-hooks/purity */
   const width = React.useMemo(() => {
+    // eslint-disable-next-line react-hooks/purity
     return `${Math.floor(Math.random() * 40) + 50}%`;
   }, []);
   /* eslint-enable react-hooks/purity */
@@ -636,6 +637,7 @@ export {
   SidebarRail,
   SidebarSeparator,
   SidebarTrigger,
+  // eslint-disable-next-line react-refresh/only-export-components
   useSidebar,
 };
 /* eslint-enable react-refresh/only-export-components */

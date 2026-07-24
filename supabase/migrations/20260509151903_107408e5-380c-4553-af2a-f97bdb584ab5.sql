@@ -47,15 +47,19 @@ ALTER TABLE public.notificacoes_admissao ENABLE ROW LEVEL SECURITY;
 
 -- Como não há uma coluna empresa_id direta em user_roles, usaremos uma abordagem baseada em permissão genérica ou acesso total para usuários autenticados (RH)
 -- Em um cenário real, haveria um vínculo entre auth.uid() e empresa_id.
+DROP POLICY IF EXISTS "RH pode gerenciar admissoes" ON public.admissoes;
 CREATE POLICY "RH pode gerenciar admissoes" ON public.admissoes
 FOR ALL TO authenticated USING (true);
 
+DROP POLICY IF EXISTS "RH pode gerenciar tokens" ON public.admissao_tokens;
 CREATE POLICY "RH pode gerenciar tokens" ON public.admissao_tokens
 FOR ALL TO authenticated USING (true);
 
+DROP POLICY IF EXISTS "Candidato pode acessar seu proprio token" ON public.admissao_tokens;
 CREATE POLICY "Candidato pode acessar seu proprio token" ON public.admissao_tokens
 FOR SELECT TO anon, authenticated USING (true);
 
+DROP POLICY IF EXISTS "RH pode ver notificacoes" ON public.notificacoes_admissao;
 CREATE POLICY "RH pode ver notificacoes" ON public.notificacoes_admissao
 FOR SELECT TO authenticated USING (true);
 

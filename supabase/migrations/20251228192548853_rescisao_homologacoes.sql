@@ -12,12 +12,15 @@ CREATE TABLE IF NOT EXISTS rescisao_homologacoes (
 -- Add RLS Policies
 ALTER TABLE rescisao_homologacoes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "rescisao_homologacoes_select" ON public.rescisao_homologacoes;
 CREATE POLICY "rescisao_homologacoes_select" ON rescisao_homologacoes
   FOR SELECT USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "rescisao_homologacoes_insert" ON public.rescisao_homologacoes;
 CREATE POLICY "rescisao_homologacoes_insert" ON rescisao_homologacoes
   FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "rescisao_homologacoes_update" ON public.rescisao_homologacoes;
 CREATE POLICY "rescisao_homologacoes_update" ON rescisao_homologacoes
   FOR UPDATE USING (auth.role() = 'authenticated');
 
@@ -33,6 +36,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_rescisao_homologacoes_updated_at ON public.rescisao_homologacoes;
 CREATE TRIGGER trigger_rescisao_homologacoes_updated_at
   BEFORE UPDATE ON rescisao_homologacoes
   FOR EACH ROW

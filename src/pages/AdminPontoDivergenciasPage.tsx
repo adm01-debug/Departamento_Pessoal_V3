@@ -6,22 +6,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from '@/components/ui/select';
-import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
-} from '@/components/ui/table';
-import {
-  Dialog, DialogContent, DialogDescription, DialogFooter,
-  DialogHeader, DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  AlertTriangle, CheckCircle2, UserPlus, Clock, Ban, Loader2, Search, RefreshCw,
-} from 'lucide-react';
+import { AlertTriangle, CheckCircle2, UserPlus, Clock, Ban, Loader2, Search, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { formatDateTime } from '@/utils/format';
+import { maskPisDisplay } from '@/utils/piiMask';
 
 type TipoDiv = 'ok' | 'sem_colaborador' | 'sem_batida' | 'duplicado';
 
@@ -67,7 +67,11 @@ export default function AdminPontoDivergenciasPage() {
 
   const empresaId = empresaAtual?.id;
 
-  const { data: divergencias = [], isLoading, refetch } = useQuery({
+  const {
+    data: divergencias = [],
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ['afdt-divergencias', empresaId, tipoFiltro, statusFiltro],
     enabled: !!empresaId,
     queryFn: async () => {
@@ -120,36 +124,35 @@ export default function AdminPontoDivergenciasPage() {
               toast.warning('Nova divergência crítica AFDT (PIS não cadastrado)');
             }
           }
-        },
+        }
       )
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [empresaId, qc]);
-
 
   const divergenciasFiltradas = useMemo(() => {
     if (!busca.trim()) return divergencias;
     const b = busca.toLowerCase().trim();
-    return divergencias.filter(d =>
-      d.pis?.toLowerCase().includes(b) ||
-      d.observacao?.toLowerCase().includes(b) ||
-      d.id.includes(b)
+    return divergencias.filter(
+      (d) => d.pis?.toLowerCase().includes(b) || d.observacao?.toLowerCase().includes(b) || d.id.includes(b)
     );
   }, [divergencias, busca]);
 
   const stats = useMemo(() => {
-    const pending = divergencias.filter(d => !d.resolvido);
+    const pending = divergencias.filter((d) => !d.resolvido);
     return {
       total: divergencias.length,
       naoResolvidas: pending.length,
-      semColaborador: pending.filter(d => d.tipo === 'sem_colaborador').length,
-      semBatida: pending.filter(d => d.tipo === 'sem_batida').length,
+      semColaborador: pending.filter((d) => d.tipo === 'sem_colaborador').length,
+      semBatida: pending.filter((d) => d.tipo === 'sem_batida').length,
     };
   }, [divergencias]);
 
   const mIgnorar = useMutation({
     mutationFn: async ({ id, obs }: { id: string; obs: string }) => {
-      const { error } = await supabase.rpc('resolver_divergencia_afdt', {
+      const { error } = await (supabase as any).rpc('resolver_divergencia_afdt', {
         _divergencia_id: id, _observacao: obs || null,
       });
       if (error) throw error;
@@ -160,12 +163,12 @@ export default function AdminPontoDivergenciasPage() {
       setMotivoIgnorar('');
       qc.invalidateQueries({ queryKey: ['afdt-divergencias'] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar divergência.')),
   });
 
   const mCriarBatida = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.rpc('criar_batida_da_divergencia_afdt', {
+      const { error } = await (supabase as any).rpc('criar_batida_da_divergencia_afdt', {
         _divergencia_id: id, _tipo: 'entrada',
       });
       if (error) throw error;
@@ -174,12 +177,12 @@ export default function AdminPontoDivergenciasPage() {
       toast.success('Batida criada e divergência resolvida');
       qc.invalidateQueries({ queryKey: ['afdt-divergencias'] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar divergência.')),
   });
 
   const mAssociar = useMutation({
     mutationFn: async ({ id, colaboradorId }: { id: string; colaboradorId: string }) => {
-      const { error } = await supabase.rpc('associar_pis_colaborador_afdt', {
+      const { error } = await (supabase as any).rpc('associar_pis_colaborador_afdt', {
         _divergencia_id: id, _colaborador_id: colaboradorId,
       });
       if (error) throw error;
@@ -190,7 +193,7 @@ export default function AdminPontoDivergenciasPage() {
       setColabParaAssociar('');
       qc.invalidateQueries({ queryKey: ['afdt-divergencias'] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar divergência.')),
   });
 
   const bulkIgnorar = async () => {
@@ -198,11 +201,11 @@ export default function AdminPontoDivergenciasPage() {
     if (!ids.length) return;
     toast.info(`Resolvendo ${ids.length} divergências...`);
     const results = await Promise.allSettled(
-      ids.map(id => supabase.rpc('resolver_divergencia_afdt', {
+      ids.map(id => (supabase as any).rpc('resolver_divergencia_afdt', {
         _divergencia_id: id, _observacao: 'Ignorada em massa',
       }))
     );
-    const ok = results.filter(r => r.status === 'fulfilled').length;
+    const ok = results.filter((r) => r.status === 'fulfilled').length;
     toast.success(`${ok}/${ids.length} divergências resolvidas`);
     setSelecionadas(new Set());
     qc.invalidateQueries({ queryKey: ['afdt-divergencias'] });
@@ -210,7 +213,8 @@ export default function AdminPontoDivergenciasPage() {
 
   const toggleSel = (id: string) => {
     const n = new Set(selecionadas);
-    if (n.has(id)) n.delete(id); else n.add(id);
+    if (n.has(id)) n.delete(id);
+    else n.add(id);
     setSelecionadas(n);
   };
 
@@ -238,7 +242,7 @@ export default function AdminPontoDivergenciasPage() {
           { label: 'Não resolvidas', value: stats.naoResolvidas, icon: AlertTriangle, color: 'text-warning' },
           { label: 'Sem colaborador', value: stats.semColaborador, icon: UserPlus, color: 'text-destructive' },
           { label: 'Sem batida', value: stats.semBatida, icon: Clock, color: 'text-primary' },
-        ].map(s => (
+        ].map((s) => (
           <Card key={s.label}>
             <CardContent className="pt-6 flex items-center gap-4">
               <s.icon className={`h-8 w-8 ${s.color}`} />
@@ -257,7 +261,9 @@ export default function AdminPontoDivergenciasPage() {
         </CardHeader>
         <CardContent className="flex flex-wrap gap-3">
           <Select value={tipoFiltro} onValueChange={(v) => setTipoFiltro(v as typeof tipoFiltro)}>
-            <SelectTrigger className="w-[200px]"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="todos">Todos os tipos</SelectItem>
               <SelectItem value="sem_batida">Sem batida</SelectItem>
@@ -267,7 +273,9 @@ export default function AdminPontoDivergenciasPage() {
             </SelectContent>
           </Select>
           <Select value={statusFiltro} onValueChange={(v) => setStatusFiltro(v as typeof statusFiltro)}>
-            <SelectTrigger className="w-[200px]"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="nao_resolvido">Não resolvidas</SelectItem>
               <SelectItem value="resolvido">Resolvidas</SelectItem>
@@ -294,7 +302,9 @@ export default function AdminPontoDivergenciasPage() {
       <Card>
         <CardContent className="p-0">
           {isLoading ? (
-            <div className="p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" /></div>
+            <div className="p-12 text-center">
+              <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
+            </div>
           ) : divergenciasFiltradas.length === 0 ? (
             <div className="p-12 text-center text-muted-foreground">
               <CheckCircle2 className="h-12 w-12 mx-auto mb-3 text-success" />
@@ -314,7 +324,7 @@ export default function AdminPontoDivergenciasPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {divergenciasFiltradas.map(d => (
+                {divergenciasFiltradas.map((d) => (
                   <TableRow key={d.id} className={d.resolvido ? 'opacity-60' : ''}>
                     <TableCell>
                       {!d.resolvido && (
@@ -330,17 +340,19 @@ export default function AdminPontoDivergenciasPage() {
                     <TableCell>
                       <Badge variant={TIPO_LABEL[d.tipo].variant}>{TIPO_LABEL[d.tipo].label}</Badge>
                     </TableCell>
-                    <TableCell className="font-mono text-xs">{d.pis || '—'}</TableCell>
+                    <TableCell className="font-mono text-xs">{d.pis ? maskPisDisplay(d.pis) : '—'}</TableCell>
                     <TableCell className="tabular-nums text-xs">
                       {d.data_hora_afdt ? formatDateTime(d.data_hora_afdt) : '—'}
                     </TableCell>
-                    <TableCell className="tabular-nums text-xs">
-                      {d.delta_segundos ?? '—'}
-                    </TableCell>
+                    <TableCell className="tabular-nums text-xs">{d.delta_segundos ?? '—'}</TableCell>
                     <TableCell>
-                      {d.resolvido
-                        ? <Badge variant="outline" className="gap-1"><CheckCircle2 className="h-3 w-3" /> Resolvida</Badge>
-                        : <Badge variant="secondary">Pendente</Badge>}
+                      {d.resolvido ? (
+                        <Badge variant="outline" className="gap-1">
+                          <CheckCircle2 className="h-3 w-3" /> Resolvida
+                        </Badge>
+                      ) : (
+                        <Badge variant="secondary">Pendente</Badge>
+                      )}
                     </TableCell>
                     <TableCell className="text-right">
                       {!d.resolvido && (
@@ -366,12 +378,7 @@ export default function AdminPontoDivergenciasPage() {
                               <UserPlus className="h-3 w-3" /> Associar
                             </Button>
                           )}
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => setDialogIgnorar(d)}
-                            className="gap-1"
-                          >
+                          <Button size="sm" variant="ghost" onClick={() => setDialogIgnorar(d)} className="gap-1">
                             <Ban className="h-3 w-3" /> Ignorar
                           </Button>
                         </div>
@@ -399,7 +406,9 @@ export default function AdminPontoDivergenciasPage() {
             rows={3}
           />
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setDialogIgnorar(null)}>Cancelar</Button>
+            <Button variant="ghost" onClick={() => setDialogIgnorar(null)}>
+              Cancelar
+            </Button>
             <Button
               onClick={() => dialogIgnorar && mIgnorar.mutate({ id: dialogIgnorar.id, obs: motivoIgnorar })}
               disabled={mIgnorar.isPending}
@@ -416,13 +425,15 @@ export default function AdminPontoDivergenciasPage() {
           <DialogHeader>
             <DialogTitle>Associar PIS ao colaborador</DialogTitle>
             <DialogDescription>
-              PIS: <span className="font-mono">{dialogAssociar?.pis}</span>
+              PIS: <span className="font-mono">{maskPisDisplay(dialogAssociar?.pis)}</span>
             </DialogDescription>
           </DialogHeader>
           <Select value={colabParaAssociar} onValueChange={setColabParaAssociar}>
-            <SelectTrigger><SelectValue placeholder="Selecione um colaborador" /></SelectTrigger>
+            <SelectTrigger>
+              <SelectValue placeholder="Selecione um colaborador" />
+            </SelectTrigger>
             <SelectContent>
-              {colaboradores.map(c => (
+              {colaboradores.map((c) => (
                 <SelectItem key={c.id} value={c.id}>
                   {c.nome} {c.matricula ? `(${c.matricula})` : ''}
                 </SelectItem>
@@ -430,10 +441,15 @@ export default function AdminPontoDivergenciasPage() {
             </SelectContent>
           </Select>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setDialogAssociar(null)}>Cancelar</Button>
+            <Button variant="ghost" onClick={() => setDialogAssociar(null)}>
+              Cancelar
+            </Button>
             <Button
-              onClick={() => dialogAssociar && colabParaAssociar &&
-                mAssociar.mutate({ id: dialogAssociar.id, colaboradorId: colabParaAssociar })}
+              onClick={() =>
+                dialogAssociar &&
+                colabParaAssociar &&
+                mAssociar.mutate({ id: dialogAssociar.id, colaboradorId: colabParaAssociar })
+              }
               disabled={!colabParaAssociar || mAssociar.isPending}
             >
               Associar

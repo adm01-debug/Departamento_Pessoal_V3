@@ -9,33 +9,42 @@ import { supabase } from '@/integrations/supabase/client';
 import { Shield, ShieldAlert, ShieldCheck, Users, Info } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+import { auditLogger } from '@/utils/auditLogger';
+import { safeErrorMessage } from '@/utils/safeError';
 
 export function UserRolesTab() {
   const qc = useQueryClient();
   const { data: roles = [], isLoading } = useQuery({
     queryKey: ['user-roles-list'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('user_roles').select('*').order('created_at', { ascending: false });
-      if (error) {
-        if (error.code === '42P01') return [];
-        throw error;
-      }
+      // user_roles está na TABLE_DENYLIST do bridge — leitura direta retorna
+      // 403 mesmo para admins. Único caminho é esta RPC. Ver
+      // 20260718230000_admin_role_management_rpc.sql (achado R1 da auditoria).
+      const { data, error } = await supabase.rpc('admin_list_user_roles', {});
+      if (error) throw error;
       return data || [];
     },
   });
 
   const upgradeToAdmin = useMutation({
     mutationFn: async (userId: string) => {
-      const { error } = await supabase.from('user_roles').upsert({ 
-        user_id: userId, 
-        role: 'admin' 
-      }, { onConflict: 'user_id, role' });
+      const { error } = await supabase.rpc('admin_set_user_role', {
+        _target_user_id: userId,
+        _role: 'admin',
+      });
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_, userId) => {
       qc.invalidateQueries({ queryKey: ['user-roles-list'] });
       toast.success('Perfil atualizado para Administrador');
+      void auditLogger.log({
+        tabela: 'user_roles',
+        registro_id: userId,
+        acao: 'UPDATE',
+        dados_novos: { role: 'admin', user_id: userId },
+      });
     },
+    onError: (err: any) => toast.error(safeErrorMessage(err, 'Erro ao atualizar perfil do usuário.')),
   });
 
   return (
@@ -52,7 +61,9 @@ export function UserRolesTab() {
         </CardHeader>
         <CardContent className="p-0">
           {isLoading ? (
-            <div className="p-8 flex justify-center"><Spinner /></div>
+            <div className="p-8 flex justify-center">
+              <Spinner />
+            </div>
           ) : (
             <Table>
               <TableHeader>
@@ -68,7 +79,10 @@ export function UserRolesTab() {
                   <TableRow key={r.id}>
                     <TableCell className="font-mono text-[10px]">{r.user_id}</TableCell>
                     <TableCell>
-                      <Badge variant={r.role === 'admin' ? 'default' : 'secondary'} className="gap-1 rounded-full uppercase text-[10px] font-bold tracking-tight">
+                      <Badge
+                        variant={r.role === 'admin' ? 'default' : 'secondary'}
+                        className="gap-1 rounded-full uppercase text-[10px] font-bold tracking-tight"
+                      >
                         {r.role === 'admin' ? <ShieldCheck className="h-3 w-3" /> : <Users className="h-3 w-3" />}
                         {r.role}
                       </Badge>
@@ -78,9 +92,9 @@ export function UserRolesTab() {
                     </TableCell>
                     <TableCell className="text-right">
                       {r.role !== 'admin' && (
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => upgradeToAdmin.mutate(r.user_id)}
                           className="rounded-lg h-8 text-primary hover:text-primary hover:bg-primary/5"
                         >
@@ -113,8 +127,8 @@ export function UserRolesTab() {
           <div className="text-xs space-y-1 font-body">
             <p className="font-semibold">Informação de Segurança</p>
             <p className="text-muted-foreground leading-relaxed">
-              Administradores possuem acesso total a todos os módulos, incluindo auditoria, telemetria e configurações sensíveis do sistema.
-              Atribua este perfil apenas a usuários de extrema confiança.
+              Administradores possuem acesso total a todos os módulos, incluindo auditoria, telemetria e configurações
+              sensíveis do sistema. Atribua este perfil apenas a usuários de extrema confiança.
             </p>
           </div>
         </CardContent>

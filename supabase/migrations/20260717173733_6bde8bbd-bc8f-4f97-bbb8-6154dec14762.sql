@@ -49,10 +49,12 @@ GRANT ALL ON public.despesas_aprovacoes_log TO service_role;
 
 ALTER TABLE public.despesas_aprovacoes_log ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "empresa_despesas_log_select" ON public.despesas_aprovacoes_log;
 CREATE POLICY "empresa_despesas_log_select" ON public.despesas_aprovacoes_log
   FOR SELECT TO authenticated
   USING (empresa_id IN (SELECT get_user_empresas(auth.uid())));
 
+DROP POLICY IF EXISTS "empresa_despesas_log_insert" ON public.despesas_aprovacoes_log;
 CREATE POLICY "empresa_despesas_log_insert" ON public.despesas_aprovacoes_log
   FOR INSERT TO authenticated
   WITH CHECK (empresa_id IN (SELECT get_user_empresas(auth.uid())) AND usuario_id = auth.uid());

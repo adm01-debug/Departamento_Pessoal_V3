@@ -2,7 +2,7 @@
 -- =====================================================
 -- GAP 1: Locais de Trabalho (Locations)
 -- =====================================================
-CREATE TABLE public.locais_trabalho (
+CREATE TABLE IF NOT EXISTS public.locais_trabalho (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   empresa_id uuid REFERENCES public.empresas(id) ON DELETE CASCADE,
   nome text NOT NULL,
@@ -17,12 +17,13 @@ CREATE TABLE public.locais_trabalho (
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 ALTER TABLE public.locais_trabalho ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Authenticated users can manage locais_trabalho" ON public.locais_trabalho;
 CREATE POLICY "Authenticated users can manage locais_trabalho" ON public.locais_trabalho FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- =====================================================
 -- GAP 2: Histórico de Contratos (Contract Versions)
 -- =====================================================
-CREATE TABLE public.historico_contratos (
+CREATE TABLE IF NOT EXISTS public.historico_contratos (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   colaborador_id uuid NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE,
   empresa_id uuid REFERENCES public.empresas(id) ON DELETE CASCADE,
@@ -40,12 +41,13 @@ CREATE TABLE public.historico_contratos (
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 ALTER TABLE public.historico_contratos ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Authenticated users can manage historico_contratos" ON public.historico_contratos;
 CREATE POLICY "Authenticated users can manage historico_contratos" ON public.historico_contratos FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- =====================================================
 -- GAP 3: Solicitações de Hora Extra
 -- =====================================================
-CREATE TABLE public.solicitacoes_hora_extra (
+CREATE TABLE IF NOT EXISTS public.solicitacoes_hora_extra (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   colaborador_id uuid NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE,
   empresa_id uuid REFERENCES public.empresas(id) ON DELETE CASCADE,
@@ -61,12 +63,13 @@ CREATE TABLE public.solicitacoes_hora_extra (
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 ALTER TABLE public.solicitacoes_hora_extra ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Authenticated users can manage solicitacoes_hora_extra" ON public.solicitacoes_hora_extra;
 CREATE POLICY "Authenticated users can manage solicitacoes_hora_extra" ON public.solicitacoes_hora_extra FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- =====================================================
 -- GAP 4: Configurações de Intervalo
 -- =====================================================
-CREATE TABLE public.configuracoes_intervalo (
+CREATE TABLE IF NOT EXISTS public.configuracoes_intervalo (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   empresa_id uuid REFERENCES public.empresas(id) ON DELETE CASCADE,
   nome text NOT NULL,
@@ -80,6 +83,7 @@ CREATE TABLE public.configuracoes_intervalo (
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 ALTER TABLE public.configuracoes_intervalo ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Authenticated users can manage configuracoes_intervalo" ON public.configuracoes_intervalo;
 CREATE POLICY "Authenticated users can manage configuracoes_intervalo" ON public.configuracoes_intervalo FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- =====================================================
@@ -99,7 +103,7 @@ ALTER TABLE public.colaboradores
 -- =====================================================
 -- GAP 7: Webhooks com Retry
 -- =====================================================
-CREATE TABLE public.webhooks (
+CREATE TABLE IF NOT EXISTS public.webhooks (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   empresa_id uuid REFERENCES public.empresas(id) ON DELETE CASCADE,
   nome text NOT NULL,
@@ -119,12 +123,13 @@ CREATE TABLE public.webhooks (
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 ALTER TABLE public.webhooks ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Authenticated users can manage webhooks" ON public.webhooks;
 CREATE POLICY "Authenticated users can manage webhooks" ON public.webhooks FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- =====================================================
 -- GAP 8: Webhook Logs
 -- =====================================================
-CREATE TABLE public.webhook_logs (
+CREATE TABLE IF NOT EXISTS public.webhook_logs (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   webhook_id uuid NOT NULL REFERENCES public.webhooks(id) ON DELETE CASCADE,
   evento text NOT NULL,
@@ -137,13 +142,19 @@ CREATE TABLE public.webhook_logs (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 ALTER TABLE public.webhook_logs ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Authenticated users can manage webhook_logs" ON public.webhook_logs;
 CREATE POLICY "Authenticated users can manage webhook_logs" ON public.webhook_logs FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- Triggers
+DROP TRIGGER IF EXISTS update_locais_trabalho_updated_at ON public.locais_trabalho;
 CREATE TRIGGER update_locais_trabalho_updated_at BEFORE UPDATE ON public.locais_trabalho FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+DROP TRIGGER IF EXISTS update_historico_contratos_updated_at ON public.historico_contratos;
 CREATE TRIGGER update_historico_contratos_updated_at BEFORE UPDATE ON public.historico_contratos FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+DROP TRIGGER IF EXISTS update_solicitacoes_hora_extra_updated_at ON public.solicitacoes_hora_extra;
 CREATE TRIGGER update_solicitacoes_hora_extra_updated_at BEFORE UPDATE ON public.solicitacoes_hora_extra FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+DROP TRIGGER IF EXISTS update_configuracoes_intervalo_updated_at ON public.configuracoes_intervalo;
 CREATE TRIGGER update_configuracoes_intervalo_updated_at BEFORE UPDATE ON public.configuracoes_intervalo FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+DROP TRIGGER IF EXISTS update_webhooks_updated_at ON public.webhooks;
 CREATE TRIGGER update_webhooks_updated_at BEFORE UPDATE ON public.webhooks FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
 -- FK for local_trabalho_id (after table exists)

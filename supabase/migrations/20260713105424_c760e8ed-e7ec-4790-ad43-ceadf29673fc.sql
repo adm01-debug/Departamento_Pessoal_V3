@@ -16,6 +16,7 @@ ALTER TABLE public.rate_limits FORCE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Service Role only access" ON public.rate_limits;
 DROP POLICY IF EXISTS "rate_limits_deny_all" ON public.rate_limits;
 
+DROP POLICY IF EXISTS "rate_limits_deny_all_non_service" ON public.rate_limits;
 CREATE POLICY "rate_limits_deny_all_non_service"
   ON public.rate_limits
   AS RESTRICTIVE

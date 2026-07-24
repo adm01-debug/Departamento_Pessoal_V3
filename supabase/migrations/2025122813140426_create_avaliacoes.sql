@@ -21,4 +21,5 @@ CREATE INDEX IF NOT EXISTS idx_avaliacoes_empresa ON public.avaliacoes(empresa_i
 CREATE INDEX IF NOT EXISTS idx_avaliacoes_colaborador ON public.avaliacoes(colaborador_id);
 ALTER TABLE public.avaliacoes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "avaliacoes_all" ON public.avaliacoes;
 CREATE POLICY "avaliacoes_all" ON public.avaliacoes FOR ALL USING (auth.uid() IS NOT NULL);

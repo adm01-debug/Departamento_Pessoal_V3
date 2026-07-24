@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS public.beneficios (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.beneficios ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage beneficios" ON public.beneficios;
 CREATE POLICY "Auth users manage beneficios" ON public.beneficios FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- Tabela colaborador_beneficios (usada em beneficioService para vincular)
@@ -28,4 +29,5 @@ CREATE TABLE IF NOT EXISTS public.colaborador_beneficios (
   UNIQUE(beneficio_id, colaborador_id)
 );
 ALTER TABLE public.colaborador_beneficios ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage colaborador_beneficios" ON public.colaborador_beneficios;
 CREATE POLICY "Auth users manage colaborador_beneficios" ON public.colaborador_beneficios FOR ALL TO authenticated USING (true) WITH CHECK (true);

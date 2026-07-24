@@ -14,10 +14,10 @@ export function calcularHorasExtras(
   horasExtras: number,
   percentual: number = 0.5
 ): number {
-  if (horasExtras <= 0) return 0;
+  if (horasExtras <= 0 || jornadaMensal <= 0) return 0;
   const valorHora = salarioBase / jornadaMensal;
   const valorComAdicional = valorHora * (1 + percentual);
-  return Math.round(valorComAdicional * horasExtras * 100) / 100;
+  return Math.trunc(valorComAdicional * horasExtras * 100) / 100;
 }
 
 /**
@@ -29,8 +29,8 @@ export function calcularDSR(
   diasUteis: number = 26,
   domingosFeriados: number = 4
 ): number {
-  if (totalVariavel <= 0) return 0;
-  return Math.round((totalVariavel / diasUteis) * domingosFeriados * 100) / 100;
+  if (totalVariavel <= 0 || diasUteis <= 0) return 0;
+  return Math.trunc((totalVariavel / diasUteis) * domingosFeriados * 100) / 100;
 }
 
 /**
@@ -48,9 +48,9 @@ export function calcular13Salario(
   
   if (parcela === 1) {
     // 1ª Parcela é sempre 50% do valor de direito, sem descontos de INSS/IRRF
-    return Math.round((valorIntegral / 2) * 100) / 100;
+    return Math.trunc((valorIntegral / 2) * 100) / 100;
   }
-  
+
   // 2ª Parcela é o valor integral (sobre o qual incidirão descontos no cálculo principal)
-  return Math.round(valorIntegral * 100) / 100;
+  return Math.trunc(valorIntegral * 100) / 100;
 }

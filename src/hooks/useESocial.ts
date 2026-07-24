@@ -2,23 +2,28 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as esocialService from '@/services/esocialService';
 import { toast } from 'sonner';
 import { useServerValidation } from './useServerValidation';
+import { useEmpresas } from './useEmpresas';
 
 export function useESocial() {
   const queryClient = useQueryClient();
   const { handleServerError } = useServerValidation();
+  const { empresaAtual } = useEmpresas();
+  const empresaId = empresaAtual?.id;
 
   const eventosQuery = useQuery({
-    queryKey: ['esocial-eventos'],
+    queryKey: ['esocial-eventos', empresaId],
     queryFn: async () => {
-      return await esocialService.listarEventos(null);
+      return await esocialService.listarEventos(empresaId!);
     },
+    enabled: !!empresaId,
   });
 
   const statsQuery = useQuery({
-    queryKey: ['esocial-stats'],
+    queryKey: ['esocial-stats', empresaId],
     queryFn: async () => {
-      return await esocialService.obterEstatisticas(null);
+      return await esocialService.obterEstatisticas(empresaId!);
     },
+    enabled: !!empresaId,
   });
 
   const invalidate = () => {
@@ -65,18 +70,21 @@ export function useESocial() {
   });
 
   const configQuery = useQuery({
-    queryKey: ['esocial-config'],
-    queryFn: async () => esocialService.getConfig(''),
+    queryKey: ['esocial-config', empresaId],
+    queryFn: async () => esocialService.getConfig(empresaId!),
+    enabled: !!empresaId,
   });
-  
+
   const certificadosQuery = useQuery({
-    queryKey: ['esocial-certificados'],
-    queryFn: async () => esocialService.listarCertificados(''),
+    queryKey: ['esocial-certificados', empresaId],
+    queryFn: async () => esocialService.listarCertificados(empresaId!),
+    enabled: !!empresaId,
   });
-  
+
   const logsQuery = useQuery({
-    queryKey: ['esocial-logs'],
-    queryFn: async () => esocialService.listarTransmissaoLogs(''),
+    queryKey: ['esocial-logs', empresaId],
+    queryFn: async () => esocialService.listarTransmissaoLogs(empresaId!),
+    enabled: !!empresaId,
   });
 
   const enviarLoteMutation = useMutation({

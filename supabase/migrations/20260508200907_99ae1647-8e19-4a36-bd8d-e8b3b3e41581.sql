@@ -16,15 +16,18 @@ CREATE TABLE IF NOT EXISTS public.cnab_configuracoes (
 -- RLS
 ALTER TABLE public.cnab_configuracoes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Usuários podem ver configurações de suas empresas" ON public.cnab_configuracoes;
 CREATE POLICY "Usuários podem ver configurações de suas empresas" 
 ON public.cnab_configuracoes FOR SELECT 
 USING (true);
 
+DROP POLICY IF EXISTS "Usuários podem gerenciar configurações bancárias" ON public.cnab_configuracoes;
 CREATE POLICY "Usuários podem gerenciar configurações bancárias" 
 ON public.cnab_configuracoes FOR ALL 
 USING (true);
 
 -- Trigger para updated_at
+DROP TRIGGER IF EXISTS update_cnab_config_updated_at ON public.cnab_configuracoes;
 CREATE TRIGGER update_cnab_config_updated_at
 BEFORE UPDATE ON public.cnab_configuracoes
 FOR EACH ROW

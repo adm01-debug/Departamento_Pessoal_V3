@@ -12,20 +12,25 @@ class BeneficioService extends BaseService<any> {
   async listar(options: ListOptions = {}): Promise<ListResponse<any>> {
     const { filters, search } = options;
     const empresaId = (filters as any)?.empresa_id;
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
     let query = this.getQuery().select('*', { count: 'exact' });
-    if (empresaId) query = query.eq('empresa_id', empresaId);
-    if (search) query = query.ilike('nome', `%${search}%`);
+    query = query.eq('empresa_id', empresaId);
+    if (search) {
+      const escapedSearch = search.replace(/[%_\\]/g, '\\$&');
+      query = query.ilike('nome', `%${escapedSearch}%`);
+    }
 
     const { data, count, error } = await query.order('nome');
     if (error) throw error;
     return { data: data || [], total: count || 0 };
   }
 
-  async listComAdesao(empresaId?: string): Promise<any[]> {
+  async listComAdesao(empresaId: string): Promise<any[]> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await this.getQuery()
       .select('*, beneficios_colaborador(count)')
-      .eq('empresa_id', empresaId || '');
+      .eq('empresa_id', empresaId);
     if (error) throw error;
     return data || [];
   }
@@ -45,11 +50,11 @@ class BeneficioService extends BaseService<any> {
     }
   }
 
-  async atualizar(id: string, d: any): Promise<any> {
+  async atualizar(id: string, d: any, empresaId?: string): Promise<any> {
     try {
-      const anterior = await this.buscarPorId(id);
-      const data = await super.atualizar(id, d);
-      
+      const anterior = await this.buscarPorId(id, empresaId);
+      const data = await super.atualizar(id, d, empresaId);
+
       await auditLogger.log({
         tabela: 'beneficios',
         registro_id: id,
@@ -57,18 +62,18 @@ class BeneficioService extends BaseService<any> {
         dados_anteriores: anterior,
         dados_novos: data
       });
-      
+
       return data;
     } catch (e: any) {
       throw new Error(e.message || 'Falha ao atualizar benefício', { cause: e });
     }
   }
 
-  async excluir(id: string): Promise<void> {
+  async excluir(id: string, empresaId?: string): Promise<void> {
     try {
-      const anterior = await this.buscarPorId(id);
-      await super.excluir(id);
-      
+      const anterior = await this.buscarPorId(id, empresaId);
+      await super.excluir(id, empresaId);
+
       await auditLogger.log({
         tabela: 'beneficios',
         registro_id: id,
@@ -80,21 +85,26 @@ class BeneficioService extends BaseService<any> {
     }
   }
 
-  async vincularColaborador(beneficioId: string, colaboradorId: string, dados: any): Promise<any> {
+  async vincularColaborador(beneficioId: string, colaboradorId: string, dados: any, empresaId: string): Promise<any> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await (supabase as any).from('beneficios_colaborador').insert({
       beneficio_id: beneficioId,
       colaborador_id: colaboradorId,
+      empresa_id: empresaId,
       ...dados
     }).select().single();
     if (error) throw error;
     return data;
   }
 
-  async listarPorColaborador(colaboradorId: string): Promise<any[]> {
+  async listarPorColaborador(colaboradorId: string, empresaId: string): Promise<any[]> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    // !inner enables filtering on beneficio.empresa_id, excluding orphan/cross-tenant rows
     const { data, error } = await (supabase as any)
       .from('beneficios_colaborador')
-      .select('*, beneficio:beneficios(*)')
-      .eq('colaborador_id', colaboradorId);
+      .select('*, beneficio:beneficios!inner(*)')
+      .eq('colaborador_id', colaboradorId)
+      .eq('beneficio.empresa_id', empresaId);
     if (error) throw error;
     return data || [];
   }

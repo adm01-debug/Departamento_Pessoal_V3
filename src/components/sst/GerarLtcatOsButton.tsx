@@ -7,6 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { FileText, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
+import { safeHref } from '@/utils/safeUrl';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
 
@@ -64,12 +66,12 @@ export function GerarLtcatOsButton() {
       const { data, error } = await supabase.functions.invoke('gerar-ltcat-os', { body: payload });
       if (error) throw error;
       if (data?.signed_url) {
-        window.open(data.signed_url, '_blank');
+        window.open(safeHref(data.signed_url), '_blank', 'noopener');
       }
       toast.success(`${tipo === 'os' ? 'Ordem de Serviço' : 'LTCAT'} gerado — v${data?.versao}`);
       setOpen(false);
     } catch (e) {
-      toast.error('Falha ao gerar documento', { description: (e as Error).message });
+      toast.error(safeErrorMessage(e, 'Falha ao gerar documento.'));
     } finally {
       setLoading(false);
     }

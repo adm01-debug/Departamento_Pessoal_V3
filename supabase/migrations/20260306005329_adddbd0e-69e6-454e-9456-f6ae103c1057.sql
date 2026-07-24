@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS public.sindicatos (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.sindicatos ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage sindicatos" ON public.sindicatos;
 CREATE POLICY "Auth users manage sindicatos" ON public.sindicatos FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- 2. guias_fgts
@@ -31,6 +32,7 @@ CREATE TABLE IF NOT EXISTS public.guias_fgts (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.guias_fgts ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage guias_fgts" ON public.guias_fgts;
 CREATE POLICY "Auth users manage guias_fgts" ON public.guias_fgts FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- 3. guias_inss
@@ -49,4 +51,5 @@ CREATE TABLE IF NOT EXISTS public.guias_inss (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.guias_inss ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage guias_inss" ON public.guias_inss;
 CREATE POLICY "Auth users manage guias_inss" ON public.guias_inss FOR ALL TO authenticated USING (true) WITH CHECK (true);

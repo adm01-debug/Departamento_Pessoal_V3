@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { AlertTriangle, CheckCircle2, RefreshCw, ShieldAlert } from 'lucide-react';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 
 interface SecurityAlert {
   id: string;
@@ -59,7 +60,7 @@ function ResolveDialog({ alertId, onDone }: { alertId: string; onDone: () => voi
       setNote('');
       onDone();
     },
-    onError: (err: Error) => toast.error(err.message || 'Falha ao resolver alerta'),
+    onError: (err: Error) => toast.error(safeErrorMessage(err, 'Falha ao resolver alerta.')),
   });
 
   return (

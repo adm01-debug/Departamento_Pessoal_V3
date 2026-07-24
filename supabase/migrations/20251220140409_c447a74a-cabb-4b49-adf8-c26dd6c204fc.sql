@@ -1,5 +1,5 @@
--- Criar tabela de empresas
-CREATE TABLE public.empresas (
+-- Criar tabela de empresas (idempotent)
+CREATE TABLE IF NOT EXISTS public.empresas (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   cnpj TEXT UNIQUE,
   razao_social TEXT NOT NULL,
@@ -21,8 +21,8 @@ CREATE TABLE public.empresas (
   updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );
 
--- Tabela de associação usuário-empresa
-CREATE TABLE public.user_empresas (
+-- Tabela de associação usuário-empresa (idempotent)
+CREATE TABLE IF NOT EXISTS public.user_empresas (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   empresa_id UUID NOT NULL REFERENCES public.empresas(id) ON DELETE CASCADE,
@@ -31,17 +31,17 @@ CREATE TABLE public.user_empresas (
   UNIQUE(user_id, empresa_id)
 );
 
--- Adicionar empresa_id nas tabelas principais
-ALTER TABLE public.colaboradores ADD COLUMN empresa_id UUID REFERENCES public.empresas(id);
-ALTER TABLE public.admissoes ADD COLUMN empresa_id UUID REFERENCES public.empresas(id);
-ALTER TABLE public.afastamentos ADD COLUMN empresa_id UUID REFERENCES public.empresas(id);
-ALTER TABLE public.ferias ADD COLUMN empresa_id UUID REFERENCES public.empresas(id);
-ALTER TABLE public.desligamentos ADD COLUMN empresa_id UUID REFERENCES public.empresas(id);
-ALTER TABLE public.folhas_pagamento ADD COLUMN empresa_id UUID REFERENCES public.empresas(id);
-ALTER TABLE public.feriados ADD COLUMN empresa_id UUID REFERENCES public.empresas(id);
-ALTER TABLE public.registros_ponto ADD COLUMN empresa_id UUID REFERENCES public.empresas(id);
-ALTER TABLE public.relatorios_agendados ADD COLUMN empresa_id UUID REFERENCES public.empresas(id);
-ALTER TABLE public.notificacoes ADD COLUMN empresa_id UUID REFERENCES public.empresas(id);
+-- Adicionar empresa_id nas tabelas principais (idempotent)
+ALTER TABLE public.colaboradores ADD COLUMN IF NOT EXISTS empresa_id UUID REFERENCES public.empresas(id);
+ALTER TABLE public.admissoes ADD COLUMN IF NOT EXISTS empresa_id UUID REFERENCES public.empresas(id);
+ALTER TABLE public.afastamentos ADD COLUMN IF NOT EXISTS empresa_id UUID REFERENCES public.empresas(id);
+ALTER TABLE public.ferias ADD COLUMN IF NOT EXISTS empresa_id UUID REFERENCES public.empresas(id);
+ALTER TABLE public.desligamentos ADD COLUMN IF NOT EXISTS empresa_id UUID REFERENCES public.empresas(id);
+ALTER TABLE public.folhas_pagamento ADD COLUMN IF NOT EXISTS empresa_id UUID REFERENCES public.empresas(id);
+ALTER TABLE public.feriados ADD COLUMN IF NOT EXISTS empresa_id UUID REFERENCES public.empresas(id);
+ALTER TABLE public.registros_ponto ADD COLUMN IF NOT EXISTS empresa_id UUID REFERENCES public.empresas(id);
+ALTER TABLE public.relatorios_agendados ADD COLUMN IF NOT EXISTS empresa_id UUID REFERENCES public.empresas(id);
+ALTER TABLE public.notificacoes ADD COLUMN IF NOT EXISTS empresa_id UUID REFERENCES public.empresas(id);
 
 -- Função para obter empresas do usuário atual
 CREATE OR REPLACE FUNCTION public.get_user_empresas(_user_id UUID)
@@ -91,25 +91,33 @@ $$;
 ALTER TABLE public.empresas ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.user_empresas ENABLE ROW LEVEL SECURITY;
 
--- Políticas para empresas
-CREATE POLICY "Usuários podem ver suas empresas"
-  ON public.empresas FOR SELECT
-  USING (id IN (SELECT public.get_user_empresas(auth.uid())));
+-- Políticas para empresas (idempotent)
+DO $$ BEGIN
+  CREATE POLICY "Usuários podem ver suas empresas"
+    ON public.empresas FOR SELECT
+    USING (id IN (SELECT public.get_user_empresas(auth.uid())));
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
-CREATE POLICY "Admins podem gerenciar empresas"
-  ON public.empresas FOR ALL
-  USING (public.is_admin(auth.uid()))
-  WITH CHECK (public.is_admin(auth.uid()));
+DO $$ BEGIN
+  CREATE POLICY "Admins podem gerenciar empresas"
+    ON public.empresas FOR ALL
+    USING (public.is_admin(auth.uid()))
+    WITH CHECK (public.is_admin(auth.uid()));
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
--- Políticas para user_empresas
-CREATE POLICY "Usuários podem ver suas associações"
-  ON public.user_empresas FOR SELECT
-  USING (user_id = auth.uid());
+-- Políticas para user_empresas (idempotent)
+DO $$ BEGIN
+  CREATE POLICY "Usuários podem ver suas associações"
+    ON public.user_empresas FOR SELECT
+    USING (user_id = auth.uid());
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
-CREATE POLICY "Admins podem gerenciar associações"
-  ON public.user_empresas FOR ALL
-  USING (public.is_admin(auth.uid()))
-  WITH CHECK (public.is_admin(auth.uid()));
+DO $$ BEGIN
+  CREATE POLICY "Admins podem gerenciar associações"
+    ON public.user_empresas FOR ALL
+    USING (public.is_admin(auth.uid()))
+    WITH CHECK (public.is_admin(auth.uid()));
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- Atualizar políticas de colaboradores para filtrar por empresa
 DROP POLICY IF EXISTS "Authenticated users can view colaboradores" ON public.colaboradores;
@@ -117,30 +125,39 @@ DROP POLICY IF EXISTS "Authenticated users can insert colaboradores" ON public.c
 DROP POLICY IF EXISTS "Authenticated users can update colaboradores" ON public.colaboradores;
 DROP POLICY IF EXISTS "Authenticated users can delete colaboradores" ON public.colaboradores;
 
-CREATE POLICY "Usuários podem ver colaboradores da sua empresa"
-  ON public.colaboradores FOR SELECT
-  USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())) OR empresa_id IS NULL);
+DO $$ BEGIN
+  CREATE POLICY "Usuários podem ver colaboradores da sua empresa"
+    ON public.colaboradores FOR SELECT
+    USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())) OR empresa_id IS NULL);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
-CREATE POLICY "Usuários podem inserir colaboradores na sua empresa"
-  ON public.colaboradores FOR INSERT
-  WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())) OR empresa_id IS NULL);
+DO $$ BEGIN
+  CREATE POLICY "Usuários podem inserir colaboradores na sua empresa"
+    ON public.colaboradores FOR INSERT
+    WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())) OR empresa_id IS NULL);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
-CREATE POLICY "Usuários podem atualizar colaboradores da sua empresa"
-  ON public.colaboradores FOR UPDATE
-  USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())) OR empresa_id IS NULL);
+DO $$ BEGIN
+  CREATE POLICY "Usuários podem atualizar colaboradores da sua empresa"
+    ON public.colaboradores FOR UPDATE
+    USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())) OR empresa_id IS NULL);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
-CREATE POLICY "Usuários podem deletar colaboradores da sua empresa"
-  ON public.colaboradores FOR DELETE
-  USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())) OR empresa_id IS NULL);
+DO $$ BEGIN
+  CREATE POLICY "Usuários podem deletar colaboradores da sua empresa"
+    ON public.colaboradores FOR DELETE
+    USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())) OR empresa_id IS NULL);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
--- Trigger para updated_at nas empresas
+-- Trigger para updated_at nas empresas (idempotent)
+DROP TRIGGER IF EXISTS update_empresas_updated_at ON public.empresas;
 CREATE TRIGGER update_empresas_updated_at
   BEFORE UPDATE ON public.empresas
   FOR EACH ROW
   EXECUTE FUNCTION public.update_updated_at_column();
 
--- Índices para performance
-CREATE INDEX idx_colaboradores_empresa ON public.colaboradores(empresa_id);
-CREATE INDEX idx_admissoes_empresa ON public.admissoes(empresa_id);
-CREATE INDEX idx_user_empresas_user ON public.user_empresas(user_id);
-CREATE INDEX idx_user_empresas_empresa ON public.user_empresas(empresa_id);
+-- Índices para performance (idempotent)
+CREATE INDEX IF NOT EXISTS idx_colaboradores_empresa ON public.colaboradores(empresa_id);
+CREATE INDEX IF NOT EXISTS idx_admissoes_empresa ON public.admissoes(empresa_id);
+CREATE INDEX IF NOT EXISTS idx_user_empresas_user ON public.user_empresas(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_empresas_empresa ON public.user_empresas(empresa_id);

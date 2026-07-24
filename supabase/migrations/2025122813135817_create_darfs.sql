@@ -21,4 +21,5 @@ CREATE INDEX IF NOT EXISTS idx_darfs_empresa ON public.darfs(empresa_id);
 CREATE INDEX IF NOT EXISTS idx_darfs_colaborador ON public.darfs(colaborador_id);
 ALTER TABLE public.darfs ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "darfs_all" ON public.darfs;
 CREATE POLICY "darfs_all" ON public.darfs FOR ALL USING (auth.uid() IS NOT NULL);

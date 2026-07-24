@@ -76,10 +76,15 @@ ALTER TABLE public.documentos_afastamento ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.prorrogacoes_afastamento ENABLE ROW LEVEL SECURITY;
 
 -- Políticas (Simplificadas para o contexto - ajustar conforme auth)
+DROP POLICY IF EXISTS "Acesso total as configuracoes" ON public.config_afastamentos;
 CREATE POLICY "Acesso total as configuracoes" ON public.config_afastamentos FOR ALL USING (true);
+DROP POLICY IF EXISTS "Leitura CID10 publica" ON public.cid10;
 CREATE POLICY "Leitura CID10 publica" ON public.cid10 FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Acesso por empresa_id em afastamentos" ON public.afastamentos;
 CREATE POLICY "Acesso por empresa_id em afastamentos" ON public.afastamentos FOR ALL USING (true);
+DROP POLICY IF EXISTS "Acesso documentos por afastamento" ON public.documentos_afastamento;
 CREATE POLICY "Acesso documentos por afastamento" ON public.documentos_afastamento FOR ALL USING (true);
+DROP POLICY IF EXISTS "Acesso prorrogacoes por afastamento" ON public.prorrogacoes_afastamento;
 CREATE POLICY "Acesso prorrogacoes por afastamento" ON public.prorrogacoes_afastamento FOR ALL USING (true);
 
 -- Inserir CIDs básicos de exemplo se a tabela estiver vazia
@@ -102,5 +107,7 @@ ON CONFLICT (tipo) DO NOTHING;
 
 -- Storage Bucket para Afastamentos
 INSERT INTO storage.buckets (id, name, public) VALUES ('afastamentos', 'afastamentos', true) ON CONFLICT (id) DO NOTHING;
+DROP POLICY IF EXISTS "Acesso publico aos arquivos de afastamento" ON storage.objects;
 CREATE POLICY "Acesso publico aos arquivos de afastamento" ON storage.objects FOR SELECT USING (bucket_id = 'afastamentos');
+DROP POLICY IF EXISTS "Upload de arquivos de afastamento" ON storage.objects;
 CREATE POLICY "Upload de arquivos de afastamento" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'afastamentos');

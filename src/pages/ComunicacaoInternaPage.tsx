@@ -62,7 +62,7 @@ export default function ComunicacaoInternaPage() {
 
   const { data: comunicados = [], isLoading: loadCom } = useQuery({
     queryKey: ['comunicados', empresaAtual?.id],
-    queryFn: () => comunicacaoService.listarComunicados(empresaAtual?.id),
+    queryFn: () => comunicacaoService.listarComunicados(empresaAtual!.id),
     enabled: !!empresaAtual?.id,
   });
 
@@ -78,7 +78,7 @@ export default function ComunicacaoInternaPage() {
 
   const { data: denuncias = [], isLoading: loadEtica } = useQuery({
     queryKey: ['canal_etica', empresaAtual?.id],
-    queryFn: () => comunicacaoService.listarDenuncias(empresaAtual?.id),
+    queryFn: () => comunicacaoService.listarDenuncias(empresaAtual!.id),
     enabled: !!empresaAtual?.id,
   });
 
@@ -112,7 +112,7 @@ export default function ComunicacaoInternaPage() {
   });
 
   const excluirCom = useMutation({
-    mutationFn: (id: string) => comunicacaoService.excluirComunicado(id),
+    mutationFn: (id: string) => comunicacaoService.excluirComunicado(id, empresaAtual!.id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['comunicados'] }); toast.success('Comunicado excluído'); },
   });
 

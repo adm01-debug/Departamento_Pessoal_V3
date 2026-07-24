@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { FileDown, Settings2, Loader2, Landmark, CheckCircle2, Zap, ShieldCheck } from 'lucide-react';
 import { cnabService, CNABConfig } from '@/services/cnabService';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { todayLocalISO } from '@/utils/dateLocal';
 
@@ -64,7 +65,7 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
       await cnabService.saveConfig(empresaAtual.id, config);
       toast.success('Configurações bancárias salvas!');
     } catch (err: any) {
-      toast.error('Erro ao salvar: ' + err.message);
+      toast.error(safeErrorMessage(err, 'Erro ao salvar configurações bancárias.'));
     } finally {
       setSaving(false);
     }
@@ -89,7 +90,7 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
       toast.success('Arquivo CNAB 240 (Remessa de Salários) gerado!');
       setOpen(false);
     } catch (err: any) {
-      toast.error('Erro ao gerar CNAB: ' + err.message);
+      toast.error(safeErrorMessage(err, 'Erro ao gerar arquivo CNAB.'));
     } finally {
       setLoading(false);
     }
@@ -112,7 +113,7 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
       toast.success('Lote PIX analítico gerado com sucesso!');
       setOpen(false);
     } catch (err: any) {
-      toast.error('Erro ao gerar PIX: ' + err.message);
+      toast.error(safeErrorMessage(err, 'Erro ao gerar lote PIX.'));
     } finally {
       setLoading(false);
     }

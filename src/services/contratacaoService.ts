@@ -1,7 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { auditLogger } from '@/utils/auditLogger';
 import { Database } from '@/integrations/supabase/types';
-import DOMPurify from 'dompurify';
 
 // Escapa HTML para prevenir XSS em dados vindos do usuário/candidato.
 const esc = (v: unknown): string => {
@@ -50,9 +49,9 @@ export const contratacaoService = {
         
         <div style="margin-bottom: 25px;">
           <h3 style="color: #2c5282; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;">QUALIFICAÇÃO DAS PARTES</h3>
-          <p><strong>EMPREGADOR:</strong> ${empresa?.razao_social || '—'}<br>
-          <strong>CNPJ:</strong> ${empresa?.cnpj || '—'}<br>
-          <strong>ENDEREÇO:</strong> ${empresa?.logradouro || '—'}, ${empresa?.numero || '—'} - ${empresa?.cidade || '—'}/${empresa?.uf || '—'}</p>
+          <p><strong>EMPREGADOR:</strong> ${esc(empresa?.razao_social || '—')}<br>
+          <strong>CNPJ:</strong> ${esc(empresa?.cnpj || '—')}<br>
+          <strong>ENDEREÇO:</strong> ${esc(empresa?.logradouro || '—')}, ${esc(empresa?.numero || '—')} - ${esc(empresa?.cidade || '—')}/${esc(empresa?.uf || '—')}</p>
 
           <p><strong>EMPREGADO:</strong> ${esc(admissao.nome)}<br>
           <strong>CPF:</strong> ${esc(admissao.cpf || '—')}<br>
@@ -83,18 +82,24 @@ export const contratacaoService = {
   
   },
 
-  async validarDocumento(admissaoId: string, docType: string, status: 'validado' | 'rejeitado', observacao?: string): Promise<void> {
+  async validarDocumento(admissaoId: string, docType: string, status: 'validado' | 'rejeitado', observacao?: string, empresaId?: string): Promise<void> {
+    const ALLOWED_DOC_TYPES = ['rg', 'cpf', 'ctps', 'titulo', 'reservista', 'comprovante_residencia', 'foto', 'certidao', 'pis', 'cnh'];
+    if (!ALLOWED_DOC_TYPES.includes(docType)) {
+      throw new Error(`Tipo de documento inválido: ${docType}`);
+    }
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     try {
       const { error } = await supabase
         .from('admissoes')
         .update({
           [`checklist_${docType}`]: status === 'validado',
-          metadata: { 
+          metadata: {
             obs: observacao,
             last_validation: new Date().toISOString()
           }
         } as any)
-        .eq('id', admissaoId);
+        .eq('id', admissaoId)
+        .eq('empresa_id', empresaId);
 
       if (error) throw error;
 
@@ -142,22 +147,24 @@ export const contratacaoService = {
       const baseUrl = window.location.origin;
       const link = `${baseUrl}/contratacao?token=${token}`;
       const mensagem = encodeURIComponent(`Olá! 👋 Boas-vindas à nossa equipe!\n\nSeu processo de admissão digital está pronto. Acesse pelo link seguro: ${link}\n\nCódigo de Acesso: *${token}*`);
-      
+
+      const { data: admissao, error: admErr } = await supabase.from('admissoes').select('empresa_id').eq('id', admissaoId).maybeSingle();
+      if (admErr) throw admErr;
+      if (!admissao) throw new Error('Admissão não encontrada — não é possível enviar notificação.');
+
       try {
-        const { data: admissao, error: admErr } = await supabase.from('admissoes').select('empresa_id').eq('id', admissaoId).maybeSingle();
-        if (admErr) throw admErr;
-        if (admissao?.empresa_id) {
+        if (admissao.empresa_id) {
           const { whatsappService } = await import('./whatsappService');
-          await whatsappService.sendMessage({ 
-            empresaId: admissao.empresa_id, 
-            phone: telefone, 
-            message: `Olá! 👋 Boas-vindas!\n\nSeu processo de admissão digital está pronto: ${link}\n\nCódigo: *${token}*` 
+          await whatsappService.sendMessage({
+            empresaId: admissao.empresa_id,
+            phone: telefone,
+            message: `Olá! 👋 Boas-vindas!\n\nSeu processo de admissão digital está pronto: ${link}\n\nCódigo: *${token}*`
           });
         }
       } catch (e) {
-        window.open(`https://wa.me/55${telefone.replace(/\D/g, '')}?text=${mensagem}`, '_blank');
+        window.open(`https://wa.me/55${telefone.replace(/\D/g, '')}?text=${mensagem}`, '_blank', 'noopener');
       }
-      
+
       await supabase.from('notificacoes_admissao').insert({
         admissao_id: admissaoId,
         tipo: 'whatsapp',
@@ -171,19 +178,22 @@ export const contratacaoService = {
     }
   },
 
-  async transmitirESocial(admissaoId: string): Promise<boolean> {
+  async transmitirESocial(admissaoId: string, empresaId: string): Promise<boolean> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     try {
-      const { data: admissao } = await supabase.from('admissoes').select('*').eq('id', admissaoId).single();
-      
+      const { data: admissao } = await supabase.from('admissoes').select('empresa_id').eq('id', admissaoId).eq('empresa_id', empresaId).single();
+      if (!admissao) throw new Error('Admissão não encontrada ou sem permissão');
+
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       const { error } = await supabase
         .from('admissoes')
-        .update({ 
-          etapa: 'esocial', 
-          metadata: { esocial_protocol: `PROTO-${Math.random().toString(36).toUpperCase().slice(0, 10)}` } as any 
+        .update({
+          etapa: 'esocial',
+          metadata: { esocial_protocol: `PROTO-${Math.random().toString(36).toUpperCase().slice(0, 10)}` } as any
         })
-        .eq('id', admissaoId);
+        .eq('id', admissaoId)
+        .eq('empresa_id', empresaId);
         
       if (error) throw error;
       

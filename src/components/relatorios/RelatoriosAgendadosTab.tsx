@@ -11,6 +11,7 @@ import { Clock, Plus, Trash2, Calendar, Mail, FileText, CheckCircle2, History, A
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { motion } from 'framer-motion';
 
 export function RelatoriosAgendadosTab({ empresaId }: { empresaId: string }) {
@@ -54,7 +55,7 @@ export function RelatoriosAgendadosTab({ empresaId }: { empresaId: string }) {
       setOpen(false);
       toast.success('Relatório agendado com sucesso!');
     },
-    onError: (e: any) => toast.error(`Erro: ${e.message}`)
+    onError: (e: any) => toast.error(safeErrorMessage(e, 'Erro ao agendar relatório.'))
   });
 
   const excluir = useMutation({

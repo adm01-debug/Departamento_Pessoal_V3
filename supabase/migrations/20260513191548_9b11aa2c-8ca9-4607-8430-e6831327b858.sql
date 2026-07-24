@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS public.logs_sistema (
 -- RLS
 ALTER TABLE public.logs_sistema ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Apenas administradores veem logs do sistema" ON public.logs_sistema;
 CREATE POLICY "Apenas administradores veem logs do sistema"
 ON public.logs_sistema FOR SELECT
 USING (auth.uid() IN (

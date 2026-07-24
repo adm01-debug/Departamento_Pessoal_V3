@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS public.premiacoes_auditoria (
 -- Habilitar RLS na auditoria
 ALTER TABLE public.premiacoes_auditoria ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Usuários autenticados podem ver auditoria de premiações" ON public.premiacoes_auditoria;
 CREATE POLICY "Usuários autenticados podem ver auditoria de premiações"
 ON public.premiacoes_auditoria FOR SELECT
 USING (auth.uid() IS NOT NULL);
@@ -36,6 +37,7 @@ CREATE TABLE IF NOT EXISTS public.premiacoes_cenarios_simulacao (
 
 ALTER TABLE public.premiacoes_cenarios_simulacao ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Usuários podem ver seus próprios cenários de simulação" ON public.premiacoes_cenarios_simulacao;
 CREATE POLICY "Usuários podem ver seus próprios cenários de simulação"
 ON public.premiacoes_cenarios_simulacao FOR SELECT
 USING (auth.uid() = criado_por);

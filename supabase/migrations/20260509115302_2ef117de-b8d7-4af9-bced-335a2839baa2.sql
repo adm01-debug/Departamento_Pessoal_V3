@@ -45,14 +45,17 @@ ALTER TABLE public.ponto_auditoria ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.ponto_ajustes ENABLE ROW LEVEL SECURITY;
 
 -- Políticas de RLS para Ajustes
+DROP POLICY IF EXISTS "Colaboradores podem ver seus próprios ajustes" ON public.ponto_ajustes;
 CREATE POLICY "Colaboradores podem ver seus próprios ajustes" 
 ON public.ponto_ajustes FOR SELECT 
 USING (auth.uid() IN (SELECT user_id FROM public.profiles WHERE id = colaborador_id));
 
+DROP POLICY IF EXISTS "Colaboradores podem solicitar ajustes" ON public.ponto_ajustes;
 CREATE POLICY "Colaboradores podem solicitar ajustes" 
 ON public.ponto_ajustes FOR INSERT 
 WITH CHECK (auth.uid() IN (SELECT user_id FROM public.profiles WHERE id = colaborador_id));
 
+DROP POLICY IF EXISTS "Gestores podem ver e editar ajustes da equipe" ON public.ponto_ajustes;
 CREATE POLICY "Gestores podem ver e editar ajustes da equipe" 
 ON public.ponto_ajustes FOR ALL 
 USING (true); -- Simplificado, idealmente filtraria por hierarquia

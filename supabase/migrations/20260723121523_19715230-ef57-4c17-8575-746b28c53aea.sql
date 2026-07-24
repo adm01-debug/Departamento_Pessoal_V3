@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.gerar_rubricas_ferias(uuid) FROM PUBLIC, anon, authenticated;

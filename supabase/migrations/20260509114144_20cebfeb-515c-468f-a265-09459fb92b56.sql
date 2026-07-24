@@ -24,10 +24,12 @@ CREATE TABLE IF NOT EXISTS public.configuracoes_ponto (
 ALTER TABLE public.configuracoes_ponto ENABLE ROW LEVEL SECURITY;
 
 -- Policies for configuracoes_ponto
+DROP POLICY IF EXISTS "Configurações de ponto visíveis por membros da empresa" ON public.configuracoes_ponto;
 CREATE POLICY "Configurações de ponto visíveis por membros da empresa" 
 ON public.configuracoes_ponto FOR SELECT 
 USING (empresa_id IN (SELECT id FROM empresas));
 
+DROP POLICY IF EXISTS "Apenas admins podem atualizar configurações de ponto" ON public.configuracoes_ponto;
 CREATE POLICY "Apenas admins podem atualizar configurações de ponto" 
 ON public.configuracoes_ponto FOR UPDATE 
 USING (empresa_id IN (SELECT id FROM empresas)); -- Simplified for now, usually checks role
@@ -48,6 +50,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS tr_gerar_hash_ponto ON public.registros_ponto;
 CREATE TRIGGER tr_gerar_hash_ponto
 BEFORE INSERT ON public.registros_ponto
 FOR EACH ROW

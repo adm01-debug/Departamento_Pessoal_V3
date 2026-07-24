@@ -1,6 +1,6 @@
 
 -- Documentos versionados do Regimento Interno
-CREATE TABLE public.sst_regimento_documentos (
+CREATE TABLE IF NOT EXISTS public.sst_regimento_documentos (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   empresa_id UUID NOT NULL REFERENCES public.empresas(id) ON DELETE CASCADE,
   titulo TEXT NOT NULL,
@@ -15,17 +15,19 @@ CREATE TABLE public.sst_regimento_documentos (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-CREATE INDEX idx_regimento_doc_empresa ON public.sst_regimento_documentos(empresa_id, status);
+CREATE INDEX IF NOT EXISTS idx_regimento_doc_empresa ON public.sst_regimento_documentos(empresa_id, status);
 CREATE UNIQUE INDEX uniq_regimento_publicado ON public.sst_regimento_documentos(empresa_id) WHERE status = 'PUBLICADO';
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.sst_regimento_documentos TO authenticated;
 GRANT ALL ON public.sst_regimento_documentos TO service_role;
 ALTER TABLE public.sst_regimento_documentos ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Leitura por empresa do usuario" ON public.sst_regimento_documentos;
 CREATE POLICY "Leitura por empresa do usuario" ON public.sst_regimento_documentos
   FOR SELECT TO authenticated
   USING (empresa_id IN (SELECT empresa_id FROM public.user_empresas WHERE user_id = auth.uid()));
 
+DROP POLICY IF EXISTS "RH/Admin gerenciam documentos" ON public.sst_regimento_documentos;
 CREATE POLICY "RH/Admin gerenciam documentos" ON public.sst_regimento_documentos
   FOR ALL TO authenticated
   USING (
@@ -37,12 +39,13 @@ CREATE POLICY "RH/Admin gerenciam documentos" ON public.sst_regimento_documentos
     AND (public.has_role(auth.uid(), 'admin') OR public.has_role(auth.uid(), 'rh'))
   );
 
+DROP TRIGGER IF EXISTS trg_regimento_doc_updated ON public.sst_regimento_documentos;
 CREATE TRIGGER trg_regimento_doc_updated
   BEFORE UPDATE ON public.sst_regimento_documentos
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
 -- Assinaturas eletrônicas
-CREATE TABLE public.sst_regimento_assinaturas (
+CREATE TABLE IF NOT EXISTS public.sst_regimento_assinaturas (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   documento_id UUID NOT NULL REFERENCES public.sst_regimento_documentos(id) ON DELETE CASCADE,
   colaborador_id UUID NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE,
@@ -55,17 +58,19 @@ CREATE TABLE public.sst_regimento_assinaturas (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE (documento_id, colaborador_id)
 );
-CREATE INDEX idx_regimento_ass_empresa ON public.sst_regimento_assinaturas(empresa_id);
-CREATE INDEX idx_regimento_ass_colab ON public.sst_regimento_assinaturas(colaborador_id);
+CREATE INDEX IF NOT EXISTS idx_regimento_ass_empresa ON public.sst_regimento_assinaturas(empresa_id);
+CREATE INDEX IF NOT EXISTS idx_regimento_ass_colab ON public.sst_regimento_assinaturas(colaborador_id);
 
 GRANT SELECT, INSERT ON public.sst_regimento_assinaturas TO authenticated;
 GRANT ALL ON public.sst_regimento_assinaturas TO service_role;
 ALTER TABLE public.sst_regimento_assinaturas ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Leitura por empresa" ON public.sst_regimento_assinaturas;
 CREATE POLICY "Leitura por empresa" ON public.sst_regimento_assinaturas
   FOR SELECT TO authenticated
   USING (empresa_id IN (SELECT empresa_id FROM public.user_empresas WHERE user_id = auth.uid()));
 
+DROP POLICY IF EXISTS "Insercao por RH/Admin ou proprio" ON public.sst_regimento_assinaturas;
 CREATE POLICY "Insercao por RH/Admin ou proprio" ON public.sst_regimento_assinaturas
   FOR INSERT TO authenticated
   WITH CHECK (
@@ -79,8 +84,10 @@ BEGIN
   RAISE EXCEPTION 'Assinaturas de regimento são imutáveis';
 END;
 $$;
+DROP TRIGGER IF EXISTS trg_regimento_ass_no_update ON public.sst_regimento_assinaturas;
 CREATE TRIGGER trg_regimento_ass_no_update BEFORE UPDATE ON public.sst_regimento_assinaturas
   FOR EACH ROW EXECUTE FUNCTION public.sst_regimento_ass_imutavel();
+DROP TRIGGER IF EXISTS trg_regimento_ass_no_delete ON public.sst_regimento_assinaturas;
 CREATE TRIGGER trg_regimento_ass_no_delete BEFORE DELETE ON public.sst_regimento_assinaturas
   FOR EACH ROW EXECUTE FUNCTION public.sst_regimento_ass_imutavel();
 

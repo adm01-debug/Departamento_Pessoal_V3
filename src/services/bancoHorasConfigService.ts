@@ -11,7 +11,7 @@ export const bancoHorasConfigService = {
   async salvar(d: any) {
     const existing = d.empresa_id ? await bancoHorasConfigService.buscar(d.empresa_id) : null;
     if (existing) {
-      const { data, error } = await (supabase as any).from('banco_horas_config').update(d).eq('id', existing.id).select().maybeSingle();
+      const { data, error } = await (supabase as any).from('banco_horas_config').update(d).eq('id', existing.id).eq('empresa_id', d.empresa_id).select().maybeSingle();
       if (error) throw error;
       return ensure(data, 'configuração banco de horas');
     }

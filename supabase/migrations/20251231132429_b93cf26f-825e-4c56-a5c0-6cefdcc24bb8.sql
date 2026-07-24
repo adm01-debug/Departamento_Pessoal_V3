@@ -1,5 +1,5 @@
 -- Create table to track login attempts with lockout
-CREATE TABLE public.login_rate_limits (
+CREATE TABLE IF NOT EXISTS public.login_rate_limits (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   identifier TEXT NOT NULL, -- email or IP
   identifier_type TEXT NOT NULL DEFAULT 'email', -- 'email' or 'ip'
@@ -15,30 +15,34 @@ CREATE TABLE public.login_rate_limits (
 ALTER TABLE public.login_rate_limits ENABLE ROW LEVEL SECURITY;
 
 -- Allow public read/write for login rate limiting (needed before auth)
+DROP POLICY IF EXISTS "Public can read rate limits" ON public.login_rate_limits;
 CREATE POLICY "Public can read rate limits"
 ON public.login_rate_limits
 FOR SELECT
 USING (true);
 
+DROP POLICY IF EXISTS "Public can insert rate limits" ON public.login_rate_limits;
 CREATE POLICY "Public can insert rate limits"
 ON public.login_rate_limits
 FOR INSERT
 WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Public can update rate limits" ON public.login_rate_limits;
 CREATE POLICY "Public can update rate limits"
 ON public.login_rate_limits
 FOR UPDATE
 USING (true);
 
 -- Admins can delete/manage all records
+DROP POLICY IF EXISTS "Admins can manage rate limits" ON public.login_rate_limits;
 CREATE POLICY "Admins can manage rate limits"
 ON public.login_rate_limits
 FOR ALL
 USING (is_admin(auth.uid()));
 
 -- Create index for fast lookups
-CREATE INDEX idx_login_rate_limits_identifier ON public.login_rate_limits(identifier, identifier_type);
-CREATE INDEX idx_login_rate_limits_locked_until ON public.login_rate_limits(locked_until);
+CREATE INDEX IF NOT EXISTS idx_login_rate_limits_identifier ON public.login_rate_limits(identifier, identifier_type);
+CREATE INDEX IF NOT EXISTS idx_login_rate_limits_locked_until ON public.login_rate_limits(locked_until);
 
 -- Function to calculate lockout duration (exponential backoff)
 CREATE OR REPLACE FUNCTION public.calculate_lockout_duration(attempts INTEGER)

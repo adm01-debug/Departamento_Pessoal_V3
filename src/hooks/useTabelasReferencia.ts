@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as service from '@/services/tabelasReferenciaService';
+import { useEmpresas } from './useEmpresas';
 
 type DataRecord = Record<string, unknown>;
 
@@ -39,7 +40,7 @@ export const useMotivosAfastamento = () => useResultQuery(['motivos-afastamento'
 // Centros de Custo (CRUD)
 // =============================================
 export function useCentrosCusto(empresaId?: string) {
-  return useResultQuery(['centros-custo', empresaId], () => service.listarCentrosCusto(empresaId), !!empresaId);
+  return useResultQuery(['centros-custo', empresaId], () => service.listarCentrosCusto(empresaId!), !!empresaId);
 }
 
 export function useCriarCentroCusto() {
@@ -54,9 +55,10 @@ export function useCriarCentroCusto() {
 
 export function useAtualizarCentroCusto() {
   const qc = useQueryClient();
+  const { empresaAtual } = useEmpresas();
   return useMutation({
     mutationFn: async ({ id, dados }: { id: string; dados: DataRecord }) => {
-      return await service.atualizarCentroCusto(id, dados);
+      return await service.atualizarCentroCusto(id, dados, empresaAtual!.id);
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['centros-custo'] }),
   });
@@ -64,9 +66,10 @@ export function useAtualizarCentroCusto() {
 
 export function useExcluirCentroCusto() {
   const qc = useQueryClient();
+  const { empresaAtual } = useEmpresas();
   return useMutation({
     mutationFn: async (id: string) => {
-      return await service.excluirCentroCusto(id);
+      return await service.excluirCentroCusto(id, empresaAtual!.id);
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['centros-custo'] }),
   });
@@ -76,7 +79,12 @@ export function useExcluirCentroCusto() {
 // Contas Bancárias (CRUD)
 // =============================================
 export function useContasBancarias(colaboradorId: string) {
-  return useResultQuery(['contas-bancarias', colaboradorId], () => service.listarContasBancarias(colaboradorId), !!colaboradorId);
+  const { empresaAtual } = useEmpresas();
+  return useResultQuery(
+    ['contas-bancarias', colaboradorId, empresaAtual?.id],
+    () => service.listarContasBancarias(colaboradorId, empresaAtual!.id),
+    !!colaboradorId && !!empresaAtual?.id
+  );
 }
 
 export function useCriarContaBancaria() {
@@ -91,9 +99,10 @@ export function useCriarContaBancaria() {
 
 export function useAtualizarContaBancaria() {
   const qc = useQueryClient();
+  const { empresaAtual } = useEmpresas();
   return useMutation({
     mutationFn: async ({ id, dados }: { id: string; dados: DataRecord }) => {
-      return await service.atualizarContaBancaria(id, dados);
+      return await service.atualizarContaBancaria(id, dados, empresaAtual!.id);
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['contas-bancarias'] }),
   });
@@ -101,9 +110,10 @@ export function useAtualizarContaBancaria() {
 
 export function useExcluirContaBancaria(colaboradorId: string) {
   const qc = useQueryClient();
+  const { empresaAtual } = useEmpresas();
   return useMutation({
     mutationFn: async (id: string) => {
-      return await service.excluirContaBancaria(id);
+      return await service.excluirContaBancaria(id, empresaAtual!.id);
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['contas-bancarias', colaboradorId] }),
   });
@@ -147,7 +157,7 @@ export function useExcluirDocumentoPessoal(colaboradorId: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      return await service.excluirDocumentoPessoal(id);
+      return await service.excluirDocumentoPessoal(colaboradorId, id);
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['documentos-pessoais', colaboradorId] }),
   });
@@ -173,8 +183,8 @@ export function useCriarFeriasAprovacao() {
 export function useAtualizarFeriasAprovacao() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, dados }: { id: string; dados: DataRecord }) => {
-      return await service.atualizarFeriasAprovacao(id, dados);
+    mutationFn: async ({ id, feriasId, dados }: { id: string; feriasId: string; dados: DataRecord }) => {
+      return await service.atualizarFeriasAprovacao(feriasId, id, dados);
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['ferias-aprovacoes'] }),
   });

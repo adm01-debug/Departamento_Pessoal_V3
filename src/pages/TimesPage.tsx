@@ -14,6 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { Plus, Users, Trash2, Edit2 } from 'lucide-react';
 import type { LooseRow } from '@/types/db';
 export default function TimesPage() {
@@ -38,7 +39,7 @@ export default function TimesPage() {
   const handleSubmit = useMutation({
     mutationFn: async (d: any) => {
       if (editingItem) {
-        const { error } = await supabase.from('times').update(d).eq('id', editingItem.id!);
+        const { error } = await supabase.from('times').update(d).eq('id', editingItem.id!).eq('empresa_id', empresaAtual!.id);
         if (error) throw error;
       } else {
         const { error } = await supabase.from('times').insert({ ...d, empresa_id: empresaAtual?.id });
@@ -52,11 +53,11 @@ export default function TimesPage() {
       setForm({ nome: '', descricao: '' });
       toast.success(editingItem ? 'Time atualizado!' : 'Time criado!'); 
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar equipe.')),
   });
 
   const excluir = useMutation({
-    mutationFn: async (id: string) => { const { error } = await supabase.from('times').delete().eq('id', id); if (error) throw error; },
+    mutationFn: async (id: string) => { const { error } = await supabase.from('times').delete().eq('id', id).eq('empresa_id', empresaAtual!.id); if (error) throw error; },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['times'] }); toast.success('Time excluído!'); },
   });
 

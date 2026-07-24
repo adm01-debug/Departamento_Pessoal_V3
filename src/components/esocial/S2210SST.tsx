@@ -1,6 +1,7 @@
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { User, Calendar, Activity, AlertTriangle, ShieldAlert } from 'lucide-react';
+import { maskCpfDisplay } from '@/utils/piiMask';
 
 export function S2210SST({ dados }: { dados: any }) {
   return (
@@ -11,7 +12,7 @@ export function S2210SST({ dados }: { dados: any }) {
             <User className="h-4 w-4 text-primary mt-1" />
             <div>
               <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">Trabalhador Acidentado</Label>
-              <p className="font-display font-bold text-sm">CPF: {dados.cpfTrab}</p>
+              <p className="font-display font-bold text-sm">CPF: {maskCpfDisplay(dados.cpfTrab)}</p>
               {dados.nmTrab && <p className="text-xs text-muted-foreground">{dados.nmTrab}</p>}
             </div>
           </CardContent>

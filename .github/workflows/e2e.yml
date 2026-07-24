@@ -16,12 +16,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://ciziytrrjjotlsjzshnm.supabase.co' }}
-      VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpeml5dHJyampvdGxzanpzaG5tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0NzU5NjQsImV4cCI6MjA5NDA1MTk2NH0.Ld9R1Rf5CH06IMUxDYvOXZoIqNmrGlwrpdO-eBrVMRQ' }}
-      E2E_USER_EMAIL: ${{ secrets.E2E_USER_EMAIL || 'admin@teste.local' }}
-      E2E_USER_PASSWORD: ${{ secrets.E2E_USER_PASSWORD || 'Admin@2026!' }}
-      E2E_NON_ADMIN_EMAIL: ${{ secrets.E2E_NON_ADMIN_EMAIL || 'user@teste.local' }}
-      E2E_NON_ADMIN_PASSWORD: ${{ secrets.E2E_NON_ADMIN_PASSWORD || 'User@2026!' }}
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+      E2E_USER_EMAIL: ${{ secrets.E2E_USER_EMAIL }}
+      E2E_USER_PASSWORD: ${{ secrets.E2E_USER_PASSWORD }}
+      E2E_NON_ADMIN_EMAIL: ${{ secrets.E2E_NON_ADMIN_EMAIL }}
+      E2E_NON_ADMIN_PASSWORD: ${{ secrets.E2E_NON_ADMIN_PASSWORD }}
       MAILOSAUR_API_KEY: ${{ secrets.MAILOSAUR_API_KEY }}
       MAILOSAUR_SERVER_ID: ${{ secrets.MAILOSAUR_SERVER_ID }}
       MAILOSAUR_INBOX_DOMAIN: ${{ secrets.MAILOSAUR_INBOX_DOMAIN }}

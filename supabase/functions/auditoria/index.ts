@@ -1,5 +1,5 @@
 // Onda 35 — Hardening crítico:
-// • JWT via getClaims() + CSRF fail-closed
+// • JWT via getUser() + CSRF fail-closed
 // • Ignora usuario_id/ip vindos do cliente (fraude); usa claims + IP real do request
 // • Tenant scope obrigatório para empresa_id em todas as ações
 // • Cap de payload em campos JSON (dados_anteriores/novos ≤ 64KB serializado)
@@ -9,7 +9,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://esm.sh/zod@3.23.8';
-import { corsHeaders, createErrorResponse } from '../_shared/contract.ts';
+import { corsHeaders, createErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 
@@ -80,16 +80,17 @@ serve(async (req: Request): Promise<Response> => {
       global: { headers: { Authorization: authHeader } },
       auth: { persistSession: false, autoRefreshToken: false },
     });
-    const token = authHeader.replace(/^Bearer\s+/i, '').trim();
-    const { data: claims, error: claimsErr } = await userClient.auth.getClaims(token);
-    if (claimsErr || !claims?.claims?.sub) {
+    const { data: claims, error: claimsErr } = await userClient.auth.getUser();
+    if (claimsErr || !claims?.user?.id) {
       return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
     }
-    const userId = claims.claims.sub as string;
-    const userEmail = (claims.claims.email as string | undefined) ?? null;
+    const userId = claims.user.id;
+    const userEmail = (claims.user.email as string | undefined) ?? null;
 
     let raw: unknown;
-    try { raw = await req.json(); } catch { return createErrorResponse('JSON inválido', 400, 'INVALID_JSON'); }
+    const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
+    if (_pe) return _pe;
+    raw = _pb;
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) {
       return createErrorResponse('Payload inválido', 422, 'VALIDATION_ERROR');
@@ -99,6 +100,10 @@ serve(async (req: Request): Promise<Response> => {
     const supabase = createClient(supabaseUrl, serviceKey, {
       auth: { persistSession: false, autoRefreshToken: false },
     });
+
+    const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
+    const rl = await checkRateLimit(supabase, { key: `auditoria:${userId}`, limit: 30, windowSec: 60 });
+    if (!rl.allowed) return rateLimitResponse(rl);
 
     // Tenant scope obrigatório
     const [{ data: belongs }, { data: isAdm }] = await Promise.all([

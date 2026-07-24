@@ -13,10 +13,9 @@ export const configAfastamentosService = {
 };
 
 export const feriasSolicitacoesService = {
-  listar: async (empresaId?: string) => {
-    let q = supabase.from('ferias_solicitacoes').select('*, colaborador:colaboradores(nome_completo)').order('created_at', { ascending: false });
-    if (empresaId) q = q.eq('empresa_id', empresaId);
-    const { data, error } = await q;
+  listar: async (empresaId: string) => {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { data, error } = await supabase.from('ferias_solicitacoes').select('*, colaborador:colaboradores(nome_completo)').eq('empresa_id', empresaId).order('created_at', { ascending: false });
     if (error) throw error;
     return data || [];
   },
@@ -24,23 +23,30 @@ export const feriasSolicitacoesService = {
     const { error } = await supabase.from('ferias_solicitacoes').insert(d);
     if (error) throw error;
   },
-  atualizar: async (id: string, d: any) => {
-    const { error } = await supabase.from('ferias_solicitacoes').update(d).eq('id', id);
+  atualizar: async (id: string, d: any, empresaId: string) => {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { error } = await supabase.from('ferias_solicitacoes').update(d).eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   },
 };
 
 export const historicoCargoService = {
-  listar: async (colaboradorId: string) => {
-    const { data, error } = await supabase.from('historico_cargo').select('*').eq('colaborador_id', colaboradorId).order('data_inicio', { ascending: false });
+  listar: async (colaboradorId: string, empresaId: string) => {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { data, error } = await (supabase as any).from('historico_cargo').select('*').eq('colaborador_id', colaboradorId).eq('empresa_id', empresaId).order('data_inicio', { ascending: false });
     if (error) throw error;
     return data || [];
   },
 };
 
 export const historicoFeriasService = {
-  listar: async (colaboradorId: string) => {
-    const { data, error } = await supabase.from('historico_ferias' as any).select('*').eq('colaborador_id', colaboradorId).order('data_inicio', { ascending: false });
+  listar: async (colaboradorId: string, empresaId: string) => {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { data, error } = await (supabase as any).from('historico_ferias')
+      .select('*, ferias!inner(colaborador_id, empresa_id)')
+      .eq('ferias.colaborador_id', colaboradorId)
+      .eq('ferias.empresa_id', empresaId)
+      .order('created_at', { ascending: false });
     if (error) throw error;
     return data || [];
   },
@@ -107,8 +113,9 @@ export const onboardingService = {
     if (error) throw error;
     return data || [];
   },
-  concluirTarefa: async (id: string) => {
-    const { error } = await supabase.from('onboarding_tarefas').update({ concluida: true, concluida_em: new Date().toISOString() } as any).eq('id', id);
+  concluirTarefa: async (onboardingId: string, id: string) => {
+    if (!onboardingId) throw new Error('onboarding_id obrigatório para isolamento de tenant');
+    const { error } = await supabase.from('onboarding_tarefas').update({ concluida: true, concluida_em: new Date().toISOString() } as any).eq('id', id).eq('onboarding_id', onboardingId);
     if (error) throw error;
   },
 };
@@ -121,8 +128,9 @@ export const treinamentoParticipantesService = {
     if (error) throw error;
     return data || [];
   },
-  registrarPresenca: async (id: string) => {
-    const { error } = await supabase.from('treinamento_participantes').update({ presente: true }).eq('id', id);
+  registrarPresenca: async (inscricaoId: string, id: string) => {
+    if (!inscricaoId) throw new Error('inscricao_id obrigatório para isolamento de tenant');
+    const { error } = await (supabase as any).from('treinamento_participantes').update({ presente: true }).eq('id', id).eq('inscricao_id', inscricaoId);
     if (error) throw error;
   },
 };

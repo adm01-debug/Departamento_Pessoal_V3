@@ -202,12 +202,21 @@ ALTER TABLE public.auth_gov_br_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.versao_banco ENABLE ROW LEVEL SECURITY;
 
 -- 6. Triggers updated_at
+DROP TRIGGER IF EXISTS tr_updated_at_configuracoes ON public.configuracoes;
 CREATE TRIGGER tr_updated_at_configuracoes BEFORE UPDATE ON public.configuracoes FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+DROP TRIGGER IF EXISTS tr_updated_at_config_ponto ON public.configuracoes_ponto;
 CREATE TRIGGER tr_updated_at_config_ponto BEFORE UPDATE ON public.configuracoes_ponto FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+DROP TRIGGER IF EXISTS tr_updated_at_config_esocial ON public.configuracoes_esocial;
 CREATE TRIGGER tr_updated_at_config_esocial BEFORE UPDATE ON public.configuracoes_esocial FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+DROP TRIGGER IF EXISTS tr_updated_at_config_intervalo ON public.configuracoes_intervalo;
 CREATE TRIGGER tr_updated_at_config_intervalo BEFORE UPDATE ON public.configuracoes_intervalo FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+DROP TRIGGER IF EXISTS tr_updated_at_blocked_ips ON public.blocked_ips;
 CREATE TRIGGER tr_updated_at_blocked_ips BEFORE UPDATE ON public.blocked_ips FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+DROP TRIGGER IF EXISTS tr_updated_at_permissao_perfis ON public.permissao_perfis;
 CREATE TRIGGER tr_updated_at_permissao_perfis BEFORE UPDATE ON public.permissao_perfis FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+DROP TRIGGER IF EXISTS tr_updated_at_controle_acesso ON public.controle_acesso;
 CREATE TRIGGER tr_updated_at_controle_acesso BEFORE UPDATE ON public.controle_acesso FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+DROP TRIGGER IF EXISTS tr_updated_at_parametros_sistema ON public.parametros_sistema;
 CREATE TRIGGER tr_updated_at_parametros_sistema BEFORE UPDATE ON public.parametros_sistema FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+DROP TRIGGER IF EXISTS tr_updated_at_auth_gov_br ON public.auth_gov_br_sessions;
 CREATE TRIGGER tr_updated_at_auth_gov_br BEFORE UPDATE ON public.auth_gov_br_sessions FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();

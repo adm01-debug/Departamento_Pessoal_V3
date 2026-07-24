@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS public.ferias_audit_log (
 -- Ativar RLS
 ALTER TABLE public.ferias_audit_log ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "View ferias audit by company" ON public.ferias_audit_log;
 CREATE POLICY "View ferias audit by company" ON public.ferias_audit_log
 FOR SELECT USING (empresa_id IN (SELECT id FROM empresas));
 

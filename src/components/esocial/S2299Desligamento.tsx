@@ -1,6 +1,7 @@
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { User, Calendar, LogOut, FileText, Banknote } from 'lucide-react';
+import { maskCpfDisplay } from '@/utils/piiMask';
 
 export function S2299Desligamento({ dados }: { dados: any }) {
   return (
@@ -11,7 +12,7 @@ export function S2299Desligamento({ dados }: { dados: any }) {
             <User className="h-4 w-4 text-primary mt-1" />
             <div>
               <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">Identificação do Trabalhador</Label>
-              <p className="font-display font-bold text-sm">CPF: {dados.cpfTrab}</p>
+              <p className="font-display font-bold text-sm">CPF: {maskCpfDisplay(dados.cpfTrab)}</p>
               <p className="text-[10px] text-muted-foreground italic">Matrícula: {dados.matricula || '-'}</p>
             </div>
           </CardContent>

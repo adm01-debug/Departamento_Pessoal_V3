@@ -3,6 +3,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
+import { safeHref } from '@/utils/safeUrl';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -61,15 +63,15 @@ export function GerarPgrButton() {
     onSuccess: (data) => {
       toast.success(`PGR v${data.versao} gerado com sucesso`);
       qc.invalidateQueries({ queryKey: ['sst-programas-pgr'] });
-      if (data.signed_url) window.open(data.signed_url, '_blank', 'noopener');
+      if (data.signed_url) window.open(safeHref(data.signed_url), '_blank', 'noopener');
     },
-    onError: (e: Error) => toast.error(e.message || 'Falha ao gerar PGR'),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Falha ao gerar PGR.')),
   });
 
   const baixar = async (path: string) => {
     const { data, error } = await supabase.storage.from('sst-programas').createSignedUrl(path, 300);
     if (error) return toast.error('Falha ao gerar link');
-    if (data?.signedUrl) window.open(data.signedUrl, '_blank', 'noopener');
+    if (data?.signedUrl) window.open(safeHref(data.signedUrl), '_blank', 'noopener');
   };
 
   return (

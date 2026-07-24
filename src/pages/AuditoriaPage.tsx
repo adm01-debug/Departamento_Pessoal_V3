@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { auditoriaService } from '@/services/auditoriaService';
 import { Shield, Eye, Clock, User, Database, Search, Download, FileSpreadsheet } from 'lucide-react';
 import { useExcelExport } from '@/hooks/useExcelExport';
+import { useEmpresas } from '@/hooks/useEmpresas';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -31,15 +32,18 @@ export default function AuditoriaPage() {
   const [acaoFilter, setAcaoFilter] = useState('todos');
   const [selectedLog, setSelectedLog] = useState<Record<string, any> | null>(null);
   const { exportarExcel } = useExcelExport();
+  const { empresaAtual } = useEmpresas();
+  const empresaId = empresaAtual?.id || '';
 
   const { data: logs, isLoading } = useQuery({
-    queryKey: ['auditoria'],
-    queryFn: () => auditoriaService.listar({ limite: 500 }),
+    queryKey: ['auditoria', empresaId],
+    queryFn: () => auditoriaService.listar(empresaId, { limite: 500 }),
+    enabled: !!empresaId,
   });
 
-  const uniqueTables = useMemo(() => {
+  const uniqueTables = useMemo((): string[] => {
     if (!logs) return [];
-    return Array.from(new Set(logs.map((l: any) => l.tabela))).sort();
+    return (Array.from(new Set(logs.map((l: any) => l.tabela))) as string[]).sort();
   }, [logs]);
 
   const filtered = useMemo(() => {
@@ -57,7 +61,7 @@ export default function AuditoriaPage() {
     if (!filtered?.length) return;
     exportarExcel(
       'Log de Auditoria',
-      filtered.map(l => ({
+      filtered.map((l: any) => ({
         ...l,
         data: new Date(l.created_at).toLocaleString('pt-BR'),
         dados_anteriores: JSON.stringify(l.dados_anteriores),

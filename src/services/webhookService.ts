@@ -13,7 +13,10 @@ class WebhookService extends BaseService<any> {
 
     let query = this.getQuery().select('*', { count: 'exact' });
     if (empresaId) query = query.eq('empresa_id', empresaId);
-    if (search) query = query.ilike('nome', `%${search}%`);
+    if (search) {
+      const escapedSearch = search.replace(/[%_\\]/g, '\\$&');
+      query = query.ilike('nome', `%${escapedSearch}%`);
+    }
 
     const { data, count, error } = await query.order('nome');
     if (error) throw error;

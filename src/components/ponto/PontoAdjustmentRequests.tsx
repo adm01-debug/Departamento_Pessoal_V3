@@ -8,6 +8,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { Input } from '@/components/ui/input';
 import { useState, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
@@ -16,10 +17,45 @@ import { exportPortaria671PDF } from '@/services/exportService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { format, parseISO } from 'date-fns';
+
+interface SolicitacaoAjustePonto {
+  id: string;
+  colaborador: {
+    nome_completo: string;
+  } | null;
+  data_ponto: string;
+  tipo_ponto: string;
+  hora_sugerida?: string;
+  hora_original?: string;
+  motivo: string;
+  status: 'pendente' | 'aprovado' | 'recusado' | 'rejeitado';
+  relatorio_conformidade?: {
+    portaria_671_conformidade?: boolean;
+    timezone?: string;
+    geofencing?: boolean;
+    divergencia_minutos?: number;
+    sha256_integridade?: string;
+  };
+  created_at?: string;
+}
+
+interface TrilhaAuditoriaPonto {
+  id: string;
+  acao: string;
+  created_at: string;
+  user_email?: string;
+}
+
+interface BatchMutationResult {
+  id: string;
+  success: boolean;
+  error?: string;
+}
+
 export function PontoAdjustmentRequests() {
   const { empresaAtual } = useEmpresas();
   const queryClient = useQueryClient();
-  const [selectedRequest, setSelectedRequest] = useState<Record<string, any> | null>(null);
+  const [selectedRequest, setSelectedRequest] = useState<SolicitacaoAjustePonto | null>(null);
   const [search, setSearch] = useState("");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
@@ -33,7 +69,7 @@ export function PontoAdjustmentRequests() {
         .eq('empresa_id', empresaAtual.id)
         .order('created_at', { ascending: false });
       if (error) throw error;
-      return data || [];
+      return (data || []) as SolicitacaoAjustePonto[];
     },
     enabled: !!empresaAtual?.id,
   });
@@ -48,7 +84,7 @@ export function PontoAdjustmentRequests() {
         .eq('registro_id', selectedRequest.id)
         .order('created_at', { ascending: false });
       if (error) throw error;
-      return data || [];
+      return (data || []) as TrilhaAuditoriaPonto[];
     },
     enabled: !!selectedRequest?.id,
   });
@@ -80,24 +116,24 @@ export function PontoAdjustmentRequests() {
       queryClient.invalidateQueries({ queryKey: ['solicitacoes-ajuste-ponto'] });
       toast.success('Solicitação processada com sucesso!');
     },
-    onError: (e: any) => {
-      toast.error(`Erro ao processar: ${e.message}`);
+    onError: (error: unknown) => {
+      toast.error(safeErrorMessage(error, 'Erro ao processar solicitação de ajuste.'));
     }
   });
 
   const batchMutation = useMutation({
     mutationFn: async ({ ids, status }: { ids: string[], status: 'aprovado' | 'recusado' }) => {
-      const results = await Promise.all(ids.map(async (id) => {
+      const results: BatchMutationResult[] = await Promise.all(ids.map(async (id) => {
         try {
           await mutation.mutateAsync({ id, status });
           return { id, success: true };
-        } catch (e: any) {
-          return { id, success: false, error: e.message };
+        } catch (e: unknown) {
+          return { id, success: false, error: e instanceof Error ? e.message : String(e) };
         }
       }));
       return results;
     },
-    onSuccess: (results) => {
+    onSuccess: (results: BatchMutationResult[]) => {
       const successful = results.filter(r => r.success).length;
       const failed = results.filter(r => !r.success).length;
       
@@ -125,12 +161,12 @@ export function PontoAdjustmentRequests() {
 
   // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const filteredSolicitacoes = useMemo(() => {
-    return solicitacoes.filter((s: any) =>
+    return solicitacoes.filter((s: SolicitacaoAjustePonto) => 
       s.colaborador?.nome_completo.toLowerCase().includes(search.toLowerCase())
     );
   }, [solicitacoes, search]);
 
-  const showDetails = (solicitacao: any) => {
+  const showDetails = (solicitacao: SolicitacaoAjustePonto) => {
     setSelectedRequest(solicitacao);
   };
 
@@ -145,7 +181,7 @@ export function PontoAdjustmentRequests() {
             <CardTitle className="font-display flex items-center gap-2">
               <Clock className="h-4 w-4 text-warning" /> Solicitações de Ajuste
             </CardTitle>
-            <Badge variant="outline" className="text-[10px]">{solicitacoes.filter((s:any) => s.status === 'pendente').length} Pendentes</Badge>
+            <Badge variant="outline" className="text-[10px]">{solicitacoes.filter((s: SolicitacaoAjustePonto) => s.status === 'pendente').length} Pendentes</Badge>
           </div>
           <div className="relative w-full sm:w-64">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
@@ -199,7 +235,7 @@ export function PontoAdjustmentRequests() {
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredSolicitacoes.map((s: any) => (
+                filteredSolicitacoes.map((s: SolicitacaoAjustePonto) => (
                   <TableRow key={s.id} className="group transition-colors hover:bg-muted/10">
                     <TableCell>
                       <Checkbox 
@@ -333,7 +369,7 @@ export function PontoAdjustmentRequests() {
                     <div className="space-y-6 relative before:absolute before:inset-0 before:left-2 before:w-0.5 before:bg-muted">
                       {requestAuditLogs.length > 0 ? (
                         requestAuditLogs
-                          .map((log: any) => (
+                          .map((log: TrilhaAuditoriaPonto) => (
                             <div key={log.id} className="relative pl-8">
                               <div className="absolute left-0 top-1.5 h-4 w-4 rounded-full border-2 border-primary bg-background z-10" />
                               <div className="bg-card rounded-xl p-4 border shadow-xs">

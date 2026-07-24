@@ -178,7 +178,7 @@ export const feriasPDF = {
 
     const blob = doc.output('blob');
     const url = URL.createObjectURL(blob);
-    window.open(url, '_blank');
+    window.open(url, '_blank', 'noopener');
     doc.save(`relatorio_ferias_${format(new Date(), 'yyyyMMdd')}.pdf`);
   }
 };

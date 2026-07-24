@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function FeriadosPage() {
@@ -52,7 +53,7 @@ export default function FeriadosPage() {
       setOpen(false);
       setNome(''); setData(''); setTipo('nacional');
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar feriado.')),
   });
 
   const tipoColor: Record<string, string> = {

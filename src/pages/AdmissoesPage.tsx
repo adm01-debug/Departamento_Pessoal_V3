@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -72,7 +73,7 @@ export default function AdmissoesPage() {
       await contratacaoService.enviarLinkCandidato(admissao.id, admissao.email);
       toast.success('Link de contratação enviado com sucesso!');
     } catch (error: any) {
-      toast.error('Erro ao enviar link: ' + error.message);
+      toast.error(safeErrorMessage(error, 'Erro ao enviar link.'));
     } finally {
       setSendingLink(null);
     }
@@ -92,7 +93,7 @@ export default function AdmissoesPage() {
 
       toast.success('Link gerado para WhatsApp!');
     } catch (error: any) {
-      toast.error('Erro ao gerar link: ' + error.message);
+      toast.error(safeErrorMessage(error, 'Erro ao gerar link.'));
     } finally {
       setSendingLink(null);
     }

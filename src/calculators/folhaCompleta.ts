@@ -35,23 +35,36 @@ export function calcularFolhaCompleta(params: ParamsFolhaCompleta) {
   
   // Cálculo de DSR sobre Adicional Noturno (o DSR das HE já vem no objeto he)
   const dsrAdNoturno = calcularDSR(adNoturno, diasUteis, domingosEFeriados);
-  const dsrTotal = Math.round((he.dsr + dsrAdNoturno) * 100) / 100;
+  const dsrTotal = Math.trunc((he.dsr + dsrAdNoturno) * 100) / 100;
 
   const adInsalubridade = insalubridade ? calcularInsalubridade(insalubridade) : 0;
   const adPericulosidade = periculosidade ? calcularPericulosidade(salarioBase) : 0;
 
-  const totalProventos = Math.round((salarioBase + he.total + adNoturno + dsrTotal + adInsalubridade + adPericulosidade + outrosProventos) * 100) / 100;
+  const totalProventos = Math.trunc((salarioBase + he.total + adNoturno + dsrTotal + adInsalubridade + adPericulosidade + outrosProventos) * 100) / 100;
 
   const inss = calcularINSS(totalProventos);
-  const irrf = calcularIRRF(totalProventos, dependentes);
   const fgts = calcularFGTS(totalProventos);
   const descontoVT = valeTransporte > 0 ? calcularDescontoVT(salarioBase, valeTransporte) : 0;
 
-  const salarioAposDescontosBase = totalProventos - inss - irrf - descontoVT - outrosDescontos;
-  const pensao = pensaoPercentual > 0 ? calcularPensaoAlimenticia(salarioAposDescontosBase, pensaoPercentual) : 0;
+  // IN RFB: Pensão alimentícia judicial é dedutível da base IRRF.
+  // Resolve circularidade (IRRF depende de pensão, pensão depende de IRRF) via iteração convergente.
+  let irrf = 0;
+  let pensao = 0;
+  if (pensaoPercentual > 0) {
+    let pensaoEstimada = 0;
+    for (let i = 0; i < 10; i++) {
+      irrf = calcularIRRF(totalProventos, dependentes, pensaoEstimada);
+      const baseParaPensao = totalProventos - inss - irrf - descontoVT - outrosDescontos;
+      pensao = calcularPensaoAlimenticia(baseParaPensao, pensaoPercentual);
+      if (Math.abs(pensao - pensaoEstimada) < 0.01) break;
+      pensaoEstimada = pensao;
+    }
+  } else {
+    irrf = calcularIRRF(totalProventos, dependentes);
+  }
 
-  const totalDescontos = Math.round((inss + irrf + descontoVT + pensao + outrosDescontos) * 100) / 100;
-  const salarioLiquido = Math.round((totalProventos - totalDescontos) * 100) / 100;
+  const totalDescontos = Math.trunc((inss + irrf + descontoVT + pensao + outrosDescontos) * 100) / 100;
+  const salarioLiquido = Math.trunc((totalProventos - totalDescontos) * 100) / 100;
 
   const lancamentos = [
     { codigo: '1000', descricao: 'Salário Base', valor: salarioBase, tipo: 'provento' },
@@ -92,6 +105,6 @@ export function calcularSalarioLiquido(params: {
   const fgts = calcularFGTS(salarioBruto);
   const descontoVT = valeTransporte > 0 ? calcularDescontoVT(salarioBruto, valeTransporte) : 0;
   const totalDescontos = inss + irrf + descontoVT;
-  const liquido = Math.round((salarioBruto - totalDescontos) * 100) / 100;
-  return { salarioBruto, inss, irrf, fgts, descontoVT, totalDescontos: Math.round(totalDescontos * 100) / 100, liquido };
+  const liquido = Math.trunc((salarioBruto - totalDescontos) * 100) / 100;
+  return { salarioBruto, inss, irrf, fgts, descontoVT, totalDescontos: Math.trunc(totalDescontos * 100) / 100, liquido };
 }

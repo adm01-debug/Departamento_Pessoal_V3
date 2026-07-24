@@ -17,6 +17,7 @@ import { faltasService } from '@/services';
 import { colaboradorService } from '@/services';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { Plus, UserX, Trash2, Check, X, FileText, Stethoscope } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -51,12 +52,12 @@ export default function FaltasPage() {
 
   const { data: faltas = [], isLoading } = useQuery({
     queryKey: ['faltas', empresaAtual?.id],
-    queryFn: () => faltasService.listar(empresaAtual?.id),
+    queryFn: () => faltasService.listar(empresaAtual!.id),
     enabled: !!empresaAtual?.id,
   });
   const { data: colaboradores = [] } = useQuery({
     queryKey: ['colaboradores', empresaAtual?.id],
-    queryFn: () => colaboradorService.list(empresaAtual?.id),
+    queryFn: () => colaboradorService.list(empresaAtual!.id),
     enabled: !!empresaAtual?.id,
   });
 
@@ -86,26 +87,26 @@ export default function FaltasPage() {
       setForm(initialForm);
       toast.success('Falta registrada!');
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao registrar falta.')),
   });
 
   const aprovar = useMutation({
-    mutationFn: (id: string) => faltasService.atualizar(id, { status: 'aprovada', aprovado_em: new Date().toISOString() }),
+    mutationFn: (id: string) => faltasService.atualizar(id, { status: 'aprovada', aprovado_em: new Date().toISOString() }, empresaAtual!.id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['faltas'] }); toast.success('Falta aprovada!'); },
   });
 
   const rejeitar = useMutation({
-    mutationFn: (id: string) => faltasService.atualizar(id, { status: 'rejeitada' }),
+    mutationFn: (id: string) => faltasService.atualizar(id, { status: 'rejeitada' }, empresaAtual!.id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['faltas'] }); toast.success('Falta rejeitada!'); },
   });
 
   const marcarDesconto = useMutation({
-    mutationFn: (id: string) => faltasService.atualizar(id, { desconto_aplicado: true, status: 'descontada' }),
+    mutationFn: (id: string) => faltasService.atualizar(id, { desconto_aplicado: true, status: 'descontada' }, empresaAtual!.id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['faltas'] }); toast.success('Desconto aplicado!'); },
   });
 
   const excluir = useMutation({
-    mutationFn: (id: string) => faltasService.excluir(id),
+    mutationFn: (id: string) => faltasService.excluir(id, empresaAtual!.id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['faltas'] }); toast.success('Falta excluída!'); },
   });
 

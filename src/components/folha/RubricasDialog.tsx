@@ -32,6 +32,7 @@ import { Settings2, Plus, Trash2, Check, X, Save, AlertCircle, Wrench, DownloadC
 import { cn } from '@/lib/utils';
 import { validarRubricaESocial, sugerirCorrecaoRubrica } from '@/validators/esocial';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 
 export function RubricasDialog() {
   const [isOpen, setIsOpen] = useState(false);
@@ -89,7 +90,7 @@ export function RubricasDialog() {
       });
     },
     onError: (error: any) => {
-      toast.error(`Erro ao criar rubrica: ${error.message}`);
+      toast.error(safeErrorMessage(error, 'Erro ao criar rubrica.'));
     },
   });
 
@@ -106,7 +107,7 @@ export function RubricasDialog() {
       toast.success('Rubrica removida com sucesso');
     },
     onError: (error: any) => {
-      toast.error(`Erro ao remover rubrica: ${error.message}`);
+      toast.error(safeErrorMessage(error, 'Erro ao remover rubrica.'));
     },
   });
 

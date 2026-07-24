@@ -6,6 +6,8 @@ import { documentoService } from '@/services';
 import { supabase } from '@/integrations/supabase/client';
 import { useState, useRef } from 'react';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
+import { validateUploadFile } from '@/utils/uploadValidation';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
@@ -19,9 +21,10 @@ const TIPOS_DOCUMENTO = ['Atestado', 'Certificado', 'Comprovante', 'Contrato', '
 interface PortalDocumentosTabProps {
   navigate: (path: string) => void;
   colaboradorId?: string;
+  empresaId?: string;
 }
 
-export function PortalDocumentosTab({ navigate, colaboradorId }: PortalDocumentosTabProps) {
+export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: PortalDocumentosTabProps) {
   const [showUpload, setShowUpload] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [tipo, setTipo] = useState('');
@@ -31,9 +34,9 @@ export function PortalDocumentosTab({ navigate, colaboradorId }: PortalDocumento
   const queryClient = useQueryClient();
 
   const { data: documentos, isLoading } = useQuery<any[]>({
-    queryKey: ['portal-documentos', colaboradorId],
-    queryFn: () => documentoService.listarDocumentos(colaboradorId),
-    enabled: !!colaboradorId
+    queryKey: ['portal-documentos', empresaId, colaboradorId],
+    queryFn: () => documentoService.listarDocumentos(empresaId!, colaboradorId),
+    enabled: !!colaboradorId && !!empresaId,
   });
 
 
@@ -43,7 +46,13 @@ export function PortalDocumentosTab({ navigate, colaboradorId }: PortalDocumento
       toast.error('Selecione um arquivo e tipo');
       return;
     }
-    
+    try {
+      validateUploadFile(file, { maxSizeMB: 10 });
+    } catch (err: any) {
+      toast.error(safeErrorMessage(err, 'Arquivo inválido.'));
+      return;
+    }
+
     setUploading(true);
     try {
       const ext = file.name.split('.').pop();
@@ -72,7 +81,7 @@ export function PortalDocumentosTab({ navigate, colaboradorId }: PortalDocumento
       setFile(null);
       setTipo('');
     } catch (e: any) {
-      toast.error(e.message);
+      toast.error(safeErrorMessage(e, 'Erro ao enviar documento.'));
     } finally {
       setUploading(false);
     }
@@ -135,7 +144,7 @@ export function PortalDocumentosTab({ navigate, colaboradorId }: PortalDocumento
       toast.success('Documento assinado com sucesso!');
       setDocToSign(null);
     } catch (e: any) {
-      toast.error('Erro ao assinar documento: ' + e.message);
+      toast.error(safeErrorMessage(e, 'Erro ao assinar documento.'));
     }
   };
 

@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Gift, Save, RefreshCw, Plus, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -35,10 +36,16 @@ export function BeneficiosSettingsTab() {
 
   const criar = useMutation({
     mutationFn: async (d: typeof form) => {
+      const nome = d.nome.trim().slice(0, 100);
+      const tipo = d.tipo.trim().slice(0, 50);
+      const valor = Number(d.valor);
+      if (!nome) throw new Error('Nome do plano é obrigatório.');
+      if (valor < 0 || valor > 99999.99 || isNaN(valor)) throw new Error('Valor inválido (entre 0 e 99.999,99).');
+
       const { error } = await supabase.from('beneficios').insert({
-        nome: d.nome,
-        tipo: d.tipo,
-        valor: Number(d.valor),
+        nome,
+        tipo,
+        valor,
         ativo: true
       });
       if (error) throw error;
@@ -49,7 +56,7 @@ export function BeneficiosSettingsTab() {
       setForm({ nome: '', tipo: '', valor: '' });
       toast.success('Regra de benefício criada');
     },
-    onError: (e: any) => toast.error(e.message || 'Erro ao criar'),
+    onError: (e: any) => toast.error(safeErrorMessage(e, 'Erro ao criar regra de benefício.')),
   });
 
   const alternarStatus = useMutation({

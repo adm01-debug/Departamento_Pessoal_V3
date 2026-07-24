@@ -20,6 +20,7 @@ CREATE INDEX IF NOT EXISTS idx_provisoes_colaborador ON public.provisoes_mensais
 -- RLS
 ALTER TABLE public.provisoes_mensais ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view provisoes of their companies" ON public.provisoes_mensais;
 CREATE POLICY "Users can view provisoes of their companies"
 ON public.provisoes_mensais
 FOR SELECT
@@ -31,6 +32,7 @@ USING (
     )
 );
 
+DROP POLICY IF EXISTS "Users can manage provisoes of their companies" ON public.provisoes_mensais;
 CREATE POLICY "Users can manage provisoes of their companies"
 ON public.provisoes_mensais
 FOR ALL

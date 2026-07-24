@@ -1,6 +1,15 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { corsHeaders, createErrorResponse } from '../_shared/contract.ts';
+import { corsHeaders, createErrorResponse, parseJsonBody, enforceOrigin, handlePreflight } from '../_shared/contract.ts';
+import { verifyCsrf } from '../_shared/csrf.ts';
+import { captureException } from '../_shared/sentry.ts';
+import {
+  beginIdempotency,
+  completeIdempotency,
+  extractIdempotencyKey,
+  failIdempotency,
+} from '../_shared/idempotency.ts';
+
 
 /**
  * distribuir-holerites
@@ -10,7 +19,10 @@ import { corsHeaders, createErrorResponse } from '../_shared/contract.ts';
  * - Idempotente: reprocessa apenas canais/holerites ainda não distribuídos.
  */
 serve(async (req: Request): Promise<Response> => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  const __pf = handlePreflight(req); if (__pf) return __pf;
+  const __og = enforceOrigin(req); if (__og) return __og;try {
+  const csrf = await verifyCsrf(req.clone());
+  if (!csrf.ok) return csrf.response!;
 
   const authHeader = req.headers.get('Authorization') ?? '';
   if (!authHeader.startsWith('Bearer ')) {
@@ -32,12 +44,15 @@ serve(async (req: Request): Promise<Response> => {
   }
   const userId = userData.user.id;
 
+  const rlClient = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
+  const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
+  const rl = await checkRateLimit(rlClient, { key: `distribuir-holerites:${userId}`, limit: 5, windowSec: 60 });
+  if (!rl.allowed) return rateLimitResponse(rl);
+
   let body: { folha_id?: string; canais?: string[] };
-  try {
-    body = await req.json();
-  } catch {
-    return createErrorResponse('JSON inválido', 400, 'BAD_REQUEST');
-  }
+  const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
+  if (_pe) return _pe;
+  body = _pb as typeof body;
 
   const folhaId = String(body.folha_id ?? '').trim();
   const canais = Array.isArray(body.canais) && body.canais.length
@@ -67,6 +82,19 @@ serve(async (req: Request): Promise<Response> => {
     .eq('empresa_id', folha.empresa_id)
     .maybeSingle();
   if (!vinc) return createErrorResponse('Sem permissão nesta empresa', 403, 'FORBIDDEN');
+
+  // Idempotência transacional — evita distribuições duplicadas em rajada
+  const idemKey = extractIdempotencyKey(req, body);
+  const idem = await beginIdempotency(admin, {
+    endpoint: 'distribuir-holerites',
+    key: idemKey,
+    requestBody: { folha_id: folhaId, canais: [...canais].sort() },
+    empresaId: folha.empresa_id,
+    userId,
+  });
+  if (idem.replay) return idem.replay;
+  if (idem.conflict) return idem.conflict;
+
 
   // Busca holerites da folha
   const { data: holerites, error: hErr } = await admin
@@ -121,8 +149,10 @@ serve(async (req: Request): Promise<Response> => {
   }
 
   if (inserts.length === 0) {
+    const replayBody = { ok: true, novos: 0, ja_distribuidos: existentes.size, total: holerites.length };
+    await completeIdempotency(admin, idem.id, 200, replayBody);
     return new Response(
-      JSON.stringify({ ok: true, novos: 0, ja_distribuidos: existentes.size, total: holerites.length }),
+      JSON.stringify(replayBody),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
@@ -131,7 +161,10 @@ serve(async (req: Request): Promise<Response> => {
     .from('holerite_distribuicoes')
     .insert(inserts)
     .select('id, canal');
-  if (distErr) return createErrorResponse(distErr.message, 500, 'DB_ERROR');
+  if (distErr) {
+    await failIdempotency(admin, idem.id);
+    return createErrorResponse(distErr.message, 500, 'DB_ERROR');
+  }
 
   // Marca portal como enviado imediatamente (canal síncrono)
   const idsPortal = (distIns ?? []).filter((d) => d.canal === 'portal').map((d) => d.id);
@@ -146,15 +179,22 @@ serve(async (req: Request): Promise<Response> => {
     await admin.from('notificacoes').insert(notifs);
   }
 
+  const successBody = {
+    ok: true,
+    total: holerites.length,
+    novos: inserts.length,
+    ja_distribuidos: existentes.size,
+    canais,
+    folha_id: folhaId,
+  };
+  await completeIdempotency(admin, idem.id, 200, successBody);
   return new Response(
-    JSON.stringify({
-      ok: true,
-      total: holerites.length,
-      novos: inserts.length,
-      ja_distribuidos: existentes.size,
-      canais,
-      folha_id: folhaId,
-    }),
+    JSON.stringify(successBody),
     { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
   );
+  } catch (e) {
+    captureException(e);
+    return createErrorResponse('Erro interno', 500, 'INTERNAL_SERVER_ERROR');
+  }
 });
+

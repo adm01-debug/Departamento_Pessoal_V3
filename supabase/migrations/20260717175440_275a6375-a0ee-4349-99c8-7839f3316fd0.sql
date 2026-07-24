@@ -1,4 +1,4 @@
-CREATE TABLE public.afdt_divergencias (
+CREATE TABLE IF NOT EXISTS public.afdt_divergencias (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   importacao_id UUID NOT NULL REFERENCES public.afdt_importacoes(id) ON DELETE CASCADE,
   empresa_id UUID NOT NULL,
@@ -14,14 +14,15 @@ CREATE TABLE public.afdt_divergencias (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_afdt_div_imp ON public.afdt_divergencias(importacao_id);
-CREATE INDEX idx_afdt_div_emp_tipo ON public.afdt_divergencias(empresa_id, tipo) WHERE resolvido = false;
+CREATE INDEX IF NOT EXISTS idx_afdt_div_imp ON public.afdt_divergencias(importacao_id);
+CREATE INDEX IF NOT EXISTS idx_afdt_div_emp_tipo ON public.afdt_divergencias(empresa_id, tipo) WHERE resolvido = false;
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.afdt_divergencias TO authenticated;
 GRANT ALL ON public.afdt_divergencias TO service_role;
 
 ALTER TABLE public.afdt_divergencias ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "afdt_div_tenant_all" ON public.afdt_divergencias;
 CREATE POLICY "afdt_div_tenant_all" ON public.afdt_divergencias
   FOR ALL TO authenticated
   USING (empresa_id IN (SELECT ue.empresa_id FROM public.user_empresas ue WHERE ue.user_id = auth.uid()))

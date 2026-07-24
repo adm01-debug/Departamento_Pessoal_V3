@@ -40,6 +40,7 @@ GRANT ALL ON public.sst_extintores TO service_role;
 
 ALTER TABLE public.sst_extintores ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users manage extintores from their empresa" ON public.sst_extintores;
 CREATE POLICY "Users manage extintores from their empresa"
 ON public.sst_extintores FOR ALL
 TO authenticated
@@ -80,6 +81,7 @@ GRANT ALL ON public.sst_extintores_inspecoes TO service_role;
 
 ALTER TABLE public.sst_extintores_inspecoes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users manage inspecoes from their empresa" ON public.sst_extintores_inspecoes;
 CREATE POLICY "Users manage inspecoes from their empresa"
 ON public.sst_extintores_inspecoes FOR ALL
 TO authenticated

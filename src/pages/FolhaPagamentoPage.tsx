@@ -12,6 +12,8 @@ import { cn } from '@/lib/utils';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { useIdempotencyKey } from '@/hooks/useIdempotencyKey';
 import { auditLogger } from '@/utils/auditLogger';
+import { useDataAccessLog } from '@/hooks/useDataAccessLog';
+import { safeErrorMessage } from '@/utils/safeError';
 import { Card, CardContent } from '@/components/ui/card';
 import { FolhaKPIs, FolhaPipeline, FolhaValidationAlerts, FolhaComposicao, Simulador13Dialog, SimuladorWhatIf, CNABDialog, RelatorioContabilDialog, FGTSDigitalDashboard, RubricasDialog, CalculoFolhaWizard, PagamentoBancarioWizard, FolhaAuditTimeline, FolhaDashboard, FolhaESocialSync } from '@/components/folha';
 import { folhaCalc } from '@/utils/folhaCalc';
@@ -108,6 +110,8 @@ export default function FolhaPagamentoPage() {
   const queryClient = useQueryClient();
   const [calcServidor, setCalcServidor] = useState(false);
 
+  useDataAccessLog('folhas_pagamento', resumo?.id, empresaAtual?.id);
+
   const calcularFolha = useMutation({
     mutationFn: async (comp: string) => {
       const [mes, ano] = comp.split('/');
@@ -129,7 +133,7 @@ export default function FolhaPagamentoPage() {
       queryClient.invalidateQueries({ queryKey: ['folha-resumo', competencia] });
       toast.success('Folha calculada com sucesso!');
     },
-    onError: (error: Error) => toast.error(`Erro: ${error.message}`),
+    onError: (error: Error) => toast.error(safeErrorMessage(error, 'Erro na operação da folha.')),
   });
 
   const { key: idemKey, reset: idemReset } = useIdempotencyKey();
@@ -150,7 +154,7 @@ export default function FolhaPagamentoPage() {
       toast.success('Folha calculada no servidor com sucesso!');
     } catch (err: any) {
       // Falha: mantém a mesma chave para permitir REPLAY seguro em retry manual
-      toast.error(`Erro: ${err.message}`);
+      toast.error(safeErrorMessage(err, 'Erro ao calcular folha no servidor.'));
     } finally {
       setCalcServidor(false);
     }
@@ -176,7 +180,7 @@ export default function FolhaPagamentoPage() {
       queryClient.invalidateQueries({ queryKey: ['folha-resumo', competencia] });
       toast.success('Folha de pagamento encerrada com sucesso!');
     },
-    onError: (error: Error) => toast.error(`Erro: ${error.message}`),
+    onError: (error: Error) => toast.error(safeErrorMessage(error, 'Erro na operação da folha.')),
   });
 
 

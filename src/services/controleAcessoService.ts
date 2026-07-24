@@ -1,13 +1,14 @@
 import { supabase } from '@/integrations/supabase/client';
 export const controleAcessoService = {
-  async listar(empresaId?: string): Promise<any[]> {
-    
-    let q = supabase.from('controle_acesso').select('*, colaborador:colaboradores(nome_completo)').order('created_at', { ascending: false });
-    if (empresaId) q = q.eq('empresa_id', empresaId);
-    const { data, error } = await q;
+  async listar(empresaId: string): Promise<any[]> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { data, error } = await supabase
+      .from('controle_acesso')
+      .select('*, colaborador:colaboradores(nome_completo)')
+      .eq('empresa_id', empresaId)
+      .order('created_at', { ascending: false });
     if (error) throw error;
     return data || [];
-  
   },
   
   async registrar(d: any): Promise<any> {
@@ -19,11 +20,10 @@ export const controleAcessoService = {
   
   },
   
-  async excluir(id: string): Promise<void> {
-    
-    const { error } = await supabase.from('controle_acesso').delete().eq('id', id);
+  async excluir(id: string, empresaId: string): Promise<void> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { error } = await supabase.from('controle_acesso').delete().eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
-  
   },
 };
 

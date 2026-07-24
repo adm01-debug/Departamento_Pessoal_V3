@@ -29,15 +29,19 @@ CREATE INDEX IF NOT EXISTS idx_comissoes_created ON public.comissoes(created_at)
 -- RLS
 ALTER TABLE public.comissoes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "comissoes_select" ON public.comissoes;
 CREATE POLICY "comissoes_select" ON public.comissoes
   FOR SELECT USING (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "comissoes_insert" ON public.comissoes;
 CREATE POLICY "comissoes_insert" ON public.comissoes
   FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "comissoes_update" ON public.comissoes;
 CREATE POLICY "comissoes_update" ON public.comissoes
   FOR UPDATE USING (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "comissoes_delete" ON public.comissoes;
 CREATE POLICY "comissoes_delete" ON public.comissoes
   FOR DELETE USING (auth.uid() IS NOT NULL);
 
@@ -50,6 +54,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_comissoes_updated_at ON public.comissoes;
 CREATE TRIGGER trigger_comissoes_updated_at
   BEFORE UPDATE ON public.comissoes
   FOR EACH ROW EXECUTE FUNCTION update_comissoes_updated_at();

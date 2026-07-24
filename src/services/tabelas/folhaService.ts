@@ -15,9 +15,9 @@ export const esocialLotesService = {
 };
 
 export const eventosVariaveisService = {
-  listar: async (empresaId?: string, competencia?: string) => {
-    let q = supabase.from('eventos_variaveis').select('*, colaborador:colaboradores(nome_completo)').order('created_at', { ascending: false });
-    if (empresaId) q = (q as any).eq('empresa_id', empresaId);
+  listar: async (empresaId: string, competencia?: string) => {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    let q = (supabase as any).from('eventos_variaveis').select('*, colaborador:colaboradores(nome_completo)').eq('empresa_id', empresaId).order('created_at', { ascending: false });
     if (competencia) q = q.eq('competencia', competencia);
     const { data, error } = await q;
     if (error) throw error;
@@ -27,8 +27,9 @@ export const eventosVariaveisService = {
     const { error } = await supabase.from('eventos_variaveis').insert(d);
     if (error) throw error;
   },
-  excluir: async (id: string) => {
-    const { error } = await supabase.from('eventos_variaveis').delete().eq('id', id);
+  excluir: async (id: string, empresaId: string) => {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { error } = await (supabase as any).from('eventos_variaveis').delete().eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   },
 };
@@ -46,10 +47,9 @@ export const lancamentosFolhaService = {
 };
 
 export const rubricasFolhaService = {
-  listar: async (empresaId?: string) => {
-    let q = supabase.from('rubricas_folha').select('*').order('codigo');
-    if (empresaId) q = q.eq('empresa_id', empresaId);
-    const { data, error } = await q;
+  listar: async (empresaId: string) => {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { data, error } = await supabase.from('rubricas_folha').select('*').eq('empresa_id', empresaId).order('codigo');
     if (error) throw error;
     return data || [];
   },
@@ -57,8 +57,9 @@ export const rubricasFolhaService = {
     const { error } = await supabase.from('rubricas_folha').insert(d);
     if (error) throw error;
   },
-  atualizar: async (id: string, d: any) => {
-    const { error } = await supabase.from('rubricas_folha').update(d).eq('id', id);
+  atualizar: async (id: string, d: any, empresaId: string) => {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { error } = await supabase.from('rubricas_folha').update(d).eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   },
 };

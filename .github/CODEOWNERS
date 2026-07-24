@@ -1,19 +1,17 @@
-# Code Owners
+# Default
 * @adm01-debug
 
-# Frontend
-/src/components/ @adm01-debug
-/src/pages/ @adm01-debug
-/src/hooks/ @adm01-debug
+# CI/CD
+.github/workflows/ @adm01-debug
 
-# Backend
-/src/services/ @adm01-debug
-/supabase/ @adm01-debug
+# Deploy
+Dockerfile @adm01-debug
+nginx.conf @adm01-debug
 
-# Tests
-/src/test/ @adm01-debug
-/e2e/ @adm01-debug
+# Core
+src/ @adm01-debug
+supabase/ @adm01-debug
+scripts/ @adm01-debug
 
-# Documentation
-/docs/ @adm01-debug
+# Docs
 *.md @adm01-debug

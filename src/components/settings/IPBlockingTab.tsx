@@ -14,6 +14,15 @@ import { toast } from 'sonner';
 import { Plus, Trash2, ShieldBan, ShieldCheck, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import { safeErrorMessage } from '@/utils/safeError';
+
+const IP_V4_REGEX = /^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$/;
+const IP_V4_CIDR_REGEX = /^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)\/(3[0-2]|[12]?\d)$/;
+
+function isValidIP(value: string): boolean {
+  const trimmed = value.trim();
+  return IP_V4_REGEX.test(trimmed) || IP_V4_CIDR_REGEX.test(trimmed);
+}
 
 export function IPBlockingTab() {
   const qc = useQueryClient();
@@ -34,15 +43,20 @@ export function IPBlockingTab() {
 
   const bloquear = useMutation({
     mutationFn: async () => {
+      const ip = form.ip_address.trim();
+      if (!isValidIP(ip)) throw new Error('Endereço IP inválido. Use formato IPv4 (ex: 192.168.1.1) ou CIDR (ex: 10.0.0.0/24).');
+      const reason = form.reason.trim().slice(0, 200);
+      const hours = Math.max(1, Math.min(8760, Number(form.hours) || 24));
+
       const payload: any = {
-        ip_address: form.ip_address,
-        reason: form.reason || null,
+        ip_address: ip,
+        reason: reason || null,
         permanent: form.permanent,
         blocked_at: new Date().toISOString(),
       };
       if (!form.permanent) {
         const expires = new Date();
-        expires.setHours(expires.getHours() + Number(form.hours || 24));
+        expires.setHours(expires.getHours() + hours);
         payload.expires_at = expires.toISOString();
       }
       const { error } = await supabase.from('blocked_ips').insert(payload);
@@ -54,7 +68,7 @@ export function IPBlockingTab() {
       setOpen(false);
       setForm({ ip_address: '', reason: '', permanent: true, hours: '24' });
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toast.error(safeErrorMessage(err, 'Erro ao bloquear IP.')),
   });
 
   const desbloquear = useMutation({

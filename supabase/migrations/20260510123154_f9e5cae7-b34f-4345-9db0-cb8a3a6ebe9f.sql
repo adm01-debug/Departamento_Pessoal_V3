@@ -5,6 +5,7 @@ DROP POLICY IF EXISTS "solicitacoes_update_policy" ON public.solicitacoes_ajuste
 DROP POLICY IF EXISTS "solicitacoes_delete_policy" ON public.solicitacoes_ajuste_ponto;
 
 -- Política de Visualização: Admins/Gestores veem tudo. 
+DROP POLICY IF EXISTS "solicitacoes_select_policy" ON public.solicitacoes_ajuste_ponto;
 CREATE POLICY "solicitacoes_select_policy" ON public.solicitacoes_ajuste_ponto
 FOR SELECT TO authenticated
 USING (
@@ -12,11 +13,13 @@ USING (
 );
 
 -- Política de Inserção: Permitida para autenticados
+DROP POLICY IF EXISTS "solicitacoes_insert_policy" ON public.solicitacoes_ajuste_ponto;
 CREATE POLICY "solicitacoes_insert_policy" ON public.solicitacoes_ajuste_ponto
 FOR INSERT TO authenticated
 WITH CHECK (true);
 
 -- Política de Atualização: Apenas Admins/Gestores podem mudar status
+DROP POLICY IF EXISTS "solicitacoes_update_policy" ON public.solicitacoes_ajuste_ponto;
 CREATE POLICY "solicitacoes_update_policy" ON public.solicitacoes_ajuste_ponto
 FOR UPDATE TO authenticated
 USING (
@@ -27,6 +30,7 @@ WITH CHECK (
 );
 
 -- Política de Deleção: Admins/Gestores
+DROP POLICY IF EXISTS "solicitacoes_delete_policy" ON public.solicitacoes_ajuste_ponto;
 CREATE POLICY "solicitacoes_delete_policy" ON public.solicitacoes_ajuste_ponto
 FOR DELETE TO authenticated
 USING (

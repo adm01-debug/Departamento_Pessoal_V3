@@ -21,4 +21,5 @@ CREATE INDEX IF NOT EXISTS idx_cas_empresa ON public.cas(empresa_id);
 CREATE INDEX IF NOT EXISTS idx_cas_colaborador ON public.cas(colaborador_id);
 ALTER TABLE public.cas ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "cas_all" ON public.cas;
 CREATE POLICY "cas_all" ON public.cas FOR ALL USING (auth.uid() IS NOT NULL);

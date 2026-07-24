@@ -32,6 +32,7 @@ CREATE INDEX IF NOT EXISTS idx_guias_inss_status ON public.guias_inss(status);
 -- RLS
 ALTER TABLE public.guias_inss ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "guias_inss_all" ON public.guias_inss;
 CREATE POLICY "guias_inss_all" ON public.guias_inss
   USING (auth.uid() IS NOT NULL)
   WITH CHECK (auth.uid() IS NOT NULL);

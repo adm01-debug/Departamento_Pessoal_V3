@@ -42,9 +42,11 @@ describe('Audit Log & RLS Integration Logic', () => {
 
     expect(insertSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        tabela: 'desligamentos',
+        source_table: 'desligamentos',
+        entity: 'desligamentos',
+        entity_id: 'des-456',
+        action: 'INSERT',
         user_id: 'user-123',
-        user_email: 'test@example.com'
       })
     );
   });

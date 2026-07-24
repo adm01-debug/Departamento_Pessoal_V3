@@ -1,6 +1,6 @@
 
 -- Avaliação de Desempenho tables
-CREATE TABLE public.ciclos_avaliacao (
+CREATE TABLE IF NOT EXISTS public.ciclos_avaliacao (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   empresa_id UUID REFERENCES public.empresas(id),
   nome TEXT NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE public.ciclos_avaliacao (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE public.metas_okrs (
+CREATE TABLE IF NOT EXISTS public.metas_okrs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   empresa_id UUID REFERENCES public.empresas(id),
   colaborador_id UUID REFERENCES public.colaboradores(id),
@@ -30,7 +30,7 @@ CREATE TABLE public.metas_okrs (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE public.feedbacks_360 (
+CREATE TABLE IF NOT EXISTS public.feedbacks_360 (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   empresa_id UUID REFERENCES public.empresas(id),
   ciclo_id UUID REFERENCES public.ciclos_avaliacao(id) ON DELETE SET NULL,
@@ -46,7 +46,7 @@ CREATE TABLE public.feedbacks_360 (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE public.pdis (
+CREATE TABLE IF NOT EXISTS public.pdis (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   empresa_id UUID REFERENCES public.empresas(id),
   colaborador_id UUID REFERENCES public.colaboradores(id),
@@ -61,7 +61,7 @@ CREATE TABLE public.pdis (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE public.competencias_matriz (
+CREATE TABLE IF NOT EXISTS public.competencias_matriz (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   empresa_id UUID REFERENCES public.empresas(id),
   nome TEXT NOT NULL,
@@ -81,27 +81,47 @@ ALTER TABLE public.pdis ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.competencias_matriz ENABLE ROW LEVEL SECURITY;
 
 -- RLS policies
+DROP POLICY IF EXISTS "ciclos_avaliacao_select" ON public.ciclos_avaliacao;
 CREATE POLICY "ciclos_avaliacao_select" ON public.ciclos_avaliacao FOR SELECT TO authenticated USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "ciclos_avaliacao_insert" ON public.ciclos_avaliacao;
 CREATE POLICY "ciclos_avaliacao_insert" ON public.ciclos_avaliacao FOR INSERT TO authenticated WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "ciclos_avaliacao_update" ON public.ciclos_avaliacao;
 CREATE POLICY "ciclos_avaliacao_update" ON public.ciclos_avaliacao FOR UPDATE TO authenticated USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "ciclos_avaliacao_delete" ON public.ciclos_avaliacao;
 CREATE POLICY "ciclos_avaliacao_delete" ON public.ciclos_avaliacao FOR DELETE TO authenticated USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
 
+DROP POLICY IF EXISTS "metas_okrs_select" ON public.metas_okrs;
 CREATE POLICY "metas_okrs_select" ON public.metas_okrs FOR SELECT TO authenticated USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "metas_okrs_insert" ON public.metas_okrs;
 CREATE POLICY "metas_okrs_insert" ON public.metas_okrs FOR INSERT TO authenticated WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "metas_okrs_update" ON public.metas_okrs;
 CREATE POLICY "metas_okrs_update" ON public.metas_okrs FOR UPDATE TO authenticated USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "metas_okrs_delete" ON public.metas_okrs;
 CREATE POLICY "metas_okrs_delete" ON public.metas_okrs FOR DELETE TO authenticated USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
 
+DROP POLICY IF EXISTS "feedbacks_360_select" ON public.feedbacks_360;
 CREATE POLICY "feedbacks_360_select" ON public.feedbacks_360 FOR SELECT TO authenticated USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "feedbacks_360_insert" ON public.feedbacks_360;
 CREATE POLICY "feedbacks_360_insert" ON public.feedbacks_360 FOR INSERT TO authenticated WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "feedbacks_360_update" ON public.feedbacks_360;
 CREATE POLICY "feedbacks_360_update" ON public.feedbacks_360 FOR UPDATE TO authenticated USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "feedbacks_360_delete" ON public.feedbacks_360;
 CREATE POLICY "feedbacks_360_delete" ON public.feedbacks_360 FOR DELETE TO authenticated USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
 
+DROP POLICY IF EXISTS "pdis_select" ON public.pdis;
 CREATE POLICY "pdis_select" ON public.pdis FOR SELECT TO authenticated USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "pdis_insert" ON public.pdis;
 CREATE POLICY "pdis_insert" ON public.pdis FOR INSERT TO authenticated WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "pdis_update" ON public.pdis;
 CREATE POLICY "pdis_update" ON public.pdis FOR UPDATE TO authenticated USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "pdis_delete" ON public.pdis;
 CREATE POLICY "pdis_delete" ON public.pdis FOR DELETE TO authenticated USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
 
+DROP POLICY IF EXISTS "competencias_select" ON public.competencias_matriz;
 CREATE POLICY "competencias_select" ON public.competencias_matriz FOR SELECT TO authenticated USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "competencias_insert" ON public.competencias_matriz;
 CREATE POLICY "competencias_insert" ON public.competencias_matriz FOR INSERT TO authenticated WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "competencias_update" ON public.competencias_matriz;
 CREATE POLICY "competencias_update" ON public.competencias_matriz FOR UPDATE TO authenticated USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "competencias_delete" ON public.competencias_matriz;
 CREATE POLICY "competencias_delete" ON public.competencias_matriz FOR DELETE TO authenticated USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));

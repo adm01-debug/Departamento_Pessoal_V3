@@ -11,6 +11,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useDocumentosPessoais, useCriarDocumentoPessoal, useExcluirDocumentoPessoal } from '@/hooks/useTabelasReferencia';
+import { maskCpfDisplay, maskPisDisplay } from '@/utils/piiMask';
 
 const TIPOS = ['RG', 'CPF', 'CNH', 'CTPS', 'Título Eleitor', 'Certificado Reservista', 'Comprovante Endereço', 'Certidão Nascimento', 'Certidão Casamento', 'PIS/PASEP', 'Foto 3x4', 'Outro'];
 
@@ -68,7 +69,7 @@ export function DocumentosPessoaisTab({ colaboradorId }: { colaboradorId: string
               {data.map((d: any) => (
                 <TableRow key={d.id}>
                   <TableCell><Badge variant="outline">{d.tipo_documento}</Badge></TableCell>
-                  <TableCell>{d.numero || '-'}</TableCell>
+                  <TableCell>{d.numero ? (d.tipo_documento === 'CPF' ? maskCpfDisplay(d.numero) : d.tipo_documento === 'PIS/PASEP' ? maskPisDisplay(d.numero) : d.numero) : '-'}</TableCell>
                   <TableCell>{d.orgao_emissor || '-'}</TableCell>
                   <TableCell>{d.data_emissao || '-'}</TableCell>
                   <TableCell>{d.data_validade || '-'}</TableCell>

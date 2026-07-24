@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -8,15 +8,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { FileSignature, ShieldCheck, ShieldAlert, Loader2 } from "lucide-react";
-import { todayLocalISO } from "@/utils/dateLocal";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import { FileSignature, ShieldCheck, ShieldAlert, Loader2 } from 'lucide-react';
+import { currentCompetenciaLocal } from '@/utils/dateLocal';
 
 interface Props {
   colaboradorId: string;
@@ -44,16 +44,9 @@ interface VerificacaoResult {
   revogado: boolean;
 }
 
-export function AssinarEspelhoDialog({
-  colaboradorId,
-  colaboradorNome,
-  competenciaPadrao,
-  trigger,
-}: Props) {
+export function AssinarEspelhoDialog({ colaboradorId, colaboradorNome, competenciaPadrao, trigger }: Props) {
   const [open, setOpen] = useState(false);
-  const [competencia, setCompetencia] = useState(
-    competenciaPadrao ?? todayLocalISO().slice(0, 7),
-  );
+  const [competencia, setCompetencia] = useState(competenciaPadrao ?? currentCompetenciaLocal());
   const [loading, setLoading] = useState(false);
   const [verificando, setVerificando] = useState(false);
   const [resultado, setResultado] = useState<AssinaturaResult | null>(null);
@@ -64,16 +57,16 @@ export function AssinarEspelhoDialog({
     setResultado(null);
     setVerificacao(null);
     try {
-      const { data, error } = await supabase.rpc("assinar_espelho_ponto", {
+      const { data, error } = await supabase.rpc('assinar_espelho_ponto', {
         _colaborador_id: colaboradorId,
         _competencia: competencia,
         _user_agent: navigator.userAgent.slice(0, 500),
       });
       if (error) throw error;
       setResultado(data as unknown as AssinaturaResult);
-      toast.success("Espelho assinado com sucesso");
+      toast.success('Espelho assinado com sucesso');
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Falha ao assinar";
+      const msg = err instanceof Error ? err.message : 'Falha ao assinar';
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -84,16 +77,16 @@ export function AssinarEspelhoDialog({
     if (!resultado?.espelho_id) return;
     setVerificando(true);
     try {
-      const { data, error } = await supabase.rpc("verificar_espelho_ponto", {
+      const { data, error } = await supabase.rpc('verificar_espelho_ponto', {
         _espelho_id: resultado.espelho_id,
       });
       if (error) throw error;
       const v = data as unknown as VerificacaoResult;
       setVerificacao(v);
-      if (v.integro) toast.success("Integridade confirmada");
-      else toast.error("Divergência detectada: hash não bate");
+      if (v.integro) toast.success('Integridade confirmada');
+      else toast.error('Divergência detectada: hash não bate');
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Falha ao verificar";
+      const msg = err instanceof Error ? err.message : 'Falha ao verificar';
       toast.error(msg);
     } finally {
       setVerificando(false);
@@ -114,8 +107,8 @@ export function AssinarEspelhoDialog({
         <DialogHeader>
           <DialogTitle>Assinatura digital de espelho de ponto</DialogTitle>
           <DialogDescription>
-            Gera um hash SHA-256 imutável do espelho de {colaboradorNome} para a competência
-            selecionada. Qualquer alteração posterior nas batidas será detectada.
+            Gera um hash SHA-256 imutável do espelho de {colaboradorNome} para a competência selecionada. Qualquer
+            alteração posterior nas batidas será detectada.
           </DialogDescription>
         </DialogHeader>
 
@@ -139,23 +132,17 @@ export function AssinarEspelhoDialog({
                   <span className="font-semibold">Espelho assinado</span>
                   <Badge variant="secondary">{resultado.total_batidas} batidas</Badge>
                 </div>
-                <p className="text-xs font-mono break-all text-muted-foreground">
-                  SHA-256: {resultado.hash_sha256}
-                </p>
+                <p className="text-xs font-mono break-all text-muted-foreground">SHA-256: {resultado.hash_sha256}</p>
               </AlertDescription>
             </Alert>
           )}
 
           {verificacao && (
-            <Alert variant={verificacao.integro ? "default" : "destructive"}>
-              {verificacao.integro ? (
-                <ShieldCheck className="h-4 w-4" />
-              ) : (
-                <ShieldAlert className="h-4 w-4" />
-              )}
+            <Alert variant={verificacao.integro ? 'default' : 'destructive'}>
+              {verificacao.integro ? <ShieldCheck className="h-4 w-4" /> : <ShieldAlert className="h-4 w-4" />}
               <AlertDescription>
                 {verificacao.integro
-                  ? "Hash confere. Nenhuma alteração desde a assinatura."
+                  ? 'Hash confere. Nenhuma alteração desde a assinatura.'
                   : `Divergência! Batidas originais: ${verificacao.total_batidas_original}, atuais: ${verificacao.total_batidas_atual}.`}
               </AlertDescription>
             </Alert>

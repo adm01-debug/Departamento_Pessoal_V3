@@ -32,6 +32,7 @@ ALTER TABLE public.provisoes_mensais ADD COLUMN IF NOT EXISTS log_id UUID REFERE
 ALTER TABLE public.provisao_logs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.provisao_auditoria ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Gestores podem ver logs de provisão" ON public.provisao_logs;
 CREATE POLICY "Gestores podem ver logs de provisão" 
 ON public.provisao_logs FOR SELECT 
 USING (true); -- Idealmente filtraria por empresa_id do perfil do usuário

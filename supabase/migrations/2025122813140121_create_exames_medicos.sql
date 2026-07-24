@@ -21,4 +21,5 @@ CREATE INDEX IF NOT EXISTS idx_exames_medicos_empresa ON public.exames_medicos(e
 CREATE INDEX IF NOT EXISTS idx_exames_medicos_colaborador ON public.exames_medicos(colaborador_id);
 ALTER TABLE public.exames_medicos ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "exames_medicos_all" ON public.exames_medicos;
 CREATE POLICY "exames_medicos_all" ON public.exames_medicos FOR ALL USING (auth.uid() IS NOT NULL);

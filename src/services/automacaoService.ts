@@ -87,21 +87,23 @@ export const automacaoService = {
   },
 
   async notificarTerminoExperiencia(empresaId: string) {
+    if (!empresaId) return;
     const dataAlerta = new Date();
-    dataAlerta.setDate(dataAlerta.getDate() + 7); // 7 dias de antecedência
+    dataAlerta.setDate(dataAlerta.getDate() + 7);
     const dataFormatada = formatDateLocalISO(dataAlerta);
 
     const { data: periodos } = await supabase
       .from('periodos_experiencia')
-      .select('*, colaborador:colaboradores(id, nome_completo, empresa_id)')
+      .select('*, colaborador:colaboradores!inner(id, nome_completo, empresa_id)')
+      .eq('colaborador.empresa_id' as any, empresaId)
       .or(`primeira_etapa_fim.eq.${dataFormatada},segunda_etapa_fim.eq.${dataFormatada}` as any);
 
     if (!periodos) return;
 
     for (const periodo of periodos) {
       const colab = (periodo as any).colaborador;
-      if (!colab || colab.empresa_id !== empresaId) continue;
-      
+      if (!colab) continue;
+
       await criarNotificacao({
         titulo: 'Término de Experiência Próximo',
         mensagem: `O período de experiência de ${colab.nome_completo} encerra em 7 dias. Avalie a continuidade.`,

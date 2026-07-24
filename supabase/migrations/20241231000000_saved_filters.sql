@@ -38,18 +38,21 @@ CREATE INDEX IF NOT EXISTS idx_saved_filters_default
 ALTER TABLE public.saved_filters ENABLE ROW LEVEL SECURITY;
 
 -- Política: usuários podem ver apenas seus próprios filtros
+DROP POLICY IF EXISTS "Users can view own filters" ON public.saved_filters;
 CREATE POLICY "Users can view own filters"
   ON public.saved_filters
   FOR SELECT
   USING (auth.uid() = user_id);
 
 -- Política: usuários podem inserir seus próprios filtros
+DROP POLICY IF EXISTS "Users can insert own filters" ON public.saved_filters;
 CREATE POLICY "Users can insert own filters"
   ON public.saved_filters
   FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
 -- Política: usuários podem atualizar seus próprios filtros
+DROP POLICY IF EXISTS "Users can update own filters" ON public.saved_filters;
 CREATE POLICY "Users can update own filters"
   ON public.saved_filters
   FOR UPDATE
@@ -57,6 +60,7 @@ CREATE POLICY "Users can update own filters"
   WITH CHECK (auth.uid() = user_id);
 
 -- Política: usuários podem deletar seus próprios filtros
+DROP POLICY IF EXISTS "Users can delete own filters" ON public.saved_filters;
 CREATE POLICY "Users can delete own filters"
   ON public.saved_filters
   FOR DELETE

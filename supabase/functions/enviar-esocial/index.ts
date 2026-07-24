@@ -10,7 +10,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://esm.sh/zod@3.23.8';
 import { assinarXMLEsocial } from './utils/signer.ts';
-import { corsHeaders, createErrorResponse } from '../_shared/contract.ts';
+import { corsHeaders, createErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import {
@@ -28,7 +28,8 @@ const BodySchema = z.object({
   idempotencyKey: z.string().optional(),
 });
 
-const SIMULATE = (Deno.env.get('ESOCIAL_SIMULATE') ?? 'true').toLowerCase() === 'true';
+// Fail-closed: simulation must be explicitly enabled. In production, missing env = real mode (which fails safely if SOAP not configured)
+const SIMULATE = Deno.env.get('ESOCIAL_SIMULATE')?.toLowerCase() === 'true';
 
 const NO_STORE = { 'Cache-Control': 'no-store' };
 
@@ -68,14 +69,15 @@ serve(async (req: Request): Promise<Response> => {
       global: { headers: { Authorization: authHeader } },
       auth: { persistSession: false, autoRefreshToken: false },
     });
-    const token = authHeader.replace(/^Bearer\s+/i, '').trim();
-    const { data: claimsData, error: claimsErr } = await userClient.auth.getClaims(token);
-    if (claimsErr || !claimsData?.claims?.sub) return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
-    const userId = claimsData.claims.sub as string;
+    const { data: claimsData, error: claimsErr } = await userClient.auth.getUser();
+    if (claimsErr || !claimsData?.user?.id) return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
+    const userId = claimsData.user.id;
 
     // Payload
     let raw: unknown;
-    try { raw = await req.json(); } catch { return createErrorResponse('JSON inválido', 400, 'BAD_REQUEST'); }
+    const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
+    if (_pe) return _pe;
+    raw = _pb;
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) return createErrorResponse('Payload inválido', 422, 'VALIDATION_ERROR');
     const { empresaId, eventoId } = parsed.data;

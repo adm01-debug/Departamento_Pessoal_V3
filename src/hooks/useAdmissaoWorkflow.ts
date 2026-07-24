@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from './useEmpresas';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 
 export function useAdmissaoWorkflow(admissaoId?: string) {
   const queryClient = useQueryClient();
@@ -43,12 +44,14 @@ export function useAdmissaoWorkflow(admissaoId?: string) {
 
       // Atualiza o status da admissão para 'documentos' (etapa inicial comum)
       if (admissaoId) {
-        await supabase
+        const { error: admissaoUpdateError } = await supabase
           .from('admissoes')
-          .update({ 
+          .update({
             etapa: 'documentos' as any
           })
-          .eq('id', admissaoId);
+          .eq('id', admissaoId)
+          .eq('empresa_id', empresaAtualId!);
+        if (admissaoUpdateError) throw admissaoUpdateError;
       }
 
       // Automatically send link to candidate if email is present
@@ -66,7 +69,7 @@ export function useAdmissaoWorkflow(admissaoId?: string) {
         const expiracao = new Date();
         expiracao.setDate(expiracao.getDate() + 7);
 
-        await supabase
+        const { error: tokenError } = await supabase
           .from('admissao_tokens')
           .insert({
             admissao_id: admissaoId || '',
@@ -74,6 +77,7 @@ export function useAdmissaoWorkflow(admissaoId?: string) {
             email_candidato: admissao.email,
             data_expiracao: expiracao.toISOString(),
           });
+        if (tokenError) throw tokenError;
       }
 
       // Registra o início no histórico
@@ -90,18 +94,19 @@ export function useAdmissaoWorkflow(admissaoId?: string) {
       queryClient.invalidateQueries({ queryKey: ['admissoes'] });
       toast.success('Workflow de admissão iniciado com sucesso');
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(safeErrorMessage(err, 'Erro no workflow de admissão.')),
   });
 
   const avancarEtapa = useMutation({
     mutationFn: async ({ execucaoId, proximaEtapa, observacao }: { execucaoId: string, proximaEtapa: number, observacao?: string }) => {
       const { data: execucao, error: execError } = await supabase
         .from('workflows_execucoes')
-        .update({ 
+        .update({
           etapa_atual: proximaEtapa,
           updated_at: new Date().toISOString()
         } as any)
         .eq('id', execucaoId)
+        .eq('empresa_id', empresaAtualId!)
         .select()
         .single();
 

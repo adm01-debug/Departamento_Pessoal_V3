@@ -18,4 +18,5 @@ CREATE TABLE IF NOT EXISTS public.taxas_cambio (
 
 -- RLS for exchange rates
 ALTER TABLE public.taxas_cambio ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Public can view exchange rates" ON public.taxas_cambio;
 CREATE POLICY "Public can view exchange rates" ON public.taxas_cambio FOR SELECT USING (true);

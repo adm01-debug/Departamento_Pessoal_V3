@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PageTitle } from '@/components/PageTitle';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { lovable } from '@/integrations/lovable/index';
 import { supabase } from '@/integrations/supabase/client';
@@ -10,10 +10,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Zap, Shield, Users, BarChart3, FileText, Lock, Mail, Eye, EyeOff } from 'lucide-react';
+import { Loader2, Zap, Shield, Users, BarChart3, FileText, Lock, Mail, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import govbrLogo from '@/assets/govbr-logo.svg';
 
 const features = [
@@ -22,6 +23,11 @@ const features = [
   { icon: BarChart3, label: 'Relatórios Inteligentes', desc: 'Dashboards com KPIs em tempo real' },
   { icon: FileText, label: 'Folha de Pagamento', desc: 'Cálculos trabalhistas atualizados 2026' },
 ];
+
+const SECURITY_REASONS: Record<string, string> = {
+  session_anomaly: 'Sessão encerrada por motivos de segurança. Faça login novamente.',
+  idle_timeout: 'Sessão expirada por inatividade. Faça login novamente.',
+};
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -33,9 +39,21 @@ export default function LoginPage() {
   const [forgotSent, setForgotSent] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [govBrLoading, setGovBrLoading] = useState(false);
+  const [securityNotice, setSecurityNotice] = useState('');
+  const [mfaPending, setMfaPending] = useState<{ factorId: string } | null>(null);
+  const [totpCode, setTotpCode] = useState('');
   const { signIn, resetPassword, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { lockState, checkLock, recordFailedAttempt, resetAttempts } = useBruteForceProtection();
+
+  useEffect(() => {
+    const reason = searchParams.get('reason');
+    if (reason && SECURITY_REASONS[reason]) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSecurityNotice(SECURITY_REASONS[reason]);
+    }
+  }, [searchParams]);
 
 
   const handleGoogleSignIn = async () => {
@@ -49,7 +67,7 @@ export default function LoginPage() {
         throw result.error;
       }
     } catch (err: any) {
-      setError(err.message || 'Erro ao fazer login com Google');
+      setError(safeErrorMessage(err, 'Erro ao fazer login com Google.'));
     } finally {
       setGoogleLoading(false);
     }
@@ -66,11 +84,15 @@ export default function LoginPage() {
       });
       if (error) throw error;
       if (data?.url) {
+        const parsed = new URL(data.url);
+        if (parsed.protocol !== 'https:' || !/\.gov\.br$/i.test(parsed.hostname)) {
+          throw new Error('URL de redirecionamento inválida');
+        }
         window.location.href = data.url;
       }
     } catch (err: any) {
       setError('Erro ao iniciar integração Gov.br');
-      toast.error(err.message);
+      toast.error(safeErrorMessage(err, 'Erro ao iniciar integração Gov.br.'));
     } finally {
       setGovBrLoading(false);
     }
@@ -91,8 +113,38 @@ export default function LoginPage() {
       await resetAttempts(email);
       navigate('/dashboard');
     } catch (err: any) {
+      if (err?.code === 'mfa_required') {
+        // MFA enrolled — show TOTP challenge without recording a failed attempt
+        setMfaPending({ factorId: err.factorId || '' });
+        return;
+      }
       await recordFailedAttempt(email);
-      setError(err.message || 'Erro ao fazer login');
+      const msg = err?.message;
+      if (msg && msg.includes('bloqueada')) {
+        setError(msg);
+      } else {
+        setError('Email ou senha inválidos.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMfaSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!mfaPending || !totpCode) return;
+    setLoading(true);
+    setError('');
+    try {
+      const { error: challengeError } = await supabase.auth.mfa.challengeAndVerify({
+        factorId: mfaPending.factorId,
+        code: totpCode.replace(/\s/g, ''),
+      });
+      if (challengeError) throw challengeError;
+      await resetAttempts(email);
+      navigate('/dashboard');
+    } catch (err: any) {
+      setError('Código inválido. Tente novamente.');
     } finally {
       setLoading(false);
     }
@@ -104,13 +156,28 @@ export default function LoginPage() {
       setError('Informe seu email');
       return;
     }
+    const lastReset = Number(sessionStorage.getItem('__pwd_reset_ts') || '0');
+    if (Date.now() - lastReset < 60_000) {
+      setError('Aguarde 1 minuto antes de solicitar novamente.');
+      return;
+    }
     setLoading(true);
     setError('');
     try {
+      const { data: rl } = await supabase.rpc('check_rate_limit', {
+        check_endpoint: 'password_reset',
+        check_ip: 'client',
+        check_user_id: undefined,
+      });
+      if (rl && typeof rl === 'object' && (rl as any).blocked) {
+        setError('Muitas tentativas. Aguarde alguns minutos antes de tentar novamente.');
+        return;
+      }
       await resetPassword(email);
+      sessionStorage.setItem('__pwd_reset_ts', String(Date.now()));
       setForgotSent(true);
     } catch (err: any) {
-      setError(err.message || 'Erro ao enviar email de recuperação');
+      setError(safeErrorMessage(err, 'Erro ao enviar email de recuperação.'));
     } finally {
       setLoading(false);
     }
@@ -222,16 +289,65 @@ export default function LoginPage() {
             <div className="h-[2px] bg-gradient-to-r from-primary to-primary-glow" />
             <CardHeader className="text-center pb-2 pt-8">
               <CardTitle className="text-2xl font-display">
-                {forgotMode ? 'Recuperar senha' : 'Bem-vindo de volta'}
+                {mfaPending ? 'Verificação em duas etapas' : forgotMode ? 'Recuperar senha' : 'Bem-vindo de volta'}
               </CardTitle>
               <CardDescription className="font-body">
-                {forgotMode
+                {mfaPending
+                  ? 'Digite o código do seu aplicativo autenticador'
+                  : forgotMode
                   ? 'Informe seu email para receber o link de recuperação'
                   : 'Faça login para acessar o sistema'
                 }
               </CardDescription>
             </CardHeader>
             <CardContent className="px-8 pb-8">
+              {mfaPending ? (
+                <form onSubmit={handleMfaSubmit} className="space-y-5">
+                  <div className="flex justify-center mb-2">
+                    <div className="h-14 w-14 rounded-full bg-primary/15 flex items-center justify-center">
+                      <ShieldCheck className="h-7 w-7 text-primary" />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="totp" className="font-body text-sm font-medium">Código TOTP (6 dígitos)</Label>
+                    <Input
+                      id="totp"
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9 ]*"
+                      maxLength={7}
+                      autoComplete="one-time-code"
+                      value={totpCode}
+                      onChange={(e) => setTotpCode(e.target.value)}
+                      placeholder="000 000"
+                      required
+                      autoFocus
+                      className="h-11 text-center text-lg tracking-widest rounded-lg border-border/50 focus:border-primary/50 font-mono"
+                    />
+                  </div>
+                  {error && (
+                    <motion.p role="alert" aria-live="assertive" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                      className="text-sm text-destructive font-body bg-destructive/10 px-3 py-2 rounded-lg">
+                      {error}
+                    </motion.p>
+                  )}
+                  <Button type="submit" className="w-full h-11 rounded-lg font-body font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-glow" disabled={loading || totpCode.replace(/\s/g,'').length !== 6}>
+                    {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Verificar
+                  </Button>
+                  <Button type="button" variant="ghost" className="w-full font-body text-sm" onClick={() => { setMfaPending(null); setTotpCode(''); setError(''); }}>
+                    Voltar ao login
+                  </Button>
+                </form>
+              ) : (
+              <>
+              {securityNotice && (
+                <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
+                  className="mb-4 flex items-center gap-2 rounded-lg bg-warning/10 border border-warning/30 px-3 py-2 text-sm text-warning-foreground">
+                  <Shield className="h-4 w-4 shrink-0 text-warning" />
+                  <span className="font-body">{securityNotice}</span>
+                </motion.div>
+              )}
               {forgotMode ? (
                 forgotSent ? (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center space-y-4 py-4">
@@ -297,6 +413,7 @@ export default function LoginPage() {
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="seu@email.com"
                         required
+                        autoComplete="username"
                         className="h-11 pl-10 rounded-lg border-border/50 focus:border-primary/50 font-body"
                       />
                     </div>
@@ -320,6 +437,7 @@ export default function LoginPage() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
+                        autoComplete="current-password"
                         className="h-11 pl-10 pr-10 rounded-lg border-border/50 focus:border-primary/50 font-body"
                       />
                       <button
@@ -401,6 +519,8 @@ export default function LoginPage() {
                     </Button>
                   </div>
                 </form>
+              )}
+              </>
               )}
             </CardContent>
           </Card>

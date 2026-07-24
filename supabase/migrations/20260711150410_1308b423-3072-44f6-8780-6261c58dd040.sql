@@ -15,6 +15,7 @@ WITH CHECK (
   AND (storage.foldername(name))[1] = auth.uid()::text
 );
 
+DROP POLICY IF EXISTS "avatars_authenticated_update_own" ON storage.objects;
 CREATE POLICY "avatars_authenticated_update_own"
 ON storage.objects FOR UPDATE TO authenticated
 USING (
@@ -26,6 +27,7 @@ WITH CHECK (
   AND (storage.foldername(name))[1] = auth.uid()::text
 );
 
+DROP POLICY IF EXISTS "avatars_authenticated_delete_own" ON storage.objects;
 CREATE POLICY "avatars_authenticated_delete_own"
 ON storage.objects FOR DELETE TO authenticated
 USING (
@@ -34,6 +36,7 @@ USING (
 );
 
 -- Leitura autenticada por objeto específico (não permite list amplo).
+DROP POLICY IF EXISTS "avatars_public_read_scoped" ON storage.objects;
 CREATE POLICY "avatars_public_read_scoped"
 ON storage.objects FOR SELECT TO authenticated
 USING (

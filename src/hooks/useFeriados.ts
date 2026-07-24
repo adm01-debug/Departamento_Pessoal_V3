@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresa } from '@/contexts/EmpresaContext';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 
 export function useFeriados() {
   const { empresaAtual } = useEmpresa();
@@ -33,19 +34,19 @@ export function useFeriados() {
       queryClient.invalidateQueries({ queryKey: ['feriados'] });
       toast.success('Feriado cadastrado!');
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar feriado.')),
   });
 
   const excluirFeriado = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from('feriados').delete().eq('id', id);
+      const { error } = await supabase.from('feriados').delete().eq('id', id).eq('empresa_id', empresaAtual!.id);
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['feriados'] });
       toast.success('Feriado excluído');
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar feriado.')),
   });
 
   return { feriados, isLoading, criarFeriado, excluirFeriado };

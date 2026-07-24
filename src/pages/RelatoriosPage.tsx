@@ -12,6 +12,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { edgeFunctionsService } from '@/services/edgeFunctionsService';
 import { useExcelExport } from '@/hooks/useExcelExport';
 import { usePDFExport } from '@/hooks/usePDFExport';
@@ -248,7 +249,7 @@ export default function RelatoriosPage() {
         }
       });
     } catch (e: any) { 
-      toast.error(`Erro: ${e.message}`); 
+      toast.error(safeErrorMessage(e, 'Erro ao gerar relatório.')); 
     } finally { 
       setGenerating(null); 
     } 
@@ -267,7 +268,7 @@ export default function RelatoriosPage() {
       setEmailDialog(null); 
       setEmailTo(''); 
     } catch (e: any) { 
-      toast.error(`Erro: ${e.message}`); 
+      toast.error(safeErrorMessage(e, 'Erro ao gerar relatório.')); 
     } finally { 
       setSendingEmail(false); 
     } 

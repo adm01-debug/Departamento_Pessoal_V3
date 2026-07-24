@@ -21,6 +21,12 @@ export default defineConfig({
         "**/*.stories.tsx",
         "**/index.ts",
       ],
+      thresholds: {
+        lines: 60,
+        functions: 60,
+        branches: 50,
+        statements: 60,
+      },
     },
     testTimeout: 10000,
     hookTimeout: 10000,

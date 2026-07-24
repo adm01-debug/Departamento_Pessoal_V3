@@ -29,15 +29,19 @@ CREATE INDEX IF NOT EXISTS idx_dependentes_created ON public.dependentes(created
 -- RLS
 ALTER TABLE public.dependentes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "dependentes_select" ON public.dependentes;
 CREATE POLICY "dependentes_select" ON public.dependentes
   FOR SELECT USING (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "dependentes_insert" ON public.dependentes;
 CREATE POLICY "dependentes_insert" ON public.dependentes
   FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "dependentes_update" ON public.dependentes;
 CREATE POLICY "dependentes_update" ON public.dependentes
   FOR UPDATE USING (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "dependentes_delete" ON public.dependentes;
 CREATE POLICY "dependentes_delete" ON public.dependentes
   FOR DELETE USING (auth.uid() IS NOT NULL);
 
@@ -50,6 +54,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_dependentes_updated_at ON public.dependentes;
 CREATE TRIGGER trigger_dependentes_updated_at
   BEFORE UPDATE ON public.dependentes
   FOR EACH ROW EXECUTE FUNCTION update_dependentes_updated_at();

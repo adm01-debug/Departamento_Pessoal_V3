@@ -30,7 +30,7 @@ export async function readWorkbookRows(buffer: ArrayBuffer): Promise<unknown[][]
   const sheet = wb.worksheets[0];
   if (!sheet) throw new Error('Planilha vazia');
   const rows: unknown[][] = [];
-  sheet.eachRow({ includeEmpty: false }, (row) => {
+  sheet.eachRow({ includeEmpty: false }, (row: any) => {
     // row.values is 1-indexed; drop the leading undefined slot
     rows.push((row.values as unknown[]).slice(1));
   });

@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 
 export type AuditoriaEvento = 'CALCULO' | 'CONFERENCIA' | 'ESOCIAL' | 'AJUSTE';
 export type AuditoriaSeveridade = 'INFO' | 'AVISO' | 'ERRO' | 'CRITICO';
@@ -53,7 +54,7 @@ export function useFolhaAuditoria(folhaId?: string) {
       queryClient.invalidateQueries({ queryKey: ['folha-auditoria', folhaId] });
     },
     onError: (error: any) => {
-      toast.error('Erro ao registrar log de auditoria: ' + error.message);
+      toast.error(safeErrorMessage(error, 'Erro ao registrar log de auditoria.'));
     },
   });
 

@@ -163,7 +163,7 @@ export default function DashboardExecutivoPage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                   <XAxis dataKey="mes" tick={{ fontSize: 11 }} />
                   <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `R$ ${(v / 1000).toFixed(0)}k`} />
-                  <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '12px' }} formatter={(v: number) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} />
+                  <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '12px' }} formatter={(v: any) => Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} />
                   <Legend />
                   <Area type="monotone" dataKey="bruto" name="Bruto" fill="hsl(var(--primary) / 0.1)" stroke="hsl(var(--primary))" strokeWidth={2} />
                   <Line type="monotone" dataKey="liquido" name="Líquido" stroke="hsl(var(--success))" strokeWidth={2} />
@@ -181,7 +181,7 @@ export default function DashboardExecutivoPage() {
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <RechartsPie>
-                    <Pie data={data?.departamentos || []} dataKey="value" nameKey="nome" cx="50%" cy="50%" outerRadius={100} label={({ nome, value }) => `${nome} (${value})`}>
+                    <Pie data={data?.departamentos || []} dataKey="value" nameKey="nome" cx="50%" cy="50%" outerRadius={100} label={(p: any) => `${p.nome} (${p.value})`}>
                       {data?.departamentos?.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                     </Pie>
                     <Tooltip />

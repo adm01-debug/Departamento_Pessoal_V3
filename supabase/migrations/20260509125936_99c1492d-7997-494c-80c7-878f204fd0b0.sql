@@ -36,5 +36,6 @@ BEGIN
 END $$;
 
 -- RLS simplificado: Usuários logados podem ver (restringido pelo app)
+DROP POLICY IF EXISTS "Acesso à trilha de auditoria" ON public.trilha_auditoria_ponto;
 CREATE POLICY "Acesso à trilha de auditoria" ON public.trilha_auditoria_ponto
 FOR SELECT USING (auth.uid() IS NOT NULL);

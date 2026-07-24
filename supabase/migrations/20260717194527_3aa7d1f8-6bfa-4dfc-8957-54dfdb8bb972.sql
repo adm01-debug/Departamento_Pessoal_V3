@@ -1,6 +1,6 @@
 
 -- Ordens de Serviço (NR-01, item 1.5.3.3)
-CREATE TABLE public.sst_ordens_servico (
+CREATE TABLE IF NOT EXISTS public.sst_ordens_servico (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   empresa_id UUID NOT NULL,
   escopo TEXT NOT NULL CHECK (escopo IN ('cargo','colaborador')),
@@ -30,19 +30,21 @@ CREATE TABLE public.sst_ordens_servico (
   )
 );
 
-CREATE INDEX idx_sst_os_empresa ON public.sst_ordens_servico(empresa_id);
-CREATE INDEX idx_sst_os_cargo ON public.sst_ordens_servico(cargo_id) WHERE cargo_id IS NOT NULL;
-CREATE INDEX idx_sst_os_colab ON public.sst_ordens_servico(colaborador_id) WHERE colaborador_id IS NOT NULL;
-CREATE INDEX idx_sst_os_status ON public.sst_ordens_servico(empresa_id, status);
+CREATE INDEX IF NOT EXISTS idx_sst_os_empresa ON public.sst_ordens_servico(empresa_id);
+CREATE INDEX IF NOT EXISTS idx_sst_os_cargo ON public.sst_ordens_servico(cargo_id) WHERE cargo_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_sst_os_colab ON public.sst_ordens_servico(colaborador_id) WHERE colaborador_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_sst_os_status ON public.sst_ordens_servico(empresa_id, status);
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.sst_ordens_servico TO authenticated;
 GRANT ALL ON public.sst_ordens_servico TO service_role;
 ALTER TABLE public.sst_ordens_servico ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "OS visíveis para membros da empresa" ON public.sst_ordens_servico;
 CREATE POLICY "OS visíveis para membros da empresa"
 ON public.sst_ordens_servico FOR SELECT TO authenticated
 USING (EXISTS (SELECT 1 FROM public.user_empresas ue WHERE ue.user_id = auth.uid() AND ue.empresa_id = sst_ordens_servico.empresa_id));
 
+DROP POLICY IF EXISTS "OS gerenciáveis por admin/rh" ON public.sst_ordens_servico;
 CREATE POLICY "OS gerenciáveis por admin/rh"
 ON public.sst_ordens_servico FOR ALL TO authenticated
 USING (
@@ -54,11 +56,12 @@ WITH CHECK (
   AND (public.has_role(auth.uid(), 'admin') OR public.has_role(auth.uid(), 'rh'))
 );
 
+DROP TRIGGER IF EXISTS trg_sst_os_updated ON public.sst_ordens_servico;
 CREATE TRIGGER trg_sst_os_updated BEFORE UPDATE ON public.sst_ordens_servico
 FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
 -- LTCAT (Laudo Técnico das Condições Ambientais do Trabalho)
-CREATE TABLE public.sst_ltcat_laudos (
+CREATE TABLE IF NOT EXISTS public.sst_ltcat_laudos (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   empresa_id UUID NOT NULL,
   titulo TEXT NOT NULL,
@@ -82,18 +85,20 @@ CREATE TABLE public.sst_ltcat_laudos (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE INDEX idx_ltcat_empresa ON public.sst_ltcat_laudos(empresa_id);
-CREATE INDEX idx_ltcat_status ON public.sst_ltcat_laudos(empresa_id, status);
+CREATE INDEX IF NOT EXISTS idx_ltcat_empresa ON public.sst_ltcat_laudos(empresa_id);
+CREATE INDEX IF NOT EXISTS idx_ltcat_status ON public.sst_ltcat_laudos(empresa_id, status);
 CREATE UNIQUE INDEX idx_ltcat_ativo_unico ON public.sst_ltcat_laudos(empresa_id) WHERE status = 'ativo';
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.sst_ltcat_laudos TO authenticated;
 GRANT ALL ON public.sst_ltcat_laudos TO service_role;
 ALTER TABLE public.sst_ltcat_laudos ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "LTCAT visível para membros da empresa" ON public.sst_ltcat_laudos;
 CREATE POLICY "LTCAT visível para membros da empresa"
 ON public.sst_ltcat_laudos FOR SELECT TO authenticated
 USING (EXISTS (SELECT 1 FROM public.user_empresas ue WHERE ue.user_id = auth.uid() AND ue.empresa_id = sst_ltcat_laudos.empresa_id));
 
+DROP POLICY IF EXISTS "LTCAT gerenciável por admin/rh" ON public.sst_ltcat_laudos;
 CREATE POLICY "LTCAT gerenciável por admin/rh"
 ON public.sst_ltcat_laudos FOR ALL TO authenticated
 USING (
@@ -105,5 +110,6 @@ WITH CHECK (
   AND (public.has_role(auth.uid(), 'admin') OR public.has_role(auth.uid(), 'rh'))
 );
 
+DROP TRIGGER IF EXISTS trg_ltcat_updated ON public.sst_ltcat_laudos;
 CREATE TRIGGER trg_ltcat_updated BEFORE UPDATE ON public.sst_ltcat_laudos
 FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();

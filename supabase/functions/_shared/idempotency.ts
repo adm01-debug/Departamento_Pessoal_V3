@@ -102,7 +102,12 @@ export async function beginIdempotency(
     };
   }
 
-  const keyHash = await sha256Hex(`${params.endpoint}:${rawKey}`);
+  // T005: incluir empresaId para evitar colisão cross-tenant com mesma chave e endpoint
+  const keyHash = await sha256Hex(`${params.endpoint}:${params.empresaId ?? ""}:${rawKey}`);
+  // Legacy hash (pre-T005 format, without empresaId) — used only during rollout window.
+  // Records created before T005 deployment use this format; without the fallback they'd
+  // become invisible to new code, causing double-execution during the 24h TTL window.
+  const legacyKeyHash = await sha256Hex(`${params.endpoint}:${rawKey}`);
   const requestHash = await sha256Hex(canonicalize(params.requestBody ?? null));
 
   // Tenta INSERT — se colidir (unique), lemos o existente.
@@ -120,13 +125,44 @@ export async function beginIdempotency(
     .maybeSingle();
 
   if (!insertErr && inserted?.id) {
+    // T005 rollout safety: check for a pre-T005 completed record under the legacy hash.
+    // Tenant isolation is maintained because legacy records carry empresa_id in the row.
+    // Remove this fallback lookup once the idempotency TTL (24h) has elapsed post-deploy.
+    if (legacyKeyHash !== keyHash) {
+      const { data: legacyRec } = await admin
+        .from("idempotency_keys")
+        .select("id, request_hash, status, response_status, response_body")
+        .eq("key_hash", legacyKeyHash)
+        .eq("empresa_id", params.empresaId ?? null)
+        .eq("status", "completed")
+        .maybeSingle();
+      if (legacyRec?.response_body && legacyRec.request_hash === requestHash) {
+        // Undo the spurious new record and replay the original completed response.
+        await admin.from("idempotency_keys").delete().eq("id", inserted.id);
+        return {
+          skipped: false,
+          reason: 'REPLAY',
+          existingId: legacyRec.id,
+          keyHash,
+          requestHash,
+          replay: new Response(JSON.stringify(legacyRec.response_body), {
+            status: legacyRec.response_status ?? 200,
+            headers: {
+              ...corsHeaders,
+              "Content-Type": "application/json",
+              "Idempotent-Replay": "true",
+            },
+          }),
+        };
+      }
+    }
     return { skipped: false, id: inserted.id, reason: 'NEW', keyHash, requestHash };
   }
 
   // Colisão — carrega registro existente
   const { data: existing } = await admin
     .from("idempotency_keys")
-    .select("id, request_hash, status, response_status, response_body, expires_at")
+    .select("id, request_hash, status, response_status, response_body, expires_at, created_at")
     .eq("endpoint", params.endpoint)
     .eq("key_hash", keyHash)
     .maybeSingle();
@@ -161,18 +197,52 @@ export async function beginIdempotency(
   }
 
   if (existing.status === "in_progress") {
-    return {
-      skipped: false,
-      reason: 'IN_PROGRESS',
-      existingId: existing.id,
-      keyHash,
-      requestHash,
-      conflict: createErrorResponse(
-        "Requisição idempotente em andamento — tente novamente em instantes",
-        409,
-        "IDEMPOTENCY_IN_PROGRESS",
-      ),
-    };
+    // Registros in_progress com mais de 5 minutos são considerados zumbis (função caiu sem completar).
+    // Reutilizamos o registro para evitar deadlock permanente.
+    const IN_PROGRESS_TTL_MS = 5 * 60 * 1000;
+    const createdAt = existing.created_at ? new Date(existing.created_at).getTime() : null;
+    const isStale = createdAt !== null && (Date.now() - createdAt) > IN_PROGRESS_TTL_MS;
+
+    if (!isStale) {
+      return {
+        skipped: false,
+        reason: 'IN_PROGRESS',
+        existingId: existing.id,
+        keyHash,
+        requestHash,
+        conflict: createErrorResponse(
+          "Requisição idempotente em andamento — tente novamente em instantes",
+          409,
+          "IDEMPOTENCY_IN_PROGRESS",
+        ),
+      };
+    }
+
+    // Registro zumbi — reclamar atomicamente (Codex P1: sem SELECT-then-UPDATE separado).
+    // O WHERE status='in_progress' garante que apenas um worker ganha a corrida.
+    const { data: claimed } = await admin
+      .from("idempotency_keys")
+      .update({ status: "in_progress", request_hash: requestHash, response_body: null, response_status: null, completed_at: null })
+      .eq("id", existing.id)
+      .eq("status", "in_progress")
+      .select("id")
+      .maybeSingle();
+    if (!claimed?.id) {
+      // Outro worker reclamou primeiro — rejeitar como in_progress
+      return {
+        skipped: false,
+        reason: 'IN_PROGRESS',
+        existingId: existing.id,
+        keyHash,
+        requestHash,
+        conflict: createErrorResponse(
+          "Requisição idempotente em andamento — tente novamente em instantes",
+          409,
+          "IDEMPOTENCY_IN_PROGRESS",
+        ),
+      };
+    }
+    return { skipped: false, id: existing.id, reason: 'RETRY_AFTER_FAILURE', existingId: existing.id, keyHash, requestHash };
   }
 
   if (existing.status === "completed" && existing.response_body) {

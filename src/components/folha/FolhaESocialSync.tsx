@@ -32,7 +32,7 @@ export function FolhaESocialSync({ competencia }: { competencia: string }) {
 
   const { data: eventosRaw, isLoading, refetch } = useQuery({
     queryKey: ['esocial-events-sync', compFormatada, empresaAtual?.id],
-    queryFn: () => listarEventosPorCompetencia(empresaAtual?.id || null, compFormatada),
+    queryFn: () => listarEventosPorCompetencia(empresaAtual!.id, compFormatada),
     enabled: !!empresaAtual?.id
   });
 
@@ -159,7 +159,7 @@ export function FolhaESocialSync({ competencia }: { competencia: string }) {
           <Button 
             variant="outline" 
             className="flex-1 rounded-xl gap-2 font-body text-xs border-info/20 text-info hover:bg-info/5 h-9"
-            onClick={() => window.open('/esocial', '_blank')}
+            onClick={() => window.open('/esocial', '_blank', 'noopener')}
           >
             <ExternalLink className="h-3.5 w-3.5" />
             Painel Geral

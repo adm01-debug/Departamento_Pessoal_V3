@@ -1,5 +1,5 @@
 -- Criar tabela de templates de documentos
-CREATE TABLE public.documento_templates (
+CREATE TABLE IF NOT EXISTS public.documento_templates (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   nome TEXT NOT NULL,
   tipo TEXT NOT NULL,
@@ -17,12 +17,14 @@ CREATE TABLE public.documento_templates (
 ALTER TABLE public.documento_templates ENABLE ROW LEVEL SECURITY;
 
 -- Policy
+DROP POLICY IF EXISTS "Authenticated users can manage documento_templates" ON public.documento_templates;
 CREATE POLICY "Authenticated users can manage documento_templates"
 ON public.documento_templates FOR ALL
 USING (auth.role() = 'authenticated')
 WITH CHECK (auth.role() = 'authenticated');
 
 -- Trigger updated_at
+DROP TRIGGER IF EXISTS update_documento_templates_updated_at ON public.documento_templates;
 CREATE TRIGGER update_documento_templates_updated_at
 BEFORE UPDATE ON public.documento_templates
 FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();

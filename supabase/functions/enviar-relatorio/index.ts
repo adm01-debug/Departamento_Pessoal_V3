@@ -3,6 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { z } from "https://esm.sh/zod@3.23.8";
 import { verifyCsrf } from "../_shared/csrf.ts";
 import { captureException } from "../_shared/sentry.ts";
+import { corsHeaders, parseJsonBody } from "../_shared/contract.ts";
 
 /**
  * enviar-relatorio — Onda 20 hardening
@@ -20,13 +21,6 @@ import { captureException } from "../_shared/sentry.ts";
  * 10. Todas as queries de coleta são escopadas por empresa_id (evita
  *     vazamento cross-tenant que existia antes com service key crua).
  */
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-csrf-token",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
 
 const RELATORIOS_PERMITIDOS = [
   "lista_colaboradores",
@@ -185,20 +179,17 @@ serve(async (req: Request): Promise<Response> => {
     const userClient = createClient(supabaseUrl, anonKey, {
       global: { headers: { Authorization: authHeader } },
     });
-    const jwt = authHeader.replace(/^Bearer\s+/i, '').trim();
-    const { data: claimsData, error: claimsErr } = await userClient.auth.getClaims(jwt);
-    if (claimsErr || !claimsData?.claims?.sub) {
+    const { data: claimsData, error: claimsErr } = await userClient.auth.getUser();
+    if (claimsErr || !claimsData?.user?.id) {
       return json({ error: "Sessão inválida" }, 401);
     }
-    const userId = String(claimsData.claims.sub);
+    const userId = claimsData.user.id;
 
     // 3. Validação do payload
     let raw: unknown;
-    try {
-      raw = await req.json();
-    } catch {
-      return json({ error: "JSON inválido" }, 400);
-    }
+    const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
+    if (_pe) return _pe;
+    raw = _pb;
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) {
       return json(
@@ -219,6 +210,10 @@ serve(async (req: Request): Promise<Response> => {
       const { data: isAdm } = await admin.rpc("is_admin", { _user_id: userId });
       if (!isAdm) return json({ error: "Sem acesso a esta empresa" }, 403);
     }
+
+    const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
+    const rl = await checkRateLimit(admin, { key: `enviar-relatorio:${userId}`, limit: 5, windowSec: 60 });
+    if (!rl.allowed) return rateLimitResponse(rl);
 
     // 4b. Anti-exfiltração: emailDestinatario deve pertencer a um usuário
     // vinculado à empresa (evita envio de dados internos para email externo).

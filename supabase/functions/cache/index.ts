@@ -1,7 +1,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
-import { corsHeaders, createErrorResponse, createValidationErrorResponse } from '../_shared/contract.ts';
+import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 
@@ -97,13 +97,18 @@ serve(async (req: Request): Promise<Response> => {
     }
     const userId = userData.user.id;
 
-    const parsed = BodySchema.safeParse(await req.json().catch(() => ({})));
-    if (!parsed.success) return createValidationErrorResponse(parsed.error);
-    const body = parsed.data;
-
     const admin = createClient(SUPABASE_URL, SERVICE_KEY, {
       auth: { persistSession: false, autoRefreshToken: false },
     });
+
+    const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
+    const rl = await checkRateLimit(admin, { key: `cache:${userId}`, limit: 60, windowSec: 60 });
+    if (!rl.allowed) return rateLimitResponse(rl);
+
+    const { body: _pb } = await parseJsonBody(req);
+    const parsed = BodySchema.safeParse(_pb ?? {});
+    if (!parsed.success) return createValidationErrorResponse(parsed.error);
+    const body = parsed.data;
 
     evictExpired();
 

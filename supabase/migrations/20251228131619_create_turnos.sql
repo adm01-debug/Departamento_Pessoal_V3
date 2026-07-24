@@ -29,15 +29,19 @@ CREATE INDEX IF NOT EXISTS idx_turnos_created ON public.turnos(created_at);
 -- RLS
 ALTER TABLE public.turnos ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "turnos_select" ON public.turnos;
 CREATE POLICY "turnos_select" ON public.turnos
   FOR SELECT USING (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "turnos_insert" ON public.turnos;
 CREATE POLICY "turnos_insert" ON public.turnos
   FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "turnos_update" ON public.turnos;
 CREATE POLICY "turnos_update" ON public.turnos
   FOR UPDATE USING (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "turnos_delete" ON public.turnos;
 CREATE POLICY "turnos_delete" ON public.turnos
   FOR DELETE USING (auth.uid() IS NOT NULL);
 
@@ -50,6 +54,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_turnos_updated_at ON public.turnos;
 CREATE TRIGGER trigger_turnos_updated_at
   BEFORE UPDATE ON public.turnos
   FOR EACH ROW EXECUTE FUNCTION update_turnos_updated_at();

@@ -1,4 +1,5 @@
 -- Tipos de afastamento
+DO $$ BEGIN
 CREATE TYPE public.tipo_afastamento AS ENUM (
   'doenca',
   'acidente_trabalho',
@@ -13,17 +14,20 @@ CREATE TYPE public.tipo_afastamento AS ENUM (
   'suspensao_disciplinar',
   'outros'
 );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- Status do afastamento
+DO $$ BEGIN
 CREATE TYPE public.status_afastamento AS ENUM (
   'ativo',
   'encerrado',
   'cancelado',
   'prorrogado'
 );
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- Tabela principal de afastamentos
-CREATE TABLE public.afastamentos (
+CREATE TABLE IF NOT EXISTS public.afastamentos (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   colaborador_id UUID NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE,
   tipo tipo_afastamento NOT NULL,
@@ -48,7 +52,7 @@ CREATE TABLE public.afastamentos (
 );
 
 -- Tabela de prorrogações
-CREATE TABLE public.prorrogacoes_afastamento (
+CREATE TABLE IF NOT EXISTS public.prorrogacoes_afastamento (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   afastamento_id UUID NOT NULL REFERENCES public.afastamentos(id) ON DELETE CASCADE,
   data_fim_anterior DATE NOT NULL,
@@ -62,7 +66,7 @@ CREATE TABLE public.prorrogacoes_afastamento (
 );
 
 -- Tabela de documentos de afastamento
-CREATE TABLE public.documentos_afastamento (
+CREATE TABLE IF NOT EXISTS public.documentos_afastamento (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   afastamento_id UUID NOT NULL REFERENCES public.afastamentos(id) ON DELETE CASCADE,
   tipo VARCHAR(50) NOT NULL,
@@ -78,18 +82,22 @@ ALTER TABLE public.prorrogacoes_afastamento ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.documentos_afastamento ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies
+DROP POLICY IF EXISTS "Authenticated users can manage afastamentos" ON public.afastamentos;
 CREATE POLICY "Authenticated users can manage afastamentos" ON public.afastamentos FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Authenticated users can manage prorrogacoes" ON public.prorrogacoes_afastamento;
 CREATE POLICY "Authenticated users can manage prorrogacoes" ON public.prorrogacoes_afastamento FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Authenticated users can manage docs_afastamento" ON public.documentos_afastamento;
 CREATE POLICY "Authenticated users can manage docs_afastamento" ON public.documentos_afastamento FOR ALL USING (true) WITH CHECK (true);
 
 -- Trigger para atualizar updated_at
+DROP TRIGGER IF EXISTS update_afastamentos_updated_at ON public.afastamentos;
 CREATE TRIGGER update_afastamentos_updated_at
   BEFORE UPDATE ON public.afastamentos
   FOR EACH ROW
   EXECUTE FUNCTION public.update_updated_at_column();
 
 -- Tabela de configurações de afastamentos (dias por tipo)
-CREATE TABLE public.config_afastamentos (
+CREATE TABLE IF NOT EXISTS public.config_afastamentos (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   tipo tipo_afastamento NOT NULL UNIQUE,
   dias_empresa_maximo INTEGER DEFAULT 15,
@@ -102,6 +110,7 @@ CREATE TABLE public.config_afastamentos (
 );
 
 ALTER TABLE public.config_afastamentos ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Authenticated users can view config_afastamentos" ON public.config_afastamentos;
 CREATE POLICY "Authenticated users can view config_afastamentos" ON public.config_afastamentos FOR SELECT USING (true);
 
 -- Inserir configurações padrão

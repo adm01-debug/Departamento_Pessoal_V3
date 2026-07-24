@@ -11,13 +11,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://esm.sh/zod@3.23.8';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-csrf-token, idempotency-key',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Cache-Control': 'no-store',
-};
+import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 
 const MAX_SALARIO_CENTS = 100_000_000n; // R$ 1.000.000,00
 const TETO_INSS_CENTS = 815_741n; // R$ 8.157,41
@@ -61,8 +55,10 @@ function calcularINSSCents(baseCents: bigint): bigint {
   let inss: bigint;
   if (b <= F1) inss = (b * 75n) / 1000n;
   else if (b <= F2) inss = 11_385n + ((b - F1) * 90n) / 1000n;
-  else if (b <= F3) inss = 22_868n + ((b - F2) * 120n) / 1000n;
-  else inss = 39_631n + ((b - F3) * 140n) / 1000n;
+  // 22_867n = 11_385 + floor((279_388-151_800)*90/1000) — BigInt division truncates per IN RFB 2110/2022
+  else if (b <= F3) inss = 22_867n + ((b - F2) * 120n) / 1000n;
+  // 39_630n = 22_867 + floor((419_083-279_388)*120/1000)
+  else inss = 39_630n + ((b - F3) * 140n) / 1000n;
   const TETO_DESC = 95_163n; // R$ 951,63
   return inss < TETO_DESC ? inss : TETO_DESC;
 }
@@ -70,7 +66,10 @@ function calcularINSSCents(baseCents: bigint): bigint {
 // IRRF progressivo (retorna centavos)
 function calcularIRRFCents(baseCents: bigint, dependentes: number): bigint {
   const deducaoDep = BigInt(dependentes) * 18_959n; // R$ 189,59
-  const b = baseCents - deducaoDep;
+  const bLegal = baseCents - deducaoDep;
+  // Desconto simplificado R$564,80 = 56_480 centavos (Art. 1°, Lei 13.149/2015)
+  const bSimplificado = baseCents - 56_480n;
+  const b = bLegal < bSimplificado ? bLegal : bSimplificado;
   if (b <= 225_920n) return 0n;
   if (b <= 282_665n) { const v = (b * 75n) / 1000n - 16_944n; return v > 0n ? v : 0n; }
   if (b <= 375_105n) { const v = (b * 150n) / 1000n - 38_144n; return v > 0n ? v : 0n; }
@@ -106,19 +105,20 @@ serve(async (req: Request): Promise<Response> => {
       global: { headers: { Authorization: authHeader } },
       auth: { persistSession: false, autoRefreshToken: false },
     });
-    const token = authHeader.replace('Bearer ', '');
-    const { data: claimsData, error: claimsErr } = await userClient.auth.getClaims(token);
-    if (claimsErr || !claimsData?.claims?.sub) {
+    const { data: userData, error: userErr } = await userClient.auth.getUser();
+    if (userErr || !userData?.user?.id) {
       return json({ success: false, error: 'Sessão inválida', code: 'UNAUTHORIZED' }, 401);
     }
-    const userId = claimsData.claims.sub as string;
+    const userId = userData.user.id;
 
     const supabase = createClient(supabaseUrl, serviceKey, {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
     let raw: unknown;
-    try { raw = await req.json(); } catch { return json({ success: false, error: 'JSON inválido', code: 'INVALID_JSON' }, 400); }
+    const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
+    if (_pe) return _pe;
+    raw = _pb;
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) {
       return json({ success: false, error: 'Payload inválido', code: 'VALIDATION_ERROR', details: parsed.error.flatten() }, 422);
@@ -133,6 +133,10 @@ serve(async (req: Request): Promise<Response> => {
     if (!belongs && !isAdm) {
       return json({ success: false, error: 'Sem acesso a esta empresa', code: 'FORBIDDEN' }, 403);
     }
+
+    const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
+    const rl = await checkRateLimit(supabase, { key: `calc-13:${userId}`, limit: 30, windowSec: 60 });
+    if (!rl.allowed) return rateLimitResponse(rl);
 
     // Idempotência (janela 10min por competencia+colaborador+parcela)
     const idemKey = req.headers.get('idempotency-key') ?? '';

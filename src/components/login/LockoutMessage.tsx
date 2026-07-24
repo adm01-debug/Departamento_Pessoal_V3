@@ -20,7 +20,8 @@ export function LockoutMessage({ remainingSeconds }: LockoutMessageProps) {
       setSeconds((s) => Math.max(0, s - 1));
     }, 1000);
     return () => clearInterval(timer);
-  }, [seconds]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [seconds > 0]);
 
   const minutes = Math.floor(seconds / 60);
   const secs = seconds % 60;

@@ -9,14 +9,17 @@ VALUES (
 );
 
 -- Storage policies for authenticated users
+DROP POLICY IF EXISTS "Users can view documents" ON storage.objects;
 CREATE POLICY "Users can view documents"
 ON storage.objects FOR SELECT
 USING (bucket_id = 'documentos-colaboradores' AND auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Users can upload documents" ON storage.objects;
 CREATE POLICY "Users can upload documents"
 ON storage.objects FOR INSERT
 WITH CHECK (bucket_id = 'documentos-colaboradores' AND auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Users can delete documents" ON storage.objects;
 CREATE POLICY "Users can delete documents"
 ON storage.objects FOR DELETE
 USING (bucket_id = 'documentos-colaboradores' AND auth.role() = 'authenticated');

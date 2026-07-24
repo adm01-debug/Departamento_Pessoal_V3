@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { CardSkeleton } from '@/components/ui/module-skeleton';
 import { edgeFunctionsService } from '@/services/edgeFunctionsService';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { useState } from 'react';
 
 interface BriefingData {
@@ -127,7 +128,7 @@ export function MorningBriefing() {
       await fn();
       toast.success(successMsg);
     } catch (err: any) {
-      toast.error(`Erro: ${err.message}`);
+      toast.error(safeErrorMessage(err, 'Erro ao executar ação.'));
     } finally {
       setRunningAction(null);
     }

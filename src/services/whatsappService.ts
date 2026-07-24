@@ -110,7 +110,8 @@ export const whatsappService = {
       
       await supabase.from('whatsapp_mensagens_logs')
         .update({ status: 'sent', mensagem_id_externo: `wa_${Date.now()}` } as any)
-        .eq('id', (log as any).id);
+        .eq('id', (log as any).id)
+        .eq('empresa_id', empresaId);
         
       return ({ success: true, logId: (log as any).id });
     } catch (e: any) {

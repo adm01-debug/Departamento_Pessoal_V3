@@ -1,5 +1,5 @@
 -- Tabela para configuração de WhatsApp
-CREATE TABLE public.whatsapp_config (
+CREATE TABLE IF NOT EXISTS public.whatsapp_config (
     id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
     empresa_id UUID NOT NULL REFERENCES public.empresas(id) ON DELETE CASCADE UNIQUE,
     instancia_url TEXT,
@@ -15,12 +15,14 @@ CREATE TABLE public.whatsapp_config (
 
 ALTER TABLE public.whatsapp_config ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Empresas gerenciam seu próprio WhatsApp" ON public.whatsapp_config;
 CREATE POLICY "Empresas gerenciam seu próprio WhatsApp" 
 ON public.whatsapp_config FOR ALL
 USING (auth.uid() IN (
     SELECT user_id FROM public.user_empresas WHERE empresa_id = whatsapp_config.empresa_id
 ));
 
+DROP TRIGGER IF EXISTS update_whatsapp_config_updated_at ON public.whatsapp_config;
 CREATE TRIGGER update_whatsapp_config_updated_at
 BEFORE UPDATE ON public.whatsapp_config
 FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();

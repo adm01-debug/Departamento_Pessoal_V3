@@ -12,12 +12,15 @@ CREATE TABLE IF NOT EXISTS cache_tabelas (
 -- Add RLS Policies
 ALTER TABLE cache_tabelas ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "cache_tabelas_select" ON public.cache_tabelas;
 CREATE POLICY "cache_tabelas_select" ON cache_tabelas
   FOR SELECT USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "cache_tabelas_insert" ON public.cache_tabelas;
 CREATE POLICY "cache_tabelas_insert" ON cache_tabelas
   FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "cache_tabelas_update" ON public.cache_tabelas;
 CREATE POLICY "cache_tabelas_update" ON cache_tabelas
   FOR UPDATE USING (auth.role() = 'authenticated');
 
@@ -33,6 +36,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_cache_tabelas_updated_at ON public.cache_tabelas;
 CREATE TRIGGER trigger_cache_tabelas_updated_at
   BEFORE UPDATE ON cache_tabelas
   FOR EACH ROW

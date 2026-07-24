@@ -4,9 +4,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
-import { Trash2, Users, FileText, CheckCircle2, XCircle, Eye, ExternalLink, AlertTriangle } from 'lucide-react';
+import { Trash2, Users, FileText, CheckCircle2, XCircle, Eye, ExternalLink, AlertTriangle, FileDown, Loader2, MessageSquareWarning } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { safeHref } from '@/utils/safeUrl';
 
 const tipoLabels: Record<string, string> = {
   advertencia_verbal: 'Adv. Verbal',
@@ -41,9 +42,12 @@ interface MedidasTableProps {
   data: any[];
   onMarcarCiencia: (id: string) => void;
   onExcluir: (id: string) => void;
+  onGerarPDF?: (id: string) => void;
+  onAbrirContestacao?: (m: any) => void;
+  gerandoPDFId?: string | null;
 }
 
-export function MedidasTable({ data, onMarcarCiencia, onExcluir }: MedidasTableProps) {
+export function MedidasTable({ data, onMarcarCiencia, onExcluir, onGerarPDF, onAbrirContestacao, gerandoPDFId }: MedidasTableProps) {
   const formatDate = (d: string) => {
     try { return format(parseISO(d), 'dd/MM/yyyy', { locale: ptBR }); } catch { return d; }
   };
@@ -165,13 +169,42 @@ export function MedidasTable({ data, onMarcarCiencia, onExcluir }: MedidasTableP
                         {m.documento_url && (
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button size="icon" variant="ghost" aria-label="Abrir em nova aba" className="h-7 w-7 rounded-lg" asChild>
-                                <a href={m.documento_url} target="_blank" rel="noopener noreferrer">
+                              <Button size="icon" variant="ghost" className="h-7 w-7 rounded-lg" asChild>
+                                <a href={safeHref(m.documento_url)} target="_blank" rel="noopener noreferrer">
                                   <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
                                 </a>
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>Ver documento</TooltipContent>
+                          </Tooltip>
+                        )}
+                        {onGerarPDF && (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="h-7 w-7 rounded-lg"
+                                onClick={() => onGerarPDF(m.id)}
+                                disabled={gerandoPDFId === m.id}
+                                aria-label="Gerar documento PDF"
+                              >
+                                {gerandoPDFId === m.id
+                                  ? <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                                  : <FileDown className="h-3.5 w-3.5 text-primary" />}
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>{m.pdf_url ? 'Regerar documento assinável' : 'Gerar documento assinável (PDF)'}</TooltipContent>
+                          </Tooltip>
+                        )}
+                        {onAbrirContestacao && ['aplicada','contestada'].includes(m.status_workflow) && (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button size="icon" variant="ghost" className="h-7 w-7 rounded-lg" onClick={() => onAbrirContestacao(m)} aria-label="Contestação">
+                                <MessageSquareWarning className={`h-3.5 w-3.5 ${m.status_workflow === 'contestada' ? 'text-warning' : 'text-muted-foreground'}`} />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>{m.status_workflow === 'contestada' ? 'Contestação pendente de resposta' : 'Ver / contestar'}</TooltipContent>
                           </Tooltip>
                         )}
                         <Tooltip>

@@ -56,5 +56,7 @@ FOR EACH ROW EXECUTE FUNCTION public.fn_processar_workflow_admissao();
 
 -- Enable RLS
 ALTER TABLE public.workflows_config ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users can view their company workflows" ON public.workflows_config;
 CREATE POLICY "Users can view their company workflows" ON public.workflows_config FOR SELECT USING (empresa_id IN (SELECT empresa_id FROM profiles WHERE id = auth.uid()));
+DROP POLICY IF EXISTS "Users can manage their company workflows" ON public.workflows_config;
 CREATE POLICY "Users can manage their company workflows" ON public.workflows_config FOR ALL USING (empresa_id IN (SELECT empresa_id FROM profiles WHERE id = auth.uid()));

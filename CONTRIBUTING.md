@@ -1,23 +1,37 @@
 # Contribuindo
 
-## Como contribuir
+## Stack
+React 19 · TypeScript 6 · Vite 8 · Bun · Tailwind 4 · Supabase 2.x
 
-1. Fork o repositório
-2. Crie uma branch: `git checkout -b feature/minha-feature`
-3. Commit: `git commit -m 'feat: minha feature'`
-4. Push: `git push origin feature/minha-feature`
-5. Abra um Pull Request
+## Setup
 
-## Padrões de código
+```bash
+git clone https://github.com/adm01-debug/departamento-pessoal-v2.git
+cd departamento-pessoal-v2
+bun install
+cp .env.example .env.local
+bun run dev
+```
 
-- ESLint + Prettier
-- TypeScript strict
-- Testes para utils e hooks
+## Comandos
+
+| Comando | Descrição |
+|---------|-----------|
+| `bun run dev` | Dev server (8080) |
+| `bun run build` | Produção |
+| `bun run lint` | ESLint |
+| `bun run typecheck` | tsc --noEmit |
+| `bun run test` | Vitest |
+| `bun run test:e2e` | Playwright |
+| `bun run ci:verify` | typecheck + lint + format |
+
+## DB Bridge
+NUNCA use Supabase client direto. Importe de `@/integrations/supabase/client`. O proxy roteia para `external-db-bridge`.
 
 ## Commits
+Conventional Commits: `feat:` · `fix:` · `chore:` · `docs:` · `test:` · `refactor:`
 
-Usamos Conventional Commits:
-- `feat:` nova funcionalidade
-- `fix:` correção
-- `docs:` documentação
-- `test:` testes
+## PRs
+- Branch: `fix/desc`, `feat/desc`, `chore/desc`
+- CI precisa passar (typecheck + lint + test)
+- 1 reviewer mínimo

@@ -22,12 +22,16 @@ describe('provisaoService', () => {
       const mockEq = vi.fn().mockResolvedValue({ data: [], error: null });
       const mockOrder = vi.fn().mockReturnValue({ eq: mockEq });
       const mockSelect = vi.fn().mockReturnValue({ order: mockOrder });
-      
+
       vi.mocked(supabase.from).mockReturnValue({ select: mockSelect } as any);
 
-      const result = await provisaoService.list();
+      const result = await provisaoService.list('empresa-123');
       expect(mockSelect).toHaveBeenCalledWith('*, colaborador:colaboradores(nome_completo, salario_base)');
       expect(result).toEqual([]);
+    });
+
+    it('should throw when empresa_id is missing', async () => {
+      await expect(provisaoService.list('')).rejects.toThrow('empresa_id obrigatório');
     });
 
     it('should throw error if supabase fails', async () => {

@@ -2,12 +2,24 @@
 import { createClient } from '@supabase/supabase-js';
 import { toast } from 'sonner';
 import type { Database } from './types';
+import { secureJsonParse } from '@/utils/secureJson';
 
-// Configurações do Lovable Cloud (projeto ciziytrrjjotlsjzshnm).
-// O banco corporativo (hncgwjbzdajfdztqgefe) foi descontinuado por chave API
-// inválida — migramos para o backend gerenciado pelo Lovable Cloud.
-const SUPABASE_URL = 'https://ciziytrrjjotlsjzshnm.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpeml5dHJyampvdGxzanpzaG5tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0NzU5NjQsImV4cCI6MjA5NDA1MTk2NH0.Ld9R1Rf5CH06IMUxDYvOXZoIqNmrGlwrpdO-eBrVMRQ';
+
+// Projeto ativo pós-cutover: frjbfeamybqsejlvmqbl.
+// Guard fail-fast: se as env vars faltarem no build, gritamos alto no console
+// (o client Supabase silenciosamente iria para "undefined.supabase.co").
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://frjbfeamybqsejlvmqbl.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY =
+  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
+  import.meta.env.VITE_SUPABASE_ANON_KEY ||
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZyamJmZWFteWJxc2VqbHZtcWJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ2NDA3NTYsImV4cCI6MjEwMDIxNjc1Nn0.yrnnKshNB_89tmJtHbyaZGnsOHuAEV6x5OFrcepBYIU';
+
+if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY) {
+  console.error(
+    '⚠️ [SUPABASE] VITE_SUPABASE_URL/VITE_SUPABASE_PUBLISHABLE_KEY ausentes no .env. ' +
+    'Usando fallback embutido — verifique o build.',
+  );
+}
 
 // Base client usado para Auth/Storage. Toda I/O de dados vai pela bridge.
 const supabaseBase = createClient<Database>(
@@ -18,6 +30,8 @@ const supabaseBase = createClient<Database>(
       storage: localStorage,
       persistSession: true,
       autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce',
     }
   }
 );
@@ -97,12 +111,13 @@ const callBridge = async <T = any>(
       },
       body: JSON.stringify(body),
     });
+    const rawText = await res.text().catch(() => '{}');
     const json: {
       data?: unknown;
       count?: number;
       error?: string;
       duration_ms?: number;
-    } = await res.json().catch(() => ({}));
+    } = secureJsonParse(rawText);
     if (!res.ok || json.error) {
       const errorMsg = json.error || `Erro HTTP ${res.status}`;
       console.error('🔴 [BRIDGE_SCHEMA_ERROR]', action, target, errorMsg);
@@ -111,7 +126,7 @@ const callBridge = async <T = any>(
       // Apenas propagamos o erro para quem chamou tratar (ou ignorar).
       const isMissingObject = /Could not find the (function|table)|schema cache|does not exist|column .* does not exist/i.test(errorMsg);
       if (!isMissingObject) {
-        toast.error(`Erro de banco: ${errorMsg}`, {
+        toast.error('Erro ao processar operação no banco de dados.', {
           duration: 6000,
         });
       }

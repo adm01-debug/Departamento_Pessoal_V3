@@ -38,7 +38,8 @@ export function usePendencias(empresaId?: string) {
       const { error } = await supabase
         .from('pendencias')
         .update({ status, atualizado_at: new Date().toISOString() })
-        .eq('id', id);
+        .eq('id', id)
+        .eq('empresa_id', empresaId!);
 
       if (error) throw error;
     },

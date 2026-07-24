@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresa } from '@/contexts';
+import { safeHref } from '@/utils/safeUrl';
 
 export function SSTProgramasTab() {
   const { empresaAtual } = useEmpresa();
@@ -73,7 +74,7 @@ export function SSTProgramasTab() {
                   <div className="flex justify-between text-[10px] font-body"><span className="text-muted-foreground">Status:</span><Badge className={cn("border-0 text-[9px]", new Date(prog.data_validade) < new Date() ? "bg-destructive/15 text-destructive" : "bg-success/15 text-success")}>{new Date(prog.data_validade) < new Date() ? 'Vencido' : 'Vigente'}</Badge></div>
                 </div>
                 <div className="mt-3 pt-3 border-t border-border/20 flex gap-2">
-                  <Button size="sm" variant="outline" className="flex-1 text-[10px] h-7 rounded-lg font-body" onClick={() => prog.arquivo_url && window.open(prog.arquivo_url)}>Visualizar</Button>
+                  <Button size="sm" variant="outline" className="flex-1 text-[10px] h-7 rounded-lg font-body" onClick={() => prog.arquivo_url && window.open(safeHref(prog.arquivo_url), '_blank', 'noopener')}>Visualizar</Button>
                   <Button size="sm" variant="outline" className="flex-1 text-[10px] h-7 rounded-lg font-body">Renovar</Button>
                 </div>
               </CardContent>

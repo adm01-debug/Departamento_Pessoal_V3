@@ -38,6 +38,7 @@ ADD COLUMN IF NOT EXISTS data_assinatura_colaborador TIMESTAMP WITH TIME ZONE;
 ALTER TABLE public.homologacoes_rescisao ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.verbas_rescisorias ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Acesso homologacoes por empresa" ON public.homologacoes_rescisao;
 CREATE POLICY "Acesso homologacoes por empresa" ON public.homologacoes_rescisao
 FOR ALL USING (
     EXISTS (
@@ -47,6 +48,7 @@ FOR ALL USING (
     )
 );
 
+DROP POLICY IF EXISTS "Acesso verbas por empresa" ON public.verbas_rescisorias;
 CREATE POLICY "Acesso verbas por empresa" ON public.verbas_rescisorias
 FOR ALL USING (
     EXISTS (

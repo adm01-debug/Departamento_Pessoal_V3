@@ -21,4 +21,5 @@ CREATE INDEX IF NOT EXISTS idx_homologacoes_empresa ON public.homologacoes(empre
 CREATE INDEX IF NOT EXISTS idx_homologacoes_colaborador ON public.homologacoes(colaborador_id);
 ALTER TABLE public.homologacoes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "homologacoes_all" ON public.homologacoes;
 CREATE POLICY "homologacoes_all" ON public.homologacoes FOR ALL USING (auth.uid() IS NOT NULL);

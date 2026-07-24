@@ -13,6 +13,7 @@ import { PortalOverviewTab } from '@/components/portal/PortalOverviewTab';
 import { PortalFinanceiroTab } from '@/components/portal/PortalFinanceiroTab';
 import { PortalDocumentosTab } from '@/components/portal/PortalDocumentosTab';
 import { PortalMeusDadosTab } from '@/components/portal/PortalMeusDadosTab';
+import { useEmpresas } from '@/hooks/useEmpresas';
 
 function usePortalCompleto(userId: string | undefined) {
   return useQuery({
@@ -46,6 +47,7 @@ function usePortalCompleto(userId: string | undefined) {
 export default function PortalPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { empresaAtual } = useEmpresas();
   const { data } = usePortalCompleto(user?.id);
   const [tab, setTab] = useState('visao-geral');
 
@@ -73,7 +75,7 @@ export default function PortalPage() {
           </TabsList>
           <TabsContent value="visao-geral"><PortalOverviewTab nome={nome} data={data} completude={completude} navigate={navigate} /></TabsContent>
           <TabsContent value="financeiro"><PortalFinanceiroTab holerites={data?.holerites || []} beneficios={data?.beneficios || []} /></TabsContent>
-          <TabsContent value="documentos"><PortalDocumentosTab navigate={navigate} colaboradorId={data?.profile?.id} /></TabsContent>
+          <TabsContent value="documentos"><PortalDocumentosTab navigate={navigate} colaboradorId={data?.profile?.id} empresaId={empresaAtual?.id} /></TabsContent>
           <TabsContent value="meus-dados"><PortalMeusDadosTab nome={nome} email={user?.email || ''} profile={data?.profile} userId={user?.id || ''} navigate={navigate} /></TabsContent>
           <TabsContent value="regimento"><PortalRegimentoCard /></TabsContent>
         </Tabs>

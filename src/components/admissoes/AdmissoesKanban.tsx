@@ -14,8 +14,10 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { admissaoService } from '@/services/admissaoService';
 import { useQueryClient } from '@tanstack/react-query';
+import { useEmpresas } from '@/hooks/useEmpresas';
 import { formatDate } from '@/utils/format';
 import { GripVertical } from 'lucide-react';
 
@@ -124,6 +126,7 @@ function Column({
 
 export function AdmissoesKanban({ admissoes }: { admissoes: Admissao[] }) {
   const qc = useQueryClient();
+  const { empresaAtual } = useEmpresas();
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
   const [activeId, setActiveId] = useState<string | null>(null);
   const [optimistic, setOptimistic] = useState<Record<string, string>>({});
@@ -156,7 +159,7 @@ export function AdmissoesKanban({ admissoes }: { admissoes: Admissao[] }) {
 
     setOptimistic((s) => ({ ...s, [id]: target }));
     try {
-      await admissaoService.atualizar(id, { etapa: target });
+      await admissaoService.atualizar(id, { etapa: target }, empresaAtual?.id);
       toast.success(`Movido para ${COLUMNS.find((c) => c.key === target)?.label ?? target}`);
       await qc.invalidateQueries({ queryKey: ['admissoes'] });
     } catch (err: any) {
@@ -165,7 +168,7 @@ export function AdmissoesKanban({ admissoes }: { admissoes: Admissao[] }) {
         delete next[id];
         return next;
       });
-      toast.error('Falha ao mover: ' + (err?.message ?? 'erro'));
+      toast.error(safeErrorMessage(err, 'Falha ao mover admissão.'));
     }
   };
 

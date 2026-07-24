@@ -1,4 +1,4 @@
-CREATE TABLE public.historico_rescisoes (
+CREATE TABLE IF NOT EXISTS public.historico_rescisoes (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   empresa_id UUID REFERENCES public.empresas(id),
   created_by UUID,
@@ -21,10 +21,12 @@ CREATE TABLE public.historico_rescisoes (
 
 ALTER TABLE public.historico_rescisoes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Usuarios autenticados podem inserir rescisoes" ON public.historico_rescisoes;
 CREATE POLICY "Usuarios autenticados podem inserir rescisoes"
   ON public.historico_rescisoes FOR INSERT TO authenticated
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Usuarios autenticados podem ver rescisoes" ON public.historico_rescisoes;
 CREATE POLICY "Usuarios autenticados podem ver rescisoes"
   ON public.historico_rescisoes FOR SELECT TO authenticated
   USING (true);

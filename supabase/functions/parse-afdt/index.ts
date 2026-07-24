@@ -3,11 +3,9 @@
 // Retorna { importacao_id, total_linhas, total_registros, total_erros }
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { verifyCsrf } from '../_shared/csrf.ts';
+import { captureException } from '../_shared/sentry.ts';
+import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 
 function err(msg: string, status = 400, code = 'BAD_REQUEST') {
   return new Response(JSON.stringify({ error: msg, code }), {
@@ -112,6 +110,9 @@ function parseAFDT(text: string): { rows: ParsedRow[]; cnpj: string | null; dtIn
 serve(async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
+  const csrf = await verifyCsrf(req.clone());
+  if (!csrf.ok) return csrf.response!;
+
   const authHeader = req.headers.get('Authorization') ?? '';
   if (!authHeader.startsWith('Bearer ')) return err('Autenticação obrigatória', 401, 'UNAUTHORIZED');
 
@@ -127,8 +128,15 @@ serve(async (req: Request): Promise<Response> => {
   if (!u?.user) return err('Sessão inválida', 401, 'UNAUTHORIZED');
   const userId = u.user.id;
 
+  const adminRL = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
+  const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
+  const rl = await checkRateLimit(adminRL, { key: `parse-afdt:${userId}`, limit: 10, windowSec: 60 });
+  if (!rl.allowed) return rateLimitResponse(rl);
+
   let body: { conteudo?: string; nome_arquivo?: string; tipo?: string; empresa_id?: string };
-  try { body = await req.json(); } catch { return err('JSON inválido'); }
+  const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
+  if (_pe) return _pe;
+  body = _pb as typeof body;
 
   const conteudo = String(body.conteudo ?? '');
   const nomeArquivo = String(body.nome_arquivo ?? 'arquivo.txt').slice(0, 255);

@@ -1,5 +1,5 @@
 -- Create table for indicator alert limits configuration
-CREATE TABLE public.config_alertas_indicadores (
+CREATE TABLE IF NOT EXISTS public.config_alertas_indicadores (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tipo text NOT NULL UNIQUE,
   limite_atencao numeric NOT NULL,
@@ -12,16 +12,19 @@ CREATE TABLE public.config_alertas_indicadores (
 ALTER TABLE public.config_alertas_indicadores ENABLE ROW LEVEL SECURITY;
 
 -- Policies for authenticated users
+DROP POLICY IF EXISTS "Authenticated users can view config_alertas" ON public.config_alertas_indicadores;
 CREATE POLICY "Authenticated users can view config_alertas" 
 ON public.config_alertas_indicadores 
 FOR SELECT 
 USING (true);
 
+DROP POLICY IF EXISTS "Authenticated users can insert config_alertas" ON public.config_alertas_indicadores;
 CREATE POLICY "Authenticated users can insert config_alertas" 
 ON public.config_alertas_indicadores 
 FOR INSERT 
 WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Authenticated users can update config_alertas" ON public.config_alertas_indicadores;
 CREATE POLICY "Authenticated users can update config_alertas" 
 ON public.config_alertas_indicadores 
 FOR UPDATE 
@@ -33,6 +36,7 @@ INSERT INTO public.config_alertas_indicadores (tipo, limite_atencao, limite_crit
 ('absenteismo', 3, 5);
 
 -- Create trigger for updated_at
+DROP TRIGGER IF EXISTS update_config_alertas_updated_at ON public.config_alertas_indicadores;
 CREATE TRIGGER update_config_alertas_updated_at
 BEFORE UPDATE ON public.config_alertas_indicadores
 FOR EACH ROW

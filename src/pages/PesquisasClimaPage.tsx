@@ -29,7 +29,7 @@ export default function PesquisasClimaPage() {
 
   const { data: pesquisas = [], isLoading } = useQuery({
     queryKey: ['pesquisas', empresaAtual?.id],
-    queryFn: () => pesquisaService.listar(empresaAtual?.id),
+    queryFn: () => pesquisaService.listar(empresaAtual!.id),
     enabled: !!empresaAtual?.id,
   });
 
@@ -40,12 +40,12 @@ export default function PesquisasClimaPage() {
   });
 
   const excluir = useMutation({
-    mutationFn: (id: string) => pesquisaService.excluir(id),
+    mutationFn: (id: string) => pesquisaService.excluir(id, empresaAtual!.id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['pesquisas'] }); toast.success('Pesquisa excluída'); },
   });
 
   const ativar = useMutation({
-    mutationFn: (id: string) => pesquisaService.atualizar(id, { status: 'ativa' }),
+    mutationFn: (id: string) => pesquisaService.atualizar(id, { status: 'ativa' }, empresaAtual!.id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['pesquisas'] }); toast.success('Pesquisa ativada!'); },
   });
 

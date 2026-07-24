@@ -12,6 +12,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { User, Mail, Save, Loader2, Camera, Phone, Briefcase, Building2, Lock, ShieldCheck, History, Bell, Smartphone, Monitor } from 'lucide-react';
 import { pushNotificationService } from '@/services/pushNotificationService';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
+import { validateUploadFile } from '@/utils/uploadValidation';
 import { motion } from 'framer-motion';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -67,13 +69,13 @@ export default function PerfilPage() {
         toast.success('Notificações push ativadas com sucesso!');
       }
     } catch (e: any) {
-      toast.error(e.message);
+      toast.error(safeErrorMessage(e, 'Erro ao atualizar perfil.'));
     }
   };
 
   useEffect(() => {
     if (profile) {
-      /* eslint-disable react-hooks/set-state-in-effect */
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setNome(profile.nome || '');
       setTelefone(profile.telefone || '');
       setCargo(profile.cargo || '');
@@ -97,7 +99,7 @@ export default function PerfilPage() {
       queryClient.invalidateQueries({ queryKey: ['meu-perfil'] });
       toast.success('Perfil atualizado!');
     } catch (e: any) {
-      toast.error(e.message);
+      toast.error(safeErrorMessage(e, 'Erro ao atualizar perfil.'));
     } finally {
       setSaving(false);
     }
@@ -107,8 +109,15 @@ export default function PerfilPage() {
     const file = e.target.files?.[0];
     if (!file || !user || !profile) return;
 
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error('Arquivo deve ter no máximo 2MB');
+    try {
+      validateUploadFile(file, { maxSizeMB: 2 });
+    } catch (err: any) {
+      toast.error(safeErrorMessage(err, 'Arquivo inválido.'));
+      return;
+    }
+    const allowedAvatarTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedAvatarTypes.includes(file.type)) {
+      toast.error('Avatar deve ser JPG, PNG ou WebP');
       return;
     }
 
@@ -126,7 +135,7 @@ export default function PerfilPage() {
       queryClient.invalidateQueries({ queryKey: ['meu-perfil'] });
       toast.success('Avatar atualizado!');
     } catch (e: any) {
-      toast.error(e.message);
+      toast.error(safeErrorMessage(e, 'Erro ao atualizar perfil.'));
     } finally {
       setUploadingAvatar(false);
     }

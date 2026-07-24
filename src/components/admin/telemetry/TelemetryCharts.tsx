@@ -193,7 +193,7 @@ export function TelemetryCharts({ rows, timeFilter }: TelemetryChartsProps) {
                 <XAxis dataKey="time" tick={{ fontSize: 10 }} />
                 <YAxis tick={{ fontSize: 10 }} tickFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(0)}s` : `${v}ms`} />
                 <Tooltip
-                  formatter={(value: number) => value >= 1000 ? `${(value / 1000).toFixed(1)}s` : `${value}ms`}
+                  formatter={(value: any) => Number(value) >= 1000 ? `${(value / 1000).toFixed(1)}s` : `${value}ms`}
                   contentStyle={{
                     backgroundColor: "hsl(var(--popover))",
                     border: "1px solid hsl(var(--border))",

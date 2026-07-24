@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 
 interface Dados13Salario {
   colaboradorId: string;
@@ -53,7 +54,7 @@ export function useCalcular13Salario() {
       toast.success(`13º Salário (${dados.parcela}ª parcela) calculado!`);
       return data.resultado;
     } catch (err: any) {
-      toast.error(`Erro ao calcular 13º: ${err.message}`);
+      toast.error(safeErrorMessage(err, 'Erro ao calcular 13º salário.'));
       return null;
     } finally {
       setLoading(false);

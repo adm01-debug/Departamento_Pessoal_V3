@@ -12,6 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { Plus, Landmark, Trash2 } from 'lucide-react';
 
 export default function SindicatosPage() {
@@ -39,11 +40,11 @@ export default function SindicatosPage() {
       return data;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['sindicatos'] }); setOpen(false); toast.success('Sindicato cadastrado!'); },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar sindicato.')),
   });
 
   const excluir = useMutation({
-    mutationFn: async (id: string) => { const { error } = await supabase.from('sindicatos').delete().eq('id', id); if (error) throw error; },
+    mutationFn: async (id: string) => { const { error } = await (supabase as any).from('sindicatos').delete().eq('id', id).eq('empresa_id', empresaAtual!.id); if (error) throw error; },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['sindicatos'] }); toast.success('Sindicato excluído!'); },
   });
 

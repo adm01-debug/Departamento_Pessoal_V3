@@ -2,6 +2,9 @@
 // Layout MVP: Registro 1 (cabeçalho), 5 (colaboradores/vínculos), 3 (marcações), 9 (trailer).
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+import { parseJsonBody } from '../_shared/contract.ts';
+import { verifyCsrf } from '../_shared/csrf.ts';
+import { captureException } from '../_shared/sentry.ts';
 
 const TZ = "America/Sao_Paulo";
 const CRLF = "\r\n";
@@ -47,6 +50,9 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
+    const csrf = await verifyCsrf(req.clone());
+    if (!csrf.ok) return csrf.response!;
+
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "unauthorized" }), {
@@ -68,10 +74,16 @@ Deno.serve(async (req) => {
       });
     }
 
-    const body = await req.json().catch(() => ({}));
-    const empresa_id: string | undefined = body.empresa_id;
-    const periodo_inicio: string | undefined = body.periodo_inicio;
-    const periodo_fim: string | undefined = body.periodo_fim;
+    const rlAdmin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false, autoRefreshToken: false } });
+    const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
+    const rl = await checkRateLimit(rlAdmin, { key: `gerar-aej:${userId}`, limit: 5, windowSec: 60 });
+    if (!rl.allowed) return rateLimitResponse(rl);
+
+    const { body: _pb } = await parseJsonBody(req);
+    const body = (_pb ?? {}) as Record<string, unknown>;
+    const empresa_id: string | undefined = body.empresa_id as string | undefined;
+    const periodo_inicio: string | undefined = body.periodo_inicio as string | undefined;
+    const periodo_fim: string | undefined = body.periodo_fim as string | undefined;
 
     if (!empresa_id || !periodo_inicio || !periodo_fim) {
       return new Response(JSON.stringify({ error: "empresa_id, periodo_inicio, periodo_fim são obrigatórios" }), {
@@ -216,8 +228,8 @@ Deno.serve(async (req) => {
       conteudo, // TXT completo (base64 opcional em versões futuras)
     }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
-    return new Response(JSON.stringify({ error: msg }), {
+    captureException(e, { fn: 'gerar-aej' });
+    return new Response(JSON.stringify({ error: 'Erro interno' }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }

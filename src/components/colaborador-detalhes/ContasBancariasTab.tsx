@@ -11,6 +11,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useContasBancarias, useCriarContaBancaria, useExcluirContaBancaria } from '@/hooks/useTabelasReferencia';
+import { maskBankAccount } from '@/utils/piiMask';
 
 const TIPOS_CONTA = ['Corrente', 'Poupança', 'Salário'];
 const TIPOS_PIX = ['CPF', 'CNPJ', 'Email', 'Telefone', 'Chave aleatória'];
@@ -83,8 +84,8 @@ export function ContasBancariasTab({ colaboradorId }: { colaboradorId: string })
               {data.map((c: any) => (
                 <TableRow key={c.id}>
                   <TableCell>{c.banco_nome} {c.banco_codigo ? `(${c.banco_codigo})` : ''}</TableCell>
-                  <TableCell>{c.agencia}</TableCell>
-                  <TableCell>{c.conta}</TableCell>
+                  <TableCell>{maskBankAccount(c.agencia)}</TableCell>
+                  <TableCell>{maskBankAccount(c.conta)}</TableCell>
                   <TableCell>{c.tipo_conta}</TableCell>
                   <TableCell>{c.pix_tipo ? `${c.pix_tipo}: ${c.pix_chave}` : '-'}</TableCell>
                   <TableCell>{c.principal ? <Badge>Sim</Badge> : 'Não'}</TableCell>

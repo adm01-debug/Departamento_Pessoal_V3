@@ -32,6 +32,7 @@ CREATE INDEX IF NOT EXISTS idx_guias_fgts_status ON public.guias_fgts(status);
 -- RLS
 ALTER TABLE public.guias_fgts ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "guias_fgts_all" ON public.guias_fgts;
 CREATE POLICY "guias_fgts_all" ON public.guias_fgts
   USING (auth.uid() IS NOT NULL)
   WITH CHECK (auth.uid() IS NOT NULL);

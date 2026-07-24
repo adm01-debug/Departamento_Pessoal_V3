@@ -16,5 +16,7 @@ CREATE INDEX IF NOT EXISTS idx_versions_date ON public.entity_versions(changed_a
 
 ALTER TABLE public.entity_versions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view versions" ON public.entity_versions;
 CREATE POLICY "Users can view versions" ON public.entity_versions FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Users can insert versions" ON public.entity_versions;
 CREATE POLICY "Users can insert versions" ON public.entity_versions FOR INSERT WITH CHECK (auth.uid() = changed_by OR changed_by IS NULL);

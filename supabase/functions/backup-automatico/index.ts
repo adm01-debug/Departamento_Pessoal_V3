@@ -1,7 +1,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
-import { corsHeaders, createErrorResponse, createValidationErrorResponse } from '../_shared/contract.ts';
+import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 
@@ -41,15 +41,15 @@ serve(async (req: Request): Promise<Response> => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
-    const jwtToken = jwt;
-    const { data: claimsData, error: userErr } = await userClient.auth.getClaims(jwtToken);
-    if (userErr || !claimsData?.claims?.sub) {
+    const { data: claimsData, error: userErr } = await userClient.auth.getUser();
+    if (userErr || !claimsData?.user?.id) {
       return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
     }
-    const user = { id: claimsData.claims.sub as string };
+    const user = { id: claimsData.user.id };
 
     // 3) Validação
-    const parsed = BodySchema.safeParse(await req.json().catch(() => ({})));
+    const { body: _pb } = await parseJsonBody(req);
+    const parsed = BodySchema.safeParse(_pb ?? {});
     if (!parsed.success) return createValidationErrorResponse(parsed.error);
     const { action, empresaId, tables, destino } = parsed.data;
 
@@ -73,6 +73,10 @@ serve(async (req: Request): Promise<Response> => {
         return createErrorResponse('Sem acesso a esta empresa', 403, 'FORBIDDEN');
       }
     }
+
+    const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
+    const rl = await checkRateLimit(admin, { key: `backup:${user.id}`, limit: 3, windowSec: 60 });
+    if (!rl.allowed) return rateLimitResponse(rl);
 
     // 6) Whitelist de tabelas exportáveis (evita dump de auth/storage/vault)
     const ALLOWED_TABLES = new Set([

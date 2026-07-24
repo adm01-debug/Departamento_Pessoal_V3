@@ -13,20 +13,16 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://esm.sh/zod@3.23.8';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-csrf-token',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Cache-Control': 'no-store',
-};
+import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 
 const CHUNK = 500;
 const MAX_COLABS = 10_000;
 
-// Encargos patronais consolidados
+// Encargos patronais consolidados. Achado K5 da auditoria: RAT estava em 2%
+// aqui, divergindo do valor canônico usado em src/calculators/tabelas.ts
+// (ENCARGOS_PADRAO.rat = 3%) — provisão de encargos subestimada.
 const INSS_PATRONAL_BPS = 200n;  // 20%
-const RAT_MEDIO_BPS = 20n;       // 2%
+const RAT_MEDIO_BPS = 30n;       // 3% (src/calculators/tabelas.ts::ENCARGOS_PADRAO.rat)
 const TERCEIROS_BPS = 58n;       // 5.8%
 const FGTS_BPS = 80n;            // 8%
 
@@ -85,19 +81,20 @@ serve(async (req: Request): Promise<Response> => {
       global: { headers: { Authorization: authHeader } },
       auth: { persistSession: false, autoRefreshToken: false },
     });
-    const token = authHeader.replace('Bearer ', '');
-    const { data: claimsData, error: claimsErr } = await userClient.auth.getClaims(token);
-    if (claimsErr || !claimsData?.claims?.sub) {
+    const { data: claimsData, error: claimsErr } = await userClient.auth.getUser();
+    if (claimsErr || !claimsData?.user?.id) {
       return json({ success: false, error: 'Sessão inválida', code: 'UNAUTHORIZED' }, 401);
     }
-    const userId = claimsData.claims.sub as string;
+    const userId = claimsData.user.id;
 
     const supabase = createClient(supabaseUrl, serviceKey, {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
     let raw: unknown;
-    try { raw = await req.json(); } catch { return json({ success: false, error: 'JSON inválido', code: 'INVALID_JSON' }, 400); }
+    const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
+    if (_pe) return _pe;
+    raw = _pb;
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) {
       return json({ success: false, error: 'Payload inválido', code: 'VALIDATION_ERROR', details: parsed.error.flatten() }, 422);
@@ -111,6 +108,10 @@ serve(async (req: Request): Promise<Response> => {
     if (!belongs && !isAdm) {
       return json({ success: false, error: 'Sem acesso a esta empresa', code: 'FORBIDDEN' }, 403);
     }
+
+    const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
+    const rl = await checkRateLimit(supabase, { key: `calc-provisoes:${userId}`, limit: 10, windowSec: 60 });
+    if (!rl.allowed) return rateLimitResponse(rl);
 
     const dataLimite = ultimoDiaCompetencia(competencia);
     const startTime = Date.now();
@@ -164,9 +165,7 @@ serve(async (req: Request): Promise<Response> => {
         const salarioCents = reaisToCents(Number(c.salario_base) || 0);
         if (salarioCents <= 0n) continue;
 
-        // Provisão de Férias: (salário × 4/3) / 12
-        const feriasPrincipalCents = (salarioCents * 4n) / 12n / 3n * 3n; // = salarioCents * 4/36
-        // Fórmula mais precisa em BigInt:
+        // Provisão de Férias: (salário × 4/3) / 12 = salário × 4/36
         const feriasCents = (salarioCents * 4n) / 36n;
         const feriasINSSCents = (feriasCents * (INSS_PATRONAL_BPS + RAT_MEDIO_BPS + TERCEIROS_BPS)) / 1000n;
         const feriasFGTSCents = (feriasCents * FGTS_BPS) / 1000n;
@@ -195,9 +194,6 @@ serve(async (req: Request): Promise<Response> => {
         });
         totalPrincipalCents += decimoCents;
         totalEncargosCents += decimoINSSCents + decimoFGTSCents;
-
-        // silence unused
-        void feriasPrincipalCents;
       }
     }
 

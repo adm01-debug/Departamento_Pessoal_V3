@@ -1,7 +1,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
-import { corsHeaders, createErrorResponse, createValidationErrorResponse } from '../_shared/contract.ts';
+import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 
@@ -22,6 +22,21 @@ const BodySchema = z.object({
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+
+const selfRateBuckets = new Map<string, { count: number; resetAt: number }>();
+const SELF_LIMIT = 30;
+const SELF_WINDOW = 60_000;
+
+function selfRateCheck(userId: string): boolean {
+  const now = Date.now();
+  const b = selfRateBuckets.get(userId);
+  if (!b || b.resetAt <= now) {
+    selfRateBuckets.set(userId, { count: 1, resetAt: now + SELF_WINDOW });
+    return true;
+  }
+  b.count++;
+  return b.count <= SELF_LIMIT;
+}
 
 serve(async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') {
@@ -46,7 +61,17 @@ serve(async (req: Request): Promise<Response> => {
     }
     const userId = userData.user.id;
 
-    const parsed = BodySchema.safeParse(await req.json().catch(() => ({})));
+    if (!selfRateCheck(userId)) {
+      return new Response(JSON.stringify({
+        success: false, error: 'Rate limit endpoint abuse detected',
+      }), {
+        status: 429,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': '60' },
+      });
+    }
+
+    const { body: _pb } = await parseJsonBody(req);
+    const parsed = BodySchema.safeParse(_pb ?? {});
     if (!parsed.success) return createValidationErrorResponse(parsed.error);
 
     const limit = parsed.data.limit ?? 100;

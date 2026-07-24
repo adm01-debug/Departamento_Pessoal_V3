@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS public.provisoes_folha (
 ALTER TABLE public.provisoes_folha ENABLE ROW LEVEL SECURITY;
 
 -- Políticas RLS
+DROP POLICY IF EXISTS "Visualização por empresa provisoes" ON public.provisoes_folha;
 CREATE POLICY "Visualização por empresa provisoes" 
 ON public.provisoes_folha FOR SELECT 
 TO authenticated

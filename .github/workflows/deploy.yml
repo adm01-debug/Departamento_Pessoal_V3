@@ -11,17 +11,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+
+      - uses: oven-sh/setup-bun@v2
+        continue-on-error: true
+        id: setup-bun
         with:
           bun-version: latest
 
+      - name: Fallback Setup Node
+        if: steps.setup-bun.outcome == 'failure'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: |
+          if command -v bun &> /dev/null; then
+            bun install
+          else
+            npm install
+          fi
 
       - name: Build
-        run: bun run build
+        run: |
+          if command -v bun &> /dev/null; then
+            bun run build
+          else
+            npm run build
+          fi
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
@@ -38,4 +55,3 @@ jobs:
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-

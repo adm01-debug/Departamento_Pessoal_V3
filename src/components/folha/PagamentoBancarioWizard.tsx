@@ -20,6 +20,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { cnabService } from '@/services/cnabService';
 
 export function PagamentoBancarioWizard({ folhaId }: { folhaId?: string }) {
@@ -60,7 +61,7 @@ export function PagamentoBancarioWizard({ folhaId }: { folhaId?: string }) {
       setCurrentStep(3);
       toast.success(method === 'pix' ? 'Lote PIX liquidado com sucesso!' : 'Arquivo de remessa gerado e enviado ao banco.');
     } catch (err: any) {
-      toast.error(`Falha no processamento: ${err.message}`);
+      toast.error(safeErrorMessage(err, 'Falha no processamento bancário.'));
     } finally {
       setIsProcessing(false);
     }

@@ -22,11 +22,13 @@ GRANT ALL ON public.audit_log_unified TO service_role;
 
 ALTER TABLE public.audit_log_unified ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Admins can view unified audit log" ON public.audit_log_unified;
 CREATE POLICY "Admins can view unified audit log"
   ON public.audit_log_unified FOR SELECT
   TO authenticated
   USING (public.has_role(auth.uid(), 'admin'));
 
+DROP POLICY IF EXISTS "Service role manages unified audit log" ON public.audit_log_unified;
 CREATE POLICY "Service role manages unified audit log"
   ON public.audit_log_unified FOR ALL
   TO service_role

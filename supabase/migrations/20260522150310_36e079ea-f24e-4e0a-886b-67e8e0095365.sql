@@ -17,13 +17,14 @@ CREATE TABLE IF NOT EXISTS public.fila_processamento (
 ALTER TABLE public.fila_processamento ENABLE ROW LEVEL SECURITY;
 
 -- Políticas de acesso
+DROP POLICY IF EXISTS "Usuários podem ver suas próprias tarefas" ON public.fila_processamento;
 CREATE POLICY "Usuários podem ver suas próprias tarefas"
 ON public.fila_processamento FOR SELECT
 USING (auth.uid() = usuario_id);
 
 -- Índices para performance
-CREATE INDEX idx_fila_processamento_status ON public.fila_processamento(status) WHERE status = 'pendente';
-CREATE INDEX idx_fila_processamento_usuario ON public.fila_processamento(usuario_id);
+CREATE INDEX IF NOT EXISTS idx_fila_processamento_status ON public.fila_processamento(status) WHERE status = 'pendente';
+CREATE INDEX IF NOT EXISTS idx_fila_processamento_usuario ON public.fila_processamento(usuario_id);
 
 -- Trigger para updated_at
 CREATE OR REPLACE FUNCTION update_fila_processamento_updated_at()
@@ -34,6 +35,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS tr_update_fila_processamento_updated_at ON public.fila_processamento;
 CREATE TRIGGER tr_update_fila_processamento_updated_at
 BEFORE UPDATE ON public.fila_processamento
 FOR EACH ROW

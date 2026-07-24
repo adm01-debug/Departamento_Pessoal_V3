@@ -8,11 +8,11 @@ export function useDepartamentos() {
   const empresaId = empresaAtual?.id;
 
   const crud = useGenericCrud<Departamento>({
-    // Inclui empresaId na queryKey para evitar reuso de cache cross-tenant.
     queryKey: `departamentos:${empresaId ?? 'none'}`,
     service: departamentoService,
     initialPageSize: 10,
     filters: empresaId ? { empresa_id: empresaId } : {},
+    empresaId: empresaId ?? undefined,
     successMessages: {
       create: 'Departamento criado com sucesso',
       update: 'Departamento atualizado',

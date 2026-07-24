@@ -4,12 +4,25 @@
 //   const csrf = await verifyCsrf(req);
 //   if (!csrf.ok) return csrf.response;
 
+// EXTRA_ALLOWED_ORIGINS permite adicionar origens via env sem alterar código.
+// Formato: lista separada por vírgulas, ex: "https://app.exemplo.com,https://staging.exemplo.com"
+const _extraOrigins = (Deno.env.get('EXTRA_ALLOWED_ORIGINS') ?? '')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+
 const ALLOWED_ORIGINS = [
   'https://sistema-dp.lovable.app',
   'https://unified-harmony-hub.lovable.app',
+  ..._extraOrigins,
 ];
 
 const LOVABLE_HOST_RE = /\.lovable\.(app|dev)$/;
+
+// Localhost only allowed when running Supabase locally (SUPABASE_URL points to localhost)
+const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+const IS_LOCAL_DEV = supabaseUrl.includes('localhost') || supabaseUrl.includes('127.0.0.1') ||
+                     Deno.env.get('SUPABASE_ENV') === 'local';
 
 export interface CsrfResult {
   ok: boolean;
@@ -48,8 +61,7 @@ export async function verifyCsrf(req: Request): Promise<CsrfResult> {
     const isAllowed =
       ALLOWED_ORIGINS.some((o) => source.startsWith(o)) ||
       LOVABLE_HOST_RE.test(host) ||
-      host === 'localhost' ||
-      host === '127.0.0.1';
+      (IS_LOCAL_DEV && (host === 'localhost' || host === '127.0.0.1'));
 
     if (!isAllowed) {
       return {

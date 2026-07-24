@@ -37,15 +37,17 @@ describe('desligamentoService', () => {
   });
 
   describe('listar', () => {
+    const EMPRESA_ID = 'empresa-test-123';
+
     it('should call select with colaborador join', () => {
-      mockLimit.mockResolvedValue({ data: [], error: null });
-      desligamentoService.listar();
+      mockEq.mockResolvedValue({ data: [], error: null });
+      desligamentoService.listar({ filters: { empresa_id: EMPRESA_ID } });
       expect(mockSelect).toHaveBeenCalledWith('*, colaborador:colaboradores(nome_completo)', { count: 'exact' });
     });
 
     it('should apply limit of 500', () => {
-      mockLimit.mockResolvedValue({ data: [], error: null });
-      desligamentoService.listar();
+      mockEq.mockResolvedValue({ data: [], error: null });
+      desligamentoService.listar({ filters: { empresa_id: EMPRESA_ID } });
       expect(mockOrder).toHaveBeenCalledWith('data_desligamento', { ascending: false });
       expect(mockLimit).toHaveBeenCalledWith(500);
     });
@@ -58,14 +60,18 @@ describe('desligamentoService', () => {
     });
 
     it('should return empty array when data is null', async () => {
-      mockLimit.mockResolvedValue({ data: null, error: null });
-      const result = await desligamentoService.listar();
+      mockEq.mockResolvedValue({ data: null, error: null });
+      const result = await desligamentoService.listar({ filters: { empresa_id: EMPRESA_ID } });
       expect(result.data).toEqual([]);
     });
 
     it('should throw on error', async () => {
-      mockLimit.mockResolvedValue({ data: null, error: new Error('DB error') });
-      await expect(desligamentoService.listar()).rejects.toThrow('DB error');
+      mockEq.mockResolvedValue({ data: null, error: new Error('DB error') });
+      await expect(desligamentoService.listar({ filters: { empresa_id: EMPRESA_ID } })).rejects.toThrow('DB error');
+    });
+
+    it('should throw when empresa_id is missing', async () => {
+      await expect(desligamentoService.listar()).rejects.toThrow('empresa_id obrigatório');
     });
   });
 

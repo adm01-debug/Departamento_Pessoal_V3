@@ -4,6 +4,7 @@ DROP POLICY IF EXISTS "Usuários autenticados podem ver logs" ON public.log_envi
 
 -- 2. Fix historico_alertas SELECT - admin only
 DROP POLICY IF EXISTS "Authenticated users can view historico_alertas" ON public.historico_alertas;
+DROP POLICY IF EXISTS "Admins can view historico_alertas" ON public.historico_alertas;
 CREATE POLICY "Admins can view historico_alertas" ON public.historico_alertas
   FOR SELECT TO authenticated USING (public.is_admin(auth.uid()));
 

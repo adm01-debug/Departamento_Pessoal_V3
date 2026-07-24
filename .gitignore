@@ -10,3 +10,17 @@ coverage
 playwright-report
 test-results
 e2e/.auth
+
+# Build artifacts
+*.tsbuildinfo
+*.tgz
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store

@@ -27,7 +27,7 @@ export default function BeneficiosPage() {
 
   const { data: beneficios = [], isLoading } = useQuery({
     queryKey: ['beneficios-full', empresaAtual?.id],
-    queryFn: () => beneficioService.listComAdesao(empresaAtual?.id),
+    queryFn: () => beneficioService.listComAdesao(empresaAtual!.id),
     enabled: !!empresaAtual?.id,
   });
 

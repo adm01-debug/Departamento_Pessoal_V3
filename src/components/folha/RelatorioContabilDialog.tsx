@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { FileSpreadsheet, Download, Loader2, BookOpen } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 
 interface RelatorioContabilDialogProps {
   folhaId: string;
@@ -73,7 +74,7 @@ export function RelatorioContabilDialog({ folhaId }: RelatorioContabilDialogProp
       toast.success('Relatório analítico para reconciliação contábil gerado!');
       setOpen(false);
     } catch (err: any) {
-      toast.error('Erro ao exportar: ' + err.message);
+      toast.error(safeErrorMessage(err, 'Erro ao exportar relatório contábil.'));
     } finally {
       setLoading(false);
     }

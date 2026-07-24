@@ -98,7 +98,8 @@ export const cnabService = {
       const { error } = await supabase
         .from('cnab_configuracoes')
         .update(config as DataRecord)
-        .eq('id', String(existingRecord.id));
+        .eq('id', String(existingRecord.id))
+        .eq('empresa_id', empresaId);
       if (error) throw error;
     } else {
       const { error } = await supabase
@@ -134,14 +135,31 @@ export const cnabService = {
     const config = await this.getConfig(empresaId);
     if (!config) throw new Error('Configuração CNAB não encontrada para esta empresa.');
 
+    // Idempotency guard (C46/C47): reject if a remessa already exists in 'enviado'
+    // status for this folha to prevent double-payment. Allow recovery if 'pendente'
+    // (previous attempt failed before sending).
+    const { data: existingRemessa } = await (supabase as any)
+      .from('cnab_remessas')
+      .select('id, status, arquivo_remessa')
+      .eq('empresa_id', empresaId)
+      .eq('folha_id', folhaId)
+      .maybeSingle();
+
+    if (existingRemessa) {
+      const rec = existingRemessa as unknown as CnabRemessaRecord & { folha_id?: string; arquivo_remessa?: string };
+      if (rec.status === 'enviado' && rec.arquivo_remessa) {
+        return rec.arquivo_remessa;
+      }
+    }
+
     const { data: itens, error: hError } = await supabase
       .from('folha_itens')
       .select(`
-        *, 
+        *,
         colaborador:colaboradores(id, nome_completo, cpf)
       `)
       .eq('folha_id', folhaId);
-    
+
     if (hError) throw hError;
     if (!itens?.length) throw new Error('Nenhum pagamento encontrado para gerar CNAB.');
 
@@ -155,30 +173,42 @@ export const cnabService = {
 
     if (cError) throw cError;
 
-    const { data: remessa, error: rError } = await supabase
-      .from('cnab_remessas')
-      .insert([{
-        empresa_id: empresaId,
-        banco_codigo: config.banco_codigo,
-        status: 'pendente',
-        valor_total: typedItens.reduce((acc, i) => acc + Number(i.total_liquido), 0),
-        total_pagamentos: typedItens.length
-      }] as any)
-      .select()
-      .single();
+    // Re-use pending remessa from a failed previous attempt; otherwise create new.
+    let remessaRecord: CnabRemessaRecord;
+    if (existingRemessa && (existingRemessa as unknown as CnabRemessaRecord).status === 'pendente') {
+      remessaRecord = existingRemessa as unknown as CnabRemessaRecord;
+    } else {
+      const { data: remessa, error: rError } = await supabase
+        .from('cnab_remessas')
+        .insert([{
+          empresa_id: empresaId,
+          folha_id: folhaId,
+          banco_codigo: config.banco_codigo,
+          status: 'pendente',
+          valor_total: typedItens.reduce((acc, i) => acc + Number(i.total_liquido), 0),
+          total_pagamentos: typedItens.length
+        }] as any)
+        .select()
+        .single();
 
-    if (rError || !remessa) throw rError || new Error('Falha ao criar remessa');
-    const remessaRecord = remessa as unknown as CnabRemessaRecord;
+      if (rError || !remessa) throw rError || new Error('Falha ao criar remessa');
+      remessaRecord = remessa as unknown as CnabRemessaRecord;
+    }
 
     const lines: string[] = [];
-    const sequence = 1;
+    // Fetch monotonically increasing sequence per (empresa, banco) — fixes C46 hardcoded=1
+    const { data: seqData } = await supabase.rpc('next_cnab_sequencial', {
+      p_empresa_id: empresaId,
+      p_banco_codigo: config.banco_codigo,
+    } as any);
+    const sequence = (seqData as number) || 1;
 
     const pad = (val: unknown, len: number, char = ' ', side: 'left' | 'right' = 'right') => {
       const s = String(val || '').substring(0, len);
       return side === 'right' ? s.padEnd(len, char) : s.padStart(len, char);
     };
 
-    const formatAmount = (val: number) => pad(Math.round(val * 100), 15, '0', 'left');
+    const formatAmount = (val: number) => pad(Math.trunc(val * 100), 15, '0', 'left');
 
     const today = new Date();
     const dateStr = formatDateLocalISO(today).replace(/-/g, '');
@@ -186,12 +216,6 @@ export const cnabService = {
 
     const header = pad(config.banco_codigo, 3, '0', 'left') + '00000' + pad('', 9) + '2' + pad('', 14, '0') + pad(config.convenio, 20) + pad(config.agencia, 5, '0', 'left') + pad(config.agencia_digito || '', 1) + pad(config.conta, 12, '0', 'left') + pad(config.conta_digito, 1) + ' ' + pad(config.nome_empresa || 'EMPRESA', 30) + pad('BANCO', 30) + pad('', 10) + '1' + dateStr + timeStr + pad(sequence, 6, '0', 'left') + '081' + '00000' + pad('', 69);
     lines.push(header.padEnd(240, ' '));
-
-    // Registrar o arquivo de remessa no banco para auditoria real
-    await supabase.from('cnab_remessas').update({
-      arquivo_remessa: lines[0],
-      status: 'enviado'
-    } as any).eq('id', remessaRecord.id);
 
     let detailSequence = 1;
     let totalValue = 0;
@@ -238,23 +262,31 @@ export const cnabService = {
     const lotTrailer = pad(config.banco_codigo, 3, '0', 'left') + '00015' + pad('', 9) + pad(detailSequence + 1, 6, '0', 'left') + formatAmount(totalValue) + pad('', 18, '0') + pad('', 183);
     lines.push(lotTrailer.padEnd(240, ' '));
 
-    await supabase.from('cnab_itens').insert(cnabItensToInsert);
-
     // Trailer de Arquivo (Tipo 9)
     const trailer = pad(config.banco_codigo, 3, '0', 'left') + '99999' + pad('', 9) + '000001' + pad(lines.length + 1, 6, '0', 'left') + pad('', 6, '0') + pad('', 205);
     lines.push(trailer.padEnd(240, ' '));
 
     const fullFile = lines.join('\r\n');
-    
-    // Atualiza com o arquivo completo
+
+    // Insert cnab_itens BEFORE marking remessa as 'enviado' (fixes C47):
+    // if we crash after updating status but before inserting items, the remessa
+    // would appear sent but have no payment records. Insert items first so the
+    // DB is always consistent — a pending remessa with items is recoverable.
+    if (cnabItensToInsert.length > 0) {
+      await supabase.from('cnab_itens').insert(cnabItensToInsert);
+    }
+
+    // Only after items are persisted, mark remessa as sent with the full file
     await supabase.from('cnab_remessas').update({
-      arquivo_remessa: fullFile
-    } as any).eq('id', remessaRecord.id);
+      arquivo_remessa: fullFile,
+      status: 'enviado',
+      sequencial_arquivo: sequence,
+    } as any).eq('id', remessaRecord.id).eq('empresa_id', empresaId);
 
     return fullFile;
   },
 
-  async parseRetornoCNAB(fileContent: string) {
+  async parseRetornoCNAB(empresaId: string, fileContent: string) {
     const lines = fileContent.split(/\r?\n/);
     const results = {
       sucesso: 0,
@@ -272,31 +304,34 @@ export const cnabService = {
         const seuNumero = line.substring(73, 93).trim();
         const codigoOcorrencia = line.substring(230, 232);
         
-        const { data: item } = await supabase
+        const { data: item } = await (supabase as any)
           .from('cnab_itens')
           .select('id, folha_item_id, nome_favorecido')
           .eq('seu_numero', seuNumero)
+          .eq('empresa_id', empresaId)
           .maybeSingle();
 
         if (item) {
           const itemRecord = item as unknown as CnabItemRecord;
           const isSuccess = ['00', '02'].includes(codigoOcorrencia);
           const status = isSuccess ? 'pago' : 'erro';
-          
-          await supabase
+
+          await (supabase as any)
             .from('cnab_itens')
-            .update({ 
-              status, 
+            .update({
+              status,
               codigo_ocorrencia: codigoOcorrencia,
               mensagem_ocorrencia: isSuccess ? 'Confirmado' : 'Rejeitado pelo banco'
             })
-            .eq('id', itemRecord.id);
+            .eq('id', itemRecord.id)
+            .eq('empresa_id', empresaId);
 
           if (isSuccess && itemRecord.folha_item_id) {
-            await supabase
+            await (supabase as any)
               .from('folha_itens')
               .update({ status_pagamento: 'pago' })
-              .eq('id', itemRecord.folha_item_id);
+              .eq('id', itemRecord.folha_item_id)
+              .eq('empresa_id', empresaId);
             results.sucesso++;
           } else {
             results.erro++;

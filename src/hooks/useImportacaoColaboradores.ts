@@ -8,6 +8,7 @@ import {
   type ParsedImportRow,
 } from '@/utils/importacao/parser';
 import { normalizarCPF } from '@/utils/importacao/validators';
+import { safeErrorMessage } from '@/utils/safeError';
 
 export type ImportRow = ParsedImportRow;
 
@@ -33,7 +34,7 @@ export function useImportacaoColaboradores() {
         setRows(parsed);
         return parsed;
       } catch (err: any) {
-        toast.error(err.message);
+        toast.error(safeErrorMessage(err, 'Erro ao processar arquivo de importação.'));
         throw err;
       }
     },

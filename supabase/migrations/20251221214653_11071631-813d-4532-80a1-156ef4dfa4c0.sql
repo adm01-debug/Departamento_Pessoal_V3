@@ -67,54 +67,64 @@ ALTER TABLE public.configuracoes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.auditoria_logs ENABLE ROW LEVEL SECURITY;
 
 -- Políticas RLS para bitrix24_config (apenas usuários autenticados)
+DROP POLICY IF EXISTS "Usuários autenticados podem ver config bitrix24" ON public.bitrix24_config;
 CREATE POLICY "Usuários autenticados podem ver config bitrix24"
   ON public.bitrix24_config FOR SELECT
   TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Usuários autenticados podem atualizar config bitrix24" ON public.bitrix24_config;
 CREATE POLICY "Usuários autenticados podem atualizar config bitrix24"
   ON public.bitrix24_config FOR UPDATE
   TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Usuários autenticados podem inserir config bitrix24" ON public.bitrix24_config;
 CREATE POLICY "Usuários autenticados podem inserir config bitrix24"
   ON public.bitrix24_config FOR INSERT
   TO authenticated
   WITH CHECK (true);
 
 -- Políticas RLS para bitrix24_sync_logs
+DROP POLICY IF EXISTS "Usuários autenticados podem ver logs bitrix24" ON public.bitrix24_sync_logs;
 CREATE POLICY "Usuários autenticados podem ver logs bitrix24"
   ON public.bitrix24_sync_logs FOR SELECT
   TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Usuários autenticados podem inserir logs bitrix24" ON public.bitrix24_sync_logs;
 CREATE POLICY "Usuários autenticados podem inserir logs bitrix24"
   ON public.bitrix24_sync_logs FOR INSERT
   TO authenticated
   WITH CHECK (true);
 
 -- Políticas RLS para configuracoes
+DROP POLICY IF EXISTS "Usuários autenticados podem ver configuracoes" ON public.configuracoes;
 CREATE POLICY "Usuários autenticados podem ver configuracoes"
   ON public.configuracoes FOR SELECT
   TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Usuários autenticados podem atualizar configuracoes" ON public.configuracoes;
 CREATE POLICY "Usuários autenticados podem atualizar configuracoes"
   ON public.configuracoes FOR UPDATE
   TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Usuários autenticados podem inserir configuracoes" ON public.configuracoes;
 CREATE POLICY "Usuários autenticados podem inserir configuracoes"
   ON public.configuracoes FOR INSERT
   TO authenticated
   WITH CHECK (true);
 
 -- Políticas RLS para auditoria_logs
+DROP POLICY IF EXISTS "Usuários autenticados podem ver auditoria_logs" ON public.auditoria_logs;
 CREATE POLICY "Usuários autenticados podem ver auditoria_logs"
   ON public.auditoria_logs FOR SELECT
   TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Usuários autenticados podem inserir auditoria_logs" ON public.auditoria_logs;
 CREATE POLICY "Usuários autenticados podem inserir auditoria_logs"
   ON public.auditoria_logs FOR INSERT
   TO authenticated

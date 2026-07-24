@@ -44,20 +44,25 @@ ALTER TABLE public.recrutamento_testes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.recrutamento_anotacoes ENABLE ROW LEVEL SECURITY;
 
 -- Políticas
+DROP POLICY IF EXISTS "Entrevistas acessíveis por empresa" ON public.recrutamento_entrevistas;
 CREATE POLICY "Entrevistas acessíveis por empresa" ON public.recrutamento_entrevistas
     FOR ALL USING (candidatura_id IN (SELECT id FROM public.candidaturas));
 
+DROP POLICY IF EXISTS "Testes acessíveis por empresa" ON public.recrutamento_testes;
 CREATE POLICY "Testes acessíveis por empresa" ON public.recrutamento_testes
     FOR ALL USING (candidatura_id IN (SELECT id FROM public.candidaturas));
 
+DROP POLICY IF EXISTS "Anotações acessíveis por empresa" ON public.recrutamento_anotacoes;
 CREATE POLICY "Anotações acessíveis por empresa" ON public.recrutamento_anotacoes
     FOR ALL USING (candidatura_id IN (SELECT id FROM public.candidaturas));
 
 -- Triggers de Updated_at
+DROP TRIGGER IF EXISTS set_timestamp_recrutamento_entrevistas ON public.recrutamento_entrevistas;
 CREATE TRIGGER set_timestamp_recrutamento_entrevistas
 BEFORE UPDATE ON public.recrutamento_entrevistas
 FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
+DROP TRIGGER IF EXISTS set_timestamp_recrutamento_testes ON public.recrutamento_testes;
 CREATE TRIGGER set_timestamp_recrutamento_testes
 BEFORE UPDATE ON public.recrutamento_testes
 FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();

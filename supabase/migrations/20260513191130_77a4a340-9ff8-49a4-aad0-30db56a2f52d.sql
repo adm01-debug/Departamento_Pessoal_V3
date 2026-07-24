@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS public.push_subscriptions (
 ALTER TABLE public.push_subscriptions ENABLE ROW LEVEL SECURITY;
 
 -- Políticas
+DROP POLICY IF EXISTS "Usuários gerenciam suas próprias assinaturas" ON public.push_subscriptions;
 CREATE POLICY "Usuários gerenciam suas próprias assinaturas"
 ON public.push_subscriptions
 FOR ALL

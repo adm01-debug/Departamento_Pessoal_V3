@@ -11,11 +11,13 @@ CREATE TABLE IF NOT EXISTS public.historico_calculos_folha (
 -- RLS
 ALTER TABLE public.historico_calculos_folha ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Acesso por empresa historico" ON public.historico_calculos_folha;
 CREATE POLICY "Acesso por empresa historico" 
 ON public.historico_calculos_folha FOR SELECT 
 TO authenticated
 USING (empresa_id::uuid = (auth.jwt()->>'empresa_id')::uuid);
 
+DROP POLICY IF EXISTS "Inserção por empresa historico" ON public.historico_calculos_folha;
 CREATE POLICY "Inserção por empresa historico" 
 ON public.historico_calculos_folha FOR INSERT 
 TO authenticated

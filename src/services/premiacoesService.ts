@@ -1,33 +1,39 @@
 import { supabase } from '@/integrations/supabase/client';
 
 export const premiacoesService = {
-  async listarCampanhas(empresaId?: string) {
+  async listarCampanhas(empresaId: string) {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     let q = supabase.from('premiacoes_campanhas').select('*').order('created_at', { ascending: false });
-    if (empresaId) q = q.eq('empresa_id', empresaId);
+    q = q.eq('empresa_id', empresaId);
     const { data, error } = await q;
     if (error) throw error;
     return data || [];
   },
 
-  async listarRegras(campanhaId: string) {
-    const { data, error } = await supabase
+  async listarRegras(campanhaId: string, empresaId: string) {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    // !inner validates campanhaId belongs to this empresa (prevents IDOR across tenants)
+    const { data, error } = await (supabase as any)
       .from('premiacoes_regras')
-      .select('*, meta:metas_okrs(*)')
-      .eq('campanha_id', campanhaId);
+      .select('*, meta:metas_okrs(*), campanha:premiacoes_campanhas!inner(empresa_id)')
+      .eq('campanha_id', campanhaId)
+      .eq('campanha.empresa_id', empresaId);
     if (error) throw error;
     return data || [];
   },
 
-  async listarPagamentos(campanhaId?: string, empresaId?: string) {
-    let q = supabase.from('premiacoes_pagamentos').select(`
+  async listarPagamentos(campanhaId: string | undefined, empresaId: string) {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    // !inner on campanha enables .eq() filtering on the embedded empresa_id column
+    let q = (supabase as any).from('premiacoes_pagamentos').select(`
       *,
       colaborador:colaboradores(nome_completo, salario_base),
-      campanha:premiacoes_campanhas(nome)
+      campanha:premiacoes_campanhas!inner(nome, empresa_id)
     `);
-    
+
     if (campanhaId) q = q.eq('campanha_id', campanhaId);
-    if (empresaId) q = q.filter('campanha.empresa_id', 'eq', empresaId);
-    
+    q = q.eq('campanha.empresa_id', empresaId);
+
     const { data, error } = await q;
     if (error) throw error;
     return data || [];
@@ -45,25 +51,27 @@ export const premiacoesService = {
     return data;
   },
 
-  async atualizarStatusPagamento(id: string, status: string, valorAprovado?: number, comentario?: string) {
-    const { data: original, error: fetchErr } = await supabase.from('premiacoes_pagamentos').select('*').eq('id', id).single();
+  async atualizarStatusPagamento(id: string, status: string, empresaId: string, valorAprovado?: number, comentario?: string) {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { data: original, error: fetchErr } = await supabase.from('premiacoes_pagamentos').select('*, campanha:premiacoes_campanhas!inner(empresa_id)').eq('id', id).eq('campanha.empresa_id', empresaId).single();
     if (fetchErr) throw fetchErr;
 
     const currentHistory = Array.isArray(original.historico_mudancas) ? original.historico_mudancas : [];
-    
+
     const { data, error } = await supabase
       .from('premiacoes_pagamentos')
-      .update({ 
-        status, 
+      .update({
+        status,
         valor_aprovado: valorAprovado,
         historico_mudancas: [...currentHistory, { status, data: new Date().toISOString(), comentario, user: 'current_user' }]
       })
       .eq('id', id)
+      .eq('campanha_id', original.campanha_id)
       .select()
       .single();
-    
+
     if (error) throw error;
-    
+
     if (status === 'rejeitado' || status === 'aprovado_financeiro') {
       await this.enviarNotificacaoCritica(`pagamento_${status}`, { id, status, valorAprovado });
     }
@@ -71,8 +79,9 @@ export const premiacoesService = {
     return data;
   },
 
-  async reconciliarFolha(id: string, valorFolha: number, justificativa?: string) {
-    const { data: original, error: fetchErr } = await supabase.from('premiacoes_pagamentos').select('*').eq('id', id).single();
+  async reconciliarFolha(id: string, valorFolha: number, empresaId: string, justificativa?: string) {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { data: original, error: fetchErr } = await supabase.from('premiacoes_pagamentos').select('*, campanha:premiacoes_campanhas!inner(empresa_id)').eq('id', id).eq('campanha.empresa_id', empresaId).single();
     if (fetchErr) throw fetchErr;
 
     const valorAprovado = Number(original.valor_aprovado || original.valor_calculado);
@@ -96,6 +105,7 @@ export const premiacoesService = {
         }]
       })
       .eq('id', id)
+      .eq('campanha_id', original.campanha_id)
       .select()
       .single();
     
@@ -143,9 +153,16 @@ export const premiacoesService = {
     return this.reconciliarFolha(pagamentoId, valorEncontrado, "Conciliação automática via integração eSocial/Folha");
   },
 
-  async listarAuditoria(entidadeId?: string) {
-    let q = supabase.from('premiacoes_auditoria').select('*').order('created_at', { ascending: false });
+  async listarAuditoria(entidadeId?: string, empresaId?: string) {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    // Scope via !inner join on pagamento → campanha → empresa_id
+    // (Requires entidade_tipo = 'pagamento' records; mixed types are excluded by !inner)
+    let q = (supabase as any)
+      .from('premiacoes_auditoria')
+      .select('*, pagamento:premiacoes_pagamentos!inner(campanha:premiacoes_campanhas!inner(empresa_id))')
+      .order('created_at', { ascending: false });
     if (entidadeId) q = q.eq('entidade_id', entidadeId);
+    q = q.eq('pagamento.campanha.empresa_id', empresaId);
     const { data, error } = await q;
     if (error) throw error;
     return data || [];
@@ -157,11 +174,13 @@ export const premiacoesService = {
     return pagamentos;
   },
 
-  async salvarCenarioROI(cenario: any) {
-    const { data, error } = await supabase
-      .from('premiacoes_roi_cenarios')
+  async salvarCenarioROI(cenario: any, empresaId: string) {
+    if (!empresaId) throw new Error('empresaId é obrigatório');
+    const { data, error } = await (supabase
+      .from('premiacoes_roi_cenarios') as any)
       .insert({
         nome: cenario.name,
+        empresa_id: empresaId,
         configuracoes: {
           employees: cenario.employees,
           avgSalary: cenario.avgSalary,
@@ -185,11 +204,14 @@ export const premiacoesService = {
     return data;
   },
 
-  async listarCenariosROI(empresaId?: string) {
-    const { data, error } = await supabase
-      .from('premiacoes_roi_cenarios')
+  async listarCenariosROI(empresaId: string) {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    let query = (supabase
+      .from('premiacoes_roi_cenarios') as any)
       .select('*')
       .order('created_at', { ascending: false });
+    query = query.eq('empresa_id', empresaId);
+    const { data, error } = await query;
     if (error) throw error;
     return data || [];
   },

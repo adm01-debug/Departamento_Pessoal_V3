@@ -1,5 +1,10 @@
 import { supabase } from '@/integrations/supabase/client';
 import { CalculoResultado } from '@/utils/folhaCalc';
+
+async function sha256Hex(data: string): Promise<string> {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(data));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
 export interface HoleriteData extends CalculoResultado {
   colaboradorNome: string;
   cpf: string;
@@ -51,7 +56,7 @@ export const folhaPagamentoService = {
       return ({
         proventos: item.total_proventos || 0,
         descontos: item.total_descontos || 0,
-        liquido: (item as any).valor_liquido || 0,
+        liquido: item.total_liquido || 0,
         inss: item.inss_mes || 0,
         irrf: item.irrf_mes || 0,
         fgts: item.fgts_mes || 0,
@@ -82,7 +87,7 @@ export const folhaPagamentoService = {
    */
   assinarHolerite: async (folhaId: string, colaboradorId: string): Promise<string> => {
     try {
-      const hash = btoa(`assinatura-${folhaId}-${colaboradorId}-${new Date().getTime()}`).substring(0, 32);
+      const hash = await sha256Hex(`assinatura-${folhaId}-${colaboradorId}-${new Date().toISOString()}`);
       
       const { data: colab } = await supabase
         .from('colaboradores')

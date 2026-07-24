@@ -12,13 +12,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://esm.sh/zod@3.23.8';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-csrf-token',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Cache-Control': 'no-store',
-};
+import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 
 const CHUNK = 500;
 const MAX_COLABS = 50_000;
@@ -109,19 +103,20 @@ serve(async (req: Request): Promise<Response> => {
       global: { headers: { Authorization: authHeader } },
       auth: { persistSession: false, autoRefreshToken: false },
     });
-    const token = authHeader.replace('Bearer ', '');
-    const { data: claimsData, error: claimsErr } = await userClient.auth.getClaims(token);
-    if (claimsErr || !claimsData?.claims?.sub) {
+    const { data: claimsData, error: claimsErr } = await userClient.auth.getUser();
+    if (claimsErr || !claimsData?.user?.id) {
       return json({ success: false, error: 'Sessão inválida', code: 'UNAUTHORIZED' }, 401);
     }
-    const userId = claimsData.claims.sub as string;
+    const userId = claimsData.user.id;
 
     const supabase = createClient(supabaseUrl, serviceKey, {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
     let raw: unknown;
-    try { raw = await req.json(); } catch { return json({ success: false, error: 'JSON inválido', code: 'INVALID_JSON' }, 400); }
+    const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
+    if (_pe) return _pe;
+    raw = _pb;
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) {
       return json({ success: false, error: 'Payload inválido', code: 'VALIDATION_ERROR', details: parsed.error.flatten() }, 422);
@@ -144,6 +139,10 @@ serve(async (req: Request): Promise<Response> => {
     if (!belongs && !isAdm) {
       return json({ success: false, error: 'Sem acesso a esta empresa', code: 'FORBIDDEN' }, 403);
     }
+
+    const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
+    const rl = await checkRateLimit(supabase, { key: `gerar-guias:${userId}`, limit: 10, windowSec: 60 });
+    if (!rl.allowed) return rateLimitResponse(rl);
 
     // Contagem prévia + cap
     const { count: totalColabs, error: countErr } = await supabase
@@ -250,6 +249,28 @@ serve(async (req: Request): Promise<Response> => {
       };
       const hash = await sha256Hex(JSON.stringify(payload));
       guias.push({ ...payload, hash_sha256: hash, status: 'pendente' });
+    }
+
+    // Persist guias to database
+    if (guias.length > 0) {
+      for (const guia of guias) {
+        const t = guia.tipo as string;
+        const tabela = (t === 'FGTS' || t === 'FGTS_DIGITAL' || t === 'GFD') ? 'guias_fgts' : 'guias_inss';
+        const { error: insertErr } = await supabase.from(tabela).insert({
+          empresa_id: guia.empresa_id,
+          competencia: guia.competencia,
+          tipo: guia.tipo,
+          codigo_receita: guia.codigo_receita,
+          valor_total: guia.valor_total,
+          valores: guia.valores,
+          vencimento: guia.vencimento,
+          protocolo: guia.protocolo,
+          hash_sha256: guia.hash_sha256,
+          status: 'pendente',
+          gerado_por: userId,
+        });
+        if (insertErr) throw insertErr;
+      }
     }
 
     // Auditoria bloqueante

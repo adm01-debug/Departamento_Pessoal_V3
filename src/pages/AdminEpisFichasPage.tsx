@@ -9,6 +9,7 @@ import { HardHat, Plus, Fingerprint } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { SignaturePad } from '@/components/sst/SignaturePad';
 
 async function sha256(text: string) {
@@ -66,7 +67,7 @@ export default function AdminEpisFichasPage() {
       setSignOpen(null);
       qc.invalidateQueries({ queryKey: ['epis-fichas'] });
     } catch (e) {
-      toast.error('Falha ao assinar', { description: (e as Error).message });
+      toast.error(safeErrorMessage(e, 'Falha ao assinar ficha de EPI.'));
     }
   };
 

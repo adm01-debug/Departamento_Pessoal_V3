@@ -12,12 +12,15 @@ CREATE TABLE IF NOT EXISTS notificacoes_templates (
 -- Add RLS Policies
 ALTER TABLE notificacoes_templates ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "notificacoes_templates_select" ON public.notificacoes_templates;
 CREATE POLICY "notificacoes_templates_select" ON notificacoes_templates
   FOR SELECT USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "notificacoes_templates_insert" ON public.notificacoes_templates;
 CREATE POLICY "notificacoes_templates_insert" ON notificacoes_templates
   FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "notificacoes_templates_update" ON public.notificacoes_templates;
 CREATE POLICY "notificacoes_templates_update" ON notificacoes_templates
   FOR UPDATE USING (auth.role() = 'authenticated');
 
@@ -33,6 +36,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_notificacoes_templates_updated_at ON public.notificacoes_templates;
 CREATE TRIGGER trigger_notificacoes_templates_updated_at
   BEFORE UPDATE ON notificacoes_templates
   FOR EACH ROW

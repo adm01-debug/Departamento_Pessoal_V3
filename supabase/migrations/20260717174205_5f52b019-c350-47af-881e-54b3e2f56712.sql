@@ -20,12 +20,13 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON public.contabilidade_contatos TO authent
 GRANT ALL ON public.contabilidade_contatos TO service_role;
 ALTER TABLE public.contabilidade_contatos ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "contabilidade_contatos_tenant_all" ON public.contabilidade_contatos;
 CREATE POLICY "contabilidade_contatos_tenant_all" ON public.contabilidade_contatos
   FOR ALL TO authenticated
   USING (public.user_belongs_to_empresa(auth.uid(), empresa_id))
   WITH CHECK (public.user_belongs_to_empresa(auth.uid(), empresa_id));
 
-CREATE INDEX idx_contab_contatos_empresa ON public.contabilidade_contatos(empresa_id) WHERE ativo = true;
+CREATE INDEX IF NOT EXISTS idx_contab_contatos_empresa ON public.contabilidade_contatos(empresa_id) WHERE ativo = true;
 
 -- Threads
 CREATE TABLE IF NOT EXISTS public.contabilidade_threads (
@@ -47,13 +48,14 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON public.contabilidade_threads TO authenti
 GRANT ALL ON public.contabilidade_threads TO service_role;
 ALTER TABLE public.contabilidade_threads ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "contab_threads_tenant_all" ON public.contabilidade_threads;
 CREATE POLICY "contab_threads_tenant_all" ON public.contabilidade_threads
   FOR ALL TO authenticated
   USING (public.user_belongs_to_empresa(auth.uid(), empresa_id))
   WITH CHECK (public.user_belongs_to_empresa(auth.uid(), empresa_id));
 
-CREATE INDEX idx_contab_threads_empresa_ativ ON public.contabilidade_threads(empresa_id, ultima_atividade_em DESC);
-CREATE INDEX idx_contab_threads_status ON public.contabilidade_threads(empresa_id, status) WHERE status IN ('aberto','respondido');
+CREATE INDEX IF NOT EXISTS idx_contab_threads_empresa_ativ ON public.contabilidade_threads(empresa_id, ultima_atividade_em DESC);
+CREATE INDEX IF NOT EXISTS idx_contab_threads_status ON public.contabilidade_threads(empresa_id, status) WHERE status IN ('aberto','respondido');
 
 -- Mensagens
 CREATE TABLE IF NOT EXISTS public.contabilidade_mensagens (
@@ -73,12 +75,13 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON public.contabilidade_mensagens TO authen
 GRANT ALL ON public.contabilidade_mensagens TO service_role;
 ALTER TABLE public.contabilidade_mensagens ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "contab_msgs_tenant_all" ON public.contabilidade_mensagens;
 CREATE POLICY "contab_msgs_tenant_all" ON public.contabilidade_mensagens
   FOR ALL TO authenticated
   USING (public.user_belongs_to_empresa(auth.uid(), empresa_id))
   WITH CHECK (public.user_belongs_to_empresa(auth.uid(), empresa_id));
 
-CREATE INDEX idx_contab_msgs_thread ON public.contabilidade_mensagens(thread_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_contab_msgs_thread ON public.contabilidade_mensagens(thread_id, created_at);
 
 -- Trigger: sempre que uma nova mensagem entrar, atualiza ultima_atividade e status
 CREATE OR REPLACE FUNCTION public.trg_contab_msg_bump_thread()
@@ -101,13 +104,16 @@ BEGIN
 END;
 $$;
 
+DROP TRIGGER IF EXISTS trg_bump_contab_thread ON public.contabilidade_mensagens;
 CREATE TRIGGER trg_bump_contab_thread
 AFTER INSERT ON public.contabilidade_mensagens
 FOR EACH ROW EXECUTE FUNCTION public.trg_contab_msg_bump_thread();
 
 -- updated_at triggers
+DROP TRIGGER IF EXISTS trg_contab_contatos_updated ON public.contabilidade_contatos;
 CREATE TRIGGER trg_contab_contatos_updated BEFORE UPDATE ON public.contabilidade_contatos
 FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
+DROP TRIGGER IF EXISTS trg_contab_threads_updated ON public.contabilidade_threads;
 CREATE TRIGGER trg_contab_threads_updated BEFORE UPDATE ON public.contabilidade_threads
 FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();

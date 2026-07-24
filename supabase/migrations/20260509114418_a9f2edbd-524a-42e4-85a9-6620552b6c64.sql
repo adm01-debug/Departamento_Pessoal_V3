@@ -36,14 +36,17 @@ CREATE TABLE IF NOT EXISTS public.solicitacoes_ajuste_ponto (
 ALTER TABLE public.solicitacoes_ajuste_ponto ENABLE ROW LEVEL SECURITY;
 
 -- Policies
+DROP POLICY IF EXISTS "Colaboradores veem suas próprias solicitações" ON public.solicitacoes_ajuste_ponto;
 CREATE POLICY "Colaboradores veem suas próprias solicitações" 
 ON public.solicitacoes_ajuste_ponto FOR SELECT 
 USING (colaborador_id IN (SELECT id FROM colaboradores WHERE email = auth.jwt() ->> 'email'));
 
+DROP POLICY IF EXISTS "Colaboradores criam suas próprias solicitações" ON public.solicitacoes_ajuste_ponto;
 CREATE POLICY "Colaboradores criam suas próprias solicitações" 
 ON public.solicitacoes_ajuste_ponto FOR INSERT 
 WITH CHECK (colaborador_id IN (SELECT id FROM colaboradores WHERE email = auth.jwt() ->> 'email'));
 
+DROP POLICY IF EXISTS "Gestores veem solicitações da empresa" ON public.solicitacoes_ajuste_ponto;
 CREATE POLICY "Gestores veem solicitações da empresa" 
 ON public.solicitacoes_ajuste_ponto FOR SELECT 
 USING (empresa_id IN (SELECT id FROM empresas));

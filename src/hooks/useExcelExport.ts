@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import {
   buildTabularWorkbook,
   downloadWorkbook,
@@ -20,7 +21,7 @@ export function useExcelExport() {
         await downloadWorkbook(wb, filename);
         toast.success('Excel exportado com sucesso!');
       } catch (e: any) {
-        toast.error('Erro ao gerar Excel: ' + e.message);
+        toast.error(safeErrorMessage(e, 'Erro ao gerar Excel.'));
       }
     },
     []

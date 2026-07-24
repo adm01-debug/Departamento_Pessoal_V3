@@ -12,12 +12,15 @@ CREATE TABLE IF NOT EXISTS ponto_banco_horas (
 -- Add RLS Policies
 ALTER TABLE ponto_banco_horas ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "ponto_banco_horas_select" ON public.ponto_banco_horas;
 CREATE POLICY "ponto_banco_horas_select" ON ponto_banco_horas
   FOR SELECT USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "ponto_banco_horas_insert" ON public.ponto_banco_horas;
 CREATE POLICY "ponto_banco_horas_insert" ON ponto_banco_horas
   FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "ponto_banco_horas_update" ON public.ponto_banco_horas;
 CREATE POLICY "ponto_banco_horas_update" ON ponto_banco_horas
   FOR UPDATE USING (auth.role() = 'authenticated');
 
@@ -33,6 +36,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_ponto_banco_horas_updated_at ON public.ponto_banco_horas;
 CREATE TRIGGER trigger_ponto_banco_horas_updated_at
   BEFORE UPDATE ON ponto_banco_horas
   FOR EACH ROW

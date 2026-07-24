@@ -41,16 +41,20 @@ ALTER TABLE public.beneficio_movimentacoes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.beneficio_arquivos ENABLE ROW LEVEL SECURITY;
 
 -- Políticas
+DROP POLICY IF EXISTS "Regras acessíveis por empresa" ON public.beneficio_regras_elegibilidade;
 CREATE POLICY "Regras acessíveis por empresa" ON public.beneficio_regras_elegibilidade
     FOR ALL USING (empresa_id IN (SELECT id FROM public.empresas));
 
+DROP POLICY IF EXISTS "Movimentações acessíveis por empresa" ON public.beneficio_movimentacoes;
 CREATE POLICY "Movimentações acessíveis por empresa" ON public.beneficio_movimentacoes
     FOR ALL USING (colaborador_id IN (SELECT id FROM public.colaboradores));
 
+DROP POLICY IF EXISTS "Arquivos acessíveis por empresa" ON public.beneficio_arquivos;
 CREATE POLICY "Arquivos acessíveis por empresa" ON public.beneficio_arquivos
     FOR ALL USING (empresa_id IN (SELECT id FROM public.empresas));
 
 -- Triggers de Updated_at
+DROP TRIGGER IF EXISTS set_timestamp_beneficio_regras ON public.beneficio_regras_elegibilidade;
 CREATE TRIGGER set_timestamp_beneficio_regras
 BEFORE UPDATE ON public.beneficio_regras_elegibilidade
 FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();

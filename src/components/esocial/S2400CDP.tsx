@@ -1,6 +1,7 @@
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { User, Calendar, Heart, Shield } from 'lucide-react';
+import { maskCpfDisplay } from '@/utils/piiMask';
 
 export function S2400CDP({ dados }: { dados: any }) {
   return (
@@ -11,7 +12,7 @@ export function S2400CDP({ dados }: { dados: any }) {
             <User className="h-4 w-4 text-primary mt-1" />
             <div>
               <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">Beneficiário</Label>
-              <p className="font-display font-bold text-sm">CPF: {dados.cpfBenef}</p>
+              <p className="font-display font-bold text-sm">CPF: {maskCpfDisplay(dados.cpfBenef)}</p>
               {dados.nmBenef && <p className="text-xs text-muted-foreground">{dados.nmBenef}</p>}
             </div>
           </CardContent>

@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { pontosService } from '@/services/pontosService';
 import { useEmpresa } from '@/contexts/EmpresaContext';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 
 export function usePonto(colaboradorId?: string) {
   const { empresaAtual } = useEmpresa();
@@ -68,7 +69,7 @@ export function usePonto(colaboradorId?: string) {
       queryClient.invalidateQueries({ queryKey: ['ponto-hoje'] });
       toast.success('Ponto registrado com sucesso!');
     },
-    onError: (e: Error) => toast.error(`Erro ao registrar ponto: ${e.message}`),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao registrar ponto.')),
   });
 
   return { 

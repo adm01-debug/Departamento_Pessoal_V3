@@ -15,11 +15,13 @@ CREATE TABLE IF NOT EXISTS public.folha_auditoria (
 ALTER TABLE public.folha_auditoria ENABLE ROW LEVEL SECURITY;
 
 -- Simplified policies for now based on public.profiles structure
+DROP POLICY IF EXISTS "Usuários autenticados podem visualizar auditoria" ON public.folha_auditoria;
 CREATE POLICY "Usuários autenticados podem visualizar auditoria"
 ON public.folha_auditoria
 FOR SELECT
 USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Usuários autenticados podem inserir auditoria" ON public.folha_auditoria;
 CREATE POLICY "Usuários autenticados podem inserir auditoria"
 ON public.folha_auditoria
 FOR INSERT

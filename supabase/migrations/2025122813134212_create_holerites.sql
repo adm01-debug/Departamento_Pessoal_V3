@@ -25,19 +25,24 @@ CREATE INDEX IF NOT EXISTS idx_holerites_status ON public.holerites(status);
 -- RLS
 ALTER TABLE public.holerites ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "holerites_select" ON public.holerites;
 CREATE POLICY "holerites_select" ON public.holerites
   FOR SELECT USING (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "holerites_insert" ON public.holerites;
 CREATE POLICY "holerites_insert" ON public.holerites
   FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "holerites_update" ON public.holerites;
 CREATE POLICY "holerites_update" ON public.holerites
   FOR UPDATE USING (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "holerites_delete" ON public.holerites;
 CREATE POLICY "holerites_delete" ON public.holerites
   FOR DELETE USING (auth.uid() IS NOT NULL);
 
 -- Trigger updated_at
+DROP TRIGGER IF EXISTS update_holerites_updated_at ON public.holerites;
 CREATE TRIGGER update_holerites_updated_at
   BEFORE UPDATE ON public.holerites
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

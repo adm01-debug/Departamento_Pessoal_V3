@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { admissaoService } from '@/services';
 import { useEmpresas } from './useEmpresas';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 
 export function useAdmissoes() {
   const { empresaAtual } = useEmpresas();
@@ -10,7 +11,7 @@ export function useAdmissoes() {
 
   const query = useQuery<any[]>({
     queryKey: ['admissoes', empresaId],
-    queryFn: () => admissaoService.listarAdmissoes(empresaId),
+    queryFn: () => admissaoService.listarAdmissoes(empresaId!),
     // Guard: evita fetch sem tenant (possível vazamento cross-empresa via RLS frouxa).
     enabled: !!empresaId,
   });
@@ -24,16 +25,16 @@ export function useAdmissoes() {
       void invalidate();
       toast.success('Admissão criada com sucesso');
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(safeErrorMessage(err, 'Erro na operação de admissão.')),
   });
 
   const atualizarMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => admissaoService.atualizar(id, data),
+    mutationFn: ({ id, data }: { id: string; data: any }) => admissaoService.atualizar(id, data, empresaId!),
     onSuccess: () => {
       void invalidate();
       toast.success('Admissão atualizada');
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(safeErrorMessage(err, 'Erro na operação de admissão.')),
   });
 
   return {

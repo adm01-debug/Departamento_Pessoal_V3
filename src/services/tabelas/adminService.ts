@@ -22,8 +22,9 @@ export const relatoriosAgendadosService = {
     const { error } = await supabase.from('relatorios_agendados').insert(d);
     if (error) throw error;
   },
-  excluir: async (id: string) => {
-    const { error } = await supabase.from('relatorios_agendados').delete().eq('id', id);
+  excluir: async (id: string, empresaId: string) => {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { error } = await supabase.from('relatorios_agendados').delete().eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   },
 };
@@ -38,8 +39,9 @@ export const savedFiltersService = {
     const { error } = await supabase.from('saved_filters').insert(d);
     if (error) throw error;
   },
-  excluir: async (id: string) => {
-    const { error } = await supabase.from('saved_filters').delete().eq('id', id);
+  excluir: async (id: string, userId: string) => {
+    if (!userId) throw new Error('user_id obrigatório para isolamento de tenant');
+    const { error } = await supabase.from('saved_filters').delete().eq('id', id).eq('user_id', userId);
     if (error) throw error;
   },
 };

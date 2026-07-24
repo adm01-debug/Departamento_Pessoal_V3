@@ -12,12 +12,15 @@ CREATE TABLE IF NOT EXISTS esocial_retornos (
 -- Add RLS Policies
 ALTER TABLE esocial_retornos ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "esocial_retornos_select" ON public.esocial_retornos;
 CREATE POLICY "esocial_retornos_select" ON esocial_retornos
   FOR SELECT USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "esocial_retornos_insert" ON public.esocial_retornos;
 CREATE POLICY "esocial_retornos_insert" ON esocial_retornos
   FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "esocial_retornos_update" ON public.esocial_retornos;
 CREATE POLICY "esocial_retornos_update" ON esocial_retornos
   FOR UPDATE USING (auth.role() = 'authenticated');
 
@@ -33,6 +36,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_esocial_retornos_updated_at ON public.esocial_retornos;
 CREATE TRIGGER trigger_esocial_retornos_updated_at
   BEFORE UPDATE ON esocial_retornos
   FOR EACH ROW

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { todayLocalISO } from '@/utils/dateLocal';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { Loader2, FileText, ShieldCheck, Users, CheckCircle2, Plus, Send, Bell, UserX, Download } from 'lucide-react';
 import { todayLocalISO } from '@/utils/dateLocal';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -55,7 +57,7 @@ const AdminRegimentoInternoPage = () => {
 
   const proximaVersao = useMemo(
     () => (documentos.length ? Math.max(...documentos.map((d) => d.versao)) + 1 : 1),
-    [documentos],
+    [documentos]
   );
 
   const carregar = async () => {
@@ -149,12 +151,11 @@ const AdminRegimentoInternoPage = () => {
       }
     } catch (err: any) {
       console.error(err);
-      toast.error('Falha ao notificar pendentes', { description: err?.message });
+      toast.error(safeErrorMessage(err, 'Falha ao notificar pendentes.'));
     } finally {
       setNotificando(false);
     }
   };
-
 
   return (
     <div className="p-6 space-y-6">
@@ -169,7 +170,9 @@ const AdminRegimentoInternoPage = () => {
         </div>
         <Dialog open={showNew} onOpenChange={setShowNew}>
           <DialogTrigger asChild>
-            <Button className="gap-2"><Plus className="h-4 w-4" /> Novo Documento</Button>
+            <Button className="gap-2">
+              <Plus className="h-4 w-4" /> Novo Documento
+            </Button>
           </DialogTrigger>
           <DialogContent className="max-w-3xl">
             <DialogHeader>
@@ -200,22 +203,38 @@ const AdminRegimentoInternoPage = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Vigente</CardTitle></CardHeader>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-muted-foreground">Vigente</CardTitle>
+          </CardHeader>
           <CardContent>
             <div className="text-lg font-semibold truncate">{dash?.documento?.titulo ?? '—'}</div>
             {dash?.documento && <Badge variant="secondary">v{dash.documento.versao}</Badge>}
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground flex items-center gap-2"><Users className="h-4 w-4" /> Colaboradores Ativos</CardTitle></CardHeader>
-          <CardContent><div className="text-3xl font-bold">{dash?.total_colaboradores ?? 0}</div></CardContent>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
+              <Users className="h-4 w-4" /> Colaboradores Ativos
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{dash?.total_colaboradores ?? 0}</div>
+          </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-primary" /> Assinaram</CardTitle></CardHeader>
-          <CardContent><div className="text-3xl font-bold">{dash?.assinados ?? 0}</div></CardContent>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-muted-foreground flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-primary" /> Assinaram
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{dash?.assinados ?? 0}</div>
+          </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Adesão</CardTitle></CardHeader>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-muted-foreground">Adesão</CardTitle>
+          </CardHeader>
           <CardContent className="space-y-2">
             <div className="text-3xl font-bold">{dash?.adesao_pct ?? 0}%</div>
             <Button
@@ -234,7 +253,9 @@ const AdminRegimentoInternoPage = () => {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between gap-2">
-          <CardTitle className="flex items-center gap-2"><UserX className="h-4 w-4 text-destructive" /> Colaboradores Pendentes ({pendentes.length})</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <UserX className="h-4 w-4 text-destructive" /> Colaboradores Pendentes ({pendentes.length})
+          </CardTitle>
           <Button
             size="sm"
             variant="outline"
@@ -242,14 +263,18 @@ const AdminRegimentoInternoPage = () => {
             disabled={pendentes.length === 0}
             onClick={() => {
               const header = 'Nome;Email;Cargo;Departamento;Tem Usuário;Última Notificação\n';
-              const rows = pendentes.map((p) => [
-                (p.nome ?? '').replace(/;/g, ','),
-                (p.email ?? '').replace(/;/g, ','),
-                (p.cargo ?? '').replace(/;/g, ','),
-                (p.departamento ?? '').replace(/;/g, ','),
-                p.tem_usuario ? 'Sim' : 'Não',
-                p.ultima_notificacao ? new Date(p.ultima_notificacao).toLocaleString('pt-BR') : '—',
-              ].join(';')).join('\n');
+              const rows = pendentes
+                .map((p) =>
+                  [
+                    (p.nome ?? '').replace(/;/g, ','),
+                    (p.email ?? '').replace(/;/g, ','),
+                    (p.cargo ?? '').replace(/;/g, ','),
+                    (p.departamento ?? '').replace(/;/g, ','),
+                    p.tem_usuario ? 'Sim' : 'Não',
+                    p.ultima_notificacao ? new Date(p.ultima_notificacao).toLocaleString('pt-BR') : '—',
+                  ].join(';')
+                )
+                .join('\n');
               const blob = new Blob([header + rows], { type: 'text/csv;charset=utf-8;' });
               const url = URL.createObjectURL(blob);
               const a = document.createElement('a');
@@ -292,7 +317,9 @@ const AdminRegimentoInternoPage = () => {
                         {p.tem_usuario ? (
                           <Badge variant="secondary">Vinculado</Badge>
                         ) : (
-                          <Badge variant="outline" className="text-destructive border-destructive">Sem acesso</Badge>
+                          <Badge variant="outline" className="text-destructive border-destructive">
+                            Sem acesso
+                          </Badge>
                         )}
                       </TableCell>
                       <TableCell className="text-xs text-muted-foreground">
@@ -308,10 +335,14 @@ const AdminRegimentoInternoPage = () => {
       </Card>
 
       <Card>
-        <CardHeader><CardTitle>Versões</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>Versões</CardTitle>
+        </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="flex items-center gap-2 text-muted-foreground"><Loader2 className="h-4 w-4 animate-spin" /> Carregando...</div>
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin" /> Carregando...
+            </div>
           ) : documentos.length === 0 ? (
             <div className="text-muted-foreground text-sm">Nenhum documento criado ainda.</div>
           ) : (
@@ -327,7 +358,9 @@ const AdminRegimentoInternoPage = () => {
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     <Badge
-                      variant={d.status === 'PUBLICADO' ? 'default' : d.status === 'ARQUIVADO' ? 'outline' : 'secondary'}
+                      variant={
+                        d.status === 'PUBLICADO' ? 'default' : d.status === 'ARQUIVADO' ? 'outline' : 'secondary'
+                      }
                     >
                       {d.status}
                     </Badge>

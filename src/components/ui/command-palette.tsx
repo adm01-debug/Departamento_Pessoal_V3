@@ -7,6 +7,8 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresa } from '@/contexts';
 import { useDebounce } from '@/hooks/useDebounce';
+import { maskCpfDisplay } from '@/utils/piiMask';
+import { secureJsonParse } from '@/utils/secureJson';
 import { UserAvatar } from '@/components/ui/user-avatar';
 import { ColaboradorStatus } from '@/components/ui/status-badge';
 import {
@@ -86,7 +88,7 @@ function fuzzyMatch(text: string, query: string): boolean {
 /* ─── Recent searches ─── */
 function getRecentSearches(): string[] {
   try {
-    return JSON.parse(localStorage.getItem('cmd-recent') || '[]').slice(0, 5);
+    return secureJsonParse<string[]>(localStorage.getItem('cmd-recent') || '[]').slice(0, 5);
   } catch { return []; }
 }
 
@@ -153,10 +155,11 @@ export function CommandPalette({
         .eq('ativa', true)
         .limit(5);
 
-      if (/^\d+$/.test(q)) {
-        queryBuilder = queryBuilder.ilike('cnpj', `%${q}%`);
-      } else {
-        queryBuilder = queryBuilder.or(`razao_social.ilike.%${q}%,nome_fantasia.ilike.%${q}%`);
+      const sq = q.replace(/[%_.,()]/g, '');
+      if (/^\d+$/.test(sq)) {
+        queryBuilder = queryBuilder.ilike('cnpj', `%${sq}%`);
+      } else if (sq) {
+        queryBuilder = queryBuilder.or(`razao_social.ilike.%${sq}%,nome_fantasia.ilike.%${sq}%`);
       }
 
       const { data } = await queryBuilder;
@@ -177,7 +180,8 @@ export function CommandPalette({
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [open, setOpen, setQuery, setSelectedIndex]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Build dynamic items from DB results
   const dynamicItems = useMemo<CommandItem[]>(() => {
@@ -187,7 +191,7 @@ export function CommandPalette({
       items.push({
         id: `colab-${c.id}`,
         label: c.nome_completo,
-        description: `${c.cpf || ''} · ${c.cargo || ''}`,
+        description: `${c.cpf ? maskCpfDisplay(c.cpf) : ''} · ${c.cargo || ''}`,
         status: c.status,
         icon: User,
         category: 'pessoa',
@@ -241,7 +245,8 @@ export function CommandPalette({
     if (item.action) item.action();
     setOpen(false);
     setQuery('');
-  }, [navigate, query, setOpen, setQuery]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigate, query]);
 
   // Keyboard nav
   useEffect(() => {
@@ -262,7 +267,8 @@ export function CommandPalette({
     return () => window.removeEventListener('keydown', handler);
   }, [open, selectedIndex, allItems, execute]);
 
-  useEffect(() => { setSelectedIndex(0); }, [query]); // eslint-disable-line react-hooks/set-state-in-effect
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { setSelectedIndex(0); }, [query]);
 
   /* ─── Render group helper ─── */
   let globalIndex = -1;

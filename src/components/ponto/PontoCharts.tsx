@@ -92,7 +92,7 @@ export function PontoCharts() {
                   <XAxis dataKey="week" tick={{ fontSize: 12 }} />
                   <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} />
                   <Tooltip
-                    formatter={(value: number) => [`${value}%`, 'Taxa']}
+                    formatter={(value: any) => [`${value}%`, 'Taxa']}
                     contentStyle={{
                       backgroundColor: 'hsl(var(--popover))',
                       border: '1px solid hsl(var(--border))',

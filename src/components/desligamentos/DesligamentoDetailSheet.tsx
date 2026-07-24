@@ -13,6 +13,7 @@ import { gerarPDFRescisao } from '@/utils/rescisaoPDF';
 
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { useState } from 'react';
 
 
@@ -49,11 +50,11 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
         if (d.etapa === 'documentacao') updates.etapa = 'calculo';
       }
 
-      await desligamentoService.atualizar(d.id, updates);
+      await desligamentoService.atualizar(d.id, updates, d.empresa_id);
       queryClient.invalidateQueries({ queryKey: ['desligamentos'] });
       toast.success('Checklist atualizado');
     } catch (err: any) {
-      toast.error('Erro ao atualizar checklist: ' + err.message);
+      toast.error(safeErrorMessage(err, 'Erro ao atualizar checklist.'));
     }
   };
 
@@ -74,11 +75,11 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
         aviso_trabalhado: (d as Record<string, unknown>).aviso_trabalhado ?? false,
         ferias_vencidas: (d as Record<string, unknown>).ferias_vencidas_check ?? false,
         saldo_fgts: (d as Record<string, unknown>).saldo_fgts ?? 0,
-      });
+      }, d.empresa_id);
       queryClient.invalidateQueries({ queryKey: ['desligamentos'] });
       toast.success('Rescisão calculada com sucesso');
     } catch (err: any) {
-      toast.error('Erro ao calcular: ' + err.message);
+      toast.error(safeErrorMessage(err, 'Erro ao calcular rescisão.'));
     } finally {
       setCalculating(false);
     }
@@ -87,11 +88,11 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
   const handleHomologar = async () => {
     setHomologating(true);
     try {
-      await rescisaoService.homologar(d.id);
+      await rescisaoService.homologar(d.id, d.empresa_id);
       queryClient.invalidateQueries({ queryKey: ['desligamentos'] });
       toast.success('Homologação concluída');
     } catch (err: any) {
-      toast.error('Erro ao homologar: ' + err.message);
+      toast.error(safeErrorMessage(err, 'Erro ao homologar.'));
     } finally {
       setHomologating(false);
     }

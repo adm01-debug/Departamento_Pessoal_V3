@@ -47,6 +47,7 @@ import { useRealTimeSubscription } from '@/hooks/useRealTimeSubscription';
 /* eslint-disable react-refresh/only-export-components */
 export {
   MotionCard,
+  // eslint-disable-next-line react-refresh/only-export-components
   donutColors,
   IndicatorRow,
   QuickStat,
@@ -746,7 +747,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
                               size="icon"
                               aria-label="Visualizar"
                               className="h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
-                              onClick={() => window.open(`/detalhes/${item.referencia_id || item.id}`, '_blank')}
+                              onClick={() => window.open(`/detalhes/${item.referencia_id || item.id}`, '_blank', 'noopener')}
                             >
                               <Eye className="h-4 w-4" />
                             </Button>

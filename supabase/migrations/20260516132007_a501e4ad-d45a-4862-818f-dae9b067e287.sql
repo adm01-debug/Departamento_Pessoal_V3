@@ -21,14 +21,22 @@ ALTER TABLE public.times ENABLE ROW LEVEL SECURITY;
 
 -- Simple policies (allowing all for now as it's a management system, 
 -- but in production these would be restricted by auth.uid())
+DROP POLICY IF EXISTS "Enable read access for all users" ON public.promo_brindes;
 CREATE POLICY "Enable read access for all users" ON public.promo_brindes FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Enable insert for all users" ON public.promo_brindes;
 CREATE POLICY "Enable insert for all users" ON public.promo_brindes FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS "Enable update for all users" ON public.promo_brindes;
 CREATE POLICY "Enable update for all users" ON public.promo_brindes FOR UPDATE USING (true);
+DROP POLICY IF EXISTS "Enable delete for all users" ON public.promo_brindes;
 CREATE POLICY "Enable delete for all users" ON public.promo_brindes FOR DELETE USING (true);
 
+DROP POLICY IF EXISTS "Enable read access for all users" ON public.times;
 CREATE POLICY "Enable read access for all users" ON public.times FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Enable insert for all users" ON public.times;
 CREATE POLICY "Enable insert for all users" ON public.times FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS "Enable update for all users" ON public.times;
 CREATE POLICY "Enable update for all users" ON public.times FOR UPDATE USING (true);
+DROP POLICY IF EXISTS "Enable delete for all users" ON public.times;
 CREATE POLICY "Enable delete for all users" ON public.times FOR DELETE USING (true);
 
 -- Trigger for updated_at on promo_brindes
@@ -40,6 +48,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS update_promo_brindes_updated_at ON public.promo_brindes;
 CREATE TRIGGER update_promo_brindes_updated_at
 BEFORE UPDATE ON public.promo_brindes
 FOR EACH ROW

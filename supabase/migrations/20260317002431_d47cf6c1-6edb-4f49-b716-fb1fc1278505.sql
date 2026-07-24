@@ -1,7 +1,7 @@
 
 -- Criar tabelas que AINDA não existem
 
-CREATE TABLE public.batidas_ponto (
+CREATE TABLE IF NOT EXISTS public.batidas_ponto (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   colaborador_id uuid NOT NULL REFERENCES public.colaboradores(id) ON DELETE RESTRICT,
   empresa_id uuid REFERENCES public.empresas(id),
@@ -23,16 +23,20 @@ CREATE TABLE public.batidas_ponto (
   UNIQUE(colaborador_id, data, ordem)
 );
 ALTER TABLE public.batidas_ponto ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "bp_sel" ON public.batidas_ponto;
 CREATE POLICY "bp_sel" ON public.batidas_ponto FOR SELECT TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "bp_ins" ON public.batidas_ponto;
 CREATE POLICY "bp_ins" ON public.batidas_ponto FOR INSERT TO authenticated
   WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "bp_upd" ON public.batidas_ponto;
 CREATE POLICY "bp_upd" ON public.batidas_ponto FOR UPDATE TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "bp_del" ON public.batidas_ponto;
 CREATE POLICY "bp_del" ON public.batidas_ponto FOR DELETE TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
 
-CREATE TABLE public.jornadas_horarios (
+CREATE TABLE IF NOT EXISTS public.jornadas_horarios (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   jornada_id uuid NOT NULL REFERENCES public.jornadas(id) ON DELETE CASCADE,
   dia_semana integer NOT NULL,
@@ -45,7 +49,9 @@ CREATE TABLE public.jornadas_horarios (
   UNIQUE(jornada_id, dia_semana)
 );
 ALTER TABLE public.jornadas_horarios ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "jh_sel" ON public.jornadas_horarios;
 CREATE POLICY "jh_sel" ON public.jornadas_horarios FOR SELECT TO authenticated USING (true);
+DROP POLICY IF EXISTS "jh_mod" ON public.jornadas_horarios;
 CREATE POLICY "jh_mod" ON public.jornadas_horarios FOR ALL TO authenticated USING (true);
 
 -- Views corrigidas

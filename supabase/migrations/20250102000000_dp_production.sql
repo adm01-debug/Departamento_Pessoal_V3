@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS public.folhas (
 
 -- Índices
 CREATE INDEX IF NOT EXISTS idx_colaboradores_status ON public.colaboradores(status);
-CREATE INDEX IF NOT EXISTS idx_colaboradores_depto ON public.colaboradores(departamento);
+-- idx_colaboradores_depto removido: referenciava coluna inexistente; 002_colaboradores.sql já cria o índice correto.
 CREATE INDEX IF NOT EXISTS idx_ferias_status ON public.ferias(status);
 CREATE INDEX IF NOT EXISTS idx_pontos_data ON public.pontos(data);
 CREATE INDEX IF NOT EXISTS idx_folhas_mes ON public.folhas(mes_referencia);
@@ -91,6 +91,7 @@ ALTER TABLE public.ferias ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.pontos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.folhas ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Allow all" ON public.colaboradores;
 CREATE POLICY "Allow all" ON public.colaboradores FOR ALL USING (true);
 CREATE POLICY "Allow all" ON public.ferias FOR ALL USING (true);
 CREATE POLICY "Allow all" ON public.pontos FOR ALL USING (true);
@@ -105,6 +106,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS colaboradores_updated_at ON public.colaboradores;
 CREATE TRIGGER colaboradores_updated_at
   BEFORE UPDATE ON public.colaboradores
   FOR EACH ROW EXECUTE FUNCTION update_colaborador_updated_at();

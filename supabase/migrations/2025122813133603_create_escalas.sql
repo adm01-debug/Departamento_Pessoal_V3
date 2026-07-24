@@ -25,19 +25,24 @@ CREATE INDEX IF NOT EXISTS idx_escalas_status ON public.escalas(status);
 -- RLS
 ALTER TABLE public.escalas ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "escalas_select" ON public.escalas;
 CREATE POLICY "escalas_select" ON public.escalas
   FOR SELECT USING (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "escalas_insert" ON public.escalas;
 CREATE POLICY "escalas_insert" ON public.escalas
   FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "escalas_update" ON public.escalas;
 CREATE POLICY "escalas_update" ON public.escalas
   FOR UPDATE USING (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "escalas_delete" ON public.escalas;
 CREATE POLICY "escalas_delete" ON public.escalas
   FOR DELETE USING (auth.uid() IS NOT NULL);
 
 -- Trigger updated_at
+DROP TRIGGER IF EXISTS update_escalas_updated_at ON public.escalas;
 CREATE TRIGGER update_escalas_updated_at
   BEFORE UPDATE ON public.escalas
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

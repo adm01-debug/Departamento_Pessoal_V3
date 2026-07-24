@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 import { Plus, Trash2, Edit2, GripVertical, CheckCircle, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import { safeErrorMessage } from '@/utils/safeError';
 
 const TIPOS_CAMPO = [
   { value: 'texto', label: 'Texto' },
@@ -59,15 +60,22 @@ export function CamposCustomizadosTab() {
 
   const salvar = useMutation({
     mutationFn: async () => {
+      const nome = form.nome.trim().slice(0, 100);
+      if (!nome) throw new Error('Nome do campo é obrigatório.');
+      if (!TIPOS_CAMPO.some(t => t.value === form.tipo)) throw new Error('Tipo de campo inválido.');
+      if (!SECOES.some(s => s.value === form.secao)) throw new Error('Seção inválida.');
+
+      const opcoes = form.tipo === 'selecao' && form.opcoes
+        ? form.opcoes.split(',').map(o => o.trim().slice(0, 100)).filter(Boolean).slice(0, 50)
+        : null;
+
       const payload: any = {
-        nome: form.nome,
+        nome,
         tipo: form.tipo,
         secao: form.secao,
         obrigatorio: form.obrigatorio,
         empresa_id: empresaAtual?.id,
-        opcoes: form.tipo === 'selecao' && form.opcoes
-          ? form.opcoes.split(',').map(o => o.trim()).filter(Boolean)
-          : null,
+        opcoes,
       };
 
       if (editId) {
@@ -86,7 +94,7 @@ export function CamposCustomizadosTab() {
       setEditId(null);
       setForm(emptyForm);
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toast.error(safeErrorMessage(err, 'Erro ao salvar campo customizado.')),
   });
 
   const toggleAtivo = useMutation({

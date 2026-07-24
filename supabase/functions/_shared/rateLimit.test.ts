@@ -99,13 +99,25 @@ Deno.test('ignora rows fora da janela (timestamp < windowStart)', async () => {
   assertEquals(r.remaining, 4);
 });
 
-Deno.test('fail-open — retorna allowed em erro de DB', async () => {
+Deno.test('fail-closed (fallback em memória) — primeira req permitida com limite reduzido', async () => {
   const { client, state } = makeMockClient({ countError: { message: 'DB offline' } });
-  const r = await checkRateLimit(client, { key: 'u:1:foo', limit: 5, windowSec: 60 });
+  // limit=5, fallbackLimit = max(1, floor(5 * 0.5)) = 2
+  const r = await checkRateLimit(client, { key: 'u:1:foo-fb', limit: 5, windowSec: 60 });
   assertEquals(r.allowed, true);
-  assertEquals(r.remaining, 5);
-  // fail-open não deve inserir marcador (não passou pelo caminho happy)
-  assertEquals(state.inserts.length, 0);
+  assertEquals(r.limit, 2);           // 50% do limite normal
+  assertEquals(r.remaining, 1);       // 2 - 1 (esta requisição) = 1
+  assertEquals(state.inserts.length, 0); // fallback não insere na tabela DB
+});
+
+Deno.test('fail-closed (fallback em memória) — bloqueia após atingir limite reduzido', async () => {
+  const { client } = makeMockClient({ countError: { message: 'DB offline' } });
+  // fallbackLimit = 2; consome as 2 permissões
+  await checkRateLimit(client, { key: 'u:1:foo-fb2', limit: 5, windowSec: 60 });
+  await checkRateLimit(client, { key: 'u:1:foo-fb2', limit: 5, windowSec: 60 });
+  // 3ª req deve ser bloqueada
+  const r3 = await checkRateLimit(client, { key: 'u:1:foo-fb2', limit: 5, windowSec: 60 });
+  assertEquals(r3.allowed, false);
+  assertEquals(r3.remaining, 0);
 });
 
 Deno.test('rateLimitResponse gera 429 com headers RFC-compliant', async () => {

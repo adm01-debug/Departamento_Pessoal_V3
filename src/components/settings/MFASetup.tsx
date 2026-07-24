@@ -12,6 +12,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Shield, ShieldCheck, ShieldAlert, Copy, Key, Smartphone, Loader2, Trash2, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
+import { safeErrorMessage } from '@/utils/safeError';
 
 export function MFASetup() {
   const { user } = useAuth();
@@ -63,7 +64,7 @@ export function MFASetup() {
       });
       setShowEnrollDialog(true);
     } catch (e: any) {
-      toast.error(e.message || 'Erro ao iniciar configuração MFA');
+      toast.error(safeErrorMessage(e, 'Erro ao iniciar configuração MFA.'));
     } finally {
       setEnrolling(false);
     }
@@ -83,12 +84,11 @@ export function MFASetup() {
       });
       if (verify.error) throw verify.error;
 
-      // Update user_mfa record
       await supabase.from('user_mfa').upsert([{
         user_id: user!.id,
         mfa_enabled: true,
         mfa_type: 'totp',
-        mfa_secret: enrollData.secret,
+        mfa_secret: null,
       }], { onConflict: 'user_id' });
 
       toast.success('Autenticação de dois fatores ativada com sucesso!');
@@ -98,7 +98,7 @@ export function MFASetup() {
       refetch();
       qc.invalidateQueries({ queryKey: ['user-mfa-record'] });
     } catch (e: any) {
-      toast.error(e.message || 'Código inválido');
+      toast.error(safeErrorMessage(e, 'Código inválido ou expirado.'));
     } finally {
       setEnrolling(false);
     }
@@ -123,7 +123,7 @@ export function MFASetup() {
       refetch();
       qc.invalidateQueries({ queryKey: ['user-mfa-record'] });
     } catch (e: any) {
-      toast.error(e.message || 'Erro ao desativar MFA');
+      toast.error(safeErrorMessage(e, 'Erro ao desativar MFA.'));
     } finally {
       setEnrolling(false);
     }

@@ -21,4 +21,5 @@ CREATE INDEX IF NOT EXISTS idx_treinamentos_empresa ON public.treinamentos(empre
 CREATE INDEX IF NOT EXISTS idx_treinamentos_colaborador ON public.treinamentos(colaborador_id);
 ALTER TABLE public.treinamentos ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "treinamentos_all" ON public.treinamentos;
 CREATE POLICY "treinamentos_all" ON public.treinamentos FOR ALL USING (auth.uid() IS NOT NULL);

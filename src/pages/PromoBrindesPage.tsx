@@ -13,6 +13,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { Plus, Gift, Trash2, Edit2, Search, Package } from 'lucide-react';
 export default function PromoBrindesPage() {
   const qc = useQueryClient();
@@ -66,7 +67,7 @@ export default function PromoBrindesPage() {
       resetForm();
       toast.success(editingItem ? 'Brinde atualizado!' : 'Brinde criado!');
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 
   const excluir = useMutation({
@@ -81,7 +82,7 @@ export default function PromoBrindesPage() {
       qc.invalidateQueries({ queryKey: ['promo_brindes'] });
       toast.success('Brinde excluído!');
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 
   const resetForm = () => {

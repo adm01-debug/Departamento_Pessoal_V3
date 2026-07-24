@@ -32,6 +32,7 @@ CREATE INDEX IF NOT EXISTS idx_darfs_status ON public.darfs(status);
 -- RLS
 ALTER TABLE public.darfs ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "darfs_all" ON public.darfs;
 CREATE POLICY "darfs_all" ON public.darfs
   USING (auth.uid() IS NOT NULL)
   WITH CHECK (auth.uid() IS NOT NULL);

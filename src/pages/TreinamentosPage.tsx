@@ -35,8 +35,10 @@ const treinamentosService = {
     const { error } = await supabase.from('treinamentos').insert(d);
     if (error) throw error;
   },
-  excluir: async (id: string) => {
-    const { error } = await supabase.from('treinamentos').delete().eq('id', id);
+  excluir: async (id: string, empresaId?: string) => {
+    let q = supabase.from('treinamentos').delete().eq('id', id);
+    if (empresaId) q = q.eq('empresa_id', empresaId);
+    const { error } = await q;
     if (error) throw error;
   },
 };
@@ -65,7 +67,7 @@ function TrilhaCursosSection({ trilhaId, cursos }: { trilhaId: string; cursos: a
   });
 
   const desvincular = useMutation({
-    mutationFn: (id: string) => catalogoCursoService.desvincularCursoTrilha(id),
+    mutationFn: (id: string) => catalogoCursoService.desvincularCursoTrilha(id, trilhaId),
     onSuccess: () => { 
       qc.invalidateQueries({ queryKey: ['trilhas_cursos', trilhaId] }); 
       toast.success('Curso desvinculado'); 
@@ -165,12 +167,12 @@ export default function TreinamentosPage() {
 
   // === Queries ===
   const { data: treinamentos = [], isLoading: loadTrein } = useQuery({ queryKey: ['treinamentos', empresaAtual?.id], queryFn: () => treinamentosService.listar(empresaAtual?.id), enabled: !!empresaAtual?.id });
-  const { data: cursos = [], isLoading: loadCursos } = useQuery({ queryKey: ['catalogo_cursos', empresaAtual?.id], queryFn: () => catalogoCursoService.listarCursos(empresaAtual?.id), enabled: !!empresaAtual?.id });
-  const { data: trilhas = [], isLoading: loadTrilhas } = useQuery({ queryKey: ['trilhas', empresaAtual?.id], queryFn: () => catalogoCursoService.listarTrilhas(empresaAtual?.id), enabled: !!empresaAtual?.id });
-  const { data: inscricoes = [], isLoading: loadInsc } = useQuery({ queryKey: ['inscricoes_cursos', empresaAtual?.id], queryFn: () => catalogoCursoService.listarInscricoes(undefined, empresaAtual?.id), enabled: !!empresaAtual?.id });
-  const { data: instancias = [], isLoading: loadInst } = useQuery({ queryKey: ['treinamento_instancias', empresaAtual?.id], queryFn: () => catalogoCursoService.listarInstancias(), enabled: !!empresaAtual?.id });
-  const { data: certificados = [], isLoading: loadCert } = useQuery({ queryKey: ['treinamento_certificados', empresaAtual?.id], queryFn: () => (catalogoCursoService as any).listarCertificados(undefined, empresaAtual?.id), enabled: !!empresaAtual?.id });
-  const { data: colaboradores = [] } = useQuery({ queryKey: ['colaboradores', empresaAtual?.id], queryFn: () => colaboradorService.list(empresaAtual?.id), enabled: !!empresaAtual?.id });
+  const { data: cursos = [], isLoading: loadCursos } = useQuery({ queryKey: ['catalogo_cursos', empresaAtual?.id], queryFn: () => catalogoCursoService.listarCursos(empresaAtual!.id), enabled: !!empresaAtual?.id });
+  const { data: trilhas = [], isLoading: loadTrilhas } = useQuery({ queryKey: ['trilhas', empresaAtual?.id], queryFn: () => catalogoCursoService.listarTrilhas(empresaAtual!.id), enabled: !!empresaAtual?.id });
+  const { data: inscricoes = [], isLoading: loadInsc } = useQuery({ queryKey: ['inscricoes_cursos', empresaAtual?.id], queryFn: () => catalogoCursoService.listarInscricoes(empresaAtual!.id), enabled: !!empresaAtual?.id });
+  const { data: instancias = [], isLoading: loadInst } = useQuery({ queryKey: ['treinamento_instancias', empresaAtual?.id], queryFn: () => catalogoCursoService.listarInstancias(empresaAtual!.id), enabled: !!empresaAtual?.id });
+  const { data: certificados = [], isLoading: loadCert } = useQuery({ queryKey: ['treinamento_certificados', empresaAtual?.id], queryFn: () => catalogoCursoService.listarCertificados(empresaAtual!.id), enabled: !!empresaAtual?.id });
+  const { data: colaboradores = [] } = useQuery({ queryKey: ['colaboradores', empresaAtual?.id], queryFn: () => colaboradorService.list(empresaAtual!.id), enabled: !!empresaAtual?.id });
 
   // === Treinamentos ===
   const [openTrein, setOpenTrein] = useState(false);
@@ -180,7 +182,7 @@ export default function TreinamentosPage() {
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['treinamentos'] }); setOpenTrein(false); setTreinForm({ nome: '', descricao: '', data: '', carga_horaria: '' }); toast.success('Treinamento criado!'); },
     onError: () => toast.error('Erro ao criar treinamento'),
   });
-  const excluirTrein = useMutation({ mutationFn: (id: string) => treinamentosService.excluir(id), onSuccess: () => { qc.invalidateQueries({ queryKey: ['treinamentos'] }); toast.success('Treinamento excluído'); } });
+  const excluirTrein = useMutation({ mutationFn: (id: string) => treinamentosService.excluir(id, empresaAtual?.id), onSuccess: () => { qc.invalidateQueries({ queryKey: ['treinamentos'] }); toast.success('Treinamento excluído'); } });
 
   // === Cursos ===
   const [openCurso, setOpenCurso] = useState(false);
@@ -190,7 +192,7 @@ export default function TreinamentosPage() {
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['catalogo_cursos'] }); setOpenCurso(false); setCursoForm({ nome: '', descricao: '', categoria: '', modalidade: 'presencial', carga_horaria: '', obrigatorio: false, nr_relacionada: '' }); toast.success('Curso criado!'); },
     onError: () => toast.error('Erro ao criar curso'),
   });
-  const excluirCurso = useMutation({ mutationFn: (id: string) => catalogoCursoService.excluirCurso(id), onSuccess: () => { qc.invalidateQueries({ queryKey: ['catalogo_cursos'] }); toast.success('Curso excluído'); } });
+  const excluirCurso = useMutation({ mutationFn: (id: string) => catalogoCursoService.excluirCurso(id, empresaAtual!.id), onSuccess: () => { qc.invalidateQueries({ queryKey: ['catalogo_cursos'] }); toast.success('Curso excluído'); } });
 
   // === Trilhas ===
   const [openTrilha, setOpenTrilha] = useState(false);
@@ -200,7 +202,7 @@ export default function TreinamentosPage() {
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['trilhas'] }); setOpenTrilha(false); setTrilhaForm({ titulo: '', descricao: '', nivel: 'basico' }); toast.success('Trilha criada!'); },
     onError: () => toast.error('Erro ao criar trilha'),
   });
-  const excluirTrilha = useMutation({ mutationFn: (id: string) => catalogoCursoService.excluirTrilha(id), onSuccess: () => { qc.invalidateQueries({ queryKey: ['trilhas'] }); toast.success('Trilha excluída'); } });
+  const excluirTrilha = useMutation({ mutationFn: (id: string) => catalogoCursoService.excluirTrilha(id, empresaAtual!.id), onSuccess: () => { qc.invalidateQueries({ queryKey: ['trilhas'] }); toast.success('Trilha excluída'); } });
 
   // === Inscrições ===
   const [openInsc, setOpenInsc] = useState(false);

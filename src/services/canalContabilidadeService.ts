@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { validateUploadFile } from '@/utils/uploadValidation';
 
 export type ThreadStatus = 'aberto' | 'respondido' | 'resolvido' | 'arquivado';
 export type ThreadCategoria = 'folha' | 'esocial' | 'admissao' | 'rescisao' | 'tributos' | 'ferias' | 'outro';
@@ -19,7 +20,10 @@ export const canalContabilidadeService = {
     return data || [];
   },
 
-  async criarContato(empresaId: string, payload: { nome: string; email: string; telefone?: string; escritorio?: string }) {
+  async criarContato(
+    empresaId: string,
+    payload: { nome: string; email: string; telefone?: string; escritorio?: string }
+  ) {
     const { data, error } = await supabase
       .from('contabilidade_contatos' as any)
       .insert({ ...payload, empresa_id: empresaId })
@@ -29,8 +33,8 @@ export const canalContabilidadeService = {
     return data;
   },
 
-  async toggleContato(id: string, ativo: boolean) {
-    const { error } = await supabase.from('contabilidade_contatos' as any).update({ ativo }).eq('id', id);
+  async toggleContato(empresaId: string, id: string, ativo: boolean) {
+    const { error } = await supabase.from('contabilidade_contatos' as any).update({ ativo }).eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   },
 
@@ -48,13 +52,16 @@ export const canalContabilidadeService = {
     return data || [];
   },
 
-  async criarThread(empresaId: string, payload: {
-    assunto: string;
-    categoria: ThreadCategoria;
-    prioridade?: ThreadPrioridade;
-    contato_id?: string | null;
-    mensagemInicial: string;
-  }) {
+  async criarThread(
+    empresaId: string,
+    payload: {
+      assunto: string;
+      categoria: ThreadCategoria;
+      prioridade?: ThreadPrioridade;
+      contato_id?: string | null;
+      mensagemInicial: string;
+    }
+  ) {
     const { data: user } = await supabase.auth.getUser();
     const { data: thread, error } = await supabase
       .from('contabilidade_threads' as any)
@@ -74,10 +81,10 @@ export const canalContabilidadeService = {
     return thread;
   },
 
-  async atualizarStatus(threadId: string, status: ThreadStatus) {
+  async atualizarStatus(empresaId: string, threadId: string, status: ThreadStatus) {
     const patch: any = { status };
     if (status === 'resolvido') patch.resolvido_em = new Date().toISOString();
-    const { error } = await supabase.from('contabilidade_threads' as any).update(patch).eq('id', threadId);
+    const { error } = await supabase.from('contabilidade_threads' as any).update(patch).eq('id', threadId).eq('empresa_id', empresaId);
     if (error) throw error;
   },
 
@@ -92,7 +99,13 @@ export const canalContabilidadeService = {
     return data || [];
   },
 
-  async enviarMensagem(threadId: string, empresaId: string, corpo: string, autorTipo: AutorTipo = 'rh', anexos: any[] = []) {
+  async enviarMensagem(
+    threadId: string,
+    empresaId: string,
+    corpo: string,
+    autorTipo: AutorTipo = 'rh',
+    anexos: any[] = []
+  ) {
     if (!corpo?.trim()) throw new Error('Mensagem vazia');
     const { data: user } = await supabase.auth.getUser();
     const { data, error } = await supabase
@@ -114,6 +127,7 @@ export const canalContabilidadeService = {
 
   // ---------- anexos ----------
   async uploadAnexo(empresaId: string, threadId: string, file: File) {
+    validateUploadFile(file);
     const safe = file.name.replace(/[^\w.-]/g, '_');
     const path = `${empresaId}/${threadId}/${Date.now()}_${safe}`;
     const { error } = await supabase.storage.from(BUCKET).upload(path, file, { upsert: false });

@@ -3,7 +3,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://esm.sh/zod@3.23.8';
-import { corsHeaders, createErrorResponse, createValidationErrorResponse } from '../_shared/contract.ts';
+import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 
@@ -77,12 +77,14 @@ serve(async (req) => {
       global: { headers: { Authorization: authHeader } },
       auth: { persistSession: false, autoRefreshToken: false },
     });
-    const { data: claimsData, error: claimsErr } = await userClient.auth.getClaims(authHeader.replace(/^Bearer\s+/i, ''));
-    if (claimsErr || !claimsData?.claims?.sub) return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
-    const userId = String(claimsData.claims.sub);
+    const { data: claimsData, error: claimsErr } = await userClient.auth.getUser();
+    if (claimsErr || !claimsData?.user?.id) return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
+    const userId = claimsData.user.id;
 
     let raw: unknown;
-    try { raw = await req.json(); } catch { return createErrorResponse('JSON inválido', 400, 'INVALID_JSON'); }
+    const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
+    if (_pe) return _pe;
+    raw = _pb;
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) return createValidationErrorResponse(parsed.error);
     const { action, format, empresaId, filters } = parsed.data;
@@ -102,6 +104,10 @@ serve(async (req) => {
       });
       if (!belongs && !isAdm) return createErrorResponse('Sem acesso a esta empresa', 403, 'FORBIDDEN');
     }
+
+    const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
+    const rl = await checkRateLimit(admin, { key: `exportacao:${userId}`, limit: 10, windowSec: 60 });
+    if (!rl.allowed) return rateLimitResponse(rl);
 
     if (action === 'colaboradores') {
       let q = admin.from('colaboradores')

@@ -5,13 +5,15 @@ import { PageLayout } from '@/components/layout';
 import { DataTableToolbar } from '@/components/ui/data-table-toolbar';
 import { EmptyList } from '@/components/ui/empty-state';
 import { TableSkeleton } from '@/components/ui/module-skeleton';
-import { FeriasKPIs, FeriasTable, FeriasDashboard, FeriasInsights } from '@/components/ferias';
+import { FeriasKPIs, FeriasTable, FeriasDashboard, FeriasInsights, FeriasAlertasPagamentoCard, FeriasReconciliacaoCard, FeriasReconciliacaoHistoricoCard } from '@/components/ferias';
+import { FeriasColetivasTab } from '@/components/ferias/FeriasColetivasTab';
 import { FeriasRelatorioDialog } from '@/components/ferias/FeriasRelatorioDialog';
 import { feriasPDF } from '@/utils/feriasPDF';
 import { useFerias } from '@/hooks/useFerias';
 import { feriasService, auditoriaService } from '@/services';
 import { useFeriasAprovacao } from '@/hooks/useFeriasAprovacao';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { useDataAccessLog } from '@/hooks/useDataAccessLog';
 import { Calendar, Calculator, Loader2, List, CalendarDays, History, LayoutDashboard, FileDown, RefreshCw, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -46,12 +48,14 @@ export default function FeriasPage() {
   const [calcResult, setCalcResult] = useState<Record<string, any> | null>(null);
   const queryClient = useQueryClient();
   
-  const { ferias, totalCount, isLoading, refetch } = useFerias({ 
-    page, 
-    limit, 
-    search: search.length >= 3 ? search : undefined, 
-    status: statusFilter 
+  const { ferias, totalCount, isLoading, refetch } = useFerias({
+    page,
+    limit,
+    search: search.length >= 3 ? search : undefined,
+    status: statusFilter
   });
+
+  useDataAccessLog('ferias', empresaAtual?.id, empresaAtual?.id);
 
   // Auto-sync effect
   useEffect(() => {
@@ -144,6 +148,16 @@ export default function FeriasPage() {
       gradient="from-primary-glow to-primary"
       actions={
         <div className="flex gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            className="rounded-xl gap-1.5 font-body"
+            asChild
+          >
+            <a href="/ferias/programacao">
+              <CalendarDays className="h-4 w-4" /> Programação Anual
+            </a>
+          </Button>
           <Button 
             size="sm" 
             variant="outline" 
@@ -213,9 +227,17 @@ export default function FeriasPage() {
           <TabsTrigger value="periodos" className="rounded-lg gap-2 font-display">
             <History className="h-4 w-4" /> Períodos Aquisitivos
           </TabsTrigger>
+          <TabsTrigger value="coletivas" className="rounded-lg gap-2 font-display">
+            <FileDown className="h-4 w-4" /> Coletivas
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="dashboard">
+        <TabsContent value="dashboard" className="space-y-6">
+          <div className="grid gap-6 lg:grid-cols-2">
+            <FeriasAlertasPagamentoCard />
+            <FeriasReconciliacaoCard />
+          </div>
+          <FeriasReconciliacaoHistoricoCard />
           <FeriasDashboard data={ferias} />
         </TabsContent>
 
@@ -343,6 +365,10 @@ export default function FeriasPage() {
           <div className="grid gap-6">
             <GerenciamentoPeriodos />
           </div>
+        </TabsContent>
+
+        <TabsContent value="coletivas">
+          <FeriasColetivasTab />
         </TabsContent>
 
       </Tabs>

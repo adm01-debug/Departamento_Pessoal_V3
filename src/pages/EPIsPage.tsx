@@ -16,6 +16,7 @@ import { episService, episEntregasService } from '@/services';
 import { colaboradorService } from '@/services';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { Plus, HardHat, Package } from 'lucide-react';
 import { addMonths, parseISO, isBefore } from 'date-fns';
 
@@ -49,19 +50,19 @@ export default function EPIsPage() {
 
   const { data: epis = [], isLoading } = useQuery({
     queryKey: ['epis', empresaAtual?.id],
-    queryFn: () => episService.listar(empresaAtual?.id),
+    queryFn: () => episService.listar(empresaAtual!.id),
     enabled: !!empresaAtual?.id,
   });
 
   const { data: entregas = [] } = useQuery({
     queryKey: ['epis-entregas', empresaAtual?.id],
-    queryFn: () => episEntregasService.listar(empresaAtual?.id),
+    queryFn: () => episEntregasService.listar(empresaAtual!.id),
     enabled: !!empresaAtual?.id,
   });
 
   const { data: colaboradores = [] } = useQuery({
     queryKey: ['colaboradores', empresaAtual?.id],
-    queryFn: () => colaboradorService.list(empresaAtual?.id),
+    queryFn: () => colaboradorService.list(empresaAtual!.id),
     enabled: !!empresaAtual?.id,
   });
 
@@ -89,7 +90,7 @@ export default function EPIsPage() {
       });
       toast.success('EPI cadastrado!');
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar EPI.')),
   });
 
   const criarEntrega = useMutation({
@@ -100,16 +101,16 @@ export default function EPIsPage() {
       setFormEntrega({ epi_id: '', colaborador_id: '', data_entrega: '', quantidade: '1' });
       toast.success('Entrega registrada!');
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar EPI.')),
   });
 
   const excluirEpi = useMutation({
-    mutationFn: (id: string) => episService.excluir(id),
+    mutationFn: (id: string) => episService.excluir(id, empresaAtual!.id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['epis'] }); toast.success('EPI excluído!'); },
   });
 
   const devolverEpi = useMutation({
-    mutationFn: (id: string) => episEntregasService.registrarDevolucao(id, todayLocalISO()),
+    mutationFn: (id: string) => episEntregasService.registrarDevolucao(id, todayLocalISO(), empresaAtual!.id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['epis-entregas'] }); toast.success('Devolução registrada!'); },
   });
 

@@ -47,20 +47,25 @@ ALTER TABLE public.pdi_plano_desenvolvimento ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.competencias_config ENABLE ROW LEVEL SECURITY;
 
 -- Políticas
+DROP POLICY IF EXISTS "Metas acessíveis por empresa" ON public.metas_okrs;
 CREATE POLICY "Metas acessíveis por empresa" ON public.metas_okrs
     FOR ALL USING (empresa_id IN (SELECT id FROM public.empresas));
 
+DROP POLICY IF EXISTS "PDIs acessíveis por empresa" ON public.pdi_plano_desenvolvimento;
 CREATE POLICY "PDIs acessíveis por empresa" ON public.pdi_plano_desenvolvimento
     FOR ALL USING (empresa_id IN (SELECT id FROM public.empresas));
 
+DROP POLICY IF EXISTS "Competências acessíveis por empresa" ON public.competencias_config;
 CREATE POLICY "Competências acessíveis por empresa" ON public.competencias_config
     FOR ALL USING (empresa_id IN (SELECT id FROM public.empresas));
 
 -- Gatilhos de Timestamps
+DROP TRIGGER IF EXISTS set_timestamp_metas_okrs ON public.metas_okrs;
 CREATE TRIGGER set_timestamp_metas_okrs
 BEFORE UPDATE ON public.metas_okrs
 FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
+DROP TRIGGER IF EXISTS set_timestamp_pdi_plano ON public.pdi_plano_desenvolvimento;
 CREATE TRIGGER set_timestamp_pdi_plano
 BEFORE UPDATE ON public.pdi_plano_desenvolvimento
 FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();

@@ -21,4 +21,5 @@ CREATE INDEX IF NOT EXISTS idx_grrf_empresa ON public.grrf(empresa_id);
 CREATE INDEX IF NOT EXISTS idx_grrf_colaborador ON public.grrf(colaborador_id);
 ALTER TABLE public.grrf ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "grrf_all" ON public.grrf;
 CREATE POLICY "grrf_all" ON public.grrf FOR ALL USING (auth.uid() IS NOT NULL);

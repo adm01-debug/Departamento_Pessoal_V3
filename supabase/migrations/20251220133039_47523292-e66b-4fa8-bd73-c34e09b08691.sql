@@ -1,5 +1,5 @@
 -- Create tipos_beneficio table
-CREATE TABLE public.tipos_beneficio (
+CREATE TABLE IF NOT EXISTS public.tipos_beneficio (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   codigo TEXT NOT NULL UNIQUE,
   nome TEXT NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE public.tipos_beneficio (
 );
 
 -- Create beneficios_colaborador table
-CREATE TABLE public.beneficios_colaborador (
+CREATE TABLE IF NOT EXISTS public.beneficios_colaborador (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   colaborador_id UUID NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE,
   tipo_beneficio_id UUID NOT NULL REFERENCES public.tipos_beneficio(id) ON DELETE CASCADE,
@@ -34,11 +34,13 @@ ALTER TABLE public.tipos_beneficio ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.beneficios_colaborador ENABLE ROW LEVEL SECURITY;
 
 -- Policies for tipos_beneficio
+DROP POLICY IF EXISTS "Authenticated users can view tipos_beneficio" ON public.tipos_beneficio;
 CREATE POLICY "Authenticated users can view tipos_beneficio"
 ON public.tipos_beneficio
 FOR SELECT
 USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Authenticated users can manage tipos_beneficio" ON public.tipos_beneficio;
 CREATE POLICY "Authenticated users can manage tipos_beneficio"
 ON public.tipos_beneficio
 FOR ALL
@@ -46,6 +48,7 @@ USING (auth.role() = 'authenticated')
 WITH CHECK (auth.role() = 'authenticated');
 
 -- Policies for beneficios_colaborador
+DROP POLICY IF EXISTS "Authenticated users can manage beneficios_colaborador" ON public.beneficios_colaborador;
 CREATE POLICY "Authenticated users can manage beneficios_colaborador"
 ON public.beneficios_colaborador
 FOR ALL
@@ -53,9 +56,9 @@ USING (auth.role() = 'authenticated')
 WITH CHECK (auth.role() = 'authenticated');
 
 -- Create indexes
-CREATE INDEX idx_beneficios_colaborador_colaborador ON public.beneficios_colaborador(colaborador_id);
-CREATE INDEX idx_beneficios_colaborador_tipo ON public.beneficios_colaborador(tipo_beneficio_id);
-CREATE INDEX idx_beneficios_colaborador_ativo ON public.beneficios_colaborador(ativo);
+CREATE INDEX IF NOT EXISTS idx_beneficios_colaborador_colaborador ON public.beneficios_colaborador(colaborador_id);
+CREATE INDEX IF NOT EXISTS idx_beneficios_colaborador_tipo ON public.beneficios_colaborador(tipo_beneficio_id);
+CREATE INDEX IF NOT EXISTS idx_beneficios_colaborador_ativo ON public.beneficios_colaborador(ativo);
 
 -- Insert default benefit types
 INSERT INTO public.tipos_beneficio (codigo, nome, descricao, icone, valor_padrao, desconto_colaborador) VALUES
@@ -69,12 +72,14 @@ INSERT INTO public.tipos_beneficio (codigo, nome, descricao, icone, valor_padrao
 ('AUX', 'Auxílio Creche', 'Auxílio para creche/escola', '👶', 500, 0);
 
 -- Trigger for updated_at
+DROP TRIGGER IF EXISTS update_beneficios_colaborador_updated_at ON public.beneficios_colaborador;
 CREATE TRIGGER update_beneficios_colaborador_updated_at
 BEFORE UPDATE ON public.beneficios_colaborador
 FOR EACH ROW
 EXECUTE FUNCTION public.update_updated_at_column();
 
 -- Add audit trigger
+DROP TRIGGER IF EXISTS audit_beneficios_colaborador ON public.beneficios_colaborador;
 CREATE TRIGGER audit_beneficios_colaborador
   AFTER INSERT OR UPDATE OR DELETE ON public.beneficios_colaborador
   FOR EACH ROW EXECUTE FUNCTION public.log_audit_change();

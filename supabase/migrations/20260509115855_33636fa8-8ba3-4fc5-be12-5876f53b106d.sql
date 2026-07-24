@@ -16,4 +16,5 @@ ALTER TABLE public.ponto_ajustes ADD COLUMN IF NOT EXISTS historico_aprovacao JS
 
 -- Política de RLS para regras
 ALTER TABLE public.ponto_regras_aprovacao ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Gestores podem gerenciar regras" ON public.ponto_regras_aprovacao;
 CREATE POLICY "Gestores podem gerenciar regras" ON public.ponto_regras_aprovacao FOR ALL USING (true);

@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS public.premiacoes_roi_cenarios (
 
 ALTER TABLE public.premiacoes_roi_cenarios ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can manage their own scenarios" ON public.premiacoes_roi_cenarios;
 CREATE POLICY "Users can manage their own scenarios" 
 ON public.premiacoes_roi_cenarios 
 FOR ALL 
@@ -43,6 +44,7 @@ CREATE TABLE IF NOT EXISTS public.premiacoes_alertas (
 
 ALTER TABLE public.premiacoes_alertas ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view their own alerts" ON public.premiacoes_alertas;
 CREATE POLICY "Users can view their own alerts" 
 ON public.premiacoes_alertas 
 FOR SELECT 

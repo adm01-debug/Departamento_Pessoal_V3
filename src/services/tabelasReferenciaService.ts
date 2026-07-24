@@ -34,10 +34,9 @@ export const listarMotivosAfastamento = () => listarReferencia('motivos_afastame
 // =============================================
 // Centros de Custo (CRUD completo)
 // =============================================
-export async function listarCentrosCusto(empresaId?: string): Promise<unknown[]> {
-  let query = supabase.from('centros_custo').select('*').order('nome');
-  if (empresaId) query = query.eq('empresa_id', empresaId);
-  const { data, error } = await query;
+export async function listarCentrosCusto(empresaId: string): Promise<unknown[]> {
+  if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+  const { data, error } = await supabase.from('centros_custo').select('*').eq('empresa_id', empresaId).order('nome');
   if (error) throw error;
   return data || [];
 }
@@ -52,23 +51,27 @@ export async function criarCentroCusto(centro: DataRecord): Promise<any> {
   return data;
 }
 
-export async function atualizarCentroCusto(id: string, dados: DataRecord): Promise<void> {
-  const { error } = await supabase.from('centros_custo').update(dados).eq('id', id);
+export async function atualizarCentroCusto(id: string, dados: DataRecord, empresaId: string): Promise<void> {
+  if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+  const { error } = await supabase.from('centros_custo').update(dados).eq('id', id).eq('empresa_id', empresaId);
   if (error) throw error;
 }
 
-export async function excluirCentroCusto(id: string): Promise<void> {
-  const { error } = await supabase.from('centros_custo').delete().eq('id', id);
+export async function excluirCentroCusto(id: string, empresaId: string): Promise<void> {
+  if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+  const { error } = await supabase.from('centros_custo').delete().eq('id', id).eq('empresa_id', empresaId);
   if (error) throw error;
 }
 
 // =============================================
 // Contas Bancárias
 // =============================================
-export async function listarContasBancarias(colaboradorId: string): Promise<unknown[]> {
+export async function listarContasBancarias(colaboradorId: string, empresaId: string): Promise<unknown[]> {
+  if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
   const { data, error } = await supabase.from('contas_bancarias')
     .select('*')
     .eq('colaborador_id', colaboradorId)
+    .eq('empresa_id', empresaId)
     .order('principal', { ascending: false });
   if (error) throw error;
   return data || [];
@@ -84,13 +87,15 @@ export async function criarContaBancaria(conta: DataRecord): Promise<any> {
   return data;
 }
 
-export async function atualizarContaBancaria(id: string, dados: DataRecord): Promise<void> {
-  const { error } = await supabase.from('contas_bancarias').update(dados).eq('id', id);
+export async function atualizarContaBancaria(id: string, dados: DataRecord, empresaId: string): Promise<void> {
+  if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+  const { error } = await supabase.from('contas_bancarias').update(dados).eq('id', id).eq('empresa_id', empresaId);
   if (error) throw error;
 }
 
-export async function excluirContaBancaria(id: string): Promise<void> {
-  const { error } = await supabase.from('contas_bancarias').delete().eq('id', id);
+export async function excluirContaBancaria(id: string, empresaId: string): Promise<void> {
+  if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+  const { error } = await supabase.from('contas_bancarias').delete().eq('id', id).eq('empresa_id', empresaId);
   if (error) throw error;
 }
 
@@ -155,8 +160,9 @@ export async function criarDocumentoPessoal(doc: DataRecord): Promise<any> {
   return data;
 }
 
-export async function excluirDocumentoPessoal(id: string): Promise<void> {
-  const { error } = await supabase.from('documentos_pessoais').delete().eq('id', id);
+export async function excluirDocumentoPessoal(colaboradorId: string, id: string): Promise<void> {
+  if (!colaboradorId) throw new Error('colaborador_id obrigatório para isolamento de tenant');
+  const { error } = await supabase.from('documentos_pessoais').delete().eq('id', id).eq('colaborador_id', colaboradorId);
   if (error) throw error;
 }
 
@@ -182,8 +188,9 @@ export async function criarFeriasAprovacao(aprovacao: DataRecord): Promise<any> 
   return data;
 }
 
-export async function atualizarFeriasAprovacao(id: string, dados: DataRecord): Promise<void> {
-  const { error } = await supabase.from('ferias_aprovacoes').update(dados).eq('id', id);
+export async function atualizarFeriasAprovacao(feriasId: string, id: string, dados: DataRecord): Promise<void> {
+  if (!feriasId) throw new Error('ferias_id obrigatório para isolamento de tenant');
+  const { error } = await supabase.from('ferias_aprovacoes').update(dados).eq('id', id).eq('ferias_id', feriasId);
   if (error) throw error;
 }
 

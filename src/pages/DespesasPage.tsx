@@ -16,6 +16,8 @@ import { despesaService, type DespesaStatus, type DespesaTipo } from '@/services
 import { colaboradorService } from '@/services';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
+import { safeHref } from '@/utils/safeUrl';
 import { Plus, Receipt, DollarSign, CheckCircle, Clock, XCircle, Trash2, Upload, Eye, DollarSign as DollarIcon } from 'lucide-react';
 import { formatCurrency } from '@/utils/format';
 
@@ -67,13 +69,13 @@ export default function DespesasPage() {
   });
   const { data: colaboradores = [] } = useQuery({
     queryKey: ['colaboradores', empresaAtual?.id],
-    queryFn: () => colaboradorService.list(empresaAtual?.id),
+    queryFn: () => colaboradorService.list(empresaAtual!.id),
     enabled: !!empresaAtual?.id,
   });
 
   const criar = useMutation({
     mutationFn: async () => {
-      const created = await despesaService.criar({ ...form, valor: Number(form.valor), empresa_id: empresaAtual?.id });
+      const created = await despesaService.criar({ ...form, valor: Number(form.valor), empresa_id: empresaAtual!.id });
       if (file && created?.id && empresaAtual?.id) {
         await despesaService.uploadComprovante(empresaAtual.id, created.id, file);
       }
@@ -86,38 +88,38 @@ export default function DespesasPage() {
       setFile(null);
       toast.success('Despesa registrada com sucesso!');
     },
-    onError: (e: Error) => toast.error(e.message || 'Erro ao registrar despesa'),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar despesa.')),
   });
 
   const aprovar = useMutation({
-    mutationFn: (id: string) => despesaService.aprovar(id),
+    mutationFn: (id: string) => despesaService.aprovar(id, empresaAtual!.id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['despesas'] }); toast.success('Despesa aprovada'); },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar despesa.')),
   });
 
   const rejeitar = useMutation({
-    mutationFn: () => despesaService.rejeitar(rejectTarget!, rejectMotivo),
+    mutationFn: () => despesaService.rejeitar(rejectTarget!, empresaAtual!.id, rejectMotivo),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['despesas'] });
       toast.success('Despesa rejeitada');
       setRejectTarget(null); setRejectMotivo('');
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar despesa.')),
   });
 
   const marcarPago = useMutation({
-    mutationFn: (id: string) => despesaService.marcarPago(id),
+    mutationFn: (id: string) => despesaService.marcarPago(id, empresaAtual!.id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['despesas'] }); toast.success('Marcada como paga'); },
   });
 
   const excluir = useMutation({
-    mutationFn: (id: string) => despesaService.excluir(id),
+    mutationFn: (id: string) => despesaService.excluir(id, empresaAtual!.id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['despesas'] }); toast.success('Excluída'); },
   });
 
   const abrirComprovante = async (path: string) => {
     const url = await despesaService.getComprovanteUrl(path);
-    if (url) window.open(url, '_blank');
+    if (url) window.open(safeHref(url), '_blank', 'noopener');
     else toast.error('Não foi possível gerar link do comprovante');
   };
 

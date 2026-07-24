@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS public.sst_incidentes (
 -- RLS para Incidentes
 ALTER TABLE public.sst_incidentes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Gestores e RH gerenciam incidentes" ON public.sst_incidentes;
 CREATE POLICY "Gestores e RH gerenciam incidentes"
 ON public.sst_incidentes FOR ALL
 USING (auth.uid() IN (
@@ -43,6 +44,7 @@ CREATE TABLE IF NOT EXISTS public.sst_programas (
 -- RLS para Programas
 ALTER TABLE public.sst_programas ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Gestores veem programas de SST" ON public.sst_programas;
 CREATE POLICY "Gestores veem programas de SST"
 ON public.sst_programas FOR SELECT
 USING (auth.uid() IN (
@@ -65,6 +67,7 @@ CREATE TABLE IF NOT EXISTS public.sst_riscos_ambientais (
 -- RLS para Riscos
 ALTER TABLE public.sst_riscos_ambientais ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Acesso aos riscos da empresa" ON public.sst_riscos_ambientais;
 CREATE POLICY "Acesso aos riscos da empresa"
 ON public.sst_riscos_ambientais FOR SELECT
 USING (auth.uid() IN (

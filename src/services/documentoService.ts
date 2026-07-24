@@ -3,9 +3,9 @@ import { Documento } from '@/types/entities';
 
 class DocumentoService extends BaseService<Documento> {
   constructor() {
-    super('documentos', { 
-      searchColumn: 'nome', 
-      defaultOrderBy: 'created_at' 
+    super('documentos', {
+      searchColumn: 'nome',
+      defaultOrderBy: 'created_at'
     });
   }
 
@@ -13,19 +13,21 @@ class DocumentoService extends BaseService<Documento> {
     const { filters } = options;
     const colabId = (filters as any)?.colaborador_id;
     const empId = (filters as any)?.empresa_id;
-    const data = await this.listarDocumentos(colabId, empId);
+    if (!empId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const data = await this.listarDocumentos(empId, colabId);
     return { data, total: data.length };
   }
 
-  async listarDocumentos(colaboradorId?: string, empresaId?: string): Promise<Documento[]> {
+  async listarDocumentos(empresaId: string, colaboradorId?: string): Promise<Documento[]> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     let query = this.getQuery()
       .select('*, colaborador:colaboradores(id, nome_completo, cpf)')
+      .eq('empresa_id', empresaId)
       .order('created_at', { ascending: false })
-      .limit(500);
-      
-    if (empresaId) query = query.eq('empresa_id', empresaId);
+      .limit(200);
+
     if (colaboradorId) query = query.eq('colaborador_id', colaboradorId);
-    
+
     const { data, error } = await query;
     if (error) throw error;
     return (data as Documento[]) || [];

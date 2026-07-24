@@ -35,24 +35,24 @@ export default function RecrutamentoPage() {
 
   const { data: vagas = [], isLoading: loadVagas } = useQuery({
     queryKey: ['vagas', empresaAtual?.id],
-    queryFn: () => recrutamentoService.listarVagas(empresaAtual?.id),
+    queryFn: () => recrutamentoService.listarVagas(empresaAtual!.id),
     enabled: !!empresaAtual?.id
   });
 
   const { data: candidaturas = [], isLoading: loadCandidaturas } = useQuery({
     queryKey: ['candidaturas', selectedVagaId],
-    queryFn: () => recrutamentoService.listarCandidaturas(selectedVagaId === 'all' ? undefined : selectedVagaId),
+    queryFn: () => recrutamentoService.listarCandidaturas(empresaAtual!.id, selectedVagaId === 'all' ? undefined : selectedVagaId),
     enabled: !!empresaAtual?.id
   });
 
   const { data: candidatos = [], isLoading: loadCandidatos } = useQuery({
     queryKey: ['candidatos', empresaAtual?.id],
-    queryFn: () => recrutamentoService.listarCandidatos(empresaAtual?.id),
+    queryFn: () => recrutamentoService.listarCandidatos(empresaAtual!.id),
     enabled: !!empresaAtual?.id
   });
 
   const updateEtapa = useMutation({
-    mutationFn: ({ id, etapa }: { id: string, etapa: string }) => recrutamentoService.atualizarCandidatura(id, { etapa }),
+    mutationFn: ({ id, etapa }: { id: string, etapa: string }) => recrutamentoService.atualizarCandidatura(id, { etapa }, empresaAtual!.id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['candidaturas'] });
       toast.success('Etapa atualizada!');

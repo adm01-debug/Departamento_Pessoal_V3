@@ -18,7 +18,9 @@ ALTER TABLE public.pendencias ENABLE ROW LEVEL SECURITY;
 
 -- Políticas de Segurança
 -- Simplificando ao máximo para evitar erro de coluna
+DROP POLICY IF EXISTS "view_pendencias" ON public.pendencias;
 CREATE POLICY "view_pendencias" ON public.pendencias FOR SELECT USING (true);
+DROP POLICY IF EXISTS "manage_pendencias" ON public.pendencias;
 CREATE POLICY "manage_pendencias" ON public.pendencias FOR ALL USING (true);
 
 -- Tabela de Auditoria para Timeline Real-time
@@ -35,6 +37,7 @@ CREATE TABLE IF NOT EXISTS public.audit_log (
 );
 
 ALTER TABLE public.audit_log ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "view_audit" ON public.audit_log;
 CREATE POLICY "view_audit" ON public.audit_log FOR SELECT USING (true);
 
 -- Função para automatizar o log de auditoria

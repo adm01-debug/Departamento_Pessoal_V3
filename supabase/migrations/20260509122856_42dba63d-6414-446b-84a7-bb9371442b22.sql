@@ -35,6 +35,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS tr_workflows_automation_start ON public.workflows_execucoes;
 CREATE TRIGGER tr_workflows_automation_start
 BEFORE INSERT ON public.workflows_execucoes
 FOR EACH ROW EXECUTE FUNCTION public.trigger_workflow_automation();

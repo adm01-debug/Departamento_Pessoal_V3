@@ -12,12 +12,15 @@ CREATE TABLE IF NOT EXISTS ferias_abono (
 -- Add RLS Policies
 ALTER TABLE ferias_abono ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "ferias_abono_select" ON public.ferias_abono;
 CREATE POLICY "ferias_abono_select" ON ferias_abono
   FOR SELECT USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "ferias_abono_insert" ON public.ferias_abono;
 CREATE POLICY "ferias_abono_insert" ON ferias_abono
   FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "ferias_abono_update" ON public.ferias_abono;
 CREATE POLICY "ferias_abono_update" ON ferias_abono
   FOR UPDATE USING (auth.role() = 'authenticated');
 
@@ -33,6 +36,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_ferias_abono_updated_at ON public.ferias_abono;
 CREATE TRIGGER trigger_ferias_abono_updated_at
   BEFORE UPDATE ON ferias_abono
   FOR EACH ROW

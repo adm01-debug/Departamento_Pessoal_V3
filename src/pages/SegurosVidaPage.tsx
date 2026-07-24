@@ -117,7 +117,7 @@ export default function SegurosVidaPage() {
   });
 
   const excluir = useMutation({
-    mutationFn: async (id: string) => { const { error } = await supabase.from('seguros_vida').delete().eq('id', id); if (error) throw error; },
+    mutationFn: async (id: string) => { const { error } = await supabase.from('seguros_vida').delete().eq('id', id).eq('empresa_id', empresaAtual!.id); if (error) throw error; },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['seguros-vida'] }); toast.success('Excluído'); },
   });
 
@@ -171,7 +171,7 @@ export default function SegurosVidaPage() {
   });
 
   const desvincular = useMutation({
-    mutationFn: (id: string) => segurosColaboradoresService.desvincular(id),
+    mutationFn: ({ id, seguroVidaId }: { id: string; seguroVidaId: string }) => segurosColaboradoresService.desvincular(seguroVidaId, id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['seguros-colaboradores'] }); toast.success('Desvinculado'); },
   });
 
@@ -275,7 +275,7 @@ export default function SegurosVidaPage() {
                     <TableRow key={v.id}>
                       <TableCell className="font-medium">{v.colaborador?.nome_completo || '-'}</TableCell>
                       <TableCell>{v.seguro_vida_id}</TableCell>
-                      <TableCell><Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => desvincular.mutate(v.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
+                      <TableCell><Button variant="ghost" size="icon" onClick={() => desvincular.mutate({ id: v.id, seguroVidaId: v.seguro_vida_id })}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
                     </TableRow>
                   ))}
                   {vinculados.length === 0 && <TableRow><TableCell colSpan={3} className="text-center text-muted-foreground py-8">Nenhum colaborador vinculado</TableCell></TableRow>}

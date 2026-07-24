@@ -8,11 +8,11 @@ export function useCargos() {
   const empresaId = empresaAtual?.id;
 
   const crud = useGenericCrud<Cargo>({
-    // Inclui empresaId na queryKey para evitar reuso de cache cross-tenant.
     queryKey: `cargos:${empresaId ?? 'none'}`,
     service: cargoService,
     initialPageSize: 15,
     filters: empresaId ? { empresa_id: empresaId } : {},
+    empresaId: empresaId ?? undefined,
     successMessages: {
       create: 'Cargo criado com sucesso',
       update: 'Cargo atualizado',

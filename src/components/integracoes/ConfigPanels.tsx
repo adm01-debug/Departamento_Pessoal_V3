@@ -13,6 +13,7 @@ import { ExternalLink, RefreshCw, XCircle, Settings, History, Plus, Zap } from '
 import { bitrix24Service } from '@/services/tabelasComplementaresService';
 import { cnabService, webhookService } from '@/services/integracaoService';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { whatsappService, WhatsAppConfig } from '@/services/whatsappService';
 import { useEmpresas } from '@/hooks/useEmpresas';
 
@@ -70,7 +71,7 @@ export function Bitrix24ConfigPanel() {
       qc.invalidateQueries({ queryKey: ['bitrix24_sync_logs'] });
       toast.success(`Sincronização concluída: ${res.data.totals.success} sucessos.`);
     },
-    onError: (err: any) => toast.error(`Falha no Sync: ${err.message}`),
+    onError: (err: any) => toast.error(safeErrorMessage(err, 'Falha no Sync.')),
   });
 
   if (loadConfig) return <div className="flex justify-center py-8"><Spinner /></div>;
@@ -130,8 +131,10 @@ export function Bitrix24ConfigPanel() {
 
 export function CnabConfigPanel() {
   const [tab, setTab] = useState('remessas');
-  const { data: config } = useQuery({ queryKey: ['cnab_config'], queryFn: cnabService.getConfig });
-  const { data: remessas = [], isLoading } = useQuery({ queryKey: ['cnab_remessas'], queryFn: cnabService.getRemessas });
+  const { empresaAtual } = useEmpresas();
+  const empresaId = empresaAtual?.id || '';
+  const { data: config } = useQuery({ queryKey: ['cnab_config', empresaId], queryFn: () => cnabService.getConfig(empresaId), enabled: !!empresaId });
+  const { data: remessas = [], isLoading } = useQuery({ queryKey: ['cnab_remessas', empresaId], queryFn: () => cnabService.getRemessas(empresaId), enabled: !!empresaId });
 
   return (
     <Tabs value={tab} onValueChange={setTab} className="flex-1 flex flex-col overflow-hidden">
@@ -188,8 +191,10 @@ export function CnabConfigPanel() {
 
 export function WebhookConfigPanel() {
   const [tab, setTab] = useState('webhooks');
-  const { data: webhooks = [], isLoading: loadWebhooks } = useQuery({ queryKey: ['webhooks'], queryFn: webhookService.listar });
-  const { data: logs = [], isLoading: loadLogs } = useQuery({ queryKey: ['webhook_logs'], queryFn: webhookService.getLogs });
+  const { empresaAtual } = useEmpresas();
+  const empresaId = empresaAtual?.id || '';
+  const { data: webhooks = [], isLoading: loadWebhooks } = useQuery({ queryKey: ['webhooks', empresaId], queryFn: () => webhookService.listar(empresaId), enabled: !!empresaId });
+  const { data: logs = [], isLoading: loadLogs } = useQuery({ queryKey: ['webhook_logs', empresaId], queryFn: () => webhookService.getLogs(empresaId), enabled: !!empresaId });
 
   return (
     <Tabs value={tab} onValueChange={setTab} className="flex-1 flex flex-col overflow-hidden">
@@ -308,6 +313,7 @@ export function WhatsAppConfigPanel() {
           <Label>API Key</Label>
           <Input
             type="password"
+            autoComplete="off"
             value={config.api_key || ''}
             onChange={e => setConfig(p => ({ ...p, api_key: e.target.value }))}
             placeholder="Sua chave secreta"

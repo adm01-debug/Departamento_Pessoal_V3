@@ -21,4 +21,5 @@ CREATE INDEX IF NOT EXISTS idx_recibos_rescisao_empresa ON public.recibos_rescis
 CREATE INDEX IF NOT EXISTS idx_recibos_rescisao_colaborador ON public.recibos_rescisao(colaborador_id);
 ALTER TABLE public.recibos_rescisao ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "recibos_rescisao_all" ON public.recibos_rescisao;
 CREATE POLICY "recibos_rescisao_all" ON public.recibos_rescisao FOR ALL USING (auth.uid() IS NOT NULL);

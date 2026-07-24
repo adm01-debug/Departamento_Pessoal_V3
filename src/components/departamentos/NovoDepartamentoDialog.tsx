@@ -28,7 +28,7 @@ export function NovoDepartamentoDialog({ open, onOpenChange, departamento }: Pro
   useEffect(() => {
     if (open) {
       if (departamento) {
-        /* eslint-disable react-hooks/set-state-in-effect */
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setForm({
           nome: departamento.nome || '',
           descricao: departamento.descricao || '',

@@ -12,6 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { Link, Trash2, Plus, Users, Gift, ArrowRight } from 'lucide-react';
 
 export default function VinculosPromoPage() {
@@ -81,7 +82,7 @@ export default function VinculosPromoPage() {
       if (e.code === '23505') {
         toast.error('Este time já possui este brinde vinculado.');
       } else {
-        toast.error(e.message);
+        toast.error(safeErrorMessage(e, 'Erro ao processar vínculo.'));
       }
     }
   });
@@ -95,7 +96,7 @@ export default function VinculosPromoPage() {
       qc.invalidateQueries({ queryKey: ['times_brindes'] });
       toast.success('Vínculo removido!');
     },
-    onError: (e: Error) => toast.error(e.message)
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar vínculo.'))
   });
 
   if (isLoading) return <PageLayout title="Vínculos Promo"><Spinner /></PageLayout>;

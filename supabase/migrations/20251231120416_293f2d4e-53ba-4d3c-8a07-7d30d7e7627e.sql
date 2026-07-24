@@ -160,80 +160,97 @@ ALTER TABLE public.password_history ENABLE ROW LEVEL SECURITY;
 -- =============================================
 
 -- Rate Limit Logs - Apenas admins podem ver
+DROP POLICY IF EXISTS "Admins can view rate limit logs" ON public.rate_limit_logs;
 CREATE POLICY "Admins can view rate limit logs" ON public.rate_limit_logs
   FOR SELECT TO authenticated
   USING (public.is_admin(auth.uid()));
 
+DROP POLICY IF EXISTS "System can insert rate limit logs" ON public.rate_limit_logs;
 CREATE POLICY "System can insert rate limit logs" ON public.rate_limit_logs
   FOR INSERT TO authenticated
   WITH CHECK (true);
 
 -- Blocked IPs - Apenas admins podem gerenciar
+DROP POLICY IF EXISTS "Admins can manage blocked IPs" ON public.blocked_ips;
 CREATE POLICY "Admins can manage blocked IPs" ON public.blocked_ips
   FOR ALL TO authenticated
   USING (public.is_admin(auth.uid()));
 
 -- IP Whitelist - Apenas admins podem gerenciar
+DROP POLICY IF EXISTS "Admins can manage IP whitelist" ON public.ip_whitelist;
 CREATE POLICY "Admins can manage IP whitelist" ON public.ip_whitelist
   FOR ALL TO authenticated
   USING (public.is_admin(auth.uid()));
 
 -- Rate Limit Config - Apenas admins podem gerenciar
+DROP POLICY IF EXISTS "Admins can manage rate limit config" ON public.rate_limit_config;
 CREATE POLICY "Admins can manage rate limit config" ON public.rate_limit_config
   FOR ALL TO authenticated
   USING (public.is_admin(auth.uid()));
 
 -- User Sessions - Usuários veem próprias sessões, admins veem todas
+DROP POLICY IF EXISTS "Users can view own sessions" ON public.user_sessions;
 CREATE POLICY "Users can view own sessions" ON public.user_sessions
   FOR SELECT TO authenticated
   USING (user_id = auth.uid() OR public.is_admin(auth.uid()));
 
+DROP POLICY IF EXISTS "Users can manage own sessions" ON public.user_sessions;
 CREATE POLICY "Users can manage own sessions" ON public.user_sessions
   FOR ALL TO authenticated
   USING (user_id = auth.uid());
 
 -- User MFA - Usuários gerenciam próprio MFA
+DROP POLICY IF EXISTS "Users can manage own MFA" ON public.user_mfa;
 CREATE POLICY "Users can manage own MFA" ON public.user_mfa
   FOR ALL TO authenticated
   USING (user_id = auth.uid());
 
 -- Login Attempts - Admins podem ver, sistema pode inserir
+DROP POLICY IF EXISTS "Admins can view login attempts" ON public.login_attempts;
 CREATE POLICY "Admins can view login attempts" ON public.login_attempts
   FOR SELECT TO authenticated
   USING (public.is_admin(auth.uid()));
 
+DROP POLICY IF EXISTS "System can insert login attempts" ON public.login_attempts;
 CREATE POLICY "System can insert login attempts" ON public.login_attempts
   FOR INSERT TO authenticated
   WITH CHECK (true);
 
 -- Verification Tokens - Usuários gerenciam próprios tokens
+DROP POLICY IF EXISTS "Users can manage own tokens" ON public.verification_tokens;
 CREATE POLICY "Users can manage own tokens" ON public.verification_tokens
   FOR ALL TO authenticated
   USING (user_id = auth.uid());
 
 -- Security Alerts - Apenas admins
+DROP POLICY IF EXISTS "Admins can view security alerts" ON public.security_alerts;
 CREATE POLICY "Admins can view security alerts" ON public.security_alerts
   FOR SELECT TO authenticated
   USING (public.is_admin(auth.uid()));
 
+DROP POLICY IF EXISTS "System can insert security alerts" ON public.security_alerts;
 CREATE POLICY "System can insert security alerts" ON public.security_alerts
   FOR INSERT TO authenticated
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Admins can update security alerts" ON public.security_alerts;
 CREATE POLICY "Admins can update security alerts" ON public.security_alerts
   FOR UPDATE TO authenticated
   USING (public.is_admin(auth.uid()));
 
 -- Password Policies - Apenas admins podem modificar, todos podem ler
+DROP POLICY IF EXISTS "All can read password policies" ON public.password_policies;
 CREATE POLICY "All can read password policies" ON public.password_policies
   FOR SELECT TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Admins can manage password policies" ON public.password_policies;
 CREATE POLICY "Admins can manage password policies" ON public.password_policies
   FOR ALL TO authenticated
   USING (public.is_admin(auth.uid()));
 
 -- Password History - Apenas sistema
+DROP POLICY IF EXISTS "Users can view own password history" ON public.password_history;
 CREATE POLICY "Users can view own password history" ON public.password_history
   FOR SELECT TO authenticated
   USING (user_id = auth.uid());

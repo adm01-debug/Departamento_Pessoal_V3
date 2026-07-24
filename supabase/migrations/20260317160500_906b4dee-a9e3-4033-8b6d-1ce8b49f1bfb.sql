@@ -3,21 +3,27 @@
 
 -- audit_logs: restrict ALL to just INSERT for authenticated (logging only)
 DROP POLICY IF EXISTS "Auth users read audit_logs" ON public.audit_logs;
+DROP POLICY IF EXISTS "audit_logs_select" ON public.audit_logs;
 CREATE POLICY "audit_logs_select" ON public.audit_logs FOR SELECT TO authenticated USING (auth.uid() IS NOT NULL);
+DROP POLICY IF EXISTS "audit_logs_insert" ON public.audit_logs;
 CREATE POLICY "audit_logs_insert" ON public.audit_logs FOR INSERT TO authenticated WITH CHECK (auth.uid() IS NOT NULL);
 
 -- bitrix24_config: restrict to empresa-scoped users
 DROP POLICY IF EXISTS "Usuários autenticados podem inserir config bitrix24" ON public.bitrix24_config;
 DROP POLICY IF EXISTS "Usuários autenticados podem atualizar config bitrix24" ON public.bitrix24_config;
+DROP POLICY IF EXISTS "bitrix24_config_insert" ON public.bitrix24_config;
 CREATE POLICY "bitrix24_config_insert" ON public.bitrix24_config FOR INSERT TO authenticated WITH CHECK (auth.uid() IS NOT NULL);
+DROP POLICY IF EXISTS "bitrix24_config_update" ON public.bitrix24_config;
 CREATE POLICY "bitrix24_config_update" ON public.bitrix24_config FOR UPDATE TO authenticated USING (auth.uid() IS NOT NULL);
 
 -- bitrix24_sync_logs: logging table, restrict to authenticated
 DROP POLICY IF EXISTS "Usuários autenticados podem inserir logs bitrix24" ON public.bitrix24_sync_logs;
+DROP POLICY IF EXISTS "bitrix24_sync_logs_insert" ON public.bitrix24_sync_logs;
 CREATE POLICY "bitrix24_sync_logs_insert" ON public.bitrix24_sync_logs FOR INSERT TO authenticated WITH CHECK (auth.uid() IS NOT NULL);
 
 -- auditoria_logs: logging table
 DROP POLICY IF EXISTS "Usuários autenticados podem inserir auditoria_logs" ON public.auditoria_logs;
+DROP POLICY IF EXISTS "auditoria_logs_insert" ON public.auditoria_logs;
 CREATE POLICY "auditoria_logs_insert" ON public.auditoria_logs FOR INSERT TO authenticated WITH CHECK (auth.uid() IS NOT NULL);
 
 -- Fix check_brute_force search_path (M7 remaining)

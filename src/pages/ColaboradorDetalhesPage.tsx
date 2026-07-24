@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { PageTitle } from '@/components/PageTitle';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useDataAccessLog } from '@/hooks/useDataAccessLog';
 import { useQuery } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -44,6 +45,7 @@ export default function ColaboradorDetalhesPage() {
     enabled: !!id,
   });
 
+  useDataAccessLog('colaboradores', id, colaborador?.empresa_id);
 
   if (isLoading) return <div className="flex items-center justify-center h-64"><Spinner /></div>;
   if (!colaborador) return <div className="p-6">Colaborador não encontrado</div>;

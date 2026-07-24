@@ -25,10 +25,12 @@ CREATE TABLE IF NOT EXISTS public.cargo_faixas_salariais (
 ALTER TABLE public.cargo_faixas_salariais ENABLE ROW LEVEL SECURITY;
 
 -- Políticas
+DROP POLICY IF EXISTS "Faixas acessíveis por empresa" ON public.cargo_faixas_salariais;
 CREATE POLICY "Faixas acessíveis por empresa" ON public.cargo_faixas_salariais
     FOR ALL USING (cargo_id IN (SELECT id FROM public.cargos));
 
 -- Trigger de Updated_at
+DROP TRIGGER IF EXISTS set_timestamp_cargo_faixas ON public.cargo_faixas_salariais;
 CREATE TRIGGER set_timestamp_cargo_faixas
 BEFORE UPDATE ON public.cargo_faixas_salariais
 FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();

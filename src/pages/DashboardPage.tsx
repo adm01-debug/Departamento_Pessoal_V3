@@ -19,6 +19,7 @@ import { AnalyticsSection } from "@/components/dashboard/AnalyticsSection";
 import { KPICardSkeleton } from "@/components/ui/module-skeleton";
 import { useRealtimeDashboard } from "@/hooks/useRealtimeDashboard";
 import { formatCompetenciaLocal } from '@/utils/dateLocal';
+import { HealthTrendCard } from "@/components/admin/HealthTrendCard";
 
 /* ─── Data Hooks ─── */
 interface DashboardStats {
@@ -240,7 +241,7 @@ function OnboardingWizard() {
 
 /* ─── Main Dashboard ─── */
 export default function DashboardPage() {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { empresaAtualId } = useRealtimeDashboard();
   const isAuthenticated = !!user;
   const { data: stats, isLoading: loadingStats, refetch: refetchStats } = useDashboardStats(isAuthenticated);
@@ -311,6 +312,9 @@ export default function DashboardPage() {
         isEmptySystem={isEmptySystem}
         empresaId={empresaAtualId || undefined}
       />
+
+      {/* 7. Observabilidade pós-cutover — admin only */}
+      {isAdmin && <HealthTrendCard />}
     </div>
   );
 }

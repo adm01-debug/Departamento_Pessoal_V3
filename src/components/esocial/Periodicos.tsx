@@ -3,6 +3,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Banknote, User, Calendar, Hash, FileText, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { maskCpfDisplay } from '@/utils/piiMask';
 
 export function S1200Remuneracao({ dados }: { dados: any }) {
   const dmDev = dados.dmDev || [];
@@ -18,7 +19,7 @@ export function S1200Remuneracao({ dados }: { dados: any }) {
             <User className="h-4 w-4 text-primary" />
             <div>
               <Label className="text-[9px] uppercase text-muted-foreground font-bold">Trabalhador</Label>
-              <p className="text-xs font-bold">CPF: {dados.cpfTrab}</p>
+              <p className="text-xs font-bold">CPF: {maskCpfDisplay(dados.cpfTrab)}</p>
             </div>
           </CardContent>
         </Card>

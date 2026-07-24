@@ -3,12 +3,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { ListOptions, ListResponse } from '@/services/baseService';
 import { loggerService } from '@/services/loggerService';
+import { auditLogger } from '@/utils/auditLogger';
+import { safeErrorMessage } from '@/utils/safeError';
 
 interface ServiceInterface<T> {
   listar(options: ListOptions): Promise<ListResponse<T>>;
   criar(data: any): Promise<T>;
-  atualizar(id: string, data: any): Promise<T>;
-  excluir(id: string): Promise<void>;
+  atualizar(id: string, data: any, empresaId?: string): Promise<T>;
+  excluir(id: string, empresaId?: string): Promise<void>;
 }
 
 interface UseGenericCrudOptions<T> {
@@ -20,8 +22,9 @@ interface UseGenericCrudOptions<T> {
     update?: string;
     delete?: string;
   };
-  filters?: Record<string, any>;
+  filters?: Record<string, unknown>;
   searchColumn?: string;
+  empresaId?: string;
 }
 
 export function useGenericCrud<T>({
@@ -30,7 +33,8 @@ export function useGenericCrud<T>({
   initialPageSize = 10,
   successMessages = {},
   filters = {},
-  searchColumn
+  searchColumn,
+  empresaId
 }: UseGenericCrudOptions<T>) {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
@@ -42,7 +46,7 @@ export function useGenericCrud<T>({
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setPage(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, JSON.stringify(filters)]);
 
   const query = useQuery({
@@ -67,12 +71,12 @@ export function useGenericCrud<T>({
     },
     onError: (err: Error) => {
       loggerService.error(`Failed to create ${queryKey}`, {}, err);
-      toast.error(err.message);
+      toast.error(safeErrorMessage(err, 'Erro ao criar registro.'));
     },
   });
 
   const atualizarMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => service.atualizar(id, data),
+    mutationFn: ({ id, data }: { id: string; data: any }) => service.atualizar(id, data, empresaId),
     onSuccess: (_, variables) => {
       void queryClient.invalidateQueries({ queryKey: [queryKey] });
       toast.success(successMessages.update || 'Registro atualizado com sucesso');
@@ -80,20 +84,21 @@ export function useGenericCrud<T>({
     },
     onError: (err: Error) => {
       loggerService.error(`Failed to update ${queryKey}`, {}, err);
-      toast.error(err.message);
+      toast.error(safeErrorMessage(err, 'Erro ao atualizar registro.'));
     },
   });
 
   const excluirMutation = useMutation({
-    mutationFn: (id: string) => service.excluir(id),
+    mutationFn: (id: string) => service.excluir(id, empresaId),
     onSuccess: (_, id) => {
       void queryClient.invalidateQueries({ queryKey: [queryKey] });
       toast.success(successMessages.delete || 'Registro excluído com sucesso');
       loggerService.info(`${queryKey} deleted`, { id });
+      void auditLogger.log({ tabela: queryKey, registro_id: id, acao: 'DELETE' });
     },
     onError: (err: Error) => {
       loggerService.error(`Failed to delete ${queryKey}`, {}, err);
-      toast.error(err.message);
+      toast.error(safeErrorMessage(err, 'Erro ao excluir registro.'));
     },
   });
 

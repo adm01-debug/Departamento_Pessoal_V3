@@ -1,5 +1,5 @@
 -- Criar tabela de templates de onboarding
-CREATE TABLE public.onboarding_templates (
+CREATE TABLE IF NOT EXISTS public.onboarding_templates (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   nome TEXT NOT NULL,
   descricao TEXT,
@@ -10,7 +10,7 @@ CREATE TABLE public.onboarding_templates (
 );
 
 -- Criar tabela de tarefas do template
-CREATE TABLE public.onboarding_template_tarefas (
+CREATE TABLE IF NOT EXISTS public.onboarding_template_tarefas (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   template_id UUID NOT NULL REFERENCES public.onboarding_templates(id) ON DELETE CASCADE,
   titulo TEXT NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE public.onboarding_template_tarefas (
 );
 
 -- Criar tabela de onboarding do colaborador
-CREATE TABLE public.onboarding_colaborador (
+CREATE TABLE IF NOT EXISTS public.onboarding_colaborador (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   colaborador_id UUID NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE,
   template_id UUID REFERENCES public.onboarding_templates(id),
@@ -38,7 +38,7 @@ CREATE TABLE public.onboarding_colaborador (
 );
 
 -- Criar tabela de tarefas do onboarding do colaborador
-CREATE TABLE public.onboarding_tarefas (
+CREATE TABLE IF NOT EXISTS public.onboarding_tarefas (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   onboarding_id UUID NOT NULL REFERENCES public.onboarding_colaborador(id) ON DELETE CASCADE,
   template_tarefa_id UUID REFERENCES public.onboarding_template_tarefas(id),
@@ -61,27 +61,32 @@ ALTER TABLE public.onboarding_colaborador ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.onboarding_tarefas ENABLE ROW LEVEL SECURITY;
 
 -- Policies
+DROP POLICY IF EXISTS "Authenticated users can manage onboarding_templates" ON public.onboarding_templates;
 CREATE POLICY "Authenticated users can manage onboarding_templates"
 ON public.onboarding_templates FOR ALL
 USING (auth.role() = 'authenticated')
 WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Authenticated users can manage onboarding_template_tarefas" ON public.onboarding_template_tarefas;
 CREATE POLICY "Authenticated users can manage onboarding_template_tarefas"
 ON public.onboarding_template_tarefas FOR ALL
 USING (auth.role() = 'authenticated')
 WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Authenticated users can manage onboarding_colaborador" ON public.onboarding_colaborador;
 CREATE POLICY "Authenticated users can manage onboarding_colaborador"
 ON public.onboarding_colaborador FOR ALL
 USING (auth.role() = 'authenticated')
 WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Authenticated users can manage onboarding_tarefas" ON public.onboarding_tarefas;
 CREATE POLICY "Authenticated users can manage onboarding_tarefas"
 ON public.onboarding_tarefas FOR ALL
 USING (auth.role() = 'authenticated')
 WITH CHECK (auth.role() = 'authenticated');
 
 -- Trigger para updated_at
+DROP TRIGGER IF EXISTS update_onboarding_colaborador_updated_at ON public.onboarding_colaborador;
 CREATE TRIGGER update_onboarding_colaborador_updated_at
 BEFORE UPDATE ON public.onboarding_colaborador
 FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();

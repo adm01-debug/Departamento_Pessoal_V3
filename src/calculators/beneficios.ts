@@ -34,19 +34,19 @@ export function calcularDecimo13(params: ParamsDecimo13): {
   const valorProporcional = (valorIntegral / 12) * meses;
 
   if (parcela === 1) {
-    const bruto = Math.round((valorProporcional / 2) * 100) / 100;
-    const fgts = Math.round(bruto * 0.08 * 100) / 100;
+    const bruto = Math.trunc((valorProporcional / 2) * 100) / 100;
+    const fgts = Math.trunc(bruto * 0.08 * 100) / 100;
     return { bruto, inss: 0, irrf: 0, fgts, liquido: bruto };
   } else {
-    const brutoTotal = Math.round(valorProporcional * 100) / 100;
-    const primeiraParcelaJaPaga = Math.round((brutoTotal / 2) * 100) / 100;
+    const brutoTotal = Math.trunc(valorProporcional * 100) / 100;
+    const primeiraParcelaJaPaga = Math.trunc((brutoTotal / 2) * 100) / 100;
     
     const inss = calcularINSS(brutoTotal);
     const irrf = calcularIRRF(brutoTotal, dependentes);
-    const fgts = Math.round((brutoTotal - primeiraParcelaJaPaga) * 0.08 * 100) / 100;
+    const fgts = Math.trunc((brutoTotal - primeiraParcelaJaPaga) * 0.08 * 100) / 100;
     
-    const brutoSegunda = Math.round((brutoTotal - primeiraParcelaJaPaga) * 100) / 100;
-    const liquido = Math.round((brutoTotal - inss - irrf - primeiraParcelaJaPaga) * 100) / 100;
+    const brutoSegunda = Math.trunc((brutoTotal - primeiraParcelaJaPaga) * 100) / 100;
+    const liquido = Math.trunc((brutoTotal - inss - irrf - primeiraParcelaJaPaga) * 100) / 100;
     
     return { bruto: brutoSegunda, inss, irrf, fgts, liquido };
   }
@@ -64,107 +64,109 @@ export function calcularFerias(salarioBase: number, diasFerias: number = 30, dia
   const inss = calcularINSS(valorFerias + tercoConstitucional);
   const irrf = calcularIRRF(valorFerias + tercoConstitucional, dependentes);
   
-  const liquido = Math.round((bruto - inss - irrf) * 100) / 100;
-  
+  const liquido = Math.trunc((bruto - inss - irrf) * 100) / 100;
+
   return {
-    valorFerias: Math.round(valorFerias * 100) / 100,
-    tercoConstitucional: Math.round(tercoConstitucional * 100) / 100,
-    valorAbono: Math.round(valorAbono * 100) / 100,
-    tercoAbono: Math.round(tercoAbono * 100) / 100,
-    bruto: Math.round(bruto * 100) / 100,
+    valorFerias: Math.trunc(valorFerias * 100) / 100,
+    tercoConstitucional: Math.trunc(tercoConstitucional * 100) / 100,
+    valorAbono: Math.trunc(valorAbono * 100) / 100,
+    tercoAbono: Math.trunc(tercoAbono * 100) / 100,
+    bruto: Math.trunc(bruto * 100) / 100,
     inss, irrf, liquido,
   };
 }
 
 export function calcularHorasExtras(salarioBase: number, horasExtras50: number = 0, horasExtras100: number = 0, jornadaMensal: number = 220, diasUteis: number = 26, domingosEFeriados: number = 4) {
   const valorHora = jornadaMensal > 0 ? salarioBase / jornadaMensal : 0;
-  const valor50 = Math.round(valorHora * 1.5 * horasExtras50 * 100) / 100;
-  const valor100 = Math.round(valorHora * 2.0 * horasExtras100 * 100) / 100;
-  const totalExtras = Math.round((valor50 + valor100) * 100) / 100;
+  const valor50 = Math.trunc(valorHora * 1.5 * horasExtras50 * 100) / 100;
+  const valor100 = Math.trunc(valorHora * 2.0 * horasExtras100 * 100) / 100;
+  const totalExtras = Math.trunc((valor50 + valor100) * 100) / 100;
   const dsr = calcularDSR(totalExtras, diasUteis, domingosEFeriados);
-  return { valor50, valor100, total: totalExtras, dsr, totalComDsr: Math.round((totalExtras + dsr) * 100) / 100 };
+  return { valor50, valor100, total: totalExtras, dsr, totalComDsr: Math.trunc((totalExtras + dsr) * 100) / 100 };
 }
 
 export function calcularDSR(totalVariaveis: number, diasUteis: number, domingosEFeriados: number): number {
   if (diasUteis <= 0) return 0;
   const valorDsr = (totalVariaveis / diasUteis) * domingosEFeriados;
-  return Math.round(valorDsr * 100) / 100;
+  return Math.trunc(valorDsr * 100) / 100;
 }
 
 export function calcularAdicionalNoturno(salarioBase: number, horasNoturnas: number, jornadaMensal: number = 220, percentual: number = 20): number {
   const valorHora = jornadaMensal > 0 ? salarioBase / jornadaMensal : 0;
-  return Math.round(valorHora * (percentual / 100) * horasNoturnas * 100) / 100;
+  return Math.trunc(valorHora * (percentual / 100) * horasNoturnas * 100) / 100;
 }
 
 export function calcularPericulosidade(salarioBase: number): number {
-  return Math.round(salarioBase * 0.30 * 100) / 100;
+  return Math.trunc(salarioBase * 0.30 * 100) / 100;
 }
 
 export type GrauInsalubridade = 'minimo' | 'medio' | 'maximo';
 export function calcularInsalubridade(grau: GrauInsalubridade): number {
   const percentuais = { minimo: 0.10, medio: 0.20, maximo: 0.40 };
-  return Math.round(SALARIO_MINIMO_2026 * percentuais[grau] * 100) / 100;
+  return Math.trunc(SALARIO_MINIMO_2026 * percentuais[grau] * 100) / 100;
 }
 
 export function calcularDescontoVT(salarioBase: number, valorVTMensal: number): number {
   const limiteDesconto = salarioBase * 0.06;
-  return Math.round(Math.min(valorVTMensal, limiteDesconto) * 100) / 100;
+  return Math.trunc(Math.min(valorVTMensal, limiteDesconto) * 100) / 100;
 }
 
 export function calcularValeAlimentacao(valorMensal: number, salarioBase: number, usaPAT: boolean = true): { valor: number, desconto: number } {
   const percentualMaximo = usaPAT ? VA_VR_MAX_DESCONTO_PAT : 1.0;
-  const desconto = Math.round(Math.min(valorMensal * percentualMaximo, salarioBase * 0.20) * 100) / 100;
+  const desconto = Math.trunc(Math.min(valorMensal * percentualMaximo, salarioBase * 0.20) * 100) / 100;
   return { valor: valorMensal, desconto };
 }
 
 export function calcularPlanoSaude(custoTotal: number, coparticipacao: number = 0, mensalidadeFixa: number = 0): number {
-  return Math.round((mensalidadeFixa + coparticipacao) * 100) / 100;
+  return Math.trunc((mensalidadeFixa + coparticipacao) * 100) / 100;
 }
 
 export function calcularPensaoAlimenticia(baseCalculo: number, percentual: number): number {
-  return Math.round(baseCalculo * (percentual / 100) * 100) / 100;
+  return Math.trunc(baseCalculo * (percentual / 100) * 100) / 100;
 }
 
 export function calcularSalarioFamilia(salarioBruto: number, numeroDependentes: number): number {
   if (salarioBruto > SALARIO_FAMILIA_TETO) return 0;
-  return Math.round(SALARIO_FAMILIA_VALOR * numeroDependentes * 100) / 100;
+  return Math.trunc(SALARIO_FAMILIA_VALOR * numeroDependentes * 100) / 100;
 }
 
 export function calcularSalarioMaternidade(salarioBase: number, diasLicenca: number = 120): number {
-  return Math.round((salarioBase / 30) * diasLicenca * 100) / 100;
+  return Math.trunc((salarioBase / 30) * diasLicenca * 100) / 100;
 }
 
 export function calcularAuxilioDoenca(mediaSalarial: number): number {
   const beneficio = mediaSalarial * 0.91;
-  return Math.round(Math.max(SALARIO_MINIMO_2026, beneficio) * 100) / 100;
+  return Math.trunc(Math.max(SALARIO_MINIMO_2026, beneficio) * 100) / 100;
 }
 
 export function calcularSobreaviso(salarioBase: number, horas: number, jornadaMensal: number = 220): number {
-  const valorHora = jornadaMensal > 0 ? salarioBase / jornadaMensal : 0;
-  return Math.round(valorHora * (1 / 3) * horas * 100) / 100;
+  if (jornadaMensal <= 0 || horas <= 0) return 0;
+  const valorHora = salarioBase / jornadaMensal;
+  return Math.trunc(valorHora * (1 / 3) * horas * 100) / 100;
 }
 
 export function calcularProntidao(salarioBase: number, horas: number, jornadaMensal: number = 220): number {
-  const valorHora = jornadaMensal > 0 ? salarioBase / jornadaMensal : 0;
-  return Math.round(valorHora * (2 / 3) * horas * 100) / 100;
+  if (jornadaMensal <= 0 || horas <= 0) return 0;
+  const valorHora = salarioBase / jornadaMensal;
+  return Math.trunc(valorHora * (2 / 3) * horas * 100) / 100;
 }
 
 export function calcularGratificacao(salarioBase: number, percentual: number): number {
-  return Math.round(salarioBase * (percentual / 100) * 100) / 100;
+  return Math.trunc(salarioBase * (percentual / 100) * 100) / 100;
 }
 
 export function calcularComissao(valorVendas: number, percentualComissao: number): number {
-  return Math.round(valorVendas * (percentualComissao / 100) * 100) / 100;
+  return Math.trunc(valorVendas * (percentualComissao / 100) * 100) / 100;
 }
 
 export function calcularDiarias(valorDiaria: number, dias: number, percentualDesconto: number = 0) {
-  const total = Math.round(valorDiaria * dias * 100) / 100;
-  const desconto = Math.round(total * (percentualDesconto / 100) * 100) / 100;
-  return { total, desconto, liquido: Math.round((total - desconto) * 100) / 100 };
+  const total = Math.trunc(valorDiaria * dias * 100) / 100;
+  const desconto = Math.trunc(total * (percentualDesconto / 100) * 100) / 100;
+  return { total, desconto, liquido: Math.trunc((total - desconto) * 100) / 100 };
 }
 
 export function calcularQuilometragem(km: number, valorPorKm: number = 1.20): number {
-  return Math.round(km * valorPorKm * 100) / 100;
+  return Math.trunc(km * valorPorKm * 100) / 100;
 }
 
 export function calcularBancoHoras(creditos: string[], debitos: string[]) {
@@ -184,21 +186,21 @@ export function calcularBancoHoras(creditos: string[], debitos: string[]) {
 export function calcularMedias(valores: number[]): number {
   if (valores.length === 0) return 0;
   const soma = valores.reduce((acc, val) => acc + val, 0);
-  return Math.round((soma / valores.length) * 100) / 100;
+  return Math.trunc((soma / valores.length) * 100) / 100;
 }
 
 export function calcularLiquido(bruto: number, descontos: number): number {
-  return Math.round((bruto - descontos) * 100) / 100;
+  return Math.trunc((bruto - descontos) * 100) / 100;
 }
 
 export function calcularAdicionalTransferencia(salarioBase: number, percentual: number = 25): number {
-  return Math.round(salarioBase * (percentual / 100) * 100) / 100;
+  return Math.trunc(salarioBase * (percentual / 100) * 100) / 100;
 }
 
 export function calcularEmprestimoConsignado(salarioLiquido: number, parcela: number): { parcela: number, margemDisponivel: number } {
-  const margemTotal = Math.round(salarioLiquido * 0.35 * 100) / 100;
+  const margemTotal = Math.trunc(salarioLiquido * 0.35 * 100) / 100;
   return {
     parcela,
-    margemDisponivel: Math.max(0, Math.round((margemTotal - parcela) * 100) / 100)
+    margemDisponivel: Math.max(0, Math.trunc((margemTotal - parcela) * 100) / 100)
   };
 }

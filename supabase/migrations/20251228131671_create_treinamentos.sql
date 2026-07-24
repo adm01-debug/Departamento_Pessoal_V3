@@ -32,6 +32,7 @@ CREATE INDEX IF NOT EXISTS idx_treinamentos_status ON public.treinamentos(status
 -- RLS
 ALTER TABLE public.treinamentos ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "treinamentos_all" ON public.treinamentos;
 CREATE POLICY "treinamentos_all" ON public.treinamentos
   USING (auth.uid() IS NOT NULL)
   WITH CHECK (auth.uid() IS NOT NULL);

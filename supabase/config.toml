@@ -1,1 +1,5 @@
-project_id = "hncgwjbzdajfdztqgefe"
+project_id = "frjbfeamybqsejlvmqbl"
+
+[functions.auth-login]
+verify_jwt = false
+

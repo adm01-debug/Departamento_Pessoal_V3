@@ -3,6 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://esm.sh/zod@3.23.8';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
+import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 
 /**
  * Integrações externas — Edge Function endurecida.
@@ -17,12 +18,6 @@ import { captureException } from '../_shared/sentry.ts';
  *  7. Ação `ping` funciona apenas para telemetria (não toca dados).
  *  8. Ação `sync` grava log de integração escopo tenant.
  */
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-csrf-token',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
 
 const BodySchema = z.discriminatedUnion('action', [
   z.object({
@@ -79,9 +74,9 @@ serve(async (req: Request): Promise<Response> => {
 
     // 3. Zod validation
     let raw: unknown;
-    try { raw = await req.json(); } catch {
-      return json({ success: false, error: 'JSON inválido' }, 400);
-    }
+    const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
+    if (_pe) return _pe;
+    raw = _pb;
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) {
       return json({ success: false, error: 'Payload inválido', details: parsed.error.flatten() }, 400);
@@ -100,6 +95,10 @@ serve(async (req: Request): Promise<Response> => {
         return json({ success: false, error: 'Sem acesso a esta empresa' }, 403);
       }
     }
+
+    const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
+    const rl = await checkRateLimit(admin, { key: `integracao:${userId}`, limit: 20, windowSec: 60 });
+    if (!rl.allowed) return rateLimitResponse(rl);
 
     // 5. Dispatch de ação
     if (body.action === 'ping') {

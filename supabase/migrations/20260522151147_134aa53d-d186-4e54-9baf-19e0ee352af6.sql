@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS public.metricas_processamento (
 
 -- Habilitar RLS
 ALTER TABLE public.metricas_processamento ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Service role can manage metrics" ON public.metricas_processamento;
 CREATE POLICY "Service role can manage metrics" ON public.metricas_processamento FOR ALL USING (auth.jwt() ->> 'role' = 'service_role');
 
 -- View para Alertas de Timeout (> 55 segundos para functions padrão de 60s)
@@ -32,4 +33,5 @@ CREATE TABLE IF NOT EXISTS public.configuracoes_alertas (
 );
 
 ALTER TABLE public.configuracoes_alertas ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Admins can manage alert configs" ON public.configuracoes_alertas;
 CREATE POLICY "Admins can manage alert configs" ON public.configuracoes_alertas FOR ALL TO authenticated USING (EXISTS (SELECT 1 FROM user_roles WHERE user_id = auth.uid() AND role::text = 'admin'));

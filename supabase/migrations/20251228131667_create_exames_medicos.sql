@@ -32,6 +32,7 @@ CREATE INDEX IF NOT EXISTS idx_exames_medicos_status ON public.exames_medicos(st
 -- RLS
 ALTER TABLE public.exames_medicos ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "exames_medicos_all" ON public.exames_medicos;
 CREATE POLICY "exames_medicos_all" ON public.exames_medicos
   USING (auth.uid() IS NOT NULL)
   WITH CHECK (auth.uid() IS NOT NULL);

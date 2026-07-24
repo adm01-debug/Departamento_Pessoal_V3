@@ -2,12 +2,9 @@
 // Gera PGR (NR-01) em PDF, armazena em bucket privado, versionamento + hash SHA-256 legal
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
 import { PDFDocument, StandardFonts, rgb } from 'https://esm.sh/pdf-lib@1.17.1';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
+import { verifyCsrf } from '../_shared/csrf.ts';
+import { captureException } from '../_shared/sentry.ts';
+import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 
 interface Risco {
   categoria: string;
@@ -30,6 +27,9 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
+    const csrf = await verifyCsrf(req.clone());
+    if (!csrf.ok) return csrf.response!;
+
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) return json({ error: 'Não autenticado' }, 401);
 
@@ -41,12 +41,19 @@ Deno.serve(async (req) => {
     const admin = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+      { auth: { persistSession: false, autoRefreshToken: false } },
     );
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return json({ error: 'Não autenticado' }, 401);
 
-    const { empresa_id, responsavel_tecnico, registro_profissional } = await req.json();
+    const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
+    const rl = await checkRateLimit(admin, { key: `gerar-pgr:${user.id}`, limit: 5, windowSec: 60 });
+    if (!rl.allowed) return rateLimitResponse(rl);
+
+    const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
+    if (_pe) return _pe;
+    const { empresa_id, responsavel_tecnico, registro_profissional } = _pb as Record<string, unknown>;
     if (!empresa_id) return json({ error: 'empresa_id é obrigatório' }, 400);
 
     // Autorização via vínculo empresa + role
@@ -103,7 +110,7 @@ Deno.serve(async (req) => {
     const { error: upErr } = await admin.storage
       .from('sst-programas')
       .upload(path, pdfBytes, { contentType: 'application/pdf', upsert: false });
-    if (upErr) return json({ error: `Falha no upload: ${upErr.message}` }, 500);
+    if (upErr) { console.error('[gerar-pgr] upload error:', upErr.message); return json({ error: 'Falha no upload do documento' }, 500); }
 
     // Arquivar versão anterior e inserir a nova como ativa (transação lógica)
     await admin
@@ -132,7 +139,7 @@ Deno.serve(async (req) => {
       })
       .select()
       .single();
-    if (insErr) return json({ error: `Falha ao registrar programa: ${insErr.message}` }, 500);
+    if (insErr) { console.error('[gerar-pgr] insert error:', insErr.message); return json({ error: 'Falha ao registrar programa' }, 500); }
 
     // URL assinada 5 min
     const { data: signed } = await admin.storage
@@ -147,8 +154,8 @@ Deno.serve(async (req) => {
       signed_url: signed?.signedUrl,
     });
   } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
-    return json({ error: msg }, 500);
+    captureException(e, { fn: 'gerar-pgr' });
+    return json({ error: 'Erro interno' }, 500);
   }
 });
 

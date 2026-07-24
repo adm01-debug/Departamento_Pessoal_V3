@@ -21,4 +21,5 @@ CREATE INDEX IF NOT EXISTS idx_asos_empresa ON public.asos(empresa_id);
 CREATE INDEX IF NOT EXISTS idx_asos_colaborador ON public.asos(colaborador_id);
 ALTER TABLE public.asos ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "asos_all" ON public.asos;
 CREATE POLICY "asos_all" ON public.asos FOR ALL USING (auth.uid() IS NOT NULL);

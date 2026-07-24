@@ -25,19 +25,24 @@ CREATE INDEX IF NOT EXISTS idx_jornadas_status ON public.jornadas(status);
 -- RLS
 ALTER TABLE public.jornadas ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "jornadas_select" ON public.jornadas;
 CREATE POLICY "jornadas_select" ON public.jornadas
   FOR SELECT USING (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "jornadas_insert" ON public.jornadas;
 CREATE POLICY "jornadas_insert" ON public.jornadas
   FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "jornadas_update" ON public.jornadas;
 CREATE POLICY "jornadas_update" ON public.jornadas
   FOR UPDATE USING (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "jornadas_delete" ON public.jornadas;
 CREATE POLICY "jornadas_delete" ON public.jornadas
   FOR DELETE USING (auth.uid() IS NOT NULL);
 
 -- Trigger updated_at
+DROP TRIGGER IF EXISTS update_jornadas_updated_at ON public.jornadas;
 CREATE TRIGGER update_jornadas_updated_at
   BEFORE UPDATE ON public.jornadas
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

@@ -20,6 +20,7 @@ USING (
 );
 
 -- Permitir inserção apenas para usuários autenticados
+DROP POLICY IF EXISTS "Authenticated users can insert audit_logs" ON public.audit_log;
 CREATE POLICY "Authenticated users can insert audit_logs" 
 ON public.audit_log 
 FOR INSERT 

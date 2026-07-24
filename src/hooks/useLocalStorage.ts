@@ -1,12 +1,12 @@
-// V15-133: src/hooks/useLocalStorage.ts
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
+import { secureJsonParse } from '@/utils/secureJson';
 
 export function useLocalStorage<T>(key: string, initialValue: T) {
   const [storedValue, setStoredValue] = useState<T>(() => {
     try {
       const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
+      return item ? secureJsonParse<T>(item) : initialValue;
     } catch { return initialValue; }
   });
 
@@ -35,7 +35,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === key && e.newValue) {
-        try { setStoredValue(JSON.parse(e.newValue)); }
+        try { setStoredValue(secureJsonParse<T>(e.newValue)); }
         catch { /* ignore */ }
       }
     };

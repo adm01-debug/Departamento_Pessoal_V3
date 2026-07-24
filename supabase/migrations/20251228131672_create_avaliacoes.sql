@@ -32,6 +32,7 @@ CREATE INDEX IF NOT EXISTS idx_avaliacoes_status ON public.avaliacoes(status);
 -- RLS
 ALTER TABLE public.avaliacoes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "avaliacoes_all" ON public.avaliacoes;
 CREATE POLICY "avaliacoes_all" ON public.avaliacoes
   USING (auth.uid() IS NOT NULL)
   WITH CHECK (auth.uid() IS NOT NULL);

@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS public.lotacoes (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.lotacoes ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage lotacoes" ON public.lotacoes;
 CREATE POLICY "Auth users manage lotacoes" ON public.lotacoes FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- 2. jornadas (jornadaService.ts)
@@ -31,6 +32,7 @@ CREATE TABLE IF NOT EXISTS public.jornadas (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.jornadas ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage jornadas" ON public.jornadas;
 CREATE POLICY "Auth users manage jornadas" ON public.jornadas FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- 3. exames (exameService.ts)
@@ -47,6 +49,7 @@ CREATE TABLE IF NOT EXISTS public.exames (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.exames ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage exames" ON public.exames;
 CREATE POLICY "Auth users manage exames" ON public.exames FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- 4. dctfweb_declaracoes (dctfwebService.ts)
@@ -64,6 +67,7 @@ CREATE TABLE IF NOT EXISTS public.dctfweb_declaracoes (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.dctfweb_declaracoes ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage dctfweb" ON public.dctfweb_declaracoes;
 CREATE POLICY "Auth users manage dctfweb" ON public.dctfweb_declaracoes FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- 5. contratos (contratoService.ts)
@@ -80,6 +84,7 @@ CREATE TABLE IF NOT EXISTS public.contratos (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.contratos ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage contratos" ON public.contratos;
 CREATE POLICY "Auth users manage contratos" ON public.contratos FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- 6. comunicados (comunicadoService.ts)
@@ -97,6 +102,7 @@ CREATE TABLE IF NOT EXISTS public.comunicados (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.comunicados ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage comunicados" ON public.comunicados;
 CREATE POLICY "Auth users manage comunicados" ON public.comunicados FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- 7. promocoes (promocaoService.ts)
@@ -112,6 +118,7 @@ CREATE TABLE IF NOT EXISTS public.promocoes (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.promocoes ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage promocoes" ON public.promocoes;
 CREATE POLICY "Auth users manage promocoes" ON public.promocoes FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- 8. seguros_vida (seguroVidaService.ts)
@@ -129,6 +136,7 @@ CREATE TABLE IF NOT EXISTS public.seguros_vida (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.seguros_vida ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage seguros_vida" ON public.seguros_vida;
 CREATE POLICY "Auth users manage seguros_vida" ON public.seguros_vida FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- 9. planos_saude (planoSaudeService.ts)
@@ -148,6 +156,7 @@ CREATE TABLE IF NOT EXISTS public.planos_saude (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.planos_saude ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage planos_saude" ON public.planos_saude;
 CREATE POLICY "Auth users manage planos_saude" ON public.planos_saude FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- 10. pensoes (usePensao.ts)
@@ -166,6 +175,7 @@ CREATE TABLE IF NOT EXISTS public.pensoes (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.pensoes ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage pensoes" ON public.pensoes;
 CREATE POLICY "Auth users manage pensoes" ON public.pensoes FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- 11. ferias_solicitacoes (useDashboard.ts, dashboardService.ts)
@@ -184,4 +194,5 @@ CREATE TABLE IF NOT EXISTS public.ferias_solicitacoes (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.ferias_solicitacoes ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage ferias_solicitacoes" ON public.ferias_solicitacoes;
 CREATE POLICY "Auth users manage ferias_solicitacoes" ON public.ferias_solicitacoes FOR ALL TO authenticated USING (true) WITH CHECK (true);

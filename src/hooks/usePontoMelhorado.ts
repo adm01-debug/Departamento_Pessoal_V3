@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { notificarAjustePonto } from '@/services/notificacoesService';
 import CryptoJS from 'crypto-js';
 
@@ -80,7 +81,7 @@ export function usePontoMelhorado(empresaId?: string, colaboradorId?: string) {
       queryClient.invalidateQueries({ queryKey: ['solicitacoes-ajuste-ponto'] });
       toast.success('Solicitação de ajuste enviada com sucesso.');
     },
-    onError: (e: Error) => toast.error(`Erro ao criar solicitação: ${e.message}`),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao criar solicitação.')),
   });
 
   const responderSolicitacao = useMutation({
@@ -97,6 +98,7 @@ export function usePontoMelhorado(empresaId?: string, colaboradorId?: string) {
           updated_at: new Date().toISOString()
         })
         .eq('id', id)
+        .eq('empresa_id', empresaId!)
         .select()
         .single();
 
@@ -113,7 +115,7 @@ export function usePontoMelhorado(empresaId?: string, colaboradorId?: string) {
       queryClient.invalidateQueries({ queryKey: ['solicitacoes-ajuste-ponto'] });
       toast.success(`Solicitação ${variables.status === 'aprovado' ? 'aprovada' : 'rejeitada'} com sucesso.`);
     },
-    onError: (e: Error) => toast.error(`Erro ao responder solicitação: ${e.message}`),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao responder solicitação.')),
   });
 
   return {

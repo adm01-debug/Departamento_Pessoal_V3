@@ -12,12 +12,15 @@ CREATE TABLE IF NOT EXISTS folha_calculos (
 -- Add RLS Policies
 ALTER TABLE folha_calculos ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "folha_calculos_select" ON public.folha_calculos;
 CREATE POLICY "folha_calculos_select" ON folha_calculos
   FOR SELECT USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "folha_calculos_insert" ON public.folha_calculos;
 CREATE POLICY "folha_calculos_insert" ON folha_calculos
   FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "folha_calculos_update" ON public.folha_calculos;
 CREATE POLICY "folha_calculos_update" ON folha_calculos
   FOR UPDATE USING (auth.role() = 'authenticated');
 
@@ -33,6 +36,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_folha_calculos_updated_at ON public.folha_calculos;
 CREATE TRIGGER trigger_folha_calculos_updated_at
   BEFORE UPDATE ON folha_calculos
   FOR EACH ROW

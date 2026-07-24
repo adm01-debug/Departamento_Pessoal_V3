@@ -13,7 +13,9 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { supabase } from '@/integrations/supabase/client';
+import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Plus, Edit2, Trash2, Hash, TrendingUp, TrendingDown, Info, CheckCircle, XCircle } from 'lucide-react';
@@ -42,6 +44,7 @@ const tipoConfig: Record<TipoEvento, { label: string; color: string; icon: any }
 const emptyForm = { codigo: '', descricao: '', tipo: 'provento' as TipoEvento, incide_inss: true, incide_irrf: true, incide_fgts: true, automatico: false, formula: '' };
 
 export default function RubricasPage() {
+  const { empresaAtual } = useEmpresas();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
@@ -70,7 +73,7 @@ export default function RubricasPage() {
         formula: form.formula || null,
       };
       if (editId) {
-        const { error } = await supabase.from('rubricas_folha').update(payload).eq('id', editId);
+        const { error } = await supabase.from('rubricas_folha').update(payload).eq('id', editId).eq('empresa_id', empresaAtual!.id);
         if (error) throw error;
       } else {
         const { error } = await supabase.from('rubricas_folha').insert(payload);
@@ -84,12 +87,12 @@ export default function RubricasPage() {
       setForm(emptyForm);
       toast.success(editId ? 'Rubrica atualizada!' : 'Rubrica criada!');
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar rubrica.')),
   });
 
   const toggleAtivo = useMutation({
     mutationFn: async ({ id, ativo }: { id: string; ativo: boolean }) => {
-      const { error } = await supabase.from('rubricas_folha').update({ ativo }).eq('id', id);
+      const { error } = await supabase.from('rubricas_folha').update({ ativo }).eq('id', id).eq('empresa_id', empresaAtual!.id);
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['rubricas_folha'] }),
@@ -97,7 +100,7 @@ export default function RubricasPage() {
 
   const excluir = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from('rubricas_folha').delete().eq('id', id);
+      const { error } = await supabase.from('rubricas_folha').delete().eq('id', id).eq('empresa_id', empresaAtual!.id);
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['rubricas_folha'] }); toast.success('Rubrica excluída'); },

@@ -9,6 +9,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { contabilidadeService, folhaService } from '@/services';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -60,7 +61,7 @@ export default function ContabilidadePage() {
       toast.success('Lançamentos contábeis gerados com sucesso');
       loadData();
     } catch (error: any) {
-      toast.error(error.message || 'Erro ao gerar lançamentos');
+      toast.error(safeErrorMessage(error, 'Erro ao gerar lançamentos contábeis.'));
     } finally {
       setProcessing(false);
     }

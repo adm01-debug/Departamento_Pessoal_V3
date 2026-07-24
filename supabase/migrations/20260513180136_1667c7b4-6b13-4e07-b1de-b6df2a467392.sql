@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS public.push_subscriptions (
 ALTER TABLE public.push_subscriptions ENABLE ROW LEVEL SECURITY;
 
 -- Políticas
+DROP POLICY IF EXISTS "Usuários podem gerenciar suas próprias inscrições push" ON public.push_subscriptions;
 CREATE POLICY "Usuários podem gerenciar suas próprias inscrições push"
 ON public.push_subscriptions
 FOR ALL

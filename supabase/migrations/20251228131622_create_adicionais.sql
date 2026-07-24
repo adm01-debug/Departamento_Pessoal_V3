@@ -29,15 +29,19 @@ CREATE INDEX IF NOT EXISTS idx_adicionais_created ON public.adicionais(created_a
 -- RLS
 ALTER TABLE public.adicionais ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "adicionais_select" ON public.adicionais;
 CREATE POLICY "adicionais_select" ON public.adicionais
   FOR SELECT USING (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "adicionais_insert" ON public.adicionais;
 CREATE POLICY "adicionais_insert" ON public.adicionais
   FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "adicionais_update" ON public.adicionais;
 CREATE POLICY "adicionais_update" ON public.adicionais
   FOR UPDATE USING (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "adicionais_delete" ON public.adicionais;
 CREATE POLICY "adicionais_delete" ON public.adicionais
   FOR DELETE USING (auth.uid() IS NOT NULL);
 
@@ -50,6 +54,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_adicionais_updated_at ON public.adicionais;
 CREATE TRIGGER trigger_adicionais_updated_at
   BEFORE UPDATE ON public.adicionais
   FOR EACH ROW EXECUTE FUNCTION update_adicionais_updated_at();

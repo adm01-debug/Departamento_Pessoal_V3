@@ -52,7 +52,7 @@ export function useNotificacoes() {
 
   const marcarComoLida = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from('notificacoes').update({ lida: true }).eq('id', id);
+      const { error } = await supabase.from('notificacoes').update({ lida: true }).eq('id', id).eq('empresa_id', empresaAtualId!);
       if (error) throw error;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notificacoes'] }),
@@ -72,7 +72,7 @@ export function useNotificacoes() {
 
   const excluirNotificacao = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from('notificacoes').delete().eq('id', id);
+      const { error } = await supabase.from('notificacoes').delete().eq('id', id).eq('empresa_id', empresaAtualId!);
       if (error) throw error;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notificacoes'] }),

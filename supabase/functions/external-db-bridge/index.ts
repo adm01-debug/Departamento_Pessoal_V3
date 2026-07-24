@@ -1,5 +1,5 @@
 // external-db-bridge — Hardened gateway (Onda 36)
-// Segurança: JWT via getClaims() para writes, tenant scope (empresa_id),
+// Segurança: JWT via getUser() para writes, tenant scope (empresa_id),
 // denylist de tabelas sensíveis, allowlist de RPC e operadores, validação
 // estrita de identificadores, CSRF fail-closed, no-store, payload cap.
 //
@@ -7,17 +7,16 @@
 // frontend atual — RLS no banco externo é a fonte de verdade), mas qualquer
 // operação de escrita exige JWT válido + verificação de tenant.
 
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { createClient, type SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { z } from "https://deno.land/x/zod@v3.23.8/mod.ts";
 import { verifyCsrf } from "../_shared/csrf.ts";
+import { corsHeaders, enforceOrigin, handlePreflight } from '../_shared/contract.ts';
+import {
+  isSafeTableName, isSafeColumnsExpr, isSafeOrderColumn, isSafeOrExpression, isSafeFilterColumn,
+  TABLE_DENYLIST, TENANT_SCOPED_TABLES, RPC_ALLOWLIST, FILTER_OPS, NOT_EXTRA_OPS,
+} from "./validation.ts";
 
 // -------------------- Headers --------------------
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-csrf-token, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
 const NO_STORE = { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" };
 
 // -------------------- Limites e thresholds --------------------
@@ -26,93 +25,38 @@ const MAX_LIMIT = 1000;
 const SLOW_QUERY_THRESHOLD_MS = 3000;
 const VERY_SLOW_QUERY_THRESHOLD_MS = 8000;
 
-// -------------------- Validação de identificadores --------------------
-// Permite: letras, dígitos, _, ponto (schema.tab), vírgula/espaço (colunas
-// múltiplas em select), !, *, (, ) e :: para casts. Bloqueia ;, --, /*, comentários.
-const IDENTIFIER_RE = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
-const COLUMNS_RE = /^[a-zA-Z0-9_,.\s*!():"-]+$/;
-const DANGEROUS_TOKENS = /(;|--|\/\*|\*\/|\bDROP\b|\bTRUNCATE\b|\bALTER\b|\bGRANT\b)/i;
-
-function isSafeTableName(t: unknown): t is string {
-  return typeof t === "string" && t.length > 0 && t.length <= 63 && IDENTIFIER_RE.test(t);
-}
-function isSafeColumnsExpr(c: unknown): c is string {
-  if (typeof c !== "string") return false;
-  if (c.length === 0 || c.length > 2000) return false;
-  if (DANGEROUS_TOKENS.test(c)) return false;
-  return COLUMNS_RE.test(c);
+// -------------------- Timeout de consulta (Onda 37) --------------------
+// Evita que uma consulta ao banco externo pendure a invocação indefinidamente.
+// Cada request HTTP do supabase-js recebe um AbortSignal com timeout; ao estourar,
+// a consulta é abortada (libera recursos) e o handler responde 504.
+const BRIDGE_QUERY_TIMEOUT_MS = Number(Deno.env.get("BRIDGE_QUERY_TIMEOUT_MS") || "15000");
+const timeoutFetch: typeof fetch = (input, init) =>
+  fetch(input, { ...init, signal: (init as RequestInit | undefined)?.signal ?? AbortSignal.timeout(BRIDGE_QUERY_TIMEOUT_MS) });
+function isTimeoutError(e: unknown): boolean {
+  if (!(e instanceof Error)) return false;
+  return e.name === "TimeoutError" || e.name === "AbortError" || /timed out|aborted|timeout/i.test(e.message);
 }
 
-// -------------------- Denylist de tabelas --------------------
-// Estas tabelas nunca podem ser acessadas via bridge (nem leitura). Contêm
-// dados de segurança/roles que devem ser gerenciados apenas server-side.
-const TABLE_DENYLIST = new Set<string>([
-  "user_roles",
-  "secrets",
-  "vault",
-  "ip_whitelist",
-  "blocked_ips",
-  "rate_limit_config",
-  "rate_limit_logs",
-  "login_attempts",
-  "login_lockouts",
-  "login_rate_limits",
-  "password_policies",
-  "security_alerts",
-  "audit_log",
-  "geo_blocking_config",
-  "geo_allowed_countries",
-  "govbr_auth_state",
-]);
-
-// Tabelas em que writes são permitidos apenas com auth+tenant válido.
-// (Todas as tabelas de negócio; para leitura, RLS externo protege.)
-const TENANT_SCOPED_TABLES = new Set<string>([
-  "colaboradores", "empresas", "folhas_pagamento", "holerites", "batidas_ponto",
-  "registros_ponto", "admissoes", "candidaturas", "ferias_solicitacoes",
-  "periodos_aquisitivos", "provisoes_mensais", "provisoes_folha", "beneficios",
-  "documentos", "notificacoes", "workflows_execucoes", "workflows_definicoes",
-  "auditoria_logs", "ferias_audit_log", "esocial_eventos", "guias_impostos",
-]);
-
-// -------------------- Allowlist de RPCs --------------------
-// Somente RPCs explicitamente listadas são invocáveis via bridge.
-const RPC_ALLOWLIST = new Set<string>([
-  // segurança / login
-  "check_login_lock", "record_failed_login", "reset_login_attempts",
-  "check_brute_force", "check_rate_limit", "is_ip_blocked", "is_ip_whitelisted",
-  "is_country_allowed",
-  // roles / tenant
-  "has_role", "is_admin", "get_user_roles", "get_user_empresas",
-  "get_user_default_empresa", "get_user_scope_empresas", "user_belongs_to_empresa",
-  "get_auth_empresa_id",
-  // negócio
-  "get_personnel_cost_projection", "get_colaborador_banco_horas",
-  "calcular_dias_ferias", "fn_calculate_periodo_aquisitivo",
-  "fn_link_gov_br_account", "processar_ajuste_aprovado",
-  "gerar_alertas_preditivos_ia", "anonimizar_dados_pessoais",
-  "run_rls_tests",
-]);
 const LOGIN_PROTECTION_RPC_FALLBACKS: Record<string, unknown> = {
   check_login_lock: false,
   record_failed_login: null,
   reset_login_attempts: null,
 };
 
-// -------------------- Allowlist de operadores --------------------
-const FILTER_OPS = new Set([
-  "eq", "neq", "gt", "gte", "lt", "lte",
-  "like", "ilike", "in", "is", "or", "not", "contains", "match",
-]);
-const NOT_EXTRA_OPS = new Set(["eq", "neq", "gt", "gte", "lt", "lte", "in", "is"]);
-
 // -------------------- Zod schemas --------------------
+const MAX_FILTER_VALUE_BYTES = 8 * 1024; // 8 KB por valor escalar de filtro
+const boundedFilterValue = z.unknown().refine((v) => {
+  if (typeof v === "string") return v.length <= MAX_FILTER_VALUE_BYTES;
+  if (Array.isArray(v)) return v.every((x) => typeof x !== "string" || x.length <= MAX_FILTER_VALUE_BYTES);
+  return true;
+}, { message: `Filter value exceeds ${MAX_FILTER_VALUE_BYTES} bytes` });
 const FilterSchema = z.object({
   column: z.string().max(120),
   op: z.string().max(20),
-  value: z.unknown(),
+  value: boundedFilterValue,
   extraOp: z.string().max(20).optional(),
 });
+
 const BodySchema = z.object({
   action: z.enum(["select", "insert", "update", "delete", "upsert", "rpc"]),
   table: z.string().max(63).optional(),
@@ -128,7 +72,7 @@ const BodySchema = z.object({
   data: z.union([z.record(z.unknown()), z.array(z.record(z.unknown()))]).optional(),
   params: z.record(z.unknown()).optional(),
   userId: z.string().max(64).optional(),
-});
+}).strict();
 
 // -------------------- Telemetria --------------------
 interface TelemetryMeta {
@@ -184,6 +128,8 @@ function getServiceClient() {
   return createClient(localUrl, serviceKey);
 }
 
+const TELEMETRY_BUFFER_CAP = 500; // evita crescimento ilimitado em modo degradado
+
 async function flushTelemetry(): Promise<void> {
   if (telemetryBuffer.length === 0) return;
   if (telemetryFlushInFlight) return telemetryFlushInFlight;
@@ -191,14 +137,26 @@ async function flushTelemetry(): Promise<void> {
   const batch = telemetryBuffer.splice(0, telemetryBuffer.length);
   telemetryLastFlush = Date.now();
   const client = getServiceClient();
-  if (!client) return;
+  if (!client) {
+    // Sem client disponível — devolve itens ao buffer (com cap para evitar OOM)
+    const keep = batch.slice(0, TELEMETRY_BUFFER_CAP - telemetryBuffer.length);
+    telemetryBuffer.unshift(...keep);
+    return;
+  }
 
   telemetryFlushInFlight = (async () => {
     try {
       const { error } = await client.from("query_telemetry").insert(batch);
-      if (error) console.warn("[telemetry-batch] persist falhou:", error.message);
+      if (error) {
+        console.warn("[telemetry-batch] persist falhou:", error.message);
+        // Devolve ao buffer para nova tentativa (com cap para evitar OOM)
+        const keep = batch.slice(0, Math.max(0, TELEMETRY_BUFFER_CAP - telemetryBuffer.length));
+        telemetryBuffer.unshift(...keep);
+      }
     } catch (e) {
       console.warn("[telemetry-batch] exceção:", (e as Error).message);
+      const keep = batch.slice(0, Math.max(0, TELEMETRY_BUFFER_CAP - telemetryBuffer.length));
+      telemetryBuffer.unshift(...keep);
     } finally {
       telemetryFlushInFlight = null;
     }
@@ -282,18 +240,51 @@ function jsonOk(payload: Record<string, unknown>) {
 }
 
 // -------------------- Tenant scope check --------------------
-async function assertTenantScope(
-  localClient: ReturnType<typeof createClient>,
-  userId: string,
+function extractEmpresaIdsFromData(
   data: Record<string, unknown> | Record<string, unknown>[] | undefined,
-): Promise<{ ok: true } | { ok: false; msg: string }> {
-  if (!data) return { ok: true };
-  const rows = Array.isArray(data) ? data : [data];
+): Set<string> {
   const empresaIds = new Set<string>();
+  if (!data) return empresaIds;
+  const rows = Array.isArray(data) ? data : [data];
   for (const r of rows) {
     const eid = (r as Record<string, unknown>)?.empresa_id;
     if (typeof eid === "string" && eid) empresaIds.add(eid);
   }
+  return empresaIds;
+}
+
+function empresaIdColumnFor(table: string): string {
+  return table === "empresas" ? "id" : "empresa_id";
+}
+
+async function lookupEmpresaIdsForWrite(
+  externalClient: SupabaseClient<any, any, any>,
+  table: string,
+  filters: Array<{ column: string; op: string; value: unknown }>,
+): Promise<{ ok: true; empresaIds: Set<string> } | { ok: false }> {
+  const col = empresaIdColumnFor(table);
+  // Query dinâmica (tabela/coluna vêm de string em runtime): tipo do proxy é any por natureza.
+  let query: any = externalClient.from(table).select(col);
+  for (const f of filters) {
+    if (f.op === "eq") query = query.eq(f.column, f.value);
+  }
+  const { data, error } = await query;
+  if (error) return { ok: false };
+  const empresaIds = new Set<string>();
+  if (Array.isArray(data)) {
+    for (const row of data as Record<string, unknown>[]) {
+      const eid = row?.[col];
+      if (typeof eid === "string" && eid) empresaIds.add(eid);
+    }
+  }
+  return { ok: true, empresaIds };
+}
+
+async function assertTenantScope(
+  localClient: SupabaseClient<any, any, any>,
+  userId: string,
+  empresaIds: Set<string>,
+): Promise<{ ok: true } | { ok: false; msg: string }> {
   if (empresaIds.size === 0) return { ok: true };
 
   // Verifica via RPC has_role(admin) primeiro
@@ -314,8 +305,8 @@ async function assertTenantScope(
 // Handler principal
 // ============================================================
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
-  if (req.method !== "POST") return jsonError(405, "METHOD_NOT_ALLOWED", "Only POST is allowed");
+  const __pf = handlePreflight(req); if (__pf) return __pf;
+  const __og = enforceOrigin(req); if (__og) return __og;if (req.method !== "POST") return jsonError(405, "METHOD_NOT_ALLOWED", "Only POST is allowed");
 
   // CSRF fail-closed em toda operação de escrita/rpc.
   const csrf = await verifyCsrf(req);
@@ -340,26 +331,45 @@ Deno.serve(async (req) => {
       try {
         const localClient = createClient(supabaseUrl, supabaseAnonKey, {
           global: { headers: { Authorization: authHeader } },
+          auth: { persistSession: false, autoRefreshToken: false },
         });
-        const { data, error } = await localClient.auth.getClaims(token);
-        if (!error && data?.claims?.sub) {
-          user = { id: String(data.claims.sub) };
+        const { data, error } = await localClient.auth.getUser();
+        if (!error && data?.user?.id) {
+          user = { id: data.user.id };
         }
       } catch { /* segue anônimo */ }
     }
   }
 
-  // Body + validação estrutural
+  // Body + validação estrutural (leitura streaming com corte precoce em MAX_PAYLOAD_BYTES)
   let rawBody: unknown;
   try {
-    const text = await req.text();
-    if (text.length > MAX_PAYLOAD_BYTES) {
-      return jsonError(413, "PAYLOAD_TOO_LARGE", "Body too large");
+    const reader = req.body?.getReader();
+    if (!reader) {
+      rawBody = {};
+    } else {
+      const chunks: Uint8Array[] = [];
+      let total = 0;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        total += value.byteLength;
+        if (total > MAX_PAYLOAD_BYTES) {
+          try { await reader.cancel(); } catch { /* ignore */ }
+          return jsonError(413, "PAYLOAD_TOO_LARGE", `Payload exceeds ${MAX_PAYLOAD_BYTES} bytes`);
+        }
+        chunks.push(value);
+      }
+      const buf = new Uint8Array(total);
+      let off = 0;
+      for (const c of chunks) { buf.set(c, off); off += c.byteLength; }
+      const text = new TextDecoder().decode(buf);
+      rawBody = text.length ? JSON.parse(text) : {};
     }
-    rawBody = JSON.parse(text);
   } catch {
     return jsonError(400, "INVALID_JSON", "Invalid JSON body");
   }
+
   const parsed = BodySchema.safeParse(rawBody);
   if (!parsed.success) {
     return jsonError(400, "SCHEMA_VALIDATION", "Invalid request shape", {
@@ -375,10 +385,31 @@ Deno.serve(async (req) => {
     .map((f) => ({ ...f, value: sanitizeData(f.value) }))
     .filter((f) => f.op === "or" || (f.value !== null && f.value !== undefined && f.value !== "" && f.value !== "all"));
 
-  // Validação: writes exigem auth
+  // Validação: writes e RPCs protegidas exigem auth
   const isWrite = action === "insert" || action === "update" || action === "delete" || action === "upsert";
-  if (isWrite && !user) {
-    return jsonError(401, "UNAUTHORIZED", "Authentication required for write operations");
+  // RPCs públicas: chamadas antes/fora de sessão de usuário (login protection + onboarding).
+  // Todos os demais RPCs do allowlist operam sobre dados tenant-scoped e requerem auth.
+  const PUBLIC_RPCS = new Set<string>([
+    "check_login_lock", "record_failed_login", "reset_login_attempts",
+    "check_account_lockout", "record_login_attempt", "reset_account_lockout",
+    "check_brute_force", "check_rate_limit", "is_ip_blocked", "is_ip_whitelisted",
+    "is_country_allowed",
+    "get_admissao_por_token",
+  ]);
+  const isProtectedRpc = action === "rpc" && rpcName != null && !PUBLIC_RPCS.has(rpcName);
+  if ((isWrite || isProtectedRpc) && !user) {
+    return jsonError(401, "UNAUTHORIZED", "Authentication required for this operation");
+  }
+
+  // Rate limit — bridge é o endpoint mais genérico: 100 req/min para reads, 30 req/min para writes
+  if (serviceKey) {
+    const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
+    const rlClient = createClient(supabaseUrl, serviceKey);
+    const rlIdentity = user?.id ?? (req.headers.get('cf-connecting-ip') || req.headers.get('x-real-ip') || 'anon');
+    const rlKey = isWrite ? `bridge-write:${rlIdentity}` : `bridge-read:${rlIdentity}`;
+    const rlLimit = isWrite ? 30 : (user ? 100 : 20);
+    const rl = await checkRateLimit(rlClient as any, { key: rlKey, limit: rlLimit, windowSec: 60 });
+    if (!rl.allowed) return rateLimitResponse(rl);
   }
 
   // Validação: table obrigatório para non-rpc + regex + denylist
@@ -402,8 +433,27 @@ Deno.serve(async (req) => {
     if (f.op === "not" && (!f.extraOp || !NOT_EXTRA_OPS.has(f.extraOp))) {
       return jsonError(400, "INVALID_NOT_OP", "Filter 'not' requires a valid extraOp");
     }
-    if (f.op !== "or" && !/^[a-zA-Z0-9_.,()->\s"-]+$/.test(f.column)) {
+    if (f.op !== "or" && !isSafeFilterColumn(f.column)) {
       return jsonError(400, "INVALID_COLUMN", `Filter column '${f.column}' is invalid`);
+    }
+  }
+
+  // UPDATE/DELETE só aplicam filtros 'eq' na query real (ver abaixo). Se o
+  // chamador enviar QUALQUER outro operador (neq/gt/like/...), esses filtros
+  // seriam silenciosamente ignorados na hora de montar a query — e com zero
+  // filtros 'eq' efetivos, a mutação atingiria a tabela inteira. Em vez de
+  // aceitar e descartar em silêncio, rejeitamos explicitamente (fail-closed).
+  if (action === "update" || action === "delete") {
+    const nonEq = filters.find((f) => f.op !== "eq");
+    if (nonEq) {
+      return jsonError(
+        400,
+        "UNSUPPORTED_FILTER_FOR_WRITE",
+        `${action} only supports 'eq' filters; operator '${nonEq.op}' on column '${nonEq.column}' would be silently ignored and is rejected instead`,
+      );
+    }
+    if (filters.length === 0) {
+      return jsonError(400, "WRITE_REQUIRES_FILTER", `${action} requires at least one 'eq' filter`);
     }
   }
 
@@ -413,14 +463,37 @@ Deno.serve(async (req) => {
   if (!externalUrl || !externalKey) {
     return jsonError(500, "NOT_CONFIGURED", "External database not configured");
   }
-  const externalClient = createClient(externalUrl, externalKey);
+  const externalClient = createClient(externalUrl, externalKey, { global: { fetch: timeoutFetch } });
+  // User-scoped client for RPCs that rely on auth.uid() inside the external DB
+  const externalUserClient = authHeader
+    ? createClient(externalUrl, externalKey, { global: { headers: { Authorization: authHeader }, fetch: timeoutFetch } })
+    : externalClient;
 
   // Cliente local (para verificação de tenant scope via RPC has_role/user_belongs_to_empresa)
   const localClient = serviceKey ? createClient(supabaseUrl, serviceKey) : null;
 
-  // Tenant scope check para writes em tabelas de negócio
+  // Tenant scope check para writes em tabelas de negócio.
+  // - insert/upsert: o tenant afetado vem do `empresa_id` nas linhas de `data`.
+  // - update/delete: descobrimos o tenant real das linhas alvo via lookup
+  //   (ver `lookupEmpresaIdsForWrite`) usando os mesmos filtros 'eq' da
+  //   mutação — não dependemos do cliente declarar `empresa_id` explicitamente.
   if (isWrite && user && localClient && table && TENANT_SCOPED_TABLES.has(table)) {
-    const scope = await assertTenantScope(localClient, user.id, data);
+    let empresaIds: Set<string>;
+    if (action === "update" || action === "delete") {
+      const lookup = await lookupEmpresaIdsForWrite(externalClient, table, filters);
+      if (!lookup.ok) {
+        return jsonError(
+          403,
+          "TENANT_SCOPE_LOOKUP_FAILED",
+          `Could not verify tenant scope for ${action} on tenant-scoped table '${table}'`,
+        );
+      }
+      empresaIds = lookup.empresaIds;
+    } else {
+      empresaIds = extractEmpresaIdsFromData(data);
+    }
+
+    const scope = await assertTenantScope(localClient, user.id, empresaIds);
     if (!scope.ok) {
       return jsonError(403, "TENANT_SCOPE_DENIED", scope.msg);
     }
@@ -435,7 +508,8 @@ Deno.serve(async (req) => {
     // -------- SELECT --------
     if (action === "select") {
       const t0 = performance.now();
-      let query = externalClient
+      // Query dinâmica: filtros/colunas resolvidos em runtime; tipo do proxy é any.
+      let query: any = externalClient
         .from(table!)
         .select(selectColumns, { count: queryCountMode === "none" ? undefined : queryCountMode });
       if (queryLimit !== -1) query = query.range(queryOffset, queryOffset + queryLimit - 1);
@@ -450,11 +524,18 @@ Deno.serve(async (req) => {
         else if (f.op === "ilike") query = query.ilike(f.column, f.value as string);
         else if (f.op === "in") query = query.in(f.column, f.value as unknown[]);
         else if (f.op === "is") query = query.is(f.column, f.value as null | boolean);
-        else if (f.op === "or") query = query.or(f.value as string);
+        else if (f.op === "or") {
+          if (!isSafeOrExpression(f.value)) return jsonError(400, "INVALID_OR_FILTER", "Expressão .or() contém operadores ou padrões não permitidos");
+          query = query.or(f.value as string);
+        }
         else if (f.op === "not") query = query.not(f.column, f.extraOp!, f.value);
         else if (f.op === "contains") query = query.contains(f.column, f.value);
       }
+      if (body.order && !isSafeOrderColumn(body.order.column)) {
+        return jsonError(400, "INVALID_ORDER_COLUMN", "ORDER BY column contains invalid characters");
+      }
       if (body.order) query = query.order(body.order.column, { ascending: body.order.ascending !== false });
+      if (body.single) query = query.single();
 
       const { data: selectData, error, count } = await query;
       const durationMs = Math.round(performance.now() - t0);
@@ -463,7 +544,7 @@ Deno.serve(async (req) => {
         durationMs, status: classifySeverity(durationMs, !!error),
         recordCount: (selectData as unknown[] | null)?.length ?? 0, error: error?.message, userId: user?.id,
       });
-      if (error) return jsonError(400, "QUERY_ERROR", error.message, { hint: error.hint, code: error.code });
+      if (error) { console.error('[bridge] QUERY_ERROR:', error.message, error.hint); return jsonError(400, "QUERY_ERROR", "Falha na consulta"); }
       return jsonOk({ data: selectData, count, duration_ms: durationMs });
     }
 
@@ -473,7 +554,7 @@ Deno.serve(async (req) => {
       const { data: r, error } = await externalClient.from(table!).insert(data as any).select();
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({ operation: "insert", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id });
-      if (error) return jsonError(400, "INSERT_ERROR", error.message, { hint: error.hint, code: error.code });
+      if (error) { console.error('[bridge] INSERT_ERROR:', error.message, error.hint); return jsonError(400, "INSERT_ERROR", "Falha na inserção"); }
       return jsonOk({ data: r, duration_ms: durationMs });
     }
 
@@ -483,7 +564,7 @@ Deno.serve(async (req) => {
       const { data: r, error } = await externalClient.from(table!).upsert(data as any).select();
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({ operation: "upsert", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id });
-      if (error) return jsonError(400, "UPSERT_ERROR", error.message, { hint: error.hint, code: error.code });
+      if (error) { console.error('[bridge] UPSERT_ERROR:', error.message, error.hint); return jsonError(400, "UPSERT_ERROR", "Falha no upsert"); }
       return jsonOk({ data: r, duration_ms: durationMs });
     }
 
@@ -492,13 +573,26 @@ Deno.serve(async (req) => {
       if (filters.length === 0) {
         return jsonError(400, "UPDATE_REQUIRES_FILTER", "UPDATE requires at least one filter");
       }
+      // Require at least one eq filter to prevent overly-broad updates
+      if (!filters.some((f) => f.op === "eq")) {
+        return jsonError(400, "UPDATE_REQUIRES_EQ", "UPDATE requires at least one 'eq' filter for safety");
+      }
       const t0 = performance.now();
       let query = externalClient.from(table!).update(data as any);
-      for (const f of filters) if (f.op === "eq") query = query.eq(f.column, f.value);
+      for (const f of filters) {
+        if (f.op === "eq") query = query.eq(f.column, f.value);
+        else if (f.op === "neq") query = query.neq(f.column, f.value);
+        else if (f.op === "gt") query = query.gt(f.column, f.value);
+        else if (f.op === "gte") query = query.gte(f.column, f.value);
+        else if (f.op === "lt") query = query.lt(f.column, f.value);
+        else if (f.op === "lte") query = query.lte(f.column, f.value);
+        else if (f.op === "in") query = query.in(f.column, f.value as unknown[]);
+        else if (f.op === "is") query = query.is(f.column, f.value as null | boolean);
+      }
       const { data: r, error } = await query.select();
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({ operation: "update", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id });
-      if (error) return jsonError(400, "UPDATE_ERROR", error.message, { hint: error.hint, code: error.code });
+      if (error) { console.error('[bridge] UPDATE_ERROR:', error.message, error.hint); return jsonError(400, "UPDATE_ERROR", "Falha na atualização"); }
       return jsonOk({ data: r, duration_ms: durationMs });
     }
 
@@ -507,13 +601,25 @@ Deno.serve(async (req) => {
       if (filters.length === 0) {
         return jsonError(400, "DELETE_REQUIRES_FILTER", "DELETE requires at least one filter");
       }
+      if (!filters.some((f) => f.op === "eq")) {
+        return jsonError(400, "DELETE_REQUIRES_EQ", "DELETE requires at least one 'eq' filter for safety");
+      }
       const t0 = performance.now();
       let query = externalClient.from(table!).delete();
-      for (const f of filters) if (f.op === "eq") query = query.eq(f.column, f.value);
+      for (const f of filters) {
+        if (f.op === "eq") query = query.eq(f.column, f.value);
+        else if (f.op === "neq") query = query.neq(f.column, f.value);
+        else if (f.op === "gt") query = query.gt(f.column, f.value);
+        else if (f.op === "gte") query = query.gte(f.column, f.value);
+        else if (f.op === "lt") query = query.lt(f.column, f.value);
+        else if (f.op === "lte") query = query.lte(f.column, f.value);
+        else if (f.op === "in") query = query.in(f.column, f.value as unknown[]);
+        else if (f.op === "is") query = query.is(f.column, f.value as null | boolean);
+      }
       const { data: r, error } = await query.select();
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({ operation: "delete", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id });
-      if (error) return jsonError(400, "DELETE_ERROR", error.message, { hint: error.hint, code: error.code });
+      if (error) { console.error('[bridge] DELETE_ERROR:', error.message, error.hint); return jsonError(400, "DELETE_ERROR", "Falha na exclusão"); }
       return jsonOk({ data: r, duration_ms: durationMs });
     }
 
@@ -530,20 +636,24 @@ Deno.serve(async (req) => {
         const durationMs = Math.round(performance.now() - t0);
         return jsonOk({ data: LOGIN_PROTECTION_RPC_FALLBACKS[rpcName], duration_ms: durationMs });
       }
-      const { data: rpcData, error } = await externalClient.rpc(rpcName, (rpcArgs || {}) as Record<string, unknown>);
+      const { data: rpcData, error } = await externalUserClient.rpc(rpcName, (rpcArgs || {}) as Record<string, unknown>);
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({
         operation: "rpc", rpcName, durationMs, status: classifySeverity(durationMs, !!error),
         recordCount: Array.isArray(rpcData) ? rpcData.length : rpcData ? 1 : 0,
         error: error?.message, userId: user?.id,
       });
-      if (error) return jsonError(400, "RPC_ERROR", error.message);
+      if (error) { console.error('[bridge] RPC_ERROR:', error.message); return jsonError(400, "RPC_ERROR", "Falha na chamada RPC"); }
       return jsonOk({ data: rpcData, duration_ms: durationMs });
     }
 
     return jsonError(400, "UNKNOWN_ACTION", `Unknown action: ${action}`);
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Internal server error";
+    if (isTimeoutError(err)) {
+      console.error("[external-db-bridge] Timeout:", msg);
+      return jsonError(504, "QUERY_TIMEOUT", "A consulta excedeu o tempo limite");
+    }
     console.error("[external-db-bridge] Error:", msg);
     return jsonError(500, "INTERNAL_ERROR", "Internal server error");
   }

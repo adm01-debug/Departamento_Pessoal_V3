@@ -12,7 +12,11 @@ CREATE TABLE IF NOT EXISTS public.times_brindes (
 ALTER TABLE public.times_brindes ENABLE ROW LEVEL SECURITY;
 
 -- Policies
+DROP POLICY IF EXISTS "Enable read for all" ON public.times_brindes;
 CREATE POLICY "Enable read for all" ON public.times_brindes FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Enable insert for all" ON public.times_brindes;
 CREATE POLICY "Enable insert for all" ON public.times_brindes FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS "Enable update for all" ON public.times_brindes;
 CREATE POLICY "Enable update for all" ON public.times_brindes FOR UPDATE USING (true);
+DROP POLICY IF EXISTS "Enable delete for all" ON public.times_brindes;
 CREATE POLICY "Enable delete for all" ON public.times_brindes FOR DELETE USING (true);

@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 
 export function usePDFExport() {
   const exportarPDF = useCallback(async (titulo: string, dados: any[], colunas: string[]) => {
@@ -24,7 +25,7 @@ export function usePDFExport() {
       doc.save(`${titulo.toLowerCase().replace(/\s+/g, '-')}.pdf`);
       toast.success('PDF exportado com sucesso!');
     } catch (e: any) {
-      toast.error('Erro ao gerar PDF: ' + e.message);
+      toast.error(safeErrorMessage(e, 'Erro ao gerar PDF.'));
     }
   }, []);
 

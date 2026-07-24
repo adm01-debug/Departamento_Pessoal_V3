@@ -12,12 +12,15 @@ CREATE TABLE IF NOT EXISTS treinamentos_avaliacoes (
 -- Add RLS Policies
 ALTER TABLE treinamentos_avaliacoes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "treinamentos_avaliacoes_select" ON public.treinamentos_avaliacoes;
 CREATE POLICY "treinamentos_avaliacoes_select" ON treinamentos_avaliacoes
   FOR SELECT USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "treinamentos_avaliacoes_insert" ON public.treinamentos_avaliacoes;
 CREATE POLICY "treinamentos_avaliacoes_insert" ON treinamentos_avaliacoes
   FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "treinamentos_avaliacoes_update" ON public.treinamentos_avaliacoes;
 CREATE POLICY "treinamentos_avaliacoes_update" ON treinamentos_avaliacoes
   FOR UPDATE USING (auth.role() = 'authenticated');
 
@@ -33,6 +36,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_treinamentos_avaliacoes_updated_at ON public.treinamentos_avaliacoes;
 CREATE TRIGGER trigger_treinamentos_avaliacoes_updated_at
   BEFORE UPDATE ON treinamentos_avaliacoes
   FOR EACH ROW

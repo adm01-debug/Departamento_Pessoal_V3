@@ -83,10 +83,11 @@ CREATE TABLE IF NOT EXISTS colaboradores (
 CREATE TABLE IF NOT EXISTS dependentes (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   colaborador_id UUID NOT NULL REFERENCES colaboradores(id) ON DELETE CASCADE,
-  nome VARCHAR(255) NOT NULL,
+  empresa_id UUID REFERENCES empresas(id) ON DELETE CASCADE,
+  nome VARCHAR(255),
   cpf CHAR(11),
-  data_nascimento DATE NOT NULL,
-  parentesco VARCHAR(50) NOT NULL,
+  data_nascimento DATE,
+  parentesco VARCHAR(50),
   sexo CHAR(1),
   ir_dependente BOOLEAN DEFAULT false,
   sf_dependente BOOLEAN DEFAULT false,
@@ -94,8 +95,17 @@ CREATE TABLE IF NOT EXISTS dependentes (
   certidao_tipo VARCHAR(20),
   certidao_numero VARCHAR(50),
   certidao_cartorio VARCHAR(100),
+  descricao TEXT,
+  valor DECIMAL(15,2) DEFAULT 0,
+  data_inicio DATE,
+  data_fim DATE,
+  ativo BOOLEAN DEFAULT true,
+  status VARCHAR(50) DEFAULT 'ativo',
+  observacoes TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  created_by UUID,
+  updated_by UUID
 );
 
 -- INDEXES

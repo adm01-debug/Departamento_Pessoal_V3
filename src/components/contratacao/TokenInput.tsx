@@ -17,15 +17,15 @@ export function TokenInput({ onValidToken }: { onValidToken: (token: string) => 
     setLoading(true);
     setError('');
     try {
-      const { data, error: err } = await supabase
-        .from('admissao_tokens')
-        .select('*')
-        .eq('token', token)
-        .maybeSingle();
+      // Lookup via RPC (não leitura direta da tabela): a função exige o
+      // token exato como argumento, então não há como listar/enumerar
+      // tokens sem já conhecer um — ver 20260718220000_rls_remediacao_auditoria.sql.
+      const { data, error: err } = await supabase.rpc('get_admissao_por_token', { _token: token });
+      const row = Array.isArray(data) ? data[0] : data;
 
-      if (err || !data) {
+      if (err || !row?.token_row) {
         setError('Código inválido ou expirado.');
-      } else if (new Date(data.data_expiracao) < new Date()) {
+      } else if (new Date(row.token_row.data_expiracao) < new Date()) {
         setError('Este link expirou. Solicite um novo ao RH.');
       } else {
         onValidToken(token);
@@ -53,16 +53,22 @@ export function TokenInput({ onValidToken }: { onValidToken: (token: string) => 
           </CardHeader>
           <CardContent className="space-y-6 px-8 pb-8">
             <div className="space-y-3">
-              <Label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Código de Acesso</Label>
+              <Label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
+                Código de Acesso
+              </Label>
               <Input
                 placeholder="Insira seu código aqui..."
                 value={token}
-                onChange={e => setToken(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+                onChange={(e) => setToken(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
                 className="h-14 text-center text-xl font-mono tracking-widest rounded-2xl border-2 focus-visible:ring-primary"
               />
               {error && (
-                <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-destructive flex items-center justify-center gap-1 font-medium">
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-sm text-destructive flex items-center justify-center gap-1 font-medium"
+                >
                   <AlertCircle className="w-4 h-4" /> {error}
                 </motion.p>
               )}
@@ -77,8 +83,15 @@ export function TokenInput({ onValidToken }: { onValidToken: (token: string) => 
             </Button>
 
             <div className="pt-4 flex items-center justify-center gap-2">
-              <img src={govbrLogo} alt="Gov.br" className="h-6 opacity-50 grayscale hover:grayscale-0 transition-all cursor-not-allowed" title="Em breve: Acesso via Gov.br" />
-              <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">Powered by Lovable Cloud</span>
+              <img
+                src={govbrLogo}
+                alt="Gov.br"
+                className="h-6 opacity-50 grayscale hover:grayscale-0 transition-all cursor-not-allowed"
+                title="Em breve: Acesso via Gov.br"
+              />
+              <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">
+                Powered by Lovable Cloud
+              </span>
             </div>
           </CardContent>
         </Card>

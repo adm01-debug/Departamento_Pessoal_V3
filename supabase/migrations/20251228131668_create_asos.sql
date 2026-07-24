@@ -32,6 +32,7 @@ CREATE INDEX IF NOT EXISTS idx_asos_status ON public.asos(status);
 -- RLS
 ALTER TABLE public.asos ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "asos_all" ON public.asos;
 CREATE POLICY "asos_all" ON public.asos
   USING (auth.uid() IS NOT NULL)
   WITH CHECK (auth.uid() IS NOT NULL);

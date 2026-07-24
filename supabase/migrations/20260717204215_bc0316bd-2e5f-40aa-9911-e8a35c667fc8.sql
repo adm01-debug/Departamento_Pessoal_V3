@@ -44,10 +44,11 @@ CREATE TABLE IF NOT EXISTS public.sst_cat_testemunhas (
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.sst_cat_testemunhas TO authenticated;
 GRANT ALL ON public.sst_cat_testemunhas TO service_role;
 ALTER TABLE public.sst_cat_testemunhas ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "cat_testemunhas_por_empresa" ON public.sst_cat_testemunhas;
 CREATE POLICY "cat_testemunhas_por_empresa" ON public.sst_cat_testemunhas FOR ALL TO authenticated
   USING (EXISTS (SELECT 1 FROM public.sst_cat c JOIN public.user_empresas ue ON ue.empresa_id = c.empresa_id WHERE c.id = cat_id AND ue.user_id = auth.uid()))
   WITH CHECK (EXISTS (SELECT 1 FROM public.sst_cat c JOIN public.user_empresas ue ON ue.empresa_id = c.empresa_id WHERE c.id = cat_id AND ue.user_id = auth.uid()));
-CREATE INDEX idx_sst_cat_testemunhas_cat ON public.sst_cat_testemunhas(cat_id);
+CREATE INDEX IF NOT EXISTS idx_sst_cat_testemunhas_cat ON public.sst_cat_testemunhas(cat_id);
 
 -- Anexos
 CREATE TABLE IF NOT EXISTS public.sst_cat_anexos (
@@ -63,10 +64,11 @@ CREATE TABLE IF NOT EXISTS public.sst_cat_anexos (
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.sst_cat_anexos TO authenticated;
 GRANT ALL ON public.sst_cat_anexos TO service_role;
 ALTER TABLE public.sst_cat_anexos ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "cat_anexos_por_empresa" ON public.sst_cat_anexos;
 CREATE POLICY "cat_anexos_por_empresa" ON public.sst_cat_anexos FOR ALL TO authenticated
   USING (EXISTS (SELECT 1 FROM public.sst_cat c JOIN public.user_empresas ue ON ue.empresa_id = c.empresa_id WHERE c.id = cat_id AND ue.user_id = auth.uid()))
   WITH CHECK (EXISTS (SELECT 1 FROM public.sst_cat c JOIN public.user_empresas ue ON ue.empresa_id = c.empresa_id WHERE c.id = cat_id AND ue.user_id = auth.uid()));
-CREATE INDEX idx_sst_cat_anexos_cat ON public.sst_cat_anexos(cat_id);
+CREATE INDEX IF NOT EXISTS idx_sst_cat_anexos_cat ON public.sst_cat_anexos(cat_id);
 
 -- Trigger para calcular prazo legal e gerar número da CAT
 CREATE OR REPLACE FUNCTION public.calcular_prazo_cat()
@@ -110,10 +112,13 @@ CREATE TRIGGER tr_updated_at_sst_cat BEFORE UPDATE ON public.sst_cat FOR EACH RO
 
 -- Recriar política mais estrita (multi-tenant)
 DROP POLICY IF EXISTS "Gestores de RH podem ver CATs" ON public.sst_cat;
+DROP POLICY IF EXISTS "cat_select_por_empresa" ON public.sst_cat;
 CREATE POLICY "cat_select_por_empresa" ON public.sst_cat FOR SELECT TO authenticated
   USING (EXISTS (SELECT 1 FROM public.user_empresas ue WHERE ue.empresa_id = sst_cat.empresa_id AND ue.user_id = auth.uid()));
+DROP POLICY IF EXISTS "cat_insert_por_empresa" ON public.sst_cat;
 CREATE POLICY "cat_insert_por_empresa" ON public.sst_cat FOR INSERT TO authenticated
   WITH CHECK (EXISTS (SELECT 1 FROM public.user_empresas ue WHERE ue.empresa_id = sst_cat.empresa_id AND ue.user_id = auth.uid()));
+DROP POLICY IF EXISTS "cat_update_por_empresa" ON public.sst_cat;
 CREATE POLICY "cat_update_por_empresa" ON public.sst_cat FOR UPDATE TO authenticated
   USING (EXISTS (SELECT 1 FROM public.user_empresas ue WHERE ue.empresa_id = sst_cat.empresa_id AND ue.user_id = auth.uid()));
 

@@ -7,8 +7,10 @@ import { Badge } from '@/components/ui/badge';
 import { Database, Download, Clock, Shield, HardDrive, CheckCircle, FileJson, FileSpreadsheet, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { cn } from '@/lib/utils';
 import { exportarBackupCSV, exportarBackupJSON, downloadBlob } from '@/services/backupService';
+import { useEmpresa } from '@/contexts/EmpresaContext';
 
 interface BackupHistoryItem {
   id: string;
@@ -20,15 +22,20 @@ interface BackupHistoryItem {
 }
 
 export default function BackupPage() {
+  const { empresaAtual } = useEmpresa();
   const [backing, setBacking] = useState<'csv' | 'json' | null>(null);
   const [historico, setHistorico] = useState<BackupHistoryItem[]>([]);
 
   const handleBackup = async (formato: 'csv' | 'json') => {
+    if (!empresaAtual?.id) {
+      toast.error('Selecione uma empresa antes de realizar o backup');
+      return;
+    }
     setBacking(formato);
     try {
       const result = formato === 'csv'
-        ? await exportarBackupCSV()
-        : await exportarBackupJSON();
+        ? await exportarBackupCSV(empresaAtual.id)
+        : await exportarBackupJSON(empresaAtual.id);
 
       downloadBlob(result.blob, result.fileName);
 
@@ -46,7 +53,7 @@ export default function BackupPage() {
         `Backup ${formato.toUpperCase()} concluído! ${result.stats.registros} registros de ${result.stats.tabelas} tabelas (${result.stats.tamanho})`
       );
     } catch (err: any) {
-      toast.error(`Erro no backup: ${err.message}`);
+      toast.error(safeErrorMessage(err, 'Erro ao realizar backup.'));
     } finally {
       setBacking(null);
     }

@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS public.relatorios_agendados (
 -- Enable RLS
 ALTER TABLE public.relatorios_agendados ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can manage their company's schedules" ON public.relatorios_agendados;
 CREATE POLICY "Users can manage their company's schedules"
     ON public.relatorios_agendados FOR ALL
     USING (empresa_id IN (
@@ -38,6 +39,7 @@ CREATE TABLE IF NOT EXISTS public.log_envio_relatorios (
 -- Enable RLS
 ALTER TABLE public.log_envio_relatorios ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view their company's delivery logs" ON public.log_envio_relatorios;
 CREATE POLICY "Users can view their company's delivery logs"
     ON public.log_envio_relatorios FOR SELECT
     USING (agendamento_id IN (

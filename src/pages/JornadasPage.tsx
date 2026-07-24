@@ -14,6 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { Plus, Clock, Trash2 } from 'lucide-react';
 
 export default function JornadasPage() {
@@ -45,12 +46,12 @@ export default function JornadasPage() {
       return data;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['jornadas'] }); setOpen(false); toast.success('Jornada criada!'); },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar jornada.')),
   });
 
   const excluir = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from('jornadas').delete().eq('id', id);
+      const { error } = await supabase.from('jornadas').delete().eq('id', id).eq('empresa_id', empresaAtual!.id);
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['jornadas'] }); toast.success('Jornada excluída!'); },

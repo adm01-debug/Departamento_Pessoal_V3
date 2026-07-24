@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS public.documentos_admissao (
 ALTER TABLE public.documentos_admissao ENABLE ROW LEVEL SECURITY;
 
 -- Políticas
+DROP POLICY IF EXISTS "Gestores veem documentos de admissão" ON public.documentos_admissao;
 CREATE POLICY "Gestores veem documentos de admissão"
 ON public.documentos_admissao FOR SELECT
 USING (auth.uid() IN (

@@ -12,12 +12,15 @@ CREATE TABLE IF NOT EXISTS auditoria_logs (
 -- Add RLS Policies
 ALTER TABLE auditoria_logs ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "auditoria_logs_select" ON public.auditoria_logs;
 CREATE POLICY "auditoria_logs_select" ON auditoria_logs
   FOR SELECT USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "auditoria_logs_insert" ON public.auditoria_logs;
 CREATE POLICY "auditoria_logs_insert" ON auditoria_logs
   FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "auditoria_logs_update" ON public.auditoria_logs;
 CREATE POLICY "auditoria_logs_update" ON auditoria_logs
   FOR UPDATE USING (auth.role() = 'authenticated');
 
@@ -33,6 +36,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_auditoria_logs_updated_at ON public.auditoria_logs;
 CREATE TRIGGER trigger_auditoria_logs_updated_at
   BEFORE UPDATE ON auditoria_logs
   FOR EACH ROW

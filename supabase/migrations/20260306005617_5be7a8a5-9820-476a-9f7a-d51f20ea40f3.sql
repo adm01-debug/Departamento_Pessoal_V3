@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS public.convenios (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.convenios ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage convenios" ON public.convenios;
 CREATE POLICY "Auth users manage convenios" ON public.convenios FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- convenios_colaboradores table
@@ -23,4 +24,5 @@ CREATE TABLE IF NOT EXISTS public.convenios_colaboradores (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.convenios_colaboradores ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage convenios_colaboradores" ON public.convenios_colaboradores;
 CREATE POLICY "Auth users manage convenios_colaboradores" ON public.convenios_colaboradores FOR ALL TO authenticated USING (true) WITH CHECK (true);

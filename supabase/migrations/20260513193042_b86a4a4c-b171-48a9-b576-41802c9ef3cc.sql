@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS public.medidas_disciplinares_anexos (
 -- RLS
 ALTER TABLE public.medidas_disciplinares_anexos ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Gestores e RH gerenciam anexos disciplinares" ON public.medidas_disciplinares_anexos;
 CREATE POLICY "Gestores e RH gerenciam anexos disciplinares"
 ON public.medidas_disciplinares_anexos FOR ALL
 USING (auth.uid() IN (

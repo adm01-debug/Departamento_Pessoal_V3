@@ -8,6 +8,7 @@ ADD COLUMN IF NOT EXISTS relatorio_conformidade JSONB DEFAULT '{}'::jsonb;
 -- Atualizar políticas RLS para solicitações de ajuste de ponto
 DROP POLICY IF EXISTS "Gestores aprovam solicitações" ON public.solicitacoes_ajuste_ponto;
 
+DROP POLICY IF EXISTS "Gestores e RH aprovam solicitações" ON public.solicitacoes_ajuste_ponto;
 CREATE POLICY "Gestores e RH aprovam solicitações" 
 ON public.solicitacoes_ajuste_ponto 
 FOR UPDATE 

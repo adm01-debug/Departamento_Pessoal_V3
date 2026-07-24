@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { TrendingUp, Calculator, Loader2, Save, History, PieChart } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { useEmpresas } from '@/hooks/useEmpresas';
 function formatCurrency(value: number): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 }).format(value);
@@ -83,7 +84,7 @@ export function SimuladorWhatIf() {
       if (error) throw error;
       toast.success('Simulação salva com sucesso!');
     } catch (err: any) {
-      toast.error('Erro ao salvar: ' + err.message);
+      toast.error(safeErrorMessage(err, 'Erro ao salvar simulação.'));
     } finally {
       setSaving(false);
     }

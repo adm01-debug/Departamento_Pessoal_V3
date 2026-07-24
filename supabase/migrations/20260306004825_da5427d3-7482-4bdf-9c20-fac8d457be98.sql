@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS public.escalas (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.escalas ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage escalas" ON public.escalas;
 CREATE POLICY "Auth users manage escalas" ON public.escalas FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- 2. Tabela vales_alimentacao (usada em valeAlimentacaoService.ts)
@@ -33,6 +34,7 @@ CREATE TABLE IF NOT EXISTS public.vales_alimentacao (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.vales_alimentacao ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage vales_alimentacao" ON public.vales_alimentacao;
 CREATE POLICY "Auth users manage vales_alimentacao" ON public.vales_alimentacao FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- 3. Tabela recargas_vale (usada em valeAlimentacaoService.ts)
@@ -46,6 +48,7 @@ CREATE TABLE IF NOT EXISTS public.recargas_vale (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.recargas_vale ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage recargas_vale" ON public.recargas_vale;
 CREATE POLICY "Auth users manage recargas_vale" ON public.recargas_vale FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- 4. Tabela saved_filters (usada em useSavedFilters.ts)
@@ -60,4 +63,5 @@ CREATE TABLE IF NOT EXISTS public.saved_filters (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.saved_filters ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Users manage own filters" ON public.saved_filters;
 CREATE POLICY "Users manage own filters" ON public.saved_filters FOR ALL TO authenticated USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);

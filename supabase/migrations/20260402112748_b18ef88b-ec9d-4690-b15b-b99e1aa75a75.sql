@@ -1,6 +1,6 @@
 
 -- Tabela de Vagas
-CREATE TABLE public.vagas (
+CREATE TABLE IF NOT EXISTS public.vagas (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   empresa_id UUID REFERENCES public.empresas(id) ON DELETE CASCADE,
   titulo TEXT NOT NULL,
@@ -23,7 +23,7 @@ CREATE TABLE public.vagas (
 );
 
 -- Tabela de Candidatos
-CREATE TABLE public.candidatos (
+CREATE TABLE IF NOT EXISTS public.candidatos (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   empresa_id UUID REFERENCES public.empresas(id) ON DELETE CASCADE,
   nome TEXT NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE public.candidatos (
 );
 
 -- Tabela de Pipeline (candidato x vaga)
-CREATE TABLE public.candidaturas (
+CREATE TABLE IF NOT EXISTS public.candidaturas (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   vaga_id UUID REFERENCES public.vagas(id) ON DELETE CASCADE NOT NULL,
   candidato_id UUID REFERENCES public.candidatos(id) ON DELETE CASCADE NOT NULL,
@@ -63,19 +63,25 @@ ALTER TABLE public.vagas ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.candidatos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.candidaturas ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can manage vagas of their empresa" ON public.vagas;
 CREATE POLICY "Users can manage vagas of their empresa" ON public.vagas
   FOR ALL TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
 
+DROP POLICY IF EXISTS "Users can manage candidatos of their empresa" ON public.candidatos;
 CREATE POLICY "Users can manage candidatos of their empresa" ON public.candidatos
   FOR ALL TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
 
+DROP POLICY IF EXISTS "Users can manage candidaturas via vaga empresa" ON public.candidaturas;
 CREATE POLICY "Users can manage candidaturas via vaga empresa" ON public.candidaturas
   FOR ALL TO authenticated
   USING (vaga_id IN (SELECT id FROM public.vagas WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid()))));
 
 -- Triggers updated_at
+DROP TRIGGER IF EXISTS set_vagas_updated_at ON public.vagas;
 CREATE TRIGGER set_vagas_updated_at BEFORE UPDATE ON public.vagas FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+DROP TRIGGER IF EXISTS set_candidatos_updated_at ON public.candidatos;
 CREATE TRIGGER set_candidatos_updated_at BEFORE UPDATE ON public.candidatos FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+DROP TRIGGER IF EXISTS set_candidaturas_updated_at ON public.candidaturas;
 CREATE TRIGGER set_candidaturas_updated_at BEFORE UPDATE ON public.candidaturas FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();

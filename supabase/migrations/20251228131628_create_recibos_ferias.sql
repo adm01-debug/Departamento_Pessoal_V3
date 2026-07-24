@@ -29,15 +29,19 @@ CREATE INDEX IF NOT EXISTS idx_recibos_ferias_created ON public.recibos_ferias(c
 -- RLS
 ALTER TABLE public.recibos_ferias ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "recibos_ferias_select" ON public.recibos_ferias;
 CREATE POLICY "recibos_ferias_select" ON public.recibos_ferias
   FOR SELECT USING (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "recibos_ferias_insert" ON public.recibos_ferias;
 CREATE POLICY "recibos_ferias_insert" ON public.recibos_ferias
   FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "recibos_ferias_update" ON public.recibos_ferias;
 CREATE POLICY "recibos_ferias_update" ON public.recibos_ferias
   FOR UPDATE USING (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "recibos_ferias_delete" ON public.recibos_ferias;
 CREATE POLICY "recibos_ferias_delete" ON public.recibos_ferias
   FOR DELETE USING (auth.uid() IS NOT NULL);
 
@@ -50,6 +54,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_recibos_ferias_updated_at ON public.recibos_ferias;
 CREATE TRIGGER trigger_recibos_ferias_updated_at
   BEFORE UPDATE ON public.recibos_ferias
   FOR EACH ROW EXECUTE FUNCTION update_recibos_ferias_updated_at();

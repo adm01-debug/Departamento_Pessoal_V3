@@ -12,6 +12,7 @@ import { desligamentoService } from '@/services/desligamentoService';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 interface Props {
   open: boolean;
   onClose: () => void;
@@ -96,7 +97,7 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
         saldo_fgts: ''
       });
     } catch (e: any) {
-      toast.error(e.message || 'Erro ao criar desligamento');
+      toast.error(safeErrorMessage(e, 'Erro ao criar desligamento.'));
     } finally {
       setLoading(false);
     }

@@ -59,6 +59,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_lgpd_limpeza_desligamento ON public.colaboradores;
 CREATE TRIGGER trigger_lgpd_limpeza_desligamento
 AFTER UPDATE ON public.colaboradores
 FOR EACH ROW

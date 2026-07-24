@@ -8,7 +8,7 @@ export function usePontosAbertos() {
 
   const query = useQuery({
     queryKey: ['pontos_abertos', empresaId],
-    queryFn: () => pontoAbertoService.listar(empresaId),
+    queryFn: () => pontoAbertoService.listar(empresaId!),
     enabled: !!empresaId,
     refetchInterval: 60000, // Auto-refresh every minute
   });

@@ -17,6 +17,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { colaboradorService } from '@/services';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { Plus, ArrowRightLeft, TrendingUp, MapPin, Trash2 } from 'lucide-react';
 
 export default function MovimentacoesPage() {
@@ -27,7 +28,7 @@ export default function MovimentacoesPage() {
   const [formTransf, setFormTransf] = useState({ colaborador_id: '', tipo: 'transferencia', origem: '', destino: '', data_efetivacao: '', motivo: '' });
   const [formPromo, setFormPromo] = useState({ colaborador_id: '', cargo_anterior: '', cargo_novo: '', data_promocao: '', novo_salario: '', motivo: '' });
 
-  const { data: colaboradores = [] } = useQuery({ queryKey: ['colaboradores', empresaAtual?.id], queryFn: () => colaboradorService.list(empresaAtual?.id), enabled: !!empresaAtual?.id });
+  const { data: colaboradores = [] } = useQuery({ queryKey: ['colaboradores', empresaAtual?.id], queryFn: () => colaboradorService.list(empresaAtual!.id), enabled: !!empresaAtual?.id });
 
   const { data: transferencias = [], isLoading: loadTransf } = useQuery({
     queryKey: ['transferencias', empresaAtual?.id],
@@ -60,7 +61,7 @@ export default function MovimentacoesPage() {
       return data;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['transferencias'] }); setOpenTransf(false); toast.success('Transferência registrada!'); },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar movimentação.')),
   });
 
   const criarPromo = useMutation({
@@ -70,7 +71,7 @@ export default function MovimentacoesPage() {
       return data;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['promocoes'] }); setOpenPromo(false); toast.success('Promoção registrada!'); },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar movimentação.')),
   });
 
   const isLoading = loadTransf || loadPromo;

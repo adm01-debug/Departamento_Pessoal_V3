@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS public.whatsapp_templates (
 -- RLS
 ALTER TABLE public.whatsapp_templates ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Gestores veem templates WhatsApp" ON public.whatsapp_templates;
 CREATE POLICY "Gestores veem templates WhatsApp"
 ON public.whatsapp_templates FOR SELECT
 USING (auth.uid() IN (
@@ -34,6 +35,7 @@ CREATE TABLE IF NOT EXISTS public.whatsapp_mensagens_logs (
 
 ALTER TABLE public.whatsapp_mensagens_logs ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Gestores veem logs de mensagens WhatsApp" ON public.whatsapp_mensagens_logs;
 CREATE POLICY "Gestores veem logs de mensagens WhatsApp"
 ON public.whatsapp_mensagens_logs FOR SELECT
 USING (auth.uid() IN (

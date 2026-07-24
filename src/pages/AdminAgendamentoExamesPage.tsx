@@ -14,6 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CalendarClock, MapPin, Navigation, Plus, Stethoscope, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 
 type Agend = {
   id: string;
@@ -110,7 +111,7 @@ export default function AdminAgendamentoExamesPage() {
       setClinicasProximas((data ?? []) as ClinicaProxima[]);
       if (!data || data.length === 0) toast.info('Nenhuma clínica encontrada no raio informado');
     } catch (e: any) {
-      toast.error(e?.message ?? 'Falha na busca');
+      toast.error(safeErrorMessage(e, 'Falha na busca de clínicas.'));
     } finally {
       setBuscando(false);
     }
@@ -151,7 +152,7 @@ export default function AdminAgendamentoExamesPage() {
       setColaboradorId(''); setDataAgendada(''); setLat(''); setLng('');
       setClinicaEscolhida(null); setClinicasProximas([]); setObs('');
     },
-    onError: (e: any) => toast.error(e?.message ?? 'Falha ao agendar'),
+    onError: (e: any) => toast.error(safeErrorMessage(e, 'Falha ao agendar exame.')),
   });
 
   /* eslint-disable react-hooks/purity */
@@ -161,8 +162,10 @@ export default function AdminAgendamentoExamesPage() {
     const realizados = agendamentos?.filter((a) => a.status === 'realizado').length ?? 0;
     const now = Date.now();
     const proximos7d = agendamentos?.filter((a) => {
-      const t = new Date(a.data_agendada).getTime();
-      return t >= now && t <= now + 7 * 24 * 3600 * 1000;
+      const d = new Date(a.data_agendada);
+      // eslint-disable-next-line react-hooks/purity
+      const now = Date.now();
+      return d.getTime() >= now && d.getTime() <= now + 7 * 24 * 3600 * 1000;
     }).length ?? 0;
     return { total, agendados, realizados, proximos7d };
   }, [agendamentos]);

@@ -30,14 +30,17 @@ CREATE POLICY "Usuários podem ver colaboradores da sua empresa" ON public.colab
   FOR SELECT TO authenticated
   USING (empresa_id IN (SELECT get_user_empresas(auth.uid())));
 
+DROP POLICY IF EXISTS "Usuários podem inserir colaboradores na sua empresa" ON public.colaboradores;
 CREATE POLICY "Usuários podem inserir colaboradores na sua empresa" ON public.colaboradores
   FOR INSERT TO authenticated
   WITH CHECK (empresa_id IN (SELECT get_user_empresas(auth.uid())));
 
+DROP POLICY IF EXISTS "Usuários podem atualizar colaboradores da sua empresa" ON public.colaboradores;
 CREATE POLICY "Usuários podem atualizar colaboradores da sua empresa" ON public.colaboradores
   FOR UPDATE TO authenticated
   USING (empresa_id IN (SELECT get_user_empresas(auth.uid())));
 
+DROP POLICY IF EXISTS "Usuários podem deletar colaboradores da sua empresa" ON public.colaboradores;
 CREATE POLICY "Usuários podem deletar colaboradores da sua empresa" ON public.colaboradores
   FOR DELETE TO authenticated
   USING (empresa_id IN (SELECT get_user_empresas(auth.uid())));
@@ -47,6 +50,7 @@ CREATE POLICY "Usuários podem deletar colaboradores da sua empresa" ON public.c
 -- ============================================================
 DROP POLICY IF EXISTS "auth_webauthn_challenges" ON public.webauthn_challenges;
 
+DROP POLICY IF EXISTS "Users can manage own webauthn challenges" ON public.webauthn_challenges;
 CREATE POLICY "Users can manage own webauthn challenges" ON public.webauthn_challenges
   FOR ALL TO authenticated
   USING (user_id = auth.uid() OR user_id IS NULL)
@@ -57,6 +61,7 @@ CREATE POLICY "Users can manage own webauthn challenges" ON public.webauthn_chal
 -- ============================================================
 DROP POLICY IF EXISTS "Authenticated users can view audit_log" ON public.audit_log;
 
+DROP POLICY IF EXISTS "Users can view own audit_log" ON public.audit_log;
 CREATE POLICY "Users can view own audit_log" ON public.audit_log
   FOR SELECT TO authenticated
   USING (user_id = auth.uid() OR public.is_admin(auth.uid()));
@@ -84,6 +89,7 @@ CREATE POLICY "Usuários autenticados podem ver auditoria_logs" ON public.audito
 -- ============================================================
 DROP POLICY IF EXISTS "auth_integracoes" ON public.integracoes;
 
+DROP POLICY IF EXISTS "Admins can manage integracoes" ON public.integracoes;
 CREATE POLICY "Admins can manage integracoes" ON public.integracoes
   FOR ALL TO authenticated
   USING (public.is_admin(auth.uid()))
@@ -96,14 +102,17 @@ DROP POLICY IF EXISTS "Usuários autenticados podem ver configuracoes" ON public
 DROP POLICY IF EXISTS "configuracoes_insert" ON public.configuracoes;
 DROP POLICY IF EXISTS "configuracoes_update" ON public.configuracoes;
 
+DROP POLICY IF EXISTS "Authenticated can read configuracoes" ON public.configuracoes;
 CREATE POLICY "Authenticated can read configuracoes" ON public.configuracoes
   FOR SELECT TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Admins can insert configuracoes" ON public.configuracoes;
 CREATE POLICY "Admins can insert configuracoes" ON public.configuracoes
   FOR INSERT TO authenticated
   WITH CHECK (public.is_admin(auth.uid()));
 
+DROP POLICY IF EXISTS "Admins can update configuracoes" ON public.configuracoes;
 CREATE POLICY "Admins can update configuracoes" ON public.configuracoes
   FOR UPDATE TO authenticated
   USING (public.is_admin(auth.uid()));
@@ -113,18 +122,22 @@ CREATE POLICY "Admins can update configuracoes" ON public.configuracoes
 -- ============================================================
 DROP POLICY IF EXISTS "auth_periodos_ponto" ON public.periodos_ponto;
 
+DROP POLICY IF EXISTS "Authenticated can read periodos_ponto" ON public.periodos_ponto;
 CREATE POLICY "Authenticated can read periodos_ponto" ON public.periodos_ponto
   FOR SELECT TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Admins can manage periodos_ponto" ON public.periodos_ponto;
 CREATE POLICY "Admins can manage periodos_ponto" ON public.periodos_ponto
   FOR INSERT TO authenticated
   WITH CHECK (public.is_admin(auth.uid()));
 
+DROP POLICY IF EXISTS "Admins can update periodos_ponto" ON public.periodos_ponto;
 CREATE POLICY "Admins can update periodos_ponto" ON public.periodos_ponto
   FOR UPDATE TO authenticated
   USING (public.is_admin(auth.uid()));
 
+DROP POLICY IF EXISTS "Admins can delete periodos_ponto" ON public.periodos_ponto;
 CREATE POLICY "Admins can delete periodos_ponto" ON public.periodos_ponto
   FOR DELETE TO authenticated
   USING (public.is_admin(auth.uid()));
@@ -134,6 +147,7 @@ CREATE POLICY "Admins can delete periodos_ponto" ON public.periodos_ponto
 -- ============================================================
 DROP POLICY IF EXISTS "Authenticated users can manage beneficios_colaborador" ON public.beneficios_colaborador;
 
+DROP POLICY IF EXISTS "Users can manage beneficios_colaborador" ON public.beneficios_colaborador;
 CREATE POLICY "Users can manage beneficios_colaborador" ON public.beneficios_colaborador
   FOR ALL TO authenticated
   USING (
@@ -154,18 +168,22 @@ CREATE POLICY "Users can manage beneficios_colaborador" ON public.beneficios_col
 -- ============================================================
 DROP POLICY IF EXISTS "auth_sindicatos" ON public.sindicatos;
 
+DROP POLICY IF EXISTS "Authenticated can read sindicatos" ON public.sindicatos;
 CREATE POLICY "Authenticated can read sindicatos" ON public.sindicatos
   FOR SELECT TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Admins can manage sindicatos" ON public.sindicatos;
 CREATE POLICY "Admins can manage sindicatos" ON public.sindicatos
   FOR INSERT TO authenticated
   WITH CHECK (public.is_admin(auth.uid()));
 
+DROP POLICY IF EXISTS "Admins can update sindicatos" ON public.sindicatos;
 CREATE POLICY "Admins can update sindicatos" ON public.sindicatos
   FOR UPDATE TO authenticated
   USING (public.is_admin(auth.uid()));
 
+DROP POLICY IF EXISTS "Admins can delete sindicatos" ON public.sindicatos;
 CREATE POLICY "Admins can delete sindicatos" ON public.sindicatos
   FOR DELETE TO authenticated
   USING (public.is_admin(auth.uid()));
@@ -175,18 +193,22 @@ CREATE POLICY "Admins can delete sindicatos" ON public.sindicatos
 -- ============================================================
 DROP POLICY IF EXISTS "auth_rubricas_folha" ON public.rubricas_folha;
 
+DROP POLICY IF EXISTS "Authenticated can read rubricas_folha" ON public.rubricas_folha;
 CREATE POLICY "Authenticated can read rubricas_folha" ON public.rubricas_folha
   FOR SELECT TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Admins can manage rubricas_folha" ON public.rubricas_folha;
 CREATE POLICY "Admins can manage rubricas_folha" ON public.rubricas_folha
   FOR INSERT TO authenticated
   WITH CHECK (public.is_admin(auth.uid()));
 
+DROP POLICY IF EXISTS "Admins can update rubricas_folha" ON public.rubricas_folha;
 CREATE POLICY "Admins can update rubricas_folha" ON public.rubricas_folha
   FOR UPDATE TO authenticated
   USING (public.is_admin(auth.uid()));
 
+DROP POLICY IF EXISTS "Admins can delete rubricas_folha" ON public.rubricas_folha;
 CREATE POLICY "Admins can delete rubricas_folha" ON public.rubricas_folha
   FOR DELETE TO authenticated
   USING (public.is_admin(auth.uid()));

@@ -8,13 +8,17 @@ CREATE POLICY "jh_mod" ON public.jornadas_horarios FOR ALL TO authenticated
 -- configuracoes: no empresa_id, restrict to authenticated (already better than true for write)
 DROP POLICY IF EXISTS "Usuários autenticados podem inserir configuracoes" ON public.configuracoes;
 DROP POLICY IF EXISTS "Usuários autenticados podem atualizar configuracoes" ON public.configuracoes;
+DROP POLICY IF EXISTS "configuracoes_insert" ON public.configuracoes;
 CREATE POLICY "configuracoes_insert" ON public.configuracoes FOR INSERT TO authenticated WITH CHECK (auth.uid() IS NOT NULL);
+DROP POLICY IF EXISTS "configuracoes_update" ON public.configuracoes;
 CREATE POLICY "configuracoes_update" ON public.configuracoes FOR UPDATE TO authenticated USING (auth.uid() IS NOT NULL);
 
 -- config_alertas_indicadores: no empresa_id, restrict to authenticated
 DROP POLICY IF EXISTS "Authenticated users can insert config_alertas" ON public.config_alertas_indicadores;
 DROP POLICY IF EXISTS "Authenticated users can update config_alertas" ON public.config_alertas_indicadores;
+DROP POLICY IF EXISTS "config_alertas_insert" ON public.config_alertas_indicadores;
 CREATE POLICY "config_alertas_insert" ON public.config_alertas_indicadores FOR INSERT TO authenticated WITH CHECK (auth.uid() IS NOT NULL);
+DROP POLICY IF EXISTS "config_alertas_update" ON public.config_alertas_indicadores;
 CREATE POLICY "config_alertas_update" ON public.config_alertas_indicadores FOR UPDATE TO authenticated USING (auth.uid() IS NOT NULL);
 
 -- M7: Fix search_path on 3 DB functions

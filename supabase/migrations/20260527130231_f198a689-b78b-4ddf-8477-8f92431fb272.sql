@@ -21,25 +21,31 @@ BEGIN
 END $$;
 
 -- 3. Aplicar Isolamento Robusto por Empresa utilizando a nova função
+DROP POLICY IF EXISTS "empresa_isolation_colaboradores" ON public.colaboradores;
 CREATE POLICY "empresa_isolation_colaboradores" ON public.colaboradores
 FOR ALL TO authenticated USING (empresa_id = public.get_auth_empresa_id());
 
+DROP POLICY IF EXISTS "empresa_isolation_dependentes" ON public.dependentes;
 CREATE POLICY "empresa_isolation_dependentes" ON public.dependentes
 FOR ALL TO authenticated USING (
   EXISTS (SELECT 1 FROM colaboradores WHERE id = colaborador_id AND empresa_id = public.get_auth_empresa_id())
 );
 
+DROP POLICY IF EXISTS "empresa_isolation_ponto" ON public.registros_ponto;
 CREATE POLICY "empresa_isolation_ponto" ON public.registros_ponto
 FOR ALL TO authenticated USING (empresa_id = public.get_auth_empresa_id());
 
+DROP POLICY IF EXISTS "empresa_isolation_ferias" ON public.ferias;
 CREATE POLICY "empresa_isolation_ferias" ON public.ferias
 FOR ALL TO authenticated USING (empresa_id = public.get_auth_empresa_id());
 
+DROP POLICY IF EXISTS "empresa_isolation_folhas" ON public.folhas_pagamento;
 CREATE POLICY "empresa_isolation_folhas" ON public.folhas_pagamento
 FOR ALL TO authenticated USING (empresa_id = public.get_auth_empresa_id());
 
 -- 4. Segurança em Admissão (Token-based)
 ALTER TABLE public.admissao_tokens ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Allow anon access" ON public.admissao_tokens;
+DROP POLICY IF EXISTS "token_access_isolation" ON public.admissao_tokens;
 CREATE POLICY "token_access_isolation" ON public.admissao_tokens
 FOR SELECT TO anon, authenticated USING (data_expiracao > NOW());

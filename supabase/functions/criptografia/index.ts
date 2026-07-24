@@ -90,6 +90,12 @@ serve(async (req: Request): Promise<Response> => {
     }
     const userId = userData.user.id;
 
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+    const adminClient = createClient(SUPABASE_URL, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
+    const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
+    const rl = await checkRateLimit(adminClient, { key: `crypto:${userId}`, limit: 60, windowSec: 60 });
+    if (!rl.allowed) return rateLimitResponse(rl);
+
     const raw = await req.text();
     if (raw.length > MAX_PAYLOAD_BYTES) {
       return createErrorResponse('Payload excede 128KB', 413, 'PAYLOAD_TOO_LARGE');

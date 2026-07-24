@@ -15,6 +15,8 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { canalContabilidadeService, type ThreadCategoria, type ThreadPrioridade, type ThreadStatus } from '@/services/canalContabilidadeService';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
+import { safeHref } from '@/utils/safeUrl';
 import { MessageSquare, Plus, Send, Paperclip, CheckCircle2, Archive, UserPlus, ExternalLink, Inbox } from 'lucide-react';
 import { formatDateTime } from '@/utils/format';
 
@@ -69,7 +71,7 @@ export default function CanalContabilidadePage() {
       setThreadForm({ assunto: '', categoria: 'outro', prioridade: 'normal', contato_id: '', mensagemInicial: '' });
       toast.success('Solicitação enviada à contabilidade');
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar solicitação.')),
   });
 
   const criarContato = useMutation({
@@ -80,7 +82,7 @@ export default function CanalContabilidadePage() {
       setContatoForm({ nome: '', email: '', telefone: '', escritorio: '' });
       toast.success('Contato adicionado');
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar solicitação.')),
   });
 
   const enviarMsg = useMutation({
@@ -97,11 +99,11 @@ export default function CanalContabilidadePage() {
       qc.invalidateQueries({ queryKey: ['contab-threads'] });
       setNovaMensagem(''); setAnexoFile(null);
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar solicitação.')),
   });
 
   const mudarStatus = useMutation({
-    mutationFn: (s: ThreadStatus) => canalContabilidadeService.atualizarStatus(activeThread!, s),
+    mutationFn: (s: ThreadStatus) => canalContabilidadeService.atualizarStatus(empresaAtual!.id, activeThread!, s),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['contab-threads'] });
       toast.success('Status atualizado');
@@ -110,7 +112,7 @@ export default function CanalContabilidadePage() {
 
   const abrirAnexo = async (path: string) => {
     const url = await canalContabilidadeService.getAnexoUrl(path);
-    if (url) window.open(url, '_blank');
+    if (url) window.open(safeHref(url), '_blank', 'noopener');
     else toast.error('Não foi possível abrir anexo');
   };
 

@@ -2,7 +2,7 @@
 -- =============================================
 -- GAP 2: Contatos de Emergência
 -- =============================================
-CREATE TABLE public.contatos_emergencia (
+CREATE TABLE IF NOT EXISTS public.contatos_emergencia (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   colaborador_id UUID NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE,
   nome TEXT NOT NULL,
@@ -16,13 +16,14 @@ CREATE TABLE public.contatos_emergencia (
 );
 
 ALTER TABLE public.contatos_emergencia ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Authenticated users can manage contatos_emergencia" ON public.contatos_emergencia;
 CREATE POLICY "Authenticated users can manage contatos_emergencia"
 ON public.contatos_emergencia FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- =============================================
 -- GAP 3: Histórico Salarial
 -- =============================================
-CREATE TABLE public.historico_salarial (
+CREATE TABLE IF NOT EXISTS public.historico_salarial (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   colaborador_id UUID NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE,
   empresa_id UUID REFERENCES public.empresas(id),
@@ -43,13 +44,14 @@ CREATE TABLE public.historico_salarial (
 );
 
 ALTER TABLE public.historico_salarial ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Authenticated users can manage historico_salarial" ON public.historico_salarial;
 CREATE POLICY "Authenticated users can manage historico_salarial"
 ON public.historico_salarial FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- =============================================
 -- GAP 4: Times/Equipes
 -- =============================================
-CREATE TABLE public.times (
+CREATE TABLE IF NOT EXISTS public.times (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   nome TEXT NOT NULL,
   descricao TEXT,
@@ -62,13 +64,14 @@ CREATE TABLE public.times (
 );
 
 ALTER TABLE public.times ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Authenticated users can manage times" ON public.times;
 CREATE POLICY "Authenticated users can manage times"
 ON public.times FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- =============================================
 -- GAP 5: Campos Customizados
 -- =============================================
-CREATE TABLE public.campos_customizados (
+CREATE TABLE IF NOT EXISTS public.campos_customizados (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   empresa_id UUID REFERENCES public.empresas(id),
   nome TEXT NOT NULL,
@@ -82,7 +85,7 @@ CREATE TABLE public.campos_customizados (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE public.valores_campos_customizados (
+CREATE TABLE IF NOT EXISTS public.valores_campos_customizados (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   campo_customizado_id UUID NOT NULL REFERENCES public.campos_customizados(id) ON DELETE CASCADE,
   colaborador_id UUID NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE,
@@ -94,13 +97,15 @@ CREATE TABLE public.valores_campos_customizados (
 
 ALTER TABLE public.campos_customizados ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.valores_campos_customizados ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth manage campos_customizados" ON public.campos_customizados;
 CREATE POLICY "Auth manage campos_customizados" ON public.campos_customizados FOR ALL TO authenticated USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Auth manage valores_campos" ON public.valores_campos_customizados;
 CREATE POLICY "Auth manage valores_campos" ON public.valores_campos_customizados FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- =============================================
 -- GAP 6: Período de Experiência
 -- =============================================
-CREATE TABLE public.periodos_experiencia (
+CREATE TABLE IF NOT EXISTS public.periodos_experiencia (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   colaborador_id UUID NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE,
   data_inicio DATE NOT NULL,
@@ -115,12 +120,13 @@ CREATE TABLE public.periodos_experiencia (
 );
 
 ALTER TABLE public.periodos_experiencia ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth manage periodos_experiencia" ON public.periodos_experiencia;
 CREATE POLICY "Auth manage periodos_experiencia" ON public.periodos_experiencia FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- =============================================
 -- GAP 7: ASO
 -- =============================================
-CREATE TABLE public.asos (
+CREATE TABLE IF NOT EXISTS public.asos (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   colaborador_id UUID NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE,
   empresa_id UUID REFERENCES public.empresas(id),
@@ -138,12 +144,13 @@ CREATE TABLE public.asos (
 );
 
 ALTER TABLE public.asos ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth manage asos" ON public.asos;
 CREATE POLICY "Auth manage asos" ON public.asos FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- =============================================
 -- GAP 8: Formações Acadêmicas
 -- =============================================
-CREATE TABLE public.formacoes_academicas (
+CREATE TABLE IF NOT EXISTS public.formacoes_academicas (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   colaborador_id UUID NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE,
   tipo_escolaridade TEXT,
@@ -156,12 +163,13 @@ CREATE TABLE public.formacoes_academicas (
 );
 
 ALTER TABLE public.formacoes_academicas ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth manage formacoes" ON public.formacoes_academicas;
 CREATE POLICY "Auth manage formacoes" ON public.formacoes_academicas FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- =============================================
 -- GAP 9: Dados de Estrangeiro
 -- =============================================
-CREATE TABLE public.dados_estrangeiro (
+CREATE TABLE IF NOT EXISTS public.dados_estrangeiro (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   colaborador_id UUID NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE,
   pais_origem TEXT,
@@ -180,12 +188,13 @@ CREATE TABLE public.dados_estrangeiro (
 );
 
 ALTER TABLE public.dados_estrangeiro ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth manage dados_estrangeiro" ON public.dados_estrangeiro;
 CREATE POLICY "Auth manage dados_estrangeiro" ON public.dados_estrangeiro FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- =============================================
 -- GAP 10: Deficiências (PCD)
 -- =============================================
-CREATE TABLE public.deficiencias (
+CREATE TABLE IF NOT EXISTS public.deficiencias (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   colaborador_id UUID NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE,
   tipo TEXT NOT NULL,
@@ -200,12 +209,13 @@ CREATE TABLE public.deficiencias (
 );
 
 ALTER TABLE public.deficiencias ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth manage deficiencias" ON public.deficiencias;
 CREATE POLICY "Auth manage deficiencias" ON public.deficiencias FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- =============================================
 -- GAP 11: Webhooks
 -- =============================================
-CREATE TABLE public.webhooks_config (
+CREATE TABLE IF NOT EXISTS public.webhooks_config (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   empresa_id UUID REFERENCES public.empresas(id),
   url TEXT NOT NULL,
@@ -218,7 +228,7 @@ CREATE TABLE public.webhooks_config (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE public.webhooks_logs (
+CREATE TABLE IF NOT EXISTS public.webhooks_logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   webhook_id UUID REFERENCES public.webhooks_config(id) ON DELETE CASCADE,
   evento TEXT NOT NULL,
@@ -230,13 +240,15 @@ CREATE TABLE public.webhooks_logs (
 
 ALTER TABLE public.webhooks_config ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.webhooks_logs ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth manage webhooks_config" ON public.webhooks_config;
 CREATE POLICY "Auth manage webhooks_config" ON public.webhooks_config FOR ALL TO authenticated USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Auth manage webhooks_logs" ON public.webhooks_logs;
 CREATE POLICY "Auth manage webhooks_logs" ON public.webhooks_logs FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- =============================================
 -- GAP 12: Férias Coletivas
 -- =============================================
-CREATE TABLE public.ferias_coletivas (
+CREATE TABLE IF NOT EXISTS public.ferias_coletivas (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   empresa_id UUID NOT NULL REFERENCES public.empresas(id),
   data_inicio DATE NOT NULL,
@@ -252,12 +264,13 @@ CREATE TABLE public.ferias_coletivas (
 );
 
 ALTER TABLE public.ferias_coletivas ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth manage ferias_coletivas" ON public.ferias_coletivas;
 CREATE POLICY "Auth manage ferias_coletivas" ON public.ferias_coletivas FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- =============================================
 -- GAP 14: Anotações do Colaborador
 -- =============================================
-CREATE TABLE public.anotacoes_colaborador (
+CREATE TABLE IF NOT EXISTS public.anotacoes_colaborador (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   colaborador_id UUID NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE,
   titulo TEXT NOT NULL,
@@ -270,6 +283,7 @@ CREATE TABLE public.anotacoes_colaborador (
 );
 
 ALTER TABLE public.anotacoes_colaborador ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth manage anotacoes" ON public.anotacoes_colaborador;
 CREATE POLICY "Auth manage anotacoes" ON public.anotacoes_colaborador FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- =============================================
@@ -297,7 +311,7 @@ ALTER TABLE public.colaboradores
 -- =============================================
 -- GAP 17: Etnias
 -- =============================================
-CREATE TABLE public.etnias (
+CREATE TABLE IF NOT EXISTS public.etnias (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   nome TEXT NOT NULL UNIQUE,
   codigo_esocial INT,
@@ -305,6 +319,7 @@ CREATE TABLE public.etnias (
 );
 
 ALTER TABLE public.etnias ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Read etnias" ON public.etnias;
 CREATE POLICY "Read etnias" ON public.etnias FOR SELECT TO authenticated USING (true);
 
 INSERT INTO public.etnias (nome, codigo_esocial) VALUES
@@ -313,13 +328,14 @@ INSERT INTO public.etnias (nome, codigo_esocial) VALUES
 -- =============================================
 -- GAP 18: Identidades de Gênero
 -- =============================================
-CREATE TABLE public.identidades_genero (
+CREATE TABLE IF NOT EXISTS public.identidades_genero (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   nome TEXT NOT NULL UNIQUE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 ALTER TABLE public.identidades_genero ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Read identidades_genero" ON public.identidades_genero;
 CREATE POLICY "Read identidades_genero" ON public.identidades_genero FOR SELECT TO authenticated USING (true);
 
 INSERT INTO public.identidades_genero (nome) VALUES
@@ -329,7 +345,7 @@ INSERT INTO public.identidades_genero (nome) VALUES
 -- =============================================
 -- GAP 19: Tipos de Admissão
 -- =============================================
-CREATE TABLE public.tipos_admissao (
+CREATE TABLE IF NOT EXISTS public.tipos_admissao (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   nome TEXT NOT NULL UNIQUE,
   codigo_esocial INT,
@@ -337,6 +353,7 @@ CREATE TABLE public.tipos_admissao (
 );
 
 ALTER TABLE public.tipos_admissao ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Read tipos_admissao" ON public.tipos_admissao;
 CREATE POLICY "Read tipos_admissao" ON public.tipos_admissao FOR SELECT TO authenticated USING (true);
 
 INSERT INTO public.tipos_admissao (nome, codigo_esocial) VALUES
@@ -346,7 +363,7 @@ INSERT INTO public.tipos_admissao (nome, codigo_esocial) VALUES
 -- =============================================
 -- GAP 20: Tipos de Estabilidade
 -- =============================================
-CREATE TABLE public.tipos_estabilidade (
+CREATE TABLE IF NOT EXISTS public.tipos_estabilidade (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   nome TEXT NOT NULL UNIQUE,
   descricao TEXT,
@@ -355,6 +372,7 @@ CREATE TABLE public.tipos_estabilidade (
 );
 
 ALTER TABLE public.tipos_estabilidade ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Read tipos_estabilidade" ON public.tipos_estabilidade;
 CREATE POLICY "Read tipos_estabilidade" ON public.tipos_estabilidade FOR SELECT TO authenticated USING (true);
 
 INSERT INTO public.tipos_estabilidade (nome, descricao, duracao_meses) VALUES

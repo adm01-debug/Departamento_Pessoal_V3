@@ -19,7 +19,7 @@ WITH DATA;
 
 CREATE UNIQUE INDEX ux_mv_status_change_daily
   ON public.mv_status_change_daily (dia, tabela, acao);
-CREATE INDEX ix_mv_status_change_daily_tabela
+CREATE INDEX IF NOT EXISTS ix_mv_status_change_daily_tabela
   ON public.mv_status_change_daily (tabela, dia DESC);
 
 DROP MATERIALIZED VIEW IF EXISTS public.mv_anomalies_hourly CASCADE;
@@ -39,7 +39,7 @@ WITH DATA;
 
 CREATE UNIQUE INDEX ux_mv_anomalies_hourly
   ON public.mv_anomalies_hourly (hora, tipo, severidade);
-CREATE INDEX ix_mv_anomalies_hourly_tipo
+CREATE INDEX IF NOT EXISTS ix_mv_anomalies_hourly_tipo
   ON public.mv_anomalies_hourly (tipo, hora DESC);
 
 CREATE OR REPLACE FUNCTION public.refresh_dashboard_mvs()

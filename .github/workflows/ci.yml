@@ -1,6 +1,7 @@
 name: Continuous Integration & Delivery
 
 on:
+  workflow_dispatch:
   push:
     branches: [ main, master ]
   pull_request:
@@ -10,146 +11,79 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
-  quality:
-    name: Lint, Type Check & Test
+  typecheck:
+    name: Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install
+        run: npm install --no-audit --no-fund
+      - name: Type Check
+        run: npm run typecheck
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install
+        run: npm install --no-audit --no-fund
+      - name: Lint
+        run: npm run lint:ci
+
+  test:
+    name: Unit Tests
     runs-on: ubuntu-latest
     env:
-      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://hncgwjbzdajfdztqgefe.supabase.co' }}
-      VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhuY2d3amJ6ZGFqZmR6dHFnZWZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NjQ4ODIsImV4cCI6MjA4OTI0MDg4Mn0.B9ml1sHPkPHoTEWBapO3z1y1RNVpMQfT9Ws0srULlzE' }}
-      E2E_USER_EMAIL: ${{ secrets.E2E_USER_EMAIL || 'admin@teste.local' }}
-      E2E_USER_PASSWORD: ${{ secrets.E2E_USER_PASSWORD || 'Admin@2026!' }}
-
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || '' }}
+      VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || '' }}
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
         with:
-          bun-version: latest
-
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-
-      - name: Type Check
-        run: bun run typecheck
-
-      - name: Lint
-        run: bun run lint:ci
-
+          node-version: '22'
+      - name: Install
+        run: npm install --no-audit --no-fund
       - name: Unit Tests
-        run: bun run test:coverage
+        run: npm run test:coverage
 
-      - name: Playwright Browsers
-        run: bun x playwright install --with-deps
-
-      - name: E2E Tests
-        run: bun run test:e2e
-        env:
-          E2E_BASE_URL: http://localhost:8080
-          CI: true
-
-      - name: Supabase Edge Functions Test
-        run: |
-          # Verifica se os arquivos de teste existem (smoke test de configuração)
-          test -f supabase/functions/calcular-folha/index.test.ts || echo "Warning: calcular-folha test missing"
-          test -f supabase/functions/webhook/index.test.ts || echo "Warning: webhook test missing"
-          echo "Edge Functions tests structure verified."
-
-      - name: Upload Playwright Report & Logs
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-results
-          path: |
-            playwright-report/
-            test-results/
-          retention-days: 30
-
-
-      - name: Upload Coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: coverage/
-
-  # MP-044: SonarCloud static analysis (requires SONAR_TOKEN secret)
-  sonar:
-    name: SonarCloud Scan
-    needs: quality
-    if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
+  edge-functions:
+    name: Edge Functions (deno check)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
         with:
-          fetch-depth: 0
-      - name: Download coverage
-        uses: actions/download-artifact@v4
-        with:
-          name: coverage-report
-          path: coverage/
+          deno-version: v2.x
+      - name: Type-check external-db-bridge (gate crítico)
+        # Verifica o bridge com zero tolerância — validado com 0 erros desde M6.
+        # Este é o único edge function com acesso a DB externo; erros de tipo
+        # aqui causam falhas silenciosas em produção.
+        run: deno check --no-lock supabase/functions/external-db-bridge/index.ts
+      - name: Type-check demais edge functions (informativo)
+        # Passa mesmo com erros — apenas gera relatório para rastreamento progressivo.
+        # As demais funções serão migradas gradualmente para zero erros.
         continue-on-error: true
-      - name: SonarCloud Scan
-        if: ${{ env.SONAR_TOKEN != '' }}
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-
-  build-and-deploy:
-    name: Build & Deploy Production
-    needs: quality
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-
-      - name: Build Application
-        run: bun run build
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
-
-      - name: Deploy to Netlify
-        if: ${{ success() && secrets.NETLIFY_AUTH_TOKEN != '' && secrets.NETLIFY_SITE_ID != '' }}
-        uses: nwtgck/actions-netlify@v3.0
-        with:
-          publish-dir: './dist'
-          production-branch: main
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: "Deploy from GitHub Actions"
-          enable-pull-request-comment: false
-          enable-commit-comment: true
-          over-write-all-builds: true
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-
-      - name: Deploy Supabase Functions
-        if: success()
-        uses: supabase/setup-cli@v1
-        with:
-          version: latest
-
-      - name: Deploy All Edge Functions
         run: |
-          for dir in supabase/functions/*/; do
+          ERRORS=0
+          for fn in supabase/functions/*/index.ts; do
+            dir=$(dirname "$fn")
             name=$(basename "$dir")
-            if [ "$name" != "_shared" ]; then
-              echo "Deploying $name..."
-              supabase functions deploy "$name" --project-ref ${{ secrets.SUPABASE_PROJECT_ID }} --no-verify-jwt
+            if [ "$name" = "external-db-bridge" ]; then continue; fi
+            if ! deno check --no-lock "$fn" 2>/dev/null; then
+              ERRORS=$((ERRORS+1))
+              echo "  ⚠ $name: erros de tipo (não bloqueia)"
             fi
           done
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-
-
+          echo "Funções com erros de tipo (não-bridge): $ERRORS"

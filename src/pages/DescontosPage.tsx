@@ -7,7 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
-import { 
+import { safeErrorMessage } from '@/utils/safeError';
+import {
   TrendingDown, Landmark, Wallet, Sparkles
 } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
@@ -71,7 +72,7 @@ export default function DescontosPage() {
       qc.invalidateQueries({ queryKey: ['emprestimos-consignados'] });
       toast.success('Empréstimo registrado com sucesso!');
     },
-    onError: (err: any) => toast.error(`Erro: ${err.message}`),
+    onError: (err: any) => toast.error(safeErrorMessage(err, 'Erro ao registrar empréstimo.')),
   });
 
   const criarAdiantamento = useMutation({
@@ -87,7 +88,7 @@ export default function DescontosPage() {
       qc.invalidateQueries({ queryKey: ['adiantamentos-salariais'] });
       toast.success('Solicitação de adiantamento enviada!');
     },
-    onError: (err: any) => toast.error(`Erro: ${err.message}`),
+    onError: (err: any) => toast.error(safeErrorMessage(err, 'Erro ao solicitar adiantamento.')),
   });
 
   const atualizarStatusAdiantamento = useMutation({
@@ -125,8 +126,8 @@ export default function DescontosPage() {
         </div>
 
         <FinancialSummaryCards 
-          emprestimos={emprestimos} 
-          adiantamentos={adiantamentos} 
+          emprestimos={emprestimos as any} 
+          adiantamentos={adiantamentos as any} 
           fmt={fmt} 
         />
 

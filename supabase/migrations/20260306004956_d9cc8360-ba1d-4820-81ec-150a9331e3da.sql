@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS public.esocial_eventos (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.esocial_eventos ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage esocial_eventos" ON public.esocial_eventos;
 CREATE POLICY "Auth users manage esocial_eventos" ON public.esocial_eventos FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- Tabela esocial_lotes
@@ -30,4 +31,5 @@ CREATE TABLE IF NOT EXISTS public.esocial_lotes (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.esocial_lotes ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Auth users manage esocial_lotes" ON public.esocial_lotes;
 CREATE POLICY "Auth users manage esocial_lotes" ON public.esocial_lotes FOR ALL TO authenticated USING (true) WITH CHECK (true);

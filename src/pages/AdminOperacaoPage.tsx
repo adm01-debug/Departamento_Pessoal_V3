@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { useState } from 'react';
 import { UnifiedAuditSection } from '@/components/admin/UnifiedAuditSection';
 
@@ -111,7 +112,7 @@ export default function AdminOperacaoPage() {
       toast.success('Alerta resolvido');
       qc.invalidateQueries({ queryKey: ['admin-op', 'security-alerts'] });
     },
-    onError: (e: any) => toast.error(e?.message ?? 'Falha ao resolver alerta'),
+    onError: (e: any) => toast.error(safeErrorMessage(e, 'Falha ao resolver alerta.')),
   });
 
   const refetchAll = () => {

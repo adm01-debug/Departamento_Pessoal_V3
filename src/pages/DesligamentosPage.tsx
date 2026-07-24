@@ -13,6 +13,8 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { desligamentoService } from '@/services/desligamentoService';
 import { useQueryClient } from '@tanstack/react-query';
+import { useDataAccessLog } from '@/hooks/useDataAccessLog';
+import { useEmpresas } from '@/hooks/useEmpresas';
 import { exportarDesligamentosExcel } from '@/utils/desligamentoExcel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PontoAuditTimeline } from '@/components/ponto/PontoAuditTimeline';
@@ -28,8 +30,11 @@ import {
 import type { LooseRow } from '@/types/db';
 export default function DesligamentosPage() {
   const { desligamentos, isLoading } = useDesligamentos();
+  const { empresaAtual } = useEmpresas();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  useDataAccessLog('desligamentos', empresaAtual?.id, empresaAtual?.id);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
   const [tipoFilter, setTipoFilter] = useState('todos');
@@ -58,7 +63,7 @@ export default function DesligamentosPage() {
     e.stopPropagation();
     if (!confirm('Tem certeza que deseja excluir este desligamento?')) return;
     try {
-      await desligamentoService.excluir(id);
+      await desligamentoService.excluir(id, empresaAtual?.id);
       queryClient.invalidateQueries({ queryKey: ['desligamentos'] });
       toast.success('Desligamento excluído');
     } catch (err) {

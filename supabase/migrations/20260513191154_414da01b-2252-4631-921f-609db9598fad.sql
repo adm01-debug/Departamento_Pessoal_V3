@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS public.auth_gov_br_sessions (
 -- RLS
 ALTER TABLE public.auth_gov_br_sessions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Usuários veem suas próprias sessões Gov.br" ON public.auth_gov_br_sessions;
 CREATE POLICY "Usuários veem suas próprias sessões Gov.br"
 ON public.auth_gov_br_sessions FOR SELECT
 USING (auth.uid() = user_id);

@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { edgeFunctionsService } from '@/services/edgeFunctionsService';
 import { Receipt, DollarSign, Building2, Plus, FileText, Shield, Loader2, Zap, CloudSync, Calculator, Key } from 'lucide-react';
 import { ObrigacoesKPIs } from '@/components/obrigacoes/ObrigacoesKPIs';
@@ -65,7 +66,7 @@ export default function ObrigacoesFiscaisPage() {
 
   const marcarPaga = useMutation({
     mutationFn: async ({ id, tabela }: { id: string; tabela: string }) => {
-      const { error } = await supabase.from(tabela as any).update({ status: 'paga', data_pagamento: new Date().toISOString() } as any).eq('id', id);
+      const { error } = await supabase.from(tabela as any).update({ status: 'paga', data_pagamento: new Date().toISOString() } as any).eq('id', id).eq('empresa_id', empresaAtual!.id);
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['guias-fgts'] }); qc.invalidateQueries({ queryKey: ['guias-inss'] }); toast.success('Guia marcada como paga!'); },
@@ -79,7 +80,7 @@ export default function ObrigacoesFiscaisPage() {
       await edgeFunctionsService.gerarGuias({ empresaId: empresaAtual.id, competencia: `${ano}-${mes}`, tipo: 'todos' });
       qc.invalidateQueries({ queryKey: ['guias-fgts'] }); qc.invalidateQueries({ queryKey: ['guias-inss'] });
       toast.success('Guias geradas automaticamente via servidor!');
-    } catch (err: any) { toast.error(`Erro: ${err.message}`); } finally { setGerandoServidor(false); }
+    } catch (err: any) { toast.error(safeErrorMessage(err, 'Erro ao gerar guias.')); } finally { setGerandoServidor(false); }
   };
 
   const totalFgts = guiasFgts.reduce((acc: number, g: any) => acc + (g.valor || 0), 0);

@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
 import { edgeFunctionsService } from '@/services/edgeFunctionsService';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
@@ -25,7 +26,7 @@ export function SystemHealthTab() {
       setHealthData(result);
       toast.success(`Sistema: ${(result as Record<string, unknown>).status}`);
     } catch (err: any) {
-      toast.error(`Erro: ${err.message}`);
+      toast.error(safeErrorMessage(err, 'Erro na operação.'));
     } finally {
       setLoading(null);
     }
@@ -38,7 +39,7 @@ export function SystemHealthTab() {
       setCleanupResult(result);
       toast.success(`${(result as Record<string, unknown>).total_cleaned} registros limpos!`);
     } catch (err: any) {
-      toast.error(`Erro: ${err.message}`);
+      toast.error(safeErrorMessage(err, 'Erro na operação.'));
     } finally {
       setLoading(null);
     }
@@ -52,7 +53,7 @@ export function SystemHealthTab() {
       setBackupId(crypto.randomUUID().slice(0, 8).toUpperCase());
       toast.success((result as Record<string, unknown>).message as string);
     } catch (err: any) {
-      toast.error(`Erro: ${err.message}`);
+      toast.error(safeErrorMessage(err, 'Erro na operação.'));
     } finally {
       setLoading(null);
     }
@@ -64,7 +65,7 @@ export function SystemHealthTab() {
       await edgeFunctionsService.dispararAlertasDP();
       toast.success('Alertas de DP disparados com sucesso!');
     } catch (err: any) {
-      toast.error(`Erro: ${err.message}`);
+      toast.error(safeErrorMessage(err, 'Erro na operação.'));
     } finally {
       setLoading(null);
     }
@@ -76,7 +77,7 @@ export function SystemHealthTab() {
       const result = await edgeFunctionsService.processarAgendamentos();
       toast.success(`${(result as Record<string, unknown>).processados || 0} agendamentos processados!`);
     } catch (err: any) {
-      toast.error(`Erro: ${err.message}`);
+      toast.error(safeErrorMessage(err, 'Erro na operação.'));
     } finally {
       setLoading(null);
     }
@@ -88,7 +89,7 @@ export function SystemHealthTab() {
       await edgeFunctionsService.sincronizarBitrix({ action: 'sync_all' });
       toast.success('Sincronização Bitrix24 iniciada!');
     } catch (err: any) {
-      toast.error(`Erro: ${err.message}`);
+      toast.error(safeErrorMessage(err, 'Erro na operação.'));
     } finally {
       setLoading(null);
     }
@@ -100,7 +101,7 @@ export function SystemHealthTab() {
       await edgeFunctionsService.cache({ action: 'invalidate' });
       toast.success('Cache do sistema limpo com sucesso!');
     } catch (err: any) {
-      toast.error(`Erro: ${err.message}`);
+      toast.error(safeErrorMessage(err, 'Erro na operação.'));
     } finally {
       setLoading(null);
     }

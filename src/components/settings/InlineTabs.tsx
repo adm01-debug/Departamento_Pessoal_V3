@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { Bell, Plug, Plus, RefreshCw, Save, Settings, Trash2, Webhook } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { edgeFunctionsService } from '@/services/edgeFunctionsService';
+import { safeErrorMessage } from '@/utils/safeError';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -313,7 +314,7 @@ export function IntegracoesTab() {
                   try {
                     await edgeFunctionsService.sincronizarBitrix({ action: 'sync_all' });
                     toast.success('Sincronização Bitrix24 iniciada!');
-                  } catch (err: any) { toast.error(err.message); }
+                  } catch (err: any) { toast.error(safeErrorMessage(err, 'Erro na sincronização.')); }
                 }}
               >
                 <RefreshCw className="h-3.5 w-3.5" /> Sincronizar Agora

@@ -26,6 +26,7 @@ GRANT ALL ON public.aej_geracoes TO service_role;
 
 ALTER TABLE public.aej_geracoes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "aej_geracoes_select_membros" ON public.aej_geracoes;
 CREATE POLICY "aej_geracoes_select_membros"
   ON public.aej_geracoes FOR SELECT TO authenticated
   USING (
@@ -36,6 +37,7 @@ CREATE POLICY "aej_geracoes_select_membros"
     )
   );
 
+DROP POLICY IF EXISTS "aej_geracoes_insert_membros" ON public.aej_geracoes;
 CREATE POLICY "aej_geracoes_insert_membros"
   ON public.aej_geracoes FOR INSERT TO authenticated
   WITH CHECK (

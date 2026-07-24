@@ -18,6 +18,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { beneficiariosPlanoService } from '@/services/tabelasComplementaresService';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { Plus, Heart, Shield, Trash2, Users } from 'lucide-react';
 
 // ========== Beneficiários de um Plano ==========
@@ -39,7 +40,7 @@ function BeneficiariosPlanoSection({ planoId }: { planoId: string }) {
   });
 
   const excluir = useMutation({
-    mutationFn: (id: string) => beneficiariosPlanoService.excluir(id),
+    mutationFn: (id: string) => beneficiariosPlanoService.excluir(planoId, id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['beneficiarios-plano', planoId] }); toast.success('Beneficiário excluído do plano'); },
   });
 
@@ -131,7 +132,7 @@ export default function PlanosSaudePage() {
       return data;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['planos-saude'] }); setOpenPlano(false); toast.success('Plano cadastrado!'); },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar plano de saúde.')),
   });
 
   const criarSeguro = useMutation({
@@ -141,7 +142,7 @@ export default function PlanosSaudePage() {
       return data;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['seguros-vida'] }); setOpenSeguro(false); toast.success('Seguro cadastrado!'); },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar plano de saúde.')),
   });
 
   const isLoading = l1 || l2;

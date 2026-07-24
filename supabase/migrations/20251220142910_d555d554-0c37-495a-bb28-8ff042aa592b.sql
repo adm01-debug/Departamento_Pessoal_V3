@@ -1,5 +1,5 @@
 -- Tabela para documentos que precisam de assinatura digital
-CREATE TABLE public.documentos_assinatura (
+CREATE TABLE IF NOT EXISTS public.documentos_assinatura (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   colaborador_id UUID NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE,
   tipo_documento TEXT NOT NULL,
@@ -20,22 +20,25 @@ CREATE TABLE public.documentos_assinatura (
 ALTER TABLE public.documentos_assinatura ENABLE ROW LEVEL SECURITY;
 
 -- Policies
+DROP POLICY IF EXISTS "Authenticated users can view documentos_assinatura" ON public.documentos_assinatura;
 CREATE POLICY "Authenticated users can view documentos_assinatura"
 ON public.documentos_assinatura
 FOR SELECT
 USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Authenticated users can insert documentos_assinatura" ON public.documentos_assinatura;
 CREATE POLICY "Authenticated users can insert documentos_assinatura"
 ON public.documentos_assinatura
 FOR INSERT
 WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Authenticated users can update documentos_assinatura" ON public.documentos_assinatura;
 CREATE POLICY "Authenticated users can update documentos_assinatura"
 ON public.documentos_assinatura
 FOR UPDATE
 USING (auth.role() = 'authenticated');
 
 -- Índices
-CREATE INDEX idx_documentos_assinatura_colaborador ON public.documentos_assinatura(colaborador_id);
-CREATE INDEX idx_documentos_assinatura_status ON public.documentos_assinatura(status);
-CREATE INDEX idx_documentos_assinatura_created ON public.documentos_assinatura(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_documentos_assinatura_colaborador ON public.documentos_assinatura(colaborador_id);
+CREATE INDEX IF NOT EXISTS idx_documentos_assinatura_status ON public.documentos_assinatura(status);
+CREATE INDEX IF NOT EXISTS idx_documentos_assinatura_created ON public.documentos_assinatura(created_at DESC);

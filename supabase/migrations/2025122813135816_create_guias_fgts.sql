@@ -21,4 +21,5 @@ CREATE INDEX IF NOT EXISTS idx_guias_fgts_empresa ON public.guias_fgts(empresa_i
 CREATE INDEX IF NOT EXISTS idx_guias_fgts_colaborador ON public.guias_fgts(colaborador_id);
 ALTER TABLE public.guias_fgts ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "guias_fgts_all" ON public.guias_fgts;
 CREATE POLICY "guias_fgts_all" ON public.guias_fgts FOR ALL USING (auth.uid() IS NOT NULL);

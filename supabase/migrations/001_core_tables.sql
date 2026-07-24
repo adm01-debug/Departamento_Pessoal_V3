@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS empresas (
   esocial_ambiente VARCHAR(20) DEFAULT 'producao_restrita',
   esocial_processo VARCHAR(20),
   logo_url TEXT,
+  ativa BOOLEAN DEFAULT true,
   status VARCHAR(20) DEFAULT 'ativa',
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),

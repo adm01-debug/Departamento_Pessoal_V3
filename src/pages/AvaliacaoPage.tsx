@@ -39,12 +39,12 @@ export default function AvaliacaoPage() {
   const [tab, setTab] = useState('ciclos');
 
   // === Queries ===
-  const { data: ciclos = [], isLoading: loadCiclos } = useQuery({ queryKey: ['ciclos_avaliacao', empresaAtual?.id], queryFn: () => avaliacaoService.listarCiclos(empresaAtual?.id), enabled: !!empresaAtual?.id });
-  const { data: metas = [], isLoading: loadMetas } = useQuery({ queryKey: ['metas_okrs', empresaAtual?.id], queryFn: () => avaliacaoService.listarMetas(empresaAtual?.id), enabled: !!empresaAtual?.id });
-  const { data: feedbacks = [], isLoading: loadFeedbacks } = useQuery({ queryKey: ['feedbacks_360', empresaAtual?.id], queryFn: () => avaliacaoService.listarFeedbacks(empresaAtual?.id), enabled: !!empresaAtual?.id });
-  const { data: pdis = [], isLoading: loadPDIs } = useQuery({ queryKey: ['pdis', empresaAtual?.id], queryFn: () => avaliacaoService.listarPDIs(empresaAtual?.id), enabled: !!empresaAtual?.id });
-  const { data: competencias = [], isLoading: loadComp } = useQuery({ queryKey: ['competencias', empresaAtual?.id], queryFn: () => avaliacaoService.listarCompetencias(empresaAtual?.id), enabled: !!empresaAtual?.id });
-  const { data: colaboradores = [] } = useQuery({ queryKey: ['colaboradores', empresaAtual?.id], queryFn: () => colaboradorService.list(empresaAtual?.id), enabled: !!empresaAtual?.id });
+  const { data: ciclos = [], isLoading: loadCiclos } = useQuery({ queryKey: ['ciclos_avaliacao', empresaAtual?.id], queryFn: () => avaliacaoService.listarCiclos(empresaAtual!.id), enabled: !!empresaAtual?.id });
+  const { data: metas = [], isLoading: loadMetas } = useQuery({ queryKey: ['metas_okrs', empresaAtual?.id], queryFn: () => avaliacaoService.listarMetas(empresaAtual!.id), enabled: !!empresaAtual?.id });
+  const { data: feedbacks = [], isLoading: loadFeedbacks } = useQuery({ queryKey: ['feedbacks_360', empresaAtual?.id], queryFn: () => avaliacaoService.listarFeedbacks(empresaAtual!.id), enabled: !!empresaAtual?.id });
+  const { data: pdis = [], isLoading: loadPDIs } = useQuery({ queryKey: ['pdis', empresaAtual?.id], queryFn: () => avaliacaoService.listarPDIs(empresaAtual!.id), enabled: !!empresaAtual?.id });
+  const { data: competencias = [], isLoading: loadComp } = useQuery({ queryKey: ['competencias', empresaAtual?.id], queryFn: () => avaliacaoService.listarCompetencias(empresaAtual!.id), enabled: !!empresaAtual?.id });
+  const { data: colaboradores = [] } = useQuery({ queryKey: ['colaboradores', empresaAtual?.id], queryFn: () => colaboradorService.list(empresaAtual!.id), enabled: !!empresaAtual?.id });
 
   // === Mutations ===
   const criarCiclo = useMutation({

@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { intervaloService } from '@/services/intervaloService';
 import { useEmpresas } from './useEmpresas';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 
 export function useConfiguracoesIntervalo() {
   const { empresaAtual } = useEmpresas();
@@ -10,7 +11,7 @@ export function useConfiguracoesIntervalo() {
 
   const query = useQuery({
     queryKey: ['configuracoes_intervalo', empresaId],
-    queryFn: () => intervaloService.listar(empresaId),
+    queryFn: () => intervaloService.listar(empresaId!),
     enabled: !!empresaId,
   });
 
@@ -20,25 +21,25 @@ export function useConfiguracoesIntervalo() {
       queryClient.invalidateQueries({ queryKey: ['configuracoes_intervalo'] });
       toast.success('Configuração de intervalo criada');
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(safeErrorMessage(err, 'Erro na configuração de intervalo.')),
   });
 
   const atualizarMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => intervaloService.atualizar(id, data),
+    mutationFn: ({ id, data }: { id: string; data: any }) => intervaloService.atualizar(empresaId!, id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['configuracoes_intervalo'] });
       toast.success('Configuração atualizada');
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(safeErrorMessage(err, 'Erro na configuração de intervalo.')),
   });
 
   const excluirMutation = useMutation({
-    mutationFn: (id: string) => intervaloService.excluir(id),
+    mutationFn: (id: string) => intervaloService.excluir(empresaId!, id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['configuracoes_intervalo'] });
       toast.success('Configuração excluída');
     },
-    onError: (err: Error) => toast.error(err.message),
+    onError: (err: Error) => toast.error(safeErrorMessage(err, 'Erro na configuração de intervalo.')),
   });
 
   return {

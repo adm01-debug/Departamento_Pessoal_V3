@@ -1,5 +1,5 @@
 -- Tabela de registros de ponto
-CREATE TABLE public.registros_ponto (
+CREATE TABLE IF NOT EXISTS public.registros_ponto (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   colaborador_id UUID NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE,
   data DATE NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE public.registros_ponto (
 );
 
 -- Tabela de banco de horas
-CREATE TABLE public.banco_horas (
+CREATE TABLE IF NOT EXISTS public.banco_horas (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   colaborador_id UUID NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE,
   data DATE NOT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE public.banco_horas (
 );
 
 -- Tabela de ajustes de ponto
-CREATE TABLE public.ajustes_ponto (
+CREATE TABLE IF NOT EXISTS public.ajustes_ponto (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   registro_ponto_id UUID NOT NULL REFERENCES public.registros_ponto(id) ON DELETE CASCADE,
   colaborador_id UUID NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE,
@@ -56,7 +56,7 @@ CREATE TABLE public.ajustes_ponto (
 );
 
 -- Tabela de períodos de ponto
-CREATE TABLE public.periodos_ponto (
+CREATE TABLE IF NOT EXISTS public.periodos_ponto (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   competencia VARCHAR(7) NOT NULL,
   data_inicio DATE NOT NULL,
@@ -68,7 +68,7 @@ CREATE TABLE public.periodos_ponto (
 );
 
 -- Tabela de feriados
-CREATE TABLE public.feriados (
+CREATE TABLE IF NOT EXISTS public.feriados (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   data DATE NOT NULL,
   descricao VARCHAR(100) NOT NULL,
@@ -86,14 +86,21 @@ ALTER TABLE public.periodos_ponto ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.feriados ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies
+DROP POLICY IF EXISTS "Authenticated users can manage registros_ponto" ON public.registros_ponto;
 CREATE POLICY "Authenticated users can manage registros_ponto" ON public.registros_ponto FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Authenticated users can manage banco_horas" ON public.banco_horas;
 CREATE POLICY "Authenticated users can manage banco_horas" ON public.banco_horas FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Authenticated users can manage ajustes_ponto" ON public.ajustes_ponto;
 CREATE POLICY "Authenticated users can manage ajustes_ponto" ON public.ajustes_ponto FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Authenticated users can manage periodos_ponto" ON public.periodos_ponto;
 CREATE POLICY "Authenticated users can manage periodos_ponto" ON public.periodos_ponto FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Authenticated users can view feriados" ON public.feriados;
 CREATE POLICY "Authenticated users can view feriados" ON public.feriados FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Authenticated users can manage feriados" ON public.feriados;
 CREATE POLICY "Authenticated users can manage feriados" ON public.feriados FOR ALL USING (true) WITH CHECK (true);
 
 -- Trigger para atualizar updated_at
+DROP TRIGGER IF EXISTS update_registros_ponto_updated_at ON public.registros_ponto;
 CREATE TRIGGER update_registros_ponto_updated_at
   BEFORE UPDATE ON public.registros_ponto
   FOR EACH ROW

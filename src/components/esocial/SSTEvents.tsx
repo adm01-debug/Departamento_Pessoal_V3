@@ -1,6 +1,7 @@
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { User, Calendar, ShieldCheck, Microscope, Thermometer, Wind, AlertCircle } from 'lucide-react';
+import { maskCpfDisplay } from '@/utils/piiMask';
 
 export function S2220ASO({ dados }: { dados: any }) {
   return (
@@ -11,7 +12,7 @@ export function S2220ASO({ dados }: { dados: any }) {
             <User className="h-4 w-4 text-primary" />
             <div>
               <Label className="text-[9px] uppercase text-muted-foreground font-bold">Trabalhador</Label>
-              <p className="text-xs font-bold">CPF: {dados.cpfTrab}</p>
+              <p className="text-xs font-bold">CPF: {maskCpfDisplay(dados.cpfTrab)}</p>
             </div>
           </CardContent>
         </Card>
@@ -64,7 +65,7 @@ export function S2240AgentesNocivos({ dados }: { dados: any }) {
           <User className="h-4 w-4 text-primary" />
           <div>
             <Label className="text-[9px] uppercase text-muted-foreground font-bold">Trabalhador</Label>
-            <p className="text-xs font-bold">CPF: {dados.cpfTrab}</p>
+            <p className="text-xs font-bold">CPF: {maskCpfDisplay(dados.cpfTrab)}</p>
           </div>
         </CardContent>
       </Card>

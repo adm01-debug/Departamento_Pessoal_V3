@@ -32,6 +32,7 @@ CREATE INDEX IF NOT EXISTS idx_recibos_rescisao_status ON public.recibos_rescisa
 -- RLS
 ALTER TABLE public.recibos_rescisao ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "recibos_rescisao_all" ON public.recibos_rescisao;
 CREATE POLICY "recibos_rescisao_all" ON public.recibos_rescisao
   USING (auth.uid() IS NOT NULL)
   WITH CHECK (auth.uid() IS NOT NULL);

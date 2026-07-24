@@ -8,6 +8,7 @@ ALTER TABLE public.cnab_itens ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.auditoria_logs ENABLE ROW LEVEL SECURITY;
 
 -- Políticas para CNAB Remessas
+DROP POLICY IF EXISTS "Users can see their company remessas" ON public.cnab_remessas;
 CREATE POLICY "Users can see their company remessas" ON public.cnab_remessas
 FOR SELECT USING (
   empresa_id IN (
@@ -16,6 +17,7 @@ FOR SELECT USING (
   )
 );
 
+DROP POLICY IF EXISTS "Users can insert their company remessas" ON public.cnab_remessas;
 CREATE POLICY "Users can insert their company remessas" ON public.cnab_remessas
 FOR INSERT WITH CHECK (
   empresa_id IN (
@@ -25,12 +27,14 @@ FOR INSERT WITH CHECK (
 );
 
 -- Políticas para CNAB Itens
+DROP POLICY IF EXISTS "Users can see their company cnab items" ON public.cnab_itens;
 CREATE POLICY "Users can see their company cnab items" ON public.cnab_itens
 FOR SELECT USING (
   remessa_id IN (SELECT id FROM public.cnab_remessas)
 );
 
 -- Políticas para Auditoria (Admin apenas via roles)
+DROP POLICY IF EXISTS "Admins can view audit logs" ON public.auditoria_logs;
 CREATE POLICY "Admins can view audit logs" ON public.auditoria_logs
 FOR SELECT USING (
   EXISTS (

@@ -31,12 +31,14 @@ const FAIXAS_IRRF = [
 ];
 
 const TETO_INSS = 8157.41;
+const DEDUCAO_SIMPLIFICADA_IRRF = 564.80; // Lei 14.663/2023
+const DEDUCAO_DEPENDENTE_IRRF = 189.59;
 const CHUNK_SIZE = 500;
 const MAX_COLABORADORES = 50_000;
 
 const round2 = (n: number): number => Math.round((n + Number.EPSILON) * 100) / 100;
-
-
+// IN RFB 2110/2022: contribuições previdenciárias e IR truncam centavos
+const trunc2 = (n: number): number => Math.trunc(n * 100) / 100;
 
 
 
@@ -52,13 +54,18 @@ function calcINSS(salario: number): number {
     desc += f * FAIXAS_INSS[i].aliquota;
     rest -= f;
   }
-  return round2(desc);
+  return trunc2(desc);
 }
 
-function calcIRRF(base: number): number {
-  if (!Number.isFinite(base) || base <= 0) return 0;
+function calcIRRF(bruto: number, dependentes = 0): number {
+  if (!Number.isFinite(bruto) || bruto <= 0) return 0;
+  const inss = calcINSS(bruto);
+  const baseLegal = bruto - inss - dependentes * DEDUCAO_DEPENDENTE_IRRF;
+  const baseSimplificada = bruto - DEDUCAO_SIMPLIFICADA_IRRF;
+  const base = Math.max(0, Math.min(baseLegal, baseSimplificada));
+  if (base <= 0) return 0;
   for (const f of FAIXAS_IRRF) {
-    if (base <= f.limite) return Math.max(0, round2(base * f.aliquota - f.deducao));
+    if (base <= f.limite) return Math.max(0, trunc2(base * f.aliquota - f.deducao));
   }
   return 0;
 }
@@ -220,18 +227,33 @@ Deno.serve(async (req) => {
     for (let offset = 0; offset < totalColabs; offset += CHUNK_SIZE) {
       const { data: colabs, error: e } = await admin
         .from('colaboradores')
-        .select('id, nome_completo, salario_base, cargo, departamento')
+        .select('id, nome_completo, salario_base, cargo, departamento, dependentes_irrf')
         .eq('empresa_id', empresa_id)
         .eq('status', 'ativo')
         .range(offset, offset + CHUNK_SIZE - 1);
       if (e) throw e;
       if (!colabs?.length) break;
 
+      // Dependentes para fins de IRRF (public.dependentes.ir_dependente) — uma
+      // única query em lote por chunk, evita N+1 por colaborador.
+      const colabIds = colabs.map((c) => c.id);
+      const { data: depsRows } = await admin
+        .from('dependentes')
+        .select('colaborador_id')
+        .in('colaborador_id', colabIds)
+        .eq('ir_dependente', true);
+      const dependentesPorColaborador = new Map<string, number>();
+      for (const d of depsRows ?? []) {
+        const key = d.colaborador_id as string;
+        dependentesPorColaborador.set(key, (dependentesPorColaborador.get(key) ?? 0) + 1);
+      }
+
       for (const c of colabs) {
         const bruto = Number(c.salario_base) || 0;
         const inss = calcINSS(bruto);
-        const irrf = calcIRRF(bruto - inss);
-        const fgts = round2(bruto * 0.08);
+        const dependentes = dependentesPorColaborador.get(c.id as string) ?? 0;
+        const irrf = calcIRRF(bruto, dependentes);
+        const fgts = trunc2(bruto * 0.08);
         const descontos = round2(inss + irrf);
         const liquido = round2(bruto - descontos);
 

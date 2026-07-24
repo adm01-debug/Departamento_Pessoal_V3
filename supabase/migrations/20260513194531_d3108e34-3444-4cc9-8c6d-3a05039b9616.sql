@@ -36,7 +36,9 @@ ALTER TABLE public.sst_cat ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.sst_exposicao_riscos ENABLE ROW LEVEL SECURITY;
 
 -- Políticas de Acesso
+DROP POLICY IF EXISTS "Gestores de RH podem ver CATs" ON public.sst_cat;
 CREATE POLICY "Gestores de RH podem ver CATs" ON public.sst_cat FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Gestores de RH podem ver Riscos" ON public.sst_exposicao_riscos;
 CREATE POLICY "Gestores de RH podem ver Riscos" ON public.sst_exposicao_riscos FOR SELECT USING (true);
 
 -- Trigger para log de auditoria em alterações de SST
@@ -49,10 +51,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_auditoria_sst_cat ON public.sst_cat;
 CREATE TRIGGER trigger_auditoria_sst_cat
 AFTER INSERT OR UPDATE ON public.sst_cat
 FOR EACH ROW EXECUTE FUNCTION public.registrar_auditoria_sst();
 
+DROP TRIGGER IF EXISTS trigger_auditoria_sst_riscos ON public.sst_exposicao_riscos;
 CREATE TRIGGER trigger_auditoria_sst_riscos
 AFTER INSERT OR UPDATE ON public.sst_exposicao_riscos
 FOR EACH ROW EXECUTE FUNCTION public.registrar_auditoria_sst();

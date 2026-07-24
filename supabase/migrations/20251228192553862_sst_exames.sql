@@ -12,12 +12,15 @@ CREATE TABLE IF NOT EXISTS sst_exames (
 -- Add RLS Policies
 ALTER TABLE sst_exames ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "sst_exames_select" ON public.sst_exames;
 CREATE POLICY "sst_exames_select" ON sst_exames
   FOR SELECT USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "sst_exames_insert" ON public.sst_exames;
 CREATE POLICY "sst_exames_insert" ON sst_exames
   FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "sst_exames_update" ON public.sst_exames;
 CREATE POLICY "sst_exames_update" ON sst_exames
   FOR UPDATE USING (auth.role() = 'authenticated');
 
@@ -33,6 +36,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_sst_exames_updated_at ON public.sst_exames;
 CREATE TRIGGER trigger_sst_exames_updated_at
   BEFORE UPDATE ON sst_exames
   FOR EACH ROW

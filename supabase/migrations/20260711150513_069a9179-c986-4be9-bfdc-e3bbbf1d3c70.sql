@@ -18,6 +18,7 @@ GRANT ALL ON public.login_lockouts TO service_role;
 ALTER TABLE public.login_lockouts ENABLE ROW LEVEL SECURITY;
 
 -- Acesso à tabela é feito exclusivamente via SECURITY DEFINER RPCs.
+DROP POLICY IF EXISTS "login_lockouts_service_role_all" ON public.login_lockouts;
 CREATE POLICY "login_lockouts_service_role_all"
   ON public.login_lockouts FOR ALL TO service_role
   USING (true) WITH CHECK (true);

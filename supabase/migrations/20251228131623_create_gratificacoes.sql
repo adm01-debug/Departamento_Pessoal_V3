@@ -29,15 +29,19 @@ CREATE INDEX IF NOT EXISTS idx_gratificacoes_created ON public.gratificacoes(cre
 -- RLS
 ALTER TABLE public.gratificacoes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "gratificacoes_select" ON public.gratificacoes;
 CREATE POLICY "gratificacoes_select" ON public.gratificacoes
   FOR SELECT USING (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "gratificacoes_insert" ON public.gratificacoes;
 CREATE POLICY "gratificacoes_insert" ON public.gratificacoes
   FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "gratificacoes_update" ON public.gratificacoes;
 CREATE POLICY "gratificacoes_update" ON public.gratificacoes
   FOR UPDATE USING (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "gratificacoes_delete" ON public.gratificacoes;
 CREATE POLICY "gratificacoes_delete" ON public.gratificacoes
   FOR DELETE USING (auth.uid() IS NOT NULL);
 
@@ -50,6 +54,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_gratificacoes_updated_at ON public.gratificacoes;
 CREATE TRIGGER trigger_gratificacoes_updated_at
   BEFORE UPDATE ON public.gratificacoes
   FOR EACH ROW EXECUTE FUNCTION update_gratificacoes_updated_at();

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import DOMPurify from 'dompurify';
+import { sanitizeContractHtml } from '@/utils/sanitizeHtml';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEmpresas } from '@/hooks/useEmpresas';
@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { CheckCircle2, FileText, Loader2, ShieldCheck } from 'lucide-react';
 
 type DocumentoVigente = {
@@ -84,7 +85,7 @@ export function PortalRegimentoCard() {
         setAssinatura(null);
       }
     } catch (err: any) {
-      toast.error('Falha ao carregar regimento', { description: err?.message });
+      toast.error(safeErrorMessage(err, 'Falha ao carregar regimento.'));
     } finally {
       setLoading(false);
     }
@@ -97,7 +98,7 @@ export function PortalRegimentoCard() {
   }, [empresaId, user?.id]);
 
   const conteudoSeguro = useMemo(
-    () => (documento ? DOMPurify.sanitize(documento.conteudo_html || '') : ''),
+    () => (documento ? sanitizeContractHtml(documento.conteudo_html || '') : ''),
     [documento],
   );
 
@@ -117,7 +118,7 @@ export function PortalRegimentoCard() {
       toast.success('Regimento assinado com sucesso.');
       await carregar();
     } catch (err: any) {
-      toast.error('Erro ao assinar regimento', { description: err?.message });
+      toast.error(safeErrorMessage(err, 'Erro ao assinar regimento.'));
     } finally {
       setSaving(false);
     }

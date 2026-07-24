@@ -86,7 +86,7 @@ export function RelatoriosAnalyticsTab({ analytics }: RelatoriosAnalyticsTabProp
           <CardContent>
             <ResponsiveContainer width="100%" height={220}>
               <RePie>
-                <Pie data={analytics?.salarioDistribuicao || []} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
+                <Pie data={analytics?.salarioDistribuicao || []} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={(p: any) => `${p.name} ${((p.percent ?? 0) * 100).toFixed(0)}%`}>
                   {(analytics?.salarioDistribuicao || []).map((_: any, i: number) => (
                     <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
                   ))}

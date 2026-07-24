@@ -1,6 +1,7 @@
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { User, Calendar, MapPin, GraduationCap, Heart, Hash } from 'lucide-react';
+import { maskCpfDisplay } from '@/utils/piiMask';
 
 export function S2205AlteracaoCadastral({ dados }: { dados: any }) {
   return (
@@ -13,7 +14,7 @@ export function S2205AlteracaoCadastral({ dados }: { dados: any }) {
               <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">Trabalhador</Label>
               <p className="font-display font-bold text-sm">{dados.nmTrab || '-'}</p>
               <p className="text-[10px] text-muted-foreground flex items-center gap-1 mt-1">
-                <Hash className="h-3 w-3" /> CPF: {dados.cpfTrab || '-'}
+                <Hash className="h-3 w-3" /> CPF: {maskCpfDisplay(dados.cpfTrab) || '-'}
               </p>
             </div>
           </CardContent>

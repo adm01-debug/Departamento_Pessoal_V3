@@ -10,6 +10,7 @@ import { Upload, FileSpreadsheet, CheckCircle, AlertTriangle, XCircle, Download,
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { useImportacaoColaboradores } from '@/hooks/useImportacaoColaboradores';
 import { downloadTemplate as downloadImportTemplate } from '@/utils/importacao/template';
 
@@ -47,7 +48,7 @@ export default function ImportacaoPage() {
       await downloadImportTemplate();
       toast.success('Modelo baixado!');
     } catch (err: any) {
-      toast.error('Erro ao gerar modelo: ' + (err?.message ?? 'desconhecido'));
+      toast.error(safeErrorMessage(err, 'Erro ao gerar modelo de importação.'));
     }
   };
 

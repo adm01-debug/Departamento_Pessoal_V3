@@ -12,6 +12,7 @@ DROP POLICY IF EXISTS "Usuários podem visualizar rubricas da empresa" ON public
 DROP POLICY IF EXISTS "Admins podem gerenciar rubricas" ON public.rubricas_folha;
 
 -- Políticas de acesso por empresa (incluindo rubricas globais onde empresa_id é nulo)
+DROP POLICY IF EXISTS "Visualização por empresa ou global" ON public.rubricas_folha;
 CREATE POLICY "Visualização por empresa ou global" 
 ON public.rubricas_folha FOR SELECT 
 TO authenticated
@@ -21,6 +22,7 @@ USING (
 );
 
 -- Somente administradores da empresa podem gerenciar rubricas
+DROP POLICY IF EXISTS "Gerenciamento por admin" ON public.rubricas_folha;
 CREATE POLICY "Gerenciamento por admin" 
 ON public.rubricas_folha FOR ALL 
 TO authenticated

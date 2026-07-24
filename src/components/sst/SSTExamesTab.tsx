@@ -26,7 +26,7 @@ export function SSTExamesTab({ asos, porTipo, porDepartamento, isLoading }: SSTE
           <CardContent>
             <ResponsiveContainer width="100%" height={200}>
               <PieChart>
-                <Pie data={porTipo} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
+                <Pie data={porTipo} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} label={(p: any) => `${p.name} ${((p.percent ?? 0) * 100).toFixed(0)}%`}>
                   {porTipo.map((_: any, i: number) => <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />)}
                 </Pie>
                 <Tooltip />

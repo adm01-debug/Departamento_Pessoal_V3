@@ -1,10 +1,13 @@
 import { supabase } from '@/integrations/supabase/client';
 
 export const ajustesPontoService = {
-  listar: async (empresaId?: string) => {
-    let q = supabase.from('ajustes_ponto').select('*, colaborador:colaboradores(nome_completo)').order('created_at', { ascending: false });
-    if (empresaId) q = q.in('colaborador_id', supabase.from('colaboradores').select('id').eq('empresa_id', empresaId) as any);
-    const { data, error } = await q;
+  listar: async (empresaId: string) => {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { data, error } = await (supabase as any)
+      .from('ajustes_ponto')
+      .select('*, colaborador:colaboradores!inner(nome_completo, empresa_id)')
+      .eq('colaborador.empresa_id', empresaId)
+      .order('created_at', { ascending: false });
     if (error) throw error;
     return data || [];
   },
@@ -12,8 +15,9 @@ export const ajustesPontoService = {
     const { error } = await supabase.from('ajustes_ponto').insert(d);
     if (error) throw error;
   },
-  aprovar: async (id: string, userId: string) => {
-    const { error } = await supabase.from('ajustes_ponto').update({ status: 'aprovado', aprovado_por: userId, aprovado_em: new Date().toISOString() }).eq('id', id);
+  aprovar: async (colaboradorId: string, id: string, userId: string) => {
+    if (!colaboradorId) throw new Error('colaborador_id obrigatório para isolamento de tenant');
+    const { error } = await supabase.from('ajustes_ponto').update({ status: 'aprovado', aprovado_por: userId, aprovado_em: new Date().toISOString() }).eq('id', id).eq('colaborador_id', colaboradorId);
     if (error) throw error;
   },
 };
@@ -30,8 +34,9 @@ export const periodosPontoService = {
     const { error } = await supabase.from('periodos_ponto').insert(d);
     if (error) throw error;
   },
-  fechar: async (id: string) => {
-    const { error } = await supabase.from('periodos_ponto').update({ status: 'fechado', fechado_em: new Date().toISOString() }).eq('id', id);
+  fechar: async (empresaId: string, id: string) => {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { error } = await (supabase as any).from('periodos_ponto').update({ status: 'fechado', fechado_em: new Date().toISOString() }).eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   },
 };

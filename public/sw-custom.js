@@ -36,8 +36,13 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Evitar cache em chamadas de API do Supabase e Auth
-  if (url.hostname.includes('supabase.co') || url.pathname.startsWith('/auth/')) {
+  // Never cache API calls, auth flows, or sensitive endpoints
+  if (
+    url.hostname.includes('supabase.co') ||
+    url.hostname.includes('pwnedpasswords.com') ||
+    url.pathname.startsWith('/auth/') ||
+    request.method !== 'GET'
+  ) {
     return;
   }
 
@@ -65,13 +70,14 @@ self.addEventListener('push', (event) => {
 
   try {
     const data = event.data.json();
+    const notifUrl = (typeof data.url === 'string' && data.url.startsWith('/')) ? data.url : '/notificacoes';
     const options = {
-      body: data.body || 'Você tem uma nova notificação do Departamento Pessoal.',
+      body: typeof data.body === 'string' ? data.body.slice(0, 300) : 'Você tem uma nova notificação do Departamento Pessoal.',
       icon: 'https://raw.githubusercontent.com/lovable-dev/lovable-preview-assets/main/dp-icon-192.png',
       badge: 'https://raw.githubusercontent.com/lovable-dev/lovable-preview-assets/main/dp-icon-192.png',
       vibrate: [100, 50, 100],
       data: {
-        url: data.url || '/notificacoes'
+        url: notifUrl
       },
       actions: [
         { action: 'open', title: 'Ver Detalhes' },
@@ -79,8 +85,9 @@ self.addEventListener('push', (event) => {
       ]
     };
 
+    const title = (typeof data.title === 'string' && data.title.length > 0) ? data.title.slice(0, 100) : 'Bombon DP';
     event.waitUntil(
-      self.registration.showNotification(data.title || 'Bombon DP', options)
+      self.registration.showNotification(title, options)
     );
   } catch (e) {
     console.error('Erro ao processar push notification:', e);
@@ -93,12 +100,13 @@ self.addEventListener('notificationclick', (event) => {
 
   if (event.action === 'close') return;
 
-  const urlToOpen = event.notification.data.url;
+  const rawUrl = event.notification.data.url || '/notificacoes';
+  const urlToOpen = rawUrl.startsWith('/') ? rawUrl : '/notificacoes';
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
       for (const client of windowClients) {
-        if (client.url === urlToOpen && 'focus' in client) {
+        if (client.url.endsWith(urlToOpen) && 'focus' in client) {
           return client.focus();
         }
       }

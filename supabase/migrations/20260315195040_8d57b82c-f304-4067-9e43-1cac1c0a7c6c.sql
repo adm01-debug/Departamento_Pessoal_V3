@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS public.nacionalidades (
   created_at timestamptz DEFAULT now()
 );
 ALTER TABLE public.nacionalidades ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "nacionalidades_read" ON public.nacionalidades;
 CREATE POLICY "nacionalidades_read" ON public.nacionalidades FOR SELECT TO authenticated USING (true);
 
 INSERT INTO public.nacionalidades (nome, codigo_esocial) VALUES
@@ -46,6 +47,7 @@ CREATE TABLE IF NOT EXISTS public.centros_custo (
   updated_at timestamptz DEFAULT now()
 );
 ALTER TABLE public.centros_custo ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "centros_custo_auth" ON public.centros_custo;
 CREATE POLICY "centros_custo_auth" ON public.centros_custo FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- 3. Tipos de Desligamento
@@ -56,6 +58,7 @@ CREATE TABLE IF NOT EXISTS public.tipos_desligamento (
   created_at timestamptz DEFAULT now()
 );
 ALTER TABLE public.tipos_desligamento ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "tipos_desligamento_read" ON public.tipos_desligamento;
 CREATE POLICY "tipos_desligamento_read" ON public.tipos_desligamento FOR SELECT TO authenticated USING (true);
 
 INSERT INTO public.tipos_desligamento (nome, codigo_esocial) VALUES
@@ -94,6 +97,7 @@ CREATE TABLE IF NOT EXISTS public.tipos_aviso_previo (
   created_at timestamptz DEFAULT now()
 );
 ALTER TABLE public.tipos_aviso_previo ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "tipos_aviso_previo_read" ON public.tipos_aviso_previo;
 CREATE POLICY "tipos_aviso_previo_read" ON public.tipos_aviso_previo FOR SELECT TO authenticated USING (true);
 
 INSERT INTO public.tipos_aviso_previo (nome) VALUES
@@ -110,6 +114,7 @@ CREATE TABLE IF NOT EXISTS public.tipos_deficiencia (
   created_at timestamptz DEFAULT now()
 );
 ALTER TABLE public.tipos_deficiencia ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "tipos_deficiencia_read" ON public.tipos_deficiencia;
 CREATE POLICY "tipos_deficiencia_read" ON public.tipos_deficiencia FOR SELECT TO authenticated USING (true);
 
 INSERT INTO public.tipos_deficiencia (nome) VALUES
@@ -128,6 +133,7 @@ CREATE TABLE IF NOT EXISTS public.tipos_pagamento (
   created_at timestamptz DEFAULT now()
 );
 ALTER TABLE public.tipos_pagamento ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "tipos_pagamento_read" ON public.tipos_pagamento;
 CREATE POLICY "tipos_pagamento_read" ON public.tipos_pagamento FOR SELECT TO authenticated USING (true);
 
 INSERT INTO public.tipos_pagamento (nome) VALUES
@@ -146,6 +152,7 @@ CREATE TABLE IF NOT EXISTS public.tipos_salario (
   created_at timestamptz DEFAULT now()
 );
 ALTER TABLE public.tipos_salario ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "tipos_salario_read" ON public.tipos_salario;
 CREATE POLICY "tipos_salario_read" ON public.tipos_salario FOR SELECT TO authenticated USING (true);
 
 INSERT INTO public.tipos_salario (nome, codigo_esocial) VALUES
@@ -166,6 +173,7 @@ CREATE TABLE IF NOT EXISTS public.relacionamentos_dependentes (
   created_at timestamptz DEFAULT now()
 );
 ALTER TABLE public.relacionamentos_dependentes ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "relacionamentos_dependentes_read" ON public.relacionamentos_dependentes;
 CREATE POLICY "relacionamentos_dependentes_read" ON public.relacionamentos_dependentes FOR SELECT TO authenticated USING (true);
 
 INSERT INTO public.relacionamentos_dependentes (nome, descricao, codigo_esocial) VALUES
@@ -190,6 +198,7 @@ CREATE TABLE IF NOT EXISTS public.generos_documento (
   created_at timestamptz DEFAULT now()
 );
 ALTER TABLE public.generos_documento ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "generos_documento_read" ON public.generos_documento;
 CREATE POLICY "generos_documento_read" ON public.generos_documento FOR SELECT TO authenticated USING (true);
 
 INSERT INTO public.generos_documento (nome, codigo_esocial) VALUES
@@ -204,6 +213,7 @@ CREATE TABLE IF NOT EXISTS public.tipos_visto (
   created_at timestamptz DEFAULT now()
 );
 ALTER TABLE public.tipos_visto ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "tipos_visto_read" ON public.tipos_visto;
 CREATE POLICY "tipos_visto_read" ON public.tipos_visto FOR SELECT TO authenticated USING (true);
 
 INSERT INTO public.tipos_visto (nome) VALUES
@@ -220,6 +230,7 @@ CREATE TABLE IF NOT EXISTS public.condicoes_ingresso (
   created_at timestamptz DEFAULT now()
 );
 ALTER TABLE public.condicoes_ingresso ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "condicoes_ingresso_read" ON public.condicoes_ingresso;
 CREATE POLICY "condicoes_ingresso_read" ON public.condicoes_ingresso FOR SELECT TO authenticated USING (true);
 
 INSERT INTO public.condicoes_ingresso (nome) VALUES
@@ -240,6 +251,7 @@ CREATE TABLE IF NOT EXISTS public.tempos_residencia (
   created_at timestamptz DEFAULT now()
 );
 ALTER TABLE public.tempos_residencia ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "tempos_residencia_read" ON public.tempos_residencia;
 CREATE POLICY "tempos_residencia_read" ON public.tempos_residencia FOR SELECT TO authenticated USING (true);
 
 INSERT INTO public.tempos_residencia (nome) VALUES
@@ -255,6 +267,7 @@ CREATE TABLE IF NOT EXISTS public.descricoes_logradouro (
   created_at timestamptz DEFAULT now()
 );
 ALTER TABLE public.descricoes_logradouro ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "descricoes_logradouro_read" ON public.descricoes_logradouro;
 CREATE POLICY "descricoes_logradouro_read" ON public.descricoes_logradouro FOR SELECT TO authenticated USING (true);
 
 INSERT INTO public.descricoes_logradouro (nome) VALUES
@@ -277,6 +290,7 @@ CREATE TABLE IF NOT EXISTS public.paises (
   created_at timestamptz DEFAULT now()
 );
 ALTER TABLE public.paises ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "paises_read" ON public.paises;
 CREATE POLICY "paises_read" ON public.paises FOR SELECT TO authenticated USING (true);
 
 INSERT INTO public.paises (nome, codigo_iso) VALUES
@@ -300,6 +314,7 @@ CREATE TABLE IF NOT EXISTS public.categorias_trabalhador (
   created_at timestamptz DEFAULT now()
 );
 ALTER TABLE public.categorias_trabalhador ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "categorias_trabalhador_read" ON public.categorias_trabalhador;
 CREATE POLICY "categorias_trabalhador_read" ON public.categorias_trabalhador FOR SELECT TO authenticated USING (true);
 
 INSERT INTO public.categorias_trabalhador (nome, codigo_esocial) VALUES
@@ -335,6 +350,7 @@ CREATE TABLE IF NOT EXISTS public.relacionamentos_contato_emergencia (
   created_at timestamptz DEFAULT now()
 );
 ALTER TABLE public.relacionamentos_contato_emergencia ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "relacionamentos_contato_emergencia_read" ON public.relacionamentos_contato_emergencia;
 CREATE POLICY "relacionamentos_contato_emergencia_read" ON public.relacionamentos_contato_emergencia FOR SELECT TO authenticated USING (true);
 
 INSERT INTO public.relacionamentos_contato_emergencia (nome) VALUES
@@ -366,6 +382,7 @@ CREATE TABLE IF NOT EXISTS public.contas_bancarias (
   updated_at timestamptz DEFAULT now()
 );
 ALTER TABLE public.contas_bancarias ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "contas_bancarias_auth" ON public.contas_bancarias;
 CREATE POLICY "contas_bancarias_auth" ON public.contas_bancarias FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- 18. Dados de Estagiário
@@ -392,6 +409,7 @@ CREATE TABLE IF NOT EXISTS public.dados_estagiario (
   updated_at timestamptz DEFAULT now()
 );
 ALTER TABLE public.dados_estagiario ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "dados_estagiario_auth" ON public.dados_estagiario;
 CREATE POLICY "dados_estagiario_auth" ON public.dados_estagiario FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- 19. Documentos Pessoais Arquivos (upload tipado)
@@ -407,6 +425,7 @@ CREATE TABLE IF NOT EXISTS public.documentos_pessoais_arquivos (
   updated_at timestamptz DEFAULT now()
 );
 ALTER TABLE public.documentos_pessoais_arquivos ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "documentos_pessoais_auth" ON public.documentos_pessoais_arquivos;
 CREATE POLICY "documentos_pessoais_auth" ON public.documentos_pessoais_arquivos FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- 20. Férias Aprovações (workflow)
@@ -422,6 +441,7 @@ CREATE TABLE IF NOT EXISTS public.ferias_aprovacoes (
   updated_at timestamptz DEFAULT now()
 );
 ALTER TABLE public.ferias_aprovacoes ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "ferias_aprovacoes_auth" ON public.ferias_aprovacoes;
 CREATE POLICY "ferias_aprovacoes_auth" ON public.ferias_aprovacoes FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- 21. Férias Arquivos
@@ -435,6 +455,7 @@ CREATE TABLE IF NOT EXISTS public.ferias_arquivos (
   updated_at timestamptz DEFAULT now()
 );
 ALTER TABLE public.ferias_arquivos ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "ferias_arquivos_auth" ON public.ferias_arquivos;
 CREATE POLICY "ferias_arquivos_auth" ON public.ferias_arquivos FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- 22. Dependentes Benefícios (vinculação)
@@ -449,6 +470,7 @@ CREATE TABLE IF NOT EXISTS public.dependentes_beneficios (
   UNIQUE(dependente_id, beneficio_id)
 );
 ALTER TABLE public.dependentes_beneficios ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "dependentes_beneficios_auth" ON public.dependentes_beneficios;
 CREATE POLICY "dependentes_beneficios_auth" ON public.dependentes_beneficios FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 -- 23. Motivos de Falta/Afastamento
@@ -459,6 +481,7 @@ CREATE TABLE IF NOT EXISTS public.motivos_afastamento (
   created_at timestamptz DEFAULT now()
 );
 ALTER TABLE public.motivos_afastamento ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "motivos_afastamento_read" ON public.motivos_afastamento;
 CREATE POLICY "motivos_afastamento_read" ON public.motivos_afastamento FOR SELECT TO authenticated USING (true);
 
 INSERT INTO public.motivos_afastamento (nome, tipo) VALUES

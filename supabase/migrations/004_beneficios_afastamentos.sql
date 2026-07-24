@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS colaborador_beneficios (
 CREATE TABLE IF NOT EXISTS afastamentos (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   colaborador_id UUID NOT NULL REFERENCES colaboradores(id) ON DELETE CASCADE,
+  empresa_id UUID REFERENCES empresas(id) ON DELETE CASCADE,
   tipo VARCHAR(50) NOT NULL, -- doenca, acidente_trabalho, licenca_maternidade, licenca_paternidade, outros
   motivo_esocial VARCHAR(10),
   data_inicio DATE NOT NULL,

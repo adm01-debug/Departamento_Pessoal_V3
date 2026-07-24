@@ -9,6 +9,7 @@ import { User, Settings, LogOut, Shield, HelpCircle, Loader2 } from 'lucide-reac
 import { useAuth } from '@/contexts/AuthContext';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 
 interface UserProfileMenuProps {
   user?: { name: string; email: string; avatar?: string };
@@ -27,7 +28,7 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
       toast.success('Sessão encerrada com sucesso');
       navigate('/login');
     } catch (error: any) {
-      toast.error('Erro ao sair: ' + (error.message || 'Erro desconhecido'));
+      toast.error(safeErrorMessage(error, 'Erro ao encerrar sessão.'));
     } finally {
       setIsLoggingOut(false);
     }

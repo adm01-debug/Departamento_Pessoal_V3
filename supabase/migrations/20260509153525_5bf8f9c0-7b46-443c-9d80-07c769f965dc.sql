@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS public.folha_itens (
 ALTER TABLE public.folhas_pagamento ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.folha_itens ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Empresas gerenciam suas proprias folhas" ON public.folhas_pagamento;
 CREATE POLICY "Empresas gerenciam suas proprias folhas" ON public.folhas_pagamento
 FOR ALL TO authenticated USING (true); -- Em prod: vincular ao empresa_id do user
 

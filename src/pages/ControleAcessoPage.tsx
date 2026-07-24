@@ -23,8 +23,8 @@ export default function ControleAcessoPage() {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ colaborador_id: '', tipo: 'entrada', metodo: 'manual', local: '', area: '' });
 
-  const { data: registros = [], isLoading } = useQuery({ queryKey: ['controle_acesso', empresaAtual?.id], queryFn: () => controleAcessoService.listar(empresaAtual?.id), enabled: !!empresaAtual?.id });
-  const { data: colaboradores = [] } = useQuery({ queryKey: ['colaboradores', empresaAtual?.id], queryFn: () => colaboradorService.list(empresaAtual?.id), enabled: !!empresaAtual?.id });
+  const { data: registros = [], isLoading } = useQuery({ queryKey: ['controle_acesso', empresaAtual?.id], queryFn: () => controleAcessoService.listar(empresaAtual!.id), enabled: !!empresaAtual?.id });
+  const { data: colaboradores = [] } = useQuery({ queryKey: ['colaboradores', empresaAtual?.id], queryFn: () => colaboradorService.list(empresaAtual!.id), enabled: !!empresaAtual?.id });
 
   const registrar = useMutation({
     mutationFn: () => controleAcessoService.registrar({ ...form, empresa_id: empresaAtual?.id }),

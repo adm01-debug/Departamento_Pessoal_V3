@@ -1,5 +1,5 @@
 -- Tabela de períodos aquisitivos de férias
-CREATE TABLE public.periodos_aquisitivos (
+CREATE TABLE IF NOT EXISTS public.periodos_aquisitivos (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   colaborador_id UUID NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE,
   numero_periodo INTEGER NOT NULL DEFAULT 1,
@@ -14,7 +14,7 @@ CREATE TABLE public.periodos_aquisitivos (
 );
 
 -- Tabela de programação/solicitação de férias
-CREATE TABLE public.ferias (
+CREATE TABLE IF NOT EXISTS public.ferias (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   colaborador_id UUID NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE,
   periodo_aquisitivo_id UUID REFERENCES public.periodos_aquisitivos(id),
@@ -43,7 +43,7 @@ CREATE TABLE public.ferias (
 );
 
 -- Tabela de histórico de férias (para auditoria)
-CREATE TABLE public.historico_ferias (
+CREATE TABLE IF NOT EXISTS public.historico_ferias (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   ferias_id UUID NOT NULL REFERENCES public.ferias(id) ON DELETE CASCADE,
   status_anterior VARCHAR(20),
@@ -59,11 +59,15 @@ ALTER TABLE public.ferias ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.historico_ferias ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies
+DROP POLICY IF EXISTS "Authenticated users can manage periodos_aquisitivos" ON public.periodos_aquisitivos;
 CREATE POLICY "Authenticated users can manage periodos_aquisitivos" ON public.periodos_aquisitivos FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Authenticated users can manage ferias" ON public.ferias;
 CREATE POLICY "Authenticated users can manage ferias" ON public.ferias FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Authenticated users can manage historico_ferias" ON public.historico_ferias;
 CREATE POLICY "Authenticated users can manage historico_ferias" ON public.historico_ferias FOR ALL USING (true) WITH CHECK (true);
 
 -- Trigger para atualizar updated_at
+DROP TRIGGER IF EXISTS update_ferias_updated_at ON public.ferias;
 CREATE TRIGGER update_ferias_updated_at
   BEFORE UPDATE ON public.ferias
   FOR EACH ROW

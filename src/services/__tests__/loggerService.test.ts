@@ -1,27 +1,25 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { loggerService } from '../loggerService';
-import { supabase } from '@/integrations/supabase/client';
 
-// Criar mocks globais
+const mockRpcResult = { catch: vi.fn() };
+const mockRpc = vi.fn((_fn: string, _args?: unknown) => mockRpcResult);
 const mockInsert = vi.fn(() => Promise.resolve({ error: null }));
-const mockFrom = vi.fn((_table: string) => ({
-  insert: mockInsert,
-}));
+const mockFrom = vi.fn((_table: string) => ({ insert: mockInsert }));
 
-vi.mock('@/integrations/supabase/client', () => {
-  return {
-    supabase: {
-      auth: {
-        getUser: vi.fn(() => Promise.resolve({ data: { user: { id: 'test-user' } } })),
-      },
-      from: (table: string) => mockFrom(table),
+vi.mock('@/integrations/supabase/client', () => ({
+  supabase: {
+    auth: {
+      getUser: vi.fn(() => Promise.resolve({ data: { user: { id: 'test-user' } } })),
     },
-  };
-});
+    from: (table: string) => mockFrom(table),
+    rpc: (fn: string, args: unknown) => mockRpc(fn, args),
+  },
+}));
 
 describe('loggerService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockRpcResult.catch.mockReturnValue(undefined);
     vi.useFakeTimers();
   });
 
@@ -29,30 +27,63 @@ describe('loggerService', () => {
     vi.useRealTimers();
   });
 
-  it('should buffer info logs and not call supabase immediately', async () => {
+  it('should buffer info logs and not call supabase rpc immediately', async () => {
     await loggerService.info('Test log 1');
     await loggerService.info('Test log 2');
-    
-    expect(mockFrom).not.toHaveBeenCalled();
+
+    expect(mockRpc).not.toHaveBeenCalled();
   });
 
-  // A persistência remota em `logs_sistema` foi desabilitada de propósito: o banco
-  // corporativo externo bloqueia esses inserts via RLS, então o flush descarta o
-  // buffer silenciosamente para não quebrar a UI. Os testes abaixo garantem que o
-  // flush NÃO tenta inserir no Supabase (e não lança).
-  it('should flush info logs after 50 logs without hitting Supabase', async () => {
+  it('should flush error logs immediately via rpc', async () => {
+    await loggerService.error('Test error');
+
+    expect(mockRpc).toHaveBeenCalledWith(
+      'log_frontend_error',
+      expect.objectContaining({ p_nivel: 'error', p_mensagem: 'Test error' })
+    );
+    expect(mockFrom).not.toHaveBeenCalledWith('logs_sistema');
+  });
+
+  it('should flush warn logs immediately via rpc for security audit', async () => {
+    await loggerService.warn('Account locked warning');
+
+    expect(mockRpc).toHaveBeenCalledWith(
+      'log_frontend_error',
+      expect.objectContaining({ p_nivel: 'warn', p_mensagem: 'Account locked warning' })
+    );
+  });
+
+  it('should flush fatal logs immediately via rpc', async () => {
+    await loggerService.fatal('Critical failure');
+
+    expect(mockRpc).toHaveBeenCalledWith(
+      'log_frontend_error',
+      expect.objectContaining({ p_nivel: 'fatal', p_mensagem: 'Critical failure' })
+    );
+  });
+
+  it('should flush info logs after 50 entries without hitting rpc', async () => {
     for (let i = 0; i < 50; i++) {
       await loggerService.info(`Log ${i}`);
     }
 
-    await expect(loggerService.flush()).resolves.toBeUndefined();
+    // Info logs should not be persisted remotely even at buffer capacity
+    expect(mockRpc).not.toHaveBeenCalled();
+  });
+
+  it('should not call logs_sistema table directly', async () => {
+    await loggerService.error('Should use rpc not direct insert');
     expect(mockFrom).not.toHaveBeenCalledWith('logs_sistema');
   });
 
-  it('should flush error logs immediately without hitting Supabase', async () => {
-    await loggerService.error('Test error');
+  it('should enrich context with url and user_agent', async () => {
+    await loggerService.error('Enriched error', { customKey: 'value' });
 
-    await expect(loggerService.flush()).resolves.toBeUndefined();
-    expect(mockFrom).not.toHaveBeenCalledWith('logs_sistema');
+    const callArg = mockRpc.mock.calls[0][1] as { p_contexto: Record<string, unknown> };
+    expect(callArg.p_contexto).toMatchObject({
+      customKey: 'value',
+      url: expect.any(String),
+      user_agent: expect.any(String),
+    });
   });
 });

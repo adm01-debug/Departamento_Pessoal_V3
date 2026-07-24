@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts';
 import { useEmpresas } from './useEmpresas';
 import { toast } from 'sonner';
 import { useNotificacoes } from './useNotificacoes';
+import { safeErrorMessage } from '@/utils/safeError';
 
 export function useFeriasAprovacao() {
   const { user } = useAuth();
@@ -15,7 +16,7 @@ export function useFeriasAprovacao() {
   const invalidate = () => qc.invalidateQueries({ queryKey: ['ferias', empresaId] });
 
   const aprovarGestor = useMutation({
-    mutationFn: (id: string) => feriasService.aprovarGestor(id, user?.id),
+    mutationFn: (id: string) => feriasService.aprovarGestor(id, empresaId!, user?.id),
     onSuccess: (_, id) => {
       invalidate();
       criarNotificacao({
@@ -27,11 +28,11 @@ export function useFeriasAprovacao() {
       });
       toast.success('Aprovação do gestor registrada com sucesso');
     },
-    onError: (error: any) => toast.error(`Erro ao aprovar: ${error.message}`),
+    onError: (error: any) => toast.error(safeErrorMessage(error, 'Erro ao aprovar férias.')),
   });
 
   const aprovarRH = useMutation({
-    mutationFn: (id: string) => feriasService.aprovarRH(id, user?.id),
+    mutationFn: (id: string) => feriasService.aprovarRH(id, empresaId!, user?.id),
     onSuccess: (_, id) => {
       invalidate();
       criarNotificacao({
@@ -43,20 +44,20 @@ export function useFeriasAprovacao() {
       });
       toast.success('Aprovação do RH registrada. Férias confirmadas!');
     },
-    onError: (error: any) => toast.error(`Erro ao aprovar: ${error.message}`),
+    onError: (error: any) => toast.error(safeErrorMessage(error, 'Erro ao aprovar férias.')),
   });
 
   const enviarContabilidade = useMutation({
-    mutationFn: (id: string) => feriasService.enviarContabilidade(id, user?.id),
+    mutationFn: (id: string) => feriasService.enviarContabilidade(id, empresaId!, user?.id),
     onSuccess: () => {
       invalidate();
       toast.success('Solicitação enviada para a contabilidade');
     },
-    onError: (error: any) => toast.error(`Erro ao enviar: ${error.message}`),
+    onError: (error: any) => toast.error(safeErrorMessage(error, 'Erro ao enviar para contabilidade.')),
   });
 
   const rejeitar = useMutation({
-    mutationFn: (id: string) => feriasService.rejeitar(id),
+    mutationFn: (id: string) => feriasService.rejeitar(id, empresaId!),
     onSuccess: (_, id) => {
       invalidate();
       criarNotificacao({
@@ -68,16 +69,16 @@ export function useFeriasAprovacao() {
       });
       toast.warning('Solicitação de férias rejeitada');
     },
-    onError: (error: any) => toast.error(`Erro ao rejeitar: ${error.message}`),
+    onError: (error: any) => toast.error(safeErrorMessage(error, 'Erro ao rejeitar férias.')),
   });
 
   const cancelar = useMutation({
-    mutationFn: (id: string) => feriasService.cancelar(id, user?.id),
+    mutationFn: (id: string) => feriasService.cancelar(id, empresaId!, user?.id),
     onSuccess: () => {
       invalidate();
       toast.info('Solicitação de férias cancelada');
     },
-    onError: (error: any) => toast.error(`Erro ao cancelar: ${error.message}`),
+    onError: (error: any) => toast.error(safeErrorMessage(error, 'Erro ao cancelar férias.')),
   });
 
   return {

@@ -15,6 +15,6 @@ ALTER TABLE public.faltas
   ADD COLUMN IF NOT EXISTS motivo_rejeicao text,
   ADD COLUMN IF NOT EXISTS documento_anexo text,
   ADD COLUMN IF NOT EXISTS desconto_aplicado boolean DEFAULT false,
-  ADD COLUMN IF NOT EXISTS motivo_afastamento_id uuid REFERENCES public.motivos_afastamento(id),
+  ADD COLUMN IF NOT EXISTS motivo_afastamento_id integer REFERENCES public.motivos_afastamento(id),
   ADD COLUMN IF NOT EXISTS status text DEFAULT 'registrada',
   ADD COLUMN IF NOT EXISTS horas_falta interval;

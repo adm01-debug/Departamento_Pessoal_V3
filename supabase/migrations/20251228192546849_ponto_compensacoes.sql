@@ -12,12 +12,15 @@ CREATE TABLE IF NOT EXISTS ponto_compensacoes (
 -- Add RLS Policies
 ALTER TABLE ponto_compensacoes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "ponto_compensacoes_select" ON public.ponto_compensacoes;
 CREATE POLICY "ponto_compensacoes_select" ON ponto_compensacoes
   FOR SELECT USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "ponto_compensacoes_insert" ON public.ponto_compensacoes;
 CREATE POLICY "ponto_compensacoes_insert" ON ponto_compensacoes
   FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "ponto_compensacoes_update" ON public.ponto_compensacoes;
 CREATE POLICY "ponto_compensacoes_update" ON ponto_compensacoes
   FOR UPDATE USING (auth.role() = 'authenticated');
 
@@ -33,6 +36,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_ponto_compensacoes_updated_at ON public.ponto_compensacoes;
 CREATE TRIGGER trigger_ponto_compensacoes_updated_at
   BEFORE UPDATE ON ponto_compensacoes
   FOR EACH ROW

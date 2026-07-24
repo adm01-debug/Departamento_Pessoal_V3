@@ -18,7 +18,9 @@ import {
 } from 'lucide-react';
 import { premiacoesService } from '@/services/premiacoesService';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { useQueryClient } from '@tanstack/react-query';
+import { useEmpresas } from '@/hooks';
 import {
   Dialog,
   DialogContent,
@@ -33,6 +35,7 @@ interface ApprovalHubProps {
 
 export function RewardsApprovalHub({ pagamentos }: ApprovalHubProps) {
   const queryClient = useQueryClient();
+  const { empresaAtual } = useEmpresas();
   const [selectedPagamento, setSelectedPagamento] = React.useState<Record<string, any> | null>(null);
   const [comentario, setComentario] = React.useState('');
   const [isReconcileOpen, setIsReconcileOpen] = React.useState(false);
@@ -50,9 +53,10 @@ export function RewardsApprovalHub({ pagamentos }: ApprovalHubProps) {
     if (!pendingAction) return;
     try {
       await premiacoesService.atualizarStatusPagamento(
-        pendingAction.id, 
-        pendingAction.nextStatus, 
-        pendingAction.valor, 
+        pendingAction.id,
+        pendingAction.nextStatus,
+        empresaAtual!.id,
+        pendingAction.valor,
         comentario || (pendingAction.nextStatus === 'rejeitado' ? 'Rejeitado via Hub' : 'Aprovado via Hub')
       );
       queryClient.invalidateQueries({ queryKey: ['premiacoes_pagamentos'] });
@@ -68,7 +72,7 @@ export function RewardsApprovalHub({ pagamentos }: ApprovalHubProps) {
   const handleReconcile = async () => {
     if (!selectedPagamento) return;
     try {
-      await premiacoesService.reconciliarFolha(selectedPagamento.id, Number(valorFolha), comentario);
+      await premiacoesService.reconciliarFolha(selectedPagamento.id, Number(valorFolha), empresaAtual!.id, comentario);
       queryClient.invalidateQueries({ queryKey: ['premiacoes_pagamentos'] });
       toast.success("Conciliação registrada.");
       setIsReconcileOpen(false);
@@ -140,7 +144,7 @@ export function RewardsApprovalHub({ pagamentos }: ApprovalHubProps) {
                                   queryClient.invalidateQueries({ queryKey: ['premiacoes_pagamentos'] });
                                   toast.success("Auto-conciliação concluída com sucesso!");
                                 } catch (e: any) {
-                                  toast.error(e.message || "Falha na conciliação automática.");
+                                  toast.error(safeErrorMessage(e, "Falha na conciliação automática."));
                                 }
                               }}
                             >

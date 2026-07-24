@@ -1,8 +1,10 @@
 -- Create enum for app roles
+DO $$ BEGIN
 CREATE TYPE public.app_role AS ENUM ('admin', 'gestor', 'rh', 'user');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 -- Create user_roles table
-CREATE TABLE public.user_roles (
+CREATE TABLE IF NOT EXISTS public.user_roles (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
   role app_role NOT NULL DEFAULT 'user',
@@ -61,31 +63,35 @@ $$;
 
 -- RLS Policies for user_roles table
 -- Only admins can view all roles
+DROP POLICY IF EXISTS "Admins can view all roles" ON public.user_roles;
 CREATE POLICY "Admins can view all roles"
 ON public.user_roles
 FOR SELECT
 USING (public.is_admin(auth.uid()) OR auth.uid() = user_id);
 
 -- Only admins can insert roles
+DROP POLICY IF EXISTS "Admins can insert roles" ON public.user_roles;
 CREATE POLICY "Admins can insert roles"
 ON public.user_roles
 FOR INSERT
 WITH CHECK (public.is_admin(auth.uid()));
 
 -- Only admins can update roles
+DROP POLICY IF EXISTS "Admins can update roles" ON public.user_roles;
 CREATE POLICY "Admins can update roles"
 ON public.user_roles
 FOR UPDATE
 USING (public.is_admin(auth.uid()));
 
 -- Only admins can delete roles
+DROP POLICY IF EXISTS "Admins can delete roles" ON public.user_roles;
 CREATE POLICY "Admins can delete roles"
 ON public.user_roles
 FOR DELETE
 USING (public.is_admin(auth.uid()));
 
 -- Create permissions table for granular access control
-CREATE TABLE public.permissions (
+CREATE TABLE IF NOT EXISTS public.permissions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   role app_role NOT NULL,
   resource TEXT NOT NULL,
@@ -98,11 +104,13 @@ CREATE TABLE public.permissions (
 ALTER TABLE public.permissions ENABLE ROW LEVEL SECURITY;
 
 -- Only admins can manage permissions
+DROP POLICY IF EXISTS "Authenticated users can view permissions" ON public.permissions;
 CREATE POLICY "Authenticated users can view permissions"
 ON public.permissions
 FOR SELECT
 USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "Admins can manage permissions" ON public.permissions;
 CREATE POLICY "Admins can manage permissions"
 ON public.permissions
 FOR ALL

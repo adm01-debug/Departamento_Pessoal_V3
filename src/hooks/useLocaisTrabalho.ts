@@ -7,10 +7,11 @@ export function useLocaisTrabalho() {
   const empresaId = empresaAtual?.id;
 
   const crud = useGenericCrud<unknown>({
-    queryKey: 'locais_trabalho',
+    queryKey: `locais_trabalho:${empresaId ?? 'none'}`,
     service: localTrabalhoService,
     initialPageSize: 10,
     filters: empresaId ? { empresa_id: empresaId } : {},
+    empresaId: empresaId ?? undefined,
     successMessages: {
       create: 'Local de trabalho criado',
       update: 'Local de trabalho atualizado',

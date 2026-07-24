@@ -1,5 +1,5 @@
 // fechar-folha — Onda 40: hardening completo
-// - CSRF fail-closed + JWT via getClaims()
+// - CSRF fail-closed + JWT via getUser()
 // - Zod strict (rejeita campos extras / payload injection)
 // - Tenant scope obrigatório via user_belongs_to_empresa / is_admin
 // - Optimistic locking via coluna `version` (UPDATE ... WHERE version=X)
@@ -11,12 +11,11 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
-import {
-  corsHeaders, createErrorResponse, validateRequest,
-} from '../_shared/contract.ts';
+import { corsHeaders, createErrorResponse, validateRequest, enforceOrigin, handlePreflight } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { verifyFolhaIntegrity } from '../_shared/folhaIntegrity.ts';
 import { integrityHash } from '../_shared/integrityHash.ts';
+import { beginIdempotency, completeIdempotency, failIdempotency, extractIdempotencyKey } from '../_shared/idempotency.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -44,8 +43,8 @@ const BodySchema = z.object({
 
 
 serve(async (req: Request): Promise<Response> => {
-  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders });
-  if (req.method !== 'POST') {
+  const __pf = handlePreflight(req); if (__pf) return __pf;
+  const __og = enforceOrigin(req); if (__og) return __og;if (req.method !== 'POST') {
     return createErrorResponse('Method not allowed', 405, 'METHOD_NOT_ALLOWED');
   }
 
@@ -54,7 +53,7 @@ serve(async (req: Request): Promise<Response> => {
     const csrf = await verifyCsrf(req.clone());
     if (!csrf.ok) return csrf.response!;
 
-    // 2) JWT via getClaims()
+    // 2) JWT (getUser — validação server-side da sessão)
     const authHeader = req.headers.get('Authorization') ?? '';
     const jwt = authHeader.replace(/^Bearer\s+/i, '').trim();
     if (!jwt) return createErrorResponse('Não autenticado', 401, 'UNAUTHORIZED');
@@ -63,12 +62,12 @@ serve(async (req: Request): Promise<Response> => {
       global: { headers: { Authorization: `Bearer ${jwt}` } },
       auth: { persistSession: false, autoRefreshToken: false },
     });
-    const { data: claimsData, error: claimsErr } = await userClient.auth.getClaims(jwt);
-    if (claimsErr || !claimsData?.claims?.sub) {
+    const { data: claimsData, error: claimsErr } = await userClient.auth.getUser();
+    if (claimsErr || !claimsData?.user?.id) {
       return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
     }
-    const userId = String(claimsData.claims.sub);
-    const userEmail = String(claimsData.claims.email ?? '');
+    const userId = claimsData.user.id;
+    const userEmail = (claimsData.user.email ?? '');
 
     // 3) Validação Zod strict
     const { data: body, errorResponse } = await validateRequest(req, BodySchema);
@@ -83,6 +82,20 @@ serve(async (req: Request): Promise<Response> => {
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(admin, { key: `fechar-folha:${userId}`, limit: 5, windowSec: 60 });
     if (!rl.allowed) return rateLimitResponse(rl);
+
+    // 3.5) Idempotência — evita duplo-fechamento por double-click / retry de rede
+    const idemKey = extractIdempotencyKey(req, body);
+    const idem = await beginIdempotency(admin, {
+      endpoint: 'fechar-folha',
+      key: idemKey,
+      requestBody: body,
+      empresaId,
+      userId,
+    });
+    if (idem.replay) return idem.replay;
+    if (idem.conflict) return idem.conflict;
+
+
 
 
     // 4) Tenant scope
@@ -215,18 +228,22 @@ serve(async (req: Request): Promise<Response> => {
         version: folha.version,
         updated_at: new Date().toISOString(),
       }).eq('id', folhaId).eq('version', updated.version);
+      await failIdempotency(admin, idem.id);
       return createErrorResponse('Auditoria falhou — fechamento revertido', 500, 'AUDIT_FAILED');
     }
 
-    return jsonOk({
+    const okBody = {
       ok: true,
       folha_id: folhaId,
       version: updated.version,
       audit_hash: auditHash,
       warnings,
-    }, 200, { 'X-Audit-Hash': auditHash });
+    };
+    await completeIdempotency(admin, idem.id, 200, okBody);
+    return jsonOk(okBody, 200, { 'X-Audit-Hash': auditHash });
   } catch (e) {
     console.error('[fechar-folha] erro inesperado:', (e as Error)?.message);
     return createErrorResponse('Erro interno', 500, 'INTERNAL_ERROR');
   }
 });
+

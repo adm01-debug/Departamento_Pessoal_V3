@@ -12,12 +12,15 @@ CREATE TABLE IF NOT EXISTS beneficios_movimentacoes (
 -- Add RLS Policies
 ALTER TABLE beneficios_movimentacoes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "beneficios_movimentacoes_select" ON public.beneficios_movimentacoes;
 CREATE POLICY "beneficios_movimentacoes_select" ON beneficios_movimentacoes
   FOR SELECT USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "beneficios_movimentacoes_insert" ON public.beneficios_movimentacoes;
 CREATE POLICY "beneficios_movimentacoes_insert" ON beneficios_movimentacoes
   FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "beneficios_movimentacoes_update" ON public.beneficios_movimentacoes;
 CREATE POLICY "beneficios_movimentacoes_update" ON beneficios_movimentacoes
   FOR UPDATE USING (auth.role() = 'authenticated');
 
@@ -33,6 +36,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_beneficios_movimentacoes_updated_at ON public.beneficios_movimentacoes;
 CREATE TRIGGER trigger_beneficios_movimentacoes_updated_at
   BEFORE UPDATE ON beneficios_movimentacoes
   FOR EACH ROW

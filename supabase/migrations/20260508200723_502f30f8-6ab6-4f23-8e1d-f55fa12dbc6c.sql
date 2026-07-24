@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS public.simulacoes_fiscais (
 -- RLS
 ALTER TABLE public.simulacoes_fiscais ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view simulations of their companies" ON public.simulacoes_fiscais;
 CREATE POLICY "Users can view simulations of their companies" 
 ON public.simulacoes_fiscais FOR SELECT 
 USING (true); -- Simplificando para evitar dependência de user_empresas se não existir exatamente assim

@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS public.portal_notificacoes_settings (
 -- Enable RLS
 ALTER TABLE public.portal_notificacoes_settings ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can manage their own portal settings" ON public.portal_notificacoes_settings;
 CREATE POLICY "Users can manage their own portal settings"
     ON public.portal_notificacoes_settings FOR ALL
     USING (auth.uid() = user_id);

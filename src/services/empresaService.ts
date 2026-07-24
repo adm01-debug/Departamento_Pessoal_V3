@@ -15,7 +15,8 @@ class EmpresaService extends BaseService<Empresa> {
     let query = this.getQuery().select('*', { count: 'exact' });
     
     if (search) {
-      query = query.or(`razao_social.ilike.%${search}%,nome_fantasia.ilike.%${search}%,cnpj.ilike.%${search}%`);
+      const s = search.replace(/[%_.,()]/g, '');
+      if (s) query = query.or(`razao_social.ilike.%${s}%,nome_fantasia.ilike.%${s}%,cnpj.ilike.%${s}%`);
     }
     
     const from = (page - 1) * pageSize;

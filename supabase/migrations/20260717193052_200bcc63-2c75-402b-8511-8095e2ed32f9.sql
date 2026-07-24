@@ -27,6 +27,7 @@ GRANT ALL ON public.exames_agendamentos TO service_role;
 
 ALTER TABLE public.exames_agendamentos ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "RH/Admin gerenciam agendamentos da empresa" ON public.exames_agendamentos;
 CREATE POLICY "RH/Admin gerenciam agendamentos da empresa"
 ON public.exames_agendamentos FOR ALL
 TO authenticated
@@ -39,6 +40,7 @@ WITH CHECK (
   OR public.has_role(auth.uid(), 'admin'::app_role)
 );
 
+DROP TRIGGER IF EXISTS trg_exames_agend_updated_at ON public.exames_agendamentos;
 CREATE TRIGGER trg_exames_agend_updated_at
 BEFORE UPDATE ON public.exames_agendamentos
 FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();

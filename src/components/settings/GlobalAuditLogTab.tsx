@@ -12,6 +12,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { motion } from 'framer-motion';
 import { exportPontoCSV } from '@/services/exportService';
+import { maskEmail } from '@/utils/piiMask';
 
 export function GlobalAuditLogTab() {
   const [search, setSearch] = useState('');
@@ -129,7 +130,7 @@ export function GlobalAuditLogTab() {
                           <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center">
                             <User className="h-3 w-3 text-primary" />
                           </div>
-                          <span className="text-xs font-medium truncate max-w-[150px]">{log.user_email || 'Sistema'}</span>
+                          <span className="text-xs font-medium truncate max-w-[150px]">{log.user_email ? maskEmail(log.user_email) : 'Sistema'}</span>
                         </div>
                       </TableCell>
                       <TableCell>

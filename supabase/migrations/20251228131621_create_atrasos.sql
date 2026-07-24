@@ -29,15 +29,19 @@ CREATE INDEX IF NOT EXISTS idx_atrasos_created ON public.atrasos(created_at);
 -- RLS
 ALTER TABLE public.atrasos ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "atrasos_select" ON public.atrasos;
 CREATE POLICY "atrasos_select" ON public.atrasos
   FOR SELECT USING (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "atrasos_insert" ON public.atrasos;
 CREATE POLICY "atrasos_insert" ON public.atrasos
   FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "atrasos_update" ON public.atrasos;
 CREATE POLICY "atrasos_update" ON public.atrasos
   FOR UPDATE USING (auth.uid() IS NOT NULL);
 
+DROP POLICY IF EXISTS "atrasos_delete" ON public.atrasos;
 CREATE POLICY "atrasos_delete" ON public.atrasos
   FOR DELETE USING (auth.uid() IS NOT NULL);
 
@@ -50,6 +54,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_atrasos_updated_at ON public.atrasos;
 CREATE TRIGGER trigger_atrasos_updated_at
   BEFORE UPDATE ON public.atrasos
   FOR EACH ROW EXECUTE FUNCTION update_atrasos_updated_at();

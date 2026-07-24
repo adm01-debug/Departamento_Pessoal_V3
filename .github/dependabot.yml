@@ -4,4 +4,40 @@ updates:
     directory: /
     schedule:
       interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: America/Sao_Paulo
     open-pull-requests-limit: 10
+    labels:
+      - dependencies
+      - javascript
+    groups:
+      radix-ui:
+        patterns:
+          - "@radix-ui/*"
+        update-types:
+          - minor
+          - patch
+      react-ecosystem:
+        patterns:
+          - "react*"
+          - "@types/react*"
+        update-types:
+          - minor
+          - patch
+      testing:
+        patterns:
+          - "@testing-library/*"
+          - "vitest"
+          - "@playwright/*"
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    labels:
+      - ci
+      - dependencies

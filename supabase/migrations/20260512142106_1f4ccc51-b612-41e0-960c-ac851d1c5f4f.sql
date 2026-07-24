@@ -47,9 +47,11 @@ ALTER TABLE public.documentos_historico ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.documentos_assinatura ENABLE ROW LEVEL SECURITY;
 
 -- Políticas
+DROP POLICY IF EXISTS "Templates acessíveis por empresa" ON public.documento_templates;
 CREATE POLICY "Templates acessíveis por empresa" ON public.documento_templates
     FOR ALL USING (empresa_id IS NULL OR empresa_id IN (SELECT id FROM public.empresas));
 
+DROP POLICY IF EXISTS "Histórico acessível por documento" ON public.documentos_historico;
 CREATE POLICY "Histórico acessível por documento" ON public.documentos_historico
     FOR ALL USING (true); -- Ajustado via trigger/app logic
 
@@ -57,10 +59,12 @@ CREATE POLICY "Assinaturas acessíveis por empresa" ON public.documentos_assinat
     FOR ALL USING (empresa_id IN (SELECT id FROM public.empresas));
 
 -- Triggers de Updated_at
+DROP TRIGGER IF EXISTS set_timestamp_documento_templates ON public.documento_templates;
 CREATE TRIGGER set_timestamp_documento_templates
 BEFORE UPDATE ON public.documento_templates
 FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
+DROP TRIGGER IF EXISTS set_timestamp_documentos_assinatura ON public.documentos_assinatura;
 CREATE TRIGGER set_timestamp_documentos_assinatura
 BEFORE UPDATE ON public.documentos_assinatura
 FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();

@@ -12,12 +12,15 @@ CREATE TABLE IF NOT EXISTS documentos_versoes (
 -- Add RLS Policies
 ALTER TABLE documentos_versoes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "documentos_versoes_select" ON public.documentos_versoes;
 CREATE POLICY "documentos_versoes_select" ON documentos_versoes
   FOR SELECT USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "documentos_versoes_insert" ON public.documentos_versoes;
 CREATE POLICY "documentos_versoes_insert" ON documentos_versoes
   FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "documentos_versoes_update" ON public.documentos_versoes;
 CREATE POLICY "documentos_versoes_update" ON documentos_versoes
   FOR UPDATE USING (auth.role() = 'authenticated');
 
@@ -33,6 +36,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_documentos_versoes_updated_at ON public.documentos_versoes;
 CREATE TRIGGER trigger_documentos_versoes_updated_at
   BEFORE UPDATE ON documentos_versoes
   FOR EACH ROW

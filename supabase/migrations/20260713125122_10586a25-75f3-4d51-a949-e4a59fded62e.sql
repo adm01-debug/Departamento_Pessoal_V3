@@ -3,6 +3,7 @@
 
 -- 1) Substituir política INSERT permissiva por admin-only
 DROP POLICY IF EXISTS "System can insert security alerts" ON public.security_alerts;
+DROP POLICY IF EXISTS "Admins can insert security alerts" ON public.security_alerts;
 CREATE POLICY "Admins can insert security alerts"
   ON public.security_alerts FOR INSERT
   TO authenticated

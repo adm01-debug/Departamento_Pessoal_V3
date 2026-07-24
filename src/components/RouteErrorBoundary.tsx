@@ -57,7 +57,7 @@ export class RouteErrorBoundary extends Component<Props, State> {
             <p className="text-base text-muted-foreground font-body leading-relaxed">
               Ocorreu uma falha na renderização deste módulo. Nossa equipe de engenharia já foi notificada automaticamente via telemetria.
             </p>
-            {this.state.error && (
+            {this.state.error && import.meta.env.DEV && (
               <div className="mt-6 p-4 bg-muted/30 border border-border/40 rounded-2xl text-left">
                 <p className="text-[10px] font-bold uppercase text-muted-foreground mb-2 tracking-widest">Stack Trace Resume</p>
                 <code className="text-xs text-destructive/80 font-mono break-all line-clamp-3">

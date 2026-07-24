@@ -21,4 +21,5 @@ CREATE INDEX IF NOT EXISTS idx_epis_empresa ON public.epis(empresa_id);
 CREATE INDEX IF NOT EXISTS idx_epis_colaborador ON public.epis(colaborador_id);
 ALTER TABLE public.epis ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "epis_all" ON public.epis;
 CREATE POLICY "epis_all" ON public.epis FOR ALL USING (auth.uid() IS NOT NULL);

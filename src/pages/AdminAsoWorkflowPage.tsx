@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -122,7 +123,7 @@ export default function AdminAsoWorkflowPage() {
         if (restricoesEdit.trim().length >= 5) patch.restricoes_descricao = restricoesEdit;
         if (restricaoDataFim) patch.restricao_data_fim = restricaoDataFim;
       }
-      const { error } = await supabase.from('asos').update(patch).eq('id', aso.id);
+      const { error } = await supabase.from('asos').update(patch).eq('id', aso.id).eq('empresa_id', empresaAtual!.id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -133,7 +134,7 @@ export default function AdminAsoWorkflowPage() {
       setRestricoesEdit('');
       setRestricaoDataFim('');
     },
-    onError: (e: Error) => toast.error(e.message || 'Falha ao atualizar ASO'),
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Falha ao atualizar ASO.')),
   });
 
   const openDetail = (aso: AsoRow) => {

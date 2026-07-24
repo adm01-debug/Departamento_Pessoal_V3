@@ -44,7 +44,7 @@ describe('folhaPagamentoService', () => {
       const hash = await folhaPagamentoService.assinarHolerite('folha-1', 'colab-1');
 
       expect(hash).toBeDefined();
-      expect(hash.length).toBe(32);
+      expect(hash.length).toBe(64); // SHA-256 hex = 64 chars
       expect(mockUpsert).toHaveBeenCalledWith(expect.objectContaining({
         folha_id: 'folha-1',
         colaborador_id: 'colab-1',

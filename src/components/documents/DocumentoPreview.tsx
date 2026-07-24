@@ -2,6 +2,7 @@ import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Download, ExternalLink, FileText, X } from 'lucide-react';
+import { safeHref } from '@/utils/safeUrl';
 
 interface DocumentoPreviewProps {
   documento: any;
@@ -12,6 +13,7 @@ interface DocumentoPreviewProps {
 export function DocumentoPreview({ documento, isOpen, onClose }: DocumentoPreviewProps) {
   if (!documento) return null;
 
+  const url = safeHref(documento.url);
   const isPDF = documento.mime_type === 'application/pdf' || documento.url?.endsWith('.pdf');
   const isImage = documento.mime_type?.startsWith('image/') || /\.(jpg|jpeg|png|gif)$/i.test(documento.url || '');
 
@@ -29,7 +31,7 @@ export function DocumentoPreview({ documento, isOpen, onClose }: DocumentoPrevie
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" className="rounded-xl h-8 text-xs" onClick={() => window.open(documento.url, '_blank')}>
+            <Button variant="ghost" size="sm" className="rounded-xl h-8 text-xs" onClick={() => window.open(url, '_blank', 'noopener')}>
               <ExternalLink className="h-3.5 w-3.5 mr-1.5" /> Abrir Original
             </Button>
             <Button variant="outline" size="icon" aria-label="Fechar" className="rounded-xl h-8 w-8" onClick={onClose}>
@@ -40,16 +42,17 @@ export function DocumentoPreview({ documento, isOpen, onClose }: DocumentoPrevie
 
         <div className="flex-1 bg-accent/5 overflow-auto flex items-center justify-center p-4">
           {isPDF ? (
-            <iframe 
-              src={`${documento.url}#toolbar=0`} 
+            <iframe
+              src={`${url}#toolbar=0`}
+              sandbox="allow-same-origin"
               className="w-full h-full border-0 rounded-lg shadow-xs"
               title="Preview PDF"
             />
           ) : isImage ? (
-            <img 
-              src={documento.url} 
-              alt={documento.nome} 
-              className="max-w-full max-h-full object-contain rounded-lg shadow-lg" 
+            <img
+              src={url}
+              alt={documento.nome}
+              className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
             />
           ) : (
             <div className="text-center space-y-4 p-12 bg-background rounded-3xl border border-dashed shadow-xs">
@@ -58,7 +61,7 @@ export function DocumentoPreview({ documento, isOpen, onClose }: DocumentoPrevie
                 <h3 className="font-display font-semibold">Visualização não disponível</h3>
                 <p className="text-sm text-muted-foreground mt-1">Este tipo de arquivo não pode ser visualizado diretamente no navegador.</p>
               </div>
-              <Button className="rounded-xl" onClick={() => window.open(documento.url, '_blank')}>
+              <Button className="rounded-xl" onClick={() => window.open(url, '_blank', 'noopener')}>
                 <Download className="h-4 w-4 mr-2" /> Baixar para Ver
               </Button>
             </div>

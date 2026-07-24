@@ -1,5 +1,5 @@
 -- Tabela de Empréstimos Consignados
-CREATE TABLE public.emprestimos_consignados (
+CREATE TABLE IF NOT EXISTS public.emprestimos_consignados (
     id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
     empresa_id UUID NOT NULL REFERENCES public.empresas(id) ON DELETE CASCADE,
     colaborador_id UUID NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE,
@@ -17,7 +17,7 @@ CREATE TABLE public.emprestimos_consignados (
 );
 
 -- Tabela de Adiantamentos Salariais
-CREATE TABLE public.adiantamentos_salariais (
+CREATE TABLE IF NOT EXISTS public.adiantamentos_salariais (
     id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
     empresa_id UUID NOT NULL REFERENCES public.empresas(id) ON DELETE CASCADE,
     colaborador_id UUID NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE,
@@ -37,17 +37,21 @@ ALTER TABLE public.emprestimos_consignados ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.adiantamentos_salariais ENABLE ROW LEVEL SECURITY;
 
 -- Políticas para Empréstimos (Focadas em gestores por agora, políticas de colaborador precisam de mapeamento auth.uid)
+DROP POLICY IF EXISTS "Gestores podem gerenciar empréstimos da empresa" ON public.emprestimos_consignados;
 CREATE POLICY "Gestores podem gerenciar empréstimos da empresa" 
 ON public.emprestimos_consignados 
 FOR ALL
 USING (empresa_id IN (SELECT id FROM public.empresas));
 
 -- Políticas para Adiantamentos
+DROP POLICY IF EXISTS "Gestores podem gerenciar adiantamentos da empresa" ON public.adiantamentos_salariais;
 CREATE POLICY "Gestores podem gerenciar adiantamentos da empresa" 
 ON public.adiantamentos_salariais 
 FOR ALL
 USING (empresa_id IN (SELECT id FROM public.empresas));
 
 -- Triggers para updated_at
+DROP TRIGGER IF EXISTS update_emprestimos_updated_at ON public.emprestimos_consignados;
 CREATE TRIGGER update_emprestimos_updated_at BEFORE UPDATE ON public.emprestimos_consignados FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DROP TRIGGER IF EXISTS update_adiantamentos_updated_at ON public.adiantamentos_salariais;
 CREATE TRIGGER update_adiantamentos_updated_at BEFORE UPDATE ON public.adiantamentos_salariais FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

@@ -12,12 +12,15 @@ CREATE TABLE IF NOT EXISTS integracao_logs (
 -- Add RLS Policies
 ALTER TABLE integracao_logs ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "integracao_logs_select" ON public.integracao_logs;
 CREATE POLICY "integracao_logs_select" ON integracao_logs
   FOR SELECT USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "integracao_logs_insert" ON public.integracao_logs;
 CREATE POLICY "integracao_logs_insert" ON integracao_logs
   FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "integracao_logs_update" ON public.integracao_logs;
 CREATE POLICY "integracao_logs_update" ON integracao_logs
   FOR UPDATE USING (auth.role() = 'authenticated');
 
@@ -33,6 +36,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_integracao_logs_updated_at ON public.integracao_logs;
 CREATE TRIGGER trigger_integracao_logs_updated_at
   BEFORE UPDATE ON integracao_logs
   FOR EACH ROW

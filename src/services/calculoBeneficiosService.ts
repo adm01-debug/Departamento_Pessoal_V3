@@ -175,13 +175,15 @@ export const dependentesService = {
   /**
    * Gestão de dependentes para IRRF e Salário Família
    */
-  async listarPorColaborador(colaboradorId: string) {
+  async listarPorColaborador(colaboradorId: string, empresaId: string) {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await (supabase
       .from('dependentes') as any)
       .select('*')
       .eq('colaborador_id', colaboradorId)
+      .eq('empresa_id', empresaId)
       .order('nome');
-    
+
     if (error) throw error;
     return data || [];
   },

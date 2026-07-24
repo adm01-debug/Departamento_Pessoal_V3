@@ -12,12 +12,15 @@ CREATE TABLE IF NOT EXISTS sst_epis (
 -- Add RLS Policies
 ALTER TABLE sst_epis ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "sst_epis_select" ON public.sst_epis;
 CREATE POLICY "sst_epis_select" ON sst_epis
   FOR SELECT USING (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "sst_epis_insert" ON public.sst_epis;
 CREATE POLICY "sst_epis_insert" ON sst_epis
   FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
+DROP POLICY IF EXISTS "sst_epis_update" ON public.sst_epis;
 CREATE POLICY "sst_epis_update" ON sst_epis
   FOR UPDATE USING (auth.role() = 'authenticated');
 
@@ -33,6 +36,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_sst_epis_updated_at ON public.sst_epis;
 CREATE TRIGGER trigger_sst_epis_updated_at
   BEFORE UPDATE ON sst_epis
   FOR EACH ROW

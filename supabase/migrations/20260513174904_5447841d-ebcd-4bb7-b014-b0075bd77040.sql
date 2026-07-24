@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS public.automacao_logs (
 ALTER TABLE public.automacao_logs ENABLE ROW LEVEL SECURITY;
 
 -- Políticas RLS
+DROP POLICY IF EXISTS "Logs de automação visíveis para gestores" ON public.automacao_logs;
 CREATE POLICY "Logs de automação visíveis para gestores" 
 ON public.automacao_logs 
 FOR SELECT 

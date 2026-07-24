@@ -12,6 +12,7 @@ import { Plus, Trash2, Save, Database } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 
 export function ConfiguracoesGeraisTab() {
   const qc = useQueryClient();
@@ -35,10 +36,15 @@ export function ConfiguracoesGeraisTab() {
 
   const criar = useMutation({
     mutationFn: async (d: typeof form) => {
+      const chave = d.chave.trim().slice(0, 100);
+      const valor = d.valor.trim().slice(0, 500);
+      if (!chave) throw new Error('Chave é obrigatória.');
+      if (!/^[a-zA-Z0-9_.-]+$/.test(chave)) throw new Error('Chave deve conter apenas letras, números, _ . e -');
+
       const { error } = await supabase.from('configuracoes').insert({
-        chave: d.chave,
-        valor: d.valor,
-        descricao: d.descricao || null,
+        chave,
+        valor,
+        descricao: d.descricao?.trim().slice(0, 200) || null,
       } as any);
       if (error) throw error;
     },
@@ -48,7 +54,7 @@ export function ConfiguracoesGeraisTab() {
       setForm({ chave: '', valor: '', descricao: '' });
       toast.success('Configuração criada');
     },
-    onError: (e: any) => toast.error(e.message || 'Erro ao criar'),
+    onError: (e: any) => toast.error(safeErrorMessage(e, 'Erro ao criar configuração.')),
   });
 
   const excluir = useMutation({

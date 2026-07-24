@@ -43,3 +43,13 @@ export const ENCARGOS_PADRAO = {
   terceiros: 0.058,
   fgts: 0.08,
 };
+
+// Seguro-Desemprego 2026 (Resolução CODEFAT — base SM R$1.518,00)
+export const FAIXAS_SEGURO_DESEMPREGO_2026 = {
+  faixa1Limite: 2041.39,
+  faixa1Mult: 0.8,
+  faixa2Limite: 3402.65,
+  faixa2Base: 1633.10,
+  faixa2Mult: 0.5,
+  teto: 2313.74,
+};

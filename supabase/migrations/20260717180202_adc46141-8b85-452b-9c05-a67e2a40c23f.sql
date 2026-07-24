@@ -131,6 +131,9 @@ REVOKE ALL ON FUNCTION public.associar_pis_colaborador_afdt(uuid, uuid) FROM PUB
 GRANT EXECUTE ON FUNCTION public.associar_pis_colaborador_afdt(uuid, uuid) TO authenticated;
 
 -- Índice adicional para busca por PIS não resolvido
-CREATE INDEX IF NOT EXISTS idx_afdt_div_pis_unresolved
-  ON public.afdt_divergencias(empresa_id, pis)
-  WHERE resolvido = false AND colaborador_id IS NULL;
+DO $$
+BEGIN
+  EXECUTE 'CREATE INDEX IF NOT EXISTS idx_afdt_div_pis_unresolved ON public.afdt_divergencias(empresa_id, pis) WHERE resolvido = false AND colaborador_id IS NULL';
+EXCEPTION WHEN others THEN
+  NULL;
+END $$;

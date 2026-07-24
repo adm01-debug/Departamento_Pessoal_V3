@@ -51,27 +51,14 @@ export const pontoService = {
       const now = new Date();
       const data = format(now, 'yyyy-MM-dd');
       const hora = format(now, 'HH:mm');
-      
-      const tipoMap: Record<string, string> = { 
-        entrada: 'entrada', 
-        saida_almoco: 'saida', 
-        retorno_almoco: 'entrada', 
-        saida: 'saida' 
+
+      const tipoMap: Record<string, string> = {
+        entrada: 'entrada',
+        saida_almoco: 'saida',
+        retorno_almoco: 'entrada',
+        saida: 'saida'
       };
-
-      // 1. Prevenção de duplicidade
-      const { data: duplicate } = await supabase
-        .from('batidas_ponto')
-        .select('id')
-        .eq('colaborador_id', colaboradorId)
-        .eq('data', data)
-        .eq('hora', hora)
-        .eq('tipo', tipoMap[tipo] || 'entrada')
-        .maybeSingle();
-
-      if (duplicate) {
-        throw new Error('Já existe um registro idêntico para este horário. Aguarde um minuto.');
-      }
+      const tipoNormalizado = tipoMap[tipo] || 'entrada';
 
       const { data: colab, error: colabError } = await supabase
         .from('colaboradores')
@@ -90,18 +77,18 @@ export const pontoService = {
         const workplace = colab.locais_trabalho as any;
         if (workplace.latitude && workplace.longitude && options?.latitude && options?.longitude) {
           const distance = getDistance(
-            workplace.latitude, 
-            workplace.longitude, 
-            options.latitude, 
+            workplace.latitude,
+            workplace.longitude,
+            options.latitude,
             options.longitude
           );
           dentroRaio = distance <= (settings.raio_maximo_metros || 200);
-          
+
           if (!dentroRaio && settings.exige_geolocalizacao) {
             await pontoMonitorService.trackGeofenceFailure(
-              colaboradorId, 
-              options.latitude, 
-              options.longitude, 
+              colaboradorId,
+              options.latitude,
+              options.longitude,
               settings.raio_maximo_metros || 200
             );
           }
@@ -111,46 +98,37 @@ export const pontoService = {
       const hashPayload = `${colaboradorId}|${data}|${hora}|${options?.dispositivoId || 'web'}`;
       const hashIntegridade = CryptoJS.SHA256(hashPayload).toString();
 
-      const { data: lastPoint } = await supabase
-        .from('batidas_ponto')
-        .select('ordem')
-        .eq('colaborador_id', colab.id)
-        .eq('data', data)
-        .order('ordem', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      
-      const ordem = (lastPoint?.ordem || 0) + 1;
+      // Atomic insertion via SECURITY DEFINER RPC:
+      //   - Advisory lock on (colaborador_id, data) prevents concurrent ordem collision (C44)
+      //   - DB UNIQUE(colaborador_id, data, hora, tipo) catches duplicate batidas (C43)
+      //     without a racy SELECT pre-check
+      const { data: batida, error: rpcError } = await supabase.rpc('registrar_batida_ponto', {
+        p_colaborador_id: colab.id,
+        p_empresa_id: colab.empresa_id,
+        p_data: data,
+        p_hora: hora,
+        p_tipo: tipoNormalizado,
+        p_origem: 'web',
+        p_latitude: options?.latitude ?? null,
+        p_longitude: options?.longitude ?? null,
+        p_precisao_metros: options?.precisao ?? null,
+        p_dispositivo_id: options?.dispositivoId || 'web-browser',
+        p_dentro_raio: dentroRaio,
+        p_timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        p_hash_integridade: hashIntegridade,
+        p_foto_biometria_url: options?.foto_biometria_url ?? null,
+        p_metadata: options?.metadata ?? null,
+      } as any);
 
-      const { data: batida, error: insertError } = await supabase
-        .from('batidas_ponto')
-        .insert({
-          colaborador_id: colab.id,
-          empresa_id: colab.empresa_id,
-          data,
-          hora,
-          ordem,
-          tipo: tipoMap[tipo] || 'entrada',
-          origem: 'web',
-          latitude: options?.latitude,
-          longitude: options?.longitude,
-          precisao_metros: options?.precisao,
-          dispositivo_id: options?.dispositivoId || 'web-browser',
-          dentro_raio: dentroRaio,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          versao_app: '2.0.0-perf',
-          hash_integridade: hashIntegridade,
-          audit_sha256: hashIntegridade,
-          audit_conformidade: true,
-          foto_biometria_url: options?.foto_biometria_url,
-          metadata: options?.metadata
-        } as any)
-        .select()
-        .maybeSingle();
-
-      if (insertError) throw insertError;
+      if (rpcError) {
+        const pgCode = (rpcError as { code?: string }).code;
+        if (pgCode === '23505') {
+          throw new Error('Já existe um registro idêntico para este horário. Aguarde um minuto.');
+        }
+        throw rpcError;
+      }
       if (!batida) throw new Error('Nenhum registro de batida de ponto foi retornado.');
-      return (batida);
+      return batida;
     } catch (e: any) {
       throw new Error(e.message || 'Falha ao registrar ponto', { cause: e });
     }

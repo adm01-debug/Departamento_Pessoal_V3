@@ -73,9 +73,13 @@ export default defineConfig(({ mode }) => ({
     dedupe: ["react", "react-dom", "react/jsx-runtime"],
   },
   optimizeDeps: {
-    force: true,
+    // force: true foi removido — forçar re-otimização a cada dev start prejudica a DX
   },
   build: {
+    // Vite 8 usa o minifier oxc. O código do app não emite console cru (usa
+    // loggerService); o `esbuild.drop` da config antiga era ignorado pelo Vite 8
+    // e por isso foi removido. O console remanescente no bundle vem apenas de
+    // libs de terceiros (jspdf, html2canvas, etc.) e é preservado de propósito.
     rollupOptions: {
       output: {
         // Forma de função exigida pelo Vite 8 (rolldown). A forma de objeto

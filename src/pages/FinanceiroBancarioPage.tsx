@@ -9,6 +9,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { cnabService, CNABConfig, folhaService } from '@/services';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -106,7 +107,7 @@ export default function FinanceiroBancarioPage() {
       toast.success('Remessa CNAB gerada com sucesso');
       loadData();
     } catch (error: any) {
-      toast.error(error.message || 'Erro ao gerar CNAB');
+      toast.error(safeErrorMessage(error, 'Erro ao gerar CNAB.'));
     } finally {
       setGenerating(false);
     }
@@ -121,7 +122,7 @@ export default function FinanceiroBancarioPage() {
     try {
       setGenerating(true);
       const content = await cnabService.generatePIXBatch(empresaAtual!.id, selectedFolha);
-      
+
       // Download CSV
       const blob = new Blob([content], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
@@ -129,11 +130,11 @@ export default function FinanceiroBancarioPage() {
       a.href = url;
       a.download = `PIX_LOTE_${todayLocalISO()}.csv`;
       a.click();
-      
+
       toast.success('Lote PIX gerado com sucesso');
       loadData();
     } catch (error: any) {
-      toast.error(error.message || 'Erro ao gerar PIX');
+      toast.error(safeErrorMessage(error, 'Erro ao gerar lote PIX.'));
     } finally {
       setGenerating(false);
     }
@@ -146,12 +147,12 @@ export default function FinanceiroBancarioPage() {
     try {
       setProcessingRetorno(true);
       const content = await file.text();
-      const results = await cnabService.parseRetornoCNAB(content);
-      
+      const results = await cnabService.parseRetornoCNAB(empresaAtual!.id, content);
+
       toast.success(`Retorno processado: ${results.sucesso} sucessos, ${results.erro} erros.`);
       loadData();
     } catch (error: any) {
-      toast.error('Erro ao processar arquivo de retorno: ' + error.message);
+      toast.error(safeErrorMessage(error, 'Erro ao processar arquivo de retorno.'));
     } finally {
       setProcessingRetorno(false);
       // Reset input

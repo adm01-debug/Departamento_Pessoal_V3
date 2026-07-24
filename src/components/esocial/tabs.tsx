@@ -220,7 +220,7 @@ export function ESocialConfigTab({
                 </div>
                 <div className="space-y-2">
                   <Label>Senha do Certificado</Label>
-                  <Input name="password" type="password" placeholder="Sua senha" required />
+                  <Input name="password" type="password" autoComplete="off" placeholder="Sua senha" required />
                 </div>
                 <div className="space-y-2">
                   <Label>Identificação (Ex: e-CNPJ Empresa)</Label>

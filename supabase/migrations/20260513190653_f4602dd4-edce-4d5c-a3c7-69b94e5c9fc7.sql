@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS public.esocial_transmissao_logs (
 ALTER TABLE public.esocial_transmissao_logs ENABLE ROW LEVEL SECURITY;
 
 -- Políticas de acesso corretas
+DROP POLICY IF EXISTS "Gestores e RH podem ver logs de transmissão" ON public.esocial_transmissao_logs;
 CREATE POLICY "Gestores e RH podem ver logs de transmissão"
 ON public.esocial_transmissao_logs
 FOR SELECT
