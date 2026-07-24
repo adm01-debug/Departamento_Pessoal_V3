@@ -98,13 +98,22 @@ const callBridge = async <T = any>(
     ...payload,
   };
 
+  // P0-009: nunca usar anon key como Authorization. Writes exigem JWT válido;
+  // reads anônimos continuam permitidos (compatibilidade com o frontend).
+  const bearerToken = session?.access_token;
+  const isWrite = action === 'insert' || action === 'update' || action === 'delete' || action === 'upsert';
+  if (isWrite && !bearerToken) {
+    return { data: null, count: 0, error: { message: 'Sessão inválida — faça login novamente.' } };
+  }
+
   try {
     const res = await fetch(`${SUPABASE_URL}/functions/v1/external-db-bridge`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'apikey': SUPABASE_PUBLISHABLE_KEY,
-        'Authorization': `Bearer ${session?.access_token || SUPABASE_PUBLISHABLE_KEY}`,
+        // Bearer = access_token (se houver) ou anon key (apenas para reads anônimos)
+        'Authorization': `Bearer ${bearerToken || SUPABASE_PUBLISHABLE_KEY}`,
       },
       body: JSON.stringify(body),
     });
