@@ -12,6 +12,9 @@ import './index.css';
 if (import.meta.env.PROD && import.meta.env.VITE_SENTRY_DSN) {
   Sentry.init({
     dsn: import.meta.env.VITE_SENTRY_DSN,
+    // P3-053: release tracking + source maps upload
+    release: import.meta.env.VITE_SENTRY_RELEASE ?? 'dp-v2@unknown',
+    environment: import.meta.env.MODE,
     integrations: [
       Sentry.browserTracingIntegration(),
       Sentry.replayIntegration(),
@@ -19,6 +22,20 @@ if (import.meta.env.PROD && import.meta.env.VITE_SENTRY_DSN) {
     tracesSampleRate: 0.1,
     replaysSessionSampleRate: 0.1,
     replaysOnErrorSampleRate: 1.0,
+    // Tags globais para filtragem no dashboard Sentry
+    initialScope: {
+      tags: {
+        component: 'frontend',
+        app: 'departamento-pessoal-v2',
+        tenant_isolation: 'enforced',
+      },
+    },
+    // Filtra erros esperados de bots/scanners
+    ignoreErrors: [
+      'ResizeObserver loop limit exceeded',
+      'NetworkError when attempting to fetch resource',
+      'Failed to fetch',
+    ],
   });
 }
 
