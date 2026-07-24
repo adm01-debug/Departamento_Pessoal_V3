@@ -22,11 +22,14 @@ export function isSafeColumnsExpr(c: unknown): c is string {
   if (DANGEROUS_TOKENS.test(c)) return false;
   return COLUMNS_RE.test(c);
 }
+// Aceita: "id", "id.desc", "id.desc.nullsfirst", "created_at.asc.nullslast"
+// Bloqueia: ; -- /* */ SQL keywords, espaços, caracteres especiais
+const ORDER_FULL_RE = /^[a-zA-Z_][a-zA-Z0-9_]*(\.(asc|desc))?(\.(nullsfirst|nullslast))?$/;
 export function isSafeOrderColumn(c: unknown): c is string {
   if (typeof c !== "string") return false;
   if (c.length === 0 || c.length > 120) return false;
   if (DANGEROUS_TOKENS.test(c)) return false;
-  return /^[a-zA-Z_][a-zA-Z0-9_.]*$/.test(c);
+  return ORDER_FULL_RE.test(c);
 }
 
 // -------------------- Denylist de tabelas --------------------
