@@ -8,7 +8,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { medidasDisciplinaresService } from '@/services';
-import { useAuth } from '@/hooks';
+import { useAuth, useNow } from '@/hooks';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { MedidaWorkflowTimeline } from './MedidaWorkflowTimeline';
@@ -27,6 +27,7 @@ interface Props {
 export function MedidaContestacaoDialog({ medida, open, onOpenChange, isRHOrAdmin, colaboradorUserId }: Props) {
   const qc = useQueryClient();
   const { user } = useAuth();
+  const now = useNow(30_000); // P1-029: estável durante render
   const [texto, setTexto] = useState('');
   const [resposta, setResposta] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
@@ -34,7 +35,7 @@ export function MedidaContestacaoDialog({ medida, open, onOpenChange, isRHOrAdmi
   const isOwner = colaboradorUserId && user?.id === colaboradorUserId;
   const prazoDate = medida?.contestacao_prazo_ate ? parseISO(medida.contestacao_prazo_ate) : null;
   // eslint-disable-next-line react-hooks/purity -- comparação de prazo em tempo de render (UI de contestação)
-  const prazoExpirado = prazoDate ? Date.now() > prazoDate.getTime() : false;
+  const prazoExpirado = prazoDate ? now > prazoDate.getTime() : false;
   const podeContestar = !!medida && isOwner && medida.status_workflow === 'aplicada' && !prazoExpirado && !medida.contestacao_texto;
   const podeResponder = !!medida && isRHOrAdmin && medida.status_workflow === 'contestada';
 
