@@ -45,7 +45,12 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
   const [diasInfo, setDiasInfo] = useState({ total: 0, empresa: 0, inss: 0 });
   const [cidSearch, setCidSearch] = useState('');
   const [cidResults, setCidResults] = useState<any[]>([]);
-  const [selectedCid, setSelectedCid] = useState<any>(initialData?.cid || null);
+  interface CidItem {
+    id: string;
+    codigo: string;
+    descricao: string;
+  }
+  const [selectedCid, setSelectedCid] = useState<CidItem | null>(initialData?.cid ?? null);
   const [historicoRecente, setHistoricoRecente] = useState<any[]>([]);
 
   const [isVerificandoHistorico, setIsVerificandoHistorico] = useState(false);
