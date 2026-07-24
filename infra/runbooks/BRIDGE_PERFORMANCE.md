@@ -6,7 +6,32 @@
 `data as any` em insert/upsert (linhas ~950-980). Zod valida o body mas o `data` escapa.
 
 ### 2. ⚠️ Rate limit IP spoofable
-`cf-connecting-ip` / `x-real-ip` headers podem ser falsificados. Usar `request.headers.get("cf-connecting-ip")` com fallback para IP real do Deno.
+`cf-connecting-ip` / `x-real-ip` headers podem ser falsificados se o cliente
+puder enviá-los diretamente. **Mitigação obrigatória em produção (P1-014)**:
+
+1. **WAF/Proxy reverso obrigatório**: Cloudflare (ou AWS CloudFront, GCP Load
+   Balancer) DEVE estar à frente do `external-db-bridge`. O proxy:
+   - **Sobrescreve** `cf-connecting-ip` com o IP real do cliente (não
+     confiar no header do cliente)
+   - Adiciona `X-Forwarded-For` confiável
+   - Bloqueia requisições que tentam forjar esses headers
+
+2. **Cloudflare WAF rules** sugeridas:
+   - Block: requisições com `cf-connecting-ip: 127.0.0.1` (loopback)
+   - Block: ASN de países não permitidos (use `is_country_allowed`)
+   - Rate limit por IP+UA combination (mitiga scrapers)
+
+3. **Em dev/staging**: `cf-connecting-ip` pode ser falsificado sem
+   consequência (rate limits mais permissivos). Em prod, **DEVE** passar
+   por Cloudflare.
+
+4. **Configurar `BRIDGE_TRUSTED_PROXY_HEADER`**: indica qual header
+   confiar para IP real. Default: `cf-connecting-ip` (Cloudflare).
+
+**Sem Cloudflare em prod, atacante pode**:
+- Bypassar rate limit (enviar IP falso)
+- Executar brute-force de tokens de admissão
+- Esgotar connection pool com requests flood
 
 ### 3. ⚠️ ORDER BY sem validação regex
 `body.order.column` é usado direto sem `isSafeColumnsExpr()`. PostgREST aceita `column.nullsfirst` syntax que pode conter injeção.
