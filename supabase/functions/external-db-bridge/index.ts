@@ -509,6 +509,15 @@ Deno.serve(async (req) => {
     if (action === "select") {
       const t0 = performance.now();
       // Query dinâmica: filtros/colunas resolvidos em runtime; tipo do proxy é any.
+      // ---------------------------------------------------------------
+      // countMode (P1-016 documentado):
+      //   - "none"      → não retorna count (mais rápido, default)
+      //   - "exact"     → COUNT(*) exato; custo extra +1 scan
+      //   - "planned"   → estimativa via plano do Postgres (PostgREST >= 12)
+      //   - "estimated" → estimativa via estatísticas (PostgREST >= 12)
+      // IMPORTANTE: 'planned'/'estimated' exigem Accept-Profile correto e
+      // são indistinguíveis de 'none' se o banco não suportar. Em produção
+      // com Supabase self-hosted, validar se o PostgREST tem suporte.
       let query: any = externalClient
         .from(table!)
         .select(selectColumns, { count: queryCountMode === "none" ? undefined : queryCountMode });
