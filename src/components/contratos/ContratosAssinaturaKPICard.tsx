@@ -10,7 +10,7 @@ import { useContratosAssinaturaKPI } from '@/hooks/useContratosAssinaturaKPI';
 import { ContratoTokenTimelineDialog } from './ContratoTokenTimelineDialog';
 
 function fmtHoras(h: number | null): string {
-  if (h == null) return '—';
+  if (h === null || h === undefined) return '—';
   if (h < 1) return `${Math.round(h * 60)} min`;
   if (h < 24) return `${h.toFixed(1)} h`;
   return `${(h / 24).toFixed(1)} d`;

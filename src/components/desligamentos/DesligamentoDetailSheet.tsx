@@ -24,7 +24,7 @@ interface DetailSheetProps {
 }
 
 function fmt(v: number | null) {
-  if (v == null) return 'R$ 0,00';
+  if (v === null || v === undefined) return 'R$ 0,00';
   return `R$ ${v.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
 }
 

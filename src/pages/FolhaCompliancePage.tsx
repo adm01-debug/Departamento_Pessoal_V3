@@ -55,7 +55,7 @@ const fmtDate = (iso: string | null) =>
   iso ? new Date(iso).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'medium' }) : '—';
 
 const fmtMoney = (n: number | null | undefined) =>
-  n == null ? '—' : n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  n === null || n === undefined ? '—' : n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
 function toCSV(rows: ComplianceRow[]): string {
   const header = [
@@ -65,7 +65,7 @@ function toCSV(rows: ComplianceRow[]): string {
     'itens_count','motivo','override_esocial','user_email',
   ];
   const escape = (v: unknown) => {
-    if (v == null) return '';
+    if (v === null || v === undefined) return '';
     const s = String(v).replace(/"/g, '""');
     return /[",\n;]/.test(s) ? `"${s}"` : s;
   };
