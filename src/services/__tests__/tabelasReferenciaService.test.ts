@@ -105,6 +105,15 @@ function setupUpdateEqChain(error: any = null) {
   return { updateFn, eqFn };
 }
 
+// update(dados).eq('id', id).eq('...', ...) → resolvedValue
+function setupUpdateDoubleEqChain(error: any = null) {
+  const eq2Fn = vi.fn().mockResolvedValue({ error });
+  const eq1Fn = vi.fn().mockReturnValue({ eq: eq2Fn });
+  const updateFn = vi.fn().mockReturnValue({ eq: eq1Fn });
+  mockFrom.mockReturnValue({ update: updateFn });
+  return { updateFn, eq1Fn, eq2Fn };
+}
+
 // delete().eq('id', id) → resolvedValue
 function setupDeleteEqChain(error: any = null) {
   const eqFn = vi.fn().mockResolvedValue({ error });
@@ -120,6 +129,16 @@ function setupDeleteDoubleEqChain(error: any = null) {
   const deleteFn = vi.fn().mockReturnValue({ eq: eq1Fn });
   mockFrom.mockReturnValue({ delete: deleteFn });
   return { deleteFn, eq1Fn, eq2Fn };
+}
+
+// select → eq1 → eq2 → order → resolve (for functions filtering by two fields)
+function setupDoubleEqOrderChain(data: any[], error: any = null) {
+  const orderFn = vi.fn().mockResolvedValue({ data, error });
+  const eq2Fn = vi.fn().mockReturnValue({ order: orderFn });
+  const eq1Fn = vi.fn().mockReturnValue({ eq: eq2Fn, order: orderFn });
+  const selectFn = vi.fn().mockReturnValue({ eq: eq1Fn });
+  mockFrom.mockReturnValue({ select: selectFn });
+  return { selectFn, eq1Fn, eq2Fn, orderFn };
 }
 
 // ─── Reference Tables ─────────────────────────────────────────────────────────
@@ -171,15 +190,15 @@ describe('listarTiposDesligamento', () => {
 describe('listarCentrosCusto', () => {
   beforeEach(() => { vi.clearAllMocks(); });
 
-  it('returns centros without empresa filter', async () => {
+  it('returns centros with empresa filter', async () => {
     const records = [{ id: 'cc1', nome: 'TI' }];
     setupListChain(records);
-    expect(await listarCentrosCusto()).toEqual(records);
+    expect(await listarCentrosCusto('emp-1')).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
     setupListChain(null as any);
-    expect(await listarCentrosCusto()).toEqual([]);
+    expect(await listarCentrosCusto('emp-1')).toEqual([]);
   });
 
   it('filters by empresa_id when provided', async () => {
@@ -190,13 +209,13 @@ describe('listarCentrosCusto', () => {
 
   it('orders by nome', async () => {
     const { chain } = setupListChain([]);
-    await listarCentrosCusto();
+    await listarCentrosCusto('emp-1');
     expect(chain.order).toHaveBeenCalledWith('nome');
   });
 
   it('throws on DB error', async () => {
     setupListChain([], { message: 'fail' });
-    await expect(listarCentrosCusto()).rejects.toBeDefined();
+    await expect(listarCentrosCusto('emp-1')).rejects.toBeDefined();
   });
 });
 
@@ -225,32 +244,32 @@ describe('criarCentroCusto', () => {
 describe('atualizarCentroCusto', () => {
   beforeEach(() => { vi.clearAllMocks(); });
 
-  it('updates centro by id', async () => {
-    const { updateFn, eqFn } = setupUpdateEqChain();
-    await atualizarCentroCusto('cc1', { nome: 'Novo Nome' });
+  it('updates centro by id and empresa_id', async () => {
+    const { updateFn, eq1Fn } = setupUpdateDoubleEqChain();
+    await atualizarCentroCusto('cc1', { nome: 'Novo Nome' }, 'emp-1');
     expect(updateFn).toHaveBeenCalledWith({ nome: 'Novo Nome' });
-    expect(eqFn).toHaveBeenCalledWith('id', 'cc1');
+    expect(eq1Fn).toHaveBeenCalledWith('id', 'cc1');
   });
 
   it('throws on DB error', async () => {
-    setupUpdateEqChain({ message: 'fail' });
-    await expect(atualizarCentroCusto('cc1', {})).rejects.toBeDefined();
+    setupUpdateDoubleEqChain({ message: 'fail' });
+    await expect(atualizarCentroCusto('cc1', {}, 'emp-1')).rejects.toBeDefined();
   });
 });
 
 describe('excluirCentroCusto', () => {
   beforeEach(() => { vi.clearAllMocks(); });
 
-  it('deletes centro by id', async () => {
-    const { deleteFn, eqFn } = setupDeleteEqChain();
-    await excluirCentroCusto('cc1');
+  it('deletes centro by id and empresa_id', async () => {
+    const { deleteFn, eq1Fn } = setupDeleteDoubleEqChain();
+    await excluirCentroCusto('cc1', 'emp-1');
     expect(deleteFn).toHaveBeenCalled();
-    expect(eqFn).toHaveBeenCalledWith('id', 'cc1');
+    expect(eq1Fn).toHaveBeenCalledWith('id', 'cc1');
   });
 
   it('throws on DB error', async () => {
-    setupDeleteEqChain({ message: 'fail' });
-    await expect(excluirCentroCusto('cc1')).rejects.toBeDefined();
+    setupDeleteDoubleEqChain({ message: 'fail' });
+    await expect(excluirCentroCusto('cc1', 'emp-1')).rejects.toBeDefined();
   });
 });
 
@@ -261,26 +280,26 @@ describe('listarContasBancarias', () => {
 
   it('returns contas for colaborador', async () => {
     const records = [{ id: 'cb1', colaborador_id: 'c1' }];
-    const { eqFn } = setupEqOrderChain(records);
-    const result = await listarContasBancarias('c1');
+    const { eq1Fn } = setupDoubleEqOrderChain(records);
+    const result = await listarContasBancarias('c1', 'emp-1');
     expect(result).toEqual(records);
-    expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
+    expect(eq1Fn).toHaveBeenCalledWith('colaborador_id', 'c1');
   });
 
   it('orders by principal descending', async () => {
-    const { orderFn } = setupEqOrderChain([]);
-    await listarContasBancarias('c1');
+    const { orderFn } = setupDoubleEqOrderChain([]);
+    await listarContasBancarias('c1', 'emp-1');
     expect(orderFn).toHaveBeenCalledWith('principal', { ascending: false });
   });
 
   it('returns empty array when data is null', async () => {
-    setupEqOrderChain(null as any);
-    expect(await listarContasBancarias('c1')).toEqual([]);
+    setupDoubleEqOrderChain(null as any);
+    expect(await listarContasBancarias('c1', 'emp-1')).toEqual([]);
   });
 
   it('throws on DB error', async () => {
-    setupEqOrderChain([], { message: 'fail' });
-    await expect(listarContasBancarias('c1')).rejects.toBeDefined();
+    setupDoubleEqOrderChain([], { message: 'fail' });
+    await expect(listarContasBancarias('c1', 'emp-1')).rejects.toBeDefined();
   });
 });
 
@@ -304,32 +323,32 @@ describe('criarContaBancaria', () => {
 describe('atualizarContaBancaria', () => {
   beforeEach(() => { vi.clearAllMocks(); });
 
-  it('updates conta by id', async () => {
-    const { updateFn, eqFn } = setupUpdateEqChain();
-    await atualizarContaBancaria('cb1', { agencia: '1234' });
+  it('updates conta by id and empresa_id', async () => {
+    const { updateFn, eq1Fn } = setupUpdateDoubleEqChain();
+    await atualizarContaBancaria('cb1', { agencia: '1234' }, 'emp-1');
     expect(updateFn).toHaveBeenCalledWith({ agencia: '1234' });
-    expect(eqFn).toHaveBeenCalledWith('id', 'cb1');
+    expect(eq1Fn).toHaveBeenCalledWith('id', 'cb1');
   });
 
   it('throws on DB error', async () => {
-    setupUpdateEqChain({ message: 'fail' });
-    await expect(atualizarContaBancaria('cb1', {})).rejects.toBeDefined();
+    setupUpdateDoubleEqChain({ message: 'fail' });
+    await expect(atualizarContaBancaria('cb1', {}, 'emp-1')).rejects.toBeDefined();
   });
 });
 
 describe('excluirContaBancaria', () => {
   beforeEach(() => { vi.clearAllMocks(); });
 
-  it('deletes conta by id', async () => {
-    const { deleteFn, eqFn } = setupDeleteEqChain();
-    await excluirContaBancaria('cb1');
+  it('deletes conta by id and empresa_id', async () => {
+    const { deleteFn, eq1Fn } = setupDeleteDoubleEqChain();
+    await excluirContaBancaria('cb1', 'emp-1');
     expect(deleteFn).toHaveBeenCalled();
-    expect(eqFn).toHaveBeenCalledWith('id', 'cb1');
+    expect(eq1Fn).toHaveBeenCalledWith('id', 'cb1');
   });
 
   it('throws on DB error', async () => {
-    setupDeleteEqChain({ message: 'fail' });
-    await expect(excluirContaBancaria('cb1')).rejects.toBeDefined();
+    setupDeleteDoubleEqChain({ message: 'fail' });
+    await expect(excluirContaBancaria('cb1', 'emp-1')).rejects.toBeDefined();
   });
 });
 
@@ -463,16 +482,16 @@ describe('criarDocumentoPessoal', () => {
 describe('excluirDocumentoPessoal', () => {
   beforeEach(() => { vi.clearAllMocks(); });
 
-  it('deletes documento by id', async () => {
-    const { deleteFn, eqFn } = setupDeleteEqChain();
-    await excluirDocumentoPessoal('dp1');
+  it('deletes documento by colaborador and id', async () => {
+    const { deleteFn, eq1Fn } = setupDeleteDoubleEqChain();
+    await excluirDocumentoPessoal('col-1', 'dp1');
     expect(deleteFn).toHaveBeenCalled();
-    expect(eqFn).toHaveBeenCalledWith('id', 'dp1');
+    expect(eq1Fn).toHaveBeenCalledWith('id', 'dp1');
   });
 
   it('throws on DB error', async () => {
-    setupDeleteEqChain({ message: 'fail' });
-    await expect(excluirDocumentoPessoal('dp1')).rejects.toBeDefined();
+    setupDeleteDoubleEqChain({ message: 'fail' });
+    await expect(excluirDocumentoPessoal('col-1', 'dp1')).rejects.toBeDefined();
   });
 });
 
@@ -526,16 +545,16 @@ describe('criarFeriasAprovacao', () => {
 describe('atualizarFeriasAprovacao', () => {
   beforeEach(() => { vi.clearAllMocks(); });
 
-  it('updates aprovacao by id', async () => {
-    const { updateFn, eqFn } = setupUpdateEqChain();
-    await atualizarFeriasAprovacao('fa1', { status: 'rejeitado' });
+  it('updates aprovacao by id and ferias_id', async () => {
+    const { updateFn, eq1Fn } = setupUpdateDoubleEqChain();
+    await atualizarFeriasAprovacao('f1', 'fa1', { status: 'rejeitado' });
     expect(updateFn).toHaveBeenCalledWith({ status: 'rejeitado' });
-    expect(eqFn).toHaveBeenCalledWith('id', 'fa1');
+    expect(eq1Fn).toHaveBeenCalledWith('id', 'fa1');
   });
 
   it('throws on DB error', async () => {
-    setupUpdateEqChain({ message: 'fail' });
-    await expect(atualizarFeriasAprovacao('fa1', {})).rejects.toBeDefined();
+    setupUpdateDoubleEqChain({ message: 'fail' });
+    await expect(atualizarFeriasAprovacao('f1', 'fa1', {})).rejects.toBeDefined();
   });
 });
 

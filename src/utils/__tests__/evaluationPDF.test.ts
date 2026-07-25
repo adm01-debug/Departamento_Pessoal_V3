@@ -28,7 +28,7 @@ function makeDocMock() {
 describe('gerarPDIPDF', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    MockJsPDF.mockImplementation(() => makeDocMock());
+    MockJsPDF.mockImplementation(function() { return makeDocMock(); });
   });
 
   it('creates a jsPDF instance', async () => {

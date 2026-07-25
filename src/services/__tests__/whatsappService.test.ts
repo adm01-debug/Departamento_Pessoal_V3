@@ -258,7 +258,8 @@ describe('whatsappService', () => {
       const selectFn1 = vi.fn().mockReturnValue({ single: singleFn });
       const insertFn = vi.fn().mockReturnValue({ select: selectFn1 });
 
-      const eqUpdate = vi.fn().mockResolvedValue({ error: null });
+      const eqUpdate2 = vi.fn().mockResolvedValue({ error: null });
+      const eqUpdate = vi.fn().mockReturnValue({ eq: eqUpdate2 });
       const updateFn = vi.fn().mockReturnValue({ eq: eqUpdate });
 
       mockFrom
@@ -280,7 +281,8 @@ describe('whatsappService', () => {
       const selectFn1 = vi.fn().mockReturnValue({ single: singleFn });
       const insertFn = vi.fn().mockReturnValue({ select: selectFn1 });
 
-      const eqUpdate = vi.fn().mockResolvedValue({ error: null });
+      const eqUpdate2 = vi.fn().mockResolvedValue({ error: null });
+      const eqUpdate = vi.fn().mockReturnValue({ eq: eqUpdate2 });
       const updateFn = vi.fn().mockReturnValue({ eq: eqUpdate });
 
       mockFrom
@@ -310,7 +312,8 @@ describe('whatsappService', () => {
       const selectFn1 = vi.fn().mockReturnValue({ single: singleFn });
       const insertFn = vi.fn().mockReturnValue({ select: selectFn1 });
 
-      const eqUpdate = vi.fn().mockResolvedValue({ error: null });
+      const eqUpdate2 = vi.fn().mockResolvedValue({ error: null });
+      const eqUpdate = vi.fn().mockReturnValue({ eq: eqUpdate2 });
       const updateFn = vi.fn().mockReturnValue({ eq: eqUpdate });
 
       mockFrom

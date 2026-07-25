@@ -212,13 +212,13 @@ describe('workflowService.excluirEtapa', () => {
 
   it('calls delete with given id', async () => {
     const { eqFn } = setupDeleteChain();
-    await workflowService.excluirEtapa('et-1');
+    await workflowService.excluirEtapa('wf-1', 'et-1');
     expect(eqFn).toHaveBeenCalledWith('id', 'et-1');
   });
 
   it('throws on DB error', async () => {
     setupDeleteChain({ message: 'fail' });
-    await expect(workflowService.excluirEtapa('et-1')).rejects.toBeDefined();
+    await expect(workflowService.excluirEtapa('wf-1', 'et-1')).rejects.toBeDefined();
   });
 });
 

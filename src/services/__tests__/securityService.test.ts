@@ -71,7 +71,7 @@ describe('securityService.getBlockedIps', () => {
   });
 
   it('throws and logs error on DB failure', async () => {
-    setupSelectOrderChain([], { message: 'fail' });
+    setupSelectOrderLimitChain([], { message: 'fail' });
     await expect(securityService.getBlockedIps()).rejects.toBeDefined();
     expect(mockLoggerError).toHaveBeenCalled();
   });

@@ -162,13 +162,13 @@ describe('turnoService.listarEscalas', () => {
   it('returns all escalas without filters', async () => {
     const records = [{ id: 'e1', data: '2026-07-24' }];
     setupListChain(records);
-    const result = await turnoService.listarEscalas();
+    const result = await turnoService.listarEscalas(EMPRESA_ID);
     expect(result).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
     setupListChain(null as any);
-    const result = await turnoService.listarEscalas();
+    const result = await turnoService.listarEscalas(EMPRESA_ID);
     expect(result).toEqual([]);
   });
 
@@ -180,13 +180,13 @@ describe('turnoService.listarEscalas', () => {
 
   it('filters by data when provided', async () => {
     const { chain } = setupListChain([]);
-    await turnoService.listarEscalas(undefined, '2026-07-24');
+    await turnoService.listarEscalas(EMPRESA_ID, '2026-07-24');
     expect(chain.eq).toHaveBeenCalledWith('data', '2026-07-24');
   });
 
   it('includes colaborador and turno joins in select', async () => {
     const { selectFn } = setupListChain([]);
-    await turnoService.listarEscalas();
+    await turnoService.listarEscalas(EMPRESA_ID);
     expect(selectFn).toHaveBeenCalledWith(
       expect.stringContaining('colaborador:colaboradores')
     );
@@ -197,7 +197,7 @@ describe('turnoService.listarEscalas', () => {
 
   it('throws on DB error', async () => {
     setupListChain([], { message: 'fail' });
-    await expect(turnoService.listarEscalas()).rejects.toBeDefined();
+    await expect(turnoService.listarEscalas(EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 

@@ -29,7 +29,7 @@ describe('auditLogger.log', () => {
     expect(mockGetUser).toHaveBeenCalled();
   });
 
-  it('inserts into audit_log with correct tabela, registro_id, and acao', async () => {
+  it('inserts into audit_log_unified with correct entity, entity_id, and action', async () => {
     await auditLogger.log({
       tabela: 'colaboradores',
       registro_id: 'colab-1',
@@ -37,9 +37,9 @@ describe('auditLogger.log', () => {
     });
     expect(mockInsert).toHaveBeenCalledWith(
       expect.objectContaining({
-        tabela: 'colaboradores',
-        registro_id: 'colab-1',
-        acao: 'UPDATE',
+        entity: 'colaboradores',
+        entity_id: 'colab-1',
+        action: 'UPDATE',
       })
     );
   });
@@ -53,7 +53,7 @@ describe('auditLogger.log', () => {
     expect(mockInsert).toHaveBeenCalledWith(
       expect.objectContaining({
         user_id: 'user-1',
-        user_email: 'test@test.com',
+        payload: expect.objectContaining({ user_email: 'test@test.com' }),
       })
     );
   });
@@ -69,12 +69,12 @@ describe('auditLogger.log', () => {
     expect(mockInsert).toHaveBeenCalledWith(
       expect.objectContaining({
         user_id: 'override-user',
-        user_email: 'override@email.com',
+        payload: expect.objectContaining({ user_email: 'override@email.com' }),
       })
     );
   });
 
-  it('includes dados_anteriores and dados_novos when provided', async () => {
+  it('includes dados_anteriores and dados_novos inside payload when provided', async () => {
     const antes = { nome: 'Old Name' };
     const depois = { nome: 'New Name' };
     await auditLogger.log({
@@ -85,18 +85,22 @@ describe('auditLogger.log', () => {
       dados_novos: depois,
     });
     expect(mockInsert).toHaveBeenCalledWith(
-      expect.objectContaining({ dados_anteriores: antes, dados_novos: depois })
+      expect.objectContaining({
+        payload: expect.objectContaining({ dados_anteriores: antes, dados_novos: depois }),
+      })
     );
   });
 
-  it('sets dados_anteriores=null when not provided', async () => {
+  it('sets dados_anteriores=null inside payload when not provided', async () => {
     await auditLogger.log({
       tabela: 'colaboradores',
       registro_id: 'c1',
       acao: 'INSERT',
     });
     expect(mockInsert).toHaveBeenCalledWith(
-      expect.objectContaining({ dados_anteriores: null })
+      expect.objectContaining({
+        payload: expect.objectContaining({ dados_anteriores: null }),
+      })
     );
   });
 

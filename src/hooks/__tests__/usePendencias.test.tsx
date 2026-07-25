@@ -29,7 +29,8 @@ function setupSelectMock(data: any[], error: any = null) {
   const order = vi.fn().mockResolvedValue({ data, error });
   const eqSelect = vi.fn().mockReturnValue({ order });
   const select = vi.fn().mockReturnValue({ eq: eqSelect });
-  const eqUpdate = vi.fn().mockResolvedValue({ error: null });
+  const eqUpdate2 = vi.fn().mockResolvedValue({ error: null });
+  const eqUpdate = vi.fn().mockReturnValue({ eq: eqUpdate2 });
   const update = vi.fn().mockReturnValue({ eq: eqUpdate });
   mockFrom.mockReturnValue({ select, update });
   return { select, eqSelect, order, update, eqUpdate };
@@ -121,7 +122,8 @@ describe('usePendencias', () => {
 
   it('updateStatus shows error toast when supabase returns error', async () => {
     setupSelectMock(mockPendencias);
-    const eqError = vi.fn().mockResolvedValue({ error: { message: 'DB error' } });
+    const eqError2 = vi.fn().mockResolvedValue({ error: { message: 'DB error' } });
+    const eqError = vi.fn().mockReturnValue({ eq: eqError2 });
     const update = vi.fn().mockReturnValue({ eq: eqError });
     mockFrom.mockImplementation((table: string) => {
       if (table === 'pendencias') {

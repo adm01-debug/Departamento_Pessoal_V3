@@ -3,15 +3,16 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 const { MockJsPDF, mockSave, mockText } = vi.hoisted(() => {
   const mockSave = vi.fn();
   const mockText = vi.fn();
-  const MockJsPDF = vi.fn().mockImplementation(() => ({
+  const mockDoc = {
     setFontSize: vi.fn(), setTextColor: vi.fn(), setFont: vi.fn(),
     setFillColor: vi.fn(), setDrawColor: vi.fn(), setLineWidth: vi.fn(),
     rect: vi.fn(), line: vi.fn(), text: mockText, save: mockSave,
     internal: {
-      pageSize: { getWidth: () => 210, getHeight: () => 297 },
+      pageSize: { getWidth: function() { return 210; }, getHeight: function() { return 297; } },
     },
     lastAutoTable: { finalY: 100 },
-  }));
+  };
+  const MockJsPDF = vi.fn().mockImplementation(function() { return mockDoc; });
   return { MockJsPDF, mockSave, mockText };
 });
 
@@ -36,15 +37,17 @@ const sampleHolerite = {
 describe('gerarPDFHolerite', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    MockJsPDF.mockImplementation(() => ({
-      setFontSize: vi.fn(), setTextColor: vi.fn(), setFont: vi.fn(),
-      setFillColor: vi.fn(), setDrawColor: vi.fn(), setLineWidth: vi.fn(),
-      rect: vi.fn(), line: vi.fn(), text: mockText, save: mockSave,
-      internal: {
-        pageSize: { getWidth: () => 210, getHeight: () => 297 },
-      },
-      lastAutoTable: { finalY: 100 },
-    }));
+    MockJsPDF.mockImplementation(function() {
+      return {
+        setFontSize: vi.fn(), setTextColor: vi.fn(), setFont: vi.fn(),
+        setFillColor: vi.fn(), setDrawColor: vi.fn(), setLineWidth: vi.fn(),
+        rect: vi.fn(), line: vi.fn(), text: mockText, save: mockSave,
+        internal: {
+          pageSize: { getWidth: function() { return 210; }, getHeight: function() { return 297; } },
+        },
+        lastAutoTable: { finalY: 100 },
+      };
+    });
   });
 
   it('creates a jsPDF document', () => {

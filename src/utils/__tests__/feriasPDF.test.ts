@@ -9,8 +9,8 @@ const { MockJsPDF, mockSave, mockText, mockLine, mockAutoTable } = vi.hoisted(()
   const mockSetFont = vi.fn();
   const mockSetFillColor = vi.fn();
   const mockRect = vi.fn();
-  const mockSplitTextToSize = vi.fn((t: string) => [t]);
-  const MockJsPDF = vi.fn().mockImplementation(() => ({
+  const mockSplitTextToSize = vi.fn(function(t: string) { return [t]; });
+  const mockDoc = {
     setFontSize: mockSetFontSize,
     setTextColor: mockSetTextColor,
     setFont: mockSetFont,
@@ -20,12 +20,13 @@ const { MockJsPDF, mockSave, mockText, mockLine, mockAutoTable } = vi.hoisted(()
     line: mockLine,
     save: mockSave,
     splitTextToSize: mockSplitTextToSize,
-    internal: { pageSize: { getWidth: () => 210, getHeight: () => 297 } },
+    internal: { pageSize: { getWidth: function() { return 210; }, getHeight: function() { return 297; } } },
     lastAutoTable: { finalY: 100 },
     addPage: vi.fn(),
-  }));
-  const mockAutoTable = vi.fn().mockImplementation(function(this: any) {
-    this.lastAutoTable = { finalY: 100 };
+  };
+  const MockJsPDF = vi.fn().mockImplementation(function() { return mockDoc; });
+  const mockAutoTable = vi.fn().mockImplementation(function(doc: any) {
+    doc.lastAutoTable = { finalY: 100 };
   });
   return { MockJsPDF, mockSave, mockText, mockLine, mockAutoTable };
 });
@@ -54,7 +55,7 @@ describe('feriasPDF.gerarRecibo', () => {
       internal: { pageSize: { getWidth: () => 210 } },
       lastAutoTable: { finalY: 100 },
     };
-    MockJsPDF.mockReturnValue(mockDoc as any);
+    MockJsPDF.mockImplementation(function() { return mockDoc as any; });
     mockAutoTable.mockImplementation(function(doc: any) {
       doc.lastAutoTable = { finalY: 100 };
     });

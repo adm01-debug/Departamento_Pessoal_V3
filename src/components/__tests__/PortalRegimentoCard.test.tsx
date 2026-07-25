@@ -14,7 +14,7 @@ vi.mock('@/hooks/useEmpresas', () => ({
 }));
 
 vi.mock('dompurify', () => ({
-  default: { sanitize: (html: string) => html },
+  default: { sanitize: (html: string) => html, addHook: vi.fn(), removeHooks: vi.fn() },
 }));
 
 vi.mock('@/components/ui/checkbox', () => ({
