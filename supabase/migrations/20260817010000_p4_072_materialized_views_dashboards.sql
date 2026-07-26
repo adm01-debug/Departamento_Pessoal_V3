@@ -171,11 +171,11 @@ CREATE MATERIALIZED VIEW mv_passivo_trabalhista AS
     SELECT
       c.empresa_id,
       COUNT(*)                                       AS qtde_colabs_vencidas,
-      SUM(f.dias_vencidos * (c.salario / 30))       AS provisoes_ferias,
-      SUM(f.dias_vencidos * (c.salario / 30) * 0.3333) AS provisoes_terco,
+      SUM(f.dias_vencidos * (c.salario_base / 30))       AS provisoes_ferias,
+      SUM(f.dias_vencidos * (c.salario_base / 30) * 0.3333) AS provisoes_terco,
       SUM(
-        (f.dias_vencidos * (c.salario / 30))
-        + (f.dias_vencidos * (c.salario / 30) * 0.3333)
+        (f.dias_vencidos * (c.salario_base / 30))
+        + (f.dias_vencidos * (c.salario_base / 30) * 0.3333)
       ) * 0.08                                       AS provisoes_fgts_ferias
     FROM ferias f
     JOIN colaboradores c ON c.id = f.colaborador_id
@@ -200,7 +200,7 @@ CREATE MATERIALIZED VIEW mv_passivo_trabalhista AS
     COALESCE(ud.provisoes_13_ultimo_dezembro, 0) AS provisoes_13_dezembro,
     -- 13º pro-rata do ano corrente (1/12 por mês)
     ROUND((SELECT COUNT(*) FROM colaboradores WHERE empresa_id = uf.empresa_id)
-          * COALESCE(AVG(c.salario), 0) / 12, 2) AS provisoes_13_prorata,
+          * COALESCE(AVG(c.salario_base), 0) / 12, 2) AS provisoes_13_prorata,
     COALESCE(fv.provisoes_fgts_ferias, 0)
       + (COALESCE(ud.provisoes_13_ultimo_dezembro, 0) * 0.08)
       AS provisoes_fgts,
@@ -257,6 +257,37 @@ ALTER MATERIALIZED VIEW mv_esocial_status
   SET (security_invoker = true);
 
 
+-- ── TABELA DE FERIADOS BRASILEIROS (P4-072) ───────────────────
+-- Usada pelo mv_absenteismo_mensal para excluir fins de semana
+-- e feriados nacionais/locais do cálculo de dias úteis.
+-- Mantida pelo time de DP;种子 dados em seguida.
+CREATE TABLE IF NOT EXISTS feriados_brasileiros (
+  id          BIGSERIAL PRIMARY KEY,
+  empresa_id  TEXT,                          -- NULL = aplica a todas
+  data        DATE        NOT NULL,
+  nome        TEXT        NOT NULL,
+  tipo        TEXT        NOT NULL DEFAULT 'nacional'  -- nacional|estadual|municipal
+);
+CREATE INDEX IF NOT EXISTS idx_feriados_empresa_data
+  ON feriados_brasileiros(empresa_id, data);
+
+-- Feriados federais brasileiros (Ano Novo, Carnaval*, Sexta-feira Santa,
+-- Tiradentes, Dia do Trabalho, Independência, Nossa Senhora Aparecida,
+-- Finados, Proclamação da República, Natal, Carnaval*)
+-- *Carnaval = segunda-feira anterior à Quarta-feira de Cinzas
+INSERT INTO feriados_brasileiros (data, nome, tipo) VALUES
+  (DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '0 days',         'Ano Novo', 'nacional'),
+  (DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '21 days',        'Carnaval', 'nacional'),
+  (DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '45 days',        'Sexta-feira Santa', 'nacional'),
+  (DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '51 days',        'Tiradentes', 'nacional'),
+  (DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '121 days',       'Dia do Trabalho', 'nacional'),
+  (DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '167 days',       'Independência', 'nacional'),
+  (DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '281 days',      'Nossa Senhora Aparecida', 'nacional'),
+  (DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '307 days',       'Finados', 'nacional'),
+  (DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '315 days',       'Proclamação da República', 'nacional'),
+  (DATE_TRUNC('year', CURRENT_DATE) + INTERVAL '359 days',      'Natal', 'nacional')
+ON CONFLICT DO NOTHING;
+
 -- ── 5. MV: Frequência / absenteísmo mensal ─────────────────────
 DROP MATERIALIZED VIEW IF EXISTS mv_absenteismo_mensal CASCADE;
 CREATE MATERIALIZED VIEW mv_absenteismo_mensal AS
@@ -270,10 +301,13 @@ CREATE MATERIALIZED VIEW mv_absenteismo_mensal AS
       DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 month' - INTERVAL '1 day',
       '1 day'
     ) AS d(data)
+    CROSS JOIN LATERAL (
+      SELECT CURRENT_DATE AS hoje) AS h
     WHERE EXTRACT(DOW FROM d.data) BETWEEN 1 AND 5  -- seg-sex
       AND NOT EXISTS (
-        SELECT 1 FROM只会节假日表 h
-        WHERE h.data = d.data AND h.empresa_id = d.empresa_id
+        SELECT 1 FROM feriados_brasileiros fb
+        WHERE fb.data = d.data
+          AND (fb.empresa_id IS NULL OR fb.empresa_id = empresa_id)
       )
     GROUP BY 1, 2
   ),
