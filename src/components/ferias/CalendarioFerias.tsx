@@ -10,10 +10,29 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { Separator } from '@/components/ui/separator';
+
+// P2-051 (batch 2026-07-26): tipo explícito para eventos de férias selecionados.
+// Substitui `useState<any>(null)` — props acessadas sem checagem geravam
+// vulnerabilidade silenciosa (typos não eram detectados).
+export interface FeriasItem {
+  id: string;
+  colaborador_id: string;
+  data_inicio: string;
+  data_fim: string;
+  dias_ferias: number;
+  status: 'aprovada' | 'em_gozo' | 'pendente' | 'concluida' | 'cancelada' | 'rejeitada';
+  abono_pecuniario?: boolean;
+  adiantamento_13?: boolean;
+  colaborador?: {
+    nome_completo?: string;
+    cargo?: { nome?: string };
+  };
+}
+
 export function CalendarioFerias() {
   const { ferias } = useFerias();
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedEvent, setSelectedEvent] = useState<any>(null);
+  const [selectedEvent, setSelectedEvent] = useState<FeriasItem | null>(null);
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
@@ -21,7 +40,7 @@ export function CalendarioFerias() {
   const nextMonth = () => setCurrentDate(addMonths(currentDate, 1));
   const prevMonth = () => setCurrentDate(subMonths(currentDate, 1));
 
-  const feriasNoMes = ferias.filter((f: any) => {
+  const feriasNoMes = ferias.filter((f: FeriasItem) => {
     if (f.status === 'cancelada' || f.status === 'rejeitada') return false;
     const start = new Date(f.data_inicio);
     const end = new Date(f.data_fim);
@@ -30,7 +49,7 @@ export function CalendarioFerias() {
       isWithinInterval(end, { start: monthStart, end: monthEnd }) ||
       (start < monthStart && end > monthEnd)
     );
-  }).sort((a: any, b: any) => new Date(a.data_inicio).getTime() - new Date(b.data_inicio).getTime());
+  }).sort((a: FeriasItem, b: FeriasItem) => new Date(a.data_inicio).getTime() - new Date(b.data_inicio).getTime());
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -70,7 +89,7 @@ export function CalendarioFerias() {
               Nenhuma férias programada para este mês.
             </div>
           ) : (
-            feriasNoMes.map((f: any) => {
+            feriasNoMes.map((f: FeriasItem) => {
               const start = new Date(f.data_inicio);
               const end = new Date(f.data_fim);
               return (

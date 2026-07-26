@@ -212,12 +212,56 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       loggerService.info('User signed in', { email });
+
+      // P4-076: Pre-fetch dados críticos após login
+      // - Não bloqueia a transição de página (fire-and-forget)
+      // - AbortController garante cancelamento se logout ocorrer durante pre-fetch
+      // - Fallback graceful: erro de pre-fetch nunca quebra o login
+      const controller = new AbortController();
+      const prefetchTimeout = window.setTimeout(() => controller.abort(), 10_000);
+
+      void Promise.all([
+        // Empresas do tenant (necessário em quase todas as páginas)
+        queryClient.prefetchQuery({
+          queryKey: ['empresas'],
+          queryFn: async () => {
+            const { data, error } = await supabase
+              .from('empresas')
+              .select('id, nome, cnpj')
+              .limit(10);
+            if (error) throw error;
+            return data;
+          },
+          signal: controller.signal,
+        }),
+        // Colaboradores ativos (dashboard + listagens)
+        queryClient.prefetchQuery({
+          queryKey: ['colaboradores', { status: 'ativo', limit: 50 }],
+          queryFn: async () => {
+            const { data, error } = await supabase
+              .from('colaboradores')
+              .select('id, nome, empresa_id, cargo_id, status, data_admissao')
+              .eq('status', 'ativo')
+              .limit(50);
+            if (error) throw error;
+            return data;
+          },
+          signal: controller.signal,
+        }),
+      ])
+        .then(() => loggerService.debug('Pre-fetch post-login concluído'))
+        .catch((err) => {
+          if (err instanceof Error && err.name === 'AbortError') return;
+          loggerService.warn('Pre-fetch post-login falhou (não bloqueia login)', { email });
+        })
+        .finally(() => window.clearTimeout(prefetchTimeout));
+
     } catch (e) {
       const err = e as AuthError | Error;
       loggerService.warn('Sign in failed', { email, message: err.message });
       throw err;
     }
-  }, []);
+  }, [queryClient, supabase]);
 
   const signOut = useCallback(async () => {
     try {

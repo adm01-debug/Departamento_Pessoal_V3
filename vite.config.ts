@@ -76,6 +76,8 @@ export default defineConfig(({ mode }) => ({
     // force: true foi removido — forçar re-otimização a cada dev start prejudica a DX
   },
   build: {
+    // P3-053: source maps para Sentry — upload via @sentry/vite-plugin em CI
+    sourcemap: import.meta.env.VITE_SENTRY_DSN ? true : false,
     // P2-038: Vite 8 usa minifier oxc (mais rápido que terser). esbuild.drop
     // da config antiga era ignorado pelo Vite 8. oxc tem opção própria:
     // `minify: { compress: { drop_console: true } }` — habilitada abaixo.

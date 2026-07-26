@@ -22,6 +22,27 @@ if (import.meta.env.PROD && import.meta.env.VITE_SENTRY_DSN) {
     tracesSampleRate: 0.1,
     replaysSessionSampleRate: 0.1,
     replaysOnErrorSampleRate: 1.0,
+    // P3-053: beforeSend — filtra erros de bots e browsers de teste antes do capture
+    beforeSend(event, hint) {
+      const error = hint?.originalException;
+      // Erros de bots, scrapers e browsers headless que enviam eventos falsos
+      if (typeof navigator !== 'undefined' && navigator.userAgent === '') return null;
+      // Erros conhecidos de extensões/chrome-devtools (ruído)
+      const chromeExtPatterns = [
+        'chrome-extension://',
+        'moz-extension://',
+        'safari-extension://',
+        'webkit-masked-url',
+      ];
+      const reqUrl = event.request?.url ?? '';
+      if (chromeExtPatterns.some(p => reqUrl.includes(p))) return null;
+      // Eventos sem stack (são quase sempre false-positives)
+      if (!event.exception?.values?.length) return event;
+      // Erros com stack de extensão (comum em devtools abierto)
+      const firstExc = event.exception.values[0];
+      if (firstExc?.stack?.includes('extensions/') || firstExc?.stack?.includes('chrome-extension')) return null;
+      return event;
+    },
     // Tags globais para filtragem no dashboard Sentry
     initialScope: {
       tags: {
@@ -35,6 +56,9 @@ if (import.meta.env.PROD && import.meta.env.VITE_SENTRY_DSN) {
       'ResizeObserver loop limit exceeded',
       'NetworkError when attempting to fetch resource',
       'Failed to fetch',
+      'No unique DOM nodes matched',
+      'net::ERR_NAME_NOT_RESOLVED',
+      'net::ERR_INTERNET_DISCONNECTED',
     ],
   });
 }
