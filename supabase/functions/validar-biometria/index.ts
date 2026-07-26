@@ -127,24 +127,30 @@ serve(async (req: Request): Promise<Response> => {
       try {
         const promptIA = `Compare estas duas imagens de rostos. A primeira URL e a foto de referencia do colaborador "${colaborador.nome_completo}": ${colaborador.foto_referencia_url}. A segunda e a foto capturada em base64. Responda APENAS um JSON: {"match": boolean, "confidence": number (0-1), "analysis": "string"}. match=true se confianca >= 0.85.`;
 
-        const response = await fetch('https://ai-gateway.lovable.dev/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-            'Content-Type': 'application/json',
+        const response = await safeFetchWithRetry(
+          'https://ai-gateway.lovable.dev/v1/chat/completions',
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              model: 'google/gemini-2.5-flash',
+              messages: [
+                { role: 'user', content: [
+                  { type: 'text', text: promptIA },
+                  { type: 'image_url', image_url: { url: fotoBase64.startsWith('data:') ? fotoBase64 : `data:image/jpeg;base64,${fotoBase64}` } },
+                ]},
+              ],
+              max_tokens: 256,
+              temperature: 0,
+            }),
+            timeoutMs: 30_000,
+            tag: 'openai',
           },
-          body: JSON.stringify({
-            model: 'google/gemini-2.5-flash',
-            messages: [
-              { role: 'user', content: [
-                { type: 'text', text: promptIA },
-                { type: 'image_url', image_url: { url: fotoBase64.startsWith('data:') ? fotoBase64 : `data:image/jpeg;base64,${fotoBase64}` } },
-              ]},
-            ],
-            max_tokens: 256,
-            temperature: 0,
-          }),
-        });
+          { maxAttempts: 3, baseDelayMs: 2_000, tag: 'openai' }
+        );
 
         if (response.ok) {
           const data = await response.json();

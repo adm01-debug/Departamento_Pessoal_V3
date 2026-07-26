@@ -4,6 +4,7 @@ import { z } from 'https://esm.sh/zod@3.23.8';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
+import { safeFetchWithRetry } from '../_shared/safe-fetch.ts';
 
 function isAllowedFileUrl(urlStr: string): boolean {
   try {
@@ -107,22 +108,28 @@ serve(async (req: Request): Promise<Response> => {
 
     const userPrompt = `Analise este documento do tipo: ${docType}.`;
 
-    const aiResponse = await fetch('https://api.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${lovableApiKey}`,
+    const aiResponse = await safeFetchWithRetry(
+      'https://api.lovable.dev/v1/chat/completions',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${lovableApiKey}`,
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-2.0-flash',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: [{ type: 'text', text: userPrompt }, { type: 'image_url', image_url: { url: fileUrl } }] },
+          ],
+          response_format: { type: 'json_object' },
+          max_tokens: 1000,
+        }),
+        timeoutMs: 30_000,
+        tag: 'openai',
       },
-      body: JSON.stringify({
-        model: 'google/gemini-2.0-flash',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: [{ type: 'text', text: userPrompt }, { type: 'image_url', image_url: { url: fileUrl } }] },
-        ],
-        response_format: { type: 'json_object' },
-        max_tokens: 1000,
-      }),
-    });
+      { maxAttempts: 3, baseDelayMs: 2_000, tag: 'openai' }
+    );
 
     if (!aiResponse.ok) {
       return json({ valid: false, confidence: 0, error: 'Erro no serviço de OCR' }, 502);

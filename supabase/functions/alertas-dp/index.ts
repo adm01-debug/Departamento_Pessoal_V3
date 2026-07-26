@@ -25,6 +25,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
+import { safeFetch } from '../_shared/safe-fetch.ts';
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 
@@ -309,7 +310,7 @@ serve(async (req: Request): Promise<Response> => {
     let emailResult: unknown = null;
     if (recipientEmails.length && RESEND_API_KEY) {
       try {
-        const emailRes = await fetch('https://api.resend.com/emails', {
+        const emailRes = await safeFetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -321,6 +322,8 @@ serve(async (req: Request): Promise<Response> => {
             subject: `${alertas.length} Alerta(s) DP — ${hoje.toLocaleDateString('pt-BR')}`,
             html,
           }),
+          timeoutMs: 8_000,
+          tag: 'webhook',
         });
         emailResult = await emailRes.json();
       } catch (emailErr) {

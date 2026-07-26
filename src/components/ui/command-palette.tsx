@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresa } from '@/contexts';
 import { useDebounce } from '@/hooks/useDebounce';
+import { useOnMount } from '@/hooks/useMountEffects';
 import { maskCpfDisplay } from '@/utils/piiMask';
 import { secureJsonParse } from '@/utils/secureJson';
 import { UserAvatar } from '@/components/ui/user-avatar';
@@ -267,8 +268,13 @@ export function CommandPalette({
     return () => window.removeEventListener('keydown', handler);
   }, [open, selectedIndex, allItems, execute]);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
-  useEffect(() => { setSelectedIndex(0); }, [query]);
+  useOnMount(() => {
+    setSelectedIndex(0);
+  });
+
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [query]);
 
   /* ─── Render group helper ─── */
   let globalIndex = -1;

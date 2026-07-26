@@ -13,6 +13,7 @@ import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { loggerService } from '@/services/loggerService';
+import { useOnMount } from '@/hooks/useMountEffects';
 import {
   FileText,
   Upload,
@@ -85,26 +86,39 @@ function ContratacaoWorkflow({ token }: { token: string }) {
     },
   });
 
-  useEffect(() => {
+  useOnMount(() => {
     if (tokenData?.admissao) {
-      const adm = tokenData.admissao as any;
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+      const adm = tokenData.admissao as Record<string, unknown>;
       setFormData(prev => ({
         ...prev,
-        nome_completo: adm.nome || '',
-        cpf: adm.cpf || '',
-        data_nascimento: adm.data_nascimento || '',
-        email: adm.email || '',
-        telefone: adm.telefone || '',
+        nome_completo: (adm.nome as string) || '',
+        cpf: (adm.cpf as string) || '',
+        data_nascimento: (adm.data_nascimento as string) || '',
+        email: (adm.email as string) || '',
+        telefone: (adm.telefone as string) || '',
       }));
-
-      // Determine step based on status
       if (tokenData.contrato_assinado) setStep(3);
       else if (tokenData.documentos_enviados) setStep(2);
       else if (tokenData.dados_preenchidos) setStep(1);
+      contratacaoService.gerarTemplateContrato(adm.id as string).then(setContractHtml);
+    }
+  });
 
-      // Load contract template
-      contratacaoService.gerarTemplateContrato(adm.id).then(setContractHtml);
+  useEffect(() => {
+    if (tokenData?.admissao) {
+      const adm = tokenData.admissao as Record<string, unknown>;
+      setFormData(prev => ({
+        ...prev,
+        nome_completo: (adm.nome as string) || '',
+        cpf: (adm.cpf as string) || '',
+        data_nascimento: (adm.data_nascimento as string) || '',
+        email: (adm.email as string) || '',
+        telefone: (adm.telefone as string) || '',
+      }));
+      if (tokenData.contrato_assinado) setStep(3);
+      else if (tokenData.documentos_enviados) setStep(2);
+      else if (tokenData.dados_preenchidos) setStep(1);
+      contratacaoService.gerarTemplateContrato(adm.id as string).then(setContractHtml);
     }
   }, [tokenData]);
 

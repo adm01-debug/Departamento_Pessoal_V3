@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { lovable } from '@/integrations/lovable/index';
 import { supabase } from '@/integrations/supabase/client';
 import { useBruteForceProtection } from '@/hooks/useBruteForceProtection';
+import { useOnMount } from '@/hooks/useMountEffects';
 import { LockoutMessage } from '@/components/login/LockoutMessage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -47,10 +48,16 @@ export default function LoginPage() {
   const [searchParams] = useSearchParams();
   const { lockState, checkLock, recordFailedAttempt, resetAttempts } = useBruteForceProtection();
 
+  useOnMount(() => {
+    const reason = searchParams.get('reason');
+    if (reason && SECURITY_REASONS[reason]) {
+      setSecurityNotice(SECURITY_REASONS[reason]);
+    }
+  });
+
   useEffect(() => {
     const reason = searchParams.get('reason');
     if (reason && SECURITY_REASONS[reason]) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSecurityNotice(SECURITY_REASONS[reason]);
     }
   }, [searchParams]);

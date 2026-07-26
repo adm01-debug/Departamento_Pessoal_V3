@@ -7,7 +7,9 @@ import { Landmark, FileDown, History, Settings, CheckCircle, AlertCircle, Loader
 import { motion } from 'framer-motion';
 import { useState, useEffect, useCallback } from 'react';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { useOnMount } from '@/hooks/useMountEffects';
 import { cnabService, CNABConfig, folhaService } from '@/services';
+import { loggerService } from '@/services/loggerService';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -72,8 +74,11 @@ export default function FinanceiroBancarioPage() {
     }
   }, [empresaAtual?.id]);
 
+  useOnMount(() => {
+    loadData();
+  });
+
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadData();
   }, [loadData]);
 

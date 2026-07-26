@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { useOnMount } from '@/hooks/useMountEffects';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -108,8 +109,13 @@ export default function AdminExtintoresPage() {
     }
   }, [empresaAtual?.id]);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
-  useEffect(() => { carregar(); }, [carregar]);
+  useOnMount(() => {
+    carregar();
+  });
+
+  useEffect(() => {
+    carregar();
+  }, [carregar]);
 
   const criarExtintor = async () => {
     if (!empresaAtual?.id) return;

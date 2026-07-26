@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { useOnMount } from '@/hooks/useMountEffects';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Building2, Save } from 'lucide-react';
@@ -24,9 +25,24 @@ export function EmpresaSettingsTab() {
     telefone: '',
   });
 
+  useOnMount(() => {
+    if (empresaAtual) {
+      setForm({
+        razao_social: empresaAtual.razao_social || '',
+        nome_fantasia: empresaAtual.nome_fantasia || '',
+        cnpj: empresaAtual.cnpj || '',
+        inscricao_estadual: empresaAtual.inscricao_estadual || '',
+        inscricao_municipal: empresaAtual.inscricao_municipal || '',
+        cidade: empresaAtual.cidade || '',
+        uf: empresaAtual.uf || '',
+        email: empresaAtual.email || '',
+        telefone: empresaAtual.telefone || '',
+      });
+    }
+  });
+
   useEffect(() => {
     if (empresaAtual) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setForm({
         razao_social: empresaAtual.razao_social || '',
         nome_fantasia: empresaAtual.nome_fantasia || '',

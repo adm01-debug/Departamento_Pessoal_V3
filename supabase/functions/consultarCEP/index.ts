@@ -5,6 +5,7 @@ import { cepSchema } from '../_shared/schemas/common.ts';
 import { cachePublic } from '../_shared/cache.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
+import { safeFetch } from '../_shared/safe-fetch.ts';
 
 // MP-032: CEPs são estáveis; cache CDN de 24h + SWR de 1h reduz custo e latência.
 const CACHE = cachePublic(60 * 60 * 24, 60 * 60);
@@ -44,7 +45,7 @@ serve(async (req) => {
 
   try {
     // ViaCEP
-    const res = await fetch(`https://viacep.com.br/ws/${clean}/json/`);
+    const res = await safeFetch(`https://viacep.com.br/ws/${clean}/json/`, { timeoutMs: 8_000, tag: 'webhook' });
     if (res.ok) {
       const viacep = await res.json();
       if (!viacep.erro) {
@@ -57,7 +58,7 @@ serve(async (req) => {
     }
 
     // Fallback BrasilAPI
-    const res2 = await fetch(`https://brasilapi.com.br/api/cep/v2/${clean}`);
+    const res2 = await safeFetch(`https://brasilapi.com.br/api/cep/v2/${clean}`, { timeoutMs: 8_000, tag: 'webhook' });
     if (res2.ok) {
       const d = await res2.json();
       return new Response(JSON.stringify({

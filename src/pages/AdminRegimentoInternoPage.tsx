@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { todayLocalISO } from '@/utils/dateLocal';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { useOnMount } from '@/hooks/useMountEffects';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -87,10 +88,12 @@ const AdminRegimentoInternoPage = () => {
     }
   };
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+  useOnMount(() => {
     carregar();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  });
+
+  useEffect(() => {
+    carregar();
   }, [empresaAtual?.id]);
 
   const criarDocumento = async () => {

@@ -17,6 +17,7 @@ import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
 import { corsHeaders, createErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
 import { captureException } from '../_shared/sentry.ts';
+import { safeFetch } from '../_shared/safe-fetch.ts';
 
 const BodySchema = z.object({
   email: z.string().email().max(254).toLowerCase(),
@@ -94,10 +95,12 @@ serve(async (req: Request): Promise<Response> => {
 
     // 5. Forward to Supabase Auth REST API.
     const authUrl = `${SUPABASE_URL}/auth/v1/token?grant_type=password`;
-    const authRes = await fetch(authUrl, {
+    const authRes = await safeFetch(authUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', apikey: ANON_KEY },
       body: JSON.stringify({ email, password }),
+      timeoutMs: 10_000,
+      tag: 'dbbridge',
     });
 
     const authBody = await authRes.json();

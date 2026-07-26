@@ -3,6 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders } from '../_shared/contract.ts';
+import { safeFetch } from '../_shared/safe-fetch.ts';
 
 serve(async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders });
@@ -99,7 +100,7 @@ serve(async (req: Request): Promise<Response> => {
           return { id: agendamento.id, status: 'skipped' };
         }
 
-        const response = await fetch(`${supabaseUrl}/functions/v1/enviar-relatorio`, {
+        const response = await safeFetch(`${supabaseUrl}/functions/v1/enviar-relatorio`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -112,6 +113,8 @@ serve(async (req: Request): Promise<Response> => {
             emailDestinatario: agendamento.email_destinatario,
             parametros: agendamento.parametros,
           }),
+          timeoutMs: 30_000,
+          tag: 'dbbridge',
         });
 
         if (!response.ok) {

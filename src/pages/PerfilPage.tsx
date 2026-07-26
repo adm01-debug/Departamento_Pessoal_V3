@@ -2,6 +2,7 @@ import { PageTitle } from '@/components/PageTitle';
 import { cn } from '@/lib/utils';
 import { useState, useEffect, useRef } from 'react';
 import { PageLayout } from '@/components/layout';
+import { useOnMount } from '@/hooks/useMountEffects';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -73,9 +74,19 @@ export default function PerfilPage() {
     }
   };
 
+  useOnMount(() => {
+    if (profile) {
+      setNome(profile.nome || '');
+      setTelefone(profile.telefone || '');
+      setCargo(profile.cargo || '');
+      setDepartamento(profile.departamento || '');
+    } else if (user?.name) {
+      setNome(user.name);
+    }
+  });
+
   useEffect(() => {
     if (profile) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setNome(profile.nome || '');
       setTelefone(profile.telefone || '');
       setCargo(profile.cargo || '');

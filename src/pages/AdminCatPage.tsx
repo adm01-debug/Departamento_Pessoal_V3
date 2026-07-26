@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { useOnMount } from '@/hooks/useMountEffects';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -101,8 +102,13 @@ export default function AdminCatPage() {
     }
   };
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps
-  useEffect(() => { void carregar(); }, [empresaId]);
+  useOnMount(() => {
+    void carregar();
+  });
+
+  useEffect(() => {
+    void carregar();
+  }, [empresaId]);
 
   const onSubmit = async (values: CatForm) => {
     if (!empresaId) return;

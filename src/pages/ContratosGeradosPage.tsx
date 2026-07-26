@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { useOnMount } from '@/hooks/useMountEffects';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -130,15 +131,16 @@ export default function ContratosGeradosPage() {
     }
   };
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- carga inicial no mount
+  useOnMount(() => {
     void carregar();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  });
+
+  useEffect(() => {
+    void carregar();
   }, [empresaAtual?.id]);
 
   const filtrados = useMemo(() => {
     const term = busca.trim().toLowerCase();
-    // eslint-disable-next-line react-hooks/purity -- filtro por janela de tempo relativa ao agora
     const cutoff = periodo === 'todos' ? null : Date.now() - Number(periodo) * 86400_000;
     return contratos.filter((c) => {
       if (status !== 'todos' && c.status !== status) return false;
@@ -154,8 +156,14 @@ export default function ContratosGeradosPage() {
 
   const [pagina, setPagina] = useState(1);
   const PAGE_SIZE = 25;
-  // eslint-disable-next-line react-hooks/set-state-in-effect -- reseta paginação ao trocar filtros
-  useEffect(() => setPagina(1), [status, busca, periodo]);
+
+  useOnMount(() => {
+    setPagina(1);
+  });
+
+  useEffect(() => {
+    setPagina(1);
+  }, [status, busca, periodo]);
   const totalPaginas = Math.max(1, Math.ceil(filtrados.length / PAGE_SIZE));
   const paginados = useMemo(
     () => filtrados.slice((pagina - 1) * PAGE_SIZE, pagina * PAGE_SIZE),

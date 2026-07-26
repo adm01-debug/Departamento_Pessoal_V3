@@ -7,6 +7,7 @@ import { BookOpen, FileSpreadsheet, History, Download, Zap, RefreshCcw, Table as
 import { motion } from 'framer-motion';
 import { useState, useEffect, useCallback } from 'react';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { useOnMount } from '@/hooks/useMountEffects';
 import { contabilidadeService, folhaService } from '@/services';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
@@ -63,8 +64,11 @@ export default function ContabilidadePage() {
     }
   }, [empresaAtual?.id]);
 
+  useOnMount(() => {
+    loadData();
+  });
+
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadData();
   }, [loadData]);
 

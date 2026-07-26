@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useOnMount } from '@/hooks/useMountEffects';
 import {
   Clock,
   LogIn,
@@ -72,18 +73,21 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
     }
   }, [isSyncing]);
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+  useOnMount(() => {
     setOfflineQueueSize(pontoOfflineService.getQueueSize());
-
     if (navigator.onLine) {
       handleSync();
     }
+  });
 
+  useEffect(() => {
+    setOfflineQueueSize(pontoOfflineService.getQueueSize());
+    if (navigator.onLine) {
+      handleSync();
+    }
     const interval = setInterval(() => {
       setOfflineQueueSize(pontoOfflineService.getQueueSize());
     }, 5000);
-
     return () => {
       clearInterval(interval);
       if (stream) stream.getTracks().forEach((track) => track.stop());

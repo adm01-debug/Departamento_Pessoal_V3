@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { PageTitle } from '@/components/PageTitle';
 import { PageLayout } from '@/components/layout';
+import { useOnMount } from '@/hooks/useMountEffects';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -169,10 +170,12 @@ export default function AdminDiagnosticoMigracaoPage() {
     setRunning(false);
   };
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- diagnóstico dispara uma vez no mount; run() é assíncrono
+  useOnMount(() => {
     run();
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- executar apenas no mount
+  });
+
+  useEffect(() => {
+    run();
   }, []);
 
   const grouped = {

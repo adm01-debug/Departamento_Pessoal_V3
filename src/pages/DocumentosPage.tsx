@@ -2,6 +2,7 @@ import { PageTitle } from '@/components/PageTitle';
 import { useState, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
+import { useOnMount } from '@/hooks/useMountEffects';
 import { DataTableToolbar } from '@/components/ui/data-table-toolbar';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { EmptyList } from '@/components/ui/empty-state';
@@ -57,9 +58,15 @@ export default function DocumentosPage() {
   const empresaId = empresaAtual?.id;
   const queryClient = useQueryClient();
 
+  useOnMount(() => {
+    if (urlColaboradorId) {
+      setColaboradorFilter(urlColaboradorId);
+      setColaboradorId(urlColaboradorId);
+    }
+  });
+
   useEffect(() => {
     if (urlColaboradorId) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setColaboradorFilter(urlColaboradorId);
       setColaboradorId(urlColaboradorId);
     }

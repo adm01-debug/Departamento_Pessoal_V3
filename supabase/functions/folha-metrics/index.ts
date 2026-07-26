@@ -6,6 +6,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders, createErrorResponse } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
+import { safeFetch } from '../_shared/safe-fetch.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -88,7 +89,7 @@ Deno.serve(async (req: Request) => {
     let alerted = false;
     if (slackUrl && (conflictCount >= conflictThreshold || failedCount >= failedThreshold)) {
       try {
-        await fetch(slackUrl, {
+        await safeFetch(slackUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -98,6 +99,8 @@ Deno.serve(async (req: Request) => {
               `• falhas: *${failedCount}* (limite ${failedThreshold})\n` +
               `• eventos folha: ${JSON.stringify(auditByAcao)}`,
           }),
+          timeoutMs: 8_000,
+          tag: 'webhook',
         });
         alerted = true;
       } catch (e) {

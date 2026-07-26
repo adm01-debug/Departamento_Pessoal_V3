@@ -13,6 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useOnMount } from '@/hooks/useMountEffects';
 import { loggerService } from '@/services/loggerService';
 export default function PontoKioskPage() {
   const [time, setTime] = useState(new Date());
@@ -39,8 +40,11 @@ export default function PontoKioskPage() {
     }
   }, [isSyncing]);
 
+  useOnMount(() => {
+    setOfflineQueueSize(pontoOfflineService.getQueueSize());
+  });
+
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setOfflineQueueSize(pontoOfflineService.getQueueSize());
     const interval = setInterval(() => {
       setOfflineQueueSize(pontoOfflineService.getQueueSize());
