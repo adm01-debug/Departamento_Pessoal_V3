@@ -1,6 +1,7 @@
 import { currentCompetenciaLocal, todayLocalISO } from '@/utils/dateLocal';
 import { supabase } from '@/integrations/supabase/client';
-import { validarEvento, getValidadoresDisponiveis, type ValidationResult } from '@/validators/esocialValidators';
+import { validarEvento, getValidadoresDisponiveis, type ValidationResult } from '@/schemas/esocial';
+export type { ValidationResult } from '@/schemas/esocial';
 import { gerarXmlESocial } from '@/utils/esocialXmlGenerator';
 export interface ESocialEvento {
   id: string;
@@ -344,6 +345,4 @@ export async function listarTransmissaoLogs(empresaId: string, eventoId?: string
   return data || [];
   
 }
-
-export { type ValidationResult } from '@/validators/esocialValidators';
 

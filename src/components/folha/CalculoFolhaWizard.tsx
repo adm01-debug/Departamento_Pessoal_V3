@@ -28,7 +28,7 @@ import { useEmpresas } from '@/hooks/useEmpresas';
 import { useCalculoFolha } from '@/hooks/useCalculoFolha';
 import { auditCalculation } from '@/calculators/auditHelper';
 import { rubricasFolhaService } from '@/services/tabelas/folhaService';
-import { validarRubricaESocial } from '@/validators/esocial';
+import { validarRubricaESocial } from '@/schemas/esocial';
 import { folhaPagamentoService } from '@/services/folhaPagamentoService';
 import { FolhaComposicao } from './FolhaComposicao';
 import { folhaCalc, CalculoResultado } from '@/utils/folhaCalc';
