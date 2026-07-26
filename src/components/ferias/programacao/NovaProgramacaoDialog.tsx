@@ -29,16 +29,26 @@ export function NovaProgramacaoDialog({ open, onOpenChange, ano, mesInicial }: P
 
   const { criar } = useProgramacaoMutations(ano);
 
-  useEffect(() => {
+  useOnMount(() => {
     // Seleciona automaticamente o período aquisitivo mais antigo em aberto
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- sincroniza período selecionado com a lista carregada (mount/prop)
     if (!periodos?.length) { setPeriodoId(''); return; }
-    const aberto = periodos.find((p: any) => p.status !== 'gozado') ?? periodos[0];
+    const aberto = periodos.find((p: { status?: string }) => p.status !== 'gozado') ?? periodos[0];
+    setPeriodoId(aberto.id);
+  });
+
+  useEffect(() => {
+    if (!periodos?.length) { setPeriodoId(''); return; }
+    const aberto = periodos.find((p: { status?: string }) => p.status !== 'gozado') ?? periodos[0];
     setPeriodoId(aberto.id);
   }, [periodos]);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect -- sincroniza mês com a prop mesInicial
-  useEffect(() => { if (mesInicial) setMes(mesInicial); }, [mesInicial]);
+  useOnMount(() => {
+    if (mesInicial) setMes(mesInicial);
+  });
+
+  useEffect(() => {
+    if (mesInicial) setMes(mesInicial);
+  }, [mesInicial]);
 
   const handleSalvar = async () => {
     if (!colaboradorId) return;

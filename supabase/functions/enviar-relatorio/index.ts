@@ -4,6 +4,7 @@ import { z } from "https://esm.sh/zod@3.23.8";
 import { verifyCsrf } from "../_shared/csrf.ts";
 import { captureException } from "../_shared/sentry.ts";
 import { corsHeaders, parseJsonBody } from "../_shared/contract.ts";
+import { safeFetch } from "../_shared/safe-fetch.ts";
 
 /**
  * enviar-relatorio — Onda 20 hardening
@@ -271,7 +272,7 @@ serve(async (req: Request): Promise<Response> => {
 
     if (resendApiKey) {
       try {
-        const res = await fetch("https://api.resend.com/emails", {
+        const res = await safeFetch("https://api.resend.com/emails", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -300,6 +301,8 @@ serve(async (req: Request): Promise<Response> => {
               </p>
             `,
           }),
+          timeoutMs: 8_000,
+          tag: 'webhook',
         });
         if (!res.ok) throw new Error(`Resend API: ${res.status}`);
         statusEnvio = "sucesso";

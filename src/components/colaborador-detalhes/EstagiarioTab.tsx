@@ -7,6 +7,21 @@ import { Spinner } from '@/components/ui/spinner';
 import { Edit2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useDadosEstagiario, useSalvarDadosEstagiario } from '@/hooks/useTabelasReferencia';
+import { useOnMount } from '@/hooks/useMountEffects';
+
+interface EstagiarioData {
+  instituicao_nome?: string;
+  instituicao_cnpj?: string;
+  curso?: string;
+  nivel?: string;
+  supervisor_nome?: string;
+  supervisor_cargo?: string;
+  data_inicio?: string;
+  data_fim?: string;
+  carga_horaria_semanal?: number;
+  valor_bolsa?: number;
+  numero_apolice?: string;
+}
 
 export function EstagiarioTab({ colaboradorId }: { colaboradorId: string }) {
   const { data, isLoading } = useDadosEstagiario(colaboradorId);
@@ -19,10 +34,24 @@ export function EstagiarioTab({ colaboradorId }: { colaboradorId: string }) {
     valor_bolsa: '', numero_apolice: ''
   });
 
+  // Inicializa form no mount
+  useOnMount(() => {
+    if (data && !editing) {
+      const d = data as EstagiarioData;
+      setForm({
+        instituicao_nome: d.instituicao_nome || '', instituicao_cnpj: d.instituicao_cnpj || '',
+        curso: d.curso || '', nivel: d.nivel || '',
+        supervisor_nome: d.supervisor_nome || '', supervisor_cargo: d.supervisor_cargo || '',
+        data_inicio: d.data_inicio || '', data_fim: d.data_fim || '',
+        carga_horaria_semanal: d.carga_horaria_semanal?.toString() || '',
+        valor_bolsa: d.valor_bolsa?.toString() || '', numero_apolice: d.numero_apolice || ''
+      });
+    }
+  });
+
   useEffect(() => {
     if (data && !editing) {
-      const d = data as any;
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+      const d = data as EstagiarioData;
       setForm({
         instituicao_nome: d.instituicao_nome || '', instituicao_cnpj: d.instituicao_cnpj || '',
         curso: d.curso || '', nivel: d.nivel || '',

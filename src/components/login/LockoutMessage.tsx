@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ShieldAlert } from 'lucide-react';
+import { useOnMount } from '@/hooks/useMountEffects';
 
 interface LockoutMessageProps {
   remainingSeconds: number;
@@ -9,8 +10,12 @@ interface LockoutMessageProps {
 export function LockoutMessage({ remainingSeconds }: LockoutMessageProps) {
   const [seconds, setSeconds] = useState(remainingSeconds);
 
+  // Inicializa com valor do prop apenas no mount
+  useOnMount(() => {
+    setSeconds(remainingSeconds);
+  });
+
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSeconds(remainingSeconds);
   }, [remainingSeconds]);
 
@@ -20,8 +25,7 @@ export function LockoutMessage({ remainingSeconds }: LockoutMessageProps) {
       setSeconds((s) => Math.max(0, s - 1));
     }, 1000);
     return () => clearInterval(timer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [seconds > 0]);
+  }, [seconds]);
 
   const minutes = Math.floor(seconds / 60);
   const secs = seconds % 60;

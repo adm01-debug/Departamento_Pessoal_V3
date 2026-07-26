@@ -8,6 +8,14 @@ import { Spinner } from '@/components/ui/spinner';
 import { Edit2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useDadosEstrangeiro, useSalvarDadosEstrangeiro } from '@/hooks/useColaboradorDetalhes';
+import { useOnMount } from '@/hooks/useMountEffects';
+
+interface EstrangeiroData {
+  pais_origem?: string;
+  tipo_visto?: string;
+  data_chegada?: string;
+  reside_brasil?: boolean;
+}
 
 export function EstrangeiroTab({ colaboradorId }: { colaboradorId: string }) {
   const { data, isLoading } = useDadosEstrangeiro(colaboradorId);
@@ -15,10 +23,17 @@ export function EstrangeiroTab({ colaboradorId }: { colaboradorId: string }) {
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({ pais_origem: '', tipo_visto: '', data_chegada: '', reside_brasil: true });
 
+  // Inicializa form no mount
+  useOnMount(() => {
+    if (data && !editing) {
+      const d = data as EstrangeiroData;
+      setForm({ pais_origem: d.pais_origem || '', tipo_visto: d.tipo_visto || '', data_chegada: d.data_chegada || '', reside_brasil: d.reside_brasil ?? true });
+    }
+  });
+
   useEffect(() => {
     if (data && !editing) {
-      const d = data as any;
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+      const d = data as EstrangeiroData;
       setForm({ pais_origem: d.pais_origem || '', tipo_visto: d.tipo_visto || '', data_chegada: d.data_chegada || '', reside_brasil: d.reside_brasil ?? true });
     }
   }, [data, editing]);

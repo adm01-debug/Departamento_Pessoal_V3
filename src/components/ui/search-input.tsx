@@ -5,6 +5,7 @@ import { Input } from './input';
 import { Button } from './button';
 import { Search, X, Loader2 } from 'lucide-react';
 import { useDebounce } from '@/hooks/useDebounce';
+import { useOnMount } from '@/hooks/useMountEffects';
 
 interface SearchInputProps {
   value?: string;
@@ -20,8 +21,12 @@ export function SearchInput({ value: controlledValue, onChange, onSearch, placeh
   const [value, setValue] = useState(controlledValue || '');
   const debouncedValue = useDebounce(value, debounce);
 
+  // Inicializa com valor controlado no mount
+  useOnMount(() => {
+    if (controlledValue !== undefined) setValue(controlledValue);
+  });
+
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (controlledValue !== undefined) setValue(controlledValue);
   }, [controlledValue]);
 

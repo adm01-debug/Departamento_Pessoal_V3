@@ -5,6 +5,7 @@ import { cnpjSchema } from '../_shared/schemas/common.ts';
 import { cachePublic } from '../_shared/cache.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
+import { safeFetch } from '../_shared/safe-fetch.ts';
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
@@ -39,7 +40,10 @@ serve(async (req) => {
   const clean = cnpj.replace(/\D/g, '');
 
   try {
-    const res = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${clean}`);
+    const res = await safeFetch(`https://brasilapi.com.br/api/cnpj/v1/${clean}`, {
+      timeoutMs: 10_000,
+      tag: 'webhook',
+    });
     if (!res.ok) {
       return createErrorResponse('CNPJ não encontrado', 404, 'NOT_FOUND');
     }

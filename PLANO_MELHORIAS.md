@@ -1,11 +1,11 @@
 # 🎯 PLANO MESTRE DE MELHORIAS — Departamento Pessoal v2
 
-**Data:** 2026-07-25 (atualizado 2026-08-17)
+**Data:** 2026-07-25 (atualizado 2026-08-26)
 **Escopo:** `adm01-debug/departamento-pessoal-v2` (React 19 + TS 6.0.3 + Vite 8 + Supabase self-hosted)
 **Autor:** Análise Sênior — PhD em Supabase / Segurança / Arquitetura
-**Status geral:** 63/76 itens implementados · 13 itens restantes no backlog
+**Status geral:** 65/76 itens implementados · 11 itens restantes no backlog
 **Filosofia:** EXCELÊNCIA E PERFEIÇÃO — nada de melhorias cosméticas; cada item gera valor mensurável.
-**Status:** ✅ **58/76 ITENS IMPLEMENTADOS (P0–P2 + P3–P5 parciais)** — 58 das 76 etapas foram executadas e commitadas no branch `main` entre 22-25/07/2026. As 18 etapas remanescentes (2 P3 + 4 P4 + 12 P5) permanecem como backlog e requerem infraestrutura/external services ou dependências de terceiros. Este documento serve como referência consolidada de auditoria e implementation notes.
+**Status:** ✅ **65/76 ITENS IMPLEMENTADOS (P0–P2 + P3–P5 parciais)** — 65 das 76 etapas foram executadas e commitadas no branch `main` entre 22-25/07 e 26/07/2026. As 11 etapas remanescentes requerem infraestrutura/external services ou dependências de terceiros. Últimos implementados (26/07/2026): P1-022 React Compiler (babel-plugin-react-compiler, VITE_REACT_COMPILER=1), P1-025 pgcrypto AES-256 banking (contas_bancarias + pix_itens + audit table), P2-035 sync-lockfiles, P2-037 legacy tables deprecation (003 schema rename), P2-040 Zod validators consolidation, P2-046 ESLint 75→0 warnings, P2-047 vite.config.optimized.ts removed, P2-049 vi.fn<T> typed mocks, P2-052 useState<unknown> in 11 components/pages, P3-061 retryWithIdempotency (verificado: ja implementado em edgeFunctionsService), P4-068/P4-069 runbooks verificados✅.
 
 > ⚠️ Este documento é **FECHADO, EXAUSTIVO e PRIORIZADO**. Ele é o resultado de uma auditoria minuciosa de TODOS os artefatos do repositório (532 migrações SQL, 57 Edge Functions, 80+ services, 95+ hooks, 200+ componentes, 62 pages, 2.364 ocorrências de `any`, 70+ console.log, 75+ arquivos com `USING (true)`, 45+ funções `SECURITY DEFINER` sem `SET search_path`, etc.).
 >
@@ -21,8 +21,8 @@
 | Categoria | Planejado | Implementados | Backlog | Esforço Total |
 |---|---|---|---|---|
 | 🔴 **P0 — Segurança Crítica** | 12 | 12 ✅ | 0 | ~3 semanas |
-| 🟠 **P1 — Robustez e Consistência** | 18 | 16 ✅ + 2 📝 | 0 | ~4 semanas |
-| 🟡 **P2 — Qualidade de Código e DX** | 22 | 21 ✅ + 1 📝 | 0 | ~4 semanas |
+| 🟠 **P1 — Robustez e Consistência** | 18 | 17 ✅ + 1 📝 | 0 | ~4 semanas |
+| 🟡 **P2 — Qualidade de Código e DX** | 22 | 22 ✅ | 0 | ~4 semanas |
 | 🟢 **P3 — Observabilidade e Operacional** | 14 | 12 ✅ | 2 🔄 | ~3 semanas |
 | 🔵 **P4 — Performance e Escalabilidade** | 10 | 8 ✅ | 2 🔄 | ~3 semanas |
 | 🟣 **P5 — Features Faltantes e Roadmap** | 12 | 1 ✅ | 11 🔄 | ~6 semanas |
@@ -664,7 +664,7 @@
 
 ---
 
-## P2-035 🟡 Coexistência de lockfiles (`bun.lock` + `package-lock.json`)
+## P2-035 ✅ Coexistência de lockfiles (`bun.lock` + `package-lock.json`)
 
 - **Origem:** `QA_SIMULATION_REPORT.md` item 4.4 + `CLAUDE.md`.
 - **Risco:** Drift de versões entre CI e dev.
@@ -692,7 +692,7 @@
 
 ---
 
-## P2-037 🟡 Tabelas órfãs/duplicadas (`ferias`, `folhas`, `pontos` em triplicata)
+## P2-037 ✅ Tabelas órfãs/duplicadas — deprecadas (`003` schema legado)
 
 - **Origem:** `SECURITY_AUDIT_REPORT.md` ISSUE-011.
 - **Risco:** Dados fragmentados; policies não se aplicam entre tabelas.

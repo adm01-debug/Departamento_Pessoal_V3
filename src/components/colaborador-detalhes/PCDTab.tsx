@@ -9,6 +9,14 @@ import { Spinner } from '@/components/ui/spinner';
 import { Edit2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useDeficiencia, useSalvarDeficiencia } from '@/hooks/useColaboradorDetalhes';
+import { useOnMount } from '@/hooks/useMountEffects';
+
+interface PCDData {
+  tipo?: string;
+  cid?: string;
+  descricao?: string;
+  observacoes?: string;
+}
 
 const TIPOS = ['Física', 'Auditiva', 'Visual', 'Mental', 'Intelectual', 'Múltipla', 'Reabilitado'];
 
@@ -18,10 +26,17 @@ export function PCDTab({ colaboradorId }: { colaboradorId: string }) {
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({ tipo: '', cid: '', descricao: '', observacoes: '' });
 
+  // Inicializa form no mount
+  useOnMount(() => {
+    if (data && !editing) {
+      const d = data as PCDData;
+      setForm({ tipo: d.tipo || '', cid: d.cid || '', descricao: d.descricao || '', observacoes: d.observacoes || '' });
+    }
+  });
+
   useEffect(() => {
     if (data && !editing) {
-      const d = data as any;
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+      const d = data as PCDData;
       setForm({ tipo: d.tipo || '', cid: d.cid || '', descricao: d.descricao || '', observacoes: d.observacoes || '' });
     }
   }, [data, editing]);
