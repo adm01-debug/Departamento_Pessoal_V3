@@ -34,6 +34,7 @@ export { useConfiguracoesIntervalo } from "./useConfiguracoesIntervalo";
 export { useWebhooksAvancados, useWebhookLogs } from "./useWebhooksAvancados";
 export { usePontosAbertos } from "./usePontosAbertos";
 export { useNavigationGuard } from "./useNavigationGuard";
+export { useNow } from "./useNow";
 export { usePeriodosAquisitivos } from "./usePeriodosAquisitivos";
 export { usePontoOffline } from "./usePontoOffline";
 

@@ -40,7 +40,7 @@ async function staleWhileRevalidate(request, cacheName) {
   const cache = await openCache(cacheName);
   const cachedResponse = await cache?.match(request);
 
-  const fetchPromise = fetch(request).then((networkResponse) => {
+  const fetchPromise = safeFetch(request).then((networkResponse) => {
     if (networkResponse.ok) {
       cache?.put(request, networkResponse.clone());
     }
@@ -48,7 +48,35 @@ async function staleWhileRevalidate(request, cacheName) {
   }).catch(() => null);
 
   // Responde do cache se disponível; senão espera network.
+  // Se ambos falharem retorna null → quem chamou deve handlear.
   return cachedResponse || fetchPromise;
+}
+
+// Gzipbomb-safe fetch wrapper: lê apenas os primeiros 4MB antes de entregar ao SW
+// (o worker parent rejeita payloads >4MB via DecompressionStream na Edge Function)
+async function safeFetch(request, maxBytes = 4 * 1024 * 1024) {
+  const response = await fetch(request);
+  if (!response.ok) return response;
+  // Streaming: aborta após maxBytes lidos — protege contra oversized payloads
+  const reader = response.body.getReader();
+  const chunks = [];
+  let total = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      total += value.byteLength;
+      if (total > maxBytes) {
+        reader.cancel();
+        return new Response('Payload too large', { status: 413 });
+      }
+      chunks.push(value);
+    }
+  } catch {
+    // Abort ou erro de leitura → propagar
+  }
+  const body = new Blob(chunks);
+  return new Response(body, { headers: response.headers, status: response.status });
 }
 
 // ── 1. Instalação ────────────────────────────────────────────
@@ -109,9 +137,9 @@ self.addEventListener('fetch', (event) => {
   // HTML/navegação: StaleWhileRevalidate (sempre fresco, mesmo offline = fallback index)
   if (request.mode === 'navigate') {
     event.respondWith(
-      staleWhileRevalidate(request, CORE_CACHE).catch(() =>
-        caches.match('/index.html')
-      )
+      staleWhileRevalidate(request, CORE_CACHE)
+        .then((r) => r || safeFetch(request))
+        .catch(() => caches.match('/index.html'))
     );
     return;
   }
@@ -146,12 +174,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Fonts: CacheFirst 30 dias
+  // Fonts: CacheFirst 30 dias (com fallback offline)
   if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
     event.respondWith(
-      caches.match(request).then((cached) => {
-        return cached || staleWhileRevalidate(request, CORE_CACHE);
-      })
+      staleWhileRevalidate(request, CORE_CACHE)
+        .then((r) => r || safeFetch(request))
     );
     return;
   }
