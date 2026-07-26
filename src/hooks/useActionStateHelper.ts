@@ -1,11 +1,16 @@
 /**
- * P2-039: Helper para actions de form (React 19).
+ * P2-039 (Etapa 55 — execução real): Helper para actions de form (React 19).
  *
  * Substitui useFormState (deprecated em React 19) por useActionState.
- * Mantém backward compatibility com React 18.
+ * Suporta React 18 via fallback local (sem useTransition reativo).
+ *
+ * Auditoria 26/07: zero usos de useFormState e zero usos de useFormActionState
+ * em src/. O hook é exposto para os 80+ formulários do sistema migrarem
+ * gradualmente conforme cada feature é tocada.
  */
 
 import { useState, useCallback, useRef, type RefObject } from 'react';
+import { toErrorMessage } from '@/utils/toError';
 
 // =============================================================================
 // TYPES
@@ -57,7 +62,7 @@ function useFormActionStateFallback<State extends ActionState>(
       .catch((error) => {
         setState({
           ...state,
-          error: error instanceof Error ? error.message : 'Erro desconhecido',
+          error: toErrorMessage(error),
         } as State);
       })
       .finally(() => setIsPending(false));
