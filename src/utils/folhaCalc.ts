@@ -150,7 +150,6 @@ export const folhaCalc = {
 
     // 8. Cálculo de Impostos
     const baseTributavel = Decimal.max(0, new Decimal(proventos).minus(valorFaltas)).toNumber();
-    const _outrasDeducoesLegais = 0; // Ex: Pensão alimentícia se viesse como parâmetro direto
 
     const { valor: inss, faixa: faixaInss } = folhaCalc.calcularINSS(baseTributavel);
     detalheEventos.push({ codigo: '5000', descricao: 'Desconto INSS', tipo: 'desconto', valor: inss });

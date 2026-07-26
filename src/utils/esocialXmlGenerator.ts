@@ -118,7 +118,7 @@ function generateS2200(id: string, dados: any, empresa: any, ambiente: string) {
   </evtAdmissao>`;
 }
 
-function generateGeneric(id: string, tipo: string, dados: any, empresa: any, ambiente: string) {
+function generateGeneric(id: string, _tipo: string, dados: any, empresa: any, ambiente: string) {
   return `
   <evento Id="${id}">
     <ideEvento>

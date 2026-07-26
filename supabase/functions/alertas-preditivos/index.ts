@@ -75,8 +75,7 @@ serve(async (req: Request): Promise<Response> => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
-    const { body } = await req.json().catch(() => ({})) as Record<string, unknown>;
-    const bodyObj  = (body ?? {}) as Record<string, unknown>;
+    const bodyObj = (await req.json().catch(() => ({}))) as Record<string, unknown>;
     const empresaId = bodyObj?.empresaId as string | undefined;
     const mode = (bodyObj?.mode as string | undefined) ?? 'both'; // 'turnover' | 'absenteismo' | 'both'
 
@@ -315,11 +314,12 @@ ${contexto.alertasAbsenteismo.map(a => `- ABSENTEÍSMO [${a.nivel}]: ${a.nome} �
 Responda em português brasileiro, tom profissional.`;
 
           const endpoint = AI_GATEWAY_URL || 'https://api.openai.com/v1/chat/completions';
-          const res = await safeFetch(`${AI_GATEWAY_URL || 'https://api.openai.com'}/v1/chat/completions`, {
+          const authToken = AI_GATEWAY_URL ? AI_GATEWAY_URL : OPENAI_API_KEY;
+          const res = await safeFetch(`${endpoint}/chat/completions`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${AI_GATEWAY_URL ? '' : OPENAI_API_KEY}`,
+              'Authorization': `Bearer ${authToken}`,
             },
             body: JSON.stringify({
               model: AI_GATEWAY_URL ? 'gpt-4o-mini' : 'gpt-4o-mini',

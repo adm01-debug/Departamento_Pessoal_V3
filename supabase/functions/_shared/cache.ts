@@ -53,6 +53,12 @@ interface CacheEntry<T> {
 
 const cache = new Map<string, CacheEntry<unknown>>();
 
+// In-flight requests: deduplicação de loaders concorrentes para a mesma key.
+// Quando duas chamadas chegam simultaneamente com cache miss, ambas devem
+// reusar o mesmo Promise em vez de disparar o loader N vezes (thundering herd).
+// https://en.wikipedia.org/wiki/Thundering_herd_problem
+const inFlight = new Map<string, Promise<unknown>>();
+
 let totalHits = 0;
 let totalMisses = 0;
 
@@ -63,7 +69,13 @@ export interface CacheStats {
   hit_rate: number;
 }
 
-/** Obtém valor do cache. Se ausente/expirado, chama loader(). */
+/**
+ * Obtém valor do cache. Se ausente/expirado, chama loader().
+ *
+ * Thread-safety: chamadas simultâneas com a mesma key compartilham o mesmo
+ * Promise (deduplicação via inFlight), evitando o thundering herd.
+ * Loader é chamado no máximo 1x por key TTL window.
+ */
 export async function cachedFetch<T>(
   key: string,
   loader: () => Promise<T>,
@@ -75,10 +87,25 @@ export async function cachedFetch<T>(
     totalHits++;
     return entry.value;
   }
+
+  // Cache miss — verifica se já existe loader em andamento para esta key
+  const pending = inFlight.get(key) as Promise<T> | undefined;
+  if (pending) {
+    return pending;
+  }
+
   totalMisses++;
-  const value = await loader();
-  cache.set(key, { value, expiresAt: Date.now() + ttlMs, hits: 0 });
-  return value;
+  const promise = (async () => {
+    try {
+      const value = await loader();
+      cache.set(key, { value, expiresAt: Date.now() + ttlMs, hits: 0 });
+      return value;
+    } finally {
+      inFlight.delete(key);
+    }
+  })();
+  inFlight.set(key, promise);
+  return promise;
 }
 
 /** Invalida entrada(s) por key ou prefixo */
@@ -96,6 +123,7 @@ export function invalidateCache(keyOrPrefix: string): number {
 /** Limpa todo o cache (uso em testes ou admin) */
 export function clearCache(): void {
   cache.clear();
+  inFlight.clear();
   totalHits = 0;
   totalMisses = 0;
 }
