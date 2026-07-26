@@ -14,6 +14,7 @@ import { cachedFetch, invalidateCache } from "../_shared/cache.ts";
 import { createClient, type SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { z } from "https://deno.land/x/zod@v3.23.8/mod.ts";
 import { verifyCsrf } from "../_shared/csrf.ts";
+import { logRpcError } from "../_shared/rpc-error-logging.ts";
 import { corsHeaders, enforceOrigin, handlePreflight } from '../_shared/contract.ts';
 import {
   isSafeTableName, isSafeColumnsExpr, isSafeOrderColumn, isSafeOrExpression, isSafeFilterColumn,
@@ -772,16 +773,16 @@ Deno.serve(async (req) => {
         error: error?.message, userId: user?.id,
         traceId, // P3-064
       });
-      // P1-017: inclui details e hint no log do backend (NUNCA retorna ao cliente).
+      // P1-017: log estruturado no servidor — details/hint/code sanitizados, NUNCA retornados ao cliente
       if (error) {
-        console.error(
-          '[bridge] RPC_ERROR: %s | details=%s | hint=%s | code=%s',
-          error.message,
-          error.details ?? 'n/a',
-          error.hint ?? 'n/a',
-          error.code ?? 'n/a'
-        );
-        return jsonError(400, "RPC_ERROR", "Falha na chamada RPC");
+        const safeMessage = logRpcError(error, {
+          rpcName,
+          userId: user?.id,
+          empresaId: undefined,
+          params: rpcArgs ?? undefined,
+          statusCode: 400,
+        }, false);
+        return jsonError(400, "RPC_ERROR", safeMessage);
       }
       return jsonOk({ data: rpcData, duration_ms: durationMs });
     }

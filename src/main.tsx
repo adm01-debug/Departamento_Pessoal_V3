@@ -6,6 +6,7 @@ import * as Sentry from "@sentry/react";
 import { QueryProvider, ThemeProvider, ToastProvider } from '@/providers';
 import { AuthProvider, NotificationProvider, EmpresaProvider } from '@/contexts';
 import { ErrorBoundary } from '@/errors';
+import { loggerService } from '@/services/loggerService';
 import App from './App';
 import './index.css';
 
@@ -110,8 +111,8 @@ if (import.meta.env.PROD) {
 if (!isInIframe && !isPreviewHost && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw-custom.js')
-      .then(reg => { if (import.meta.env.DEV) console.debug('Service Worker registrado:', reg.scope); })
-      .catch(err => console.error('Falha ao registrar Service Worker:', err));
+      .then(reg => { if (import.meta.env.DEV) loggerService.info('Service Worker registrado', { scope: reg.scope }); })
+      .catch(err => loggerService.error('Falha ao registrar Service Worker', {}, err instanceof Error ? err : new Error(String(err))));
   });
 }
 
