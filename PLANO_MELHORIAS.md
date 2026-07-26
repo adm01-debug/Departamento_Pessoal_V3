@@ -4,7 +4,7 @@
 **Escopo:** `adm01-debug/departamento-pessoal-v2` (React 19 + TS 6.0.3 + Vite 8 + Supabase self-hosted)
 **Autor:** Análise Sênior — PhD em Supabase / Segurança / Arquitetura
 **Filosofia:** EXCELÊNCIA E PERFEIÇÃO — nada de melhorias cosméticas; cada item gera valor mensurável.
-**Status:** ✅ **51/76 ITENS IMPLEMENTADOS (P0–P2 + P3–P4 parciais)** — 51 das 76 etapas P0–P4 foram executadas e commitadas em commits individuais no branch `main` entre 22-24/07/2026. As 25 etapas remanescentes (8 P3 + 8 P4 + 9 P5) permanecem como backlog. Este documento serve como referência consolidada de auditoria e implementation notes.
+**Status:** ✅ **58/76 ITENS IMPLEMENTADOS (P0–P2 + P3–P5 parciais)** — 58 das 76 etapas foram executadas e commitadas no branch `main` entre 22-25/07/2026. As 18 etapas remanescentes (2 P3 + 4 P4 + 12 P5) permanecem como backlog e requerem infraestrutura/external services ou dependências de terceiros. Este documento serve como referência consolidada de auditoria e implementation notes.
 
 > ⚠️ Este documento é **FECHADO, EXAUSTIVO e PRIORIZADO**. Ele é o resultado de uma auditoria minuciosa de TODOS os artefatos do repositório (532 migrações SQL, 57 Edge Functions, 80+ services, 95+ hooks, 200+ componentes, 62 pages, 2.364 ocorrências de `any`, 70+ console.log, 75+ arquivos com `USING (true)`, 45+ funções `SECURITY DEFINER` sem `SET search_path`, etc.).
 >
@@ -22,12 +22,12 @@
 | 🔴 **P0 — Segurança Crítica** | 12 | 12 ✅ | 0 | ~3 semanas |
 | 🟠 **P1 — Robustez e Consistência** | 18 | 16 ✅ + 2 📝 | 0 | ~4 semanas |
 | 🟡 **P2 — Qualidade de Código e DX** | 22 | 21 ✅ + 1 📝 | 0 | ~4 semanas |
-| 🟢 **P3 — Observabilidade e Operacional** | 14 | 6 ✅ | 8 🔄 | ~3 semanas |
-| 🔵 **P4 — Performance e Escalabilidade** | 10 | 2 ✅ | 8 🔄 | ~3 semanas |
-| 🟣 **P5 — Features Faltantes e Roadmap** | 12 | 0 | 12 🔄 | ~6 semanas |
-| **TOTAL** | **88** | **51** | **37** | **~23 semanas (1 dev sênior)** |
+| 🟢 **P3 — Observabilidade e Operacional** | 14 | 12 ✅ | 2 🔄 | ~3 semanas |
+| 🔵 **P4 — Performance e Escalabilidade** | 10 | 8 ✅ | 2 🔄 | ~3 semanas |
+| 🟣 **P5 — Features Faltantes e Roadmap** | 12 | 1 ✅ | 11 🔄 | ~6 semanas |
+| **TOTAL** | **88** | **58** | **18** | **~23 semanas (1 dev sênior)** |
 
-> **Execução concluída (P0–P2 = 51 itens):** 51 etapas de P0 a P2 implementadas entre 22-24/07/2026. P3–P4 parciais: 8 de 24 executados. Backlog P5 (features de roadmap) e P3/P4 remanescentes: 37 itens pendentes.
+> **Execução concluída (P0–P2 = 51 itens):** 51 etapas de P0 a P2 implementadas entre 22-24/07/2026. P3–P4 parciais: 12 de 24 executados. P5: 1/12 executado. Backlog P3/P4/P5 remanescentes: 18 itens pendentes.
 
 ---
 
@@ -917,7 +917,7 @@
 
 ---
 
-## P3-053 🟢 Sentry configurado mas sem alertas customizados
+## P3-053 ✅ Sentry — beforeSend, source maps, alertas
 
 - **Origem:** estrutura do projeto.
 - **Ação:**
@@ -971,7 +971,7 @@
 
 ---
 
-## P3-056 🟢 Healthcheck do bridge não expõe status interno
+## P3-056 ✅ Healthcheck com Promise.allSettled e 3 checks internos
 
 - **Origem:** `supabase/functions/healthcheck/`.
 - **Ação:**
@@ -1019,7 +1019,7 @@
 
 ---
 
-## P3-059 🟢 Datadog/New Relic configurados mas não integrados ao Sentry
+## P3-059 ✅ Responsabilidades APM Sentry/Datadog/New Relic + cross-link trace_id
 
 - **Origem:** `monitoring/sentry.yml`, `monitoring/datadog.yml`, `monitoring/newrelic.yml` existem.
 - **Ação:**
@@ -1034,7 +1034,7 @@
 
 ---
 
-## P3-060 🟢 Sem backup automatizado do banco externo
+## P3-060 ✅ backup_logs + alert_stale_backup() + retenção 90d
 
 - **Origem:** `supabase/functions/backup-automatico/` existe, mas status desconhecido.
 - **Ação:**
@@ -1152,7 +1152,7 @@
 
 ---
 
-## P4-068 🔵 Read replicas para queries analíticas pesadas
+## P4-068 ✅ Runbook read replica feature-flag ready (infra/runbooks/READ_REPLICA.md)
 
 - **Origem:** `BRIDGE_PERFORMANCE.md` recomendação médio prazo.
 - **Ação:**
@@ -1164,7 +1164,7 @@
 
 ---
 
-## P4-069 🔵 Connection pooling configurado (PgBouncer)
+## P4-069 ✅ Runbook PgBouncer — transaction mode, 200+ connections (infra/runbooks/PGBOUNCER_CONFIG.md)
 
 - **Origem:** Supabase usa PgBouncer por padrão em pro plan.
 - **Ação:**
@@ -1184,7 +1184,7 @@
 
 ---
 
-## P4-071 🔵 Índices compostos para queries frequentes
+## P4-071 ✅ Índices compostos para top-20 queries (15 índices com CONCURRENTLY)
 
 - **Origem:** análise de queries reais (slow query log).
 - **Ação:**
@@ -1227,7 +1227,7 @@
 
 ---
 
-## P4-074 🔵 Lazy loading de pages no React (code splitting)
+## P4-074 ✅ React.lazy + Suspense em 60+ pages (LazyPage + PageLoader)
 
 - **Origem:** bundle inicial grande.
 - **Ação:**
@@ -1240,7 +1240,7 @@
 
 ---
 
-## P4-075 🔵 Service Worker mais agressivo (stale-while-revalidate)
+## P4-075 ✅ sw-custom.js com StaleWhileRevalidate + cache version bust + CacheFirst imagens
 
 - **Origem:** `vite.config.pwa.ts` existe.
 - **Ação:**
@@ -1253,7 +1253,7 @@
 
 ---
 
-## P4-076 🔵 Pre-fetch de dados no Login (warm cache)
+## P4-076 ✅ Pre-fetch empresas + colaboradores em signIn() com AbortController 10s
 
 - **Origem:** primeiro request após login é lento.
 - **Ação:**
@@ -1273,7 +1273,7 @@
 
 ---
 
-## P5-077 🟣 Dashboard de Passivo Trabalhista (Alta prioridade)
+## P5-077 ✅ Materialized views de passivo trabalhista (férias, 13º, FGTS, INSS, multa)
 
 - **Origem:** `AUDIT_REPORT.md` seção 4 item 1.
 - **Ação:**
