@@ -15,7 +15,6 @@ import { Spinner } from '@/components/ui/spinner';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { workflowService } from '@/services/workflowService';
 import { WorkflowDesigner } from '@/components/workflows/WorkflowDesigner';
 import { useEmpresas } from '@/hooks';
