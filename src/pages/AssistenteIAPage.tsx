@@ -7,19 +7,19 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Bot, Send, Loader2, Sparkles, Calculator,
-  Calendar, FileText, Scale, HelpCircle, Trash2
+  Calendar, FileText, Scale, HelpCircle, Trash2, WifiOff, AlertCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import {
+  assistenteIAService,
+  type ChatMessage,
+  type AssistenteIAError,
+} from '@/services/assistenteIAService';
+import { toast } from 'sonner';
 
-interface Message {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-  timestamp: Date;
-}
+interface Message extends ChatMessage {}
 
 const SUGGESTED_QUESTIONS = [
   { icon: Calculator, text: 'Como calcular rescisão de um funcionário com 3 anos de CLT?' },
@@ -45,7 +45,16 @@ export default function AssistenteIAPage() {
   }, [messages]);
 
   const sendMessage = async (text: string) => {
-    if (!text.trim() || loading) return;
+    // P5-081: validação client-side antes de enviar
+    const validation = assistenteIAService.validateMessage(text);
+    if (!validation.ok) {
+      toast.warning(validation.reason);
+      return;
+    }
+    if (!user) {
+      toast.error('Faça login para usar o assistente.');
+      return;
+    }
 
     const userMessage: Message = {
       id: crypto.randomUUID(),
@@ -59,31 +68,33 @@ export default function AssistenteIAPage() {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('assistente-ia', {
-        body: {
-          message: text.trim(),
-          history: messages.slice(-10).map(m => ({ role: m.role, content: m.content })),
-        },
+      // P5-081: Usa serviço com timeout 30s, cancelamento automático,
+      // retry em 401 e parse seguro de resposta
+      const data = await assistenteIAService.sendMessage({
+        message: text.trim(),
+        history: messages.slice(-10).map(m => ({ role: m.role, content: m.content })),
       });
-
-      if (error) throw error;
 
       const assistantMessage: Message = {
         id: crypto.randomUUID(),
         role: 'assistant',
-        content: data?.response || 'Desculpe, não consegui processar sua pergunta. Tente novamente.',
+        content: data.response,
         timestamp: new Date(),
+        latencyMs: undefined,
       };
-
       setMessages(prev => [...prev, assistantMessage]);
-    } catch (err) {
-      const errorMessage: Message = {
-        id: crypto.randomUUID(),
-        role: 'assistant',
-        content: '⚠️ Erro ao processar sua pergunta. Verifique sua conexão e tente novamente.',
-        timestamp: new Date(),
-      };
-      setMessages(prev => [...prev, errorMessage]);
+    } catch (err: unknown) {
+      const iaErr = err as AssistenteIAError;
+      if (iaErr?.code === 'CANCELLED') return; // cancelado por novo request — silencioso
+
+      const icon = iaErr?.code === 'NETWORK' || iaErr?.code === 'TIMEOUT'
+        ? <WifiOff className="h-4 w-4" />
+        : <AlertCircle className="h-4 w-4" />;
+
+      toast.error(iaErr?.message ?? 'Erro ao processar pergunta.', {
+        icon,
+        duration: 5000,
+      });
     } finally {
       setLoading(false);
       inputRef.current?.focus();

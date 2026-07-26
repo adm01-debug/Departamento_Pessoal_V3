@@ -223,7 +223,7 @@ export const rescisaoService = {
   },
 
 
-  async processarPagamento(id: string, empresaId: string, comprovanteUrl?: string): Promise<any> {(id: string, empresaId: string, comprovanteUrl?: string): Promise<any> {
+  async processarPagamento(id: string, empresaId: string, comprovanteUrl?: string): Promise<any> {
     if (!empresaId) throw new Error('empresa_id é obrigatório');
     try {
       const { data: d, error: fetchError } = await supabase

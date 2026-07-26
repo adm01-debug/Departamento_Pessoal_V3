@@ -20,6 +20,10 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+  // TanStack Table's useReactTable API returns functions (getPaginationRowModel etc.)
+  // that cannot be safely memoized — this is a known library limitation.
+  // The returned table object is stable; only the row model getters are re-created.
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns,
