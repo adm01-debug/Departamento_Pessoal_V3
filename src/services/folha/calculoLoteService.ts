@@ -234,7 +234,7 @@ export const calculoLoteService = {
           progress.success++;
           onProgress?.({ ...progress });
         } catch (err) {
-          loggerService.error('Erro no processamento de colaborador', { colaboradorId: colab.id }, toError(err));
+          loggerService.error('Erro no processamento de colaborador', { colaboradorId: colab.id }, err instanceof Error ? err : new Error(String(err)));
           progress.errors++;
           onProgress?.({ ...progress });
         }

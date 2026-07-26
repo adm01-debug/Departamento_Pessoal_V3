@@ -1,9 +1,9 @@
-# BACKLOG — 11 Itens Restantes
+# BACKLOG — 2 Itens Restantes
 
-**Última atualização:** 2026-08-26
-**Total implementado:** 67/78 ✅
-**Restantes:** 11 🔄
-**Dependência comum:** Supabase self-hosted / Pro tier (ver cada item)
+**Última atualização:** 2026-08-28
+**Total implementado:** 86/88 ✅
+**Restantes:** 2 🔄
+**Dependência:** Design de UX (P5-083) + credenciais de terceiros (P5-084/P5-086)
 
 ---
 

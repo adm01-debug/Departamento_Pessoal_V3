@@ -285,7 +285,7 @@ const createQueryBuilder = (table: string): TerminalQueryBuilder => {
 
   const exec = <T = any>() => callBridge<T>(state.action, table, state.payload);
 
-  const addFilter = (column: string, op: string, value: unknown): QueryBuilder => {
+  const addFilter = (column: string, op: string, value: unknown): TerminalQueryBuilder => {
     // Se o valor for "undefined" ou "null" como string, converte para null real.
     // Se for "all", ignoramos o filtro para permitir listagem completa.
     if (value === "all") return builder;
