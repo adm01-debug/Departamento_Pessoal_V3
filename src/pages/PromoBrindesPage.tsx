@@ -19,7 +19,7 @@ export default function PromoBrindesPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [editingItem, setEditingItem] = useState<Record<string, any> | null>(null);
+  const [editingItem, setEditingItem] = useState<Record<string, unknown> | null>(null);
   const [form, setForm] = useState({
     nome: '',
     descricao: '',

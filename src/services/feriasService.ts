@@ -1,12 +1,13 @@
 import { BaseService, ListOptions, ListResponse } from './baseService';
 import { Ferias } from '@/types/entities';
 import { supabase } from '@/integrations/supabase/client';
+import { parseCursor } from '@/lib/cursor';
 
 class FeriasService extends BaseService<Ferias> {
   constructor() {
-    super('ferias', { 
-      searchColumn: 'colaborador_nome', 
-      defaultOrderBy: 'data_inicio' 
+    super('ferias', {
+      searchColumn: 'colaborador_nome',
+      defaultOrderBy: 'data_inicio'
     });
   }
 
@@ -18,30 +19,77 @@ class FeriasService extends BaseService<Ferias> {
     return { data: res.data, total: res.count };
   }
 
-  async listSolicitacoes(empresaId: string, params?: { page?: number; limit?: number; search?: string; status?: string }): Promise<{ data: Ferias[]; count: number }> {
+  /**
+   * Lista solicitações de férias com suporte a cursor-based pagination
+   * P1-020: substitui offset por keyset para melhor performance em tabelas grandes
+   *
+   * @param empresaId - ID da empresa (obrigatório para tenant isolation)
+   * @param params - Parâmetros de paginação
+   * @param params.cursor - Cursor para paginação (formato: base64 encoded)
+   * @param params.limit - Quantidade de registros por página (default: 20)
+   * @param params.page - Número da página (para backward compatibility, usa offset se cursor não fornecido)
+   * @param params.search - Busca por nome do colaborador
+   * @param params.status - Filtro por status
+   */
+  async listSolicitacoes(
+    empresaId: string,
+    params?: {
+      page?: number;
+      limit?: number;
+      cursor?: string;
+      search?: string;
+      status?: string;
+    }
+  ): Promise<{ data: Ferias[]; count: number; nextCursor: string | null; hasMore: boolean }> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
-    const { page = 1, limit = 10, search, status } = params || {};
-    const from = (page - 1) * limit;
-    const to = from + limit - 1;
+    const { page = 1, limit = 20, cursor, search, status } = params || {};
+    const effectiveLimit = limit + 1; // Pegamos 1 a mais para saber se há mais páginas
 
     let query = this.getQuery()
       .select('*, colaborador:colaboradores!fk_ferias_colaborador(nome_completo, foto_url)', { count: 'exact' });
 
     query = query.eq('empresa_id', empresaId);
     if (status && status !== 'all') query = query.eq('status', status);
-    
+
     if (search && search.length >= 3) {
       const escapedSearch = search.replace(/[%_\\]/g, '\\$&');
       query = query.ilike('colaborador_nome', `%${escapedSearch}%`);
     }
 
-    const { data, error, count } = await query
-      .order('data_inicio', { ascending: false })
-      .range(from, to);
-      
+    // Cursor-based pagination (preferido) ou offset-based (backward compatibility)
+    if (cursor) {
+      const parsed = parseCursor(cursor);
+      if (parsed && parsed.column === 'id') {
+        query = query.gt('id', parsed.value as string);
+      }
+      query = query.order('id', { ascending: true }).limit(effectiveLimit);
+    } else {
+      // Offset-based para backward compatibility
+      const from = (page - 1) * limit;
+      const to = from + limit - 1;
+      query = query.order('id', { ascending: false }).range(from, to);
+    }
+
+    const { data, error, count } = await query;
+
     if (error) throw error;
-    return { data: (data as any[]) || [], count: count || 0 };
+
+    const resultData = (data as any[]) || [];
+    const hasMore = resultData.length > limit;
+    const returnData = hasMore ? resultData.slice(0, limit) : resultData;
+
+    // Calcula próximo cursor (ID do último item)
+    const nextCursor = hasMore && returnData.length > 0
+      ? Buffer.from(`id:${returnData[returnData.length - 1].id}:after`).toString('base64')
+      : null;
+
+    return {
+      data: returnData,
+      count: count || 0,
+      nextCursor,
+      hasMore
+    };
   }
 
   async syncWithHub(empresaId: string): Promise<{ success: boolean; lastSync: string; recordsUpdated: number }> {

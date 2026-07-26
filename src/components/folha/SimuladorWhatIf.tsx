@@ -31,7 +31,7 @@ export function SimuladorWhatIf() {
     planoSaude: '350',
   });
 
-  const [resultado, setResultado] = useState<Record<string, any> | null>(null);
+  const [resultado, setResultado] = useState<Record<string, unknown> | null>(null);
 
   const calcularImpacto = () => {
     setLoading(true);

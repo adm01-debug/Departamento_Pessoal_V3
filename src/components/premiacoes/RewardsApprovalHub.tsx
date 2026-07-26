@@ -36,7 +36,7 @@ interface ApprovalHubProps {
 export function RewardsApprovalHub({ pagamentos }: ApprovalHubProps) {
   const queryClient = useQueryClient();
   const { empresaAtual } = useEmpresas();
-  const [selectedPagamento, setSelectedPagamento] = React.useState<Record<string, any> | null>(null);
+  const [selectedPagamento, setSelectedPagamento] = React.useState<Record<string, unknown> | null>(null);
   const [comentario, setComentario] = React.useState('');
   const [isReconcileOpen, setIsReconcileOpen] = React.useState(false);
   const [isApprovalDialogOpen, setIsApprovalDialogOpen] = React.useState(false);

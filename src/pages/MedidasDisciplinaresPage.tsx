@@ -63,7 +63,7 @@ export default function MedidasDisciplinaresPage() {
   const [form, setForm] = useState(initialForm);
   const [search, setSearch] = useState('');
   const [tipoFilter, setTipoFilter] = useState('');
-  const [contestMedida, setContestMedida] = useState<any | null>(null);
+  const [contestMedida, setContestMedida] = useState<Record<string, unknown> | null>(null);
   const { user } = useAuth();
 
   const { data: userRoles = [] } = useQuery({

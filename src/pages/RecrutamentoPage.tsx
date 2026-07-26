@@ -31,7 +31,7 @@ export default function RecrutamentoPage() {
   const qc = useQueryClient();
   const [activeTab, setActiveTab] = useState('pipeline');
   const [selectedVagaId, setSelectedVagaId] = useState<string>('all');
-  const [selectedCandidatura, setSelectedCandidatura] = useState<Record<string, any> | null>(null);
+  const [selectedCandidatura, setSelectedCandidatura] = useState<Record<string, unknown> | null>(null);
 
   const { data: vagas = [], isLoading: loadVagas } = useQuery({
     queryKey: ['vagas', empresaAtual?.id],
