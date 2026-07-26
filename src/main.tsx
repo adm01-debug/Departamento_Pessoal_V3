@@ -38,9 +38,13 @@ if (import.meta.env.PROD && import.meta.env.VITE_SENTRY_DSN) {
       if (chromeExtPatterns.some(p => reqUrl.includes(p))) return null;
       // Eventos sem stack (são quase sempre false-positives)
       if (!event.exception?.values?.length) return event;
-      // Erros com stack de extensão (comum em devtools abierto)
-      const firstExc = event.exception.values[0];
-      if (firstExc?.stack?.includes('extensions/') || firstExc?.stack?.includes('chrome-extension')) return null;
+      // Erros de extensões Chrome/Firefox/Safari (comum em devtools aberto)
+      // firstExc.stacktrace?.frames é o caminho correto — Exception.stack não existe no tipo
+      const frames = firstExc?.stacktrace?.frames;
+      if (frames?.some(f =>
+        f?.filename?.includes('extensions/') ||
+        f?.filename?.includes('chrome-extension')
+      )) return null;
       return event;
     },
     // Tags globais para filtragem no dashboard Sentry

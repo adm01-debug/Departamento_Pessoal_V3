@@ -1,5 +1,5 @@
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
+import react from "@vitejs/plugin-react";
 import path from "path";
 import { imagetools } from 'vite-imagetools';
 import { componentTagger } from "lovable-tagger";
@@ -12,7 +12,18 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
   },
   plugins: [
-    react(),
+    // P1-022: Babel-based plugin required for React Compiler
+    react({
+      // React Compiler: compila automaticamente components/hooks com dependências
+      // estáveis — elimina useMemo/useCallback redundantes automaticamente.
+      // babel-plugin-react-compiler@^1.0.0. Experimental — ativar com:
+      //   VITE_REACT_COMPILER=1 npm run build
+      babel: {
+        plugins: process.env.VITE_REACT_COMPILER === '1'
+          ? [['babel-plugin-react-compiler', { target: '19' }]]
+          : [],
+      },
+    }),
     imagetools(),
     mode === 'development' && componentTagger(),
     // P3-053: source maps upload automático para Sentry em builds de prod
