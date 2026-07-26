@@ -744,7 +744,7 @@
 
 ---
 
-## P2-040 🟡 Validação Zod duplicada — schemas em `validators/` e `schemas/`
+## P2-040 ✅ Validação Zod duplicada — schemas consolidados em `src/schemas/`
 
 - **Origem:** estrutura do projeto.
 - **Ação:**
@@ -823,7 +823,7 @@
 
 ---
 
-## P2-046 🟡 75+ warnings de ESLint em React Compiler
+## P2-046 ✅ 75+ ESLint warnings — todos resolvidos (8→0)
 
 - **Origem:** `QA_SIMULATION_REPORT.md` item 4.2.
 - **Ação:**
@@ -836,7 +836,7 @@
 
 ---
 
-## P2-047 🟡 `tsconfig.build.json` + `vite.config.optimized.ts` + `vite.analyze.config.ts` — unificar?
+## P2-047 ✅ `vite.config.optimized.ts` + `vite.analyze.config.ts` removidos
 
 - **Origem:** múltiplos configs de build.
 - **Ação:**
@@ -866,7 +866,7 @@
 
 ---
 
-## P2-049 🟡 Mock types em testes com `vi.fn<T>` em vez de `(fn: any) => ...`
+## P2-049 ✅ Mock types com `vi.fn<T>` tipados nos testes
 
 - **Origem:** `PLANO_REFATORACAO_TIPOS.md` Etapa 12.
 - **Ação:**
@@ -902,7 +902,7 @@
 
 ---
 
-## P2-052 🟡 Componentes com props `any` (top 4: ponto, settings, esocial, ferias)
+## P2-052 ✅ Props `any` em 11 components/pages substituídas por tipos concretos
 
 - **Origem:** `PLANO_REFATORACAO_TIPOS.md` Etapas 17-19.
 - **Ação:** Tipar props de 4 pastas: `components/ponto/`, `components/settings/`, `components/esocial/`, `components/ferias/`.
@@ -1469,9 +1469,9 @@
 | **Sprint 18-19** | P5 — Contabilidade | P5-080 | 2 semanas | ✅ Concluído |
 | **Sprint 20-21** | P5 — eSocial | P5-082 | 2 semanas | ✅ Concluído |
 | **Sprint 22** | P5 — E2E + leftovers | P5-088, P1-015, P1-017 | 1 semana | ✅ Concluído |
-| **Sprint 23+** | Backlog final | P1-015, P1-017, P2-043, P2-045, P2-046, P3-058, P4-068, P4-072, P5-081, P5-083, P5-084, P5-085, P5-088 | 4+ semanas | 🔄 Backlog |
+| **Sprint 23+** | Backlog final | P1-015, P1-017, P2-043, P2-045, P3-058, P4-068, P4-072, P5-081, P5-083, P5-084, P5-085, P5-088 | 4+ semanas | 🔄 Backlog |
 
-> **Total executado:** 22 sprints completos. **63/76 itens** implementados. **13 itens pendentes** no backlog (ver tabela abaixo).
+> **Total executado:** 22 sprints completos. **65/76 itens** implementados. **11 itens pendentes** no backlog (ver tabela abaixo).
 
 ---
 
