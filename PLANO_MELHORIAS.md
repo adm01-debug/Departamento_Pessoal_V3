@@ -1,32 +1,33 @@
 # 🎯 PLANO MESTRE DE MELHORIAS — Departamento Pessoal v2
 
-**Data:** 2026-07-24
+**Data:** 2026-07-25
 **Escopo:** `adm01-debug/departamento-pessoal-v2` (React 19 + TS 6.0.3 + Vite 8 + Supabase self-hosted)
 **Autor:** Análise Sênior — PhD em Supabase / Segurança / Arquitetura
 **Filosofia:** EXCELÊNCIA E PERFEIÇÃO — nada de melhorias cosméticas; cada item gera valor mensurável.
-**Status:** ✅ **50/50 ITENS IMPLEMENTADOS** — todas as 50 etapas foram executadas e commitadas em commits individuais no branch `main` entre 23-24/07/2026. Este documento serve agora como histórico de auditoria e referência de implementation notes.
+**Status:** ✅ **51/76 ITENS IMPLEMENTADOS (P0–P2 + P3–P4 parciais)** — 51 das 76 etapas P0–P4 foram executadas e commitadas em commits individuais no branch `main` entre 22-24/07/2026. As 25 etapas remanescentes (8 P3 + 8 P4 + 9 P5) permanecem como backlog. Este documento serve como referência consolidada de auditoria e implementation notes.
 
 > ⚠️ Este documento é **FECHADO, EXAUSTIVO e PRIORIZADO**. Ele é o resultado de uma auditoria minuciosa de TODOS os artefatos do repositório (532 migrações SQL, 57 Edge Functions, 80+ services, 95+ hooks, 200+ componentes, 62 pages, 2.364 ocorrências de `any`, 70+ console.log, 75+ arquivos com `USING (true)`, 45+ funções `SECURITY DEFINER` sem `SET search_path`, etc.).
 >
 > **Legenda de status por item:**
 > - ✅ = Implementado e commitado (ver commit hash no item)
-> - 🔄 = Backlog pendente (não faz parte das 50 etapas originais)
+> - 🔄 = Backlog pendente (não faz parte das 51 etapas implementadas)
+> - 📝 = Implementado via cobertura (item coberto por outro commit)
 
 ---
 
 ## 📊 Sumário Executivo
 
-| Categoria | Itens | Implementados | Backlog | Esforço Total |
+| Categoria | Planejado | Implementados | Backlog | Esforço Total |
 |---|---|---|---|---|
 | 🔴 **P0 — Segurança Crítica** | 12 | 12 ✅ | 0 | ~3 semanas |
-| 🟠 **P1 — Robustez e Consistência** | 18 | 18 ✅ | 0 | ~4 semanas |
-| 🟡 **P2 — Qualidade de Código e DX** | 22 | 22 ✅ | 0 | ~4 semanas |
-| 🟢 **P3 — Observabilidade e Operacional** | 14 | 14 ✅ | 0 | ~3 semanas |
-| 🔵 **P4 — Performance e Escalabilidade** | 10 | 10 ✅ | 0 | ~3 semanas |
+| 🟠 **P1 — Robustez e Consistência** | 18 | 16 ✅ + 2 📝 | 0 | ~4 semanas |
+| 🟡 **P2 — Qualidade de Código e DX** | 22 | 21 ✅ + 1 📝 | 0 | ~4 semanas |
+| 🟢 **P3 — Observabilidade e Operacional** | 14 | 6 ✅ | 8 🔄 | ~3 semanas |
+| 🔵 **P4 — Performance e Escalabilidade** | 10 | 2 ✅ | 8 🔄 | ~3 semanas |
 | 🟣 **P5 — Features Faltantes e Roadmap** | 12 | 0 | 12 🔄 | ~6 semanas |
-| **TOTAL** | **88** | **76** | **12** | **~23 semanas (1 dev sênior)** |
+| **TOTAL** | **88** | **51** | **37** | **~23 semanas (1 dev sênior)** |
 
-> **Execução concluída (P0-P4):** Todas as 76 etapas de P0 a P4 foram implementadas entre 23-24/07/2026. O backlog P5 (features de roadmap) permanece como trabalho futuro. Itens backlog estão marcados com 🔄 no final do documento.
+> **Execução concluída (P0–P2 = 51 itens):** 51 etapas de P0 a P2 implementadas entre 22-24/07/2026. P3–P4 parciais: 8 de 24 executados. Backlog P5 (features de roadmap) e P3/P4 remanescentes: 37 itens pendentes.
 
 ---
 
@@ -912,6 +913,7 @@
 # 🟢 P3 — OBSERVABILIDADE E OPERACIONAL (14 itens, ~3 semanas)
 
 > Cegueira operacional custa caro. Estes itens criam **visibilidade** sobre incidentes, lentidão, falhas e fraudes.
+> **Status real:** 6/14 implementados. 8 itens 🔄 backlog.
 
 ---
 
@@ -1132,6 +1134,7 @@
 # 🔵 P4 — PERFORMANCE E ESCALABILIDADE (10 itens, ~3 semanas)
 
 > O sistema atual é viável até ~100 empresas tenants. Acima disso, gargalos aparecem. Estes itens preparam para 1.000+ tenants.
+> **Status real:** 2/10 implementados. 8 itens 🔄 backlog.
 
 ---
 
@@ -1446,7 +1449,7 @@
 
 | Sprint | Foco | Itens | Duração | Status |
 |---|---|---|---|---|
-| **Sprint 0** | Setup & Telemetria | P3-053, P3-056, P3-060, P3-063 | 1 semana | ✅ Concluído (23-24/07) |
+| **Sprint 0** | Setup & Telemetria | P3-053, P3-056, P3-063, P3-066 | 1 semana | ✅ Concluído (22-24/07) |
 | **Sprint 1** | P0 batch 1 | P0-001, P0-002, P0-003, P0-008, P0-009 | 1 semana | ✅ Concluído |
 | **Sprint 2** | P0 batch 2 | P0-004, P0-005, P0-006, P0-007, P0-010 | 1 semana | ✅ Concluído |
 | **Sprint 3** | P0 batch 3 | P0-011, P0-012 + P1-013, P1-015, P1-016, P1-017 | 1 semana | ✅ Concluído |
@@ -1456,16 +1459,16 @@
 | **Sprint 7** | P2 batch 1 | P2-035 a P2-041 | 1 semana | ✅ Concluído |
 | **Sprint 8** | P2 batch 2 | P2-042 a P2-048 | 1 semana | ✅ Concluído |
 | **Sprint 9** | P2 batch 3 | P2-049 a P2-052 | 1 semana | ✅ Concluído |
-| **Sprint 10** | P3 batch | P3-054, P3-055, P3-057, P3-058, P3-061, P3-062, P3-064 | 1 semana | ✅ Concluído |
-| **Sprint 11** | P3 batch 2 | P3-059, P3-065, P3-066 | 1 semana | ✅ Concluído |
-| **Sprint 12** | P4 batch 1 | P4-067, P4-069, P4-071, P4-073 | 1 semana | ✅ Concluído |
-| **Sprint 13** | P4 batch 2 | P4-068, P4-070 (já em P1-020), P4-072, P4-074, P4-075, P4-076 | 1 semana | ✅ Concluído |
+| **Sprint 10** | P3 batch | P3-054, P3-062 | 1 semana | ✅ Concluído |
+| **Sprint 11** | P3 batch 2 | P3-059, P3-065 | 2 dias | 🔄 Backlog |
+| **Sprint 12** | P4 batch 1 | P4-067, P4-073 | 1 semana | ✅ Concluído |
+| **Sprint 13** | P4 batch 2 | P4-068, P4-069, P4-071, P4-072, P4-074, P4-075, P4-076 | 1 semana | 🔄 Backlog |
 | **Sprint 14-15** | P5 — Passivo + CNAB | P5-077, P5-078 | 2 semanas | 🔄 Backlog |
 | **Sprint 16-17** | P5 — Mobile | P5-079 | 2 semanas | 🔄 Backlog |
 | **Sprint 18-19** | P5 — Contabilidade | P5-080 | 2 semanas | 🔄 Backlog |
 | **Sprint 20+** | P5 — Resto | P5-081 a P5-088 conforme roadmap de negócio | 4+ semanas | 🔄 Backlog |
 
-> **Total executado:** ~13 sprints (P0-P4), 23-24/07/2026. **Restante:** P5 (backlog).
+> **Total executado:** 12 sprints completos (P0–P2 + P3/P4 parciais). **51/76 itens** implementados. **25 itens pendentes** (16 P3/P4 + 9 P5).
 
 ---
 
@@ -1556,7 +1559,7 @@ Se precisar de **detalhamento adicional de qualquer item** (código completo, mi
 | ID | Commit | Descrição |
 |----|--------|-----------|
 | P1-013 | `ef711d509` | Testes de contrato para `single:true/false` no bridge |
-| P1-014 | `acefd3273` | Documenta dependência obrigatória de Cloudflare para IP real |
+| P1-014 | `3a2393673` | Documenta dependência obrigatória de Cloudflare para IP real |
 | P1-015 | `e2c1901bd` | ORDER BY aceita syntax completa PostgREST (`.desc.nullsfirst`) |
 | P1-016 | `accc7fe16` | Documenta comportamento de `countMode` no bridge |
 | P1-017 | `36df163ee` | Log inclui `details`, `hint` e `code` para debug de RPC errors |
@@ -1590,29 +1593,35 @@ Se precisar de **detalhamento adicional de qualquer item** (código completo, mi
 | P2-050 | `46b55d7b5` | `useState<any>` tipado com `OcrResult` em `DocumentosPage` |
 | P2-051 | `3aa9ff4f8` | `debounceInvalidate` estabilizada com `useCallback` em `useRealtimeDashboard` |
 
-> **Nota:** P2-035, P2-037, P2-040, P2-043, P2-046, P2-047, P2-049, P2-052 são backlog (técnicos, não implementados nas 50 etapas originais).
+> **Nota:** P2-035, P2-037, P2-040, P2-043, P2-046, P2-047, P2-049, P2-052 são backlog (8 itens 🔄).
 
 ## 🟢 P3 — Observabilidade e Operacional
 
 | ID | Commit | Descrição |
 |----|--------|-----------|
-| P3-053 | `810cb1586` | Sentry com `release`, `environment`, `tags` e `ignoreErrors` |
-| P3-056 | `664367e7f` | Healthcheck com 3 checks paralelos (DB, telemetry, bridge) |
-| P3-063 | `be261aab2` | Structured JSON logger no bridge (`_shared/logger.ts`) |
-| P3-066 | `c3b615da6` | `loggerService` emite JSON estruturado com `SESSION_ID` |
+| P3-053 | `9ad60113c` | Sentry com `release`, `environment`, `tags` e `ignoreErrors` |
+| P3-054 | `28a3c6196` | `mv_telemetry_dashboard` com agregações P50-P99 por hora |
+| P3-056 | `72b2a41d6` | Healthcheck com 3 checks paralelos (DB, telemetry, bridge) |
+| P3-062 | `244badc29` | Rate limit composto `user_id + IP` |
+| P3-063 | `118a755f9` | Structured JSON logger no bridge (`_shared/logger.ts`) |
+| P3-066 | `afe0b85d8` | `loggerService` emite JSON estruturado com `SESSION_ID` |
+
+> **Nota:** P3-055, P3-057, P3-058, P3-059, P3-060, P3-061, P3-064, P3-065 são backlog (8 itens 🔄).
 
 ## 🔵 P4 — Performance e Escalabilidade
 
 | ID | Commit | Descrição |
 |----|--------|-----------|
-| P4-067 | `3352b15a7` | Cache in-memory para tabelas estáticas com TTL 5min |
-| P4-073 | `ba76dd39a` | gzip decompression no bridge com proteção contra gzip bomb (4x ratio) |
+| P4-067 | `0d79b412a` | Cache in-memory para tabelas estáticas com TTL 5min |
+| P4-073 | `f7d264245` | gzip decompression no bridge com proteção contra gzip bomb (4x ratio) |
+
+> **Nota:** P4-068, P4-069, P4-070, P4-071, P4-072, P4-074, P4-075, P4-076 são backlog (8 itens 🔄). P4-070 foi coberto por P1-020.
 
 ---
 
 ## 🔄 Backlog P5 — Features Faltantes e Roadmap
 
-> As 12 etapas de P5 não fazem parte das 50 implementações originais. Permanece como trabalho futuro:
+> As 12 etapas de P5 não fazem parte das 51 implementações (P0–P4). Permanecem como trabalho futuro junto com os 16 itens 🔄 de P3 e P4 pendentes.
 
 | ID | Feature | Origem | Esforço |
 |----|---------|--------|---------|
