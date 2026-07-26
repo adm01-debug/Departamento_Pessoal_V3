@@ -41,7 +41,7 @@ async function validateBridge() {
           'Content-Type': 'application/json',
           'apikey': SUPABASE_PUBLISHABLE_KEY,
           'Authorization': `Bearer ${SUPABASE_PUBLISHABLE_KEY}`
-        },
+        } as Record<string, string>,
         body: JSON.stringify(test.payload)
       });
 
