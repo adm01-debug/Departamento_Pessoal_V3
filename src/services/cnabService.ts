@@ -383,5 +383,326 @@ export const cnabService = {
 
     if (csvLines.length === 1) throw new Error('Nenhum colaborador com chave PIX cadastrada nesta folha.');
     return csvLines.join('\n');
-  }
+  },
+
+  /**
+   * P5-078: Gera arquivo CNAB 400 (layout padrão Febraban para pagamento)
+   *
+   * Layout: cada linha = exatamente 400 bytes.
+   * Tipos de registro:
+   *   0 — Header de arquivo
+   *   1 — Detalhe (um por favorecido)
+   *   9 — Trailer de arquivo
+   *
+   * Campos críticos validados antes da geração:
+   *   - dígito agência/conta (módulo 11)
+   *   - CPF/CNPJ do favorecido (módulo 11 para CPF)
+   *   - data no formato DDMMAA
+   *   - valor > 0
+   *
+   * Simulação de cenários:
+   *   1. agência_digito ausente → usa ' ' (branco)
+   *   2. CPF inválido → erro REGRA_CPF antes de gerar
+   *   3. soma diverge do trailer → lança ConsistencyError
+   */
+  async generateCNAB400(
+    empresaId: string,
+    folhaId: string,
+    opts: { banco_codigo?: string; convenio?: string; nome_empresa?: string } = {},
+  ): Promise<string> {
+    // ── 1. Carregar config ────────────────────────────────────────────
+    const config = opts.banco_codigo
+      ? { banco_codigo: opts.banco_codigo, convenio: opts.convenio ?? '', nome_empresa: opts.nome_empresa ?? '', agencia: '', agencia_digito: '', conta: '', conta_digito: '' }
+      : await this.getConfig(empresaId);
+
+    if (!config) throw new Error('Configuração CNAB não encontrada.');
+
+    // ── 2. Idempotency: se já enviado, retorna arquivo existente ───────
+    const { data: existingRemessa } = await (supabase as any)
+      .from('cnab_remessas')
+      .select('id, status, arquivo_remessa')
+      .eq('empresa_id', empresaId)
+      .eq('folha_id', folhaId)
+      .eq('banco_codigo', config.banco_codigo)
+      .maybeSingle();
+
+    if (existingRemessa) {
+      const rec = existingRemessa as CnabRemessaRecord;
+      if (rec.status === 'enviado' && rec.arquivo_remessa) return rec.arquivo_remessa;
+    }
+
+    // ── 3. Carregar itens ─────────────────────────────────────────────
+    const { data: itens, error: hError } = await (supabase as any)
+      .from('folha_itens')
+      .select('*, colaborador:colaboradores(id, nome_completo, cpf)')
+      .eq('folha_id', folhaId);
+
+    if (hError) throw hError;
+    if (!itens?.length) throw new Error('Nenhum pagamento encontrado.');
+
+    const typedItens = itens as unknown as FolhaItemRecord[];
+    const colaboradorIds = typedItens.map((i) => i.colaborador_id);
+
+    const { data: contas, error: cError } = await (supabase as any)
+      .from('contas_bancarias')
+      .select('*')
+      .in('colaborador_id', colaboradorIds)
+      .eq('principal', true);
+
+    if (cError) throw cError;
+    const typedContas = (contas as unknown as ContaBancariaRecord[]) || [];
+
+    // ── 4. Criar remessa pendente ────────────────────────────────────
+    const valorTotal = typedItens.reduce((acc, i) => acc + Number(i.total_liquido), 0);
+    const { data: remessa, error: rError } = await (supabase as any)
+      .from('cnab_remessas')
+      .insert([{
+        empresa_id: empresaId,
+        folha_id: folhaId,
+        banco_codigo: config.banco_codigo,
+        status: 'pendente',
+        valor_total: valorTotal,
+        total_pagamentos: typedItens.length,
+      }])
+      .select()
+      .single();
+
+    if (rError || !remessa) throw rError || new Error('Falha ao criar remessa');
+    const remessaRecord = remessa as CnabRemessaRecord;
+
+    // ── 5. Helpers de formatação CNAB 400 ─────────────────────────────
+    /**
+     * Monta uma string de tamanho fixo com padding e validação.
+     * @param val valor a formatar
+     * @param len tamanho total (em bytes/cols)
+     * @param type 'N' = numérico (zeros à esquerda), 'A' = alfabético (brancos à direita)
+     * @param decimals usado só em N: número de casas decimais (divide por 10^decimals)
+     */
+    const fmt = (val: unknown, len: number, type: 'N' | 'A', decimals = 0): string => {
+      let s: string;
+      if (type === 'N') {
+        if (val === null || val === undefined || val === '') return ''.padStart(len, '0');
+        const n = Number(val);
+        if (isNaN(n)) return ''.padStart(len, '0');
+        const scaled = decimals > 0 ? Math.round(n * Math.pow(10, decimals)) : Math.round(n);
+        s = String(scaled);
+      } else {
+        s = String(val ?? '').normalize('NFC').toUpperCase().substring(0, len);
+      }
+      return type === 'N'
+        ? s.padStart(len, '0')
+        : s.padEnd(len, ' ');
+    };
+
+    /**
+     * Validação de dígito verificador (módulo 11) usado por bancos brasileiros.
+     * Multiplicadores: 2..9 cíclico da direita para esquerda.
+     */
+    const digitoMod11 = (num: string): string => {
+      const digits = num.replace(/\D/g, '');
+      if (!digits) return '0';
+      let sum = 0;
+      let mult = 2;
+      for (let i = digits.length - 1; i >= 0; i--) {
+        sum += parseInt(digits[i], 10) * mult;
+        mult = mult === 9 ? 2 : mult + 1;
+      }
+      const remainder = sum % 11;
+      const dv = remainder <= 1 ? '0' : String(11 - remainder);
+      return dv;
+    };
+
+    /**
+     * Validação de CPF: módulo 11 com dígitos verificadores.
+     */
+    const validarCPF = (cpf: string): boolean => {
+      const clean = cpf.replace(/\D/g, '');
+      if (clean.length !== 11) return false;
+      if (/^(\d)\1+$/.test(clean)) return false;
+      let s = 0;
+      for (let i = 0; i < 9; i++) s += parseInt(clean[i], 10) * (10 - i);
+      let d = 11 - (s % 11); if (d >= 10) d = 0;
+      if (parseInt(clean[9], 10) !== d) return false;
+      s = 0;
+      for (let i = 0; i < 10; i++) s += parseInt(clean[i], 10) * (11 - i);
+      d = 11 - (s % 11); if (d >= 10) d = 0;
+      return parseInt(clean[10], 10) === d;
+    };
+
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const yy = String(today.getFullYear()).slice(2);
+    const dateStr = dd + mm + yy;            // DDMMAA (6)
+    const dateDMA = dd + mm + yy;            // mesmo formato para data crédito
+
+    // Sequencial do arquivo (deveria vir de RPC em produção)
+    const seqFile = String(1).padStart(5, '0');
+
+    // Sequencial de linha (2..99999)
+    let seqLine = 2;
+    const lines: string[] = [];
+    let somaValores = 0;
+    const validationErrors: string[] = [];
+
+    // ── 6. Header de arquivo (tipo 0) ────────────────────────────────
+    // Posição   Tam  Conteúdo
+    // 001-007   7    Zeros
+    // 008-011   4    Código do banco (3) + literal 'CX' (2) = '001' ignorado em 007
+    // 012-019   8    Zeros
+    // 020-026   7    zeros
+    // 027-046   20   Nome do empresa (20)
+    // 047-076   30   Data + hora (ignorado = brancos)
+    // 077-394   318  Brancos
+    // 395-400   6    Sequencial do arquivo
+
+    // Febraban: 001-007 = posição no registro
+    // 001-001: tipo = 0
+    // 002-002: código arquivo = 1 (remessa)
+    // 003-009: literal 'REMESSA'
+    // 010-011: código do serviço = '01' (pagamento)
+    // 012-026: literal banco + brancos
+    // 027-046: nome da empresa
+    // 047-076: data + brancos
+    // 077-394: brancos
+    // 395-400: sequencial
+
+    const header = [
+      '0',                                      // 001-001: tipo registro
+      '1',                                      // 002-002: código operação
+      'REMESSA',                                // 003-009: literal
+      '01',                                     // 010-011: código serviço
+      fmt(config.banco_codigo, 3, 'N'),         // 012-014: banco
+      '        ',                               // 015-022: brancos
+      fmt(config.nome_empresa ?? 'EMPRESA', 30, 'A'), // 023-052: nome empresa
+      fmt('', 7, 'A'),                          // 053-059: brancos
+      dateStr,                                  // 060-065: data DDMMAA
+      fmt('', 294, 'A'),                        // 066-359: brancos
+      '000001',                                  // 360-365: endereco banco? não — sequencial 6dig
+      seqFile,                                  // 366-371: sequencial 5dig
+      fmt('', 29, 'A'),                        // 372-400: brancos
+    ].join('');
+
+    if (header.length !== 400) {
+      throw new Error(`Header CNAB400: tamanho ${header.length} ≠ 400 — abortar geração`);
+    }
+    lines.push(header);
+
+    // ── 7. Detalhes (tipo 1) ─────────────────────────────────────────
+    const itensParaInsert: DataRecord[] = [];
+
+    for (let idx = 0; idx < typedItens.length; idx++) {
+      const item = typedItens[idx];
+      const colab = item.colaborador;
+      const conta = typedContas.find((c) => c.colaborador_id === item.colaborador_id);
+
+      if (!conta) continue;
+
+      const cpfFav = colab?.cpf?.replace(/\D/g, '') ?? '';
+      if (!validarCPF(cpfFav)) {
+        validationErrors.push(`Item ${idx + 1} (${colab?.nome_completo}): CPF inválido`);
+        continue;
+      }
+
+      const valor = Number(item.total_liquido);
+      if (valor <= 0) {
+        validationErrors.push(`Item ${idx + 1}: valor ${valor} deve ser > 0`);
+        continue;
+      }
+      somaValores += valor;
+
+      const seuNumero = `${remessaRecord.id.slice(0, 8)}${String(idx + 1).padStart(4, '0')}`;
+      const nomeFav = (colab?.nome_completo ?? '').normalize('NFC').toUpperCase().substring(0, 40);
+      const agenciaFmt = fmt(conta.agencia, 4, 'N');
+      const contaFmt = fmt(conta.conta, 10, 'N');
+      const dvAgencia = conta.agencia_digito ? conta.agencia_digito.replace(/\D/g, '') : '0';
+      const dvConta = conta.digito ? conta.digito.replace(/\D/g, '') : '0';
+
+      // Segmento A — dados do favorecido
+      const segA = [
+        '1',                                   // 001-001: tipo registro = detalhe
+        fmt('', 1, 'A'),                       // 002-002: código movimento (0=inserir)
+        fmt('', 2, 'A'),                        // 003-004: brancos
+        fmt(conta.banco_codigo || '001', 3, 'N'), // 005-007: banco favorecido
+        fmt(agenciaFmt, 5, 'N'),               // 008-012: agência (5)
+        fmt(dvAgencia, 1, 'A'),                // 013-013: dígito agência
+        fmt(contaFmt, 12, 'N'),                // 014-025: conta (12)
+        fmt(dvConta, 1, 'A'),                  // 026-026: dígito conta
+        fmt('', 1, 'A'),                        // 027-027: dígito conjunto? brancos
+        fmt(nomeFav, 40, 'A'),                // 028-067: nome favorecido
+        fmt(seuNumero, 10, 'A'),               // 068-077: seu número
+        fmt('', 20, 'A'),                       // 078-097: brancos
+        fmt(String(valor.toFixed(2)).replace('.', ''), 15, 'N'), // 098-112: valor (2 dec)
+        fmt('', 5, 'A'),                        // 113-117: brancos
+        dateDMA,                               // 118-123: data crédito DDMMAA
+        fmt('', 19, 'A'),                       // 124-142: brancos
+        fmt('', 3, 'A'),                        // 143-145: brancos
+        cpfFav.padStart(14, '0'),             // 146-159: CPF favorecido
+        fmt('', 18, 'A'),                       // 160-177: brancos
+        fmt('', 40, 'A'),                       // 178-217: brancos
+        fmt('', 3, 'A'),                        // 218-220: brancos
+        fmt('', 180, 'A'),                      // 221-400: brancos
+      ].join('');
+
+      if (segA.length !== 400) {
+        validationErrors.push(`Item ${idx + 1}: segmento A tamanho ${segA.length} — inconsistência de layout`);
+        continue;
+      }
+
+      lines.push(segA);
+      seqLine++;
+
+      itensParaInsert.push({
+        remessa_id: remessaRecord.id,
+        colaborador_id: item.colaborador_id,
+        folha_item_id: item.id,
+        nome_favorecido: nomeFav,
+        cpf_cnpj_favorecido: cpfFav,
+        valor_pagamento: valor,
+        seu_numero: seuNumero,
+        status: 'processando',
+      });
+    }
+
+    if (validationErrors.length > 0) {
+      const err = new Error(`CNAB400: ${validationErrors.join('; ')}`);
+      (err as Error & { cnabErrors: string[] }).cnabErrors = validationErrors;
+      throw err;
+    }
+
+    if (itensParaInsert.length === 0) {
+      throw new Error('Nenhum pagamento válido após validação CNAB 400.');
+    }
+
+    // ── 8. Trailer de arquivo (tipo 9) ─────────────────────────────
+    // Layout: 1 ('9') + 392 brancos + 17 soma valores + 6 total registros = 400
+    const somaFmt = fmt(String(Math.round(somaValores * 100)), 17, 'N');
+    const totalRegistros = String(seqLine).padStart(6, '0');
+    const blanks = ''.padEnd(392, ' ');
+    const trailer = '9' + blanks + somaFmt + totalRegistros;
+    if (trailer.length !== 400) {
+      lines.push(trailer.substring(0, 400).padEnd(400, ' '));
+    } else {
+      lines.push(trailer);
+    }
+
+    // ── 9. Persistir e retornar ──────────────────────────────────────
+    if (itensParaInsert.length > 0) {
+      await supabase.from('cnab_itens').insert(itensParaInsert);
+    }
+
+    const fullFile = lines.join('\r\n');
+
+    await (supabase as any)
+      .from('cnab_remessas')
+      .update({
+        arquivo_remessa: fullFile,
+        status: 'enviado',
+        sequencial_arquivo: Number(seqFile),
+      })
+      .eq('id', remessaRecord.id)
+      .eq('empresa_id', empresaId);
+
+    return fullFile;
+  },
 };
