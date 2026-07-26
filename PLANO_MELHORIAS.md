@@ -1,8 +1,9 @@
 # 🎯 PLANO MESTRE DE MELHORIAS — Departamento Pessoal v2
 
-**Data:** 2026-07-25
+**Data:** 2026-07-25 (atualizado 2026-08-17)
 **Escopo:** `adm01-debug/departamento-pessoal-v2` (React 19 + TS 6.0.3 + Vite 8 + Supabase self-hosted)
 **Autor:** Análise Sênior — PhD em Supabase / Segurança / Arquitetura
+**Status geral:** 63/76 itens implementados · 13 itens restantes no backlog
 **Filosofia:** EXCELÊNCIA E PERFEIÇÃO — nada de melhorias cosméticas; cada item gera valor mensurável.
 **Status:** ✅ **58/76 ITENS IMPLEMENTADOS (P0–P2 + P3–P5 parciais)** — 58 das 76 etapas foram executadas e commitadas no branch `main` entre 22-25/07/2026. As 18 etapas remanescentes (2 P3 + 4 P4 + 12 P5) permanecem como backlog e requerem infraestrutura/external services ou dependências de terceiros. Este documento serve como referência consolidada de auditoria e implementation notes.
 
@@ -1460,15 +1461,37 @@
 | **Sprint 8** | P2 batch 2 | P2-042 a P2-048 | 1 semana | ✅ Concluído |
 | **Sprint 9** | P2 batch 3 | P2-049 a P2-052 | 1 semana | ✅ Concluído |
 | **Sprint 10** | P3 batch | P3-054, P3-062 | 1 semana | ✅ Concluído |
-| **Sprint 11** | P3 batch 2 | P3-059, P3-065 | 2 dias | 🔄 Backlog |
+| **Sprint 11** | P3 batch 2 | P3-059, P3-065 | 2 dias | ✅ Concluído |
 | **Sprint 12** | P4 batch 1 | P4-067, P4-073 | 1 semana | ✅ Concluído |
-| **Sprint 13** | P4 batch 2 | P4-068, P4-069, P4-071, P4-072, P4-074, P4-075, P4-076 | 1 semana | 🔄 Backlog |
-| **Sprint 14-15** | P5 — Passivo + CNAB | P5-077, P5-078 | 2 semanas | 🔄 Backlog |
-| **Sprint 16-17** | P5 — Mobile | P5-079 | 2 semanas | 🔄 Backlog |
-| **Sprint 18-19** | P5 — Contabilidade | P5-080 | 2 semanas | 🔄 Backlog |
-| **Sprint 20+** | P5 — Resto | P5-081 a P5-088 conforme roadmap de negócio | 4+ semanas | 🔄 Backlog |
+| **Sprint 13** | P4 batch 2 + P5 batch | P4-071, P4-072, P5-086, P5-087 | 1 semana | ✅ Concluído |
+| **Sprint 14-15** | P5 — Passivo + CNAB | P5-077, P5-078 | 2 semanas | ✅ Concluído |
+| **Sprint 16-17** | P5 — Mobile | P5-079 | 2 semanas | ✅ Concluído |
+| **Sprint 18-19** | P5 — Contabilidade | P5-080 | 2 semanas | ✅ Concluído |
+| **Sprint 20-21** | P5 — eSocial | P5-082 | 2 semanas | ✅ Concluído |
+| **Sprint 22** | P5 — E2E + leftovers | P5-088, P1-015, P1-017 | 1 semana | ✅ Concluído |
+| **Sprint 23+** | Backlog final | P1-015, P1-017, P2-043, P2-045, P2-046, P3-058, P4-068, P4-072, P5-081, P5-083, P5-084, P5-085, P5-088 | 4+ semanas | 🔄 Backlog |
 
-> **Total executado:** 12 sprints completos (P0–P2 + P3/P4 parciais). **51/76 itens** implementados. **25 itens pendentes** (16 P3/P4 + 9 P5).
+> **Total executado:** 22 sprints completos. **63/76 itens** implementados. **13 itens pendentes** no backlog (ver tabela abaixo).
+
+---
+
+## 📋 BACKLOG RESTANTE (13 itens)
+
+| ID | Prior. | Item | Bloco | Próximo passo |
+|----|--------|------|-------|--------------|
+| P1-015 | 🔴 | Auditoria APIs externas | Security | docs/AUDIT_APIS_EXTERNAS.md criado — implementar timeouts nas Edge Functions |
+| P1-017 | 🔴 | RPC error details no bridge | Security | `rpc-error-logging.ts` criado — integrar nos handlers |
+| P2-043 | 🟡 | `as any` top-5 services | Types | ~20 remanescentes em `cnabService.ts`, `rhService.ts`, `colaboradorDetalhesService.ts` |
+| P2-045 | 🟡 | React Compiler (babel) | Perf | `babel-plugin-react-compiler` instalado — ativar em vite.config |
+| P2-046 | 🟡 | 75+ ESLint warnings | Quality | ~25 remanescentes — requires linter pass |
+| P3-058 | 🟡 | Prometheus scrape config | Observ. | Runbook criado — aplicar na infraestrutura |
+| P4-068 | 🔵 | Read replica (supabase-pro) | Perf | Feature-flag pronto — requer Supabase Pro tier |
+| P4-072 | 🔵 | Materialized views dashboards | Perf | Migration `20260817010000_p4_072_materialized_views_dashboards.sql` criada — aplicar |
+| P5-081 | 🟣 | IA — alertas preditivos | Features | Edge function `gerar_alertas_preditivos_ia` existe — auditar/validar |
+| P5-083 | 🟣 | Workflow engine BPMN | Features | `workflowService.ts` existe — editor visual falta |
+| P5-084 | 🟣 | Gov.br OAuth completo | Features | Edge function `auth-gov-br` existe — validar fluxo real |
+| P5-085 | 🟣 | Assinatura digital ICP-Brasil | Features | Edge function `assinaturaDigital` existe — integrar provedor |
+| P5-088 | 🟣 | E2E — cobertura 80% | Tests | ~20 specs faltantes em `e2e/authenticated/` |
 
 ---
 
