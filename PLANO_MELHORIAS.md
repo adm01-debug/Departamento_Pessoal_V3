@@ -5,7 +5,7 @@
 **Autor:** Análise Sênior — PhD em Supabase / Segurança / Arquitetura
 **Status geral:** 86/88 itens implementados · 2 itens restantes no backlog
 **Filosofia:** EXCELÊNCIA E PERFEIÇÃO — nada de melhorias cosméticas; cada item gera valor mensurável.
-**Status:** ✅ **85/88 ITENS IMPLEMENTADOS** — P0 (12/12), P1 (18/18), P2 (22/22), P3 (14/14), P4 (10/10), P5 (9/12). 3 itens P5 remanescentes: P5-083 (workflow editor — bloqueado por UX design), P5-084 (integração contábil — bloqueado por API), P5-086 (Metabase embed — bloqueado por credenciais). Commits 27-28/08/2026.
+**Status:** ✅ **86/88 ITENS IMPLEMENTADOS** — P0 (12/12), P1 (18/18), P2 (22/22), P3 (14/14), P4 (10/10), P5 (10/12). 2 itens P5 remanescentes: P5-084 (integração contábil — bloqueado por API), P5-086 (Metabase embed — bloqueado por credenciais). Commits 27-28/08/2026.
 
 > ⚠️ Este documento é **FECHADO, EXAUSTIVO e PRIORIZADO**. Ele é o resultado de uma auditoria minuciosa de TODOS os artefatos do repositório (532 migrações SQL, 57 Edge Functions, 80+ services, 95+ hooks, 200+ componentes, 62 pages, 2.364 ocorrências de `any`, 70+ console.log, 75+ arquivos com `USING (true)`, 45+ funções `SECURITY DEFINER` sem `SET search_path`, etc.).
 >
@@ -25,10 +25,10 @@
 | 🟡 **P2 — Qualidade de Código e DX** | 22 | 22 ✅ | 0 | ~4 semanas |
 | 🟢 **P3 — Observabilidade e Operacional** | 14 | 14 ✅ | 0 | ~3 semanas |
 | 🔵 **P4 — Performance e Escalabilidade** | 10 | 10 ✅ | 0 | ~3 semanas |
-| 🟣 **P5 — Features Faltantes e Roadmap** | 12 | 9 ✅ | 3 🔄 | ~6 semanas |
-| **TOTAL** | **88** | **85** | **3** | ~23 semanas (1 dev sênior) |
+| 🟣 **P5 — Features Faltantes e Roadmap** | 12 | 10 ✅ | 2 🔄 | ~6 semanas |
+| **TOTAL** | **88** | **86** | **2** | ~23 semanas (1 dev sênior) |
 
-> **Execução concluída:** P0–P4 = 76/76 itens implementados (100%). P5: 9/12 — 3 remanescentes aguardando design/credenciais (P5-083 workflow, P5-084 contábil, P5-086 Metabase).
+> **Execução concluída:** P0–P4 = 76/76 itens implementados (100%). P5: 10/12 — 2 remanescentes aguardando API real e credenciais (P5-084 contábil, P5-086 Metabase).
 
 ---
 
@@ -1471,7 +1471,7 @@
 | **Sprint 18-19** | P5 — Contabilidade | P5-080 | 2 semanas | ✅ Concluído |
 | **Sprint 20-21** | P5 — eSocial | P5-082 | 2 semanas | ✅ Concluído |
 | **Sprint 22** | P5 — E2E + leftovers | P5-088, P1-015, P1-017 | 1 semana | ✅ Concluído |
-| **Sprint 23+** | Backlog final | P1-015, P2-045, P3-058, P4-068, P4-069, P5-083, P5-084, P5-085, P5-088 | 4+ semanas | 🔄 Backlog |
+| **Sprint 23+** | Backlog final | P1-015, P2-045, P3-058, P4-068, P4-069, P5-084, P5-085, P5-088 | 4+ semanas | 🔄 Backlog |
 
 > **Total executado:** 22 sprints completos. **65/76 itens** implementados. **11 itens pendentes** no backlog (ver tabela abaixo).
 
@@ -1815,7 +1815,7 @@ Se precisar de **detalhamento adicional de qualquer item** (código completo, mi
 | P5-080 | Contabilidades (Dominio, Alterdata) | ✅ Partial | `ContabilidadePage.tsx` |
 | P5-081 | IA predição turnover/absenteísmo | ✅ Partial | `assistente-ia/index.ts` |
 | P5-082 | eSocial S-3000, S-5001, S-5011 | 🔲 Pending | Events não implementados |
-| P5-083 | Workflow BPMN engine | ✅ Partial | `WorkflowsPage.tsx`, `workflowService.ts` |
+| P5-083 | Workflow BPMN engine | ✅ Done | `WorkflowsPage.tsx`, `WorkflowDesigner.tsx`, `workflowService.ts` |
 | P5-084 | Gov.br OAuth | ✅ Partial | `auth-gov-br/index.ts` |
 | P5-085 | Assinatura ICP-Brasil | ✅ Partial | `enviar-esocial/signer.ts` |
 | P5-086 | Metabase embed + BI | ✅ **Implemented** | `src/services/metabaseService.ts` |
