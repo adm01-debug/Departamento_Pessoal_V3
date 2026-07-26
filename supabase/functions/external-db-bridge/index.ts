@@ -87,6 +87,7 @@ interface TelemetryMeta {
   status: "ok" | "error" | "slow" | "very_slow";
   error?: string;
   userId?: string | null;
+  traceId?: string | null; // P3-064: correlação distribuída
 }
 function classifySeverity(durationMs: number, hasError: boolean): TelemetryMeta["status"] {
   if (hasError) return "error";
@@ -114,6 +115,7 @@ type TelemetryRow = {
   severity: string;
   error_message: string | null;
   user_id: string | null;
+  trace_id: string | null; // P3-064: correlação distribuída
 };
 const TELEMETRY_MAX_BATCH = 25;
 const TELEMETRY_FLUSH_INTERVAL_MS = 2000;
@@ -178,9 +180,11 @@ function emitTelemetry(meta: TelemetryMeta) {
   const icon =
     meta.status === "very_slow" ? "🔴" : meta.status === "slow" ? "🟡" : meta.status === "error" ? "❌" : "✅";
   const target = meta.rpcName || meta.table || "unknown";
+  const traceSuffix = meta.traceId ? ` trace=${meta.traceId}` : '';
   const line =
     `${icon} [telemetry] ${meta.operation}:${target} ${meta.durationMs}ms` +
-    ` | records=${meta.recordCount ?? "-"} limit=${meta.limit ?? "-"} offset=${meta.offset ?? "-"} count=${meta.countMode ?? "-"}`;
+    ` | records=${meta.recordCount ?? "-"} limit=${meta.limit ?? "-"} offset=${meta.offset ?? "-"} count=${meta.countMode ?? "-"}` +
+    traceSuffix;
   if (meta.status === "very_slow") console.warn(`⚠️ VERY SLOW: ${line}`);
   else if (meta.status === "slow") console.warn(`⚠️ SLOW: ${line}`);
   else if (meta.status === "error") console.error(line + ` error=${meta.error}`);
@@ -200,6 +204,7 @@ function emitTelemetry(meta: TelemetryMeta) {
     severity: meta.status,
     error_message: meta.error || null,
     user_id: meta.userId || null,
+    trace_id: meta.traceId || null, // P3-064
   };
 
   // P1-019: erros também são bufferizados, mas com flush IMEDIATO
@@ -414,6 +419,13 @@ Deno.serve(async (req) => {
   }
   const body = parsed.data;
   const { action, table, columns, limit, offset, countMode } = body;
+  // P3-064: extrai trace_id do body (trafega no body, não em header — CORS limitado).
+  // Se não vier do frontend, geramos um novo para correlação nos logs.
+  const traceId: string = (() => {
+    const candidate = (body as Record<string, unknown>).trace_id ?? (body as Record<string, unknown>).traceId;
+    if (typeof candidate === 'string' && candidate.length >= 16) return candidate;
+    try { return crypto.randomUUID(); } catch { return `no-trace-${Date.now()}`; }
+  })();
   const rpcName = body.rpcName || body.fn;
   const rpcArgs = sanitizeData(body.params ?? body.data) as Record<string, unknown> | null;
   const data = sanitizeData(body.data) as Record<string, unknown> | Record<string, unknown>[] | undefined;
@@ -593,6 +605,7 @@ Deno.serve(async (req) => {
         operation: "select", table, limit: queryLimit, offset: queryOffset, countMode: queryCountMode,
         durationMs, status: classifySeverity(durationMs, !!error),
         recordCount: (selectData as unknown[] | null)?.length ?? 0, error: error?.message, userId: user?.id,
+        traceId, // P3-064
       });
       if (error) { console.error('[bridge] QUERY_ERROR:', error.message, error.hint); return jsonError(400, "QUERY_ERROR", "Falha na consulta"); }
       return jsonOk({ data: selectData, count, duration_ms: durationMs });
@@ -607,7 +620,7 @@ Deno.serve(async (req) => {
       const insertData = (Array.isArray(data) ? data : [data]) as Record<string, unknown>[];
       const { data: r, error } = await externalClient.from(table!).insert(insertData).select();
       const durationMs = Math.round(performance.now() - t0);
-      emitTelemetry({ operation: "insert", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id });
+      emitTelemetry({ operation: "insert", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, traceId });
       if (error) { console.error('[bridge] INSERT_ERROR:', error.message, error.hint); return jsonError(400, "INSERT_ERROR", "Falha na inserção"); }
       return jsonOk({ data: r, duration_ms: durationMs });
     }
@@ -618,7 +631,7 @@ Deno.serve(async (req) => {
       const upsertData = (Array.isArray(data) ? data : [data]) as Record<string, unknown>[];
       const { data: r, error } = await externalClient.from(table!).upsert(upsertData).select();
       const durationMs = Math.round(performance.now() - t0);
-      emitTelemetry({ operation: "upsert", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id });
+      emitTelemetry({ operation: "upsert", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, traceId });
       if (error) { console.error('[bridge] UPSERT_ERROR:', error.message, error.hint); return jsonError(400, "UPSERT_ERROR", "Falha no upsert"); }
       return jsonOk({ data: r, duration_ms: durationMs });
     }
@@ -646,7 +659,7 @@ Deno.serve(async (req) => {
       }
       const { data: r, error } = await query.select();
       const durationMs = Math.round(performance.now() - t0);
-      emitTelemetry({ operation: "update", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id });
+      emitTelemetry({ operation: "update", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, traceId });
       if (error) { console.error('[bridge] UPDATE_ERROR:', error.message, error.hint); return jsonError(400, "UPDATE_ERROR", "Falha na atualização"); }
       return jsonOk({ data: r, duration_ms: durationMs });
     }
@@ -673,7 +686,7 @@ Deno.serve(async (req) => {
       }
       const { data: r, error } = await query.select();
       const durationMs = Math.round(performance.now() - t0);
-      emitTelemetry({ operation: "delete", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id });
+      emitTelemetry({ operation: "delete", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, traceId });
       if (error) { console.error('[bridge] DELETE_ERROR:', error.message, error.hint); return jsonError(400, "DELETE_ERROR", "Falha na exclusão"); }
       return jsonOk({ data: r, duration_ms: durationMs });
     }
@@ -697,6 +710,7 @@ Deno.serve(async (req) => {
         operation: "rpc", rpcName, durationMs, status: classifySeverity(durationMs, !!error),
         recordCount: Array.isArray(rpcData) ? rpcData.length : rpcData ? 1 : 0,
         error: error?.message, userId: user?.id,
+        traceId, // P3-064
       });
       // P1-017: inclui details e hint no log do backend (NUNCA retorna ao cliente).
       if (error) {
