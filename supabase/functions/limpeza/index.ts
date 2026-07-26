@@ -105,13 +105,40 @@ serve(async (req: Request): Promise<Response> => {
     // se acumulavam para sempre com executado=false. drenar_fila_limpeza_lgpd
     // (SECURITY DEFINER, service_role) processa os itens vencidos e chama
     // anonimizar_dados_pessoais para cada um.
-    const { data: lgpdResults, error: lgpdError } = await supabase.rpc('drenar_fila_limpeza_lgpd');
+    const { data: lgpdResults, error: lgpdError } = await adminClient.rpc('drenar_fila_limpeza_lgpd');
     if (lgpdError) {
       results.lgpd_fila_limpeza_erro = 1;
     } else {
       const processados = (lgpdResults ?? []) as Array<{ sucesso: boolean }>;
       results.lgpd_fila_limpeza_processados = processados.filter((r) => r.sucesso).length;
       results.lgpd_fila_limpeza_falhas = processados.filter((r) => !r.sucesso).length;
+    }
+
+    // ── P3-065: Purge LGPD via run_lgpd_purge ────────────────────────────
+    // Limpa tabelas de log/telemetria conforme config_retencao (90 dias query_telemetry,
+    // 30 dias login_attempts, 730 dias audit_log, etc.). SECURITY DEFINER via RPC.
+    const { data: purgeResults, error: purgeError } = await adminClient
+      .rpc('run_lgpd_purge', { p_dry_run: false });
+
+    if (purgeError) {
+      results.lgpd_purge_erro = 1;
+      captureException(purgeError, { fn: 'limpeza:run_lgpd_purge' });
+    } else {
+      const purgeArr = (purgeResults ?? []) as Array<{
+        tabela: string;
+        deleted: number;
+        batches: number;
+      }>;
+      results.lgpd_purge_executado = purgeArr.length;
+      results.lgpd_purge_total_deletado = purgeArr.reduce(
+        (acc, r) => acc + (Number(r.deleted) || 0), 0
+      );
+      // Log individual de cada tabela
+      for (const r of purgeArr) {
+        if (r.deleted && Number(r.deleted) > 0) {
+          results[`lgpd_purge_${r.tabela}`] = Number(r.deleted) || 0;
+        }
+      }
     }
 
     const totalCleaned = Object.values(results).reduce((a, b) => a + b, 0);
