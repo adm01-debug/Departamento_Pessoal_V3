@@ -4,6 +4,7 @@ import { z } from 'https://esm.sh/zod@3.23.8';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
+import { safeFetch, safeGet } from '../_shared/safe-fetch.ts';
 
 const GOVBR_BASE_URL = Deno.env.get('GOVBR_BASE_URL') ?? 'https://sso.acesso.gov.br';
 const GOVBR_AUTH_URL = `${GOVBR_BASE_URL}/authorize`;
@@ -157,7 +158,7 @@ serve(async (req: Request): Promise<Response> => {
       const clientId = Deno.env.get('GOVBR_CLIENT_ID') ?? '';
       const clientSecret = Deno.env.get('GOVBR_CLIENT_SECRET') ?? '';
 
-      const tokenResponse = await fetch(GOVBR_TOKEN_URL, {
+      const tokenResponse = await safeFetch(GOVBR_TOKEN_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
@@ -167,6 +168,8 @@ serve(async (req: Request): Promise<Response> => {
           client_id: clientId,
           client_secret: clientSecret,
         }),
+        timeoutMs: 10_000,
+        tag: 'govbr',
       });
 
       if (!tokenResponse.ok) {
@@ -174,8 +177,10 @@ serve(async (req: Request): Promise<Response> => {
       }
       const tokens = await tokenResponse.json();
 
-      const userResponse = await fetch(GOVBR_USERINFO_URL, {
+      const userResponse = await safeGet(GOVBR_USERINFO_URL, {
         headers: { 'Authorization': `Bearer ${tokens.access_token}` },
+        timeoutMs: 10_000,
+        tag: 'govbr',
       });
 
       if (!userResponse.ok) {

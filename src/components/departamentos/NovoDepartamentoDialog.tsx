@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Spinner } from '@/components/ui/spinner';
 import { useDepartamentos } from '@/hooks/useDepartamentos';
+import { useOnMount } from '@/hooks/useMountEffects';
 import { toast } from 'sonner';
 import { Building2, Save } from 'lucide-react';
 
@@ -25,10 +26,25 @@ export function NovoDepartamentoDialog({ open, onOpenChange, departamento }: Pro
     ativo: true,
   });
 
+  // Reseta form quando dialog abre (mount-time)
+  useOnMount(() => {
+    if (open) {
+      if (departamento) {
+        setForm({
+          nome: departamento.nome || '',
+          descricao: departamento.descricao || '',
+          ativo: departamento.ativo !== false,
+        });
+      } else {
+        setForm({ nome: '', descricao: '', ativo: true });
+      }
+    }
+  });
+
+  // Também reseta quando departamento ou open mudam
   useEffect(() => {
     if (open) {
       if (departamento) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setForm({
           nome: departamento.nome || '',
           descricao: departamento.descricao || '',

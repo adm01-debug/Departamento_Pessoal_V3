@@ -3,6 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
+import { safeFetchWithRetry, FetchTimeoutError, FetchNetworkError } from '../_shared/safe-fetch.ts';
 
 const SYSTEM_PROMPT = `Voce e um assistente especialista em Departamento Pessoal brasileiro. Seu nome e "Assistente DP".
 
@@ -109,23 +110,43 @@ serve(async (req: Request): Promise<Response> => {
       { role: 'user', content: message },
     ];
 
-    const response = await fetch('https://ai-gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
+    const response = await safeFetchWithRetry(
+      'https://ai-gateway.lovable.dev/v1/chat/completions',
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-2.5-flash',
+          messages,
+          max_tokens: 2048,
+          temperature: 0.3,
+        }),
+        timeoutMs: 30_000,
+        tag: 'openai',
       },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages,
-        max_tokens: 2048,
-        temperature: 0.3,
-      }),
-    });
+      {
+        maxAttempts: 3,
+        baseDelayMs: 2_000,
+        onRetry: (attempt, err, delay) => {
+          console.error(`[assistente-ia] Retry ${attempt}/3 em ${delay}ms — ${err.message}`);
+        },
+        tag: 'openai',
+      }
+    );
 
     if (!response.ok) {
-      const errText = await response.text();
-      throw new Error(`AI API error [${response.status}]: ${errText}`);
+      const errText = await response.text().catch(() => '');
+      if (response.status === 429) {
+        throw new Error('Limite de requisições excedido. Tente novamente em alguns minutos.');
+      }
+      if (response.status === 401 || response.status === 403) {
+        captureException?.(new Error(`AI API auth error [${response.status}]`));
+        throw new Error('Erro de configuração do assistente IA.');
+      }
+      throw new Error(`Erro do assistente IA [${response.status}]: ${errText}`);
     }
 
     const data = await response.json();

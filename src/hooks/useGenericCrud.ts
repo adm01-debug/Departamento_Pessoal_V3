@@ -1,15 +1,16 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { ListOptions, ListResponse } from '@/services/baseService';
 import { loggerService } from '@/services/loggerService';
 import { auditLogger } from '@/utils/auditLogger';
 import { safeErrorMessage } from '@/utils/safeError';
+import { useOnMount } from './useMountEffects';
 
 interface ServiceInterface<T> {
   listar(options: ListOptions): Promise<ListResponse<T>>;
-  criar(data: any): Promise<T>;
-  atualizar(id: string, data: any, empresaId?: string): Promise<T>;
+  criar(data: unknown): Promise<T>;
+  atualizar(id: string, data: unknown, empresaId?: string): Promise<T>;
   excluir(id: string, empresaId?: string): Promise<void>;
 }
 
@@ -42,11 +43,13 @@ export function useGenericCrud<T>({
   const [search, setSearch] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Reset page on search or filter change
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+  // Reset page on mount and when search/filters change
+  useOnMount(() => {
     setPage(1);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  });
+
+  useEffect(() => {
+    setPage(1);
   }, [search, JSON.stringify(filters)]);
 
   const query = useQuery({

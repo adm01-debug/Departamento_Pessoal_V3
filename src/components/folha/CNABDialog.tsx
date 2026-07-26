@@ -54,8 +54,11 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
     }
   }, [empresaAtual?.id, empresaAtual?.razao_social]);
 
+  useOnMount(() => {
+    if (open) loadConfig();
+  });
+
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (open) loadConfig();
   }, [open, loadConfig]);
 

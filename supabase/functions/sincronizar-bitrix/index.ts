@@ -1,10 +1,10 @@
-// Onda 15 — Endurecimento: Zod + Auth + Tenant scope + CORS uniformes
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://esm.sh/zod@3.23.8';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
+import { safeFetch } from '../_shared/safe-fetch.ts';
 
 const BodySchema = z.object({
   action: z.enum(['sync_departamentos', 'sync_colaboradores', 'sync_cargos', 'sync_all', 'status']),
@@ -104,7 +104,10 @@ serve(async (req: Request): Promise<Response> => {
 
     if ((action === 'sync_departamentos' || action === 'sync_all') && config.sync_departamentos) {
       try {
-        const resp = await fetch(`${config.webhook_url}/department.get`);
+        const resp = await safeFetch(`${config.webhook_url}/department.get`, {
+          timeoutMs: 8_000,
+          tag: 'webhook',
+        });
         if (!resp.ok) throw new Error(`Bitrix API error: ${resp.status}`);
         const bitrixData = await resp.json();
         const departments = bitrixData.result || [];
@@ -124,7 +127,10 @@ serve(async (req: Request): Promise<Response> => {
 
     if ((action === 'sync_colaboradores' || action === 'sync_all') && config.sync_colaboradores) {
       try {
-        const resp = await fetch(`${config.webhook_url}/user.get?ACTIVE=true`);
+        const resp = await safeFetch(`${config.webhook_url}/user.get?ACTIVE=true`, {
+          timeoutMs: 8_000,
+          tag: 'webhook',
+        });
         if (!resp.ok) throw new Error(`Bitrix API error: ${resp.status}`);
         const bitrixData = await resp.json();
         const users = bitrixData.result || [];

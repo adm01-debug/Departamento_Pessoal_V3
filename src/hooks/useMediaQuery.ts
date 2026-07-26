@@ -1,5 +1,6 @@
 // V15-137: src/hooks/useMediaQuery.ts
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
+import { useOnMount } from './useMountEffects';
 
 export function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState(() => {
@@ -12,12 +13,15 @@ export function useMediaQuery(query: string): boolean {
   useEffect(() => {
     const mediaQuery = window.matchMedia(query);
     const handler = (event: MediaQueryListEvent) => setMatches(event.matches);
-    
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMatches(mediaQuery.matches);
     mediaQuery.addEventListener('change', handler);
     return () => mediaQuery.removeEventListener('change', handler);
   }, [query]);
+
+  // Inicializa valor apenas no mount
+  useOnMount(() => {
+    const mediaQuery = window.matchMedia(query);
+    setMatches(mediaQuery.matches);
+  });
 
   return matches;
 }

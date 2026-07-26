@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useCallback } from 'react';
 import { sanitizeContractHtml } from '@/utils/sanitizeHtml';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -10,6 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { CheckCircle2, FileText, Loader2, ShieldCheck } from 'lucide-react';
+import { useOnMount } from '@/hooks/useMountEffects';
 
 type DocumentoVigente = {
   id: string;
@@ -44,11 +45,11 @@ export function PortalRegimentoCard() {
 
   const empresaId = empresaAtual?.id;
 
-  const carregar = async () => {
+  const carregar = useCallback(async () => {
     if (!empresaId || !user?.id) return;
     setLoading(true);
     try {
-      const db = supabase as any;
+      const db = supabase as { from: Function };
 
       // Vínculo colaborador ↔ user
       const { data: colab } = await db
@@ -89,12 +90,14 @@ export function PortalRegimentoCard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [empresaId, user?.id]);
+
+  useOnMount(() => {
+    carregar();
+  });
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     carregar();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [empresaId, user?.id]);
 
   const conteudoSeguro = useMemo(
