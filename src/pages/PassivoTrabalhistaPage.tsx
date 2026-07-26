@@ -4,122 +4,181 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { 
-  Scale, AlertTriangle, Calendar, TrendingUp, Info, Download, 
+import {
+  Scale, AlertTriangle, Calendar, TrendingUp, Info, Download,
   RefreshCw, Users, DollarSign, PieChart, ShieldAlert, Clock,
-  ArrowRight, Landmark
+  ArrowRight, Landmark, FileWarning
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, 
+import {
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
   ResponsiveContainer, Cell, Legend, PieChart as RePieChart, Pie, AreaChart, Area
 } from 'recharts';
-import { format, addMonths, differenceInDays, parseISO } from 'date-fns';
+import { format, addMonths, differenceInDays, parseISO, startOfMonth, differenceInMonths } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { ChartSkeleton, KPICardSkeleton } from '@/components/ui/module-skeleton';
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#0088FE', '#00C49F'];
 
+const DIAS_POR_ANO = 30;
+const TERCO = 1 / 3;
+const ALIQ_FGTS = 0.08;
+const MULTA_FGTS = 0.40;
+const ALIQ_INSS = 0.20;
+
+interface RiskEmp {
+  id: string; nome: string; salario: number;
+  diasAtraso: number; nivel: 'critico' | 'alerta' | 'normal';
+  valorFerias: number; terco: number; valor13: number;
+  fgtsFerias: number; fgts13: number; multa: number;
+  totalProvisionado: number;
+  periodoAquisitivo: string; dataVencimento: string;
+}
+
+function calcFerias(salario: number, admissao: string, ultimaFim: string | null, hoje: Date) {
+  const admiss = new Date(admissao);
+  const ultFim = ultimaFim ? new Date(ultimaFim) : null;
+  const periodoInicio = ultFim
+    ? new Date(ultFim.getTime() + 86400000)
+    : admiss;
+  const vencimento = addMonths(periodoInicio, 12);
+  const diasDecorridos = differenceInDays(vencimento, hoje);
+  const vencidas = Math.max(0, -diasDecorridos);
+  const direito = Math.min(vencidas, 30);
+  const vf = (salario / 30) * direito;
+  const tc = vf * TERCO;
+  return { dias: vencidas, vf, tc, vencimento };
+}
+
+function calc13(salario: number, admissao: string, hoje: Date) {
+  const iniAno = new Date(hoje.getFullYear(), 0, 1);
+  const ini = new Date(admissao) > iniAno ? new Date(admissao) : iniAno;
+  const meses = Math.min(12, Math.max(1, differenceInMonths(hoje, ini) + 1));
+  return salario * (meses / 12);
+}
+
 export default function PassivoTrabalhistaPage() {
   const { empresaAtualId } = useEmpresas();
 
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ['passivo-trabalhista', empresaAtualId],
+  const { data: folhaAtual } = useQuery({
+    queryKey: ['folha-ultima-competencia', empresaAtualId],
     enabled: !!empresaAtualId,
     queryFn: async () => {
-      // 1. Get Collaborators with salaries
-      const { data: colabs } = await supabase
+      const { data } = await (supabase as any)
+        .from('folhas_pagamento')
+        .select('competencia')
+        .eq('empresa_id', empresaAtualId!)
+        .order('competencia', { ascending: false }).limit(1).maybeSingle();
+      return data;
+    },
+  });
+
+  const competenciaLabel = folhaAtual?.competencia
+    ? format(parseISO(folhaAtual.competencia), 'MMM/yyyy', { locale: ptBR })
+    : format(new Date(), 'MMM/yyyy', { locale: ptBR });
+
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ['passivo-trabalhista-v2', empresaAtualId, folhaAtual?.competencia],
+    enabled: !!empresaAtualId,
+    queryFn: async () => {
+      const { data: colabs } = await (supabase as any)
         .from('colaboradores')
-        .select('id, nome_completo, salario_base, data_admissao, status')
-        .eq('empresa_id', empresaAtualId!)
-        .eq('status', 'ativo');
+        .select('id, nome_completo, salario_base, data_admissao')
+        .eq('empresa_id', empresaAtualId!).eq('status', 'ativo');
+      if (!colabs?.length) return null;
 
-      // 2. Get Vacations
-      const { data: ferias } = await supabase
-        .from('ferias')
-        .select('*')
-        .eq('empresa_id', empresaAtualId!)
-        .neq('status', 'cancelado');
+      const { data: fer } = await (supabase as any)
+        .from('ferias').select('colaborador_id, data_fim, status')
+        .eq('empresa_id', empresaAtualId!).neq('status', 'cancelado');
 
-      if (!colabs) return null;
+      const { data: provs } = await (supabase as any)
+        .from('provisionamentos')
+        .select('colaborador_id, tipo, valor_provisionado')
+        .eq('empresa_id', empresaAtualId!)
+        .eq('competencia', folhaAtual?.competencia ?? format(new Date(), 'yyyy-MM'));
+      const provMap = new Map<string, number>();
+      for (const p of (provs ?? [])) provMap.set(`${p.colaborador_id}_${p.tipo}`, Number(p.valor_provisionado));
 
       const hoje = new Date();
-      let totalVacationLiability = 0;
-      let total13thLiability = 0;
-      const riskEmployees: any[] = [];
+      let tVac = 0, t13 = 0, tFgts = 0, tMulta = 0, tInss = 0;
+      const risks: RiskEmp[] = [];
+      const divergencias: { nome: string; tipo: string; diff: number }[] = [];
 
-      colabs.forEach(c => {
-        const salario = Number(c.salario_base || 0);
-        if (salario === 0) return;
+      for (const c of colabs) {
+        const sal = Number(c.salario_base || 0);
+        if (!sal) continue;
+        const ferC = (fer ?? []).filter((f: any) => f.colaborador_id === c.id && f.status === 'concluida');
+        const ultFim = ferC.length ? String(ferC.reduce((m: number, f: any) => Math.max(m, new Date(f.data_fim).getTime()), 0)) : null;
+        const { dias, vf, tc, vencimento } = calcFerias(sal, c.data_admissao, ultFim, hoje);
+        const v13 = calc13(sal, c.data_admissao, hoje);
+        const fgtsF = (vf + tc) * ALIQ_FGTS;
+        const fgts13 = v13 * ALIQ_FGTS;
+        const fgtsTotal = fgtsF + fgts13;
+        const multa = fgtsTotal * 12 * MULTA_FGTS;
+        const inss = (vf + tc + v13) * ALIQ_INSS;
+        const total = vf + tc + v13 + fgtsTotal + multa + inss;
+        tVac += vf + tc; t13 += v13; tFgts += fgtsTotal; tMulta += multa; tInss += inss;
 
-        // Pro-rated 13th Salary (from Jan 1st of current year)
-        const startOfYear = new Date(hoje.getFullYear(), 0, 1);
-        const admissionDate = new Date(c.data_admissao);
-        const calculationStart = admissionDate > startOfYear ? admissionDate : startOfYear;
-        
-        // Months elapsed in current year
-        const months = hoje.getMonth() - calculationStart.getMonth() + (12 * (hoje.getFullYear() - calculationStart.getFullYear())) + 1;
-        const accrued13th = (salario / 12) * Math.min(months, 12);
-        total13thLiability += accrued13th;
-
-        // Simplified Vacation Accrual
-        // In a real scenario, we'd check 'periodo_aquisitivo' tables
-        // For this dashboard, we'll estimate based on admission date vs last taken vacation
-        const employeeFerias = ferias?.filter(f => f.colaborador_id === c.id) || [];
-        const lastFeriasEnd = employeeFerias.length > 0 
-          ? new Date(Math.max(...employeeFerias.map(f => new Date(f.data_fim).getTime())))
-          : admissionDate;
-
-        const daysSinceLastFerias = differenceInDays(hoje, lastFeriasEnd);
-        const accruedVacationDays = Math.floor(daysSinceLastFerias / 30) * 2.5; // 30 days per year
-        
-        const vacationCost = (salario / 30) * accruedVacationDays;
-        const vacationThird = vacationCost / 3;
-        totalVacationLiability += (vacationCost + vacationThird);
-
-        // Check for double payment risk (more than 1 year and 11 months since last vacation/admission)
-        if (daysSinceLastFerias > 630) { // ~21 months
-          riskEmployees.push({
-            id: c.id,
-            nome: c.nome_completo,
-            diasAtraso: daysSinceLastFerias,
-            custoEstimado: (vacationCost + vacationThird) * 2, // Potential double penalty
-            nivel: daysSinceLastFerias > 700 ? 'critico' : 'alerta'
+        if (dias >= 365) {
+          risks.push({
+            id: c.id, nome: c.nome_completo, salario: sal,
+            diasAtraso: dias, nivel: dias >= 730 ? 'critico' : 'alerta',
+            valorFerias: vf, terco: tc, valor13: v13,
+            fgtsFerias: fgtsF, fgts13, multa,
+            totalProvisionado: total,
+            periodoAquisitivo: ultFim
+              ? `${format(addMonths(new Date(ultFim), 1), 'MMM/yy', { locale: ptBR })} → ${format(vencimento, 'MMM/yy', { locale: ptBR })}`
+              : `${format(new Date(c.data_admissao), 'MMM/yy', { locale: ptBR })} → ${format(vencimento, 'MMM/yy', { locale: ptBR })}`,
+            dataVencimento: format(vencimento, 'yyyy-MM-dd'),
           });
         }
-      });
+        const provF = provMap.get(`${c.id}_ferias`) ?? 0;
+        const prov13 = provMap.get(`${c.id}_13`) ?? 0;
+        if ((provF > 0 || prov13 > 0) && (
+          Math.abs(vf + tc - provF) > sal * 0.05 ||
+          Math.abs(v13 - prov13) > sal * 0.05
+        )) {
+          divergencias.push({
+            nome: c.nome_completo,
+            tipo: Math.abs(vf + tc - provF) > sal * 0.05 ? 'Férias' : '13º',
+            diff: Math.abs(vf + tc - provF) > sal * 0.05
+              ? Math.abs(vf + tc - provF) : Math.abs(v13 - prov13),
+          });
+        }
+      }
 
-      // Charges estimation (INSS Patronal + FGTS ~ 35%)
-      const totalCharges = (totalVacationLiability + total13thLiability) * 0.35;
+      const tCharges = tFgts + tMulta + tInss;
+      const tTotal = tVac + t13 + tCharges;
 
       return {
-        totalLiability: totalVacationLiability + total13thLiability + totalCharges,
-        vacationLiability: totalVacationLiability,
-        thirteenthLiability: total13thLiability,
-        chargesLiability: totalCharges,
-        riskEmployees: riskEmployees.sort((a, b) => b.diasAtraso - a.diasAtraso),
+        competencia: folhaAtual?.competencia,
+        totalLiability: tTotal,
+        vacationLiability: tVac, thirteenthLiability: t13,
+        fgtsLiability: tFgts, multaFgtsLiability: tMulta,
+        inssPatronalLiability: tInss, chargesLiability: tCharges,
+        riskEmployees: risks.sort((a, b) => b.diasAtraso - a.diasAtraso),
+        divergencias: divergencias.slice(0, 10),
         distribution: [
-          { name: 'Férias + 1/3', value: totalVacationLiability },
-          { name: '13º Salário', value: total13thLiability },
-          { name: 'Encargos (INSS/FGTS)', value: totalCharges },
+          { name: 'Férias + 1/3', value: tVac },
+          { name: '13º Salário', value: t13 },
+          { name: 'FGTS (8%)', value: tFgts },
+          { name: 'Multa FGTS (40%)', value: tMulta },
+          { name: 'INSS Patronal (20%)', value: tInss },
         ],
         projection: Array.from({ length: 6 }).map((_, i) => {
           const d = addMonths(hoje, i);
-          return {
-            mes: format(d, 'MMM/yy', { locale: ptBR }),
-            valor: (totalVacationLiability + total13thLiability + totalCharges) * (1 + (i * 0.02)) // 2% growth estimate
-          };
-        })
+          return { mes: format(d, 'MMM/yy', { locale: ptBR }), valor: tTotal * (1 + i * 0.015) };
+        }),
       };
-    }
+    },
   });
 
-  const formatCurrency = (v: number) => 
+  const formatCurrency = (v: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
 
   return (
@@ -130,6 +189,9 @@ export default function PassivoTrabalhistaPage() {
       gradient="from-destructive to-destructive-glow"
       actions={
         <div className="flex gap-2">
+          <Badge variant="outline" className="text-xs font-mono">
+            Competência: {competenciaLabel}
+          </Badge>
           <Button variant="outline" size="sm" onClick={() => refetch()} className="rounded-xl">
             <RefreshCw className={cn("h-4 w-4 mr-2", isLoading && "animate-spin")} />
             Atualizar
@@ -141,12 +203,25 @@ export default function PassivoTrabalhistaPage() {
         </div>
       }
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        {isLoading ? Array.from({ length: 4 }).map((_, i) => <KPICardSkeleton key={i} index={i} />) : [
-          { label: 'Passivo Total Estimado', value: data?.totalLiability || 0, icon: DollarSign, gradient: 'from-destructive to-destructive/70', desc: 'Soma de Férias, 13º e Encargos' },
-          { label: 'Risco de Multa (Férias)', value: data?.riskEmployees.length || 0, icon: ShieldAlert, gradient: 'from-warning to-warning/70', desc: 'Colaboradores com férias vencendo' },
-          { label: 'Provisão 13º Acumulada', value: data?.thirteenthLiability || 0, icon: Clock, gradient: 'from-primary to-primary/70', desc: 'Valor pro-rata até hoje' },
-          { label: 'Encargos Provisionados', value: data?.chargesLiability || 0, icon: Landmark, gradient: 'from-info to-info/70', desc: 'Estimativa de impostos sobre o passivo' },
+      {data === null && !isLoading && (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <div className="w-16 h-16 rounded-full bg-muted/30 flex items-center justify-center mb-4">
+            <FileWarning className="h-8 w-8 text-muted-foreground" />
+          </div>
+          <h3 className="text-lg font-semibold mb-2">Nenhum dado de passivo disponível</h3>
+          <p className="text-sm text-muted-foreground max-w-sm">
+            Cadastre colaboradores ativos e folhas de pagamento para visualizar o passivo trabalhista.
+          </p>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+        {isLoading ? Array.from({ length: 5 }).map((_, i) => <KPICardSkeleton key={i} index={i} />) : [
+          { label: 'Passivo Total', value: data?.totalLiability || 0, icon: DollarSign, gradient: 'from-destructive to-destructive/70', desc: 'Soma de Férias, 13º e Encargos' },
+          { label: 'FGTS + Multa 40%', value: (data?.fgtsLiability || 0) + (data?.multaFgtsLiability || 0), icon: Landmark, gradient: 'from-warning to-warning/70', desc: 'Provisão FGTS + multa rescisória' },
+          { label: 'Risco Crítico', value: data?.riskEmployees.filter((r: RiskEmp) => r.nivel === 'critico').length || 0, icon: ShieldAlert, gradient: 'from-destructive/80 to-destructive', desc: 'Férias ≥ 2 anos vencidas (CLT)' },
+          { label: 'Provisão 13º', value: data?.thirteenthLiability || 0, icon: Clock, gradient: 'from-primary to-primary/70', desc: 'Pro-rata até competência atual' },
+          { label: 'Divergências', value: data?.divergencias?.length || 0, icon: AlertTriangle, gradient: (data?.divergencias?.length || 0) > 0 ? 'from-warning/80 to-warning' : 'from-muted to-muted/50', desc: 'Provisionamento vs calculado' },
         ].map((kpi, i) => (
           <motion.div key={kpi.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
             <Card className="border border-border/30 rounded-2xl overflow-hidden shadow-xs h-full">
@@ -156,14 +231,19 @@ export default function PassivoTrabalhistaPage() {
                   <div className={cn("p-2 rounded-xl bg-gradient-to-br", kpi.gradient)}>
                     <kpi.icon className="h-4 w-4 text-primary-foreground" />
                   </div>
-                  {kpi.label.includes('Risco') && (data?.riskEmployees.length || 0) > 0 && (
-                    <Badge variant="destructive" className="animate-pulse">Crítico</Badge>
+                  {kpi.label === 'Risco Crítico' && (data?.riskEmployees.filter((r: RiskEmp) => r.nivel === 'critico').length || 0) > 0 && (
+                    <Badge variant="destructive" className="animate-pulse text-xs">Crítico</Badge>
+                  )}
+                  {kpi.label === 'Divergências' && (data?.divergencias?.length || 0) > 0 && (
+                    <Badge variant="secondary" className="bg-warning/20 text-warning border-warning/30 text-xs">Atenção</Badge>
                   )}
                 </div>
                 <h3 className="text-2xl font-display font-bold truncate">
-                  {typeof kpi.value === 'number' && (kpi.label.includes('Total') || kpi.label.includes('Provisão') || kpi.label.includes('Encargos')) 
-                    ? formatCurrency(kpi.value) 
-                    : kpi.value}
+                  {typeof kpi.value === 'number' && (
+                    kpi.label.includes('Risco') || kpi.label === 'Divergências'
+                      ? kpi.value
+                      : formatCurrency(kpi.value)
+                  )}
                 </h3>
                 <p className="text-xs font-medium text-foreground/80 mt-1">{kpi.label}</p>
                 <p className="text-[10px] text-muted-foreground mt-2 flex items-center gap-1">
@@ -174,6 +254,48 @@ export default function PassivoTrabalhistaPage() {
           </motion.div>
         ))}
       </div>
+
+      {/* P5-077: Alerta de divergências provisionamento vs calculado */}
+      {data?.divergencias && data.divergencias.length > 0 && (
+        <Card className="mb-6 border border-warning/40 bg-warning/5 rounded-2xl">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-display flex items-center gap-2 text-warning">
+              <AlertTriangle className="h-4 w-4" />
+              Divergências de Provisionamento Detectadas ({data.divergencias.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="text-muted-foreground font-medium border-b border-warning/20">
+                    <th className="px-4 py-2 text-left">Colaborador</th>
+                    <th className="px-4 py-2 text-center">Tipo</th>
+                    <th className="px-4 py-2 text-right">Diferença</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.divergencias.map((d: { nome: string; tipo: string; diff: number }, i: number) => (
+                    <tr key={i} className="border-b border-warning/10 last:border-0">
+                      <td className="px-4 py-2 font-medium">{d.nome}</td>
+                      <td className="px-4 py-2 text-center">
+                        <Badge variant="outline" className="border-warning/50 text-warning text-xs">{d.tipo}</Badge>
+                      </td>
+                      <td className="px-4 py-2 text-right font-mono text-warning">
+                        {formatCurrency(d.diff)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="px-4 py-2 text-xs text-muted-foreground">
+              <Info className="inline h-3 w-3 mr-1" />
+              Provisionamento registrado diverge &gt;5% do calculado — revise os valores da folha.
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <Card className="lg:col-span-2 border border-border/30 rounded-2xl shadow-xs">
@@ -289,19 +411,25 @@ export default function PassivoTrabalhistaPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.riskEmployees.map((emp) => (
+                  {data?.riskEmployees.map((emp: RiskEmp) => (
                     <tr key={emp.id} className="border-b border-border/10 hover:bg-muted/10 transition-colors group">
                       <td className="px-4 py-3 font-medium">{emp.nome}</td>
+                      <td className="px-4 py-2 text-xs text-muted-foreground">{emp.periodoAquisitivo}</td>
                       <td className="px-4 py-3 text-center">
                         <div className="flex flex-col items-center">
-                          <span>{emp.diasAtraso} dias</span>
-                          <Progress value={Math.min(100, (emp.diasAtraso / 730) * 100)} className={cn("h-1 w-20 mt-1", emp.nivel === 'critico' ? "bg-destructive/20" : "bg-warning/20")} />
+                          <span className="text-sm font-mono">{emp.diasAtraso} dias</span>
+                          <Progress value={Math.min(100, (emp.diasAtraso / 730) * 100)}
+                            className={cn("h-1 w-20 mt-1", emp.nivel === 'critico' ? "bg-destructive/20 [&>div]:bg-destructive" : "bg-warning/20 [&>div]:bg-warning")}
+                          />
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-right text-muted-foreground">{formatCurrency(emp.custoEstimado / 2)}</td>
-                      <td className="px-4 py-3 text-right font-bold text-destructive">{formatCurrency(emp.custoEstimado)}</td>
+                      <td className="px-4 py-3 text-right font-mono text-xs">{formatCurrency(emp.valorFerias + emp.terco)}</td>
+                      <td className="px-4 py-3 text-right font-mono text-xs text-warning">{formatCurrency(emp.fgtsFerias + emp.fgts13)}</td>
+                      <td className="px-4 py-3 text-right font-mono text-xs text-destructive">{formatCurrency(emp.multa)}</td>
+                      <td className="px-4 py-3 text-right font-bold">{formatCurrency(emp.totalProvisionado)}</td>
                       <td className="px-4 py-3 text-center">
-                        <Badge variant={emp.nivel === 'critico' ? 'destructive' : 'outline'} className={cn(emp.nivel === 'alerta' && "border-warning text-warning")}>
+                        <Badge variant={emp.nivel === 'critico' ? 'destructive' : 'outline'}
+                          className={cn(emp.nivel === 'alerta' && "border-warning text-warning")}>
                           {emp.nivel === 'critico' ? 'Crítico' : 'Alerta'}
                         </Badge>
                       </td>
