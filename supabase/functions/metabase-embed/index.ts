@@ -21,6 +21,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders } from '../_shared/contract.ts';
 import { logger } from '../_shared/logger.ts';
+import { safeFetch } from '../_shared/safe-fetch.ts';
 
 const METABASE_URL   = Deno.env.get('METABASE_URL')          ?? '';
 const METABASE_SECRET = Deno.env.get('METABASE_SECRET_KEY')   ?? '';
@@ -80,13 +81,10 @@ async function signJwt(payload: Record<string, unknown>, secret: string, expires
 async function metabaseHealthCheck(): Promise<boolean> {
   if (!METABASE_URL) return false;
   try {
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), HEALTH_TIMEOUT_MS);
-    const res = await fetch(`${METABASE_URL}/api/health`, {
-      signal: ctrl.signal,
-      headers: { 'Content-Type': 'application/json' },
+    const res = await safeFetch(`${METABASE_URL}/api/health`, {
+      timeoutMs: HEALTH_TIMEOUT_MS,
+      tag: 'metabase',
     });
-    clearTimeout(timer);
     return res.ok;
   } catch {
     return false;

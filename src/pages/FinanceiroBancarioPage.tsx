@@ -20,7 +20,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { StatusBadge } from '@/components/ui/status-badge';
 import { todayLocalISO } from '@/utils/dateLocal';
 import { formatDate } from '@/utils/format';
-import { loggerService } from '@/services/loggerService';
 export default function FinanceiroBancarioPage() {
   const { empresaAtual } = useEmpresas();
   const [config, setConfig] = useState<CNABConfig | null>(null);

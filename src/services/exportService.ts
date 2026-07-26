@@ -4,6 +4,7 @@ import Papa from 'papaparse';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { loggerService } from './loggerService';
+import { toError } from '@/utils/toError';
 
 export const validateExportData = (data: any[]) => {
   if (!data || data.length === 0) {
@@ -37,7 +38,7 @@ export const exportPontoCSV = (data: any[], filename = 'registros-ponto.csv') =>
     document.body.removeChild(link);
     return true;
   } catch (error) {
-    loggerService.error('Erro na exportação CSV', { filename }, error);
+    loggerService.error('Erro na exportação CSV', { filename }, toError(error));
     throw error;
   }
 };
@@ -132,7 +133,7 @@ export const exportPontoPDF = (data: any[], title = 'Relatório de Ponto', colum
     doc.save(`${title.toLowerCase().replace(/\s+/g, '-')}-${format(now, 'yyyyMMdd')}.pdf`);
     return true;
   } catch (error) {
-    loggerService.error('Erro na exportação PDF', { title }, error);
+    loggerService.error('Erro na exportação PDF', { title }, toError(error));
     throw error;
   }
 };
