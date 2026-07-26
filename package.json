@@ -23,7 +23,10 @@
     "test:e2e:public": "playwright test --project=public",
     "test:e2e:auth": "playwright test --project=authenticated",
     "test:e2e:mobile": "playwright test --project=mobile-smoke",
-    "test:e2e:report": "playwright show-report"
+    "test:e2e:report": "playwright show-report",
+    "build:mobile": "./scripts/capacitor-build.sh",
+    "build:mobile:android": "./scripts/capacitor-build.sh --apk",
+    "cap:check": "./scripts/capacitor-build.sh --check"
   },
   "dependencies": {
     "@dnd-kit/core": "6.3.1",
