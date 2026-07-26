@@ -4,6 +4,7 @@ import path from "path";
 import { imagetools } from 'vite-imagetools';
 import { componentTagger } from "lovable-tagger";
 import { VitePWA } from 'vite-plugin-pwa';
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 
 export default defineConfig(({ mode }) => ({
   server: {
@@ -14,6 +15,15 @@ export default defineConfig(({ mode }) => ({
     react(),
     imagetools(),
     mode === 'development' && componentTagger(),
+    // P3-053: source maps upload automático para Sentry em builds de prod
+    mode === 'production' && import.meta.env.VITE_SENTRY_DSN && sentryVitePlugin({
+      org: import.meta.env.VITE_SENTRY_ORG ?? 'dp-team',
+      project: import.meta.env.VITE_SENTRY_PROJECT ?? 'departamento-pessoal-v2',
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      telemetries: 'debug',
+      setCommits: { auto: true },
+      deploy: { env: mode },
+    }),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
