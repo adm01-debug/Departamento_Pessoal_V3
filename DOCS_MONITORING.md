@@ -104,3 +104,74 @@ const result = await retryWithIdempotency({
   onRetry: (attempt, delay, error) => logger.warn('retry', { attempt, delay }),
 });
 ```
+
+## Responsabilidades APM — Sentry / Datadog / New Relic (P3-059)
+
+> Decisão de arquitetura: cada ferramenta tem responsabilidade única e não sobreposta.
+> Cross-link via `trace_id` (P3-064) correlaciona eventos entre plataformas.
+
+### Sentry — Erros e Performance de Frontend
+
+| Responsabilidade | Detalhe |
+|-----------------|---------|
+| Erros de frontend (React) | Exceções não-capturadas, `loggerService.error()`, `captureException()` |
+| Source maps | Upload automático via `@sentry/vite-plugin` em build de prod (P3-053) |
+| Replay de sessão | Sessões de usuário quando erro ocorre (replaysOnErrorSampleRate: 1.0) |
+| Browser tracing | Waterfall de navegação frontend (tracesSampleRate: 0.1) |
+| Tags | `component`, `app`, `tenant_isolation`, `trace_id` em todo evento |
+| Alertas | > 50 erros/min → Slack; tag `fatal` → PagerDuty |
+
+### Datadog — APM, Logs e Métricas de Infraestrutura
+
+| Responsabilidade | Detalhe |
+|-----------------|---------|
+| APM de Edge Functions | Traces distribuídos entre functions via `trace_id` (P3-064) |
+| Logs estruturados | JSON por linha do bridge (`supabase/functions/_shared/logger.ts`) |
+| Métricas de host | CPU, memória, rede dos containers |
+| Dashboard | P95 latency, error rate, throughput por endpoint |
+| RUM (opcional) | Sessões de usuário real — complementar ao Sentry Replay |
+
+**Integração:** Datadog extrai `trace_id` dos logs JSON do bridge via parser `trace_id` (key).
+
+### New Relic — Agentes de Servidor (infraestrutura legada)
+
+| Responsabilidade | Detalhe |
+|-----------------|---------|
+| Servidores on-prem | Se houver VMs/servidores próprios (fora do Supabase managed) |
+| Banco externo | Se houver Postgres externo acessível |
+
+**Se não houver infraestrutura on-prem:** New Relic pode ser desativado sem impacto.
+
+### Tabela Consolidada de Correlação
+
+| Dado | Sentry | Datadog | New Relic |
+|------|--------|---------|-----------|
+| Erro frontend | ✅ source | ✅ via trace_id | ❌ |
+| Erro Edge Function | ✅ (via `captureException`) | ✅ APM | ❌ |
+| Log estruturado | ❌ | ✅ JSON ingestion | ❌ |
+| Métricas bridge | ❌ | ✅ Prometheus scrape | ❌ |
+| Infraestrutura | ❌ | ✅ APM/host | ✅ (se on-prem) |
+| Sessão de usuário | ✅ Replay | ✅ RUM (opcional) | ❌ |
+| Correlação | `trace_id` tag | `trace_id` key | `trace_id` attribute |
+
+### Configuração de Cross-Link via trace_id
+
+```bash
+# No Sentry, filtrar por trace_id de uma request:
+# project:departamento-pessoal-v2 trace:{id}
+#
+# No Datadog, buscar o mesmo trace:
+# @trace_id:"{id}"
+```
+
+### Alertas Recomendados
+
+| Plataforma | Alerta | Condição | Canal |
+|-----------|--------|----------|-------|
+| Sentry | HighErrorRate | > 50 erros/min | Slack |
+| Sentry | FatalError | tag: fatal | PagerDuty |
+| Sentry | SlowP95 | P95 > 5s | Email |
+| Datadog | BridgeLatencyP95 | P95 > 5s por 5min | Slack |
+| Datadog | BridgeErrorRate | taxa > 1% por 1min | Slack |
+| Datadog | BackupStale | last_success > 25h | PagerDuty |
+| Datadog | HealthcheckDown | health_overall=0 por 1min | PagerDuty |
