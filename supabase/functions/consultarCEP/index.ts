@@ -2,13 +2,17 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { validateRequest, corsHeaders, createErrorResponse } from '../_shared/contract.ts';
 import { cepSchema } from '../_shared/schemas/common.ts';
-import { cachePublic } from '../_shared/cache.ts';
+import { cachePublic, cachedFetch } from '../_shared/cache.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { safeFetch } from '../_shared/safe-fetch.ts';
 
 // MP-032: CEPs são estáveis; cache CDN de 24h + SWR de 1h reduz custo e latência.
 const CACHE = cachePublic(60 * 60 * 24, 60 * 60);
+
+// P4-067 (consumer): TTL 24h para CEP. In-memory cache hit evita chamadas
+// repetidas à ViaCEP/BrasilAPI no mesmo isolate.
+const CEP_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
@@ -44,26 +48,40 @@ serve(async (req) => {
   const headers = { ...corsHeaders, 'Content-Type': 'application/json', ...CACHE };
 
   try {
-    // ViaCEP
-    const res = await safeFetch(`https://viacep.com.br/ws/${clean}/json/`, { timeoutMs: 8_000, tag: 'webhook' });
-    if (res.ok) {
-      const viacep = await res.json();
-      if (!viacep.erro) {
-        return new Response(JSON.stringify({
-          cep: viacep.cep, logradouro: viacep.logradouro || '', complemento: viacep.complemento || '',
-          bairro: viacep.bairro || '', localidade: viacep.localidade || '', uf: viacep.uf || '',
-          ibge: viacep.ibge || '', ddd: viacep.ddd || '',
-        }), { headers });
-      }
+    const viaCepResult = await cachedFetch(
+      `cep:viacep:${clean}`,
+      async () => {
+        const res = await safeFetch(`https://viacep.com.br/ws/${clean}/json/`, { timeoutMs: 8_000, tag: 'webhook' });
+        if (!res.ok) return null;
+        const json = await res.json();
+        return json.erro ? null : json;
+      },
+      CEP_CACHE_TTL_MS
+    );
+
+    if (viaCepResult) {
+      return new Response(JSON.stringify({
+        cep: viaCepResult.cep, logradouro: viaCepResult.logradouro || '', complemento: viaCepResult.complemento || '',
+        bairro: viaCepResult.bairro || '', localidade: viaCepResult.localidade || '', uf: viaCepResult.uf || '',
+        ibge: viaCepResult.ibge || '', ddd: viaCepResult.ddd || '',
+      }), { headers });
     }
 
-    // Fallback BrasilAPI
-    const res2 = await safeFetch(`https://brasilapi.com.br/api/cep/v2/${clean}`, { timeoutMs: 8_000, tag: 'webhook' });
-    if (res2.ok) {
-      const d = await res2.json();
+    // Fallback BrasilAPI (também cacheado)
+    const brasilApiResult = await cachedFetch(
+      `cep:brasilapi:${clean}`,
+      async () => {
+        const res = await safeFetch(`https://brasilapi.com.br/api/cep/v2/${clean}`, { timeoutMs: 8_000, tag: 'webhook' });
+        if (!res.ok) return null;
+        return await res.json();
+      },
+      CEP_CACHE_TTL_MS
+    );
+
+    if (brasilApiResult) {
       return new Response(JSON.stringify({
-        cep: d.cep, logradouro: d.street || '', complemento: '', bairro: d.neighborhood || '',
-        localidade: d.city || '', uf: d.state || '', ibge: d.city_ibge || '', ddd: '',
+        cep: brasilApiResult.cep, logradouro: brasilApiResult.street || '', complemento: '', bairro: brasilApiResult.neighborhood || '',
+        localidade: brasilApiResult.city || '', uf: brasilApiResult.state || '', ibge: brasilApiResult.city_ibge || '', ddd: '',
       }), { headers });
     }
 

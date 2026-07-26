@@ -2,10 +2,14 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { validateRequest, corsHeaders, createErrorResponse } from '../_shared/contract.ts';
 import { cnpjSchema } from '../_shared/schemas/common.ts';
-import { cachePublic } from '../_shared/cache.ts';
+import { cachePublic, cachedFetch } from '../_shared/cache.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { safeFetch } from '../_shared/safe-fetch.ts';
+
+// P4-067 (consumer): TTL 24h para CNPJ. Dados da Receita Federal mudam raramente;
+// reduz chamadas à brasilapi.com.br em ~95% no uso típico.
+const CNPJ_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
@@ -40,15 +44,21 @@ serve(async (req) => {
   const clean = cnpj.replace(/\D/g, '');
 
   try {
-    const res = await safeFetch(`https://brasilapi.com.br/api/cnpj/v1/${clean}`, {
-      timeoutMs: 10_000,
-      tag: 'webhook',
-    });
-    if (!res.ok) {
-      return createErrorResponse('CNPJ não encontrado', 404, 'NOT_FOUND');
-    }
+    const d = await cachedFetch(
+      `cnpj:${clean}`,
+      async () => {
+        const res = await safeFetch(`https://brasilapi.com.br/api/cnpj/v1/${clean}`, {
+          timeoutMs: 10_000,
+          tag: 'webhook',
+        });
+        if (!res.ok) {
+          throw new Error(`CNPJ lookup failed: ${res.status}`);
+        }
+        return await res.json();
+      },
+      CNPJ_CACHE_TTL_MS
+    );
 
-    const d = await res.json();
     return new Response(JSON.stringify({
       cnpj: d.cnpj, razao_social: d.razao_social || '', nome_fantasia: d.nome_fantasia || '',
       situacao_cadastral: d.descricao_situacao_cadastral || '', cnae_principal: d.cnae_fiscal?.toString() || '',
@@ -69,6 +79,9 @@ serve(async (req) => {
 
 
   } catch (error: unknown) {
+    if (error instanceof Error && error.message.startsWith('CNPJ lookup failed')) {
+      return createErrorResponse('CNPJ não encontrado', 404, 'NOT_FOUND');
+    }
     captureException(error);
     return createErrorResponse('Erro interno', 500, 'INTERNAL_SERVER_ERROR');
   }

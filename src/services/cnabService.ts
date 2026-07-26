@@ -33,6 +33,7 @@ interface CnabRemessaRecord {
   valor_total: number;
   total_pagamentos: number;
   arquivo_remessa?: string;
+  folha_id?: string;
   created_at?: string;
 }
 
@@ -72,7 +73,7 @@ interface FolhaItemRecord {
   colaborador?: { id: string; nome_completo: string; cpf: string };
 }
 
-type DataRecord = any;
+type DataRecord = Record<string, unknown>;
 
 export const cnabService = {
   async getConfig(empresaId: string): Promise<CNABConfig | null> {
@@ -146,7 +147,7 @@ export const cnabService = {
       .maybeSingle();
 
     if (existingRemessa) {
-      const rec = existingRemessa as unknown as CnabRemessaRecord & { folha_id?: string; arquivo_remessa?: string };
+      const rec = existingRemessa as CnabRemessaRecord;
       if (rec.status === 'enviado' && rec.arquivo_remessa) {
         return rec.arquivo_remessa;
       }
@@ -175,8 +176,8 @@ export const cnabService = {
 
     // Re-use pending remessa from a failed previous attempt; otherwise create new.
     let remessaRecord: CnabRemessaRecord;
-    if (existingRemessa && (existingRemessa as unknown as CnabRemessaRecord).status === 'pendente') {
-      remessaRecord = existingRemessa as unknown as CnabRemessaRecord;
+    if (existingRemessa && (existingRemessa as CnabRemessaRecord).status === 'pendente') {
+      remessaRecord = existingRemessa as CnabRemessaRecord;
     } else {
       const { data: remessa, error: rError } = await supabase
         .from('cnab_remessas')

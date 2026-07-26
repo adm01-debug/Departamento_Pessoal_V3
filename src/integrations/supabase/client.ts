@@ -277,7 +277,7 @@ type ChainableQueryBuilder = TerminalQueryBuilder;
 // Tipo exportado de supabase.from(table) — visível externamente via Module augmentation.
 export type QueryBuilderType = ChainableQueryBuilder;
 
-const createQueryBuilder = (table: string): QueryBuilder => {
+const createQueryBuilder = (table: string): TerminalQueryBuilder => {
   const state: { action: Action; payload: BridgePayload } = {
     action: 'select',
     payload: { filters: [] },
@@ -374,7 +374,7 @@ const createQueryBuilder = (table: string): QueryBuilder => {
 
  
 interface SupabaseProxyTarget {
-  from: (table: string) => QueryBuilder;
+  from: (table: string) => ChainableQueryBuilder;
   rpc: (fn: string, params: Record<string, unknown>) => Promise<BridgeResponse<any>>;
   [key: string]: unknown;
 }
