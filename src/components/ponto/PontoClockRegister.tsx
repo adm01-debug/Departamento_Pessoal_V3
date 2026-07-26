@@ -49,7 +49,7 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
   const [scanProgress, setScanProgress] = useState(0);
   const [scanStage, setScanStage] = useState('');
   const [scanOutcome, setScanOutcome] = useState<'confirmado' | 'pendente' | null>(null);
-  const [selectedTipo, setSelectedTipo] = useState<any>(null);
+  const [selectedTipo, setSelectedTipo] = useState<'entrada' | 'saida_almoco' | 'retorno_almoco' | 'saida' | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);

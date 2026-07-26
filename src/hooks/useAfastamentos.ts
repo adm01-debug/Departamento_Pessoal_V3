@@ -6,10 +6,23 @@ import { auditLogger } from '@/utils/auditLogger';
 import { toast } from 'sonner';
 import { useGenericCrud } from './useGenericCrud';
 import { safeErrorMessage } from '@/utils/safeError';
+
+// P2-051 (batch 2026-07-26): filtros tipados para o useGenericCrud.
+// Cada chave é opcional e aceita string (filtro livre, id, status, etc.).
+export interface AfastamentoFiltros {
+  status?: string;
+  tipo?: string;
+  colaborador_id?: string;
+  data_inicio?: string;
+  data_fim?: string;
+  busca?: string;
+  [key: string]: string | undefined;
+}
+
 export function useAfastamentos() {
   const { empresaAtual } = useEmpresas();
   const empresaId = empresaAtual?.id;
-  const [filtros, setFiltros] = useState<any>({});
+  const [filtros, setFiltros] = useState<AfastamentoFiltros>({});
 
   const crud = useGenericCrud<unknown>({
     queryKey: 'afastamentos',

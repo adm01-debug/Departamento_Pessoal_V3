@@ -12,11 +12,42 @@ import {
   Activity, Database, HardDrive, CheckCircle, XCircle, Trash2, Download,
   RefreshCw, Loader2, Bell, Zap, Clock
 } from 'lucide-react';
+
+// P2-051 (batch 2026-07-26): tipos explícitos substituem `useState<any>` em todos
+// os estados do SystemHealthTab. Antes, qualquer typo em `result.foo` passava
+// silenciosamente pelo compilador — agora erros de campo são detectados.
+
+export interface HealthServiceStatus {
+  status: 'ok' | 'error' | 'degraded' | 'unavailable';
+  latency_ms?: number;
+  error?: string;
+  records?: number | null;
+  note?: string;
+}
+
+export interface HealthcheckResult {
+  status: 'healthy' | 'degraded';
+  timestamp: string;
+  services: Record<string, HealthServiceStatus>;
+  total_latency_ms: number;
+}
+
+export interface CleanupResult {
+  total_cleaned: number;
+  results: Record<string, number>;
+}
+
+export interface BackupResult {
+  message?: string;
+  total_records: number;
+  tables: Record<string, { count?: number; error?: string }>;
+}
+
 export function SystemHealthTab() {
-  const [healthData, setHealthData] = useState<any>(null);
+  const [healthData, setHealthData] = useState<HealthcheckResult | null>(null);
   const [loading, setLoading] = useState<string | null>(null);
-  const [cleanupResult, setCleanupResult] = useState<any>(null);
-  const [backupResult, setBackupResult] = useState<any>(null);
+  const [cleanupResult, setCleanupResult] = useState<CleanupResult | null>(null);
+  const [backupResult, setBackupResult] = useState<BackupResult | null>(null);
   const [backupId, setBackupId] = useState('');
 
   const runHealthcheck = async () => {
@@ -25,8 +56,9 @@ export function SystemHealthTab() {
       const result = await edgeFunctionsService.healthcheck();
       setHealthData(result);
       toast.success(`Sistema: ${(result as Record<string, unknown>).status}`);
-    } catch (err: any) {
-      toast.error(safeErrorMessage(err, 'Erro na operação.'));
+    } catch (err: unknown) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      toast.error(safeErrorMessage(error, 'Erro na operação.'));
     } finally {
       setLoading(null);
     }
@@ -38,8 +70,9 @@ export function SystemHealthTab() {
       const result = await edgeFunctionsService.limpezaDados();
       setCleanupResult(result);
       toast.success(`${(result as Record<string, unknown>).total_cleaned} registros limpos!`);
-    } catch (err: any) {
-      toast.error(safeErrorMessage(err, 'Erro na operação.'));
+    } catch (err: unknown) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      toast.error(safeErrorMessage(error, 'Erro na operação.'));
     } finally {
       setLoading(null);
     }
@@ -52,8 +85,9 @@ export function SystemHealthTab() {
       setBackupResult(result);
       setBackupId(crypto.randomUUID().slice(0, 8).toUpperCase());
       toast.success((result as Record<string, unknown>).message as string);
-    } catch (err: any) {
-      toast.error(safeErrorMessage(err, 'Erro na operação.'));
+    } catch (err: unknown) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      toast.error(safeErrorMessage(error, 'Erro na operação.'));
     } finally {
       setLoading(null);
     }
@@ -64,8 +98,9 @@ export function SystemHealthTab() {
     try {
       await edgeFunctionsService.dispararAlertasDP();
       toast.success('Alertas de DP disparados com sucesso!');
-    } catch (err: any) {
-      toast.error(safeErrorMessage(err, 'Erro na operação.'));
+    } catch (err: unknown) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      toast.error(safeErrorMessage(error, 'Erro na operação.'));
     } finally {
       setLoading(null);
     }
@@ -76,8 +111,9 @@ export function SystemHealthTab() {
     try {
       const result = await edgeFunctionsService.processarAgendamentos();
       toast.success(`${(result as Record<string, unknown>).processados || 0} agendamentos processados!`);
-    } catch (err: any) {
-      toast.error(safeErrorMessage(err, 'Erro na operação.'));
+    } catch (err: unknown) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      toast.error(safeErrorMessage(error, 'Erro na operação.'));
     } finally {
       setLoading(null);
     }
@@ -88,8 +124,9 @@ export function SystemHealthTab() {
     try {
       await edgeFunctionsService.sincronizarBitrix({ action: 'sync_all' });
       toast.success('Sincronização Bitrix24 iniciada!');
-    } catch (err: any) {
-      toast.error(safeErrorMessage(err, 'Erro na operação.'));
+    } catch (err: unknown) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      toast.error(safeErrorMessage(error, 'Erro na operação.'));
     } finally {
       setLoading(null);
     }
@@ -100,8 +137,9 @@ export function SystemHealthTab() {
     try {
       await edgeFunctionsService.cache({ action: 'invalidate' });
       toast.success('Cache do sistema limpo com sucesso!');
-    } catch (err: any) {
-      toast.error(safeErrorMessage(err, 'Erro na operação.'));
+    } catch (err: unknown) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      toast.error(safeErrorMessage(error, 'Erro na operação.'));
     } finally {
       setLoading(null);
     }
