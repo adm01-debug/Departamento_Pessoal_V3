@@ -56,6 +56,8 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
     data_fim_prevista: string;
     tipo: string;
     status: string;
+    dias_total?: number;
+    cid?: { codigo: string; descricao: string };
   }
   const [cidResults, setCidResults] = useState<CidItem[]>([]);
   const [selectedCid, setSelectedCid] = useState<CidItem | null>(initialData?.cid ?? null);

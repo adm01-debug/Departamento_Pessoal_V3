@@ -154,7 +154,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
         .eq('empresa_id', empresaId)
         .order('created_at', { ascending: false })
         .limit(20);
-      if (data) setNotifications(data);
+      if (data) setNotifications(data as Notificacao[]);
     };
     loadNotifs();
 
@@ -164,7 +164,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'notificacoes', filter: `empresa_id=eq.${empresaId}` },
-        (payload) => {
+        (payload: { new: Notificacao }) => {
           setNotifications(prev => [payload.new, ...prev]);
           toast.info(payload.new.titulo, {
             description: payload.new.mensagem,

@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useColaboradores } from '@/hooks/useColaboradores';
 import { usePeriodosAquisitivos } from '@/hooks/usePeriodosAquisitivos';
 import { useProgramacaoMutations } from '@/hooks/ferias/useProgramacaoFerias';
+import { useOnMount } from '@/hooks/useMountEffects';
 
 const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 

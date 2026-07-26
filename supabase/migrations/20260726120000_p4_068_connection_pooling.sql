@@ -1,5 +1,6 @@
 -- P4-068: Configuração de Connection Pooling (PgBouncer)
 -- Data: 2026-07-26
+-- CORRIGIDO: Nomes de tabelas verificados nas migrations existentes
 
 -- =============================================================================
 -- 1. CONFIGURAÇÃO PGBOUNCER (Supabase)
@@ -52,7 +53,7 @@ GROUP BY datname;
 --   documentos        : verificar existência de empresa_id + ativo
 -- =============================================================================
 
--- Índices que otimizam queries frequentes (NÃO bloqueiam — IF NOT EXISTS + CONCURRENTLY)
+-- Índices que otimizam queries frequentes (NÃO bloqueiam — CONCURRENTLY)
 
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_colaboradores_empresa_ativo_sw
   ON public.colaboradores(empresa_id, status)
@@ -67,8 +68,14 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_folhas_pagamento_status_sw
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_registros_ponto_colab_data_sw
   ON public.registros_ponto(colaborador_id, data DESC);
 
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_ajustes_ponto_status_sw
+  ON public.ajustes_ponto(status, created_at DESC);
+
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_solicitacoes_ajuste_ponto_status_sw
+  ON public.solicitacoes_ajuste_ponto(status, created_at DESC);
+
 -- =============================================================================
--- 5. FUNÇÃO DE LIMPEZA DE CONEXÕES óRFÃS
+-- 5. FUNÇÃO DE LIMPEZA DE CONEXÕES óRFÃS (COM TRATAMENTO DE ERROS)
 -- =============================================================================
 
 CREATE OR REPLACE FUNCTION admin.clean_idle_connections()
@@ -78,12 +85,17 @@ SECURITY DEFINER
 AS $$
 BEGIN
   -- Termina conexões ociosas há mais de 30 minutos
-  PERFORM pg_terminate_backend(pid)
-  FROM pg_stat_activity
-  WHERE state = 'idle'
-    AND state_change < NOW() - INTERVAL '30 minutes'
-    AND pid <> pg_backend_pid()
-    AND application_name LIKE '%pgbouncer%';
+  BEGIN
+    PERFORM pg_terminate_backend(pid)
+    FROM pg_stat_activity
+    WHERE state = 'idle'
+      AND state_change < NOW() - INTERVAL '30 minutes'
+      AND pid <> pg_backend_pid()
+      AND application_name LIKE '%pgbouncer%';
+  EXCEPTION WHEN OTHERS THEN
+    -- Log error mas não quebra a função
+    RAISE NOTICE 'Erro ao limpar conexões: %', SQLERRM;
+  END;
 END;
 $$;
 

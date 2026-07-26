@@ -13,7 +13,7 @@
  * O hook garante que o efeito só executa no mount e nunca mais.
  */
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 
 export function useOnMount(effect: () => void | (() => void)): void {
   const mounted = useRef(false);

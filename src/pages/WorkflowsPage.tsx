@@ -17,10 +17,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { workflowService } from '@/services/workflowService';
+import { WorkflowDesigner } from '@/components/workflows/WorkflowDesigner';
 import { useEmpresas } from '@/hooks';
 import { formatDateTime } from '@/utils/format';
 import { toast } from 'sonner';
-import { Plus, GitBranch, Play, CheckCircle, XCircle, Clock, Trash2, Workflow, ArrowRight, Users, AlertTriangle, Timer, History, Zap, Mail, Bell } from 'lucide-react';
+import { Plus, GitBranch, Play, CheckCircle, XCircle, Clock, Trash2, Workflow, AlertTriangle, Timer, History, Zap, Mail, Bell, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import type { LooseRow } from '@/types/db';
@@ -137,6 +138,9 @@ export default function WorkflowsPage() {
             <TabsTrigger value="definicoes" className="rounded-lg font-body">Workflows</TabsTrigger>
             <TabsTrigger value="execucoes" className="rounded-lg font-body">Execuções</TabsTrigger>
             <TabsTrigger value="pipeline" className="rounded-lg font-body">Pipeline</TabsTrigger>
+            <TabsTrigger value="designer" className="rounded-lg font-body">
+              <GitBranch className="h-3 w-3 mr-1" />Designer
+            </TabsTrigger>
           </TabsList>
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
@@ -344,6 +348,34 @@ export default function WorkflowsPage() {
               );
             })}
           </div>
+        </TabsContent>
+        <TabsContent value="designer">
+          <WorkflowDesigner
+            onSave={(nodes, connections) => {
+              const tipoMap: Record<string, string> = {
+                ferias: 'ferias', afastamento: 'afastamento', despesa: 'despesa',
+                documento: 'documento', admissao: 'admissao', desligamento: 'desligamento',
+              };
+              const tipo = tipoMap[form.tipo] ?? 'custom';
+              workflowService.criarDefinicao({
+                empresa_id: empresaAtual?.id,
+                nome: nodes.find(n => n.type === 'start')?.label ?? 'Workflow sem nome',
+                tipo,
+                descricao: `Workflow com ${nodes.length} nós e ${connections.length} conexões`,
+                etapas: nodes.filter(n => n.type === 'aprovador').map((n, i) => ({
+                  nome: n.label,
+                  ordem: i + 1,
+                  sla_horas: (n.config.sla_horas as number) ?? 48,
+                  papel: (n.config.papel as string) ?? 'gestor',
+                })),
+                ativo: true,
+              }).then(() => {
+                toast.success('Workflow salvo!');
+              }).catch(() => {
+                toast.error('Erro ao salvar workflow');
+              });
+            }}
+          />
         </TabsContent>
       </Tabs>
 

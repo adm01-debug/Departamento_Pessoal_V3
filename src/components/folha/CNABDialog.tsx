@@ -11,6 +11,7 @@ import { safeErrorMessage } from '@/utils/safeError';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { todayLocalISO } from '@/utils/dateLocal';
 import { loggerService } from '@/services/loggerService';
+import { useOnMount } from '@/hooks/useMountEffects';
 
 interface CNABDialogProps {
   folhaId: string;

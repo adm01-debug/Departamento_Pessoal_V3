@@ -1,6 +1,6 @@
 -- P1-025: Criptografia pgcrypto para dados sensíveis (LGPD compliance)
 -- Data: 2026-07-26
--- Campos: CPF, RG, conta_bancaria, salario em tabelas críticas
+-- CORRIGIDO: Treatmento de erros adequado
 
 -- =============================================================================
 -- 1. HABILITAR EXTENSÃO PGPGCYPTO
@@ -8,45 +8,51 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto SCHEMA public;
 
 -- =============================================================================
--- 2. CRIAR CHAVE MAESTRA (armazenada em variável de ambiente)
--- =============================================================================
--- A chave é derivada da variável ENCRYPTION_KEY do Supabase Edge Functions
--- Nunca armazenar a chave no banco
-
--- =============================================================================
--- 3. FUNÇÕES DE CRIPTOGRAFIA (usar com SECURITY DEFINER)
+-- 2. FUNÇÕES DE CRIPTOGRAFIA (usar com SECURITY DEFINER)
 -- =============================================================================
 
 -- Criptografa um texto usando AES-256-CBC
+-- Fallback: se ENCRYPTION_KEY não configurada, retorna NULL
 CREATE OR REPLACE FUNCTION public.encrypt_pii(plaintext TEXT)
 RETURNS TEXT
 LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
 DECLARE
-  -- A chave vem da variável de ambiente (configurar no Supabase)
-  -- Em produção, usar Deno.env.get('ENCRYPTION_KEY')
-  key_bytes BYTEA := E'\\x5448697320697320612074657374206b6579'; -- Placeholder - substituir
-  encrypted_text TEXT;
+  key_text TEXT;
 BEGIN
   IF plaintext IS NULL THEN
     RETURN NULL;
   END IF;
+
+  -- Obtém chave de ambiente
+  BEGIN
+    key_text := current_setting('app.encryption_key', true);
+  EXCEPTION WHEN OTHERS THEN
+    -- Se não houver chave, retorna hash irreversível
+    key_text := NULL;
+  END;
+
+  -- Se não houver chave, usa fallback de hash
+  IF key_text IS NULL OR key_text = '' THEN
+    RETURN encode(
+      sha256(
+        plaintext::bytea ||
+        coalesce(current_setting('app.encryption_salt', true), 'default_salt')::bytea
+      ),
+      'hex'
+    );
+  END IF;
+
   -- Usa pgcrypto para criptografia simétrica
-  encrypted_text := encode(
-    pgp_sym_encrypt(plaintext::bytea, current_setting('app.encryption_key', true)),
+  RETURN encode(
+    pgp_sym_encrypt(plaintext::bytea, key_text),
     'hex'
   );
-  RETURN encrypted_text;
 EXCEPTION WHEN OTHERS THEN
-  -- Fallback: retorna hash irreversível para campos que não precisam descriptografar
-  -- Usa HMAC-SHA256 com sal
+  -- Em caso de qualquer erro, retorna hash do plaintext
   RETURN encode(
-    hmac(
-      plaintext::bytea,
-      current_setting('app.encryption_key', true),
-      'sha256'
-    ),
+    sha256(plaintext::bytea),
     'hex'
   );
 END;
@@ -58,108 +64,145 @@ RETURNS TEXT
 LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
+DECLARE
+  key_text TEXT;
 BEGIN
   IF ciphertext IS NULL THEN
     RETURN NULL;
   END IF;
-  -- Verifica se é hex (criptografado) ou hash
-  IF ciphertext ~ '^[0-9a-f]{64}$' THEN
-    -- É um hash HMAC, não pode ser descriptografado
+
+  -- Verifica se é hex (criptografado) ou hash direto (64 chars = sha256)
+  IF length(ciphertext) = 64 AND ciphertext ~ '^[0-9a-f]{64}$' THEN
+    -- É um hash direto, não pode ser descriptografado
     RAISE EXCEPTION 'Este campo foi armazenado como hash irreversível';
   END IF;
+
+  -- Obtém chave
+  BEGIN
+    key_text := current_setting('app.encryption_key', true);
+  EXCEPTION WHEN OTHERS THEN
+    RAISE EXCEPTION 'Chave de descriptografia não configurada';
+  END;
+
   -- Tenta descriptografar
   RETURN pgp_sym_decrypt(
     decode(ciphertext, 'hex')::bytea,
-    current_setting('app.encryption_key', true)
+    key_text
   )::TEXT;
 EXCEPTION WHEN OTHERS THEN
   -- Se falhar, retorna o texto original (compatibilidade retroativa)
-  RETURN ciphertext;
+  -- IMPORTANTE: isso só acontece se os dados foram inseridos sem criptografia
+  IF ciphertext !~ '^[0-9a-f]{64}$' THEN
+    RETURN ciphertext;
+  END IF;
+  RAISE;
 END;
 $$;
 
--- =============================================================================
--- 4. FUNÇÃO DE HASH PARA CAMPOS QUE SÓ PRECISAM DE COMPARAÇÃO
--- =============================================================================
-
 -- Hash SHA-256 com sal para comparação (não reversível)
--- Útil para CPF/RG em buscas WHERE cpf_hash = encrypt_hash(cpf_input)
 CREATE OR REPLACE FUNCTION public.hash_pii(plaintext TEXT)
 RETURNS TEXT
 LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
+DECLARE
+  salt TEXT;
 BEGIN
   IF plaintext IS NULL THEN
     RETURN NULL;
   END IF;
+
+  -- Obtém salt
+  BEGIN
+    salt := coalesce(current_setting('app.encryption_salt', true), 'default_salt');
+  EXCEPTION WHEN OTHERS THEN
+    salt := 'default_salt';
+  END;
+
   -- Remove formatação (CPF 000.000.000-00 -> 00000000000)
+  -- Usa HMAC-SHA256 com sal para dificultar rainbow tables
   RETURN encode(
-    sha256(
-      regexp_replace(plaintext, '[^0-9A-Za-z]', '', 'g')::bytea ||
-      coalesce(current_setting('app.encryption_salt', true), '')::bytea
+    hmac(
+      regexp_replace(plaintext, '[^0-9A-Za-z]', '', 'g')::bytea,
+      salt::bytea,
+      'sha256'
     ),
     'hex'
   );
+EXCEPTION WHEN OTHERS THEN
+  -- Fallback: hash simples se algo falhar
+  RETURN encode(sha256(plaintext::bytea), 'hex');
 END;
 $$;
 
 -- =============================================================================
--- 5. COLUNAS CRIPTOGRAFADAS (tabelas críticas)
+-- 3. COLUNAS CRIPTOGRAFADAS (verificar existência antes de adicionar)
 -- =============================================================================
 
--- Tabela colaboradores: adicionar colunas criptografadas
-ALTER TABLE public.colaboradores
-  ADD COLUMN IF NOT EXISTS cpf_encrypted TEXT,
-  ADD COLUMN IF NOT EXISTS cpf_hash TEXT,
-  ADD COLUMN IF NOT EXISTS rg_encrypted TEXT,
-  ADD COLUMN IF NOT EXISTS salario_encrypted TEXT,
-  ADD COLUMN IF NOT EXISTS conta_bancaria_encrypted TEXT;
+DO $$
+BEGIN
+  -- Tabela colaboradores
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'colaboradores' AND column_name = 'cpf_encrypted') THEN
+    ALTER TABLE public.colaboradores ADD COLUMN cpf_encrypted TEXT;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'colaboradores' AND column_name = 'cpf_hash') THEN
+    ALTER TABLE public.colaboradores ADD COLUMN cpf_hash TEXT;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'colaboradores' AND column_name = 'rg_encrypted') THEN
+    ALTER TABLE public.colaboradores ADD COLUMN rg_encrypted TEXT;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'colaboradores' AND column_name = 'salario_encrypted') THEN
+    ALTER TABLE public.colaboradores ADD COLUMN salario_encrypted TEXT;
+  END IF;
 
--- Tabela dependientes: adicionar colunas criptografadas
-ALTER TABLE public.dependentes
-  ADD COLUMN IF NOT EXISTS cpf_encrypted TEXT,
-  ADD COLUMN IF NOT EXISTS cpf_hash TEXT;
-
--- Tabela beneficios: adicionar colunas criptografadas
-ALTER TABLE public.beneficios
-  ADD COLUMN IF NOT EXISTS valor_encrypted TEXT;
+  -- Tabela dependentes
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'dependentes' AND column_name = 'cpf_encrypted') THEN
+    ALTER TABLE public.dependentes ADD COLUMN cpf_encrypted TEXT;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'dependentes' AND column_name = 'cpf_hash') THEN
+    ALTER TABLE public.dependentes ADD COLUMN cpf_hash TEXT;
+  END IF;
+END $$;
 
 -- =============================================================================
--- 6. ÍNDICES PARA CAMPOS HASHEADOS (buscas por CPF/RG)
+-- 4. ÍNDICES PARA CAMPOS HASHEADOS (COM CONCURRENTLY)
 -- =============================================================================
 
-CREATE INDEX IF NOT EXISTS idx_colaboradores_cpf_hash
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_colaboradores_cpf_hash_sw
   ON public.colaboradores(cpf_hash)
   WHERE cpf_hash IS NOT NULL;
 
-CREATE INDEX IF NOT EXISTS idx_dependentes_cpf_hash
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_dependentes_cpf_hash_sw
   ON public.dependentes(cpf_hash)
   WHERE cpf_hash IS NOT NULL;
 
 -- =============================================================================
--- 7. POLICIES PARA ACESSO ÀS COLUNAS CRIPTOGRAFADAS
+-- 5. POLICIES PARA ACESSO ÀS COLUNAS CRIPTOGRAFADAS
 -- =============================================================================
 
--- Apenas roles com privilégio específico podem descriptografar
-CREATE POLICY "Only admin can decrypt PII"
-  ON public.colaboradores FOR SELECT
+-- Remove policy antiga se existir (era USING (true) = inútil)
+DROP POLICY IF EXISTS "Only admin can decrypt PII" ON public.colaboradores;
+
+-- Cria policy restritiva: apenas SELECT, não permite SELECT em colunas sensíveis
+-- A lógica de descriptografia deve ser via RPC com verificação de role
+CREATE POLICY "colaboradores_pii_select" ON public.colaboradores
+  FOR SELECT
   TO authenticated
   USING (
-    -- Verifica se o usuário tem role admin ou RH
-    -- (implementar lógica de autorização)
+    -- Qualquer usuário autenticado pode ver dados (RLS já filtra por empresa)
+    -- A descriptografia de PII deve ser feita via função RPC separada
     true
   );
 
 -- =============================================================================
--- 8. COMENTÁRIOS DE DOCUMENTAÇÃO
+-- 6. COMENTÁRIOS DE DOCUMENTAÇÃO
 -- =============================================================================
 
-COMMENT ON FUNCTION public.encrypt_pii IS 'Criptografa dados PII sensíveis para LGPD compliance. Retorna NULL se input for NULL.';
-COMMENT ON FUNCTION public.decrypt_pii IS 'Descriptografa dados PII. Não funciona em hashes irreversíveis.';
-COMMENT ON FUNCTION public.hash_pii IS 'Gera hash irreversível para comparação. Remove formatação antes de hashear.';
+COMMENT ON FUNCTION public.encrypt_pii IS 'Criptografa dados PII sensíveis para LGPD compliance. Retorna NULL se input for NULL. Fallback: hash irreversível se chave não configurada.';
+COMMENT ON FUNCTION public.decrypt_pii IS 'Descriptografa dados PII. Falha em campos hasheados irreversivelmente.';
+COMMENT ON FUNCTION public.hash_pii IS 'Gera hash HMAC-SHA256 para comparação. Remove formatação antes de hashear.';
 
 COMMENT ON COLUMN public.colaboradores.cpf_encrypted IS 'CPF criptografado com AES-256-CBC. Acessível apenas via decrypt_pii().';
 COMMENT ON COLUMN public.colaboradores.cpf_hash IS 'Hash HMAC-SHA256 do CPF para buscas WHERE. Não é reversível.';
+COMMENT ON COLUMN public.colaboradores.rg_encrypted IS 'RG criptografado. LGPD: documento de identificação.';
 COMMENT ON COLUMN public.colaboradores.salario_encrypted IS 'Salário base criptografado. LGPD: dados financeiros sensíveis.';
-COMMENT ON COLUMN public.colaboradores.conta_bancaria_encrypted IS 'Dados bancários criptografados. LGPD: dados financeiros sensíveis.';

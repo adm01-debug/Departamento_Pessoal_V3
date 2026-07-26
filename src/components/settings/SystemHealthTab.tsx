@@ -53,9 +53,9 @@ export function SystemHealthTab() {
   const runHealthcheck = async () => {
     setLoading('health');
     try {
-      const result = await edgeFunctionsService.healthcheck();
+      const result = await edgeFunctionsService.healthcheck() as HealthcheckResult;
       setHealthData(result);
-      toast.success(`Sistema: ${(result as Record<string, unknown>).status}`);
+      toast.success(`Sistema: ${result.status}`);
     } catch (err: unknown) {
       const error = err instanceof Error ? err : new Error(String(err));
       toast.error(safeErrorMessage(error, 'Erro na operação.'));
@@ -67,9 +67,9 @@ export function SystemHealthTab() {
   const runCleanup = async () => {
     setLoading('cleanup');
     try {
-      const result = await edgeFunctionsService.limpezaDados();
+      const result = await edgeFunctionsService.limpezaDados() as CleanupResult;
       setCleanupResult(result);
-      toast.success(`${(result as Record<string, unknown>).total_cleaned} registros limpos!`);
+      toast.success(`${result.total_cleaned} registros limpos!`);
     } catch (err: unknown) {
       const error = err instanceof Error ? err : new Error(String(err));
       toast.error(safeErrorMessage(error, 'Erro na operação.'));
@@ -81,10 +81,10 @@ export function SystemHealthTab() {
   const runBackup = async () => {
     setLoading('backup');
     try {
-      const result = await edgeFunctionsService.backupServidor();
+      const result = await edgeFunctionsService.backupServidor() as BackupResult;
       setBackupResult(result);
       setBackupId(crypto.randomUUID().slice(0, 8).toUpperCase());
-      toast.success((result as Record<string, unknown>).message as string);
+      toast.success(result.message || 'Backup processado');
     } catch (err: unknown) {
       const error = err instanceof Error ? err : new Error(String(err));
       toast.error(safeErrorMessage(error, 'Erro na operação.'));
@@ -109,8 +109,8 @@ export function SystemHealthTab() {
   const runAgendamentos = async () => {
     setLoading('agendamentos');
     try {
-      const result = await edgeFunctionsService.processarAgendamentos();
-      toast.success(`${(result as Record<string, unknown>).processados || 0} agendamentos processados!`);
+      const result = await edgeFunctionsService.processarAgendamentos() as { processados: number };
+      toast.success(`${result.processados || 0} agendamentos processados!`);
     } catch (err: unknown) {
       const error = err instanceof Error ? err : new Error(String(err));
       toast.error(safeErrorMessage(error, 'Erro na operação.'));

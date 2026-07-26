@@ -10,24 +10,21 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { Separator } from '@/components/ui/separator';
+import type { Ferias } from '@/types/entities';
 
-// P2-051 (batch 2026-07-26): tipo explícito para eventos de férias selecionados.
+// P2-051 (batch 2026-07-26): tipo concreto do tipo Ferias (já definido em entities.ts)
+// é usado em vez de um novo local. Mantém o componente em sync com o schema.
 // Substitui `useState<any>(null)` — props acessadas sem checagem geravam
 // vulnerabilidade silenciosa (typos não eram detectados).
-export interface FeriasItem {
-  id: string;
-  colaborador_id: string;
-  data_inicio: string;
-  data_fim: string;
-  dias_ferias: number;
-  status: 'aprovada' | 'em_gozo' | 'pendente' | 'concluida' | 'cancelada' | 'rejeitada';
+export type FeriasItem = Ferias & {
+  dias_ferias?: number;
   abono_pecuniario?: boolean;
   adiantamento_13?: boolean;
   colaborador?: {
     nome_completo?: string;
     cargo?: { nome?: string };
   };
-}
+};
 
 export function CalendarioFerias() {
   const { ferias } = useFerias();
@@ -40,7 +37,7 @@ export function CalendarioFerias() {
   const nextMonth = () => setCurrentDate(addMonths(currentDate, 1));
   const prevMonth = () => setCurrentDate(subMonths(currentDate, 1));
 
-  const feriasNoMes = ferias.filter((f: FeriasItem) => {
+  const feriasNoMes = (ferias as FeriasItem[]).filter((f) => {
     if (f.status === 'cancelada' || f.status === 'rejeitada') return false;
     const start = new Date(f.data_inicio);
     const end = new Date(f.data_fim);
@@ -49,7 +46,7 @@ export function CalendarioFerias() {
       isWithinInterval(end, { start: monthStart, end: monthEnd }) ||
       (start < monthStart && end > monthEnd)
     );
-  }).sort((a: FeriasItem, b: FeriasItem) => new Date(a.data_inicio).getTime() - new Date(b.data_inicio).getTime());
+  }).sort((a, b) => new Date(a.data_inicio).getTime() - new Date(b.data_inicio).getTime());
 
   const getStatusColor = (status: string) => {
     switch (status) {

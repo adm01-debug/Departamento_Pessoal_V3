@@ -6,6 +6,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+import { loggerService } from './loggerService';
 
 export type DomainType = 'cbo' | 'cnae' | 'irrf' | 'inss' | 'feriados' | 'rubricas';
 

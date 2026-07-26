@@ -67,8 +67,8 @@ async function fetchWithRetry(
       return res;
     }
     // Último retry agotado
-    if (attempt === retries) return res;
-    if (attempt < retries) await sleep(RETRY_DELAYS[attempt]);
+    if (attempt === retryCount) return res;
+    if (attempt < retryCount) await sleep(RETRY_DELAYS[attempt]);
   }
   return new Response(null, { status: 500 }) as Response;
 }

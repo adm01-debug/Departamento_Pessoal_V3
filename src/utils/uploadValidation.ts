@@ -19,7 +19,7 @@ const DANGEROUS_EXTENSIONS = new Set([
   'svg', 'html', 'htm', 'xhtml',
 ]);
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const _MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB (referência para limites por tipo de upload)
 
 export function validateUploadFile(file: File, options?: { maxSizeMB?: number }): void {
   const maxSize = (options?.maxSizeMB ?? 10) * 1024 * 1024;
