@@ -1,5 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { bitrixBreaker, resendBreaker, genericBreaker } from '@/lib/circuitBreaker';
+import { retryWithIdempotency } from '@/lib/retry';
+import { loggerService } from '@/services/loggerService';
 
 // NOTA: não enviamos headers customizados (ex.: 'x-request-id') nas invocações de
 // edge functions. O CORS das funções (supabase/functions/_shared/contract.ts) só
@@ -40,25 +42,43 @@ export const edgeFunctionsService = {
     competencia?: string;
   }) => handleInvoke('enviar-relatorio', { body: params }, resendBreaker),
 
-  /** Gera guias DARF/GPS/FGTS via edge function */
+  /** Gera guias DARF/GPS/FGTS via edge function — retry com idempotência. */
   gerarGuias: async (params: {
     empresaId: string;
     competencia: string;
     tipo: 'darf' | 'gps' | 'fgts' | 'fgts_digital' | 'todos';
-  }) => handleInvoke('gerar-guias', { body: params }),
+  }) => {
+    const idemKey = `gerar-guias:${params.empresaId}:${params.competencia}:${params.tipo}`;
+    return retryWithIdempotency({
+      fn: () => handleInvoke('gerar-guias', { body: params }),
+      idempotencyKey: idemKey,
+      onRetry: (a, d, e) => loggerService.warn('gerarGuias retry', { attempt: a, delayMs: d, error: e }),
+    });
+  },
 
-  /** Processa ponto do período via edge function */
-  processarPonto: async (params: { empresaId: string; dataInicio: string; dataFim: string }) =>
-    handleInvoke('processar-ponto', { body: params }),
+  /** Processa ponto do período — retry com idempotência. */
+  processarPonto: async (params: { empresaId: string; dataInicio: string; dataFim: string }) => {
+    const idemKey = `processar-ponto:${params.empresaId}:${params.dataInicio}:${params.dataFim}`;
+    return retryWithIdempotency({
+      fn: () => handleInvoke('processar-ponto', { body: params }),
+      idempotencyKey: idemKey,
+    });
+  },
 
-  /** Calcula férias via edge function */
+  /** Calcula férias — retry com idempotência. */
   calcularFerias: async (params: {
     salario_base: number;
     dias_ferias?: number;
     dias_abono?: number;
     dependentes_irrf?: number;
     colaborador_id?: string;
-  }) => handleInvoke('calcular-ferias', { body: params }),
+  }) => {
+    const idemKey = `calcular-ferias:${params.colaborador_id ?? 'anon'}:${Date.now()}`;
+    return retryWithIdempotency({
+      fn: () => handleInvoke('calcular-ferias', { body: params }),
+      idempotencyKey: idemKey,
+    });
+  },
 
   /** Calcula folha via edge function server-side com resiliência + idempotência.
    *  A `idempotencyKey` viaja no body (o CORS já aceita header, mas body é mais robusto

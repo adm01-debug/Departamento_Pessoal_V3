@@ -83,3 +83,24 @@ Para acompanhar a saúde da fila de limpeza LGPD (`lgpd_fila_limpeza`):
 1. **Logging:** Sempre use `console.time()` e `console.timeEnd()` dentro das functions para logs detalhados.
 2. **Retentativas:** Funções que falham por timeout devem ser idempotentes para permitir retentativas automáticas.
 3. **Escalabilidade:** Se o backlog da fila crescer constantemente, considere aumentar o paralelismo ou otimizar a query principal.
+
+## Retry Exponencial com Idempotência (P3-061)
+
+**Implementação:** `src/lib/retry.ts`
+
+Métodos `gerarGuias`, `processarPonto` e `calcularFerias` no `edgeFunctionsService` agora usam retry exponencial com idempotency key:
+
+- Backoff: 500ms → 1s → 2s → 4s (max 4 tentativas)
+- Jitter: ±20% para evitar thundering herd
+- 429 Rate Limit: respeita header `Retry-After`
+- 5xx: retry automático
+- 4xx (não 429): falha imediata
+- Idempotency key no body garante que retries não causam duplicação
+
+```typescript
+const result = await retryWithIdempotency({
+  fn: () => edgeFunctionsService.calcularFolha({ empresaId, competencia }),
+  idempotencyKey: `${empresaId}:${competencia}:${Date.now()}`,
+  onRetry: (attempt, delay, error) => logger.warn('retry', { attempt, delay }),
+});
+```
