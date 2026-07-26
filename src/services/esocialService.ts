@@ -113,7 +113,7 @@ export async function criarEvento(evento: {
         ambiente: '2'
       });
     } catch (e) {
-      loggerService.warn('Erro ao gerar XML inicial', { tipo_evento: evento.tipo_evento }, e instanceof Error ? e : undefined);
+      loggerService.warn('Erro ao gerar XML inicial', { tipo_evento: evento.tipo_evento });
     }
   }
 

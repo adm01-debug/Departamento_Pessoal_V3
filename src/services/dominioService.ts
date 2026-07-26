@@ -67,11 +67,11 @@ async function fetchDomainData<T>(type: DomainType): Promise<T[]> {
 
   // Busca do backend (que tem cachedFetch)
   const { data, error } = await supabase.functions.invoke('tabelas-dominio', {
-    query: { type },
+    body: { type },
   });
 
   if (error) {
-    console.error(`[dominioService] Erro ao buscar ${type}:`, error);
+    loggerService.error(`Erro ao buscar domínio ${type}`, { type }, error instanceof Error ? error : new Error(String(error)));
     throw error;
   }
 

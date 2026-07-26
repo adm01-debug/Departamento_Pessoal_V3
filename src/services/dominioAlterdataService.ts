@@ -52,13 +52,14 @@ async function fetchWithRetry(
   url: string,
   options: RequestInit & { retries?: number },
 ): Promise<Response> {
-  const retries = options.retries ?? RETRY_DELAYS.length;
-  for (let attempt = 0; attempt <= retries; attempt++) {
-    const res = await fetch(url, { ...options, retries: undefined });
+  const { retries: _retries, ...fetchOptions } = options;
+  const retryCount = options.retries ?? RETRY_DELAYS.length;
+  for (let attempt = 0; attempt <= retryCount; attempt++) {
+    const res = await fetch(url, fetchOptions);
     if (res.ok) return res;
     // 401 → tenta re-autenticar na próxima iteração (secreto implícito no retry)
     if (res.status === 401) {
-      if (attempt < retries) await sleep(RETRY_DELAYS[attempt]);
+      if (attempt < retryCount) await sleep(RETRY_DELAYS[attempt]);
       continue;
     }
     // 4xx não-retryable exceto 429

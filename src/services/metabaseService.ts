@@ -76,12 +76,12 @@ function buildSignedUrl(
   for (const [key, value] of Object.entries(params)) {
     const vals = Array.isArray(value) ? value : [value];
     for (const v of vals) {
-      searchParams.append(`&filter_${key}=${encodeURIComponent(v)}`);
+      searchParams.append(`filter_${key}`, String(v));
     }
   }
 
   const baseUrl = `${siteUrl}/dashboard/${dashboardId}`;
-  const qs = searchParams.toString().replace(/^&/, '');
+  const qs = searchParams.toString();
 
   // Em produção real, usar jsonwebtoken ou Auth.js para assinar:
   //   const token = jwt.sign({ resource: { dashboard: dashboardId }, params, exp: ... }, secretKey);
