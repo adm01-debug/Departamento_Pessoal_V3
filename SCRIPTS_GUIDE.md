@@ -100,34 +100,51 @@ npm run docker:down      # Para ambiente Docker
 }
 ```
 
-## Dicas
+## Scripts de Manutenção
 
-1. **Use `npm run`** para ver todos os scripts disponíveis
-2. **Crie aliases** no seu `.bashrc` ou `.zshrc` para scripts frequentes
-3. **Documente** scripts complexos com comentários no próprio comando
+### sync-lockfiles.sh (P2-035)
+Valida paridade entre `bun.lock` e `package-lock.json`.
 
-## Exemplo de package.json Completo
+```bash
+# Verificação (padrão — dry-run)
+./scripts/sync-lockfiles.sh
 
-```json
-{
-  "name": "departamento-pessoal",
-  "version": "18.0.0",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "build:optimized": "vite build --config vite.config.optimized.ts",
-    "preview": "vite preview",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "lint:fix": "eslint . --ext ts,tsx --fix",
-    "format": "prettier --write \"src/**/*.{ts,tsx,css,md}\"",
-    "type-check": "tsc --noEmit",
-    "clean": "rm -rf dist node_modules",
-    "fresh": "npm run clean && npm install"
-  }
-}
+# Corrigir drift automaticamente
+./scripts/sync-lockfiles.sh --fix
 ```
+
+| Saída | Significado |
+|-------|------------|
+| Exit 0 | Paridade OK ou drift abaixo do threshold (3) |
+| Exit 1 | Drift crítico detectado — CI deve falhar |
+| Exit 2 | Lockfile ausente |
+
+Packages comparados: `react`, `react-dom`, `vite`, `typescript`, `@supabase/supabase-js`, `zod`, `@tanstack/react-query`, `zustand`, etc. (14 críticos).
+
+### regenerate-supabase-types.sh (P2-044)
+Regenera tipos TypeScript a partir do schema live do banco.
+
+```bash
+# Supabase Cloud (padrão)
+./scripts/regenerate-supabase-types.sh
+
+# Self-hosted (psql direto)
+SUPABASE_DB_URL="postgresql://user:pass@host:5432/db" \
+  ./scripts/regenerate-supabase-types.sh
+```
+
+Saída: `src/integrations/supabase/types.ts`.
 
 ---
 
-**Última atualização:** Janeiro 2026  
-**Versão:** 1.0
+## Dicas
+
+1. **Use `bun run`** para ver todos os scripts disponíveis (preferível a `npm run`).
+2. **CI**: adicione `sync-lockfiles.sh` ao workflow de CI para detectar drift antes do merge.
+3. **Dependências**: após `bun install`, rode `sync-lockfiles.sh --fix` se usar npm em CI.
+4. **Documente** scripts complexos com comentários no próprio comando.
+
+---
+
+**Última atualização:** 24/07/2026
+**Versão:** 1.1
