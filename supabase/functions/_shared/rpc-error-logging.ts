@@ -51,12 +51,12 @@ function sanitize(value: string): string {
 function categorizeByCode(code: string | undefined): 'error' | 'warn' | 'info' {
   if (!code) return 'error';
   const c = Number(code);
-  if (c === 23505) return 'warn';    // unique_violation — retry não ajuda, mas não é crítico
-  if (c === 23503) return 'warn';    // foreign_key_violation — dado referencial
+  if (c === 23505) return 'warn';    // unique_violation
+  if (c === 23503) return 'warn';    // foreign_key_violation
   if (c === 23502) return 'error';   // not_null_violation
-  if (c === 23514) return 'error';    // check_violation
-  if (c === 23506) return 'error';    // exclusion_violation
-  if (c === 22P02) return 'warn';     // invalid_text_representation (tipo errado)
+  if (c === 23514) return 'error';   // check_violation
+  if (c === 23506) return 'error';  // exclusion_violation
+  if (code === '22P02') return 'warn'; // invalid_text_representation (tipo errado — usa string)
   return 'error';
 }
 
