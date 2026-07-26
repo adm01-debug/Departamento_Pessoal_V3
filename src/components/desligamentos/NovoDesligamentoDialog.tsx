@@ -22,7 +22,13 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
   const { empresaAtual } = useEmpresas();
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
-  const [colaboradores, setColaboradores] = useState<any[]>([]);
+  interface ColaboradorBasico {
+    id: string;
+    nome_completo: string;
+    cargo: string | null;
+    salario_base: number | null;
+  }
+  const [colaboradores, setColaboradores] = useState<ColaboradorBasico[]>([]);
   const [loadingColab, setLoadingColab] = useState(false);
   const [form, setForm] = useState({
     colaborador_id: '',
@@ -96,7 +102,7 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
         aviso_trabalhado: false,
         saldo_fgts: ''
       });
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao criar desligamento.'));
     } finally {
       setLoading(false);

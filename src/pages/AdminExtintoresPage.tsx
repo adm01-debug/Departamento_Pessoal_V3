@@ -14,6 +14,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { AlertCircle, Flame, ShieldCheck, Timer, Plus, ClipboardCheck, QrCode } from 'lucide-react';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+import { loggerService } from '@/services/loggerService';
 import { z } from 'zod';
 
 interface Dashboard {
@@ -100,8 +101,8 @@ export default function AdminExtintoresPage() {
       setDashboard(dash as unknown as Dashboard);
       setExtintores((exts as Extintor[]) || []);
     } catch (e) {
+      loggerService.error('Erro ao carregar extintores', { empresaId: empresaAtual?.id }, e instanceof Error ? e : new Error(String(e)));
       toast.error('Erro ao carregar extintores');
-      console.error(e);
     } finally {
       setLoading(false);
     }

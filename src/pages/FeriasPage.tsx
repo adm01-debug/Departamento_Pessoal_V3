@@ -18,6 +18,7 @@ import { Calendar, Calculator, Loader2, List, CalendarDays, History, LayoutDashb
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { loggerService } from '@/services/loggerService';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
@@ -69,7 +70,7 @@ export default function FeriasPage() {
         } else {
           refetch();
         }
-      }).catch(err => console.error('Erro no auto-sync:', err));
+      }).catch(err => loggerService.error('Erro no auto-sync de férias', { empresaId: empresaAtual?.id }, err instanceof Error ? err : new Error(String(err))));
     }, 60000); // 1 minuto de intervalo fixo para precisão
 
     return () => clearInterval(intervalId);
@@ -119,8 +120,8 @@ export default function FeriasPage() {
       });
       setCalcResult(result as Record<string, any>);
       toast.success('Cálculo validado pelo servidor');
-    } catch (err: any) {
-      console.error('Erro no cálculo server-side:', err);
+    } catch (err) {
+      loggerService.error('Erro no cálculo server-side de férias', { empresaId: empresaAtual?.id }, err instanceof Error ? err : new Error(String(err)));
     } finally {
       setCalcLoading(false);
     }

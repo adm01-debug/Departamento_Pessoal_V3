@@ -5,6 +5,7 @@ import { calculoLoteService, BatchProgress } from '@/services/folha/calculoLoteS
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+import { loggerService } from '@/services/loggerService';
 
 export function useCalculoFolha() {
   const [resultado, setResultado] = useState<CalculoResultado | null>(null);
@@ -96,7 +97,7 @@ export function useCalculoFolha() {
 
         return data;
       } catch (err: unknown) {
-        console.error('Erro no cálculo de folha:', err);
+        loggerService.error('Erro no cálculo de folha', { colaboradorId }, err instanceof Error ? err : undefined);
         throw err;
       }
     },

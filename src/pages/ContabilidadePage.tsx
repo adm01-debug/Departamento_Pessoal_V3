@@ -14,11 +14,30 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { StatusBadge } from '@/components/ui/status-badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { formatDate } from '@/utils/format';
+import { loggerService } from '@/services/loggerService';
 export default function ContabilidadePage() {
   const { empresaAtual } = useEmpresas();
-  const [lancamentos, setLancamentos] = useState<any[]>([]);
-  const [planoContas, setPlanoContas] = useState<any[]>([]);
-  const [folhas, setFolhas] = useState<any[]>([]);
+  interface Lancamento {
+    id: string;
+    data: string;
+    descricao: string;
+    valor: number;
+    tipo: string;
+  }
+  interface PlanoConta {
+    id: string;
+    codigo: string;
+    descricao: string;
+  }
+  interface FolhaResumo {
+    id: string;
+    competencia: string;
+    total: number;
+    status: string;
+  }
+  const [lancamentos, setLancamentos] = useState<Lancamento[]>([]);
+  const [planoContas, setPlanoContas] = useState<PlanoConta[]>([]);
+  const [folhas, setFolhas] = useState<FolhaResumo[]>([]);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [selectedFolha, setSelectedFolha] = useState('');
@@ -37,7 +56,7 @@ export default function ContabilidadePage() {
       setPlanoContas(pla || []);
       setFolhas(fls || []);
     } catch (error) {
-      console.error(error);
+      loggerService.error('Erro ao carregar dados contábeis', { empresaId: empresaAtual?.id }, error instanceof Error ? error : new Error(String(error)));
       toast.error('Erro ao carregar dados contábeis');
     } finally {
       setLoading(false);
@@ -60,7 +79,7 @@ export default function ContabilidadePage() {
       await contabilidadeService.gerarLancamentosFolha(empresaAtual!.id, selectedFolha);
       toast.success('Lançamentos contábeis gerados com sucesso');
       loadData();
-    } catch (error: any) {
+    } catch (error) {
       toast.error(safeErrorMessage(error, 'Erro ao gerar lançamentos contábeis.'));
     } finally {
       setProcessing(false);

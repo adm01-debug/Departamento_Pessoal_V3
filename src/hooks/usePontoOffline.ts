@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { pontoOfflineService } from '@/services/pontoOfflineService';
+import { loggerService } from '@/services/loggerService';
 
 export function usePontoOffline() {
   const [queueSize, setQueueSize] = useState(0);
@@ -36,7 +37,7 @@ export function usePontoOffline() {
       updateSize();
       toast.warning('Você está offline. O ponto foi salvo localmente com criptografia e será sincronizado automaticamente quando houver conexão.');
     } catch (error) {
-      console.error('Erro ao enfileirar ponto offline:', error);
+      loggerService.error('Erro ao enfileirar ponto offline', { tipo, colaboradorId }, error instanceof Error ? error : undefined);
       toast.error('Falha ao salvar ponto offline.');
     }
   };
@@ -57,7 +58,7 @@ export function usePontoOffline() {
         toast.error(`${result.errors} batida(s) não puderam ser sincronizadas e permanecem na fila.`);
       }
     } catch (error) {
-      console.error('Erro durante sincronização de ponto:', error);
+      loggerService.error('Erro durante sincronização de ponto', { synced: result.synced, errors: result.errors }, error instanceof Error ? error : undefined);
     } finally {
       setIsSyncing(false);
     }

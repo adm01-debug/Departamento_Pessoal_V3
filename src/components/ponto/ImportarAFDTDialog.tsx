@@ -76,7 +76,7 @@ export function ImportarAFDTDialog() {
           }
         }
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Falha na reconciliação.'));
     } finally {
       setReconciliando(false);
@@ -117,7 +117,7 @@ export function ImportarAFDTDialog() {
           ? 'Arquivo já importado — resultado reutilizado.'
           : `Importação concluída: ${res.total_registros} registros.`
       );
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Falha na importação do arquivo.'));
     } finally {
       setLoading(false);

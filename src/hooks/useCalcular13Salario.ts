@@ -53,7 +53,7 @@ export function useCalcular13Salario() {
       setResultado(data.resultado);
       toast.success(`13º Salário (${dados.parcela}ª parcela) calculado!`);
       return data.resultado;
-    } catch (err: any) {
+    } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro ao calcular 13º salário.'));
       return null;
     } finally {

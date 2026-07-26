@@ -83,7 +83,7 @@ export function SimuladorWhatIf() {
       });
       if (error) throw error;
       toast.success('Simulação salva com sucesso!');
-    } catch (err: any) {
+    } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro ao salvar simulação.'));
     } finally {
       setSaving(false);

@@ -314,7 +314,7 @@ export function IntegracoesTab() {
                   try {
                     await edgeFunctionsService.sincronizarBitrix({ action: 'sync_all' });
                     toast.success('Sincronização Bitrix24 iniciada!');
-                  } catch (err: any) { toast.error(safeErrorMessage(err, 'Erro na sincronização.')); }
+                  } catch (err) { toast.error(safeErrorMessage(err, 'Erro na sincronização.')); }
                 }}
               >
                 <RefreshCw className="h-3.5 w-3.5" /> Sincronizar Agora

@@ -115,7 +115,7 @@ export const contratacaoService = {
         }
       });
       return (undefined);
-    } catch (e: any) {
+    } catch (e) {
       throw new Error('Falha ao validar documento de admissão', { cause: e });
     }
   },
@@ -173,7 +173,7 @@ export const contratacaoService = {
         mensagem: `Link de contratação enviado via WhatsApp`
       });
       return (undefined);
-    } catch (e: any) {
+    } catch (e) {
       throw new Error('Falha ao enviar notificação via WhatsApp', { cause: e });
     }
   },
@@ -205,7 +205,7 @@ export const contratacaoService = {
       });
       
       return (true);
-    } catch (e: any) {
+    } catch (e) {
       throw new Error('Falha na transmissão para o eSocial', { cause: e });
     }
   }

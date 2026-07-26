@@ -60,7 +60,7 @@ export function PagamentoBancarioWizard({ folhaId }: { folhaId?: string }) {
       
       setCurrentStep(3);
       toast.success(method === 'pix' ? 'Lote PIX liquidado com sucesso!' : 'Arquivo de remessa gerado e enviado ao banco.');
-    } catch (err: any) {
+    } catch (err) {
       toast.error(safeErrorMessage(err, 'Falha no processamento bancário.'));
     } finally {
       setIsProcessing(false);

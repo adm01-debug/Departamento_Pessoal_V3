@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { calcularRescisao } from '@/utils/rescisaoCalc';
 import { auditLogger } from '@/utils/auditLogger';
+import { loggerService } from './loggerService';
 
 async function sha256Hex(data: string): Promise<string> {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(data));
@@ -36,8 +37,8 @@ export const rescisaoService = {
       }
 
       return true;
-    } catch (e: any) {
-      throw new Error(e.message || 'Erro inesperado na validação de transição', { cause: e });
+    } catch (e) {
+      throw new Error(e instanceof Error ? e.message : 'Erro inesperado na validação de transição', { cause: e });
     }
   },
 
@@ -117,8 +118,8 @@ export const rescisaoService = {
       });
 
       return novo;
-    } catch (e: any) {
-      throw new Error(e.message || 'Erro crítico ao processar cálculo de rescisão', { cause: e });
+    } catch (e) {
+      throw new Error(e instanceof Error ? e.message : 'Erro crítico ao processar cálculo de rescisão', { cause: e });
     }
   },
 
@@ -191,8 +192,8 @@ export const rescisaoService = {
       });
 
       return data;
-    } catch (e: any) {
-      throw new Error(e.message || 'Erro ao processar homologação', { cause: e });
+    } catch (e) {
+      throw new Error(e instanceof Error ? e.message : 'Erro ao processar homologação', { cause: e });
     }
   },
 
@@ -215,14 +216,14 @@ export const rescisaoService = {
       });
 
       return data;
-    } catch (e: any) {
-      throw new Error(e.message || 'Falha ao realizar assinatura digital', { cause: e });
+    } catch (e: unknown) {
+      if (e instanceof Error) throw e;
+      throw new Error(String(e), { cause: e });
     }
   },
 
 
-
-  async processarPagamento(id: string, empresaId: string, comprovanteUrl?: string): Promise<any> {
+  async processarPagamento(id: string, empresaId: string, comprovanteUrl?: string): Promise<any> {(id: string, empresaId: string, comprovanteUrl?: string): Promise<any> {
     if (!empresaId) throw new Error('empresa_id é obrigatório');
     try {
       const { data: d, error: fetchError } = await supabase
@@ -264,7 +265,7 @@ export const rescisaoService = {
         .eq('id', d.colaborador_id)
         .eq('empresa_id', empresaId);
 
-      if (colabError) console.error('Erro ao desativar colaborador:', colabError);
+      if (colabError) loggerService.error('Erro ao desativar colaborador', { colaboradorId: d.colaborador_id, desligamentoId: id }, colabError);
 
       await auditLogger.log({
         tabela: 'desligamentos',
@@ -274,8 +275,9 @@ export const rescisaoService = {
       });
 
       return data;
-    } catch (e: any) {
-      throw new Error('Erro ao processar pagamento de rescisão', { cause: e });
+    } catch (e: unknown) {
+      if (e instanceof Error) throw e;
+      throw new Error(String(e), { cause: e });
     }
   },
 };

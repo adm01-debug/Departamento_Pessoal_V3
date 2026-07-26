@@ -64,7 +64,7 @@ export default function CalculadoraRescisaoPage() {
         saldoFGTS: (data as Record<string, unknown>).saldo_fgts_estimado?.toString() || '',
       }));
       toast.success('Dados do colaborador importados!');
-    } catch (err: any) {
+    } catch (err) {
       toast.error('Erro ao buscar colaborador');
     } finally {
       setLoadingColab(false);
@@ -112,7 +112,7 @@ export default function CalculadoraRescisaoPage() {
       } else {
         toast.error('Servidor não retornou um resultado válido');
       }
-    } catch (err: any) {
+    } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro ao calcular rescisão.'));
     } finally {
       setCalcServidor(false);
@@ -187,7 +187,7 @@ export default function CalculadoraRescisaoPage() {
       }
 
       toast.success('Cálculo salvo no histórico!');
-    } catch (err: any) {
+    } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro ao salvar cálculo.'));
     } finally {
       setSaving(false);

@@ -110,7 +110,7 @@ export default function AdminAgendamentoExamesPage() {
       if (error) throw error;
       setClinicasProximas((data ?? []) as ClinicaProxima[]);
       if (!data || data.length === 0) toast.info('Nenhuma clínica encontrada no raio informado');
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Falha na busca de clínicas.'));
     } finally {
       setBuscando(false);

@@ -354,7 +354,7 @@ export function AppSidebar({ onSearchOpen }: AppSidebarProps) {
       await signOut(); 
       toast.success('Logout realizado com sucesso'); 
       navigate('/login'); 
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao encerrar sessão.'));
     }
   };

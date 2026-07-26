@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import CryptoJS from 'crypto-js';
+import { loggerService } from './loggerService';
 
 const PONTO_OFFLINE_STORAGE_KEY = 'ponto_offline_queue';
 
@@ -72,7 +73,7 @@ export const pontoOfflineService = {
         entryWithId.foto_base64 = null;
         (entryWithId as any).has_photo_in_idb = true;
       } catch (e) {
-        console.error('Falha ao salvar foto no IndexedDB:', e);
+        loggerService.error('Falha ao salvar foto no IndexedDB', { registroId: id }, e instanceof Error ? e : undefined);
       }
     }
     
@@ -159,8 +160,8 @@ export const pontoOfflineService = {
           });
         }
       }
-    } catch (err) {
-      console.error('[OfflineSync] Falha na comunicação com o servidor:', err);
+    } catch (err: unknown) {
+      loggerService.error('[OfflineSync] Falha na comunicação com o servidor', { queueLength: queue.length }, err instanceof Error ? err : new Error(String(err)));
       return { synced: 0, errors: queue.length };
     }
     // Notificar monitoramento sobre conclusão

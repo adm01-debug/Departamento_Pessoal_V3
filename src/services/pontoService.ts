@@ -129,8 +129,8 @@ export const pontoService = {
       }
       if (!batida) throw new Error('Nenhum registro de batida de ponto foi retornado.');
       return batida;
-    } catch (e: any) {
-      throw new Error(e.message || 'Falha ao registrar ponto', { cause: e });
+    } catch (e) {
+      throw new Error(e instanceof Error ? e.message : 'Falha ao registrar ponto', { cause: e });
     }
   },
 

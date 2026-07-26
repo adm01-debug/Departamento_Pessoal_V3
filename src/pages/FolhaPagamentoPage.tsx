@@ -152,7 +152,7 @@ export default function FolhaPagamentoPage() {
       idemReset(intent); // sucesso → habilita nova operação legítima
       queryClient.invalidateQueries({ queryKey: ['folha-resumo', competencia] });
       toast.success('Folha calculada no servidor com sucesso!');
-    } catch (err: any) {
+    } catch (err) {
       // Falha: mantém a mesma chave para permitir REPLAY seguro em retry manual
       toast.error(safeErrorMessage(err, 'Erro ao calcular folha no servidor.'));
     } finally {

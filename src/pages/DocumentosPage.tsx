@@ -24,6 +24,7 @@ import { edgeFunctionsService } from '@/services/edgeFunctionsService';
 import { DocumentoTimeline } from '@/components/documents/DocumentoTimeline';
 import { DocumentoPreview } from '@/components/documents/DocumentoPreview';
 import { useSearchParams } from 'react-router-dom';
+import { Documento } from '@/types';
 const BUCKET = 'documentos';
 const TIPOS_DOCUMENTO = ['Contrato', 'Atestado', 'Holerite', 'Certificado', 'RG', 'CPF', 'CTPS', 'Comprovante', 'Outro'];
 
@@ -43,14 +44,15 @@ export default function DocumentosPage() {
   interface OcrResult {
     text: string;
     confidence?: number;
+    data?: Record<string, string>;
     fields?: Record<string, string>;
     raw?: unknown;
   }
   const [selectedDocForOcr, setSelectedDocForOcr] = useState<unknown>(null);
   const [ocrResult, setOcrResult] = useState<OcrResult | null>(null);
   const [isProcessingOcr, setIsProcessingOcr] = useState(false);
-  const [selectedDocForTimeline, setSelectedDocForTimeline] = useState<any>(null);
-  const [selectedDocForPreview, setSelectedDocForPreview] = useState<any>(null);
+  const [selectedDocForTimeline, setSelectedDocForTimeline] = useState<Documento | null>(null);
+  const [selectedDocForPreview, setSelectedDocForPreview] = useState<Documento | null>(null);
   const { empresaAtual } = useEmpresas();
   const empresaId = empresaAtual?.id;
   const queryClient = useQueryClient();
@@ -102,7 +104,7 @@ export default function DocumentosPage() {
     }
     try {
       validateUploadFile(file, { maxSizeMB: 10 });
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Arquivo inválido.'));
       return;
     }
@@ -133,7 +135,7 @@ export default function DocumentosPage() {
       setShowUpload(false);
       setFile(null);
       setTipo('');
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao processar documento.'));
     } finally {
       setUploading(false);
@@ -151,9 +153,9 @@ export default function DocumentosPage() {
         filePath: path,
         documentType: (doc.tipo || '').toLowerCase() as any,
       });
-      setOcrResult(result);
+      setOcrResult(result as OcrResult);
       toast.success('Processamento concluído!');
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao processar documento.'));
     } finally {
       setIsProcessingOcr(false);
@@ -174,7 +176,7 @@ export default function DocumentosPage() {
       a.download = doc.nome_arquivo || doc.nome || 'documento';
       a.click();
       URL.revokeObjectURL(url);
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao processar documento.'));
     }
   };
@@ -322,7 +324,7 @@ export default function DocumentosPage() {
               <DialogTitle className="font-display">Análise de Documento (IA)</DialogTitle>
             </div>
             <DialogDescription>
-              Processando o arquivo <span className="font-semibold">{selectedDocForOcr?.nome || 'documento'}</span> para extração automática de dados.
+              Processando o arquivo <span className="font-semibold">{(selectedDocForOcr as Documento)?.nome || 'documento'}</span> para extração automática de dados.
             </DialogDescription>
           </DialogHeader>
 

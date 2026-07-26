@@ -201,7 +201,7 @@ export default function GeradorDocumentosPage() {
         const url = URL.createObjectURL(blob);
         window.open(url, '_blank', 'noopener');
       }
-    } catch (err: any) {
+    } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro ao gerar documento.'));
     } finally {
       setGenerating(false);

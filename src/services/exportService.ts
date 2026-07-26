@@ -3,19 +3,20 @@ import 'jspdf-autotable';
 import Papa from 'papaparse';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { loggerService } from './loggerService';
 
 export const validateExportData = (data: any[]) => {
   if (!data || data.length === 0) {
     throw new Error('Nenhum dado disponível para exportação');
   }
-  
+
   // Verificação de integridade básica: garantir que todos os campos essenciais existem
   const sample = data[0];
   const requiredKeys = ['colaborador', 'data'];
   const missingKeys = requiredKeys.filter(key => !Object.keys(sample).includes(key));
-  
+
   if (missingKeys.length > 0) {
-    console.warn(`Aviso de integridade: Campos faltando no primeiro registro: ${missingKeys.join(', ')}`);
+    loggerService.warn(`Aviso de integridade: Campos faltando no primeiro registro: ${missingKeys.join(', ')}`);
   }
 
   return true;
@@ -35,8 +36,8 @@ export const exportPontoCSV = (data: any[], filename = 'registros-ponto.csv') =>
     link.click();
     document.body.removeChild(link);
     return true;
-  } catch (error: any) {
-    console.error('Erro na exportação CSV:', error);
+  } catch (error) {
+    loggerService.error('Erro na exportação CSV', { filename }, error);
     throw error;
   }
 };
@@ -130,8 +131,8 @@ export const exportPontoPDF = (data: any[], title = 'Relatório de Ponto', colum
     
     doc.save(`${title.toLowerCase().replace(/\s+/g, '-')}-${format(now, 'yyyyMMdd')}.pdf`);
     return true;
-  } catch (error: any) {
-    console.error('Erro na exportação PDF:', error);
+  } catch (error) {
+    loggerService.error('Erro na exportação PDF', { title }, error);
     throw error;
   }
 };
@@ -194,8 +195,8 @@ export const exportPortaria671PDF = (solicitacao: any) => {
     
     doc.save(`conformidade-671-${solicitacao.id.slice(0, 8)}.pdf`);
     return true;
-  } catch (error) {
-    console.error('Erro exportando conformidade:', error);
+  } catch (error: unknown) {
+    loggerService.error('Erro exportando conformidade', { solicitacaoId: solicitacao.id }, error instanceof Error ? error : new Error(String(error)));
     throw error;
   }
 };

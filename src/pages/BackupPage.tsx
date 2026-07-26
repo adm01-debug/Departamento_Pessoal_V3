@@ -52,7 +52,7 @@ export default function BackupPage() {
       toast.success(
         `Backup ${formato.toUpperCase()} concluído! ${result.stats.registros} registros de ${result.stats.tabelas} tabelas (${result.stats.tamanho})`
       );
-    } catch (err: any) {
+    } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro ao realizar backup.'));
     } finally {
       setBacking(null);

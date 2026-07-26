@@ -50,7 +50,7 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
       });
       setOpen(false);
       setForm({ nome: '', tipo: 'Outros', url: '', observacoes: '', data_validade: '' });
-    } catch (err: any) {
+    } catch (err) {
       toast.error('Erro ao salvar documento');
     }
   };

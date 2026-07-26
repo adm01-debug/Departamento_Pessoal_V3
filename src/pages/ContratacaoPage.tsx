@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+import { loggerService } from '@/services/loggerService';
 import {
   FileText,
   Upload,
@@ -245,8 +246,8 @@ function ContratacaoWorkflow({ token }: { token: string }) {
         }));
         toast.error(`Atenção: ${result.error || 'Não foi possível validar o documento.'}`);
       }
-    } catch (error: any) {
-      console.error(error);
+    } catch (error) {
+      loggerService.error('Erro no upload de documento', { docId }, error instanceof Error ? error : new Error(String(error)));
       setUploadedDocs(prev => ({ ...prev, [docId]: { name: file.name, status: 'error' } }));
       toast.error(safeErrorMessage(error, 'Erro no upload do documento.'));
     }

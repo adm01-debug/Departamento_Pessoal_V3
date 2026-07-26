@@ -25,7 +25,7 @@ export function FGTSDigitalDashboard() {
         tipo: 'fgts_digital'
       });
       toast.success('Sincronizado com FGTS Digital via API Caixa!');
-    } catch (err: any) {
+    } catch (err) {
       toast.error(safeErrorMessage(err, 'Falha na sincronização FGTS Digital.'));
     } finally {
       setLoading(false);

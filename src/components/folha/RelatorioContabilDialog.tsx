@@ -73,7 +73,7 @@ export function RelatorioContabilDialog({ folhaId }: RelatorioContabilDialogProp
 
       toast.success('Relatório analítico para reconciliação contábil gerado!');
       setOpen(false);
-    } catch (err: any) {
+    } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro ao exportar relatório contábil.'));
     } finally {
       setLoading(false);

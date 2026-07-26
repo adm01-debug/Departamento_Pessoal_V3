@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { useImportacaoColaboradores } from '@/hooks/useImportacaoColaboradores';
 import { downloadTemplate as downloadImportTemplate } from '@/utils/importacao/template';
+import { loggerService } from '@/services/loggerService';
 
 export default function ImportacaoPage() {
   const fileRef = useRef<HTMLInputElement>(null);
@@ -28,7 +29,7 @@ export default function ImportacaoPage() {
       await processarArquivo(file);
       setStep('preview');
     } catch (err) {
-      console.error('Erro ao processar arquivo:', err);
+      loggerService.error('Erro ao processar arquivo de importação', {}, err instanceof Error ? err : new Error(String(err)));
       toast.error('Falha ao processar o arquivo. Verifique o formato e tente novamente.');
     }
   };
@@ -47,7 +48,7 @@ export default function ImportacaoPage() {
     try {
       await downloadImportTemplate();
       toast.success('Modelo baixado!');
-    } catch (err: any) {
+    } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro ao gerar modelo de importação.'));
     }
   };

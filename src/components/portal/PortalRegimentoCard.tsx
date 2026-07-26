@@ -84,7 +84,7 @@ export function PortalRegimentoCard() {
       } else {
         setAssinatura(null);
       }
-    } catch (err: any) {
+    } catch (err) {
       toast.error(safeErrorMessage(err, 'Falha ao carregar regimento.'));
     } finally {
       setLoading(false);
@@ -117,7 +117,7 @@ export function PortalRegimentoCard() {
       if (error) throw error;
       toast.success('Regimento assinado com sucesso.');
       await carregar();
-    } catch (err: any) {
+    } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro ao assinar regimento.'));
     } finally {
       setSaving(false);

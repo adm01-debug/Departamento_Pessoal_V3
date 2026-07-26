@@ -46,31 +46,31 @@ export function useTranslation() {
 
   const t = useCallback(
     (key: string, vars?: Record<string, unknown>) => i18n.t(key, { vars }),
-    [locale],
+    [],
   );
 
   const formatDate = useCallback(
     (date: Date | string, options?: Intl.DateTimeFormatOptions) =>
       i18n.formatDate(date, options),
-    [locale],
+    [],
   );
 
   const formatNumber = useCallback(
     (value: number, options?: Intl.NumberFormatOptions) =>
       i18n.formatNumber(value, options),
-    [locale],
+    [],
   );
 
   const formatCurrency = useCallback(
     (value: number, currency?: string) =>
       i18n.formatCurrency(value, currency),
-    [locale],
+    [],
   );
 
   const formatRelativeTime = useCallback(
     (value: number, unit: Intl.RelativeTimeFormatUnit) =>
       i18n.formatRelativeTime(value, unit),
-    [locale],
+    [],
   );
 
   return {

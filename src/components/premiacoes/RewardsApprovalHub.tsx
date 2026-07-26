@@ -143,7 +143,7 @@ export function RewardsApprovalHub({ pagamentos }: ApprovalHubProps) {
                                   await premiacoesService.autoConciliarComFolha(p.id);
                                   queryClient.invalidateQueries({ queryKey: ['premiacoes_pagamentos'] });
                                   toast.success("Auto-conciliação concluída com sucesso!");
-                                } catch (e: any) {
+                                } catch (e: unknown) {
                                   toast.error(safeErrorMessage(e, "Falha na conciliação automática."));
                                 }
                               }}

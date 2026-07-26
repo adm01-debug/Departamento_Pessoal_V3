@@ -248,7 +248,7 @@ export default function RelatoriosPage() {
           registros: r.rows.length 
         }
       });
-    } catch (e: any) { 
+    } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao gerar relatório.')); 
     } finally { 
       setGenerating(null); 
@@ -267,7 +267,7 @@ export default function RelatoriosPage() {
       toast.success('Relatório enviado por email!'); 
       setEmailDialog(null); 
       setEmailTo(''); 
-    } catch (e: any) { 
+    } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao gerar relatório.')); 
     } finally { 
       setSendingEmail(false); 

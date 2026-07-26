@@ -10,6 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { CheckCircle2, ShieldCheck, FileSignature, AlertTriangle, Ban, Clock, RotateCcw, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 import { QRCodeSVG } from 'qrcode.react';
+import { loggerService } from '@/services/loggerService';
 
 interface ContratoInfo {
   contrato_id: string;
@@ -294,7 +295,7 @@ export default function AssinarContratoPage() {
                   });
                   toast.success('Recibo baixado');
                 } catch (e) {
-                  console.error('[recibo-pdf]', e);
+                  loggerService.error('Erro ao gerar PDF do recibo', { contratoId }, e instanceof Error ? e : new Error(String(e)));
                   toast.error('Falha ao gerar recibo');
                 }
               }}

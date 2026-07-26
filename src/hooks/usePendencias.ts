@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/useToast';
+import { loggerService } from '@/services/loggerService';
 
 export interface Pendencia {
   id: string;
@@ -47,8 +48,8 @@ export function usePendencias(empresaId?: string) {
       queryClient.invalidateQueries({ queryKey: ['pendencias', empresaId] });
       toast({ title: "Sucesso", description: "Status da pendência atualizado." });
     },
-    onError: (error) => {
-      console.error(error);
+    onError: (error: unknown) => {
+      loggerService.error('Erro ao atualizar pendência', { id }, error instanceof Error ? error : undefined);
       toast({ title: "Erro", description: "Não foi possível atualizar a pendência.", variant: "destructive" });
     }
   });

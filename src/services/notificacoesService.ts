@@ -70,7 +70,7 @@ export async function notificarAjustePonto(
       });
     }
     return (undefined);
-  } catch (e: any) {
+  } catch (e) {
     throw new Error('Falha ao notificar ajuste de ponto', { cause: e });
   }
 }

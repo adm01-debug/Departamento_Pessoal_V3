@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { loggerService } from '@/services/loggerService';
 
 export const viewsService = {
   alertasRH: async () => {
@@ -7,7 +8,7 @@ export const viewsService = {
       if (error) throw error;
       return data || [];
     } catch (e) {
-      console.warn('View vw_alertas_rh not found or inaccessible');
+      loggerService.warn('View vw_alertas_rh not found or inaccessible', { view: 'vw_alertas_rh' });
       return [];
     }
   },
@@ -17,7 +18,7 @@ export const viewsService = {
       if (error) throw error;
       return data || [];
     } catch (e) {
-      console.warn('View vw_kpi_turnover not found or inaccessible');
+      loggerService.warn('View vw_kpi_turnover not found or inaccessible', { view: 'vw_kpi_turnover' });
       return [];
     }
   },
@@ -27,7 +28,7 @@ export const viewsService = {
       if (error) throw error;
       return data || [];
     } catch (e) {
-      console.warn('View vw_kpi_absenteismo not found or inaccessible');
+      loggerService.warn('View vw_kpi_absenteismo not found or inaccessible', { view: 'vw_kpi_absenteismo' });
       return [];
     }
   },

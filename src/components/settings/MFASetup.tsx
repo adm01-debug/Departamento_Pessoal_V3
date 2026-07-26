@@ -63,7 +63,7 @@ export function MFASetup() {
         uri: data.totp.uri,
       });
       setShowEnrollDialog(true);
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao iniciar configuração MFA.'));
     } finally {
       setEnrolling(false);
@@ -97,7 +97,7 @@ export function MFASetup() {
       setEnrollData(null);
       refetch();
       qc.invalidateQueries({ queryKey: ['user-mfa-record'] });
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Código inválido ou expirado.'));
     } finally {
       setEnrolling(false);
@@ -122,7 +122,7 @@ export function MFASetup() {
       setShowDisableDialog(false);
       refetch();
       qc.invalidateQueries({ queryKey: ['user-mfa-record'] });
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao desativar MFA.'));
     } finally {
       setEnrolling(false);

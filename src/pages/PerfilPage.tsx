@@ -68,7 +68,7 @@ export default function PerfilPage() {
         setIsSubscribed(true);
         toast.success('Notificações push ativadas com sucesso!');
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao atualizar perfil.'));
     }
   };
@@ -97,7 +97,7 @@ export default function PerfilPage() {
       }
       queryClient.invalidateQueries({ queryKey: ['meu-perfil'] });
       toast.success('Perfil atualizado!');
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao atualizar perfil.'));
     } finally {
       setSaving(false);
@@ -110,7 +110,7 @@ export default function PerfilPage() {
 
     try {
       validateUploadFile(file, { maxSizeMB: 2 });
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(safeErrorMessage(err, 'Arquivo inválido.'));
       return;
     }
@@ -133,7 +133,7 @@ export default function PerfilPage() {
 
       queryClient.invalidateQueries({ queryKey: ['meu-perfil'] });
       toast.success('Avatar atualizado!');
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao atualizar perfil.'));
     } finally {
       setUploadingAvatar(false);

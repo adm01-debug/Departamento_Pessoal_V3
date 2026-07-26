@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+import { loggerService } from '@/services/loggerService';
 import { Loader2, FileText, ShieldCheck, Users, CheckCircle2, Plus, Send, Bell, UserX, Download } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
@@ -79,7 +80,7 @@ const AdminRegimentoInternoPage = () => {
       setDash(dashRes.data as unknown as Dashboard);
       setPendentes((pendRes.error ? [] : (pendRes.data ?? [])) as Pendente[]);
     } catch (err) {
-      console.error(err);
+      loggerService.error('Falha ao carregar Regimento Interno', { empresaId: empresaAtual?.id }, err instanceof Error ? err : new Error(String(err)));
       toast.error('Falha ao carregar Regimento Interno');
     } finally {
       setLoading(false);
@@ -114,7 +115,7 @@ const AdminRegimentoInternoPage = () => {
       setNovoConteudo('');
       carregar();
     } catch (err) {
-      console.error(err);
+      loggerService.error('Falha ao criar documento', { empresaId: empresaAtual?.id }, err instanceof Error ? err : new Error(String(err)));
       toast.error('Falha ao criar documento');
     } finally {
       setSaving(false);
@@ -128,7 +129,7 @@ const AdminRegimentoInternoPage = () => {
       toast.success('Documento publicado e vigente');
       carregar();
     } catch (err) {
-      console.error(err);
+      loggerService.error('Falha ao publicar documento', { documentoId: id }, err instanceof Error ? err : new Error(String(err)));
       toast.error('Falha ao publicar');
     }
   };
@@ -148,8 +149,8 @@ const AdminRegimentoInternoPage = () => {
       } else {
         toast.success(`${notif} colaborador(es) notificado(s)${semUser ? ` · ${semUser} sem usuário` : ''}`);
       }
-    } catch (err: any) {
-      console.error(err);
+    } catch (err) {
+      loggerService.error('Falha ao notificar pendentes', { empresaId: empresaAtual?.id }, err instanceof Error ? err : new Error(String(err)));
       toast.error(safeErrorMessage(err, 'Falha ao notificar pendentes.'));
     } finally {
       setNotificando(false);

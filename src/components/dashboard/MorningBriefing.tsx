@@ -127,7 +127,7 @@ export function MorningBriefing() {
     try {
       await fn();
       toast.success(successMsg);
-    } catch (err: any) {
+    } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro ao executar ação.'));
     } finally {
       setRunningAction(null);

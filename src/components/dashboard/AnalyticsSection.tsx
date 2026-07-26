@@ -132,7 +132,15 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
   useRealTimeSubscription('pendencias', ['pendencias', empresaId], empresaId);
 
   // Notifications State & Logic
-  const [notifications, setNotifications] = useState<any[]>([]);
+  interface Notificacao {
+    id: string;
+    titulo: string;
+    mensagem: string;
+    tipo: string;
+    lida: boolean;
+    created_at: string;
+  }
+  const [notifications, setNotifications] = useState<Notificacao[]>([]);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
 
   useEffect(() => {

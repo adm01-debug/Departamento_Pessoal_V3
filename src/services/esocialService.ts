@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { validarEvento, getValidadoresDisponiveis, type ValidationResult } from '@/schemas/esocial';
 export type { ValidationResult } from '@/schemas/esocial';
 import { gerarXmlESocial } from '@/utils/esocialXmlGenerator';
+import { loggerService } from './loggerService';
 export interface ESocialEvento {
   id: string;
   empresa_id: string | null;
@@ -89,7 +90,7 @@ export async function obterEstatisticas(empresaId: string): Promise<any> {
     const conformidade = total > 0 ? Math.round(((total - erros) / total) * 100) : 100;
 
     return ({ enviados, pendentes, erros, conformidade });
-  } catch (e: any) {
+  } catch (e) {
     throw new Error('Falha ao processar estatísticas do eSocial', { cause: e });
   }
 }
@@ -112,7 +113,7 @@ export async function criarEvento(evento: {
         ambiente: '2'
       });
     } catch (e) {
-      console.warn('Erro ao gerar XML inicial:', e);
+      loggerService.warn('Erro ao gerar XML inicial', { tipo_evento: evento.tipo_evento }, e instanceof Error ? e : undefined);
     }
   }
 
@@ -177,7 +178,7 @@ export async function enviarEvento(eventoId: string, empresaId: string): Promise
     }
 
     return (data);
-  } catch (e: any) {
+  } catch (e) {
     throw new Error('Falha na transmissão do evento eSocial', { cause: e });
   }
 }
@@ -269,7 +270,7 @@ export async function gerarEventosPeriodo(empresaId: string, competencia: string
     }
 
     return (resultados);
-  } catch (e: any) {
+  } catch (e) {
     throw new Error('Falha ao gerar eventos do período', { cause: e });
   }
 }

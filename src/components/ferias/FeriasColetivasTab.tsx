@@ -101,8 +101,8 @@ export function FeriasColetivasTab() {
     try {
       const url = await baixarComunicadoColetivas(path);
       window.open(url, '_blank', 'noopener,noreferrer');
-    } catch (e: any) {
-      toast.error(`Não foi possível baixar: ${e.message ?? e}`);
+    } catch (e: unknown) {
+      toast.error(`Não foi possível baixar: ${e instanceof Error ? e.message : String(e)}`);
     }
   };
 

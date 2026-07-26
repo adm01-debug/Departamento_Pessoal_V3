@@ -162,7 +162,7 @@ export function AdmissoesKanban({ admissoes }: { admissoes: Admissao[] }) {
       await admissaoService.atualizar(id, { etapa: target }, empresaAtual?.id);
       toast.success(`Movido para ${COLUMNS.find((c) => c.key === target)?.label ?? target}`);
       await qc.invalidateQueries({ queryKey: ['admissoes'] });
-    } catch (err: any) {
+    } catch (err) {
       setOptimistic((s) => {
         const next = { ...s };
         delete next[id];

@@ -22,6 +22,8 @@
  *   - Passivo Trabalhista (requisitos, provisionamentos)
  */
 
+import { loggerService } from './loggerService';
+
 export interface MetabaseConfig {
   /** URL pública do Metabase (usado no iframe src) */
   siteUrl: string;
@@ -92,7 +94,7 @@ function buildSignedUrl(
 
   // Placeholder: assinatura JWT deveria ser gerada server-side para proteger secretKey.
   // Este é um stub que indica o caminho de implementação production-ready.
-  console.warn('[Metabase] Signed embedding: implemente assinatura JWT server-side');
+  loggerService.warn('[Metabase] Signed embedding: implemente assinatura JWT server-side');
   return qs ? `${baseUrl}?${qs}` : baseUrl;
 }
 

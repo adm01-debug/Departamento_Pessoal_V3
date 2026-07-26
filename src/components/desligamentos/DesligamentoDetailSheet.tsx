@@ -53,7 +53,7 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
       await desligamentoService.atualizar(d.id, updates, d.empresa_id);
       queryClient.invalidateQueries({ queryKey: ['desligamentos'] });
       toast.success('Checklist atualizado');
-    } catch (err: any) {
+    } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro ao atualizar checklist.'));
     }
   };
@@ -78,7 +78,7 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
       }, d.empresa_id);
       queryClient.invalidateQueries({ queryKey: ['desligamentos'] });
       toast.success('Rescisão calculada com sucesso');
-    } catch (err: any) {
+    } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro ao calcular rescisão.'));
     } finally {
       setCalculating(false);
@@ -91,7 +91,7 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
       await rescisaoService.homologar(d.id, d.empresa_id);
       queryClient.invalidateQueries({ queryKey: ['desligamentos'] });
       toast.success('Homologação concluída');
-    } catch (err: any) {
+    } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro ao homologar.'));
     } finally {
       setHomologating(false);

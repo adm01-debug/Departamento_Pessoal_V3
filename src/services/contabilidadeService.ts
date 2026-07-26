@@ -73,8 +73,8 @@ export const contabilidadeService = {
       
       if (lError) throw lError;
       return (undefined);
-    } catch (e: any) {
-      throw new Error(e.message || 'Falha ao gerar lançamentos contábeis', { cause: e });
+    } catch (e) {
+      throw new Error(e instanceof Error ? e.message : 'Falha ao gerar lançamentos contábeis', { cause: e });
     }
   },
 
@@ -92,7 +92,7 @@ export const contabilidadeService = {
       sped += '|9999|...|END|\r\n';
 
       return (sped);
-    } catch (e: any) {
+    } catch (e) {
       throw new Error('Falha ao exportar SPED', { cause: e });
     }
   }

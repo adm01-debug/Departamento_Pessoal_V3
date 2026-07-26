@@ -34,7 +34,6 @@ export function MedidaContestacaoDialog({ medida, open, onOpenChange, isRHOrAdmi
 
   const isOwner = colaboradorUserId && user?.id === colaboradorUserId;
   const prazoDate = medida?.contestacao_prazo_ate ? parseISO(medida.contestacao_prazo_ate) : null;
-  // eslint-disable-next-line react-hooks/purity -- comparação de prazo em tempo de render (UI de contestação)
   const prazoExpirado = prazoDate ? now > prazoDate.getTime() : false;
   const podeContestar = !!medida && isOwner && medida.status_workflow === 'aplicada' && !prazoExpirado && !medida.contestacao_texto;
   const podeResponder = !!medida && isRHOrAdmin && medida.status_workflow === 'contestada';

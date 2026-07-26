@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { loggerService } from './loggerService';
 
 export const pushNotificationService = {
   async isSupported(): Promise<boolean> {
@@ -52,9 +53,10 @@ export const pushNotificationService = {
 
       if (error) throw error;
       return true;
-    } catch (e: any) {
-      console.error('Erro ao subscrever para Push:', e);
-      throw e;
+    } catch (e: unknown) {
+      const err = e instanceof Error ? e : new Error(String(e));
+      loggerService.error('Erro ao subscrever para Push', { userId }, err);
+      throw err;
     }
   },
 
@@ -71,8 +73,8 @@ export const pushNotificationService = {
           .eq('user_id', userId);
       }
       return true;
-    } catch (e) {
-      console.error('Erro ao cancelar subscrição Push:', e);
+    } catch (e: unknown) {
+      loggerService.error('Erro ao cancelar subscrição Push', { userId }, e instanceof Error ? e : new Error(String(e)));
       return false;
     }
   }

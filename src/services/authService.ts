@@ -15,8 +15,8 @@ export const authService = {
         throw new Error(error.message || 'Falha ao enviar email de recuperação');
       }
       return ({ success: true });
-    } catch (e: any) {
-      throw new Error(e.message || 'Erro inesperado no servidor de autenticação', { cause: e });
+    } catch (e) {
+      throw new Error(e instanceof Error ? e.message : 'Erro inesperado no servidor de autenticação', { cause: e });
     }
   },
 
@@ -34,8 +34,8 @@ export const authService = {
         throw new Error(error.message || 'Falha ao atualizar senha');
       }
       return ({ success: true, warnings: pwCheck.warnings });
-    } catch (e: any) {
-      throw new Error(e.message || 'Erro inesperado ao redefinir senha', { cause: e });
+    } catch (e) {
+      throw new Error(e instanceof Error ? e.message : 'Erro inesperado ao redefinir senha', { cause: e });
     }
   },
 
@@ -47,7 +47,7 @@ export const authService = {
       const { data, error } = await supabase.auth.getSession();
       if (error) throw error;
       return (data.session);
-    } catch (e: any) {
+    } catch (e) {
       throw new Error('Sessão inválida ou expirada', { cause: e });
     }
   }

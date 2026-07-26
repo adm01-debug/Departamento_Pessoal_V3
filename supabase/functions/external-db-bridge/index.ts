@@ -7,6 +7,10 @@
 // frontend atual — RLS no banco externo é a fonte de verdade), mas qualquer
 // operação de escrita exige JWT válido + verificação de tenant.
 
+// P4-067: Cache em memória para tabelas estáticas de referência.
+// Tabelas de domínio (rubricas, parâmetros fiscais, feriados) raramente mudam
+// e são consultadas frequentemente pelo bridge — caching reduz latência e carga.
+import { cachedFetch, invalidateCache } from "../_shared/cache.ts";
 import { createClient, type SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { z } from "https://deno.land/x/zod@v3.23.8/mod.ts";
 import { verifyCsrf } from "../_shared/csrf.ts";
@@ -15,6 +19,20 @@ import {
   isSafeTableName, isSafeColumnsExpr, isSafeOrderColumn, isSafeOrExpression, isSafeFilterColumn,
   TABLE_DENYLIST, TENANT_SCOPED_TABLES, RPC_ALLOWLIST, FILTER_OPS, NOT_EXTRA_OPS,
 } from "./validation.ts";
+
+// TTL para tabelas estáticas (em ms)
+// Rubricas podem ser editadas pelo admin: 1h. Parâmetros fiscais/vigências: 24h.
+const CACHE_TTL_STATIC_RUBRICAS = 3600 * 1000;   // 1 hora
+const CACHE_TTL_STATIC_FISCAL = 24 * 3600 * 1000; // 24 horas
+
+// Tabelas estáticas elegíveis para cache (sem empresa_id — dados globais)
+const CACHEABLE_TABLES = new Set([
+  "rubricas_folha", "parametros_fiscais", "feriados",
+  "cbo", "cnae", "faixas_inss", "faixas_irrf",
+]);
+
+// Tabelas que podem ter cache com TTL curto (mais suscetíveis a alterações)
+const CACHEABLE_TABLES_SHORT = new Set(["rubricas_folha"]);
 
 // -------------------- Headers --------------------
 const NO_STORE = { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" };
@@ -561,6 +579,40 @@ Deno.serve(async (req) => {
     // -------- SELECT --------
     if (action === "select") {
       const t0 = performance.now();
+
+      // P4-067: Cache para tabelas estáticas de referência.
+      // Apenas SELECT sem filtros (full table scan) é cacheado.
+      // Filtros específicos retornam dados parciais e não são cacheados.
+      const isCacheable = CACHEABLE_TABLES.has(table!) && filters.length === 0 && queryOffset === 0;
+      const cacheTtl = CACHEABLE_TABLES_SHORT.has(table!) ? CACHE_TTL_STATIC_RUBRICAS : CACHE_TTL_STATIC_FISCAL;
+      const cacheKey = `bridge:${table}:${selectColumns}:${queryLimit}`;
+
+      if (isCacheable) {
+        try {
+          const cachedData = await cachedFetch(
+            cacheKey,
+            async () => {
+              const q = externalClient.from(table!).select(selectColumns);
+              const { data, error } = queryLimit > 0 ? await q.limit(queryLimit) : await q;
+              if (error) throw new Error(error.message);
+              return data;
+            },
+            cacheTtl,
+          );
+          const durationMs = Math.round(performance.now() - t0);
+          emitTelemetry({
+            operation: "select", table, limit: queryLimit, offset: queryOffset, countMode: queryCountMode,
+            durationMs, status: classifySeverity(durationMs, false),
+            recordCount: (cachedData as unknown[] | null)?.length ?? 0, error: undefined, userId: user?.id,
+            traceId,
+          });
+          return jsonOk({ data: cachedData, count: (cachedData as unknown[])?.length ?? 0, duration_ms: durationMs, cached: true });
+        } catch (e) {
+          // Cache falhou — segue para query direta (fail-open)
+          console.warn(`[bridge] cache miss/fallback for ${table}:`, (e as Error).message);
+        }
+      }
+
       // Query dinâmica: filtros/colunas resolvidos em runtime; tipo do proxy é any.
       // ---------------------------------------------------------------
       // countMode (P1-016 documentado):
@@ -622,6 +674,8 @@ Deno.serve(async (req) => {
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({ operation: "insert", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, traceId });
       if (error) { console.error('[bridge] INSERT_ERROR:', error.message, error.hint); return jsonError(400, "INSERT_ERROR", "Falha na inserção"); }
+      // P4-067: invalida cache da tabela se for estática
+      if (CACHEABLE_TABLES.has(table!)) invalidateCache(`bridge:${table}`);
       return jsonOk({ data: r, duration_ms: durationMs });
     }
 
@@ -633,6 +687,8 @@ Deno.serve(async (req) => {
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({ operation: "upsert", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, traceId });
       if (error) { console.error('[bridge] UPSERT_ERROR:', error.message, error.hint); return jsonError(400, "UPSERT_ERROR", "Falha no upsert"); }
+      // P4-067: invalida cache da tabela se for estática
+      if (CACHEABLE_TABLES.has(table!)) invalidateCache(`bridge:${table}`);
       return jsonOk({ data: r, duration_ms: durationMs });
     }
 
@@ -661,6 +717,8 @@ Deno.serve(async (req) => {
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({ operation: "update", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, traceId });
       if (error) { console.error('[bridge] UPDATE_ERROR:', error.message, error.hint); return jsonError(400, "UPDATE_ERROR", "Falha na atualização"); }
+      // P4-067: invalida cache da tabela se for estática
+      if (CACHEABLE_TABLES.has(table!)) invalidateCache(`bridge:${table}`);
       return jsonOk({ data: r, duration_ms: durationMs });
     }
 
@@ -688,6 +746,8 @@ Deno.serve(async (req) => {
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({ operation: "delete", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, traceId });
       if (error) { console.error('[bridge] DELETE_ERROR:', error.message, error.hint); return jsonError(400, "DELETE_ERROR", "Falha na exclusão"); }
+      // P4-067: invalida cache da tabela se for estática
+      if (CACHEABLE_TABLES.has(table!)) invalidateCache(`bridge:${table}`);
       return jsonOk({ data: r, duration_ms: durationMs });
     }
 

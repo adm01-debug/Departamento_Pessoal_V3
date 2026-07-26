@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { todayLocalISO } from '@/utils/dateLocal';
+import { loggerService } from '@/services/loggerService';
 
 interface CNABDialogProps {
   folhaId: string;
@@ -49,7 +50,7 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
           setConfig(prev => ({ ...prev, nome_empresa: empresaAtual?.razao_social || '' }));
       }
     } catch (err) {
-      console.error(err);
+      loggerService.error('Erro ao carregar config CNAB', { empresaId: empresaAtual?.id }, err instanceof Error ? err : new Error(String(err)));
     }
   }, [empresaAtual?.id, empresaAtual?.razao_social]);
 
@@ -64,7 +65,7 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
     try {
       await cnabService.saveConfig(empresaAtual.id, config);
       toast.success('Configurações bancárias salvas!');
-    } catch (err: any) {
+    } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro ao salvar configurações bancárias.'));
     } finally {
       setSaving(false);
@@ -89,7 +90,7 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
       
       toast.success('Arquivo CNAB 240 (Remessa de Salários) gerado!');
       setOpen(false);
-    } catch (err: any) {
+    } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro ao gerar arquivo CNAB.'));
     } finally {
       setLoading(false);
@@ -112,7 +113,7 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
       document.body.removeChild(a);
       toast.success('Lote PIX analítico gerado com sucesso!');
       setOpen(false);
-    } catch (err: any) {
+    } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro ao gerar lote PIX.'));
     } finally {
       setLoading(false);

@@ -15,6 +15,7 @@ import { useColaboradores } from '@/hooks/useColaboradores';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { Info, Calendar, Search, Stethoscope, AlertTriangle, Calendar as CalendarIcon, Zap, History as HistoryIcon } from 'lucide-react';
 import { formatDate } from '@/utils/format';
+import { loggerService } from '@/services/loggerService';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from '@/components/ui/command';
 import { cn } from '@/lib/utils';
@@ -44,14 +45,21 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
   const { empresaAtual } = useEmpresas();
   const [diasInfo, setDiasInfo] = useState({ total: 0, empresa: 0, inss: 0 });
   const [cidSearch, setCidSearch] = useState('');
-  const [cidResults, setCidResults] = useState<any[]>([]);
   interface CidItem {
     id: string;
     codigo: string;
     descricao: string;
   }
+  interface HistoricoItem {
+    id: string;
+    data_inicio: string;
+    data_fim_prevista: string;
+    tipo: string;
+    status: string;
+  }
+  const [cidResults, setCidResults] = useState<CidItem[]>([]);
   const [selectedCid, setSelectedCid] = useState<CidItem | null>(initialData?.cid ?? null);
-  const [historicoRecente, setHistoricoRecente] = useState<any[]>([]);
+  const [historicoRecente, setHistoricoRecente] = useState<HistoricoItem[]>([]);
 
   const [isVerificandoHistorico, setIsVerificandoHistorico] = useState(false);
 
@@ -76,9 +84,8 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
         try {
           const res = await afastamentoService.listarHistoricoRecente(watchColaboradorId, empresaAtual.id);
           setHistoricoRecente(res);
-        } catch (e) {
-
-          console.error('Erro ao carregar histórico:', e);
+        } catch (e: unknown) {
+          loggerService.error('Erro ao carregar histórico de afastamentos', { colaboradorId: watchColaboradorId }, e instanceof Error ? e : undefined);
         } finally {
           setIsVerificandoHistorico(false);
         }
@@ -123,8 +130,8 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
         await criar(payload);
       }
       onSuccess();
-    } catch (error) {
-      console.error(error);
+    } catch (error: unknown) {
+      loggerService.error('Erro ao salvar afastamento', { initialDataId: initialData?.id }, error instanceof Error ? error : undefined);
     }
   };
 

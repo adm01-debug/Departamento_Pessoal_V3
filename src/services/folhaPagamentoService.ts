@@ -77,8 +77,8 @@ export const folhaPagamentoService = {
         hashAssinatura: holerite?.hash_assinatura ?? undefined,
         dataAssinatura: holerite?.data_assinatura ?? undefined
       });
-    } catch (e: any) {
-      throw new Error(e.message || 'Falha ao gerar holerite', { cause: e });
+    } catch (e) {
+      throw new Error(e instanceof Error ? e.message : 'Falha ao gerar holerite', { cause: e });
     }
   },
 
@@ -110,7 +110,7 @@ export const folhaPagamentoService = {
 
       if (error) throw error;
       return (hash);
-    } catch (e: any) {
+    } catch (e) {
       throw new Error('Falha ao assinar holerite digitalmente', { cause: e });
     }
   },

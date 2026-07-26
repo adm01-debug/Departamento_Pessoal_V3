@@ -13,6 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { loggerService } from '@/services/loggerService';
 export default function PontoKioskPage() {
   const [time, setTime] = useState(new Date());
   const [pin, setPin] = useState('');
@@ -31,7 +32,7 @@ export default function PontoKioskPage() {
         toast.success(`${result.synced} registros sincronizados automaticamente.`);
       }
     } catch (e) {
-      console.error('Erro na sincronização do quiosque', e);
+      loggerService.error('Erro na sincronização do quiosque', {}, e instanceof Error ? e : new Error(String(e)));
     } finally {
       setIsSyncing(false);
       setOfflineQueueSize(pontoOfflineService.getQueueSize());
@@ -76,7 +77,7 @@ export default function PontoKioskPage() {
         setStep('action');
         speak(`Identidade confirmada. Selecione o tipo de registro.`);
       }, 3500);
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao registrar ponto.'));
       setPin('');
     } finally {
@@ -116,7 +117,7 @@ export default function PontoKioskPage() {
         setPin('');
         setSelectedColab(null);
       }, 3000);
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao registrar ponto.'));
     } finally {
       setLoading(false);

@@ -145,7 +145,7 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
       
       queryClient.invalidateQueries({ queryKey: ['folha-resumo', competencia] });
       setCurrentStep(4);
-    } catch (err: any) {
+    } catch (err) {
       toast.error(safeErrorMessage(err, 'Erro no processamento da folha.'));
     } finally {
       setIsProcessing(false);
@@ -360,7 +360,7 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
                         try {
                           const result = await folhaPagamentoService.emitirPDF(currentFolhaId);
                           window.open(safeHref(result), '_blank', 'noopener');
-                        } catch (e: any) {
+                        } catch (e: unknown) {
                           toast.error(safeErrorMessage(e, 'Erro ao gerar PDF do holerite.'));
                         }
                       }
@@ -386,7 +386,7 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
                           document.body.removeChild(a);
                           URL.revokeObjectURL(url);
                           toast.success('Arquivo CNAB gerado com sucesso!');
-                        } catch (err: any) {
+                        } catch (err: unknown) {
                           toast.error(safeErrorMessage(err, 'Erro ao gerar CNAB.'));
                         }
                       }

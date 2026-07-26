@@ -45,6 +45,7 @@ import { PontoLeaderboard } from '@/components/ponto/PontoLeaderboard';
 import { GestaoPontoAnalytics } from '@/components/ponto/GestaoPontoAnalytics';
 import { PontoGeoAnalytics } from '@/components/ponto/PontoGeoAnalytics';
 import { formatDateLocalISO, todayLocalISO } from '@/utils/dateLocal';
+import { loggerService } from '@/services/loggerService';
 
 interface BancoHorasResumo {
   saldo: string;
@@ -274,13 +275,13 @@ export default function PontoPage() {
           }
           return { biometriaValida: !!bio?.valid };
         } catch (bioErr) {
-          console.error('Erro na validação biométrica:', bioErr);
+          loggerService.error('Erro na validação biométrica', { colaboradorId }, bioErr instanceof Error ? bioErr : new Error(String(bioErr)));
           toast.warning('Não foi possível validar a biometria agora — ponto registrado, revisão pendente.');
           return { biometriaValida: undefined };
         }
       }
       return {};
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao registrar ponto.'));
       return undefined;
     } finally {
@@ -303,7 +304,7 @@ export default function PontoPage() {
       toast.success('Ponto processado!');
       refetchRegistro();
       refetchBatidas();
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao processar ponto.'));
     } finally {
       setProcessando(false);

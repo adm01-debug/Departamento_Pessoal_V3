@@ -261,7 +261,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loggerService.warn('Sign in failed', { email, message: err.message });
       throw err;
     }
-  }, [queryClient, supabase]);
+  }, []); // queryClient e supabase são singletons de módulo — deps estáveis, excluídas de propósito
 
   const signOut = useCallback(async () => {
     try {

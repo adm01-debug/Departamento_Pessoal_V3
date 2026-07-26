@@ -28,7 +28,7 @@ export default function AuthCallbackPage() {
             toast.success(`Autenticado com Gov.br! Nível: ${data.profile.nivel}`);
             navigate('/dashboard', { replace: true });
           }
-        } catch (err: any) {
+        } catch (err) {
           toast.error(safeErrorMessage(err, 'Erro na autenticação Gov.br.'));
           navigate('/login', { replace: true });
         }

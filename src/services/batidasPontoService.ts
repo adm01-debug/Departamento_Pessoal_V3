@@ -44,7 +44,7 @@ export const batidasPontoService = {
 
       if (!data) throw new Error('Nenhum registro de batida de ponto foi retornado.');
       return (data);
-    } catch (e: any) {
+    } catch (e) {
       throw new Error('Falha ao ajustar batida de ponto', { cause: e });
     }
   },

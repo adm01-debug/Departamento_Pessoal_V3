@@ -48,7 +48,7 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
     }
     try {
       validateUploadFile(file, { maxSizeMB: 10 });
-    } catch (err: any) {
+    } catch (err) {
       toast.error(safeErrorMessage(err, 'Arquivo inválido.'));
       return;
     }
@@ -80,7 +80,7 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
       setShowUpload(false);
       setFile(null);
       setTipo('');
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao enviar documento.'));
     } finally {
       setUploading(false);
@@ -112,19 +112,19 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
       a.download = doc.nome_arquivo || doc.nome || 'documento';
       a.click();
       URL.revokeObjectURL(url);
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error('Erro ao baixar arquivo');
     }
   };
 
   const handleSaveSignature = async (base64: string) => {
     if (!docToSign || !colaboradorId) return;
-    
+
     try {
       // 1. Upload signature image
       const fileName = `assinaturas/doc_${docToSign.id}_${Date.now()}.png`;
       const binary = Uint8Array.from(atob(base64.split(',')[1]), c => c.charCodeAt(0));
-      
+
       const { error: uploadErr } = await supabase.storage.from(BUCKET).upload(fileName, binary, { contentType: 'image/png' });
       if (uploadErr) throw uploadErr;
 
@@ -143,7 +143,7 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
       queryClient.invalidateQueries({ queryKey: ['portal-documentos'] });
       toast.success('Documento assinado com sucesso!');
       setDocToSign(null);
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao assinar documento.'));
     }
   };

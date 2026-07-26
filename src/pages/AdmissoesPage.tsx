@@ -72,7 +72,7 @@ export default function AdmissoesPage() {
     try {
       await contratacaoService.enviarLinkCandidato(admissao.id, admissao.email);
       toast.success('Link de contratação enviado com sucesso!');
-    } catch (error: any) {
+    } catch (error) {
       toast.error(safeErrorMessage(error, 'Erro ao enviar link.'));
     } finally {
       setSendingLink(null);
@@ -92,7 +92,7 @@ export default function AdmissoesPage() {
       await contratacaoService.enviarWhatsApp(admissao.id, admissao.telefone, tokenData.token);
 
       toast.success('Link gerado para WhatsApp!');
-    } catch (error: any) {
+    } catch (error) {
       toast.error(safeErrorMessage(error, 'Erro ao gerar link.'));
     } finally {
       setSendingLink(null);

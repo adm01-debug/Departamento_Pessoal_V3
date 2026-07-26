@@ -20,7 +20,7 @@ export function useExcelExport() {
         const filename = `${titulo.toLowerCase().replace(/\s+/g, '-')}.xlsx`;
         await downloadWorkbook(wb, filename);
         toast.success('Excel exportado com sucesso!');
-      } catch (e: any) {
+      } catch (e: unknown) {
         toast.error(safeErrorMessage(e, 'Erro ao gerar Excel.'));
       }
     },

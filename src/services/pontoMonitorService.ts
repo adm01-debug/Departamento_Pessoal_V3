@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { loggerService } from './loggerService';
 
 export const pontoMonitorService = {
   logEvent: async (eventName: string, details: any) => {
@@ -14,8 +15,8 @@ export const pontoMonitorService = {
         user_agent: navigator.userAgent
       });
       if (error) throw error;
-    } catch (err) {
-      console.error('Falha ao registrar log de monitoramento:', err);
+    } catch (err: unknown) {
+      loggerService.error('Falha ao registrar log de monitoramento', { eventName }, err instanceof Error ? err : new Error(String(err)));
     }
   },
 

@@ -66,7 +66,7 @@ export default function LoginPage() {
       if (result?.error) {
         throw result.error;
       }
-    } catch (err: any) {
+    } catch (err) {
       setError(safeErrorMessage(err, 'Erro ao fazer login com Google.'));
     } finally {
       setGoogleLoading(false);
@@ -90,7 +90,7 @@ export default function LoginPage() {
         }
         window.location.href = data.url;
       }
-    } catch (err: any) {
+    } catch (err) {
       setError('Erro ao iniciar integração Gov.br');
       toast.error(safeErrorMessage(err, 'Erro ao iniciar integração Gov.br.'));
     } finally {
@@ -112,8 +112,8 @@ export default function LoginPage() {
       await signIn(email, password);
       await resetAttempts(email);
       navigate('/dashboard');
-    } catch (err: any) {
-      if (err?.code === 'mfa_required') {
+    } catch (err) {
+      if (err && typeof err === 'object' && 'code' in err && (err as any).code === 'mfa_required') {
         // MFA enrolled — show TOTP challenge without recording a failed attempt
         setMfaPending({ factorId: err.factorId || '' });
         return;
@@ -143,7 +143,7 @@ export default function LoginPage() {
       if (challengeError) throw challengeError;
       await resetAttempts(email);
       navigate('/dashboard');
-    } catch (err: any) {
+    } catch (err) {
       setError('Código inválido. Tente novamente.');
     } finally {
       setLoading(false);
@@ -176,7 +176,7 @@ export default function LoginPage() {
       await resetPassword(email);
       sessionStorage.setItem('__pwd_reset_ts', String(Date.now()));
       setForgotSent(true);
-    } catch (err: any) {
+    } catch (err) {
       setError(safeErrorMessage(err, 'Erro ao enviar email de recuperação.'));
     } finally {
       setLoading(false);

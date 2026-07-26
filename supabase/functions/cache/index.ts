@@ -36,11 +36,16 @@ const BodySchema = z.discriminatedUnion('action', [
     }).optional(),
   }),
   z.object({ action: z.literal('stats') }),
+  // P4-067: invalidar cache de bridge por tabela
+  z.object({ action: z.literal('invalidate_table'), table: z.string().min(1).max(64) }),
 ]);
 
 const ALLOWED_TABLES = new Set([
   'colaboradores', 'departamentos', 'cargos', 'folhas_pagamento',
   'holerites', 'ferias', 'afastamentos', 'beneficios',
+  // P4-067: tabelas de domínio para cache de dados estáticos
+  'rubricas_folha', 'parametros_fiscais', 'feriados',
+  'cbo', 'cnae', 'faixas_inss', 'faixas_irrf',
 ]);
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
@@ -201,6 +206,21 @@ serve(async (req: Request): Promise<Response> => {
           totalBytes += serialized.length;
         }
         return json({ success: true, hit: false, data, source: 'database' });
+      }
+
+      // P4-067: invalidar todas as entradas de cache relacionadas a uma tabela do bridge
+      case 'invalidate_table': {
+        let removed = 0;
+        const prefix = `bridge:${body.table}`;
+        for (const key of cacheStore.keys()) {
+          if (key.startsWith(prefix)) {
+            const e = cacheStore.get(key);
+            if (e) totalBytes -= e.bytes;
+            cacheStore.delete(key);
+            removed++;
+          }
+        }
+        return json({ success: true, table: body.table, removed });
       }
 
       case 'stats': {

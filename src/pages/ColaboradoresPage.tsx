@@ -25,6 +25,7 @@ import {
 import { EntityPageContainer } from '@/components/layout/EntityPageContainer';
 import { Colaborador } from '@/types/entities';
 import { StatCardSkeleton } from '@/components/ui/module-skeleton';
+import { loggerService } from '@/services/loggerService';
 
 export default function ColaboradoresPage() {
   const navigate = useNavigate();
@@ -117,7 +118,7 @@ export default function ColaboradoresPage() {
         ['nome_completo', 'cpf', 'cargo', 'departamento', 'status', 'data_admissao', 'email']
       );
     } catch (err) {
-      console.error('Export error:', err);
+      loggerService.error('Falha ao exportar dados', {}, err instanceof Error ? err : new Error(String(err)));
       toast.error('Falha ao exportar dados');
     }
   };
@@ -128,7 +129,7 @@ export default function ColaboradoresPage() {
       toast.info('Preparando PDF...', {
         description: 'Gerando documento com os filtros atuais.'
       });
-      
+
       const { data } = await colaboradorService.listar({
         pageSize: 1000,
         filters: {
@@ -151,7 +152,7 @@ export default function ColaboradoresPage() {
         ['nome_completo', 'cpf', 'cargo', 'departamento', 'status']
       );
     } catch (err) {
-      console.error('Export error:', err);
+      loggerService.error('Falha ao exportar PDF', { empresaId: empresaAtual?.id }, err instanceof Error ? err : new Error(String(err)));
       toast.error('Falha ao exportar PDF');
     }
   };

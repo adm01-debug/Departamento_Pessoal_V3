@@ -111,8 +111,8 @@ class AfastamentoService extends BaseService<any> {
 
       if (error) throw error;
       return data;
-    } catch (e: any) {
-      throw new Error(e.message || 'Falha no upload do documento', { cause: e });
+    } catch (e) {
+      throw new Error(e instanceof Error ? e.message : 'Falha no upload do documento', { cause: e });
     }
   }
 
@@ -167,7 +167,7 @@ class AfastamentoService extends BaseService<any> {
       }, empresaId);
 
       return data;
-    } catch (e: any) {
+    } catch (e) {
       throw new Error('Falha ao criar prorrogação', { cause: e });
     }
   }
@@ -220,7 +220,7 @@ class AfastamentoService extends BaseService<any> {
       link.click();
       document.body.removeChild(link);
       return data;
-    } catch (e: any) {
+    } catch (e) {
       throw new Error('Falha ao exportar relatório', { cause: e });
     }
   }

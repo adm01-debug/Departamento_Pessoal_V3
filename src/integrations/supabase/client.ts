@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { toast } from 'sonner';
 import type { Database } from './types';
 import { secureJsonParse } from '@/utils/secureJson';
+import { loggerService } from '@/services/loggerService';
 
 
 // Projeto ativo: variáveis de ambiente são obrigatórias (P0-008).
@@ -188,7 +189,7 @@ const callBridge = async <T = any>(
     // (o cliente que gerou a key deve evitar reuse). Fail fast.
     if (!res.ok || json.error) {
       const errorMsg = json.error || `Erro HTTP ${res.status}`;
-      console.error('🔴 [BRIDGE_SCHEMA_ERROR]', action, target, errorMsg);
+      loggerService.error('BRIDGE_SCHEMA_ERROR', { action, target, errorMsg });
 
       // Erros de função/tabela/coluna ausente NÃO devem poluir a UI com toast.
       // Apenas propagamos o erro para quem chamou tratar (ou ignorar).
@@ -205,7 +206,7 @@ const callBridge = async <T = any>(
     if (payload.single) data = Array.isArray(data) ? ((data as unknown[])[0] ?? null) : data;
 
     if (json.duration_ms && json.duration_ms > 1000) {
-      console.warn(`🕒 [BRIDGE_SLOW_QUERY] ${action} em ${target} demorou ${json.duration_ms}ms`);
+      loggerService.warn(`[BRIDGE_SLOW_QUERY] ${action} em ${target} demorou ${json.duration_ms}ms`, { action, target, duration_ms: json.duration_ms });
     }
 
     return { data: data as T | null, count: json.count, error: null };
@@ -217,7 +218,7 @@ const callBridge = async <T = any>(
       ? 'Erro de conexão com o banco. Verifique sua internet.'
       : (err instanceof Error ? err.message : 'Erro desconhecido');
 
-    console.error('🔴 [BRIDGE_FATAL_ERROR]', err);
+    loggerService.error('BRIDGE_FATAL_ERROR', { isNetworkError }, err instanceof Error ? err : undefined);
 
     if (isNetworkError) {
       toast.error(errorMsg, { duration: 5000 });

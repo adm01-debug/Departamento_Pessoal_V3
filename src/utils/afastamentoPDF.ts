@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { loggerService } from '@/services/loggerService';
 
 interface AfastamentoPDFData {
   colaborador: string;
@@ -120,8 +121,8 @@ export async function gerarAfastamentosPDF(
 
     doc.save(`relatorio-afastamentos-${format(new Date(), 'yyyyMMdd-HHmm')}.pdf`);
     return true;
-  } catch (error) {
-    console.error('Erro ao gerar PDF:', error);
+  } catch (error: unknown) {
+    loggerService.error('Erro ao gerar PDF', { titulo }, error instanceof Error ? error : undefined);
     throw error;
   }
 }

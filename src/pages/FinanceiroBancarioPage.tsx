@@ -18,12 +18,31 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { StatusBadge } from '@/components/ui/status-badge';
 import { todayLocalISO } from '@/utils/dateLocal';
 import { formatDate } from '@/utils/format';
+import { loggerService } from '@/services/loggerService';
 export default function FinanceiroBancarioPage() {
   const { empresaAtual } = useEmpresas();
   const [config, setConfig] = useState<CNABConfig | null>(null);
-  const [remessas, setRemessas] = useState<any[]>([]);
-  const [pixLotes, setPixLotes] = useState<any[]>([]);
-  const [folhas, setFolhas] = useState<any[]>([]);
+  interface Remessa {
+    id: string;
+    arquivo: string;
+    data: string;
+    tipo: string;
+    status: string;
+  }
+  interface PixLote {
+    id: string;
+    valor: number;
+    quantidade: number;
+    data: string;
+  }
+  interface FolhaResumo {
+    id: string;
+    competencia: string;
+    total: number;
+  }
+  const [remessas, setRemessas] = useState<Remessa[]>([]);
+  const [pixLotes, setPixLotes] = useState<PixLote[]>([]);
+  const [folhas, setFolhas] = useState<FolhaResumo[]>([]);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [processingRetorno, setProcessingRetorno] = useState(false);
@@ -46,7 +65,7 @@ export default function FinanceiroBancarioPage() {
       setPixLotes(pix || []);
       setFolhas(fls || []);
     } catch (error) {
-      console.error(error);
+      loggerService.error('Erro ao carregar dados bancários', { empresaId: empresaAtual?.id }, error instanceof Error ? error : new Error(String(error)));
       toast.error('Erro ao carregar dados bancários');
     } finally {
       setLoading(false);
@@ -106,7 +125,7 @@ export default function FinanceiroBancarioPage() {
       
       toast.success('Remessa CNAB gerada com sucesso');
       loadData();
-    } catch (error: any) {
+    } catch (error) {
       toast.error(safeErrorMessage(error, 'Erro ao gerar CNAB.'));
     } finally {
       setGenerating(false);
@@ -133,7 +152,7 @@ export default function FinanceiroBancarioPage() {
 
       toast.success('Lote PIX gerado com sucesso');
       loadData();
-    } catch (error: any) {
+    } catch (error) {
       toast.error(safeErrorMessage(error, 'Erro ao gerar lote PIX.'));
     } finally {
       setGenerating(false);
@@ -151,7 +170,7 @@ export default function FinanceiroBancarioPage() {
 
       toast.success(`Retorno processado: ${results.sucesso} sucessos, ${results.erro} erros.`);
       loadData();
-    } catch (error: any) {
+    } catch (error) {
       toast.error(safeErrorMessage(error, 'Erro ao processar arquivo de retorno.'));
     } finally {
       setProcessingRetorno(false);

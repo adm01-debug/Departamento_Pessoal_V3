@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { loggerService } from '@/services/loggerService';
 
 export type OCRResult = {
   valid: boolean;
@@ -54,8 +55,8 @@ export function useDocumentOCR() {
       // await supabase.storage.from('documentos-admissao').remove([filePath]);
 
       return data as OCRResult;
-    } catch (err: any) {
-      console.error('OCR Error:', err);
+    } catch (err: unknown) {
+      loggerService.error('OCR Error', { docType }, err instanceof Error ? err : undefined);
       return {
         valid: false,
         confidence: 0,

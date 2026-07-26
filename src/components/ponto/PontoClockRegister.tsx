@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { pontoOfflineService } from '@/services/pontoOfflineService';
+import { loggerService } from '@/services/loggerService';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { Badge } from '@/components/ui/badge';
@@ -64,7 +65,7 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
         toast.success(`${result.synced} registros offline sincronizados!`);
       }
     } catch (e) {
-      console.error('Erro na sincronização automática', e);
+      loggerService.error('Erro na sincronização automática', {}, e instanceof Error ? e : new Error(String(e)));
     } finally {
       setIsSyncing(false);
       setOfflineQueueSize(pontoOfflineService.getQueueSize());
@@ -117,7 +118,7 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
         }
       }, 100);
     } catch (err) {
-      console.error('Erro ao acessar câmera:', err);
+      loggerService.error('Erro ao acessar câmera para biometria', {}, err instanceof Error ? err : new Error(String(err)));
       toast.error('Acesso à câmera é obrigatório para biometria.');
       setShowFaceScan(false);
     }
@@ -208,7 +209,7 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
         icon: <WifiOff className="h-4 w-4" />,
       });
       setOfflineQueueSize(pontoOfflineService.getQueueSize());
-    } catch (e: any) {
+    } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro no registro offline.'));
     }
   };

@@ -34,6 +34,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { loggerService } from '@/services/loggerService';
 
 type EventoContrato = {
   id: string;
@@ -93,7 +94,7 @@ export default function ContratosGeradosPage() {
       const data = await contratoTemplateService.listarEventos(c.id);
       setEventos(data);
     } catch (e) {
-      console.error('[eventos-contrato]', e);
+      loggerService.error('Erro ao carregar eventos de contrato', { contratoId: c.id }, e instanceof Error ? e : new Error(String(e)));
       toast.error('Falha ao carregar histórico');
     } finally {
       setLoadingEventos(false);
@@ -122,7 +123,7 @@ export default function ContratosGeradosPage() {
         setColaboradores(map);
       }
     } catch (e) {
-      console.error('[contratos-gerados]', e);
+      loggerService.error('Erro ao carregar contratos gerados', { empresaId: empresaAtual?.id }, e instanceof Error ? e : new Error(String(e)));
       toast.error('Falha ao carregar contratos');
     } finally {
       setLoading(false);
@@ -179,7 +180,7 @@ export default function ContratosGeradosPage() {
       const url = await contratoTemplateService.downloadUrl(path);
       window.open(url, '_blank', 'noopener');
     } catch (e) {
-      console.error('[download-contrato]', e);
+      loggerService.error('Erro ao baixar contrato', { path }, e instanceof Error ? e : new Error(String(e)));
       toast.error('Não foi possível gerar o link de download');
     }
   };
@@ -191,7 +192,7 @@ export default function ContratosGeradosPage() {
       toast.success('Novo link gerado e copiado (válido por 7 dias)');
       void carregar();
     } catch (e) {
-      console.error('[reenviar-link]', e);
+      loggerService.error('Erro ao reenviar link de assinatura', { contratoId }, e instanceof Error ? e : new Error(String(e)));
       toast.error('Falha ao gerar link de assinatura');
     }
   };

@@ -10,6 +10,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { format } from 'date-fns';
 import { safeHref } from '@/utils/safeUrl';
 import { toast } from 'sonner';
+import { loggerService } from '@/services/loggerService';
 
 interface AfastamentoDocumentManagerProps {
   afastamentoId: string;
@@ -73,8 +74,8 @@ export function AfastamentoDocumentManager({ afastamentoId }: AfastamentoDocumen
       }
 
       // Feedback de Qualidade
-    } catch (e) {
-      console.error('Erro na validação de metadados:', e);
+    } catch (e: unknown) {
+      loggerService.error('Erro na validação de metadados', { fileName: file.name }, e instanceof Error ? e : undefined);
       return false;
     }
 
@@ -105,9 +106,9 @@ export function AfastamentoDocumentManager({ afastamentoId }: AfastamentoDocumen
       setFile(null);
       const input = document.getElementById('file-upload') as HTMLInputElement;
       if (input) input.value = '';
-    } catch (error: any) {
-      console.error(error);
-      const message = error.message || 'Ocorreu um erro técnico ao realizar o upload.';
+    } catch (error) {
+      loggerService.error('Erro no upload de documento de afastamento', { afastamentoId }, error instanceof Error ? error : new Error(String(error)));
+      const message = error && typeof error === 'object' && 'message' in error ? (error as unknown as { message: string }).message : 'Ocorreu um erro técnico ao realizar o upload.';
       toast.error('Erro no Upload', {
         description: message,
         icon: <AlertTriangle className="h-4 w-4 text-destructive" />

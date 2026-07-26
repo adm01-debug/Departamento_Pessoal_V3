@@ -59,7 +59,7 @@ export const jornadaHorariosService = {
         .not('dia_semana', 'in', `(${diasNovos.join(',')})`);
 
       return data || [];
-    } catch (e: any) {
+    } catch (e) {
       throw new Error('Falha ao salvar grade de horários', { cause: e });
     }
   },

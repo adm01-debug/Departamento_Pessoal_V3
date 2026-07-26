@@ -18,6 +18,7 @@ import { useEmpresas } from '@/hooks/useEmpresas';
 import { exportarDesligamentosExcel } from '@/utils/desligamentoExcel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PontoAuditTimeline } from '@/components/ponto/PontoAuditTimeline';
+import { loggerService } from '@/services/loggerService';
 import {
   DesligamentoKPIs,
   DesligamentoFilters,
@@ -67,7 +68,7 @@ export default function DesligamentosPage() {
       queryClient.invalidateQueries({ queryKey: ['desligamentos'] });
       toast.success('Desligamento excluído');
     } catch (err) {
-      console.error('Erro ao excluir desligamento:', err);
+      loggerService.error('Erro ao excluir desligamento', { id, empresaId: empresaAtual?.id }, err instanceof Error ? err : new Error(String(err)));
       toast.error('Erro ao excluir desligamento');
     }
   };

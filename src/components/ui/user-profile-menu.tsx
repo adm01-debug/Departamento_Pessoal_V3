@@ -27,7 +27,7 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
       await signOut();
       toast.success('Sessão encerrada com sucesso');
       navigate('/login');
-    } catch (error: any) {
+    } catch (error) {
       toast.error(safeErrorMessage(error, 'Erro ao encerrar sessão.'));
     } finally {
       setIsLoggingOut(false);

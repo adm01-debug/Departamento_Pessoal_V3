@@ -9,6 +9,7 @@ import {
 } from '@/utils/importacao/parser';
 import { normalizarCPF } from '@/utils/importacao/validators';
 import { safeErrorMessage } from '@/utils/safeError';
+import { loggerService } from '@/services/loggerService';
 
 export type ImportRow = ParsedImportRow;
 
@@ -33,7 +34,7 @@ export function useImportacaoColaboradores() {
         const parsed = await parseWorkbookBuffer(buffer, { existingCPFs });
         setRows(parsed);
         return parsed;
-      } catch (err: any) {
+      } catch (err) {
         toast.error(safeErrorMessage(err, 'Erro ao processar arquivo de importação.'));
         throw err;
       }
@@ -59,8 +60,8 @@ export function useImportacaoColaboradores() {
         } as any);
         if (error) throw error;
         successCount++;
-      } catch (err) {
-        console.error(err);
+      } catch (err: unknown) {
+        loggerService.error('Erro ao importar colaborador', { rowIndex: i }, err instanceof Error ? err : undefined);
       }
       setProgress(Math.round(((i + 1) / validos.length) * 100));
     }

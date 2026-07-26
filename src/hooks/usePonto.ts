@@ -3,6 +3,7 @@ import { pontosService } from '@/services/pontosService';
 import { useEmpresa } from '@/contexts/EmpresaContext';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+import { loggerService } from '@/services/loggerService';
 
 export function usePonto(colaboradorId?: string) {
   const { empresaAtual } = useEmpresa();
@@ -57,7 +58,7 @@ export function usePonto(colaboradorId?: string) {
             }
           })
           .catch(err => {
-            console.error('Erro na validação biométrica:', err);
+            loggerService.error('Erro na validação biométrica', { colaboradorId }, err instanceof Error ? err : new Error(String(err)));
             toast.error('Falha na validação biométrica. O registro de ponto não será validado.');
           });
       }

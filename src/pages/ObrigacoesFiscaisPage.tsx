@@ -80,7 +80,7 @@ export default function ObrigacoesFiscaisPage() {
       await edgeFunctionsService.gerarGuias({ empresaId: empresaAtual.id, competencia: `${ano}-${mes}`, tipo: 'todos' });
       qc.invalidateQueries({ queryKey: ['guias-fgts'] }); qc.invalidateQueries({ queryKey: ['guias-inss'] });
       toast.success('Guias geradas automaticamente via servidor!');
-    } catch (err: any) { toast.error(safeErrorMessage(err, 'Erro ao gerar guias.')); } finally { setGerandoServidor(false); }
+    } catch (err) { toast.error(safeErrorMessage(err, 'Erro ao gerar guias.')); } finally { setGerandoServidor(false); }
   };
 
   const totalFgts = guiasFgts.reduce((acc: number, g: any) => acc + (g.valor || 0), 0);

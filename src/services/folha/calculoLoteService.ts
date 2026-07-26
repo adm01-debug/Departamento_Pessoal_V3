@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { pontoIntegracaoUtils } from '@/utils/folha/pontoIntegracaoUtils';
 import { safeErrorMessage } from '@/utils/safeError';
 import { formatDateLocalISO } from '@/utils/dateLocal';
+import { loggerService } from '../loggerService';
 
 export interface BatchProgress {
   total: number;
@@ -232,8 +233,8 @@ export const calculoLoteService = {
 
           progress.success++;
           onProgress?.({ ...progress });
-        } catch (err: any) {
-          console.error(`Erro no processamento de colaborador id=${colab.id}:`, safeErrorMessage(err, 'erro desconhecido'));
+        } catch (err) {
+          loggerService.error('Erro no processamento de colaborador', { colaboradorId: colab.id }, err);
           progress.errors++;
           onProgress?.({ ...progress });
         }
@@ -242,7 +243,7 @@ export const calculoLoteService = {
       }
 
       return progress;
-    } catch (error: any) {
+    } catch (error) {
       toast.error(safeErrorMessage(error, 'Falha no processamento em lote.'));
       throw error;
     }

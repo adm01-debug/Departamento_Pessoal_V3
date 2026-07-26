@@ -186,8 +186,9 @@ export async function calcularRescisao(params: RescisaoParams): Promise<Rescisao
     result.assinaturaDigital = await signCalculation(result);
 
     return (result);
-  } catch (e: any) {
-    throw new Error(e.message || 'Erro inesperado no motor de cálculo de rescisão', { cause: e });
+  } catch (e: unknown) {
+    if (e instanceof Error) throw e;
+    throw new Error(String(e), { cause: e });
   }
 }
 

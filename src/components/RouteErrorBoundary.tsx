@@ -21,10 +21,9 @@ export class RouteErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
-    console.error('[RouteErrorBoundary]', error, info.componentStack);
-    loggerService.fatal('Route rendering error', { 
+    loggerService.fatal('Route rendering error', {
       componentStack: info.componentStack,
-      location: window.location.pathname 
+      location: window.location.pathname
     }, error);
   }
 
