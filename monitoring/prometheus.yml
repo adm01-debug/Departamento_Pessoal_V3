@@ -1,14 +1,88 @@
-# Prometheus Config - Configuration
-version: '1.0'
-name: Prometheus Config
-enabled: true
+# ============================================================
+# P3-058: Prometheus — Scrape Config + Alert Rules
+# Alvo: external-db-bridge e Edge Functions do DP v2
+# Deploy: kubernetes / docker-compose / standalone
+# ============================================================
 
-settings:
-  environment: production
-  logging: true
-  monitoring: true
+global:
+  scrape_interval: 30s
+  evaluation_interval: 15s
+  external_labels:
+    environment: production
+    service: departamento-pessoal-v2
 
-config:
-  timeout: 300
-  retries: 3
-  cache: true
+# ── Alertmanager ───────────────────────────────────────────
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - alertmanager:9093
+
+# ── Alert Rules ─────────────────────────────────────────────
+rule_files:
+  - "alerts/*.yml"
+
+# ── Scrape Configs ──────────────────────────────────────────
+scrape_configs:
+  # 1) Prometheus auto-scrapes itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # 2) Node Exporter (host metrics)
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  # 3) Supabase Edge Functions — Healthcheck + Metrics
+  #    O healthcheck (P3-056) retorna JSON; o metrics (P3-058) retorna Prometheus format.
+  - job_name: 'supabase-edge-functions'
+    metrics_path: '/functions/v1/metrics'
+    scrape_interval: 30s
+    scrape_timeout: 15s
+    static_configs:
+      - targets:
+          - '<SUPABASE_PROJECT_REF>.supabase.co'
+        labels:
+          function: metrics
+    # Autenticação via Bearer token (se exposto)
+    # bearer_token: '<METRICS_BEARER_TOKEN>'
+    # TLS (Supabase usa HTTPS)
+    scheme: https
+    tls_config:
+      insecure_skip_verify: false
+    # Retry config
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'supabase-edge-functions'
+      - source_labels: [__scrape_interval__]
+        target_label: scrape_interval
+        replacement: '30s'
+
+  # 4) external-db-bridge healthcheck direto
+  - job_name: 'external-db-bridge'
+    metrics_path: '/functions/v1/healthcheck'
+    scrape_interval: 30s
+    static_configs:
+      - targets:
+          - '<SUPABASE_PROJECT_REF>.supabase.co'
+    scheme: https
+    # Response from healthcheck is JSON — use json_exporter or
+    # use the dedicated /functions/v1/metrics endpoint instead.
+
+  # 5) PostgreSQL via postgres_exporter (se self-hosted)
+  - job_name: 'postgresql'
+    static_configs:
+      - targets:
+          - 'postgres-exporter:9187'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: job
+        replacement: 'postgres'
+
+  # 6) Nginx reverse proxy (se aplicável)
+  - job_name: 'nginx'
+    static_configs:
+      - targets:
+          - 'nginx-exporter:9113'

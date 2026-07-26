@@ -6,6 +6,44 @@ Este sistema utiliza tabelas internas e views para monitorar o desempenho das Ed
 
 As métricas são armazenadas na tabela `public.metricas_processamento`.
 
+### Prometheus Metrics (P3-058)
+
+**Endpoint:** `GET /functions/v1/metrics`
+
+Formato: Prometheus text exposition. Scrape a cada 30s.
+
+| Métrica | Tipo | Descrição |
+|---------|------|-----------|
+| `departamento_pessoal_health_overall` | gauge | 1=healthy, 0=degraded |
+| `departamento_pessoal_health_database` | gauge | 1=ok, 0=error |
+| `departamento_pessoal_health_telemetry` | gauge | 1=ok, 0=error |
+| `departamento_pessoal_health_total_latency_ms` | gauge | Latência do healthcheck |
+| `departamento_pessoal_bridge_p95_latency_ms` | gauge | P95 de latência (última hora) |
+| `departamento_pessoal_bridge_errors_total` | counter | Erros na última hora |
+| `departamento_pessoal_bridge_slow_queries_total` | counter | Queries >5s na última hora |
+
+**Alertas configurados em** `monitoring/alerts/bridge.yml`:
+
+| Alerta | Condição | Severidade |
+|--------|----------|------------|
+| `BridgeHighLatencyP95` | P95 > 5s por 5min | warning |
+| `BridgeCriticalLatencyP95` | P95 > 10s por 2min | critical |
+| `BridgeDown` | health_overall = 0 por 1min | critical |
+| `BridgeHighErrorRate` | taxa > 1% por 1min | warning |
+| `BridgeCriticalErrorRate` | taxa > 5% por 30s | critical |
+| `ManySlowQueries` | > 50 slow queries/h | warning |
+
+**Configuração Prometheus** em `monitoring/prometheus.yml`:
+```yaml
+scrape_configs:
+  - job_name: 'supabase-edge-functions'
+    metrics_path: '/functions/v1/metrics'
+    scrape_interval: 30s
+    static_configs:
+      - targets: ['<SUPABASE_REF>.supabase.co']
+    scheme: https
+```
+
 ### View de Alertas: `v_alertas_timeout`
 
 Esta view destaca funções que estão operando próximo ao limite de 60 segundos do Supabase Edge Functions.

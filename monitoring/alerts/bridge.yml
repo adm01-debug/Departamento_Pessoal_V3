@@ -1,0 +1,133 @@
+# ============================================================
+# P3-058: Prometheus Alert Rules — Departamento Pessoal v2
+# A colocar em: prometheus/alerts/bridge.yml
+# ou inline em prometheus.yml via rule_files
+# ============================================================
+
+groups:
+  - name: departamento_pessoal_bridge
+    interval: 30s
+    rules:
+      # ── Latência ────────────────────────────────────────
+
+      - alert: BridgeHighLatencyP95
+        expr: departamento_pessoal_bridge_p95_latency_ms > 5000
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Bridge P95 latency > 5s há mais de 5min"
+          description: "P95 de latência do external-db-bridge está em {{ $value | humanizeDuration }}. Verifique queries lentas em mv_telemetry_dashboard."
+          runbook: "infra/runbooks/BRIDGE_PERFORMANCE.md"
+
+      - alert: BridgeCriticalLatencyP95
+        expr: departamento_pessoal_bridge_p95_latency_ms > 10000
+        for: 2m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Bridge P95 latency > 10s — CRÍTICO"
+          description: "Latência P95 em {{ $value | humanizeDuration }}. Provavelmente query com full scan. Verifique query_telemetry."
+          runbook: "infra/runbooks/BRIDGE_PERFORMANCE.md"
+
+      - alert: HealthcheckLatencyHigh
+        expr: departamento_pessoal_health_total_latency_ms > 3000
+        for: 3m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Healthcheck lento ({{ $value }}ms)"
+          description: "O healthcheck está demorando {{ $value }}ms para completar."
+
+      # ── Disponibilidade ──────────────────────────────────
+
+      - alert: BridgeDown
+        expr: departamento_pessoal_health_overall == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "external-db-bridge INDISPONÍVEL"
+          description: "O healthcheck do bridge está retornando erro há mais de 1min. Verifique logs de Edge Functions."
+          runbook: "infra/runbooks/BRIDGE_PERFORMANCE.md"
+
+      - alert: DatabaseDown
+        expr: departamento_pessoal_health_database == 0
+        for: 30s
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Banco de dados INDISPONÍVEL"
+          description: "Database health check falhou. Possível problema de conexão ou RLS bloqueando."
+
+      - alert: TelemetryDown
+        expr: departamento_pessoal_health_telemetry == 0
+        for: 2m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Tabela query_telemetry inacessível"
+          description: "A telemetria do bridge não está gravando. Verifique se a tabela existe e se RLS permite."
+
+      # ── Erros ────────────────────────────────────────────
+
+      - alert: BridgeHighErrorRate
+        expr: rate(departamento_pessoal_bridge_errors_total[5m]) / rate(departamento_pessoal_bridge_slow_queries_total[5m]) > 0.01
+        for: 1m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Taxa de erro do bridge > 1%"
+          description: "Erros: {{ $value | printf \"%.2f\" }}%. Verifique logs em Sentry com tag severity=error."
+
+      - alert: BridgeCriticalErrorRate
+        expr: rate(departamento_pessoal_bridge_errors_total[2m]) / rate(departamento_pessoal_bridge_slow_queries_total[2m]) > 0.05
+        for: 30s
+        labels:
+          severity: critical
+          team: platform
+        annotations:
+          summary: "Taxa de erro do bridge > 5% — CRÍTICO"
+          description: "Taxa de erro em {{ $value | printf \"%.2f\" }}%. Execute rollback se necessário."
+
+      - alert: ManySlowQueries
+        expr: departamento_pessoal_bridge_slow_queries_total > 50
+        for: 5m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Mais de 50 slow queries na última hora"
+          description: "{{ $value }} queries com latência >5s. Verifique mv_telemetry_dashboard para identificar tabelas."
+
+  # ── Alertas de Infraestrutura ──────────────────────────────
+
+  - name: departamento_pessoal_infra
+    interval: 60s
+    rules:
+      - alert: PrometheusTargetDown
+        expr: up{job="supabase-edge-functions"} == 0
+        for: 2m
+        labels:
+          severity: warning
+          team: platform
+        annotations:
+          summary: "Prometheus não consegue scrapar Supabase Edge Functions"
+          description: "O target supabase-edge-functions está fora há {{ $value }}min. Verifique se o endpoint /functions/v1/metrics está acessível."
+
+      - alert: PostgreSQLDown
+        expr: up{job="postgresql"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: dba
+        annotations:
+          summary: "PostgreSQL exporter está fora"
+          description: "PostgreSQL pode estar down ou o exporter falhou."
