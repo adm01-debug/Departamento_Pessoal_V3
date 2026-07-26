@@ -33,6 +33,61 @@ const supabaseBase = createClient<Database>(
   }
 );
 
+// ── Idempotency retry helper (P3-061) ───────────────────────────────────────
+// Backoff: 1s → 5s → 25s. Máximo 3 tentativas.
+// Não retry: 4xx exceto 429; não retry se idempotency-key inválida (409).
+// Para writes: auto-injeta Idempotency-Key gerado pelo cliente (crypto.randomUUID).
+// Para reads: sem retry (reads são idempotent por natureza).
+
+const RETRY_DELAYS_MS = [1_000, 5_000, 25_000];
+const RETRYABLE_STATUS_CODES = new Set([429, 502, 503, 504]);
+
+async function sleep(ms: number): Promise<void> {
+  await new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function isRetryableHttpError(res: Response): boolean {
+  return RETRYABLE_STATUS_CODES.has(res.status);
+}
+
+async function fetchWithRetry(
+  url: string,
+  options: RequestInit,
+  isWrite: boolean,
+): Promise<{ res: Response; idempotencyKey: string | null }> {
+  let idempotencyKey: string | null = null;
+
+  for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
+    const headers = { ...options.headers } as Record<string, string>;
+
+    // Writes GET idempotency key auto-gerado (não afeta reads).
+    if (isWrite && !headers['Idempotency-Key']) {
+      idempotencyKey = crypto.randomUUID();
+      headers['Idempotency-Key'] = idempotencyKey;
+    }
+
+    const res = await fetch(url, { ...options, headers });
+
+    // Sucesso: retorna imediatamente.
+    if (res.ok) return { res, idempotencyKey };
+
+    // Não-retryable: 4xx exceto 429 → fail fast.
+    if (res.status >= 400 && res.status < 500 && res.status !== 429) {
+      return { res, idempotencyKey };
+    }
+
+    // Último retry agotado: retorna erro final.
+    if (attempt === RETRY_DELAYS_MS.length) return { res, idempotencyKey };
+
+    // Retryable: aplica backoff e tenta novamente.
+    const delay = RETRY_DELAYS_MS[attempt];
+    await sleep(delay);
+  }
+
+  // Fallback impossível mas requerido pelo TS.
+  return { res: new Response(null, { status: 500 }), idempotencyKey };
+}
+
 // --- external-db-bridge Proxy ---
 // Contrato real (descoberto via probe):
 //   { action: 'select'|'insert'|'update'|'delete'|'rpc',
@@ -107,16 +162,20 @@ const callBridge = async <T = any>(
   }
 
   try {
-    const res = await fetch(`${SUPABASE_URL}/functions/v1/external-db-bridge`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'apikey': SUPABASE_PUBLISHABLE_KEY,
-        // Bearer = access_token (se houver) ou anon key (apenas para reads anônimos)
-        'Authorization': `Bearer ${bearerToken || SUPABASE_PUBLISHABLE_KEY}`,
+    // P3-061: retry com backoff para writes; idempotency key auto-injetada.
+    const { res, idempotencyKey } = await fetchWithRetry(
+      `${SUPABASE_URL}/functions/v1/external-db-bridge`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_PUBLISHABLE_KEY,
+          'Authorization': `Bearer ${bearerToken || SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify(body),
       },
-      body: JSON.stringify(body),
-    });
+      isWrite,
+    );
     const rawText = await res.text().catch(() => '{}');
     const json: {
       data?: unknown;
@@ -124,6 +183,9 @@ const callBridge = async <T = any>(
       error?: string;
       duration_ms?: number;
     } = secureJsonParse(rawText);
+
+    // 409 = idempotency key reutilizada com payload diferente → não retryable aqui
+    // (o cliente que gerou a key deve evitar reuse). Fail fast.
     if (!res.ok || json.error) {
       const errorMsg = json.error || `Erro HTTP ${res.status}`;
       console.error('🔴 [BRIDGE_SCHEMA_ERROR]', action, target, errorMsg);
