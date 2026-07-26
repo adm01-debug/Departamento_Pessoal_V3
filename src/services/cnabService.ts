@@ -37,6 +37,17 @@ interface CnabRemessaRecord {
   created_at?: string;
 }
 
+interface CnabRemessaInsert {
+  empresa_id: string;
+  folha_id: string;
+  banco_codigo: string;
+  status: string;
+  valor_total: number;
+  total_pagamentos: number;
+  arquivo_remessa?: string;
+  sequencial_arquivo?: number;
+}
+
 interface ContaBancariaRecord {
   id: string;
   colaborador_id: string;
@@ -164,7 +175,7 @@ export const cnabService = {
     if (hError) throw hError;
     if (!itens?.length) throw new Error('Nenhum pagamento encontrado para gerar CNAB.');
 
-    const typedItens = itens as unknown as FolhaItemRecord[];
+    const typedItens = itens as FolhaItemRecord[];
     const colaboradorIds = typedItens.map(i => i.colaborador_id);
     const { data: contas, error: cError } = await supabase
       .from('contas_bancarias')
@@ -188,12 +199,12 @@ export const cnabService = {
           status: 'pendente',
           valor_total: typedItens.reduce((acc, i) => acc + Number(i.total_liquido), 0),
           total_pagamentos: typedItens.length
-        }] as any)
+        }] as CnabRemessaInsert[])
         .select()
         .single();
 
       if (rError || !remessa) throw rError || new Error('Falha ao criar remessa');
-      remessaRecord = remessa as unknown as CnabRemessaRecord;
+      remessaRecord = remessa as CnabRemessaRecord;
     }
 
     const lines: string[] = [];
@@ -201,7 +212,7 @@ export const cnabService = {
     const { data: seqData } = await supabase.rpc('next_cnab_sequencial', {
       p_empresa_id: empresaId,
       p_banco_codigo: config.banco_codigo,
-    } as any);
+    });
     const sequence = (seqData as number) || 1;
 
     const pad = (val: unknown, len: number, char = ' ', side: 'left' | 'right' = 'right') => {
@@ -226,7 +237,7 @@ export const cnabService = {
     const lotHeader = pad(config.banco_codigo, 3, '0', 'left') + '00011' + 'C' + '30' + '01' + ' ' + '040' + pad(config.agencia, 5, '0', 'left') + pad(config.agencia_digito || '', 1) + pad(config.conta, 12, '0', 'left') + pad(config.conta_digito, 1) + ' ' + pad(config.nome_empresa || 'EMPRESA', 30) + pad('', 40) + pad('', 30) + pad('', 10) + dateStr + pad('', 8, '0') + pad('', 33);
     lines.push(lotHeader.padEnd(240, ' '));
 
-    const typedContas = (contas as unknown as ContaBancariaRecord[]) || [];
+    const typedContas = (contas as ContaBancariaRecord[]) || [];
 
     for (const item of typedItens) {
       const colab = item.colaborador;
@@ -282,7 +293,7 @@ export const cnabService = {
       arquivo_remessa: fullFile,
       status: 'enviado',
       sequencial_arquivo: sequence,
-    } as any).eq('id', remessaRecord.id).eq('empresa_id', empresaId);
+    } as Partial<CnabRemessaRecord>).eq('id', remessaRecord.id).eq('empresa_id', empresaId);
 
     return fullFile;
   },
@@ -313,7 +324,7 @@ export const cnabService = {
           .maybeSingle();
 
         if (item) {
-          const itemRecord = item as unknown as CnabItemRecord;
+          const itemRecord = item as CnabItemRecord;
           const isSuccess = ['00', '02'].includes(codigoOcorrencia);
           const status = isSuccess ? 'pago' : 'erro';
 
@@ -361,7 +372,7 @@ export const cnabService = {
     if (hError) throw hError;
     if (!itens?.length) throw new Error('Nenhum pagamento encontrado para gerar lote PIX.');
 
-    const typedItens = itens as unknown as FolhaItemRecord[];
+    const typedItens = itens as FolhaItemRecord[];
     const colaboradorIds = typedItens.map(i => i.colaborador_id);
     const { data: contas, error: cError } = await supabase
       .from('contas_bancarias')
@@ -371,7 +382,7 @@ export const cnabService = {
 
     if (cError) throw cError;
 
-    const typedContas = (contas as unknown as ContaBancariaRecord[]) || [];
+    const typedContas = (contas as ContaBancariaRecord[]) || [];
 
     const csvLines = ['Nome;CPF/CNPJ;Chave Pix;Tipo Chave;Valor;Descricao;ID_Folha_Item'];
     for (const item of typedItens) {
@@ -441,7 +452,7 @@ export const cnabService = {
     if (hError) throw hError;
     if (!itens?.length) throw new Error('Nenhum pagamento encontrado.');
 
-    const typedItens = itens as unknown as FolhaItemRecord[];
+    const typedItens = itens as FolhaItemRecord[];
     const colaboradorIds = typedItens.map((i) => i.colaborador_id);
 
     const { data: contas, error: cError } = await (supabase as any)
@@ -451,7 +462,7 @@ export const cnabService = {
       .eq('principal', true);
 
     if (cError) throw cError;
-    const typedContas = (contas as unknown as ContaBancariaRecord[]) || [];
+    const typedContas = (contas as ContaBancariaRecord[]) || [];
 
     // ── 4. Criar remessa pendente ────────────────────────────────────
     const valorTotal = typedItens.reduce((acc, i) => acc + Number(i.total_liquido), 0);

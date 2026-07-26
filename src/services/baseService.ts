@@ -17,7 +17,7 @@ export interface ListResponse<T> {
   total: number;
 }
 
-export class BaseService<T, CreateDTO = any, UpdateDTO = any> {
+export class BaseService<T, CreateDTO = Record<string, unknown>, UpdateDTO = Record<string, unknown>> {
   constructor(
     protected table: string,
     protected options: {
@@ -104,7 +104,7 @@ export class BaseService<T, CreateDTO = any, UpdateDTO = any> {
   async criar(payload: CreateDTO): Promise<T> {
     try {
       const { data, error } = await this.getQuery()
-        .insert(payload as any)
+        .insert(payload as CreateDTO)
         .select()
         .maybeSingle();
       
@@ -132,7 +132,7 @@ export class BaseService<T, CreateDTO = any, UpdateDTO = any> {
           .single();
 
         if (currentError) throw currentError;
-        query = query.eq('version', (current as any)?.version || 1);
+        query = query.eq('version', (current as { version: number } | null)?.version || 1);
       }
 
       const { data, error } = await query.select().maybeSingle();
