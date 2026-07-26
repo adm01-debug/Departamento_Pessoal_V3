@@ -46,21 +46,26 @@ GROUP BY datname;
 -- =============================================================================
 -- 4. ÍNDICES COMPOSTOS PARA REDUZIR CONEXÕES
 -- =============================================================================
+-- AUDITORIA DE COLUNAS (2026-07-26):
+--   folhas_pagamento : SEM empresa_id (tabela consolidada sem FK direta)
+--   registros_ponto   : SEM empresa_id (via colaborador); SEM data_hora (é "data" DATE)
+--   documentos        : verificar existência de empresa_id + ativo
+-- =============================================================================
 
--- Índices que otimizam queries frequentes
-CREATE INDEX IF NOT EXISTS idx_colaboradores_empresa_ativo
-  ON public.colaboradores(empresa_id, ativo)
-  WHERE ativo = true;
+-- Índices que otimizam queries frequentes (NÃO bloqueiam — IF NOT EXISTS + CONCURRENTLY)
 
-CREATE INDEX IF NOT EXISTS idx_folhas_competencia_empresa
-  ON public.folhas_pagamento(empresa_id, competencia DESC);
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_colaboradores_empresa_ativo_sw
+  ON public.colaboradores(empresa_id, status)
+  WHERE status = 'ativo';
 
-CREATE INDEX IF NOT EXISTS idx_registros_ponto_colaborador_data
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_folhas_pagamento_competencia_sw
+  ON public.folhas_pagamento(competencia DESC);
+
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_folhas_pagamento_status_sw
+  ON public.folhas_pagamento(status, competencia DESC);
+
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_registros_ponto_colab_data_sw
   ON public.registros_ponto(colaborador_id, data DESC);
-
-CREATE INDEX IF NOT EXISTS idx_documentos_empresa_tipo
-  ON public.documentos(empresa_id, tipo)
-  WHERE ativo = true;
 
 -- =============================================================================
 -- 5. FUNÇÃO DE LIMPEZA DE CONEXÕES óRFÃS

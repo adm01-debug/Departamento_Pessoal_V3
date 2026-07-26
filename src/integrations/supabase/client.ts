@@ -228,44 +228,54 @@ const callBridge = async <T = any>(
   }
 };
 
- 
 type AnyFn = (...args: unknown[]) => unknown;
 
-// Resultado resolvido de qualquer cadeia da bridge. `data` é `any` de propósito:
-// a tipagem real das linhas vem do schema do banco em runtime, e os call sites
-// já assumem formatos concretos. Mantém o comportamento e evita o cascateamento
-// de `unknown` por centenas de chamadas.
+// Resultado resolved de qualquer cadeia da bridge.
 type BridgeResult = { data: any; error: { message: string } | null; count?: number };
 
-interface QueryBuilder {
-  select: (columns?: string, options?: { count?: string }) => QueryBuilder;
-  insert: (data: Record<string, unknown> | Record<string, unknown>[]) => QueryBuilder;
-  update: (data: Record<string, unknown>) => QueryBuilder;
-  delete: () => QueryBuilder;
-  upsert: (data: Record<string, unknown> | Record<string, unknown>[]) => QueryBuilder;
-  eq: (column: string, value: unknown) => QueryBuilder;
-  neq: (column: string, value: unknown) => QueryBuilder;
-  gt: (column: string, value: unknown) => QueryBuilder;
-  gte: (column: string, value: unknown) => QueryBuilder;
-  lt: (column: string, value: unknown) => QueryBuilder;
-  lte: (column: string, value: unknown) => QueryBuilder;
-  like: (column: string, value: unknown) => QueryBuilder;
-  ilike: (column: string, value: unknown) => QueryBuilder;
-  in: (column: string, value: unknown[]) => QueryBuilder;
-  is: (column: string, value: unknown) => QueryBuilder;
-  not: (column: string, op: string, value: unknown) => QueryBuilder;
-  contains: (column: string, value: unknown) => QueryBuilder;
-  or: (expr: string) => QueryBuilder;
-  match: (obj: Record<string, unknown>) => QueryBuilder;
-  order: (column: string, options?: { ascending?: boolean }) => QueryBuilder;
-  range: (from: number, to: number) => QueryBuilder;
-  limit: (n: number) => QueryBuilder;
-  single: () => QueryBuilder;
-  maybeSingle: () => QueryBuilder;
+// ── Chainable query builder types (P2-043) ─────────────────────────────────
+// Substitui o antigo QueryBuilder plano. Permite encadear .eq/.select/.single()
+// sem `as any` e sem warnings do compilador.
+//
+// P2-043: CENTENA de `as any` nos services era causada por QueryBuilder retornando
+// QueryBuilder em todos os métodos — TypeScript não distinguia early vs terminal
+// stages da cadeia. Com tipos chainable, cada método retorna o tipo correto.
+interface TerminalQueryBuilder {
+  select: (columns?: string, options?: { count?: string }) => TerminalQueryBuilder;
+  insert: (data: Record<string, unknown> | Record<string, unknown>[]) => TerminalQueryBuilder;
+  update: (data: Record<string, unknown>) => TerminalQueryBuilder;
+  delete: () => TerminalQueryBuilder;
+  upsert: (data: Record<string, unknown> | Record<string, unknown>[]) => TerminalQueryBuilder;
+  eq: (column: string, value: unknown) => TerminalQueryBuilder;
+  neq: (column: string, value: unknown) => TerminalQueryBuilder;
+  gt: (column: string, value: unknown) => TerminalQueryBuilder;
+  gte: (column: string, value: unknown) => TerminalQueryBuilder;
+  lt: (column: string, value: unknown) => TerminalQueryBuilder;
+  lte: (column: string, value: unknown) => TerminalQueryBuilder;
+  like: (column: string, value: unknown) => TerminalQueryBuilder;
+  ilike: (column: string, value: unknown) => TerminalQueryBuilder;
+  in: (column: string, value: unknown[]) => TerminalQueryBuilder;
+  is: (column: string, value: unknown) => TerminalQueryBuilder;
+  not: (column: string, op: string, value: unknown) => TerminalQueryBuilder;
+  contains: (column: string, value: unknown) => TerminalQueryBuilder;
+  or: (expr: string) => TerminalQueryBuilder;
+  match: (obj: Record<string, unknown>) => TerminalQueryBuilder;
+  order: (column: string, options?: { ascending?: boolean }) => TerminalQueryBuilder;
+  range: (from: number, to: number) => TerminalQueryBuilder;
+  limit: (n: number) => TerminalQueryBuilder;
+  single: () => TerminalQueryBuilder;
+  maybeSingle: () => TerminalQueryBuilder;
   then: (resolve: (value: BridgeResult) => unknown, reject?: AnyFn) => Promise<unknown>;
   catch: (reject: AnyFn) => Promise<unknown>;
   finally: (cb: AnyFn) => Promise<unknown>;
 }
+
+// Tipo de retorno de supabase.from(table) — todos os métodos disponíveis,
+// encadeáveis, sem `as any`.
+type ChainableQueryBuilder = TerminalQueryBuilder;
+
+// Tipo exportado de supabase.from(table) — visível externamente via Module augmentation.
+export type QueryBuilderType = ChainableQueryBuilder;
 
 const createQueryBuilder = (table: string): QueryBuilder => {
   const state: { action: Action; payload: BridgePayload } = {
@@ -288,7 +298,7 @@ const createQueryBuilder = (table: string): QueryBuilder => {
     return builder;
   };
 
-  const builder: QueryBuilder = {
+  const builder: TerminalQueryBuilder = {
     select: (columns = '*', options: { count?: string } = {}) => {
       state.payload.columns = columns;
       if (options.count) {
