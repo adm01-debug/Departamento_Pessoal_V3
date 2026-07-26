@@ -3,7 +3,16 @@ import { premiacoesService } from '../premiacoesService';
 
 const EMPRESA_ID = 'test-empresa-id';
 
-const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
+type SelectChain = { eq: ReturnType<typeof vi.fn>; order: ReturnType<typeof vi.fn>; filter: ReturnType<typeof vi.fn> };
+type InsertChain = { select: ReturnType<typeof vi.fn>; then: (fn: unknown) => unknown; catch: (fn: unknown) => unknown };
+
+const { mockFrom } = vi.hoisted<{ mockFrom: ReturnType<typeof vi.fn> }>(() => ({
+  mockFrom: vi.fn<(table: string) => {
+    select: () => SelectChain;
+    insert: (data?: unknown) => InsertChain;
+    update: (data: unknown) => { eq: ReturnType<typeof vi.fn> };
+  }>(),
+}));
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: mockFrom },

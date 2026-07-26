@@ -3,12 +3,27 @@ import { beneficioService } from '../beneficioService';
 
 const EMPRESA_ID = 'test-empresa-id';
 
-// ─── hoisted mocks ────────────────────────────────────────────────────────────
+// ─── hoisted mocks (P2-049: tipados com vi.fn<T>) ──────────────────────────────────
 
-const { mockFrom, mockLog, mockLoggerError } = vi.hoisted(() => ({
-  mockFrom: vi.fn(),
-  mockLog: vi.fn(),
-  mockLoggerError: vi.fn(),
+type DbResponse<T> = Promise<{ data: T | null; error: Error | null }>;
+type SelectChain = { eq: ReturnType<typeof vi.fn>; order: ReturnType<typeof vi.fn>; ilike: ReturnType<typeof vi.fn> };
+type InsertChain = { select: ReturnType<typeof vi.fn> };
+type UpdateChain = { eq: ReturnType<typeof vi.fn> };
+type DeleteChain = { eq: ReturnType<typeof vi.fn> };
+
+const { mockFrom, mockLog, mockLoggerError } = vi.hoisted<{
+  mockFrom: ReturnType<typeof vi.fn>;
+  mockLog: ReturnType<typeof vi.fn>;
+  mockLoggerError: ReturnType<typeof vi.fn>;
+}>(() => ({
+  mockFrom: vi.fn<(table: string) => {
+    select: () => SelectChain;
+    insert: (data: unknown) => InsertChain;
+    update: (data: unknown) => UpdateChain;
+    delete: () => DeleteChain;
+  }>(),
+  mockLog: vi.fn<() => Promise<void>>(),
+  mockLoggerError: vi.fn<() => void>(),
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
