@@ -1,15 +1,11 @@
 /**
  * @fileoverview Schemas canônicos para Edge Functions e bridge.
- * CANONICO: src/schemas/common.ts
- *
- * ATENÇÃO: ao editar este arquivo, sincronize com src/schemas/common.ts.
- * Deno não pode importar diretamente do src/ (formato diferente de módulo).
- * Manter manualmente em sincronia — usar grep para comparar periodicamente:
- *   diff <(grep -v 'deno.land' src/schemas/common.ts) <(grep -v 'deno.land' supabase/functions/_shared/schemas/common.ts)
- *
- * Zod versão Deno: 3.23.8 (pinned para consistência)
+ * Canonico: src/schemas/common.ts
+ * Re-exportado por:
+ *   - supabase/functions/_shared/schemas/common.ts (via copy)
+ *   - src/validators/esocialValidators.ts (backward compat)
  */
-import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
+import { z } from 'zod';
 
 export const metricasSchema = z.object({
   empresaId: z.string().uuid('ID da empresa deve ser um UUID válido').optional(),
@@ -18,7 +14,7 @@ export const metricasSchema = z.object({
 export const webhookSchema = z.object({
   event_id: z.string().min(1, 'event_id é obrigatório para idempotência').max(128),
   event: z.string().min(1, 'Evento é obrigatório').max(128),
-  data: z.record(z.any()),
+  data: z.record(z.unknown()),
   timestamp: z.string().datetime().optional(),
   version: z.string().optional().default('v1'),
 }).strict();
@@ -70,8 +66,8 @@ export const auditoriaSchema = z.object({
     usuario_id: z.string().optional(),
     usuario_nome: z.string().optional(),
     descricao: z.string().optional(),
-    dados_anteriores: z.any().optional(),
-    dados_novos: z.any().optional(),
+    dados_anteriores: z.unknown().optional(),
+    dados_novos: z.unknown().optional(),
     ip_address: z.string().ip().optional(),
     data_inicio: z.string().datetime().optional(),
     data_fim: z.string().datetime().optional(),

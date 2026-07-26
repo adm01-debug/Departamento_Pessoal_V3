@@ -9,3 +9,4 @@ export * from './documento';
 export * from './ponto';
 export * from './folha';
 export * from './beneficio';
+export * as commonSchemas from './common';
