@@ -272,6 +272,8 @@ Deno.test("single: zero rows com single=true resultaria em PGRST116", () => {
   // mas a expectativa fica registrada para o time de frontend.
   ok(true, "contrato: cliente deve tratar PGRST116 quando single=true e 0 rows");
 });
+
+Deno.test("disjunção: tabelas tenant-scoped não podem estar na denylist", () => {
   for (const t of TENANT_SCOPED_TABLES) ok(!TABLE_DENYLIST.has(t), `tabela tenant-scoped não pode estar na denylist: ${t}`);
 });
 
