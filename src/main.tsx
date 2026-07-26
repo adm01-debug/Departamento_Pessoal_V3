@@ -23,8 +23,7 @@ if (import.meta.env.PROD && import.meta.env.VITE_SENTRY_DSN) {
     replaysSessionSampleRate: 0.1,
     replaysOnErrorSampleRate: 1.0,
     // P3-053: beforeSend — filtra erros de bots e browsers de teste antes do capture
-    beforeSend(event, hint) {
-      const error = hint?.originalException;
+    beforeSend(event) {
       // Erros de bots, scrapers e browsers headless que enviam eventos falsos
       if (typeof navigator !== 'undefined' && navigator.userAgent === '') return null;
       // Erros conhecidos de extensões/chrome-devtools (ruído)
@@ -35,16 +34,18 @@ if (import.meta.env.PROD && import.meta.env.VITE_SENTRY_DSN) {
         'webkit-masked-url',
       ];
       const reqUrl = event.request?.url ?? '';
-      if (chromeExtPatterns.some(p => reqUrl.includes(p))) return null;
-      // Eventos sem stack (são quase sempre false-positives)
+      if (chromeExtPatterns.some((p: string) => reqUrl.includes(p))) return null;
+      // Eventos sem exception values (podem ser eventos de rede ou custom)
       if (!event.exception?.values?.length) return event;
-      // Erros de extensões Chrome/Firefox/Safari (comum em devtools aberto)
-      // firstExc.stacktrace?.frames é o caminho correto — Exception.stack não existe no tipo
-      const frames = firstExc?.stacktrace?.frames;
-      if (frames?.some(f =>
+      // Erros de extensões Chrome/Firefox/Safari: filtra via frames
+      // Exception.stack não existe no tipo — o caminho correto é stacktrace.frames
+      const firstExc = event.exception.values[0];
+      const extFrames = firstExc?.stacktrace?.frames?.filter((f) =>
         f?.filename?.includes('extensions/') ||
-        f?.filename?.includes('chrome-extension')
-      )) return null;
+        f?.filename?.includes('chrome-extension') ||
+        f?.filename?.includes('moz-extension')
+      );
+      if (extFrames?.length) return null;
       return event;
     },
     // Tags globais para filtragem no dashboard Sentry
