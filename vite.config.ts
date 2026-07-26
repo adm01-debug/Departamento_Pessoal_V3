@@ -27,9 +27,9 @@ export default defineConfig(({ mode }) => ({
     imagetools(),
     mode === 'development' && componentTagger(),
     // P3-053: source maps upload automático para Sentry em builds de prod
-    mode === 'production' && import.meta.env.VITE_SENTRY_DSN && sentryVitePlugin({
-      org: import.meta.env.VITE_SENTRY_ORG ?? 'dp-team',
-      project: import.meta.env.VITE_SENTRY_PROJECT ?? 'departamento-pessoal-v2',
+    mode === 'production' && process.env.VITE_SENTRY_DSN && sentryVitePlugin({
+      org: process.env.VITE_SENTRY_ORG ?? 'dp-team',
+      project: process.env.VITE_SENTRY_PROJECT ?? 'departamento-pessoal-v2',
       authToken: process.env.SENTRY_AUTH_TOKEN,
       telemetries: 'debug',
       setCommits: { auto: true },
@@ -98,7 +98,7 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     // P3-053: source maps para Sentry — upload via @sentry/vite-plugin em CI
-    sourcemap: import.meta.env.VITE_SENTRY_DSN ? true : false,
+    sourcemap: !!process.env.VITE_SENTRY_DSN,
     // P2-038: Vite 8 usa minifier oxc (mais rápido que terser). esbuild.drop
     // da config antiga era ignorado pelo Vite 8. oxc tem opção própria:
     // `minify: { compress: { drop_console: true } }` — habilitada abaixo.

@@ -372,3 +372,39 @@ export function validarS5011(dados: ESocialData): ValidationResult {
 
   return { valid: errors.length === 0, errors, warnings };
 }
+
+// ── Stubs: eventos periódicos pendentes de implementação completa ──────────────
+// TODO (P5-082): substituir stubs por validação real conforme manual eSocial v2.5.01
+// Cada stub aceita qualquer payload válido e retorna { valid: true }.
+// Validadores completos requerem mapeamento de campos, regras de negócio e testes.
+
+export function validarS1000(_dados: ESocialData): ValidationResult {
+  return { valid: true, errors: [], warnings: [] };
+}
+export function validarS1005(_dados: ESocialData): ValidationResult {
+  return { valid: true, errors: [], warnings: [] };
+}
+export function validarS1010(_dados: ESocialData): ValidationResult {
+  return { valid: true, errors: [], warnings: [] };
+}
+export function validarS1020(_dados: ESocialData): ValidationResult {
+  return { valid: true, errors: [], warnings: [] };
+}
+export function validarS1070(_dados: ESocialData): ValidationResult {
+  return { valid: true, errors: [], warnings: [] };
+}
+export function validarS1200(_dados: ESocialData): ValidationResult {
+  return { valid: true, errors: [], warnings: [] };
+}
+export function validarS1210(_dados: ESocialData): ValidationResult {
+  return { valid: true, errors: [], warnings: [] };
+}
+export function validarS1260(_dados: ESocialData): ValidationResult {
+  return { valid: true, errors: [], warnings: [] };
+}
+export function validarS1270(_dados: ESocialData): ValidationResult {
+  return { valid: true, errors: [], warnings: [] };
+}
+export function validarS1280(_dados: ESocialData): ValidationResult {
+  return { valid: true, errors: [], warnings: [] };
+}
