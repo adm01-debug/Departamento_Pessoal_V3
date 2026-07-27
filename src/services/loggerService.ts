@@ -100,17 +100,40 @@ export const loggerService = {
 
     // Persist warn/error/fatal via SECURITY DEFINER RPC — bypasses RLS on audit_log_unified
     const persistableLogs = logsToSend.filter(l => PERSIST_LEVELS.has(l.nivel));
-    for (const entry of persistableLogs) {
-      supabase.rpc('log_frontend_error', {
-        p_nivel: entry.nivel,
-        p_mensagem: entry.mensagem,
-        p_contexto: entry.contexto as Record<string, unknown>,
-      }).catch((e: unknown) => {
-        if (import.meta.env.DEV) {
-          console.error('[logger] RPC flush failed:', e);
-        }
-      });
+
+    // Defensivo: em ambientes degradados (testes, SSR, client parcialmente
+    // mockado) `supabase.rpc` pode não existir. Nunca deixar o logger derrubar
+    // o processo com uma unhandled rejection — ele é infraestrutura, não regra.
+    const rpc = (supabase as { rpc?: unknown } | undefined)?.rpc;
+    if (typeof rpc !== 'function') {
+      if (import.meta.env.DEV) {
+        console.debug('[logger] supabase.rpc indisponível — descartando lote local.');
+      }
+      return;
     }
+
+    for (const entry of persistableLogs) {
+      try {
+        const result = supabase.rpc('log_frontend_error', {
+          p_nivel: entry.nivel,
+          p_mensagem: entry.mensagem,
+          p_contexto: entry.contexto as Record<string, unknown>,
+        }) as unknown as Promise<unknown> | undefined;
+
+        if (result && typeof (result as Promise<unknown>).catch === 'function') {
+          void (result as Promise<unknown>).catch((e: unknown) => {
+            if (import.meta.env.DEV) {
+              console.error('[logger] RPC flush failed:', e);
+            }
+          });
+        }
+      } catch (e) {
+        if (import.meta.env.DEV) {
+          console.error('[logger] RPC flush threw synchronously:', e);
+        }
+      }
+    }
+
 
     if (import.meta.env.DEV) {
       const skipped = logsToSend.length - persistableLogs.length;
