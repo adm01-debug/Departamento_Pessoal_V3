@@ -26,11 +26,26 @@ const acaoColors: Record<string, string> = {
   DELETE: 'bg-destructive/15 text-destructive border-0',
 };
 
+/** Linha de log de auditoria exibida no drawer de detalhes */
+interface AuditLogRow {
+  id?: string;
+  tabela?: string;
+  acao?: string;
+  created_at?: string;
+  user_email?: string | null;
+  ip_address?: string | null;
+  user_agent?: string | null;
+  dados_anteriores?: unknown;
+  dados_novos?: unknown;
+  [key: string]: unknown;
+}
+
 export default function AuditoriaPage() {
   const [search, setSearch] = useState('');
   const [tabelaFilter, setTabelaFilter] = useState('todos');
   const [acaoFilter, setAcaoFilter] = useState('todos');
-  const [selectedLog, setSelectedLog] = useState<Record<string, unknown> | null>(null);
+  const [selectedLog, setSelectedLog] = useState<AuditLogRow | null>(null);
+
   const { exportarExcel } = useExcelExport();
   const { empresaAtual } = useEmpresas();
   const empresaId = empresaAtual?.id || '';
