@@ -275,7 +275,7 @@ export default function PontoPage() {
           }
           return { biometriaValida: !!bio?.valid };
         } catch (bioErr) {
-          loggerService.error('Erro na validação biométrica', { colaboradorId }, bioErr instanceof Error ? bioErr : new Error(String(bioErr)));
+          loggerService.error('Erro na validação biométrica', { colaboradorId: colab.id, batidaId: batida.id }, bioErr instanceof Error ? bioErr : new Error(String(bioErr)));
           toast.warning('Não foi possível validar a biometria agora — ponto registrado, revisão pendente.');
           return { biometriaValida: undefined };
         }

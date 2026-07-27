@@ -48,8 +48,8 @@ export function usePendencias(empresaId?: string) {
       queryClient.invalidateQueries({ queryKey: ['pendencias', empresaId] });
       toast({ title: "Sucesso", description: "Status da pendência atualizado." });
     },
-    onError: (error: unknown) => {
-      loggerService.error('Erro ao atualizar pendência', { id }, error instanceof Error ? error : undefined);
+    onError: (error: unknown, variables) => {
+      loggerService.error('Erro ao atualizar pendência', { id: variables?.id }, error instanceof Error ? error : undefined);
       toast({ title: "Erro", description: "Não foi possível atualizar a pendência.", variant: "destructive" });
     }
   });

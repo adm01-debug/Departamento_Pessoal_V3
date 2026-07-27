@@ -61,7 +61,7 @@ export async function tracedFetch(
   const mergedBody = init?.body
     ? typeof init.body === 'string'
       ? JSON.parse(init.body as string)
-      : (init.body as Record<string, unknown>)
+      : (init.body as unknown as Record<string, unknown>)
     : {};
   const finalBody = { ...mergedBody, trace_id: traceId };
   return fetch(input, {
