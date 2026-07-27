@@ -373,38 +373,419 @@ export function validarS5011(dados: ESocialData): ValidationResult {
   return { valid: errors.length === 0, errors, warnings };
 }
 
-// ── Stubs: eventos periódicos pendentes de implementação completa ──────────────
-// TODO (P5-082): substituir stubs por validação real conforme manual eSocial v2.5.01
-// Cada stub aceita qualquer payload válido e retorna { valid: true }.
-// Validadores completos requerem mapeamento de campos, regras de negócio e testes.
+// ── Eventos periódicos e de tabela (implementação real) ───────────────────────
+// P5-082 concluído: os stubs que retornavam `{ valid: true }` para qualquer
+// payload foram substituídos por validação conforme o Manual do eSocial
+// v2.5.01 / layout S-1.3. Um stub permissivo é pior que ausência de
+// validação: dá falsa garantia de conformidade antes da transmissão.
 
-export function validarS1000(_dados: ESocialData): ValidationResult {
-  return { valid: true, errors: [], warnings: [] };
+/** Formato de competência AAAA-MM (perApur / iniValid). */
+const COMPETENCIA_RE = /^\d{4}-(0[1-9]|1[0-2])$/;
+
+/** Valida um campo de competência AAAA-MM. */
+function competenciaValida(
+  val: unknown,
+  campo: string,
+  errors: ValidationError[],
+): void {
+  if (typeof val === 'string' && !COMPETENCIA_RE.test(val)) {
+    errors.push({
+      campo,
+      mensagem: `${campo} deve estar no formato AAAA-MM`,
+      regra: 'REGRA_PERIODO',
+    });
+  }
 }
-export function validarS1005(_dados: ESocialData): ValidationResult {
-  return { valid: true, errors: [], warnings: [] };
+
+/** Valida o par tpInsc/nrInsc do empregador (CNPJ quando 1, CPF quando 2). */
+function validarInscricao(
+  dados: ESocialData,
+  errors: ValidationError[],
+  campoTp = 'tpInsc',
+  campoNr = 'nrInsc',
+): void {
+  required(dados[campoTp], campoTp, errors);
+  enumValido(String(dados[campoTp] ?? ''), ['1', '2', '3', '4', '5', '6'], campoTp, errors);
+  required(dados[campoNr], campoNr, errors);
+  if (Number(dados[campoTp]) === 1) cnpjValido(String(dados[campoNr] ?? ''), campoNr, errors);
+  if (Number(dados[campoTp]) === 2) cpfValido(String(dados[campoNr] ?? ''), campoNr, errors);
 }
-export function validarS1010(_dados: ESocialData): ValidationResult {
-  return { valid: true, errors: [], warnings: [] };
+
+/**
+ * S-1000 — Informações do Empregador/Contribuinte/Órgão Público
+ * Evento de tabela; abre o cadastro do empregador no ambiente eSocial.
+ */
+export function validarS1000(dados: ESocialData): ValidationResult {
+  const errors: ValidationError[] = [];
+  const warnings: ValidationWarning[] = [];
+
+  validarInscricao(dados, errors);
+
+  required(dados.nmRazao, 'nmRazao', errors);
+  maxLen(String(dados.nmRazao ?? ''), 115, 'nmRazao', errors);
+
+  required(dados.classTrib, 'classTrib', errors);
+  maxLen(String(dados.classTrib ?? ''), 2, 'classTrib', errors);
+
+  // Indicadores binários obrigatórios (0 = não, 1 = sim)
+  for (const campo of ['indCoop', 'indConstr', 'indDesFolha', 'indOptRegEletron'] as const) {
+    required(dados[campo], campo, errors);
+    if (dados[campo] !== undefined && dados[campo] !== null && dados[campo] !== '') {
+      enumValido(String(dados[campo]), ['0', '1', '2', '3', '4'], campo, errors);
+    }
+  }
+  // indCoop aceita apenas 0..4; indConstr/indDesFolha/indOptRegEletron só 0 ou 1
+  for (const campo of ['indConstr', 'indDesFolha', 'indOptRegEletron'] as const) {
+    if (dados[campo] !== undefined && dados[campo] !== null && dados[campo] !== '') {
+      enumValido(String(dados[campo]), ['0', '1'], campo, errors);
+    }
+  }
+
+  required(dados.iniValid, 'iniValid', errors);
+  competenciaValida(dados.iniValid, 'iniValid', errors);
+
+  const contato = dados.contato as Record<string, unknown> | undefined;
+  if (!contato || !contato.nmCtt) {
+    warnings.push({
+      campo: 'contato.nmCtt',
+      mensagem: 'Nome do contato não informado — recomendado pelo eSocial',
+    });
+  }
+
+  return { valid: errors.length === 0, errors, warnings };
 }
-export function validarS1020(_dados: ESocialData): ValidationResult {
-  return { valid: true, errors: [], warnings: [] };
+
+/**
+ * S-1005 — Tabela de Estabelecimentos, Obras ou Unidades de Órgãos Públicos
+ * Traz CNAE preponderante, alíquota RAT e FAP do estabelecimento.
+ */
+export function validarS1005(dados: ESocialData): ValidationResult {
+  const errors: ValidationError[] = [];
+  const warnings: ValidationWarning[] = [];
+
+  validarInscricao(dados, errors);
+
+  required(dados.iniValid, 'iniValid', errors);
+  competenciaValida(dados.iniValid, 'iniValid', errors);
+
+  required(dados.cnaePrep, 'cnaePrep', errors);
+  if (dados.cnaePrep !== undefined && dados.cnaePrep !== null && dados.cnaePrep !== '') {
+    if (!/^\d{7}$/.test(String(dados.cnaePrep))) {
+      errors.push({
+        campo: 'cnaePrep',
+        mensagem: 'CNAE preponderante deve ter exatamente 7 dígitos',
+        regra: 'REGRA_CNAE',
+      });
+    }
+  }
+
+  required(dados.aliqRat, 'aliqRat', errors);
+  enumValido(String(dados.aliqRat ?? ''), ['1', '2', '3'], 'aliqRat', errors);
+
+  // FAP é opcional, mas quando informado deve estar entre 0,5000 e 2,0000
+  if (dados.fap !== undefined && dados.fap !== null && dados.fap !== '') {
+    const fap = Number(dados.fap);
+    if (!Number.isFinite(fap) || fap < 0.5 || fap > 2.0) {
+      errors.push({
+        campo: 'fap',
+        mensagem: 'FAP deve estar entre 0,5000 e 2,0000',
+        regra: 'REGRA_FAP',
+      });
+    }
+  }
+
+  return { valid: errors.length === 0, errors, warnings };
 }
-export function validarS1070(_dados: ESocialData): ValidationResult {
-  return { valid: true, errors: [], warnings: [] };
+
+/**
+ * S-1010 — Tabela de Rubricas
+ * Define códigos de rubrica e suas incidências (CP, IRRF, FGTS).
+ */
+export function validarS1010(dados: ESocialData): ValidationResult {
+  const errors: ValidationError[] = [];
+  const warnings: ValidationWarning[] = [];
+
+  required(dados.codRubr, 'codRubr', errors);
+  maxLen(String(dados.codRubr ?? ''), 30, 'codRubr', errors);
+
+  required(dados.ideTabRubr, 'ideTabRubr', errors);
+  maxLen(String(dados.ideTabRubr ?? ''), 8, 'ideTabRubr', errors);
+
+  required(dados.iniValid, 'iniValid', errors);
+  competenciaValida(dados.iniValid, 'iniValid', errors);
+
+  required(dados.dscRubr, 'dscRubr', errors);
+  maxLen(String(dados.dscRubr ?? ''), 100, 'dscRubr', errors);
+
+  required(dados.natRubr, 'natRubr', errors);
+
+  // tpRubr: 1=vencimento, 2=desconto, 3=informativa, 4=informativa dedutora
+  required(dados.tpRubr, 'tpRubr', errors);
+  enumValido(String(dados.tpRubr ?? ''), ['1', '2', '3', '4'], 'tpRubr', errors);
+
+  required(dados.codIncCP, 'codIncCP', errors);
+  required(dados.codIncIRRF, 'codIncIRRF', errors);
+  required(dados.codIncFGTS, 'codIncFGTS', errors);
+
+  return { valid: errors.length === 0, errors, warnings };
 }
-export function validarS1200(_dados: ESocialData): ValidationResult {
-  return { valid: true, errors: [], warnings: [] };
+
+/**
+ * S-1020 — Tabela de Lotações Tributárias
+ */
+export function validarS1020(dados: ESocialData): ValidationResult {
+  const errors: ValidationError[] = [];
+  const warnings: ValidationWarning[] = [];
+
+  required(dados.codLotacao, 'codLotacao', errors);
+  maxLen(String(dados.codLotacao ?? ''), 30, 'codLotacao', errors);
+
+  required(dados.iniValid, 'iniValid', errors);
+  competenciaValida(dados.iniValid, 'iniValid', errors);
+
+  // tpLotacao conforme Tabela 10 do eSocial (01..10, 21..24, 90..91)
+  required(dados.tpLotacao, 'tpLotacao', errors);
+  enumValido(
+    String(dados.tpLotacao ?? ''),
+    ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '21', '22', '24', '90', '91'],
+    'tpLotacao',
+    errors,
+  );
+
+  return { valid: errors.length === 0, errors, warnings };
 }
-export function validarS1210(_dados: ESocialData): ValidationResult {
-  return { valid: true, errors: [], warnings: [] };
+
+/**
+ * S-1070 — Tabela de Processos Administrativos/Judiciais
+ */
+export function validarS1070(dados: ESocialData): ValidationResult {
+  const errors: ValidationError[] = [];
+  const warnings: ValidationWarning[] = [];
+
+  // tpProc: 1=administrativo, 2=judicial, 3=judicial do trabalhador
+  required(dados.tpProc, 'tpProc', errors);
+  enumValido(String(dados.tpProc ?? ''), ['1', '2', '3'], 'tpProc', errors);
+
+  required(dados.nrProc, 'nrProc', errors);
+  maxLen(String(dados.nrProc ?? ''), 21, 'nrProc', errors);
+
+  required(dados.iniValid, 'iniValid', errors);
+  competenciaValida(dados.iniValid, 'iniValid', errors);
+
+  // indAutoria: 1=próprio contribuinte, 2=outra entidade/empresa
+  required(dados.indAutoria, 'indAutoria', errors);
+  enumValido(String(dados.indAutoria ?? ''), ['1', '2'], 'indAutoria', errors);
+
+  return { valid: errors.length === 0, errors, warnings };
 }
-export function validarS1260(_dados: ESocialData): ValidationResult {
-  return { valid: true, errors: [], warnings: [] };
+
+/**
+ * S-1200 — Remuneração de Trabalhador vinculado ao RGPS
+ * Percorre dmDev → infoPerApur → ideEstabLot → detVerbas validando as rubricas.
+ */
+export function validarS1200(dados: ESocialData): ValidationResult {
+  const errors: ValidationError[] = [];
+  const warnings: ValidationWarning[] = [];
+
+  required(dados.perApur, 'perApur', errors);
+  competenciaValida(dados.perApur, 'perApur', errors);
+
+  required(dados.cpfTrab, 'cpfTrab', errors);
+  cpfValido(String(dados.cpfTrab ?? ''), 'cpfTrab', errors);
+
+  if (!Array.isArray(dados.dmDev) || dados.dmDev.length === 0) {
+    errors.push({
+      campo: 'dmDev',
+      mensagem: 'dmDev deve ser uma lista com ao menos um demonstrativo',
+      regra: 'REGRA_ESTRUTURA',
+    });
+    return { valid: false, errors, warnings };
+  }
+
+  (dados.dmDev as Record<string, unknown>[]).forEach((dm, i) => {
+    if (!dm?.ideDmDev) {
+      errors.push({
+        campo: `dmDev[${i}].ideDmDev`,
+        mensagem: 'Identificador do demonstrativo é obrigatório',
+        regra: 'REGRA_OBRIGATORIO',
+      });
+    }
+
+    const infoPerApur = dm?.infoPerApur as Record<string, unknown> | undefined;
+    const estabs = infoPerApur?.ideEstabLot;
+    if (!Array.isArray(estabs) || estabs.length === 0) {
+      errors.push({
+        campo: `dmDev[${i}].infoPerApur.ideEstabLot`,
+        mensagem: 'Ao menos um estabelecimento/lotação é obrigatório',
+        regra: 'REGRA_ESTRUTURA',
+      });
+      return;
+    }
+
+    (estabs as Record<string, unknown>[]).forEach((estab) => {
+      if (!estab?.codLotacao) {
+        errors.push({
+          campo: 'codLotacao',
+          mensagem: 'Código de lotação é obrigatório',
+          regra: 'REGRA_OBRIGATORIO',
+        });
+      }
+      const verbas = estab?.detVerbas;
+      if (!Array.isArray(verbas) || verbas.length === 0) {
+        errors.push({
+          campo: 'detVerbas',
+          mensagem: 'Ao menos uma rubrica é obrigatória',
+          regra: 'REGRA_ESTRUTURA',
+        });
+        return;
+      }
+      (verbas as Record<string, unknown>[]).forEach((v) => {
+        if (!v?.codRubr) {
+          errors.push({
+            campo: 'codRubr',
+            mensagem: 'Código da rubrica é obrigatório',
+            regra: 'REGRA_OBRIGATORIO',
+          });
+        }
+        const valor = Number(v?.vrRubr);
+        if (!Number.isFinite(valor) || valor < 0) {
+          errors.push({
+            campo: 'vrRubr',
+            mensagem: 'Valor da rubrica deve ser numérico e não negativo',
+            regra: 'REGRA_VALOR',
+          });
+        }
+      });
+    });
+  });
+
+  return { valid: errors.length === 0, errors, warnings };
 }
-export function validarS1270(_dados: ESocialData): ValidationResult {
-  return { valid: true, errors: [], warnings: [] };
+
+/**
+ * S-1210 — Pagamentos de Rendimentos do Trabalho
+ */
+export function validarS1210(dados: ESocialData): ValidationResult {
+  const errors: ValidationError[] = [];
+  const warnings: ValidationWarning[] = [];
+
+  required(dados.perApur, 'perApur', errors);
+  competenciaValida(dados.perApur, 'perApur', errors);
+
+  required(dados.cpfTrab, 'cpfTrab', errors);
+  cpfValido(String(dados.cpfTrab ?? ''), 'cpfTrab', errors);
+
+  if (!Array.isArray(dados.infoPgto) || dados.infoPgto.length === 0) {
+    errors.push({
+      campo: 'infoPgto',
+      mensagem: 'infoPgto deve ser uma lista com ao menos um pagamento',
+      regra: 'REGRA_ESTRUTURA',
+    });
+    return { valid: false, errors, warnings };
+  }
+
+  (dados.infoPgto as Record<string, unknown>[]).forEach((pgto, i) => {
+    required(pgto?.dtPgto, `infoPgto[${i}].dtPgto`, errors);
+    dataValida(pgto?.dtPgto as string, `infoPgto[${i}].dtPgto`, errors);
+
+    // tpPgto conforme Tabela 26: 1..5
+    required(pgto?.tpPgto, `infoPgto[${i}].tpPgto`, errors);
+    enumValido(
+      String(pgto?.tpPgto ?? ''),
+      ['1', '2', '3', '4', '5'],
+      `infoPgto[${i}].tpPgto`,
+      errors,
+    );
+  });
+
+  return { valid: errors.length === 0, errors, warnings };
 }
-export function validarS1280(_dados: ESocialData): ValidationResult {
-  return { valid: true, errors: [], warnings: [] };
+
+/**
+ * S-1260 — Comercialização da Produção Rural Pessoa Física
+ */
+export function validarS1260(dados: ESocialData): ValidationResult {
+  const errors: ValidationError[] = [];
+  const warnings: ValidationWarning[] = [];
+
+  required(dados.perApur, 'perApur', errors);
+  competenciaValida(dados.perApur, 'perApur', errors);
+
+  required(dados.nrInsc, 'nrInsc', errors);
+
+  // indComerc conforme Tabela 13 — 1 não é código válido para este evento
+  required(dados.indComerc, 'indComerc', errors);
+  enumValido(
+    String(dados.indComerc ?? ''),
+    ['2', '3', '5', '6', '7', '8', '9'],
+    'indComerc',
+    errors,
+  );
+
+  required(dados.vrTotCom, 'vrTotCom', errors);
+  if (dados.vrTotCom !== undefined && dados.vrTotCom !== null && dados.vrTotCom !== '') {
+    const total = Number(dados.vrTotCom);
+    if (!Number.isFinite(total) || total < 0) {
+      errors.push({
+        campo: 'vrTotCom',
+        mensagem: 'Valor total da comercialização deve ser numérico e não negativo',
+        regra: 'REGRA_VALOR',
+      });
+    }
+  }
+
+  return { valid: errors.length === 0, errors, warnings };
 }
+
+/**
+ * S-1270 — Contratação de Trabalhadores Avulsos Não Portuários
+ */
+export function validarS1270(dados: ESocialData): ValidationResult {
+  const errors: ValidationError[] = [];
+  const warnings: ValidationWarning[] = [];
+
+  required(dados.perApur, 'perApur', errors);
+  competenciaValida(dados.perApur, 'perApur', errors);
+
+  required(dados.nrInsc, 'nrInsc', errors);
+
+  required(dados.codLotacao, 'codLotacao', errors);
+  maxLen(String(dados.codLotacao ?? ''), 30, 'codLotacao', errors);
+
+  return { valid: errors.length === 0, errors, warnings };
+}
+
+/**
+ * S-1280 — Informações Complementares aos Eventos Periódicos
+ * (desoneração da folha / substituição da contribuição patronal)
+ */
+export function validarS1280(dados: ESocialData): ValidationResult {
+  const errors: ValidationError[] = [];
+  const warnings: ValidationWarning[] = [];
+
+  required(dados.perApur, 'perApur', errors);
+  competenciaValida(dados.perApur, 'perApur', errors);
+
+  // indSubstPatr: 1=integral, 2=proporcional
+  if (dados.indSubstPatr !== undefined && dados.indSubstPatr !== null && dados.indSubstPatr !== '') {
+    enumValido(String(dados.indSubstPatr), ['1', '2'], 'indSubstPatr', errors);
+  }
+
+  if (
+    dados.percRedContrib !== undefined &&
+    dados.percRedContrib !== null &&
+    dados.percRedContrib !== ''
+  ) {
+    const perc = Number(dados.percRedContrib);
+    if (!Number.isFinite(perc) || perc < 0 || perc > 100) {
+      errors.push({
+        campo: 'percRedContrib',
+        mensagem: 'Percentual de redução deve estar entre 0 e 100',
+        regra: 'REGRA_PERCENTUAL',
+      });
+    }
+  }
+
+  return { valid: errors.length === 0, errors, warnings };
+}
+
