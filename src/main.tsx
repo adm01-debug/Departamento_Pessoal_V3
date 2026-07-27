@@ -84,14 +84,32 @@ const isInIframe = (() => {
   try { return window.self !== window.top; } catch (e) { return true; }
 })();
 
-const isPreviewHost =
-  window.location.hostname.includes("id-preview--") ||
-  window.location.hostname.includes("lovableproject.com");
+/**
+ * Hosts confiáveis onde o app PODE ser embutido em iframe:
+ * - Preview/editor Lovable (id-preview--*, *.lovable.app, *.lovable.dev,
+ *   *.lovableproject.com, *.sandbox.lovable.dev)
+ * - Desenvolvimento local (localhost / 127.0.0.1 / IPs de rede local)
+ *
+ * IMPORTANTE: manter permissivo. Um falso-negativo aqui apaga o <body>
+ * inteiro e resulta em TELA BRANCA no preview.
+ */
+const TRUSTED_FRAME_HOST_RE =
+  /(^|\.)(lovable\.app|lovable\.dev|lovableproject\.com)$|^localhost$|^127\.0\.0\.1$|^\[?::1\]?$|^\d+\.\d+\.\d+\.\d+$/i;
 
-if (isInIframe && !isPreviewHost) {
-  document.body.innerHTML = '';
-  if (window.top) window.top.location.href = window.self.location.href;
+const isPreviewHost =
+  TRUSTED_FRAME_HOST_RE.test(window.location.hostname) ||
+  window.location.hostname.includes('id-preview--');
+
+// Clickjacking defense-in-depth: só quebra o frame em produção e apenas
+// quando o host NÃO é confiável. Nunca apaga o body (evita tela branca).
+if (isInIframe && !isPreviewHost && import.meta.env.PROD) {
+  try {
+    if (window.top) window.top.location.href = window.self.location.href;
+  } catch {
+    /* cross-origin: navegação bloqueada pelo browser, nada a fazer */
+  }
 }
+
 
 // CSP violation monitoring — detect and report policy breaches client-side
 if (import.meta.env.PROD) {
