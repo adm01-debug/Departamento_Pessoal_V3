@@ -92,7 +92,7 @@ export const automacaoService = {
     dataAlerta.setDate(dataAlerta.getDate() + 7);
     const dataFormatada = formatDateLocalISO(dataAlerta);
 
-    const { data: periodos } = await supabase
+    const { data: periodos } = await (supabase as any)
       .from('periodos_experiencia')
       .select('*, colaborador:colaboradores!inner(id, nome_completo, empresa_id)')
       .eq('colaborador.empresa_id' as any, empresaId)
