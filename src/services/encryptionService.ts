@@ -195,19 +195,19 @@ export async function encryptDadosBancarios(
 export function sanitizeForLogging<T extends Record<string, unknown>>(obj: T): T {
   const sensitiveFields = ['cpf', 'cnpj', 'rg', 'senha', 'password', 'conta', 'agencia', 'salario'];
 
-  const sanitized = { ...obj };
+  const sanitized: Record<string, unknown> = { ...obj };
 
   for (const key of Object.keys(sanitized)) {
     const lowerKey = key.toLowerCase();
     if (sensitiveFields.some((field) => lowerKey.includes(field))) {
       const value = sanitized[key];
       if (typeof value === 'string') {
-        sanitized[key] = `[REDACTED-${value.length}chars]` as T[Extract<keyof T, string>];
+        sanitized[key] = `[REDACTED-${value.length}chars]`;
       }
     }
   }
 
-  return sanitized;
+  return sanitized as T;
 }
 
 // =============================================================================
