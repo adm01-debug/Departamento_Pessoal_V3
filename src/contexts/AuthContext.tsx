@@ -232,7 +232,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             if (error) throw error;
             return data;
           },
-          signal: controller.signal,
         }),
         // Colaboradores ativos (dashboard + listagens)
         queryClient.prefetchQuery({
@@ -246,7 +245,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             if (error) throw error;
             return data;
           },
-          signal: controller.signal,
         }),
       ])
         .then(() => loggerService.debug('Pre-fetch post-login concluído'))
