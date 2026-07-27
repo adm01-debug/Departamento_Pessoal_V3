@@ -27,8 +27,9 @@ export default function ContabilidadePage() {
     valor?: number;
     tipo?: string;
     status?: string;
-    conta_debito?: string;
-    conta_credito?: string;
+    /** join com plano de contas */
+    conta_debito?: { codigo?: string; nome?: string } | null;
+    conta_credito?: { codigo?: string; nome?: string } | null;
   }
   /** Espelha `contabil_plano_contas` */
   interface PlanoConta {
