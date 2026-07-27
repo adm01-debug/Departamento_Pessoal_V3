@@ -31,9 +31,11 @@ vi.mock('date-fns', () => ({
   }),
 }));
 
-vi.mock('@/utils/dateLocal', () => ({
+vi.mock('@/utils/dateLocal', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/utils/dateLocal')>()),
   formatDateLocalISO: (d: Date) => d.toISOString().slice(0, 10),
 }));
+
 
 vi.mock('crypto-js', () => ({
   default: { SHA256: vi.fn(() => ({ toString: () => 'mock-hash-abc123' })) },
