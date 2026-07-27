@@ -227,7 +227,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           queryFn: async () => {
             const { data, error } = await supabase
               .from('empresas')
-              .select('id, nome, cnpj')
+              .select('id, razao_social, nome_fantasia, cnpj')
               .limit(10);
             if (error) throw error;
             return data;
@@ -240,7 +240,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           queryFn: async () => {
             const { data, error } = await supabase
               .from('colaboradores')
-              .select('id, nome, empresa_id, cargo_id, status, data_admissao')
+              .select('id, nome_completo, empresa_id, cargo, status, data_admissao')
               .eq('status', 'ativo')
               .limit(50);
             if (error) throw error;

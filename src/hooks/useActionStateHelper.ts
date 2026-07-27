@@ -25,9 +25,9 @@ export interface ActionState {
 
 export type FormState = ActionState;
 
-export type ActionFunction<State extends ActionState, FormData = FormData> = (
+export type ActionFunction<State extends ActionState, TFormData = FormData> = (
   prevState: State,
-  formData: FormData
+  formData: TFormData
 ) => Promise<State>;
 
 export interface UseFormActionStateReturn<State extends ActionState> {
