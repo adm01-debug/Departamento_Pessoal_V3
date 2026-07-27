@@ -18,9 +18,11 @@ vi.mock('../whatsappService', () => ({
   whatsappService: { sendMessage: mockSendMessage },
 }));
 
-vi.mock('@/utils/dateLocal', () => ({
+vi.mock('@/utils/dateLocal', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/utils/dateLocal')>()),
   formatDateLocalISO: (d: Date) => d.toISOString().slice(0, 10),
 }));
+
 
 import { automacaoService } from '../automacaoService';
 

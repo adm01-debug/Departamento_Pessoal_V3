@@ -7,9 +7,11 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: mockFrom },
 }));
 
-vi.mock('@/utils/dateLocal', () => ({
+vi.mock('@/utils/dateLocal', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/utils/dateLocal')>()),
   todayLocalISO: () => '2026-07-24',
 }));
+
 
 // select → eq → order → resolvedValue
 function setupSelectEqOrder(data: any[], error: any = null) {
