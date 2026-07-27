@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import type { UiRecord } from '@/types/uiRecord';
 function formatCurrency(value: number): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 }).format(value);
 }
@@ -31,7 +32,7 @@ export function SimuladorWhatIf() {
     planoSaude: '350',
   });
 
-  const [resultado, setResultado] = useState<Record<string, unknown> | null>(null);
+  const [resultado, setResultado] = useState<UiRecord | null>(null);
 
   const calcularImpacto = () => {
     setLoading(true);

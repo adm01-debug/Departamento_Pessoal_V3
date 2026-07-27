@@ -25,6 +25,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell } from 'recharts';
+import type { UiRecord } from '@/types/uiRecord';
 const tipoLabels: Record<string, string> = {
   doenca: 'Doença',
   acidente_trabalho: 'Acidente Trabalho',
@@ -52,7 +53,7 @@ export default function AfastamentosPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDocOpen, setIsDocOpen] = useState(false);
   const [isTimelineOpen, setIsTimelineOpen] = useState(false);
-  const [selectedAfastamento, setSelectedAfastamento] = useState<Record<string, unknown> | null>(null);
+  const [selectedAfastamento, setSelectedAfastamento] = useState<UiRecord | null>(null);
 
   const stats = {
     total: afastamentos.length,
