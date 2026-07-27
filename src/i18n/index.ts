@@ -481,7 +481,7 @@ export const i18n = new I18n();
 
 // ── React hook ────────────────────────────────────────────────
 
-let currentLocale = DEFAULT_LOCALE;
+let currentLocale: Locale = DEFAULT_LOCALE;
 const listeners = new Set<() => void>();
 
 export function setI18nLocale(locale: Locale): void {
