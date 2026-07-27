@@ -1,19 +1,23 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { pontoService } from '../pontoService';
+import { createQueryBuilder } from '@/test/supabaseMock';
 
 // ─── shared mock setup ────────────────────────────────────────────────────────
 
-const { mockFrom, mockFunctionsInvoke } = vi.hoisted(() => ({
+const { mockFrom, mockFunctionsInvoke, mockRpc } = vi.hoisted(() => ({
   mockFrom: vi.fn(),
   mockFunctionsInvoke: vi.fn(),
+  mockRpc: vi.fn(),
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: mockFrom,
+    rpc: mockRpc,
     functions: { invoke: mockFunctionsInvoke },
   },
 }));
+
 
 vi.mock('./pontoMonitorService', () => ({
   pontoMonitorService: { trackGeofenceFailure: vi.fn() },
@@ -189,18 +193,28 @@ describe('pontoService.registrar', () => {
   });
 
   it('throws when a duplicate ponto record exists', async () => {
-    // First call: duplicate check returns a record
-    const dupMaybeSingle = vi.fn().mockResolvedValue({ data: { id: 'dup-1' }, error: null });
-    const dupQuery: any = {};
-    const dupEqFn = vi.fn().mockReturnValue(dupQuery);
-    Object.assign(dupQuery, { eq: dupEqFn, maybeSingle: dupMaybeSingle });
-    const selectFn = vi.fn().mockReturnValue(dupQuery);
-    mockFrom.mockReturnValueOnce({ select: selectFn });
+    // A duplicidade agora é detectada pela UNIQUE constraint dentro da RPC
+    // atômica `registrar_batida_ponto` (código Postgres 23505) — não mais por
+    // um SELECT pré-checagem, que era sujeito a corrida.
+    // Chamada 1: colaborador encontrado
+    mockFrom.mockReturnValueOnce(
+      createQueryBuilder({ data: { id: 'c1', empresa_id: 'emp-1' }, error: null }),
+    );
+    // Chamada 2: getSettings — sem exigência de geolocalização
+    mockFrom.mockReturnValueOnce(
+      createQueryBuilder({ data: { empresa_id: 'emp-1', exige_geolocalizacao: false }, error: null }),
+    );
+    mockRpc.mockResolvedValueOnce({
+      data: null,
+      error: { code: '23505', message: 'duplicate key value violates unique constraint' },
+    });
 
     await expect(pontoService.registrar('entrada', 'c1')).rejects.toThrow(
       'Já existe um registro idêntico'
     );
+    expect(mockRpc).toHaveBeenCalledWith('registrar_batida_ponto', expect.any(Object));
   });
+
 
   it('throws when colaborador is not found', async () => {
     // Call 1: no duplicate (null)
