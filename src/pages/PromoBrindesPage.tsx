@@ -15,11 +15,12 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { Plus, Gift, Trash2, Edit2, Search, Package } from 'lucide-react';
+import type { UiRecord } from '@/types/uiRecord';
 export default function PromoBrindesPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [editingItem, setEditingItem] = useState<Record<string, unknown> | null>(null);
+  const [editingItem, setEditingItem] = useState<UiRecord | null>(null);
   const [form, setForm] = useState({
     nome: '',
     descricao: '',

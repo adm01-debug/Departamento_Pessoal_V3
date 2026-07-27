@@ -295,7 +295,7 @@ export default function AssinarContratoPage() {
                   });
                   toast.success('Recibo baixado');
                 } catch (e) {
-                  loggerService.error('Erro ao gerar PDF do recibo', { contratoId }, e instanceof Error ? e : new Error(String(e)));
+                  loggerService.error('Erro ao gerar PDF do recibo', { hash: assinado.hash }, e instanceof Error ? e : new Error(String(e)));
                   toast.error('Falha ao gerar recibo');
                 }
               }}

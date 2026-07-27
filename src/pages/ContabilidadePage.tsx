@@ -18,24 +18,36 @@ import { formatDate } from '@/utils/format';
 import { loggerService } from '@/services/loggerService';
 export default function ContabilidadePage() {
   const { empresaAtual } = useEmpresas();
+  /** Espelha `contabil_lancamentos` (campos opcionais = nem sempre projetados) */
   interface Lancamento {
     id: string;
-    data: string;
-    descricao: string;
-    valor: number;
-    tipo: string;
+    data?: string;
+    data_lancamento?: string;
+    descricao?: string;
+    valor?: number;
+    tipo?: string;
+    status?: string;
+    /** join com plano de contas */
+    conta_debito?: { codigo?: string; nome?: string } | null;
+    conta_credito?: { codigo?: string; nome?: string } | null;
   }
+  /** Espelha `contabil_plano_contas` */
   interface PlanoConta {
     id: string;
-    codigo: string;
-    descricao: string;
+    codigo?: string;
+    descricao?: string;
+    nome?: string;
+    tipo?: string;
+    natureza?: string;
   }
+  /** Resumo de folha para seleção */
   interface FolhaResumo {
     id: string;
-    competencia: string;
-    total: number;
-    status: string;
+    competencia?: string;
+    total?: number;
+    status?: string;
   }
+
   const [lancamentos, setLancamentos] = useState<Lancamento[]>([]);
   const [planoContas, setPlanoContas] = useState<PlanoConta[]>([]);
   const [folhas, setFolhas] = useState<FolhaResumo[]>([]);

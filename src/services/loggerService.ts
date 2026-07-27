@@ -120,9 +120,20 @@ export const loggerService = {
     }
   },
 
+  /**
+   * Log de depuração — só emitido em DEV (nunca persistido remotamente),
+   * mapeado para o nível 'info' no backend quando necessário.
+   */
+  debug(mensagem: string, contexto?: Record<string, unknown>) {
+    if (import.meta.env.DEV) {
+      console.debug(`[debug] ${mensagem}`, contexto ?? {});
+    }
+  },
+
   info(mensagem: string, contexto?: Record<string, unknown>) {
     void this.log('info', mensagem, contexto);
   },
+
 
   warn(mensagem: string, contexto?: Record<string, unknown>) {
     void this.log('warn', mensagem, contexto);

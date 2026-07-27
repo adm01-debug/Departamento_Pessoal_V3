@@ -59,7 +59,7 @@ export function useFeriasCursor(options: UseCursorPaginationOptions = {}): UseCu
   });
 
   // Atualiza allData quando novos dados chegam
-  const newData = query.data?.data ?? [];
+  const newData = (query.data?.data ?? []) as unknown as FeriasRow[];
 
   // Combina dados existentes com novos (para scroll infinito)
   const combinedData = cursor === null ? newData : [...allData, ...newData];
@@ -84,7 +84,7 @@ export function useFeriasCursor(options: UseCursorPaginationOptions = {}): UseCu
     });
 
     // Adiciona aos dados existentes
-    setAllData(prev => [...prev, ...(result.data ?? [])]);
+    setAllData(prev => [...prev, ...((result.data ?? []) as unknown as FeriasRow[])]);
     setIsLoadingMore(false);
   }, [nextCursor, isLoadingMore, empresaId, limit, options]);
 

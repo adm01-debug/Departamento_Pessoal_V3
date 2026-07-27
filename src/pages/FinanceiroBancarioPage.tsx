@@ -23,24 +23,40 @@ import { formatDate } from '@/utils/format';
 export default function FinanceiroBancarioPage() {
   const { empresaAtual } = useEmpresas();
   const [config, setConfig] = useState<CNABConfig | null>(null);
+  /** Espelha `cnab_remessas` (campos opcionais = nem sempre selecionados) */
   interface Remessa {
     id: string;
-    arquivo: string;
-    data: string;
-    tipo: string;
-    status: string;
+    empresa_id?: string;
+    banco_codigo?: string;
+    sequencial_arquivo?: number;
+    total_pagamentos?: number;
+    valor_total?: number;
+    arquivo_url?: string;
+    hash_integridade?: string;
+    data_geracao?: string;
+    created_at?: string;
+    updated_at?: string;
+    status?: string;
   }
+  /** Espelha `pix_lotes` */
   interface PixLote {
     id: string;
-    valor: number;
-    quantidade: number;
-    data: string;
+    empresa_id?: string;
+    quantidade_pagamentos?: number;
+    valor_total?: number;
+    data_criacao?: string;
+    created_at?: string;
+    updated_at?: string;
+    status?: string;
   }
+  /** Resumo de folha usado apenas para seleção/exibição */
   interface FolhaResumo {
     id: string;
-    competencia: string;
-    total: number;
+    competencia?: string;
+    total?: number;
+    tipo?: string;
   }
+
   const [remessas, setRemessas] = useState<Remessa[]>([]);
   const [pixLotes, setPixLotes] = useState<PixLote[]>([]);
   const [folhas, setFolhas] = useState<FolhaResumo[]>([]);

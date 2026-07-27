@@ -15,12 +15,13 @@ import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useOnMount } from '@/hooks/useMountEffects';
 import { loggerService } from '@/services/loggerService';
+import type { UiRecord } from '@/types/uiRecord';
 export default function PontoKioskPage() {
   const [time, setTime] = useState(new Date());
   const [pin, setPin] = useState('');
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<'pin' | 'facial_scan' | 'action' | 'success'>('pin');
-  const [selectedColab, setSelectedColab] = useState<Record<string, unknown> | null>(null);
+  const [selectedColab, setSelectedColab] = useState<UiRecord | null>(null);
   const [offlineQueueSize, setOfflineQueueSize] = useState(0);
   const [isSyncing, setIsSyncing] = useState(false);
 

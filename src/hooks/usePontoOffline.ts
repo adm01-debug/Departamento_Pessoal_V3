@@ -26,7 +26,7 @@ export function usePontoOffline() {
     updateSize();
   });
 
-  const addOffline = async (tipo: unknown, colaboradorId: string, geo?: { lat?: number; latitude?: number; lng?: number; longitude?: number; accuracy?: number }) => {
+  const addOffline = async (tipo: 'entrada' | 'saida' | 'saida_almoco' | 'retorno_almoco', colaboradorId: string, geo?: { lat?: number; latitude?: number; lng?: number; longitude?: number; accuracy?: number }) => {
     try {
       await pontoOfflineService.queueRegistro({
         tipo,

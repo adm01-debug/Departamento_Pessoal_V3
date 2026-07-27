@@ -32,19 +32,19 @@ const LOCALE_CONFIG: Record<Locale, {
     label: 'Português (Brasil)',
     flag: '🇧🇷',
     dateFormat: { day: '2-digit', month: '2-digit', year: 'numeric' },
-    pluralRules: { locale: 'pt-BR' },
+    pluralRules: { type: 'cardinal' },
   },
   'en-US': {
     label: 'English (US)',
     flag: '🇺🇸',
     dateFormat: { month: 'short', day: '2-digit', year: 'numeric' },
-    pluralRules: { locale: 'en-US' },
+    pluralRules: { type: 'cardinal' },
   },
   'es-ES': {
     label: 'Español',
     flag: '🇪🇸',
     dateFormat: { day: '2-digit', month: 'short', year: 'numeric' },
-    pluralRules: { locale: 'es-ES' },
+    pluralRules: { type: 'cardinal' },
   },
 };
 
