@@ -84,7 +84,7 @@ export function useFeriasCursor(options: UseCursorPaginationOptions = {}): UseCu
     });
 
     // Adiciona aos dados existentes
-    setAllData(prev => [...prev, ...(result.data ?? [])]);
+    setAllData(prev => [...prev, ...((result.data ?? []) as unknown as FeriasRow[])]);
     setIsLoadingMore(false);
   }, [nextCursor, isLoadingMore, empresaId, limit, options]);
 

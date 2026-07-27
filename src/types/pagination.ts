@@ -71,12 +71,12 @@ export function decodeCursor(cursor: string | null | undefined): string | null {
  * Extrai o cursor da última linha de uma página.
  * Retorna `null` quando a página está vazia ou a coluna não existe.
  */
-export function extractNextCursor<T extends Record<string, unknown>>(
+export function extractNextCursor<T extends object>(
   rows: T[] | null | undefined,
   column: keyof T & string,
 ): string | null {
   if (!rows || rows.length === 0) return null;
-  const last = rows[rows.length - 1];
+  const last = rows[rows.length - 1] as Record<string, unknown> | undefined;
   const value = last?.[column];
   if (value === undefined || value === null) return null;
   return encodeCursor(value);
