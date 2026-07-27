@@ -108,8 +108,8 @@ export const cnabService = {
     if (existing) {
       const existingRecord = existing as DataRecord;
       const { error } = await supabase
-        .from('cnab_configuracoes')
-        .update(config as DataRecord)
+        .from('cnab_configuracoes' as never)
+        .update(config as never)
         .eq('id', String(existingRecord.id))
         .eq('empresa_id', empresaId);
       if (error) throw error;
@@ -190,7 +190,7 @@ export const cnabService = {
     if (existingRemessa && (existingRemessa as CnabRemessaRecord).status === 'pendente') {
       remessaRecord = existingRemessa as CnabRemessaRecord;
     } else {
-      const { data: remessa, error: rError } = await supabase
+      const { data: remessa, error: rError } = await (supabase as any)
         .from('cnab_remessas')
         .insert([{
           empresa_id: empresaId,
@@ -285,11 +285,11 @@ export const cnabService = {
     // would appear sent but have no payment records. Insert items first so the
     // DB is always consistent — a pending remessa with items is recoverable.
     if (cnabItensToInsert.length > 0) {
-      await supabase.from('cnab_itens').insert(cnabItensToInsert);
+      await (supabase as any).from('cnab_itens').insert(cnabItensToInsert);
     }
 
     // Only after items are persisted, mark remessa as sent with the full file
-    await supabase.from('cnab_remessas').update({
+    await (supabase as any).from('cnab_remessas').update({
       arquivo_remessa: fullFile,
       status: 'enviado',
       sequencial_arquivo: sequence,
@@ -700,7 +700,7 @@ export const cnabService = {
 
     // ── 9. Persistir e retornar ──────────────────────────────────────
     if (itensParaInsert.length > 0) {
-      await supabase.from('cnab_itens').insert(itensParaInsert);
+      await (supabase as any).from('cnab_itens').insert(itensParaInsert);
     }
 
     const fullFile = lines.join('\r\n');
