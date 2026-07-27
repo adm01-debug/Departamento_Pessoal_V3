@@ -6,7 +6,11 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: mockFrom },
 }));
 
-vi.mock('@/utils/dateLocal', () => ({ todayLocalISO: () => '2024-07-24' }));
+vi.mock('@/utils/dateLocal', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/utils/dateLocal')>()),
+  todayLocalISO: () => '2024-07-24',
+}));
+
 
 function makeChain(data: any = [], error: any = null) {
   const result = { data, error };

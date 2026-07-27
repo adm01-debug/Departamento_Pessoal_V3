@@ -3,7 +3,11 @@ import { exportarBackupCSV, exportarBackupJSON, downloadBlob } from '../backupSe
 
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 vi.mock('@/integrations/supabase/client', () => ({ supabase: { from: mockFrom } }));
-vi.mock('@/utils/dateLocal', () => ({ formatDateLocalISO: () => '2026-07-24' }));
+vi.mock('@/utils/dateLocal', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/utils/dateLocal')>()),
+  formatDateLocalISO: () => '2026-07-24',
+}));
+
 
 function setupSelectLimit(data: any[] | null, error: any = null) {
   const limitFn = vi.fn().mockResolvedValue({ data, error });
