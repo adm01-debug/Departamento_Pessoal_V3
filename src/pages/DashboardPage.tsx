@@ -162,7 +162,7 @@ function usePendencias(enabled: boolean) {
         supabase.from("ferias").select("*", { count: "exact", head: true }).eq("status", "pendente"),
         supabase.from("afastamentos").select("*", { count: "exact", head: true }).eq("status", "ativo"),
         supabase.from("admissoes").select("*", { count: "exact", head: true }).filter('etapa', 'not.in', '("concluida","cancelada")'),
-        supabase.from("assinaturas_digitais" as any).select("*", { count: "exact", head: true }).eq("status", "pendente"),
+        supabase.from("documentos_assinatura").select("*", { count: "exact", head: true }).eq("status", "pendente"),
         supabase.from("solicitacoes_ajuste_ponto" as any).select("*", { count: "exact", head: true }).eq("status", "pendente"),
       ]);
       const pendencias: Pendencia[] = [];

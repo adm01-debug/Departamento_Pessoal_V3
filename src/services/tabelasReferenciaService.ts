@@ -142,7 +142,7 @@ export async function salvarDadosEstagiario(colaboradorId: string, dados: DataRe
 // Documentos Pessoais Arquivos
 // =============================================
 export async function listarDocumentosPessoais(colaboradorId: string): Promise<unknown[]> {
-  const { data, error } = await supabase.from('documentos_pessoais')
+  const { data, error } = await supabase.from('documentos_pessoais_arquivos')
     .select('*')
     .eq('colaborador_id', colaboradorId)
     .order('created_at', { ascending: false });
@@ -151,7 +151,7 @@ export async function listarDocumentosPessoais(colaboradorId: string): Promise<u
 }
 
 export async function criarDocumentoPessoal(doc: DataRecord): Promise<any> {
-  const { data, error } = await supabase.from('documentos_pessoais')
+  const { data, error } = await supabase.from('documentos_pessoais_arquivos')
     .insert([doc])
     .select()
     .maybeSingle();
@@ -162,7 +162,7 @@ export async function criarDocumentoPessoal(doc: DataRecord): Promise<any> {
 
 export async function excluirDocumentoPessoal(colaboradorId: string, id: string): Promise<void> {
   if (!colaboradorId) throw new Error('colaborador_id obrigatório para isolamento de tenant');
-  const { error } = await supabase.from('documentos_pessoais').delete().eq('id', id).eq('colaborador_id', colaboradorId);
+  const { error } = await supabase.from('documentos_pessoais_arquivos').delete().eq('id', id).eq('colaborador_id', colaboradorId);
   if (error) throw error;
 }
 
