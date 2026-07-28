@@ -46,7 +46,9 @@ export default function LoginPage() {
   const { signIn, resetPassword, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { lockState, checkLock, recordFailedAttempt, resetAttempts } = useBruteForceProtection();
+  const { lockState, checkLock, recordFailedAttempt, resetAttempts, applyServerLock } =
+    useBruteForceProtection();
+
 
   useOnMount(() => {
     const reason = searchParams.get('reason');
