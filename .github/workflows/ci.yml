@@ -91,3 +91,29 @@ jobs:
             fi
           done
           echo "Funções com erros de tipo (não-bridge): $ERRORS"
+
+  db-integrity:
+    name: Integridade do banco (search_path x extensões)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar cliente psql
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+      - name: Auditar search_path das funções
+        # Detecta funções que chamam rotinas de extensão (pgcrypto, pg_net, ...)
+        # sem o schema da extensão no search_path fixado. Esse defeito NÃO é
+        # acusado na criação da função — só explode em produção, na primeira
+        # gravação selada por hash. Sem DATABASE_URL o passo apenas avisa.
+        env:
+          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/audit-db-search-path.mjs
+      - name: Smoke test dos selos de integridade
+        # Verifica que todo gatilho enforce_*_hash está acoplado, é BEFORE
+        # INSERT/UPDATE e consegue resolver digest() sob seu próprio
+        # search_path. Não grava dados de negócio.
+        env:
+          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/smoke-hash-triggers.mjs
