@@ -179,5 +179,4 @@ describe('BaseService.excluir', () => {
     await expect(service.excluir('id-1', 'emp-1')).rejects.toBeDefined();
     expect(mockLoggerError).toHaveBeenCalled();
   });
-  });
 });
