@@ -10,7 +10,9 @@ const { mockGetSession, mockInsert, mockFrom } = vi.hoisted(() => {
   return { mockGetSession, mockInsert, mockFrom };
 });
 
-vi.mock('@/integrations/supabase/client', () => ({
+// O hook usa o cliente base (não o proxy do bridge) — o mock precisa apontar
+// exatamente para esse módulo, senão nada é interceptado.
+vi.mock('@/integrations/supabase/client.base', () => ({
   supabase: {
     auth: { getSession: mockGetSession },
     from: mockFrom,
