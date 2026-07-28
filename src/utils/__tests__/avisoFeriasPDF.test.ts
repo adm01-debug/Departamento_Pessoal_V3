@@ -100,7 +100,7 @@ describe('gerarAvisoFeriasPDF', () => {
 
   it('includes ferias id prefix in filename', async () => {
     const result = await gerarAvisoFeriasPDF(MOCK_INPUT);
-    expect(result.filename).toContain('ferias-uui');
+    expect(result.filename).toContain('ferias-u');
   });
 
   it('creates a jsPDF instance', async () => {

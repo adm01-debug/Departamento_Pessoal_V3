@@ -50,7 +50,7 @@ describe('gerarAfastamentosPDF', () => {
       },
       lastAutoTable: { finalY: 80 },
     };
-    MockJsPDF.mockReturnValue(mockDoc as any);
+    MockJsPDF.mockImplementation(function () { return mockDoc as any; });
     mockAutoTable.mockImplementation(function(doc: any) {
       doc.lastAutoTable = { finalY: 80 };
     });
