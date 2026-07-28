@@ -110,3 +110,10 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/audit-db-search-path.mjs
+      - name: Smoke test dos selos de integridade
+        # Verifica que todo gatilho enforce_*_hash está acoplado, é BEFORE
+        # INSERT/UPDATE e consegue resolver digest() sob seu próprio
+        # search_path. Não grava dados de negócio.
+        env:
+          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/smoke-hash-triggers.mjs
