@@ -53,11 +53,23 @@ export function PortalRegimentoCard() {
     try {
       const db = supabase as unknown as SupabaseClient;
 
-      // Vínculo colaborador ↔ user.
-      // NOTA: `colaboradores` não possui hoje coluna de vínculo com auth.users.
-      // Enquanto o vínculo não existir no schema, esta consulta falha (42703) e
-      // o cartão cai no estado "não vinculado". O erro precisa ser observável
-      // — antes era silenciosamente descartado, mascarando a causa raiz.
+      // Vínculo colaborador ↔ conta de login.
+      // O cadastro do colaborador costuma ser criado pelo RH antes de a pessoa
+      // ter conta (ou depois, se ela já era usuária). A RPC concilia as duas
+      // ordens casando pelo e-mail da conta autenticada — o e-mail é derivado
+      // de auth.uid() no servidor, nunca enviado daqui.
+      // Falha de vínculo não impede a leitura do regimento: o cartão apenas
+      // não oferece a assinatura.
+      const { error: vincErr } = await db.rpc('vincular_colaborador_ao_usuario');
+      if (vincErr) {
+        loggerService.error('Falha ao autovincular colaborador ao usuário', {
+          userId: user.id,
+          empresaId,
+          code: (vincErr as { code?: string }).code,
+          error: vincErr,
+        });
+      }
+
       const { data: colab, error: colabErr } = await db
         .from('colaboradores')
         .select('id')
@@ -74,6 +86,7 @@ export function PortalRegimentoCard() {
       }
       const cid: string | null = colab?.id ?? null;
       setColaboradorId(cid);
+
 
 
       // Documento publicado mais recente
