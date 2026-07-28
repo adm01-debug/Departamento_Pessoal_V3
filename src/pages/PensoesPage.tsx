@@ -23,19 +23,30 @@ export default function PensoesPage() {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ colaborador_id: '', beneficiario: '', cpf_beneficiario: '', tipo: 'alimenticia', percentual: '', valor_fixo: '', banco: '', agencia: '', conta: '' });
 
+  const empresaId = empresaAtual?.id;
+
   const { data, isLoading } = useQuery({
-    queryKey: ['pensoes'],
+    queryKey: ['pensoes', empresaId],
     queryFn: async () => {
-      const { data, error } = await supabase.from('pensoes').select('*').order('created_at', { ascending: false });
+      // Filtro explícito por tenant: `pensoes` não tem empresa_id, então
+      // escopamos via inner join em colaboradores (defesa em profundidade
+      // sobre a RLS, que libera todas as empresas do usuário).
+      const { data, error } = await supabase
+        .from('pensoes')
+        .select('*, colaboradores!inner(id, nome_completo, empresa_id)')
+        .eq('colaboradores.empresa_id', empresaId!)
+        .order('created_at', { ascending: false })
+        .limit(500);
       if (error) throw error;
       return data || [];
     },
+    enabled: !!empresaId,
   });
 
   const { data: colaboradores } = useQuery({
-    queryKey: ['colaboradores', empresaAtual?.id],
-    queryFn: () => colaboradorService.list(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
+    queryKey: ['colaboradores', empresaId],
+    queryFn: () => colaboradorService.list(empresaId!),
+    enabled: !!empresaId,
   });
 
   const criar = useMutation({
@@ -47,13 +58,14 @@ export default function PensoesPage() {
       });
       if (error) throw error;
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['pensoes'] }); setOpen(false); toast.success('Pensão cadastrada'); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['pensoes', empresaId] }); setOpen(false); toast.success('Pensão cadastrada'); },
   });
 
   const excluir = useMutation({
     mutationFn: async (id: string) => { const { error } = await supabase.from('pensoes').delete().eq('id', id); if (error) throw error; },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['pensoes'] }); toast.success('Excluída'); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['pensoes', empresaId] }); toast.success('Excluída'); },
   });
+
 
   return (
     <>
