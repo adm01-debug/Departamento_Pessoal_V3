@@ -35,7 +35,7 @@ export function GestaoRegistrosPonto() {
       if (!empresaAtual?.id) return [];
       const { data, error } = await (supabase as any)
         .from('registros_ponto')
-        .select('*, colaborador:colaboradores!fk_batidas_ponto_colaborador(nome_completo, cargo, departamento, foto_url)')
+        .select('*, colaborador:colaboradores!batidas_ponto_colaborador_id_fkey(nome_completo, cargo, departamento, foto_url)')
         .eq('empresa_id', empresaAtual.id)
         .gte('data', filtroData)
         .lte('data', filtroFim)
