@@ -1,5 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card';
-import { CheckCircle, Clock, AlertTriangle, HardHat, Users, TrendingUp, ShieldAlert } from 'lucide-react';
+import { CheckCircle, Clock, AlertTriangle, HardHat, TrendingUp, ShieldAlert } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';

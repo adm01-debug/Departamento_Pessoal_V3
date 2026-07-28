@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { 
-  AlertTriangle, Clock, Zap, CheckCircle2, ShieldAlert, 
+  AlertTriangle, Zap, CheckCircle2, ShieldAlert, 
   ArrowRight, MessageSquare, Edit3, CheckCircle 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';

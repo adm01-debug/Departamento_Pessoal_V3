@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { Bell, Check, CheckCheck, Info, AlertTriangle, CheckCircle, AlertCircle, History, Filter, Search, Trash2, RefreshCw, Zap } from 'lucide-react';
+import { Bell, Check, CheckCheck, Info, AlertTriangle, CheckCircle, AlertCircle, History, Filter, Search, Trash2, Zap } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -22,23 +22,19 @@ import { useNotificacoes } from '@/hooks/useNotificacoes';
 const tipoIcon: Record<string, React.ElementType> = {
   info: Info, alerta: AlertTriangle, sucesso: CheckCircle, erro: AlertCircle,
   periodo_aquisitivo: AlertTriangle, contrato_vencendo: AlertCircle,
-  documento_vencendo: Info, ferias_vencendo: CheckCircle,
-};
+  documento_vencendo: Info, ferias_vencendo: CheckCircle};
 const tipoGradient: Record<string, string> = {
   info: 'from-primary to-primary-glow', alerta: 'from-warning to-warning/70',
   sucesso: 'from-success to-success/70', erro: 'from-destructive to-destructive/70',
   periodo_aquisitivo: 'from-warning to-warning/70', contrato_vencendo: 'from-destructive to-destructive/70',
-  documento_vencendo: 'from-info to-info/70', ferias_vencendo: 'from-success to-success/70',
-};
+  documento_vencendo: 'from-info to-info/70', ferias_vencendo: 'from-success to-success/70'};
 const tipoLabels: Record<string, string> = {
   periodo_aquisitivo: 'Férias', contrato_vencendo: 'Contrato',
   documento_vencendo: 'Documento', ferias_vencendo: 'Férias',
-  info: 'Info', alerta: 'Alerta', sucesso: 'Sucesso', erro: 'Erro',
-};
+  info: 'Info', alerta: 'Alerta', sucesso: 'Sucesso', erro: 'Erro'};
 
 const nivelColors: Record<string, string> = {
-  atencao: 'bg-warning/15 text-warning', critico: 'bg-destructive/15 text-destructive', info: 'bg-info/15 text-info',
-};
+  atencao: 'bg-warning/15 text-warning', critico: 'bg-destructive/15 text-destructive', info: 'bg-info/15 text-info'};
 
 export default function NotificacoesPage() {
   const { user } = useAuth();
@@ -71,8 +67,7 @@ export default function NotificacoesPage() {
       const { data, error } = await supabase.from('notificacoes').select('*').eq('user_id', user!.id).order('created_at', { ascending: false }).limit(100);
       if (error) throw error;
       return data || [];
-    },
-  });
+    }});
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const notificacoes = notificacoesDB || notificacoesHook || [];
@@ -89,18 +84,15 @@ export default function NotificacoesPage() {
 
   const marcarLida = useMutation({
     mutationFn: async (id: string) => { const { error } = await supabase.from('notificacoes').update({ lida: true }).eq('id', id).eq('user_id', user!.id); if (error) throw error; },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['notificacoes-db'] }); queryClient.invalidateQueries({ queryKey: ['notificacoes'] }); },
-  });
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['notificacoes-db'] }); queryClient.invalidateQueries({ queryKey: ['notificacoes'] }); }});
 
   const marcarTodasLidas = useMutation({
     mutationFn: async () => { const { error } = await supabase.from('notificacoes').update({ lida: true }).eq('user_id', user!.id).eq('lida', false); if (error) throw error; },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['notificacoes-db'] }); queryClient.invalidateQueries({ queryKey: ['notificacoes'] }); toast.success('Todas marcadas como lidas'); },
-  });
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['notificacoes-db'] }); queryClient.invalidateQueries({ queryKey: ['notificacoes'] }); toast.success('Todas marcadas como lidas'); }});
 
   const excluirNotificacao = useMutation({
     mutationFn: async (id: string) => { const { error } = await supabase.from('notificacoes').delete().eq('id', id).eq('user_id', user!.id); if (error) throw error; },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['notificacoes-db'] }); queryClient.invalidateQueries({ queryKey: ['notificacoes'] }); toast.success('Notificação removida'); },
-  });
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['notificacoes-db'] }); queryClient.invalidateQueries({ queryKey: ['notificacoes'] }); toast.success('Notificação removida'); }});
 
   const { data: historicoAlertas = [], isLoading: loadAlertas } = useQuery({
     queryKey: ['historico-alertas'],
@@ -108,8 +100,7 @@ export default function NotificacoesPage() {
       const { data, error } = await supabase.from('historico_alertas').select('*').order('created_at', { ascending: false }).limit(100);
       if (error) throw error;
       return data || [];
-    },
-  });
+    }});
 
   const tiposDisponiveis = [...new Set(notificacoes.map((n: any) => n.tipo))];
 

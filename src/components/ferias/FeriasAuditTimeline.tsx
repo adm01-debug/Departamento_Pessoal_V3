@@ -6,7 +6,7 @@ import {
   CheckCircle2, 
   Clock, 
   User, 
-  Building2, 
+  
   Shield, 
   History,
   Loader2,
@@ -16,7 +16,6 @@ import {
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { 
   Tabs, 

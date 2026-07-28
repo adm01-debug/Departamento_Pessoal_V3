@@ -19,10 +19,9 @@ import { colaboradorService } from '@/services';
 import { useNotification } from '@/contexts';
 import { 
   User, MapPin, Landmark, Briefcase, 
-  FileText, ArrowLeft, Save, Loader2, Camera
+  FileText, Save, Loader2, Camera
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { useDepartamentos } from '@/hooks/useDepartamentos';
 import { useCargos } from '@/hooks/useCargos';
@@ -73,8 +72,7 @@ const schema = z.object({
   rg_orgao_emissor: z.string().optional(),
   pis_pasep: z.string().optional(),
   ctps_numero: z.string().optional(),
-  ctps_serie: z.string().optional(),
-});
+  ctps_serie: z.string().optional()});
 
 type FormData = z.infer<typeof schema>;
 type FormInput = z.input<typeof schema>;
@@ -94,8 +92,7 @@ export default function ColaboradorFormPage() {
   const { data: colaborador, isLoading } = useQuery({
     queryKey: ['colaborador', id],
     queryFn: () => (colaboradorService as any).buscarPorId(id!),
-    enabled: isEditing,
-  });
+    enabled: isEditing});
 
 
   const { register, handleSubmit, formState: { errors, isDirty }, setValue, reset, watch, setError } = useForm<FormInput, unknown, FormData>({
@@ -105,8 +102,7 @@ export default function ColaboradorFormPage() {
       estado_civil: 'solteiro', 
       tipo_contrato: 'clt',
       sexo: 'masculino'
-    },
-  });
+    }});
 
   // Proteção contra perda de dados
   useFormGuard(isDirty);
@@ -125,8 +121,7 @@ export default function ColaboradorFormPage() {
       success(isEditing ? 'Colaborador atualizado!' : 'Colaborador criado!');
       navigate('/colaboradores');
     },
-    onError: (err: any) => handleServerError(err, setError),
-  });
+    onError: (err: any) => handleServerError(err, setError)});
 
   const handleAddressFound = (addr: Address) => {
     setValue('logradouro', addr.logradouro);

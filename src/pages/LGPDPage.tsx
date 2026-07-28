@@ -1,6 +1,6 @@
 import { PageTitle } from '@/components/PageTitle';
 import { formatDateLocalISO, addDaysLocal } from '@/utils/dateLocal';
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useNow } from '@/hooks/useNow';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
@@ -14,7 +14,6 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
 import { lgpdService } from '@/services/lgpdService';
 import { colaboradorService } from '@/services';
 import { useEmpresas } from '@/hooks';
@@ -31,29 +30,24 @@ import {
   XCircle,
   Database,
   Eye,
-  Clock,
-  Users,
-} from 'lucide-react';
+  Clock} from 'lucide-react';
 
 const statusColors: Record<string, string> = {
   pendente: 'bg-warning/15 text-warning border-0',
   em_andamento: 'bg-info/15 text-info border-0',
   concluida: 'bg-success/15 text-success border-0',
-  recusada: 'bg-destructive/15 text-destructive border-0',
-};
+  recusada: 'bg-destructive/15 text-destructive border-0'};
 const tipoConsentimento: Record<string, string> = {
   dados_pessoais: 'Dados Pessoais',
   dados_sensiveis: 'Dados Sensíveis',
   compartilhamento: 'Compartilhamento',
-  marketing: 'Marketing',
-};
+  marketing: 'Marketing'};
 const tipoSolicitacao: Record<string, string> = {
   acesso: 'Acesso aos Dados',
   retificacao: 'Retificação',
   exclusao: 'Exclusão',
   portabilidade: 'Portabilidade',
-  revogacao: 'Revogação de Consentimento',
-};
+  revogacao: 'Revogação de Consentimento'};
 
 const MAPEAMENTO_DADOS = [
   {
@@ -61,43 +55,37 @@ const MAPEAMENTO_DADOS = [
     tabela: 'colaboradores',
     campos: ['nome_completo', 'cpf', 'rg', 'data_nascimento', 'email', 'telefone'],
     base_legal: 'Execução de Contrato (Art. 7°, V)',
-    finalidade: 'Gestão de RH e cumprimento de obrigações trabalhistas',
-  },
+    finalidade: 'Gestão de RH e cumprimento de obrigações trabalhistas'},
   {
     categoria: 'Dados Bancários',
     tabela: 'colaboradores',
     campos: ['banco', 'agencia', 'conta', 'pix'],
     base_legal: 'Execução de Contrato (Art. 7°, V)',
-    finalidade: 'Pagamento de salários e benefícios',
-  },
+    finalidade: 'Pagamento de salários e benefícios'},
   {
     categoria: 'Dados de Saúde',
     tabela: 'asos',
     campos: ['tipo_exame', 'resultado', 'cid', 'medico_nome'],
     base_legal: 'Obrigação Legal (Art. 7°, II)',
-    finalidade: 'Cumprimento de NRs e saúde ocupacional',
-  },
+    finalidade: 'Cumprimento de NRs e saúde ocupacional'},
   {
     categoria: 'Dados de Dependentes',
     tabela: 'dependentes',
     campos: ['nome', 'cpf', 'parentesco', 'data_nascimento'],
     base_legal: 'Obrigação Legal (Art. 7°, II)',
-    finalidade: 'IRRF, salário-família, plano de saúde',
-  },
+    finalidade: 'IRRF, salário-família, plano de saúde'},
   {
     categoria: 'Dados Biométricos',
     tabela: 'batidas_ponto',
     campos: ['latitude', 'longitude', 'ip_address'],
     base_legal: 'Legítimo Interesse (Art. 7°, IX)',
-    finalidade: 'Controle de jornada de trabalho',
-  },
+    finalidade: 'Controle de jornada de trabalho'},
   {
     categoria: 'Dados de Candidatos',
     tabela: 'candidatos',
     campos: ['nome', 'email', 'curriculo_url', 'pretensao_salarial'],
     base_legal: 'Consentimento (Art. 7°, I)',
-    finalidade: 'Processo seletivo',
-  },
+    finalidade: 'Processo seletivo'},
 ];
 
 export default function LGPDPage() {
@@ -116,26 +104,22 @@ export default function LGPDPage() {
       lgpdService.criarSolicitacao({
         ...formSol,
         empresa_id: empresaAtual?.id,
-        prazo_legal: formatDateLocalISO(addDaysLocal(new Date(), 15)),
-      }),
+        prazo_legal: formatDateLocalISO(addDaysLocal(new Date(), 15))}),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['lgpd_solicitacoes'] });
       setOpenSol(false);
       toast.success('Solicitação LGPD registrada!');
       setFormSol({ colaborador_id: '', tipo: 'acesso', descricao: '' });
     },
-    onError: () => toast.error('Erro ao registrar'),
-  });
+    onError: () => toast.error('Erro ao registrar')});
 
   const concluirSol = useMutation({
     mutationFn: (id: string) => lgpdService.atualizarSolicitacao(id, { status: 'concluida', concluida_em: new Date().toISOString() }, empresaAtual!.id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['lgpd_solicitacoes'] }); toast.success('Solicitação concluída!'); },
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['lgpd_solicitacoes'] }); toast.success('Solicitação concluída!'); }});
 
   const revogar = useMutation({
     mutationFn: (id: string) => lgpdService.revogarConsentimento(id, empresaAtual!.id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['lgpd_consentimentos'] }); toast.success('Consentimento revogado'); },
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['lgpd_consentimentos'] }); toast.success('Consentimento revogado'); }});
 
   const aceitos = consentimentos.filter((c: any) => c.aceito).length;
   const pendentes = solicitacoes.filter((s: any) => s.status === 'pendente').length;
@@ -233,8 +217,7 @@ export default function LGPDPage() {
               label: 'Consentimentos',
               value: consentimentos.length,
               icon: ShieldCheck,
-              gradient: 'from-primary to-primary-glow',
-            },
+              gradient: 'from-primary to-primary-glow'},
             { label: 'Aceitos', value: aceitos, icon: CheckCircle, gradient: 'from-success to-success/70' },
             { label: 'Solicitações', value: solicitacoes.length, icon: FileSearch, gradient: 'from-info to-info/70' },
             { label: 'Pendentes', value: pendentes, icon: AlertTriangle, gradient: 'from-warning to-warning/70' },

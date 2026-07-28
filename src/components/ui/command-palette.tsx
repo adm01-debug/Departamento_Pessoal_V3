@@ -15,7 +15,7 @@ import { ColaboradorStatus } from '@/components/ui/status-badge';
 import {
   Home, Users, Building2, FileText, Calendar,
   Clock, Gift, BarChart3, Settings, FileCheck,
-  Search, UserPlus, DollarSign, ArrowRight,
+  Search, UserPlus, ArrowRight,
   Zap, Calculator, Plus, User, Briefcase,
   FolderOpen, Network, Shield, UserCog, Plug, Database,
   CalendarDays, UserMinus, Scale, TrendingUp
@@ -141,8 +141,7 @@ export function CommandPalette({
       const { data } = await queryBuilder;
       return data || [];
     },
-    staleTime: 10_000,
-  });
+    staleTime: 10_000});
 
   // Search empresas from DB (filtered by user's empresas via RLS)
   const { data: dbEmpresas } = useQuery({
@@ -166,8 +165,7 @@ export function CommandPalette({
       const { data } = await queryBuilder;
       return data || [];
     },
-    staleTime: 10_000,
-  });
+    staleTime: 10_000});
 
   // ⌘K / Ctrl+K to toggle
   useEffect(() => {
@@ -198,8 +196,7 @@ export function CommandPalette({
         category: 'pessoa',
         path: `/colaboradores/${c.id}`,
         gradient: 'from-primary to-primary-glow',
-        avatar: { name: c.nome_completo },
-      });
+        avatar: { name: c.nome_completo }});
     });
 
     dbEmpresas?.forEach(e => {
@@ -210,8 +207,7 @@ export function CommandPalette({
         icon: Building2,
         category: 'empresa',
         path: `/empresas/${e.id}/editar`,
-        gradient: 'from-primary/80 to-primary',
-      });
+        gradient: 'from-primary/80 to-primary'});
     });
 
     return items;
@@ -230,8 +226,7 @@ export function CommandPalette({
     pessoas: dynamicItems.filter(c => c.category === 'pessoa'),
     empresas: dynamicItems.filter(c => c.category === 'empresa'),
     navigation: filteredStatic.filter(c => c.category === 'navigation').slice(0, query ? 6 : 8),
-    action: filteredStatic.filter(c => c.category === 'action'),
-  }), [dynamicItems, filteredStatic, query]);
+    action: filteredStatic.filter(c => c.category === 'action')}), [dynamicItems, filteredStatic, query]);
 
   const allItems = useMemo(() => [
     ...grouped.pessoas,

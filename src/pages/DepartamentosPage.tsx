@@ -3,7 +3,7 @@ import { useDepartamentos } from '@/hooks/useDepartamentos';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { TableCell, TableRow } from '@/components/ui/table';
-import { Building2, Plus, GitBranch, ArrowRight, Wallet } from 'lucide-react';
+import { Building2, GitBranch, ArrowRight, Wallet } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { NovoDepartamentoDialog } from '@/components/departamentos/NovoDepartamentoDialog';
 import { EntityPageContainer } from '@/components/layout/EntityPageContainer';

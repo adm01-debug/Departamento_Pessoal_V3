@@ -3,9 +3,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Trophy, Target, TargetIcon, Calculator, Plus, Trash2, Sparkles, Info } from 'lucide-react';
+import { Trophy, Plus, Trash2, Sparkles } from 'lucide-react';
 import { premiacoesService } from '@/services/premiacoesService';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';

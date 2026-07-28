@@ -2,10 +2,10 @@ import { PageTitle } from '@/components/PageTitle';
 import { useState, useMemo } from 'react';
 import { useDesligamentos } from '@/hooks/useDesligamentos';
 import { PageLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 import { EmptyList } from '@/components/ui/empty-state';
-import { UserMinus, Plus, Eye, MoreHorizontal, Download, Calculator, FileSpreadsheet, Trash2, History, List } from 'lucide-react';
+import { UserMinus, Plus, Eye, MoreHorizontal, Calculator, FileSpreadsheet, Trash2, History, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -26,8 +26,7 @@ import {
   TipoBadge,
   DesligamentoDetailSheet,
   NovoDesligamentoDialog,
-  TurnoverChart,
-} from '@/components/desligamentos';
+  TurnoverChart} from '@/components/desligamentos';
 import type { LooseRow } from '@/types/db';
 export default function DesligamentosPage() {
   const { desligamentos, isLoading } = useDesligamentos();

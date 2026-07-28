@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ShieldCheck, AlertTriangle, FileText, Send, CheckCircle2, Zap } from 'lucide-react';
+import { ShieldCheck, AlertTriangle, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export function ESocialComplianceScore({ stats }: { stats: any }) {

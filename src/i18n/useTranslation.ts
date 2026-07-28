@@ -18,14 +18,13 @@
  *   formatDate(new Date())      // "25/07/2026"
  *   formatDate(date, { year: 'numeric', month: 'long' }) // "julho de 2026"
  */
-import { useState, useCallback, useEffect, useSyncExternalStore } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
   i18n,
   Locale,
   SUPPORTED_LOCALES,
   setI18nLocale,
-  onI18nLocaleChange,
-} from './index.ts';
+  onI18nLocaleChange} from './index.ts';
 
 export { type Locale, SUPPORTED_LOCALES };
 
@@ -81,6 +80,5 @@ export function useTranslation() {
     formatNumber,
     formatCurrency,
     formatRelativeTime,
-    supportedLocales: SUPPORTED_LOCALES,
-  };
+    supportedLocales: SUPPORTED_LOCALES};
 }

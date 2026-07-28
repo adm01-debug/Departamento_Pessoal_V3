@@ -1,18 +1,17 @@
 import React from 'react';
-import { useFolhaAuditoria, FolhaAuditoria } from '@/hooks/useFolhaAuditoria';
+import { useFolhaAuditoria } from '@/hooks/useFolhaAuditoria';
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+  TableRow} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { AlertCircle, CheckCircle2, Info, AlertTriangle, Search } from 'lucide-react';
+import { AlertCircle, Info, AlertTriangle, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
 interface FolhaAuditoriaTableProps {
@@ -23,15 +22,13 @@ const severidadeIcons = {
   INFO: <Info className="h-4 w-4 text-blue-500" />,
   AVISO: <AlertTriangle className="h-4 w-4 text-amber-500" />,
   ERRO: <AlertCircle className="h-4 w-4 text-red-500" />,
-  CRITICO: <AlertCircle className="h-4 w-4 text-red-700" />,
-};
+  CRITICO: <AlertCircle className="h-4 w-4 text-red-700" />};
 
 const severidadeVariants = {
   INFO: 'secondary',
   AVISO: 'warning',
   ERRO: 'destructive',
-  CRITICO: 'destructive',
-} as const;
+  CRITICO: 'destructive'} as const;
 
 export function FolhaAuditoriaTable({ folhaId }: FolhaAuditoriaTableProps) {
   const { logs, isLoading } = useFolhaAuditoria(folhaId);

@@ -1,12 +1,10 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { useEmpresas } from '@/hooks/useEmpresas';
-import { supabase } from '@/integrations/supabase/client';
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
+  
+  
   DialogTrigger,
   DialogFooter
 } from '@/components/ui/dialog';
@@ -14,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
   Landmark, CheckCircle2, Loader2,
-  FileDown, Zap, Globe, Smartphone,
+  FileDown, Zap, Globe, 
   ArrowRight, ShieldCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';

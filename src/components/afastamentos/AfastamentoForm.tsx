@@ -13,7 +13,7 @@ import { useAfastamentos } from '@/hooks/useAfastamentos';
 import { afastamentoService } from '@/services/afastamentoService';
 import { useColaboradores } from '@/hooks/useColaboradores';
 import { useEmpresas } from '@/hooks/useEmpresas';
-import { Info, Calendar, Search, Stethoscope, AlertTriangle, Calendar as CalendarIcon, Zap, History as HistoryIcon } from 'lucide-react';
+import { Search, Stethoscope, AlertTriangle, Calendar as CalendarIcon, Zap, History as HistoryIcon } from 'lucide-react';
 import { formatDate } from '@/utils/format';
 import { loggerService } from '@/services/loggerService';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -31,8 +31,7 @@ const schema = z.object({
   status: z.string().default('ativo'),
   data_pericia: z.string().optional().nullable(),
   local_pericia: z.string().optional().nullable(),
-  protocolo_inss: z.string().optional().nullable(),
-});
+  protocolo_inss: z.string().optional().nullable()});
 
 interface AfastamentoFormProps {
   onSuccess: () => void;
@@ -123,8 +122,7 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
         ...data,
         cid_id: selectedCid?.id,
         dias_empresa: diasInfo.empresa,
-        dias_inss: diasInfo.inss,
-      };
+        dias_inss: diasInfo.inss};
 
       if (initialData?.id) {
         await atualizar({ id: initialData.id, data: payload });

@@ -16,7 +16,7 @@
  *   - Erro de rede → toast + opção de retry manual
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
@@ -71,8 +71,7 @@ const FALLBACK_DATA: Record<number, { type: 'bar' | 'line' | 'pie' | 'area'; tit
       { departamento: 'Financeiro', value: 8 },
       { departamento: 'TI', value: 11 },
       { departamento: 'Produção', value: 67 },
-    ],
-  },
+    ]},
   // 2 = Folha de Pagamento
   2: {
     type: 'line',
@@ -84,8 +83,7 @@ const FALLBACK_DATA: Record<number, { type: 'bar' | 'line' | 'pie' | 'area'; tit
       { mes: 'Abr', bruto: 501, liquido: 406 },
       { mes: 'Mai', bruto: 515, liquido: 417 },
       { mes: 'Jun', bruto: 523, liquido: 424 },
-    ],
-  },
+    ]},
   // 3 = eSocial
   3: {
     type: 'bar',
@@ -95,8 +93,7 @@ const FALLBACK_DATA: Record<number, { type: 'bar' | 'line' | 'pie' | 'area'; tit
       { status: 'Pendentes', count: 12 },
       { status: 'Rejeitados', count: 3 },
       { status: 'Aguardando', count: 8 },
-    ],
-  },
+    ]},
   // 4 = Passivo Trabalhista
   4: {
     type: 'area',
@@ -108,15 +105,12 @@ const FALLBACK_DATA: Record<number, { type: 'bar' | 'line' | 'pie' | 'area'; tit
       { mes: 'Abr', ferias: 61, decimo: 38, fgts: 101, total: 200 },
       { mes: 'Mai', ferias: 67, decimo: 38, fgts: 108, total: 213 },
       { mes: 'Jun', ferias: 73, decimo: 38, fgts: 115, total: 226 },
-    ],
-  },
-};
+    ]}};
 
 // ── Componente de Fallback Recharts ──────────────────────────────
 function RechartsFallback({
   dashboardId,
-  height,
-}: { dashboardId: number; height: string }) {
+  height}: { dashboardId: number; height: string }) {
   const config = FALLBACK_DATA[dashboardId];
 
   if (!config) {
@@ -140,8 +134,7 @@ function RechartsFallback({
   const renderChart = () => {
     const baseProps = {
       data: config.data as Record<string, unknown>[],
-      margin: { top: 8, right: 24, left: 0, bottom: 8 },
-    };
+      margin: { top: 8, right: 24, left: 0, bottom: 8 }};
 
     switch (config.type) {
       case 'bar':
@@ -254,8 +247,7 @@ export function MetabaseEmbed({
   filters = {},
   showToggle = true,
   defaultView = 'metabase',
-  autoRefreshMs,
-}: MetabaseEmbedProps) {
+  autoRefreshMs}: MetabaseEmbedProps) {
   const [viewMode, setViewMode] = useState<ViewMode>(defaultView);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [tokenError, setTokenError] = useState<string | null>(null);
@@ -266,18 +258,15 @@ export function MetabaseEmbed({
     isLoading,
     error,
     refetch,
-    isFetching,
-  } = useQuery<EmbedResponse, Error>({
+    isFetching} = useQuery<EmbedResponse, Error>({
     queryKey: ['metabase-embed', dashboardId, filters],
     queryFn: async () => {
       const res = await fetch('/functions/v1/metabase-embed', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${await getAccessToken()}`,
-        },
-        body: JSON.stringify({ dashboardId, params: filters }),
-      });
+          'Authorization': `Bearer ${await getAccessToken()}`},
+        body: JSON.stringify({ dashboardId, params: filters })});
 
       if (!res.ok) {
         const body = await res.text().catch(() => '');
@@ -293,8 +282,7 @@ export function MetabaseEmbed({
       // Retry apenas 2x, apenas se for erro de rede
       if (count >= 2) return false;
       return err?.message?.includes('fetch') ?? false;
-    },
-  });
+    }});
 
   // ── Auto-refresh ──────────────────────────────────────────────
   useEffect(() => {

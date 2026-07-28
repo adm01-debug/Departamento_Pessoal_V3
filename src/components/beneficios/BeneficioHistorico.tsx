@@ -1,10 +1,9 @@
-import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
-import { History, User, Calendar, ArrowRight, UserPlus, UserMinus, RefreshCw } from 'lucide-react';
+import { User, UserPlus, UserMinus, RefreshCw } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -33,8 +32,7 @@ export function BeneficioHistorico({ beneficioId, colaboradorId }: BeneficioHist
       if (error) throw error;
       return data;
     },
-    enabled: !!beneficioId || !!colaboradorId,
-  });
+    enabled: !!beneficioId || !!colaboradorId});
 
   if (isLoading) return <div className="p-8 flex justify-center"><Spinner /></div>;
 

@@ -11,7 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { useState, memo, useCallback, useMemo, useEffect } from 'react';
+import { useState, memo, useCallback, useEffect } from 'react';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
@@ -238,8 +238,7 @@ const ColaboradoresCount = memo(function ColaboradoresCount() {
         .eq('status', 'ativo');
       return count || 0;
     },
-    staleTime: 60000,
-  });
+    staleTime: 60000});
 
   if (isLoading || !count) return null;
 
@@ -266,8 +265,7 @@ const SecurityAlertsCount = memo(function SecurityAlertsCount() {
     },
     staleTime: 30_000,
     refetchInterval: 60_000, // fallback caso realtime caia
-    retry: false,
-  });
+    retry: false});
 
   // Realtime: invalida contador e página de alertas ao detectar mudança
   useEffect(() => {

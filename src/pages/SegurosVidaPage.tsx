@@ -17,7 +17,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { beneficiariosSeguroService, segurosColaboradoresService } from '@/services/tabelasComplementaresService';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
-import { Plus, ShieldCheck, Trash2, AlertTriangle, Users, UserPlus } from 'lucide-react';
+import { Plus, ShieldCheck, Trash2, Users, UserPlus } from 'lucide-react';
 
 // ========== Beneficiários de um Seguro ==========
 function BeneficiariosSeguroSection({ seguroId }: { seguroId: string }) {
@@ -28,17 +28,14 @@ function BeneficiariosSeguroSection({ seguroId }: { seguroId: string }) {
   const { data: beneficiarios = [], isLoading } = useQuery({
     queryKey: ['beneficiarios-seguro', seguroId],
     queryFn: () => beneficiariosSeguroService.listar(seguroId),
-    enabled: !!seguroId,
-  });
+    enabled: !!seguroId});
 
   const criar = useMutation({
     mutationFn: () => beneficiariosSeguroService.criar({
       seguro_vida_id: seguroId, nome: form.nome, cpf: form.cpf || null,
-      parentesco: form.parentesco || null, percentual: form.percentual ? Number(form.percentual) : null, status: 'ativo',
-    }),
+      parentesco: form.parentesco || null, percentual: form.percentual ? Number(form.percentual) : null, status: 'ativo'}),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['beneficiarios-seguro', seguroId] }); setOpen(false); setForm({ nome: '', cpf: '', parentesco: '', percentual: '' }); toast.success('Beneficiário incluído!'); },
-    onError: () => toast.error('Erro ao incluir'),
-  });
+    onError: () => toast.error('Erro ao incluir')});
 
   const ativos = beneficiarios.filter((b: any) => b.status !== 'inativo');
 
@@ -99,8 +96,7 @@ export default function SegurosVidaPage() {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const criar = useMutation({
     mutationFn: async (d: typeof form) => {
@@ -109,17 +105,14 @@ export default function SegurosVidaPage() {
         capital_segurado: d.capital_segurado ? Number(d.capital_segurado) : null,
         premio_mensal: d.premio_mensal ? Number(d.premio_mensal) : null,
         data_inicio: d.data_inicio || null, data_fim: d.data_fim || null,
-        empresa_id: empresaAtual?.id,
-      });
+        empresa_id: empresaAtual?.id});
       if (error) throw error;
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['seguros-vida'] }); setOpen(false); toast.success('Seguro cadastrado'); },
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['seguros-vida'] }); setOpen(false); toast.success('Seguro cadastrado'); }});
 
   const excluir = useMutation({
     mutationFn: async (id: string) => { const { error } = await supabase.from('seguros_vida').delete().eq('id', id).eq('empresa_id', empresaAtual!.id); if (error) throw error; },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['seguros-vida'] }); toast.success('Excluído'); },
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['seguros-vida'] }); toast.success('Excluído'); }});
 
   // === Sinistros ===
   const [openSin, setOpenSin] = useState(false);
@@ -132,8 +125,7 @@ export default function SegurosVidaPage() {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const { data: sinistros = [], isLoading: loadSin } = useQuery({
     queryKey: ['sinistros-seguro', empresaAtual?.id],
@@ -142,8 +134,7 @@ export default function SegurosVidaPage() {
       if (error) throw error;
       return d || [];
     },
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const criarSinistro = useMutation({
     mutationFn: async (d: typeof sinForm) => {
@@ -151,8 +142,7 @@ export default function SegurosVidaPage() {
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['sinistros-seguro'] }); setOpenSin(false); setSinForm({ seguro_vida_id: '', colaborador_id: '', tipo: '', data_sinistro: '', descricao: '' }); toast.success('Sinistro registrado'); },
-    onError: () => toast.error('Erro ao registrar sinistro'),
-  });
+    onError: () => toast.error('Erro ao registrar sinistro')});
 
   // === Colaboradores Vinculados ===
   const [openVinc, setOpenVinc] = useState(false);
@@ -161,19 +151,16 @@ export default function SegurosVidaPage() {
   const { data: vinculados = [], isLoading: loadVinc } = useQuery({
     queryKey: ['seguros-colaboradores', empresaAtual?.id],
     queryFn: () => segurosColaboradoresService.listar(),
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const vincular = useMutation({
     mutationFn: () => segurosColaboradoresService.vincular({ seguro_vida_id: vincForm.seguro_vida_id, colaborador_id: vincForm.colaborador_id }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['seguros-colaboradores'] }); setOpenVinc(false); setVincForm({ seguro_vida_id: '', colaborador_id: '' }); toast.success('Colaborador vinculado!'); },
-    onError: () => toast.error('Erro ao vincular'),
-  });
+    onError: () => toast.error('Erro ao vincular')});
 
   const desvincular = useMutation({
     mutationFn: ({ id, seguroVidaId }: { id: string; seguroVidaId: string }) => segurosColaboradoresService.desvincular(seguroVidaId, id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['seguros-colaboradores'] }); toast.success('Desvinculado'); },
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['seguros-colaboradores'] }); toast.success('Desvinculado'); }});
 
   const fmt = (v: number | null) => v ? `R$ ${Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : '-';
 

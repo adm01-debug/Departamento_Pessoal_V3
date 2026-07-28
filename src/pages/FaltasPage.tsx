@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { faltasService } from '@/services';
 import { colaboradorService } from '@/services';
 import { useEmpresas } from '@/hooks';
@@ -27,21 +27,17 @@ const tipoLabels: Record<string, string> = {
   licenca_casamento: 'Lic. Casamento', licenca_obito: 'Lic. Óbito', acidente_trabalho: 'Acidente Trabalho',
   doacao_sangue: 'Doação Sangue', servico_militar: 'Serviço Militar', comparecimento_juizo: 'Comp. Juízo',
   alistamento_eleitoral: 'Alistamento Eleitoral', vestibular: 'Vestibular', consulta_prenatal: 'Consulta Pré-natal',
-  acompanhamento_filho: 'Acomp. Filho Médico',
-};
+  acompanhamento_filho: 'Acomp. Filho Médico'};
 
 const statusLabels: Record<string, string> = {
-  registrada: 'Registrada', justificada: 'Justificada', abonada: 'Abonada', descontada: 'Descontada', aprovada: 'Aprovada', rejeitada: 'Rejeitada',
-};
+  registrada: 'Registrada', justificada: 'Justificada', abonada: 'Abonada', descontada: 'Descontada', aprovada: 'Aprovada', rejeitada: 'Rejeitada'};
 
 const statusVariant: Record<string, 'secondary' | 'default' | 'destructive' | 'outline'> = {
-  registrada: 'outline', justificada: 'secondary', abonada: 'secondary', descontada: 'destructive', aprovada: 'default', rejeitada: 'destructive',
-};
+  registrada: 'outline', justificada: 'secondary', abonada: 'secondary', descontada: 'destructive', aprovada: 'default', rejeitada: 'destructive'};
 
 const initialForm = {
   colaborador_id: '', data: '', data_fim: '', tipo: 'injustificada', motivo: '', horas_falta: '',
-  cid: '', medico_nome: '', medico_crm: '', documento_anexo: '',
-};
+  cid: '', medico_nome: '', medico_crm: '', documento_anexo: ''};
 
 export default function FaltasPage() {
   const { empresaAtual } = useEmpresas();
@@ -53,13 +49,11 @@ export default function FaltasPage() {
   const { data: faltas = [], isLoading } = useQuery({
     queryKey: ['faltas', empresaAtual?.id],
     queryFn: () => faltasService.listar(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
   const { data: colaboradores = [] } = useQuery({
     queryKey: ['colaboradores', empresaAtual?.id],
     queryFn: () => colaboradorService.list(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const criar = useMutation({
     mutationFn: (d: any) => {
@@ -71,8 +65,7 @@ export default function FaltasPage() {
         cid: d.cid || null,
         medico_nome: d.medico_nome || null,
         medico_crm: d.medico_crm || null,
-        documento_anexo: d.documento_anexo || null,
-      };
+        documento_anexo: d.documento_anexo || null};
       if (d.data_fim && d.data) {
         const start = new Date(d.data);
         const end = new Date(d.data_fim);
@@ -87,28 +80,23 @@ export default function FaltasPage() {
       setForm(initialForm);
       toast.success('Falta registrada!');
     },
-    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao registrar falta.')),
-  });
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao registrar falta.'))});
 
   const aprovar = useMutation({
     mutationFn: (id: string) => faltasService.atualizar(id, { status: 'aprovada', aprovado_em: new Date().toISOString() }, empresaAtual!.id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['faltas'] }); toast.success('Falta aprovada!'); },
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['faltas'] }); toast.success('Falta aprovada!'); }});
 
   const rejeitar = useMutation({
     mutationFn: (id: string) => faltasService.atualizar(id, { status: 'rejeitada' }, empresaAtual!.id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['faltas'] }); toast.success('Falta rejeitada!'); },
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['faltas'] }); toast.success('Falta rejeitada!'); }});
 
   const marcarDesconto = useMutation({
     mutationFn: (id: string) => faltasService.atualizar(id, { desconto_aplicado: true, status: 'descontada' }, empresaAtual!.id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['faltas'] }); toast.success('Desconto aplicado!'); },
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['faltas'] }); toast.success('Desconto aplicado!'); }});
 
   const excluir = useMutation({
     mutationFn: (id: string) => faltasService.excluir(id, empresaAtual!.id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['faltas'] }); toast.success('Falta excluída!'); },
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['faltas'] }); toast.success('Falta excluída!'); }});
 
   if (isLoading) return <PageLayout title="Faltas"><Spinner /></PageLayout>;
 
@@ -119,8 +107,7 @@ export default function FaltasPage() {
     justificadas: faltas.filter((f: any) => f.tipo === 'justificada' || f.tipo === 'atestado_medico').length,
     injustificadas: faltas.filter((f: any) => f.tipo === 'injustificada').length,
     pendentes: faltas.filter((f: any) => f.status === 'registrada').length,
-    descontadas: faltas.filter((f: any) => f.desconto_aplicado).length,
-  };
+    descontadas: faltas.filter((f: any) => f.desconto_aplicado).length};
 
   const needsMedicalInfo = ['atestado_medico', 'acidente_trabalho', 'consulta_prenatal', 'acompanhamento_filho'].includes(form.tipo);
 

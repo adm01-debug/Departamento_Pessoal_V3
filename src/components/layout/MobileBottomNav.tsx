@@ -3,7 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Link, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import { MobileQuickActions } from './MobileQuickActions';
-import { Home, Users, FileText, Calendar, MoreHorizontal, LayoutGrid, Scale } from 'lucide-react';
+import { Home, Users, FileText, MoreHorizontal, LayoutGrid, Scale } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const mobileItems = [

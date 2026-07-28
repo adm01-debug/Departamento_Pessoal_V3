@@ -8,7 +8,6 @@ import { Spinner } from '@/components/ui/spinner';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { useOnMount } from '@/hooks/useMountEffects';
 import { motion } from 'framer-motion';
-import { toast } from 'sonner';
 import { Building2, Save } from 'lucide-react';
 
 export function EmpresaSettingsTab() {
@@ -22,8 +21,7 @@ export function EmpresaSettingsTab() {
     cidade: '',
     uf: '',
     email: '',
-    telefone: '',
-  });
+    telefone: ''});
 
   useOnMount(() => {
     if (empresaAtual) {
@@ -36,8 +34,7 @@ export function EmpresaSettingsTab() {
         cidade: empresaAtual.cidade || '',
         uf: empresaAtual.uf || '',
         email: empresaAtual.email || '',
-        telefone: empresaAtual.telefone || '',
-      });
+        telefone: empresaAtual.telefone || ''});
     }
   });
 
@@ -52,8 +49,7 @@ export function EmpresaSettingsTab() {
         cidade: empresaAtual.cidade || '',
         uf: empresaAtual.uf || '',
         email: empresaAtual.email || '',
-        telefone: empresaAtual.telefone || '',
-      });
+        telefone: empresaAtual.telefone || ''});
     }
   }, [empresaAtual]);
 
@@ -61,8 +57,7 @@ export function EmpresaSettingsTab() {
     if (!empresaAtual?.id) return;
     atualizarEmpresa.mutate({
       id: empresaAtual.id,
-      ...form,
-    });
+      ...form});
   };
 
   if (loadingEmpresas) return <div className="p-8 flex justify-center"><Spinner /></div>;

@@ -3,7 +3,6 @@ import { useState, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { useOnMount } from '@/hooks/useMountEffects';
-import { DataTableToolbar } from '@/components/ui/data-table-toolbar';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { EmptyList } from '@/components/ui/empty-state';
 import { Spinner } from '@/components/ui/spinner';
@@ -17,7 +16,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { documentoService, colaboradorService } from '@/services';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { FileText, Upload, Download, Eye, Trash2, Loader2, File, Sparkles, Languages, CheckCircle2, Search, Filter, History } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { validateUploadFile } from '@/utils/uploadValidation';
@@ -78,15 +77,13 @@ export default function DocumentosPage() {
       empresaId!,
       colaboradorFilter === 'todos' ? undefined : colaboradorFilter
     ),
-    enabled: !!empresaId,
-  });
+    enabled: !!empresaId});
 
 
 
   const { data: colaboradoresRes } = useQuery({
     queryKey: ['colaboradores-simples'],
-    queryFn: () => colaboradorService.listar({ pageSize: 1000 }),
-  });
+    queryFn: () => colaboradorService.listar({ pageSize: 1000 })});
   const colaboradores = colaboradoresRes?.data || [];
 
   const deleteMutation = useMutation({
@@ -101,8 +98,7 @@ export default function DocumentosPage() {
       queryClient.invalidateQueries({ queryKey: ['documentos'] });
       toast.success('Documento excluído');
     },
-    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar documento.')),
-  });
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar documento.'))});
 
   const handleUpload = async () => {
     if (!file || !tipo) {
@@ -134,8 +130,7 @@ export default function DocumentosPage() {
         tamanho: file.size,
         mime_type: file.type,
         storage_path: storagePath,
-        colaborador_id: colaboradorId || undefined,
-      });
+        colaborador_id: colaboradorId || undefined});
 
       queryClient.invalidateQueries({ queryKey: ['documentos'] });
       toast.success('Documento enviado com sucesso');
@@ -158,8 +153,7 @@ export default function DocumentosPage() {
       const result = await edgeFunctionsService.ocrDocumento({
         bucket: BUCKET,
         filePath: path,
-        documentType: (doc.tipo || '').toLowerCase() as any,
-      });
+        documentType: (doc.tipo || '').toLowerCase() as any});
       setOcrResult(result as OcrResult);
       toast.success('Processamento concluído!');
     } catch (e: unknown) {

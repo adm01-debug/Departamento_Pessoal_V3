@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronRight, Users, Mail, Building2 } from 'lucide-react';
+import { ChevronDown, ChevronRight, Mail, Building2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface OrganogramaNodeProps {

@@ -1,9 +1,8 @@
-import { PageTitle } from '@/components/PageTitle';
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -18,9 +17,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { catalogoCursoService, colaboradorService } from '@/services';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
-import { GraduationCap, Plus, BookOpen, Award, Users, Trash2, Link, Calendar, CheckCircle2, Clock, Search, ChevronRight, MoreHorizontal, Video, MapPin } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { GraduationCap, Plus, BookOpen, Award, Users, Trash2, Link, Calendar, Video } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 // === Treinamentos Service (tabela treinamentos) ===
 const treinamentosService = {
@@ -40,8 +38,7 @@ const treinamentosService = {
     if (empresaId) q = q.eq('empresa_id', empresaId);
     const { error } = await q;
     if (error) throw error;
-  },
-};
+  }};
 
 // Sub-component for managing courses within a trilha
 function TrilhaCursosSection({ trilhaId, cursos }: { trilhaId: string; cursos: any[] }) {
@@ -52,8 +49,7 @@ function TrilhaCursosSection({ trilhaId, cursos }: { trilhaId: string; cursos: a
   const { data: vinculados = [] } = useQuery({
     queryKey: ['trilhas_cursos', trilhaId],
     queryFn: () => catalogoCursoService.listarTrilhasCursos(trilhaId),
-    enabled: !!trilhaId,
-  });
+    enabled: !!trilhaId});
 
   const vincular = useMutation({
     mutationFn: () => catalogoCursoService.vincularCursoTrilha({ trilha_id: trilhaId, curso_id: selCurso, ordem: vinculados.length + 1 }),
@@ -63,16 +59,14 @@ function TrilhaCursosSection({ trilhaId, cursos }: { trilhaId: string; cursos: a
       setSelCurso(''); 
       toast.success('Curso vinculado!'); 
     },
-    onError: () => toast.error('Erro ao vincular'),
-  });
+    onError: () => toast.error('Erro ao vincular')});
 
   const desvincular = useMutation({
     mutationFn: (id: string) => catalogoCursoService.desvincularCursoTrilha(id, trilhaId),
     onSuccess: () => { 
       qc.invalidateQueries({ queryKey: ['trilhas_cursos', trilhaId] }); 
       toast.success('Curso desvinculado'); 
-    },
-  });
+    }});
 
   const cursosDisponiveis = cursos.filter(c => !vinculados.some((v: any) => v.curso_id === c.id));
 
@@ -180,8 +174,7 @@ export default function TreinamentosPage() {
   const criarTrein = useMutation({
     mutationFn: () => treinamentosService.criar({ ...treinForm, carga_horaria: treinForm.carga_horaria ? Number(treinForm.carga_horaria) : undefined, empresa_id: empresaAtual?.id }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['treinamentos'] }); setOpenTrein(false); setTreinForm({ nome: '', descricao: '', data: '', carga_horaria: '' }); toast.success('Treinamento criado!'); },
-    onError: () => toast.error('Erro ao criar treinamento'),
-  });
+    onError: () => toast.error('Erro ao criar treinamento')});
   const excluirTrein = useMutation({ mutationFn: (id: string) => treinamentosService.excluir(id, empresaAtual?.id), onSuccess: () => { qc.invalidateQueries({ queryKey: ['treinamentos'] }); toast.success('Treinamento excluído'); } });
 
   // === Cursos ===
@@ -190,8 +183,7 @@ export default function TreinamentosPage() {
   const criarCurso = useMutation({
     mutationFn: () => catalogoCursoService.criarCurso({ ...cursoForm, carga_horaria: cursoForm.carga_horaria ? Number(cursoForm.carga_horaria) : null, empresa_id: empresaAtual?.id }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['catalogo_cursos'] }); setOpenCurso(false); setCursoForm({ nome: '', descricao: '', categoria: '', modalidade: 'presencial', carga_horaria: '', obrigatorio: false, nr_relacionada: '' }); toast.success('Curso criado!'); },
-    onError: () => toast.error('Erro ao criar curso'),
-  });
+    onError: () => toast.error('Erro ao criar curso')});
   const excluirCurso = useMutation({ mutationFn: (id: string) => catalogoCursoService.excluirCurso(id, empresaAtual!.id), onSuccess: () => { qc.invalidateQueries({ queryKey: ['catalogo_cursos'] }); toast.success('Curso excluído'); } });
 
   // === Trilhas ===
@@ -200,8 +192,7 @@ export default function TreinamentosPage() {
   const criarTrilha = useMutation({
     mutationFn: () => catalogoCursoService.criarTrilha({ ...trilhaForm, empresa_id: empresaAtual?.id }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['trilhas'] }); setOpenTrilha(false); setTrilhaForm({ titulo: '', descricao: '', nivel: 'basico' }); toast.success('Trilha criada!'); },
-    onError: () => toast.error('Erro ao criar trilha'),
-  });
+    onError: () => toast.error('Erro ao criar trilha')});
   const excluirTrilha = useMutation({ mutationFn: (id: string) => catalogoCursoService.excluirTrilha(id, empresaAtual!.id), onSuccess: () => { qc.invalidateQueries({ queryKey: ['trilhas'] }); toast.success('Trilha excluída'); } });
 
   // === Inscrições ===
@@ -210,8 +201,7 @@ export default function TreinamentosPage() {
   const criarInsc = useMutation({
     mutationFn: () => catalogoCursoService.criarInscricao({ ...inscForm, empresa_id: empresaAtual?.id, status: 'inscrito' }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['inscricoes_cursos'] }); setOpenInsc(false); setInscForm({ colaborador_id: '', curso_id: '', data_inicio: '' }); toast.success('Inscrição realizada!'); },
-    onError: () => toast.error('Erro ao inscrever'),
-  });
+    onError: () => toast.error('Erro ao inscrever')});
 
   const isLoading = loadTrein || loadCursos || loadTrilhas || loadInsc || loadInst || loadCert;
 

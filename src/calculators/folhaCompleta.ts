@@ -1,7 +1,6 @@
 // Cálculo completo de folha e salário líquido
 import { calcularINSS, calcularIRRF, calcularFGTS } from './impostos';
 import { calcularHorasExtras, calcularAdicionalNoturno, calcularInsalubridade, calcularPericulosidade, calcularDescontoVT, calcularPensaoAlimenticia, calcularDSR, type GrauInsalubridade } from './beneficios';
-import { RUBRICAS_PADRAO } from '@/constants/rubricas';
 
 export interface ParamsFolhaCompleta {
   salarioBase: number;
@@ -27,8 +26,7 @@ export function calcularFolhaCompleta(params: ParamsFolhaCompleta) {
     insalubridade = null, periculosidade = false,
     dependentes = 0, valeTransporte = 0,
     pensaoPercentual = 0, outrosDescontos = 0, outrosProventos = 0,
-    diasUteis = 26, domingosEFeriados = 4,
-  } = params;
+    diasUteis = 26, domingosEFeriados = 4} = params;
 
   const he = calcularHorasExtras(salarioBase, horasExtras50, horasExtras100, 220, diasUteis, domingosEFeriados);
   const adNoturno = horasNoturnas > 0 ? calcularAdicionalNoturno(salarioBase, horasNoturnas, 220, adicionalNoturnoPerc) : 0;
@@ -85,12 +83,10 @@ export function calcularFolhaCompleta(params: ParamsFolhaCompleta) {
     proventos: {
       salarioBase, horasExtras: he.total, adicionalNoturno: adNoturno,
       dsr: dsrTotal, insalubridade: adInsalubridade, periculosidade: adPericulosidade,
-      outrosProventos, totalProventos,
-    },
+      outrosProventos, totalProventos},
     descontos: { inss, irrf, valeTransporte: descontoVT, pensao, outrosDescontos, totalDescontos },
     fgts, salarioLiquido,
-    lancamentos,
-  };
+    lancamentos};
 }
 
 export function calcularSalarioLiquido(params: {

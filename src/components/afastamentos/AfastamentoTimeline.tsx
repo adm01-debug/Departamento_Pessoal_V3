@@ -1,13 +1,11 @@
-import { useEffect } from 'react';
 import { useProrrogacoesAfastamento, useAfastamentos } from '@/hooks/useAfastamentos';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, ArrowRight, History, Clock, FileText, Stethoscope, AlertCircle, Plus } from 'lucide-react';
 import { afastamentoService } from '@/services/afastamentoService';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Spinner } from '@/components/ui/spinner';
-import { Separator } from '@/components/ui/separator';
 
 interface AfastamentoTimelineProps {
   afastamentoId: string;

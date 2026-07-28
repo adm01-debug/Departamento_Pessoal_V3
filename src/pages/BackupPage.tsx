@@ -4,7 +4,7 @@ import { PageLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Database, Download, Clock, Shield, HardDrive, CheckCircle, FileJson, FileSpreadsheet, Loader2 } from 'lucide-react';
+import { Database, Clock, Shield, HardDrive, CheckCircle, FileJson, FileSpreadsheet, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
@@ -45,8 +45,7 @@ export default function BackupPage() {
         tamanho: result.stats.tamanho,
         formato: formato.toUpperCase(),
         registros: result.stats.registros,
-        tabelas: result.stats.tabelas,
-      };
+        tabelas: result.stats.tabelas};
       setHistorico(prev => [entry, ...prev]);
 
       toast.success(

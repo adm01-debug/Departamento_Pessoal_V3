@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { 
   Dialog, 
   DialogContent, 
@@ -16,10 +16,9 @@ import {
   SelectTrigger, 
   SelectValue 
 } from '@/components/ui/select';
-import { FileDown, Eye, Loader2, Calendar } from 'lucide-react';
+import { FileDown, Eye, Loader2 } from 'lucide-react';
 import { feriasPDF } from '@/utils/feriasPDF';
-import { format, subMonths, isAfter, isBefore } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { format, subMonths, isAfter } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { useEmpresas } from '@/hooks/useEmpresas';
 
