@@ -163,21 +163,20 @@ describe('BaseService.excluir', () => {
   beforeEach(() => { vi.clearAllMocks(); });
 
   it('calls delete with the given id', async () => {
-    const eqFn = vi.fn().mockResolvedValue({ error: null });
-    const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
-    mockFrom.mockReturnValue({ delete: deleteFn });
+    const chain = makeChain({ error: null });
+    mockFrom.mockReturnValue(chain);
 
     await service.excluir('id-1', 'emp-1');
-    expect(deleteFn).toHaveBeenCalled();
-    expect(eqFn).toHaveBeenCalledWith('id', 'id-1');
+    expect(chain.delete).toHaveBeenCalled();
+    expect(chain.eq).toHaveBeenCalledWith('id', 'id-1');
+    expect(chain.eq).toHaveBeenCalledWith('empresa_id', 'emp-1');
   });
 
   it('throws on DB error', async () => {
-    const eqFn = vi.fn().mockResolvedValue({ error: { message: 'fail' } });
-    const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
-    mockFrom.mockReturnValue({ delete: deleteFn });
+    mockFrom.mockReturnValue(makeChain({ error: { message: 'fail' } }));
 
     await expect(service.excluir('id-1', 'emp-1')).rejects.toBeDefined();
     expect(mockLoggerError).toHaveBeenCalled();
+  });
   });
 });
