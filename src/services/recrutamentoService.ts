@@ -1,7 +1,8 @@
 import { supabase } from '@/integrations/supabase/client';
+import type { VagaRow, CandidatoRow, CandidaturaRow, CandidaturaComRelacoes } from '@/types/recrutamento';
 export const recrutamentoService = {
   // ===== VAGAS =====
-  async listarVagas(empresaId: string): Promise<any[]> {
+  async listarVagas(empresaId: string): Promise<VagaRow[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
     let q = supabase.from('vagas').select('*').order('created_at', { ascending: false });
@@ -12,7 +13,7 @@ export const recrutamentoService = {
 
   },
 
-  async criarVaga(d: Record<string, unknown>): Promise<any> {
+  async criarVaga(d: Record<string, unknown>): Promise<VagaRow> {
     
     const { data, error } = await supabase.from('vagas').insert(d as any).select().maybeSingle();
     if (error) throw error;
@@ -21,7 +22,7 @@ export const recrutamentoService = {
   
   },
 
-  async atualizarVaga(id: string, d: Record<string, unknown>, empresaId: string): Promise<any> {
+  async atualizarVaga(id: string, d: Record<string, unknown>, empresaId: string): Promise<VagaRow> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase.from('vagas').update(d as any).eq('id', id).eq('empresa_id', empresaId).select().maybeSingle();
     if (error) throw error;
@@ -38,7 +39,7 @@ export const recrutamentoService = {
   },
 
   // ===== CANDIDATOS =====
-  async listarCandidatos(empresaId: string): Promise<any[]> {
+  async listarCandidatos(empresaId: string): Promise<CandidatoRow[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
     let q = supabase.from('candidatos').select('*').order('created_at', { ascending: false });
@@ -49,7 +50,7 @@ export const recrutamentoService = {
 
   },
 
-  async criarCandidato(d: Record<string, unknown>): Promise<any> {
+  async criarCandidato(d: Record<string, unknown>): Promise<CandidatoRow> {
     
     const { data, error } = await supabase.from('candidatos').insert(d as any).select().maybeSingle();
     if (error) throw error;
@@ -58,7 +59,7 @@ export const recrutamentoService = {
   
   },
 
-  async atualizarCandidato(id: string, d: Record<string, unknown>, empresaId: string): Promise<any> {
+  async atualizarCandidato(id: string, d: Record<string, unknown>, empresaId: string): Promise<CandidatoRow> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase.from('candidatos').update(d as any).eq('id', id).eq('empresa_id', empresaId).select().maybeSingle();
     if (error) throw error;
@@ -75,17 +76,17 @@ export const recrutamentoService = {
   },
 
   // ===== CANDIDATURAS =====
-  async listarCandidaturas(empresaId: string, vagaId?: string): Promise<any[]> {
+  async listarCandidaturas(empresaId: string, vagaId?: string): Promise<CandidaturaComRelacoes[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     let q = supabase.from('candidaturas').select('*, candidato:candidatos(*), vaga:vagas(titulo, departamento)').eq('empresa_id', empresaId).order('created_at', { ascending: false });
     if (vagaId) q = q.eq('vaga_id', vagaId);
     const { data, error } = await q;
     if (error) throw error;
-    return data || [];
+    return (data || []) as unknown as CandidaturaComRelacoes[];
 
   },
 
-  async criarCandidatura(d: Record<string, unknown>): Promise<any> {
+  async criarCandidatura(d: Record<string, unknown>): Promise<CandidaturaRow> {
     
     const { data, error } = await supabase.from('candidaturas').insert(d as any).select().maybeSingle();
     if (error) throw error;
@@ -94,7 +95,7 @@ export const recrutamentoService = {
   
   },
 
-  async atualizarCandidatura(id: string, d: Record<string, unknown>, empresaId: string): Promise<any> {
+  async atualizarCandidatura(id: string, d: Record<string, unknown>, empresaId: string): Promise<CandidaturaRow> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase.from('candidaturas').update(d as any).eq('id', id).eq('empresa_id', empresaId).select().maybeSingle();
     if (error) throw error;

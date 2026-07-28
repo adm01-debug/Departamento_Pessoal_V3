@@ -18,7 +18,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { CandidatoTimeline } from '@/components/recrutamento/CandidatoTimeline';
-import type { UiRecord } from '@/types/uiRecord';
+import type { CandidaturaComRelacoes, VagaRow, CandidatoRow } from '@/types/recrutamento';
 const ETAPAS = [
   { id: 'triagem', label: 'Triagem', color: 'bg-slate-100 border-slate-200' },
   { id: 'entrevista', label: 'Entrevista', color: 'bg-blue-50 border-blue-200' },
@@ -32,7 +32,7 @@ export default function RecrutamentoPage() {
   const qc = useQueryClient();
   const [activeTab, setActiveTab] = useState('pipeline');
   const [selectedVagaId, setSelectedVagaId] = useState<string>('all');
-  const [selectedCandidatura, setSelectedCandidatura] = useState<UiRecord | null>(null);
+  const [selectedCandidatura, setSelectedCandidatura] = useState<CandidaturaComRelacoes | null>(null);
 
   const { data: vagas = [], isLoading: loadVagas } = useQuery({
     queryKey: ['vagas', empresaAtual?.id],
@@ -107,7 +107,7 @@ export default function RecrutamentoPage() {
                   <SelectTrigger className="rounded-xl"><SelectValue placeholder="Filtrar por Vaga" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todas as Vagas</SelectItem>
-                    {vagas.map((v: any) => <SelectItem key={v.id} value={v.id}>{v.titulo}</SelectItem>)}
+                    {vagas.map((v: VagaRow) => <SelectItem key={v.id} value={v.id}>{v.titulo}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
@@ -128,15 +128,15 @@ export default function RecrutamentoPage() {
                           <h3 className="font-display font-semibold text-sm flex items-center gap-2">
                             {etapa.label}
                             <Badge variant="secondary" className="rounded-full h-5 px-1.5 text-[10px] bg-muted/80">
-                              {candidaturas.filter((c: any) => (c.etapa || 'triagem') === etapa.id).length}
+                              {candidaturas.filter((c: CandidaturaComRelacoes) => (c.etapa || 'triagem') === etapa.id).length}
                             </Badge>
                           </h3>
                         </div>
                         
                         <div className={cn("flex-1 rounded-2xl border-2 border-dashed p-3 space-y-3 transition-colors duration-300", etapa.color)}>
                           {candidaturas
-                            .filter((c: any) => (c.etapa || 'triagem') === etapa.id)
-                            .map((cand: any) => (
+                            .filter((c: CandidaturaComRelacoes) => (c.etapa || 'triagem') === etapa.id)
+                            .map((cand: CandidaturaComRelacoes) => (
                               <motion.div 
                                 key={cand.id}
                                 layoutId={cand.id}
@@ -191,7 +191,7 @@ export default function RecrutamentoPage() {
                                 </div>
                               </motion.div>
                             ))}
-                          {candidaturas.filter((c: any) => (c.etapa || 'triagem') === etapa.id).length === 0 && (
+                          {candidaturas.filter((c: CandidaturaComRelacoes) => (c.etapa || 'triagem') === etapa.id).length === 0 && (
                             <div className="h-32 flex flex-col items-center justify-center border border-dashed rounded-xl opacity-20 gap-2">
                               <Users className="h-6 w-6" />
                               <span className="text-xs font-medium">Sem candidatos</span>
@@ -206,7 +206,7 @@ export default function RecrutamentoPage() {
                 {/* VAGAS */}
                 <TabsContent value="vagas" className="mt-0">
                   <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {vagas.map((vaga: any) => (
+                    {vagas.map((vaga: VagaRow) => (
                       <Card key={vaga.id} className="rounded-2xl border-border/40 hover:border-primary/30 hover:shadow-xl transition-all group overflow-hidden bg-card/50 backdrop-blur-xs">
                         <CardHeader className="pb-3">
                           <div className="flex justify-between items-start mb-2">
@@ -245,7 +245,7 @@ export default function RecrutamentoPage() {
                               <div className="flex flex-col">
                                 <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">Candidatos</span>
                                 <span className="text-lg font-display font-bold text-primary">
-                                  {candidaturas.filter((c: any) => c.vaga_id === vaga.id).length}
+                                  {candidaturas.filter((c: CandidaturaComRelacoes) => c.vaga_id === vaga.id).length}
                                 </span>
                               </div>
                               <Button className="rounded-xl h-9 px-4 text-xs font-bold shadow-xs group-hover:shadow-md transition-all">
@@ -285,7 +285,7 @@ export default function RecrutamentoPage() {
                              </tr>
                            </thead>
                            <tbody className="divide-y divide-border/30">
-                             {candidatos.map((cand: any) => (
+                             {candidatos.map((cand: CandidaturaComRelacoes) => (
                                <tr key={cand.id} className="hover:bg-primary/[0.02] transition-colors group">
                                  <td className="px-6 py-4">
                                    <div className="flex items-center gap-3">
@@ -349,7 +349,7 @@ export default function RecrutamentoPage() {
                     <CardHeader className="pb-0"><CardTitle className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Distribuição por Etapa</CardTitle></CardHeader>
                     <CardContent className="h-full flex items-end gap-2 px-8 pb-8 pt-4">
                       {ETAPAS.map(e => {
-                        const count = candidaturas.filter((c: any) => (c.etapa || 'triagem') === e.id).length;
+                        const count = candidaturas.filter((c: CandidaturaComRelacoes) => (c.etapa || 'triagem') === e.id).length;
                         const height = (count / (candidaturas.length || 1)) * 100 + 10;
                         return (
                           <div key={e.id} className="flex-1 flex flex-col items-center gap-2">
