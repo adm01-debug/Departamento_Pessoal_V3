@@ -117,7 +117,8 @@ export function WorkflowDesigner({ initialNodes = [], initialConnections = [], o
   const [validationErrors, setValidationErrors] = useState<Set<string>>(new Set());
   const svgRef = useRef<SVGSVGElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
-  const panRef = useRef({ x: 0, y: 0, dragging: false, startX: 0, startY: 0 });
+  // Offset de pan do canvas (state, não ref: é lido durante o render).
+  const [pan] = useState({ x: 0, y: 0 });
 
   // ── Helpers ───────────────────────────────────────────────────
   const getNode = (id: string) => nodes.find(n => n.id === id);
@@ -333,7 +334,7 @@ export function WorkflowDesigner({ initialNodes = [], initialConnections = [], o
             className="w-full h-full"
             style={{ cursor: draggingId ? 'grabbing' : pendingFrom ? 'crosshair' : 'default' }}
           >
-            <g transform={`scale(${zoom}) translate(${panRef.current.x / zoom}, ${panRef.current.y / zoom})`}>
+            <g transform={`scale(${zoom}) translate(${pan.x / zoom}, ${pan.y / zoom})`}>
 
               {/* ── Connections ─────────────────────────── */}
               {connections.map(conn => {

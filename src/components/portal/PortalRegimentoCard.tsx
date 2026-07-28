@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { sanitizeContractHtml } from '@/utils/sanitizeHtml';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEmpresas } from '@/hooks/useEmpresas';
@@ -48,7 +49,7 @@ export function PortalRegimentoCard() {
     if (!empresaId || !user?.id) return;
     setLoading(true);
     try {
-      const db = supabase as { from: Function };
+      const db = supabase as unknown as SupabaseClient;
 
       // Vínculo colaborador ↔ user
       const { data: colab } = await db

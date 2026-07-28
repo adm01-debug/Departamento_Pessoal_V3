@@ -49,7 +49,7 @@ export function decodeCursor(cursor: string): { column: string; value: string | 
   const raw = decoded.substring(idx + 1);
   // Rejeita caracteres perigosos: mesmas regras de identificador do bridge.
   if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(column)) return null;
-  if (raw.length === 0 || raw.length > 128 || !/^[A-Za-z0-9_.:@\-]*$/.test(raw)) return null;
+  if (raw.length === 0 || raw.length > 128 || !/^[A-Za-z0-9_.:@-]*$/.test(raw)) return null;
   const asNumber = Number(raw);
   return { column, value: Number.isFinite(asNumber) && raw !== '' ? asNumber : raw };
 }
