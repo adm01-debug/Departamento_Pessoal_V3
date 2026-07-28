@@ -225,7 +225,7 @@ export default function AuditoriaPage() {
               <Card className="bg-muted/30 border-none shadow-none">
                 <CardContent className="p-4 flex flex-col gap-1">
                   <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Data e Hora</span>
-                  <span className="text-sm font-medium">{selectedLog && new Date(selectedLog.created_at).toLocaleString('pt-BR')}</span>
+                  <span className="text-sm font-medium">{selectedLog?.created_at ? new Date(selectedLog.created_at).toLocaleString('pt-BR') : '-'}</span>
                 </CardContent>
               </Card>
               <Card className="bg-muted/30 border-none shadow-none">
@@ -237,7 +237,7 @@ export default function AuditoriaPage() {
               <Card className="bg-muted/30 border-none shadow-none">
                 <CardContent className="p-4 flex flex-col gap-1">
                   <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Ação</span>
-                  <Badge className={cn('w-fit', acaoColors[selectedLog?.acao] || 'bg-muted')}>{selectedLog?.acao}</Badge>
+                  <Badge className={cn('w-fit', (selectedLog?.acao ? acaoColors[selectedLog.acao] : undefined) || 'bg-muted')}>{selectedLog?.acao}</Badge>
                 </CardContent>
               </Card>
               <Card className="bg-muted/30 border-none shadow-none">

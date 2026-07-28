@@ -250,8 +250,8 @@ export default function ContabilidadePage() {
                               </div>
                             </div>
                           </TableCell>
-                          <TableCell className="text-right font-display font-bold">{formatCurrency(l.valor)}</TableCell>
-                          <TableCell><StatusBadge status={l.status} variant="success" /></TableCell>
+                          <TableCell className="text-right font-display font-bold">{formatCurrency(l.valor ?? 0)}</TableCell>
+                          <TableCell><StatusBadge status={l.status ?? 'desconhecido'} variant="success" /></TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
