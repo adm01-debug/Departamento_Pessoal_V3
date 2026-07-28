@@ -52,11 +52,6 @@ const AdminRegimentoInternoPage = () => {
   const [saving, setSaving] = useState(false);
   const [notificando, setNotificando] = useState(false);
 
-  const proximaVersao = useMemo(
-    () => (documentos.length ? Math.max(...documentos.map((d) => d.versao)) + 1 : 1),
-    [documentos]
-  );
-
   const empresaId = empresaAtual?.id;
 
   // Data fetching via React Query: chave por empresa (multi-tenant), sem efeito manual.
@@ -100,6 +95,12 @@ const AdminRegimentoInternoPage = () => {
   const loading = regimentoQuery.isPending && !!empresaId;
 
   const carregar = () => { void regimentoQuery.refetch(); };
+
+  const proximaVersao = useMemo(
+    () => (documentos.length ? Math.max(...documentos.map((d) => d.versao)) + 1 : 1),
+    [documentos]
+  );
+
 
 
   const criarDocumento = async () => {
