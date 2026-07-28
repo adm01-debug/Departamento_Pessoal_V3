@@ -57,33 +57,33 @@ describe('BaseService.listar', () => {
   it('returns data and total from supabase', async () => {
     const records = [{ id: '1', nome: 'Alice' }];
     setupListChain(records, 1);
-    const result = await service.listar();
+    const result = await service.listar({ empresaId: 'emp-1' });
     expect(result.data).toEqual(records);
     expect(result.total).toBe(1);
   });
 
   it('returns empty data with total 0 when supabase returns null', async () => {
     setupListChain(null as any, null as any);
-    const result = await service.listar();
+    const result = await service.listar({ empresaId: 'emp-1' });
     expect(result.data).toEqual([]);
     expect(result.total).toBe(0);
   });
 
   it('queries page 2 with correct range offset', async () => {
     const { rangeFn } = setupListChain([], 0);
-    await service.listar({ page: 2, pageSize: 10 });
+    await service.listar({ page: 2, pageSize: 10, empresaId: 'emp-1' });
     expect(rangeFn).toHaveBeenCalledWith(10, 19);
   });
 
   it('queries page 1 with default pageSize 10', async () => {
     const { rangeFn } = setupListChain([], 0);
-    await service.listar({ page: 1, pageSize: 10 });
+    await service.listar({ page: 1, pageSize: 10, empresaId: 'emp-1' });
     expect(rangeFn).toHaveBeenCalledWith(0, 9);
   });
 
   it('throws and logs on DB error', async () => {
     setupListChain([], 0, { message: 'DB fail' });
-    await expect(service.listar()).rejects.toBeDefined();
+    await expect(service.listar({ empresaId: 'emp-1' })).rejects.toBeDefined();
     expect(mockLoggerError).toHaveBeenCalled();
   });
 });
@@ -167,7 +167,7 @@ describe('BaseService.excluir', () => {
     const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockReturnValue({ delete: deleteFn });
 
-    await service.excluir('id-1');
+    await service.excluir('id-1', 'emp-1');
     expect(deleteFn).toHaveBeenCalled();
     expect(eqFn).toHaveBeenCalledWith('id', 'id-1');
   });
@@ -177,7 +177,7 @@ describe('BaseService.excluir', () => {
     const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockReturnValue({ delete: deleteFn });
 
-    await expect(service.excluir('id-1')).rejects.toBeDefined();
+    await expect(service.excluir('id-1', 'emp-1')).rejects.toBeDefined();
     expect(mockLoggerError).toHaveBeenCalled();
   });
 });
