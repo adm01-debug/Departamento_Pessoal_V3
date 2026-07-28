@@ -34,13 +34,13 @@ describe('folhaService.list', () => {
   it('returns folhas from supabase', async () => {
     const records = [{ id: 'f1', competencia: '2026-01' }];
     setupListChain(records);
-    const result = await folhaService.list(EMPRESA_ID);
+    const result = await folhaService.list(undefined, EMPRESA_ID);
     expect(result).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
     setupListChain(null as any);
-    const result = await folhaService.list(EMPRESA_ID);
+    const result = await folhaService.list(undefined, EMPRESA_ID);
     expect(result).toEqual([]);
   });
 
@@ -65,19 +65,19 @@ describe('folhaService.list', () => {
 
   it('orders by competencia descending', async () => {
     const { chain } = setupListChain([]);
-    await folhaService.list(EMPRESA_ID);
+    await folhaService.list(undefined, EMPRESA_ID);
     expect(chain.order).toHaveBeenCalledWith('competencia', { ascending: false });
   });
 
   it('limits to 500 records', async () => {
     const { chain } = setupListChain([]);
-    await folhaService.list(EMPRESA_ID);
+    await folhaService.list(undefined, EMPRESA_ID);
     expect(chain.limit).toHaveBeenCalledWith(500);
   });
 
   it('throws on DB error', async () => {
     setupListChain([], { message: 'fail' });
-    await expect(folhaService.list(EMPRESA_ID)).rejects.toBeDefined();
+    await expect(folhaService.list(undefined, EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -89,20 +89,20 @@ describe('folhaService.listar', () => {
   it('returns { data, total } delegating to list', async () => {
     const records = [{ id: 'f2', competencia: '2026-03' }];
     setupListChain(records);
-    const result = await folhaService.listar({});
+    const result = await folhaService.listar({ filters: { empresa_id: EMPRESA_ID } });
     expect(result.data).toEqual(records);
     expect(result.total).toBe(1);
   });
 
   it('passes competencia from options.search', async () => {
     const { chain } = setupListChain([]);
-    await folhaService.listar({ search: '2026-04' });
+    await folhaService.listar({ search: '2026-04', filters: { empresa_id: EMPRESA_ID } });
     expect(chain.eq).toHaveBeenCalledWith('competencia', '2026-04');
   });
 
   it('passes competencia from options.filters.competencia', async () => {
     const { chain } = setupListChain([]);
-    await folhaService.listar({ filters: { competencia: '2026-05' } });
+    await folhaService.listar({ filters: { competencia: '2026-05', empresa_id: EMPRESA_ID } });
     expect(chain.eq).toHaveBeenCalledWith('competencia', '2026-05');
   });
 

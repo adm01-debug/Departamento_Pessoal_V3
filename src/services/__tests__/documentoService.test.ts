@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { documentoService } from '../documentoService';
 
+const EMP = 'emp-test';
+
 // ─── shared mock setup ────────────────────────────────────────────────────────
 
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
@@ -32,50 +34,50 @@ describe('documentoService.listarDocumentos', () => {
   it('returns documents without filters', async () => {
     const records = [{ id: 'd1', nome: 'Holerite Jan' }];
     setupListChain(records);
-    const result = await documentoService.listarDocumentos();
+    const result = await documentoService.listarDocumentos(EMP);
     expect(result).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
     setupListChain(null as any);
-    const result = await documentoService.listarDocumentos();
+    const result = await documentoService.listarDocumentos(EMP);
     expect(result).toEqual([]);
   });
 
   it('filters by empresa_id when provided', async () => {
     const { chain } = setupListChain([]);
-    await documentoService.listarDocumentos(undefined, 'emp-1');
+    await documentoService.listarDocumentos('emp-1');
     expect(chain.eq).toHaveBeenCalledWith('empresa_id', 'emp-1');
   });
 
   it('filters by colaborador_id when provided', async () => {
     const { chain } = setupListChain([]);
-    await documentoService.listarDocumentos('col-1');
+    await documentoService.listarDocumentos(EMP, 'col-1');
     expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'col-1');
   });
 
   it('applies both filters simultaneously', async () => {
     const { chain } = setupListChain([]);
-    await documentoService.listarDocumentos('col-2', 'emp-2');
+    await documentoService.listarDocumentos('emp-2', 'col-2');
     expect(chain.eq).toHaveBeenCalledWith('empresa_id', 'emp-2');
     expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'col-2');
   });
 
   it('orders by created_at descending', async () => {
     const { chain } = setupListChain([]);
-    await documentoService.listarDocumentos();
+    await documentoService.listarDocumentos(EMP);
     expect(chain.order).toHaveBeenCalledWith('created_at', { ascending: false });
   });
 
-  it('limits to 500 records', async () => {
+  it('limits to 200 records', async () => {
     const { chain } = setupListChain([]);
-    await documentoService.listarDocumentos();
-    expect(chain.limit).toHaveBeenCalledWith(500);
+    await documentoService.listarDocumentos(EMP);
+    expect(chain.limit).toHaveBeenCalledWith(200);
   });
 
   it('selects with colaborador join including id, nome_completo, cpf', async () => {
     const { selectFn } = setupListChain([]);
-    await documentoService.listarDocumentos();
+    await documentoService.listarDocumentos(EMP);
     expect(selectFn).toHaveBeenCalledWith(
       expect.stringContaining('colaborador:colaboradores')
     );
@@ -83,7 +85,7 @@ describe('documentoService.listarDocumentos', () => {
 
   it('throws on DB error', async () => {
     setupListChain([], { message: 'fail' });
-    await expect(documentoService.listarDocumentos()).rejects.toBeDefined();
+    await expect(documentoService.listarDocumentos(EMP)).rejects.toBeDefined();
   });
 });
 
@@ -95,14 +97,14 @@ describe('documentoService.listar', () => {
   it('returns { data, total } delegating to listarDocumentos', async () => {
     const records = [{ id: 'd2' }, { id: 'd3' }];
     setupListChain(records);
-    const result = await documentoService.listar({});
+    const result = await documentoService.listar({ filters: { empresa_id: EMP } });
     expect(result.data).toEqual(records);
     expect(result.total).toBe(2);
   });
 
   it('passes colaborador_id from filters', async () => {
     const { chain } = setupListChain([]);
-    await documentoService.listar({ filters: { colaborador_id: 'col-5' } });
+    await documentoService.listar({ filters: { empresa_id: EMP, colaborador_id: 'col-5' } });
     expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'col-5');
   });
 

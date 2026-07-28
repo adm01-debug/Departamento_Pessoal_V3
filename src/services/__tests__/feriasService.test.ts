@@ -42,14 +42,14 @@ describe('feriasService.listSolicitacoes', () => {
   it('returns data and count from supabase', async () => {
     const records = [{ id: 'f1', status: 'pendente' }];
     setupListChain(records, 1);
-    const result = await feriasService.listSolicitacoes();
+    const result = await feriasService.listSolicitacoes(EMPRESA_ID);
     expect(result.data).toEqual(records);
     expect(result.count).toBe(1);
   });
 
   it('returns empty data when supabase returns null', async () => {
     setupListChain(null as any, null as any);
-    const result = await feriasService.listSolicitacoes();
+    const result = await feriasService.listSolicitacoes(EMPRESA_ID);
     expect(result.data).toEqual([]);
     expect(result.count).toBe(0);
   });
@@ -62,43 +62,43 @@ describe('feriasService.listSolicitacoes', () => {
 
   it('filters by status when not "all"', async () => {
     const { eqFn } = setupListChain([], 0);
-    await feriasService.listSolicitacoes(undefined, { status: 'aprovada' });
+    await feriasService.listSolicitacoes(EMPRESA_ID, { status: 'aprovada' });
     expect(eqFn).toHaveBeenCalledWith('status', 'aprovada');
   });
 
   it('does NOT filter by status when status is "all"', async () => {
     const { eqFn } = setupListChain([], 0);
-    await feriasService.listSolicitacoes(undefined, { status: 'all' });
+    await feriasService.listSolicitacoes(EMPRESA_ID, { status: 'all' });
     expect(eqFn).not.toHaveBeenCalledWith('status', 'all');
   });
 
   it('adds ilike filter when search has 3+ characters', async () => {
     const { ilikeFn } = setupListChain([], 0);
-    await feriasService.listSolicitacoes(undefined, { search: 'Silva' });
+    await feriasService.listSolicitacoes(EMPRESA_ID, { search: 'Silva' });
     expect(ilikeFn).toHaveBeenCalledWith('colaborador_nome', '%Silva%');
   });
 
   it('does NOT add ilike filter when search has fewer than 3 characters', async () => {
     const { ilikeFn } = setupListChain([], 0);
-    await feriasService.listSolicitacoes(undefined, { search: 'Jo' });
+    await feriasService.listSolicitacoes(EMPRESA_ID, { search: 'Jo' });
     expect(ilikeFn).not.toHaveBeenCalled();
   });
 
   it('calls range with correct offset for page 2, limit 5', async () => {
     const { rangeFn } = setupListChain([], 0);
-    await feriasService.listSolicitacoes(undefined, { page: 2, limit: 5 });
+    await feriasService.listSolicitacoes(EMPRESA_ID, { page: 2, limit: 5 });
     expect(rangeFn).toHaveBeenCalledWith(5, 9);
   });
 
-  it('orders by data_inicio descending', async () => {
+  it('orders by id descending (keyset pagination)', async () => {
     const { orderFn } = setupListChain([], 0);
-    await feriasService.listSolicitacoes();
-    expect(orderFn).toHaveBeenCalledWith('data_inicio', { ascending: false });
+    await feriasService.listSolicitacoes(EMPRESA_ID);
+    expect(orderFn).toHaveBeenCalledWith('id', { ascending: false });
   });
 
   it('throws on DB error', async () => {
     setupListChain([], 0, { message: 'fail' });
-    await expect(feriasService.listSolicitacoes()).rejects.toBeDefined();
+    await expect(feriasService.listSolicitacoes(EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -110,7 +110,7 @@ describe('feriasService.listar', () => {
   it('returns { data, total } delegating to listSolicitacoes', async () => {
     const records = [{ id: 'f2', status: 'pendente' }];
     setupListChain(records, 1);
-    const result = await feriasService.listar({});
+    const result = await feriasService.listar({ filters: { empresa_id: EMPRESA_ID } });
     expect(result.data).toEqual(records);
     expect(result.total).toBe(1);
   });
@@ -158,7 +158,7 @@ describe('feriasService.cancelar', () => {
 
   it('calls update with cancelado=true and status=cancelada', async () => {
     const { updateFn } = setupUpdateChain();
-    await feriasService.cancelar('ferias-3', 'user-1');
+    await feriasService.cancelar('ferias-3', EMPRESA_ID, 'user-1');
     const updateArgs = (updateFn as any).mock.calls[0][0];
     expect(updateArgs.cancelado).toBe(true);
     expect(updateArgs.status).toBe('cancelada');
@@ -167,14 +167,14 @@ describe('feriasService.cancelar', () => {
 
   it('sets cancelado_por to null when userId not provided', async () => {
     const { updateFn } = setupUpdateChain();
-    await feriasService.cancelar('ferias-3');
+    await feriasService.cancelar('ferias-3', EMPRESA_ID);
     const updateArgs = (updateFn as any).mock.calls[0][0];
     expect(updateArgs.cancelado_por).toBeNull();
   });
 
   it('throws on DB error', async () => {
     setupUpdateChain({ message: 'fail' });
-    await expect(feriasService.cancelar('ferias-3')).rejects.toBeDefined();
+    await expect(feriasService.cancelar('ferias-3', EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -185,7 +185,7 @@ describe('feriasService.aprovarGestor', () => {
 
   it('calls update with aprovado_gestor=true and userId', async () => {
     const { updateFn } = setupUpdateChain();
-    await feriasService.aprovarGestor('ferias-1', 'gestor-1');
+    await feriasService.aprovarGestor('ferias-1', EMPRESA_ID, 'gestor-1');
     const updateArgs = (updateFn as any).mock.calls[0][0];
     expect(updateArgs.aprovado_gestor).toBe(true);
     expect(updateArgs.status_aprovacao_gestor).toBe('aprovado');
@@ -194,7 +194,7 @@ describe('feriasService.aprovarGestor', () => {
 
   it('throws on DB error', async () => {
     setupUpdateChain({ message: 'fail' });
-    await expect(feriasService.aprovarGestor('ferias-1', 'g1')).rejects.toBeDefined();
+    await expect(feriasService.aprovarGestor('ferias-1', EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -205,7 +205,7 @@ describe('feriasService.aprovarRH', () => {
 
   it('calls update with aprovado_rh=true and status aprovada', async () => {
     const { updateFn } = setupUpdateChain();
-    await feriasService.aprovarRH('ferias-1', 'rh-1');
+    await feriasService.aprovarRH('ferias-1', EMPRESA_ID, 'rh-1');
     const updateArgs = (updateFn as any).mock.calls[0][0];
     expect(updateArgs.aprovado_rh).toBe(true);
     expect(updateArgs.status).toBe('aprovada');
@@ -214,7 +214,7 @@ describe('feriasService.aprovarRH', () => {
 
   it('throws on DB error', async () => {
     setupUpdateChain({ message: 'fail' });
-    await expect(feriasService.aprovarRH('ferias-1', 'rh-1')).rejects.toBeDefined();
+    await expect(feriasService.aprovarRH('ferias-1', EMPRESA_ID, 'rh-1')).rejects.toBeDefined();
   });
 });
 
@@ -321,8 +321,10 @@ describe('feriasService.excluirPeriodoAquisitivo', () => {
   beforeEach(() => { vi.clearAllMocks(); });
 
   it('calls delete with the given id', async () => {
-    const eqFn = vi.fn().mockResolvedValue({ error: null });
-    const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
+    const eqFn = vi.fn();
+    const delChain: any = { eq: eqFn, then: (r: any) => Promise.resolve({ error: null }).then(r) };
+    eqFn.mockReturnValue(delChain);
+    const deleteFn = vi.fn().mockReturnValue(delChain);
     mockFrom.mockReturnValue({ delete: deleteFn });
 
     await feriasService.excluirPeriodoAquisitivo('pa-2', EMPRESA_ID);
@@ -331,8 +333,10 @@ describe('feriasService.excluirPeriodoAquisitivo', () => {
   });
 
   it('throws on DB error', async () => {
-    const eqFn = vi.fn().mockResolvedValue({ error: { message: 'fail' } });
-    const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
+    const eqFn = vi.fn();
+    const delChain: any = { eq: eqFn, then: (r: any) => Promise.resolve({ error: { message: 'fail' } }).then(r) };
+    eqFn.mockReturnValue(delChain);
+    const deleteFn = vi.fn().mockReturnValue(delChain);
     mockFrom.mockReturnValue({ delete: deleteFn });
 
     await expect(feriasService.excluirPeriodoAquisitivo('pa-2', EMPRESA_ID)).rejects.toBeDefined();
