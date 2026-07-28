@@ -53,7 +53,7 @@ describe('useSystemHealthHistory', () => {
     mockMaybeSingle.mockResolvedValue({ error: null });
     const { result } = renderHook(() => useSystemHealthHistory(60_000));
     await act(async () => {
-      await vi.runAllTimersAsync();
+      await vi.advanceTimersByTimeAsync(60_000);
     });
     expect(result.current.samples.length).toBeGreaterThan(0);
     const sample = result.current.last;
@@ -64,7 +64,7 @@ describe('useSystemHealthHistory', () => {
     mockMaybeSingle.mockResolvedValue({ error: { message: 'DB down' } });
     const { result } = renderHook(() => useSystemHealthHistory(60_000));
     await act(async () => {
-      await vi.runAllTimersAsync();
+      await vi.advanceTimersByTimeAsync(60_000);
     });
     expect(result.current.last?.status).toBe('offline');
   });
@@ -85,7 +85,7 @@ describe('useSystemHealthHistory', () => {
     mockMaybeSingle.mockResolvedValue({ error: null });
     const { result } = renderHook(() => useSystemHealthHistory(60_000));
     await act(async () => {
-      await vi.runAllTimersAsync();
+      await vi.advanceTimersByTimeAsync(60_000);
     });
     expect(result.current.last).toBeDefined();
     expect(result.current.last?.at).toBeTypeOf('number');

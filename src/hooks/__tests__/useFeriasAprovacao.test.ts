@@ -81,7 +81,7 @@ describe('useFeriasAprovacao', () => {
       await result.current.aprovarGestor('f1');
     });
 
-    expect(mockAprovarGestor).toHaveBeenCalledWith('f1', 'user-1');
+    expect(mockAprovarGestor).toHaveBeenCalledWith('f1', 'emp-1', 'user-1');
   });
 
   it('aprovarGestor shows success toast', async () => {
@@ -103,7 +103,7 @@ describe('useFeriasAprovacao', () => {
       await result.current.aprovarRH('f1');
     });
 
-    expect(mockAprovarRH).toHaveBeenCalledWith('f1', 'user-1');
+    expect(mockAprovarRH).toHaveBeenCalledWith('f1', 'emp-1', 'user-1');
   });
 
   it('aprovarRH creates notification', async () => {
@@ -128,7 +128,7 @@ describe('useFeriasAprovacao', () => {
       await result.current.rejeitar('f1');
     });
 
-    expect(mockRejeitar).toHaveBeenCalledWith('f1');
+    expect(mockRejeitar).toHaveBeenCalledWith('f1', 'emp-1');
     await waitFor(() => expect(mockToastWarning).toHaveBeenCalled());
   });
 

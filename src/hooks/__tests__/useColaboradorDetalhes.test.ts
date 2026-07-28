@@ -33,6 +33,11 @@ import {
   useCriarContatoEmergencia,
 } from '../useColaboradorDetalhes';
 
+vi.mock('@/hooks/useEmpresas', async () =>
+  (await import('@/test/empresaMock')).useEmpresasMockModule()
+);
+
+
 function wrapper({ children }: { children: React.ReactNode }) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
   return React.createElement(QueryClientProvider, { client: qc }, children);
@@ -47,7 +52,7 @@ describe('useDependentes', () => {
   it('calls listarDependentes with colaboradorId', async () => {
     const { result } = renderHook(() => useDependentes('col-1'), { wrapper });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
-    expect(mockListarDependentes).toHaveBeenCalledWith('col-1');
+    expect(mockListarDependentes).toHaveBeenCalledWith('col-1', '00000000-0000-0000-0000-0000000000e1');
   });
 
   it('returns dependentes from service', async () => {

@@ -3,6 +3,11 @@ import { renderHook, act, waitFor } from '@testing-library/react';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+vi.mock('@/hooks/useEmpresas', async () =>
+  (await import('@/test/empresaMock')).useEmpresasMockModule()
+);
+
+
 const {
   mockListarNacionalidades, mockListarTiposDesligamento, mockListarTiposAvisoPrevio,
   mockListarCentrosCusto, mockCriarCentroCusto,
@@ -140,6 +145,6 @@ describe('useContasBancarias', () => {
   it('calls listarContasBancarias with colaboradorId', async () => {
     const { result } = renderHook(() => useContasBancarias('col-1'), { wrapper });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
-    expect(mockListarContasBancarias).toHaveBeenCalledWith('col-1');
+    expect(mockListarContasBancarias).toHaveBeenCalledWith('col-1', '00000000-0000-0000-0000-0000000000e1');
   });
 });

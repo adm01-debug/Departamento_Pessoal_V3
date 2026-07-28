@@ -1,9 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 
-const { mockUseMutation, mockUseQueryClient } = vi.hoisted(() => ({
+const { mockUseMutation, mockUseQueryClient, mockStorage } = vi.hoisted(() => ({
   mockUseMutation: vi.fn(),
   mockUseQueryClient: vi.fn(() => ({ invalidateQueries: vi.fn() })),
+  mockStorage: {
+    from: vi.fn().mockReturnValue({
+      upload: vi.fn().mockResolvedValue({ error: null }),
+      createSignedUrl: vi
+        .fn()
+        .mockResolvedValue({ data: { signedUrl: 'https://signed.url' }, error: null }),
+    }),
+  },
 }));
 
 vi.mock('@tanstack/react-query', () => ({
@@ -12,13 +20,6 @@ vi.mock('@tanstack/react-query', () => ({
 }));
 
 vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
-
-const mockStorage = {
-  from: vi.fn().mockReturnValue({
-    upload: vi.fn().mockResolvedValue({ error: null }),
-    createSignedUrl: vi.fn().mockResolvedValue({ data: { signedUrl: 'https://signed.url' }, error: null }),
-  }),
-};
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {

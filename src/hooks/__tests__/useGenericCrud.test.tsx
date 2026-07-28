@@ -162,13 +162,14 @@ describe('useGenericCrud', () => {
     const { toast } = await import('sonner');
     const wrapper = createWrapper();
     const { result } = renderHook(
-      () => useGenericCrud({ queryKey: 'test', service }),
+      () => useGenericCrud({ queryKey: 'test', service, empresaId: 'emp-1' }),
       { wrapper }
     );
     await act(async () => {
       await result.current.atualizar({ id: '1', data: { nome: 'Updated' } });
     });
-    expect(service.atualizar).toHaveBeenCalledWith('1', { nome: 'Updated' });
+    // O escopo de tenant deve ser repassado ao serviço (isolamento multi-tenant).
+    expect(service.atualizar).toHaveBeenCalledWith('1', { nome: 'Updated' }, 'emp-1');
     expect(toast.success).toHaveBeenCalledWith('Registro atualizado com sucesso');
   });
 
@@ -193,13 +194,13 @@ describe('useGenericCrud', () => {
     const { toast } = await import('sonner');
     const wrapper = createWrapper();
     const { result } = renderHook(
-      () => useGenericCrud({ queryKey: 'test', service }),
+      () => useGenericCrud({ queryKey: 'test', service, empresaId: 'emp-1' }),
       { wrapper }
     );
     await act(async () => {
       await result.current.excluir('1');
     });
-    expect(service.excluir).toHaveBeenCalledWith('1');
+    expect(service.excluir).toHaveBeenCalledWith('1', 'emp-1');
     expect(toast.success).toHaveBeenCalledWith('Registro excluído com sucesso');
   });
 
