@@ -29,13 +29,15 @@ describe('CurrencyInput', () => {
   it('calls onChange with numeric value when user types', () => {
     const onChange = vi.fn();
     render(<CurrencyInput onChange={onChange} />);
+    // A máscara trabalha em centavos: os dígitos "1000" representam R$ 10,00.
     fireEvent.change(screen.getByTestId('currency-input'), { target: { value: 'R$ 10,00' } });
-    expect(onChange).toHaveBeenCalledWith(0.1);
+    expect(onChange).toHaveBeenCalledWith(10);
   });
 
   it('calls onChange with 0 when input is empty', () => {
     const onChange = vi.fn();
-    render(<CurrencyInput onChange={onChange} />);
+    // Parte de um valor preenchido — limpar um campo já vazio não dispara change.
+    render(<CurrencyInput value={1500} onChange={onChange} />);
     fireEvent.change(screen.getByTestId('currency-input'), { target: { value: '' } });
     expect(onChange).toHaveBeenCalledWith(0);
   });
