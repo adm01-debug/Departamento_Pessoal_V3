@@ -29,7 +29,7 @@ const { mockFrom, mockLog, mockLoggerError } = vi.hoisted<{
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
+  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(a[0] as string)) },
 }));
 
 vi.mock('@/utils/auditLogger', () => ({
