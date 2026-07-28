@@ -1,8 +1,8 @@
 import { PageTitle } from '@/components/PageTitle';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
+import { useSyncedState } from '@/hooks/useSyncedState';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
-import { useOnMount } from '@/hooks/useMountEffects';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { EmptyList } from '@/components/ui/empty-state';
 import { Spinner } from '@/components/ui/spinner';
@@ -33,11 +33,15 @@ export default function DocumentosPage() {
   const urlColaboradorId = searchParams.get('colaborador');
   const [search, setSearch] = useState('');
   const [tipoFilter, setTipoFilter] = useState('todos');
-  const [colaboradorFilter, setColaboradorFilter] = useState(urlColaboradorId || 'todos');
+  // Estado derivado do parâmetro de URL (padrão React, sem efeito de sincronização).
+  const [colaboradorFilter, setColaboradorFilter] = useSyncedState(
+    urlColaboradorId,
+    (id) => id || 'todos'
+  );
   const [showUpload, setShowUpload] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [tipo, setTipo] = useState('');
-  const [colaboradorId, setColaboradorId] = useState(urlColaboradorId || '');
+  const [colaboradorId, setColaboradorId] = useSyncedState(urlColaboradorId, (id) => id || '');
   const [file, setFile] = useState<File | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   // P2-050: tipo concreto para OCR result (era any, escondia bugs)
@@ -57,20 +61,6 @@ export default function DocumentosPage() {
   const empresaId = empresaAtual?.id;
   const queryClient = useQueryClient();
 
-  useOnMount(() => {
-    if (urlColaboradorId) {
-      setColaboradorFilter(urlColaboradorId);
-      setColaboradorId(urlColaboradorId);
-    }
-  });
-
-  useEffect(() => {
-    if (urlColaboradorId) {
-      setColaboradorFilter(urlColaboradorId);
-      setColaboradorId(urlColaboradorId);
-    }
-  }, [urlColaboradorId]);
-
   const { data: documentos, isLoading } = useQuery<any[]>({
     queryKey: ['documentos', empresaId, colaboradorFilter],
     queryFn: () => documentoService.listarDocumentos(
@@ -82,7 +72,9 @@ export default function DocumentosPage() {
 
 
   const { data: colaboradoresRes } = useQuery({
-    queryKey: ['colaboradores-simples'],
+    // Chave inclui a empresa: evita vazamento de cache entre tenants.
+    queryKey: ['colaboradores-simples', empresaId],
+    enabled: !!empresaId,
     queryFn: () => colaboradorService.listar({ pageSize: 1000 })});
   const colaboradores = colaboradoresRes?.data || [];
 
