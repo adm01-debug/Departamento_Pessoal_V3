@@ -3976,6 +3976,7 @@ export type Database = {
           bitrix_ultima_sync: string | null
           cargo: string
           cargo_confianca: boolean | null
+          cargo_id: string | null
           categoria_trabalhador: string | null
           categoria_trabalhador_id: number | null
           cbo: string | null
@@ -4125,6 +4126,7 @@ export type Database = {
           bitrix_ultima_sync?: string | null
           cargo: string
           cargo_confianca?: boolean | null
+          cargo_id?: string | null
           categoria_trabalhador?: string | null
           categoria_trabalhador_id?: number | null
           cbo?: string | null
@@ -4274,6 +4276,7 @@ export type Database = {
           bitrix_ultima_sync?: string | null
           cargo?: string
           cargo_confianca?: boolean | null
+          cargo_id?: string | null
           categoria_trabalhador?: string | null
           categoria_trabalhador_id?: number | null
           cbo?: string | null
@@ -4413,6 +4416,13 @@ export type Database = {
           whatsapp?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "colaboradores_cargo_id_fkey"
+            columns: ["cargo_id"]
+            isOneToOne: false
+            referencedRelation: "cargos"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "colaboradores_categoria_trabalhador_id_fkey"
             columns: ["categoria_trabalhador_id"]
@@ -25815,6 +25825,23 @@ export type Database = {
           isOneToOne: false
           isSetofReturn: true
         }
+      }
+      pcs_grades_mercado: {
+        Args: { p_plano_id: string }
+        Returns: {
+          aderencia: string
+          cargos_com_mercado: number
+          grade_id: string
+          grade_nome: string
+          mercado_p50: number
+          ordem: number
+          pontos_max: number
+          pontos_min: number
+          posicionamento: number
+          salario_max: number
+          salario_medio: number
+          salario_min: number
+        }[]
       }
       pcs_pode_gerir_plano: { Args: { _plano_id: string }; Returns: boolean }
       pcs_pode_ver_plano: { Args: { _plano_id: string }; Returns: boolean }
