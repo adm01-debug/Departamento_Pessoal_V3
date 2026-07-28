@@ -30,7 +30,7 @@ describe('S2300TSVInicio', () => {
 
   it('renders CPF', () => {
     render(<S2300TSVInicio dados={S2300_DADOS} />);
-    expect(screen.getByText(/444\.555\.666-77/)).toBeInTheDocument();
+    expect(screen.getByText(/•••\.•••\.•••-77/)).toBeInTheDocument();
   });
 
   it('renders data de início', () => {
@@ -57,7 +57,7 @@ describe('S2300TSVInicio', () => {
 describe('S2306TSVAlteracao', () => {
   it('renders CPF', () => {
     render(<S2306TSVAlteracao dados={S2306_DADOS} />);
-    expect(screen.getByText(/888\.777\.666-55/)).toBeInTheDocument();
+    expect(screen.getByText(/•••\.•••\.•••-55/)).toBeInTheDocument();
   });
 
   it('renders trabalhador name', () => {

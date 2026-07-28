@@ -24,7 +24,7 @@ const S2399_DADOS = {
 describe('S2210SST', () => {
   it('renders CPF do trabalhador', () => {
     render(<S2210SST dados={S2210_DADOS} />);
-    expect(screen.getByText(/321\.654\.987-00/)).toBeInTheDocument();
+    expect(screen.getByText(/•••\.•••\.•••-00/)).toBeInTheDocument();
   });
 
   it('renders nome do trabalhador', () => {
@@ -56,7 +56,7 @@ describe('S2210SST', () => {
 describe('S2399TSVTermino', () => {
   it('renders CPF', () => {
     render(<S2399TSVTermino dados={S2399_DADOS} />);
-    expect(screen.getByText(/111\.333\.555-77/)).toBeInTheDocument();
+    expect(screen.getByText(/•••\.•••\.•••-77/)).toBeInTheDocument();
   });
 
   it('renders data de término', () => {
