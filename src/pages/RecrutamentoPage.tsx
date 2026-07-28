@@ -41,7 +41,7 @@ export default function RecrutamentoPage() {
   });
 
   const { data: candidaturas = [], isLoading: loadCandidaturas } = useQuery({
-    queryKey: ['candidaturas', selectedVagaId],
+    queryKey: ['candidaturas', empresaAtual?.id, selectedVagaId],
     queryFn: () => recrutamentoService.listarCandidaturas(empresaAtual!.id, selectedVagaId === 'all' ? undefined : selectedVagaId),
     enabled: !!empresaAtual?.id
   });
@@ -55,7 +55,7 @@ export default function RecrutamentoPage() {
   const updateEtapa = useMutation({
     mutationFn: ({ id, etapa }: { id: string, etapa: string }) => recrutamentoService.atualizarCandidatura(id, { etapa }, empresaAtual!.id),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['candidaturas'] });
+      qc.invalidateQueries({ queryKey: ['candidaturas', empresaAtual?.id] });
       toast.success('Etapa atualizada!');
     }
   });
