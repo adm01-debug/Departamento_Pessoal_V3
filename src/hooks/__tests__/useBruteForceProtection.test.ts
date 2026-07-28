@@ -1,23 +1,37 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useBruteForceProtection } from '../useBruteForceProtection';
 
+/**
+ * Este hook é intencionalmente offline: o bloqueio real de conta é decidido
+ * pela edge function `auth-login` (service_role). As RPCs `record_failed_login`
+ * e `check_login_lock` foram revogadas de anon/authenticated porque permitiam
+ * bloquear a conta de terceiros conhecendo apenas o e-mail. Os testes abaixo
+ * garantem que o hook nunca volte a chamá-las.
+ */
+const rpcSpy = vi.fn();
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
-    rpc: vi.fn(),
+    get rpc() {
+      return rpcSpy;
+    },
   },
 }));
 
-import { supabase } from '@/integrations/supabase/client';
-const mockRpc = supabase.rpc as ReturnType<typeof vi.fn>;
+const EMAIL = 'user@test.com';
 
 describe('useBruteForceProtection', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    sessionStorage.clear();
   });
 
-  describe('initial state', () => {
-    it('starts unlocked with zero attempts', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  describe('estado inicial', () => {
+    it('começa destravado e sem tentativas', () => {
       const { result } = renderHook(() => useBruteForceProtection());
       expect(result.current.lockState).toEqual({
         isLocked: false,
@@ -27,158 +41,149 @@ describe('useBruteForceProtection', () => {
     });
   });
 
-  describe('checkLock', () => {
-    it('returns false when user is not locked', async () => {
-      mockRpc.mockResolvedValueOnce({
-        data: [{ is_locked: false, remaining_seconds: 0 }],
-        error: null,
-      });
-
+  describe('superfície de rede', () => {
+    it('não chama nenhuma RPC do banco em nenhuma das operações', async () => {
       const { result } = renderHook(() => useBruteForceProtection());
-      let locked: boolean;
 
       await act(async () => {
-        locked = await result.current.checkLock('user@test.com');
+        await result.current.checkLock(EMAIL);
+        await result.current.recordFailedAttempt(EMAIL);
+        await result.current.resetAttempts(EMAIL);
       });
 
-      expect(locked!).toBe(false);
+      // Regressão: qualquer chamada aqui reabre o DoS de lockout por e-mail.
+      expect(rpcSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('checkLock', () => {
+    it('retorna false quando não há bloqueio local', async () => {
+      const { result } = renderHook(() => useBruteForceProtection());
+      let locked: boolean | undefined;
+
+      await act(async () => {
+        locked = await result.current.checkLock(EMAIL);
+      });
+
+      expect(locked).toBe(false);
       expect(result.current.lockState.isLocked).toBe(false);
     });
 
-    it('returns true and updates state when user is locked', async () => {
-      mockRpc.mockResolvedValueOnce({
-        data: [{ is_locked: true, remaining_seconds: 300 }],
-        error: null,
-      });
-
+    it('retorna false para e-mail vazio', async () => {
       const { result } = renderHook(() => useBruteForceProtection());
-      let locked: boolean;
-
-      await act(async () => {
-        locked = await result.current.checkLock('locked@test.com');
-      });
-
-      expect(locked!).toBe(true);
-      expect(result.current.lockState.isLocked).toBe(true);
-      expect(result.current.lockState.remainingSeconds).toBe(300);
-    });
-
-    it('lowercases the email before sending', async () => {
-      mockRpc.mockResolvedValueOnce({ data: [{ is_locked: false }], error: null });
-
-      const { result } = renderHook(() => useBruteForceProtection());
-      await act(async () => {
-        await result.current.checkLock('User@Test.COM');
-      });
-
-      expect(mockRpc).toHaveBeenCalledWith('check_login_lock', {
-        p_identifier: 'user@test.com',
-        p_identifier_type: 'email',
-      });
-    });
-
-    it('fails open (returns false) when RPC throws', async () => {
-      mockRpc.mockRejectedValueOnce(new Error('network error'));
-
-      const { result } = renderHook(() => useBruteForceProtection());
-      let locked: boolean;
-
-      await act(async () => {
-        locked = await result.current.checkLock('user@test.com');
-      });
-
-      expect(locked!).toBe(false);
-    });
-
-    it('returns false for empty email without calling RPC', async () => {
-      const { result } = renderHook(() => useBruteForceProtection());
-      let locked: boolean;
+      let locked: boolean | undefined;
 
       await act(async () => {
         locked = await result.current.checkLock('');
       });
 
-      expect(locked!).toBe(false);
-      expect(mockRpc).not.toHaveBeenCalled();
+      expect(locked).toBe(false);
     });
 
-    it('handles non-array response (single object)', async () => {
-      mockRpc.mockResolvedValueOnce({
-        data: { is_locked: true, remaining_seconds: 60 },
-        error: null,
-      });
-
+    it('retorna true enquanto o bloqueio local estiver vigente', async () => {
       const { result } = renderHook(() => useBruteForceProtection());
-      let locked: boolean;
 
       await act(async () => {
-        locked = await result.current.checkLock('user@test.com');
+        for (let i = 0; i < 5; i += 1) {
+          await result.current.recordFailedAttempt(EMAIL);
+        }
       });
 
-      expect(locked!).toBe(true);
-      expect(result.current.lockState.remainingSeconds).toBe(60);
+      let locked: boolean | undefined;
+      await act(async () => {
+        locked = await result.current.checkLock(EMAIL);
+      });
+
+      expect(locked).toBe(true);
+      expect(result.current.lockState.remainingSeconds).toBeGreaterThan(0);
+    });
+
+    it('libera automaticamente depois que o bloqueio expira', async () => {
+      const { result } = renderHook(() => useBruteForceProtection());
+
+      await act(async () => {
+        for (let i = 0; i < 5; i += 1) {
+          await result.current.recordFailedAttempt(EMAIL);
+        }
+      });
+
+      // Avança além dos 5 minutos de espera.
+      const agora = Date.now();
+      vi.spyOn(Date, 'now').mockReturnValue(agora + 6 * 60 * 1000);
+
+      let locked: boolean | undefined;
+      await act(async () => {
+        locked = await result.current.checkLock(EMAIL);
+      });
+
+      expect(locked).toBe(false);
+      expect(result.current.lockState.isLocked).toBe(false);
     });
   });
 
   describe('recordFailedAttempt', () => {
-    it('updates state after recording failure', async () => {
-      mockRpc.mockResolvedValueOnce({
-        data: [{ attempts: 3, is_locked: false, lockout_minutes: 0 }],
-        error: null,
-      });
-
+    it('incrementa o contador sem travar antes do limite', async () => {
       const { result } = renderHook(() => useBruteForceProtection());
 
       await act(async () => {
-        await result.current.recordFailedAttempt('user@test.com');
+        await result.current.recordFailedAttempt(EMAIL);
+        await result.current.recordFailedAttempt(EMAIL);
       });
 
-      expect(result.current.lockState.attempts).toBe(3);
+      expect(result.current.lockState.attempts).toBe(2);
       expect(result.current.lockState.isLocked).toBe(false);
     });
 
-    it('shows lockout when threshold exceeded', async () => {
-      mockRpc.mockResolvedValueOnce({
-        data: [{ attempts: 5, is_locked: true, lockout_minutes: 5 }],
-        error: null,
-      });
-
+    it('trava a UI na quinta falha', async () => {
       const { result } = renderHook(() => useBruteForceProtection());
 
       await act(async () => {
-        await result.current.recordFailedAttempt('user@test.com');
+        for (let i = 0; i < 5; i += 1) {
+          await result.current.recordFailedAttempt(EMAIL);
+        }
       });
 
+      expect(result.current.lockState.attempts).toBe(5);
       expect(result.current.lockState.isLocked).toBe(true);
       expect(result.current.lockState.remainingSeconds).toBe(300);
     });
 
-    it('does nothing for empty email', async () => {
+    it('mantém contadores independentes por e-mail', async () => {
+      const { result } = renderHook(() => useBruteForceProtection());
+
+      await act(async () => {
+        for (let i = 0; i < 5; i += 1) {
+          await result.current.recordFailedAttempt(EMAIL);
+        }
+      });
+
+      let outroBloqueado: boolean | undefined;
+      await act(async () => {
+        outroBloqueado = await result.current.checkLock('outro@test.com');
+      });
+
+      expect(outroBloqueado).toBe(false);
+    });
+
+    it('ignora e-mail vazio', async () => {
       const { result } = renderHook(() => useBruteForceProtection());
 
       await act(async () => {
         await result.current.recordFailedAttempt('');
       });
 
-      expect(mockRpc).not.toHaveBeenCalled();
+      expect(result.current.lockState.attempts).toBe(0);
     });
   });
 
   describe('resetAttempts', () => {
-    it('resets lockState to initial on success', async () => {
-      mockRpc.mockResolvedValueOnce({ data: [{ is_locked: true, remaining_seconds: 300 }], error: null });
-      mockRpc.mockResolvedValueOnce({ error: null });
-
+    it('zera o contador após login bem-sucedido', async () => {
       const { result } = renderHook(() => useBruteForceProtection());
 
       await act(async () => {
-        await result.current.checkLock('user@test.com');
-      });
-
-      expect(result.current.lockState.isLocked).toBe(true);
-
-      await act(async () => {
-        await result.current.resetAttempts('user@test.com');
+        await result.current.recordFailedAttempt(EMAIL);
+        await result.current.recordFailedAttempt(EMAIL);
+        await result.current.resetAttempts(EMAIL);
       });
 
       expect(result.current.lockState).toEqual({
@@ -186,16 +191,56 @@ describe('useBruteForceProtection', () => {
         remainingSeconds: 0,
         attempts: 0,
       });
-    });
 
-    it('does nothing for empty email', async () => {
+      let locked: boolean | undefined;
+      await act(async () => {
+        locked = await result.current.checkLock(EMAIL);
+      });
+      expect(locked).toBe(false);
+    });
+  });
+
+  describe('applyServerLock', () => {
+    it('reflete o bloqueio decidido pelo servidor', async () => {
       const { result } = renderHook(() => useBruteForceProtection());
 
-      await act(async () => {
-        await result.current.resetAttempts('');
+      act(() => {
+        result.current.applyServerLock(EMAIL, 900);
       });
 
-      expect(mockRpc).not.toHaveBeenCalled();
+      expect(result.current.lockState.isLocked).toBe(true);
+      expect(result.current.lockState.remainingSeconds).toBe(900);
+
+      let locked: boolean | undefined;
+      await act(async () => {
+        locked = await result.current.checkLock(EMAIL);
+      });
+      expect(locked).toBe(true);
+    });
+
+    it('usa a espera padrão quando o servidor não informa a duração', () => {
+      const { result } = renderHook(() => useBruteForceProtection());
+
+      act(() => {
+        result.current.applyServerLock(EMAIL, 0);
+      });
+
+      expect(result.current.lockState.remainingSeconds).toBe(300);
+    });
+  });
+
+  describe('resiliência do sessionStorage', () => {
+    it('trata conteúdo corrompido como contador zerado', async () => {
+      const chave = `__bf_${btoa(EMAIL).replace(/=/g, '')}`;
+      sessionStorage.setItem(chave, 'não-é-json');
+
+      const { result } = renderHook(() => useBruteForceProtection());
+      let locked: boolean | undefined;
+      await act(async () => {
+        locked = await result.current.checkLock(EMAIL);
+      });
+
+      expect(locked).toBe(false);
     });
   });
 });

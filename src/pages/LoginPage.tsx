@@ -46,7 +46,9 @@ export default function LoginPage() {
   const { signIn, resetPassword, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { lockState, checkLock, recordFailedAttempt, resetAttempts } = useBruteForceProtection();
+  const { lockState, checkLock, recordFailedAttempt, resetAttempts, applyServerLock } =
+    useBruteForceProtection();
+
 
   useOnMount(() => {
     const reason = searchParams.get('reason');
@@ -128,13 +130,17 @@ export default function LoginPage() {
         setMfaPending({ factorId: typeof errObj.factorId === 'string' ? errObj.factorId : '' });
         return;
       }
-      await recordFailedAttempt(email);
       const msg = typeof errObj.message === 'string' ? errObj.message : undefined;
       if (msg && msg.includes('bloqueada')) {
+        // Bloqueio decidido pelo servidor (auth-login): reflete na UI em vez de
+        // tratar como mais uma falha de senha.
+        applyServerLock(email, 0);
         setError(msg);
       } else {
+        await recordFailedAttempt(email);
         setError('Email ou senha inválidos.');
       }
+
     } finally {
       setLoading(false);
     }
