@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { Mock } from 'vitest';
 import { deepChain } from '@/test/deepChain';
 import { beneficioService } from '../beneficioService';
 import { makeChain } from '@/test/chain';
@@ -14,7 +15,7 @@ type UpdateChain = { eq: ReturnType<typeof vi.fn> };
 type DeleteChain = { eq: ReturnType<typeof vi.fn> };
 
 const { mockFrom, mockLog, mockLoggerError } = vi.hoisted<{
-  mockFrom: ReturnType<typeof vi.fn>;
+  mockFrom: Mock<(...args: any[]) => any>;
   mockLog: ReturnType<typeof vi.fn>;
   mockLoggerError: ReturnType<typeof vi.fn>;
 }>(() => ({

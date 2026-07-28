@@ -145,6 +145,6 @@ describe('sugerirCorrecaoRubrica', () => {
       tipo: 'desconto',
       customField: 'preserved',
     });
-    expect(suggestion!.customField).toBe('preserved');
+    expect((suggestion as Record<string, unknown>).customField).toBe('preserved');
   });
 });

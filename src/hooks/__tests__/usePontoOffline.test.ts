@@ -71,7 +71,7 @@ describe('usePontoOffline', () => {
     const { result } = renderHook(() => usePontoOffline());
 
     await act(async () => {
-      await result.current.addOffline('saida', 'col-1', null);
+      await result.current.addOffline('saida', 'col-1', undefined);
     });
 
     expect(mockToastError).toHaveBeenCalledWith('Falha ao salvar ponto offline.');

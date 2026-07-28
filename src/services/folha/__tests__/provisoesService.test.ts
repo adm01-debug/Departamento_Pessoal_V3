@@ -9,7 +9,7 @@ vi.mock('@/integrations/supabase/client', () => ({
 
 import { provisoesService } from '../provisoesService';
 
-function makeColabChain(data: any[], error: any = null) {
+function makeColabChain(data: any[] | null, error: any = null) {
   const result = { data, error };
   const eq2 = vi.fn().mockResolvedValue(result);
   const eq1 = vi.fn().mockReturnValue({ eq: eq2 });
