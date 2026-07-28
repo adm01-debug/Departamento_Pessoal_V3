@@ -56,6 +56,9 @@ const initialForm = {
   motivo_recusa: '',
 };
 
+/** Estado do formulário de criação de medida disciplinar. */
+type MedidaFormState = typeof initialForm;
+
 export default function MedidasDisciplinaresPage() {
   const { empresaAtual } = useEmpresas();
   const qc = useQueryClient();
@@ -96,21 +99,30 @@ export default function MedidasDisciplinaresPage() {
   });
 
   const criar = useMutation({
-    mutationFn: (d: Record<string, unknown>) => medidasDisciplinaresService.criar({
-      ...d,
-      empresa_id: empresaAtual?.id,
-      dias_suspensao: d.dias_suspensao ? Number(d.dias_suspensao) : null,
-      artigo_clt: d.artigo_clt || null,
-      gravidade: d.gravidade || null,
-      data_conhecimento_fato: d.data_conhecimento_fato || null,
-      testemunha_1_nome: d.testemunha_1_nome || null,
-      testemunha_1_cpf: d.testemunha_1_cpf || null,
-      testemunha_2_nome: d.testemunha_2_nome || null,
-      testemunha_2_cpf: d.testemunha_2_cpf || null,
-      documento_url: d.documento_url || null,
-      recusa_assinatura: d.recusa_assinatura || false,
-      motivo_recusa: d.motivo_recusa || null,
-    }),
+    mutationFn: (d: MedidaFormState) => {
+      if (!empresaAtual?.id) {
+        throw new Error('Selecione uma empresa antes de registrar a medida.');
+      }
+      return medidasDisciplinaresService.criar({
+        colaborador_id: d.colaborador_id,
+        tipo: d.tipo,
+        descricao: d.descricao,
+        data_ocorrencia: d.data_ocorrencia,
+        empresa_id: empresaAtual.id,
+        dias_suspensao: d.dias_suspensao ? Number(d.dias_suspensao) : null,
+        artigo_clt: d.artigo_clt || null,
+        gravidade: d.gravidade || null,
+        data_conhecimento_fato: d.data_conhecimento_fato || null,
+        testemunha_1_nome: d.testemunha_1_nome || null,
+        testemunha_1_cpf: d.testemunha_1_cpf || null,
+        testemunha_2_nome: d.testemunha_2_nome || null,
+        testemunha_2_cpf: d.testemunha_2_cpf || null,
+        documento_url: d.documento_url || null,
+        recusa_assinatura: d.recusa_assinatura || false,
+        motivo_recusa: d.motivo_recusa || null,
+      });
+    },
+
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['medidas-disciplinares'] });
       setOpen(false);

@@ -28,6 +28,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { medidasDisciplinaresService } from '@/services/medidasDisciplinaresService';
+import type { MedidaDisciplinarComColaborador } from '@/types/medidasDisciplinares';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -42,14 +43,17 @@ type Status =
   | 'rejeitada'
   | 'arquivada';
 
-interface Medida {
-  id: string;
-  tipo: string;
-  descricao: string;
-  status_workflow: Status;
-  data_ocorrencia: string;
-  gravidade?: string | null;
-  colaborador?: { nome_completo: string } | null;
+type Medida = MedidaDisciplinarComColaborador;
+
+const STATUS_VALIDOS: readonly Status[] = [
+  'rascunho', 'aguardando_gestor', 'aguardando_rh', 'aguardando_juridico',
+  'aplicada', 'rejeitada', 'arquivada',
+];
+
+/** Normaliza o status vindo do banco (nullable/texto livre) para o domínio do Kanban. */
+function statusDe(m: Medida): Status {
+  const s = m.status_workflow as Status | null;
+  return s && STATUS_VALIDOS.includes(s) ? s : 'rascunho';
 }
 
 const COLUNAS: Array<{ id: Status; titulo: string; icon: typeof ClipboardList; cor: string }> = [
@@ -163,8 +167,7 @@ export function MedidasKanban() {
       aplicada: [], rejeitada: [], arquivada: [],
     };
     for (const m of medidas) {
-      const s = (m.status_workflow ?? 'aplicada') as Status;
-      if (g[s]) g[s].push(m);
+      g[statusDe(m)].push(m);
     }
     return g;
   }, [medidas]);
@@ -203,7 +206,7 @@ export function MedidasKanban() {
     if (!alvo) return;
     const medida = medidas.find((m) => m.id === id);
     if (!medida) return;
-    const origem = medida.status_workflow;
+    const origem = statusDe(medida);
     if (origem === alvo) return;
 
     // Transições suportadas via drag
