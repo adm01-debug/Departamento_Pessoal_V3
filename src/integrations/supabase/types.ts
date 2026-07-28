@@ -13056,6 +13056,39 @@ export type Database = {
         }
         Relationships: []
       }
+      lgpd_retencao_logs: {
+        Row: {
+          ativo: boolean
+          coluna_data: string
+          created_at: string
+          dias: number
+          id: string
+          observacao: string | null
+          tabela: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          coluna_data: string
+          created_at?: string
+          dias: number
+          id?: string
+          observacao?: string | null
+          tabela: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          coluna_data?: string
+          created_at?: string
+          dias?: number
+          id?: string
+          observacao?: string | null
+          tabela?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       lgpd_solicitacoes: {
         Row: {
           colaborador_id: string | null
@@ -25016,6 +25049,16 @@ export type Database = {
         Args: { lat1: number; lat2: number; lng1: number; lng2: number }
         Returns: number
       }
+      drenar_fila_limpeza_lgpd: {
+        Args: { p_limite?: number }
+        Returns: {
+          erro: string
+          id: string
+          registro_id: string
+          sucesso: boolean
+          tabela: string
+        }[]
+      }
       edge_rate_limit_check: {
         Args: {
           p_key: string
@@ -25947,6 +25990,14 @@ export type Database = {
           _user_agent?: string
         }
         Returns: Json
+      }
+      run_lgpd_purge: {
+        Args: { p_dry_run?: boolean }
+        Returns: {
+          batches: number
+          deleted: number
+          tabela: string
+        }[]
       }
       run_rls_tests: { Args: never; Returns: string[] }
       search_audit_unified: {
