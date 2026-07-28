@@ -91,7 +91,7 @@ describe('catalogoCursoService.criarCurso', () => {
     const created = { id: 'c-new', nome: 'Python' };
     const { insertFn } = setupInsertChain(created);
     const result = await catalogoCursoService.criarCurso({ nome: 'Python', empresa_id: EMPRESA_ID });
-    expect(insertFn).toHaveBeenCalledWith({ nome: 'Python' });
+    expect(insertFn).toHaveBeenCalledWith({ nome: 'Python', empresa_id: EMPRESA_ID });
     expect(result).toEqual(created);
   });
 
