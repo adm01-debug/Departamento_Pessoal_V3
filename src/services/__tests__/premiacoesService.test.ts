@@ -9,7 +9,7 @@ const EMPRESA_ID = 'test-empresa-id';
 type SelectChain = { eq: ReturnType<typeof vi.fn>; order: ReturnType<typeof vi.fn>; filter: ReturnType<typeof vi.fn> };
 type InsertChain = { select: ReturnType<typeof vi.fn>; then: (fn: unknown) => unknown; catch: (fn: unknown) => unknown };
 
-const { mockFrom } = vi.hoisted<{ mockFrom: Mock<(table: string) => any> }>(() => ({
+const { mockFrom } = vi.hoisted<{ mockFrom: Mock<(...args: any[]) => any> }>(() => ({
   mockFrom: vi.fn<(table: string) => {
     select: () => SelectChain;
     insert: (data?: unknown) => InsertChain;

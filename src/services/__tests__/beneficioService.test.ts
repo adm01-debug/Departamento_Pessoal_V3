@@ -15,7 +15,7 @@ type UpdateChain = { eq: ReturnType<typeof vi.fn> };
 type DeleteChain = { eq: ReturnType<typeof vi.fn> };
 
 const { mockFrom, mockLog, mockLoggerError } = vi.hoisted<{
-  mockFrom: Mock<(table: string) => any>;
+  mockFrom: Mock<(...args: any[]) => any>;
   mockLog: ReturnType<typeof vi.fn>;
   mockLoggerError: ReturnType<typeof vi.fn>;
 }>(() => ({

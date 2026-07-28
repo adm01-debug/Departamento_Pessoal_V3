@@ -147,7 +147,7 @@ describe('useImportacaoColaboradores', () => {
       }
     });
 
-    expect(caught?.message).toBe('parse error');
+    expect(caught?.message as string).toBe('parse error');
     expect(mockToastError).toHaveBeenCalledWith('parse error');
   });
 });
