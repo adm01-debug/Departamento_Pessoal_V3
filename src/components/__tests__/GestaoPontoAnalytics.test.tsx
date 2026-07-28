@@ -65,7 +65,7 @@ describe('GestaoPontoAnalytics', () => {
 
   it('renders MTP 671 reference in subtitle', () => {
     render(<GestaoPontoAnalytics registros={[]} />);
-    expect(screen.getByText(/MTP 671/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/MTP 671/i).length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders 0h projection when no registros', () => {

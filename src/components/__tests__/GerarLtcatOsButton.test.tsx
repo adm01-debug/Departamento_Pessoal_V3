@@ -69,7 +69,10 @@ describe('GerarLtcatOsButton', () => {
 
   it('shows LTCAT description text', () => {
     render(<GerarLtcatOsButton />);
-    expect(screen.getByText(/Ordem de Serviço/)).toBeTruthy();
+    // O termo aparece também na opção do select; ancoramos no texto descritivo.
+    expect(
+      screen.getByText(/Ordem de Serviço \(NR-01\) ou Laudo Técnico das Condições Ambientais do Trabalho/),
+    ).toBeTruthy();
   });
 
   it('renders Gerar button initially not loading', () => {

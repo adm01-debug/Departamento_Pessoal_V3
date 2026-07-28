@@ -90,7 +90,7 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
             />
           </div>
           <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs" onClick={handleExportAudit}>
-            <Download className="h-3 w-3" /> Exportar Trilha
+            <Download className="h-3 w-3" /> Exportar CSV
           </Button>
         </div>
       </CardHeader>
@@ -156,7 +156,7 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
                     <div className="flex items-center justify-between">
                       <div className="flex flex-wrap gap-2 text-[10px]">
                         <span className="flex items-center gap-1 text-muted-foreground bg-muted/40 px-2 py-0.5 rounded-full border border-border/20">
-                          <Tag className="h-3 w-3" /> Entidade: {log.tabela}
+                          <Tag className="h-3 w-3" /> Entidade: <span>{log.tabela}</span>
                         </span>
                       </div>
                       <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors translate-x-0 group-hover:translate-x-1" />
@@ -166,6 +166,19 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
                 </div>
               </motion.div>
             ))}
+
+            {/* Estados vazio/carregando: antes a lista renderizava em branco,
+                sem qualquer feedback ao usuário. */}
+            {isLoading && (
+              <p className="py-10 text-center text-sm text-muted-foreground">
+                Carregando trilha de auditoria…
+              </p>
+            )}
+            {!isLoading && filteredLogs.length === 0 && (
+              <p className="py-10 text-center text-sm text-muted-foreground">
+                Nenhum registro de auditoria encontrado para os filtros atuais.
+              </p>
+            )}
           </div>
         </ScrollArea>
       </CardContent>

@@ -33,6 +33,7 @@ vi.mock('@/components/ui/select', () => ({
 
 import { useDependentes } from '@/hooks/useColaboradorDetalhes';
 import { DependentesTab } from '../colaborador-detalhes/DependentesTab';
+import { maskCpfDisplay } from '@/utils/piiMask';
 
 const MOCK_DEPENDENTES = [
   { id: 'd1', nome: 'Ana Silva', parentesco: 'Filho(a)', cpf: '123.456.789-00', ir: true, salario_familia: false, incapacidade_fisica_mental: false },
@@ -70,10 +71,12 @@ describe('DependentesTab', () => {
     expect(screen.getAllByText('Filho(a)').length).toBeGreaterThanOrEqual(1);
   });
 
-  it('renders cpf in table', () => {
+  it('renders cpf mascarado na tabela (LGPD)', () => {
     vi.mocked(useDependentes).mockReturnValue({ data: MOCK_DEPENDENTES, isLoading: false } as any);
     render(<DependentesTab colaboradorId="col-1" />);
-    expect(screen.getByText('123.456.789-00')).toBeInTheDocument();
+    // CPF de dependente é PII: só os 2 últimos dígitos podem aparecer.
+    expect(screen.getByText(maskCpfDisplay('123.456.789-00'))).toBeInTheDocument();
+    expect(screen.queryByText('123.456.789-00')).not.toBeInTheDocument();
   });
 
   it('renders IRRF badge when ir is true', () => {

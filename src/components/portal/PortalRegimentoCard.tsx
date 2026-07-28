@@ -10,7 +10,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { CheckCircle2, FileText, Loader2, ShieldCheck } from 'lucide-react';
-import { useOnMount } from '@/hooks/useMountEffects';
 
 type DocumentoVigente = {
   id: string;
@@ -92,13 +91,12 @@ export function PortalRegimentoCard() {
     }
   }, [empresaId, user?.id]);
 
-  useOnMount(() => {
-    carregar();
-  });
-
+  // Uma única fonte de disparo: `carregar` é memoizado por (empresaId, user.id),
+  // então este efeito cobre o mount e as trocas de empresa/usuário sem
+  // duplicar a requisição (o antigo par useOnMount + useEffect fazia 2 fetches).
   useEffect(() => {
     carregar();
-  }, [empresaId, user?.id]);
+  }, [carregar]);
 
   const conteudoSeguro = useMemo(
     () => (documento ? sanitizeContractHtml(documento.conteudo_html || '') : ''),
