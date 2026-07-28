@@ -26588,6 +26588,13 @@ export type Database = {
         Returns: undefined
       }
       verificar_espelho_ponto: { Args: { _espelho_id: string }; Returns: Json }
+      vincular_colaborador_ao_usuario: {
+        Args: never
+        Returns: {
+          colaborador_id: string
+          empresa_id: string
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "gestor" | "rh" | "user"
