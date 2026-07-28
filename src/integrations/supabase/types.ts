@@ -24851,6 +24851,13 @@ export type Database = {
         Args: { attempts: number }
         Returns: string
       }
+      check_account_lockout: {
+        Args: { p_email: string }
+        Returns: {
+          is_locked: boolean
+          locked_until: string
+        }[]
+      }
       check_brute_force: {
         Args: { check_email: string; check_ip: string }
         Returns: Json
@@ -25680,6 +25687,10 @@ export type Database = {
           is_locked: boolean
           lockout_minutes: number
         }[]
+      }
+      record_login_attempt: {
+        Args: { p_email: string; p_ip?: string; p_success: boolean }
+        Returns: undefined
       }
       refresh_dashboard_mvs: { Args: never; Returns: Json }
       registrar_batida_ponto: {
