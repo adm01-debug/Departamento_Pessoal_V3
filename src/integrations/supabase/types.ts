@@ -4112,6 +4112,7 @@ export type Database = {
           uniforme_calcado: string | null
           uniforme_camiseta: string | null
           updated_at: string
+          user_id: string | null
           version: number | null
           whatsapp: string | null
         }
@@ -4262,6 +4263,7 @@ export type Database = {
           uniforme_calcado?: string | null
           uniforme_camiseta?: string | null
           updated_at?: string
+          user_id?: string | null
           version?: number | null
           whatsapp?: string | null
         }
@@ -4412,6 +4414,7 @@ export type Database = {
           uniforme_calcado?: string | null
           uniforme_camiseta?: string | null
           updated_at?: string
+          user_id?: string | null
           version?: number | null
           whatsapp?: string | null
         }
@@ -26585,6 +26588,13 @@ export type Database = {
         Returns: undefined
       }
       verificar_espelho_ponto: { Args: { _espelho_id: string }; Returns: Json }
+      vincular_colaborador_ao_usuario: {
+        Args: never
+        Returns: {
+          colaborador_id: string
+          empresa_id: string
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "gestor" | "rh" | "user"
