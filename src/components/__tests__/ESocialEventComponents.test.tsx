@@ -37,7 +37,7 @@ describe('S2200Admissao (NaoPeriodicos)', () => {
 
   it('renders CPF', () => {
     render(<S2200Admissao dados={ADMISSAO_DADOS} />);
-    expect(screen.getByText(/123\.456\.789-00/)).toBeInTheDocument();
+    expect(screen.getByText(/•••\.•••\.•••-00/)).toBeInTheDocument();
   });
 
   it('renders admissao date', () => {
@@ -54,7 +54,7 @@ describe('S2200Admissao (NaoPeriodicos)', () => {
 describe('S2220ASO (SSTEvents)', () => {
   it('renders CPF', () => {
     render(<S2220ASO dados={ASO_DADOS} />);
-    expect(screen.getByText(/987\.654\.321-00/)).toBeInTheDocument();
+    expect(screen.getByText(/•••\.•••\.•••-00/)).toBeInTheDocument();
   });
 
   it('renders exam date', () => {
@@ -81,7 +81,7 @@ describe('S1200Remuneracao (Periodicos)', () => {
 
   it('renders CPF', () => {
     render(<S1200Remuneracao dados={S1200_DADOS} />);
-    expect(screen.getByText(/111\.222\.333-44/)).toBeInTheDocument();
+    expect(screen.getByText(/•••\.•••\.•••-44/)).toBeInTheDocument();
   });
 
   it('renders Período Apuração', () => {

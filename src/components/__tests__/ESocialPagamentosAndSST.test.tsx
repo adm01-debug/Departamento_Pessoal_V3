@@ -53,7 +53,7 @@ describe('S1210Pagamentos', () => {
 describe('S2240AgentesNocivos', () => {
   it('renders CPF do trabalhador', () => {
     render(<S2240AgentesNocivos dados={S2240_DADOS} />);
-    expect(screen.getByText(/555\.444\.333-22/)).toBeInTheDocument();
+    expect(screen.getByText(/•••\.•••\.•••-22/)).toBeInTheDocument();
   });
 
   it('renders Exposição a Agentes Nocivos label', () => {

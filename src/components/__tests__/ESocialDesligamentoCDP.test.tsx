@@ -23,7 +23,7 @@ const S2400_DADOS = {
 describe('S2299Desligamento', () => {
   it('renders CPF do trabalhador', () => {
     render(<S2299Desligamento dados={S2299_DADOS} />);
-    expect(screen.getByText(/123\.456\.789-00/)).toBeInTheDocument();
+    expect(screen.getByText(/•••\.•••\.•••-00/)).toBeInTheDocument();
   });
 
   it('renders data do desligamento', () => {
@@ -55,7 +55,7 @@ describe('S2299Desligamento', () => {
 describe('S2400CDP', () => {
   it('renders CPF do beneficiário', () => {
     render(<S2400CDP dados={S2400_DADOS} />);
-    expect(screen.getByText(/987\.654\.321-00/)).toBeInTheDocument();
+    expect(screen.getByText(/•••\.•••\.•••-00/)).toBeInTheDocument();
   });
 
   it('renders nome do beneficiário', () => {

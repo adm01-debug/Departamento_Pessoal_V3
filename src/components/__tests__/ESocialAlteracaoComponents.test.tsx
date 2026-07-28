@@ -42,7 +42,7 @@ describe('S2205AlteracaoCadastral', () => {
 
   it('renders CPF', () => {
     render(<S2205AlteracaoCadastral dados={S2205_DADOS} />);
-    expect(screen.getByText(/111\.222\.333-44/)).toBeInTheDocument();
+    expect(screen.getByText(/•••\.•••\.•••-44/)).toBeInTheDocument();
   });
 
   it('renders data de alteração', () => {
@@ -64,7 +64,7 @@ describe('S2205AlteracaoCadastral', () => {
 describe('S2206AlteracaoContratual', () => {
   it('renders CPF', () => {
     render(<S2206AlteracaoContratual dados={S2206_DADOS} />);
-    expect(screen.getByText(/555\.666\.777-88/)).toBeInTheDocument();
+    expect(screen.getByText(/•••\.•••\.•••-88/)).toBeInTheDocument();
   });
 
   it('renders vigência da alteração', () => {
@@ -86,7 +86,7 @@ describe('S2206AlteracaoContratual', () => {
 describe('S2230Afastamento', () => {
   it('renders CPF', () => {
     render(<S2230Afastamento dados={S2230_DADOS} />);
-    expect(screen.getByText(/999\.888\.777-66/)).toBeInTheDocument();
+    expect(screen.getByText(/•••\.•••\.•••-66/)).toBeInTheDocument();
   });
 
   it('renders início do afastamento', () => {
