@@ -22,13 +22,15 @@ export function useDataAccessLog(
         const { error } = await supabaseBase
           .from('audit_log')
           .insert({
-            usuario_id: session.user.id,
+            // Colunas reais da tabela (ver database types): user_id / registro_id /
+            // tabela / ip_address / dados_novos. `empresa_id` não existe como coluna,
+            // portanto o escopo do tenant vai no payload JSON.
+            user_id: session.user.id,
             acao: 'VISUALIZACAO',
             tabela: recurso,
             registro_id: recursoId,
-            empresa_id: empresaId,
-            ip: null,
-            dados_novos: { accessed_at: new Date().toISOString() },
+            ip_address: null,
+            dados_novos: { empresa_id: empresaId, accessed_at: new Date().toISOString() },
           });
 
         if (error && !cancelled) {
