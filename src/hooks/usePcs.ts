@@ -131,6 +131,14 @@ export function usePcsGrades(planoId: string | null) {
     enabled: !!planoId,
   });
 
+  // Confronto da faixa interna com o P50 de mercado — depende das pesquisas
+  // salariais cadastradas, por isso vive numa query própria.
+  const mercado = useQuery({
+    queryKey: ['pcs', 'grades-mercado', planoId],
+    queryFn: () => pcsService.gradesMercado(planoId!),
+    enabled: !!planoId,
+  });
+
   const gerar = useMutation({
     mutationFn: ({ numGrades, salarioBase }: { numGrades: number; salarioBase?: number | null }) => {
       if (!planoId) throw new Error('Nenhum plano selecionado');
@@ -138,6 +146,7 @@ export function usePcsGrades(planoId: string | null) {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['pcs', 'grades', planoId] });
+      qc.invalidateQueries({ queryKey: ['pcs', 'grades-mercado', planoId] });
       qc.invalidateQueries({ queryKey: ['pcs', 'enquadramento', planoId] });
       qc.invalidateQueries({ queryKey: ['pcs', 'impacto', planoId] });
       toast.success('Matriz salarial gerada');
@@ -145,8 +154,14 @@ export function usePcsGrades(planoId: string | null) {
     onError: (e) => toast.error(erro(e, 'Não foi possível gerar a matriz')),
   });
 
-  return { grades: grades.data ?? [], isLoading: grades.isLoading, gerar };
+  return {
+    grades: grades.data ?? [],
+    mercado: mercado.data ?? [],
+    isLoading: grades.isLoading || mercado.isLoading,
+    gerar,
+  };
 }
+
 
 export function usePcsEquidade(planoId: string | null, encargosPct: number) {
   const enquadramento = useQuery({
