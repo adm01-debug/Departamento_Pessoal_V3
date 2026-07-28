@@ -90,10 +90,10 @@ describe('feriasService.listSolicitacoes', () => {
     expect(rangeFn).toHaveBeenCalledWith(5, 9);
   });
 
-  it('orders by data_inicio descending', async () => {
+  it('orders by id descending (keyset pagination)', async () => {
     const { orderFn } = setupListChain([], 0);
     await feriasService.listSolicitacoes(EMPRESA_ID);
-    expect(orderFn).toHaveBeenCalledWith('data_inicio', { ascending: false });
+    expect(orderFn).toHaveBeenCalledWith('id', { ascending: false });
   });
 
   it('throws on DB error', async () => {
