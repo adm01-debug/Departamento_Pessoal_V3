@@ -33,7 +33,7 @@ export default function PensoesPage() {
       // sobre a RLS, que libera todas as empresas do usuário).
       const { data, error } = await supabase
         .from('pensoes')
-        .select('*, colaboradores!inner(id, nome_completo, empresa_id)')
+        .select('*, colaboradores!pensoes_colaborador_id_fkey!inner(id, nome_completo, empresa_id)')
         .eq('colaboradores.empresa_id', empresaId!)
         .order('created_at', { ascending: false })
         .limit(500);
