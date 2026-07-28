@@ -23,6 +23,24 @@ export type PcsPesquisaSalarial = Tables['pcs_pesquisa_salarial']['Row'];
 export type PcsPesquisaSalarialInsert = Tables['pcs_pesquisa_salarial']['Insert'];
 
 export type PcsEnquadramentoRow = Functions['pcs_enquadramento']['Returns'][number];
+export type PcsGradeMercadoRow = Functions['pcs_grades_mercado']['Returns'][number];
+
+/** Aderência da faixa interna ao P50 de mercado (tolerância de ±5%). */
+export type PcsAderencia = 'abaixo_mercado' | 'alinhado' | 'acima_mercado' | 'sem_referencia';
+
+export const PCS_ADERENCIA_LABEL: Record<PcsAderencia, string> = {
+  abaixo_mercado: 'Abaixo do mercado',
+  alinhado: 'Alinhado',
+  acima_mercado: 'Acima do mercado',
+  sem_referencia: 'Sem referência',
+};
+
+/** Narrowing do texto vindo do banco para a união conhecida. */
+export function parseAderencia(valor: string | null): PcsAderencia {
+  return valor === 'abaixo_mercado' || valor === 'acima_mercado' || valor === 'alinhado'
+    ? valor
+    : 'sem_referencia';
+}
 
 /** Status possíveis de um plano — espelha o CHECK do banco. */
 export const PCS_STATUS = ['rascunho', 'em_avaliacao', 'ativo', 'arquivado'] as const;
