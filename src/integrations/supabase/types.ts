@@ -7655,27 +7655,39 @@ export type Database = {
           created_at: string
           created_by: string | null
           id: string
+          metadados: Json
           nome_arquivo: string
           tipo: string
           url: string
+          validado: boolean
+          validado_em: string | null
+          validado_por: string | null
         }
         Insert: {
           afastamento_id: string
           created_at?: string
           created_by?: string | null
           id?: string
+          metadados?: Json
           nome_arquivo: string
           tipo: string
           url: string
+          validado?: boolean
+          validado_em?: string | null
+          validado_por?: string | null
         }
         Update: {
           afastamento_id?: string
           created_at?: string
           created_by?: string | null
           id?: string
+          metadados?: Json
           nome_arquivo?: string
           tipo?: string
           url?: string
+          validado?: boolean
+          validado_em?: string | null
+          validado_por?: string | null
         }
         Relationships: [
           {
