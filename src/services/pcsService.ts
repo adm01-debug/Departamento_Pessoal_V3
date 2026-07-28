@@ -13,6 +13,7 @@ import {
   type PcsFator,
   type PcsFatorInsert,
   type PcsGrade,
+  type PcsGradeMercadoRow,
   type PcsImpacto,
   type PcsPesquisaSalarial,
   type PcsPesquisaSalarialInsert,
