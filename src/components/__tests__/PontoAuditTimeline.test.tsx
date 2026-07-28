@@ -7,6 +7,14 @@ vi.mock('framer-motion', () => ({
   },
 }));
 
+vi.mock('@/contexts/AuthContext', () => ({
+  useAuth: () => ({ user: { id: 'u1', email: 'teste@empresa.com' }, isAdmin: true }),
+}));
+
+vi.mock('@/hooks/useEmpresas', () => ({
+  useEmpresas: () => ({ empresaAtual: { id: 'emp-1' } }),
+}));
+
 vi.mock('@tanstack/react-query', async () => {
   const actual = await vi.importActual<typeof import('@tanstack/react-query')>('@tanstack/react-query');
   return {
