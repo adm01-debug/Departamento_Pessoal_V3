@@ -15,6 +15,7 @@ function setupListChain(data: any[], error: any = null) {
   const chain: any = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
+  chain.returns = vi.fn().mockReturnValue(chain);
   chain.then = (fn: any) => Promise.resolve(response).then(fn);
   chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
   chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
