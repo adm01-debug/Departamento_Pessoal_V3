@@ -99,7 +99,9 @@ export default function SegurancaPage() {
             <TabsTrigger value="logins" className="rounded-lg py-2">Tentativas de Login</TabsTrigger>
             <TabsTrigger value="firewall" className="rounded-lg py-2">Firewall (IPs)</TabsTrigger>
             <TabsTrigger value="geo" className="rounded-lg py-2">Geo-Firewall</TabsTrigger>
+            <TabsTrigger value="policies" className="rounded-lg py-2">Políticas RLS</TabsTrigger>
           </TabsList>
+
 
           <TabsContent value="overview">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
