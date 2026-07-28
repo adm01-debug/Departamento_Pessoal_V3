@@ -143,36 +143,45 @@ describe('afastamentoService.buscarCID', () => {
   it('returns CID results', async () => {
     const cids = [{ codigo: 'J00', descricao: 'Resfriado' }];
     const { chain } = setupThenabledChain(cids);
-    // override limit to resolve directly
-    chain.limit = vi.fn().mockResolvedValue({ data: cids, error: null });
+    chain.limit = vi.fn().mockReturnValue(chain);
+    chain.returns = vi.fn().mockReturnValue(chain);
+    chain.then = (fn: any) => Promise.resolve({ data: cids, error: null }).then(fn);
     const result = await afastamentoService.buscarCID('J00');
     expect(result).toEqual(cids);
   });
 
   it('uses or() filter with code and description ilike', async () => {
     const { chain } = setupThenabledChain([]);
-    chain.limit = vi.fn().mockResolvedValue({ data: [], error: null });
+    chain.limit = vi.fn().mockReturnValue(chain);
+    chain.returns = vi.fn().mockReturnValue(chain);
+    chain.then = (fn: any) => Promise.resolve({ data: [], error: null }).then(fn);
     await afastamentoService.buscarCID('tosse');
     expect(chain.or).toHaveBeenCalledWith(expect.stringContaining('ilike.%tosse%'));
   });
 
   it('limits results to 10', async () => {
     const { chain } = setupThenabledChain([]);
-    chain.limit = vi.fn().mockResolvedValue({ data: [], error: null });
+    chain.limit = vi.fn().mockReturnValue(chain);
+    chain.returns = vi.fn().mockReturnValue(chain);
+    chain.then = (fn: any) => Promise.resolve({ data: [], error: null }).then(fn);
     await afastamentoService.buscarCID('abc');
     expect(chain.limit).toHaveBeenCalledWith(10);
   });
 
   it('returns empty array when no results', async () => {
     const { chain } = setupThenabledChain(null as any);
-    chain.limit = vi.fn().mockResolvedValue({ data: null, error: null });
+    chain.limit = vi.fn().mockReturnValue(chain);
+    chain.returns = vi.fn().mockReturnValue(chain);
+    chain.then = (fn: any) => Promise.resolve({ data: null, error: null }).then(fn);
     const result = await afastamentoService.buscarCID('xyz');
     expect(result).toEqual([]);
   });
 
   it('throws on DB error', async () => {
     const { chain } = setupThenabledChain([]);
-    chain.limit = vi.fn().mockResolvedValue({ data: null, error: { message: 'fail' } });
+    chain.limit = vi.fn().mockReturnValue(chain);
+    chain.returns = vi.fn().mockReturnValue(chain);
+    chain.then = (fn: any) => Promise.resolve({ data: null, error: { message: 'fail' } }).then(fn);
     await expect(afastamentoService.buscarCID('err')).rejects.toBeDefined();
   });
 });
