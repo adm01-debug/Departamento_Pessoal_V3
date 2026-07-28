@@ -1,44 +1,56 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { History, Search, Download, User, Calendar, Tag, ArrowRight, ShieldCheck } from 'lucide-react';
+import { History, Search, Download, User, Calendar, Tag, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { exportPontoCSV } from '@/services/exportService';
 import { motion } from 'framer-motion';
+import { useEmpresas } from '@/hooks/useEmpresas';
 
 export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) {
   const [searchTerm, setSearchTerm] = useState('');
+  const { empresaAtual } = useEmpresas();
 
   const queryClient = useQueryClient();
-  const { data: auditLogs = [], isLoading } = useQuery({
+  const { data: auditLogs = [], isLoading, error } = useQuery({
     queryKey: ['ponto-audit-logs', filterTabela],
     queryFn: async () => {
-      let query = (supabase as any)
-        .from('audit_log')
-        .select('*');
-      
-      if (filterTabela) {
-        query = query.eq('tabela', filterTabela);
-      } else {
-        query = query.or('tabela.eq.batidas_ponto,tabela.eq.registros_ponto,tabela.eq.solicitacoes_ajuste_ponto');
+      try {
+        let query = (supabase as any)
+          .from('audit_log')
+          .select('*');
+
+        if (filterTabela) {
+          query = query.eq('tabela', filterTabela);
+        } else {
+          query = query.or('tabela.eq.batidas_ponto,tabela.eq.registros_ponto,tabela.eq.solicitacoes_ajuste_ponto');
+        }
+
+        const { data, error: queryError } = await query
+          .order('created_at', { ascending: false })
+          .limit(100);
+        if (queryError) {
+          console.warn('[PontoAuditTimeline] audit_log access denied:', queryError.message);
+          return [];
+        }
+        return data || [];
+      } catch (e) {
+        console.warn('[PontoAuditTimeline] audit_log query failed:', e instanceof Error ? e.message : String(e));
+        return [];
       }
-      
-      const { data, error } = await query
-        .order('created_at', { ascending: false })
-        .limit(100);
-      if (error) throw error;
-      return data || [];
-    }
+    },
+    enabled: !!empresaAtual?.id,
   });
 
-  // Real-time listener for audit logs
-  useMemo(() => {
+  // Real-time listener for audit logs — useEffect because useMemo must not have side effects
+  useEffect(() => {
+    if (!empresaAtual?.id) return;
     const channel = (supabase as any)
       .channel('audit-changes')
       .on(
@@ -50,14 +62,14 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
       )
       .subscribe();
     return () => { (supabase as any).removeChannel(channel); };
-  }, [queryClient]);
+  }, [queryClient, empresaAtual?.id]);
 
 
 
-  const filteredLogs = auditLogs.filter((log: any) => 
-    log.acao.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    log.tabela.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    log.user_email?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredLogs = auditLogs.filter((log: any) =>
+    (log.acao || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (log.tabela || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (log.user_email || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleExportAudit = () => {
@@ -82,11 +94,12 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
         <div className="flex items-center gap-2">
           <div className="relative">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <Input 
-              placeholder="Buscar na trilha..." 
+            <Input
+              placeholder="Buscar na trilha..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-8 h-8 text-xs w-48"
+              disabled={!empresaAtual?.id}
             />
           </div>
           <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs" onClick={handleExportAudit}>
@@ -96,19 +109,31 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-[400px] pr-4">
-          <div className="space-y-6 relative before:absolute before:inset-0 before:left-[11px] before:w-px before:bg-gradient-to-b before:from-primary/50 before:via-border/50 before:to-transparent">
-            {filteredLogs.map((log: any, idx: number) => (
-              <motion.div 
-                key={log.id} 
-                initial={{ opacity: 0, x: -10 }} 
-                animate={{ opacity: 1, x: 0 }} 
+          {!empresaAtual?.id ? (
+            <div className="flex flex-col items-center justify-center h-full py-16 gap-3 text-muted-foreground">
+              <AlertCircle className="h-8 w-8 opacity-40" />
+              <p className="text-sm font-medium">Selecione uma empresa para ver a trilha de auditoria</p>
+            </div>
+          ) : filteredLogs.length === 0 && !isLoading ? (
+            <div className="flex flex-col items-center justify-center h-full py-16 gap-3 text-muted-foreground">
+              <History className="h-8 w-8 opacity-40" />
+              <p className="text-sm font-medium">Nenhum registro de auditoria encontrado</p>
+            </div>
+          ) : (
+            <div className="space-y-6 relative before:absolute before:inset-0 before:left-[11px] before:w-px before:bg-gradient-to-b before:from-primary/50 before:via-border/50 before:to-transparent">
+            {filteredLogs.map((log: any, idx: number) => {
+              return (
+              <motion.div
+                key={log.id}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: idx * 0.05 }}
                 className="relative pl-8 group"
               >
                 <div className="absolute left-0 top-1.5 h-[24px] w-[24px] rounded-full bg-background border-2 border-primary flex items-center justify-center z-10 group-hover:scale-110 transition-transform shadow-xs">
                   <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
                 </div>
-                
+
                 <div className="flex flex-col gap-1.5">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -126,15 +151,14 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
                     </div>
                     <div className="flex flex-col items-end gap-1">
                       <span className="text-[10px] font-mono text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded border border-border/30">
-                        REF: {log.registro_id.slice(0, 8)}
+                        REF: {(log.registro_id || '—').slice(0, 8)}
                       </span>
                       <div className="flex items-center gap-1 text-[8px] text-success font-bold">
                         <ShieldCheck className="h-2 w-2" /> PROVA SHA256
                       </div>
                     </div>
-
                   </div>
-                  
+
                   <div className="p-4 rounded-2xl bg-gradient-to-br from-muted/30 to-background border border-border/40 group-hover:border-primary/30 transition-all group-hover:shadow-md">
                     <div className="flex items-center gap-2 mb-2">
                       <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center">
@@ -142,7 +166,7 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
                       </div>
                       <span className="text-sm font-semibold text-foreground/90">{log.user_email || 'Sistema (Automático)'}</span>
                     </div>
-                    
+
                     {log.dados_novos && log.acao === 'UPDATE' && (
                       <div className="relative overflow-hidden mb-3">
                         <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/20 rounded-full" />
@@ -162,11 +186,12 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
                       <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors translate-x-0 group-hover:translate-x-1" />
                     </div>
                   </div>
-
                 </div>
               </motion.div>
-            ))}
-          </div>
+              );
+            })}
+            </div>
+          )}
         </ScrollArea>
       </CardContent>
     </Card>

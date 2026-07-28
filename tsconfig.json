@@ -26,6 +26,8 @@
     "src/**/*.stories.ts",
     "src/**/*.test.tsx",
     "src/**/*.test.ts",
-    "src/**/__tests__/**"
+    "src/**/__tests__/**",
+    "supabase/functions/**",
+    "supabase/**"
   ]
 }

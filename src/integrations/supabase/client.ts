@@ -20,7 +20,9 @@ if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
 }
 
 // Base client usado para Auth/Storage. Toda I/O de dados vai pela bridge.
-const supabaseBase = createClient<Database>(
+// Exportado também como `supabaseBase` para uso em casos especiais (ex.: client.base.ts)
+// onde o proxy de bridge não deve mediar (audit_log, tabelas de sistema, etc).
+export const supabaseBase = createClient<Database>(
   SUPABASE_URL,
   SUPABASE_PUBLISHABLE_KEY,
   {
