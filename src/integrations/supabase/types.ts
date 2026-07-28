@@ -4112,6 +4112,7 @@ export type Database = {
           uniforme_calcado: string | null
           uniforme_camiseta: string | null
           updated_at: string
+          user_id: string | null
           version: number | null
           whatsapp: string | null
         }
@@ -4262,6 +4263,7 @@ export type Database = {
           uniforme_calcado?: string | null
           uniforme_camiseta?: string | null
           updated_at?: string
+          user_id?: string | null
           version?: number | null
           whatsapp?: string | null
         }
@@ -4412,6 +4414,7 @@ export type Database = {
           uniforme_calcado?: string | null
           uniforme_camiseta?: string | null
           updated_at?: string
+          user_id?: string | null
           version?: number | null
           whatsapp?: string | null
         }
