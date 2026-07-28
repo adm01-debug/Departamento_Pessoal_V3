@@ -26,8 +26,10 @@ jobs:
           node-version: '22'
       - name: Install
         run: npm install --no-audit --no-fund
-      - name: Type Check
+      - name: Type Check (src)
         run: npm run typecheck
+      - name: Type Check (tests)
+        run: npm run typecheck:tests
 
   lint:
     name: Lint
