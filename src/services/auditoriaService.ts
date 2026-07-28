@@ -1,59 +1,77 @@
 import { supabase } from '@/integrations/supabase/client';
 
+/**
+ * Auditoria — leitura e escrita são feitas exclusivamente via RPCs
+ * `SECURITY DEFINER` (`listar_auditoria` / `registrar_auditoria`).
+ *
+ * Motivo (segurança): a tabela `audit_log` não aceita mais INSERT vindo do
+ * cliente — isso permitia forjar eventos de auditoria e informar um autor
+ * arbitrário. A RPC deriva o autor de `auth.uid()` no servidor e valida o
+ * escopo de empresa, tornando a trilha confiável.
+ */
+
+export interface AuditoriaFiltros {
+  tabela?: string;
+  acao?: string;
+  colaborador_id?: string;
+  registro_id?: string;
+  data_inicio?: string;
+  data_fim?: string;
+  limite?: number;
+}
+
+export interface AuditoriaRegistro {
+  id: string;
+  tabela: string | null;
+  registro_id: string | null;
+  acao: string | null;
+  user_id: string | null;
+  payload: Record<string, unknown> | null;
+  created_at: string;
+}
+
 export const auditoriaService = {
-  async listar(empresaId: string, filtros?: {
-    tabela?: string;
-    acao?: string;
-    colaborador_id?: string;
-    registro_id?: string;
-    data_inicio?: string;
-    data_fim?: string;
-    limite?: number
-  }) {
+  async listar(empresaId: string, filtros?: AuditoriaFiltros): Promise<AuditoriaRegistro[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório');
-    let query = (supabase
-      .from('audit_log')
-      .select('id, tabela, registro_id, acao, user_id, user_email, dados_anteriores, dados_novos, created_at') as any)
-      .eq('empresa_id', empresaId)
-      .order('created_at', { ascending: false });
 
-    if (filtros?.tabela) query = query.eq('tabela', filtros.tabela);
-    if (filtros?.acao) query = query.eq('acao', filtros.acao);
-    if (filtros?.registro_id) query = query.eq('registro_id', filtros.registro_id);
+    const { data, error } = await supabase.rpc('listar_auditoria', {
+      p_empresa_id: empresaId,
+      p_tabela: filtros?.tabela ?? null,
+      p_acao: filtros?.acao ?? null,
+      p_registro_id: filtros?.registro_id ?? null,
+      p_data_inicio: filtros?.data_inicio ?? null,
+      p_data_fim: filtros?.data_fim ?? null,
+      p_limite: filtros?.limite ?? 200,
+    } as never);
 
-    if (filtros?.data_inicio) query = query.gte('created_at', filtros.data_inicio);
-    if (filtros?.data_fim) query = query.lte('created_at', filtros.data_fim);
-
-    query = query.limit(filtros?.limite || 200);
-
-    const { data, error } = await query;
     if (error) throw error;
-
-    return data || [];
+    return (data as unknown as AuditoriaRegistro[]) || [];
   },
 
   async logComVersao(params: {
     tabela: string;
     registro_id: string;
     acao: 'UPDATE' | 'DELETE';
-    dados_anteriores: any;
-    dados_novos?: any;
+    dados_anteriores: unknown;
+    dados_novos?: unknown;
     empresa_id?: string;
-  }) {
-    const { data: { user } } = await supabase.auth.getUser();
+  }): Promise<void> {
+    const { error } = await supabase.rpc('registrar_auditoria', {
+      p_tabela: params.tabela,
+      p_registro_id: params.registro_id,
+      p_acao: params.acao,
+      p_dados_anteriores: (params.dados_anteriores ?? null) as never,
+      p_dados_novos: (params.dados_novos ?? null) as never,
+      p_empresa_id: params.empresa_id ?? null,
+    } as never);
 
-    await (supabase.from('audit_log') as any).insert({
-      tabela: params.tabela,
-      registro_id: params.registro_id,
-      acao: params.acao,
-      dados_anteriores: params.dados_anteriores,
-      dados_novos: params.dados_novos || null,
-      user_id: user?.id,
-      user_email: user?.email,
-      empresa_id: params.empresa_id,
-    });
-  }
+    // Auditoria não pode quebrar a operação de negócio, mas precisa ser observável.
+    if (error) {
+      console.error('[auditoriaService] falha ao registrar auditoria', error.message);
+    }
+  },
 };
+
 
 export const notificacaoService = {
   async listar(userId: string) {

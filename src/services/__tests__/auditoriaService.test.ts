@@ -6,13 +6,18 @@ import { makeChain } from '@/test/chain';
 const EMPRESA_ID = 'test-empresa-id';
 const USER_ID = 'test-user-id';
 
-const { mockFrom, mockGetUser } = vi.hoisted(() => ({
+const { mockFrom, mockGetUser, mockRpc } = vi.hoisted(() => ({
   mockFrom: vi.fn(),
   mockGetUser: vi.fn(),
+  mockRpc: vi.fn(),
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)), auth: { getUser: mockGetUser } },
+  supabase: {
+    from: (...a: unknown[]) => deepChain(mockFrom(...a)),
+    rpc: (...a: unknown[]) => mockRpc(...a),
+    auth: { getUser: mockGetUser },
+  },
 }));
 
 // Chain canônico (suporta encadeamento arbitrário do PostgREST)
@@ -22,117 +27,124 @@ function setupListChain(data: any[], error: any = null) {
   return { selectFn: chain.select, chain };
 }
 
-// ─── auditoriaService.listar ──────────────────────────────────────────────────
+// ─── auditoriaService.listar (via RPC listar_auditoria) ──────────────────────
 
 describe('auditoriaService.listar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
-
-  it('returns all audit records without filters', async () => {
-    const records = [{ id: 'a1', tabela: 'colaboradores', acao: 'UPDATE' }];
-    setupListChain(records);
-    const result = await auditoriaService.listar(EMPRESA_ID);
-    expect(result).toEqual(records);
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockRpc.mockResolvedValue({ data: [], error: null });
   });
 
-  it('returns empty array when data is null', async () => {
-    setupListChain(null as any);
-    const result = await auditoriaService.listar(EMPRESA_ID);
-    expect(result).toEqual([]);
+  it('exige empresa_id (isolamento de tenant)', async () => {
+    await expect(auditoriaService.listar('')).rejects.toThrow(/empresa_id/);
+    expect(mockRpc).not.toHaveBeenCalled();
   });
 
-  it('orders by created_at descending', async () => {
-    const { chain } = setupListChain([]);
+  it('usa a RPC segura em vez de ler a tabela diretamente', async () => {
     await auditoriaService.listar(EMPRESA_ID);
-    expect(chain.order).toHaveBeenCalledWith('created_at', { ascending: false });
+    expect(mockRpc).toHaveBeenCalledWith('listar_auditoria', expect.any(Object));
+    expect(mockFrom).not.toHaveBeenCalled();
   });
 
-  it('filters by tabela when provided', async () => {
-    const { chain } = setupListChain([]);
-    await auditoriaService.listar(EMPRESA_ID, { tabela: 'colaboradores' });
-    expect(chain.eq).toHaveBeenCalledWith('tabela', 'colaboradores');
+  it('retorna os registros da RPC', async () => {
+    const records = [{ id: 'a1', tabela: 'colaboradores', acao: 'UPDATE' }];
+    mockRpc.mockResolvedValue({ data: records, error: null });
+    await expect(auditoriaService.listar(EMPRESA_ID)).resolves.toEqual(records);
   });
 
-  it('filters by acao when provided', async () => {
-    const { chain } = setupListChain([]);
-    await auditoriaService.listar(EMPRESA_ID, { acao: 'DELETE' });
-    expect(chain.eq).toHaveBeenCalledWith('acao', 'DELETE');
+  it('retorna array vazio quando data é null', async () => {
+    mockRpc.mockResolvedValue({ data: null, error: null });
+    await expect(auditoriaService.listar(EMPRESA_ID)).resolves.toEqual([]);
   });
 
-  it('filters by registro_id when provided', async () => {
-    const { chain } = setupListChain([]);
-    await auditoriaService.listar(EMPRESA_ID, { registro_id: 'reg-1' });
-    expect(chain.eq).toHaveBeenCalledWith('registro_id', 'reg-1');
+  it('propaga o empresa_id e os filtros para a RPC', async () => {
+    await auditoriaService.listar(EMPRESA_ID, {
+      tabela: 'colaboradores',
+      acao: 'DELETE',
+      registro_id: 'reg-1',
+      data_inicio: '2026-01-01',
+      data_fim: '2026-12-31',
+      limite: 10,
+    });
+    expect(mockRpc).toHaveBeenCalledWith('listar_auditoria', {
+      p_empresa_id: EMPRESA_ID,
+      p_tabela: 'colaboradores',
+      p_acao: 'DELETE',
+      p_registro_id: 'reg-1',
+      p_data_inicio: '2026-01-01',
+      p_data_fim: '2026-12-31',
+      p_limite: 10,
+    });
   });
 
-  it('applies gte filter for data_inicio', async () => {
-    const { chain } = setupListChain([]);
-    await auditoriaService.listar(EMPRESA_ID, { data_inicio: '2026-01-01' });
-    expect(chain.gte).toHaveBeenCalledWith('created_at', '2026-01-01');
+  it('usa limite padrão de 200 e filtros nulos', async () => {
+    await auditoriaService.listar(EMPRESA_ID);
+    expect(mockRpc.mock.calls[0][1]).toMatchObject({ p_limite: 200, p_tabela: null, p_acao: null });
   });
 
-  it('applies lte filter for data_fim', async () => {
-    const { chain } = setupListChain([]);
-    await auditoriaService.listar(EMPRESA_ID, { data_fim: '2026-12-31' });
-    expect(chain.lte).toHaveBeenCalledWith('created_at', '2026-12-31');
-  });
-
-  it('applies limit when provided', async () => {
-    const { chain } = setupListChain([]);
-    await auditoriaService.listar(EMPRESA_ID, { limite: 10 });
-    expect(chain.limit).toHaveBeenCalledWith(10);
-  });
-
-  it('throws on DB error', async () => {
-    setupListChain([], { message: 'fail' });
+  it('lança em erro da RPC', async () => {
+    mockRpc.mockResolvedValue({ data: null, error: { message: 'fail' } });
     await expect(auditoriaService.listar(EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
-// ─── auditoriaService.logComVersao ────────────────────────────────────────────
+// ─── auditoriaService.logComVersao (via RPC registrar_auditoria) ─────────────
 
 describe('auditoriaService.logComVersao', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockRpc.mockResolvedValue({ data: 'audit-id', error: null });
+  });
 
-  it('inserts audit log with user info', async () => {
-    mockGetUser.mockResolvedValue({ data: { user: { id: 'u1', email: 'admin@test.com' } } });
-    const chain = makeChain({ error: null });
-    const insertFn = chain.insert;
-    mockFrom.mockReturnValue(chain);
-
+  it('registra a auditoria pela RPC, sem informar o autor pelo cliente', async () => {
     await auditoriaService.logComVersao({
       tabela: 'colaboradores',
       registro_id: 'c1',
       acao: 'UPDATE',
       dados_anteriores: { nome: 'Old' },
       dados_novos: { nome: 'New' },
+      empresa_id: EMPRESA_ID,
     });
 
-    expect(mockFrom).toHaveBeenCalledWith('audit_log');
-    const insertArg = insertFn.mock.calls[0][0];
-    expect(insertArg.tabela).toBe('colaboradores');
-    expect(insertArg.registro_id).toBe('c1');
-    expect(insertArg.acao).toBe('UPDATE');
-    expect(insertArg.user_id).toBe('u1');
-    expect(insertArg.user_email).toBe('admin@test.com');
+    expect(mockFrom).not.toHaveBeenCalled();
+    const [fn, args] = mockRpc.mock.calls[0];
+    expect(fn).toBe('registrar_auditoria');
+    expect(args).toEqual({
+      p_tabela: 'colaboradores',
+      p_registro_id: 'c1',
+      p_acao: 'UPDATE',
+      p_dados_anteriores: { nome: 'Old' },
+      p_dados_novos: { nome: 'New' },
+      p_empresa_id: EMPRESA_ID,
+    });
+    // A autoria é derivada de auth.uid() no servidor — nunca enviada pelo cliente.
+    expect(Object.keys(args)).not.toContain('p_user_id');
   });
 
-  it('uses null for dados_novos when not provided', async () => {
-    mockGetUser.mockResolvedValue({ data: { user: { id: 'u1', email: 'admin@test.com' } } });
-    const chain = makeChain({ error: null });
-    const insertFn = chain.insert;
-    mockFrom.mockReturnValue(chain);
-
+  it('usa null para dados_novos quando não informado', async () => {
     await auditoriaService.logComVersao({
       tabela: 'colaboradores',
       registro_id: 'c1',
       acao: 'DELETE',
       dados_anteriores: { nome: 'Old' },
     });
+    expect(mockRpc.mock.calls[0][1].p_dados_novos).toBeNull();
+    expect(mockRpc.mock.calls[0][1].p_empresa_id).toBeNull();
+  });
 
-    const insertArg = insertFn.mock.calls[0][0];
-    expect(insertArg.dados_novos).toBeNull();
+  it('não quebra a operação de negócio em caso de falha', async () => {
+    mockRpc.mockResolvedValue({ data: null, error: { message: 'fail' } });
+    await expect(
+      auditoriaService.logComVersao({
+        tabela: 'colaboradores',
+        registro_id: 'c1',
+        acao: 'UPDATE',
+        dados_anteriores: {},
+      })
+    ).resolves.toBeUndefined();
   });
 });
+
 
 // ─── notificacaoService.listar ────────────────────────────────────────────────
 

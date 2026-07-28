@@ -25521,6 +25521,26 @@ export type Database = {
       is_ip_blocked: { Args: { check_ip: string }; Returns: boolean }
       is_ip_whitelisted: { Args: { check_ip: string }; Returns: boolean }
       limpar_govbr_states_expirados: { Args: never; Returns: undefined }
+      listar_auditoria: {
+        Args: {
+          p_acao?: string
+          p_data_fim?: string
+          p_data_inicio?: string
+          p_empresa_id: string
+          p_limite?: number
+          p_registro_id?: string
+          p_tabela?: string
+        }
+        Returns: {
+          acao: string
+          created_at: string
+          id: string
+          payload: Json
+          registro_id: string
+          tabela: string
+          user_id: string
+        }[]
+      }
       log_frontend_error: {
         Args: { p_contexto?: Json; p_mensagem: string; p_nivel: string }
         Returns: undefined
@@ -25849,6 +25869,7 @@ export type Database = {
         Args: { p_encargos_pct?: number; p_plano_id: string }
         Returns: Json
       }
+      pertence_a_empresa: { Args: { _empresa_id: string }; Returns: boolean }
       process_lgpd_cleanup_queue: { Args: never; Returns: number }
       processar_ajuste_aprovado: {
         Args: { p_solicitacao_id: string }
@@ -26089,6 +26110,17 @@ export type Database = {
         Returns: undefined
       }
       refresh_dashboard_mvs: { Args: never; Returns: Json }
+      registrar_auditoria: {
+        Args: {
+          p_acao: string
+          p_dados_anteriores?: Json
+          p_dados_novos?: Json
+          p_empresa_id?: string
+          p_registro_id: string
+          p_tabela: string
+        }
+        Returns: string
+      }
       registrar_batida_ponto: {
         Args: {
           p_colaborador_id: string
@@ -26374,6 +26406,15 @@ export type Database = {
           source_id: string
           source_table: string
           user_id: string
+        }[]
+      }
+      sec_audit_policies: {
+        Args: never
+        Returns: {
+          cmd: string
+          motivo: string
+          policy_name: string
+          tabela: string
         }[]
       }
       solicitar_adiantamento_13_ferias: {
