@@ -138,7 +138,8 @@ describe('useAdmissoes', () => {
       await result.current.atualizar({ id: 'adm-1', data: { nome: 'Maria Atualizada' } });
     });
 
-    expect(mockAtualizar).toHaveBeenCalledWith('adm-1', { nome: 'Maria Atualizada' });
+    // Isolamento multi-tenant: o service exige empresa_id como 3º argumento.
+    expect(mockAtualizar).toHaveBeenCalledWith('adm-1', { nome: 'Maria Atualizada' }, 'empresa-1');
   });
 
   it('shows error toast when criar fails', async () => {

@@ -19,7 +19,7 @@ const { MockJsPDF, mockSave } = vi.hoisted(() => {
       pageSize: { getWidth: () => 210, getHeight: () => 297 },
     },
   };
-  const MockJsPDF = vi.fn().mockImplementation(() => mockDoc);
+  const MockJsPDF = vi.fn().mockImplementation(function () { return mockDoc; });
   return { MockJsPDF, mockSave };
 });
 
@@ -54,7 +54,7 @@ describe('gerarReciboAssinaturaPDF', () => {
       save: mockSave,
       internal: { pageSize: { getWidth: () => 210, getHeight: () => 297 } },
     };
-    MockJsPDF.mockImplementation(() => freshDoc);
+    MockJsPDF.mockImplementation(function () { return freshDoc; });
   });
 
   it('creates a jsPDF document', async () => {
@@ -88,7 +88,7 @@ describe('gerarReciboAssinaturaPDF', () => {
 
   it('adds QR code image to document', async () => {
     const addImage = vi.fn();
-    MockJsPDF.mockImplementation(() => ({
+    MockJsPDF.mockImplementation(function () { return ({
       setFillColor: vi.fn(),
       setTextColor: vi.fn(),
       setFont: vi.fn().mockReturnThis(),
@@ -101,7 +101,7 @@ describe('gerarReciboAssinaturaPDF', () => {
       splitTextToSize: vi.fn((t: string) => [t]),
       save: mockSave,
       internal: { pageSize: { getWidth: () => 210, getHeight: () => 297 } },
-    }));
+    }); });
     await gerarReciboAssinaturaPDF(MOCK_DATA);
     expect(addImage).toHaveBeenCalledWith(
       expect.stringContaining('data:image/png'),
