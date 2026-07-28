@@ -114,12 +114,14 @@ function main() {
   for (const line of rows.split('\n')) {
     if (!line.trim()) continue;
     const [name, secdef, anon, auth, src] = line.split('\u0001');
+    // `boolean::text` no Postgres devolve 'true'/'false' (não 't'/'f').
+    const yes = (v) => v === 'true' || v === 't';
     // Sobrecargas: concatena os corpos, pois qualquer uma delas é alcançável.
     const prev = fns.get(name);
     fns.set(name, {
-      secdef: secdef === 't' || prev?.secdef === true,
-      anon: anon === 't' || prev?.anon === true,
-      auth: auth === 't' || prev?.auth === true,
+      secdef: yes(secdef) || prev?.secdef === true,
+      anon: yes(anon) || prev?.anon === true,
+      auth: yes(auth) || prev?.auth === true,
       src: (prev?.src ?? '') + ' ' + (src ?? ''),
     });
   }
