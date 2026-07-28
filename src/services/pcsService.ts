@@ -134,6 +134,14 @@ export const pcsService = {
     return data ?? [];
   },
 
+  /** Faixas da matriz confrontadas com o P50 mais recente das pesquisas salariais. */
+  async gradesMercado(planoId: string): Promise<PcsGradeMercadoRow[]> {
+    const { data, error } = await supabase.rpc('pcs_grades_mercado', { p_plano_id: planoId });
+    if (error) throw error;
+    return data ?? [];
+  },
+
+
   // ------------------------------------------------------- equidade/impacto
   async enquadramento(planoId: string): Promise<PcsEnquadramentoRow[]> {
     const { data, error } = await supabase.rpc('pcs_enquadramento', { p_plano_id: planoId });
