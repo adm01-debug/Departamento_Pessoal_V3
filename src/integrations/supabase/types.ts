@@ -15113,6 +15113,282 @@ export type Database = {
         }
         Relationships: []
       }
+      pcs_avaliacoes_cargo: {
+        Row: {
+          avaliado_em: string
+          avaliado_por: string | null
+          cargo_id: string
+          created_at: string
+          id: string
+          justificativa: string | null
+          plano_id: string
+          pontos_total: number
+          pontuacoes: Json
+          updated_at: string
+        }
+        Insert: {
+          avaliado_em?: string
+          avaliado_por?: string | null
+          cargo_id: string
+          created_at?: string
+          id?: string
+          justificativa?: string | null
+          plano_id: string
+          pontos_total?: number
+          pontuacoes?: Json
+          updated_at?: string
+        }
+        Update: {
+          avaliado_em?: string
+          avaliado_por?: string | null
+          cargo_id?: string
+          created_at?: string
+          id?: string
+          justificativa?: string | null
+          plano_id?: string
+          pontos_total?: number
+          pontuacoes?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pcs_avaliacoes_cargo_cargo_id_fkey"
+            columns: ["cargo_id"]
+            isOneToOne: false
+            referencedRelation: "cargos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pcs_avaliacoes_cargo_plano_id_fkey"
+            columns: ["plano_id"]
+            isOneToOne: false
+            referencedRelation: "pcs_planos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pcs_fatores: {
+        Row: {
+          created_at: string
+          descricao: string | null
+          graus: Json
+          id: string
+          nome: string
+          ordem: number
+          peso: number
+          plano_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          descricao?: string | null
+          graus?: Json
+          id?: string
+          nome: string
+          ordem?: number
+          peso?: number
+          plano_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          descricao?: string | null
+          graus?: Json
+          id?: string
+          nome?: string
+          ordem?: number
+          peso?: number
+          plano_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pcs_fatores_plano_id_fkey"
+            columns: ["plano_id"]
+            isOneToOne: false
+            referencedRelation: "pcs_planos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pcs_grades: {
+        Row: {
+          created_at: string
+          id: string
+          nome: string
+          ordem: number
+          plano_id: string
+          pontos_max: number
+          pontos_min: number
+          salario_max: number
+          salario_medio: number
+          salario_min: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nome: string
+          ordem: number
+          plano_id: string
+          pontos_max: number
+          pontos_min: number
+          salario_max: number
+          salario_medio: number
+          salario_min: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nome?: string
+          ordem?: number
+          plano_id?: string
+          pontos_max?: number
+          pontos_min?: number
+          salario_max?: number
+          salario_medio?: number
+          salario_min?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pcs_grades_plano_id_fkey"
+            columns: ["plano_id"]
+            isOneToOne: false
+            referencedRelation: "pcs_planos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pcs_pesquisa_salarial: {
+        Row: {
+          amostra: number | null
+          cargo_id: string | null
+          cargo_referencia: string
+          created_at: string
+          data_referencia: string
+          empresa_id: string
+          fonte: string
+          id: string
+          p25: number | null
+          p50: number | null
+          p75: number | null
+          p90: number | null
+          regiao: string | null
+          updated_at: string
+        }
+        Insert: {
+          amostra?: number | null
+          cargo_id?: string | null
+          cargo_referencia: string
+          created_at?: string
+          data_referencia: string
+          empresa_id: string
+          fonte: string
+          id?: string
+          p25?: number | null
+          p50?: number | null
+          p75?: number | null
+          p90?: number | null
+          regiao?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amostra?: number | null
+          cargo_id?: string | null
+          cargo_referencia?: string
+          created_at?: string
+          data_referencia?: string
+          empresa_id?: string
+          fonte?: string
+          id?: string
+          p25?: number | null
+          p50?: number | null
+          p75?: number | null
+          p90?: number | null
+          regiao?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pcs_pesquisa_salarial_cargo_id_fkey"
+            columns: ["cargo_id"]
+            isOneToOne: false
+            referencedRelation: "cargos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pcs_pesquisa_salarial_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pcs_planos: {
+        Row: {
+          amplitude_pct: number
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          empresa_id: string
+          id: string
+          nome: string
+          num_steps: number
+          observacoes: string | null
+          overlap_pct: number
+          status: string
+          updated_at: string
+          versao: number
+          vigencia_fim: string | null
+          vigencia_inicio: string | null
+        }
+        Insert: {
+          amplitude_pct?: number
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          empresa_id: string
+          id?: string
+          nome: string
+          num_steps?: number
+          observacoes?: string | null
+          overlap_pct?: number
+          status?: string
+          updated_at?: string
+          versao?: number
+          vigencia_fim?: string | null
+          vigencia_inicio?: string | null
+        }
+        Update: {
+          amplitude_pct?: number
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          empresa_id?: string
+          id?: string
+          nome?: string
+          num_steps?: number
+          observacoes?: string | null
+          overlap_pct?: number
+          status?: string
+          updated_at?: string
+          versao?: number
+          vigencia_fim?: string | null
+          vigencia_inicio?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pcs_planos_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pdi_plano_desenvolvimento: {
         Row: {
           acao_desenvolvimento: string | null
@@ -25495,6 +25771,56 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      pcs_enquadramento: {
+        Args: { p_plano_id: string }
+        Returns: {
+          ajuste_necessario: number
+          cargo_nome: string
+          colaborador_id: string
+          colaborador_nome: string
+          comparatio: number
+          departamento: string
+          grade_nome: string
+          grade_ordem: number
+          salario_atual: number
+          salario_max: number
+          salario_medio: number
+          salario_min: number
+          situacao: string
+        }[]
+      }
+      pcs_gerar_grades: {
+        Args: {
+          p_num_grades?: number
+          p_plano_id: string
+          p_salario_base_menor?: number
+        }
+        Returns: {
+          created_at: string
+          id: string
+          nome: string
+          ordem: number
+          plano_id: string
+          pontos_max: number
+          pontos_min: number
+          salario_max: number
+          salario_medio: number
+          salario_min: number
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "pcs_grades"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      pcs_pode_gerir_plano: { Args: { _plano_id: string }; Returns: boolean }
+      pcs_pode_ver_plano: { Args: { _plano_id: string }; Returns: boolean }
+      pcs_simular_impacto: {
+        Args: { p_encargos_pct?: number; p_plano_id: string }
+        Returns: Json
       }
       process_lgpd_cleanup_queue: { Args: never; Returns: number }
       processar_ajuste_aprovado: {

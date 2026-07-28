@@ -4,7 +4,7 @@ import {
   LogOut, History, Calendar, Building2, Shield, PenTool, UserCircle,
   Network, ClipboardList, FileCheck, Calculator, Settings, Briefcase,
   FileText, GraduationCap, Target, UserSearch, LucideIcon, MapPin, Timer,
-  Megaphone, Receipt, GitBranch, CalendarClock, Fingerprint, ShieldCheck, Scale, Bot, Landmark, BookOpen, TrendingDown,
+  Megaphone, Receipt, GitBranch, CalendarClock, Fingerprint, ShieldCheck, Scale, Bot, Landmark, BookOpen, TrendingDown, TrendingUp,
   Trophy, MessageSquareText, Activity, ShieldAlert
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -99,6 +99,7 @@ const menuGroups: MenuGroup[] = [
     items: [
       { icon: Building2, label: 'Empresas', path: '/empresas', color: 'text-info' },
       { icon: Briefcase, label: 'Cargos', path: '/cargos', color: 'text-warning' },
+      { icon: TrendingUp, label: 'Cargos & Salários (PCS)', path: '/cargos-salarios', color: 'text-success' },
       { icon: Building2, label: 'Departamentos', path: '/departamentos', color: 'text-info' },
       { icon: MapPin, label: 'Locais de Trabalho', path: '/locais-trabalho', color: 'text-success' },
     ]
