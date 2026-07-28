@@ -10,7 +10,7 @@ import {
   buildCursorQuery,
   extractNextCursor,
   useCursorPagination,
-} from '../cursor';
+} from './cursor';
 
 describe('encodeCursor', () => {
   it('encode/decodes string values correctly', () => {
