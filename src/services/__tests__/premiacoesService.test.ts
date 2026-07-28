@@ -118,11 +118,12 @@ describe('premiacoesService.listarPagamentos', () => {
     expect(chain.eq).toHaveBeenCalledWith('campanha_id', 'c1');
   });
 
-  it('filters by empresa_id using filter() when provided', async () => {
+  it('escopa por empresa_id via join !inner na campanha', async () => {
     const { chain } = setupPagamentosChain([]);
     await premiacoesService.listarPagamentos(undefined, 'emp-1');
-    expect(chain.eq).toHaveBeenCalledWith('campanha.empresa_id', 'eq', 'emp-1');
+    expect(chain.eq).toHaveBeenCalledWith('campanha.empresa_id', 'emp-1');
   });
+
 
   it('returns empty array when data is null', async () => {
     setupPagamentosChain(null as any);
