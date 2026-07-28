@@ -7,6 +7,9 @@ import {
   listarEventosValidaveis,
   validarAnteDeEnviar,
 } from '../esocialService';
+import { makeChain } from '@/test/chain';
+
+const EMPRESA_ID = 'test-empresa-id';
 
 // ─── shared mock setup ────────────────────────────────────────────────────────
 
@@ -16,32 +19,26 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: mockFrom },
 }));
 
-// Builds a thenable chain: from → select → order → limit (→ optional eq)
-function buildEventosChain(data: any[], error: any = null) {
-  const response = { data, error };
-  const eqFn = vi.fn().mockResolvedValue(response);
-  const limitReturn = {
-    then: (res: any) => Promise.resolve(response).then(res),
-    catch: (fn: any) => Promise.resolve(response).catch(fn),
-    finally: (fn: any) => Promise.resolve(response).finally(fn),
-    eq: eqFn,
+/**
+ * Chain canônico: aceita qualquer encadeamento (`select → order → limit → eq`,
+ * `select → eq → eq`, etc.) sem precisar prever a forma exata da query.
+ */
+function buildChain(data: any, error: any = null) {
+  const chain = makeChain({ data, error });
+  mockFrom.mockReturnValue(chain);
+  return {
+    chain,
+    selectFn: chain.select,
+    orderFn: chain.order,
+    limitFn: chain.limit,
+    eqFn: chain.eq,
+    eq1: chain.eq,
+    eq2: chain.eq,
   };
-  const limitFn = vi.fn().mockReturnValue(limitReturn);
-  const orderFn = vi.fn().mockReturnValue({ limit: limitFn });
-  const selectFn = vi.fn().mockReturnValue({ order: orderFn });
-  mockFrom.mockReturnValue({ select: selectFn });
-  return { selectFn, orderFn, limitFn, eqFn };
 }
 
-// Builds chain: from → select → eq → (optional eq) → resolves
-function buildFilterChain(data: any[], error: any = null) {
-  const response = { data, error };
-  const eq2 = vi.fn().mockResolvedValue(response);
-  const eq1 = vi.fn().mockReturnValue({ eq: eq2, then: (r: any) => Promise.resolve(response).then(r), catch: (f: any) => Promise.resolve(response).catch(f) });
-  const selectFn = vi.fn().mockReturnValue({ eq: eq1 });
-  mockFrom.mockReturnValue({ select: selectFn });
-  return { selectFn, eq1, eq2 };
-}
+const buildEventosChain = buildChain;
+const buildFilterChain = buildChain;
 
 // ─── getEventoDescricao ───────────────────────────────────────────────────────
 
@@ -86,7 +83,7 @@ describe('listarEventos', () => {
       { id: '2', tipo_evento: 'S-2200', status: 'enviado' },
     ];
     buildEventosChain(eventos);
-    const result = await listarEventos(null);
+    const result = await listarEventos(EMPRESA_ID);
     expect(result).toEqual(eventos);
   });
 
@@ -96,21 +93,21 @@ describe('listarEventos', () => {
     expect(eqFn).toHaveBeenCalledWith('empresa_id', 'empresa-1');
   });
 
-  it('does NOT call eq when empresaId is null', async () => {
-    const { eqFn } = buildEventosChain([]);
-    await listarEventos(null);
+  it('rejeita quando empresaId não é informado (isolamento de tenant)', async () => {
+    buildEventosChain([]);
+    await expect(listarEventos('' as unknown as string)).rejects.toThrow('empresa_id obrigatório');
     expect(eqFn).not.toHaveBeenCalled();
   });
 
   it('returns empty array when data is null', async () => {
     buildEventosChain(null as any);
-    const result = await listarEventos(null);
+    const result = await listarEventos(EMPRESA_ID);
     expect(result).toEqual([]);
   });
 
   it('throws when supabase returns an error', async () => {
     buildEventosChain([], { message: 'DB error' });
-    await expect(listarEventos(null)).rejects.toBeDefined();
+    await expect(listarEventos(EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -121,7 +118,7 @@ describe('listarEventosPorCompetencia', () => {
 
   it('filters by competencia', async () => {
     const { eq1 } = buildFilterChain([]);
-    await listarEventosPorCompetencia(null, '2026-07');
+    await listarEventosPorCompetencia(EMPRESA_ID, '2026-07');
     expect(eq1).toHaveBeenCalledWith('competencia', '2026-07');
   });
 
@@ -134,13 +131,13 @@ describe('listarEventosPorCompetencia', () => {
   it('returns eventos list', async () => {
     const eventos = [{ id: 'e1', tipo_evento: 'S-1200' }];
     buildFilterChain(eventos);
-    const result = await listarEventosPorCompetencia(null, '2026-01');
+    const result = await listarEventosPorCompetencia(EMPRESA_ID, '2026-01');
     expect(result).toEqual(eventos);
   });
 
   it('throws on error', async () => {
     buildFilterChain([], { message: 'fail' });
-    await expect(listarEventosPorCompetencia(null, '2026-01')).rejects.toBeDefined();
+    await expect(listarEventosPorCompetencia(EMPRESA_ID, '2026-01')).rejects.toBeDefined();
   });
 });
 
@@ -156,7 +153,7 @@ describe('obterEstatisticas', () => {
       { status: 'pendente' },
       { status: 'erro' },
     ]);
-    const stats = await obterEstatisticas(null);
+    const stats = await obterEstatisticas(EMPRESA_ID);
     expect(stats.enviados).toBe(2);
     expect(stats.pendentes).toBe(1);
     expect(stats.erros).toBe(1);
@@ -164,7 +161,7 @@ describe('obterEstatisticas', () => {
 
   it('conformidade = 100% when no eventos', async () => {
     buildEventosChain([]);
-    const stats = await obterEstatisticas(null);
+    const stats = await obterEstatisticas(EMPRESA_ID);
     expect(stats.conformidade).toBe(100);
   });
 
@@ -175,7 +172,7 @@ describe('obterEstatisticas', () => {
       { status: 'pendente' },
       { status: 'erro' },
     ]);
-    const stats = await obterEstatisticas(null);
+    const stats = await obterEstatisticas(EMPRESA_ID);
     expect(stats.conformidade).toBe(75);
   });
 
@@ -184,13 +181,13 @@ describe('obterEstatisticas', () => {
       { status: 'enviado' },
       { status: 'enviado' },
     ]);
-    const stats = await obterEstatisticas(null);
+    const stats = await obterEstatisticas(EMPRESA_ID);
     expect(stats.conformidade).toBe(100);
   });
 
   it('throws wrapped error on DB failure', async () => {
     buildEventosChain([], { message: 'DB error' });
-    await expect(obterEstatisticas(null)).rejects.toThrow('Falha ao processar');
+    await expect(obterEstatisticas(EMPRESA_ID)).rejects.toThrow('Falha ao processar');
   });
 });
 
