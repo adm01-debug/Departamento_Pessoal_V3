@@ -147,7 +147,9 @@ describe('useImportacaoColaboradores', () => {
       }
     });
 
-    expect(caught?.message as string).toBe('parse error');
+    // TS não rastreia atribuições feitas dentro do callback assíncrono; reafirmamos o tipo.
+    const capturado = caught as { message?: string } | null;
+    expect(capturado?.message).toBe('parse error');
     expect(mockToastError).toHaveBeenCalledWith('parse error');
   });
 });
