@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { beneficioService } from '../beneficioService';
+import { makeChain } from '@/test/chain';
 
 const EMPRESA_ID = 'test-empresa-id';
 
@@ -38,96 +39,59 @@ vi.mock('../loggerService', () => ({
   loggerService: { error: mockLoggerError },
 }));
 
-// ─── chain helpers ────────────────────────────────────────────────────────────
-
-// listar: select → chain{eq, ilike} → order → resolvedValue with {data, count, error}
-function setupListarChain(data: any[], count = 0, error: any = null) {
-  const chain: any = {};
-  chain.eq = vi.fn().mockReturnValue(chain);
-  chain.ilike = vi.fn().mockReturnValue(chain);
-  chain.order = vi.fn().mockResolvedValue({ data, count, error });
-  const selectFn = vi.fn().mockReturnValue(chain);
-  mockFrom.mockReturnValue({ select: selectFn });
-  return { selectFn, chain };
+// ─── chain helpers (canônicos) ───────────────────────────────────────────────
+/**
+ * Todos os helpers derivam de `makeChain`, que aceita qualquer profundidade de
+ * encadeamento PostgREST — inclusive os `.eq()` extras introduzidos pelo
+ * isolamento multi-tenant.
+ */
+function setupChain(data: any = null, extra: Record<string, unknown> = {}) {
+  const chain = makeChain({ data, ...extra } as any);
+  mockFrom.mockReturnValue(chain);
+  return {
+    chain,
+    selectFn: chain.select,
+    eqFn: chain.eq,
+    eqFns: [chain.eq, chain.eq],
+    orderFn: chain.order,
+    insertFn: chain.insert,
+    updateFn: chain.update,
+    deleteFn: chain.delete,
+    maybeSingle: chain.maybeSingle,
+    singleFn: chain.single,
+  };
 }
 
-// listComAdesao: select → eq → resolvedValue
-function setupListComAdesaoChain(data: any[], error: any = null) {
-  const eqFn = vi.fn().mockResolvedValue({ data, error });
-  const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
-  mockFrom.mockReturnValue({ select: selectFn });
-  return { selectFn, eqFn };
+/** Chain isolado, para uso com `mockReturnValueOnce`. */
+function standaloneChain(data: any = null, error: any = null) {
+  const chain = makeChain({ data, error });
+  return {
+    chain,
+    selectFn: chain.select,
+    eqFn: chain.eq,
+    eqFns: [chain.eq, chain.eq],
+    insertFn: chain.insert,
+    updateFn: chain.update,
+    deleteFn: chain.delete,
+    maybeSingle: chain.maybeSingle,
+    singleFn: chain.single,
+  };
 }
 
-// insert → select → maybeSingle (used by BaseService.criar)
-function makeInsertMaybeSingleMock(data: any, error: any = null) {
-  const maybeSingle = vi.fn().mockResolvedValue({ data, error });
-  const selectFn = vi.fn().mockReturnValue({ maybeSingle });
-  const insertFn = vi.fn().mockReturnValue({ select: selectFn });
-  return { insertFn, selectFn, maybeSingle };
-}
-
-// select → eq → maybeSingle (used by BaseService.buscarPorId)
-function makeBuscarMock(data: any, error: any = null) {
-  const maybeSingle = vi.fn().mockResolvedValue({ data, error });
-  const eqFn = vi.fn().mockReturnValue({ maybeSingle });
-  const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
-  return { selectFn, eqFn, maybeSingle };
-}
-
-// update → eq → select → maybeSingle (used by BaseService.atualizar)
-function makeUpdateMaybeSingleMock(data: any, error: any = null) {
-  const maybeSingle = vi.fn().mockResolvedValue({ data, error });
-  const selectFn = vi.fn().mockReturnValue({ maybeSingle });
-  const eqFn = vi.fn();
-  const __eqChain = { select: selectFn, eq: eqFn };
-  eqFn.mockReturnValue(__eqChain);
-  const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
-  return { updateFn, eqFn, selectFn, maybeSingle };
-}
-
-// delete → eq → resolvedValue (used by BaseService.excluir)
-function makeDeleteEqMock(error: any = null) {
-  const eqFn = vi.fn();
-  const __delChain = { then: (r) => Promise.resolve({ error }).then(r), catch: (r) => Promise.resolve({ error }).catch(r), finally: (r) => Promise.resolve({ error }).finally(r), eq: eqFn };
-  eqFn.mockReturnValue(__delChain);
-  const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
-  return { deleteFn, eqFn };
-}
-
-// insert → select → single (used by vincularColaborador)
-function makeInsertSingleMock(data: any, error: any = null) {
-  const singleFn = vi.fn().mockResolvedValue({ data, error });
-  const selectFn = vi.fn().mockReturnValue({ single: singleFn });
-  const insertFn = vi.fn().mockReturnValue({ select: selectFn });
-  return { insertFn, singleFn };
-}
-
-// select → eq(s) → resolvedValue
-function makeSelectEqMock(data: any[], error: any = null, eqCount = 1) {
-  const resolved = vi.fn().mockResolvedValue({ data, error });
-  let chain: any = resolved;
-  for (let i = 0; i < eqCount; i++) {
-    const prev = chain;
-    chain = { eq: vi.fn().mockReturnValue(i === eqCount - 1 ? prev : { eq: vi.fn() }) };
-  }
-  // rebuild properly
-  if (eqCount === 1) {
-    const eqFn = vi.fn().mockResolvedValue({ data, error });
-    const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
-    return { selectFn, eqFns: [eqFn] };
-  }
-  // eqCount === 2
-  const eq2Fn = vi.fn().mockResolvedValue({ data, error });
-  const eq1Fn = vi.fn().mockReturnValue({ eq: eq2Fn });
-  const selectFn = vi.fn().mockReturnValue({ eq: eq1Fn });
-  return { selectFn, eqFns: [eq1Fn, eq2Fn] };
-}
+const setupListarChain = (data: any[], count = 0, error: any = null) =>
+  setupChain(data, { count, error });
+const setupListComAdesaoChain = (data: any[], error: any = null) => setupChain(data, { error });
+const makeInsertMaybeSingleMock = standaloneChain;
+const makeBuscarMock = standaloneChain;
+const makeUpdateMaybeSingleMock = standaloneChain;
+const makeDeleteEqMock = (error: any = null) => standaloneChain(null, error);
+const makeInsertSingleMock = standaloneChain;
+const makeSelectEqMock = (data: any[], error: any = null, _eqCount = 1) => standaloneChain(data, error);
 
 // ─── listar ───────────────────────────────────────────────────────────────────
 
 describe('beneficioService.listar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('returns data and total without filters', async () => {
     const records = [{ id: 'b1', nome: 'VT' }];
@@ -169,7 +133,7 @@ describe('beneficioService.listar', () => {
 // ─── listComAdesao ────────────────────────────────────────────────────────────
 
 describe('beneficioService.listComAdesao', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('queries with empresa_id and returns data', async () => {
     const records = [{ id: 'b1', beneficios_colaborador: [{ count: 3 }] }];
@@ -245,7 +209,7 @@ describe('beneficioService.atualizar', () => {
 
   it('throws wrapped error when buscarPorId fails', async () => {
     const buscarMock = makeBuscarMock(null, { message: 'not found' });
-    mockFrom.mockReturnValue({ select: buscarMock.selectFn });
+    mockFrom.mockReturnValue(buscarMock.chain);
     await expect(beneficioService.atualizar('b1', {}, EMPRESA_ID)).rejects.toThrow();
   });
 });
@@ -275,7 +239,7 @@ describe('beneficioService.excluir', () => {
 
   it('throws wrapped error on DB failure', async () => {
     const buscarMock = makeBuscarMock(null, { message: 'fail' });
-    mockFrom.mockReturnValue({ select: buscarMock.selectFn });
+    mockFrom.mockReturnValue(buscarMock.chain);
     await expect(beneficioService.excluir('b1', EMPRESA_ID)).rejects.toThrow();
   });
 });
@@ -283,7 +247,7 @@ describe('beneficioService.excluir', () => {
 // ─── vincularColaborador ──────────────────────────────────────────────────────
 
 describe('beneficioService.vincularColaborador', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('inserts into beneficios_colaborador and returns data', async () => {
     const vinculo = { id: 'v1', beneficio_id: 'b1', colaborador_id: 'c1' };
@@ -309,7 +273,7 @@ describe('beneficioService.vincularColaborador', () => {
 // ─── listarPorColaborador ─────────────────────────────────────────────────────
 
 describe('beneficioService.listarPorColaborador', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('queries by colaborador_id and returns data', async () => {
     const records = [{ id: 'v1', beneficio: { nome: 'VT' } }];
@@ -340,7 +304,7 @@ describe('beneficioService.listarPorColaborador', () => {
 // ─── obterResumoCustos ────────────────────────────────────────────────────────
 
 describe('beneficioService.obterResumoCustos', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   function setupResumoCustos(data: any[], error: any = null) {
     const eq2Fn = vi.fn().mockResolvedValue({ data, error });
