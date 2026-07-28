@@ -76,9 +76,17 @@ serve(async (req: Request): Promise<Response> => {
     const emailRL = await checkRateLimit(admin, { key: emailKey, limit: 10, windowSec: IP_WINDOW_SEC });
     if (!emailRL.allowed) return rateLimitResponse(emailRL);
 
-    // 4. Account lockout check (5 failures in 15 min → 30 min lockout).
+    // 4. Account lockout check (5 failures in 15 min → lockout escalonado).
+    // Observabilidade: um erro aqui degrada para fail-open (não travamos todos os
+    // logins por indisponibilidade do DB), mas NUNCA em silêncio — foi exatamente
+    // um erro mudo que manteve a proteção desligada sem ninguém perceber.
     const { data: lockout, error: lockoutErr } = await admin.rpc('check_account_lockout', { p_email: email });
+    if (lockoutErr) {
+      console.error('[auth-login] check_account_lockout indisponível — proteção de lockout DEGRADADA:', lockoutErr.message);
+      await captureException(new Error(`check_account_lockout falhou: ${lockoutErr.message}`), { function: 'auth-login' });
+    }
     if (!lockoutErr && lockout?.[0]?.is_locked) {
+
       const lockedUntil: string | null = lockout[0].locked_until ?? null;
       return new Response(
         JSON.stringify({
