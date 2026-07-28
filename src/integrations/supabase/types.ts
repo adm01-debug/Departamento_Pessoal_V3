@@ -25009,6 +25009,15 @@ export type Database = {
         Args: { lat1: number; lat2: number; lng1: number; lng2: number }
         Returns: number
       }
+      edge_rate_limit_check: {
+        Args: {
+          p_key: string
+          p_limit: number
+          p_now?: number
+          p_window_sec: number
+        }
+        Returns: Json
+      }
       eh_dia_valido_inicio_ferias: {
         Args: { p_data: string; p_empresa_id: string }
         Returns: {
