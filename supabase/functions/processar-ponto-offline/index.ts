@@ -262,7 +262,8 @@ serve(async (req: Request): Promise<Response> => {
             // sela a linha gravada. Enviá-lo aqui faria o banco recusar a
             // sincronização por selo divergente.
             foto_biometria_url: finalFotoUrl,
-            metadata: {
+            // A coluna em batidas_ponto chama-se device_metadata (não metadata).
+            device_metadata: {
               offline_original_type: reg.tipo,
               offline_timestamp: reg.timestamp,
               client_hash: reg.hash ?? null,
