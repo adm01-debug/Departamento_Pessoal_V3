@@ -5,6 +5,20 @@ import { MemoryRouter } from 'react-router-dom';
 const { mockUseAuth } = vi.hoisted(() => ({ mockUseAuth: vi.fn() }));
 
 vi.mock('@/hooks/useAuth', () => ({ useAuth: mockUseAuth }));
+// ProtectedRoute consulta o AAL (MFA) na montagem; o mock global não expõe `auth.mfa`.
+vi.mock('@/integrations/supabase/client', () => ({
+  supabase: {
+    auth: {
+      mfa: {
+        getAuthenticatorAssuranceLevel: vi.fn().mockResolvedValue({
+          data: { currentLevel: 'aal1', nextLevel: 'aal1' },
+          error: null,
+        }),
+      },
+    },
+  },
+}));
+
 vi.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,

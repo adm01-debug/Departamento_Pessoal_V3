@@ -9,6 +9,15 @@ vi.mock('@/components/ui/tooltip', () => ({
   TooltipContent: ({ children }: any) => <div>{children}</div>,
 }));
 
+// O hook real consome o AuthContext; em teste unitário isolamos a dependência.
+vi.mock('@/hooks/useAssinarAvisoFerias', () => ({
+  useAssinarAvisoFerias: () => ({
+    baixarAvisoAssinado: vi.fn(),
+    assinar: vi.fn(),
+    loading: false,
+  }),
+}));
+
 vi.mock('@/utils/feriasPDF', () => ({
   feriasPDF: { gerarRecibo: vi.fn() },
 }));
