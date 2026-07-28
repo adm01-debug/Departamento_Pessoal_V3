@@ -90,7 +90,7 @@ describe('PontoAuditTimeline', () => {
     const { useQuery } = await import('@tanstack/react-query');
     vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
     render(<PontoAuditTimeline />);
-    expect(screen.getByText('registros_ponto')).toBeInTheDocument();
+    expect(screen.getByText(/Entidade: registros_ponto/)).toBeInTheDocument();
   });
 
   it('renders user email in log', async () => {
