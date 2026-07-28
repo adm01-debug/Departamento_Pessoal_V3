@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,7 +8,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Edit2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useDadosEstrangeiro, useSalvarDadosEstrangeiro } from '@/hooks/useColaboradorDetalhes';
-import { useOnMount } from '@/hooks/useMountEffects';
+import { useSyncedState } from '@/hooks/useSyncedState';
 
 interface EstrangeiroData {
   pais_origem?: string;
@@ -21,22 +21,12 @@ export function EstrangeiroTab({ colaboradorId }: { colaboradorId: string }) {
   const { data, isLoading } = useDadosEstrangeiro(colaboradorId);
   const salvar = useSalvarDadosEstrangeiro();
   const [editing, setEditing] = useState(false);
-  const [form, setForm] = useState({ pais_origem: '', tipo_visto: '', data_chegada: '', reside_brasil: true });
-
-  // Inicializa form no mount
-  useOnMount(() => {
-    if (data && !editing) {
-      const d = data as EstrangeiroData;
-      setForm({ pais_origem: d.pais_origem || '', tipo_visto: d.tipo_visto || '', data_chegada: d.data_chegada || '', reside_brasil: d.reside_brasil ?? true });
-    }
-  });
-
-  useEffect(() => {
-    if (data && !editing) {
-      const d = data as EstrangeiroData;
-      setForm({ pais_origem: d.pais_origem || '', tipo_visto: d.tipo_visto || '', data_chegada: d.data_chegada || '', reside_brasil: d.reside_brasil ?? true });
-    }
-  }, [data, editing]);
+  // Formulário derivado do dado remoto; a sincronização pausa durante a edição.
+  const [form, setForm] = useSyncedState(
+    data as EstrangeiroData | undefined,
+    (d) => ({ pais_origem: d?.pais_origem || '', tipo_visto: d?.tipo_visto || '', data_chegada: d?.data_chegada || '', reside_brasil: d?.reside_brasil ?? true }),
+    !editing
+  );
 
   const handleSave = async () => {
     if (!form.pais_origem.trim()) { toast.error('País de origem é obrigatório'); return; }
