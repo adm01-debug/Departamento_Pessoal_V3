@@ -174,10 +174,6 @@ export default function AdminDiagnosticoMigracaoPage() {
     run();
   });
 
-  useEffect(() => {
-    run();
-  }, []);
-
   const grouped = {
     infra: checks.filter((c) => c.category === 'infra'),
     tabelas: checks.filter((c) => c.category === 'tabelas'),
