@@ -190,7 +190,10 @@ export function PortalRegimentoCard() {
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            Seu usuário não está vinculado a um colaborador desta empresa. Fale com o RH.
+            Não encontramos um cadastro de colaborador desta empresa com o e-mail da sua
+            conta. Peça ao RH para conferir o e-mail cadastrado na sua ficha — assim que
+            ele coincidir, a assinatura fica disponível automaticamente.
+
           </p>
         </CardContent>
       </Card>
