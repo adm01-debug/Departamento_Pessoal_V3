@@ -126,4 +126,14 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/audit-rls-pii.mjs
+      - name: Autorização em funções SECURITY DEFINER
+        # SECURITY DEFINER atravessa o RLS: se a função é executável por
+        # anon/authenticated e confia em identificadores vindos do chamador,
+        # ela anula o isolamento multi-tenant sem que nenhuma política esteja
+        # errada. O gate segue o fecho transitivo de chamadas para não reprovar
+        # funções que delegam a checagem a um helper.
+        env:
+          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/audit-secdef-authz.mjs
+
 
