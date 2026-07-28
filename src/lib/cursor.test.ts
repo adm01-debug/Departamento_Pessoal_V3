@@ -20,7 +20,7 @@ describe('encodeCursor', () => {
 
   it('encode/decodes numeric values correctly', () => {
     const cursor = encodeCursor('created_at', 1719475200000, 'after');
-    expect(cursor).toBe(btoa('id:1719475200000:after'));
+    expect(cursor).toBe(btoa('created_at:1719475200000:after'));
   });
 
   it('encode/decodes null values correctly', () => {
