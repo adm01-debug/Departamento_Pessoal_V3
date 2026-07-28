@@ -143,10 +143,15 @@ export default function ContratosGeradosPage() {
 
   const carregar = () => { void contratosQuery.refetch(); };
 
+  // Instante do último carregamento: usado como "agora" nos filtros por período,
+  // mantendo o render puro (sem Date.now() durante a renderização).
+  const agora = contratosQuery.dataUpdatedAt || contratosQuery.errorUpdatedAt || 0;
+
 
   const filtrados = useMemo(() => {
     const term = busca.trim().toLowerCase();
-    const cutoff = periodo === 'todos' ? null : Date.now() - Number(periodo) * 86400_000;
+    // Relógio de referência estável: instante do último fetch (render puro).
+    const cutoff = periodo === 'todos' ? null : agora - Number(periodo) * 86400_000;
     return contratos.filter((c) => {
       if (status !== 'todos' && c.status !== status) return false;
       if (cutoff && new Date(c.created_at).getTime() < cutoff) return false;
@@ -157,7 +162,7 @@ export default function ContratosGeradosPage() {
       }
       return true;
     });
-  }, [contratos, status, busca, colaboradores, periodo]);
+  }, [contratos, status, busca, colaboradores, periodo, agora]);
 
   const PAGE_SIZE = 25;
   // Página reinicia sempre que os filtros mudam (estado derivado, sem efeito).
