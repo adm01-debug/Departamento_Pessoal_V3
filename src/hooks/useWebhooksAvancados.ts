@@ -7,10 +7,15 @@ export function useWebhooksAvancados() {
   const { empresaAtual } = useEmpresas();
   const empresaId = empresaAtual?.id;
 
+  // IMPORTANTE: `empresaId` é passado nas duas formas — como parâmetro dedicado
+  // (destrava `enabled` em useGenericCrud, que ignora `empresa_id`/`empresaId`
+  // dentro de `filters`) e dentro de `filters` apenas quando definido.
+  // Sem isso, a query nunca dispara.
   const crud = useGenericCrud<unknown>({
     queryKey: 'webhooks',
     service: webhookService,
-    filters: { empresa_id: empresaId },
+    filters: empresaId ? { empresa_id: empresaId } : {},
+    empresaId: empresaId ?? undefined,
   });
 
   return {

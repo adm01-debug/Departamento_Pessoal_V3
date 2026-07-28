@@ -1,5 +1,81 @@
 # Changelog - Sistema Departamento Pessoal
 
+## [22.0.0] - 2026-07-27
+
+### Contexto da versão
+
+Esta versão consolida o trabalho de **migração do banco Lovable → Supabase**
+do sistema **Departamento Pessoal v2** (projeto Supabase
+`frjbfeamybqsejlvmqbl`), além do ciclo de testes módulo-a-módulo iniciado
+em **2026-07-26** e finalizado nesta data.
+
+A migração não foi apenas troca de provedor: envolveu recriar schema, RLS,
+triggers, helpers (`get_user_empresas`, `enforce_desligamento_hash`,
+`fn_workflow_admissao_auto`) e todos os hooks de acesso a dados no
+front-end. Cada módulo foi testado individualmente para confirmar:
+
+- tabelas corretamente mapeadas para os services TypeScript
+  (admissões, onboarding, desligamentos, ciclos de avaliação, benefícios,
+  afastamentos, folha, webhooks, etc.);
+- políticas RLS deixando passar os registros esperados para o usuário
+  autenticado `ti@promobrindes.com.br`;
+- triggers de negócio disparando (criação automática de workflow por
+  admissão, hash de integridade em desligamentos homologados, propagação
+  de tarefas de onboarding a partir do template);
+- UI consumindo os dados sem listar vazio indevidamente.
+
+### Bug fix — `useGenericCrud.enabled` quebrado em hooks tenant-scoped
+
+Sintoma: páginas de listagem mostravam "Nenhum registro encontrado" e a aba
+Network do DevTools (filtro `external-db-bridge`) tinha zero requests —
+o React Query não disparava.
+
+Causa raiz: `useGenericCrud.enabled` avalia
+`alwaysEnabled || hasMeaningfulFilters(filters) || !!empresaId`,
+mas `hasMeaningfulFilters()` ignora chaves `empresa_id`/`empresaId` dentro de
+`filters`. Hooks que passavam só `filters: { empresa_id: empresaId }` (sem o
+parâmetro dedicado `empresaId`) ficavam com `enabled: false`.
+
+Hooks corrigidos:
+- `src/hooks/useDesligamentos.ts`
+- `src/hooks/useBeneficios.ts`
+- `src/hooks/useWebhooksAvancados.ts`
+
+Padrão aplicado em todos:
+```ts
+filters: empresaId ? { empresa_id: empresaId } : {},
+empresaId: empresaId ?? undefined,
+```
+
+Cada arquivo recebeu comentário `// IMPORTANTE:` acima da chamada explicando
+o porquê do duplo parâmetro.
+
+Validação no browser:
+- `/desligamentos` → 2 desligamentos listados (Bruno + Felipe)
+- `/beneficios` → 8 benefícios ativos com adesões e custos
+
+### Banco — migrations SQL
+
+Novas migrations em `supabase/migrations/`:
+
+- `20260730000000_seed_admissao_onboarding_desligamento_avaliacao.sql` — seed
+  de dados placeholder explícito (8 admissões, 2 desligamentos, 2 ciclos,
+  4 templates de onboarding, 6 colaboradores em onboarding, 27 tarefas, 1 workflow).
+  Empresa alvo: `66104399-aba8-4105-bbd3-9bf67820c1d0` (TIME | PROMO BRINDES).
+  Flag `metadata.placeholder: true` em todos os registros.
+- `_wf_fix.sql` — adiciona colunas faltantes em `workflows_execucoes`
+  (`workflow_id`, `entidade_id`, `entidade_tipo`, `status`, `etapa_atual`,
+  `metadata`, `log_execucao`). Resolve FK violation ao inserir admissões.
+- `_fix_digest.sql` — recria `enforce_desligamento_hash()` com cast explícito
+  `digest(..., 'sha256'::text)`. Resolve `function digest(unknown, unknown)
+  does not exist` no trigger de hash de integridade.
+
+### Não-objetivos
+
+- Não foi inicializado repositório git (o projeto não tinha `.git/`).
+- Não foram criados testes para os hooks corrigidos.
+- Não foram alteradas políticas RLS.
+
 ## [18.0.1] - 2026-07-23
 
 ### Infrastructure
