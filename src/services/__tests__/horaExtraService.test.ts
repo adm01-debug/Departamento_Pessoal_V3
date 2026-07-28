@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { makeChain } from '@/test/chain';
 import { horaExtraService } from '../horaExtraService';
 
 const EMPRESA_ID = 'test-empresa-id';
@@ -193,9 +194,9 @@ describe('horaExtraService.excluir', () => {
   beforeEach(() => { vi.clearAllMocks(); });
 
   it('calls delete with the given id', async () => {
-    const eqFn = vi.fn().mockResolvedValue({ error: null });
-    const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
-    mockFrom.mockReturnValue({ delete: deleteFn });
+    const chain = makeChain({ error: null });
+    const deleteFn = chain.delete; const eqFn = chain.eq;
+    mockFrom.mockReturnValue(chain);
 
     await horaExtraService.excluir('he-1', EMPRESA_ID);
     expect(deleteFn).toHaveBeenCalled();
@@ -203,9 +204,7 @@ describe('horaExtraService.excluir', () => {
   });
 
   it('throws on DB error', async () => {
-    const eqFn = vi.fn().mockResolvedValue({ error: { message: 'fail' } });
-    const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
-    mockFrom.mockReturnValue({ delete: deleteFn });
+    mockFrom.mockReturnValue(makeChain({ error: { message: 'fail' } }));
 
     await expect(horaExtraService.excluir('he-1', EMPRESA_ID)).rejects.toBeDefined();
   });

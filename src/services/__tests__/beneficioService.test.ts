@@ -279,7 +279,7 @@ describe('beneficioService.listarPorColaborador', () => {
     const records = [{ id: 'v1', beneficio: { nome: 'VT' } }];
     const eqFn = vi.fn().mockResolvedValue({ data: records, error: null });
     const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
-    mockFrom.mockReturnValue({ select: selectFn });
+    mockFrom.mockReturnValue(mock.chain);
 
     const result = await beneficioService.listarPorColaborador('c1', EMPRESA_ID);
     expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
@@ -289,14 +289,14 @@ describe('beneficioService.listarPorColaborador', () => {
   it('returns empty array when data is null', async () => {
     const eqFn = vi.fn().mockResolvedValue({ data: null, error: null });
     const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
-    mockFrom.mockReturnValue({ select: selectFn });
+    mockFrom.mockReturnValue(mock.chain);
     expect(await beneficioService.listarPorColaborador('c1', EMPRESA_ID)).toEqual([]);
   });
 
   it('throws on DB error', async () => {
     const eqFn = vi.fn().mockResolvedValue({ data: null, error: { message: 'fail' } });
     const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
-    mockFrom.mockReturnValue({ select: selectFn });
+    mockFrom.mockReturnValue(mock.chain);
     await expect(beneficioService.listarPorColaborador('c1', EMPRESA_ID)).rejects.toBeDefined();
   });
 });
@@ -310,7 +310,7 @@ describe('beneficioService.obterResumoCustos', () => {
     const eq2Fn = vi.fn().mockResolvedValue({ data, error });
     const eq1Fn = vi.fn().mockReturnValue({ eq: eq2Fn });
     const selectFn = vi.fn().mockReturnValue({ eq: eq1Fn });
-    mockFrom.mockReturnValue({ select: selectFn });
+    mockFrom.mockReturnValue(mock.chain);
     return { selectFn, eq1Fn, eq2Fn };
   }
 
