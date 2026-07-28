@@ -277,9 +277,7 @@ describe('beneficioService.listarPorColaborador', () => {
 
   it('queries by colaborador_id and returns data', async () => {
     const records = [{ id: 'v1', beneficio: { nome: 'VT' } }];
-    const eqFn = vi.fn().mockResolvedValue({ data: records, error: null });
-    const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
-    mockFrom.mockReturnValue(mock.chain);
+    const { eqFn } = setupChain(records, { error: null });
 
     const result = await beneficioService.listarPorColaborador('c1', EMPRESA_ID);
     expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
@@ -287,16 +285,12 @@ describe('beneficioService.listarPorColaborador', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    const eqFn = vi.fn().mockResolvedValue({ data: null, error: null });
-    const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
-    mockFrom.mockReturnValue(mock.chain);
+    setupChain(null, { error: null });
     expect(await beneficioService.listarPorColaborador('c1', EMPRESA_ID)).toEqual([]);
   });
 
   it('throws on DB error', async () => {
-    const eqFn = vi.fn().mockResolvedValue({ data: null, error: { message: 'fail' } });
-    const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
-    mockFrom.mockReturnValue(mock.chain);
+    setupChain(null, { error: { message: 'fail' } });
     await expect(beneficioService.listarPorColaborador('c1', EMPRESA_ID)).rejects.toBeDefined();
   });
 });
@@ -307,11 +301,8 @@ describe('beneficioService.obterResumoCustos', () => {
   beforeEach(() => { vi.resetAllMocks(); });
 
   function setupResumoCustos(data: any[], error: any = null) {
-    const eq2Fn = vi.fn().mockResolvedValue({ data, error });
-    const eq1Fn = vi.fn().mockReturnValue({ eq: eq2Fn });
-    const selectFn = vi.fn().mockReturnValue({ eq: eq1Fn });
-    mockFrom.mockReturnValue(mock.chain);
-    return { selectFn, eq1Fn, eq2Fn };
+    const { chain, selectFn } = setupChain(data, { error });
+    return { selectFn, eq1Fn: chain.eq, eq2Fn: chain.eq };
   }
 
   it('returns empty object when no data', async () => {
