@@ -1,7 +1,7 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
-import { useOnMount } from '@/hooks/useMountEffects';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -64,9 +64,6 @@ const statusVariant = (s: string) =>
 
 export default function AdminExtintoresPage() {
   const { empresaAtual } = useEmpresas();
-  const [dashboard, setDashboard] = useState<Dashboard | null>(null);
-  const [extintores, setExtintores] = useState<Extintor[]>([]);
-  const [loading, setLoading] = useState(true);
   const [openNovo, setOpenNovo] = useState(false);
   const [openInsp, setOpenInsp] = useState<Extintor | null>(null);
 
@@ -85,37 +82,45 @@ export default function AdminExtintoresPage() {
     altura_correta: true, corpo_integro: true, observacoes: '',
   });
 
-  // eslint-disable-next-line react-hooks/preserve-manual-memoization
-  const carregar = useCallback(async () => {
-    if (!empresaAtual?.id) return;
-    setLoading(true);
-    try {
-      const [{ data: dash }, { data: exts }] = await Promise.all([
-        supabase.rpc('sst_extintores_dashboard', { p_empresa_id: empresaAtual.id }),
+  const empresaId = empresaAtual?.id;
+
+  // Data fetching via React Query: cache por empresa, revalidação declarativa.
+  const extintoresQuery = useQuery({
+    queryKey: ['sst-extintores', empresaId],
+    enabled: !!empresaId,
+    queryFn: async () => {
+      const [{ data: dash, error: e1 }, { data: exts, error: e2 }] = await Promise.all([
+        supabase.rpc('sst_extintores_dashboard', { p_empresa_id: empresaId! }),
         supabase.from('sst_extintores')
           .select('id,codigo_patrimonio,tipo,capacidade_kg,localizacao,data_proxima_recarga,data_proximo_teste_hidrostatico,status,qr_code')
-          .eq('empresa_id', empresaAtual.id)
+          .eq('empresa_id', empresaId!)
           .is('deleted_at', null)
           .order('codigo_patrimonio')
           .limit(500),
       ]);
-      setDashboard(dash as unknown as Dashboard);
-      setExtintores((exts as Extintor[]) || []);
-    } catch (e) {
-      loggerService.error('Erro ao carregar extintores', { empresaId: empresaAtual?.id }, e instanceof Error ? e : new Error(String(e)));
-      toast.error('Erro ao carregar extintores');
-    } finally {
-      setLoading(false);
-    }
-  }, [empresaAtual?.id]);
-
-  useOnMount(() => {
-    carregar();
+      if (e1 || e2) throw (e1 ?? e2);
+      return {
+        dashboard: dash as unknown as Dashboard,
+        extintores: (exts as Extintor[] | null) ?? [],
+      };
+    },
   });
 
-  useEffect(() => {
-    carregar();
-  }, [carregar]);
+  if (extintoresQuery.error) {
+    loggerService.error(
+      'Erro ao carregar extintores',
+      { empresaId },
+      extintoresQuery.error instanceof Error ? extintoresQuery.error : new Error(String(extintoresQuery.error))
+    );
+  }
+
+  const EMPTY_EXT: Extintor[] = useMemo(() => [], []);
+  const dashboard = extintoresQuery.data?.dashboard ?? null;
+  const extintores = extintoresQuery.data?.extintores ?? EMPTY_EXT;
+  const loading = extintoresQuery.isPending && !!empresaId;
+
+  const carregar = () => { void extintoresQuery.refetch(); };
+
 
   const criarExtintor = async () => {
     if (!empresaAtual?.id) return;

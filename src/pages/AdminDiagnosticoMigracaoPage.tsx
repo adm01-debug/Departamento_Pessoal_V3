@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { PageTitle } from '@/components/PageTitle';
 import { PageLayout } from '@/components/layout';
@@ -173,10 +173,6 @@ export default function AdminDiagnosticoMigracaoPage() {
   useOnMount(() => {
     run();
   });
-
-  useEffect(() => {
-    run();
-  }, []);
 
   const grouped = {
     infra: checks.filter((c) => c.category === 'infra'),
