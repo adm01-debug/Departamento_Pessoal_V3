@@ -63,7 +63,7 @@ export default function PensoesPage() {
   });
 
   const excluir = useMutation({
-    mutationFn: async (id: string) => { const { error } = await supabase.from('pensoes').delete().eq('id', id); if (error) throw error; },
+    mutationFn: async (id: string) => { const { error } = await supabase.from('pensoes').delete().eq('id', id).eq('empresa_id', empresaId!); if (error) throw error; },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['pensoes', empresaId] }); toast.success('Excluída'); },
   });
 
