@@ -83,19 +83,24 @@ export const folhaPagamentoService = {
   },
 
   /**
-   * Assina digitalmente um holerite
+   * Assina digitalmente um holerite.
+   *
+   * O selo (hash_assinatura) NÃO é calculado aqui. Ele é responsabilidade
+   * exclusiva do gatilho enforce_holerite_signed_hash, que deriva o hash do
+   * conteúdo efetivamente gravado e recusa qualquer valor vindo do cliente.
+   * A versão anterior enviava um hash do navegador baseado em timestamp — ele
+   * não provava nada (não dependia do conteúdo do holerite) e passaria a ser
+   * rejeitado pelo banco. Aqui apenas lemos de volta o selo emitido.
    */
   assinarHolerite: async (folhaId: string, colaboradorId: string): Promise<string> => {
     try {
-      const hash = await sha256Hex(`assinatura-${folhaId}-${colaboradorId}-${new Date().toISOString()}`);
-      
       const { data: colab } = await supabase
         .from('colaboradores')
         .select('nome_completo, cpf, cargo')
         .eq('id', colaboradorId)
         .single();
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('holerites')
         .upsert({
           folha_id: folhaId,
@@ -103,17 +108,24 @@ export const folhaPagamentoService = {
           colaborador_nome: colab?.nome_completo || 'N/A',
           colaborador_cpf: colab?.cpf || 'N/A',
           colaborador_cargo: colab?.cargo || 'N/A',
-          hash_assinatura: hash,
           data_assinatura: new Date().toISOString(),
           assinado: true
-        } as any);
+        } as any)
+        .select('hash_assinatura')
+        .single();
 
       if (error) throw error;
-      return (hash);
+
+      const hash = (data as { hash_assinatura: string | null } | null)?.hash_assinatura;
+      if (!hash) {
+        throw new Error('O banco não retornou o selo de assinatura do holerite');
+      }
+      return hash;
     } catch (e) {
       throw new Error('Falha ao assinar holerite digitalmente', { cause: e });
     }
   },
+
 
   /**
    * Finaliza e fecha a folha de competência.
