@@ -117,3 +117,13 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/smoke-hash-triggers.mjs
+      - name: Regressão de RLS sobre PII
+        # Reprova o build quando uma política sobre tabela com dado pessoal
+        # (CPF, PIS, salário, conta bancária, endereço, biometria...) não
+        # correlaciona com auth.uid() nem com o vínculo de empresa, ou quando
+        # deriva o tenant de claim livre do JWT. O Postgres aceita esses
+        # predicados sem reclamar — a exposição só aparece em produção.
+        env:
+          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/audit-rls-pii.mjs
+
