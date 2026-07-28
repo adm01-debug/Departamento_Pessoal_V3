@@ -90,7 +90,7 @@ describe('catalogoCursoService.criarCurso', () => {
   it('inserts and returns new curso', async () => {
     const created = { id: 'c-new', nome: 'Python' };
     const { insertFn } = setupInsertChain(created);
-    const result = await catalogoCursoService.criarCurso({ nome: 'Python' });
+    const result = await catalogoCursoService.criarCurso({ nome: 'Python', empresa_id: EMPRESA_ID });
     expect(insertFn).toHaveBeenCalledWith({ nome: 'Python' });
     expect(result).toEqual(created);
   });
@@ -159,7 +159,7 @@ describe('catalogoCursoService.criarTrilha', () => {
   it('inserts and returns new trilha', async () => {
     const created = { id: 't-new', titulo: 'Liderança' };
     const { insertFn } = setupInsertChain(created);
-    const result = await catalogoCursoService.criarTrilha({ titulo: 'Liderança' });
+    const result = await catalogoCursoService.criarTrilha({ titulo: 'Liderança', empresa_id: EMPRESA_ID });
     expect(result).toEqual(created);
   });
 
@@ -187,24 +187,24 @@ describe('catalogoCursoService.listarInscricoes', () => {
   it('returns inscricoes without filters', async () => {
     const records = [{ id: 'i1' }];
     setupListChain(records);
-    expect(await catalogoCursoService.listarInscricoes()).toEqual(records);
+    expect(await catalogoCursoService.listarInscricoes(EMPRESA_ID)).toEqual(records);
   });
 
   it('filters by curso_id when provided', async () => {
     const { chain } = setupListChain([]);
-    await catalogoCursoService.listarInscricoes('c1');
+    await catalogoCursoService.listarInscricoes(EMPRESA_ID, 'c1');
     expect(chain.eq).toHaveBeenCalledWith('curso_id', 'c1');
   });
 
   it('filters by empresa_id when provided', async () => {
     const { chain } = setupListChain([]);
-    await catalogoCursoService.listarInscricoes(undefined, 'emp-1');
+    await catalogoCursoService.listarInscricoes('emp-1');
     expect(chain.eq).toHaveBeenCalledWith('empresa_id', 'emp-1');
   });
 
   it('includes colaborador and curso joins', async () => {
     const { selectFn } = setupListChain([]);
-    await catalogoCursoService.listarInscricoes();
+    await catalogoCursoService.listarInscricoes(EMPRESA_ID);
     expect(selectFn).toHaveBeenCalledWith(
       expect.stringContaining('colaborador:colaboradores')
     );
@@ -220,7 +220,7 @@ describe('catalogoCursoService.criarInscricao', () => {
   it('inserts and returns new inscricao', async () => {
     const created = { id: 'i-new', curso_id: 'c1' };
     const { insertFn } = setupInsertChain(created);
-    const result = await catalogoCursoService.criarInscricao({ curso_id: 'c1' });
+    const result = await catalogoCursoService.criarInscricao({ curso_id: 'c1', empresa_id: EMPRESA_ID });
     expect(result).toEqual(created);
   });
 
@@ -277,7 +277,7 @@ describe('catalogoCursoService.desvincularCursoTrilha', () => {
 
   it('deletes vinculo by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await catalogoCursoService.desvincularCursoTrilha('v1');
+    await catalogoCursoService.desvincularCursoTrilha('v1', 't1');
     expect(eqFn).toHaveBeenCalledWith('id', 'v1');
   });
 });
@@ -308,7 +308,7 @@ describe('catalogoCursoService.listarCertificados', () => {
     const selectFn = vi.fn().mockReturnValue({ eq: eqFn, order: orderFn });
     mockFrom.mockReturnValue({ select: selectFn });
 
-    const result = await catalogoCursoService.listarCertificados();
+    const result = await catalogoCursoService.listarCertificados(EMPRESA_ID);
     expect(result).toEqual([{ id: 'cert1' }]);
   });
 });
