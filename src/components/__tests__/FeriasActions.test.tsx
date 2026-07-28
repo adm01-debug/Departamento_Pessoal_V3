@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render as rtlRender, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import userEvent from '@testing-library/user-event';
 
 vi.mock('@/components/ui/tooltip', () => ({
@@ -34,6 +35,14 @@ const DEFAULT_PROPS = {
   onRejeitar: vi.fn(),
   onCancelar: vi.fn(),
 };
+
+/** Renderiza com QueryClient isolado: o componente usa react-query internamente. */
+function render(ui: React.ReactElement) {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+  });
+  return rtlRender(<QueryClientProvider client={client}>{ui}</QueryClientProvider>);
+}
 
 describe('FeriasActions', () => {
   it('renders Aprovar (Gestor) button when not yet approved', () => {
