@@ -12,6 +12,7 @@
     "lint": "eslint src --ext ts,tsx",
     "audit:search-path": "node scripts/audit-db-search-path.mjs",
     "smoke:selos": "node scripts/smoke-hash-triggers.mjs",
+    "audit:rls-pii": "node scripts/audit-rls-pii.mjs",
     "lint:ci": "eslint src --ext ts,tsx --max-warnings=18",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json,md}\"",
     "format:check:changed": "bash scripts/format-check-changed.sh",
