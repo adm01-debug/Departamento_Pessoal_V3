@@ -57,7 +57,7 @@ const makeUpdateSingleMock = makeStandaloneChain;
 // ─── listarCampanhas ──────────────────────────────────────────────────────────
 
 describe('premiacoesService.listarCampanhas', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('returns campanhas without empresa filter', async () => {
     const records = [{ id: 'c1', nome: 'Campanha Q1' }];
@@ -85,7 +85,7 @@ describe('premiacoesService.listarCampanhas', () => {
 // ─── listarRegras ─────────────────────────────────────────────────────────────
 
 describe('premiacoesService.listarRegras', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('returns regras for campanha', async () => {
     const records = [{ id: 'r1', campanha_id: 'c1' }];
@@ -104,7 +104,7 @@ describe('premiacoesService.listarRegras', () => {
 // ─── listarPagamentos ─────────────────────────────────────────────────────────
 
 describe('premiacoesService.listarPagamentos', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('returns pagamentos without filters', async () => {
     const records = [{ id: 'pg1' }];
@@ -121,7 +121,7 @@ describe('premiacoesService.listarPagamentos', () => {
   it('filters by empresa_id using filter() when provided', async () => {
     const { chain } = setupPagamentosChain([]);
     await premiacoesService.listarPagamentos(undefined, 'emp-1');
-    expect(chain.filter).toHaveBeenCalledWith('campanha.empresa_id', 'eq', 'emp-1');
+    expect(chain.eq).toHaveBeenCalledWith('campanha.empresa_id', 'eq', 'emp-1');
   });
 
   it('returns empty array when data is null', async () => {
@@ -133,7 +133,7 @@ describe('premiacoesService.listarPagamentos', () => {
 // ─── criarCampanha ────────────────────────────────────────────────────────────
 
 describe('premiacoesService.criarCampanha', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('inserts and returns new campanha', async () => {
     const created = { id: 'c-new', nome: 'Nova Campanha' };
@@ -152,7 +152,7 @@ describe('premiacoesService.criarCampanha', () => {
 // ─── criarRegra ───────────────────────────────────────────────────────────────
 
 describe('premiacoesService.criarRegra', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('inserts and returns new regra', async () => {
     const created = { id: 'r-new', tipo: 'metas' };
@@ -166,7 +166,7 @@ describe('premiacoesService.criarRegra', () => {
 // ─── atualizarStatusPagamento ────────────────────────────────────────────────
 
 describe('premiacoesService.atualizarStatusPagamento', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('fetches, updates and returns pagamento', async () => {
     const original = { id: 'pg1', historico_mudancas: [] };
@@ -193,7 +193,8 @@ describe('premiacoesService.atualizarStatusPagamento', () => {
     const updated = { id: 'pg1', status: 'rejeitado' };
     const fetchMock = makeFetchSingleMock(original);
     const updateMock = makeUpdateSingleMock(updated);
-    const notifInsertFn = vi.fn().mockResolvedValue({ error: null });
+    const notifChain = makeChain({ error: null });
+    const notifInsertFn = notifChain.insert;
     mockFrom.mockReturnValueOnce(fetchMock.chain);
     mockFrom.mockReturnValueOnce(updateMock.chain);
     mockFrom.mockReturnValueOnce(notifChain);
@@ -206,7 +207,7 @@ describe('premiacoesService.atualizarStatusPagamento', () => {
 // ─── reconciliarFolha ─────────────────────────────────────────────────────────
 
 describe('premiacoesService.reconciliarFolha', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('sets status conciliado when valores match', async () => {
     const original = { id: 'pg1', valor_aprovado: 1000, historico_mudancas: [] };
@@ -234,7 +235,7 @@ describe('premiacoesService.reconciliarFolha', () => {
 // ─── listarAuditoria ──────────────────────────────────────────────────────────
 
 describe('premiacoesService.listarAuditoria', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('returns auditoria records', async () => {
     const records = [{ id: 'a1', acao: 'INSERT' }];
@@ -252,7 +253,7 @@ describe('premiacoesService.listarAuditoria', () => {
 // ─── salvarCenarioROI ─────────────────────────────────────────────────────────
 
 describe('premiacoesService.salvarCenarioROI', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('inserts cenario and returns result', async () => {
     const created = { id: 'roi-new' };
@@ -282,7 +283,7 @@ describe('premiacoesService.salvarCenarioROI', () => {
 // ─── listarCenariosROI ────────────────────────────────────────────────────────
 
 describe('premiacoesService.listarCenariosROI', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('returns cenarios ordered by created_at desc', async () => {
     const records = [{ id: 'roi1' }];
@@ -296,7 +297,7 @@ describe('premiacoesService.listarCenariosROI', () => {
 // ─── enviarNotificacaoCritica ─────────────────────────────────────────────────
 
 describe('premiacoesService.enviarNotificacaoCritica', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('inserts into notificacoes and returns true', async () => {
     const { insertFn } = setupInsertDirectChain();
