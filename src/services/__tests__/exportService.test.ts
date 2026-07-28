@@ -91,7 +91,7 @@ describe('exportPontoPDF', () => {
       lastAutoTable: { finalY: 100 },
       autoTable: autoTableFn,
     };
-    MockJsPDF.mockImplementation(() => docMock);
+    MockJsPDF.mockImplementation(function () { return docMock; });
   });
 
   it('creates jsPDF and saves a file', () => {

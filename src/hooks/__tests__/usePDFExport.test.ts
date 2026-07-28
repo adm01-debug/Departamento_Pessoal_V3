@@ -8,11 +8,11 @@ const {
   const mockSave = vi.fn();
   const mockText = vi.fn();
   const mockSetFontSize = vi.fn();
-  const MockJsPDF = vi.fn().mockImplementation(() => ({
+  const MockJsPDF = vi.fn().mockImplementation(function () { return ({
     setFontSize: mockSetFontSize,
     text: mockText,
     save: mockSave,
-  }));
+  }); });
   return {
     MockJsPDF,
     mockSave,
