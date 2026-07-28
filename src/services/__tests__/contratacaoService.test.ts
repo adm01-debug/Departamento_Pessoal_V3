@@ -41,7 +41,7 @@ describe('contratacaoService.validarDocumento', () => {
     await contratacaoService.validarDocumento('adm-1', 'rg', 'validado', 'Ok', EMPRESA_ID);
     expect(mockFrom).toHaveBeenCalledWith('admissoes');
     expect(updateFn).toHaveBeenCalledWith(expect.objectContaining({
-      checklist_identidade: true,
+      checklist_rg: true,
     }));
     expect(eqFn).toHaveBeenCalledWith('id', 'adm-1');
     expect(mockLog).toHaveBeenCalledWith(expect.objectContaining({
