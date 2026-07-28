@@ -25641,6 +25641,10 @@ export type Database = {
       purge_expired_idempotency_keys: { Args: never; Returns: number }
       purge_expired_security_data: { Args: never; Returns: Json }
       purge_old_lock_conflicts: { Args: never; Returns: number }
+      purge_rate_limits: {
+        Args: { p_older_than_sec?: number }
+        Returns: number
+      }
       reconciliar_afdt: {
         Args: { _importacao_id: string; _janela_seg?: number }
         Returns: {
