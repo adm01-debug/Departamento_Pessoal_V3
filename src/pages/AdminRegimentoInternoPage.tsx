@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { todayLocalISO } from '@/utils/dateLocal';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
-import { useOnMount } from '@/hooks/useMountEffects';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -46,10 +46,6 @@ type Pendente = {
 
 const AdminRegimentoInternoPage = () => {
   const { empresaAtual } = useEmpresas();
-  const [loading, setLoading] = useState(true);
-  const [documentos, setDocumentos] = useState<Documento[]>([]);
-  const [dash, setDash] = useState<Dashboard | null>(null);
-  const [pendentes, setPendentes] = useState<Pendente[]>([]);
   const [showNew, setShowNew] = useState(false);
   const [novoTitulo, setNovoTitulo] = useState('');
   const [novoConteudo, setNovoConteudo] = useState('');
@@ -61,40 +57,50 @@ const AdminRegimentoInternoPage = () => {
     [documentos]
   );
 
-  const carregar = async () => {
-    if (!empresaAtual?.id) return;
-    setLoading(true);
-    try {
+  const empresaId = empresaAtual?.id;
+
+  // Data fetching via React Query: chave por empresa (multi-tenant), sem efeito manual.
+  const regimentoQuery = useQuery({
+    queryKey: ['sst-regimento', empresaId],
+    enabled: !!empresaId,
+    queryFn: async () => {
       const [docsRes, dashRes, pendRes] = await Promise.all([
         supabase
           .from('sst_regimento_documentos')
           .select('*')
-          .eq('empresa_id', empresaAtual.id)
+          .eq('empresa_id', empresaId!)
           .order('versao', { ascending: false })
           .limit(50),
-        supabase.rpc('sst_regimento_dashboard', { p_empresa_id: empresaAtual.id }),
-        supabase.rpc('sst_regimento_pendentes_lista', { p_empresa_id: empresaAtual.id }),
+        supabase.rpc('sst_regimento_dashboard', { p_empresa_id: empresaId! }),
+        supabase.rpc('sst_regimento_pendentes_lista', { p_empresa_id: empresaId! }),
       ]);
       if (docsRes.error) throw docsRes.error;
       if (dashRes.error) throw dashRes.error;
-      setDocumentos((docsRes.data ?? []) as Documento[]);
-      setDash(dashRes.data as unknown as Dashboard);
-      setPendentes((pendRes.error ? [] : (pendRes.data ?? [])) as Pendente[]);
-    } catch (err) {
-      loggerService.error('Falha ao carregar Regimento Interno', { empresaId: empresaAtual?.id }, err instanceof Error ? err : new Error(String(err)));
-      toast.error('Falha ao carregar Regimento Interno');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useOnMount(() => {
-    carregar();
+      return {
+        documentos: (docsRes.data ?? []) as Documento[],
+        dash: dashRes.data as unknown as Dashboard,
+        pendentes: (pendRes.error ? [] : (pendRes.data ?? [])) as Pendente[],
+      };
+    },
   });
 
-  useEffect(() => {
-    carregar();
-  }, [empresaAtual?.id]);
+  if (regimentoQuery.error) {
+    loggerService.error(
+      'Falha ao carregar Regimento Interno',
+      { empresaId },
+      regimentoQuery.error instanceof Error ? regimentoQuery.error : new Error(String(regimentoQuery.error))
+    );
+  }
+
+  const EMPTY_DOCS: Documento[] = useMemo(() => [], []);
+  const EMPTY_PEND: Pendente[] = useMemo(() => [], []);
+  const documentos = regimentoQuery.data?.documentos ?? EMPTY_DOCS;
+  const dash = regimentoQuery.data?.dash ?? null;
+  const pendentes = regimentoQuery.data?.pendentes ?? EMPTY_PEND;
+  const loading = regimentoQuery.isPending && !!empresaId;
+
+  const carregar = () => { void regimentoQuery.refetch(); };
+
 
   const criarDocumento = async () => {
     if (!empresaAtual?.id) return;
