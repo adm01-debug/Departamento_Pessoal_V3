@@ -4,13 +4,14 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { useColaboradorVinculo } from '@/hooks/useColaboradorVinculo';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { loggerService } from '@/services/loggerService';
 
 import { CheckCircle2, FileText, Loader2, ShieldCheck } from 'lucide-react';
 
@@ -43,7 +44,10 @@ export function PortalRegimentoCard() {
   const [aceite, setAceite] = useState(false);
   const [documento, setDocumento] = useState<DocumentoVigente | null>(null);
   const [assinatura, setAssinatura] = useState<AssinaturaExistente | null>(null);
-  const [colaboradorId, setColaboradorId] = useState<string | null>(null);
+  // Fonte única do vínculo colaborador↔login (hook compartilhado com as demais
+  // abas do portal). Falha de vínculo não impede a leitura do regimento:
+  // o cartão apenas não oferece a assinatura.
+  const { colaboradorId } = useColaboradorVinculo();
 
   const empresaId = empresaAtual?.id;
 
@@ -52,42 +56,7 @@ export function PortalRegimentoCard() {
     setLoading(true);
     try {
       const db = supabase as unknown as SupabaseClient;
-
-      // Vínculo colaborador ↔ conta de login.
-      // O cadastro do colaborador costuma ser criado pelo RH antes de a pessoa
-      // ter conta (ou depois, se ela já era usuária). A RPC concilia as duas
-      // ordens casando pelo e-mail da conta autenticada — o e-mail é derivado
-      // de auth.uid() no servidor, nunca enviado daqui.
-      // Falha de vínculo não impede a leitura do regimento: o cartão apenas
-      // não oferece a assinatura.
-      const { error: vincErr } = await db.rpc('vincular_colaborador_ao_usuario');
-      if (vincErr) {
-        loggerService.error('Falha ao autovincular colaborador ao usuário', {
-          userId: user.id,
-          empresaId,
-          code: (vincErr as { code?: string }).code,
-          error: vincErr,
-        });
-      }
-
-      const { data: colab, error: colabErr } = await db
-        .from('colaboradores')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('empresa_id', empresaId)
-        .maybeSingle();
-      if (colabErr) {
-        loggerService.error('Falha ao resolver vínculo colaborador↔usuário', {
-          userId: user.id,
-          empresaId,
-          code: (colabErr as { code?: string }).code,
-          error: colabErr,
-        });
-      }
-      const cid: string | null = colab?.id ?? null;
-      setColaboradorId(cid);
-
-
+      const cid = colaboradorId;
 
       // Documento publicado mais recente
       const { data: doc, error: docErr } = await db
@@ -118,7 +87,8 @@ export function PortalRegimentoCard() {
     } finally {
       setLoading(false);
     }
-  }, [empresaId, user?.id]);
+  }, [empresaId, user?.id, colaboradorId]);
+
 
   // Uma única fonte de disparo: `carregar` é memoizado por (empresaId, user.id),
   // então este efeito cobre o mount e as trocas de empresa/usuário sem

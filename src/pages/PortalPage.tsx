@@ -14,6 +14,8 @@ import { PortalFinanceiroTab } from '@/components/portal/PortalFinanceiroTab';
 import { PortalDocumentosTab } from '@/components/portal/PortalDocumentosTab';
 import { PortalMeusDadosTab } from '@/components/portal/PortalMeusDadosTab';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { useColaboradorVinculo } from '@/hooks/useColaboradorVinculo';
+
 
 function usePortalCompleto(userId: string | undefined) {
   return useQuery({
@@ -49,7 +51,10 @@ export default function PortalPage() {
   const { user } = useAuth();
   const { empresaAtual } = useEmpresas();
   const { data } = usePortalCompleto(user?.id);
+  // id do CADASTRO trabalhista — não confundir com profiles.id (FK aponta para colaboradores).
+  const { colaboradorId } = useColaboradorVinculo();
   const [tab, setTab] = useState('visao-geral');
+
 
   const nome = data?.profile?.nome || user?.name || user?.email?.split('@')[0] || 'Colaborador';
   const hoje = new Date();
@@ -75,7 +80,7 @@ export default function PortalPage() {
           </TabsList>
           <TabsContent value="visao-geral"><PortalOverviewTab nome={nome} data={data} completude={completude} navigate={navigate} /></TabsContent>
           <TabsContent value="financeiro"><PortalFinanceiroTab holerites={data?.holerites || []} beneficios={data?.beneficios || []} /></TabsContent>
-          <TabsContent value="documentos"><PortalDocumentosTab navigate={navigate} colaboradorId={data?.profile?.id} empresaId={empresaAtual?.id} /></TabsContent>
+          <TabsContent value="documentos"><PortalDocumentosTab navigate={navigate} colaboradorId={colaboradorId ?? undefined} empresaId={empresaAtual?.id} /></TabsContent>
           <TabsContent value="meus-dados"><PortalMeusDadosTab nome={nome} email={user?.email || ''} profile={data?.profile} userId={user?.id || ''} navigate={navigate} /></TabsContent>
           <TabsContent value="regimento"><PortalRegimentoCard /></TabsContent>
         </Tabs>
