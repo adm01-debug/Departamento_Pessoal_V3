@@ -98,9 +98,12 @@ export default function AdminCatPage() {
     },
   });
 
-  const cats = catsQuery.data?.cats ?? [];
-  const colaboradores = catsQuery.data?.colaboradores ?? [];
-  const dashboard = catsQuery.data?.dashboard ?? {};
+  const EMPTY_CATS: CatRow[] = useMemo(() => [], []);
+  const EMPTY_COLS: { id: string; nome: string }[] = useMemo(() => [], []);
+  const EMPTY_DASH: Record<string, unknown> = useMemo(() => ({}), []);
+  const cats = catsQuery.data?.cats ?? EMPTY_CATS;
+  const colaboradores = catsQuery.data?.colaboradores ?? EMPTY_COLS;
+  const dashboard = catsQuery.data?.dashboard ?? EMPTY_DASH;
   const loading = catsQuery.isPending && !!empresaId;
 
   const carregar = () => { void catsQuery.refetch(); };
