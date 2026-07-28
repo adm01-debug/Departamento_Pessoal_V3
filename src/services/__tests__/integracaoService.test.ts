@@ -59,7 +59,7 @@ describe('cnabService.getConfig', () => {
     const { selectFn, limitFn } = setupMaybeSingleChain(null);
     await cnabService.getConfig(EMPRESA_ID);
     expect(mockFrom).toHaveBeenCalledWith('cnab_configuracoes');
-    expect(selectFn).toHaveBeenCalledWith('*');
+    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('created_at'));
     expect(limitFn).toHaveBeenCalledWith(1);
   });
 
@@ -79,7 +79,7 @@ describe('cnabService.saveConfig', () => {
     const config = { banco_nome: 'Itaú', agencia: '1234' };
     await cnabService.saveConfig(EMPRESA_ID, config);
     expect(mockFrom).toHaveBeenCalledWith('cnab_configuracoes');
-    expect(upsertFn).toHaveBeenCalledWith(config);
+    expect(upsertFn).toHaveBeenCalledWith({ ...config, empresa_id: EMPRESA_ID });
   });
 
   it('throws on DB error', async () => {
@@ -111,7 +111,7 @@ describe('cnabService.getRemessas', () => {
     const { selectFn, orderFn, limitFn } = setupOrderLimitChain([]);
     await cnabService.getRemessas(EMPRESA_ID);
     expect(mockFrom).toHaveBeenCalledWith('cnab_remessas');
-    expect(selectFn).toHaveBeenCalledWith('*');
+    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('created_at'));
     expect(orderFn).toHaveBeenCalledWith('created_at', { ascending: false });
     expect(limitFn).toHaveBeenCalledWith(50);
   });
@@ -144,7 +144,7 @@ describe('webhookService.listar', () => {
     const { selectFn, orderFn } = setupOrderChain([]);
     await webhookService.listar(EMPRESA_ID);
     expect(mockFrom).toHaveBeenCalledWith('webhooks_config');
-    expect(selectFn).toHaveBeenCalledWith('*');
+    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('created_at'));
     expect(orderFn).toHaveBeenCalledWith('created_at', { ascending: false });
   });
 
@@ -165,7 +165,7 @@ describe('webhookService.criar', () => {
     const payload = { nome: 'My Hook', url: 'https://example.com/hook', eventos: ['admissao'] };
     await webhookService.criar(EMPRESA_ID, payload);
     expect(mockFrom).toHaveBeenCalledWith('webhooks_config');
-    expect(insertFn).toHaveBeenCalledWith(payload);
+    expect(insertFn).toHaveBeenCalledWith({ ...payload, empresa_id: EMPRESA_ID });
   });
 
   it('throws on DB error', async () => {
@@ -181,9 +181,7 @@ describe('webhookService.excluir', () => {
   beforeEach(() => { vi.resetAllMocks(); });
 
   it('deletes webhook by id', async () => {
-    const eqFn = vi.fn().mockResolvedValue({ error: null });
-    const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
-    mockFrom.mockReturnValue({ delete: deleteFn });
+    const { deleteFn, eqFn } = setupChain(null, null);
     await webhookService.excluir(EMPRESA_ID, 'w-1');
     expect(mockFrom).toHaveBeenCalledWith('webhooks_config');
     expect(deleteFn).toHaveBeenCalled();
@@ -191,9 +189,7 @@ describe('webhookService.excluir', () => {
   });
 
   it('throws on DB error', async () => {
-    const eqFn = vi.fn().mockResolvedValue({ error: { message: 'fail' } });
-    const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
-    mockFrom.mockReturnValue({ delete: deleteFn });
+    setupChain(null, { message: 'fail' });
     await expect(webhookService.excluir(EMPRESA_ID, 'w-1')).rejects.toBeDefined();
   });
 });
@@ -220,7 +216,7 @@ describe('webhookService.getLogs', () => {
     const { selectFn, orderFn, limitFn } = setupOrderLimitChain([]);
     await webhookService.getLogs(EMPRESA_ID);
     expect(mockFrom).toHaveBeenCalledWith('webhook_logs');
-    expect(selectFn).toHaveBeenCalledWith('*');
+    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('created_at'));
     expect(orderFn).toHaveBeenCalledWith('created_at', { ascending: false });
     expect(limitFn).toHaveBeenCalledWith(50);
   });
