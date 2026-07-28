@@ -52,11 +52,11 @@ describe('useDataAccessLog', () => {
     await vi.waitFor(() => expect(mockFrom).toHaveBeenCalledWith('audit_log'));
     expect(mockInsert).toHaveBeenCalledWith(
       expect.objectContaining({
-        usuario_id: 'user-1',
+        user_id: 'user-1',
         acao: 'VISUALIZACAO',
         tabela: 'colaboradores',
         registro_id: 'c-1',
-        empresa_id: 'emp-1',
+        dados_novos: expect.objectContaining({ empresa_id: 'emp-1' }),
       })
     );
   });
