@@ -11,6 +11,11 @@ vi.mock('@/components/ui/tooltip', () => ({
 }));
 
 // O hook real consome o AuthContext; em teste unitário isolamos a dependência.
+// Depende do AuthContext (usuário atual) — isolado no teste unitário.
+vi.mock('@/hooks/ferias/useAdiantamento13', () => ({
+  useSolicitarAdiantamento13: () => ({ mutate: vi.fn(), isPending: false }),
+}));
+
 vi.mock('@/hooks/useAssinarAvisoFerias', () => ({
   useAssinarAvisoFerias: () => ({
     baixarAvisoAssinado: vi.fn(),
