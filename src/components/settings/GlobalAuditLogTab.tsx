@@ -9,7 +9,6 @@ import { Spinner } from '@/components/ui/spinner';
 import { ScrollText, Search, Download, Calendar, User, Tag, Filter } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import { motion } from 'framer-motion';
 import { exportPontoCSV } from '@/services/exportService';
 import { maskEmail } from '@/utils/piiMask';

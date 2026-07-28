@@ -3,8 +3,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+  DialogDescription} from "@/components/ui/dialog";
 import { AdmissaoChecklist, Documento } from "@/components/admissao/AdmissaoChecklist";
 import { useContratacaoDigital } from "@/hooks/useContratacaoDigital";
 import { useAdmissaoWorkflow } from "@/hooks/useAdmissaoWorkflow";
@@ -18,7 +17,7 @@ import {
   History, 
   CheckCircle2, 
   Clock, 
-  AlertCircle,
+  
   ExternalLink,
   ShieldCheck,
   Send

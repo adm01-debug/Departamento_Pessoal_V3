@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { HardHat, Plus, Fingerprint } from 'lucide-react';
+import { Plus, Fingerprint } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { toast } from 'sonner';
@@ -36,15 +36,13 @@ export default function AdminEpisFichasPage() {
       if (error) throw error;
       return data ?? [];
     },
-    staleTime: 5 * 60_000,
-  });
+    staleTime: 5 * 60_000});
 
   const kpis = {
     total: fichas.length,
     pendentes: fichas.filter((f) => f.status === 'pendente').length,
     assinadas: fichas.filter((f) => f.status === 'assinada').length,
-    recusas: fichas.filter((f) => f.status === 'recusada').length,
-  };
+    recusas: fichas.filter((f) => f.status === 'recusada').length};
 
   const assinar = async (fichaId: string, dataUrl: string) => {
     try {
@@ -54,14 +52,12 @@ export default function AdminEpisFichasPage() {
         assinatura_tipo: 'canvas',
         assinatura_dados: dataUrl,
         hash_sha256: hash,
-        user_agent: navigator.userAgent,
-      });
+        user_agent: navigator.userAgent});
       if (sigErr) throw sigErr;
       const { error: updErr } = await supabase.from('epis_fichas').update({
         status: 'assinada',
         assinada_em: new Date().toISOString(),
-        hash_sha256: hash,
-      }).eq('id', fichaId);
+        hash_sha256: hash}).eq('id', fichaId);
       if (updErr) throw updErr;
       toast.success('Ficha assinada — hash registrado para integridade');
       setSignOpen(null);

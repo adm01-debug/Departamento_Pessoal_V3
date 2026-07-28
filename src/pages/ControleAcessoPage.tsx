@@ -15,7 +15,7 @@ import { controleAcessoService } from '@/services/controleAcessoService';
 import { colaboradorService } from '@/services';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
-import { Plus, DoorOpen, DoorClosed, MapPin, Fingerprint, LogIn, LogOut } from 'lucide-react';
+import { Plus, MapPin, Fingerprint, LogIn, LogOut } from 'lucide-react';
 
 export default function ControleAcessoPage() {
   const { empresaAtual } = useEmpresas();
@@ -29,8 +29,7 @@ export default function ControleAcessoPage() {
   const registrar = useMutation({
     mutationFn: () => controleAcessoService.registrar({ ...form, empresa_id: empresaAtual?.id }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['controle_acesso'] }); setOpen(false); toast.success('Acesso registrado!'); setForm({ colaborador_id: '', tipo: 'entrada', metodo: 'manual', local: '', area: '' }); },
-    onError: () => toast.error('Erro ao registrar'),
-  });
+    onError: () => toast.error('Erro ao registrar')});
 
   const entradas = registros.filter((r: any) => r.tipo === 'entrada').length;
   const saidas = registros.filter((r: any) => r.tipo === 'saida').length;

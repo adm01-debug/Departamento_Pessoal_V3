@@ -1,8 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Timer, Clock, AlertTriangle, ArrowUpRight, ArrowDownRight, Coffee, Sparkles, BrainCircuit } from 'lucide-react';
+import { Timer, Clock, AlertTriangle, ArrowUpRight, ArrowDownRight, Coffee, BrainCircuit } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import { useMemo } from 'react';
 

@@ -1,5 +1,5 @@
 import React, { Component, type ReactNode } from 'react';
-import { AlertTriangle, RefreshCw, Home, ShieldAlert, Send } from 'lucide-react';
+import { RefreshCw, Home, ShieldAlert, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { loggerService } from '@/services/loggerService';

@@ -24,7 +24,7 @@ import { format } from 'date-fns';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell } from 'recharts';
 import type { UiRecord } from '@/types/uiRecord';
 const tipoLabels: Record<string, string> = {
   doenca: 'Doença',
@@ -38,8 +38,7 @@ const tipoLabels: Record<string, string> = {
   servico_militar: 'Serviço Militar',
   mandato_sindical: 'Mandato Sindical',
   suspensao_disciplinar: 'Suspensão Disc.',
-  outros: 'Outros',
-};
+  outros: 'Outros'};
 
 export default function AfastamentosPage() {
   const { afastamentos, isLoading, filtros, setFiltros } = useAfastamentos();
@@ -60,8 +59,7 @@ export default function AfastamentosPage() {
     ativos: afastamentos.filter((a: any) => a.status === 'ativo').length,
     pendentes: afastamentos.filter((a: any) => a.status === 'pendente').length,
     finalizados: afastamentos.filter((a: any) => a.status === 'finalizado' || a.status === 'concluido').length,
-    diasTotais: afastamentos.reduce<number>((sum, a: any) => sum + Number(a.dias_total || 0), 0),
-  };
+    diasTotais: afastamentos.reduce<number>((sum, a: any) => sum + Number(a.dias_total || 0), 0)};
 
   const filteredAfastamentos = afastamentos.filter((a: any) => {
     const matchSearch = 

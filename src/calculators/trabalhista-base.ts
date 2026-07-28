@@ -1,5 +1,4 @@
 // Cálculos base para Verbas Trabalhistas Complementares: Horas Extras, DSR, 13º Salário
-import { SALARIO_MINIMO_2026 } from './tabelas';
 
 /**
  * Calcula o valor das Horas Extras

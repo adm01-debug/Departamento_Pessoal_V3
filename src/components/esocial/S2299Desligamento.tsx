@@ -1,6 +1,6 @@
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
-import { User, Calendar, LogOut, FileText, Banknote } from 'lucide-react';
+import { User, LogOut, FileText, Banknote } from 'lucide-react';
 import { maskCpfDisplay } from '@/utils/piiMask';
 
 export function S2299Desligamento({ dados }: { dados: any }) {

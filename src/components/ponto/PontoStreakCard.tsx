@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Flame, CheckCircle2, XCircle, Timer, TrendingUp, Target } from 'lucide-react';
+import { Flame, CheckCircle2, XCircle, Timer, Target } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts';
@@ -29,8 +29,7 @@ export function PontoStreakCard() {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!user?.id,
-  });
+    enabled: !!user?.id});
 
   const stats = useMemo(() => {
     let pontual = 0, atrasado = 0, ausente = 0, bestStreak = 0, tempStreak = 0;

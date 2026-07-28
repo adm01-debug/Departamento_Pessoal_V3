@@ -8,7 +8,7 @@ import { EmptyList } from '@/components/ui/empty-state';
 import { Spinner } from '@/components/ui/spinner';
 import { Badge } from '@/components/ui/badge';
 import { auditoriaService } from '@/services/auditoriaService';
-import { Shield, Eye, Clock, User, Database, Search, Download, FileSpreadsheet } from 'lucide-react';
+import { Shield, Eye, Clock, User, Database, FileSpreadsheet } from 'lucide-react';
 import { useExcelExport } from '@/hooks/useExcelExport';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -23,8 +23,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 const acaoColors: Record<string, string> = {
   INSERT: 'bg-success/15 text-success border-0',
   UPDATE: 'bg-info/15 text-info border-0',
-  DELETE: 'bg-destructive/15 text-destructive border-0',
-};
+  DELETE: 'bg-destructive/15 text-destructive border-0'};
 
 /** Linha de log de auditoria exibida no drawer de detalhes */
 interface AuditLogRow {
@@ -53,8 +52,7 @@ export default function AuditoriaPage() {
   const { data: logs, isLoading } = useQuery({
     queryKey: ['auditoria', empresaId],
     queryFn: () => auditoriaService.listar(empresaId, { limite: 500 }),
-    enabled: !!empresaId,
-  });
+    enabled: !!empresaId});
 
   const uniqueTables = useMemo((): string[] => {
     if (!logs) return [];

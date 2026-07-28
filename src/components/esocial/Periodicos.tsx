@@ -2,7 +2,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Banknote, User, Calendar, Hash, FileText, CheckCircle2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { maskCpfDisplay } from '@/utils/piiMask';
 
 export function S1200Remuneracao({ dados }: { dados: any }) {

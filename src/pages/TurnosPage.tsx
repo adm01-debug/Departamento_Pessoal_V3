@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -25,25 +25,21 @@ export default function TurnosPage() {
   const { data: turnos = [], isLoading } = useQuery({
     queryKey: ['turnos', empresaAtual?.id],
     queryFn: () => turnoService.listarTurnos(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const { data: escalas = [] } = useQuery({
     queryKey: ['escalas_trabalho', empresaAtual?.id],
     queryFn: () => turnoService.listarEscalas(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const criar = useMutation({
     mutationFn: () => turnoService.criarTurno({ ...form, empresa_id: empresaAtual?.id }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['turnos'] }); setOpen(false); toast.success('Turno criado!'); setForm({ nome: '', horario_inicio: '08:00', horario_fim: '17:00', intervalo_minutos: 60, cor: '#3b82f6' }); },
-    onError: () => toast.error('Erro ao criar turno'),
-  });
+    onError: () => toast.error('Erro ao criar turno')});
 
   const excluir = useMutation({
     mutationFn: (id: string) => turnoService.excluirTurno(id, empresaAtual!.id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['turnos'] }); toast.success('Turno excluído'); },
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['turnos'] }); toast.success('Turno excluído'); }});
 
   return (
     <>

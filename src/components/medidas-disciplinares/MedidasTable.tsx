@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
-import { Trash2, Users, FileText, CheckCircle2, XCircle, Eye, ExternalLink, AlertTriangle, FileDown, Loader2, MessageSquareWarning } from 'lucide-react';
+import { Trash2, Users, CheckCircle2, XCircle, ExternalLink, AlertTriangle, FileDown, Loader2, MessageSquareWarning } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { safeHref } from '@/utils/safeUrl';
@@ -13,15 +13,13 @@ const tipoLabels: Record<string, string> = {
   advertencia_verbal: 'Adv. Verbal',
   advertencia_escrita: 'Adv. Escrita',
   suspensao: 'Suspensão',
-  justa_causa: 'Justa Causa',
-};
+  justa_causa: 'Justa Causa'};
 
 const gravidade: Record<string, 'secondary' | 'default' | 'destructive'> = {
   advertencia_verbal: 'secondary',
   advertencia_escrita: 'default',
   suspensao: 'destructive',
-  justa_causa: 'destructive',
-};
+  justa_causa: 'destructive'};
 
 const artigosCLT: Record<string, string> = {
   art_482_a: 'Art. 482, a — Improbidade',
@@ -35,8 +33,7 @@ const artigosCLT: Record<string, string> = {
   art_482_i: 'Art. 482, i — Insubordinação',
   art_482_j: 'Art. 482, j — Abandono',
   art_482_k: 'Art. 482, k — Ato lesivo',
-  outro: 'Outro',
-};
+  outro: 'Outro'};
 
 interface MedidasTableProps {
   data: any[];

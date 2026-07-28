@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, XCircle, Clock, FileText, History, Info, ExternalLink, Calendar, MapPin, Shield, Search, Download, CheckSquare, Square, MoreHorizontal, Zap } from 'lucide-react';
+import { CheckCircle2, XCircle, Clock, FileText, History, MapPin, Shield, Search, Download, Zap } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
@@ -71,8 +71,7 @@ export function PontoAdjustmentRequests() {
       if (error) throw error;
       return (data || []) as SolicitacaoAjustePonto[];
     },
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const { data: requestAuditLogs = [], isLoading: isLoadingAudit } = useQuery({
     queryKey: ['trilha-auditoria-ponto', selectedRequest?.id],
@@ -86,8 +85,7 @@ export function PontoAdjustmentRequests() {
       if (error) throw error;
       return (data || []) as TrilhaAuditoriaPonto[];
     },
-    enabled: !!selectedRequest?.id,
-  });
+    enabled: !!selectedRequest?.id});
 
   const mutation = useMutation({
     mutationFn: async ({ id, status, observacoes }: { id: string, status: string, observacoes?: string }) => {

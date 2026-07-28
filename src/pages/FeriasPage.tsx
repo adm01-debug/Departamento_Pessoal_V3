@@ -8,9 +8,8 @@ import { TableSkeleton } from '@/components/ui/module-skeleton';
 import { FeriasKPIs, FeriasTable, FeriasDashboard, FeriasInsights, FeriasAlertasPagamentoCard, FeriasReconciliacaoCard, FeriasReconciliacaoHistoricoCard } from '@/components/ferias';
 import { FeriasColetivasTab } from '@/components/ferias/FeriasColetivasTab';
 import { FeriasRelatorioDialog } from '@/components/ferias/FeriasRelatorioDialog';
-import { feriasPDF } from '@/utils/feriasPDF';
 import { useFerias } from '@/hooks/useFerias';
-import { feriasService, auditoriaService } from '@/services';
+import { feriasService } from '@/services';
 import { useFeriasAprovacao } from '@/hooks/useFeriasAprovacao';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { useDataAccessLog } from '@/hooks/useDataAccessLog';
@@ -117,8 +116,7 @@ export default function FeriasPage() {
       const result = await edgeFunctionsService.calcularFerias({
         salario_base: parseFloat(calcForm.salario) || 0,
         dias_ferias: parseInt(calcForm.diasFerias) || 30,
-        dias_abono: parseInt(calcForm.diasAbono) || 0,
-      });
+        dias_abono: parseInt(calcForm.diasAbono) || 0});
       setCalcResult(result as Record<string, any>);
       toast.success('Cálculo validado pelo servidor');
     } catch (err) {
@@ -136,8 +134,7 @@ export default function FeriasPage() {
     aprovadas: ferias?.filter((s: any) => s.status === 'aprovada' || s.aprovado_rh).length || 0,
     emGozo: ferias?.filter((s: any) => s.status === 'em_gozo').length || 0,
     abonoPecuniario: ferias?.filter((s: any) => s.abono_pecuniario).length || 0,
-    vencidas: ferias?.filter((s: any) => s.status === 'vencida').length || 0,
-  };
+    vencidas: ferias?.filter((s: any) => s.status === 'vencida').length || 0};
 
 
   return (

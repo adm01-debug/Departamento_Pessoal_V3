@@ -3,9 +3,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { 
   Sun, Moon, Sunset, Gift, Calendar, AlertTriangle, 
-  CheckCircle2, Clock, UserPlus, UserMinus, FileText, 
-  ChevronRight, Sparkles, Coffee, Database, Zap,
-  Loader2, RefreshCw, Trash2, Bell, ShieldAlert
+  CheckCircle2, Clock, UserPlus, FileText, 
+  ChevronRight, Coffee, Database, Zap,
+  Loader2, Trash2, Bell, ShieldAlert
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -81,16 +81,13 @@ function useMorningBriefing() {
       const admissoesHoje = (admData || []).map(a => ({ nome: a.nome, cargo: a.cargo }));
       const vencimentosHoje = (asoData || []).map((a: any) => ({
         descricao: `Exame ${a.tipo} de ${a.colaboradores?.nome_completo || 'Colaborador'} - ${format(parseISO(a.data_validade), 'dd/MM')}`,
-        tipo: 'exame',
-      }));
+        tipo: 'exame'}));
 
       return {
         aniversariantes, feriasPeriodo, afastadosHoje, admissoesHoje, vencimentosHoje,
         totalAtivos: totalAtivos || 0, pontosRegistradosHoje: pontosHoje || 0,
-        esocialHealth,
-      };
-    },
-  });
+        esocialHealth};
+    }});
 }
 
 function BriefingItem({ icon: Icon, label, count, gradient, onClick }: {

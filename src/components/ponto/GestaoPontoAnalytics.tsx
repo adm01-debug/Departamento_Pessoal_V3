@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
-  Cell, PieChart, Pie, Legend, LineChart, Line, AreaChart, Area 
+  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
+  Cell, PieChart, Pie, Legend, AreaChart, Area 
 } from 'recharts';
 import { 
-  Activity, Users, Clock, Calendar, ShieldAlert, Gavel, 
-  TrendingUp, AlertTriangle, CheckCircle2, Zap, BrainCircuit, ShieldCheck
+  Activity, Users, Clock, ShieldAlert, Gavel, 
+  TrendingUp, AlertTriangle, Zap, BrainCircuit, ShieldCheck
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';

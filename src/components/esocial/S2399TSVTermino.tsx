@@ -1,6 +1,6 @@
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
-import { User, Calendar, LogOut, FileText } from 'lucide-react';
+import { User, LogOut, FileText } from 'lucide-react';
 import { maskCpfDisplay } from '@/utils/piiMask';
 
 export function S2399TSVTermino({ dados }: { dados: any }) {

@@ -11,11 +11,10 @@ import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { supabase } from '@/integrations/supabase/client';
-import { cn } from '@/lib/utils';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { Plus, Users, Trash2, Edit2 } from 'lucide-react';
+import { Plus, Trash2, Edit2 } from 'lucide-react';
 import type { LooseRow } from '@/types/db';
 export default function TimesPage() {
   const { empresaAtual } = useEmpresas();
@@ -33,8 +32,7 @@ export default function TimesPage() {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const handleSubmit = useMutation({
     mutationFn: async (d: any) => {
@@ -53,13 +51,11 @@ export default function TimesPage() {
       setForm({ nome: '', descricao: '' });
       toast.success(editingItem ? 'Time atualizado!' : 'Time criado!'); 
     },
-    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar equipe.')),
-  });
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar equipe.'))});
 
   const excluir = useMutation({
     mutationFn: async (id: string) => { const { error } = await supabase.from('times').delete().eq('id', id).eq('empresa_id', empresaAtual!.id); if (error) throw error; },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['times'] }); toast.success('Time excluído!'); },
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['times'] }); toast.success('Time excluído!'); }});
 
   if (isLoading) return <PageLayout title="Times"><Spinner /></PageLayout>;
 

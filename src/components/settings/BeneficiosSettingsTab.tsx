@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { FormSwitch } from '@/components/forms';
 import { Spinner } from '@/components/ui/spinner';
 import { supabase } from '@/integrations/supabase/client';
-import { Gift, Save, RefreshCw, Plus, Trash2 } from 'lucide-react';
+import { Gift, RefreshCw, Plus, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
@@ -31,8 +31,7 @@ export function BeneficiosSettingsTab() {
         throw error;
       }
       return data || [];
-    },
-  });
+    }});
 
   const criar = useMutation({
     mutationFn: async (d: typeof form) => {
@@ -56,8 +55,7 @@ export function BeneficiosSettingsTab() {
       setForm({ nome: '', tipo: '', valor: '' });
       toast.success('Regra de benefício criada');
     },
-    onError: (e: any) => toast.error(safeErrorMessage(e, 'Erro ao criar regra de benefício.')),
-  });
+    onError: (e: any) => toast.error(safeErrorMessage(e, 'Erro ao criar regra de benefício.'))});
 
   const alternarStatus = useMutation({
     mutationFn: async ({ id, ativo }: { id: string; ativo: boolean }) => {
@@ -67,8 +65,7 @@ export function BeneficiosSettingsTab() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['configuracoes-beneficios'] });
       toast.success('Status atualizado');
-    },
-  });
+    }});
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">

@@ -2,7 +2,7 @@ import { PageTitle } from '@/components/PageTitle';
 import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Upload, Calculator, RefreshCw, Shield, Loader2, Banknote, Lock, History } from 'lucide-react';
+import { Upload, RefreshCw, Shield, Loader2, Banknote, Lock } from 'lucide-react';
 import { edgeFunctionsService } from '@/services/edgeFunctionsService';
 import { PageLayout } from '@/components/layout';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -16,7 +16,6 @@ import { useDataAccessLog } from '@/hooks/useDataAccessLog';
 import { safeErrorMessage } from '@/utils/safeError';
 import { Card, CardContent } from '@/components/ui/card';
 import { FolhaKPIs, FolhaPipeline, FolhaValidationAlerts, FolhaComposicao, Simulador13Dialog, SimuladorWhatIf, CNABDialog, RelatorioContabilDialog, FGTSDigitalDashboard, RubricasDialog, CalculoFolhaWizard, PagamentoBancarioWizard, FolhaAuditTimeline, FolhaDashboard, FolhaESocialSync } from '@/components/folha';
-import { folhaCalc } from '@/utils/folhaCalc';
 
 
 
@@ -92,13 +91,10 @@ function useFolhaResumo(competencia: string, empresaId?: string) {
           beneficios: hasData ? 'processado' : 'pendente',
           calculo: hasData ? 'executado' : 'pendente',
           conferencia: 'pendente',
-          fechamento: (folhaData?.[0]?.folha as any)?.status || 'aberto',
-        },
-      };
+          fechamento: (folhaData?.[0]?.folha as any)?.status || 'aberto'}};
     },
     enabled: !!empresaId,
-    staleTime: 2 * 60 * 1000,
-  });
+    staleTime: 2 * 60 * 1000});
 }
 
 /* ─── Main Page ─── */
@@ -133,8 +129,7 @@ export default function FolhaPagamentoPage() {
       queryClient.invalidateQueries({ queryKey: ['folha-resumo', competencia] });
       toast.success('Folha calculada com sucesso!');
     },
-    onError: (error: Error) => toast.error(safeErrorMessage(error, 'Erro na operação da folha.')),
-  });
+    onError: (error: Error) => toast.error(safeErrorMessage(error, 'Erro na operação da folha.'))});
 
   const { key: idemKey, reset: idemReset } = useIdempotencyKey();
   const calcularFolhaServidor = async () => {
@@ -147,8 +142,7 @@ export default function FolhaPagamentoPage() {
       await edgeFunctionsService.calcularFolha({
         empresaId,
         competencia: compServer,
-        idempotencyKey: idemKey(intent),
-      });
+        idempotencyKey: idemKey(intent)});
       idemReset(intent); // sucesso → habilita nova operação legítima
       queryClient.invalidateQueries({ queryKey: ['folha-resumo', competencia] });
       toast.success('Folha calculada no servidor com sucesso!');
@@ -180,8 +174,7 @@ export default function FolhaPagamentoPage() {
       queryClient.invalidateQueries({ queryKey: ['folha-resumo', competencia] });
       toast.success('Folha de pagamento encerrada com sucesso!');
     },
-    onError: (error: Error) => toast.error(safeErrorMessage(error, 'Erro na operação da folha.')),
-  });
+    onError: (error: Error) => toast.error(safeErrorMessage(error, 'Erro na operação da folha.'))});
 
 
   return (

@@ -6,10 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { cn } from '@/lib/utils';
 import {
-  Palette, Type, Square, Layers, Zap, Sun, Moon,
+  Palette, Type, Square, Layers, Zap, 
   ArrowLeft, Users, DollarSign, Calendar, Clock,
-  Gift, Star, Award, Flame, TrendingUp, Check,
-} from 'lucide-react';
+  Gift, Star, Award, Flame, Check} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const colorTokens = [

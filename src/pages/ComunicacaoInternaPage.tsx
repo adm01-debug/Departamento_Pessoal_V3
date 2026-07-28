@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -19,22 +19,19 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
   Plus, Megaphone, Shield, AlertTriangle, Trash2, Pin, Search,
-  Eye, EyeOff, Calendar, Clock, CheckCircle, Users, Bell,
-  MessageSquare, Send, Filter, Star
+  Eye, EyeOff, Calendar, Clock, CheckCircle, Bell,
+  MessageSquare, Send, Filter
 } from 'lucide-react';
-import { format } from 'date-fns';
 
 const tipoColors: Record<string, string> = {
   aviso: 'bg-warning/15 text-warning', mural: 'bg-info/15 text-info',
-  evento: 'bg-success/15 text-success', urgente: 'bg-destructive/15 text-destructive',
-};
+  evento: 'bg-success/15 text-success', urgente: 'bg-destructive/15 text-destructive'};
 const tipoIcons: Record<string, React.ElementType> = {
-  aviso: AlertTriangle, mural: MessageSquare, evento: Calendar, urgente: Bell,
-};
+  aviso: AlertTriangle, mural: MessageSquare, evento: Calendar, urgente: Bell};
 const statusEticaColors: Record<string, string> = { aberto: 'default', em_analise: 'secondary', resolvido: 'outline', arquivado: 'outline' };
 
 export default function ComunicacaoInternaPage() {
@@ -63,8 +60,7 @@ export default function ComunicacaoInternaPage() {
   const { data: comunicados = [], isLoading: loadCom } = useQuery({
     queryKey: ['comunicados', empresaAtual?.id],
     queryFn: () => comunicacaoService.listarComunicados(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const { data: leituras = [] } = useQuery({
     queryKey: ['comunicados-leituras', empresaAtual?.id, user?.id],
@@ -73,14 +69,12 @@ export default function ComunicacaoInternaPage() {
       const { data, error } = await supabase.from('comunicados_leituras').select('comunicado_id').eq('usuario_id', user!.id);
       if (error) return [];
       return data?.map((l: any) => l.comunicado_id) || [];
-    },
-  });
+    }});
 
   const { data: denuncias = [], isLoading: loadEtica } = useQuery({
     queryKey: ['canal_etica', empresaAtual?.id],
     queryFn: () => comunicacaoService.listarDenuncias(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const comunicadosFiltrados = comunicados.filter((c: any) => {
     if (filtroTipo !== 'todos' && c.tipo !== filtroTipo) return false;
@@ -94,27 +88,23 @@ export default function ComunicacaoInternaPage() {
   const criarCom = useMutation({
     mutationFn: () => comunicacaoService.criarComunicado({ ...formCom, empresa_id: empresaAtual?.id, ativo: true }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['comunicados'] }); setOpenCom(false); toast.success('Comunicado publicado!'); setFormCom({ titulo: '', conteudo: '', tipo: 'aviso', prioridade: 1, fixado: false }); },
-    onError: () => toast.error('Erro ao publicar'),
-  });
+    onError: () => toast.error('Erro ao publicar')});
 
   const criarEtica = useMutation({
     mutationFn: () => comunicacaoService.criarDenuncia({ ...formEtica, empresa_id: empresaAtual?.id }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['canal_etica'] }); setOpenEtica(false); toast.success('Relato registrado!'); setFormEtica({ categoria: 'outro', descricao: '', anonimo: true }); },
-    onError: () => toast.error('Erro ao registrar'),
-  });
+    onError: () => toast.error('Erro ao registrar')});
 
   const marcarLido = useMutation({
     mutationFn: async (comunicadoId: string) => {
       if (!user?.id) return;
       await comunicacaoService.marcarLido(comunicadoId, user.id);
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['comunicados-leituras'] }),
-  });
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['comunicados-leituras'] })});
 
   const excluirCom = useMutation({
     mutationFn: (id: string) => comunicacaoService.excluirComunicado(id, empresaAtual!.id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['comunicados'] }); toast.success('Comunicado excluído'); },
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['comunicados'] }); toast.success('Comunicado excluído'); }});
 
   const naoLidos = comunicados.filter((c: any) => !leituras.includes(c.id)).length;
 

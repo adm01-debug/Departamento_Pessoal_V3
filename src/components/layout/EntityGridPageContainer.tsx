@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { PageTitle } from '@/components/PageTitle';
 import { PageLayout } from '@/components/layout';
 import { DataTableToolbar } from '@/components/ui/data-table-toolbar';
@@ -8,7 +8,6 @@ import { FilterX, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DataTablePagination } from '@/components/ui/data-table-pagination';
 import { SyncErrorState } from '@/components/ui/sync-error-state';
-import { Button } from '@/components/ui/button';
 import { GridCardSkeleton } from '@/components/ui/module-skeleton';
 
 interface EntityGridPageContainerProps<T> {

@@ -6,7 +6,7 @@
  * Salva a seleção em localStorage.
  */
 
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { useTranslation, type Locale } from '@/hooks/useTranslation';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,8 +14,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+  DropdownMenuTrigger} from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { Globe, Check } from 'lucide-react';
 

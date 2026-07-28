@@ -13,7 +13,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAfastamentos } from '@/hooks/useAfastamentos';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 const statusColors: Record<string, string> = {
@@ -21,8 +20,7 @@ const statusColors: Record<string, string> = {
   aprovado: 'bg-green-100 text-green-700 border-green-200',
   finalizado: 'bg-gray-100 text-gray-700 border-gray-200',
   pendente: 'bg-orange-100 text-orange-700 border-orange-200',
-  rejeitado: 'bg-red-100 text-red-700 border-red-200',
-};
+  rejeitado: 'bg-red-100 text-red-700 border-red-200'};
 
 const tipoLabels: Record<string, string> = {
   doenca: 'Doença',
@@ -36,8 +34,7 @@ const tipoLabels: Record<string, string> = {
   servico_militar: 'Serviço Militar',
   mandato_sindical: 'Mandato Sindical',
   suspensao_disciplinar: 'Suspensão Disc.',
-  outros: 'Outros',
-};
+  outros: 'Outros'};
 
 interface AfastamentoTableProps {
   data: any[];

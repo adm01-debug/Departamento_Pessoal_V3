@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Users, Search, ChevronLeft, ChevronRight, Clock, AlertTriangle, Download, FileJson, FileText, Smartphone, ShieldCheck, Activity, Bell, Zap, TrendingUp, Filter, History } from 'lucide-react';
+import { Users, Search, Clock, AlertTriangle, Download, FileText, Smartphone, ShieldCheck, Activity, TrendingUp, Filter, History } from 'lucide-react';
 import { PontoInconsistencyPanel } from './PontoInconsistencyPanel';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
@@ -18,7 +18,6 @@ import { PontoGeoAnalytics } from './PontoGeoAnalytics';
 import { toast } from 'sonner';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Checkbox } from '@/components/ui/checkbox';
 import { formatDateLocalISO, todayLocalISO } from '@/utils/dateLocal';
 
 export function GestaoRegistrosPonto() {
@@ -44,8 +43,7 @@ export function GestaoRegistrosPonto() {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const { data: batidas = [] } = useQuery({
     queryKey: ['gestao-batidas-ponto-geo', empresaAtual?.id, filtroData, filtroFim],
@@ -60,8 +58,7 @@ export function GestaoRegistrosPonto() {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const formatTime = (val: any) => {
     if (!val) return '--:--';
@@ -114,8 +111,7 @@ export function GestaoRegistrosPonto() {
       retorno_intervalo: formatTime(r.retorno_intervalo),
       saida_1: formatTime(r.saida_1),
       horas_trabalhadas: formatInterval(r.horas_trabalhadas),
-      horas_extras: formatInterval(r.horas_extras),
-    }));
+      horas_extras: formatInterval(r.horas_extras)}));
 
     if (format === 'csv') {
       exportPontoCSV(dataToExport, `ponto-${filtroData}.csv`);

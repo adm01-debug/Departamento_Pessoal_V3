@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   UserPlus, UserMinus, Calendar, FileText, Clock, AlertTriangle, 
-  type LucideIcon, Filter, ArrowUpDown, ShieldCheck, MapPin, Globe
+  type LucideIcon, ArrowUpDown, ShieldCheck, MapPin, Globe
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
