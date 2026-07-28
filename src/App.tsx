@@ -54,6 +54,8 @@ const RecrutamentoPage = lazy(() => import('@/pages/RecrutamentoPage'));
 const ContratacaoPage = lazy(() => import('@/pages/ContratacaoPage'));
 const AssinarContratoPage = lazy(() => import('@/pages/AssinarContratoPage'));
 const VerificarContratoPage = lazy(() => import('@/pages/VerificarContratoPage'));
+const CienciaMedidaPage = lazy(() => import('@/pages/CienciaMedidaPage'));
+
 const OnboardingPage = lazy(() => import('@/pages/OnboardingPage'));
 const AssinaturasPage = lazy(() => import('@/pages/AssinaturasPage'));
 const HorasExtrasPage = lazy(() => import('@/pages/HorasExtrasPage'));
@@ -179,6 +181,8 @@ export default function App() {
       <Route path="/assinar-contrato/:token" element={<LazyPage Component={AssinarContratoPage} />} />
       <Route path="/verificar-contrato" element={<LazyPage Component={VerificarContratoPage} />} />
       <Route path="/verificar-contrato/:hash" element={<LazyPage Component={VerificarContratoPage} />} />
+      <Route path="/ciencia-medida/:token" element={<LazyPage Component={CienciaMedidaPage} />} />
+
 
       <Route
         path="/"

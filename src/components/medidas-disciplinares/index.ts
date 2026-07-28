@@ -5,3 +5,4 @@ export { MedidasGravityScale } from './MedidasGravityScale';
 export { MedidasKanban } from './MedidasKanban';
 export { MedidaWorkflowTimeline } from './MedidaWorkflowTimeline';
 export { MedidaContestacaoDialog } from './MedidaContestacaoDialog';
+export { GerarLinkCienciaDialog } from './GerarLinkCienciaDialog';
