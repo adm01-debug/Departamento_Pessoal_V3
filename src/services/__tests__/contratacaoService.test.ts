@@ -1,11 +1,12 @@
 /**
  * Unit tests for contratacaoService methods beyond gerarTemplateContrato.
 
-const EMPRESA_ID = 'test-empresa-id';
  * (XSS/security tests for gerarTemplateContrato live in contratacaoService.xss.test.ts)
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deepChain } from '@/test/deepChain';
+
+const EMPRESA_ID = 'test-empresa-id';
 
 const { mockFrom, mockLog } = vi.hoisted(() => ({
   mockFrom: vi.fn(),
