@@ -14,6 +14,8 @@ import { PortalFinanceiroTab } from '@/components/portal/PortalFinanceiroTab';
 import { PortalDocumentosTab } from '@/components/portal/PortalDocumentosTab';
 import { PortalMeusDadosTab } from '@/components/portal/PortalMeusDadosTab';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { useColaboradorVinculo } from '@/hooks/useColaboradorVinculo';
+
 
 function usePortalCompleto(userId: string | undefined) {
   return useQuery({
