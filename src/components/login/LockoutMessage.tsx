@@ -1,23 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ShieldAlert } from 'lucide-react';
-import { useOnMount } from '@/hooks/useMountEffects';
+import { useSyncedState } from '@/hooks/useSyncedState';
 
 interface LockoutMessageProps {
   remainingSeconds: number;
 }
 
 export function LockoutMessage({ remainingSeconds }: LockoutMessageProps) {
-  const [seconds, setSeconds] = useState(remainingSeconds);
-
-  // Inicializa com valor do prop apenas no mount
-  useOnMount(() => {
-    setSeconds(remainingSeconds);
-  });
-
-  useEffect(() => {
-    setSeconds(remainingSeconds);
-  }, [remainingSeconds]);
+  // Estado derivado da prop: ressincroniza sem efeito (sem render intermediário obsoleto).
+  const [seconds, setSeconds] = useSyncedState(remainingSeconds, (v) => v);
 
   useEffect(() => {
     if (seconds <= 0) return;
