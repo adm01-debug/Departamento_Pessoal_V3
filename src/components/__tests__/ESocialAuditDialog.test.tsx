@@ -88,7 +88,7 @@ describe('ESocialAuditDialog', () => {
   });
 
   it('shows Iniciar Varredura button when eventos have errors', () => {
-    const eventos = [evento({ id: 'e1', tipo_evento: 'S-2200', status: 'erro', dados: {} }];
+    const eventos = [evento({ id: 'e1', tipo_evento: 'S-2200', status: 'erro', dados: {} })];
     render(<ESocialAuditDialog open={true} onOpenChange={vi.fn()} eventos={eventos} />);
     expect(screen.getByText(/Iniciar Varredura Completa/i)).toBeInTheDocument();
   });
