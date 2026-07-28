@@ -65,7 +65,7 @@ describe('ESocialTimeline', () => {
   });
 
   it('renders failure label for erro status', () => {
-    const erroEvento = [
+    const erroEvento: ESocialEvento[] = [
       {
         id: '3',
         tipo_evento: 'S-1200',
@@ -75,6 +75,10 @@ describe('ESocialTimeline', () => {
         data_envio: '2024-07-03T08:05:00',
         protocolo: null,
         erros: { mensagem: 'Timeout no webservice' },
+        empresa_id: 'emp-1',
+        dados: null,
+        competencia: '2024-07',
+        xml: null,
       },
     ];
     render(<ESocialTimeline eventos={erroEvento} />);

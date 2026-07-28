@@ -41,13 +41,13 @@ import { pontosService } from '../pontosService';
 
 describe('pontosService facade', () => {
   it('exposes registrar from pontoService', () => {
-    pontosService.registrar({ colaborador_id: 'c1' } as any);
-    expect(pontoFns.registrar).toHaveBeenCalledWith({ colaborador_id: 'c1' });
+    pontosService.registrar('entrada', 'c1');
+    expect(pontoFns.registrar).toHaveBeenCalledWith('entrada', 'c1');
   });
 
   it('exposes getSettings from pontoService', () => {
-    pontosService.getSettings();
-    expect(pontoFns.getSettings).toHaveBeenCalled();
+    pontosService.getSettings('emp-1');
+    expect(pontoFns.getSettings).toHaveBeenCalledWith('emp-1');
   });
 
   it('exposes buscarRegistroHoje from pontoService', () => {
@@ -61,23 +61,23 @@ describe('pontosService facade', () => {
   });
 
   it('exposes validarBiometria from pontoService', () => {
-    pontosService.validarBiometria('col-1', 'fp-data');
-    expect(pontoFns.validarBiometria).toHaveBeenCalledWith('col-1', 'fp-data');
+    pontosService.validarBiometria('bat-1', 'col-1', 'fp-data');
+    expect(pontoFns.validarBiometria).toHaveBeenCalledWith('bat-1', 'col-1', 'fp-data');
   });
 
   it('exposes listar from batidasPontoService', () => {
-    pontosService.listar({ empresa_id: 'e1' });
-    expect(batidasFns.listar).toHaveBeenCalledWith({ empresa_id: 'e1' });
+    pontosService.listar('col-1', '2024-07-01', '2024-07-31', 'e1');
+    expect(batidasFns.listar).toHaveBeenCalledWith('col-1', '2024-07-01', '2024-07-31', 'e1');
   });
 
   it('exposes ajustar from batidasPontoService', () => {
-    pontosService.ajustar('id-1', {} as any);
-    expect(batidasFns.ajustar).toHaveBeenCalledWith('id-1', {});
+    pontosService.ajustar('id-1', {} as any, 'e1');
+    expect(batidasFns.ajustar).toHaveBeenCalledWith('id-1', {}, 'e1');
   });
 
   it('exposes excluir from batidasPontoService', () => {
-    pontosService.excluir('id-1');
-    expect(batidasFns.excluir).toHaveBeenCalledWith('id-1');
+    pontosService.excluir('id-1', 'e1');
+    expect(batidasFns.excluir).toHaveBeenCalledWith('id-1', 'e1');
   });
 
   it('exposes monitor namespace', () => {
