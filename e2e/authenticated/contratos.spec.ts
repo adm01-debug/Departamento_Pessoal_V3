@@ -44,7 +44,9 @@ test.describe('Módulo Contratos e Assinaturas', () => {
       if (download) {
         const filename = download.suggestedFilename();
         const isValid = filename.endsWith('.txt') || filename.endsWith('.rem');
-        expect(isValid || download.failure()?.errorText).toBeTruthy();
+        // `failure()` é assíncrono no Playwright: retorna Promise<string | null>.
+        const failure = await download.failure();
+        expect(isValid || Boolean(failure)).toBeTruthy();
       }
     }
   });
