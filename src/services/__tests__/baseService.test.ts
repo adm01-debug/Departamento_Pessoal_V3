@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BaseService } from '../baseService';
+import { makeChain } from '@/test/chain';
 
 // ─── shared mock setup ────────────────────────────────────────────────────────
 
