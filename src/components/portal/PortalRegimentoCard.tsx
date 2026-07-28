@@ -51,15 +51,28 @@ export function PortalRegimentoCard() {
     try {
       const db = supabase as unknown as SupabaseClient;
 
-      // Vínculo colaborador ↔ user
-      const { data: colab } = await db
+      // Vínculo colaborador ↔ user.
+      // NOTA: `colaboradores` não possui hoje coluna de vínculo com auth.users.
+      // Enquanto o vínculo não existir no schema, esta consulta falha (42703) e
+      // o cartão cai no estado "não vinculado". O erro precisa ser observável
+      // — antes era silenciosamente descartado, mascarando a causa raiz.
+      const { data: colab, error: colabErr } = await db
         .from('colaboradores')
         .select('id')
         .eq('user_id', user.id)
         .eq('empresa_id', empresaId)
         .maybeSingle();
+      if (colabErr) {
+        loggerService.error('Falha ao resolver vínculo colaborador↔usuário', {
+          userId: user.id,
+          empresaId,
+          code: (colabErr as { code?: string }).code,
+          error: colabErr,
+        });
+      }
       const cid: string | null = colab?.id ?? null;
       setColaboradorId(cid);
+
 
       // Documento publicado mais recente
       const { data: doc, error: docErr } = await db
