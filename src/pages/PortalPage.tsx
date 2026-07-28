@@ -51,7 +51,10 @@ export default function PortalPage() {
   const { user } = useAuth();
   const { empresaAtual } = useEmpresas();
   const { data } = usePortalCompleto(user?.id);
+  // id do CADASTRO trabalhista — não confundir com profiles.id (FK aponta para colaboradores).
+  const { colaboradorId } = useColaboradorVinculo();
   const [tab, setTab] = useState('visao-geral');
+
 
   const nome = data?.profile?.nome || user?.name || user?.email?.split('@')[0] || 'Colaborador';
   const hoje = new Date();
