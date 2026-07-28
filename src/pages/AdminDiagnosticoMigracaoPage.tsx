@@ -122,9 +122,9 @@ export default function AdminDiagnosticoMigracaoPage() {
 
     // 5. cron jobs — comparar com allowlist esperada
     try {
-      const { data, error } = await (supabase as any).rpc('cron_job_list_diag', {});
+      const { data, error } = await (supabase as any).rpc('get_cron_jobs_health');
       if (error) {
-        update('cron', { status: 'warn', detail: 'RPC cron_job_list_diag ausente (opcional)' });
+        update('cron', { status: 'warn', detail: 'RPC get_cron_jobs_health indisponível' });
       } else {
         const names = new Set<string>(
           Array.isArray(data)

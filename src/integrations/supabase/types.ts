@@ -25009,6 +25009,15 @@ export type Database = {
         Args: { lat1: number; lat2: number; lng1: number; lng2: number }
         Returns: number
       }
+      edge_rate_limit_check: {
+        Args: {
+          p_key: string
+          p_limit: number
+          p_now?: number
+          p_window_sec: number
+        }
+        Returns: Json
+      }
       eh_dia_valido_inicio_ferias: {
         Args: { p_data: string; p_empresa_id: string }
         Returns: {
@@ -25632,6 +25641,10 @@ export type Database = {
       purge_expired_idempotency_keys: { Args: never; Returns: number }
       purge_expired_security_data: { Args: never; Returns: Json }
       purge_old_lock_conflicts: { Args: never; Returns: number }
+      purge_rate_limits: {
+        Args: { p_older_than_sec?: number }
+        Returns: number
+      }
       reconciliar_afdt: {
         Args: { _importacao_id: string; _janela_seg?: number }
         Returns: {

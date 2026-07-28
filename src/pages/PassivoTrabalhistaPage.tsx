@@ -95,12 +95,12 @@ export default function PassivoTrabalhistaPage() {
         .eq('empresa_id', empresaAtualId!).neq('status', 'cancelado');
 
       const { data: provs } = await (supabase as any)
-        .from('provisionamentos')
-        .select('colaborador_id, tipo, valor_provisionado')
+        .from('provisoes_mensais')
+        .select('colaborador_id, tipo, total')
         .eq('empresa_id', empresaAtualId!)
         .eq('competencia', folhaAtual?.competencia ?? format(new Date(), 'yyyy-MM'));
       const provMap = new Map<string, number>();
-      for (const p of (provs ?? [])) provMap.set(`${p.colaborador_id}_${p.tipo}`, Number(p.valor_provisionado));
+      for (const p of (provs ?? [])) provMap.set(`${p.colaborador_id}_${p.tipo}`, Number(p.total));
 
       const hoje = new Date();
       let tVac = 0, t13 = 0, tFgts = 0, tMulta = 0, tInss = 0;
