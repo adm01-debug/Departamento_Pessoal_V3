@@ -13695,7 +13695,7 @@ export type Database = {
           ip_address: string | null
           medida_id: string
           motivo_recusa: string | null
-          token: string
+          token_hash: string
           used_at: string | null
           user_agent: string | null
         }
@@ -13712,7 +13712,7 @@ export type Database = {
           ip_address?: string | null
           medida_id: string
           motivo_recusa?: string | null
-          token: string
+          token_hash: string
           used_at?: string | null
           user_agent?: string | null
         }
@@ -13729,7 +13729,7 @@ export type Database = {
           ip_address?: string | null
           medida_id?: string
           motivo_recusa?: string | null
-          token?: string
+          token_hash?: string
           used_at?: string | null
           user_agent?: string | null
         }

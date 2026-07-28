@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { DataTableToolbar } from '@/components/ui/data-table-toolbar';
 import { TableSkeleton } from '@/components/ui/module-skeleton';
-import { MedidasKPIs, MedidasTimeline, MedidasTable, MedidasGravityScale, MedidasKanban, MedidaContestacaoDialog } from '@/components/medidas-disciplinares';
+import { MedidasKPIs, MedidasTimeline, MedidasTable, MedidasGravityScale, MedidasKanban, MedidaContestacaoDialog, GerarLinkCienciaDialog } from '@/components/medidas-disciplinares';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -67,6 +67,8 @@ export default function MedidasDisciplinaresPage() {
   const [search, setSearch] = useState('');
   const [tipoFilter, setTipoFilter] = useState('');
   const [contestMedida, setContestMedida] = useState<Record<string, unknown> | null>(null);
+  const [linkMedida, setLinkMedida] = useState<Record<string, unknown> | null>(null);
+
   const { user } = useAuth();
 
   const { data: userRoles = [] } = useQuery({
@@ -384,6 +386,7 @@ export default function MedidasDisciplinaresPage() {
               onExcluir={(id) => excluir.mutate(id)}
               onGerarPDF={(id) => gerarPDF.mutate(id)}
               onAbrirContestacao={(m) => setContestMedida(m)}
+              onGerarLinkCiencia={isRHOrAdmin ? (m) => setLinkMedida(m) : undefined}
               gerandoPDFId={gerarPDF.isPending ? (gerarPDF.variables as string) : null}
             />
           )}
@@ -392,6 +395,16 @@ export default function MedidasDisciplinaresPage() {
           <MedidasKanban />
         </TabsContent>
       </Tabs>
+
+      <GerarLinkCienciaDialog
+        medidaId={(linkMedida?.id as string) ?? null}
+        colaboradorNome={
+          (linkMedida?.colaborador as { nome_completo?: string } | undefined)?.nome_completo ?? null
+        }
+        open={!!linkMedida}
+        onOpenChange={(v: boolean) => !v && setLinkMedida(null)}
+      />
+
 
       <MedidaContestacaoDialog
         medida={contestMedida}
