@@ -32,7 +32,7 @@ class AfastamentoService extends BaseService<AfastamentoRow> {
     if (!empId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
     let query = supabase.from('afastamentos').select(
-      sel('*, colaborador:colaboradores!fk_afastamentos_colaborador(nome_completo, departamento)'),
+      sel('*, colaborador:colaboradores!afastamentos_colaborador_id_fkey(nome_completo, departamento)'),
       { count: 'exact' }
     );
 
