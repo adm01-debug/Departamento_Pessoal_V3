@@ -13056,6 +13056,39 @@ export type Database = {
         }
         Relationships: []
       }
+      lgpd_retencao_logs: {
+        Row: {
+          ativo: boolean
+          coluna_data: string
+          created_at: string
+          dias: number
+          id: string
+          observacao: string | null
+          tabela: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          coluna_data: string
+          created_at?: string
+          dias: number
+          id?: string
+          observacao?: string | null
+          tabela: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          coluna_data?: string
+          created_at?: string
+          dias?: number
+          id?: string
+          observacao?: string | null
+          tabela?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       lgpd_solicitacoes: {
         Row: {
           colaborador_id: string | null
@@ -24851,6 +24884,13 @@ export type Database = {
         Args: { attempts: number }
         Returns: string
       }
+      check_account_lockout: {
+        Args: { p_email: string }
+        Returns: {
+          is_locked: boolean
+          locked_until: string
+        }[]
+      }
       check_brute_force: {
         Args: { check_email: string; check_ip: string }
         Returns: Json
@@ -25008,6 +25048,16 @@ export type Database = {
       distancia_haversine: {
         Args: { lat1: number; lat2: number; lng1: number; lng2: number }
         Returns: number
+      }
+      drenar_fila_limpeza_lgpd: {
+        Args: { p_limite?: number }
+        Returns: {
+          erro: string
+          id: string
+          registro_id: string
+          sucesso: boolean
+          tabela: string
+        }[]
       }
       edge_rate_limit_check: {
         Args: {
@@ -25681,6 +25731,10 @@ export type Database = {
           lockout_minutes: number
         }[]
       }
+      record_login_attempt: {
+        Args: { p_email: string; p_ip?: string; p_success: boolean }
+        Returns: undefined
+      }
       refresh_dashboard_mvs: { Args: never; Returns: Json }
       registrar_batida_ponto: {
         Args: {
@@ -25936,6 +25990,14 @@ export type Database = {
           _user_agent?: string
         }
         Returns: Json
+      }
+      run_lgpd_purge: {
+        Args: { p_dry_run?: boolean }
+        Returns: {
+          batches: number
+          deleted: number
+          tabela: string
+        }[]
       }
       run_rls_tests: { Args: never; Returns: string[] }
       search_audit_unified: {
