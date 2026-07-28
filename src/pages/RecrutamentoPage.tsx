@@ -285,7 +285,7 @@ export default function RecrutamentoPage() {
                              </tr>
                            </thead>
                            <tbody className="divide-y divide-border/30">
-                             {candidatos.map((cand: CandidaturaComRelacoes) => (
+                             {candidatos.map((cand: CandidatoRow) => (
                                <tr key={cand.id} className="hover:bg-primary/[0.02] transition-colors group">
                                  <td className="px-6 py-4">
                                    <div className="flex items-center gap-3">
