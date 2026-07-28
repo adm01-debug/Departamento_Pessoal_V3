@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { cnabService, webhookService } from '../integracaoService';
+import { makeChain } from '@/test/chain';
 
 const EMPRESA_ID = 'test-empresa-id';
 
@@ -11,50 +12,35 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: mockFrom },
 }));
 
-// select → limit → maybeSingle
-function setupMaybeSingleChain(data: any, error: any = null) {
-  const maybeSingle = vi.fn().mockResolvedValue({ data, error });
-  const limitFn = vi.fn().mockReturnValue({ maybeSingle });
-  const selectFn = vi.fn().mockReturnValue({ limit: limitFn });
-  mockFrom.mockReturnValue({ select: selectFn });
-  return { selectFn, limitFn, maybeSingle };
+/**
+ * Chain canônico: cobre qualquer combinação de select/eq/order/limit/maybeSingle
+ * sem precisar espelhar a forma exata da query do serviço.
+ */
+function setupChain(data: any = null, error: any = null) {
+  const chain = makeChain({ data, error });
+  mockFrom.mockReturnValue(chain);
+  return {
+    chain,
+    selectFn: chain.select,
+    orderFn: chain.order,
+    limitFn: chain.limit,
+    eqFn: chain.eq,
+    maybeSingle: chain.maybeSingle,
+    upsertFn: chain.upsert,
+    insertFn: chain.insert,
+    deleteFn: chain.delete,
+  };
 }
 
-// upsert / insert / delete → await
-function setupDirectChain(error: any = null) {
-  const eqFn = vi.fn();
-  const __delChain = { then: (r) => Promise.resolve({ error }).then(r), catch: (r) => Promise.resolve({ error }).catch(r), finally: (r) => Promise.resolve({ error }).finally(r), eq: eqFn };
-  eqFn.mockReturnValue(__delChain);
-  const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
-  const upsertFn = vi.fn().mockResolvedValue({ error });
-  const insertFn = vi.fn().mockResolvedValue({ error });
-  mockFrom.mockReturnValue({ upsert: upsertFn, insert: insertFn, delete: deleteFn });
-  return { upsertFn, insertFn, deleteFn, eqFn };
-}
-
-// select → order → limit → await
-function setupOrderLimitChain(data: any[], error: any = null) {
-  const response = { data, error };
-  const limitFn = vi.fn().mockResolvedValue(response);
-  const orderFn = vi.fn().mockReturnValue({ limit: limitFn });
-  const selectFn = vi.fn().mockReturnValue({ order: orderFn });
-  mockFrom.mockReturnValue({ select: selectFn });
-  return { selectFn, orderFn, limitFn };
-}
-
-// select → order → await (no limit)
-function setupOrderChain(data: any[], error: any = null) {
-  const response = { data, error };
-  const orderFn = vi.fn().mockResolvedValue(response);
-  const selectFn = vi.fn().mockReturnValue({ order: orderFn });
-  mockFrom.mockReturnValue({ select: selectFn });
-  return { selectFn, orderFn };
-}
+const setupMaybeSingleChain = setupChain;
+const setupOrderLimitChain = setupChain;
+const setupOrderChain = setupChain;
+const setupDirectChain = (error: any = null) => setupChain(null, error);
 
 // ─── cnabService.getConfig ────────────────────────────────────────────────────
 
 describe('cnabService.getConfig', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('returns config when found', async () => {
     const config = { id: 'c1', banco_nome: 'Bradesco' };
@@ -86,12 +72,12 @@ describe('cnabService.getConfig', () => {
 // ─── cnabService.saveConfig ───────────────────────────────────────────────────
 
 describe('cnabService.saveConfig', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('upserts the config', async () => {
     const { upsertFn } = setupDirectChain();
     const config = { banco_nome: 'Itaú', agencia: '1234' };
-    await cnabService.saveConfig(config);
+    await cnabService.saveConfig(EMPRESA_ID, config);
     expect(mockFrom).toHaveBeenCalledWith('cnab_configuracoes');
     expect(upsertFn).toHaveBeenCalledWith(config);
   });
@@ -99,14 +85,14 @@ describe('cnabService.saveConfig', () => {
   it('throws on DB error', async () => {
     const upsertFn = vi.fn().mockResolvedValue({ error: { message: 'fail' } });
     mockFrom.mockReturnValue({ upsert: upsertFn });
-    await expect(cnabService.saveConfig({})).rejects.toBeDefined();
+    await expect(cnabService.saveConfig(EMPRESA_ID, {})).rejects.toBeDefined();
   });
 });
 
 // ─── cnabService.getRemessas ──────────────────────────────────────────────────
 
 describe('cnabService.getRemessas', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('returns remessas list', async () => {
     const records = [{ id: 'r1' }, { id: 'r2' }];
@@ -139,7 +125,7 @@ describe('cnabService.getRemessas', () => {
 // ─── webhookService.listar ────────────────────────────────────────────────────
 
 describe('webhookService.listar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('returns webhooks list', async () => {
     const records = [{ id: 'w1', nome: 'Admissão Hook' }];
@@ -171,13 +157,13 @@ describe('webhookService.listar', () => {
 // ─── webhookService.criar ─────────────────────────────────────────────────────
 
 describe('webhookService.criar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('inserts a new webhook config', async () => {
     const insertFn = vi.fn().mockResolvedValue({ error: null });
     mockFrom.mockReturnValue({ insert: insertFn });
     const payload = { nome: 'My Hook', url: 'https://example.com/hook', eventos: ['admissao'] };
-    await webhookService.criar(payload);
+    await webhookService.criar(EMPRESA_ID, payload);
     expect(mockFrom).toHaveBeenCalledWith('webhooks_config');
     expect(insertFn).toHaveBeenCalledWith(payload);
   });
@@ -185,20 +171,20 @@ describe('webhookService.criar', () => {
   it('throws on DB error', async () => {
     const insertFn = vi.fn().mockResolvedValue({ error: { message: 'fail' } });
     mockFrom.mockReturnValue({ insert: insertFn });
-    await expect(webhookService.criar({})).rejects.toBeDefined();
+    await expect(webhookService.criar(EMPRESA_ID, {})).rejects.toBeDefined();
   });
 });
 
 // ─── webhookService.excluir ───────────────────────────────────────────────────
 
 describe('webhookService.excluir', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('deletes webhook by id', async () => {
     const eqFn = vi.fn().mockResolvedValue({ error: null });
     const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockReturnValue({ delete: deleteFn });
-    await webhookService.excluir('w-1');
+    await webhookService.excluir(EMPRESA_ID, 'w-1');
     expect(mockFrom).toHaveBeenCalledWith('webhooks_config');
     expect(deleteFn).toHaveBeenCalled();
     expect(eqFn).toHaveBeenCalledWith('id', 'w-1');
@@ -208,14 +194,14 @@ describe('webhookService.excluir', () => {
     const eqFn = vi.fn().mockResolvedValue({ error: { message: 'fail' } });
     const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockReturnValue({ delete: deleteFn });
-    await expect(webhookService.excluir('w-1')).rejects.toBeDefined();
+    await expect(webhookService.excluir(EMPRESA_ID, 'w-1')).rejects.toBeDefined();
   });
 });
 
 // ─── webhookService.getLogs ───────────────────────────────────────────────────
 
 describe('webhookService.getLogs', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('returns logs list', async () => {
     const records = [{ id: 'l1', status: 200 }];
