@@ -56,7 +56,7 @@ JOIN pg_namespace cn ON cn.oid = c.pronamespace AND cn.nspname = 'public'
 WHERE c.proconfig IS NOT NULL
   AND array_to_string(c.proconfig, ',') ~ 'search_path'
   AND array_to_string(c.proconfig, ',') !~ ('\\m' || f.sch || '\\M')
-ORDER BY 1, 4;
+ORDER BY 1;
 `;
 
 function hasDatabase() {
@@ -83,9 +83,17 @@ function main() {
   try {
     output = runQuery();
   } catch (error) {
-    // Falha de conexão não é o mesmo que código aprovado, mas também não é
-    // motivo para reprovar um PR. Reportamos alto e claro.
-    console.warn(`[search-path] Não foi possível consultar o banco: ${error.message}`);
+    // Distinção deliberada: banco fora do ar é ambiente, mas erro do próprio
+    // SQL é defeito do gate. Tratar os dois como "passou" transformaria uma
+    // consulta quebrada num selo verde permanente — exatamente o modo de
+    // falha que este gate existe para impedir.
+    const stderr = String(error.stderr || '');
+    if (/^ERROR:/m.test(stderr)) {
+      console.error('[search-path] A consulta de auditoria falhou — gate reprovado.');
+      console.error(stderr.trim());
+      return 1;
+    }
+    console.warn(`[search-path] Banco inacessível: ${error.message}`);
     return 0;
   }
 
