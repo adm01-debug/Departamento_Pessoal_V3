@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { premiacoesService } from '../premiacoesService';
+import { makeChain } from '@/test/chain';
 
 const EMPRESA_ID = 'test-empresa-id';
 
@@ -18,84 +19,40 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: mockFrom },
 }));
 
-// Thenable chain with order + optional eq (listarCampanhas / listarAuditoria)
-function setupOrderChain(data: any[], error: any = null) {
-  const response = { data, error };
-  const chain: any = {};
-  chain.eq = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
-  const orderFn = vi.fn().mockReturnValue(chain);
-  const selectFn = vi.fn().mockReturnValue({ order: orderFn });
-  mockFrom.mockReturnValue({ select: selectFn });
-  return { selectFn, orderFn, chain };
+/**
+ * Todos os helpers abaixo usam o chain canônico (`makeChain`), que aceita
+ * qualquer profundidade de encadeamento do PostgREST. Isso evita que a suíte
+ * quebre sempre que um serviço ganha um novo `.eq()` (ex.: isolamento de tenant).
+ */
+function setupChain(data: any, error: any = null) {
+  const chain = makeChain({ data, error });
+  mockFrom.mockReturnValue(chain);
+  return {
+    chain,
+    selectFn: chain.select,
+    orderFn: chain.order,
+    eqFn: chain.eq,
+    insertFn: chain.insert,
+    updateFn: chain.update,
+    singleFn: chain.single,
+  };
 }
 
-// Thenable chain with optional eq + filter (listarPagamentos)
-function setupPagamentosChain(data: any[], error: any = null) {
-  const response = { data, error };
-  const chain: any = {};
-  chain.eq = vi.fn().mockReturnValue(chain);
-  chain.filter = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
-  const selectFn = vi.fn().mockReturnValue(chain);
-  mockFrom.mockReturnValue({ select: selectFn });
-  return { selectFn, chain };
+const setupOrderChain = setupChain;
+const setupPagamentosChain = setupChain;
+const setupEqResolveChain = setupChain;
+const setupSelectOrderChain = setupChain;
+const setupInsertSingleChain = setupChain;
+const setupInsertDirectChain = (error: any = null) => setupChain(null, error);
+
+/** Chain isolado (não registrado no mockFrom) para uso com mockReturnValueOnce. */
+function makeStandaloneChain(data: any, error: any = null) {
+  const chain = makeChain({ data, error });
+  return { chain, selectFn: chain.select, eqFn: chain.eq, singleFn: chain.single, updateFn: chain.update };
 }
 
-// select → eq → resolvedValue (listarRegras)
-function setupEqResolveChain(data: any[], error: any = null) {
-  const eqFn = vi.fn().mockResolvedValue({ data, error });
-  const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
-  mockFrom.mockReturnValue({ select: selectFn });
-  return { selectFn, eqFn };
-}
-
-// select → order → resolvedValue (listarCenariosROI)
-function setupSelectOrderChain(data: any[], error: any = null) {
-  const orderFn = vi.fn().mockResolvedValue({ data, error });
-  const selectFn = vi.fn().mockReturnValue({ order: orderFn });
-  mockFrom.mockReturnValue({ select: selectFn });
-  return { selectFn, orderFn };
-}
-
-// insert(d).select().single()
-function setupInsertSingleChain(data: any, error: any = null) {
-  const singleFn = vi.fn().mockResolvedValue({ data, error });
-  const selectFn = vi.fn().mockReturnValue({ single: singleFn });
-  const insertFn = vi.fn().mockReturnValue({ select: selectFn });
-  mockFrom.mockReturnValue({ insert: insertFn });
-  return { insertFn, selectFn, singleFn };
-}
-
-// insert({...}) resolves directly (enviarNotificacaoCritica)
-function setupInsertDirectChain(error: any = null) {
-  const insertFn = vi.fn().mockResolvedValue({ error });
-  mockFrom.mockReturnValue({ insert: insertFn });
-  return { insertFn };
-}
-
-// select('*').eq('id', id).single()
-function makeFetchSingleMock(data: any, error: any = null) {
-  const singleFn = vi.fn().mockResolvedValue({ data, error });
-  const eqFn = vi.fn().mockReturnValue({ single: singleFn });
-  const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
-  return { selectFn, eqFn, singleFn };
-}
-
-// update({...}).eq('id', id).select().single()
-function makeUpdateSingleMock(data: any, error: any = null) {
-  const singleFn = vi.fn().mockResolvedValue({ data, error });
-  const selectFn = vi.fn().mockReturnValue({ single: singleFn });
-  const eqFn = vi.fn();
-  const __eqChain = { select: selectFn, eq: eqFn };
-  eqFn.mockReturnValue(__eqChain);
-  const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
-  return { updateFn, eqFn, selectFn, singleFn };
-}
+const makeFetchSingleMock = makeStandaloneChain;
+const makeUpdateSingleMock = makeStandaloneChain;
 
 // ─── listarCampanhas ──────────────────────────────────────────────────────────
 
@@ -152,7 +109,7 @@ describe('premiacoesService.listarPagamentos', () => {
   it('returns pagamentos without filters', async () => {
     const records = [{ id: 'pg1' }];
     setupPagamentosChain(records);
-    expect(await premiacoesService.listarPagamentos(EMPRESA_ID)).toEqual(records);
+    expect(await premiacoesService.listarPagamentos(undefined, EMPRESA_ID)).toEqual(records);
   });
 
   it('filters by campanha_id when provided', async () => {
@@ -169,7 +126,7 @@ describe('premiacoesService.listarPagamentos', () => {
 
   it('returns empty array when data is null', async () => {
     setupPagamentosChain(null as any);
-    expect(await premiacoesService.listarPagamentos(EMPRESA_ID)).toEqual([]);
+    expect(await premiacoesService.listarPagamentos(undefined, EMPRESA_ID)).toEqual([]);
   });
 });
 
@@ -216,10 +173,10 @@ describe('premiacoesService.atualizarStatusPagamento', () => {
     const updated = { id: 'pg1', status: 'aprovado' };
     const fetchMock = makeFetchSingleMock(original);
     const updateMock = makeUpdateSingleMock(updated);
-    mockFrom.mockReturnValueOnce({ select: fetchMock.selectFn });
-    mockFrom.mockReturnValueOnce({ update: updateMock.updateFn });
+    mockFrom.mockReturnValueOnce(fetchMock.chain);
+    mockFrom.mockReturnValueOnce(updateMock.chain);
 
-    const result = await premiacoesService.atualizarStatusPagamento('pg1', 'aprovado', 1000);
+    const result = await premiacoesService.atualizarStatusPagamento('pg1', 'aprovado', EMPRESA_ID, 1000);
     expect(fetchMock.eqFn).toHaveBeenCalledWith('id', 'pg1');
     expect(updateMock.eqFn).toHaveBeenCalledWith('id', 'pg1');
     expect(result).toEqual(updated);
@@ -227,8 +184,8 @@ describe('premiacoesService.atualizarStatusPagamento', () => {
 
   it('throws when fetch fails', async () => {
     const fetchMock = makeFetchSingleMock(null, { message: 'fail' });
-    mockFrom.mockReturnValueOnce({ select: fetchMock.selectFn });
-    await expect(premiacoesService.atualizarStatusPagamento('pg1', 'aprovado')).rejects.toBeDefined();
+    mockFrom.mockReturnValueOnce(fetchMock.chain);
+    await expect(premiacoesService.atualizarStatusPagamento('pg1', 'aprovado', EMPRESA_ID)).rejects.toBeDefined();
   });
 
   it('sends notification for rejeitado status', async () => {
@@ -237,11 +194,11 @@ describe('premiacoesService.atualizarStatusPagamento', () => {
     const fetchMock = makeFetchSingleMock(original);
     const updateMock = makeUpdateSingleMock(updated);
     const notifInsertFn = vi.fn().mockResolvedValue({ error: null });
-    mockFrom.mockReturnValueOnce({ select: fetchMock.selectFn });
-    mockFrom.mockReturnValueOnce({ update: updateMock.updateFn });
-    mockFrom.mockReturnValueOnce({ insert: notifInsertFn });
+    mockFrom.mockReturnValueOnce(fetchMock.chain);
+    mockFrom.mockReturnValueOnce(updateMock.chain);
+    mockFrom.mockReturnValueOnce(notifChain);
 
-    await premiacoesService.atualizarStatusPagamento('pg1', 'rejeitado');
+    await premiacoesService.atualizarStatusPagamento('pg1', 'rejeitado', EMPRESA_ID);
     expect(notifInsertFn).toHaveBeenCalled();
   });
 });
@@ -256,20 +213,21 @@ describe('premiacoesService.reconciliarFolha', () => {
     const updated = { id: 'pg1', status: 'pago', status_conciliacao: 'conciliado' };
     const fetchMock = makeFetchSingleMock(original);
     const updateMock = makeUpdateSingleMock(updated);
-    const auditInsertFn = vi.fn().mockResolvedValue({ error: null });
-    mockFrom.mockReturnValueOnce({ select: fetchMock.selectFn });
-    mockFrom.mockReturnValueOnce({ update: updateMock.updateFn });
-    mockFrom.mockReturnValueOnce({ insert: auditInsertFn });
+    const auditChain = makeChain({ error: null });
+    const auditInsertFn = auditChain.insert;
+    mockFrom.mockReturnValueOnce(fetchMock.chain);
+    mockFrom.mockReturnValueOnce(updateMock.chain);
+    mockFrom.mockReturnValueOnce(auditChain);
 
-    const result = await premiacoesService.reconciliarFolha('pg1', 1000);
+    const result = await premiacoesService.reconciliarFolha('pg1', 1000, EMPRESA_ID);
     expect(result).toEqual(updated);
     expect(auditInsertFn).toHaveBeenCalled();
   });
 
   it('throws when fetch fails', async () => {
     const fetchMock = makeFetchSingleMock(null, { message: 'fail' });
-    mockFrom.mockReturnValueOnce({ select: fetchMock.selectFn });
-    await expect(premiacoesService.reconciliarFolha('pg1', 1000)).rejects.toBeDefined();
+    mockFrom.mockReturnValueOnce(fetchMock.chain);
+    await expect(premiacoesService.reconciliarFolha('pg1', 1000, EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -281,7 +239,7 @@ describe('premiacoesService.listarAuditoria', () => {
   it('returns auditoria records', async () => {
     const records = [{ id: 'a1', acao: 'INSERT' }];
     setupOrderChain(records);
-    expect(await premiacoesService.listarAuditoria(EMPRESA_ID)).toEqual(records);
+    expect(await premiacoesService.listarAuditoria(undefined, EMPRESA_ID)).toEqual(records);
   });
 
   it('filters by entidade_id when provided', async () => {
