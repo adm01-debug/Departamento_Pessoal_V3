@@ -233,11 +233,11 @@ export default function RecrutamentoPage() {
                         <CardContent>
                           <div className="space-y-4">
                             <div className="flex flex-wrap gap-1.5">
-                              {(vaga.requisitos?.split(',') || []).slice(0, 3).map((req: string, i: number) => (
+                              {(vaga.requisitos ?? '').split(',').filter(Boolean).slice(0, 3).map((req: string, i: number) => (
                                 <Badge key={i} variant="secondary" className="text-[9px] bg-slate-100/50 text-slate-600 font-normal">{req.trim()}</Badge>
                               ))}
-                              {(vaga.requisitos?.split(',').length > 3) && (
-                                <Badge variant="secondary" className="text-[9px] bg-slate-100/50 text-slate-600 font-normal">+{vaga.requisitos.split(',').length - 3}</Badge>
+                              {(vaga.requisitos ?? '').split(',').filter(Boolean).length > 3 && (
+                                <Badge variant="secondary" className="text-[9px] bg-slate-100/50 text-slate-600 font-normal">+{(vaga.requisitos ?? '').split(',').filter(Boolean).length - 3}</Badge>
                               )}
                             </div>
 
