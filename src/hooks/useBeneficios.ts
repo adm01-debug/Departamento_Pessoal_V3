@@ -7,11 +7,16 @@ export function useBeneficios() {
   const { empresaAtual } = useEmpresas();
   const empresaId = empresaAtual?.id;
 
+  // IMPORTANTE: `empresaId` é passado nas duas formas — como parâmetro dedicado
+  // (destrava `enabled` em useGenericCrud, que ignora `empresa_id`/`empresaId`
+  // dentro de `filters`) e dentro de `filters` apenas quando definido.
+  // Sem isso, a query nunca dispara e a página exibe lista vazia.
   const crud = useGenericCrud<unknown>({
     // Inclui empresaId na queryKey para evitar reuso de cache cross-tenant.
     queryKey: `beneficios:${empresaId ?? 'none'}`,
     service: beneficioService,
-    filters: { empresa_id: empresaId },
+    filters: empresaId ? { empresa_id: empresaId } : {},
+    empresaId: empresaId ?? undefined,
   });
 
   const resumoQuery = useQuery({
