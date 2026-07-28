@@ -2974,7 +2974,7 @@ export type Database = {
           created_at: string
           data_entrevista: string | null
           data_proxima_etapa: string | null
-          empresa_id: string | null
+          empresa_id: string
           entrevistador: string | null
           etapa: string | null
           feedback: string | null
@@ -2992,7 +2992,7 @@ export type Database = {
           created_at?: string
           data_entrevista?: string | null
           data_proxima_etapa?: string | null
-          empresa_id?: string | null
+          empresa_id: string
           entrevistador?: string | null
           etapa?: string | null
           feedback?: string | null
@@ -3010,7 +3010,7 @@ export type Database = {
           created_at?: string
           data_entrevista?: string | null
           data_proxima_etapa?: string | null
-          empresa_id?: string | null
+          empresa_id?: string
           entrevistador?: string | null
           etapa?: string | null
           feedback?: string | null
@@ -13321,21 +13321,21 @@ export type Database = {
       }
       log_envio_relatorios: {
         Row: {
-          agendamento_id: string | null
+          agendamento_id: string
           created_at: string
           id: string
           mensagem: string | null
           status: string
         }
         Insert: {
-          agendamento_id?: string | null
+          agendamento_id: string
           created_at?: string
           id?: string
           mensagem?: string | null
           status: string
         }
         Update: {
-          agendamento_id?: string | null
+          agendamento_id?: string
           created_at?: string
           id?: string
           mensagem?: string | null
@@ -18166,7 +18166,7 @@ export type Database = {
       recrutamento_anotacoes: {
         Row: {
           anotacao: string
-          candidatura_id: string | null
+          candidatura_id: string
           created_at: string
           id: string
           privada: boolean | null
@@ -18174,7 +18174,7 @@ export type Database = {
         }
         Insert: {
           anotacao: string
-          candidatura_id?: string | null
+          candidatura_id: string
           created_at?: string
           id?: string
           privada?: boolean | null
@@ -18182,7 +18182,7 @@ export type Database = {
         }
         Update: {
           anotacao?: string
-          candidatura_id?: string | null
+          candidatura_id?: string
           created_at?: string
           id?: string
           privada?: boolean | null
@@ -18200,7 +18200,7 @@ export type Database = {
       }
       recrutamento_entrevistas: {
         Row: {
-          candidatura_id: string | null
+          candidatura_id: string
           created_at: string
           data_hora: string
           entrevistador_id: string | null
@@ -18213,7 +18213,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          candidatura_id?: string | null
+          candidatura_id: string
           created_at?: string
           data_hora: string
           entrevistador_id?: string | null
@@ -18226,7 +18226,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          candidatura_id?: string | null
+          candidatura_id?: string
           created_at?: string
           data_hora?: string
           entrevistador_id?: string | null
@@ -18250,7 +18250,7 @@ export type Database = {
       }
       recrutamento_testes: {
         Row: {
-          candidatura_id: string | null
+          candidatura_id: string
           comentarios: string | null
           created_at: string
           data_entrega: string | null
@@ -18263,7 +18263,7 @@ export type Database = {
           url_teste: string | null
         }
         Insert: {
-          candidatura_id?: string | null
+          candidatura_id: string
           comentarios?: string | null
           created_at?: string
           data_entrega?: string | null
@@ -18276,7 +18276,7 @@ export type Database = {
           url_teste?: string | null
         }
         Update: {
-          candidatura_id?: string | null
+          candidatura_id?: string
           comentarios?: string | null
           created_at?: string
           data_entrega?: string | null
@@ -25229,6 +25229,10 @@ export type Database = {
       calculate_lockout_duration: {
         Args: { attempts: number }
         Returns: string
+      }
+      candidatura_na_minha_empresa: {
+        Args: { _candidatura_id: string }
+        Returns: boolean
       }
       check_account_lockout: {
         Args: { p_email: string }
