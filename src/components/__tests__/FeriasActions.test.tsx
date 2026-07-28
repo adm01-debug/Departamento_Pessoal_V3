@@ -11,6 +11,20 @@ vi.mock('@/components/ui/tooltip', () => ({
 }));
 
 // O hook real consome o AuthContext; em teste unitário isolamos a dependência.
+// Sessão fixa: o componente e seus filhos leem o usuário atual via AuthContext.
+vi.mock('@/contexts/AuthContext', async (importOriginal) => {
+  const actual = await importOriginal<Record<string, unknown>>();
+  return {
+    ...actual,
+    useAuth: () => ({
+      user: { id: 'user-1', email: 'rh@empresa.com' },
+      session: { access_token: 'token' },
+      isReady: true,
+      loading: false,
+    }),
+  };
+});
+
 // Depende do AuthContext (usuário atual) — isolado no teste unitário.
 vi.mock('@/hooks/ferias/useAdiantamento13', () => ({
   useSolicitarAdiantamento13: () => ({ mutate: vi.fn(), isPending: false }),
