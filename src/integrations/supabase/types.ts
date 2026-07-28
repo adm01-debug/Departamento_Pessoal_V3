@@ -18770,6 +18770,36 @@ export type Database = {
         }
         Relationships: []
       }
+      sec_seal_events: {
+        Row: {
+          ator: string | null
+          created_at: string
+          detalhe: string | null
+          evento: string
+          id: string
+          registro_id: string | null
+          tabela: string
+        }
+        Insert: {
+          ator?: string | null
+          created_at?: string
+          detalhe?: string | null
+          evento: string
+          id?: string
+          registro_id?: string | null
+          tabela: string
+        }
+        Update: {
+          ator?: string | null
+          created_at?: string
+          detalhe?: string | null
+          evento?: string
+          id?: string
+          registro_id?: string | null
+          tabela?: string
+        }
+        Relationships: []
+      }
       security_alerts: {
         Row: {
           created_at: string | null
@@ -26415,6 +26445,18 @@ export type Database = {
         }[]
       }
       run_rls_tests: { Args: never; Returns: string[] }
+      seal_enforce: {
+        Args: {
+          p_canonical: string
+          p_new_hash: string
+          p_old_hash: string
+          p_op: string
+          p_registro_id: string
+          p_sealed: boolean
+          p_tabela: string
+        }
+        Returns: string
+      }
       search_audit_unified: {
         Args: {
           _empresa_id?: string
