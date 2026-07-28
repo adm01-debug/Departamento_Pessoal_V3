@@ -35,6 +35,7 @@ const DesignSystemPage = lazy(() => import('@/pages/DesignSystemPage'));
 const AdmissoesPage = lazy(() => import('@/pages/AdmissoesPage'));
 const AfastamentosPage = lazy(() => import('@/pages/AfastamentosPage'));
 const CargosPage = lazy(() => import('@/pages/CargosPage'));
+const PlanoCargosSalariosPage = lazy(() => import('@/pages/PlanoCargosSalariosPage'));
 const DepartamentosPage = lazy(() => import('@/pages/DepartamentosPage'));
 const DesligamentosPage = lazy(() => import('@/pages/DesligamentosPage'));
 const DocumentosPage = lazy(() => import('@/pages/DocumentosPage'));
@@ -223,6 +224,8 @@ export default function App() {
         <Route path="empresas/novo" element={<LazyPage Component={EmpresaFormPage} />} />
         <Route path="empresas/editar/:id" element={<LazyPage Component={EmpresaFormPage} />} />
         <Route path="cargos" element={<LazyPage Component={CargosPage} />} />
+        <Route path="cargos-salarios" element={<LazyPage Component={PlanoCargosSalariosPage} />} />
+
         <Route path="departamentos" element={<LazyPage Component={DepartamentosPage} />} />
         <Route path="lotacoes" element={<LazyPage Component={LotacoesPage} />} />
         <Route path="locais-trabalho" element={<LazyPage Component={LocaisTrabalhoPage} />} />
