@@ -76,7 +76,7 @@ describe('PontoAuditTimeline', () => {
 
   it('renders Exportar CSV button', () => {
     render(<PontoAuditTimeline />);
-    expect(screen.getByRole('button', { name: /Exportar CSV/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Exportar Trilha/i })).toBeInTheDocument();
   });
 
   it('renders log acao badge when logs provided', async () => {
