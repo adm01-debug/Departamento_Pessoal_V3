@@ -306,8 +306,13 @@ export default function SegurancaPage() {
               </Table>
             </Card>
           </TabsContent>
+
+          <TabsContent value="policies">
+            <PolicyAuditPanel />
+          </TabsContent>
         </Tabs>
       </PageLayout>
+
     </>
   );
 }
