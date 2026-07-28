@@ -47,7 +47,7 @@ class FeriasService extends BaseService<Ferias> {
     const effectiveLimit = limit + 1; // Pegamos 1 a mais para saber se há mais páginas
 
     let query = this.getQuery()
-      .select('*, colaborador:colaboradores!fk_ferias_colaborador(nome_completo, foto_url)', { count: 'exact' });
+      .select('*, colaborador:colaboradores!ferias_colaborador_id_fkey(nome_completo, foto_url)', { count: 'exact' });
 
     query = query.eq('empresa_id', empresaId);
     if (status && status !== 'all') query = query.eq('status', status);

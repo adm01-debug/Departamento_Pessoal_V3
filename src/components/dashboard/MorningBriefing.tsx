@@ -53,7 +53,7 @@ function useMorningBriefing() {
         { data: esocialData },
       ] = await Promise.all([
         supabase.from('colaboradores').select('nome_completo, data_nascimento').eq('status', 'ativo').not('data_nascimento', 'is', null),
-        supabase.from('ferias').select('data_inicio, data_fim, colaboradores!fk_ferias_colaborador(nome_completo)').in('status', ['aprovada', 'em_andamento']).lte('data_inicio', hojeStr).gte('data_fim', hojeStr),
+        supabase.from('ferias').select('data_inicio, data_fim, colaboradores!ferias_colaborador_id_fkey(nome_completo)').in('status', ['aprovada', 'em_andamento']).lte('data_inicio', hojeStr).gte('data_fim', hojeStr),
         supabase.from('afastamentos').select('tipo, colaboradores!afastamentos_colaborador_id_fkey(nome_completo)').eq('status', 'ativo').lte('data_inicio', hojeStr).gte('data_fim_prevista', hojeStr),
         supabase.from('admissoes').select('nome, cargo').eq('data_prevista', hojeStr),
         supabase.from('exames').select('data_validade, tipo, colaboradores!exames_colaborador_id_fkey(nome_completo)').gte('data_validade', hojeStr).lte('data_validade', em7Dias),
