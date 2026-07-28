@@ -7,10 +7,14 @@ vi.mock('framer-motion', () => ({
   },
 }));
 
-vi.mock('@tanstack/react-query', () => ({
-  useQuery: vi.fn(() => ({ data: [], isLoading: false })),
-  useQueryClient: vi.fn(() => ({ invalidateQueries: vi.fn() })),
-}));
+vi.mock('@tanstack/react-query', async () => {
+  const actual = await vi.importActual<typeof import('@tanstack/react-query')>('@tanstack/react-query');
+  return {
+    ...actual,
+    useQuery: vi.fn(() => ({ data: [], isLoading: false })),
+    useQueryClient: vi.fn(() => ({ invalidateQueries: vi.fn() })),
+  };
+});
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
