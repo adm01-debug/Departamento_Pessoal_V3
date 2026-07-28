@@ -61,9 +61,9 @@ describe('horaExtraService.listar', () => {
     expect(chain.eq).toHaveBeenCalledWith('empresa_id', 'emp-1');
   });
 
-  it('does not call eq when empresaId is undefined', async () => {
+  it('rejeita quando empresaId não é informado (isolamento de tenant)', async () => {
     const { chain } = setupListarChain([]);
-    await horaExtraService.listar(EMPRESA_ID);
+    await expect(horaExtraService.listar('' as unknown as string)).rejects.toThrow('empresa_id');
     expect(chain.eq).not.toHaveBeenCalled();
   });
 
@@ -131,7 +131,7 @@ describe('horaExtraService.aprovar', () => {
   it('updates status to aprovada with aprovado_por', async () => {
     const updated = { id: 'he-1', status: 'aprovada' };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    await horaExtraService.aprovar('he-1', 'user-1');
+    await horaExtraService.aprovar('he-1', 'user-1', EMPRESA_ID);
     const updateArgs = (updateFn as any).mock.calls[0][0];
     expect(updateArgs.status).toBe('aprovada');
     expect(updateArgs.aprovado_por).toBe('user-1');
@@ -140,19 +140,19 @@ describe('horaExtraService.aprovar', () => {
 
   it('includes observacoes_aprovador when obs is provided', async () => {
     const { updateFn } = setupUpdateChain({ id: 'he-1', status: 'aprovada' });
-    await horaExtraService.aprovar('he-1', 'user-1', 'Autorizado pelo gestor');
+    await horaExtraService.aprovar('he-1', 'user-1', EMPRESA_ID, 'Autorizado pelo gestor');
     const updateArgs = (updateFn as any).mock.calls[0][0];
     expect(updateArgs.observacoes_aprovador).toBe('Autorizado pelo gestor');
   });
 
   it('throws when data is null (record not found)', async () => {
     setupUpdateChain(null);
-    await expect(horaExtraService.aprovar('he-1', 'user-1')).rejects.toThrow();
+    await expect(horaExtraService.aprovar('he-1', 'user-1', EMPRESA_ID)).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
     setupUpdateChain(null, { message: 'fail' });
-    await expect(horaExtraService.aprovar('he-1', 'user-1')).rejects.toBeDefined();
+    await expect(horaExtraService.aprovar('he-1', 'user-1', EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -163,7 +163,7 @@ describe('horaExtraService.rejeitar', () => {
 
   it('updates status to rejeitada', async () => {
     const { updateFn } = setupUpdateChain({ id: 'he-1', status: 'rejeitada' });
-    await horaExtraService.rejeitar('he-1', 'user-1');
+    await horaExtraService.rejeitar('he-1', 'user-1', EMPRESA_ID);
     const updateArgs = (updateFn as any).mock.calls[0][0];
     expect(updateArgs.status).toBe('rejeitada');
     expect(updateArgs.aprovado_por).toBe('user-1');
@@ -171,19 +171,19 @@ describe('horaExtraService.rejeitar', () => {
 
   it('includes motivo as observacoes_aprovador when provided', async () => {
     const { updateFn } = setupUpdateChain({ id: 'he-1', status: 'rejeitada' });
-    await horaExtraService.rejeitar('he-1', 'user-1', 'Limite mensal atingido');
+    await horaExtraService.rejeitar('he-1', 'user-1', EMPRESA_ID, 'Limite mensal atingido');
     const updateArgs = (updateFn as any).mock.calls[0][0];
     expect(updateArgs.observacoes_aprovador).toBe('Limite mensal atingido');
   });
 
   it('throws when data is null', async () => {
     setupUpdateChain(null);
-    await expect(horaExtraService.rejeitar('he-1', 'user-1')).rejects.toThrow();
+    await expect(horaExtraService.rejeitar('he-1', 'user-1', EMPRESA_ID)).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
     setupUpdateChain(null, { message: 'fail' });
-    await expect(horaExtraService.rejeitar('he-1', 'user-1')).rejects.toBeDefined();
+    await expect(horaExtraService.rejeitar('he-1', 'user-1', EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 

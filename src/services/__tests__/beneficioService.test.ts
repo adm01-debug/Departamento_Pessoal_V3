@@ -132,13 +132,13 @@ describe('beneficioService.listar', () => {
   it('returns data and total without filters', async () => {
     const records = [{ id: 'b1', nome: 'VT' }];
     setupListarChain(records, 1);
-    const result = await beneficioService.listar();
+    const result = await beneficioService.listar({ filters: { empresa_id: EMPRESA_ID } });
     expect(result).toEqual({ data: records, total: 1 });
   });
 
   it('returns empty data when null', async () => {
     setupListarChain(null as any, 0);
-    const result = await beneficioService.listar();
+    const result = await beneficioService.listar({ filters: { empresa_id: EMPRESA_ID } });
     expect(result).toEqual({ data: [], total: 0 });
   });
 
@@ -150,19 +150,19 @@ describe('beneficioService.listar', () => {
 
   it('applies ilike search when search provided', async () => {
     const { chain } = setupListarChain([]);
-    await beneficioService.listar({ search: 'vale' });
+    await beneficioService.listar({ search: 'vale', filters: { empresa_id: EMPRESA_ID } });
     expect(chain.ilike).toHaveBeenCalledWith('nome', '%vale%');
   });
 
   it('orders by nome', async () => {
     const { chain } = setupListarChain([]);
-    await beneficioService.listar();
+    await beneficioService.listar({ filters: { empresa_id: EMPRESA_ID } });
     expect(chain.order).toHaveBeenCalledWith('nome');
   });
 
   it('throws on DB error', async () => {
     setupListarChain([], 0, { message: 'fail' });
-    await expect(beneficioService.listar()).rejects.toBeDefined();
+    await expect(beneficioService.listar({ filters: { empresa_id: EMPRESA_ID } })).rejects.toBeDefined();
   });
 });
 
