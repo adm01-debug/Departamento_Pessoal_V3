@@ -201,6 +201,7 @@ export function usePcsBenchmark() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['pcs', 'benchmark', empresaId] });
+      qc.invalidateQueries({ queryKey: ['pcs', 'grades-mercado'] });
       toast.success('Referência de mercado registrada');
     },
     onError: (e) => toast.error(erro(e, 'Não foi possível registrar a referência')),
@@ -213,6 +214,7 @@ export function usePcsBenchmark() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['pcs', 'benchmark', empresaId] });
+      qc.invalidateQueries({ queryKey: ['pcs', 'grades-mercado'] });
       toast.success('Referência removida');
     },
     onError: (e) => toast.error(erro(e, 'Não foi possível remover a referência')),
