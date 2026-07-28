@@ -94,10 +94,11 @@ describe('listarEventos', () => {
   });
 
   it('rejeita quando empresaId não é informado (isolamento de tenant)', async () => {
-    buildEventosChain([]);
+    const { eqFn } = buildEventosChain([]);
     await expect(listarEventos('' as unknown as string)).rejects.toThrow('empresa_id obrigatório');
     expect(eqFn).not.toHaveBeenCalled();
   });
+
 
   it('returns empty array when data is null', async () => {
     buildEventosChain(null as any);
