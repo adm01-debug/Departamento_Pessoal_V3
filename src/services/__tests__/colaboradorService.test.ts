@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { colaboradorService } from '../colaboradorService';
 
+const EMP = 'emp-test';
+
 // ─── shared mock setup ────────────────────────────────────────────────────────
 
 const { mockFrom, mockLoggerError } = vi.hoisted(() => ({
@@ -49,21 +51,21 @@ describe('colaboradorService.listar', () => {
   it('returns data and total from supabase', async () => {
     const records = [{ id: '1', nome_completo: 'Alice' }];
     setupListarChain(records, 1);
-    const result = await colaboradorService.listar();
+    const result = await colaboradorService.listar({ filters: { empresaId: EMP } });
     expect(result.data).toEqual(records);
     expect(result.total).toBe(1);
   });
 
   it('returns empty data with total 0 when supabase returns null', async () => {
     setupListarChain(null as any, null as any);
-    const result = await colaboradorService.listar();
+    const result = await colaboradorService.listar({ filters: { empresaId: EMP } });
     expect(result.data).toEqual([]);
     expect(result.total).toBe(0);
   });
 
   it('adds or() filter when search is provided', async () => {
     const { orFn } = setupListarChain([], 0);
-    await colaboradorService.listar({ search: 'Silva' });
+    await colaboradorService.listar({ search: 'Silva', filters: { empresaId: EMP } });
     expect(orFn).toHaveBeenCalledWith(
       expect.stringContaining('ilike.%Silva%')
     );
@@ -77,36 +79,36 @@ describe('colaboradorService.listar', () => {
 
   it('filters by status when not "all"', async () => {
     const { eqFn } = setupListarChain([], 0);
-    await colaboradorService.listar({ filters: { status: 'ativo' } });
+    await colaboradorService.listar({ filters: { empresaId: EMP, status: 'ativo' } });
     expect(eqFn).toHaveBeenCalledWith('status', 'ativo');
   });
 
   it('does NOT filter by status when status is "all"', async () => {
     const { eqFn } = setupListarChain([], 0);
-    await colaboradorService.listar({ filters: { status: 'all' } });
+    await colaboradorService.listar({ filters: { empresaId: EMP, status: 'all' } });
     expect(eqFn).not.toHaveBeenCalledWith('status', 'all');
   });
 
   it('calls range with correct offset for page 2 (default pageSize 25)', async () => {
     const { rangeFn } = setupListarChain([], 0);
-    await colaboradorService.listar({ page: 2, pageSize: 25 });
+    await colaboradorService.listar({ page: 2, pageSize: 25, filters: { empresaId: EMP } });
     expect(rangeFn).toHaveBeenCalledWith(25, 49);
   });
 
   it('calls range(0, 24) for first page with pageSize 25', async () => {
     const { rangeFn } = setupListarChain([], 0);
-    await colaboradorService.listar({ page: 1, pageSize: 25 });
+    await colaboradorService.listar({ page: 1, pageSize: 25, filters: { empresaId: EMP } });
     expect(rangeFn).toHaveBeenCalledWith(0, 24);
   });
 
   it('throws on DB error', async () => {
     setupListarChain([], 0, { message: 'DB fail' });
-    await expect(colaboradorService.listar()).rejects.toBeDefined();
+    await expect(colaboradorService.listar({ filters: { empresaId: EMP } })).rejects.toBeDefined();
   });
 
   it('orders by nome_completo ascending', async () => {
     const { orderFn } = setupListarChain([], 0);
-    await colaboradorService.listar();
+    await colaboradorService.listar({ filters: { empresaId: EMP } });
     expect(orderFn).toHaveBeenCalledWith('nome_completo', { ascending: true });
   });
 });
@@ -121,7 +123,7 @@ describe('colaboradorService.getSummary', () => {
     let callIdx = 0;
     mockFrom.mockImplementation(() => makeCountChain(counts[callIdx++]));
 
-    const summary = await colaboradorService.getSummary();
+    const summary = await colaboradorService.getSummary(EMP);
     expect(summary.ativo).toBe(5);
     expect(summary.desligado).toBe(2);
     expect(summary.afastado).toBe(1);
@@ -134,13 +136,13 @@ describe('colaboradorService.getSummary', () => {
     let callIdx = 0;
     mockFrom.mockImplementation(() => makeCountChain(counts[callIdx++]));
 
-    const summary = await colaboradorService.getSummary();
+    const summary = await colaboradorService.getSummary(EMP);
     expect(summary.inativo).toBe(3);
   });
 
   it('returns 0 total when all counts are 0', async () => {
     mockFrom.mockImplementation(() => makeCountChain(0));
-    const summary = await colaboradorService.getSummary();
+    const summary = await colaboradorService.getSummary(EMP);
     expect(summary.total).toBe(0);
   });
 
@@ -153,7 +155,7 @@ describe('colaboradorService.getSummary', () => {
 
   it('returns count 0 per status on DB error (graceful fallback)', async () => {
     mockFrom.mockImplementation(() => makeCountChain(0, { message: 'fail' }));
-    const summary = await colaboradorService.getSummary();
+    const summary = await colaboradorService.getSummary(EMP);
     expect(summary.total).toBe(0);
     expect(summary.ativo).toBe(0);
   });
