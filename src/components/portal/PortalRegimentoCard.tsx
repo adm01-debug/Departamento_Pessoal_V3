@@ -10,6 +10,8 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+import { loggerService } from '@/services/loggerService';
+
 import { CheckCircle2, FileText, Loader2, ShieldCheck } from 'lucide-react';
 
 type DocumentoVigente = {
