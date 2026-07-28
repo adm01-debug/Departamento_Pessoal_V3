@@ -69,10 +69,10 @@ describe('documentoService.listarDocumentos', () => {
     expect(chain.order).toHaveBeenCalledWith('created_at', { ascending: false });
   });
 
-  it('limits to 500 records', async () => {
+  it('limits to 200 records', async () => {
     const { chain } = setupListChain([]);
     await documentoService.listarDocumentos(EMP);
-    expect(chain.limit).toHaveBeenCalledWith(500);
+    expect(chain.limit).toHaveBeenCalledWith(200);
   });
 
   it('selects with colaborador join including id, nome_completo, cpf', async () => {
