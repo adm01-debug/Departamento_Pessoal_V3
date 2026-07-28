@@ -28,18 +28,19 @@ export default function PensoesPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['pensoes', empresaId],
     queryFn: async () => {
-      // Filtro explícito por tenant: `pensoes` não tem empresa_id, então
-      // escopamos via inner join em colaboradores (defesa em profundidade
-      // sobre a RLS, que libera todas as empresas do usuário).
+      // `pensoes.empresa_id` é denormalizada e mantida por trigger a partir
+      // do colaborador. Filtro direto (indexado) + defesa em profundidade
+      // sobre a RLS, que libera todas as empresas do usuário.
       const { data, error } = await supabase
         .from('pensoes')
-        .select('*, colaboradores!pensoes_colaborador_id_fkey!inner(id, nome_completo, empresa_id)')
-        .eq('colaboradores.empresa_id', empresaId!)
+        .select('*, colaboradores!pensoes_colaborador_id_fkey(id, nome_completo)')
+        .eq('empresa_id', empresaId!)
         .order('created_at', { ascending: false })
         .limit(500);
       if (error) throw error;
       return data || [];
     },
+
     enabled: !!empresaId,
   });
 
@@ -62,7 +63,7 @@ export default function PensoesPage() {
   });
 
   const excluir = useMutation({
-    mutationFn: async (id: string) => { const { error } = await supabase.from('pensoes').delete().eq('id', id); if (error) throw error; },
+    mutationFn: async (id: string) => { const { error } = await supabase.from('pensoes').delete().eq('id', id).eq('empresa_id', empresaId!); if (error) throw error; },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['pensoes', empresaId] }); toast.success('Excluída'); },
   });
 

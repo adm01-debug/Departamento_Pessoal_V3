@@ -15322,6 +15322,7 @@ export type Database = {
           conta: string | null
           cpf_beneficiario: string | null
           created_at: string
+          empresa_id: string | null
           id: string
           percentual: number | null
           tipo: string | null
@@ -15336,6 +15337,7 @@ export type Database = {
           conta?: string | null
           cpf_beneficiario?: string | null
           created_at?: string
+          empresa_id?: string | null
           id?: string
           percentual?: number | null
           tipo?: string | null
@@ -15350,6 +15352,7 @@ export type Database = {
           conta?: string | null
           cpf_beneficiario?: string | null
           created_at?: string
+          empresa_id?: string | null
           id?: string
           percentual?: number | null
           tipo?: string | null
