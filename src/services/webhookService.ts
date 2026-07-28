@@ -1,3 +1,4 @@
+import { supabase } from '@/integrations/supabase/client';
 import { BaseService, ListOptions, ListResponse } from './baseService';
 
 class WebhookService extends BaseService<any> {
@@ -20,11 +21,14 @@ class WebhookService extends BaseService<any> {
 
     const { data, count, error } = await query.order('nome');
     if (error) throw error;
-    return { data: data || [], total: count || 0 };
+    return { data: (data as any[]) || [], total: count || 0 };
   }
 
   async listarLogs(webhookId: string): Promise<any[]> {
-    const { data, error } = await (this.getQuery().from as any)('webhook_logs')
+    // BUG corrigido: o builder do PostgREST não expõe `.from()`; a chamada
+    // antiga (`this.getQuery().from(...)`) lançava TypeError em runtime.
+    const { data, error } = await supabase
+      .from('webhook_logs')
       .select('*')
       .eq('webhook_id', webhookId)
       .order('created_at', { ascending: false })
