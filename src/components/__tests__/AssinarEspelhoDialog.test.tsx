@@ -13,6 +13,9 @@ vi.mock('@/integrations/supabase/client', () => ({
 
 vi.mock('@/utils/dateLocal', () => ({
   todayLocalISO: () => '2026-07-24',
+  // Competência derivada da mesma data fixa, mantendo o teste determinístico.
+  currentCompetenciaLocal: () => '2026-07',
+  formatCompetenciaLocal: () => '2026-07',
 }));
 
 vi.mock('@/components/ui/dialog', () => ({

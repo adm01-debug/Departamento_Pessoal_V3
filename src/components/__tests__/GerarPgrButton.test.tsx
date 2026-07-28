@@ -5,8 +5,17 @@ const mockMutate = vi.fn();
 const mockInvalidateQueries = vi.fn();
 
 vi.mock('@tanstack/react-query', () => ({
+  // Mock fiel ao contrato do useMutation: `mutate` executa a mutationFn e
+  // encaminha sucesso/erro para onSuccess/onError, permitindo testar as
+  // validações que vivem dentro da mutation.
   useMutation: (opts: any) => ({
-    mutate: () => mockMutate(opts),
+    mutate: (vars?: unknown) => {
+      mockMutate(opts);
+      Promise.resolve()
+        .then(() => opts.mutationFn?.(vars))
+        .then((data: unknown) => opts.onSuccess?.(data, vars, undefined))
+        .catch((err: unknown) => opts.onError?.(err, vars, undefined));
+    },
     mutateAsync: async () => opts.mutationFn?.(),
     isPending: false,
   }),

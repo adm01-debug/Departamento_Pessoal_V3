@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { deepChain } from '@/test/deepChain';
 import { securityService } from '../securityService';
 
 const { mockFrom, mockLoggerError, mockLoggerInfo } = vi.hoisted(() => ({
@@ -8,7 +9,7 @@ const { mockFrom, mockLoggerError, mockLoggerInfo } = vi.hoisted(() => ({
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: mockFrom },
+  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
 vi.mock('../loggerService', () => ({
@@ -35,7 +36,7 @@ function setupSelectOrderChain(data: any[], error: any = null) {
 // delete → eq → resolvedValue
 function setupDeleteEqChain(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = { then: (r) => Promise.resolve({ error }).then(r), catch: (r) => Promise.resolve({ error }).catch(r), finally: (r) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
   eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
@@ -45,7 +46,7 @@ function setupDeleteEqChain(error: any = null) {
 // update → eq → resolvedValue
 function setupUpdateEqChain(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = { then: (r) => Promise.resolve({ error }).then(r), catch: (r) => Promise.resolve({ error }).catch(r), finally: (r) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
   eqFn.mockReturnValue(__delChain);
   const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ update: updateFn });

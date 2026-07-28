@@ -138,7 +138,7 @@ describe('useImportacaoColaboradores', () => {
 
     const { result } = renderHook(() => useImportacaoColaboradores(), { wrapper });
 
-    let caught: Error | null = null;
+    let caught: { message?: string } | null = null;
     await act(async () => {
       try {
         await result.current.processarArquivo(mockFile);
@@ -147,7 +147,9 @@ describe('useImportacaoColaboradores', () => {
       }
     });
 
-    expect(caught?.message).toBe('parse error');
+    // TS não rastreia atribuições feitas dentro do callback assíncrono; reafirmamos o tipo.
+    const capturado = caught as { message?: string } | null;
+    expect(capturado?.message).toBe('parse error');
     expect(mockToastError).toHaveBeenCalledWith('parse error');
   });
 });

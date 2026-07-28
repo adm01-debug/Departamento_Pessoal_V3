@@ -1,3 +1,4 @@
+import { deepChain } from '@/test/deepChain';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import React from 'react';
@@ -35,7 +36,7 @@ function buildSelectChain(data: any[] = []) {
   const insertFn = vi.fn().mockResolvedValue({ error: null });
   const eqFn = vi.fn().mockResolvedValue({ error: null });
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
-  mockFrom.mockReturnValue({ select: vi.fn().mockReturnValue(chain), insert: insertFn, delete: deleteFn });
+  mockFrom.mockReturnValue(deepChain({ select: vi.fn().mockReturnValue(chain), insert: insertFn, delete: deleteFn }) as any);
   return { chain, insertFn, deleteFn, eqFn };
 }
 
@@ -78,7 +79,7 @@ describe('useFeriados', () => {
       catch: (fn: any) => Promise.resolve({ data: [], error: null }).catch(fn),
       finally: (fn: any) => Promise.resolve({ data: [], error: null }).finally(fn),
     };
-    mockFrom.mockReturnValue({ select: vi.fn().mockReturnValue(selectChain), insert: insertFn });
+    mockFrom.mockReturnValue(deepChain({ select: vi.fn().mockReturnValue(selectChain), insert: insertFn }) as any);
 
     const { result } = renderHook(() => useFeriados(), { wrapper });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
@@ -101,7 +102,7 @@ describe('useFeriados', () => {
       catch: (fn: any) => Promise.resolve({ data: [], error: null }).catch(fn),
       finally: (fn: any) => Promise.resolve({ data: [], error: null }).finally(fn),
     };
-    mockFrom.mockReturnValue({ select: vi.fn().mockReturnValue(selectChain), delete: deleteFn });
+    mockFrom.mockReturnValue(deepChain({ select: vi.fn().mockReturnValue(selectChain), delete: deleteFn }) as any);
 
     const { result } = renderHook(() => useFeriados(), { wrapper });
 

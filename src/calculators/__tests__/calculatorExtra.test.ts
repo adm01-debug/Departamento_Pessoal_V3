@@ -41,13 +41,20 @@ describe('calcularAvisoPrevioIndenizado', () => {
 // ─── calcularMulta477 ────────────────────────────────────────────────────────
 
 describe('calcularMulta477', () => {
-  it('equals salarioBase (1 mês de salário)', () => {
-    expect(calcularMulta477(3000)).toBe(3000);
-    expect(calcularMulta477(1518)).toBe(1518);
+  // CLT Art. 477 §8: a multa (1 salário) só é devida quando o empregador dá
+  // causa ao atraso no pagamento das verbas rescisórias. Sem culpa → 0.
+  it('equals salarioBase quando o empregador deu causa ao atraso', () => {
+    expect(calcularMulta477(3000, true)).toBe(3000);
+    expect(calcularMulta477(1518, true)).toBe(1518);
+  });
+
+  it('returns 0 quando não há culpa do empregador (default)', () => {
+    expect(calcularMulta477(3000)).toBe(0);
+    expect(calcularMulta477(3000, false)).toBe(0);
   });
 
   it('returns 0 for 0 salary', () => {
-    expect(calcularMulta477(0)).toBe(0);
+    expect(calcularMulta477(0, true)).toBe(0);
   });
 });
 

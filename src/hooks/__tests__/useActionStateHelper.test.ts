@@ -3,6 +3,7 @@
 
 import { renderHook, act } from '@testing-library/react';
 import { useFormActionState } from '../useActionStateHelper';
+import type { ActionState } from '../useActionStateHelper';
 
 describe('useFormActionState', () => {
   it('inicializa com o estado fornecido', () => {

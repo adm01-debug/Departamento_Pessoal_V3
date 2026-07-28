@@ -21,6 +21,11 @@ vi.mock('sonner', () => ({
 
 import { useHistoricoContratos } from '../useHistoricoContratos';
 
+vi.mock('@/hooks/useEmpresas', async () =>
+  (await import('@/test/empresaMock')).useEmpresasMockModule()
+);
+
+
 function wrapper({ children }: { children: React.ReactNode }) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
   return React.createElement(QueryClientProvider, { client: qc }, children);
@@ -41,7 +46,7 @@ describe('useHistoricoContratos', () => {
   it('calls historicoContratoService.listar with colaboradorId', async () => {
     const { result } = renderHook(() => useHistoricoContratos('col-1'), { wrapper });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
-    expect(mockListar).toHaveBeenCalledWith('col-1');
+    expect(mockListar).toHaveBeenCalledWith('col-1', '00000000-0000-0000-0000-0000000000e1');
   });
 
   it('returns historico from service', async () => {
@@ -86,7 +91,7 @@ describe('useHistoricoContratos', () => {
       await result.current.excluir('h1');
     });
 
-    expect(mockExcluir).toHaveBeenCalledWith('h1');
+    expect(mockExcluir).toHaveBeenCalledWith('00000000-0000-0000-0000-0000000000e1', 'h1');
     await waitFor(() => expect(mockToastSuccess).toHaveBeenCalledWith('Registro excluído'));
   });
 

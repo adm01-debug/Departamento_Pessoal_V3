@@ -84,7 +84,7 @@ describe('useConfiguracoesIntervalo', () => {
       await result.current.atualizar({ id: 'i1', data: { duracao_minutos: 30 } });
     });
 
-    expect(mockAtualizar).toHaveBeenCalledWith('i1', { duracao_minutos: 30 });
+    expect(mockAtualizar).toHaveBeenCalledWith('emp-1', 'i1', { duracao_minutos: 30 });
     await waitFor(() => expect(mockToastSuccess).toHaveBeenCalledWith('Configuração atualizada'));
   });
 
@@ -96,7 +96,7 @@ describe('useConfiguracoesIntervalo', () => {
       await result.current.excluir('i1');
     });
 
-    expect(mockExcluir).toHaveBeenCalledWith('i1');
+    expect(mockExcluir).toHaveBeenCalledWith('emp-1', 'i1');
     await waitFor(() => expect(mockToastSuccess).toHaveBeenCalledWith('Configuração excluída'));
   });
 });

@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { deepChain } from '@/test/deepChain';
 import { criarNotificacao, notificarResultadoSync, notificarAjustePonto, notificacoesService } from '../notificacoesService';
 
 // ─── shared mock setup ────────────────────────────────────────────────────────
@@ -10,7 +11,7 @@ const { mockFrom, mockGetUser } = vi.hoisted(() => ({
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
-    from: mockFrom,
+    from: (...a: unknown[]) => deepChain(mockFrom(...a)),
     auth: { getUser: mockGetUser },
   },
 }));

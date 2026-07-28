@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { EmprestimosTable } from '../descontos/EmprestimosTable';
 import { FinancialSummaryCards } from '../descontos/FinancialSummaryCards';
 
-const fmt = (v: number) => `R$ ${v.toFixed(2)}`;
+const fmt = (v: number | null) => `R$ ${(v ?? 0).toFixed(2)}`;
 
 const EMPRESTIMOS = [
   {

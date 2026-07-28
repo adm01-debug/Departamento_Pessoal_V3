@@ -53,7 +53,7 @@ describe('useContratosAssinaturaKPI', () => {
       Array.isArray(opts.queryKey) && opts.queryKey[0] === 'contratos-assinatura-kpi'
     );
     expect(kpiCall).toBeDefined();
-    expect(kpiCall[0].queryKey).toEqual(['contratos-assinatura-kpi', 'emp-1']);
+    expect(kpiCall![0].queryKey).toEqual(['contratos-assinatura-kpi', 'emp-1']);
   });
 
   it('queries pendentes with empresa_id', () => {
@@ -63,7 +63,7 @@ describe('useContratosAssinaturaKPI', () => {
       Array.isArray(opts.queryKey) && opts.queryKey[0] === 'contratos-tokens-pendentes'
     );
     expect(pendentesCall).toBeDefined();
-    expect(pendentesCall[0].queryKey).toEqual(['contratos-tokens-pendentes', 'emp-1']);
+    expect(pendentesCall![0].queryKey).toEqual(['contratos-tokens-pendentes', 'emp-1']);
   });
 
   it('exposes kpi query result', () => {

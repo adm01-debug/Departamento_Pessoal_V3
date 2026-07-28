@@ -81,7 +81,7 @@ describe('useBatidasPonto', () => {
   it('calls batidasPontoService.listar with colaboradorId', async () => {
     const { result } = renderHook(() => useBatidasPonto('col-1'), { wrapper });
     await waitFor(() => !result.current.isLoading);
-    expect(mockListarBatidas).toHaveBeenCalledWith('col-1', undefined, undefined);
+    expect(mockListarBatidas).toHaveBeenCalledWith('col-1', undefined, undefined, 'emp-1');
   });
 
   it('returns batidas data', async () => {
@@ -132,7 +132,7 @@ describe('useFaltasColaborador', () => {
   it('calls faltasService.buscarPorColaborador with colaboradorId', async () => {
     const { result } = renderHook(() => useFaltasColaborador('col-1'), { wrapper });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
-    expect(mockListarFaltasColaborador).toHaveBeenCalledWith('col-1');
+    expect(mockListarFaltasColaborador).toHaveBeenCalledWith('col-1', 'emp-1');
   });
 
   it('is disabled when no colaboradorId', () => {

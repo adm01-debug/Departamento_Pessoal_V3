@@ -1,12 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { Mock } from 'vitest';
+import { deepChain } from '@/test/deepChain';
 import { premiacoesService } from '../premiacoesService';
+import { makeChain } from '@/test/chain';
 
 const EMPRESA_ID = 'test-empresa-id';
 
 type SelectChain = { eq: ReturnType<typeof vi.fn>; order: ReturnType<typeof vi.fn>; filter: ReturnType<typeof vi.fn> };
 type InsertChain = { select: ReturnType<typeof vi.fn>; then: (fn: unknown) => unknown; catch: (fn: unknown) => unknown };
 
-const { mockFrom } = vi.hoisted<{ mockFrom: ReturnType<typeof vi.fn> }>(() => ({
+const { mockFrom } = vi.hoisted<{ mockFrom: Mock<(...args: any[]) => any> }>(() => ({
   mockFrom: vi.fn<(table: string) => {
     select: () => SelectChain;
     insert: (data?: unknown) => InsertChain;
@@ -15,92 +18,48 @@ const { mockFrom } = vi.hoisted<{ mockFrom: ReturnType<typeof vi.fn> }>(() => ({
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: mockFrom },
+  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(a[0] as string)) },
 }));
 
-// Thenable chain with order + optional eq (listarCampanhas / listarAuditoria)
-function setupOrderChain(data: any[], error: any = null) {
-  const response = { data, error };
-  const chain: any = {};
-  chain.eq = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
-  const orderFn = vi.fn().mockReturnValue(chain);
-  const selectFn = vi.fn().mockReturnValue({ order: orderFn });
-  mockFrom.mockReturnValue({ select: selectFn });
-  return { selectFn, orderFn, chain };
+/**
+ * Todos os helpers abaixo usam o chain canônico (`makeChain`), que aceita
+ * qualquer profundidade de encadeamento do PostgREST. Isso evita que a suíte
+ * quebre sempre que um serviço ganha um novo `.eq()` (ex.: isolamento de tenant).
+ */
+function setupChain(data: any, error: any = null) {
+  const chain = makeChain({ data, error });
+  mockFrom.mockReturnValue(chain);
+  return {
+    chain,
+    selectFn: chain.select,
+    orderFn: chain.order,
+    eqFn: chain.eq,
+    insertFn: chain.insert,
+    updateFn: chain.update,
+    singleFn: chain.single,
+  };
 }
 
-// Thenable chain with optional eq + filter (listarPagamentos)
-function setupPagamentosChain(data: any[], error: any = null) {
-  const response = { data, error };
-  const chain: any = {};
-  chain.eq = vi.fn().mockReturnValue(chain);
-  chain.filter = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
-  const selectFn = vi.fn().mockReturnValue(chain);
-  mockFrom.mockReturnValue({ select: selectFn });
-  return { selectFn, chain };
+const setupOrderChain = setupChain;
+const setupPagamentosChain = setupChain;
+const setupEqResolveChain = setupChain;
+const setupSelectOrderChain = setupChain;
+const setupInsertSingleChain = setupChain;
+const setupInsertDirectChain = (error: any = null) => setupChain(null, error);
+
+/** Chain isolado (não registrado no mockFrom) para uso com mockReturnValueOnce. */
+function makeStandaloneChain(data: any, error: any = null) {
+  const chain = makeChain({ data, error });
+  return { chain, selectFn: chain.select, eqFn: chain.eq, singleFn: chain.single, updateFn: chain.update };
 }
 
-// select → eq → resolvedValue (listarRegras)
-function setupEqResolveChain(data: any[], error: any = null) {
-  const eqFn = vi.fn().mockResolvedValue({ data, error });
-  const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
-  mockFrom.mockReturnValue({ select: selectFn });
-  return { selectFn, eqFn };
-}
-
-// select → order → resolvedValue (listarCenariosROI)
-function setupSelectOrderChain(data: any[], error: any = null) {
-  const orderFn = vi.fn().mockResolvedValue({ data, error });
-  const selectFn = vi.fn().mockReturnValue({ order: orderFn });
-  mockFrom.mockReturnValue({ select: selectFn });
-  return { selectFn, orderFn };
-}
-
-// insert(d).select().single()
-function setupInsertSingleChain(data: any, error: any = null) {
-  const singleFn = vi.fn().mockResolvedValue({ data, error });
-  const selectFn = vi.fn().mockReturnValue({ single: singleFn });
-  const insertFn = vi.fn().mockReturnValue({ select: selectFn });
-  mockFrom.mockReturnValue({ insert: insertFn });
-  return { insertFn, selectFn, singleFn };
-}
-
-// insert({...}) resolves directly (enviarNotificacaoCritica)
-function setupInsertDirectChain(error: any = null) {
-  const insertFn = vi.fn().mockResolvedValue({ error });
-  mockFrom.mockReturnValue({ insert: insertFn });
-  return { insertFn };
-}
-
-// select('*').eq('id', id).single()
-function makeFetchSingleMock(data: any, error: any = null) {
-  const singleFn = vi.fn().mockResolvedValue({ data, error });
-  const eqFn = vi.fn().mockReturnValue({ single: singleFn });
-  const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
-  return { selectFn, eqFn, singleFn };
-}
-
-// update({...}).eq('id', id).select().single()
-function makeUpdateSingleMock(data: any, error: any = null) {
-  const singleFn = vi.fn().mockResolvedValue({ data, error });
-  const selectFn = vi.fn().mockReturnValue({ single: singleFn });
-  const eqFn = vi.fn();
-  const __eqChain = { select: selectFn, eq: eqFn };
-  eqFn.mockReturnValue(__eqChain);
-  const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
-  return { updateFn, eqFn, selectFn, singleFn };
-}
+const makeFetchSingleMock = makeStandaloneChain;
+const makeUpdateSingleMock = makeStandaloneChain;
 
 // ─── listarCampanhas ──────────────────────────────────────────────────────────
 
 describe('premiacoesService.listarCampanhas', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('returns campanhas without empresa filter', async () => {
     const records = [{ id: 'c1', nome: 'Campanha Q1' }];
@@ -128,7 +87,7 @@ describe('premiacoesService.listarCampanhas', () => {
 // ─── listarRegras ─────────────────────────────────────────────────────────────
 
 describe('premiacoesService.listarRegras', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('returns regras for campanha', async () => {
     const records = [{ id: 'r1', campanha_id: 'c1' }];
@@ -147,12 +106,12 @@ describe('premiacoesService.listarRegras', () => {
 // ─── listarPagamentos ─────────────────────────────────────────────────────────
 
 describe('premiacoesService.listarPagamentos', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('returns pagamentos without filters', async () => {
     const records = [{ id: 'pg1' }];
     setupPagamentosChain(records);
-    expect(await premiacoesService.listarPagamentos(EMPRESA_ID)).toEqual(records);
+    expect(await premiacoesService.listarPagamentos(undefined, EMPRESA_ID)).toEqual(records);
   });
 
   it('filters by campanha_id when provided', async () => {
@@ -161,22 +120,23 @@ describe('premiacoesService.listarPagamentos', () => {
     expect(chain.eq).toHaveBeenCalledWith('campanha_id', 'c1');
   });
 
-  it('filters by empresa_id using filter() when provided', async () => {
+  it('escopa por empresa_id via join !inner na campanha', async () => {
     const { chain } = setupPagamentosChain([]);
     await premiacoesService.listarPagamentos(undefined, 'emp-1');
-    expect(chain.filter).toHaveBeenCalledWith('campanha.empresa_id', 'eq', 'emp-1');
+    expect(chain.eq).toHaveBeenCalledWith('campanha.empresa_id', 'emp-1');
   });
+
 
   it('returns empty array when data is null', async () => {
     setupPagamentosChain(null as any);
-    expect(await premiacoesService.listarPagamentos(EMPRESA_ID)).toEqual([]);
+    expect(await premiacoesService.listarPagamentos(undefined, EMPRESA_ID)).toEqual([]);
   });
 });
 
 // ─── criarCampanha ────────────────────────────────────────────────────────────
 
 describe('premiacoesService.criarCampanha', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('inserts and returns new campanha', async () => {
     const created = { id: 'c-new', nome: 'Nova Campanha' };
@@ -195,7 +155,7 @@ describe('premiacoesService.criarCampanha', () => {
 // ─── criarRegra ───────────────────────────────────────────────────────────────
 
 describe('premiacoesService.criarRegra', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('inserts and returns new regra', async () => {
     const created = { id: 'r-new', tipo: 'metas' };
@@ -209,17 +169,17 @@ describe('premiacoesService.criarRegra', () => {
 // ─── atualizarStatusPagamento ────────────────────────────────────────────────
 
 describe('premiacoesService.atualizarStatusPagamento', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('fetches, updates and returns pagamento', async () => {
     const original = { id: 'pg1', historico_mudancas: [] };
     const updated = { id: 'pg1', status: 'aprovado' };
     const fetchMock = makeFetchSingleMock(original);
     const updateMock = makeUpdateSingleMock(updated);
-    mockFrom.mockReturnValueOnce({ select: fetchMock.selectFn });
-    mockFrom.mockReturnValueOnce({ update: updateMock.updateFn });
+    mockFrom.mockReturnValueOnce(fetchMock.chain);
+    mockFrom.mockReturnValueOnce(updateMock.chain);
 
-    const result = await premiacoesService.atualizarStatusPagamento('pg1', 'aprovado', 1000);
+    const result = await premiacoesService.atualizarStatusPagamento('pg1', 'aprovado', EMPRESA_ID, 1000);
     expect(fetchMock.eqFn).toHaveBeenCalledWith('id', 'pg1');
     expect(updateMock.eqFn).toHaveBeenCalledWith('id', 'pg1');
     expect(result).toEqual(updated);
@@ -227,8 +187,8 @@ describe('premiacoesService.atualizarStatusPagamento', () => {
 
   it('throws when fetch fails', async () => {
     const fetchMock = makeFetchSingleMock(null, { message: 'fail' });
-    mockFrom.mockReturnValueOnce({ select: fetchMock.selectFn });
-    await expect(premiacoesService.atualizarStatusPagamento('pg1', 'aprovado')).rejects.toBeDefined();
+    mockFrom.mockReturnValueOnce(fetchMock.chain);
+    await expect(premiacoesService.atualizarStatusPagamento('pg1', 'aprovado', EMPRESA_ID)).rejects.toBeDefined();
   });
 
   it('sends notification for rejeitado status', async () => {
@@ -236,12 +196,13 @@ describe('premiacoesService.atualizarStatusPagamento', () => {
     const updated = { id: 'pg1', status: 'rejeitado' };
     const fetchMock = makeFetchSingleMock(original);
     const updateMock = makeUpdateSingleMock(updated);
-    const notifInsertFn = vi.fn().mockResolvedValue({ error: null });
-    mockFrom.mockReturnValueOnce({ select: fetchMock.selectFn });
-    mockFrom.mockReturnValueOnce({ update: updateMock.updateFn });
-    mockFrom.mockReturnValueOnce({ insert: notifInsertFn });
+    const notifChain = makeChain({ error: null });
+    const notifInsertFn = notifChain.insert;
+    mockFrom.mockReturnValueOnce(fetchMock.chain);
+    mockFrom.mockReturnValueOnce(updateMock.chain);
+    mockFrom.mockReturnValueOnce(notifChain);
 
-    await premiacoesService.atualizarStatusPagamento('pg1', 'rejeitado');
+    await premiacoesService.atualizarStatusPagamento('pg1', 'rejeitado', EMPRESA_ID);
     expect(notifInsertFn).toHaveBeenCalled();
   });
 });
@@ -249,39 +210,40 @@ describe('premiacoesService.atualizarStatusPagamento', () => {
 // ─── reconciliarFolha ─────────────────────────────────────────────────────────
 
 describe('premiacoesService.reconciliarFolha', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('sets status conciliado when valores match', async () => {
     const original = { id: 'pg1', valor_aprovado: 1000, historico_mudancas: [] };
     const updated = { id: 'pg1', status: 'pago', status_conciliacao: 'conciliado' };
     const fetchMock = makeFetchSingleMock(original);
     const updateMock = makeUpdateSingleMock(updated);
-    const auditInsertFn = vi.fn().mockResolvedValue({ error: null });
-    mockFrom.mockReturnValueOnce({ select: fetchMock.selectFn });
-    mockFrom.mockReturnValueOnce({ update: updateMock.updateFn });
-    mockFrom.mockReturnValueOnce({ insert: auditInsertFn });
+    const auditChain = makeChain({ error: null });
+    const auditInsertFn = auditChain.insert;
+    mockFrom.mockReturnValueOnce(fetchMock.chain);
+    mockFrom.mockReturnValueOnce(updateMock.chain);
+    mockFrom.mockReturnValueOnce(auditChain);
 
-    const result = await premiacoesService.reconciliarFolha('pg1', 1000);
+    const result = await premiacoesService.reconciliarFolha('pg1', 1000, EMPRESA_ID);
     expect(result).toEqual(updated);
     expect(auditInsertFn).toHaveBeenCalled();
   });
 
   it('throws when fetch fails', async () => {
     const fetchMock = makeFetchSingleMock(null, { message: 'fail' });
-    mockFrom.mockReturnValueOnce({ select: fetchMock.selectFn });
-    await expect(premiacoesService.reconciliarFolha('pg1', 1000)).rejects.toBeDefined();
+    mockFrom.mockReturnValueOnce(fetchMock.chain);
+    await expect(premiacoesService.reconciliarFolha('pg1', 1000, EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
 // ─── listarAuditoria ──────────────────────────────────────────────────────────
 
 describe('premiacoesService.listarAuditoria', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('returns auditoria records', async () => {
     const records = [{ id: 'a1', acao: 'INSERT' }];
     setupOrderChain(records);
-    expect(await premiacoesService.listarAuditoria(EMPRESA_ID)).toEqual(records);
+    expect(await premiacoesService.listarAuditoria(undefined, EMPRESA_ID)).toEqual(records);
   });
 
   it('filters by entidade_id when provided', async () => {
@@ -294,7 +256,7 @@ describe('premiacoesService.listarAuditoria', () => {
 // ─── salvarCenarioROI ─────────────────────────────────────────────────────────
 
 describe('premiacoesService.salvarCenarioROI', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('inserts cenario and returns result', async () => {
     const created = { id: 'roi-new' };
@@ -324,7 +286,7 @@ describe('premiacoesService.salvarCenarioROI', () => {
 // ─── listarCenariosROI ────────────────────────────────────────────────────────
 
 describe('premiacoesService.listarCenariosROI', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('returns cenarios ordered by created_at desc', async () => {
     const records = [{ id: 'roi1' }];
@@ -338,7 +300,7 @@ describe('premiacoesService.listarCenariosROI', () => {
 // ─── enviarNotificacaoCritica ─────────────────────────────────────────────────
 
 describe('premiacoesService.enviarNotificacaoCritica', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => { vi.resetAllMocks(); });
 
   it('inserts into notificacoes and returns true', async () => {
     const { insertFn } = setupInsertDirectChain();

@@ -1,4 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
+import { maskEmail } from '@/utils/piiMask';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
@@ -73,7 +74,9 @@ describe('GlobalAuditLogTab', () => {
   it('renders user_email in table', () => {
     vi.mocked(useQuery).mockReturnValue({ data: MOCK_LOGS, isLoading: false } as any);
     render(<GlobalAuditLogTab />);
-    expect(screen.getByText('admin@empresa.com')).toBeInTheDocument();
+    // E-mail é PII: a tabela exibe apenas a versão mascarada.
+    expect(screen.getByText(maskEmail('admin@empresa.com'))).toBeInTheDocument();
+    expect(screen.queryByText('admin@empresa.com')).not.toBeInTheDocument();
   });
 
   it('renders Sistema fallback for null user_email', () => {

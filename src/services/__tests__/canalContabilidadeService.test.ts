@@ -1,5 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { deepChain } from '@/test/deepChain';
 import { canalContabilidadeService } from '../canalContabilidadeService';
+
+const EMPRESA_ID = 'test-empresa-id';
 
 const { mockFrom, mockGetUser } = vi.hoisted(() => ({
   mockFrom: vi.fn(),
@@ -8,7 +11,7 @@ const { mockFrom, mockGetUser } = vi.hoisted(() => ({
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
-    from: mockFrom,
+    from: (...a: unknown[]) => deepChain(mockFrom(...a)),
     auth: { getUser: mockGetUser },
   },
 }));
@@ -34,7 +37,7 @@ function setupInsertSelectMaybeSingle(data: any, error: any = null) {
 // update → eq → resolvedValue
 function setupUpdateEq(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = { then: (r) => Promise.resolve({ error }).then(r), catch: (r) => Promise.resolve({ error }).catch(r), finally: (r) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
   eqFn.mockReturnValue(__delChain);
   const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ update: updateFn });
@@ -116,14 +119,14 @@ describe('canalContabilidadeService.toggleContato', () => {
 
   it('updates ativo flag without error', async () => {
     const { updateFn, eqFn } = setupUpdateEq();
-    await expect(canalContabilidadeService.toggleContato('c1', false)).resolves.toBeUndefined();
+    await expect(canalContabilidadeService.toggleContato(EMPRESA_ID, 'c1', false)).resolves.toBeUndefined();
     expect(updateFn).toHaveBeenCalledWith({ ativo: false });
     expect(eqFn).toHaveBeenCalledWith('id', 'c1');
   });
 
   it('throws on DB error', async () => {
     setupUpdateEq({ message: 'update failed' });
-    await expect(canalContabilidadeService.toggleContato('c1', true)).rejects.toBeDefined();
+    await expect(canalContabilidadeService.toggleContato(EMPRESA_ID, 'c1', true)).rejects.toBeDefined();
   });
 });
 
@@ -252,13 +255,13 @@ describe('canalContabilidadeService.atualizarStatus', () => {
 
   it('updates status without resolvido_em for non-resolvido status', async () => {
     const { updateFn } = setupUpdateEq();
-    await canalContabilidadeService.atualizarStatus('th1', 'respondido');
+    await canalContabilidadeService.atualizarStatus(EMPRESA_ID, 'th1', 'respondido');
     expect(updateFn).toHaveBeenCalledWith({ status: 'respondido' });
   });
 
   it('sets resolvido_em when status is "resolvido"', async () => {
     const { updateFn } = setupUpdateEq();
-    await canalContabilidadeService.atualizarStatus('th1', 'resolvido');
+    await canalContabilidadeService.atualizarStatus(EMPRESA_ID, 'th1', 'resolvido');
     const patch = (updateFn as ReturnType<typeof vi.fn>).mock.calls[0][0];
     expect(patch.status).toBe('resolvido');
     expect(typeof patch.resolvido_em).toBe('string');
@@ -267,7 +270,7 @@ describe('canalContabilidadeService.atualizarStatus', () => {
 
   it('throws on DB error', async () => {
     setupUpdateEq({ message: 'update failed' });
-    await expect(canalContabilidadeService.atualizarStatus('th1', 'arquivado')).rejects.toBeDefined();
+    await expect(canalContabilidadeService.atualizarStatus(EMPRESA_ID, 'th1', 'arquivado')).rejects.toBeDefined();
   });
 });
 

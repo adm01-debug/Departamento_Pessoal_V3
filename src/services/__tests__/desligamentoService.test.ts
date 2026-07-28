@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { desligamentoService } from '../desligamentoService';
 
+const EMPRESA_ID = 'test-empresa-id';
+
 // Mock supabase
 const mockSelect = vi.fn();
 const mockInsert = vi.fn();

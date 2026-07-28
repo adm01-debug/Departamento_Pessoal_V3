@@ -8,8 +8,9 @@ vi.mock('framer-motion', () => ({
 }));
 
 import { ESocialTimeline } from '../esocial/ESocialTimeline';
+import type { ESocialEvento } from '@/services/esocialService';
 
-const EVENTOS = [
+const EVENTOS: ESocialEvento[] = [
   {
     id: '1',
     tipo_evento: 'S-2200',
@@ -19,6 +20,10 @@ const EVENTOS = [
     data_envio: null,
     protocolo: null,
     erros: null,
+    empresa_id: 'emp-1',
+    dados: null,
+    competencia: '2024-07',
+    xml: null,
   },
   {
     id: '2',
@@ -29,6 +34,10 @@ const EVENTOS = [
     data_envio: '2024-07-02T09:30:00',
     protocolo: 'PROTO-12345',
     erros: null,
+    empresa_id: 'emp-1',
+    dados: null,
+    competencia: '2024-07',
+    xml: null,
   },
 ];
 
@@ -56,7 +65,7 @@ describe('ESocialTimeline', () => {
   });
 
   it('renders failure label for erro status', () => {
-    const erroEvento = [
+    const erroEvento: ESocialEvento[] = [
       {
         id: '3',
         tipo_evento: 'S-1200',
@@ -66,6 +75,10 @@ describe('ESocialTimeline', () => {
         data_envio: '2024-07-03T08:05:00',
         protocolo: null,
         erros: { mensagem: 'Timeout no webservice' },
+        empresa_id: 'emp-1',
+        dados: null,
+        competencia: '2024-07',
+        xml: null,
       },
     ];
     render(<ESocialTimeline eventos={erroEvento} />);

@@ -33,6 +33,7 @@ vi.mock('@/components/ui/select', () => ({
 
 import { useContasBancarias } from '@/hooks/useTabelasReferencia';
 import { ContasBancariasTab } from '../colaborador-detalhes/ContasBancariasTab';
+import { maskBankAccount } from '@/utils/piiMask';
 
 const MOCK_CONTAS = [
   { id: 'c1', banco_nome: 'Banco do Brasil', banco_codigo: '001', agencia: '1234', conta: '56789-0', tipo_conta: 'Corrente', pix_tipo: 'CPF', pix_chave: '123.456.789-00', principal: true },
@@ -70,11 +71,13 @@ describe('ContasBancariasTab', () => {
     expect(screen.getByText(/001/)).toBeInTheDocument();
   });
 
-  it('renders agencia and conta', () => {
+  it('renders agencia and conta mascaradas (LGPD)', () => {
     vi.mocked(useContasBancarias).mockReturnValue({ data: MOCK_CONTAS, isLoading: false } as any);
     render(<ContasBancariasTab colaboradorId="col-1" />);
-    expect(screen.getByText('1234')).toBeInTheDocument();
-    expect(screen.getByText('56789-0')).toBeInTheDocument();
+    // Dados bancários nunca são exibidos em claro: apenas os 4 últimos dígitos.
+    expect(screen.getByText(maskBankAccount('1234'))).toBeInTheDocument();
+    expect(screen.getByText(maskBankAccount('56789-0'))).toBeInTheDocument();
+    expect(screen.queryByText('56789-0')).not.toBeInTheDocument();
   });
 
   it('renders pix info', () => {

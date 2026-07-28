@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render as rtlRender, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import userEvent from '@testing-library/user-event';
 
 vi.mock('@/components/ui/tooltip', () => ({
@@ -7,6 +8,34 @@ vi.mock('@/components/ui/tooltip', () => ({
   Tooltip: ({ children }: any) => <>{children}</>,
   TooltipTrigger: ({ children }: any) => children,
   TooltipContent: ({ children }: any) => <div>{children}</div>,
+}));
+
+// O hook real consome o AuthContext; em teste unitário isolamos a dependência.
+// Sessão fixa: o componente e seus filhos leem o usuário atual via AuthContext.
+vi.mock('@/contexts/AuthContext', async (importOriginal) => {
+  const actual = await importOriginal<Record<string, unknown>>();
+  return {
+    ...actual,
+    useAuth: () => ({
+      user: { id: 'user-1', email: 'rh@empresa.com' },
+      session: { access_token: 'token' },
+      isReady: true,
+      loading: false,
+    }),
+  };
+});
+
+// Depende do AuthContext (usuário atual) — isolado no teste unitário.
+vi.mock('@/hooks/ferias/useAdiantamento13', () => ({
+  useSolicitarAdiantamento13: () => ({ mutate: vi.fn(), isPending: false }),
+}));
+
+vi.mock('@/hooks/useAssinarAvisoFerias', () => ({
+  useAssinarAvisoFerias: () => ({
+    baixarAvisoAssinado: vi.fn(),
+    assinar: vi.fn(),
+    loading: false,
+  }),
 }));
 
 vi.mock('@/utils/feriasPDF', () => ({
@@ -25,6 +54,14 @@ const DEFAULT_PROPS = {
   onRejeitar: vi.fn(),
   onCancelar: vi.fn(),
 };
+
+/** Renderiza com QueryClient isolado: o componente usa react-query internamente. */
+function render(ui: React.ReactElement) {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+  });
+  return rtlRender(<QueryClientProvider client={client}>{ui}</QueryClientProvider>);
+}
 
 describe('FeriasActions', () => {
   it('renders Aprovar (Gestor) button when not yet approved', () => {

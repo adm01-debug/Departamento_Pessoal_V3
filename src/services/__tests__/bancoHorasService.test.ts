@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { deepChain } from '@/test/deepChain';
 import { bancoHorasService } from '../bancoHorasService';
 import { bancoHorasConfigService } from '../bancoHorasConfigService';
 
@@ -9,7 +10,7 @@ const EMPRESA_ID = 'test-empresa-id';
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: mockFrom },
+  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
 // ─── bancoHorasService ────────────────────────────────────────────────────────
@@ -19,9 +20,11 @@ describe('bancoHorasService', () => {
 
   // listarPorColaborador
   describe('listarPorColaborador', () => {
+    // Mock encadeável: o serviço aplica .eq(colaborador_id).eq(empresa_id).order()
     function setupList(data: any[], error: any = null) {
       const order = vi.fn().mockResolvedValue({ data, error });
-      const eq = vi.fn().mockReturnValue({ order });
+      const eq: any = vi.fn();
+      eq.mockReturnValue({ eq, order });
       const select = vi.fn().mockReturnValue({ eq });
       mockFrom.mockReturnValue({ select });
       return { select, eq, order };
@@ -57,8 +60,13 @@ describe('bancoHorasService', () => {
 
   // getSaldo
   describe('getSaldo', () => {
+    // .eq() precisa ser encadeável E aguardável (tenant isolation usa 2 eq).
     function setupSaldo(data: any[] | null, error: any = null) {
-      const eq = vi.fn().mockResolvedValue({ data, error });
+      const eq: any = vi.fn();
+      eq.mockImplementation(() => ({
+        eq,
+        then: (resolve: (v: unknown) => unknown) => Promise.resolve({ data, error }).then(resolve),
+      }));
       const select = vi.fn().mockReturnValue({ eq });
       mockFrom.mockReturnValue({ select });
       return { select, eq };
@@ -164,13 +172,14 @@ describe('bancoHorasService', () => {
   describe('registrar', () => {
     it('calls insert and returns data', async () => {
       const inserted = { id: 'bh-1', tipo: 'credito', horas: '08:00:00' };
+      const payload = { tipo: 'credito', horas: '08:00:00', empresa_id: EMPRESA_ID };
       const maybeSingle = vi.fn().mockResolvedValue({ data: inserted, error: null });
       const select = vi.fn().mockReturnValue({ maybeSingle });
       const insert = vi.fn().mockReturnValue({ select });
       mockFrom.mockReturnValue({ insert });
 
-      const result = await bancoHorasService.registrar({ tipo: 'credito', horas: '08:00:00' });
-      expect(insert).toHaveBeenCalledWith({ tipo: 'credito', horas: '08:00:00' });
+      const result = await bancoHorasService.registrar(payload);
+      expect(insert).toHaveBeenCalledWith(payload);
       expect(result).toEqual(inserted);
     });
 
@@ -179,7 +188,7 @@ describe('bancoHorasService', () => {
       const select = vi.fn().mockReturnValue({ maybeSingle });
       const insert = vi.fn().mockReturnValue({ select });
       mockFrom.mockReturnValue({ insert });
-      await expect(bancoHorasService.registrar({})).rejects.toBeDefined();
+      await expect(bancoHorasService.registrar({ empresa_id: EMPRESA_ID })).rejects.toBeDefined();
     });
   });
 });
@@ -222,7 +231,8 @@ describe('bancoHorasConfigService', () => {
     it('calls UPDATE when config already exists for empresa_id', async () => {
       const existing = { id: 'cfg-1', empresa_id: 'emp-1' };
       const updateMaybeSingle = vi.fn().mockResolvedValue({ data: { ...existing, nome: 'updated' }, error: null });
-      const updateEq = vi.fn().mockReturnValue({ select: vi.fn().mockReturnValue({ maybeSingle: updateMaybeSingle }) });
+      const updateEq: any = vi.fn();
+      updateEq.mockReturnValue({ eq: updateEq, select: vi.fn().mockReturnValue({ maybeSingle: updateMaybeSingle }) });
       const update = vi.fn().mockReturnValue({ eq: updateEq });
 
       const selectMaybeSingle = vi.fn().mockResolvedValue({ data: existing, error: null });

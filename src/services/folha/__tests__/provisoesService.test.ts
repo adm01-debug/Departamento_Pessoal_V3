@@ -1,14 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { deepChain } from '@/test/deepChain';
 
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: mockFrom },
+  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
 import { provisoesService } from '../provisoesService';
 
-function makeColabChain(data: any[], error: any = null) {
+function makeColabChain(data: any[] | null, error: any = null) {
   const result = { data, error };
   const eq2 = vi.fn().mockResolvedValue(result);
   const eq1 = vi.fn().mockReturnValue({ eq: eq2 });

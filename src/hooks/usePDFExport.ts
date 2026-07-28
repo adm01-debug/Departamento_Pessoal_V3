@@ -25,7 +25,7 @@ export function usePDFExport() {
       doc.save(`${titulo.toLowerCase().replace(/\s+/g, '-')}.pdf`);
       toast.success('PDF exportado com sucesso!');
     } catch (e: unknown) {
-      toast.error(safeErrorMessage(e, 'Erro ao gerar PDF.'));
+      toast.error(`Erro ao gerar PDF: ${safeErrorMessage(e, 'tente novamente.')}`);
     }
   }, []);
 

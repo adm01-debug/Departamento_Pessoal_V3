@@ -103,7 +103,15 @@ export default defineConfig(({ mode }) => ({
     // da config antiga era ignorado pelo Vite 8. oxc tem opção própria:
     // `minify: { compress: { drop_console: true } }` — habilitada abaixo.
     // console.error/warn são MANTIDOS para integração com Sentry (P3-053).
-    minify: 'oxc',
+    // Forma de objeto: além de selecionar o minifier oxc, remove chamadas de
+    // console.log/debug/info do bundle de produção (a string 'oxc' sozinha
+    // não aplica nenhum `compress`). console.error/warn permanecem para o Sentry.
+    minify: {
+      type: 'oxc',
+      compress: {
+        dropConsole: ['log', 'debug', 'info', 'trace'],
+      },
+    },
     rollupOptions: {
       output: {
         // Forma de função exigida pelo Vite 8 (rolldown). A forma de objeto

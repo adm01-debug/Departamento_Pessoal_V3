@@ -37,7 +37,7 @@ export function FeriasActions(props: FeriasActionsProps) {
         {podeAprovarGestor && (
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg hover:bg-success/10 text-success"
+              <Button aria-label="Aprovar (Gestor)" variant="ghost" size="icon" className="h-7 w-7 rounded-lg hover:bg-success/10 text-success"
                 onClick={() => props.onAprovarGestor(solicitacao.id)}>
                 <UserCheck className="h-3.5 w-3.5" />
               </Button>
@@ -49,7 +49,7 @@ export function FeriasActions(props: FeriasActionsProps) {
         {podeAssinarRH && (
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg hover:bg-success/10 text-success"
+              <Button aria-label="Assinar Aviso e Aprovar (RH)" variant="ghost" size="icon" className="h-7 w-7 rounded-lg hover:bg-success/10 text-success"
                 onClick={() => setAssinarOpen(true)}>
                 <FileSignature className="h-3.5 w-3.5" />
               </Button>
@@ -61,7 +61,7 @@ export function FeriasActions(props: FeriasActionsProps) {
         {podeEnviarContab && (
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg hover:bg-info/10 text-info"
+              <Button aria-label="Enviar Contabilidade" variant="ghost" size="icon" className="h-7 w-7 rounded-lg hover:bg-info/10 text-info"
                 onClick={() => props.onEnviarContabilidade(solicitacao.id)}>
                 <Building2 className="h-3.5 w-3.5" />
               </Button>
@@ -73,7 +73,7 @@ export function FeriasActions(props: FeriasActionsProps) {
         {podeRejeitar && (
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg hover:bg-destructive/10 text-destructive"
+              <Button aria-label="Rejeitar" variant="ghost" size="icon" className="h-7 w-7 rounded-lg hover:bg-destructive/10 text-destructive"
                 onClick={() => props.onRejeitar(solicitacao.id)}>
                 <X className="h-3.5 w-3.5" />
               </Button>
@@ -84,7 +84,7 @@ export function FeriasActions(props: FeriasActionsProps) {
 
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg hover:bg-primary/10 text-primary"
+            <Button aria-label="Baixar Recibo" variant="ghost" size="icon" className="h-7 w-7 rounded-lg hover:bg-primary/10 text-primary"
               onClick={() => feriasPDF.gerarRecibo(solicitacao)}>
               <FileDown className="h-3.5 w-3.5" />
             </Button>
@@ -95,7 +95,7 @@ export function FeriasActions(props: FeriasActionsProps) {
         {temAvisoAssinado && (
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg hover:bg-success/10 text-success"
+              <Button aria-label="Baixar Aviso Assinado" variant="ghost" size="icon" className="h-7 w-7 rounded-lg hover:bg-success/10 text-success"
                 onClick={() => baixarAvisoAssinado(solicitacao.empresa_id, solicitacao.id)}>
                 <Shield className="h-3.5 w-3.5" />
               </Button>
@@ -107,7 +107,7 @@ export function FeriasActions(props: FeriasActionsProps) {
         {podeSolicitar13 && (
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg hover:bg-warning/10 text-warning"
+              <Button aria-label="Solicitar adiantamento 13º (Lei 4.749/65)" variant="ghost" size="icon" className="h-7 w-7 rounded-lg hover:bg-warning/10 text-warning"
                 disabled={solicitarAdiant13.isPending}
                 onClick={() => solicitarAdiant13.mutate({ feriasId: solicitacao.id })}>
                 <Gift className="h-3.5 w-3.5" />
@@ -119,7 +119,7 @@ export function FeriasActions(props: FeriasActionsProps) {
 
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-7 w-7 rounded-lg hover:bg-destructive/10 text-destructive"
+            <Button aria-label="Cancelar" variant="ghost" size="icon" className="h-7 w-7 rounded-lg hover:bg-destructive/10 text-destructive"
               onClick={() => props.onCancelar(solicitacao.id)}>
               <Ban className="h-3.5 w-3.5" />
             </Button>

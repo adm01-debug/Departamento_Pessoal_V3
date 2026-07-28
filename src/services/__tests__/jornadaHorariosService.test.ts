@@ -1,10 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { deepChain } from '@/test/deepChain';
+import { makeChain } from '@/test/chain';
 import { jornadaHorariosService } from '../jornadaHorariosService';
 
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: mockFrom },
+  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
 // select → eq → order → await
@@ -45,7 +47,7 @@ function setupUpdateChain(data: any, error: any = null) {
 
 function setupDeleteChain(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = { then: (r) => Promise.resolve({ error }).then(r), catch: (r) => Promise.resolve({ error }).catch(r), finally: (r) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
   eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
@@ -120,7 +122,7 @@ describe('jornadaHorariosService.atualizar', () => {
   it('updates and returns horario', async () => {
     const updated = { id: 'h1', hora_inicio: '09:00' };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    const result = await jornadaHorariosService.atualizar('h1', { hora_inicio: '09:00' });
+    const result = await jornadaHorariosService.atualizar('j1', 'h1', { hora_inicio: '09:00' });
     expect(updateFn).toHaveBeenCalledWith({ hora_inicio: '09:00' });
     expect(eqFn).toHaveBeenCalledWith('id', 'h1');
     expect(result).toEqual(updated);
@@ -128,7 +130,7 @@ describe('jornadaHorariosService.atualizar', () => {
 
   it('throws when data is null', async () => {
     setupUpdateChain(null);
-    await expect(jornadaHorariosService.atualizar('h1', {})).rejects.toThrow();
+    await expect(jornadaHorariosService.atualizar('j1', 'h1', {})).rejects.toThrow();
   });
 });
 
@@ -139,14 +141,14 @@ describe('jornadaHorariosService.excluir', () => {
 
   it('deletes horario by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();
-    await jornadaHorariosService.excluir('h1');
+    await jornadaHorariosService.excluir('j1', 'h1');
     expect(deleteFn).toHaveBeenCalled();
     expect(eqFn).toHaveBeenCalledWith('id', 'h1');
   });
 
   it('throws on DB error', async () => {
     setupDeleteChain({ message: 'fail' });
-    await expect(jornadaHorariosService.excluir('h1')).rejects.toBeDefined();
+    await expect(jornadaHorariosService.excluir('j1', 'h1')).rejects.toBeDefined();
   });
 });
 
@@ -165,32 +167,27 @@ describe('jornadaHorariosService.salvarGrade', () => {
     expect(result).toEqual([]);
   });
 
-  it('deletes existing then inserts new grade', async () => {
+  it('upserts new grade (idempotente) and trims removed days', async () => {
     const horarios = [{ dia_semana: 1, hora_inicio: '08:00' }];
     const inserted = [{ id: 'h-new', jornada_id: 'j1', dia_semana: 1, hora_inicio: '08:00' }];
 
-    // First call: delete
-    const eqDeleteFn = vi.fn().mockResolvedValue({ error: null });
-    const deleteFn = vi.fn().mockReturnValue({ eq: eqDeleteFn });
+    // 1ª chamada: upsert(onConflict) → select
+    const upsertChain: any = makeChain({ data: inserted, error: null });
+    // 2ª chamada: delete de trim dos dias que saíram da grade
+    const trimChain: any = makeChain({ error: null });
 
-    // Second call: insert
-    const selectInsert = vi.fn().mockResolvedValue({ data: inserted, error: null });
-    const insertFn = vi.fn().mockReturnValue({ select: selectInsert });
-
-    mockFrom
-      .mockReturnValueOnce({ delete: deleteFn })
-      .mockReturnValueOnce({ insert: insertFn });
+    mockFrom.mockReturnValueOnce(upsertChain).mockReturnValueOnce(trimChain);
 
     const result = await jornadaHorariosService.salvarGrade('j1', horarios);
-    expect(eqDeleteFn).toHaveBeenCalledWith('jornada_id', 'j1');
-    expect(insertFn).toHaveBeenCalledWith([{ dia_semana: 1, hora_inicio: '08:00', jornada_id: 'j1' }]);
+    expect(upsertChain.upsert).toHaveBeenCalledWith(
+      [{ dia_semana: 1, hora_inicio: '08:00', jornada_id: 'j1' }],
+      { onConflict: 'jornada_id,dia_semana' },
+    );
     expect(result).toEqual(inserted);
   });
 
   it('wraps errors in Falha message', async () => {
-    const eqFn = vi.fn().mockResolvedValue({ error: { message: 'db fail' } });
-    const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
-    mockFrom.mockReturnValue({ delete: deleteFn });
+    mockFrom.mockReturnValue(makeChain({ data: null, error: { message: 'db fail' } }));
 
     await expect(
       jornadaHorariosService.salvarGrade('j1', [{ dia_semana: 1 }])

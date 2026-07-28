@@ -33,13 +33,13 @@ export function NovaProgramacaoDialog({ open, onOpenChange, ano, mesInicial }: P
   useOnMount(() => {
     // Seleciona automaticamente o período aquisitivo mais antigo em aberto
     if (!periodos?.length) { setPeriodoId(''); return; }
-    const aberto = periodos.find((p: { status?: string }) => p.status !== 'gozado') ?? periodos[0];
+    const aberto = periodos.find((p: { status?: string | null }) => p.status !== 'gozado') ?? periodos[0];
     setPeriodoId(aberto.id);
   });
 
   useEffect(() => {
     if (!periodos?.length) { setPeriodoId(''); return; }
-    const aberto = periodos.find((p: { status?: string }) => p.status !== 'gozado') ?? periodos[0];
+    const aberto = periodos.find((p: { status?: string | null }) => p.status !== 'gozado') ?? periodos[0];
     setPeriodoId(aberto.id);
   }, [periodos]);
 

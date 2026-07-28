@@ -103,6 +103,10 @@ export const automacaoService = {
     for (const periodo of periodos) {
       const colab = (periodo as any).colaborador;
       if (!colab) continue;
+      // Defesa em profundidade: descarta qualquer registro que escape do escopo do tenant
+      // (protege contra falha/alteração do filtro no join embedado do PostgREST).
+      if (colab.empresa_id && colab.empresa_id !== empresaId) continue;
+
 
       await criarNotificacao({
         titulo: 'Término de Experiência Próximo',

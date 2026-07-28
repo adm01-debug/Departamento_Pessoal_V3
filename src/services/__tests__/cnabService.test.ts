@@ -1,10 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { deepChain } from '@/test/deepChain';
 import { cnabService } from '../cnabService';
+import { makeChain } from '@/test/chain';
 
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: mockFrom },
+  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
@@ -30,7 +32,7 @@ function setupSelectEqOrder(data: any[], error: any = null) {
 // update → eq → resolvedValue
 function setupUpdateEq(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = { then: (r) => Promise.resolve({ error }).then(r), catch: (r) => Promise.resolve({ error }).catch(r), finally: (r) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
   eqFn.mockReturnValue(__delChain);
   const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ update: updateFn });
@@ -84,12 +86,13 @@ describe('cnabService.saveConfig', () => {
     const select1 = vi.fn().mockReturnValue({ eq: eq1 });
 
     // Second call: update.eq → success
-    const eq2 = vi.fn().mockResolvedValue({ error: null });
-    const update2 = vi.fn().mockReturnValue({ eq: eq2 });
+    const upChain = makeChain({ error: null });
+    const update2 = upChain.update;
+    const eq2 = upChain.eq;
 
     mockFrom
       .mockReturnValueOnce({ select: select1 })
-      .mockReturnValueOnce({ update: update2 });
+      .mockReturnValueOnce(upChain);
 
     await cnabService.saveConfig('emp-1', config);
     expect(update2).toHaveBeenCalledWith(config);
@@ -118,11 +121,11 @@ describe('cnabService.saveConfig', () => {
     const eq1 = vi.fn().mockReturnValue({ maybeSingle: maybeSingle1 });
     const select1 = vi.fn().mockReturnValue({ eq: eq1 });
 
-    const eq2 = vi.fn().mockResolvedValue({ error: { message: 'fail' } });
-    const update2 = vi.fn().mockReturnValue({ eq: eq2 });
+    const upChain = makeChain({ error: { message: 'fail' } });
+    const update2 = upChain.update;
     mockFrom
       .mockReturnValueOnce({ select: select1 })
-      .mockReturnValueOnce({ update: update2 });
+      .mockReturnValueOnce(upChain);
 
     await expect(cnabService.saveConfig('emp-1', config)).rejects.toBeDefined();
   });
@@ -192,7 +195,7 @@ describe('cnabService.parseRetornoCNAB', () => {
   }
 
   it('ignores lines shorter than 240 chars', async () => {
-    const result = await cnabService.parseRetornoCNAB('short line\n');
+    const result = await cnabService.parseRetornoCNAB('emp-1', 'short line\n');
     expect(result).toEqual({ sucesso: 0, erro: 0, detalhes: [] });
     expect(mockFrom).not.toHaveBeenCalled();
   });
@@ -203,23 +206,24 @@ describe('cnabService.parseRetornoCNAB', () => {
 
     // cnab_itens select.eq.maybeSingle
     const maybeSingle = vi.fn().mockResolvedValue({ data: item, error: null });
-    const eqCnab = vi.fn().mockReturnValue({ maybeSingle });
-    const selectCnab = vi.fn().mockReturnValue({ eq: eqCnab });
+    const selChain = makeChain({ data: null, error: null });
+    selChain.maybeSingle.mockImplementation(() => maybeSingle());
+    const selectCnab = selChain.select;
 
     // cnab_itens update.eq
-    const eqUpdate1 = vi.fn().mockResolvedValue({ error: null });
-    const updateCnab = vi.fn().mockReturnValue({ eq: eqUpdate1 });
+    const updChain = makeChain({ error: null });
+    const updateCnab = updChain.update;
 
     // folha_itens update.eq
-    const eqUpdate2 = vi.fn().mockResolvedValue({ error: null });
-    const updateFolha = vi.fn().mockReturnValue({ eq: eqUpdate2 });
+    const folhaChain = makeChain({ error: null });
+    const updateFolha = folhaChain.update;
 
     mockFrom
-      .mockReturnValueOnce({ select: selectCnab })
-      .mockReturnValueOnce({ update: updateCnab })
-      .mockReturnValueOnce({ update: updateFolha });
+      .mockReturnValueOnce(selChain)
+      .mockReturnValueOnce(updChain)
+      .mockReturnValueOnce(folhaChain);
 
-    const result = await cnabService.parseRetornoCNAB(line);
+    const result = await cnabService.parseRetornoCNAB('emp-1', line);
     expect(result.sucesso).toBe(1);
     expect(result.erro).toBe(0);
     expect(result.detalhes[0]).toEqual(expect.objectContaining({
@@ -234,17 +238,18 @@ describe('cnabService.parseRetornoCNAB', () => {
     const item = { id: 'item-2', folha_item_id: null, nome_favorecido: 'Maria' };
 
     const maybeSingle = vi.fn().mockResolvedValue({ data: item, error: null });
-    const eqCnab = vi.fn().mockReturnValue({ maybeSingle });
-    const selectCnab = vi.fn().mockReturnValue({ eq: eqCnab });
+    const selChain = makeChain({ data: null, error: null });
+    selChain.maybeSingle.mockImplementation(() => maybeSingle());
+    const selectCnab = selChain.select;
 
-    const eqUpdate1 = vi.fn().mockResolvedValue({ error: null });
-    const updateCnab = vi.fn().mockReturnValue({ eq: eqUpdate1 });
+    const updChain = makeChain({ error: null });
+    const updateCnab = updChain.update;
 
     mockFrom
-      .mockReturnValueOnce({ select: selectCnab })
-      .mockReturnValueOnce({ update: updateCnab });
+      .mockReturnValueOnce(selChain)
+      .mockReturnValueOnce(updChain);
 
-    const result = await cnabService.parseRetornoCNAB(line);
+    const result = await cnabService.parseRetornoCNAB('emp-1', line);
     expect(result.erro).toBe(1);
     expect(result.sucesso).toBe(0);
     expect(result.detalhes[0].status).toBe('erro');
@@ -254,11 +259,12 @@ describe('cnabService.parseRetornoCNAB', () => {
     const line = makeSegmentALine('NOTFOUND', '00');
 
     const maybeSingle = vi.fn().mockResolvedValue({ data: null, error: null });
-    const eqCnab = vi.fn().mockReturnValue({ maybeSingle });
-    const selectCnab = vi.fn().mockReturnValue({ eq: eqCnab });
-    mockFrom.mockReturnValueOnce({ select: selectCnab });
+    const selChain = makeChain({ data: null, error: null });
+    selChain.maybeSingle.mockImplementation(() => maybeSingle());
+    const selectCnab = selChain.select;
+    mockFrom.mockReturnValueOnce(selChain);
 
-    const result = await cnabService.parseRetornoCNAB(line);
+    const result = await cnabService.parseRetornoCNAB('emp-1', line);
     expect(result.sucesso).toBe(0);
     expect(result.erro).toBe(0);
     expect(result.detalhes).toHaveLength(0);

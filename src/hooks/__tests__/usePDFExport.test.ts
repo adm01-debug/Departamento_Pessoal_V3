@@ -8,11 +8,11 @@ const {
   const mockSave = vi.fn();
   const mockText = vi.fn();
   const mockSetFontSize = vi.fn();
-  const MockJsPDF = vi.fn().mockImplementation(() => ({
+  const MockJsPDF = vi.fn().mockImplementation(function () { return ({
     setFontSize: mockSetFontSize,
     text: mockText,
     save: mockSave,
-  }));
+  }); });
   return {
     MockJsPDF,
     mockSave,
@@ -73,7 +73,8 @@ describe('usePDFExport', () => {
   });
 
   it('shows error toast when jsPDF throws', async () => {
-    MockJsPDF.mockImplementationOnce(() => { throw new Error('PDF failed'); });
+    // Função clássica: o hook invoca com `new`, e arrow functions não são construtores.
+    MockJsPDF.mockImplementationOnce(function () { throw new Error('PDF failed'); });
     const { result } = renderHook(() => usePDFExport());
 
     await act(async () => {

@@ -1,12 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { deepChain } from '@/test/deepChain';
 import { afastamentoService } from '../afastamentoService';
+
+const EMPRESA_ID = 'test-empresa-id';
 
 // ─── shared mock setup ────────────────────────────────────────────────────────
 
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: mockFrom },
+  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
 vi.mock('@/utils/dateLocal', () => ({
@@ -49,14 +52,14 @@ describe('afastamentoService.listar', () => {
   it('returns data and total from supabase', async () => {
     const records = [{ id: 'af-1', status: 'ativo' }];
     setupListarChain(records, 1);
-    const result = await afastamentoService.listar();
+    const result = await afastamentoService.listar({ filters: { empresa_id: EMPRESA_ID } });
     expect(result.data).toEqual(records);
     expect(result.total).toBe(1);
   });
 
   it('returns empty data when supabase returns null', async () => {
     setupListarChain(null as any, null as any);
-    const result = await afastamentoService.listar();
+    const result = await afastamentoService.listar({ filters: { empresa_id: EMPRESA_ID } });
     expect(result.data).toEqual([]);
     expect(result.total).toBe(0);
   });
@@ -75,19 +78,19 @@ describe('afastamentoService.listar', () => {
 
   it('filters by status when provided in filters', async () => {
     const { eqFn } = setupListarChain([], 0);
-    await afastamentoService.listar({ filters: { status: 'encerrado' } });
+    await afastamentoService.listar({ filters: { empresa_id: EMPRESA_ID, status: 'encerrado' } });
     expect(eqFn).toHaveBeenCalledWith('status', 'encerrado');
   });
 
   it('orders by data_inicio descending', async () => {
     const { orderFn } = setupListarChain([], 0);
-    await afastamentoService.listar();
+    await afastamentoService.listar({ filters: { empresa_id: EMPRESA_ID } });
     expect(orderFn).toHaveBeenCalledWith('data_inicio', { ascending: false });
   });
 
   it('throws on DB error', async () => {
     setupListarChain([], 0, { message: 'fail' });
-    await expect(afastamentoService.listar()).rejects.toBeDefined();
+    await expect(afastamentoService.listar({ filters: { empresa_id: EMPRESA_ID } })).rejects.toBeDefined();
   });
 });
 
@@ -99,26 +102,26 @@ describe('afastamentoService.listarHistoricoRecente', () => {
   it('returns records for given colaboradorId', async () => {
     const records = [{ id: 'af-2', colaborador_id: 'c1' }];
     const { chain } = setupThenabledChain(records);
-    const result = await afastamentoService.listarHistoricoRecente('c1');
+    const result = await afastamentoService.listarHistoricoRecente('c1', EMPRESA_ID);
     expect(result).toEqual(records);
     expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'c1');
   });
 
   it('returns empty array when no records', async () => {
     setupThenabledChain(null as any);
-    const result = await afastamentoService.listarHistoricoRecente('c1');
+    const result = await afastamentoService.listarHistoricoRecente('c1', EMPRESA_ID);
     expect(result).toEqual([]);
   });
 
   it('adds gte filter for data_inicio', async () => {
     const { chain } = setupThenabledChain([]);
-    await afastamentoService.listarHistoricoRecente('c1', 30);
+    await afastamentoService.listarHistoricoRecente('c1', EMPRESA_ID, 30);
     expect(chain.gte).toHaveBeenCalledWith('data_inicio', expect.any(String));
   });
 
   it('throws on DB error', async () => {
     setupThenabledChain([], { message: 'fail' });
-    await expect(afastamentoService.listarHistoricoRecente('c1')).rejects.toBeDefined();
+    await expect(afastamentoService.listarHistoricoRecente('c1', EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
