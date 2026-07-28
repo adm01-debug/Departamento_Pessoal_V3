@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { FinancialSummaryCards } from '../descontos/FinancialSummaryCards';
 
-const fmt = (v: number) => `R$${v}`;
+const fmt = (v: number | null) => `R$${v ?? 0}`;
 
 const EMPRESTIMOS = [
   { id: '1', status: 'ativo', valor_parcela: 500 },

@@ -30,10 +30,29 @@ vi.mock('@/lib/utils', () => ({
 }));
 
 import { ESocialAuditDialog } from '../esocial/ESocialAuditDialog';
+import type { ESocialEvento } from '@/services/esocialService';
+
+/** Preenche os campos obrigatórios do contrato ESocialEvento nos mocks de teste. */
+function evento(partial: Partial<ESocialEvento> & { id: string }): ESocialEvento {
+  return {
+    empresa_id: 'emp-1',
+    tipo_evento: 'S-1200',
+    dados: null,
+    competencia: '2024-07',
+    status: 'pendente',
+    data_envio: null,
+    protocolo: null,
+    erros: null,
+    xml: null,
+    created_at: '2024-07-01T10:00:00',
+    updated_at: '2024-07-01T10:00:00',
+    ...partial,
+  };
+}
 
 const MOCK_EVENTOS = [
-  { id: 'e1', tipo_evento: 'S-1200', status: 'enviado', dados: { cpfTrab: '123' } },
-  { id: 'e2', tipo_evento: 'S-2200', status: 'pendente', dados: {} },
+  evento({ id: 'e1', tipo_evento: 'S-1200', status: 'enviado', dados: { cpfTrab: '123' } }),
+  evento({ id: 'e2', tipo_evento: 'S-2200', status: 'pendente', dados: {} }),
 ];
 
 describe('ESocialAuditDialog', () => {
@@ -69,7 +88,7 @@ describe('ESocialAuditDialog', () => {
   });
 
   it('shows Iniciar Varredura button when eventos have errors', () => {
-    const eventos = [{ id: 'e1', tipo_evento: 'S-2200', status: 'erro', dados: {} }];
+    const eventos = [evento({ id: 'e1', tipo_evento: 'S-2200', status: 'erro', dados: {} }];
     render(<ESocialAuditDialog open={true} onOpenChange={vi.fn()} eventos={eventos} />);
     expect(screen.getByText(/Iniciar Varredura Completa/i)).toBeInTheDocument();
   });
