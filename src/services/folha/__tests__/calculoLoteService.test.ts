@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { deepChain } from '@/test/deepChain';
 
 const { mockFrom, mockToast } = vi.hoisted(() => ({
   mockFrom: vi.fn(),
@@ -6,7 +7,7 @@ const { mockFrom, mockToast } = vi.hoisted(() => ({
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: mockFrom },
+  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
 vi.mock('sonner', () => ({ toast: { error: mockToast.error } }));

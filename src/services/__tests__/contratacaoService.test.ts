@@ -1,8 +1,12 @@
 /**
  * Unit tests for contratacaoService methods beyond gerarTemplateContrato.
+
  * (XSS/security tests for gerarTemplateContrato live in contratacaoService.xss.test.ts)
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { deepChain } from '@/test/deepChain';
+
+const EMPRESA_ID = 'test-empresa-id';
 
 const { mockFrom, mockLog } = vi.hoisted(() => ({
   mockFrom: vi.fn(),
@@ -10,7 +14,7 @@ const { mockFrom, mockLog } = vi.hoisted(() => ({
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: mockFrom },
+  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
 vi.mock('@/utils/auditLogger', () => ({
@@ -34,10 +38,10 @@ describe('contratacaoService.validarDocumento', () => {
 
   it('updates admissao document status and logs audit', async () => {
     const { updateFn, eqFn } = setupUpdateEqChain();
-    await contratacaoService.validarDocumento('adm-1', 'identidade', 'validado', 'Ok');
+    await contratacaoService.validarDocumento('adm-1', 'rg', 'validado', 'Ok', EMPRESA_ID);
     expect(mockFrom).toHaveBeenCalledWith('admissoes');
     expect(updateFn).toHaveBeenCalledWith(expect.objectContaining({
-      checklist_identidade: true,
+      checklist_rg: true,
     }));
     expect(eqFn).toHaveBeenCalledWith('id', 'adm-1');
     expect(mockLog).toHaveBeenCalledWith(expect.objectContaining({
@@ -49,7 +53,7 @@ describe('contratacaoService.validarDocumento', () => {
 
   it('sets document flag false when status is rejeitado', async () => {
     const { updateFn } = setupUpdateEqChain();
-    await contratacaoService.validarDocumento('adm-1', 'cnh', 'rejeitado');
+    await contratacaoService.validarDocumento('adm-1', 'cnh', 'rejeitado', undefined, EMPRESA_ID);
     expect(updateFn).toHaveBeenCalledWith(expect.objectContaining({
       checklist_cnh: false,
     }));
@@ -58,7 +62,7 @@ describe('contratacaoService.validarDocumento', () => {
   it('throws wrapped error on DB failure', async () => {
     setupUpdateEqChain({ message: 'DB fail' });
     await expect(
-      contratacaoService.validarDocumento('adm-1', 'identidade', 'validado')
+      contratacaoService.validarDocumento('adm-1', 'rg', 'validado', 'Ok', EMPRESA_ID)
     ).rejects.toThrow('Falha ao validar documento de admissão');
   });
 });
@@ -142,7 +146,7 @@ describe('contratacaoService.transmitirESocial', () => {
       .mockReturnValueOnce({ select: selectFn })
       .mockReturnValueOnce({ update: updateFn });
 
-    const result = await contratacaoService.transmitirESocial('adm-1');
+    const result = await contratacaoService.transmitirESocial('adm-1', EMPRESA_ID);
 
     expect(result).toBe(true);
     expect(updateFn).toHaveBeenCalledWith(expect.objectContaining({ etapa: 'esocial' }));
@@ -165,7 +169,7 @@ describe('contratacaoService.transmitirESocial', () => {
       .mockReturnValueOnce({ select: selectFn })
       .mockReturnValueOnce({ update: updateFn });
 
-    await expect(contratacaoService.transmitirESocial('adm-1')).rejects.toThrow(
+    await expect(contratacaoService.transmitirESocial('adm-1', EMPRESA_ID)).rejects.toThrow(
       'Falha na transmissão para o eSocial'
     );
   });

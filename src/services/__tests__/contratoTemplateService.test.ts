@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { deepChain } from '@/test/deepChain';
 
 const { mockFrom, mockStorage, mockFunctions, mockRpc } = vi.hoisted(() => ({
   mockFrom: vi.fn(),
@@ -9,7 +10,7 @@ const { mockFrom, mockStorage, mockFunctions, mockRpc } = vi.hoisted(() => ({
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
-    from: mockFrom,
+    from: (...a: unknown[]) => deepChain(mockFrom(...a)),
     storage: mockStorage,
     functions: mockFunctions,
     rpc: mockRpc,

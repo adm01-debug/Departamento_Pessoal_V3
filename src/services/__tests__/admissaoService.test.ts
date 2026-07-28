@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { deepChain } from '@/test/deepChain';
 import { admissaoService } from '../admissaoService';
 
 const EMPRESA_ID = 'test-empresa-id';
@@ -11,7 +12,7 @@ const { mockFrom, mockLoggerError } = vi.hoisted(() => ({
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: mockFrom },
+  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
 vi.mock('../loggerService', () => ({
@@ -59,12 +60,12 @@ function setupAtualizarChain(data: any, error: any = null) {
 describe('admissaoService.listarAdmissoes', () => {
   beforeEach(() => { vi.clearAllMocks(); });
 
-  it('returns all admissoes when no empresaId', async () => {
+  it('always scopes query by empresa_id (multi-tenant)', async () => {
     const records = [{ id: 'adm-1', nome_candidato: 'João' }];
     const { chain } = setupListarAdmissoesChain(records);
     const result = await admissaoService.listarAdmissoes(EMPRESA_ID);
     expect(result).toEqual(records);
-    expect(chain.eq).not.toHaveBeenCalled();
+    expect(chain.eq).toHaveBeenCalledWith('empresa_id', EMPRESA_ID);
   });
 
   it('returns empty array when supabase returns null', async () => {
@@ -99,7 +100,7 @@ describe('admissaoService.listar', () => {
   it('returns { data, total } delegating to listarAdmissoes', async () => {
     const records = [{ id: 'adm-2' }, { id: 'adm-3' }];
     setupListarAdmissoesChain(records);
-    const result = await admissaoService.listar({});
+    const result = await admissaoService.listar({ filters: { empresa_id: EMPRESA_ID } } as any);
     expect(result.data).toEqual(records);
     expect(result.total).toBe(2);
   });

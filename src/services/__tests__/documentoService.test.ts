@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { deepChain } from '@/test/deepChain';
 import { documentoService } from '../documentoService';
 
 const EMP = 'emp-test';
@@ -8,7 +9,7 @@ const EMP = 'emp-test';
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: mockFrom },
+  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
 // Thenable chain for select → order → limit → (optional eq) → await

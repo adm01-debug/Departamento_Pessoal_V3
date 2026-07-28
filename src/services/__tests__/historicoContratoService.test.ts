@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { deepChain } from '@/test/deepChain';
 import { historicoContratoService } from '../historicoContratoService';
 
 const EMPRESA_ID = 'test-empresa-id';
@@ -6,7 +7,7 @@ const EMPRESA_ID = 'test-empresa-id';
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: mockFrom },
+  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
 function setupListChain(data: any[], error: any = null) {
@@ -100,13 +101,13 @@ describe('historicoContratoService.excluir', () => {
 
   it('deletes historico by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();
-    await historicoContratoService.excluir('h1');
+    await historicoContratoService.excluir(EMPRESA_ID, 'h1');
     expect(deleteFn).toHaveBeenCalled();
     expect(eqFn).toHaveBeenCalledWith('id', 'h1');
   });
 
   it('throws on DB error', async () => {
     setupDeleteChain({ message: 'fail' });
-    await expect(historicoContratoService.excluir('h1')).rejects.toBeDefined();
+    await expect(historicoContratoService.excluir(EMPRESA_ID, 'h1')).rejects.toBeDefined();
   });
 });

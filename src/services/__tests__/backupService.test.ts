@@ -1,8 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { deepChain } from '@/test/deepChain';
+
+const EMPRESA_ID = 'test-empresa-id';
 import { exportarBackupCSV, exportarBackupJSON, downloadBlob } from '../backupService';
 
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
-vi.mock('@/integrations/supabase/client', () => ({ supabase: { from: mockFrom } }));
+vi.mock('@/integrations/supabase/client', () => ({ supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) } }));
 vi.mock('@/utils/dateLocal', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/utils/dateLocal')>()),
   formatDateLocalISO: () => '2026-07-24',
@@ -23,7 +26,7 @@ describe('exportarBackupCSV', () => {
 
   it('returns blob, fileName and stats when data is present', async () => {
     setupSelectLimit([{ id: '1', nome: 'Alice' }, { id: '2', nome: 'Bob' }]);
-    const result = await exportarBackupCSV(['colaboradores']);
+    const result = await exportarBackupCSV(EMPRESA_ID, ['colaboradores']);
     expect(result.blob).toBeInstanceOf(Blob);
     expect(result.fileName).toBeTruthy();
     expect(result.stats).toBeDefined();
@@ -31,31 +34,31 @@ describe('exportarBackupCSV', () => {
 
   it('fileName includes date from formatDateLocalISO', async () => {
     setupSelectLimit([]);
-    const { fileName } = await exportarBackupCSV(['colaboradores']);
+    const { fileName } = await exportarBackupCSV(EMPRESA_ID, ['colaboradores']);
     expect(fileName).toContain('2026-07-24');
   });
 
   it('stats.tabelas equals the number of tables passed', async () => {
     setupSelectLimit([]);
-    const { stats } = await exportarBackupCSV(['colaboradores', 'departamentos']);
+    const { stats } = await exportarBackupCSV(EMPRESA_ID, ['colaboradores', 'departamentos']);
     expect(stats.tabelas).toBe(2);
   });
 
   it('stats.registros counts total records across all tables', async () => {
     setupSelectLimit([{ id: '1' }, { id: '2' }, { id: '3' }]);
-    const { stats } = await exportarBackupCSV(['colaboradores']);
+    const { stats } = await exportarBackupCSV(EMPRESA_ID, ['colaboradores']);
     expect(stats.registros).toBe(3);
   });
 
   it('CSV blob content type is text/csv;charset=utf-8;', async () => {
     setupSelectLimit([]);
-    const { blob } = await exportarBackupCSV(['colaboradores']);
+    const { blob } = await exportarBackupCSV(EMPRESA_ID, ['colaboradores']);
     expect(blob.type).toBe('text/csv;charset=utf-8;');
   });
 
   it('returns stats with 0 registros when all table fetches fail', async () => {
     setupSelectLimit(null, { message: 'DB error' });
-    const { stats } = await exportarBackupCSV(['colaboradores', 'departamentos']);
+    const { stats } = await exportarBackupCSV(EMPRESA_ID, ['colaboradores', 'departamentos']);
     expect(stats.registros).toBe(0);
   });
 });
@@ -67,13 +70,13 @@ describe('exportarBackupJSON', () => {
 
   it('returns blob with correct JSON content type', async () => {
     setupSelectLimit([]);
-    const { blob } = await exportarBackupJSON(['colaboradores']);
+    const { blob } = await exportarBackupJSON(EMPRESA_ID, ['colaboradores']);
     expect(blob.type).toBe('application/json;charset=utf-8;');
   });
 
   it('blob contains dados keys for each table', async () => {
     setupSelectLimit([{ id: '1' }]);
-    const { blob } = await exportarBackupJSON(['colaboradores']);
+    const { blob } = await exportarBackupJSON(EMPRESA_ID, ['colaboradores']);
     const text = await blob.text();
     const json = JSON.parse(text);
     expect(json.dados).toHaveProperty('colaboradores');
@@ -81,7 +84,7 @@ describe('exportarBackupJSON', () => {
 
   it('stats.tabelas matches table count', async () => {
     setupSelectLimit([]);
-    const { stats } = await exportarBackupJSON(['colaboradores', 'departamentos']);
+    const { stats } = await exportarBackupJSON(EMPRESA_ID, ['colaboradores', 'departamentos']);
     expect(stats.tabelas).toBe(2);
   });
 });

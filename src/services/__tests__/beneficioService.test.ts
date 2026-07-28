@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { deepChain } from '@/test/deepChain';
 import { beneficioService } from '../beneficioService';
 import { makeChain } from '@/test/chain';
 
@@ -28,7 +29,7 @@ const { mockFrom, mockLog, mockLoggerError } = vi.hoisted<{
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: mockFrom },
+  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
 vi.mock('@/utils/auditLogger', () => ({

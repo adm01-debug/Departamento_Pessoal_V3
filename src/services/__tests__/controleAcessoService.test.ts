@@ -1,4 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { deepChain } from '@/test/deepChain';
+import { makeChain } from '@/test/chain';
 import { controleAcessoService } from '../controleAcessoService';
 
 const EMPRESA_ID = 'test-empresa-id';
@@ -6,21 +8,14 @@ const EMPRESA_ID = 'test-empresa-id';
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: mockFrom },
+  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
 // listar: select → order → [optional eq] → resolvedValue (thenable chain)
 function setupListarChain(data: any[], error: any = null) {
-  const response = { data, error };
-  const chain: any = {};
-  chain.eq = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
-  const orderFn = vi.fn().mockReturnValue(chain);
-  const selectFn = vi.fn().mockReturnValue({ order: orderFn });
-  mockFrom.mockReturnValue({ select: selectFn });
-  return { selectFn, orderFn, chain };
+  const chain: any = makeChain({ data, error });
+  mockFrom.mockReturnValue(chain);
+  return { selectFn: chain.select, orderFn: chain.order, chain };
 }
 
 describe('controleAcessoService.listar', () => {

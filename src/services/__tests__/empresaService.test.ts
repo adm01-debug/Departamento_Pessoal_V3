@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { deepChain } from '@/test/deepChain';
 import { empresaService } from '../empresaService';
 
 // ─── shared mock setup ────────────────────────────────────────────────────────
@@ -6,7 +7,7 @@ import { empresaService } from '../empresaService';
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: mockFrom },
+  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
 // Helper: build select → or → order → range chain for listar
