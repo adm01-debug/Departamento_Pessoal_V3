@@ -26491,6 +26491,23 @@ export type Database = {
       }
       sec_audit_policies_scan: { Args: never; Returns: Json }
       sec_policy_regressions_purge: { Args: never; Returns: number }
+      sec_verify_seals: {
+        Args: never
+        Returns: {
+          divergentes: number
+          selados: number
+          tabela: string
+        }[]
+      }
+      sec_verify_seals_admin: {
+        Args: never
+        Returns: {
+          divergentes: number
+          selados: number
+          tabela: string
+        }[]
+      }
+      sec_verify_seals_scan: { Args: never; Returns: Json }
       solicitar_adiantamento_13_ferias: {
         Args: { p_ferias_id: string }
         Returns: Json
