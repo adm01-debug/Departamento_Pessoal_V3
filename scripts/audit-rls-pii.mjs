@@ -59,8 +59,22 @@ const TENANT_CORRELATORS = [
   /\bpertence_a_empresa\b/i,
   /\bhas_role\b/i,
   /\bis_admin\b/i,
-  /\bcurrent_setting\s*\(\s*'request\.jwt/i,
 ];
+
+/**
+ * Anti-padrão: derivar o tenant de uma claim arbitrária do próprio JWT.
+ * A claim é escrita por quem emite/edita o token (user_metadata é editável
+ * pelo próprio usuário via API de auth), então o predicado só "parece"
+ * isolar. `auth.uid()` é a única parte do token verificada pelo banco.
+ * Detectado ANTES dos correlacionadores, porque uma política pode conter
+ * `auth.uid()` num ramo e a claim forjável em outro, unidos por OR.
+ */
+const FORGEABLE_CLAIM_RE =
+  /auth\.jwt\s*\(\s*\)\s*(->>?|#>>?)|current_setting\s*\(\s*'request\.jwt/i;
+
+/** Claims do JWT que o banco valida e que, portanto, não são forjáveis. */
+const TRUSTED_CLAIM_RE = /->>\s*'(sub|aud|exp|iat|iss)'/i;
+
 
 /**
  * Tabelas isentas, com justificativa obrigatória.
