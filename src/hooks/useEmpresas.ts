@@ -80,7 +80,7 @@ export const useEmpresaStore = create<EmpresaStore>()(
   )
 );
 
-export /**
+/**
  * Chaves de cache NÃO vinculadas à empresa ativa (sessão, usuário, tabelas
  * de domínio nacionais). Só estas sobrevivem à troca de tenant.
  */
