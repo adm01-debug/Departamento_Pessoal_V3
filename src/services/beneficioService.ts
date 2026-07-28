@@ -23,7 +23,7 @@ class BeneficioService extends BaseService<any> {
 
     const { data, count, error } = await query.order('nome');
     if (error) throw error;
-    return { data: data || [], total: count || 0 };
+    return { data: (data as any[]) || [], total: count || 0 };
   }
 
   async listComAdesao(empresaId: string): Promise<any[]> {
@@ -32,7 +32,7 @@ class BeneficioService extends BaseService<any> {
       .select('*, beneficios_colaborador(count)')
       .eq('empresa_id', empresaId);
     if (error) throw error;
-    return data || [];
+    return (data as any[]) || [];
   }
 
   async criar(d: any): Promise<any> {
