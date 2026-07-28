@@ -108,8 +108,8 @@ export const cnabService = {
     if (existing) {
       const existingRecord = existing as DataRecord;
       const { error } = await supabase
-        .from('cnab_configuracoes' as never)
-        .update(config as never)
+        .from('cnab_configuracoes')
+        .update(config)
         .eq('id', String(existingRecord.id))
         .eq('empresa_id', empresaId);
       if (error) throw error;
