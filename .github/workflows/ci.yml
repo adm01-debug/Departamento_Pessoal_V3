@@ -30,6 +30,8 @@ jobs:
         run: npm run typecheck
       - name: Type Check (tests)
         run: npm run typecheck:tests
+      - name: Type Check (e2e)
+        run: npm run typecheck:e2e
 
   lint:
     name: Lint

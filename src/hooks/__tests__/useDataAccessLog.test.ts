@@ -10,7 +10,9 @@ const { mockGetSession, mockInsert, mockFrom } = vi.hoisted(() => {
   return { mockGetSession, mockInsert, mockFrom };
 });
 
-vi.mock('@/integrations/supabase/client', () => ({
+// O hook usa o cliente base (não o proxy do bridge) — o mock precisa apontar
+// exatamente para esse módulo, senão nada é interceptado.
+vi.mock('@/integrations/supabase/client.base', () => ({
   supabase: {
     auth: { getSession: mockGetSession },
     from: mockFrom,
@@ -52,11 +54,11 @@ describe('useDataAccessLog', () => {
     await vi.waitFor(() => expect(mockFrom).toHaveBeenCalledWith('audit_log'));
     expect(mockInsert).toHaveBeenCalledWith(
       expect.objectContaining({
-        usuario_id: 'user-1',
+        user_id: 'user-1',
         acao: 'VISUALIZACAO',
         tabela: 'colaboradores',
         registro_id: 'c-1',
-        empresa_id: 'emp-1',
+        dados_novos: expect.objectContaining({ empresa_id: 'emp-1' }),
       })
     );
   });
