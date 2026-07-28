@@ -1,10 +1,9 @@
 import { supabase } from '@/integrations/supabase/client';
 import { CalculoResultado } from '@/utils/folhaCalc';
 
-async function sha256Hex(data: string): Promise<string> {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(data));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
+// sha256Hex removido: nenhum selo é mais calculado no navegador. Os hashes de
+// integridade (holerite, ponto, folha) são emitidos e verificados pelo banco.
+
 export interface HoleriteData extends CalculoResultado {
   colaboradorNome: string;
   cpf: string;
