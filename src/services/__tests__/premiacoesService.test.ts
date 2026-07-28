@@ -18,7 +18,7 @@ const { mockFrom } = vi.hoisted<{ mockFrom: Mock<(...args: any[]) => any> }>(() 
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
+  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(a[0] as string)) },
 }));
 
 /**
