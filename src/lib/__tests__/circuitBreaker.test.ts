@@ -104,6 +104,11 @@ describe('CircuitBreaker', () => {
 
     vi.advanceTimersByTime(5001);
 
+    // successThreshold=2: o circuito só fecha após 2 sondagens consecutivas
+    // bem-sucedidas, evitando flapping enquanto o backend ainda está instável.
+    await cb.execute(() => Promise.resolve('ok'));
+    expect(cb.getState()).toBe('HALF_OPEN');
+
     await cb.execute(() => Promise.resolve('ok'));
     expect(cb.getState()).toBe('CLOSED');
   });
