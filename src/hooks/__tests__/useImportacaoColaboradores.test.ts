@@ -138,7 +138,7 @@ describe('useImportacaoColaboradores', () => {
 
     const { result } = renderHook(() => useImportacaoColaboradores(), { wrapper });
 
-    let caught: Error | null = null;
+    let caught: { message?: string } | null = null;
     await act(async () => {
       try {
         await result.current.processarArquivo(mockFile);
