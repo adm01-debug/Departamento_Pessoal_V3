@@ -10745,7 +10745,7 @@ export type Database = {
           created_at: string
           criado_por: string | null
           detalhes: Json | null
-          folha_id: string | null
+          folha_id: string
           id: string
           mensagem: string
           severidade: string
@@ -10756,7 +10756,7 @@ export type Database = {
           created_at?: string
           criado_por?: string | null
           detalhes?: Json | null
-          folha_id?: string | null
+          folha_id: string
           id?: string
           mensagem: string
           severidade?: string
@@ -10767,7 +10767,7 @@ export type Database = {
           created_at?: string
           criado_por?: string | null
           detalhes?: Json | null
-          folha_id?: string | null
+          folha_id?: string
           id?: string
           mensagem?: string
           severidade?: string
