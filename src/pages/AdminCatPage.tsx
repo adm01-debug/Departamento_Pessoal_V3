@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
-import { useOnMount } from '@/hooks/useMountEffects';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -58,10 +58,6 @@ type CatRow = {
 
 export default function AdminCatPage() {
   const { empresaAtual } = useEmpresas();
-  const [cats, setCats] = useState<CatRow[]>([]);
-  const [colaboradores, setColaboradores] = useState<{ id: string; nome: string }[]>([]);
-  const [dashboard, setDashboard] = useState<Record<string, unknown>>({});
-  const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
   const form = useForm<CatForm>({
@@ -77,38 +73,38 @@ export default function AdminCatPage() {
 
   const empresaId = empresaAtual?.id;
 
-  const carregar = async () => {
-    if (!empresaId) return;
-    setLoading(true);
-    try {
-      const [{ data: cs }, { data: cols }, { data: dash }] = await Promise.all([
+  // Data fetching via React Query: cache por empresa (multi-tenant), sem efeitos manuais.
+  const catsQuery = useQuery({
+    queryKey: ['sst-cat', empresaId],
+    enabled: !!empresaId,
+    queryFn: async () => {
+      const [{ data: cs, error: e1 }, { data: cols, error: e2 }, { data: dash, error: e3 }] = await Promise.all([
         supabase
           .from('sst_cat')
           .select('id,numero_cat,data_acidente,tipo_acidente,tipo_cat,cid_principal,houve_obito,houve_afastamento,status_esocial,prazo_limite_envio,data_envio_esocial,protocolo_esocial,colaborador_id')
-          .eq('empresa_id', empresaId)
+          .eq('empresa_id', empresaId!)
           .order('data_acidente', { ascending: false })
           .limit(500),
-        supabase.from('colaboradores').select('id,nome_completo').eq('empresa_id', empresaId).limit(500),
-        supabase.rpc('sst_cat_dashboard', { p_empresa_id: empresaId }),
+        supabase.from('colaboradores').select('id,nome_completo').eq('empresa_id', empresaId!).limit(500),
+        supabase.rpc('sst_cat_dashboard', { p_empresa_id: empresaId! }),
       ]);
-      setCats((cs as CatRow[]) || []);
-      const colsData = (cols as { id: string; nome_completo: string }[] | null) || [];
-      setColaboradores(colsData.map(c => ({ id: c.id, nome: c.nome_completo })));
-      setDashboard((dash as Record<string, unknown>) || {});
-    } catch (e) {
-      toast.error('Falha ao carregar CATs');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useOnMount(() => {
-    void carregar();
+      if (e1 || e2 || e3) throw (e1 ?? e2 ?? e3);
+      const colsData = (cols as { id: string; nome_completo: string }[] | null) ?? [];
+      return {
+        cats: ((cs as CatRow[] | null) ?? []),
+        colaboradores: colsData.map((c) => ({ id: c.id, nome: c.nome_completo })),
+        dashboard: ((dash as Record<string, unknown> | null) ?? {}),
+      };
+    },
   });
 
-  useEffect(() => {
-    void carregar();
-  }, [empresaId]);
+  const cats = catsQuery.data?.cats ?? [];
+  const colaboradores = catsQuery.data?.colaboradores ?? [];
+  const dashboard = catsQuery.data?.dashboard ?? {};
+  const loading = catsQuery.isPending && !!empresaId;
+
+  const carregar = () => { void catsQuery.refetch(); };
+
 
   const onSubmit = async (values: CatForm) => {
     if (!empresaId) return;
@@ -122,7 +118,7 @@ export default function AdminCatPage() {
       toast.success('CAT registrada. Prazo legal calculado automaticamente.');
       setOpen(false);
       form.reset();
-      void carregar();
+      carregar();
     } catch (e) {
       toast.error(safeErrorMessage(e, 'Erro ao salvar CAT.'));
     }
