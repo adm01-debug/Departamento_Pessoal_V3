@@ -43,10 +43,30 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: mockFrom },
 }));
 
+// Tenant isolation: todo serviço exige empresa_id explícito.
+const EMPRESA_ID = 'empresa-test-id';
+
+/**
+ * Cria um mock de `.eq()` que é ao mesmo tempo ENCADEÁVEL (permite
+ * `.eq(colaborador_id).eq(empresa_id)`) e AGUARDÁVEL (resolve a resposta ao
+ * final da cadeia), refletindo o builder real do supabase-js.
+ */
+function chainableEq(response: any, extra: Record<string, unknown> = {}) {
+  const eqFn: any = vi.fn();
+  eqFn.mockImplementation(() => ({
+    eq: eqFn,
+    ...extra,
+    then: (r: (v: unknown) => unknown) => Promise.resolve(response).then(r),
+    catch: (r: (v: unknown) => unknown) => Promise.resolve(response).catch(r),
+    finally: (r: () => void) => Promise.resolve(response).finally(r),
+  }));
+  return eqFn;
+}
+
 // select → eq → order → resolvedValue
 function setupEqOrderChain(data: any[], error: any = null) {
   const orderFn = vi.fn().mockResolvedValue({ data, error });
-  const eqFn = vi.fn().mockReturnValue({ order: orderFn });
+  const eqFn = chainableEq({ data, error }, { order: orderFn });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, eqFn, orderFn };
@@ -54,7 +74,7 @@ function setupEqOrderChain(data: any[], error: any = null) {
 
 // select → eq → resolvedValue (no order)
 function setupEqResolveChain(data: any[], error: any = null) {
-  const eqFn = vi.fn().mockResolvedValue({ data, error });
+  const eqFn = chainableEq({ data, error });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, eqFn };
@@ -63,7 +83,7 @@ function setupEqResolveChain(data: any[], error: any = null) {
 // select → eq → maybeSingle
 function setupEqMaybeSingleChain(data: any, error: any = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
-  const eqFn = vi.fn().mockReturnValue({ maybeSingle });
+  const eqFn = chainableEq({ data, error }, { maybeSingle });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, eqFn, maybeSingle };
@@ -111,7 +131,7 @@ function setupUpsertChain(data: any, error: any = null) {
 
 // update(dados).eq('id', id) → resolvedValue
 function setupUpdateEqChain(error: any = null) {
-  const eqFn = vi.fn().mockResolvedValue({ error });
+  const eqFn = chainableEq({ error }, { select: vi.fn().mockReturnValue({ maybeSingle: vi.fn().mockResolvedValue({ data: {}, error }) }) });
   const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ update: updateFn });
   return { updateFn, eqFn };
@@ -119,7 +139,7 @@ function setupUpdateEqChain(error: any = null) {
 
 // delete().eq() → resolvedValue
 function setupDeleteChain(error: any = null) {
-  const eqFn = vi.fn().mockResolvedValue({ error });
+  const eqFn = chainableEq({ error });
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
   return { deleteFn, eqFn };
@@ -133,18 +153,18 @@ describe('listarDependentes', () => {
   it('returns dependentes for colaborador', async () => {
     const records = [{ id: 'd1', colaborador_id: 'c1' }];
     const { eqFn } = setupEqOrderChain(records);
-    expect(await listarDependentes('c1')).toEqual(records);
+    expect(await listarDependentes('c1', EMPRESA_ID)).toEqual(records);
     expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
   });
 
   it('returns empty array when data is null', async () => {
     setupEqOrderChain(null as any);
-    expect(await listarDependentes('c1')).toEqual([]);
+    expect(await listarDependentes('c1', EMPRESA_ID)).toEqual([]);
   });
 
   it('throws on DB error', async () => {
     setupEqOrderChain([], { message: 'fail' });
-    await expect(listarDependentes('c1')).rejects.toBeDefined();
+    await expect(listarDependentes('c1', EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -164,7 +184,7 @@ describe('atualizarDependente', () => {
 
   it('updates dependente by id', async () => {
     const { updateFn, eqFn } = setupUpdateEqChain();
-    await atualizarDependente('d1', { nome: 'Ana Paula' });
+    await atualizarDependente('d1', { nome: 'Ana Paula' }, EMPRESA_ID);
     expect(updateFn).toHaveBeenCalledWith({ nome: 'Ana Paula' });
     expect(eqFn).toHaveBeenCalledWith('id', 'd1');
   });
@@ -175,7 +195,7 @@ describe('excluirDependente', () => {
 
   it('deletes dependente by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await excluirDependente('d1');
+    await excluirDependente('d1', EMPRESA_ID);
     expect(eqFn).toHaveBeenCalledWith('id', 'd1');
   });
 });
@@ -203,7 +223,7 @@ describe('excluirContatoEmergencia', () => {
 
   it('deletes contato by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await excluirContatoEmergencia('ce1');
+    await excluirContatoEmergencia('c1', 'ce1');
     expect(eqFn).toHaveBeenCalledWith('id', 'ce1');
   });
 });
@@ -216,7 +236,7 @@ describe('listarHistoricoSalarial', () => {
   it('returns historico for colaborador ordered by data_vigencia desc', async () => {
     const records = [{ id: 'hs1' }];
     const { eqFn, orderFn } = setupEqOrderChain(records);
-    expect(await listarHistoricoSalarial('c1')).toEqual(records);
+    expect(await listarHistoricoSalarial('c1', EMPRESA_ID)).toEqual(records);
     expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
     expect(orderFn).toHaveBeenCalledWith('data_vigencia', { ascending: false });
   });
@@ -241,7 +261,7 @@ describe('listarASOs', () => {
   it('returns ASOs for colaborador', async () => {
     const records = [{ id: 'a1' }];
     const { eqFn } = setupEqOrderChain(records);
-    expect(await listarASOs('c1')).toEqual(records);
+    expect(await listarASOs('c1', EMPRESA_ID)).toEqual(records);
     expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
   });
 });
@@ -283,7 +303,7 @@ describe('excluirFormacao', () => {
 
   it('deletes formacao by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await excluirFormacao('f1');
+    await excluirFormacao('c1', 'f1');
     expect(eqFn).toHaveBeenCalledWith('id', 'f1');
   });
 });
@@ -397,7 +417,8 @@ describe('salvarPeriodoExperiencia — update when found', () => {
     // Second: update → eq → select → maybeSingle
     const maybeSingle2 = vi.fn().mockResolvedValue({ data: updated, error: null });
     const select2 = vi.fn().mockReturnValue({ maybeSingle: maybeSingle2 });
-    const eqForUpdate = vi.fn().mockReturnValue({ select: select2 });
+    const eqForUpdate: any = vi.fn();
+    eqForUpdate.mockReturnValue({ eq: eqForUpdate, select: select2 });
     const updateFn = vi.fn().mockReturnValue({ eq: eqForUpdate });
     mockFrom.mockReturnValueOnce({ update: updateFn });
 
@@ -435,7 +456,7 @@ describe('excluirAnotacao', () => {
 
   it('deletes anotacao by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await excluirAnotacao('an1');
+    await excluirAnotacao('c1', 'an1');
     expect(eqFn).toHaveBeenCalledWith('id', 'an1');
   });
 });
@@ -447,7 +468,7 @@ describe('listarPeriodosAquisitivos', () => {
 
   it('returns periodos for colaborador', async () => {
     const { eqFn } = setupEqOrderChain([]);
-    await listarPeriodosAquisitivos('c1');
+    await listarPeriodosAquisitivos('c1', EMPRESA_ID);
     expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
   });
 });
@@ -460,7 +481,7 @@ describe('listarTimes', () => {
   it('returns times without empresa filter', async () => {
     const records = [{ id: 't1', nome: 'Dev' }];
     setupListChain(records);
-    expect(await listarTimes()).toEqual(records);
+    expect(await listarTimes(EMPRESA_ID)).toEqual(records);
   });
 
   it('filters by empresa_id when provided', async () => {
@@ -500,7 +521,7 @@ describe('listarWebhooks', () => {
 
   it('returns webhooks without empresa filter', async () => {
     setupListChain([{ id: 'wh1' }]);
-    expect(await listarWebhooks()).toHaveLength(1);
+    expect(await listarWebhooks(EMPRESA_ID)).toHaveLength(1);
   });
 
   it('filters by empresa_id when provided', async () => {
@@ -525,7 +546,7 @@ describe('excluirWebhook', () => {
 
   it('deletes webhook by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await excluirWebhook('wh1');
+    await excluirWebhook('wh1', EMPRESA_ID);
     expect(eqFn).toHaveBeenCalledWith('id', 'wh1');
   });
 });
@@ -561,7 +582,7 @@ describe('listarCamposCustomizados', () => {
   it('returns campos without empresa filter and filters by ativo=true', async () => {
     const records = [{ id: 'cc1', ativo: true }];
     const { chain } = setupListChain(records);
-    expect(await listarCamposCustomizados()).toEqual(records);
+    expect(await listarCamposCustomizados(EMPRESA_ID)).toEqual(records);
     expect(chain.eq).toHaveBeenCalledWith('ativo', true);
   });
 
