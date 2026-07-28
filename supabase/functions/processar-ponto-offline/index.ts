@@ -253,15 +253,24 @@ serve(async (req: Request): Promise<Response> => {
             dispositivo_id: reg.dispositivoId,
             is_offline: true,
             sync_at: new Date().toISOString(),
-            hash_integridade: expected,
+            // O selo de integridade (hash_integridade) é calculado pelo banco,
+            // no gatilho enforce_batida_ponto_hash. Não enviamos daqui: o hash
+            // desta função é o do DISPOSITIVO — canonicaliza `timestamp` (e usa
+            // HMAC quando há PONTO_HASH_SECRET), enquanto o selo do banco
+            // canonicaliza `data|hora`. São propósitos diferentes: este prova
+            // que o registro offline não foi adulterado no aparelho; o do banco
+            // sela a linha gravada. Enviá-lo aqui faria o banco recusar a
+            // sincronização por selo divergente.
             foto_biometria_url: finalFotoUrl,
             metadata: {
               offline_original_type: reg.tipo,
               offline_timestamp: reg.timestamp,
               client_hash: reg.hash ?? null,
+              device_hash: expected,
               hash_enforced: enforceHash,
               synced_by: userId,
             },
+
           })
           .select('id')
           .maybeSingle();
