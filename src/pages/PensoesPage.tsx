@@ -108,11 +108,12 @@ export default function PensoesPage() {
       <Card><CardContent className="p-0">
         {isLoading ? <div className="p-8 flex justify-center"><Spinner /></div> : (
           <Table>
-            <TableHeader><TableRow><TableHead>Beneficiário</TableHead><TableHead>CPF</TableHead><TableHead>Tipo</TableHead><TableHead>% / Valor</TableHead><TableHead>Status</TableHead><TableHead></TableHead></TableRow></TableHeader>
+            <TableHeader><TableRow><TableHead>Colaborador</TableHead><TableHead>Beneficiário</TableHead><TableHead>CPF</TableHead><TableHead>Tipo</TableHead><TableHead>% / Valor</TableHead><TableHead>Status</TableHead><TableHead></TableHead></TableRow></TableHeader>
             <TableBody>
               {data?.map(r => (
                 <TableRow key={r.id}>
-                  <TableCell className="font-medium">{r.beneficiario}</TableCell>
+                  <TableCell className="font-medium">{r.colaboradores?.nome_completo || '-'}</TableCell>
+                  <TableCell>{r.beneficiario}</TableCell>
                   <TableCell>{r.cpf_beneficiario || '-'}</TableCell>
                   <TableCell className="capitalize">{r.tipo || '-'}</TableCell>
                   <TableCell>{r.percentual ? `${r.percentual}%` : r.valor_fixo ? `R$ ${Number(r.valor_fixo).toLocaleString('pt-BR')}` : '-'}</TableCell>
@@ -120,7 +121,7 @@ export default function PensoesPage() {
                   <TableCell><Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => excluir.mutate(r.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
                 </TableRow>
               ))}
-              {!data?.length && <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">Nenhuma pensão cadastrada</TableCell></TableRow>}
+              {!data?.length && <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">Nenhuma pensão cadastrada</TableCell></TableRow>}
             </TableBody>
           </Table>
         )}
