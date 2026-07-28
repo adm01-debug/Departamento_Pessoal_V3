@@ -18740,6 +18740,36 @@ export type Database = {
         }
         Relationships: []
       }
+      sec_policy_regressions: {
+        Row: {
+          cmd: string | null
+          created_at: string
+          id: string
+          motivo: string
+          policy_name: string
+          scan_at: string
+          tabela: string
+        }
+        Insert: {
+          cmd?: string | null
+          created_at?: string
+          id?: string
+          motivo: string
+          policy_name: string
+          scan_at?: string
+          tabela: string
+        }
+        Update: {
+          cmd?: string | null
+          created_at?: string
+          id?: string
+          motivo?: string
+          policy_name?: string
+          scan_at?: string
+          tabela?: string
+        }
+        Relationships: []
+      }
       security_alerts: {
         Row: {
           created_at: string | null
@@ -26417,6 +26447,8 @@ export type Database = {
           tabela: string
         }[]
       }
+      sec_audit_policies_scan: { Args: never; Returns: Json }
+      sec_policy_regressions_purge: { Args: never; Returns: number }
       solicitar_adiantamento_13_ferias: {
         Args: { p_ferias_id: string }
         Returns: Json
