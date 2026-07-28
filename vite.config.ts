@@ -109,7 +109,7 @@ export default defineConfig(({ mode }) => ({
     minify: {
       type: 'oxc',
       compress: {
-        dropConsole: ['log', 'debug', 'info', 'trace'],
+        dropConsole: true,
       },
     },
     rollupOptions: {
