@@ -4,7 +4,7 @@ import {
   LogOut, History, Calendar, Building2, Shield, PenTool, UserCircle,
   Network, ClipboardList, FileCheck, Calculator, Settings, Briefcase,
   FileText, GraduationCap, Target, UserSearch, LucideIcon, MapPin, Timer,
-  Megaphone, Receipt, GitBranch, CalendarClock, Fingerprint, ShieldCheck, Scale, Bot, Landmark, BookOpen, TrendingDown,
+  Megaphone, Receipt, GitBranch, CalendarClock, Fingerprint, ShieldCheck, Scale, Bot, Landmark, BookOpen, TrendingDown, TrendingUp,
   Trophy, MessageSquareText, Activity, ShieldAlert
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
