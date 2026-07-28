@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { deepChain } from '@/test/deepChain';
 import { pontoService } from '../pontoService';
 import { createQueryBuilder } from '@/test/supabaseMock';
 
@@ -12,7 +13,7 @@ const { mockFrom, mockFunctionsInvoke, mockRpc } = vi.hoisted(() => ({
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
-    from: mockFrom,
+    from: (...a: unknown[]) => deepChain(mockFrom(...a)),
     rpc: mockRpc,
     functions: { invoke: mockFunctionsInvoke },
   },

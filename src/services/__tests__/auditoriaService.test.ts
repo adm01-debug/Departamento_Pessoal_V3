@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { deepChain } from '@/test/deepChain';
 import { auditoriaService, notificacaoService } from '../auditoriaService';
 import { makeChain } from '@/test/chain';
 
@@ -11,7 +12,7 @@ const { mockFrom, mockGetUser } = vi.hoisted(() => ({
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: mockFrom, auth: { getUser: mockGetUser } },
+  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)), auth: { getUser: mockGetUser } },
 }));
 
 // Chain canônico (suporta encadeamento arbitrário do PostgREST)

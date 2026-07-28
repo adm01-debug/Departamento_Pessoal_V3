@@ -206,7 +206,9 @@ export const rescisaoService = {
         _desligamento_id: id,
         _parte: tipo,
       });
-      if (error) throw error;
+      // Normaliza o PostgrestError em Error nativo — objetos crus viram "[object Object]"
+      // na UI e escondem a regra de negócio violada no servidor.
+      if (error) throw new Error(error.message || 'Falha ao assinar digitalmente o desligamento');
 
       await auditLogger.log({
         tabela: 'desligamentos',

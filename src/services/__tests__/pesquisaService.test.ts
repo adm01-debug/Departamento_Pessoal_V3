@@ -1,4 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { deepChain } from '@/test/deepChain';
+import { makeChain } from '@/test/chain';
 import { pesquisaService } from '../pesquisaService';
 
 const EMPRESA_ID = 'test-empresa-id';
@@ -6,7 +8,7 @@ const EMPRESA_ID = 'test-empresa-id';
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: mockFrom },
+  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
 function setupListChain(data: any[], error: any = null) {
@@ -195,10 +197,27 @@ describe('pesquisaService.criarPergunta', () => {
 describe('pesquisaService.excluirPergunta', () => {
   beforeEach(() => { vi.clearAllMocks(); });
 
-  it('deletes pergunta by id', async () => {
-    const { eqFn } = setupDeleteChain();
+  it('deletes pergunta by id after cross-tenant ownership check', async () => {
+    // 1) pergunta → pesquisa_id | 2) pesquisa → empresa_id | 3) delete
+    const pergChain: any = makeChain({ data: { pesquisa_id: 'p1' }, error: null });
+    const pesqChain: any = makeChain({ data: { empresa_id: EMPRESA_ID }, error: null });
+    const delChain: any = makeChain({ error: null });
+    mockFrom
+      .mockReturnValueOnce(pergChain)
+      .mockReturnValueOnce(pesqChain)
+      .mockReturnValueOnce(delChain);
+
     await pesquisaService.excluirPergunta('q1', EMPRESA_ID);
-    expect(eqFn).toHaveBeenCalledWith('id', 'q1');
+    expect(delChain.eq).toHaveBeenCalledWith('id', 'q1');
+    expect(delChain.eq).toHaveBeenCalledWith('pesquisa_id', 'p1');
+  });
+
+  it('fail-closed: rejeita pergunta de outro tenant', async () => {
+    const pergChain: any = makeChain({ data: { pesquisa_id: 'p1' }, error: null });
+    const pesqChain: any = makeChain({ data: { empresa_id: 'outra-empresa' }, error: null });
+    mockFrom.mockReturnValueOnce(pergChain).mockReturnValueOnce(pesqChain);
+
+    await expect(pesquisaService.excluirPergunta('q1', EMPRESA_ID)).rejects.toThrow(/outro tenant/);
   });
 });
 

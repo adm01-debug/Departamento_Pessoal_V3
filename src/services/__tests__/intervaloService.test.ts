@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { deepChain } from '@/test/deepChain';
 import { intervaloService } from '../intervaloService';
 
 const EMPRESA_ID = 'test-empresa-id';
@@ -6,7 +7,7 @@ const EMPRESA_ID = 'test-empresa-id';
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: mockFrom },
+  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
 function setupListChain(data: any[], error: any = null) {
@@ -116,7 +117,7 @@ describe('intervaloService.atualizar', () => {
   it('updates and returns intervalo', async () => {
     const updated = { id: 'i1', duracao_minutos: 60 };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    const result = await intervaloService.atualizar('i1', { duracao_minutos: 60 });
+    const result = await intervaloService.atualizar(EMPRESA_ID, 'i1', { duracao_minutos: 60 });
     expect(updateFn).toHaveBeenCalledWith({ duracao_minutos: 60 });
     expect(eqFn).toHaveBeenCalledWith('id', 'i1');
     expect(result).toEqual(updated);
@@ -124,7 +125,7 @@ describe('intervaloService.atualizar', () => {
 
   it('throws when data is null', async () => {
     setupUpdateChain(null);
-    await expect(intervaloService.atualizar('i1', {})).rejects.toThrow();
+    await expect(intervaloService.atualizar(EMPRESA_ID, 'i1', {})).rejects.toThrow();
   });
 });
 
@@ -135,13 +136,13 @@ describe('intervaloService.excluir', () => {
 
   it('deletes intervalo by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();
-    await intervaloService.excluir('i1');
+    await intervaloService.excluir(EMPRESA_ID, 'i1');
     expect(deleteFn).toHaveBeenCalled();
     expect(eqFn).toHaveBeenCalledWith('id', 'i1');
   });
 
   it('throws on DB error', async () => {
     setupDeleteChain({ message: 'fail' });
-    await expect(intervaloService.excluir('i1')).rejects.toBeDefined();
+    await expect(intervaloService.excluir(EMPRESA_ID, 'i1')).rejects.toBeDefined();
   });
 });
