@@ -26,28 +26,28 @@ export default function FinanceiroBancarioPage() {
   /** Espelha `cnab_remessas` (campos opcionais = nem sempre selecionados) */
   interface Remessa {
     id: string;
-    empresa_id?: string;
-    banco_codigo?: string;
-    sequencial_arquivo?: number;
-    total_pagamentos?: number;
-    valor_total?: number;
-    arquivo_url?: string;
-    hash_integridade?: string;
-    data_geracao?: string;
-    created_at?: string;
-    updated_at?: string;
-    status?: string;
+    empresa_id?: string | null;
+    banco_codigo?: string | null;
+    sequencial_arquivo?: number | null;
+    total_pagamentos?: number | null;
+    valor_total?: number | null;
+    arquivo_url?: string | null;
+    hash_integridade?: string | null;
+    data_geracao?: string | null;
+    created_at?: string | null;
+    updated_at?: string | null;
+    status?: string | null;
   }
   /** Espelha `pix_lotes` */
   interface PixLote {
     id: string;
-    empresa_id?: string;
-    quantidade_pagamentos?: number;
-    valor_total?: number;
-    data_criacao?: string;
-    created_at?: string;
-    updated_at?: string;
-    status?: string;
+    empresa_id?: string | null;
+    quantidade_pagamentos?: number | null;
+    valor_total?: number | null;
+    data_criacao?: string | null;
+    created_at?: string | null;
+    updated_at?: string | null;
+    status?: string | null;
   }
   /** Resumo de folha usado apenas para seleção/exibição */
   interface FolhaResumo {
@@ -397,8 +397,8 @@ export default function FinanceiroBancarioPage() {
                           <TableCell>{r.banco_codigo}</TableCell>
                           <TableCell>{r.sequencial_arquivo}</TableCell>
                           <TableCell>{r.total_pagamentos}</TableCell>
-                          <TableCell className="text-right font-medium">{formatCurrency(r.valor_total)}</TableCell>
-                          <TableCell><StatusBadge status={r.status} variant="success" /></TableCell>
+                          <TableCell className="text-right font-medium">{formatCurrency(r.valor_total ?? 0)}</TableCell>
+                          <TableCell><StatusBadge status={r.status ?? 'desconhecido'} variant="success" /></TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -432,8 +432,8 @@ export default function FinanceiroBancarioPage() {
                         <TableRow key={l.id}>
                           <TableCell>{formatDate(l.created_at)}</TableCell>
                           <TableCell>{l.quantidade_pagamentos}</TableCell>
-                          <TableCell className="text-right font-medium">{formatCurrency(l.valor_total)}</TableCell>
-                          <TableCell><StatusBadge status={l.status} variant="success" /></TableCell>
+                          <TableCell className="text-right font-medium">{formatCurrency(l.valor_total ?? 0)}</TableCell>
+                          <TableCell><StatusBadge status={l.status ?? 'desconhecido'} variant="success" /></TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

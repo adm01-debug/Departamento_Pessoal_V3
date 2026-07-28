@@ -120,13 +120,16 @@ export default function LoginPage() {
       await resetAttempts(email);
       navigate('/dashboard');
     } catch (err) {
-      if (err && typeof err === 'object' && 'code' in err && (err as any).code === 'mfa_required') {
+      // Narrowing defensivo: o erro pode vir de fontes distintas (SDK, edge function, rede)
+      const errObj: Record<string, unknown> =
+        err && typeof err === 'object' ? (err as Record<string, unknown>) : {};
+      if (errObj.code === 'mfa_required') {
         // MFA enrolled — show TOTP challenge without recording a failed attempt
-        setMfaPending({ factorId: err.factorId || '' });
+        setMfaPending({ factorId: typeof errObj.factorId === 'string' ? errObj.factorId : '' });
         return;
       }
       await recordFailedAttempt(email);
-      const msg = err?.message;
+      const msg = typeof errObj.message === 'string' ? errObj.message : undefined;
       if (msg && msg.includes('bloqueada')) {
         setError(msg);
       } else {

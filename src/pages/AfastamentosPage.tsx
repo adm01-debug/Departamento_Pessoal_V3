@@ -168,7 +168,7 @@ export default function AfastamentosPage() {
               <DropdownMenuContent align="end" className="w-56 p-2">
                 <DropdownMenuLabel className="text-xs uppercase text-muted-foreground font-bold">Status do Afastamento</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setFiltros({ ...filtros, status: null })}>Todos Status</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFiltros({ ...filtros, status: undefined })}>Todos Status</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setFiltros({ ...filtros, status: 'ativo' })} className="text-green-600 font-medium">Ativos</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setFiltros({ ...filtros, status: 'pendente' })} className="text-orange-600 font-medium">Pendentes (INSS)</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setFiltros({ ...filtros, status: 'finalizado' })} className="text-gray-600 font-medium">Finalizados</DropdownMenuItem>
@@ -197,6 +197,10 @@ export default function AfastamentosPage() {
                 <DropdownMenuLabel>Exportar Relatório</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={async () => {
+                  if (!filtros.empresa_id) {
+                    toast.error('Selecione uma empresa para exportar o relatório');
+                    return;
+                  }
                   await afastamentoService.exportarRelatorio(filtros.empresa_id, { ...filtros, tipo: selectedTipo });
                   toast.success('Relatório exportado com sucesso em CSV');
                 }}>

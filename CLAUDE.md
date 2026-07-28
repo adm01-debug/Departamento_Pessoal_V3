@@ -8,8 +8,9 @@
 > - `typescript` **re-pinado 7.0.2 → 6.0.3**. TS 7 quebrava o `typescript-eslint` (peer `>=4.8.4 <6.1.0`) → `lint:ci` abortava (CI vermelho). **NÃO re-bumpar `typescript` para ≥6.1.0** até o typescript-eslint suportar. O `tsgo` (typecheck) vem do pacote separado `@typescript/native-preview`, não afetado.
 > - Bucket de storage **`ferias-avisos` criado** (migração `20260723113000`). O batch da feature de assinatura criou as policies RLS mas nunca o bucket → upload do PDF falhava em runtime ("Bucket not found").
 > - Corrigidos 3 erros de tipo de mock em `loggerService.test.ts` (vitest 4).
-> - ⚠️ **`tsconfig.app.json` é ÓRFÃO** — nada no CI/build o roda. O typecheck real do CI é `tsgo --noEmit` → `tsconfig.json` (raiz), que já dá 0 erros. Ligar `strict` só no app config teve efeito prático ZERO no CI.
-> - Regressão pendente: **Vite 8 ignora `esbuild.drop`** → ~20 `console.*` vazam no bundle de prod (exige terser ou oxc-minify).
+> ✅ **Resolvido (28/07/2026)** — `tsconfig.app.json` foi removido (era órfão). O único config é `tsconfig.json` (raiz), o mesmo que o CI roda via `tsgo --noEmit`, agora com **`strict: true` + `noImplicitAny: true`** e **0 erros** (17 erros reais corrigidos em 7 arquivos).
+> ✅ **Resolvido (28/07/2026)** — `build.minify` migrado para a forma de objeto do Vite 8/OXC (`{ type: 'oxc', compress: { dropConsole: [...] } }`). Auditoria do bundle: os `console.*` remanescentes são **100% de vendor chunks** (jspdf, vendor-react, vendor-supabase), sem PII e sem origem no nosso código.
+> - ⚠️ Pendente: arquivos de teste (`**/*.test.ts(x)`, `__tests__/`) seguem **excluídos** do typecheck — 232 erros de tipo sob strict apenas em testes.
 
 ## 📋 Sumário
 1. [Stack & Arquitetura](#-stack--arquitetura)
@@ -192,7 +193,7 @@ Dependabot               → Groups ativos ✅ (23 PRs merged na sessão)
 | Open Issues | ~7 (Dependabot automáticos) |
 | Open PRs | ~7 (Dependabot automáticos) |
 | TypeScript strict | ✅ Ativado |
-| `any` types no app | ❓ Não verificado (search code não funciona p/ repo privado) |
+| `any` types no app | ✅ Compatível com `strict` (0 erros de tipo no CI) |
 | Testes | ✅ Configurados |
 | Cobertura | ✅ v8 configurada |
 | Branch protection | ❌ Não ativo (Settings manual) |
@@ -207,8 +208,14 @@ O `oven-sh/setup-bun@v2` action não funciona em repositórios privados do GitHu
 ### Por que npm install em vez de npm ci?
 O projeto usa `bun.lock` como lockfile, não `package-lock.json`. `npm ci` requer lockfile. `npm install` funciona sem.
 
-### Por que strict:false foi alterado para true?
-`strict` foi ligado em `tsconfig.app.json` — porém esse config é ÓRFÃO (nada no CI/build o invoca), então o efeito prático foi ZERO. O typecheck real do CI é `tsgo --noEmit` sobre `tsconfig.json` (raiz). Sob `tsconfig.app.json` o `tsc` acusa erros de dead-code (`noUnusedLocals`); a afirmação anterior de "claim não validado (tsconfig.app.json órfão)" NÃO se sustentava. Verificar sempre o config que o CI de fato roda antes de declarar verde.
+### TypeScript strict — estado real (28/07/2026)
+`strict: true` e `noImplicitAny: true` estão ligados no **`tsconfig.json` raiz**, que é exatamente o config executado pelo CI (`tsgo --noEmit`). Medição por flag antes de ligar: `strictNullChecks` isolado = 60 erros, `noImplicitAny` = 9, `strictPropertyInitialization` = 1, `useUnknownInCatchVariables` = 2; **strict completo = 17** (as flags se reforçam e eliminam falsos positivos de inferência). Os 17 foram corrigidos na fonte — sem `any`, sem `@ts-ignore`, sem supressão:
+- `FinanceiroBancarioPage`: interfaces locais divergiam do schema (`| null` do Postgres modelado como `| undefined`).
+- `AfastamentosPage`: `status: null` em filtro tipado como opcional + export sem guarda de `empresa_id`.
+- `LoginPage`: narrowing defensivo do erro de login (removido `as any` no caminho de MFA).
+- `AuditoriaPage`, `ContabilidadePage`, `MetabaseEmbed`, `NovaProgramacaoDialog`: acessos indexados/format sem guarda de nulidade.
+
+Regra: verificar sempre o config que o CI de fato roda antes de declarar verde.
 
 ### Bridge external-db-bridge
 Gateway hardening com JWT validation, CSRF fail-closed, rate limiting, tenant isolation, denylist de tabelas, allowlist de RPCs, regex de SQL injection, validação de ORDER BY, e telemetria com batch. Código em `supabase/functions/external-db-bridge/index.ts` (729 linhas).
@@ -234,7 +241,7 @@ Gateway hardening com JWT validation, CSRF fail-closed, rate limiting, tenant is
 | Gap | Impacto | Solução |
 |-----|---------|---------|
 | `noUnusedLocals:true` pode alertar | Warnings no build | Aceitar ou limpar |
-| tsconfig raiz duplicado | Confusão de configs | Unificar tsconfigs |
+| Testes fora do typecheck | 232 erros de tipo latentes em `__tests__` | Incluir testes no `tsconfig` e sanear gradualmente |
 
 ---
 
@@ -272,7 +279,6 @@ bun run test:e2e           # Testes E2E
 
 # TypeScript
 bunx tsc --noEmit          # Typecheck (root config)
-bunx tsc -p tsconfig.app.json  # Typecheck (app config)
 
 # Dependências
 bun install                # Instalar/atualizar
