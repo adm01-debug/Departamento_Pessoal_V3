@@ -21,7 +21,7 @@ export function useExcelExport() {
         await downloadWorkbook(wb, filename);
         toast.success('Excel exportado com sucesso!');
       } catch (e: unknown) {
-        toast.error(safeErrorMessage(e, 'Erro ao gerar Excel.'));
+        toast.error(`Erro ao gerar Excel: ${safeErrorMessage(e, 'tente novamente.')}`);
       }
     },
     []

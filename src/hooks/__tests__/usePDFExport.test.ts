@@ -73,7 +73,8 @@ describe('usePDFExport', () => {
   });
 
   it('shows error toast when jsPDF throws', async () => {
-    MockJsPDF.mockImplementationOnce(() => { throw new Error('PDF failed'); });
+    // Função clássica: o hook invoca com `new`, e arrow functions não são construtores.
+    MockJsPDF.mockImplementationOnce(function () { throw new Error('PDF failed'); });
     const { result } = renderHook(() => usePDFExport());
 
     await act(async () => {

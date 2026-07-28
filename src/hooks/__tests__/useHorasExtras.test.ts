@@ -107,7 +107,7 @@ describe('useHorasExtras', () => {
       await result.current.aprovar({ id: 'he1', obs: 'ok' });
     });
 
-    expect(mockAprovar).toHaveBeenCalledWith('he1', 'user-1', 'ok');
+    expect(mockAprovar).toHaveBeenCalledWith('he1', 'user-1', 'emp-1', 'ok');
   });
 
   it('rejeitar calls horaExtraService.rejeitar with id and userId', async () => {
@@ -118,7 +118,7 @@ describe('useHorasExtras', () => {
       await result.current.rejeitar({ id: 'he1', obs: 'nok' });
     });
 
-    expect(mockRejeitar).toHaveBeenCalledWith('he1', 'user-1', 'nok');
+    expect(mockRejeitar).toHaveBeenCalledWith('he1', 'user-1', 'emp-1', 'nok');
   });
 
   it('excluir calls horaExtraService.excluir with id', async () => {
@@ -129,7 +129,7 @@ describe('useHorasExtras', () => {
       await result.current.excluir('he1');
     });
 
-    expect(mockExcluir).toHaveBeenCalledWith('he1');
+    expect(mockExcluir).toHaveBeenCalledWith('he1', 'emp-1');
   });
 
   it('criar shows error toast on failure', async () => {

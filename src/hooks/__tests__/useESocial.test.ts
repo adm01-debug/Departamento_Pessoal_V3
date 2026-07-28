@@ -3,6 +3,11 @@ import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+vi.mock('@/hooks/useEmpresas', async () =>
+  (await import('@/test/empresaMock')).useEmpresasMockModule()
+);
+
+
 const {
   mockListarEventos, mockObterEstatisticas, mockEnviarEvento, mockReenviarEvento,
   mockGerarEventosPeriodo, mockGetConfig, mockListarCertificados, mockListarTransmissaoLogs,

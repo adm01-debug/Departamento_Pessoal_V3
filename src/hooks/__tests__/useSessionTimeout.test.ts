@@ -51,7 +51,7 @@ describe('useSessionTimeout', () => {
     mockGetSession.mockResolvedValue({ data: { session: null } });
     renderHook(() => useSessionTimeout());
     vi.advanceTimersByTime(31 * 60 * 1000); // > 30min inactivity
-    await vi.runAllTimersAsync();
+    await vi.advanceTimersByTimeAsync(60_000);
     expect(mockSignOut).not.toHaveBeenCalled();
   });
 

@@ -1,3 +1,4 @@
+import { deepChain } from '@/test/deepChain';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import React from 'react';
@@ -9,9 +10,14 @@ const { mockFrom, mockToastSuccess, mockToastError } = vi.hoisted(() => ({
   mockToastError: vi.fn(),
 }));
 
-vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: mockFrom },
-}));
+// `from()` é envolvido pelo `deepChain` para tolerar níveis extras de
+// encadeamento (ex.: `.eq('empresa_id', ...)`) sem reescrever cada mock.
+vi.mock('@/integrations/supabase/client', async () => {
+  const { deepChain } = await import('@/test/deepChain');
+  return {
+    supabase: { from: (...args: unknown[]) => deepChain(mockFrom(...args)) },
+  };
+});
 
 vi.mock('sonner', () => ({
   toast: { success: mockToastSuccess, error: mockToastError },
@@ -34,11 +40,11 @@ function buildChains(selectData: any[] = [], insertData: any = null) {
   const deleteChain: any = {
     eq: vi.fn().mockResolvedValue({ error: null }),
   };
-  mockFrom.mockReturnValue({
+  mockFrom.mockReturnValue(deepChain({
     select: vi.fn().mockReturnValue(selectChain),
     insert: vi.fn().mockReturnValue(insertChain),
     delete: vi.fn().mockReturnValue(deleteChain),
-  });
+  }) as any);
   return { selectChain, insertChain, deleteChain };
 }
 
