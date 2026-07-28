@@ -27,6 +27,9 @@ vi.mock('@/services', () => ({
 
 vi.mock('@/hooks', () => ({
   useAuth: () => ({ user: { id: 'user-rh', email: 'rh@test.com' } }),
+  // useNow retorna um timestamp fixo: prazos calculados no componente
+  // ficam determinísticos entre execuções.
+  useNow: () => new Date('2026-07-01T10:00:00Z').getTime(),
 }));
 
 vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
@@ -73,22 +76,22 @@ vi.mock('@/components/ui/separator', () => ({
   Separator: () => <hr />,
 }));
 
-vi.mock('./MedidaWorkflowTimeline', () => ({
+vi.mock('../medidas-disciplinares/MedidaWorkflowTimeline', () => ({
   MedidaWorkflowTimeline: ({ medidaId }: any) => (
     <div data-testid="workflow-timeline" data-medida-id={medidaId} />
   ),
 }));
 
-vi.mock('lucide-react', () => ({
-  AlertTriangle: () => <svg />,
-  Clock: () => <svg />,
-  Paperclip: () => <svg />,
-  Upload: () => <svg />,
-  Download: () => <svg />,
-  FileText: () => <svg />,
-  Check: () => <svg />,
-  X: () => <svg />,
-}));
+// Substitui cada ícone real por um <svg /> leve, preservando a lista de
+// exports do módulo original (o Vitest valida os nomes exportados).
+vi.mock('lucide-react', async (importOriginal) => {
+  const actual = await importOriginal<Record<string, unknown>>();
+  const Stub = () => <svg />;
+  const stubs: Record<string, unknown> = {};
+  for (const key of Object.keys(actual)) stubs[key] = Stub;
+  return stubs;
+});
+
 
 vi.mock('date-fns', () => ({
   format: vi.fn().mockReturnValue('01/07/2026 10:00'),

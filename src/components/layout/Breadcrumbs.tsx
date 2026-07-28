@@ -81,16 +81,22 @@ export function Breadcrumbs({ className }: { className?: string }) {
   const crumbs = segments.map((seg, i) => {
     const path = '/' + segments.slice(0, i + 1).join('/');
     const isLast = i === segments.length - 1;
-    // Melhorado: detecção de UUID e limpeza de IDs numéricos para breadcrumbs mais limpos
+    // Detecção de identificadores para breadcrumbs legíveis.
+    // Além de UUID/numérico, tratamos como "Detalhes" qualquer segmento
+    // desconhecido que seja filho de uma rota conhecida (ex.: /colaboradores/col-1),
+    // pois nesses casos o segmento é sempre um ID opaco e nunca um rótulo.
     const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(seg);
     const isNumericId = /^\d+$/.test(seg);
-    
+    const parentIsKnownRoute = i > 0 && !!routeLabels[segments[i - 1]];
+    const isOpaqueChildId = parentIsKnownRoute && !routeLabels[seg];
+
     let label: string;
-    if (isUuid || isNumericId) {
+    if (isUuid || isNumericId || isOpaqueChildId) {
       label = 'Detalhes';
     } else {
       label = routeLabels[seg] || seg.charAt(0).toUpperCase() + seg.slice(1).replace(/-/g, ' ');
     }
+
 
     return { path, label, isLast };
   }).filter(c => c.label);
