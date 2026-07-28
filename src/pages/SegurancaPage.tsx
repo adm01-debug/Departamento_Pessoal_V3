@@ -9,6 +9,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Spinner } from '@/components/ui/spinner';
 import { securityService } from '@/services/securityService';
+import { PolicyAuditPanel } from '@/components/seguranca/PolicyAuditPanel';
+
 import { 
   ShieldAlert, 
   Lock, 
