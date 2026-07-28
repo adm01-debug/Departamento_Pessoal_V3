@@ -17,7 +17,7 @@ export function LockoutMessage({ remainingSeconds }: LockoutMessageProps) {
       setSeconds((s) => Math.max(0, s - 1));
     }, 1000);
     return () => clearInterval(timer);
-  }, [seconds]);
+  }, [seconds, setSeconds]);
 
   const minutes = Math.floor(seconds / 60);
   const secs = seconds % 60;
