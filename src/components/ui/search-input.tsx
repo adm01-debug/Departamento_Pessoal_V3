@@ -1,11 +1,11 @@
 // V15-187: src/components/ui/search-input.tsx
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Input } from './input';
 import { Button } from './button';
 import { Search, X, Loader2 } from 'lucide-react';
 import { useDebounce } from '@/hooks/useDebounce';
-import { useOnMount } from '@/hooks/useMountEffects';
+import { useSyncedState } from '@/hooks/useSyncedState';
 
 interface SearchInputProps {
   value?: string;
@@ -18,17 +18,13 @@ interface SearchInputProps {
 }
 
 export function SearchInput({ value: controlledValue, onChange, onSearch, placeholder = 'Buscar...', debounce = 300, loading = false, className }: SearchInputProps) {
-  const [value, setValue] = useState(controlledValue || '');
+  // Sincroniza com o valor controlado (quando informado) sem efeito colateral.
+  const [value, setValue] = useSyncedState(
+    controlledValue,
+    (v) => v ?? '',
+    controlledValue !== undefined
+  );
   const debouncedValue = useDebounce(value, debounce);
-
-  // Inicializa com valor controlado no mount
-  useOnMount(() => {
-    if (controlledValue !== undefined) setValue(controlledValue);
-  });
-
-  useEffect(() => {
-    if (controlledValue !== undefined) setValue(controlledValue);
-  }, [controlledValue]);
 
   useEffect(() => {
     onSearch?.(debouncedValue);

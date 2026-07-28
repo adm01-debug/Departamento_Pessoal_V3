@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,52 +6,24 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { useEmpresas } from '@/hooks/useEmpresas';
-import { useOnMount } from '@/hooks/useMountEffects';
+import { useSyncedState } from '@/hooks/useSyncedState';
 import { motion } from 'framer-motion';
 import { Building2, Save } from 'lucide-react';
 
 export function EmpresaSettingsTab() {
   const { empresaAtual, atualizarEmpresa, loadingEmpresas } = useEmpresas();
-  const [form, setForm] = useState({
-    razao_social: '',
-    nome_fantasia: '',
-    cnpj: '',
-    inscricao_estadual: '',
-    inscricao_municipal: '',
-    cidade: '',
-    uf: '',
-    email: '',
-    telefone: ''});
-
-  useOnMount(() => {
-    if (empresaAtual) {
-      setForm({
-        razao_social: empresaAtual.razao_social || '',
-        nome_fantasia: empresaAtual.nome_fantasia || '',
-        cnpj: empresaAtual.cnpj || '',
-        inscricao_estadual: empresaAtual.inscricao_estadual || '',
-        inscricao_municipal: empresaAtual.inscricao_municipal || '',
-        cidade: empresaAtual.cidade || '',
-        uf: empresaAtual.uf || '',
-        email: empresaAtual.email || '',
-        telefone: empresaAtual.telefone || ''});
-    }
-  });
-
-  useEffect(() => {
-    if (empresaAtual) {
-      setForm({
-        razao_social: empresaAtual.razao_social || '',
-        nome_fantasia: empresaAtual.nome_fantasia || '',
-        cnpj: empresaAtual.cnpj || '',
-        inscricao_estadual: empresaAtual.inscricao_estadual || '',
-        inscricao_municipal: empresaAtual.inscricao_municipal || '',
-        cidade: empresaAtual.cidade || '',
-        uf: empresaAtual.uf || '',
-        email: empresaAtual.email || '',
-        telefone: empresaAtual.telefone || ''});
-    }
-  }, [empresaAtual]);
+  // Formulário derivado da empresa ativa (multi-tenant): troca de empresa ressincroniza.
+  const [form, setForm] = useSyncedState(empresaAtual, (e) => ({
+    razao_social: e?.razao_social || '',
+    nome_fantasia: e?.nome_fantasia || '',
+    cnpj: e?.cnpj || '',
+    inscricao_estadual: e?.inscricao_estadual || '',
+    inscricao_municipal: e?.inscricao_municipal || '',
+    cidade: e?.cidade || '',
+    uf: e?.uf || '',
+    email: e?.email || '',
+    telefone: e?.telefone || '',
+  }));
 
   const handleSave = () => {
     if (!empresaAtual?.id) return;
