@@ -176,6 +176,13 @@ function isCorrelated(expression) {
   return TENANT_CORRELATORS.some((re) => re.test(expression));
 }
 
+function usesForgeableClaim(expression) {
+  if (!FORGEABLE_CLAIM_RE.test(expression)) return false;
+  // `auth.jwt() ->> 'sub'` é equivalente a auth.uid() e é verificado pelo
+  // banco; só as claims livres (empresa_id, role, tenant, ...) são o problema.
+  return !TRUSTED_CLAIM_RE.test(expression);
+}
+
 function main() {
   if (!hasDatabase()) {
     console.warn('[rls-pii] Banco indisponível neste ambiente — verificação ignorada.');
@@ -204,7 +211,10 @@ function main() {
 
   const bodies = parseRows(functionOutput, 2).map(([name, src]) => [name, src]);
 
+  /** Reprovam o build: a PII fica de fato acessível a quem não deveria. */
   const violations = [];
+  /** Não reprovam: higiene de política, sem exposição comprovada. */
+  const warnings = [];
   let inspected = 0;
 
   for (const [tablename, policyname, cmd, roles, rawExpr] of parseRows(policyOutput, 5)) {
@@ -218,33 +228,46 @@ function main() {
     // concatenada já cobre os dois casos.
     const expanded = inlineFunctions(rawExpr, bodies);
     const correlated = isCorrelated(expanded);
+    const entry = { tablename, policyname, cmd, expr: rawExpr };
 
-    if (reachesAnon) {
+    if (usesForgeableClaim(expanded)) {
       violations.push({
-        tablename,
-        policyname,
-        cmd,
-        reason: `alcança a role "${roleList.join(', ')}" — políticas permissivas se somam em OR, ` +
-          'então isso amplia o acesso mesmo que outra política seja restritiva',
-        expr: rawExpr,
+        ...entry,
+        reason:
+          'deriva o tenant de uma claim livre do JWT (auth.jwt() / request.jwt) — ' +
+          'essa claim não é verificada pelo banco e é influenciável pelo próprio usuário',
       });
       continue;
     }
 
     if (!correlated) {
       violations.push({
-        tablename,
-        policyname,
-        cmd,
+        ...entry,
         reason: 'predicado não correlaciona com auth.uid() nem com o escopo de empresa',
-        expr: rawExpr,
+      });
+      continue;
+    }
+
+    // Predicado correlacionado + role `public`: `anon` tem auth.uid() nulo, então
+    // o predicado já retorna falso e NÃO há exposição. Fica como aviso porque
+    // `TO authenticated` é defesa em profundidade e evita que uma edição futura
+    // do predicado transforme isso em vazamento silencioso.
+    if (reachesAnon) {
+      warnings.push({
+        ...entry,
+        reason: `atribuída à role "${roleList.join(', ')}" (inclui anon); restrinja para "authenticated"`,
       });
     }
   }
 
+  for (const w of warnings) {
+    console.warn(`[rls-pii] aviso — ${w.tablename}."${w.policyname}" (${w.cmd}): ${w.reason}`);
+  }
+
   if (violations.length === 0) {
     console.log(
-      `[rls-pii] OK — ${inspected} política(s) sobre tabelas com PII, todas correlacionadas.`,
+      `[rls-pii] OK — ${inspected} política(s) sobre tabelas com PII, todas correlacionadas ` +
+        `(${warnings.length} aviso(s) não bloqueante(s)).`,
     );
     return 0;
   }
@@ -264,5 +287,6 @@ function main() {
   );
   return 1;
 }
+
 
 process.exit(main());
