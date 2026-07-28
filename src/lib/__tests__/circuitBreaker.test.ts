@@ -44,11 +44,6 @@ describe('CircuitBreaker', () => {
     await cb.execute(() => Promise.reject(new Error('x'))).catch(() => {});
     await cb.execute(() => Promise.reject(new Error('x'))).catch(() => {});
     // Success resets the counter
-    // successThreshold=2: o circuito só fecha após 2 sondagens consecutivas
-    // bem-sucedidas, evitando flapping quando o backend ainda está instável.
-    await cb.execute(() => Promise.resolve('ok'));
-    expect(cb.getState()).toBe('HALF_OPEN');
-
     await cb.execute(() => Promise.resolve('ok'));
     expect(cb.getState()).toBe('CLOSED');
     // Two more failures should still not open (counter was reset to 0)
@@ -108,6 +103,11 @@ describe('CircuitBreaker', () => {
     }
 
     vi.advanceTimersByTime(5001);
+
+    // successThreshold=2: o circuito só fecha após 2 sondagens consecutivas
+    // bem-sucedidas, evitando flapping enquanto o backend ainda está instável.
+    await cb.execute(() => Promise.resolve('ok'));
+    expect(cb.getState()).toBe('HALF_OPEN');
 
     await cb.execute(() => Promise.resolve('ok'));
     expect(cb.getState()).toBe('CLOSED');
