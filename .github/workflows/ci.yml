@@ -126,6 +126,15 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/audit-rls-pii.mjs
+      - name: Menor privilégio em RLS (papel no caminho de escrita)
+        # Complementa o gate acima. Isolar por empresa aprova ali, mas em tabela
+        # sensível não basta: com `FOR ALL` + só `empresa_id`, o estagiário e o
+        # RH ficam indistinguíveis dentro do mesmo tenant — contracheque, conta
+        # bancária, ASO e denúncia do canal de ética ficam graváveis por
+        # qualquer autenticado. Escrita nessas tabelas exige papel explícito.
+        env:
+          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: node scripts/audit-rls-least-privilege.mjs
       - name: Autorização em funções SECURITY DEFINER
         # SECURITY DEFINER atravessa o RLS: se a função é executável por
         # anon/authenticated e confia em identificadores vindos do chamador,
