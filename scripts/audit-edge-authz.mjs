@@ -38,13 +38,31 @@ const SENSIVEIS = new Set([
   'auditoria', 'backup', 'backup-automatico',
 ]);
 
-/** Evidência de verificação de PAPEL (não apenas de tenant). */
+/**
+ * Evidência de verificação de PAPEL que efetivamente RESTRINGE.
+ *
+ * `is_admin` está deliberadamente FORA desta lista. No código real ele aparece
+ * quase sempre como alargador, não como trava:
+ *
+ *     if (!belongs && !isAdm) return 403;   // === (belongs || isAdm)
+ *
+ * Ou seja: pertencer à empresa já basta, e o `is_admin` só adiciona o admin
+ * global por cima. Contar isso como "verifica papel" inverte o sentido do
+ * código e foi exatamente o bug que deixou 20 funções passarem por este gate.
+ */
 const TEM_PAPEL = [
   /\brequireRh\b/, /\brequireSelfOrRh\b/, /\bpodeGerirRh\b/, /\bpodeGerirPessoas\b/,
   /pode_gerir_rh_para/, /pode_gerir_pessoas_para/,
-  /\bis_admin\b/, /\bhas_role\b/,
-  // folha-metrics restringe via lista de papéis — igualmente válido.
-  /\bget_user_roles\b/,
+  /\bhas_role\b/, /\bget_user_roles\b/,
+];
+
+/**
+ * O anti-padrão explícito: tenant OU admin. Sempre uma violação em função
+ * sensível, mesmo que `has_role` apareça em outro ponto do arquivo.
+ */
+const OR_ADMIN = [
+  /!\s*\w*[Bb]elongs?\w*\s*&&\s*!\s*\w*(?:isAdm|is_admin|isAdmin)\w*/,
+  /!\s*\w*pertence\w*\s*&&\s*!\s*\w*(?:isAdm|isAdmin)\w*/,
 ];
 
 /** Check que parece autorização mas é só tenant. */
