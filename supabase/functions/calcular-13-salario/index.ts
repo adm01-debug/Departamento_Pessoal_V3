@@ -10,6 +10,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://esm.sh/zod@3.23.8';
 import { verifyCsrf } from '../_shared/csrf.ts';
+import { requireRh } from '../_shared/authz.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 
@@ -126,12 +127,12 @@ serve(async (req: Request): Promise<Response> => {
     const d = parsed.data;
 
     // Tenant scope
-    const [{ data: belongs }, { data: isAdm }] = await Promise.all([
-      supabase.rpc('user_belongs_to_empresa', { _user_id: userId, _empresa_id: d.empresa_id }),
-      supabase.rpc('is_admin', { _user_id: userId }),
-    ]);
-    if (!belongs && !isAdm) {
-      return json({ success: false, error: 'Sem acesso a esta empresa', code: 'FORBIDDEN' }, 403);
+    // Papel, não apenas vínculo: o padrão anterior (`!belongs && !isAdmin`)
+    // era um OU — pertencer à empresa já bastava, e o is_admin apenas somava
+    // o admin global. Qualquer colaborador autenticado passava.
+    {
+      const authz = await requireRh(supabase, userId, d.empresa_id);
+      if (authz.denied) return authz.denied;
     }
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
