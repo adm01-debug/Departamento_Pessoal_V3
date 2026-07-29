@@ -57,6 +57,15 @@ const SEM_CORRELACAO = [
 /**
  * Expressões que provam correlação com o solicitante. `empresa_id` sozinho
  * não basta — é preciso amarrar ao usuário autenticado.
+ *
+ * Sobre os dois últimos: derivar o tenant de uma claim do JWT correlaciona
+ * de fato (`get_auth_empresa_id()` lê `app_metadata.empresa_id`, gravável
+ * apenas por `service_role`, portanto não forjável pelo titular do token).
+ * Este gate mede APENAS ausência de correlação. A discussão sobre a robustez
+ * da claim escolhida — `app_metadata` vs. `user_metadata` (este editável pelo
+ * próprio usuário) — é responsabilidade do `audit-rls-pii`, que possui a
+ * heurística FORGEABLE_CLAIM_RE para isso. Duplicar o julgamento aqui
+ * produziria ruído e levaria o time a desligar o gate.
  */
 const CORRELACIONADORES = [
   /auth\.uid\s*\(\s*\)/i,
@@ -68,7 +77,10 @@ const CORRELACIONADORES = [
   /\bsou_o_colaborador\b/i,
   /\bhas_role\b/i,
   /\bis_admin\b/i,
+  /\bget_auth_empresa_id\b/i,
+  /auth\.jwt\s*\(\s*\)/i,
 ];
+
 
 /**
  * Isenções, com justificativa obrigatória.
