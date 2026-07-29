@@ -10,6 +10,7 @@ import { corsHeaders, createErrorResponse, parseJsonBody, enforceOrigin, handleP
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
 import { captureException } from '../_shared/sentry.ts';
+import { requireRh } from '../_shared/authz.ts';
 
 const BodySchema = z.object({
   medida_id: z.string().uuid(),
