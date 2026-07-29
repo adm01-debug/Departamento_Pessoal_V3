@@ -68,8 +68,32 @@ const OR_ADMIN = [
 /** Check que parece autorização mas é só tenant. */
 const APENAS_TENANT = /user_belongs_to_empresa|from\(\s*['"]user_empresas['"]\s*\)/;
 
+/**
+ * Gate DURO de admin: `if (!isAdmin) return 403`. Aqui o admin RESTRINGE em vez
+ * de alargar, então é separação de papéis legítima (backup, backup-automatico).
+ */
+const HARD_ADMIN = [
+  /if\s*\(\s*!\s*\w*(?:isAdmin|isAdm|is_admin)\w*\s*\)/,
+  /if\s*\(\s*\w*(?:isAdmin|isAdm)\w*\s*!==\s*true\s*\)\s*\{?\s*return/,
+  // Gate por consulta direta à tabela de papéis (backup faz assim).
+  /from\(\s*['"]user_roles['"]\s*\)[\s\S]{0,300}?\.eq\(\s*['"]role['"]/,
+];
+
 /** Exige autenticação de fato. */
 const TEM_AUTH = [/auth\.getUser\s*\(/, /getClaims\s*\(/, /requireAuth\s*\(/];
+
+/**
+ * Remove comentários antes de casar os padrões.
+ *
+ * Sem isto o gate acusa a própria documentação: os comentários que explicam o
+ * anti-padrão `!belongs && !isAdmin` contêm o texto que o regex procura, e o
+ * arquivo corrigido era reportado como vulnerável.
+ */
+function semComentarios(src) {
+  return src
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/(^|[^:])\/\/[^\n]*/g, '$1');
+}
 
 function lerFuncoes() {
   if (!existsSync(DIR)) {
@@ -79,7 +103,7 @@ function lerFuncoes() {
   return readdirSync(DIR)
     .filter((d) => d !== '_shared' && statSync(join(DIR, d)).isDirectory())
     .filter((d) => existsSync(join(DIR, d, 'index.ts')))
-    .map((d) => ({ nome: d, src: readFileSync(join(DIR, d, 'index.ts'), 'utf8') }));
+    .map((d) => ({ nome: d, src: semComentarios(readFileSync(join(DIR, d, 'index.ts'), 'utf8')) }));
 }
 
 function main() {
@@ -93,7 +117,7 @@ function main() {
     auditadas++;
 
     const temAuth = TEM_AUTH.some((r) => r.test(src));
-    const temPapel = TEM_PAPEL.some((r) => r.test(src));
+    const temPapel = TEM_PAPEL.some((r) => r.test(src)) || HARD_ADMIN.some((r) => r.test(src));
     const soTenant = APENAS_TENANT.test(src);
     const orAdmin = OR_ADMIN.some((r) => r.test(src));
 

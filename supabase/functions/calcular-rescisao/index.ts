@@ -9,6 +9,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://esm.sh/zod@3.23.8';
 import { verifyCsrf } from '../_shared/csrf.ts';
+import { requireRh } from '../_shared/authz.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody, enforceOrigin, handlePreflight } from '../_shared/contract.ts';
 
@@ -166,11 +167,12 @@ Deno.serve(async (req) => {
       empresaIdFinal = colab.empresa_id;
     }
     if (empresaIdFinal) {
-      const [{ data: belongs }, { data: isAdm }] = await Promise.all([
-        admin.rpc('user_belongs_to_empresa', { _user_id: userId, _empresa_id: empresaIdFinal }),
-        admin.rpc('is_admin', { _user_id: userId }),
-      ]);
-      if (!belongs && !isAdm) return json({ error: 'Sem acesso a esta empresa', code: 'FORBIDDEN' }, 403);
+    // Papel, não apenas vínculo: o padrão anterior (`!belongs && !isAdmin`)
+    // era um OU — pertencer à empresa já bastava, e o is_admin apenas somava
+    // o admin global. Qualquer colaborador autenticado passava.
+    {
+      const authz = await requireRh(admin, userId, empresaIdFinal);
+      if (authz.denied) return authz.denied;
     }
 
     // ==== Cálculo ====

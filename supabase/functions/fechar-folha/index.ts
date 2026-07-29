@@ -16,6 +16,7 @@ import { verifyCsrf } from '../_shared/csrf.ts';
 import { verifyFolhaIntegrity } from '../_shared/folhaIntegrity.ts';
 import { integrityHash } from '../_shared/integrityHash.ts';
 import { beginIdempotency, completeIdempotency, failIdempotency, extractIdempotencyKey } from '../_shared/idempotency.ts';
+import { requireRh } from '../_shared/authz.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -98,15 +99,12 @@ serve(async (req: Request): Promise<Response> => {
 
 
 
-    // 4) Tenant scope
-    const { data: belongs } = await admin.rpc('user_belongs_to_empresa', {
-      _user_id: userId, _empresa_id: empresaId,
-    });
-    if (belongs !== true) {
-      const { data: isAdmin } = await admin.rpc('is_admin', { _user_id: userId });
-      if (isAdmin !== true) {
-        return createErrorResponse('Sem acesso a esta empresa', 403, 'FORBIDDEN');
-      }
+    // 4) Papel — fechar a folha é ato de RH/admin, não de qualquer pessoa da
+    // empresa. O aninhamento anterior (`if !belongs { if !isAdmin 403 }`)
+    // equivalia a `belongs || isAdmin`: bastava trabalhar aqui.
+    {
+      const authz = await requireRh(admin, userId, empresaId);
+      if (authz.denied) return authz.denied;
     }
 
     // 5) Carregar folha

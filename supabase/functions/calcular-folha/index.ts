@@ -10,6 +10,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { validateRequest, corsHeaders, createErrorResponse } from '../_shared/contract.ts';
 import { calcularFolhaSchema } from '../_shared/schemas/common.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
+import { requireRh } from '../_shared/authz.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { beginIdempotency, completeIdempotency, failIdempotency, extractIdempotencyKey } from '../_shared/idempotency.ts';
 import { integrityHash as computeIntegrityHash } from '../_shared/integrityHash.ts';
@@ -114,12 +115,13 @@ Deno.serve(async (req) => {
     if (!rl.allowed) return rateLimitResponse(rl);
 
     // Tenant scope (antes de qualquer efeito colateral / idempotência)
-    const [{ data: belongs }, { data: isAdm }] = await Promise.all([
-      admin.rpc('user_belongs_to_empresa', { _user_id: userId, _empresa_id: empresa_id }),
-      admin.rpc('is_admin', { _user_id: userId }),
-    ]);
-    if (!belongs && !isAdm) return createErrorResponse('Sem acesso a esta empresa', 403, 'FORBIDDEN');
-
+    // Papel, não apenas vínculo: o padrão anterior (`!belongs && !isAdmin`)
+    // era um OU — pertencer à empresa já bastava, e o is_admin apenas somava
+    // o admin global. Qualquer colaborador autenticado passava.
+    {
+      const authz = await requireRh(admin, userId, empresa_id);
+      if (authz.denied) return authz.denied;
+    }
     // Idempotência — Onda 41
     // Payload canonicalizado (empresa_id + competencia + userId) evita replay cruzado entre usuários.
     const idem = await beginIdempotency(admin, {
