@@ -52,7 +52,16 @@ const SEM_CORRELACAO = [
   /^\(?\s*true\s*\)?$/i,
   /^\(?\s*empresa_id\s+is\s+not\s+null\s*\)?$/i,
   /^\(?\s*1\s*=\s*1\s*\)?$/i,
+  // "Está logado?" não é isolamento de tenant — é autenticação. Precisa vir
+  // ANTES da checagem de CORRELACIONADORES, senão o `auth.uid()` presente na
+  // expressão faz o predicado passar como se correlacionasse. Foi exatamente
+  // esse o furo em premiacoes_pagamentos, treinamento_* e documentos_historico.
+  /^\(?\s*auth\.uid\s*\(\s*\)\s+is\s+not\s+null\s*\)?$/i,
+  /^\(?\s*auth\.uid\s*\(\s*\)\s*<>\s*null\s*\)?$/i,
+  /^\(?\s*auth\.role\s*\(\s*\)\s*=\s*'authenticated'(::text)?\s*\)?$/i,
+  /^\(?\s*\(\s*auth\.jwt\s*\(\s*\)\s*->>\s*'role'(::text)?\s*\)\s*=\s*'authenticated'(::text)?\s*\)?$/i,
 ];
+
 
 /**
  * Expressões que provam correlação com o solicitante. `empresa_id` sozinho
