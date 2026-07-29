@@ -101,7 +101,13 @@ function main() {
       violacoes.push({ nome, motivo: 'usa service_role sem autenticar o chamador' });
       continue;
     }
-    if (!temPapel) {
+    if (orAdmin) {
+      violacoes.push({
+        nome,
+        motivo: 'padrão `!belongs && !isAdmin` — é um OU: pertencer à empresa já basta, '
+          + 'o is_admin apenas soma o admin global. Qualquer colaborador passa.',
+      });
+    } else if (!temPapel) {
       violacoes.push({
         nome,
         motivo: soTenant
