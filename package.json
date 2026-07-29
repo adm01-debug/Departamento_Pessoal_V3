@@ -129,7 +129,7 @@
     "eslint-plugin-react-refresh": "0.5.3",
     "globals": "17.8.0",
     "msw": "^2.1.5",
-    "postcss": "^8.5.15",
+    "postcss": "^8.5.24",
     "prettier": "3.9.6",
     "tailwindcss": "^4.3.0",
     "typescript": "6.0.3",
