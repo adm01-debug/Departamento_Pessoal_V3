@@ -98,7 +98,39 @@ const CORRELACIONADORES = [
  */
 const ALLOWLIST = new Map([]);
 
+/**
+ * Escopo do gate = tabelas cujo conteúdo pertence a um tenant.
+ *
+ * Ter a coluna `empresa_id` é o caso fácil. O caso que escapou por muito tempo
+ * é a tabela-FILHA: `premiacoes_pagamentos` não tem `empresa_id`, herda o
+ * tenant de `premiacoes_campanhas` pela FK. Como o gate original só enxergava
+ * a coluna, essas tabelas ficavam fora da amostra — e foi justamente onde
+ * `auth.uid() IS NOT NULL` sobreviveu, expondo valores de premiação entre
+ * empresas.
+ *
+ * Por isso o alcance é o fechamento transitivo das FKs até uma tabela com
+ * `empresa_id`. `documentos_historico` exige 2 saltos
+ * (documentos -> colaboradores), então a profundidade precisa ser > 1. O teto
+ * de 4 evita ciclos degenerados e mantém a consulta barata; FKs para `auth.users`
+ * ficam de fora porque `auth` não é schema de tenant.
+ */
 const QUERY = `
+WITH RECURSIVE alcanca_tenant(oid, profundidade) AS (
+  -- base: a tabela carrega o próprio tenant
+  SELECT c.oid, 0
+  FROM pg_class c
+  JOIN pg_namespace n ON n.oid = c.relnamespace
+  JOIN pg_attribute a ON a.attrelid = c.oid AND a.attname = 'empresa_id' AND NOT a.attisdropped
+  WHERE n.nspname = 'public' AND c.relkind = 'r'
+  UNION
+  -- passo: filha que aponta, por FK, para algo que já alcança o tenant
+  SELECT fk.conrelid, at.profundidade + 1
+  FROM alcanca_tenant at
+  JOIN pg_constraint fk ON fk.confrelid = at.oid AND fk.contype = 'f'
+  JOIN pg_class c ON c.oid = fk.conrelid
+  JOIN pg_namespace n ON n.oid = c.relnamespace AND n.nspname = 'public'
+  WHERE at.profundidade < 4
+)
 SELECT
   p.tablename,
   p.policyname,
@@ -108,15 +140,13 @@ SELECT
   replace(coalesce(p.qual, ''), E'\\n', ' '),
   replace(coalesce(p.with_check, ''), E'\\n', ' ')
 FROM pg_policies p
+JOIN pg_class pc ON pc.relname = p.tablename
+JOIN pg_namespace pn ON pn.oid = pc.relnamespace AND pn.nspname = 'public'
 WHERE p.schemaname = 'public'
-  AND EXISTS (
-    SELECT 1 FROM information_schema.columns c
-    WHERE c.table_schema = 'public'
-      AND c.table_name = p.tablename
-      AND c.column_name = 'empresa_id'
-  )
+  AND pc.oid IN (SELECT oid FROM alcanca_tenant)
 ORDER BY p.tablename, p.policyname;
 `;
+
 
 function runQuery(sql) {
   const args = ['-Atq', '-F', '\t', '-c', sql];
