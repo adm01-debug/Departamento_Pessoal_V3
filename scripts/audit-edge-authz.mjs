@@ -43,6 +43,8 @@ const TEM_PAPEL = [
   /\brequireRh\b/, /\brequireSelfOrRh\b/, /\bpodeGerirRh\b/, /\bpodeGerirPessoas\b/,
   /pode_gerir_rh_para/, /pode_gerir_pessoas_para/,
   /\bis_admin\b/, /\bhas_role\b/,
+  // folha-metrics restringe via lista de papéis — igualmente válido.
+  /\bget_user_roles\b/,
 ];
 
 /** Check que parece autorização mas é só tenant. */
