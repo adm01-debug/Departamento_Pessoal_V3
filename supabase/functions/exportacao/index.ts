@@ -6,6 +6,7 @@ import { z } from 'https://esm.sh/zod@3.23.8';
 import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
+import { requireRh } from '../_shared/authz.ts';
 
 const HARD_CAP = 10_000;
 
