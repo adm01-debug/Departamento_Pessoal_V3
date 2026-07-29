@@ -236,6 +236,7 @@ function main() {
     if (!TABELAS_SENSIVEIS.has(tablename)) continue;
     if (!CMDS_DE_ESCRITA.has(cmd)) continue;
     if (ISENCOES.has(`${tablename}:${policyname}`)) continue;
+    if (!CMDS_AUDITADOS.has(cmd)) continue;
 
     const roleList = roles.split(',').map((r) => r.trim()).filter(Boolean);
     // service_role opera fora do RLS por definição; exigir papel dele é ruído.
@@ -243,17 +244,31 @@ function main() {
 
     inspecionadas += 1;
     const expanded = inlineFunctions(rawExpr, bodies);
-    if (!verificaPapel(expanded)) {
-      violacoes.push({ tablename, policyname, cmd, expr: rawExpr.slice(0, 200) });
+    const temPapel = verificaPapel(expanded);
+    const temAutoAcesso = verificaAutoAcesso(expanded);
+    // `ALL` inclui escrita, então é julgado pela régua de escrita.
+    const ehEscrita = cmd !== 'SELECT';
+
+    let motivo = null;
+    if (!temPapel && !temAutoAcesso) {
+      motivo = `${ehEscrita ? 'escrita' : 'leitura'} liberada a qualquer autenticado do tenant`;
+    } else if (ehEscrita && !temPapel && !AUTO_SERVICO_ESCRITA.has(tablename)) {
+      motivo =
+        'escrita autorizada apenas por auto-acesso; nesta tabela o titular não ' +
+        'pode gravar a própria linha sem destruir o valor probatório do registro';
+    }
+
+    if (motivo) {
+      violacoes.push({ tablename, policyname, cmd, motivo, expr: rawExpr.slice(0, 180) });
     }
   }
 
   if (violacoes.length > 0) {
     console.error(
-      `\n[rls-least-privilege] ${violacoes.length} política(s) de ESCRITA sem verificação de papel:\n`,
+      `\n[rls-least-privilege] ${violacoes.length} política(s) sem separação de papéis:\n`,
     );
     for (const v of violacoes) {
-      console.error(`  ✗ ${v.tablename} :: "${v.policyname}" (${v.cmd})`);
+      console.error(`  ✗ ${v.tablename} :: "${v.policyname}" (${v.cmd}) — ${v.motivo}`);
       console.error(`      ${v.expr}`);
     }
     console.error(
@@ -262,12 +277,16 @@ function main() {
     console.error(
       '  o estagiário e o RH ficam indistinguíveis. Exija pode_gerir_rh() /',
     );
-    console.error('  pode_gerir_pessoas() / has_role() no caminho de escrita.\n');
+    console.error(
+      '  pode_gerir_pessoas() / has_role(), ou amarre a linha ao titular com',
+    );
+    console.error('  sou_o_colaborador(). Lembre: políticas se somam por OR.\n');
     return 1;
   }
 
   console.log(
-    `[rls-least-privilege] OK — ${inspecionadas} política(s) de escrita em tabela sensível exigem papel.`,
+    `[rls-least-privilege] OK — ${inspecionadas} política(s) em tabela sensível ` +
+      'exigem papel ou amarram a linha ao titular.',
   );
   return 0;
 }
