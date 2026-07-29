@@ -6,6 +6,7 @@ import { z } from 'https://esm.sh/zod@3.23.8';
 import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
+import { requireRh } from '../_shared/authz.ts';
 
 const HARD_CAP = 10_000;
 
@@ -93,16 +94,16 @@ serve(async (req) => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
-    // Tenant scope — exigir empresaId; sem empresa = apenas admin pode exportar tudo
+    // Exportar despeja CPF, salário, e-mail e telefone de TODA a empresa em
+    // um CSV. O vínculo com a empresa era condição insuficiente: tornava o
+    // quadro salarial inteiro legível por qualquer pessoa autenticada.
     const { data: isAdm } = await admin.rpc('is_admin', { _user_id: userId });
     if (!empresaId && !isAdm) {
       return createErrorResponse('empresaId é obrigatório', 400, 'EMPRESA_REQUIRED');
     }
     if (empresaId) {
-      const { data: belongs } = await admin.rpc('user_belongs_to_empresa', {
-        _user_id: userId, _empresa_id: empresaId,
-      });
-      if (!belongs && !isAdm) return createErrorResponse('Sem acesso a esta empresa', 403, 'FORBIDDEN');
+      const authz = await requireRh(admin, userId, empresaId);
+      if (authz.denied) return authz.denied;
     }
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');

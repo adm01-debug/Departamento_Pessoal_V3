@@ -23135,7 +23135,15 @@ export type Database = {
       }
       pertence_a_empresa: { Args: { _empresa_id: string }; Returns: boolean }
       pode_gerir_pessoas: { Args: { _empresa_id: string }; Returns: boolean }
+      pode_gerir_pessoas_para: {
+        Args: { _empresa_id: string; _user_id: string }
+        Returns: boolean
+      }
       pode_gerir_rh: { Args: { _empresa_id: string }; Returns: boolean }
+      pode_gerir_rh_para: {
+        Args: { _empresa_id: string; _user_id: string }
+        Returns: boolean
+      }
       process_lgpd_cleanup_queue: { Args: never; Returns: number }
       processar_ajuste_aprovado: {
         Args: { p_solicitacao_id: string }
