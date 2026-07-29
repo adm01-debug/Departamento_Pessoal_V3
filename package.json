@@ -13,6 +13,7 @@
     "audit:search-path": "node scripts/audit-db-search-path.mjs",
     "smoke:selos": "node scripts/smoke-hash-triggers.mjs",
     "audit:rls-pii": "node scripts/audit-rls-pii.mjs",
+    "audit:rls-roles": "node scripts/audit-rls-least-privilege.mjs",
     "audit:secdef": "node scripts/audit-secdef-authz.mjs",
     "audit:embeds": "node scripts/audit-embed-hints.mjs",
 
