@@ -234,7 +234,7 @@ function main() {
 
   for (const [tablename, policyname, cmd, roles, rawExpr] of parseRows(policyOutput, 5)) {
     if (!TABELAS_SENSIVEIS.has(tablename)) continue;
-    if (!CMDS_DE_ESCRITA.has(cmd)) continue;
+    
     if (ISENCOES.has(`${tablename}:${policyname}`)) continue;
     if (!CMDS_AUDITADOS.has(cmd)) continue;
 
