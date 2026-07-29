@@ -93,7 +93,7 @@ const CMDS_AUDITADOS = new Set(['ALL', 'INSERT', 'UPDATE', 'DELETE', 'SELECT']);
 /**
  * Predicados que comprovam verificação de PAPEL, não apenas de tenant.
  * `pertence_a_empresa` e `get_user_empresas` NÃO entram: são exatamente o
- * padrão que este gate existe para reprovar em caminhos de escrita.
+ * padrão que este gate existe para reprovar.
  */
 const VERIFICADORES_DE_PAPEL = [
   /\bpode_gerir_rh\b/i,
@@ -104,8 +104,32 @@ const VERIFICADORES_DE_PAPEL = [
 ];
 
 /**
- * Isenções, com justificativa obrigatória. Só entram políticas de
- * auto-serviço estreito, onde o próprio titular escreve o próprio dado.
+ * Predicados que amarram a linha ao PRÓPRIO titular. Correlacionam com a
+ * pessoa, não com a empresa — logo não sofrem do problema que este gate
+ * combate.
+ */
+const AUTO_ACESSO = [
+  /\bsou_o_colaborador\b/i,
+  /\buser_id\s*=\s*auth\.uid\s*\(\s*\)/i,
+  /\bauth\.uid\s*\(\s*\)\s*=\s*user_id\b/i,
+];
+
+/**
+ * Tabelas em que o titular pode ESCREVER a própria linha.
+ *
+ * Deliberadamente curta. Ler o próprio dado é auto-serviço legítimo em
+ * qualquer tabela; escrevê-lo, não: se o colaborador pudesse gravar o
+ * próprio holerite, o próprio histórico salarial ou a própria medida
+ * disciplinar, o registro deixaria de ter valor probatório trabalhista.
+ * Só entram aqui dados cadastrais que a própria pessoa mantém no portal.
+ */
+const AUTO_SERVICO_ESCRITA = new Set([
+  'contatos_emergencia',
+  'formacoes_academicas',
+]);
+
+/**
+ * Isenções, com justificativa obrigatória.
  */
 const ISENCOES = new Map([
   [
