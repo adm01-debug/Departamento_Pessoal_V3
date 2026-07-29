@@ -58,15 +58,42 @@ const TABELAS_SENSIVEIS = new Set([
   'ferias',
   'user_roles',
   'user_empresas',
+  // Adicionadas após a varredura de LEITURA: todas expunham dado de saúde,
+  // documento pessoal digitalizado, valor de folha ou conta bancária a
+  // qualquer autenticado do mesmo tenant.
+  'exames',
+  'documentos_pessoais_arquivos',
+  'beneficiarios_plano',
+  'contatos_emergencia',
+  'formacoes_academicas',
+  'anotacoes_colaborador',
+  'folha_itens',
+  'lancamentos_folha',
+  'historico_rescisoes',
+  'cnab_itens',
+  'pix_itens',
 ]);
 
-/** Comandos que alteram estado. SELECT fica de fora por decisão explícita. */
-const CMDS_DE_ESCRITA = new Set(['ALL', 'INSERT', 'UPDATE', 'DELETE']);
+/**
+ * Comandos auditados.
+ *
+ * SELECT ficou de fora da primeira versão deste gate — e essa omissão custou
+ * 12 tabelas. A varredura seguinte encontrou exame médico, RG digitalizado,
+ * item de folha e remessa bancária legíveis por qualquer autenticado do
+ * tenant, sem que nenhuma política de ESCRITA estivesse errada. Ler o
+ * contracheque do colega já é o vazamento; não é preciso alterá-lo.
+ *
+ * Um detalhe do modelo do Postgres torna a omissão especialmente traiçoeira:
+ * políticas se combinam por OR. Uma única regra `SELECT` tenant-wide
+ * sobrevivente anula silenciosamente três políticas restritivas corretas
+ * criadas ao lado dela — foi exatamente o que ocorreu em `desligamentos`.
+ */
+const CMDS_AUDITADOS = new Set(['ALL', 'INSERT', 'UPDATE', 'DELETE', 'SELECT']);
 
 /**
  * Predicados que comprovam verificação de PAPEL, não apenas de tenant.
  * `pertence_a_empresa` e `get_user_empresas` NÃO entram: são exatamente o
- * padrão que este gate existe para reprovar em caminhos de escrita.
+ * padrão que este gate existe para reprovar.
  */
 const VERIFICADORES_DE_PAPEL = [
   /\bpode_gerir_rh\b/i,
@@ -77,8 +104,32 @@ const VERIFICADORES_DE_PAPEL = [
 ];
 
 /**
- * Isenções, com justificativa obrigatória. Só entram políticas de
- * auto-serviço estreito, onde o próprio titular escreve o próprio dado.
+ * Predicados que amarram a linha ao PRÓPRIO titular. Correlacionam com a
+ * pessoa, não com a empresa — logo não sofrem do problema que este gate
+ * combate.
+ */
+const AUTO_ACESSO = [
+  /\bsou_o_colaborador\b/i,
+  /\buser_id\s*=\s*auth\.uid\s*\(\s*\)/i,
+  /\bauth\.uid\s*\(\s*\)\s*=\s*user_id\b/i,
+];
+
+/**
+ * Tabelas em que o titular pode ESCREVER a própria linha.
+ *
+ * Deliberadamente curta. Ler o próprio dado é auto-serviço legítimo em
+ * qualquer tabela; escrevê-lo, não: se o colaborador pudesse gravar o
+ * próprio holerite, o próprio histórico salarial ou a própria medida
+ * disciplinar, o registro deixaria de ter valor probatório trabalhista.
+ * Só entram aqui dados cadastrais que a própria pessoa mantém no portal.
+ */
+const AUTO_SERVICO_ESCRITA = new Set([
+  'contatos_emergencia',
+  'formacoes_academicas',
+]);
+
+/**
+ * Isenções, com justificativa obrigatória.
  */
 const ISENCOES = new Map([
   [
@@ -150,6 +201,10 @@ function verificaPapel(expression) {
   return VERIFICADORES_DE_PAPEL.some((re) => re.test(expression));
 }
 
+function verificaAutoAcesso(expression) {
+  return AUTO_ACESSO.some((re) => re.test(expression));
+}
+
 function main() {
   if (!hasDatabase()) {
     console.warn('[rls-least-privilege] Banco indisponível neste ambiente — verificação ignorada.');
@@ -179,8 +234,9 @@ function main() {
 
   for (const [tablename, policyname, cmd, roles, rawExpr] of parseRows(policyOutput, 5)) {
     if (!TABELAS_SENSIVEIS.has(tablename)) continue;
-    if (!CMDS_DE_ESCRITA.has(cmd)) continue;
+    
     if (ISENCOES.has(`${tablename}:${policyname}`)) continue;
+    if (!CMDS_AUDITADOS.has(cmd)) continue;
 
     const roleList = roles.split(',').map((r) => r.trim()).filter(Boolean);
     // service_role opera fora do RLS por definição; exigir papel dele é ruído.
@@ -188,17 +244,31 @@ function main() {
 
     inspecionadas += 1;
     const expanded = inlineFunctions(rawExpr, bodies);
-    if (!verificaPapel(expanded)) {
-      violacoes.push({ tablename, policyname, cmd, expr: rawExpr.slice(0, 200) });
+    const temPapel = verificaPapel(expanded);
+    const temAutoAcesso = verificaAutoAcesso(expanded);
+    // `ALL` inclui escrita, então é julgado pela régua de escrita.
+    const ehEscrita = cmd !== 'SELECT';
+
+    let motivo = null;
+    if (!temPapel && !temAutoAcesso) {
+      motivo = `${ehEscrita ? 'escrita' : 'leitura'} liberada a qualquer autenticado do tenant`;
+    } else if (ehEscrita && !temPapel && !AUTO_SERVICO_ESCRITA.has(tablename)) {
+      motivo =
+        'escrita autorizada apenas por auto-acesso; nesta tabela o titular não ' +
+        'pode gravar a própria linha sem destruir o valor probatório do registro';
+    }
+
+    if (motivo) {
+      violacoes.push({ tablename, policyname, cmd, motivo, expr: rawExpr.slice(0, 180) });
     }
   }
 
   if (violacoes.length > 0) {
     console.error(
-      `\n[rls-least-privilege] ${violacoes.length} política(s) de ESCRITA sem verificação de papel:\n`,
+      `\n[rls-least-privilege] ${violacoes.length} política(s) sem separação de papéis:\n`,
     );
     for (const v of violacoes) {
-      console.error(`  ✗ ${v.tablename} :: "${v.policyname}" (${v.cmd})`);
+      console.error(`  ✗ ${v.tablename} :: "${v.policyname}" (${v.cmd}) — ${v.motivo}`);
       console.error(`      ${v.expr}`);
     }
     console.error(
@@ -207,12 +277,16 @@ function main() {
     console.error(
       '  o estagiário e o RH ficam indistinguíveis. Exija pode_gerir_rh() /',
     );
-    console.error('  pode_gerir_pessoas() / has_role() no caminho de escrita.\n');
+    console.error(
+      '  pode_gerir_pessoas() / has_role(), ou amarre a linha ao titular com',
+    );
+    console.error('  sou_o_colaborador(). Lembre: políticas se somam por OR.\n');
     return 1;
   }
 
   console.log(
-    `[rls-least-privilege] OK — ${inspecionadas} política(s) de escrita em tabela sensível exigem papel.`,
+    `[rls-least-privilege] OK — ${inspecionadas} política(s) em tabela sensível ` +
+      'exigem papel ou amarram a linha ao titular.',
   );
   return 0;
 }
