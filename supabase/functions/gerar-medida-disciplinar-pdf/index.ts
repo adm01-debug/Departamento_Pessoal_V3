@@ -181,11 +181,11 @@ serve(async (req: Request): Promise<Response> => {
 
     if (mErr || !medida) return createErrorResponse('Medida não encontrada', 404, 'NOT_FOUND');
 
-    // Gate multi-tenant
-    const { data: belongs } = await admin.rpc('user_belongs_to_empresa', {
-      _user_id: userId, _empresa_id: medida.empresa_id,
-    });
-    if (!belongs) return createErrorResponse('Sem acesso a esta medida', 403, 'FORBIDDEN');
+    // Emitir a advertência/suspensão de outra pessoa é ato de RH. O gate
+    // anterior só exigia vínculo com a empresa — o que permitia a um colega
+    // gerar (e ler) o documento disciplinar de qualquer um, com CPF e cargo.
+    const authz = await requireRh(admin, userId, medida.empresa_id);
+    if (authz.denied) return authz.denied;
 
     // Buscar colaborador e empresa
     const [{ data: colaborador }, { data: empresa }] = await Promise.all([
