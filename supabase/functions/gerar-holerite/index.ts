@@ -4,6 +4,7 @@ import { validateRequest, corsHeaders, createErrorResponse, enforceOrigin, handl
 import { holeriteSchema } from '../_shared/schemas/common.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
+import { requireSelfOrRh } from '../_shared/authz.ts';
 
 // Tabelas INSS 2026
 const calcularINSS = (base: number): number => {
