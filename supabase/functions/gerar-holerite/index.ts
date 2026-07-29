@@ -72,15 +72,14 @@ serve(async (req: Request): Promise<Response> => {
       return createErrorResponse('Colaborador não encontrado', 404, 'NOT_FOUND');
     }
 
-    // Tenant scope: usuário deve ser dono do holerite, admin, OU pertencer à empresa
-    const { data: belongs } = await supabase.rpc('user_belongs_to_empresa', {
-      _user_id: userId, _empresa_id: colaborador.empresa_id,
-    });
-    const { data: isAdm } = await supabase.rpc('is_admin', { _user_id: userId });
-    const isOwner = colaborador.user_id === userId;
-    if (!isOwner && !belongs && !isAdm) {
-      return createErrorResponse('Sem acesso a este holerite', 403, 'FORBIDDEN');
-    }
+    // Autorização: o titular do holerite, ou RH/admin da empresa.
+    //
+    // A regra anterior aceitava `user_belongs_to_empresa`, que é verdadeiro
+    // para QUALQUER colega — bastava o id do colaborador para obter salário,
+    // CPF, banco, agência e conta de outra pessoa. Pertencer à empresa é
+    // pré-requisito, não permissão.
+    const authz = await requireSelfOrRh(supabase, userId, colaborador.user_id, colaborador.empresa_id);
+    if (authz.denied) return authz.denied;
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(supabase, { key: `gerar-holerite:${userId}`, limit: 30, windowSec: 60 });
