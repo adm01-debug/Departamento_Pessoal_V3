@@ -58,10 +58,37 @@ const TABELAS_SENSIVEIS = new Set([
   'ferias',
   'user_roles',
   'user_empresas',
+  // Adicionadas após a varredura de LEITURA: todas expunham dado de saúde,
+  // documento pessoal digitalizado, valor de folha ou conta bancária a
+  // qualquer autenticado do mesmo tenant.
+  'exames',
+  'documentos_pessoais_arquivos',
+  'beneficiarios_plano',
+  'contatos_emergencia',
+  'formacoes_academicas',
+  'anotacoes_colaborador',
+  'folha_itens',
+  'lancamentos_folha',
+  'historico_rescisoes',
+  'cnab_itens',
+  'pix_itens',
 ]);
 
-/** Comandos que alteram estado. SELECT fica de fora por decisão explícita. */
-const CMDS_DE_ESCRITA = new Set(['ALL', 'INSERT', 'UPDATE', 'DELETE']);
+/**
+ * Comandos auditados.
+ *
+ * SELECT ficou de fora da primeira versão deste gate — e essa omissão custou
+ * 12 tabelas. A varredura seguinte encontrou exame médico, RG digitalizado,
+ * item de folha e remessa bancária legíveis por qualquer autenticado do
+ * tenant, sem que nenhuma política de ESCRITA estivesse errada. Ler o
+ * contracheque do colega já é o vazamento; não é preciso alterá-lo.
+ *
+ * Um detalhe do modelo do Postgres torna a omissão especialmente traiçoeira:
+ * políticas se combinam por OR. Uma única regra `SELECT` tenant-wide
+ * sobrevivente anula silenciosamente três políticas restritivas corretas
+ * criadas ao lado dela — foi exatamente o que ocorreu em `desligamentos`.
+ */
+const CMDS_AUDITADOS = new Set(['ALL', 'INSERT', 'UPDATE', 'DELETE', 'SELECT']);
 
 /**
  * Predicados que comprovam verificação de PAPEL, não apenas de tenant.
