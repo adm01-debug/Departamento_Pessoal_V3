@@ -22621,6 +22621,10 @@ export type Database = {
           ok: boolean
         }[]
       }
+      empresa_do_colaborador: {
+        Args: { _colaborador_id: string }
+        Returns: string
+      }
       enfileirar_esocial_medida_disciplinar: {
         Args: { p_medida_id: string }
         Returns: Json
@@ -23130,6 +23134,8 @@ export type Database = {
         Returns: Json
       }
       pertence_a_empresa: { Args: { _empresa_id: string }; Returns: boolean }
+      pode_gerir_pessoas: { Args: { _empresa_id: string }; Returns: boolean }
+      pode_gerir_rh: { Args: { _empresa_id: string }; Returns: boolean }
       process_lgpd_cleanup_queue: { Args: never; Returns: number }
       processar_ajuste_aprovado: {
         Args: { p_solicitacao_id: string }
@@ -23712,6 +23718,7 @@ export type Database = {
         Args: { p_ferias_id: string }
         Returns: Json
       }
+      sou_o_colaborador: { Args: { _colaborador_id: string }; Returns: boolean }
       sst_cat_dashboard: { Args: { p_empresa_id: string }; Returns: Json }
       sst_dashboard_sla: { Args: { p_empresa_id: string }; Returns: Json }
       sst_extintores_dashboard: {
