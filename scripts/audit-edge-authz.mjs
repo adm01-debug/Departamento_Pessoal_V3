@@ -95,6 +95,7 @@ function main() {
     const temAuth = TEM_AUTH.some((r) => r.test(src));
     const temPapel = TEM_PAPEL.some((r) => r.test(src));
     const soTenant = APENAS_TENANT.test(src);
+    const orAdmin = OR_ADMIN.some((r) => r.test(src));
 
     if (!temAuth) {
       violacoes.push({ nome, motivo: 'usa service_role sem autenticar o chamador' });
