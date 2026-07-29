@@ -3,6 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders, createErrorResponse, parseJsonBody, enforceOrigin, handlePreflight } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
+import { requireRh } from '../_shared/authz.ts';
 import {
   beginIdempotency,
   completeIdempotency,
