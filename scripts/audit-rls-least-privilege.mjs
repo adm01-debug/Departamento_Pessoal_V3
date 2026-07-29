@@ -201,6 +201,10 @@ function verificaPapel(expression) {
   return VERIFICADORES_DE_PAPEL.some((re) => re.test(expression));
 }
 
+function verificaAutoAcesso(expression) {
+  return AUTO_ACESSO.some((re) => re.test(expression));
+}
+
 function main() {
   if (!hasDatabase()) {
     console.warn('[rls-least-privilege] Banco indisponível neste ambiente — verificação ignorada.');
