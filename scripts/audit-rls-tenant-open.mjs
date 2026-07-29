@@ -88,7 +88,13 @@ const CORRELACIONADORES = [
   /\bis_admin\b/i,
   /\bget_auth_empresa_id\b/i,
   /auth\.jwt\s*\(\s*\)/i,
+  // Helpers de tabela-filha: recebem a FK do pai e resolvem o tenant lá dentro,
+  // sempre amarrando em auth.uid(). Verificados um a um em pg_get_functiondef.
+  /\bpcs_pode_ver_plano\b/i,
+  /\bpcs_pode_gerir_plano\b/i,
+  /\bcandidatura_na_minha_empresa\b/i,
 ];
+
 
 
 /**
