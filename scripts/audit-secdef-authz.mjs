@@ -60,6 +60,13 @@ const AUTHZ_MARKERS =
  * buraco futuro passaria despercebido se virasse depósito.
  */
 const ALLOWLIST = new Map([
+  // Helper de RLS: 10 políticas (dependentes, holerites, documentos_colaborador,
+  // exames...) a invocam no próprio predicado, então `authenticated` PRECISA
+  // manter EXECUTE — revogar derrubaria as políticas que protegem esse PII.
+  // Não pode autorizar internamente sem recursão. Exposição residual: mapeia
+  // colaborador_id -> empresa_id, ambos uuid, sem PII e exigindo um uuid já
+  // conhecido. Verificar as políticas dependentes antes de remover daqui.
+  ['empresa_do_colaborador', 'Helper usado dentro de 10 políticas RLS; retorna apenas empresa_id (uuid) a partir de um colaborador_id já conhecido.'],
   ['contrato_assinar_por_token', 'Assinatura de contrato por link; valida token + CPF.'],
   ['contrato_consultar_por_token', 'Leitura do contrato pelo signatário; valida token.'],
   ['contrato_preview_url_por_token', 'Preview do PDF pelo signatário; valida token.'],
