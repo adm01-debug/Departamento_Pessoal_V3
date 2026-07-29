@@ -18601,7 +18601,7 @@ export type Database = {
           created_at: string
           departamento_id: string | null
           descricao: string | null
-          empresa_id: string | null
+          empresa_id: string
           id: string
           lider_id: string | null
           nome: string
@@ -18612,7 +18612,7 @@ export type Database = {
           created_at?: string
           departamento_id?: string | null
           descricao?: string | null
-          empresa_id?: string | null
+          empresa_id: string
           id?: string
           lider_id?: string | null
           nome: string
@@ -18623,7 +18623,7 @@ export type Database = {
           created_at?: string
           departamento_id?: string | null
           descricao?: string | null
-          empresa_id?: string | null
+          empresa_id?: string
           id?: string
           lider_id?: string | null
           nome?: string
