@@ -162,9 +162,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // API directly (which would bypass the React UI checks entirely).
       const SUPABASE_URL = (supabase as unknown as { supabaseUrl?: string }).supabaseUrl
         ?? import.meta.env.VITE_SUPABASE_URL;
-      const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      // O .env do projeto expõe a chave pública como VITE_SUPABASE_PUBLISHABLE_KEY.
+      // VITE_SUPABASE_ANON_KEY existe apenas em ambientes legados — usar apenas
+      // ela deixava ANON_KEY undefined e derrubava todo login com "credenciais inválidas".
+      const ANON_KEY =
+        import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
       if (!SUPABASE_URL || !ANON_KEY) {
-        throw new Error('VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are required');
+        throw new Error('VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY são obrigatórias');
       }
 
       const res = await fetch(`${SUPABASE_URL}/functions/v1/auth-login`, {
