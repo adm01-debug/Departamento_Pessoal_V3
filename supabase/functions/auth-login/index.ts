@@ -120,8 +120,15 @@ serve(async (req: Request): Promise<Response> => {
 
 
     // 6. Record attempt (fire-and-forget).
-    admin.rpc('record_login_attempt', { p_email: email, p_success: success, p_ip: ip })
-      .catch((e: unknown) => console.warn('[auth-login] record_login_attempt falhou:', (e as Error)?.message));
+    // PostgrestBuilder é "thenable" mas NÃO é Promise: não possui .catch().
+    // O .catch() anterior lançava TypeError e derrubava todo login com 500.
+    void admin
+      .rpc('record_login_attempt', { p_email: email, p_success: success, p_ip: ip })
+      .then(
+        ({ error }) =>
+          error && console.warn('[auth-login] record_login_attempt falhou:', error.message),
+        (e: unknown) => console.warn('[auth-login] record_login_attempt falhou:', (e as Error)?.message),
+      );
 
     if (!success) {
       return new Response(
