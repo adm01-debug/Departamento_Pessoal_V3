@@ -1315,6 +1315,7 @@ export type Database = {
           id_token: string | null
           metadata: Json | null
           nivel_autenticacao: string | null
+          updated_at: string
           user_id: string | null
         }
         Insert: {
@@ -1325,6 +1326,7 @@ export type Database = {
           id_token?: string | null
           metadata?: Json | null
           nivel_autenticacao?: string | null
+          updated_at?: string
           user_id?: string | null
         }
         Update: {
@@ -1335,6 +1337,7 @@ export type Database = {
           id_token?: string | null
           metadata?: Json | null
           nivel_autenticacao?: string | null
+          updated_at?: string
           user_id?: string | null
         }
         Relationships: []
@@ -2440,6 +2443,7 @@ export type Database = {
           ip_address: string
           permanent: boolean | null
           reason: string | null
+          updated_at: string
         }
         Insert: {
           blocked_at?: string | null
@@ -2450,6 +2454,7 @@ export type Database = {
           ip_address: string
           permanent?: boolean | null
           reason?: string | null
+          updated_at?: string
         }
         Update: {
           blocked_at?: string | null
@@ -2460,6 +2465,7 @@ export type Database = {
           ip_address?: string
           permanent?: boolean | null
           reason?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -5433,6 +5439,7 @@ export type Database = {
           longitude: number | null
           metodo: string | null
           tipo: string
+          updated_at: string
         }
         Insert: {
           area?: string | null
@@ -5447,6 +5454,7 @@ export type Database = {
           longitude?: number | null
           metodo?: string | null
           tipo: string
+          updated_at?: string
         }
         Update: {
           area?: string | null
@@ -5461,6 +5469,7 @@ export type Database = {
           longitude?: number | null
           metodo?: string | null
           tipo?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -6788,6 +6797,7 @@ export type Database = {
           observacoes: string | null
           tamanho_bytes: number | null
           tipo: string
+          updated_at: string
           url: string
           validado: boolean | null
           validado_em: string | null
@@ -6801,6 +6811,7 @@ export type Database = {
           observacoes?: string | null
           tamanho_bytes?: number | null
           tipo: string
+          updated_at?: string
           url: string
           validado?: boolean | null
           validado_em?: string | null
@@ -6814,6 +6825,7 @@ export type Database = {
           observacoes?: string | null
           tamanho_bytes?: number | null
           tipo?: string
+          updated_at?: string
           url?: string
           validado?: boolean | null
           validado_em?: string | null
@@ -6895,6 +6907,7 @@ export type Database = {
           status: string
           tipo_documento: string
           titulo: string
+          updated_at: string
           validade_assinatura: string | null
         }
         Insert: {
@@ -6912,6 +6925,7 @@ export type Database = {
           status?: string
           tipo_documento: string
           titulo: string
+          updated_at?: string
           validade_assinatura?: string | null
         }
         Update: {
@@ -6929,6 +6943,7 @@ export type Database = {
           status?: string
           tipo_documento?: string
           titulo?: string
+          updated_at?: string
           validade_assinatura?: string | null
         }
         Relationships: [
@@ -6979,6 +6994,7 @@ export type Database = {
           nome_arquivo: string
           tamanho_bytes: number | null
           tipo: string
+          updated_at: string
           url: string
           verificado_ia: boolean | null
         }
@@ -6991,6 +7007,7 @@ export type Database = {
           nome_arquivo: string
           tamanho_bytes?: number | null
           tipo: string
+          updated_at?: string
           url: string
           verificado_ia?: boolean | null
         }
@@ -7003,6 +7020,7 @@ export type Database = {
           nome_arquivo?: string
           tamanho_bytes?: number | null
           tipo?: string
+          updated_at?: string
           url?: string
           verificado_ia?: boolean | null
         }
@@ -7727,6 +7745,7 @@ export type Database = {
           observacoes: string | null
           status: string | null
           turno_id: string
+          updated_at: string
         }
         Insert: {
           colaborador_id: string
@@ -7738,6 +7757,7 @@ export type Database = {
           observacoes?: string | null
           status?: string | null
           turno_id: string
+          updated_at?: string
         }
         Update: {
           colaborador_id?: string
@@ -7749,6 +7769,7 @@ export type Database = {
           observacoes?: string | null
           status?: string | null
           turno_id?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -9315,6 +9336,7 @@ export type Database = {
           id: string
           observacoes: string | null
           status: string | null
+          updated_at: string
         }
         Insert: {
           abono_pecuniario?: boolean | null
@@ -9329,6 +9351,7 @@ export type Database = {
           id?: string
           observacoes?: string | null
           status?: string | null
+          updated_at?: string
         }
         Update: {
           abono_pecuniario?: boolean | null
@@ -9343,6 +9366,7 @@ export type Database = {
           id?: string
           observacoes?: string | null
           status?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -12861,6 +12885,7 @@ export type Database = {
           mensagem: string
           tipo: string
           titulo: string
+          updated_at: string
           user_id: string | null
         }
         Insert: {
@@ -12874,6 +12899,7 @@ export type Database = {
           mensagem: string
           tipo: string
           titulo: string
+          updated_at?: string
           user_id?: string | null
         }
         Update: {
@@ -12887,6 +12913,7 @@ export type Database = {
           mensagem?: string
           tipo?: string
           titulo?: string
+          updated_at?: string
           user_id?: string | null
         }
         Relationships: [
@@ -13116,6 +13143,7 @@ export type Database = {
           ordem: number
           template_tarefa_id: string | null
           titulo: string
+          updated_at: string
         }
         Insert: {
           categoria?: string
@@ -13132,6 +13160,7 @@ export type Database = {
           ordem?: number
           template_tarefa_id?: string | null
           titulo: string
+          updated_at?: string
         }
         Update: {
           categoria?: string
@@ -13148,6 +13177,7 @@ export type Database = {
           ordem?: number
           template_tarefa_id?: string | null
           titulo?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -13229,6 +13259,7 @@ export type Database = {
           empresa_id: string | null
           id: string
           nome: string
+          updated_at: string
         }
         Insert: {
           ativo?: boolean | null
@@ -13238,6 +13269,7 @@ export type Database = {
           empresa_id?: string | null
           id?: string
           nome: string
+          updated_at?: string
         }
         Update: {
           ativo?: boolean | null
@@ -13247,6 +13279,7 @@ export type Database = {
           empresa_id?: string | null
           id?: string
           nome?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -14232,6 +14265,7 @@ export type Database = {
           fechado_por: string | null
           id: string
           status: string | null
+          updated_at: string
         }
         Insert: {
           competencia: string
@@ -14242,6 +14276,7 @@ export type Database = {
           fechado_por?: string | null
           id?: string
           status?: string | null
+          updated_at?: string
         }
         Update: {
           competencia?: string
@@ -14252,6 +14287,7 @@ export type Database = {
           fechado_por?: string | null
           id?: string
           status?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -14732,6 +14768,7 @@ export type Database = {
           percentual_colaborador: number | null
           percentual_empresa: number | null
           tipo_plano: string | null
+          updated_at: string
           valor_mensal: number | null
         }
         Insert: {
@@ -14750,6 +14787,7 @@ export type Database = {
           percentual_colaborador?: number | null
           percentual_empresa?: number | null
           tipo_plano?: string | null
+          updated_at?: string
           valor_mensal?: number | null
         }
         Update: {
@@ -14768,6 +14806,7 @@ export type Database = {
           percentual_colaborador?: number | null
           percentual_empresa?: number | null
           tipo_plano?: string | null
+          updated_at?: string
           valor_mensal?: number | null
         }
         Relationships: [
@@ -16763,6 +16802,7 @@ export type Database = {
           incide_irrf: boolean | null
           natureza_rubrica: string | null
           tipo: Database["public"]["Enums"]["tipo_evento_folha"]
+          updated_at: string
         }
         Insert: {
           ativo?: boolean | null
@@ -16779,6 +16819,7 @@ export type Database = {
           incide_irrf?: boolean | null
           natureza_rubrica?: string | null
           tipo: Database["public"]["Enums"]["tipo_evento_folha"]
+          updated_at?: string
         }
         Update: {
           ativo?: boolean | null
@@ -16795,6 +16836,7 @@ export type Database = {
           incide_irrf?: boolean | null
           natureza_rubrica?: string | null
           tipo?: Database["public"]["Enums"]["tipo_evento_folha"]
+          updated_at?: string
         }
         Relationships: [
           {
@@ -17067,6 +17109,7 @@ export type Database = {
           possui_assistencia_funeral: boolean | null
           premio_mensal: number | null
           seguradora: string | null
+          updated_at: string
         }
         Insert: {
           apolice_numero?: string | null
@@ -17083,6 +17126,7 @@ export type Database = {
           possui_assistencia_funeral?: boolean | null
           premio_mensal?: number | null
           seguradora?: string | null
+          updated_at?: string
         }
         Update: {
           apolice_numero?: string | null
@@ -17099,6 +17143,7 @@ export type Database = {
           possui_assistencia_funeral?: boolean | null
           premio_mensal?: number | null
           seguradora?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -19280,6 +19325,7 @@ export type Database = {
           empresa_id: string | null
           id: string
           nome: string
+          updated_at: string
         }
         Insert: {
           carga_horaria?: number | null
@@ -19289,6 +19335,7 @@ export type Database = {
           empresa_id?: string | null
           id?: string
           nome: string
+          updated_at?: string
         }
         Update: {
           carga_horaria?: number | null
@@ -19298,6 +19345,7 @@ export type Database = {
           empresa_id?: string | null
           id?: string
           nome?: string
+          updated_at?: string
         }
         Relationships: [
           {
