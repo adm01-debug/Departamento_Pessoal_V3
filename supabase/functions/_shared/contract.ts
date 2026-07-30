@@ -30,20 +30,29 @@ const _supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
 const IS_LOCAL_DEV = _supabaseUrl.includes('localhost') || _supabaseUrl.includes('127.0.0.1') ||
                      Deno.env.get('SUPABASE_ENV') === 'local';
 
-function isOriginAllowed(origin: string): boolean {
-  if (!origin) return false;
-  // Strict: rejeitar espaços, controle, null-byte ou unicode não-ASCII no header Origin.
-  // (WHATWG URL faz trim silencioso; queremos falhar fechado.)
-  if (origin !== origin.trim()) return false;
-  if (/[\u0000-\u001F\u007F-\uFFFF]/.test(origin)) return false;
+// Localhost: permite portas via EXTRA_ALLOWED_LOCAL_PORTS env (ex: "8081,5173")
+const _extraLocalPorts = (Deno.env.get("EXTRA_ALLOWED_LOCAL_PORTS") ?? "")
+  .split(",").map((p) => p.trim()).filter(Boolean);
+
+function isLocalhostOrigin(origin: string): boolean {
   try {
     const url = new URL(origin);
-    if (url.protocol !== 'https:' && url.protocol !== 'http:') return false;
+    if (url.hostname !== "localhost" && url.hostname !== "127.0.0.1") return false;
+    return !url.port || _extraLocalPorts.includes(url.port);
+  } catch { return false; }
+}
+
+function isOriginAllowed(origin: string): boolean {
+  if (!origin) return false;
+  if (origin !== origin.trim()) return false;
+  try {
+    const url = new URL(origin);
+    if (url.protocol !== "https:" && url.protocol !== "http:") return false;
     const host = url.hostname;
     return (
       ALLOWED_ORIGINS.includes(origin) ||
       LOVABLE_HOST_RE.test(host) ||
-      (IS_LOCAL_DEV && (host === 'localhost' || host === '127.0.0.1'))
+      IS_LOCAL_DEV && isLocalhostOrigin(origin)
     );
   } catch {
     return false;
