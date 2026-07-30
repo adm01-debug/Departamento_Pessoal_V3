@@ -17,7 +17,6 @@ import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
 import { corsHeaders, createErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
 import { captureException } from '../_shared/sentry.ts';
-import { safeFetch } from '../_shared/safe-fetch.ts';
 
 const BodySchema = z.object({
   email: z.string().email().max(254).toLowerCase(),
@@ -117,9 +116,7 @@ serve(async (req: Request): Promise<Response> => {
       password,
     });
     const success = !authErr && !!authData?.session?.access_token;
-    const authBody = success
-      ? authData.session
-      : { error_description: authErr?.message ?? 'Credenciais inválidas' };
+    const errorMessage = authErr?.message ?? 'Credenciais inválidas';
 
 
     // 6. Record attempt (fire-and-forget).
@@ -128,13 +125,13 @@ serve(async (req: Request): Promise<Response> => {
 
     if (!success) {
       return new Response(
-        JSON.stringify({ success: false, error: authBody.error_description ?? authBody.msg ?? 'Credenciais inválidas', code: 'INVALID_CREDENTIALS' }),
+        JSON.stringify({ success: false, error: errorMessage, code: 'INVALID_CREDENTIALS' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
       );
     }
 
     return new Response(
-      JSON.stringify({ success: true, session: authBody }),
+      JSON.stringify({ success: true, session: authData.session }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
     );
   } catch (err) {
