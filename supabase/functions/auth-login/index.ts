@@ -105,17 +105,22 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     // 5. Forward to Supabase Auth REST API.
-    const authUrl = `${SUPABASE_URL}/auth/v1/token?grant_type=password`;
-    const authRes = await safeFetch(authUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', apikey: ANON_KEY },
-      body: JSON.stringify({ email, password }),
-      timeoutMs: 10_000,
-      tag: 'dbbridge',
+    // Usamos o cliente oficial em vez de fetch manual: ele resolve o endpoint
+    // de auth corretamente dentro do runtime das edge functions (o fetch direto
+    // para SUPABASE_URL/auth/v1 estava travando até o timeout, derrubando 100%
+    // dos logins com 500 "Erro interno").
+    const authClient = createClient(SUPABASE_URL, ANON_KEY, {
+      auth: { persistSession: false, autoRefreshToken: false },
     });
+    const { data: authData, error: authErr } = await authClient.auth.signInWithPassword({
+      email,
+      password,
+    });
+    const success = !authErr && !!authData?.session?.access_token;
+    const authBody = success
+      ? authData.session
+      : { error_description: authErr?.message ?? 'Credenciais inválidas' };
 
-    const authBody = await authRes.json();
-    const success = authRes.ok && !!authBody.access_token;
 
     // 6. Record attempt (fire-and-forget).
     admin.rpc('record_login_attempt', { p_email: email, p_success: success, p_ip: ip })
