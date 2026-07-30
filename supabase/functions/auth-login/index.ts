@@ -26,7 +26,10 @@ const BodySchema = z.object({
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+// Projetos migrados para signing keys expõem SUPABASE_PUBLISHABLE_KEY;
+// os antigos, SUPABASE_ANON_KEY. Aceitar ambos evita apikey vazia no /auth/v1.
+const ANON_KEY =
+  Deno.env.get('SUPABASE_ANON_KEY') ?? Deno.env.get('SUPABASE_PUBLISHABLE_KEY') ?? '';
 
 const IP_RATE_LIMIT = 30;       // requests per window
 const IP_WINDOW_SEC = 5 * 60;   // 5 minutes
