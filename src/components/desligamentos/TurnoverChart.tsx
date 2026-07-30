@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Line, ComposedChart } from 'recharts';
+import { Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Line, ComposedChart } from 'recharts';
 import { motion } from 'framer-motion';
 import { TrendingDown } from 'lucide-react';
 
@@ -52,8 +52,7 @@ export function TurnoverChart({ desligamentos }: TurnoverChartProps) {
                   backgroundColor: 'hsl(var(--card))',
                   border: '1px solid hsl(var(--border))',
                   borderRadius: '0.75rem',
-                  fontSize: 12,
-                }}
+                  fontSize: 12}}
               />
               <Legend iconSize={8} wrapperStyle={{ fontSize: 10 }} />
               <Bar dataKey="sem_justa" name="Sem Justa Causa" stackId="a" fill="hsl(var(--destructive))" radius={[0, 0, 0, 0]} />

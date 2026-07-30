@@ -4,7 +4,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -18,7 +17,7 @@ import { colaboradorService } from '@/services';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { Plus, ArrowRightLeft, TrendingUp, MapPin, Trash2 } from 'lucide-react';
+import { Plus, ArrowRightLeft, TrendingUp } from 'lucide-react';
 
 export default function MovimentacoesPage() {
   const { empresaAtual } = useEmpresas();
@@ -39,8 +38,7 @@ export default function MovimentacoesPage() {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const { data: promocoes = [], isLoading: loadPromo } = useQuery({
     queryKey: ['promocoes', empresaAtual?.id],
@@ -51,8 +49,7 @@ export default function MovimentacoesPage() {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const criarTransf = useMutation({
     mutationFn: async (d: any) => {
@@ -61,8 +58,7 @@ export default function MovimentacoesPage() {
       return data;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['transferencias'] }); setOpenTransf(false); toast.success('Transferência registrada!'); },
-    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar movimentação.')),
-  });
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar movimentação.'))});
 
   const criarPromo = useMutation({
     mutationFn: async (d: any) => {
@@ -71,8 +67,7 @@ export default function MovimentacoesPage() {
       return data;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['promocoes'] }); setOpenPromo(false); toast.success('Promoção registrada!'); },
-    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar movimentação.')),
-  });
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar movimentação.'))});
 
   const isLoading = loadTransf || loadPromo;
   if (isLoading) return <PageLayout title="Movimentações"><Spinner /></PageLayout>;

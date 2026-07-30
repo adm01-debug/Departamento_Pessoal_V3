@@ -23,19 +23,31 @@ export default function PensoesPage() {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ colaborador_id: '', beneficiario: '', cpf_beneficiario: '', tipo: 'alimenticia', percentual: '', valor_fixo: '', banco: '', agencia: '', conta: '' });
 
+  const empresaId = empresaAtual?.id;
+
   const { data, isLoading } = useQuery({
-    queryKey: ['pensoes'],
+    queryKey: ['pensoes', empresaId],
     queryFn: async () => {
-      const { data, error } = await supabase.from('pensoes').select('*').order('created_at', { ascending: false });
+      // `pensoes.empresa_id` é denormalizada e mantida por trigger a partir
+      // do colaborador. Filtro direto (indexado) + defesa em profundidade
+      // sobre a RLS, que libera todas as empresas do usuário.
+      const { data, error } = await supabase
+        .from('pensoes')
+        .select('*, colaboradores!pensoes_colaborador_id_fkey(id, nome_completo)')
+        .eq('empresa_id', empresaId!)
+        .order('created_at', { ascending: false })
+        .limit(500);
       if (error) throw error;
       return data || [];
     },
+
+    enabled: !!empresaId,
   });
 
   const { data: colaboradores } = useQuery({
-    queryKey: ['colaboradores', empresaAtual?.id],
-    queryFn: () => colaboradorService.list(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
+    queryKey: ['colaboradores', empresaId],
+    queryFn: () => colaboradorService.list(empresaId!),
+    enabled: !!empresaId,
   });
 
   const criar = useMutation({
@@ -47,13 +59,14 @@ export default function PensoesPage() {
       });
       if (error) throw error;
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['pensoes'] }); setOpen(false); toast.success('Pensão cadastrada'); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['pensoes', empresaId] }); setOpen(false); toast.success('Pensão cadastrada'); },
   });
 
   const excluir = useMutation({
-    mutationFn: async (id: string) => { const { error } = await supabase.from('pensoes').delete().eq('id', id); if (error) throw error; },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['pensoes'] }); toast.success('Excluída'); },
+    mutationFn: async (id: string) => { const { error } = await supabase.from('pensoes').delete().eq('id', id).eq('empresa_id', empresaId!); if (error) throw error; },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['pensoes', empresaId] }); toast.success('Excluída'); },
   });
+
 
   return (
     <>
@@ -96,11 +109,12 @@ export default function PensoesPage() {
       <Card><CardContent className="p-0">
         {isLoading ? <div className="p-8 flex justify-center"><Spinner /></div> : (
           <Table>
-            <TableHeader><TableRow><TableHead>Beneficiário</TableHead><TableHead>CPF</TableHead><TableHead>Tipo</TableHead><TableHead>% / Valor</TableHead><TableHead>Status</TableHead><TableHead></TableHead></TableRow></TableHeader>
+            <TableHeader><TableRow><TableHead>Colaborador</TableHead><TableHead>Beneficiário</TableHead><TableHead>CPF</TableHead><TableHead>Tipo</TableHead><TableHead>% / Valor</TableHead><TableHead>Status</TableHead><TableHead></TableHead></TableRow></TableHeader>
             <TableBody>
               {data?.map(r => (
                 <TableRow key={r.id}>
-                  <TableCell className="font-medium">{r.beneficiario}</TableCell>
+                  <TableCell className="font-medium">{r.colaboradores?.nome_completo || '-'}</TableCell>
+                  <TableCell>{r.beneficiario}</TableCell>
                   <TableCell>{r.cpf_beneficiario || '-'}</TableCell>
                   <TableCell className="capitalize">{r.tipo || '-'}</TableCell>
                   <TableCell>{r.percentual ? `${r.percentual}%` : r.valor_fixo ? `R$ ${Number(r.valor_fixo).toLocaleString('pt-BR')}` : '-'}</TableCell>
@@ -108,7 +122,7 @@ export default function PensoesPage() {
                   <TableCell><Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => excluir.mutate(r.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
                 </TableRow>
               ))}
-              {!data?.length && <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-8">Nenhuma pensão cadastrada</TableCell></TableRow>}
+              {!data?.length && <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">Nenhuma pensão cadastrada</TableCell></TableRow>}
             </TableBody>
           </Table>
         )}

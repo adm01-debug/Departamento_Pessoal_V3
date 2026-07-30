@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
-import { AlertTriangle, FileWarning, Ban, Gavel, TrendingUp, TrendingDown, Clock } from 'lucide-react';
+import { AlertTriangle, FileWarning, Ban, Gavel, Clock } from 'lucide-react';
 
 interface MedidasStats {
   total: number;
@@ -26,8 +26,7 @@ const kpis = [
     color: 'text-foreground',
     bgColor: 'bg-muted/50',
     borderColor: 'border-border/40',
-    tooltip: 'Total de medidas disciplinares registradas',
-  },
+    tooltip: 'Total de medidas disciplinares registradas'},
   {
     key: 'advertenciasVerbais' as const,
     label: 'Adv. Verbais',
@@ -35,8 +34,7 @@ const kpis = [
     color: 'text-warning',
     bgColor: 'bg-warning/5',
     borderColor: 'border-warning/20',
-    tooltip: 'Advertências verbais — menor gravidade, primeiro nível disciplinar',
-  },
+    tooltip: 'Advertências verbais — menor gravidade, primeiro nível disciplinar'},
   {
     key: 'advertenciasEscritas' as const,
     label: 'Adv. Escritas',
@@ -44,8 +42,7 @@ const kpis = [
     color: 'text-accent-foreground',
     bgColor: 'bg-accent/30',
     borderColor: 'border-accent/40',
-    tooltip: 'Advertências escritas — segundo nível, documentação formal',
-  },
+    tooltip: 'Advertências escritas — segundo nível, documentação formal'},
   {
     key: 'suspensoes' as const,
     label: 'Suspensões',
@@ -53,8 +50,7 @@ const kpis = [
     color: 'text-destructive',
     bgColor: 'bg-destructive/5',
     borderColor: 'border-destructive/20',
-    tooltip: 'Suspensões disciplinares — afastamento temporário (CLT Art. 474, máx. 30 dias)',
-  },
+    tooltip: 'Suspensões disciplinares — afastamento temporário (CLT Art. 474, máx. 30 dias)'},
   {
     key: 'justaCausa' as const,
     label: 'Justa Causa',
@@ -62,8 +58,7 @@ const kpis = [
     color: 'text-destructive',
     bgColor: 'bg-destructive/10',
     borderColor: 'border-destructive/30',
-    tooltip: 'Rescisões por justa causa — CLT Art. 482',
-  },
+    tooltip: 'Rescisões por justa causa — CLT Art. 482'},
   {
     key: 'pendenteCiencia' as const,
     label: 'Pendente Ciência',
@@ -71,8 +66,7 @@ const kpis = [
     color: 'text-warning',
     bgColor: 'bg-warning/5',
     borderColor: 'border-warning/20',
-    tooltip: 'Medidas aguardando ciência do colaborador',
-  },
+    tooltip: 'Medidas aguardando ciência do colaborador'},
 ];
 
 export function MedidasKPIs({ stats }: MedidasKPIsProps) {

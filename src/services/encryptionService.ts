@@ -1,88 +1,32 @@
 /**
  * P1-025: Service de criptografia para dados sensíveis (LGPD compliance)
  *
- * Usa pgcrypto via Supabase RPC para criptografar/descriptografar:
- * - CPF, RG, conta bancária, salário
+ * Utilidades PURAS de tratamento de dados sensíveis no cliente:
+ * validação de CPF/CNPJ, mascaramento para exibição e sanitização para logs.
  *
- * IMPORTANTE: Apenas roles administrativas devem chamar estas funções.
- * Os dados descriptografados NUNCA devem ser expostos ao frontend sem necessidade.
+ * Nenhuma operação criptográfica de PII acontece no navegador — ver a
+ * "NOTA DE SEGURANÇA" abaixo.
  */
-
-import { supabase } from '@/integrations/supabase/client';
-import { loggerService } from './loggerService';
-
-export interface EncryptedData {
-  encrypted: string;
-  hash?: string;
-}
-
-export interface PIIField {
-  value: string;
-  encrypted?: string;
-  hash?: string;
-}
 
 // =============================================================================
-// CRIPTOGRAFIA
+// NOTA DE SEGURANÇA — CRIPTOGRAFIA DE PII
 // =============================================================================
-
-/**
- * Criptografa um campo PII
- * Retorna texto cifrado + hash para buscas
- */
-export async function encryptPII(value: string): Promise<EncryptedData> {
-  try {
-    const { data, error } = await supabase.rpc('encrypt_pii', { plaintext: value });
-
-    if (error) throw error;
-
-    // Gera hash separadamente para buscas
-    const { data: hashData, error: hashError } = await supabase.rpc('hash_pii', { plaintext: value });
-    if (hashError) throw hashError;
-
-    return {
-      encrypted: data,
-      hash: hashData,
-    };
-  } catch (err) {
-    loggerService.error('Erro ao criptografar PII', { valueLength: value.length }, err instanceof Error ? err : undefined);
-    throw err;
-  }
-}
-
-/**
- * Descriptografa um campo PII
- * REQUER privilégios administrativos
- */
-export async function decryptPII(encrypted: string): Promise<string> {
-  try {
-    const { data, error } = await supabase.rpc('decrypt_pii', { ciphertext: encrypted });
-
-    if (error) throw error;
-
-    return data;
-  } catch (err) {
-    loggerService.error('Erro ao descriptografar PII', {}, err instanceof Error ? err : undefined);
-    throw err;
-  }
-}
-
-/**
- * Gera hash para comparação (não reversível)
- * Útil para validação de CPF/RG sem expor dados
- */
-export async function hashPII(value: string): Promise<string> {
-  try {
-    const { data, error } = await supabase.rpc('hash_pii', { plaintext: value });
-
-    if (error) throw error;
-
-    return data;
-  } catch (err) {
-    loggerService.error('Erro ao gerar hash PII', {}, err instanceof Error ? err : undefined);
-    throw err;
-  }
-}
+// As funções `encryptPII` / `decryptPII` / `hashPII` (e `encryptDadosBancarios`,
+// `checkEncryptionAvailable`, que dependiam delas) foram REMOVIDAS por dois
+// motivos:
+//
+// 1. Elas chamavam as RPCs `encrypt_pii`, `decrypt_pii` e `hash_pii`, que NÃO
+//    existem no banco — toda invocação falhava em runtime.
+// 2. Expor uma RPC de decriptografia ao papel `authenticated` permitiria que
+//    qualquer sessão do navegador revertesse PII de terceiros.
+//
+// Criptografia/decriptografia de PII deve ocorrer exclusivamente no servidor
+// (Edge Function com service role) ou via colunas derivadas mantidas por
+// trigger no banco (ex.: `fn_colab_cpf_hash` para o hash de CPF).
+//
+// Este módulo mantém apenas utilidades puras e seguras para o cliente:
+// validação, mascaramento e sanitização para logs.
+// =============================================================================
 
 // =============================================================================
 // VALIDAÇÃO DE CPF/CNPJ (ANTES DE CRIPTOGRAFAR)
@@ -147,45 +91,6 @@ export function maskContaBancaria(conta: string): string {
 }
 
 // =============================================================================
-// CRIPTOGRAFIA DE DADOS FINANCEIROS
-// =============================================================================
-
-export interface DadosBancariosCriptografados {
-  agencia: string;
-  agencia_digito: string;
-  conta: string;
-  conta_digito: string;
-  operacao: string;
-  tipo_conta: string;
-  banco_nome: string;
-  banco_codigo: string;
-}
-
-export async function encryptDadosBancarios(
-  dados: DadosBancariosCriptografados
-): Promise<DadosBancariosCriptografados> {
-  try {
-    // Criptografa apenas campos sensíveis
-    const [agenciaEnc, contaEnc] = await Promise.all([
-      encryptPII(dados.agencia),
-      encryptPII(dados.conta),
-    ]);
-
-    return {
-      ...dados,
-      agencia: agenciaEnc.encrypted,
-      conta: contaEnc.encrypted,
-      // Hash para validação de existência
-      agencia_digito: agenciaEnc.hash || dados.agencia_digito,
-      conta_digito: contaEnc.hash || dados.conta_digito,
-    };
-  } catch (err) {
-    loggerService.error('Erro ao criptografar dados bancários', {}, err instanceof Error ? err : undefined);
-    throw err;
-  }
-}
-
-// =============================================================================
 // MASCARAMENTO TOTAL (PARA LOGS/TELEMETRIA)
 // =============================================================================
 
@@ -208,20 +113,4 @@ export function sanitizeForLogging<T extends Record<string, unknown>>(obj: T): T
   }
 
   return sanitized as T;
-}
-
-// =============================================================================
-// CONFIG (PARA EDGE FUNCTIONS)
-// =============================================================================
-
-/**
- * Verifica se a extensão pgcrypto está habilitada
- */
-export async function checkEncryptionAvailable(): Promise<boolean> {
-  try {
-    const { data, error } = await supabase.rpc('encrypt_pii', { plaintext: 'test' });
-    return !error;
-  } catch {
-    return false;
-  }
 }

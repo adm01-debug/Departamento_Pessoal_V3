@@ -4,8 +4,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
-import { Package, RotateCcw, AlertTriangle } from 'lucide-react';
-import { format, parseISO, addMonths, isBefore, isAfter } from 'date-fns';
+import { Package, RotateCcw } from 'lucide-react';
+import { format, parseISO, addMonths, isBefore } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 interface EpiEntregasTableProps {

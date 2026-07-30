@@ -15,7 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
-import { Plus, Handshake, Trash2, Users } from 'lucide-react';
+import { Plus, Handshake, Trash2 } from 'lucide-react';
 
 export default function ConveniosPage() {
   const { empresaAtual } = useEmpresas();
@@ -35,21 +35,18 @@ export default function ConveniosPage() {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const criar = useMutation({
     mutationFn: async (d: typeof form) => {
       const { error } = await supabase.from('convenios').insert({ nome: d.nome, tipo: d.tipo || null, limite_global: d.limite_global ? Number(d.limite_global) : null, empresa_id: empresaAtual?.id });
       if (error) throw error;
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['convenios'] }); setOpen(false); setForm({ nome: '', tipo: '', limite_global: '' }); toast.success('Convênio criado'); },
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['convenios'] }); setOpen(false); setForm({ nome: '', tipo: '', limite_global: '' }); toast.success('Convênio criado'); }});
 
   const excluir = useMutation({
     mutationFn: async (id: string) => { const { error } = await supabase.from('convenios').delete().eq('id', id).eq('empresa_id', empresaAtual!.id); if (error) throw error; },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['convenios'] }); toast.success('Excluído'); },
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['convenios'] }); toast.success('Excluído'); }});
 
   // === Convênios ↔ Colaboradores ===
   const [openVinc, setOpenVinc] = useState(false);
@@ -62,8 +59,7 @@ export default function ConveniosPage() {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const { data: vinculos = [], isLoading: loadVinc } = useQuery({
     queryKey: ['convenios-colaboradores', empresaAtual?.id],
@@ -72,26 +68,22 @@ export default function ConveniosPage() {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const criarVinculo = useMutation({
     mutationFn: async (d: typeof vincForm) => {
       const { error } = await supabase.from('convenios_colaboradores').insert({
         convenio_id: d.convenio_id, colaborador_id: d.colaborador_id,
         limite_individual: d.limite_individual ? Number(d.limite_individual) : null,
-        ativo: true,
-      });
+        ativo: true});
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['convenios-colaboradores'] }); setOpenVinc(false); setVincForm({ convenio_id: '', colaborador_id: '', limite_individual: '' }); toast.success('Colaborador vinculado ao convênio'); },
-    onError: () => toast.error('Erro ao vincular'),
-  });
+    onError: () => toast.error('Erro ao vincular')});
 
   const excluirVinculo = useMutation({
     mutationFn: async (id: string) => { const { error } = await supabase.from('convenios_colaboradores').delete().eq('id', id); if (error) throw error; },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['convenios-colaboradores'] }); toast.success('Vínculo removido'); },
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['convenios-colaboradores'] }); toast.success('Vínculo removido'); }});
 
   const fmt = (v: number | null) => v ? `R$ ${Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : '-';
 

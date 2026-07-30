@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,7 +7,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Edit2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useDadosEstagiario, useSalvarDadosEstagiario } from '@/hooks/useTabelasReferencia';
-import { useOnMount } from '@/hooks/useMountEffects';
+import { useSyncedState } from '@/hooks/useSyncedState';
 
 interface EstagiarioData {
   instituicao_nome?: string;
@@ -27,41 +27,19 @@ export function EstagiarioTab({ colaboradorId }: { colaboradorId: string }) {
   const { data, isLoading } = useDadosEstagiario(colaboradorId);
   const salvar = useSalvarDadosEstagiario();
   const [editing, setEditing] = useState(false);
-  const [form, setForm] = useState({
-    instituicao_nome: '', instituicao_cnpj: '', curso: '', nivel: '',
-    supervisor_nome: '', supervisor_cargo: '',
-    data_inicio: '', data_fim: '', carga_horaria_semanal: '',
-    valor_bolsa: '', numero_apolice: ''
-  });
-
-  // Inicializa form no mount
-  useOnMount(() => {
-    if (data && !editing) {
-      const d = data as EstagiarioData;
-      setForm({
-        instituicao_nome: d.instituicao_nome || '', instituicao_cnpj: d.instituicao_cnpj || '',
-        curso: d.curso || '', nivel: d.nivel || '',
-        supervisor_nome: d.supervisor_nome || '', supervisor_cargo: d.supervisor_cargo || '',
-        data_inicio: d.data_inicio || '', data_fim: d.data_fim || '',
-        carga_horaria_semanal: d.carga_horaria_semanal?.toString() || '',
-        valor_bolsa: d.valor_bolsa?.toString() || '', numero_apolice: d.numero_apolice || ''
-      });
-    }
-  });
-
-  useEffect(() => {
-    if (data && !editing) {
-      const d = data as EstagiarioData;
-      setForm({
-        instituicao_nome: d.instituicao_nome || '', instituicao_cnpj: d.instituicao_cnpj || '',
-        curso: d.curso || '', nivel: d.nivel || '',
-        supervisor_nome: d.supervisor_nome || '', supervisor_cargo: d.supervisor_cargo || '',
-        data_inicio: d.data_inicio || '', data_fim: d.data_fim || '',
-        carga_horaria_semanal: d.carga_horaria_semanal?.toString() || '',
-        valor_bolsa: d.valor_bolsa?.toString() || '', numero_apolice: d.numero_apolice || ''
-      });
-    }
-  }, [data, editing]);
+  // Formulário derivado do dado remoto; a sincronização pausa durante a edição.
+  const [form, setForm] = useSyncedState(
+    data as EstagiarioData | undefined,
+    (d) => ({
+      instituicao_nome: d?.instituicao_nome || '', instituicao_cnpj: d?.instituicao_cnpj || '',
+      curso: d?.curso || '', nivel: d?.nivel || '',
+      supervisor_nome: d?.supervisor_nome || '', supervisor_cargo: d?.supervisor_cargo || '',
+      data_inicio: d?.data_inicio || '', data_fim: d?.data_fim || '',
+      carga_horaria_semanal: d?.carga_horaria_semanal?.toString() || '',
+      valor_bolsa: d?.valor_bolsa?.toString() || '', numero_apolice: d?.numero_apolice || ''
+    }),
+    !editing
+  );
 
   const handleSave = async () => {
     if (!form.instituicao_nome.trim()) { toast.error('Instituição de ensino é obrigatória'); return; }

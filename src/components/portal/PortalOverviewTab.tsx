@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import {
-  UserCircle, Calendar, Clock, FileText, DollarSign,
+  Calendar, Clock, FileText, DollarSign,
   ChevronRight, Bell, CheckCircle2, AlertCircle, Edit,
   Gift, Megaphone, Bot, PenTool
 } from 'lucide-react';

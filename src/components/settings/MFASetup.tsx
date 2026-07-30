@@ -4,14 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Shield, ShieldCheck, ShieldAlert, Copy, Key, Smartphone, Loader2, Trash2, Eye, EyeOff } from 'lucide-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Shield, ShieldCheck, ShieldAlert, Copy, Key, Smartphone, Loader2, Trash2, Eye } from 'lucide-react';
 import { toast } from 'sonner';
-import { motion } from 'framer-motion';
 import { safeErrorMessage } from '@/utils/safeError';
 
 export function MFASetup() {
@@ -32,8 +30,7 @@ export function MFASetup() {
       const { data, error } = await supabase.auth.mfa.listFactors();
       if (error) throw error;
       return data;
-    },
-  });
+    }});
 
   // Get user_mfa record
   const { data: mfaRecord } = useQuery({
@@ -42,8 +39,7 @@ export function MFASetup() {
     queryFn: async () => {
       const { data } = await supabase.from('user_mfa').select('*').eq('user_id', user!.id).maybeSingle();
       return data;
-    },
-  });
+    }});
 
   const activeFactor = factors?.totp?.find(f => f.status === 'verified');
   const isEnabled = !!activeFactor;
@@ -53,15 +49,13 @@ export function MFASetup() {
     try {
       const { data, error } = await supabase.auth.mfa.enroll({
         factorType: 'totp',
-        friendlyName: 'Authenticator App',
-      });
+        friendlyName: 'Authenticator App'});
       if (error) throw error;
       setEnrollData({
         id: data.id,
         qr: data.totp.qr_code,
         secret: data.totp.secret,
-        uri: data.totp.uri,
-      });
+        uri: data.totp.uri});
       setShowEnrollDialog(true);
     } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao iniciar configuração MFA.'));
@@ -80,16 +74,14 @@ export function MFASetup() {
       const verify = await supabase.auth.mfa.verify({
         factorId: enrollData.id,
         challengeId: challenge.data.id,
-        code: verifyCode,
-      });
+        code: verifyCode});
       if (verify.error) throw verify.error;
 
       await supabase.from('user_mfa').upsert([{
         user_id: user!.id,
         mfa_enabled: true,
         mfa_type: 'totp',
-        mfa_secret: null,
-      }], { onConflict: 'user_id' });
+        mfa_secret: null}], { onConflict: 'user_id' });
 
       toast.success('Autenticação de dois fatores ativada com sucesso!');
       setShowEnrollDialog(false);
@@ -115,8 +107,7 @@ export function MFASetup() {
         user_id: user!.id,
         mfa_enabled: false,
         mfa_type: null,
-        mfa_secret: null,
-      }], { onConflict: 'user_id' });
+        mfa_secret: null}], { onConflict: 'user_id' });
 
       toast.success('Autenticação de dois fatores desativada');
       setShowDisableDialog(false);

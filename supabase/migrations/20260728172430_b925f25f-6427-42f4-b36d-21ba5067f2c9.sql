@@ -1,0 +1,1 @@
+REVOKE ALL ON FUNCTION public.fn_pensoes_set_empresa() FROM PUBLIC, anon, authenticated;

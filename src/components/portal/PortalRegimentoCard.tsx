@@ -1,14 +1,18 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { sanitizeContractHtml } from '@/utils/sanitizeHtml';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { useColaboradorVinculo } from '@/hooks/useColaboradorVinculo';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+
 import { CheckCircle2, FileText, Loader2, ShieldCheck } from 'lucide-react';
 
 type DocumentoVigente = {
@@ -40,7 +44,10 @@ export function PortalRegimentoCard() {
   const [aceite, setAceite] = useState(false);
   const [documento, setDocumento] = useState<DocumentoVigente | null>(null);
   const [assinatura, setAssinatura] = useState<AssinaturaExistente | null>(null);
-  const [colaboradorId, setColaboradorId] = useState<string | null>(null);
+  // Fonte única do vínculo colaborador↔login (hook compartilhado com as demais
+  // abas do portal). Falha de vínculo não impede a leitura do regimento:
+  // o cartão apenas não oferece a assinatura.
+  const { colaboradorId } = useColaboradorVinculo();
 
   const empresaId = empresaAtual?.id;
 
@@ -48,17 +55,8 @@ export function PortalRegimentoCard() {
     if (!empresaId || !user?.id) return;
     setLoading(true);
     try {
-      const db = supabase as { from: Function };
-
-      // Vínculo colaborador ↔ user
-      const { data: colab } = await db
-        .from('colaboradores')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('empresa_id', empresaId)
-        .maybeSingle();
-      const cid: string | null = colab?.id ?? null;
-      setColaboradorId(cid);
+      const db = supabase as unknown as SupabaseClient;
+      const cid = colaboradorId;
 
       // Documento publicado mais recente
       const { data: doc, error: docErr } = await db
@@ -89,7 +87,8 @@ export function PortalRegimentoCard() {
     } finally {
       setLoading(false);
     }
-  }, [empresaId, user?.id]);
+  }, [empresaId, user?.id, colaboradorId]);
+
 
   // Uma única fonte de disparo: `carregar` é memoizado por (empresaId, user.id),
   // então este efeito cobre o mount e as trocas de empresa/usuário sem
@@ -161,7 +160,10 @@ export function PortalRegimentoCard() {
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            Seu usuário não está vinculado a um colaborador desta empresa. Fale com o RH.
+            Não encontramos um cadastro de colaborador desta empresa com o e-mail da sua
+            conta. Peça ao RH para conferir o e-mail cadastrado na sua ficha — assim que
+            ele coincidir, a assinatura fica disponível automaticamente.
+
           </p>
         </CardContent>
       </Card>

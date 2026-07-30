@@ -13,7 +13,7 @@
  *   log('info', 'Folha carregada');
  */
 
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { getTraceId, generateTraceId } from './tracing';
 import { loggerService } from '@/services/loggerService';
 
@@ -27,7 +27,8 @@ export interface Span {
 
 export interface TracingContext {
   traceId: string;
-  spans: Span[];
+  /** Retorna o snapshot atual dos spans (refs não devem ser lidos durante o render). */
+  getSpans: () => Span[];
   startSpan: (name: string, metadata?: Record<string, unknown>) => void;
   endSpan: (name: string, metadata?: Record<string, unknown>) => void;
   log: (level: 'debug' | 'info' | 'warn' | 'error', message: string, data?: Record<string, unknown>) => void;
@@ -38,7 +39,7 @@ export interface TracingContext {
  * Hook de tracing para React components
  */
 export function useTracing(): TracingContext {
-  const traceId = useRef(getTraceId()).current;
+  const [traceId] = useState(getTraceId);
   const spans = useRef<Span[]>([]);
   const spanStartTimes = useRef<Map<string, number>>(new Map());
 
@@ -130,7 +131,7 @@ export function useTracing(): TracingContext {
 
   return {
     traceId,
-    spans: spans.current,
+    getSpans: () => [...spans.current],
     startSpan,
     endSpan,
     log,

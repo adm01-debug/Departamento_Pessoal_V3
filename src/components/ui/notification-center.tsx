@@ -4,9 +4,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Bell, Calendar, UserPlus, AlertTriangle, CheckCircle2,
-  Clock, FileText, X, Check, Info,
-} from 'lucide-react';
+  Bell, Calendar, AlertTriangle, CheckCircle2,
+  FileText, X, Check, Info} from 'lucide-react';
 import { useNotificacoes } from '@/hooks/useNotificacoes';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -18,8 +17,7 @@ const typeConfig: Record<string, { icon: React.ElementType; gradient: string }> 
   documento_vencendo: { icon: AlertTriangle, gradient: 'from-destructive to-streak' },
   sucesso: { icon: CheckCircle2, gradient: 'from-primary to-primary-glow' },
   erro: { icon: AlertTriangle, gradient: 'from-destructive to-streak' },
-  info: { icon: Info, gradient: 'from-primary to-primary-glow' },
-};
+  info: { icon: Info, gradient: 'from-primary to-primary-glow' }};
 
 const defaultConfig = { icon: Bell, gradient: 'from-primary to-primary-glow' };
 
@@ -31,8 +29,7 @@ export function NotificationCenter() {
     marcarComoLida,
     marcarTodasComoLidas,
     excluirNotificacao,
-    isLoading,
-  } = useNotificacoes();
+    isLoading} = useNotificacoes();
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

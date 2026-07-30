@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -23,15 +22,13 @@ export function UserRolesTab() {
       const { data, error } = await supabase.rpc('admin_list_user_roles', {});
       if (error) throw error;
       return data || [];
-    },
-  });
+    }});
 
   const upgradeToAdmin = useMutation({
     mutationFn: async (userId: string) => {
       const { error } = await supabase.rpc('admin_set_user_role', {
         _target_user_id: userId,
-        _role: 'admin',
-      });
+        _role: 'admin'});
       if (error) throw error;
     },
     onSuccess: (_, userId) => {
@@ -41,11 +38,9 @@ export function UserRolesTab() {
         tabela: 'user_roles',
         registro_id: userId,
         acao: 'UPDATE',
-        dados_novos: { role: 'admin', user_id: userId },
-      });
+        dados_novos: { role: 'admin', user_id: userId }});
     },
-    onError: (err: any) => toast.error(safeErrorMessage(err, 'Erro ao atualizar perfil do usuário.')),
-  });
+    onError: (err: any) => toast.error(safeErrorMessage(err, 'Erro ao atualizar perfil do usuário.'))});
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">

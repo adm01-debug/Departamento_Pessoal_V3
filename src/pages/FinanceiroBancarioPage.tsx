@@ -3,8 +3,7 @@ import { PageLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Landmark, FileDown, History, Settings, CheckCircle, AlertCircle, Loader2, Download, Plus, Banknote, Globe, Upload } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Landmark, FileDown, History, Settings, CheckCircle, Loader2, Download, Plus, Globe, Upload } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { useOnMount } from '@/hooks/useMountEffects';
@@ -107,8 +106,7 @@ export default function FinanceiroBancarioPage() {
       conta: formData.get('conta') as string,
       conta_digito: formData.get('conta_digito') as string,
       convenio: formData.get('convenio') as string,
-      nome_empresa: formData.get('nome_empresa') as string,
-    };
+      nome_empresa: formData.get('nome_empresa') as string};
 
     try {
       await cnabService.saveConfig(empresaAtual!.id, newConfig);

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { PageTitle } from '@/components/PageTitle';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDataAccessLog } from '@/hooks/useDataAccessLog';
@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
 import { colaboradorService } from '@/services';
 import {
-  ArrowLeft, Users, Briefcase, ShieldCheck,
+  Users, Briefcase, ShieldCheck,
   Landmark, FileText, Info, Edit, MoreHorizontal, History as HistoryIcon,
   MapPin, Calendar, Stethoscope, User as UserIcon, Gift
 } from 'lucide-react';
@@ -21,14 +21,11 @@ import {
   ColaboradorHistory, BeneficiosTab, ColaboradorDocuments
 } from '@/components/colaborador-detalhes';
 import { Card, CardContent } from '@/components/ui/card';
-import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+  DropdownMenuTrigger} from '@/components/ui/dropdown-menu';
 
 export default function ColaboradorDetalhesPage() {
   const { id } = useParams<{ id: string }>();
@@ -42,8 +39,7 @@ export default function ColaboradorDetalhesPage() {
   const { data: colaborador, isLoading } = useQuery({
     queryKey: ['colaborador', id],
     queryFn: () => (colaboradorService as any).buscarPorId(id!),
-    enabled: !!id,
-  });
+    enabled: !!id});
 
   useDataAccessLog('colaboradores', id, colaborador?.empresa_id);
 

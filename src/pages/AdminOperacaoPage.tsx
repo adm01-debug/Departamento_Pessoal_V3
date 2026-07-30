@@ -4,14 +4,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AlertTriangle, Activity, GitBranch, ShieldAlert, RefreshCw, Clock, Bell, Check, ScrollText } from 'lucide-react';
+import { AlertTriangle, Activity, GitBranch, ShieldAlert, RefreshCw, Clock, Bell, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { useState } from 'react';
 import { UnifiedAuditSection } from '@/components/admin/UnifiedAuditSection';
 
 interface DlqRow { tipo_tarefa: string; total_dlq: number; mais_recente: string | null; ultimo_erro_sample: string | null }
@@ -48,8 +46,7 @@ export default function AdminOperacaoPage() {
       if (error) throw error;
       return (data ?? []) as DlqRow[];
     },
-    staleTime: 60_000,
-  });
+    staleTime: 60_000});
 
   const conflitos = useQuery({
     queryKey: ['admin-op', 'folha-conflicts'],
@@ -58,8 +55,7 @@ export default function AdminOperacaoPage() {
       if (error) throw error;
       return (data ?? []) as ConflictRow[];
     },
-    staleTime: 60_000,
-  });
+    staleTime: 60_000});
 
   const telemetry = useQuery({
     queryKey: ['admin-op', 'query-telemetry'],
@@ -68,8 +64,7 @@ export default function AdminOperacaoPage() {
       if (error) throw error;
       return (data ?? []) as TelemetryRow[];
     },
-    staleTime: 60_000,
-  });
+    staleTime: 60_000});
 
   const idem = useQuery({
     queryKey: ['admin-op', 'idempotency-health'],
@@ -78,8 +73,7 @@ export default function AdminOperacaoPage() {
       if (error) throw error;
       return (data ?? []) as IdemRow[];
     },
-    staleTime: 60_000,
-  });
+    staleTime: 60_000});
 
   const cron = useQuery({
     queryKey: ['admin-op', 'cron-health'],
@@ -88,8 +82,7 @@ export default function AdminOperacaoPage() {
       if (error) throw error;
       return (data ?? []) as CronRow[];
     },
-    staleTime: 60_000,
-  });
+    staleTime: 60_000});
 
   const alerts = useQuery({
     queryKey: ['admin-op', 'security-alerts'],
@@ -99,8 +92,7 @@ export default function AdminOperacaoPage() {
       return (data ?? []) as AlertRow[];
     },
     staleTime: 30_000,
-    refetchInterval: 60_000,
-  });
+    refetchInterval: 60_000});
 
   const qc = useQueryClient();
   const resolveAlert = useMutation({
@@ -112,8 +104,7 @@ export default function AdminOperacaoPage() {
       toast.success('Alerta resolvido');
       qc.invalidateQueries({ queryKey: ['admin-op', 'security-alerts'] });
     },
-    onError: (e: any) => toast.error(safeErrorMessage(e, 'Falha ao resolver alerta.')),
-  });
+    onError: (e: any) => toast.error(safeErrorMessage(e, 'Falha ao resolver alerta.'))});
 
   const refetchAll = () => {
     dlq.refetch();

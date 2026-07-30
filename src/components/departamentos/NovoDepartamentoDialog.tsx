@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Spinner } from '@/components/ui/spinner';
 import { useDepartamentos } from '@/hooks/useDepartamentos';
-import { useOnMount } from '@/hooks/useMountEffects';
+import { useSyncedState } from '@/hooks/useSyncedState';
 import { toast } from 'sonner';
 import { Building2, Save } from 'lucide-react';
 
@@ -20,41 +20,16 @@ interface Props {
 export function NovoDepartamentoDialog({ open, onOpenChange, departamento }: Props) {
   const { criar, atualizar } = useDepartamentos();
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({
-    nome: '',
-    descricao: '',
-    ativo: true,
-  });
-
-  // Reseta form quando dialog abre (mount-time)
-  useOnMount(() => {
-    if (open) {
-      if (departamento) {
-        setForm({
-          nome: departamento.nome || '',
-          descricao: departamento.descricao || '',
-          ativo: departamento.ativo !== false,
-        });
-      } else {
-        setForm({ nome: '', descricao: '', ativo: true });
-      }
-    }
-  });
-
-  // Também reseta quando departamento ou open mudam
-  useEffect(() => {
-    if (open) {
-      if (departamento) {
-        setForm({
-          nome: departamento.nome || '',
-          descricao: departamento.descricao || '',
-          ativo: departamento.ativo !== false,
-        });
-      } else {
-        setForm({ nome: '', descricao: '', ativo: true });
-      }
-    }
-  }, [departamento, open]);
+  // Formulário derivado do departamento em edição; ressincroniza a cada abertura do diálogo.
+  const [form, setForm] = useSyncedState(
+    departamento,
+    (d) => ({
+      nome: d?.nome || '',
+      descricao: d?.descricao || '',
+      ativo: d?.ativo !== false,
+    }),
+    open
+  );
 
   const handleSave = async () => {
     if (!form.nome.trim()) {

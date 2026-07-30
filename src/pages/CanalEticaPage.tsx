@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
@@ -15,7 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
-import { Plus, Shield, Eye } from 'lucide-react';
+import { Plus, Shield } from 'lucide-react';
 
 export default function CanalEticaPage() {
   const { empresaAtual } = useEmpresas();
@@ -32,16 +31,14 @@ export default function CanalEticaPage() {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const criar = useMutation({
     mutationFn: async (d: typeof form) => {
       const { error } = await supabase.from('canal_etica').insert({ ...d, empresa_id: empresaAtual?.id, anonimo: d.anonimo });
       if (error) throw error;
     },
-    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['canal-etica'] }); setOpen(false); toast.success('Denúncia registrada'); },
-  });
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ['canal-etica'] }); setOpen(false); toast.success('Denúncia registrada'); }});
 
   const statusColor = (s: string | null) => s === 'resolvido' ? 'default' : s === 'em_analise' ? 'secondary' : 'outline';
 

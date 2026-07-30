@@ -8,9 +8,8 @@ import { FolhaStatus } from '@/components/ui/status-badge';
 import { EmptyList } from '@/components/ui/empty-state';
 import { Spinner } from '@/components/ui/spinner';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Eye, Calculator, FileText, DollarSign, TrendingUp, TrendingDown, Banknote, Download, FileSpreadsheet, ClipboardList } from 'lucide-react';
+import { Eye, FileText, DollarSign, TrendingUp, TrendingDown, Banknote, Download, FileSpreadsheet, ClipboardList } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { FolhaAuditoriaTable } from '@/components/folha/FolhaAuditoriaTable';
 import { CalculoFolhaWizard } from '@/components/folha/CalculoFolhaWizard';
@@ -25,8 +24,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+  DropdownMenuTrigger} from '@/components/ui/dropdown-menu';
 import { currentCompetenciaLocal } from '@/utils/dateLocal';
 
 
@@ -49,8 +47,7 @@ export default function FolhaPage() {
       proventos: acc.proventos + (f.total_proventos || 0),
       descontos: acc.descontos + (f.total_descontos || 0),
       liquido: acc.liquido + (f.total_liquido || 0),
-      count: acc.count + 1,
-    }),
+      count: acc.count + 1}),
     { proventos: 0, descontos: 0, liquido: 0, count: 0 }
   );
   const handleExportExcel = () => {

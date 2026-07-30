@@ -381,7 +381,7 @@ export const workflowService = {
 
     let novoStatus: Execucao['status'] = 'em_andamento';
     let proximaEtapaId: string | null = proxima?.id ?? null;
-    let novoSlaInicio: string | null = null;
+    let novoSlaInicio: string | null;
 
     if (!aprovado) {
       // Rejeição — workflow encerrado

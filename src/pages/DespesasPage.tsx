@@ -18,7 +18,7 @@ import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { safeHref } from '@/utils/safeUrl';
-import { Plus, Receipt, DollarSign, CheckCircle, Clock, XCircle, Trash2, Upload, Eye, DollarSign as DollarIcon } from 'lucide-react';
+import { Plus, Receipt, DollarSign, CheckCircle, Clock, XCircle, Trash2, Eye, DollarSign as DollarIcon } from 'lucide-react';
 import { formatCurrency } from '@/utils/format';
 
 const statusColors: Record<DespesaStatus, string> = {
@@ -28,8 +28,7 @@ const statusColors: Record<DespesaStatus, string> = {
   rejeitado: 'destructive',
   integrado_folha: 'default',
   pago: 'default',
-  cancelado: 'outline',
-};
+  cancelado: 'outline'};
 
 const statusLabels: Record<DespesaStatus, string> = {
   rascunho: 'Rascunho',
@@ -38,8 +37,7 @@ const statusLabels: Record<DespesaStatus, string> = {
   rejeitado: 'Rejeitado',
   integrado_folha: 'Na folha',
   pago: 'Pago',
-  cancelado: 'Cancelado',
-};
+  cancelado: 'Cancelado'};
 
 const tipoLabels: Record<DespesaTipo, string> = {
   reembolso: 'Reembolso',
@@ -48,8 +46,7 @@ const tipoLabels: Record<DespesaTipo, string> = {
   material: 'Material',
   alimentacao: 'Alimentação',
   transporte: 'Transporte',
-  outro: 'Outro',
-};
+  outro: 'Outro'};
 
 const emptyForm = { colaborador_id: '', tipo: 'reembolso' as DespesaTipo, categoria: 'transporte', descricao: '', valor: '', data_despesa: '' };
 
@@ -65,13 +62,11 @@ export default function DespesasPage() {
   const { data: despesas = [], isLoading } = useQuery({
     queryKey: ['despesas', empresaAtual?.id],
     queryFn: () => despesaService.listar(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
   const { data: colaboradores = [] } = useQuery({
     queryKey: ['colaboradores', empresaAtual?.id],
     queryFn: () => colaboradorService.list(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const criar = useMutation({
     mutationFn: async () => {
@@ -88,14 +83,12 @@ export default function DespesasPage() {
       setFile(null);
       toast.success('Despesa registrada com sucesso!');
     },
-    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar despesa.')),
-  });
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar despesa.'))});
 
   const aprovar = useMutation({
     mutationFn: (id: string) => despesaService.aprovar(id, empresaAtual!.id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['despesas'] }); toast.success('Despesa aprovada'); },
-    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar despesa.')),
-  });
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar despesa.'))});
 
   const rejeitar = useMutation({
     mutationFn: () => despesaService.rejeitar(rejectTarget!, empresaAtual!.id, rejectMotivo),
@@ -104,18 +97,15 @@ export default function DespesasPage() {
       toast.success('Despesa rejeitada');
       setRejectTarget(null); setRejectMotivo('');
     },
-    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar despesa.')),
-  });
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar despesa.'))});
 
   const marcarPago = useMutation({
     mutationFn: (id: string) => despesaService.marcarPago(id, empresaAtual!.id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['despesas'] }); toast.success('Marcada como paga'); },
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['despesas'] }); toast.success('Marcada como paga'); }});
 
   const excluir = useMutation({
     mutationFn: (id: string) => despesaService.excluir(id, empresaAtual!.id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['despesas'] }); toast.success('Excluída'); },
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['despesas'] }); toast.success('Excluída'); }});
 
   const abrirComprovante = async (path: string) => {
     const url = await despesaService.getComprovanteUrl(path);

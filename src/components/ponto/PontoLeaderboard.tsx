@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Trophy, Medal, Star, TrendingUp, Users } from 'lucide-react';
+import { Trophy, Star, TrendingUp, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const MOCK_LEADERBOARD = [

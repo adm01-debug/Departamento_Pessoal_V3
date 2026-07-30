@@ -15,7 +15,7 @@ export const batidasPontoService = {
   async listarPorData(data: string, empresaId: string): Promise<any[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
-    let q = (supabase as any).from('batidas_ponto').select('*, colaborador:colaboradores!fk_batidas_ponto_colaborador(nome_completo, foto_url)').eq('data', data).order('ordem');
+    let q = (supabase as any).from('batidas_ponto').select('*, colaborador:colaboradores!batidas_ponto_colaborador_id_fkey(nome_completo, foto_url)').eq('data', data).order('ordem');
     q = q.eq('empresa_id', empresaId);
     const { data: result, error } = await q;
     if (error) throw error;

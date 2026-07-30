@@ -8,7 +8,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
@@ -30,19 +29,16 @@ function BeneficiariosPlanoSection({ planoId }: { planoId: string }) {
   const { data: beneficiarios = [], isLoading } = useQuery({
     queryKey: ['beneficiarios-plano', planoId],
     queryFn: () => beneficiariosPlanoService.listar(planoId),
-    enabled: !!planoId,
-  });
+    enabled: !!planoId});
 
   const criar = useMutation({
     mutationFn: () => beneficiariosPlanoService.criar({ ...form, plano_saude_id: planoId, status: 'ativo', data_inclusao: todayLocalISO() }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['beneficiarios-plano', planoId] }); setOpen(false); setForm({ nome: '', cpf: '', parentesco: '', tipo: 'dependente' }); toast.success('Beneficiário incluído!'); },
-    onError: () => toast.error('Erro ao incluir beneficiário'),
-  });
+    onError: () => toast.error('Erro ao incluir beneficiário')});
 
   const excluir = useMutation({
     mutationFn: (id: string) => beneficiariosPlanoService.excluir(planoId, id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['beneficiarios-plano', planoId] }); toast.success('Beneficiário excluído do plano'); },
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['beneficiarios-plano', planoId] }); toast.success('Beneficiário excluído do plano'); }});
 
   const ativos = beneficiarios.filter((b: any) => b.status !== 'excluido');
 
@@ -110,8 +106,7 @@ export default function PlanosSaudePage() {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const { data: seguros = [], isLoading: l2 } = useQuery({
     queryKey: ['seguros-vida', empresaAtual?.id],
@@ -122,8 +117,7 @@ export default function PlanosSaudePage() {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const criarPlano = useMutation({
     mutationFn: async (d: any) => {
@@ -132,8 +126,7 @@ export default function PlanosSaudePage() {
       return data;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['planos-saude'] }); setOpenPlano(false); toast.success('Plano cadastrado!'); },
-    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar plano de saúde.')),
-  });
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar plano de saúde.'))});
 
   const criarSeguro = useMutation({
     mutationFn: async (d: any) => {
@@ -142,8 +135,7 @@ export default function PlanosSaudePage() {
       return data;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['seguros-vida'] }); setOpenSeguro(false); toast.success('Seguro cadastrado!'); },
-    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar plano de saúde.')),
-  });
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar plano de saúde.'))});
 
   const isLoading = l1 || l2;
   if (isLoading) return <PageLayout title="Planos e Seguros"><Spinner /></PageLayout>;

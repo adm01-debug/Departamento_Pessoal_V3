@@ -3,18 +3,17 @@ import { feriasService, colaboradorService } from '@/services';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Calendar, AlertTriangle, CheckCircle2, Clock, Plus, Trash2, Edit2, Loader2, User, Search } from 'lucide-react';
+import { Calendar, AlertTriangle, CheckCircle2, Clock, Plus, Trash2, Edit2, Loader2, Search } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
 import { useState, useMemo } from 'react';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { toast } from 'sonner';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 interface GerenciamentoPeriodosProps {
   colaboradorId?: string;
@@ -38,14 +37,12 @@ export function GerenciamentoPeriodos({ colaboradorId: initialColaboradorId }: G
   const { data: colaboradores } = useQuery({
     queryKey: ['colaboradores-ferias', empresaAtual?.id],
     queryFn: () => colaboradorService.list(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const { data: periodos, isLoading } = useQuery({
     queryKey: ['periodos-aquisitivos', selectedColabId, empresaAtual?.id],
     queryFn: () => feriasService.listPeriodosAquisitivos(selectedColabId, empresaAtual!.id),
-    enabled: !!selectedColabId && !!empresaAtual?.id,
-  });
+    enabled: !!selectedColabId && !!empresaAtual?.id});
 
   const createMutation = useMutation({
     mutationFn: (data: any) => feriasService.criarPeriodoAquisitivo(data),
@@ -53,8 +50,7 @@ export function GerenciamentoPeriodos({ colaboradorId: initialColaboradorId }: G
       qc.invalidateQueries({ queryKey: ['periodos-aquisitivos', selectedColabId] });
       toast.success('Período aquisitivo criado');
       setIsDialogOpen(false);
-    },
-  });
+    }});
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: any }) => feriasService.atualizarPeriodoAquisitivo(id, data, empresaAtual!.id),
@@ -62,24 +58,21 @@ export function GerenciamentoPeriodos({ colaboradorId: initialColaboradorId }: G
       qc.invalidateQueries({ queryKey: ['periodos-aquisitivos', selectedColabId] });
       toast.success('Período aquisitivo atualizado');
       setIsDialogOpen(false);
-    },
-  });
+    }});
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => feriasService.excluirPeriodoAquisitivo(id, empresaAtual!.id),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['periodos-aquisitivos', selectedColabId] });
       toast.success('Período aquisitivo excluído');
-    },
-  });
+    }});
 
   const handleSave = () => {
     const data = {
       ...form,
       colaborador_id: selectedColabId,
       dias_direito: parseInt(form.dias_direito),
-      numero_periodo: parseInt(form.numero_periodo),
-    };
+      numero_periodo: parseInt(form.numero_periodo)};
 
     if (editingPeriodo) {
       updateMutation.mutate({ id: editingPeriodo.id, data });

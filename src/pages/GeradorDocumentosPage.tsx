@@ -8,11 +8,10 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresa } from '@/contexts';
-import { FileText, Download, Eye, Printer, FileSignature, ScrollText, Shield, UserCheck, Loader2, Sparkles } from 'lucide-react';
+import { FileText, Download, Eye, FileSignature, ScrollText, Shield, UserCheck, Loader2, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -129,8 +128,7 @@ function gerarPDF(template: string, colaborador: any, empresa: any) {
         termo_confidencialidade: 'TERMO DE CONFIDENCIALIDADE E NÃO DIVULGAÇÃO',
         recibo_entrega_doc: 'RECIBO DE ENTREGA DE DOCUMENTOS',
         advertencia: 'ADVERTÊNCIA DISCIPLINAR',
-        termo_rescisao: 'TERMO DE RESCISÃO DO CONTRATO DE TRABALHO',
-      };
+        termo_rescisao: 'TERMO DE RESCISÃO DO CONTRATO DE TRABALHO'};
       doc.text(titles[template] || 'DOCUMENTO', pageWidth / 2, y, { align: 'center' });
       y += 20;
       doc.setFontSize(11);
@@ -182,8 +180,7 @@ export default function GeradorDocumentosPage() {
         .order('nome_completo');
       if (error) throw error;
       return data || [];
-    },
-  });
+    }});
 
   const handleGenerate = async (action: 'download' | 'preview') => {
     if (!selectedColaborador) { toast.error('Selecione um colaborador'); return; }

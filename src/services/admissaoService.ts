@@ -21,7 +21,7 @@ class AdmissaoService extends BaseService<any> {
     query = query.eq('empresa_id', empresaId);
     const { data, error } = await query;
     if (error) throw error;
-    return data || [];
+    return (data as any[]) || [];
   }
 
   // Aliases

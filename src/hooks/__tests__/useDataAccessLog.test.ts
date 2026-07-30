@@ -1,18 +1,21 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 
-const { mockGetSession, mockInsert, mockFrom } = vi.hoisted(() => {
-  const mockInsert = vi.fn().mockResolvedValue({ error: null });
-  const mockFrom = vi.fn().mockReturnValue({ insert: mockInsert });
+const { mockGetSession, mockRpc, mockFrom } = vi.hoisted(() => {
+  const mockRpc = vi.fn().mockResolvedValue({ data: 'audit-1', error: null });
+  const mockFrom = vi.fn();
   const mockGetSession = vi.fn().mockResolvedValue({
     data: { session: { user: { id: 'user-1' } } },
   });
-  return { mockGetSession, mockInsert, mockFrom };
+  return { mockGetSession, mockRpc, mockFrom };
 });
 
-vi.mock('@/integrations/supabase/client', () => ({
+// O hook usa o cliente base (não o proxy do bridge) — o mock precisa apontar
+// exatamente para esse módulo, senão nada é interceptado.
+vi.mock('@/integrations/supabase/client.base', () => ({
   supabase: {
     auth: { getSession: mockGetSession },
+    rpc: mockRpc,
     from: mockFrom,
   },
 }));
@@ -25,8 +28,7 @@ describe('useDataAccessLog', () => {
     mockGetSession.mockResolvedValue({
       data: { session: { user: { id: 'user-1' } } },
     });
-    mockInsert.mockResolvedValue({ error: null });
-    mockFrom.mockReturnValue({ insert: mockInsert });
+    mockRpc.mockResolvedValue({ data: 'audit-1', error: null });
   });
 
   it('does nothing when recursoId is undefined', () => {
@@ -47,29 +49,33 @@ describe('useDataAccessLog', () => {
     await vi.waitFor(() => expect(mockGetSession).toHaveBeenCalled());
   });
 
-  it('inserts audit_log record with correct fields', async () => {
+  it('registra o acesso pela RPC segura, sem escrita direta na tabela', async () => {
     renderHook(() => useDataAccessLog('colaboradores', 'c-1', 'emp-1'));
-    await vi.waitFor(() => expect(mockFrom).toHaveBeenCalledWith('audit_log'));
-    expect(mockInsert).toHaveBeenCalledWith(
-      expect.objectContaining({
-        usuario_id: 'user-1',
-        acao: 'VISUALIZACAO',
-        tabela: 'colaboradores',
-        registro_id: 'c-1',
-        empresa_id: 'emp-1',
-      })
+    await vi.waitFor(() =>
+      expect(mockRpc).toHaveBeenCalledWith('registrar_auditoria', expect.any(Object))
     );
+    expect(mockFrom).not.toHaveBeenCalled();
+
+    const args = mockRpc.mock.calls[0][1];
+    expect(args).toMatchObject({
+      p_tabela: 'colaboradores',
+      p_registro_id: 'c-1',
+      p_acao: 'VISUALIZACAO',
+      p_empresa_id: 'emp-1',
+    });
+    // Autoria derivada de auth.uid() no servidor — nunca enviada pelo cliente.
+    expect(Object.keys(args)).not.toContain('p_user_id');
   });
 
-  it('does not insert when session has no user', async () => {
+  it('does not log when session has no user', async () => {
     mockGetSession.mockResolvedValue({ data: { session: null } });
     renderHook(() => useDataAccessLog('colaboradores', 'c-1', 'emp-1'));
     await vi.waitFor(() => expect(mockGetSession).toHaveBeenCalled());
-    expect(mockInsert).not.toHaveBeenCalled();
+    expect(mockRpc).not.toHaveBeenCalled();
   });
 
-  it('does not throw when insert fails (non-blocking)', async () => {
-    mockInsert.mockRejectedValue(new Error('network error'));
+  it('does not throw when the audit call fails (non-blocking)', async () => {
+    mockRpc.mockRejectedValue(new Error('network error'));
     expect(() =>
       renderHook(() => useDataAccessLog('colaboradores', 'c-1', 'emp-1'))
     ).not.toThrow();

@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import type { TipoAfastamento, StatusAfastamento } from '@/types/afastamentos';
 import { useAfastamentos, useProrrogacoesAfastamento } from '@/hooks/useAfastamentos';
 import { usePDFExport } from '@/hooks/usePDFExport';
 import { gerarAfastamentosPDF } from '@/utils/afastamentoPDF';
@@ -24,9 +25,9 @@ import { format } from 'date-fns';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell } from 'recharts';
 import type { UiRecord } from '@/types/uiRecord';
-const tipoLabels: Record<string, string> = {
+const tipoLabels: Partial<Record<TipoAfastamento, string>> = {
   doenca: 'Doença',
   acidente_trabalho: 'Acidente Trabalho',
   acidente_trajeto: 'Acidente Trajeto',
@@ -38,8 +39,7 @@ const tipoLabels: Record<string, string> = {
   servico_militar: 'Serviço Militar',
   mandato_sindical: 'Mandato Sindical',
   suspensao_disciplinar: 'Suspensão Disc.',
-  outros: 'Outros',
-};
+  outros: 'Outros'};
 
 export default function AfastamentosPage() {
   const { afastamentos, isLoading, filtros, setFiltros } = useAfastamentos();
@@ -48,7 +48,7 @@ export default function AfastamentosPage() {
   
   const [activeTab, setActiveTab] = useState('afastamentos');
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedTipo, setSelectedTipo] = useState<string | null>(null);
+  const [selectedTipo, setSelectedTipo] = useState<TipoAfastamento | null>(null);
   
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDocOpen, setIsDocOpen] = useState(false);
@@ -60,8 +60,7 @@ export default function AfastamentosPage() {
     ativos: afastamentos.filter((a: any) => a.status === 'ativo').length,
     pendentes: afastamentos.filter((a: any) => a.status === 'pendente').length,
     finalizados: afastamentos.filter((a: any) => a.status === 'finalizado' || a.status === 'concluido').length,
-    diasTotais: afastamentos.reduce<number>((sum, a: any) => sum + Number(a.dias_total || 0), 0),
-  };
+    diasTotais: afastamentos.reduce<number>((sum, a: any) => sum + Number(a.dias_total || 0), 0)};
 
   const filteredAfastamentos = afastamentos.filter((a: any) => {
     const matchSearch = 
@@ -179,7 +178,7 @@ export default function AfastamentosPage() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => setSelectedTipo(null)}>Todos Tipos</DropdownMenuItem>
                 <ScrollArea className="h-48">
-                  {Object.entries(tipoLabels).map(([key, label]) => (
+                  {(Object.entries(tipoLabels) as [TipoAfastamento, string][]).map(([key, label]) => (
                     <DropdownMenuItem key={key} onClick={() => setSelectedTipo(key)} className="text-xs">
                       {label}
                     </DropdownMenuItem>
@@ -201,7 +200,11 @@ export default function AfastamentosPage() {
                     toast.error('Selecione uma empresa para exportar o relatório');
                     return;
                   }
-                  await afastamentoService.exportarRelatorio(filtros.empresa_id, { ...filtros, tipo: selectedTipo });
+                  await afastamentoService.exportarRelatorio(filtros.empresa_id, {
+                    empresa_id: filtros.empresa_id,
+                    status: filtros.status as StatusAfastamento | undefined,
+                    tipo: selectedTipo ?? undefined,
+                  });
                   toast.success('Relatório exportado com sucesso em CSV');
                 }}>
                   <Download className="h-4 w-4 mr-2" /> CSV (Planilha)
@@ -209,7 +212,7 @@ export default function AfastamentosPage() {
                 <DropdownMenuItem onClick={async () => {
                   const dataToExport = filteredAfastamentos.map((af: any) => ({
                     colaborador: af.colaborador?.nome_completo || '-',
-                    tipo: tipoLabels[af.tipo] || af.tipo,
+                    tipo: tipoLabels[af.tipo as TipoAfastamento] || af.tipo,
                     cid: af.cid?.codigo || af.cid || '-',
                     inicio: format(new Date(af.data_inicio), 'dd/MM/yyyy'),
                     fim: format(new Date(af.data_fim_prevista), 'dd/MM/yyyy'),
@@ -282,7 +285,7 @@ export default function AfastamentosPage() {
                             <TableCell className="font-medium">{p.afastamento?.colaborador?.nome_completo || '-'}</TableCell>
                             <TableCell>
                               <Badge variant="secondary" className="font-normal">
-                                {tipoLabels[p.afastamento?.tipo] || p.afastamento?.tipo || '-'}
+                                {tipoLabels[p.afastamento?.tipo as TipoAfastamento] || p.afastamento?.tipo || '-'}
                               </Badge>
                             </TableCell>
                             <TableCell>{p.data_fim_antiga ? format(new Date(p.data_fim_antiga), 'dd/MM/yyyy') : '-'}</TableCell>

@@ -496,9 +496,16 @@ describe('criarTime', () => {
   beforeEach(() => { vi.clearAllMocks(); });
 
   it('inserts and returns time', async () => {
-    const created = { id: 't-new', nome: 'Design' };
+    const created = { id: 't-new', nome: 'Design', empresa_id: 'emp-1' };
     setupInsertChain(created);
-    expect(await criarTime({ nome: 'Design' })).toEqual(created);
+    expect(await criarTime({ nome: 'Design', empresa_id: 'emp-1' })).toEqual(created);
+  });
+
+  // Regressao: time sem tenant ficava invisivel para todos (a politica de RLS
+  // exige empresa_id IN get_user_empresas()), entao o registro "sumia" da tela
+  // em vez de dar erro. Agora falha alto, antes de chegar ao banco.
+  it('rejeita criacao sem empresa_id', async () => {
+    await expect(criarTime({ nome: 'Design' })).rejects.toThrow(/empresa_id obrigatório/);
   });
 });
 

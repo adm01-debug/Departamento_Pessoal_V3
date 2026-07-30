@@ -6,6 +6,10 @@ const mockFrom = vi.fn();
 const mockGetSession = vi.fn();
 const mockInvoke = vi.fn();
 
+vi.mock('@/hooks/useEmpresas', () => ({
+  useEmpresas: () => ({ empresaAtual: { id: 'emp-1', razao_social: 'Empresa Teste' } }),
+}));
+
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: (...args: any[]) => mockFrom(...args),

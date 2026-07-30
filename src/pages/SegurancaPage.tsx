@@ -2,26 +2,26 @@ import { PageTitle } from '@/components/PageTitle';
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Spinner } from '@/components/ui/spinner';
 import { securityService } from '@/services/securityService';
+import { PolicyAuditPanel } from '@/components/seguranca/PolicyAuditPanel';
+
 import { 
   ShieldAlert, 
   Lock, 
   Unlock, 
   Globe, 
-  UserX, 
+  
   AlertTriangle, 
   CheckCircle, 
   History, 
-  ShieldCheck,
-  Zap
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+  ShieldCheck} from 'lucide-react';
+import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -101,7 +101,9 @@ export default function SegurancaPage() {
             <TabsTrigger value="logins" className="rounded-lg py-2">Tentativas de Login</TabsTrigger>
             <TabsTrigger value="firewall" className="rounded-lg py-2">Firewall (IPs)</TabsTrigger>
             <TabsTrigger value="geo" className="rounded-lg py-2">Geo-Firewall</TabsTrigger>
+            <TabsTrigger value="policies" className="rounded-lg py-2">Políticas RLS</TabsTrigger>
           </TabsList>
+
 
           <TabsContent value="overview">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -306,8 +308,13 @@ export default function SegurancaPage() {
               </Table>
             </Card>
           </TabsContent>
+
+          <TabsContent value="policies">
+            <PolicyAuditPanel />
+          </TabsContent>
         </Tabs>
       </PageLayout>
+
     </>
   );
 }

@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { loggerService } from './loggerService';
+import type { LooseQueryBuilder } from '@/types/queryBuilder';
 
 export interface ListOptions {
   search?: string;
@@ -32,8 +33,14 @@ export class BaseService<T, CreateDTO = Record<string, unknown>, UpdateDTO = Rec
     }
   }
 
-  protected getQuery() {
-    return (supabase as any).from(this.table);
+  /**
+   * O nome da tabela é dinâmico (string), então não há como instanciar os tipos
+   * gerados do Supabase aqui sem estourar o typecheck. Usamos um contrato
+   * estrutural (`LooseQueryBuilder`) que preserva a checagem de assinatura dos
+   * métodos e da resposta — só o mapeamento coluna→tipo fica de fora.
+   */
+  protected getQuery(): LooseQueryBuilder {
+    return supabase.from(this.table as never) as unknown as LooseQueryBuilder;
   }
 
   async listar(options: ListOptions = {}): Promise<ListResponse<T>> {

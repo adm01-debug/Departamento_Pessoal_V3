@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { Calculator, Download, Save, Shield, Loader2, User } from 'lucide-react';
+import { Calculator, Download, Save, Shield, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
@@ -41,8 +41,7 @@ export default function CalculadoraRescisaoPage() {
     feriasVencidas: false,
     saldoFGTS: '',
     motivoDesligamento: '',
-    observacoes: '',
-  });
+    observacoes: ''});
   const [result, setResult] = useState<RescisaoResult | null>(null);
   const [saving, setSaving] = useState(false);
   const [calcServidor, setCalcServidor] = useState(false);
@@ -61,8 +60,7 @@ export default function CalculadoraRescisaoPage() {
         cargo: data.cargo || '',
         salario: data.salario_base?.toString() || '',
         dataAdmissao: data.data_admissao || '',
-        saldoFGTS: (data as Record<string, unknown>).saldo_fgts_estimado?.toString() || '',
-      }));
+        saldoFGTS: (data as Record<string, unknown>).saldo_fgts_estimado?.toString() || ''}));
       toast.success('Dados do colaborador importados!');
     } catch (err) {
       toast.error('Erro ao buscar colaborador');
@@ -84,8 +82,7 @@ export default function CalculadoraRescisaoPage() {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const handleCalcServidor = async () => {
     if (!form.salario || !form.dataAdmissao || !form.dataDesligamento) {
@@ -102,8 +99,7 @@ export default function CalculadoraRescisaoPage() {
         aviso_previo: form.avisoTrabalhado ? 'trabalhado' : 'indenizado',
         saldo_fgts: Number(form.saldoFGTS || 0),
         ferias_vencidas: form.feriasVencidas,
-        dependentes_irrf: 0,
-      });
+        dependentes_irrf: 0});
 
       const data = result as any;
       if (data?.resultado) {
@@ -132,8 +128,7 @@ export default function CalculadoraRescisaoPage() {
       tipo: form.tipo,
       avisoTrabalhado: form.avisoTrabalhado,
       feriasVencidas: form.feriasVencidas,
-      saldoFGTS: Number(form.saldoFGTS || 0),
-    });
+      saldoFGTS: Number(form.saldoFGTS || 0)});
 
     setResult(result);
     toast.success('Rescisão calculada com sucesso!');
@@ -162,8 +157,7 @@ export default function CalculadoraRescisaoPage() {
           total_proventos: result.totalProventos,
           total_descontos: result.totalDescontos,
           total_liquido: result.totalLiquido,
-          resultado: result as any,
-        })
+          resultado: result as any})
         .select()
         .single();
 
@@ -178,8 +172,7 @@ export default function CalculadoraRescisaoPage() {
           motivo: form.tipo.replace(/_/g, ' '),
           valor_rescisao: result.totalLiquido,
           status: 'pendente',
-          created_by: user.id,
-        } as any);
+          created_by: user.id} as any);
 
         if (!deslError) {
           toast.success('Desligamento registrado no módulo de Pessoas!');

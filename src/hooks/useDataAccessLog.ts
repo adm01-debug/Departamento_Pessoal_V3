@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-// Importa diretamente o cliente Supabase base (não o proxy), porque `audit_log`
-// está na denylist do external-db-bridge e a tabela deve ser acessada pelo
-// RLS direto do PostgREST. O proxy global `supabase` reescreve TODAS as chamadas
-// para irem via bridge, o que faz esta operação falhar com INSERT_ERROR 400.
+// Usa o cliente Supabase base (não o proxy do bridge) para chamar a RPC de
+// auditoria. A escrita direta em `audit_log` foi revogada por segurança —
+// eventos de auditoria agora passam por `registrar_auditoria`, que deriva o
+// autor de `auth.uid()` no servidor e valida o escopo de empresa.
 import { supabase as supabaseBase } from '@/integrations/supabase/client.base';
 
 export function useDataAccessLog(
@@ -19,25 +19,17 @@ export function useDataAccessLog(
         const { data: { session } } = await supabaseBase.auth.getSession();
         if (!session?.user?.id) return;
 
-        const { error } = await supabaseBase
-          .from('audit_log')
-          .insert({
-            usuario_id: session.user.id,
-            acao: 'VISUALIZACAO',
-            tabela: recurso,
-            registro_id: recursoId,
-            empresa_id: empresaId,
-            ip: null,
-            dados_novos: { accessed_at: new Date().toISOString() },
-          });
+        const { error } = await supabaseBase.rpc('registrar_auditoria', {
+          p_tabela: recurso,
+          p_registro_id: recursoId,
+          p_acao: 'VISUALIZACAO',
+          p_dados_anteriores: null,
+          p_dados_novos: { accessed_at: new Date().toISOString() },
+          p_empresa_id: empresaId,
+        } as never);
 
-        if (error && !cancelled) {
-          // Logar apenas em DEV; em prod audit falha silenciosa (não-impacta UX)
-          // (audit_log tem CHECK(acao IN ('INSERT','UPDATE','DELETE')) e policy de
-          //  INSERT ausente — falha esperada. Não polui console.)
-          if (import.meta.env.DEV) {
-            console.debug('[useDataAccessLog] audit_log insert falhou:', error.code, error.message);
-          }
+        if (error && !cancelled && import.meta.env.DEV) {
+          console.debug('[useDataAccessLog] registrar_auditoria falhou:', error.message);
         }
       } catch {
         // Non-blocking — audit failure should not break UX
@@ -48,3 +40,4 @@ export function useDataAccessLog(
     return () => { cancelled = true; };
   }, [recurso, recursoId, empresaId]);
 }
+

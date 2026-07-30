@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertTriangle, CheckCircle, Info, Shield, ArrowUpRight, TrendingUp, AlertCircle, Percent } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Info, Shield, TrendingUp, AlertCircle, Percent } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 

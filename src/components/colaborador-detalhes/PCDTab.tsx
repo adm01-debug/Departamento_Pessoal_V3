@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,7 +9,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Edit2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useDeficiencia, useSalvarDeficiencia } from '@/hooks/useColaboradorDetalhes';
-import { useOnMount } from '@/hooks/useMountEffects';
+import { useSyncedState } from '@/hooks/useSyncedState';
 
 interface PCDData {
   tipo?: string;
@@ -24,22 +24,12 @@ export function PCDTab({ colaboradorId }: { colaboradorId: string }) {
   const { data, isLoading } = useDeficiencia(colaboradorId);
   const salvar = useSalvarDeficiencia();
   const [editing, setEditing] = useState(false);
-  const [form, setForm] = useState({ tipo: '', cid: '', descricao: '', observacoes: '' });
-
-  // Inicializa form no mount
-  useOnMount(() => {
-    if (data && !editing) {
-      const d = data as PCDData;
-      setForm({ tipo: d.tipo || '', cid: d.cid || '', descricao: d.descricao || '', observacoes: d.observacoes || '' });
-    }
-  });
-
-  useEffect(() => {
-    if (data && !editing) {
-      const d = data as PCDData;
-      setForm({ tipo: d.tipo || '', cid: d.cid || '', descricao: d.descricao || '', observacoes: d.observacoes || '' });
-    }
-  }, [data, editing]);
+  // Formulário derivado do dado remoto; a sincronização pausa durante a edição.
+  const [form, setForm] = useSyncedState(
+    data as PCDData | undefined,
+    (d) => ({ tipo: d?.tipo || '', cid: d?.cid || '', descricao: d?.descricao || '', observacoes: d?.observacoes || '' }),
+    !editing
+  );
 
   const handleSave = async () => {
     if (!form.tipo) { toast.error('Tipo de deficiência é obrigatório'); return; }

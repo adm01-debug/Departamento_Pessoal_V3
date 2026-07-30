@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { PageTitle } from '@/components/PageTitle';
 import { PageLayout } from '@/components/layout';
 import { DataTableToolbar } from '@/components/ui/data-table-toolbar';
@@ -6,11 +6,10 @@ import { Table, TableBody, TableHeader, TableRow, TableHead } from '@/components
 import { EmptyList, EmptySearch } from '@/components/ui/empty-state';
 import { Spinner } from '@/components/ui/spinner';
 import { FilterX, RefreshCw } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { DataTablePagination } from '@/components/ui/data-table-pagination';
 import { SyncErrorState } from '@/components/ui/sync-error-state';
 import { TableSkeleton } from '@/components/ui/module-skeleton';
-import { Button } from '@/components/ui/button';
 
 interface EntityPageContainerProps<T> {
   title: string;

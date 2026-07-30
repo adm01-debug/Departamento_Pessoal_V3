@@ -1,5 +1,4 @@
 // DashboardPage — Modular Executive Dashboard (V26)
-import { PageTitle } from "@/components/PageTitle";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, DollarSign, Calendar, Clock, Sparkles, Building2, UserPlus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -141,13 +140,11 @@ function useDashboardStats(enabled: boolean) {
         admissoesMes: admissoesMes || 0,
         demissoesMes: demissoesMes || 0,
         departamentos,
-        passivoTotal,
-      };
+        passivoTotal};
     },
     staleTime: 5 * 60 * 1000,
     gcTime: 15 * 60 * 1000,
-    refetchOnWindowFocus: false,
-  });
+    refetchOnWindowFocus: false});
 }
 
 function usePendencias(enabled: boolean) {
@@ -165,7 +162,7 @@ function usePendencias(enabled: boolean) {
         supabase.from("ferias").select("*", { count: "exact", head: true }).eq("status", "pendente"),
         supabase.from("afastamentos").select("*", { count: "exact", head: true }).eq("status", "ativo"),
         supabase.from("admissoes").select("*", { count: "exact", head: true }).filter('etapa', 'not.in', '("concluida","cancelada")'),
-        supabase.from("assinaturas_digitais" as any).select("*", { count: "exact", head: true }).eq("status", "pendente"),
+        supabase.from("documentos_assinatura").select("*", { count: "exact", head: true }).eq("status", "pendente"),
         supabase.from("solicitacoes_ajuste_ponto" as any).select("*", { count: "exact", head: true }).eq("status", "pendente"),
       ]);
       const pendencias: Pendencia[] = [];
@@ -177,15 +174,13 @@ function usePendencias(enabled: boolean) {
       
       return pendencias;
     },
-    staleTime: 5 * 60 * 1000,
-  });
+    staleTime: 5 * 60 * 1000});
 }
 
 function formatCurrency(value: number): string {
   return new Intl.NumberFormat("pt-BR", {
     style: "currency", currency: "BRL",
-    minimumFractionDigits: 0, maximumFractionDigits: 0,
-  }).format(value);
+    minimumFractionDigits: 0, maximumFractionDigits: 0}).format(value);
 }
 
 const emptySparkline = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];

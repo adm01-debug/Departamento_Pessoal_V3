@@ -280,6 +280,10 @@ export async function listarTimes(empresaId: string) {
 }
 
 export async function criarTime(time: DadosInsert) {
+  // O banco agora recusa time sem tenant (NOT NULL), mas a checagem aqui
+  // devolve uma mensagem util em vez do erro cru do Postgres — e espelha a
+  // mesma exigencia que `listarTimes` ja faz.
+  if (!time?.empresa_id) throw new Error('empresa_id obrigatório para isolamento de tenant');
   const { data, error } = await supabase
     .from('times')
     .insert([time])

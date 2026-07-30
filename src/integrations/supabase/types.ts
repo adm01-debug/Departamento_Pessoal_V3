@@ -268,13 +268,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_admissoes_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       aej_geracoes: {
@@ -474,41 +467,6 @@ export type Database = {
           },
           {
             foreignKeyName: "afastamentos_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_afastamentos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_afastamentos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_afastamentos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_afastamentos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_afastamentos_empresa"
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
@@ -784,34 +742,6 @@ export type Database = {
             referencedRelation: "registros_ponto"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_ajustes_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ajustes_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ajustes_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ajustes_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
         ]
       }
       anotacoes_colaborador: {
@@ -872,34 +802,6 @@ export type Database = {
           },
           {
             foreignKeyName: "anotacoes_colaborador_colaborador_id_fkey"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_anotacoes_colaborador_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_anotacoes_colaborador_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_anotacoes_colaborador_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_anotacoes_colaborador_colaborador"
             columns: ["colaborador_id"]
             isOneToOne: false
             referencedRelation: "vw_passivo_trabalhista_consolidado"
@@ -1046,41 +948,6 @@ export type Database = {
           },
           {
             foreignKeyName: "asos_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_asos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_asos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_asos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_asos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_asos_empresa"
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
@@ -1448,6 +1315,7 @@ export type Database = {
           id_token: string | null
           metadata: Json | null
           nivel_autenticacao: string | null
+          updated_at: string
           user_id: string | null
         }
         Insert: {
@@ -1458,6 +1326,7 @@ export type Database = {
           id_token?: string | null
           metadata?: Json | null
           nivel_autenticacao?: string | null
+          updated_at?: string
           user_id?: string | null
         }
         Update: {
@@ -1468,6 +1337,7 @@ export type Database = {
           id_token?: string | null
           metadata?: Json | null
           nivel_autenticacao?: string | null
+          updated_at?: string
           user_id?: string | null
         }
         Relationships: []
@@ -1595,41 +1465,6 @@ export type Database = {
             referencedRelation: "registros_ponto"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_banco_horas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_banco_horas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_banco_horas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_banco_horas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_banco_horas_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       banco_horas_config: {
@@ -1669,13 +1504,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "banco_horas_config_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_banco_horas_config_empresa"
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
@@ -1840,41 +1668,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_batidas_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_batidas_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_batidas_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_batidas_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_batidas_ponto_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       beneficiarios_plano: {
@@ -1956,34 +1749,6 @@ export type Database = {
             referencedRelation: "planos_saude"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_beneficiarios_plano_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_beneficiarios_plano_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_beneficiarios_plano_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_beneficiarios_plano_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
         ]
       }
       beneficiarios_seguro: {
@@ -2055,34 +1820,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "seguros_vida"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_beneficiarios_seguro_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_beneficiarios_seguro_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_beneficiarios_seguro_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_beneficiarios_seguro_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
           },
         ]
       }
@@ -2427,41 +2164,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_beneficios_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_beneficios_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_beneficios_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_beneficios_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_beneficios_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       beneficios_colaborador: {
@@ -2557,34 +2259,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "tipos_beneficio"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_beneficios_colaborador_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_beneficios_colaborador_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_beneficios_colaborador_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_beneficios_colaborador_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
           },
         ]
       }
@@ -2769,6 +2443,7 @@ export type Database = {
           ip_address: string
           permanent: boolean | null
           reason: string | null
+          updated_at: string
         }
         Insert: {
           blocked_at?: string | null
@@ -2779,6 +2454,7 @@ export type Database = {
           ip_address: string
           permanent?: boolean | null
           reason?: string | null
+          updated_at?: string
         }
         Update: {
           blocked_at?: string | null
@@ -2789,6 +2465,7 @@ export type Database = {
           ip_address?: string
           permanent?: boolean | null
           reason?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -2840,13 +2517,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_campos_customizados_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       canal_etica: {
@@ -2892,13 +2562,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "canal_etica_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_canal_etica_empresa"
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
@@ -2974,7 +2637,7 @@ export type Database = {
           created_at: string
           data_entrevista: string | null
           data_proxima_etapa: string | null
-          empresa_id: string | null
+          empresa_id: string
           entrevistador: string | null
           etapa: string | null
           feedback: string | null
@@ -2992,7 +2655,7 @@ export type Database = {
           created_at?: string
           data_entrevista?: string | null
           data_proxima_etapa?: string | null
-          empresa_id?: string | null
+          empresa_id: string
           entrevistador?: string | null
           etapa?: string | null
           feedback?: string | null
@@ -3010,7 +2673,7 @@ export type Database = {
           created_at?: string
           data_entrevista?: string | null
           data_proxima_etapa?: string | null
-          empresa_id?: string | null
+          empresa_id?: string
           entrevistador?: string | null
           etapa?: string | null
           feedback?: string | null
@@ -3146,13 +2809,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_cargos_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       catalogo_cursos: {
@@ -3201,13 +2857,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "catalogo_cursos_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_catalogo_cursos_empresa"
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
@@ -3325,13 +2974,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_centros_custo_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       certificados_digitais: {
@@ -3427,13 +3069,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "ciclos_avaliacao_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ciclos_avaliacao_empresa"
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
@@ -3934,34 +3569,6 @@ export type Database = {
             referencedRelation: "vw_passivo_trabalhista_consolidado"
             referencedColumns: ["colaborador_id"]
           },
-          {
-            foreignKeyName: "fk_colaborador_beneficios_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_colaborador_beneficios_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_colaborador_beneficios_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_colaborador_beneficios_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
         ]
       }
       colaboradores: {
@@ -3976,6 +3583,7 @@ export type Database = {
           bitrix_ultima_sync: string | null
           cargo: string
           cargo_confianca: boolean | null
+          cargo_id: string | null
           categoria_trabalhador: string | null
           categoria_trabalhador_id: number | null
           cbo: string | null
@@ -4111,6 +3719,7 @@ export type Database = {
           uniforme_calcado: string | null
           uniforme_camiseta: string | null
           updated_at: string
+          user_id: string | null
           version: number | null
           whatsapp: string | null
         }
@@ -4125,6 +3734,7 @@ export type Database = {
           bitrix_ultima_sync?: string | null
           cargo: string
           cargo_confianca?: boolean | null
+          cargo_id?: string | null
           categoria_trabalhador?: string | null
           categoria_trabalhador_id?: number | null
           cbo?: string | null
@@ -4260,6 +3870,7 @@ export type Database = {
           uniforme_calcado?: string | null
           uniforme_camiseta?: string | null
           updated_at?: string
+          user_id?: string | null
           version?: number | null
           whatsapp?: string | null
         }
@@ -4274,6 +3885,7 @@ export type Database = {
           bitrix_ultima_sync?: string | null
           cargo?: string
           cargo_confianca?: boolean | null
+          cargo_id?: string | null
           categoria_trabalhador?: string | null
           categoria_trabalhador_id?: number | null
           cbo?: string | null
@@ -4409,10 +4021,18 @@ export type Database = {
           uniforme_calcado?: string | null
           uniforme_camiseta?: string | null
           updated_at?: string
+          user_id?: string | null
           version?: number | null
           whatsapp?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "colaboradores_cargo_id_fkey"
+            columns: ["cargo_id"]
+            isOneToOne: false
+            referencedRelation: "cargos"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "colaboradores_categoria_trabalhador_id_fkey"
             columns: ["categoria_trabalhador_id"]
@@ -4519,13 +4139,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "fk_colaboradores_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "fk_colaboradores_local_trabalho"
             columns: ["local_trabalho_id"]
             isOneToOne: false
@@ -4617,13 +4230,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_competencias_matriz_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       comunicados: {
@@ -4669,13 +4275,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "comunicados_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_comunicados_empresa"
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
@@ -4935,13 +4534,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "configuracoes_intervalo_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_configuracoes_intervalo_empresa"
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
@@ -5303,41 +4895,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_contas_bancarias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_contas_bancarias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_contas_bancarias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_contas_bancarias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_contas_bancarias_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       contatos_emergencia: {
@@ -5415,34 +4972,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "relacionamentos_contato_emergencia"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_contatos_emergencia_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_contatos_emergencia_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_contatos_emergencia_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_contatos_emergencia_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
           },
         ]
       }
@@ -5758,41 +5287,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_contratos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_contratos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_contratos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_contratos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_contratos_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       contratos_gerados: {
@@ -5945,6 +5439,7 @@ export type Database = {
           longitude: number | null
           metodo: string | null
           tipo: string
+          updated_at: string
         }
         Insert: {
           area?: string | null
@@ -5959,6 +5454,7 @@ export type Database = {
           longitude?: number | null
           metodo?: string | null
           tipo: string
+          updated_at?: string
         }
         Update: {
           area?: string | null
@@ -5973,6 +5469,7 @@ export type Database = {
           longitude?: number | null
           metodo?: string | null
           tipo?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -6005,41 +5502,6 @@ export type Database = {
           },
           {
             foreignKeyName: "controle_acesso_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_controle_acesso_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_controle_acesso_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_controle_acesso_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_controle_acesso_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_controle_acesso_empresa"
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
@@ -6078,13 +5540,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "convenios_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_convenios_empresa"
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
@@ -6155,34 +5610,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "convenios"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_convenios_colaboradores_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_convenios_colaboradores_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_convenios_colaboradores_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_convenios_colaboradores_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
           },
         ]
       }
@@ -6377,41 +5804,6 @@ export type Database = {
             referencedRelation: "vw_passivo_trabalhista_consolidado"
             referencedColumns: ["colaborador_id"]
           },
-          {
-            foreignKeyName: "fk_dados_estagiario_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_dados_estagiario_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_dados_estagiario_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_dados_estagiario_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_dados_estagiario_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       dados_estrangeiro: {
@@ -6542,34 +5934,6 @@ export type Database = {
             referencedRelation: "tipos_visto"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_dados_estrangeiro_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: true
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_dados_estrangeiro_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: true
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_dados_estrangeiro_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: true
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_dados_estrangeiro_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: true
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
         ]
       }
       dctfweb_declaracoes: {
@@ -6615,13 +5979,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "dctfweb_declaracoes_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_dctfweb_declaracoes_empresa"
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
@@ -6690,34 +6047,6 @@ export type Database = {
           },
           {
             foreignKeyName: "deficiencias_colaborador_id_fkey"
-            columns: ["colaborador_id"]
-            isOneToOne: true
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_deficiencias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: true
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_deficiencias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: true
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_deficiencias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: true
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_deficiencias_colaborador"
             columns: ["colaborador_id"]
             isOneToOne: true
             referencedRelation: "vw_passivo_trabalhista_consolidado"
@@ -6804,13 +6133,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "vw_passivo_trabalhista_consolidado"
             referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_departamentos_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
           },
         ]
       }
@@ -6923,34 +6245,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "relacionamentos_dependentes"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_dependentes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_dependentes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_dependentes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_dependentes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
           },
         ]
       }
@@ -7218,41 +6512,6 @@ export type Database = {
             referencedRelation: "tipos_desligamento"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_desligamentos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_desligamentos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_desligamentos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_desligamentos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_desligamentos_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       despesas: {
@@ -7362,41 +6621,6 @@ export type Database = {
             referencedRelation: "folhas_pagamento"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_despesas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_despesas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_despesas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_despesas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_despesas_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       despesas_aprovacoes_log: {
@@ -7491,13 +6715,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_documento_templates_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       documentos: {
@@ -7569,34 +6786,6 @@ export type Database = {
             referencedRelation: "vw_passivo_trabalhista_consolidado"
             referencedColumns: ["colaborador_id"]
           },
-          {
-            foreignKeyName: "fk_documentos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_documentos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_documentos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_documentos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
         ]
       }
       documentos_admissao: {
@@ -7608,6 +6797,7 @@ export type Database = {
           observacoes: string | null
           tamanho_bytes: number | null
           tipo: string
+          updated_at: string
           url: string
           validado: boolean | null
           validado_em: string | null
@@ -7621,6 +6811,7 @@ export type Database = {
           observacoes?: string | null
           tamanho_bytes?: number | null
           tipo: string
+          updated_at?: string
           url: string
           validado?: boolean | null
           validado_em?: string | null
@@ -7634,6 +6825,7 @@ export type Database = {
           observacoes?: string | null
           tamanho_bytes?: number | null
           tipo?: string
+          updated_at?: string
           url?: string
           validado?: boolean | null
           validado_em?: string | null
@@ -7655,27 +6847,39 @@ export type Database = {
           created_at: string
           created_by: string | null
           id: string
+          metadados: Json
           nome_arquivo: string
           tipo: string
           url: string
+          validado: boolean
+          validado_em: string | null
+          validado_por: string | null
         }
         Insert: {
           afastamento_id: string
           created_at?: string
           created_by?: string | null
           id?: string
+          metadados?: Json
           nome_arquivo: string
           tipo: string
           url: string
+          validado?: boolean
+          validado_em?: string | null
+          validado_por?: string | null
         }
         Update: {
           afastamento_id?: string
           created_at?: string
           created_by?: string | null
           id?: string
+          metadados?: Json
           nome_arquivo?: string
           tipo?: string
           url?: string
+          validado?: boolean
+          validado_em?: string | null
+          validado_por?: string | null
         }
         Relationships: [
           {
@@ -7703,6 +6907,7 @@ export type Database = {
           status: string
           tipo_documento: string
           titulo: string
+          updated_at: string
           validade_assinatura: string | null
         }
         Insert: {
@@ -7720,6 +6925,7 @@ export type Database = {
           status?: string
           tipo_documento: string
           titulo: string
+          updated_at?: string
           validade_assinatura?: string | null
         }
         Update: {
@@ -7737,6 +6943,7 @@ export type Database = {
           status?: string
           tipo_documento?: string
           titulo?: string
+          updated_at?: string
           validade_assinatura?: string | null
         }
         Relationships: [
@@ -7775,13 +6982,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_documentos_assinatura_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       documentos_colaborador: {
@@ -7794,6 +6994,7 @@ export type Database = {
           nome_arquivo: string
           tamanho_bytes: number | null
           tipo: string
+          updated_at: string
           url: string
           verificado_ia: boolean | null
         }
@@ -7806,6 +7007,7 @@ export type Database = {
           nome_arquivo: string
           tamanho_bytes?: number | null
           tipo: string
+          updated_at?: string
           url: string
           verificado_ia?: boolean | null
         }
@@ -7818,6 +7020,7 @@ export type Database = {
           nome_arquivo?: string
           tamanho_bytes?: number | null
           tipo?: string
+          updated_at?: string
           url?: string
           verificado_ia?: boolean | null
         }
@@ -7845,34 +7048,6 @@ export type Database = {
           },
           {
             foreignKeyName: "documentos_colaborador_colaborador_id_fkey"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_documentos_colaborador_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_documentos_colaborador_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_documentos_colaborador_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_documentos_colaborador_colaborador"
             columns: ["colaborador_id"]
             isOneToOne: false
             referencedRelation: "vw_passivo_trabalhista_consolidado"
@@ -7991,34 +7166,6 @@ export type Database = {
           },
           {
             foreignKeyName: "documentos_pessoais_arquivos_colaborador_id_fkey"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_documentos_pessoais_arquivos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_documentos_pessoais_arquivos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_documentos_pessoais_arquivos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_documentos_pessoais_arquivos_colaborador"
             columns: ["colaborador_id"]
             isOneToOne: false
             referencedRelation: "vw_passivo_trabalhista_consolidado"
@@ -8260,13 +7407,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_epis_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       epis_entregas: {
@@ -8356,41 +7496,6 @@ export type Database = {
             columns: ["epi_id"]
             isOneToOne: false
             referencedRelation: "epis"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_epis_entregas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_epis_entregas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_epis_entregas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_epis_entregas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_epis_entregas_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
         ]
@@ -8627,13 +7732,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_escalas_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       escalas_trabalho: {
@@ -8647,6 +7745,7 @@ export type Database = {
           observacoes: string | null
           status: string | null
           turno_id: string
+          updated_at: string
         }
         Insert: {
           colaborador_id: string
@@ -8658,6 +7757,7 @@ export type Database = {
           observacoes?: string | null
           status?: string | null
           turno_id: string
+          updated_at?: string
         }
         Update: {
           colaborador_id?: string
@@ -8669,6 +7769,7 @@ export type Database = {
           observacoes?: string | null
           status?: string | null
           turno_id?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -8711,41 +7812,6 @@ export type Database = {
             columns: ["turno_id"]
             isOneToOne: false
             referencedRelation: "turnos"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_escalas_trabalho_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_escalas_trabalho_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_escalas_trabalho_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_escalas_trabalho_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_escalas_trabalho_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
         ]
@@ -8831,13 +7897,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_esocial_eventos_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       esocial_lotes: {
@@ -8877,13 +7936,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "esocial_lotes_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_esocial_lotes_empresa"
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
@@ -9067,34 +8119,6 @@ export type Database = {
             referencedRelation: "rubricas_folha"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_eventos_variaveis_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_eventos_variaveis_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_eventos_variaveis_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_eventos_variaveis_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
         ]
       }
       exames: {
@@ -9158,34 +8182,6 @@ export type Database = {
           },
           {
             foreignKeyName: "exames_colaborador_id_fkey"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_exames_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_exames_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_exames_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_exames_colaborador"
             columns: ["colaborador_id"]
             isOneToOne: false
             referencedRelation: "vw_passivo_trabalhista_consolidado"
@@ -9383,41 +8379,6 @@ export type Database = {
             referencedRelation: "motivos_afastamento"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_faltas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_faltas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_faltas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_faltas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_faltas_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       feedbacks_360: {
@@ -9543,13 +8504,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_feedbacks_360_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       feriados: {
@@ -9586,13 +8540,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "feriados_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_feriados_empresa"
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
@@ -9852,41 +8799,6 @@ export type Database = {
             columns: ["periodo_aquisitivo_id"]
             isOneToOne: false
             referencedRelation: "periodos_aquisitivos"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
         ]
@@ -10214,13 +9126,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_ferias_coletivas_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       ferias_programacao: {
@@ -10431,6 +9336,7 @@ export type Database = {
           id: string
           observacoes: string | null
           status: string | null
+          updated_at: string
         }
         Insert: {
           abono_pecuniario?: boolean | null
@@ -10445,6 +9351,7 @@ export type Database = {
           id?: string
           observacoes?: string | null
           status?: string | null
+          updated_at?: string
         }
         Update: {
           abono_pecuniario?: boolean | null
@@ -10459,6 +9366,7 @@ export type Database = {
           id?: string
           observacoes?: string | null
           status?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -10491,41 +9399,6 @@ export type Database = {
           },
           {
             foreignKeyName: "ferias_solicitacoes_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_solicitacoes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_solicitacoes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_solicitacoes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_solicitacoes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_solicitacoes_empresa"
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
@@ -10723,7 +9596,7 @@ export type Database = {
           created_at: string
           criado_por: string | null
           detalhes: Json | null
-          folha_id: string | null
+          folha_id: string
           id: string
           mensagem: string
           severidade: string
@@ -10734,7 +9607,7 @@ export type Database = {
           created_at?: string
           criado_por?: string | null
           detalhes?: Json | null
-          folha_id?: string | null
+          folha_id: string
           id?: string
           mensagem: string
           severidade?: string
@@ -10745,7 +9618,7 @@ export type Database = {
           created_at?: string
           criado_por?: string | null
           detalhes?: Json | null
-          folha_id?: string | null
+          folha_id?: string
           id?: string
           mensagem?: string
           severidade?: string
@@ -11028,13 +9901,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_folhas_pagamento_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "folhas_pagamento_empresa_id_fkey"
             columns: ["empresa_id"]
             isOneToOne: false
@@ -11078,34 +9944,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_formacoes_academicas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_formacoes_academicas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_formacoes_academicas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_formacoes_academicas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
           {
             foreignKeyName: "formacoes_academicas_colaborador_id_fkey"
             columns: ["colaborador_id"]
@@ -11307,13 +10145,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_guias_fgts_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "guias_fgts_empresa_id_fkey"
             columns: ["empresa_id"]
             isOneToOne: false
@@ -11414,13 +10245,6 @@ export type Database = {
           valor_total?: number | null
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_guias_inss_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "guias_inss_empresa_id_fkey"
             columns: ["empresa_id"]
@@ -11544,34 +10368,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_historico_cargo_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_historico_cargo_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_historico_cargo_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_historico_cargo_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
             foreignKeyName: "historico_cargo_colaborador_id_fkey"
             columns: ["colaborador_id"]
             isOneToOne: false
@@ -11654,41 +10450,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_historico_contratos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_historico_contratos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_historico_contratos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_historico_contratos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_historico_contratos_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "historico_contratos_colaborador_id_fkey"
             columns: ["colaborador_id"]
@@ -11923,41 +10684,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_historico_salarial_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_historico_salarial_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_historico_salarial_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_historico_salarial_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_historico_salarial_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "historico_salarial_colaborador_id_fkey"
             columns: ["colaborador_id"]
             isOneToOne: false
@@ -12143,34 +10869,6 @@ export type Database = {
           valor_irrf?: number | null
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_holerites_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_holerites_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_holerites_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_holerites_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
           {
             foreignKeyName: "holerites_colaborador_id_fkey"
             columns: ["colaborador_id"]
@@ -12391,41 +11089,6 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_inscricoes_cursos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_inscricoes_cursos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_inscricoes_cursos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_inscricoes_cursos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_inscricoes_cursos_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "inscricoes_cursos_colaborador_id_fkey"
             columns: ["colaborador_id"]
@@ -12684,13 +11347,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_jornadas_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "jornadas_empresa_id_fkey"
             columns: ["empresa_id"]
             isOneToOne: false
@@ -12913,41 +11569,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_lgpd_consentimentos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_lgpd_consentimentos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_lgpd_consentimentos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_lgpd_consentimentos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_lgpd_consentimentos_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "lgpd_consentimentos_colaborador_id_fkey"
             columns: ["colaborador_id"]
             isOneToOne: false
@@ -13044,6 +11665,39 @@ export type Database = {
         }
         Relationships: []
       }
+      lgpd_retencao_logs: {
+        Row: {
+          ativo: boolean
+          coluna_data: string
+          created_at: string
+          dias: number
+          id: string
+          observacao: string | null
+          tabela: string
+          updated_at: string
+        }
+        Insert: {
+          ativo?: boolean
+          coluna_data: string
+          created_at?: string
+          dias: number
+          id?: string
+          observacao?: string | null
+          tabela: string
+          updated_at?: string
+        }
+        Update: {
+          ativo?: boolean
+          coluna_data?: string
+          created_at?: string
+          dias?: number
+          id?: string
+          observacao?: string | null
+          tabela?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       lgpd_solicitacoes: {
         Row: {
           colaborador_id: string | null
@@ -13088,41 +11742,6 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_lgpd_solicitacoes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_lgpd_solicitacoes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_lgpd_solicitacoes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_lgpd_solicitacoes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_lgpd_solicitacoes_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "lgpd_solicitacoes_colaborador_id_fkey"
             columns: ["colaborador_id"]
@@ -13249,13 +11868,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_locais_trabalho_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "locais_trabalho_empresa_id_fkey"
             columns: ["empresa_id"]
             isOneToOne: false
@@ -13266,21 +11878,21 @@ export type Database = {
       }
       log_envio_relatorios: {
         Row: {
-          agendamento_id: string | null
+          agendamento_id: string
           created_at: string
           id: string
           mensagem: string | null
           status: string
         }
         Insert: {
-          agendamento_id?: string | null
+          agendamento_id: string
           created_at?: string
           id?: string
           mensagem?: string | null
           status: string
         }
         Update: {
-          agendamento_id?: string | null
+          agendamento_id?: string
           created_at?: string
           id?: string
           mensagem?: string | null
@@ -13555,41 +12167,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_lotacoes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_lotacoes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_lotacoes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_lotacoes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_lotacoes_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "lotacoes_colaborador_id_fkey"
             columns: ["colaborador_id"]
             isOneToOne: false
@@ -13640,7 +12217,7 @@ export type Database = {
           ip_address: string | null
           medida_id: string
           motivo_recusa: string | null
-          token: string
+          token_hash: string
           used_at: string | null
           user_agent: string | null
         }
@@ -13657,7 +12234,7 @@ export type Database = {
           ip_address?: string | null
           medida_id: string
           motivo_recusa?: string | null
-          token: string
+          token_hash: string
           used_at?: string | null
           user_agent?: string | null
         }
@@ -13674,7 +12251,7 @@ export type Database = {
           ip_address?: string | null
           medida_id?: string
           motivo_recusa?: string | null
-          token?: string
+          token_hash?: string
           used_at?: string | null
           user_agent?: string | null
         }
@@ -13870,41 +12447,6 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_medidas_disciplinares_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_medidas_disciplinares_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_medidas_disciplinares_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_medidas_disciplinares_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_medidas_disciplinares_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "medidas_disciplinares_colaborador_id_fkey"
             columns: ["colaborador_id"]
@@ -14222,41 +12764,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_metas_okrs_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_metas_okrs_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_metas_okrs_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_metas_okrs_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_metas_okrs_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "metas_okrs_ciclo_id_fkey"
             columns: ["ciclo_id"]
             isOneToOne: false
@@ -14378,6 +12885,7 @@ export type Database = {
           mensagem: string
           tipo: string
           titulo: string
+          updated_at: string
           user_id: string | null
         }
         Insert: {
@@ -14391,6 +12899,7 @@ export type Database = {
           mensagem: string
           tipo: string
           titulo: string
+          updated_at?: string
           user_id?: string | null
         }
         Update: {
@@ -14404,16 +12913,10 @@ export type Database = {
           mensagem?: string
           tipo?: string
           titulo?: string
+          updated_at?: string
           user_id?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_notificacoes_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "notificacoes_empresa_id_fkey"
             columns: ["empresa_id"]
@@ -14508,34 +13011,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_onboarding_colaborador_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_onboarding_colaborador_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_onboarding_colaborador_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_onboarding_colaborador_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
           {
             foreignKeyName: "onboarding_colaborador_colaborador_id_fkey"
             columns: ["colaborador_id"]
@@ -14668,6 +13143,7 @@ export type Database = {
           ordem: number
           template_tarefa_id: string | null
           titulo: string
+          updated_at: string
         }
         Insert: {
           categoria?: string
@@ -14684,6 +13160,7 @@ export type Database = {
           ordem?: number
           template_tarefa_id?: string | null
           titulo: string
+          updated_at?: string
         }
         Update: {
           categoria?: string
@@ -14700,6 +13177,7 @@ export type Database = {
           ordem?: number
           template_tarefa_id?: string | null
           titulo?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -14781,6 +13259,7 @@ export type Database = {
           empresa_id: string | null
           id: string
           nome: string
+          updated_at: string
         }
         Insert: {
           ativo?: boolean | null
@@ -14790,6 +13269,7 @@ export type Database = {
           empresa_id?: string | null
           id?: string
           nome: string
+          updated_at?: string
         }
         Update: {
           ativo?: boolean | null
@@ -14799,15 +13279,9 @@ export type Database = {
           empresa_id?: string | null
           id?: string
           nome?: string
+          updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_onboarding_templates_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "onboarding_templates_empresa_id_fkey"
             columns: ["empresa_id"]
@@ -15068,6 +13542,282 @@ export type Database = {
         }
         Relationships: []
       }
+      pcs_avaliacoes_cargo: {
+        Row: {
+          avaliado_em: string
+          avaliado_por: string | null
+          cargo_id: string
+          created_at: string
+          id: string
+          justificativa: string | null
+          plano_id: string
+          pontos_total: number
+          pontuacoes: Json
+          updated_at: string
+        }
+        Insert: {
+          avaliado_em?: string
+          avaliado_por?: string | null
+          cargo_id: string
+          created_at?: string
+          id?: string
+          justificativa?: string | null
+          plano_id: string
+          pontos_total?: number
+          pontuacoes?: Json
+          updated_at?: string
+        }
+        Update: {
+          avaliado_em?: string
+          avaliado_por?: string | null
+          cargo_id?: string
+          created_at?: string
+          id?: string
+          justificativa?: string | null
+          plano_id?: string
+          pontos_total?: number
+          pontuacoes?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pcs_avaliacoes_cargo_cargo_id_fkey"
+            columns: ["cargo_id"]
+            isOneToOne: false
+            referencedRelation: "cargos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pcs_avaliacoes_cargo_plano_id_fkey"
+            columns: ["plano_id"]
+            isOneToOne: false
+            referencedRelation: "pcs_planos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pcs_fatores: {
+        Row: {
+          created_at: string
+          descricao: string | null
+          graus: Json
+          id: string
+          nome: string
+          ordem: number
+          peso: number
+          plano_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          descricao?: string | null
+          graus?: Json
+          id?: string
+          nome: string
+          ordem?: number
+          peso?: number
+          plano_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          descricao?: string | null
+          graus?: Json
+          id?: string
+          nome?: string
+          ordem?: number
+          peso?: number
+          plano_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pcs_fatores_plano_id_fkey"
+            columns: ["plano_id"]
+            isOneToOne: false
+            referencedRelation: "pcs_planos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pcs_grades: {
+        Row: {
+          created_at: string
+          id: string
+          nome: string
+          ordem: number
+          plano_id: string
+          pontos_max: number
+          pontos_min: number
+          salario_max: number
+          salario_medio: number
+          salario_min: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          nome: string
+          ordem: number
+          plano_id: string
+          pontos_max: number
+          pontos_min: number
+          salario_max: number
+          salario_medio: number
+          salario_min: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          nome?: string
+          ordem?: number
+          plano_id?: string
+          pontos_max?: number
+          pontos_min?: number
+          salario_max?: number
+          salario_medio?: number
+          salario_min?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pcs_grades_plano_id_fkey"
+            columns: ["plano_id"]
+            isOneToOne: false
+            referencedRelation: "pcs_planos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pcs_pesquisa_salarial: {
+        Row: {
+          amostra: number | null
+          cargo_id: string | null
+          cargo_referencia: string
+          created_at: string
+          data_referencia: string
+          empresa_id: string
+          fonte: string
+          id: string
+          p25: number | null
+          p50: number | null
+          p75: number | null
+          p90: number | null
+          regiao: string | null
+          updated_at: string
+        }
+        Insert: {
+          amostra?: number | null
+          cargo_id?: string | null
+          cargo_referencia: string
+          created_at?: string
+          data_referencia: string
+          empresa_id: string
+          fonte: string
+          id?: string
+          p25?: number | null
+          p50?: number | null
+          p75?: number | null
+          p90?: number | null
+          regiao?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amostra?: number | null
+          cargo_id?: string | null
+          cargo_referencia?: string
+          created_at?: string
+          data_referencia?: string
+          empresa_id?: string
+          fonte?: string
+          id?: string
+          p25?: number | null
+          p50?: number | null
+          p75?: number | null
+          p90?: number | null
+          regiao?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pcs_pesquisa_salarial_cargo_id_fkey"
+            columns: ["cargo_id"]
+            isOneToOne: false
+            referencedRelation: "cargos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pcs_pesquisa_salarial_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pcs_planos: {
+        Row: {
+          amplitude_pct: number
+          created_at: string
+          created_by: string | null
+          deleted_at: string | null
+          empresa_id: string
+          id: string
+          nome: string
+          num_steps: number
+          observacoes: string | null
+          overlap_pct: number
+          status: string
+          updated_at: string
+          versao: number
+          vigencia_fim: string | null
+          vigencia_inicio: string | null
+        }
+        Insert: {
+          amplitude_pct?: number
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          empresa_id: string
+          id?: string
+          nome: string
+          num_steps?: number
+          observacoes?: string | null
+          overlap_pct?: number
+          status?: string
+          updated_at?: string
+          versao?: number
+          vigencia_fim?: string | null
+          vigencia_inicio?: string | null
+        }
+        Update: {
+          amplitude_pct?: number
+          created_at?: string
+          created_by?: string | null
+          deleted_at?: string | null
+          empresa_id?: string
+          id?: string
+          nome?: string
+          num_steps?: number
+          observacoes?: string | null
+          overlap_pct?: number
+          status?: string
+          updated_at?: string
+          versao?: number
+          vigencia_fim?: string | null
+          vigencia_inicio?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pcs_planos_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pdi_plano_desenvolvimento: {
         Row: {
           acao_desenvolvimento: string | null
@@ -15191,41 +13941,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_pdis_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_pdis_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_pdis_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_pdis_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_pdis_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "pdis_colaborador_id_fkey"
             columns: ["colaborador_id"]
             isOneToOne: false
@@ -15322,6 +14037,7 @@ export type Database = {
           conta: string | null
           cpf_beneficiario: string | null
           created_at: string
+          empresa_id: string | null
           id: string
           percentual: number | null
           tipo: string | null
@@ -15336,6 +14052,7 @@ export type Database = {
           conta?: string | null
           cpf_beneficiario?: string | null
           created_at?: string
+          empresa_id?: string | null
           id?: string
           percentual?: number | null
           tipo?: string | null
@@ -15350,40 +14067,13 @@ export type Database = {
           conta?: string | null
           cpf_beneficiario?: string | null
           created_at?: string
+          empresa_id?: string | null
           id?: string
           percentual?: number | null
           tipo?: string | null
           valor_fixo?: number | null
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_pensoes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_pensoes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_pensoes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_pensoes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
           {
             foreignKeyName: "pensoes_colaborador_id_fkey"
             columns: ["colaborador_id"]
@@ -15465,34 +14155,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_periodos_aquisitivos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_periodos_aquisitivos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_periodos_aquisitivos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_periodos_aquisitivos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
             foreignKeyName: "periodos_aquisitivos_colaborador_id_fkey"
             columns: ["colaborador_id"]
             isOneToOne: false
@@ -15564,34 +14226,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_periodos_experiencia_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_periodos_experiencia_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_periodos_experiencia_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_periodos_experiencia_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
             foreignKeyName: "periodos_experiencia_colaborador_id_fkey"
             columns: ["colaborador_id"]
             isOneToOne: false
@@ -15631,6 +14265,7 @@ export type Database = {
           fechado_por: string | null
           id: string
           status: string | null
+          updated_at: string
         }
         Insert: {
           competencia: string
@@ -15641,6 +14276,7 @@ export type Database = {
           fechado_por?: string | null
           id?: string
           status?: string | null
+          updated_at?: string
         }
         Update: {
           competencia?: string
@@ -15651,6 +14287,7 @@ export type Database = {
           fechado_por?: string | null
           id?: string
           status?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -15835,13 +14472,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_pesquisas_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "pesquisas_empresa_id_fkey"
             columns: ["empresa_id"]
             isOneToOne: false
@@ -15920,34 +14550,6 @@ export type Database = {
           valor_texto?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_pesquisas_respostas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_pesquisas_respostas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_pesquisas_respostas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_pesquisas_respostas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
           {
             foreignKeyName: "pesquisas_respostas_colaborador_id_fkey"
             columns: ["colaborador_id"]
@@ -16166,6 +14768,7 @@ export type Database = {
           percentual_colaborador: number | null
           percentual_empresa: number | null
           tipo_plano: string | null
+          updated_at: string
           valor_mensal: number | null
         }
         Insert: {
@@ -16184,6 +14787,7 @@ export type Database = {
           percentual_colaborador?: number | null
           percentual_empresa?: number | null
           tipo_plano?: string | null
+          updated_at?: string
           valor_mensal?: number | null
         }
         Update: {
@@ -16202,44 +14806,10 @@ export type Database = {
           percentual_colaborador?: number | null
           percentual_empresa?: number | null
           tipo_plano?: string | null
+          updated_at?: string
           valor_mensal?: number | null
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_planos_saude_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_planos_saude_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_planos_saude_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_planos_saude_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_planos_saude_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "planos_saude_colaborador_id_fkey"
             columns: ["colaborador_id"]
@@ -17161,34 +15731,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_promocoes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_promocoes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_promocoes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_promocoes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
             foreignKeyName: "promocoes_cargo_anterior_id_fkey"
             columns: ["cargo_anterior_id"]
             isOneToOne: false
@@ -17712,34 +16254,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_recargas_vale_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_recargas_vale_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_recargas_vale_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_recargas_vale_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
             foreignKeyName: "recargas_vale_colaborador_id_fkey"
             columns: ["colaborador_id"]
             isOneToOne: false
@@ -17832,7 +16346,7 @@ export type Database = {
       recrutamento_anotacoes: {
         Row: {
           anotacao: string
-          candidatura_id: string | null
+          candidatura_id: string
           created_at: string
           id: string
           privada: boolean | null
@@ -17840,7 +16354,7 @@ export type Database = {
         }
         Insert: {
           anotacao: string
-          candidatura_id?: string | null
+          candidatura_id: string
           created_at?: string
           id?: string
           privada?: boolean | null
@@ -17848,7 +16362,7 @@ export type Database = {
         }
         Update: {
           anotacao?: string
-          candidatura_id?: string | null
+          candidatura_id?: string
           created_at?: string
           id?: string
           privada?: boolean | null
@@ -17866,7 +16380,7 @@ export type Database = {
       }
       recrutamento_entrevistas: {
         Row: {
-          candidatura_id: string | null
+          candidatura_id: string
           created_at: string
           data_hora: string
           entrevistador_id: string | null
@@ -17879,7 +16393,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          candidatura_id?: string | null
+          candidatura_id: string
           created_at?: string
           data_hora: string
           entrevistador_id?: string | null
@@ -17892,7 +16406,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          candidatura_id?: string | null
+          candidatura_id?: string
           created_at?: string
           data_hora?: string
           entrevistador_id?: string | null
@@ -17916,7 +16430,7 @@ export type Database = {
       }
       recrutamento_testes: {
         Row: {
-          candidatura_id: string | null
+          candidatura_id: string
           comentarios: string | null
           created_at: string
           data_entrega: string | null
@@ -17929,7 +16443,7 @@ export type Database = {
           url_teste: string | null
         }
         Insert: {
-          candidatura_id?: string | null
+          candidatura_id: string
           comentarios?: string | null
           created_at?: string
           data_entrega?: string | null
@@ -17942,7 +16456,7 @@ export type Database = {
           url_teste?: string | null
         }
         Update: {
-          candidatura_id?: string | null
+          candidatura_id?: string
           comentarios?: string | null
           created_at?: string
           data_entrega?: string | null
@@ -18102,41 +16616,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_registros_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_registros_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_registros_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_registros_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_registros_ponto_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "registros_ponto_colaborador_id_fkey"
             columns: ["colaborador_id"]
             isOneToOne: false
@@ -18275,13 +16754,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_relatorios_agendados_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "relatorios_agendados_empresa_id_fkey"
             columns: ["empresa_id"]
             isOneToOne: false
@@ -18330,6 +16802,7 @@ export type Database = {
           incide_irrf: boolean | null
           natureza_rubrica: string | null
           tipo: Database["public"]["Enums"]["tipo_evento_folha"]
+          updated_at: string
         }
         Insert: {
           ativo?: boolean | null
@@ -18346,6 +16819,7 @@ export type Database = {
           incide_irrf?: boolean | null
           natureza_rubrica?: string | null
           tipo: Database["public"]["Enums"]["tipo_evento_folha"]
+          updated_at?: string
         }
         Update: {
           ativo?: boolean | null
@@ -18362,6 +16836,7 @@ export type Database = {
           incide_irrf?: boolean | null
           natureza_rubrica?: string | null
           tipo?: Database["public"]["Enums"]["tipo_evento_folha"]
+          updated_at?: string
         }
         Relationships: [
           {
@@ -18403,6 +16878,66 @@ export type Database = {
           name?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      sec_policy_regressions: {
+        Row: {
+          cmd: string | null
+          created_at: string
+          id: string
+          motivo: string
+          policy_name: string
+          scan_at: string
+          tabela: string
+        }
+        Insert: {
+          cmd?: string | null
+          created_at?: string
+          id?: string
+          motivo: string
+          policy_name: string
+          scan_at?: string
+          tabela: string
+        }
+        Update: {
+          cmd?: string | null
+          created_at?: string
+          id?: string
+          motivo?: string
+          policy_name?: string
+          scan_at?: string
+          tabela?: string
+        }
+        Relationships: []
+      }
+      sec_seal_events: {
+        Row: {
+          ator: string | null
+          created_at: string
+          detalhe: string | null
+          evento: string
+          id: string
+          registro_id: string | null
+          tabela: string
+        }
+        Insert: {
+          ator?: string | null
+          created_at?: string
+          detalhe?: string | null
+          evento: string
+          id?: string
+          registro_id?: string | null
+          tabela: string
+        }
+        Update: {
+          ator?: string | null
+          created_at?: string
+          detalhe?: string | null
+          evento?: string
+          id?: string
+          registro_id?: string | null
+          tabela?: string
         }
         Relationships: []
       }
@@ -18487,13 +17022,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_sefip_arquivos_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "sefip_arquivos_empresa_id_fkey"
             columns: ["empresa_id"]
             isOneToOne: false
@@ -18528,34 +17056,6 @@ export type Database = {
           status?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_seguros_colaboradores_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_seguros_colaboradores_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_seguros_colaboradores_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_seguros_colaboradores_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
           {
             foreignKeyName: "seguros_colaboradores_colaborador_id_fkey"
             columns: ["colaborador_id"]
@@ -18609,6 +17109,7 @@ export type Database = {
           possui_assistencia_funeral: boolean | null
           premio_mensal: number | null
           seguradora: string | null
+          updated_at: string
         }
         Insert: {
           apolice_numero?: string | null
@@ -18625,6 +17126,7 @@ export type Database = {
           possui_assistencia_funeral?: boolean | null
           premio_mensal?: number | null
           seguradora?: string | null
+          updated_at?: string
         }
         Update: {
           apolice_numero?: string | null
@@ -18641,43 +17143,9 @@ export type Database = {
           possui_assistencia_funeral?: boolean | null
           premio_mensal?: number | null
           seguradora?: string | null
+          updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_seguros_vida_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_seguros_vida_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_seguros_vida_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_seguros_vida_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_seguros_vida_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "seguros_vida_colaborador_id_fkey"
             columns: ["colaborador_id"]
@@ -18821,34 +17289,6 @@ export type Database = {
           tipo?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_sinistros_seguro_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_sinistros_seguro_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_sinistros_seguro_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_sinistros_seguro_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
           {
             foreignKeyName: "sinistros_seguro_colaborador_id_fkey"
             columns: ["colaborador_id"]
@@ -19036,41 +17476,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_solicitacoes_hora_extra_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_solicitacoes_hora_extra_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_solicitacoes_hora_extra_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_solicitacoes_hora_extra_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_solicitacoes_hora_extra_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "solicitacoes_hora_extra_colaborador_id_fkey"
             columns: ["colaborador_id"]
@@ -20241,7 +18646,7 @@ export type Database = {
           created_at: string
           departamento_id: string | null
           descricao: string | null
-          empresa_id: string | null
+          empresa_id: string
           id: string
           lider_id: string | null
           nome: string
@@ -20252,7 +18657,7 @@ export type Database = {
           created_at?: string
           departamento_id?: string | null
           descricao?: string | null
-          empresa_id?: string | null
+          empresa_id: string
           id?: string
           lider_id?: string | null
           nome: string
@@ -20263,20 +18668,13 @@ export type Database = {
           created_at?: string
           departamento_id?: string | null
           descricao?: string | null
-          empresa_id?: string | null
+          empresa_id?: string
           id?: string
           lider_id?: string | null
           nome?: string
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_times_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "times_departamento_id_fkey"
             columns: ["departamento_id"]
@@ -20588,34 +18986,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_transferencias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_transferencias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_transferencias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_transferencias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
             foreignKeyName: "transferencias_colaborador_id_fkey"
             columns: ["colaborador_id"]
             isOneToOne: false
@@ -20910,34 +19280,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_treinamento_participantes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_treinamento_participantes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_treinamento_participantes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_treinamento_participantes_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
             foreignKeyName: "treinamento_participantes_colaborador_id_fkey"
             columns: ["colaborador_id"]
             isOneToOne: false
@@ -20983,6 +19325,7 @@ export type Database = {
           empresa_id: string | null
           id: string
           nome: string
+          updated_at: string
         }
         Insert: {
           carga_horaria?: number | null
@@ -20992,6 +19335,7 @@ export type Database = {
           empresa_id?: string | null
           id?: string
           nome: string
+          updated_at?: string
         }
         Update: {
           carga_horaria?: number | null
@@ -21001,15 +19345,9 @@ export type Database = {
           empresa_id?: string | null
           id?: string
           nome?: string
+          updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_treinamentos_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "treinamentos_empresa_id_fkey"
             columns: ["empresa_id"]
@@ -21148,13 +19486,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_trilhas_aprendizado_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "trilhas_aprendizado_empresa_id_fkey"
             columns: ["empresa_id"]
             isOneToOne: false
@@ -21240,13 +19571,6 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_turnos_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "turnos_empresa_id_fkey"
             columns: ["empresa_id"]
@@ -21615,41 +19939,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_vales_alimentacao_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_vales_alimentacao_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_vales_alimentacao_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_vales_alimentacao_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_vales_alimentacao_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "vales_alimentacao_colaborador_id_fkey"
             columns: ["colaborador_id"]
             isOneToOne: false
@@ -21728,34 +20017,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_vales_transporte_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_vales_transporte_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_vales_transporte_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_vales_transporte_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
             foreignKeyName: "vales_transporte_colaborador_id_fkey"
             columns: ["colaborador_id"]
             isOneToOne: false
@@ -21811,34 +20072,6 @@ export type Database = {
           valor?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_valores_campos_customizados_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_valores_campos_customizados_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_valores_campos_customizados_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_valores_campos_customizados_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
           {
             foreignKeyName: "valores_campos_customizados_campo_customizado_id_fkey"
             columns: ["campo_customizado_id"]
@@ -22019,34 +20252,6 @@ export type Database = {
           tipo?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_vinculos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_vinculos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_vinculos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_vinculos_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
           {
             foreignKeyName: "vinculos_colaborador_id_fkey"
             columns: ["colaborador_id"]
@@ -22262,13 +20467,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_webhooks_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "webhooks_empresa_id_fkey"
             columns: ["empresa_id"]
             isOneToOne: false
@@ -22315,13 +20513,6 @@ export type Database = {
           url?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_webhooks_config_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "webhooks_config_empresa_id_fkey"
             columns: ["empresa_id"]
@@ -22601,13 +20792,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "fk_workflows_definicoes_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "workflows_definicoes_empresa_id_fkey"
             columns: ["empresa_id"]
             isOneToOne: false
@@ -22710,13 +20894,6 @@ export type Database = {
           workflow_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_workflows_execucoes_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "workflows_execucoes_empresa_id_fkey"
             columns: ["empresa_id"]
@@ -22824,34 +21001,6 @@ export type Database = {
             referencedRelation: "vw_passivo_trabalhista_consolidado"
             referencedColumns: ["colaborador_id"]
           },
-          {
-            foreignKeyName: "fk_batidas_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_batidas_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_batidas_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_batidas_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
         ]
       }
       pontos_abertos: {
@@ -22867,41 +21016,6 @@ export type Database = {
           saida_2: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_registros_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_registros_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_registros_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_registros_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_registros_ponto_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "registros_ponto_colaborador_id_fkey"
             columns: ["colaborador_id"]
@@ -23297,41 +21411,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_ferias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       v_ferias_alerta_pagamento_d2: {
@@ -23404,41 +21483,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_ferias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       v_ferias_alertas_criticos: {
@@ -23504,41 +21548,6 @@ export type Database = {
           },
           {
             foreignKeyName: "ferias_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_empresa"
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
@@ -23629,41 +21638,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_banco_horas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_banco_horas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_banco_horas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_banco_horas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_banco_horas_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       vw_alertas_rh: {
@@ -23707,13 +21681,6 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_notificacoes_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "notificacoes_empresa_id_fkey"
             columns: ["empresa_id"]
@@ -23762,41 +21729,6 @@ export type Database = {
           },
           {
             foreignKeyName: "colaboradores_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_banco_horas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_banco_horas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_banco_horas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_banco_horas_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_colaboradores_empresa"
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
@@ -23858,41 +21790,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_batidas_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_batidas_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_batidas_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_batidas_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_batidas_ponto_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       vw_batidas_resumo: {
@@ -23942,41 +21839,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_batidas_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_batidas_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_batidas_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_batidas_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_batidas_ponto_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       vw_cadastro_incompleto: {
@@ -24012,13 +21874,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_colaboradores_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       vw_colaboradores_completo: {
@@ -24042,13 +21897,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_colaboradores_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       vw_dashboard_time: {
@@ -24061,13 +21909,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "colaboradores_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_colaboradores_empresa"
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
@@ -24120,41 +21961,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_batidas_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_batidas_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_batidas_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_batidas_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_colaboradores_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       vw_faltas_mensal: {
@@ -24170,13 +21976,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "faltas_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_faltas_empresa"
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
@@ -24230,41 +22029,6 @@ export type Database = {
           },
           {
             foreignKeyName: "ferias_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_ferias_empresa"
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
@@ -24363,41 +22127,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "fk_colaboradores_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_registros_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_registros_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_registros_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_registros_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
             foreignKeyName: "registros_ponto_colaborador_id_fkey"
             columns: ["colaborador_id"]
             isOneToOne: false
@@ -24442,13 +22171,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_faltas_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       vw_kpi_beneficios_custo: {
@@ -24464,13 +22186,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "beneficios_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_beneficios_empresa"
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
@@ -24495,41 +22210,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "empresas"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_colaboradores_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_registros_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_registros_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_registros_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_registros_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
           },
           {
             foreignKeyName: "registros_ponto_colaborador_id_fkey"
@@ -24615,13 +22295,6 @@ export type Database = {
             referencedRelation: "empresas"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_feedbacks_360_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
         ]
       }
       vw_metricas_fila: {
@@ -24659,41 +22332,6 @@ export type Database = {
           total_atrasos_minutos: number | null
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_registros_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "colaboradores"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_registros_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_cadastro_incompleto"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_registros_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_colaboradores_completo"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_registros_ponto_colaborador"
-            columns: ["colaborador_id"]
-            isOneToOne: false
-            referencedRelation: "vw_passivo_trabalhista_consolidado"
-            referencedColumns: ["colaborador_id"]
-          },
-          {
-            foreignKeyName: "fk_registros_ponto_empresa"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "registros_ponto_colaborador_id_fkey"
             columns: ["colaborador_id"]
@@ -24835,6 +22473,17 @@ export type Database = {
       calculate_lockout_duration: {
         Args: { attempts: number }
         Returns: string
+      }
+      candidatura_na_minha_empresa: {
+        Args: { _candidatura_id: string }
+        Returns: boolean
+      }
+      check_account_lockout: {
+        Args: { p_email: string }
+        Returns: {
+          is_locked: boolean
+          locked_until: string
+        }[]
       }
       check_brute_force: {
         Args: { check_email: string; check_ip: string }
@@ -24994,12 +22643,35 @@ export type Database = {
         Args: { lat1: number; lat2: number; lng1: number; lng2: number }
         Returns: number
       }
+      drenar_fila_limpeza_lgpd: {
+        Args: { p_limite?: number }
+        Returns: {
+          erro: string
+          id: string
+          registro_id: string
+          sucesso: boolean
+          tabela: string
+        }[]
+      }
+      edge_rate_limit_check: {
+        Args: {
+          p_key: string
+          p_limit: number
+          p_now?: number
+          p_window_sec: number
+        }
+        Returns: Json
+      }
       eh_dia_valido_inicio_ferias: {
         Args: { p_data: string; p_empresa_id: string }
         Returns: {
           motivo: string
           ok: boolean
         }[]
+      }
+      empresa_do_colaborador: {
+        Args: { _colaborador_id: string }
+        Returns: string
       }
       enfileirar_esocial_medida_disciplinar: {
         Args: { p_medida_id: string }
@@ -25161,6 +22833,26 @@ export type Database = {
       is_ip_blocked: { Args: { check_ip: string }; Returns: boolean }
       is_ip_whitelisted: { Args: { check_ip: string }; Returns: boolean }
       limpar_govbr_states_expirados: { Args: never; Returns: undefined }
+      listar_auditoria: {
+        Args: {
+          p_acao?: string
+          p_data_fim?: string
+          p_data_inicio?: string
+          p_empresa_id: string
+          p_limite?: number
+          p_registro_id?: string
+          p_tabela?: string
+        }
+        Returns: {
+          acao: string
+          created_at: string
+          id: string
+          payload: Json
+          registro_id: string
+          tabela: string
+          user_id: string
+        }[]
+      }
       log_frontend_error: {
         Args: { p_contexto?: Json; p_mensagem: string; p_nivel: string }
         Returns: undefined
@@ -25422,6 +23114,84 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      pcs_enquadramento: {
+        Args: { p_plano_id: string }
+        Returns: {
+          ajuste_necessario: number
+          cargo_nome: string
+          colaborador_id: string
+          colaborador_nome: string
+          comparatio: number
+          departamento: string
+          grade_nome: string
+          grade_ordem: number
+          salario_atual: number
+          salario_max: number
+          salario_medio: number
+          salario_min: number
+          situacao: string
+        }[]
+      }
+      pcs_gerar_grades: {
+        Args: {
+          p_num_grades?: number
+          p_plano_id: string
+          p_salario_base_menor?: number
+        }
+        Returns: {
+          created_at: string
+          id: string
+          nome: string
+          ordem: number
+          plano_id: string
+          pontos_max: number
+          pontos_min: number
+          salario_max: number
+          salario_medio: number
+          salario_min: number
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "pcs_grades"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      pcs_grades_mercado: {
+        Args: { p_plano_id: string }
+        Returns: {
+          aderencia: string
+          cargos_com_mercado: number
+          grade_id: string
+          grade_nome: string
+          mercado_p50: number
+          ordem: number
+          pontos_max: number
+          pontos_min: number
+          posicionamento: number
+          salario_max: number
+          salario_medio: number
+          salario_min: number
+        }[]
+      }
+      pcs_pode_gerir_plano: { Args: { _plano_id: string }; Returns: boolean }
+      pcs_pode_ver_plano: { Args: { _plano_id: string }; Returns: boolean }
+      pcs_simular_impacto: {
+        Args: { p_encargos_pct?: number; p_plano_id: string }
+        Returns: Json
+      }
+      pertence_a_empresa: { Args: { _empresa_id: string }; Returns: boolean }
+      pode_gerir_pessoas: { Args: { _empresa_id: string }; Returns: boolean }
+      pode_gerir_pessoas_para: {
+        Args: { _empresa_id: string; _user_id: string }
+        Returns: boolean
+      }
+      pode_gerir_rh: { Args: { _empresa_id: string }; Returns: boolean }
+      pode_gerir_rh_para: {
+        Args: { _empresa_id: string; _user_id: string }
+        Returns: boolean
+      }
       process_lgpd_cleanup_queue: { Args: never; Returns: number }
       processar_ajuste_aprovado: {
         Args: { p_solicitacao_id: string }
@@ -25617,6 +23387,10 @@ export type Database = {
       purge_expired_idempotency_keys: { Args: never; Returns: number }
       purge_expired_security_data: { Args: never; Returns: Json }
       purge_old_lock_conflicts: { Args: never; Returns: number }
+      purge_rate_limits: {
+        Args: { p_older_than_sec?: number }
+        Returns: number
+      }
       reconciliar_afdt: {
         Args: { _importacao_id: string; _janela_seg?: number }
         Returns: {
@@ -25653,7 +23427,22 @@ export type Database = {
           lockout_minutes: number
         }[]
       }
+      record_login_attempt: {
+        Args: { p_email: string; p_ip?: string; p_success: boolean }
+        Returns: undefined
+      }
       refresh_dashboard_mvs: { Args: never; Returns: Json }
+      registrar_auditoria: {
+        Args: {
+          p_acao: string
+          p_dados_anteriores?: Json
+          p_dados_novos?: Json
+          p_empresa_id?: string
+          p_registro_id: string
+          p_tabela: string
+        }
+        Returns: string
+      }
       registrar_batida_ponto: {
         Args: {
           p_colaborador_id: string
@@ -25909,7 +23698,27 @@ export type Database = {
         }
         Returns: Json
       }
+      run_lgpd_purge: {
+        Args: { p_dry_run?: boolean }
+        Returns: {
+          batches: number
+          deleted: number
+          tabela: string
+        }[]
+      }
       run_rls_tests: { Args: never; Returns: string[] }
+      seal_enforce: {
+        Args: {
+          p_canonical: string
+          p_new_hash: string
+          p_old_hash: string
+          p_op: string
+          p_registro_id: string
+          p_sealed: boolean
+          p_tabela: string
+        }
+        Returns: string
+      }
       search_audit_unified: {
         Args: {
           _empresa_id?: string
@@ -25933,10 +23742,39 @@ export type Database = {
           user_id: string
         }[]
       }
+      sec_audit_policies: {
+        Args: never
+        Returns: {
+          cmd: string
+          motivo: string
+          policy_name: string
+          tabela: string
+        }[]
+      }
+      sec_audit_policies_scan: { Args: never; Returns: Json }
+      sec_policy_regressions_purge: { Args: never; Returns: number }
+      sec_verify_seals: {
+        Args: never
+        Returns: {
+          divergentes: number
+          selados: number
+          tabela: string
+        }[]
+      }
+      sec_verify_seals_admin: {
+        Args: never
+        Returns: {
+          divergentes: number
+          selados: number
+          tabela: string
+        }[]
+      }
+      sec_verify_seals_scan: { Args: never; Returns: Json }
       solicitar_adiantamento_13_ferias: {
         Args: { p_ferias_id: string }
         Returns: Json
       }
+      sou_o_colaborador: { Args: { _colaborador_id: string }; Returns: boolean }
       sst_cat_dashboard: { Args: { p_empresa_id: string }; Returns: Json }
       sst_dashboard_sla: { Args: { p_empresa_id: string }; Returns: Json }
       sst_extintores_dashboard: {
@@ -26006,6 +23844,13 @@ export type Database = {
         Returns: undefined
       }
       verificar_espelho_ponto: { Args: { _espelho_id: string }; Returns: Json }
+      vincular_colaborador_ao_usuario: {
+        Args: never
+        Returns: {
+          colaborador_id: string
+          empresa_id: string
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "gestor" | "rh" | "user"

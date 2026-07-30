@@ -1,5 +1,5 @@
 // NotificationContext - connected to database via useNotificacoes + toast helpers
-import React, { createContext, useContext, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useCallback, ReactNode } from 'react';
 import { useNotificacoes, Notificacao } from '@/hooks/useNotificacoes';
 import { toast } from 'sonner';
 
@@ -33,8 +33,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       success,
       error,
       warning,
-      info,
-    }}>
+      info}}>
       {children}
     </NotificationContext.Provider>
   );

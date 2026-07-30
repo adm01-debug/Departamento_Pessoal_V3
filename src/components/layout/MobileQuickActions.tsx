@@ -1,6 +1,6 @@
 import { 
   Zap, UserPlus, DollarSign, Clock, Calendar, 
-  FileText, BarChart3, X, ChevronRight,
+  FileText, BarChart3, X, 
   ClipboardList, Calculator, Settings, Network
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';

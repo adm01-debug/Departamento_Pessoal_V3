@@ -8,6 +8,7 @@ import { corsHeaders, createErrorResponse, parseJsonBody, enforceOrigin, handleP
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
 import { captureException } from '../_shared/sentry.ts';
+import { requireRh } from '../_shared/authz.ts';
 
 const BodySchema = z.object({
   admissao_id: z.string().uuid(),
@@ -148,6 +149,12 @@ serve(async (req: Request): Promise<Response> => {
     if (!empresaId || empresaId !== tmpl.empresa_id) {
       return createErrorResponse('Modelo pertence a outra empresa', 403, 'FORBIDDEN');
     }
+
+    // O isolamento de tenant já vem do RLS (vars são montadas pelo cliente do
+    // usuário, não pelo admin). Falta a camada de papel: emitir contrato de
+    // trabalho é ato de RH, não de qualquer colaborador da empresa.
+    const authz = await requireRh(admin, userId, empresaId);
+    if (authz.denied) return authz.denied;
 
     // Corpo + cláusulas condicionais
     let body = render(tmpl.corpo_html as string, vars);

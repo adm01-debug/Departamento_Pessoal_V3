@@ -2,22 +2,17 @@ import { PageTitle } from '@/components/PageTitle';
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { avaliacaoService } from '@/services/avaliacaoService';
 import { colaboradorService } from '@/services';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
-import { Target, Plus, Users, TrendingUp, Star, Trash2, LayoutGrid, History, BarChart2, Calendar, CheckCircle2, Clock } from 'lucide-react';
+import { Target, Users, TrendingUp, Star, LayoutGrid, History, BarChart2, Calendar } from 'lucide-react';
 import { PerformanceDashboard } from '@/components/avaliacao/PerformanceDashboard';
 import { NineBoxMatrix } from '@/components/avaliacao/NineBoxMatrix';
 import { PerformanceAuditTimeline } from '@/components/avaliacao/PerformanceAuditTimeline';
@@ -49,18 +44,15 @@ export default function AvaliacaoPage() {
   // === Mutations ===
   const criarCiclo = useMutation({
     mutationFn: (d: any) => avaliacaoService.criarCiclo({ ...d, empresa_id: empresaAtual?.id }),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['ciclos_avaliacao'] }); toast.success('Ciclo criado!'); },
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['ciclos_avaliacao'] }); toast.success('Ciclo criado!'); }});
 
   const criarMeta = useMutation({
     mutationFn: (d: any) => avaliacaoService.criarMeta({ ...d, empresa_id: empresaAtual?.id }),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['metas_okrs'] }); toast.success('Meta criada!'); },
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['metas_okrs'] }); toast.success('Meta criada!'); }});
 
   const criarPDI = useMutation({
     mutationFn: (d: any) => avaliacaoService.criarPDI({ ...d, empresa_id: empresaAtual?.id }),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['pdis'] }); toast.success('PDI criado!'); },
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['pdis'] }); toast.success('PDI criado!'); }});
 
   const isLoading = loadCiclos || loadMetas || loadFeedbacks || loadPDIs || loadComp;
 
