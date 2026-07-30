@@ -135,6 +135,8 @@ serve(async (req: Request): Promise<Response> => {
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
     );
   } catch (err) {
+    // Diagnóstico: sem esta linha o 500 era opaco e impossível de rastrear.
+    console.error('[auth-login] falha inesperada:', (err as Error)?.name, (err as Error)?.message, (err as Error)?.stack);
     await captureException(err, { function: 'auth-login' });
     return createErrorResponse('Erro interno', 500, 'INTERNAL_SERVER_ERROR');
   }
