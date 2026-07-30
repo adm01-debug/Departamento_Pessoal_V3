@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Deploy de todas as Edge Functions no NOVO projeto Supabase (frjbfeamybqsejlvmqbl).
+# Deploy de todas as Edge Functions no NOVO projeto Supabase (ciziytrrjjotlsjzshnm).
 #
 # Uso:
 #   1. Instale o CLI: https://supabase.com/docs/guides/cli
@@ -9,7 +9,7 @@
 # Idempotente. Erros em uma função não interrompem as demais (continua e reporta no fim).
 
 set -u
-PROJECT_REF="${SUPABASE_PROJECT_REF:-frjbfeamybqsejlvmqbl}"
+PROJECT_REF="${SUPABASE_PROJECT_REF:-ciziytrrjjotlsjzshnm}"
 FUNCTIONS_DIR="supabase/functions"
 
 if ! command -v supabase >/dev/null 2>&1; then
