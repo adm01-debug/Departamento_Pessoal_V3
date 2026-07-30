@@ -231,13 +231,18 @@ function ContratacaoWorkflow({ token }: { token: string }) {
 
         if (uploadErr) throw uploadErr;
 
-        // 2. Registrar na tabela documentos_admissao
+        // 2. Registrar na tabela documentos_admissao.
+        // As colunas reais são tipo/url/nome_arquivo/validado — o insert
+        // anterior usava tipo_documento/storage_path/status (inexistentes),
+        // e o `as any` escondia o erro do TypeScript: todo upload falhava.
         const { error: dbErr } = await supabase.from('documentos_admissao').insert({
-          admissao_id: tokenData?.admissao_id,
-          tipo_documento: docType,
-          storage_path: storagePath,
-          status: 'pendente',
-        } as any);
+          admissao_id: tokenData!.admissao_id,
+          tipo: docType,
+          nome_arquivo: file.name,
+          url: storagePath,
+          tamanho_bytes: file.size,
+          validado: false,
+        });
 
         if (dbErr) throw dbErr;
 
