@@ -27,10 +27,12 @@ const LOVABLE_HOST_RE = /\.lovable\.(app|dev)$/;
 
 // Localhost only allowed when running Supabase locally
 const _supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-const IS_LOCAL_DEV = _supabaseUrl.includes('localhost') || _supabaseUrl.includes('127.0.0.1') ||
-                     Deno.env.get('SUPABASE_ENV') === 'local';
+// Localhost: permite qualquer porta via EXTRA_ALLOWED_LOCAL_PORTS env (ex: "8081,5173")
+// Também permite quando SUPABASE_ENV=local ou quando Supabase URL é localhost
+const IS_LOCAL_DEV = _supabaseUrl.includes("localhost") || _supabaseUrl.includes("127.0.0.1") ||
+                     Deno.env.get("SUPABASE_ENV") === "local" ||
+                     !!Deno.env.get("EXTRA_ALLOWED_LOCAL_PORTS");
 
-// Localhost: permite portas via EXTRA_ALLOWED_LOCAL_PORTS env (ex: "8081,5173")
 const _extraLocalPorts = (Deno.env.get("EXTRA_ALLOWED_LOCAL_PORTS") ?? "")
   .split(",").map((p) => p.trim()).filter(Boolean);
 
