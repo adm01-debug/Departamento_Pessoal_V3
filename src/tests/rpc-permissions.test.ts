@@ -13,8 +13,7 @@ import { describe, it, expect } from 'vitest';
 import { createClient } from '@supabase/supabase-js';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
-const SUPABASE_ANON = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
-  import.meta.env.VITE_SUPABASE_ANON_KEY) as string;
+const SUPABASE_ANON = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
 
 // Smoke test de integração: exige backend real (URL + anon key). Sem essas
 // variáveis (ex.: CI sem secrets), o suite é pulado em vez de quebrar no import.
