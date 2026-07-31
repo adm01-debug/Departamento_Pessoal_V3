@@ -12,7 +12,9 @@ import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 import { safeFetchWithRetry } from '../_shared/safe-fetch.ts';
 
-const ALLOWED_BUCKETS = ['documentos', 'colaboradores', 'documents', 'arquivos', 'uploads'];
+// Só buckets de documentos de identidade/admissão fazem sentido para OCR;
+// nunca aceitar um bucket arbitrário informado pelo cliente.
+const ALLOWED_BUCKETS = ['documentos', 'documentos-admissao'];
 
 function isAllowedFileUrl(urlStr: string): boolean {
   try {
@@ -54,9 +56,6 @@ function json(body: unknown, status = 200): Response {
   });
 }
 
-// Só buckets de documentos de identidade/admissão fazem sentido para OCR;
-// nunca aceitar um bucket arbitrário informado pelo cliente.
-const ALLOWED_BUCKETS = new Set(['documentos', 'documentos-admissao']);
 
 function jsonError(status: number, code: string, message: string) {
   return new Response(JSON.stringify({ success: false, error: message, code }), {
