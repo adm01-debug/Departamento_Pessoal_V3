@@ -7,14 +7,13 @@ import { loggerService } from '@/services/loggerService';
 
 
 // Projeto ativo: variáveis de ambiente são obrigatórias (P0-008).
-// Sem fallback hardcoded — qualquer ausência falha o build com mensagem clara.
+// Chave canônica única: VITE_SUPABASE_PUBLISHABLE_KEY (sem fallback legado).
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_PUBLISHABLE_KEY =
-  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
+const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
 if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
   throw new Error(
-    '[SUPABASE] VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY (ou VITE_SUPABASE_ANON_KEY) ' +
+    '[SUPABASE] VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY ' +
       'são obrigatórias. Configure no .env antes do build. Veja .env.example.',
   );
 }
