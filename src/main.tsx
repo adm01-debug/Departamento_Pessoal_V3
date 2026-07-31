@@ -140,7 +140,7 @@ if (!isInIframe && !isPreviewHost && 'serviceWorker' in navigator) {
 // silenciosamente incorreta.
 (() => {
   const url = import.meta.env.VITE_SUPABASE_URL;
-  const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
+  const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
   if (url && key) return;
   const banner = document.createElement('div');
   banner.setAttribute('role', 'alert');
