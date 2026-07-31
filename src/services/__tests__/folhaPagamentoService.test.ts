@@ -29,7 +29,15 @@ describe('folhaPagamentoService', () => {
         data: { nome_completo: 'João Silva', cpf: '123', cargo: 'Dev' }, 
         error: null 
       });
-      const mockUpsert = vi.fn().mockResolvedValue({ error: null });
+      // O serviço não calcula mais o hash no cliente: o selo é produzido
+      // server-side pelo trigger `enforce_holerite_signed_hash` e devolvido
+      // via `.select('hash_assinatura').single()`.
+      const mockUpsertSingle = vi.fn().mockResolvedValue({
+        data: { hash_assinatura: 'a'.repeat(64) },
+        error: null,
+      });
+      const mockUpsertSelect = vi.fn(() => ({ single: mockUpsertSingle }));
+      const mockUpsert = vi.fn(() => ({ select: mockUpsertSelect }));
 
       (supabase.from as unknown as ReturnType<typeof vi.fn>).mockImplementation((table: string) => {
         if (table === 'colaboradores') {
