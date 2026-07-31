@@ -90,7 +90,7 @@ describe('PortalRegimentoCard', () => {
     ];
     render(<PortalRegimentoCard />);
     await waitFor(() => {
-      expect(screen.getByText(/não está vinculado/)).toBeInTheDocument();
+      expect(screen.getByText(/Não encontramos um cadastro de colaborador/)).toBeInTheDocument();
     });
   });
 
