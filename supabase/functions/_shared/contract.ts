@@ -70,19 +70,36 @@ export const securityHeaders: Record<string, string> = {
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
 };
 
+const CORS_BASE_HEADERS: Record<string, string> = {
+  'Access-Control-Allow-Headers':
+    'authorization, x-client-info, apikey, content-type, x-hub-signature-256, idempotency-key, x-csrf-token',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+  'Access-Control-Max-Age': '86400',
+  'Access-Control-Expose-Headers': 'idempotent-replay',
+  Vary: 'Origin',
+};
+
+/**
+ * Headers CORS por requisição. Ecoa exatamente o Origin quando ele está na
+ * allowlist — obrigatório para que o browser aceite a resposta (a spec exige
+ * match exato, não vale devolver "outra" origem permitida).
+ *
+ * Sem `req` (uso estático em módulos), devolve `*`: as edge functions não usam
+ * cookies — a autorização é feita por JWT/`enforceOrigin` no servidor — logo o
+ * curinga não concede acesso a nada que o token já não conceda.
+ */
 export function getCorsHeaders(req?: Request): Record<string, string> {
   const origin = req?.headers.get('origin') || '';
-  const allowedOrigin = isOriginAllowed(origin) ? origin : ALLOWED_ORIGINS[0];
+  const allowedOrigin = origin ? (isOriginAllowed(origin) ? origin : ALLOWED_ORIGINS[0]) : '*';
   return {
     'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-hub-signature-256, idempotency-key, x-csrf-token',
-    'Access-Control-Expose-Headers': 'idempotent-replay',
-    'Vary': 'Origin',
+    ...CORS_BASE_HEADERS,
     ...securityHeaders,
   };
 }
 
 export const corsHeaders = getCorsHeaders();
+
 
 /**
  * Strict origin gate. Retorna Response 403 quando o Origin é enviado

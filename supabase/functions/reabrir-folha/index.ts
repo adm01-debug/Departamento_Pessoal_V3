@@ -16,8 +16,8 @@ import { corsHeaders, createErrorResponse, validateRequest, enforceOrigin, handl
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { verifyFolhaIntegrity } from '../_shared/folhaIntegrity.ts';
 import { integrityHash } from '../_shared/integrityHash.ts';
-import {
 import { requireRh } from '../_shared/authz.ts';
+import {
   beginIdempotency,
   completeIdempotency,
   extractIdempotencyKey,

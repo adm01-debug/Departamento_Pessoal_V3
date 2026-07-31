@@ -14,7 +14,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
-import { corsHeaders, createErrorResponse, parseJsonBody } from '../_shared/contract.ts';
+import { getCorsHeaders, createErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
 import { captureException } from '../_shared/sentry.ts';
 
@@ -44,6 +44,9 @@ function getClientIP(req: Request): string {
 }
 
 serve(async (req: Request): Promise<Response> => {
+  // CORS por requisição: a spec exige eco exato do Origin (um valor fixo
+  // quebraria o preview e qualquer domínio permitido que não fosse o primeiro).
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders });
   }

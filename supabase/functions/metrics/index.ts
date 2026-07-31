@@ -120,7 +120,7 @@ async function collectBridgeMetrics(): Promise<{ error_count_1h: number; slow_qu
   }
 }
 
-function buildMetricsPage(metrics: HealthMetrics, bridgeMetrics: ReturnType<typeof collectBridgeMetrics> extends Promise<infer T ? T : never>): string {
+function buildMetricsPage(metrics: HealthMetrics, bridgeMetrics: Awaited<ReturnType<typeof collectBridgeMetrics>>): string {
   const now = new Date().toISOString();
   let output = `# Prometheus metrics — Departamento Pessoal v2\n# Generated: ${now}\n# Version: ${METRICS_VERSION}\n\n`;
 

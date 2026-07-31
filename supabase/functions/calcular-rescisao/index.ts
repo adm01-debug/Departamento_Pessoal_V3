@@ -167,13 +167,13 @@ Deno.serve(async (req) => {
       empresaIdFinal = colab.empresa_id;
     }
     if (empresaIdFinal) {
-    // Papel, não apenas vínculo: o padrão anterior (`!belongs && !isAdmin`)
-    // era um OU — pertencer à empresa já bastava, e o is_admin apenas somava
-    // o admin global. Qualquer colaborador autenticado passava.
-    {
+      // Papel, não apenas vínculo: o padrão anterior (`!belongs && !isAdmin`)
+      // era um OU — pertencer à empresa já bastava, e o is_admin apenas somava
+      // o admin global. Qualquer colaborador autenticado passava.
       const authz = await requireRh(admin, userId, empresaIdFinal);
       if (authz.denied) return authz.denied;
     }
+
 
     // ==== Cálculo ====
     // Portado de src/utils/rescisaoCalc.ts — motor canônico, testado e já
