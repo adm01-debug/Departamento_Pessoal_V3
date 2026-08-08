@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { format, startOfMonth, addDays } from 'date-fns';
 
 vi.mock('@/hooks/useFerias', () => ({
   useFerias: vi.fn(() => ({ ferias: [] })),
@@ -23,11 +24,14 @@ vi.mock('@/components/ui/separator', () => ({
 import { useFerias } from '@/hooks/useFerias';
 import { CalendarioFerias } from '../ferias/CalendarioFerias';
 
+// Datas geradas dinamicamente dentro do mês corrente: o componente filtra
+// férias pelo mês exibido (isWithinInterval), então datas fixas (ex.: julho/2026)
+// seriam excluídas quando o mês corrente fosse outro.
 const MOCK_FERIAS = [
   {
     id: 'f1',
-    data_inicio: '2026-07-01',
-    data_fim: '2026-07-30',
+    data_inicio: format(addDays(startOfMonth(new Date()), 1), 'yyyy-MM-dd'),
+    data_fim: format(addDays(startOfMonth(new Date()), 10), 'yyyy-MM-dd'),
     status: 'aprovada',
     dias_ferias: 30,
     abono_pecuniario: false,
@@ -36,8 +40,8 @@ const MOCK_FERIAS = [
   },
   {
     id: 'f2',
-    data_inicio: '2026-07-10',
-    data_fim: '2026-07-20',
+    data_inicio: format(addDays(startOfMonth(new Date()), 12), 'yyyy-MM-dd'),
+    data_fim: format(addDays(startOfMonth(new Date()), 20), 'yyyy-MM-dd'),
     status: 'pendente',
     dias_ferias: 10,
     abono_pecuniario: true,
