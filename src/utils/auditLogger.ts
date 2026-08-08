@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { loggerService } from '@/services/loggerService';
+import type { Json } from '@/integrations/supabase/types';
 
 const PII_FIELDS = new Set([
   'cpf', 'pis', 'rg', 'senha', 'password', 'hash', 'token',
@@ -70,7 +71,7 @@ export const auditLogger = {
           user_email: params.user_email || user?.email || null,
           dados_anteriores: params.dados_anteriores ? maskPii(params.dados_anteriores) : null,
           dados_novos: params.dados_novos ? maskPii(params.dados_novos) : null,
-        } as never,
+        } as Json,
       });
       if (error) loggerService.error('Audit log error', { tabela: params.tabela, registro_id: params.registro_id }, error);
     } catch (e) {
