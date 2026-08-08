@@ -10,6 +10,22 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    proxy: {
+      // Dev local: encaminha chamadas de edge functions para o Supabase remoto.
+      // O gate estrito (allowlist *.lovable.app) rejeita Origin localhost — o
+      // proxy reescreve Origin/Referer para um host da allowlist (somente dev).
+      "/functions/v1": {
+        target: "https://frjbfeamybqsejlvmqbl.supabase.co",
+        changeOrigin: true,
+        secure: true,
+        configure(proxy) {
+          proxy.on("proxyReq", (proxyReq) => {
+            proxyReq.setHeader("origin", "https://sistema-dp.lovable.app");
+            proxyReq.setHeader("referer", "https://sistema-dp.lovable.app/");
+          });
+        },
+      },
+    },
   },
   plugins: [
     // P1-022: Babel-based plugin required for React Compiler
