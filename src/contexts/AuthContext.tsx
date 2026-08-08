@@ -167,8 +167,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!SUPABASE_URL || !ANON_KEY) {
         throw new Error('VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY são obrigatórias');
       }
+      // Dev local: VITE_SUPABASE_FUNCTIONS_BASE=/functions/v1 roteia pela bridge
+      // do Vite (proxy reescreve Origin p/ allowlist). Produção: URL absoluta.
+      const FUNCTIONS_BASE = import.meta.env.VITE_SUPABASE_FUNCTIONS_BASE?.trim()
+        || `${SUPABASE_URL}/functions/v1`;
 
-      const res = await fetch(`${SUPABASE_URL}/functions/v1/auth-login`, {
+      const res = await fetch(`${FUNCTIONS_BASE}/auth-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY },
         body: JSON.stringify({ email, password })});
