@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import type { Json } from '@/integrations/supabase/types';
 
 /**
  * Auditoria — leitura e escrita são feitas exclusivamente via RPCs
@@ -42,7 +43,7 @@ export const auditoriaService = {
       p_data_inicio: filtros?.data_inicio ?? null,
       p_data_fim: filtros?.data_fim ?? null,
       p_limite: filtros?.limite ?? 200,
-    } as never);
+    });
 
     if (error) throw error;
     return (data as unknown as AuditoriaRegistro[]) || [];
@@ -52,18 +53,18 @@ export const auditoriaService = {
     tabela: string;
     registro_id: string;
     acao: 'UPDATE' | 'DELETE';
-    dados_anteriores: unknown;
-    dados_novos?: unknown;
+    dados_anteriores: Json;
+    dados_novos?: Json;
     empresa_id?: string;
   }): Promise<void> {
     const { error } = await supabase.rpc('registrar_auditoria', {
       p_tabela: params.tabela,
       p_registro_id: params.registro_id,
       p_acao: params.acao,
-      p_dados_anteriores: (params.dados_anteriores ?? null) as never,
-      p_dados_novos: (params.dados_novos ?? null) as never,
+      p_dados_anteriores: params.dados_anteriores ?? null,
+      p_dados_novos: params.dados_novos ?? null,
       p_empresa_id: params.empresa_id ?? null,
-    } as never);
+    });
 
     // Auditoria não pode quebrar a operação de negócio, mas precisa ser observável.
     if (error) {

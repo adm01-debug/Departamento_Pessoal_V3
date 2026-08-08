@@ -68,6 +68,10 @@ function wrapper({ children }: { children: React.ReactNode }) {
 describe('useAuth', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Env vars obrigatórias no AuthContext (P0-008) — stubadas no teste
+    // para o CI não depender de .env real.
+    vi.stubEnv('VITE_SUPABASE_URL', 'https://test.supabase.co');
+    vi.stubEnv('VITE_SUPABASE_PUBLISHABLE_KEY', 'test-key');
     mockGetSession.mockResolvedValue({ data: { session: null }, error: null });
     mockOnAuthStateChange.mockReturnValue({ data: { subscription: { unsubscribe: vi.fn() } } });
     mockRpc.mockResolvedValue({ data: ['user'], error: null });
@@ -197,5 +201,9 @@ describe('useAuth', () => {
   it('onAuthStateChange is called on mount', () => {
     renderHook(() => useAuth(), { wrapper });
     expect(mockOnAuthStateChange).toHaveBeenCalled();
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 });

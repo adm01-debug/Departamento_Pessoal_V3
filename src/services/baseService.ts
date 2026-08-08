@@ -40,7 +40,7 @@ export class BaseService<T, CreateDTO = Record<string, unknown>, UpdateDTO = Rec
    * métodos e da resposta — só o mapeamento coluna→tipo fica de fora.
    */
   protected getQuery(): LooseQueryBuilder {
-    return supabase.from(this.table as never) as unknown as LooseQueryBuilder;
+    return supabase.from(this.table) as unknown as LooseQueryBuilder;
   }
 
   async listar(options: ListOptions = {}): Promise<ListResponse<T>> {

@@ -26,7 +26,7 @@ export function useDataAccessLog(
           p_dados_anteriores: null,
           p_dados_novos: { accessed_at: new Date().toISOString() },
           p_empresa_id: empresaId,
-        } as never);
+        });
 
         if (error && !cancelled && import.meta.env.DEV) {
           console.debug('[useDataAccessLog] registrar_auditoria falhou:', error.message);

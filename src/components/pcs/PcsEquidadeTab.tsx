@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { FileSpreadsheet } from 'lucide-react';
 import { buildTabularWorkbook, downloadWorkbook } from '@/utils/importacao/excelDownload';
+import { todayLocalISO } from '@/utils/dateLocal';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -60,7 +61,7 @@ export function PcsEquidadeTab({ planoId }: { planoId: string | null }) {
     }
     try {
       const wb = buildTabularWorkbook('Enquadramento', [...COLUNAS_EXPORT], linhasExport(linhas));
-      const data = new Date().toISOString().slice(0, 10);
+      const data = todayLocalISO();
       await downloadWorkbook(wb, `enquadramento-pcs-${data}.xlsx`);
       toast.success('Enquadramento exportado');
     } catch (e) {

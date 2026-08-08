@@ -8,6 +8,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Plus, Trash2 } from 'lucide-react';
 import { usePcsBenchmark } from '@/hooks/usePcs';
+import { todayLocalISO } from '@/utils/dateLocal';
 
 const brl = (v: number | null) => (v === null ? '—' : Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }));
 
@@ -15,7 +16,7 @@ const FORM_INICIAL = {
   cargo_referencia: '',
   fonte: '',
   regiao: '',
-  data_referencia: new Date().toISOString().slice(0, 10),
+  data_referencia: todayLocalISO(),
   p25: '',
   p50: '',
   p75: '',
