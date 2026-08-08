@@ -22,12 +22,11 @@ export function useDataAccessLog(
         const { error } = await supabaseBase
           .from('audit_log')
           .insert({
-            usuario_id: session.user.id,
+            user_id: session.user.id,
             acao: 'VISUALIZACAO',
             tabela: recurso,
             registro_id: recursoId,
-            empresa_id: empresaId,
-            ip: null,
+            ip_address: null,
             dados_novos: { accessed_at: new Date().toISOString() },
           });
 
