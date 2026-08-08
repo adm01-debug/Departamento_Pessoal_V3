@@ -1,15 +1,14 @@
 import { PageTitle } from '@/components/PageTitle';
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
-import { DataTableToolbar } from '@/components/ui/data-table-toolbar';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { EmptyList, EmptyState } from '@/components/ui/empty-state';
+import { EmptyState } from '@/components/ui/empty-state';
 import { Spinner } from '@/components/ui/spinner';
 import { Button } from '@/components/ui/button';
 import { provisaoService } from '@/services';
-import { Calculator, Wallet, TrendingUp, Landmark, PieChart, Info, Download, FileText, FileSpreadsheet, History, BarChart3, ShieldCheck, Activity, AlertCircle, X } from 'lucide-react';
+import { Calculator, Wallet, TrendingUp, Landmark, PieChart, Info, FileText, FileSpreadsheet, History, BarChart3, ShieldCheck, Activity, AlertCircle, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
   BarChart,
@@ -19,9 +18,7 @@ import {
   CartesianGrid,
   Tooltip as RechartsTooltip,
   ResponsiveContainer,
-  Cell,
-  Legend
-} from 'recharts';
+  Cell} from 'recharts';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { AnimatedNumber } from '@/components/dashboard/AnimatedNumber';
@@ -47,8 +44,7 @@ export default function ProvisoesPage() {
   const { data: provisoes, isLoading } = useQuery({
     queryKey: ['provisoes', empresaAtual?.id, competencia],
     queryFn: () => provisaoService.list(empresaAtual!.id, `${competencia}-01`),
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
 
   const { data: inconsistencias } = useQuery({
@@ -91,8 +87,7 @@ export default function ProvisoesPage() {
       principal: acc.principal + Number(p.valor_principal || 0),
       inss: acc.inss + Number(p.encargos_inss || 0),
       fgts: acc.fgts + Number(p.encargos_fgts || 0),
-      total: acc.total + Number(p.total || 0),
-    }),
+      total: acc.total + Number(p.total || 0)}),
     { principal: 0, inss: 0, fgts: 0, total: 0 }
   );
 

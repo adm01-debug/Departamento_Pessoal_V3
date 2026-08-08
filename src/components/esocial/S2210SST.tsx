@@ -1,6 +1,6 @@
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
-import { User, Calendar, Activity, AlertTriangle, ShieldAlert } from 'lucide-react';
+import { User, Calendar, Activity, ShieldAlert } from 'lucide-react';
 import { maskCpfDisplay } from '@/utils/piiMask';
 
 export function S2210SST({ dados }: { dados: any }) {

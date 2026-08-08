@@ -10,6 +10,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
 import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
+import { requireRh } from '../_shared/authz.ts';
 import { captureException } from '../_shared/sentry.ts';
 import {
   beginIdempotency,
@@ -85,12 +86,12 @@ Deno.serve(async (req) => {
     const { empresa_id, banco_codigo, itens } = parsed.data;
 
     // Tenant scope
-    const { data: pertence } = await service.rpc('user_belongs_to_empresa', {
-      _user_id: userId, _empresa_id: empresa_id,
-    });
-    const { data: isAdmin } = await service.rpc('is_admin', { _user_id: userId });
-    if (!pertence && !isAdmin) {
-      return createErrorResponse('Acesso negado', 403, 'FORBIDDEN');
+    // Papel, não apenas vínculo: o padrão anterior (`!belongs && !isAdmin`)
+    // era um OU — pertencer à empresa já bastava, e o is_admin apenas somava
+    // o admin global. Qualquer colaborador autenticado passava.
+    {
+      const authz = await requireRh(service, userId, empresa_id);
+      if (authz.denied) return authz.denied;
     }
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');

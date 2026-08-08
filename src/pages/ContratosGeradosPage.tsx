@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useSyncedState } from '@/hooks/useSyncedState';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { useOnMount } from '@/hooks/useMountEffects';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -77,9 +78,6 @@ interface ColaboradorLite {
 
 export default function ContratosGeradosPage() {
   const { empresaAtual } = useEmpresas();
-  const [contratos, setContratos] = useState<ContratoGerado[]>([]);
-  const [colaboradores, setColaboradores] = useState<Record<string, ColaboradorLite>>({});
-  const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState<StatusFilter>('todos');
   const [busca, setBusca] = useState('');
   const [periodo, setPeriodo] = useState<'todos' | '30' | '90' | '365'>('todos');
@@ -102,46 +100,58 @@ export default function ContratosGeradosPage() {
     }
   };
 
-  const carregar = async () => {
-    if (!empresaAtual) return;
-    setLoading(true);
-    try {
-      const gerados = await contratoTemplateService.listarGerados(empresaAtual.id);
-      setContratos(gerados);
+  const empresaId = empresaAtual?.id;
+
+  // Data fetching declarativo com cache por empresa (tenant-scoped).
+  const contratosQuery = useQuery({
+    queryKey: ['contratos-gerados', empresaId],
+    enabled: !!empresaId,
+    queryFn: async () => {
+      const gerados = await contratoTemplateService.listarGerados(empresaId!);
       const ids = Array.from(
         new Set(gerados.map((g) => g.colaborador_id).filter((v): v is string => !!v)),
       ).slice(0, 500);
+      const map: Record<string, ColaboradorLite> = {};
       if (ids.length) {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('colaboradores')
           .select('id, nome_completo, cpf')
           .in('id', ids)
           .limit(500);
-        const map: Record<string, ColaboradorLite> = {};
+        if (error) throw error;
         (data ?? []).forEach((c) => {
           map[c.id] = c as ColaboradorLite;
         });
-        setColaboradores(map);
       }
-    } catch (e) {
-      loggerService.error('Erro ao carregar contratos gerados', { empresaId: empresaAtual?.id }, e instanceof Error ? e : new Error(String(e)));
-      toast.error('Falha ao carregar contratos');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useOnMount(() => {
-    void carregar();
+      return { contratos: gerados, colaboradores: map };
+    },
   });
 
-  useEffect(() => {
-    void carregar();
-  }, [empresaAtual?.id]);
+  if (contratosQuery.error) {
+    loggerService.error(
+      'Erro ao carregar contratos gerados',
+      { empresaId },
+      contratosQuery.error instanceof Error ? contratosQuery.error : new Error(String(contratosQuery.error))
+    );
+  }
+
+  const EMPTY_CONTRATOS: ContratoGerado[] = useMemo(() => [], []);
+  const EMPTY_COLS: Record<string, ColaboradorLite> = useMemo(() => ({}), []);
+  const contratos = contratosQuery.data?.contratos ?? EMPTY_CONTRATOS;
+  const colaboradores = contratosQuery.data?.colaboradores ?? EMPTY_COLS;
+  const loading = contratosQuery.isPending && !!empresaId;
+
+  const carregar = () => { void contratosQuery.refetch(); };
+
+  // Instante do último carregamento: usado como "agora" nos filtros por período,
+  // mantendo o render puro (sem Date.now() durante a renderização).
+  const agora = contratosQuery.dataUpdatedAt || contratosQuery.errorUpdatedAt || 0;
+
 
   const filtrados = useMemo(() => {
     const term = busca.trim().toLowerCase();
-    const cutoff = periodo === 'todos' ? null : Date.now() - Number(periodo) * 86400_000;
+    // Relógio de referência estável: instante do último fetch (render puro).
+    const cutoff = periodo === 'todos' ? null : agora - Number(periodo) * 86400_000;
     return contratos.filter((c) => {
       if (status !== 'todos' && c.status !== status) return false;
       if (cutoff && new Date(c.created_at).getTime() < cutoff) return false;
@@ -152,18 +162,11 @@ export default function ContratosGeradosPage() {
       }
       return true;
     });
-  }, [contratos, status, busca, colaboradores, periodo]);
+  }, [contratos, status, busca, colaboradores, periodo, agora]);
 
-  const [pagina, setPagina] = useState(1);
   const PAGE_SIZE = 25;
-
-  useOnMount(() => {
-    setPagina(1);
-  });
-
-  useEffect(() => {
-    setPagina(1);
-  }, [status, busca, periodo]);
+  // Página reinicia sempre que os filtros mudam (estado derivado, sem efeito).
+  const [pagina, setPagina] = useSyncedState(`${status}|${busca}|${periodo}`, () => 1);
   const totalPaginas = Math.max(1, Math.ceil(filtrados.length / PAGE_SIZE));
   const paginados = useMemo(
     () => filtrados.slice((pagina - 1) * PAGE_SIZE, pagina * PAGE_SIZE),

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useFolhaAuditoria } from '@/hooks/useFolhaAuditoria';
 import { formatDateLocalISO } from '@/utils/dateLocal';
@@ -8,10 +8,9 @@ import { safeHref } from '@/utils/safeUrl';
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+  
+  
+  DialogTrigger} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { 
@@ -23,15 +22,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { edgeFunctionsService } from '@/services/edgeFunctionsService';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { useCalculoFolha } from '@/hooks/useCalculoFolha';
-import { auditCalculation } from '@/calculators/auditHelper';
 import { rubricasFolhaService } from '@/services/tabelas/folhaService';
 import { validarRubricaESocial } from '@/schemas/esocial';
 import { folhaPagamentoService } from '@/services/folhaPagamentoService';
 import { FolhaComposicao } from './FolhaComposicao';
-import { folhaCalc, CalculoResultado } from '@/utils/folhaCalc';
+import { CalculoResultado } from '@/utils/folhaCalc';
 import { cnabService } from '@/services/cnabService';
 
 interface StepProps {
@@ -88,8 +85,7 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
         .lte('data', formatDateLocalISO(new Date(parseInt(ano, 10), parseInt(mes, 10), 0)));
       return count || 0;
     },
-    enabled: isOpen && currentStep === 1,
-  });
+    enabled: isOpen && currentStep === 1});
 
   const handleCalculate = async () => {
     setIsProcessing(true);

@@ -13,8 +13,9 @@ import { useAfastamentos } from '@/hooks/useAfastamentos';
 import { afastamentoService } from '@/services/afastamentoService';
 import { useColaboradores } from '@/hooks/useColaboradores';
 import { useEmpresas } from '@/hooks/useEmpresas';
-import { Info, Calendar, Search, Stethoscope, AlertTriangle, Calendar as CalendarIcon, Zap, History as HistoryIcon } from 'lucide-react';
+import { Search, Stethoscope, AlertTriangle, Calendar as CalendarIcon, Zap, History as HistoryIcon } from 'lucide-react';
 import { formatDate } from '@/utils/format';
+import type { AfastamentoRow } from '@/types/afastamentos';
 import { loggerService } from '@/services/loggerService';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from '@/components/ui/command';
@@ -31,8 +32,7 @@ const schema = z.object({
   status: z.string().default('ativo'),
   data_pericia: z.string().optional().nullable(),
   local_pericia: z.string().optional().nullable(),
-  protocolo_inss: z.string().optional().nullable(),
-});
+  protocolo_inss: z.string().optional().nullable()});
 
 interface AfastamentoFormProps {
   onSuccess: () => void;
@@ -50,15 +50,9 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
     codigo: string;
     descricao: string;
   }
-  interface HistoricoItem {
-    id: string;
-    data_inicio: string;
-    data_fim_prevista: string;
-    tipo: string;
-    status: string;
-    dias_total?: number;
-    cid?: { codigo: string; descricao: string };
-  }
+  // Histórico vem direto da tabela `afastamentos` — derivamos do schema real
+  // para não divergir da nulidade do Postgres.
+  type HistoricoItem = AfastamentoRow;
   const [cidResults, setCidResults] = useState<CidItem[]>([]);
   const [selectedCid, setSelectedCid] = useState<CidItem | null>(initialData?.cid ?? null);
   const [historicoRecente, setHistoricoRecente] = useState<HistoricoItem[]>([]);
@@ -123,8 +117,7 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
         ...data,
         cid_id: selectedCid?.id,
         dias_empresa: diasInfo.empresa,
-        dias_inss: diasInfo.inss,
-      };
+        dias_inss: diasInfo.inss};
 
       if (initialData?.id) {
         await atualizar({ id: initialData.id, data: payload });
@@ -191,7 +184,7 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
                 {historicoRecente.map(h => (
                   <div key={h.id} className="text-[11px] flex justify-between items-center text-blue-800">
                     <span>{formatDate(h.data_inicio)} - {h.dias_total} dias</span>
-                    <Badge variant="outline" className="h-4 text-[9px] bg-white/50 border-blue-200">CID: {h.cid?.codigo || 'N/A'}</Badge>
+                    <Badge variant="outline" className="h-4 text-[9px] bg-white/50 border-blue-200">CID: {h.cid || 'N/A'}</Badge>
                   </div>
                 ))}
                 <p className="text-[9px] text-muted-foreground italic mt-2">

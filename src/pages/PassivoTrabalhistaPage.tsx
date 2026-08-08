@@ -1,12 +1,11 @@
-import { PageTitle } from '@/components/PageTitle';
 import { PageLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import {
-  Scale, AlertTriangle, Calendar, TrendingUp, Info, Download,
-  RefreshCw, Users, DollarSign, PieChart, ShieldAlert, Clock,
+  Scale, AlertTriangle, TrendingUp, Info, Download,
+  RefreshCw, DollarSign, PieChart, ShieldAlert, Clock,
   ArrowRight, Landmark, FileWarning
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -15,10 +14,10 @@ import { useEmpresas } from '@/hooks/useEmpresas';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
+  XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
   ResponsiveContainer, Cell, Legend, PieChart as RePieChart, Pie, AreaChart, Area
 } from 'recharts';
-import { format, addMonths, differenceInDays, parseISO, startOfMonth, differenceInMonths } from 'date-fns';
+import { format, addMonths, differenceInDays, parseISO, differenceInMonths } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { ChartSkeleton, KPICardSkeleton } from '@/components/ui/module-skeleton';
@@ -75,8 +74,7 @@ export default function PassivoTrabalhistaPage() {
         .eq('empresa_id', empresaAtualId!)
         .order('competencia', { ascending: false }).limit(1).maybeSingle();
       return data;
-    },
-  });
+    }});
 
   const competenciaLabel = folhaAtual?.competencia
     ? format(parseISO(folhaAtual.competencia), 'MMM/yyyy', { locale: ptBR })
@@ -97,12 +95,12 @@ export default function PassivoTrabalhistaPage() {
         .eq('empresa_id', empresaAtualId!).neq('status', 'cancelado');
 
       const { data: provs } = await (supabase as any)
-        .from('provisionamentos')
-        .select('colaborador_id, tipo, valor_provisionado')
+        .from('provisoes_mensais')
+        .select('colaborador_id, tipo, total')
         .eq('empresa_id', empresaAtualId!)
         .eq('competencia', folhaAtual?.competencia ?? format(new Date(), 'yyyy-MM'));
       const provMap = new Map<string, number>();
-      for (const p of (provs ?? [])) provMap.set(`${p.colaborador_id}_${p.tipo}`, Number(p.valor_provisionado));
+      for (const p of (provs ?? [])) provMap.set(`${p.colaborador_id}_${p.tipo}`, Number(p.total));
 
       const hoje = new Date();
       let tVac = 0, t13 = 0, tFgts = 0, tMulta = 0, tInss = 0;
@@ -134,8 +132,7 @@ export default function PassivoTrabalhistaPage() {
             periodoAquisitivo: ultFim
               ? `${format(addMonths(new Date(ultFim), 1), 'MMM/yy', { locale: ptBR })} → ${format(vencimento, 'MMM/yy', { locale: ptBR })}`
               : `${format(new Date(c.data_admissao), 'MMM/yy', { locale: ptBR })} → ${format(vencimento, 'MMM/yy', { locale: ptBR })}`,
-            dataVencimento: format(vencimento, 'yyyy-MM-dd'),
-          });
+            dataVencimento: format(vencimento, 'yyyy-MM-dd')});
         }
         const provF = provMap.get(`${c.id}_ferias`) ?? 0;
         const prov13 = provMap.get(`${c.id}_13`) ?? 0;
@@ -147,8 +144,7 @@ export default function PassivoTrabalhistaPage() {
             nome: c.nome_completo,
             tipo: Math.abs(vf + tc - provF) > sal * 0.05 ? 'Férias' : '13º',
             diff: Math.abs(vf + tc - provF) > sal * 0.05
-              ? Math.abs(vf + tc - provF) : Math.abs(v13 - prov13),
-          });
+              ? Math.abs(vf + tc - provF) : Math.abs(v13 - prov13)});
         }
       }
 
@@ -173,10 +169,8 @@ export default function PassivoTrabalhistaPage() {
         projection: Array.from({ length: 6 }).map((_, i) => {
           const d = addMonths(hoje, i);
           return { mes: format(d, 'MMM/yy', { locale: ptBR }), valor: tTotal * (1 + i * 0.015) };
-        }),
-      };
-    },
-  });
+        })};
+    }});
 
   const formatCurrency = (v: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);

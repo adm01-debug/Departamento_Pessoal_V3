@@ -107,7 +107,10 @@ serve(async (req: Request): Promise<Response> => {
     // anonimizar_dados_pessoais para cada um.
     const { data: lgpdResults, error: lgpdError } = await adminClient.rpc('drenar_fila_limpeza_lgpd');
     if (lgpdError) {
+      // Falha aqui = direito ao apagamento parado. Nunca em silêncio.
       results.lgpd_fila_limpeza_erro = 1;
+      console.error('[limpeza] drenar_fila_limpeza_lgpd falhou:', lgpdError.message);
+      captureException(lgpdError, { fn: 'limpeza:drenar_fila_limpeza_lgpd' });
     } else {
       const processados = (lgpdResults ?? []) as Array<{ sucesso: boolean }>;
       results.lgpd_fila_limpeza_processados = processados.filter((r) => r.sucesso).length;
@@ -115,8 +118,9 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     // ── P3-065: Purge LGPD via run_lgpd_purge ────────────────────────────
-    // Limpa tabelas de log/telemetria conforme config_retencao (90 dias query_telemetry,
-    // 30 dias login_attempts, 730 dias audit_log, etc.). SECURITY DEFINER via RPC.
+    // Limpa tabelas de log/telemetria conforme public.lgpd_retencao_logs
+    // (30d login_attempts, 90d query_telemetry, 730d auditoria, …), editável
+    // por admin. Deleta em lotes de 5000 para não segurar lock longo.
     const { data: purgeResults, error: purgeError } = await adminClient
       .rpc('run_lgpd_purge', { p_dry_run: false });
 

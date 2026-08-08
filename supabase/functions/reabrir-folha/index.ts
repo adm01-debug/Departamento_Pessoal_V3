@@ -16,6 +16,7 @@ import { corsHeaders, createErrorResponse, validateRequest, enforceOrigin, handl
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { verifyFolhaIntegrity } from '../_shared/folhaIntegrity.ts';
 import { integrityHash } from '../_shared/integrityHash.ts';
+import { requireRh } from '../_shared/authz.ts';
 import {
   beginIdempotency,
   completeIdempotency,
@@ -86,14 +87,13 @@ serve(async (req: Request): Promise<Response> => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
-    // 4) Tenant scope + role admin (para overrides)
-    const [{ data: belongs }, { data: isAdmin }] = await Promise.all([
-      admin.rpc('user_belongs_to_empresa', { _user_id: userId, _empresa_id: empresaId }),
-      admin.rpc('is_admin', { _user_id: userId }),
-    ]);
-    if (belongs !== true && isAdmin !== true) {
-      return createErrorResponse('Sem acesso a esta empresa', 403, 'FORBIDDEN');
-    }
+    // 4) Papel — reabrir folha fechada é ato de RH/admin. O gate anterior era
+    // um OU com o vínculo, então qualquer colaborador reabria a folha.
+    // `isAdmin` continua necessário adiante: ele libera overrides (reabrir
+    // fora da janela de auditoria), privilégio que o RH comum não tem.
+    const authz = await requireRh(admin, userId, empresaId);
+    if (authz.denied) return authz.denied;
+    const isAdmin = authz.isAdmin;
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(admin, { key: `reabrir-folha:${userId}`, limit: 10, windowSec: 60 });

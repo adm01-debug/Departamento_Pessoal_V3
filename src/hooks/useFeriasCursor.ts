@@ -14,7 +14,7 @@ import { useState, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { feriasService } from '@/services';
 import { useEmpresas } from './useEmpresas';
-import { encodeCursor, extractNextCursor, type FeriasRow } from '@/types/pagination';
+import { extractNextCursor, type FeriasRow } from '@/types/pagination';
 
 interface UseCursorPaginationOptions {
   limit?: number;
@@ -50,8 +50,7 @@ export function useFeriasCursor(options: UseCursorPaginationOptions = {}): UseCu
         limit,
         cursor: cursor ?? undefined,
         search: options.search,
-        status: options.status,
-      });
+        status: options.status});
       return result;
     },
     enabled: !!empresaId,
@@ -80,8 +79,7 @@ export function useFeriasCursor(options: UseCursorPaginationOptions = {}): UseCu
       limit,
       cursor: nextCursor,
       search: options.search,
-      status: options.status,
-    });
+      status: options.status});
 
     // Adiciona aos dados existentes
     setAllData(prev => [...prev, ...((result.data ?? []) as unknown as FeriasRow[])]);
@@ -102,6 +100,5 @@ export function useFeriasCursor(options: UseCursorPaginationOptions = {}): UseCu
     isLoadingMore,
     loadMore,
     reset,
-    cursors,
-  };
+    cursors};
 }

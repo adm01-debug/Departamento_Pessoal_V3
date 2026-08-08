@@ -1,6 +1,5 @@
 // Componente tipado com @tanstack/react-table (agora declarado em devDependencies).
 // Resolve o FIXME(dep-fantasma) que exigia @ts-nocheck.
-import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import {
   flexRender,
@@ -9,8 +8,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   getFilteredRowModel,
-  type ColumnDef,
-} from '@tanstack/react-table';
+  type ColumnDef} from '@tanstack/react-table';
 import { Button } from './button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -30,8 +28,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-  });
+    getFilteredRowModel: getFilteredRowModel()});
 
   return (
     <div>

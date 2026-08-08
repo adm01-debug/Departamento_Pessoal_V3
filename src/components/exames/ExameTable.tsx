@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
-import { Trash2, Stethoscope, AlertTriangle } from 'lucide-react';
+import { Trash2, Stethoscope } from 'lucide-react';
 import { format, parseISO, isBefore } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -13,8 +13,7 @@ const tipoLabels: Record<string, string> = {
   periodico: 'Periódico',
   retorno_trabalho: 'Retorno ao Trabalho',
   mudanca_funcao: 'Mudança de Função',
-  demissional: 'Demissional',
-};
+  demissional: 'Demissional'};
 
 const resultadoBadge = (resultado: string | null) => {
   if (!resultado) return <Badge variant="outline" className="text-[10px]">Pendente</Badge>;

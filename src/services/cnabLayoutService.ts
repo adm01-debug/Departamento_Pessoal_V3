@@ -1,4 +1,3 @@
-import { supabase } from '@/integrations/supabase/client';
 import { cnabService } from '@/services/cnabService';
 
 export const cnabLayoutService = {

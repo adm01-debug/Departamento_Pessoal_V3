@@ -6,8 +6,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+  DialogTrigger} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -15,8 +14,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+  TableRow} from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -26,9 +24,8 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Settings2, Plus, Trash2, Check, X, Save, AlertCircle, Wrench, DownloadCloud, FileCode } from 'lucide-react';
+  SelectValue} from '@/components/ui/select';
+import { Settings2, Plus, Trash2, Check, X, Save, Wrench, DownloadCloud, FileCode } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { validarRubricaESocial, sugerirCorrecaoRubrica } from '@/schemas/esocial';
 import { toast } from 'sonner';
@@ -45,8 +42,7 @@ export function RubricasDialog() {
     incide_fgts: true,
     incide_irrf: true,
     automatico: false,
-    ativo: true,
-  });
+    ativo: true});
   const queryClient = useQueryClient();
 
   const { data: rubricas, isLoading } = useQuery({
@@ -58,8 +54,7 @@ export function RubricasDialog() {
         .order('codigo', { ascending: true });
       if (error) throw error;
       return data;
-    },
-  });
+    }});
 
   const createMutation = useMutation({
     mutationFn: async (rubrica: typeof newRubrica) => {
@@ -86,13 +81,11 @@ export function RubricasDialog() {
         incide_fgts: true,
         incide_irrf: true,
         automatico: false,
-        ativo: true,
-      });
+        ativo: true});
     },
     onError: (error: any) => {
       toast.error(safeErrorMessage(error, 'Erro ao criar rubrica.'));
-    },
-  });
+    }});
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
@@ -108,8 +101,7 @@ export function RubricasDialog() {
     },
     onError: (error: any) => {
       toast.error(safeErrorMessage(error, 'Erro ao remover rubrica.'));
-    },
-  });
+    }});
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

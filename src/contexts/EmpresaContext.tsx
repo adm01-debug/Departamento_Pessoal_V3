@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEmpresas, type Empresa } from '@/hooks/useEmpresas';
 
@@ -23,8 +23,7 @@ export function EmpresaProvider({ children }: { children: ReactNode }) {
     userEmpresas,
     empresaAtual,
     loadingEmpresas,
-    trocarEmpresa,
-  } = useEmpresas();
+    trocarEmpresa} = useEmpresas();
 
   // Map userEmpresas to flat Empresa[] for backward compat
   const empresas: Empresa[] = (userEmpresas || [])
@@ -53,8 +52,7 @@ export function EmpresaProvider({ children }: { children: ReactNode }) {
         empresaAtual: empresaAtual ?? null,
         loading: loadingEmpresas,
         setEmpresaAtual,
-        refresh,
-      }}
+        refresh}}
     >
       {children}
     </EmpresaContext.Provider>

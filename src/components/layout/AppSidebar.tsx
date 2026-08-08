@@ -4,14 +4,14 @@ import {
   LogOut, History, Calendar, Building2, Shield, PenTool, UserCircle,
   Network, ClipboardList, FileCheck, Calculator, Settings, Briefcase,
   FileText, GraduationCap, Target, UserSearch, LucideIcon, MapPin, Timer,
-  Megaphone, Receipt, GitBranch, CalendarClock, Fingerprint, ShieldCheck, Scale, Bot, Landmark, BookOpen, TrendingDown,
+  Megaphone, Receipt, GitBranch, CalendarClock, Fingerprint, ShieldCheck, Scale, Bot, Landmark, BookOpen, TrendingDown, TrendingUp,
   Trophy, MessageSquareText, Activity, ShieldAlert
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { useState, memo, useCallback, useMemo, useEffect } from 'react';
+import { useState, memo, useCallback, useEffect } from 'react';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
@@ -99,6 +99,7 @@ const menuGroups: MenuGroup[] = [
     items: [
       { icon: Building2, label: 'Empresas', path: '/empresas', color: 'text-info' },
       { icon: Briefcase, label: 'Cargos', path: '/cargos', color: 'text-warning' },
+      { icon: TrendingUp, label: 'Cargos & Salários (PCS)', path: '/cargos-salarios', color: 'text-success' },
       { icon: Building2, label: 'Departamentos', path: '/departamentos', color: 'text-info' },
       { icon: MapPin, label: 'Locais de Trabalho', path: '/locais-trabalho', color: 'text-success' },
     ]
@@ -238,8 +239,7 @@ const ColaboradoresCount = memo(function ColaboradoresCount() {
         .eq('status', 'ativo');
       return count || 0;
     },
-    staleTime: 60000,
-  });
+    staleTime: 60000});
 
   if (isLoading || !count) return null;
 
@@ -266,8 +266,7 @@ const SecurityAlertsCount = memo(function SecurityAlertsCount() {
     },
     staleTime: 30_000,
     refetchInterval: 60_000, // fallback caso realtime caia
-    retry: false,
-  });
+    retry: false});
 
   // Realtime: invalida contador e página de alertas ao detectar mudança
   useEffect(() => {

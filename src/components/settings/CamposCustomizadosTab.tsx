@@ -13,8 +13,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
-import { Plus, Trash2, Edit2, GripVertical, CheckCircle, XCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Plus, Trash2, Edit2, CheckCircle, XCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { safeErrorMessage } from '@/utils/safeError';
 
@@ -55,8 +54,7 @@ export function CamposCustomizadosTab() {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const salvar = useMutation({
     mutationFn: async () => {
@@ -75,8 +73,7 @@ export function CamposCustomizadosTab() {
         secao: form.secao,
         obrigatorio: form.obrigatorio,
         empresa_id: empresaAtual?.id,
-        opcoes,
-      };
+        opcoes};
 
       if (editId) {
         const { error } = await supabase.from('campos_customizados').update(payload).eq('id', editId);
@@ -94,16 +91,14 @@ export function CamposCustomizadosTab() {
       setEditId(null);
       setForm(emptyForm);
     },
-    onError: (err: any) => toast.error(safeErrorMessage(err, 'Erro ao salvar campo customizado.')),
-  });
+    onError: (err: any) => toast.error(safeErrorMessage(err, 'Erro ao salvar campo customizado.'))});
 
   const toggleAtivo = useMutation({
     mutationFn: async ({ id, ativo }: { id: string; ativo: boolean }) => {
       const { error } = await supabase.from('campos_customizados').update({ ativo }).eq('id', id);
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['campos-customizados'] }),
-  });
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['campos-customizados'] })});
 
   const excluir = useMutation({
     mutationFn: async (id: string) => {
@@ -113,8 +108,7 @@ export function CamposCustomizadosTab() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['campos-customizados'] });
       toast.success('Campo removido');
-    },
-  });
+    }});
 
   const handleEdit = (campo: any) => {
     setEditId(campo.id);
@@ -123,8 +117,7 @@ export function CamposCustomizadosTab() {
       tipo: campo.tipo,
       secao: campo.secao || 'outros',
       obrigatorio: campo.obrigatorio || false,
-      opcoes: Array.isArray(campo.opcoes) ? campo.opcoes.join(', ') : '',
-    });
+      opcoes: Array.isArray(campo.opcoes) ? campo.opcoes.join(', ') : ''});
     setOpen(true);
   };
 

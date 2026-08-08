@@ -3,11 +3,10 @@ import { PageLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BookOpen, FileSpreadsheet, History, Download, Zap, RefreshCcw, Table as TableIcon, Loader2, ArrowRight } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { useState, useEffect, useCallback } from 'react';
+import { BookOpen, History, Download, Zap, RefreshCcw, Table as TableIcon, Loader2 } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { useEmpresas } from '@/hooks/useEmpresas';
-import { useOnMount } from '@/hooks/useMountEffects';
 import { contabilidadeService, folhaService } from '@/services';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
@@ -48,41 +47,47 @@ export default function ContabilidadePage() {
     status?: string;
   }
 
-  const [lancamentos, setLancamentos] = useState<Lancamento[]>([]);
-  const [planoContas, setPlanoContas] = useState<PlanoConta[]>([]);
-  const [folhas, setFolhas] = useState<FolhaResumo[]>([]);
-  const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [selectedFolha, setSelectedFolha] = useState('');
 
-  // eslint-disable-next-line react-hooks/preserve-manual-memoization
-  const loadData = useCallback(async () => {
-    if (!empresaAtual?.id) return;
-    try {
-      setLoading(true);
-      const [lan, pla, fls] = await Promise.all([
-        contabilidadeService.listLancamentos(empresaAtual.id),
-        contabilidadeService.listPlanoContas(empresaAtual.id),
-        folhaService.list()
-      ]);
-      setLancamentos(lan || []);
-      setPlanoContas(pla || []);
-      setFolhas(fls || []);
-    } catch (error) {
-      loggerService.error('Erro ao carregar dados contábeis', { empresaId: empresaAtual?.id }, error instanceof Error ? error : new Error(String(error)));
-      toast.error('Erro ao carregar dados contábeis');
-    } finally {
-      setLoading(false);
-    }
-  }, [empresaAtual?.id]);
+  const empresaId = empresaAtual?.id;
 
-  useOnMount(() => {
-    loadData();
+  // Data fetching declarativo: cache por empresa (tenant-scoped), sem efeitos manuais.
+  const contabilQuery = useQuery({
+    queryKey: ['contabilidade', empresaId],
+    enabled: !!empresaId,
+    queryFn: async () => {
+      const [lan, pla, fls] = await Promise.all([
+        contabilidadeService.listLancamentos(empresaId!),
+        contabilidadeService.listPlanoContas(empresaId!),
+        folhaService.list(),
+      ]);
+      return {
+        lancamentos: (lan ?? []) as Lancamento[],
+        planoContas: (pla ?? []) as PlanoConta[],
+        folhas: (fls ?? []) as FolhaResumo[],
+      };
+    },
   });
 
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
+  if (contabilQuery.error) {
+    loggerService.error(
+      'Erro ao carregar dados contábeis',
+      { empresaId },
+      contabilQuery.error instanceof Error ? contabilQuery.error : new Error(String(contabilQuery.error))
+    );
+  }
+
+  const EMPTY_LAN: Lancamento[] = useMemo(() => [], []);
+  const EMPTY_PLA: PlanoConta[] = useMemo(() => [], []);
+  const EMPTY_FLS: FolhaResumo[] = useMemo(() => [], []);
+  const lancamentos = contabilQuery.data?.lancamentos ?? EMPTY_LAN;
+  const planoContas = contabilQuery.data?.planoContas ?? EMPTY_PLA;
+  const folhas = contabilQuery.data?.folhas ?? EMPTY_FLS;
+  const loading = contabilQuery.isPending && !!empresaId;
+
+  const loadData = () => { void contabilQuery.refetch(); };
+
 
   const gerarLancamentos = async () => {
     if (!selectedFolha) {

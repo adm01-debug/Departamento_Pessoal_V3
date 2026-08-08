@@ -1,4 +1,3 @@
-import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,8 +24,7 @@ export function DocumentoTimeline({ documentoId }: DocumentoTimelineProps) {
       if (error) throw error;
       return data;
     },
-    enabled: !!documentoId,
-  });
+    enabled: !!documentoId});
 
   if (isLoading) return <div className="p-4 text-center text-sm text-muted-foreground animate-pulse">Carregando histórico...</div>;
 

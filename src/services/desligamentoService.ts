@@ -22,7 +22,7 @@ class DesligamentoService extends BaseService<any> {
 
     const { data, count, error } = await query;
     if (error) throw error;
-    return { data: data || [], total: count || 0 };
+    return { data: (data as any[]) || [], total: count || 0 };
   }
 
   async criar(d: any): Promise<any> {

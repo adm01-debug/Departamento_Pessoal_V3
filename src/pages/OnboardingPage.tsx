@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Rocket, CheckCircle2, Clock, UserPlus, Package, Mail, ListTodo, ChevronRight, Loader2 } from 'lucide-react';
+import { Rocket, CheckCircle2, Clock, UserPlus, Package, Mail, ListTodo, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { toast } from 'sonner';

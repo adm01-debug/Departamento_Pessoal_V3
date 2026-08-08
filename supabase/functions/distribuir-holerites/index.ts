@@ -3,6 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders, createErrorResponse, parseJsonBody, enforceOrigin, handlePreflight } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
+import { requireRh } from '../_shared/authz.ts';
 import {
   beginIdempotency,
   completeIdempotency,
@@ -75,13 +76,10 @@ serve(async (req: Request): Promise<Response> => {
     return createErrorResponse('Folha não encontrada', 404, 'NOT_FOUND');
   }
 
-  const { data: vinc } = await admin
-    .from('user_empresas')
-    .select('empresa_id')
-    .eq('user_id', userId)
-    .eq('empresa_id', folha.empresa_id)
-    .maybeSingle();
-  if (!vinc) return createErrorResponse('Sem permissão nesta empresa', 403, 'FORBIDDEN');
+  // Distribuir holerites dispara e-mail/portal com PII de toda a folha:
+  // é ato de RH, não de qualquer pessoa vinculada à empresa.
+  const authz = await requireRh(admin, userId, folha.empresa_id);
+  if (authz.denied) return authz.denied;
 
   // Idempotência transacional — evita distribuições duplicadas em rajada
   const idemKey = extractIdempotencyKey(req, body);

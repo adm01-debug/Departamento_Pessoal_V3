@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Send, CheckCircle2, Clock, AlertCircle, RefreshCw, ExternalLink, ChevronRight, Calculator } from 'lucide-react';
+import { Send, CheckCircle2, Clock, AlertCircle, RefreshCw, ExternalLink, Calculator } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useState, useMemo } from 'react';

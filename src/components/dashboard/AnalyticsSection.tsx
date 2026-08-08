@@ -1,15 +1,15 @@
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
-  TrendingUp, Activity, Timer, PieChart,
+  TrendingUp, Activity, PieChart,
   AlertCircle, UserPlus, UserMinus, Briefcase,
-  CheckCircle2, AlertTriangle, Calendar, ChevronRight,
-  TrendingDown, Minus, ShieldCheck, Clock, Search, Filter, X,
+  CheckCircle2, Calendar, ChevronRight,
+  ShieldCheck, Clock, Search, X,
   Check, Eye, Forward, MoreHorizontal, History, XCircle, ChevronLeft, MapPin, Shield,
   Download, ListChecks, CheckCircle, AlertOctagon, Bell, ExternalLink, FileJson,
-  Layers, Database, BarChart3, Target, Zap, Scale
+  Layers, Database, Target, Zap, Scale
 } from 'lucide-react';
 import { MiniSparkline } from './MiniSparkline';
 import { useNavigate } from 'react-router-dom';
@@ -18,8 +18,7 @@ import { BarChartWidget } from './BarChartWidget';
 import { DonutChart } from './DonutChart';
 import { Badge } from '@/components/ui/badge';
 import { CardSkeleton } from '@/components/ui/module-skeleton';
-import { viewsService } from '@/services/tabelasComplementaresService';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState, useMemo, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { 
@@ -28,8 +27,8 @@ import {
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { usePendencias, type Pendencia as DB_Pendencia } from '@/hooks/usePendencias';
-import { usePontoMelhorado, type SolicitacaoAjuste } from '@/hooks/usePontoMelhorado';
+import { usePendencias } from '@/hooks/usePendencias';
+import { usePontoMelhorado } from '@/hooks/usePontoMelhorado';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
@@ -37,7 +36,6 @@ import { toast } from 'sonner';
 import { exportPortaria671PDF, exportPontoCSV } from '@/services/exportService';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { useRealTimeSubscription } from '@/hooks/useRealTimeSubscription';
 /**
  * Sub-widgets extraídos para `./analytics/widgets` — reduz o tamanho deste
@@ -53,8 +51,7 @@ export {
   PendenciaItem,
   AlertasRHWidget,
   CadastroIncompletoWidget,
-  ESocialMonitorWidget,
-} from './analytics/widgets';
+  ESocialMonitorWidget} from './analytics/widgets';
 /* eslint-enable react-refresh/only-export-components */
 import {
   MotionCard,
@@ -62,11 +59,10 @@ import {
   IndicatorRow,
   QuickStat,
   PendenciaItem,
-  AlertasRHWidget,
-  CadastroIncompletoWidget,
+  
+  
   ESocialMonitorWidget,
-  type PendenciaSummary,
-} from './analytics/widgets';
+  type PendenciaSummary} from './analytics/widgets';
 export type { PendenciaSummary } from './analytics/widgets';
 
 /* ─── Exports ─── */

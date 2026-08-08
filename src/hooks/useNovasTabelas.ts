@@ -1,3 +1,4 @@
+import type { MedidaDisciplinarInsert } from '@/types/medidasDisciplinares';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEmpresas } from './useEmpresas';
 import { batidasPontoService } from '@/services/batidasPontoService';
@@ -109,7 +110,7 @@ export function useMedidasDisciplinaresColaborador(colaboradorId: string) {
 export function useCriarMedidaDisciplinar() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (d: DataRecord) => medidasDisciplinaresService.criar(d),
+    mutationFn: (d: MedidaDisciplinarInsert) => medidasDisciplinaresService.criar(d),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['medidas-disciplinares'] }); toast.success('Medida disciplinar registrada'); },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });

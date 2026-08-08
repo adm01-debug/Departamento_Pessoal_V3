@@ -2,7 +2,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { cn } from '@/lib/utils';
-import { Shield, TrendingUp, TrendingDown, Minus, ChevronRight } from 'lucide-react';
+import { Shield, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 
@@ -42,8 +42,7 @@ const statusColors = {
   excellent: 'bg-success/15 text-success',
   good: 'bg-primary/15 text-primary',
   warning: 'bg-warning/15 text-warning',
-  critical: 'bg-destructive/15 text-destructive',
-};
+  critical: 'bg-destructive/15 text-destructive'};
 
 export function WorkforceHealthScore({ turnover, absenteismo, cadastrosCompletos, totalColaboradores, feriasPendentes, passivoTotal = 0 }: WorkforceHealthScoreProps) {
   const ref = useRef<HTMLDivElement>(null);

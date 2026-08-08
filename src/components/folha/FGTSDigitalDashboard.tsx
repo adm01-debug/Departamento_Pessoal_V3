@@ -1,11 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Landmark, FileText, CheckCircle2, AlertCircle, ExternalLink, Loader2, CloudSync, History } from 'lucide-react';
+import { Landmark, FileText, CheckCircle2, ExternalLink, Loader2, CloudSync, History } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
 import { edgeFunctionsService } from '@/services/edgeFunctionsService';
 import { format } from 'date-fns';

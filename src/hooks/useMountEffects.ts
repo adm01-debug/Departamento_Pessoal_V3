@@ -61,9 +61,8 @@ export function useOnMountWithDeps(
  */
 export function useStableCallback<T extends (...args: never[]) => void>(
   callback: T,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _deps: React.DependencyList
 ): T {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/use-memo
   return useCallback(callback, []);
 }

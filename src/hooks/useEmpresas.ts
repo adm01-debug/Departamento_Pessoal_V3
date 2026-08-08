@@ -80,7 +80,31 @@ export const useEmpresaStore = create<EmpresaStore>()(
   )
 );
 
-export interface UseEmpresasReturn {
+/**
+ * Chaves de cache NÃO vinculadas à empresa ativa (sessão, usuário, tabelas
+ * de domínio nacionais). Só estas sobrevivem à troca de tenant.
+ */
+export const GLOBAL_QUERY_KEYS: readonly string[] = [
+  'user-empresas',
+  'todas-empresas',
+  'auth-user',
+  'user-roles',
+  'user-permissions',
+  'profile',
+  'perfil',
+  'feature-flags',
+  'cid10',
+  'nacionalidades',
+  'etnias',
+  'municipios',
+  'tabelas-referencia-nacionais',
+];
+
+export function isGlobalQueryKey(key: unknown): boolean {
+  return typeof key === 'string' && GLOBAL_QUERY_KEYS.includes(key);
+}
+
+interface UseEmpresasReturn {
   userEmpresas: UserEmpresa[] | undefined;
   todasEmpresas: Empresa[] | undefined;
   empresaAtual: Empresa | null;
@@ -299,22 +323,13 @@ export function useEmpresas(): UseEmpresasReturn {
     
     setEmpresaAtual(empresaId);
     
-    // Invalida apenas queries que dependem de empresa (tenant-scoped)
-    // Preserva dados de sessão/auth para evitar logouts ou loadings globais
+    // Invalidação por DENYLIST (fail-safe): tudo é considerado tenant-scoped,
+    // exceto chaves globais/sessão explicitamente listadas. Uma allowlist deixava
+    // qualquer chave nova (ex.: 'sst-extintores') servindo cache da empresa anterior.
     queryClient.invalidateQueries({
-      predicate: (query) => {
-        const key = query.queryKey[0];
-        // Adicionamos aqui chaves que sabemos que DEVEM ser invalidadas ao trocar de contexto
-        const tenantKeys = [
-          'colaboradores', 'colaborador', 'folhas', 'folha', 
-          'registros-ponto', 'batidas-ponto', 'ferias', 
-          'afastamentos', 'beneficios', 'admissoes', 'departamentos', 'cargos', 'locais_trabalho',
-          'notificacoes', 'relatorios_analytics'
-        ];
-        return tenantKeys.includes(key as string);
-      },
+      predicate: (query) => !isGlobalQueryKey(query.queryKey[0]),
     });
-    
+
     toast.success("Contexto de empresa alterado");
   };
 

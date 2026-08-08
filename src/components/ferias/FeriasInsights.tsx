@@ -1,6 +1,5 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BrainCircuit, TrendingDown, AlertTriangle, CheckCircle2, Info, ArrowRight, History, ExternalLink } from 'lucide-react';
+import { BrainCircuit, TrendingDown, AlertTriangle, CheckCircle2, Info, ArrowRight, History } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';

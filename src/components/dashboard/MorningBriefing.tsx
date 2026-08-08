@@ -3,9 +3,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { 
   Sun, Moon, Sunset, Gift, Calendar, AlertTriangle, 
-  CheckCircle2, Clock, UserPlus, UserMinus, FileText, 
-  ChevronRight, Sparkles, Coffee, Database, Zap,
-  Loader2, RefreshCw, Trash2, Bell, ShieldAlert
+  CheckCircle2, Clock, UserPlus, FileText, 
+  ChevronRight, Coffee, Database, Zap,
+  Loader2, Trash2, Bell, ShieldAlert
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -53,7 +53,7 @@ function useMorningBriefing() {
         { data: esocialData },
       ] = await Promise.all([
         supabase.from('colaboradores').select('nome_completo, data_nascimento').eq('status', 'ativo').not('data_nascimento', 'is', null),
-        supabase.from('ferias').select('data_inicio, data_fim, colaboradores!fk_ferias_colaborador(nome_completo)').in('status', ['aprovada', 'em_andamento']).lte('data_inicio', hojeStr).gte('data_fim', hojeStr),
+        supabase.from('ferias').select('data_inicio, data_fim, colaboradores!ferias_colaborador_id_fkey(nome_completo)').in('status', ['aprovada', 'em_andamento']).lte('data_inicio', hojeStr).gte('data_fim', hojeStr),
         supabase.from('afastamentos').select('tipo, colaboradores!afastamentos_colaborador_id_fkey(nome_completo)').eq('status', 'ativo').lte('data_inicio', hojeStr).gte('data_fim_prevista', hojeStr),
         supabase.from('admissoes').select('nome, cargo').eq('data_prevista', hojeStr),
         supabase.from('exames').select('data_validade, tipo, colaboradores!exames_colaborador_id_fkey(nome_completo)').gte('data_validade', hojeStr).lte('data_validade', em7Dias),
@@ -81,16 +81,13 @@ function useMorningBriefing() {
       const admissoesHoje = (admData || []).map(a => ({ nome: a.nome, cargo: a.cargo }));
       const vencimentosHoje = (asoData || []).map((a: any) => ({
         descricao: `Exame ${a.tipo} de ${a.colaboradores?.nome_completo || 'Colaborador'} - ${format(parseISO(a.data_validade), 'dd/MM')}`,
-        tipo: 'exame',
-      }));
+        tipo: 'exame'}));
 
       return {
         aniversariantes, feriasPeriodo, afastadosHoje, admissoesHoje, vencimentosHoje,
         totalAtivos: totalAtivos || 0, pontosRegistradosHoje: pontosHoje || 0,
-        esocialHealth,
-      };
-    },
-  });
+        esocialHealth};
+    }});
 }
 
 function BriefingItem({ icon: Icon, label, count, gradient, onClick }: {

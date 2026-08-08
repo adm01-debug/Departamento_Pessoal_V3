@@ -1,5 +1,5 @@
 import { todayLocalISO } from '@/utils/dateLocal';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { useBeneficiosColaborador } from '@/hooks/useBeneficiosColaborador';
 import { useBeneficios } from '@/hooks/useBeneficios';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';

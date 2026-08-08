@@ -13,8 +13,7 @@ import { describe, it, expect } from 'vitest';
 import { createClient } from '@supabase/supabase-js';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
-const SUPABASE_ANON = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
-  import.meta.env.VITE_SUPABASE_ANON_KEY) as string;
+const SUPABASE_ANON = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
 
 // Smoke test de integração: exige backend real (URL + anon key). Sem essas
 // variáveis (ex.: CI sem secrets), o suite é pulado em vez de quebrar no import.
@@ -29,21 +28,29 @@ const anon = hasBackend
   : (null as unknown as ReturnType<typeof createClient>);
 
 describe.skipIf(!hasBackend)('RPC permissions — anon role', () => {
-  it('check_login_lock continua acessível sem sessão', async () => {
+  // Regressão: estas duas RPCs eram executáveis por anon. record_failed_login
+  // incrementa o contador de falhas de um identificador arbitrário, então
+  // qualquer pessoa que soubesse o e-mail da vítima podia chamá-la cinco vezes
+  // e manter a conta bloqueada por até 60 minutos sem tentar nenhuma senha.
+  // O lockout legítimo é aplicado pela edge function auth-login (service_role).
+  it('check_login_lock NÃO pode ser executada por anon', async () => {
     const { error } = await anon.rpc('check_login_lock', {
       p_identifier: 'test@example.com',
       p_identifier_type: 'email',
     });
-    expect(error?.message ?? '').not.toMatch(/permission denied/i);
+    expect(error).toBeTruthy();
+    expect(error!.message).toMatch(/permission denied|not allowed|not found|allowlist|egress/i);
   });
 
-  it('record_failed_login continua acessível sem sessão', async () => {
+  it('record_failed_login NÃO pode ser executada por anon (DoS de lockout)', async () => {
     const { error } = await anon.rpc('record_failed_login', {
       p_identifier: 'test@example.com',
       p_identifier_type: 'email',
     });
-    expect(error?.message ?? '').not.toMatch(/permission denied/i);
+    expect(error).toBeTruthy();
+    expect(error!.message).toMatch(/permission denied|not allowed|not found|allowlist|egress/i);
   });
+
 
   it('has_role NÃO pode ser executada por anon', async () => {
     const { error } = await anon.rpc('has_role', {

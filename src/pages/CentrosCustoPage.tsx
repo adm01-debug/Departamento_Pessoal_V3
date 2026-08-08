@@ -15,7 +15,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { Plus, Building, Trash2 } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 
 export default function CentrosCustoPage() {
   const { empresaAtual } = useEmpresas();
@@ -32,8 +32,7 @@ export default function CentrosCustoPage() {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const criar = useMutation({
     mutationFn: async (d: any) => {
@@ -42,16 +41,14 @@ export default function CentrosCustoPage() {
       return data;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['centros-custo'] }); setOpen(false); toast.success('Centro de custo criado!'); },
-    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar centro de custo.')),
-  });
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar centro de custo.'))});
 
   const excluir = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from('centros_custo').delete().eq('id', id).eq('empresa_id', empresaAtual!.id);
       if (error) throw error;
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['centros-custo'] }); toast.success('Centro excluído!'); },
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['centros-custo'] }); toast.success('Centro excluído!'); }});
 
   if (isLoading) return <PageLayout title="Centros de Custo"><Spinner /></PageLayout>;
 

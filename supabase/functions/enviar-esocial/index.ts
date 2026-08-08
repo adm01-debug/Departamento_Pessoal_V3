@@ -12,6 +12,7 @@ import { z } from 'https://esm.sh/zod@3.23.8';
 import { assinarXMLEsocial } from './utils/signer.ts';
 import { corsHeaders, createErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
+import { requireRh } from '../_shared/authz.ts';
 import { captureException } from '../_shared/sentry.ts';
 import {
   beginIdempotency,
@@ -92,12 +93,13 @@ serve(async (req: Request): Promise<Response> => {
     if (!rl.allowed) return rateLimitResponse(rl);
 
     // Tenant scope
-    const [{ data: belongs }, { data: isAdm }] = await Promise.all([
-      supabase.rpc('user_belongs_to_empresa', { _user_id: userId, _empresa_id: empresaId }),
-      supabase.rpc('is_admin', { _user_id: userId }),
-    ]);
-    if (!belongs && !isAdm) return createErrorResponse('Sem acesso a esta empresa', 403, 'FORBIDDEN');
-
+    // Papel, não apenas vínculo: o padrão anterior (`!belongs && !isAdmin`)
+    // era um OU — pertencer à empresa já bastava, e o is_admin apenas somava
+    // o admin global. Qualquer colaborador autenticado passava.
+    {
+      const authz = await requireRh(supabase, userId, empresaId);
+      if (authz.denied) return authz.denied;
+    }
     // Idempotência transacional (Idempotency-Key header ou body)
     const idemKey = extractIdempotencyKey(req, raw);
     const idem = await beginIdempotency(supabase, {

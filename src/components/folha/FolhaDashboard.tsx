@@ -3,7 +3,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   AreaChart, Area, PieChart, Pie, Cell, Legend
 } from 'recharts';
-import { Banknote, TrendingUp, Users, PieChart as PieIcon, ArrowRight } from 'lucide-react';
+import { TrendingUp, Users, PieChart as PieIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface FolhaDashboardProps {

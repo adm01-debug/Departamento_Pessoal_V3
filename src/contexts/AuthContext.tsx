@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { Session, AuthError } from '@supabase/supabase-js';
 import { sanitizePlainText } from '@/utils/sanitizeHtml';
@@ -72,8 +72,7 @@ function buildUser(supabaseUser: { id: string; email?: string | null; user_metad
     id: supabaseUser.id,
     email: supabaseUser.email || '',
     name: supabaseUser.user_metadata?.name as string | undefined,
-    roles,
-  };
+    roles};
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -163,16 +162,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // API directly (which would bypass the React UI checks entirely).
       const SUPABASE_URL = (supabase as unknown as { supabaseUrl?: string }).supabaseUrl
         ?? import.meta.env.VITE_SUPABASE_URL;
-      const ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      // Chave pública canônica: VITE_SUPABASE_PUBLISHABLE_KEY (única suportada).
+      const ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
       if (!SUPABASE_URL || !ANON_KEY) {
-        throw new Error('VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are required');
+        throw new Error('VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY são obrigatórias');
       }
+      // Dev local: VITE_SUPABASE_FUNCTIONS_BASE=/functions/v1 roteia pela bridge
+      // do Vite (proxy reescreve Origin p/ allowlist). Produção: URL absoluta.
+      const FUNCTIONS_BASE = import.meta.env.VITE_SUPABASE_FUNCTIONS_BASE?.trim()
+        || `${SUPABASE_URL}/functions/v1`;
 
-      const res = await fetch(`${SUPABASE_URL}/functions/v1/auth-login`, {
+      const res = await fetch(`${FUNCTIONS_BASE}/auth-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY },
-        body: JSON.stringify({ email, password }),
-      });
+        body: JSON.stringify({ email, password })});
 
       const body = await res.json().catch(() => ({})) as {
         success?: boolean;
@@ -196,8 +199,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const session = body.session!;
       const { error: sessionErr } = await supabase.auth.setSession({
         access_token: session.access_token,
-        refresh_token: session.refresh_token,
-      });
+        refresh_token: session.refresh_token});
       if (sessionErr) throw sessionErr;
 
       // Check if MFA challenge is required (user enrolled TOTP → nextLevel = aal2)
@@ -231,8 +233,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               .limit(10);
             if (error) throw error;
             return data;
-          },
-        }),
+          }}),
         // Colaboradores ativos (dashboard + listagens)
         queryClient.prefetchQuery({
           queryKey: ['colaboradores', { status: 'ativo', limit: 50 }],
@@ -244,8 +245,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               .limit(50);
             if (error) throw error;
             return data;
-          },
-        }),
+          }}),
       ])
         .then(() => loggerService.debug('Pre-fetch post-login concluído'))
         .catch((err) => {
@@ -310,8 +310,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const resetPassword = useCallback(async (email: string) => {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/login`,
-      });
+        redirectTo: `${window.location.origin}/login`});
       if (error) throw error;
       loggerService.info('Password reset email sent', { email });
     } catch (e) {

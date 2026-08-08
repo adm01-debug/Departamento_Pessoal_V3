@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { ShieldAlert, CheckCircle, AlertTriangle, Loader2, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
+import { ShieldAlert, CheckCircle, AlertTriangle, Loader2, Sparkles, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ESocialEvento } from '@/services/esocialService';
 import { Progress } from '@/components/ui/progress';
@@ -48,30 +48,26 @@ export function ESocialAuditDialog({ open, onOpenChange, eventos }: ESocialAudit
     if (erros.length > 0) {
       issues.push({
         type: 'critical' as const,
-        message: `${erros.length} eventos estão com erro e bloqueiam o fechamento da folha.`,
-      });
+        message: `${erros.length} eventos estão com erro e bloqueiam o fechamento da folha.`});
     }
     
     if (pendentes.length > 5) {
       issues.push({
         type: 'warning' as const,
-        message: 'Volume alto de eventos pendentes para a competência atual.',
-      });
+        message: 'Volume alto de eventos pendentes para a competência atual.'});
     }
 
     const s1200WithoutS1210 = eventos.filter(e => e.tipo_evento === 'S-1200' && !eventos.some(e2 => e2.tipo_evento === 'S-1210' && (e2.dados as any)?.cpfTrab === (e.dados as any)?.cpfTrab));
     if (s1200WithoutS1210.length > 0) {
       issues.push({
         type: 'info' as const,
-        message: `${s1200WithoutS1210.length} remunerações (S-1200) sem o respectivo pagamento (S-1210).`,
-      });
+        message: `${s1200WithoutS1210.length} remunerações (S-1200) sem o respectivo pagamento (S-1210).`});
     }
 
     if (issues.length === 0) {
       issues.push({
         type: 'info' as const,
-        message: 'Todos os eventos analisados estão em conformidade com as regras básicas.',
-      });
+        message: 'Todos os eventos analisados estão em conformidade com as regras básicas.'});
     }
 
     setResults({

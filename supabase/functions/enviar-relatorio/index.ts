@@ -5,6 +5,7 @@ import { verifyCsrf } from "../_shared/csrf.ts";
 import { captureException } from "../_shared/sentry.ts";
 import { corsHeaders, parseJsonBody } from "../_shared/contract.ts";
 import { safeFetch } from "../_shared/safe-fetch.ts";
+import { requireRh } from '../_shared/authz.ts';
 
 /**
  * enviar-relatorio — Onda 20 hardening
@@ -201,15 +202,13 @@ serve(async (req: Request): Promise<Response> => {
     const body = parsed.data;
     const empresaId = body.parametros.empresaId;
 
-    // 4. Tenant scope — admin bypass permitido
+    // 4. Papel — o relatório carrega dados consolidados da empresa e é
+    // despachado por e-mail. Exige RH/admin; o gate anterior (`!belongs` com
+    // fallback em `isAdm`) era um OU e liberava qualquer colaborador.
     const admin = createClient(supabaseUrl, serviceKey);
-    const { data: belongs } = await admin.rpc("user_belongs_to_empresa", {
-      _user_id: userId,
-      _empresa_id: empresaId,
-    });
-    if (!belongs) {
-      const { data: isAdm } = await admin.rpc("is_admin", { _user_id: userId });
-      if (!isAdm) return json({ error: "Sem acesso a esta empresa" }, 403);
+    {
+      const authz = await requireRh(admin, userId, empresaId);
+      if (authz.denied) return authz.denied;
     }
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');

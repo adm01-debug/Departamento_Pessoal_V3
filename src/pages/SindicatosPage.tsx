@@ -13,7 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { Plus, Landmark, Trash2 } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 
 export default function SindicatosPage() {
   const { empresaAtual } = useEmpresas();
@@ -30,8 +30,7 @@ export default function SindicatosPage() {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!empresaAtual?.id,
-  });
+    enabled: !!empresaAtual?.id});
 
   const criar = useMutation({
     mutationFn: async (d: any) => {
@@ -40,13 +39,11 @@ export default function SindicatosPage() {
       return data;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['sindicatos'] }); setOpen(false); toast.success('Sindicato cadastrado!'); },
-    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar sindicato.')),
-  });
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar sindicato.'))});
 
   const excluir = useMutation({
     mutationFn: async (id: string) => { const { error } = await (supabase as any).from('sindicatos').delete().eq('id', id).eq('empresa_id', empresaAtual!.id); if (error) throw error; },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['sindicatos'] }); toast.success('Sindicato excluído!'); },
-  });
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['sindicatos'] }); toast.success('Sindicato excluído!'); }});
 
   if (isLoading) return <PageLayout title="Sindicatos"><Spinner /></PageLayout>;
 

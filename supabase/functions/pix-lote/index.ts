@@ -12,6 +12,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
 import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
+import { requireRh } from '../_shared/authz.ts';
 import { captureException } from '../_shared/sentry.ts';
 import {
   beginIdempotency,
@@ -132,13 +133,13 @@ Deno.serve(async (req) => {
     // ---------- CRIAR ----------
     if (payload.action === 'criar') {
       // Tenant scope
-      const { data: pertence } = await service.rpc('user_belongs_to_empresa', {
-        _user_id: userId, _empresa_id: payload.empresa_id,
-      });
-      const { data: isAdmin } = await service.rpc('is_admin', { _user_id: userId });
-      if (!pertence && !isAdmin) {
-        return createErrorResponse('Acesso negado', 403, 'FORBIDDEN');
-      }
+    // Papel, não apenas vínculo: o padrão anterior (`!belongs && !isAdmin`)
+    // era um OU — pertencer à empresa já bastava, e o is_admin apenas somava
+    // o admin global. Qualquer colaborador autenticado passava.
+    {
+      const authz = await requireRh(service, userId, payload.empresa_id);
+      if (authz.denied) return authz.denied;
+    }
 
       // Soma e cap
       const soma = payload.itens.reduce((acc, i) => acc + BigInt(i.valor_centavos), 0n);
@@ -254,12 +255,12 @@ Deno.serve(async (req) => {
     if (findErr) throw findErr;
     if (!lote) return createErrorResponse('Lote não encontrado', 404, 'NOT_FOUND');
 
-    const { data: pertence } = await service.rpc('user_belongs_to_empresa', {
-      _user_id: userId, _empresa_id: lote.empresa_id,
-    });
-    const { data: isAdmin } = await service.rpc('is_admin', { _user_id: userId });
-    if (!pertence && !isAdmin) {
-      return createErrorResponse('Acesso negado', 403, 'FORBIDDEN');
+    // Papel, não apenas vínculo: o padrão anterior (`!belongs && !isAdmin`)
+    // era um OU — pertencer à empresa já bastava, e o is_admin apenas somava
+    // o admin global. Qualquer colaborador autenticado passava.
+    {
+      const authz = await requireRh(service, userId, lote.empresa_id);
+      if (authz.denied) return authz.denied;
     }
 
     if (lote.status !== 'pendente_aprovacao' && lote.status !== 'aprovado_parcial') {

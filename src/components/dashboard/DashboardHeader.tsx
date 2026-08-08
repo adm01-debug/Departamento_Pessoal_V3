@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { RefreshCw, Search, Calendar, Filter, Settings, Download } from 'lucide-react';
+import { RefreshCw, Search, Calendar, Filter, Download } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
@@ -9,8 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-  DropdownMenuLabel,
-} from '@/components/ui/dropdown-menu';
+  DropdownMenuLabel} from '@/components/ui/dropdown-menu';
 
 interface DashboardHeaderProps {
   greeting: string;

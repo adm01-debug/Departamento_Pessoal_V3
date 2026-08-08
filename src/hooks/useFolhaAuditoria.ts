@@ -8,7 +8,8 @@ export type AuditoriaSeveridade = 'INFO' | 'AVISO' | 'ERRO' | 'CRITICO';
 
 export interface FolhaAuditoria {
   id: string;
-  folha_id?: string;
+  /** Obrigatório: toda linha de auditoria pertence a uma folha (âncora de tenant no RLS). */
+  folha_id: string;
   colaborador_id?: string;
   tipo_evento: AuditoriaEvento;
   severidade: AuditoriaSeveridade;

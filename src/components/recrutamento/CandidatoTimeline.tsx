@@ -1,10 +1,9 @@
-import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
-import { Calendar, User, Clock, MessageSquare, Video, Phone, MapPin, CheckCircle2, XCircle } from 'lucide-react';
+import { Calendar, User, Clock, MessageSquare, Video, Phone, MapPin, CheckCircle2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -31,8 +30,7 @@ export function CandidatoTimeline({ candidaturaId }: CandidatoTimelineProps) {
 
       return items;
     },
-    enabled: !!candidaturaId,
-  });
+    enabled: !!candidaturaId});
 
   if (isLoading) return <div className="p-8 flex justify-center"><Spinner /></div>;
 

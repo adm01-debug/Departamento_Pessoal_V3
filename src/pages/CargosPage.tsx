@@ -3,7 +3,7 @@ import { useCargos } from '@/hooks/useCargos';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { TableCell, TableRow } from '@/components/ui/table';
-import { Briefcase, Plus, Info } from 'lucide-react';
+import { Briefcase, Info } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { EntityPageContainer } from '@/components/layout/EntityPageContainer';
 import { Cargo } from '@/types/entities';

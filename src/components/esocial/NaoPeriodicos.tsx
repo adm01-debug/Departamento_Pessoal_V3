@@ -1,8 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
-import { User, Calendar, Briefcase, Banknote, ShieldCheck, Clock, MapPin, Activity } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { User, Calendar, Briefcase, Clock, Activity } from 'lucide-react';
 import { maskCpfDisplay } from '@/utils/piiMask';
 
 export function S2200Admissao({ dados }: { dados: any }) {

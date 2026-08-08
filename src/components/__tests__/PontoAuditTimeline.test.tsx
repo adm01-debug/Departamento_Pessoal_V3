@@ -7,10 +7,22 @@ vi.mock('framer-motion', () => ({
   },
 }));
 
-vi.mock('@tanstack/react-query', () => ({
-  useQuery: vi.fn(() => ({ data: [], isLoading: false })),
-  useQueryClient: vi.fn(() => ({ invalidateQueries: vi.fn() })),
+vi.mock('@/contexts/AuthContext', () => ({
+  useAuth: () => ({ user: { id: 'u1', email: 'teste@empresa.com' }, isAdmin: true }),
 }));
+
+vi.mock('@/hooks/useEmpresas', () => ({
+  useEmpresas: () => ({ empresaAtual: { id: 'emp-1' } }),
+}));
+
+vi.mock('@tanstack/react-query', async () => {
+  const actual = await vi.importActual<typeof import('@tanstack/react-query')>('@tanstack/react-query');
+  return {
+    ...actual,
+    useQuery: vi.fn(() => ({ data: [], isLoading: false })),
+    useQueryClient: vi.fn(() => ({ invalidateQueries: vi.fn() })),
+  };
+});
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
@@ -64,7 +76,7 @@ describe('PontoAuditTimeline', () => {
 
   it('renders Exportar CSV button', () => {
     render(<PontoAuditTimeline />);
-    expect(screen.getByRole('button', { name: /Exportar CSV/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Exportar Trilha/i })).toBeInTheDocument();
   });
 
   it('renders log acao badge when logs provided', async () => {
@@ -78,7 +90,7 @@ describe('PontoAuditTimeline', () => {
     const { useQuery } = await import('@tanstack/react-query');
     vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
     render(<PontoAuditTimeline />);
-    expect(screen.getByText('registros_ponto')).toBeInTheDocument();
+    expect(screen.getByText(/Entidade: registros_ponto/)).toBeInTheDocument();
   });
 
   it('renders user email in log', async () => {

@@ -1,4 +1,3 @@
-import { PageTitle } from '@/components/PageTitle';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Clock, FileText, Calculator, Shield, CheckCircle, ArrowRight, ChevronRight } from 'lucide-react';
@@ -20,8 +19,7 @@ const statusStyles: Record<string, { label: string }> = {
   executado: { label: 'Executado' },
   aprovado: { label: 'Aprovado' },
   aberto: { label: 'Aberto' },
-  fechado: { label: 'Fechado' },
-};
+  fechado: { label: 'Fechado' }};
 
 function PipelineStep({ step, status, index, isLast }: { step: typeof stepConfig[0]; status: string; index: number; isLast: boolean }) {
   const st = statusStyles[status] || statusStyles.pendente;

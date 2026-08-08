@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deepChain } from '@/test/deepChain';
 import { afastamentoService } from '../afastamentoService';
+import type { ConfigAfastamentoRow } from '@/types/afastamentos';
 
 const EMPRESA_ID = 'test-empresa-id';
 
@@ -18,7 +19,15 @@ vi.mock('@/utils/dateLocal', () => ({
 
 // Helper: select → eq → order chain (order resolves directly, no range)
 function setupListarChain(data: any[], count: number, error: any = null) {
-  const orderFn = vi.fn().mockResolvedValue({ data, count, error });
+  const response = { data, count, error };
+  // `.order(...)` é aguardado direto ou seguido de `.returns<T>()` (tipagem do supabase-js).
+  const ordered: any = {
+    returns: vi.fn(() => ordered),
+    then: (fn: any) => Promise.resolve(response).then(fn),
+    catch: (fn: any) => Promise.resolve(response).catch(fn),
+    finally: (fn: any) => Promise.resolve(response).finally(fn),
+  };
+  const orderFn = vi.fn().mockReturnValue(ordered);
   const baseQuery: any = { order: orderFn };
   const eqFn = vi.fn().mockReturnValue(baseQuery);
   Object.assign(baseQuery, { eq: eqFn });
@@ -34,7 +43,9 @@ function setupThenabledChain(data: any[], error: any = null) {
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.gte = vi.fn().mockReturnValue(chain);
   chain.or = vi.fn().mockReturnValue(chain);
-  chain.limit = vi.fn().mockResolvedValue(response);
+  chain.limit = vi.fn().mockReturnValue(chain);
+  chain.returns = vi.fn().mockReturnValue(chain);
+  chain.maybeSingle = vi.fn().mockResolvedValue({ data: (data as any[])?.[0] ?? null, error });
   chain.order = vi.fn().mockReturnValue(chain);
   chain.then = (fn: any) => Promise.resolve(response).then(fn);
   chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
@@ -133,36 +144,45 @@ describe('afastamentoService.buscarCID', () => {
   it('returns CID results', async () => {
     const cids = [{ codigo: 'J00', descricao: 'Resfriado' }];
     const { chain } = setupThenabledChain(cids);
-    // override limit to resolve directly
-    chain.limit = vi.fn().mockResolvedValue({ data: cids, error: null });
+    chain.limit = vi.fn().mockReturnValue(chain);
+    chain.returns = vi.fn().mockReturnValue(chain);
+    chain.then = (fn: any) => Promise.resolve({ data: cids, error: null }).then(fn);
     const result = await afastamentoService.buscarCID('J00');
     expect(result).toEqual(cids);
   });
 
   it('uses or() filter with code and description ilike', async () => {
     const { chain } = setupThenabledChain([]);
-    chain.limit = vi.fn().mockResolvedValue({ data: [], error: null });
+    chain.limit = vi.fn().mockReturnValue(chain);
+    chain.returns = vi.fn().mockReturnValue(chain);
+    chain.then = (fn: any) => Promise.resolve({ data: [], error: null }).then(fn);
     await afastamentoService.buscarCID('tosse');
     expect(chain.or).toHaveBeenCalledWith(expect.stringContaining('ilike.%tosse%'));
   });
 
   it('limits results to 10', async () => {
     const { chain } = setupThenabledChain([]);
-    chain.limit = vi.fn().mockResolvedValue({ data: [], error: null });
+    chain.limit = vi.fn().mockReturnValue(chain);
+    chain.returns = vi.fn().mockReturnValue(chain);
+    chain.then = (fn: any) => Promise.resolve({ data: [], error: null }).then(fn);
     await afastamentoService.buscarCID('abc');
     expect(chain.limit).toHaveBeenCalledWith(10);
   });
 
   it('returns empty array when no results', async () => {
     const { chain } = setupThenabledChain(null as any);
-    chain.limit = vi.fn().mockResolvedValue({ data: null, error: null });
+    chain.limit = vi.fn().mockReturnValue(chain);
+    chain.returns = vi.fn().mockReturnValue(chain);
+    chain.then = (fn: any) => Promise.resolve({ data: null, error: null }).then(fn);
     const result = await afastamentoService.buscarCID('xyz');
     expect(result).toEqual([]);
   });
 
   it('throws on DB error', async () => {
     const { chain } = setupThenabledChain([]);
-    chain.limit = vi.fn().mockResolvedValue({ data: null, error: { message: 'fail' } });
+    chain.limit = vi.fn().mockReturnValue(chain);
+    chain.returns = vi.fn().mockReturnValue(chain);
+    chain.then = (fn: any) => Promise.resolve({ data: null, error: { message: 'fail' } }).then(fn);
     await expect(afastamentoService.buscarCID('err')).rejects.toBeDefined();
   });
 });
@@ -233,8 +253,8 @@ describe('afastamentoService.calcularDias', () => {
 // ─── calcularDistribuicaoDias (pure) ─────────────────────────────────────────
 
 describe('afastamentoService.calcularDistribuicaoDias', () => {
-  const configDoenca = [{ tipo: 'doenca', dias_empresa_maximo: 15 }];
-  const configSemLimite = [{ tipo: 'licenca', dias_empresa_maximo: 0 }];
+  const configDoenca: ConfigAfastamentoRow[] = [{ tipo: 'doenca', dias_empresa_maximo: 15, id: 'cfg-1', created_at: new Date().toISOString(), descricao: null, dias_maximos: null, dias_minimos: null, exige_cid: null, pago_empresa: null, pago_inss: null }];
+  const configSemLimite: ConfigAfastamentoRow[] = [{ tipo: 'licenca_maternidade', dias_empresa_maximo: 0, id: 'cfg-2', created_at: new Date().toISOString(), descricao: null, dias_maximos: null, dias_minimos: null, exige_cid: null, pago_empresa: null, pago_inss: null }];
 
   it('all days go to empresa when total <= maxEmpresa', () => {
     const result = afastamentoService.calcularDistribuicaoDias(10, 'doenca', configDoenca);
@@ -249,7 +269,7 @@ describe('afastamentoService.calcularDistribuicaoDias', () => {
   });
 
   it('all days go to empresa when maxEmpresa = 0 (no INSS period)', () => {
-    const result = afastamentoService.calcularDistribuicaoDias(20, 'licenca', configSemLimite);
+    const result = afastamentoService.calcularDistribuicaoDias(20, 'licenca_maternidade', configSemLimite);
     expect(result.empresa).toBe(20);
     expect(result.inss).toBe(0);
   });

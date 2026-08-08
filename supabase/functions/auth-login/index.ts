@@ -14,10 +14,9 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
-import { corsHeaders, createErrorResponse, parseJsonBody } from '../_shared/contract.ts';
+import { getCorsHeaders, createErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
 import { captureException } from '../_shared/sentry.ts';
-import { safeFetch } from '../_shared/safe-fetch.ts';
 
 const BodySchema = z.object({
   email: z.string().email().max(254).toLowerCase(),
@@ -26,7 +25,10 @@ const BodySchema = z.object({
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+// Projetos migrados para signing keys expõem SUPABASE_PUBLISHABLE_KEY;
+// os antigos, SUPABASE_ANON_KEY. Aceitar ambos evita apikey vazia no /auth/v1.
+const ANON_KEY =
+  Deno.env.get('SUPABASE_ANON_KEY') ?? Deno.env.get('SUPABASE_PUBLISHABLE_KEY') ?? '';
 
 const IP_RATE_LIMIT = 30;       // requests per window
 const IP_WINDOW_SEC = 5 * 60;   // 5 minutes
@@ -42,6 +44,9 @@ function getClientIP(req: Request): string {
 }
 
 serve(async (req: Request): Promise<Response> => {
+  // CORS por requisição: a spec exige eco exato do Origin (um valor fixo
+  // quebraria o preview e qualquer domínio permitido que não fosse o primeiro).
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
@@ -76,9 +81,17 @@ serve(async (req: Request): Promise<Response> => {
     const emailRL = await checkRateLimit(admin, { key: emailKey, limit: 10, windowSec: IP_WINDOW_SEC });
     if (!emailRL.allowed) return rateLimitResponse(emailRL);
 
-    // 4. Account lockout check (5 failures in 15 min → 30 min lockout).
+    // 4. Account lockout check (5 failures in 15 min → lockout escalonado).
+    // Observabilidade: um erro aqui degrada para fail-open (não travamos todos os
+    // logins por indisponibilidade do DB), mas NUNCA em silêncio — foi exatamente
+    // um erro mudo que manteve a proteção desligada sem ninguém perceber.
     const { data: lockout, error: lockoutErr } = await admin.rpc('check_account_lockout', { p_email: email });
+    if (lockoutErr) {
+      console.error('[auth-login] check_account_lockout indisponível — proteção de lockout DEGRADADA:', lockoutErr.message);
+      await captureException(new Error(`check_account_lockout falhou: ${lockoutErr.message}`), { function: 'auth-login' });
+    }
     if (!lockoutErr && lockout?.[0]?.is_locked) {
+
       const lockedUntil: string | null = lockout[0].locked_until ?? null;
       return new Response(
         JSON.stringify({
@@ -94,34 +107,46 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     // 5. Forward to Supabase Auth REST API.
-    const authUrl = `${SUPABASE_URL}/auth/v1/token?grant_type=password`;
-    const authRes = await safeFetch(authUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', apikey: ANON_KEY },
-      body: JSON.stringify({ email, password }),
-      timeoutMs: 10_000,
-      tag: 'dbbridge',
+    // Usamos o cliente oficial em vez de fetch manual: ele resolve o endpoint
+    // de auth corretamente dentro do runtime das edge functions (o fetch direto
+    // para SUPABASE_URL/auth/v1 estava travando até o timeout, derrubando 100%
+    // dos logins com 500 "Erro interno").
+    const authClient = createClient(SUPABASE_URL, ANON_KEY, {
+      auth: { persistSession: false, autoRefreshToken: false },
     });
+    const { data: authData, error: authErr } = await authClient.auth.signInWithPassword({
+      email,
+      password,
+    });
+    const success = !authErr && !!authData?.session?.access_token;
+    const errorMessage = authErr?.message ?? 'Credenciais inválidas';
 
-    const authBody = await authRes.json();
-    const success = authRes.ok && !!authBody.access_token;
 
     // 6. Record attempt (fire-and-forget).
-    admin.rpc('record_login_attempt', { p_email: email, p_success: success, p_ip: ip })
-      .catch((e: unknown) => console.warn('[auth-login] record_login_attempt falhou:', (e as Error)?.message));
+    // PostgrestBuilder é "thenable" mas NÃO é Promise: não possui .catch().
+    // O .catch() anterior lançava TypeError e derrubava todo login com 500.
+    void admin
+      .rpc('record_login_attempt', { p_email: email, p_success: success, p_ip: ip })
+      .then(
+        ({ error }) =>
+          error && console.warn('[auth-login] record_login_attempt falhou:', error.message),
+        (e: unknown) => console.warn('[auth-login] record_login_attempt falhou:', (e as Error)?.message),
+      );
 
     if (!success) {
       return new Response(
-        JSON.stringify({ success: false, error: authBody.error_description ?? authBody.msg ?? 'Credenciais inválidas', code: 'INVALID_CREDENTIALS' }),
+        JSON.stringify({ success: false, error: errorMessage, code: 'INVALID_CREDENTIALS' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
       );
     }
 
     return new Response(
-      JSON.stringify({ success: true, session: authBody }),
+      JSON.stringify({ success: true, session: authData.session }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
     );
   } catch (err) {
+    // Diagnóstico: sem esta linha o 500 era opaco e impossível de rastrear.
+    console.error('[auth-login] falha inesperada:', (err as Error)?.name, (err as Error)?.message, (err as Error)?.stack);
     await captureException(err, { function: 'auth-login' });
     return createErrorResponse('Erro interno', 500, 'INTERNAL_SERVER_ERROR');
   }

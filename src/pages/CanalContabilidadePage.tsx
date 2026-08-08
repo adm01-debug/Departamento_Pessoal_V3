@@ -54,7 +54,7 @@ export default function CanalContabilidadePage() {
     enabled: !!empresaAtual?.id,
   });
   const { data: mensagens = [] } = useQuery({
-    queryKey: ['contab-msgs', activeThread],
+    queryKey: ['contab-msgs', empresaAtual?.id, activeThread],
     queryFn: () => canalContabilidadeService.listMensagens(activeThread!),
     enabled: !!activeThread,
     refetchInterval: 15000,
@@ -66,7 +66,7 @@ export default function CanalContabilidadePage() {
       contato_id: threadForm.contato_id || null,
     }),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['contab-threads'] });
+      qc.invalidateQueries({ queryKey: ['contab-threads', empresaAtual?.id] });
       setNewThreadOpen(false);
       setThreadForm({ assunto: '', categoria: 'outro', prioridade: 'normal', contato_id: '', mensagemInicial: '' });
       toast.success('Solicitação enviada à contabilidade');
@@ -77,7 +77,7 @@ export default function CanalContabilidadePage() {
   const criarContato = useMutation({
     mutationFn: () => canalContabilidadeService.criarContato(empresaAtual!.id, contatoForm),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['contab-contatos'] });
+      qc.invalidateQueries({ queryKey: ['contab-contatos', empresaAtual?.id] });
       setNewContatoOpen(false);
       setContatoForm({ nome: '', email: '', telefone: '', escritorio: '' });
       toast.success('Contato adicionado');
@@ -95,8 +95,8 @@ export default function CanalContabilidadePage() {
       return canalContabilidadeService.enviarMensagem(activeThread!, empresaAtual!.id, novaMensagem, 'rh', anexos);
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['contab-msgs', activeThread] });
-      qc.invalidateQueries({ queryKey: ['contab-threads'] });
+      qc.invalidateQueries({ queryKey: ['contab-msgs', empresaAtual?.id, activeThread] });
+      qc.invalidateQueries({ queryKey: ['contab-threads', empresaAtual?.id] });
       setNovaMensagem(''); setAnexoFile(null);
     },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar solicitação.')),
@@ -105,7 +105,7 @@ export default function CanalContabilidadePage() {
   const mudarStatus = useMutation({
     mutationFn: (s: ThreadStatus) => canalContabilidadeService.atualizarStatus(empresaAtual!.id, activeThread!, s),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['contab-threads'] });
+      qc.invalidateQueries({ queryKey: ['contab-threads', empresaAtual?.id] });
       toast.success('Status atualizado');
     },
   });

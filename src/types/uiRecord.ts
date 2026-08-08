@@ -11,5 +11,4 @@
  * Regra: NÃO usar `UiRecord` em serviços, payloads de escrita ou cálculos.
  * Apenas em estado local de apresentação.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type UiRecord = Record<string, any>;

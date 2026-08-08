@@ -15,6 +15,7 @@ function setupListChain(data: any[], error: any = null) {
   const chain: any = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
+  chain.returns = vi.fn().mockReturnValue(chain);
   chain.then = (fn: any) => Promise.resolve(response).then(fn);
   chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
   chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
@@ -129,19 +130,19 @@ describe('medidasDisciplinaresService.criar', () => {
   it('inserts and returns new medida', async () => {
     const created = { id: 'm-new', tipo: 'suspensao' };
     const { insertFn } = setupInsertChain(created);
-    const result = await medidasDisciplinaresService.criar({ tipo: 'suspensao' });
-    expect(insertFn).toHaveBeenCalledWith({ tipo: 'suspensao' });
+    const result = await medidasDisciplinaresService.criar({ tipo: 'suspensao', colaborador_id: 'colab-1', descricao: 'teste', data_ocorrencia: '2026-08-08' });
+    expect(insertFn).toHaveBeenCalledWith({ tipo: 'suspensao', colaborador_id: 'colab-1', descricao: 'teste', data_ocorrencia: '2026-08-08' });
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(medidasDisciplinaresService.criar({})).rejects.toThrow();
+    await expect(medidasDisciplinaresService.criar({ tipo: 'suspensao', colaborador_id: 'colab-1', descricao: 'teste', data_ocorrencia: '2026-08-08' })).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
     setupInsertChain(null, { message: 'fail' });
-    await expect(medidasDisciplinaresService.criar({})).rejects.toBeDefined();
+    await expect(medidasDisciplinaresService.criar({ tipo: 'suspensao', colaborador_id: 'colab-1', descricao: 'teste', data_ocorrencia: '2026-08-08' })).rejects.toBeDefined();
   });
 });
 

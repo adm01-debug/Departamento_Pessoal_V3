@@ -7,14 +7,18 @@ import { loggerService } from '@/services/loggerService';
 
 
 // Projeto ativo: variáveis de ambiente são obrigatórias (P0-008).
-// Sem fallback hardcoded — qualquer ausência falha o build com mensagem clara.
+// Chave canônica única: VITE_SUPABASE_PUBLISHABLE_KEY (sem fallback legado).
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_PUBLISHABLE_KEY =
-  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
+const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+// Em dev local, VITE_SUPABASE_FUNCTIONS_BASE=/functions/v1 faz a bridge passar
+// pelo proxy do Vite (que reescreve Origin para a allowlist da edge function).
+// Em produção, fica vazio → URL absoluta do Supabase.
+const FUNCTIONS_BASE = import.meta.env.VITE_SUPABASE_FUNCTIONS_BASE?.trim() || `${SUPABASE_URL}/functions/v1`;
 
 if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
   throw new Error(
-    '[SUPABASE] VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY (ou VITE_SUPABASE_ANON_KEY) ' +
+    '[SUPABASE] VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY ' +
       'são obrigatórias. Configure no .env antes do build. Veja .env.example.',
   );
 }
@@ -31,8 +35,7 @@ export const supabaseBase = createClient<Database>(
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true,
-      flowType: 'pkce',
-    }
+      flowType: 'pkce'}
   }
 );
 
@@ -47,10 +50,6 @@ const RETRYABLE_STATUS_CODES = new Set([429, 502, 503, 504]);
 
 async function sleep(ms: number): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function isRetryableHttpError(res: Response): boolean {
-  return RETRYABLE_STATUS_CODES.has(res.status);
 }
 
 async function fetchWithRetry(
@@ -153,8 +152,7 @@ const callBridge = async <T = any>(
   const body: RpcBody = {
     action,
     ...(action === 'rpc' ? { fn: target } : { table: target }),
-    ...payload,
-  };
+    ...payload};
 
   // P0-009: nunca usar anon key como Authorization. Writes exigem JWT válido;
   // reads anônimos continuam permitidos (compatibilidade com o frontend).
@@ -167,16 +165,14 @@ const callBridge = async <T = any>(
   try {
     // P3-061: retry com backoff para writes; idempotency key auto-injetada.
     const { res, idempotencyKey } = await fetchWithRetry(
-      `${SUPABASE_URL}/functions/v1/external-db-bridge`,
+      `${FUNCTIONS_BASE}/external-db-bridge`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'apikey': SUPABASE_PUBLISHABLE_KEY,
-          'Authorization': `Bearer ${bearerToken || SUPABASE_PUBLISHABLE_KEY}`,
-        },
-        body: JSON.stringify(body),
-      },
+          'Authorization': `Bearer ${bearerToken || SUPABASE_PUBLISHABLE_KEY}`},
+        body: JSON.stringify(body)},
       isWrite,
     );
     const rawText = await res.text().catch(() => '{}');
@@ -198,8 +194,7 @@ const callBridge = async <T = any>(
       const isMissingObject = /Could not find the (function|table)|schema cache|does not exist|column .* does not exist/i.test(errorMsg);
       if (!isMissingObject) {
         toast.error('Erro ao processar operação no banco de dados.', {
-          duration: 6000,
-        });
+          duration: 6000});
       }
 
       return { data: null, count: 0, error: { message: errorMsg } };
@@ -282,8 +277,7 @@ export type QueryBuilderType = ChainableQueryBuilder;
 const createQueryBuilder = (table: string): TerminalQueryBuilder => {
   const state: { action: Action; payload: BridgePayload } = {
     action: 'select',
-    payload: { filters: [] },
-  };
+    payload: { filters: [] }};
 
   const exec = <T = any>() => callBridge<T>(state.action, table, state.payload);
 
@@ -368,8 +362,7 @@ const createQueryBuilder = (table: string): TerminalQueryBuilder => {
     maybeSingle: () => { state.payload.single = true; return builder; },
     then: (resolve: (value: BridgeResult) => unknown, reject?: AnyFn) => exec().then(resolve, reject),
     catch: (reject: AnyFn) => exec().catch(reject),
-    finally: (cb: AnyFn) => exec().finally(cb),
-  };
+    finally: (cb: AnyFn) => exec().finally(cb)};
 
   return builder;
 };
@@ -384,8 +377,7 @@ interface SupabaseProxyTarget {
 const proxyTarget: SupabaseProxyTarget = {
   from: (table: string) => createQueryBuilder(table),
   rpc: (fn: string, params: Record<string, unknown>) =>
-    callBridge('rpc', fn, { params }),
-};
+    callBridge('rpc', fn, { params })};
 
 const dbBridgeProxy: ProxyHandler<SupabaseProxyTarget> = {
   get(target, prop, receiver) {

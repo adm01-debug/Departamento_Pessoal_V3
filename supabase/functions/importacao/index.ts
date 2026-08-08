@@ -6,6 +6,7 @@ import { z } from 'https://esm.sh/zod@3.23.8';
 import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
+import { requireRh } from '../_shared/authz.ts';
 
 // Whitelist rígida — todas exigem empresa_id (multi-tenant)
 const ALLOWED_TABLES = [
@@ -149,11 +150,10 @@ serve(async (req: Request): Promise<Response> => {
       return createErrorResponse('empresaId é obrigatório para esta tabela', 400, 'EMPRESA_REQUIRED');
     }
     if (empresaId) {
-      const { data: belongs } = await admin.rpc('user_belongs_to_empresa', {
-        _user_id: userId, _empresa_id: empresaId,
-      });
-      const { data: isAdm } = await admin.rpc('is_admin', { _user_id: userId });
-      if (!belongs && !isAdm) return createErrorResponse('Sem acesso a esta empresa', 403, 'FORBIDDEN');
+      // Importar grava em massa em tabelas de colaboradores, folha e
+      // cadastros. Exige RH/admin — o gate anterior aceitava o vínculo.
+      const authz = await requireRh(admin, userId, empresaId);
+      if (authz.denied) return authz.denied;
     }
 
     // 5) Handlers

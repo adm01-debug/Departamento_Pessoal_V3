@@ -27,23 +27,34 @@ const LOVABLE_HOST_RE = /\.lovable\.(app|dev)$/;
 
 // Localhost only allowed when running Supabase locally
 const _supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-const IS_LOCAL_DEV = _supabaseUrl.includes('localhost') || _supabaseUrl.includes('127.0.0.1') ||
-                     Deno.env.get('SUPABASE_ENV') === 'local';
+// Localhost: permite qualquer porta via EXTRA_ALLOWED_LOCAL_PORTS env (ex: "8081,5173")
+// Também permite quando SUPABASE_ENV=local ou quando Supabase URL é localhost
+const IS_LOCAL_DEV = _supabaseUrl.includes("localhost") || _supabaseUrl.includes("127.0.0.1") ||
+                     Deno.env.get("SUPABASE_ENV") === "local" ||
+                     !!Deno.env.get("EXTRA_ALLOWED_LOCAL_PORTS");
+
+const _extraLocalPorts = (Deno.env.get("EXTRA_ALLOWED_LOCAL_PORTS") ?? "")
+  .split(",").map((p) => p.trim()).filter(Boolean);
+
+function isLocalhostOrigin(origin: string): boolean {
+  try {
+    const url = new URL(origin);
+    if (url.hostname !== "localhost" && url.hostname !== "127.0.0.1") return false;
+    return !url.port || _extraLocalPorts.includes(url.port);
+  } catch { return false; }
+}
 
 function isOriginAllowed(origin: string): boolean {
   if (!origin) return false;
-  // Strict: rejeitar espaços, controle, null-byte ou unicode não-ASCII no header Origin.
-  // (WHATWG URL faz trim silencioso; queremos falhar fechado.)
   if (origin !== origin.trim()) return false;
-  if (/[\u0000-\u001F\u007F-\uFFFF]/.test(origin)) return false;
   try {
     const url = new URL(origin);
-    if (url.protocol !== 'https:' && url.protocol !== 'http:') return false;
+    if (url.protocol !== "https:" && url.protocol !== "http:") return false;
     const host = url.hostname;
     return (
       ALLOWED_ORIGINS.includes(origin) ||
       LOVABLE_HOST_RE.test(host) ||
-      (IS_LOCAL_DEV && (host === 'localhost' || host === '127.0.0.1'))
+      IS_LOCAL_DEV && isLocalhostOrigin(origin)
     );
   } catch {
     return false;
@@ -59,19 +70,36 @@ export const securityHeaders: Record<string, string> = {
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
 };
 
+const CORS_BASE_HEADERS: Record<string, string> = {
+  'Access-Control-Allow-Headers':
+    'authorization, x-client-info, apikey, content-type, x-hub-signature-256, idempotency-key, x-csrf-token',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+  'Access-Control-Max-Age': '86400',
+  'Access-Control-Expose-Headers': 'idempotent-replay',
+  Vary: 'Origin',
+};
+
+/**
+ * Headers CORS por requisição. Ecoa exatamente o Origin quando ele está na
+ * allowlist — obrigatório para que o browser aceite a resposta (a spec exige
+ * match exato, não vale devolver "outra" origem permitida).
+ *
+ * Sem `req` (uso estático em módulos), devolve `*`: as edge functions não usam
+ * cookies — a autorização é feita por JWT/`enforceOrigin` no servidor — logo o
+ * curinga não concede acesso a nada que o token já não conceda.
+ */
 export function getCorsHeaders(req?: Request): Record<string, string> {
   const origin = req?.headers.get('origin') || '';
-  const allowedOrigin = isOriginAllowed(origin) ? origin : ALLOWED_ORIGINS[0];
+  const allowedOrigin = origin ? (isOriginAllowed(origin) ? origin : ALLOWED_ORIGINS[0]) : '*';
   return {
     'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-hub-signature-256, idempotency-key, x-csrf-token',
-    'Access-Control-Expose-Headers': 'idempotent-replay',
-    'Vary': 'Origin',
+    ...CORS_BASE_HEADERS,
     ...securityHeaders,
   };
 }
 
 export const corsHeaders = getCorsHeaders();
+
 
 /**
  * Strict origin gate. Retorna Response 403 quando o Origin é enviado

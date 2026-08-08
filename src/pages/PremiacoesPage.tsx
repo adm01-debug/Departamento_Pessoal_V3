@@ -7,9 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { 
-  Trophy, Target, TrendingUp, DollarSign, Plus, Calendar, Filter, 
-  ArrowUpRight, CheckCircle2, AlertCircle, Calculator, FileText, 
-  Download, History, ShieldCheck, ExternalLink, RefreshCw
+  Trophy, Target, DollarSign, Plus, Calendar, Filter, 
+  ArrowUpRight, AlertCircle, Calculator, FileText, 
+  Download, History, ShieldCheck
 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { premiacoesService } from '@/services/premiacoesService';

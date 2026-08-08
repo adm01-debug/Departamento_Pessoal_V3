@@ -122,10 +122,14 @@ export const assistenteIAService = {
       // O invoke do Supabase JS não suporta AbortController diretamente.
       // Usamos fetch direto via REST para ter controle total de timeout.
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL ?? '';
-      const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? import.meta.env.VITE_SUPABASE_ANON_KEY ?? '';
+      const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? '';
+      // Dev local: VITE_SUPABASE_FUNCTIONS_BASE=/functions/v1 roteia pela bridge
+      // do Vite (proxy reescreve Origin p/ allowlist). Produção: URL absoluta.
+      const functionsBase = import.meta.env.VITE_SUPABASE_FUNCTIONS_BASE?.trim()
+        || `${supabaseUrl}/functions/v1`;
 
       const res = await fetch(
-        `${supabaseUrl}/functions/v1/${FUNCTION_NAME}`,
+        `${functionsBase}/${FUNCTION_NAME}`,
         {
           method: 'POST',
           headers: {

@@ -127,7 +127,7 @@ export function useNotificacoes() {
       // 1. Períodos aquisitivos vencendo
       const periodosQuery: any = supabase
         .from('periodos_aquisitivos')
-        .select('*, colaboradores:colaboradores!fk_periodos_aquisitivos_colaborador (id, nome_completo, status)')
+        .select('*, colaboradores:colaboradores!periodos_aquisitivos_colaborador_id_fkey (id, nome_completo, status)')
         .eq('status', 'adquirido');
       const { data: periodos } = await periodosQuery.eq('empresa_id', empresaAtualId!);
 
@@ -214,7 +214,7 @@ export function useNotificacoes() {
       // 4. Férias aprovadas próximas
       const { data: feriasProgramadas } = await supabase
         .from('ferias')
-        .select('*, colaboradores:colaboradores!fk_ferias_colaborador (id, nome_completo)')
+        .select('*, colaboradores:colaboradores!ferias_colaborador_id_fkey (id, nome_completo)')
         .eq('status', 'aprovada')
         .eq('empresa_id', empresaAtualId);
 

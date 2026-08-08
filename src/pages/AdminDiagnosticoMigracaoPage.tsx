@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { PageTitle } from '@/components/PageTitle';
 import { PageLayout } from '@/components/layout';
@@ -122,9 +122,9 @@ export default function AdminDiagnosticoMigracaoPage() {
 
     // 5. cron jobs — comparar com allowlist esperada
     try {
-      const { data, error } = await (supabase as any).rpc('cron_job_list_diag', {});
+      const { data, error } = await (supabase as any).rpc('get_cron_jobs_health');
       if (error) {
-        update('cron', { status: 'warn', detail: 'RPC cron_job_list_diag ausente (opcional)' });
+        update('cron', { status: 'warn', detail: 'RPC get_cron_jobs_health indisponível' });
       } else {
         const names = new Set<string>(
           Array.isArray(data)
@@ -173,10 +173,6 @@ export default function AdminDiagnosticoMigracaoPage() {
   useOnMount(() => {
     run();
   });
-
-  useEffect(() => {
-    run();
-  }, []);
 
   const grouped = {
     infra: checks.filter((c) => c.category === 'infra'),
