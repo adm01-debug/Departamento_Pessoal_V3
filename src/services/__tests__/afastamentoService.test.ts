@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deepChain } from '@/test/deepChain';
 import { afastamentoService } from '../afastamentoService';
+import type { ConfigAfastamentoRow } from '@/types/afastamentos';
 
 const EMPRESA_ID = 'test-empresa-id';
 
@@ -252,8 +253,8 @@ describe('afastamentoService.calcularDias', () => {
 // ─── calcularDistribuicaoDias (pure) ─────────────────────────────────────────
 
 describe('afastamentoService.calcularDistribuicaoDias', () => {
-  const configDoenca = [{ tipo: 'doenca', dias_empresa_maximo: 15 }];
-  const configSemLimite = [{ tipo: 'licenca', dias_empresa_maximo: 0 }];
+  const configDoenca: ConfigAfastamentoRow[] = [{ tipo: 'doenca', dias_empresa_maximo: 15, id: 'cfg-1', created_at: new Date().toISOString(), descricao: null, dias_maximos: null, dias_minimos: null, exige_cid: null, pago_empresa: null, pago_inss: null }];
+  const configSemLimite: ConfigAfastamentoRow[] = [{ tipo: 'licenca_maternidade', dias_empresa_maximo: 0, id: 'cfg-2', created_at: new Date().toISOString(), descricao: null, dias_maximos: null, dias_minimos: null, exige_cid: null, pago_empresa: null, pago_inss: null }];
 
   it('all days go to empresa when total <= maxEmpresa', () => {
     const result = afastamentoService.calcularDistribuicaoDias(10, 'doenca', configDoenca);
@@ -268,7 +269,7 @@ describe('afastamentoService.calcularDistribuicaoDias', () => {
   });
 
   it('all days go to empresa when maxEmpresa = 0 (no INSS period)', () => {
-    const result = afastamentoService.calcularDistribuicaoDias(20, 'licenca', configSemLimite);
+    const result = afastamentoService.calcularDistribuicaoDias(20, 'licenca_maternidade', configSemLimite);
     expect(result.empresa).toBe(20);
     expect(result.inss).toBe(0);
   });
