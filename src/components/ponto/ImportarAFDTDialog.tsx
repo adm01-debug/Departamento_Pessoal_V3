@@ -47,12 +47,14 @@ export function ImportarAFDTDialog() {
     if (!resultado?.importacao_id) return;
     setReconciliando(true);
     try {
-      const { data, error } = await (supabase as any).rpc('reconciliar_afdt', {
+      const { data, error } = await supabase.rpc('reconciliar_afdt', {
         _importacao_id: resultado.importacao_id,
         _janela_seg: 300,
       });
       if (error) throw error;
-      const row = Array.isArray(data) ? (data[0] as any) : (data as any);
+      const row = (Array.isArray(data) ? data[0] : data) as {
+        total?: number; ok?: number; sem_colaborador?: number; sem_batida?: number;
+      } | null;
       setReconc({
         total: row?.total ?? 0,
         ok: row?.ok ?? 0,
@@ -65,14 +67,14 @@ export function ImportarAFDTDialog() {
       // Dispara notificações agregadas aos membros da empresa (idempotente).
       const divergenciasTotais = (row?.sem_colaborador ?? 0) + (row?.sem_batida ?? 0);
       if (divergenciasTotais > 0) {
-        const { data: notif, error: notifErr } = await (supabase as any).rpc(
+        const { data: notif, error: notifErr } = await supabase.rpc(
           'notificar_divergencias_afdt',
           { _importacao_id: resultado.importacao_id },
         );
         if (!notifErr && notif) {
-          const n = Array.isArray(notif) ? (notif[0] as any) : (notif as any);
+          const n = (Array.isArray(notif) ? notif[0] : notif) as { notificacoes_criadas?: number } | null;
           if ((n?.notificacoes_criadas ?? 0) > 0) {
-            toast.info(`${n.notificacoes_criadas} notificação(ões) enviada(s) à equipe.`);
+            toast.info(`${n?.notificacoes_criadas ?? 0} notificação(ões) enviada(s) à equipe.`);
           }
         }
       }
@@ -102,18 +104,18 @@ export function ImportarAFDTDialog() {
         },
       });
       if (error) throw error;
-      const res = (data as any).importacao ?? data;
+      const res = (data as { importacao?: Resultado; reused?: boolean }).importacao ?? data as unknown as Resultado;
       setResultado({
-        importacao_id: res.importacao_id ?? res.id,
+        importacao_id: res.importacao_id ?? (res as { id?: string }).id,
         total_linhas: res.total_linhas ?? 0,
         total_registros: res.total_registros ?? 0,
         total_erros: res.total_erros ?? 0,
         cnpj_empregador: res.cnpj_empregador,
         periodo: res.periodo,
-        reused: (data as any).reused,
+        reused: (data as { reused?: boolean }).reused,
       });
       toast.success(
-        (data as any).reused
+        (data as { reused?: boolean }).reused
           ? 'Arquivo já importado — resultado reutilizado.'
           : `Importação concluída: ${res.total_registros} registros.`
       );

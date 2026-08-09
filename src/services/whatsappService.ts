@@ -37,7 +37,7 @@ export const whatsappService = {
   async saveConfig(config: WhatsAppConfigTable['Insert']): Promise<void> {
     const { error } = await supabase
       .from('whatsapp_config')
-      .upsert(config as any, { onConflict: 'empresa_id' });
+      .upsert(config, { onConflict: 'empresa_id' });
     
     if (error) throw error;
   },
@@ -56,7 +56,7 @@ export const whatsappService = {
         telefone: params.phone,
         status: 'sent',
         mensagem_id_externo: `wa_direct_${Date.now()}`
-      } as any);
+      });
     
     if (error) throw error;
     return { success: true };
@@ -100,7 +100,7 @@ export const whatsappService = {
           template_id: templateId,
           telefone: phone,
           status: 'pending'
-        } as any)
+        })
         .select()
         .single();
 
@@ -109,11 +109,11 @@ export const whatsappService = {
       await new Promise(r => setTimeout(r, 1000));
       
       await supabase.from('whatsapp_mensagens_logs')
-        .update({ status: 'sent', mensagem_id_externo: `wa_${Date.now()}` } as any)
-        .eq('id', (log as any).id)
+        .update({ status: 'sent', mensagem_id_externo: `wa_${Date.now()}` })
+        .eq('id', log.id)
         .eq('empresa_id', empresaId);
         
-      return ({ success: true, logId: (log as any).id });
+      return ({ success: true, logId: log.id });
     } catch (e) {
       throw new Error('Falha ao enviar mensagem de template do WhatsApp', { cause: e });
     }

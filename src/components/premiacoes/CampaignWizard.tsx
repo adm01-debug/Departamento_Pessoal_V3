@@ -29,11 +29,15 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
   });
 
   const [rules, setRules] = React.useState([
-    { nome: 'Bônus de Batimento', tipo_calculo: 'valor_fixo', valor_base: 500, condicao_metrica: 'atingimento_meta' }
+    { titulo: 'Bônus de Batimento', tipo_calculo: 'valor_fixo', valor_base: 500, configuracao: { condicao_metrica: 'atingimento_meta' } }
   ]);
 
   const handleSave = async () => {
     try {
+      if (!empresaId) {
+        toast.error("Empresa não identificada.");
+        return;
+      }
       const campanha = await premiacoesService.criarCampanha({
         ...formData,
         empresa_id: empresaId
@@ -99,8 +103,8 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
                   <Button variant="link" className="p-0 h-auto text-[10px] font-bold text-primary" onClick={() => {
                     setRules([
                       ...rules,
-                      { nome: 'Atingimento Meta Vendas', tipo_calculo: 'percentual_comissao', valor_base: 5, condicao_metrica: 'meta_vendas > 100%' },
-                      { nome: 'Superação de Meta (Kicker)', tipo_calculo: 'valor_fixo', valor_base: 1000, condicao_metrica: 'meta_vendas > 120%' }
+                      { titulo: 'Atingimento Meta Vendas', tipo_calculo: 'percentual_comissao', valor_base: 5, configuracao: { condicao_metrica: 'meta_vendas > 100%' } },
+                      { titulo: 'Superação de Meta (Kicker)', tipo_calculo: 'valor_fixo', valor_base: 1000, configuracao: { condicao_metrica: 'meta_vendas > 120%' } }
                     ]);
                     toast.success("Regras sugeridas aplicadas!");
                   }}>
@@ -110,7 +114,7 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
               </div>
               <div className="flex justify-between items-center pt-2">
                 <Label className="text-sm font-bold">Regras de Premiação</Label>
-                <Button size="sm" variant="outline" className="h-8 text-[10px]" onClick={() => setRules([...rules, { nome: '', tipo_calculo: 'valor_fixo', valor_base: 0, condicao_metrica: '' }])}>
+                <Button size="sm" variant="outline" className="h-8 text-[10px]" onClick={() => setRules([...rules, { titulo: '', tipo_calculo: 'valor_fixo', valor_base: 0, configuracao: { condicao_metrica: '' } }])}>
                   <Plus className="h-3 w-3 mr-1" /> Adicionar Regra
                 </Button>
               </div>
@@ -123,7 +127,7 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
                     <Trash2 className="h-3 w-3" />
                   </Button>
                   <div className="grid grid-cols-2 gap-3">
-                    <Input placeholder="Nome da Regra" value={rule.nome} onChange={e => patch({ nome: e.target.value })} />
+                    <Input placeholder="Nome da Regra" value={rule.titulo} onChange={e => patch({ titulo: e.target.value })} />
                     <Select value={rule.tipo_calculo} onValueChange={v => patch({ tipo_calculo: v })}>
                       <SelectTrigger><SelectValue placeholder="Tipo" /></SelectTrigger>
                       <SelectContent>
@@ -135,7 +139,7 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <Input type="number" placeholder="Valor/Base" value={rule.valor_base} onChange={e => patch({ valor_base: Number(e.target.value) })} />
-                    <Input placeholder="Critério (Ex: Meta > 100%)" value={rule.condicao_metrica} onChange={e => patch({ condicao_metrica: e.target.value })} />
+                    <Input placeholder="Critério (Ex: Meta > 100%)" value={rule.configuracao?.condicao_metrica ?? ''} onChange={e => patch({ configuracao: { condicao_metrica: e.target.value } })} />
                   </div>
                 </div>
               );})}

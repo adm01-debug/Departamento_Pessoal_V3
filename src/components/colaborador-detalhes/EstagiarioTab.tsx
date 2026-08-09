@@ -72,14 +72,14 @@ export function EstagiarioTab({ colaboradorId }: { colaboradorId: string }) {
       <CardContent>
         {!showForm && data ? (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <div><Label className="text-xs text-muted-foreground">Instituição</Label><p className="font-medium">{(data as any).instituicao_nome}</p></div>
-            <div><Label className="text-xs text-muted-foreground">CNPJ Instituição</Label><p className="font-medium">{(data as any).instituicao_cnpj || '-'}</p></div>
-            <div><Label className="text-xs text-muted-foreground">Curso</Label><p className="font-medium">{(data as any).curso || '-'}</p></div>
-            <div><Label className="text-xs text-muted-foreground">Nível</Label><p className="font-medium">{(data as any).nivel || '-'}</p></div>
-            <div><Label className="text-xs text-muted-foreground">Supervisor</Label><p className="font-medium">{(data as any).supervisor_nome || '-'}</p></div>
-            <div><Label className="text-xs text-muted-foreground">Período</Label><p className="font-medium">{(data as any).data_inicio} a {(data as any).data_fim || '...'}</p></div>
-            <div><Label className="text-xs text-muted-foreground">Carga Horária</Label><p className="font-medium">{(data as any).carga_horaria_semanal ? `${(data as any).carga_horaria_semanal}h/sem` : '-'}</p></div>
-            <div><Label className="text-xs text-muted-foreground">Bolsa</Label><p className="font-medium">{(data as any).valor_bolsa ? Number((data as any).valor_bolsa).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '-'}</p></div>
+            <div><Label className="text-xs text-muted-foreground">Instituição</Label><p className="font-medium">{(data as EstagiarioData).instituicao_nome}</p></div>
+            <div><Label className="text-xs text-muted-foreground">CNPJ Instituição</Label><p className="font-medium">{(data as EstagiarioData).instituicao_cnpj || '-'}</p></div>
+            <div><Label className="text-xs text-muted-foreground">Curso</Label><p className="font-medium">{(data as EstagiarioData).curso || '-'}</p></div>
+            <div><Label className="text-xs text-muted-foreground">Nível</Label><p className="font-medium">{(data as EstagiarioData).nivel || '-'}</p></div>
+            <div><Label className="text-xs text-muted-foreground">Supervisor</Label><p className="font-medium">{(data as EstagiarioData).supervisor_nome || '-'}</p></div>
+            <div><Label className="text-xs text-muted-foreground">Período</Label><p className="font-medium">{(data as EstagiarioData).data_inicio} a {(data as EstagiarioData).data_fim || '...'}</p></div>
+            <div><Label className="text-xs text-muted-foreground">Carga Horária</Label><p className="font-medium">{(data as EstagiarioData).carga_horaria_semanal ? `${(data as EstagiarioData).carga_horaria_semanal}h/sem` : '-'}</p></div>
+            <div><Label className="text-xs text-muted-foreground">Bolsa</Label><p className="font-medium">{(data as EstagiarioData).valor_bolsa ? Number((data as EstagiarioData).valor_bolsa).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '-'}</p></div>
           </div>
         ) : (
           <div className="grid gap-3 max-w-lg">

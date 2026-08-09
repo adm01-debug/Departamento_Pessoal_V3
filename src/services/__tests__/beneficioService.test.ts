@@ -179,7 +179,7 @@ describe('beneficioService.criar', () => {
   it('throws wrapped error on DB failure', async () => {
     const { insertFn } = makeInsertMaybeSingleMock(null, { message: 'DB fail' });
     mockFrom.mockReturnValue({ insert: insertFn });
-    await expect(beneficioService.criar({})).rejects.toThrow();
+    await expect(beneficioService.criar({ nome: 'VT', empresa_id: 'emp-1' })).rejects.toThrow();
   });
 });
 
@@ -252,13 +252,13 @@ describe('beneficioService.vincularColaborador', () => {
   beforeEach(() => { vi.resetAllMocks(); });
 
   it('inserts into beneficios_colaborador and returns data', async () => {
-    const vinculo = { id: 'v1', beneficio_id: 'b1', colaborador_id: 'c1' };
+    const vinculo = { id: 'v1', tipo_beneficio_id: 'b1', colaborador_id: 'c1' };
     const { insertFn, singleFn } = makeInsertSingleMock(vinculo);
     mockFrom.mockReturnValue({ insert: insertFn });
 
     const result = await beneficioService.vincularColaborador('b1', 'c1', { valor: 100 }, EMPRESA_ID);
     expect(insertFn).toHaveBeenCalledWith(expect.objectContaining({
-      beneficio_id: 'b1',
+      tipo_beneficio_id: 'b1',
       colaborador_id: 'c1',
       valor: 100,
     }));
@@ -315,29 +315,29 @@ describe('beneficioService.obterResumoCustos', () => {
 
   it('groups costs by tipo', async () => {
     const data = [
-      { valor_empresa: 100, valor_colaborador: 50, beneficio: { tipo: 'alimentacao' } },
-      { valor_empresa: 200, valor_colaborador: 100, beneficio: { tipo: 'alimentacao' } },
-      { valor_empresa: 300, valor_colaborador: 0, beneficio: { tipo: 'transporte' } },
+      { valor: 150, tipo_beneficio: { nome: 'alimentacao', desconto_colaborador: 0.5 } },
+      { valor: 300, tipo_beneficio: { nome: 'alimentacao', desconto_colaborador: 0.5 } },
+      { valor: 300, tipo_beneficio: { nome: 'transporte', desconto_colaborador: 0 } },
     ];
     setupResumoCustos(data);
     const result = await beneficioService.obterResumoCustos('emp-1');
-    expect(result.alimentacao).toEqual({ empresa: 300, colaborador: 150, total: 450 });
+    expect(result.alimentacao).toEqual({ empresa: 225, colaborador: 225, total: 450 });
     expect(result.transporte).toEqual({ empresa: 300, colaborador: 0, total: 300 });
   });
 
   it('groups null tipo as Outros', async () => {
     const data = [
-      { valor_empresa: 50, valor_colaborador: 25, beneficio: { tipo: null } },
+      { valor: 75, tipo_beneficio: { nome: null, desconto_colaborador: 0.5 } },
     ];
     setupResumoCustos(data);
     const result = await beneficioService.obterResumoCustos('emp-1');
-    expect(result['Outros']).toEqual({ empresa: 50, colaborador: 25, total: 75 });
+    expect(result['Outros']).toEqual({ empresa: 37.5, colaborador: 37.5, total: 75 });
   });
 
   it('filters by empresa_id and status_vinculo', async () => {
     const { eq1Fn, eq2Fn } = setupResumoCustos([]);
     await beneficioService.obterResumoCustos('emp-1');
-    expect(eq1Fn).toHaveBeenCalledWith('beneficio.empresa_id', 'emp-1');
+    expect(eq1Fn).toHaveBeenCalledWith('colaborador.empresa_id', 'emp-1');
     expect(eq2Fn).toHaveBeenCalledWith('status_vinculo', 'ativo');
   });
 

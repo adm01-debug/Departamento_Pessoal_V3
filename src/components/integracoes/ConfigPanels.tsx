@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -61,7 +62,7 @@ export function Bitrix24ConfigPanel() {
 
   const sincronizar = useMutation({
     mutationFn: async () => {
-      const { data, error } = await (window as any).supabase.functions.invoke('sincronizar-bitrix', {
+      const { data, error } = await supabase.functions.invoke('sincronizar-bitrix', {
         body: { action: 'sync_all' }
       });
       if (error) throw error;
@@ -170,16 +171,16 @@ export function CnabConfigPanel() {
         <TabsContent value="config" className="m-0">
           <div className="grid gap-6 max-w-2xl">
             <div className="grid grid-cols-2 gap-4">
-               <div className="space-y-2"><Label>Banco Principal</Label><Input placeholder="Ex: Itaú Unibanco" defaultValue={(config as any)?.banco_nome} /></div>
-               <div className="space-y-2"><Label>Código do Banco</Label><Input placeholder="Ex: 341" defaultValue={(config as any)?.banco_codigo} /></div>
+               <div className="space-y-2"><Label>Banco Principal</Label><Input placeholder="Ex: Itaú Unibanco" defaultValue={config?.banco_nome} /></div>
+               <div className="space-y-2"><Label>Código do Banco</Label><Input placeholder="Ex: 341" defaultValue={config?.banco_codigo} /></div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-               <div className="space-y-2"><Label>Agência</Label><Input placeholder="0000" defaultValue={(config as any)?.agencia} /></div>
-               <div className="space-y-2"><Label>Conta Corrente</Label><Input placeholder="00000-0" defaultValue={(config as any)?.conta} /></div>
+               <div className="space-y-2"><Label>Agência</Label><Input placeholder="0000" defaultValue={config?.agencia} /></div>
+               <div className="space-y-2"><Label>Conta Corrente</Label><Input placeholder="00000-0" defaultValue={config?.conta} /></div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-               <div className="space-y-2"><Label>Layout CNAB</Label><Input placeholder="Ex: CNAB 240" defaultValue={(config as any)?.layout_cnab} /></div>
-               <div className="space-y-2"><Label>Convênio</Label><Input placeholder="Código de convênio" defaultValue={(config as any)?.convenio} /></div>
+               <div className="space-y-2"><Label>Layout CNAB</Label><Input placeholder="Ex: CNAB 240" defaultValue={config?.layout_cnab} /></div>
+               <div className="space-y-2"><Label>Convênio</Label><Input placeholder="Código de convênio" defaultValue={config?.convenio} /></div>
             </div>
             <Button className="w-fit px-8 rounded-xl shadow-lg shadow-primary/20">Salvar Configurações</Button>
           </div>
@@ -287,7 +288,7 @@ export function WhatsAppConfigPanel() {
     if (!empresaAtual?.id) return;
     setLoading(true);
     try {
-      await whatsappService.saveConfig({ ...config, empresa_id: empresaAtual.id, status: (config as Record<string, unknown>).status || 'active' } as any);
+      await whatsappService.saveConfig({ ...config, empresa_id: empresaAtual.id, status: config?.status ?? 'active' });
       toast.success('Configuração de WhatsApp salva!');
     } catch {
       toast.error('Erro ao salvar configuração');
