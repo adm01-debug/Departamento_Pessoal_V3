@@ -27,3 +27,14 @@ Thumbs.db
 
 # Lint-staged legado (mantemos apenas .lintstagedrc.json)
 .lintstagedrc
+# Graphify: so o relatorio legivel e o manifest.
+# graph.json/graph.html sao regeneraveis: graphify update .
+graphify-out/*
+!graphify-out/GRAPH_REPORT.md
+!graphify-out/manifest.json
+
+# Graphify: so o relatorio legivel e o manifest.
+# graph.json/graph.html sao regeneraveis: graphify update .
+graphify-out/*
+!graphify-out/GRAPH_REPORT.md
+!graphify-out/manifest.json
