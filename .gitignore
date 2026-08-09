@@ -38,3 +38,6 @@ graphify-out/*
 graphify-out/*
 !graphify-out/GRAPH_REPORT.md
 !graphify-out/manifest.json
+
+# Artefatos de sessao do Hermes (conversa por projeto)
+.hermes-chats/
