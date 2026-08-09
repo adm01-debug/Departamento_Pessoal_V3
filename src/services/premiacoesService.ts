@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import type { Tables, TablesInsert } from '@/integrations/supabase/types';
 import { loggerService } from './loggerService';
 
 export const premiacoesService = {
@@ -14,7 +15,7 @@ export const premiacoesService = {
   async listarRegras(campanhaId: string, empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     // !inner validates campanhaId belongs to this empresa (prevents IDOR across tenants)
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('premiacoes_regras')
       .select('*, meta:metas_okrs(*), campanha:premiacoes_campanhas!inner(empresa_id)')
       .eq('campanha_id', campanhaId)
@@ -26,7 +27,7 @@ export const premiacoesService = {
   async listarPagamentos(campanhaId: string | undefined, empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     // !inner on campanha enables .eq() filtering on the embedded empresa_id column
-    let q = (supabase as any).from('premiacoes_pagamentos').select(`
+    let q = supabase.from('premiacoes_pagamentos').select(`
       *,
       colaborador:colaboradores(nome_completo, salario_base),
       campanha:premiacoes_campanhas!inner(nome, empresa_id)
@@ -40,13 +41,13 @@ export const premiacoesService = {
     return data || [];
   },
 
-  async criarCampanha(d: any) {
+  async criarCampanha(d: TablesInsert<'premiacoes_campanhas'>) {
     const { data, error } = await supabase.from('premiacoes_campanhas').insert(d).select().single();
     if (error) throw error;
     return data;
   },
 
-  async criarRegra(d: any) {
+  async criarRegra(d: TablesInsert<'premiacoes_regras'>) {
     const { data, error } = await supabase.from('premiacoes_regras').insert(d).select().single();
     if (error) throw error;
     return data;
@@ -118,7 +119,7 @@ export const premiacoesService = {
       entidade_id: id,
       acao: 'conciliacao_folha',
       detalhes: { valor_aprovado: valorAprovado, valor_folha: valorFolha, status_conciliacao, justificativa }
-    } as any);
+    } as TablesInsert<'premiacoes_auditoria'>);
 
     if (status_conciliacao === 'divergente') {
       await this.enviarNotificacaoCritica('conciliacao_divergente', { id, valorAprovado, valorFolha, justificativa });
@@ -158,7 +159,7 @@ export const premiacoesService = {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     // Scope via !inner join on pagamento → campanha → empresa_id
     // (Requires entidade_tipo = 'pagamento' records; mixed types are excluded by !inner)
-    let q = (supabase as any)
+    let q = supabase
       .from('premiacoes_auditoria')
       .select('*, pagamento:premiacoes_pagamentos!inner(campanha:premiacoes_campanhas!inner(empresa_id))')
       .order('created_at', { ascending: false });
@@ -169,19 +170,18 @@ export const premiacoesService = {
     return data || [];
   },
 
-  async exportarRelatorio(filtros: any) {
-    const pagamentos = await this.listarPagamentos(undefined, filtros.empresaId);
+  async exportarRelatorio(filtros: Record<string, unknown>) {
+    const pagamentos = await this.listarPagamentos(undefined, filtros.empresaId as string);
     // Real logic to export would be here
     return pagamentos;
   },
 
-  async salvarCenarioROI(cenario: any, empresaId: string) {
+  async salvarCenarioROI(cenario: Record<string, unknown>, empresaId: string) {
     if (!empresaId) throw new Error('empresaId é obrigatório');
-    const { data, error } = await (supabase
-      .from('premiacoes_roi_cenarios') as any)
+    const { data, error } = await supabase
+      .from('premiacoes_roi_cenarios')
       .insert({
-        nome: cenario.name,
-        empresa_id: empresaId,
+        nome: cenario.name as string,
         configuracoes: {
           employees: cenario.employees,
           avgSalary: cenario.avgSalary,
@@ -198,7 +198,7 @@ export const premiacoesService = {
           timestamp: new Date().toISOString(),
           version: '1.0'
         }
-      })
+      } as TablesInsert<'premiacoes_roi_cenarios'>)
       .select()
       .single();
     if (error) throw error;
@@ -207,17 +207,17 @@ export const premiacoesService = {
 
   async listarCenariosROI(empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    let query = (supabase
-      .from('premiacoes_roi_cenarios') as any)
+    // Nota: premiacoes_roi_cenarios não tem coluna empresa_id (só user_id);
+    // o isolamento é garantido pela RLS da tabela. Filtro removido (era inválido).
+    const { data, error } = await supabase
+      .from('premiacoes_roi_cenarios')
       .select('*')
       .order('created_at', { ascending: false });
-    query = query.eq('empresa_id', empresaId);
-    const { data, error } = await query;
     if (error) throw error;
     return data || [];
   },
 
-  async enviarNotificacaoCritica(tipo: string, payload: any) {
+  async enviarNotificacaoCritica(tipo: string, payload: Record<string, unknown>) {
     // Notification logged to audit trail in production
     if (import.meta.env.DEV) {
       console.log(`[Notification] ${tipo}:`, payload);
@@ -227,9 +227,10 @@ export const premiacoesService = {
       tipo: 'premiacao_critica',
       titulo: `Evento Crítico: ${tipo.replace('_', ' ').toUpperCase()}`,
       mensagem: `Ação detectada no módulo de premiações: ${JSON.stringify(payload)}`,
-      user_id: payload.user_id,
-      metadata: { ...payload, modulo: 'premiacoes' }
-    } as any);
+      user_id: payload.user_id as string | null,
+      metadata: payload.metadata as Record<string, unknown> | null,
+      ...payload
+    } as TablesInsert<'notificacoes'>);
     
     if (error) loggerService.error('Erro ao registrar notificação crítica', { tipo, payload }, error as Error);
     return true;

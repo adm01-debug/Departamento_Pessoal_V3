@@ -105,12 +105,12 @@ describe('jornadaHorariosService.criar', () => {
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(jornadaHorariosService.criar({})).rejects.toThrow();
+    await expect(jornadaHorariosService.criar({ dia_semana: 1, jornada_id: 'j1' })).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
     setupInsertChain(null, { message: 'fail' });
-    await expect(jornadaHorariosService.criar({})).rejects.toBeDefined();
+    await expect(jornadaHorariosService.criar({ dia_semana: 1, jornada_id: 'j1' })).rejects.toBeDefined();
   });
 });
 
@@ -120,10 +120,10 @@ describe('jornadaHorariosService.atualizar', () => {
   beforeEach(() => { vi.clearAllMocks(); });
 
   it('updates and returns horario', async () => {
-    const updated = { id: 'h1', hora_inicio: '09:00' };
+    const updated = { id: 'h1', entrada: '09:00' };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    const result = await jornadaHorariosService.atualizar('j1', 'h1', { hora_inicio: '09:00' });
-    expect(updateFn).toHaveBeenCalledWith({ hora_inicio: '09:00' });
+    const result = await jornadaHorariosService.atualizar('j1', 'h1', { entrada: '09:00' });
+    expect(updateFn).toHaveBeenCalledWith({ entrada: '09:00' });
     expect(eqFn).toHaveBeenCalledWith('id', 'h1');
     expect(result).toEqual(updated);
   });
@@ -168,8 +168,8 @@ describe('jornadaHorariosService.salvarGrade', () => {
   });
 
   it('upserts new grade (idempotente) and trims removed days', async () => {
-    const horarios = [{ dia_semana: 1, hora_inicio: '08:00' }];
-    const inserted = [{ id: 'h-new', jornada_id: 'j1', dia_semana: 1, hora_inicio: '08:00' }];
+    const horarios = [{ dia_semana: 1, entrada: '08:00', jornada_id: 'j1' }];
+    const inserted = [{ id: 'h-new', jornada_id: 'j1', dia_semana: 1, entrada: '08:00' }];
 
     // 1ª chamada: upsert(onConflict) → select
     const upsertChain: any = makeChain({ data: inserted, error: null });
@@ -180,7 +180,7 @@ describe('jornadaHorariosService.salvarGrade', () => {
 
     const result = await jornadaHorariosService.salvarGrade('j1', horarios);
     expect(upsertChain.upsert).toHaveBeenCalledWith(
-      [{ dia_semana: 1, hora_inicio: '08:00', jornada_id: 'j1' }],
+      [{ dia_semana: 1, entrada: '08:00', jornada_id: 'j1' }],
       { onConflict: 'jornada_id,dia_semana' },
     );
     expect(result).toEqual(inserted);
@@ -190,7 +190,7 @@ describe('jornadaHorariosService.salvarGrade', () => {
     mockFrom.mockReturnValue(makeChain({ data: null, error: { message: 'db fail' } }));
 
     await expect(
-      jornadaHorariosService.salvarGrade('j1', [{ dia_semana: 1 }])
+      jornadaHorariosService.salvarGrade('j1', [{ dia_semana: 1, jornada_id: 'j1', entrada: '08:00' }])
     ).rejects.toThrow('Falha ao salvar grade de horários');
   });
 });

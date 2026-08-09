@@ -1,17 +1,23 @@
 import { BaseService, ListOptions, ListResponse } from './baseService';
 import { auditLogger } from '@/utils/auditLogger';
 import { supabase } from '@/integrations/supabase/client';
+import type { Tables, TablesInsert } from '@/integrations/supabase/types';
 
-class BeneficioService extends BaseService<any> {
+type BeneficioRow = Tables<'beneficios'>;
+type BeneficioVinculoRow = Tables<'beneficios_colaborador'> & {
+  beneficio: Pick<Tables<'beneficios'>, 'id' | 'nome' | 'tipo' | 'empresa_id'>;
+};
+
+class BeneficioService extends BaseService<BeneficioRow, TablesInsert<'beneficios'>, Partial<TablesInsert<'beneficios'>>> {
   constructor() {
     super('beneficios', { 
       defaultOrderBy: 'nome' 
     });
   }
 
-  async listar(options: ListOptions = {}): Promise<ListResponse<any>> {
+  async listar(options: ListOptions = {}): Promise<ListResponse<BeneficioRow>> {
     const { filters, search } = options;
-    const empresaId = (filters as any)?.empresa_id;
+    const empresaId = (filters as ListOptions['filters'])?.empresa_id as string | undefined;
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
     let query = this.getQuery().select('*', { count: 'exact' });
@@ -23,19 +29,19 @@ class BeneficioService extends BaseService<any> {
 
     const { data, count, error } = await query.order('nome');
     if (error) throw error;
-    return { data: (data as any[]) || [], total: count || 0 };
+    return { data: (data as BeneficioRow[]) || [], total: count || 0 };
   }
 
-  async listComAdesao(empresaId: string): Promise<any[]> {
+  async listComAdesao(empresaId: string): Promise<BeneficioRow[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await this.getQuery()
       .select('*, beneficios_colaborador(count)')
       .eq('empresa_id', empresaId);
     if (error) throw error;
-    return (data as any[]) || [];
+    return (data as BeneficioRow[]) || [];
   }
 
-  async criar(d: any): Promise<any> {
+  async criar(d: TablesInsert<'beneficios'>): Promise<BeneficioRow> {
     try {
       const data = await super.criar(d);
       await auditLogger.log({
@@ -50,7 +56,7 @@ class BeneficioService extends BaseService<any> {
     }
   }
 
-  async atualizar(id: string, d: any, empresaId?: string): Promise<any> {
+  async atualizar(id: string, d: Partial<TablesInsert<'beneficios'>>, empresaId?: string): Promise<BeneficioRow> {
     try {
       const anterior = await this.buscarPorId(id, empresaId);
       const data = await super.atualizar(id, d, empresaId);
@@ -85,59 +91,60 @@ class BeneficioService extends BaseService<any> {
     }
   }
 
-  async vincularColaborador(beneficioId: string, colaboradorId: string, dados: any, empresaId: string): Promise<any> {
+  async vincularColaborador(tipoBeneficioId: string, colaboradorId: string, dados: Partial<TablesInsert<'beneficios_colaborador'>>, empresaId: string): Promise<BeneficioVinculoRow> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data, error } = await (supabase as any).from('beneficios_colaborador').insert({
-      beneficio_id: beneficioId,
+    const { data, error } = await supabase.from('beneficios_colaborador').insert({
+      tipo_beneficio_id: tipoBeneficioId,
       colaborador_id: colaboradorId,
-      empresa_id: empresaId,
       ...dados
     }).select().single();
     if (error) throw error;
-    return data;
+    return data as unknown as BeneficioVinculoRow;
   }
 
-  async listarPorColaborador(colaboradorId: string, empresaId: string): Promise<any[]> {
+  async listarPorColaborador(colaboradorId: string, empresaId: string): Promise<BeneficioVinculoRow[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     // !inner enables filtering on beneficio.empresa_id, excluding orphan/cross-tenant rows
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('beneficios_colaborador')
-      .select('*, beneficio:beneficios!inner(*)')
+      .select('*, beneficio:tipos_beneficio!inner(*)')
       .eq('colaborador_id', colaboradorId)
       .eq('beneficio.empresa_id', empresaId);
     if (error) throw error;
-    return data || [];
+    return (data as unknown as BeneficioVinculoRow[]) || [];
   }
 
-  async obterResumoCustos(empresaId: string): Promise<any> {
-    const { data, error } = await (supabase as any)
+  async obterResumoCustos(empresaId: string): Promise<Record<string, { empresa: number; colaborador: number; total: number }>> {
+    const { data, error } = await supabase
       .from('beneficios_colaborador')
       .select(`
         id,
-        valor_colaborador,
-        valor_empresa,
-        beneficio:beneficios!inner (
+        valor,
+        tipo_beneficio:tipos_beneficio!inner (
           id,
           nome,
-          tipo,
+          desconto_colaborador
+        ),
+        colaborador:colaboradores!inner (
           empresa_id
         )
       `)
-      .eq('beneficio.empresa_id', empresaId)
+      .eq('colaborador.empresa_id', empresaId)
       .eq('status_vinculo', 'ativo');
 
     if (error) throw error;
 
-    return (data || []).reduce((acc: any, item: any) => {
-      const tipo = item.beneficio.tipo || 'Outros';
+    return (data || []).reduce((acc: Record<string, { empresa: number; colaborador: number; total: number }>, item: any) => {
+      const tipo = item.tipo_beneficio.nome || 'Outros';
       if (!acc[tipo]) acc[tipo] = { empresa: 0, colaborador: 0, total: 0 };
       
-      const vEmpresa = Number(item.valor_empresa) || 0;
-      const vColab = Number(item.valor_colaborador) || 0;
+      const vTotal = Number(item.valor) || 0;
+      const descontoColab = Number(item.tipo_beneficio.desconto_colaborador) || 0;
+      const vColab = vTotal * descontoColab;
       
-      acc[tipo].empresa += vEmpresa;
+      acc[tipo].empresa += (vTotal - vColab);
       acc[tipo].colaborador += vColab;
-      acc[tipo].total += (vEmpresa + vColab);
+      acc[tipo].total += vTotal;
       
       return acc;
     }, {});

@@ -141,14 +141,29 @@ describe('premiacoesService.criarCampanha', () => {
   it('inserts and returns new campanha', async () => {
     const created = { id: 'c-new', nome: 'Nova Campanha' };
     const { insertFn } = setupInsertSingleChain(created);
-    const result = await premiacoesService.criarCampanha({ nome: 'Nova Campanha' });
-    expect(insertFn).toHaveBeenCalledWith({ nome: 'Nova Campanha' });
+    const result = await premiacoesService.criarCampanha({
+      nome: 'Nova Campanha',
+      empresa_id: 'emp-1',
+      data_inicio: '2026-01-01',
+      data_fim: '2026-12-31',
+    });
+    expect(insertFn).toHaveBeenCalledWith({
+      nome: 'Nova Campanha',
+      empresa_id: 'emp-1',
+      data_inicio: '2026-01-01',
+      data_fim: '2026-12-31',
+    });
     expect(result).toEqual(created);
   });
 
   it('throws on DB error', async () => {
     setupInsertSingleChain(null, { message: 'fail' });
-    await expect(premiacoesService.criarCampanha({})).rejects.toBeDefined();
+    await expect(premiacoesService.criarCampanha({
+      nome: 'X',
+      empresa_id: 'emp-1',
+      data_inicio: '2026-01-01',
+      data_fim: '2026-12-31',
+    })).rejects.toBeDefined();
   });
 });
 
@@ -158,10 +173,10 @@ describe('premiacoesService.criarRegra', () => {
   beforeEach(() => { vi.resetAllMocks(); });
 
   it('inserts and returns new regra', async () => {
-    const created = { id: 'r-new', tipo: 'metas' };
+    const created = { id: 'r-new', titulo: 'metas' };
     const { insertFn } = setupInsertSingleChain(created);
-    const result = await premiacoesService.criarRegra({ tipo: 'metas' });
-    expect(insertFn).toHaveBeenCalledWith({ tipo: 'metas' });
+    const result = await premiacoesService.criarRegra({ campanha_id: 'c-1', titulo: 'metas', tipo_calculo: 'valor_fixo' });
+    expect(insertFn).toHaveBeenCalledWith({ campanha_id: 'c-1', titulo: 'metas', tipo_calculo: 'valor_fixo' });
     expect(result).toEqual(created);
   });
 });

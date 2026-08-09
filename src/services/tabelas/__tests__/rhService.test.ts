@@ -35,24 +35,24 @@ import {
 describe('configAfastamentosService', () => {
   beforeEach(() => { vi.clearAllMocks(); });
 
-  it('obter calls from config_afastamentos with eq empresa_id', async () => {
+  it('obter calls from config_afastamentos', async () => {
     const chain = makeChain({ id: 'c1' });
     mockFrom.mockReturnValue(chain);
-    await configAfastamentosService.obter('emp-1');
+    await configAfastamentosService.obter();
     expect(mockFrom).toHaveBeenCalledWith('config_afastamentos');
   });
 
   it('obter throws on error', async () => {
     const chain = makeChain(null, new Error('db error'));
-    chain.select.mockReturnValue({ eq: vi.fn().mockReturnValue({ maybeSingle: vi.fn().mockResolvedValue({ data: null, error: new Error('db error') }) }) });
+    chain.select.mockReturnValue({ maybeSingle: vi.fn().mockResolvedValue({ data: null, error: new Error('db error') }) });
     mockFrom.mockReturnValue(chain);
-    await expect(configAfastamentosService.obter('emp-1')).rejects.toThrow('db error');
+    await expect(configAfastamentosService.obter()).rejects.toThrow('db error');
   });
 
   it('salvar calls upsert', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await configAfastamentosService.salvar({ empresa_id: 'emp-1', valor: 10 });
+    await configAfastamentosService.salvar({ tipo: 'doenca', dias_empresa_maximo: 15 });
     expect(mockFrom).toHaveBeenCalledWith('config_afastamentos');
     expect(chain.upsert).toHaveBeenCalled();
   });
@@ -79,7 +79,11 @@ describe('feriasSolicitacoesService', () => {
   it('criar calls from ferias_solicitacoes', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await feriasSolicitacoesService.criar({ colaborador_id: 'c1' });
+    await feriasSolicitacoesService.criar({
+      colaborador_id: 'c1',
+      data_inicio: '2026-01-10',
+      data_fim: '2026-01-20',
+    });
     expect(mockFrom).toHaveBeenCalledWith('ferias_solicitacoes');
   });
 });
@@ -90,7 +94,7 @@ describe('historicoCargoService', () => {
   it('listar queries historico_cargo', async () => {
     const chain = makeChain([]);
     mockFrom.mockReturnValue(chain);
-    await historicoCargoService.listar('col-1', 'emp-1');
+    await historicoCargoService.listar('col-1');
     expect(mockFrom).toHaveBeenCalledWith('historico_cargo');
   });
 });

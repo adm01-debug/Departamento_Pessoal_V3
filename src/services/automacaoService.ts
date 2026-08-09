@@ -1,7 +1,15 @@
 import { supabase } from '@/integrations/supabase/client';
+import type { Tables } from '@/integrations/supabase/types';
 import { whatsappService } from './whatsappService';
 import { criarNotificacao } from './notificacoesService';
 import { formatDateLocalISO } from '@/utils/dateLocal';
+
+type AsosComColaborador = Tables<'asos'> & {
+  colaborador: Pick<Tables<'colaboradores'>, 'id' | 'nome_completo' | 'telefone'> | null;
+};
+type PeriodoComColaborador = Tables<'periodos_experiencia'> & {
+  colaborador: Pick<Tables<'colaboradores'>, 'id' | 'nome_completo' | 'empresa_id'>;
+};
 
 export const automacaoService = {
   /**
@@ -57,16 +65,17 @@ export const automacaoService = {
     dataAlerta.setDate(dataAlerta.getDate() + 30); // 30 dias de antecedência
     const dataFormatada = formatDateLocalISO(dataAlerta);
 
-    const { data: asos } = await (supabase as any)
+    const { data: asos } = await supabase
       .from('asos')
       .select('*, colaborador:colaboradores(id, nome_completo, telefone)')
       .eq('empresa_id', empresaId)
-      .eq('data_validade', dataFormatada);
+      .eq('data_validade', dataFormatada)
+      .returns<AsosComColaborador[]>();
 
     if (!asos) return;
 
     for (const aso of asos) {
-      const colab = (aso as any).colaborador;
+      const colab = aso.colaborador;
       if (!colab) continue;
       
       const mensagem = `Olá ${colab.nome_completo}, seu exame médico (ASO) vence em 30 dias (${dataAlerta.toLocaleDateString('pt-BR')}). Favor agendar com o RH.`;
@@ -92,16 +101,17 @@ export const automacaoService = {
     dataAlerta.setDate(dataAlerta.getDate() + 7);
     const dataFormatada = formatDateLocalISO(dataAlerta);
 
-    const { data: periodos } = await (supabase as any)
+    const { data: periodos } = await supabase
       .from('periodos_experiencia')
       .select('*, colaborador:colaboradores!inner(id, nome_completo, empresa_id)')
-      .eq('colaborador.empresa_id' as any, empresaId)
-      .or(`primeira_etapa_fim.eq.${dataFormatada},segunda_etapa_fim.eq.${dataFormatada}` as any);
+      .eq('colaborador.empresa_id', empresaId)
+      .or(`primeira_etapa_fim.eq.${dataFormatada},segunda_etapa_fim.eq.${dataFormatada}`)
+      .returns<PeriodoComColaborador[]>();
 
     if (!periodos) return;
 
     for (const periodo of periodos) {
-      const colab = (periodo as any).colaborador;
+      const colab = periodo.colaborador;
       if (!colab) continue;
       // Defesa em profundidade: descarta qualquer registro que escape do escopo do tenant
       // (protege contra falha/alteração do filtro no join embedado do PostgREST).
