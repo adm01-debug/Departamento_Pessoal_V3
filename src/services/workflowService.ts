@@ -1,6 +1,16 @@
 import { supabase } from '@/integrations/supabase/client';
+import type { QueryBuilderType } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
 
 // ── Tipos ───────────────────────────────────────────────────────────────────
+
+type Tables = Database['public']['Tables'];
+type WorkflowsDefinicoesInsert = Tables['workflows_definicoes']['Insert'];
+type WorkflowsDefinicoesUpdate = Tables['workflows_definicoes']['Update'];
+type WorkflowsEtapasInsert = Tables['workflows_etapas']['Insert'];
+type WorkflowsExecucoesInsert = Tables['workflows_execucoes']['Insert'];
+type WorkflowsExecucoesUpdate = Tables['workflows_execucoes']['Update'];
+type WorkflowsHistoricoInsert = Tables['workflows_historico']['Insert'];
 
 interface EtapaConfig {
   nivel?: number;
@@ -117,7 +127,7 @@ export const workflowService = {
 
   async listarDefinicoes(empresaId: string): Promise<Etapa[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('workflows_definicoes')
       .select('*')
       .eq('empresa_id', empresaId)
@@ -127,9 +137,9 @@ export const workflowService = {
   },
 
   async criarDefinicao(d: Record<string, unknown>): Promise<unknown> {
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('workflows_definicoes')
-      .insert(d)
+      .insert(d as WorkflowsDefinicoesInsert)
       .select()
       .maybeSingle();
     if (error) throw error;
@@ -143,9 +153,9 @@ export const workflowService = {
     empresaId: string,
   ): Promise<unknown> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('workflows_definicoes')
-      .update({ ...d, updated_at: new Date().toISOString() })
+      .update({ ...d, updated_at: new Date().toISOString() } as WorkflowsDefinicoesUpdate)
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()
@@ -157,7 +167,7 @@ export const workflowService = {
 
   async excluirDefinicao(id: string, empresaId: string): Promise<void> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('workflows_definicoes')
       .delete()
       .eq('id', id)
@@ -166,7 +176,7 @@ export const workflowService = {
   },
 
   async listarEtapas(workflowId: string): Promise<Etapa[]> {
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('workflows_etapas')
       .select('*')
       .eq('workflow_id', workflowId)
@@ -176,19 +186,19 @@ export const workflowService = {
   },
 
   async criarEtapa(d: Record<string, unknown>): Promise<Etapa> {
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('workflows_etapas')
-      .insert(d)
+      .insert(d as WorkflowsEtapasInsert)
       .select()
       .maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Etapa não foi criada.');
-    return data as Etapa;
+    return data as unknown as Etapa;
   },
 
   async excluirEtapa(workflowId: string, id: string): Promise<void> {
     if (!workflowId) throw new Error('workflow_id obrigatório');
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('workflows_etapas')
       .delete()
       .eq('id', id)
@@ -198,7 +208,7 @@ export const workflowService = {
 
   async listarExecucoes(empresaId: string): Promise<Execucao[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('workflows_execucoes')
       .select('*, workflow:workflows_definicoes(nome, tipo)')
       .eq('empresa_id', empresaId)
@@ -208,9 +218,9 @@ export const workflowService = {
   },
 
   async criarExecucao(d: Record<string, unknown>): Promise<unknown> {
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('workflows_execucoes')
-      .insert(d)
+      .insert(d as WorkflowsExecucoesInsert)
       .select()
       .maybeSingle();
     if (error) throw error;
@@ -224,9 +234,9 @@ export const workflowService = {
     empresaId: string,
   ): Promise<Execucao> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('workflows_execucoes')
-      .update({ ...d, updated_at: new Date().toISOString() })
+      .update({ ...d, updated_at: new Date().toISOString() } as WorkflowsExecucoesUpdate)
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()
@@ -237,14 +247,14 @@ export const workflowService = {
   },
 
   async registrarHistorico(d: Record<string, unknown>): Promise<Historico> {
-    const { data, error } = await (supabase as any)
+    const { data, error } = await supabase
       .from('workflows_historico')
-      .insert(d)
+      .insert(d as WorkflowsHistoricoInsert)
       .select()
       .maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Histórico não foi registrado.');
-    return data as Historico;
+    return data as unknown as Historico;
   },
 
   // ── Execução de workflow (P5-083) ───────────────────────────────────────
@@ -267,7 +277,7 @@ export const workflowService = {
     if (!entidadeTipo || !entidadeId) throw new Error('entidade_tipo e entidade_id obrigatórios');
 
     // Idempotency: se já existe execução ativa para esta entidade, retorna a existente
-    const { data: existing } = await (supabase as any)
+    const { data: existing } = await supabase
       .from('workflows_execucoes')
       .select('*')
       .eq('workflow_id', workflowId)
@@ -279,7 +289,7 @@ export const workflowService = {
     if (existing) return existing as unknown as Execucao;
 
     // Verifica que o workflow está ativo
-    const { data: definicao } = await (supabase as any)
+    const { data: definicao } = await supabase
       .from('workflows_definicoes')
       .select('id, ativo')
       .eq('id', workflowId)
@@ -289,7 +299,7 @@ export const workflowService = {
     if (!definicao.ativo) throw new Error('Workflow está desativado.');
 
     // Primeira etapa (ordem = 1)
-    const { data: primeiraEtapa } = await (supabase as any)
+    const { data: primeiraEtapa } = await supabase
       .from('workflows_etapas')
       .select('*')
       .eq('workflow_id', workflowId)
@@ -310,16 +320,17 @@ export const workflowService = {
       sla_iniciado_em: now,
     };
 
-    const { data: execucao, error: execError } = await (supabase as any)
+    // sla_iniciado_em existe no banco (usado pelo SLA) mas não no types.ts gerado → cast via unknown
+    const { data: execucao, error: execError } = await supabase
       .from('workflows_execucoes')
-      .insert(execData)
+      .insert(execData as unknown as WorkflowsExecucoesInsert)
       .select()
       .maybeSingle();
     if (execError) throw execError;
     if (!execucao) throw new Error('Falha ao criar execução.');
 
     // Log de início
-    await (supabase as any).from('workflows_historico').insert({
+    await supabase.from('workflows_historico').insert({
       execucao_id: execucao.id,
       etapa_id: primeiraEtapa.id,
       acao: 'iniciou',
@@ -345,7 +356,7 @@ export const workflowService = {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
     // Busca execução atual
-    const { data: execucao } = await (supabase as any)
+    const { data: execucao } = await supabase
       .from('workflows_execucoes')
       .select('*')
       .eq('id', execucaoId)
@@ -355,7 +366,7 @@ export const workflowService = {
     if (execucao.etapa_atual_id !== etapaId) {
       throw new Error(`Etapa ${etapaId} não é a etapa atual desta execução.`);
     }
-    if (!['pendente', 'em_andamento'].includes(execucao.status)) {
+    if (!['pendente', 'em_andamento'].includes(execucao.status as string)) {
       throw new Error(`Execução já está ${execucao.status} — não pode ser alterada.`);
     }
 
@@ -369,7 +380,7 @@ export const workflowService = {
     }
 
     // Atualiza ou avança
-    const { data: etapa } = await (supabase as any)
+    const { data: etapa } = await supabase
       .from('workflows_etapas')
       .select('*')
       .eq('id', etapaId)
@@ -404,9 +415,9 @@ export const workflowService = {
       sla_iniciado_em: novoSlaInicio,
     };
 
-    const { data: updated, error: updateError } = await (supabase as any)
+    const { data: updated, error: updateError } = await supabase
       .from('workflows_execucoes')
-      .update({ ...updatePayload, updated_at: now })
+      .update({ ...updatePayload, updated_at: now } as WorkflowsExecucoesUpdate)
       .eq('id', execucaoId)
       .eq('empresa_id', empresaId)
       .select()
@@ -415,7 +426,7 @@ export const workflowService = {
     if (!updated) throw new Error('Falha ao atualizar execução.');
 
     // Registra histórico
-    const { data: historico } = await (supabase as any)
+    const { data: historico } = await supabase
       .from('workflows_historico')
       .insert({
         execucao_id: execucaoId,
@@ -434,7 +445,7 @@ export const workflowService = {
    * Retorna status de SLA da etapa atual de uma execução.
    */
   async statusSLA(execucaoId: string, empresaId: string): Promise<SLAStatus | null> {
-    const { data: execucao } = await (supabase as any)
+    const { data: execucao } = await supabase
       .from('workflows_execucoes')
       .select('*, etapa_atual:workflows_etapas(*)')
       .eq('id', execucaoId)
@@ -448,8 +459,10 @@ export const workflowService = {
    * Lista execuções com SLA vencido (para cron/alert).
    */
   async execucoesComSLAVencido(empresaId: string): Promise<Execucao[]> {
-    const { data: execucoes } = await (supabase as any)
-      .from('workflows_execucoes')
+    // sla_iniciado_em (filtro .not) existe no banco mas não no types.ts gerado →
+    // cast do builder para QueryBuilderType (runtime É o builder da bridge)
+    const { data: execucoes } = await (supabase
+      .from('workflows_execucoes') as unknown as QueryBuilderType)
       .select('*, workflows_etapas(*)')
       .eq('empresa_id', empresaId)
       .in('status', ['pendente', 'em_andamento'])

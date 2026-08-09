@@ -1,4 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
+import type { Database, TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
+
+type Functions = Database['public']['Functions'];
 
 export type TipoContrato =
   | 'clt_indeterminado'
@@ -55,7 +58,7 @@ export interface ContratoGerado {
 export const contratoTemplateService = {
   async listar(empresaId: string): Promise<ContratoTemplate[]> {
     const { data, error } = await supabase
-      .from('contrato_templates' as any)
+      .from('contrato_templates')
       .select('*')
       .eq('empresa_id', empresaId)
       .order('tipo_contrato')
@@ -66,7 +69,7 @@ export const contratoTemplateService = {
 
   async obter(id: string): Promise<ContratoTemplate | null> {
     const { data, error } = await supabase
-      .from('contrato_templates' as any)
+      .from('contrato_templates')
       .select('*')
       .eq('id', id)
       .maybeSingle();
@@ -78,8 +81,8 @@ export const contratoTemplateService = {
     const { id, ...rest } = payload;
     if (id) {
       const { data, error } = await supabase
-        .from('contrato_templates' as any)
-        .update(rest as any)
+        .from('contrato_templates')
+        .update(rest as unknown as TablesUpdate<'contrato_templates'>)
         .eq('id', id)
         .select()
         .single();
@@ -87,8 +90,8 @@ export const contratoTemplateService = {
       return data as unknown as ContratoTemplate;
     }
     const { data, error } = await supabase
-      .from('contrato_templates' as any)
-      .insert(rest as any)
+      .from('contrato_templates')
+      .insert(rest as unknown as TablesInsert<'contrato_templates'>)
       .select()
       .single();
     if (error) throw error;
@@ -98,16 +101,16 @@ export const contratoTemplateService = {
   async duplicarNovaVersao(id: string): Promise<ContratoTemplate> {
     const atual = await this.obter(id);
     if (!atual) throw new Error('Template não encontrado');
-    await supabase.from('contrato_templates' as any).update({ ativo: false } as any).eq('id', id);
-    const clone = { ...atual, versao: atual.versao + 1, ativo: true } as Partial<ContratoTemplate>;
+    await supabase.from('contrato_templates').update({ ativo: false }).eq('id', id);
+    const clone: Partial<ContratoTemplate> & { empresa_id: string; nome: string; tipo_contrato: TipoContrato; corpo_html: string } = { ...atual, versao: atual.versao + 1, ativo: true };
     delete (clone as { id?: string }).id;
     delete (clone as { created_at?: string }).created_at;
     delete (clone as { updated_at?: string }).updated_at;
-    return this.salvar(clone as any);
+    return this.salvar(clone);
   },
 
   async excluir(id: string): Promise<void> {
-    const { error } = await supabase.from('contrato_templates' as any).delete().eq('id', id);
+    const { error } = await supabase.from('contrato_templates').delete().eq('id', id);
     if (error) throw error;
   },
 
@@ -120,7 +123,7 @@ export const contratoTemplateService = {
   },
 
   async listarGerados(empresaId: string, admissaoId?: string): Promise<ContratoGerado[]> {
-    let q = supabase.from('contratos_gerados' as any).select('*').eq('empresa_id', empresaId).order('created_at', { ascending: false });
+    let q = supabase.from('contratos_gerados').select('*').eq('empresa_id', empresaId).order('created_at', { ascending: false });
     if (admissaoId) q = q.eq('admissao_id', admissaoId);
     const { data, error } = await q;
     if (error) throw error;
@@ -137,12 +140,12 @@ export const contratoTemplateService = {
     contratoId: string,
     opts: { email?: string; cpf?: string; validadeDias?: number } = {}
   ): Promise<{ token: string; url: string; expira_em: string }> {
-    const { data, error } = await supabase.rpc('contrato_gerar_token_assinatura' as any, {
+    const { data, error } = await supabase.rpc('contrato_gerar_token_assinatura', {
       p_contrato_id: contratoId,
       p_email: opts.email ?? null,
       p_cpf: opts.cpf ?? null,
       p_validade_dias: opts.validadeDias ?? 7,
-    } as any);
+    } as unknown as Functions['contrato_gerar_token_assinatura']['Args']);
     if (error) throw error;
     const row = Array.isArray(data) ? (data[0] as { token: string; expira_em: string }) : (data as { token: string; expira_em: string });
     const url = `${window.location.origin}/assinar-contrato/${row.token}`;
@@ -150,10 +153,10 @@ export const contratoTemplateService = {
   },
 
   async revogarToken(tokenId: string, motivo?: string): Promise<void> {
-    const { error } = await supabase.rpc('contrato_revogar_token' as any, {
+    const { error } = await supabase.rpc('contrato_revogar_token', {
       p_token_id: tokenId,
       p_motivo: motivo ?? null,
-    } as any);
+    } as unknown as Functions['contrato_revogar_token']['Args']);
     if (error) throw error;
   },
 
@@ -161,10 +164,10 @@ export const contratoTemplateService = {
     tokenId: string,
     dias = 7
   ): Promise<{ id: string; expira_em: string }> {
-    const { data, error } = await supabase.rpc('contrato_estender_expiracao' as any, {
+    const { data, error } = await supabase.rpc('contrato_estender_expiracao', {
       p_token_id: tokenId,
       p_dias: dias,
-    } as any);
+    });
     if (error) throw error;
     const row = Array.isArray(data)
       ? (data[0] as { id: string; expira_em: string })
@@ -181,12 +184,19 @@ export const contratoTemplateService = {
     created_at: string;
   }>> {
     const { data, error } = await supabase
-      .from('contrato_token_eventos' as any)
+      .from('contrato_token_eventos')
       .select('id, evento, detalhes, ip, user_agent, created_at')
       .eq('contrato_id', contratoId)
       .order('created_at', { ascending: false })
       .limit(200);
     if (error) throw error;
-    return (data ?? []) as any;
+    return (data ?? []) as unknown as Array<{
+      id: string;
+      evento: string;
+      detalhes: Record<string, unknown> | null;
+      ip: string | null;
+      user_agent: string | null;
+      created_at: string;
+    }>;
   },
 };

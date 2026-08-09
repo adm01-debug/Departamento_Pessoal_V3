@@ -1,4 +1,5 @@
 import type { MedidaDisciplinarInsert } from '@/types/medidasDisciplinares';
+import type { TablesInsert } from '@/integrations/supabase/types';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEmpresas } from './useEmpresas';
 import { batidasPontoService } from '@/services/batidasPontoService';
@@ -139,7 +140,7 @@ export function useEpis() {
 export function useCriarEpi() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (d: DataRecord) => episService.criar(d),
+    mutationFn: (d: DataRecord) => episService.criar(d as TablesInsert<'epis'>),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['epis'] }); toast.success('EPI cadastrado'); },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
@@ -187,7 +188,7 @@ export function useEpisEntregasColaborador(colaboradorId: string) {
 export function useCriarEpiEntrega() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (d: DataRecord) => episEntregasService.criar(d),
+    mutationFn: (d: DataRecord) => episEntregasService.criar(d as TablesInsert<'epis_entregas'>),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['epis-entregas'] }); toast.success('Entrega de EPI registrada'); },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });

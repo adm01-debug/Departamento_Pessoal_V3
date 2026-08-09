@@ -1,5 +1,9 @@
 import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
 import type { VagaRow, CandidatoRow, CandidaturaRow, CandidaturaComRelacoes } from '@/types/recrutamento';
+
+type Tables = Database['public']['Tables'];
+
 export const recrutamentoService = {
   // ===== VAGAS =====
   async listarVagas(empresaId: string): Promise<VagaRow[]> {
@@ -15,7 +19,7 @@ export const recrutamentoService = {
 
   async criarVaga(d: Record<string, unknown>): Promise<VagaRow> {
     
-    const { data, error } = await supabase.from('vagas').insert(d as any).select().maybeSingle();
+    const { data, error } = await supabase.from('vagas').insert(d as Tables['vagas']['Insert']).select().maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de vaga foi retornado.');
     return data;
@@ -24,7 +28,7 @@ export const recrutamentoService = {
 
   async atualizarVaga(id: string, d: Record<string, unknown>, empresaId: string): Promise<VagaRow> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data, error } = await supabase.from('vagas').update(d as any).eq('id', id).eq('empresa_id', empresaId).select().maybeSingle();
+    const { data, error } = await supabase.from('vagas').update(d as Tables['vagas']['Update']).eq('id', id).eq('empresa_id', empresaId).select().maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de vaga foi retornado.');
     return data;
@@ -52,7 +56,7 @@ export const recrutamentoService = {
 
   async criarCandidato(d: Record<string, unknown>): Promise<CandidatoRow> {
     
-    const { data, error } = await supabase.from('candidatos').insert(d as any).select().maybeSingle();
+    const { data, error } = await supabase.from('candidatos').insert(d as Tables['candidatos']['Insert']).select().maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de candidato foi retornado.');
     return data;
@@ -61,7 +65,7 @@ export const recrutamentoService = {
 
   async atualizarCandidato(id: string, d: Record<string, unknown>, empresaId: string): Promise<CandidatoRow> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data, error } = await supabase.from('candidatos').update(d as any).eq('id', id).eq('empresa_id', empresaId).select().maybeSingle();
+    const { data, error } = await supabase.from('candidatos').update(d as Tables['candidatos']['Update']).eq('id', id).eq('empresa_id', empresaId).select().maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de candidato foi retornado.');
     return data;
@@ -88,7 +92,7 @@ export const recrutamentoService = {
 
   async criarCandidatura(d: Record<string, unknown>): Promise<CandidaturaRow> {
     
-    const { data, error } = await supabase.from('candidaturas').insert(d as any).select().maybeSingle();
+    const { data, error } = await supabase.from('candidaturas').insert(d as Tables['candidaturas']['Insert']).select().maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de candidatura foi retornado.');
     return data;
@@ -97,7 +101,7 @@ export const recrutamentoService = {
 
   async atualizarCandidatura(id: string, d: Record<string, unknown>, empresaId: string): Promise<CandidaturaRow> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data, error } = await supabase.from('candidaturas').update(d as any).eq('id', id).eq('empresa_id', empresaId).select().maybeSingle();
+    const { data, error } = await supabase.from('candidaturas').update(d as Tables['candidaturas']['Update']).eq('id', id).eq('empresa_id', empresaId).select().maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de candidatura foi retornado.');
     return data;
@@ -112,25 +116,25 @@ export const recrutamentoService = {
   },
 
   // ===== TESTES E ENTREVISTAS =====
-  async agendarEntrevista(d: Record<string, unknown>): Promise<any> {
+  async agendarEntrevista(d: Record<string, unknown>): Promise<Tables['recrutamento_entrevistas']['Row'] | null> {
     
-    const { data, error } = await supabase.from('recrutamento_entrevistas').insert(d as any).select().maybeSingle();
+    const { data, error } = await supabase.from('recrutamento_entrevistas').insert(d as Tables['recrutamento_entrevistas']['Insert']).select().maybeSingle();
     if (error) throw error;
     return data;
   
   },
 
-  async registrarTeste(d: Record<string, unknown>): Promise<any> {
+  async registrarTeste(d: Record<string, unknown>): Promise<Tables['recrutamento_testes']['Row'] | null> {
     
-    const { data, error } = await supabase.from('recrutamento_testes').insert(d as any).select().maybeSingle();
+    const { data, error } = await supabase.from('recrutamento_testes').insert(d as Tables['recrutamento_testes']['Insert']).select().maybeSingle();
     if (error) throw error;
     return data;
   
   },
 
-  async adicionarAnotacao(d: Record<string, unknown>): Promise<any> {
+  async adicionarAnotacao(d: Record<string, unknown>): Promise<Tables['recrutamento_anotacoes']['Row'] | null> {
     
-    const { data, error } = await supabase.from('recrutamento_anotacoes').insert(d as any).select().maybeSingle();
+    const { data, error } = await supabase.from('recrutamento_anotacoes').insert(d as Tables['recrutamento_anotacoes']['Insert']).select().maybeSingle();
     if (error) throw error;
     return data;
   

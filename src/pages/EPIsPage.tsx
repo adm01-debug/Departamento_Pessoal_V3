@@ -1,4 +1,5 @@
 import { todayLocalISO } from '@/utils/dateLocal';
+import type { TablesInsert } from '@/integrations/supabase/types';
 import { PageTitle } from '@/components/PageTitle';
 import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -73,7 +74,7 @@ export default function EPIsPage() {
       validade_meses: Number(d.validade_meses) || null,
       estoque_atual: Number(d.estoque_atual) || 0,
       estoque_minimo: Number(d.estoque_minimo) || 0
-    }),
+    } as unknown as TablesInsert<'epis'>),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['epis'] });
       setOpenEpi(false);
@@ -94,7 +95,7 @@ export default function EPIsPage() {
   });
 
   const criarEntrega = useMutation({
-    mutationFn: (d: Record<string, unknown>) => episEntregasService.criar({ ...d, empresa_id: empresaAtual?.id, quantidade: Number(d.quantidade) }),
+    mutationFn: (d: Record<string, unknown>) => episEntregasService.criar({ ...d, empresa_id: empresaAtual?.id, quantidade: Number(d.quantidade) } as unknown as TablesInsert<'epis_entregas'>),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['epis-entregas'] });
       setOpenEntrega(false);

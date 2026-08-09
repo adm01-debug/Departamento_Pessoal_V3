@@ -268,9 +268,17 @@ describe('feriasService.criarPeriodoAquisitivo', () => {
     const insertFn = vi.fn().mockReturnValue({ select: selectFn });
     mockFrom.mockReturnValue({ insert: insertFn });
 
-    const result = await feriasService.criarPeriodoAquisitivo({ colaborador_id: 'c1' });
+    const result = await feriasService.criarPeriodoAquisitivo({
+      colaborador_id: 'c1',
+      data_inicio: '2026-01-01',
+      data_fim: '2026-12-31',
+    });
     expect(result).toEqual(created);
-    expect(insertFn).toHaveBeenCalledWith({ colaborador_id: 'c1' });
+    expect(insertFn).toHaveBeenCalledWith({
+      colaborador_id: 'c1',
+      data_inicio: '2026-01-01',
+      data_fim: '2026-12-31',
+    });
   });
 
   it('throws on DB error', async () => {
@@ -279,7 +287,11 @@ describe('feriasService.criarPeriodoAquisitivo', () => {
     const insertFn = vi.fn().mockReturnValue({ select: selectFn });
     mockFrom.mockReturnValue({ insert: insertFn });
 
-    await expect(feriasService.criarPeriodoAquisitivo({})).rejects.toBeDefined();
+    await expect(feriasService.criarPeriodoAquisitivo({
+      colaborador_id: 'c1',
+      data_inicio: '2026-01-01',
+      data_fim: '2026-12-31',
+    })).rejects.toBeDefined();
   });
 });
 

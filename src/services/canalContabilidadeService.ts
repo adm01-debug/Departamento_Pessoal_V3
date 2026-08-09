@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { validateUploadFile } from '@/utils/uploadValidation';
+import type { Json, Tables, TablesUpdate } from '@/integrations/supabase/types';
 
 export type ThreadStatus = 'aberto' | 'respondido' | 'resolvido' | 'arquivado';
 export type ThreadCategoria = 'folha' | 'esocial' | 'admissao' | 'rescisao' | 'tributos' | 'ferias' | 'outro';
@@ -12,7 +13,7 @@ export const canalContabilidadeService = {
   // ---------- contatos ----------
   async listContatos(empresaId: string) {
     const { data, error } = await supabase
-      .from('contabilidade_contatos' as any)
+      .from('contabilidade_contatos')
       .select('*')
       .eq('empresa_id', empresaId)
       .order('nome');
@@ -25,7 +26,7 @@ export const canalContabilidadeService = {
     payload: { nome: string; email: string; telefone?: string; escritorio?: string }
   ) {
     const { data, error } = await supabase
-      .from('contabilidade_contatos' as any)
+      .from('contabilidade_contatos')
       .insert({ ...payload, empresa_id: empresaId })
       .select()
       .maybeSingle();
@@ -34,14 +35,14 @@ export const canalContabilidadeService = {
   },
 
   async toggleContato(empresaId: string, id: string, ativo: boolean) {
-    const { error } = await supabase.from('contabilidade_contatos' as any).update({ ativo }).eq('id', id).eq('empresa_id', empresaId);
+    const { error } = await supabase.from('contabilidade_contatos').update({ ativo }).eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   },
 
   // ---------- threads ----------
   async listThreads(empresaId: string, filtroStatus?: ThreadStatus) {
     let q = supabase
-      .from('contabilidade_threads' as any)
+      .from('contabilidade_threads')
       .select('*, contato:contabilidade_contatos(nome, email)')
       .eq('empresa_id', empresaId)
       .order('ultima_atividade_em', { ascending: false })
@@ -64,7 +65,7 @@ export const canalContabilidadeService = {
   ) {
     const { data: user } = await supabase.auth.getUser();
     const { data: thread, error } = await supabase
-      .from('contabilidade_threads' as any)
+      .from('contabilidade_threads')
       .insert({
         empresa_id: empresaId,
         assunto: payload.assunto,
@@ -77,21 +78,21 @@ export const canalContabilidadeService = {
       .maybeSingle();
     if (error) throw error;
     if (!thread) throw new Error('Falha ao criar thread');
-    await this.enviarMensagem((thread as any).id, empresaId, payload.mensagemInicial, 'rh');
+    await this.enviarMensagem(thread.id, empresaId, payload.mensagemInicial, 'rh');
     return thread;
   },
 
   async atualizarStatus(empresaId: string, threadId: string, status: ThreadStatus) {
-    const patch: any = { status };
+    const patch: TablesUpdate<'contabilidade_threads'> = { status };
     if (status === 'resolvido') patch.resolvido_em = new Date().toISOString();
-    const { error } = await supabase.from('contabilidade_threads' as any).update(patch).eq('id', threadId).eq('empresa_id', empresaId);
+    const { error } = await supabase.from('contabilidade_threads').update(patch).eq('id', threadId).eq('empresa_id', empresaId);
     if (error) throw error;
   },
 
   // ---------- mensagens ----------
   async listMensagens(threadId: string) {
     const { data, error } = await supabase
-      .from('contabilidade_mensagens' as any)
+      .from('contabilidade_mensagens')
       .select('*')
       .eq('thread_id', threadId)
       .order('created_at', { ascending: true });
@@ -104,12 +105,12 @@ export const canalContabilidadeService = {
     empresaId: string,
     corpo: string,
     autorTipo: AutorTipo = 'rh',
-    anexos: any[] = []
+    anexos: Json[] = []
   ) {
     if (!corpo?.trim()) throw new Error('Mensagem vazia');
     const { data: user } = await supabase.auth.getUser();
     const { data, error } = await supabase
-      .from('contabilidade_mensagens' as any)
+      .from('contabilidade_mensagens')
       .insert({
         thread_id: threadId,
         empresa_id: empresaId,
