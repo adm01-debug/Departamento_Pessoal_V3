@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useEmpresas } from '@/hooks/useEmpresas';
-import { contratoTemplateService, type ContratoTemplate } from '@/services/contratoTemplateService';
+import { contratoTemplateService, type ContratoTemplate, type TipoContrato } from '@/services/contratoTemplateService';
 import { safeErrorMessage } from '@/utils/safeError';
 
 export function useContratoTemplates() {
@@ -19,7 +19,9 @@ export function useContratoTemplates() {
 
   const salvar = useMutation({
     mutationFn: (payload: Partial<ContratoTemplate>) =>
-      contratoTemplateService.salvar({ ...payload, empresa_id: empresaId! } as never),
+      contratoTemplateService.salvar({ ...payload, empresa_id: empresaId! } as Partial<ContratoTemplate> & {
+        empresa_id: string; nome: string; tipo_contrato: TipoContrato; corpo_html: string;
+      }),
     onSuccess: () => { invalidate(); toast.success('Modelo salvo'); },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao salvar modelo.')),
   });

@@ -27,12 +27,26 @@ export function normalizarCPF(cpf: string | number | null | undefined): string {
 export function parseDate(val: unknown): string | null {
   if (val === null || val === undefined || val === '') return null;
   if (typeof val === 'number') {
+    // Serial Excel: a conversão clássica produz meia-noite UTC; reinterpretar
+    // como data local para evitar off-by-one em fusos negativos (ex.: UTC-3).
     const d = new Date((val - 25569) * 86400 * 1000);
-    return isNaN(d.getTime()) ? null : formatDateLocalISO(d);
+    if (isNaN(d.getTime())) return null;
+    const local = new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+    return formatDateLocalISO(local);
   }
   const s = String(val);
   const parts = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
   if (parts) return `${parts[3]}-${parts[2]}-${parts[1]}`;
+  // `new Date('YYYY-MM-DD')` interpreta como meia-noite UTC → off-by-one em
+  // fusos negativos (ex.: UTC-3). Construir como meia-noite LOCAL.
+  const iso = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (iso) {
+    const local = new Date(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3]));
+    if (isNaN(local.getTime())) return null;
+    const formatted = formatDateLocalISO(local);
+    // round-trip: rejeita datas inexistentes (ex.: 2023-02-30 → 2023-03-02)
+    return formatted === s ? formatted : null;
+  }
   const d = new Date(s);
   return isNaN(d.getTime()) ? null : formatDateLocalISO(d);
 }

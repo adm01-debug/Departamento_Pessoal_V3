@@ -71,28 +71,28 @@ function buildVariants(cfg: Required<PageTransitionConfig>, axisDirection: numbe
         exit: { opacity: opacityFrom, scale: 1.02 },
       };
     case 'flip': {
-      const axis = axisX ? 'rotateY' : 'rotateX';
+      const axis: 'rotateX' | 'rotateY' = axisX ? 'rotateY' : 'rotateX';
       return {
-        enter: { opacity: opacityFrom, [axis]: 12 * sign, transformPerspective: 1200 } as never,
-        center: { opacity: 1, [axis]: 0, transformPerspective: 1200 } as never,
-        exit: { opacity: opacityFrom, [axis]: -12 * sign, transformPerspective: 1200 } as never,
+        enter: { opacity: opacityFrom, [axis]: 12 * sign, transformPerspective: 1200 },
+        center: { opacity: 1, [axis]: 0, transformPerspective: 1200 },
+        exit: { opacity: opacityFrom, [axis]: -12 * sign, transformPerspective: 1200 },
       };
     }
     case 'parallax': {
-      const k = axisX ? 'x' : 'y';
+      const k: 'x' | 'y' = axisX ? 'x' : 'y';
       return {
-        enter: { opacity: opacityFrom, [k]: delta * 2 * sign } as never,
-        center: { opacity: 1, [k]: 0 } as never,
-        exit: { opacity: opacityFrom, [k]: -delta * 2 * sign } as never,
+        enter: { opacity: opacityFrom, [k]: delta * 2 * sign },
+        center: { opacity: 1, [k]: 0 },
+        exit: { opacity: opacityFrom, [k]: -delta * 2 * sign },
       };
     }
     case 'slide':
     default: {
-      const k = axisX ? 'x' : 'y';
+      const k: 'x' | 'y' = axisX ? 'x' : 'y';
       return {
-        enter: { opacity: opacityFrom, [k]: delta * sign, filter: 'blur(4px)' } as never,
-        center: { opacity: 1, [k]: 0, filter: 'blur(0px)' } as never,
-        exit: { opacity: opacityFrom, [k]: -delta * sign, filter: 'blur(4px)' } as never,
+        enter: { opacity: opacityFrom, [k]: delta * sign, filter: 'blur(4px)' },
+        center: { opacity: 1, [k]: 0, filter: 'blur(0px)' },
+        exit: { opacity: opacityFrom, [k]: -delta * sign, filter: 'blur(4px)' },
       };
     }
   }

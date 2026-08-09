@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
+import { useForm, type Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
@@ -61,7 +61,7 @@ export default function AdminCatPage() {
   const [open, setOpen] = useState(false);
 
   const form = useForm<CatForm>({
-    resolver: zodResolver(catSchema) as never,
+    resolver: zodResolver(catSchema) as unknown as Resolver<CatForm>,
     defaultValues: {
       tipo_cat: 'inicial',
       tipo_acidente: 'tipico',
