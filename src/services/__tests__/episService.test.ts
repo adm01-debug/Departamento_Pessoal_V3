@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deepChain } from '@/test/deepChain';
 import { episService, episEntregasService } from '../episService';
+import type { TablesInsert } from '@/integrations/supabase/types';
 
 const EMPRESA_ID = 'test-empresa-id';
 
@@ -105,7 +106,7 @@ describe('episService.criar', () => {
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(episService.criar({})).rejects.toThrow('Nenhum registro de EPI foi retornado.');
+    await expect(episService.criar({} as TablesInsert<'epis'>)).rejects.toThrow('Nenhum registro de EPI foi retornado.');
   });
 });
 
@@ -184,13 +185,13 @@ describe('episEntregasService.criar', () => {
   it('inserts and returns new entrega', async () => {
     const created = { id: 'ee-new', epi_id: 'e1' };
     const { insertFn } = setupInsertChain(created);
-    const result = await episEntregasService.criar({ epi_id: 'e1' });
+    const result = await episEntregasService.criar({ epi_id: 'e1' } as TablesInsert<'epis_entregas'>);
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(episEntregasService.criar({})).rejects.toThrow('Nenhum registro de entrega de EPI foi retornado.');
+    await expect(episEntregasService.criar({} as TablesInsert<'epis_entregas'>)).rejects.toThrow('Nenhum registro de entrega de EPI foi retornado.');
   });
 });
 

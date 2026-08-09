@@ -1,4 +1,4 @@
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, type QueryBuilderType } from '@/integrations/supabase/client';
 import { formatDateLocalISO } from '@/utils/dateLocal';
 
 export interface CNABConfig {
@@ -35,17 +35,6 @@ interface CnabRemessaRecord {
   arquivo_remessa?: string;
   folha_id?: string;
   created_at?: string;
-}
-
-interface CnabRemessaInsert {
-  empresa_id: string;
-  folha_id: string;
-  banco_codigo: string;
-  status: string;
-  valor_total: number;
-  total_pagamentos: number;
-  arquivo_remessa?: string;
-  sequencial_arquivo?: number;
 }
 
 interface ContaBancariaRecord {
@@ -150,8 +139,7 @@ export const cnabService = {
     // Idempotency guard (C46/C47): reject if a remessa already exists in 'enviado'
     // status for this folha to prevent double-payment. Allow recovery if 'pendente'
     // (previous attempt failed before sending).
-    const { data: existingRemessa } = await (supabase as any)
-      .from('cnab_remessas')
+    const { data: existingRemessa } = await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
       .select('id, status, arquivo_remessa')
       .eq('empresa_id', empresaId)
       .eq('folha_id', folhaId)
@@ -190,8 +178,7 @@ export const cnabService = {
     if (existingRemessa && (existingRemessa as CnabRemessaRecord).status === 'pendente') {
       remessaRecord = existingRemessa as CnabRemessaRecord;
     } else {
-      const { data: remessa, error: rError } = await (supabase as any)
-        .from('cnab_remessas')
+      const { data: remessa, error: rError } = await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
         .insert([{
           empresa_id: empresaId,
           folha_id: folhaId,
@@ -199,7 +186,7 @@ export const cnabService = {
           status: 'pendente',
           valor_total: typedItens.reduce((acc, i) => acc + Number(i.total_liquido), 0),
           total_pagamentos: typedItens.length
-        }] as CnabRemessaInsert[])
+        }])
         .select()
         .single();
 
@@ -285,11 +272,11 @@ export const cnabService = {
     // would appear sent but have no payment records. Insert items first so the
     // DB is always consistent — a pending remessa with items is recoverable.
     if (cnabItensToInsert.length > 0) {
-      await (supabase as any).from('cnab_itens').insert(cnabItensToInsert);
+      await (supabase.from('cnab_itens') as unknown as QueryBuilderType).insert(cnabItensToInsert);
     }
 
     // Only after items are persisted, mark remessa as sent with the full file
-    await (supabase as any).from('cnab_remessas').update({
+    await (supabase.from('cnab_remessas') as unknown as QueryBuilderType).update({
       arquivo_remessa: fullFile,
       status: 'enviado',
       sequencial_arquivo: sequence,
@@ -316,8 +303,7 @@ export const cnabService = {
         const seuNumero = line.substring(73, 93).trim();
         const codigoOcorrencia = line.substring(230, 232);
         
-        const { data: item } = await (supabase as any)
-          .from('cnab_itens')
+        const { data: item } = await (supabase.from('cnab_itens') as unknown as QueryBuilderType)
           .select('id, folha_item_id, nome_favorecido')
           .eq('seu_numero', seuNumero)
           .eq('empresa_id', empresaId)
@@ -328,8 +314,7 @@ export const cnabService = {
           const isSuccess = ['00', '02'].includes(codigoOcorrencia);
           const status = isSuccess ? 'pago' : 'erro';
 
-          await (supabase as any)
-            .from('cnab_itens')
+          await (supabase.from('cnab_itens') as unknown as QueryBuilderType)
             .update({
               status,
               codigo_ocorrencia: codigoOcorrencia,
@@ -339,8 +324,7 @@ export const cnabService = {
             .eq('empresa_id', empresaId);
 
           if (isSuccess && itemRecord.folha_item_id) {
-            await (supabase as any)
-              .from('folha_itens')
+            await (supabase.from('folha_itens') as unknown as QueryBuilderType)
               .update({ status_pagamento: 'pago' })
               .eq('id', itemRecord.folha_item_id)
               .eq('empresa_id', empresaId);
@@ -430,8 +414,7 @@ export const cnabService = {
     if (!config) throw new Error('Configuração CNAB não encontrada.');
 
     // ── 2. Idempotency: se já enviado, retorna arquivo existente ───────
-    const { data: existingRemessa } = await (supabase as any)
-      .from('cnab_remessas')
+    const { data: existingRemessa } = await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
       .select('id, status, arquivo_remessa')
       .eq('empresa_id', empresaId)
       .eq('folha_id', folhaId)
@@ -444,7 +427,7 @@ export const cnabService = {
     }
 
     // ── 3. Carregar itens ─────────────────────────────────────────────
-    const { data: itens, error: hError } = await (supabase as any)
+    const { data: itens, error: hError } = await supabase
       .from('folha_itens')
       .select('*, colaborador:colaboradores(id, nome_completo, cpf)')
       .eq('folha_id', folhaId);
@@ -455,7 +438,7 @@ export const cnabService = {
     const typedItens = itens as FolhaItemRecord[];
     const colaboradorIds = typedItens.map((i) => i.colaborador_id);
 
-    const { data: contas, error: cError } = await (supabase as any)
+    const { data: contas, error: cError } = await supabase
       .from('contas_bancarias')
       .select('*')
       .in('colaborador_id', colaboradorIds)
@@ -466,8 +449,7 @@ export const cnabService = {
 
     // ── 4. Criar remessa pendente ────────────────────────────────────
     const valorTotal = typedItens.reduce((acc, i) => acc + Number(i.total_liquido), 0);
-    const { data: remessa, error: rError } = await (supabase as any)
-      .from('cnab_remessas')
+    const { data: remessa, error: rError } = await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
       .insert([{
         empresa_id: empresaId,
         folha_id: folhaId,
@@ -700,13 +682,12 @@ export const cnabService = {
 
     // ── 9. Persistir e retornar ──────────────────────────────────────
     if (itensParaInsert.length > 0) {
-      await (supabase as any).from('cnab_itens').insert(itensParaInsert);
+      await (supabase.from('cnab_itens') as unknown as QueryBuilderType).insert(itensParaInsert);
     }
 
     const fullFile = lines.join('\r\n');
 
-    await (supabase as any)
-      .from('cnab_remessas')
+    await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
       .update({
         arquivo_remessa: fullFile,
         status: 'enviado',

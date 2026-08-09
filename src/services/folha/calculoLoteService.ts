@@ -1,4 +1,5 @@
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, type QueryBuilderType } from '@/integrations/supabase/client';
+import type { Json, TablesInsert } from '@/integrations/supabase/types';
 import { folhaCalc } from '@/utils/folhaCalc';
 import { toast } from 'sonner';
 import { pontoIntegracaoUtils } from '@/utils/folha/pontoIntegracaoUtils';
@@ -11,6 +12,28 @@ export interface BatchProgress {
   current: number;
   success: number;
   errors: number;
+}
+
+interface EventoFolha {
+  codigo: string;
+  descricao: string;
+  tipo: 'provento' | 'desconto';
+  valor: number;
+}
+
+interface ColaboradorFolha {
+  id: string;
+  nome_completo: string;
+  salario_base: number | null;
+  dependentes?: Array<{ id: string; tipo?: string | null }> | null;
+  eventos_variaveis?: EventoFolha[] | null;
+  contratos?: Array<{ jornada_mensal?: number | null; tipo_contrato?: string | null }> | null;
+}
+
+interface BeneficioVinculo {
+  valor: number;
+  desconto: number | null;
+  beneficio: { tipo?: string; nome: string } | null;
 }
 
 export const calculoLoteService = {
@@ -28,8 +51,9 @@ export const calculoLoteService = {
       const dataFim = formatDateLocalISO(new Date(Number(ano), Number(mes), 0));
 
       // 1. Buscar colaboradores ativos da empresa
-      const { data: colaboradores, error: colabError } = await (supabase as any)
-        .from('colaboradores')
+      const { data: colaboradoresData, error: colabError } = await (
+        supabase.from('colaboradores') as unknown as QueryBuilderType
+      )
         .select(`
           *,
           dependentes (id, tipo),
@@ -40,12 +64,13 @@ export const calculoLoteService = {
         .eq('status', 'ativo');
 
       if (colabError) throw colabError;
-      if (!colaboradores || colaboradores.length === 0) {
+      const colaboradores = (colaboradoresData ?? []) as unknown as ColaboradorFolha[];
+      if (colaboradores.length === 0) {
         throw new Error('Nenhum colaborador ativo encontrado para esta empresa.');
       }
 
       // 2. Garantir cabeçalho da folha
-      const { data: header, error: headerError } = await (supabase as any)
+      const { data: header, error: headerError } = await supabase
         .from('folhas_pagamento')
         .select('id, status')
         .eq('empresa_id', empresaId)
@@ -60,7 +85,7 @@ export const calculoLoteService = {
 
       let folhaId = header?.id;
       if (!folhaId) {
-        const { data: newHeader, error: createError } = await (supabase as any)
+        const { data: newHeader, error: createError } = await supabase
           .from('folhas_pagamento')
           .insert({
             empresa_id: empresaId,
@@ -85,12 +110,12 @@ export const calculoLoteService = {
       // 3. Processar cada colaborador
       for (const colab of colaboradores) {
         try {
-          const dependentesCount = colab.dependentes?.filter((d: any) => d.tipo === 'filho' || d.tipo === 'enteado').length || 0;
+          const dependentesCount = colab.dependentes?.filter((d) => d.tipo === 'filho' || d.tipo === 'enteado').length || 0;
           const eventosVariaveis = colab.eventos_variaveis || [];
           const jornada = colab.contratos?.[0]?.jornada_mensal || 220;
 
           // 3.1 Integrar dados de PONTO ELETRÔNICO (Horas Extras e Faltas Aprovadas)
-          const { data: registrosPonto } = await (supabase as any)
+          const { data: registrosPonto } = await supabase
             .from('registros_ponto')
             .select('horas_extras, horas_falta')
             .eq('colaborador_id', colab.id)
@@ -102,7 +127,7 @@ export const calculoLoteService = {
           let totalFaltas = 0;
           
           if (registrosPonto) {
-            registrosPonto.forEach((r: any) => {
+            registrosPonto.forEach((r) => {
               totalHE += pontoIntegracaoUtils.intervalToDecimal(r.horas_extras);
               totalFaltas += pontoIntegracaoUtils.intervalToDecimal(r.horas_falta);
             });
@@ -110,7 +135,7 @@ export const calculoLoteService = {
 
           // 3.2 Buscar Benefícios Ativos (Vale Transporte / Vale Alimentação / Refeição)
           // Tenta na tabela unificada 'beneficios_colaborador'
-          const { data: beneficiosVinculos } = await (supabase as any)
+          const { data: beneficiosVinculosData } = await supabase
             .from('beneficios_colaborador')
             .select(`
               *,
@@ -119,9 +144,10 @@ export const calculoLoteService = {
             .eq('colaborador_id', colab.id)
             .eq('ativo', true);
 
-          const beneficiosEventos: any[] = [];
+          const beneficiosVinculos = (beneficiosVinculosData ?? []) as unknown as BeneficioVinculo[];
+          const beneficiosEventos: EventoFolha[] = [];
           if (beneficiosVinculos && beneficiosVinculos.length > 0) {
-            beneficiosVinculos.forEach((v: any) => {
+            beneficiosVinculos.forEach((v) => {
               if (v.beneficio) {
                 if (v.beneficio.tipo === 'VT') {
                   const custoVT = Number(v.valor || 0);
@@ -148,7 +174,7 @@ export const calculoLoteService = {
             });
           } else {
             // Fallback para tabelas individuais legacy
-            const { data: vtLegacy } = await (supabase as any)
+            const { data: vtLegacy } = await supabase
               .from('vales_transporte')
               .select('*')
               .eq('colaborador_id', colab.id)
@@ -169,14 +195,14 @@ export const calculoLoteService = {
               }
             }
 
-            const { data: vaLegacy } = await (supabase as any)
+            const { data: vaLegacy } = await supabase
               .from('vales_alimentacao')
               .select('*')
               .eq('colaborador_id', colab.id)
               .eq('ativo', true);
 
             if (vaLegacy) {
-              vaLegacy.forEach((v: any) => {
+              vaLegacy.forEach((v) => {
                 const desc = v.valor_mensal ? v.valor_mensal * 0.20 : 0;
                 if (desc > 0) {
                   beneficiosEventos.push({
@@ -200,7 +226,7 @@ export const calculoLoteService = {
           });
 
           // Salva o item da folha
-          const itemData: any = {
+          const itemData: TablesInsert<'folha_itens'> = {
             folha_id: folhaId,
             colaborador_id: colab.id,
             salario_base: colab.salario_base,
@@ -210,15 +236,15 @@ export const calculoLoteService = {
             inss_mes: res.inss,
             irrf_mes: res.irrf,
             fgts_mes: res.fgts,
-            detalhes: res as any
+            detalhes: res as unknown as Json
           };
 
-          await (supabase as any)
+          await supabase
             .from('folha_itens')
             .upsert(itemData, { onConflict: 'folha_id,colaborador_id' });
 
           // Auditoria analítica
-          await (supabase as any).from('folha_auditoria').insert({
+          await supabase.from('folha_auditoria').insert({
             folha_id: folhaId,
             colaborador_id: colab.id,
             tipo_evento: 'CALCULO',

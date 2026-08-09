@@ -1,7 +1,13 @@
 import { BaseService, ListOptions, ListResponse } from './baseService';
 import { Ferias } from '@/types/entities';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, type QueryBuilderType } from '@/integrations/supabase/client';
+import type { Insertable, Tables, Updatable } from '@/integrations/supabase/database.types';
 import { parseCursor } from '@/lib/cursor';
+
+type PeriodoAquisitivo = Tables<'periodos_aquisitivos'>;
+type PeriodoAquisitivoInsert = Insertable<'periodos_aquisitivos'>;
+type PeriodoAquisitivoUpdate = Updatable<'periodos_aquisitivos'>;
+type FeriasAprovacoesLog = Tables<'ferias_aprovacoes_log'>;
 
 class FeriasService extends BaseService<Ferias> {
   constructor() {
@@ -13,9 +19,9 @@ class FeriasService extends BaseService<Ferias> {
 
   async listar(options: ListOptions = {}): Promise<ListResponse<Ferias>> {
     const { filters, search, page, pageSize } = options;
-    const empId = (filters as any)?.empresa_id;
-    const status = (filters as any)?.status;
-    const res = await this.listSolicitacoes(empId, { page, limit: pageSize, search, status });
+    const empId = filters?.empresa_id as string | undefined;
+    const status = filters?.status as string | undefined;
+    const res = await this.listSolicitacoes(empId as string, { page, limit: pageSize, search, status });
     return { data: res.data, total: res.count };
   }
 
@@ -75,7 +81,7 @@ class FeriasService extends BaseService<Ferias> {
 
     if (error) throw error;
 
-    const resultData = (data as any[]) || [];
+    const resultData = (data as Ferias[]) || [];
     const hasMore = resultData.length > limit;
     const returnData = hasMore ? resultData.slice(0, limit) : resultData;
 
@@ -94,7 +100,7 @@ class FeriasService extends BaseService<Ferias> {
 
   async syncWithHub(empresaId: string): Promise<{ success: boolean; lastSync: string; recordsUpdated: number }> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { error } = await (supabase as any)
+    const { error } = await supabase
       .from('ferias')
       .select('id')
       .eq('empresa_id', empresaId)
@@ -107,8 +113,8 @@ class FeriasService extends BaseService<Ferias> {
     };
   }
 
-  async getAprovacoesLog(feriasId: string): Promise<any[]> {
-    const { data, error } = await (supabase as any)
+  async getAprovacoesLog(feriasId: string): Promise<FeriasAprovacoesLog[]> {
+    const { data, error } = await supabase
       .from('ferias_aprovacoes_log')
       .select('*')
       .eq('ferias_id', feriasId)
@@ -118,22 +124,30 @@ class FeriasService extends BaseService<Ferias> {
     return data || [];
   }
 
-  async criarPeriodoAquisitivo(d: any): Promise<any> {
-    const { data, error } = await (supabase as any).from('periodos_aquisitivos').insert(d).select().maybeSingle();
+  async criarPeriodoAquisitivo(d: PeriodoAquisitivoInsert): Promise<PeriodoAquisitivo | null> {
+    const { data, error } = await supabase.from('periodos_aquisitivos').insert(d).select().maybeSingle();
     if (error) throw error;
     return data;
   }
 
-  async atualizarPeriodoAquisitivo(id: string, d: any, empresaId: string): Promise<any> {
+  async atualizarPeriodoAquisitivo(id: string, d: PeriodoAquisitivoUpdate, empresaId: string): Promise<PeriodoAquisitivo | null> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data, error } = await (supabase as any).from('periodos_aquisitivos').update(d).eq('id', id).eq('empresa_id', empresaId).select().maybeSingle();
+    const { data, error } = await (supabase.from('periodos_aquisitivos') as unknown as QueryBuilderType)
+      .update(d)
+      .eq('id', id)
+      .eq('empresa_id', empresaId)
+      .select()
+      .maybeSingle();
     if (error) throw error;
-    return data;
+    return data as PeriodoAquisitivo | null;
   }
 
   async excluirPeriodoAquisitivo(id: string, empresaId: string): Promise<void> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { error } = await (supabase as any).from('periodos_aquisitivos').delete().eq('id', id).eq('empresa_id', empresaId);
+    const { error } = await (supabase.from('periodos_aquisitivos') as unknown as QueryBuilderType)
+      .delete()
+      .eq('id', id)
+      .eq('empresa_id', empresaId);
     if (error) throw error;
   }
 
@@ -143,13 +157,13 @@ class FeriasService extends BaseService<Ferias> {
       enviado_contabilidade: true,
       enviado_contabilidade_em: new Date().toISOString(),
       enviado_contabilidade_por: userId || null,
-    } as any).eq('id', id).eq('empresa_id', empresaId);
+    }).eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   }
 
   async aprovar(id: string, empresaId: string): Promise<void> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { error } = await this.getQuery().update({ status: 'aprovada' } as Record<string, unknown>).eq('id', id).eq('empresa_id', empresaId);
+    const { error } = await this.getQuery().update({ status: 'aprovada' }).eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   }
 
@@ -160,7 +174,7 @@ class FeriasService extends BaseService<Ferias> {
       aprovado_gestor: true,
       aprovado_gestor_em: new Date().toISOString(),
       aprovado_gestor_por: userId || null,
-    } as any).eq('id', id).eq('empresa_id', empresaId);
+    }).eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   }
 
@@ -172,25 +186,24 @@ class FeriasService extends BaseService<Ferias> {
       aprovado_rh_em: new Date().toISOString(),
       aprovado_rh_por: userId || null,
       status: 'aprovada',
-    } as any).eq('id', id).eq('empresa_id', empresaId);
+    }).eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   }
 
-  async listPeriodosAquisitivos(colaboradorId: string, empresaId: string): Promise<any[]> {
+  async listPeriodosAquisitivos(colaboradorId: string, empresaId: string): Promise<PeriodoAquisitivo[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data, error } = await (supabase as any)
-      .from('periodos_aquisitivos')
+    const { data, error } = await (supabase.from('periodos_aquisitivos') as unknown as QueryBuilderType)
       .select('*')
       .eq('colaborador_id', colaboradorId)
       .eq('empresa_id', empresaId)
       .order('data_inicio', { ascending: false });
     if (error) throw error;
-    return data || [];
+    return (data as PeriodoAquisitivo[]) || [];
   }
 
   async rejeitar(id: string, empresaId: string): Promise<void> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { error } = await this.getQuery().update({ status: 'rejeitada' } as Record<string, unknown>).eq('id', id).eq('empresa_id', empresaId);
+    const { error } = await this.getQuery().update({ status: 'rejeitada' }).eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   }
 
@@ -201,7 +214,7 @@ class FeriasService extends BaseService<Ferias> {
       cancelado_em: new Date().toISOString(),
       cancelado_por: userId || null,
       status: 'cancelada',
-    } as any).eq('id', id).eq('empresa_id', empresaId);
+    }).eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   }
 }
