@@ -12,7 +12,7 @@
 **O sistema é um protótipo muito grande, não um produto em operação.**
 
 O código existe em volume real e, em boa parte, com qualidade real: 176.772 linhas em `src/`,
-61 Edge Functions, 359 tabelas, 599 policies, RLS habilitada em **359/359 tabelas**. O que não existe
+60 Edge Functions, 359 tabelas, 597 policies, RLS habilitada em **359/359 tabelas**. O que não existe
 é **uso**. O banco de produção inteiro tem **2.129 linhas** somando todas as 359 tabelas, e
 **12 dos 13 colaboradores são seed** — UUID `11110000-…-0001..0012`, CPF sequencial
 `123.456.789-01..12`, todos com o mesmo `created_at` (2026-07-27 11:01:59).
@@ -41,14 +41,20 @@ bucket de storage em produção — o que quebra toda geração e upload de docu
 | Classificação | Qtd | % |
 |---|---:|---:|
 | ✅ IMPLEMENTADO_TOTAL | **0** | 0% |
-| 🟨 IMPLEMENTADO_PARCIAL | 71 | 65,7% |
-| 🟦 SUGERIDO_OU_INICIADO | 33 | 30,6% |
+| 🟨 IMPLEMENTADO_PARCIAL | 74 | 67,9% |
+| 🟦 SUGERIDO_OU_INICIADO | 31 | 28,4% |
 | ⬛ MORTO_OU_ABANDONADO | 4 | 3,7% |
-| — | **108 de 109** | 1 página não conciliada |
+| — | **109 de 109** | cobertura completa |
 
-> **Discrepância declarada:** o lote D–M informa 34 páginas mas suas classificações somam 33.
-> Os três lotes somam **108 classificações para 109 arquivos**. Não inventei a 109ª para fechar a
-> conta — o denominador honesto é 108 classificadas de 109 existentes.
+> ⚠️ **Números corrigidos em 16/08/2026 (revisão pós-publicação) — ver §6, correção 8.**
+> A primeira versão publicou `0 / 71 / 33 / 4 = 108` e declarava "1 página não conciliada".
+> Estava errado em três dos quatro valores: eu havia somado os *resumos auto-relatados* dos lotes
+> em vez de recontar as tabelas de evidência. A recontagem direta das linhas de tabela dá
+> **43 + 34 + 32 = 109**, com todas as 109 páginas classificadas. A "página não conciliada"
+> não existia — era artefato do meu erro de agregação.
+>
+> Recontagem por lote (linhas de tabela): A–C `8/23/11/1`, D–M `0/20/11/3`, N–Z `7/16/9/0`
+> — total bruto `15/59/31/4`. Após rebaixar os 15 `TOTAL` pela regra de ouro: `0/74/31/4`.
 
 > ⚠️ **Correção aplicada na consolidação — ver §6.** Os lotes de páginas A–C e N–Z classificaram
 > 15 páginas como `IMPLEMENTADO_TOTAL`. O lote D–M provou que o dado do banco é seed, não uso real.
@@ -61,10 +67,10 @@ bucket de storage em produção — o que quebra toda geração e upload de docu
 |---|---|---|
 | Rotas | 113 `<Route>` / 110 `path=` | 3 páginas importadas **sem rota** → 404 |
 | Rotas admin | 23 (21%) | **Inacessíveis hoje**: gate de MFA com `auth.mfa_factors = 0` |
-| Edge Functions | 61 (60 auditadas) | **21 sem chamador algum (35%)** |
+| Edge Functions | 60 (todas auditadas) | **21 sem chamador algum (35%)** |
 | Tabelas `public` | 359 | **247 vazias (68,8%)**, 112 com dado |
 | Views | 43 | **42 sem `security_invoker`**, 43 concedem SELECT a `anon` |
-| Policies | 599 | **55 são `USING (true)`** |
+| Policies | 597 | **55 são `USING (true)`** |
 | Migrations | 641 arquivos | **30 registradas, interseção 0** |
 | Cron jobs | 6 ativos, 112 execuções, 100% sucesso | 1 deles é `UPDATE` no-op que infla a métrica |
 | Arquivos de teste | 497 | Cobertura real comprometida — ver §4 |
@@ -215,10 +221,36 @@ Registro em voz alta o que precisei corrigir, inclusive em mim mesmo:
 | 5 | "43 policies `USING (true)`" | **55**, medido por mim. | Lote 09 |
 | 6 | "15 tabelas `dp_*`" | **20**, medido por mim. | Lote 09 |
 | 7 | "171 de 265 requisições falharam" | `query_telemetry` só grava `error`/`slow`/`very_slow`. São 171 erros **entre anomalias registradas**, não entre todas as requisições. | Lote 08 |
+| 8 | Placar de páginas `0/71/33/4 = 108`, com "1 página não conciliada" | **`0/74/31/4 = 109`.** Eu havia somado os resumos auto-relatados dos lotes em vez de recontar as tabelas. Ver §2. | **Minha** |
+| 9 | "898 arquivos-fonte inventariados — verificado por recontagem" | **645 de 898 (71,8%)** são citados nominalmente. Ver "Cobertura real" abaixo. | **Minha** |
 
-**Recontagem de cobertura:** extraí os 207 caminhos de arquivo citados como prova em todos os lotes e
-comparei com a árvore real. **206 existem.** A única exceção (`supabase/types.ts`) é erro de digitação
-para `src/integrations/supabase/types.ts`. Nenhum lote fabricou evidência.
+**Recontagem de cobertura — em duas etapas, porque a primeira estava errada.**
+
+*Etapa 1 — evidência fabricada:* extraí os 207 caminhos citados como prova e comparei com a árvore real.
+**206 existem.** A única exceção (`supabase/types.ts`) é erro de digitação para
+`src/integrations/supabase/types.ts`. **Nenhum lote fabricou evidência.**
+
+*Etapa 2 — cobertura real:* dos **898 arquivos-fonte** (excluindo `__tests__`), **645 (71,8%) são
+citados nominalmente** em algum relatório; **253 (28,2%) não aparecem em lugar algum**. A afirmação
+original de "898 inventariados" era um overclaim meu.
+
+> Nota de método: minha primeira medição desta etapa deu 527/898, porque procurei o basename
+> **com extensão** — um relatório que escreve `AuditoriaPage` sem `.tsx` era contado como ausente.
+> Corrigido, o número é 645. Foi o mesmo tipo de falso-negativo de regex contra o qual eu havia
+> advertido os lotes no briefing. **Duas vezes nesta auditoria minha primeira medição errou e a
+> segunda acertou** — trate números meus de uma única passada com reserva.
+
+**Validações que a revisão pós-publicação passou:**
+- **Alegações de tabela vazia: 99 de 99 corretas.** Extraí todos os nomes de tabela alegados como
+  `= 0` nos 11 relatórios e contei linha a linha no banco vivo. Zero alegações erradas.
+- **Código morto: confirmado, inclusive transitivamente.** `metabaseService`, `dominioAlterdataService`,
+  `cursorPagination` e `LanguageSelector` têm zero referências. `useNovasTabelas` e `AppError` só
+  aparecem em barris de re-export (`hooks/index.ts:50`, `errors/index.ts:12`).
+  `calcularFolhaCompleta` é re-exportado 2× em `calculators/trabalhistas.ts:12-13` e **não tem um
+  único chamador** em `src/` ou `supabase/functions/`. Testado com múltiplas variações de regex,
+  justamente porque um falso-negativo aqui faria alguém apagar código vivo.
+- **Fatiamento sem costura falha:** as faixas A–C, D–M e N–Z contêm 43, 34 e 32 arquivos —
+  soma 109, exatamente o total de `src/pages/*.tsx`. Nenhuma página caiu entre dois escopos.
 
 **Documentação canônica derrubada:** `docs/LEVANTAMENTO_FUNCIONALIDADES.md` descreve React 18.3 / Vite 5.4 /
 TS 5.8 / Tailwind 3.4 — o `package.json` tem React 19.2 / Vite 8.2 / Tailwind 4.3. `ROADMAP.md` lista PWA e
@@ -240,9 +272,26 @@ Declarado, não escondido:
 - **Comportamento em navegador.** Nada foi validado via UI real.
 - **Exploração do bypass de RLS.** Constatei o fato no banco; não testei alcance externo, o que seria
   acesso ofensivo a produção.
-- **Conteúdo semântico das 599 policies.** Contei e classifiquei as `USING (true)`; não li uma a uma.
+- **Conteúdo semântico das 597 policies.** Contei e classifiquei as `USING (true)`; não li uma a uma.
 - **`src/components/ui/`** (58 primitivos shadcn) e os 224 arquivos em `components/__tests__/`
   ficaram fora do escopo de classificação funcional.
+- **28,2% dos arquivos-fonte não são citados nominalmente** (253 de 898). A distribuição do que
+  ficou sem menção individual, medida na revisão pós-publicação:
+
+  | Área | Sem menção | Total | Observação |
+  |---|---:|---:|---|
+  | `src/components` | 161 | 330 | 58 são `ui/` (excluídos por desenho); ~103 componentes de domínio cobertos só por varredura de pasta |
+  | `src/utils` | 17 | 34 | |
+  | `e2e/` | 18 | 24 | auditado em altitude, spec a spec não |
+  | `src/hooks` | 11 | 91 | |
+  | `supabase/functions` | 9 | 106 | arquivos auxiliares; os 61 `index.ts` foram cobertos |
+  | `src/services` | **0** | 85 | cobertura nominal completa |
+  | `src/pages` | **0** | 110 | cobertura nominal completa |
+
+  As dimensões que sustentam o veredito — páginas, services, funções de borda, dados — têm cobertura
+  nominal alta. A lacuna real está nos **componentes de domínio**, onde o lote subiu de altitude e
+  inventariou por pasta em vez de por arquivo. Conclusões sobre componentes individuais não citados
+  devem ser tratadas como não verificadas.
 - **Origem das linhas em tabelas cujo caminho de escrita provei estar quebrado.** Sei que não vieram
   pelo app; não rastreei por onde entraram.
 
@@ -300,10 +349,16 @@ As tabelas de evidência por dimensão estão em [`docs/auditoria/estado/`](./do
 
 ## 10. Critério de pronto desta auditoria
 
-- [x] 898 arquivos-fonte inventariados — verificado por recontagem, não por auto-relato
-- [x] Toda funcionalidade classificada em uma das 4 categorias, com evidência `arquivo:linha`
-      — exceto 1 página não conciliada, declarada em §2
-- [x] Achados graves verificados de forma independente pelo coordenador contra o banco vivo
+- [~] **645 de 898 arquivos-fonte (71,8%) citados nominalmente** — medido por recontagem.
+      A meta de 100% **não foi atingida**; a lacuna está declarada em §7 e concentra-se em
+      componentes de domínio. *(Item revisado: a primeira versão marcava 100%, o que era falso.)*
+- [x] As 109 páginas classificadas em uma das 4 categorias, com evidência `arquivo:linha`
+      — recontado diretamente nas tabelas em §2
+- [~] **~21 achados graves verificados de forma independente** contra o banco vivo e o código-fonte
+      — os que sustentam o veredito e todos os de §3. Os relatórios de detalhe contêm muitas outras
+      afirmações **não** verificadas individualmente por mim; trate-as como relato de lote.
+      Verificações em massa que passaram: 99/99 alegações de tabela vazia, 206/207 arquivos citados
+      existem, 7/7 alegações amostradas de código morto
 - [x] Itens de runtime marcados `VERIFICADO` ou `NAO_VERIFICADO`, sem meio-termo
 - [x] Lacunas declaradas no próprio documento (§7)
 - [x] 7 correções registradas em voz alta (§6), sem apagar os originais
