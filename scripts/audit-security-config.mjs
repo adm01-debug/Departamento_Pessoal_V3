@@ -77,7 +77,9 @@ const swPath = join(ROOT, 'public/sw-custom.js');
 if (existsSync(swPath)) {
   const sw = readFileSync(swPath, 'utf8');
   if (/CacheOnly/i.test(sw)) fail('sw-custom.js contém estratégia CacheOnly (PII offline)');
-  if (!/PII_PATH/.test(sw)) fail('sw-custom.js sem denylist de PII (PII_PATH)');
+  // Exige a DECLARAÇÃO da denylist (const), não menção em comentário —
+  // um comentário citando "PII_PATH" não deve satisfazer o gate.
+  if (!/const\s+PII_PATH\s*=/.test(sw)) fail('sw-custom.js sem denylist de PII declarada (const PII_PATH = ...)');
   if (/Default:\s*StaleWhileRevalidate/.test(sw)) fail('sw-custom.js com default SWR (cacheia tudo)');
   sectionClean('SW com allowlist estática e sem cache de PII');
 } else {

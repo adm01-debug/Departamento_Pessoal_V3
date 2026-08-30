@@ -57,6 +57,10 @@ WITH CHECK (user_id = auth.uid());
 -- Trilha imutável via API; purge só via função service_role.
 REVOKE UPDATE, DELETE, TRUNCATE ON public.pii_access_logs FROM authenticated;
 REVOKE ALL ON public.pii_access_logs FROM anon;
+-- Grants explícitos (não depender das default privileges do ambiente):
+-- leitura e inserção para authenticated ficam sob controle das policies acima.
+GRANT SELECT, INSERT ON public.pii_access_logs TO authenticated;
+GRANT SELECT, INSERT ON public.pii_access_logs TO service_role;
 
 -- ── 3. View de acessos suspeitos (janela de 24h, limiares por hora) ────────
 CREATE OR REPLACE VIEW public.v_pii_access_suspeitos
@@ -81,6 +85,9 @@ COMMENT ON VIEW public.v_pii_access_suspeitos IS
   'E-036: acessos a PII acima do limiar (200 leituras/h ou 50 exports/h).';
 
 REVOKE ALL ON public.v_pii_access_suspeitos FROM anon;
+-- security_invoker: a view roda com os privilégios do chamador e respeita a
+-- RLS da tabela base; o grant abaixo apenas permite alcançá-la.
+GRANT SELECT ON public.v_pii_access_suspeitos TO authenticated;
 
 -- ── 4. Função de alerta (job pg_cron / admin UI) ───────────────────────────
 -- Conta janelas suspeitas recentes e grava evento em audit_log_unified
@@ -113,7 +120,10 @@ BEGIN
       SELECT 1 FROM public.audit_log_unified a
       WHERE a.action = 'PII_ACCESS_ANOMALY'
         AND a.entity_id = r.user_id::text
-        AND a.payload->>'janela' = r.janela::text
+        -- Comparação tipada: JSONB serializa timestamptz como ISO-8601
+        -- ("...T21:00:00+00:00") e ::text usa espaço ("... 21:00:00+00");
+        -- comparar como texto NUNCA casa. Cast para timestamptz resolve.
+        AND (a.payload->>'janela')::timestamptz = r.janela
         AND a.created_at > now() - interval '2 hours');
   END LOOP;
   RETURN v_suspeitos;

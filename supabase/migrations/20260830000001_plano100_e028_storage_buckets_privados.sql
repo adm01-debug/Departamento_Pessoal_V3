@@ -62,6 +62,12 @@ GRANT EXECUTE ON FUNCTION public.storage_path_empresa_id(text) TO authenticated;
 
 -- ── 4. Policies tenant-scoped para os novos buckets ────────────────────────
 -- Convenção de path: <empresa_id>/<...arquivo>
+--
+-- Defesa em profundidade: garantir que storage.objects está com RLS ativo.
+-- O Supabase ativa por padrão, mas instalações self-hosted divergentes podem
+-- não ter — e policies sobre tabela sem RLS são ignoradas por completo.
+ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+
 DO $$
 DECLARE
   b text;

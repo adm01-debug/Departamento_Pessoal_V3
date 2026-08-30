@@ -15,7 +15,9 @@ FAILURES=0
 check() {
   local name="$1" url="$2" expect="${3:-200}"
   local code
-  code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time "$TIMEOUT" "$url" 2>/dev/null || echo "000")
+  code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time "$TIMEOUT" "$url" 2>/dev/null)
+  # curl falho já emite 000 via -w; só garantir string vazia nunca vaze
+  [ -z "$code" ] && code="000"
   if [ "$code" = "$expect" ]; then
     echo "✅ $name → HTTP $code"
   else

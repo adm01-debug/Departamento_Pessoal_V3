@@ -53,6 +53,33 @@ REVOKE ALL ON FUNCTION public.get_my_permissions() FROM PUBLIC;
 REVOKE ALL ON FUNCTION public.get_my_permissions() FROM anon;
 GRANT EXECUTE ON FUNCTION public.get_my_permissions() TO authenticated;
 
+-- ── 1b. Anti-drift: sobrecargas legadas com argumentos ────────────────────
+-- `DROP FUNCTION ...()` acima só remove a variante sem argumentos. Produção
+-- pode conter sobrecargas antigas (ex.: get_my_permissions(uuid)) concedidas
+-- a anon/authenticated — o IDOR que esta etapa elimina. Em vez de DROP cego
+-- (poderia quebrar views/policies dependentes), revogamos EXECUTE de TODAS
+-- as sobrecargas com argumentos desses dois nomes. Fail-safe idempotente.
+DO $$
+DECLARE
+  sig text;
+BEGIN
+  FOR sig IN
+    SELECT format('%I.%I(%s)', n.nspname, p.proname,
+                   pg_get_function_identity_arguments(p.oid))
+    FROM pg_proc p
+    JOIN pg_namespace n ON n.oid = p.pronamespace
+    WHERE n.nspname = 'public'
+      AND p.proname IN ('get_my_permissions', 'get_user_tenants')
+      AND pg_get_function_identity_arguments(p.oid) <> ''  -- só as COM argumentos
+  LOOP
+    EXECUTE format('REVOKE ALL ON FUNCTION %s FROM PUBLIC', sig);
+    EXECUTE format('REVOKE ALL ON FUNCTION %s FROM anon', sig);
+    EXECUTE format('REVOKE ALL ON FUNCTION %s FROM authenticated', sig);
+    EXECUTE format('GRANT EXECUTE ON FUNCTION %s TO service_role', sig);
+    RAISE NOTICE 'E-012 anti-drift: EXECUTE revogado de %', sig;
+  END LOOP;
+END $$;
+
 -- ── 2. get_user_tenants(): empresas às quais o usuário autenticado pertence ─
 DROP FUNCTION IF EXISTS public.get_user_tenants();
 
@@ -86,6 +113,8 @@ COMMENT ON FUNCTION public.get_user_tenants() IS
 REVOKE ALL ON FUNCTION public.get_user_tenants() FROM PUBLIC;
 REVOKE ALL ON FUNCTION public.get_user_tenants() FROM anon;
 GRANT EXECUTE ON FUNCTION public.get_user_tenants() TO authenticated;
+
+-- Nota: o bloco anti-drift do §1 já cobre sobrecargas de get_user_tenants.
 
 -- ── Verificação (preview) ──────────────────────────────────────────────────
 -- SELECT prosecdef, proconfig FROM pg_proc
