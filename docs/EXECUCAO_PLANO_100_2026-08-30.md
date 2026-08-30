@@ -85,3 +85,43 @@
 2. **Promover migrations** (lotes B1–B7) via runbook E-026 — sem acesso DB nesta sessão (MCP aponta para outra instância).
 3. **Confirmar remoção do deploy** da migrate-helper no console.
 4. E-004 (MCP read-only), E-067 (PITR), E-074 (pentest): plataforma/externos.
+
+---
+
+## Apêndice — Auditoria exaustiva pós-implementação (30/08/2026, noite)
+
+Revisão por 5 frentes (SQL/PostgreSQL, Frontend, Edge/Deno, CI/Scripts, Docs)
+com **simulação em Postgres 17 real** (docker, stubs fiéis do Supabase +
+drift simulado de produção). Resultado: **6 defeitos encontrados e corrigidos**
+(commit `953d6e64e`), ciclo final 100% verde.
+
+### Achados e correções
+
+| # | Achado (com prova) | Severidade | Correção |
+|---|---|---|---|
+| 1 | **E-012 não matava o IDOR em drift real**: sobrecarga legada `get_my_permissions(uuid)` concedida a `anon` sobreviveu à migration (`DROP ...()` só remove a variante sem-args) — teste T6.4 provou `anon_can_exec=true` | 🔴 P1 | Bloco anti-drift: `REVOKE EXECUTE` de TODAS as sobrecargas com argumentos via varredura `pg_proc` (REVOKE em vez de DROP para não quebrar dependências) |
+| 2 | **E-036 sem grants explícitos**: `permission denied` para `authenticated` em PG puro — funcionava no Supabase apenas por *default privileges* (frágil em self-hosted divergente) | 🟠 P2 | `GRANT SELECT, INSERT` explícitos (tabela e view) |
+| 3 | **E-036 dedup nunca casava**: `payload->>'janela'` (JSONB ISO-8601, `...T21:00:00+00:00`) ≠ `r.janela::text` (formato PG, `... 21:00:00+00`) → 1 evento duplicado por execução (T3.5) | 🟠 P2 | Cast tipado `(payload->>'janela')::timestamptz = r.janela`; validado: 3 execuções → 1 evento |
+| 4 | **E-028 assumia RLS ativo em `storage.objects`**: policies em tabela sem RLS são ignoradas — `anon` leu 2 objetos no teste (T5.3) até o guard ser simulado | 🔴 P1 | `ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY` (idempotente; testado `f→t` pela própria migration) |
+| 5 | **Gate E-077 falso negativo**: checagem de SW por *menção* a `PII_PATH` era satisfeita por comentário (V6 do teste negativo) | 🟡 P3 | Exigir a declaração `const PII_PATH =` |
+| 6 | **healthcheck.sh**: curl falho concatenava `000`+`000` → `HTTP 000000` | 🟡 P3 | Captura única + guarda de vazio |
+
+### Suítes de certificação (todas verdes)
+
+| Suíte | Escopo | Resultado |
+|---|---|---|
+| Aplicação migrations ×2 passes | PG 17 + stubs + drift | 0 erros (idempotência) |
+| Testes de papel T1–T7 | buckets/RLS/anomalia/dedup/purge/storage/grants/secdef | 24/24 asserts OK (T2.2/T2.4 bloqueiam conforme projetado) |
+| Harness SW (novo: `scripts/tests/sw-routing.test.mjs`) | 18 cenários de roteamento E-037 | 18/18 (PII/auth/fn/Supabase/default → network-only) |
+| Gate E-077 negativo | 7 violações plantadas em repo-fake | todas reprovam + baseline aprova |
+| healthcheck.sh | sintaxe + alvo morto + alvo real | fail-loud/exit 1; 200/exit 0 |
+| `deno check` metrics/tabelas-dominio | tipos | 0 erros |
+| `tsc --noEmit` | app inteiro | 0 erros |
+| `vitest run` | suíte do projeto | **4841 passed / 0 failed** |
+| YAML/TOML parse | ci.yml, healthcheck.yml, config.toml | válidos; 6 jobs CI; allowlist verify_jwt = 4 funções |
+
+### Observações herdadas (não introduzidas por este trabalho)
+
+- `deno lint` acusa `no-import-prefix` nos imports `https://` das edges — padrão de todo o repo (60 funções), inclusive do bridge; migração para import-maps é decisão de arquitetura, não de correção pontual.
+- A trilha `pii_access_logs` ainda não é populada pelo frontend (instrumentação é o passo seguinte do E-036); view/funções já estão prontas e protegidas.
+- Harness SQL de validação preservado em `/tmp/dptest/` desta sessão; para reprodutibilidade, os stubs devem ser versionados como fixture se o time adotar CI com Postgres service container (recomendado).
