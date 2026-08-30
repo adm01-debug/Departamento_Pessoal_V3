@@ -14,6 +14,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useOnMount } from '@/hooks/useMountEffects';
 import { loggerService } from '@/services/loggerService';
 import type { UiRecord } from '@/types/uiRecord';
+
+// E-035: identificador estável do quiosque e ponto geográfico fixo de
+// fallback (usado somente quando o hardware do quiosque não expõe GPS).
+const KIOSK_DEVICE_ID = 'KIOSK-01';
+const KIOSK_GEO_FIXO = { latitude: -23.5505, longitude: -46.6333 } as const;
+
 export default function PontoKioskPage() {
   const [time, setTime] = useState(new Date());
   const [pin, setPin] = useState('');
@@ -74,13 +80,33 @@ export default function PontoKioskPage() {
 
       setSelectedColab(colab);
       setStep('facial_scan');
+      // E-035: auditoria de quiosque — identificação por matrícula registrada
+      loggerService.log('info', 'KIOSK_IDENTIFICACAO', {
+        colaborador_id: colab.id,
+        empresa_id: colab.empresa_id,
+        dispositivo_id: KIOSK_DEVICE_ID,
+      });
       const firstName = (colab.nome_completo ?? 'Colaborador').split(' ')[0];
-      speak(`Olá ${firstName}, olhe para a câmera para identificação facial.`);
+      speak(`Olá ${firstName}, olhe para a câmera para registro da foto de conferência.`);
+      // E-035: a captura facial do quiosque é apenas visual (foto de
+      // conferência anexada à batida) — NÃO é verificação biométrica real.
+      // Nunca anunciar "identidade confirmada": o fator de autenticação é a
+      // matrícula; a biometria real fica a cargo da edge validar-biometria.
       setTimeout(() => {
         setStep('action');
-        speak(`Identidade confirmada. Selecione o tipo de registro.`);
+        loggerService.log('info', 'KIOSK_FOTO_CONFERENCIA_CAPTURADA', {
+          colaborador_id: colab.id,
+          dispositivo_id: KIOSK_DEVICE_ID,
+          biometria_validada: false,
+        });
+        speak(`Foto registrada. Selecione o tipo de registro.`);
       }, 3500);
     } catch (e: unknown) {
+      // E-035: falha de identificação também é auditada (tentativa inválida)
+      loggerService.log('warn', 'KIOSK_PIN_INVALIDO', {
+        dispositivo_id: KIOSK_DEVICE_ID,
+        erro: safeErrorMessage(e, 'falha'),
+      });
       toast.error(safeErrorMessage(e, 'Erro ao registrar ponto.'));
       setPin('');
     } finally {
@@ -88,13 +114,45 @@ export default function PontoKioskPage() {
     }
   };
 
+  // E-035: geolocalização validada do quiosque (mesmo padrão do captureGeo
+  // do PontoPage). Fallback para o ponto fixo apenas se o GPS estiver
+  // indisponível ou a permissão for negada — origem sempre registrada.
+  const captureKioskGeo = (): Promise<{
+    latitude: number;
+    longitude: number;
+    precisao?: number;
+    origem: 'gps' | 'fallback_fixo';
+  }> =>
+    new Promise((resolve) => {
+      if (!navigator.geolocation) {
+        resolve({ ...KIOSK_GEO_FIXO, origem: 'fallback_fixo' });
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (pos) => resolve({
+          latitude: pos.coords.latitude,
+          longitude: pos.coords.longitude,
+          precisao: pos.coords.accuracy,
+          origem: 'gps',
+        }),
+        () => resolve({ ...KIOSK_GEO_FIXO, origem: 'fallback_fixo' }),
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    });
+
   const registrar = async (tipo: any) => {
     setLoading(true);
     try {
+      // E-035: geolocalização real do dispositivo (padrão captureGeo do
+      // PontoPage), com fallback documentado para o ponto fixo do quiosque
+      // quando o hardware não expõe GPS — nunca coordenada "muda".
+      const geoReal = await captureKioskGeo();
       const geo = {
-        latitude: -23.5505, // Localização fixa do quiosque
-        longitude: -46.6333,
-        dispositivoId: 'KIOSK-01'
+        latitude: geoReal.latitude,
+        longitude: geoReal.longitude,
+        precisao: geoReal.precisao,
+        dispositivoId: KIOSK_DEVICE_ID,
+        metadata: { origem_geo: geoReal.origem, canal: 'kiosk' }
       };
 
       if (!selectedColab) return;
@@ -107,9 +165,24 @@ export default function PontoKioskPage() {
           latitude: geo.latitude,
           longitude: geo.longitude
         });
+        loggerService.log('warn', 'KIOSK_REGISTRO_OFFLINE', {
+          tipo,
+          colaborador_id: selectedColab.id,
+          dispositivo_id: KIOSK_DEVICE_ID,
+          origem_geo: geoReal.origem,
+        });
         toast.warning('Ponto registrado em modo OFFLINE (Quiosque).');
       } else {
         await pontoService.registrar(tipo, selectedColab.id, geo);
+        // E-035: auditoria de quiosque — toda batida fica rastreável
+        loggerService.log('info', 'KIOSK_REGISTRO_PONTO', {
+          tipo,
+          colaborador_id: selectedColab.id,
+          empresa_id: selectedColab.empresa_id,
+          dispositivo_id: KIOSK_DEVICE_ID,
+          origem_geo: geoReal.origem,
+          precisao_m: geoReal.precisao ?? null,
+        });
         toast.success('Ponto registrado com sucesso!');
       }
 

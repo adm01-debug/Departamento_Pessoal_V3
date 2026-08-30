@@ -1,21 +1,24 @@
 /**
  * P4-075: Service Worker com Stale-While-Revalidate + Cache Version Bust
  *
- * Estratégias por tipo de recurso:
+ * Estratégias por tipo de recurso (E-037 — allowlist estática, fail-closed):
  *   - HTML/navegação : StaleWhileRevalidate (sempre busca fresco em background)
- *   - Assets estáticos: StaleWhileRevalidate com CacheFirst fallback
- *   - Avatares/imagens: CacheFirst com TTL 7 dias
- *   - Fonts/API: NetworkOnly (nunca cache)
- *   - Holerites próprios: CacheOnly (offline-first, dados sensíveis)
+ *   - Assets estáticos same-origin (js/css/fontes): StaleWhileRevalidate
+ *   - Imagens estáticas same-origin: CacheFirst
+ *   - Google Fonts (asset público): SWR em cache dedicado
+ *   - TODO O RESTO: NetworkOnly — nunca cacheado
+ *
+ * E-037: NUNCA entram em cache: chamadas com credencial (Authorization/apikey),
+ * Supabase, Edge Functions, webhooks, rotas de auth/MFA e APIs de dados
+ * pessoais (holerites, pagamentos, dados bancários, biometria, documentos).
  *
  * Cache Version Bust: usa hash do deployment para invalidar cache
  * automaticamente em cada deploy — evita servir assets desatualizados.
  */
 
-const CACHE_VERSION = 'v2';          // Bumpar em cada deploy para bustar cache antigo
+const CACHE_VERSION = 'v3';          // Bumpar em cada deploy para bustar cache antigo (v3: E-037)
 const CORE_CACHE = `bombon-dp-${CACHE_VERSION}`;
 const IMAGE_CACHE = `bombon-dp-images-${CACHE_VERSION}`;
-const HOLERITE_CACHE = `bombon-dp-holerites-${CACHE_VERSION}`;
 
 const ASSETS_TO_PRECACHE = [
   '/',
@@ -53,7 +56,6 @@ async function staleWhileRevalidate(request, cacheName) {
 }
 
 // Gzipbomb-safe fetch wrapper: lê apenas os primeiros 4MB antes de entregar ao SW
-// (o worker parent rejeita payloads >4MB via DecompressionStream na Edge Function)
 async function safeFetch(request, maxBytes = 4 * 1024 * 1024) {
   const response = await fetch(request);
   if (!response.ok) return response;
@@ -95,77 +97,87 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// ── 2. Ativação ──────────────────────────────────────────────
-// Limpa caches de versões antigas (mantém últimas 3 versões)
+// ── 2. Ativação: limpa caches antigos ────────────────────────
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((names) => {
-      return Promise.all(
-        names
-          .filter((name) =>
-            (name.startsWith('bombon-dp-') || name.startsWith('bombon-dp-images-'))
-            && name !== CORE_CACHE
-            && name !== IMAGE_CACHE
-            && name !== HOLERITE_CACHE
-          )
-          .map((name) => caches.delete(name))
-      );
-    }).then(() => {
-      // Toma controle de todas as tabs imediatamente
-      return self.clients.claim();
-    })
+    (async () => {
+      try {
+        const cacheNames = await caches.keys();
+        // Remove caches de versões anteriores do app
+        const CACHE_KEEP = [CORE_CACHE, IMAGE_CACHE];
+        await Promise.all(
+          cacheNames
+            .filter((name) => !CACHE_KEEP.includes(name))
+            .map((name) => caches.delete(name))
+        );
+      } catch {
+        // caches indisponível (ex.: modo privado restrito)
+      }
+      // Claim clients: assume controle das tabs abertas imediatamente
+      await self.clients.claim();
+    })()
   );
 });
 
-// ── 3. Fetch — Routing por Estratégia ─────────────────────────
+// ── 3. Fetch: allowlist estática (E-037, fail-closed) ────────
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Nunca cachear: APIs, auth, métodos não-GET, external services
-  if (
-    url.hostname.includes('supabase.co') ||
-    url.hostname.includes('pwnedpasswords.com') ||
-    url.hostname.includes('supabase.io') ||
-    url.pathname.startsWith('/auth/') ||
-    url.pathname.startsWith('/functions/') ||
-    request.method !== 'GET'
-  ) {
-    return; // NetworkOnly (comportamento padrão)
+  // Supabase requests com credencial válida: NUNCA cachear (dados dinâmicos)
+  if (url.hostname.includes('supabase.co')) {
+    const authHeader = request.headers.get('authorization');
+    const hasValidAuth = authHeader && authHeader !== 'null' && authHeader !== 'undefined';
+    if (hasValidAuth) {
+      return; // network-only
+    }
   }
 
-  // HTML/navegação: StaleWhileRevalidate (sempre fresco, mesmo offline = fallback index)
+  // Nunca cachear (fail-closed):
+  //   - não-GET (mutações)
+  //   - chamadas com credencial (Authorization / apikey)
+  //   - Supabase (API de dados, auth, realtime)
+  //   - Edge Functions e webhooks assinados
+  //   - rotas de autenticação/MFA
+  //   - APIs de dados pessoais (holerites, pagamentos, dados bancários,
+  //     biometria, documentos) — PII nunca fica no Cache Storage
+  if (url.protocol === 'chrome-extension:') return;
+  if (request.method !== 'GET') return;
+
+  const authH = request.headers.get('authorization');
+  const hasCred = !!(authH && authH !== 'null' && authH !== 'undefined') || request.headers.has('apikey');
+  if (hasCred) return;
+
+  const NEVER_CACHE_PATH = /^\/(auth|login|mfa|functions|webhooks?)\//i;
+  const PII_PATH = /\/(holerites?|pagamentos?|dados-bancarios|biometria|documentos)(\/|$)/i;
+  if (
+    url.hostname.includes('supabase.co') ||
+    url.pathname.startsWith('/functions/v1/') ||
+    NEVER_CACHE_PATH.test(url.pathname) ||
+    PII_PATH.test(url.pathname)
+  ) {
+    return; // network-only: resposta nunca passa pelo Cache Storage
+  }
+
+  // Navegação (HTML público): StaleWhileRevalidate
   if (request.mode === 'navigate') {
     event.respondWith(
       staleWhileRevalidate(request, CORE_CACHE)
-        .then((r) => r || safeFetch(request))
-        .catch(() => caches.match('/index.html'))
+        .then((r) => r || caches.match('/index.html'))
     );
     return;
   }
 
-  // Imagens: CacheFirst 7 dias
-  if (
-    /\.(?:png|jpg|jpeg|svg|gif|webp|ico|avif)$/i.test(url.pathname) ||
-    url.pathname.includes('/avatar') ||
-    url.pathname.includes('/foto/')
-  ) {
+  // Imagens estáticas same-origin: CacheFirst
+  if (url.origin === self.location.origin &&
+      /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/i.test(url.pathname)) {
     event.respondWith(
       caches.match(request).then((cached) => {
-        if (cached) {
-          // Verifica TTL (7 dias) em background
-          const cachedDate = cached.headers.get('sw-cached-at');
-          const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 dias
-          if (cachedDate && Date.now() - Number(cachedDate) < maxAge) {
-            return cached;
-          }
-        }
-        return staleWhileRevalidate(request, IMAGE_CACHE).then((r) => {
-          if (r?.ok) {
-            const cloned = r.clone();
-            const headers = new Headers(cloned.headers);
-            headers.set('sw-cached-at', String(Date.now()));
-            return new Response(cloned.body, { status: cloned.status, statusText: cloned.statusText, headers });
+        if (cached) return cached;
+        return safeFetch(request).then((r) => {
+          if (r.ok) {
+            const clone = r.clone();
+            openCache(IMAGE_CACHE).then((c) => c?.put(request, clone));
           }
           return r;
         });
@@ -174,35 +186,25 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Fonts: CacheFirst 30 dias (com fallback offline)
-  if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
+  // Google Fonts (asset estático público, cross-origin): cache dedicado
+  if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
     event.respondWith(
-      staleWhileRevalidate(request, CORE_CACHE)
+      staleWhileRevalidate(request, IMAGE_CACHE)
         .then((r) => r || safeFetch(request))
     );
     return;
   }
 
-  // Holerites: CacheOnly (offline-first, dados sensíveis)
-  if (url.pathname.includes('/holerites/') || url.pathname.includes('/pagamentos/')) {
-    event.respondWith(
-      caches.match(request).then((cached) => {
-        if (cached) return cached;
-        // Offline e sem cache: retorna página offline
-        return caches.match('/index.html');
-      })
-    );
-    return;
-  }
-
-  // Assets JS/CSS: StaleWhileRevalidate
-  if (/\.(?:js|css|woff2?)$/i.test(url.pathname)) {
+  // Assets JS/CSS/fontes same-origin: StaleWhileRevalidate
+  if (url.origin === self.location.origin &&
+      /\.(?:js|css|woff2?)$/i.test(url.pathname)) {
     event.respondWith(staleWhileRevalidate(request, CORE_CACHE));
     return;
   }
 
-  // Default: StaleWhileRevalidate
-  event.respondWith(staleWhileRevalidate(request, CORE_CACHE));
+  // Default (E-037): network-only. Qualquer rota não listada acima NÃO é
+  // cacheada — o SW apenas observa a resposta passar.
+  return;
 });
 
 // ── 4. Push Notifications ─────────────────────────────────────
