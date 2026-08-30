@@ -1,0 +1,41 @@
+name: Environment Healthcheck
+
+# E-095: verificação agendada a cada 6h do ambiente de produção.
+# Falha abre/atualiza issue para visibilidade (schedule sem issue ninguém vê).
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'   # a cada 6h, minuto 17 (fora da hora cheia)
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  healthcheck:
+    name: Healthcheck produção
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Rodar healthcheck
+        id: hc
+        env:
+          APP_URL: ${{ vars.APP_URL || 'https://sistema-dp.lovable.app' }}
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+        run: bash scripts/healthcheck.sh
+
+      - name: Abrir issue em caso de falha
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TITLE="🔴 Healthcheck falhou ($(date -u +%F\ %H:%M) UTC)"
+          EXISTING=$(gh issue list --label healthcheck --state open --json number --jq '.[0].number' || true)
+          BODY="O healthcheck agendado falhou.\n\nRun: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\n\nVerificar runbook: infra/runbooks/RESPOSTA_INCIDENTES.md"
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --body "$BODY"
+          else
+            gh issue create --title "$TITLE" --body "$BODY" --label healthcheck || \
+            gh issue create --title "$TITLE" --body "$BODY"
+          fi

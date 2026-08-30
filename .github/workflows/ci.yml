@@ -92,6 +92,20 @@ jobs:
           done
           echo "Funções com erros de tipo (não-bridge): $ERRORS"
 
+  security-config:
+    name: Config de segurança (E-077, estático)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      - name: Gate de configuração de segurança
+        # E-077: verify_jwt deny-by-default, CORS sem wildcard, security
+        # headers, ausência de segredos hardcoded e SW sem cache de PII.
+        # Estático (não precisa de DATABASE_URL) — roda em todo PR.
+        run: node scripts/audit-security-config.mjs
+
   db-integrity:
     name: Integridade do banco (search_path x extensões)
     runs-on: ubuntu-latest
