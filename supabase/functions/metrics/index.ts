@@ -13,6 +13,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { captureException } from '../_shared/sentry.ts';
+import { getCorsHeaders, handlePreflight } from '../_shared/contract.ts';
 
 const METRICS_PREFIX = 'departamento_pessoal_';
 const METRICS_VERSION = '1.0.0';
@@ -62,7 +63,8 @@ async function collectMetrics(): Promise<HealthMetrics> {
   const brOk = bridgeCheck.status === 'fulfilled';
 
   const dbLatency = dbCheck.status === 'fulfilled'
-    ? (dbCheck.value.config?.nextPageUrl ? 0 : totalLatency) // approximate
+    // aproximação: se houve paginação, o tempo total inclui 2+ round-trips
+    ? ((dbCheck.value as { config?: { nextPageUrl?: string } }).config?.nextPageUrl ? 0 : totalLatency)
     : 0;
 
   return {
@@ -180,12 +182,9 @@ function buildMetricsPage(metrics: HealthMetrics, bridgeMetrics: Awaited<ReturnT
 }
 
 serve(async (req: Request): Promise<Response> => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 204,
-      headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET' },
-    });
-  }
+  // E-077: CORS via allowlist compartilhada (sem wildcard fixo)
+  const preflight = handlePreflight(req);
+  if (preflight) return preflight;
 
   if (req.method !== 'GET') {
     return new Response('Method Not Allowed', { status: 405 });
@@ -203,11 +202,11 @@ serve(async (req: Request): Promise<Response> => {
       headers: {
         'Content-Type': 'text/plain; version=0.0.4; charset=utf-8',
         'Cache-Control': 'no-store',
-        'Access-Control-Allow-Origin': '*',
+        ...getCorsHeaders(req),
       },
     });
   } catch (error: unknown) {
-    captureException(error, { fn: 'metrics' });
+    captureException(error, { function: 'metrics' });
     // Even on error, return metrics (with 0 values) so Prometheus doesn't go red
     return new Response(
       `# ERROR: failed to collect metrics\n${METRICS_PREFIX}health_overall 0\n`,

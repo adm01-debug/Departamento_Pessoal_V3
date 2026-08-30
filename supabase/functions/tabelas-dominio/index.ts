@@ -16,6 +16,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { cachePublic, cachedFetch, getCacheStats } from '../_shared/cache.ts';
+import { getCorsHeaders, handlePreflight } from '../_shared/contract.ts';
 
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos
 
@@ -52,16 +53,9 @@ serve(async (req) => {
   const url = new URL(req.url);
   const type = url.searchParams.get('type')?.toLowerCase() as DomainType | null;
 
-  // CORS preflight
-  if (req.method === 'OPTIONS') {
-    return new Response(null, {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-      },
-    });
-  }
+  // E-077: CORS via allowlist compartilhada (sem wildcard fixo)
+  const preflight = handlePreflight(req);
+  if (preflight) return preflight;
 
   // Validação de tipo
   if (!type || !SUPPORTED_TYPES.includes(type)) {
@@ -131,6 +125,7 @@ serve(async (req) => {
         headers: {
           'Content-Type': 'application/json',
           ...cachePublic(CACHE_TTL_MS / 1000),
+          ...getCorsHeaders(req),
         },
       }
     );
