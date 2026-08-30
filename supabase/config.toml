@@ -1,8 +1,37 @@
-project_id = "ciziytrrjjotlsjzshnm"
+# Projeto de produção (corrigido em 2026-08-30 — antes apontava para o
+# projeto antigo/errado; ver ESTADO_ATUAL.md §8 item 6).
+project_id = "frjbfeamybqsejlvmqbl"
 
+# ── verify_jwt ───────────────────────────────────────────────────────────────
+# PLANO_100 · E-029/E-031. Regra: deny-by-default — toda função NÃO listada
+# aqui exige JWT válido no gateway (default do Supabase). Apenas endpoints
+# deliberadamente públicos ficam com verify_jwt = false, cada um com
+# justificativa. Nenhuma função pública executa escrita sem controles
+# próprios (rate limit + CSRF + validação).
+#
+# REMOVIDO (A-015): `migrate-helper` — edge temporária com ACCESS_KEY
+# hardcoded no código e endpoint `?action=credentials` que exfiltrava
+# SUPABASE_SERVICE_ROLE_KEY e SUPABASE_DB_URL. Função deletada do repo;
+# a chave versionada deve ser considerada comprometida (rotação: ver
+# infra/runbooks/ROTACAO_SEGREDOS.md).
+
+# E-031: auth-login é pré-autenticação por natureza (não existe JWT ainda).
+# Proteções próprias: CORS restritivo via allowlist (_shared/contract.ts),
+# rate limit e lockout progressivo. Manter verify_jwt = false.
 [functions.auth-login]
 verify_jwt = false
 
+# E-029: healthcheck/metrics servem probes de monitoramento (Prometheus/
+# uptime) que não carregam JWT. Mantidos públicos de forma explícita e
+# documentada; expõem apenas status agregado, sem PII nem dados de negócio.
+[functions.healthcheck]
+verify_jwt = false
 
-[functions.migrate-helper]
+[functions.metrics]
+verify_jwt = false
+
+# Webhook inbound é chamado por sistemas externos sem JWT de usuário;
+# autenticação própria via HMAC (x-hub-signature-256) com fail-closed
+# (E-030: sem secret configurado → 503, nunca aceita sem verificar).
+[functions.webhook]
 verify_jwt = false
