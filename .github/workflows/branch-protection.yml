@@ -12,7 +12,7 @@ jobs:
       - name: Protect main branch
         env:
           # Fine-grained PAT: Administration (repository) = Read and write.
-          # O GITHUB_TOKEN não pode alterar branch protection e retorna HTTP 403.
+          # O GITHUB_TOKEN não pode alterar rulesets e retorna HTTP 403.
           GH_TOKEN: ${{ secrets.BRANCH_PROTECTION_TOKEN }}
         run: |
           if [ -z "${GH_TOKEN:-}" ]; then
@@ -20,20 +20,68 @@ jobs:
             exit 1
           fi
 
-          curl --fail-with-body --silent --show-error -X PUT \
-            -H "Authorization: token $GH_TOKEN" \
-            -H "Accept: application/vnd.github.v3+json" \
-            "https://api.github.com/repos/${{ github.repository }}/branches/main/protection" \
-            -d '{
-              "required_status_checks": {"strict": true, "contexts": []},
-              "enforce_admins": false,
-              "required_pull_request_reviews": {
-                "required_approving_review_count": 1,
-                "dismiss_stale_reviews": true,
-                "require_code_owner_reviews": false
+          api="https://api.github.com/repos/${{ github.repository }}"
+          ruleset_name="Departamento Pessoal V3 - protect main"
+
+          owner_id="$(curl --fail-with-body --silent --show-error \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            "$api" | jq -r '.owner.id')"
+
+          ruleset_id="$(curl --fail-with-body --silent --show-error \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            "$api/rulesets" | jq -r --arg name "$ruleset_name" \
+            '[.[] | select(.name == $name)][0].id // empty')"
+
+          payload="$(jq -n \
+            --arg name "$ruleset_name" \
+            --argjson owner_id "$owner_id" \
+            '{
+              name: $name,
+              target: "branch",
+              enforcement: "active",
+              bypass_actors: [{
+                actor_id: $owner_id,
+                actor_type: "User",
+                bypass_mode: "always"
+              }],
+              conditions: {
+                ref_name: {include: ["~DEFAULT_BRANCH"], exclude: []}
               },
-              "required_linear_history": true,
-              "allow_force_pushes": false,
-              "allow_deletions": false,
-              "required_conversation_resolution": true
-            }'
+              rules: [
+                {type: "deletion"},
+                {type: "non_fast_forward"},
+                {type: "required_linear_history"},
+                {
+                  type: "pull_request",
+                  parameters: {
+                    allowed_merge_methods: ["squash", "rebase"],
+                    dismiss_stale_reviews_on_push: true,
+                    require_code_owner_review: false,
+                    require_last_push_approval: false,
+                    required_approving_review_count: 1,
+                    required_review_thread_resolution: true
+                  }
+                }
+              ]
+            }')"
+
+          if [ -n "$ruleset_id" ]; then
+            method="PUT"
+            endpoint="$api/rulesets/$ruleset_id"
+          else
+            method="POST"
+            endpoint="$api/rulesets"
+          fi
+
+          curl --fail-with-body --silent --show-error \
+            -X "$method" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            -H "Content-Type: application/json" \
+            --data "$payload" \
+            "$endpoint" >/dev/null
