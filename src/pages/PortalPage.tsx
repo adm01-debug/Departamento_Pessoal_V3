@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { PortalOverviewTab } from '@/components/portal/PortalOverviewTab';
@@ -71,6 +72,15 @@ function usePortalCompleto(
 
       const [{ data: profile }, { data: notificacoes }] = base;
       const [pontoRes, feriasRes, holeritesRes, beneficiosRes] = colab as any[];
+
+      // E-036 (LGPD art.37): trilha de leitura do próprio holerite
+      if (Array.isArray(holeritesRes?.data) && holeritesRes.data.length > 0) {
+        void registrarAcessoPII('holerites', 'select', {
+          empresaId,
+          registroId: colaboradorId,
+          registroCount: holeritesRes.data.length,
+        });
+      }
 
       // Normaliza o holerite para o formato consumido pela aba financeira,
       // que espera `competencia`/`total_liquido`.

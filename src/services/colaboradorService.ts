@@ -1,6 +1,7 @@
 import { BaseService, ListOptions, ListResponse } from './baseService';
 import { Colaborador } from '@/types/entities';
 import { supabase } from '@/integrations/supabase/client';
+import { registrarAcessoPII } from './piiAccessLogService';
 
 class ColaboradorService extends BaseService<Colaborador> {
   constructor() {
@@ -45,6 +46,16 @@ class ColaboradorService extends BaseService<Colaborador> {
       .range(from, to);
 
     if (error) throw error;
+
+    // E-036 (LGPD art.37): trilha de leitura de PII — a listagem expõe CPF,
+    // e-mail e telefone de N colaboradores por página (alvo clássico de
+    // scraping; a view v_pii_access_suspeitos agrega por hora/usuário).
+    const rows = Array.isArray(data) ? data : [];
+    void registrarAcessoPII('colaboradores', 'select', {
+      empresaId: typeof empresaId === 'string' ? empresaId : null,
+      registroCount: rows.length,
+    });
+
     return { data: (data as Colaborador[]) || [], total: count || 0 };
   }
 

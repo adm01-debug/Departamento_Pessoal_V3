@@ -125,3 +125,33 @@ drift simulado de produção). Resultado: **6 defeitos encontrados e corrigidos*
 - `deno lint` acusa `no-import-prefix` nos imports `https://` das edges — padrão de todo o repo (60 funções), inclusive do bridge; migração para import-maps é decisão de arquitetura, não de correção pontual.
 - A trilha `pii_access_logs` ainda não é populada pelo frontend (instrumentação é o passo seguinte do E-036); view/funções já estão prontas e protegidas.
 - Harness SQL de validação preservado em `/tmp/dptest/` desta sessão; para reprodutibilidade, os stubs devem ser versionados como fixture se o time adotar CI com Postgres service container (recomendado).
+
+## Adendo — Encaminhamentos executados na sequência (30/08/2026)
+
+Os três encaminhamentos apontados pela auditoria foram concluídos:
+
+1. **Harness SQL versionado e reproduzível**
+   - `supabase/tests/plano100/00_setup_stubs.sql` — stubs fiéis do Supabase
+     (auth.uid() SECURITY DEFINER, grants padrão de storage, funções de
+     autorização, audit_log_unified) **+ drift simulado** (sobrecarga
+     `get_my_permissions(uuid)` concedida a anon; buckets públicos).
+   - `supabase/tests/plano100/20_asserts.sql` — suíte **assertion-based**
+     (25 asserts T1–T7 com tabela `_asserts`; falha → `RAISE EXCEPTION` →
+     exit ≠ 0), incluindo asserts de erro-esperado (RLS violation e
+     permission denied capturados via `GET STACKED DIAGNOSTICS`).
+   - `scripts/tests/migrations-plano100.sh` — runner: sobe `postgres:17-alpine`,
+     aplica stubs + migrations ×2 passes (idempotência) + asserts; cleanup
+     garantido por trap. `npm run test:migrations`.
+   - Execução certificada: **25 asserts, 0 falhas, MIGTEST_OK**.
+2. **CI com banco real**: `.github/workflows/db-tests.yml` — job
+   `plano100-migrations` (Ubuntu + Docker) disparado por paths de
+   migrations/fixture/runner.
+3. **Instrumentação do E-036 (LGPD art. 37) no frontend**
+   - `src/services/piiAccessLogService.ts` — `registrarAcessoPII(tabela, acao,
+     opts)`: fire-and-forget seguro (erro nunca propaga), exige sessão.
+   - Wiring: leitura de holerites no Portal do colaborador (`PortalPage`) e
+     listagem de colaboradores com CPF (`colaboradorService.listar`) — os dois
+     pontos de leitura de PII de maior volume.
+   - Teste unitário `piiAccessLogService.test.ts` (3 casos: insere com
+     user_id da sessão; sem sessão não insere; falha não propaga).
+   - Regressão: `tsc --noEmit` = 0 erros; suíte completa verde.
