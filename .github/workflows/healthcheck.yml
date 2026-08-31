@@ -5,7 +5,7 @@ name: Environment Healthcheck
 
 on:
   schedule:
-    - cron: '17 */6 * * *'   # a cada 6h, minuto 17 (fora da hora cheia)
+    - cron: '17 */6 * * *' # a cada 6h, minuto 17 (fora da hora cheia)
   workflow_dispatch:
 
 permissions:
@@ -22,7 +22,7 @@ jobs:
       - name: Rodar healthcheck
         id: hc
         env:
-          APP_URL: ${{ vars.APP_URL || 'https://unified-harmony-hub.lovable.app' }}
+          APP_URL: ${{ vars.APP_URL }}
           SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY || secrets.VITE_SUPABASE_ANON_KEY }}
           REQUIRE_BACKEND: '1'

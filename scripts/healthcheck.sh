@@ -3,13 +3,15 @@
 # E-095 · Healthcheck de ambiente — Departamento Pessoal
 # Verifica: app web, edge `healthcheck`, endpoint de auth e bridge.
 # Uso:  APP_URL=... SUPABASE_URL=... ./scripts/healthcheck.sh
+# APP_URL é opcional até a hospedagem canônica ser definida; REQUIRE_APP=1 a torna obrigatória.
 # Exit: 0 = tudo saudável · 1 = pelo menos uma falha
 # ============================================================================
 set -uo pipefail
 
-APP_URL="${APP_URL:-https://unified-harmony-hub.lovable.app}"
+APP_URL="${APP_URL:-}"
 SUPABASE_URL="${SUPABASE_URL:-${VITE_SUPABASE_URL:-}}"
 SUPABASE_PUBLISHABLE_KEY="${SUPABASE_PUBLISHABLE_KEY:-${VITE_SUPABASE_PUBLISHABLE_KEY:-}}"
+REQUIRE_APP="${REQUIRE_APP:-0}"
 REQUIRE_BACKEND="${REQUIRE_BACKEND:-0}"
 TIMEOUT="${HEALTHCHECK_TIMEOUT:-10}"
 FAILURES=0
@@ -36,16 +38,23 @@ check() {
 }
 
 echo "== Healthcheck $(date -u +%FT%TZ) =="
-echo "App: $APP_URL"
+[ -n "$APP_URL" ] && echo "App: $APP_URL" || echo "App: (APP_URL não definida — pulando check do frontend)"
 [ -n "$SUPABASE_URL" ] && echo "Supabase: $SUPABASE_URL" || echo "Supabase: (SUPABASE_URL não definida — pulando checks de backend)"
+
+if [ "$REQUIRE_APP" = "1" ] && [ -z "$APP_URL" ]; then
+  echo "❌ frontend obrigatório, mas APP_URL não está configurada"
+  FAILURES=$((FAILURES + 1))
+fi
 
 if [ "$REQUIRE_BACKEND" = "1" ] && { [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_PUBLISHABLE_KEY" ]; }; then
   echo "❌ backend obrigatório, mas SUPABASE_URL/chave pública não estão configuradas"
   FAILURES=$((FAILURES + 1))
 fi
 
-# 1. App web responde
-check "web app" "$APP_URL/"
+# 1. App web responde (quando uma hospedagem canônica estiver configurada)
+if [ -n "$APP_URL" ]; then
+  check "web app" "${APP_URL%/}/"
+fi
 
 # 2. Backend Supabase (se configurado)
 if [ -n "$SUPABASE_URL" ]; then
