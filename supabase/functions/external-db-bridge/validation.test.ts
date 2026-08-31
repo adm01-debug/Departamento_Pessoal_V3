@@ -57,6 +57,7 @@ Deno.test("denylist: tabelas sensíveis presentes", () => {
     "rate_limit_config", "rate_limit_logs", "login_attempts", "login_lockouts",
     "login_rate_limits", "password_policies", "security_alerts", "audit_log",
     "geo_blocking_config", "geo_allowed_countries", "govbr_auth_state",
+    "pii_access_logs", "pii_access_alerts",
   ];
   for (const t of mustDeny) ok(TABLE_DENYLIST.has(t), `denylist deveria conter: ${t}`);
   // sanity: uma tabela de negócio não está na denylist
@@ -94,12 +95,13 @@ Deno.test("order: injeção rejeitada", () => {
   const bad = [
     "id; DROP", "id--", "id/*", "(select 1)", "id,secrets", "id desc; DELETE",
     "1", "id ASC", "id nulls first", "id)", "*", "id||", "id SELECT", "id FROM x",
+    "tabela.coluna",
   ];
   for (const c of bad) ok(!isSafeOrderColumn(c), `order deveria ser rejeitada: ${JSON.stringify(c)}`);
   ok(!isSafeOrderColumn("a".repeat(121)), "order > 120 rejeitada");
 });
 Deno.test("order: colunas simples aceitas", () => {
-  for (const c of ["id", "created_at", "empresa_id", "tabela.coluna", "_x", "A1"]) ok(isSafeOrderColumn(c), `order legítima deveria passar: ${c}`);
+  for (const c of ["id", "created_at", "empresa_id", "id.asc", "created_at.desc.nullslast", "_x", "A1"]) ok(isSafeOrderColumn(c), `order legítima deveria passar: ${c}`);
 });
 
 // ---------------------------------------------------------------------------
@@ -147,7 +149,7 @@ Deno.test("operadores: allowlist", () => {
 // 8. RPC allowlist — só listadas passam; nomes sensíveis/injeção fora
 // ---------------------------------------------------------------------------
 Deno.test("rpc allowlist", () => {
-  for (const r of ["has_role","is_admin","admin_set_user_role","assinar_desligamento","get_admissao_por_token"]) ok(RPC_ALLOWLIST.has(r), `rpc permitida: ${r}`);
+  for (const r of ["has_role","is_admin","admin_set_user_role","assinar_desligamento","get_admissao_por_token","registrar_batida_ponto"]) ok(RPC_ALLOWLIST.has(r), `rpc permitida: ${r}`);
   for (const r of ["pg_sleep","drop_table","exec","delete_all_users","'; DROP","set_config","pg_read_file","dblink"]) ok(!RPC_ALLOWLIST.has(r), `rpc proibida: ${r}`);
 });
 

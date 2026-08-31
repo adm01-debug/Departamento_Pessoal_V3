@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { pontoOfflineService } from '@/services/pontoOfflineService';
 import { loggerService } from '@/services/loggerService';
@@ -8,9 +8,9 @@ export function usePontoOffline() {
   const [queueSize, setQueueSize] = useState(0);
   const [isSyncing, setIsSyncing] = useState(false);
 
-  const updateSize = () => {
+  const updateSize = useCallback(() => {
     setQueueSize(pontoOfflineService.getQueueSize());
-  };
+  }, []);
 
   useEffect(() => {
     window.addEventListener('storage', updateSize);
@@ -19,33 +19,45 @@ export function usePontoOffline() {
       window.removeEventListener('storage', updateSize);
       window.removeEventListener('ponto-offline-updated', updateSize);
     };
-  }, []);
+  }, [updateSize]);
 
   // Inicializa queue size no mount
   useOnMount(() => {
     updateSize();
   });
 
-  const addOffline = async (tipo: 'entrada' | 'saida' | 'saida_almoco' | 'retorno_almoco', colaboradorId: string, geo?: { lat?: number; latitude?: number; lng?: number; longitude?: number; accuracy?: number }) => {
+  const addOffline = async (
+    tipo: 'entrada' | 'saida' | 'saida_almoco' | 'retorno_almoco',
+    colaboradorId: string,
+    empresaId: string,
+    geo?: { lat?: number; latitude?: number; lng?: number; longitude?: number; accuracy?: number }
+  ) => {
     try {
       await pontoOfflineService.queueRegistro({
         tipo,
         colaborador_id: colaboradorId,
+        empresa_id: empresaId,
         timestamp: new Date().toISOString(),
         latitude: geo?.lat || geo?.latitude,
         longitude: geo?.lng || geo?.longitude,
         precisao: geo?.accuracy,
-        dispositivoId: navigator.userAgent
+        dispositivoId: navigator.userAgent,
       });
       updateSize();
-      toast.warning('Você está offline. O ponto foi salvo localmente com criptografia e será sincronizado automaticamente quando houver conexão.');
+      toast.warning(
+        'Você está offline. O ponto foi salvo localmente com criptografia e será sincronizado automaticamente quando houver conexão.'
+      );
     } catch (error) {
-      loggerService.error('Erro ao enfileirar ponto offline', { tipo, colaboradorId }, error instanceof Error ? error : undefined);
+      loggerService.error(
+        'Erro ao enfileirar ponto offline',
+        { tipo, colaboradorId },
+        error instanceof Error ? error : undefined
+      );
       toast.error('Falha ao salvar ponto offline.');
     }
   };
 
-  const sync = async () => {
+  const sync = useCallback(async () => {
     if (isSyncing || !navigator.onLine) return;
 
     setIsSyncing(true);
@@ -60,11 +72,15 @@ export function usePontoOffline() {
         toast.error(`${result.errors} batida(s) não puderam ser sincronizadas e permanecem na fila.`);
       }
     } catch (error) {
-      loggerService.error('Erro durante sincronização de ponto', { synced: 0, errors: 0 }, error instanceof Error ? error : undefined);
+      loggerService.error(
+        'Erro durante sincronização de ponto',
+        { synced: 0, errors: 0 },
+        error instanceof Error ? error : undefined
+      );
     } finally {
       setIsSyncing(false);
     }
-  };
+  }, [isSyncing, updateSize]);
 
   useEffect(() => {
     const handleOnline = () => sync();
@@ -81,8 +97,8 @@ export function usePontoOffline() {
 
   return {
     offlineBatidasCount: queueSize,
-    addOffline, 
+    addOffline,
     sync,
-    isSyncing 
+    isSyncing,
   };
 }

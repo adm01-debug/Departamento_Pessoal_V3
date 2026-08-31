@@ -43,7 +43,7 @@ section('2. CORS wildcard');
 const FN_DIR = join(ROOT, 'supabase/functions');
 const corsWild = /Access-Control-Allow-Origin["']?\s*[:=]\s*["']\*["']/;
 for (const dir of readdirSync(FN_DIR, { withFileTypes: true })) {
-  if (!dir.isDirectory() || dir.name === '_shared') continue;
+  if (!dir.isDirectory()) continue;
   const idx = join(FN_DIR, dir.name, 'index.ts');
   if (!existsSync(idx)) continue;
   const src = readFileSync(idx, 'utf8');
@@ -54,6 +54,9 @@ sectionClean('nenhum CORS wildcard em edge functions');
 // ── 3. Security headers no contrato compartilhado ──────────────────────────
 section('3. Security headers (_shared/contract.ts)');
 const contract = readFileSync(join(FN_DIR, '_shared/contract.ts'), 'utf8');
+if (/\?\s*[^:]+:\s*["']\*["']/.test(contract) || /getCorsHeaders\(\)\s*;[\s\S]*Access-Control-Allow-Origin[^\n]*\*/.test(contract)) {
+  fail('fallback CORS wildcard presente em _shared/contract.ts');
+}
 for (const h of ['X-Content-Type-Options', 'X-Frame-Options', 'Referrer-Policy', 'Strict-Transport-Security']) {
   if (!contract.includes(h)) fail(`header ${h} ausente em _shared/contract.ts`);
 }

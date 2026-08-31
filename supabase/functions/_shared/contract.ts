@@ -84,13 +84,13 @@ const CORS_BASE_HEADERS: Record<string, string> = {
  * allowlist — obrigatório para que o browser aceite a resposta (a spec exige
  * match exato, não vale devolver "outra" origem permitida).
  *
- * Sem `req` (uso estático em módulos), devolve `*`: as edge functions não usam
- * cookies — a autorização é feita por JWT/`enforceOrigin` no servidor — logo o
- * curinga não concede acesso a nada que o token já não conceda.
+ * Sem `req` (compatibilidade com módulos legados), usa a origem primária da
+ * allowlist. Nunca devolve wildcard: isso mantém o contrato fail-closed mesmo
+ * quando uma função ainda usa o objeto estático `corsHeaders`.
  */
 export function getCorsHeaders(req?: Request): Record<string, string> {
   const origin = req?.headers.get('origin') || '';
-  const allowedOrigin = origin ? (isOriginAllowed(origin) ? origin : ALLOWED_ORIGINS[0]) : '*';
+  const allowedOrigin = origin && isOriginAllowed(origin) ? origin : ALLOWED_ORIGINS[0];
   return {
     'Access-Control-Allow-Origin': allowedOrigin,
     ...CORS_BASE_HEADERS,

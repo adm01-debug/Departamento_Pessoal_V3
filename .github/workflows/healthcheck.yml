@@ -9,6 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  contents: read
   issues: write
 
 jobs:
@@ -23,6 +24,8 @@ jobs:
         env:
           APP_URL: ${{ vars.APP_URL || 'https://sistema-dp.lovable.app' }}
           SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY || secrets.VITE_SUPABASE_ANON_KEY }}
+          REQUIRE_BACKEND: '1'
         run: bash scripts/healthcheck.sh
 
       - name: Abrir issue em caso de falha

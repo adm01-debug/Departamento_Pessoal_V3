@@ -70,6 +70,7 @@ serve(async (req) => {
         headers: {
           'Content-Type': 'application/json',
           ...cachePublic(60),
+          ...getCorsHeaders(req),
         },
       }
     );
@@ -109,6 +110,7 @@ serve(async (req) => {
           headers: {
             'Content-Type': 'application/json',
             ...cachePublic(60),
+            ...getCorsHeaders(req),
           },
         }
       );
@@ -124,6 +126,7 @@ serve(async (req) => {
       {
         headers: {
           'Content-Type': 'application/json',
+          ...getCorsHeaders(req),
           ...cachePublic(CACHE_TTL_MS / 1000),
           ...getCorsHeaders(req),
         },

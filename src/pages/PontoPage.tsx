@@ -20,7 +20,8 @@ import {
   Zap,
   BrainCircuit,
   BarChart3,
-  Map as MapIcon} from 'lucide-react';
+  Map as MapIcon,
+} from 'lucide-react';
 import { pontoService, batidasPontoService } from '@/services';
 import { useAuth } from '@/contexts';
 import { useEmpresas, usePontoOffline } from '@/hooks';
@@ -71,7 +72,8 @@ export default function PontoPage() {
       if (error) throw error;
       return data;
     },
-    enabled: !!empresaAtual?.id});
+    enabled: !!empresaAtual?.id,
+  });
 
   useEffect(() => {
     const i = setInterval(() => setTime(new Date()), 1000);
@@ -99,13 +101,15 @@ export default function PontoPage() {
       return data;
     },
     enabled: !!user?.id,
-    refetchInterval: 30000});
+    refetchInterval: 30000,
+  });
 
   const { data: batidasHoje = [], refetch: refetchBatidas } = useQuery({
     queryKey: ['batidas-hoje', empresaAtual?.id, today],
     queryFn: () => batidasPontoService.listarPorData(today, empresaAtual?.id ?? ''),
     enabled: !!empresaAtual?.id,
-    refetchInterval: 30000});
+    refetchInterval: 30000,
+  });
 
   const { data: registrosSemana = [] } = useQuery({
     queryKey: ['registros-semana', user?.id],
@@ -128,7 +132,8 @@ export default function PontoPage() {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!user?.id});
+    enabled: !!user?.id,
+  });
 
   const { data: bancoResumo } = useQuery({
     queryKey: ['banco-horas-resumo', user?.id],
@@ -161,9 +166,11 @@ export default function PontoPage() {
       return {
         saldo: `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`,
         saldoMinutos: totalMinutos,
-        tipo: totalMinutos >= 0 ? 'credito' : 'debito'} as BancoHorasResumo;
+        tipo: totalMinutos >= 0 ? 'credito' : 'debito',
+      } as BancoHorasResumo;
     },
-    enabled: !!user?.id});
+    enabled: !!user?.id,
+  });
 
   const captureGeo = (): Promise<{ lat: number; lng: number; accuracy: number } | null> =>
     new Promise((resolve) => {
@@ -228,10 +235,12 @@ export default function PontoPage() {
 
       if (!navigator.onLine) {
         // Agora passando a foto para o modo offline (biometria real mesmo offline)
-        await addOffline(tipo, colab.id, {
+        if (!empresaAtual?.id) throw new Error('Empresa ativa obrigatória para registro offline');
+        await addOffline(tipo, colab.id, empresaAtual.id, {
           lat: geo?.lat,
           lng: geo?.lng,
-          accuracy: geo?.accuracy});
+          accuracy: geo?.accuracy,
+        });
         return undefined;
       }
 
@@ -241,7 +250,8 @@ export default function PontoPage() {
         precisao: geo?.accuracy ? Math.round(geo.accuracy) : undefined,
         dispositivoId: navigator.userAgent,
         metadata: geoStatus === 'out_of_range' ? { out_of_range: true } : undefined,
-        foto_biometria_url: options?.foto_biometria_url});
+        foto_biometria_url: options?.foto_biometria_url,
+      });
 
       toast.success(
         `Ponto registrado: ${tipo.replace(/_/g, ' ')} às ${new Date().toLocaleTimeString('pt-BR')}${geo ? ` (📍 ${geo.lat.toFixed(4)}, ${geo.lng.toFixed(4)})` : ''}`
@@ -265,7 +275,11 @@ export default function PontoPage() {
           }
           return { biometriaValida: !!bio?.valid };
         } catch (bioErr) {
-          loggerService.error('Erro na validação biométrica', { colaboradorId: colab.id, batidaId: batida.id }, bioErr instanceof Error ? bioErr : new Error(String(bioErr)));
+          loggerService.error(
+            'Erro na validação biométrica',
+            { colaboradorId: colab.id, batidaId: batida.id },
+            bioErr instanceof Error ? bioErr : new Error(String(bioErr))
+          );
           toast.warning('Não foi possível validar a biometria agora — ponto registrado, revisão pendente.');
           return { biometriaValida: undefined };
         }
@@ -289,7 +303,8 @@ export default function PontoPage() {
       await edgeFunctionsService.processarPonto({
         empresaId: empresaAtual.id,
         dataInicio: formatDateLocalISO(w),
-        dataFim: todayLocalISO()});
+        dataFim: todayLocalISO(),
+      });
       toast.success('Ponto processado!');
       refetchRegistro();
       refetchBatidas();
@@ -347,7 +362,8 @@ export default function PontoPage() {
               className="rounded-xl gap-1.5 font-bold shadow-lg shadow-primary/20 bg-gradient-to-r from-primary to-primary-glow border-none"
               onClick={() =>
                 toast.success('Relatório MTP 671 Gerado com Sucesso!', {
-                  description: 'O documento foi assinado digitalmente e está disponível no histórico de auditoria.'})
+                  description: 'O documento foi assinado digitalmente e está disponível no histórico de auditoria.',
+                })
               }
             >
               <ShieldCheck className="h-4 w-4" />

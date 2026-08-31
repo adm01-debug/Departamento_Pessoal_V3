@@ -74,8 +74,9 @@ async function safeFetch(request, maxBytes = 4 * 1024 * 1024) {
       }
       chunks.push(value);
     }
-  } catch {
-    // Abort ou erro de leitura → propagar
+  } catch (error) {
+    await reader.cancel().catch(() => {});
+    throw error;
   }
   const body = new Blob(chunks);
   return new Response(body, { headers: response.headers, status: response.status });
@@ -107,7 +108,7 @@ self.addEventListener('activate', (event) => {
         const CACHE_KEEP = [CORE_CACHE, IMAGE_CACHE];
         await Promise.all(
           cacheNames
-            .filter((name) => !CACHE_KEEP.includes(name))
+            .filter((name) => name.startsWith('bombon-dp-') && !CACHE_KEEP.includes(name))
             .map((name) => caches.delete(name))
         );
       } catch {

@@ -22840,7 +22840,7 @@ export type Database = {
           p_data_inicio?: string
           p_empresa_id: string
           p_limite?: number
-          p_registro_id?: string
+          p_registro_id?: string | null
           p_tabela?: string
         }
         Returns: {
@@ -23418,6 +23418,16 @@ export type Database = {
           isOneToOne: false
           isSetofReturn: true
         }
+      }
+      record_pii_access: {
+        Args: {
+          p_acao?: string
+          p_empresa_id: string
+          p_registro_count?: number
+          p_registro_id?: string | null
+          p_tabela: string
+        }
+        Returns: string
       }
       record_failed_login: {
         Args: { p_identifier: string; p_identifier_type?: string }

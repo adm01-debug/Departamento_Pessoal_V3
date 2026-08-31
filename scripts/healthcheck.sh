@@ -9,13 +9,20 @@ set -uo pipefail
 
 APP_URL="${APP_URL:-https://sistema-dp.lovable.app}"
 SUPABASE_URL="${SUPABASE_URL:-${VITE_SUPABASE_URL:-}}"
+SUPABASE_PUBLISHABLE_KEY="${SUPABASE_PUBLISHABLE_KEY:-${VITE_SUPABASE_PUBLISHABLE_KEY:-}}"
+REQUIRE_BACKEND="${REQUIRE_BACKEND:-0}"
 TIMEOUT="${HEALTHCHECK_TIMEOUT:-10}"
 FAILURES=0
 
 check() {
-  local name="$1" url="$2" expect="${3:-200}"
+  local name="$1" url="$2" expect="${3:-200}" use_apikey="${4:-0}"
   local code
-  code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time "$TIMEOUT" "$url" 2>/dev/null)
+  if [ "$use_apikey" = "1" ] && [ -n "$SUPABASE_PUBLISHABLE_KEY" ]; then
+    code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time "$TIMEOUT" \
+      -H "apikey: $SUPABASE_PUBLISHABLE_KEY" "$url" 2>/dev/null)
+  else
+    code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time "$TIMEOUT" "$url" 2>/dev/null)
+  fi
   # curl falho já emite 000 via -w; só garantir string vazia nunca vaze
   [ -z "$code" ] && code="000"
   if [ "$code" = "$expect" ]; then
@@ -30,17 +37,22 @@ echo "== Healthcheck $(date -u +%FT%TZ) =="
 echo "App: $APP_URL"
 [ -n "$SUPABASE_URL" ] && echo "Supabase: $SUPABASE_URL" || echo "Supabase: (SUPABASE_URL não definida — pulando checks de backend)"
 
+if [ "$REQUIRE_BACKEND" = "1" ] && { [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_PUBLISHABLE_KEY" ]; }; then
+  echo "❌ backend obrigatório, mas SUPABASE_URL/chave pública não estão configuradas"
+  FAILURES=$((FAILURES + 1))
+fi
+
 # 1. App web responde
 check "web app" "$APP_URL/"
 
 # 2. Backend Supabase (se configurado)
 if [ -n "$SUPABASE_URL" ]; then
   # Edge healthcheck é pública por decisão documentada (E-029, config.toml)
-  check "edge healthcheck" "$SUPABASE_URL/functions/v1/healthcheck"
+  check "edge healthcheck" "$SUPABASE_URL/functions/v1/healthcheck" "200" "1"
   # Auth settings endpoint responde (público por natureza)
-  check "auth settings" "$SUPABASE_URL/auth/v1/settings"
+  check "auth settings" "$SUPABASE_URL/auth/v1/settings" "200" "1"
   # Bridge exige POST: GET deve responder 405 (prova que está no ar e fail-closed)
-  check "bridge method-gate" "$SUPABASE_URL/functions/v1/external-db-bridge" "405"
+  check "bridge method-gate" "$SUPABASE_URL/functions/v1/external-db-bridge" "405" "1"
 fi
 
 echo "== Resultado: $FAILURES falha(s) =="

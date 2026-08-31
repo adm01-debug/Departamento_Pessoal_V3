@@ -187,7 +187,7 @@ serve(async (req: Request): Promise<Response> => {
   if (preflight) return preflight;
 
   if (req.method !== 'GET') {
-    return new Response('Method Not Allowed', { status: 405 });
+    return new Response('Method Not Allowed', { status: 405, headers: getCorsHeaders(req) });
   }
 
   try {
@@ -210,7 +210,14 @@ serve(async (req: Request): Promise<Response> => {
     // Even on error, return metrics (with 0 values) so Prometheus doesn't go red
     return new Response(
       `# ERROR: failed to collect metrics\n${METRICS_PREFIX}health_overall 0\n`,
-      { status: 200, headers: { 'Content-Type': 'text/plain; version=0.0.4' } }
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/plain; version=0.0.4',
+          'Cache-Control': 'no-store',
+          ...getCorsHeaders(req),
+        },
+      }
     );
   }
 });

@@ -51,7 +51,9 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
   const [scanProgress, setScanProgress] = useState(0);
   const [scanStage, setScanStage] = useState('');
   const [scanOutcome, setScanOutcome] = useState<'confirmado' | 'pendente' | null>(null);
-  const [selectedTipo, setSelectedTipo] = useState<'entrada' | 'saida_almoco' | 'retorno_almoco' | 'saida' | null>(null);
+  const [selectedTipo, setSelectedTipo] = useState<'entrada' | 'saida_almoco' | 'retorno_almoco' | 'saida' | null>(
+    null
+  );
   const [showConfetti, setShowConfetti] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -81,10 +83,6 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
   });
 
   useEffect(() => {
-    setOfflineQueueSize(pontoOfflineService.getQueueSize());
-    if (navigator.onLine) {
-      handleSync();
-    }
     const interval = setInterval(() => {
       setOfflineQueueSize(pontoOfflineService.getQueueSize());
     }, 5000);
@@ -92,7 +90,7 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
       clearInterval(interval);
       if (stream) stream.getTracks().forEach((track) => track.stop());
     };
-  }, [stream, handleSync]);
+  }, [stream]);
 
   const startScan = async (tipo: any) => {
     setSelectedTipo(tipo);
@@ -122,7 +120,11 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
         }
       }, 100);
     } catch (err) {
-      loggerService.error('Erro ao acessar câmera para biometria', {}, err instanceof Error ? err : new Error(String(err)));
+      loggerService.error(
+        'Erro ao acessar câmera para biometria',
+        {},
+        err instanceof Error ? err : new Error(String(err))
+      );
       toast.error('Acesso à câmera é obrigatório para biometria.');
       setShowFaceScan(false);
     }
@@ -192,12 +194,17 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
 
     // Modo Offline
     try {
-      const { data: colab } = await supabase.from('colaboradores').select('id').eq('email', user.email!).maybeSingle();
-      if (!colab) throw new Error('Colaborador não identificado localmente');
+      const { data: colab } = await supabase
+        .from('colaboradores')
+        .select('id, empresa_id')
+        .eq('email', user.email!)
+        .maybeSingle();
+      if (!colab?.empresa_id) throw new Error('Colaborador ou empresa não identificados localmente');
 
       const hashPayload = {
         tipo,
         colaborador_id: colab.id,
+        empresa_id: colab.empresa_id,
         timestamp: new Date().toISOString(),
         dispositivoId: navigator.userAgent,
         foto_base64: fotoBase64,

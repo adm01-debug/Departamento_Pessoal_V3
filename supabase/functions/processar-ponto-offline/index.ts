@@ -7,12 +7,13 @@ import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
 
 async function computeExpectedHash(payload: {
   colaborador_id: string;
+  empresa_id: string;
   timestamp: string;
   tipo: string;
   dispositivoId: string;
 }): Promise<string> {
   const secret = Deno.env.get('PONTO_HASH_SECRET') ?? '';
-  const canonical = `${payload.colaborador_id}|${payload.timestamp}|${payload.tipo}|${payload.dispositivoId}`;
+  const canonical = `${payload.empresa_id}|${payload.colaborador_id}|${payload.timestamp}|${payload.tipo}|${payload.dispositivoId}`;
   if (!secret) return sha256Hex(canonical);
   const key = await crypto.subtle.importKey(
     'raw',
@@ -92,20 +93,6 @@ serve(async (req: Request): Promise<Response> => {
       });
     }
 
-    // Tenant scope: validate that user belongs to the empresas referenced
-    const empresaIds = [...new Set(registros.map((r: any) => r.empresa_id).filter(Boolean))];
-    for (const empId of empresaIds) {
-      const [{ data: belongs }, { data: isAdm }] = await Promise.all([
-        supabase.rpc('user_belongs_to_empresa', { _user_id: userId, _empresa_id: empId }),
-        supabase.rpc('is_admin', { _user_id: userId }),
-      ]);
-      if (!belongs && !isAdm) {
-        return new Response(JSON.stringify({ error: 'Sem acesso a esta empresa', code: 'FORBIDDEN' }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403,
-        });
-      }
-    }
-
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(supabase, { key: `ponto-offline:${userId}`, limit: 30, windowSec: 60 });
     if (!rl.allowed) return rateLimitResponse(rl);
@@ -132,6 +119,39 @@ serve(async (req: Request): Promise<Response> => {
         .in('id', colaboradorIds);
       for (const c of colabs ?? []) {
         empresaPorColaborador.set(c.id as string, (c as any).empresa_id ?? null);
+      }
+    }
+
+    // O tenant confiável é derivado do colaborador no servidor. O valor do
+    // cliente é obrigatório apenas como vínculo de integridade e deve casar.
+    const derivedEmpresaIds = [...new Set([...empresaPorColaborador.values()].filter(
+      (v): v is string => typeof v === 'string' && v.length > 0,
+    ))];
+    const { data: memberships } = derivedEmpresaIds.length > 0
+      ? await supabase
+          .from('user_empresas')
+          .select('empresa_id')
+          .eq('user_id', userId)
+          .eq('ativo', true)
+          .in('empresa_id', derivedEmpresaIds)
+      : { data: [] };
+    const allowedEmpresas = new Set((memberships ?? []).map((m: any) => String(m.empresa_id)));
+    const { data: isGlobalAdmin } = await supabase.rpc('has_role', {
+      _user_id: userId,
+      _role: 'admin',
+    });
+
+    for (const reg of registros) {
+      const derivedEmpresa = empresaPorColaborador.get(reg?.colaborador_id);
+      if (!derivedEmpresa || reg?.empresa_id !== derivedEmpresa) {
+        return new Response(JSON.stringify({ error: 'Tenant do registro divergente', code: 'TENANT_MISMATCH' }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403,
+        });
+      }
+      if (!allowedEmpresas.has(derivedEmpresa) && !isGlobalAdmin) {
+        return new Response(JSON.stringify({ error: 'Sem acesso a esta empresa', code: 'FORBIDDEN' }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403,
+        });
       }
     }
 
@@ -165,12 +185,13 @@ serve(async (req: Request): Promise<Response> => {
 
     for (const reg of registros) {
       try {
-        if (!reg?.colaborador_id || !reg?.timestamp || !reg?.tipo || !reg?.dispositivoId) {
-          throw new Error('Campos obrigatórios ausentes (colaborador_id, timestamp, tipo, dispositivoId)');
+        if (!reg?.empresa_id || !reg?.colaborador_id || !reg?.timestamp || !reg?.tipo || !reg?.dispositivoId) {
+          throw new Error('Campos obrigatórios ausentes (empresa_id, colaborador_id, timestamp, tipo, dispositivoId)');
         }
 
         const expected = await computeExpectedHash({
           colaborador_id: reg.colaborador_id,
+          empresa_id: reg.empresa_id,
           timestamp: reg.timestamp,
           tipo: reg.tipo,
           dispositivoId: reg.dispositivoId,

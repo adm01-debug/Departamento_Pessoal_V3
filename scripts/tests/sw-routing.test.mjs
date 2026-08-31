@@ -109,8 +109,36 @@ const scenarios = [
 
 for (const [id, desc, url, opts, exp] of scenarios) await scenario(id, desc, url, opts, exp);
 
+// S: uma falha no stream não pode virar HTTP 200 com corpo parcial/vazio.
+const safeFetchFn = vm.runInContext('safeFetch', sandbox);
+const originalFetch = sandbox.fetch;
+sandbox.fetch = async () => new Response(new ReadableStream({
+  start(controller) { controller.error(new Error('stream interrompido')); },
+}), { status: 200 });
+try {
+  await safeFetchFn(new Request(H + '/assets/interrompido.js'));
+  failures++;
+  results.push('❌ S erro de stream foi convertido em resposta 200');
+} catch {
+  results.push('✅ S erro de stream é propagado (sem falso HTTP 200)');
+}
+sandbox.fetch = originalFetch;
+
+// T: ativação limpa somente caches deste app; caches de outras aplicações
+// no mesmo origin não podem ser apagados.
+cacheStore.set('third-party-cache', new Map());
+cacheStore.set('bombon-dp-v1', new Map());
+let activation;
+for (const h of listeners.activate ?? []) {
+  h({ waitUntil: (p) => { activation = p; } });
+}
+await activation;
+const scopedCleanupOk = cacheStore.has('third-party-cache') && !cacheStore.has('bombon-dp-v1');
+if (!scopedCleanupOk) failures++;
+results.push(`${scopedCleanupOk ? '✅' : '❌'} T limpeza de cache limitada ao prefixo do app`);
+
 console.log(results.join('\n'));
 console.log(failures === 0
-  ? `\n✅ SW-TEST: ${scenarios.length}/${scenarios.length} cenários OK`
-  : `\n❌ SW-TEST: ${failures} falha(s) em ${scenarios.length} cenários`);
+  ? `\n✅ SW-TEST: ${scenarios.length + 2}/${scenarios.length + 2} cenários OK`
+  : `\n❌ SW-TEST: ${failures} falha(s) em ${scenarios.length + 2} cenários`);
 process.exit(failures === 0 ? 0 : 1);

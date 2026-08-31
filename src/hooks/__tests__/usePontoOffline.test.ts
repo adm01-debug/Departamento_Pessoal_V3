@@ -2,8 +2,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 
 const {
-  mockGetQueueSize, mockQueueRegistro, mockSyncOfflineQueue,
-  mockToastWarning, mockToastSuccess, mockToastError,
+  mockGetQueueSize,
+  mockQueueRegistro,
+  mockSyncOfflineQueue,
+  mockToastWarning,
+  mockToastSuccess,
+  mockToastError,
 } = vi.hoisted(() => ({
   mockGetQueueSize: vi.fn(),
   mockQueueRegistro: vi.fn(),
@@ -54,15 +58,18 @@ describe('usePontoOffline', () => {
     const { result } = renderHook(() => usePontoOffline());
 
     await act(async () => {
-      await result.current.addOffline('entrada', 'col-1', { lat: -23.5, lng: -46.6 });
+      await result.current.addOffline('entrada', 'col-1', 'emp-1', { lat: -23.5, lng: -46.6 });
     });
 
-    expect(mockQueueRegistro).toHaveBeenCalledWith(expect.objectContaining({
-      tipo: 'entrada',
-      colaborador_id: 'col-1',
-      latitude: -23.5,
-      longitude: -46.6,
-    }));
+    expect(mockQueueRegistro).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tipo: 'entrada',
+        colaborador_id: 'col-1',
+        empresa_id: 'emp-1',
+        latitude: -23.5,
+        longitude: -46.6,
+      })
+    );
     expect(mockToastWarning).toHaveBeenCalled();
   });
 
@@ -71,7 +78,7 @@ describe('usePontoOffline', () => {
     const { result } = renderHook(() => usePontoOffline());
 
     await act(async () => {
-      await result.current.addOffline('saida', 'col-1', undefined);
+      await result.current.addOffline('saida', 'col-1', 'emp-1', undefined);
     });
 
     expect(mockToastError).toHaveBeenCalledWith('Falha ao salvar ponto offline.');
@@ -86,7 +93,9 @@ describe('usePontoOffline', () => {
       await result.current.sync();
     });
 
-    await waitFor(() => expect(mockToastSuccess).toHaveBeenCalledWith('2 batida(s) offline sincronizada(s) com sucesso!'));
+    await waitFor(() =>
+      expect(mockToastSuccess).toHaveBeenCalledWith('2 batida(s) offline sincronizada(s) com sucesso!')
+    );
   });
 
   it('sync shows error toast when errors > 0', async () => {
@@ -98,9 +107,9 @@ describe('usePontoOffline', () => {
       await result.current.sync();
     });
 
-    await waitFor(() => expect(mockToastError).toHaveBeenCalledWith(
-      expect.stringContaining('1 batida(s) não puderam ser sincronizadas')
-    ));
+    await waitFor(() =>
+      expect(mockToastError).toHaveBeenCalledWith(expect.stringContaining('1 batida(s) não puderam ser sincronizadas'))
+    );
   });
 
   it('sync does nothing when offline', async () => {

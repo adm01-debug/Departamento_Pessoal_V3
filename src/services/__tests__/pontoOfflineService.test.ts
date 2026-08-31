@@ -2,7 +2,9 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
-    functions: { invoke: vi.fn().mockResolvedValue({ data: { success: true, success_count: 1, error_count: 0 }, error: null }) },
+    functions: {
+      invoke: vi.fn().mockResolvedValue({ data: { success: true, success_count: 1, error_count: 0 }, error: null }),
+    },
   },
 }));
 
@@ -29,6 +31,7 @@ import { pontoOfflineService } from '../pontoOfflineService';
 describe('pontoOfflineService.generateIntegrityHash', () => {
   it('returns a non-empty string', () => {
     const hash = pontoOfflineService.generateIntegrityHash({
+      empresa_id: 'e1',
       colaborador_id: 'c1',
       timestamp: '2024-07-24T08:00:00Z',
       tipo: 'entrada',
@@ -40,17 +43,37 @@ describe('pontoOfflineService.generateIntegrityHash', () => {
 
   it('is deterministic for the same input', () => {
     const data = { colaborador_id: 'c1', timestamp: '2024-07-24T08:00:00Z', tipo: 'entrada', dispositivoId: 'dev-1' };
-    expect(pontoOfflineService.generateIntegrityHash(data)).toBe(pontoOfflineService.generateIntegrityHash(data));
+    expect(pontoOfflineService.generateIntegrityHash({ empresa_id: 'e1', ...data })).toBe(
+      pontoOfflineService.generateIntegrityHash({ empresa_id: 'e1', ...data })
+    );
   });
 
   it('differs for different inputs', () => {
-    const h1 = pontoOfflineService.generateIntegrityHash({ colaborador_id: 'c1', timestamp: '2024-01-01T08:00:00Z', tipo: 'entrada', dispositivoId: 'd1' });
-    const h2 = pontoOfflineService.generateIntegrityHash({ colaborador_id: 'c2', timestamp: '2024-01-01T08:00:00Z', tipo: 'saida', dispositivoId: 'd2' });
+    const h1 = pontoOfflineService.generateIntegrityHash({
+      empresa_id: 'e1',
+      colaborador_id: 'c1',
+      timestamp: '2024-01-01T08:00:00Z',
+      tipo: 'entrada',
+      dispositivoId: 'd1',
+    });
+    const h2 = pontoOfflineService.generateIntegrityHash({
+      empresa_id: 'e2',
+      colaborador_id: 'c2',
+      timestamp: '2024-01-01T08:00:00Z',
+      tipo: 'saida',
+      dispositivoId: 'd2',
+    });
     expect(h1).not.toBe(h2);
   });
 
   it('produces a SHA-256 hex string (64 chars)', () => {
-    const hash = pontoOfflineService.generateIntegrityHash({ colaborador_id: 'c1', timestamp: '2024-07-24T08:00:00Z', tipo: 'saida', dispositivoId: 'dev-1' });
+    const hash = pontoOfflineService.generateIntegrityHash({
+      empresa_id: 'e1',
+      colaborador_id: 'c1',
+      timestamp: '2024-07-24T08:00:00Z',
+      tipo: 'saida',
+      dispositivoId: 'dev-1',
+    });
     expect(hash).toMatch(/^[0-9a-f]{64}$/);
   });
 });

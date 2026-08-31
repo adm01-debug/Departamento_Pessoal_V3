@@ -1,17 +1,6 @@
--- ============================================================================
--- PLANO_100 · E-028 · [P1] · banco/Storage — criar buckets privados ausentes
--- Corrige: A-005, A-018
--- ----------------------------------------------------------------------------
--- 1) Cria os 4 buckets esperados pelo app sem migration própria:
---      comprovantes-despesas, contabilidade-anexos, relatorios-privados,
---      sst-programas   (todos PRIVADOS — acesso via createSignedUrl)
--- 2) Hardening: força `public = false` em buckets criados públicos por engano
---    (documentos-admissao em 20251220151012; ponto-biometria em 20260513182833).
--- 3) Policies tenant-scoped: path <empresa_id>/<arquivo>, acesso só de membros.
--- Idempotente: ON CONFLICT DO NOTHING / UPDATE com guarda / DROP IF EXISTS.
--- ============================================================================
+-- PLANO_100 · E-028 · Storage privado e isolamento por tenant.
+-- Compatível com o schema canônico self-hosted (user_empresas.role/app_role).
 
--- ── 1. Buckets ausentes (privados) ─────────────────────────────────────────
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 VALUES
   ('comprovantes-despesas', 'comprovantes-despesas', false, 10485760,
@@ -24,11 +13,11 @@ VALUES
    ARRAY['application/pdf', 'text/csv']),
   ('sst-programas', 'sst-programas', false, 20971520,
    ARRAY['application/pdf'])
-ON CONFLICT (id) DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET
+  public = false,
+  file_size_limit = EXCLUDED.file_size_limit,
+  allowed_mime_types = EXCLUDED.allowed_mime_types;
 
--- ── 2. Hardening: buckets de negócio jamais públicos ───────────────────────
--- documentos-admissão contém PII (RG/CPF); biometria é dado sensível
--- (LGPD art. 11). URL pública previsível é inaceitável.
 UPDATE storage.buckets
 SET public = false
 WHERE id IN (
@@ -38,10 +27,7 @@ WHERE id IN (
   'recrutamento-curriculos', 'relatorios-privados', 'sst-programas'
 )
 AND public = true;
--- NOTA: 'avatars' permanece público por decisão de produto (fotos de perfil
--- exibidas sem URL assinada). Não contém documento nem dado sensível.
 
--- ── 3. Helper: 1º segmento do path como empresa_id (sem cast error) ────────
 CREATE OR REPLACE FUNCTION public.storage_path_empresa_id(p_name text)
 RETURNS uuid
 LANGUAGE sql
@@ -56,86 +42,120 @@ AS $$
   END;
 $$;
 
-REVOKE ALL ON FUNCTION public.storage_path_empresa_id(text) FROM PUBLIC;
-REVOKE ALL ON FUNCTION public.storage_path_empresa_id(text) FROM anon;
-GRANT EXECUTE ON FUNCTION public.storage_path_empresa_id(text) TO authenticated;
+CREATE OR REPLACE FUNCTION public.user_belongs_to_empresa(p_user_id uuid, p_empresa_id uuid)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public, pg_catalog
+AS $$
+  SELECT EXISTS (
+    SELECT 1
+    FROM public.user_empresas ue
+    WHERE ue.user_id = p_user_id
+      AND ue.empresa_id = p_empresa_id
+      AND ue.ativo IS TRUE
+  );
+$$;
 
--- ── 4. Policies tenant-scoped para os novos buckets ────────────────────────
--- Convenção de path: <empresa_id>/<...arquivo>
---
--- Defesa em profundidade: garantir que storage.objects está com RLS ativo.
--- O Supabase ativa por padrão, mas instalações self-hosted divergentes podem
--- não ter — e policies sobre tabela sem RLS são ignoradas por completo.
+CREATE OR REPLACE FUNCTION public.user_can_manage_tenant_storage(
+  p_user_id uuid,
+  p_empresa_id uuid
+)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public, pg_catalog
+AS $$
+  SELECT EXISTS (
+    SELECT 1
+    FROM public.user_empresas ue
+    WHERE ue.user_id = p_user_id
+      AND ue.empresa_id = p_empresa_id
+      AND ue.ativo IS TRUE
+      AND ue.role::text IN ('admin', 'manager', 'supervisor')
+  );
+$$;
+
+REVOKE ALL ON FUNCTION public.storage_path_empresa_id(text) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.user_belongs_to_empresa(uuid, uuid) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.user_can_manage_tenant_storage(uuid, uuid) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.storage_path_empresa_id(text) TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.user_belongs_to_empresa(uuid, uuid) TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.user_can_manage_tenant_storage(uuid, uuid) TO authenticated, service_role;
+
 ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
 
 DO $$
 DECLARE
   b text;
-  buckets text[] := ARRAY[
+  readable_buckets text[] := ARRAY[
     'comprovantes-despesas', 'contabilidade-anexos',
     'relatorios-privados', 'sst-programas'
   ];
+  writable_buckets text[] := ARRAY[
+    'comprovantes-despesas', 'contabilidade-anexos'
+  ];
 BEGIN
-  FOREACH b IN ARRAY buckets LOOP
-    EXECUTE format(
-      'DROP POLICY IF EXISTS %I ON storage.objects',
+  FOREACH b IN ARRAY readable_buckets LOOP
+    EXECUTE format('DROP POLICY IF EXISTS %I ON storage.objects',
       'tenant_select_' || replace(b, '-', '_'));
     EXECUTE format(
       'CREATE POLICY %I ON storage.objects FOR SELECT TO authenticated
        USING (
          bucket_id = %L
-         AND public.storage_path_empresa_id(name) IS NOT NULL
          AND public.user_belongs_to_empresa(
-               auth.uid(), public.storage_path_empresa_id(name))
+           auth.uid(), public.storage_path_empresa_id(name))
        )',
       'tenant_select_' || replace(b, '-', '_'), b);
 
-    EXECUTE format(
-      'DROP POLICY IF EXISTS %I ON storage.objects',
+    EXECUTE format('DROP POLICY IF EXISTS %I ON storage.objects',
       'tenant_insert_' || replace(b, '-', '_'));
+    EXECUTE format('DROP POLICY IF EXISTS %I ON storage.objects',
+      'tenant_update_' || replace(b, '-', '_'));
+    EXECUTE format('DROP POLICY IF EXISTS %I ON storage.objects',
+      'tenant_delete_' || replace(b, '-', '_'));
+  END LOOP;
+
+  FOREACH b IN ARRAY writable_buckets LOOP
     EXECUTE format(
       'CREATE POLICY %I ON storage.objects FOR INSERT TO authenticated
        WITH CHECK (
          bucket_id = %L
-         AND public.storage_path_empresa_id(name) IS NOT NULL
+         AND owner = auth.uid()
          AND public.user_belongs_to_empresa(
-               auth.uid(), public.storage_path_empresa_id(name))
+           auth.uid(), public.storage_path_empresa_id(name))
        )',
       'tenant_insert_' || replace(b, '-', '_'), b);
 
     EXECUTE format(
-      'DROP POLICY IF EXISTS %I ON storage.objects',
-      'tenant_update_' || replace(b, '-', '_'));
-    EXECUTE format(
       'CREATE POLICY %I ON storage.objects FOR UPDATE TO authenticated
        USING (
          bucket_id = %L
-         AND public.storage_path_empresa_id(name) IS NOT NULL
          AND public.user_belongs_to_empresa(
-               auth.uid(), public.storage_path_empresa_id(name))
+           auth.uid(), public.storage_path_empresa_id(name))
+         AND (owner = auth.uid() OR public.user_can_manage_tenant_storage(
+           auth.uid(), public.storage_path_empresa_id(name)))
+       )
+       WITH CHECK (
+         bucket_id = %L
+         AND public.user_belongs_to_empresa(
+           auth.uid(), public.storage_path_empresa_id(name))
+         AND (owner = auth.uid() OR public.user_can_manage_tenant_storage(
+           auth.uid(), public.storage_path_empresa_id(name)))
        )',
-      'tenant_update_' || replace(b, '-', '_'), b);
+      'tenant_update_' || replace(b, '-', '_'), b, b);
 
-    EXECUTE format(
-      'DROP POLICY IF EXISTS %I ON storage.objects',
-      'tenant_delete_' || replace(b, '-', '_'));
     EXECUTE format(
       'CREATE POLICY %I ON storage.objects FOR DELETE TO authenticated
        USING (
          bucket_id = %L
-         AND public.storage_path_empresa_id(name) IS NOT NULL
          AND public.user_belongs_to_empresa(
-               auth.uid(), public.storage_path_empresa_id(name))
+           auth.uid(), public.storage_path_empresa_id(name))
+         AND (owner = auth.uid() OR public.user_can_manage_tenant_storage(
+           auth.uid(), public.storage_path_empresa_id(name)))
        )',
       'tenant_delete_' || replace(b, '-', '_'), b);
   END LOOP;
 END $$;
-
--- ── Verificação (preview antes de promover) ────────────────────────────────
--- SELECT id, public FROM storage.buckets WHERE id IN
---   ('comprovantes-despesas','contabilidade-anexos','relatorios-privados',
---    'sst-programas','documentos-admissao','ponto-biometria');
---   -- esperado: public = false em todas
--- SELECT count(*) FROM pg_policies WHERE schemaname = 'storage'
---   AND tablename = 'objects' AND policyname LIKE 'tenant\_%';
---   -- esperado: 16 (4 buckets × 4 comandos)

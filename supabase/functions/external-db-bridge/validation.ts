@@ -75,6 +75,8 @@ export const TABLE_DENYLIST = new Set<string>([
   "password_policies",
   "security_alerts",
   "audit_log",
+  "pii_access_logs",
+  "pii_access_alerts",
   "geo_blocking_config",
   "geo_allowed_countries",
   "govbr_auth_state",
@@ -111,6 +113,7 @@ export const RPC_ALLOWLIST = new Set<string>([
   "calcular_dias_ferias", "fn_calculate_periodo_aquisitivo",
   "fn_link_gov_br_account", "processar_ajuste_aprovado",
   "gerar_alertas_preditivos_ia",
+  "registrar_batida_ponto",
   "run_rls_tests",
   // rescisão — bloqueio de pagamento sem homologação/assinatura (achado
   // N25); ambas verificam is_admin(auth.uid()) por dentro. Ver

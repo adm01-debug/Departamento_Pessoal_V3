@@ -45,7 +45,11 @@ Deno.test({
   name: "[P1-027] payload > 256KB deve retornar 413 PAYLOAD_TOO_LARGE",
   ignore: !Deno.env.get("BRIDGE_URL"),
   async fn() {
-    const hugeData = { action: "select", table: "colaboradores", filters: [] };
+    const hugeData: {
+      action: string;
+      table: string;
+      filters: Array<{ column: string; op: string; value: string }>;
+    } = { action: "select", table: "colaboradores", filters: [] };
     // 270KB de lixo em filters[0].value
     hugeData.filters = [{ column: "id", op: "eq", value: "x".repeat(270 * 1024) }];
 
