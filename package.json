@@ -30,6 +30,7 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
+    "test:migrations": "bash scripts/tests/migrations-plano100.sh",
     "test:e2e:public": "playwright test --project=public",
     "test:e2e:auth": "playwright test --project=authenticated",
     "test:e2e:mobile": "playwright test --project=mobile-smoke",

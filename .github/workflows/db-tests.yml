@@ -1,0 +1,34 @@
+name: DB Migration Tests (PLANO_100)
+
+# Valida as migrations de segurança do PLANO_100 num Postgres 17 real:
+# stubs fiéis do Supabase + drift simulado → migrations ×2 (idempotência) →
+# suíte assertion-based (RLS, grants anti-drift, buckets, anomalia PII).
+# Gatilho restrito a caminhos relevantes para não queimar minutos de CI.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'supabase/migrations/2026*_plano100_*.sql'
+      - 'supabase/tests/plano100/**'
+      - 'scripts/tests/migrations-plano100.sh'
+  pull_request:
+    paths:
+      - 'supabase/migrations/2026*_plano100_*.sql'
+      - 'supabase/tests/plano100/**'
+      - 'scripts/tests/migrations-plano100.sh'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  plano100-migrations:
+    name: Migrations PLANO_100 (Postgres 17)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - name: Rodar suíte de validação
+        run: bash scripts/tests/migrations-plano100.sh
