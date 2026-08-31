@@ -16,7 +16,7 @@ describe('template do modelo de importação', () => {
 
     const headerRow = ws!.getRow(1).values as unknown[];
     // ExcelJS 1-indexes row.values → drop the first slot
-    expect((headerRow.slice(1) as string[])).toEqual([...TEMPLATE_HEADERS]);
+    expect(headerRow.slice(1) as string[]).toEqual([...TEMPLATE_HEADERS]);
 
     const sampleRow = (ws!.getRow(2).values as unknown[]).slice(1);
     expect(sampleRow).toEqual([...TEMPLATE_SAMPLE_ROW]);
@@ -48,10 +48,33 @@ describe('template do modelo de importação', () => {
     expect(headers).toEqual([...TEMPLATE_HEADERS]);
   });
 
+  it('mantém o ExcelJS compatível com o override de uuid em regras x14', async () => {
+    const wb = new ExcelJS.Workbook();
+    const ws = wb.addWorksheet('Compatibilidade');
+    ws.addRows([[10], [20], [30]]);
+    ws.addConditionalFormatting({
+      ref: 'A1:A3',
+      rules: [
+        {
+          type: 'dataBar',
+          priority: 1,
+          cfvo: [{ type: 'min' }, { type: 'max' }],
+          gradient: false,
+        },
+      ],
+    });
+
+    // Regras dataBar sem gradiente passam pelo renderer x14 do ExcelJS, que
+    // chama uuid.v4(). Este round-trip protege o override transitivo no runtime.
+    const buffer = await wb.xlsx.writeBuffer();
+    const parsed = new ExcelJS.Workbook();
+    await parsed.xlsx.load(buffer);
+
+    expect(parsed.getWorksheet('Compatibilidade')!.getCell('A3').value).toBe(30);
+  });
+
   it('expõe MIME e filename corretos para download .xlsx', () => {
-    expect(TEMPLATE_MIME).toBe(
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    );
+    expect(TEMPLATE_MIME).toBe('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     expect(TEMPLATE_FILENAME).toMatch(/\.xlsx$/);
   });
 });
