@@ -37,6 +37,7 @@ CREATE TABLE storage.objects (
   created_at timestamptz DEFAULT now(),
   UNIQUE (bucket_id, name)
 );
+ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
 CREATE FUNCTION storage.foldername("name" text) RETURNS text[]
 LANGUAGE sql IMMUTABLE AS $$ SELECT string_to_array("name", '/') $$;
 GRANT USAGE ON SCHEMA storage TO anon, authenticated, service_role;

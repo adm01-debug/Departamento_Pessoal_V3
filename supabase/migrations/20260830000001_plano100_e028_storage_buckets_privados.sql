@@ -83,7 +83,9 @@ GRANT EXECUTE ON FUNCTION public.storage_path_empresa_id(text) TO authenticated,
 GRANT EXECUTE ON FUNCTION public.user_belongs_to_empresa(uuid, uuid) TO authenticated, service_role;
 GRANT EXECUTE ON FUNCTION public.user_can_manage_tenant_storage(uuid, uuid) TO authenticated, service_role;
 
-ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+-- storage.objects já nasce com RLS habilitada no Supabase hospedado e pertence
+-- a supabase_storage_admin. O papel postgres pode criar policies, mas não pode
+-- executar ALTER TABLE nessa relação; repetir ENABLE RLS abortaria a migration.
 
 DO $$
 DECLARE
