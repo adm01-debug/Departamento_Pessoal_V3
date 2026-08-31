@@ -7,7 +7,7 @@
 # ============================================================================
 set -uo pipefail
 
-APP_URL="${APP_URL:-https://sistema-dp.lovable.app}"
+APP_URL="${APP_URL:-https://unified-harmony-hub.lovable.app}"
 SUPABASE_URL="${SUPABASE_URL:-${VITE_SUPABASE_URL:-}}"
 SUPABASE_PUBLISHABLE_KEY="${SUPABASE_PUBLISHABLE_KEY:-${VITE_SUPABASE_PUBLISHABLE_KEY:-}}"
 REQUIRE_BACKEND="${REQUIRE_BACKEND:-0}"

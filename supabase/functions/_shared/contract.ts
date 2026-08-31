@@ -19,11 +19,9 @@ const _extraOrigins = (Deno.env.get('EXTRA_ALLOWED_ORIGINS') ?? '')
   .filter(Boolean);
 
 const ALLOWED_ORIGINS = [
-  'https://sistema-dp.lovable.app',
   'https://unified-harmony-hub.lovable.app',
   ..._extraOrigins,
 ];
-const LOVABLE_HOST_RE = /\.lovable\.(app|dev)$/;
 
 // Localhost only allowed when running Supabase locally
 const _supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
@@ -53,7 +51,6 @@ function isOriginAllowed(origin: string): boolean {
     const host = url.hostname;
     return (
       ALLOWED_ORIGINS.includes(origin) ||
-      LOVABLE_HOST_RE.test(host) ||
       IS_LOCAL_DEV && isLocalhostOrigin(origin)
     );
   } catch {

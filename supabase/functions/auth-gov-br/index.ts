@@ -12,7 +12,6 @@ const GOVBR_TOKEN_URL = `${GOVBR_BASE_URL}/token`;
 const GOVBR_USERINFO_URL = `${GOVBR_BASE_URL}/userinfo`;
 
 const DEFAULT_ALLOWED_REDIRECT_ORIGINS = [
-  'https://sistema-dp.lovable.app',
   'https://unified-harmony-hub.lovable.app',
 ];
 

@@ -2,8 +2,8 @@
 // Executa com Deno: `deno test supabase/functions/_shared/rateLimit.test.ts --no-check`
 //
 // Escopo: verificamos os invariantes críticos — allowed/remaining/reset,
-// bloqueio quando count >= limit, fail-open em erro de DB, e insert só
-// quando allowed. Mockamos o SupabaseClient com stubs mínimos.
+// bloqueio quando count >= limit, fallback fail-closed em erro de DB e
+// isolamento por chave. Mockamos a RPC atômica usada pelo helper.
 import { assertEquals } from 'https://deno.land/std@0.208.0/assert/mod.ts';
 import { checkRateLimit, rateLimitResponse } from './rateLimit.ts';
 
@@ -21,43 +21,49 @@ function makeMockClient(opts: {
   };
 
   const client = {
-    from(table: string) {
-      if (table !== 'rate_limits') throw new Error(`tabela inesperada: ${table}`);
+    async rpc(name: string, args: {
+      p_key: string;
+      p_limit: number;
+      p_window_sec: number;
+      p_now: number;
+    }) {
+      if (name !== 'edge_rate_limit_check') {
+        throw new Error(`RPC inesperada: ${name}`);
+      }
+      if (opts.countError) return { data: null, error: opts.countError };
+
+      const windowStart = args.p_now - args.p_window_sec;
+      const beforeCleanup = state.rows.length;
+      state.rows = state.rows.filter(
+        row => row.key !== args.p_key || row.timestamp >= windowStart,
+      );
+      state.deletes += beforeCleanup - state.rows.length;
+
+      let current = state.rows.filter(row => row.key === args.p_key).length;
+      const allowed = current < args.p_limit;
+      if (allowed) {
+        const row = { key: args.p_key, timestamp: args.p_now };
+        state.rows.push(row);
+        state.inserts.push(row);
+        current += 1;
+      }
+
       return {
-        // delete().lt(...)  → thenable no-op
-        delete() {
-          return {
-            lt(_col: string, _val: number) {
-              state.deletes++;
-              return { then: (res: () => void) => { res(); return Promise.resolve(); } };
-            },
-          };
+        data: {
+          allowed,
+          current,
+          limit: args.p_limit,
+          remaining: Math.max(0, args.p_limit - current),
+          reset: args.p_now,
         },
-        // select('id', { count: 'exact', head: true }).eq(...).gte(...)
-        select(_cols: string, _opts: unknown) {
-          const chain = {
-            _key: '' as string,
-            _from: 0 as number,
-            eq(_col: string, v: string) { chain._key = v; return chain; },
-            async gte(_col: string, v: number) {
-              chain._from = v;
-              if (opts.countError) return { count: null, error: opts.countError };
-              const c = state.rows.filter(r => r.key === chain._key && r.timestamp >= chain._from).length;
-              return { count: c, error: null };
-            },
-          };
-          return chain;
-        },
-        // insert({ key, timestamp })
-        async insert(row: Row) {
-          state.inserts.push(row);
-          state.rows.push(row);
-          return { error: null };
-        },
+        error: null,
       };
     },
   };
-  return { client: client as any, state };
+  return {
+    client: client as unknown as Parameters<typeof checkRateLimit>[0],
+    state,
+  };
 }
 
 Deno.test('permite quando abaixo do limite e insere marcador', async () => {

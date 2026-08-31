@@ -1,8 +1,13 @@
 import { assertEquals } from "https://deno.land/std@0.168.0/testing/asserts.ts";
 
 const METRICAS_URL = "http://localhost:54321/functions/v1/metricas";
+const RUN_LOCAL_EDGE_TESTS = Deno.env.get("RUN_LOCAL_EDGE_TESTS") === "1";
 
-Deno.test("Metricas Contract - Valid Payload", async () => {
+function localEdgeTest(name: string, fn: () => void | Promise<void>): void {
+  Deno.test({ name, ignore: !RUN_LOCAL_EDGE_TESTS, fn });
+}
+
+localEdgeTest("Metricas Contract - Valid Payload", async () => {
   const payload = {
     empresaId: "00000000-0000-0000-0000-000000000000"
   };
@@ -21,7 +26,7 @@ Deno.test("Metricas Contract - Valid Payload", async () => {
   }
 });
 
-Deno.test("Metricas Contract - Invalid UUID", async () => {
+localEdgeTest("Metricas Contract - Invalid UUID", async () => {
   const payload = {
     empresaId: "invalid-uuid"
   };

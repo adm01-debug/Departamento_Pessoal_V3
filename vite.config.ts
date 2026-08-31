@@ -20,8 +20,8 @@ export default defineConfig(({ mode }) => ({
         secure: true,
         configure(proxy) {
           proxy.on("proxyReq", (proxyReq) => {
-            proxyReq.setHeader("origin", "https://sistema-dp.lovable.app");
-            proxyReq.setHeader("referer", "https://sistema-dp.lovable.app/");
+            proxyReq.setHeader("origin", "https://unified-harmony-hub.lovable.app");
+            proxyReq.setHeader("referer", "https://unified-harmony-hub.lovable.app/");
           });
         },
       },

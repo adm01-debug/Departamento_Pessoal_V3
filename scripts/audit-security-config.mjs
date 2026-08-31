@@ -6,6 +6,8 @@
  *   1. Função com `verify_jwt = false` fora da allowlist documentada
  *      (auth-login, healthcheck, metrics, webhook — ver supabase/config.toml).
  *   2. CORS wildcard (`Access-Control-Allow-Origin: *`) em edge functions.
+ *      Também bloqueia allowlist implícita para qualquer `*.lovable.app/dev`
+ *      e comparação de origem por prefixo.
  *   3. Ausência dos security headers em `_shared/contract.ts`.
  *   4. Segredo hardcoded no padrão do migrate-helper (A-015): string hex
  *      longa atribuída a constante com nome de chave/segredo.
@@ -54,8 +56,15 @@ sectionClean('nenhum CORS wildcard em edge functions');
 // ── 3. Security headers no contrato compartilhado ──────────────────────────
 section('3. Security headers (_shared/contract.ts)');
 const contract = readFileSync(join(FN_DIR, '_shared/contract.ts'), 'utf8');
+const csrf = readFileSync(join(FN_DIR, '_shared/csrf.ts'), 'utf8');
 if (/\?\s*[^:]+:\s*["']\*["']/.test(contract) || /getCorsHeaders\(\)\s*;[\s\S]*Access-Control-Allow-Origin[^\n]*\*/.test(contract)) {
   fail('fallback CORS wildcard presente em _shared/contract.ts');
+}
+if (contract.includes('LOVABLE_HOST_RE') || csrf.includes('LOVABLE_HOST_RE')) {
+  fail('allowlist implícita para qualquer subdomínio Lovable presente no contrato/CSRF');
+}
+if (/source\.startsWith\s*\(/.test(csrf)) {
+  fail('comparação de origem por prefixo presente em _shared/csrf.ts');
 }
 for (const h of ['X-Content-Type-Options', 'X-Frame-Options', 'Referrer-Policy', 'Strict-Transport-Security']) {
   if (!contract.includes(h)) fail(`header ${h} ausente em _shared/contract.ts`);

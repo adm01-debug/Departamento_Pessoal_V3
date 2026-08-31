@@ -133,7 +133,7 @@ async function runCsrf() {
     { name: 'origin_ausente', origin: null, expectBlock: true },
     { name: 'origin_evil', origin: 'https://evil.example.com', expectBlock: true },
     { name: 'origin_localhost', origin: 'http://localhost:8080', expectBlock: false },
-    { name: 'origin_preview', origin: 'https://id-preview--6b75936b-47df-442a-8778-2840c71d84af.lovable.app', expectBlock: false },
+    { name: 'origin_preview_nao_configurado', origin: 'https://id-preview--6b75936b-47df-442a-8778-2840c71d84af.lovable.app', expectBlock: true },
   ];
   const out = [];
   for (const c of cases) {

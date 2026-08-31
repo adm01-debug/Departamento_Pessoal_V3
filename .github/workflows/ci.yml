@@ -75,6 +75,8 @@ jobs:
         # Este é o único edge function com acesso a DB externo; erros de tipo
         # aqui causam falhas silenciosas em produção.
         run: deno check --no-lock supabase/functions/external-db-bridge/index.ts
+      - name: Testes unitários compartilhados das Edge Functions
+        run: deno test --allow-env --no-lock supabase/functions/_shared/*.test.ts
       - name: Type-check demais edge functions (informativo)
         # Passa mesmo com erros — apenas gera relatório para rastreamento progressivo.
         # As demais funções serão migradas gradualmente para zero erros.
@@ -176,5 +178,4 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/audit-embed-hints.mjs
-
 

@@ -12,12 +12,9 @@ const _extraOrigins = (Deno.env.get('EXTRA_ALLOWED_ORIGINS') ?? '')
   .filter(Boolean);
 
 const ALLOWED_ORIGINS = [
-  'https://sistema-dp.lovable.app',
   'https://unified-harmony-hub.lovable.app',
   ..._extraOrigins,
 ];
-
-const LOVABLE_HOST_RE = /\.lovable\.(app|dev)$/;
 
 // Localhost only allowed when running Supabase locally (SUPABASE_URL points to localhost)
 const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
@@ -59,8 +56,7 @@ export async function verifyCsrf(req: Request): Promise<CsrfResult> {
     const url = new URL(source);
     const host = url.hostname;
     const isAllowed =
-      ALLOWED_ORIGINS.some((o) => source.startsWith(o)) ||
-      LOVABLE_HOST_RE.test(host) ||
+      ALLOWED_ORIGINS.includes(url.origin) ||
       (IS_LOCAL_DEV && (host === 'localhost' || host === '127.0.0.1'));
 
     if (!isAllowed) {
