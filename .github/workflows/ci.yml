@@ -3,9 +3,9 @@ name: Continuous Integration & Delivery
 on:
   workflow_dispatch:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -74,9 +74,9 @@ jobs:
         # Verifica o bridge com zero tolerância — validado com 0 erros desde M6.
         # Este é o único edge function com acesso a DB externo; erros de tipo
         # aqui causam falhas silenciosas em produção.
-        run: deno check --no-lock supabase/functions/external-db-bridge/index.ts
+        run: deno check --no-lock --node-modules-dir=false supabase/functions/external-db-bridge/index.ts
       - name: Testes unitários compartilhados das Edge Functions
-        run: deno test --allow-env --no-lock supabase/functions/_shared/*.test.ts
+        run: deno test --allow-env --no-lock --node-modules-dir=false supabase/functions/_shared/*.test.ts
       - name: Type-check demais edge functions (informativo)
         # Passa mesmo com erros — apenas gera relatório para rastreamento progressivo.
         # As demais funções serão migradas gradualmente para zero erros.
@@ -87,7 +87,7 @@ jobs:
             dir=$(dirname "$fn")
             name=$(basename "$dir")
             if [ "$name" = "external-db-bridge" ]; then continue; fi
-            if ! deno check --no-lock "$fn" 2>/dev/null; then
+            if ! deno check --no-lock --node-modules-dir=false "$fn" 2>/dev/null; then
               ERRORS=$((ERRORS+1))
               echo "  ⚠ $name: erros de tipo (não bloqueia)"
             fi
@@ -178,4 +178,3 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/audit-embed-hints.mjs
-
