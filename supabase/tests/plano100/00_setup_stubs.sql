@@ -67,6 +67,13 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public, pg_catalog AS
        SELECT 1 FROM public.user_roles ur
        WHERE ur.user_id = _user_id AND ur.role = _role
      ) $$;
+CREATE FUNCTION public.user_belongs_to_empresa(_user_id uuid, _empresa_id uuid)
+RETURNS boolean
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS
+  $$ SELECT EXISTS (
+       SELECT 1 FROM public.user_empresas ue
+       WHERE ue.user_id = _user_id AND ue.empresa_id = _empresa_id
+     ) $$;
 
 -- Drift legado: uma sobrecarga pública que E-012 deve retirar da API.
 CREATE FUNCTION public.get_my_permissions(p_other_user uuid)
