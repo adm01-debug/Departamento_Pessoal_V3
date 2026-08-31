@@ -24,11 +24,32 @@ trap cleanup EXIT
 echo "── Container $IMAGE ($NAME)"
 docker rm -f "$NAME" >/dev/null 2>&1 || true
 docker run -d --name "$NAME" -e POSTGRES_PASSWORD=test "$IMAGE" >/dev/null
-for i in $(seq 1 30); do
-  docker exec "$NAME" pg_isready -U postgres >/dev/null 2>&1 && break
+
+# O entrypoint oficial inicia primeiro um servidor temporário somente via socket
+# para executar a inicialização e depois o reinicia em modo definitivo. Aguardar
+# pelo socket gera uma corrida no CI: o primeiro pg_isready passa e a chamada
+# seguinte pode cair exatamente durante o restart. TCP só fica disponível no
+# servidor definitivo, portanto é o sinal de readiness correto para esta suíte.
+postgres_ready=0
+for i in $(seq 1 60); do
+  if docker exec "$NAME" pg_isready -h 127.0.0.1 -U postgres >/dev/null 2>&1; then
+    postgres_ready=1
+    break
+  fi
+
+  if [ "$(docker inspect -f '{{.State.Running}}' "$NAME" 2>/dev/null || true)" != "true" ]; then
+    echo "❌ container postgres encerrou durante a inicialização"
+    docker logs "$NAME" >&2 || true
+    exit 1
+  fi
+
   sleep 1
 done
-docker exec "$NAME" pg_isready -U postgres >/dev/null 2>&1 || { echo "❌ postgres não subiu"; exit 1; }
+if [ "$postgres_ready" != "1" ]; then
+  echo "❌ postgres não ficou pronto em 60 segundos"
+  docker logs "$NAME" >&2 || true
+  exit 1
+fi
 
 run_sql() { # arquivo, rótulo
   docker cp "$1" "$NAME":/tmp/x.sql >/dev/null
