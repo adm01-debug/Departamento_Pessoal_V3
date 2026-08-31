@@ -1,4 +1,5 @@
--- Stubs mínimos alinhados ao schema canônico self-hosted (31/08/2026).
+-- Stubs mínimos alinhados ao schema canônico frjbfeamybqsejlvmqbl
+-- (PostgreSQL 17.6, inspecionado em 31/08/2026).
 \set ON_ERROR_STOP on
 
 CREATE ROLE anon NOLOGIN;
@@ -43,35 +44,40 @@ GRANT SELECT ON storage.buckets TO anon, authenticated, service_role;
 GRANT SELECT, INSERT, UPDATE, DELETE ON storage.objects TO authenticated, service_role;
 GRANT SELECT ON storage.objects TO anon;
 
-CREATE TYPE public.app_role AS ENUM (
-  'admin', 'manager', 'supervisor', 'agent', 'special_agent', 'dev',
-  'financeiro', 'operacional', 'visualizador', 'contador', 'operator', 'viewer'
-);
+CREATE TYPE public.app_role AS ENUM ('admin', 'gestor', 'rh', 'user');
 CREATE TABLE public.user_empresas (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid NOT NULL,
   empresa_id uuid NOT NULL,
-  role public.app_role NOT NULL,
   is_default boolean DEFAULT false,
-  provisioned_via text,
-  scim_external_id text,
-  ativo boolean NOT NULL DEFAULT true,
   created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now(),
   UNIQUE (user_id, empresa_id)
+);
+CREATE TABLE public.user_roles (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL,
+  role public.app_role NOT NULL DEFAULT 'user',
+  created_at timestamptz NOT NULL DEFAULT now(),
+  created_by uuid,
+  UNIQUE (user_id, role)
 );
 CREATE FUNCTION public.has_role(_user_id uuid, _role public.app_role) RETURNS boolean
 LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public, pg_catalog AS
   $$ SELECT EXISTS (
-       SELECT 1 FROM public.user_empresas ue
-       WHERE ue.user_id = _user_id AND ue.role = _role AND ue.ativo IS TRUE
+       SELECT 1 FROM public.user_roles ur
+       WHERE ur.user_id = _user_id AND ur.role = _role
      ) $$;
 
 -- Drift legado: uma sobrecarga pública que E-012 deve retirar da API.
 CREATE FUNCTION public.get_my_permissions(p_other_user uuid)
 RETURNS TABLE(permissao text, empresa_id uuid)
 LANGUAGE sql STABLE SECURITY DEFINER AS
-  $$ SELECT role::text, empresa_id FROM public.user_empresas WHERE user_id = p_other_user $$;
+  $$
+    SELECT ur.role::text, ue.empresa_id
+    FROM public.user_empresas ue
+    JOIN public.user_roles ur ON ur.user_id = ue.user_id
+    WHERE ue.user_id = p_other_user
+  $$;
 REVOKE ALL ON FUNCTION public.get_my_permissions(uuid) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.get_my_permissions(uuid) TO anon, authenticated;
 

@@ -1,5 +1,6 @@
 -- PLANO_100 · E-028 · Storage privado e isolamento por tenant.
--- Compatível com o schema canônico self-hosted (user_empresas.role/app_role).
+-- Compatível com o schema canônico frjbfeamybqsejlvmqbl:
+-- user_empresas contém apenas o vínculo; papéis ficam em user_roles.
 
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 VALUES
@@ -54,7 +55,6 @@ AS $$
     FROM public.user_empresas ue
     WHERE ue.user_id = p_user_id
       AND ue.empresa_id = p_empresa_id
-      AND ue.ativo IS TRUE
   );
 $$;
 
@@ -68,14 +68,12 @@ STABLE
 SECURITY DEFINER
 SET search_path = public, pg_catalog
 AS $$
-  SELECT EXISTS (
-    SELECT 1
-    FROM public.user_empresas ue
-    WHERE ue.user_id = p_user_id
-      AND ue.empresa_id = p_empresa_id
-      AND ue.ativo IS TRUE
-      AND ue.role::text IN ('admin', 'manager', 'supervisor')
-  );
+  SELECT public.user_belongs_to_empresa(p_user_id, p_empresa_id)
+    AND (
+      public.has_role(p_user_id, 'admin'::public.app_role)
+      OR public.has_role(p_user_id, 'gestor'::public.app_role)
+      OR public.has_role(p_user_id, 'rh'::public.app_role)
+    );
 $$;
 
 REVOKE ALL ON FUNCTION public.storage_path_empresa_id(text) FROM PUBLIC, anon;

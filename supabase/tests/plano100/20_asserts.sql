@@ -19,9 +19,12 @@ DO $$
 DECLARE e1 uuid := gen_random_uuid(); e2 uuid := gen_random_uuid();
 BEGIN
   INSERT INTO public._test_ctx VALUES ('e1', e1), ('e2', e2);
-  INSERT INTO public.user_empresas (user_id, empresa_id, role, ativo) VALUES
-    ('aaaaaaaa-0000-0000-0000-000000000001', e1, 'manager', true),
-    ('aaaaaaaa-0000-0000-0000-000000000002', e1, 'viewer', true);
+  INSERT INTO public.user_empresas (user_id, empresa_id) VALUES
+    ('aaaaaaaa-0000-0000-0000-000000000001', e1),
+    ('aaaaaaaa-0000-0000-0000-000000000002', e1);
+  INSERT INTO public.user_roles (user_id, role) VALUES
+    ('aaaaaaaa-0000-0000-0000-000000000001', 'gestor'),
+    ('aaaaaaaa-0000-0000-0000-000000000002', 'user');
 END $$;
 
 -- T1: buckets e helper de path.
@@ -205,7 +208,7 @@ BEGIN
 
   PERFORM auth._set_uid('aaaaaaaa-0000-0000-0000-000000000001');
   SELECT count(*) INTO perms FROM public.get_my_permissions()
-    WHERE papel='manager' AND empresa_id=(SELECT v FROM public._test_ctx WHERE k='e1');
+    WHERE papel='gestor' AND empresa_id=(SELECT v FROM public._test_ctx WHERE k='e1');
   SELECT count(*) INTO tenants FROM public.get_user_tenants()
     WHERE get_user_tenants=(SELECT v FROM public._test_ctx WHERE k='e1');
 

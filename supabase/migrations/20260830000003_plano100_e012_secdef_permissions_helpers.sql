@@ -1,4 +1,6 @@
 -- PLANO_100 · E-012 · Helpers de permissões compatíveis com o banco canônico.
+-- No projeto frjbfeamybqsejlvmqbl, vínculos vivem em user_empresas e os
+-- papéis globais do usuário em user_roles.
 
 DROP FUNCTION IF EXISTS public.get_my_permissions();
 CREATE FUNCTION public.get_my_permissions()
@@ -8,10 +10,11 @@ STABLE
 SECURITY DEFINER
 SET search_path = public, pg_catalog
 AS $$
-  SELECT ue.role::text, ue.role::text, ue.empresa_id
+  SELECT ur.role::text, ur.role::text, ue.empresa_id
   FROM public.user_empresas ue
+  JOIN public.user_roles ur ON ur.user_id = ue.user_id
   WHERE ue.user_id = auth.uid()
-    AND ue.ativo IS TRUE;
+  ORDER BY ue.empresa_id, ur.role::text;
 $$;
 
 DROP FUNCTION IF EXISTS public.get_user_tenants();
@@ -24,8 +27,7 @@ SET search_path = public, pg_catalog
 AS $$
   SELECT ue.empresa_id
   FROM public.user_empresas ue
-  WHERE ue.user_id = auth.uid()
-    AND ue.ativo IS TRUE;
+  WHERE ue.user_id = auth.uid();
 $$;
 
 REVOKE ALL ON FUNCTION public.get_my_permissions() FROM PUBLIC, anon;
