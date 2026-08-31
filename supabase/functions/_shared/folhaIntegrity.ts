@@ -11,7 +11,7 @@
 // `{ ok: false, code, details }` caso contrário, com o motivo específico
 // para logging/auditoria — sem vazar PII.
 
-import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
 
 export const FINANCIAL_TOLERANCE = 0.01; // R$ 0,01
 

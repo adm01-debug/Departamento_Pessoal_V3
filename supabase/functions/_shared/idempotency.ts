@@ -9,7 +9,7 @@
 //
 // Requer tabela public.idempotency_keys (migration 20260712190000).
 
-import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
+import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { corsHeaders, createErrorResponse } from "./contract.ts";
 
 const KEY_MIN = 16;

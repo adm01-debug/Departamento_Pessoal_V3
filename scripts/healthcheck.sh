@@ -19,7 +19,9 @@ check() {
   local code
   if [ "$use_apikey" = "1" ] && [ -n "$SUPABASE_PUBLISHABLE_KEY" ]; then
     code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time "$TIMEOUT" \
-      -H "apikey: $SUPABASE_PUBLISHABLE_KEY" "$url" 2>/dev/null)
+      -H "apikey: $SUPABASE_PUBLISHABLE_KEY" \
+      -H "Authorization: Bearer $SUPABASE_PUBLISHABLE_KEY" \
+      "$url" 2>/dev/null)
   else
     code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time "$TIMEOUT" "$url" 2>/dev/null)
   fi

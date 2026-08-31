@@ -8,7 +8,7 @@
 // pg_advisory_xact_lock para serializar verificações concorrentes da mesma chave,
 // eliminando a corrida TOCTOU do SELECT+INSERT não-atômico anterior.
 // RLS bloqueia acesso não-service-role — sempre passe um client com service role.
-import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
 import { corsHeaders } from './contract.ts';
 
 export interface RateLimitOptions {

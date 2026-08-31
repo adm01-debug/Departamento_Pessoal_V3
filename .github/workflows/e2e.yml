@@ -31,6 +31,27 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      - name: Validate E2E configuration
+        run: |
+          missing=()
+          for name in \
+            VITE_SUPABASE_URL \
+            VITE_SUPABASE_PUBLISHABLE_KEY \
+            E2E_USER_EMAIL \
+            E2E_USER_PASSWORD \
+            E2E_NON_ADMIN_EMAIL \
+            E2E_NON_ADMIN_PASSWORD
+          do
+            if [ -z "${!name:-}" ]; then
+              missing+=("$name")
+            fi
+          done
+
+          if [ "${#missing[@]}" -gt 0 ]; then
+            printf '::error::Required E2E configuration is missing: %s\n' "${missing[*]}"
+            exit 1
+          fi
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
