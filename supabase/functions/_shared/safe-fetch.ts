@@ -47,7 +47,7 @@ export class FetchTimeoutError extends Error {
 export class FetchNetworkError extends Error {
   readonly url: string;
   readonly tag?: string;
-  readonly cause: unknown;
+  override readonly cause: unknown;
 
   constructor(url: string, tag: string | undefined, cause: unknown) {
     super(`Network error for ${url}: ${String(cause)}`);

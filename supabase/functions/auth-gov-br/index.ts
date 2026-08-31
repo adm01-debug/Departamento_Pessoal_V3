@@ -1,5 +1,5 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
 import { z } from 'https://esm.sh/zod@3.23.8';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
@@ -201,7 +201,7 @@ serve(async (req: Request): Promise<Response> => {
 
     return json({ success: false, error: 'Ação inválida' }, 400);
   } catch (error: unknown) {
-    try { captureException(error, { fn: 'auth-gov-br' }); } catch { /* noop */ }
+    try { captureException(error, { function: 'auth-gov-br' }); } catch { /* noop */ }
     return json({ success: false, error: 'Erro interno' }, 500);
   }
 });

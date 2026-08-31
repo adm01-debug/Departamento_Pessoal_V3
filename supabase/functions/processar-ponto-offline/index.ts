@@ -1,5 +1,5 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
 import { integrityHash, sha256Hex } from '../_shared/integrityHash.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
@@ -132,7 +132,6 @@ serve(async (req: Request): Promise<Response> => {
           .from('user_empresas')
           .select('empresa_id')
           .eq('user_id', userId)
-          .eq('ativo', true)
           .in('empresa_id', derivedEmpresaIds)
       : { data: [] };
     const allowedEmpresas = new Set((memberships ?? []).map((m: any) => String(m.empresa_id)));
@@ -174,12 +173,12 @@ serve(async (req: Request): Promise<Response> => {
     const enforceHash = !!Deno.env.get('PONTO_HASH_SECRET');
 
     const results: {
-      success: number;
-      errors: number;
+      success_count: number;
+      error_count: number;
       rejected_invalid_hash: number;
       details: Array<{ id?: string; error: string; code?: string }>;
       batch_integrity_hash?: string;
-    } = { success: 0, errors: 0, rejected_invalid_hash: 0, details: [] };
+    } = { success_count: 0, error_count: 0, rejected_invalid_hash: 0, details: [] };
 
     const processedIds: string[] = [];
 
@@ -200,7 +199,7 @@ serve(async (req: Request): Promise<Response> => {
         if (enforceHash) {
           if (!reg.hash || !safeEqual(String(reg.hash), expected)) {
             results.rejected_invalid_hash++;
-            results.errors++;
+            results.error_count++;
             results.details.push({
               id: reg.id,
               error: 'Assinatura de integridade inválida',
@@ -225,7 +224,7 @@ serve(async (req: Request): Promise<Response> => {
           .maybeSingle();
 
         if (duplicate) {
-          results.success++;
+          results.success_count++;
           processedIds.push(String(duplicate.id));
           continue;
         }
@@ -299,18 +298,18 @@ serve(async (req: Request): Promise<Response> => {
 
         if (error) throw error;
         if (inserted?.id) processedIds.push(String(inserted.id));
-        results.success++;
+        results.success_count++;
       } catch (err) {
         console.error('[processar-ponto-offline] item error:', err instanceof Error ? err.message : err);
-        results.errors++;
+        results.error_count++;
         results.details.push({ id: reg?.id, error: 'Falha ao processar registro' });
       }
     }
 
     results.batch_integrity_hash = await integrityHash({
       total: registros.length,
-      success: results.success,
-      errors: results.errors,
+      success: results.success_count,
+      errors: results.error_count,
       rejected_invalid_hash: results.rejected_invalid_hash,
       processed_ids: processedIds.sort(),
       enforce_hash: enforceHash,
@@ -321,7 +320,7 @@ serve(async (req: Request): Promise<Response> => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    try { captureException(error, { fn: 'processar-ponto-offline' }); } catch { /* noop */ }
+    try { captureException(error, { function: 'processar-ponto-offline' }); } catch { /* noop */ }
     return new Response(JSON.stringify({ success: false, error: 'Erro interno no processamento offline', code: 'INTERNAL_SERVER_ERROR' }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500,
     });
