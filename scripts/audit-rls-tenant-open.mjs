@@ -121,6 +121,10 @@ const ALLOWLIST = new Map([]);
  * ficam de fora porque `auth` não é schema de tenant.
  */
 const QUERY = `
+-- pg_get_expr (usado por pg_policies) qualifica nomes conforme o search_path
+-- da sessão. Vazio preserva auth.uid()/auth.jwt() e evita falsos positivos.
+SET search_path = '';
+
 WITH RECURSIVE alcanca_tenant(oid, profundidade) AS (
   -- base: a tabela carrega o próprio tenant
   SELECT c.oid, 0

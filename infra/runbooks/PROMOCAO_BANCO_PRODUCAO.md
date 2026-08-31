@@ -24,24 +24,21 @@
 - [ ] Janela de manutenção comunicada (mudanças de policy/grant podem cortar
       acessos indevidos que hoje "funcionam" por acidente).
 
-## 2. Baseline — reconciliar o ledger (uma vez só)
+## 2. Baseline — reconciliação do ledger (uma vez só)
 
-O ledger vivo (`schema_migrations`) não corresponde ao repo. Decisão tomada:
-**adotar o repo como fonte da verdade, marcando o estado vivo como baseline.**
+> **BLOQUEADO em 31/08/2026.** O replay real falha no arquivo ordinal 529,
+> o prefixo replayável diverge do canônico em milhares de itens e os cinco
+> gates de segurança reprovam. É proibido marcar as migrations antigas como
+> aplicadas/revertidas ou executar `db push` nesse estado.
 
-```bash
-# 1. Gerar dump do schema vivo (segurança + referência)
-supabase db dump --db-url "$SUPABASE_DB_URL" -f backups/pre_baseline_$(date +%F).sql
+Seguir integralmente
+[`RECONCILIACAO_DRIFT_MIGRATIONS.md`](./RECONCILIACAO_DRIFT_MIGRATIONS.md).
+O candidato fiel ao schema vivo está em
+`supabase/baseline/20260831_canonical/`, deliberadamente fora da cadeia ativa.
 
-# 2. Marcar como aplicadas (sem executar) todas as migrations até o ponto de
-#    corte validado em staging:
-supabase migration repair --status applied <versão>   # por versão, ou:
-supabase migration repair --status reverted <versão>  # para as que quebram replay
-```
-
-> ⚠️ Migrations conhecidas por quebrar em replay (ver `docs/auditoria/estado/09`):
-> `20260818000000_p2_037_deprecate_legacy_tables.sql` (renomeia tabelas que
-> nunca existiram em prod). Marcar como `reverted` para tirá-la do caminho.
+Depois de restore, diff, segurança e staging hospedado verdes, manter
+placeholders para as 33 versões já registradas e marcar **somente o novo
+timestamp do squash** como aplicado. Nunca reparar centenas de versões.
 
 ## 3. Ordem de aplicação (lotes, com verificação entre eles)
 
@@ -55,9 +52,9 @@ supabase migration repair --status reverted <versão>  # para as que quebram rep
 | **B6 — Helpers** | `20260830000003_plano100_e012_*` (get_my_permissions/tenants) | §5.6 |
 | **B7 — Crons** | jobs `lgpd-*`, `purge-*`, `refresh-*` | `cron.job` contém os nomes |
 
-```bash
-supabase db push --db-url "$SUPABASE_DB_URL"   # aplica o que falta, em ordem
-```
+Cada lote deve ser promovido por arquivo explícito e transação assistida. O
+comando genérico `supabase db push` permanece bloqueado até a ativação do
+squash e a eliminação das versões duplicadas.
 
 ## 4. Critérios de rollback
 
@@ -93,11 +90,15 @@ WHERE schemaname = 'public' AND qual = 'true'
   AND tablename NOT IN ('cid10','paises','generos'); -- catálogos públicos
 ```
 
-### 5.4 Buckets (alvo: 13 privados + avatars público)
+### 5.4 Buckets
 ```sql
 SELECT id, public FROM storage.buckets ORDER BY id;
--- documentos-admissao e ponto-biometria DEVEM estar public = false
 ```
+
+O canônico possui atualmente apenas quatro buckets privados
+(`comprovantes-despesas`, `contabilidade-anexos`, `relatorios-privados` e
+`sst-programas`). A aplicação referencia outros buckets; a lista definitiva
+deve ser reconciliada em staging antes da promoção.
 
 ### 5.5 Trilha PII
 ```sql

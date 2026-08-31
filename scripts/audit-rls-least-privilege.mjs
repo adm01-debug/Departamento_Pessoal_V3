@@ -139,6 +139,10 @@ const ISENCOES = new Map([
 ]);
 
 const QUERY = `
+-- Evita que pg_policies remova os schemas de auth.uid()/auth.jwt() conforme o
+-- papel da conexão, o que tornava o gate dependente do ambiente.
+SET search_path = '';
+
 SELECT
   p.tablename,
   p.policyname,

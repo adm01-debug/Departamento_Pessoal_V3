@@ -1,0 +1,47 @@
+{
+  "generated_at": "2026-08-31T16:24:39.802Z",
+  "migrations_directory": "supabase/migrations",
+  "local_files": 644,
+  "remote_versions": 33,
+  "exact_version_intersection": 3,
+  "remote_only_versions": 30,
+  "duplicate_versions": [
+    {
+      "version": "20260724120000",
+      "count": 2
+    },
+    {
+      "version": "20260724130000",
+      "count": 2
+    },
+    {
+      "version": "20260724140000",
+      "count": 2
+    },
+    {
+      "version": "20260818000000",
+      "count": 2
+    }
+  ],
+  "invalid_timestamp_files": 69,
+  "last_successful_ordinal": 528,
+  "first_failed_file": "20260724100000_p3_054_mv_telemetry_dashboard.sql",
+  "classification_counts": {
+    "ausente": 104,
+    "ja_aplicada": 3,
+    "obsoleta": 1,
+    "parcial": 566
+  },
+  "ledger_status_counts": {
+    "applied": 3,
+    "missing": 641,
+    "source_missing": 30
+  },
+  "replay_status_counts": {
+    "falhou": 1,
+    "nao_alcancada": 115,
+    "nao_aplicavel": 30,
+    "replay_ok": 528
+  },
+  "caveat": "Classificacao operacional conservadora. \"parcial\" indica que o arquivo foi replayavel, mas nao possui prova individual no ledger e o inventario fisico final diverge. Nao equivale a afirmar que todo DDL do arquivo esta vivo."
+}

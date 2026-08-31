@@ -1,1 +1,5 @@
 graphify-out/graph.json merge=graphify
+
+# Snapshots gerados pelo pg_dump devem preservar os bytes originais. Espaços
+# finais podem fazer parte de corpos/strings SQL e não devem ser formatados.
+supabase/baseline/20260831_canonical/canonical_*.sql -text -whitespace linguist-generated=true

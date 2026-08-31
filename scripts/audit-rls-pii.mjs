@@ -103,6 +103,10 @@ const ALLOWLIST = new Map([
 ]);
 
 const QUERY = `
+-- Torna a decompilação de pg_policies determinística e mantém auth.uid()
+-- qualificado; com search_path padrão ele pode aparecer apenas como uid().
+SET search_path = '';
+
 WITH pii_tables AS (
   SELECT DISTINCT c.table_name
   FROM information_schema.columns c

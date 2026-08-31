@@ -12,6 +12,10 @@ test-results
 e2e/.auth
 supabase/.temp/
 
+# Backups lógicos locais: podem conter Auth, PII e tokens de sessão.
+# Nunca versionar; manter com permissões 0700/0600 e copiar para cofre seguro.
+.local-backups/
+
 # Build artifacts
 *.tsbuildinfo
 *.tgz
