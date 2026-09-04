@@ -34,7 +34,7 @@ export async function registrarAcessoPII(
     } = await supabase.auth.getSession();
     if (!session?.user?.id || !opts.empresaId) return;
 
-    await supabase.rpc('record_pii_access', {
+    await (supabase.rpc as (fn: string, args: Record<string, unknown>) => Promise<unknown>)('record_pii_access', {
       p_empresa_id: opts.empresaId,
       p_tabela: tabela,
       p_acao: acao,
