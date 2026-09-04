@@ -2,6 +2,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { toast } from 'sonner';
 import type { Database } from './types';
+import { brokeredPreviewStorage } from './previewAuthStorage';
 import { secureJsonParse } from '@/utils/secureJson';
 import { loggerService } from '@/services/loggerService';
 
@@ -31,7 +32,7 @@ export const supabaseBase = createClient<Database>(
   SUPABASE_PUBLISHABLE_KEY,
   {
     auth: {
-      storage: localStorage,
+      storage: brokeredPreviewStorage(),
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true,
