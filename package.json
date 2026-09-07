@@ -111,7 +111,7 @@
     "@playwright/test": "1.62.1",
     "@sentry/vite-plugin": "5.4.0",
     "@tailwindcss/postcss": "4.3.3",
-    "@tanstack/react-table": "^8.20.5",
+    "@tanstack/react-table": "^9.2.4",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "14.6.6",
