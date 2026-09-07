@@ -56,12 +56,6 @@ function isTimeoutError(e: unknown): boolean {
   return e.name === "TimeoutError" || e.name === "AbortError" || /timed out|aborted|timeout/i.test(e.message);
 }
 
-const LOGIN_PROTECTION_RPC_FALLBACKS: Record<string, unknown> = {
-  check_login_lock: false,
-  record_failed_login: null,
-  reset_login_attempts: null,
-};
-
 // -------------------- Zod schemas --------------------
 const MAX_FILTER_VALUE_BYTES = 8 * 1024; // 8 KB por valor escalar de filtro
 const boundedFilterValue = z.unknown().refine((v) => {
@@ -454,13 +448,10 @@ Deno.serve(async (req) => {
 
   // Validação: writes e RPCs protegidas exigem auth
   const isWrite = action === "insert" || action === "update" || action === "delete" || action === "upsert";
-  // RPCs públicas: chamadas antes/fora de sessão de usuário (login protection + onboarding).
-  // Todos os demais RPCs do allowlist operam sobre dados tenant-scoped e requerem auth.
+  // RPC pública: onboarding por token antes de existir sessão de usuário.
+  // Proteções de login/rate-limit rodam exclusivamente em edges com service_role;
+  // expô-las aqui permitiria lockout/enumeração acionados por terceiros.
   const PUBLIC_RPCS = new Set<string>([
-    "check_login_lock", "record_failed_login", "reset_login_attempts",
-    "check_account_lockout", "record_login_attempt", "reset_account_lockout",
-    "check_brute_force", "check_rate_limit", "is_ip_blocked", "is_ip_whitelisted",
-    "is_country_allowed",
     "get_admissao_por_token",
   ]);
   const isProtectedRpc = action === "rpc" && rpcName != null && !PUBLIC_RPCS.has(rpcName);
@@ -761,10 +752,6 @@ Deno.serve(async (req) => {
         return jsonError(403, "RPC_DENIED", `RPC '${rpcName}' is not in allowlist`);
       }
       const t0 = performance.now();
-      if (rpcName in LOGIN_PROTECTION_RPC_FALLBACKS) {
-        const durationMs = Math.round(performance.now() - t0);
-        return jsonOk({ data: LOGIN_PROTECTION_RPC_FALLBACKS[rpcName], duration_ms: durationMs });
-      }
       const { data: rpcData, error } = await externalUserClient.rpc(rpcName, (rpcArgs || {}) as Record<string, unknown>);
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({

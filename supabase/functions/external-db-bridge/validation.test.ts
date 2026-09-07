@@ -150,7 +150,11 @@ Deno.test("operadores: allowlist", () => {
 // ---------------------------------------------------------------------------
 Deno.test("rpc allowlist", () => {
   for (const r of ["has_role","is_admin","admin_set_user_role","assinar_desligamento","get_admissao_por_token","registrar_batida_ponto"]) ok(RPC_ALLOWLIST.has(r), `rpc permitida: ${r}`);
-  for (const r of ["pg_sleep","drop_table","exec","delete_all_users","'; DROP","set_config","pg_read_file","dblink"]) ok(!RPC_ALLOWLIST.has(r), `rpc proibida: ${r}`);
+  for (const r of [
+    "pg_sleep","drop_table","exec","delete_all_users","'; DROP","set_config","pg_read_file","dblink",
+    "record_failed_login","reset_login_attempts","check_rate_limit","check_brute_force",
+    "is_ip_blocked","is_ip_whitelisted","is_country_allowed","fn_link_gov_br_account",
+  ]) ok(!RPC_ALLOWLIST.has(r), `rpc proibida: ${r}`);
 });
 
 // ---------------------------------------------------------------------------
@@ -187,7 +191,9 @@ Deno.test("fuzz: payloads combinatórios de injeção sempre rejeitados", () => 
 // ---------------------------------------------------------------------------
 Deno.test("listas: sanidade e disjunção", () => {
   ok(TABLE_DENYLIST.size >= 15, "denylist com tamanho esperado");
-  ok(RPC_ALLOWLIST.size >= 30, "rpc allowlist com tamanho esperado");
+  // A superfície foi deliberadamente reduzida: rotinas de lockout, IP,
+  // rate-limit e manutenção não podem atravessar o bridge público.
+  ok(RPC_ALLOWLIST.size >= 15 && RPC_ALLOWLIST.size <= 25, "rpc allowlist com tamanho esperado");
   // nenhuma tabela de negócio (tenant-scoped) pode estar simultaneamente na denylist
 });
 

@@ -6,7 +6,6 @@ import { brokeredPreviewStorage } from './previewAuthStorage';
 import { secureJsonParse } from '@/utils/secureJson';
 import { loggerService } from '@/services/loggerService';
 
-
 // Projeto ativo: variáveis de ambiente são obrigatórias (P0-008).
 // Chave canônica única: VITE_SUPABASE_PUBLISHABLE_KEY (sem fallback legado).
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
@@ -20,25 +19,22 @@ const FUNCTIONS_BASE = import.meta.env.VITE_SUPABASE_FUNCTIONS_BASE?.trim() || `
 if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
   throw new Error(
     '[SUPABASE] VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY ' +
-      'são obrigatórias. Configure no .env antes do build. Veja .env.example.',
+      'são obrigatórias. Configure no .env antes do build. Veja .env.example.'
   );
 }
 
 // Base client usado para Auth/Storage. Toda I/O de dados vai pela bridge.
 // Exportado também como `supabaseBase` para uso em casos especiais (ex.: client.base.ts)
 // onde o proxy de bridge não deve mediar (audit_log, tabelas de sistema, etc).
-export const supabaseBase = createClient<Database>(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY,
-  {
-    auth: {
-      storage: brokeredPreviewStorage(),
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true,
-      flowType: 'pkce'}
-  }
-);
+export const supabaseBase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  auth: {
+    storage: brokeredPreviewStorage(),
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    flowType: 'pkce',
+  },
+});
 
 // ── Idempotency retry helper (P3-061) ───────────────────────────────────────
 // Backoff: 1s → 5s → 25s. Máximo 3 tentativas.
@@ -53,21 +49,26 @@ async function sleep(ms: number): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function fetchWithRetry(
+export async function fetchWithRetry(
   url: string,
   options: RequestInit,
-  isWrite: boolean,
+  isWrite: boolean
 ): Promise<{ res: Response; idempotencyKey: string | null }> {
+  // A chave de idempotência pertence à OPERAÇÃO LÓGICA, não à tentativa. Se for
+  // gerada dentro do laço, o header nunca sobrevive ao retry e cada tentativa
+  // leva uma chave nova — de modo que um 502 devolvido DEPOIS do commit faz a
+  // tentativa seguinte parecer uma operação inédita e o servidor grava de novo.
+  // Gerar uma única vez, fora do laço, é justamente o que torna o retry seguro.
+  const baseHeaders = { ...options.headers } as Record<string, string>;
   let idempotencyKey: string | null = null;
 
-  for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
-    const headers = { ...options.headers } as Record<string, string>;
+  if (isWrite) {
+    idempotencyKey = baseHeaders['Idempotency-Key'] ?? crypto.randomUUID();
+    baseHeaders['Idempotency-Key'] = idempotencyKey;
+  }
 
-    // Writes GET idempotency key auto-gerado (não afeta reads).
-    if (isWrite && !headers['Idempotency-Key']) {
-      idempotencyKey = crypto.randomUUID();
-      headers['Idempotency-Key'] = idempotencyKey;
-    }
+  for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
+    const headers = { ...baseHeaders };
 
     const res = await fetch(url, { ...options, headers });
 
@@ -149,11 +150,14 @@ const callBridge = async <T = any>(
   target: string,
   payload: BridgePayload = {}
 ): Promise<BridgeResponse<T>> => {
-  const { data: { session } } = await supabaseBase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabaseBase.auth.getSession();
   const body: RpcBody = {
     action,
     ...(action === 'rpc' ? { fn: target } : { table: target }),
-    ...payload};
+    ...payload,
+  };
 
   // P0-009: nunca usar anon key como Authorization. Writes exigem JWT válido;
   // reads anônimos continuam permitidos (compatibilidade com o frontend).
@@ -171,10 +175,12 @@ const callBridge = async <T = any>(
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'apikey': SUPABASE_PUBLISHABLE_KEY,
-          'Authorization': `Bearer ${bearerToken || SUPABASE_PUBLISHABLE_KEY}`},
-        body: JSON.stringify(body)},
-      isWrite,
+          apikey: SUPABASE_PUBLISHABLE_KEY,
+          Authorization: `Bearer ${bearerToken || SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify(body),
+      },
+      isWrite
     );
     const rawText = await res.text().catch(() => '{}');
     const json: {
@@ -192,10 +198,12 @@ const callBridge = async <T = any>(
 
       // Erros de função/tabela/coluna ausente NÃO devem poluir a UI com toast.
       // Apenas propagamos o erro para quem chamou tratar (ou ignorar).
-      const isMissingObject = /Could not find the (function|table)|schema cache|does not exist|column .* does not exist/i.test(errorMsg);
+      const isMissingObject =
+        /Could not find the (function|table)|schema cache|does not exist|column .* does not exist/i.test(errorMsg);
       if (!isMissingObject) {
         toast.error('Erro ao processar operação no banco de dados.', {
-          duration: 6000});
+          duration: 6000,
+        });
       }
 
       return { data: null, count: 0, error: { message: errorMsg } };
@@ -204,17 +212,21 @@ const callBridge = async <T = any>(
     if (payload.single) data = Array.isArray(data) ? ((data as unknown[])[0] ?? null) : data;
 
     if (json.duration_ms && json.duration_ms > 1000) {
-      loggerService.warn(`[BRIDGE_SLOW_QUERY] ${action} em ${target} demorou ${json.duration_ms}ms`, { action, target, duration_ms: json.duration_ms });
+      loggerService.warn(`[BRIDGE_SLOW_QUERY] ${action} em ${target} demorou ${json.duration_ms}ms`, {
+        action,
+        target,
+        duration_ms: json.duration_ms,
+      });
     }
 
     return { data: data as T | null, count: json.count, error: null };
   } catch (err: unknown) {
-    const isNetworkError =
-      err instanceof Error &&
-      (err.message === 'Failed to fetch' || err.name === 'TypeError');
+    const isNetworkError = err instanceof Error && (err.message === 'Failed to fetch' || err.name === 'TypeError');
     const errorMsg = isNetworkError
       ? 'Erro de conexão com o banco. Verifique sua internet.'
-      : (err instanceof Error ? err.message : 'Erro desconhecido');
+      : err instanceof Error
+        ? err.message
+        : 'Erro desconhecido';
 
     loggerService.error('BRIDGE_FATAL_ERROR', { isNetworkError }, err instanceof Error ? err : undefined);
 
@@ -278,19 +290,20 @@ export type QueryBuilderType = ChainableQueryBuilder;
 const createQueryBuilder = (table: string): TerminalQueryBuilder => {
   const state: { action: Action; payload: BridgePayload } = {
     action: 'select',
-    payload: { filters: [] }};
+    payload: { filters: [] },
+  };
 
   const exec = <T = any>() => callBridge<T>(state.action, table, state.payload);
 
   const addFilter = (column: string, op: string, value: unknown): TerminalQueryBuilder => {
     // Se o valor for "undefined" ou "null" como string, converte para null real.
     // Se for "all", ignoramos o filtro para permitir listagem completa.
-    if (value === "all") return builder;
-    
-    // Filtros de busca vazios não devem ser aplicados
-    if (value === "" && (op === 'ilike' || op === 'like')) return builder;
+    if (value === 'all') return builder;
 
-    const cleanValue = (value === "undefined" || value === "null") ? null : value;
+    // Filtros de busca vazios não devem ser aplicados
+    if (value === '' && (op === 'ilike' || op === 'like')) return builder;
+
+    const cleanValue = value === 'undefined' || value === 'null' ? null : value;
     state.payload.filters = [...(state.payload.filters || []), { column, op, value: cleanValue }];
     return builder;
   };
@@ -333,8 +346,11 @@ const createQueryBuilder = (table: string): TerminalQueryBuilder => {
     in: (c: string, v: unknown[]) => addFilter(c, 'in', v),
     is: (c: string, v: unknown) => addFilter(c, 'is', v),
     not: (c: string, op: string, v: unknown) => {
-      const cleanValue = (v === "undefined" || v === "null") ? null : v;
-      state.payload.filters = [...(state.payload.filters || []), { column: c, op: 'not', value: cleanValue, extraOp: op }];
+      const cleanValue = v === 'undefined' || v === 'null' ? null : v;
+      state.payload.filters = [
+        ...(state.payload.filters || []),
+        { column: c, op: 'not', value: cleanValue, extraOp: op },
+      ];
       return builder;
     },
     contains: (c: string, v: unknown) => addFilter(c, 'contains', v),
@@ -359,16 +375,22 @@ const createQueryBuilder = (table: string): TerminalQueryBuilder => {
       state.payload.limit = n;
       return builder;
     },
-    single: () => { state.payload.single = true; return builder; },
-    maybeSingle: () => { state.payload.single = true; return builder; },
+    single: () => {
+      state.payload.single = true;
+      return builder;
+    },
+    maybeSingle: () => {
+      state.payload.single = true;
+      return builder;
+    },
     then: (resolve: (value: BridgeResult) => unknown, reject?: AnyFn) => exec().then(resolve, reject),
     catch: (reject: AnyFn) => exec().catch(reject),
-    finally: (cb: AnyFn) => exec().finally(cb)};
+    finally: (cb: AnyFn) => exec().finally(cb),
+  };
 
   return builder;
 };
 
- 
 interface SupabaseProxyTarget {
   from: (table: string) => ChainableQueryBuilder;
   rpc: (fn: string, params: Record<string, unknown>) => Promise<BridgeResponse<any>>;
@@ -377,16 +399,15 @@ interface SupabaseProxyTarget {
 
 const proxyTarget: SupabaseProxyTarget = {
   from: (table: string) => createQueryBuilder(table),
-  rpc: (fn: string, params: Record<string, unknown>) =>
-    callBridge('rpc', fn, { params })};
+  rpc: (fn: string, params: Record<string, unknown>) => callBridge('rpc', fn, { params }),
+};
 
 const dbBridgeProxy: ProxyHandler<SupabaseProxyTarget> = {
   get(target, prop, receiver) {
     if (prop === 'from') return (table: string) => createQueryBuilder(table);
-    if (prop === 'rpc') return (fn: string, params: Record<string, unknown>) =>
-      callBridge('rpc', fn, { params });
+    if (prop === 'rpc') return (fn: string, params: Record<string, unknown>) => callBridge('rpc', fn, { params });
     return Reflect.get(target, prop, receiver);
-  }
+  },
 };
 
 export const supabase = new Proxy(

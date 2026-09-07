@@ -86,15 +86,33 @@ const ALLOWLIST = new Map([
   ['get_user_default_empresa', 'Primitivo de escopo de tenant.'],
 ]);
 
-/** Executa SQL via psql usando as variáveis PG* do ambiente. */
+/**
+ * Banco acessível quando PGHOST (padrão libpq) ou DATABASE_URL/SUPABASE_DB_URL
+ * (padrão dos secrets do CI) está definido. Mesmo critério dos scripts irmãos
+ * (audit-rls-pii.mjs etc.) — sem isso, o gate ficava mudo mesmo quando o CI
+ * já injetava DATABASE_URL, porque nunca chegava a repassar a conexão ao psql.
+ */
+function hasDb() {
+  return Boolean(process.env.PGHOST || process.env.DATABASE_URL || process.env.SUPABASE_DB_URL);
+}
+
+/** Executa SQL via psql, repassando DATABASE_URL/SUPABASE_DB_URL quando presentes. */
 function query(sql) {
-  return execFileSync('psql', ['-At', '-F', '\u0001', '-c', sql], {
+  const args = ['-At', '-F', '\u0001', '-c', sql];
+  const conn = process.env.DATABASE_URL || process.env.SUPABASE_DB_URL;
+  if (!process.env.PGHOST && conn) args.unshift(conn);
+  return execFileSync('psql', args, {
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
   });
 }
 
 function main() {
+  if (!hasDb()) {
+    console.warn('[secdef-authz] Defina PGHOST/PG* ou DATABASE_URL para habilitar o gate.');
+    return 0;
+  }
+
   let rows;
   try {
     rows = query(`
@@ -106,6 +124,15 @@ function main() {
         FROM pg_proc p
         JOIN pg_namespace n ON n.oid = p.pronamespace
        WHERE n.nspname = 'public' AND p.prokind = 'f'
+         -- Funções pertencentes a extensões são gerenciadas pelo provedor,
+         -- não são RPCs da aplicação e não podem ser alteradas pelo papel do
+         -- projeto (ex.: event triggers internos do pgaudit).
+         AND NOT EXISTS (
+           SELECT 1
+           FROM pg_depend d
+           JOIN pg_extension e ON e.oid = d.refobjid
+           WHERE d.objid = p.oid AND d.deptype = 'e'
+         )
     `);
   } catch (err) {
     console.warn(

@@ -1,3 +1,1 @@
-#!/bin/sh
-. "\"\/bin/_/husky.sh"
-npm run lint
+npx lint-staged

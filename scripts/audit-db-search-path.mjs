@@ -38,7 +38,7 @@ WITH ext AS (
   WHERE n.nspname <> 'pg_catalog'
 ),
 ext_fn AS (
-  SELECT DISTINCT e.extname, e.sch, p.proname
+  SELECT DISTINCT e.extname, e.sch, p.proname, p.oid AS ext_fn_oid
   FROM ext e
   JOIN pg_extension x ON x.extname = e.extname
   JOIN pg_depend d ON d.refobjid = x.oid AND d.deptype = 'e'
@@ -52,6 +52,7 @@ ext_fn AS (
 SELECT f.extname || E'\t' || f.sch || E'\t' || f.proname || E'\t' || c.oid::regprocedure::text
 FROM ext_fn f
 JOIN pg_proc c ON c.prosrc ~ ('\\m' || f.proname || '\\M')
+  AND c.oid <> f.ext_fn_oid
 JOIN pg_namespace cn ON cn.oid = c.pronamespace AND cn.nspname = 'public'
 WHERE c.proconfig IS NOT NULL
   AND array_to_string(c.proconfig, ',') ~ 'search_path'
