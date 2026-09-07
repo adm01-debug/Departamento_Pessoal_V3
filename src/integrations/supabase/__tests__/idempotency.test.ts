@@ -31,9 +31,7 @@ describe('fetchWithRetry — idempotência sob retry', () => {
       const headers = init.headers as Record<string, string>;
       chavesEnviadas.push(headers['Idempotency-Key']);
       // Duas falhas retryable, depois sucesso.
-      return chavesEnviadas.length < 3
-        ? new Response(null, { status: 502 })
-        : new Response(null, { status: 200 });
+      return chavesEnviadas.length < 3 ? new Response(null, { status: 502 }) : new Response(null, { status: 200 });
     });
     vi.stubGlobal('fetch', fetchMock);
 
@@ -54,7 +52,7 @@ describe('fetchWithRetry — idempotência sob retry', () => {
     const { idempotencyKey } = await fetchWithRetry(
       'https://x/y',
       { method: 'POST', headers: { 'Idempotency-Key': 'chave-do-chamador' } },
-      true,
+      true
     );
 
     expect(idempotencyKey).toBe('chave-do-chamador');

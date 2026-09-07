@@ -23,27 +23,42 @@ interface Check {
 const CRITICAL_TABLES = ['colaboradores', 'empresas', 'user_roles', 'folhas_pagamento', 'profiles'];
 const EDGE_FUNCTIONS = ['healthcheck', 'metricas', 'external-db-bridge'];
 const EXPECTED_BUCKETS = [
-  'afastamentos', 'assinaturas', 'avatars', 'backups', 'comprovantes-despesas',
-  'contabilidade-anexos', 'contratacao', 'contratos-trabalho', 'documentos',
-  'documentos-admissao', 'documentos-colaboradores', 'ferias-avisos',
-  'ferias-coletivas-comunicados', 'medidas-contestacoes',
-  'medidas-disciplinares', 'ponto-biometria',
-  'recrutamento-curriculos', 'relatorios-privados', 'sst-programas',
+  'afastamentos',
+  'assinaturas',
+  'avatars',
+  'backups',
+  'comprovantes-despesas',
+  'contabilidade-anexos',
+  'contratacao',
+  'contratos-trabalho',
+  'documentos',
+  'documentos-admissao',
+  'documentos-colaboradores',
+  'ferias-avisos',
+  'ferias-coletivas-comunicados',
+  'medidas-contestacoes',
+  'medidas-disciplinares',
+  'ponto-biometria',
+  'recrutamento-curriculos',
+  'relatorios-privados',
+  'sst-programas',
 ];
-const EXPECTED_CRON_JOBS = [
-  'sec-audit-policies-daily',
-  'sec-policy-regressions-purge',
-  'sec-verify-seals-weekly',
-];
+const EXPECTED_CRON_JOBS = ['sec-audit-policies-daily', 'sec-policy-regressions-purge', 'sec-verify-seals-weekly'];
 
 const initialChecks = (): Check[] => [
   { id: 'env', label: 'VITE_SUPABASE_URL definida', category: 'infra', status: 'idle' },
   { id: 'auth', label: 'Sessão Auth acessível', category: 'infra', status: 'idle' },
   ...CRITICAL_TABLES.map<Check>((t) => ({
-    id: `tab:${t}`, label: `Tabela ${t} acessível`, category: 'tabelas', status: 'idle',
+    id: `tab:${t}`,
+    label: `Tabela ${t} acessível`,
+    category: 'tabelas',
+    status: 'idle',
   })),
   ...EDGE_FUNCTIONS.map<Check>((f) => ({
-    id: `fn:${f}`, label: `Edge function ${f}`, category: 'edge', status: 'idle',
+    id: `fn:${f}`,
+    label: `Edge function ${f}`,
+    category: 'edge',
+    status: 'idle',
   })),
   { id: 'cron', label: `Cron jobs (${EXPECTED_CRON_JOBS.length} esperados)`, category: 'cron', status: 'idle' },
   { id: 'storage', label: `Buckets (${EXPECTED_BUCKETS.length} esperados)`, category: 'storage', status: 'idle' },
@@ -75,9 +90,7 @@ export default function AdminDiagnosticoMigracaoPage() {
 
     // 1. env
     const url = import.meta.env.VITE_SUPABASE_URL;
-    update('env', url
-      ? { status: 'ok', detail: String(url) }
-      : { status: 'fail', detail: 'não definida' });
+    update('env', url ? { status: 'ok', detail: String(url) } : { status: 'fail', detail: 'não definida' });
 
     // 2. auth session
     try {
@@ -89,36 +102,41 @@ export default function AdminDiagnosticoMigracaoPage() {
     }
 
     // 3. tabelas críticas — head + count + latência
-    await Promise.all(CRITICAL_TABLES.map(async (t) => {
-      const start = performance.now();
-      try {
-        const { error, count } = await (supabase.from(t) as any)
-          .select('*', { count: 'exact', head: true })
-          .limit(1);
-        const ms = Math.round(performance.now() - start);
-        if (error) update(`tab:${t}`, { status: 'fail', detail: error.message });
-        else update(`tab:${t}`, { status: 'ok', detail: `${count ?? 0} regs • ${ms}ms` });
-      } catch (e) {
-        update(`tab:${t}`, { status: 'fail', detail: (e as Error).message });
-      }
-    }));
+    await Promise.all(
+      CRITICAL_TABLES.map(async (t) => {
+        const start = performance.now();
+        try {
+          const { error, count } = await (supabase.from(t) as any).select('*', { count: 'exact', head: true }).limit(1);
+          const ms = Math.round(performance.now() - start);
+          if (error) update(`tab:${t}`, { status: 'fail', detail: error.message });
+          else update(`tab:${t}`, { status: 'ok', detail: `${count ?? 0} regs • ${ms}ms` });
+        } catch (e) {
+          update(`tab:${t}`, { status: 'fail', detail: (e as Error).message });
+        }
+      })
+    );
 
     // 4. edge functions (com latência)
-    await Promise.all(EDGE_FUNCTIONS.map(async (fn) => {
-      const start = performance.now();
-      try {
-        const { data, error } = await supabase.functions.invoke(fn, { body: {} });
-        const ms = Math.round(performance.now() - start);
-        if (error) {
-          const status = /404|not found/i.test(error.message) ? 'fail' : 'warn';
-          update(`fn:${fn}`, { status, detail: `${ms}ms · ${error.message}` });
-        } else {
-          update(`fn:${fn}`, { status: 'ok', detail: `${ms}ms · ${typeof data === 'object' ? 'resposta ok' : String(data).slice(0, 40)}` });
+    await Promise.all(
+      EDGE_FUNCTIONS.map(async (fn) => {
+        const start = performance.now();
+        try {
+          const { data, error } = await supabase.functions.invoke(fn, { body: {} });
+          const ms = Math.round(performance.now() - start);
+          if (error) {
+            const status = /404|not found/i.test(error.message) ? 'fail' : 'warn';
+            update(`fn:${fn}`, { status, detail: `${ms}ms · ${error.message}` });
+          } else {
+            update(`fn:${fn}`, {
+              status: 'ok',
+              detail: `${ms}ms · ${typeof data === 'object' ? 'resposta ok' : String(data).slice(0, 40)}`,
+            });
+          }
+        } catch (e) {
+          update(`fn:${fn}`, { status: 'fail', detail: (e as Error).message });
         }
-      } catch (e) {
-        update(`fn:${fn}`, { status: 'fail', detail: (e as Error).message });
-      }
-    }));
+      })
+    );
 
     // 5. cron jobs — comparar com allowlist esperada
     try {
@@ -127,9 +145,7 @@ export default function AdminDiagnosticoMigracaoPage() {
         update('cron', { status: 'warn', detail: 'RPC get_cron_jobs_health indisponível' });
       } else {
         const names = new Set<string>(
-          Array.isArray(data)
-            ? data.map((j: any) => String(j.jobname || j.name || '').trim()).filter(Boolean)
-            : [],
+          Array.isArray(data) ? data.map((j: any) => String(j.jobname || j.name || '').trim()).filter(Boolean) : []
         );
         const missing = EXPECTED_CRON_JOBS.filter((j) => !names.has(j));
         if (missing.length === 0) {
@@ -184,7 +200,7 @@ export default function AdminDiagnosticoMigracaoPage() {
 
   const counts = checks.reduce(
     (acc, c) => ({ ...acc, [c.status]: (acc[c.status] ?? 0) + 1 }),
-    {} as Record<Status, number>,
+    {} as Record<Status, number>
   );
 
   return (
@@ -223,18 +239,36 @@ export default function AdminDiagnosticoMigracaoPage() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 text-sm">
-              <Stat label="Status atual" value={health.last?.status ?? '—'} tone={health.last?.status === 'online' ? 'ok' : health.last?.status === 'slow' ? 'warn' : 'fail'} />
-              <Stat label="Última latência" value={health.last?.latencyMs != null ? `${health.last.latencyMs}ms` : '—'} />
+              <Stat
+                label="Status atual"
+                value={health.last?.status ?? '—'}
+                tone={health.last?.status === 'online' ? 'ok' : health.last?.status === 'slow' ? 'warn' : 'fail'}
+              />
+              <Stat
+                label="Última latência"
+                value={health.last?.latencyMs != null ? `${health.last.latencyMs}ms` : '—'}
+              />
               <Stat label="p95" value={health.p95 != null ? `${health.p95}ms` : '—'} />
-              <Stat label="Taxa de falha" value={`${Math.round(health.failRate * 100)}%`} tone={health.failRate > 0.1 ? 'fail' : health.failRate > 0 ? 'warn' : 'ok'} />
+              <Stat
+                label="Taxa de falha"
+                value={`${Math.round(health.failRate * 100)}%`}
+                tone={health.failRate > 0.1 ? 'fail' : health.failRate > 0 ? 'warn' : 'ok'}
+              />
             </div>
             {/* Sparkline em barras — sem depender de lib */}
             <div className="flex items-end gap-1 h-12">
               {health.samples.map((s, i) => {
                 const h = s.latencyMs ? Math.min(100, (s.latencyMs / 1000) * 100) : 100;
-                const color = s.status === 'online' ? 'bg-emerald-500'
-                  : s.status === 'slow' ? 'bg-amber-500' : 'bg-destructive';
-                return <div key={i} className={`flex-1 rounded-t ${color}`} style={{ height: `${h}%` }} title={`${new Date(s.at).toLocaleTimeString()} • ${s.latencyMs ?? '—'}ms • ${s.status}`} />;
+                const color =
+                  s.status === 'online' ? 'bg-emerald-500' : s.status === 'slow' ? 'bg-amber-500' : 'bg-destructive';
+                return (
+                  <div
+                    key={i}
+                    className={`flex-1 rounded-t ${color}`}
+                    style={{ height: `${h}%` }}
+                    title={`${new Date(s.at).toLocaleTimeString()} • ${s.latencyMs ?? '—'}ms • ${s.status}`}
+                  />
+                );
               })}
               {health.samples.length === 0 && (
                 <p className="text-xs text-muted-foreground">aguardando primeira amostra…</p>
@@ -251,14 +285,15 @@ export default function AdminDiagnosticoMigracaoPage() {
               </CardHeader>
               <CardContent className="space-y-2">
                 {grouped[cat].map((c) => (
-                  <div key={c.id} className="flex items-start justify-between gap-3 py-1.5 border-b border-border/40 last:border-0">
+                  <div
+                    key={c.id}
+                    className="flex items-start justify-between gap-3 py-1.5 border-b border-border/40 last:border-0"
+                  >
                     <div className="flex items-start gap-2 min-w-0">
                       <StatusIcon status={c.status} />
                       <div className="min-w-0">
                         <p className="text-sm font-medium truncate">{c.label}</p>
-                        {c.detail && (
-                          <p className="text-xs text-muted-foreground truncate">{c.detail}</p>
-                        )}
+                        {c.detail && <p className="text-xs text-muted-foreground truncate">{c.detail}</p>}
                       </div>
                     </div>
                   </div>
@@ -277,11 +312,16 @@ export default function AdminDiagnosticoMigracaoPage() {
                 const b = breakers[k];
                 const tone = b.state === 'CLOSED' ? 'ok' : b.state === 'HALF_OPEN' ? 'warn' : 'fail';
                 return (
-                  <div key={k} className="flex items-center justify-between gap-3 py-1.5 border-b border-border/40 last:border-0">
+                  <div
+                    key={k}
+                    className="flex items-center justify-between gap-3 py-1.5 border-b border-border/40 last:border-0"
+                  >
                     <div className="flex items-center gap-2">
                       <StatusIcon status={tone as Status} />
                       <p className="text-sm font-medium capitalize">{k}Breaker</p>
-                      <Badge variant="outline" className="text-xs">{b.state}</Badge>
+                      <Badge variant="outline" className="text-xs">
+                        {b.state}
+                      </Badge>
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="text-xs text-muted-foreground">
@@ -314,11 +354,22 @@ export default function AdminDiagnosticoMigracaoPage() {
               Como usar este diagnóstico
             </p>
             <ul className="list-disc pl-6 space-y-1 text-muted-foreground">
-              <li>Falhas em <strong>tabelas</strong> → schema/dados não restaurados no novo projeto.</li>
-              <li>Falhas em <strong>edge functions</strong> → rode <code>scripts/deploy-functions-novo-projeto.sh</code>.</li>
-              <li>Alerta em <strong>cron</strong> → aplique <code>03_cron_jobs.sql</code> no SQL Editor.</li>
-              <li>Alerta em <strong>storage</strong> → aplique <code>01_storage_buckets.sql</code> + <code>02_storage_policies.sql</code>.</li>
-              <li>Rollback rápido: veja <code>docs/ROLLBACK_DRILL.md</code>.</li>
+              <li>
+                Falhas em <strong>tabelas</strong> → schema/dados não restaurados no novo projeto.
+              </li>
+              <li>
+                Falhas em <strong>edge functions</strong> → rode <code>scripts/deploy-functions-novo-projeto.sh</code>.
+              </li>
+              <li>
+                Alerta em <strong>cron</strong> → aplique <code>03_cron_jobs.sql</code> no SQL Editor.
+              </li>
+              <li>
+                Alerta em <strong>storage</strong> → aplique <code>01_storage_buckets.sql</code> +{' '}
+                <code>02_storage_policies.sql</code>.
+              </li>
+              <li>
+                Rollback rápido: veja <code>docs/ROLLBACK_DRILL.md</code>.
+              </li>
             </ul>
           </CardContent>
         </Card>
@@ -336,9 +387,8 @@ function StatusIcon({ status }: { status: Status }) {
 }
 
 function Stat({ label, value, tone }: { label: string; value: string; tone?: 'ok' | 'warn' | 'fail' }) {
-  const color = tone === 'ok' ? 'text-emerald-600'
-    : tone === 'warn' ? 'text-amber-600'
-    : tone === 'fail' ? 'text-destructive' : '';
+  const color =
+    tone === 'ok' ? 'text-emerald-600' : tone === 'warn' ? 'text-amber-600' : tone === 'fail' ? 'text-destructive' : '';
   return (
     <div className="rounded-lg border border-border/40 p-3">
       <p className="text-xs text-muted-foreground uppercase tracking-wide">{label}</p>

@@ -1,6 +1,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, DollarSign, PenTool, Upload, ChevronRight, CheckCircle2, File, Loader2, Download, Trash2 } from 'lucide-react';
+import {
+  FileText,
+  DollarSign,
+  PenTool,
+  Upload,
+  ChevronRight,
+  CheckCircle2,
+  File,
+  Loader2,
+  Download,
+  Trash2,
+} from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { documentoService } from '@/services';
 import { supabase } from '@/integrations/supabase/client';
@@ -36,9 +47,8 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
   const { data: documentos, isLoading } = useQuery<any[]>({
     queryKey: ['portal-documentos', empresaId, colaboradorId],
     queryFn: () => documentoService.listarDocumentos(empresaId!, colaboradorId),
-    enabled: !!colaboradorId && !!empresaId});
-
-
+    enabled: !!colaboradorId && !!empresaId,
+  });
 
   const handleUpload = async () => {
     if (!file || !tipo || !colaboradorId || !empresaId) {
@@ -70,7 +80,7 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
         tamanho: file.size,
         mime_type: file.type,
         storage_path: storagePath,
-        colaborador_id: colaboradorId
+        colaborador_id: colaboradorId,
       });
 
       queryClient.invalidateQueries({ queryKey: ['portal-documentos'] });
@@ -96,7 +106,7 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['portal-documentos'] });
       toast.success('Documento removido');
-    }
+    },
   });
 
   const handleDownload = async (doc: any) => {
@@ -123,9 +133,11 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
       // 1. Upload signature image
       if (!empresaId) throw new Error('Empresa não identificada');
       const fileName = `${empresaId}/${colaboradorId}/assinaturas/doc_${docToSign.id}_${Date.now()}.png`;
-      const binary = Uint8Array.from(atob(base64.split(',')[1]), c => c.charCodeAt(0));
+      const binary = Uint8Array.from(atob(base64.split(',')[1]), (c) => c.charCodeAt(0));
 
-      const { error: uploadErr } = await supabase.storage.from(BUCKET).upload(fileName, binary, { contentType: 'image/png' });
+      const { error: uploadErr } = await supabase.storage
+        .from(BUCKET)
+        .upload(fileName, binary, { contentType: 'image/png' });
       if (uploadErr) throw uploadErr;
 
       // 2. Mark document as signed
@@ -134,7 +146,7 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
         colaborador_id: colaboradorId,
         assinatura_base64: base64,
         ip_assinatura: '127.0.0.1', // Mock IP
-        assinado_em: new Date().toISOString()
+        assinado_em: new Date().toISOString(),
       });
 
       // Update status if column exists
@@ -158,21 +170,28 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-h3 font-display font-bold">Gestão de Documentos</h2>
-        <Button 
+        <Button
           className="rounded-xl bg-gradient-to-r from-warning to-primary hover:opacity-90 shadow-lg font-body"
           onClick={() => setShowUpload(true)}
         >
-          <Upload className="h-4 w-4 mr-2" />Enviar Novo
+          <Upload className="h-4 w-4 mr-2" />
+          Enviar Novo
         </Button>
       </div>
 
       {/* Quick Links */}
       <div className="grid gap-3 md:grid-cols-3">
         {quickLinks.map(({ label, path, icon: Icon, desc }) => (
-          <Card key={path} className="border border-border/30 rounded-2xl cursor-pointer hover:shadow-elevated transition-all group overflow-hidden" onClick={() => navigate(path)}>
+          <Card
+            key={path}
+            className="border border-border/30 rounded-2xl cursor-pointer hover:shadow-elevated transition-all group overflow-hidden"
+            onClick={() => navigate(path)}
+          >
             <div className="h-[2px] bg-gradient-to-r from-warning to-primary opacity-50 group-hover:opacity-100" />
             <CardContent className="flex items-center gap-3 p-4">
-              <div className="p-2 rounded-xl bg-warning/10 text-warning group-hover:scale-110 transition-transform"><Icon className="h-4 w-4" /></div>
+              <div className="p-2 rounded-xl bg-warning/10 text-warning group-hover:scale-110 transition-transform">
+                <Icon className="h-4 w-4" />
+              </div>
               <div className="flex-1 min-w-0">
                 <p className="font-display font-semibold text-sm">{label}</p>
                 <p className="text-[10px] text-muted-foreground font-body truncate">{desc}</p>
@@ -187,12 +206,15 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
       <Card className="border border-border/30 rounded-2xl overflow-hidden shadow-elevated">
         <CardHeader className="bg-muted/30 border-b border-border/20 py-4 px-6">
           <CardTitle className="text-sm font-display flex items-center gap-2">
-            <FileText className="h-4 w-4 text-primary" />Meus Arquivos Recentes
+            <FileText className="h-4 w-4 text-primary" />
+            Meus Arquivos Recentes
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           {isLoading ? (
-            <div className="p-8 text-center"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" /></div>
+            <div className="p-8 text-center">
+              <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
+            </div>
           ) : !documentos?.length ? (
             <div className="p-12 text-center text-muted-foreground font-body">
               <File className="h-10 w-10 mx-auto mb-3 opacity-20" />
@@ -201,7 +223,10 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
           ) : (
             <div className="divide-y divide-border/20">
               {documentos.map((doc: any) => (
-                <div key={doc.id} className="flex items-center justify-between p-4 hover:bg-accent/20 transition-colors">
+                <div
+                  key={doc.id}
+                  className="flex items-center justify-between p-4 hover:bg-accent/20 transition-colors"
+                >
                   <div className="flex items-center gap-3">
                     <div className="p-2 rounded-lg bg-info/10 text-info">
                       <File className="h-4 w-4" />
@@ -209,21 +234,46 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
                     <div>
                       <p className="text-sm font-medium font-body truncate max-w-[200px] sm:max-w-md">{doc.nome}</p>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <Badge variant="outline" className="text-[9px] h-4 px-1">{doc.tipo}</Badge>
-                        <span className="text-[10px] text-muted-foreground">{new Date(doc.created_at).toLocaleDateString('pt-BR')}</span>
+                        <Badge variant="outline" className="text-[9px] h-4 px-1">
+                          {doc.tipo}
+                        </Badge>
+                        <span className="text-[10px] text-muted-foreground">
+                          {new Date(doc.created_at).toLocaleDateString('pt-BR')}
+                        </span>
                       </div>
                     </div>
                   </div>
                   <div className="flex gap-1">
                     {doc.tipo === 'Contrato' && doc.status !== 'assinado' && (
-                      <Button variant="ghost" size="icon" aria-label="Assinar" className="h-8 w-8 rounded-lg text-warning hover:bg-warning/10" onClick={() => setDocToSign(doc)} title="Assinar">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label="Assinar"
+                        className="h-8 w-8 rounded-lg text-warning hover:bg-warning/10"
+                        onClick={() => setDocToSign(doc)}
+                        title="Assinar"
+                      >
                         <PenTool className="h-4 w-4" />
                       </Button>
                     )}
-                    <Button variant="ghost" size="icon" aria-label="Baixar" className="h-8 w-8 rounded-lg" onClick={() => handleDownload(doc)} title="Baixar">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      aria-label="Baixar"
+                      className="h-8 w-8 rounded-lg"
+                      onClick={() => handleDownload(doc)}
+                      title="Baixar"
+                    >
                       <Download className="h-4 w-4 text-muted-foreground hover:text-success" />
                     </Button>
-                    <Button variant="ghost" size="icon" aria-label="Excluir" className="h-8 w-8 rounded-lg" onClick={() => deleteMutation.mutate(doc)} title="Excluir">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      aria-label="Excluir"
+                      className="h-8 w-8 rounded-lg"
+                      onClick={() => deleteMutation.mutate(doc)}
+                      title="Excluir"
+                    >
                       <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
                     </Button>
                   </div>
@@ -244,9 +294,15 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
             <div className="space-y-2">
               <Label className="font-body text-xs">Tipo de Documento</Label>
               <Select value={tipo} onValueChange={setTipo}>
-                <SelectTrigger className="rounded-xl"><SelectValue placeholder="Selecione o tipo" /></SelectTrigger>
+                <SelectTrigger className="rounded-xl">
+                  <SelectValue placeholder="Selecione o tipo" />
+                </SelectTrigger>
                 <SelectContent>
-                  {TIPOS_DOCUMENTO.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                  {TIPOS_DOCUMENTO.map((t) => (
+                    <SelectItem key={t} value={t}>
+                      {t}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -269,9 +325,14 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
                   </div>
                 )}
               </div>
-              <input ref={fileRef} type="file" className="hidden" onChange={e => setFile(e.target.files?.[0] || null)} />
+              <input
+                ref={fileRef}
+                type="file"
+                className="hidden"
+                onChange={(e) => setFile(e.target.files?.[0] || null)}
+              />
             </div>
-            <Button 
+            <Button
               className="w-full rounded-xl bg-gradient-to-r from-warning to-primary h-11"
               onClick={handleUpload}
               disabled={uploading || !file || !tipo}
@@ -291,13 +352,11 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
           </DialogHeader>
           <div className="space-y-4 py-4">
             <p className="text-sm text-muted-foreground font-body">
-              Você está assinando digitalmente o documento: <span className="font-semibold text-foreground">{docToSign?.nome}</span>. 
-              Sua assinatura manuscrita será vinculada a este registro com validade jurídica interna.
+              Você está assinando digitalmente o documento:{' '}
+              <span className="font-semibold text-foreground">{docToSign?.nome}</span>. Sua assinatura manuscrita será
+              vinculada a este registro com validade jurídica interna.
             </p>
-            <SignatureCanvas 
-              onSave={handleSaveSignature} 
-              onCancel={() => setDocToSign(null)} 
-            />
+            <SignatureCanvas onSave={handleSaveSignature} onCancel={() => setDocToSign(null)} />
           </div>
         </DialogContent>
       </Dialog>
