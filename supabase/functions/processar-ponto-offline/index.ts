@@ -241,7 +241,7 @@ serve(async (req: Request): Promise<Response> => {
         // Upload seguro de foto (opcional)
         let finalFotoUrl: string | null = null;
         if (reg.foto_base64 && reg.colaborador_id) {
-          const fileName = `${reg.colaborador_id}/offline-${Date.now()}.jpg`;
+          const fileName = `${empresaId}/${reg.colaborador_id}/offline-${Date.now()}.jpg`;
           const parts = String(reg.foto_base64).split(',');
           const b64 = parts.length > 1 ? parts[1] : parts[0];
           try {
@@ -249,10 +249,7 @@ serve(async (req: Request): Promise<Response> => {
             const { error: storageError } = await supabase.storage
               .from('ponto-biometria')
               .upload(fileName, binary, { contentType: 'image/jpeg' });
-            if (!storageError) {
-              const { data: pub } = supabase.storage.from('ponto-biometria').getPublicUrl(fileName);
-              finalFotoUrl = pub.publicUrl;
-            }
+            if (!storageError) finalFotoUrl = fileName;
           } catch {
             // foto inválida não bloqueia a batida
           }

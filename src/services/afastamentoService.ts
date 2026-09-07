@@ -119,8 +119,22 @@ class AfastamentoService extends BaseService<AfastamentoRow> {
   ): Promise<DocumentoAfastamentoRow | null> {
     try {
       validateUploadFile(file);
+
+      // O primeiro segmento do objeto é sempre o tenant. Além de impedir
+      // colisões entre empresas, esse formato é o contrato das policies de
+      // Storage do bucket privado `afastamentos`.
+      const { data: afastamento, error: afastamentoError } = await supabase
+        .from('afastamentos')
+        .select(sel('empresa_id'))
+        .eq('id', afastamentoId)
+        .maybeSingle<{ empresa_id: string | null }>();
+      if (afastamentoError) throw afastamentoError;
+      if (!afastamento?.empresa_id) {
+        throw new Error('Afastamento não encontrado ou sem empresa vinculada');
+      }
+
       const fileExt = file.name.split('.').pop();
-      const fileName = `${afastamentoId}/${crypto.randomUUID()}.${fileExt}`;
+      const fileName = `${afastamento.empresa_id}/${afastamentoId}/${crypto.randomUUID()}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
         .from('afastamentos')

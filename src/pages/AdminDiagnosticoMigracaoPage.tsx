@@ -23,17 +23,17 @@ interface Check {
 const CRITICAL_TABLES = ['colaboradores', 'empresas', 'user_roles', 'folhas_pagamento', 'profiles'];
 const EDGE_FUNCTIONS = ['healthcheck', 'metricas', 'external-db-bridge'];
 const EXPECTED_BUCKETS = [
-  'afastamentos', 'assinaturas', 'avatars', 'comprovantes-despesas',
-  'contabilidade-anexos', 'contratacao', 'documentos', 'documentos-admissao',
-  'documentos-colaboradores', 'ponto-biometria', 'recrutamento-curriculos',
-  'relatorios-privados', 'sst-programas',
+  'afastamentos', 'assinaturas', 'avatars', 'backups', 'comprovantes-despesas',
+  'contabilidade-anexos', 'contratacao', 'contratos-trabalho', 'documentos',
+  'documentos-admissao', 'documentos-colaboradores', 'ferias-avisos',
+  'ferias-coletivas-comunicados', 'medidas-contestacoes',
+  'medidas-disciplinares', 'ponto-biometria',
+  'recrutamento-curriculos', 'relatorios-privados', 'sst-programas',
 ];
 const EXPECTED_CRON_JOBS = [
-  'audit-archive-retention-daily', 'audit-log-monthly-purge', 'check-idempotency-anomalies',
-  'cleanup-govbr-states-daily', 'cleanup-logs-sistema-daily', 'cleanup-security-logs',
-  'gerar-alertas-preditivos-ia', 'lgpd-cleanup-queue-daily', 'lgpd-retention-dry-run',
-  'log-retention-daily', 'purge-idempotency-daily', 'purge-lock-conflicts-daily',
-  'purge-security-data-hourly', 'status-anomalies-scan', 'weekly-analyze-critical',
+  'sec-audit-policies-daily',
+  'sec-policy-regressions-purge',
+  'sec-verify-seals-weekly',
 ];
 
 const initialChecks = (): Check[] => [

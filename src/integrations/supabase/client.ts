@@ -52,21 +52,26 @@ async function sleep(ms: number): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function fetchWithRetry(
+export async function fetchWithRetry(
   url: string,
   options: RequestInit,
   isWrite: boolean,
 ): Promise<{ res: Response; idempotencyKey: string | null }> {
+  // A chave de idempotência pertence à OPERAÇÃO LÓGICA, não à tentativa. Se for
+  // gerada dentro do laço, o header nunca sobrevive ao retry e cada tentativa
+  // leva uma chave nova — de modo que um 502 devolvido DEPOIS do commit faz a
+  // tentativa seguinte parecer uma operação inédita e o servidor grava de novo.
+  // Gerar uma única vez, fora do laço, é justamente o que torna o retry seguro.
+  const baseHeaders = { ...options.headers } as Record<string, string>;
   let idempotencyKey: string | null = null;
 
-  for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
-    const headers = { ...options.headers } as Record<string, string>;
+  if (isWrite) {
+    idempotencyKey = baseHeaders['Idempotency-Key'] ?? crypto.randomUUID();
+    baseHeaders['Idempotency-Key'] = idempotencyKey;
+  }
 
-    // Writes GET idempotency key auto-gerado (não afeta reads).
-    if (isWrite && !headers['Idempotency-Key']) {
-      idempotencyKey = crypto.randomUUID();
-      headers['Idempotency-Key'] = idempotencyKey;
-    }
+  for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
+    const headers = { ...baseHeaders };
 
     const res = await fetch(url, { ...options, headers });
 

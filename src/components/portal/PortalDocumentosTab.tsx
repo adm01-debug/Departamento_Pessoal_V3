@@ -41,7 +41,7 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
 
 
   const handleUpload = async () => {
-    if (!file || !tipo || !colaboradorId) {
+    if (!file || !tipo || !colaboradorId || !empresaId) {
       toast.error('Selecione um arquivo e tipo');
       return;
     }
@@ -55,7 +55,7 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
     setUploading(true);
     try {
       const ext = file.name.split('.').pop();
-      const storagePath = `colaborador_${colaboradorId}/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
+      const storagePath = `${empresaId}/${colaboradorId}/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
 
       const { error: uploadErr } = await supabase.storage.from(BUCKET).upload(storagePath, file);
       if (uploadErr) throw uploadErr;
@@ -121,7 +121,8 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
 
     try {
       // 1. Upload signature image
-      const fileName = `assinaturas/doc_${docToSign.id}_${Date.now()}.png`;
+      if (!empresaId) throw new Error('Empresa não identificada');
+      const fileName = `${empresaId}/${colaboradorId}/assinaturas/doc_${docToSign.id}_${Date.now()}.png`;
       const binary = Uint8Array.from(atob(base64.split(',')[1]), c => c.charCodeAt(0));
 
       const { error: uploadErr } = await supabase.storage.from(BUCKET).upload(fileName, binary, { contentType: 'image/png' });

@@ -95,11 +95,6 @@ export const TENANT_SCOPED_TABLES = new Set<string>([
 // -------------------- Allowlist de RPCs --------------------
 // Somente RPCs explicitamente listadas são invocáveis via bridge.
 export const RPC_ALLOWLIST = new Set<string>([
-  // segurança / login
-  "check_login_lock", "record_failed_login", "reset_login_attempts",
-  "check_account_lockout", "record_login_attempt", "reset_account_lockout",
-  "check_brute_force", "check_rate_limit", "is_ip_blocked", "is_ip_whitelisted",
-  "is_country_allowed",
   // roles / tenant
   "has_role", "is_admin", "get_user_roles", "get_user_empresas",
   "get_user_default_empresa", "get_user_scope_empresas", "user_belongs_to_empresa",
@@ -109,9 +104,9 @@ export const RPC_ALLOWLIST = new Set<string>([
   // por dentro. Ver 20260718230000_admin_role_management_rpc.sql (achado R1).
   "admin_set_user_role", "admin_list_user_roles",
   // negócio
-  "get_personnel_cost_projection", "get_colaborador_banco_horas",
+  "get_personnel_cost_projection",
   "calcular_dias_ferias", "fn_calculate_periodo_aquisitivo",
-  "fn_link_gov_br_account", "processar_ajuste_aprovado",
+  "processar_ajuste_aprovado",
   "gerar_alertas_preditivos_ia",
   "registrar_batida_ponto",
   "run_rls_tests",

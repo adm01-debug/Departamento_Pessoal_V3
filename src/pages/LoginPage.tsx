@@ -180,15 +180,9 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
     try {
-      const { data: rl } = await supabase.rpc('check_rate_limit', {
-        check_endpoint: 'password_reset',
-        check_ip: 'client',
-        check_user_id: undefined,
-      });
-      if (rl && typeof rl === 'object' && (rl as any).blocked) {
-        setError('Muitas tentativas. Aguarde alguns minutos antes de tentar novamente.');
-        return;
-      }
+      // O limite autoritativo é aplicado pelo endpoint de Auth. A antiga RPC
+      // aceitava o IP literal "client" enviado pelo navegador, portanto não
+      // limitava o IP real e ainda expunha uma SECURITY DEFINER sem sessão.
       await resetPassword(email);
       sessionStorage.setItem('__pwd_reset_ts', String(Date.now()));
       setForgotSent(true);

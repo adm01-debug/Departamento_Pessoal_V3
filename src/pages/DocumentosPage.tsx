@@ -80,8 +80,8 @@ export default function DocumentosPage() {
 
   const deleteMutation = useMutation({
     mutationFn: async (doc: any) => {
-      if (doc.url) {
-        const path = doc.url.split(`${BUCKET}/`).pop();
+      if (doc.storage_path || doc.url) {
+        const path = doc.storage_path || doc.url.split(`${BUCKET}/`).pop();
         if (path) await supabase.storage.from(BUCKET).remove([path]);
       }
       await documentoService.excluir(doc.id);
@@ -93,7 +93,7 @@ export default function DocumentosPage() {
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar documento.'))});
 
   const handleUpload = async () => {
-    if (!file || !tipo) {
+    if (!file || !tipo || !empresaId) {
       toast.error('Selecione um arquivo e tipo');
       return;
     }
@@ -107,7 +107,7 @@ export default function DocumentosPage() {
     setUploading(true);
     try {
       const ext = file.name.split('.').pop();
-      const storagePath = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
+      const storagePath = `${empresaId}/${colaboradorId || 'empresa'}/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
 
       const { error: uploadErr } = await supabase.storage.from(BUCKET).upload(storagePath, file);
       if (uploadErr) throw uploadErr;

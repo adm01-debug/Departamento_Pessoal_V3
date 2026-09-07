@@ -100,6 +100,15 @@ const ALLOWLIST = new Map([
     'etnias',
     'Domínio de referência do eSocial. Lista fechada de códigos, sem vínculo com pessoa.',
   ],
+  [
+    'medidas_ciencia_tokens',
+    'Ciência de medida disciplinar por link, antes de existir sessão (mesmo ' +
+      'padrão de contrato_consultar_por_token). O segredo é o próprio token ' +
+      '(coluna token, opaco, gerado no servidor) que o cliente já filtra na ' +
+      'query; a policy só soma "ainda não usado, ainda não expirado" — não ' +
+      'abre para enumeração porque o predicado nunca é o único filtro. ' +
+      'Acesso de RH à listagem tem policy própria escopada por empresa_id.',
+  ],
 ]);
 
 const QUERY = `

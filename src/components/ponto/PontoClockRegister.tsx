@@ -150,15 +150,23 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
       if (blob && user?.id && navigator.onLine) {
         setScanStage('Enviando foto...');
         setScanProgress(80);
+        const { data: colab } = await supabase
+          .from('colaboradores')
+          .select('id, empresa_id')
+          .eq('user_id', user.id)
+          .limit(1)
+          .maybeSingle();
+        if (!colab?.empresa_id) {
+          throw new Error('Colaborador ou empresa não identificados para o upload biométrico');
+        }
         // eslint-disable-next-line react-hooks/purity -- roda em handler assíncrono de captura de foto (ação do usuário), não em render
-        const fileName = `${user.id}/${Date.now()}.jpg`;
+        const fileName = `${colab.empresa_id}/${colab.id}/${Date.now()}.jpg`;
         const { error } = await supabase.storage.from('ponto-biometria').upload(fileName, blob);
 
         if (!error) {
-          const {
-            data: { publicUrl },
-          } = supabase.storage.from('ponto-biometria').getPublicUrl(fileName);
-          fotoUrl = publicUrl;
+          // Bucket privado: persistimos o path, nunca uma URL pública ou
+          // assinada com expiração embutida no registro trabalhista.
+          fotoUrl = fileName;
         }
       }
     }
