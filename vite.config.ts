@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => ({
       // O gate estrito (allowlist *.lovable.app) rejeita Origin localhost — o
       // proxy reescreve Origin/Referer para um host da allowlist (somente dev).
       "/functions/v1": {
-        target: "https://frjbfeamybqsejlvmqbl.supabase.co",
+        target: "https://ciziytrrjjotlsjzshnm.supabase.co",
         changeOrigin: true,
         secure: true,
         configure(proxy) {
