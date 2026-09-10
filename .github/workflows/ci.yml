@@ -76,7 +76,7 @@ jobs:
         # aqui causam falhas silenciosas em produção.
         run: deno check --no-lock --node-modules-dir=false supabase/functions/external-db-bridge/index.ts
       - name: Testes unitários compartilhados das Edge Functions
-        run: deno test --allow-env --no-lock --node-modules-dir=false supabase/functions/_shared/*.test.ts
+        run: deno test --allow-env --no-lock --node-modules-dir=false supabase/functions/_shared/*.test.ts supabase/functions/metrics/*.test.ts
       - name: Type-check demais edge functions (informativo)
         # Passa mesmo com erros — apenas gera relatório para rastreamento progressivo.
         # As demais funções serão migradas gradualmente para zero erros.
@@ -114,6 +114,11 @@ jobs:
   db-integrity:
     name: Integridade do banco (search_path x extensões)
     runs-on: ubuntu-latest
+    # Este é deliberadamente um gate de banco canônico, não uma análise
+    # estática. Sem uma conexão de auditoria, um "verde" não é evidência de
+    # RLS, grants, funções ou triggers reais.
+    env:
+      DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -121,20 +126,27 @@ jobs:
           node-version: '22'
       - name: Instalar cliente psql
         run: sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+      - name: Regressão fail-closed dos auditores
+        run: npm run test:db-audit-contract
+      - name: Exigir alvo canônico de auditoria
+        # Não exibir nem testar a URL em shell com tracing. A presença é
+        # suficiente; os scripts seguintes abrem a conexão read-only usada
+        # pelos seus próprios SELECTs de catálogo.
+        run: |
+          if [ -z "${DATABASE_URL}" ]; then
+            echo "::error::SUPABASE_DB_URL ausente. O gate de integridade não pode aprovar sem auditar o banco canônico."
+            exit 1
+          fi
       - name: Auditar search_path das funções
         # Detecta funções que chamam rotinas de extensão (pgcrypto, pg_net, ...)
         # sem o schema da extensão no search_path fixado. Esse defeito NÃO é
         # acusado na criação da função — só explode em produção, na primeira
-        # gravação selada por hash. Sem DATABASE_URL o passo apenas avisa.
-        env:
-          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+        # gravação selada por hash.
         run: node scripts/audit-db-search-path.mjs
       - name: Smoke test dos selos de integridade
         # Verifica que todo gatilho enforce_*_hash está acoplado, é BEFORE
         # INSERT/UPDATE e consegue resolver digest() sob seu próprio
         # search_path. Não grava dados de negócio.
-        env:
-          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/smoke-hash-triggers.mjs
       - name: Regressão de RLS sobre PII
         # Reprova o build quando uma política sobre tabela com dado pessoal
@@ -142,8 +154,6 @@ jobs:
         # correlaciona com auth.uid() nem com o vínculo de empresa, ou quando
         # deriva o tenant de claim livre do JWT. O Postgres aceita esses
         # predicados sem reclamar — a exposição só aparece em produção.
-        env:
-          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/audit-rls-pii.mjs
       - name: Menor privilégio em RLS (papel no caminho de escrita)
         # Complementa o gate acima. Isolar por empresa aprova ali, mas em tabela
@@ -151,8 +161,6 @@ jobs:
         # RH ficam indistinguíveis dentro do mesmo tenant — contracheque, conta
         # bancária, ASO e denúncia do canal de ética ficam graváveis por
         # qualquer autenticado. Escrita nessas tabelas exige papel explícito.
-        env:
-          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/audit-rls-least-privilege.mjs
       - name: Política permissiva irrestrita em tabela multi-tenant
         # Políticas PERMISSIVAS se combinam por OU: basta UMA liberar para o
@@ -161,8 +169,6 @@ jobs:
         # rubricas de todas as empresas, porque uma legada `USING (true)` nunca
         # foi removida. Escrever a política certa não protege enquanto a errada
         # viver. Os gates acima não pegam o caso: rubrica de folha não é PII.
-        env:
-          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/audit-rls-tenant-open.mjs
       - name: Autorização em funções SECURITY DEFINER
         # SECURITY DEFINER atravessa o RLS: se a função é executável por
@@ -170,14 +176,10 @@ jobs:
         # ela anula o isolamento multi-tenant sem que nenhuma política esteja
         # errada. O gate segue o fecho transitivo de chamadas para não reprovar
         # funções que delegam a checagem a um helper.
-        env:
-          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/audit-secdef-authz.mjs
       - name: Integridade das dicas de relacionamento (PostgREST)
         # `.select('*, tabela!constraint(...)')` amarra o código a um nome de
         # constraint que nada valida: typecheck e testes com mock passam, e a
         # quebra só aparece em runtime como PGRST200. Também reprova FKs
         # duplicadas, que reintroduzem a ambiguidade de relacionamento.
-        env:
-          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: node scripts/audit-embed-hints.mjs

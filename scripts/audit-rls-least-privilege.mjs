@@ -123,10 +123,7 @@ const AUTO_ACESSO = [
  * disciplinar, o registro deixaria de ter valor probatório trabalhista.
  * Só entram aqui dados cadastrais que a própria pessoa mantém no portal.
  */
-const AUTO_SERVICO_ESCRITA = new Set([
-  'contatos_emergencia',
-  'formacoes_academicas',
-]);
+const AUTO_SERVICO_ESCRITA = new Set(['contatos_emergencia', 'formacoes_academicas']);
 
 /**
  * Isenções, com justificativa obrigatória.
@@ -222,14 +219,10 @@ function main() {
     policyOutput = runQuery(QUERY);
     functionOutput = runQuery(FUNCTIONS_QUERY);
   } catch (error) {
-    const stderr = String(error.stderr || '');
-    if (/^ERROR:/m.test(stderr)) {
-      console.error('[rls-least-privilege] A consulta de auditoria falhou — gate reprovado.');
-      console.error(stderr.trim());
-      return 1;
-    }
-    console.warn(`[rls-least-privilege] Banco inacessível: ${error.message}`);
-    return 0;
+    // O alvo existe neste caminho; falha de conexão também invalida o gate.
+    console.error('[rls-least-privilege] A consulta de auditoria falhou — gate reprovado.');
+    console.error(String(error.stderr || error.message).trim());
+    return 1;
   }
 
   const bodies = parseRows(functionOutput, 2).map(([name, src]) => [name, src]);
@@ -238,11 +231,14 @@ function main() {
 
   for (const [tablename, policyname, cmd, roles, rawExpr] of parseRows(policyOutput, 5)) {
     if (!TABELAS_SENSIVEIS.has(tablename)) continue;
-    
+
     if (ISENCOES.has(`${tablename}:${policyname}`)) continue;
     if (!CMDS_AUDITADOS.has(cmd)) continue;
 
-    const roleList = roles.split(',').map((r) => r.trim()).filter(Boolean);
+    const roleList = roles
+      .split(',')
+      .map((r) => r.trim())
+      .filter(Boolean);
     // service_role opera fora do RLS por definição; exigir papel dele é ruído.
     if (roleList.length === 1 && roleList[0] === 'service_role') continue;
 
@@ -268,29 +264,21 @@ function main() {
   }
 
   if (violacoes.length > 0) {
-    console.error(
-      `\n[rls-least-privilege] ${violacoes.length} política(s) sem separação de papéis:\n`,
-    );
+    console.error(`\n[rls-least-privilege] ${violacoes.length} política(s) sem separação de papéis:\n`);
     for (const v of violacoes) {
       console.error(`  ✗ ${v.tablename} :: "${v.policyname}" (${v.cmd}) — ${v.motivo}`);
       console.error(`      ${v.expr}`);
     }
-    console.error(
-      '\n  Isolar por empresa não basta em tabela sensível: dentro do mesmo tenant',
-    );
-    console.error(
-      '  o estagiário e o RH ficam indistinguíveis. Exija pode_gerir_rh() /',
-    );
-    console.error(
-      '  pode_gerir_pessoas() / has_role(), ou amarre a linha ao titular com',
-    );
+    console.error('\n  Isolar por empresa não basta em tabela sensível: dentro do mesmo tenant');
+    console.error('  o estagiário e o RH ficam indistinguíveis. Exija pode_gerir_rh() /');
+    console.error('  pode_gerir_pessoas() / has_role(), ou amarre a linha ao titular com');
     console.error('  sou_o_colaborador(). Lembre: políticas se somam por OR.\n');
     return 1;
   }
 
   console.log(
     `[rls-least-privilege] OK — ${inspecionadas} política(s) em tabela sensível ` +
-      'exigem papel ou amarram a linha ao titular.',
+      'exigem papel ou amarram a linha ao titular.'
   );
   return 0;
 }

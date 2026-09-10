@@ -14,6 +14,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { captureException } from '../_shared/sentry.ts';
 import { getCorsHeaders, handlePreflight } from '../_shared/contract.ts';
+import { calculateErrorRate } from './metricsMath.ts';
 
 const METRICS_PREFIX = 'departamento_pessoal_';
 const METRICS_VERSION = '1.0.0';
@@ -60,7 +61,7 @@ async function collectMetrics(): Promise<HealthMetrics> {
 
   const dbOk = dbCheck.status === 'fulfilled' && !dbCheck.value.error;
   const telOk = telemetryCheck.status === 'fulfilled' && !telemetryCheck.value.error;
-  const brOk = bridgeCheck.status === 'fulfilled';
+  const brOk = bridgeCheck.status === 'fulfilled' && !bridgeCheck.value.error;
 
   const dbLatency = dbCheck.status === 'fulfilled'
     // aproximação: se houve paginação, o tempo total inclui 2+ round-trips
@@ -77,7 +78,15 @@ async function collectMetrics(): Promise<HealthMetrics> {
   };
 }
 
-async function collectBridgeMetrics(): Promise<{ error_count_1h: number; slow_query_count_1h: number; avg_p95_ms: number }> {
+interface BridgeMetrics {
+  error_count_1h: number;
+  slow_query_count_1h: number;
+  total_query_count_1h: number;
+  avg_p95_ms: number;
+  collection_status: number;
+}
+
+async function collectBridgeMetrics(): Promise<BridgeMetrics> {
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL') ?? '',
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
@@ -85,40 +94,55 @@ async function collectBridgeMetrics(): Promise<{ error_count_1h: number; slow_qu
   );
 
   try {
-    // Erros na última hora
-    const { count: errorCount } = await supabase
-      .from('query_telemetry')
-      .select('id', { count: 'exact', head: true })
-      .in('severity', ['error', 'fatal'])
-      .gte('created_at', new Date(Date.now() - 3600_000).toISOString());
+    const since = new Date(Date.now() - 3600_000).toISOString();
+    const [errorResult, slowResult, totalResult, mvResult] = await Promise.all([
+      supabase
+        .from('query_telemetry')
+        .select('id', { count: 'exact', head: true })
+        .in('severity', ['error', 'fatal'])
+        .gte('created_at', since),
+      supabase
+        .from('query_telemetry')
+        .select('id', { count: 'exact', head: true })
+        .gt('duration_ms', 5000)
+        .gte('created_at', since),
+      supabase
+        .from('query_telemetry')
+        .select('id', { count: 'exact', head: true })
+        .gte('created_at', since),
+      supabase
+        .from('mv_telemetry_dashboard')
+        .select('p95_ms')
+        .gte('hour', since)
+        .limit(10),
+    ]);
 
-    // Slow queries (>5s) na última hora
-    const { count: slowCount } = await supabase
-      .from('query_telemetry')
-      .select('id', { count: 'exact', head: true })
-      .gt('duration_ms', 5000)
-      .gte('created_at', new Date(Date.now() - 3600_000).toISOString());
+    for (const result of [errorResult, slowResult, totalResult, mvResult]) {
+      if (result.error) throw result.error;
+    }
 
-    // P95 da última hora via view materializada (se existir)
     let avgP95 = 0;
-    const { data: mvData } = await supabase
-      .from('mv_telemetry_dashboard')
-      .select('p95_ms')
-      .gte('hour', new Date(Date.now() - 3600_000).toISOString())
-      .limit(10);
-
-    if (mvData && mvData.length > 0) {
-      const p95s = mvData.map((d: { p95_ms: number }) => d.p95_ms || 0).filter(Boolean);
+    if (mvResult.data && mvResult.data.length > 0) {
+      const p95s = mvResult.data.map((d: { p95_ms: number }) => d.p95_ms || 0).filter(Boolean);
       if (p95s.length > 0) avgP95 = Math.round(p95s.reduce((a: number, b: number) => a + b, 0) / p95s.length);
     }
 
     return {
-      error_count_1h: errorCount ?? 0,
-      slow_query_count_1h: slowCount ?? 0,
+      error_count_1h: errorResult.count ?? 0,
+      slow_query_count_1h: slowResult.count ?? 0,
+      total_query_count_1h: totalResult.count ?? 0,
       avg_p95_ms: avgP95,
+      collection_status: 1,
     };
-  } catch {
-    return { error_count_1h: 0, slow_query_count_1h: 0, avg_p95_ms: 0 };
+  } catch (error) {
+    captureException(error, { function: 'metrics' });
+    return {
+      error_count_1h: 0,
+      slow_query_count_1h: 0,
+      total_query_count_1h: 0,
+      avg_p95_ms: 0,
+      collection_status: 0,
+    };
   }
 }
 
@@ -163,19 +187,27 @@ function buildMetricsPage(metrics: HealthMetrics, bridgeMetrics: Awaited<ReturnT
     `${METRICS_PREFIX}bridge_slow_queries_total`, bridgeMetrics.slow_query_count_1h,
     'Total bridge slow queries (>5s) in the last hour'
   );
+  output += counter(
+    `${METRICS_PREFIX}bridge_queries_total`, bridgeMetrics.total_query_count_1h,
+    'Total bridge queries in the last hour'
+  );
   output += gauge(
     `${METRICS_PREFIX}bridge_p95_latency_ms`, bridgeMetrics.avg_p95_ms,
     'Average P95 bridge latency in milliseconds (last hour)'
   );
 
-  // Derived: error rate (errors / total queries in 1h)
-  // Approximation: if we have >1000 total queries/h, flag if >1% error
-  const errorRate = bridgeMetrics.avg_p95_ms > 0
-    ? bridgeMetrics.error_count_1h / Math.max(bridgeMetrics.avg_p95_ms, 1) // rough proxy
-    : 0;
+  output += gauge(
+    `${METRICS_PREFIX}bridge_metrics_collection_status`, bridgeMetrics.collection_status,
+    'Bridge telemetry collection: 1=complete, 0=failed'
+  );
+
+  const errorRate = calculateErrorRate(
+    bridgeMetrics.error_count_1h,
+    bridgeMetrics.total_query_count_1h,
+  );
   output += gauge(
     `${METRICS_PREFIX}bridge_error_rate`, errorRate,
-    'Approximate error rate (errors per 1000 queries/hour proxy)'
+    'Fraction of bridge queries with error or fatal severity in the last hour'
   );
 
   return output;
@@ -198,7 +230,9 @@ serve(async (req: Request): Promise<Response> => {
 
     const body = buildMetricsPage(health, bridge);
 
+    const status = health.overall_status && bridge.collection_status ? 200 : 503;
     return new Response(body, {
+      status,
       headers: {
         'Content-Type': 'text/plain; version=0.0.4; charset=utf-8',
         'Cache-Control': 'no-store',
@@ -207,11 +241,11 @@ serve(async (req: Request): Promise<Response> => {
     });
   } catch (error: unknown) {
     captureException(error, { function: 'metrics' });
-    // Even on error, return metrics (with 0 values) so Prometheus doesn't go red
+    // Um scrape incompleto não pode parecer saudável para o monitoramento.
     return new Response(
       `# ERROR: failed to collect metrics\n${METRICS_PREFIX}health_overall 0\n`,
       {
-        status: 200,
+        status: 503,
         headers: {
           'Content-Type': 'text/plain; version=0.0.4',
           'Cache-Control': 'no-store',

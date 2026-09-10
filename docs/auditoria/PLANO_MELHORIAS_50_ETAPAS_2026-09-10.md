@@ -8,6 +8,8 @@
 
 > Consolida a auditoria local, a inspeção viva do Supabase e o grafo de dependências. Não autoriza reset, exclusão, `db push` ou `migration repair` em massa.
 
+> **Revisão de implementação:** a existência de código, migration, teste ou documentação não encerra uma etapa. O estado auditado das 50 etapas, as funcionalidades parciais e as funcionalidades apenas sugeridas estão em [`REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-10.md`](./REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-10.md). Na data de corte, **nenhuma etapa atingiu C4**.
+
 ## Regras de execução
 
 - Ordem obrigatória, com contenção E50-001–E50-008 antes de qualquer feature.
@@ -290,21 +292,21 @@
 - [ ] **C3 — Verificação:** regressão completa, gate permanente e métricas dentro do limite.
 - [ ] **C4 — Evidência:** staging/canário aprovado, documentação atualizada e links anexados.
 
-## E50-010 — Classificar todo drift
+## E50-010 — Classificar todo drift técnico e funcional
 
-| Campo        | Valor                                                                                     |
-| ------------ | ----------------------------------------------------------------------------------------- |
-| Onda         | Onda 1 — Reconstrução                                                                     |
-| Prioridade   | P0                                                                                        |
-| Dependências | E50-009                                                                                   |
-| Objetivo     | Decidir manter/implementar/substituir/arquivar/remover cada diferença código↔tipos↔banco. |
+| Campo        | Valor                                                                                                                   |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| Onda         | Onda 1 — Reconstrução                                                                                                   |
+| Prioridade   | P0                                                                                                                      |
+| Dependências | E50-009                                                                                                                 |
+| Objetivo     | Decidir manter/implementar/substituir/arquivar/remover cada diferença de schema, função, página, integração e contrato. |
 
 ### 10 subetapas
 
-1. [ ] **Evidência inicial:** 17 tabelas live-only, 8 type-only, 158 funções live-only, 26 type-only e 6 views sem tipos.
+1. [ ] **Evidência inicial:** Conciliar drift físico e o inventário funcional: páginas parciais, Edge Functions sem chamador, stubs, sucessos simulados, integrações ausentes e código morto.
 2. [ ] **Ownership:** nomear executor, revisor e aprovador; mapear consumidores, dados, pré-condições e blast radius.
 3. [ ] **Contrato:** documentar invariantes, entradas/saídas, autorização, compatibilidade, métricas, ameaça e critério de abort.
-4. [ ] **Implementação:** Decidir manter/implementar/substituir/arquivar/remover cada diferença código↔tipos↔banco.
+4. [ ] **Implementação:** Registrar decisão e owner para cada diferença código↔tipos↔banco e para cada funcionalidade parcial, sugerida, simulada, órfã ou morta.
 5. [ ] **Teste positivo:** Todo consumidor ativo aponta para objeto aprovado.
 6. [ ] **Teste negativo:** Objeto órfão, chamada fantasma ou remoção com consumer reprova.
 7. [ ] **Regressão:** executar typecheck, lint, unidade, integração, banco e E2E diretamente afetados.
@@ -812,23 +814,23 @@
 - [ ] **C3 — Verificação:** regressão completa, gate permanente e métricas dentro do limite.
 - [ ] **C4 — Evidência:** staging/canário aprovado, documentação atualizada e links anexados.
 
-## E50-028 — Validar eSocial, CNAB, PIX e financeiro
+## E50-028 — Validar obrigações legais, financeiro e integrações externas
 
-| Campo        | Valor                                                                            |
-| ------------ | -------------------------------------------------------------------------------- |
-| Onda         | Onda 2 — Aplicação                                                               |
-| Prioridade   | P0                                                                               |
-| Dependências | E50-007, E50-013 e E50-024                                                       |
-| Objetivo     | Versionar layouts, assinaturas, sequenciais e idempotência de retornos/webhooks. |
+| Campo        | Valor                                                                                                                                           |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Onda         | Onda 2 — Aplicação                                                                                                                              |
+| Prioridade   | P0                                                                                                                                              |
+| Dependências | E50-007, E50-013 e E50-024                                                                                                                      |
+| Objetivo     | Tornar reais ou desabilitar explicitamente eSocial/ICP-Brasil, FGTS Digital, DCTFWeb, CNAB, PIX, WhatsApp/e-mail, gov.br, Bitrix, ERP, BI e IA. |
 
 ### 10 subetapas
 
-1. [ ] **Evidência inicial:** Integrações fiscais/bancárias são críticas e dependem de RPCs/triggers.
+1. [ ] **Evidência inicial:** Há integrações simuladas, CRUD local apresentado como transmissão, protocolos fictícios, serviços órfãos e integrações apenas sugeridas; CAGED/RAIS exigem decisão explícita de escopo.
 2. [ ] **Ownership:** nomear executor, revisor e aprovador; mapear consumidores, dados, pré-condições e blast radius.
 3. [ ] **Contrato:** documentar invariantes, entradas/saídas, autorização, compatibilidade, métricas, ameaça e critério de abort.
-4. [ ] **Implementação:** Versionar layouts, assinaturas, sequenciais e idempotência de retornos/webhooks.
-5. [ ] **Teste positivo:** Fixtures homologadas validam e conciliam exatamente uma vez.
-6. [ ] **Teste negativo:** Layout antigo, CNPJ ruim, replay, webhook forjado e T2 são rejeitados.
+4. [ ] **Implementação:** Versionar layouts/assinaturas/sequenciais/idempotência, integrar provedores aprovados e remover qualquer `success` ou protocolo sintético fora de modo de demonstração isolado.
+5. [ ] **Teste positivo:** Sandbox oficial ou double contratual homologado comprova envio, retorno, assinatura, conciliação e trilha exatamente uma vez.
+6. [ ] **Teste negativo:** Provedor/secret ausente, layout antigo, CNPJ ruim, replay, webhook forjado, timeout e T2 falham fechados e nunca gravam sucesso.
 7. [ ] **Regressão:** executar typecheck, lint, unidade, integração, banco e E2E diretamente afetados.
 8. [ ] **Operação:** medir antes/depois, garantir logs sem PII, alertas acionáveis e rollback ensaiado.
 9. [ ] **Gate permanente:** automatizar os testes e o critério objetivo; exceção exige owner, compensação e expiração.
@@ -881,12 +883,12 @@
 
 ### 10 subetapas
 
-1. [ ] **Evidência inicial:** A inspeção SQL não provou quais versões/configs estão implantadas.
+1. [ ] **Evidência inicial:** A inspeção SQL não provou versões/configs implantadas; o inventário funcional encontrou Edge Functions sem chamador e wrappers sem consumidor.
 2. [ ] **Ownership:** nomear executor, revisor e aprovador; mapear consumidores, dados, pré-condições e blast radius.
 3. [ ] **Contrato:** documentar invariantes, entradas/saídas, autorização, compatibilidade, métricas, ameaça e critério de abort.
-4. [ ] **Implementação:** Criar manifest nome/hash/verify_jwt/import-map/secrets e comparar Management API.
+4. [ ] **Implementação:** Criar manifest nome/hash/verify_jwt/import-map/secrets/callers/cron e comparar repositório, Management API e catálogo de capacidades aprovado.
 5. [ ] **Teste positivo:** Staging contém exatamente funções/config do commit.
-6. [ ] **Teste negativo:** Função extra, hash diferente, secret ausente ou verify_jwt inesperado bloqueia.
+6. [ ] **Teste negativo:** Função extra/órfã, hash diferente, secret ausente, caller inexistente ou verify_jwt inesperado bloqueia.
 7. [ ] **Regressão:** executar typecheck, lint, unidade, integração, banco e E2E diretamente afetados.
 8. [ ] **Operação:** medir antes/depois, garantir logs sem PII, alertas acionáveis e rollback ensaiado.
 9. [ ] **Gate permanente:** automatizar os testes e o critério objetivo; exceção exige owner, compensação e expiração.
@@ -1171,10 +1173,10 @@
 
 ### 10 subetapas
 
-1. [ ] **Evidência inicial:** Grafo/Madge: dois ciclos; 157 arquivos >200 linhas; 90 clones.
+1. [ ] **Evidência inicial:** Grafo/Madge: dois ciclos; 157 arquivos >200 linhas; 90 clones; rotas órfãs, services paralelos e código sem caminho de execução.
 2. [ ] **Ownership:** nomear executor, revisor e aprovador; mapear consumidores, dados, pré-condições e blast radius.
 3. [ ] **Contrato:** documentar invariantes, entradas/saídas, autorização, compatibilidade, métricas, ameaça e critério de abort.
-4. [ ] **Implementação:** Definir boundaries de domínio, inverter infraestrutura e decompor arquivos/clones por seams.
+4. [ ] **Implementação:** Definir boundaries, corrigir ou remover rotas/serviços/hooks/Edge Functions órfãos e decompor arquivos/clones por seams.
 5. [ ] **Teste positivo:** Rotas e regras permanecem cobertas com boundaries acíclicos.
 6. [ ] **Teste negativo:** Import proibido, regressão de estado ou clone novo reprova.
 7. [ ] **Regressão:** executar typecheck, lint, unidade, integração, banco e E2E diretamente afetados.
@@ -1218,21 +1220,21 @@
 - [ ] **C3 — Verificação:** regressão completa, gate permanente e métricas dentro do limite.
 - [ ] **C4 — Evidência:** staging/canário aprovado, documentação atualizada e links anexados.
 
-## E50-042 — Reduzir bundle e PWA
+## E50-042 — Reduzir bundle e concluir PWA/mobile
 
-| Campo        | Valor                                                                      |
-| ------------ | -------------------------------------------------------------------------- |
-| Onda         | Onda 4 — Engenharia                                                        |
-| Prioridade   | P1                                                                         |
-| Dependências | E50-040                                                                    |
-| Objetivo     | Lazy-load Excel/PDF/gráficos, revisar chunks e retirar assets do precache. |
+| Campo        | Valor                                                                                              |
+| ------------ | -------------------------------------------------------------------------------------------------- |
+| Onda         | Onda 4 — Engenharia                                                                                |
+| Prioridade   | P1                                                                                                 |
+| Dependências | E50-040                                                                                            |
+| Objetivo     | Lazy-load Excel/PDF/gráficos, limitar precache e concluir ou retirar o esqueleto Capacitor/mobile. |
 
 ### 10 subetapas
 
-1. [ ] **Evidência inicial:** Main ~382KB gzip, Excel ~288KB e precache ~12MB.
+1. [ ] **Evidência inicial:** Main ~382KB gzip, Excel ~288KB, precache ~12MB; Capacitor tem config/script, mas não tem dependências nem projetos Android/iOS versionados.
 2. [ ] **Ownership:** nomear executor, revisor e aprovador; mapear consumidores, dados, pré-condições e blast radius.
 3. [ ] **Contrato:** documentar invariantes, entradas/saídas, autorização, compatibilidade, métricas, ameaça e critério de abort.
-4. [ ] **Implementação:** Lazy-load Excel/PDF/gráficos, revisar chunks e retirar assets do precache.
+4. [ ] **Implementação:** Lazy-load Excel/PDF/gráficos, revisar chunks/precache e entregar pipeline mobile reproduzível ou remover a promessa de app nativo.
 5. [ ] **Teste positivo:** Budgets de JS/LCP/INP/CLS passam em cache frio.
 6. [ ] **Teste negativo:** Rede lenta e atualização de service worker não quebram navegação.
 7. [ ] **Regressão:** executar typecheck, lint, unidade, integração, banco e E2E diretamente afetados.
@@ -1423,19 +1425,19 @@
 
 ## E50-049 — Consolidar documentação e governança
 
-| Campo        | Valor                                                                                     |
-| ------------ | ----------------------------------------------------------------------------------------- |
-| Onda         | Onda 5 — Entrega                                                                          |
-| Prioridade   | P1                                                                                        |
-| Dependências | E50-010–048                                                                               |
-| Objetivo     | Publicar índice canônico, ADRs, ERD/dicionário, OpenAPI, runbooks, RoPA/DPIA e ownership. |
+| Campo        | Valor                                                                                                                      |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| Onda         | Onda 5 — Entrega                                                                                                           |
+| Prioridade   | P1                                                                                                                         |
+| Dependências | E50-010–048                                                                                                                |
+| Objetivo     | Publicar índice canônico, catálogo honesto de capacidades, ADRs, ERD/dicionário, OpenAPI, runbooks, RoPA/DPIA e ownership. |
 
 ### 10 subetapas
 
-1. [ ] **Evidência inicial:** Há 208 docs, contradições históricas, um ADR e contratos incompletos.
+1. [ ] **Evidência inicial:** Há centenas de docs e sete ADRs, mas também status históricos contraditórios, capacidades declaradas como concluídas sem execução e contratos incompletos.
 2. [ ] **Ownership:** nomear executor, revisor e aprovador; mapear consumidores, dados, pré-condições e blast radius.
 3. [ ] **Contrato:** documentar invariantes, entradas/saídas, autorização, compatibilidade, métricas, ameaça e critério de abort.
-4. [ ] **Implementação:** Publicar índice canônico, ADRs, ERD/dicionário, OpenAPI, runbooks, RoPA/DPIA e ownership.
+4. [ ] **Implementação:** Publicar índice/catálogo canônico, marcar documentos legados como superados e manter ADRs, ERD/dicionário, OpenAPI, runbooks, RoPA/DPIA e ownership.
 5. [ ] **Teste positivo:** Novo mantenedor reproduz ambiente/incidente só com docs aprovadas.
 6. [ ] **Teste negativo:** Link quebrado, fato sem last-verified e item sem owner reprovam.
 7. [ ] **Regressão:** executar typecheck, lint, unidade, integração, banco e E2E diretamente afetados.

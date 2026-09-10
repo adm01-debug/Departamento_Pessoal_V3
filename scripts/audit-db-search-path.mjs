@@ -84,18 +84,11 @@ function main() {
   try {
     output = runQuery();
   } catch (error) {
-    // Distinção deliberada: banco fora do ar é ambiente, mas erro do próprio
-    // SQL é defeito do gate. Tratar os dois como "passou" transformaria uma
-    // consulta quebrada num selo verde permanente — exatamente o modo de
-    // falha que este gate existe para impedir.
-    const stderr = String(error.stderr || '');
-    if (/^ERROR:/m.test(stderr)) {
-      console.error('[search-path] A consulta de auditoria falhou — gate reprovado.');
-      console.error(stderr.trim());
-      return 1;
-    }
-    console.warn(`[search-path] Banco inacessível: ${error.message}`);
-    return 0;
+    // Se o alvo foi configurado, tanto erro de SQL quanto indisponibilidade
+    // impedem uma conclusão de auditoria. O CI não pode aprovar às cegas.
+    console.error('[search-path] A consulta de auditoria falhou — gate reprovado.');
+    console.error(String(error.stderr || error.message).trim());
+    return 1;
   }
 
   const rows = output
@@ -112,18 +105,14 @@ function main() {
     return 0;
   }
 
-  console.error(
-    `\n[search-path] ${rows.length} função(ões) quebrariam em tempo de execução:\n`,
-  );
+  console.error(`\n[search-path] ${rows.length} função(ões) quebrariam em tempo de execução:\n`);
   for (const row of rows) {
     console.error(
       `  ✖ ${row.fn}\n      usa ${row.extFn}() de "${row.extname}" (schema ${row.schema}), ` +
-        `ausente do search_path fixado`,
+        `ausente do search_path fixado`
     );
   }
-  console.error(
-    '\n  Correção: ALTER FUNCTION <assinatura> SET search_path = public, <schema_da_extensao>;\n',
-  );
+  console.error('\n  Correção: ALTER FUNCTION <assinatura> SET search_path = public, <schema_da_extensao>;\n');
   return 1;
 }
 

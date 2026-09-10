@@ -69,12 +69,10 @@ const TENANT_CORRELATORS = [
  * Detectado ANTES dos correlacionadores, porque uma política pode conter
  * `auth.uid()` num ramo e a claim forjável em outro, unidos por OR.
  */
-const FORGEABLE_CLAIM_RE =
-  /auth\.jwt\s*\(\s*\)\s*(->>?|#>>?)|current_setting\s*\(\s*'request\.jwt/i;
+const FORGEABLE_CLAIM_RE = /auth\.jwt\s*\(\s*\)\s*(->>?|#>>?)|current_setting\s*\(\s*'request\.jwt/i;
 
 /** Claims do JWT que o banco valida e que, portanto, não são forjáveis. */
 const TRUSTED_CLAIM_RE = /->>\s*'(sub|aud|exp|iat|iss)'/i;
-
 
 /**
  * Tabelas isentas, com justificativa obrigatória.
@@ -88,18 +86,9 @@ const ALLOWLIST = new Map([
     'Cadastro institucional de sindicatos (CNPJ, telefone e e-mail da entidade). ' +
       'Dado público de contato da pessoa jurídica, compartilhado entre tenants — não é PII de colaborador.',
   ],
-  [
-    'cid10',
-    'Tabela de referência da CID-10 (OMS). Conteúdo público e imutável, sem vínculo com pessoa.',
-  ],
-  [
-    'nacionalidades',
-    'Domínio de referência do eSocial. Lista fechada de códigos, sem vínculo com pessoa.',
-  ],
-  [
-    'etnias',
-    'Domínio de referência do eSocial. Lista fechada de códigos, sem vínculo com pessoa.',
-  ],
+  ['cid10', 'Tabela de referência da CID-10 (OMS). Conteúdo público e imutável, sem vínculo com pessoa.'],
+  ['nacionalidades', 'Domínio de referência do eSocial. Lista fechada de códigos, sem vínculo com pessoa.'],
+  ['etnias', 'Domínio de referência do eSocial. Lista fechada de códigos, sem vínculo com pessoa.'],
   [
     'medidas_ciencia_tokens',
     'Ciência de medida disciplinar por link, antes de existir sessão (mesmo ' +
@@ -209,17 +198,10 @@ function main() {
     policyOutput = runQuery(QUERY);
     functionOutput = runQuery(FUNCTIONS_QUERY);
   } catch (error) {
-    // Distinção deliberada: banco fora do ar é ambiente, mas erro do próprio
-    // SQL é defeito do gate. Tratar os dois como "passou" transformaria uma
-    // consulta quebrada num selo verde permanente.
-    const stderr = String(error.stderr || '');
-    if (/^ERROR:/m.test(stderr)) {
-      console.error('[rls-pii] A consulta de auditoria falhou — gate reprovado.');
-      console.error(stderr.trim());
-      return 1;
-    }
-    console.warn(`[rls-pii] Banco inacessível: ${error.message}`);
-    return 0;
+    // Havendo alvo configurado, erro de rede e erro SQL impedem o veredito.
+    console.error('[rls-pii] A consulta de auditoria falhou — gate reprovado.');
+    console.error(String(error.stderr || error.message).trim());
+    return 1;
   }
 
   const bodies = parseRows(functionOutput, 2).map(([name, src]) => [name, src]);
@@ -234,7 +216,10 @@ function main() {
     if (ALLOWLIST.has(tablename)) continue;
     inspected += 1;
 
-    const roleList = roles.split(',').map((r) => r.trim()).filter(Boolean);
+    const roleList = roles
+      .split(',')
+      .map((r) => r.trim())
+      .filter(Boolean);
     const reachesAnon = roleList.includes('anon') || roleList.includes('public');
 
     // INSERT não tem USING; o predicado relevante é o WITH CHECK. A expressão
@@ -280,14 +265,12 @@ function main() {
   if (violations.length === 0) {
     console.log(
       `[rls-pii] OK — ${inspected} política(s) sobre tabelas com PII, todas correlacionadas ` +
-        `(${warnings.length} aviso(s) não bloqueante(s)).`,
+        `(${warnings.length} aviso(s) não bloqueante(s)).`
     );
     return 0;
   }
 
-  console.error(
-    `\n[rls-pii] ${violations.length} política(s) sobre PII sem isolamento comprovado:\n`,
-  );
+  console.error(`\n[rls-pii] ${violations.length} política(s) sobre PII sem isolamento comprovado:\n`);
   for (const v of violations) {
     console.error(`  ✖ ${v.tablename}."${v.policyname}" (${v.cmd})`);
     console.error(`      ${v.reason}`);
@@ -296,10 +279,9 @@ function main() {
   console.error(
     '\n  Correção: escope a política com public.pertence_a_empresa(empresa_id) ou\n' +
       '  com auth.uid(), e restrinja a role para "authenticated".\n' +
-      '  Tabela de referência sem PII de pessoa? Justifique na ALLOWLIST de scripts/audit-rls-pii.mjs.\n',
+      '  Tabela de referência sem PII de pessoa? Justifique na ALLOWLIST de scripts/audit-rls-pii.mjs.\n'
   );
   return 1;
 }
-
 
 process.exit(main());

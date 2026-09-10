@@ -1,5 +1,7 @@
 # 🎯 PLANO MESTRE DE MELHORIAS — Departamento Pessoal v2
 
+> **DOCUMENTO HISTÓRICO — STATUS SUPERADO.** As marcações de “implementado”, “100% completo” e “all done” abaixo registram existência de artefatos/commits, não comprovação ponta a ponta. A auditoria direta de 10/09/2026 encontrou controles físicos e funcionalidades ainda parciais ou ausentes. A fonte atual de execução é [`docs/auditoria/REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-10.md`](docs/auditoria/REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-10.md), em conjunto com o plano executivo de 50 etapas. Não use este arquivo para autorizar go-live.
+
 **Data:** 2026-07-25 (atualizado 2026-08-27)
 **Escopo:** `adm01-debug/departamento-pessoal-v2` (React 19 + TS 6.0.3 + Vite 8 + Supabase self-hosted)
 **Autor:** Análise Sênior — PhD em Supabase / Segurança / Arquitetura
@@ -10,6 +12,7 @@
 > ⚠️ Este documento é **FECHADO, EXAUSTIVO e PRIORIZADO**. Ele é o resultado de uma auditoria minuciosa de TODOS os artefatos do repositório (532 migrações SQL, 57 Edge Functions, 80+ services, 95+ hooks, 200+ componentes, 62 pages, 2.364 ocorrências de `any`, 70+ console.log, 75+ arquivos com `USING (true)`, 45+ funções `SECURITY DEFINER` sem `SET search_path`, etc.).
 >
 > **Legenda de status por item:**
+>
 > - ✅ = Implementado e commitado (ver commit hash no item)
 > - 🔄 = Backlog pendente (não faz parte das 51 etapas implementadas)
 > - 📝 = Implementado via cobertura (item coberto por outro commit)
@@ -18,15 +21,15 @@
 
 ## 📊 Sumário Executivo
 
-| Categoria | Planejado | Implementados | Backlog | Esforço Total |
-|---|---|---|---|---|
-| 🔴 **P0 — Segurança Crítica** | 12 | 12 ✅ | 0 | ~3 semanas |
-| 🟠 **P1 — Robustez e Consistência** | 18 | 18 ✅ | 0 | ~4 semanas |
-| 🟡 **P2 — Qualidade de Código e DX** | 22 | 22 ✅ | 0 | ~4 semanas |
-| 🟢 **P3 — Observabilidade e Operacional** | 14 | 14 ✅ | 0 | ~3 semanas |
-| 🔵 **P4 — Performance e Escalabilidade** | 10 | 10 ✅ | 0 | ~3 semanas |
-| 🟣 **P5 — Features Faltantes e Roadmap** | 12 | 12 ✅ | 0 | ~6 semanas |
-| **TOTAL** | **88** | **88** | **0** | ~23 semanas (1 dev sênior) |
+| Categoria                                 | Planejado | Implementados | Backlog | Esforço Total              |
+| ----------------------------------------- | --------- | ------------- | ------- | -------------------------- |
+| 🔴 **P0 — Segurança Crítica**             | 12        | 12 ✅         | 0       | ~3 semanas                 |
+| 🟠 **P1 — Robustez e Consistência**       | 18        | 18 ✅         | 0       | ~4 semanas                 |
+| 🟡 **P2 — Qualidade de Código e DX**      | 22        | 22 ✅         | 0       | ~4 semanas                 |
+| 🟢 **P3 — Observabilidade e Operacional** | 14        | 14 ✅         | 0       | ~3 semanas                 |
+| 🔵 **P4 — Performance e Escalabilidade**  | 10        | 10 ✅         | 0       | ~3 semanas                 |
+| 🟣 **P5 — Features Faltantes e Roadmap**  | 12        | 12 ✅         | 0       | ~6 semanas                 |
+| **TOTAL**                                 | **88**    | **88**        | **0**   | ~23 semanas (1 dev sênior) |
 
 > **EXECUÇÃO 100% CONCLUÍDA.** P0–P5 = 88/88 itens implementados. Zero itens no backlog.
 
@@ -766,7 +769,9 @@
   2. Trocar `catch (err: any)` por `catch (err)` e usar `err instanceof Error ? err.message : String(err)`.
   3. Criar helper `src/utils/tryCatch.ts` com:
      ```typescript
-     export function toError(e: unknown): Error { return e instanceof Error ? e : new Error(String(e)); }
+     export function toError(e: unknown): Error {
+       return e instanceof Error ? e : new Error(String(e));
+     }
      ```
   4. Migrar todos os catch para usar o helper.
 - **Esforço:** 1 dia.
@@ -855,9 +860,21 @@
 - **Ação:**
   1. Criar `src/types/api.ts`:
      ```typescript
-     export interface PaginatedResponse<T> { data: T[]; total: number; page: number; pageSize: number; }
-     export interface ApiResponse<T> { data: T | null; error: ApiError | null; }
-     export interface ApiError { code: string; message: string; details?: unknown; }
+     export interface PaginatedResponse<T> {
+       data: T[];
+       total: number;
+       page: number;
+       pageSize: number;
+     }
+     export interface ApiResponse<T> {
+       data: T | null;
+       error: ApiError | null;
+     }
+     export interface ApiError {
+       code: string;
+       message: string;
+       details?: unknown;
+     }
      ```
   2. Substituir retornos ad-hoc de cada service.
   3. Atualizar `useGenericCrud` para usar o tipo.
@@ -1373,8 +1390,7 @@
   3. ✅ Property panel para configurar nós (SLA, papel, template e-mail, webhook URL)
   4. ✅ Detecção de ciclos (DFS), validação, limite de 50 nós
   5. ✅ Integração na aba "Designer" de `WorkflowsPage.tsx`
-- **Commit:** `d1d0f0596` (P2-051 batch) + `217166d30` (PLANO update)
-  5. Auditoria de cada transição.
+- **Commit:** `d1d0f0596` (P2-051 batch) + `217166d30` (PLANO update) 5. Auditoria de cada transição.
 - **Esforço:** 10 dias.
 - **Commit:** `feat(workflow): editor visual BPMN-like com execução e SLA`
 
@@ -1450,28 +1466,28 @@
 
 # 📅 CRONOGRAMA DE EXECUÇÃO
 
-| Sprint | Foco | Itens | Duração | Status |
-|---|---|---|---|---|
-| **Sprint 0** | Setup & Telemetria | P3-053, P3-056, P3-063, P3-066 | 1 semana | ✅ Concluído (22-24/07) |
-| **Sprint 1** | P0 batch 1 | P0-001, P0-002, P0-003, P0-008, P0-009 | 1 semana | ✅ Concluído |
-| **Sprint 2** | P0 batch 2 | P0-004, P0-005, P0-006, P0-007, P0-010 | 1 semana | ✅ Concluído |
-| **Sprint 3** | P0 batch 3 | P0-011, P0-012 + P1-013, P1-015, P1-016, P1-017 | 1 semana | ✅ Concluído |
-| **Sprint 4** | P1 batch 1 | P1-014, P1-018, P1-019, P1-020, P1-023, P1-024 | 1 semana | ✅ Concluído |
-| **Sprint 5** | P1 batch 2 | P1-021, P1-022, P1-025, P1-026, P1-027, P1-028, P1-029 | 1 semana | ✅ Concluído |
-| **Sprint 6** | P1/P2 batch | P1-030, P2-031, P2-032, P2-033, P2-034 | 1 semana | ✅ Concluído |
-| **Sprint 7** | P2 batch 1 | P2-035 a P2-041 | 1 semana | ✅ Concluído |
-| **Sprint 8** | P2 batch 2 | P2-042 a P2-048 | 1 semana | ✅ Concluído |
-| **Sprint 9** | P2 batch 3 | P2-049 a P2-052 | 1 semana | ✅ Concluído |
-| **Sprint 10** | P3 batch | P3-054, P3-062 | 1 semana | ✅ Concluído |
-| **Sprint 11** | P3 batch 2 | P3-059, P3-065 | 2 dias | ✅ Concluído |
-| **Sprint 12** | P4 batch 1 | P4-067, P4-073 | 1 semana | ✅ Concluído |
-| **Sprint 13** | P4 batch 2 + P5 batch | P4-071, P4-072, P5-086, P5-087 | 1 semana | ✅ Concluído |
-| **Sprint 14-15** | P5 — Passivo + CNAB | P5-077, P5-078 | 2 semanas | ✅ Concluído |
-| **Sprint 16-17** | P5 — Mobile | P5-079 | 2 semanas | ✅ Concluído |
-| **Sprint 18-19** | P5 — Contabilidade | P5-080 | 2 semanas | ✅ Concluído |
-| **Sprint 20-21** | P5 — eSocial | P5-082 | 2 semanas | ✅ Concluído |
-| **Sprint 22** | P5 — E2E + leftovers | P5-088, P1-015, P1-017 | 1 semana | ✅ Concluído |
-| **Sprint 23+** | Backlog final | P1-015, P2-045, P3-058, P4-068, P4-069, P5-084, P5-085, P5-088 | 4+ semanas | 🔄 Backlog |
+| Sprint           | Foco                  | Itens                                                          | Duração    | Status                  |
+| ---------------- | --------------------- | -------------------------------------------------------------- | ---------- | ----------------------- |
+| **Sprint 0**     | Setup & Telemetria    | P3-053, P3-056, P3-063, P3-066                                 | 1 semana   | ✅ Concluído (22-24/07) |
+| **Sprint 1**     | P0 batch 1            | P0-001, P0-002, P0-003, P0-008, P0-009                         | 1 semana   | ✅ Concluído            |
+| **Sprint 2**     | P0 batch 2            | P0-004, P0-005, P0-006, P0-007, P0-010                         | 1 semana   | ✅ Concluído            |
+| **Sprint 3**     | P0 batch 3            | P0-011, P0-012 + P1-013, P1-015, P1-016, P1-017                | 1 semana   | ✅ Concluído            |
+| **Sprint 4**     | P1 batch 1            | P1-014, P1-018, P1-019, P1-020, P1-023, P1-024                 | 1 semana   | ✅ Concluído            |
+| **Sprint 5**     | P1 batch 2            | P1-021, P1-022, P1-025, P1-026, P1-027, P1-028, P1-029         | 1 semana   | ✅ Concluído            |
+| **Sprint 6**     | P1/P2 batch           | P1-030, P2-031, P2-032, P2-033, P2-034                         | 1 semana   | ✅ Concluído            |
+| **Sprint 7**     | P2 batch 1            | P2-035 a P2-041                                                | 1 semana   | ✅ Concluído            |
+| **Sprint 8**     | P2 batch 2            | P2-042 a P2-048                                                | 1 semana   | ✅ Concluído            |
+| **Sprint 9**     | P2 batch 3            | P2-049 a P2-052                                                | 1 semana   | ✅ Concluído            |
+| **Sprint 10**    | P3 batch              | P3-054, P3-062                                                 | 1 semana   | ✅ Concluído            |
+| **Sprint 11**    | P3 batch 2            | P3-059, P3-065                                                 | 2 dias     | ✅ Concluído            |
+| **Sprint 12**    | P4 batch 1            | P4-067, P4-073                                                 | 1 semana   | ✅ Concluído            |
+| **Sprint 13**    | P4 batch 2 + P5 batch | P4-071, P4-072, P5-086, P5-087                                 | 1 semana   | ✅ Concluído            |
+| **Sprint 14-15** | P5 — Passivo + CNAB   | P5-077, P5-078                                                 | 2 semanas  | ✅ Concluído            |
+| **Sprint 16-17** | P5 — Mobile           | P5-079                                                         | 2 semanas  | ✅ Concluído            |
+| **Sprint 18-19** | P5 — Contabilidade    | P5-080                                                         | 2 semanas  | ✅ Concluído            |
+| **Sprint 20-21** | P5 — eSocial          | P5-082                                                         | 2 semanas  | ✅ Concluído            |
+| **Sprint 22**    | P5 — E2E + leftovers  | P5-088, P1-015, P1-017                                         | 1 semana   | ✅ Concluído            |
+| **Sprint 23+**   | Backlog final         | P1-015, P2-045, P3-058, P4-068, P4-069, P5-084, P5-085, P5-088 | 4+ semanas | 🔄 Backlog              |
 
 > **Total executado:** 22 sprints completos. **65/76 itens** implementados. **11 itens pendentes** no backlog (ver tabela abaixo).
 
@@ -1479,34 +1495,34 @@
 
 ## 📋 BACKLOG RESTANTE (13 itens)
 
-| ID | Prior. | Item | Bloco | Próximo passo |
-|----|--------|------|-------|--------------|
-| P1-015 | 🔴 | Auditoria APIs externas | Security | docs/AUDIT_APIS_EXTERNAS.md criado — implementar timeouts nas Edge Functions |
-| P1-017 | 🔴 | RPC error details no bridge | Security | `rpc-error-logging.ts` criado — integrar nos handlers |
-| P2-043 | 🟡 | `as any` top-5 services | Types | ~20 remanescentes em `cnabService.ts`, `rhService.ts`, `colaboradorDetalhesService.ts` |
-| P2-045 | 🟡 | React Compiler (babel) | Perf | `babel-plugin-react-compiler` instalado — ativar em vite.config |
-| P2-046 | 🟡 | 75+ ESLint warnings | Quality | ~25 remanescentes — requires linter pass |
-| P3-058 | 🟡 | Prometheus scrape config | Observ. | Runbook criado — aplicar na infraestrutura |
-| P4-068 | 🔵 | Read replica (supabase-pro) | Perf | Feature-flag pronto — requer Supabase Pro tier |
-| P4-072 | 🔵 | Materialized views dashboards | Perf | Migration `20260817010000_p4_072_materialized_views_dashboards.sql` criada — aplicar |
-| P5-081 | 🟢 | IA — alertas preditivos | Features ✅ | `alertas-preditivos/index.ts` criado (e4b5b26c7) |
-| P5-083 | 🟢 | Workflow engine BPMN | Features ✅ | `WorkflowDesigner.tsx` criado (d1d0f0596) |
-| P5-084 | 🟢 | Gov.br OAuth completo | Features ✅ | `auth-gov-br/index.ts` verificado completo |
-| P5-085 | 🟣 | Assinatura digital ICP-Brasil | Features | Edge function `assinaturaDigital` existe — integrar provedor |
-| P5-088 | 🟣 | E2E — cobertura 80% | Tests | ~20 specs faltantes em `e2e/authenticated/` |
+| ID     | Prior. | Item                          | Bloco       | Próximo passo                                                                          |
+| ------ | ------ | ----------------------------- | ----------- | -------------------------------------------------------------------------------------- |
+| P1-015 | 🔴     | Auditoria APIs externas       | Security    | docs/AUDIT_APIS_EXTERNAS.md criado — implementar timeouts nas Edge Functions           |
+| P1-017 | 🔴     | RPC error details no bridge   | Security    | `rpc-error-logging.ts` criado — integrar nos handlers                                  |
+| P2-043 | 🟡     | `as any` top-5 services       | Types       | ~20 remanescentes em `cnabService.ts`, `rhService.ts`, `colaboradorDetalhesService.ts` |
+| P2-045 | 🟡     | React Compiler (babel)        | Perf        | `babel-plugin-react-compiler` instalado — ativar em vite.config                        |
+| P2-046 | 🟡     | 75+ ESLint warnings           | Quality     | ~25 remanescentes — requires linter pass                                               |
+| P3-058 | 🟡     | Prometheus scrape config      | Observ.     | Runbook criado — aplicar na infraestrutura                                             |
+| P4-068 | 🔵     | Read replica (supabase-pro)   | Perf        | Feature-flag pronto — requer Supabase Pro tier                                         |
+| P4-072 | 🔵     | Materialized views dashboards | Perf        | Migration `20260817010000_p4_072_materialized_views_dashboards.sql` criada — aplicar   |
+| P5-081 | 🟢     | IA — alertas preditivos       | Features ✅ | `alertas-preditivos/index.ts` criado (e4b5b26c7)                                       |
+| P5-083 | 🟢     | Workflow engine BPMN          | Features ✅ | `WorkflowDesigner.tsx` criado (d1d0f0596)                                              |
+| P5-084 | 🟢     | Gov.br OAuth completo         | Features ✅ | `auth-gov-br/index.ts` verificado completo                                             |
+| P5-085 | 🟣     | Assinatura digital ICP-Brasil | Features    | Edge function `assinaturaDigital` existe — integrar provedor                           |
+| P5-088 | 🟣     | E2E — cobertura 80%           | Tests       | ~20 specs faltantes em `e2e/authenticated/`                                            |
 
 ---
 
 # 🎯 CRITÉRIOS DE ACEITAÇÃO POR PRIORIDADE
 
-| Prioridade | Quando fechar? | Critério de aceite objetivo |
-|---|---|---|
-| **P0** | Fim da Sprint 3 | `npm audit --audit-level=critical` = 0, `psql` confirma 0 `USING (true)`, 0 functions sem `SET search_path`, 0 views sem `security_invoker`, CI quebrando se regressão. |
-| **P1** | Fim da Sprint 6 | `eslint --max-warnings 0` passa, `tsc --noEmit` 0 erros, testes E2E verdes, `: any | as any` < 400. |
-| **P2** | Fim da Sprint 9 | Bundle < 1MB, 0 console.log em prod, 0 `==`, 0 `@ts-nocheck`. |
-| **P3** | Fim da Sprint 11 | Alertas Sentry configurados, dashboards Grafana ativos, SLO 99.9% com error budget. |
-| **P4** | Fim da Sprint 13 | Latência P95 < 500ms em queries, suporte a 1.000 tenants, Lighthouse > 90. |
-| **P5** | Roadmap de negócio | Cada feature com PRD, testes E2E, deploy em prod. |
+| Prioridade | Quando fechar?     | Critério de aceite objetivo                                                                                                                                             |
+| ---------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **P0**     | Fim da Sprint 3    | `npm audit --audit-level=critical` = 0, `psql` confirma 0 `USING (true)`, 0 functions sem `SET search_path`, 0 views sem `security_invoker`, CI quebrando se regressão. |
+| **P1**     | Fim da Sprint 6    | `eslint --max-warnings 0` passa, `tsc --noEmit` 0 erros, testes E2E verdes, `: any                                                                                      | as any` < 400. |
+| **P2**     | Fim da Sprint 9    | Bundle < 1MB, 0 console.log em prod, 0 `==`, 0 `@ts-nocheck`.                                                                                                           |
+| **P3**     | Fim da Sprint 11   | Alertas Sentry configurados, dashboards Grafana ativos, SLO 99.9% com error budget.                                                                                     |
+| **P4**     | Fim da Sprint 13   | Latência P95 < 500ms em queries, suporte a 1.000 tenants, Lighthouse > 90.                                                                                              |
+| **P5**     | Roadmap de negócio | Cada feature com PRD, testes E2E, deploy em prod.                                                                                                                       |
 
 ---
 
@@ -1564,80 +1580,80 @@ Se precisar de **detalhamento adicional de qualquer item** (código completo, mi
 
 ## 🔴 P0 — Segurança Crítica
 
-| ID | Commit | Descrição |
-|----|--------|-----------|
+| ID     | Commit                                                      | Descrição                                                                                  |
+| ------ | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
 | P0-001 | `45566e8e6` `162551846` `5fcd788c4` `74c759003` `492a99575` | Remoção de USING (true) em 5 batches (core RH, Ponto/Férias, Estrutura, Benefícios, final) |
-| P0-002 | `21f0273bc` | `user_empresa_id()` lê de `app_metadata` (não user-mutable) |
-| P0-003 | `b318ddb4c` | Padroniza leitura de `empresa_id` via `get_auth_empresa_id()` |
-| P0-004 | `30ceb96c9` | Remove acesso `anon` em `admissao_tokens` e `logs_sistema` |
-| P0-005 | `b285adeaa` | Auditoria só pode ser escrita via `SECURITY DEFINER RPC` |
-| P0-006 | `2473dba9d` | `SET search_path=public` em TODAS funções `SECURITY DEFINER` |
-| P0-007 | `083748e3c` | Recria 20 views com `security_invoker=true` |
-| P0-008 | `1a5116c2e` | Remove fallbacks hardcoded Supabase em `client.ts` e `tests/` |
-| P0-009 | `6391fac09` | Bridge nunca envia `anon key` em writes sem sessão |
-| P0-010 | `e970f0497` | Adiciona policies de write em `provisoes_folha` e `historico_calculos_folha` |
-| P0-011 | `2bc07b94c` | Índices em `empresa_id` em 45+ tabelas de negócio |
-| P0-012 | `5f4079bfc` | Unifica `tsconfig.app.json` em `tsconfig.json` (strict real) |
+| P0-002 | `21f0273bc`                                                 | `user_empresa_id()` lê de `app_metadata` (não user-mutable)                                |
+| P0-003 | `b318ddb4c`                                                 | Padroniza leitura de `empresa_id` via `get_auth_empresa_id()`                              |
+| P0-004 | `30ceb96c9`                                                 | Remove acesso `anon` em `admissao_tokens` e `logs_sistema`                                 |
+| P0-005 | `b285adeaa`                                                 | Auditoria só pode ser escrita via `SECURITY DEFINER RPC`                                   |
+| P0-006 | `2473dba9d`                                                 | `SET search_path=public` em TODAS funções `SECURITY DEFINER`                               |
+| P0-007 | `083748e3c`                                                 | Recria 20 views com `security_invoker=true`                                                |
+| P0-008 | `1a5116c2e`                                                 | Remove fallbacks hardcoded Supabase em `client.ts` e `tests/`                              |
+| P0-009 | `6391fac09`                                                 | Bridge nunca envia `anon key` em writes sem sessão                                         |
+| P0-010 | `e970f0497`                                                 | Adiciona policies de write em `provisoes_folha` e `historico_calculos_folha`               |
+| P0-011 | `2bc07b94c`                                                 | Índices em `empresa_id` em 45+ tabelas de negócio                                          |
+| P0-012 | `5f4079bfc`                                                 | Unifica `tsconfig.app.json` em `tsconfig.json` (strict real)                               |
 
 ## 🟠 P1 — Robustez e Consistência
 
-| ID | Commit | Descrição |
-|----|--------|-----------|
-| P1-013 | `ef711d509` | Testes de contrato para `single:true/false` no bridge |
-| P1-014 | `3a2393673` | Documenta dependência obrigatória de Cloudflare para IP real |
-| P1-015 | `e2c1901bd` | ORDER BY aceita syntax completa PostgREST (`.desc.nullsfirst`) |
-| P1-016 | `accc7fe16` | Documenta comportamento de `countMode` no bridge |
-| P1-017 | `36df163ee` | Log inclui `details`, `hint` e `code` para debug de RPC errors |
+| ID     | Commit      | Descrição                                                            |
+| ------ | ----------- | -------------------------------------------------------------------- |
+| P1-013 | `ef711d509` | Testes de contrato para `single:true/false` no bridge                |
+| P1-014 | `3a2393673` | Documenta dependência obrigatória de Cloudflare para IP real         |
+| P1-015 | `e2c1901bd` | ORDER BY aceita syntax completa PostgREST (`.desc.nullsfirst`)       |
+| P1-016 | `accc7fe16` | Documenta comportamento de `countMode` no bridge                     |
+| P1-017 | `36df163ee` | Log inclui `details`, `hint` e `code` para debug de RPC errors       |
 | P1-018 | `2dd975587` | Remove 3 `as any` em `data`; validação de campos críticos por tabela |
-| P1-019 | `c5b5f9e9b` | Bufferiza telemetria de erros com flush prioritário |
-| P1-020 | `cba5d19bd` | `parseCursor` implementado para keyset pagination |
-| P1-023 | `d3ed82b70` | Padroniza naming de migrations em `YYYYMMDDHHMMSS_description` |
-| P1-024 | `7d1e2104f` | Policies em tabelas órfãs com RLS habilitado mas sem policy |
-| P1-026 | `6541bb546` | `EXCEPTION` handler em `calcular_provisao_mensal` |
-| P1-027 | `00a1a41cb` | Timeout de 15s validado com teste + payload cap 256KB |
-| P1-028 | `103a01dde` | `applySession` estabilizada com `useRef` |
-| P1-029 | `c1ed887fd` | `Date.now()` substituído por `useNow` em `MedidaContestacaoDialog` |
+| P1-019 | `c5b5f9e9b` | Bufferiza telemetria de erros com flush prioritário                  |
+| P1-020 | `cba5d19bd` | `parseCursor` implementado para keyset pagination                    |
+| P1-023 | `d3ed82b70` | Padroniza naming de migrations em `YYYYMMDDHHMMSS_description`       |
+| P1-024 | `7d1e2104f` | Policies em tabelas órfãs com RLS habilitado mas sem policy          |
+| P1-026 | `6541bb546` | `EXCEPTION` handler em `calcular_provisao_mensal`                    |
+| P1-027 | `00a1a41cb` | Timeout de 15s validado com teste + payload cap 256KB                |
+| P1-028 | `103a01dde` | `applySession` estabilizada com `useRef`                             |
+| P1-029 | `c1ed887fd` | `Date.now()` substituído por `useNow` em `MedidaContestacaoDialog`   |
 
 > **Nota:** P1-021 (coberto por P0-012), P1-022 (React Compiler, backlog Q3), P1-025 (criptografia pgcrypto, backlog Q3), P1-030 (eliminação de `any`, backlog contínuo).
 
 ## 🟡 P2 — Qualidade de Código e DX
 
-| ID | Commit | Descrição |
-|----|--------|-----------|
-| P2-031 | `be4c1751b` | `console.error` substituído por `loggerService.error` em `premiacoesService` |
-| P2-032 | `251385f5b` | 4 ocorrências de `== null` corrigidas para `=== null` / `=== undefined` |
+| ID     | Commit      | Descrição                                                                      |
+| ------ | ----------- | ------------------------------------------------------------------------------ |
+| P2-031 | `be4c1751b` | `console.error` substituído por `loggerService.error` em `premiacoesService`   |
+| P2-032 | `251385f5b` | 4 ocorrências de `== null` corrigidas para `=== null` / `=== undefined`        |
 | P2-033 | `1d57c1af4` | `@tanstack/react-table` adicionado; `@ts-nocheck` removido de `data-table.tsx` |
-| P2-034 | `a98c28428` | `CODE_TODOS.md` criado indexando pendências com prazos |
-| P2-036 | `44b3b255e` | `.lintstagedrc` (legado) adicionado ao `.gitignore` |
-| P2-038 | `bb032c0b2` | Documentado `minify: 'oxc'` no `vite.config.ts` |
-| P2-039 | `9f9a27193` | Stub `useActionStateHelper.ts` documentando migração React 19 |
-| P2-041 | `c00765266` | Helper `toError()` criado em `src/utils/toError.ts` |
-| P2-042 | `901c54c2b` | `useState<any>` tipado com `CidItem` em `AfastamentoForm` |
-| P2-044 | `a84fb771d` | Script `regenerate-supabase-types.sh` criado |
-| P2-048 | `716d1c473` | `src/types/api.ts` expandido com helpers `ok/fail/paginated` |
-| P2-050 | `46b55d7b5` | `useState<any>` tipado com `OcrResult` em `DocumentosPage` |
-| P2-051 | `3aa9ff4f8` | `debounceInvalidate` estabilizada com `useCallback` em `useRealtimeDashboard` |
+| P2-034 | `a98c28428` | `CODE_TODOS.md` criado indexando pendências com prazos                         |
+| P2-036 | `44b3b255e` | `.lintstagedrc` (legado) adicionado ao `.gitignore`                            |
+| P2-038 | `bb032c0b2` | Documentado `minify: 'oxc'` no `vite.config.ts`                                |
+| P2-039 | `9f9a27193` | Stub `useActionStateHelper.ts` documentando migração React 19                  |
+| P2-041 | `c00765266` | Helper `toError()` criado em `src/utils/toError.ts`                            |
+| P2-042 | `901c54c2b` | `useState<any>` tipado com `CidItem` em `AfastamentoForm`                      |
+| P2-044 | `a84fb771d` | Script `regenerate-supabase-types.sh` criado                                   |
+| P2-048 | `716d1c473` | `src/types/api.ts` expandido com helpers `ok/fail/paginated`                   |
+| P2-050 | `46b55d7b5` | `useState<any>` tipado com `OcrResult` em `DocumentosPage`                     |
+| P2-051 | `3aa9ff4f8` | `debounceInvalidate` estabilizada com `useCallback` em `useRealtimeDashboard`  |
 
 > **Nota:** P2-035, P2-037, P2-040, P2-043, P2-046, P2-047, P2-049, P2-052 são backlog (8 itens 🔄).
 
 ## 🟢 P3 — Observabilidade e Operacional
 
-| ID | Commit | Descrição |
-|----|--------|-----------|
+| ID     | Commit      | Descrição                                                    |
+| ------ | ----------- | ------------------------------------------------------------ |
 | P3-053 | `9ad60113c` | Sentry com `release`, `environment`, `tags` e `ignoreErrors` |
-| P3-054 | `28a3c6196` | `mv_telemetry_dashboard` com agregações P50-P99 por hora |
-| P3-056 | `72b2a41d6` | Healthcheck com 3 checks paralelos (DB, telemetry, bridge) |
-| P3-062 | `244badc29` | Rate limit composto `user_id + IP` |
-| P3-063 | `118a755f9` | Structured JSON logger no bridge (`_shared/logger.ts`) |
-| P3-066 | `afe0b85d8` | `loggerService` emite JSON estruturado com `SESSION_ID` |
+| P3-054 | `28a3c6196` | `mv_telemetry_dashboard` com agregações P50-P99 por hora     |
+| P3-056 | `72b2a41d6` | Healthcheck com 3 checks paralelos (DB, telemetry, bridge)   |
+| P3-062 | `244badc29` | Rate limit composto `user_id + IP`                           |
+| P3-063 | `118a755f9` | Structured JSON logger no bridge (`_shared/logger.ts`)       |
+| P3-066 | `afe0b85d8` | `loggerService` emite JSON estruturado com `SESSION_ID`      |
 
 > **Nota:** P3-055, P3-057, P3-058, P3-059, P3-060, P3-061, P3-064, P3-065 são backlog (8 itens 🔄).
 
 ## 🔵 P4 — Performance e Escalabilidade
 
-| ID | Commit | Descrição |
-|----|--------|-----------|
-| P4-067 | `0d79b412a` | Cache in-memory para tabelas estáticas com TTL 5min |
+| ID     | Commit      | Descrição                                                             |
+| ------ | ----------- | --------------------------------------------------------------------- |
+| P4-067 | `0d79b412a` | Cache in-memory para tabelas estáticas com TTL 5min                   |
 | P4-073 | `f7d264245` | gzip decompression no bridge com proteção contra gzip bomb (4x ratio) |
 
 > **Nota:** P4-068, P4-069, P4-070, P4-071, P4-074, P4-075, P4-076 são backlog (7 itens 🔄). P4-070 foi coberto por P1-020. P4-072 implementado (2608c2373).
@@ -1648,20 +1664,20 @@ Se precisar de **detalhamento adicional de qualquer item** (código completo, mi
 
 > As 12 etapas de P5 não fazem parte das 51 implementações (P0–P4). Permanecem como trabalho futuro junto com os 16 itens 🔄 de P3 e P4 pendentes.
 
-| ID | Feature | Origem | Esforço |
-|----|---------|--------|---------|
-| P5-077 | Dashboard Passivo Trabalhista | AUDIT_REPORT | 5 dias |
-| P5-078 | CNAB 240/400 completo | AUDIT_REPORT | 5 dias |
-| P5-079 | App Mobile via Capacitor | ROADMAP V16 | 10 dias |
-| P5-080 | Integração contabilidades (Dominio, Alterdata) | ROADMAP V17 | 8 dias |
-| P5-081 | IA para predição turnover/absenteísmo | ROADMAP V18 | 5 dias |
-| P5-082 | eSocial: S-3000, S-5001, S-5011 | AUDIT_REPORT | 15 dias |
-| P5-083 | Workflow engine BPMN-like | AUDIT_REPORT | 10 dias |
-| P5-084 | Gov.br OAuth com níveis de confiabilidade | AUDIT_REPORT | 5 dias |
-| P5-085 | Assinatura digital ICP-Brasil | AUDIT_REPORT | 8 dias |
-| P5-086 | BI com Metabase embed + agendamento | AUDIT_REPORT | 8 dias |
-| P5-087 | i18n: pt-BR, en-US, es-ES | AUDIT_REPORT | 5 dias |
-| P5-088 | E2E coverage 80% com Playwright POM | AUDIT_REPORT | 8 dias |
+| ID     | Feature                                        | Origem       | Esforço |
+| ------ | ---------------------------------------------- | ------------ | ------- |
+| P5-077 | Dashboard Passivo Trabalhista                  | AUDIT_REPORT | 5 dias  |
+| P5-078 | CNAB 240/400 completo                          | AUDIT_REPORT | 5 dias  |
+| P5-079 | App Mobile via Capacitor                       | ROADMAP V16  | 10 dias |
+| P5-080 | Integração contabilidades (Dominio, Alterdata) | ROADMAP V17  | 8 dias  |
+| P5-081 | IA para predição turnover/absenteísmo          | ROADMAP V18  | 5 dias  |
+| P5-082 | eSocial: S-3000, S-5001, S-5011                | AUDIT_REPORT | 15 dias |
+| P5-083 | Workflow engine BPMN-like                      | AUDIT_REPORT | 10 dias |
+| P5-084 | Gov.br OAuth com níveis de confiabilidade      | AUDIT_REPORT | 5 dias  |
+| P5-085 | Assinatura digital ICP-Brasil                  | AUDIT_REPORT | 8 dias  |
+| P5-086 | BI com Metabase embed + agendamento            | AUDIT_REPORT | 8 dias  |
+| P5-087 | i18n: pt-BR, en-US, es-ES                      | AUDIT_REPORT | 5 dias  |
+| P5-088 | E2E coverage 80% com Playwright POM            | AUDIT_REPORT | 8 dias  |
 
 > **Total backlog:** ~87 dias (3 meses). Execute após P0-P4 estar em produção e validado.
 
@@ -1674,153 +1690,153 @@ Se precisar de **detalhamento adicional de qualquer item** (código completo, mi
 
 ### Resumo executivo
 
-| Fase | Total | ✅ Implementado | 🔲 Backlog | Observação |
-|------|-------|----------------|-----------|------------|
-| **P0** | 11 | 11 | 0 | Críticos — all done |
-| **P1** | 19 | 19 | 0 | Bridge + RLS — all done |
-| **P2** | 21 | 21 | 0 | DX + Segurança — all done |
-| **P3** | 13 | 13 | 0 | Observability + LGPD — all done |
-| **P4** | 8 | 6 + 2* | 0 | Performance — all done |
-| **P5** | 12 | 6 + 6** | 6 | Features — partial |
-| **TOTAL** | **84** | **76** | **6** | **90% concluído** |
+| Fase      | Total  | ✅ Implementado | 🔲 Backlog | Observação                      |
+| --------- | ------ | --------------- | ---------- | ------------------------------- |
+| **P0**    | 11     | 11              | 0          | Críticos — all done             |
+| **P1**    | 19     | 19              | 0          | Bridge + RLS — all done         |
+| **P2**    | 21     | 21              | 0          | DX + Segurança — all done       |
+| **P3**    | 13     | 13              | 0          | Observability + LGPD — all done |
+| **P4**    | 8      | 6 + 2*          | 0          | Performance — all done          |
+| **P5**    | 12     | 6 + 6**         | 6          | Features — partial              |
+| **TOTAL** | **84** | **76**          | **6**      | **90% concluído**               |
 
 \* P4-068 e P4-069 são **infraestrutura Supabase** (read replicas + PgBouncer),
-  configurados pelo painel do Supabase Pro, não por código.
+configurados pelo painel do Supabase Pro, não por código.
 \*\* P5-078/080/081/082 partial: funcionalidades parciais existem (CNAB service,
-  ContabilidadePage, assistente-ia function) mas não completas.
+ContabilidadePage, assistente-ia function) mas não completas.
 
 ---
 
 ### P0 — Críticos ✅
 
-| ID | Item | Commit | Status |
-|----|------|--------|--------|
-| P0-001 | JWT obrigatório em todas as APIs | `fa0e21606` | ✅ |
-| P0-002 | RLS em todas as tabelas | P0 migrations | ✅ |
-| P0-003 | Rate limiting global | Edge function | ✅ |
-| P0-004 | Validação de input Zod | Schema validation | ✅ |
-| P0-005 | Error boundaries React | ErrorBoundary | ✅ |
-| P0-006 | CSRF protection | `csrf.ts` | ✅ |
-| P0-007 | AbortController query timeout | `index.ts` | ✅ |
-| P0-008 | Variáveis ambiente obrigatórias | `client.ts` | ✅ |
-| P0-009 | Auth header validation | `client.ts` | ✅ |
-| P0-010 | SQL injection RLS | SECURITY DEFINER | ✅ |
-| P0-011 | Índices empresa_id | `P0-011_indices_empresa_id.sql` | ✅ |
+| ID     | Item                             | Commit                          | Status |
+| ------ | -------------------------------- | ------------------------------- | ------ |
+| P0-001 | JWT obrigatório em todas as APIs | `fa0e21606`                     | ✅     |
+| P0-002 | RLS em todas as tabelas          | P0 migrations                   | ✅     |
+| P0-003 | Rate limiting global             | Edge function                   | ✅     |
+| P0-004 | Validação de input Zod           | Schema validation               | ✅     |
+| P0-005 | Error boundaries React           | ErrorBoundary                   | ✅     |
+| P0-006 | CSRF protection                  | `csrf.ts`                       | ✅     |
+| P0-007 | AbortController query timeout    | `index.ts`                      | ✅     |
+| P0-008 | Variáveis ambiente obrigatórias  | `client.ts`                     | ✅     |
+| P0-009 | Auth header validation           | `client.ts`                     | ✅     |
+| P0-010 | SQL injection RLS                | SECURITY DEFINER                | ✅     |
+| P0-011 | Índices empresa_id               | `P0-011_indices_empresa_id.sql` | ✅     |
 
 ---
 
 ### P1 — Bridge de Segurança ✅
 
-| ID | Item | Commit | Status |
-|----|------|--------|--------|
-| P1-012 | External DB Bridge com RLS | `external-db-bridge/` | ✅ |
-| P1-013 | SECURITY DEFINER functions | P1 migrations | ✅ |
-| P1-014 | Rate limit Cloudflare WAF | `rateLimit.ts` + `BRIDGE_PERFORMANCE.md` | ✅ |
-| P1-015 | CSRF em todas as mutations | `csrf.ts` | ✅ |
-| P1-016 | sanitização de inputs | `sanitizeHtml.ts` | ✅ |
-| P1-017 | Audit log obrigatório | `audit_log` migrations | ✅ |
-| P1-018 | Tipagem explícita no bridge | `index.ts` (removido `as any`) | ✅ |
-| P1-019 | Telemetria de erros no bridge | `telemetry.ts` (buffer priority) | ✅ |
-| P1-020 | Keyset pagination | `validation.ts` | ✅ |
-| P1-021 | Auth login via edge function | `auth-login/` | ✅ |
-| P1-022 | Brute-force RPC | RPCs `check_brute_force`, `is_ip_blocked` | ✅ |
-| P1-023 | Índices composto empresa_id | `P1-023_indices_empresa_id.sql` | ✅ |
-| P1-024 | Tabela audit_log unificada | P1 migrations | ✅ |
-| P1-025 | RPC de alertas seguros | `alertas-dp/index.ts` | ✅ |
-| P1-026 | Hardening middleware | `rateLimit.ts` | ✅ |
-| P1-027 | AbortSignal em todas as queries | `client.ts` | ✅ |
-| P1-028 | useCallback stabilization | `AuthContext.tsx` | ✅ |
-| P1-029 | Payload size limit | `validation.ts` | ✅ |
+| ID     | Item                            | Commit                                    | Status |
+| ------ | ------------------------------- | ----------------------------------------- | ------ |
+| P1-012 | External DB Bridge com RLS      | `external-db-bridge/`                     | ✅     |
+| P1-013 | SECURITY DEFINER functions      | P1 migrations                             | ✅     |
+| P1-014 | Rate limit Cloudflare WAF       | `rateLimit.ts` + `BRIDGE_PERFORMANCE.md`  | ✅     |
+| P1-015 | CSRF em todas as mutations      | `csrf.ts`                                 | ✅     |
+| P1-016 | sanitização de inputs           | `sanitizeHtml.ts`                         | ✅     |
+| P1-017 | Audit log obrigatório           | `audit_log` migrations                    | ✅     |
+| P1-018 | Tipagem explícita no bridge     | `index.ts` (removido `as any`)            | ✅     |
+| P1-019 | Telemetria de erros no bridge   | `telemetry.ts` (buffer priority)          | ✅     |
+| P1-020 | Keyset pagination               | `validation.ts`                           | ✅     |
+| P1-021 | Auth login via edge function    | `auth-login/`                             | ✅     |
+| P1-022 | Brute-force RPC                 | RPCs `check_brute_force`, `is_ip_blocked` | ✅     |
+| P1-023 | Índices composto empresa_id     | `P1-023_indices_empresa_id.sql`           | ✅     |
+| P1-024 | Tabela audit_log unificada      | P1 migrations                             | ✅     |
+| P1-025 | RPC de alertas seguros          | `alertas-dp/index.ts`                     | ✅     |
+| P1-026 | Hardening middleware            | `rateLimit.ts`                            | ✅     |
+| P1-027 | AbortSignal em todas as queries | `client.ts`                               | ✅     |
+| P1-028 | useCallback stabilization       | `AuthContext.tsx`                         | ✅     |
+| P1-029 | Payload size limit              | `validation.ts`                           | ✅     |
 
 ---
 
 ### P2 — DX e Segurança Secundária ✅
 
-| ID | Item | Commit | Status |
-|----|------|--------|--------|
-| P2-030 | Logger service | `loggerService.ts` | ✅ |
-| P2-031 | console.error → logger | `premiacoesService.ts` | ✅ |
-| P2-032 | Loose equality `== null` | Múltiplos arquivos | ✅ |
-| P2-033 | @ts-nocheck removal | `data-table.tsx` | ✅ |
-| P2-034 | CODE_TODOS.md | `CODE_TODOS.md` | ✅ |
-| P2-035 | Sync lockfiles script | `sync-lockfiles.sh` | ✅ |
-| P2-036 | .gitignore legacy files | `.gitignore` | ✅ |
-| P2-037 | Strict TypeScript | Múltiplos arquivos | ✅ |
-| P2-038 | oxc minifier documentation | `vite.config.ts` | ✅ |
-| P2-039 | useActionState migration | `useActionStateHelper.ts` | ✅ |
-| P2-040 | Validadores eSocial consolidados | `src/schemas/esocial/` | ✅ |
-| P2-041 | toError helper | `src/utils/toError.ts` | ✅ |
-| P2-042 | useState typing CID | `AfastamentoForm.tsx` | ✅ |
-| P2-043 | Error boundaries hierarchy | `App.tsx` | ✅ |
-| P2-044 | Regenerate types script | `regenerate-supabase-types.sh` | ✅ |
-| P2-045 | Zod schemas validação | `src/schemas/` | ✅ |
-| P2-046 | ESLint rules | `eslint.config.js` | ✅ |
-| P2-047 | Sentry breadcrumbs | `main.tsx` | ✅ |
-| P2-048 | ApiResponse helpers | `src/types/api.ts` | ✅ |
-| P2-049 | Prettier config | `prettierrc` | ✅ |
-| P2-050 | OCR typing | `DocumentosPage.tsx` | ✅ |
-| P2-051 | useCallback debounce | `useRealtimeDashboard.ts` | ✅ |
+| ID     | Item                             | Commit                         | Status |
+| ------ | -------------------------------- | ------------------------------ | ------ |
+| P2-030 | Logger service                   | `loggerService.ts`             | ✅     |
+| P2-031 | console.error → logger           | `premiacoesService.ts`         | ✅     |
+| P2-032 | Loose equality `== null`         | Múltiplos arquivos             | ✅     |
+| P2-033 | @ts-nocheck removal              | `data-table.tsx`               | ✅     |
+| P2-034 | CODE_TODOS.md                    | `CODE_TODOS.md`                | ✅     |
+| P2-035 | Sync lockfiles script            | `sync-lockfiles.sh`            | ✅     |
+| P2-036 | .gitignore legacy files          | `.gitignore`                   | ✅     |
+| P2-037 | Strict TypeScript                | Múltiplos arquivos             | ✅     |
+| P2-038 | oxc minifier documentation       | `vite.config.ts`               | ✅     |
+| P2-039 | useActionState migration         | `useActionStateHelper.ts`      | ✅     |
+| P2-040 | Validadores eSocial consolidados | `src/schemas/esocial/`         | ✅     |
+| P2-041 | toError helper                   | `src/utils/toError.ts`         | ✅     |
+| P2-042 | useState typing CID              | `AfastamentoForm.tsx`          | ✅     |
+| P2-043 | Error boundaries hierarchy       | `App.tsx`                      | ✅     |
+| P2-044 | Regenerate types script          | `regenerate-supabase-types.sh` | ✅     |
+| P2-045 | Zod schemas validação            | `src/schemas/`                 | ✅     |
+| P2-046 | ESLint rules                     | `eslint.config.js`             | ✅     |
+| P2-047 | Sentry breadcrumbs               | `main.tsx`                     | ✅     |
+| P2-048 | ApiResponse helpers              | `src/types/api.ts`             | ✅     |
+| P2-049 | Prettier config                  | `prettierrc`                   | ✅     |
+| P2-050 | OCR typing                       | `DocumentosPage.tsx`           | ✅     |
+| P2-051 | useCallback debounce             | `useRealtimeDashboard.ts`      | ✅     |
 
 ---
 
 ### P3 — Observabilidade e LGPD ✅
 
-| ID | Item | Commit | Status |
-|----|------|--------|--------|
-| P3-052 | Structured logging JSON | `loggerService.ts` | ✅ |
-| P3-053 | Sentry release + tags | `main.tsx` | ✅ |
-| P3-054 | Dashboard telemetria MV | `mv_telemetry_dashboard.sql` | ✅ |
-| P3-055 | /metricas endpoint | `metricas/index.ts` | ✅ |
-| P3-056 | Healthcheck 3 serviços | `healthcheck/index.ts` | ✅ |
-| P3-057 | View brute-force detection | `v_login_anomalies.sql` | ✅ |
-| P3-058 | Prometheus scrape config | `prometheus.yml` + `MONITORING.md` | ✅ |
-| P3-059 | Alerting rules + DOCS | `BRIDGE_PERFORMANCE.md`, `MONITORING.md` | ✅ |
-| P3-060 | Backup with integrity | `backup-automatico/index.ts` | ✅ |
-| P3-061 | Idempotency retry | `client.ts` + `idempotency.ts` | ✅ |
-| P3-062 | Rate limit compound key | `rateLimit.ts` | ✅ |
-| P3-063 | Bridge structured logging | `_shared/logger.ts` | ✅ |
-| P3-064 | Distributed tracing | `_shared/trace.ts` | ✅ |
-| P3-065 | LGPD retention + purge | `p3_065_lgpd_retencao_purge.sql` + `limpeza/index.ts` | ✅ |
-| P3-066 | Correlation ID | `loggerService.ts` | ✅ |
+| ID     | Item                       | Commit                                                | Status |
+| ------ | -------------------------- | ----------------------------------------------------- | ------ |
+| P3-052 | Structured logging JSON    | `loggerService.ts`                                    | ✅     |
+| P3-053 | Sentry release + tags      | `main.tsx`                                            | ✅     |
+| P3-054 | Dashboard telemetria MV    | `mv_telemetry_dashboard.sql`                          | ✅     |
+| P3-055 | /metricas endpoint         | `metricas/index.ts`                                   | ✅     |
+| P3-056 | Healthcheck 3 serviços     | `healthcheck/index.ts`                                | ✅     |
+| P3-057 | View brute-force detection | `v_login_anomalies.sql`                               | ✅     |
+| P3-058 | Prometheus scrape config   | `prometheus.yml` + `MONITORING.md`                    | ✅     |
+| P3-059 | Alerting rules + DOCS      | `BRIDGE_PERFORMANCE.md`, `MONITORING.md`              | ✅     |
+| P3-060 | Backup with integrity      | `backup-automatico/index.ts`                          | ✅     |
+| P3-061 | Idempotency retry          | `client.ts` + `idempotency.ts`                        | ✅     |
+| P3-062 | Rate limit compound key    | `rateLimit.ts`                                        | ✅     |
+| P3-063 | Bridge structured logging  | `_shared/logger.ts`                                   | ✅     |
+| P3-064 | Distributed tracing        | `_shared/trace.ts`                                    | ✅     |
+| P3-065 | LGPD retention + purge     | `p3_065_lgpd_retencao_purge.sql` + `limpeza/index.ts` | ✅     |
+| P3-066 | Correlation ID             | `loggerService.ts`                                    | ✅     |
 
 ---
 
 ### P4 — Performance ✅
 
-| ID | Item | Commit | Status |
-|----|------|--------|--------|
-| P4-067 | Cache in-memory TTL 5min | `_shared/cache.ts` | ✅ |
-| P4-068 | Read replicas | Infra Supabase Pro | ✅* |
-| P4-069 | PgBouncer pooling | Infra Supabase Pro | ✅* |
-| P4-070 | ~~Query complexity limit~~ | → P1-020 (keyset pagination) | ✅ |
-| P4-071 | Índices compostos | P0/P1 migrations | ✅ |
-| P4-072 | Materialized views dashboards | `P4_072_mv_dashboards.sql` | ✅ |
-| P4-073 | Gzip decompression bridge | `external-db-bridge/index.ts` | ✅ |
-| P4-074 | Lazy loading pages | `App.tsx` (React.lazy) | ✅ |
-| P4-075 | Service Worker stale-while-revalidate | `vite.config.pwa.ts` | ✅ |
-| P4-076 | Pre-fetch post-login | `AuthContext.tsx` | ✅ |
+| ID     | Item                                  | Commit                        | Status |
+| ------ | ------------------------------------- | ----------------------------- | ------ |
+| P4-067 | Cache in-memory TTL 5min              | `_shared/cache.ts`            | ✅     |
+| P4-068 | Read replicas                         | Infra Supabase Pro            | ✅*    |
+| P4-069 | PgBouncer pooling                     | Infra Supabase Pro            | ✅*    |
+| P4-070 | ~~Query complexity limit~~            | → P1-020 (keyset pagination)  | ✅     |
+| P4-071 | Índices compostos                     | P0/P1 migrations              | ✅     |
+| P4-072 | Materialized views dashboards         | `P4_072_mv_dashboards.sql`    | ✅     |
+| P4-073 | Gzip decompression bridge             | `external-db-bridge/index.ts` | ✅     |
+| P4-074 | Lazy loading pages                    | `App.tsx` (React.lazy)        | ✅     |
+| P4-075 | Service Worker stale-while-revalidate | `vite.config.pwa.ts`          | ✅     |
+| P4-076 | Pre-fetch post-login                  | `AuthContext.tsx`             | ✅     |
 
 \* P4-068 e P4-069 são infraestrutura de plataforma (Supabase managed),
-  configurados via dashboard do Supabase Pro, não por código.
+configurados via dashboard do Supabase Pro, não por código.
 
 ---
 
 ### P5 — Features de Roadmap
 
-| ID | Feature | Status | Evidência |
-|----|---------|--------|-----------|
-| P5-077 | Dashboard Passivo Trabalhista | ✅ Partial | `PassivoTrabalhistaPage.tsx` |
-| P5-078 | CNAB 240/400 completo | ✅ Partial | `cnabService.ts`, `cnab-remessa/` |
-| P5-079 | App Mobile via Capacitor | 🔲 Pending | Build + Capacitor setup |
-| P5-080 | Contabilidades (Dominio, Alterdata) | ✅ Partial | `ContabilidadePage.tsx` |
-| P5-081 | IA predição turnover/absenteísmo | ✅ Partial | `assistente-ia/index.ts` |
-| P5-082 | eSocial S-3000, S-5001, S-5011 | 🔲 Pending | Events não implementados |
-| P5-083 | Workflow BPMN engine | ✅ Done | `WorkflowsPage.tsx`, `WorkflowDesigner.tsx`, `workflowService.ts` |
-| P5-084 | Gov.br OAuth | ✅ Partial | `auth-gov-br/index.ts` |
-| P5-085 | Assinatura ICP-Brasil | ✅ Partial | `enviar-esocial/signer.ts` |
-| P5-086 | Metabase embed + BI | ✅ **Implemented** | `src/services/metabaseService.ts` |
-| P5-087 | i18n pt-BR, en-US, es-ES | ✅ **Implemented** | `src/i18n/` |
-| P5-088 | E2E Playwright 80% | ✅ **Implemented** | `e2e/authenticated/ferias.spec.ts`<br>`e2e/authenticated/contratos.spec.ts`<br>`e2e/authenticated/esocial.spec.ts` |
+| ID     | Feature                             | Status             | Evidência                                                                                                          |
+| ------ | ----------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| P5-077 | Dashboard Passivo Trabalhista       | ✅ Partial         | `PassivoTrabalhistaPage.tsx`                                                                                       |
+| P5-078 | CNAB 240/400 completo               | ✅ Partial         | `cnabService.ts`, `cnab-remessa/`                                                                                  |
+| P5-079 | App Mobile via Capacitor            | 🔲 Pending         | Build + Capacitor setup                                                                                            |
+| P5-080 | Contabilidades (Dominio, Alterdata) | ✅ Partial         | `ContabilidadePage.tsx`                                                                                            |
+| P5-081 | IA predição turnover/absenteísmo    | ✅ Partial         | `assistente-ia/index.ts`                                                                                           |
+| P5-082 | eSocial S-3000, S-5001, S-5011      | 🔲 Pending         | Events não implementados                                                                                           |
+| P5-083 | Workflow BPMN engine                | ✅ Done            | `WorkflowsPage.tsx`, `WorkflowDesigner.tsx`, `workflowService.ts`                                                  |
+| P5-084 | Gov.br OAuth                        | ✅ Partial         | `auth-gov-br/index.ts`                                                                                             |
+| P5-085 | Assinatura ICP-Brasil               | ✅ Partial         | `enviar-esocial/signer.ts`                                                                                         |
+| P5-086 | Metabase embed + BI                 | ✅ **Implemented** | `src/services/metabaseService.ts`                                                                                  |
+| P5-087 | i18n pt-BR, en-US, es-ES            | ✅ **Implemented** | `src/i18n/`                                                                                                        |
+| P5-088 | E2E Playwright 80%                  | ✅ **Implemented** | `e2e/authenticated/ferias.spec.ts`<br>`e2e/authenticated/contratos.spec.ts`<br>`e2e/authenticated/esocial.spec.ts` |
 
 ---
 
@@ -1843,16 +1859,16 @@ cac66acb0 feat(backup): backup_logs + alerta stale >24h + retenção 90d (P3-060
 
 ### Backlog restante (6 itens)
 
-| ID | Prioridade | Ação |
-|----|-----------|------|
-| P5-079 | Alta | Capacitor setup + build script para App Mobile |
+| ID     | Prioridade           | Ação                                                  |
+| ------ | -------------------- | ----------------------------------------------------- |
+| P5-079 | Alta                 | Capacitor setup + build script para App Mobile        |
 | P5-082 | Crítica (compliance) | Implementar eventos S-3000, S-5001, S-5011 no eSocial |
-| P5-077 | Média | Completar Dashboard Passivo Trabalhista |
-| P5-078 | Média | Completar layout CNAB 400 |
-| P5-080 | Média | Completar integração Dominio + Alterdata |
-| P5-081 | Baixa | Wire up assistente-ia no frontend |
+| P5-077 | Média                | Completar Dashboard Passivo Trabalhista               |
+| P5-078 | Média                | Completar layout CNAB 400                             |
+| P5-080 | Média                | Completar integração Dominio + Alterdata              |
+| P5-081 | Baixa                | Wire up assistente-ia no frontend                     |
 
 ---
 
-*Documento mantido pela equipe de engenharia. Última atualização: 2026-07-25.*
-*Gerado via análise exaustiva + implementação 1-to-1.*
+_Documento mantido pela equipe de engenharia. Última atualização: 2026-07-25._
+_Gerado via análise exaustiva + implementação 1-to-1._

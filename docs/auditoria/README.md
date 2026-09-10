@@ -6,6 +6,7 @@
 > - [`AUDITORIA_BANCO_CANONICO_AO_VIVO_2026-09-10.md`](./AUDITORIA_BANCO_CANONICO_AO_VIVO_2026-09-10.md);
 > - [`PLANO_100_ETAPAS_2026-09-10.md`](./PLANO_100_ETAPAS_2026-09-10.md);
 > - [`PLANO_MELHORIAS_50_ETAPAS_2026-09-10.md`](./PLANO_MELHORIAS_50_ETAPAS_2026-09-10.md) — versão executiva consolidada, com 500 subetapas e 200 checkpoints;
+> - [`REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-10.md`](./REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-10.md) — validação das 50 etapas e inventário de funcionalidades parciais, sugeridas, simuladas ou órfãs;
 > - [`SIMULACAO_PRE_EXECUCAO_2026-09-10.md`](./SIMULACAO_PRE_EXECUCAO_2026-09-10.md) — gates validados antes da execução, cenários de regressão e ordem segura;
 > - [`HANDOFF_CLINE_REMEDIACAO_2026-09-10.md`](./HANDOFF_CLINE_REMEDIACAO_2026-09-10.md).
 

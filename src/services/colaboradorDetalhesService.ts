@@ -20,11 +20,7 @@ export async function listarDependentes(colaboradorId: string, empresaId: string
 }
 
 export async function criarDependente(dependente: DadosInsert) {
-  const { data, error } = await supabase
-    .from('dependentes')
-    .insert([dependente])
-    .select()
-    .maybeSingle();
+  const { data, error } = await supabase.from('dependentes').insert([dependente]).select().maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -45,21 +41,27 @@ export async function excluirDependente(id: string, empresaId: string) {
 // Contatos de Emergência
 // =============================================
 export async function listarContatosEmergencia(colaboradorId: string) {
-  return []; // Tabela contatos_emergencia não encontrada no cache do banco externo
+  const { data, error } = await supabase
+    .from('contatos_emergencia')
+    .select('*')
+    .eq('colaborador_id', colaboradorId)
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return data || [];
 }
 
 export async function criarContatoEmergencia(contato: DadosInsert) {
-  const { data, error } = await supabase
-    .from('contatos_emergencia')
-    .insert([contato])
-    .select()
-    .maybeSingle();
+  const { data, error } = await supabase.from('contatos_emergencia').insert([contato]).select().maybeSingle();
   if (error) throw error;
   return data;
 }
 
 export async function excluirContatoEmergencia(colaboradorId: string, id: string) {
-  const { error } = await supabase.from('contatos_emergencia').delete().eq('id', id).eq('colaborador_id', colaboradorId);
+  const { error } = await supabase
+    .from('contatos_emergencia')
+    .delete()
+    .eq('id', id)
+    .eq('colaborador_id', colaboradorId);
   if (error) throw error;
 }
 
@@ -79,11 +81,7 @@ export async function listarHistoricoSalarial(colaboradorId: string, empresaId: 
 }
 
 export async function criarRegistroSalarial(registro: DadosInsert) {
-  const { data, error } = await supabase
-    .from('historico_salarial')
-    .insert([registro])
-    .select()
-    .maybeSingle();
+  const { data, error } = await supabase.from('historico_salarial').insert([registro]).select().maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -104,11 +102,7 @@ export async function listarASOs(colaboradorId: string, empresaId: string) {
 }
 
 export async function criarASO(aso: DadosInsert) {
-  const { data, error } = await supabase
-    .from('asos')
-    .insert([aso])
-    .select()
-    .maybeSingle();
+  const { data, error } = await supabase.from('asos').insert([aso]).select().maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -127,17 +121,17 @@ export async function listarFormacoes(colaboradorId: string) {
 }
 
 export async function criarFormacao(formacao: DadosInsert) {
-  const { data, error } = await supabase
-    .from('formacoes_academicas')
-    .insert([formacao])
-    .select()
-    .maybeSingle();
+  const { data, error } = await supabase.from('formacoes_academicas').insert([formacao]).select().maybeSingle();
   if (error) throw error;
   return data;
 }
 
 export async function excluirFormacao(colaboradorId: string, id: string) {
-  const { error } = await supabase.from('formacoes_academicas').delete().eq('id', id).eq('colaborador_id', colaboradorId);
+  const { error } = await supabase
+    .from('formacoes_academicas')
+    .delete()
+    .eq('id', id)
+    .eq('colaborador_id', colaboradorId);
   if (error) throw error;
 }
 
@@ -238,17 +232,17 @@ export async function listarAnotacoes(colaboradorId: string) {
 }
 
 export async function criarAnotacao(anotacao: DadosInsert) {
-  const { data, error } = await supabase
-    .from('anotacoes_colaborador')
-    .insert([anotacao])
-    .select()
-    .maybeSingle();
+  const { data, error } = await supabase.from('anotacoes_colaborador').insert([anotacao]).select().maybeSingle();
   if (error) throw error;
   return data;
 }
 
 export async function excluirAnotacao(colaboradorId: string, id: string) {
-  const { error } = await supabase.from('anotacoes_colaborador').delete().eq('id', id).eq('colaborador_id', colaboradorId);
+  const { error } = await supabase
+    .from('anotacoes_colaborador')
+    .delete()
+    .eq('id', id)
+    .eq('colaborador_id', colaboradorId);
   if (error) throw error;
 }
 
@@ -284,11 +278,7 @@ export async function criarTime(time: DadosInsert) {
   // devolve uma mensagem util em vez do erro cru do Postgres — e espelha a
   // mesma exigencia que `listarTimes` ja faz.
   if (!time?.empresa_id) throw new Error('empresa_id obrigatório para isolamento de tenant');
-  const { data, error } = await supabase
-    .from('times')
-    .insert([time])
-    .select()
-    .maybeSingle();
+  const { data, error } = await supabase.from('times').insert([time]).select().maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -335,11 +325,7 @@ export async function listarWebhooks(empresaId: string) {
 }
 
 export async function criarWebhook(webhook: DadosInsert) {
-  const { data, error } = await supabase
-    .from('webhooks_config')
-    .insert([webhook])
-    .select()
-    .maybeSingle();
+  const { data, error } = await supabase.from('webhooks_config').insert([webhook]).select().maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -365,11 +351,7 @@ export async function listarFeriasColetivas(empresaId: string) {
 }
 
 export async function criarFeriasColetivas(ferias: DadosInsert) {
-  const { data, error } = await supabase
-    .from('ferias_coletivas')
-    .insert([ferias])
-    .select()
-    .maybeSingle();
+  const { data, error } = await supabase.from('ferias_coletivas').insert([ferias]).select().maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -387,11 +369,7 @@ export async function listarCamposCustomizados(empresaId: string) {
 }
 
 export async function criarCampoCustomizado(campo: DadosInsert) {
-  const { data, error } = await supabase
-    .from('campos_customizados')
-    .insert([campo])
-    .select()
-    .maybeSingle();
+  const { data, error } = await supabase.from('campos_customizados').insert([campo]).select().maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -405,11 +383,7 @@ export async function obterValoresCamposCustomizados(colaboradorId: string) {
   return data || [];
 }
 
-export async function salvarValorCampoCustomizado(
-  campoId: string,
-  colaboradorId: string,
-  valor: string
-) {
+export async function salvarValorCampoCustomizado(campoId: string, colaboradorId: string, valor: string) {
   const { data, error } = await supabase
     .from('valores_campos_customizados')
     .upsert(
