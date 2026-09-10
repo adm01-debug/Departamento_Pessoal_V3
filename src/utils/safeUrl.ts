@@ -1,16 +1,11 @@
 const ALLOWED_HOSTS = new Set([
-  'ciziytrrjjotlsjzshnm.supabase.co',
+  'frjbfeamybqsejlvmqbl.supabase.co',
   'viacep.com.br',
   'brasilapi.com.br',
   'api.hibp.com',
 ]);
 
-const ALLOWED_HOST_SUFFIXES = [
-  '.supabase.co',
-  '.lovable.app',
-  '.lovable.dev',
-  '.sentry.io',
-];
+const ALLOWED_HOST_SUFFIXES = ['.lovable.app', '.lovable.dev', '.sentry.io'];
 
 export function isAllowedUrl(url: string): boolean {
   try {
@@ -18,7 +13,7 @@ export function isAllowedUrl(url: string): boolean {
     if (parsed.protocol !== 'https:') return false;
     const host = parsed.hostname;
     if (ALLOWED_HOSTS.has(host)) return true;
-    return ALLOWED_HOST_SUFFIXES.some(suffix => host.endsWith(suffix));
+    return ALLOWED_HOST_SUFFIXES.some((suffix) => host.endsWith(suffix));
   } catch {
     return false;
   }

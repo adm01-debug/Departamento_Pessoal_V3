@@ -25,6 +25,7 @@ jobs:
           APP_URL: ${{ vars.APP_URL }}
           SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY || secrets.VITE_SUPABASE_ANON_KEY }}
+          REQUIRE_APP: '1'
           REQUIRE_BACKEND: '1'
         run: bash scripts/healthcheck.sh
 

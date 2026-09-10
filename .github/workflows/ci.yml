@@ -106,7 +106,10 @@ jobs:
         # E-077: verify_jwt deny-by-default, CORS sem wildcard, security
         # headers, ausência de segredos hardcoded e SW sem cache de PII.
         # Estático (não precisa de DATABASE_URL) — roda em todo PR.
-        run: node scripts/audit-security-config.mjs
+        run: |
+          node scripts/audit-security-config.mjs
+          node scripts/validate-plan-50.mjs
+          node scripts/audit-canonical-project.mjs
 
   db-integrity:
     name: Integridade do banco (search_path x extensões)
