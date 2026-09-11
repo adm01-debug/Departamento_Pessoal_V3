@@ -124,6 +124,7 @@ jobs:
           bash scripts/tests/migrations-p0-hash-search-path.sh
           bash scripts/tests/migrations-p0-auth-lockout.sh
           bash scripts/tests/migrations-p0-view-acl.sh
+          bash scripts/tests/migrations-p0-atomic-rate-limit.sh
 
   db-integrity:
     name: Integridade do banco (search_path x extensões)
