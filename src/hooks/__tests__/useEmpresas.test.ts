@@ -21,14 +21,32 @@ vi.mock('zustand/middleware', () => ({
 }));
 
 const sampleEmpresa = {
-  id: 'emp-1', razao_social: 'Empresa Teste Ltda', nome_fantasia: 'Teste',
-  cnpj: '12.345.678/0001-99', ativa: true, regime_tributario: 'simples_nacional',
-  aliquota_simples: 0.06, fap: 1, rat: 0.01, terceiros: 0.05,
-  cor_identificacao: null, ordem_exibicao: 1,
-  created_at: '2024-01-01', updated_at: '2024-01-01',
-  inscricao_estadual: null, inscricao_municipal: null,
-  cep: null, logradouro: null, numero: null, complemento: null,
-  bairro: null, cidade: null, uf: null, telefone: null, email: null, logo_url: null,
+  id: 'emp-1',
+  razao_social: 'Empresa Teste Ltda',
+  nome_fantasia: 'Teste',
+  cnpj: '12.345.678/0001-99',
+  ativa: true,
+  regime_tributario: 'simples_nacional',
+  aliquota_simples: 0.06,
+  fap: 1,
+  rat: 0.01,
+  terceiros: 0.05,
+  cor_identificacao: null,
+  ordem_exibicao: 1,
+  created_at: '2024-01-01',
+  updated_at: '2024-01-01',
+  inscricao_estadual: null,
+  inscricao_municipal: null,
+  cep: null,
+  logradouro: null,
+  numero: null,
+  complemento: null,
+  bairro: null,
+  cidade: null,
+  uf: null,
+  telefone: null,
+  email: null,
+  logo_url: null,
 };
 
 function buildSelectChain(data: any, error: any = null) {
@@ -39,7 +57,10 @@ function buildSelectChain(data: any, error: any = null) {
   const eq2 = vi.fn().mockReturnValue({ order, maybeSingle, single });
   const eq = vi.fn().mockReturnValue({ eq: eq2, order, maybeSingle, single });
   const select = vi.fn().mockReturnValue({ eq, order, maybeSingle, single });
-  return { select, eq, eq2, order };
+  const insert = vi.fn().mockReturnValue({
+    select: vi.fn().mockReturnValue({ maybeSingle }),
+  });
+  return { select, eq, eq2, order, insert };
 }
 
 function createWrapper() {
@@ -51,18 +72,22 @@ function createWrapper() {
 import { useEmpresas, useEmpresaStore } from '../useEmpresas';
 
 describe('useEmpresas', () => {
+  let empresasChain: ReturnType<typeof buildSelectChain>;
+
   beforeEach(() => {
     vi.clearAllMocks();
     // Reset zustand store
     useEmpresaStore.setState({ empresaAtualId: null, modo: 'consolidado' });
 
-    const userEmpresasChain = buildSelectChain([{ id: 'ue-1', user_id: 'user-1', empresa_id: 'emp-1', is_default: true, empresa: sampleEmpresa }]);
-    const todasEmpresasChain = buildSelectChain([sampleEmpresa]);
+    const userEmpresasChain = buildSelectChain([
+      { id: 'ue-1', user_id: 'user-1', empresa_id: 'emp-1', is_default: true, empresa: sampleEmpresa },
+    ]);
+    empresasChain = buildSelectChain([sampleEmpresa]);
 
     let callCount = 0;
     mockFrom.mockImplementation((table: string) => {
       if (table === 'user_empresas') return userEmpresasChain;
-      if (table === 'empresas') return todasEmpresasChain;
+      if (table === 'empresas') return empresasChain;
       return buildSelectChain([]);
     });
   });
@@ -95,7 +120,9 @@ describe('useEmpresas', () => {
 
   it('trocarEmpresa updates the store id', () => {
     const { result } = renderHook(() => useEmpresas(), { wrapper: createWrapper() });
-    act(() => { result.current.trocarEmpresa('emp-2'); });
+    act(() => {
+      result.current.trocarEmpresa('emp-2');
+    });
     expect(useEmpresaStore.getState().empresaAtualId).toBe('emp-2');
   });
 
@@ -113,7 +140,36 @@ describe('useEmpresas', () => {
 
   it('setModo changes the mode', () => {
     const { result } = renderHook(() => useEmpresas(), { wrapper: createWrapper() });
-    act(() => { result.current.setModo('empresa_unica'); });
+    act(() => {
+      result.current.setModo('empresa_unica');
+    });
     expect(useEmpresaStore.getState().modo).toBe('empresa_unica');
+  });
+
+  it('supplies an explicit company UUID so the bridge can authorize creation', async () => {
+    const uuid = vi.spyOn(crypto, 'randomUUID').mockReturnValue('00000000-0000-4000-8000-000000000001');
+    const { result } = renderHook(() => useEmpresas(), { wrapper: createWrapper() });
+
+    await act(async () => {
+      await result.current.criarEmpresa.mutateAsync({ razao_social: 'Empresa Nova Ltda.' });
+    });
+
+    expect(empresasChain.insert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: '00000000-0000-4000-8000-000000000001',
+        razao_social: 'Empresa Nova Ltda.',
+      })
+    );
+    uuid.mockRestore();
+  });
+
+  it('does not attempt a company creation for a non-admin user', async () => {
+    mockIsAdmin.mockReturnValue(false);
+    const { result } = renderHook(() => useEmpresas(), { wrapper: createWrapper() });
+
+    await expect(result.current.criarEmpresa.mutateAsync({ razao_social: 'Empresa Não Permitida' })).rejects.toThrow(
+      'Apenas administradores'
+    );
+    expect(empresasChain.insert).not.toHaveBeenCalled();
   });
 });

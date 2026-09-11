@@ -20,6 +20,7 @@ import {
   TABLE_DENYLIST, TENANT_SCOPED_TABLES, RPC_ALLOWLIST, FILTER_OPS, NOT_EXTRA_OPS,
 } from "./validation.ts";
 import { BodySchema, toUpsertOptions } from "./request-schema.ts";
+import { extractTenantWriteScope, hasCompleteTenantWriteScope } from './tenantScope.ts';
 
 // TTL para tabelas estáticas (em ms)
 // Rubricas podem ser editadas pelo admin: 1h. Parâmetros fiscais/vigências: 24h.
@@ -232,19 +233,6 @@ function jsonOk(payload: Record<string, unknown>) {
 }
 
 // -------------------- Tenant scope check --------------------
-function extractEmpresaIdsFromData(
-  data: Record<string, unknown> | Record<string, unknown>[] | undefined,
-): Set<string> {
-  const empresaIds = new Set<string>();
-  if (!data) return empresaIds;
-  const rows = Array.isArray(data) ? data : [data];
-  for (const r of rows) {
-    const eid = (r as Record<string, unknown>)?.empresa_id;
-    if (typeof eid === "string" && eid) empresaIds.add(eid);
-  }
-  return empresaIds;
-}
-
 function empresaIdColumnFor(table: string): string {
   return table === "empresas" ? "id" : "empresa_id";
 }
@@ -506,7 +494,7 @@ Deno.serve(async (req) => {
   const localClient = serviceKey ? createClient(supabaseUrl, serviceKey) : null;
 
   // Tenant scope check para writes em tabelas de negócio.
-  // - insert/upsert: o tenant afetado vem do `empresa_id` nas linhas de `data`.
+  // - insert/upsert: TODAS as linhas devem declarar o tenant afetado.
   // - update/delete: descobrimos o tenant real das linhas alvo via lookup
   //   (ver `lookupEmpresaIdsForWrite`) usando os mesmos filtros 'eq' da
   //   mutação — não dependemos do cliente declarar `empresa_id` explicitamente.
@@ -523,7 +511,15 @@ Deno.serve(async (req) => {
       }
       empresaIds = lookup.empresaIds;
     } else {
-      empresaIds = extractEmpresaIdsFromData(data);
+      const tenantWriteScope = extractTenantWriteScope(table, data);
+      if (!hasCompleteTenantWriteScope(tenantWriteScope)) {
+        return jsonError(
+          403,
+          "TENANT_SCOPE_REQUIRED",
+          `Every ${action} row for tenant-scoped table '${table}' must include a non-empty ${table === 'empresas' ? 'id' : 'empresa_id'}`,
+        );
+      }
+      empresaIds = tenantWriteScope.empresaIds;
     }
 
     const scope = await assertTenantScope(localClient, user.id, empresaIds);
