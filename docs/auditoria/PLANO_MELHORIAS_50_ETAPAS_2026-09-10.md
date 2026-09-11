@@ -8,7 +8,9 @@
 
 > Consolida a auditoria local, a inspeção viva do Supabase e o grafo de dependências. Não autoriza reset, exclusão, `db push` ou `migration repair` em massa.
 
-> **Revisão de implementação:** a existência de código, migration, teste ou documentação não encerra uma etapa. O estado auditado das 50 etapas, as funcionalidades parciais e as funcionalidades apenas sugeridas estão em [`REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-10.md`](./REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-10.md). Na data de corte, **nenhuma etapa atingiu C4**.
+> **Revisão de implementação vigente (11/09/2026):** a existência de código, migration, teste ou documentação não encerra uma etapa. Consulte [`REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-11.md`](./REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-11.md) e seu snapshot JSON: 42 etapas parciais, 2 com dependência externa e 6 sem demonstração integral do objetivo; **nenhuma com C4 comprovado**. A revisão de 10/09 permanece como histórico.
+>
+> **Exceção de ambiente autorizada pelo owner:** alterações podem ser realizadas diretamente no canônico enquanto os dados são descartáveis. Não exigir nova autorização genérica ou staging como condição de autorização. Permanecem necessários escopo versionado, recuperação, testes e evidências; essa exceção não comprova staging/DR nem encerra E50-048.
 
 ## Regras de execução
 
@@ -468,19 +470,19 @@
 
 ## E50-016 — Versionar cron e rotinas periódicas
 
-| Campo        | Valor                                                                          |
-| ------------ | ------------------------------------------------------------------------------ |
-| Onda         | Onda 1 — Reconstrução                                                          |
-| Prioridade   | P1                                                                             |
-| Dependências | E50-012–013                                                                    |
-| Objetivo     | Versionar sete jobs vivos e decidir/criar os três jobs de segurança esperados. |
+| Campo        | Valor                                                                                                                             |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| Onda         | Onda 1 — Reconstrução                                                                                                             |
+| Prioridade   | P1                                                                                                                                |
+| Dependências | E50-012–013                                                                                                                       |
+| Objetivo     | Reconciliar os 50 jobs ativos, revisar comandos duplicados e restaurar as funções ausentes dos três jobs de segurança existentes. |
 
 ### 10 subetapas
 
-1. [ ] **Evidência inicial:** Jobs atuais não estão representados pelo baseline histórico; diagnóstico espera três ausentes.
+1. [ ] **Evidência inicial:** Catálogo vivo de 11/09: 50 jobs ativos e oito grupos com comandos idênticos. Os três jobs sec-* existem, mas sec_audit_policies_scan, sec_policy_regressions_purge e sec_verify_seals_scan estão ausentes; o diagnóstico histórico de sete jobs/três agendamentos ausentes foi superado.
 2. [ ] **Ownership:** nomear executor, revisor e aprovador; mapear consumidores, dados, pré-condições e blast radius.
 3. [ ] **Contrato:** documentar invariantes, entradas/saídas, autorização, compatibilidade, métricas, ameaça e critério de abort.
-4. [ ] **Implementação:** Versionar sete jobs vivos e decidir/criar os três jobs de segurança esperados.
+4. [ ] **Implementação:** Versionar a reconciliação dos 50 jobs; decidir cadência/ownership por grupo repetido e restaurar/testar as três funções de segurança antes de manter seus agendamentos. Não criar novos jobs duplicados.
 5. [ ] **Teste positivo:** Cada job executa uma vez com resultado e latência observáveis.
 6. [ ] **Teste negativo:** Dupla execução, atraso, lock e erro parcial não duplicam/apagam indevidamente.
 7. [ ] **Regressão:** executar typecheck, lint, unidade, integração, banco e E2E diretamente afetados.
@@ -883,7 +885,7 @@
 
 ### 10 subetapas
 
-1. [ ] **Evidência inicial:** A inspeção SQL não provou versões/configs implantadas; o inventário funcional encontrou Edge Functions sem chamador e wrappers sem consumidor.
+1. [ ] **Evidência inicial:** Comparação Management API de 11/09: 60 Edge Functions locais e 59 remotas; metabase-embed ausente no remoto. Dos 59 entrypoints comparados, 56 diferem textualmente e 3 coincidem após normalização de CRLF/fim de arquivo. Shared dependencies, secrets, callers e equivalência funcional ainda não foram certificados; gerar-holerite e metrics têm divergências semânticas confirmadas.
 2. [ ] **Ownership:** nomear executor, revisor e aprovador; mapear consumidores, dados, pré-condições e blast radius.
 3. [ ] **Contrato:** documentar invariantes, entradas/saídas, autorização, compatibilidade, métricas, ameaça e critério de abort.
 4. [ ] **Implementação:** Criar manifest nome/hash/verify_jwt/import-map/secrets/callers/cron e comparar repositório, Management API e catálogo de capacidades aprovado.
