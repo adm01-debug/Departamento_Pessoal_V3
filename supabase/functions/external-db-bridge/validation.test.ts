@@ -16,7 +16,7 @@ import {
   FILTER_OPS,
   NOT_EXTRA_OPS,
 } from "./validation.ts";
-import { requiresAuthenticatedBridgeSession } from './access.ts';
+import { requiresAuthenticatedBridgeSession, requiresCallerScopedExternalClient } from './access.ts';
 import { BodySchema, ON_CONFLICT_COLUMNS_RE, toUpsertOptions } from "./request-schema.ts";
 
 let CASES = 0;
@@ -167,6 +167,14 @@ Deno.test("bridge auth: apenas RPC pública explícita dispensa sessão", () => 
   ok(requiresAuthenticatedBridgeSession("rpc", "set_own_default_empresa"), "RPC protegida exige sessão");
   ok(requiresAuthenticatedBridgeSession("rpc"), "RPC sem nome exige sessão");
   ok(!requiresAuthenticatedBridgeSession("rpc", "get_admissao_por_token"), "única RPC pública é permitida sem sessão");
+});
+
+Deno.test("bridge data client: operações genéricas nunca usam credencial privilegiada", () => {
+  for (const action of ["select", "insert", "update", "delete", "upsert"]) {
+    ok(requiresCallerScopedExternalClient(action), `${action} deve usar o JWT do chamador no banco externo`);
+  }
+  ok(requiresCallerScopedExternalClient("rpc", "set_own_default_empresa"), "RPC protegida deve usar o JWT do chamador");
+  ok(!requiresCallerScopedExternalClient("rpc", "get_admissao_por_token"), "a única RPC pública mantém o contrato sem sessão");
 });
 
 // ---------------------------------------------------------------------------

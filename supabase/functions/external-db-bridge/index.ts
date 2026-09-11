@@ -15,7 +15,7 @@ import {
 } from "./validation.ts";
 import { BodySchema, toUpsertOptions } from "./request-schema.ts";
 import { extractTenantWriteScope, hasCompleteTenantWriteScope } from './tenantScope.ts';
-import { requiresAuthenticatedBridgeSession } from './access.ts';
+import { requiresAuthenticatedBridgeSession, requiresCallerScopedExternalClient } from './access.ts';
 
 // -------------------- Headers --------------------
 const NO_STORE = { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" };
@@ -460,11 +460,21 @@ Deno.serve(async (req) => {
     return jsonError(500, "NOT_CONFIGURED", "External database not configured");
   }
   const externalClient = createClient(externalUrl, externalKey, { global: { fetch: timeoutFetch } });
-  // Reads/RPCs execute with the caller JWT. Generic SELECT must never use the
-  // service-role client, or external RLS becomes irrelevant.
+  // Every generic action executes with the caller JWT. `EXTERNAL_DB_KEY` can
+  // be privileged; using it for a mutation would bypass external RLS and
+  // role-based policies even after the bridge's local tenant check succeeds.
+  // The only exception is the deliberately public onboarding lookup (below).
   const externalUserClient = user && authHeader
     ? createClient(externalUrl, externalKey, { global: { headers: { Authorization: authHeader }, fetch: timeoutFetch } })
+    : null;
+  const externalDataClient = requiresCallerScopedExternalClient(action, rpcName)
+    ? externalUserClient
     : externalClient;
+  if (!externalDataClient) {
+    // This is defensive redundancy for the authentication gate above. Do not
+    // ever fall back to EXTERNAL_DB_KEY for an authenticated generic action.
+    return jsonError(401, "UNAUTHORIZED", "Authentication required for this operation");
+  }
 
   // Cliente local (para verificação de tenant scope via RPC has_role/user_belongs_to_empresa)
   const localClient = serviceKey ? createClient(supabaseUrl, serviceKey) : null;
@@ -485,7 +495,7 @@ Deno.serve(async (req) => {
     }
     let empresaIds: Set<string>;
     if (action === "update" || action === "delete") {
-      const lookup = await lookupEmpresaIdsForWrite(externalClient, table, filters);
+      const lookup = await lookupEmpresaIdsForWrite(externalDataClient, table, filters);
       if (!lookup.ok) {
         return jsonError(
           403,
@@ -537,7 +547,7 @@ Deno.serve(async (req) => {
       // IMPORTANTE: 'planned'/'estimated' exigem Accept-Profile correto e
       // são indistinguíveis de 'none' se o banco não suportar. Em produção
       // com Supabase self-hosted, validar se o PostgREST tem suporte.
-      let query: any = externalUserClient
+      let query: any = externalDataClient
         .from(table!)
         .select(selectColumns, { count: queryCountMode === "none" ? undefined : queryCountMode });
       if (queryLimit !== -1) query = query.range(queryOffset, queryOffset + queryLimit - 1);
@@ -584,7 +594,7 @@ Deno.serve(async (req) => {
       // forte (Zod) ficaria em iteração futura; por ora mantemos o cast
       // do SDK do Supabase, mas explicitamente tipado.
       const insertData = (Array.isArray(data) ? data : [data]) as Record<string, unknown>[];
-      const { data: r, error } = await externalClient.from(table!).insert(insertData).select();
+      const { data: r, error } = await externalDataClient.from(table!).insert(insertData).select();
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({ operation: "insert", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, traceId });
       if (error) { console.error('[bridge] INSERT_ERROR:', error.message, error.hint); return jsonError(400, "INSERT_ERROR", "Falha na inserção"); }
@@ -595,7 +605,7 @@ Deno.serve(async (req) => {
     if (action === "upsert") {
       const t0 = performance.now();
       const upsertData = (Array.isArray(data) ? data : [data]) as Record<string, unknown>[];
-      const { data: r, error } = await externalClient
+      const { data: r, error } = await externalDataClient
         .from(table!)
         .upsert(upsertData, toUpsertOptions(body.onConflict))
         .select();
@@ -615,7 +625,7 @@ Deno.serve(async (req) => {
       }
       const t0 = performance.now();
       const updateData = (data ?? {}) as Record<string, unknown>;
-      let query = externalClient.from(table!).update(updateData);
+      let query = externalDataClient.from(table!).update(updateData);
       for (const f of filters) {
         if (f.op === "eq") query = query.eq(f.column, f.value);
         else if (f.op === "neq") query = query.neq(f.column, f.value);
@@ -642,7 +652,7 @@ Deno.serve(async (req) => {
         return jsonError(400, "DELETE_REQUIRES_EQ", "DELETE requires at least one 'eq' filter for safety");
       }
       const t0 = performance.now();
-      let query = externalClient.from(table!).delete();
+      let query = externalDataClient.from(table!).delete();
       for (const f of filters) {
         if (f.op === "eq") query = query.eq(f.column, f.value);
         else if (f.op === "neq") query = query.neq(f.column, f.value);
@@ -669,7 +679,7 @@ Deno.serve(async (req) => {
         return jsonError(403, "RPC_DENIED", `RPC '${rpcName}' is not in allowlist`);
       }
       const t0 = performance.now();
-      const { data: rpcData, error } = await externalUserClient.rpc(rpcName, (rpcArgs || {}) as Record<string, unknown>);
+      const { data: rpcData, error } = await externalDataClient.rpc(rpcName, (rpcArgs || {}) as Record<string, unknown>);
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({
         operation: "rpc", rpcName, durationMs, status: classifySeverity(durationMs, !!error),
