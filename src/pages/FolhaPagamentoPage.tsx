@@ -225,7 +225,7 @@ export default function FolhaPagamentoPage() {
       >
         <FolhaKPIs resumo={resumo} isLoading={isLoading} />
 
-        {!isLoading && <FolhaDashboard competencia={competencia} />}
+        {!isLoading && <FolhaDashboard competencia={competencia} empresaId={empresaAtual?.id} resumo={resumo} />}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
