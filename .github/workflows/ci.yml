@@ -114,8 +114,14 @@ jobs:
   p0-database-migrations:
     name: P0 database migration simulations
     runs-on: ubuntu-latest
+    # Os scripts de simulação SQL não fazem chamadas à API do GitHub. Mantém o
+    # token mínimo e evita deixá-lo no git config enquanto executam SQL de PR.
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - name: Simular a migração em PostgreSQL descartável
         # Cada teste sobe PostgreSQL descartável. Eles exercitam o defeito que
         # só aparece em runtime, reaplicação idempotente e pré-condições que
