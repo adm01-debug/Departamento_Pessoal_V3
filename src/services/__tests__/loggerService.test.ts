@@ -5,7 +5,9 @@ const mockRpcResult = { catch: vi.fn() };
 const mockRpc = vi.fn((_fn: string, _args?: unknown) => mockRpcResult);
 const mockInsert = vi.fn(() => Promise.resolve({ error: null }));
 const mockFrom = vi.fn((_table: string) => ({ insert: mockInsert }));
-const mockGetSession = vi.fn(() => Promise.resolve({ data: { session: { access_token: 'test-token' } } }));
+const mockGetSession = vi.fn<() => Promise<{ data: { session: { access_token: string } | null } }>>(() =>
+  Promise.resolve({ data: { session: { access_token: 'test-token' } } })
+);
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
