@@ -809,6 +809,7 @@
       "migration_scope": "20260830000001..00003, twice, PostgreSQL container",
       "p0_simulation": "42 views on synthetic RLS fixture, applied twice; anonymous rejection, T1/T2/no-tenant counts checked",
       "digest_public_path": "SQLSTATE 42883 reproduced with synthetic string; no business write",
+      "p0_hash_trigger_migration": "20260911190000: PostgreSQL 17 fixture reproduced digest failure before migration; all 13 trigger functions succeeded after two idempotent applications; missing pgcrypto and missing expected function failed closed",
       "playwright_discovery": "71 tests in 24 files; two root specs excluded"
     }
   },

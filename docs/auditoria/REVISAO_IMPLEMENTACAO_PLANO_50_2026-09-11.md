@@ -72,6 +72,8 @@ Há 12 CHECKs NOT VALID e a tabela `audit_log_unified_archive` segue sem PK. Em 
 
 Foram encontrados 13 nomes `enforce*hash`: dez com search_path somente `public`, um sem configuração fixa e dois com `public, extensions`. A consulta sintética `digest(...)` sob `search_path=public` falhou novamente com SQLSTATE `42883`. Isso reproduz a dependência quebrada, mas não equivale à execução de todos os corpos de triggers nem prova que todos eles falham pelo mesmo motivo.
 
+**Execução posterior à revisão:** foi criada a migration progressiva `20260911190000_p0_hash_trigger_search_path.sql`. Ela exige `pgcrypto` no schema `extensions`, exige os 13 gatilhos esperados e fixa `public, extensions, pg_catalog`; portanto não mascara drift parcial. Em PostgreSQL 17 descartável, a suíte reproduziu a falha antes da migration, exerceu os 13 gatilhos após duas aplicações e confirmou falha explícita quando a extensão ou uma função esperada estão ausentes. A aplicação e o smoke no canônico continuam pendentes de acesso de migration, logo esta evidência não é uma certificação remota.
+
 O cron possui **50 jobs ativos**, não 7. Os três jobs `sec-audit-policies-daily`, `sec-policy-regressions-purge` e `sec-verify-seals-weekly` existem, mas apontam respectivamente para funções ausentes: `sec_audit_policies_scan`, `sec_policy_regressions_purge` e `sec_verify_seals_scan`.
 
 Há oito grupos com comandos textualmente idênticos agendados sob nomes distintos. Um grupo executa a checagem de anomalias de idempotência quatro vezes em cadências diferentes. Isso exige análise de intenção, custo e idempotência; não autoriza apagar todos os duplicados automaticamente.

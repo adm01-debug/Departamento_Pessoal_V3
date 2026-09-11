@@ -218,20 +218,20 @@
 
 ### 10 subetapas
 
-1. [ ] **Evidência inicial:** 24 funções únicas afetadas e 11 smokes de selagem quebrados.
+1. [x] **Evidência inicial:** 13 funções `enforce_*_hash` identificadas; dez com `search_path=public`, uma sem configuração e duas com `public, extensions`. `digest(...)` sob `public` reproduz SQLSTATE `42883`.
 2. [ ] **Ownership:** nomear executor, revisor e aprovador; mapear consumidores, dados, pré-condições e blast radius.
 3. [ ] **Contrato:** documentar invariantes, entradas/saídas, autorização, compatibilidade, métricas, ameaça e critério de abort.
-4. [ ] **Implementação:** Corrigir search_path/qualificação de pgcrypto e decidir os dois triggers de folha desabilitados.
-5. [ ] **Teste positivo:** 11/11 smokes geram e verificam hashes determinísticos.
-6. [ ] **Teste negativo:** Payload adulterado, schema malicioso e bypass de trigger são rejeitados.
+4. [ ] **Implementação:** Migration local `20260911190000_p0_hash_trigger_search_path.sql` restaura `public, extensions, pg_catalog` nos 13 gatilhos; aplicação no canônico e decisão sobre os dois triggers de folha seguem pendentes.
+5. [ ] **Teste positivo:** Em fixture PostgreSQL 17, os 13 gatilhos executam `digest()` após duas aplicações idempotentes; falta validar os corpos/dados canônicos e os 11 smokes completos.
+6. [ ] **Teste negativo:** A fixture rejeita migration sem `pgcrypto` no schema `extensions` e com função de gatilho faltante; adulteração, schema malicioso e bypass real seguem pendentes.
 7. [ ] **Regressão:** executar typecheck, lint, unidade, integração, banco e E2E diretamente afetados.
 8. [ ] **Operação:** medir antes/depois, garantir logs sem PII, alertas acionáveis e rollback ensaiado.
-9. [ ] **Gate permanente:** automatizar os testes e o critério objetivo; exceção exige owner, compensação e expiração.
+9. [x] **Gate permanente:** `test:migrations:p0` e o job CI `P0 Hash-trigger migration` reproduzem o defeito, validam os 13 gatilhos, reaplicação e cenários fail-closed.
 10. [ ] **Promoção:** revisão dupla, staging/canário e evidências de commit, PR, runs, inventário, decisão e smoke pós-deploy.
 
 ### Checkpoints
 
-- [ ] **C1 — Diagnóstico:** defeito reproduzido; owner, escopo, contrato e ameaça aprovados.
+- [ ] **C1 — Diagnóstico:** defeito e escopo técnico reproduzidos; falta aprovação formal de owner/contrato operacional.
 - [ ] **C2 — Implementação:** mudança revisada; testes positivo/negativo e rollback demonstrados.
 - [ ] **C3 — Verificação:** regressão completa, gate permanente e métricas dentro do limite.
 - [ ] **C4 — Evidência:** staging/canário aprovado, documentação atualizada e links anexados.

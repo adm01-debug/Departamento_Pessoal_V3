@@ -111,6 +111,17 @@ jobs:
           node scripts/validate-plan-50.mjs
           node scripts/audit-canonical-project.mjs
 
+  p0-hash-trigger-migration:
+    name: P0 Hash-trigger migration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Simular a migração em PostgreSQL descartável
+        # Reproduz o erro de digest() que só aparece na primeira escrita,
+        # valida os 13 gatilhos, a reaplicação idempotente e os dois caminhos
+        # fail-closed (extensão ou função esperada ausente).
+        run: bash scripts/tests/migrations-p0-hash-search-path.sh
+
   db-integrity:
     name: Integridade do banco (search_path x extensões)
     runs-on: ubuntu-latest
