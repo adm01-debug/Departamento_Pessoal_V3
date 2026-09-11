@@ -247,15 +247,15 @@
 
 ### 10 subetapas
 
-1. [ ] **Evidência inicial:** auth-login degrada por RPCs ausentes; reset_login_attempts é anon-executable.
+1. [x] **Evidência inicial:** `auth-login` chama `check_account_lockout` e `record_login_attempt` ausentes no canônico, enquanto `reset_login_attempts` é anon-executable.
 2. [ ] **Ownership:** nomear executor, revisor e aprovador; mapear consumidores, dados, pré-condições e blast radius.
 3. [ ] **Contrato:** documentar invariantes, entradas/saídas, autorização, compatibilidade, métricas, ameaça e critério de abort.
-4. [ ] **Implementação:** Implementar RPCs ausentes, remover reset público e combinar CAPTCHA/WAF/rate limit atômico.
-5. [ ] **Teste positivo:** Login, bloqueio, expiração e recuperação autorizada funcionam.
-6. [ ] **Teste negativo:** Brute force distribuído, enumeração, replay e bypass do wrapper falham.
+4. [ ] **Implementação:** Migration local `20260911191000_p0_auth_lockout_contract.sql` restaura o contrato de lockout somente para `service_role`; a remoção do reset público, CAPTCHA/WAF e aplicação no canônico seguem pendentes.
+5. [ ] **Teste positivo:** Fixture PostgreSQL 17 valida bloqueio na quinta falha, expiração/recuperação e reset após sucesso; ainda falta fluxo Auth/Edge real.
+6. [ ] **Teste negativo:** Fixture bloqueia `anon` e falha sem pré-requisitos; brute force distribuído, enumeração, replay e bypass real seguem pendentes.
 7. [ ] **Regressão:** executar typecheck, lint, unidade, integração, banco e E2E diretamente afetados.
 8. [ ] **Operação:** medir antes/depois, garantir logs sem PII, alertas acionáveis e rollback ensaiado.
-9. [ ] **Gate permanente:** automatizar os testes e o critério objetivo; exceção exige owner, compensação e expiração.
+9. [x] **Gate permanente:** o job CI `P0 database migration simulations` valida o contrato, ACL, `search_path`, idempotência e pré-requisito fail-closed em PostgreSQL descartável.
 10. [ ] **Promoção:** revisão dupla, staging/canário e evidências de commit, PR, runs, inventário, decisão e smoke pós-deploy.
 
 ### Checkpoints

@@ -49,7 +49,11 @@ Requisito: E50-013/023/027/030/031. Esse é um caso concreto em que código corr
 
 ### R03 — P0/P1: Auth continua dependendo de RPCs ausentes
 
-`auth-login/index.ts:87` chama `check_account_lockout`; a tentativa é registrada por `record_login_attempt`, na linha 129. Ambas estão ausentes no canônico. O código local registra a falha do lockout e continua a autenticação; o registro da tentativa é assíncrono. `edge_rate_limit_check` também está ausente. A RPC legada `reset_login_attempts` continua executável por `anon`.
+`auth-login/index.ts:87` chama `check_account_lockout`; a tentativa é registrada por `record_login_attempt`, na linha 129. Ambas estão ausentes no canônico. `edge_rate_limit_check` também está ausente. A RPC legada `reset_login_attempts` continua executável por `anon`.
+
+**Execução posterior à revisão:** a migration progressiva `20260911191000_p0_auth_lockout_contract.sql` restaura as duas RPCs exclusivamente para `service_role`, exige suas tabelas/índice/função de duração e fixa `search_path` seguro. A Edge passou a negar login com 503 quando o contrato não está disponível e espera a gravação do resultado antes de responder, removendo o bypass por degradação ou por trabalho em segundo plano cancelado. Em PostgreSQL 17 descartável: quatro falhas não bloqueiam, a quinta bloqueia, sucesso zera o contador, `anon` recebe negação, a migration é idempotente e falta de pré-requisito aborta. Ainda falta aplicar no canônico, remover o reset público e validar o endpoint de Auth real.
+
+O cliente web usa a Edge, mas isso não impede requisições diretas ao endpoint de senha do Supabase Auth. Por isso, CAPTCHA/proteção contra senha vazada e os limites de taxa hospedados permanecem controles externos obrigatórios; a Edge não pode ser apresentada como barreira completa contra força bruta enquanto essa configuração não for verificada.
 
 Existirem `check_login_lock` e `record_failed_login` não satisfaz o contrato dos nomes usados pelo caller atual. Requisito: E50-008/013/022. Testar bloqueio, expiração, recuperação, corrida e bypass pelo endpoint direto de Auth, preservando disponibilidade sem mascarar degradação.
 
@@ -94,9 +98,9 @@ O CI do SHA revisado registra **462 arquivos aprovados, 1 pulado; 4.857 testes a
 
 `src/tests/rpc-permissions.test.ts:23` desativa os testes de backend quando `CI` ou `GITHUB_ACTIONS` existe, mesmo que as credenciais estejam presentes. Os testes RPC aceitam mensagens contendo `egress`/`not found`; nos testes de tabela, qualquer `error` evita a asserção de ausência de linhas. Assim, indisponibilidade, objeto ausente ou falha de consulta podem ser confundidos com negação correta de autorização.
 
-O job Edge Functions passou, mas os logs registram **54 funções não-bridge com erro de typecheck**, sob `continue-on-error: true`. O verde certifica somente os passos bloqueantes, não a correção de todas as Edge Functions.
+O job Edge Functions passou sob `continue-on-error`; portanto, seu verde certifica somente os passos bloqueantes, não a correção de todas as Edge Functions. Nesta execução, a varredura explícita de 60 entrypoints reduziu as falhas de **48 para 22** ao normalizar os contratos compartilhados de Sentry, rate limit e autorização; 38 passam. Os 22 restantes continuam rastreados e não devem ser omitidos da certificação.
 
-`test:rebaseline` foi adicionado a `ci:verify`, mas nenhuma workflow atual chama `ci:verify` ou `test:rebaseline`. O teste existe e passa localmente; ainda falta execução obrigatória em CI. `test:migrations` também não está ligado às workflows inspecionadas.
+`test:rebaseline` foi adicionado a `ci:verify`, mas nenhuma workflow atual chama `ci:verify` ou `test:rebaseline`. O teste existe e passa localmente; ainda falta execução obrigatória em CI. O novo job `P0 database migration simulations` já executa as duas simulações P0; a suíte histórica `test:migrations` continua fora da workflow.
 
 Requisito: E50-031/033/034/035/041/047. Separar disponibilidade de negação, exigir códigos/estado esperados e executar os testes de segurança num job com backend acessível; reduzir a tolerância de typecheck com estratégia incremental rastreável.
 

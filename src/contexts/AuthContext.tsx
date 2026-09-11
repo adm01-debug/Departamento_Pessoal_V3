@@ -67,12 +67,16 @@ function fetchUserRolesWithTimeout(userId: string): Promise<AppRole[]> {
   });
 }
 
-function buildUser(supabaseUser: { id: string; email?: string | null; user_metadata?: Record<string, unknown> }, roles: AppRole[]): User {
+function buildUser(
+  supabaseUser: { id: string; email?: string | null; user_metadata?: Record<string, unknown> },
+  roles: AppRole[]
+): User {
   return {
     id: supabaseUser.id,
     email: supabaseUser.email || '',
     name: supabaseUser.user_metadata?.name as string | undefined,
-    roles};
+    roles,
+  };
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -90,27 +94,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isReadyRef.current = true;
   }, []);
 
+  const enrichUserWithRoles = useCallback(
+    async (supabaseUser: { id: string; email?: string | null; user_metadata?: Record<string, unknown> }) => {
+      const roles = await fetchUserRolesWithTimeout(supabaseUser.id);
+      setUser((prevUser) => (prevUser && prevUser.id === supabaseUser.id ? buildUser(supabaseUser, roles) : prevUser));
+    },
+    []
+  );
 
-  const enrichUserWithRoles = useCallback(async (supabaseUser: { id: string; email?: string | null; user_metadata?: Record<string, unknown> }) => {
-    const roles = await fetchUserRolesWithTimeout(supabaseUser.id);
-    setUser(prevUser => prevUser && prevUser.id === supabaseUser.id ? buildUser(supabaseUser, roles) : prevUser);
-  }, []);
-
-  const applySession = useCallback((nextSession: Session | null) => {
-    if (nextSession?.user) {
-      setSession(nextSession);
-      setUser(buildUser(nextSession.user, ['user']));
-      void enrichUserWithRoles(nextSession.user);
-    } else {
-      setSession(null);
-      setUser(null);
-    }
-    markReady();
-  }, [enrichUserWithRoles, markReady]);
+  const applySession = useCallback(
+    (nextSession: Session | null) => {
+      if (nextSession?.user) {
+        setSession(nextSession);
+        setUser(buildUser(nextSession.user, ['user']));
+        void enrichUserWithRoles(nextSession.user);
+      } else {
+        setSession(null);
+        setUser(null);
+      }
+      markReady();
+    },
+    [enrichUserWithRoles, markReady]
+  );
 
   // P1-028: ref estável para o callback, evita re-execução do useEffect a cada render.
   const applySessionRef = useRef(applySession);
-  useEffect(() => { applySessionRef.current = applySession; }, [applySession]);
+  useEffect(() => {
+    applySessionRef.current = applySession;
+  }, [applySession]);
 
   useEffect(() => {
     let isMounted = true;
@@ -122,8 +133,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }, AUTH_INIT_TIMEOUT_MS);
 
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, newSession) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, newSession) => {
       if (!isMounted) return;
       loggerService.info('Auth state changed', { event, userId: newSession?.user?.id });
       applySession(newSession);
@@ -131,7 +143,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const initializeAuth = async () => {
       try {
-        const { data: { session: initialSession }, error } = await supabase.auth.getSession();
+        const {
+          data: { session: initialSession },
+          error,
+        } = await supabase.auth.getSession();
         if (error) throw error;
         if (isMounted) applySession(initialSession);
       } catch (e) {
@@ -153,15 +168,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [applySession, markReady]);
 
-
   const signIn = useCallback(async (email: string, password: string) => {
     try {
-      // H20: Route all logins through the auth-login edge function so that
-      // IP-level + per-email rate limits and account lockout are enforced
-      // server-side — unreachable by attackers calling the Supabase Auth REST
-      // API directly (which would bypass the React UI checks entirely).
-      const SUPABASE_URL = (supabase as unknown as { supabaseUrl?: string }).supabaseUrl
-        ?? import.meta.env.VITE_SUPABASE_URL;
+      // H20: o cliente do produto usa a Edge para aplicar rate-limit e lockout
+      // próprios. Isso NÃO bloqueia chamadas diretas ao endpoint de senha do
+      // Supabase Auth; CAPTCHA/rate limits do Auth hospedado continuam sendo
+      // controles obrigatórios de produção e são verificados no gate externo.
+      const SUPABASE_URL =
+        (supabase as unknown as { supabaseUrl?: string }).supabaseUrl ?? import.meta.env.VITE_SUPABASE_URL;
       // Chave pública canônica: VITE_SUPABASE_PUBLISHABLE_KEY (única suportada).
       const ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
       if (!SUPABASE_URL || !ANON_KEY) {
@@ -169,15 +183,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       // Dev local: VITE_SUPABASE_FUNCTIONS_BASE=/functions/v1 roteia pela bridge
       // do Vite (proxy reescreve Origin p/ allowlist). Produção: URL absoluta.
-      const FUNCTIONS_BASE = import.meta.env.VITE_SUPABASE_FUNCTIONS_BASE?.trim()
-        || `${SUPABASE_URL}/functions/v1`;
+      const FUNCTIONS_BASE = import.meta.env.VITE_SUPABASE_FUNCTIONS_BASE?.trim() || `${SUPABASE_URL}/functions/v1`;
 
       const res = await fetch(`${FUNCTIONS_BASE}/auth-login`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY },
-        body: JSON.stringify({ email, password })});
+        headers: { 'Content-Type': 'application/json', apikey: ANON_KEY },
+        body: JSON.stringify({ email, password }),
+      });
 
-      const body = await res.json().catch(() => ({})) as {
+      const body = (await res.json().catch(() => ({}))) as {
         success?: boolean;
         code?: string;
         error?: string;
@@ -199,7 +213,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const session = body.session!;
       const { error: sessionErr } = await supabase.auth.setSession({
         access_token: session.access_token,
-        refresh_token: session.refresh_token});
+        refresh_token: session.refresh_token,
+      });
       if (sessionErr) throw sessionErr;
 
       // Check if MFA challenge is required (user enrolled TOTP → nextLevel = aal2)
@@ -233,7 +248,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               .limit(10);
             if (error) throw error;
             return data;
-          }}),
+          },
+        }),
         // Colaboradores ativos (dashboard + listagens)
         queryClient.prefetchQuery({
           queryKey: ['colaboradores', { status: 'ativo', limit: 50 }],
@@ -245,7 +261,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               .limit(50);
             if (error) throw error;
             return data;
-          }}),
+          },
+        }),
       ])
         .then(() => loggerService.debug('Pre-fetch post-login concluído'))
         .catch((err) => {
@@ -253,7 +270,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           loggerService.warn('Pre-fetch post-login falhou (não bloqueia login)', { email });
         })
         .finally(() => window.clearTimeout(prefetchTimeout));
-
     } catch (e) {
       const err = e as AuthError | Error;
       loggerService.warn('Sign in failed', { email, message: err.message });
@@ -269,15 +285,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loggerService.error('Sign out error', {}, e as Error);
     } finally {
       queryClient.clear();
-      try { localStorage.clear(); } catch { /* private browsing */ }
-      try { sessionStorage.clear(); } catch { /* private browsing */ }
-      try { indexedDB.deleteDatabase('ponto-offline-db'); } catch { /* ignore */ }
+      try {
+        localStorage.clear();
+      } catch {
+        /* private browsing */
+      }
+      try {
+        sessionStorage.clear();
+      } catch {
+        /* private browsing */
+      }
+      try {
+        indexedDB.deleteDatabase('ponto-offline-db');
+      } catch {
+        /* ignore */
+      }
       try {
         if ('caches' in window) {
           const keys = await caches.keys();
-          await Promise.all(keys.map(k => caches.delete(k)));
+          await Promise.all(keys.map((k) => caches.delete(k)));
         }
-      } catch { /* caches API unavailable */ }
+      } catch {
+        /* caches API unavailable */
+      }
       setUser(null);
       setSession(null);
       loggerService.info('User signed out - all local state cleared');
@@ -297,7 +327,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { name: sanitizedName } }
+        options: { data: { name: sanitizedName } },
       });
       if (error) throw error;
       loggerService.info('User signed up', { email });
@@ -310,7 +340,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const resetPassword = useCallback(async (email: string) => {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/login`});
+        redirectTo: `${window.location.origin}/login`,
+      });
       if (error) throw error;
       loggerService.info('Password reset email sent', { email });
     } catch (e) {
@@ -327,11 +358,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [user, session, loading, isReady, isAdmin, hasRole, signIn, signOut, signUp, resetPassword]
   );
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -340,4 +367,3 @@ export function useAuth() {
   if (!context) throw new Error('useAuth must be used within AuthProvider');
   return context;
 }
-

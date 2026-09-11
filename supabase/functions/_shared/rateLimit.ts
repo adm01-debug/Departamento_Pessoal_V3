@@ -8,7 +8,6 @@
 // pg_advisory_xact_lock para serializar verificações concorrentes da mesma chave,
 // eliminando a corrida TOCTOU do SELECT+INSERT não-atômico anterior.
 // RLS bloqueia acesso não-service-role — sempre passe um client com service role.
-import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
 import { corsHeaders } from './contract.ts';
 
 export interface RateLimitOptions {
@@ -48,8 +47,26 @@ interface RpcResult {
   reset: number;
 }
 
+/**
+ * O helper só depende da RPC abaixo. Tipar a superfície mínima evita acoplar
+ * todas as Edge Functions à mesma instância/versionamento de supabase-js — a
+ * incompatibilidade entre os genéricos do cliente já fazia `deno check` de
+ * consumers falhar mesmo quando a chamada RPC estava correta.
+ */
+export interface RateLimitRpcClient {
+  rpc(
+    name: 'edge_rate_limit_check',
+    args: {
+      p_key: string;
+      p_limit: number;
+      p_window_sec: number;
+      p_now: number;
+    },
+  ): PromiseLike<{ data: unknown; error: { message: string } | null }>;
+}
+
 export async function checkRateLimit(
-  admin: SupabaseClient,
+  admin: RateLimitRpcClient,
   opts: RateLimitOptions,
 ): Promise<RateLimitResult> {
   const now = Math.floor(Date.now() / 1000);

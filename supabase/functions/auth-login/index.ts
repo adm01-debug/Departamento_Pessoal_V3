@@ -82,15 +82,19 @@ serve(async (req: Request): Promise<Response> => {
     if (!emailRL.allowed) return rateLimitResponse(emailRL);
 
     // 4. Account lockout check (5 failures in 15 min → lockout escalonado).
-    // Observabilidade: um erro aqui degrada para fail-open (não travamos todos os
-    // logins por indisponibilidade do DB), mas NUNCA em silêncio — foi exatamente
-    // um erro mudo que manteve a proteção desligada sem ninguém perceber.
+    // Segurança fail-closed: prosseguir quando a RPC estiver ausente transforma
+    // uma indisponibilidade de banco em bypass de força bruta.
     const { data: lockout, error: lockoutErr } = await admin.rpc('check_account_lockout', { p_email: email });
     if (lockoutErr) {
-      console.error('[auth-login] check_account_lockout indisponível — proteção de lockout DEGRADADA:', lockoutErr.message);
+      console.error('[auth-login] check_account_lockout indisponível:', lockoutErr.message);
       await captureException(new Error(`check_account_lockout falhou: ${lockoutErr.message}`), { function: 'auth-login' });
+      return createErrorResponse(
+        'Proteção de login temporariamente indisponível. Tente novamente.',
+        503,
+        'LOGIN_PROTECTION_UNAVAILABLE',
+      );
     }
-    if (!lockoutErr && lockout?.[0]?.is_locked) {
+    if (lockout?.[0]?.is_locked) {
 
       const lockedUntil: string | null = lockout[0].locked_until ?? null;
       return new Response(
@@ -122,16 +126,24 @@ serve(async (req: Request): Promise<Response> => {
     const errorMessage = authErr?.message ?? 'Credenciais inválidas';
 
 
-    // 6. Record attempt (fire-and-forget).
-    // PostgrestBuilder é "thenable" mas NÃO é Promise: não possui .catch().
-    // O .catch() anterior lançava TypeError e derrubava todo login com 500.
-    void admin
-      .rpc('record_login_attempt', { p_email: email, p_success: success, p_ip: ip })
-      .then(
-        ({ error }) =>
-          error && console.warn('[auth-login] record_login_attempt falhou:', error.message),
-        (e: unknown) => console.warn('[auth-login] record_login_attempt falhou:', (e as Error)?.message),
+    // 6. Persist outcome before answering. A background thenable can be
+    // cancelled when the Edge request ends, silently disabling lockout again.
+    const { error: recordAttemptErr } = await admin.rpc('record_login_attempt', {
+      p_email: email,
+      p_success: success,
+      p_ip: ip,
+    });
+    if (recordAttemptErr) {
+      console.error('[auth-login] record_login_attempt indisponível:', recordAttemptErr.message);
+      await captureException(new Error(`record_login_attempt falhou: ${recordAttemptErr.message}`), {
+        function: 'auth-login',
+      });
+      return createErrorResponse(
+        'Proteção de login temporariamente indisponível. Tente novamente.',
+        503,
+        'LOGIN_PROTECTION_UNAVAILABLE',
       );
+    }
 
     if (!success) {
       return new Response(

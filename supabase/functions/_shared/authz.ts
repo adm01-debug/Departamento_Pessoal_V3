@@ -24,11 +24,15 @@
  * personificar qualquer pessoa. Só o backend as alcança.
  */
 
-// deno-lint-ignore-file no-explicit-any
 import { createErrorResponse } from './contract.ts';
 
 /** Cliente Supabase com service_role (tipagem mínima necessária aqui). */
-type AdminClient = { rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: any; error: any }> };
+type AdminClient = {
+  rpc: (
+    fn: string,
+    args: Record<string, unknown>,
+  ) => PromiseLike<{ data: unknown; error: unknown | null }>;
+};
 
 export interface AuthzResult {
   /** Pronto para `if (denied) return denied;` — nulo quando autorizado. */
