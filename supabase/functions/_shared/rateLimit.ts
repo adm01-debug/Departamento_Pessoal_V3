@@ -8,7 +8,7 @@
 // pg_advisory_xact_lock para serializar verificações concorrentes da mesma chave,
 // eliminando a corrida TOCTOU do SELECT+INSERT não-atômico anterior.
 // RLS bloqueia acesso não-service-role — sempre passe um client com service role.
-import { corsHeaders } from './contract.ts';
+import { getCorsHeaders } from './contract.ts';
 
 export interface RateLimitOptions {
   key: string;           // Deve incluir namespacing (ex: `esocial:<userId>`)
@@ -47,6 +47,83 @@ interface RpcResult {
   reset: number;
 }
 
+function isValidRpcResult(value: unknown, expectedLimit: number): value is RpcResult {
+  if (typeof value !== 'object' || value === null) return false;
+  const rpc = value as Record<string, unknown>;
+  return (
+    typeof rpc.allowed === 'boolean' &&
+    typeof rpc.current === 'number' && Number.isFinite(rpc.current) && rpc.current >= 0 &&
+    typeof rpc.limit === 'number' && rpc.limit === expectedLimit &&
+    typeof rpc.remaining === 'number' && Number.isFinite(rpc.remaining) &&
+    rpc.remaining >= 0 && rpc.remaining <= expectedLimit &&
+    typeof rpc.reset === 'number' && Number.isFinite(rpc.reset)
+  );
+}
+
+function memoryFallback(
+  opts: RateLimitOptions,
+  now: number,
+  reason: string,
+): RateLimitResult {
+  // It is not shared between Edge isolates, but this prevents an RPC outage
+  // from silently removing rate limiting altogether.
+  console.error(`[rateLimit] RPC indisponível (${reason}) — fallback em memória (fail-closed)`);
+
+  const fallbackLimit = Math.max(1, Math.floor(opts.limit * MEM_LIMIT_FRACTION));
+  const windowStart = now - opts.windowSec;
+  let slot = _memFallback.get(opts.key);
+  if (!slot || slot.windowStart < windowStart) {
+    slot = { count: 0, windowStart: now };
+    _memFallback.set(opts.key, slot);
+  }
+  const allowed = slot.count < fallbackLimit;
+  if (allowed) slot.count++;
+
+  if (_memFallback.size > 1000) {
+    const oldest = _memFallback.keys().next().value;
+    if (oldest !== undefined) _memFallback.delete(oldest);
+  }
+
+  return {
+    allowed,
+    remaining: Math.max(0, fallbackLimit - slot.count),
+    // Return the end of the active fallback window, not `now`.
+    reset: slot.windowStart + opts.windowSec,
+    limit: fallbackLimit,
+    windowSec: opts.windowSec,
+  };
+}
+
+function consumeBurst(
+  opts: RateLimitOptions,
+  now: number,
+): Pick<RateLimitResult, 'allowed' | 'limit' | 'reset' | 'windowSec' | 'reason'> | null {
+  if (!opts.burstLimit || !opts.burstWindowSec) return null;
+
+  const key = `__burst:${opts.key}`;
+  const windowStart = now - opts.burstWindowSec;
+  let slot = _memFallback.get(key);
+  if (!slot || slot.windowStart < windowStart) {
+    slot = { count: 0, windowStart: now };
+    _memFallback.set(key, slot);
+  }
+
+  if (slot.count >= opts.burstLimit) {
+    return {
+      allowed: false,
+      limit: opts.burstLimit,
+      reset: slot.windowStart + opts.burstWindowSec,
+      windowSec: opts.burstWindowSec,
+      reason: 'burst',
+    };
+  }
+
+  // Reserve this first. A request rejected for a full burst must not consume
+  // one token from the database-backed main window.
+  slot.count++;
+  return null;
+}
+
 /**
  * O helper só depende da RPC abaixo. Tipar a superfície mínima evita acoplar
  * todas as Edge Functions à mesma instância/versionamento de supabase-js — a
@@ -71,76 +148,44 @@ export async function checkRateLimit(
 ): Promise<RateLimitResult> {
   const now = Math.floor(Date.now() / 1000);
 
+  const burstRejection = consumeBurst(opts, now);
+  if (burstRejection) return { ...burstRejection, remaining: 0 };
+
   // Atomic check via DB RPC (pg_advisory_xact_lock — eliminates SELECT+INSERT race).
-  const { data, error } = await admin.rpc('edge_rate_limit_check', {
-    p_key: opts.key,
-    p_limit: opts.limit,
-    p_window_sec: opts.windowSec,
-    p_now: now,
-  });
-
-  if (error) {
-    // Fail-closed com fallback em memória (H21):
-    // Quando o RPC está indisponível, mantemos contadores locais com limite
-    // reduzido (50%). Isso evita tanto o fail-open irrestrito quanto uma negação
-    // total de serviço — em modo degradado a proteção permanece ativa.
-    console.error('[rateLimit] RPC indisponível — fallback em memória (fail-closed):', error.message);
-
-    const fallbackLimit = Math.max(1, Math.floor(opts.limit * MEM_LIMIT_FRACTION));
-    const windowStart = now - opts.windowSec;
-    let slot = _memFallback.get(opts.key);
-    if (!slot || slot.windowStart < windowStart) {
-      slot = { count: 0, windowStart: now };
-      _memFallback.set(opts.key, slot);
-    }
-    const allowed = slot.count < fallbackLimit;
-    if (allowed) slot.count++;
-
-    // Evita vazamento de memória: descarta entradas mais antigas quando o mapa cresce
-    if (_memFallback.size > 1000) {
-      const oldest = _memFallback.keys().next().value;
-      if (oldest !== undefined) _memFallback.delete(oldest);
-    }
-
-    return {
-      allowed,
-      remaining: Math.max(0, fallbackLimit - slot.count),
-      reset: windowStart + opts.windowSec,
-      limit: fallbackLimit,
-      windowSec: opts.windowSec,
-    };
+  let result: { data: unknown; error: { message: string } | null };
+  try {
+    result = await admin.rpc('edge_rate_limit_check', {
+      p_key: opts.key,
+      p_limit: opts.limit,
+      p_window_sec: opts.windowSec,
+      p_now: now,
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'RPC rejected without an Error';
+    return memoryFallback(opts, now, message);
   }
 
-  const rpc = data as RpcResult;
-  const allowedMain = rpc.allowed;
-
-  // Bucket de burst opcional (janela curta anti-rajada, in-memory)
-  let allowedBurst = true;
-  if (opts.burstLimit && opts.burstWindowSec) {
-    const bKey = `__burst:${opts.key}`;
-    const bWinStart = now - opts.burstWindowSec;
-    let slot = _memFallback.get(bKey);
-    if (!slot || slot.windowStart < bWinStart) {
-      slot = { count: 0, windowStart: now };
-      _memFallback.set(bKey, slot);
-    }
-    allowedBurst = slot.count < opts.burstLimit;
-    if (allowedBurst && allowedMain) slot.count++;
+  if (result.error) {
+    return memoryFallback(opts, now, result.error.message);
   }
 
-  const allowed = allowedMain && allowedBurst;
+  if (!isValidRpcResult(result.data, opts.limit)) {
+    return memoryFallback(opts, now, 'invalid RPC response shape');
+  }
+
+  const rpc = result.data;
 
   return {
-    allowed,
-    remaining: allowed ? rpc.remaining : 0,
+    allowed: rpc.allowed,
+    remaining: rpc.allowed ? rpc.remaining : 0,
     reset: rpc.reset,
     limit: opts.limit,
     windowSec: opts.windowSec,
-    reason: allowed ? undefined : (!allowedBurst ? 'burst' : 'main'),
+    reason: rpc.allowed ? undefined : 'main',
   };
 }
 
-export function rateLimitResponse(result: RateLimitResult): Response {
+export function rateLimitResponse(result: RateLimitResult, req?: Request): Response {
   return new Response(
     JSON.stringify({
       success: false,
@@ -153,7 +198,7 @@ export function rateLimitResponse(result: RateLimitResult): Response {
     {
       status: 429,
       headers: {
-        ...corsHeaders,
+        ...getCorsHeaders(req),
         'Content-Type': 'application/json',
         'Retry-After': String(result.windowSec),
         'X-RateLimit-Limit': String(result.limit),

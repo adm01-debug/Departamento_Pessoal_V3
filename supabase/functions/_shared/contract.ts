@@ -176,7 +176,9 @@ export async function parseJsonBody(
       errorResponse: createErrorResponse(
         `Payload excede o limite de ${Math.round(maxBytes / 1024)} KB`,
         413,
-        'PAYLOAD_TOO_LARGE'
+        'PAYLOAD_TOO_LARGE',
+        undefined,
+        req,
       ),
     };
   }
@@ -185,10 +187,12 @@ export async function parseJsonBody(
     const raw = await req.text();
     if (raw.length > maxBytes) {
       return {
-        errorResponse: createErrorResponse(
-          `Payload excede o limite de ${Math.round(maxBytes / 1024)} KB`,
-          413,
-          'PAYLOAD_TOO_LARGE'
+      errorResponse: createErrorResponse(
+        `Payload excede o limite de ${Math.round(maxBytes / 1024)} KB`,
+        413,
+        'PAYLOAD_TOO_LARGE',
+        undefined,
+        req,
         ),
       };
     }
@@ -199,7 +203,9 @@ export async function parseJsonBody(
       errorResponse: createErrorResponse(
         'JSON inválido ou corpo da requisição ausente',
         400,
-        'INVALID_JSON'
+        'INVALID_JSON',
+        undefined,
+        req,
       ),
     };
   }

@@ -126,6 +126,50 @@ Deno.test('fail-closed (fallback em memória) — bloqueia após atingir limite 
   assertEquals(r3.remaining, 0);
 });
 
+Deno.test('fallback fail-closed quando a RPC rejeita a Promise', async () => {
+  const client = {
+    rpc: () => Promise.reject(new Error('network unavailable')),
+  } as unknown as Parameters<typeof checkRateLimit>[0];
+  const before = Math.floor(Date.now() / 1000);
+  const result = await checkRateLimit(client, { key: 'u:1:rpc-throw', limit: 6, windowSec: 60 });
+  assertEquals(result.allowed, true);
+  assertEquals(result.limit, 3);
+  assertEquals(result.remaining, 2);
+  if (result.reset < before + 59 || result.reset > before + 61) {
+    throw new Error(`fallback reset must be the end of the active window, got ${result.reset}`);
+  }
+});
+
+Deno.test('fallback fail-closed quando a RPC retorna data nula sem erro', async () => {
+  const client = {
+    rpc: () => Promise.resolve({ data: null, error: null }),
+  } as unknown as Parameters<typeof checkRateLimit>[0];
+  const result = await checkRateLimit(client, { key: 'u:1:rpc-malformed', limit: 4, windowSec: 60 });
+  assertEquals(result.allowed, true);
+  assertEquals(result.limit, 2);
+  assertEquals(result.remaining, 1);
+});
+
+Deno.test('burst cheio nega antes de consumir a cota principal', async () => {
+  let rpcCalls = 0;
+  const client = {
+    rpc: async (_name: string, args: { p_limit: number; p_now: number }) => {
+      rpcCalls++;
+      return {
+        data: { allowed: true, current: 1, limit: args.p_limit, remaining: args.p_limit - 1, reset: args.p_now + 60 },
+        error: null,
+      };
+    },
+  } as unknown as Parameters<typeof checkRateLimit>[0];
+  const options = { key: 'u:1:burst-main-preserved', limit: 10, windowSec: 60, burstLimit: 1, burstWindowSec: 10 };
+  const first = await checkRateLimit(client, options);
+  const second = await checkRateLimit(client, options);
+  assertEquals(first.allowed, true);
+  assertEquals(second.allowed, false);
+  assertEquals(second.reason, 'burst');
+  assertEquals(rpcCalls, 1);
+});
+
 Deno.test('rateLimitResponse gera 429 com headers RFC-compliant', async () => {
   const res = rateLimitResponse({ allowed: false, remaining: 0, reset: 1_700_000_000, limit: 10, windowSec: 60 });
   assertEquals(res.status, 429);

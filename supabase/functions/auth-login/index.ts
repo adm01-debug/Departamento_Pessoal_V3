@@ -51,7 +51,7 @@ serve(async (req: Request): Promise<Response> => {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
   if (req.method !== 'POST') {
-    return createErrorResponse('Método não permitido', 405, 'METHOD_NOT_ALLOWED');
+    return createErrorResponse('Método não permitido', 405, 'METHOD_NOT_ALLOWED', undefined, req);
   }
 
   const ip = getClientIP(req);
@@ -65,21 +65,21 @@ serve(async (req: Request): Promise<Response> => {
     // 1. IP-level rate limit — anonymous, no auth required.
     const ipKey = `login:ip:${ip}`;
     const ipRL = await checkRateLimit(admin, { key: ipKey, limit: IP_RATE_LIMIT, windowSec: IP_WINDOW_SEC });
-    if (!ipRL.allowed) return rateLimitResponse(ipRL);
+    if (!ipRL.allowed) return rateLimitResponse(ipRL, req);
 
     // 2. Parse and validate request body.
     const { body: pb, errorResponse } = await parseJsonBody(req);
     if (errorResponse) return errorResponse;
     const parsed = BodySchema.safeParse(pb ?? {});
     if (!parsed.success) {
-      return createErrorResponse('Dados de login inválidos', 400, 'VALIDATION_ERROR');
+      return createErrorResponse('Dados de login inválidos', 400, 'VALIDATION_ERROR', undefined, req);
     }
     const { email, password } = parsed.data;
 
     // 3. Per-email rate limit — more granular than IP (catches credential stuffing).
     const emailKey = `login:email:${email}`;
     const emailRL = await checkRateLimit(admin, { key: emailKey, limit: 10, windowSec: IP_WINDOW_SEC });
-    if (!emailRL.allowed) return rateLimitResponse(emailRL);
+    if (!emailRL.allowed) return rateLimitResponse(emailRL, req);
 
     // 4. Account lockout check (5 failures in 15 min → lockout escalonado).
     // Segurança fail-closed: prosseguir quando a RPC estiver ausente transforma
@@ -92,6 +92,8 @@ serve(async (req: Request): Promise<Response> => {
         'Proteção de login temporariamente indisponível. Tente novamente.',
         503,
         'LOGIN_PROTECTION_UNAVAILABLE',
+        undefined,
+        req,
       );
     }
     if (lockout?.[0]?.is_locked) {
@@ -142,6 +144,8 @@ serve(async (req: Request): Promise<Response> => {
         'Proteção de login temporariamente indisponível. Tente novamente.',
         503,
         'LOGIN_PROTECTION_UNAVAILABLE',
+        undefined,
+        req,
       );
     }
 
@@ -160,6 +164,6 @@ serve(async (req: Request): Promise<Response> => {
     // Diagnóstico: sem esta linha o 500 era opaco e impossível de rastrear.
     console.error('[auth-login] falha inesperada:', (err as Error)?.name, (err as Error)?.message, (err as Error)?.stack);
     await captureException(err, { function: 'auth-login' });
-    return createErrorResponse('Erro interno', 500, 'INTERNAL_SERVER_ERROR');
+    return createErrorResponse('Erro interno', 500, 'INTERNAL_SERVER_ERROR', undefined, req);
   }
 });
