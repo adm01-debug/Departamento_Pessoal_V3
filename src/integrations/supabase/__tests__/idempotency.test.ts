@@ -7,7 +7,7 @@ vi.stubEnv('VITE_SUPABASE_PUBLISHABLE_KEY', 'test-key');
 
 // O setup global mocka '@/integrations/supabase/client'; aqui precisamos do
 // módulo real, então pedimos a implementação original explicitamente.
-const { fetchWithRetry } = await vi.importActual<typeof import('../client')>('../client');
+const { fetchWithRetry, supabase, supabaseBase } = await vi.importActual<typeof import('../client')>('../client');
 
 describe('fetchWithRetry — idempotência sob retry', () => {
   beforeEach(() => {
@@ -70,5 +70,27 @@ describe('fetchWithRetry — idempotência sob retry', () => {
 
     expect(headerVisto).toBeUndefined();
     expect(idempotencyKey).toBeNull();
+  });
+
+  it('preserva onConflict na chamada browser → bridge', async () => {
+    vi.spyOn(supabaseBase.auth, 'getSession').mockResolvedValue({
+      data: { session: { access_token: 'jwt-de-teste' } },
+      error: null,
+    } as Awaited<ReturnType<typeof supabaseBase.auth.getSession>>);
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ data: [] }), { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await supabase
+      .from('folha_itens')
+      .upsert({ folha_id: 'folha-1', colaborador_id: 'colaborador-1' }, { onConflict: 'folha_id,colaborador_id' })
+      .select();
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const request = fetchMock.mock.calls[0]?.[1] as RequestInit;
+    expect(JSON.parse(String(request.body))).toMatchObject({
+      action: 'upsert',
+      table: 'folha_itens',
+      onConflict: 'folha_id,colaborador_id',
+    });
   });
 });

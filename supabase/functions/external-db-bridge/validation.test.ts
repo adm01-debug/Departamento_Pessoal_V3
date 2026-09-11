@@ -15,6 +15,7 @@ import {
   FILTER_OPS,
   NOT_EXTRA_OPS,
 } from "./validation.ts";
+import { BodySchema, ON_CONFLICT_COLUMNS_RE, toUpsertOptions } from "./request-schema.ts";
 
 let CASES = 0;
 function ok(cond: boolean, msg: string) {
@@ -205,34 +206,6 @@ Deno.test("listas: sanidade e disjunção", () => {
 // implementado em index.ts:538). Aqui garantimos que o schema rejeita tipos
 // inválidos e que a semântica é explícita.
 // ---------------------------------------------------------------------------
-import { z } from "https://deno.land/x/zod@v3.23.8/mod.ts";
-
-// Re-importa o BodySchema do index.ts (mirror do contrato real)
-const BodySchema = z.object({
-  action: z.enum(["select", "insert", "update", "delete", "upsert", "rpc"]),
-  table: z.string().max(63).optional(),
-  rpcName: z.string().max(63).optional(),
-  fn: z.string().max(63).optional(),
-  columns: z.string().max(2000).optional(),
-  filters: z.array(z.object({
-    column: z.string().max(120),
-    op: z.string().max(20),
-    value: z.unknown(),
-    extraOp: z.string().max(20).optional(),
-  })).max(50).optional(),
-  order: z.object({
-    column: z.string().max(120),
-    ascending: z.boolean().optional(),
-  }).optional(),
-  limit: z.number().int().optional(),
-  offset: z.number().int().min(0).optional(),
-  countMode: z.enum(["none", "exact", "planned", "estimated"]).optional(),
-  single: z.boolean().optional(),
-  data: z.union([z.record(z.unknown()), z.array(z.record(z.unknown()))]).optional(),
-  params: z.record(z.unknown()).optional(),
-  userId: z.string().max(64).optional(),
-}).strict();
-
 Deno.test("single: true é aceito em SELECT", () => {
   const parsed = BodySchema.safeParse({
     action: "select",
@@ -279,6 +252,41 @@ Deno.test("single: zero rows com single=true resultaria em PGRST116", () => {
   // quando single=true e 0 registros. Não testável aqui (precisa DB real),
   // mas a expectativa fica registrada para o time de frontend.
   ok(true, "contrato: cliente deve tratar PGRST116 quando single=true e 0 rows");
+});
+
+// ---------------------------------------------------------------------------
+// 12. UPSERT onConflict — deve atravessar o proxy sem abrir vetor de SQL
+// ---------------------------------------------------------------------------
+Deno.test("upsert onConflict: lista de colunas legítima é preservada", () => {
+  const parsed = BodySchema.safeParse({
+    action: "upsert",
+    table: "folha_itens",
+    data: { folha_id: "folha-1", colaborador_id: "colaborador-1" },
+    onConflict: "folha_id,colaborador_id",
+  });
+  ok(parsed.success, "upsert com onConflict válido deve passar validação");
+  if (!parsed.success) return;
+  const onConflict = parsed.data.onConflict;
+  ok(onConflict === "folha_id,colaborador_id", "onConflict deve ser preservado pelo schema real");
+  if (!onConflict) throw new Error("FALHOU: onConflict válido não pode ser undefined");
+  const options = toUpsertOptions(onConflict);
+  ok(options.onConflict === "folha_id,colaborador_id", "onConflict deve chegar às opções supabase-js");
+  ok(ON_CONFLICT_COLUMNS_RE.test(onConflict), "contrato usa somente identificadores simples");
+});
+
+Deno.test("upsert onConflict: SQL, espaços e formatos inválidos são rejeitados", () => {
+  const invalid = [
+    "folha_id;DROP TABLE folha_itens", "folha_id, colaborador_id", "folha_id--comment",
+    "folha_id,1colaborador", "folha_id,,colaborador_id", "folha_id()", "", "a".repeat(241),
+  ];
+  for (const onConflict of invalid) {
+    const parsed = BodySchema.safeParse({
+      action: "upsert", table: "folha_itens", data: { folha_id: "folha-1" }, onConflict,
+    });
+    ok(!parsed.success, `onConflict inseguro deve ser rejeitado: ${JSON.stringify(onConflict)}`);
+  }
+  const noOption = toUpsertOptions(undefined);
+  ok(Object.keys(noOption).length === 0, "upsert sem onConflict mantém semântica original");
 });
 
 Deno.test("disjunção: tabelas tenant-scoped não podem estar na denylist", () => {

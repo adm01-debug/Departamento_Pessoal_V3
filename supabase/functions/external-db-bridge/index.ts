@@ -12,7 +12,6 @@
 // e são consultadas frequentemente pelo bridge — caching reduz latência e carga.
 import { cachedFetch, invalidateCache } from "../_shared/cache.ts";
 import { createClient, type SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
-import { z } from "https://deno.land/x/zod@v3.23.8/mod.ts";
 import { verifyCsrf } from "../_shared/csrf.ts";
 import { logRpcError } from "../_shared/rpc-error-logging.ts";
 import { corsHeaders, enforceOrigin, handlePreflight } from '../_shared/contract.ts';
@@ -20,6 +19,7 @@ import {
   isSafeTableName, isSafeColumnsExpr, isSafeOrderColumn, isSafeOrExpression, isSafeFilterColumn,
   TABLE_DENYLIST, TENANT_SCOPED_TABLES, RPC_ALLOWLIST, FILTER_OPS, NOT_EXTRA_OPS,
 } from "./validation.ts";
+import { BodySchema, toUpsertOptions } from "./request-schema.ts";
 
 // TTL para tabelas estáticas (em ms)
 // Rubricas podem ser editadas pelo admin: 1h. Parâmetros fiscais/vigências: 24h.
@@ -57,36 +57,6 @@ function isTimeoutError(e: unknown): boolean {
 }
 
 // -------------------- Zod schemas --------------------
-const MAX_FILTER_VALUE_BYTES = 8 * 1024; // 8 KB por valor escalar de filtro
-const boundedFilterValue = z.unknown().refine((v) => {
-  if (typeof v === "string") return v.length <= MAX_FILTER_VALUE_BYTES;
-  if (Array.isArray(v)) return v.every((x) => typeof x !== "string" || x.length <= MAX_FILTER_VALUE_BYTES);
-  return true;
-}, { message: `Filter value exceeds ${MAX_FILTER_VALUE_BYTES} bytes` });
-const FilterSchema = z.object({
-  column: z.string().max(120),
-  op: z.string().max(20),
-  value: boundedFilterValue,
-  extraOp: z.string().max(20).optional(),
-});
-
-const BodySchema = z.object({
-  action: z.enum(["select", "insert", "update", "delete", "upsert", "rpc"]),
-  table: z.string().max(63).optional(),
-  rpcName: z.string().max(63).optional(),
-  fn: z.string().max(63).optional(),
-  columns: z.string().max(2000).optional(),
-  filters: z.array(FilterSchema).max(50).optional(),
-  order: z.object({ column: z.string().max(120), ascending: z.boolean().optional() }).optional(),
-  limit: z.number().int().optional(),
-  offset: z.number().int().min(0).optional(),
-  countMode: z.enum(["none", "exact", "planned", "estimated"]).optional(),
-  single: z.boolean().optional(),
-  data: z.union([z.record(z.unknown()), z.array(z.record(z.unknown()))]).optional(),
-  params: z.record(z.unknown()).optional(),
-  userId: z.string().max(64).optional(),
-}).strict();
-
 // -------------------- Telemetria --------------------
 interface TelemetryMeta {
   operation: string;
@@ -675,7 +645,10 @@ Deno.serve(async (req) => {
     if (action === "upsert") {
       const t0 = performance.now();
       const upsertData = (Array.isArray(data) ? data : [data]) as Record<string, unknown>[];
-      const { data: r, error } = await externalClient.from(table!).upsert(upsertData).select();
+      const { data: r, error } = await externalClient
+        .from(table!)
+        .upsert(upsertData, toUpsertOptions(body.onConflict))
+        .select();
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({ operation: "upsert", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, traceId });
       if (error) { console.error('[bridge] UPSERT_ERROR:', error.message, error.hint); return jsonError(400, "UPSERT_ERROR", "Falha no upsert"); }
