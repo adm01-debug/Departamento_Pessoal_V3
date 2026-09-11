@@ -14,10 +14,14 @@ import { test, expect, request } from '@playwright/test';
  * a camada de rede rejeita tokens expirados antes de chegar ao SQL.
  */
 
-const SUPABASE_URL = process.env.VITE_SUPABASE_URL ?? 'https://ciziytrrjjotlsjzshnm.supabase.co';
-const ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY ?? '';
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL ?? '';
+const ANON_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY
+  ?? process.env.VITE_SUPABASE_ANON_KEY
+  ?? '';
 
 test.describe('API — respostas 401/403 em endpoints protegidos', () => {
+  test.skip(!SUPABASE_URL, 'VITE_SUPABASE_URL não configurada');
+
   test('REST sem apikey retorna 401', async () => {
     const api = await request.newContext();
     const res = await api.get(`${SUPABASE_URL}/rest/v1/empresas?select=id`);

@@ -62,7 +62,6 @@ const SEM_CORRELACAO = [
   /^\(?\s*\(\s*auth\.jwt\s*\(\s*\)\s*->>\s*'role'(::text)?\s*\)\s*=\s*'authenticated'(::text)?\s*\)?$/i,
 ];
 
-
 /**
  * Expressões que provam correlação com o solicitante. `empresa_id` sozinho
  * não basta — é preciso amarrar ao usuário autenticado.
@@ -94,8 +93,6 @@ const CORRELACIONADORES = [
   /\bpcs_pode_gerir_plano\b/i,
   /\bcandidatura_na_minha_empresa\b/i,
 ];
-
-
 
 /**
  * Isenções, com justificativa obrigatória.
@@ -167,6 +164,9 @@ WHERE p.schemaname = 'public'
 ORDER BY p.tablename, p.policyname;
 `;
 
+function hasDatabase() {
+  return Boolean(process.env.PGHOST || process.env.DATABASE_URL || process.env.SUPABASE_DB_URL);
+}
 
 function runQuery(sql) {
   const args = ['-Atq', '-F', '\t', '-c', sql];
@@ -186,12 +186,19 @@ function irrestrito(pred) {
 }
 
 function main() {
+  if (!hasDatabase()) {
+    console.warn('[rls-tenant-open] Banco indisponível neste ambiente — verificação ignorada.');
+    console.warn('[rls-tenant-open] Defina PGHOST/PG* ou DATABASE_URL para habilitar o gate.');
+    return 0;
+  }
+
   let saida;
   try {
     saida = runQuery(QUERY);
   } catch (err) {
-    console.warn(`[rls-tenant-open] banco inacessível, gate NÃO executado: ${err.message.split('\n')[0]}`);
-    return 0;
+    console.error('[rls-tenant-open] A consulta de auditoria falhou — gate reprovado.');
+    console.error(String(err.stderr || err.message).trim());
+    return 1;
   }
 
   const linhas = saida
@@ -206,7 +213,10 @@ function main() {
     // RESTRICTIVE combina por E: restringe, nunca alarga.
     if ((permissive ?? '').toUpperCase() !== 'PERMISSIVE') continue;
     // service_role atravessa o RLS; a política não é a fronteira aqui.
-    const papeis = (roles ?? '').split(',').map((r) => r.trim()).filter(Boolean);
+    const papeis = (roles ?? '')
+      .split(',')
+      .map((r) => r.trim())
+      .filter(Boolean);
     if (papeis.length > 0 && papeis.every((r) => r === 'service_role')) continue;
     if (ALLOWLIST.has(tabela)) continue;
     avaliadas++;
@@ -216,16 +226,26 @@ function main() {
     // qual já cobre o caso.
     const pred = cmd === 'INSERT' ? withCheck : qual;
     if (irrestrito(pred)) {
-      violacoes.push({ tabela, politica, cmd, papeis: papeis.join(',') || 'public', pred: (pred ?? '').trim() || '(vazio)' });
+      violacoes.push({
+        tabela,
+        politica,
+        cmd,
+        papeis: papeis.join(',') || 'public',
+        pred: (pred ?? '').trim() || '(vazio)',
+      });
     }
   }
 
   if (violacoes.length === 0) {
-    console.log(`[rls-tenant-open] OK — ${avaliadas} política(s) permissiva(s) em tabelas multi-tenant, todas correlacionadas.`);
+    console.log(
+      `[rls-tenant-open] OK — ${avaliadas} política(s) permissiva(s) em tabelas multi-tenant, todas correlacionadas.`
+    );
     return 0;
   }
 
-  console.error(`\n[rls-tenant-open] ${violacoes.length} política(s) permissiva(s) irrestrita(s) em tabela multi-tenant:\n`);
+  console.error(
+    `\n[rls-tenant-open] ${violacoes.length} política(s) permissiva(s) irrestrita(s) em tabela multi-tenant:\n`
+  );
   for (const v of violacoes) {
     console.error(`  ✗ ${v.tabela}.${v.politica}  [${v.cmd}, roles: ${v.papeis}]`);
     console.error(`      predicado: ${v.pred}`);

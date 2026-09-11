@@ -132,7 +132,10 @@ function setupUpsertChain(data: any, error: any = null) {
 
 // update(dados).eq('id', id) → resolvedValue
 function setupUpdateEqChain(error: any = null) {
-  const eqFn = chainableEq({ error }, { select: vi.fn().mockReturnValue({ maybeSingle: vi.fn().mockResolvedValue({ data: {}, error }) }) });
+  const eqFn = chainableEq(
+    { error },
+    { select: vi.fn().mockReturnValue({ maybeSingle: vi.fn().mockResolvedValue({ data: {}, error }) }) }
+  );
   const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ update: updateFn });
   return { updateFn, eqFn };
@@ -149,7 +152,9 @@ function setupDeleteChain(error: any = null) {
 // ─── Dependentes ──────────────────────────────────────────────────────────────
 
 describe('listarDependentes', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns dependentes for colaborador', async () => {
     const records = [{ id: 'd1', colaborador_id: 'c1' }];
@@ -170,7 +175,9 @@ describe('listarDependentes', () => {
 });
 
 describe('criarDependente', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns dependente', async () => {
     const created = { id: 'd-new', nome: 'Ana' };
@@ -181,7 +188,9 @@ describe('criarDependente', () => {
 });
 
 describe('atualizarDependente', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates dependente by id', async () => {
     const { updateFn, eqFn } = setupUpdateEqChain();
@@ -192,7 +201,9 @@ describe('atualizarDependente', () => {
 });
 
 describe('excluirDependente', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes dependente by id', async () => {
     const { eqFn } = setupDeleteChain();
@@ -204,13 +215,37 @@ describe('excluirDependente', () => {
 // ─── Contatos de Emergência ───────────────────────────────────────────────────
 
 describe('listarContatosEmergencia', () => {
-  it('always returns empty array (table not available)', async () => {
-    expect(await listarContatosEmergencia('c1')).toEqual([]);
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('returns contacts for the requested colaborador ordered by creation date', async () => {
+    const records = [{ id: 'ce1', colaborador_id: 'c1', nome: 'Maria' }];
+    const { eqFn, orderFn } = setupEqOrderChain(records);
+
+    await expect(listarContatosEmergencia('c1')).resolves.toEqual(records);
+    expect(mockFrom).toHaveBeenCalledWith('contatos_emergencia');
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
+    expect(orderFn).toHaveBeenCalledWith('created_at', { ascending: false });
+  });
+
+  it('normalizes a null response to an empty list', async () => {
+    setupEqOrderChain(null as any);
+    await expect(listarContatosEmergencia('c1')).resolves.toEqual([]);
+  });
+
+  it('propagates database errors instead of presenting an empty list', async () => {
+    setupEqOrderChain([], { message: 'database unavailable' });
+    await expect(listarContatosEmergencia('c1')).rejects.toMatchObject({
+      message: 'database unavailable',
+    });
   });
 });
 
 describe('criarContatoEmergencia', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns contato', async () => {
     const created = { id: 'ce-new', nome: 'Maria' };
@@ -220,7 +255,9 @@ describe('criarContatoEmergencia', () => {
 });
 
 describe('excluirContatoEmergencia', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes contato by id', async () => {
     const { eqFn } = setupDeleteChain();
@@ -232,7 +269,9 @@ describe('excluirContatoEmergencia', () => {
 // ─── Histórico Salarial ───────────────────────────────────────────────────────
 
 describe('listarHistoricoSalarial', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns historico for colaborador ordered by data_vigencia desc', async () => {
     const records = [{ id: 'hs1' }];
@@ -244,7 +283,9 @@ describe('listarHistoricoSalarial', () => {
 });
 
 describe('criarRegistroSalarial', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns registro', async () => {
     const created = { id: 'hs-new', salario: 5000 };
@@ -257,7 +298,9 @@ describe('criarRegistroSalarial', () => {
 // ─── ASOs ─────────────────────────────────────────────────────────────────────
 
 describe('listarASOs', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns ASOs for colaborador', async () => {
     const records = [{ id: 'a1' }];
@@ -268,7 +311,9 @@ describe('listarASOs', () => {
 });
 
 describe('criarASO', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns ASO', async () => {
     const created = { id: 'a-new', tipo: 'Admissional' };
@@ -280,7 +325,9 @@ describe('criarASO', () => {
 // ─── Formações ────────────────────────────────────────────────────────────────
 
 describe('listarFormacoes', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns formacoes for colaborador', async () => {
     const { eqFn } = setupEqOrderChain([]);
@@ -290,7 +337,9 @@ describe('listarFormacoes', () => {
 });
 
 describe('criarFormacao', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns formacao', async () => {
     const created = { id: 'f-new', curso: 'Engenharia' };
@@ -300,7 +349,9 @@ describe('criarFormacao', () => {
 });
 
 describe('excluirFormacao', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes formacao by id', async () => {
     const { eqFn } = setupDeleteChain();
@@ -312,7 +363,9 @@ describe('excluirFormacao', () => {
 // ─── Dados de Estrangeiro ─────────────────────────────────────────────────────
 
 describe('obterDadosEstrangeiro', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns data for colaborador', async () => {
     const data = { id: 'de1', colaborador_id: 'c1' };
@@ -328,16 +381,15 @@ describe('obterDadosEstrangeiro', () => {
 });
 
 describe('salvarDadosEstrangeiro', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('upserts with onConflict and returns data', async () => {
     const upserted = { id: 'de1', colaborador_id: 'c1', visto: 'B1' };
     const { upsertFn } = setupUpsertChain(upserted);
     const result = await salvarDadosEstrangeiro('c1', { visto: 'B1' });
-    expect(upsertFn).toHaveBeenCalledWith(
-      { visto: 'B1', colaborador_id: 'c1' },
-      { onConflict: 'colaborador_id' }
-    );
+    expect(upsertFn).toHaveBeenCalledWith({ visto: 'B1', colaborador_id: 'c1' }, { onConflict: 'colaborador_id' });
     expect(result).toEqual(upserted);
   });
 });
@@ -345,7 +397,9 @@ describe('salvarDadosEstrangeiro', () => {
 // ─── Deficiência ──────────────────────────────────────────────────────────────
 
 describe('obterDeficiencia', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns deficiencia for colaborador', async () => {
     const data = { id: 'def1' };
@@ -356,23 +410,24 @@ describe('obterDeficiencia', () => {
 });
 
 describe('salvarDeficiencia', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('upserts with onConflict colaborador_id', async () => {
     const upserted = { id: 'def-new' };
     const { upsertFn } = setupUpsertChain(upserted);
     await salvarDeficiencia('c1', { tipo: 'visual' });
-    expect(upsertFn).toHaveBeenCalledWith(
-      { tipo: 'visual', colaborador_id: 'c1' },
-      { onConflict: 'colaborador_id' }
-    );
+    expect(upsertFn).toHaveBeenCalledWith({ tipo: 'visual', colaborador_id: 'c1' }, { onConflict: 'colaborador_id' });
   });
 });
 
 // ─── Período de Experiência ───────────────────────────────────────────────────
 
 describe('obterPeriodoExperiencia', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns periodo for colaborador', async () => {
     const data = { id: 'pe1' };
@@ -383,7 +438,9 @@ describe('obterPeriodoExperiencia', () => {
 });
 
 describe('salvarPeriodoExperiencia — insert when not found', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts when no existing record', async () => {
     const inserted = { id: 'pe-new', colaborador_id: 'c1' };
@@ -405,7 +462,9 @@ describe('salvarPeriodoExperiencia — insert when not found', () => {
 });
 
 describe('salvarPeriodoExperiencia — update when found', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates when existing record found', async () => {
     const existing = { id: 'pe1', colaborador_id: 'c1' };
@@ -433,7 +492,9 @@ describe('salvarPeriodoExperiencia — update when found', () => {
 // ─── Anotações ────────────────────────────────────────────────────────────────
 
 describe('listarAnotacoes', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns anotacoes for colaborador', async () => {
     const { eqFn } = setupEqOrderChain([{ id: 'an1' }]);
@@ -443,7 +504,9 @@ describe('listarAnotacoes', () => {
 });
 
 describe('criarAnotacao', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns anotacao', async () => {
     const created = { id: 'an-new', texto: 'Bom desempenho' };
@@ -453,7 +516,9 @@ describe('criarAnotacao', () => {
 });
 
 describe('excluirAnotacao', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes anotacao by id', async () => {
     const { eqFn } = setupDeleteChain();
@@ -465,7 +530,9 @@ describe('excluirAnotacao', () => {
 // ─── Períodos Aquisitivos ─────────────────────────────────────────────────────
 
 describe('listarPeriodosAquisitivos', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns periodos for colaborador', async () => {
     const { eqFn } = setupEqOrderChain([]);
@@ -477,7 +544,9 @@ describe('listarPeriodosAquisitivos', () => {
 // ─── Times ────────────────────────────────────────────────────────────────────
 
 describe('listarTimes', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns times without empresa filter', async () => {
     const records = [{ id: 't1', nome: 'Dev' }];
@@ -493,7 +562,9 @@ describe('listarTimes', () => {
 });
 
 describe('criarTime', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns time', async () => {
     const created = { id: 't-new', nome: 'Design', empresa_id: 'emp-1' };
@@ -512,7 +583,9 @@ describe('criarTime', () => {
 // ─── Tabelas de referência ────────────────────────────────────────────────────
 
 describe('listarEtnias', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('queries etnias table and returns data', async () => {
     const records = [{ id: 'e1', nome: 'Parda' }];
@@ -525,7 +598,9 @@ describe('listarEtnias', () => {
 // ─── Webhooks ────────────────────────────────────────────────────────────────
 
 describe('listarWebhooks', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns webhooks without empresa filter', async () => {
     setupListChain([{ id: 'wh1' }]);
@@ -540,7 +615,9 @@ describe('listarWebhooks', () => {
 });
 
 describe('criarWebhook', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns webhook', async () => {
     const created = { id: 'wh-new', url: 'https://example.com/hook' };
@@ -550,7 +627,9 @@ describe('criarWebhook', () => {
 });
 
 describe('excluirWebhook', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes webhook by id', async () => {
     const { eqFn } = setupDeleteChain();
@@ -562,7 +641,9 @@ describe('excluirWebhook', () => {
 // ─── Férias Coletivas ─────────────────────────────────────────────────────────
 
 describe('listarFeriasColetivas', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns ferias coletivas for empresa', async () => {
     const records = [{ id: 'fc1' }];
@@ -573,7 +654,9 @@ describe('listarFeriasColetivas', () => {
 });
 
 describe('criarFeriasColetivas', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns ferias coletivas', async () => {
     const created = { id: 'fc-new' };
@@ -585,7 +668,9 @@ describe('criarFeriasColetivas', () => {
 // ─── Campos Customizados ──────────────────────────────────────────────────────
 
 describe('listarCamposCustomizados', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns campos without empresa filter and filters by ativo=true', async () => {
     const records = [{ id: 'cc1', ativo: true }];
@@ -602,7 +687,9 @@ describe('listarCamposCustomizados', () => {
 });
 
 describe('obterValoresCamposCustomizados', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns valores for colaborador', async () => {
     const records = [{ id: 'v1' }];
@@ -613,7 +700,9 @@ describe('obterValoresCamposCustomizados', () => {
 });
 
 describe('salvarValorCampoCustomizado', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('upserts with onConflict and returns data', async () => {
     const upserted = { id: 'v-new' };

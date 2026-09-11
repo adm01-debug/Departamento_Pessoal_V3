@@ -66,7 +66,10 @@ const ALLOWLIST = new Map([
   // Não pode autorizar internamente sem recursão. Exposição residual: mapeia
   // colaborador_id -> empresa_id, ambos uuid, sem PII e exigindo um uuid já
   // conhecido. Verificar as políticas dependentes antes de remover daqui.
-  ['empresa_do_colaborador', 'Helper usado dentro de 10 políticas RLS; retorna apenas empresa_id (uuid) a partir de um colaborador_id já conhecido.'],
+  [
+    'empresa_do_colaborador',
+    'Helper usado dentro de 10 políticas RLS; retorna apenas empresa_id (uuid) a partir de um colaborador_id já conhecido.',
+  ],
   ['contrato_assinar_por_token', 'Assinatura de contrato por link; valida token + CPF.'],
   ['contrato_consultar_por_token', 'Leitura do contrato pelo signatário; valida token.'],
   ['contrato_preview_url_por_token', 'Preview do PDF pelo signatário; valida token.'],
@@ -135,12 +138,9 @@ function main() {
          )
     `);
   } catch (err) {
-    console.warn(
-      `[secdef-authz] AVISO: banco inacessível, gate não executado (${
-        err instanceof Error ? err.message.split('\n')[0] : err
-      }).`,
-    );
-    return 0;
+    console.error('[secdef-authz] A consulta de auditoria falhou — gate reprovado.');
+    console.error(String(err.stderr || (err instanceof Error ? err.message : err)).trim());
+    return 1;
   }
 
   /** @type {Map<string, {secdef: boolean, anon: boolean, auth: boolean, src: string}>} */
@@ -203,13 +203,13 @@ function main() {
   if (violations.length === 0) {
     console.log(
       `[secdef-authz] OK — ${inspected} função(ões) SECURITY DEFINER expostas na API, ` +
-        `todas com autorização comprovada (${ALLOWLIST.size} em allowlist justificada).`,
+        `todas com autorização comprovada (${ALLOWLIST.size} em allowlist justificada).`
     );
     return 0;
   }
 
   console.error(
-    `\n[secdef-authz] ${violations.length} função(ões) SECURITY DEFINER expostas sem autorização interna:\n`,
+    `\n[secdef-authz] ${violations.length} função(ões) SECURITY DEFINER expostas sem autorização interna:\n`
   );
   for (const v of violations) {
     console.error(`  ✖ public.${v.name}()  — executável por: ${v.exposedTo}`);
@@ -221,7 +221,7 @@ function main() {
       '       public.pertence_a_empresa(...) / public.has_role(auth.uid(), ...);\n' +
       '    2. REVOKE EXECUTE ... FROM anon, authenticated (rotina interna/cron);\n' +
       '    3. Se a autorização é um token opaco validado no corpo, registre a\n' +
-      '       função na ALLOWLIST de scripts/audit-secdef-authz.mjs COM justificativa.\n',
+      '       função na ALLOWLIST de scripts/audit-secdef-authz.mjs COM justificativa.\n'
   );
   return 1;
 }

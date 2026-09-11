@@ -1,5 +1,15 @@
 # Auditoria Exaustiva do Sistema — Departamento Pessoal v2
 
+> **Atualização canônica de 10/09/2026:** a auditoria abaixo, de 18/07, é histórica. A avaliação atual acessou diretamente o banco `frjbfeamybqsejlvmqbl`, reduziu a nota para **4,11/10** e bloqueou dados reais por vazamentos anônimos, RPCs privilegiadas, falhas de hash e drift de schema. Use estes documentos como fonte corrente:
+>
+> - [`AUDITORIA_TECNICA_EXAUSTIVA_2026-09-10.md`](./AUDITORIA_TECNICA_EXAUSTIVA_2026-09-10.md);
+> - [`AUDITORIA_BANCO_CANONICO_AO_VIVO_2026-09-10.md`](./AUDITORIA_BANCO_CANONICO_AO_VIVO_2026-09-10.md);
+> - [`PLANO_100_ETAPAS_2026-09-10.md`](./PLANO_100_ETAPAS_2026-09-10.md);
+> - [`PLANO_MELHORIAS_50_ETAPAS_2026-09-10.md`](./PLANO_MELHORIAS_50_ETAPAS_2026-09-10.md) — versão executiva consolidada, com 500 subetapas e 200 checkpoints;
+> - [`REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-10.md`](./REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-10.md) — validação das 50 etapas e inventário de funcionalidades parciais, sugeridas, simuladas ou órfãs;
+> - [`SIMULACAO_PRE_EXECUCAO_2026-09-10.md`](./SIMULACAO_PRE_EXECUCAO_2026-09-10.md) — gates validados antes da execução, cenários de regressão e ordem segura;
+> - [`HANDOFF_CLINE_REMEDIACAO_2026-09-10.md`](./HANDOFF_CLINE_REMEDIACAO_2026-09-10.md).
+
 Auditoria independente conduzida em 2026-07-18 sobre 662 arquivos TS/TSX (~106k LOC), 102 páginas, ~90 services, ~66 hooks, 54 Edge Functions e 405 migrations. **Fase atual: descoberta e documentação — nenhuma correção aplicada.**
 
 ## Documentos
