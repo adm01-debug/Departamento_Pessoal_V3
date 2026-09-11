@@ -3,13 +3,14 @@ import { renderHook, waitFor, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 
-const { mockFrom, mockIsAdmin } = vi.hoisted(() => ({
+const { mockFrom, mockIsAdmin, mockRpc } = vi.hoisted(() => ({
   mockFrom: vi.fn(),
   mockIsAdmin: vi.fn().mockReturnValue(true),
+  mockRpc: vi.fn(),
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: mockFrom },
+  supabase: { from: mockFrom, rpc: mockRpc },
 }));
 
 vi.mock('@/contexts/AuthContext', () => ({
@@ -76,6 +77,7 @@ describe('useEmpresas', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockIsAdmin.mockReturnValue(true);
     // Reset zustand store
     useEmpresaStore.setState({ empresaAtualId: null, modo: 'consolidado' });
 
@@ -83,6 +85,10 @@ describe('useEmpresas', () => {
       { id: 'ue-1', user_id: 'user-1', empresa_id: 'emp-1', is_default: true, empresa: sampleEmpresa },
     ]);
     empresasChain = buildSelectChain([sampleEmpresa]);
+    mockRpc.mockResolvedValue({
+      data: [{ id: 'ue-1', user_id: 'user-1', empresa_id: 'emp-1', is_default: true, created_at: '2024-01-01' }],
+      error: null,
+    });
 
     let callCount = 0;
     mockFrom.mockImplementation((table: string) => {
@@ -110,6 +116,20 @@ describe('useEmpresas', () => {
     const { result } = renderHook(() => useEmpresas(), { wrapper: createWrapper() });
     await waitFor(() => expect(result.current.loadingTodas).toBe(false));
     expect(mockFrom).toHaveBeenCalledWith('empresas');
+  });
+
+  it('loads accessible companies for a non-admin user through RLS', async () => {
+    mockIsAdmin.mockReturnValue(false);
+    const { result } = renderHook(() => useEmpresas(), { wrapper: createWrapper() });
+    await waitFor(() => expect(result.current.loadingTodas).toBe(false));
+    expect(mockFrom).toHaveBeenCalledWith('empresas');
+  });
+
+  it('reads memberships only through the self-scoped RPC', async () => {
+    const { result } = renderHook(() => useEmpresas(), { wrapper: createWrapper() });
+    await waitFor(() => expect(result.current.loadingEmpresas).toBe(false));
+    expect(mockRpc).toHaveBeenCalledWith('get_my_user_empresas', {});
+    expect(mockFrom).not.toHaveBeenCalledWith('user_empresas');
   });
 
   it('empresaAtual resolves from todasEmpresas', async () => {
@@ -171,5 +191,26 @@ describe('useEmpresas', () => {
       'Apenas administradores'
     );
     expect(empresasChain.insert).not.toHaveBeenCalled();
+  });
+
+  it('sets the default company via the atomic self-scoped RPC', async () => {
+    const { result } = renderHook(() => useEmpresas(), { wrapper: createWrapper() });
+
+    await act(async () => {
+      await result.current.definirEmpresaPadrao.mutateAsync('emp-1');
+    });
+
+    expect(mockRpc).toHaveBeenCalledWith('set_own_default_empresa', { p_empresa_id: 'emp-1' });
+    expect(mockFrom).not.toHaveBeenCalledWith('user_empresas');
+  });
+
+  it('does not attempt an association for a non-admin user', async () => {
+    mockIsAdmin.mockReturnValue(false);
+    const { result } = renderHook(() => useEmpresas(), { wrapper: createWrapper() });
+
+    await expect(result.current.associarUsuario.mutateAsync({ userId: 'user-2', empresaId: 'emp-1' })).rejects.toThrow(
+      'Apenas administradores'
+    );
+    expect(mockRpc).not.toHaveBeenCalledWith('admin_associar_usuario_empresa', expect.anything());
   });
 });

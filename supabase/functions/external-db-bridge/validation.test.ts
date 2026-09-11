@@ -11,10 +11,12 @@ import {
   isSafeFilterColumn,
   TABLE_DENYLIST,
   TENANT_SCOPED_TABLES,
+  ADMIN_ONLY_WRITE_TABLES,
   RPC_ALLOWLIST,
   FILTER_OPS,
   NOT_EXTRA_OPS,
 } from "./validation.ts";
+import { requiresAuthenticatedBridgeSession } from './access.ts';
 import { BodySchema, ON_CONFLICT_COLUMNS_RE, toUpsertOptions } from "./request-schema.ts";
 
 let CASES = 0;
@@ -54,7 +56,7 @@ Deno.test("tabela: nomes legítimos aceitos", () => {
 // ---------------------------------------------------------------------------
 Deno.test("denylist: tabelas sensíveis presentes", () => {
   const mustDeny = [
-    "user_roles", "secrets", "vault", "ip_whitelist", "blocked_ips",
+    "user_empresas", "user_roles", "secrets", "vault", "ip_whitelist", "blocked_ips",
     "rate_limit_config", "rate_limit_logs", "login_attempts", "login_lockouts",
     "login_rate_limits", "password_policies", "security_alerts", "audit_log",
     "geo_blocking_config", "geo_allowed_countries", "govbr_auth_state",
@@ -150,12 +152,21 @@ Deno.test("operadores: allowlist", () => {
 // 8. RPC allowlist — só listadas passam; nomes sensíveis/injeção fora
 // ---------------------------------------------------------------------------
 Deno.test("rpc allowlist", () => {
-  for (const r of ["has_role","is_admin","admin_set_user_role","assinar_desligamento","get_admissao_por_token","registrar_batida_ponto"]) ok(RPC_ALLOWLIST.has(r), `rpc permitida: ${r}`);
+  for (const r of ["has_role","is_admin","admin_set_user_role","admin_associar_usuario_empresa","get_my_user_empresas","set_own_default_empresa","assinar_desligamento","get_admissao_por_token","registrar_batida_ponto"]) ok(RPC_ALLOWLIST.has(r), `rpc permitida: ${r}`);
   for (const r of [
     "pg_sleep","drop_table","exec","delete_all_users","'; DROP","set_config","pg_read_file","dblink",
     "record_failed_login","reset_login_attempts","check_rate_limit","check_brute_force",
     "is_ip_blocked","is_ip_whitelisted","is_country_allowed","fn_link_gov_br_account",
   ]) ok(!RPC_ALLOWLIST.has(r), `rpc proibida: ${r}`);
+});
+
+Deno.test("bridge auth: apenas RPC pública explícita dispensa sessão", () => {
+  for (const action of ["select", "insert", "update", "delete", "upsert"]) {
+    ok(requiresAuthenticatedBridgeSession(action), `${action} deve exigir sessão`);
+  }
+  ok(requiresAuthenticatedBridgeSession("rpc", "set_own_default_empresa"), "RPC protegida exige sessão");
+  ok(requiresAuthenticatedBridgeSession("rpc"), "RPC sem nome exige sessão");
+  ok(!requiresAuthenticatedBridgeSession("rpc", "get_admissao_por_token"), "única RPC pública é permitida sem sessão");
 });
 
 // ---------------------------------------------------------------------------
@@ -195,6 +206,7 @@ Deno.test("listas: sanidade e disjunção", () => {
   // A superfície foi deliberadamente reduzida: rotinas de lockout, IP,
   // rate-limit e manutenção não podem atravessar o bridge público.
   ok(RPC_ALLOWLIST.size >= 15 && RPC_ALLOWLIST.size <= 25, "rpc allowlist com tamanho esperado");
+  ok(ADMIN_ONLY_WRITE_TABLES.has("empresas"), "empresas exige escopo administrativo para escrita");
   // nenhuma tabela de negócio (tenant-scoped) pode estar simultaneamente na denylist
 });
 

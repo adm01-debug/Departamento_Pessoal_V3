@@ -142,17 +142,21 @@ export function useEmpresas(): UseEmpresasReturn {
     gcTime: 30 * 60 * 1000,
     queryFn: async () => {
       if (!user?.id) return [];
-      const { data, error } = await supabase.from('user_empresas').select(`*`).eq('user_id', user.id);
+      const { data, error } = await supabase.rpc('get_my_user_empresas', {});
 
       if (error) throw error;
-      return data as (UserEmpresa & { empresa: Empresa })[];
+      return (data ?? []) as (UserEmpresa & { empresa: Empresa })[];
     },
   });
 
-  // Listar todas as empresas (apenas para admin — evita chamadas desnecessárias)
+  // Empresas acessíveis à sessão. O JWT é encaminhado ao banco externo para
+  // que o RLS aplique o mesmo escopo para usuários comuns e administradores.
   const { data: todasEmpresas, isLoading: loadingTodas } = useQuery({
-    queryKey: ['todas-empresas'],
-    enabled: isAdmin,
+    // Cache de empresas é identidade-sensível: reutilizar a chave entre login
+    // de usuários diferentes poderia exibir por alguns minutos a lista da
+    // sessão anterior antes da nova consulta sob RLS concluir.
+    queryKey: ['todas-empresas', user?.id],
+    enabled: !!user?.id,
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
     queryFn: async () => {
@@ -240,17 +244,7 @@ export function useEmpresas(): UseEmpresasReturn {
   // Atualizar empresa
   const atualizarEmpresa = useMutation({
     mutationFn: async ({ id, ...dados }: Partial<Empresa> & { id: string }) => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) throw new Error('Sessão expirada. Faça login novamente.');
-      const { data: membership } = await supabase
-        .from('user_empresas')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('empresa_id', id)
-        .maybeSingle();
-      if (!membership) throw new Error('Sem permissão para atualizar esta empresa.');
+      if (!isAdmin) throw new Error('Apenas administradores podem atualizar empresas.');
       const { data, error } = await supabase.from('empresas').update(dados).eq('id', id).select().maybeSingle();
 
       if (error) throw error;
@@ -277,15 +271,12 @@ export function useEmpresas(): UseEmpresasReturn {
       empresaId: string;
       isDefault?: boolean;
     }) => {
-      const { data, error } = await supabase
-        .from('user_empresas')
-        .insert({
-          user_id: userId,
-          empresa_id: empresaId,
-          is_default: isDefault,
-        })
-        .select()
-        .maybeSingle();
+      if (!isAdmin) throw new Error('Apenas administradores podem associar usuários a empresas.');
+      const { data, error } = await supabase.rpc('admin_associar_usuario_empresa', {
+        p_user_id: userId,
+        p_empresa_id: empresaId,
+        p_is_default: isDefault,
+      });
 
       if (error) throw error;
       return ensureSingleResult(data, 'vínculo de usuário/empresa');
@@ -302,23 +293,7 @@ export function useEmpresas(): UseEmpresasReturn {
   // Definir empresa padrão
   const definirEmpresaPadrao = useMutation({
     mutationFn: async (empresaId: string) => {
-      const { data: userData } = await supabase.auth.getUser();
-      if (!userData.user) throw new Error('Usuário não autenticado');
-
-      // Remover padrão de todas
-      const { error: clearError } = await supabase
-        .from('user_empresas')
-        .update({ is_default: false })
-        .eq('user_id', userData.user.id);
-
-      if (clearError) throw clearError;
-
-      // Definir nova padrão
-      const { error } = await supabase
-        .from('user_empresas')
-        .update({ is_default: true })
-        .eq('user_id', userData.user.id)
-        .eq('empresa_id', empresaId);
+      const { error } = await supabase.rpc('set_own_default_empresa', { p_empresa_id: empresaId });
 
       if (error) throw error;
     },

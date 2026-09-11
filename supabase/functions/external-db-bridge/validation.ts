@@ -35,7 +35,7 @@ export function isSafeOrderColumn(c: unknown): c is string {
 // -------------------- Keyset cursor (P1-020) --------------------
 // Cursor base64-encoded: "<column>:<value>". Validamos column com
 // isSafeOrderColumn e value como string|number (tamanho limitado).
-const CURSOR_VALUE_RE = /^[A-Za-z0-9_.:@\-]{1,128}$/;
+const CURSOR_VALUE_RE = /^[A-Za-z0-9_.:@-]{1,128}$/;
 export interface ParsedCursor {
   column: string;
   value: string | number;
@@ -62,6 +62,9 @@ export function parseCursor(c: unknown): ParsedCursor | null {
 // Estas tabelas nunca podem ser acessadas via bridge (nem leitura). Contêm
 // dados de segurança/roles que devem ser gerenciados apenas server-side.
 export const TABLE_DENYLIST = new Set<string>([
+  // Membership is authorization data. Generic bridge mutations use a service
+  // client, so this table must be exposed only through narrowly-scoped RPCs.
+  "user_empresas",
   "user_roles",
   "secrets",
   "vault",
@@ -92,17 +95,22 @@ export const TENANT_SCOPED_TABLES = new Set<string>([
   "auditoria_logs", "ferias_audit_log", "esocial_eventos", "guias_impostos",
 ]);
 
+// Tenant membership alone never permits global company administration.
+export const ADMIN_ONLY_WRITE_TABLES = new Set<string>([
+  "empresas",
+]);
+
 // -------------------- Allowlist de RPCs --------------------
 // Somente RPCs explicitamente listadas são invocáveis via bridge.
 export const RPC_ALLOWLIST = new Set<string>([
   // roles / tenant
   "has_role", "is_admin", "get_user_roles", "get_user_empresas",
   "get_user_default_empresa", "get_user_scope_empresas", "user_belongs_to_empresa",
-  "get_auth_empresa_id",
+  "get_auth_empresa_id", "get_my_user_empresas", "set_own_default_empresa",
   // gestão de papéis — único caminho de leitura/escrita para user_roles (a
   // tabela está na TABLE_DENYLIST); as funções verificam is_admin(auth.uid())
   // por dentro. Ver 20260718230000_admin_role_management_rpc.sql (achado R1).
-  "admin_set_user_role", "admin_list_user_roles",
+  "admin_set_user_role", "admin_list_user_roles", "admin_associar_usuario_empresa",
   // negócio
   "get_personnel_cost_projection",
   "calcular_dias_ferias", "fn_calculate_periodo_aquisitivo",
