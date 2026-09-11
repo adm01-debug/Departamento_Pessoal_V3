@@ -66,18 +66,18 @@ export const loggerService = {
       nivel,
       mensagem,
       contexto: enrichedContexto,
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
     };
 
     logBuffer.push(logEntry);
 
     if (IMMEDIATE_LEVELS.has(nivel)) {
       emitStructured(logEntry);
-      void this.flush();
+      return this.flush();
     } else if (nivel === 'warn') {
       emitStructured(logEntry);
       // Warn logs flush immediately to preserve security audit trail
-      void this.flush();
+      return this.flush();
     } else {
       if (logBuffer.length >= MAX_LOGS_BUFFER) {
         void this.flush();
@@ -99,7 +99,34 @@ export const loggerService = {
     const logsToSend = logBuffer.splice(0, logBuffer.length);
 
     // Persist warn/error/fatal via SECURITY DEFINER RPC — bypasses RLS on audit_log_unified
-    const persistableLogs = logsToSend.filter(l => PERSIST_LEVELS.has(l.nivel));
+    const persistableLogs = logsToSend.filter((l) => PERSIST_LEVELS.has(l.nivel));
+
+    // A RPC de auditoria exige sessão autenticada. Tentá-la em login, reset de
+    // senha ou bootstrap sem sessão só cria uma segunda falha de telemetria e
+    // não consegue registrar nada. O evento continua emitido localmente pelo
+    // logger estruturado e será persistido normalmente após autenticação.
+    const getSession = (supabase as { auth?: { getSession?: unknown } } | undefined)?.auth?.getSession;
+    if (typeof getSession !== 'function') {
+      if (import.meta.env.DEV) {
+        console.debug('[logger] sessão indisponível — descartando lote remoto.');
+      }
+      return;
+    }
+
+    try {
+      const { data } = await getSession();
+      if (!data?.session) {
+        if (import.meta.env.DEV) {
+          console.debug('[logger] sem sessão — descartando lote remoto.');
+        }
+        return;
+      }
+    } catch {
+      if (import.meta.env.DEV) {
+        console.debug('[logger] não foi possível consultar sessão — descartando lote remoto.');
+      }
+      return;
+    }
 
     // Defensivo: em ambientes degradados (testes, SSR, client parcialmente
     // mockado) `supabase.rpc` pode não existir. Nunca deixar o logger derrubar
@@ -134,7 +161,6 @@ export const loggerService = {
       }
     }
 
-
     if (import.meta.env.DEV) {
       const skipped = logsToSend.length - persistableLogs.length;
       if (skipped > 0) {
@@ -157,16 +183,15 @@ export const loggerService = {
     void this.log('info', mensagem, contexto);
   },
 
-
   warn(mensagem: string, contexto?: Record<string, unknown>) {
-    void this.log('warn', mensagem, contexto);
+    return this.log('warn', mensagem, contexto);
   },
 
   error(mensagem: string, contexto?: Record<string, unknown>, error?: Error) {
-    void this.log('error', mensagem, contexto, error?.stack);
+    return this.log('error', mensagem, contexto, error?.stack);
   },
 
   fatal(mensagem: string, contexto?: Record<string, unknown>, error?: Error) {
-    void this.log('fatal', mensagem, contexto, error?.stack);
-  }
+    return this.log('fatal', mensagem, contexto, error?.stack);
+  },
 };

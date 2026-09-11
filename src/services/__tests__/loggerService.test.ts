@@ -5,10 +5,12 @@ const mockRpcResult = { catch: vi.fn() };
 const mockRpc = vi.fn((_fn: string, _args?: unknown) => mockRpcResult);
 const mockInsert = vi.fn(() => Promise.resolve({ error: null }));
 const mockFrom = vi.fn((_table: string) => ({ insert: mockInsert }));
+const mockGetSession = vi.fn(() => Promise.resolve({ data: { session: { access_token: 'test-token' } } }));
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     auth: {
+      getSession: () => mockGetSession(),
       getUser: vi.fn(() => Promise.resolve({ data: { user: { id: 'test-user' } } })),
     },
     from: (table: string) => mockFrom(table),
@@ -85,5 +87,13 @@ describe('loggerService', () => {
       url: expect.any(String),
       user_agent: expect.any(String),
     });
+  });
+
+  it('keeps pre-auth logs local instead of calling a protected RPC', async () => {
+    mockGetSession.mockResolvedValueOnce({ data: { session: null } });
+
+    await loggerService.warn('Pre-auth login failure');
+
+    expect(mockRpc).not.toHaveBeenCalled();
   });
 });
