@@ -77,7 +77,7 @@ describe('fetchWithRetry — idempotência sob retry', () => {
       data: { session: { access_token: 'jwt-de-teste' } },
       error: null,
     } as Awaited<ReturnType<typeof supabaseBase.auth.getSession>>);
-    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ data: [] }), { status: 200 }));
+    const fetchMock = vi.fn<typeof fetch>(async () => new Response(JSON.stringify({ data: [] }), { status: 200 }));
     vi.stubGlobal('fetch', fetchMock);
 
     await supabase
@@ -86,8 +86,9 @@ describe('fetchWithRetry — idempotência sob retry', () => {
       .select();
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    const request = fetchMock.mock.calls[0]?.[1] as RequestInit;
-    expect(JSON.parse(String(request.body))).toMatchObject({
+    const request = fetchMock.mock.calls[0]?.[1];
+    expect(request).toBeDefined();
+    expect(JSON.parse(String(request?.body))).toMatchObject({
       action: 'upsert',
       table: 'folha_itens',
       onConflict: 'folha_id,colaborador_id',

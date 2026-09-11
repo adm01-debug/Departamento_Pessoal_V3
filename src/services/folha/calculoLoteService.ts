@@ -40,11 +40,7 @@ export const calculoLoteService = {
   /**
    * Processa a folha de pagamento de todos os colaboradores ativos de uma empresa
    */
-  processarLote: async (
-    empresaId: string, 
-    competencia: string,
-    onProgress?: (progress: BatchProgress) => void
-  ) => {
+  processarLote: async (empresaId: string, competencia: string, onProgress?: (progress: BatchProgress) => void) => {
     try {
       const [ano, mes] = competencia.split('-');
       const dataInicio = `${ano}-${mes}-01`;
@@ -54,12 +50,14 @@ export const calculoLoteService = {
       const { data: colaboradoresData, error: colabError } = await (
         supabase.from('colaboradores') as unknown as QueryBuilderType
       )
-        .select(`
+        .select(
+          `
           *,
           dependentes (id, tipo),
           eventos_variaveis (codigo, descricao, tipo, valor),
           contratos:contratos_trabalho(jornada_mensal, tipo_contrato)
-        `)
+        `
+        )
         .eq('empresa_id', empresaId)
         .eq('status', 'ativo');
 
@@ -75,10 +73,11 @@ export const calculoLoteService = {
         .select('id, status')
         .eq('empresa_id', empresaId)
         .eq('competencia', competencia)
+        .eq('tipo', 'mensal')
         .maybeSingle();
 
       if (headerError) throw headerError;
-      
+
       if (header && header.status === 'fechada') {
         throw new Error('A folha desta competência já está fechada e não pode ser recalculada.');
       }
@@ -91,11 +90,11 @@ export const calculoLoteService = {
             empresa_id: empresaId,
             competencia,
             status: 'aberta',
-            tipo: 'Mensal'
+            tipo: 'mensal',
           })
           .select('id')
           .single();
-        
+
         if (createError) throw createError;
         folhaId = newHeader.id;
       }
@@ -104,13 +103,14 @@ export const calculoLoteService = {
         total: colaboradores.length,
         current: 0,
         success: 0,
-        errors: 0
+        errors: 0,
       };
 
       // 3. Processar cada colaborador
       for (const colab of colaboradores) {
         try {
-          const dependentesCount = colab.dependentes?.filter((d) => d.tipo === 'filho' || d.tipo === 'enteado').length || 0;
+          const dependentesCount =
+            colab.dependentes?.filter((d) => d.tipo === 'filho' || d.tipo === 'enteado').length || 0;
           const eventosVariaveis = colab.eventos_variaveis || [];
           const jornada = colab.contratos?.[0]?.jornada_mensal || 220;
 
@@ -122,10 +122,10 @@ export const calculoLoteService = {
             .eq('aprovado', true)
             .gte('data', dataInicio)
             .lte('data', dataFim);
-          
+
           let totalHE = 0;
           let totalFaltas = 0;
-          
+
           if (registrosPonto) {
             registrosPonto.forEach((r) => {
               totalHE += pontoIntegracaoUtils.intervalToDecimal(r.horas_extras);
@@ -137,10 +137,12 @@ export const calculoLoteService = {
           // Tenta na tabela unificada 'beneficios_colaborador'
           const { data: beneficiosVinculosData } = await supabase
             .from('beneficios_colaborador')
-            .select(`
+            .select(
+              `
               *,
               beneficio:tipos_beneficio(*)
-            `)
+            `
+            )
             .eq('colaborador_id', colab.id)
             .eq('ativo', true);
 
@@ -158,17 +160,17 @@ export const calculoLoteService = {
                       codigo: '5010',
                       descricao: 'Desconto Vale Transporte (Portaria 671)',
                       tipo: 'desconto',
-                      valor: Math.trunc(valorDescontoVT * 100) / 100
+                      valor: Math.trunc(valorDescontoVT * 100) / 100,
                     });
                   }
                 }
                 if (v.desconto && v.beneficio.tipo !== 'VT') {
-                   beneficiosEventos.push({
-                      codigo: '5020',
-                      descricao: `Coparticipação ${v.beneficio.nome}`,
-                      tipo: 'desconto',
-                      valor: Number(v.desconto)
-                   });
+                  beneficiosEventos.push({
+                    codigo: '5020',
+                    descricao: `Coparticipação ${v.beneficio.nome}`,
+                    tipo: 'desconto',
+                    valor: Number(v.desconto),
+                  });
                 }
               }
             });
@@ -190,7 +192,7 @@ export const calculoLoteService = {
                   codigo: '5010',
                   descricao: 'Desconto Vale Transporte (Legacy)',
                   tipo: 'desconto',
-                  valor: Math.trunc(valorDescontoVT * 100) / 100
+                  valor: Math.trunc(valorDescontoVT * 100) / 100,
                 });
               }
             }
@@ -203,13 +205,13 @@ export const calculoLoteService = {
 
             if (vaLegacy) {
               vaLegacy.forEach((v) => {
-                const desc = v.valor_mensal ? v.valor_mensal * 0.20 : 0;
+                const desc = v.valor_mensal ? v.valor_mensal * 0.2 : 0;
                 if (desc > 0) {
                   beneficiosEventos.push({
                     codigo: '5020',
                     descricao: `Coparticipação ${v.tipo || 'Ticket'} (Legacy)`,
                     tipo: 'desconto',
-                    valor: Math.trunc(desc * 100) / 100
+                    valor: Math.trunc(desc * 100) / 100,
                   });
                 }
               });
@@ -222,7 +224,7 @@ export const calculoLoteService = {
             horasExtras50: totalHE,
             horasFalta: totalFaltas,
             jornada,
-            descontosExtras: 0
+            descontosExtras: 0,
           });
 
           // Salva o item da folha
@@ -236,12 +238,13 @@ export const calculoLoteService = {
             inss_mes: res.inss,
             irrf_mes: res.irrf,
             fgts_mes: res.fgts,
-            detalhes: res as unknown as Json
+            detalhes: res as unknown as Json,
           };
 
-          await supabase
+          const { error: itemUpsertError } = await supabase
             .from('folha_itens')
             .upsert(itemData, { onConflict: 'folha_id,colaborador_id' });
+          if (itemUpsertError) throw itemUpsertError;
 
           // Auditoria analítica
           await supabase.from('folha_auditoria').insert({
@@ -250,21 +253,25 @@ export const calculoLoteService = {
             tipo_evento: 'CALCULO',
             mensagem: `Cálculo analítico processado para ${colab.nome_completo}. Eventos: ${res.detalheEventos?.length || 0}. Integração Ponto: ${res.horasExtras?.toFixed(1)}h extras.`,
             severidade: 'INFO',
-            detalhes: { 
-              timestamp: new Date().toISOString(), 
+            detalhes: {
+              timestamp: new Date().toISOString(),
               liquido: res.liquido,
-              compliance: 'Portaria 671 MTP'
-            }
+              compliance: 'Portaria 671 MTP',
+            },
           });
 
           progress.success++;
           onProgress?.({ ...progress });
         } catch (err) {
-          loggerService.error('Erro no processamento de colaborador', { colaboradorId: colab.id }, err instanceof Error ? err : new Error(String(err)));
+          loggerService.error(
+            'Erro no processamento de colaborador',
+            { colaboradorId: colab.id },
+            err instanceof Error ? err : new Error(String(err))
+          );
           progress.errors++;
           onProgress?.({ ...progress });
         }
-        
+
         progress.current++;
       }
 
@@ -273,5 +280,5 @@ export const calculoLoteService = {
       toast.error(safeErrorMessage(error, 'Falha no processamento em lote.'));
       throw error;
     }
-  }
+  },
 };
