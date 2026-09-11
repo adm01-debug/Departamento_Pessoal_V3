@@ -439,19 +439,19 @@
 
 ## E50-015 — Provisionar os 19 buckets
 
-| Campo        | Valor                                                                             |
-| ------------ | --------------------------------------------------------------------------------- |
-| Onda         | Onda 1 — Reconstrução                                                             |
-| Prioridade   | P0                                                                                |
-| Dependências | E50-006 e E50-012                                                                 |
-| Objetivo     | Criar 15 buckets ausentes, todos privados, com path tenant, owner, MIME e limite. |
+| Campo        | Valor                                                                                                                                                                                      |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Onda         | Onda 1 — Reconstrução                                                                                                                                                                      |
+| Prioridade   | P0                                                                                                                                                                                         |
+| Dependências | E50-006 e E50-012                                                                                                                                                                          |
+| Objetivo     | Convergir os 19 buckets para o contrato canônico: 18 privados com path tenant/owner/MIME/limite; `avatars` público com mutação somente do owner; `backups` privado e exclusivo de serviço. |
 
 ### 10 subetapas
 
-1. [ ] **Evidência inicial:** Canônico tem 4/19 buckets e zero objetos; código usa vários ausentes.
+1. [ ] **Evidência inicial:** A medição viva de 2026-09-11 registra 18/19 buckets. Falta `backups`; vários buckets existentes não têm MIME/limite. A foto histórica 4/19 foi superada e permanece apenas no relatório de revisão.
 2. [ ] **Ownership:** nomear executor, revisor e aprovador; mapear consumidores, dados, pré-condições e blast radius.
 3. [ ] **Contrato:** documentar invariantes, entradas/saídas, autorização, compatibilidade, métricas, ameaça e critério de abort.
-4. [ ] **Implementação:** Criar 15 buckets ausentes, todos privados, com path tenant, owner, MIME e limite.
+4. [ ] **Implementação:** Criar `backups` e aplicar o contrato canônico de visibilidade, path, owner, MIME e limite nos 19 buckets; não tornar `avatars` privado nem disponibilizar `backups` ao cliente.
 5. [ ] **Teste positivo:** Upload/download assinado/remoção autorizada passam em 19/19.
 6. [ ] **Teste negativo:** Anon, T2, path traversal, MIME forjado, excesso e spoof de owner falham.
 7. [ ] **Regressão:** executar typecheck, lint, unidade, integração, banco e E2E diretamente afetados.

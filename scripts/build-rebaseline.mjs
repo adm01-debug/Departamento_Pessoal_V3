@@ -6,9 +6,20 @@ import { resolve } from 'node:path';
 const root = resolve(import.meta.dirname, '..');
 const output = resolve(process.argv[2] ?? '/tmp/20260831000000_rebaseline_canonico.sql');
 const publicDumpPath = resolve(root, 'supabase/rebaseline/20260831_corrected_public.sql');
+// Estas correções não pertencem ao histórico de migrations ativo: elas são
+// aplicadas SOBRE o snapshot físico antes de ele virar a baseline única.
+// A ordem é deliberada: primeiro helpers de autorização, depois policies e
+// funções que os consomem, e só então views e Storage.
+const remediationPaths = [
+  'supabase/rebaseline/20260831_security_remediation.sql',
+  'supabase/rebaseline/20260902_rls_tenant_tautology_remediation.sql',
+  'supabase/rebaseline/20260902_secdef_authz_remediation.sql',
+  'supabase/rebaseline/20260902_view_security_invoker_remediation.sql',
+].map((path) => resolve(root, path));
 const storagePath = resolve(root, 'supabase/rebaseline/20260831_storage_remediation.sql');
 
 const publicDump = await readFile(publicDumpPath, 'utf8');
+const remediations = await Promise.all(remediationPaths.map((path) => readFile(path, 'utf8')));
 const storage = await readFile(storagePath, 'utf8');
 
 const sanitizedDump = publicDump
@@ -94,7 +105,9 @@ SELECT cron.schedule(
 );
 `;
 
-const result = `${prelude}\n\n${sanitizedDump}\n\n${storage.trim()}\n\n${cron}`;
+const result = [prelude, sanitizedDump, ...remediations.map((content) => content.trim()), storage.trim(), cron].join(
+  '\n\n'
+);
 
 if (/^\\(?:un)?restrict\b/m.test(result)) {
   throw new Error('A migração não pode conter metacomandos exclusivos do psql.');
