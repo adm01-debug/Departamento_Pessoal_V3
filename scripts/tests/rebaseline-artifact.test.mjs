@@ -47,7 +47,19 @@ try {
     }
   }
 
-  console.log(`✅ baseline inclui ${orderedMarkers.length} camadas de remediação na ordem validada`);
+  // The baseline is only used for a clean rebuild.  A production deployment
+  // needs an append-only migration containing exactly the same view hardening.
+  const rolloutPath = join(root, 'supabase/migrations/20260911180000_p0_views_security_invoker.sql');
+  const baselineViewPath = join(root, 'supabase/rebaseline/20260902_view_security_invoker_remediation.sql');
+  const statementLines = /^(?:ALTER VIEW|REVOKE SELECT ON) .+$/gm;
+  const rolloutStatements = (await readFile(rolloutPath, 'utf8')).match(statementLines) ?? [];
+  const baselineStatements = (await readFile(baselineViewPath, 'utf8')).match(statementLines) ?? [];
+
+  if (rolloutStatements.length !== 84 || rolloutStatements.join('\n') !== baselineStatements.join('\n')) {
+    throw new Error('A migration incremental de views não corresponde exatamente à remediação da baseline');
+  }
+
+  console.log(`✅ baseline inclui ${orderedMarkers.length} camadas de remediação e a migration P0 replica 42 views`);
 } finally {
   await rm(tempDir, { recursive: true, force: true });
 }
