@@ -123,6 +123,7 @@ jobs:
         run: |
           bash scripts/tests/migrations-p0-hash-search-path.sh
           bash scripts/tests/migrations-p0-auth-lockout.sh
+          bash scripts/tests/migrations-p0-view-acl.sh
 
   db-integrity:
     name: Integridade do banco (search_path x extensões)
