@@ -17,6 +17,7 @@ import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
 import { getCorsHeaders, createErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
 import { captureException } from '../_shared/sentry.ts';
+import { parseLockoutState } from './lockoutContract.ts';
 
 const BodySchema = z.object({
   email: z.string().email().max(254).toLowerCase(),
@@ -96,9 +97,20 @@ serve(async (req: Request): Promise<Response> => {
         req,
       );
     }
-    if (lockout?.[0]?.is_locked) {
-
-      const lockedUntil: string | null = lockout[0].locked_until ?? null;
+    const lockoutState = parseLockoutState(lockout);
+    if (!lockoutState) {
+      console.error('[auth-login] check_account_lockout retornou formato inválido');
+      await captureException(new Error('check_account_lockout retornou formato inválido'), { function: 'auth-login' });
+      return createErrorResponse(
+        'Proteção de login temporariamente indisponível. Tente novamente.',
+        503,
+        'LOGIN_PROTECTION_UNAVAILABLE',
+        undefined,
+        req,
+      );
+    }
+    if (lockoutState.isLocked) {
+      const lockedUntil = lockoutState.lockedUntil;
       return new Response(
         JSON.stringify({
           success: false,

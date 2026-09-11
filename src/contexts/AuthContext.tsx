@@ -194,19 +194,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const body = (await res.json().catch(() => ({}))) as {
         success?: boolean;
         code?: string;
-        error?: string;
+        error?: string | { code?: string; message?: string };
         locked_until?: string;
         session?: { access_token: string; refresh_token: string };
       };
 
       if (!res.ok || !body.success) {
-        const code = body.code ?? '';
+        // `createErrorResponse` returns { error: { code, message } }, while
+        // older auth-login paths return top-level string/code. Accept both
+        // shapes so a protective 503 is never presented as bad credentials.
+        const structuredError = typeof body.error === 'object' && body.error !== null ? body.error : undefined;
+        const code = body.code ?? structuredError?.code ?? '';
+        const message = typeof body.error === 'string' ? body.error : structuredError?.message;
         if (code === 'ACCOUNT_LOCKED' || res.status === 429) {
-          const msg = body.error ?? 'Conta temporariamente bloqueada por excesso de tentativas.';
+          const msg = message ?? 'Conta temporariamente bloqueada por excesso de tentativas.';
           loggerService.warn('Login blocked - account locked or rate limited', { email, code });
           throw new Error(msg);
         }
-        throw new Error(body.error ?? 'Credenciais inválidas.');
+        throw new Error(message ?? 'Credenciais inválidas.');
       }
 
       // Hydrate the Supabase client session from the token returned by the edge function.

@@ -2,9 +2,18 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import React from 'react';
 
-const { mockGetSession, mockSignInWithPassword, mockSignOut, mockSignUp,
-  mockResetPasswordForEmail, mockOnAuthStateChange, mockRpc, mockSetSession,
-  mockGetAAL, mockListFactors } = vi.hoisted(() => {
+const {
+  mockGetSession,
+  mockSignInWithPassword,
+  mockSignOut,
+  mockSignUp,
+  mockResetPasswordForEmail,
+  mockOnAuthStateChange,
+  mockRpc,
+  mockSetSession,
+  mockGetAAL,
+  mockListFactors,
+} = vi.hoisted(() => {
   const mockSubscription = { unsubscribe: vi.fn() };
   const mockOnAuthStateChange = vi.fn().mockReturnValue({ data: { subscription: mockSubscription } });
   return {
@@ -37,8 +46,10 @@ vi.mock('@/integrations/supabase/client', () => ({
       },
     },
     from: () => ({
-      select: () => ({ limit: () => Promise.resolve({ data: [], error: null }),
-        eq: () => ({ limit: () => Promise.resolve({ data: [], error: null }) }) }),
+      select: () => ({
+        limit: () => Promise.resolve({ data: [], error: null }),
+        eq: () => ({ limit: () => Promise.resolve({ data: [], error: null }) }),
+      }),
     }),
     rpc: mockRpc,
   },
@@ -52,7 +63,8 @@ vi.mock('@/utils/passwordPolicy', () => ({
   validatePasswordFull: vi.fn(async (pw: string) =>
     pw.length >= 8
       ? { valid: true, errors: [], warnings: [] }
-      : { valid: false, errors: ['Mínimo de 8 caracteres'], warnings: [] }),
+      : { valid: false, errors: ['Mínimo de 8 caracteres'], warnings: [] }
+  ),
 }));
 
 vi.mock('dompurify', () => ({
@@ -79,20 +91,21 @@ describe('useAuth', () => {
     mockGetAAL.mockResolvedValue({ data: { currentLevel: 'aal1', nextLevel: 'aal1' }, error: null });
     // H20: signIn é roteado pela edge function `auth-login` (rate limit + lockout
     // server-side). O teste precisa simular a resposta HTTP, não o SDK direto.
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      json: async () => ({
-        success: true,
-        session: { access_token: 'at', refresh_token: 'rt' },
-      }),
-    }));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          success: true,
+          session: { access_token: 'at', refresh_token: 'rt' },
+        }),
+      })
+    );
   });
 
   it('throws when used outside AuthProvider', () => {
-    expect(() => renderHook(() => useAuth())).toThrow(
-      'useAuth must be used within AuthProvider'
-    );
+    expect(() => renderHook(() => useAuth())).toThrow('useAuth must be used within AuthProvider');
   });
 
   it('provides initial user=null', async () => {
@@ -135,28 +148,60 @@ describe('useAuth', () => {
   });
 
   it('signIn lança erro quando a edge function rejeita as credenciais', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      ok: false,
-      status: 401,
-      json: async () => ({ success: false, error: 'Credenciais inválidas.' }),
-    }));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 401,
+        json: async () => ({ success: false, error: 'Credenciais inválidas.' }),
+      })
+    );
     const { result } = renderHook(() => useAuth(), { wrapper });
     await expect(
-      act(async () => { await result.current.signIn('bad@test.com', 'wrong'); })
+      act(async () => {
+        await result.current.signIn('bad@test.com', 'wrong');
+      })
     ).rejects.toThrow('Credenciais inválidas.');
     expect(mockSetSession).not.toHaveBeenCalled();
   });
 
   it('signIn propaga bloqueio de conta (429 / ACCOUNT_LOCKED)', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      ok: false,
-      status: 429,
-      json: async () => ({ success: false, code: 'ACCOUNT_LOCKED', error: 'Conta bloqueada por 15 minutos.' }),
-    }));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 429,
+        json: async () => ({ success: false, code: 'ACCOUNT_LOCKED', error: 'Conta bloqueada por 15 minutos.' }),
+      })
+    );
     const { result } = renderHook(() => useAuth(), { wrapper });
     await expect(
-      act(async () => { await result.current.signIn('bad@test.com', 'wrong'); })
+      act(async () => {
+        await result.current.signIn('bad@test.com', 'wrong');
+      })
     ).rejects.toThrow('Conta bloqueada por 15 minutos.');
+  });
+
+  it('signIn exibe mensagem estruturada da proteção de login, sem mascará-la como credencial inválida', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: false,
+        status: 503,
+        json: async () => ({
+          error: {
+            code: 'LOGIN_PROTECTION_UNAVAILABLE',
+            message: 'Proteção de login temporariamente indisponível. Tente novamente.',
+          },
+        }),
+      })
+    );
+    const { result } = renderHook(() => useAuth(), { wrapper });
+    await expect(
+      act(async () => {
+        await result.current.signIn('user@test.com', 'pass123');
+      })
+    ).rejects.toThrow('Proteção de login temporariamente indisponível. Tente novamente.');
   });
 
   it('signIn exige MFA quando o nextLevel é aal2', async () => {
@@ -164,13 +209,17 @@ describe('useAuth', () => {
     mockListFactors.mockResolvedValue({ data: { totp: [{ id: 'factor-1' }] }, error: null });
     const { result } = renderHook(() => useAuth(), { wrapper });
     await expect(
-      act(async () => { await result.current.signIn('mfa@test.com', 'pass123'); })
+      act(async () => {
+        await result.current.signIn('mfa@test.com', 'pass123');
+      })
     ).rejects.toThrow('Autenticação de dois fatores necessária.');
   });
 
   it('signOut calls supabase.auth.signOut', async () => {
     const { result } = renderHook(() => useAuth(), { wrapper });
-    await act(async () => { await result.current.signOut(); });
+    await act(async () => {
+      await result.current.signOut();
+    });
     expect(mockSignOut).toHaveBeenCalled();
   });
 
@@ -180,21 +229,28 @@ describe('useAuth', () => {
       await result.current.signUp('new@test.com', 'Str0ng!Pass', 'New User');
     });
     expect(mockSignUp).toHaveBeenCalledWith(
-      expect.objectContaining({ email: 'new@test.com', options: expect.objectContaining({ data: { name: 'New User' } }) })
+      expect.objectContaining({
+        email: 'new@test.com',
+        options: expect.objectContaining({ data: { name: 'New User' } }),
+      })
     );
   });
 
   it('signUp rejeita senha fraca antes de chamar o backend', async () => {
     const { result } = renderHook(() => useAuth(), { wrapper });
     await expect(
-      act(async () => { await result.current.signUp('new@test.com', 'pass', 'New User'); })
+      act(async () => {
+        await result.current.signUp('new@test.com', 'pass', 'New User');
+      })
     ).rejects.toThrow(/Senha fraca/);
     expect(mockSignUp).not.toHaveBeenCalled();
   });
 
   it('resetPassword calls supabase.auth.resetPasswordForEmail', async () => {
     const { result } = renderHook(() => useAuth(), { wrapper });
-    await act(async () => { await result.current.resetPassword('user@test.com'); });
+    await act(async () => {
+      await result.current.resetPassword('user@test.com');
+    });
     expect(mockResetPasswordForEmail).toHaveBeenCalledWith('user@test.com', expect.any(Object));
   });
 
