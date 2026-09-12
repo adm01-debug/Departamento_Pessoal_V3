@@ -14,7 +14,11 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { captureException } from '../_shared/sentry.ts';
 import { getCorsHeaders, handlePreflight } from '../_shared/contract.ts';
-import { calculateErrorRate } from './metricsMath.ts';
+import {
+  calculateErrorRate,
+  calculateMetricsHttpStatus,
+  calculateOverallHealthStatus,
+} from './metricsMath.ts';
 
 const METRICS_PREFIX = 'departamento_pessoal_';
 const METRICS_VERSION = '1.0.0';
@@ -74,7 +78,7 @@ async function collectMetrics(): Promise<HealthMetrics> {
     telemetry_status: telOk ? 1 : 0,
     bridge_status: brOk ? 1 : 0,
     total_latency_ms: totalLatency,
-    overall_status: (dbOk && telOk) ? 1 : 0,
+    overall_status: calculateOverallHealthStatus(dbOk, telOk, brOk),
   };
 }
 
@@ -230,7 +234,10 @@ serve(async (req: Request): Promise<Response> => {
 
     const body = buildMetricsPage(health, bridge);
 
-    const status = health.overall_status && bridge.collection_status ? 200 : 503;
+    const status = calculateMetricsHttpStatus(
+      health.overall_status,
+      bridge.collection_status,
+    );
     return new Response(body, {
       status,
       headers: {
