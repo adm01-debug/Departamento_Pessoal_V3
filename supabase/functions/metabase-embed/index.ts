@@ -23,6 +23,7 @@ import { corsHeaders } from '../_shared/contract.ts';
 import { log } from '../_shared/logger.ts';
 import { safeFetch } from '../_shared/safe-fetch.ts';
 import { metabaseUnavailablePayload } from './availability.ts';
+import { isConfiguredDashboard } from './dashboardAccess.ts';
 
 const METABASE_URL   = Deno.env.get('METABASE_URL')          ?? '';
 const METABASE_SECRET = Deno.env.get('METABASE_SECRET_KEY')   ?? '';
@@ -101,19 +102,6 @@ function parseDashboardId(id: unknown): { valid: boolean; value: number | null }
   return { valid: false, value: null };
 }
 
-// ── Dashboard ACL: quais dashboards cada empresa pode ver ──────
-const DASHBOARD_ACL: Record<number, string[]> = {
-  // ID do dashboard no Metabase → roles que têm acesso
-  // Se array vazio → todos os usuários autenticados acessam
-  // Se roles listadas → apenas esses perfis têm acesso
-};
-const ALL_EMPRESAS_ACL: Record<number, boolean> = {
-  1: true,   // RH Overview — todos
-  2: true,   // Folha — todos
-  3: true,   // eSocial — admin + dp
-  4: true,   // Passivo — admin + dp
-};
-
 // ── Main handler ───────────────────────────────────────────────
 serve(async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders });
@@ -174,9 +162,11 @@ serve(async (req: Request): Promise<Response> => {
     }
     const dashId = parsed.value!;
 
-    // ── 5. Verificar ACL ───────────────────────────────────────
-    if (ALL_EMPRESAS_ACL[dashId] === false) {
-      return new Response(JSON.stringify({ error: 'Acesso negado a este dashboard' }), {
+    // ── 5. Allowlist de dashboards ─────────────────────────────
+    // Um ID desconhecido nunca recebe token assinado, ainda que o caller seja
+    // autenticado. A autorização fina por tenant continua no payload do JWT.
+    if (!isConfiguredDashboard(dashId)) {
+      return new Response(JSON.stringify({ error: 'Acesso negado ao dashboard solicitado' }), {
         status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
