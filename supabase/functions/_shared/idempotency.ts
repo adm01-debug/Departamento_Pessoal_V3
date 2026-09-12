@@ -9,12 +9,15 @@
 //
 // Requer tabela public.idempotency_keys (migration 20260712190000).
 
-import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+// Mantém a mesma resolução major usada pelos callers. Fixar 2.49.1 aqui e
+// criar clientes com `@2` em outras funções fazia os genéricos protegidos do
+// supabase-js divergirem durante o type-check das Edge Functions.
+import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders, createErrorResponse } from "./contract.ts";
 
 const KEY_MIN = 16;
 const KEY_MAX = 128;
-const KEY_REGEX = /^[A-Za-z0-9._~:\-]{16,128}$/;
+const KEY_REGEX = /^[A-Za-z0-9._~:-]{16,128}$/;
 
 export interface BeginIdempotencyParams {
   endpoint: string;

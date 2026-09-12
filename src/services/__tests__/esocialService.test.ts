@@ -7,6 +7,7 @@ import {
   obterEstatisticas,
   listarEventosValidaveis,
   validarAnteDeEnviar,
+  enviarEvento,
 } from '../esocialService';
 import { makeChain } from '@/test/chain';
 
@@ -14,10 +15,13 @@ const EMPRESA_ID = 'test-empresa-id';
 
 // ─── shared mock setup ────────────────────────────────────────────────────────
 
-const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
+const { mockFrom, mockInvoke } = vi.hoisted(() => ({ mockFrom: vi.fn(), mockInvoke: vi.fn() }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
+  supabase: {
+    from: (...a: unknown[]) => deepChain(mockFrom(...a)),
+    functions: { invoke: mockInvoke },
+  },
 }));
 
 /**
@@ -76,7 +80,9 @@ describe('getEventoDescricao', () => {
 // ─── listarEventos ────────────────────────────────────────────────────────────
 
 describe('listarEventos', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('queries esocial_eventos and returns data', async () => {
     const eventos = [
@@ -100,7 +106,6 @@ describe('listarEventos', () => {
     expect(eqFn).not.toHaveBeenCalled();
   });
 
-
   it('returns empty array when data is null', async () => {
     buildEventosChain(null as any);
     const result = await listarEventos(EMPRESA_ID);
@@ -116,7 +121,9 @@ describe('listarEventos', () => {
 // ─── listarEventosPorCompetencia ─────────────────────────────────────────────
 
 describe('listarEventosPorCompetencia', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('filters by competencia', async () => {
     const { eq1 } = buildFilterChain([]);
@@ -146,15 +153,12 @@ describe('listarEventosPorCompetencia', () => {
 // ─── obterEstatisticas ───────────────────────────────────────────────────────
 
 describe('obterEstatisticas', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('counts enviados, pendentes, erros correctly', async () => {
-    buildEventosChain([
-      { status: 'enviado' },
-      { status: 'enviado' },
-      { status: 'pendente' },
-      { status: 'erro' },
-    ]);
+    buildEventosChain([{ status: 'enviado' }, { status: 'enviado' }, { status: 'pendente' }, { status: 'erro' }]);
     const stats = await obterEstatisticas(EMPRESA_ID);
     expect(stats.enviados).toBe(2);
     expect(stats.pendentes).toBe(1);
@@ -168,21 +172,13 @@ describe('obterEstatisticas', () => {
   });
 
   it('conformidade = 75% with 1 error in 4 events', async () => {
-    buildEventosChain([
-      { status: 'enviado' },
-      { status: 'enviado' },
-      { status: 'pendente' },
-      { status: 'erro' },
-    ]);
+    buildEventosChain([{ status: 'enviado' }, { status: 'enviado' }, { status: 'pendente' }, { status: 'erro' }]);
     const stats = await obterEstatisticas(EMPRESA_ID);
     expect(stats.conformidade).toBe(75);
   });
 
   it('conformidade = 100% when all enviado', async () => {
-    buildEventosChain([
-      { status: 'enviado' },
-      { status: 'enviado' },
-    ]);
+    buildEventosChain([{ status: 'enviado' }, { status: 'enviado' }]);
     const stats = await obterEstatisticas(EMPRESA_ID);
     expect(stats.conformidade).toBe(100);
   });
@@ -223,5 +219,48 @@ describe('validarAnteDeEnviar', () => {
     expect(result).toHaveProperty('valid');
     expect(result).toHaveProperty('errors');
     expect(result).toHaveProperty('warnings');
+  });
+});
+
+// ─── enviarEvento ────────────────────────────────────────────────────────────
+
+function setupTransmission(evento: Record<string, unknown>) {
+  mockFrom.mockReset();
+  mockInvoke.mockReset();
+  mockFrom
+    .mockReturnValueOnce(makeChain({ data: null, error: null }))
+    .mockReturnValueOnce(makeChain({ data: evento, error: null }));
+}
+
+describe('enviarEvento', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('rejeita transmissão não confirmada, inclusive quando a Edge respondeu um payload de falha', async () => {
+    setupTransmission({ id: 'evento-1', tipo_evento: 'S-1200', dados: null });
+    mockFrom.mockReturnValueOnce(makeChain({ data: null, error: null }));
+    mockInvoke.mockResolvedValue({
+      data: { success: false, error: 'Integração eSocial não configurada para produção' },
+      error: null,
+    });
+
+    await expect(enviarEvento('evento-1', EMPRESA_ID)).rejects.toThrow('Falha na transmissão do evento eSocial');
+    expect(mockInvoke).toHaveBeenCalledWith('enviar-esocial', {
+      body: { empresaId: EMPRESA_ID, eventoId: 'evento-1' },
+    });
+  });
+
+  it('aceita somente o payload de confirmação explícita do provedor', async () => {
+    setupTransmission({ id: 'evento-1', tipo_evento: 'S-1200', dados: null });
+    mockInvoke.mockResolvedValue({
+      data: { success: true, protocolo: 'PRT-1', recibo: 'REC-1', tentativas: 1 },
+      error: null,
+    });
+
+    await expect(enviarEvento('evento-1', EMPRESA_ID)).resolves.toMatchObject({
+      success: true,
+      protocolo: 'PRT-1',
+    });
   });
 });

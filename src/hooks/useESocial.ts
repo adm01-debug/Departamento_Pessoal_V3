@@ -36,11 +36,7 @@ export function useESocial() {
       return await esocialService.enviarEvento(eventoId, empresaId);
     },
     onSuccess: (data) => {
-      if (data?.success) {
-        toast.success(`Evento enviado — Protocolo: ${data.protocolo}`);
-      } else {
-        toast.error(`Falha no envio: ${data?.error}`);
-      }
+      toast.success(`Evento enviado — Protocolo: ${data.protocolo}`);
       invalidate();
     },
     onError: (err: any) => handleServerError(err),
@@ -51,8 +47,7 @@ export function useESocial() {
       return await esocialService.reenviarEvento(eventoId, empresaId);
     },
     onSuccess: (data) => {
-      if (data?.success) toast.success('Evento reenviado com sucesso');
-      else toast.error(`Falha ao reenviar: ${data?.error}`);
+      toast.success(`Evento reenviado — Protocolo: ${data.protocolo}`);
       invalidate();
     },
     onError: (err: any) => handleServerError(err),
@@ -95,9 +90,9 @@ export function useESocial() {
       }
       return results;
     },
-    onSuccess: () => { 
-      toast.success('Lote enviado com sucesso'); 
-      invalidate(); 
+    onSuccess: () => {
+      toast.success('Lote enviado com sucesso');
+      invalidate();
     },
     onError: (err: any) => handleServerError(err),
   });
@@ -120,4 +115,3 @@ export function useESocial() {
     isSending: enviarMutation.isPending || reenviarMutation.isPending || gerarEventosMutation.isPending,
   };
 }
-
