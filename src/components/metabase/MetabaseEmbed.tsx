@@ -297,7 +297,7 @@ export function MetabaseEmbed({
       const url = `${embedData.dashboardUrl}#${embedData.token}`;
       iframeRef.current.src = url;
     }
-  }, [embedData?.token]);
+  }, [embedData?.dashboardUrl, embedData?.token]);
 
   // ── Render ─────────────────────────────────────────────────────
   const isFallbackMode = !embedData?.metabaseOk || viewMode === 'recharts';

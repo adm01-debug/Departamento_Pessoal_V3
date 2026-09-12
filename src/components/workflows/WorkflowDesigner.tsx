@@ -121,7 +121,7 @@ export function WorkflowDesigner({ initialNodes = [], initialConnections = [], o
   const [pan] = useState({ x: 0, y: 0 });
 
   // ── Helpers ───────────────────────────────────────────────────
-  const getNode = (id: string) => nodes.find(n => n.id === id);
+  const getNode = useCallback((id: string) => nodes.find(n => n.id === id), [nodes]);
 
   const getPortPos = (node: WfNode, side: 'right' | 'bottom' | 'left' | 'top') => {
     const { w, h } = nodeSize(node.type);
@@ -238,7 +238,7 @@ export function WorkflowDesigner({ initialNodes = [], initialConnections = [], o
     const newX = Math.max(0, e.clientX - dragOffset.x);
     const newY = Math.max(0, e.clientY - dragOffset.y);
     setNodes(prev => prev.map(n => n.id === draggingId ? { ...n, x: newX, y: newY } : n));
-  }, [draggingId, dragOffset, pendingFrom]);
+  }, [draggingId, dragOffset, pendingFrom, getNode]);
 
   const onPointerUp = () => {
     setDraggingId(null);
