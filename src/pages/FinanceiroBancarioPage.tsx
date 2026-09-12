@@ -3,10 +3,20 @@ import { PageLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Landmark, FileDown, History, Settings, CheckCircle, Loader2, Download, Plus, Globe, Upload } from 'lucide-react';
+import {
+  Landmark,
+  FileDown,
+  History,
+  Settings,
+  CheckCircle,
+  Loader2,
+  Download,
+  Plus,
+  Globe,
+  Upload,
+} from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import { useEmpresas } from '@/hooks/useEmpresas';
-import { useOnMount } from '@/hooks/useMountEffects';
 import { cnabService, CNABConfig, folhaService } from '@/services';
 import { loggerService } from '@/services/loggerService';
 import { toast } from 'sonner';
@@ -74,26 +84,32 @@ export default function FinanceiroBancarioPage() {
         cnabService.getConfig(empresaAtual.id),
         cnabService.listRemessas(empresaAtual.id),
         cnabService.listPixLotes(empresaAtual.id),
-        folhaService.list()
+        folhaService.list(),
       ]);
       setConfig(conf);
       setRemessas(rem || []);
       setPixLotes(pix || []);
       setFolhas(fls || []);
     } catch (error) {
-      loggerService.error('Erro ao carregar dados bancários', { empresaId: empresaAtual?.id }, error instanceof Error ? error : new Error(String(error)));
+      loggerService.error(
+        'Erro ao carregar dados bancários',
+        { empresaId: empresaAtual?.id },
+        error instanceof Error ? error : new Error(String(error))
+      );
       toast.error('Erro ao carregar dados bancários');
     } finally {
       setLoading(false);
     }
   }, [empresaAtual?.id]);
 
-  useOnMount(() => {
-    loadData();
-  });
-
   useEffect(() => {
-    loadData();
+    let cancelled = false;
+    queueMicrotask(() => {
+      if (!cancelled) void loadData();
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [loadData]);
 
   const handleSaveConfig = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -106,7 +122,8 @@ export default function FinanceiroBancarioPage() {
       conta: formData.get('conta') as string,
       conta_digito: formData.get('conta_digito') as string,
       convenio: formData.get('convenio') as string,
-      nome_empresa: formData.get('nome_empresa') as string};
+      nome_empresa: formData.get('nome_empresa') as string,
+    };
 
     try {
       await cnabService.saveConfig(empresaAtual!.id, newConfig);
@@ -132,7 +149,7 @@ export default function FinanceiroBancarioPage() {
     try {
       setGenerating(true);
       const content = await cnabService.generateCNAB240(empresaAtual!.id, selectedFolha);
-      
+
       // Download file
       const blob = new Blob([content], { type: 'text/plain' });
       const url = window.URL.createObjectURL(blob);
@@ -140,7 +157,7 @@ export default function FinanceiroBancarioPage() {
       a.href = url;
       a.download = `REMESSA_${config.banco_codigo}_${todayLocalISO()}.rem`;
       a.click();
-      
+
       toast.success('Remessa CNAB gerada com sucesso');
       loadData();
     } catch (error) {
@@ -197,7 +214,8 @@ export default function FinanceiroBancarioPage() {
     }
   };
 
-  const formatCurrency = (val: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+  const formatCurrency = (val: number) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
 
   return (
     <>
@@ -220,8 +238,10 @@ export default function FinanceiroBancarioPage() {
                   <SelectValue placeholder="Selecione a competência" />
                 </SelectTrigger>
                 <SelectContent>
-                  {folhas.map(f => (
-                    <SelectItem key={f.id} value={f.id}>{f.competencia} - {f.tipo}</SelectItem>
+                  {folhas.map((f) => (
+                    <SelectItem key={f.id} value={f.id}>
+                      {f.competencia} - {f.tipo}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -269,10 +289,18 @@ export default function FinanceiroBancarioPage() {
                     </div>
                     <div className="space-y-2">
                       <Label>Nome da Empresa (no Banco)</Label>
-                      <Input name="nome_empresa" defaultValue={config?.nome_empresa} placeholder="EMPRESA LTDA" required />
+                      <Input
+                        name="nome_empresa"
+                        defaultValue={config?.nome_empresa}
+                        placeholder="EMPRESA LTDA"
+                        required
+                      />
                     </div>
                     <DialogFooter>
-                      <Button type="submit" className="w-full rounded-xl bg-gradient-to-r from-info to-primary text-primary-foreground">
+                      <Button
+                        type="submit"
+                        className="w-full rounded-xl bg-gradient-to-r from-info to-primary text-primary-foreground"
+                      >
                         Salvar Configurações
                       </Button>
                     </DialogFooter>
@@ -295,12 +323,18 @@ export default function FinanceiroBancarioPage() {
                 <CardDescription>Gerar arquivo para pagamento de salários</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button 
-                  onClick={generateCNAB} 
-                  disabled={generating || !selectedFolha} 
+                <Button
+                  onClick={generateCNAB}
+                  disabled={generating || !selectedFolha}
                   className="w-full rounded-xl bg-gradient-to-r from-info to-primary text-primary-foreground font-body h-11"
                 >
-                  {generating ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Download className="h-4 w-4 mr-2" /> Gerar Arquivo</>}
+                  {generating ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <>
+                      <Download className="h-4 w-4 mr-2" /> Gerar Arquivo
+                    </>
+                  )}
                 </Button>
               </CardContent>
             </Card>
@@ -317,13 +351,19 @@ export default function FinanceiroBancarioPage() {
                 <CardDescription>Gere CSV para pagamento instantâneo</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button 
-                  onClick={generatePix} 
+                <Button
+                  onClick={generatePix}
                   variant="outline"
-                  disabled={generating || !selectedFolha} 
+                  disabled={generating || !selectedFolha}
                   className="w-full rounded-xl border-success/30 hover:bg-success/5 text-success font-body h-11"
                 >
-                  {generating ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Plus className="h-4 w-4 mr-2" /> Gerar CSV PIX</>}
+                  {generating ? (
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <>
+                      <Plus className="h-4 w-4 mr-2" /> Gerar CSV PIX
+                    </>
+                  )}
                 </Button>
               </CardContent>
             </Card>
@@ -341,18 +381,24 @@ export default function FinanceiroBancarioPage() {
               </CardHeader>
               <CardContent>
                 <div className="relative">
-                  <Input 
-                    type="file" 
-                    accept=".ret,.txt" 
+                  <Input
+                    type="file"
+                    accept=".ret,.txt"
                     onChange={handleImportRetorno}
                     className="absolute inset-0 opacity-0 cursor-pointer z-10"
                     disabled={processingRetorno}
                   />
-                  <Button 
+                  <Button
                     variant="outline"
                     className="w-full rounded-xl border-warning/30 hover:bg-warning/5 text-warning font-body h-11 pointer-events-none"
                   >
-                    {processingRetorno ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Upload className="h-4 w-4 mr-2" /> Importar Retorno</>}
+                    {processingRetorno ? (
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                    ) : (
+                      <>
+                        <Upload className="h-4 w-4 mr-2" /> Importar Retorno
+                      </>
+                    )}
                   </Button>
                 </div>
               </CardContent>
@@ -387,18 +433,26 @@ export default function FinanceiroBancarioPage() {
                     <TableBody>
                       {remessas.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Nenhuma remessa gerada</TableCell>
+                          <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                            Nenhuma remessa gerada
+                          </TableCell>
                         </TableRow>
-                      ) : remessas.map(r => (
-                        <TableRow key={r.id}>
-                          <TableCell>{formatDate(r.created_at)}</TableCell>
-                          <TableCell>{r.banco_codigo}</TableCell>
-                          <TableCell>{r.sequencial_arquivo}</TableCell>
-                          <TableCell>{r.total_pagamentos}</TableCell>
-                          <TableCell className="text-right font-medium">{formatCurrency(r.valor_total ?? 0)}</TableCell>
-                          <TableCell><StatusBadge status={r.status ?? 'desconhecido'} variant="success" /></TableCell>
-                        </TableRow>
-                      ))}
+                      ) : (
+                        remessas.map((r) => (
+                          <TableRow key={r.id}>
+                            <TableCell>{formatDate(r.created_at)}</TableCell>
+                            <TableCell>{r.banco_codigo}</TableCell>
+                            <TableCell>{r.sequencial_arquivo}</TableCell>
+                            <TableCell>{r.total_pagamentos}</TableCell>
+                            <TableCell className="text-right font-medium">
+                              {formatCurrency(r.valor_total ?? 0)}
+                            </TableCell>
+                            <TableCell>
+                              <StatusBadge status={r.status ?? 'desconhecido'} variant="success" />
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
                     </TableBody>
                   </Table>
                 </CardContent>
@@ -424,16 +478,24 @@ export default function FinanceiroBancarioPage() {
                     <TableBody>
                       {pixLotes.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">Nenhum lote PIX gerado</TableCell>
+                          <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                            Nenhum lote PIX gerado
+                          </TableCell>
                         </TableRow>
-                      ) : pixLotes.map(l => (
-                        <TableRow key={l.id}>
-                          <TableCell>{formatDate(l.created_at)}</TableCell>
-                          <TableCell>{l.quantidade_pagamentos}</TableCell>
-                          <TableCell className="text-right font-medium">{formatCurrency(l.valor_total ?? 0)}</TableCell>
-                          <TableCell><StatusBadge status={l.status ?? 'desconhecido'} variant="success" /></TableCell>
-                        </TableRow>
-                      ))}
+                      ) : (
+                        pixLotes.map((l) => (
+                          <TableRow key={l.id}>
+                            <TableCell>{formatDate(l.created_at)}</TableCell>
+                            <TableCell>{l.quantidade_pagamentos}</TableCell>
+                            <TableCell className="text-right font-medium">
+                              {formatCurrency(l.valor_total ?? 0)}
+                            </TableCell>
+                            <TableCell>
+                              <StatusBadge status={l.status ?? 'desconhecido'} variant="success" />
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
                     </TableBody>
                   </Table>
                 </CardContent>
@@ -479,13 +541,17 @@ export default function FinanceiroBancarioPage() {
                         <TableCell className="font-medium">USD → BRL</TableCell>
                         <TableCell>5.2410</TableCell>
                         <TableCell>{formatDate(new Date())}</TableCell>
-                        <TableCell><StatusBadge status="ativo" variant="success" /></TableCell>
+                        <TableCell>
+                          <StatusBadge status="ativo" variant="success" />
+                        </TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell className="font-medium">EUR → BRL</TableCell>
                         <TableCell>5.6822</TableCell>
                         <TableCell>{formatDate(new Date())}</TableCell>
-                        <TableCell><StatusBadge status="ativo" variant="success" /></TableCell>
+                        <TableCell>
+                          <StatusBadge status="ativo" variant="success" />
+                        </TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>
