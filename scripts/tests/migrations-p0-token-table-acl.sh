@@ -10,7 +10,19 @@ NAME="dp-p0-token-acl-$$"
 cleanup() { [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f "$NAME" >/dev/null 2>&1 || true; }
 trap cleanup EXIT
 docker run -d --name "$NAME" -e POSTGRES_PASSWORD=test "$IMAGE" >/dev/null
-for _ in $(seq 1 60); do docker exec "$NAME" pg_isready -U postgres >/dev/null 2>&1 && break; sleep 1; done
+ready=0
+for _ in $(seq 1 60); do
+  if docker exec "$NAME" psql -X -h 127.0.0.1 -U postgres -qAtc 'SELECT 1' 2>/dev/null | grep -qx '1'; then
+    ready=1
+    break
+  fi
+  sleep 1
+done
+if [ "$ready" -ne 1 ]; then
+  echo "PostgreSQL did not accept a real SQL query within 60 seconds" >&2
+  docker logs "$NAME" >&2 || true
+  exit 1
+fi
 docker cp "$MIGRATION" "$NAME":/tmp/p0-token-acl.sql
 
 docker exec -i "$NAME" psql -X -U postgres -v ON_ERROR_STOP=1 <<'SQL'
