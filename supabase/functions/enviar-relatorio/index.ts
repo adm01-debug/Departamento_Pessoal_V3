@@ -26,6 +26,7 @@ import {
   requestMatchesStoredReportSchedule,
 } from "./internalDispatch.ts";
 import { requireCompleteReportRows, toCsv } from "./reportContent.ts";
+import { reportEmailPayload, scheduledReportPath, stableJson } from './dispatchPayload.ts';
 
 /**
  * enviar-relatorio — Onda 20 hardening
@@ -64,7 +65,10 @@ const BodySchema = z.object({
   dispatchKey: z.string().min(1).max(200).regex(/^[A-Za-z0-9:._-]+$/).optional(),
   tipoRelatorio: z.enum(RELATORIOS_PERMITIDOS),
   formato: z.enum(FORMATOS_PERMITIDOS),
-  emailDestinatario: z.string().email().max(254),
+  // Canonicalize before hashing and provider submission. This keeps the
+  // complete Resend payload byte-identical when a retry changes only casing
+  // or surrounding whitespace in the address.
+  emailDestinatario: z.string().trim().toLowerCase().email().max(254),
   parametros: z
     .object({
       empresaId: z.string().uuid(),
@@ -315,35 +319,95 @@ serve(async (req: Request): Promise<Response> => {
       );
     }
 
-    // 5. Coleta escopada por empresa
-    const { dados, totalRegistros } = await coletarDados(
-      admin,
-      body.tipoRelatorio,
-      empresaId,
-      body.parametros,
-    );
+    const dispatchKeyHash = body.dispatchKey ? await sha256Hex(body.dispatchKey) : null;
+    const dispatchRequestHash = body.dispatchKey
+      ? await sha256Hex(stableJson({
+        agendamentoId: body.agendamentoId,
+        empresaId,
+        tipoRelatorio: body.tipoRelatorio,
+        formato: body.formato,
+        emailDestinatario: body.emailDestinatario.toLowerCase(),
+        parametros: body.parametros,
+      }))
+      : null;
+    const { data: priorAttempt, error: priorAttemptError } = dispatchKeyHash
+      ? await admin.from('report_dispatch_attempts')
+        .select('request_hash,storage_path,signed_url,signed_url_expires_at,subject,html,content_sha256,total_registros,provider_message_id,status')
+        .eq('dispatch_key_hash', dispatchKeyHash)
+        .maybeSingle()
+      : { data: null, error: null };
+    if (priorAttemptError) throw priorAttemptError;
+    if (priorAttempt && priorAttempt.request_hash !== dispatchRequestHash) {
+      return json(req, { error: 'Chave de despacho reutilizada com parâmetros diferentes' }, 409);
+    }
+    if (
+      priorAttempt && priorAttempt.status !== 'accepted' &&
+      new Date(priorAttempt.signed_url_expires_at).getTime() <= Date.now()
+    ) {
+      return json(req, {
+        error: 'Despacho indeterminado com link expirado; reconciliação manual obrigatória',
+      }, 409);
+    }
 
-    // 6. Persistência em bucket privado + hash do conteúdo (não-repúdio)
-    const conteudo = body.formato === "csv"
-      ? toCsv(dados)
-      : JSON.stringify(dados, null, 2);
-    const contentHash = await sha256Hex(conteudo);
-    const path =
-      `${empresaId}/${body.tipoRelatorio}/${crypto.randomUUID()}.${body.formato}`;
-    const { error: upErr } = await admin.storage.from(BUCKET).upload(
-      path,
-      new Blob([conteudo], {
-        type: body.formato === "csv" ? "text/csv" : "application/json",
-      }),
-      { upsert: false },
-    );
-    if (upErr) throw new Error(`Falha ao subir relatório: ${upErr.message}`);
+    let totalRegistros: number;
+    let contentHash: string;
+    let path: string;
+    let signedUrl: string;
+    let subject: string;
+    let html: string;
 
-    const { data: signed, error: signErr } = await admin.storage
-      .from(BUCKET)
-      .createSignedUrl(path, SIGNED_URL_TTL_SECONDS);
-    if (signErr || !signed?.signedUrl) {
-      throw new Error(`Falha ao gerar signed URL: ${signErr?.message}`);
+    if (priorAttempt) {
+      totalRegistros = priorAttempt.total_registros;
+      contentHash = priorAttempt.content_sha256;
+      path = priorAttempt.storage_path;
+      signedUrl = priorAttempt.signed_url;
+      subject = priorAttempt.subject;
+      html = priorAttempt.html;
+    } else {
+      // 5. Coleta escopada por empresa
+      const { dados, totalRegistros: collectedCount } = await coletarDados(
+        admin, body.tipoRelatorio, empresaId, body.parametros,
+      );
+      totalRegistros = collectedCount;
+      const conteudo = body.formato === 'csv' ? toCsv(dados) : JSON.stringify(dados, null, 2);
+      contentHash = await sha256Hex(conteudo);
+      path = dispatchKeyHash
+        ? scheduledReportPath(
+          empresaId, body.tipoRelatorio, dispatchKeyHash, contentHash, body.formato,
+        )
+        : `${empresaId}/${body.tipoRelatorio}/${crypto.randomUUID()}.${body.formato}`;
+      const { error: upErr } = await admin.storage.from(BUCKET).upload(
+        path,
+        new Blob([conteudo], { type: body.formato === 'csv' ? 'text/csv' : 'application/json' }),
+        { upsert: Boolean(dispatchKeyHash) },
+      );
+      if (upErr) throw new Error(`Falha ao subir relatório: ${upErr.message}`);
+      const { data: signed, error: signErr } = await admin.storage
+        .from(BUCKET).createSignedUrl(path, SIGNED_URL_TTL_SECONDS);
+      if (signErr || !signed?.signedUrl) throw new Error(`Falha ao gerar signed URL: ${signErr?.message}`);
+      signedUrl = signed.signedUrl;
+      const occurrence = body.dispatchKey?.slice((body.agendamentoId?.length ?? -1) + 1);
+      const occurrenceDate = occurrence && Number.isFinite(Date.parse(occurrence))
+        ? new Date(occurrence) : new Date();
+      ({ subject, html } = reportEmailPayload(body, totalRegistros, signedUrl, occurrenceDate));
+
+      // Persist exactly what will be submitted before the external effect.
+      if (dispatchKeyHash && dispatchRequestHash && body.agendamentoId) {
+        const { error: prepareError } = await admin.from('report_dispatch_attempts').insert({
+          dispatch_key_hash: dispatchKeyHash,
+          request_hash: dispatchRequestHash,
+          agendamento_id: body.agendamentoId,
+          empresa_id: empresaId,
+          storage_path: path,
+          signed_url: signedUrl,
+          signed_url_expires_at: new Date(Date.now() + SIGNED_URL_TTL_SECONDS * 1000).toISOString(),
+          subject,
+          html,
+          content_sha256: contentHash,
+          total_registros: totalRegistros,
+        });
+        if (prepareError) throw new Error(`Falha ao persistir despacho idempotente: ${prepareError.message}`);
+      }
     }
 
     // Persistir a intenção antes do efeito externo. Assim uma indisponibilidade
@@ -372,16 +436,17 @@ serve(async (req: Request): Promise<Response> => {
       },
     });
     if (attemptAuditError) {
-      await admin.storage.from(BUCKET).remove([path]);
+      if (!dispatchKeyHash) await admin.storage.from(BUCKET).remove([path]);
       return json(req, { error: "Auditoria obrigatória indisponível" }, 500);
     }
 
     // 7. Envio (metadados apenas — LGPD)
-    let statusEnvio: ReportDeliveryStatus = "erro";
-    let mensagemEnvio = REPORT_DELIVERY_FAILED_MESSAGE;
-    let providerMessageId: string | null = null;
+    let statusEnvio: ReportDeliveryStatus = priorAttempt?.status === 'accepted' ? 'sucesso' : 'erro';
+    let mensagemEnvio = statusEnvio === 'sucesso'
+      ? 'E-mail com link assinado aceito pelo provedor' : REPORT_DELIVERY_FAILED_MESSAGE;
+    let providerMessageId: string | null = priorAttempt?.provider_message_id ?? null;
 
-    try {
+    if (statusEnvio !== 'sucesso') try {
       const res = await safeFetch("https://api.resend.com/emails", {
         method: "POST",
         headers: {
@@ -394,29 +459,8 @@ serve(async (req: Request): Promise<Response> => {
         body: JSON.stringify({
           from: "Sistema DP <onboarding@resend.dev>",
           to: [body.emailDestinatario],
-          subject: `Relatório: ${body.tipoRelatorio} — ${
-            new Date().toLocaleDateString("pt-BR")
-          }`,
-          html: `
-              <h1>Relatório disponível</h1>
-              <p><strong>Tipo:</strong> ${body.tipoRelatorio}</p>
-              <p><strong>Formato:</strong> ${body.formato}</p>
-              <p><strong>Total de registros:</strong> ${totalRegistros}</p>
-              <p><strong>Gerado em:</strong> ${
-            new Date().toLocaleString("pt-BR")
-          }</p>
-              <p><strong>Validade do link:</strong> 24 horas</p>
-              <p>
-                <a href="${signed.signedUrl}"
-                   style="background:#84cc16;color:#111;padding:10px 16px;border-radius:6px;text-decoration:none;">
-                  Baixar relatório
-                </a>
-              </p>
-              <p style="color:#666;font-size:12px;">
-                Este e-mail contém apenas metadados. Os dados sensíveis estão
-                protegidos por link assinado e requerem acesso autorizado.
-              </p>
-          `,
+          subject,
+          html,
         }),
         timeoutMs: 8_000,
         tag: "webhook",
@@ -428,6 +472,16 @@ serve(async (req: Request): Promise<Response> => {
           httpStatus: res.status,
         });
       } else {
+        if (dispatchKeyHash) {
+          const { error: receiptError } = await admin.from('report_dispatch_attempts').update({
+            status: 'accepted', provider_message_id: providerMessageId,
+            accepted_at: new Date().toISOString(), updated_at: new Date().toISOString(),
+          }).eq('dispatch_key_hash', dispatchKeyHash);
+          if (receiptError) throw new Error(`Falha ao persistir recibo do provedor: ${receiptError.message}`);
+        }
+        // A execução agendada só pode avançar depois que o recibo durável foi
+        // persistido. Em falha, a resposta é retryable e a Idempotency-Key do
+        // provedor impede um segundo efeito externo.
         statusEnvio = "sucesso";
         mensagemEnvio = "E-mail com link assinado aceito pelo provedor";
       }
@@ -467,7 +521,7 @@ serve(async (req: Request): Promise<Response> => {
         "[enviar-relatorio] AUDIT_BLOCKING_FAILURE:",
         auditErr.message,
       );
-      if (statusEnvio !== "sucesso") {
+      if (statusEnvio !== "sucesso" && !dispatchKeyHash) {
         await admin.storage.from(BUCKET).remove([path]);
       }
       return json(req, { error: "Auditoria obrigatória falhou" }, 500);
@@ -497,7 +551,9 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     if (statusEnvio !== "sucesso") {
-      const { error: cleanupError } = await admin.storage.from(BUCKET).remove([path]);
+      const { error: cleanupError } = !dispatchKeyHash
+        ? await admin.storage.from(BUCKET).remove([path])
+        : { error: null };
       if (cleanupError) {
         console.error("[enviar-relatorio] Falha ao remover artefato sem entrega:", cleanupError.message);
       }

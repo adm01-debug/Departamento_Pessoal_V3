@@ -13,7 +13,10 @@ BEGIN
 END
 $preflight$;
 
-ALTER TABLE public.esocial_eventos ADD COLUMN IF NOT EXISTS admissao_id uuid;
+ALTER TABLE public.esocial_eventos
+  ADD COLUMN IF NOT EXISTS admissao_id uuid,
+  ADD COLUMN IF NOT EXISTS transmission_claim_token uuid,
+  ADD COLUMN IF NOT EXISTS transmission_claimed_at timestamptz;
 
 DO $constraint$
 BEGIN
@@ -75,6 +78,10 @@ DECLARE
   actor uuid := auth.uid();
   admission public.admissoes%ROWTYPE;
   event_id uuid;
+  event_status text;
+  event_claim_token uuid;
+  event_claimed_at timestamptz;
+  claim_token uuid := gen_random_uuid();
   was_created boolean := false;
 BEGIN
   IF actor IS NULL OR NOT public.pode_gerir_rh(p_empresa_id) THEN
@@ -92,9 +99,24 @@ BEGIN
     RAISE EXCEPTION 'admission CPF is required' USING ERRCODE = '23514';
   END IF;
 
-  SELECT id INTO event_id
+  SELECT id, status, transmission_claim_token, transmission_claimed_at
+  INTO event_id, event_status, event_claim_token, event_claimed_at
   FROM public.esocial_eventos
-  WHERE admissao_id = p_admissao_id AND tipo_evento = 'S-2200';
+  WHERE admissao_id = p_admissao_id AND tipo_evento = 'S-2200'
+  FOR UPDATE;
+
+  IF admission.status_esocial = 'enviado'
+     AND event_id IS NOT NULL
+     AND event_status IN ('enviado', 'processado') THEN
+    RETURN jsonb_build_object('evento_id', event_id, 'state', 'already_sent', 'created', false);
+  END IF;
+  IF admission.status_esocial = 'enviado' THEN
+    RAISE EXCEPTION 'inconsistent admission eSocial completion state' USING ERRCODE = '23514';
+  END IF;
+  IF event_claim_token IS NOT NULL
+     AND event_claimed_at > now() - interval '5 minutes' THEN
+    RAISE EXCEPTION 'admission eSocial transmission already in progress' USING ERRCODE = '55000';
+  END IF;
 
   IF event_id IS NULL THEN
     INSERT INTO public.esocial_eventos (
@@ -104,7 +126,7 @@ BEGIN
       p_admissao_id,
       'S-2200',
       to_char(current_date, 'YYYY-MM'),
-      'pendente',
+      'processando',
       jsonb_strip_nulls(jsonb_build_object(
         'admissaoId', admission.id,
         'cpfTrab', admission.cpf,
@@ -114,6 +136,17 @@ BEGIN
       ))
     ) RETURNING id INTO event_id;
     was_created := true;
+  ELSE
+    UPDATE public.esocial_eventos
+    SET status = 'processando', transmission_claim_token = claim_token,
+        transmission_claimed_at = now(), updated_at = now()
+    WHERE id = event_id;
+  END IF;
+
+  IF was_created THEN
+    UPDATE public.esocial_eventos
+    SET transmission_claim_token = claim_token, transmission_claimed_at = now()
+    WHERE id = event_id;
   END IF;
 
   UPDATE public.admissoes
@@ -122,7 +155,10 @@ BEGIN
       updated_at = now()
   WHERE id = p_admissao_id;
 
-  RETURN jsonb_build_object('evento_id', event_id, 'created', was_created);
+  RETURN jsonb_build_object(
+    'evento_id', event_id, 'claim_token', claim_token,
+    'state', 'claimed', 'created', was_created
+  );
 END
 $function$;
 
@@ -130,6 +166,7 @@ CREATE OR REPLACE FUNCTION public.complete_admission_esocial_event(
   p_admissao_id uuid,
   p_empresa_id uuid,
   p_evento_id uuid,
+  p_claim_token uuid,
   p_protocolo text,
   p_recibo text DEFAULT NULL
 )
@@ -141,21 +178,36 @@ AS $function$
 DECLARE
   actor uuid := auth.uid();
   receipt text := COALESCE(NULLIF(btrim(p_protocolo), ''), NULLIF(btrim(p_recibo), ''));
+  admission_status text;
 BEGIN
   IF actor IS NULL OR NOT public.pode_gerir_rh(p_empresa_id) THEN
     RAISE EXCEPTION 'not authorized to complete admission eSocial event' USING ERRCODE = '42501';
   END IF;
-  IF receipt IS NULL OR NOT EXISTS (
-    SELECT 1 FROM public.esocial_eventos
-    WHERE id = p_evento_id AND admissao_id = p_admissao_id
-      AND empresa_id = p_empresa_id AND tipo_evento = 'S-2200'
-  ) THEN
+  -- Every lifecycle writer locks admission first and event second. This avoids
+  -- a stale token check racing with fail/reclaim and completing a newer lease.
+  SELECT status_esocial INTO admission_status
+  FROM public.admissoes
+  WHERE id = p_admissao_id AND empresa_id = p_empresa_id
+  FOR UPDATE;
+  IF NOT FOUND THEN RAISE EXCEPTION 'admission not found in company' USING ERRCODE = 'P0002'; END IF;
+
+  PERFORM 1 FROM public.esocial_eventos
+  WHERE id = p_evento_id AND admissao_id = p_admissao_id
+    AND empresa_id = p_empresa_id AND tipo_evento = 'S-2200'
+  FOR UPDATE;
+  IF NOT FOUND OR receipt IS NULL THEN
     RAISE EXCEPTION 'invalid admission eSocial completion' USING ERRCODE = '23514';
   END IF;
 
-  PERFORM 1 FROM public.admissoes
-  WHERE id = p_admissao_id AND empresa_id = p_empresa_id FOR UPDATE;
-  IF NOT FOUND THEN RAISE EXCEPTION 'admission not found in company' USING ERRCODE = 'P0002'; END IF;
+  -- A lost HTTP response after a committed completion is safe to retry.
+  IF admission_status = 'enviado' THEN RETURN; END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM public.esocial_eventos
+    WHERE id = p_evento_id AND empresa_id = p_empresa_id
+      AND transmission_claim_token = p_claim_token
+  ) THEN
+    RAISE EXCEPTION 'invalid admission eSocial completion' USING ERRCODE = '23514';
+  END IF;
 
   UPDATE public.admissoes
   SET etapa = 'esocial',
@@ -170,6 +222,11 @@ BEGIN
       )),
       updated_at = now()
   WHERE id = p_admissao_id;
+
+  UPDATE public.esocial_eventos
+  SET transmission_claim_token = NULL, transmission_claimed_at = NULL
+  WHERE id = p_evento_id AND empresa_id = p_empresa_id
+    AND transmission_claim_token = p_claim_token;
 
   IF to_regclass('public.audit_log_unified') IS NOT NULL THEN
     INSERT INTO public.audit_log_unified(
@@ -186,9 +243,10 @@ $function$;
 CREATE OR REPLACE FUNCTION public.fail_admission_esocial_event(
   p_admissao_id uuid,
   p_empresa_id uuid,
-  p_evento_id uuid
+  p_evento_id uuid,
+  p_claim_token uuid
 )
-RETURNS void
+RETURNS jsonb
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = pg_catalog, public, pg_temp
@@ -197,6 +255,19 @@ BEGIN
   IF auth.uid() IS NULL OR NOT public.pode_gerir_rh(p_empresa_id) THEN
     RAISE EXCEPTION 'not authorized to fail admission eSocial event' USING ERRCODE = '42501';
   END IF;
+  PERFORM 1 FROM public.admissoes AS a
+  WHERE a.id = p_admissao_id AND a.empresa_id = p_empresa_id
+  FOR UPDATE;
+  IF NOT FOUND THEN
+    RETURN jsonb_build_object('state', 'not_recorded');
+  END IF;
+  IF EXISTS (
+    SELECT 1 FROM public.admissoes a
+    WHERE a.id=p_admissao_id AND a.empresa_id=p_empresa_id AND a.status_esocial='enviado'
+  ) THEN
+    RETURN jsonb_build_object('state', 'already_sent');
+  END IF;
+
   UPDATE public.admissoes AS a
   SET status_esocial = 'erro',
       metadata = COALESCE(a.metadata, '{}'::jsonb) || jsonb_build_object(
@@ -210,20 +281,94 @@ BEGIN
     AND EXISTS (
       SELECT 1 FROM public.esocial_eventos e
       WHERE e.id = p_evento_id AND e.admissao_id = a.id AND e.empresa_id = p_empresa_id
+        AND e.transmission_claim_token = p_claim_token
     );
+  IF NOT FOUND THEN
+    RETURN jsonb_build_object('state', 'not_recorded');
+  END IF;
+
+  UPDATE public.esocial_eventos
+  SET status='erro', transmission_claim_token=NULL,
+      transmission_claimed_at=NULL, updated_at=now()
+  WHERE id=p_evento_id AND empresa_id=p_empresa_id
+    AND transmission_claim_token=p_claim_token;
+  RETURN jsonb_build_object('state', 'failed');
 END
 $function$;
 
+DROP FUNCTION IF EXISTS public.complete_admission_esocial_event(uuid,uuid,uuid,text,text);
+DROP FUNCTION IF EXISTS public.fail_admission_esocial_event(uuid,uuid,uuid);
 REVOKE ALL ON FUNCTION public.claim_admission_esocial_event(uuid,uuid) FROM PUBLIC, anon;
-REVOKE ALL ON FUNCTION public.complete_admission_esocial_event(uuid,uuid,uuid,text,text) FROM PUBLIC, anon;
-REVOKE ALL ON FUNCTION public.fail_admission_esocial_event(uuid,uuid,uuid) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.complete_admission_esocial_event(uuid,uuid,uuid,uuid,text,text) FROM PUBLIC, anon;
+REVOKE ALL ON FUNCTION public.fail_admission_esocial_event(uuid,uuid,uuid,uuid) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.claim_admission_esocial_event(uuid,uuid) TO authenticated, service_role;
-GRANT EXECUTE ON FUNCTION public.complete_admission_esocial_event(uuid,uuid,uuid,text,text) TO authenticated, service_role;
-GRANT EXECUTE ON FUNCTION public.fail_admission_esocial_event(uuid,uuid,uuid) TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.complete_admission_esocial_event(uuid,uuid,uuid,uuid,text,text) TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.fail_admission_esocial_event(uuid,uuid,uuid,uuid) TO authenticated, service_role;
 
 -- The public contract-signing endpoint is part of the same admission
 -- lifecycle. Consolidate the historical overloads and make a missing CPF fail
 -- before SQL three-valued comparison can bypass the expected identity.
+CREATE OR REPLACE FUNCTION public.contrato_gerar_token_assinatura(
+  p_contrato_id uuid,
+  p_email text DEFAULT NULL,
+  p_cpf text DEFAULT NULL,
+  p_validade_dias integer DEFAULT 7
+)
+RETURNS TABLE(token text, expira_em timestamptz)
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = pg_catalog, public, pg_temp
+AS $function$
+DECLARE
+  v_empresa uuid;
+  v_status text;
+  v_token text;
+  v_hash text;
+  v_exp timestamptz;
+  v_expected_cpf text;
+  v_supplied_cpf text := regexp_replace(COALESCE(p_cpf, ''), '[^0-9]', '', 'g');
+BEGIN
+  SELECT cg.empresa_id, cg.status,
+    regexp_replace(COALESCE(a.cpf, c.cpf, ''), '[^0-9]', '', 'g')
+  INTO v_empresa, v_status, v_expected_cpf
+  FROM public.contratos_gerados cg
+  LEFT JOIN public.admissoes a ON a.id = cg.admissao_id AND a.empresa_id = cg.empresa_id
+  LEFT JOIN public.colaboradores c ON c.id = cg.colaborador_id AND c.empresa_id = cg.empresa_id
+  WHERE cg.id = p_contrato_id;
+
+  IF v_empresa IS NULL THEN RAISE EXCEPTION 'Contrato não encontrado'; END IF;
+  IF length(v_expected_cpf) <> 11 THEN
+    RAISE EXCEPTION 'Contrato sem CPF verificável do signatário' USING ERRCODE = '23514';
+  END IF;
+  IF p_cpf IS NOT NULL AND v_supplied_cpf <> v_expected_cpf THEN
+    RAISE EXCEPTION 'CPF informado diverge do contrato' USING ERRCODE = '23514';
+  END IF;
+  IF NOT public.user_belongs_to_empresa(auth.uid(), v_empresa)
+     OR NOT (public.has_role(auth.uid(),'admin'::public.app_role)
+             OR public.has_role(auth.uid(),'rh'::public.app_role)) THEN
+    RAISE EXCEPTION 'Sem permissão' USING ERRCODE = '42501';
+  END IF;
+  IF v_status = 'assinado' THEN RAISE EXCEPTION 'Contrato já assinado'; END IF;
+  IF v_status = 'cancelado' THEN RAISE EXCEPTION 'Contrato cancelado'; END IF;
+
+  v_token := replace(gen_random_uuid()::text, '-', '');
+  v_hash := encode(sha256(convert_to(v_token, 'UTF8')), 'hex');
+  v_exp := now() + make_interval(days => GREATEST(1, LEAST(30, p_validade_dias)));
+  INSERT INTO public.contrato_assinatura_tokens(
+    contrato_id, empresa_id, token_hash, cpf_esperado,
+    email_destinatario, expira_em, created_by
+  ) VALUES (
+    p_contrato_id, v_empresa, v_hash, v_expected_cpf,
+    p_email, v_exp, auth.uid()
+  );
+  UPDATE public.contratos_gerados SET status='enviado'
+  WHERE id=p_contrato_id AND status='gerado';
+  RETURN QUERY SELECT v_token, v_exp;
+END
+$function$;
+REVOKE ALL ON FUNCTION public.contrato_gerar_token_assinatura(uuid,text,text,integer) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.contrato_gerar_token_assinatura(uuid,text,text,integer) TO authenticated;
+
 DROP FUNCTION IF EXISTS public.contrato_assinar_por_token(text,text,text,inet,text,text,text);
 
 CREATE OR REPLACE FUNCTION public.contrato_assinar_por_token(
@@ -270,8 +415,8 @@ BEGIN
   IF token_row.expira_em < now() THEN RAISE EXCEPTION 'Token expirado' USING ERRCODE = '22023'; END IF;
   IF token_row.tentativas >= 20 THEN RAISE EXCEPTION 'Muitas tentativas' USING ERRCODE = '22023'; END IF;
 
-  IF token_row.cpf_esperado IS NOT NULL
-     AND regexp_replace(token_row.cpf_esperado, '[^0-9]', '', 'g') <> cpf_normalized THEN
+  IF token_row.cpf_esperado IS NULL
+     OR regexp_replace(token_row.cpf_esperado, '[^0-9]', '', 'g') <> cpf_normalized THEN
     UPDATE public.contrato_assinatura_tokens SET tentativas = tentativas + 1 WHERE id = token_row.id;
     -- Returning a controlled failure is intentional. Raising after the UPDATE
     -- would roll the attempt counter back with the statement, making the

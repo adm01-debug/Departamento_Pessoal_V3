@@ -207,10 +207,15 @@ export const contratacaoService = {
   async transmitirESocial(admissaoId: string, empresaId: string): Promise<boolean> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     let eventoId: string | null = null;
+    let claimToken: string | null = null;
     try {
-      eventoId = await claimEventoAdmissaoESocial(admissaoId, empresaId);
+      const claim = await claimEventoAdmissaoESocial(admissaoId, empresaId);
+      eventoId = claim.eventoId;
+      claimToken = claim.claimToken;
+      if (claim.alreadySent) return true;
+      if (!claimToken) throw new Error('Concessão eSocial exclusiva ausente');
 
-      const transmission = await enviarEvento(eventoId, empresaId);
+      const transmission = await enviarEvento(eventoId, empresaId, claimToken);
       if (transmission.simulated) {
         throw new Error('A simulação eSocial não pode concluir uma admissão real');
       }
@@ -221,17 +226,23 @@ export const contratacaoService = {
         admissaoId,
         empresaId,
         eventoId,
+        claimToken,
         transmission.protocolo,
         transmission.recibo ?? null
       );
 
       return true;
     } catch (e) {
-      if (eventoId) {
+      if (eventoId && claimToken) {
+        let recovery: 'failed' | 'already_sent' | 'not_recorded' | null = null;
         try {
-          await failEventoAdmissaoESocial(admissaoId, empresaId, eventoId);
+          recovery = await failEventoAdmissaoESocial(admissaoId, empresaId, eventoId, claimToken);
         } catch {
           // A falha de recuperação não deve ocultar a causa da transmissão.
+        }
+        if (recovery === 'already_sent') return true;
+        if (recovery === 'not_recorded') {
+          throw new Error('Falha na transmissão para o eSocial: recuperação não registrada', { cause: e });
         }
       }
       throw new Error('Falha na transmissão para o eSocial', { cause: e });

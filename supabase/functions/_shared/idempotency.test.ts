@@ -217,6 +217,22 @@ Deno.test("idempotency: reenvio após conclusão retorna REPLAY com mesmo body",
   }
 });
 
+Deno.test("idempotency: conclusão 204 sem body continua sendo replay de sucesso", async () => {
+  const { client } = createMockAdmin();
+  const first = await beginIdempotency(client, {
+    endpoint: ENDPOINT, key: KEY, requestBody: payload,
+  });
+  await completeIdempotency(client, first.id!, 204, undefined);
+
+  const replay = await beginIdempotency(client, {
+    endpoint: ENDPOINT, key: KEY, requestBody: payload,
+  });
+  assertEquals(replay.reason, "REPLAY");
+  assert(replay.replay);
+  assertEquals(replay.replay.status, 204);
+  assertEquals(await replay.replay.text(), "");
+});
+
 Deno.test("idempotency: mesma key com payload divergente → KEY_REUSE (409)", async () => {
   const { client } = createMockAdmin();
 

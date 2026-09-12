@@ -19,6 +19,8 @@ export interface ConfiguracaoEncargosEmpresa {
   rat: number | null;
   fap: number | null;
   terceiros: number | null;
+  simples_anexo: 'I' | 'II' | 'III' | 'IV' | 'V' | null;
+  aliquota_encargos_folha: number | null;
 }
 
 function taxaValida(value: number | null, fallback: number, field: string, maximum = 1): number {
@@ -30,16 +32,31 @@ function taxaValida(value: number | null, fallback: number, field: string, maxim
 }
 
 export function calcularAliquotaEncargosProvisao(config: ConfiguracaoEncargosEmpresa): number {
-  if (config.regime_tributario === 'mei' || config.regime_tributario === 'simples_nacional') {
-    return ALIQUOTA_FGTS;
+  if (config.aliquota_encargos_folha !== null) {
+    return taxaValida(config.aliquota_encargos_folha, 0, 'alíquota efetiva de encargos');
+  }
+  if (config.regime_tributario === 'mei') {
+    // MEI com empregado: 3% de CPP patronal + 8% de FGTS.
+    return ALIQUOTA_FGTS + 0.03;
+  }
+  if (config.regime_tributario === 'simples_nacional') {
+    if (!config.simples_anexo) {
+      throw new Error('Anexo do Simples Nacional obrigatório para calcular encargos');
+    }
+    if (config.simples_anexo !== 'IV') return ALIQUOTA_FGTS;
+    // No Anexo IV a CPP e o RAT/FAP ficam fora do DAS. Empresas optantes
+    // pelo Simples não recolhem contribuições de terceiros neste cálculo.
+    const rat = taxaValida(config.rat, 0.02, 'RAT', 0.03);
+    const fap = taxaValida(config.fap, 1, 'FAP', 2);
+    return ALIQUOTA_FGTS + ALIQUOTA_CPP + rat * fap;
   }
   if (config.regime_tributario !== 'lucro_presumido' && config.regime_tributario !== 'lucro_real') {
     throw new Error('Regime tributário sem regra de provisão homologada');
   }
 
-  const rat = taxaValida(config.rat, 0.02, 'RAT');
+  const rat = taxaValida(config.rat, 0.02, 'RAT', 0.03);
   const fap = taxaValida(config.fap, 1, 'FAP', 2);
-  const terceiros = taxaValida(config.terceiros, 0.058, 'Terceiros');
+  const terceiros = taxaValida(config.terceiros, 0.058, 'Terceiros', 0.2);
   const aliquota = ALIQUOTA_FGTS + ALIQUOTA_CPP + rat * fap + terceiros;
   if (aliquota > 1) throw new Error('Alíquota agregada de encargos excede 100%');
   return aliquota;
@@ -92,12 +109,12 @@ export const provisoesService = {
     if (!competencia) throw new Error('competência obrigatória');
 
     const [{ data: empresa, error: empresaError }, { data: colaboradores, error }] = await Promise.all([
-      (supabase as any)
+      supabase
         .from('empresas')
-        .select('regime_tributario, rat, fap, terceiros')
+        .select('regime_tributario, rat, fap, terceiros, simples_anexo, aliquota_encargos_folha')
         .eq('id', empresaId)
         .maybeSingle(),
-      (supabase as any)
+      supabase
         .from('colaboradores')
         .select('id, salario_base, nome_completo')
         .eq('empresa_id', empresaId)
@@ -110,7 +127,7 @@ export const provisoesService = {
     if (!colaboradores) return undefined;
     const aliquotaEncargos = calcularAliquotaEncargosProvisao(empresa as ConfiguracaoEncargosEmpresa);
 
-    for (const colaborador of colaboradores as Array<Record<string, unknown>>) {
+    for (const colaborador of colaboradores) {
       const valores = calcularProvisaoColaborador(Number(colaborador.salario_base ?? 0), aliquotaEncargos);
 
       const payload: ProvisaoCalculada = {
@@ -120,7 +137,7 @@ export const provisoesService = {
         ...valores,
       };
 
-      const { error: upsertError } = await (supabase as any)
+      const { error: upsertError } = await supabase
         .from('provisoes_folha')
         .upsert(payload, { onConflict: 'empresa_id,colaborador_id,competencia' });
 

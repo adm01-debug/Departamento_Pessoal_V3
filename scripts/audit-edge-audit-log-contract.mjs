@@ -162,7 +162,10 @@ for (const file of walk(functionsRoot)) {
           }
           const key = propertyName(property.name);
           if (key) keys.add(key);
-          if (key === 'acao' && ts.isPropertyAssignment(property)) actionInitializer = property.initializer;
+          if (key === 'acao') {
+            if (ts.isPropertyAssignment(property)) actionInitializer = property.initializer;
+            else failures.push(`${location}: acao de audit_log deve ser uma constante auditável`);
+          }
         }
         for (const key of keys) {
           if (!allowedKeys.has(key)) failures.push(`${location}: coluna inexistente em audit_log: ${key}`);

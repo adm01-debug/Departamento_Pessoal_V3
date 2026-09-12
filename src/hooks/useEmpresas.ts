@@ -37,6 +37,8 @@ export interface Empresa {
   fap: number | null;
   rat: number | null;
   terceiros: number | null;
+  simples_anexo: 'I' | 'II' | 'III' | 'IV' | 'V' | null;
+  aliquota_encargos_folha: number | null;
   cor_identificacao: string | null;
   ordem_exibicao: number | null;
   created_at: string;

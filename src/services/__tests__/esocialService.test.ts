@@ -227,9 +227,7 @@ describe('validarAnteDeEnviar', () => {
 function setupTransmission(evento: Record<string, unknown>) {
   mockFrom.mockReset();
   mockInvoke.mockReset();
-  mockFrom
-    .mockReturnValueOnce(makeChain({ data: null, error: null }))
-    .mockReturnValueOnce(makeChain({ data: evento, error: null }));
+  mockFrom.mockReturnValueOnce(makeChain({ data: evento, error: null }));
 }
 
 describe('enviarEvento', () => {
@@ -239,7 +237,6 @@ describe('enviarEvento', () => {
 
   it('rejeita transmissão não confirmada, inclusive quando a Edge respondeu um payload de falha', async () => {
     setupTransmission({ id: 'evento-1', tipo_evento: 'S-1200', dados: null });
-    mockFrom.mockReturnValueOnce(makeChain({ data: null, error: null }));
     mockInvoke.mockResolvedValue({
       data: { success: false, error: 'Integração eSocial não configurada para produção' },
       error: null,
@@ -248,6 +245,15 @@ describe('enviarEvento', () => {
     await expect(enviarEvento('evento-1', EMPRESA_ID)).rejects.toThrow('Falha na transmissão do evento eSocial');
     expect(mockInvoke).toHaveBeenCalledWith('enviar-esocial', {
       body: { empresaId: EMPRESA_ID, eventoId: 'evento-1' },
+    });
+  });
+
+  it('encaminha a concessão exclusiva da admissão para a Edge Function', async () => {
+    setupTransmission({ id: 'evento-1', tipo_evento: 'S-2200', dados: null });
+    mockInvoke.mockResolvedValue({ data: { success: true, protocolo: 'P-1' }, error: null });
+    await enviarEvento('evento-1', EMPRESA_ID, 'claim-1');
+    expect(mockInvoke).toHaveBeenCalledWith('enviar-esocial', {
+      body: { empresaId: EMPRESA_ID, eventoId: 'evento-1', claimToken: 'claim-1' },
     });
   });
 

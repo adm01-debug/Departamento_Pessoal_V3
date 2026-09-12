@@ -14,5 +14,6 @@ Deno.test('INSS uses the official 2026 progressive table and ceiling', () => {
 
 Deno.test('INSS fails closed for a competence without a homologated table', () => {
   assertThrows(() => calcularInssEmpregado(3000, '2027-01'), Error, 'Tabela INSS não homologada');
+  assertThrows(() => calcularInssEmpregado(0, '2027-01'), Error, 'Tabela INSS não homologada');
   assertThrows(() => calcularInssEmpregado(3000, '2026-13'), Error, 'Tabela INSS não homologada');
 });

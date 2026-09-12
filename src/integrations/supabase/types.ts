@@ -7175,6 +7175,7 @@ export type Database = {
       }
       empresas: {
         Row: {
+          aliquota_encargos_folha: number | null
           aliquota_simples: number | null
           ativa: boolean | null
           bairro: string | null
@@ -7197,6 +7198,7 @@ export type Database = {
           rat: number | null
           razao_social: string
           regime_tributario: Database["public"]["Enums"]["regime_tributario"]
+          simples_anexo: string | null
           telefone: string | null
           terceiros: number | null
           uf: string | null
@@ -7213,6 +7215,7 @@ export type Database = {
           cor_identificacao?: string | null
           created_at?: string
           email?: string | null
+          aliquota_encargos_folha?: number | null
           fap?: number | null
           id?: string
           inscricao_estadual?: string | null
@@ -7225,6 +7228,7 @@ export type Database = {
           rat?: number | null
           razao_social: string
           regime_tributario?: Database["public"]["Enums"]["regime_tributario"]
+          simples_anexo?: string | null
           telefone?: string | null
           terceiros?: number | null
           uf?: string | null
@@ -7241,6 +7245,7 @@ export type Database = {
           cor_identificacao?: string | null
           created_at?: string
           email?: string | null
+          aliquota_encargos_folha?: number | null
           fap?: number | null
           id?: string
           inscricao_estadual?: string | null
@@ -7253,6 +7258,7 @@ export type Database = {
           rat?: number | null
           razao_social?: string
           regime_tributario?: Database["public"]["Enums"]["regime_tributario"]
+          simples_anexo?: string | null
           telefone?: string | null
           terceiros?: number | null
           uf?: string | null
@@ -7837,6 +7843,8 @@ export type Database = {
           status: string | null
           tentativas_envio: number | null
           tipo_evento: string
+          transmission_claim_token: string | null
+          transmission_claimed_at: string | null
           updated_at: string
           xml: string | null
           xml_envio: string | null
@@ -7862,6 +7870,8 @@ export type Database = {
           status?: string | null
           tentativas_envio?: number | null
           tipo_evento: string
+          transmission_claim_token?: string | null
+          transmission_claimed_at?: string | null
           updated_at?: string
           xml?: string | null
           xml_envio?: string | null
@@ -7887,6 +7897,8 @@ export type Database = {
           status?: string | null
           tentativas_envio?: number | null
           tipo_evento?: string
+          transmission_claim_token?: string | null
+          transmission_claimed_at?: string | null
           updated_at?: string
           xml?: string | null
           xml_envio?: string | null
@@ -16102,6 +16114,7 @@ export type Database = {
           created_at: string
           duration_ms: number
           error_message: string | null
+          empresa_id: string | null
           id: string
           operation: string
           query_limit: number | null
@@ -16110,6 +16123,7 @@ export type Database = {
           rpc_name: string | null
           severity: string
           table_name: string | null
+          trace_id: string | null
           user_id: string | null
         }
         Insert: {
@@ -16117,6 +16131,7 @@ export type Database = {
           created_at?: string
           duration_ms?: number
           error_message?: string | null
+          empresa_id?: string | null
           id?: string
           operation: string
           query_limit?: number | null
@@ -16125,6 +16140,7 @@ export type Database = {
           rpc_name?: string | null
           severity?: string
           table_name?: string | null
+          trace_id?: string | null
           user_id?: string | null
         }
         Update: {
@@ -16132,6 +16148,7 @@ export type Database = {
           created_at?: string
           duration_ms?: number
           error_message?: string | null
+          empresa_id?: string | null
           id?: string
           operation?: string
           query_limit?: number | null
@@ -16140,6 +16157,7 @@ export type Database = {
           rpc_name?: string | null
           severity?: string
           table_name?: string | null
+          trace_id?: string | null
           user_id?: string | null
         }
         Relationships: []
@@ -16706,6 +16724,74 @@ export type Database = {
           nome?: string
         }
         Relationships: []
+      }
+      report_dispatch_attempts: {
+        Row: {
+          accepted_at: string | null
+          agendamento_id: string
+          content_sha256: string
+          created_at: string
+          dispatch_key_hash: string
+          empresa_id: string
+          html: string
+          id: string
+          provider_message_id: string | null
+          request_hash: string
+          signed_url: string
+          signed_url_expires_at: string
+          status: string
+          storage_path: string
+          subject: string
+          total_registros: number
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          agendamento_id: string
+          content_sha256: string
+          created_at?: string
+          dispatch_key_hash: string
+          empresa_id: string
+          html: string
+          id?: string
+          provider_message_id?: string | null
+          request_hash: string
+          signed_url: string
+          signed_url_expires_at: string
+          status?: string
+          storage_path: string
+          subject: string
+          total_registros: number
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          agendamento_id?: string
+          content_sha256?: string
+          created_at?: string
+          dispatch_key_hash?: string
+          empresa_id?: string
+          html?: string
+          id?: string
+          provider_message_id?: string | null
+          request_hash?: string
+          signed_url?: string
+          signed_url_expires_at?: string
+          status?: string
+          storage_path?: string
+          subject?: string
+          total_registros?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_dispatch_attempts_agendamento_id_fkey"
+            columns: ["agendamento_id"]
+            isOneToOne: false
+            referencedRelation: "relatorios_agendados"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       relatorios_agendados: {
         Row: {
@@ -21022,6 +21108,26 @@ export type Database = {
           },
         ]
       }
+      mv_telemetry_dashboard: {
+        Row: {
+          avg_ms: number | null
+          empresa_id: string | null
+          error_count: number | null
+          hour: string | null
+          max_ms: number | null
+          min_ms: number | null
+          operation: string | null
+          p50_ms: number | null
+          p75_ms: number | null
+          p90_ms: number | null
+          p95_ms: number | null
+          p99_ms: number | null
+          query_count: number | null
+          severity: string | null
+          table_name: string | null
+        }
+        Relationships: []
+      }
       pontos_abertos: {
         Row: {
           colaborador_id: string | null
@@ -21610,6 +21716,32 @@ export type Database = {
           snapshot_at: string | null
           tables_total: number | null
           tables_with_rls: number | null
+        }
+        Relationships: []
+      }
+      v_telemetry_last_hour: {
+        Row: {
+          avg_ms: number | null
+          empresa_id: string | null
+          error_count: number | null
+          max_ms: number | null
+          operation: string | null
+          query_count: number | null
+          severity: string | null
+          table_name: string | null
+        }
+        Relationships: []
+      }
+      v_telemetry_slow_queries: {
+        Row: {
+          created_at: string | null
+          duration_ms: number | null
+          empresa_id: string | null
+          id: string | null
+          operation: string | null
+          severity: string | null
+          table_name: string | null
+          user_id: string | null
         }
         Relationships: []
       }
@@ -22545,14 +22677,15 @@ export type Database = {
           p_admissao_id: string
           p_empresa_id: string
           p_evento_id: string
+          p_claim_token: string
           p_protocolo: string
           p_recibo?: string
         }
         Returns: undefined
       }
       fail_admission_esocial_event: {
-        Args: { p_admissao_id: string; p_empresa_id: string; p_evento_id: string }
-        Returns: undefined
+        Args: { p_admissao_id: string; p_empresa_id: string; p_evento_id: string; p_claim_token: string }
+        Returns: Json
       }
       check_rate_limit: {
         Args: {

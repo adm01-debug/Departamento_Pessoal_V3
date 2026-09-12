@@ -64,7 +64,7 @@ jobs:
             ELSE pg_catalog.current_database() || ':UNEXPECTED_DATABASE'
           END;
           DO $preflight$
-          DECLARE found integer;
+          DECLARE found integer; ledger_columns integer;
           BEGIN
             SELECT count(*) INTO found
             FROM pg_catalog.pg_class c
@@ -80,6 +80,17 @@ jobs:
             );
             IF found <> 16 THEN
               RAISE EXCEPTION 'canonical migration prerequisites missing (%/16)', found;
+            END IF;
+            IF to_regclass('supabase_migrations.schema_migrations') IS NULL THEN
+              RAISE EXCEPTION 'canonical migration ledger is missing';
+            END IF;
+            SELECT count(*) INTO ledger_columns
+            FROM information_schema.columns
+            WHERE table_schema='supabase_migrations'
+              AND table_name='schema_migrations'
+              AND column_name IN ('version','name','statements');
+            IF ledger_columns <> 3 THEN
+              RAISE EXCEPTION 'canonical migration ledger contract is incompatible';
             END IF;
           END
           $preflight$;
@@ -108,7 +119,11 @@ jobs:
             20260912203000_p1_security_cron_contract.sql \
             20260912204000_p1_admission_esocial_claim.sql \
             20260912205000_p1_payroll_audit_read_contract.sql \
-            20260912206000_p1_audit_action_contract.sql
+            20260912206000_p1_audit_action_contract.sql \
+            20260912207000_p1_idempotency_monitoring_contract.sql \
+            20260912208000_p1_company_payroll_tax_contract.sql \
+            20260912209000_p1_tenant_telemetry_contract.sql \
+            20260912210000_p1_report_dispatch_idempotency.sql
           do
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
           done
@@ -132,11 +147,23 @@ jobs:
         if: inputs.mode == 'apply'
         run: |
           set -euo pipefail
-          npx --yes supabase@2.117.0 migration up \
-            --db-url "$SUPABASE_DB_URL" \
-            --include-all \
-            --workdir "${{ steps.stage.outputs.dir }}" \
-            --yes
+          stage_dir="${{ steps.stage.outputs.dir }}"
+          # Execute the same closed list validated above and record only those
+          # versions. This deliberately avoids `db push --include-all` and
+          # `migration repair`, which are unsafe while the historical local
+          # ledger differs from the canonical ledger.
+          {
+            echo 'BEGIN;'
+            for migration in "$stage_dir"/supabase/migrations/*.sql; do
+              filename="$(basename "$migration")"
+              version="${filename%%_*}"
+              name="${filename#*_}"
+              name="${name%.sql}"
+              printf '\\i %s\n' "$migration"
+              printf "INSERT INTO supabase_migrations.schema_migrations(version,name,statements) VALUES ('%s','%s',ARRAY[]::text[]) ON CONFLICT (version) DO NOTHING;\n" "$version" "$name"
+            done
+            echo 'COMMIT;'
+          } | psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1
 
       - name: Verificar objetos e ledger
         if: inputs.mode == 'apply'
@@ -171,8 +198,8 @@ jobs:
               ('sec-verify-seals-weekly','15 3 * * 1','SELECT public.sec_verify_seals_scan();')
             )) = 3,
             'admission_esocial', to_regprocedure('public.claim_admission_esocial_event(uuid,uuid)') IS NOT NULL
-              AND to_regprocedure('public.complete_admission_esocial_event(uuid,uuid,uuid,text,text)') IS NOT NULL
-              AND to_regprocedure('public.fail_admission_esocial_event(uuid,uuid,uuid)') IS NOT NULL
+              AND to_regprocedure('public.complete_admission_esocial_event(uuid,uuid,uuid,uuid,text,text)') IS NOT NULL
+              AND to_regprocedure('public.fail_admission_esocial_event(uuid,uuid,uuid,uuid)') IS NOT NULL
               AND EXISTS (SELECT 1 FROM pg_catalog.pg_attribute
                 WHERE attrelid='public.esocial_eventos'::regclass AND attname='admissao_id' AND NOT attisdropped),
             'contract_signature', to_regprocedure('public.contrato_assinar_por_token(text,text,text,inet,text)') IS NOT NULL
@@ -191,10 +218,30 @@ jobs:
               FROM pg_catalog.pg_constraint
               WHERE conrelid='public.audit_log'::regclass AND conname='audit_log_acao_check'
             ),
+            'idempotency_monitor', pg_get_functiondef('public.check_idempotency_anomalies()'::regprocedure)
+              LIKE '%IDEMPOTENCY_STALE_IN_PROGRESS%',
+            'company_tax_contract', EXISTS (
+              SELECT 1 FROM pg_constraint WHERE conrelid='public.empresas'::regclass
+                AND conname='empresas_rat_fraction_check' AND convalidated
+            ) AND EXISTS (
+              SELECT 1 FROM information_schema.columns WHERE table_schema='public'
+                AND table_name='empresas' AND column_name='simples_anexo'
+            ),
+            'tenant_telemetry', EXISTS (
+              SELECT 1 FROM information_schema.columns WHERE table_schema='public'
+                AND table_name='query_telemetry' AND column_name='empresa_id'
+            ) AND EXISTS (
+              SELECT 1 FROM pg_catalog.pg_attribute
+              WHERE attrelid='public.mv_telemetry_dashboard'::regclass
+                AND attname='empresa_id' AND NOT attisdropped
+            ) AND NOT has_table_privilege('authenticated','public.query_telemetry','SELECT'),
+            'report_dispatch_idempotency', to_regclass('public.report_dispatch_attempts') IS NOT NULL
+              AND NOT has_table_privilege('authenticated','public.report_dispatch_attempts','SELECT'),
             'ledger_count', (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = ANY (ARRAY[
               '20260911194000','20260911200000','20260912190000','20260912191000','20260912192000',
               '20260912193000','20260912194000','20260912195000','20260912200000','20260912201000',
-              '20260912202000','20260912203000','20260912204000','20260912205000','20260912206000'
+              '20260912202000','20260912203000','20260912204000','20260912205000','20260912206000',
+              '20260912207000','20260912208000','20260912209000','20260912210000'
             ]))
           );
           SQL
@@ -202,7 +249,7 @@ jobs:
           echo "$result"
           node -e '
             const result = JSON.parse(process.argv[1]);
-            const expectedTrue = ["rate_limit","membership","authz","claims","provisions","destination","audit","recipients","backup_bucket","pcs_tables","pcs_functions","security_cron_functions","security_cron_jobs","admission_esocial","contract_signature","payroll_audit_read","audit_actions"];
-            if (expectedTrue.some((key) => result[key] !== true) || Number(result.ledger_count) !== 15) process.exit(1);
+            const expectedTrue = ["rate_limit","membership","authz","claims","provisions","destination","audit","recipients","backup_bucket","pcs_tables","pcs_functions","security_cron_functions","security_cron_jobs","admission_esocial","contract_signature","payroll_audit_read","audit_actions","idempotency_monitor","company_tax_contract","tenant_telemetry","report_dispatch_idempotency"];
+            if (expectedTrue.some((key) => result[key] !== true) || Number(result.ledger_count) !== 19) process.exit(1);
           ' "$result"
           echo 'CANONICAL_SCOPED_MIGRATIONS_OK'

@@ -232,15 +232,17 @@ export async function beginIdempotency(
     };
   }
 
-  if (existing.status === "completed" && existing.response_body) {
+  if (existing.status === "completed") {
+    const replayStatus = existing.response_status ?? 200;
+    const statusForbidsBody = replayStatus === 204 || replayStatus === 205 || replayStatus === 304;
     return {
       skipped: false,
       reason: 'REPLAY',
       existingId: existing.id,
       keyHash,
       requestHash,
-      replay: new Response(JSON.stringify(existing.response_body), {
-        status: existing.response_status ?? 200,
+      replay: new Response(statusForbidsBody ? null : JSON.stringify(existing.response_body ?? null), {
+        status: replayStatus,
         headers: {
           ...getCorsHeaders(params.request),
           "Content-Type": "application/json",

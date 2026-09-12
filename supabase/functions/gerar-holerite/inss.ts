@@ -18,10 +18,10 @@ const TABLES: Readonly<Record<string, readonly InssBracket[]>> = {
 };
 
 export function calcularInssEmpregado(base: number, competencia: string): number {
-  if (!Number.isFinite(base) || base <= 0) return 0;
   const year = competencia.match(/^(\d{4})-(?:0[1-9]|1[0-2])$/)?.[1];
   const brackets = year ? TABLES[year] : undefined;
   if (!brackets) throw new Error(`Tabela INSS não homologada para a competência ${competencia}`);
+  if (!Number.isFinite(base) || base <= 0) return 0;
 
   let previousLimit = 0;
   let total = 0;

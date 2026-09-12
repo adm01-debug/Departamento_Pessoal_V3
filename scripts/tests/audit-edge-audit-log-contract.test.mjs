@@ -46,6 +46,19 @@ try {
     throw new Error(`invalid alias escaped the checker:\n${invalid.stdout}${invalid.stderr}`);
   }
 
+  const shorthand = runFixture(`
+    const acao = 'PAYROLL_CLOSE';
+    await client.from('audit_log').insert({
+      tabela: 'folhas_pagamento', registro_id: 'f1', acao
+    });
+  `);
+  if (
+    shorthand.status === 0 ||
+    !shorthand.stderr.includes('acao de audit_log deve ser uma constante auditável')
+  ) {
+    throw new Error(`shorthand action escaped the checker:\n${shorthand.stdout}${shorthand.stderr}`);
+  }
+
   console.log('EDGE_AUDIT_LOG_ALIAS_TEST_OK');
 } finally {
   rmSync(fixtureRoot, { recursive: true, force: true });

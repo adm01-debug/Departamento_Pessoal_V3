@@ -49,6 +49,12 @@ Deno.test("segredo interno é fail-closed e não aceita aproximações", async (
 
 Deno.test("chamada agendada fica vinculada ao registro e à autoria persistidos", () => {
   assert(requestMatchesStoredReportSchedule(request, schedule));
+  assert(
+    requestMatchesStoredReportSchedule(request, {
+      ...schedule,
+      email_destinatario: "  RH@EXAMPLE.INVALID ",
+    }),
+  );
   assertEquals(
     requestMatchesStoredReportSchedule(
       { ...request, emailDestinatario: "externo@example.invalid" },

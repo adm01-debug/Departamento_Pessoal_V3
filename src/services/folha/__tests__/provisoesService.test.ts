@@ -9,7 +9,14 @@ vi.mock('@/integrations/supabase/client', () => ({
 
 import { calcularAliquotaEncargosProvisao, calcularProvisaoColaborador, provisoesService } from '../provisoesService';
 
-const lucroReal = { regime_tributario: 'lucro_real' as const, rat: 0.02, fap: 1, terceiros: 0.058 };
+const lucroReal = {
+  regime_tributario: 'lucro_real' as const,
+  rat: 0.02,
+  fap: 1,
+  terceiros: 0.058,
+  simples_anexo: null,
+  aliquota_encargos_folha: null,
+};
 
 function makeColabChain(data: any[] | null, error: any = null) {
   const result = { data, error };
@@ -114,8 +121,29 @@ describe('provisoesService.calcularProvisoesMensais', () => {
   it('derives charges from the company tax regime and RAT × FAP configuration', () => {
     expect(calcularAliquotaEncargosProvisao(lucroReal)).toBeCloseTo(0.358, 6);
     expect(calcularAliquotaEncargosProvisao({ ...lucroReal, rat: 0.03, fap: 1.5 })).toBeCloseTo(0.383, 6);
-    expect(calcularAliquotaEncargosProvisao({ ...lucroReal, regime_tributario: 'simples_nacional' })).toBe(0.08);
-    expect(calcularAliquotaEncargosProvisao({ ...lucroReal, regime_tributario: 'mei' })).toBe(0.08);
+    expect(
+      calcularAliquotaEncargosProvisao({
+        ...lucroReal,
+        regime_tributario: 'simples_nacional',
+        simples_anexo: 'III',
+      })
+    ).toBe(0.08);
+    expect(
+      calcularAliquotaEncargosProvisao({
+        ...lucroReal,
+        regime_tributario: 'simples_nacional',
+        simples_anexo: 'IV',
+      })
+    ).toBeCloseTo(0.3, 6);
+    expect(calcularAliquotaEncargosProvisao({ ...lucroReal, regime_tributario: 'mei' })).toBe(0.11);
+    expect(calcularAliquotaEncargosProvisao({ ...lucroReal, aliquota_encargos_folha: 0.3125 })).toBe(0.3125);
+    expect(() =>
+      calcularAliquotaEncargosProvisao({
+        ...lucroReal,
+        regime_tributario: 'simples_nacional',
+        simples_anexo: null,
+      })
+    ).toThrow('Anexo do Simples Nacional');
   });
 
   it('uses the supplied effective company rate in collaborator provisions', () => {
@@ -132,5 +160,7 @@ describe('provisoesService.calcularProvisoesMensais', () => {
       'Configuração tributária da empresa não encontrada'
     );
     expect(() => calcularAliquotaEncargosProvisao({ ...lucroReal, rat: 2 })).toThrow('RAT');
+    expect(() => calcularAliquotaEncargosProvisao({ ...lucroReal, rat: 0.031 })).toThrow('RAT');
+    expect(() => calcularAliquotaEncargosProvisao({ ...lucroReal, terceiros: 0.201 })).toThrow('Terceiros');
   });
 });

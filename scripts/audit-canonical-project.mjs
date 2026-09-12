@@ -81,10 +81,13 @@ expect(
   'E2E público de PR recebe somente identificadores públicos por Repository Variables'
 );
 expect(
-  !publicJob.includes('E2E_USER_EMAIL:')
+  !publicJob.includes('${{ secrets.')
+    && !publicJob.includes('E2E_USER_EMAIL:')
     && !publicJob.includes('E2E_USER_PASSWORD:')
-    && !publicJob.includes('E2E_NON_ADMIN_EMAIL:'),
-  'E2E público de PR não recebe identidades de escrita'
+    && !publicJob.includes('E2E_NON_ADMIN_EMAIL:')
+    && !publicJob.includes('E2E_NON_ADMIN_PASSWORD:')
+    && !publicJob.includes('MAILOSAUR_'),
+  'E2E público de PR não recebe secrets nem identidades de escrita'
 );
 expect(
   authenticatedJob.includes("if: github.event_name == 'push' && github.ref == 'refs/heads/main'")

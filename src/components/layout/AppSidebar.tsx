@@ -389,7 +389,10 @@ const SecurityAlertsCount = memo(function SecurityAlertsCount() {
       // tabela sensível ao gateway genérico.
       const { data, error } = await supabase.rpc('get_security_alerts_summary', { _limit: 100 });
       if (error) return 0; // RLS/permissão → some silenciosamente
-      return Array.isArray(data) ? data.length : 0;
+      // A RPC é deliberadamente limitada a 100 linhas. O render abaixo
+      // transforma 100 em `99+`, preservando a informação de que o backlog
+      // é maior que o valor enumerado em vez de apresentar um total falso.
+      return Array.isArray(data) ? Math.min(data.length, 100) : 0;
     },
     staleTime: 30_000,
     refetchInterval: 60_000, // fallback caso realtime caia

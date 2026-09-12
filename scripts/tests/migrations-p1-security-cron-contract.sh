@@ -81,6 +81,18 @@ SQL
 alerts="$(run_psql -qAtc "SELECT count(*) FROM public.historico_alertas WHERE tipo IN ('seguranca_rls','integridade_selos')")"
 [ "$alerts" = '2' ] || { echo "security alerts were not persisted: $alerts" >&2; exit 1; }
 
+run_psql <<'SQL' >/dev/null
+CREATE OR REPLACE FUNCTION public.sec_verify_seals()
+RETURNS TABLE(tabela text,selados bigint,divergentes bigint)
+LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path=pg_catalog
+AS $$ BEGIN RAISE EXCEPTION 'fixture dependency failure'; END $$;
+SQL
+failed_scan="$(run_psql -qAtc "SET ROLE service_role; SELECT public.sec_verify_seals_scan()->>'ok';")"
+[ "$failed_scan" = 'false' ] || { echo "seal scan exception was not converted to failed result: $failed_scan" >&2; exit 1; }
+[ "$(run_psql -qAtc "SELECT count(*) FROM public.historico_alertas WHERE tipo='integridade_selos'")" = '2' ] || {
+  echo 'seal scan exception was not recorded in alert stream' >&2; exit 1;
+}
+
 run_psql -qAtc "INSERT INTO public.sec_policy_regressions(scan_at,tabela,policy_name,motivo) VALUES (now()-interval '181 days','old','old','old')" >/dev/null
 purged="$(run_psql -qAt <<'SQL'
 SET ROLE service_role;

@@ -144,9 +144,9 @@ describe('contratacaoService.enviarLinkCandidato', () => {
 describe('contratacaoService.transmitirESocial', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockClaimEvento.mockResolvedValue('evento-1');
+    mockClaimEvento.mockResolvedValue({ eventoId: 'evento-1', claimToken: 'claim-1', alreadySent: false });
     mockCompleteEvento.mockResolvedValue(undefined);
-    mockFailEvento.mockResolvedValue(undefined);
+    mockFailEvento.mockResolvedValue('failed');
     mockEnviarEvento.mockResolvedValue({ success: true, protocolo: 'PROTO-REAL', recibo: 'REC-REAL' });
   });
 
@@ -155,8 +155,15 @@ describe('contratacaoService.transmitirESocial', () => {
 
     expect(result).toBe(true);
     expect(mockClaimEvento).toHaveBeenCalledWith('adm-1', EMPRESA_ID);
-    expect(mockEnviarEvento).toHaveBeenCalledWith('evento-1', EMPRESA_ID);
-    expect(mockCompleteEvento).toHaveBeenCalledWith('adm-1', EMPRESA_ID, 'evento-1', 'PROTO-REAL', 'REC-REAL');
+    expect(mockEnviarEvento).toHaveBeenCalledWith('evento-1', EMPRESA_ID, 'claim-1');
+    expect(mockCompleteEvento).toHaveBeenCalledWith(
+      'adm-1',
+      EMPRESA_ID,
+      'evento-1',
+      'claim-1',
+      'PROTO-REAL',
+      'REC-REAL'
+    );
     expect(mockFailEvento).not.toHaveBeenCalled();
   });
 
@@ -167,7 +174,7 @@ describe('contratacaoService.transmitirESocial', () => {
       'Falha na transmissão para o eSocial'
     );
     expect(mockCompleteEvento).not.toHaveBeenCalled();
-    expect(mockFailEvento).toHaveBeenCalledWith('adm-1', EMPRESA_ID, 'evento-1');
+    expect(mockFailEvento).toHaveBeenCalledWith('adm-1', EMPRESA_ID, 'evento-1', 'claim-1');
   });
 
   it('recupera o status quando o transporte falha e preserva a causa original', async () => {
@@ -177,7 +184,7 @@ describe('contratacaoService.transmitirESocial', () => {
     await expect(contratacaoService.transmitirESocial('adm-1', EMPRESA_ID)).rejects.toThrow(
       'Falha na transmissão para o eSocial'
     );
-    expect(mockFailEvento).toHaveBeenCalledWith('adm-1', EMPRESA_ID, 'evento-1');
+    expect(mockFailEvento).toHaveBeenCalledWith('adm-1', EMPRESA_ID, 'evento-1', 'claim-1');
   });
 
   it('não tenta recuperar sem uma identidade de evento confirmada pelo banco', async () => {
@@ -195,6 +202,18 @@ describe('contratacaoService.transmitirESocial', () => {
       'Falha na transmissão para o eSocial'
     );
     expect(mockCompleteEvento).not.toHaveBeenCalled();
-    expect(mockFailEvento).toHaveBeenCalledWith('adm-1', EMPRESA_ID, 'evento-1');
+    expect(mockFailEvento).toHaveBeenCalledWith('adm-1', EMPRESA_ID, 'evento-1', 'claim-1');
+  });
+
+  it('trata uma admissão já concluída por concorrente como sucesso idempotente', async () => {
+    mockClaimEvento.mockResolvedValueOnce({ eventoId: 'evento-1', claimToken: null, alreadySent: true });
+    await expect(contratacaoService.transmitirESocial('adm-1', EMPRESA_ID)).resolves.toBe(true);
+    expect(mockEnviarEvento).not.toHaveBeenCalled();
+  });
+
+  it('trata conclusão concorrente detectada na recuperação como sucesso', async () => {
+    mockEnviarEvento.mockRejectedValueOnce(new Error('timeout'));
+    mockFailEvento.mockResolvedValueOnce('already_sent');
+    await expect(contratacaoService.transmitirESocial('adm-1', EMPRESA_ID)).resolves.toBe(true);
   });
 });

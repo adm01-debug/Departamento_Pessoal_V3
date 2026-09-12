@@ -32,6 +32,7 @@ import { assertSandboxAmbiente, transmissionHttpStatus } from './transmissionSta
 const BodySchema = z.object({
   empresaId: z.string().uuid(),
   eventoId: z.string().uuid(),
+  claimToken: z.string().uuid().optional(),
   idempotency_key: z.string().optional(),
   idempotencyKey: z.string().optional(),
 });
@@ -90,7 +91,7 @@ serve(async (req: Request): Promise<Response> => {
     const raw = _pb;
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) return createErrorResponse('Payload inválido', 422, 'VALIDATION_ERROR', undefined, req);
-    const { empresaId, eventoId } = parsed.data;
+    const { empresaId, eventoId, claimToken } = parsed.data;
 
     const supabase = createClient(supabaseUrl, serviceKey, {
       auth: { persistSession: false, autoRefreshToken: false },
@@ -120,6 +121,16 @@ serve(async (req: Request): Promise<Response> => {
       .eq('empresa_id', empresaId)
       .maybeSingle();
     if (eError || !evento) return createErrorResponse('Evento não encontrado', 404, 'NOT_FOUND', undefined, req);
+
+    if (
+      evento.status === 'processando' &&
+      (!claimToken || evento.transmission_claim_token !== claimToken)
+    ) {
+      return createErrorResponse(
+        'Evento eSocial já possui uma transmissão em andamento',
+        409, 'ESOCIAL_TRANSMISSION_IN_PROGRESS', undefined, req,
+      );
+    }
 
     // Idempotência: bloqueia retransmissão de evento já enviado
     if (evento.status === 'enviado' && evento.protocolo) {

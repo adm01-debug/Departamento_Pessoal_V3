@@ -154,6 +154,13 @@ BEGIN
   RETURN jsonb_build_object(
     'ok', true, 'divergentes', divergent_count, 'detalhe', details
   );
+EXCEPTION WHEN OTHERS THEN
+  INSERT INTO public.historico_alertas (tipo, nivel, valor, limite, mensagem)
+  VALUES (
+    'integridade_selos', 'critico', 1, 0,
+    'Integrity seal scan failed: ' || left(SQLERRM, 500)
+  );
+  RETURN jsonb_build_object('ok', false, 'erro', 'seal scan failed');
 END
 $function$;
 

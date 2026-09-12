@@ -1,5 +1,5 @@
 import { assertEquals } from 'https://deno.land/std@0.224.0/assert/mod.ts';
-import { extractTenantWriteScope, hasCompleteTenantWriteScope } from './tenantScope.ts';
+import { extractTenantWriteScope, hasCompleteTenantWriteScope, preservesTenantOnUpdate } from './tenantScope.ts';
 
 Deno.test('tenant write scope accepts only fully scoped business rows', () => {
   const scope = extractTenantWriteScope('folhas_pagamento', [
@@ -35,4 +35,13 @@ Deno.test('company writes scope by their explicit company id', () => {
   assertEquals([...scope.empresaIds], ['empresa-nova']);
   assertEquals(scope.missingTenantRows, 0);
   assertEquals(hasCompleteTenantWriteScope(scope), true);
+});
+
+Deno.test('tenant update can preserve but never reassign its company', () => {
+  const targets = new Set(['empresa-a']);
+  assertEquals(preservesTenantOnUpdate('folhas_pagamento', { status: 'fechada' }, targets), true);
+  assertEquals(preservesTenantOnUpdate('folhas_pagamento', { empresa_id: 'empresa-a' }, targets), true);
+  assertEquals(preservesTenantOnUpdate('folhas_pagamento', { empresa_id: 'empresa-b' }, targets), false);
+  assertEquals(preservesTenantOnUpdate('empresas', { id: 'empresa-b' }, targets), false);
+  assertEquals(preservesTenantOnUpdate('folhas_pagamento', [{ empresa_id: 'empresa-a' }], targets), false);
 });

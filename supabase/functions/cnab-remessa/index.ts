@@ -103,6 +103,7 @@ Deno.serve(async (req) => {
       return createErrorResponse(
         `Total do lote excede R$ ${Number(MAX_TOTAL_CENTAVOS) / 100}`,
         422, 'AMOUNT_ABOVE_LIMIT',
+        undefined, req,
       );
     }
 

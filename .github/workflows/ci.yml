@@ -26,6 +26,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-node@v7
         with:
           node-version: '22'
@@ -51,6 +52,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-node@v7
         with:
           node-version: '22'
@@ -72,6 +74,8 @@ jobs:
       RUN_LIVE_RLS_TESTS: 'true'
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v7
         with:
           node-version: '22'
@@ -85,6 +89,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
@@ -118,6 +124,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v7
         with:
           node-version: '22'
@@ -171,6 +179,10 @@ jobs:
           bash scripts/tests/migrations-p1-admission-esocial-claim.sh
           bash scripts/tests/migrations-p1-payroll-audit-read-contract.sh
           bash scripts/tests/migrations-p1-audit-action-contract.sh
+          bash scripts/tests/migrations-p1-idempotency-monitoring-contract.sh
+          bash scripts/tests/migrations-p1-company-payroll-tax-contract.sh
+          bash scripts/tests/migrations-p1-tenant-telemetry-contract.sh
+          bash scripts/tests/migrations-p1-report-dispatch-idempotency.sh
 
   db-integrity:
     name: Integridade do banco (search_path x extensões)
@@ -186,6 +198,8 @@ jobs:
       DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v7
         with:
           node-version: '22'

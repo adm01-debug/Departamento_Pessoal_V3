@@ -61,8 +61,10 @@ async function getBridgeKpis(
     () => supabase
       .from('mv_telemetry_dashboard')
       .select('p95_ms')
+      .eq('empresa_id', empresaId)
       .gte('hour', new Date(Date.now() - 3600_000).toISOString())
-      .limit(100)
+      .order('p95_ms', { ascending: false })
+      .limit(1)
   );
 
   // A MV não possui uma contagem exata de queries >5s. As duas contagens
@@ -72,12 +74,14 @@ async function getBridgeKpis(
     safeCount(() =>
       supabase.from('query_telemetry')
         .select('id', { count: 'exact', head: true })
+        .eq('empresa_id', empresaId)
         .in('severity', ['error', 'fatal'])
         .gte('created_at', since)
     ),
     safeCount(() =>
       supabase.from('query_telemetry')
         .select('id', { count: 'exact', head: true })
+        .eq('empresa_id', empresaId)
         .gt('duration_ms', 5000)
         .gte('created_at', since)
     ),

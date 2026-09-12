@@ -130,7 +130,16 @@ export async function criarEvento(evento: {
   return data as ESocialEvento;
 }
 
-export async function claimEventoAdmissaoESocial(admissaoId: string, empresaId: string): Promise<string> {
+export interface AdmissionESocialClaim {
+  eventoId: string;
+  claimToken: string | null;
+  alreadySent: boolean;
+}
+
+export async function claimEventoAdmissaoESocial(
+  admissaoId: string,
+  empresaId: string
+): Promise<AdmissionESocialClaim> {
   const { data, error } = await (supabase as any).rpc('claim_admission_esocial_event', {
     p_admissao_id: admissaoId,
     p_empresa_id: empresaId,
@@ -138,13 +147,17 @@ export async function claimEventoAdmissaoESocial(admissaoId: string, empresaId: 
   if (error) throw error;
   const eventoId = data && typeof data === 'object' && typeof data.evento_id === 'string' ? data.evento_id : null;
   if (!eventoId) throw new Error('O banco não retornou a identidade do evento S-2200');
-  return eventoId;
+  const alreadySent = data.state === 'already_sent';
+  const claimToken = typeof data.claim_token === 'string' ? data.claim_token : null;
+  if (!alreadySent && !claimToken) throw new Error('O banco não retornou a concessão exclusiva do evento S-2200');
+  return { eventoId, claimToken, alreadySent };
 }
 
 export async function completeEventoAdmissaoESocial(
   admissaoId: string,
   empresaId: string,
   eventoId: string,
+  claimToken: string,
   protocolo: string | null,
   recibo: string | null
 ): Promise<void> {
@@ -152,6 +165,7 @@ export async function completeEventoAdmissaoESocial(
     p_admissao_id: admissaoId,
     p_empresa_id: empresaId,
     p_evento_id: eventoId,
+    p_claim_token: claimToken,
     p_protocolo: protocolo,
     p_recibo: recibo,
   });
@@ -161,14 +175,21 @@ export async function completeEventoAdmissaoESocial(
 export async function failEventoAdmissaoESocial(
   admissaoId: string,
   empresaId: string,
-  eventoId: string
-): Promise<void> {
-  const { error } = await (supabase as any).rpc('fail_admission_esocial_event', {
+  eventoId: string,
+  claimToken: string
+): Promise<'failed' | 'already_sent' | 'not_recorded'> {
+  const { data, error } = await (supabase as any).rpc('fail_admission_esocial_event', {
     p_admissao_id: admissaoId,
     p_empresa_id: empresaId,
     p_evento_id: eventoId,
+    p_claim_token: claimToken,
   });
   if (error) throw error;
+  const state = data && typeof data === 'object' ? data.state : null;
+  if (state !== 'failed' && state !== 'already_sent' && state !== 'not_recorded') {
+    throw new Error('Resultado inválido ao recuperar admissão eSocial');
+  }
+  return state;
 }
 
 export async function validarAnteDeEnviar(
@@ -204,14 +225,12 @@ function transmissionFailureMessage(payload: unknown): string {
   return 'A transmissão não foi confirmada pelo eSocial';
 }
 
-export async function enviarEvento(eventoId: string, empresaId: string): Promise<ESocialTransmissionResult> {
+export async function enviarEvento(
+  eventoId: string,
+  empresaId: string,
+  claimToken?: string
+): Promise<ESocialTransmissionResult> {
   try {
-    await supabase
-      .from('esocial_eventos')
-      .update({ status: 'processando' })
-      .eq('id', eventoId)
-      .eq('empresa_id', empresaId);
-
     const { data: evento } = await supabase
       .from('esocial_eventos')
       .select('*')
@@ -226,41 +245,20 @@ export async function enviarEvento(eventoId: string, empresaId: string): Promise
     if (evento?.dados && evento?.tipo_evento) {
       const validacao = validarEvento(evento.tipo_evento, evento.dados as Record<string, any>);
       if (!validacao.valid) {
-        await supabase
-          .from('esocial_eventos')
-          .update({
-            status: 'erro',
-            erros: { validacao: validacao.errors } as any,
-          })
-          .eq('id', eventoId)
-          .eq('empresa_id', empresaId);
         throw new Error('Falha na validação do evento');
       }
     }
 
     const { data, error } = await supabase.functions.invoke('enviar-esocial', {
-      body: { empresaId, eventoId },
+      body: { empresaId, eventoId, ...(claimToken ? { claimToken } : {}) },
     });
 
     if (error) {
-      await supabase
-        .from('esocial_eventos')
-        .update({
-          status: 'erro',
-          erros: { mensagem: error.message },
-        })
-        .eq('id', eventoId)
-        .eq('empresa_id', empresaId);
       throw error;
     }
 
     if (!data || data.success !== true) {
       const message = transmissionFailureMessage(data);
-      await supabase
-        .from('esocial_eventos')
-        .update({ status: 'erro', erros: { mensagem: message } })
-        .eq('id', eventoId)
-        .eq('empresa_id', empresaId);
       throw new Error(message);
     }
 

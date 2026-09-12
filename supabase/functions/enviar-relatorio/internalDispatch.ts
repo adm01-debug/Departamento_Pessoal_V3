@@ -75,5 +75,5 @@ export function requestMatchesStoredReportSchedule(
     request.empresaId === schedule.empresa_id &&
     request.tipoRelatorio === schedule.tipo_relatorio &&
     request.formato === schedule.formato &&
-    request.emailDestinatario === schedule.email_destinatario;
+    request.emailDestinatario === schedule.email_destinatario.trim().toLowerCase();
 }
