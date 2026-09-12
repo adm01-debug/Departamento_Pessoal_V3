@@ -7,7 +7,7 @@
  *   1. Escopo por empresa_id (RLS-like — cada tenant vê só seus dashboards)
  *   2. TTL curto: 3 horas (token longo = risco de vazamento)
  *   3. Cache em memória: tokens reuse por 3h sem re-gerar
- *   4. Metabase em offline → fallback flag para frontend usar gráficos recharts
+ *   4. Metabase offline → estado explícito de indisponibilidade, sem números fictícios
  *
  * Cenários de falha simulados:
  *   1. Metabase offline → healthcheck falha → retorna { metabaseOk: false }
@@ -20,8 +20,9 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders } from '../_shared/contract.ts';
-import { logger } from '../_shared/logger.ts';
+import { log } from '../_shared/logger.ts';
 import { safeFetch } from '../_shared/safe-fetch.ts';
+import { metabaseUnavailablePayload } from './availability.ts';
 
 const METABASE_URL   = Deno.env.get('METABASE_URL')          ?? '';
 const METABASE_SECRET = Deno.env.get('METABASE_SECRET_KEY')   ?? '';
@@ -184,18 +185,13 @@ serve(async (req: Request): Promise<Response> => {
     const metabaseOk = await metabaseHealthCheck();
 
     if (!metabaseOk) {
-      // Metabase offline → retorna flag para frontend usar fallback recharts
-      logger.warn('[metabase-embed] Metabase indisponivel — retornando fallback', {
+      log.warn('metabase_unavailable', {
         userId: user.id, empresaId, dashboardId: dashId,
       });
-      return new Response(JSON.stringify({
-        metabaseOk: false,
-        fallback: true,
-        message: 'Metabase indisponivel — usando gráficos nativos',
-        dashboardId: dashId,
-        // Params de filtro para o fallback recharts
-        filterParams: params,
-      }), { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify(metabaseUnavailablePayload(dashId)), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     // ── 7. Verificar cache ─────────────────────────────────────
@@ -203,7 +199,7 @@ serve(async (req: Request): Promise<Response> => {
     if (!forceRefresh) {
       const cached = getCachedToken(ck);
       if (cached) {
-        logger.info('[metabase-embed] Token cache hit', { dashboardId: dashId, userId: user.id });
+        log.info('metabase_token_cache_hit', { dashboardId: dashId, userId: user.id });
         return new Response(JSON.stringify({
           metabaseOk: true,
           token: cached,
@@ -217,7 +213,7 @@ serve(async (req: Request): Promise<Response> => {
 
     // ── 8. Gerar JWT do Metabase ────────────────────────────────
     if (!METABASE_SECRET) {
-      logger.error('[metabase-embed] METABASE_SECRET_KEY nao configurado');
+      log.error('metabase_secret_missing');
       return new Response(JSON.stringify({
         error: 'Configuracao incompleta — contacte o administrador',
       }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
@@ -246,7 +242,7 @@ serve(async (req: Request): Promise<Response> => {
       for (const [k] of oldest) tokenCache.delete(k);
     }
 
-    logger.info('[metabase-embed] Token gerado', {
+    log.info('metabase_token_generated', {
       userId: user.id, empresaId, dashboardId: dashId, ttlMs: TOKEN_TTL_MS,
     });
 
@@ -261,7 +257,7 @@ serve(async (req: Request): Promise<Response> => {
     }), { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
   } catch (err) {
-    logger.error('[metabase-embed] Erro interno', { error: String(err) });
+    log.error('metabase_embed_failed', { error: String(err) });
     return new Response(JSON.stringify({
       error: 'Erro interno ao gerar token de embed',
     }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });

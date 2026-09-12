@@ -77,7 +77,7 @@ jobs:
         # aqui causam falhas silenciosas em produção.
         run: deno check --no-lock --node-modules-dir=false supabase/functions/external-db-bridge/index.ts
       - name: Testes unitários compartilhados das Edge Functions
-        run: deno test --allow-env --no-lock --node-modules-dir=false supabase/functions/_shared/*.test.ts supabase/functions/metrics/*.test.ts supabase/functions/auth-login/*.test.ts supabase/functions/backup-automatico/*.test.ts supabase/functions/enviar-esocial/*.test.ts supabase/functions/external-db-bridge/validation.test.ts supabase/functions/external-db-bridge/tenantScope.test.ts
+        run: deno test --allow-env --no-lock --node-modules-dir=false supabase/functions/_shared/*.test.ts supabase/functions/metrics/*.test.ts supabase/functions/auth-login/*.test.ts supabase/functions/backup-automatico/*.test.ts supabase/functions/enviar-esocial/*.test.ts supabase/functions/metabase-embed/*.test.ts supabase/functions/external-db-bridge/validation.test.ts supabase/functions/external-db-bridge/tenantScope.test.ts
       - name: Type-check demais edge functions (informativo)
         # Passa mesmo com erros — apenas gera relatório para rastreamento progressivo.
         # As demais funções serão migradas gradualmente para zero erros.
