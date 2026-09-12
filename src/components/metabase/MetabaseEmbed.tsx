@@ -19,9 +19,21 @@
 import { useState, useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
-  BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
-  XAxis, YAxis, CartesianGrid, Tooltip, Legend,
-  ResponsiveContainer, Area, AreaChart
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  Area,
+  AreaChart,
 } from 'recharts';
 import { RefreshCw, AlertCircle, WifiOff, ChevronDown } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -71,7 +83,8 @@ const FALLBACK_DATA: Record<number, { type: 'bar' | 'line' | 'pie' | 'area'; tit
       { departamento: 'Financeiro', value: 8 },
       { departamento: 'TI', value: 11 },
       { departamento: 'Produção', value: 67 },
-    ]},
+    ],
+  },
   // 2 = Folha de Pagamento
   2: {
     type: 'line',
@@ -83,7 +96,8 @@ const FALLBACK_DATA: Record<number, { type: 'bar' | 'line' | 'pie' | 'area'; tit
       { mes: 'Abr', bruto: 501, liquido: 406 },
       { mes: 'Mai', bruto: 515, liquido: 417 },
       { mes: 'Jun', bruto: 523, liquido: 424 },
-    ]},
+    ],
+  },
   // 3 = eSocial
   3: {
     type: 'bar',
@@ -93,7 +107,8 @@ const FALLBACK_DATA: Record<number, { type: 'bar' | 'line' | 'pie' | 'area'; tit
       { status: 'Pendentes', count: 12 },
       { status: 'Rejeitados', count: 3 },
       { status: 'Aguardando', count: 8 },
-    ]},
+    ],
+  },
   // 4 = Passivo Trabalhista
   4: {
     type: 'area',
@@ -105,12 +120,12 @@ const FALLBACK_DATA: Record<number, { type: 'bar' | 'line' | 'pie' | 'area'; tit
       { mes: 'Abr', ferias: 61, decimo: 38, fgts: 101, total: 200 },
       { mes: 'Mai', ferias: 67, decimo: 38, fgts: 108, total: 213 },
       { mes: 'Jun', ferias: 73, decimo: 38, fgts: 115, total: 226 },
-    ]}};
+    ],
+  },
+};
 
 // ── Componente de Fallback Recharts ──────────────────────────────
-function RechartsFallback({
-  dashboardId,
-  height}: { dashboardId: number; height: string }) {
+function RechartsFallback({ dashboardId, height }: { dashboardId: number; height: string }) {
   const config = FALLBACK_DATA[dashboardId];
 
   if (!config) {
@@ -118,9 +133,7 @@ function RechartsFallback({
       <Card className="border-border/30">
         <CardContent className="p-8 text-center">
           <AlertCircle className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
-          <p className="text-body text-muted-foreground">
-            Dashboard {dashboardId} sem dados de fallback disponíveis.
-          </p>
+          <p className="text-body text-muted-foreground">Dashboard {dashboardId} sem dados de fallback disponíveis.</p>
           <p className="text-caption text-muted-foreground mt-1">
             Configure o Metabase para visualizar este relatório.
           </p>
@@ -134,7 +147,8 @@ function RechartsFallback({
   const renderChart = () => {
     const baseProps = {
       data: config.data as Record<string, unknown>[],
-      margin: { top: 8, right: 24, left: 0, bottom: 8 }};
+      margin: { top: 8, right: 24, left: 0, bottom: 8 },
+    };
 
     switch (config.type) {
       case 'bar':
@@ -146,7 +160,12 @@ function RechartsFallback({
               <YAxis tick={{ fontSize: 12 }} width={50} />
               <Tooltip contentStyle={{ borderRadius: 8, border: '1px solid hsl(var(--border))' }} />
               <Legend />
-              <Bar dataKey="value" fill="#6366f1" radius={[4, 4, 0, 0]} name={Object.keys(config.data[0] as object)[1]} />
+              <Bar
+                dataKey="value"
+                fill="#6366f1"
+                radius={[4, 4, 0, 0]}
+                name={Object.keys(config.data[0] as object)[1]}
+              />
               <Bar dataKey="count" fill="#8b5cf6" radius={[4, 4, 0, 0]} name="Quantidade" />
             </BarChart>
           </ResponsiveContainer>
@@ -176,9 +195,33 @@ function RechartsFallback({
               <YAxis tick={{ fontSize: 12 }} width={60} />
               <Tooltip contentStyle={{ borderRadius: 8 }} />
               <Legend />
-              <Area type="monotone" dataKey="ferias" stackId="1" stroke="#6366f1" fill="#6366f1" fillOpacity={0.4} name="Férias" />
-              <Area type="monotone" dataKey="decimo" stackId="1" stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.4} name="13º" />
-              <Area type="monotone" dataKey="fgts" stackId="1" stroke="#22c55e" fill="#22c55e" fillOpacity={0.4} name="FGTS" />
+              <Area
+                type="monotone"
+                dataKey="ferias"
+                stackId="1"
+                stroke="#6366f1"
+                fill="#6366f1"
+                fillOpacity={0.4}
+                name="Férias"
+              />
+              <Area
+                type="monotone"
+                dataKey="decimo"
+                stackId="1"
+                stroke="#8b5cf6"
+                fill="#8b5cf6"
+                fillOpacity={0.4}
+                name="13º"
+              />
+              <Area
+                type="monotone"
+                dataKey="fgts"
+                stackId="1"
+                stroke="#22c55e"
+                fill="#22c55e"
+                fillOpacity={0.4}
+                name="FGTS"
+              />
             </AreaChart>
           </ResponsiveContainer>
         );
@@ -247,7 +290,8 @@ export function MetabaseEmbed({
   filters = {},
   showToggle = true,
   defaultView = 'metabase',
-  autoRefreshMs}: MetabaseEmbedProps) {
+  autoRefreshMs,
+}: MetabaseEmbedProps) {
   const [viewMode, setViewMode] = useState<ViewMode>(defaultView);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [tokenError, setTokenError] = useState<string | null>(null);
@@ -258,15 +302,18 @@ export function MetabaseEmbed({
     isLoading,
     error,
     refetch,
-    isFetching} = useQuery<EmbedResponse, Error>({
+    isFetching,
+  } = useQuery<EmbedResponse, Error>({
     queryKey: ['metabase-embed', dashboardId, filters],
     queryFn: async () => {
       const res = await fetch('/functions/v1/metabase-embed', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${await getAccessToken()}`},
-        body: JSON.stringify({ dashboardId, params: filters })});
+          Authorization: `Bearer ${await getAccessToken()}`,
+        },
+        body: JSON.stringify({ dashboardId, params: filters }),
+      });
 
       if (!res.ok) {
         const body = await res.text().catch(() => '');
@@ -276,13 +323,14 @@ export function MetabaseEmbed({
       const json: EmbedResponse = await res.json();
       return json;
     },
-    staleTime: 3_000_000,   // 50min — token dura 3h
+    staleTime: 3_000_000, // 50min — token dura 3h
     gcTime: 10_000_000,
     retry: (count, err) => {
       // Retry apenas 2x, apenas se for erro de rede
       if (count >= 2) return false;
       return err?.message?.includes('fetch') ?? false;
-    }});
+    },
+  });
 
   // ── Auto-refresh ──────────────────────────────────────────────
   useEffect(() => {
@@ -301,9 +349,8 @@ export function MetabaseEmbed({
 
   // ── Render ─────────────────────────────────────────────────────
   const isFallbackMode = !embedData?.metabaseOk || viewMode === 'recharts';
-  const iframeUrl = embedData?.metabaseOk && embedData.dashboardUrl
-    ? `${embedData.dashboardUrl}#${embedData.token}`
-    : null;
+  const iframeUrl =
+    embedData?.metabaseOk && embedData.dashboardUrl ? `${embedData.dashboardUrl}#${embedData.token}` : null;
 
   return (
     <div className="flex flex-col gap-3">
@@ -338,7 +385,7 @@ export function MetabaseEmbed({
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setViewMode(v => v === 'metabase' ? 'recharts' : 'metabase')}
+              onClick={() => setViewMode((v) => (v === 'metabase' ? 'recharts' : 'metabase'))}
               className="text-xs gap-1 h-7"
             >
               <RefreshCw className={cn('h-3 w-3', isFetching && 'animate-spin')} />
@@ -348,13 +395,7 @@ export function MetabaseEmbed({
           )}
 
           {/* Refresh manual */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => refetch()}
-            disabled={isFetching}
-            className="h-8 gap-1.5"
-          >
+          <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isFetching} className="h-8 gap-1.5">
             <RefreshCw className={cn('h-3.5 w-3.5', isFetching && 'animate-spin')} />
             Atualizar
           </Button>
@@ -381,9 +422,7 @@ export function MetabaseEmbed({
       {isLoading && <EmbedSkeleton height={height} />}
 
       {/* Fallback Recharts */}
-      {!isLoading && isFallbackMode && (
-        <RechartsFallback dashboardId={dashboardId} height={height} />
-      )}
+      {!isLoading && isFallbackMode && <RechartsFallback dashboardId={dashboardId} height={height} />}
 
       {/* Iframe Metabase */}
       {!isLoading && !isFallbackMode && iframeUrl && (
@@ -407,9 +446,7 @@ export function MetabaseEmbed({
 
       {/* Mensagem do Metabase (offline) */}
       {!isLoading && embedData?.message && (
-        <p className="text-caption text-muted-foreground text-center">
-          {embedData.message}
-        </p>
+        <p className="text-caption text-muted-foreground text-center">{embedData.message}</p>
       )}
     </div>
   );
@@ -418,6 +455,8 @@ export function MetabaseEmbed({
 // ── Helper: obter access token do Supabase ──────────────────────
 async function getAccessToken(): Promise<string> {
   const { supabase } = await import('@/integrations/supabase/client');
-  const { data: { session } } = await supabase.auth.getSession();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
   return session?.access_token ?? '';
 }
