@@ -18,7 +18,10 @@ interface InvokeOptions {
 const handleInvoke = async <T>(name: string, options: InvokeOptions, breaker = genericBreaker): Promise<T> => {
   try {
     return await breaker.execute(async () => {
-      const { data, error } = await supabase.functions.invoke(name, options as Parameters<typeof supabase.functions.invoke>[1]);
+      const { data, error } = await supabase.functions.invoke(
+        name,
+        options as Parameters<typeof supabase.functions.invoke>[1]
+      );
       if (error) {
         throw new Error(error.message || `Erro ao chamar função ${name}`);
       }
@@ -34,13 +37,36 @@ export const edgeFunctionsService = {
   /** Dispara alertas automáticos de DP via email */
   dispararAlertasDP: async () => handleInvoke('alertas-dp', { body: { trigger: 'manual' } }),
 
-  /** Envia relatório por email via Resend */
+  /**
+   * Envia um relatório compatível com o contrato canônico da Edge Function.
+   *
+   * A função deliberadamente aceita um único destinatário: o backend valida
+   * que ele pertence ao tenant, o que não é possível manter com uma lista de
+   * strings sem multiplicar as verificações de autorização.
+   */
   enviarRelatorioEmail: async (params: {
-    tipo: string;
-    destinatarios: string[];
+    tipoRelatorio:
+      'lista_colaboradores' | 'folha_resumo' | 'ferias_proximas' | 'afastamentos_ativos' | 'indicadores_dp';
+    formato: 'csv' | 'json';
+    emailDestinatario: string;
     empresaId: string;
     competencia?: string;
-  }) => handleInvoke('enviar-relatorio', { body: params }, resendBreaker),
+  }) =>
+    handleInvoke(
+      'enviar-relatorio',
+      {
+        body: {
+          tipoRelatorio: params.tipoRelatorio,
+          formato: params.formato,
+          emailDestinatario: params.emailDestinatario,
+          parametros: {
+            empresaId: params.empresaId,
+            ...(params.competencia ? { competencia: params.competencia } : {}),
+          },
+        },
+      },
+      resendBreaker
+    ),
 
   /** Gera guias DARF/GPS/FGTS via edge function — retry com idempotência. */
   gerarGuias: async (params: {

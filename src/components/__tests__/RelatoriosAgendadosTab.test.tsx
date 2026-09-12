@@ -58,7 +58,9 @@ vi.mock('@/components/ui/card', () => ({
 
 vi.mock('@/components/ui/button', () => ({
   Button: ({ children, onClick, disabled }: any) => (
-    <button onClick={onClick} disabled={disabled}>{children}</button>
+    <button onClick={onClick} disabled={disabled}>
+      {children}
+    </button>
   ),
 }));
 
@@ -137,15 +139,26 @@ describe('RelatoriosAgendadosTab', () => {
     expect(screen.getByText('Nome do Agendamento')).toBeInTheDocument();
   });
 
-  it('renders Monitoramento Ativo badge', () => {
+  it('shows only confirmed history and never a sample delivery', () => {
     vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
     render(<RelatoriosAgendadosTab empresaId="emp-1" />);
-    expect(screen.getByText('Monitoramento Ativo')).toBeInTheDocument();
+    expect(screen.getByText('Histórico confirmado')).toBeInTheDocument();
+    expect(screen.getByText('Nenhuma entrega confirmada.')).toBeInTheDocument();
+    expect(screen.queryByText('Exemplo: Headcount Semanal')).not.toBeInTheDocument();
   });
 
   it('renders agendamento card when data present', () => {
     vi.mocked(useQuery).mockReturnValue({
-      data: [{ id: 'ag-1', nome: 'Headcount Semanal', frequencia: 'semanal', hora_envio: '08:00', email_destinatario: 'rh@empresa.com', proximo_envio: null }],
+      data: [
+        {
+          id: 'ag-1',
+          nome: 'Headcount Semanal',
+          frequencia: 'semanal',
+          hora_envio: '08:00',
+          email_destinatario: 'rh@empresa.com',
+          proximo_envio: null,
+        },
+      ],
       isLoading: false,
     } as any);
     render(<RelatoriosAgendadosTab empresaId="emp-1" />);

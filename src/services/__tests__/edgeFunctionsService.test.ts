@@ -51,18 +51,26 @@ describe('edgeFunctionsService.enviarRelatorioEmail', () => {
   });
 
   it('calls invoke with "enviar-relatorio" and uses resendBreaker', async () => {
-    mockInvoke.mockResolvedValue({ data: { messageId: 'msg-1' }, error: null });
+    mockInvoke.mockResolvedValue({ data: { success: true, status: 'sucesso' }, error: null });
     const params = {
-      tipo: 'folha',
-      destinatarios: ['rh@empresa.com'],
+      tipoRelatorio: 'folha_resumo' as const,
+      formato: 'csv' as const,
+      emailDestinatario: 'rh@empresa.com',
       empresaId: 'emp-1',
       competencia: '2026-07',
     };
     const result = await edgeFunctionsService.enviarRelatorioEmail(params);
-    expect(mockInvoke).toHaveBeenCalledWith('enviar-relatorio', { body: params });
+    expect(mockInvoke).toHaveBeenCalledWith('enviar-relatorio', {
+      body: {
+        tipoRelatorio: 'folha_resumo',
+        formato: 'csv',
+        emailDestinatario: 'rh@empresa.com',
+        parametros: { empresaId: 'emp-1', competencia: '2026-07' },
+      },
+    });
     expect(mockResendExecute).toHaveBeenCalled();
     expect(mockGenericExecute).not.toHaveBeenCalled();
-    expect(result).toEqual({ messageId: 'msg-1' });
+    expect(result).toEqual({ success: true, status: 'sucesso' });
   });
 });
 

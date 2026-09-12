@@ -1,26 +1,41 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import {
+  createClient,
+  type SupabaseClient,
+} from "https://esm.sh/@supabase/supabase-js@2";
 import { z } from "https://esm.sh/zod@3.23.8";
 import { verifyCsrf } from "../_shared/csrf.ts";
 import { captureException } from "../_shared/sentry.ts";
 import { corsHeaders, parseJsonBody } from "../_shared/contract.ts";
 import { safeFetch } from "../_shared/safe-fetch.ts";
-import { requireRh } from '../_shared/authz.ts';
+import { requireRh } from "../_shared/authz.ts";
+import {
+  REPORT_DELIVERY_FAILED_MESSAGE,
+  REPORT_DELIVERY_UNAVAILABLE_MESSAGE,
+  reportDeliveryHttpStatus,
+  type ReportDeliveryStatus,
+  resendDeliveryId,
+} from "./deliveryStatus.ts";
+import {
+  hasValidReportDispatchSecret,
+  requestMatchesStoredReportSchedule,
+} from "./internalDispatch.ts";
 
 /**
  * enviar-relatorio — Onda 20 hardening
  *
  * Simulação de cenários cobertos:
- *  1. POST sem JWT → 401
+ *  1. POST sem JWT → 401 (exceto o processador interno autenticado por segredo)
  *  2. JWT inválido/expirado → 401
  *  3. JWT válido mas sem vínculo à empresa (parametros.empresaId) → 403
- *  4. CSRF ausente/origem inválida → 403
+ *  4. CSRF ausente/origem inválida → 403 para chamadas do browser
  *  5. tipoRelatorio fora do whitelist → 400
  *  6. formato inválido → 400
  *  7. email inválido → 400
  *  8. Race / storage fail → 500 c/ captureException, sem stack no body
- *  9. Ausência de RESEND_API_KEY → status "simulado", não bloqueia
- * 10. Todas as queries de coleta são escopadas por empresa_id (evita
+ *  9. Ausência de RESEND_API_KEY → 503, sem criar artefato nem avançar agenda
+ * 10. Resend só confirma com recibo (`id`) válido; rejeição → HTTP 502
+ * 11. Todas as queries de coleta são escopadas por empresa_id (evita
  *     vazamento cross-tenant que existia antes com service key crua).
  */
 
@@ -57,17 +72,26 @@ type Body = z.infer<typeof BodySchema>;
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+    headers: {
+      ...corsHeaders,
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store",
+    },
   });
 }
 
 async function sha256Hex(input: string): Promise<string> {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input));
-  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, '0')).join('');
+  const buf = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(input),
+  );
+  return Array.from(new Uint8Array(buf)).map((b) =>
+    b.toString(16).padStart(2, "0")
+  ).join("");
 }
 
 async function coletarDados(
-  supabase: ReturnType<typeof createClient>,
+  supabase: SupabaseClient<any, "public", "public">,
   tipo: Body["tipoRelatorio"],
   empresaId: string,
   parametros: Record<string, unknown>,
@@ -84,8 +108,7 @@ async function coletarDados(
       return { dados: data ?? [], totalRegistros: data?.length ?? 0 };
     }
     case "folha_resumo": {
-      const competencia =
-        (parametros.competencia as string | undefined) ??
+      const competencia = (parametros.competencia as string | undefined) ??
         new Date().toISOString().slice(0, 7);
       const { data, error } = await supabase
         .from("folhas_pagamento")
@@ -154,45 +177,27 @@ function toCsv(dados: unknown): string {
     ...arr.map((r) =>
       headers
         .map((h) => escape((r as Record<string, unknown>)[h]))
-        .join(","),
+        .join(",")
     ),
   ].join("\n");
 }
 
 serve(async (req: Request): Promise<Response> => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
 
   try {
-    // 1. CSRF fail-closed
-    const csrf = await verifyCsrf(req.clone());
-    if (!csrf.ok) return csrf.response!;
-
-    // 2. Auth JWT obrigatória
-    const authHeader = req.headers.get("Authorization") ?? "";
-    if (!authHeader.startsWith("Bearer ")) {
-      return json({ error: "Autenticação obrigatória" }, 401);
-    }
-
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-    const userClient = createClient(supabaseUrl, anonKey, {
-      global: { headers: { Authorization: authHeader } },
-    });
-    const { data: claimsData, error: claimsErr } = await userClient.auth.getUser();
-    if (claimsErr || !claimsData?.user?.id) {
-      return json({ error: "Sessão inválida" }, 401);
-    }
-    const userId = claimsData.user.id;
-
-    // 3. Validação do payload
-    let raw: unknown;
+    // 1. Validação do payload antes de identificar o ator. A rota interna
+    // precisa do agendamento para vincular a chamada à autoria persistida.
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    raw = _pb;
-    const parsed = BodySchema.safeParse(raw);
+    const parsed = BodySchema.safeParse(_pb);
     if (!parsed.success) {
       return json(
         { error: "Payload inválido", details: parsed.error.flatten() },
@@ -202,17 +207,79 @@ serve(async (req: Request): Promise<Response> => {
     const body = parsed.data;
     const empresaId = body.parametros.empresaId;
 
-    // 4. Papel — o relatório carrega dados consolidados da empresa e é
+    const admin = createClient(supabaseUrl, serviceKey);
+    const internalDispatch = await hasValidReportDispatchSecret(
+      req.headers.get("X-Report-Dispatch-Secret") ?? "",
+      Deno.env.get("REPORT_SCHEDULER_SECRET") ?? "",
+    );
+    let userId: string;
+
+    if (internalDispatch) {
+      if (!body.agendamentoId) {
+        return json({ error: "Chamada interna sem agendamento" }, 403);
+      }
+      const { data: schedule, error: scheduleError } = await admin
+        .from("relatorios_agendados")
+        .select(
+          "id,created_by,empresa_id,tipo_relatorio,formato,email_destinatario",
+        )
+        .eq("id", body.agendamentoId)
+        .maybeSingle();
+      if (
+        scheduleError || !schedule ||
+        !requestMatchesStoredReportSchedule(
+          {
+            agendamentoId: body.agendamentoId,
+            tipoRelatorio: body.tipoRelatorio,
+            formato: body.formato,
+            emailDestinatario: body.emailDestinatario,
+            empresaId,
+          },
+          schedule,
+        ) || !schedule.created_by
+      ) {
+        return json(
+          { error: "Chamada interna não corresponde ao agendamento" },
+          403,
+        );
+      }
+      userId = schedule.created_by;
+    } else {
+      // 2. Chamadas do browser mantêm CSRF + sessão humana obrigatórios.
+      const csrf = await verifyCsrf(req.clone());
+      if (!csrf.ok) return csrf.response!;
+      const authHeader = req.headers.get("Authorization") ?? "";
+      if (!authHeader.startsWith("Bearer ")) {
+        return json({ error: "Autenticação obrigatória" }, 401);
+      }
+      const userClient = createClient(supabaseUrl, anonKey, {
+        global: { headers: { Authorization: authHeader } },
+        auth: { persistSession: false, autoRefreshToken: false },
+      });
+      const { data: claimsData, error: claimsErr } = await userClient.auth
+        .getUser();
+      if (claimsErr || !claimsData?.user?.id) {
+        return json({ error: "Sessão inválida" }, 401);
+      }
+      userId = claimsData.user.id;
+    }
+
+    // 3. Papel — o relatório carrega dados consolidados da empresa e é
     // despachado por e-mail. Exige RH/admin; o gate anterior (`!belongs` com
     // fallback em `isAdm`) era um OU e liberava qualquer colaborador.
-    const admin = createClient(supabaseUrl, serviceKey);
     {
       const authz = await requireRh(admin, userId, empresaId);
       if (authz.denied) return authz.denied;
     }
 
-    const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
-    const rl = await checkRateLimit(admin, { key: `enviar-relatorio:${userId}`, limit: 5, windowSec: 60 });
+    const { checkRateLimit, rateLimitResponse } = await import(
+      "../_shared/rateLimit.ts"
+    );
+    const rl = await checkRateLimit(admin, {
+      key: `enviar-relatorio:${userId}`,
+      limit: 5,
+      windowSec: 60,
+    });
     if (!rl.allowed) return rateLimitResponse(rl);
 
     // 4b. Anti-exfiltração: emailDestinatario deve pertencer a um usuário
@@ -226,13 +293,31 @@ serve(async (req: Request): Promise<Response> => {
       return json({ error: "Destinatário não é usuário do sistema" }, 403);
     }
     const { data: destBelongs } = await admin.rpc("user_belongs_to_empresa", {
-      _user_id: destinatarioUser.user_id, _empresa_id: empresaId,
+      _user_id: destinatarioUser.user_id,
+      _empresa_id: empresaId,
     });
     if (destBelongs !== true) {
-      const { data: destIsAdm } = await admin.rpc("is_admin", { _user_id: destinatarioUser.user_id });
+      const { data: destIsAdm } = await admin.rpc("is_admin", {
+        _user_id: destinatarioUser.user_id,
+      });
       if (destIsAdm !== true) {
         return json({ error: "Destinatário não pertence à empresa" }, 403);
       }
+    }
+
+    // Um relatório enviado por e-mail só é uma operação concluída quando o
+    // provedor está configurado. Não criar arquivo/signed URL "órfão" nem
+    // retornar sucesso simulado: o caller precisa poder reagendar a entrega.
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    if (!resendApiKey) {
+      return json(
+        {
+          success: false,
+          status: "indisponivel",
+          error: REPORT_DELIVERY_UNAVAILABLE_MESSAGE,
+        },
+        reportDeliveryHttpStatus("indisponivel"),
+      );
     }
 
     // 5. Coleta escopada por empresa
@@ -244,10 +329,12 @@ serve(async (req: Request): Promise<Response> => {
     );
 
     // 6. Persistência em bucket privado + hash do conteúdo (não-repúdio)
-    const conteudo =
-      body.formato === "csv" ? toCsv(dados) : JSON.stringify(dados, null, 2);
+    const conteudo = body.formato === "csv"
+      ? toCsv(dados)
+      : JSON.stringify(dados, null, 2);
     const contentHash = await sha256Hex(conteudo);
-    const path = `${empresaId}/${body.tipoRelatorio}/${crypto.randomUUID()}.${body.formato}`;
+    const path =
+      `${empresaId}/${body.tipoRelatorio}/${crypto.randomUUID()}.${body.formato}`;
     const { error: upErr } = await admin.storage.from(BUCKET).upload(
       path,
       new Blob([conteudo], {
@@ -265,28 +352,31 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     // 7. Envio (metadados apenas — LGPD)
-    const resendApiKey = Deno.env.get("RESEND_API_KEY");
-    let statusEnvio: "sucesso" | "erro" | "simulado" = "simulado";
-    let mensagemEnvio = "Envio simulado (RESEND_API_KEY não configurada)";
+    let statusEnvio: ReportDeliveryStatus = "erro";
+    let mensagemEnvio = REPORT_DELIVERY_FAILED_MESSAGE;
+    let providerMessageId: string | null = null;
 
-    if (resendApiKey) {
-      try {
-        const res = await safeFetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${resendApiKey}`,
-          },
-          body: JSON.stringify({
-            from: "Sistema DP <onboarding@resend.dev>",
-            to: [body.emailDestinatario],
-            subject: `Relatório: ${body.tipoRelatorio} — ${new Date().toLocaleDateString("pt-BR")}`,
-            html: `
+    try {
+      const res = await safeFetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${resendApiKey}`,
+        },
+        body: JSON.stringify({
+          from: "Sistema DP <onboarding@resend.dev>",
+          to: [body.emailDestinatario],
+          subject: `Relatório: ${body.tipoRelatorio} — ${
+            new Date().toLocaleDateString("pt-BR")
+          }`,
+          html: `
               <h1>Relatório disponível</h1>
               <p><strong>Tipo:</strong> ${body.tipoRelatorio}</p>
               <p><strong>Formato:</strong> ${body.formato}</p>
               <p><strong>Total de registros:</strong> ${totalRegistros}</p>
-              <p><strong>Gerado em:</strong> ${new Date().toLocaleString("pt-BR")}</p>
+              <p><strong>Gerado em:</strong> ${
+            new Date().toLocaleString("pt-BR")
+          }</p>
               <p><strong>Validade do link:</strong> 24 horas</p>
               <p>
                 <a href="${signed.signedUrl}"
@@ -298,24 +388,31 @@ serve(async (req: Request): Promise<Response> => {
                 Este e-mail contém apenas metadados. Os dados sensíveis estão
                 protegidos por link assinado e requerem acesso autorizado.
               </p>
-            `,
-          }),
-          timeoutMs: 8_000,
-          tag: 'webhook',
+          `,
+        }),
+        timeoutMs: 8_000,
+        tag: "webhook",
+      });
+      const receipt = await res.json().catch(() => null);
+      providerMessageId = res.ok ? resendDeliveryId(receipt) : null;
+      if (!providerMessageId) {
+        console.error("[enviar-relatorio] Resend delivery was not confirmed", {
+          httpStatus: res.status,
         });
-        if (!res.ok) throw new Error(`Resend API: ${res.status}`);
+      } else {
         statusEnvio = "sucesso";
-        mensagemEnvio = "Email com link assinado enviado";
-      } catch (e) {
-        statusEnvio = "erro";
-        mensagemEnvio = e instanceof Error ? e.message : "erro desconhecido no envio";
-        console.error("Erro Resend:", mensagemEnvio);
+        mensagemEnvio = "E-mail com link assinado aceito pelo provedor";
       }
+    } catch (error) {
+      console.error("[enviar-relatorio] Resend delivery request failed", {
+        error: error instanceof Error ? error.message : "unknown",
+      });
     }
 
     // 8. Auditoria BLOQUEANTE não-repudiável
     const auditPayloadHash = await sha256Hex(
-      contentHash + userId + empresaId + body.tipoRelatorio + body.emailDestinatario,
+      contentHash + userId + empresaId + body.tipoRelatorio +
+        body.emailDestinatario,
     );
     const { error: auditErr } = await admin.from("audit_log").insert({
       tabela: "relatorios_agendados",
@@ -328,6 +425,7 @@ serve(async (req: Request): Promise<Response> => {
         empresa_id: empresaId,
         total_registros: totalRegistros,
         status_envio: statusEnvio,
+        provider_message_id: providerMessageId,
         email_destinatario_hash: await sha256Hex(body.emailDestinatario),
         content_sha256: contentHash,
         audit_hash: auditPayloadHash,
@@ -336,7 +434,10 @@ serve(async (req: Request): Promise<Response> => {
       },
     });
     if (auditErr) {
-      console.error("[enviar-relatorio] AUDIT_BLOCKING_FAILURE:", auditErr.message);
+      console.error(
+        "[enviar-relatorio] AUDIT_BLOCKING_FAILURE:",
+        auditErr.message,
+      );
       return json({ error: "Auditoria obrigatória falhou" }, 500);
     }
 
@@ -353,10 +454,13 @@ serve(async (req: Request): Promise<Response> => {
         .eq("empresa_id", empresaId);
     }
 
+    const responseStatus = reportDeliveryHttpStatus(statusEnvio);
     return json({
-      success: true,
+      success: statusEnvio === "sucesso",
       status: statusEnvio,
-      mensagem: mensagemEnvio,
+      mensagem: statusEnvio === "sucesso"
+        ? mensagemEnvio
+        : REPORT_DELIVERY_FAILED_MESSAGE,
       metadados: {
         tipo: body.tipoRelatorio,
         formato: body.formato,
@@ -364,7 +468,7 @@ serve(async (req: Request): Promise<Response> => {
         expiresInSeconds: SIGNED_URL_TTL_SECONDS,
         path,
       },
-    });
+    }, responseStatus);
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Erro desconhecido";
     console.error("Erro enviar-relatorio:", msg);
