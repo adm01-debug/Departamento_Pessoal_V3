@@ -31,7 +31,51 @@ export interface AuditoriaRegistro {
   created_at: string;
 }
 
+export interface TrilhaAuditoriaFiltros {
+  /** NULL is accepted only for the global administrator feed. */
+  empresa_id: string | null;
+  tabela?: string;
+  registro_id?: string;
+  limite?: number;
+  antes_de?: string;
+}
+
+export interface TrilhaAuditoriaRegistro {
+  id: string;
+  created_at: string;
+  tabela: string | null;
+  registro_id: string | null;
+  acao: string | null;
+  user_id: string | null;
+  user_email: string | null;
+  user_nome: string | null;
+  status_anterior: string | null;
+  status_novo: string | null;
+  empresa_id: string | null;
+  dados_anteriores: Record<string, unknown> | null;
+  dados_novos: Record<string, unknown> | null;
+  campos_alterados: string[] | null;
+}
+
 export const auditoriaService = {
+  async listarTrilha(filtros: TrilhaAuditoriaFiltros): Promise<TrilhaAuditoriaRegistro[]> {
+    const limite = filtros.limite ?? 100;
+    if (!Number.isInteger(limite) || limite < 1 || limite > 500) {
+      throw new Error('limite da trilha deve estar entre 1 e 500');
+    }
+
+    const { data, error } = await supabase.rpc('get_audit_trail', {
+      p_empresa_id: filtros.empresa_id,
+      p_limit: limite,
+      p_before: filtros.antes_de ?? new Date().toISOString(),
+      p_tabela: filtros.tabela ?? null,
+      p_registro_id: filtros.registro_id ?? null,
+    });
+
+    if (error) throw error;
+    return (data as unknown as TrilhaAuditoriaRegistro[]) || [];
+  },
+
   async listar(empresaId: string, filtros?: AuditoriaFiltros): Promise<AuditoriaRegistro[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório');
 
@@ -75,7 +119,7 @@ export const auditoriaService = {
   async registrarEvento(params: {
     tabela: string;
     registro_id: string;
-    acao: 'INSERT' | 'UPDATE' | 'DELETE' | 'VISUALIZACAO' | 'EXPORT';
+    acao: 'INSERT' | 'UPDATE' | 'DELETE' | 'VISUALIZACAO' | 'EXPORT' | 'EXECUTE_CALC' | 'SIGN';
     dados_anteriores?: Json;
     dados_novos?: Json;
     empresa_id?: string;

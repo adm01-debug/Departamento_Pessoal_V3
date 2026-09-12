@@ -96,13 +96,16 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     if (action === 'status') {
-      const { data: last } = await admin
+      let q = admin
         .from('audit_log')
         .select('created_at, dados_novos')
         .eq('acao', 'BACKUP_RUN')
         .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+        .limit(1);
+      if (empresaId) q = q.contains('dados_novos', { empresa_id: empresaId });
+      const { data: lastRows, error: statusError } = await q;
+      if (statusError) return createErrorResponse('Falha ao consultar status do backup', 500, 'AUDIT_ERROR');
+      const last = lastRows?.[0] ?? null;
       return new Response(JSON.stringify({ ok: true, last }), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -112,8 +115,9 @@ serve(async (req: Request): Promise<Response> => {
     if (action === 'list') {
       let q = admin.from('audit_log').select('id, created_at, dados_novos')
         .eq('acao', 'BACKUP_RUN').order('created_at', { ascending: false }).limit(50);
-      if (empresaId) q = q.eq('empresa_id', empresaId);
-      const { data: list } = await q;
+      if (empresaId) q = q.contains('dados_novos', { empresa_id: empresaId });
+      const { data: list, error: listError } = await q;
+      if (listError) return createErrorResponse('Falha ao listar backups', 500, 'AUDIT_ERROR');
       return new Response(JSON.stringify({ ok: true, backups: list ?? [] }), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -209,12 +213,12 @@ serve(async (req: Request): Promise<Response> => {
 
     // 7) Audit log com hash de integridade
     const { error: auditErr } = await admin.from('audit_log').insert({
+      tabela: 'backups',
+      registro_id: empresaId,
       user_id: user.id,
-      empresa_id: empresaId,
       acao: 'BACKUP_RUN',
-      entidade: 'backup',
       dados_novos: {
-        path, counts, tables: targetTables, destino,
+        empresa_id: empresaId, path, counts, tables: targetTables, destino,
         sha256: payloadHash, bytes: bytesSize, integrity_verified: integrityVerified,
       },
     });

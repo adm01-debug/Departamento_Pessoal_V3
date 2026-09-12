@@ -145,7 +145,7 @@ jobs:
             'claims', to_regprocedure('public.claim_due_report_schedules(timestamptz,integer)') IS NOT NULL,
             'provisions', to_regprocedure('public.replace_monthly_provisions(uuid,text,jsonb,uuid,jsonb)') IS NOT NULL,
             'destination', to_regprocedure('public.report_destination_is_allowed(text,uuid)') IS NOT NULL,
-            'audit', to_regprocedure('public.get_audit_trail(uuid,integer,timestamptz)') IS NOT NULL,
+            'audit', to_regprocedure('public.get_audit_trail(uuid,integer,timestamptz,text,text)') IS NOT NULL,
             'recipients', to_regprocedure('public.get_company_rh_recipient_emails(uuid,integer)') IS NOT NULL,
             'backup_bucket', EXISTS (SELECT 1 FROM storage.buckets WHERE id='backups' AND public IS FALSE),
             'pcs_tables', (SELECT count(*) FROM pg_catalog.pg_class c

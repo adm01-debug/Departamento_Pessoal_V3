@@ -115,6 +115,7 @@ jobs:
         run: |
           node scripts/audit-security-config.mjs
           node scripts/audit-bridge-frontend-contract.mjs
+          node scripts/audit-edge-audit-log-contract.mjs
           node scripts/validate-plan-50.mjs
           node scripts/audit-canonical-project.mjs
           node scripts/tests/rebaseline-artifact.test.mjs

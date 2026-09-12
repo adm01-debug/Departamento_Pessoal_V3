@@ -170,10 +170,10 @@ serve(async (req: Request): Promise<Response> => {
         };
         const auditHash = await sha256Hex(JSON.stringify(auditPayload) + userId);
         const { error: auditErr } = await admin.from('audit_log').insert({
+          tabela: 'notificacoes',
+          registro_id: empresaId,
           user_id: userId,
-          empresa_id: empresaId,
           acao: 'SEND_NOTIFICATION',
-          entidade: 'notificacao',
           dados_novos: { ...auditPayload, audit_hash: auditHash },
         });
         if (auditErr) {

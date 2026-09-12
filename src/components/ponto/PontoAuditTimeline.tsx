@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { History, Search, Download, User, Calendar, Tag, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client.base';
+import { auditoriaService } from '@/services/auditoriaService';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { exportPontoCSV } from '@/services/exportService';
@@ -17,42 +17,25 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
   const [searchTerm, setSearchTerm] = useState('');
   const { empresaAtual } = useEmpresas();
 
-  const queryClient = useQueryClient();
   const {
     data: auditLogs = [],
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['ponto-audit-logs', filterTabela],
+    queryKey: ['ponto-audit-logs', empresaAtual?.id, filterTabela],
     queryFn: async () => {
-      let query = (supabase as any).from('audit_log').select('*');
-
-      if (filterTabela) {
-        query = query.eq('tabela', filterTabela);
-      } else {
-        query = query.or('tabela.eq.batidas_ponto,tabela.eq.registros_ponto,tabela.eq.solicitacoes_ajuste_ponto');
-      }
-
-      const { data, error: queryError } = await query.order('created_at', { ascending: false }).limit(100);
-      if (queryError) throw queryError;
-      return data || [];
+      const data = await auditoriaService.listarTrilha({
+        empresa_id: empresaAtual!.id,
+        tabela: filterTabela,
+        limite: 100,
+      });
+      if (filterTabela) return data;
+      const tabelasPonto = new Set(['batidas_ponto', 'registros_ponto', 'solicitacoes_ajuste_ponto']);
+      return data.filter((log) => !!log.tabela && tabelasPonto.has(log.tabela));
     },
     enabled: !!empresaAtual?.id,
+    refetchInterval: 30_000,
   });
-
-  // Real-time listener for audit logs — useEffect because useMemo must not have side effects
-  useEffect(() => {
-    if (!empresaAtual?.id) return;
-    const channel = (supabase as any)
-      .channel('audit-changes')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'audit_log' }, () => {
-        queryClient.invalidateQueries({ queryKey: ['ponto-audit-logs'] });
-      })
-      .subscribe();
-    return () => {
-      (supabase as any).removeChannel(channel);
-    };
-  }, [queryClient, empresaAtual?.id]);
 
   const filteredLogs = auditLogs.filter(
     (log: any) =>

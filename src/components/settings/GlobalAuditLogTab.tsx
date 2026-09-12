@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { ScrollText, Search, Download, Calendar, User, Tag, Filter } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client.base';
+import { auditoriaService } from '@/services/auditoriaService';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import { exportPontoCSV } from '@/services/exportService';
@@ -19,15 +19,13 @@ export function GlobalAuditLogTab() {
 
   const { data: logs = [], isLoading } = useQuery({
     queryKey: ['global-audit-logs', tabelaFilter],
-    queryFn: async () => {
-      let query = (supabase as any).from('audit_log').select('*').order('created_at', { ascending: false }).limit(200);
-      if (tabelaFilter !== 'todas') {
-        query = query.eq('tabela', tabelaFilter);
-      }
-      const { data, error } = await query;
-      if (error) throw error;
-      return data || [];
-    },
+    queryFn: () =>
+      auditoriaService.listarTrilha({
+        empresa_id: null,
+        tabela: tabelaFilter === 'todas' ? undefined : tabelaFilter,
+        limite: 200,
+      }),
+    refetchInterval: 30_000,
   });
 
   const filtered = logs.filter(

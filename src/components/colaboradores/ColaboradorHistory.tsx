@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client.base';
+import { auditoriaService } from '@/services/auditoriaService';
+import { useEmpresas } from '@/hooks/useEmpresas';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -14,20 +15,17 @@ interface ColaboradorHistoryProps {
 }
 
 export function ColaboradorHistory({ colaboradorId }: ColaboradorHistoryProps) {
+  const { empresaAtual } = useEmpresas();
   const { data: logs, isLoading } = useQuery({
-    queryKey: ['colaborador-history', colaboradorId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('audit_log')
-        .select('*')
-        .eq('registro_id', colaboradorId)
-        .eq('tabela', 'colaboradores')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!colaboradorId,
+    queryKey: ['colaborador-history', empresaAtual?.id, colaboradorId],
+    queryFn: () =>
+      auditoriaService.listarTrilha({
+        empresa_id: empresaAtual!.id,
+        tabela: 'colaboradores',
+        registro_id: colaboradorId,
+        limite: 200,
+      }),
+    enabled: !!colaboradorId && !!empresaAtual?.id,
   });
 
   if (isLoading)

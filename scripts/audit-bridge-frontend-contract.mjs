@@ -36,8 +36,12 @@ function exportedSet(source, name) {
 
 const calls = new Map();
 const bridgeTableCalls = [];
+const directLegacyAuditCalls = [];
 for (const file of walk(join(root, 'src'))) {
   const source = readFileSync(file, 'utf8');
+  for (const match of source.matchAll(/\.from\s*\(\s*["']audit_log["']\s*\)/g)) {
+    directLegacyAuditCalls.push(`${relative(root, file)}:${source.slice(0, match.index).split('\n').length}`);
+  }
   for (const match of source.matchAll(/\.rpc\s*\(\s*["']([A-Za-z0-9_]+)["']/g)) {
     const line = source.slice(0, match.index).split('\n').length;
     const locations = calls.get(match[1]) ?? [];
@@ -74,6 +78,12 @@ const allowlist = exportedSet(validation, 'RPC_ALLOWLIST');
 const denylist = exportedSet(validation, 'TABLE_DENYLIST');
 const publicRpcs = exportedSet(access, 'PUBLIC_RPCS');
 const failures = [];
+
+if (directLegacyAuditCalls.length) {
+  failures.push(
+    `Leitura/escrita frontend direta na tabela legada audit_log; use RPC tenant-scoped: ${directLegacyAuditCalls.join(', ')}`
+  );
+}
 
 for (const [rpc, locations] of [...calls].sort(([a], [b]) => a.localeCompare(b))) {
   if (!allowlist.has(rpc)) failures.push(`RPC de produção fora da allowlist: ${rpc} (${locations.join(', ')})`);

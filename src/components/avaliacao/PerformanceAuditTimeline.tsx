@@ -3,26 +3,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { History, Calendar, Tag, Target, MessageSquare } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client.base';
+import { auditoriaService } from '@/services/auditoriaService';
+import { useEmpresas } from '@/hooks/useEmpresas';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { motion } from 'framer-motion';
 
 export function PerformanceAuditTimeline() {
-  const { data: logs = [], isLoading } = useQuery({
-    queryKey: ['performance-audit-logs'],
+  const { empresaAtual } = useEmpresas();
+  const { data: logs = [] } = useQuery({
+    queryKey: ['performance-audit-logs', empresaAtual?.id],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
-        .from('audit_log')
-        .select('*')
-        .or(
-          'tabela.eq.ciclos_avaliacao,tabela.eq.metas_okrs,tabela.eq.feedbacks_360,tabela.eq.pdis,tabela.eq.competencias_matriz'
-        )
-        .order('created_at', { ascending: false })
-        .limit(30);
-      if (error) throw error;
-      return data || [];
+      const data = await auditoriaService.listarTrilha({ empresa_id: empresaAtual!.id, limite: 100 });
+      const tabelas = new Set(['ciclos_avaliacao', 'metas_okrs', 'feedbacks_360', 'pdis', 'competencias_matriz']);
+      return data.filter((log) => !!log.tabela && tabelas.has(log.tabela)).slice(0, 30);
     },
+    enabled: !!empresaAtual?.id,
   });
 
   const getIcon = (tabela: string) => {

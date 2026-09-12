@@ -78,6 +78,7 @@ export const TABLE_DENYLIST = new Set<string>([
   "password_policies",
   "security_alerts",
   "audit_log",
+  "audit_log_unified",
   "pii_access_logs",
   "pii_access_alerts",
   "geo_blocking_config",
@@ -115,7 +116,7 @@ export const RPC_ALLOWLIST = new Set<string>([
   "get_dlq_stats", "folha_conflict_stats", "get_query_telemetry",
   "get_idempotency_health", "get_cron_jobs_health",
   "get_security_alerts_summary", "resolve_security_alert",
-  "listar_auditoria", "registrar_auditoria", "search_audit_unified",
+  "get_audit_trail", "listar_auditoria", "registrar_auditoria", "search_audit_unified",
   "log_frontend_error", "record_pii_access", "sec_audit_policies",
   // folha / financeiro
   "get_personnel_cost_projection", "aprovar_despesa", "rejeitar_despesa",

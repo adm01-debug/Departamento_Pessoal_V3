@@ -14,7 +14,7 @@ expect_denied() {
   set +e
   output="$(run_psql -c "$1" 2>&1)"; status=$?
   set -e
-  [ "$status" -ne 0 ] && [[ "$output" == *"permission denied"* || "$output" == *"restricted"* || "$output" == *"authentication required"* ]] || {
+  [ "$status" -ne 0 ] && [[ "$output" == *"permission denied"* || "$output" == *"restricted"* || "$output" == *"required"* || "$output" == *"outside user scope"* ]] || {
     echo "expected permission denial" >&2; echo "$output" >&2; exit 1;
   }
 }
@@ -39,13 +39,38 @@ CREATE OR REPLACE FUNCTION public.is_admin(_user_id uuid) RETURNS boolean LANGUA
 SET search_path=pg_catalog,public AS $$ SELECT EXISTS(SELECT 1 FROM public.user_roles WHERE user_id=_user_id AND role='admin') $$;
 CREATE OR REPLACE FUNCTION public.pode_gerir_rh(_empresa_id uuid) RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER
 SET search_path=pg_catalog,public AS $$ SELECT EXISTS(SELECT 1 FROM public.user_empresas ue JOIN public.user_roles ur USING(user_id) WHERE ue.user_id=auth.uid() AND ue.empresa_id=_empresa_id AND ur.role IN ('rh','admin')) $$;
+CREATE OR REPLACE FUNCTION public.pertence_a_empresa(_empresa_id uuid) RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER
+SET search_path=pg_catalog,public AS $$ SELECT EXISTS(SELECT 1 FROM public.user_empresas ue WHERE ue.user_id=auth.uid() AND ue.empresa_id=_empresa_id) $$;
 
 CREATE TABLE public.profiles(id uuid PRIMARY KEY, user_id uuid UNIQUE NOT NULL, nome text NOT NULL);
 CREATE TABLE public.audit_log(
   id uuid PRIMARY KEY, created_at timestamptz NOT NULL DEFAULT now(), tabela text NOT NULL,
   registro_id text NOT NULL, acao text NOT NULL, user_id uuid, user_email text,
-  dados_anteriores jsonb, dados_novos jsonb
+  dados_anteriores jsonb, dados_novos jsonb, campos_alterados text[]
 );
+CREATE TABLE public.audit_log_unified(
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), source_table text NOT NULL,
+  source_id uuid, empresa_id uuid, user_id uuid, action text, entity text,
+  entity_id text, payload jsonb, ip_address inet, user_agent text,
+  occurred_at timestamptz NOT NULL DEFAULT now(), ingested_at timestamptz NOT NULL DEFAULT now()
+);
+-- Reproduce the historical forwarding bug: tenant is not extracted from the
+-- JSON snapshot. The remediation must backfill these rows and replace this
+-- function without having to recreate the trigger.
+CREATE OR REPLACE FUNCTION public.fwd_to_audit_unified() RETURNS trigger
+LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$
+BEGIN
+  INSERT INTO public.audit_log_unified(
+    source_table, source_id, empresa_id, user_id, action, entity, entity_id,
+    payload, occurred_at
+  ) VALUES (
+    TG_TABLE_NAME, NEW.id, NULL, NEW.user_id, NEW.acao, NEW.tabela,
+    NEW.registro_id, to_jsonb(NEW) - 'id' - 'created_at' - 'user_id', NEW.created_at
+  );
+  RETURN NEW;
+END $$;
+CREATE TRIGGER trg_fwd_audit_unified AFTER INSERT ON public.audit_log
+FOR EACH ROW EXECUTE FUNCTION public.fwd_to_audit_unified();
 CREATE VIEW public.v_audit_trail AS SELECT * FROM public.audit_log;
 GRANT SELECT ON public.v_audit_trail TO authenticated;
 
@@ -58,10 +83,13 @@ INSERT INTO public.user_roles VALUES
 ('00000000-0000-0000-0000-000000000099','admin');
 INSERT INTO public.profiles VALUES
 ('90000000-0000-4000-8000-000000000001','00000000-0000-0000-0000-000000000001','RH T1');
-INSERT INTO public.audit_log VALUES
-('30000000-0000-4000-8000-000000000001',now()-interval '2 minute','folha','r1','UPDATE','00000000-0000-0000-0000-000000000001','rh@example.test',NULL,'{"empresa_id":"10000000-0000-4000-8000-000000000001","status":"fechada"}'),
-('30000000-0000-4000-8000-000000000002',now()-interval '1 minute','folha','r2','UPDATE','00000000-0000-0000-0000-000000000002','user@example.test',NULL,'{"empresa_id":"20000000-0000-4000-8000-000000000002","status":"aberta"}'),
-('30000000-0000-4000-8000-000000000003',now(),'misc','r3','UPDATE',NULL,NULL,NULL,'{"empresa_id":"not-a-uuid"}');
+INSERT INTO public.audit_log(
+  id, created_at, tabela, registro_id, acao, user_id, user_email,
+  dados_anteriores, dados_novos, campos_alterados
+) VALUES
+('30000000-0000-4000-8000-000000000001',now()-interval '2 minute','folha','r1','UPDATE','00000000-0000-0000-0000-000000000001','rh@example.test',NULL,'{"empresa_id":"10000000-0000-4000-8000-000000000001","status":"fechada"}',ARRAY['status']),
+('30000000-0000-4000-8000-000000000002',now()-interval '1 minute','folha','r2','UPDATE','00000000-0000-0000-0000-000000000002','user@example.test',NULL,'{"empresa_id":"20000000-0000-4000-8000-000000000002","status":"aberta"}',ARRAY['status']),
+('30000000-0000-4000-8000-000000000003',now(),'misc','r3','UPDATE',NULL,NULL,NULL,'{"empresa_id":"not-a-uuid"}',NULL);
 SQL
 
 for pass in 1 2; do run_psql -f /tmp/migration.sql >/dev/null; done
@@ -69,12 +97,30 @@ for pass in 1 2; do run_psql -f /tmp/migration.sql >/dev/null; done
 rh_count="$(run_psql -qAtc "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000001\",\"role\":\"authenticated\"}'; SELECT count(*) FROM public.get_audit_trail('10000000-0000-4000-8000-000000000001');")"
 [ "$rh_count" = "1" ] || { echo "RH tenant scope failed: $rh_count" >&2; exit 1; }
 
+filtered_count="$(run_psql -qAtc "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000001\",\"role\":\"authenticated\"}'; SELECT count(*) FROM public.get_audit_trail('10000000-0000-4000-8000-000000000001',100,now(),'folha','r1');")"
+[ "$filtered_count" = "1" ] || { echo "entity filters failed: $filtered_count" >&2; exit 1; }
+
+changed_fields="$(run_psql -qAtc "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000001\",\"role\":\"authenticated\"}'; SELECT array_to_string(campos_alterados, ',') FROM public.get_audit_trail('10000000-0000-4000-8000-000000000001',100,now(),'folha','r1');")"
+[ "$changed_fields" = "status" ] || { echo "changed fields normalization failed: $changed_fields" >&2; exit 1; }
+
+written_actor="$(run_psql -qAtc "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000001\",\"role\":\"authenticated\"}'; SELECT public.registrar_auditoria('folha','secure-rpc','EXECUTE_CALC',NULL,'{\"total\":10}','10000000-0000-4000-8000-000000000001'); SELECT user_id FROM public.get_audit_trail('10000000-0000-4000-8000-000000000001',100,clock_timestamp()+interval '1 second','folha','secure-rpc');" | tail -1)"
+[ "$written_actor" = "00000000-0000-0000-0000-000000000001" ] || { echo "server-derived audit actor failed: $written_actor" >&2; exit 1; }
+
+expect_denied "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000001\",\"role\":\"authenticated\"}'; SELECT public.registrar_auditoria('folha','missing-tenant','UPDATE');"
+expect_denied "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000001\",\"role\":\"authenticated\"}'; SELECT public.registrar_auditoria('folha','foreign-tenant','UPDATE',NULL,NULL,'20000000-0000-4000-8000-000000000002');"
+expect_denied "SET ROLE anon; SELECT public.registrar_auditoria('folha','anonymous','UPDATE',NULL,NULL,'10000000-0000-4000-8000-000000000001');"
+
 expect_denied "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000002\",\"role\":\"authenticated\"}'; SELECT * FROM public.get_audit_trail('10000000-0000-4000-8000-000000000001');"
 expect_denied "SET ROLE anon; SELECT * FROM public.get_audit_trail('10000000-0000-4000-8000-000000000001');"
 expect_denied "SET ROLE authenticated; SELECT * FROM public.v_audit_trail;"
 
 admin_count="$(run_psql -qAtc "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000099\",\"role\":\"authenticated\"}'; SELECT count(*) FROM public.get_audit_trail(NULL);")"
-[ "$admin_count" = "3" ] || { echo "admin audit feed failed: $admin_count" >&2; exit 1; }
+[ "$admin_count" = "4" ] || { echo "admin audit feed failed: $admin_count" >&2; exit 1; }
+
+# Future legacy inserts must be forwarded with the tenant populated.
+run_psql -qAtc "INSERT INTO public.audit_log(id,tabela,registro_id,acao,dados_novos) VALUES ('30000000-0000-4000-8000-000000000004','folha','r4','INSERT','{\"empresa_id\":\"10000000-0000-4000-8000-000000000001\"}');" >/dev/null
+forwarded_tenant="$(run_psql -qAtc "SELECT empresa_id FROM public.audit_log_unified WHERE source_id='30000000-0000-4000-8000-000000000004';")"
+[ "$forwarded_tenant" = "10000000-0000-4000-8000-000000000001" ] || { echo "future forwarding lost tenant: $forwarded_tenant" >&2; exit 1; }
 
 run_psql -c 'CREATE DATABASE missing_audit_dependency' >/dev/null
 set +e
@@ -82,4 +128,4 @@ missing="$(docker exec "$NAME" psql -X -U postgres -d missing_audit_dependency -
 set -e
 [ "$status" -ne 0 ] && [[ "$missing" == *"requires public.audit_log"* ]] || { echo "preflight did not fail closed" >&2; exit 1; }
 
-echo 'P1_SCOPED_AUDIT_TRAIL_OK: tenant/admin/anonymous/view/idempotency/preflight scenarios passed.'
+echo 'P1_SCOPED_AUDIT_TRAIL_OK: tenant/admin/anonymous/view/filter/writer-authorship/backfill/forwarding/idempotency/preflight scenarios passed.'

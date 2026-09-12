@@ -31,8 +31,8 @@ export function useAfastamentos() {
     successMessages: {
       create: 'Afastamento registrado com sucesso',
       update: 'Afastamento atualizado com sucesso',
-      delete: 'Afastamento excluído com sucesso'
-    }
+      delete: 'Afastamento excluído com sucesso',
+    },
   });
 
   const configsQuery = useQuery({
@@ -51,8 +51,6 @@ export function useAfastamentos() {
     setFiltros,
   };
 }
-
-
 
 export function useProrrogacoesAfastamento(afastamentoId?: string) {
   const queryClient = useQueryClient();
@@ -73,7 +71,8 @@ export function useProrrogacoesAfastamento(afastamentoId?: string) {
         tabela: 'prorrogacoes_afastamento',
         registro_id: (data as any).id,
         acao: 'INSERT',
-        dados_novos: data
+        empresa_id: empresaAtual!.id,
+        dados_novos: data,
       });
       toast.success('Prorrogação registrada com sucesso');
     },

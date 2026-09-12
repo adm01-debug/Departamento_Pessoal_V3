@@ -1,6 +1,6 @@
 # Revisão pós-execução das 50 etapas — 12/09/2026
 
-## Atualização executiva — lote de remediação validado às 20:43 UTC
+## Atualização executiva — lote de remediação validado às 21:23 UTC
 
 O diagnóstico abaixo foi usado como entrada de uma nova rodada de implementação. Esta atualização é a fotografia mais recente e prevalece quando houver conflito com a seção histórica posterior.
 
@@ -12,10 +12,11 @@ O diagnóstico abaixo foi usado como entrada de uma nova rodada de implementaç�
 | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | TypeScript               | aplicação, testes e E2E sem erros                                                                                                                           |
 | ESLint/formatação        | `lint:ci` e `format:check:changed` aprovados                                                                                                                |
-| Vitest                   | 468 arquivos; 4.904 aprovados; 1 ignorado; cobertura real coletada                                                                                          |
+| Vitest                   | 468 arquivos; 4.910 aprovados; 1 ignorado; cobertura real: 61,74% statements, 56,86% branches, 54,37% functions e 66,04% lines                              |
 | Edge Functions           | 60/60 entrypoints aprovados no `deno check`; 95 testes Deno aprovados                                                                                       |
 | Banco descartável        | 19/19 scripts PostgreSQL aprovados, incluindo reaplicação e preflight fail-closed                                                                           |
-| Contrato frontend/bridge | 75 RPCs literais de produção mapeadas; 86 allowlisted; 7 RPCs públicas limitadas a chave publicável; zero acesso do bridge às tabelas sensíveis verificadas |
+| Contrato de auditoria    | 24 inserts Edge validados por AST; frontend sem leitura direta de `audit_log`; autoria server-owned e isolamento por empresa simulados no PostgreSQL        |
+| Contrato frontend/bridge | 76 RPCs literais de produção mapeadas; 87 allowlisted; 7 RPCs públicas limitadas a chave publicável; zero acesso do bridge às tabelas sensíveis verificadas |
 | Build                    | Vite/PWA de produção aprovado; avisos de tamanho de chunks continuam sendo dívida de performance, não falha de compilação                                   |
 | Workflows                | `actionlint` aprovado; inputs do operador tratados como dados; segredos administrativos removidos do contexto de PR                                         |
 
@@ -28,7 +29,7 @@ O diagnóstico abaixo foi usado como entrada de uma nova rodada de implementaç�
 | RV-03 policies permissivas  | policies confirmadas foram removidas/substituídas e o auditor deixou de isentar token                                                                                      | aplicar SQL e rodar os cinco auditores vivos                                        |
 | RV-04 RPCs ausentes         | RPCs de vínculo e gestão RH/pessoas entregues com grants mínimos                                                                                                           | aplicar SQL antes do deploy Edge                                                    |
 | RV-05 Auth/rate limit       | reset público revogado e rate limiter transacional service-only entregue                                                                                                   | aplicar SQL, publicar Auth/Edge e testar concorrência remota                        |
-| RV-06 trilha de auditoria   | view problemática retirada do cliente; RPC escopada e chamadas sensíveis via PostgREST/RLS                                                                                 | aplicar e validar admin/RH/comum no canônico                                        |
+| RV-06 trilha de auditoria   | RPC escopada por tenant e filtros; autoria derivada de `auth.uid()`; log unificado sem escrita direta; clientes migrados; 24 inserts Edge validados por AST                | aplicar e validar admin/RH/comum no canônico                                        |
 | RV-07 provisões             | schema compatível, chave composta e substituição mensal/auditoria em uma transação                                                                                         | aplicar e reconciliar cálculo com casos legais homologados                          |
 | RV-08 autoria de relatórios | autor server-owned/imutável, destino interno e tenant regravado por trigger                                                                                                | aplicar e repetir payload forjado remoto                                            |
 | RV-09 agenda                | claim atômico, lease, cursor durável e chave idempotente do provedor                                                                                                       | deploy + teste concorrente e de falha do provedor                                   |

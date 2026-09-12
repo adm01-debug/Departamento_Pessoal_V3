@@ -25,7 +25,7 @@ if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
 
 // Base client usado para Auth/Storage. Toda I/O de dados vai pela bridge.
 // Exportado também como `supabaseBase` para uso em casos especiais (ex.: client.base.ts)
-// onde o proxy de bridge não deve mediar (audit_log, tabelas de sistema, etc).
+// onde o proxy de bridge não deve mediar (Auth, Storage e Realtime).
 export const supabaseBase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
     storage: brokeredPreviewStorage(),

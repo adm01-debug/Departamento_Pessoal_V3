@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { supabase as supabaseBase } from '@/integrations/supabase/client.base';
+import { auditoriaService } from '@/services/auditoriaService';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useRealTimeSubscription } from '@/hooks/useRealTimeSubscription';
@@ -61,15 +61,11 @@ export const EventTimeline = memo(function EventTimeline({
   const { data: dbEvents, isLoading } = useQuery({
     queryKey: ['audit-timeline', empresaId],
     enabled: !!empresaId,
+    refetchInterval: 30_000,
     queryFn: async () => {
       // Fetch audit logs and compliance alerts
-      const [auditResponse, complianceResponse] = await Promise.all([
-        (supabaseBase as any)
-          .from('audit_log')
-          .select('*')
-          .eq('empresa_id', empresaId!)
-          .order('timestamp', { ascending: false })
-          .limit(10),
+      const [auditLogs, complianceResponse] = await Promise.all([
+        auditoriaService.listarTrilha({ empresa_id: empresaId!, limite: 10 }),
         (supabase as any)
           .from('conformidade_ponto_logs')
           .select('*')
@@ -78,15 +74,14 @@ export const EventTimeline = memo(function EventTimeline({
           .limit(10),
       ]);
 
-      if (auditResponse.error) throw auditResponse.error;
       if (complianceResponse.error) throw complianceResponse.error;
 
-      const auditEvents = auditResponse.data.map((log: any) => ({
+      const auditEvents = auditLogs.map((log) => ({
         id: log.id,
-        title: `${log.tabela.charAt(0).toUpperCase() + log.tabela.slice(1)}: ${log.acao}`,
+        title: `${(log.tabela || 'evento').replace(/^./, (value) => value.toUpperCase())}: ${log.acao || 'EVENTO'}`,
         description: `Alteração no registro ${log.registro_id?.substring(0, 8)}...`,
-        time: format(new Date(log.timestamp), 'HH:mm, dd MMM', { locale: ptBR }),
-        raw_time: log.timestamp,
+        time: format(new Date(log.created_at), 'HH:mm, dd MMM', { locale: ptBR }),
+        raw_time: log.created_at,
         type:
           log.tabela === 'ferias'
             ? 'ferias'
@@ -113,12 +108,11 @@ export const EventTimeline = memo(function EventTimeline({
     },
   });
 
-  useRealTimeSubscription('audit_log', ['audit-timeline', empresaId], empresaId);
   useRealTimeSubscription('conformidade_ponto_logs', ['audit-timeline', empresaId], empresaId);
 
   const displayEvents = useMemo(() => {
     const list = dbEvents || initialEvents || [];
-    const filtered = filterType === 'all' ? list : list.filter((e) => e.type === filterType);
+    const filtered = filterType === 'all' ? [...list] : list.filter((e) => e.type === filterType);
 
     return filtered.sort((a, b) => {
       const timeA = a.raw_time ? new Date(a.raw_time).getTime() : 0;

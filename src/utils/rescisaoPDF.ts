@@ -1,6 +1,6 @@
 import { toast } from 'sonner';
 import { RescisaoResult, fmt } from './rescisaoCalc';
-import { supabase } from '@/integrations/supabase/client.base';
+import { auditoriaService } from '@/services/auditoriaService';
 
 export async function gerarPDFRescisao(form: any, result: RescisaoResult, auditoriaParam?: any) {
   const { default: jsPDF } = await import('jspdf');
@@ -8,16 +8,21 @@ export async function gerarPDFRescisao(form: any, result: RescisaoResult, audito
 
   // Buscar trilha de auditoria se não fornecida
   let auditoria = auditoriaParam;
-  if (!auditoria && form.id) {
-    const { data } = await supabase
-      .from('audit_log')
-      .select('*')
-      .eq('registro_id', form.id)
-      .eq('tabela', 'desligamentos')
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    auditoria = data;
+  if (!auditoria && form.id && form.empresa_id) {
+    try {
+      const [registro] = await auditoriaService.listarTrilha({
+        empresa_id: form.empresa_id,
+        tabela: 'desligamentos',
+        registro_id: form.id,
+        limite: 1,
+      });
+      auditoria = registro;
+    } catch {
+      // Audit metadata enriches the PDF but is not required to generate an
+      // unsigned draft. The PDF only displays the audit seal when a verified
+      // record was actually returned.
+      auditoria = null;
+    }
   }
 
   const doc = new jsPDF();

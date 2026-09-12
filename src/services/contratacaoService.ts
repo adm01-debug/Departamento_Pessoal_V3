@@ -123,6 +123,7 @@ export const contratacaoService = {
         tabela: 'admissoes',
         registro_id: admissaoId,
         acao: 'UPDATE',
+        empresa_id: empresaId,
         dados_novos: {
           documento: docType,
           status,
@@ -272,6 +273,7 @@ export const contratacaoService = {
         tabela: 'admissoes',
         registro_id: admissaoId,
         acao: 'EXECUTE_CALC',
+        empresa_id: empresaId,
         dados_novos: {
           evento: 'TRANSMISSAO_ESOCIAL_S2200',
           status: 'sucesso',

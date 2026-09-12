@@ -22745,9 +22745,16 @@ export type Database = {
         }[]
       }
       get_audit_trail: {
-        Args: { p_before?: string; p_empresa_id?: string; p_limit?: number }
+        Args: {
+          p_before?: string
+          p_empresa_id?: string
+          p_limit?: number
+          p_registro_id?: string
+          p_tabela?: string
+        }
         Returns: {
           acao: string
+          campos_alterados: string[] | null
           created_at: string
           dados_anteriores: Json | null
           dados_novos: Json | null

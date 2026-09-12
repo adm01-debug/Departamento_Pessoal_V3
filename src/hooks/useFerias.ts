@@ -30,6 +30,7 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
         tabela: 'ferias',
         registro_id: data.id,
         acao: 'INSERT',
+        empresa_id: empresaId,
         dados_novos: data,
       });
       toast.success('Solicitação de férias criada com sucesso');
@@ -48,6 +49,7 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
         tabela: 'ferias',
         registro_id: variables.id,
         acao: 'UPDATE',
+        empresa_id: empresaId,
         dados_novos: variables.data,
       });
       toast.success('Solicitação de férias atualizada');
@@ -66,6 +68,7 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
         tabela: 'ferias',
         registro_id: id,
         acao: 'DELETE',
+        empresa_id: empresaId,
       });
       toast.success('Solicitação de férias excluída');
     },

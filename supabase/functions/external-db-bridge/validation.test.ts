@@ -64,7 +64,7 @@ Deno.test("denylist: tabelas sensíveis presentes", () => {
   const mustDeny = [
     "user_empresas", "user_roles", "secrets", "vault", "ip_whitelist", "blocked_ips",
     "rate_limit_config", "rate_limit_logs", "login_attempts", "login_lockouts",
-    "login_rate_limits", "password_policies", "security_alerts", "audit_log",
+    "login_rate_limits", "password_policies", "security_alerts", "audit_log", "audit_log_unified",
     "geo_blocking_config", "geo_allowed_countries", "govbr_auth_state",
     "pii_access_logs", "pii_access_alerts",
   ];
