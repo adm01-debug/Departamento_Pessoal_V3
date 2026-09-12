@@ -42,10 +42,7 @@ describe('useGenericCrud', () => {
 
   it('initial state has correct defaults', () => {
     const wrapper = createWrapper();
-    const { result } = renderHook(
-      () => useGenericCrud({ queryKey: 'test', service }),
-      { wrapper }
-    );
+    const { result } = renderHook(() => useGenericCrud({ queryKey: 'test', service }), { wrapper });
     expect(result.current.items).toEqual([]);
     expect(result.current.total).toBe(0);
     expect(result.current.page).toBe(1);
@@ -55,19 +52,15 @@ describe('useGenericCrud', () => {
 
   it('respects custom initialPageSize', () => {
     const wrapper = createWrapper();
-    const { result } = renderHook(
-      () => useGenericCrud({ queryKey: 'test', service, initialPageSize: 25 }),
-      { wrapper }
-    );
+    const { result } = renderHook(() => useGenericCrud({ queryKey: 'test', service, initialPageSize: 25 }), {
+      wrapper,
+    });
     expect(result.current.pageSize).toBe(25);
   });
 
   it('loads items from service after query resolves', async () => {
     const wrapper = createWrapper();
-    const { result } = renderHook(
-      () => useGenericCrud({ queryKey: 'test', service }),
-      { wrapper }
-    );
+    const { result } = renderHook(() => useGenericCrud({ queryKey: 'test', service }), { wrapper });
     await waitFor(() => expect(result.current.items).toHaveLength(1));
     expect(result.current.total).toBe(1);
     expect(result.current.items[0]).toEqual({ id: '1', nome: 'Test' });
@@ -75,65 +68,80 @@ describe('useGenericCrud', () => {
 
   it('passes correct options to service.listar', async () => {
     const wrapper = createWrapper();
-    renderHook(
-      () => useGenericCrud({ queryKey: 'test', service }),
-      { wrapper }
-    );
+    renderHook(() => useGenericCrud({ queryKey: 'test', service }), { wrapper });
     await waitFor(() => expect(service.listar).toHaveBeenCalled());
-    expect(service.listar).toHaveBeenCalledWith(
-      expect.objectContaining({ page: 1, pageSize: 10, search: '' })
-    );
+    expect(service.listar).toHaveBeenCalledWith(expect.objectContaining({ page: 1, pageSize: 10, search: '' }));
   });
 
   it('setSearch updates search value', () => {
     const wrapper = createWrapper();
-    const { result } = renderHook(
-      () => useGenericCrud({ queryKey: 'test', service }),
-      { wrapper }
-    );
-    act(() => { result.current.setSearch('foo'); });
+    const { result } = renderHook(() => useGenericCrud({ queryKey: 'test', service }), { wrapper });
+    act(() => {
+      result.current.setSearch('foo');
+    });
     expect(result.current.search).toBe('foo');
   });
 
-  it('setSearch resets page to 1', async () => {
+  it('setSearch resets page to 1 synchronously', () => {
     const wrapper = createWrapper();
-    const { result } = renderHook(
-      () => useGenericCrud({ queryKey: 'test', service }),
-      { wrapper }
-    );
-    act(() => { result.current.setPage(3); });
+    const { result } = renderHook(() => useGenericCrud({ queryKey: 'test', service }), { wrapper });
+    act(() => {
+      result.current.setPage(3);
+    });
     expect(result.current.page).toBe(3);
-    act(() => { result.current.setSearch('bar'); });
-    await waitFor(() => expect(result.current.page).toBe(1));
+    act(() => {
+      result.current.setSearch('bar');
+    });
+    expect(result.current.page).toBe(1);
+  });
+
+  it('resets pagination before fetching after filters change', async () => {
+    const wrapper = createWrapper();
+    const { result, rerender } = renderHook(({ filters }) => useGenericCrud({ queryKey: 'test', service, filters }), {
+      initialProps: { filters: { status: 'ativo' } },
+      wrapper,
+    });
+    await waitFor(() => expect(service.listar).toHaveBeenCalled());
+
+    act(() => {
+      result.current.setPage(3);
+    });
+    await waitFor(() => expect(result.current.page).toBe(3));
+    service.listar.mockClear();
+
+    rerender({ filters: { status: 'inativo' } });
+
+    expect(result.current.page).toBe(1);
+    await waitFor(() =>
+      expect(service.listar).toHaveBeenCalledWith(expect.objectContaining({ page: 1, filters: { status: 'inativo' } }))
+    );
+    expect(service.listar).not.toHaveBeenCalledWith(
+      expect.objectContaining({ page: 3, filters: { status: 'inativo' } })
+    );
   });
 
   it('setPage updates page', () => {
     const wrapper = createWrapper();
-    const { result } = renderHook(
-      () => useGenericCrud({ queryKey: 'test', service }),
-      { wrapper }
-    );
-    act(() => { result.current.setPage(5); });
+    const { result } = renderHook(() => useGenericCrud({ queryKey: 'test', service }), { wrapper });
+    act(() => {
+      result.current.setPage(5);
+    });
     expect(result.current.page).toBe(5);
   });
 
   it('setPageSize updates pageSize', () => {
     const wrapper = createWrapper();
-    const { result } = renderHook(
-      () => useGenericCrud({ queryKey: 'test', service }),
-      { wrapper }
-    );
-    act(() => { result.current.setPageSize(50); });
+    const { result } = renderHook(() => useGenericCrud({ queryKey: 'test', service }), { wrapper });
+    act(() => {
+      result.current.setPageSize(50);
+    });
     expect(result.current.pageSize).toBe(50);
   });
 
   it('criar calls service.criar and shows default success toast', async () => {
     const { toast } = await import('sonner');
     const wrapper = createWrapper();
-    const { result } = renderHook(
-      () => useGenericCrud({ queryKey: 'test', service }),
-      { wrapper }
-    );
+    const { result } = renderHook(() => useGenericCrud({ queryKey: 'test', service }), { wrapper });
     await act(async () => {
       await result.current.criar({ nome: 'New' });
     });
@@ -145,11 +153,12 @@ describe('useGenericCrud', () => {
     const { toast } = await import('sonner');
     const wrapper = createWrapper();
     const { result } = renderHook(
-      () => useGenericCrud({
-        queryKey: 'test',
-        service,
-        successMessages: { create: 'Colaborador criado!' },
-      }),
+      () =>
+        useGenericCrud({
+          queryKey: 'test',
+          service,
+          successMessages: { create: 'Colaborador criado!' },
+        }),
       { wrapper }
     );
     await act(async () => {
@@ -161,10 +170,7 @@ describe('useGenericCrud', () => {
   it('atualizar calls service.atualizar with id and data', async () => {
     const { toast } = await import('sonner');
     const wrapper = createWrapper();
-    const { result } = renderHook(
-      () => useGenericCrud({ queryKey: 'test', service, empresaId: 'emp-1' }),
-      { wrapper }
-    );
+    const { result } = renderHook(() => useGenericCrud({ queryKey: 'test', service, empresaId: 'emp-1' }), { wrapper });
     await act(async () => {
       await result.current.atualizar({ id: '1', data: { nome: 'Updated' } });
     });
@@ -177,11 +183,12 @@ describe('useGenericCrud', () => {
     const { toast } = await import('sonner');
     const wrapper = createWrapper();
     const { result } = renderHook(
-      () => useGenericCrud({
-        queryKey: 'test',
-        service,
-        successMessages: { update: 'Cargo atualizado!' },
-      }),
+      () =>
+        useGenericCrud({
+          queryKey: 'test',
+          service,
+          successMessages: { update: 'Cargo atualizado!' },
+        }),
       { wrapper }
     );
     await act(async () => {
@@ -193,10 +200,7 @@ describe('useGenericCrud', () => {
   it('excluir calls service.excluir and shows default success toast', async () => {
     const { toast } = await import('sonner');
     const wrapper = createWrapper();
-    const { result } = renderHook(
-      () => useGenericCrud({ queryKey: 'test', service, empresaId: 'emp-1' }),
-      { wrapper }
-    );
+    const { result } = renderHook(() => useGenericCrud({ queryKey: 'test', service, empresaId: 'emp-1' }), { wrapper });
     await act(async () => {
       await result.current.excluir('1');
     });
@@ -208,11 +212,12 @@ describe('useGenericCrud', () => {
     const { toast } = await import('sonner');
     const wrapper = createWrapper();
     const { result } = renderHook(
-      () => useGenericCrud({
-        queryKey: 'test',
-        service,
-        successMessages: { delete: 'Removido com sucesso!' },
-      }),
+      () =>
+        useGenericCrud({
+          queryKey: 'test',
+          service,
+          successMessages: { delete: 'Removido com sucesso!' },
+        }),
       { wrapper }
     );
     await act(async () => {
@@ -225,12 +230,13 @@ describe('useGenericCrud', () => {
     const { toast } = await import('sonner');
     service.criar.mockRejectedValue(new Error('Falha ao criar'));
     const wrapper = createWrapper();
-    const { result } = renderHook(
-      () => useGenericCrud({ queryKey: 'test', service }),
-      { wrapper }
-    );
+    const { result } = renderHook(() => useGenericCrud({ queryKey: 'test', service }), { wrapper });
     await act(async () => {
-      try { await result.current.criar({}); } catch { /* expected */ }
+      try {
+        await result.current.criar({});
+      } catch {
+        /* expected */
+      }
     });
     await waitFor(() => expect(toast.error).toHaveBeenCalledWith('Falha ao criar'));
   });
@@ -239,22 +245,20 @@ describe('useGenericCrud', () => {
     const { toast } = await import('sonner');
     service.excluir.mockRejectedValue(new Error('Não encontrado'));
     const wrapper = createWrapper();
-    const { result } = renderHook(
-      () => useGenericCrud({ queryKey: 'test', service }),
-      { wrapper }
-    );
+    const { result } = renderHook(() => useGenericCrud({ queryKey: 'test', service }), { wrapper });
     await act(async () => {
-      try { await result.current.excluir('99'); } catch { /* expected */ }
+      try {
+        await result.current.excluir('99');
+      } catch {
+        /* expected */
+      }
     });
     await waitFor(() => expect(toast.error).toHaveBeenCalledWith('Não encontrado'));
   });
 
   it('exposes isCreating, isUpdating, isDeleting flags', () => {
     const wrapper = createWrapper();
-    const { result } = renderHook(
-      () => useGenericCrud({ queryKey: 'test', service }),
-      { wrapper }
-    );
+    const { result } = renderHook(() => useGenericCrud({ queryKey: 'test', service }), { wrapper });
     expect(result.current.isCreating).toBe(false);
     expect(result.current.isUpdating).toBe(false);
     expect(result.current.isDeleting).toBe(false);
@@ -262,10 +266,7 @@ describe('useGenericCrud', () => {
 
   it('exposes refetch and isRefreshing', () => {
     const wrapper = createWrapper();
-    const { result } = renderHook(
-      () => useGenericCrud({ queryKey: 'test', service }),
-      { wrapper }
-    );
+    const { result } = renderHook(() => useGenericCrud({ queryKey: 'test', service }), { wrapper });
     expect(typeof result.current.refetch).toBe('function');
     expect(result.current.isRefreshing).toBe(false);
   });
