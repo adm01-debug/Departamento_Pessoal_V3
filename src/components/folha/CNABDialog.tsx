@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,26 +16,38 @@ interface CNABDialogProps {
   folhaId: string;
 }
 
+const emptyConfig = (nomeEmpresa = ''): CNABConfig => ({
+  banco_codigo: '001',
+  agencia: '',
+  agencia_digito: '',
+  conta: '',
+  conta_digito: '',
+  convenio: '',
+  nome_empresa: nomeEmpresa,
+});
+
 export function CNABDialog({ folhaId }: CNABDialogProps) {
   const { empresaAtual } = useEmpresas();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [config, setConfig] = useState<CNABConfig>({
-    banco_codigo: '001', // Default BB
-    agencia: '',
-    agencia_digito: '',
-    conta: '',
-    conta_digito: '',
-    convenio: '',
-    nome_empresa: '',
-  });
+  const [loadingConfig, setLoadingConfig] = useState(false);
+  const [configEmpresaId, setConfigEmpresaId] = useState<string | null>(null);
+  const [config, setConfig] = useState<CNABConfig>(() => emptyConfig());
+  const empresaAtualIdRef = useRef<string | undefined>(empresaAtual?.id);
 
-  // eslint-disable-next-line react-hooks/preserve-manual-memoization
-  const loadConfig = useCallback(async () => {
-    if (!empresaAtual?.id) return;
+  useEffect(() => {
+    empresaAtualIdRef.current = empresaAtual?.id;
+  }, [empresaAtual?.id]);
+
+  const loadConfig = useCallback(async (empresaId: string, razaoSocial?: string) => {
+    setLoadingConfig(true);
+    setConfigEmpresaId(null);
     try {
-      const data = await cnabService.getConfig(empresaAtual.id);
+      const data = await cnabService.getConfig(empresaId);
+      // A troca de empresa ou o fechamento do modal invalida a resposta que
+      // chegou atrasada. Nunca reutilizar dados bancários entre tenants.
+      if (empresaAtualIdRef.current !== empresaId) return;
       if (data) {
         setConfig({
           banco_codigo: data.banco_codigo,
@@ -44,27 +56,51 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
           conta: data.conta,
           conta_digito: data.conta_digito,
           convenio: data.convenio,
-          nome_empresa: data.nome_empresa || empresaAtual?.razao_social || '',
+          nome_empresa: data.nome_empresa || razaoSocial || '',
         });
       } else {
-        setConfig((prev) => ({ ...prev, nome_empresa: empresaAtual?.razao_social || '' }));
+        setConfig(emptyConfig(razaoSocial));
       }
+      setConfigEmpresaId(empresaId);
     } catch (err) {
       loggerService.error(
         'Erro ao carregar config CNAB',
-        { empresaId: empresaAtual?.id },
+        { empresaId },
         err instanceof Error ? err : new Error(String(err))
       );
+    } finally {
+      if (empresaAtualIdRef.current === empresaId) setLoadingConfig(false);
     }
-  }, [empresaAtual?.id, empresaAtual?.razao_social]);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (open && empresaAtual?.id) {
+      const empresaId = empresaAtual.id;
+      const razaoSocial = empresaAtual.razao_social;
+      queueMicrotask(() => {
+        if (!cancelled) void loadConfig(empresaId, razaoSocial);
+      });
+    }
+    return () => {
+      cancelled = true;
+    };
+  }, [open, empresaAtual?.id, empresaAtual?.razao_social, loadConfig]);
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
-    if (nextOpen) void loadConfig();
+    if (!nextOpen) {
+      setConfigEmpresaId(null);
+      setConfig(emptyConfig());
+    }
   };
 
   const handleSaveConfig = async () => {
     if (!empresaAtual?.id) return;
+    if (loadingConfig || configEmpresaId !== empresaAtual.id) {
+      toast.error('A configuração da empresa atual ainda não foi carregada.');
+      return;
+    }
     setSaving(true);
     try {
       await cnabService.saveConfig(empresaAtual.id, config);
@@ -213,7 +249,7 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
                 variant="ghost"
                 size="sm"
                 onClick={handleSaveConfig}
-                disabled={saving}
+                disabled={saving || loadingConfig || configEmpresaId !== empresaAtual?.id}
                 className="w-full text-xs gap-1.5 h-8 border border-dashed border-primary/20 hover:bg-primary/5"
               >
                 {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : <CheckCircle2 className="h-3 w-3" />}

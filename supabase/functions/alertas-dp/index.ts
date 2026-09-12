@@ -24,7 +24,12 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { verifyCsrf } from "../_shared/csrf.ts";
 import { captureException } from "../_shared/sentry.ts";
-import { corsHeaders, parseJsonBody } from "../_shared/contract.ts";
+import {
+  enforceOrigin,
+  getCorsHeaders,
+  handlePreflight,
+  parseJsonBody,
+} from "../_shared/contract.ts";
 import { safeFetch } from "../_shared/safe-fetch.ts";
 import { requireRh } from "../_shared/authz.ts";
 import { resendDeliveryId } from "../_shared/resendDelivery.ts";
@@ -44,13 +49,14 @@ function escapeHtml(value: unknown): string {
 }
 
 serve(async (req: Request): Promise<Response> => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { status: 204, headers: corsHeaders });
-  }
+  const preflight = handlePreflight(req);
+  if (preflight) return preflight;
+  const forbiddenOrigin = enforceOrigin(req);
+  if (forbiddenOrigin) return forbiddenOrigin;
   if (req.method !== "POST") {
     return new Response(JSON.stringify({ error: "Method not allowed" }), {
       status: 405,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 
@@ -68,7 +74,7 @@ serve(async (req: Request): Promise<Response> => {
         JSON.stringify({ error: "Autenticação obrigatória" }),
         {
           status: 401,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         },
       );
     }
@@ -81,7 +87,7 @@ serve(async (req: Request): Promise<Response> => {
     if (userErr || !userData?.user) {
       return new Response(JSON.stringify({ error: "Sessão inválida" }), {
         status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -108,7 +114,7 @@ serve(async (req: Request): Promise<Response> => {
         JSON.stringify({ error: "empresaId é obrigatório" }),
         {
           status: 422,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         },
       );
     }
@@ -135,12 +141,13 @@ serve(async (req: Request): Promise<Response> => {
     }[] = [];
 
     // ── 1. ASOs vencendo em 7 dias ───────────────────────────────────────
-    const { data: asosVencendo } = await supabase
+    const { data: asosVencendo, error: asosVencendoError } = await supabase
       .from("asos")
       .select("*, colaborador:colaboradores(nome_completo, email)")
       .eq("empresa_id", empresaId)
       .lte("data_validade", em7dias)
       .gte("data_validade", hojeStr);
+    if (asosVencendoError) throw asosVencendoError;
 
     if (asosVencendo?.length) {
       alertas.push({
@@ -160,11 +167,12 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     // ── 2. ASOs já vencidos ─────────────────────────────────────────────
-    const { data: asosVencidos } = await supabase
+    const { data: asosVencidos, error: asosVencidosError } = await supabase
       .from("asos")
       .select("*, colaborador:colaboradores(nome_completo)")
       .eq("empresa_id", empresaId)
       .lt("data_validade", hojeStr);
+    if (asosVencidosError) throw asosVencidosError;
 
     if (asosVencidos?.length) {
       alertas.push({
@@ -184,11 +192,12 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     // ── 3. Férias próximas (período aquisitivo completando 11-12 meses) ─
-    const { data: colabAtivos } = await supabase
+    const { data: colabAtivos, error: colabAtivosError } = await supabase
       .from("colaboradores")
       .select("id, nome_completo, data_admissao")
       .eq("empresa_id", empresaId)
       .eq("status", "ativo");
+    if (colabAtivosError) throw colabAtivosError;
 
     const MES_MS = 1000 * 60 * 60 * 24 * 30;
     const feriasVencendo = (colabAtivos ?? []).filter(
@@ -240,11 +249,12 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     // ── 5. Anomalias de login (P3-057) ───────────────────────────────────
-    const { data: anomaliasIP } = await supabase
+    const { data: anomaliasIP, error: anomaliasIPError } = await supabase
       .from("v_login_anomalies")
       .select("*")
       .eq("empresa_id", empresaId)
       .limit(20);
+    if (anomaliasIPError) throw anomaliasIPError;
 
     if (anomaliasIP?.length) {
       alertas.push({
@@ -266,9 +276,16 @@ serve(async (req: Request): Promise<Response> => {
     // ── Se nenhum alerta ─────────────────────────────────────────────────
     if (alertas.length === 0) {
       return new Response(
-        JSON.stringify({ message: "Nenhum alerta pendente", alertas: [] }),
+        JSON.stringify({
+          success: true,
+          alertas_processados: 0,
+          destinatarios: 0,
+          email_delivery: "not_needed",
+          message: "Nenhum alerta pendente",
+          alertas: [],
+        }),
         {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         },
       );
     }
@@ -462,7 +479,7 @@ serve(async (req: Request): Promise<Response> => {
       {
         status: alertDeliveryHttpStatus(emailDelivery),
         headers: {
-          ...corsHeaders,
+          ...getCorsHeaders(req),
           "Content-Type": "application/json",
           "Cache-Control": "no-store",
         },
@@ -474,7 +491,7 @@ serve(async (req: Request): Promise<Response> => {
     } catch { /* noop */ }
     return new Response(JSON.stringify({ error: "Erro interno" }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 });

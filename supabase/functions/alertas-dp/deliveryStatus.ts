@@ -2,7 +2,8 @@ export type AlertEmailDeliveryStatus =
   | "accepted"
   | "not_configured"
   | "no_recipients"
-  | "rejected";
+  | "rejected"
+  | "not_needed";
 
 /**
  * Alertas persistidos no produto não substituem um e-mail solicitado. Apenas
@@ -13,6 +14,7 @@ export function alertDeliveryHttpStatus(
 ): 200 | 502 | 503 {
   switch (status) {
     case "accepted":
+    case "not_needed":
       return 200;
     case "rejected":
       return 502;

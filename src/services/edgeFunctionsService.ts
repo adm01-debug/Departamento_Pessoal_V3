@@ -38,7 +38,7 @@ export const edgeFunctionsService = {
   dispararAlertasDP: async (empresaId: string) =>
     handleInvoke<{
       success: boolean;
-      email_delivery: 'accepted' | 'not_configured' | 'no_recipients' | 'rejected';
+      email_delivery: 'accepted' | 'not_configured' | 'no_recipients' | 'rejected' | 'not_needed';
       alertas_processados: number;
     }>('alertas-dp', { body: { empresaId } }),
 

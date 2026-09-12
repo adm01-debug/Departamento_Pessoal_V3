@@ -6,6 +6,7 @@ import {
 
 Deno.test("alertas não recebem sucesso HTTP sem entrega externa confirmada", () => {
   assertEquals(alertDeliveryHttpStatus("accepted"), 200);
+  assertEquals(alertDeliveryHttpStatus("not_needed"), 200);
   assertEquals(alertDeliveryHttpStatus("rejected"), 502);
   assertEquals(alertDeliveryHttpStatus("not_configured"), 503);
   assertEquals(alertDeliveryHttpStatus("no_recipients"), 503);

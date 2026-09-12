@@ -171,7 +171,19 @@ export async function parseJsonBody(
   maxBytes: number = DEFAULT_MAX_PAYLOAD_BYTES
 ): Promise<{ body?: unknown; errorResponse?: Response }> {
   const contentLength = req.headers.get('content-length');
-  if (contentLength && parseInt(contentLength, 10) > maxBytes) {
+  const declaredLength = contentLength ? Number(contentLength) : null;
+  if (declaredLength !== null && (!Number.isSafeInteger(declaredLength) || declaredLength < 0)) {
+    return {
+      errorResponse: createErrorResponse(
+        'Content-Length inválido',
+        400,
+        'INVALID_CONTENT_LENGTH',
+        undefined,
+        req,
+      ),
+    };
+  }
+  if (declaredLength !== null && declaredLength > maxBytes) {
     return {
       errorResponse: createErrorResponse(
         `Payload excede o limite de ${Math.round(maxBytes / 1024)} KB`,
@@ -184,19 +196,47 @@ export async function parseJsonBody(
   }
 
   try {
-    const raw = await req.text();
-    if (raw.length > maxBytes) {
+    if (!req.body) {
       return {
-      errorResponse: createErrorResponse(
-        `Payload excede o limite de ${Math.round(maxBytes / 1024)} KB`,
-        413,
-        'PAYLOAD_TOO_LARGE',
-        undefined,
-        req,
+        errorResponse: createErrorResponse(
+          'JSON inválido ou corpo da requisição ausente',
+          400,
+          'INVALID_JSON',
+          undefined,
+          req,
         ),
       };
     }
-    const parsed = JSON.parse(raw);
+
+    const reader = req.body.getReader();
+    const chunks: Uint8Array[] = [];
+    let receivedBytes = 0;
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      receivedBytes += value.byteLength;
+      if (receivedBytes > maxBytes) {
+        await reader.cancel();
+        return {
+          errorResponse: createErrorResponse(
+            `Payload excede o limite de ${Math.round(maxBytes / 1024)} KB`,
+            413,
+            'PAYLOAD_TOO_LARGE',
+            undefined,
+            req,
+          ),
+        };
+      }
+      chunks.push(value);
+    }
+
+    const bytes = new Uint8Array(receivedBytes);
+    let offset = 0;
+    for (const chunk of chunks) {
+      bytes.set(chunk, offset);
+      offset += chunk.byteLength;
+    }
+    const parsed = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes));
     return { body: parsed };
   } catch {
     return {

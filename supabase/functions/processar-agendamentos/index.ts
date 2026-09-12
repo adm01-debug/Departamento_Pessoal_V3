@@ -2,19 +2,26 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { verifyCsrf } from "../_shared/csrf.ts";
 import { captureException } from "../_shared/sentry.ts";
-import { corsHeaders } from "../_shared/contract.ts";
+import { enforceOrigin, getCorsHeaders, handlePreflight } from "../_shared/contract.ts";
 import { safeFetch } from "../_shared/safe-fetch.ts";
+import {
+  nextScheduleOccurrence,
+  shouldRunSchedule,
+  summarizeScheduleResults,
+  type ScheduleResult,
+} from "./scheduleContract.ts";
 
 serve(async (req: Request): Promise<Response> => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { status: 204, headers: corsHeaders });
-  }
+  const preflight = handlePreflight(req);
+  if (preflight) return preflight;
+  const forbiddenOrigin = enforceOrigin(req);
+  if (forbiddenOrigin) return forbiddenOrigin;
   if (req.method !== "POST") {
     return new Response(
       JSON.stringify({ success: false, error: "Method not allowed" }),
       {
         status: 405,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       },
     );
   }
@@ -102,7 +109,7 @@ serve(async (req: Request): Promise<Response> => {
         JSON.stringify({ success: false, error: "Não autorizado" }),
         {
           status: 401,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
         },
       );
     }
@@ -121,7 +128,7 @@ serve(async (req: Request): Promise<Response> => {
         {
           status: 503,
           headers: {
-            ...corsHeaders,
+            ...getCorsHeaders(req),
             "Content-Type": "application/json",
             "Cache-Control": "no-store",
           },
@@ -145,11 +152,18 @@ serve(async (req: Request): Promise<Response> => {
 
     const CONCURRENCY = 5;
     const lista = agendamentos ?? [];
-    const resultados: unknown[] = [];
+    type ProcessResult = ScheduleResult & {
+      id: unknown;
+      nome?: unknown;
+      resultado?: unknown;
+      proximo_envio?: Date;
+      erro?: string;
+    };
+    const resultados: ProcessResult[] = [];
 
-    const processarUm = async (agendamento: Record<string, unknown>) => {
+    const processarUm = async (agendamento: Record<string, unknown>): Promise<ProcessResult> => {
       try {
-        const deveExecutar = verificarExecucao(agendamento, agora);
+        const deveExecutar = shouldRunSchedule(agendamento as Parameters<typeof shouldRunSchedule>[0], agora);
         if (!deveExecutar) {
           return { id: agendamento.id, status: "skipped" };
         }
@@ -178,13 +192,17 @@ serve(async (req: Request): Promise<Response> => {
         if (!response.ok) {
           throw new Error(`Falha ao enviar relatório (${response.status})`);
         }
-        const resultado = await response.json();
-        const proximoEnvio = calcularProximoEnvio(agendamento);
+        const resultado = await response.json().catch(() => null) as { success?: unknown } | null;
+        if (resultado?.success !== true) {
+          throw new Error("A entrega do relatório não foi confirmada");
+        }
+        const proximoEnvio = nextScheduleOccurrence(agendamento as Parameters<typeof nextScheduleOccurrence>[0], agora);
 
-        await supabase
+        const { error: updateError } = await supabase
           .from("relatorios_agendados")
           .update({ proximo_envio: proximoEnvio.toISOString() })
           .eq("id", agendamento.id);
+        if (updateError) throw updateError;
 
         return {
           id: agendamento.id,
@@ -218,16 +236,16 @@ serve(async (req: Request): Promise<Response> => {
       resultados.push(...results);
     }
 
+    const resumo = summarizeScheduleResults(resultados);
     return new Response(
       JSON.stringify({
-        success: true,
-        processados: resultados.length,
+        ...resumo,
         resultados,
       }),
       {
-        status: 200,
+        status: resumo.success ? 200 : 502,
         headers: {
-          ...corsHeaders,
+          ...getCorsHeaders(req),
           "Content-Type": "application/json",
           "Cache-Control": "no-store",
         },
@@ -241,70 +259,8 @@ serve(async (req: Request): Promise<Response> => {
       JSON.stringify({ success: false, error: "Erro interno" }),
       {
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       },
     );
   }
 });
-
-function verificarExecucao(
-  agendamento: Record<string, unknown>,
-  agora: Date,
-): boolean {
-  const horaEnvio = agendamento.hora_envio as string;
-  if (!horaEnvio) return false;
-  const [hora, minuto] = horaEnvio.split(":").map(Number);
-
-  const horaAtual = agora.getHours();
-  const minutoAtual = agora.getMinutes();
-
-  if (Math.abs(horaAtual - hora) > 0 || Math.abs(minutoAtual - minuto) > 30) {
-    return false;
-  }
-
-  const frequencia = agendamento.frequencia as string;
-  const diaSemana = agora.getDay();
-  const diaMes = agora.getDate();
-
-  switch (frequencia) {
-    case "diario":
-      return true;
-    case "semanal":
-      return diaSemana === (agendamento.dia_semana as number);
-    case "mensal":
-      return diaMes === (agendamento.dia_mes as number);
-    default:
-      return false;
-  }
-}
-
-function calcularProximoEnvio(agendamento: Record<string, unknown>): Date {
-  const agora = new Date();
-  const horaEnvio = agendamento.hora_envio as string;
-  const [hora, minuto] = horaEnvio.split(":").map(Number);
-
-  const proximo = new Date(agora);
-  proximo.setHours(hora, minuto, 0, 0);
-
-  const frequencia = agendamento.frequencia as string;
-
-  switch (frequencia) {
-    case "diario":
-      proximo.setDate(proximo.getDate() + 1);
-      break;
-    case "semanal": {
-      const diaSemanaAlvo = agendamento.dia_semana as number;
-      const diasAteProximo = (diaSemanaAlvo - agora.getDay() + 7) % 7 || 7;
-      proximo.setDate(proximo.getDate() + diasAteProximo);
-      break;
-    }
-    case "mensal": {
-      const diaMesAlvo = agendamento.dia_mes as number;
-      proximo.setMonth(proximo.getMonth() + 1);
-      proximo.setDate(diaMesAlvo);
-      break;
-    }
-  }
-
-  return proximo;
-}

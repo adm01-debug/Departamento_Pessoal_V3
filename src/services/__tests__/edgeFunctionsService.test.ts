@@ -38,7 +38,7 @@ describe('edgeFunctionsService.dispararAlertasDP', () => {
 
   it('uses genericBreaker', async () => {
     mockInvoke.mockResolvedValue({ data: {}, error: null });
-    await edgeFunctionsService.dispararAlertasDP();
+    await edgeFunctionsService.dispararAlertasDP('empresa-1');
     expect(mockGenericExecute).toHaveBeenCalled();
     expect(mockResendExecute).not.toHaveBeenCalled();
     expect(mockBitrixExecute).not.toHaveBeenCalled();

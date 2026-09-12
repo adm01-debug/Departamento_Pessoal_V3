@@ -6,7 +6,12 @@ import {
 import { z } from "https://esm.sh/zod@3.23.8";
 import { verifyCsrf } from "../_shared/csrf.ts";
 import { captureException } from "../_shared/sentry.ts";
-import { corsHeaders, parseJsonBody } from "../_shared/contract.ts";
+import {
+  enforceOrigin,
+  getCorsHeaders,
+  handlePreflight,
+  parseJsonBody,
+} from "../_shared/contract.ts";
 import { safeFetch } from "../_shared/safe-fetch.ts";
 import { requireRh } from "../_shared/authz.ts";
 import {
@@ -20,6 +25,7 @@ import {
   hasValidReportDispatchSecret,
   requestMatchesStoredReportSchedule,
 } from "./internalDispatch.ts";
+import { toCsv } from "./reportContent.ts";
 
 /**
  * enviar-relatorio — Onda 20 hardening
@@ -69,11 +75,11 @@ const BodySchema = z.object({
 
 type Body = z.infer<typeof BodySchema>;
 
-function json(body: unknown, status = 200): Response {
+function json(req: Request, body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
-      ...corsHeaders,
+      ...getCorsHeaders(req),
       "Content-Type": "application/json",
       "Cache-Control": "no-store",
     },
@@ -146,16 +152,18 @@ async function coletarDados(
       return { dados: data ?? [], totalRegistros: data?.length ?? 0 };
     }
     case "indicadores_dp": {
-      const { count: ativos } = await supabase
+      const { count: ativos, error: ativosError } = await supabase
         .from("colaboradores")
         .select("id", { count: "exact", head: true })
         .eq("empresa_id", empresaId)
         .eq("status", "ativo");
-      const { count: afastados } = await supabase
+      const { count: afastados, error: afastadosError } = await supabase
         .from("colaboradores")
         .select("id", { count: "exact", head: true })
         .eq("empresa_id", empresaId)
         .eq("status", "afastado");
+      if (ativosError) throw ativosError;
+      if (afastadosError) throw afastadosError;
       return {
         dados: { total_ativos: ativos ?? 0, total_afastados: afastados ?? 0 },
         totalRegistros: 2,
@@ -164,34 +172,21 @@ async function coletarDados(
   }
 }
 
-function toCsv(dados: unknown): string {
-  const arr = Array.isArray(dados) ? dados : [dados];
-  if (arr.length === 0 || !arr[0] || typeof arr[0] !== "object") return "";
-  const headers = Object.keys(arr[0] as Record<string, unknown>);
-  const escape = (v: unknown) => {
-    const s = v == null ? "" : String(v);
-    return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-  };
-  return [
-    headers.join(","),
-    ...arr.map((r) =>
-      headers
-        .map((h) => escape((r as Record<string, unknown>)[h]))
-        .join(",")
-    ),
-  ].join("\n");
-}
-
 serve(async (req: Request): Promise<Response> => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
-  if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
+  const preflight = handlePreflight(req);
+  if (preflight) return preflight;
+  const forbiddenOrigin = enforceOrigin(req);
+  if (forbiddenOrigin) return forbiddenOrigin;
+  if (req.method !== "POST") return json(req, { error: "Method not allowed" }, 405);
 
   try {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+    // Keep a clone before consuming the payload. The browser path validates
+    // CSRF below; cloning afterwards throws because parseJsonBody reads it.
+    const csrfRequest = req.clone();
 
     // 1. Validação do payload antes de identificar o ator. A rota interna
     // precisa do agendamento para vincular a chamada à autoria persistida.
@@ -199,7 +194,7 @@ serve(async (req: Request): Promise<Response> => {
     if (_pe) return _pe;
     const parsed = BodySchema.safeParse(_pb);
     if (!parsed.success) {
-      return json(
+      return json(req,
         { error: "Payload inválido", details: parsed.error.flatten() },
         400,
       );
@@ -216,7 +211,7 @@ serve(async (req: Request): Promise<Response> => {
 
     if (internalDispatch) {
       if (!body.agendamentoId) {
-        return json({ error: "Chamada interna sem agendamento" }, 403);
+        return json(req, { error: "Chamada interna sem agendamento" }, 403);
       }
       const { data: schedule, error: scheduleError } = await admin
         .from("relatorios_agendados")
@@ -238,7 +233,7 @@ serve(async (req: Request): Promise<Response> => {
           schedule,
         ) || !schedule.created_by
       ) {
-        return json(
+        return json(req,
           { error: "Chamada interna não corresponde ao agendamento" },
           403,
         );
@@ -246,11 +241,11 @@ serve(async (req: Request): Promise<Response> => {
       userId = schedule.created_by;
     } else {
       // 2. Chamadas do browser mantêm CSRF + sessão humana obrigatórios.
-      const csrf = await verifyCsrf(req.clone());
+      const csrf = await verifyCsrf(csrfRequest);
       if (!csrf.ok) return csrf.response!;
       const authHeader = req.headers.get("Authorization") ?? "";
       if (!authHeader.startsWith("Bearer ")) {
-        return json({ error: "Autenticação obrigatória" }, 401);
+        return json(req, { error: "Autenticação obrigatória" }, 401);
       }
       const userClient = createClient(supabaseUrl, anonKey, {
         global: { headers: { Authorization: authHeader } },
@@ -259,7 +254,7 @@ serve(async (req: Request): Promise<Response> => {
       const { data: claimsData, error: claimsErr } = await userClient.auth
         .getUser();
       if (claimsErr || !claimsData?.user?.id) {
-        return json({ error: "Sessão inválida" }, 401);
+        return json(req, { error: "Sessão inválida" }, 401);
       }
       userId = claimsData.user.id;
     }
@@ -290,7 +285,7 @@ serve(async (req: Request): Promise<Response> => {
       .eq("email", body.emailDestinatario)
       .maybeSingle();
     if (!destinatarioUser?.user_id) {
-      return json({ error: "Destinatário não é usuário do sistema" }, 403);
+      return json(req, { error: "Destinatário não é usuário do sistema" }, 403);
     }
     const { data: destBelongs } = await admin.rpc("user_belongs_to_empresa", {
       _user_id: destinatarioUser.user_id,
@@ -301,7 +296,7 @@ serve(async (req: Request): Promise<Response> => {
         _user_id: destinatarioUser.user_id,
       });
       if (destIsAdm !== true) {
-        return json({ error: "Destinatário não pertence à empresa" }, 403);
+        return json(req, { error: "Destinatário não pertence à empresa" }, 403);
       }
     }
 
@@ -310,7 +305,7 @@ serve(async (req: Request): Promise<Response> => {
     // retornar sucesso simulado: o caller precisa poder reagendar a entrega.
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
     if (!resendApiKey) {
-      return json(
+      return json(req,
         {
           success: false,
           status: "indisponivel",
@@ -438,7 +433,7 @@ serve(async (req: Request): Promise<Response> => {
         "[enviar-relatorio] AUDIT_BLOCKING_FAILURE:",
         auditErr.message,
       );
-      return json({ error: "Auditoria obrigatória falhou" }, 500);
+      return json(req, { error: "Auditoria obrigatória falhou" }, 500);
     }
 
     if (body.agendamentoId) {
@@ -455,7 +450,7 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     const responseStatus = reportDeliveryHttpStatus(statusEnvio);
-    return json({
+    return json(req, {
       success: statusEnvio === "sucesso",
       status: statusEnvio,
       mensagem: statusEnvio === "sucesso"
@@ -473,6 +468,6 @@ serve(async (req: Request): Promise<Response> => {
     const msg = error instanceof Error ? error.message : "Erro desconhecido";
     console.error("Erro enviar-relatorio:", msg);
     captureException(error, { fn: "enviar-relatorio" });
-    return json({ error: "Erro interno ao processar relatório" }, 500);
+    return json(req, { error: "Erro interno ao processar relatório" }, 500);
   }
 });

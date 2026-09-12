@@ -8,7 +8,7 @@
 
 > Consolida a auditoria local, a inspeção viva do Supabase e o grafo de dependências. Não autoriza reset, exclusão, `db push` ou `migration repair` em massa.
 
-> **Revisão de implementação vigente (11/09/2026):** a existência de código, migration, teste ou documentação não encerra uma etapa. Consulte [`REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-11.md`](./REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-11.md) e seu snapshot JSON: 42 etapas parciais, 2 com dependência externa e 6 sem demonstração integral do objetivo; **nenhuma com C4 comprovado**. A revisão de 10/09 permanece como histórico.
+> **Revisão de implementação vigente (12/09/2026):** a existência de código, migration, teste ou documentação não encerra uma etapa. Consulte [`REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-12.md`](./REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-12.md): 42 etapas parciais, 2 com dependência externa e 6 sem demonstração integral do objetivo; **nenhuma com C4 comprovado**. O relatório confronta o SHA `cc6abb1cc`, registra 12 achados priorizados e distingue testes locais, CI e banco não recertificado. As revisões de 10/09 e 11/09 e o snapshot JSON de 11/09 permanecem como histórico; não substituem a evidência atual.
 >
 > **Exceção de ambiente autorizada pelo owner:** alterações podem ser realizadas diretamente no canônico enquanto os dados são descartáveis. Não exigir nova autorização genérica ou staging como condição de autorização. Permanecem necessários escopo versionado, recuperação, testes e evidências; essa exceção não comprova staging/DR nem encerra E50-048.
 
