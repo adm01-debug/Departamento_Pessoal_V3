@@ -26,6 +26,10 @@ jobs:
           node-version: '22'
       - name: Install
         run: npm install --no-audit --no-fund
+      - name: Contrato físico dos eventos de auditoria Edge
+        # O analisador usa a API AST do TypeScript instalada acima. Mantê-lo
+        # neste job evita um falso negativo no gate estático sem dependências.
+        run: npm run audit:edge-audit-log
       - name: Type Check (src)
         run: npm run typecheck
       - name: Type Check (tests)
@@ -115,7 +119,6 @@ jobs:
         run: |
           node scripts/audit-security-config.mjs
           node scripts/audit-bridge-frontend-contract.mjs
-          node scripts/audit-edge-audit-log-contract.mjs
           node scripts/validate-plan-50.mjs
           node scripts/audit-canonical-project.mjs
           node scripts/tests/rebaseline-artifact.test.mjs
