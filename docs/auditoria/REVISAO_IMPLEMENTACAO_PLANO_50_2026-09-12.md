@@ -16,6 +16,25 @@ Esta revisão atualiza a avaliação de 11/09, sem apagar o histórico e sem con
 
 Fonte dos requisitos: [plano de 50 etapas](PLANO_MELHORIAS_50_ETAPAS_2026-09-10.md). Foram lidos os objetivos e critérios positivos/negativos das 50 etapas e confrontados com código, histórico e evidências de execução. **Isso não significa executar os 700 itens como testes**, homologar todos os provedores ou testar todas as combinações de papéis e dados.
 
+## Execução posterior à revisão — 12/09/2026
+
+Esta seção é uma evidência de execução posterior ao veredito acima. Ela não
+transforma as etapas em C4 nem altera as limitações de E2E, restore, provedores
+externos ou do drift histórico.
+
+| Item                 | Ação no canônico `frjbfeamybqsejlvmqbl`                                                                           | Evidência positiva                                                                                                                             | Controle/limite                                                                                                                                   |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P0 hashes/Auth/folha | Aplicadas as migrações `p0_hash_trigger_search_path`, `p0_auth_lockout_contract` e `p0_payroll_upsert_contract`.  | Ledger: `20260912142449`–`20260912142520`; precondições e simulações descartáveis aprovadas.                                                   | Não foi executado `db push` nem `migration repair` em massa.                                                                                      |
+| P0 views             | Aplicada `p0_views_revoke_public`.                                                                                | As 42 views existem; após a alteração, `0` sem `security_invoker` e `0` expostas a `anon`/`PUBLIC`; `v_audit_trail` perdeu acesso anon.        | `authenticated` permanece permitido apenas onde o contrato atual já o concede; matriz CRUD/T1/T2 ainda pendente.                                  |
+| Caminho de busca     | Aplicadas `p0_secdef_search_path` (18 rotinas SECURITY DEFINER) e `p1_function_search_path` (9 helpers/triggers). | Simulações PG17 com duas aplicações idempotentes e pré-condição fail-closed; advisor canônico deixou de listar `function_search_path_mutable`. | Não foram alterados corpos, permissões ou funções fora das allowlists.                                                                            |
+| Edge Functions       | Publicadas `enviar-relatorio` v6, `alertas-dp` v7 e `processar-agendamentos` v6.                                  | CLI autenticado validou a ref canônica; teste OPTIONS hostil devolve 403. Vitest local: 468 arquivos, 4.897 testes aprovados e um skip.        | A URL Vercel disponível é preview, sem domínio de produção estável. Não sobrescrever `EXTRA_ALLOWED_ORIGINS` sem preservar os valores existentes. |
+
+As migrações criadas nesta execução possuem testes descartáveis adicionados ao
+job de CI: `migrations-p0-secdef-search-path.sh` e
+`migrations-p1-function-search-path.sh`. O ledger canônico passou a registrar
+as versões de execução emitidas pelo Supabase, que não devem ser confundidas
+com uma reconciliação integral das 651 migrações locais.
+
 ## Evidências e limites
 
 ### GitHub verificado nesta revisão
