@@ -134,6 +134,7 @@ jobs:
           bash scripts/tests/migrations-p0-view-acl.sh
           bash scripts/tests/migrations-p0-secdef-search-path.sh
           bash scripts/tests/migrations-p1-function-search-path.sh
+          bash scripts/tests/migrations-p0-pgcrypto-routine-search-path.sh
           bash scripts/tests/migrations-p0-atomic-rate-limit.sh
           bash scripts/tests/migrations-p0-payroll-upsert.sh
           bash scripts/tests/migrations-p0-bridge-membership.sh
