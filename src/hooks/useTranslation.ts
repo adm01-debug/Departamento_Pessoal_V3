@@ -22,12 +22,15 @@ import { useState, useEffect, useCallback } from 'react';
 
 export type Locale = 'pt-BR' | 'en-US' | 'es-ES';
 
-const LOCALE_CONFIG: Record<Locale, {
-  label: string;
-  flag: string;
-  dateFormat: Intl.DateTimeFormatOptions;
-  pluralRules: Intl.PluralRulesOptions;
-}> = {
+const LOCALE_CONFIG: Record<
+  Locale,
+  {
+    label: string;
+    flag: string;
+    dateFormat: Intl.DateTimeFormatOptions;
+    pluralRules: Intl.PluralRulesOptions;
+  }
+> = {
   'pt-BR': {
     label: 'Português (Brasil)',
     flag: '🇧🇷',
@@ -104,28 +107,26 @@ function resolvePlural(count: number, locale: Locale): string {
 export function useTranslation() {
   const [locale, setLocaleState] = useState<Locale>(getStoredLocale);
   const [translations, setTranslations] = useState<Record<string, unknown>>({});
-  const [loaded, setLoaded] = useState(false);
+  const [loadedLocale, setLoadedLocale] = useState<Locale | null>(null);
 
-  // Carrega locale armazenado ao montar
+  // Um único carregamento por locale evita a corrida do mount com a troca de
+  // idioma. O cancelamento impede que uma resposta antiga sobrescreva a atual.
   useEffect(() => {
-    loadLocale(getStoredLocale()).then(t => {
-      setTranslations(t);
-      setLoaded(true);
-    });
-  }, []);
+    let cancelled = false;
 
-  // Quando locale muda, recarrega traduções
-  useEffect(() => {
-    setLoaded(false);
-    loadLocale(locale).then(t => {
+    void loadLocale(locale).then((t) => {
+      if (cancelled) return;
       setTranslations(t);
-      setLoaded(true);
+      setLoadedLocale(locale);
     });
     try {
       localStorage.setItem(STORAGE_KEY, locale);
     } catch {
       // ignore
     }
+    return () => {
+      cancelled = true;
+    };
   }, [locale]);
 
   const setLocale = useCallback((newLocale: Locale) => {
@@ -135,72 +136,74 @@ export function useTranslation() {
   }, []);
 
   /** Ex: t('nav.dashboard') */
-  const t = useCallback((key: string, params?: Record<string, string | number>): string => {
-    let text = getNestedValue(translations, key);
+  const t = useCallback(
+    (key: string, params?: Record<string, string | number>): string => {
+      let text = getNestedValue(translations, key);
 
-    if (params) {
-      for (const [k, v] of Object.entries(params)) {
-        text = text.replaceAll(`{{${k}}}`, String(v));
+      if (params) {
+        for (const [k, v] of Object.entries(params)) {
+          text = text.replaceAll(`{{${k}}}`, String(v));
+        }
       }
-    }
-    return text;
-  }, [translations]);
+      return text;
+    },
+    [translations]
+  );
 
   /** Pluralização: tPlural('colaboradores', count) */
-  const tPlural = useCallback((
-    key: string,
-    count: number,
-    params?: Record<string, string | number>
-  ): string => {
-    const rule = resolvePlural(count, locale);
-    const pluralKey = `${key}_${rule}`;
-    let text = getNestedValue(translations, pluralKey);
+  const tPlural = useCallback(
+    (key: string, count: number, params?: Record<string, string | number>): string => {
+      const rule = resolvePlural(count, locale);
+      const pluralKey = `${key}_${rule}`;
+      let text = getNestedValue(translations, pluralKey);
 
-    if (text === pluralKey) {
-      // Fallback: tenta só a key singular
-      text = getNestedValue(translations, key);
-    }
-    if (text === key) {
-      return String(count);
-    }
-
-    if (params) {
-      for (const [k, v] of Object.entries(params)) {
-        text = text.replaceAll(`{{${k}}}`, String(v));
+      if (text === pluralKey) {
+        // Fallback: tenta só a key singular
+        text = getNestedValue(translations, key);
       }
-    }
-    // Sempre substitui {{count}}
-    return text.replaceAll('{{count}}', String(count));
-  }, [translations, locale]);
+      if (text === key) {
+        return String(count);
+      }
+
+      if (params) {
+        for (const [k, v] of Object.entries(params)) {
+          text = text.replaceAll(`{{${k}}}`, String(v));
+        }
+      }
+      // Sempre substitui {{count}}
+      return text.replaceAll('{{count}}', String(count));
+    },
+    [translations, locale]
+  );
 
   /** Formatar data: formatDate(new Date(), 'short') */
-  const formatDate = useCallback((
-    date: Date | string | number,
-    options?: Intl.DateTimeFormatOptions
-  ): string => {
-    const d = typeof date === 'string' || typeof date === 'number' ? new Date(date) : date;
-    const opts = options ?? LOCALE_CONFIG[locale].dateFormat;
-    return new Intl.DateTimeFormat(locale, opts).format(d);
-  }, [locale]);
+  const formatDate = useCallback(
+    (date: Date | string | number, options?: Intl.DateTimeFormatOptions): string => {
+      const d = typeof date === 'string' || typeof date === 'number' ? new Date(date) : date;
+      const opts = options ?? LOCALE_CONFIG[locale].dateFormat;
+      return new Intl.DateTimeFormat(locale, opts).format(d);
+    },
+    [locale]
+  );
 
   /** Formatar currency: formatCurrency(1234.56, 'BRL') */
-  const formatCurrency = useCallback((
-    amount: number,
-    currency = 'BRL'
-  ): string => {
-    return new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency,
-    }).format(amount);
-  }, [locale]);
+  const formatCurrency = useCallback(
+    (amount: number, currency = 'BRL'): string => {
+      return new Intl.NumberFormat(locale, {
+        style: 'currency',
+        currency,
+      }).format(amount);
+    },
+    [locale]
+  );
 
   /** Formatar número: formatNumber(1234.567, { maximumFractionDigits: 2 }) */
-  const formatNumber = useCallback((
-    value: number,
-    options?: Intl.NumberFormatOptions
-  ): string => {
-    return new Intl.NumberFormat(locale, options).format(value);
-  }, [locale]);
+  const formatNumber = useCallback(
+    (value: number, options?: Intl.NumberFormatOptions): string => {
+      return new Intl.NumberFormat(locale, options).format(value);
+    },
+    [locale]
+  );
 
   return {
     locale,
@@ -212,6 +215,6 @@ export function useTranslation() {
     formatDate,
     formatCurrency,
     formatNumber,
-    isLoaded: loaded,
+    isLoaded: loadedLocale === locale,
   };
 }
