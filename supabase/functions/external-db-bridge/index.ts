@@ -3,37 +3,19 @@
 // denylist de tabelas sensíveis, allowlist de RPC e operadores, validação
 // estrita de identificadores, CSRF fail-closed, no-store, payload cap.
 //
-// Filosofia: leituras anônimas continuam permitidas (compatibilidade com o
-// frontend atual — RLS no banco externo é a fonte de verdade), mas qualquer
-// operação de escrita exige JWT válido + verificação de tenant.
-
-// P4-067: Cache em memória para tabelas estáticas de referência.
-// Tabelas de domínio (rubricas, parâmetros fiscais, feriados) raramente mudam
-// e são consultadas frequentemente pelo bridge — caching reduz latência e carga.
-import { cachedFetch, invalidateCache } from "../_shared/cache.ts";
+// Generic data operations require a verified JWT. The external database sees
+// that same JWT on reads/RPCs, so its RLS policies remain authoritative.
 import { createClient, type SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
-import { z } from "https://deno.land/x/zod@v3.23.8/mod.ts";
 import { verifyCsrf } from "../_shared/csrf.ts";
 import { logRpcError } from "../_shared/rpc-error-logging.ts";
 import { corsHeaders, enforceOrigin, handlePreflight } from '../_shared/contract.ts';
 import {
   isSafeTableName, isSafeColumnsExpr, isSafeOrderColumn, isSafeOrExpression, isSafeFilterColumn,
-  TABLE_DENYLIST, TENANT_SCOPED_TABLES, RPC_ALLOWLIST, FILTER_OPS, NOT_EXTRA_OPS,
+  TABLE_DENYLIST, TENANT_SCOPED_TABLES, ADMIN_ONLY_WRITE_TABLES, RPC_ALLOWLIST, FILTER_OPS, NOT_EXTRA_OPS,
 } from "./validation.ts";
-
-// TTL para tabelas estáticas (em ms)
-// Rubricas podem ser editadas pelo admin: 1h. Parâmetros fiscais/vigências: 24h.
-const CACHE_TTL_STATIC_RUBRICAS = 3600 * 1000;   // 1 hora
-const CACHE_TTL_STATIC_FISCAL = 24 * 3600 * 1000; // 24 horas
-
-// Tabelas estáticas elegíveis para cache (sem empresa_id — dados globais)
-const CACHEABLE_TABLES = new Set([
-  "rubricas_folha", "parametros_fiscais", "feriados",
-  "cbo", "cnae", "faixas_inss", "faixas_irrf",
-]);
-
-// Tabelas que podem ter cache com TTL curto (mais suscetíveis a alterações)
-const CACHEABLE_TABLES_SHORT = new Set(["rubricas_folha"]);
+import { BodySchema, toUpsertOptions } from "./request-schema.ts";
+import { extractTenantWriteScope, hasCompleteTenantWriteScope } from './tenantScope.ts';
+import { requiresAuthenticatedBridgeSession, requiresCallerScopedExternalClient } from './access.ts';
 
 // -------------------- Headers --------------------
 const NO_STORE = { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" };
@@ -57,36 +39,6 @@ function isTimeoutError(e: unknown): boolean {
 }
 
 // -------------------- Zod schemas --------------------
-const MAX_FILTER_VALUE_BYTES = 8 * 1024; // 8 KB por valor escalar de filtro
-const boundedFilterValue = z.unknown().refine((v) => {
-  if (typeof v === "string") return v.length <= MAX_FILTER_VALUE_BYTES;
-  if (Array.isArray(v)) return v.every((x) => typeof x !== "string" || x.length <= MAX_FILTER_VALUE_BYTES);
-  return true;
-}, { message: `Filter value exceeds ${MAX_FILTER_VALUE_BYTES} bytes` });
-const FilterSchema = z.object({
-  column: z.string().max(120),
-  op: z.string().max(20),
-  value: boundedFilterValue,
-  extraOp: z.string().max(20).optional(),
-});
-
-const BodySchema = z.object({
-  action: z.enum(["select", "insert", "update", "delete", "upsert", "rpc"]),
-  table: z.string().max(63).optional(),
-  rpcName: z.string().max(63).optional(),
-  fn: z.string().max(63).optional(),
-  columns: z.string().max(2000).optional(),
-  filters: z.array(FilterSchema).max(50).optional(),
-  order: z.object({ column: z.string().max(120), ascending: z.boolean().optional() }).optional(),
-  limit: z.number().int().optional(),
-  offset: z.number().int().min(0).optional(),
-  countMode: z.enum(["none", "exact", "planned", "estimated"]).optional(),
-  single: z.boolean().optional(),
-  data: z.union([z.record(z.unknown()), z.array(z.record(z.unknown()))]).optional(),
-  params: z.record(z.unknown()).optional(),
-  userId: z.string().max(64).optional(),
-}).strict();
-
 // -------------------- Telemetria --------------------
 interface TelemetryMeta {
   operation: string;
@@ -262,19 +214,6 @@ function jsonOk(payload: Record<string, unknown>) {
 }
 
 // -------------------- Tenant scope check --------------------
-function extractEmpresaIdsFromData(
-  data: Record<string, unknown> | Record<string, unknown>[] | undefined,
-): Set<string> {
-  const empresaIds = new Set<string>();
-  if (!data) return empresaIds;
-  const rows = Array.isArray(data) ? data : [data];
-  for (const r of rows) {
-    const eid = (r as Record<string, unknown>)?.empresa_id;
-    if (typeof eid === "string" && eid) empresaIds.add(eid);
-  }
-  return empresaIds;
-}
-
 function empresaIdColumnFor(table: string): string {
   return table === "empresas" ? "id" : "empresa_id";
 }
@@ -306,12 +245,12 @@ async function assertTenantScope(
   localClient: SupabaseClient<any, any, any>,
   userId: string,
   empresaIds: Set<string>,
-): Promise<{ ok: true } | { ok: false; msg: string }> {
-  if (empresaIds.size === 0) return { ok: true };
+): Promise<{ ok: true; isAdmin: boolean } | { ok: false; msg: string }> {
+  if (empresaIds.size === 0) return { ok: true, isAdmin: false };
 
   // Verifica via RPC has_role(admin) primeiro
   const { data: isAdminData } = await localClient.rpc("is_admin", { _user_id: userId });
-  if (isAdminData === true) return { ok: true };
+  if (isAdminData === true) return { ok: true, isAdmin: true };
 
   for (const eid of empresaIds) {
     const { data: belongs } = await localClient.rpc("user_belongs_to_empresa", {
@@ -320,7 +259,7 @@ async function assertTenantScope(
     });
     if (belongs !== true) return { ok: false, msg: `Tenant scope denied for empresa_id=${eid}` };
   }
-  return { ok: true };
+  return { ok: true, isAdmin: false };
 }
 
 // ============================================================
@@ -345,7 +284,8 @@ Deno.serve(async (req) => {
     return jsonError(413, "PAYLOAD_TOO_LARGE", `Payload exceeds ${MAX_PAYLOAD_BYTES} bytes`);
   }
 
-  // Auth (opcional para reads; obrigatório para writes/rpc).
+  // Auth is mandatory for generic bridge data access. The only public route
+  // is the explicit, token-gated onboarding RPC.
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -446,16 +386,9 @@ Deno.serve(async (req) => {
     .map((f) => ({ ...f, value: sanitizeData(f.value) }))
     .filter((f) => f.op === "or" || (f.value !== null && f.value !== undefined && f.value !== "" && f.value !== "all"));
 
-  // Validação: writes e RPCs protegidas exigem auth
+  // Generic reads, writes and protected RPCs require a verified user session.
   const isWrite = action === "insert" || action === "update" || action === "delete" || action === "upsert";
-  // RPC pública: onboarding por token antes de existir sessão de usuário.
-  // Proteções de login/rate-limit rodam exclusivamente em edges com service_role;
-  // expô-las aqui permitiria lockout/enumeração acionados por terceiros.
-  const PUBLIC_RPCS = new Set<string>([
-    "get_admissao_por_token",
-  ]);
-  const isProtectedRpc = action === "rpc" && rpcName != null && !PUBLIC_RPCS.has(rpcName);
-  if ((isWrite || isProtectedRpc) && !user) {
+  if (requiresAuthenticatedBridgeSession(action, rpcName) && !user) {
     return jsonError(401, "UNAUTHORIZED", "Authentication required for this operation");
   }
 
@@ -527,23 +460,42 @@ Deno.serve(async (req) => {
     return jsonError(500, "NOT_CONFIGURED", "External database not configured");
   }
   const externalClient = createClient(externalUrl, externalKey, { global: { fetch: timeoutFetch } });
-  // User-scoped client for RPCs that rely on auth.uid() inside the external DB
-  const externalUserClient = authHeader
+  // Every generic action executes with the caller JWT. `EXTERNAL_DB_KEY` can
+  // be privileged; using it for a mutation would bypass external RLS and
+  // role-based policies even after the bridge's local tenant check succeeds.
+  // The only exception is the deliberately public onboarding lookup (below).
+  const externalUserClient = user && authHeader
     ? createClient(externalUrl, externalKey, { global: { headers: { Authorization: authHeader }, fetch: timeoutFetch } })
+    : null;
+  const externalDataClient = requiresCallerScopedExternalClient(action, rpcName)
+    ? externalUserClient
     : externalClient;
+  if (!externalDataClient) {
+    // This is defensive redundancy for the authentication gate above. Do not
+    // ever fall back to EXTERNAL_DB_KEY for an authenticated generic action.
+    return jsonError(401, "UNAUTHORIZED", "Authentication required for this operation");
+  }
 
   // Cliente local (para verificação de tenant scope via RPC has_role/user_belongs_to_empresa)
   const localClient = serviceKey ? createClient(supabaseUrl, serviceKey) : null;
 
   // Tenant scope check para writes em tabelas de negócio.
-  // - insert/upsert: o tenant afetado vem do `empresa_id` nas linhas de `data`.
+  // - insert/upsert: TODAS as linhas devem declarar o tenant afetado.
   // - update/delete: descobrimos o tenant real das linhas alvo via lookup
   //   (ver `lookupEmpresaIdsForWrite`) usando os mesmos filtros 'eq' da
   //   mutação — não dependemos do cliente declarar `empresa_id` explicitamente.
-  if (isWrite && user && localClient && table && TENANT_SCOPED_TABLES.has(table)) {
+  if (isWrite && table && TENANT_SCOPED_TABLES.has(table)) {
+    // The generic auth gate above already rejects this case. Keep the local
+    // guard as an explicit fail-closed invariant and to preserve narrowing.
+    if (!user) {
+      return jsonError(401, "UNAUTHORIZED", "Authentication required for this operation");
+    }
+    if (!localClient) {
+      return jsonError(503, "AUTHORIZATION_UNAVAILABLE", "Tenant authorization is unavailable; write rejected");
+    }
     let empresaIds: Set<string>;
     if (action === "update" || action === "delete") {
-      const lookup = await lookupEmpresaIdsForWrite(externalClient, table, filters);
+      const lookup = await lookupEmpresaIdsForWrite(externalDataClient, table, filters);
       if (!lookup.ok) {
         return jsonError(
           403,
@@ -553,12 +505,23 @@ Deno.serve(async (req) => {
       }
       empresaIds = lookup.empresaIds;
     } else {
-      empresaIds = extractEmpresaIdsFromData(data);
+      const tenantWriteScope = extractTenantWriteScope(table, data);
+      if (!hasCompleteTenantWriteScope(tenantWriteScope)) {
+        return jsonError(
+          403,
+          "TENANT_SCOPE_REQUIRED",
+          `Every ${action} row for tenant-scoped table '${table}' must include a non-empty ${table === 'empresas' ? 'id' : 'empresa_id'}`,
+        );
+      }
+      empresaIds = tenantWriteScope.empresaIds;
     }
 
     const scope = await assertTenantScope(localClient, user.id, empresaIds);
     if (!scope.ok) {
       return jsonError(403, "TENANT_SCOPE_DENIED", scope.msg);
+    }
+    if (ADMIN_ONLY_WRITE_TABLES.has(table) && !scope.isAdmin) {
+      return jsonError(403, "ADMIN_SCOPE_REQUIRED", `Administrative scope is required to write '${table}'`);
     }
   }
 
@@ -572,39 +535,8 @@ Deno.serve(async (req) => {
     if (action === "select") {
       const t0 = performance.now();
 
-      // P4-067: Cache para tabelas estáticas de referência.
-      // Apenas SELECT sem filtros (full table scan) é cacheado.
-      // Filtros específicos retornam dados parciais e não são cacheados.
-      const isCacheable = CACHEABLE_TABLES.has(table!) && filters.length === 0 && queryOffset === 0;
-      const cacheTtl = CACHEABLE_TABLES_SHORT.has(table!) ? CACHE_TTL_STATIC_RUBRICAS : CACHE_TTL_STATIC_FISCAL;
-      const cacheKey = `bridge:${table}:${selectColumns}:${queryLimit}`;
-
-      if (isCacheable) {
-        try {
-          const cachedData = await cachedFetch(
-            cacheKey,
-            async () => {
-              const q = externalClient.from(table!).select(selectColumns);
-              const { data, error } = queryLimit > 0 ? await q.limit(queryLimit) : await q;
-              if (error) throw new Error(error.message);
-              return data;
-            },
-            cacheTtl,
-          );
-          const durationMs = Math.round(performance.now() - t0);
-          emitTelemetry({
-            operation: "select", table, limit: queryLimit, offset: queryOffset, countMode: queryCountMode,
-            durationMs, status: classifySeverity(durationMs, false),
-            recordCount: (cachedData as unknown[] | null)?.length ?? 0, error: undefined, userId: user?.id,
-            traceId,
-          });
-          return jsonOk({ data: cachedData, count: (cachedData as unknown[])?.length ?? 0, duration_ms: durationMs, cached: true });
-        } catch (e) {
-          // Cache falhou — segue para query direta (fail-open)
-          console.warn(`[bridge] cache miss/fallback for ${table}:`, (e as Error).message);
-        }
-      }
-
+      // No process cache for authenticated reads: cache membership becomes stale
+      // after an RLS revocation and could expose a prior caller's result.
       // Query dinâmica: filtros/colunas resolvidos em runtime; tipo do proxy é any.
       // ---------------------------------------------------------------
       // countMode (P1-016 documentado):
@@ -615,7 +547,7 @@ Deno.serve(async (req) => {
       // IMPORTANTE: 'planned'/'estimated' exigem Accept-Profile correto e
       // são indistinguíveis de 'none' se o banco não suportar. Em produção
       // com Supabase self-hosted, validar se o PostgREST tem suporte.
-      let query: any = externalClient
+      let query: any = externalDataClient
         .from(table!)
         .select(selectColumns, { count: queryCountMode === "none" ? undefined : queryCountMode });
       if (queryLimit !== -1) query = query.range(queryOffset, queryOffset + queryLimit - 1);
@@ -662,12 +594,10 @@ Deno.serve(async (req) => {
       // forte (Zod) ficaria em iteração futura; por ora mantemos o cast
       // do SDK do Supabase, mas explicitamente tipado.
       const insertData = (Array.isArray(data) ? data : [data]) as Record<string, unknown>[];
-      const { data: r, error } = await externalClient.from(table!).insert(insertData).select();
+      const { data: r, error } = await externalDataClient.from(table!).insert(insertData).select();
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({ operation: "insert", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, traceId });
       if (error) { console.error('[bridge] INSERT_ERROR:', error.message, error.hint); return jsonError(400, "INSERT_ERROR", "Falha na inserção"); }
-      // P4-067: invalida cache da tabela se for estática
-      if (CACHEABLE_TABLES.has(table!)) invalidateCache(`bridge:${table}`);
       return jsonOk({ data: r, duration_ms: durationMs });
     }
 
@@ -675,12 +605,13 @@ Deno.serve(async (req) => {
     if (action === "upsert") {
       const t0 = performance.now();
       const upsertData = (Array.isArray(data) ? data : [data]) as Record<string, unknown>[];
-      const { data: r, error } = await externalClient.from(table!).upsert(upsertData).select();
+      const { data: r, error } = await externalDataClient
+        .from(table!)
+        .upsert(upsertData, toUpsertOptions(body.onConflict))
+        .select();
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({ operation: "upsert", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, traceId });
       if (error) { console.error('[bridge] UPSERT_ERROR:', error.message, error.hint); return jsonError(400, "UPSERT_ERROR", "Falha no upsert"); }
-      // P4-067: invalida cache da tabela se for estática
-      if (CACHEABLE_TABLES.has(table!)) invalidateCache(`bridge:${table}`);
       return jsonOk({ data: r, duration_ms: durationMs });
     }
 
@@ -694,7 +625,7 @@ Deno.serve(async (req) => {
       }
       const t0 = performance.now();
       const updateData = (data ?? {}) as Record<string, unknown>;
-      let query = externalClient.from(table!).update(updateData);
+      let query = externalDataClient.from(table!).update(updateData);
       for (const f of filters) {
         if (f.op === "eq") query = query.eq(f.column, f.value);
         else if (f.op === "neq") query = query.neq(f.column, f.value);
@@ -709,8 +640,6 @@ Deno.serve(async (req) => {
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({ operation: "update", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, traceId });
       if (error) { console.error('[bridge] UPDATE_ERROR:', error.message, error.hint); return jsonError(400, "UPDATE_ERROR", "Falha na atualização"); }
-      // P4-067: invalida cache da tabela se for estática
-      if (CACHEABLE_TABLES.has(table!)) invalidateCache(`bridge:${table}`);
       return jsonOk({ data: r, duration_ms: durationMs });
     }
 
@@ -723,7 +652,7 @@ Deno.serve(async (req) => {
         return jsonError(400, "DELETE_REQUIRES_EQ", "DELETE requires at least one 'eq' filter for safety");
       }
       const t0 = performance.now();
-      let query = externalClient.from(table!).delete();
+      let query = externalDataClient.from(table!).delete();
       for (const f of filters) {
         if (f.op === "eq") query = query.eq(f.column, f.value);
         else if (f.op === "neq") query = query.neq(f.column, f.value);
@@ -738,8 +667,6 @@ Deno.serve(async (req) => {
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({ operation: "delete", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, traceId });
       if (error) { console.error('[bridge] DELETE_ERROR:', error.message, error.hint); return jsonError(400, "DELETE_ERROR", "Falha na exclusão"); }
-      // P4-067: invalida cache da tabela se for estática
-      if (CACHEABLE_TABLES.has(table!)) invalidateCache(`bridge:${table}`);
       return jsonOk({ data: r, duration_ms: durationMs });
     }
 
@@ -752,7 +679,7 @@ Deno.serve(async (req) => {
         return jsonError(403, "RPC_DENIED", `RPC '${rpcName}' is not in allowlist`);
       }
       const t0 = performance.now();
-      const { data: rpcData, error } = await externalUserClient.rpc(rpcName, (rpcArgs || {}) as Record<string, unknown>);
+      const { data: rpcData, error } = await externalDataClient.rpc(rpcName, (rpcArgs || {}) as Record<string, unknown>);
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({
         operation: "rpc", rpcName, durationMs, status: classifySeverity(durationMs, !!error),

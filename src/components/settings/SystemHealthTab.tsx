@@ -7,9 +7,19 @@ import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { useEmpresaStore } from '@/hooks/useEmpresas';
 import {
-  Activity, Database, CheckCircle, XCircle, Trash2, Download,
-  RefreshCw, Loader2, Bell, Zap, Clock
+  Activity,
+  Database,
+  CheckCircle,
+  XCircle,
+  Trash2,
+  Download,
+  RefreshCw,
+  Loader2,
+  Bell,
+  Zap,
+  Clock,
 } from 'lucide-react';
 
 // P2-051 (batch 2026-07-26): tipos explícitos substituem `useState<any>` em todos
@@ -43,6 +53,7 @@ export interface BackupResult {
 }
 
 export function SystemHealthTab() {
+  const empresaAtualId = useEmpresaStore((state) => state.empresaAtualId);
   const [healthData, setHealthData] = useState<HealthcheckResult | null>(null);
   const [loading, setLoading] = useState<string | null>(null);
   const [cleanupResult, setCleanupResult] = useState<CleanupResult | null>(null);
@@ -52,7 +63,7 @@ export function SystemHealthTab() {
   const runHealthcheck = async () => {
     setLoading('health');
     try {
-      const result = await edgeFunctionsService.healthcheck() as HealthcheckResult;
+      const result = (await edgeFunctionsService.healthcheck()) as HealthcheckResult;
       setHealthData(result);
       toast.success(`Sistema: ${result.status}`);
     } catch (err: unknown) {
@@ -66,7 +77,7 @@ export function SystemHealthTab() {
   const runCleanup = async () => {
     setLoading('cleanup');
     try {
-      const result = await edgeFunctionsService.limpezaDados() as CleanupResult;
+      const result = (await edgeFunctionsService.limpezaDados()) as CleanupResult;
       setCleanupResult(result);
       toast.success(`${result.total_cleaned} registros limpos!`);
     } catch (err: unknown) {
@@ -80,7 +91,7 @@ export function SystemHealthTab() {
   const runBackup = async () => {
     setLoading('backup');
     try {
-      const result = await edgeFunctionsService.backupServidor() as BackupResult;
+      const result = (await edgeFunctionsService.backupServidor()) as BackupResult;
       setBackupResult(result);
       setBackupId(crypto.randomUUID().slice(0, 8).toUpperCase());
       toast.success(result.message || 'Backup processado');
@@ -93,10 +104,15 @@ export function SystemHealthTab() {
   };
 
   const runAlertasDP = async () => {
+    if (!empresaAtualId) {
+      toast.error('Selecione uma empresa antes de disparar alertas.');
+      return;
+    }
     setLoading('alertas');
     try {
-      await edgeFunctionsService.dispararAlertasDP();
-      toast.success('Alertas de DP disparados com sucesso!');
+      const result = await edgeFunctionsService.dispararAlertasDP(empresaAtualId);
+      if (!result.success) throw new Error('O provedor não confirmou a entrega dos alertas.');
+      toast.success('O provedor confirmou a entrega dos alertas.');
     } catch (err: unknown) {
       const error = err instanceof Error ? err : new Error(String(err));
       toast.error(safeErrorMessage(error, 'Erro na operação.'));
@@ -108,7 +124,7 @@ export function SystemHealthTab() {
   const runAgendamentos = async () => {
     setLoading('agendamentos');
     try {
-      const result = await edgeFunctionsService.processarAgendamentos() as { processados: number };
+      const result = (await edgeFunctionsService.processarAgendamentos()) as { processados: number };
       toast.success(`${result.processados || 0} agendamentos processados!`);
     } catch (err: unknown) {
       const error = err instanceof Error ? err : new Error(String(err));
@@ -144,9 +160,8 @@ export function SystemHealthTab() {
     }
   };
 
-  const StatusIcon = ({ ok }: { ok: boolean }) => ok
-    ? <CheckCircle className="h-4 w-4 text-green-500" />
-    : <XCircle className="h-4 w-4 text-destructive" />;
+  const StatusIcon = ({ ok }: { ok: boolean }) =>
+    ok ? <CheckCircle className="h-4 w-4 text-green-500" /> : <XCircle className="h-4 w-4 text-destructive" />;
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
@@ -159,7 +174,9 @@ export function SystemHealthTab() {
             </div>
             <div>
               <CardTitle className="font-display text-xl">Console de Manutenção</CardTitle>
-              <CardDescription className="font-body text-sm">Ações manuais para diagnóstico e otimização do sistema</CardDescription>
+              <CardDescription className="font-body text-sm">
+                Ações manuais para diagnóstico e otimização do sistema
+              </CardDescription>
             </div>
           </div>
         </CardHeader>
@@ -170,24 +187,37 @@ export function SystemHealthTab() {
               { id: 'cleanup', label: 'Limpeza de DB', icon: Trash2, action: runCleanup, color: 'text-orange-500' },
               { id: 'backup', label: 'Gerar Backup', icon: Download, action: runBackup, color: 'text-blue-500' },
               { id: 'alertas', label: 'Disparar Alertas', icon: Bell, action: runAlertasDP, color: 'text-warning' },
-              { id: 'agendamentos', label: 'Agendamentos', icon: Clock, action: runAgendamentos, color: 'text-indigo-500' },
-              { id: 'bitrix', label: 'Sync Bitrix', icon: RefreshCw, action: runSincronizarBitrix, color: 'text-[#00AEEF]' },
+              {
+                id: 'agendamentos',
+                label: 'Agendamentos',
+                icon: Clock,
+                action: runAgendamentos,
+                color: 'text-indigo-500',
+              },
+              {
+                id: 'bitrix',
+                label: 'Sync Bitrix',
+                icon: RefreshCw,
+                action: runSincronizarBitrix,
+                color: 'text-[#00AEEF]',
+              },
               { id: 'cache', label: 'Limpar Cache', icon: Database, action: runLimparCache, color: 'text-destructive' },
             ].map((btn) => (
-              <Button 
+              <Button
                 key={btn.id}
-                onClick={btn.action} 
-                disabled={loading === btn.id} 
-                variant="outline" 
+                onClick={btn.action}
+                disabled={loading === btn.id}
+                variant="outline"
                 className={cn(
-                  "rounded-2xl h-24 flex-col gap-2 font-body transition-all hover:shadow-md hover:border-primary/30",
-                  btn.id === 'cache' && "border-destructive/20 text-destructive hover:bg-destructive/5 hover:border-destructive/40"
+                  'rounded-2xl h-24 flex-col gap-2 font-body transition-all hover:shadow-md hover:border-primary/30',
+                  btn.id === 'cache' &&
+                    'border-destructive/20 text-destructive hover:bg-destructive/5 hover:border-destructive/40'
                 )}
               >
                 {loading === btn.id ? (
                   <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                 ) : (
-                  <btn.icon className={cn("h-6 w-6", btn.color)} />
+                  <btn.icon className={cn('h-6 w-6', btn.color)} />
                 )}
                 <span className="text-xs font-bold uppercase tracking-tight">{btn.label}</span>
               </Button>
@@ -206,10 +236,10 @@ export function SystemHealthTab() {
                 <CardTitle className="font-display flex items-center gap-2">
                   <Activity className="h-5 w-5 text-green-500" /> Status do Core
                 </CardTitle>
-                <Badge 
-                  variant={healthData.status === 'healthy' ? 'default' : 'destructive'} 
+                <Badge
+                  variant={healthData.status === 'healthy' ? 'default' : 'destructive'}
                   className={cn(
-                    "rounded-full px-3 py-1 font-bold",
+                    'rounded-full px-3 py-1 font-bold',
                     healthData.status === 'healthy' ? 'bg-success/20 text-success border-success/30' : ''
                   )}
                 >
@@ -219,7 +249,10 @@ export function SystemHealthTab() {
             </CardHeader>
             <CardContent className="space-y-1">
               {Object.entries(healthData.services || {}).map(([name, svc]: [string, any]) => (
-                <div key={name} className="flex items-center justify-between py-3 border-b border-border/10 last:border-0 hover:bg-muted/10 transition-colors px-2 rounded-lg">
+                <div
+                  key={name}
+                  className="flex items-center justify-between py-3 border-b border-border/10 last:border-0 hover:bg-muted/10 transition-colors px-2 rounded-lg"
+                >
                   <div className="flex items-center gap-3">
                     <StatusIcon ok={svc.status === 'ok'} />
                     <span className="font-display font-semibold text-sm capitalize">{name}</span>
@@ -253,7 +286,10 @@ export function SystemHealthTab() {
             </CardHeader>
             <CardContent className="space-y-1">
               {Object.entries(cleanupResult.results || {}).map(([key, val]: [string, any]) => (
-                <div key={key} className="flex justify-between py-2 border-b border-border/10 last:border-0 text-sm font-body px-2">
+                <div
+                  key={key}
+                  className="flex justify-between py-2 border-b border-border/10 last:border-0 text-sm font-body px-2"
+                >
                   <span className="text-muted-foreground capitalize">{key.replace(/_/g, ' ')}</span>
                   <span className="font-bold text-orange-600">-{val}</span>
                 </div>
@@ -288,7 +324,9 @@ export function SystemHealthTab() {
               </div>
               <div className="pt-6 mt-4 flex items-center justify-between border-t border-border/10">
                 <div className="space-y-1">
-                  <p className="text-sm font-bold text-primary">{backupResult.message || 'Backup processado com sucesso'}</p>
+                  <p className="text-sm font-bold text-primary">
+                    {backupResult.message || 'Backup processado com sucesso'}
+                  </p>
                   <p className="text-[10px] text-muted-foreground font-mono">ID: {backupId}</p>
                 </div>
                 <div className="text-right">
@@ -311,4 +349,3 @@ export function SystemHealthTab() {
     </motion.div>
   );
 }
-

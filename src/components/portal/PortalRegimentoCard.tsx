@@ -89,17 +89,22 @@ export function PortalRegimentoCard() {
     }
   }, [empresaId, user?.id, colaboradorId]);
 
-
   // Uma única fonte de disparo: `carregar` é memoizado por (empresaId, user.id),
   // então este efeito cobre o mount e as trocas de empresa/usuário sem
   // duplicar a requisição (o antigo par useOnMount + useEffect fazia 2 fetches).
   useEffect(() => {
-    carregar();
+    let cancelled = false;
+    queueMicrotask(() => {
+      if (!cancelled) void carregar();
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [carregar]);
 
   const conteudoSeguro = useMemo(
     () => (documento ? sanitizeContractHtml(documento.conteudo_html || '') : ''),
-    [documento],
+    [documento]
   );
 
   const assinar = async () => {
@@ -144,9 +149,7 @@ export function PortalRegimentoCard() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">
-            Nenhum regimento publicado no momento. Volte mais tarde.
-          </p>
+          <p className="text-sm text-muted-foreground">Nenhum regimento publicado no momento. Volte mais tarde.</p>
         </CardContent>
       </Card>
     );
@@ -160,10 +163,8 @@ export function PortalRegimentoCard() {
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            Não encontramos um cadastro de colaborador desta empresa com o e-mail da sua
-            conta. Peça ao RH para conferir o e-mail cadastrado na sua ficha — assim que
-            ele coincidir, a assinatura fica disponível automaticamente.
-
+            Não encontramos um cadastro de colaborador desta empresa com o e-mail da sua conta. Peça ao RH para conferir
+            o e-mail cadastrado na sua ficha — assim que ele coincidir, a assinatura fica disponível automaticamente.
           </p>
         </CardContent>
       </Card>
@@ -183,16 +184,9 @@ export function PortalRegimentoCard() {
           <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             <Badge variant="outline">Versão {documento.versao}</Badge>
             {documento.publicado_em && (
-              <span>
-                Publicado em{' '}
-                {new Date(documento.publicado_em).toLocaleDateString('pt-BR')}
-              </span>
+              <span>Publicado em {new Date(documento.publicado_em).toLocaleDateString('pt-BR')}</span>
             )}
-            {documento.hash_sha256 && (
-              <span className="font-mono">
-                SHA-256: {documento.hash_sha256.slice(0, 12)}…
-              </span>
-            )}
+            {documento.hash_sha256 && <span className="font-mono">SHA-256: {documento.hash_sha256.slice(0, 12)}…</span>}
           </div>
         </div>
         {assinado && (
@@ -211,8 +205,7 @@ export function PortalRegimentoCard() {
         {assinado ? (
           <div className="rounded-md border border-success/40 bg-success/10 p-3 text-sm">
             <p className="font-medium text-success-foreground">
-              Assinado em{' '}
-              {new Date(assinatura!.assinado_em).toLocaleString('pt-BR')}
+              Assinado em {new Date(assinatura!.assinado_em).toLocaleString('pt-BR')}
             </p>
             {assinatura?.hash_documento && (
               <p className="mt-1 font-mono text-xs text-muted-foreground">
@@ -223,21 +216,13 @@ export function PortalRegimentoCard() {
         ) : (
           <div className="space-y-3">
             <label className="flex items-start gap-2 text-sm">
-              <Checkbox
-                checked={aceite}
-                onCheckedChange={(v) => setAceite(v === true)}
-                disabled={saving}
-              />
+              <Checkbox checked={aceite} onCheckedChange={(v) => setAceite(v === true)} disabled={saving} />
               <span className="text-muted-foreground">
-                Declaro que li e compreendi integralmente o Regimento Interno de
-                Segurança e Saúde no Trabalho, comprometendo-me a cumpri-lo.
+                Declaro que li e compreendi integralmente o Regimento Interno de Segurança e Saúde no Trabalho,
+                comprometendo-me a cumpri-lo.
               </span>
             </label>
-            <Button
-              onClick={assinar}
-              disabled={!aceite || saving}
-              className="w-full md:w-auto"
-            >
+            <Button onClick={assinar} disabled={!aceite || saving} className="w-full md:w-auto">
               {saving ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Assinando…

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,32 +11,43 @@ import { safeErrorMessage } from '@/utils/safeError';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { todayLocalISO } from '@/utils/dateLocal';
 import { loggerService } from '@/services/loggerService';
-import { useOnMount } from '@/hooks/useMountEffects';
 
 interface CNABDialogProps {
   folhaId: string;
 }
+
+const emptyConfig = (nomeEmpresa = ''): CNABConfig => ({
+  banco_codigo: '001',
+  agencia: '',
+  agencia_digito: '',
+  conta: '',
+  conta_digito: '',
+  convenio: '',
+  nome_empresa: nomeEmpresa,
+});
 
 export function CNABDialog({ folhaId }: CNABDialogProps) {
   const { empresaAtual } = useEmpresas();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [config, setConfig] = useState<CNABConfig>({
-    banco_codigo: '001', // Default BB
-    agencia: '',
-    agencia_digito: '',
-    conta: '',
-    conta_digito: '',
-    convenio: '',
-    nome_empresa: '',
-  });
+  const [loadingConfig, setLoadingConfig] = useState(false);
+  const [configEmpresaId, setConfigEmpresaId] = useState<string | null>(null);
+  const [config, setConfig] = useState<CNABConfig>(() => emptyConfig());
+  const empresaAtualIdRef = useRef<string | undefined>(empresaAtual?.id);
 
-  // eslint-disable-next-line react-hooks/preserve-manual-memoization
-  const loadConfig = useCallback(async () => {
-    if (!empresaAtual?.id) return;
+  useEffect(() => {
+    empresaAtualIdRef.current = empresaAtual?.id;
+  }, [empresaAtual?.id]);
+
+  const loadConfig = useCallback(async (empresaId: string, razaoSocial?: string) => {
+    setLoadingConfig(true);
+    setConfigEmpresaId(null);
     try {
-      const data = await cnabService.getConfig(empresaAtual.id);
+      const data = await cnabService.getConfig(empresaId);
+      // A troca de empresa ou o fechamento do modal invalida a resposta que
+      // chegou atrasada. Nunca reutilizar dados bancários entre tenants.
+      if (empresaAtualIdRef.current !== empresaId) return;
       if (data) {
         setConfig({
           banco_codigo: data.banco_codigo,
@@ -45,26 +56,51 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
           conta: data.conta,
           conta_digito: data.conta_digito,
           convenio: data.convenio,
-          nome_empresa: data.nome_empresa || empresaAtual?.razao_social || '',
+          nome_empresa: data.nome_empresa || razaoSocial || '',
         });
       } else {
-          setConfig(prev => ({ ...prev, nome_empresa: empresaAtual?.razao_social || '' }));
+        setConfig(emptyConfig(razaoSocial));
       }
+      setConfigEmpresaId(empresaId);
     } catch (err) {
-      loggerService.error('Erro ao carregar config CNAB', { empresaId: empresaAtual?.id }, err instanceof Error ? err : new Error(String(err)));
+      loggerService.error(
+        'Erro ao carregar config CNAB',
+        { empresaId },
+        err instanceof Error ? err : new Error(String(err))
+      );
+    } finally {
+      if (empresaAtualIdRef.current === empresaId) setLoadingConfig(false);
     }
-  }, [empresaAtual?.id, empresaAtual?.razao_social]);
-
-  useOnMount(() => {
-    if (open) loadConfig();
-  });
+  }, []);
 
   useEffect(() => {
-    if (open) loadConfig();
-  }, [open, loadConfig]);
+    let cancelled = false;
+    if (open && empresaAtual?.id) {
+      const empresaId = empresaAtual.id;
+      const razaoSocial = empresaAtual.razao_social;
+      queueMicrotask(() => {
+        if (!cancelled) void loadConfig(empresaId, razaoSocial);
+      });
+    }
+    return () => {
+      cancelled = true;
+    };
+  }, [open, empresaAtual?.id, empresaAtual?.razao_social, loadConfig]);
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    if (!nextOpen) {
+      setConfigEmpresaId(null);
+      setConfig(emptyConfig());
+    }
+  };
 
   const handleSaveConfig = async () => {
     if (!empresaAtual?.id) return;
+    if (loadingConfig || configEmpresaId !== empresaAtual.id) {
+      toast.error('A configuração da empresa atual ainda não foi carregada.');
+      return;
+    }
     setSaving(true);
     try {
       await cnabService.saveConfig(empresaAtual.id, config);
@@ -81,7 +117,7 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
     setLoading(true);
     try {
       const content = await cnabService.generateCNAB240(empresaAtual.id, folhaId);
-      
+
       const blob = new Blob([content], { type: 'text/plain' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -91,7 +127,7 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-      
+
       toast.success('Arquivo CNAB 240 (Remessa de Salários) gerado!');
       setOpen(false);
     } catch (err) {
@@ -125,9 +161,13 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button size="sm" variant="outline" className="rounded-xl gap-1.5 font-body border-primary/30 hover:bg-primary/5">
+        <Button
+          size="sm"
+          variant="outline"
+          className="rounded-xl gap-1.5 font-body border-primary/30 hover:bg-primary/5"
+        >
           <FileDown className="h-4 w-4 text-primary" />
           <span className="hidden sm:inline">Exportar Bancário</span>
         </Button>
@@ -147,41 +187,71 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
                 <Settings2 className="h-4 w-4" />
                 Convênio e Conta Origem (Empresa)
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="text-xs">Código do Banco</Label>
-                  <Input placeholder="001" value={config.banco_codigo} onChange={e => setConfig(p => ({ ...p, banco_codigo: e.target.value }))} />
+                  <Input
+                    placeholder="001"
+                    value={config.banco_codigo}
+                    onChange={(e) => setConfig((p) => ({ ...p, banco_codigo: e.target.value }))}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label className="text-xs">Número do Convênio</Label>
-                  <Input placeholder="1234567" value={config.convenio} onChange={e => setConfig(p => ({ ...p, convenio: e.target.value }))} />
+                  <Input
+                    placeholder="1234567"
+                    value={config.convenio}
+                    onChange={(e) => setConfig((p) => ({ ...p, convenio: e.target.value }))}
+                  />
                 </div>
               </div>
 
               <div className="grid grid-cols-4 gap-4">
                 <div className="col-span-3 space-y-2">
                   <Label className="text-xs">Agência</Label>
-                  <Input placeholder="1234" value={config.agencia} onChange={e => setConfig(p => ({ ...p, agencia: e.target.value }))} />
+                  <Input
+                    placeholder="1234"
+                    value={config.agencia}
+                    onChange={(e) => setConfig((p) => ({ ...p, agencia: e.target.value }))}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label className="text-xs">DV</Label>
-                  <Input placeholder="X" value={config.agencia_digito} onChange={e => setConfig(p => ({ ...p, agencia_digito: e.target.value }))} />
+                  <Input
+                    placeholder="X"
+                    value={config.agencia_digito}
+                    onChange={(e) => setConfig((p) => ({ ...p, agencia_digito: e.target.value }))}
+                  />
                 </div>
               </div>
 
               <div className="grid grid-cols-4 gap-4">
                 <div className="col-span-3 space-y-2">
                   <Label className="text-xs">Conta Corrente</Label>
-                  <Input placeholder="12345678" value={config.conta} onChange={e => setConfig(p => ({ ...p, conta: e.target.value }))} />
+                  <Input
+                    placeholder="12345678"
+                    value={config.conta}
+                    onChange={(e) => setConfig((p) => ({ ...p, conta: e.target.value }))}
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label className="text-xs">DV</Label>
-                  <Input placeholder="0" value={config.conta_digito} onChange={e => setConfig(p => ({ ...p, conta_digito: e.target.value }))} />
+                  <Input
+                    placeholder="0"
+                    value={config.conta_digito}
+                    onChange={(e) => setConfig((p) => ({ ...p, conta_digito: e.target.value }))}
+                  />
                 </div>
               </div>
 
-              <Button variant="ghost" size="sm" onClick={handleSaveConfig} disabled={saving} className="w-full text-xs gap-1.5 h-8 border border-dashed border-primary/20 hover:bg-primary/5">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleSaveConfig}
+                disabled={saving || loadingConfig || configEmpresaId !== empresaAtual?.id}
+                className="w-full text-xs gap-1.5 h-8 border border-dashed border-primary/20 hover:bg-primary/5"
+              >
                 {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : <CheckCircle2 className="h-3 w-3" />}
                 Salvar Configurações de Remessa
               </Button>
@@ -189,14 +259,23 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
           </Card>
 
           <div className="grid grid-cols-2 gap-3 pt-2">
-            <Button onClick={handleGenerate} className="rounded-xl gap-2 h-12 shadow-lg bg-gradient-to-r from-primary to-primary-glow" disabled={loading}>
+            <Button
+              onClick={handleGenerate}
+              className="rounded-xl gap-2 h-12 shadow-lg bg-gradient-to-r from-primary to-primary-glow"
+              disabled={loading}
+            >
               {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <FileDown className="h-5 w-5" />}
               <div className="flex flex-col items-start leading-tight">
                 <span className="text-sm">CNAB 240</span>
                 <span className="text-[10px] opacity-70">Remessa FEBRABAN</span>
               </div>
             </Button>
-            <Button onClick={handleGeneratePIX} variant="outline" className="rounded-xl gap-2 h-12 border-primary/30 hover:bg-primary/5" disabled={loading}>
+            <Button
+              onClick={handleGeneratePIX}
+              variant="outline"
+              className="rounded-xl gap-2 h-12 border-primary/30 hover:bg-primary/5"
+              disabled={loading}
+            >
               {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Zap className="h-5 w-5 text-amber-500" />}
               <div className="flex flex-col items-start leading-tight">
                 <span className="text-sm">PIX Analítico</span>
@@ -204,10 +283,12 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
               </div>
             </Button>
           </div>
-          
+
           <div className="flex items-center gap-2 justify-center p-2 bg-success/5 rounded-lg border border-success/20">
             <ShieldCheck className="h-3.5 w-3.5 text-success" />
-            <span className="text-[10px] text-success font-medium uppercase tracking-tighter">Protocolo Bancário Seguro TLS 1.3 Ativo</span>
+            <span className="text-[10px] text-success font-medium uppercase tracking-tighter">
+              Protocolo Bancário Seguro TLS 1.3 Ativo
+            </span>
           </div>
         </div>
       </DialogContent>

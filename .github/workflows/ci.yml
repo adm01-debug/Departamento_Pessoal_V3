@@ -52,6 +52,7 @@ jobs:
     env:
       VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || '' }}
       VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY || secrets.VITE_SUPABASE_ANON_KEY || '' }}
+      RUN_LIVE_RLS_TESTS: 'true'
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -76,7 +77,7 @@ jobs:
         # aqui causam falhas silenciosas em produção.
         run: deno check --no-lock --node-modules-dir=false supabase/functions/external-db-bridge/index.ts
       - name: Testes unitários compartilhados das Edge Functions
-        run: deno test --allow-env --no-lock --node-modules-dir=false supabase/functions/_shared/*.test.ts supabase/functions/metrics/*.test.ts
+        run: deno test --allow-env --no-lock --node-modules-dir=false supabase/functions/_shared/*.test.ts supabase/functions/metrics/*.test.ts supabase/functions/auth-login/*.test.ts supabase/functions/backup-automatico/*.test.ts supabase/functions/alertas-dp/*.test.ts supabase/functions/enviar-esocial/*.test.ts supabase/functions/enviar-relatorio/*.test.ts supabase/functions/metabase-embed/*.test.ts supabase/functions/external-db-bridge/validation.test.ts supabase/functions/external-db-bridge/tenantScope.test.ts
       - name: Type-check demais edge functions (informativo)
         # Passa mesmo com erros — apenas gera relatório para rastreamento progressivo.
         # As demais funções serão migradas gradualmente para zero erros.
@@ -110,6 +111,33 @@ jobs:
           node scripts/audit-security-config.mjs
           node scripts/validate-plan-50.mjs
           node scripts/audit-canonical-project.mjs
+          node scripts/tests/rebaseline-artifact.test.mjs
+
+  p0-database-migrations:
+    name: P0 database migration simulations
+    runs-on: ubuntu-latest
+    # Os scripts de simulação SQL não fazem chamadas à API do GitHub. Mantém o
+    # token mínimo e evita deixá-lo no git config enquanto executam SQL de PR.
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Simular a migração em PostgreSQL descartável
+        # Cada teste sobe PostgreSQL descartável. Eles exercitam o defeito que
+        # só aparece em runtime, reaplicação idempotente e pré-condições que
+        # devem falhar fechadas em caso de drift.
+        run: |
+          bash scripts/tests/migrations-p0-hash-search-path.sh
+          bash scripts/tests/migrations-p0-auth-lockout.sh
+          bash scripts/tests/migrations-p0-view-acl.sh
+          bash scripts/tests/migrations-p0-secdef-search-path.sh
+          bash scripts/tests/migrations-p1-function-search-path.sh
+          bash scripts/tests/migrations-p0-pgcrypto-routine-search-path.sh
+          bash scripts/tests/migrations-p0-atomic-rate-limit.sh
+          bash scripts/tests/migrations-p0-payroll-upsert.sh
+          bash scripts/tests/migrations-p0-bridge-membership.sh
 
   db-integrity:
     name: Integridade do banco (search_path x extensões)

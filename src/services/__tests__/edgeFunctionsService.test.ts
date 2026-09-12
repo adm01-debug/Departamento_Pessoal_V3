@@ -26,16 +26,19 @@ describe('edgeFunctionsService.dispararAlertasDP', () => {
     mockGenericExecute.mockImplementation((fn: any) => fn());
   });
 
-  it('calls invoke with "alertas-dp" and trigger body', async () => {
-    mockInvoke.mockResolvedValue({ data: { sent: 3 }, error: null });
-    const result = await edgeFunctionsService.dispararAlertasDP();
-    expect(mockInvoke).toHaveBeenCalledWith('alertas-dp', { body: { trigger: 'manual' } });
-    expect(result).toEqual({ sent: 3 });
+  it('calls invoke with "alertas-dp" and an explicit tenant', async () => {
+    mockInvoke.mockResolvedValue({
+      data: { success: true, alertas_processados: 3, email_delivery: 'accepted' },
+      error: null,
+    });
+    const result = await edgeFunctionsService.dispararAlertasDP('empresa-1');
+    expect(mockInvoke).toHaveBeenCalledWith('alertas-dp', { body: { empresaId: 'empresa-1' } });
+    expect(result).toEqual({ success: true, alertas_processados: 3, email_delivery: 'accepted' });
   });
 
   it('uses genericBreaker', async () => {
     mockInvoke.mockResolvedValue({ data: {}, error: null });
-    await edgeFunctionsService.dispararAlertasDP();
+    await edgeFunctionsService.dispararAlertasDP('empresa-1');
     expect(mockGenericExecute).toHaveBeenCalled();
     expect(mockResendExecute).not.toHaveBeenCalled();
     expect(mockBitrixExecute).not.toHaveBeenCalled();
@@ -51,18 +54,26 @@ describe('edgeFunctionsService.enviarRelatorioEmail', () => {
   });
 
   it('calls invoke with "enviar-relatorio" and uses resendBreaker', async () => {
-    mockInvoke.mockResolvedValue({ data: { messageId: 'msg-1' }, error: null });
+    mockInvoke.mockResolvedValue({ data: { success: true, status: 'sucesso' }, error: null });
     const params = {
-      tipo: 'folha',
-      destinatarios: ['rh@empresa.com'],
+      tipoRelatorio: 'folha_resumo' as const,
+      formato: 'csv' as const,
+      emailDestinatario: 'rh@empresa.com',
       empresaId: 'emp-1',
       competencia: '2026-07',
     };
     const result = await edgeFunctionsService.enviarRelatorioEmail(params);
-    expect(mockInvoke).toHaveBeenCalledWith('enviar-relatorio', { body: params });
+    expect(mockInvoke).toHaveBeenCalledWith('enviar-relatorio', {
+      body: {
+        tipoRelatorio: 'folha_resumo',
+        formato: 'csv',
+        emailDestinatario: 'rh@empresa.com',
+        parametros: { empresaId: 'emp-1', competencia: '2026-07' },
+      },
+    });
     expect(mockResendExecute).toHaveBeenCalled();
     expect(mockGenericExecute).not.toHaveBeenCalled();
-    expect(result).toEqual({ messageId: 'msg-1' });
+    expect(result).toEqual({ success: true, status: 'sucesso' });
   });
 });
 

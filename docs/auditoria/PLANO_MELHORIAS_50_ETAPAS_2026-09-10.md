@@ -8,7 +8,9 @@
 
 > Consolida a auditoria local, a inspeção viva do Supabase e o grafo de dependências. Não autoriza reset, exclusão, `db push` ou `migration repair` em massa.
 
-> **Revisão de implementação:** a existência de código, migration, teste ou documentação não encerra uma etapa. O estado auditado das 50 etapas, as funcionalidades parciais e as funcionalidades apenas sugeridas estão em [`REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-10.md`](./REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-10.md). Na data de corte, **nenhuma etapa atingiu C4**.
+> **Revisão de implementação vigente (12/09/2026):** a existência de código, migration, teste ou documentação não encerra uma etapa. Consulte [`REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-12.md`](./REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-12.md): 42 etapas parciais, 2 com dependência externa e 6 sem demonstração integral do objetivo; **nenhuma com C4 comprovado**. O relatório confronta o SHA `cc6abb1cc`, registra 12 achados priorizados e distingue testes locais, CI e banco não recertificado. As revisões de 10/09 e 11/09 e o snapshot JSON de 11/09 permanecem como histórico; não substituem a evidência atual.
+>
+> **Exceção de ambiente autorizada pelo owner:** alterações podem ser realizadas diretamente no canônico enquanto os dados são descartáveis. Não exigir nova autorização genérica ou staging como condição de autorização. Permanecem necessários escopo versionado, recuperação, testes e evidências; essa exceção não comprova staging/DR nem encerra E50-048.
 
 ## Regras de execução
 
@@ -216,20 +218,20 @@
 
 ### 10 subetapas
 
-1. [ ] **Evidência inicial:** 24 funções únicas afetadas e 11 smokes de selagem quebrados.
+1. [x] **Evidência inicial:** 13 funções `enforce_*_hash` identificadas; dez com `search_path=public`, uma sem configuração e duas com `public, extensions`. `digest(...)` sob `public` reproduz SQLSTATE `42883`.
 2. [ ] **Ownership:** nomear executor, revisor e aprovador; mapear consumidores, dados, pré-condições e blast radius.
 3. [ ] **Contrato:** documentar invariantes, entradas/saídas, autorização, compatibilidade, métricas, ameaça e critério de abort.
-4. [ ] **Implementação:** Corrigir search_path/qualificação de pgcrypto e decidir os dois triggers de folha desabilitados.
-5. [ ] **Teste positivo:** 11/11 smokes geram e verificam hashes determinísticos.
-6. [ ] **Teste negativo:** Payload adulterado, schema malicioso e bypass de trigger são rejeitados.
+4. [ ] **Implementação:** Migration local `20260911190000_p0_hash_trigger_search_path.sql` restaura `public, extensions, pg_catalog` nos 13 gatilhos; aplicação no canônico e decisão sobre os dois triggers de folha seguem pendentes.
+5. [ ] **Teste positivo:** Em fixture PostgreSQL 17, os 13 gatilhos executam `digest()` após duas aplicações idempotentes; falta validar os corpos/dados canônicos e os 11 smokes completos.
+6. [ ] **Teste negativo:** A fixture rejeita migration sem `pgcrypto` no schema `extensions` e com função de gatilho faltante; adulteração, schema malicioso e bypass real seguem pendentes.
 7. [ ] **Regressão:** executar typecheck, lint, unidade, integração, banco e E2E diretamente afetados.
 8. [ ] **Operação:** medir antes/depois, garantir logs sem PII, alertas acionáveis e rollback ensaiado.
-9. [ ] **Gate permanente:** automatizar os testes e o critério objetivo; exceção exige owner, compensação e expiração.
+9. [x] **Gate permanente:** `test:migrations:p0` e o job CI `P0 Hash-trigger migration` reproduzem o defeito, validam os 13 gatilhos, reaplicação e cenários fail-closed.
 10. [ ] **Promoção:** revisão dupla, staging/canário e evidências de commit, PR, runs, inventário, decisão e smoke pós-deploy.
 
 ### Checkpoints
 
-- [ ] **C1 — Diagnóstico:** defeito reproduzido; owner, escopo, contrato e ameaça aprovados.
+- [ ] **C1 — Diagnóstico:** defeito e escopo técnico reproduzidos; falta aprovação formal de owner/contrato operacional.
 - [ ] **C2 — Implementação:** mudança revisada; testes positivo/negativo e rollback demonstrados.
 - [ ] **C3 — Verificação:** regressão completa, gate permanente e métricas dentro do limite.
 - [ ] **C4 — Evidência:** staging/canário aprovado, documentação atualizada e links anexados.
@@ -245,15 +247,15 @@
 
 ### 10 subetapas
 
-1. [ ] **Evidência inicial:** auth-login degrada por RPCs ausentes; reset_login_attempts é anon-executable.
+1. [x] **Evidência inicial:** `auth-login` chama `check_account_lockout` e `record_login_attempt` ausentes no canônico, enquanto `reset_login_attempts` é anon-executable.
 2. [ ] **Ownership:** nomear executor, revisor e aprovador; mapear consumidores, dados, pré-condições e blast radius.
 3. [ ] **Contrato:** documentar invariantes, entradas/saídas, autorização, compatibilidade, métricas, ameaça e critério de abort.
-4. [ ] **Implementação:** Implementar RPCs ausentes, remover reset público e combinar CAPTCHA/WAF/rate limit atômico.
-5. [ ] **Teste positivo:** Login, bloqueio, expiração e recuperação autorizada funcionam.
-6. [ ] **Teste negativo:** Brute force distribuído, enumeração, replay e bypass do wrapper falham.
+4. [ ] **Implementação:** Migration local `20260911191000_p0_auth_lockout_contract.sql` restaura o contrato de lockout somente para `service_role`; a remoção do reset público, CAPTCHA/WAF e aplicação no canônico seguem pendentes.
+5. [ ] **Teste positivo:** Fixture PostgreSQL 17 valida bloqueio na quinta falha, expiração/recuperação e reset após sucesso; ainda falta fluxo Auth/Edge real.
+6. [ ] **Teste negativo:** Fixture bloqueia `anon` e falha sem pré-requisitos; brute force distribuído, enumeração, replay e bypass real seguem pendentes.
 7. [ ] **Regressão:** executar typecheck, lint, unidade, integração, banco e E2E diretamente afetados.
 8. [ ] **Operação:** medir antes/depois, garantir logs sem PII, alertas acionáveis e rollback ensaiado.
-9. [ ] **Gate permanente:** automatizar os testes e o critério objetivo; exceção exige owner, compensação e expiração.
+9. [x] **Gate permanente:** o job CI `P0 database migration simulations` valida o contrato, ACL, `search_path`, idempotência e pré-requisito fail-closed em PostgreSQL descartável.
 10. [ ] **Promoção:** revisão dupla, staging/canário e evidências de commit, PR, runs, inventário, decisão e smoke pós-deploy.
 
 ### Checkpoints
@@ -439,19 +441,19 @@
 
 ## E50-015 — Provisionar os 19 buckets
 
-| Campo        | Valor                                                                             |
-| ------------ | --------------------------------------------------------------------------------- |
-| Onda         | Onda 1 — Reconstrução                                                             |
-| Prioridade   | P0                                                                                |
-| Dependências | E50-006 e E50-012                                                                 |
-| Objetivo     | Criar 15 buckets ausentes, todos privados, com path tenant, owner, MIME e limite. |
+| Campo        | Valor                                                                                                                                                                                      |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Onda         | Onda 1 — Reconstrução                                                                                                                                                                      |
+| Prioridade   | P0                                                                                                                                                                                         |
+| Dependências | E50-006 e E50-012                                                                                                                                                                          |
+| Objetivo     | Convergir os 19 buckets para o contrato canônico: 18 privados com path tenant/owner/MIME/limite; `avatars` público com mutação somente do owner; `backups` privado e exclusivo de serviço. |
 
 ### 10 subetapas
 
-1. [ ] **Evidência inicial:** Canônico tem 4/19 buckets e zero objetos; código usa vários ausentes.
+1. [ ] **Evidência inicial:** A medição viva de 2026-09-11 registra 18/19 buckets. Falta `backups`; vários buckets existentes não têm MIME/limite. A foto histórica 4/19 foi superada e permanece apenas no relatório de revisão.
 2. [ ] **Ownership:** nomear executor, revisor e aprovador; mapear consumidores, dados, pré-condições e blast radius.
 3. [ ] **Contrato:** documentar invariantes, entradas/saídas, autorização, compatibilidade, métricas, ameaça e critério de abort.
-4. [ ] **Implementação:** Criar 15 buckets ausentes, todos privados, com path tenant, owner, MIME e limite.
+4. [ ] **Implementação:** Criar `backups` e aplicar o contrato canônico de visibilidade, path, owner, MIME e limite nos 19 buckets; não tornar `avatars` privado nem disponibilizar `backups` ao cliente.
 5. [ ] **Teste positivo:** Upload/download assinado/remoção autorizada passam em 19/19.
 6. [ ] **Teste negativo:** Anon, T2, path traversal, MIME forjado, excesso e spoof de owner falham.
 7. [ ] **Regressão:** executar typecheck, lint, unidade, integração, banco e E2E diretamente afetados.
@@ -468,19 +470,19 @@
 
 ## E50-016 — Versionar cron e rotinas periódicas
 
-| Campo        | Valor                                                                          |
-| ------------ | ------------------------------------------------------------------------------ |
-| Onda         | Onda 1 — Reconstrução                                                          |
-| Prioridade   | P1                                                                             |
-| Dependências | E50-012–013                                                                    |
-| Objetivo     | Versionar sete jobs vivos e decidir/criar os três jobs de segurança esperados. |
+| Campo        | Valor                                                                                                                             |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| Onda         | Onda 1 — Reconstrução                                                                                                             |
+| Prioridade   | P1                                                                                                                                |
+| Dependências | E50-012–013                                                                                                                       |
+| Objetivo     | Reconciliar os 50 jobs ativos, revisar comandos duplicados e restaurar as funções ausentes dos três jobs de segurança existentes. |
 
 ### 10 subetapas
 
-1. [ ] **Evidência inicial:** Jobs atuais não estão representados pelo baseline histórico; diagnóstico espera três ausentes.
+1. [ ] **Evidência inicial:** Catálogo vivo de 11/09: 50 jobs ativos e oito grupos com comandos idênticos. Os três jobs sec-* existem, mas sec_audit_policies_scan, sec_policy_regressions_purge e sec_verify_seals_scan estão ausentes; o diagnóstico histórico de sete jobs/três agendamentos ausentes foi superado.
 2. [ ] **Ownership:** nomear executor, revisor e aprovador; mapear consumidores, dados, pré-condições e blast radius.
 3. [ ] **Contrato:** documentar invariantes, entradas/saídas, autorização, compatibilidade, métricas, ameaça e critério de abort.
-4. [ ] **Implementação:** Versionar sete jobs vivos e decidir/criar os três jobs de segurança esperados.
+4. [ ] **Implementação:** Versionar a reconciliação dos 50 jobs; decidir cadência/ownership por grupo repetido e restaurar/testar as três funções de segurança antes de manter seus agendamentos. Não criar novos jobs duplicados.
 5. [ ] **Teste positivo:** Cada job executa uma vez com resultado e latência observáveis.
 6. [ ] **Teste negativo:** Dupla execução, atraso, lock e erro parcial não duplicam/apagam indevidamente.
 7. [ ] **Regressão:** executar typecheck, lint, unidade, integração, banco e E2E diretamente afetados.
@@ -883,7 +885,7 @@
 
 ### 10 subetapas
 
-1. [ ] **Evidência inicial:** A inspeção SQL não provou versões/configs implantadas; o inventário funcional encontrou Edge Functions sem chamador e wrappers sem consumidor.
+1. [ ] **Evidência inicial:** Comparação Management API de 11/09: 60 Edge Functions locais e 59 remotas; metabase-embed ausente no remoto. Dos 59 entrypoints comparados, 56 diferem textualmente e 3 coincidem após normalização de CRLF/fim de arquivo. Shared dependencies, secrets, callers e equivalência funcional ainda não foram certificados; gerar-holerite e metrics têm divergências semânticas confirmadas.
 2. [ ] **Ownership:** nomear executor, revisor e aprovador; mapear consumidores, dados, pré-condições e blast radius.
 3. [ ] **Contrato:** documentar invariantes, entradas/saídas, autorização, compatibilidade, métricas, ameaça e critério de abort.
 4. [ ] **Implementação:** Criar manifest nome/hash/verify_jwt/import-map/secrets/callers/cron e comparar repositório, Management API e catálogo de capacidades aprovado.

@@ -13,7 +13,6 @@ import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { loggerService } from '@/services/loggerService';
-import { useOnMount } from '@/hooks/useMountEffects';
 import {
   FileText,
   Upload,
@@ -86,28 +85,14 @@ function ContratacaoWorkflow({ token }: { token: string }) {
     },
   });
 
-  useOnMount(() => {
-    if (tokenData?.admissao) {
-      const adm = tokenData.admissao as Record<string, unknown>;
-      setFormData(prev => ({
-        ...prev,
-        nome_completo: (adm.nome as string) || '',
-        cpf: (adm.cpf as string) || '',
-        data_nascimento: (adm.data_nascimento as string) || '',
-        email: (adm.email as string) || '',
-        telefone: (adm.telefone as string) || '',
-      }));
-      if (tokenData.contrato_assinado) setStep(3);
-      else if (tokenData.documentos_enviados) setStep(2);
-      else if (tokenData.dados_preenchidos) setStep(1);
-      contratacaoService.gerarTemplateContrato(adm.id as string).then(setContractHtml);
-    }
-  });
-
   useEffect(() => {
-    if (tokenData?.admissao) {
+    let cancelled = false;
+    const hydrate = async () => {
+      if (!tokenData?.admissao) return;
       const adm = tokenData.admissao as Record<string, unknown>;
-      setFormData(prev => ({
+      await Promise.resolve();
+      if (cancelled) return;
+      setFormData((prev) => ({
         ...prev,
         nome_completo: (adm.nome as string) || '',
         cpf: (adm.cpf as string) || '',
@@ -118,8 +103,13 @@ function ContratacaoWorkflow({ token }: { token: string }) {
       if (tokenData.contrato_assinado) setStep(3);
       else if (tokenData.documentos_enviados) setStep(2);
       else if (tokenData.dados_preenchidos) setStep(1);
-      contratacaoService.gerarTemplateContrato(adm.id as string).then(setContractHtml);
-    }
+      const template = await contratacaoService.gerarTemplateContrato(adm.id as string);
+      if (!cancelled) setContractHtml(template);
+    };
+    void hydrate();
+    return () => {
+      cancelled = true;
+    };
   }, [tokenData]);
 
   const saveDados = useMutation({
@@ -266,8 +256,12 @@ function ContratacaoWorkflow({ token }: { token: string }) {
         toast.error(`Atenção: ${result.error || 'Não foi possível validar o documento.'}`);
       }
     } catch (error) {
-      loggerService.error('Erro no upload de documento', { docId }, error instanceof Error ? error : new Error(String(error)));
-      setUploadedDocs(prev => ({ ...prev, [docId]: { name: file.name, status: 'error' } }));
+      loggerService.error(
+        'Erro no upload de documento',
+        { docId },
+        error instanceof Error ? error : new Error(String(error))
+      );
+      setUploadedDocs((prev) => ({ ...prev, [docId]: { name: file.name, status: 'error' } }));
       toast.error(safeErrorMessage(error, 'Erro no upload do documento.'));
     }
   };

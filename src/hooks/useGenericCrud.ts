@@ -1,11 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { ListOptions, ListResponse } from '@/services/baseService';
 import { loggerService } from '@/services/loggerService';
 import { auditLogger } from '@/utils/auditLogger';
 import { safeErrorMessage } from '@/utils/safeError';
-import { useOnMount } from './useMountEffects';
 
 interface ServiceInterface<T> {
   listar(options: ListOptions): Promise<ListResponse<T>>;
@@ -35,22 +34,28 @@ export function useGenericCrud<T>({
   successMessages = {},
   filters = {},
   searchColumn,
-  empresaId
+  empresaId,
 }: UseGenericCrudOptions<T>) {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(initialPageSize);
   const [search, setSearch] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const filterKey = JSON.stringify(filters);
+  const [previousFilterKey, setPreviousFilterKey] = useState(filterKey);
 
-  // Reset page on mount and when search/filters change
-  useOnMount(() => {
+  // A mudança de filtros precisa invalidar a página antes de criar a query.
+  // O update guardado durante o render reinicia a renderização sem disparar uma
+  // requisição intermediária com os filtros novos e a página antiga.
+  if (previousFilterKey !== filterKey) {
+    setPreviousFilterKey(filterKey);
     setPage(1);
-  });
+  }
 
-  useEffect(() => {
+  const setSearchAndResetPage = useCallback((nextSearch: string) => {
+    setSearch(nextSearch);
     setPage(1);
-  }, [search, JSON.stringify(filters)]);
+  }, []);
 
   const query = useQuery({
     queryKey: [queryKey, { search, page, pageSize, filters }],
@@ -125,7 +130,7 @@ export function useGenericCrud<T>({
     pageSize,
     setPageSize,
     search,
-    setSearch,
+    setSearch: setSearchAndResetPage,
     criar: criarMutation.mutateAsync,
     atualizar: atualizarMutation.mutateAsync,
     excluir: excluirMutation.mutateAsync,
@@ -134,8 +139,6 @@ export function useGenericCrud<T>({
     isCreating: criarMutation.isPending,
     isUpdating: atualizarMutation.isPending,
     isDeleting: excluirMutation.isPending,
-    query
+    query,
   };
 }
-
-

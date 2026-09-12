@@ -36,6 +36,7 @@ const DEDUCAO_SIMPLIFICADA_IRRF = 564.80; // Lei 14.663/2023
 const DEDUCAO_DEPENDENTE_IRRF = 189.59;
 const CHUNK_SIZE = 500;
 const MAX_COLABORADORES = 50_000;
+const PAYROLL_TYPE = 'mensal';
 
 const round2 = (n: number): number => Math.round((n + Number.EPSILON) * 100) / 100;
 // IN RFB 2110/2022: contribuições previdenciárias e IR truncam centavos
@@ -169,6 +170,7 @@ Deno.serve(async (req) => {
       .select('id, status, version, esocial_status')
       .eq('empresa_id', empresa_id)
       .eq('competencia', competencia)
+      .eq('tipo', PAYROLL_TYPE)
       .maybeSingle();
 
     if (folhaExistente && BLOCKED_STATUSES.has(String(folhaExistente.status))) {
@@ -281,22 +283,48 @@ Deno.serve(async (req) => {
     const { data: upserted, error: upErr } = await admin
       .from('folhas_pagamento')
       .upsert({
-        empresa_id, competencia, status: 'calculada',
-        total_bruto: totais.bruto,
+        empresa_id, competencia, tipo: PAYROLL_TYPE, status: 'calculada',
+        total_proventos: totais.bruto,
         total_descontos: totais.descontos,
         total_liquido: totais.liquido,
+        total_fgts: totais.fgts,
         total_colaboradores: totalColabs,
         data_calculo: new Date().toISOString(),
-      }, { onConflict: 'empresa_id,competencia' })
+      }, { onConflict: 'empresa_id,competencia,tipo' })
       .select('id')
       .single();
     if (upErr) throw upErr;
+
+    // Persist the same canonical item-level result returned to the caller.
+    // The compound unique constraint and conflict target make retries and
+    // recalculations idempotent instead of creating duplicate payroll rows.
+    const itemRows = itens.map((item) => ({
+      folha_id: upserted.id,
+      colaborador_id: item.colaborador_id,
+      salario_base: item.salario_bruto,
+      total_proventos: item.salario_bruto,
+      total_descontos: item.total_descontos,
+      total_liquido: item.salario_liquido,
+      inss_mes: item.inss,
+      irrf_mes: item.irrf,
+      fgts_mes: item.fgts,
+      detalhes: {
+        inss: item.inss,
+        irrf: item.irrf,
+        fgts: item.fgts,
+      },
+    }));
+    const { error: itemUpsertError } = await admin
+      .from('folha_itens')
+      .upsert(itemRows, { onConflict: 'folha_id,colaborador_id' });
+    if (itemUpsertError) throw itemUpsertError;
 
     // Snapshot canônico dos totais + contagem de itens → SHA-256 (integridade financeira não-repudiável).
     // Permite verificação posterior: qualquer alteração no cálculo produz hash diferente.
     const integritySnapshot = {
       empresa_id,
       competencia,
+      tipo: PAYROLL_TYPE,
       total_colaboradores: totalColabs,
       itens_count: itens.length,
       totais,
@@ -348,4 +376,3 @@ Deno.serve(async (req) => {
     return createErrorResponse('Erro interno no cálculo de folha', 500, 'INTERNAL_SERVER_ERROR');
   }
 });
-

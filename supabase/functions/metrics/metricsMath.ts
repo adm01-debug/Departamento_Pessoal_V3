@@ -9,3 +9,27 @@ export function calculateErrorRate(errorCount: number, totalQueryCount: number):
   if (totalQueryCount === 0) return 0;
   return Math.min(errorCount / totalQueryCount, 1);
 }
+
+/**
+ * A métricas de disponibilidade só pode declarar o sistema saudável quando
+ * todas as dependências que ela própria publica como obrigatórias responderam.
+ * Retornar 0/1 mantém o contrato Prometheus das gauges.
+ */
+export function calculateOverallHealthStatus(
+  databaseOk: boolean,
+  telemetryOk: boolean,
+  bridgeHealthCheckOk: boolean,
+): 0 | 1 {
+  return databaseOk && telemetryOk && bridgeHealthCheckOk ? 1 : 0;
+}
+
+/**
+ * Falha fechada: um scrape parcial ou degradado recebe resposta HTTP 503,
+ * impedindo que monitores interpretem métricas incompletas como saudáveis.
+ */
+export function calculateMetricsHttpStatus(
+  overallHealthStatus: number,
+  telemetryCollectionStatus: number,
+): 200 | 503 {
+  return overallHealthStatus === 1 && telemetryCollectionStatus === 1 ? 200 : 503;
+}

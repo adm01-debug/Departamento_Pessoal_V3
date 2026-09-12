@@ -21,6 +21,7 @@ import {
   failIdempotency,
 } from '../_shared/idempotency.ts';
 import { integrityHash } from '../_shared/integrityHash.ts';
+import { transmissionHttpStatus } from './transmissionStatus.ts';
 
 const BodySchema = z.object({
   empresaId: z.string().uuid(),
@@ -75,10 +76,9 @@ serve(async (req: Request): Promise<Response> => {
     const userId = claimsData.user.id;
 
     // Payload
-    let raw: unknown;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    raw = _pb;
+    const raw = _pb;
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) return createErrorResponse('Payload inválido', 422, 'VALIDATION_ERROR');
     const { empresaId, eventoId } = parsed.data;
@@ -100,18 +100,6 @@ serve(async (req: Request): Promise<Response> => {
       const authz = await requireRh(supabase, userId, empresaId);
       if (authz.denied) return authz.denied;
     }
-    // Idempotência transacional (Idempotency-Key header ou body)
-    const idemKey = extractIdempotencyKey(req, raw);
-    const idem = await beginIdempotency(supabase, {
-      endpoint: 'enviar-esocial',
-      key: idemKey,
-      requestBody: { empresaId, eventoId },
-      empresaId,
-      userId,
-    });
-    if (idem.replay) return idem.replay;
-    if (idem.conflict) return idem.conflict;
-
     const startTime = Date.now();
 
 
@@ -131,6 +119,20 @@ serve(async (req: Request): Promise<Response> => {
         alreadySent: true, tentativas: evento.tentativas_envio ?? 0,
       }), { headers: { ...corsHeaders, ...NO_STORE, 'Content-Type': 'application/json' } });
     }
+
+    // Só reserva a chave depois de validar que há trabalho transmissível. Antes
+    // disso, um evento inexistente ou já enviado deixava uma chave presa em
+    // estado IN_PROGRESS sem resposta reutilizável.
+    const idemKey = extractIdempotencyKey(req, raw);
+    const idem = await beginIdempotency(supabase, {
+      endpoint: 'enviar-esocial',
+      key: idemKey,
+      requestBody: { empresaId, eventoId },
+      empresaId,
+      userId,
+    });
+    if (idem.replay) return idem.replay;
+    if (idem.conflict) return idem.conflict;
 
     // 2. Config
     const { data: config } = await supabase
@@ -238,8 +240,10 @@ serve(async (req: Request): Promise<Response> => {
       tentativas,
       integrity_hash: auditHash,
     };
-    await completeIdempotency(supabase, idem.id, 200, responseBody);
+    const responseStatus = transmissionHttpStatus(success);
+    await completeIdempotency(supabase, idem.id, responseStatus, responseBody);
     return new Response(JSON.stringify(responseBody), {
+      status: responseStatus,
       headers: { ...corsHeaders, ...NO_STORE, 'Content-Type': 'application/json' },
     });
   } catch (error) {
@@ -262,7 +266,7 @@ function montarXMLEvento(
   const id = `ID1${cnpjRaw}${timestamp}`;
   const d = (dados ?? {}) as Record<string, unknown>;
 
-  let conteudoEvento = '';
+  let conteudoEvento: string;
   switch (tipo) {
     case 'S-1000':
       conteudoEvento =

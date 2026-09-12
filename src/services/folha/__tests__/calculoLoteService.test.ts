@@ -1,9 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deepChain } from '@/test/deepChain';
 
-const { mockFrom, mockToast } = vi.hoisted(() => ({
+const { mockFrom, mockToast, mockItemUpsert } = vi.hoisted(() => ({
   mockFrom: vi.fn(),
   mockToast: { error: vi.fn() },
+  mockItemUpsert: vi.fn(),
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -61,7 +62,8 @@ function buildSupabaseChain(overrides: Record<string, any> = {}) {
     const result = results[table] ?? { data: null, error: null };
     const maybeSingle = vi.fn().mockResolvedValue(result);
     const single = vi.fn().mockResolvedValue(result);
-    const upsert = vi.fn().mockResolvedValue(result);
+    const upsert =
+      table === 'folha_itens' ? mockItemUpsert.mockResolvedValue(result) : vi.fn().mockResolvedValue(result);
     const insert = vi.fn().mockReturnValue({
       select: vi.fn().mockReturnValue({ single }),
       then: (fn: any) => Promise.resolve(result).then(fn),
@@ -93,31 +95,33 @@ describe('calculoLoteService.processarLote', () => {
   });
 
   it('throws when no colaboradores found', async () => {
-    mockFrom.mockImplementation(buildSupabaseChain({
-      colaboradores: { data: [], error: null },
-    }));
-    await expect(
-      calculoLoteService.processarLote('emp-1', '2024-07')
-    ).rejects.toThrow('Nenhum colaborador ativo encontrado');
+    mockFrom.mockImplementation(
+      buildSupabaseChain({
+        colaboradores: { data: [], error: null },
+      })
+    );
+    await expect(calculoLoteService.processarLote('emp-1', '2024-07')).rejects.toThrow(
+      'Nenhum colaborador ativo encontrado'
+    );
     expect(mockToast.error).toHaveBeenCalled();
   });
 
   it('throws when colaboradores query returns error', async () => {
-    mockFrom.mockImplementation(buildSupabaseChain({
-      colaboradores: { data: null, error: new Error('DB error') },
-    }));
-    await expect(
-      calculoLoteService.processarLote('emp-1', '2024-07')
-    ).rejects.toThrow('DB error');
+    mockFrom.mockImplementation(
+      buildSupabaseChain({
+        colaboradores: { data: null, error: new Error('DB error') },
+      })
+    );
+    await expect(calculoLoteService.processarLote('emp-1', '2024-07')).rejects.toThrow('DB error');
   });
 
   it('throws when folha is already fechada', async () => {
-    mockFrom.mockImplementation(buildSupabaseChain({
-      folhas_pagamento: { data: { id: 'f1', status: 'fechada' }, error: null },
-    }));
-    await expect(
-      calculoLoteService.processarLote('emp-1', '2024-07')
-    ).rejects.toThrow('já está fechada');
+    mockFrom.mockImplementation(
+      buildSupabaseChain({
+        folhas_pagamento: { data: { id: 'f1', status: 'fechada' }, error: null },
+      })
+    );
+    await expect(calculoLoteService.processarLote('emp-1', '2024-07')).rejects.toThrow('já está fechada');
   });
 
   it('returns progress with success count', async () => {
@@ -146,10 +150,34 @@ describe('calculoLoteService.processarLote', () => {
 
   it('increments errors when colaborador processing fails', async () => {
     const { folhaCalc } = await import('@/utils/folhaCalc');
-    vi.mocked(folhaCalc.processar).mockImplementationOnce(() => { throw new Error('calc error'); });
+    vi.mocked(folhaCalc.processar).mockImplementationOnce(() => {
+      throw new Error('calc error');
+    });
     mockFrom.mockImplementation(buildSupabaseChain());
     const progress = await calculoLoteService.processarLote('emp-1', '2024-07');
     expect(progress?.errors).toBe(1);
     expect(progress?.success).toBe(0);
+  });
+
+  it('counts an item upsert failure as an error instead of reporting false success', async () => {
+    mockFrom.mockImplementation(
+      buildSupabaseChain({
+        folha_itens: { data: null, error: new Error('unique constraint missing') },
+      })
+    );
+    const progress = await calculoLoteService.processarLote('emp-1', '2024-07');
+    expect(progress?.errors).toBe(1);
+    expect(progress?.success).toBe(0);
+  });
+
+  it('uses the folha/colaborador compound conflict target for batch item writes', async () => {
+    mockFrom.mockImplementation(buildSupabaseChain());
+
+    await calculoLoteService.processarLote('emp-1', '2024-07');
+
+    expect(mockItemUpsert).toHaveBeenCalledWith(
+      expect.objectContaining({ folha_id: 'folha-1', colaborador_id: 'c1' }),
+      { onConflict: 'folha_id,colaborador_id' }
+    );
   });
 });

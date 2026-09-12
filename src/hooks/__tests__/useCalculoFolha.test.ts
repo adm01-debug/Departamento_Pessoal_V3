@@ -6,6 +6,11 @@ import { toast } from 'sonner';
 import { useCalculoFolha } from '../useCalculoFolha';
 
 const mockProcessar = vi.fn();
+const mockFolhaItemUpsert = vi.fn(() => ({
+  select: () => ({
+    single: () => Promise.resolve({ data: { id: 'item-1' }, error: null }),
+  }),
+}));
 
 vi.mock('@/utils/folhaCalc', () => ({
   folhaCalc: {
@@ -27,7 +32,9 @@ vi.mock('@/integrations/supabase/client', () => ({
           select: () => ({
             eq: () => ({
               eq: () => ({
-                maybeSingle: () => Promise.resolve({ data: { id: 'folha-1' }, error: null }),
+                eq: () => ({
+                  maybeSingle: () => Promise.resolve({ data: { id: 'folha-1' }, error: null }),
+                }),
               }),
             }),
           }),
@@ -40,11 +47,7 @@ vi.mock('@/integrations/supabase/client', () => ({
       }
       if (table === 'folha_itens') {
         return {
-          upsert: () => ({
-            select: () => ({
-              single: () => Promise.resolve({ data: { id: 'item-1' }, error: null }),
-            }),
-          }),
+          upsert: mockFolhaItemUpsert,
         };
       }
       if (table === 'folha_auditoria') {
@@ -52,7 +55,11 @@ vi.mock('@/integrations/supabase/client', () => ({
           insert: () => Promise.resolve({ error: null }),
         };
       }
-      const chain: any = { select: () => chain, eq: () => chain, maybeSingle: () => Promise.resolve({ data: null, error: null }) };
+      const chain: any = {
+        select: () => chain,
+        eq: () => chain,
+        maybeSingle: () => Promise.resolve({ data: null, error: null }),
+      };
       return chain;
     },
   },
@@ -70,6 +77,11 @@ function wrapper({ children }: { children: React.ReactNode }) {
 describe('useCalculoFolha', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockFolhaItemUpsert.mockImplementation(() => ({
+      select: () => ({
+        single: () => Promise.resolve({ data: { id: 'item-1' }, error: null }),
+      }),
+    }));
     mockProcessar.mockReturnValue({
       proventos: 3000,
       descontos: 373.41,
@@ -144,6 +156,24 @@ describe('useCalculoFolha', () => {
     await waitFor(() => {
       expect(toast.success).toHaveBeenCalled();
     });
+  });
+
+  it('uses the compound database conflict target when persisting an item', async () => {
+    const { result } = renderHook(() => useCalculoFolha(), { wrapper });
+
+    await act(async () => {
+      await result.current.executarCalculo({
+        colaboradorId: 'c1',
+        empresaId: 'e1',
+        competencia: '2026-01',
+        salarioBase: 3000,
+      });
+    });
+
+    expect(mockFolhaItemUpsert).toHaveBeenCalledWith(
+      expect.objectContaining({ folha_id: 'folha-1', colaborador_id: 'c1' }),
+      { onConflict: 'folha_id,colaborador_id' }
+    );
   });
 
   it('resetResultado clears resultado', async () => {

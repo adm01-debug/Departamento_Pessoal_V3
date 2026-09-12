@@ -121,6 +121,7 @@ interface BridgePayload {
   offset?: number;
   single?: boolean;
   countMode?: string;
+  onConflict?: string;
   params?: Record<string, unknown>;
 }
 
@@ -142,6 +143,7 @@ interface RpcBody {
   offset?: number;
   single?: boolean;
   countMode?: string;
+  onConflict?: string;
   params?: Record<string, unknown>;
 }
 
@@ -255,7 +257,10 @@ interface TerminalQueryBuilder {
   insert: (data: Record<string, unknown> | Record<string, unknown>[]) => TerminalQueryBuilder;
   update: (data: Record<string, unknown>) => TerminalQueryBuilder;
   delete: () => TerminalQueryBuilder;
-  upsert: (data: Record<string, unknown> | Record<string, unknown>[]) => TerminalQueryBuilder;
+  upsert: (
+    data: Record<string, unknown> | Record<string, unknown>[],
+    options?: { onConflict?: string }
+  ) => TerminalQueryBuilder;
   eq: (column: string, value: unknown) => TerminalQueryBuilder;
   neq: (column: string, value: unknown) => TerminalQueryBuilder;
   gt: (column: string, value: unknown) => TerminalQueryBuilder;
@@ -330,9 +335,10 @@ const createQueryBuilder = (table: string): TerminalQueryBuilder => {
       state.action = 'delete';
       return builder;
     },
-    upsert: (data: Record<string, unknown> | Record<string, unknown>[]) => {
+    upsert: (data: Record<string, unknown> | Record<string, unknown>[], options: { onConflict?: string } = {}) => {
       state.action = 'upsert';
       state.payload.data = data;
+      state.payload.onConflict = options.onConflict;
       return builder;
     },
     eq: (c: string, v: unknown) => addFilter(c, 'eq', v),

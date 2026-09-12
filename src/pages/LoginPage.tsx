@@ -1,11 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { PageTitle } from '@/components/PageTitle';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { lovable } from '@/integrations/lovable/index';
 import { supabase } from '@/integrations/supabase/client';
 import { useBruteForceProtection } from '@/hooks/useBruteForceProtection';
-import { useOnMount } from '@/hooks/useMountEffects';
 import { LockoutMessage } from '@/components/login/LockoutMessage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -40,27 +39,13 @@ export default function LoginPage() {
   const [forgotSent, setForgotSent] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [govBrLoading, setGovBrLoading] = useState(false);
-  const [securityNotice, setSecurityNotice] = useState('');
   const [mfaPending, setMfaPending] = useState<{ factorId: string } | null>(null);
   const [totpCode, setTotpCode] = useState('');
   const { signIn, resetPassword, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { lockState, checkLock, recordFailedAttempt, resetAttempts, applyServerLock } = useBruteForceProtection();
-
-  useOnMount(() => {
-    const reason = searchParams.get('reason');
-    if (reason && SECURITY_REASONS[reason]) {
-      setSecurityNotice(SECURITY_REASONS[reason]);
-    }
-  });
-
-  useEffect(() => {
-    const reason = searchParams.get('reason');
-    if (reason && SECURITY_REASONS[reason]) {
-      setSecurityNotice(SECURITY_REASONS[reason]);
-    }
-  }, [searchParams]);
+  const securityNotice = SECURITY_REASONS[searchParams.get('reason') ?? ''] ?? '';
 
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);

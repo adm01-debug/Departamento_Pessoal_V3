@@ -22813,6 +22813,16 @@ export type Database = {
       }
       get_user_default_empresa: { Args: { _user_id: string }; Returns: string }
       get_user_empresas: { Args: { _user_id: string }; Returns: string[] }
+      get_my_user_empresas: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          created_at: string
+          empresa_id: string
+          id: string
+          is_default: boolean
+          user_id: string
+        }[]
+      }
       get_user_roles: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"][]
@@ -22832,6 +22842,17 @@ export type Database = {
       }
       is_ip_blocked: { Args: { check_ip: string }; Returns: boolean }
       is_ip_whitelisted: { Args: { check_ip: string }; Returns: boolean }
+      set_own_default_empresa: { Args: { p_empresa_id: string }; Returns: undefined }
+      admin_associar_usuario_empresa: {
+        Args: { p_empresa_id: string; p_is_default?: boolean; p_user_id: string }
+        Returns: {
+          created_at: string
+          empresa_id: string
+          id: string
+          is_default: boolean
+          user_id: string
+        }[]
+      }
       limpar_govbr_states_expirados: { Args: never; Returns: undefined }
       listar_auditoria: {
         Args: {

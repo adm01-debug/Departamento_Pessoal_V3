@@ -48,34 +48,25 @@ export function getEventoDescricao(tipo: string): string {
 export async function listarEventos(empresaId: string): Promise<ESocialEvento[]> {
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
-  let query = supabase
-    .from('esocial_eventos')
-    .select('*')
-    .order('created_at', { ascending: false })
-    .limit(50);
+  let query = supabase.from('esocial_eventos').select('*').order('created_at', { ascending: false }).limit(50);
 
   query = query.eq('empresa_id', empresaId);
 
   const { data, error } = await query;
   if (error) throw error;
   return (data || []) as ESocialEvento[];
-
 }
 
 export async function listarEventosPorCompetencia(empresaId: string, competencia: string): Promise<ESocialEvento[]> {
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
-  let query = supabase
-    .from('esocial_eventos')
-    .select('*')
-    .eq('competencia', competencia);
+  let query = supabase.from('esocial_eventos').select('*').eq('competencia', competencia);
 
   query = query.eq('empresa_id', empresaId);
 
   const { data, error } = await query;
   if (error) throw error;
   return (data || []) as ESocialEvento[];
-
 }
 
 export async function obterEstatisticas(empresaId: string): Promise<any> {
@@ -83,13 +74,13 @@ export async function obterEstatisticas(empresaId: string): Promise<any> {
     const res = await listarEventos(empresaId);
     const eventos = res;
 
-    const enviados = eventos.filter(e => e.status === 'enviado').length;
-    const pendentes = eventos.filter(e => e.status === 'pendente').length;
-    const erros = eventos.filter(e => e.status === 'erro').length;
+    const enviados = eventos.filter((e) => e.status === 'enviado').length;
+    const pendentes = eventos.filter((e) => e.status === 'pendente').length;
+    const erros = eventos.filter((e) => e.status === 'erro').length;
     const total = eventos.length;
     const conformidade = total > 0 ? Math.round(((total - erros) / total) * 100) : 100;
 
-    return ({ enviados, pendentes, erros, conformidade });
+    return { enviados, pendentes, erros, conformidade };
   } catch (e) {
     throw new Error('Falha ao processar estatísticas do eSocial', { cause: e });
   }
@@ -102,7 +93,7 @@ export async function criarEvento(evento: {
   dados?: Record<string, unknown>;
 }): Promise<ESocialEvento> {
   const { data: empresa } = await supabase.from('empresas').select('*').eq('id', evento.empresa_id).maybeSingle();
-  
+
   let xml = null;
   if (empresa) {
     try {
@@ -110,7 +101,7 @@ export async function criarEvento(evento: {
         tipo: evento.tipo_evento,
         dados: evento.dados,
         empresa,
-        ambiente: '2'
+        ambiente: '2',
       });
     } catch (e) {
       loggerService.warn('Erro ao gerar XML inicial', { tipo_evento: evento.tipo_evento });
@@ -119,24 +110,28 @@ export async function criarEvento(evento: {
 
   const { data, error } = await supabase
     .from('esocial_eventos')
-    .insert([{
-      empresa_id: evento.empresa_id,
-      tipo_evento: evento.tipo_evento,
-      competencia: evento.competencia || currentCompetenciaLocal(),
-      dados: (evento.dados || {}) as any,
-      status: 'pendente',
-      xml: xml
-    }])
+    .insert([
+      {
+        empresa_id: evento.empresa_id,
+        tipo_evento: evento.tipo_evento,
+        competencia: evento.competencia || currentCompetenciaLocal(),
+        dados: (evento.dados || {}) as any,
+        status: 'pendente',
+        xml: xml,
+      },
+    ])
     .select()
     .maybeSingle();
 
   if (error) throw error;
   if (!data) throw new Error('Nenhum registro de evento foi retornado.');
   return data as ESocialEvento;
-  
 }
 
-export async function validarAnteDeEnviar(tipoEvento: string, dados: Record<string, unknown>): Promise<ValidationResult> {
+export async function validarAnteDeEnviar(
+  tipoEvento: string,
+  dados: Record<string, unknown>
+): Promise<ValidationResult> {
   return validarEvento(tipoEvento, dados);
 }
 
@@ -144,11 +139,41 @@ export function listarEventosValidaveis(): string[] {
   return getValidadoresDisponiveis();
 }
 
-export async function enviarEvento(eventoId: string, empresaId: string): Promise<any> {
-  try {
-    await supabase.from('esocial_eventos').update({ status: 'processando' }).eq('id', eventoId).eq('empresa_id', empresaId);
+export interface ESocialTransmissionResult {
+  success: true;
+  protocolo: string | null;
+  recibo?: string | null;
+  tentativas?: number;
+  integrity_hash?: string;
+}
 
-    const { data: evento } = await supabase.from('esocial_eventos').select('*').eq('id', eventoId).eq('empresa_id', empresaId).maybeSingle();
+function transmissionFailureMessage(payload: unknown): string {
+  if (
+    typeof payload === 'object' &&
+    payload !== null &&
+    'error' in payload &&
+    typeof payload.error === 'string' &&
+    payload.error.trim()
+  ) {
+    return payload.error;
+  }
+  return 'A transmissão não foi confirmada pelo eSocial';
+}
+
+export async function enviarEvento(eventoId: string, empresaId: string): Promise<ESocialTransmissionResult> {
+  try {
+    await supabase
+      .from('esocial_eventos')
+      .update({ status: 'processando' })
+      .eq('id', eventoId)
+      .eq('empresa_id', empresaId);
+
+    const { data: evento } = await supabase
+      .from('esocial_eventos')
+      .select('*')
+      .eq('id', eventoId)
+      .eq('empresa_id', empresaId)
+      .maybeSingle();
 
     if (!evento) {
       throw new Error('Evento eSocial não encontrado ou acesso não autorizado para esta empresa.');
@@ -157,10 +182,14 @@ export async function enviarEvento(eventoId: string, empresaId: string): Promise
     if (evento?.dados && evento?.tipo_evento) {
       const validacao = validarEvento(evento.tipo_evento, evento.dados as Record<string, any>);
       if (!validacao.valid) {
-        await supabase.from('esocial_eventos').update({
-          status: 'erro',
-          erros: { validacao: validacao.errors } as any,
-        }).eq('id', eventoId).eq('empresa_id', empresaId);
+        await supabase
+          .from('esocial_eventos')
+          .update({
+            status: 'erro',
+            erros: { validacao: validacao.errors } as any,
+          })
+          .eq('id', eventoId)
+          .eq('empresa_id', empresaId);
         throw new Error('Falha na validação do evento');
       }
     }
@@ -170,14 +199,28 @@ export async function enviarEvento(eventoId: string, empresaId: string): Promise
     });
 
     if (error) {
-      await supabase.from('esocial_eventos').update({
-        status: 'erro',
-        erros: { mensagem: error.message },
-      }).eq('id', eventoId).eq('empresa_id', empresaId);
+      await supabase
+        .from('esocial_eventos')
+        .update({
+          status: 'erro',
+          erros: { mensagem: error.message },
+        })
+        .eq('id', eventoId)
+        .eq('empresa_id', empresaId);
       throw error;
     }
 
-    return (data);
+    if (!data || data.success !== true) {
+      const message = transmissionFailureMessage(data);
+      await supabase
+        .from('esocial_eventos')
+        .update({ status: 'erro', erros: { mensagem: message } })
+        .eq('id', eventoId)
+        .eq('empresa_id', empresaId);
+      throw new Error(message);
+    }
+
+    return data as ESocialTransmissionResult;
   } catch (e) {
     throw new Error('Falha na transmissão do evento eSocial', { cause: e });
   }
@@ -199,7 +242,7 @@ export async function gerarEventosPeriodo(empresaId: string, competencia: string
 
     const resultados = { criados: 0, pulados: 0, erros: 0 };
 
-    for (const item of (itens || [])) {
+    for (const item of itens || []) {
       try {
         const colaborador = Array.isArray(item.colaboradores) ? item.colaboradores[0] : item.colaboradores;
         if (!colaborador) continue;
@@ -221,45 +264,51 @@ export async function gerarEventosPeriodo(empresaId: string, competencia: string
         const dadosS1200 = {
           cpfTrab: colaborador.cpf,
           perApur: competencia,
-          dmDev: [{
-            ideDmDev: `DM${item.id.slice(0, 5)}`,
-            infoPerApur: {
-              ideEstabLot: [{
-                tpInsc: 1,
-                nrInsc: empresaId.replace(/-/g, '').slice(0, 14), 
-                detVerbas: [
-                  { codRubr: '1000', vrRubr: Number(item.salario_base || 0) },
-                  { codRubr: '9201', vrRubr: Number(item.inss_mes || 0) },
-                  { codRubr: '9202', vrRubr: Number(item.fgts_mes || 0) }
-                ]
-              }]
-            }
-          }]
+          dmDev: [
+            {
+              ideDmDev: `DM${item.id.slice(0, 5)}`,
+              infoPerApur: {
+                ideEstabLot: [
+                  {
+                    tpInsc: 1,
+                    nrInsc: empresaId.replace(/-/g, '').slice(0, 14),
+                    detVerbas: [
+                      { codRubr: '1000', vrRubr: Number(item.salario_base || 0) },
+                      { codRubr: '9201', vrRubr: Number(item.inss_mes || 0) },
+                      { codRubr: '9202', vrRubr: Number(item.fgts_mes || 0) },
+                    ],
+                  },
+                ],
+              },
+            },
+          ],
         };
 
         await criarEvento({
           empresa_id: empresaId,
           tipo_evento: 'S-1200',
           competencia,
-          dados: dadosS1200
+          dados: dadosS1200,
         });
 
         if (item.status_pagamento === 'pago') {
           const dadosS1210 = {
             cpfTrab: colaborador.cpf,
             perApur: competencia,
-            infoPgto: [{
-              dtPgto: todayLocalISO(),
-              tpPgto: 1,
-              vlrLiq: Number(item.total_liquido || 0)
-            }]
+            infoPgto: [
+              {
+                dtPgto: todayLocalISO(),
+                tpPgto: 1,
+                vlrLiq: Number(item.total_liquido || 0),
+              },
+            ],
           };
 
           await criarEvento({
             empresa_id: empresaId,
             tipo_evento: 'S-1210',
             competencia,
-            dados: dadosS1210
+            dados: dadosS1210,
           });
         }
 
@@ -269,14 +318,13 @@ export async function gerarEventosPeriodo(empresaId: string, competencia: string
       }
     }
 
-    return (resultados);
+    return resultados;
   } catch (e) {
     throw new Error('Falha ao gerar eventos do período', { cause: e });
   }
 }
 
 export async function getConfig(empresaId: string): Promise<any> {
-  
   const { data, error } = await supabase
     .from('configuracoes_esocial')
     .select('*, certificado:certificados_digitais(*)')
@@ -284,27 +332,21 @@ export async function getConfig(empresaId: string): Promise<any> {
     .maybeSingle();
   if (error) throw error;
   return data;
-  
 }
 
-export async function salvarConfig(config: { empresa_id: string; ambiente: string; certificado_id?: string }): Promise<void> {
-  
-  const { error } = await supabase
-    .from('configuracoes_esocial')
-    .upsert(config, { onConflict: 'empresa_id' });
+export async function salvarConfig(config: {
+  empresa_id: string;
+  ambiente: string;
+  certificado_id?: string;
+}): Promise<void> {
+  const { error } = await supabase.from('configuracoes_esocial').upsert(config, { onConflict: 'empresa_id' });
   if (error) throw error;
-  
 }
 
 export async function listarCertificados(empresaId: string): Promise<any[]> {
-  
-  const { data, error } = await supabase
-    .from('certificados_digitais')
-    .select('*')
-    .eq('empresa_id', empresaId);
+  const { data, error } = await supabase.from('certificados_digitais').select('*').eq('empresa_id', empresaId);
   if (error) throw error;
   return data || [];
-  
 }
 
 export async function adicionarCertificado(cert: {
@@ -317,7 +359,6 @@ export async function adicionarCertificado(cert: {
   senha_encriptada: string;
   cnpj_cpf: string;
 }): Promise<any> {
-  
   const { data, error } = await supabase
     .from('certificados_digitais')
     .insert([{ ...cert, ativo: true }])
@@ -325,11 +366,9 @@ export async function adicionarCertificado(cert: {
     .single();
   if (error) throw error;
   return data;
-  
 }
 
 export async function listarTransmissaoLogs(empresaId: string, eventoId?: string): Promise<any[]> {
-  
   let query = supabase
     .from('esocial_transmissao_logs')
     .select('*')
@@ -344,6 +383,4 @@ export async function listarTransmissaoLogs(empresaId: string, eventoId?: string
   const { data, error } = await query;
   if (error) throw error;
   return data || [];
-  
 }
-

@@ -4,6 +4,11 @@ import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
 import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
+import {
+  BACKUP_TABLE_ROW_LIMIT,
+  BackupSnapshotError,
+  requireCompleteBackupTable,
+} from './backupSnapshot.ts';
 
 // Onda 22: hardening completo — auth JWT, CSRF, admin-only, tenant scope, audit,
 // e execução server-side com service_role. Fail-closed em todos os pontos.
@@ -122,18 +127,27 @@ serve(async (req: Request): Promise<Response> => {
     const snapshot: Record<string, unknown> = {};
     const counts: Record<string, number> = {};
     for (const table of targetTables) {
-      const { data, error, count } = await admin
+      const result = await admin
         .from(table)
         .select('*', { count: 'exact' })
         .eq('empresa_id', empresaId)
-        .limit(10_000); // hard cap — proteção contra OOM
-      if (error) {
-        // pula tabelas que não têm empresa_id (ex.: catálogos), sem falhar tudo
-        console.warn(`Backup: tabela ${table} pulada:`, error.message);
-        continue;
+        .limit(BACKUP_TABLE_ROW_LIMIT); // hard cap — proteção contra OOM
+
+      try {
+        const complete = requireCompleteBackupTable(table, result);
+        snapshot[table] = complete.data;
+        counts[table] = complete.count;
+      } catch (error) {
+        if (error instanceof BackupSnapshotError) {
+          await captureException(error, {
+            function: 'backup-automatico',
+            table,
+            code: error.code,
+          });
+          return createErrorResponse(error.publicMessage, error.httpStatus, error.code);
+        }
+        throw error;
       }
-      snapshot[table] = data ?? [];
-      counts[table] = count ?? (data?.length ?? 0);
     }
 
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');

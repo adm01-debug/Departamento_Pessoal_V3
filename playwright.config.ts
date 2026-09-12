@@ -1,5 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const localE2EUrl = 'http://127.0.0.1:4173';
+const baseURL = process.env.E2E_BASE_URL ?? localE2EUrl;
+
 /**
  * Playwright E2E Configuration — V24
  *
@@ -9,7 +12,9 @@ import { defineConfig, devices } from '@playwright/test';
  *  - Specs públicas rodam sem auth (projeto `public`)
  *
  * Variáveis de ambiente (opcionais — defaults para sandbox local):
- *  E2E_BASE_URL          — URL alvo (default http://localhost:8080)
+ *  E2E_BASE_URL          — URL alvo (default http://127.0.0.1:4173)
+ *  VITE_DEV_PORT         — porta do Vite local (default 4173; deve coincidir
+ *                          com E2E_BASE_URL para execuções locais)
  *  E2E_USER_EMAIL        — email do usuário de teste
  *  E2E_USER_PASSWORD     — senha do usuário de teste
  */
@@ -18,14 +23,15 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 2 : undefined,
+  // Vite transforma módulos na primeira carga. Limitar a concorrência local
+  // evita timeout por contenção de CPU e mantém a mesma ordem de grandeza da
+  // execução de CI, sem esconder falhas por retries.
+  workers: process.env.CI ? 2 : 4,
   timeout: 45_000,
   expect: { timeout: 8_000 },
-  reporter: process.env.CI
-    ? [['html', { open: 'never' }], ['github'], ['list']]
-    : [['html'], ['list']],
+  reporter: process.env.CI ? [['html', { open: 'never' }], ['github'], ['list']] : [['html'], ['list']],
   use: {
-    baseURL: process.env.E2E_BASE_URL ?? 'http://localhost:8080',
+    baseURL,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
@@ -101,10 +107,12 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'bun run dev',
-    url: process.env.E2E_BASE_URL ?? 'http://localhost:8080',
+    // A Edge Function restringe Origin. O proxy Vite aplica a origem de
+    // desenvolvimento permitida; sem esta variável o E2E local faria fetch
+    // direto e transformaria uma resposta válida em erro de CORS.
+    command: 'VITE_DEV_PORT=4173 VITE_SUPABASE_FUNCTIONS_BASE=/functions/v1 bun run dev',
+    url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },
-
 });

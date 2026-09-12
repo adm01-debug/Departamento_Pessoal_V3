@@ -6,16 +6,17 @@
 
 ## 1. Inventário de segredos
 
-| Segredo | Onde vive | Quem usa | Rotação |
-|---|---|---|---|
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase (project frjbfeamybqsejlvmqbl) + secrets do GitHub + env das Edge Functions | Edge Functions, scripts admin | Trimestral ou sob suspeita |
-| `SUPABASE_ANON_KEY` | Pública por natureza (frontend) | Frontend | Junto com service_role |
-| `SUPABASE_DB_URL` | secrets do GitHub (`SUPABASE_DB_URL`), operadores | CI (gates), runbooks | Semestral ou sob suspeita |
-| `EXTERNAL_DB_KEY` | env do external-db-bridge | bridge | Trimestral |
-| `WEBHOOK_SECRET` | env da edge `webhook` + sistema emissor | webhooks HMAC | Semestral |
-| `CRON_SECRET` | env das edges agendadas | pg_cron → edges | Semestral |
-| `SENTRY_DSN` | env frontend/edges | observabilidade | Anual |
-| **ACCESS_KEY do `migrate-helper`** | ⚠️ **estava commitada no repo** (`8775…a23f`) | ninguém (função removida em 30/08/2026) | **Revogar/rotacionar imediatamente** — ver §3 |
+| Segredo                            | Onde vive                                                                            | Quem usa                                                   | Rotação                                       |
+| ---------------------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------------------------- | --------------------------------------------- |
+| `SUPABASE_SERVICE_ROLE_KEY`        | Supabase (project frjbfeamybqsejlvmqbl) + secrets do GitHub + env das Edge Functions | Edge Functions, scripts admin                              | Trimestral ou sob suspeita                    |
+| `SUPABASE_ANON_KEY`                | Pública por natureza (frontend)                                                      | Frontend                                                   | Junto com service_role                        |
+| `SUPABASE_DB_URL`                  | secrets do GitHub (`SUPABASE_DB_URL`), operadores                                    | CI (gates), runbooks                                       | Semestral ou sob suspeita                     |
+| `EXTERNAL_DB_KEY`                  | env do external-db-bridge                                                            | bridge                                                     | Trimestral                                    |
+| `WEBHOOK_SECRET`                   | env da edge `webhook` + sistema emissor                                              | webhooks HMAC                                              | Semestral                                     |
+| `CRON_SECRET`                      | env das edges agendadas                                                              | pg_cron → edges                                            | Semestral                                     |
+| `REPORT_SCHEDULER_SECRET`          | env de `processar-agendamentos` e `enviar-relatorio`                                 | autentica somente o salto interno de entrega de relatórios | Semestral ou sob suspeita                     |
+| `SENTRY_DSN`                       | env frontend/edges                                                                   | observabilidade                                            | Anual                                         |
+| **ACCESS_KEY do `migrate-helper`** | ⚠️ **estava commitada no repo** (`8775…a23f`)                                        | ninguém (função removida em 30/08/2026)                    | **Revogar/rotacionar imediatamente** — ver §3 |
 
 ## 2. Procedimento padrão (por segredo)
 
@@ -38,10 +39,11 @@ A edge temporária `migrate-helper` continha:
 **Status no repo:** função removida e entrada removida de `config.toml`.
 
 **Ações pendentes (manuais, fora do repo):**
+
 1. [ ] Confirmar que a função não está deployada (Supabase → Edge Functions;
-      se estiver, deletar no painel — remover do repo não desfaz deploy).
+       se estiver, deletar no painel — remover do repo não desfaz deploy).
 2. [ ] Tratar `SERVICE_ROLE_KEY` e `DB_URL` como potencialmente expostos
-      (a chave estava pública no histórico) → executar rotação do §2.
+       (a chave estava pública no histórico) → executar rotação do §2.
 3. [ ] Revisar logs de acesso da função no período em que esteve deployada.
 
 ## 4. Regras permanentes
@@ -53,6 +55,6 @@ A edge temporária `migrate-helper` continha:
 
 ## 5. Log de rotações
 
-| Data | Segredo | Motivo | Executor |
-|---|---|---|---|
-| 2026-08-30 | migrate-helper ACCESS_KEY | A-015: commitada no repo (função removida) | — |
+| Data       | Segredo                   | Motivo                                     | Executor |
+| ---------- | ------------------------- | ------------------------------------------ | -------- |
+| 2026-08-30 | migrate-helper ACCESS_KEY | A-015: commitada no repo (função removida) | —        |

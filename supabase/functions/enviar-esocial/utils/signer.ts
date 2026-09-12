@@ -19,7 +19,7 @@ export async function assinarXMLEsocial(xml: string, certificadoId: string): Pro
 
   // 3. Simulação de Assinatura Digital (RSASSA-PKCS1-v1_5)
   // Nota: Para produção real, carregaríamos o certificado do DB e usaríamos a chave privada
-  const assinaturaSimulada = base64Encode(encoder.encode(`SIG-${hashHex.slice(0, 32)}-${certificadoId}`));
+  const assinaturaSimulada = base64Encode(`SIG-${hashHex.slice(0, 32)}-${certificadoId}`);
 
   // 4. Montagem do XML Assinado (padrão XMLDSig simplificado)
   const xmlAssinado = xml.replace('</eSocial>', `

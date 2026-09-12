@@ -2,12 +2,21 @@
 // Sends events to SENTRY_DSN when configured; no-op otherwise.
 // Avoids heavy Deno SDK cold-start; sends via native fetch to Sentry envelope endpoint.
 
-interface SentryContext {
-  function: string;
+export interface SentryContext {
+  /** Canonical Edge Function name. */
+  function?: string;
+  /** Legacy alias kept while callers are migrated to `function`. */
+  fn?: string;
   release?: string;
   environment?: string;
   extra?: Record<string, unknown>;
   user?: { id?: string; email?: string };
+  /**
+   * Some legacy callers attach metadata at top level. Accept it so a telemetry
+   * typo cannot stop an error path from compiling, but do not forward unknown
+   * fields to Sentry: they may contain PII. Callers must opt in via `extra`.
+   */
+  [key: string]: unknown;
 }
 
 const DSN = Deno.env.get('SENTRY_DSN') || '';
@@ -38,8 +47,13 @@ export async function captureException(
   err: unknown,
   context: SentryContext,
 ): Promise<void> {
+  const functionName =
+    (typeof context.function === 'string' && context.function.trim()) ||
+    (typeof context.fn === 'string' && context.fn.trim()) ||
+    'unknown';
+
   if (!PARSED) {
-    console.error(`[${context.function}] error:`, err);
+    console.error(`[${functionName}] error:`, err);
     return;
   }
 
@@ -51,11 +65,11 @@ export async function captureException(
     event_id: eventId,
     timestamp,
     level: 'error',
-    logger: `edge.${context.function}`,
+    logger: `edge.${functionName}`,
     release: context.release || RELEASE,
     environment: context.environment || ENV,
     platform: 'javascript',
-    tags: { function: context.function, runtime: 'deno' },
+    tags: { function: functionName, runtime: 'deno' },
     user: context.user,
     extra: context.extra,
     exception: {
@@ -86,7 +100,7 @@ export async function captureException(
       body: envelope,
     });
   } catch (e) {
-    console.error(`[sentry] failed to send event for ${context.function}:`, e);
+    console.error(`[sentry] failed to send event for ${functionName}:`, e);
   }
 }
 

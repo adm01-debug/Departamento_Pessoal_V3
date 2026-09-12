@@ -12,20 +12,19 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Validate deploy configuration
+      # O projeto está conectado ao Vercel pela integração Git. Ela cria o
+      # preview da PR e publica seu próprio status; este workflow valida o
+      # build do mesmo SHA, sem manter uma segunda integração Netlify órfã.
+      - name: Validate build configuration
         if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY || secrets.VITE_SUPABASE_ANON_KEY }}
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         run: |
           missing=()
           for name in \
             VITE_SUPABASE_URL \
-            VITE_SUPABASE_PUBLISHABLE_KEY \
-            NETLIFY_AUTH_TOKEN \
-            NETLIFY_SITE_ID
+            VITE_SUPABASE_PUBLISHABLE_KEY
           do
             if [ -z "${!name:-}" ]; then
               missing+=("$name")
@@ -33,7 +32,7 @@ jobs:
           done
 
           if [ "${#missing[@]}" -gt 0 ]; then
-            printf '::error::Required deploy configuration is missing: %s\n' "${missing[*]}"
+            printf '::error::Required build configuration is missing: %s\n' "${missing[*]}"
             exit 1
           fi
 
@@ -68,16 +67,7 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY || secrets.VITE_SUPABASE_ANON_KEY }}
 
-      - name: Deploy Preview to Netlify
+      - name: Vercel preview handoff
         if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
-        uses: nwtgck/actions-netlify@v4.0
-        with:
-          publish-dir: './dist'
-          production-branch: main
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: 'Preview Deploy'
-          enable-pull-request-comment: true
-          enable-commit-comment: true
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          echo 'Build validado. O preview e o status de deploy são publicados pela integração Vercel do repositório.'

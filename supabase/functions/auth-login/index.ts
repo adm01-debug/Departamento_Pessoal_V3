@@ -17,6 +17,7 @@ import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
 import { getCorsHeaders, createErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
 import { captureException } from '../_shared/sentry.ts';
+import { parseLockoutState } from './lockoutContract.ts';
 
 const BodySchema = z.object({
   email: z.string().email().max(254).toLowerCase(),
@@ -51,7 +52,7 @@ serve(async (req: Request): Promise<Response> => {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
   if (req.method !== 'POST') {
-    return createErrorResponse('Método não permitido', 405, 'METHOD_NOT_ALLOWED');
+    return createErrorResponse('Método não permitido', 405, 'METHOD_NOT_ALLOWED', undefined, req);
   }
 
   const ip = getClientIP(req);
@@ -65,34 +66,51 @@ serve(async (req: Request): Promise<Response> => {
     // 1. IP-level rate limit — anonymous, no auth required.
     const ipKey = `login:ip:${ip}`;
     const ipRL = await checkRateLimit(admin, { key: ipKey, limit: IP_RATE_LIMIT, windowSec: IP_WINDOW_SEC });
-    if (!ipRL.allowed) return rateLimitResponse(ipRL);
+    if (!ipRL.allowed) return rateLimitResponse(ipRL, req);
 
     // 2. Parse and validate request body.
     const { body: pb, errorResponse } = await parseJsonBody(req);
     if (errorResponse) return errorResponse;
     const parsed = BodySchema.safeParse(pb ?? {});
     if (!parsed.success) {
-      return createErrorResponse('Dados de login inválidos', 400, 'VALIDATION_ERROR');
+      return createErrorResponse('Dados de login inválidos', 400, 'VALIDATION_ERROR', undefined, req);
     }
     const { email, password } = parsed.data;
 
     // 3. Per-email rate limit — more granular than IP (catches credential stuffing).
     const emailKey = `login:email:${email}`;
     const emailRL = await checkRateLimit(admin, { key: emailKey, limit: 10, windowSec: IP_WINDOW_SEC });
-    if (!emailRL.allowed) return rateLimitResponse(emailRL);
+    if (!emailRL.allowed) return rateLimitResponse(emailRL, req);
 
     // 4. Account lockout check (5 failures in 15 min → lockout escalonado).
-    // Observabilidade: um erro aqui degrada para fail-open (não travamos todos os
-    // logins por indisponibilidade do DB), mas NUNCA em silêncio — foi exatamente
-    // um erro mudo que manteve a proteção desligada sem ninguém perceber.
+    // Segurança fail-closed: prosseguir quando a RPC estiver ausente transforma
+    // uma indisponibilidade de banco em bypass de força bruta.
     const { data: lockout, error: lockoutErr } = await admin.rpc('check_account_lockout', { p_email: email });
     if (lockoutErr) {
-      console.error('[auth-login] check_account_lockout indisponível — proteção de lockout DEGRADADA:', lockoutErr.message);
+      console.error('[auth-login] check_account_lockout indisponível:', lockoutErr.message);
       await captureException(new Error(`check_account_lockout falhou: ${lockoutErr.message}`), { function: 'auth-login' });
+      return createErrorResponse(
+        'Proteção de login temporariamente indisponível. Tente novamente.',
+        503,
+        'LOGIN_PROTECTION_UNAVAILABLE',
+        undefined,
+        req,
+      );
     }
-    if (!lockoutErr && lockout?.[0]?.is_locked) {
-
-      const lockedUntil: string | null = lockout[0].locked_until ?? null;
+    const lockoutState = parseLockoutState(lockout);
+    if (!lockoutState) {
+      console.error('[auth-login] check_account_lockout retornou formato inválido');
+      await captureException(new Error('check_account_lockout retornou formato inválido'), { function: 'auth-login' });
+      return createErrorResponse(
+        'Proteção de login temporariamente indisponível. Tente novamente.',
+        503,
+        'LOGIN_PROTECTION_UNAVAILABLE',
+        undefined,
+        req,
+      );
+    }
+    if (lockoutState.isLocked) {
+      const lockedUntil = lockoutState.lockedUntil;
       return new Response(
         JSON.stringify({
           success: false,
@@ -122,16 +140,26 @@ serve(async (req: Request): Promise<Response> => {
     const errorMessage = authErr?.message ?? 'Credenciais inválidas';
 
 
-    // 6. Record attempt (fire-and-forget).
-    // PostgrestBuilder é "thenable" mas NÃO é Promise: não possui .catch().
-    // O .catch() anterior lançava TypeError e derrubava todo login com 500.
-    void admin
-      .rpc('record_login_attempt', { p_email: email, p_success: success, p_ip: ip })
-      .then(
-        ({ error }) =>
-          error && console.warn('[auth-login] record_login_attempt falhou:', error.message),
-        (e: unknown) => console.warn('[auth-login] record_login_attempt falhou:', (e as Error)?.message),
+    // 6. Persist outcome before answering. A background thenable can be
+    // cancelled when the Edge request ends, silently disabling lockout again.
+    const { error: recordAttemptErr } = await admin.rpc('record_login_attempt', {
+      p_email: email,
+      p_success: success,
+      p_ip: ip,
+    });
+    if (recordAttemptErr) {
+      console.error('[auth-login] record_login_attempt indisponível:', recordAttemptErr.message);
+      await captureException(new Error(`record_login_attempt falhou: ${recordAttemptErr.message}`), {
+        function: 'auth-login',
+      });
+      return createErrorResponse(
+        'Proteção de login temporariamente indisponível. Tente novamente.',
+        503,
+        'LOGIN_PROTECTION_UNAVAILABLE',
+        undefined,
+        req,
       );
+    }
 
     if (!success) {
       return new Response(
@@ -148,6 +176,6 @@ serve(async (req: Request): Promise<Response> => {
     // Diagnóstico: sem esta linha o 500 era opaco e impossível de rastrear.
     console.error('[auth-login] falha inesperada:', (err as Error)?.name, (err as Error)?.message, (err as Error)?.stack);
     await captureException(err, { function: 'auth-login' });
-    return createErrorResponse('Erro interno', 500, 'INTERNAL_SERVER_ERROR');
+    return createErrorResponse('Erro interno', 500, 'INTERNAL_SERVER_ERROR', undefined, req);
   }
 });

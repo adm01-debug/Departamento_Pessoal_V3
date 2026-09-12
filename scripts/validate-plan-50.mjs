@@ -36,8 +36,11 @@ expect(
 
 for (const stage of stages) {
   const label = `E50-${String(stage.number).padStart(3, '0')}`;
-  const substeps = (stage.text.match(/^\d+\. \[ \]/gm) ?? []).length;
-  const checkpoints = (stage.text.match(/^- \[ \] \*\*C[1-4] /gm) ?? []).length;
+  // A checklist permanece estrutural mesmo quando uma subetapa é concluída.
+  // Antes, marcar `[x]` fazia o validador interpretar que a etapa tinha sido
+  // apagada, incentivando planos que nunca registravam o progresso real.
+  const substeps = (stage.text.match(/^\d+\. \[(?: |x|X)\]/gm) ?? []).length;
+  const checkpoints = (stage.text.match(/^- \[(?: |x|X)\] \*\*C[1-4] /gm) ?? []).length;
   expect(substeps === 10, `${label} tem 10 subetapas (encontradas: ${substeps})`);
   expect(checkpoints === 4, `${label} tem C1–C4 (encontrados: ${checkpoints})`);
 }
