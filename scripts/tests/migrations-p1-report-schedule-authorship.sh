@@ -14,11 +14,7 @@ run_psql() { docker exec -i "$NAME" psql -X -U postgres -v ON_ERROR_STOP=1 "$@";
 
 echo "Starting disposable $IMAGE database: $NAME"
 docker run -d --name "$NAME" -e POSTGRES_PASSWORD=test "$IMAGE" >/dev/null
-for _ in $(seq 1 60); do
-  docker exec "$NAME" pg_isready -h 127.0.0.1 -U postgres >/dev/null 2>&1 && break
-  sleep 1
-done
-docker exec "$NAME" pg_isready -h 127.0.0.1 -U postgres >/dev/null
+bash "$REPO_ROOT/scripts/tests/wait-for-postgres-container.sh" "$NAME"
 docker cp "$MIGRATION" "$NAME":/tmp/p1-schedule-authorship.sql
 
 run_psql <<'SQL'

@@ -34,11 +34,7 @@ expect_failure() {
 }
 
 docker run -d --name "$NAME" -e POSTGRES_PASSWORD=test "$IMAGE" >/dev/null
-for attempt in $(seq 1 60); do
-  if docker exec "$NAME" pg_isready -h 127.0.0.1 -U postgres >/dev/null 2>&1; then break; fi
-  if [ "$attempt" -eq 60 ]; then docker logs "$NAME" >&2; exit 1; fi
-  sleep 1
-done
+bash "$REPO_ROOT/scripts/tests/wait-for-postgres-container.sh" "$NAME"
 docker cp "$MIGRATION" "$NAME":/tmp/p1-pcs.sql
 
 run_psql <<'SQL'
