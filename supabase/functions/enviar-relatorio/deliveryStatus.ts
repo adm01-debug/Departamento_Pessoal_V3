@@ -3,16 +3,7 @@
  * identificável. Um HTTP 2xx sem `id` não é prova suficiente de que o e-mail
  * entrou na fila do provedor e, portanto, não pode avançar um agendamento.
  */
-export function resendDeliveryId(payload: unknown): string | null {
-  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
-    return null;
-  }
-
-  const id = (payload as Record<string, unknown>).id;
-  if (typeof id !== "string" || id.trim().length === 0) return null;
-
-  return id.trim();
-}
+export { resendDeliveryId } from "../_shared/resendDelivery.ts";
 
 export type ReportDeliveryStatus = "sucesso" | "erro" | "indisponivel";
 

@@ -1,11 +1,25 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { 
-  Sun, Moon, Sunset, Gift, Calendar, AlertTriangle, 
-  CheckCircle2, Clock, UserPlus, FileText, 
-  ChevronRight, Coffee, Database, Zap,
-  Loader2, Trash2, Bell, ShieldAlert
+import {
+  Sun,
+  Moon,
+  Sunset,
+  Gift,
+  Calendar,
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  UserPlus,
+  FileText,
+  ChevronRight,
+  Coffee,
+  Database,
+  Zap,
+  Loader2,
+  Trash2,
+  Bell,
+  ShieldAlert,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -52,11 +66,29 @@ function useMorningBriefing() {
         { count: pontosHoje },
         { data: esocialData },
       ] = await Promise.all([
-        supabase.from('colaboradores').select('nome_completo, data_nascimento').eq('status', 'ativo').not('data_nascimento', 'is', null),
-        supabase.from('ferias').select('data_inicio, data_fim, colaboradores!ferias_colaborador_id_fkey(nome_completo)').in('status', ['aprovada', 'em_andamento']).lte('data_inicio', hojeStr).gte('data_fim', hojeStr),
-        supabase.from('afastamentos').select('tipo, colaboradores!afastamentos_colaborador_id_fkey(nome_completo)').eq('status', 'ativo').lte('data_inicio', hojeStr).gte('data_fim_prevista', hojeStr),
+        supabase
+          .from('colaboradores')
+          .select('nome_completo, data_nascimento')
+          .eq('status', 'ativo')
+          .not('data_nascimento', 'is', null),
+        supabase
+          .from('ferias')
+          .select('data_inicio, data_fim, colaboradores!ferias_colaborador_id_fkey(nome_completo)')
+          .in('status', ['aprovada', 'em_andamento'])
+          .lte('data_inicio', hojeStr)
+          .gte('data_fim', hojeStr),
+        supabase
+          .from('afastamentos')
+          .select('tipo, colaboradores!afastamentos_colaborador_id_fkey(nome_completo)')
+          .eq('status', 'ativo')
+          .lte('data_inicio', hojeStr)
+          .gte('data_fim_prevista', hojeStr),
         supabase.from('admissoes').select('nome, cargo').eq('data_prevista', hojeStr),
-        supabase.from('exames').select('data_validade, tipo, colaboradores!exames_colaborador_id_fkey(nome_completo)').gte('data_validade', hojeStr).lte('data_validade', em7Dias),
+        supabase
+          .from('exames')
+          .select('data_validade, tipo, colaboradores!exames_colaborador_id_fkey(nome_completo)')
+          .gte('data_validade', hojeStr)
+          .lte('data_validade', em7Dias),
         supabase.from('colaboradores').select('id', { count: 'exact', head: true }).eq('status', 'ativo'),
         supabase.from('batidas_ponto').select('id', { count: 'exact', head: true }).eq('data', hojeStr),
         supabase.from('esocial_eventos').select('status'),
@@ -68,30 +100,55 @@ function useMorningBriefing() {
       const esocialHealth = esocialTotal > 0 ? Math.round(((esocialTotal - esocialErros) / esocialTotal) * 100) : 100;
 
       const aniversariantes = (colabs || [])
-        .filter(c => {
+        .filter((c) => {
           if (!c.data_nascimento) return false;
           const d = parseISO(c.data_nascimento);
           return d.getMonth() + 1 === mesAtual;
         })
-        .map(c => ({ nome: c.nome_completo, dia: parseISO(c.data_nascimento!).getDate() }))
+        .map((c) => ({ nome: c.nome_completo, dia: parseISO(c.data_nascimento!).getDate() }))
         .sort((a, b) => a.dia - b.dia);
 
-      const feriasPeriodo = (feriasData || []).map((f: any) => ({ nome: f.colaboradores?.nome_completo || 'Colaborador', inicio: f.data_inicio, fim: f.data_fim }));
-      const afastadosHoje = (afastData || []).map((a: any) => ({ nome: a.colaboradores?.nome_completo || 'Colaborador', tipo: a.tipo }));
-      const admissoesHoje = (admData || []).map(a => ({ nome: a.nome, cargo: a.cargo }));
+      const feriasPeriodo = (feriasData || []).map((f: any) => ({
+        nome: f.colaboradores?.nome_completo || 'Colaborador',
+        inicio: f.data_inicio,
+        fim: f.data_fim,
+      }));
+      const afastadosHoje = (afastData || []).map((a: any) => ({
+        nome: a.colaboradores?.nome_completo || 'Colaborador',
+        tipo: a.tipo,
+      }));
+      const admissoesHoje = (admData || []).map((a) => ({ nome: a.nome, cargo: a.cargo }));
       const vencimentosHoje = (asoData || []).map((a: any) => ({
         descricao: `Exame ${a.tipo} de ${a.colaboradores?.nome_completo || 'Colaborador'} - ${format(parseISO(a.data_validade), 'dd/MM')}`,
-        tipo: 'exame'}));
+        tipo: 'exame',
+      }));
 
       return {
-        aniversariantes, feriasPeriodo, afastadosHoje, admissoesHoje, vencimentosHoje,
-        totalAtivos: totalAtivos || 0, pontosRegistradosHoje: pontosHoje || 0,
-        esocialHealth};
-    }});
+        aniversariantes,
+        feriasPeriodo,
+        afastadosHoje,
+        admissoesHoje,
+        vencimentosHoje,
+        totalAtivos: totalAtivos || 0,
+        pontosRegistradosHoje: pontosHoje || 0,
+        esocialHealth,
+      };
+    },
+  });
 }
 
-function BriefingItem({ icon: Icon, label, count, gradient, onClick }: {
-  icon: React.ElementType; label: string; count: number; gradient: string; onClick?: () => void;
+function BriefingItem({
+  icon: Icon,
+  label,
+  count,
+  gradient,
+  onClick,
+}: {
+  icon: React.ElementType;
+  label: string;
+  count: number;
+  gradient: string;
+  onClick?: () => void;
 }) {
   if (count === 0) return null;
   return (
@@ -102,19 +159,21 @@ function BriefingItem({ icon: Icon, label, count, gradient, onClick }: {
       onClick={onClick}
       className="flex items-center gap-3 p-3 rounded-xl glass border border-border/30 hover:border-primary/30 transition-all w-full text-left group"
     >
-      <div className={cn("p-2 rounded-xl bg-gradient-to-br shadow-lg", gradient)}>
+      <div className={cn('p-2 rounded-xl bg-gradient-to-br shadow-lg', gradient)}>
         <Icon className="h-4 w-4 text-primary-foreground" />
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-body font-body font-medium truncate">{label}</p>
       </div>
-      <Badge variant="secondary" className="font-display font-bold">{count}</Badge>
+      <Badge variant="secondary" className="font-display font-bold">
+        {count}
+      </Badge>
       <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
     </motion.button>
   );
 }
 
-export function MorningBriefing() {
+export function MorningBriefing({ empresaId }: { empresaId?: string }) {
   const { data, isLoading, error } = useMorningBriefing();
   const [runningAction, setRunningAction] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -130,6 +189,23 @@ export function MorningBriefing() {
       setRunningAction(null);
     }
   };
+
+  const handleAlertas = async () => {
+    if (!empresaId) {
+      toast.error('Selecione uma empresa antes de disparar alertas.');
+      return;
+    }
+    await handleAction(
+      'alertas',
+      async () => {
+        const result = await edgeFunctionsService.dispararAlertasDP(empresaId);
+        if (!result.success) {
+          throw new Error('O provedor não confirmou a entrega dos alertas.');
+        }
+      },
+      'O provedor confirmou a entrega dos alertas.'
+    );
+  };
   const hoje = new Date();
   const hora = hoje.getHours();
 
@@ -137,7 +213,7 @@ export function MorningBriefing() {
   const saudacao = hora < 12 ? 'Bom dia' : hora < 18 ? 'Boa tarde' : 'Boa noite';
 
   if (isLoading) return <CardSkeleton className="h-64" />;
-  
+
   if (error) {
     return (
       <Card className="border-destructive/50 bg-destructive/5 shadow-none">
@@ -146,9 +222,7 @@ export function MorningBriefing() {
             <ShieldAlert className="h-5 w-5" />
             Erro de Esquema (Banco Externo)
           </CardTitle>
-          <CardDescription className="text-destructive/80 font-mono text-xs">
-            {(error as any).message}
-          </CardDescription>
+          <CardDescription className="text-destructive/80 font-mono text-xs">{(error as any).message}</CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-xs text-muted-foreground">
@@ -161,10 +235,14 @@ export function MorningBriefing() {
 
   if (!data) return null;
 
-  const hasContent = data.aniversariantes.length > 0 || data.feriasPeriodo.length > 0 ||
-    data.afastadosHoje.length > 0 || data.admissoesHoje.length > 0 || data.vencimentosHoje.length > 0;
+  const hasContent =
+    data.aniversariantes.length > 0 ||
+    data.feriasPeriodo.length > 0 ||
+    data.afastadosHoje.length > 0 ||
+    data.admissoesHoje.length > 0 ||
+    data.vencimentosHoje.length > 0;
 
-  const aniversariantesHoje = data.aniversariantes.filter(a => a.dia === hoje.getDate());
+  const aniversariantesHoje = data.aniversariantes.filter((a) => a.dia === hoje.getDate());
 
   return (
     <Card className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden relative">
@@ -199,12 +277,21 @@ export function MorningBriefing() {
             </Badge>
           )}
           {data.afastadosHoje.length > 0 && (
-            <Badge variant="outline" className="gap-1.5 py-1.5 rounded-xl font-body text-destructive border-destructive/30">
+            <Badge
+              variant="outline"
+              className="gap-1.5 py-1.5 rounded-xl font-body text-destructive border-destructive/30"
+            >
               <AlertTriangle className="h-3 w-3" />
               {data.afastadosHoje.length} afastados
             </Badge>
           )}
-          <Badge variant="outline" className={cn("gap-1.5 py-1.5 rounded-xl font-body", data.esocialHealth < 90 ? "text-destructive border-destructive/30" : "text-success border-success/30")}>
+          <Badge
+            variant="outline"
+            className={cn(
+              'gap-1.5 py-1.5 rounded-xl font-body',
+              data.esocialHealth < 90 ? 'text-destructive border-destructive/30' : 'text-success border-success/30'
+            )}
+          >
             <ShieldAlert className="h-3 w-3" />
             Conformidade eSocial: {data.esocialHealth}%
           </Badge>
@@ -221,9 +308,11 @@ export function MorningBriefing() {
               <Gift className="h-4 w-4 text-primary-foreground" />
             </div>
             <div className="flex-1">
-              <p className="text-body font-display font-semibold">🎉 Aniversariante{aniversariantesHoje.length > 1 ? 's' : ''} do dia!</p>
+              <p className="text-body font-display font-semibold">
+                🎉 Aniversariante{aniversariantesHoje.length > 1 ? 's' : ''} do dia!
+              </p>
               <p className="text-caption text-muted-foreground font-body">
-                {aniversariantesHoje.map(a => a.nome).join(', ')}
+                {aniversariantesHoje.map((a) => a.nome).join(', ')}
               </p>
             </div>
           </motion.div>
@@ -269,26 +358,38 @@ export function MorningBriefing() {
         </div>
 
         <div className="pt-4 border-t border-border/20">
-          <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold mb-3">Manutenção do Sistema</p>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold mb-3">
+            Manutenção do Sistema
+          </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <Button
               variant="outline"
               size="sm"
-              disabled={!!runningAction}
-              onClick={() => handleAction('alertas', edgeFunctionsService.dispararAlertasDP, 'Alertas DP disparados!')}
+              disabled={!!runningAction || !empresaId}
+              onClick={handleAlertas}
               className="rounded-xl h-auto py-2 flex-col gap-1 text-[10px] font-body"
             >
-              {runningAction === 'alertas' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Bell className="h-4 w-4 text-amber-500" />}
+              {runningAction === 'alertas' ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Bell className="h-4 w-4 text-amber-500" />
+              )}
               <span>Alertas DP</span>
             </Button>
             <Button
               variant="outline"
               size="sm"
               disabled={!!runningAction}
-              onClick={() => handleAction('cache', () => edgeFunctionsService.cache({ action: 'invalidate' }), 'Cache limpo!')}
+              onClick={() =>
+                handleAction('cache', () => edgeFunctionsService.cache({ action: 'invalidate' }), 'Cache limpo!')
+              }
               className="rounded-xl h-auto py-2 flex-col gap-1 text-[10px] font-body"
             >
-              {runningAction === 'cache' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4 text-primary" />}
+              {runningAction === 'cache' ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Zap className="h-4 w-4 text-primary" />
+              )}
               <span>Limpar Cache</span>
             </Button>
             <Button
@@ -298,7 +399,11 @@ export function MorningBriefing() {
               onClick={() => handleAction('limpeza', edgeFunctionsService.limpezaDados, 'Limpeza concluída!')}
               className="rounded-xl h-auto py-2 flex-col gap-1 text-[10px] font-body"
             >
-              {runningAction === 'limpeza' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4 text-destructive" />}
+              {runningAction === 'limpeza' ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Trash2 className="h-4 w-4 text-destructive" />
+              )}
               <span>Limpeza</span>
             </Button>
             <Button
@@ -308,7 +413,11 @@ export function MorningBriefing() {
               onClick={() => handleAction('health', edgeFunctionsService.healthcheck, 'Sistema saudável!')}
               className="rounded-xl h-auto py-2 flex-col gap-1 text-[10px] font-body"
             >
-              {runningAction === 'health' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Database className="h-4 w-4 text-success" />}
+              {runningAction === 'health' ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Database className="h-4 w-4 text-success" />
+              )}
               <span>Saúde</span>
             </Button>
           </div>

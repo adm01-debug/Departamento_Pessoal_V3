@@ -26,11 +26,14 @@ describe('edgeFunctionsService.dispararAlertasDP', () => {
     mockGenericExecute.mockImplementation((fn: any) => fn());
   });
 
-  it('calls invoke with "alertas-dp" and trigger body', async () => {
-    mockInvoke.mockResolvedValue({ data: { sent: 3 }, error: null });
-    const result = await edgeFunctionsService.dispararAlertasDP();
-    expect(mockInvoke).toHaveBeenCalledWith('alertas-dp', { body: { trigger: 'manual' } });
-    expect(result).toEqual({ sent: 3 });
+  it('calls invoke with "alertas-dp" and an explicit tenant', async () => {
+    mockInvoke.mockResolvedValue({
+      data: { success: true, alertas_processados: 3, email_delivery: 'accepted' },
+      error: null,
+    });
+    const result = await edgeFunctionsService.dispararAlertasDP('empresa-1');
+    expect(mockInvoke).toHaveBeenCalledWith('alertas-dp', { body: { empresaId: 'empresa-1' } });
+    expect(result).toEqual({ success: true, alertas_processados: 3, email_delivery: 'accepted' });
   });
 
   it('uses genericBreaker', async () => {

@@ -34,8 +34,13 @@ const handleInvoke = async <T>(name: string, options: InvokeOptions, breaker = g
 };
 
 export const edgeFunctionsService = {
-  /** Dispara alertas automáticos de DP via email */
-  dispararAlertasDP: async () => handleInvoke('alertas-dp', { body: { trigger: 'manual' } }),
+  /** Dispara alertas automáticos no tenant selecionado. */
+  dispararAlertasDP: async (empresaId: string) =>
+    handleInvoke<{
+      success: boolean;
+      email_delivery: 'accepted' | 'not_configured' | 'no_recipients' | 'rejected';
+      alertas_processados: number;
+    }>('alertas-dp', { body: { empresaId } }),
 
   /**
    * Envia um relatório compatível com o contrato canônico da Edge Function.
