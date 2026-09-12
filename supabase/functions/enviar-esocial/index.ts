@@ -27,7 +27,7 @@ import {
   failIdempotency,
 } from '../_shared/idempotency.ts';
 import { integrityHash } from '../_shared/integrityHash.ts';
-import { transmissionHttpStatus } from './transmissionStatus.ts';
+import { assertSandboxAmbiente, transmissionHttpStatus } from './transmissionStatus.ts';
 
 const BodySchema = z.object({
   empresaId: z.string().uuid(),
@@ -169,6 +169,11 @@ serve(async (req: Request): Promise<Response> => {
     const ambiente = String(config?.ambiente || '2');
     const certificadoId = config?.certificado_id || evento.empresa.id;
 
+    // O signer deste endpoint é deliberadamente sintético. Mesmo quando o
+    // sandbox está habilitado por env, o ambiente oficial nunca pode receber
+    // assinatura ou protocolo simulados.
+    assertSandboxAmbiente(ambiente);
+
     // 3. Montar + assinar XML (todos os campos passam por xe())
     const xmlBase = montarXMLEvento(
       evento.tipo_evento, evento.empresa, evento.dados, ambiente, evento.competencia,
@@ -235,9 +240,9 @@ serve(async (req: Request): Promise<Response> => {
     const { error: auditErr } = await supabase.from('audit_log').insert({
       tabela: 'esocial_eventos',
       registro_id: eventoId,
-      acao: 'ESOCIAL_SIMULATE',
+      acao: 'ESOCIAL_SEND',
       user_id: userId,
-      dados_novos: { ...auditPayload, integrity_hash: auditHash },
+      dados_novos: { evento: 'ESOCIAL_SIMULATE', ...auditPayload, integrity_hash: auditHash },
     });
     if (auditErr) {
       throw auditErr;

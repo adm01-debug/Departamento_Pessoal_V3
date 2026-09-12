@@ -137,7 +137,7 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
 
   const handleGenerate = async () => {
     if (!empresaAtual?.id) return;
-    if (loadingConfig || configEmpresaId !== empresaAtual.id) {
+    if (saving || loadingConfig || configEmpresaId !== empresaAtual.id) {
       toast.error('A configuração da empresa atual ainda não foi carregada.');
       return;
     }
@@ -178,7 +178,7 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
 
   const handleGeneratePIX = async () => {
     if (!empresaAtual?.id) return;
-    if (loadingConfig || configEmpresaId !== empresaAtual.id) {
+    if (saving || loadingConfig || configEmpresaId !== empresaAtual.id) {
       toast.error('A configuração da empresa atual ainda não foi carregada.');
       return;
     }
@@ -317,7 +317,7 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
             <Button
               onClick={handleGenerate}
               className="rounded-xl gap-2 h-12 shadow-lg bg-gradient-to-r from-primary to-primary-glow"
-              disabled={loading || loadingConfig || configEmpresaId !== empresaAtual?.id}
+              disabled={loading || saving || loadingConfig || configEmpresaId !== empresaAtual?.id}
             >
               {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <FileDown className="h-5 w-5" />}
               <div className="flex flex-col items-start leading-tight">
@@ -329,7 +329,7 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
               onClick={handleGeneratePIX}
               variant="outline"
               className="rounded-xl gap-2 h-12 border-primary/30 hover:bg-primary/5"
-              disabled={loading || loadingConfig || configEmpresaId !== empresaAtual?.id}
+              disabled={loading || saving || loadingConfig || configEmpresaId !== empresaAtual?.id}
             >
               {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Zap className="h-5 w-5 text-amber-500" />}
               <div className="flex flex-col items-start leading-tight">

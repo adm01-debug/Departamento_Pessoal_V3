@@ -58,7 +58,12 @@ export const EventTimeline = memo(function EventTimeline({
   const [filterType, setFilterType] = useState('all');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
-  const { data: dbEvents, isLoading } = useQuery({
+  const {
+    data: dbEvents,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ['audit-timeline', empresaId],
     enabled: !!empresaId,
     refetchInterval: 30_000,
@@ -135,6 +140,18 @@ export const EventTimeline = memo(function EventTimeline({
               </div>
             </div>
           ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div role="alert" className="flex flex-col items-center justify-center gap-3 py-8 text-center">
+        <AlertTriangle className="h-5 w-5 text-destructive" />
+        <p className="text-caption text-muted-foreground font-body">Falha ao carregar os eventos recentes.</p>
+        <Button variant="outline" size="sm" onClick={() => void refetch()}>
+          Tentar novamente
+        </Button>
       </div>
     );
   }

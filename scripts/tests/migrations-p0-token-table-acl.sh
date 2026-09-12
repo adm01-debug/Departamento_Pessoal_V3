@@ -36,7 +36,15 @@ CREATE OR REPLACE FUNCTION public.medida_registrar_ciencia_publica(
   p_token text,p_acao text,p_motivo_recusa text DEFAULT NULL,p_ip text DEFAULT NULL,
   p_user_agent text DEFAULT NULL,p_geo jsonb DEFAULT NULL)
 RETURNS jsonb LANGUAGE sql SECURITY DEFINER SET search_path=public
-AS $$ SELECT jsonb_build_object('success',EXISTS(SELECT 1 FROM public.medidas_ciencia_tokens WHERE token_hash=p_token AND used_at IS NULL)) $$;
+AS $$
+  WITH consumed AS (
+    UPDATE public.medidas_ciencia_tokens
+    SET used_at = now()
+    WHERE token_hash=p_token AND used_at IS NULL AND expires_at > now()
+    RETURNING id
+  )
+  SELECT jsonb_build_object('success',EXISTS(SELECT 1 FROM consumed))
+$$;
 SQL
 
 before="$(docker exec "$NAME" psql -X -qAt -U postgres -c 'SET ROLE anon; SELECT count(*) FROM public.medidas_ciencia_tokens;')"
@@ -67,8 +75,24 @@ if [ "$authenticated_status" -eq 0 ] || [[ "$authenticated_direct" != *"permissi
   exit 1
 fi
 
+set +e
+direct_update="$(docker exec "$NAME" psql -X -U postgres -c "SET ROLE anon; UPDATE public.medidas_ciencia_tokens SET used_at=now() WHERE token_hash='secret-hash';" 2>&1)"
+update_status=$?
+set -e
+if [ "$update_status" -eq 0 ] || [[ "$direct_update" != *"permission denied"* ]]; then
+  echo "anonymous direct token update was not denied" >&2
+  echo "$direct_update" >&2
+  exit 1
+fi
+
 lookup="$(docker exec "$NAME" psql -X -qAt -U postgres -c "SET ROLE anon; SELECT public.medida_consultar_por_token('secret-hash')->>'valid';")"
 [ "$lookup" = "true" ] || { echo "public RPC no longer works: $lookup" >&2; exit 1; }
+consumed="$(docker exec "$NAME" psql -X -qAt -U postgres -c "SET ROLE anon; SELECT public.medida_registrar_ciencia_publica('secret-hash','ciente')->>'success';")"
+[ "$consumed" = "true" ] || { echo "public write RPC did not consume token: $consumed" >&2; exit 1; }
+after_lookup="$(docker exec "$NAME" psql -X -qAt -U postgres -c "SET ROLE anon; SELECT public.medida_consultar_por_token('secret-hash')->>'valid';")"
+[ "$after_lookup" = "false" ] || { echo "consumed token remained valid: $after_lookup" >&2; exit 1; }
+replay="$(docker exec "$NAME" psql -X -qAt -U postgres -c "SET ROLE anon; SELECT public.medida_registrar_ciencia_publica('secret-hash','ciente')->>'success';")"
+[ "$replay" = "false" ] || { echo "public write RPC replay consumed token twice: $replay" >&2; exit 1; }
 
 docker exec "$NAME" psql -X -U postgres -c 'CREATE DATABASE p0_token_missing_prerequisite' >/dev/null
 set +e

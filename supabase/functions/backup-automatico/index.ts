@@ -38,7 +38,7 @@ serve(async (req: Request): Promise<Response> => {
     const authHeader = req.headers.get('Authorization') ?? '';
     const jwt = authHeader.replace(/^Bearer\s+/i, '').trim();
     if (!jwt) {
-      return createErrorResponse('Não autenticado', 401, 'UNAUTHORIZED');
+      return createErrorResponse('Não autenticado', 401, 'UNAUTHORIZED', undefined, req);
     }
 
     const userClient = createClient(SUPABASE_URL, ANON_KEY, {
@@ -48,7 +48,7 @@ serve(async (req: Request): Promise<Response> => {
 
     const { data: claimsData, error: userErr } = await userClient.auth.getUser();
     if (userErr || !claimsData?.user?.id) {
-      return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
+      return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED', undefined, req);
     }
     const user = { id: claimsData.user.id };
 
@@ -66,7 +66,7 @@ serve(async (req: Request): Promise<Response> => {
     // 4) Admin-only (backup é operação sensível — expõe dados em massa)
     const { data: isAdmin } = await admin.rpc('is_admin', { _user_id: user.id });
     if (!isAdmin) {
-      return createErrorResponse('Somente administradores podem executar backups', 403, 'FORBIDDEN');
+      return createErrorResponse('Somente administradores podem executar backups', 403, 'FORBIDDEN', undefined, req);
     }
 
     // 5) Tenant scope: se empresaId for informado, exige vínculo
@@ -76,7 +76,7 @@ serve(async (req: Request): Promise<Response> => {
         _empresa_id: empresaId,
       });
       if (!belongs) {
-        return createErrorResponse('Sem acesso a esta empresa', 403, 'FORBIDDEN');
+        return createErrorResponse('Sem acesso a esta empresa', 403, 'FORBIDDEN', undefined, req);
       }
     }
 
@@ -92,7 +92,7 @@ serve(async (req: Request): Promise<Response> => {
     ]);
     const targetTables = (tables ?? [...ALLOWED_TABLES]).filter((t) => ALLOWED_TABLES.has(t));
     if (targetTables.length === 0) {
-      return createErrorResponse('Nenhuma tabela válida para backup', 422, 'VALIDATION_ERROR');
+      return createErrorResponse('Nenhuma tabela válida para backup', 422, 'VALIDATION_ERROR', undefined, req);
     }
 
     if (action === 'status') {
@@ -104,7 +104,7 @@ serve(async (req: Request): Promise<Response> => {
         .limit(1);
       if (empresaId) q = q.contains('dados_novos', { empresa_id: empresaId });
       const { data: lastRows, error: statusError } = await q;
-      if (statusError) return createErrorResponse('Falha ao consultar status do backup', 500, 'AUDIT_ERROR');
+      if (statusError) return createErrorResponse('Falha ao consultar status do backup', 500, 'AUDIT_ERROR', undefined, req);
       const last = lastRows?.[0] ?? null;
       return new Response(JSON.stringify({ ok: true, last }), {
         status: 200,
@@ -117,7 +117,7 @@ serve(async (req: Request): Promise<Response> => {
         .eq('acao', 'BACKUP_RUN').order('created_at', { ascending: false }).limit(50);
       if (empresaId) q = q.contains('dados_novos', { empresa_id: empresaId });
       const { data: list, error: listError } = await q;
-      if (listError) return createErrorResponse('Falha ao listar backups', 500, 'AUDIT_ERROR');
+      if (listError) return createErrorResponse('Falha ao listar backups', 500, 'AUDIT_ERROR', undefined, req);
       return new Response(JSON.stringify({ ok: true, backups: list ?? [] }), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -126,7 +126,7 @@ serve(async (req: Request): Promise<Response> => {
 
     // action === 'run' — executa backup escopado por empresa (obrigatório)
     if (!empresaId) {
-      return createErrorResponse('empresaId é obrigatório para executar backup', 422, 'VALIDATION_ERROR');
+      return createErrorResponse('empresaId é obrigatório para executar backup', 422, 'VALIDATION_ERROR', undefined, req);
     }
 
     const snapshot: Record<string, unknown> = {};
@@ -149,7 +149,7 @@ serve(async (req: Request): Promise<Response> => {
             table,
             code: error.code,
           });
-          return createErrorResponse(error.publicMessage, error.httpStatus, error.code);
+          return createErrorResponse(error.publicMessage, error.httpStatus, error.code, undefined, req);
         }
         throw error;
       }
@@ -184,7 +184,7 @@ serve(async (req: Request): Promise<Response> => {
         });
       if (upErr && !/already exists/i.test(upErr.message)) {
         await captureException(upErr, { function: 'backup-automatico', empresaId });
-        return createErrorResponse('Falha ao gravar backup', 500, 'STORAGE_ERROR');
+        return createErrorResponse('Falha ao gravar backup', 500, 'STORAGE_ERROR', undefined, req);
       }
 
       // Verificação de integridade: re-download e compara hash
@@ -198,11 +198,11 @@ serve(async (req: Request): Promise<Response> => {
         integrityVerified = verifyHash === payloadHash;
         if (!integrityVerified) {
           await captureException(new Error('Backup integrity mismatch'), { path, expected: payloadHash, got: verifyHash });
-          return createErrorResponse('Falha de integridade no backup', 500, 'INTEGRITY_ERROR');
+          return createErrorResponse('Falha de integridade no backup', 500, 'INTEGRITY_ERROR', undefined, req);
         }
       } catch (verifyErr) {
         await captureException(verifyErr, { function: 'backup-automatico:verify', path });
-        return createErrorResponse('Falha ao verificar integridade do backup', 500, 'INTEGRITY_ERROR');
+        return createErrorResponse('Falha ao verificar integridade do backup', 500, 'INTEGRITY_ERROR', undefined, req);
       }
 
       const { data: signed } = await admin.storage
@@ -216,8 +216,9 @@ serve(async (req: Request): Promise<Response> => {
       tabela: 'backups',
       registro_id: empresaId,
       user_id: user.id,
-      acao: 'BACKUP_RUN',
+      acao: 'BACKUP_CREATED',
       dados_novos: {
+        evento: 'BACKUP_RUN',
         empresa_id: empresaId, path, counts, tables: targetTables, destino,
         sha256: payloadHash, bytes: bytesSize, integrity_verified: integrityVerified,
       },
@@ -240,6 +241,6 @@ serve(async (req: Request): Promise<Response> => {
     });
   } catch (err) {
     await captureException(err, { function: 'backup-automatico' });
-    return createErrorResponse('Erro interno no backup', 500, 'INTERNAL_SERVER_ERROR');
+    return createErrorResponse('Erro interno no backup', 500, 'INTERNAL_SERVER_ERROR', undefined, req);
   }
 });

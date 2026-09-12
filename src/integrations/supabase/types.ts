@@ -7818,6 +7818,7 @@ export type Database = {
       }
       esocial_eventos: {
         Row: {
+          admissao_id: string | null
           assinatura_xml: string | null
           competencia: string | null
           created_at: string
@@ -7842,6 +7843,7 @@ export type Database = {
           xml_retorno: string | null
         }
         Insert: {
+          admissao_id?: string | null
           assinatura_xml?: string | null
           competencia?: string | null
           created_at?: string
@@ -7866,6 +7868,7 @@ export type Database = {
           xml_retorno?: string | null
         }
         Update: {
+          admissao_id?: string | null
           assinatura_xml?: string | null
           competencia?: string | null
           created_at?: string
@@ -7890,6 +7893,13 @@ export type Database = {
           xml_retorno?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "esocial_eventos_admissao_id_fkey"
+            columns: ["admissao_id"]
+            isOneToOne: false
+            referencedRelation: "admissoes"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "esocial_eventos_empresa_id_fkey"
             columns: ["empresa_id"]
@@ -22526,6 +22536,24 @@ export type Database = {
         Args: { p_limit?: number; p_now: string }
         Returns: Database["public"]["Tables"]["relatorios_agendados"]["Row"][]
       }
+      claim_admission_esocial_event: {
+        Args: { p_admissao_id: string; p_empresa_id: string }
+        Returns: Json
+      }
+      complete_admission_esocial_event: {
+        Args: {
+          p_admissao_id: string
+          p_empresa_id: string
+          p_evento_id: string
+          p_protocolo: string
+          p_recibo?: string
+        }
+        Returns: undefined
+      }
+      fail_admission_esocial_event: {
+        Args: { p_admissao_id: string; p_empresa_id: string; p_evento_id: string }
+        Returns: undefined
+      }
       check_rate_limit: {
         Args: {
           check_endpoint: string
@@ -22751,6 +22779,7 @@ export type Database = {
           p_limit?: number
           p_registro_id?: string
           p_tabela?: string
+          p_tabelas?: string[]
         }
         Returns: {
           acao: string

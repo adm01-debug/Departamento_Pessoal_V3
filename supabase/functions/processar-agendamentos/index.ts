@@ -141,18 +141,20 @@ serve(async (req: Request): Promise<Response> => {
     });
 
     const agora = new Date();
+    const CONCURRENCY = 5;
 
     // Claim atômico: duas invocações de cron nunca recebem a mesma agenda.
     // O lease expira no banco após cinco minutos para recuperar workers que
-    // morreram sem liberar a linha.
+    // morreram sem liberar a linha. Claim somente o que começa imediatamente;
+    // uma fila local maior que o lease permitiria outro cron roubar as últimas
+    // ocorrências antes do início do envio.
     const { data: agendamentos, error } = await supabase.rpc(
       "claim_due_report_schedules",
-      { p_now: agora.toISOString(), p_limit: 100 },
+      { p_now: agora.toISOString(), p_limit: CONCURRENCY },
     );
 
     if (error) throw error;
 
-    const CONCURRENCY = 5;
     const lista = agendamentos ?? [];
     type ProcessResult = ScheduleResult & {
       id: unknown;

@@ -85,12 +85,14 @@ reset_at="$(run_psql -qAtc "SET ROLE service_role; SELECT public.edge_rate_limit
 
 # Twenty independent transactions race on the same key. The advisory lock must
 # allow exactly three requests, never N+1.
+pids=()
 for i in $(seq 1 20); do
   docker exec "$NAME" psql -X -qAt -U postgres -v ON_ERROR_STOP=1 -c \
     "SET ROLE service_role; SELECT public.edge_rate_limit_check('concurrent', 3, 60, 2000)->>'allowed';" \
     >"$RESULT_DIR/$i" &
+  pids+=("$!")
 done
-wait
+for pid in "${pids[@]}"; do wait "$pid" || { echo "concurrent rate-limit process failed" >&2; exit 1; }; done
 allowed_count="$(grep -h '^true$' "$RESULT_DIR"/* | wc -l | tr -d ' ')"
 [ "$allowed_count" = "3" ] || { echo "concurrent limiter allowed $allowed_count requests, expected 3" >&2; exit 1; }
 

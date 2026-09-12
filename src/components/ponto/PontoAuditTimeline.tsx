@@ -13,6 +13,8 @@ import { exportPontoCSV } from '@/services/exportService';
 import { motion } from 'framer-motion';
 import { useEmpresas } from '@/hooks/useEmpresas';
 
+const PONTO_AUDIT_TABLES = ['batidas_ponto', 'registros_ponto', 'solicitacoes_ajuste_ponto'];
+
 export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) {
   const [searchTerm, setSearchTerm] = useState('');
   const { empresaAtual } = useEmpresas();
@@ -27,11 +29,10 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
       const data = await auditoriaService.listarTrilha({
         empresa_id: empresaAtual!.id,
         tabela: filterTabela,
+        tabelas: filterTabela ? undefined : PONTO_AUDIT_TABLES,
         limite: 100,
       });
-      if (filterTabela) return data;
-      const tabelasPonto = new Set(['batidas_ponto', 'registros_ponto', 'solicitacoes_ajuste_ponto']);
-      return data.filter((log) => !!log.tabela && tabelasPonto.has(log.tabela));
+      return data;
     },
     enabled: !!empresaAtual?.id,
     refetchInterval: 30_000,

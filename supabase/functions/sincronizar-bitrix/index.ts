@@ -167,9 +167,9 @@ serve(async (req: Request): Promise<Response> => {
     });
 
     await admin.from('audit_log').insert({
-      tabela: 'bitrix24_sync_logs', registro_id: 'sync', acao: 'SYNC',
+      tabela: 'bitrix24_sync_logs', registro_id: 'sync', acao: 'SYSTEM_ACTION',
       user_id: userId,
-      dados_novos: { action, totals: { totalProcessed, totalSuccess, totalErrors }, empresa_id: empresaId ?? null },
+      dados_novos: { evento: 'SYNC', action, totals: { totalProcessed, totalSuccess, totalErrors }, empresa_id: empresaId ?? null },
     });
 
     await admin.from('bitrix24_config').update({

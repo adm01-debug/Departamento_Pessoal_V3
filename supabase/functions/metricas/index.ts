@@ -57,47 +57,41 @@ async function getBridgeKpis(
   empresaId: string
 ) {
   // Tenta MV primeiro (refresh noturno — rápido)
-  const mv = await safeQuery<{ p95_ms: number; avg_ms: number; errors_1h: number; slow_1h: number }[]>(
+  const mv = await safeQuery<{ p95_ms: number }[]>(
     () => supabase
       .from('mv_telemetry_dashboard')
-      .select('p95_ms, avg_ms')
+      .select('p95_ms')
       .gte('hour', new Date(Date.now() - 3600_000).toISOString())
-      .limit(1)
+      .limit(100)
   );
 
-  // Fallback: query direta em query_telemetry
-  if (!mv || mv.length === 0) {
-    const [errResult, slowResult] = await Promise.all([
-      safeCount(() =>
-        supabase.from('query_telemetry')
-          .select('id', { count: 'exact', head: true })
-          .eq('severity', 'error')
-          .gte('created_at', new Date(Date.now() - 3600_000).toISOString())
-      ),
-      safeCount(() =>
-        supabase.from('query_telemetry')
-          .select('id', { count: 'exact', head: true })
-          .gt('duration_ms', 5000)
-          .gte('created_at', new Date(Date.now() - 3600_000).toISOString())
-      ),
-    ]);
-    return {
-      p95_latency_ms: null,
-      error_count_1h: errResult ?? 0,
-      slow_query_count_1h: slowResult ?? 0,
-      source: 'telemetry_direct' as const,
-    };
-  }
+  // A MV não possui uma contagem exata de queries >5s. As duas contagens
+  // operacionais vêm da fonte; falha de coleta permanece `null`, nunca zero.
+  const since = new Date(Date.now() - 3600_000).toISOString();
+  const [errResult, slowResult] = await Promise.all([
+    safeCount(() =>
+      supabase.from('query_telemetry')
+        .select('id', { count: 'exact', head: true })
+        .in('severity', ['error', 'fatal'])
+        .gte('created_at', since)
+    ),
+    safeCount(() =>
+      supabase.from('query_telemetry')
+        .select('id', { count: 'exact', head: true })
+        .gt('duration_ms', 5000)
+        .gte('created_at', since)
+    ),
+  ]);
 
-  const p95s = mv.map((r) => r.p95_ms).filter(Boolean);
-  const avgs = mv.map((r) => r.avg_ms).filter(Boolean);
+  const p95s = (mv ?? []).map((r) => r.p95_ms).filter((value) => Number.isFinite(value));
   const p95 = p95s.length ? Math.max(...p95s) : null;
 
   return {
     p95_latency_ms: p95,
-    error_count_1h: mv[0]?.errors_1h ?? 0,
-    slow_query_count_1h: mv[0]?.slow_1h ?? 0,
-    source: 'mv_telemetry_dashboard' as const,
+    error_count_1h: errResult,
+    slow_query_count_1h: slowResult,
+    degraded: mv === null || errResult === null || slowResult === null,
+    source: mv && mv.length > 0 ? 'mv_telemetry_dashboard' as const : 'telemetry_direct' as const,
   };
 }
 

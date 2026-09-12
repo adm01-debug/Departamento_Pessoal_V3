@@ -27,6 +27,7 @@ export function useAfastamentos() {
   const crud = useGenericCrud<unknown>({
     queryKey: 'afastamentos',
     service: afastamentoService,
+    empresaId,
     filters: { ...filtros, empresaId },
     successMessages: {
       create: 'Afastamento registrado com sucesso',

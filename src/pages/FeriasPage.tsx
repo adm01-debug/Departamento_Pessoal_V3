@@ -34,6 +34,7 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
+  AlertTriangle,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -70,7 +71,7 @@ export default function FeriasPage() {
   const [calcResult, setCalcResult] = useState<UiRecord | null>(null);
   const queryClient = useQueryClient();
 
-  const { ferias, totalCount, isLoading, isFetching, refetch } = useFerias({
+  const { ferias, totalCount, isLoading, isFetching, error, refetch } = useFerias({
     page,
     limit,
     search: search.length >= 3 ? search : undefined,
@@ -336,6 +337,17 @@ export default function FeriasPage() {
 
             {isLoading ? (
               <TableSkeleton rows={6} columns={7} />
+            ) : error ? (
+              <div
+                role="alert"
+                className="flex flex-col items-center gap-3 rounded-2xl border border-destructive/20 p-8 text-center"
+              >
+                <AlertTriangle className="h-6 w-6 text-destructive" />
+                <p className="text-sm text-muted-foreground">Falha ao carregar as solicitações de férias.</p>
+                <Button variant="outline" size="sm" onClick={() => void refetch()}>
+                  Tentar novamente
+                </Button>
+              </div>
             ) : !ferias?.length ? (
               <EmptyList entityName="solicitação de férias" />
             ) : (

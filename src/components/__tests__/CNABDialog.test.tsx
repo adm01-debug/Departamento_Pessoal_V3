@@ -78,6 +78,7 @@ describe('CNABDialog', () => {
     testState.empresaAtual = { id: 'emp-1', razao_social: 'Empresa Teste' };
     testState.onOpenChange = null;
     vi.mocked(cnabService.getConfig).mockResolvedValue(null);
+    vi.mocked(cnabService.saveConfig).mockResolvedValue();
     vi.mocked(cnabService.generateCNAB240).mockResolvedValue('cnab content');
     Object.defineProperty(window.URL, 'createObjectURL', {
       configurable: true,
@@ -192,5 +193,33 @@ describe('CNABDialog', () => {
 
     expect(window.URL.createObjectURL).not.toHaveBeenCalled();
     expect(toast.success).not.toHaveBeenCalledWith(expect.stringContaining('CNAB 240'));
+  });
+
+  it('bloqueia CNAB e PIX enquanto a configuração persistida está sendo salva', async () => {
+    const save = deferred<void>();
+    vi.mocked(cnabService.saveConfig).mockImplementationOnce(() => save.promise);
+    render(<CNABDialog folhaId="f-001" />);
+
+    act(() => testState.onOpenChange?.(true));
+    const saveButton = await screen.findByRole('button', { name: /Salvar Configurações de Remessa/i });
+    await waitFor(() => expect(saveButton).toBeEnabled());
+    fireEvent.click(saveButton);
+
+    const cnabButton = screen.getByText('CNAB 240').closest('button');
+    const pixButton = screen.getByText('PIX Analítico').closest('button');
+    await waitFor(() => {
+      expect(cnabButton).toBeDisabled();
+      expect(pixButton).toBeDisabled();
+    });
+    fireEvent.click(cnabButton!);
+    fireEvent.click(pixButton!);
+    expect(cnabService.generateCNAB240).not.toHaveBeenCalled();
+    expect(cnabService.generatePIXBatch).not.toHaveBeenCalled();
+
+    await act(async () => {
+      save.resolve();
+      await save.promise;
+    });
+    await waitFor(() => expect(cnabButton).toBeEnabled());
   });
 });

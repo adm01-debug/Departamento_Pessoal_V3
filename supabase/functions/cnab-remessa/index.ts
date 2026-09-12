@@ -97,7 +97,17 @@ Deno.serve(async (req) => {
     const rl = await checkRateLimit(service, { key: `cnab-remessa:${userId}`, limit: 10, windowSec: 60 });
     if (!rl.allowed) return rateLimitResponse(rl, req);
 
-    // Idempotência transacional (shared helper)
+    // Cap financeiro
+    const totalCentavos = itens.reduce((acc, i) => acc + BigInt(i.valor_centavos), 0n);
+    if (totalCentavos > MAX_TOTAL_CENTAVOS) {
+      return createErrorResponse(
+        `Total do lote excede R$ ${Number(MAX_TOTAL_CENTAVOS) / 100}`,
+        422, 'AMOUNT_ABOVE_LIMIT',
+      );
+    }
+
+    // Persist only after authentication and all deterministic validation. A
+    // rejected request must not leave an in_progress key behind.
     const idemKey = extractIdempotencyKey(req, parsed.data);
     const idem = await beginIdempotency(service, {
       endpoint: 'cnab-remessa',
@@ -109,16 +119,6 @@ Deno.serve(async (req) => {
     });
     if (idem.replay) return idem.replay;
     if (idem.conflict) return idem.conflict;
-
-    // Cap financeiro
-    const totalCentavos = itens.reduce((acc, i) => acc + BigInt(i.valor_centavos), 0n);
-    if (totalCentavos > MAX_TOTAL_CENTAVOS) {
-      await failIdempotency(service, idem.id);
-      return createErrorResponse(
-        `Total do lote excede R$ ${Number(MAX_TOTAL_CENTAVOS) / 100}`,
-        422, 'AMOUNT_ABOVE_LIMIT',
-      );
-    }
 
     // Sequencial atômico: MAX + 1 por (empresa, banco)
     const { data: maxRow } = await service

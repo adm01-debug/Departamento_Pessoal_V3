@@ -67,12 +67,14 @@ schedule_id="$(run_psql -qAtc "INSERT INTO public.relatorios_agendados
 
 # Twenty independent transactions race for one schedule. SKIP LOCKED plus the
 # lease predicate must return the row exactly once.
+pids=()
 for i in $(seq 1 20); do
   docker exec "$NAME" psql -X -qAt -U postgres -v ON_ERROR_STOP=1 -c \
     "SET ROLE service_role; SELECT id FROM public.claim_due_report_schedules(now(), 1);" \
     >"$RESULT_DIR/$i" &
+  pids+=("$!")
 done
-wait
+for pid in "${pids[@]}"; do wait "$pid" || { echo "concurrent schedule-claim process failed" >&2; exit 1; }; done
 [ "$(grep -h -c "$schedule_id" "$RESULT_DIR"/* | awk '{s += $1} END {print s+0}')" = '1' ] || {
   echo 'concurrent claim returned the same schedule more than once' >&2; exit 1;
 }

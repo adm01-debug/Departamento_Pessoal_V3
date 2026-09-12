@@ -15,7 +15,6 @@ const _extraOrigins = (Deno.env.get('EXTRA_ALLOWED_ORIGINS') ?? '')
 
 const ALLOWED_ORIGINS = [
   'https://departamento-pessoal-v3.vercel.app',
-  'https://departamento-pessoal-v3-juca1.vercel.app',
   ..._extraOrigins,
 ];
 

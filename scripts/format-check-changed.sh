@@ -17,8 +17,8 @@ if ! git rev-parse --verify "$BASE_REF" >/dev/null 2>&1; then
   elif git rev-parse --verify HEAD~1 >/dev/null 2>&1; then
     BASE_REF="HEAD~1"
   else
-    echo "[format:check:changed] no base ref to diff against — skipping."
-    exit 0
+    echo "::error::[format:check:changed] no base ref is available; refusing a false-green format gate." >&2
+    exit 2
   fi
 fi
 

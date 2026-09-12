@@ -146,7 +146,7 @@ BEGIN
     SELECT 1
     FROM jsonb_array_elements(p_rows) AS row_data(item)
     WHERE jsonb_typeof(item) <> 'object'
-       OR COALESCE(item->>'colaborador_id', '') !~* '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+       OR COALESCE(item->>'colaborador_id', '') !~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
        OR item->>'tipo' NOT IN ('ferias', '13_salario')
        OR jsonb_typeof(item->'valor_principal') <> 'number'
        OR jsonb_typeof(item->'encargos_inss') <> 'number'
@@ -198,7 +198,8 @@ BEGIN
   INSERT INTO public.audit_log (
     tabela, registro_id, acao, user_id, dados_novos
   ) VALUES (
-    'provisoes_mensais', gen_random_uuid(), 'CALCULATE_BATCH', p_user_id, p_audit_data
+    'provisoes_mensais', gen_random_uuid(), 'PROVISOES_CALC', p_user_id,
+    COALESCE(p_audit_data, '{}'::jsonb) || jsonb_build_object('empresa_id', p_empresa_id, 'evento', 'CALCULATE_BATCH')
   );
 
   RETURN inserted_count;

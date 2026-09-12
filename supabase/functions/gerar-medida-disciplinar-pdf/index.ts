@@ -229,9 +229,9 @@ serve(async (req: Request): Promise<Response> => {
     await admin.from('audit_log').insert({
       tabela: 'medidas_disciplinares',
       registro_id: medida_id,
-      acao: 'PDF_GERADO',
+      acao: 'EXPORT',
       user_id: userId,
-      dados_novos: { path, hash, empresa_id: medida.empresa_id },
+      dados_novos: { evento: 'PDF_GERADO', path, hash, empresa_id: medida.empresa_id },
     });
 
     return new Response(

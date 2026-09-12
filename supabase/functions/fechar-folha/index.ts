@@ -84,22 +84,6 @@ serve(async (req: Request): Promise<Response> => {
     const rl = await checkRateLimit(admin, { key: `fechar-folha:${userId}`, limit: 5, windowSec: 60 });
     if (!rl.allowed) return rateLimitResponse(rl, req);
 
-    // 3.5) Idempotência — evita duplo-fechamento por double-click / retry de rede
-    const idemKey = extractIdempotencyKey(req, body);
-    const idem = await beginIdempotency(admin, {
-      endpoint: 'fechar-folha',
-      key: idemKey,
-      requestBody: body,
-      empresaId,
-      userId,
-      request: req,
-    });
-    if (idem.replay) return idem.replay;
-    if (idem.conflict) return idem.conflict;
-
-
-
-
     // 4) Papel — fechar a folha é ato de RH/admin, não de qualquer pessoa da
     // empresa. O aninhamento anterior (`if !belongs { if !isAdmin 403 }`)
     // equivalia a `belongs || isAdmin`: bastava trabalhar aqui.
@@ -148,6 +132,20 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     const { sum_proventos: sumProv, sum_descontos: sumDesc, sum_liquido: sumLiq, sum_fgts: sumFgts, holerites_count: count, itens_count: itensCount } = integrity;
+
+    // Claim only after every deterministic authorization/precondition check,
+    // immediately before the optimistic business mutation.
+    const idemKey = extractIdempotencyKey(req, body);
+    const idem = await beginIdempotency(admin, {
+      endpoint: 'fechar-folha',
+      key: idemKey,
+      requestBody: body,
+      empresaId,
+      userId,
+      request: req,
+    });
+    if (idem.replay) return idem.replay;
+    if (idem.conflict) return idem.conflict;
 
     // 7) Optimistic lock update
     const closedAt = new Date().toISOString();
@@ -212,7 +210,7 @@ serve(async (req: Request): Promise<Response> => {
     const { error: auditErr } = await admin.from('audit_log').insert({
       tabela: 'folhas_pagamento',
       registro_id: folhaId,
-      acao: 'CLOSE',
+      acao: 'PAYROLL_CLOSE',
       dados_anteriores: { status: 'aberta', version: folha.version },
       dados_novos: { ...snapshot, audit_hash: auditHash },
       user_id: userId,

@@ -8,16 +8,18 @@
 import { z } from 'zod';
 
 export const metricasSchema = z.object({
-  empresaId: z.string().uuid('ID da empresa deve ser um UUID válido').optional(),
+  empresaId: z.string().uuid('ID da empresa deve ser um UUID válido'),
 });
 
-export const webhookSchema = z.object({
-  event_id: z.string().min(1, 'event_id é obrigatório para idempotência').max(128),
-  event: z.string().min(1, 'Evento é obrigatório').max(128),
-  data: z.record(z.string(), z.unknown()),
-  timestamp: z.string().datetime().optional(),
-  version: z.string().optional().default('v1'),
-}).strict();
+export const webhookSchema = z
+  .object({
+    event_id: z.string().min(1, 'event_id é obrigatório para idempotência').max(128),
+    event: z.string().min(1, 'Evento é obrigatório').max(128),
+    data: z.record(z.string(), z.unknown()),
+    timestamp: z.string().datetime().optional(),
+    version: z.string().optional().default('v1'),
+  })
+  .strict();
 
 export const healthcheckSchema = z.object({}).strict();
 
@@ -40,36 +42,45 @@ export const calcularFolhaSchema = z.object({
 });
 
 export const notificacaoSchema = z.discriminatedUnion('action', [
-  z.object({
-    action: z.literal('enviar'),
-    empresaId: z.string().uuid(),
-    tipo: z.enum(['info', 'aviso', 'erro', 'sucesso']).default('info'),
-    destinatarios: z.array(
-      z.object({ user_id: z.string().uuid() }).strict()
-    ).min(1).max(500),
-    assunto: z.string().trim().min(1).max(200),
-    conteudo: z.string().trim().min(1).max(5000),
-  }).strict(),
-  z.object({
-    action: z.literal('listar'),
-    empresaId: z.string().uuid().optional(),
-  }).strict(),
+  z
+    .object({
+      action: z.literal('enviar'),
+      empresaId: z.string().uuid(),
+      tipo: z.enum(['info', 'aviso', 'erro', 'sucesso']).default('info'),
+      destinatarios: z
+        .array(z.object({ user_id: z.string().uuid() }).strict())
+        .min(1)
+        .max(500),
+      assunto: z.string().trim().min(1).max(200),
+      conteudo: z.string().trim().min(1).max(5000),
+    })
+    .strict(),
+  z
+    .object({
+      action: z.literal('listar'),
+      empresaId: z.string().uuid().optional(),
+    })
+    .strict(),
 ]);
 
-export const auditoriaSchema = z.object({
-  action: z.enum(['registrar', 'listar', 'resumo']),
-  empresaId: z.string().uuid().optional(),
-  data: z.object({
-    acao: z.string(),
-    entidade: z.string(),
-    entidade_id: z.string().optional(),
-    usuario_id: z.string().optional(),
-    usuario_nome: z.string().optional(),
-    descricao: z.string().optional(),
-    dados_anteriores: z.unknown().optional(),
-    dados_novos: z.unknown().optional(),
-    ip_address: z.union([z.ipv4(), z.ipv6()]).optional(),
-    data_inicio: z.string().datetime().optional(),
-    data_fim: z.string().datetime().optional(),
-  }).optional(),
-}).strict();
+export const auditoriaSchema = z
+  .object({
+    action: z.enum(['registrar', 'listar', 'resumo']),
+    empresaId: z.string().uuid().optional(),
+    data: z
+      .object({
+        acao: z.string(),
+        entidade: z.string(),
+        entidade_id: z.string().optional(),
+        usuario_id: z.string().optional(),
+        usuario_nome: z.string().optional(),
+        descricao: z.string().optional(),
+        dados_anteriores: z.unknown().optional(),
+        dados_novos: z.unknown().optional(),
+        ip_address: z.union([z.ipv4(), z.ipv6()]).optional(),
+        data_inicio: z.string().datetime().optional(),
+        data_fim: z.string().datetime().optional(),
+      })
+      .optional(),
+  })
+  .strict();

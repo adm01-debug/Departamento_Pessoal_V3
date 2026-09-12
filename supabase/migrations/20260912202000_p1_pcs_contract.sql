@@ -156,6 +156,174 @@ CREATE TABLE IF NOT EXISTS public.pcs_pesquisa_salarial (
     AND (p75 IS NULL OR p90 IS NULL OR p75 <= p90)
   )
 );
+
+-- CREATE TABLE IF NOT EXISTS does not upgrade the five historical PCS tables.
+-- Normalize the legacy shape explicitly so fresh and upgraded databases end
+-- with the same types, defaults, nullability, checks and FK delete behavior.
+DO $legacy_authorship$
+BEGIN
+  IF EXISTS (SELECT 1 FROM public.pcs_planos WHERE created_by IS NULL) THEN
+    RAISE EXCEPTION 'PCS upgrade requires created_by reconciliation before enforcing authorship';
+  END IF;
+  IF EXISTS (SELECT 1 FROM public.pcs_avaliacoes_cargo WHERE avaliado_por IS NULL) THEN
+    RAISE EXCEPTION 'PCS upgrade requires avaliado_por reconciliation before enforcing authorship';
+  END IF;
+END
+$legacy_authorship$;
+
+ALTER TABLE public.pcs_planos
+  ALTER COLUMN nome TYPE text,
+  ALTER COLUMN versao TYPE integer USING versao::integer,
+  ALTER COLUMN versao SET DEFAULT 1,
+  ALTER COLUMN versao SET NOT NULL,
+  ALTER COLUMN status TYPE text,
+  ALTER COLUMN status SET DEFAULT 'rascunho',
+  ALTER COLUMN status SET NOT NULL,
+  ALTER COLUMN amplitude_pct TYPE numeric(6,2) USING amplitude_pct::numeric(6,2),
+  ALTER COLUMN amplitude_pct SET DEFAULT 40,
+  ALTER COLUMN amplitude_pct SET NOT NULL,
+  ALTER COLUMN num_steps TYPE integer USING num_steps::integer,
+  ALTER COLUMN num_steps SET DEFAULT 5,
+  ALTER COLUMN num_steps SET NOT NULL,
+  ALTER COLUMN overlap_pct TYPE numeric(6,2) USING overlap_pct::numeric(6,2),
+  ALTER COLUMN overlap_pct SET DEFAULT 25,
+  ALTER COLUMN overlap_pct SET NOT NULL,
+  ALTER COLUMN created_by SET DEFAULT auth.uid(),
+  ALTER COLUMN created_by SET NOT NULL,
+  ALTER COLUMN created_at SET DEFAULT now(),
+  ALTER COLUMN created_at SET NOT NULL,
+  ALTER COLUMN updated_at SET DEFAULT now(),
+  ALTER COLUMN updated_at SET NOT NULL;
+ALTER TABLE public.pcs_planos
+  DROP CONSTRAINT IF EXISTS pcs_planos_nome_check,
+  DROP CONSTRAINT IF EXISTS pcs_planos_versao_check,
+  DROP CONSTRAINT IF EXISTS pcs_planos_status_check,
+  DROP CONSTRAINT IF EXISTS pcs_planos_amplitude_pct_check,
+  DROP CONSTRAINT IF EXISTS pcs_planos_num_steps_check,
+  DROP CONSTRAINT IF EXISTS pcs_planos_overlap_pct_check,
+  DROP CONSTRAINT IF EXISTS pcs_planos_vigencia_coerente;
+ALTER TABLE public.pcs_planos
+  ADD CONSTRAINT pcs_planos_nome_check CHECK (length(btrim(nome)) BETWEEN 1 AND 160),
+  ADD CONSTRAINT pcs_planos_versao_check CHECK (versao > 0),
+  ADD CONSTRAINT pcs_planos_status_check CHECK (status IN ('rascunho','em_avaliacao','ativo','arquivado')),
+  ADD CONSTRAINT pcs_planos_amplitude_pct_check CHECK (amplitude_pct > 0 AND amplitude_pct <= 200),
+  ADD CONSTRAINT pcs_planos_num_steps_check CHECK (num_steps BETWEEN 2 AND 12),
+  ADD CONSTRAINT pcs_planos_overlap_pct_check CHECK (overlap_pct >= 0 AND overlap_pct < 100),
+  ADD CONSTRAINT pcs_planos_vigencia_coerente CHECK (vigencia_fim IS NULL OR vigencia_inicio IS NULL OR vigencia_fim >= vigencia_inicio);
+
+ALTER TABLE public.pcs_fatores
+  ALTER COLUMN nome TYPE text,
+  ALTER COLUMN peso TYPE numeric(8,4) USING peso::numeric(8,4),
+  ALTER COLUMN peso SET DEFAULT 1,
+  ALTER COLUMN peso SET NOT NULL,
+  ALTER COLUMN ordem TYPE integer USING ordem::integer,
+  ALTER COLUMN ordem SET DEFAULT 0,
+  ALTER COLUMN ordem SET NOT NULL,
+  ALTER COLUMN graus TYPE jsonb USING graus::jsonb,
+  ALTER COLUMN graus SET DEFAULT '[]'::jsonb,
+  ALTER COLUMN graus SET NOT NULL,
+  ALTER COLUMN created_at SET DEFAULT now(),
+  ALTER COLUMN created_at SET NOT NULL,
+  ALTER COLUMN updated_at SET DEFAULT now(),
+  ALTER COLUMN updated_at SET NOT NULL;
+ALTER TABLE public.pcs_fatores
+  DROP CONSTRAINT IF EXISTS pcs_fatores_nome_check,
+  DROP CONSTRAINT IF EXISTS pcs_fatores_peso_check,
+  DROP CONSTRAINT IF EXISTS pcs_fatores_ordem_check;
+ALTER TABLE public.pcs_fatores
+  ADD CONSTRAINT pcs_fatores_nome_check CHECK (length(btrim(nome)) BETWEEN 1 AND 160),
+  ADD CONSTRAINT pcs_fatores_peso_check CHECK (peso > 0 AND peso <= 1000),
+  ADD CONSTRAINT pcs_fatores_ordem_check CHECK (ordem >= 0);
+DO $constraint$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_catalog.pg_constraint c
+    JOIN pg_catalog.pg_class t ON t.oid = c.conrelid
+    JOIN pg_catalog.pg_namespace n ON n.oid = t.relnamespace
+    WHERE n.nspname = 'public'
+      AND t.relname = 'pcs_fatores'
+      AND c.conname = 'pcs_fatores_plano_id_ordem_key'
+      AND c.contype = 'u'
+  ) THEN
+    ALTER TABLE public.pcs_fatores
+      ADD CONSTRAINT pcs_fatores_plano_id_ordem_key UNIQUE (plano_id, ordem);
+  END IF;
+END
+$constraint$;
+
+ALTER TABLE public.pcs_avaliacoes_cargo
+  ALTER COLUMN pontuacoes TYPE jsonb USING pontuacoes::jsonb,
+  ALTER COLUMN pontuacoes SET DEFAULT '{}'::jsonb,
+  ALTER COLUMN pontuacoes SET NOT NULL,
+  ALTER COLUMN pontos_total TYPE numeric(14,4) USING pontos_total::numeric(14,4),
+  ALTER COLUMN pontos_total SET DEFAULT 0,
+  ALTER COLUMN pontos_total SET NOT NULL,
+  ALTER COLUMN avaliado_por SET DEFAULT auth.uid(),
+  ALTER COLUMN avaliado_por SET NOT NULL,
+  ALTER COLUMN avaliado_em SET DEFAULT now(),
+  ALTER COLUMN avaliado_em SET NOT NULL,
+  ALTER COLUMN created_at SET DEFAULT now(),
+  ALTER COLUMN created_at SET NOT NULL,
+  ALTER COLUMN updated_at SET DEFAULT now(),
+  ALTER COLUMN updated_at SET NOT NULL;
+ALTER TABLE public.pcs_avaliacoes_cargo DROP CONSTRAINT IF EXISTS pcs_avaliacoes_cargo_pontos_total_check;
+ALTER TABLE public.pcs_avaliacoes_cargo
+  ADD CONSTRAINT pcs_avaliacoes_cargo_pontos_total_check CHECK (pontos_total >= 0);
+
+ALTER TABLE public.pcs_grades
+  ALTER COLUMN ordem TYPE integer USING ordem::integer,
+  ALTER COLUMN pontos_min TYPE numeric(14,4) USING pontos_min::numeric(14,4),
+  ALTER COLUMN pontos_max TYPE numeric(14,4) USING pontos_max::numeric(14,4),
+  ALTER COLUMN salario_min TYPE numeric(14,2) USING salario_min::numeric(14,2),
+  ALTER COLUMN salario_medio TYPE numeric(14,2) USING salario_medio::numeric(14,2),
+  ALTER COLUMN salario_max TYPE numeric(14,2) USING salario_max::numeric(14,2),
+  ALTER COLUMN created_at SET DEFAULT now(),
+  ALTER COLUMN created_at SET NOT NULL,
+  ALTER COLUMN updated_at SET DEFAULT now(),
+  ALTER COLUMN updated_at SET NOT NULL;
+ALTER TABLE public.pcs_grades
+  DROP CONSTRAINT IF EXISTS pcs_grades_ordem_check,
+  DROP CONSTRAINT IF EXISTS pcs_grades_nome_check,
+  DROP CONSTRAINT IF EXISTS pcs_grades_salario_min_check,
+  DROP CONSTRAINT IF EXISTS pcs_grades_salario_medio_check,
+  DROP CONSTRAINT IF EXISTS pcs_grades_salario_max_check,
+  DROP CONSTRAINT IF EXISTS pcs_grades_pontos_coerentes,
+  DROP CONSTRAINT IF EXISTS pcs_grades_salarios_coerentes;
+ALTER TABLE public.pcs_grades
+  ADD CONSTRAINT pcs_grades_ordem_check CHECK (ordem > 0),
+  ADD CONSTRAINT pcs_grades_nome_check CHECK (length(btrim(nome)) BETWEEN 1 AND 160),
+  ADD CONSTRAINT pcs_grades_salario_min_check CHECK (salario_min >= 0),
+  ADD CONSTRAINT pcs_grades_salario_medio_check CHECK (salario_medio >= 0),
+  ADD CONSTRAINT pcs_grades_salario_max_check CHECK (salario_max >= 0),
+  ADD CONSTRAINT pcs_grades_pontos_coerentes CHECK (pontos_max > pontos_min),
+  ADD CONSTRAINT pcs_grades_salarios_coerentes CHECK (salario_max >= salario_medio AND salario_medio >= salario_min);
+
+ALTER TABLE public.pcs_pesquisa_salarial
+  ALTER COLUMN cargo_referencia TYPE text,
+  ALTER COLUMN fonte TYPE text,
+  ALTER COLUMN p25 TYPE numeric(14,2) USING p25::numeric(14,2),
+  ALTER COLUMN p50 TYPE numeric(14,2) USING p50::numeric(14,2),
+  ALTER COLUMN p75 TYPE numeric(14,2) USING p75::numeric(14,2),
+  ALTER COLUMN p90 TYPE numeric(14,2) USING p90::numeric(14,2),
+  ALTER COLUMN created_at SET DEFAULT now(),
+  ALTER COLUMN created_at SET NOT NULL,
+  ALTER COLUMN updated_at SET DEFAULT now(),
+  ALTER COLUMN updated_at SET NOT NULL;
+ALTER TABLE public.pcs_pesquisa_salarial
+  DROP CONSTRAINT IF EXISTS pcs_pesquisa_salarial_cargo_id_fkey,
+  DROP CONSTRAINT IF EXISTS pcs_pesquisa_salarial_cargo_referencia_check,
+  DROP CONSTRAINT IF EXISTS pcs_pesquisa_salarial_fonte_check,
+  DROP CONSTRAINT IF EXISTS pcs_pesquisa_salarial_percentis_coerentes;
+ALTER TABLE public.pcs_pesquisa_salarial
+  ADD CONSTRAINT pcs_pesquisa_salarial_cargo_id_fkey FOREIGN KEY (cargo_id) REFERENCES public.cargos(id) ON DELETE SET NULL,
+  ADD CONSTRAINT pcs_pesquisa_salarial_cargo_referencia_check CHECK (length(btrim(cargo_referencia)) BETWEEN 1 AND 160),
+  ADD CONSTRAINT pcs_pesquisa_salarial_fonte_check CHECK (length(btrim(fonte)) BETWEEN 1 AND 240),
+  ADD CONSTRAINT pcs_pesquisa_salarial_percentis_coerentes CHECK (
+    (p25 IS NULL OR p50 IS NULL OR p25 <= p50)
+    AND (p50 IS NULL OR p75 IS NULL OR p50 <= p75)
+    AND (p75 IS NULL OR p90 IS NULL OR p75 <= p90)
+  );
 CREATE INDEX IF NOT EXISTS idx_pcs_pesquisa_empresa
   ON public.pcs_pesquisa_salarial (empresa_id, data_referencia DESC);
 CREATE INDEX IF NOT EXISTS idx_pcs_pesquisa_cargo
@@ -529,7 +697,7 @@ AS $function$
   WITH authorized_plan AS (
     SELECT p.* FROM public.pcs_planos p
     WHERE p.id = p_plano_id AND p.deleted_at IS NULL
-      AND public.pcs_pode_ver_plano(p.id)
+      AND public.pcs_pode_gerir_plano(p.id)
   ), evaluated AS (
     SELECT a.cargo_id, c.nome AS cargo_nome, a.pontos_total, a.plano_id
     FROM public.pcs_avaliacoes_cargo a
@@ -629,6 +797,38 @@ BEGIN
   IF p_encargos_pct IS NULL OR p_encargos_pct < 0 OR p_encargos_pct > 200 THEN
     RAISE EXCEPTION 'p_encargos_pct must be between 0 and 200' USING ERRCODE = '22023';
   END IF;
+  WITH authorized_plan AS (
+    SELECT p.* FROM public.pcs_planos p
+    WHERE p.id = p_plano_id AND p.deleted_at IS NULL
+      AND public.pcs_pode_ver_plano(p.id)
+  ), evaluated AS (
+    SELECT a.cargo_id, c.nome AS cargo_nome, a.pontos_total, a.plano_id
+    FROM public.pcs_avaliacoes_cargo a
+    JOIN public.cargos c ON c.id = a.cargo_id
+    WHERE a.plano_id = p_plano_id
+  ), fits AS (
+    SELECT
+      col.salario_base AS salario_atual,
+      round(col.salario_base / NULLIF(grade.salario_medio, 0), 4) AS comparatio,
+      CASE WHEN col.salario_base < grade.salario_min THEN 'abaixo_faixa'
+        WHEN col.salario_base > grade.salario_max THEN 'acima_faixa'
+        ELSE 'dentro_faixa' END AS situacao,
+      CASE WHEN col.salario_base < grade.salario_min
+        THEN round(grade.salario_min - col.salario_base, 2) ELSE 0 END AS ajuste_necessario
+    FROM authorized_plan plan
+    JOIN public.colaboradores col
+      ON col.empresa_id = plan.empresa_id AND col.status = 'ativo'
+        AND col.salario_base IS NOT NULL
+    JOIN evaluated ev ON ev.plano_id = plan.id
+      AND ((col.cargo_id IS NOT NULL AND col.cargo_id = ev.cargo_id)
+        OR (col.cargo_id IS NULL AND lower(btrim(col.cargo)) = lower(btrim(ev.cargo_nome))))
+    JOIN LATERAL (
+      SELECT g.* FROM public.pcs_grades g
+      WHERE g.plano_id = plan.id
+        AND ev.pontos_total BETWEEN g.pontos_min AND g.pontos_max
+      ORDER BY g.ordem DESC LIMIT 1
+    ) grade ON true
+  )
   SELECT jsonb_build_object(
     'colaboradores_enquadrados', count(*),
     'abaixo_faixa', count(*) FILTER (WHERE situacao = 'abaixo_faixa'),
@@ -641,7 +841,7 @@ BEGIN
     'impacto_pct_folha', round(COALESCE(sum(ajuste_necessario), 0) / NULLIF(sum(salario_atual), 0) * 100, 2),
     'comparatio_medio', round(avg(comparatio), 4),
     'encargos_pct', p_encargos_pct
-  ) INTO result FROM public.pcs_enquadramento(p_plano_id);
+  ) INTO result FROM fits;
   RETURN COALESCE(result, '{}'::jsonb);
 END
 $function$;

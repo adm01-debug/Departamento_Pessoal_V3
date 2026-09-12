@@ -49,25 +49,27 @@ for (const file of walk(join(root, 'src'))) {
     calls.set(match[1], locations);
   }
 
-  const bridgeImport = source.match(/import\s*\{([^}]+)\}\s*from\s*["']@\/integrations\/supabase\/client["']/);
-  if (bridgeImport) {
+  const aliases = new Set();
+  for (const bridgeImport of source.matchAll(
+    /import\s+(?:type\s+)?\{([^}]+)\}\s*from\s*["']@\/integrations\/supabase\/client["']/g
+  )) {
     const importedSupabase = bridgeImport[1]
       .split(',')
       .map((part) => part.trim())
       .find((part) => /^supabase(?:\s+as\s+[A-Za-z_$][\w$]*)?$/.test(part));
-    const alias =
-      importedSupabase?.match(/(?:\s+as\s+([A-Za-z_$][\w$]*))?$/)?.[1] ?? (importedSupabase ? 'supabase' : null);
-    if (alias) {
-      const tablePattern = new RegExp(
-        `(?:\\b${alias}|\\(${alias}\\s+as\\s+[^)]+\\))\\.from\\s*\\(\\s*["']([A-Za-z0-9_]+)["']`,
-        'g'
-      );
-      for (const match of source.matchAll(tablePattern)) {
-        bridgeTableCalls.push({
-          table: match[1],
-          location: `${relative(root, file)}:${source.slice(0, match.index).split('\n').length}`,
-        });
-      }
+    if (!importedSupabase) continue;
+    aliases.add(importedSupabase.match(/\s+as\s+([A-Za-z_$][\w$]*)$/)?.[1] ?? 'supabase');
+  }
+  for (const alias of aliases) {
+    const tablePattern = new RegExp(
+      `(?:\\b${alias}|\\(${alias}\\s+as\\s+[^)]+\\))\\.from\\s*\\(\\s*["']([A-Za-z0-9_]+)["']`,
+      'g'
+    );
+    for (const match of source.matchAll(tablePattern)) {
+      bridgeTableCalls.push({
+        table: match[1],
+        location: `${relative(root, file)}:${source.slice(0, match.index).split('\n').length}`,
+      });
     }
   }
 }

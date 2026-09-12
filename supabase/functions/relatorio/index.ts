@@ -260,8 +260,9 @@ serve(async (req: Request): Promise<Response> => {
       tabela: 'relatorios',
       registro_id: filtros.empresaId,
       user_id: userId,
-      acao: 'GENERATE_REPORT',
+      acao: 'EXPORT',
       dados_novos: {
+        evento: 'GENERATE_REPORT',
         empresa_id: filtros.empresaId,
         tipo: filtros.tipo,
         filtros_canonical: canonical.slice(0, 4000),

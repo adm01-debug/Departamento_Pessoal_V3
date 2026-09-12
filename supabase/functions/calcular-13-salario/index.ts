@@ -246,7 +246,7 @@ serve(async (req: Request): Promise<Response> => {
     const { error: auditErr } = await supabase.from('audit_log').insert({
       tabela: 'calculo_13_salario',
       registro_id: idemKey ? idemHash : crypto.randomUUID(),
-      acao: 'CALCULATE',
+      acao: 'DECIMO_CALC',
       user_id: userId,
       dados_novos: { ...resultado, hash_sha256: hash },
     });

@@ -98,8 +98,17 @@ export function useESocial() {
       }
       return results;
     },
-    onSuccess: () => {
-      toast.success('Lote enviado com sucesso');
+    onSuccess: (results) => {
+      const simulatedCount = results.filter((result) => result.simulated === true).length;
+      if (simulatedCount === results.length && results.length > 0) {
+        toast.info(`Lote simulado: ${simulatedCount} evento(s), sem transmissão ao Governo`);
+      } else if (simulatedCount > 0) {
+        toast.warning(
+          `Lote concluído parcialmente: ${results.length - simulatedCount} transmitido(s) e ${simulatedCount} simulado(s)`
+        );
+      } else {
+        toast.success('Lote enviado com sucesso');
+      }
       invalidate();
     },
     onError: (err: any) => handleServerError(err),

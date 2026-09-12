@@ -80,20 +80,6 @@ serve(async (req: Request): Promise<Response> => {
   const authz = await requireRh(admin, userId, folha.empresa_id, req);
   if (authz.denied) return authz.denied;
 
-  // Idempotência transacional — evita distribuições duplicadas em rajada
-  const idemKey = extractIdempotencyKey(req, body);
-  const idem = await beginIdempotency(admin, {
-    endpoint: 'distribuir-holerites',
-    key: idemKey,
-    requestBody: { folha_id: folhaId, canais: [...canais].sort() },
-    empresaId: folha.empresa_id,
-    userId,
-    request: req,
-  });
-  if (idem.replay) return idem.replay;
-  if (idem.conflict) return idem.conflict;
-
-
   // Busca holerites da folha
   const { data: holerites, error: hErr } = await admin
     .from('holerites')
@@ -145,6 +131,20 @@ serve(async (req: Request): Promise<Response> => {
       }
     }
   }
+
+  // Claim immediately before the first possible write. Read/validation
+  // failures above therefore remain safely retryable with the same key.
+  const idemKey = extractIdempotencyKey(req, body);
+  const idem = await beginIdempotency(admin, {
+    endpoint: 'distribuir-holerites',
+    key: idemKey,
+    requestBody: { folha_id: folhaId, canais: [...canais].sort() },
+    empresaId: folha.empresa_id,
+    userId,
+    request: req,
+  });
+  if (idem.replay) return idem.replay;
+  if (idem.conflict) return idem.conflict;
 
   if (inserts.length === 0) {
     const replayBody = { ok: true, novos: 0, ja_distribuidos: existentes.size, total: holerites.length };

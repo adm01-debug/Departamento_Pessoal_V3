@@ -10,12 +10,12 @@ cleanup() { [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f "$NAME" >/dev/null 2>
 trap cleanup EXIT
 run_psql() { docker exec "$NAME" psql -X -U postgres -v ON_ERROR_STOP=1 "$@"; }
 expect_denied() {
-  local output status
+  local output status expected="$2"
   set +e
   output="$(run_psql -c "$1" 2>&1)"; status=$?
   set -e
-  [ "$status" -ne 0 ] && [[ "$output" == *"permission denied"* || "$output" == *"restricted"* || "$output" == *"required"* || "$output" == *"outside user scope"* ]] || {
-    echo "expected permission denial" >&2; echo "$output" >&2; exit 1;
+  [ "$status" -ne 0 ] && [[ "$output" == *"$expected"* ]] || {
+    echo "expected denial containing: $expected" >&2; echo "$output" >&2; exit 1;
   }
 }
 
@@ -46,7 +46,7 @@ CREATE TABLE public.profiles(id uuid PRIMARY KEY, user_id uuid UNIQUE NOT NULL, 
 CREATE TABLE public.audit_log(
   id uuid PRIMARY KEY, created_at timestamptz NOT NULL DEFAULT now(), tabela text NOT NULL,
   registro_id text NOT NULL, acao text NOT NULL, user_id uuid, user_email text,
-  dados_anteriores jsonb, dados_novos jsonb, campos_alterados text[]
+  empresa_id uuid, dados_anteriores jsonb, dados_novos jsonb, campos_alterados text[]
 );
 CREATE TABLE public.audit_log_unified(
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(), source_table text NOT NULL,
@@ -76,6 +76,7 @@ GRANT SELECT ON public.v_audit_trail TO authenticated;
 
 INSERT INTO public.user_empresas VALUES
 ('00000000-0000-0000-0000-000000000001','10000000-0000-4000-8000-000000000001'),
+('00000000-0000-0000-0000-000000000001','10000000-0000-0000-0000-000000000009'),
 ('00000000-0000-0000-0000-000000000002','20000000-0000-4000-8000-000000000002');
 INSERT INTO public.user_roles VALUES
 ('00000000-0000-0000-0000-000000000001','rh'),
@@ -90,6 +91,13 @@ INSERT INTO public.audit_log(
 ('30000000-0000-4000-8000-000000000001',now()-interval '2 minute','folha','r1','UPDATE','00000000-0000-0000-0000-000000000001','rh@example.test',NULL,'{"empresa_id":"10000000-0000-4000-8000-000000000001","status":"fechada"}',ARRAY['status']),
 ('30000000-0000-4000-8000-000000000002',now()-interval '1 minute','folha','r2','UPDATE','00000000-0000-0000-0000-000000000002','user@example.test',NULL,'{"empresa_id":"20000000-0000-4000-8000-000000000002","status":"aberta"}',ARRAY['status']),
 ('30000000-0000-4000-8000-000000000003',now(),'misc','r3','UPDATE',NULL,NULL,NULL,'{"empresa_id":"not-a-uuid"}',NULL);
+INSERT INTO public.audit_log(
+  id, created_at, tabela, registro_id, acao, user_id, empresa_id,
+  dados_anteriores, dados_novos, campos_alterados
+) VALUES (
+  '30000000-0000-4000-8000-000000000005',now(),'folha','physical-tenant','UPDATE',
+  '00000000-0000-0000-0000-000000000001','10000000-0000-0000-0000-000000000009',NULL,'{"status":"fechada"}',ARRAY['status']
+);
 SQL
 
 for pass in 1 2; do run_psql -f /tmp/migration.sql >/dev/null; done
@@ -103,19 +111,30 @@ filtered_count="$(run_psql -qAtc "SET ROLE authenticated; SET request.jwt.claims
 changed_fields="$(run_psql -qAtc "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000001\",\"role\":\"authenticated\"}'; SELECT array_to_string(campos_alterados, ',') FROM public.get_audit_trail('10000000-0000-4000-8000-000000000001',100,now(),'folha','r1');")"
 [ "$changed_fields" = "status" ] || { echo "changed fields normalization failed: $changed_fields" >&2; exit 1; }
 
+physical_tenant_count="$(run_psql -qAtc "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000001\",\"role\":\"authenticated\"}'; SELECT count(*) FROM public.get_audit_trail('10000000-0000-0000-0000-000000000009');")"
+[ "$physical_tenant_count" = "1" ] || { echo "physical/non-RFC tenant backfill failed: $physical_tenant_count" >&2; exit 1; }
+
 written_actor="$(run_psql -qAtc "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000001\",\"role\":\"authenticated\"}'; SELECT public.registrar_auditoria('folha','secure-rpc','EXECUTE_CALC',NULL,'{\"total\":10}','10000000-0000-4000-8000-000000000001'); SELECT user_id FROM public.get_audit_trail('10000000-0000-4000-8000-000000000001',100,clock_timestamp()+interval '1 second','folha','secure-rpc');" | tail -1)"
 [ "$written_actor" = "00000000-0000-0000-0000-000000000001" ] || { echo "server-derived audit actor failed: $written_actor" >&2; exit 1; }
 
-expect_denied "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000001\",\"role\":\"authenticated\"}'; SELECT public.registrar_auditoria('folha','missing-tenant','UPDATE');"
-expect_denied "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000001\",\"role\":\"authenticated\"}'; SELECT public.registrar_auditoria('folha','foreign-tenant','UPDATE',NULL,NULL,'20000000-0000-4000-8000-000000000002');"
-expect_denied "SET ROLE anon; SELECT public.registrar_auditoria('folha','anonymous','UPDATE',NULL,NULL,'10000000-0000-4000-8000-000000000001');"
+expect_denied "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000001\",\"role\":\"authenticated\"}'; SELECT public.registrar_auditoria('folha','missing-tenant','UPDATE');" "empresa_id required for audit event"
+expect_denied "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000001\",\"role\":\"authenticated\"}'; SELECT public.registrar_auditoria('folha','foreign-tenant','UPDATE',NULL,NULL,'20000000-0000-4000-8000-000000000002');" "company outside user scope"
+expect_denied "SET ROLE anon; SELECT public.registrar_auditoria('folha','anonymous','UPDATE',NULL,NULL,'10000000-0000-4000-8000-000000000001');" "permission denied for function registrar_auditoria"
 
-expect_denied "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000002\",\"role\":\"authenticated\"}'; SELECT * FROM public.get_audit_trail('10000000-0000-4000-8000-000000000001');"
-expect_denied "SET ROLE anon; SELECT * FROM public.get_audit_trail('10000000-0000-4000-8000-000000000001');"
-expect_denied "SET ROLE authenticated; SELECT * FROM public.v_audit_trail;"
+expect_denied "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000002\",\"role\":\"authenticated\"}'; SELECT * FROM public.get_audit_trail('10000000-0000-4000-8000-000000000001');" "audit trail restricted to RH or administrator"
+expect_denied "SET ROLE anon; SELECT * FROM public.get_audit_trail('10000000-0000-4000-8000-000000000001');" "permission denied for function get_audit_trail"
+expect_denied "SET ROLE authenticated; SELECT * FROM public.v_audit_trail;" "permission denied for view v_audit_trail"
 
 admin_count="$(run_psql -qAtc "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000099\",\"role\":\"authenticated\"}'; SELECT count(*) FROM public.get_audit_trail(NULL);")"
-[ "$admin_count" = "4" ] || { echo "admin audit feed failed: $admin_count" >&2; exit 1; }
+[ "$admin_count" = "5" ] || { echo "admin audit feed failed: $admin_count" >&2; exit 1; }
+
+# Domain filtering must happen inside the RPC before LIMIT. A newer unrelated
+# event must not hide the older event requested by a module timeline.
+run_psql -qAtc "INSERT INTO public.audit_log_unified(source_table,empresa_id,action,entity,entity_id,occurred_at) VALUES
+  ('test','10000000-0000-4000-8000-000000000001','UPDATE','metas_okrs','target-old',now()-interval '10 seconds'),
+  ('test','10000000-0000-4000-8000-000000000001','UPDATE','misc_newer','noise-new',now());" >/dev/null
+domain_limited="$(run_psql -qAtc "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000001\",\"role\":\"authenticated\"}'; SELECT registro_id FROM public.get_audit_trail('10000000-0000-4000-8000-000000000001',1,clock_timestamp()+interval '1 second',NULL,NULL,ARRAY['metas_okrs']);")"
+[ "$domain_limited" = "target-old" ] || { echo "domain filter was applied after limit: $domain_limited" >&2; exit 1; }
 
 # Future legacy inserts must be forwarded with the tenant populated.
 run_psql -qAtc "INSERT INTO public.audit_log(id,tabela,registro_id,acao,dados_novos) VALUES ('30000000-0000-4000-8000-000000000004','folha','r4','INSERT','{\"empresa_id\":\"10000000-0000-4000-8000-000000000001\"}');" >/dev/null

@@ -1,7 +1,12 @@
 import { supabase } from '@/integrations/supabase/client';
 import { auditLogger } from '@/utils/auditLogger';
 import { Database } from '@/integrations/supabase/types';
-import { criarEvento, enviarEvento } from './esocialService';
+import {
+  claimEventoAdmissaoESocial,
+  completeEventoAdmissaoESocial,
+  enviarEvento,
+  failEventoAdmissaoESocial,
+} from './esocialService';
 
 // Escapa HTML para prevenir XSS em dados vindos do usuário/candidato.
 const esc = (v: unknown): string => {
@@ -201,46 +206,9 @@ export const contratacaoService = {
 
   async transmitirESocial(admissaoId: string, empresaId: string): Promise<boolean> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    let eventoId: string | null = null;
     try {
-      const { data: admissao, error: admissaoError } = await supabase
-        .from('admissoes')
-        .select('id,empresa_id,nome,cpf,data_prevista,data_nascimento,metadata')
-        .eq('id', admissaoId)
-        .eq('empresa_id', empresaId)
-        .maybeSingle();
-      if (admissaoError) throw admissaoError;
-      if (!admissao) throw new Error('Admissão não encontrada ou sem permissão');
-      if (!admissao.cpf) throw new Error('CPF é obrigatório para gerar o evento S-2200');
-
-      const previousMetadata =
-        admissao.metadata && typeof admissao.metadata === 'object' && !Array.isArray(admissao.metadata)
-          ? (admissao.metadata as Record<string, unknown>)
-          : {};
-      let eventoId = typeof previousMetadata.esocial_event_id === 'string' ? previousMetadata.esocial_event_id : null;
-
-      if (!eventoId) {
-        const evento = await criarEvento({
-          empresa_id: empresaId,
-          tipo_evento: 'S-2200',
-          dados: {
-            admissaoId,
-            cpfTrab: admissao.cpf,
-            nmTrab: admissao.nome,
-            dtAdm: admissao.data_prevista,
-            dtNascto: admissao.data_nascimento ?? undefined,
-          },
-        });
-        eventoId = evento.id;
-        const { error: pendingError } = await supabase
-          .from('admissoes')
-          .update({
-            status_esocial: 'processando',
-            metadata: { ...previousMetadata, esocial_event_id: eventoId },
-          })
-          .eq('id', admissaoId)
-          .eq('empresa_id', empresaId);
-        if (pendingError) throw pendingError;
-      }
+      eventoId = await claimEventoAdmissaoESocial(admissaoId, empresaId);
 
       const transmission = await enviarEvento(eventoId, empresaId);
       if (transmission.simulated) {
@@ -249,42 +217,23 @@ export const contratacaoService = {
       const receipt = transmission.protocolo || transmission.recibo;
       if (!receipt) throw new Error('O eSocial não devolveu protocolo ou recibo verificável');
 
-      const { error } = await supabase
-        .from('admissoes')
-        .update({
-          etapa: 'esocial',
-          checklist_esocial_enviado: true,
-          status_esocial: 'enviado',
-          protocolo_esocial: receipt,
-          data_transmissao_esocial: new Date().toISOString(),
-          metadata: {
-            ...previousMetadata,
-            esocial_event_id: eventoId,
-            esocial_protocol: transmission.protocolo,
-            esocial_receipt: transmission.recibo ?? null,
-          },
-        })
-        .eq('id', admissaoId)
-        .eq('empresa_id', empresaId);
-
-      if (error) throw error;
-
-      await auditLogger.log({
-        tabela: 'admissoes',
-        registro_id: admissaoId,
-        acao: 'EXECUTE_CALC',
-        empresa_id: empresaId,
-        dados_novos: {
-          evento: 'TRANSMISSAO_ESOCIAL_S2200',
-          status: 'sucesso',
-          evento_id: eventoId,
-          protocolo: transmission.protocolo,
-          recibo: transmission.recibo ?? null,
-        },
-      });
+      await completeEventoAdmissaoESocial(
+        admissaoId,
+        empresaId,
+        eventoId,
+        transmission.protocolo,
+        transmission.recibo ?? null
+      );
 
       return true;
     } catch (e) {
+      if (eventoId) {
+        try {
+          await failEventoAdmissaoESocial(admissaoId, empresaId, eventoId);
+        } catch {
+          // A falha de recuperação não deve ocultar a causa da transmissão.
+        }
+      }
       throw new Error('Falha na transmissão para o eSocial', { cause: e });
     }
   },

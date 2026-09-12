@@ -27,7 +27,8 @@ CREATE TABLE public.colaboradores (id uuid PRIMARY KEY, empresa_id uuid NOT NULL
 CREATE TABLE public.audit_log (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(), tabela text NOT NULL,
   registro_id uuid NOT NULL, acao text NOT NULL, user_id uuid NOT NULL,
-  dados_novos jsonb
+  dados_novos jsonb,
+  CONSTRAINT audit_log_acao_check CHECK (acao IN ('PROVISOES_CALC'))
 );
 CREATE TABLE public.provisoes_folha (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(), empresa_id uuid NOT NULL REFERENCES public.empresas,
@@ -77,7 +78,7 @@ inserted="$(run_psql -qAtc "SET ROLE service_role; SELECT public.replace_monthly
   '00000000-0000-4000-8000-000000000099','{\"hash_sha256\":\"ok\"}'::jsonb)")"
 [ "$inserted" = '2' ]
 [ "$(run_psql -Atc "SELECT count(*) FROM public.provisoes_mensais WHERE competencia='2026-09-01'")" = '2' ]
-[ "$(run_psql -Atc "SELECT count(*) FROM public.audit_log WHERE acao='CALCULATE_BATCH'")" = '1' ]
+[ "$(run_psql -Atc "SELECT count(*) FROM public.audit_log WHERE acao='PROVISOES_CALC' AND dados_novos->>'evento'='CALCULATE_BATCH'")" = '1' ]
 
 # One invalid FK must roll back both the deletion and the mandatory audit.
 bad_rows='[{"colaborador_id":"00000000-0000-4000-8000-000000000011","tipo":"ferias","valor_principal":1,"encargos_inss":1,"encargos_fgts":1},{"colaborador_id":"00000000-0000-4000-8000-000000000099","tipo":"13_salario","valor_principal":1,"encargos_inss":1,"encargos_fgts":1}]'

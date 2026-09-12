@@ -19,9 +19,9 @@ const _extraOrigins = (Deno.env.get('EXTRA_ALLOWED_ORIGINS') ?? '')
   .filter(Boolean);
 
 const ALLOWED_ORIGINS = [
-  // Aliases estáveis e verificados do deployment Vercel de produção.
+  // Origem canônica. Origens adicionais só entram por configuração explícita
+  // porque módulos legados ainda consomem o objeto CORS estático.
   'https://departamento-pessoal-v3.vercel.app',
-  'https://departamento-pessoal-v3-juca1.vercel.app',
   ..._extraOrigins,
 ];
 

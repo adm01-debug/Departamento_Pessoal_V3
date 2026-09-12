@@ -134,9 +134,9 @@ serve(async (req: Request): Promise<Response> => {
     await admin.from('audit_log').insert({
       tabela: 'integracoes',
       registro_id: body.empresaId,
-      acao: 'SYNC_INTEGRATION',
+      acao: 'SYSTEM_ACTION',
       user_id: userId,
-      dados_novos: { provider: body.provider, hasPayload: !!body.payload },
+      dados_novos: { evento: 'SYNC_INTEGRATION', provider: body.provider, hasPayload: !!body.payload },
     });
 
     return json({

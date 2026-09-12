@@ -97,9 +97,9 @@ serve(async (req: Request): Promise<Response> => {
     await adminClient.from('audit_log').insert({
       tabela: 'backup',
       registro_id: 'system',
-      acao: 'BACKUP',
+      acao: 'BACKUP_CREATED',
       user_id: userData.user.id,
-      dados_novos: { tables: results, total: totalRecords, empresa_id: empresaId },
+      dados_novos: { evento: 'BACKUP', tables: results, total: totalRecords, empresa_id: empresaId },
     });
 
     return new Response(JSON.stringify({

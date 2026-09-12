@@ -12,7 +12,7 @@
 import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
 
 export const metricasSchema = z.object({
-  empresaId: z.string().uuid('ID da empresa deve ser um UUID válido').optional(),
+  empresaId: z.string().uuid('ID da empresa deve ser um UUID válido'),
 });
 
 export const webhookSchema = z.object({

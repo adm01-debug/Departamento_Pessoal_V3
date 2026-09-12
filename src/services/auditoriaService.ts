@@ -35,6 +35,7 @@ export interface TrilhaAuditoriaFiltros {
   /** NULL is accepted only for the global administrator feed. */
   empresa_id: string | null;
   tabela?: string;
+  tabelas?: string[];
   registro_id?: string;
   limite?: number;
   antes_de?: string;
@@ -63,6 +64,9 @@ export const auditoriaService = {
     if (!Number.isInteger(limite) || limite < 1 || limite > 500) {
       throw new Error('limite da trilha deve estar entre 1 e 500');
     }
+    if (filtros.tabela && filtros.tabelas) {
+      throw new Error('use tabela ou tabelas, não ambos');
+    }
 
     const { data, error } = await supabase.rpc('get_audit_trail', {
       p_empresa_id: filtros.empresa_id,
@@ -70,6 +74,7 @@ export const auditoriaService = {
       p_before: filtros.antes_de ?? new Date().toISOString(),
       p_tabela: filtros.tabela ?? null,
       p_registro_id: filtros.registro_id ?? null,
+      p_tabelas: filtros.tabelas ?? null,
     });
 
     if (error) throw error;

@@ -2,21 +2,26 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
-import { History, Calendar, Tag, Target, MessageSquare } from 'lucide-react';
+import { History, Calendar, Tag, Target, MessageSquare, AlertCircle } from 'lucide-react';
 import { auditoriaService } from '@/services/auditoriaService';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { motion } from 'framer-motion';
 
+const PERFORMANCE_AUDIT_TABLES = ['ciclos_avaliacao', 'metas_okrs', 'feedbacks_360', 'pdis', 'competencias_matriz'];
+
 export function PerformanceAuditTimeline() {
   const { empresaAtual } = useEmpresas();
-  const { data: logs = [] } = useQuery({
+  const { data: logs = [], error } = useQuery({
     queryKey: ['performance-audit-logs', empresaAtual?.id],
     queryFn: async () => {
-      const data = await auditoriaService.listarTrilha({ empresa_id: empresaAtual!.id, limite: 100 });
-      const tabelas = new Set(['ciclos_avaliacao', 'metas_okrs', 'feedbacks_360', 'pdis', 'competencias_matriz']);
-      return data.filter((log) => !!log.tabela && tabelas.has(log.tabela)).slice(0, 30);
+      const data = await auditoriaService.listarTrilha({
+        empresa_id: empresaAtual!.id,
+        tabelas: PERFORMANCE_AUDIT_TABLES,
+        limite: 30,
+      });
+      return data;
     },
     enabled: !!empresaAtual?.id,
   });
@@ -37,7 +42,11 @@ export function PerformanceAuditTimeline() {
       <CardContent className="p-0">
         <ScrollArea className="h-[500px]">
           <div className="p-4 space-y-4">
-            {logs.length === 0 ? (
+            {error ? (
+              <div role="alert" className="flex items-center justify-center gap-2 py-12 text-destructive text-xs">
+                <AlertCircle className="h-4 w-4" /> Não foi possível carregar a trilha de desempenho.
+              </div>
+            ) : logs.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground text-xs italic">
                 Nenhum registro de auditoria disponível.
               </div>

@@ -5,18 +5,7 @@ import { holeriteSchema } from '../_shared/schemas/common.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { requireSelfOrRh } from '../_shared/authz.ts';
-
-// Tabelas INSS 2026
-const calcularINSS = (base: number): number => {
-  const inss = base <= 1518
-    ? base * 0.075
-    : base <= 2793.88
-      ? 113.85 + (base - 1518) * 0.09
-      : base <= 4190.83
-        ? 228.68 + (base - 2793.88) * 0.12
-        : 396.31 + (Math.min(base, 8157.41) - 4190.83) * 0.14;
-  return Number(Math.min(inss, 951.63).toFixed(2));
-};
+import { calcularInssEmpregado } from './inss.ts';
 
 const calcularIRRF = (base: number, dependentes: number = 0): number => {
   const baseCalculo = base - (dependentes * 189.59);
@@ -90,7 +79,7 @@ serve(async (req: Request): Promise<Response> => {
 
     // Audit log — leitura de PII sensível
     await supabase.from('audit_log').insert({
-      tabela: 'holerite', registro_id: colaboradorId, acao: 'READ_HOLERITE',
+      tabela: 'holerite', registro_id: colaboradorId, acao: 'VISUALIZACAO',
       user_id: userId,
       dados_novos: { competencia, empresa_id: colaborador.empresa_id },
     });
@@ -121,7 +110,7 @@ serve(async (req: Request): Promise<Response> => {
     const salarioProporcional = Number(((salarioBase / 30) * diasTrabalhados).toFixed(2));
 
     // Calcular descontos
-    const inss = calcularINSS(salarioProporcional);
+    const inss = calcularInssEmpregado(salarioProporcional, competencia);
     const irrf = calcularIRRF(salarioProporcional - inss);
     const fgts = Number((salarioProporcional * 0.08).toFixed(2));
 

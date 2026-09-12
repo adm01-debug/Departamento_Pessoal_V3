@@ -32,11 +32,23 @@ for pass in 1 2; do run_psql -f /tmp/migration.sql >/dev/null; done
 bucket="$(run_psql -qAtc "SELECT public::text||':'||file_size_limit||':'||array_to_string(allowed_mime_types,',') FROM storage.buckets WHERE id='backups';")"
 [ "$bucket" = "false:104857600:application/json" ] || { echo "bucket contract failed: $bucket" >&2; exit 1; }
 
-anon_count="$(run_psql -qAtc "SET ROLE anon; SELECT count(*) FROM storage.objects WHERE bucket_id='backups';")"
-[ "$anon_count" = "0" ] || { echo "anonymous storage scope failed" >&2; exit 1; }
 run_psql -c "SET ROLE service_role; INSERT INTO storage.objects(bucket_id,name) VALUES('backups','tenant/backup.json');" >/dev/null
 service_count="$(run_psql -qAtc "SET ROLE service_role; SELECT count(*) FROM storage.objects WHERE bucket_id='backups';")"
 [ "$service_count" = "1" ] || { echo "service role bucket access failed" >&2; exit 1; }
+anon_count="$(run_psql -qAtc "SET ROLE anon; SELECT count(*) FROM storage.objects WHERE bucket_id='backups';")"
+[ "$anon_count" = "0" ] || { echo "anonymous caller read an existing backup object" >&2; exit 1; }
+
+set +e
+anon_insert="$(run_psql -c "SET ROLE anon; INSERT INTO storage.objects(bucket_id,name) VALUES('backups','attacker.json');" 2>&1)"
+insert_status=$?
+set -e
+[ "$insert_status" -ne 0 ] && [[ "$anon_insert" == *'row-level security'* ]] || {
+  echo "anonymous caller inserted a backup object" >&2; echo "$anon_insert" >&2; exit 1;
+}
+run_psql -c "SET ROLE anon; UPDATE storage.objects SET name='tampered.json' WHERE bucket_id='backups';" >/dev/null
+run_psql -c "SET ROLE anon; DELETE FROM storage.objects WHERE bucket_id='backups';" >/dev/null
+unchanged="$(run_psql -qAtc "SET ROLE service_role; SELECT name FROM storage.objects WHERE bucket_id='backups';")"
+[ "$unchanged" = "tenant/backup.json" ] || { echo "anonymous UPDATE/DELETE changed backup object: $unchanged" >&2; exit 1; }
 
 run_psql -c 'CREATE DATABASE missing_storage' >/dev/null
 set +e

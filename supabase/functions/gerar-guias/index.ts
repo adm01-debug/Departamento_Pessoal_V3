@@ -277,9 +277,10 @@ serve(async (req: Request): Promise<Response> => {
     const { error: auditErr } = await supabase.from('audit_log').insert({
       tabela: 'guias_fiscais',
       registro_id: crypto.randomUUID(),
-      acao: 'GENERATE_GUIAS',
+      acao: 'SYSTEM_ACTION',
       user_id: userId,
       dados_novos: {
+        evento: 'GENERATE_GUIAS',
         empresa_id, competencia, tipo,
         total_colaboradores: totalColabs,
         guias_geradas: guias.length,

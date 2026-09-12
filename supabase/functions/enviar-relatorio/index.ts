@@ -356,9 +356,10 @@ serve(async (req: Request): Promise<Response> => {
     const { error: attemptAuditError } = await admin.from("audit_log").insert({
       tabela: "relatorios_agendados",
       registro_id: body.agendamentoId ?? empresaId,
-      acao: "SEND_REPORT_ATTEMPT",
+      acao: "EXPORT",
       user_id: userId,
       dados_novos: {
+        evento: "SEND_REPORT_ATTEMPT",
         empresa_id: empresaId,
         tipo: body.tipoRelatorio,
         formato: body.formato,
@@ -444,9 +445,10 @@ serve(async (req: Request): Promise<Response> => {
     const { error: auditErr } = await admin.from("audit_log").insert({
       tabela: "relatorios_agendados",
       registro_id: body.agendamentoId ?? empresaId,
-      acao: "SEND_REPORT",
+      acao: "EXPORT",
       user_id: userId,
       dados_novos: {
+        evento: "SEND_REPORT",
         tipo: body.tipoRelatorio,
         formato: body.formato,
         empresa_id: empresaId,

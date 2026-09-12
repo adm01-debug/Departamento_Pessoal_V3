@@ -19,7 +19,7 @@ Deno.test('notification text removes complete and malformed markup', () => {
 
 Deno.test('notification text removes control characters and preserves Unicode text', () => {
   assertEquals(
-    toNotificationPlainText('\u0000  Olá, férias 👩🏽‍💻\n\u007f'),
+    toNotificationPlainText('\u0000  Olá, férias 👩🏽‍💻\n\u007f\u0085\u009f'),
     'Olá, férias 👩🏽‍💻',
   );
 });

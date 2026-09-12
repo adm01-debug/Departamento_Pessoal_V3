@@ -99,20 +99,6 @@ serve(async (req: Request): Promise<Response> => {
     const rl = await checkRateLimit(admin, { key: `reabrir-folha:${userId}`, limit: 10, windowSec: 60 });
     if (!rl.allowed) return rateLimitResponse(rl, req);
 
-    // 4.5) Idempotência transacional — evita reaberturas duplicadas
-    const idemKey = extractIdempotencyKey(req, body);
-    const idem = await beginIdempotency(admin, {
-      endpoint: 'reabrir-folha',
-      key: idemKey,
-      requestBody: { empresaId, folhaId, version, motivo, override_esocial },
-      empresaId,
-      userId,
-      request: req,
-    });
-    if (idem.replay) return idem.replay;
-    if (idem.conflict) return idem.conflict;
-
-
     // 5) Carregar folha
     const { data: folha, error: folhaErr } = await admin
       .from('folhas_pagamento')
@@ -181,6 +167,20 @@ serve(async (req: Request): Promise<Response> => {
       : { ok: false as const, code: integrity.code, details: integrity.details };
     const integrityWarnings = integrity.ok ? [] : [`INTEGRITY_${integrity.code}`];
 
+    // Claim immediately before mutation; validation/compliance failures above
+    // must not poison the key with an ambiguous in_progress record.
+    const idemKey = extractIdempotencyKey(req, body);
+    const idem = await beginIdempotency(admin, {
+      endpoint: 'reabrir-folha',
+      key: idemKey,
+      requestBody: { empresaId, folhaId, version, motivo, override_esocial },
+      empresaId,
+      userId,
+      request: req,
+    });
+    if (idem.replay) return idem.replay;
+    if (idem.conflict) return idem.conflict;
+
     // 8) Optimistic lock update
     const reopenedAt = new Date().toISOString();
     const { data: updated, error: updErr } = await admin
@@ -232,7 +232,7 @@ serve(async (req: Request): Promise<Response> => {
     const { error: auditErr } = await admin.from('audit_log').insert({
       tabela: 'folhas_pagamento',
       registro_id: folhaId,
-      acao: 'REOPEN',
+      acao: 'PAYROLL_REOPEN',
       dados_anteriores: {
         status: 'fechada',
         version: folha.version,

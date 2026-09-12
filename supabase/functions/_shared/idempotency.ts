@@ -34,8 +34,9 @@ export type IdempotencyReason =
   | 'KEY_INVALID'
   | 'KEY_REUSE'
   | 'IN_PROGRESS'
-  | 'STORE_ERROR'
-  | 'RETRY_AFTER_FAILURE';
+  | 'INDETERMINATE'
+  | 'PREVIOUS_FAILURE'
+  | 'STORE_ERROR';
 
 export interface BeginIdempotencyResult {
   /** Header não fornecido — segue fluxo sem idempotência */
@@ -207,56 +208,28 @@ export async function beginIdempotency(
   }
 
   if (existing.status === "in_progress") {
-    // Registros in_progress com mais de 5 minutos são considerados zumbis (função caiu sem completar).
-    // Reutilizamos o registro para evitar deadlock permanente.
+    // An old in_progress row is an indeterminate outcome, not proof that the
+    // business mutation failed. Re-executing it can duplicate payroll/CNAB
+    // effects when the final bookkeeping UPDATE was the only failed step.
     const IN_PROGRESS_TTL_MS = 5 * 60 * 1000;
     const createdAt = existing.created_at ? new Date(existing.created_at).getTime() : null;
     const isStale = createdAt !== null && (Date.now() - createdAt) > IN_PROGRESS_TTL_MS;
-
-    if (!isStale) {
-      return {
-        skipped: false,
-        reason: 'IN_PROGRESS',
-        existingId: existing.id,
-        keyHash,
-        requestHash,
-        conflict: createErrorResponse(
-          "Requisição idempotente em andamento — tente novamente em instantes",
-          409,
-          "IDEMPOTENCY_IN_PROGRESS",
-          undefined,
-          params.request,
-        ),
-      };
-    }
-
-    // Registro zumbi — reclamar atomicamente (Codex P1: sem SELECT-then-UPDATE separado).
-    // O WHERE status='in_progress' garante que apenas um worker ganha a corrida.
-    const { data: claimed } = await admin
-      .from("idempotency_keys")
-      .update({ status: "in_progress", request_hash: requestHash, response_body: null, response_status: null, completed_at: null })
-      .eq("id", existing.id)
-      .eq("status", "in_progress")
-      .select("id")
-      .maybeSingle();
-    if (!claimed?.id) {
-      // Outro worker reclamou primeiro — rejeitar como in_progress
-      return {
-        skipped: false,
-        reason: 'IN_PROGRESS',
-        existingId: existing.id,
-        keyHash,
-        requestHash,
-        conflict: createErrorResponse(
-          "Requisição idempotente em andamento — tente novamente em instantes",
-          409,
-          "IDEMPOTENCY_IN_PROGRESS",
-          undefined,
-          params.request,
-        ),
-      };
-    }
-    return { skipped: false, id: existing.id, reason: 'RETRY_AFTER_FAILURE', existingId: existing.id, keyHash, requestHash };
+    return {
+      skipped: false,
+      reason: isStale ? 'INDETERMINATE' : 'IN_PROGRESS',
+      existingId: existing.id,
+      keyHash,
+      requestHash,
+      conflict: createErrorResponse(
+        isStale
+          ? "Resultado anterior indeterminado — reconcilie a operação antes de tentar novamente"
+          : "Requisição idempotente em andamento — tente novamente em instantes",
+        409,
+        isStale ? "IDEMPOTENCY_STATE_INDETERMINATE" : "IDEMPOTENCY_IN_PROGRESS",
+        undefined,
+        params.request,
+      ),
+    };
   }
 
   if (existing.status === "completed" && existing.response_body) {
@@ -277,13 +250,41 @@ export async function beginIdempotency(
     };
   }
 
-  // status = 'failed' — permite nova tentativa reciclando o registro
-  await admin
-    .from("idempotency_keys")
-
-    .update({ status: "in_progress", request_hash: requestHash, response_body: null, response_status: null, completed_at: null })
-    .eq("id", existing.id);
-  return { skipped: false, id: existing.id, reason: 'RETRY_AFTER_FAILURE', existingId: existing.id, keyHash, requestHash };
+  // A failed key is also terminal. Reusing the same key to retry would erase
+  // the only durable evidence of the first attempt and can duplicate effects
+  // after a partial/indeterminate failure. Callers may submit a new operation
+  // with a new key after reconciling the domain state.
+  if (existing.response_body !== null && existing.response_body !== undefined) {
+    return {
+      skipped: false,
+      reason: 'REPLAY',
+      existingId: existing.id,
+      keyHash,
+      requestHash,
+      replay: new Response(JSON.stringify(existing.response_body), {
+        status: existing.response_status ?? 500,
+        headers: {
+          ...getCorsHeaders(params.request),
+          "Content-Type": "application/json",
+          "Idempotent-Replay": "true",
+        },
+      }),
+    };
+  }
+  return {
+    skipped: false,
+    reason: 'PREVIOUS_FAILURE',
+    existingId: existing.id,
+    keyHash,
+    requestHash,
+    conflict: createErrorResponse(
+      "Tentativa anterior falhou — reconcilie a operação e use uma nova chave",
+      409,
+      "IDEMPOTENCY_PREVIOUS_FAILURE",
+      undefined,
+      params.request,
+    ),
+  };
 }
 
 export async function completeIdempotency(

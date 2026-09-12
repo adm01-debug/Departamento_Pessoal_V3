@@ -48,7 +48,7 @@ BEGIN
     NULLIF(v_row #>> '{payload,novos,empresa_id}', ''),
     NULLIF(v_row #>> '{payload,dados_novos,empresa_id}', '')
   );
-  IF v_raw_empresa ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$' THEN
+  IF v_raw_empresa ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' THEN
     v_empresa := v_raw_empresa::uuid;
   END IF;
 
@@ -113,6 +113,7 @@ WITH tenant_source AS (
   SELECT
     a.id,
     COALESCE(
+      NULLIF(to_jsonb(a) ->> 'empresa_id', ''),
       NULLIF(a.dados_novos ->> 'empresa_id', ''),
       NULLIF(a.dados_anteriores ->> 'empresa_id', '')
     ) AS raw_empresa_id
@@ -124,7 +125,7 @@ FROM tenant_source AS s
 WHERE u.source_table = 'audit_log'
   AND u.source_id = s.id
   AND u.empresa_id IS NULL
-  AND s.raw_empresa_id ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$';
+  AND s.raw_empresa_id ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$';
 
 CREATE INDEX IF NOT EXISTS idx_audit_unified_tenant_entity_occurred
   ON public.audit_log_unified (empresa_id, entity, occurred_at DESC);
@@ -173,7 +174,7 @@ BEGIN
       NULLIF(p_dados_novos ->> 'empresa_id', ''),
       NULLIF(p_dados_anteriores ->> 'empresa_id', '')
     );
-    IF raw_empresa_id ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$' THEN
+    IF raw_empresa_id ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' THEN
       scoped_empresa_id := raw_empresa_id::uuid;
     END IF;
   END IF;
@@ -212,13 +213,15 @@ COMMENT ON FUNCTION public.registrar_auditoria(text, text, text, jsonb, jsonb, u
 -- against an environment that received a pre-release draft. Keeping both
 -- overloads would make calls with default arguments ambiguous in PostgREST.
 DROP FUNCTION IF EXISTS public.get_audit_trail(uuid, integer, timestamptz);
+DROP FUNCTION IF EXISTS public.get_audit_trail(uuid, integer, timestamptz, text, text);
 
 CREATE OR REPLACE FUNCTION public.get_audit_trail(
   p_empresa_id uuid DEFAULT NULL,
   p_limit integer DEFAULT 100,
   p_before timestamptz DEFAULT now(),
   p_tabela text DEFAULT NULL,
-  p_registro_id text DEFAULT NULL
+  p_registro_id text DEFAULT NULL,
+  p_tabelas text[] DEFAULT NULL
 )
 RETURNS TABLE (
   id uuid,
@@ -249,6 +252,14 @@ BEGIN
   IF p_limit IS NULL OR p_limit < 1 OR p_limit > 500 OR p_before IS NULL
      OR (p_tabela IS NOT NULL AND (
        length(p_tabela) > 128 OR p_tabela !~ '^[A-Za-z_][A-Za-z0-9_]*$'
+     ))
+     OR (p_tabela IS NOT NULL AND p_tabelas IS NOT NULL)
+     OR (p_tabelas IS NOT NULL AND (
+       cardinality(p_tabelas) < 1 OR cardinality(p_tabelas) > 20 OR EXISTS (
+         SELECT 1 FROM unnest(p_tabelas) AS candidate
+         WHERE candidate IS NULL OR length(candidate) > 128
+           OR candidate !~ '^[A-Za-z_][A-Za-z0-9_]*$'
+       )
      ))
      OR (p_registro_id IS NOT NULL AND length(p_registro_id) > 128) THEN
     RAISE EXCEPTION 'invalid audit trail arguments' USING ERRCODE = '22023';
@@ -285,6 +296,7 @@ BEGIN
     FROM public.audit_log_unified AS a
     WHERE a.occurred_at < p_before
       AND (p_tabela IS NULL OR a.entity = p_tabela)
+      AND (p_tabelas IS NULL OR a.entity = ANY (p_tabelas))
       AND (p_registro_id IS NULL OR a.entity_id = p_registro_id)
   )
   SELECT
@@ -316,9 +328,9 @@ BEGIN
 END
 $function$;
 
-REVOKE ALL ON FUNCTION public.get_audit_trail(uuid, integer, timestamptz, text, text)
+REVOKE ALL ON FUNCTION public.get_audit_trail(uuid, integer, timestamptz, text, text, text[])
   FROM PUBLIC, anon;
-GRANT EXECUTE ON FUNCTION public.get_audit_trail(uuid, integer, timestamptz, text, text)
+GRANT EXECUTE ON FUNCTION public.get_audit_trail(uuid, integer, timestamptz, text, text, text[])
   TO authenticated, service_role;
 
 DO $lock_legacy_view$
@@ -330,5 +342,5 @@ BEGIN
 END
 $lock_legacy_view$;
 
-COMMENT ON FUNCTION public.get_audit_trail(uuid, integer, timestamptz, text, text) IS
+COMMENT ON FUNCTION public.get_audit_trail(uuid, integer, timestamptz, text, text, text[]) IS
   'Tenant-scoped unified audit feed for RH/admin with optional entity filters; avoids direct access to legacy audit tables.';

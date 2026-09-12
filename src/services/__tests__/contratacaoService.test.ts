@@ -8,10 +8,12 @@ import { deepChain } from '@/test/deepChain';
 
 const EMPRESA_ID = 'test-empresa-id';
 
-const { mockFrom, mockLog, mockCriarEvento, mockEnviarEvento } = vi.hoisted(() => ({
+const { mockFrom, mockLog, mockClaimEvento, mockCompleteEvento, mockFailEvento, mockEnviarEvento } = vi.hoisted(() => ({
   mockFrom: vi.fn(),
   mockLog: vi.fn(),
-  mockCriarEvento: vi.fn(),
+  mockClaimEvento: vi.fn(),
+  mockCompleteEvento: vi.fn(),
+  mockFailEvento: vi.fn(),
   mockEnviarEvento: vi.fn(),
 }));
 
@@ -24,7 +26,9 @@ vi.mock('@/utils/auditLogger', () => ({
 }));
 
 vi.mock('../esocialService', () => ({
-  criarEvento: mockCriarEvento,
+  claimEventoAdmissaoESocial: mockClaimEvento,
+  completeEventoAdmissaoESocial: mockCompleteEvento,
+  failEventoAdmissaoESocial: mockFailEvento,
   enviarEvento: mockEnviarEvento,
 }));
 
@@ -140,113 +144,57 @@ describe('contratacaoService.enviarLinkCandidato', () => {
 describe('contratacaoService.transmitirESocial', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockLog.mockResolvedValue(undefined);
+    mockClaimEvento.mockResolvedValue('evento-1');
+    mockCompleteEvento.mockResolvedValue(undefined);
+    mockFailEvento.mockResolvedValue(undefined);
     mockEnviarEvento.mockResolvedValue({ success: true, protocolo: 'PROTO-REAL', recibo: 'REC-REAL' });
   });
 
-  it('reutiliza o evento persistido e só avança com recibo confirmado', async () => {
-    const admissao = {
-      id: 'adm-1',
-      empresa_id: EMPRESA_ID,
-      nome: 'João',
-      cpf: '52998224725',
-      data_prevista: '2026-01-15',
-      data_nascimento: '1990-01-01',
-      metadata: { esocial_event_id: 'evento-1', campo_preservado: true },
-    };
-
-    const singleFn = vi.fn().mockResolvedValue({ data: admissao, error: null });
-    const eqSelect = vi.fn().mockReturnValue({ maybeSingle: singleFn });
-    const selectFn = vi.fn().mockReturnValue({ eq: eqSelect });
-
-    const eqUpdate = vi.fn().mockResolvedValue({ error: null });
-    const updateFn = vi.fn().mockReturnValue({ eq: eqUpdate });
-
-    mockFrom.mockReturnValueOnce({ select: selectFn }).mockReturnValueOnce({ update: updateFn });
-
+  it('reutiliza a identidade reivindicada atomicamente e só conclui com recibo verificável', async () => {
     const result = await contratacaoService.transmitirESocial('adm-1', EMPRESA_ID);
 
     expect(result).toBe(true);
-    expect(mockCriarEvento).not.toHaveBeenCalled();
+    expect(mockClaimEvento).toHaveBeenCalledWith('adm-1', EMPRESA_ID);
     expect(mockEnviarEvento).toHaveBeenCalledWith('evento-1', EMPRESA_ID);
-    expect(updateFn).toHaveBeenCalledWith(
-      expect.objectContaining({
-        etapa: 'esocial',
-        checklist_esocial_enviado: true,
-        protocolo_esocial: 'PROTO-REAL',
-      })
-    );
-    expect(mockLog).toHaveBeenCalledWith(
-      expect.objectContaining({
-        tabela: 'admissoes',
-        registro_id: 'adm-1',
-        acao: 'EXECUTE_CALC',
-      })
-    );
+    expect(mockCompleteEvento).toHaveBeenCalledWith('adm-1', EMPRESA_ID, 'evento-1', 'PROTO-REAL', 'REC-REAL');
+    expect(mockFailEvento).not.toHaveBeenCalled();
   });
 
-  it('não avança nem inventa protocolo quando o provedor não devolve recibo', async () => {
-    const singleFn = vi.fn().mockResolvedValue({
-      data: {
-        id: 'adm-1',
-        empresa_id: EMPRESA_ID,
-        nome: 'João',
-        cpf: '52998224725',
-        data_prevista: '2026-01-15',
-        data_nascimento: null,
-        metadata: { esocial_event_id: 'evento-1' },
-      },
-      error: null,
-    });
-    const eqSelect = vi.fn().mockReturnValue({ maybeSingle: singleFn });
-    const selectFn = vi.fn().mockReturnValue({ eq: eqSelect });
-    mockFrom.mockReturnValueOnce({ select: selectFn });
+  it('não avança e recupera o status quando o provedor não devolve recibo', async () => {
     mockEnviarEvento.mockResolvedValueOnce({ success: true, protocolo: null, recibo: null });
 
     await expect(contratacaoService.transmitirESocial('adm-1', EMPRESA_ID)).rejects.toThrow(
       'Falha na transmissão para o eSocial'
     );
-    expect(mockFrom).toHaveBeenCalledTimes(1);
-    expect(mockLog).not.toHaveBeenCalled();
+    expect(mockCompleteEvento).not.toHaveBeenCalled();
+    expect(mockFailEvento).toHaveBeenCalledWith('adm-1', EMPRESA_ID, 'evento-1');
   });
 
-  it('cria e persiste a identidade do evento antes de transmitir', async () => {
-    const singleFn = vi.fn().mockResolvedValue({
-      data: {
-        id: 'adm-1',
-        empresa_id: EMPRESA_ID,
-        nome: 'João',
-        cpf: '52998224725',
-        data_prevista: '2026-01-15',
-        data_nascimento: null,
-        metadata: {},
-      },
-      error: null,
-    });
-    const selectFn = vi.fn().mockReturnValue({ eq: vi.fn().mockReturnValue({ maybeSingle: singleFn }) });
-    const pendingUpdate = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue({ error: null }) });
-    const finalUpdate = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue({ error: null }) });
-    mockFrom
-      .mockReturnValueOnce({ select: selectFn })
-      .mockReturnValueOnce({ update: pendingUpdate })
-      .mockReturnValueOnce({ update: finalUpdate });
-    mockCriarEvento.mockResolvedValueOnce({ id: 'evento-novo' });
+  it('recupera o status quando o transporte falha e preserva a causa original', async () => {
+    mockEnviarEvento.mockRejectedValueOnce(new Error('transport unavailable'));
+    mockFailEvento.mockRejectedValueOnce(new Error('recovery unavailable'));
 
-    await contratacaoService.transmitirESocial('adm-1', EMPRESA_ID);
+    await expect(contratacaoService.transmitirESocial('adm-1', EMPRESA_ID)).rejects.toThrow(
+      'Falha na transmissão para o eSocial'
+    );
+    expect(mockFailEvento).toHaveBeenCalledWith('adm-1', EMPRESA_ID, 'evento-1');
+  });
 
-    expect(mockCriarEvento).toHaveBeenCalledWith(
-      expect.objectContaining({
-        empresa_id: EMPRESA_ID,
-        tipo_evento: 'S-2200',
-        dados: expect.objectContaining({ admissaoId: 'adm-1', cpfTrab: '52998224725' }),
-      })
+  it('não tenta recuperar sem uma identidade de evento confirmada pelo banco', async () => {
+    mockClaimEvento.mockRejectedValueOnce(new Error('admission outside scope'));
+    await expect(contratacaoService.transmitirESocial('adm-1', EMPRESA_ID)).rejects.toThrow(
+      'Falha na transmissão para o eSocial'
     );
-    expect(pendingUpdate).toHaveBeenCalledWith(
-      expect.objectContaining({
-        status_esocial: 'processando',
-        metadata: expect.objectContaining({ esocial_event_id: 'evento-novo' }),
-      })
+    expect(mockEnviarEvento).not.toHaveBeenCalled();
+    expect(mockFailEvento).not.toHaveBeenCalled();
+  });
+
+  it('rejeita simulação como conclusão real e marca a admissão com erro', async () => {
+    mockEnviarEvento.mockResolvedValueOnce({ success: true, simulated: true, protocolo: 'SANDBOX', recibo: null });
+    await expect(contratacaoService.transmitirESocial('adm-1', EMPRESA_ID)).rejects.toThrow(
+      'Falha na transmissão para o eSocial'
     );
-    expect(mockEnviarEvento).toHaveBeenCalledWith('evento-novo', EMPRESA_ID);
+    expect(mockCompleteEvento).not.toHaveBeenCalled();
+    expect(mockFailEvento).toHaveBeenCalledWith('adm-1', EMPRESA_ID, 'evento-1');
   });
 });

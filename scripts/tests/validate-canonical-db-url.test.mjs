@@ -21,6 +21,9 @@ for (const [label, value] of [
   ['no password', `postgresql://postgres@db.${CANONICAL_PROJECT_REF}.supabase.co:5432/postgres?sslmode=require`],
   ['wrong database', `postgresql://postgres:secret@db.${CANONICAL_PROJECT_REF}.supabase.co:5432/other?sslmode=require`],
   ['TLS disabled', `postgresql://postgres:secret@db.${CANONICAL_PROJECT_REF}.supabase.co:5432/postgres?sslmode=disable`],
+  ['TLS omitted', `postgresql://postgres:secret@db.${CANONICAL_PROJECT_REF}.supabase.co:5432/postgres`],
+  ['TLS allow downgrade', `postgresql://postgres:secret@db.${CANONICAL_PROJECT_REF}.supabase.co:5432/postgres?sslmode=allow`],
+  ['TLS prefer downgrade', `postgresql://postgres:secret@db.${CANONICAL_PROJECT_REF}.supabase.co:5432/postgres?sslmode=prefer`],
 ]) {
   assert.throws(() => validateCanonicalDbUrl(value), undefined, label);
 }

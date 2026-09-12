@@ -118,6 +118,7 @@ export const RPC_ALLOWLIST = new Set<string>([
   "get_security_alerts_summary", "resolve_security_alert",
   "get_audit_trail", "listar_auditoria", "registrar_auditoria", "search_audit_unified",
   "log_frontend_error", "record_pii_access", "sec_audit_policies",
+  "claim_admission_esocial_event", "complete_admission_esocial_event", "fail_admission_esocial_event",
   // folha / financeiro
   "get_personnel_cost_projection", "aprovar_despesa", "rejeitar_despesa",
   "next_cnab_sequencial", "processar_ajuste_aprovado",

@@ -172,9 +172,10 @@ serve(async (req: Request): Promise<Response> => {
         const { error: auditErr } = await admin.from('audit_log').insert({
           tabela: 'notificacoes',
           registro_id: empresaId,
+          empresa_id: empresaId,
           user_id: userId,
-          acao: 'SEND_NOTIFICATION',
-          dados_novos: { ...auditPayload, audit_hash: auditHash },
+          acao: 'SYSTEM_ACTION',
+          dados_novos: { evento: 'SEND_NOTIFICATION', ...auditPayload, audit_hash: auditHash },
         });
         if (auditErr) {
           console.error('[notificacao] AUDIT_BLOCKING_FAILURE:', auditErr.message);

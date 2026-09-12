@@ -130,6 +130,47 @@ export async function criarEvento(evento: {
   return data as ESocialEvento;
 }
 
+export async function claimEventoAdmissaoESocial(admissaoId: string, empresaId: string): Promise<string> {
+  const { data, error } = await (supabase as any).rpc('claim_admission_esocial_event', {
+    p_admissao_id: admissaoId,
+    p_empresa_id: empresaId,
+  });
+  if (error) throw error;
+  const eventoId = data && typeof data === 'object' && typeof data.evento_id === 'string' ? data.evento_id : null;
+  if (!eventoId) throw new Error('O banco não retornou a identidade do evento S-2200');
+  return eventoId;
+}
+
+export async function completeEventoAdmissaoESocial(
+  admissaoId: string,
+  empresaId: string,
+  eventoId: string,
+  protocolo: string | null,
+  recibo: string | null
+): Promise<void> {
+  const { error } = await (supabase as any).rpc('complete_admission_esocial_event', {
+    p_admissao_id: admissaoId,
+    p_empresa_id: empresaId,
+    p_evento_id: eventoId,
+    p_protocolo: protocolo,
+    p_recibo: recibo,
+  });
+  if (error) throw error;
+}
+
+export async function failEventoAdmissaoESocial(
+  admissaoId: string,
+  empresaId: string,
+  eventoId: string
+): Promise<void> {
+  const { error } = await (supabase as any).rpc('fail_admission_esocial_event', {
+    p_admissao_id: admissaoId,
+    p_empresa_id: empresaId,
+    p_evento_id: eventoId,
+  });
+  if (error) throw error;
+}
+
 export async function validarAnteDeEnviar(
   tipoEvento: string,
   dados: Record<string, unknown>

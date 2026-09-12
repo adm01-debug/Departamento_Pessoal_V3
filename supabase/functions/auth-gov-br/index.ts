@@ -13,7 +13,6 @@ const GOVBR_USERINFO_URL = `${GOVBR_BASE_URL}/userinfo`;
 
 const DEFAULT_ALLOWED_REDIRECT_ORIGINS = [
   'https://departamento-pessoal-v3.vercel.app',
-  'https://departamento-pessoal-v3-juca1.vercel.app',
 ];
 
 function isAllowedRedirectUri(uri: string): boolean {

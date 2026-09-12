@@ -71,13 +71,30 @@ expect(!safeUrl.includes(LEGACY_REF), 'allowlist não nomeia o host legado');
 expect(!safeUrl.includes("'.supabase.co'"), 'allowlist não libera projetos Supabase arbitrários por sufixo');
 
 console.log('6. Contrato da workflow E2E');
+const publicJobStart = workflow.indexOf('  playwright-public:');
+const authenticatedJobStart = workflow.indexOf('  playwright:', publicJobStart + 1);
+const publicJob = workflow.slice(publicJobStart, authenticatedJobStart);
+const authenticatedJob = workflow.slice(authenticatedJobStart);
 expect(
-  workflow.includes('VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}'),
-  'workflow recebe URL exclusivamente de GitHub Secrets'
+  publicJob.includes('VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}')
+    && publicJob.includes('VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}'),
+  'E2E público de PR recebe somente identificadores públicos por Repository Variables'
 );
 expect(
-  workflow.includes('VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY'),
-  'workflow recebe chave pública exclusivamente de GitHub Secrets'
+  !publicJob.includes('E2E_USER_EMAIL:')
+    && !publicJob.includes('E2E_USER_PASSWORD:')
+    && !publicJob.includes('E2E_NON_ADMIN_EMAIL:'),
+  'E2E público de PR não recebe identidades de escrita'
+);
+expect(
+  authenticatedJob.includes("if: github.event_name == 'push' && github.ref == 'refs/heads/main'")
+    && authenticatedJob.includes('E2E_USER_EMAIL: ${{ secrets.E2E_USER_EMAIL }}')
+    && authenticatedJob.includes('VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}'),
+  'E2E autenticado recebe secrets somente no SHA integrado em main'
+);
+expect(
+  (workflow.match(/test \"\$VITE_SUPABASE_URL\" = 'https:\/\/frjbfeamybqsejlvmqbl\.supabase\.co'/g) ?? []).length === 2,
+  'jobs público e autenticado recusam alvo Supabase não canônico'
 );
 
 if (failures.length > 0) {

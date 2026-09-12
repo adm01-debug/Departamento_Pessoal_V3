@@ -19,6 +19,7 @@ const allowedKeys = new Set([
   'dados_novos',
   'id',
   'ip_address',
+  'empresa_id',
   'registro_id',
   'tabela',
   'user_agent',
@@ -26,6 +27,14 @@ const allowedKeys = new Set([
   'user_id',
 ]);
 const requiredKeys = ['acao', 'registro_id', 'tabela'];
+const allowedActions = new Set([
+  'INSERT', 'UPDATE', 'DELETE',
+  'PAYROLL_CALC', 'PAYROLL_CALC_BLOCKED', 'PAYROLL_CLOSE', 'PAYROLL_REOPEN',
+  'FERIAS_CALC', 'FERIAS_CANCEL', 'RESCISAO_CALC', 'PROVISOES_CALC',
+  'ESOCIAL_SEND', 'DECIMO_CALC', 'IDEMPOTENCY_REPLAY', 'IDEMPOTENCY_CONFLICT',
+  'BACKUP_CREATED', 'BACKUP_FAILED', 'SYSTEM_ACTION', 'AUTH_ACTION',
+  'EXPORT', 'IMPORT', 'VISUALIZACAO', 'EXECUTE_CALC', 'SIGN',
+]);
 const failures = [];
 let checked = 0;
 
@@ -44,21 +53,58 @@ function propertyName(node) {
   return null;
 }
 
-function isAuditLogInsert(node) {
+function staticStringValues(node) {
+  if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) return [node.text];
+  if (ts.isConditionalExpression(node)) {
+    const left = staticStringValues(node.whenTrue);
+    const right = staticStringValues(node.whenFalse);
+    return left && right ? [...left, ...right] : null;
+  }
+  return null;
+}
+
+function isAuditLogSource(node) {
+  return ts.isCallExpression(node)
+    && ts.isPropertyAccessExpression(node.expression)
+    && node.expression.name.text === 'from'
+    && node.arguments.length === 1
+    && ts.isStringLiteral(node.arguments[0])
+    && node.arguments[0].text === 'audit_log';
+}
+
+function collectAuditLogAliases(source) {
+  const aliases = new Set();
+  function visit(node) {
+    if (
+      ts.isVariableDeclaration(node)
+      && ts.isIdentifier(node.name)
+      && node.initializer
+      && isAuditLogSource(node.initializer)
+    ) {
+      aliases.add(node.name.text);
+    }
+    ts.forEachChild(node, visit);
+  }
+  visit(source);
+  return aliases;
+}
+
+function isAuditLogInsert(node, aliases) {
   if (!ts.isCallExpression(node) || !ts.isPropertyAccessExpression(node.expression)) return false;
   if (node.expression.name.text !== 'insert') return false;
   const receiver = node.expression.expression;
+  if (ts.isIdentifier(receiver) && aliases.has(receiver.text)) return true;
   if (!ts.isCallExpression(receiver) || !ts.isPropertyAccessExpression(receiver.expression)) return false;
-  if (receiver.expression.name.text !== 'from') return false;
-  return receiver.arguments.length === 1 && ts.isStringLiteral(receiver.arguments[0]) && receiver.arguments[0].text === 'audit_log';
+  return isAuditLogSource(receiver);
 }
 
 for (const file of walk(functionsRoot)) {
   const sourceText = readFileSync(file, 'utf8');
   const source = ts.createSourceFile(file, sourceText, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
+  const auditLogAliases = collectAuditLogAliases(source);
 
   function visit(node) {
-    if (isAuditLogInsert(node)) {
+    if (isAuditLogInsert(node, auditLogAliases)) {
       checked += 1;
       const line = source.getLineAndCharacterOfPosition(node.getStart(source)).line + 1;
       const location = `${relative(root, file)}:${line}`;
@@ -67,6 +113,7 @@ for (const file of walk(functionsRoot)) {
         failures.push(`${location}: INSERT em audit_log deve usar objeto literal auditável`);
       } else {
         const keys = new Set();
+        let actionInitializer = null;
         for (const property of argument.properties) {
           if (ts.isSpreadAssignment(property)) {
             failures.push(`${location}: spread impede validar colunas de audit_log`);
@@ -74,12 +121,20 @@ for (const file of walk(functionsRoot)) {
           }
           const key = propertyName(property.name);
           if (key) keys.add(key);
+          if (key === 'acao' && ts.isPropertyAssignment(property)) actionInitializer = property.initializer;
         }
         for (const key of keys) {
           if (!allowedKeys.has(key)) failures.push(`${location}: coluna inexistente em audit_log: ${key}`);
         }
         for (const key of requiredKeys) {
           if (!keys.has(key)) failures.push(`${location}: coluna obrigatória ausente em audit_log: ${key}`);
+        }
+        const actionValues = actionInitializer ? staticStringValues(actionInitializer) : null;
+        if (actionInitializer && !actionValues) {
+          failures.push(`${location}: acao de audit_log deve ser uma constante auditável`);
+        }
+        for (const action of actionValues ?? []) {
+          if (!allowedActions.has(action)) failures.push(`${location}: acao incompatível com audit_log_acao_check: ${action}`);
         }
       }
     }

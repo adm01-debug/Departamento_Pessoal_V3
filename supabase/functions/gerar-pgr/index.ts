@@ -12,7 +12,7 @@ interface Risco {
   intensidade_concentracao: string | null;
   limite_tolerancia: string | null;
   tecnica_utilizada: string | null;
-  locais_trabalho?: Array<{ descricao: string | null }> | null;
+  locais_trabalho?: { descricao: string | null } | null;
 }
 
 interface Empresa {
@@ -90,8 +90,18 @@ Deno.serve(async (req) => {
       .maybeSingle();
     const versao = (ultimaVersao?.versao ?? 0) + 1;
 
+    // PostgREST represents this many-to-one relation as an object at runtime,
+    // while older untyped supabase-js inference models it as an array. Accept
+    // both shapes during rollout and give the PDF generator one canonical one.
+    const riscosNormalizados = (riscos ?? []).map((risco) => ({
+      ...risco,
+      locais_trabalho: Array.isArray(risco.locais_trabalho)
+        ? risco.locais_trabalho[0] ?? null
+        : risco.locais_trabalho,
+    })) as Risco[];
+
     // Gerar PDF
-    const pdfBytes = await gerarPdfPgr(empresa as Empresa, (riscos ?? []) as Risco[], {
+    const pdfBytes = await gerarPdfPgr(empresa as Empresa, riscosNormalizados, {
       versao,
       responsavel_tecnico: typeof responsavel_tecnico === 'string' ? responsavel_tecnico : '—',
       registro_profissional: typeof registro_profissional === 'string' ? registro_profissional : '—',
@@ -241,7 +251,7 @@ async function gerarPdfPgr(
   } else {
     riscos.forEach((r, i) => {
       write(`${i + 1}. [${r.categoria.toUpperCase()}] ${r.agente}`, { bold: true });
-      const local = r.locais_trabalho?.[0]?.descricao;
+      const local = r.locais_trabalho?.descricao;
       if (local) write(`   Local: ${local}`, { size: 10 });
       if (r.intensidade_concentracao) write(`   Intensidade/Concentração: ${r.intensidade_concentracao}`, { size: 10 });
       if (r.limite_tolerancia) write(`   Limite de Tolerância: ${r.limite_tolerancia}`, { size: 10 });

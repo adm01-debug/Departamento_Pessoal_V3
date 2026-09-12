@@ -84,12 +84,57 @@ AS $$
     AND public.has_role(auth.uid(), 'rh'::public.app_role)
   )
 $$;
+
+-- Reproduce the five-table legacy PCS schema: narrower precision, missing
+-- checks/unique order and cargo survey rows deleted by CASCADE.
+CREATE TABLE public.pcs_planos (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), empresa_id uuid NOT NULL REFERENCES public.empresas(id) ON DELETE CASCADE,
+  nome text NOT NULL, versao integer NOT NULL DEFAULT 1, status text NOT NULL DEFAULT 'rascunho',
+  vigencia_inicio date, vigencia_fim date, amplitude_pct numeric(6,2) NOT NULL DEFAULT 40,
+  num_steps integer NOT NULL DEFAULT 5, overlap_pct numeric(6,2) NOT NULL DEFAULT 25,
+  observacoes text, created_by uuid, created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(), deleted_at timestamptz,
+  UNIQUE(empresa_id,nome,versao)
+);
+CREATE TABLE public.pcs_fatores (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), plano_id uuid NOT NULL REFERENCES public.pcs_planos(id) ON DELETE CASCADE,
+  nome text NOT NULL, descricao text, peso numeric(6,2) NOT NULL DEFAULT 1,
+  ordem integer NOT NULL DEFAULT 0, graus jsonb NOT NULL DEFAULT '[]',
+  created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE(plano_id,nome)
+);
+CREATE TABLE public.pcs_avaliacoes_cargo (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), plano_id uuid NOT NULL REFERENCES public.pcs_planos(id) ON DELETE CASCADE,
+  cargo_id uuid NOT NULL REFERENCES public.cargos(id) ON DELETE CASCADE, pontuacoes jsonb NOT NULL DEFAULT '{}',
+  pontos_total numeric(12,2) NOT NULL DEFAULT 0, justificativa text, avaliado_por uuid,
+  avaliado_em timestamptz NOT NULL DEFAULT now(), created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(), UNIQUE(plano_id,cargo_id)
+);
+CREATE TABLE public.pcs_grades (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), plano_id uuid NOT NULL REFERENCES public.pcs_planos(id) ON DELETE CASCADE,
+  ordem integer NOT NULL, nome text NOT NULL, pontos_min numeric(12,2) NOT NULL, pontos_max numeric(12,2) NOT NULL,
+  salario_min numeric(14,2) NOT NULL, salario_medio numeric(14,2) NOT NULL, salario_max numeric(14,2) NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now(), UNIQUE(plano_id,ordem)
+);
+CREATE TABLE public.pcs_pesquisa_salarial (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), empresa_id uuid NOT NULL REFERENCES public.empresas(id) ON DELETE CASCADE,
+  cargo_id uuid REFERENCES public.cargos(id) ON DELETE CASCADE, cargo_referencia text NOT NULL,
+  fonte text NOT NULL, data_referencia date NOT NULL, regiao text, amostra integer,
+  p25 numeric(14,2), p50 numeric(14,2), p75 numeric(14,2), p90 numeric(14,2),
+  created_at timestamptz NOT NULL DEFAULT now(), updated_at timestamptz NOT NULL DEFAULT now()
+);
 SQL
 
 for pass in 1 2; do
   run_psql -f /tmp/p1-pcs.sql >/dev/null
   echo "PCS migration pass $pass succeeded"
 done
+
+legacy_contract="$(run_psql -qAtc "SELECT
+  (SELECT numeric_precision||':'||numeric_scale FROM information_schema.columns WHERE table_schema='public' AND table_name='pcs_avaliacoes_cargo' AND column_name='pontos_total') || ':' ||
+  (SELECT confdeltype::text FROM pg_constraint WHERE conrelid='public.pcs_pesquisa_salarial'::regclass AND conname='pcs_pesquisa_salarial_cargo_id_fkey') || ':' ||
+  (SELECT count(*) FROM pg_constraint WHERE conrelid='public.pcs_fatores'::regclass AND conname='pcs_fatores_plano_id_ordem_key');")"
+[ "$legacy_contract" = '14:4:n:1' ] || { echo "legacy PCS schema was not upgraded: $legacy_contract" >&2; exit 1; }
 
 run_psql <<'SQL'
 INSERT INTO public.empresas(id,nome) VALUES
@@ -106,9 +151,14 @@ INSERT INTO public.cargos(id,empresa_id,nome,salario_base) VALUES
   ('11000000-0000-0000-0000-000000000001','10000000-0000-0000-0000-000000000001','Junior',1000),
   ('11000000-0000-0000-0000-000000000002','10000000-0000-0000-0000-000000000001','Pleno',1500),
   ('11000000-0000-0000-0000-000000000003','10000000-0000-0000-0000-000000000001','Senior',2000),
+  ('11000000-0000-0000-0000-000000000004','10000000-0000-0000-0000-000000000001','Pesquisa removida',1800),
   ('22000000-0000-0000-0000-000000000001','20000000-0000-0000-0000-000000000002','Foreign',3000);
 GRANT SELECT ON public.empresas, public.cargos, public.colaboradores TO authenticated;
 SQL
+
+run_psql -qAtc "INSERT INTO public.pcs_pesquisa_salarial(empresa_id,cargo_id,cargo_referencia,fonte,data_referencia,p50) VALUES ('10000000-0000-0000-0000-000000000001','11000000-0000-0000-0000-000000000004','Pesquisa removida','Mercado','2026-09-01',1900); DELETE FROM public.cargos WHERE id='11000000-0000-0000-0000-000000000004';" >/dev/null
+survey_preserved="$(run_psql -qAtc "SELECT count(*)||':'||count(cargo_id) FROM public.pcs_pesquisa_salarial WHERE cargo_referencia='Pesquisa removida';")"
+[ "$survey_preserved" = '1:0' ] || { echo "salary survey history was deleted with cargo: $survey_preserved" >&2; exit 1; }
 
 # RH creates a tenant plan. Server-side authorship must replace the forged id.
 plan_id="$(run_psql -qAt <<'SQL'
@@ -170,12 +220,14 @@ SQL
 expect_failure "SET ROLE authenticated; SELECT set_config('request.jwt.claim.sub','bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2',false); INSERT INTO public.pcs_fatores(plano_id,nome,ordem,graus) VALUES ('$plan_id','Forbidden',9,'[{\"grau\":1,\"rotulo\":\"X\",\"pontos\":1}]');" 'row-level security'
 
 # Two simultaneous generations serialize on the plan and leave one coherent matrix.
+pids=()
 for i in 1 2; do
   docker exec "$NAME" psql -X -qAt -U postgres -v ON_ERROR_STOP=1 -c \
     "SET ROLE authenticated; SELECT set_config('request.jwt.claim.sub','aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',false); SELECT count(*) FROM public.pcs_gerar_grades('$plan_id',2,1000);" \
     >"$RESULT_DIR/$i" &
+  pids+=("$!")
 done
-wait
+for pid in "${pids[@]}"; do wait "$pid" || { echo "concurrent PCS generation process failed" >&2; exit 1; }; done
 [ "$(grep -h '^2$' "$RESULT_DIR"/* | wc -l | tr -d ' ')" = '2' ] || {
   echo "concurrent PCS grade generation failed" >&2; exit 1;
 }
@@ -199,6 +251,17 @@ SELECT public.pcs_simular_impacto('$plan_id',36.8)->>'colaboradores_enquadrados'
 SQL
 )"
 [ "$impact" = '3' ] || { echo "PCS impact aggregation failed: $impact" >&2; exit 1; }
+
+member_visibility="$(run_psql -qAt <<SQL
+SET ROLE authenticated;
+SELECT set_config('request.jwt.claim.sub','bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbb2',false) AS ignored \gset
+SELECT count(*) || ':' || (public.pcs_simular_impacto('$plan_id',36.8)->>'colaboradores_enquadrados')
+FROM public.pcs_enquadramento('$plan_id');
+SQL
+)"
+[ "$member_visibility" = '0:3' ] || {
+  echo "ordinary member nominal/aggregate PCS boundary failed: $member_visibility" >&2; exit 1;
+}
 
 # Anonymous callers cannot enumerate tables or call privileged RPCs.
 expect_failure "SET ROLE anon; SELECT * FROM public.pcs_planos;" 'permission denied'

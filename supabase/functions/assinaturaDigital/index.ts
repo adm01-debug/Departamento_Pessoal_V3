@@ -131,8 +131,8 @@ serve(async (req: Request): Promise<Response> => {
       const { error: auditErr } = await supabase.from('audit_log').insert({
         tabela: 'admissao_tokens',
         registro_id: body.tokenId,
-        acao: 'ASSINATURA_DIGITAL',
-        dados_novos: { hash: hashHex, ip: clientIp, timestamp: nowIso },
+        acao: 'SIGN',
+        dados_novos: { evento: 'ASSINATURA_DIGITAL', hash: hashHex, ip: clientIp, timestamp: nowIso },
       });
       if (auditErr) throw auditErr;
 

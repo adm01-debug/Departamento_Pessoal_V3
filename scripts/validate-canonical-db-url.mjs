@@ -17,8 +17,9 @@ export function validateCanonicalDbUrl(raw) {
   }
   if (!url.password) throw new Error('SUPABASE_DB_URL não contém senha');
   if (url.pathname !== '/postgres') throw new Error('SUPABASE_DB_URL deve apontar para o database postgres');
-  if (url.searchParams.get('sslmode') === 'disable') {
-    throw new Error('SUPABASE_DB_URL não pode desabilitar TLS');
+  const sslmode = url.searchParams.get('sslmode');
+  if (!['require', 'verify-ca', 'verify-full'].includes(sslmode ?? '')) {
+    throw new Error('SUPABASE_DB_URL deve exigir TLS com sslmode=require, verify-ca ou verify-full');
   }
 
   const directHost = `db.${CANONICAL_PROJECT_REF}.supabase.co`;
@@ -34,7 +35,7 @@ export function validateCanonicalDbUrl(raw) {
     projectRef: CANONICAL_PROJECT_REF,
     connectionKind: isDirect ? 'direct' : 'pooler',
     hostFingerprint: createHash('sha256').update(safeTarget).digest('hex').slice(0, 16),
-    tls: url.searchParams.get('sslmode') || 'libpq-default',
+    tls: sslmode,
   };
 }
 

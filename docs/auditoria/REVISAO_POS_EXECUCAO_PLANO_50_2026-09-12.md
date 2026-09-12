@@ -1,6 +1,6 @@
 # Revisão pós-execução das 50 etapas — 12/09/2026
 
-## Atualização executiva — lote de remediação validado às 21:23 UTC
+## Atualização executiva — lote de remediação validado às 22:23 UTC
 
 O diagnóstico abaixo foi usado como entrada de uma nova rodada de implementação. Esta atualização é a fotografia mais recente e prevalece quando houver conflito com a seção histórica posterior.
 
@@ -8,17 +8,18 @@ O diagnóstico abaixo foi usado como entrada de uma nova rodada de implementaç�
 
 ### Evidência local acumulada
 
-| Gate                     | Resultado                                                                                                                                                   |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| TypeScript               | aplicação, testes e E2E sem erros                                                                                                                           |
-| ESLint/formatação        | `lint:ci` e `format:check:changed` aprovados                                                                                                                |
-| Vitest                   | 468 arquivos; 4.910 aprovados; 1 ignorado; cobertura real: 61,74% statements, 56,86% branches, 54,37% functions e 66,04% lines                              |
-| Edge Functions           | 60/60 entrypoints aprovados no `deno check`; 95 testes Deno aprovados                                                                                       |
-| Banco descartável        | 19/19 scripts PostgreSQL aprovados, incluindo reaplicação e preflight fail-closed                                                                           |
-| Contrato de auditoria    | 24 inserts Edge validados por AST; frontend sem leitura direta de `audit_log`; autoria server-owned e isolamento por empresa simulados no PostgreSQL        |
-| Contrato frontend/bridge | 76 RPCs literais de produção mapeadas; 87 allowlisted; 7 RPCs públicas limitadas a chave publicável; zero acesso do bridge às tabelas sensíveis verificadas |
-| Build                    | Vite/PWA de produção aprovado; avisos de tamanho de chunks continuam sendo dívida de performance, não falha de compilação                                   |
-| Workflows                | `actionlint` aprovado; inputs do operador tratados como dados; segredos administrativos removidos do contexto de PR                                         |
+| Gate                     | Resultado                                                                                                                                                                      |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| TypeScript               | aplicação, testes e E2E sem erros                                                                                                                                              |
+| ESLint/formatação        | `lint:ci`, `lint:edge` e `format:check:changed` aprovados                                                                                                                      |
+| Vitest                   | 468 arquivos; 4.922 aprovados; 1 ignorado; cobertura real: 61,94% statements, 57,02% branches, 54,52% functions e 66,24% lines                                                 |
+| Edge Functions           | 60/60 entrypoints aprovados no `deno check`; 102 testes Deno aprovados                                                                                                         |
+| Banco descartável        | 20/20 scripts PostgreSQL aprovados, incluindo reaplicação, concorrência, negações exatas e preflight fail-closed                                                               |
+| Contrato de auditoria    | 24 inserts Edge validados por AST, inclusive aliases locais; frontend sem leitura direta de `audit_log`; autoria server-owned e isolamento por empresa simulados no PostgreSQL |
+| Contrato frontend/bridge | 79 RPCs literais de produção mapeadas; 90 allowlisted; 7 RPCs públicas limitadas a chave publicável; zero acesso do bridge às tabelas sensíveis verificadas                    |
+| Build                    | Vite/PWA de produção aprovado: 6.491 módulos e 267 entradas precache; avisos de chunks continuam dívida de performance                                                         |
+| Playwright público       | 22 aprovados e 2 ignorados por dependerem deliberadamente de mailbox/identidade; nenhuma credencial de escrita foi entregue ao job de PR                                       |
+| Workflows                | inputs do operador tratados como dados; E2E público separado do autenticado; secrets de identidade e banco não executam código de PR                                           |
 
 ### Estado dos 16 impedimentos após a remediação
 
@@ -39,21 +40,23 @@ O diagnóstico abaixo foi usado como entrada de uma nova rodada de implementaç�
 | RV-13 UI enganosa           | briefing por tenant/fail-closed, saúde sem eventos distinta de 100%, sync fictícia removida, paginação reiniciada e relatório recusa truncamento                           | E2E pós-deploy com duas empresas                                                    |
 | RV-14 drift Edge            | todos os entrypoints compilam e workflow manual canônico fail-closed foi criado                                                                                            | credencial Management API com acesso ao projeto e execução do deploy                |
 | RV-15 capacidades           | contrato PCS, bucket `backups`, destinatários internos e alvos dos três crons de segurança entregues                                                                       | aplicação, smoke real, eSocial homologado e restauração integral continuam externos |
-| RV-16 gates falsos-verdes   | Edge agora bloqueante, agenda incluída, 19 SQL suites no CI, formatação real, contrato bridge/frontend e URL canônica validados; DB/E2E com segredo não rodam código de PR | checks remotos verdes e proteção de branch revisada                                 |
+| RV-16 gates falsos-verdes   | Edge agora bloqueante, agenda incluída, 20 SQL suites no CI, formatação real, contrato bridge/frontend e URL canônica validados; DB/E2E autenticado não rodam código de PR | checks remotos verdes e proteção de branch revisada                                 |
 
 ### Ordem de promoção, sem atalhos
 
 1. Publicar o lote em branch e PR, mantendo `AUDIT_REPORT.pdf` fora do commit.
-2. Executar o workflow canônico em modo `validate`, que aplica exatamente 12 migrations numa única transação revertida.
-3. Executar o mesmo lote em modo `apply`; o CLI registra somente essas 12 versões no ledger — não há `db push` nem `migration repair` em massa.
+2. Executar o workflow canônico em modo `validate`, que aplica exatamente 13 migrations numa única transação revertida.
+3. Executar o mesmo lote em modo `apply`; o CLI registra somente essas 13 versões no ledger — não há `db push` nem `migration repair` em massa.
 4. Executar auditores e smoke tests contra o banco atualizado.
 5. Publicar as 60 Edge Functions sem `--prune`; o job exige `SUPABASE_ACCESS_TOKEN` com acesso ao projeto canônico e falha antes de escrever caso a autorização não exista.
 6. Executar Playwright com as quatro identidades sintéticas no SHA integrado e comparar o inventário remoto.
 7. Manter como pendentes eSocial produtivo, transporte bancário real, restauração/PITR integral, MFA/e-mail real e metas de cobertura por domínio até existirem evidências próprias.
 
-### Resultado da simulação E2E anterior ao deploy
+### Resultado das simulações E2E anteriores ao deploy
 
 A regressão contra o backend remoto ainda antigo terminou com **47 aprovados, 17 reprovados, 6 ignorados e 1 não executado**. Os erros reproduziram exatamente o drift que este lote corrige: `get_my_user_empresas` ausente/não allowlisted, leitura de `security_alerts` negada pelo bridge e CORS com origem Lovable obsoleta. Esse resultado não foi reclassificado como falha das correções locais e também não foi chamado de verde; ele obriga a repetição após SQL + Edge.
+
+A suíte pública, que não escreve nem recebe identidades secretas, foi repetida após a separação dos jobs: **22 aprovados e 2 ignorados**. Os dois skips são contratos explícitos que dependem de mailbox/usuário configurado e permanecem na suíte autenticada de `main`. Isso valida navegação e superfícies públicas sem enfraquecer o requisito de repetir as jornadas autenticadas após a promoção do banco e das Edge Functions.
 
 ## Fotografia de auditoria anterior ao lote (histórico)
 

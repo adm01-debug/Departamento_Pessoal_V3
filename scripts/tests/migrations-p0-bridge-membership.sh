@@ -125,12 +125,14 @@ admin_default="$(run_psql -Atc "SELECT empresa_id FROM public.user_empresas WHER
 [ "$admin_default" = "$EMP_B2" ] || { echo "admin association did not atomically set target default" >&2; exit 1; }
 
 # Twenty competing tabs must still leave one and only one default.
+pids=()
 for i in $(seq 1 20); do
   target="$EMP_A1"
   [ $((i % 2)) -eq 0 ] && target="$EMP_A2"
   (run_as_authenticated "$USER_A" "SELECT public.set_own_default_empresa('$target');" >/dev/null) >"$RESULT_DIR/$i" 2>&1 &
+  pids+=("$!")
 done
-wait
+for pid in "${pids[@]}"; do wait "$pid" || { echo "concurrent default-company process failed" >&2; exit 1; }; done
 if find "$RESULT_DIR" -type f -size +0c | grep -q .; then
   echo "concurrent own-default call failed" >&2
   find "$RESULT_DIR" -type f -size +0c -exec cat {} + >&2

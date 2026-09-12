@@ -27,6 +27,7 @@ describe('auditoriaService.listarTrilha', () => {
       p_before: '2026-09-12T12:00:00.000Z',
       p_tabela: 'colaboradores',
       p_registro_id: 'c1',
+      p_tabelas: null,
     });
     expect(mockFrom).not.toHaveBeenCalled();
   });
@@ -38,6 +39,30 @@ describe('auditoriaService.listarTrilha', () => {
 
   it('rejeita limites fora do contrato antes de consultar o banco', async () => {
     await expect(auditoriaService.listarTrilha({ empresa_id: EMPRESA_ID, limite: 501 })).rejects.toThrow(/limite/);
+    expect(mockRpc).not.toHaveBeenCalled();
+  });
+
+  it('envia filtros de múltiplas tabelas à RPC antes do limite', async () => {
+    await auditoriaService.listarTrilha({
+      empresa_id: EMPRESA_ID,
+      tabelas: ['metas_okrs', 'feedbacks_360'],
+      limite: 30,
+    });
+    expect(mockRpc.mock.calls[0][1]).toMatchObject({
+      p_tabelas: ['metas_okrs', 'feedbacks_360'],
+      p_tabela: null,
+      p_limit: 30,
+    });
+  });
+
+  it('rejeita filtro singular e múltiplo simultâneos', async () => {
+    await expect(
+      auditoriaService.listarTrilha({
+        empresa_id: EMPRESA_ID,
+        tabela: 'metas_okrs',
+        tabelas: ['feedbacks_360'],
+      })
+    ).rejects.toThrow(/não ambos/);
     expect(mockRpc).not.toHaveBeenCalled();
   });
 
