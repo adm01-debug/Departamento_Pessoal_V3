@@ -39,4 +39,6 @@ if [ "${#CHANGED[@]}" -eq 0 ]; then
 fi
 
 echo "[format:check:changed] checking ${#CHANGED[@]} changed file(s) vs $BASE_REF..."
-exec bunx prettier --check "${CHANGED[@]}"
+# The lint job intentionally installs only Node.js. Use the project-local
+# Prettier through npm so this gate does not depend on a globally installed Bun.
+exec npx --no-install prettier --check "${CHANGED[@]}"
