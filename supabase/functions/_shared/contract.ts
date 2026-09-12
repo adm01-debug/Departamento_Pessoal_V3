@@ -19,7 +19,9 @@ const _extraOrigins = (Deno.env.get('EXTRA_ALLOWED_ORIGINS') ?? '')
   .filter(Boolean);
 
 const ALLOWED_ORIGINS = [
-  'https://unified-harmony-hub.lovable.app',
+  // Aliases estáveis e verificados do deployment Vercel de produção.
+  'https://departamento-pessoal-v3.vercel.app',
+  'https://departamento-pessoal-v3-juca1.vercel.app',
   ..._extraOrigins,
 ];
 
@@ -216,7 +218,11 @@ export async function parseJsonBody(
       if (done) break;
       receivedBytes += value.byteLength;
       if (receivedBytes > maxBytes) {
-        await reader.cancel();
+        // `cancel()` pode aguardar o cancelamento de todos os ramos de um
+        // stream tee'd por Request.clone(). Um clone que ainda não foi lido
+        // faria a resposta 413 esperar indefinidamente. O limite já foi
+        // comprovado; sinalizamos o cancelamento sem bloquear a resposta.
+        void reader.cancel().catch(() => undefined);
         return {
           errorResponse: createErrorResponse(
             `Payload excede o limite de ${Math.round(maxBytes / 1024)} KB`,
@@ -261,7 +267,7 @@ export async function validateRequest<T>(
 
   const result = schema.safeParse(body);
   if (!result.success) {
-    return { errorResponse: createValidationErrorResponse(result.error) };
+    return { errorResponse: createValidationErrorResponse(result.error, req) };
   }
   return { data: result.data };
 }

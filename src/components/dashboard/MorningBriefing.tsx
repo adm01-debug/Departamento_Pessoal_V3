@@ -42,20 +42,66 @@ interface BriefingData {
   vencimentosHoje: { descricao: string; tipo: string }[];
   totalAtivos: number;
   pontosRegistradosHoje: number;
-  esocialHealth: number;
+  esocialHealth: number | null;
 }
 
-function useMorningBriefing() {
+function useMorningBriefing(empresaId?: string) {
   return useQuery<BriefingData>({
-    queryKey: ['morning-briefing'],
+    queryKey: ['morning-briefing', empresaId],
+    enabled: Boolean(empresaId),
     staleTime: 5 * 60 * 1000,
     queryFn: async () => {
+      if (!empresaId) throw new Error('Selecione uma empresa para carregar o briefing.');
       const hoje = new Date();
       const hojeStr = format(hoje, 'yyyy-MM-dd');
       const mesAtual = hoje.getMonth() + 1;
       const em7Dias = format(new Date(hoje.getTime() + 7 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd');
 
       // Fire ALL queries in parallel
+      const responses = await Promise.all([
+        supabase
+          .from('colaboradores')
+          .select('nome_completo, data_nascimento')
+          .eq('empresa_id', empresaId)
+          .eq('status', 'ativo')
+          .not('data_nascimento', 'is', null),
+        supabase
+          .from('ferias')
+          .select('data_inicio, data_fim, colaboradores!ferias_colaborador_id_fkey(nome_completo)')
+          .eq('empresa_id', empresaId)
+          .in('status', ['aprovada', 'em_andamento'])
+          .lte('data_inicio', hojeStr)
+          .gte('data_fim', hojeStr),
+        supabase
+          .from('afastamentos')
+          .select('tipo, colaboradores!afastamentos_colaborador_id_fkey(nome_completo)')
+          .eq('empresa_id', empresaId)
+          .eq('status', 'ativo')
+          .lte('data_inicio', hojeStr)
+          .gte('data_fim_prevista', hojeStr),
+        supabase.from('admissoes').select('nome, cargo').eq('empresa_id', empresaId).eq('data_prevista', hojeStr),
+        supabase
+          .from('exames')
+          .select('data_validade, tipo, colaboradores!inner(nome_completo)')
+          .eq('colaboradores.empresa_id', empresaId)
+          .gte('data_validade', hojeStr)
+          .lte('data_validade', em7Dias),
+        supabase
+          .from('colaboradores')
+          .select('id', { count: 'exact', head: true })
+          .eq('empresa_id', empresaId)
+          .eq('status', 'ativo'),
+        supabase
+          .from('batidas_ponto')
+          .select('id', { count: 'exact', head: true })
+          .eq('empresa_id', empresaId)
+          .eq('data', hojeStr),
+        supabase.from('esocial_eventos').select('status').eq('empresa_id', empresaId),
+      ]);
+
+      const failed = responses.find((response) => response.error);
+      if (failed?.error) throw failed.error;
+
       const [
         { data: colabs },
         { data: feriasData },
@@ -65,39 +111,12 @@ function useMorningBriefing() {
         { count: totalAtivos },
         { count: pontosHoje },
         { data: esocialData },
-      ] = await Promise.all([
-        supabase
-          .from('colaboradores')
-          .select('nome_completo, data_nascimento')
-          .eq('status', 'ativo')
-          .not('data_nascimento', 'is', null),
-        supabase
-          .from('ferias')
-          .select('data_inicio, data_fim, colaboradores!ferias_colaborador_id_fkey(nome_completo)')
-          .in('status', ['aprovada', 'em_andamento'])
-          .lte('data_inicio', hojeStr)
-          .gte('data_fim', hojeStr),
-        supabase
-          .from('afastamentos')
-          .select('tipo, colaboradores!afastamentos_colaborador_id_fkey(nome_completo)')
-          .eq('status', 'ativo')
-          .lte('data_inicio', hojeStr)
-          .gte('data_fim_prevista', hojeStr),
-        supabase.from('admissoes').select('nome, cargo').eq('data_prevista', hojeStr),
-        supabase
-          .from('exames')
-          .select('data_validade, tipo, colaboradores!exames_colaborador_id_fkey(nome_completo)')
-          .gte('data_validade', hojeStr)
-          .lte('data_validade', em7Dias),
-        supabase.from('colaboradores').select('id', { count: 'exact', head: true }).eq('status', 'ativo'),
-        supabase.from('batidas_ponto').select('id', { count: 'exact', head: true }).eq('data', hojeStr),
-        supabase.from('esocial_eventos').select('status'),
-      ]);
+      ] = responses;
 
       const esocialEventos = esocialData || [];
       const esocialTotal = esocialEventos.length;
-      const esocialErros = esocialEventos.filter((e: any) => e.status === 'erro').length;
-      const esocialHealth = esocialTotal > 0 ? Math.round(((esocialTotal - esocialErros) / esocialTotal) * 100) : 100;
+      const esocialErros = esocialEventos.filter((evento) => evento.status === 'erro').length;
+      const esocialHealth = esocialTotal > 0 ? Math.round(((esocialTotal - esocialErros) / esocialTotal) * 100) : null;
 
       const aniversariantes = (colabs || [])
         .filter((c) => {
@@ -174,7 +193,7 @@ function BriefingItem({
 }
 
 export function MorningBriefing({ empresaId }: { empresaId?: string }) {
-  const { data, isLoading, error } = useMorningBriefing();
+  const { data, isLoading, error } = useMorningBriefing(empresaId);
   const [runningAction, setRunningAction] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -222,7 +241,9 @@ export function MorningBriefing({ empresaId }: { empresaId?: string }) {
             <ShieldAlert className="h-5 w-5" />
             Erro de Esquema (Banco Externo)
           </CardTitle>
-          <CardDescription className="text-destructive/80 font-mono text-xs">{(error as any).message}</CardDescription>
+          <CardDescription className="text-destructive/80 font-mono text-xs">
+            {error instanceof Error ? error.message : 'Falha ao carregar o briefing.'}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-xs text-muted-foreground">
@@ -289,11 +310,15 @@ export function MorningBriefing({ empresaId }: { empresaId?: string }) {
             variant="outline"
             className={cn(
               'gap-1.5 py-1.5 rounded-xl font-body',
-              data.esocialHealth < 90 ? 'text-destructive border-destructive/30' : 'text-success border-success/30'
+              data.esocialHealth === null
+                ? 'text-muted-foreground border-border/50'
+                : data.esocialHealth < 90
+                  ? 'text-destructive border-destructive/30'
+                  : 'text-success border-success/30'
             )}
           >
             <ShieldAlert className="h-3 w-3" />
-            Conformidade eSocial: {data.esocialHealth}%
+            Conformidade eSocial: {data.esocialHealth === null ? 'sem eventos' : `${data.esocialHealth}%`}
           </Badge>
         </div>
 

@@ -9,8 +9,8 @@ import { supabase } from '@/integrations/supabase/client';
  *  - Encargos: INSS patronal + RAT/FAP + Terceiros + FGTS incidentes sobre a provisão.
  */
 
-/** Alíquota agregada de encargos patronais sobre provisões (INSS 20% + Terceiros 5,8% + RAT 1% + FGTS 8%). */
-export const ALIQUOTA_ENCARGOS_PROVISAO = 0.348;
+/** Alíquota agregada (INSS 20% + Terceiros 5,8% + RAT médio 3% + FGTS 8%). */
+export const ALIQUOTA_ENCARGOS_PROVISAO = 0.368;
 
 /** Terço constitucional de férias. */
 const TERCO_CONSTITUCIONAL = 1 / 3;
@@ -31,7 +31,7 @@ function round2(value: number): number {
 }
 
 export function calcularProvisaoColaborador(
-  salarioBase: number,
+  salarioBase: number
 ): Pick<ProvisaoCalculada, 'valor_13_salario' | 'valor_ferias' | 'encargos_provisao' | 'valor_total'> {
   const base = Number.isFinite(salarioBase) && salarioBase > 0 ? salarioBase : 0;
 

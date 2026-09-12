@@ -165,16 +165,16 @@ describe('obterEstatisticas', () => {
     expect(stats.erros).toBe(1);
   });
 
-  it('conformidade = 100% when no eventos', async () => {
+  it('não inventa conformidade quando não há eventos', async () => {
     buildEventosChain([]);
     const stats = await obterEstatisticas(EMPRESA_ID);
-    expect(stats.conformidade).toBe(100);
+    expect(stats.conformidade).toBeNull();
   });
 
-  it('conformidade = 75% with 1 error in 4 events', async () => {
+  it('conformidade conta somente eventos efetivamente enviados', async () => {
     buildEventosChain([{ status: 'enviado' }, { status: 'enviado' }, { status: 'pendente' }, { status: 'erro' }]);
     const stats = await obterEstatisticas(EMPRESA_ID);
-    expect(stats.conformidade).toBe(75);
+    expect(stats.conformidade).toBe(50);
   });
 
   it('conformidade = 100% when all enviado', async () => {

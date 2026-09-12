@@ -77,12 +77,11 @@ serve(async (req: Request): Promise<Response> => {
     });
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(admin, { key: `assistente-ia:${userId}`, limit: 20, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
-    let raw: unknown;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    raw = _pb;
+    const raw = _pb;
     const { message, history = [] } = raw as { message?: string; history?: unknown[] };
 
     if (!message || typeof message !== 'string' || message.length > 4000) {

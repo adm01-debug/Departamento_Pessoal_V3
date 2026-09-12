@@ -29,12 +29,11 @@ export type ReportScheduleForm = {
  *
  * A Edge Function gera somente JSON/CSV. O agendamento anterior gravava PDF
  * e não incluía o tenant em `parametros`, tornando toda execução assíncrona
- * inválida. A autoria explícita permite que o executor posterior revalide o
- * papel RH/admin no momento do envio.
+ * inválida. A autoria é derivada de auth.uid() pelo trigger do banco e nunca
+ * aceita um identificador escolhido pelo browser.
  */
-export function buildReportScheduleInsert(form: ReportScheduleForm, empresaId: string, userId: string) {
+export function buildReportScheduleInsert(form: ReportScheduleForm, empresaId: string) {
   if (!empresaId) throw new Error('empresa_id é obrigatório');
-  if (!userId) throw new Error('Usuário autenticado é obrigatório');
 
   return {
     nome: form.nome,
@@ -44,7 +43,6 @@ export function buildReportScheduleInsert(form: ReportScheduleForm, empresaId: s
     hora_envio: form.hora_envio,
     formato: 'csv' as const,
     empresa_id: empresaId,
-    created_by: userId,
     ativo: true,
     parametros: { empresaId },
     dia_semana: form.frequencia === 'semanal' ? form.dia_semana : null,

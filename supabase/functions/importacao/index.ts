@@ -125,12 +125,11 @@ serve(async (req: Request): Promise<Response> => {
     const userId = userData.user.id;
 
     // 3) Validação de input via Zod (com limite de payload 512 KB para importações CSV)
-    let raw: unknown;
     const { body: _body, errorResponse: _plErr } = await parseJsonBody(req, 512 * 1024);
     if (_plErr) return _plErr;
-    raw = _body;
+    const raw = _body;
     const parsed = BodySchema.safeParse(raw);
-    if (!parsed.success) return createValidationErrorResponse(parsed.error);
+    if (!parsed.success) return createValidationErrorResponse(parsed.error, req);
     const { action, tabela, dados, formato, csvContent, empresaId } = parsed.data;
 
     const admin = createClient(supabaseUrl, serviceKey, {
@@ -141,7 +140,7 @@ serve(async (req: Request): Promise<Response> => {
     if (action !== 'template') {
       const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
       const rl = await checkRateLimit(admin, { key: `importacao:${userId}`, limit: 10, windowSec: 60 });
-      if (!rl.allowed) return rateLimitResponse(rl);
+      if (!rl.allowed) return rateLimitResponse(rl, req);
     }
 
 
@@ -152,7 +151,7 @@ serve(async (req: Request): Promise<Response> => {
     if (empresaId) {
       // Importar grava em massa em tabelas de colaboradores, folha e
       // cadastros. Exige RH/admin — o gate anterior aceitava o vínculo.
-      const authz = await requireRh(admin, userId, empresaId);
+      const authz = await requireRh(admin, userId, empresaId, req);
       if (authz.denied) return authz.denied;
     }
 

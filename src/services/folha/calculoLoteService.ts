@@ -25,10 +25,17 @@ interface ColaboradorFolha {
   id: string;
   nome_completo: string;
   salario_base: number | null;
+  jornada_horas_mensais?: string | null;
+  tipo_contrato?: string | null;
   dependentes?: Array<{ id: string; tipo?: string | null }> | null;
   eventos_variaveis?: EventoFolha[] | null;
-  contratos?: Array<{ jornada_mensal?: number | null; tipo_contrato?: string | null }> | null;
 }
+
+export const COLABORADOR_FOLHA_SELECT = `
+  *,
+  dependentes (id, tipo),
+  eventos_variaveis (codigo, descricao, tipo, valor)
+`;
 
 interface BeneficioVinculo {
   valor: number;
@@ -50,14 +57,7 @@ export const calculoLoteService = {
       const { data: colaboradoresData, error: colabError } = await (
         supabase.from('colaboradores') as unknown as QueryBuilderType
       )
-        .select(
-          `
-          *,
-          dependentes (id, tipo),
-          eventos_variaveis (codigo, descricao, tipo, valor),
-          contratos:contratos_trabalho(jornada_mensal, tipo_contrato)
-        `
-        )
+        .select(COLABORADOR_FOLHA_SELECT)
         .eq('empresa_id', empresaId)
         .eq('status', 'ativo');
 
@@ -112,7 +112,7 @@ export const calculoLoteService = {
           const dependentesCount =
             colab.dependentes?.filter((d) => d.tipo === 'filho' || d.tipo === 'enteado').length || 0;
           const eventosVariaveis = colab.eventos_variaveis || [];
-          const jornada = colab.contratos?.[0]?.jornada_mensal || 220;
+          const jornada = Number(colab.jornada_horas_mensais) || 220;
 
           // 3.1 Integrar dados de PONTO ELETRÔNICO (Horas Extras e Faltas Aprovadas)
           const { data: registrosPonto } = await supabase

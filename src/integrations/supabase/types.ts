@@ -15906,6 +15906,7 @@ export type Database = {
           id: string
           valor_13_salario: number | null
           valor_ferias: number | null
+          valor_total: number
         }
         Insert: {
           colaborador_id: string
@@ -15916,6 +15917,7 @@ export type Database = {
           id?: string
           valor_13_salario?: number | null
           valor_ferias?: number | null
+          valor_total?: number
         }
         Update: {
           colaborador_id?: string
@@ -15926,6 +15928,7 @@ export type Database = {
           id?: string
           valor_13_salario?: number | null
           valor_ferias?: number | null
+          valor_total?: number
         }
         Relationships: [
           {
@@ -16699,6 +16702,8 @@ export type Database = {
           ativo: boolean | null
           created_at: string
           created_by: string | null
+          dispatch_claim_token: string | null
+          dispatch_claimed_at: string | null
           dia_mes: number | null
           dia_semana: number | null
           email_destinatario: string
@@ -16718,6 +16723,8 @@ export type Database = {
           ativo?: boolean | null
           created_at?: string
           created_by?: string | null
+          dispatch_claim_token?: string | null
+          dispatch_claimed_at?: string | null
           dia_mes?: number | null
           dia_semana?: number | null
           email_destinatario: string
@@ -16737,6 +16744,8 @@ export type Database = {
           ativo?: boolean | null
           created_at?: string
           created_by?: string | null
+          dispatch_claim_token?: string | null
+          dispatch_claimed_at?: string | null
           dia_mes?: number | null
           dia_semana?: number | null
           email_destinatario?: string
@@ -22513,6 +22522,10 @@ export type Database = {
           remaining_seconds: number
         }[]
       }
+      claim_due_report_schedules: {
+        Args: { p_limit?: number; p_now: string }
+        Returns: Database["public"]["Tables"]["relatorios_agendados"]["Row"][]
+      }
       check_rate_limit: {
         Args: {
           check_endpoint: string
@@ -22662,6 +22675,10 @@ export type Database = {
         }
         Returns: Json
       }
+      finish_report_schedule_claim: {
+        Args: { p_claim_token: string; p_next?: string; p_schedule_id: string }
+        Returns: boolean
+      }
       eh_dia_valido_inicio_ferias: {
         Args: { p_data: string; p_empresa_id: string }
         Returns: {
@@ -22727,6 +22744,24 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_audit_trail: {
+        Args: { p_before?: string; p_empresa_id?: string; p_limit?: number }
+        Returns: {
+          acao: string
+          created_at: string
+          dados_anteriores: Json | null
+          dados_novos: Json | null
+          empresa_id: string | null
+          id: string
+          registro_id: string
+          status_anterior: string | null
+          status_novo: string | null
+          tabela: string
+          user_email: string | null
+          user_id: string | null
+          user_nome: string | null
+        }[]
+      }
       get_audit_trail_by_user: {
         Args: { _limit?: number; _user_id: string }
         Returns: {
@@ -22757,6 +22792,10 @@ export type Database = {
           runs_24h: number
           schedule: string
         }[]
+      }
+      get_company_rh_recipient_emails: {
+        Args: { p_empresa_id: string; p_limit?: number }
+        Returns: { email: string; user_id: string }[]
       }
       get_dlq_stats: {
         Args: never
@@ -23214,6 +23253,20 @@ export type Database = {
         Returns: boolean
       }
       process_lgpd_cleanup_queue: { Args: never; Returns: number }
+      replace_monthly_provisions: {
+        Args: {
+          p_audit_data: Json
+          p_competencia: string
+          p_empresa_id: string
+          p_rows: Json
+          p_user_id: string
+        }
+        Returns: number
+      }
+      report_destination_is_allowed: {
+        Args: { p_email: string; p_empresa_id: string }
+        Returns: boolean
+      }
       processar_ajuste_aprovado: {
         Args: { p_solicitacao_id: string }
         Returns: undefined

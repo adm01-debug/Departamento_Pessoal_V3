@@ -82,7 +82,7 @@ serve(async (req: Request): Promise<Response> => {
     // Rate limit — fechamento de folha é ação crítica: 5 req / min / usuário
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(admin, { key: `fechar-folha:${userId}`, limit: 5, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     // 3.5) Idempotência — evita duplo-fechamento por double-click / retry de rede
     const idemKey = extractIdempotencyKey(req, body);
@@ -92,6 +92,7 @@ serve(async (req: Request): Promise<Response> => {
       requestBody: body,
       empresaId,
       userId,
+      request: req,
     });
     if (idem.replay) return idem.replay;
     if (idem.conflict) return idem.conflict;
@@ -103,7 +104,7 @@ serve(async (req: Request): Promise<Response> => {
     // empresa. O aninhamento anterior (`if !belongs { if !isAdmin 403 }`)
     // equivalia a `belongs || isAdmin`: bastava trabalhar aqui.
     {
-      const authz = await requireRh(admin, userId, empresaId);
+      const authz = await requireRh(admin, userId, empresaId, req);
       if (authz.denied) return authz.denied;
     }
 
@@ -176,7 +177,7 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     // 8) Warning não bloqueante: provisões mensais
-    let warnings: string[] = [];
+    const warnings: string[] = [];
     try {
       const { count: provCount } = await admin
         .from('provisoes_mensais')
@@ -244,4 +245,3 @@ serve(async (req: Request): Promise<Response> => {
     return createErrorResponse('Erro interno', 500, 'INTERNAL_ERROR');
   }
 });
-

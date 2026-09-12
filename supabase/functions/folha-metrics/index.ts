@@ -47,7 +47,7 @@ Deno.serve(async (req: Request) => {
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(admin, { key: `folha-metrics:${userId}`, limit: 30, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 

@@ -8,9 +8,11 @@ import { deepChain } from '@/test/deepChain';
 
 const EMPRESA_ID = 'test-empresa-id';
 
-const { mockFrom, mockLog } = vi.hoisted(() => ({
+const { mockFrom, mockLog, mockCriarEvento, mockEnviarEvento } = vi.hoisted(() => ({
   mockFrom: vi.fn(),
   mockLog: vi.fn(),
+  mockCriarEvento: vi.fn(),
+  mockEnviarEvento: vi.fn(),
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -21,13 +23,21 @@ vi.mock('@/utils/auditLogger', () => ({
   auditLogger: { log: mockLog },
 }));
 
+vi.mock('../esocialService', () => ({
+  criarEvento: mockCriarEvento,
+  enviarEvento: mockEnviarEvento,
+}));
+
 // Dynamic import after mocks are registered
 const { contratacaoService } = await import('../contratacaoService');
 
 // ─── validarDocumento ─────────────────────────────────────────────────────────
 
 describe('contratacaoService.validarDocumento', () => {
-  beforeEach(() => { vi.clearAllMocks(); mockLog.mockResolvedValue(undefined); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockLog.mockResolvedValue(undefined);
+  });
 
   function setupUpdateEqChain(error: any = null) {
     const eqFn = vi.fn().mockResolvedValue({ error });
@@ -40,37 +50,45 @@ describe('contratacaoService.validarDocumento', () => {
     const { updateFn, eqFn } = setupUpdateEqChain();
     await contratacaoService.validarDocumento('adm-1', 'rg', 'validado', 'Ok', EMPRESA_ID);
     expect(mockFrom).toHaveBeenCalledWith('admissoes');
-    expect(updateFn).toHaveBeenCalledWith(expect.objectContaining({
-      checklist_rg: true,
-    }));
+    expect(updateFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        checklist_rg: true,
+      })
+    );
     expect(eqFn).toHaveBeenCalledWith('id', 'adm-1');
-    expect(mockLog).toHaveBeenCalledWith(expect.objectContaining({
-      tabela: 'admissoes',
-      registro_id: 'adm-1',
-      acao: 'UPDATE',
-    }));
+    expect(mockLog).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tabela: 'admissoes',
+        registro_id: 'adm-1',
+        acao: 'UPDATE',
+      })
+    );
   });
 
   it('sets document flag false when status is rejeitado', async () => {
     const { updateFn } = setupUpdateEqChain();
     await contratacaoService.validarDocumento('adm-1', 'cnh', 'rejeitado', undefined, EMPRESA_ID);
-    expect(updateFn).toHaveBeenCalledWith(expect.objectContaining({
-      checklist_cnh: false,
-    }));
+    expect(updateFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        checklist_cnh: false,
+      })
+    );
   });
 
   it('throws wrapped error on DB failure', async () => {
     setupUpdateEqChain({ message: 'DB fail' });
-    await expect(
-      contratacaoService.validarDocumento('adm-1', 'rg', 'validado', 'Ok', EMPRESA_ID)
-    ).rejects.toThrow('Falha ao validar documento de admissão');
+    await expect(contratacaoService.validarDocumento('adm-1', 'rg', 'validado', 'Ok', EMPRESA_ID)).rejects.toThrow(
+      'Falha ao validar documento de admissão'
+    );
   });
 });
 
 // ─── enviarLinkCandidato ──────────────────────────────────────────────────────
 
 describe('contratacaoService.enviarLinkCandidato', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   function setupInsertSingleChain(data: any, error: any = null) {
     const singleFn = vi.fn().mockResolvedValue({ data, error });
@@ -87,10 +105,12 @@ describe('contratacaoService.enviarLinkCandidato', () => {
     const result = await contratacaoService.enviarLinkCandidato('adm-1', 'a@b.com');
 
     expect(mockFrom).toHaveBeenCalledWith('admissao_tokens');
-    expect(insertFn).toHaveBeenCalledWith(expect.objectContaining({
-      admissao_id: 'adm-1',
-      email_candidato: 'a@b.com',
-    }));
+    expect(insertFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        admissao_id: 'adm-1',
+        email_candidato: 'a@b.com',
+      })
+    );
     expect(result).toEqual(tokenRecord);
   });
 
@@ -118,59 +138,115 @@ describe('contratacaoService.enviarLinkCandidato', () => {
 // ─── transmitirESocial ────────────────────────────────────────────────────────
 
 describe('contratacaoService.transmitirESocial', () => {
-  let setTimeoutSpy: ReturnType<typeof vi.spyOn>;
-
   beforeEach(() => {
     vi.clearAllMocks();
     mockLog.mockResolvedValue(undefined);
-    // Make setTimeout fire immediately so tests don't wait 2 s
-    setTimeoutSpy = vi.spyOn(global, 'setTimeout').mockImplementation((fn: any) => {
-      fn();
-      return 0 as any;
-    });
+    mockEnviarEvento.mockResolvedValue({ success: true, protocolo: 'PROTO-REAL', recibo: 'REC-REAL' });
   });
 
-  afterEach(() => { setTimeoutSpy.mockRestore(); });
-
-  it('returns true and logs eSocial transmission', async () => {
-    const admissao = { id: 'adm-1', nome_completo: 'João' };
+  it('reutiliza o evento persistido e só avança com recibo confirmado', async () => {
+    const admissao = {
+      id: 'adm-1',
+      empresa_id: EMPRESA_ID,
+      nome: 'João',
+      cpf: '52998224725',
+      data_prevista: '2026-01-15',
+      data_nascimento: '1990-01-01',
+      metadata: { esocial_event_id: 'evento-1', campo_preservado: true },
+    };
 
     const singleFn = vi.fn().mockResolvedValue({ data: admissao, error: null });
-    const eqSelect = vi.fn().mockReturnValue({ single: singleFn });
+    const eqSelect = vi.fn().mockReturnValue({ maybeSingle: singleFn });
     const selectFn = vi.fn().mockReturnValue({ eq: eqSelect });
 
     const eqUpdate = vi.fn().mockResolvedValue({ error: null });
     const updateFn = vi.fn().mockReturnValue({ eq: eqUpdate });
 
-    mockFrom
-      .mockReturnValueOnce({ select: selectFn })
-      .mockReturnValueOnce({ update: updateFn });
+    mockFrom.mockReturnValueOnce({ select: selectFn }).mockReturnValueOnce({ update: updateFn });
 
     const result = await contratacaoService.transmitirESocial('adm-1', EMPRESA_ID);
 
     expect(result).toBe(true);
-    expect(updateFn).toHaveBeenCalledWith(expect.objectContaining({ etapa: 'esocial' }));
-    expect(mockLog).toHaveBeenCalledWith(expect.objectContaining({
-      tabela: 'admissoes',
-      registro_id: 'adm-1',
-      acao: 'EXECUTE_CALC',
-    }));
+    expect(mockCriarEvento).not.toHaveBeenCalled();
+    expect(mockEnviarEvento).toHaveBeenCalledWith('evento-1', EMPRESA_ID);
+    expect(updateFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        etapa: 'esocial',
+        checklist_esocial_enviado: true,
+        protocolo_esocial: 'PROTO-REAL',
+      })
+    );
+    expect(mockLog).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tabela: 'admissoes',
+        registro_id: 'adm-1',
+        acao: 'EXECUTE_CALC',
+      })
+    );
   });
 
-  it('throws wrapped error on update failure', async () => {
-    const singleFn = vi.fn().mockResolvedValue({ data: {}, error: null });
-    const eqSelect = vi.fn().mockReturnValue({ single: singleFn });
+  it('não avança nem inventa protocolo quando o provedor não devolve recibo', async () => {
+    const singleFn = vi.fn().mockResolvedValue({
+      data: {
+        id: 'adm-1',
+        empresa_id: EMPRESA_ID,
+        nome: 'João',
+        cpf: '52998224725',
+        data_prevista: '2026-01-15',
+        data_nascimento: null,
+        metadata: { esocial_event_id: 'evento-1' },
+      },
+      error: null,
+    });
+    const eqSelect = vi.fn().mockReturnValue({ maybeSingle: singleFn });
     const selectFn = vi.fn().mockReturnValue({ eq: eqSelect });
-
-    const eqUpdate = vi.fn().mockResolvedValue({ error: { message: 'fail' } });
-    const updateFn = vi.fn().mockReturnValue({ eq: eqUpdate });
-
-    mockFrom
-      .mockReturnValueOnce({ select: selectFn })
-      .mockReturnValueOnce({ update: updateFn });
+    mockFrom.mockReturnValueOnce({ select: selectFn });
+    mockEnviarEvento.mockResolvedValueOnce({ success: true, protocolo: null, recibo: null });
 
     await expect(contratacaoService.transmitirESocial('adm-1', EMPRESA_ID)).rejects.toThrow(
       'Falha na transmissão para o eSocial'
     );
+    expect(mockFrom).toHaveBeenCalledTimes(1);
+    expect(mockLog).not.toHaveBeenCalled();
+  });
+
+  it('cria e persiste a identidade do evento antes de transmitir', async () => {
+    const singleFn = vi.fn().mockResolvedValue({
+      data: {
+        id: 'adm-1',
+        empresa_id: EMPRESA_ID,
+        nome: 'João',
+        cpf: '52998224725',
+        data_prevista: '2026-01-15',
+        data_nascimento: null,
+        metadata: {},
+      },
+      error: null,
+    });
+    const selectFn = vi.fn().mockReturnValue({ eq: vi.fn().mockReturnValue({ maybeSingle: singleFn }) });
+    const pendingUpdate = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue({ error: null }) });
+    const finalUpdate = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue({ error: null }) });
+    mockFrom
+      .mockReturnValueOnce({ select: selectFn })
+      .mockReturnValueOnce({ update: pendingUpdate })
+      .mockReturnValueOnce({ update: finalUpdate });
+    mockCriarEvento.mockResolvedValueOnce({ id: 'evento-novo' });
+
+    await contratacaoService.transmitirESocial('adm-1', EMPRESA_ID);
+
+    expect(mockCriarEvento).toHaveBeenCalledWith(
+      expect.objectContaining({
+        empresa_id: EMPRESA_ID,
+        tipo_evento: 'S-2200',
+        dados: expect.objectContaining({ admissaoId: 'adm-1', cpfTrab: '52998224725' }),
+      })
+    );
+    expect(pendingUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        status_esocial: 'processando',
+        metadata: expect.objectContaining({ esocial_event_id: 'evento-novo' }),
+      })
+    );
+    expect(mockEnviarEvento).toHaveBeenCalledWith('evento-novo', EMPRESA_ID);
   });
 });

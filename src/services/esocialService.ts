@@ -78,7 +78,9 @@ export async function obterEstatisticas(empresaId: string): Promise<any> {
     const pendentes = eventos.filter((e) => e.status === 'pendente').length;
     const erros = eventos.filter((e) => e.status === 'erro').length;
     const total = eventos.length;
-    const conformidade = total > 0 ? Math.round(((total - erros) / total) * 100) : 100;
+    // Indicador operacional: somente recibos persistidos como `enviado`
+    // contam. Eventos pendentes ou simulados jamais viram conformidade.
+    const conformidade = total > 0 ? Math.round((enviados / total) * 100) : null;
 
     return { enviados, pendentes, erros, conformidade };
   } catch (e) {
@@ -141,6 +143,7 @@ export function listarEventosValidaveis(): string[] {
 
 export interface ESocialTransmissionResult {
   success: true;
+  simulated?: boolean;
   protocolo: string | null;
   recibo?: string | null;
   tentativas?: number;

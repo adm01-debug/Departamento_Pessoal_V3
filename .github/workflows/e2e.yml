@@ -13,6 +13,10 @@ concurrency:
 jobs:
   playwright:
     name: Playwright E2E
+    # As quatro identidades são sintéticas, mas ainda concedem escrita no
+    # projeto canônico. Não expor suas credenciais a código de pull request.
+    # O gate autenticado roda no SHA já integrado em main.
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:

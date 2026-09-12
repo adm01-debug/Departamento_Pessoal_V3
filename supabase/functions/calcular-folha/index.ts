@@ -76,7 +76,11 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   let idempotencyId: string | undefined;
-  let admin: ReturnType<typeof createClient> | undefined;
+  // Estas Edge Functions não compartilham o schema TypeScript do front-end no
+  // bundle de deploy. Sem um schema explícito, o supabase-js 2 infere `never`
+  // para todas as tabelas/RPCs. `any` aqui limita-se ao adaptador dinâmico do
+  // PostgREST; os payloads de entrada continuam validados pelo Zod abaixo.
+  let admin: ReturnType<typeof createClient<any>> | undefined;
 
   try {
     const csrf = await verifyCsrf(req.clone());
@@ -91,7 +95,7 @@ Deno.serve(async (req) => {
     const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
-    const userClient = createClient(supabaseUrl, anonKey, {
+    const userClient = createClient<any>(supabaseUrl, anonKey, {
       global: { headers: { Authorization: authHeader } },
       auth: { persistSession: false, autoRefreshToken: false },
     });
@@ -106,21 +110,21 @@ Deno.serve(async (req) => {
     // (alguns navegadores/proxies removem headers custom em preflights antigos).
     const idempotencyKey = extractIdempotencyKey(req, data);
 
-    admin = createClient(supabaseUrl, serviceKey, {
+    admin = createClient<any>(supabaseUrl, serviceKey, {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
     // Rate limit — cálculo de folha é pesado: 20 req / min / usuário
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(admin, { key: `calc-folha:${userId}`, limit: 20, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     // Tenant scope (antes de qualquer efeito colateral / idempotência)
     // Papel, não apenas vínculo: o padrão anterior (`!belongs && !isAdmin`)
     // era um OU — pertencer à empresa já bastava, e o is_admin apenas somava
     // o admin global. Qualquer colaborador autenticado passava.
     {
-      const authz = await requireRh(admin, userId, empresa_id);
+      const authz = await requireRh(admin, userId, empresa_id, req);
       if (authz.denied) return authz.denied;
     }
     // Idempotência — Onda 41
@@ -131,6 +135,7 @@ Deno.serve(async (req) => {
       requestBody: { empresa_id, competencia, user_id: userId },
       empresaId: empresa_id,
       userId,
+      request: req,
     });
 
     // Auditoria detalhada de conflito/replay/duplicidade de Idempotency-Key.

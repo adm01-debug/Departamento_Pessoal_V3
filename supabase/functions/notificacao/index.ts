@@ -35,7 +35,13 @@ async function sha256Hex(input: string): Promise<string> {
 }
 
 const stripHtml = (s: string) =>
-  s.replace(/<[^>]*>/g, '').replace(/[\u0000-\u001F\u007F]/g, '').trim();
+  Array.from(s.replace(/<[^>]*>/g, ''))
+    .filter((character) => {
+      const codePoint = character.codePointAt(0) ?? 0;
+      return codePoint >= 32 && codePoint !== 127;
+    })
+    .join('')
+    .trim();
 
 serve(async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') {
@@ -88,7 +94,7 @@ serve(async (req: Request): Promise<Response> => {
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(admin, { key: `notificacao:${userId}`, limit: 30, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     switch (body.action) {
       case 'enviar': {

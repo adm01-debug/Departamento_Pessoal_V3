@@ -91,13 +91,13 @@ serve(async (req: Request): Promise<Response> => {
     // um OU com o vínculo, então qualquer colaborador reabria a folha.
     // `isAdmin` continua necessário adiante: ele libera overrides (reabrir
     // fora da janela de auditoria), privilégio que o RH comum não tem.
-    const authz = await requireRh(admin, userId, empresaId);
+    const authz = await requireRh(admin, userId, empresaId, req);
     if (authz.denied) return authz.denied;
     const isAdmin = authz.isAdmin;
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(admin, { key: `reabrir-folha:${userId}`, limit: 10, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     // 4.5) Idempotência transacional — evita reaberturas duplicadas
     const idemKey = extractIdempotencyKey(req, body);
@@ -107,6 +107,7 @@ serve(async (req: Request): Promise<Response> => {
       requestBody: { empresaId, folhaId, version, motivo, override_esocial },
       empresaId,
       userId,
+      request: req,
     });
     if (idem.replay) return idem.replay;
     if (idem.conflict) return idem.conflict;

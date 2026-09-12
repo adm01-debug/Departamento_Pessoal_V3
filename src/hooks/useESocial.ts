@@ -36,7 +36,11 @@ export function useESocial() {
       return await esocialService.enviarEvento(eventoId, empresaId);
     },
     onSuccess: (data) => {
-      toast.success(`Evento enviado — Protocolo: ${data.protocolo}`);
+      if (data.simulated) {
+        toast.info(`Simulação concluída — não transmitida ao Governo (${data.protocolo})`);
+      } else {
+        toast.success(`Evento enviado — Protocolo: ${data.protocolo}`);
+      }
       invalidate();
     },
     onError: (err: any) => handleServerError(err),
@@ -47,7 +51,11 @@ export function useESocial() {
       return await esocialService.reenviarEvento(eventoId, empresaId);
     },
     onSuccess: (data) => {
-      toast.success(`Evento reenviado — Protocolo: ${data.protocolo}`);
+      if (data.simulated) {
+        toast.info(`Simulação repetida — não transmitida ao Governo (${data.protocolo})`);
+      } else {
+        toast.success(`Evento reenviado — Protocolo: ${data.protocolo}`);
+      }
       invalidate();
     },
     onError: (err: any) => handleServerError(err),
@@ -99,7 +107,7 @@ export function useESocial() {
 
   return {
     eventos: eventosQuery.data || [],
-    stats: statsQuery.data || { enviados: 0, pendentes: 0, erros: 0, conformidade: 100 },
+    stats: statsQuery.data || { enviados: 0, pendentes: 0, erros: 0, conformidade: null },
     config: configQuery.data,
     certificados: certificadosQuery.data || [],
     logs: logsQuery.data || [],

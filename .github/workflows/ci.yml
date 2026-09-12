@@ -45,6 +45,10 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Lint
         run: npm run lint:ci
+      - name: Lint Edge Functions
+        run: npm run lint:edge
+      - name: Format changed source files
+        run: npm run format:check:changed
 
   test:
     name: Unit Tests
@@ -77,23 +81,24 @@ jobs:
         # aqui causam falhas silenciosas em produção.
         run: deno check --no-lock --node-modules-dir=false supabase/functions/external-db-bridge/index.ts
       - name: Testes unitários compartilhados das Edge Functions
-        run: deno test --allow-env --no-lock --node-modules-dir=false supabase/functions/_shared/*.test.ts supabase/functions/metrics/*.test.ts supabase/functions/auth-login/*.test.ts supabase/functions/backup-automatico/*.test.ts supabase/functions/alertas-dp/*.test.ts supabase/functions/enviar-esocial/*.test.ts supabase/functions/enviar-relatorio/*.test.ts supabase/functions/metabase-embed/*.test.ts supabase/functions/external-db-bridge/validation.test.ts supabase/functions/external-db-bridge/tenantScope.test.ts
-      - name: Type-check demais edge functions (informativo)
-        # Passa mesmo com erros — apenas gera relatório para rastreamento progressivo.
-        # As demais funções serão migradas gradualmente para zero erros.
-        continue-on-error: true
+        run: deno test --allow-env --no-lock --node-modules-dir=false supabase/functions/_shared/*.test.ts supabase/functions/metrics/*.test.ts supabase/functions/auth-login/*.test.ts supabase/functions/backup-automatico/*.test.ts supabase/functions/alertas-dp/*.test.ts supabase/functions/enviar-esocial/*.test.ts supabase/functions/enviar-relatorio/*.test.ts supabase/functions/processar-agendamentos/*.test.ts supabase/functions/metabase-embed/*.test.ts supabase/functions/external-db-bridge/validation.test.ts supabase/functions/external-db-bridge/tenantScope.test.ts
+      - name: Type-check de todas as Edge Functions (gate bloqueante)
+        # Toda Edge Function publicada precisa compilar. O loop preserva o
+        # inventário completo de falhas e só encerra com erro ao final, evitando
+        # o antigo falso-verde de `continue-on-error`.
         run: |
           ERRORS=0
           for fn in supabase/functions/*/index.ts; do
             dir=$(dirname "$fn")
             name=$(basename "$dir")
             if [ "$name" = "external-db-bridge" ]; then continue; fi
-            if ! deno check --no-lock --node-modules-dir=false "$fn" 2>/dev/null; then
+            if ! deno check --no-lock --node-modules-dir=false "$fn"; then
               ERRORS=$((ERRORS+1))
-              echo "  ⚠ $name: erros de tipo (não bloqueia)"
+              echo "::error file=$fn::Edge Function $name falhou no deno check"
             fi
           done
           echo "Funções com erros de tipo (não-bridge): $ERRORS"
+          test "$ERRORS" -eq 0
 
   security-config:
     name: Config de segurança (E-077, estático)
@@ -109,9 +114,11 @@ jobs:
         # Estático (não precisa de DATABASE_URL) — roda em todo PR.
         run: |
           node scripts/audit-security-config.mjs
+          node scripts/audit-bridge-frontend-contract.mjs
           node scripts/validate-plan-50.mjs
           node scripts/audit-canonical-project.mjs
           node scripts/tests/rebaseline-artifact.test.mjs
+          node scripts/tests/validate-canonical-db-url.test.mjs
 
   p0-database-migrations:
     name: P0 database migration simulations
@@ -138,9 +145,23 @@ jobs:
           bash scripts/tests/migrations-p0-atomic-rate-limit.sh
           bash scripts/tests/migrations-p0-payroll-upsert.sh
           bash scripts/tests/migrations-p0-bridge-membership.sh
+          bash scripts/tests/migrations-p0-identity-rls-authz.sh
+          bash scripts/tests/migrations-p0-token-table-acl.sh
+          bash scripts/tests/migrations-p0-report-schedule-claims.sh
+          bash scripts/tests/migrations-p1-atomic-provisions.sh
+          bash scripts/tests/migrations-p1-report-schedule-authorship.sh
+          bash scripts/tests/migrations-p1-scoped-audit-trail.sh
+          bash scripts/tests/migrations-p1-backup-storage-bucket.sh
+          bash scripts/tests/migrations-p1-internal-notification-recipients.sh
+          bash scripts/tests/migrations-p1-pcs-contract.sh
+          bash scripts/tests/migrations-p1-security-cron-contract.sh
 
   db-integrity:
     name: Integridade do banco (search_path x extensões)
+    # Nunca entregar uma URL administrativa do banco a código ainda não
+    # integrado. PRs validam migrations em PostgreSQL descartável; a auditoria
+    # viva roda somente a partir de main ou por despacho manual do workflow.
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     # Este é deliberadamente um gate de banco canônico, não uma análise
     # estática. Sem uma conexão de auditoria, um "verde" não é evidência de

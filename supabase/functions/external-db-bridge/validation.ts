@@ -111,13 +111,47 @@ export const RPC_ALLOWLIST = new Set<string>([
   // tabela está na TABLE_DENYLIST); as funções verificam is_admin(auth.uid())
   // por dentro. Ver 20260718230000_admin_role_management_rpc.sql (achado R1).
   "admin_set_user_role", "admin_list_user_roles", "admin_associar_usuario_empresa",
-  // negócio
-  "get_personnel_cost_projection",
+  // observabilidade / auditoria — todas fazem a autorização fina no banco
+  "get_dlq_stats", "folha_conflict_stats", "get_query_telemetry",
+  "get_idempotency_health", "get_cron_jobs_health",
+  "get_security_alerts_summary", "resolve_security_alert",
+  "listar_auditoria", "registrar_auditoria", "search_audit_unified",
+  "log_frontend_error", "record_pii_access", "sec_audit_policies",
+  // folha / financeiro
+  "get_personnel_cost_projection", "aprovar_despesa", "rejeitar_despesa",
+  "next_cnab_sequencial", "processar_ajuste_aprovado",
+  // férias
   "calcular_dias_ferias", "fn_calculate_periodo_aquisitivo",
-  "processar_ajuste_aprovado",
-  "gerar_alertas_preditivos_ia",
-  "registrar_batida_ponto",
-  "run_rls_tests",
+  "assinar_aviso_ferias", "registrar_comunicado_ferias_coletivas",
+  "registrar_pagamento_ferias", "solicitar_adiantamento_13_ferias",
+  "programacao_ferias_mover", "programacao_ferias_aprovar_gestor",
+  "programacao_ferias_aprovar_rh", "programacao_ferias_rejeitar",
+  "programacao_ferias_converter",
+  // ponto / AFDT / AEJ
+  "registrar_batida_ponto", "assinar_espelho_ponto", "verificar_espelho_ponto",
+  "reconciliar_afdt", "notificar_divergencias_afdt",
+  "resolver_divergencia_afdt", "criar_batida_da_divergencia_afdt",
+  "associar_pis_colaborador_afdt", "aplicar_medida_folha_ponto",
+  // contratos por token e gestão autenticada
+  "contrato_consultar_por_token", "contrato_preview_url_por_token",
+  "contrato_assinar_por_token", "contrato_verificar_autenticidade_v2",
+  "contrato_gerar_token_assinatura", "contrato_revogar_token",
+  "contrato_estender_expiracao",
+  // medidas disciplinares
+  "medida_consultar_por_token", "medida_registrar_ciencia_publica",
+  "medida_gerar_link_ciencia", "medida_enviar_aprovacao", "medida_aprovar",
+  "medida_rejeitar", "medida_arquivar", "medida_contestar",
+  "medida_responder_contestacao", "sugerir_proxima_medida",
+  // plano de cargos e salários
+  "pcs_gerar_grades", "pcs_grades_mercado", "pcs_enquadramento",
+  "pcs_simular_impacto",
+  // SST
+  "clinicas_proximas", "sst_cat_dashboard", "sst_dashboard_sla",
+  "sst_extintores_dashboard", "sst_regimento_assinar",
+  "sst_regimento_dashboard", "sst_regimento_notificar_pendentes",
+  "sst_regimento_pendentes_lista", "sst_regimento_publicar",
+  // demais jornadas autenticadas
+  "gerar_alertas_preditivos_ia", "vincular_colaborador_ao_usuario",
   // rescisão — bloqueio de pagamento sem homologação/assinatura (achado
   // N25); ambas verificam is_admin(auth.uid()) por dentro. Ver
   // 20260719000000_bloqueio_pagamento_rescisao_lgpd.sql.

@@ -2,6 +2,7 @@ const HMAC_COMPARISON_KEY = "dp-report-dispatch-comparison-key";
 
 export type ReportDispatchRequest = {
   agendamentoId: string | undefined;
+  claimToken: string | undefined;
   tipoRelatorio: string;
   formato: string;
   emailDestinatario: string;
@@ -15,6 +16,8 @@ export type StoredReportSchedule = {
   tipo_relatorio: string;
   formato: string;
   email_destinatario: string;
+  ativo: boolean | null;
+  dispatch_claim_token: string | null;
 };
 
 /**
@@ -65,7 +68,10 @@ export function requestMatchesStoredReportSchedule(
   schedule: StoredReportSchedule,
 ): boolean {
   return Boolean(schedule.created_by) &&
+    schedule.ativo === true &&
+    Boolean(schedule.dispatch_claim_token) &&
     request.agendamentoId === schedule.id &&
+    request.claimToken === schedule.dispatch_claim_token &&
     request.empresaId === schedule.empresa_id &&
     request.tipoRelatorio === schedule.tipo_relatorio &&
     request.formato === schedule.formato &&

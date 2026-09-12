@@ -108,11 +108,12 @@ serve(async (req: Request): Promise<Response> => {
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(admin, { key: `cache:${userId}`, limit: 60, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
-    const { body: _pb } = await parseJsonBody(req);
+    const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
+    if (_pe) return _pe;
     const parsed = BodySchema.safeParse(_pb ?? {});
-    if (!parsed.success) return createValidationErrorResponse(parsed.error);
+    if (!parsed.success) return createValidationErrorResponse(parsed.error, req);
     const body = parsed.data;
 
     evictExpired();
@@ -181,7 +182,7 @@ serve(async (req: Request): Promise<Response> => {
 
         // select whitelist simples — apenas identificadores/wildcards/vírgulas
         const rawSel = body.query?.select ?? '*';
-        const safeSel = /^[a-zA-Z0-9_,\s\*\(\)]+$/.test(rawSel) ? rawSel : '*';
+        const safeSel = /^[a-zA-Z0-9_,\s*()]+$/.test(rawSel) ? rawSel : '*';
 
         let q = admin.from(body.table).select(safeSel).eq('empresa_id', body.empresaId);
         q = q.limit(body.query?.limit ?? 100);

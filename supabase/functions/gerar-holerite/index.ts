@@ -8,11 +8,13 @@ import { requireSelfOrRh } from '../_shared/authz.ts';
 
 // Tabelas INSS 2026
 const calcularINSS = (base: number): number => {
-  let inss = 0;
-  if (base <= 1518) inss = base * 0.075;
-  else if (base <= 2793.88) inss = 113.85 + (base - 1518) * 0.09;
-  else if (base <= 4190.83) inss = 228.68 + (base - 2793.88) * 0.12;
-  else inss = 396.31 + (Math.min(base, 8157.41) - 4190.83) * 0.14;
+  const inss = base <= 1518
+    ? base * 0.075
+    : base <= 2793.88
+      ? 113.85 + (base - 1518) * 0.09
+      : base <= 4190.83
+        ? 228.68 + (base - 2793.88) * 0.12
+        : 396.31 + (Math.min(base, 8157.41) - 4190.83) * 0.14;
   return Number(Math.min(inss, 951.63).toFixed(2));
 };
 
@@ -79,12 +81,12 @@ serve(async (req: Request): Promise<Response> => {
     // para QUALQUER colega — bastava o id do colaborador para obter salário,
     // CPF, banco, agência e conta de outra pessoa. Pertencer à empresa é
     // pré-requisito, não permissão.
-    const authz = await requireSelfOrRh(supabase, userId, colaborador.user_id, colaborador.empresa_id);
+    const authz = await requireSelfOrRh(supabase, userId, colaborador.user_id, colaborador.empresa_id, req);
     if (authz.denied) return authz.denied;
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(supabase, { key: `gerar-holerite:${userId}`, limit: 30, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     // Audit log — leitura de PII sensível
     await supabase.from('audit_log').insert({

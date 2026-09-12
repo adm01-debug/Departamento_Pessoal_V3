@@ -23,7 +23,9 @@ function makeUpsertChain(error: any = null) {
 }
 
 describe('provisoesService.calcularProvisoesMensais', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns undefined when no colaboradores found', async () => {
     mockFrom.mockReturnValue(makeColabChain(null));
@@ -77,7 +79,8 @@ describe('provisoesService.calcularProvisoesMensais', () => {
     expect(capturedUpsert).not.toBeNull();
     expect(capturedUpsert.valor_13_salario).toBeCloseTo(250, 1);
     expect(capturedUpsert.valor_ferias).toBeCloseTo(333.33, 1);
-    expect(capturedUpsert.encargos_provisao).toBeGreaterThan(0);
+    expect(capturedUpsert.encargos_provisao).toBe(214.67);
+    expect(capturedUpsert.valor_total).toBe(798);
   });
 
   it('queries colaboradores table with empresa_id and status=ativo', async () => {

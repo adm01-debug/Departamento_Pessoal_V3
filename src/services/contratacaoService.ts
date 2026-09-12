@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { auditLogger } from '@/utils/auditLogger';
 import { Database } from '@/integrations/supabase/types';
+import { criarEvento, enviarEvento } from './esocialService';
 
 // Escapa HTML para prevenir XSS em dados vindos do usuário/candidato.
 const esc = (v: unknown): string => {
@@ -18,7 +19,7 @@ const secureToken = (len = 24): string => {
   const bytes = new Uint8Array(len);
   crypto.getRandomValues(bytes);
   const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  return Array.from(bytes, b => alphabet[b % alphabet.length]).join('');
+  return Array.from(bytes, (b) => alphabet[b % alphabet.length]).join('');
 };
 
 type Empresa = Database['public']['Tables']['empresas']['Row'];
@@ -26,7 +27,6 @@ type Admissao = Database['public']['Tables']['admissoes']['Row'];
 
 export const contratacaoService = {
   async gerarTemplateContrato(admissaoId: string): Promise<string> {
-    
     const { data: admissao, error } = await supabase
       .from('admissoes')
       .select('*, empresa:empresas!admissoes_empresa_id_fkey(*)')
@@ -79,11 +79,27 @@ export const contratacaoService = {
         </div>
       </div>
     `;
-  
   },
 
-  async validarDocumento(admissaoId: string, docType: string, status: 'validado' | 'rejeitado', observacao?: string, empresaId?: string): Promise<void> {
-    const ALLOWED_DOC_TYPES = ['rg', 'cpf', 'ctps', 'titulo', 'reservista', 'comprovante_residencia', 'foto', 'certidao', 'pis', 'cnh'];
+  async validarDocumento(
+    admissaoId: string,
+    docType: string,
+    status: 'validado' | 'rejeitado',
+    observacao?: string,
+    empresaId?: string
+  ): Promise<void> {
+    const ALLOWED_DOC_TYPES = [
+      'rg',
+      'cpf',
+      'ctps',
+      'titulo',
+      'reservista',
+      'comprovante_residencia',
+      'foto',
+      'certidao',
+      'pis',
+      'cnh',
+    ];
     if (!ALLOWED_DOC_TYPES.includes(docType)) {
       throw new Error(`Tipo de documento inválido: ${docType}`);
     }
@@ -95,8 +111,8 @@ export const contratacaoService = {
           [`checklist_${docType}`]: status === 'validado',
           metadata: {
             obs: observacao,
-            last_validation: new Date().toISOString()
-          }
+            last_validation: new Date().toISOString(),
+          },
         } as any)
         .eq('id', admissaoId)
         .eq('empresa_id', empresaId);
@@ -107,21 +123,20 @@ export const contratacaoService = {
         tabela: 'admissoes',
         registro_id: admissaoId,
         acao: 'UPDATE',
-        dados_novos: { 
-          documento: docType, 
-          status, 
+        dados_novos: {
+          documento: docType,
+          status,
           observacao,
-          evento: 'VALIDACAO_DOCUMENTO'
-        }
+          evento: 'VALIDACAO_DOCUMENTO',
+        },
       });
-      return (undefined);
+      return undefined;
     } catch (e) {
       throw new Error('Falha ao validar documento de admissão', { cause: e });
     }
   },
 
   async enviarLinkCandidato(admissaoId: string, email: string): Promise<any> {
-    
     const token = secureToken(24);
     const expiracao = new Date();
     expiracao.setDate(expiracao.getDate() + 7);
@@ -139,16 +154,21 @@ export const contratacaoService = {
 
     if (error) throw error;
     return data;
-  
   },
 
   async enviarWhatsApp(admissaoId: string, telefone: string, token: string): Promise<void> {
     try {
       const baseUrl = window.location.origin;
       const link = `${baseUrl}/contratacao?token=${token}`;
-      const mensagem = encodeURIComponent(`Olá! 👋 Boas-vindas à nossa equipe!\n\nSeu processo de admissão digital está pronto. Acesse pelo link seguro: ${link}\n\nCódigo de Acesso: *${token}*`);
+      const mensagem = encodeURIComponent(
+        `Olá! 👋 Boas-vindas à nossa equipe!\n\nSeu processo de admissão digital está pronto. Acesse pelo link seguro: ${link}\n\nCódigo de Acesso: *${token}*`
+      );
 
-      const { data: admissao, error: admErr } = await supabase.from('admissoes').select('empresa_id').eq('id', admissaoId).maybeSingle();
+      const { data: admissao, error: admErr } = await supabase
+        .from('admissoes')
+        .select('empresa_id')
+        .eq('id', admissaoId)
+        .maybeSingle();
       if (admErr) throw admErr;
       if (!admissao) throw new Error('Admissão não encontrada — não é possível enviar notificação.');
 
@@ -158,7 +178,7 @@ export const contratacaoService = {
           await whatsappService.sendMessage({
             empresaId: admissao.empresa_id,
             phone: telefone,
-            message: `Olá! 👋 Boas-vindas!\n\nSeu processo de admissão digital está pronto: ${link}\n\nCódigo: *${token}*`
+            message: `Olá! 👋 Boas-vindas!\n\nSeu processo de admissão digital está pronto: ${link}\n\nCódigo: *${token}*`,
           });
         }
       } catch (e) {
@@ -170,9 +190,9 @@ export const contratacaoService = {
         tipo: 'whatsapp',
         canal: 'whatsapp',
         status: 'enviado',
-        mensagem: `Link de contratação enviado via WhatsApp`
+        mensagem: `Link de contratação enviado via WhatsApp`,
       });
-      return (undefined);
+      return undefined;
     } catch (e) {
       throw new Error('Falha ao enviar notificação via WhatsApp', { cause: e });
     }
@@ -181,35 +201,89 @@ export const contratacaoService = {
   async transmitirESocial(admissaoId: string, empresaId: string): Promise<boolean> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     try {
-      const { data: admissao } = await supabase.from('admissoes').select('empresa_id').eq('id', admissaoId).eq('empresa_id', empresaId).single();
+      const { data: admissao, error: admissaoError } = await supabase
+        .from('admissoes')
+        .select('id,empresa_id,nome,cpf,data_prevista,data_nascimento,metadata')
+        .eq('id', admissaoId)
+        .eq('empresa_id', empresaId)
+        .maybeSingle();
+      if (admissaoError) throw admissaoError;
       if (!admissao) throw new Error('Admissão não encontrada ou sem permissão');
+      if (!admissao.cpf) throw new Error('CPF é obrigatório para gerar o evento S-2200');
 
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const previousMetadata =
+        admissao.metadata && typeof admissao.metadata === 'object' && !Array.isArray(admissao.metadata)
+          ? (admissao.metadata as Record<string, unknown>)
+          : {};
+      let eventoId = typeof previousMetadata.esocial_event_id === 'string' ? previousMetadata.esocial_event_id : null;
+
+      if (!eventoId) {
+        const evento = await criarEvento({
+          empresa_id: empresaId,
+          tipo_evento: 'S-2200',
+          dados: {
+            admissaoId,
+            cpfTrab: admissao.cpf,
+            nmTrab: admissao.nome,
+            dtAdm: admissao.data_prevista,
+            dtNascto: admissao.data_nascimento ?? undefined,
+          },
+        });
+        eventoId = evento.id;
+        const { error: pendingError } = await supabase
+          .from('admissoes')
+          .update({
+            status_esocial: 'processando',
+            metadata: { ...previousMetadata, esocial_event_id: eventoId },
+          })
+          .eq('id', admissaoId)
+          .eq('empresa_id', empresaId);
+        if (pendingError) throw pendingError;
+      }
+
+      const transmission = await enviarEvento(eventoId, empresaId);
+      if (transmission.simulated) {
+        throw new Error('A simulação eSocial não pode concluir uma admissão real');
+      }
+      const receipt = transmission.protocolo || transmission.recibo;
+      if (!receipt) throw new Error('O eSocial não devolveu protocolo ou recibo verificável');
 
       const { error } = await supabase
         .from('admissoes')
         .update({
           etapa: 'esocial',
-          metadata: { esocial_protocol: `PROTO-${Math.random().toString(36).toUpperCase().slice(0, 10)}` } as any
+          checklist_esocial_enviado: true,
+          status_esocial: 'enviado',
+          protocolo_esocial: receipt,
+          data_transmissao_esocial: new Date().toISOString(),
+          metadata: {
+            ...previousMetadata,
+            esocial_event_id: eventoId,
+            esocial_protocol: transmission.protocolo,
+            esocial_receipt: transmission.recibo ?? null,
+          },
         })
         .eq('id', admissaoId)
         .eq('empresa_id', empresaId);
-        
+
       if (error) throw error;
-      
+
       await auditLogger.log({
         tabela: 'admissoes',
         registro_id: admissaoId,
         acao: 'EXECUTE_CALC',
-        dados_novos: { evento: 'TRANSMISSAO_ESOCIAL_S2200', status: 'sucesso' }
+        dados_novos: {
+          evento: 'TRANSMISSAO_ESOCIAL_S2200',
+          status: 'sucesso',
+          evento_id: eventoId,
+          protocolo: transmission.protocolo,
+          recibo: transmission.recibo ?? null,
+        },
       });
-      
-      return (true);
+
+      return true;
     } catch (e) {
       throw new Error('Falha na transmissão para o eSocial', { cause: e });
     }
-  }
+  },
 };
-
-
-

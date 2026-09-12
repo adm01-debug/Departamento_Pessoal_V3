@@ -88,6 +88,8 @@ third="$(run_psql -qAtc "SET ROLE service_role; SELECT public.edge_rate_limit_ch
 [ "$first" = "true" ] && [ "$second" = "true" ] && [ "$third" = "false" ] || {
   echo "sequential limit contract failed: $first/$second/$third" >&2; exit 1;
 }
+reset_at="$(run_psql -qAtc "SET ROLE service_role; SELECT public.edge_rate_limit_check('serial', 2, 60, 1001)->>'reset';")"
+[ "$reset_at" = "1060" ] || { echo "rate-limit reset timestamp is wrong: $reset_at" >&2; exit 1; }
 
 # Twenty independent transactions race on the same key. The advisory lock must
 # allow exactly three requests, never N+1.

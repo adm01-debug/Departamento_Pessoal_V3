@@ -131,12 +131,11 @@ serve(async (req: Request): Promise<Response> => {
   const adminRL = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
   const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
   const rl = await checkRateLimit(adminRL, { key: `parse-afdt:${userId}`, limit: 10, windowSec: 60 });
-  if (!rl.allowed) return rateLimitResponse(rl);
+  if (!rl.allowed) return rateLimitResponse(rl, req);
 
-  let body: { conteudo?: string; nome_arquivo?: string; tipo?: string; empresa_id?: string };
   const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
   if (_pe) return _pe;
-  body = _pb as typeof body;
+  const body = _pb as { conteudo?: string; nome_arquivo?: string; tipo?: string; empresa_id?: string };
 
   const conteudo = String(body.conteudo ?? '');
   const nomeArquivo = String(body.nome_arquivo ?? 'arquivo.txt').slice(0, 255);

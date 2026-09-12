@@ -25,7 +25,7 @@ import {
   hasValidReportDispatchSecret,
   requestMatchesStoredReportSchedule,
 } from "./internalDispatch.ts";
-import { toCsv } from "./reportContent.ts";
+import { requireCompleteReportRows, toCsv } from "./reportContent.ts";
 
 /**
  * enviar-relatorio — Onda 20 hardening
@@ -56,9 +56,12 @@ const RELATORIOS_PERMITIDOS = [
 const FORMATOS_PERMITIDOS = ["json", "csv"] as const;
 const BUCKET = "relatorios-privados";
 const SIGNED_URL_TTL_SECONDS = 60 * 60 * 24; // 24h
+const REPORT_MAX_ROWS = 5000;
 
 const BodySchema = z.object({
   agendamentoId: z.string().uuid().optional(),
+  claimToken: z.string().uuid().optional(),
+  dispatchKey: z.string().min(1).max(200).regex(/^[A-Za-z0-9:._-]+$/).optional(),
   tipoRelatorio: z.enum(RELATORIOS_PERMITIDOS),
   formato: z.enum(FORMATOS_PERMITIDOS),
   emailDestinatario: z.string().email().max(254),
@@ -109,9 +112,10 @@ async function coletarDados(
         .select("id,nome_completo,email,status,cargo_id,departamento_id")
         .eq("empresa_id", empresaId)
         .eq("status", "ativo")
-        .limit(5000);
+        .limit(REPORT_MAX_ROWS + 1);
       if (error) throw error;
-      return { dados: data ?? [], totalRegistros: data?.length ?? 0 };
+      const rows = requireCompleteReportRows(data, REPORT_MAX_ROWS);
+      return { dados: rows, totalRegistros: rows.length };
     }
     case "folha_resumo": {
       const competencia = (parametros.competencia as string | undefined) ??
@@ -137,9 +141,10 @@ async function coletarDados(
         .eq("empresa_id", empresaId)
         .gte("data_inicio", inicio.toISOString())
         .lte("data_inicio", fim.toISOString())
-        .limit(5000);
+        .limit(REPORT_MAX_ROWS + 1);
       if (error) throw error;
-      return { dados: data ?? [], totalRegistros: data?.length ?? 0 };
+      const rows = requireCompleteReportRows(data, REPORT_MAX_ROWS);
+      return { dados: rows, totalRegistros: rows.length };
     }
     case "afastamentos_ativos": {
       const { data, error } = await supabase
@@ -147,9 +152,10 @@ async function coletarDados(
         .select("id,colaborador_id,tipo,data_inicio,data_fim,status")
         .eq("empresa_id", empresaId)
         .eq("status", "ativo")
-        .limit(5000);
+        .limit(REPORT_MAX_ROWS + 1);
       if (error) throw error;
-      return { dados: data ?? [], totalRegistros: data?.length ?? 0 };
+      const rows = requireCompleteReportRows(data, REPORT_MAX_ROWS);
+      return { dados: rows, totalRegistros: rows.length };
     }
     case "indicadores_dp": {
       const { count: ativos, error: ativosError } = await supabase
@@ -210,13 +216,13 @@ serve(async (req: Request): Promise<Response> => {
     let userId: string;
 
     if (internalDispatch) {
-      if (!body.agendamentoId) {
+      if (!body.agendamentoId || !body.claimToken || !body.dispatchKey?.startsWith(`${body.agendamentoId}:`)) {
         return json(req, { error: "Chamada interna sem agendamento" }, 403);
       }
       const { data: schedule, error: scheduleError } = await admin
         .from("relatorios_agendados")
         .select(
-          "id,created_by,empresa_id,tipo_relatorio,formato,email_destinatario",
+          "id,created_by,empresa_id,tipo_relatorio,formato,email_destinatario,ativo,dispatch_claim_token",
         )
         .eq("id", body.agendamentoId)
         .maybeSingle();
@@ -225,6 +231,7 @@ serve(async (req: Request): Promise<Response> => {
         !requestMatchesStoredReportSchedule(
           {
             agendamentoId: body.agendamentoId,
+            claimToken: body.claimToken,
             tipoRelatorio: body.tipoRelatorio,
             formato: body.formato,
             emailDestinatario: body.emailDestinatario,
@@ -263,7 +270,7 @@ serve(async (req: Request): Promise<Response> => {
     // despachado por e-mail. Exige RH/admin; o gate anterior (`!belongs` com
     // fallback em `isAdm`) era um OU e liberava qualquer colaborador.
     {
-      const authz = await requireRh(admin, userId, empresaId);
+      const authz = await requireRh(admin, userId, empresaId, req);
       if (authz.denied) return authz.denied;
     }
 
@@ -275,29 +282,22 @@ serve(async (req: Request): Promise<Response> => {
       limit: 5,
       windowSec: 60,
     });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     // 4b. Anti-exfiltração: emailDestinatario deve pertencer a um usuário
     // vinculado à empresa (evita envio de dados internos para email externo).
-    const { data: destinatarioUser } = await admin
-      .from("profiles")
-      .select("user_id, email")
-      .eq("email", body.emailDestinatario)
-      .maybeSingle();
-    if (!destinatarioUser?.user_id) {
-      return json(req, { error: "Destinatário não é usuário do sistema" }, 403);
+    const { data: destinationAllowed, error: destinationError } = await admin.rpc(
+      "report_destination_is_allowed",
+      {
+        p_email: body.emailDestinatario,
+        p_empresa_id: empresaId,
+      },
+    );
+    if (destinationError) {
+      throw new Error(`Falha ao validar destinatário: ${destinationError.message}`);
     }
-    const { data: destBelongs } = await admin.rpc("user_belongs_to_empresa", {
-      _user_id: destinatarioUser.user_id,
-      _empresa_id: empresaId,
-    });
-    if (destBelongs !== true) {
-      const { data: destIsAdm } = await admin.rpc("is_admin", {
-        _user_id: destinatarioUser.user_id,
-      });
-      if (destIsAdm !== true) {
-        return json(req, { error: "Destinatário não pertence à empresa" }, 403);
-      }
+    if (destinationAllowed !== true) {
+      return json(req, { error: "Destinatário não pertence à empresa" }, 403);
     }
 
     // Um relatório enviado por e-mail só é uma operação concluída quando o
@@ -346,6 +346,35 @@ serve(async (req: Request): Promise<Response> => {
       throw new Error(`Falha ao gerar signed URL: ${signErr?.message}`);
     }
 
+    // Persistir a intenção antes do efeito externo. Assim uma indisponibilidade
+    // de auditoria nunca permite enviar um e-mail sem ao menos um registro
+    // durável do ator, tenant, conteúdo e chave de despacho.
+    const attemptHash = await sha256Hex(
+      contentHash + userId + empresaId + body.tipoRelatorio +
+        body.emailDestinatario + (body.dispatchKey ?? "manual"),
+    );
+    const { error: attemptAuditError } = await admin.from("audit_log").insert({
+      tabela: "relatorios_agendados",
+      registro_id: body.agendamentoId ?? empresaId,
+      acao: "SEND_REPORT_ATTEMPT",
+      user_id: userId,
+      dados_novos: {
+        empresa_id: empresaId,
+        tipo: body.tipoRelatorio,
+        formato: body.formato,
+        content_sha256: contentHash,
+        email_destinatario_hash: await sha256Hex(body.emailDestinatario),
+        dispatch_key_hash: body.dispatchKey ? await sha256Hex(body.dispatchKey) : null,
+        attempt_hash: attemptHash,
+        storage_path: path,
+        prepared_at: new Date().toISOString(),
+      },
+    });
+    if (attemptAuditError) {
+      await admin.storage.from(BUCKET).remove([path]);
+      return json(req, { error: "Auditoria obrigatória indisponível" }, 500);
+    }
+
     // 7. Envio (metadados apenas — LGPD)
     let statusEnvio: ReportDeliveryStatus = "erro";
     let mensagemEnvio = REPORT_DELIVERY_FAILED_MESSAGE;
@@ -357,6 +386,9 @@ serve(async (req: Request): Promise<Response> => {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${resendApiKey}`,
+          ...(body.dispatchKey
+            ? { "Idempotency-Key": `scheduled-report/${body.dispatchKey}` }
+            : {}),
         },
         body: JSON.stringify({
           from: "Sistema DP <onboarding@resend.dev>",
@@ -433,20 +465,40 @@ serve(async (req: Request): Promise<Response> => {
         "[enviar-relatorio] AUDIT_BLOCKING_FAILURE:",
         auditErr.message,
       );
+      if (statusEnvio !== "sucesso") {
+        await admin.storage.from(BUCKET).remove([path]);
+      }
       return json(req, { error: "Auditoria obrigatória falhou" }, 500);
     }
 
-    if (body.agendamentoId) {
-      await admin.from("log_envio_relatorios").insert({
+    if (body.agendamentoId && internalDispatch) {
+      const { error: logError } = await admin.from("log_envio_relatorios").insert({
         agendamento_id: body.agendamentoId,
         status: statusEnvio,
         mensagem: mensagemEnvio,
       });
-      await admin
-        .from("relatorios_agendados")
-        .update({ ultimo_envio: new Date().toISOString() })
-        .eq("id", body.agendamentoId)
-        .eq("empresa_id", empresaId);
+      if (logError) {
+        console.error("[enviar-relatorio] Falha ao registrar log operacional:", logError.message);
+      }
+      if (statusEnvio === "sucesso") {
+        const { data: updatedSchedule, error: updateError } = await admin
+          .from("relatorios_agendados")
+          .update({ ultimo_envio: new Date().toISOString() })
+          .eq("id", body.agendamentoId)
+          .eq("empresa_id", empresaId)
+          .eq("dispatch_claim_token", body.claimToken!)
+          .select("id")
+          .maybeSingle();
+        if (updateError) throw updateError;
+        if (!updatedSchedule) throw new Error("Lease do agendamento expirou antes de registrar a entrega");
+      }
+    }
+
+    if (statusEnvio !== "sucesso") {
+      const { error: cleanupError } = await admin.storage.from(BUCKET).remove([path]);
+      if (cleanupError) {
+        console.error("[enviar-relatorio] Falha ao remover artefato sem entrega:", cleanupError.message);
+      }
     }
 
     const responseStatus = reportDeliveryHttpStatus(statusEnvio);
@@ -456,13 +508,13 @@ serve(async (req: Request): Promise<Response> => {
       mensagem: statusEnvio === "sucesso"
         ? mensagemEnvio
         : REPORT_DELIVERY_FAILED_MESSAGE,
-      metadados: {
+      metadados: statusEnvio === "sucesso" ? {
         tipo: body.tipoRelatorio,
         formato: body.formato,
         totalRegistros,
         expiresInSeconds: SIGNED_URL_TTL_SECONDS,
         path,
-      },
+      } : undefined,
     }, responseStatus);
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Erro desconhecido";

@@ -71,8 +71,29 @@ export const auditoriaService = {
       console.error('[auditoriaService] falha ao registrar auditoria', error.message);
     }
   },
-};
 
+  async registrarEvento(params: {
+    tabela: string;
+    registro_id: string;
+    acao: 'INSERT' | 'UPDATE' | 'DELETE' | 'VISUALIZACAO' | 'EXPORT';
+    dados_anteriores?: Json;
+    dados_novos?: Json;
+    empresa_id?: string;
+  }): Promise<void> {
+    const { error } = await supabase.rpc('registrar_auditoria', {
+      p_tabela: params.tabela,
+      p_registro_id: params.registro_id,
+      p_acao: params.acao,
+      p_dados_anteriores: params.dados_anteriores ?? null,
+      p_dados_novos: params.dados_novos ?? null,
+      p_empresa_id: params.empresa_id ?? null,
+    });
+
+    if (error) {
+      console.error('[auditoriaService] falha ao registrar evento', error.message);
+    }
+  },
+};
 
 export const notificacaoService = {
   async listar(userId: string) {
@@ -94,7 +115,11 @@ export const notificacaoService = {
   },
   async marcarTodasComoLidas(userId: string) {
     if (!userId) throw new Error('user_id obrigatório');
-    const { error } = await supabase.from('notificacoes').update({ lida: true }).eq('user_id', userId).eq('lida', false);
+    const { error } = await supabase
+      .from('notificacoes')
+      .update({ lida: true })
+      .eq('user_id', userId)
+      .eq('lida', false);
     if (error) throw error;
   },
 };

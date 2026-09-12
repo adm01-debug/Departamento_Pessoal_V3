@@ -5,7 +5,7 @@
 // • Férias = (salário × 4/3) / 12 + encargos ~35.8%; 13º = salário / 12 + encargos
 // • Filtra colaboradores ativos e admitidos até último dia da competência
 // • Cap 10.000 colaboradores/execução
-// • Delete+insert atômico por (empresa, competencia) com recalculado_em
+// • Substituição + auditoria atômicas por RPC transacional
 // • Auditoria bloqueante com hash SHA-256 do consolidado
 // • Erros genéricos + captureException
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
@@ -14,7 +14,7 @@ import { z } from 'https://esm.sh/zod@3.23.8';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { requireRh } from '../_shared/authz.ts';
 import { captureException } from '../_shared/sentry.ts';
-import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
+import { enforceOrigin, getCorsHeaders, handlePreflight, parseJsonBody } from '../_shared/contract.ts';
 
 const CHUNK = 500;
 const MAX_COLABS = 10_000;
@@ -39,10 +39,10 @@ const BodySchema = z.object({
   return compDate <= nowMonth && compDate >= minDate;
 }, { message: 'Competência fora do intervalo permitido (últimos 60 meses)' });
 
-function json(body: unknown, status = 200): Response {
+function json(req: Request, body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
   });
 }
 
@@ -62,8 +62,11 @@ function ultimoDiaCompetencia(competencia: string): string {
 }
 
 serve(async (req: Request): Promise<Response> => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
-  if (req.method !== 'POST') return json({ success: false, error: 'Method not allowed' }, 405);
+  const preflight = handlePreflight(req);
+  if (preflight) return preflight;
+  const forbiddenOrigin = enforceOrigin(req);
+  if (forbiddenOrigin) return forbiddenOrigin;
+  if (req.method !== 'POST') return json(req, { success: false, error: 'Method not allowed' }, 405);
 
   try {
     const csrf = await verifyCsrf(req.clone());
@@ -71,7 +74,7 @@ serve(async (req: Request): Promise<Response> => {
 
     const authHeader = req.headers.get('Authorization') ?? '';
     if (!authHeader.startsWith('Bearer ')) {
-      return json({ success: false, error: 'Autenticação obrigatória', code: 'UNAUTHORIZED' }, 401);
+      return json(req, { success: false, error: 'Autenticação obrigatória', code: 'UNAUTHORIZED' }, 401);
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -84,7 +87,7 @@ serve(async (req: Request): Promise<Response> => {
     });
     const { data: claimsData, error: claimsErr } = await userClient.auth.getUser();
     if (claimsErr || !claimsData?.user?.id) {
-      return json({ success: false, error: 'Sessão inválida', code: 'UNAUTHORIZED' }, 401);
+      return json(req, { success: false, error: 'Sessão inválida', code: 'UNAUTHORIZED' }, 401);
     }
     const userId = claimsData.user.id;
 
@@ -92,13 +95,12 @@ serve(async (req: Request): Promise<Response> => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
-    let raw: unknown;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    raw = _pb;
+    const raw = _pb;
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) {
-      return json({ success: false, error: 'Payload inválido', code: 'VALIDATION_ERROR', details: parsed.error.flatten() }, 422);
+      return json(req, { success: false, error: 'Payload inválido', code: 'VALIDATION_ERROR', details: parsed.error.flatten() }, 422);
     }
     const { empresa_id, competencia } = parsed.data;
 
@@ -106,13 +108,13 @@ serve(async (req: Request): Promise<Response> => {
     // era um OU — pertencer à empresa já bastava, e o is_admin apenas somava
     // o admin global. Qualquer colaborador autenticado passava.
     {
-      const authz = await requireRh(supabase, userId, empresa_id);
+      const authz = await requireRh(supabase, userId, empresa_id, req);
       if (authz.denied) return authz.denied;
     }
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(supabase, { key: `calc-provisoes:${userId}`, limit: 10, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     const dataLimite = ultimoDiaCompetencia(competencia);
     const startTime = Date.now();
@@ -126,10 +128,10 @@ serve(async (req: Request): Promise<Response> => {
       .lte('data_admissao', dataLimite);
     if (countErr) throw countErr;
     if (!total) {
-      return json({ success: false, error: 'Nenhum colaborador ativo elegível', code: 'NOT_FOUND' }, 404);
+      return json(req, { success: false, error: 'Nenhum colaborador ativo elegível', code: 'NOT_FOUND' }, 404);
     }
     if (total > MAX_COLABS) {
-      return json({ success: false, error: `Limite excedido (${MAX_COLABS})`, code: 'PAYLOAD_TOO_LARGE' }, 413);
+      return json(req, { success: false, error: `Limite excedido (${MAX_COLABS})`, code: 'PAYLOAD_TOO_LARGE' }, 413);
     }
 
     // Iniciar log
@@ -198,22 +200,6 @@ serve(async (req: Request): Promise<Response> => {
       }
     }
 
-    // Delete+insert atômico (idempotência)
-    const { error: delErr } = await supabase
-      .from('provisoes_mensais')
-      .delete()
-      .eq('empresa_id', empresa_id)
-      .eq('competencia', competencia);
-    if (delErr) throw delErr;
-
-    const toInsert = provisoes.map((p) => ({ ...p, empresa_id, competencia }));
-    // Insert em chunks para evitar payload gigante
-    for (let i = 0; i < toInsert.length; i += 1000) {
-      const slice = toInsert.slice(i, i + 1000);
-      const { error: insErr } = await supabase.from('provisoes_mensais').insert(slice);
-      if (insErr) throw insErr;
-    }
-
     const totalCents = totalPrincipalCents + totalEncargosCents;
     const consolidado = {
       empresa_id,
@@ -226,15 +212,23 @@ serve(async (req: Request): Promise<Response> => {
     };
     const hash = await sha256Hex(JSON.stringify(consolidado));
 
-    // Auditoria bloqueante
-    const { error: auditErr } = await supabase.from('audit_log').insert({
-      tabela: 'provisoes_mensais',
-      registro_id: crypto.randomUUID(),
-      acao: 'CALCULATE_BATCH',
-      user_id: userId,
-      dados_novos: { ...consolidado, hash_sha256: hash },
-    });
-    if (auditErr) throw auditErr;
+    // A substituição e a auditoria obrigatória vivem na mesma transação do
+    // PostgreSQL. Uma falha de FK, constraint ou audit_log preserva integralmente
+    // o lote anterior; não existe mais o intervalo delete→insert parcial.
+    const { data: replacedCount, error: replaceError } = await supabase.rpc(
+      'replace_monthly_provisions',
+      {
+        p_empresa_id: empresa_id,
+        p_competencia: competencia,
+        p_rows: provisoes,
+        p_user_id: userId,
+        p_audit_data: { ...consolidado, hash_sha256: hash },
+      },
+    );
+    if (replaceError) throw replaceError;
+    if (replacedCount !== provisoes.length) {
+      throw new Error('Quantidade persistida diverge da quantidade calculada');
+    }
 
     if (logEntry) {
       await supabase.from('provisao_logs').update({
@@ -246,9 +240,9 @@ serve(async (req: Request): Promise<Response> => {
       }).eq('id', logEntry.id);
     }
 
-    return json({ success: true, ...consolidado, hash_sha256: hash, registros: provisoes.length });
+    return json(req, { success: true, ...consolidado, hash_sha256: hash, registros: provisoes.length });
   } catch (error: unknown) {
     try { captureException(error, { fn: 'calcular-provisoes' }); } catch { /* noop */ }
-    return json({ success: false, error: 'Erro interno ao calcular provisões', code: 'INTERNAL_SERVER_ERROR' }, 500);
+    return json(req, { success: false, error: 'Erro interno ao calcular provisões', code: 'INTERNAL_SERVER_ERROR' }, 500);
   }
 });

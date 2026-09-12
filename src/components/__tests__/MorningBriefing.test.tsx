@@ -57,6 +57,25 @@ const MOCK_BRIEFING = {
 };
 
 describe('MorningBriefing', () => {
+  it('separa o cache por empresa e não consulta sem tenant selecionado', () => {
+    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, error: null } as any);
+    const { rerender } = render(<MorningBriefing />);
+    expect(useQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        queryKey: ['morning-briefing', undefined],
+        enabled: false,
+      })
+    );
+
+    rerender(<MorningBriefing empresaId="emp-1" />);
+    expect(useQuery).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        queryKey: ['morning-briefing', 'emp-1'],
+        enabled: true,
+      })
+    );
+  });
+
   it('shows skeleton when loading', () => {
     vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: true, error: null } as any);
     render(<MorningBriefing />);
@@ -83,6 +102,16 @@ describe('MorningBriefing', () => {
     vi.mocked(useQuery).mockReturnValue({ data: MOCK_BRIEFING, isLoading: false, error: null } as any);
     render(<MorningBriefing />);
     expect(screen.getByText(/42 colaboradores ativos/)).toBeInTheDocument();
+  });
+
+  it('não declara 100% de conformidade quando não há eventos eSocial', () => {
+    vi.mocked(useQuery).mockReturnValue({
+      data: { ...MOCK_BRIEFING, esocialHealth: null },
+      isLoading: false,
+      error: null,
+    } as any);
+    render(<MorningBriefing empresaId="emp-1" />);
+    expect(screen.getByText('Conformidade eSocial: sem eventos')).toBeInTheDocument();
   });
 
   it('renders pontos registrados hoje badge', () => {

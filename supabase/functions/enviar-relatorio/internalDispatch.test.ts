@@ -9,6 +9,7 @@ import {
 
 const request = {
   agendamentoId: "schedule-1",
+  claimToken: "claim-1",
   tipoRelatorio: "folha_resumo",
   formato: "csv",
   emailDestinatario: "rh@example.invalid",
@@ -22,6 +23,8 @@ const schedule = {
   tipo_relatorio: "folha_resumo",
   formato: "csv",
   email_destinatario: "rh@example.invalid",
+  ativo: true,
+  dispatch_claim_token: "claim-1",
 };
 
 Deno.test("segredo interno é fail-closed e não aceita aproximações", async () => {
@@ -30,6 +33,14 @@ Deno.test("segredo interno é fail-closed e não aceita aproximações", async (
   );
   assertEquals(
     await hasValidReportDispatchSecret("secret-incorreto", "secret-correto"),
+    false,
+  );
+  assertEquals(
+    requestMatchesStoredReportSchedule({ ...request, claimToken: "forjado" }, schedule),
+    false,
+  );
+  assertEquals(
+    requestMatchesStoredReportSchedule(request, { ...schedule, ativo: false }),
     false,
   );
   assertEquals(await hasValidReportDispatchSecret("", "secret-correto"), false);

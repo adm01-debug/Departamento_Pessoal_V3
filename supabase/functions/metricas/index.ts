@@ -25,14 +25,26 @@ import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
 
 // ── Helpers ──────────────────────────────────────────────────
 
+type DynamicSupabaseClient = ReturnType<typeof createClient<any>>;
+
 async function safeQuery<T>(
-  supabase: ReturnType<typeof createClient>,
-  query: () => Promise<{ data: T; error: unknown }>
+  query: () => PromiseLike<{ data: unknown; error: unknown }>
 ): Promise<T | null> {
   try {
     const { data, error } = await query();
-    if (error) return null;
-    return data;
+    if (error || data === null) return null;
+    return data as T;
+  } catch {
+    return null;
+  }
+}
+
+async function safeCount(
+  query: () => PromiseLike<{ count: number | null; error: unknown }>,
+): Promise<number | null> {
+  try {
+    const { count, error } = await query();
+    return error ? null : count;
   } catch {
     return null;
   }
@@ -41,12 +53,11 @@ async function safeQuery<T>(
 // ── KPIs de Bridge via MV (P3-054) ──────────────────────────
 
 async function getBridgeKpis(
-  supabase: ReturnType<typeof createClient>,
+  supabase: DynamicSupabaseClient,
   empresaId: string
 ) {
   // Tenta MV primeiro (refresh noturno — rápido)
   const mv = await safeQuery<{ p95_ms: number; avg_ms: number; errors_1h: number; slow_1h: number }[]>(
-    supabase,
     () => supabase
       .from('mv_telemetry_dashboard')
       .select('p95_ms, avg_ms')
@@ -57,13 +68,13 @@ async function getBridgeKpis(
   // Fallback: query direta em query_telemetry
   if (!mv || mv.length === 0) {
     const [errResult, slowResult] = await Promise.all([
-      safeQuery(supabase, () =>
+      safeCount(() =>
         supabase.from('query_telemetry')
           .select('id', { count: 'exact', head: true })
           .eq('severity', 'error')
           .gte('created_at', new Date(Date.now() - 3600_000).toISOString())
       ),
-      safeQuery(supabase, () =>
+      safeCount(() =>
         supabase.from('query_telemetry')
           .select('id', { count: 'exact', head: true })
           .gt('duration_ms', 5000)
@@ -72,8 +83,8 @@ async function getBridgeKpis(
     ]);
     return {
       p95_latency_ms: null,
-      error_count_1h: errResult?.count ?? 0,
-      slow_query_count_1h: slowResult?.count ?? 0,
+      error_count_1h: errResult ?? 0,
+      slow_query_count_1h: slowResult ?? 0,
       source: 'telemetry_direct' as const,
     };
   }
@@ -93,7 +104,7 @@ async function getBridgeKpis(
 // ── KPIs de folha via MV (P4-072) ───────────────────────────
 
 async function getFolhaKpis(
-  supabase: ReturnType<typeof createClient>,
+  supabase: DynamicSupabaseClient,
   empresaId: string
 ) {
   const mv = await safeQuery<{
@@ -105,7 +116,6 @@ async function getFolhaKpis(
     total_fgts: number;
     total_inss: number;
   }[]>(
-    supabase,
     () => supabase
       .from('mv_folha_summary')
       .select('competencia_month, total_bruto, total_liquido, total_descontos, headcount_folha, total_fgts, total_inss')
@@ -198,7 +208,7 @@ serve(async (req) => {
 
     // Rate limit
     const rl = await checkRateLimit(admin, { key: `metricas:${userId}`, limit: 60, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     const userClient2 = createClient(supabaseUrl, serviceKey, {
       auth: { persistSession: false, autoRefreshToken: false },

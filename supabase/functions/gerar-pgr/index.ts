@@ -12,7 +12,7 @@ interface Risco {
   intensidade_concentracao: string | null;
   limite_tolerancia: string | null;
   tecnica_utilizada: string | null;
-  locais_trabalho?: { descricao: string | null } | null;
+  locais_trabalho?: Array<{ descricao: string | null }> | null;
 }
 
 interface Empresa {
@@ -49,12 +49,12 @@ Deno.serve(async (req) => {
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(admin, { key: `gerar-pgr:${user.id}`, limit: 5, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
     const { empresa_id, responsavel_tecnico, registro_profissional } = _pb as Record<string, unknown>;
-    if (!empresa_id) return json({ error: 'empresa_id é obrigatório' }, 400);
+    if (typeof empresa_id !== 'string') return json({ error: 'empresa_id é obrigatório' }, 400);
 
     // Autorização via vínculo empresa + role
     const { data: vinculo } = await admin
@@ -93,12 +93,12 @@ Deno.serve(async (req) => {
     // Gerar PDF
     const pdfBytes = await gerarPdfPgr(empresa as Empresa, (riscos ?? []) as Risco[], {
       versao,
-      responsavel_tecnico: responsavel_tecnico ?? '—',
-      registro_profissional: registro_profissional ?? '—',
+      responsavel_tecnico: typeof responsavel_tecnico === 'string' ? responsavel_tecnico : '—',
+      registro_profissional: typeof registro_profissional === 'string' ? registro_profissional : '—',
     });
 
     // Hash SHA-256 para integridade
-    const hashBuf = await crypto.subtle.digest('SHA-256', pdfBytes);
+    const hashBuf = await crypto.subtle.digest('SHA-256', Uint8Array.from(pdfBytes));
     const hashHex = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
 
     // Upload
@@ -241,7 +241,8 @@ async function gerarPdfPgr(
   } else {
     riscos.forEach((r, i) => {
       write(`${i + 1}. [${r.categoria.toUpperCase()}] ${r.agente}`, { bold: true });
-      if (r.locais_trabalho?.descricao) write(`   Local: ${r.locais_trabalho.descricao}`, { size: 10 });
+      const local = r.locais_trabalho?.[0]?.descricao;
+      if (local) write(`   Local: ${local}`, { size: 10 });
       if (r.intensidade_concentracao) write(`   Intensidade/Concentração: ${r.intensidade_concentracao}`, { size: 10 });
       if (r.limite_tolerancia) write(`   Limite de Tolerância: ${r.limite_tolerancia}`, { size: 10 });
       if (r.tecnica_utilizada) write(`   Técnica utilizada: ${r.tecnica_utilizada}`, { size: 10 });

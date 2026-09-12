@@ -34,14 +34,27 @@
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { corsHeaders } from '../_shared/contract.ts';
+import { z } from 'https://esm.sh/zod@3.23.8';
+import { enforceOrigin, getCorsHeaders, handlePreflight, parseJsonBody } from '../_shared/contract.ts';
+import { verifyCsrf } from '../_shared/csrf.ts';
+import { requireRh } from '../_shared/authz.ts';
 import { safeFetch } from '../_shared/safe-fetch.ts';
 
 const OPENAI_API_KEY  = Deno.env.get('OPENAI_API_KEY') ?? '';
 const AI_GATEWAY_URL  = Deno.env.get('AI_GATEWAY_URL')  ?? '';
+const AI_GATEWAY_API_KEY = Deno.env.get('AI_GATEWAY_API_KEY') ?? Deno.env.get('LOVABLE_API_KEY') ?? '';
+
+const BodySchema = z.object({
+  empresaId: z.string().uuid(),
+  mode: z.enum(['turnover', 'absenteismo', 'both']).default('both'),
+}).strict();
 
 serve(async (req: Request): Promise<Response> => {
-  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders });
+  const preflight = handlePreflight(req);
+  if (preflight) return preflight;
+  const forbiddenOrigin = enforceOrigin(req);
+  if (forbiddenOrigin) return forbiddenOrigin;
+  const corsHeaders = getCorsHeaders(req);
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
       status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -49,6 +62,8 @@ serve(async (req: Request): Promise<Response> => {
   }
 
   try {
+    const csrf = await verifyCsrf(req.clone());
+    if (!csrf.ok) return csrf.response!;
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
     const serviceKey  = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
     const anonKey     = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
@@ -75,15 +90,25 @@ serve(async (req: Request): Promise<Response> => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
-    const bodyObj = (await req.json().catch(() => ({}))) as Record<string, unknown>;
-    const empresaId = bodyObj?.empresaId as string | undefined;
-    const mode = (bodyObj?.mode as string | undefined) ?? 'both'; // 'turnover' | 'absenteismo' | 'both'
-
-    if (!empresaId || typeof empresaId !== 'string') {
-      return new Response(JSON.stringify({ error: 'empresaId é obrigatório' }), {
+    const { body: raw, errorResponse } = await parseJsonBody(req);
+    if (errorResponse) return errorResponse;
+    const parsed = BodySchema.safeParse(raw);
+    if (!parsed.success) {
+      return new Response(JSON.stringify({ error: 'Payload inválido' }), {
         status: 422, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+    const { empresaId, mode } = parsed.data;
+
+    const authz = await requireRh(supabase, userData.user.id, empresaId, req);
+    if (authz.denied) return authz.denied;
+    const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
+    const rate = await checkRateLimit(supabase, {
+      key: `alertas-preditivos:${userData.user.id}`,
+      limit: 10,
+      windowSec: 60,
+    });
+    if (!rate.allowed) return rateLimitResponse(rate, req);
 
     const hoje     = new Date();
     const tresMesesAtras = new Date(hoje.getTime() - 90 * 24 * 60 * 60 * 1000);
@@ -92,11 +117,12 @@ serve(async (req: Request): Promise<Response> => {
     const doisMesesAtrasStr  = doisMesesAtras.toISOString().split('T')[0];
 
     // ── 1. Carregar colaboradores ativos ──────────────────────────
-    const { data: colaboradores } = await supabase
+    const { data: colaboradores, error: colaboradoresError } = await supabase
       .from('colaboradores')
       .select('id, nome_completo, data_admissao, departamento, cargo, salario_base, status')
       .eq('empresa_id', empresaId)
       .eq('status', 'ativo');
+    if (colaboradoresError) throw colaboradoresError;
 
     if (!colaboradores?.length) {
       return new Response(JSON.stringify({
@@ -117,11 +143,12 @@ serve(async (req: Request): Promise<Response> => {
 
     if (mode === 'absenteismo' || mode === 'both') {
       // 2a. Faltas nos últimos 60 dias
-      const { data: faltas } = await supabase
+      const { data: faltas, error: faltasError } = await supabase
         .from('faltas')
         .select('colaborador_id, data, tipo')
         .in('colaborador_id', colabIds)
         .gte('data', doisMesesAtrasStr);
+      if (faltasError) throw faltasError;
 
       const faltasPorColab: Record<string, number> = {};
       for (const f of (faltas ?? [])) {
@@ -144,11 +171,12 @@ serve(async (req: Request): Promise<Response> => {
       }
 
       // 2b. Afastamentos nos últimos 90 dias
-      const { data: afastamentos } = await supabase
+      const { data: afastamentos, error: afastamentosError } = await supabase
         .from('afastamentos')
         .select('colaborador_id, tipo, data_inicio, data_fim')
         .in('colaborador_id', colabIds)
         .gte('data_inicio', tresMesesAtrasStr);
+      if (afastamentosError) throw afastamentosError;
 
       for (const af of (afastamentos ?? [])) {
         const colab = colaboradores.find(c => c.id === af.colaborador_id);
@@ -165,11 +193,12 @@ serve(async (req: Request): Promise<Response> => {
 
       // 2c. Registros de ponto ausentes nos últimos 30 dias
       const trintaDiasAtras = new Date(hoje.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-      const { data: pontos } = await supabase
+      const { data: pontos, error: pontosError } = await supabase
         .from('registros_ponto')
         .select('colaborador_id, data_hora')
         .in('colaborador_id', colabIds)
         .gte('data_hora', trintaDiasAtras);
+      if (pontosError) throw pontosError;
 
       const pontosSet = new Set((pontos ?? []).map(p => p.colaborador_id as string));
       for (const colab of colaboradores) {
@@ -195,23 +224,45 @@ serve(async (req: Request): Promise<Response> => {
       colaboradorId: string; nome: string; sinal: string;
       nivel: 'critica' | 'alta' | 'media'; justificativa: string; metrica: number;
     }[] = [];
+    let desligamentosRecentes: Array<{ id: string }> = [];
+    let turnoverRate3m = 0;
 
     if (mode === 'turnover' || mode === 'both') {
       // 3a. Histórico de desligamentos recentes (referência de turnover rate)
-      const { data: desligamentosRecentes } = await supabase
+      const { data: desligamentosData, error: desligamentosError } = await supabase
         .from('desligamentos')
         .select('id, empresa_id, data_desligamento')
         .eq('empresa_id', empresaId)
         .gte('data_desligamento', tresMesesAtrasStr);
+      if (desligamentosError) throw desligamentosError;
+      desligamentosRecentes = desligamentosData ?? [];
 
-      const turnoverRate3m = ((desligamentosRecentes?.length ?? 0) / Math.max(colaboradores.length, 1)) * 100;
+      turnoverRate3m = (desligamentosRecentes.length / Math.max(colaboradores.length, 1)) * 100;
 
       // 3b. Queda de frequência: faltas nos últimos 3 meses vs. admitidos há mais de 6 meses
-      const { data: faltasHistorico } = await supabase
+      const { data: faltasHistorico, error: faltasHistoricoError } = await supabase
         .from('faltas')
         .select('colaborador_id, data')
         .in('colaborador_id', colabIds)
         .gte('data', tresMesesAtrasStr);
+      if (faltasHistoricoError) throw faltasHistoricoError;
+
+      // Carrega a distribuição salarial uma única vez. A versão anterior
+      // repetia esta consulta para cada colaborador (N+1), multiplicando custo,
+      // latência e chance de resultados parciais em empresas grandes.
+      const { data: salarios, error: salariosError } = await supabase
+        .from('colaboradores')
+        .select('salario_base, cargo')
+        .eq('empresa_id', empresaId)
+        .not('salario_base', 'is', null);
+      if (salariosError) throw salariosError;
+
+      const salariosPorCargo: Record<string, number[]> = {};
+      for (const salario of salarios ?? []) {
+        if (!salario.cargo || !salario.salario_base) continue;
+        if (!salariosPorCargo[salario.cargo as string]) salariosPorCargo[salario.cargo as string] = [];
+        salariosPorCargo[salario.cargo as string].push(Number(salario.salario_base));
+      }
 
       const faltasRecentes: Record<string, number> = {};
       for (const f of (faltasHistorico ?? [])) {
@@ -243,35 +294,20 @@ serve(async (req: Request): Promise<Response> => {
 
         // 3c. Salário abaixo do piso histórico (sinal de insatisfação / desalinhamento)
         // Usa a mediana de salario_base por cargo como proxy de mercado
-        const { data: salarios } = await supabase
-          .from('colaboradores')
-          .select('salario_base, cargo')
-          .eq('empresa_id', empresaId)
-          .not('salario_base', 'is', null);
-
-        if (salarios?.length) {
-          const salariosPorCargo: Record<string, number[]> = {};
-          for (const s of salarios) {
-            if (!s.cargo || !s.salario_base) continue;
-            if (!salariosPorCargo[s.cargo as string]) salariosPorCargo[s.cargo as string] = [];
-            salariosPorCargo[s.cargo as string].push(Number(s.salario_base));
-          }
-
-          const mySalarios = salariosPorCargo[colab.cargo as string] ?? [];
-          if (mySalarios.length >= 3) {
-            const sorted = [...mySalarios].sort((a, b) => a - b);
-            const median = sorted[Math.floor(sorted.length / 2)];
-            const mySal = Number(colab.salario_base) || 0;
-            if (mySal > 0 && mySal < median * 0.7) {
-              alertasTurnover.push({
-                colaboradorId: colab.id,
-                nome: colab.nome_completo,
-                sinal: 'salario_abaixo_mercado',
-                nivel: 'media',
-                justificativa: `Salário ${mySal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} é ${Math.round((mySal / median) * 100)}% da mediana do cargo (${median.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })})`,
-                metrica: Math.round((mySal / median) * 100),
-              });
-            }
+        const mySalarios = salariosPorCargo[colab.cargo as string] ?? [];
+        if (mySalarios.length >= 3) {
+          const sorted = [...mySalarios].sort((a, b) => a - b);
+          const median = sorted[Math.floor(sorted.length / 2)];
+          const mySal = Number(colab.salario_base) || 0;
+          if (mySal > 0 && mySal < median * 0.7) {
+            alertasTurnover.push({
+              colaboradorId: colab.id,
+              nome: colab.nome_completo,
+              sinal: 'salario_abaixo_mercado',
+              nivel: 'media',
+              justificativa: `Salário ${mySal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} é ${Math.round((mySal / median) * 100)}% da mediana do cargo (${median.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })})`,
+              metrica: Math.round((mySal / median) * 100),
+            });
           }
         }
       }
@@ -280,7 +316,7 @@ serve(async (req: Request): Promise<Response> => {
     // ── 4. Análise IA via OpenAI (se configurada) ───────────────
     let iaResumo: string | null = null;
 
-    if (OPENAI_API_KEY || AI_GATEWAY_URL) {
+    if (OPENAI_API_KEY || (AI_GATEWAY_URL && AI_GATEWAY_API_KEY)) {
       const totalAlertas = alertasAbsenteismo.length + alertasTurnover.length;
       if (totalAlertas > 0) {
         try {
@@ -288,12 +324,14 @@ serve(async (req: Request): Promise<Response> => {
             empresaId,
             mode,
             totalColaboradores: colaboradores.length,
-            turnoverRate3m: Math.round(((desligamentosRecentes?.length ?? 0) / Math.max(colaboradores.length, 1)) * 100),
-            alertasAbsenteismo: alertasAbsenteismo.map(a => ({
-              nome: a.nome, sinal: a.sinal, nivel: a.nivel, justificativa: a.justificativa,
+            turnoverRate3m: Math.round(turnoverRate3m),
+            // O provedor externo recebe somente pseudônimos. Nome, UUID e
+            // empresa_id são desnecessários para o resumo e constituem PII.
+            alertasAbsenteismo: alertasAbsenteismo.slice(0, 100).map((a, index) => ({
+              sujeito: `Colaborador A${index + 1}`, sinal: a.sinal, nivel: a.nivel, justificativa: a.justificativa,
             })),
-            alertasTurnover: alertasTurnover.map(a => ({
-              nome: a.nome, sinal: a.sinal, nivel: a.nivel, justificativa: a.justificativa,
+            alertasTurnover: alertasTurnover.slice(0, 100).map((a, index) => ({
+              sujeito: `Colaborador T${index + 1}`, sinal: a.sinal, nivel: a.nivel, justificativa: a.justificativa,
             })),
           };
 
@@ -308,13 +346,13 @@ Contexto da empresa:
 - Taxa de turnover nos últimos 3 meses: ${contexto.turnoverRate3m}%
 
 ${totalAlertas} alerta(s) identificado(s):
-${contexto.alertasTurnover.map(a => `- TURNOVER [${a.nivel}]: ${a.nome} — ${a.justificativa}`).join('\n')}
-${contexto.alertasAbsenteismo.map(a => `- ABSENTEÍSMO [${a.nivel}]: ${a.nome} — ${a.justificativa}`).join('\n')}
+${contexto.alertasTurnover.map(a => `- TURNOVER [${a.nivel}]: ${a.sujeito} — ${a.justificativa}`).join('\n')}
+${contexto.alertasAbsenteismo.map(a => `- ABSENTEÍSMO [${a.nivel}]: ${a.sujeito} — ${a.justificativa}`).join('\n')}
 
 Responda em português brasileiro, tom profissional.`;
 
-          const endpoint = AI_GATEWAY_URL || 'https://api.openai.com/v1/chat/completions';
-          const authToken = AI_GATEWAY_URL ? AI_GATEWAY_URL : OPENAI_API_KEY;
+          const endpoint = (AI_GATEWAY_URL || 'https://api.openai.com/v1').replace(/\/$/, '');
+          const authToken = AI_GATEWAY_URL ? AI_GATEWAY_API_KEY : OPENAI_API_KEY;
           const res = await safeFetch(`${endpoint}/chat/completions`, {
             method: 'POST',
             headers: {
@@ -361,14 +399,15 @@ Responda em português brasileiro, tom profissional.`;
         tipo: a.nivel === 'critica' ? 'erro' : 'aviso',
       }));
 
-      supabase.from('notificacoes').insert(insertRows).then(() => {}, () => {});
+      const { error: notificationError } = await supabase.from('notificacoes').insert(insertRows);
+      if (notificationError) throw notificationError;
     }
 
     return new Response(JSON.stringify({
       empresaId,
       mode,
       totalColaboradores: colaboradores.length,
-      turnoverRate3m: Math.round(((desligamentosRecentes?.length ?? 0) / Math.max(colaboradores.length, 1)) * 100),
+      turnoverRate3m: Math.round(turnoverRate3m),
       alertasAbsenteismo,
       alertasTurnover,
       totalAlertas: todosAlertas.length,

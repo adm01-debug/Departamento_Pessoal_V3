@@ -35,10 +35,9 @@ serve(async (req: Request): Promise<Response> => {
     const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
-    let raw: unknown;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    raw = _pb;
+    const raw = _pb;
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) {
       return json({ success: false, error: 'Payload inválido', details: parsed.error.flatten() }, 400);
@@ -56,7 +55,7 @@ serve(async (req: Request): Promise<Response> => {
       || 'anon';
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(supabase, { key: `assinatura:${body.action}:${ip}`, limit: 20, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
 
     // 'assinar' é público — protegido pelo token de admissão (UUID + expiração + one-shot).

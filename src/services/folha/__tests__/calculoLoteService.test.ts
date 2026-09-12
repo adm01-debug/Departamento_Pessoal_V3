@@ -34,16 +34,16 @@ vi.mock('@/utils/folha/pontoIntegracaoUtils', () => ({
   },
 }));
 
-import { calculoLoteService } from '../calculoLoteService';
+import { calculoLoteService, COLABORADOR_FOLHA_SELECT } from '../calculoLoteService';
 
 const colaboradoresMock = [
   {
     id: 'c1',
     nome_completo: 'Ana Silva',
     salario_base: 3000,
+    jornada_horas_mensais: '220',
     dependentes: [],
     eventos_variaveis: [],
-    contratos: [{ jornada_mensal: 220 }],
   },
 ];
 
@@ -92,6 +92,11 @@ function buildSupabaseChain(overrides: Record<string, any> = {}) {
 describe('calculoLoteService.processarLote', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  it('usa somente relações existentes e lê jornada do colaborador canônico', () => {
+    expect(COLABORADOR_FOLHA_SELECT).not.toContain('contratos_trabalho');
+    expect(COLABORADOR_FOLHA_SELECT).toContain('eventos_variaveis');
   });
 
   it('throws when no colaboradores found', async () => {

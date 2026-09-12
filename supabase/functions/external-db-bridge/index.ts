@@ -15,7 +15,11 @@ import {
 } from "./validation.ts";
 import { BodySchema, toUpsertOptions } from "./request-schema.ts";
 import { extractTenantWriteScope, hasCompleteTenantWriteScope } from './tenantScope.ts';
-import { requiresAuthenticatedBridgeSession, requiresCallerScopedExternalClient } from './access.ts';
+import {
+  requiresAuthenticatedBridgeSession,
+  requiresCallerScopedExternalClient,
+  resolveExternalPublicKey,
+} from './access.ts';
 
 // -------------------- Headers --------------------
 const NO_STORE = { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" };
@@ -405,7 +409,7 @@ Deno.serve(async (req) => {
     const rlKey = isWrite ? `bridge-write:${rlIdentity}` : `bridge-read:${rlIdentity}`;
     const rlLimit = isWrite ? 30 : (user ? 100 : 20);
     const rl = await checkRateLimit(rlClient as any, { key: rlKey, limit: rlLimit, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
   }
 
   // Validação: table obrigatório para non-rpc + regex + denylist
@@ -459,7 +463,22 @@ Deno.serve(async (req) => {
   if (!externalUrl || !externalKey) {
     return jsonError(500, "NOT_CONFIGURED", "External database not configured");
   }
-  const externalClient = createClient(externalUrl, externalKey, { global: { fetch: timeoutFetch } });
+  const sameProject = (() => {
+    try {
+      return new URL(externalUrl).origin === new URL(supabaseUrl).origin;
+    } catch {
+      return false;
+    }
+  })();
+  const publicKey = resolveExternalPublicKey({
+    configuredPublicKey: Deno.env.get('EXTERNAL_DB_PUBLISHABLE_KEY'),
+    externalKey,
+    incomingApiKey: req.headers.get('apikey'),
+    sameProject,
+  });
+  const externalPublicClient = publicKey
+    ? createClient(externalUrl, publicKey, { global: { fetch: timeoutFetch } })
+    : null;
   // Every generic action executes with the caller JWT. `EXTERNAL_DB_KEY` can
   // be privileged; using it for a mutation would bypass external RLS and
   // role-based policies even after the bridge's local tenant check succeeds.
@@ -469,11 +488,13 @@ Deno.serve(async (req) => {
     : null;
   const externalDataClient = requiresCallerScopedExternalClient(action, rpcName)
     ? externalUserClient
-    : externalClient;
+    : externalPublicClient;
   if (!externalDataClient) {
     // This is defensive redundancy for the authentication gate above. Do not
     // ever fall back to EXTERNAL_DB_KEY for an authenticated generic action.
-    return jsonError(401, "UNAUTHORIZED", "Authentication required for this operation");
+    return requiresAuthenticatedBridgeSession(action, rpcName)
+      ? jsonError(401, "UNAUTHORIZED", "Authentication required for this operation")
+      : jsonError(503, "PUBLIC_DB_KEY_UNAVAILABLE", "Public database access is not configured safely");
   }
 
   // Cliente local (para verificação de tenant scope via RPC has_role/user_belongs_to_empresa)

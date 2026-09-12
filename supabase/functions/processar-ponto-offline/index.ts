@@ -74,10 +74,9 @@ serve(async (req: Request): Promise<Response> => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
-    let rawBody: any;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    rawBody = _pb;
+    const rawBody = _pb as any;
 
     const { registros } = rawBody ?? {};
     if (!registros || !Array.isArray(registros) || registros.length === 0) {
@@ -95,7 +94,7 @@ serve(async (req: Request): Promise<Response> => {
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(supabase, { key: `ponto-offline:${userId}`, limit: 30, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     // Achado N7 da auditoria: o INSERT abaixo omitia `ordem` (NOT NULL, sem
     // default, parte de UNIQUE(colaborador_id, data, ordem)) — toda batida

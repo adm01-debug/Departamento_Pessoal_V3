@@ -99,13 +99,12 @@ Deno.serve(async (req) => {
     }
     const userId = claims.user.id;
 
-    let raw: unknown;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    raw = _pb;
+    const raw = _pb;
 
     const parsed = BodySchema.safeParse(raw);
-    if (!parsed.success) return createValidationErrorResponse(parsed.error);
+    if (!parsed.success) return createValidationErrorResponse(parsed.error, req);
     const { salario_base, dias_ferias, dias_abono, dependentes_irrf, colaborador_id, empresa_id } = parsed.data;
 
     const admin = createClient(supabaseUrl, serviceKey, {
@@ -114,7 +113,7 @@ Deno.serve(async (req) => {
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(admin, { key: `calc-ferias:${userId}`, limit: 30, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     // Tenant scope
     let empresaIdFinal = empresa_id;
@@ -132,7 +131,7 @@ Deno.serve(async (req) => {
     // era um OU — pertencer à empresa já bastava, e o is_admin apenas somava
     // o admin global. Qualquer colaborador autenticado passava.
     {
-      const authz = await requireRh(admin, userId, empresaIdFinal);
+      const authz = await requireRh(admin, userId, empresaIdFinal, req);
       if (authz.denied) return authz.denied;
     }
     }

@@ -13,7 +13,7 @@
 // criar clientes com `@2` em outras funções fazia os genéricos protegidos do
 // supabase-js divergirem durante o type-check das Edge Functions.
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { corsHeaders, createErrorResponse } from "./contract.ts";
+import { createErrorResponse, getCorsHeaders } from "./contract.ts";
 
 const KEY_MIN = 16;
 const KEY_MAX = 128;
@@ -25,6 +25,7 @@ export interface BeginIdempotencyParams {
   requestBody: unknown;
   empresaId?: string | null;
   userId?: string | null;
+  request?: Request;
 }
 
 export type IdempotencyReason =
@@ -101,6 +102,8 @@ export async function beginIdempotency(
         `Idempotency-Key inválida (${KEY_MIN}-${KEY_MAX} chars alfanuméricos)`,
         400,
         "IDEMPOTENCY_KEY_INVALID",
+        undefined,
+        params.request,
       ),
     };
   }
@@ -151,7 +154,7 @@ export async function beginIdempotency(
           replay: new Response(JSON.stringify(legacyRec.response_body), {
             status: legacyRec.response_status ?? 200,
             headers: {
-              ...corsHeaders,
+              ...getCorsHeaders(params.request),
               "Content-Type": "application/json",
               "Idempotent-Replay": "true",
             },
@@ -180,6 +183,8 @@ export async function beginIdempotency(
         "Falha ao registrar idempotência",
         500,
         "IDEMPOTENCY_STORE_ERROR",
+        undefined,
+        params.request,
       ),
     };
   }
@@ -195,6 +200,8 @@ export async function beginIdempotency(
         "Idempotency-Key já usada com payload diferente",
         409,
         "IDEMPOTENCY_KEY_REUSE",
+        undefined,
+        params.request,
       ),
     };
   }
@@ -217,6 +224,8 @@ export async function beginIdempotency(
           "Requisição idempotente em andamento — tente novamente em instantes",
           409,
           "IDEMPOTENCY_IN_PROGRESS",
+          undefined,
+          params.request,
         ),
       };
     }
@@ -242,6 +251,8 @@ export async function beginIdempotency(
           "Requisição idempotente em andamento — tente novamente em instantes",
           409,
           "IDEMPOTENCY_IN_PROGRESS",
+          undefined,
+          params.request,
         ),
       };
     }
@@ -258,7 +269,7 @@ export async function beginIdempotency(
       replay: new Response(JSON.stringify(existing.response_body), {
         status: existing.response_status ?? 200,
         headers: {
-          ...corsHeaders,
+          ...getCorsHeaders(params.request),
           "Content-Type": "application/json",
           "Idempotent-Replay": "true",
         },
@@ -282,7 +293,7 @@ export async function completeIdempotency(
   body: unknown,
 ): Promise<void> {
   if (!id) return;
-  await admin
+  const { error } = await admin
     .from("idempotency_keys")
     .update({
       status: status >= 200 && status < 300 ? "completed" : "failed",
@@ -291,12 +302,14 @@ export async function completeIdempotency(
       completed_at: new Date().toISOString(),
     })
     .eq("id", id);
+  if (error) throw error;
 }
 
 export async function failIdempotency(admin: SupabaseClient, id: string | undefined): Promise<void> {
   if (!id) return;
-  await admin
+  const { error } = await admin
     .from("idempotency_keys")
     .update({ status: "failed", completed_at: new Date().toISOString() })
     .eq("id", id);
+  if (error) throw error;
 }

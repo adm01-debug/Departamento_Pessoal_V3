@@ -37,12 +37,16 @@ const MAX_PAYLOAD_BYTES = 128 * 1024;
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
+function ownedBuffer(bytes: Uint8Array): ArrayBuffer {
+  return Uint8Array.from(bytes).buffer;
+}
+
 async function deriveKey(salt: Uint8Array): Promise<CryptoKey> {
   const keyMaterial = await crypto.subtle.importKey(
     'raw', encoder.encode(MASTER_KEY), 'PBKDF2', false, ['deriveKey'],
   );
   return crypto.subtle.deriveKey(
-    { name: 'PBKDF2', salt, iterations: 200_000, hash: 'SHA-256' },
+    { name: 'PBKDF2', salt: ownedBuffer(salt), iterations: 200_000, hash: 'SHA-256' },
     keyMaterial,
     { name: 'AES-GCM', length: 256 },
     false,
@@ -50,12 +54,13 @@ async function deriveKey(salt: Uint8Array): Promise<CryptoKey> {
   );
 }
 
-function b64(buf: ArrayBuffer): string {
-  return btoa(String.fromCharCode(...new Uint8Array(buf)));
+function b64(buf: ArrayBuffer | Uint8Array): string {
+  const bytes = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
+  return btoa(String.fromCharCode(...bytes));
 }
-function fromB64(s: string): Uint8Array {
+function fromB64(s: string): Uint8Array<ArrayBuffer> {
   const bin = atob(s);
-  const arr = new Uint8Array(bin.length);
+  const arr = new Uint8Array(new ArrayBuffer(bin.length));
   for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
   return arr;
 }
@@ -94,14 +99,14 @@ serve(async (req: Request): Promise<Response> => {
     const adminClient = createClient(SUPABASE_URL, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(adminClient, { key: `crypto:${userId}`, limit: 60, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     const raw = await req.text();
     if (raw.length > MAX_PAYLOAD_BYTES) {
       return createErrorResponse('Payload excede 128KB', 413, 'PAYLOAD_TOO_LARGE');
     }
     const parsed = BodySchema.safeParse(JSON.parse(raw || '{}'));
-    if (!parsed.success) return createValidationErrorResponse(parsed.error);
+    if (!parsed.success) return createValidationErrorResponse(parsed.error, req);
     const body = parsed.data;
 
     // AAD: liga o ciphertext ao usuário → impede replay cross-user
@@ -114,13 +119,13 @@ serve(async (req: Request): Promise<Response> => {
         const key = await deriveKey(salt);
         const plaintext = typeof body.data === 'string' ? body.data : JSON.stringify(body.data);
         const enc = await crypto.subtle.encrypt(
-          { name: 'AES-GCM', iv, additionalData: aad },
+          { name: 'AES-GCM', iv: ownedBuffer(iv), additionalData: ownedBuffer(aad) },
           key,
           encoder.encode(plaintext),
         );
         return json({
           success: true,
-          data: { encrypted: b64(enc), salt: b64(salt.buffer), iv: b64(iv.buffer) },
+          data: { encrypted: b64(enc), salt: b64(salt), iv: b64(iv) },
         });
       }
 
@@ -130,9 +135,9 @@ serve(async (req: Request): Promise<Response> => {
           const iv = fromB64(body.data.iv);
           const key = await deriveKey(salt);
           const dec = await crypto.subtle.decrypt(
-            { name: 'AES-GCM', iv, additionalData: aad },
+            { name: 'AES-GCM', iv: ownedBuffer(iv), additionalData: ownedBuffer(aad) },
             key,
-            fromB64(body.data.encrypted),
+            ownedBuffer(fromB64(body.data.encrypted)),
           );
           const text = decoder.decode(dec);
           let out: unknown;

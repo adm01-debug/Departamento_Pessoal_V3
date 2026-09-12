@@ -56,7 +56,7 @@ serve(async (req: Request): Promise<Response> => {
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(adminClient, { key: `backup:${userData.user.id}`, limit: 3, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     const { data: roles } = await adminClient
       .from('user_roles')
@@ -71,7 +71,8 @@ serve(async (req: Request): Promise<Response> => {
       });
     }
 
-    const { body: _pb } = await parseJsonBody(req);
+    const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
+    if (_pe) return _pe;
     const { empresaId } = (_pb as Record<string, unknown>) ?? { empresaId: null };
     const results: Record<string, any> = {};
     let totalRecords = 0;

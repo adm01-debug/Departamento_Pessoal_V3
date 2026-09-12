@@ -158,7 +158,7 @@ serve(async (req: Request): Promise<Response> => {
     });
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(admin, { key: `relatorio:${userId}`, limit: 10, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     // 4) Validação Zod strict
     const { data: body, errorResponse } = await validateRequest(req, BodySchema);

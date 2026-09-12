@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { History, Search, Download, User, Calendar, Tag, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/integrations/supabase/client.base';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { exportPontoCSV } from '@/services/exportService';
@@ -18,13 +18,15 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
   const { empresaAtual } = useEmpresas();
 
   const queryClient = useQueryClient();
-  const { data: auditLogs = [], isLoading, error } = useQuery({
+  const {
+    data: auditLogs = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['ponto-audit-logs', filterTabela],
     queryFn: async () => {
       try {
-        let query = (supabase as any)
-          .from('audit_log')
-          .select('*');
+        let query = (supabase as any).from('audit_log').select('*');
 
         if (filterTabela) {
           query = query.eq('tabela', filterTabela);
@@ -32,9 +34,7 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
           query = query.or('tabela.eq.batidas_ponto,tabela.eq.registros_ponto,tabela.eq.solicitacoes_ajuste_ponto');
         }
 
-        const { data, error: queryError } = await query
-          .order('created_at', { ascending: false })
-          .limit(100);
+        const { data, error: queryError } = await query.order('created_at', { ascending: false }).limit(100);
         if (queryError) {
           console.warn('[PontoAuditTimeline] audit_log access denied:', queryError.message);
           return [];
@@ -53,23 +53,20 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
     if (!empresaAtual?.id) return;
     const channel = (supabase as any)
       .channel('audit-changes')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'audit_log' },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ['ponto-audit-logs'] });
-        }
-      )
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'audit_log' }, () => {
+        queryClient.invalidateQueries({ queryKey: ['ponto-audit-logs'] });
+      })
       .subscribe();
-    return () => { (supabase as any).removeChannel(channel); };
+    return () => {
+      (supabase as any).removeChannel(channel);
+    };
   }, [queryClient, empresaAtual?.id]);
 
-
-
-  const filteredLogs = auditLogs.filter((log: any) =>
-    (log.acao || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (log.tabela || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (log.user_email || '').toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredLogs = auditLogs.filter(
+    (log: any) =>
+      (log.acao || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (log.tabela || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (log.user_email || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleExportAudit = () => {
@@ -78,11 +75,10 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
       usuario: log.user_email || 'Sistema',
       acao: log.acao,
       tabela: log.tabela,
-      registro_id: log.registro_id
+      registro_id: log.registro_id,
     }));
     exportPontoCSV(exportData, 'trilha-auditoria-ponto.csv');
   };
-
 
   return (
     <Card className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden mt-6">
@@ -121,75 +117,84 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
             </div>
           ) : (
             <div className="space-y-6 relative before:absolute before:inset-0 before:left-[11px] before:w-px before:bg-gradient-to-b before:from-primary/50 before:via-border/50 before:to-transparent">
-            {filteredLogs.map((log: any, idx: number) => {
-              return (
-              <motion.div
-                key={log.id}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: idx * 0.05 }}
-                className="relative pl-8 group"
-              >
-                <div className="absolute left-0 top-1.5 h-[24px] w-[24px] rounded-full bg-background border-2 border-primary flex items-center justify-center z-10 group-hover:scale-110 transition-transform shadow-xs">
-                  <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-[10px] h-5 bg-primary/5 text-primary border-primary/20 font-bold uppercase tracking-wider">
-                        {log.acao}
-                      </Badge>
-                      <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
-                        <Calendar className="h-3 w-3" /> {format(new Date(log.created_at), "dd 'de' MMM, HH:mm", { locale: ptBR })}
-                      </span>
-                      {log.tabela === 'batidas_ponto' && (
-                        <Badge variant="outline" className="text-[9px] h-4 bg-success/5 text-success border-success/20 gap-1 px-1">
-                          <ShieldCheck className="h-2 w-2" /> 99.8% Confiança Biometria
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="flex flex-col items-end gap-1">
-                      <span className="text-[10px] font-mono text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded border border-border/30">
-                        REF: {(log.registro_id || '—').slice(0, 8)}
-                      </span>
-                      <div className="flex items-center gap-1 text-[8px] text-success font-bold">
-                        <ShieldCheck className="h-2 w-2" /> PROVA SHA256
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-4 rounded-2xl bg-gradient-to-br from-muted/30 to-background border border-border/40 group-hover:border-primary/30 transition-all group-hover:shadow-md">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center">
-                        <User className="h-3 w-3 text-primary" />
-                      </div>
-                      <span className="text-sm font-semibold text-foreground/90">{log.user_email || 'Sistema (Automático)'}</span>
+              {filteredLogs.map((log: any, idx: number) => {
+                return (
+                  <motion.div
+                    key={log.id}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.05 }}
+                    className="relative pl-8 group"
+                  >
+                    <div className="absolute left-0 top-1.5 h-[24px] w-[24px] rounded-full bg-background border-2 border-primary flex items-center justify-center z-10 group-hover:scale-110 transition-transform shadow-xs">
+                      <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
                     </div>
 
-                    {log.dados_novos && log.acao === 'UPDATE' && (
-                      <div className="relative overflow-hidden mb-3">
-                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/20 rounded-full" />
-                        <div className="text-[10px] text-muted-foreground bg-primary/5 p-2.5 rounded-r-lg border border-l-0 border-primary/10">
-                          <p className="font-bold mb-1">Alteração Detectada:</p>
-                          <pre className="whitespace-pre-wrap">{JSON.stringify(log.dados_novos, null, 2)}</pre>
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Badge
+                            variant="outline"
+                            className="text-[10px] h-5 bg-primary/5 text-primary border-primary/20 font-bold uppercase tracking-wider"
+                          >
+                            {log.acao}
+                          </Badge>
+                          <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />{' '}
+                            {format(new Date(log.created_at), "dd 'de' MMM, HH:mm", { locale: ptBR })}
+                          </span>
+                          {log.tabela === 'batidas_ponto' && (
+                            <Badge
+                              variant="outline"
+                              className="text-[9px] h-4 bg-success/5 text-success border-success/20 gap-1 px-1"
+                            >
+                              <ShieldCheck className="h-2 w-2" /> 99.8% Confiança Biometria
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="flex flex-col items-end gap-1">
+                          <span className="text-[10px] font-mono text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded border border-border/30">
+                            REF: {(log.registro_id || '—').slice(0, 8)}
+                          </span>
+                          <div className="flex items-center gap-1 text-[8px] text-success font-bold">
+                            <ShieldCheck className="h-2 w-2" /> PROVA SHA256
+                          </div>
                         </div>
                       </div>
-                    )}
 
-                    <div className="flex items-center justify-between">
-                      <div className="flex flex-wrap gap-2 text-[10px]">
-                        <span className="flex items-center gap-1 text-muted-foreground bg-muted/40 px-2 py-0.5 rounded-full border border-border/20">
-                          <Tag className="h-3 w-3" /> Entidade: {log.tabela}
-                        </span>
+                      <div className="p-4 rounded-2xl bg-gradient-to-br from-muted/30 to-background border border-border/40 group-hover:border-primary/30 transition-all group-hover:shadow-md">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center">
+                            <User className="h-3 w-3 text-primary" />
+                          </div>
+                          <span className="text-sm font-semibold text-foreground/90">
+                            {log.user_email || 'Sistema (Automático)'}
+                          </span>
+                        </div>
+
+                        {log.dados_novos && log.acao === 'UPDATE' && (
+                          <div className="relative overflow-hidden mb-3">
+                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/20 rounded-full" />
+                            <div className="text-[10px] text-muted-foreground bg-primary/5 p-2.5 rounded-r-lg border border-l-0 border-primary/10">
+                              <p className="font-bold mb-1">Alteração Detectada:</p>
+                              <pre className="whitespace-pre-wrap">{JSON.stringify(log.dados_novos, null, 2)}</pre>
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="flex items-center justify-between">
+                          <div className="flex flex-wrap gap-2 text-[10px]">
+                            <span className="flex items-center gap-1 text-muted-foreground bg-muted/40 px-2 py-0.5 rounded-full border border-border/20">
+                              <Tag className="h-3 w-3" /> Entidade: {log.tabela}
+                            </span>
+                          </div>
+                          <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors translate-x-0 group-hover:translate-x-1" />
+                        </div>
                       </div>
-                      <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors translate-x-0 group-hover:translate-x-1" />
                     </div>
-                  </div>
-                </div>
-              </motion.div>
-              );
-            })}
+                  </motion.div>
+                );
+              })}
             </div>
           )}
         </ScrollArea>

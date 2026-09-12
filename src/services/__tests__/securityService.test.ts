@@ -2,14 +2,19 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deepChain } from '@/test/deepChain';
 import { securityService } from '../securityService';
 
-const { mockFrom, mockLoggerError, mockLoggerInfo } = vi.hoisted(() => ({
+const { mockFrom, mockRpc, mockLoggerError, mockLoggerInfo } = vi.hoisted(() => ({
   mockFrom: vi.fn(),
+  mockRpc: vi.fn(),
   mockLoggerError: vi.fn(),
   mockLoggerInfo: vi.fn(),
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
+  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)), rpc: mockRpc },
+}));
+
+vi.mock('@/integrations/supabase/client.base', () => ({
+  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)), rpc: mockRpc },
 }));
 
 vi.mock('../loggerService', () => ({
@@ -36,27 +41,24 @@ function setupSelectOrderChain(data: any[], error: any = null) {
 // delete → eq → resolvedValue
 function setupDeleteEqChain(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  const __delChain = {
+    then: (r: any) => Promise.resolve({ error }).then(r),
+    catch: (r: any) => Promise.resolve({ error }).catch(r),
+    finally: (r: any) => Promise.resolve({ error }).finally(r),
+    eq: eqFn,
+  };
   eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
   return { deleteFn, eqFn };
 }
 
-// update → eq → resolvedValue
-function setupUpdateEqChain(error: any = null) {
-  const eqFn = vi.fn();
-  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
-  eqFn.mockReturnValue(__delChain);
-  const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
-  mockFrom.mockReturnValue({ update: updateFn });
-  return { updateFn, eqFn };
-}
-
 // ─── getBlockedIps ────────────────────────────────────────────────────────────
 
 describe('securityService.getBlockedIps', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns blocked IPs ordered by created_at desc', async () => {
     const records = [{ id: '1', ip_address: '1.2.3.4' }];
@@ -81,7 +83,9 @@ describe('securityService.getBlockedIps', () => {
 // ─── unblockIp ────────────────────────────────────────────────────────────────
 
 describe('securityService.unblockIp', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes blocked_ip by id and logs info', async () => {
     const { eqFn } = setupDeleteEqChain();
@@ -100,7 +104,9 @@ describe('securityService.unblockIp', () => {
 // ─── getLoginAttempts ─────────────────────────────────────────────────────────
 
 describe('securityService.getLoginAttempts', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns login attempts with limit 100', async () => {
     const records = [{ id: '1', email: 'a@b.com', success: false }];
@@ -124,7 +130,9 @@ describe('securityService.getLoginAttempts', () => {
 // ─── getSecurityAlerts ────────────────────────────────────────────────────────
 
 describe('securityService.getSecurityAlerts', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns security alerts', async () => {
     const records = [{ id: 'a1', type: 'brute_force', severity: 'high' }];
@@ -148,7 +156,9 @@ describe('securityService.getSecurityAlerts', () => {
 // ─── getGeoBlockedAttempts ────────────────────────────────────────────────────
 
 describe('securityService.getGeoBlockedAttempts', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns geo-blocked attempts', async () => {
     const records = [{ id: 'g1', ip_address: '5.6.7.8', country_code: 'CN' }];
@@ -166,7 +176,9 @@ describe('securityService.getGeoBlockedAttempts', () => {
 // ─── getRateLimitLogs ─────────────────────────────────────────────────────────
 
 describe('securityService.getRateLimitLogs', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns rate limit logs', async () => {
     const records = [{ id: 'r1', ip_address: '1.1.1.1' }];
@@ -184,20 +196,22 @@ describe('securityService.getRateLimitLogs', () => {
 // ─── resolveAlert ─────────────────────────────────────────────────────────────
 
 describe('securityService.resolveAlert', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
-  it('updates security_alerts with resolved=true and resolved_by', async () => {
-    const { updateFn, eqFn } = setupUpdateEqChain();
-    await securityService.resolveAlert('a1', 'user-1');
-    expect(updateFn).toHaveBeenCalledWith(expect.objectContaining({
-      resolved: true,
-      resolved_by: 'user-1',
-    }));
-    expect(eqFn).toHaveBeenCalledWith('id', 'a1');
+  it('resolves through the server-authored RPC', async () => {
+    mockRpc.mockResolvedValue({ data: { id: 'a1' }, error: null });
+    await securityService.resolveAlert('a1', 'legitimate alert');
+    expect(mockRpc).toHaveBeenCalledWith('resolve_security_alert', {
+      _alert_id: 'a1',
+      _note: 'legitimate alert',
+    });
+    expect(mockFrom).not.toHaveBeenCalledWith('security_alerts');
   });
 
   it('throws on DB error', async () => {
-    setupUpdateEqChain({ message: 'fail' });
-    await expect(securityService.resolveAlert('a1', 'user-1')).rejects.toBeDefined();
+    mockRpc.mockResolvedValue({ data: null, error: { message: 'fail' } });
+    await expect(securityService.resolveAlert('a1')).rejects.toBeDefined();
   });
 });

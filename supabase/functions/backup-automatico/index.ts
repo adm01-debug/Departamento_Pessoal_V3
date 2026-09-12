@@ -53,9 +53,10 @@ serve(async (req: Request): Promise<Response> => {
     const user = { id: claimsData.user.id };
 
     // 3) Validação
-    const { body: _pb } = await parseJsonBody(req);
+    const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
+    if (_pe) return _pe;
     const parsed = BodySchema.safeParse(_pb ?? {});
-    if (!parsed.success) return createValidationErrorResponse(parsed.error);
+    if (!parsed.success) return createValidationErrorResponse(parsed.error, req);
     const { action, empresaId, tables, destino } = parsed.data;
 
     const admin = createClient(SUPABASE_URL, SERVICE_KEY, {
@@ -81,7 +82,7 @@ serve(async (req: Request): Promise<Response> => {
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(admin, { key: `backup:${user.id}`, limit: 3, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     // 6) Whitelist de tabelas exportáveis (evita dump de auth/storage/vault)
     const ALLOWED_TABLES = new Set([

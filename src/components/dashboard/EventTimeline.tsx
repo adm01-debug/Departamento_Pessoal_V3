@@ -1,12 +1,22 @@
 import { memo, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  UserPlus, UserMinus, Calendar, FileText, Clock, AlertTriangle, 
-  type LucideIcon, ArrowUpDown, ShieldCheck, MapPin, Globe
+import {
+  UserPlus,
+  UserMinus,
+  Calendar,
+  FileText,
+  Clock,
+  AlertTriangle,
+  type LucideIcon,
+  ArrowUpDown,
+  ShieldCheck,
+  MapPin,
+  Globe,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { supabase as supabaseBase } from '@/integrations/supabase/client.base';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useRealTimeSubscription } from '@/hooks/useRealTimeSubscription';
@@ -31,7 +41,7 @@ const eventConfig: Record<string, { icon: LucideIcon; gradient: string }> = {
   alerta: { icon: AlertTriangle, gradient: 'from-warning to-destructive' },
   compliance: { icon: ShieldCheck, gradient: 'from-destructive to-destructive/70' },
   geofencing: { icon: MapPin, gradient: 'from-warning to-warning/70' },
-  timezone: { icon: Globe, gradient: 'from-info to-info/70' }
+  timezone: { icon: Globe, gradient: 'from-info to-info/70' },
 };
 
 interface EventTimelineProps {
@@ -40,7 +50,11 @@ interface EventTimelineProps {
   empresaId?: string;
 }
 
-export const EventTimeline = memo(function EventTimeline({ events: initialEvents, className, empresaId }: EventTimelineProps) {
+export const EventTimeline = memo(function EventTimeline({
+  events: initialEvents,
+  className,
+  empresaId,
+}: EventTimelineProps) {
   const [filterType, setFilterType] = useState('all');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
@@ -48,7 +62,7 @@ export const EventTimeline = memo(function EventTimeline({ events: initialEvents
     queryKey: ['audit-timeline', empresaId],
     enabled: !!empresaId,
     queryFn: async () => {
-      const { data, error } = await (supabase.from('audit_log') as any)
+      const { data, error } = await (supabaseBase.from('audit_log') as any)
         .select('*')
         .eq('empresa_id', empresaId!)
         .order('timestamp', { ascending: false })
@@ -58,37 +72,52 @@ export const EventTimeline = memo(function EventTimeline({ events: initialEvents
 
       // Fetch audit logs and compliance alerts
       const [auditResponse, complianceResponse] = await Promise.all([
-        (supabase as any).from('audit_log').select('*').eq('empresa_id', empresaId!).order('timestamp', { ascending: false }).limit(10),
-        (supabase as any).from('conformidade_ponto_logs').select('*').eq('empresa_id', empresaId!).order('timestamp', { ascending: false }).limit(10)
+        (supabaseBase as any)
+          .from('audit_log')
+          .select('*')
+          .eq('empresa_id', empresaId!)
+          .order('timestamp', { ascending: false })
+          .limit(10),
+        (supabase as any)
+          .from('conformidade_ponto_logs')
+          .select('*')
+          .eq('empresa_id', empresaId!)
+          .order('timestamp', { ascending: false })
+          .limit(10),
       ]);
 
       if (auditResponse.error) throw auditResponse.error;
-      
+
       const auditEvents = auditResponse.data.map((log: any) => ({
         id: log.id,
         title: `${log.tabela.charAt(0).toUpperCase() + log.tabela.slice(1)}: ${log.acao}`,
         description: `Alteração no registro ${log.registro_id?.substring(0, 8)}...`,
-        time: format(new Date(log.timestamp), "HH:mm, dd MMM", { locale: ptBR }),
+        time: format(new Date(log.timestamp), 'HH:mm, dd MMM', { locale: ptBR }),
         raw_time: log.timestamp,
-        type: log.tabela === 'ferias' ? 'ferias' : 
-              log.tabela === 'batidas_ponto' ? 'ponto' :
-              log.tabela === 'colaboradores' ? 'admissao' : 'alerta'
+        type:
+          log.tabela === 'ferias'
+            ? 'ferias'
+            : log.tabela === 'batidas_ponto'
+              ? 'ponto'
+              : log.tabela === 'colaboradores'
+                ? 'admissao'
+                : 'alerta',
       }));
 
       const complianceEvents = (complianceResponse.data || []).map((log: any) => ({
         id: log.id,
         title: `Alerta Portaria 671: ${log.tipo_alerta.toUpperCase()}`,
         description: log.descricao,
-        time: format(new Date(log.timestamp), "HH:mm, dd MMM", { locale: ptBR }),
+        time: format(new Date(log.timestamp), 'HH:mm, dd MMM', { locale: ptBR }),
         raw_time: log.timestamp,
-        type: log.tipo_alerta === 'geofencing' ? 'geofencing' :
-              log.tipo_alerta === 'timezone' ? 'timezone' : 'compliance'
+        type:
+          log.tipo_alerta === 'geofencing' ? 'geofencing' : log.tipo_alerta === 'timezone' ? 'timezone' : 'compliance',
       }));
 
-      return [...auditEvents, ...complianceEvents].sort((a, b) => 
-        new Date(b.raw_time).getTime() - new Date(a.raw_time).getTime()
+      return [...auditEvents, ...complianceEvents].sort(
+        (a, b) => new Date(b.raw_time).getTime() - new Date(a.raw_time).getTime()
       );
-    }
+    },
   });
 
   useRealTimeSubscription('audit_log', ['audit-timeline', empresaId], empresaId);
@@ -96,8 +125,8 @@ export const EventTimeline = memo(function EventTimeline({ events: initialEvents
 
   const displayEvents = useMemo(() => {
     const list = dbEvents || initialEvents || [];
-    const filtered = filterType === 'all' ? list : list.filter(e => e.type === filterType);
-    
+    const filtered = filterType === 'all' ? list : list.filter((e) => e.type === filterType);
+
     return filtered.sort((a, b) => {
       const timeA = a.raw_time ? new Date(a.raw_time).getTime() : 0;
       const timeB = b.raw_time ? new Date(b.raw_time).getTime() : 0;
@@ -108,15 +137,17 @@ export const EventTimeline = memo(function EventTimeline({ events: initialEvents
   if (isLoading) {
     return (
       <div className="space-y-4 py-4">
-        {Array(3).fill(0).map((_, i) => (
-          <div key={i} className="flex gap-3 animate-pulse">
-            <div className="w-8 h-8 rounded-lg bg-muted" />
-            <div className="flex-1 space-y-2">
-              <div className="h-3 bg-muted rounded w-1/2" />
-              <div className="h-2 bg-muted rounded w-3/4" />
+        {Array(3)
+          .fill(0)
+          .map((_, i) => (
+            <div key={i} className="flex gap-3 animate-pulse">
+              <div className="w-8 h-8 rounded-lg bg-muted" />
+              <div className="flex-1 space-y-2">
+                <div className="h-3 bg-muted rounded w-1/2" />
+                <div className="h-2 bg-muted rounded w-3/4" />
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
     );
   }
@@ -137,7 +168,7 @@ export const EventTimeline = memo(function EventTimeline({ events: initialEvents
       <div className="flex items-center justify-between gap-2 px-1">
         <div className="flex gap-1 overflow-x-auto custom-scrollbar pb-1">
           {['all', 'admissao', 'ferias', 'ponto', 'compliance', 'alerta'].map((t) => (
-            <Badge 
+            <Badge
               key={t}
               variant={filterType === t ? 'default' : 'outline'}
               className="cursor-pointer capitalize text-[10px] px-2 py-0"
@@ -152,7 +183,7 @@ export const EventTimeline = memo(function EventTimeline({ events: initialEvents
           size="icon"
           aria-label="Ordenar"
           className="h-6 w-6 shrink-0"
-          onClick={() => setSortOrder(prev => prev === 'desc' ? 'asc' : 'desc')}
+          onClick={() => setSortOrder((prev) => (prev === 'desc' ? 'asc' : 'desc'))}
         >
           <ArrowUpDown className="h-3 w-3" />
         </Button>
@@ -180,9 +211,7 @@ export const EventTimeline = memo(function EventTimeline({ events: initialEvents
                   <div className={cn('p-1.5 rounded-lg bg-gradient-to-br shadow-xs', config.gradient)}>
                     <Icon className="h-3 w-3 text-primary-foreground" />
                   </div>
-                  {!isLast && (
-                    <div className="w-px flex-1 bg-border/40 my-1" />
-                  )}
+                  {!isLast && <div className="w-px flex-1 bg-border/40 my-1" />}
                 </div>
 
                 {/* Content */}

@@ -1,0 +1,91 @@
+name: Canonical Supabase — Edge Functions
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_project_ref:
+        description: Digite o project ref canônico para evitar alvo acidental
+        required: true
+        type: string
+
+concurrency:
+  group: canonical-edge-functions
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Validar e publicar Edge Functions no canônico
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      CANONICAL_REF: frjbfeamybqsejlvmqbl
+      CONFIRM_PROJECT_REF: ${{ inputs.confirm_project_ref }}
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.117.0
+
+      - name: Validar alvo e autorização sem revelar segredo
+        run: |
+          set -euo pipefail
+          test "$CONFIRM_PROJECT_REF" = "$CANONICAL_REF" || {
+            echo '::error::Project ref de confirmação não corresponde ao canônico.'
+            exit 1
+          }
+          test -n "$SUPABASE_ACCESS_TOKEN" || {
+            echo '::error::SUPABASE_ACCESS_TOKEN ausente no environment production.'
+            exit 1
+          }
+          supabase functions list \
+            --project-ref "$CANONICAL_REF" \
+            --output json >/tmp/functions-before.json
+          echo "CANONICAL_EDGE_AUTHORIZATION_OK count=$(jq 'length' /tmp/functions-before.json)"
+
+      - name: Type-check bloqueante de todos os entrypoints
+        run: |
+          set -euo pipefail
+          errors=0
+          while IFS= read -r fn; do
+            if ! deno check --no-lock --node-modules-dir=false "$fn"; then
+              echo "::error file=$fn::Edge Function falhou no deno check"
+              errors=$((errors + 1))
+            fi
+          done < <(find supabase/functions -mindepth 2 -maxdepth 2 -name index.ts -print | LC_ALL=C sort)
+          test "$errors" -eq 0
+
+      - name: Publicar o inventário local sem excluir funções remotas
+        run: |
+          set -euo pipefail
+          # Sem --prune: este workflow não apaga funções que ainda precisem ser
+          # classificadas. O config.toml mantém verify_jwt=false somente para
+          # os quatro endpoints que possuem autenticação pública própria.
+          supabase functions deploy \
+            --project-ref "$CANONICAL_REF" \
+            --use-api \
+            --jobs 4
+
+      - name: Verificar inventário remoto pós-deploy
+        run: |
+          set -euo pipefail
+          supabase functions list \
+            --project-ref "$CANONICAL_REF" \
+            --output json >/tmp/functions-after.json
+          local_count="$(find supabase/functions -mindepth 2 -maxdepth 2 -name index.ts | wc -l)"
+          remote_count="$(jq 'length' /tmp/functions-after.json)"
+          test "$remote_count" -ge "$local_count" || {
+            echo "::error::Inventário remoto incompleto: $remote_count remoto(s), $local_count local(is)."
+            exit 1
+          }
+          echo "CANONICAL_EDGE_DEPLOY_OK local=$local_count remote=$remote_count"

@@ -9,8 +9,14 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://esm.sh/zod@3.23.8';
-import { assinarXMLEsocial } from './utils/signer.ts';
-import { corsHeaders, createErrorResponse, parseJsonBody } from '../_shared/contract.ts';
+import { assinarXmlSandboxNaoHomologado } from './utils/signer.ts';
+import {
+  createErrorResponse,
+  enforceOrigin,
+  getCorsHeaders,
+  handlePreflight,
+  parseJsonBody,
+} from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { requireRh } from '../_shared/authz.ts';
 import { captureException } from '../_shared/sentry.ts';
@@ -49,8 +55,11 @@ function xmlEscape(v: unknown): string {
 const xe = xmlEscape;
 
 serve(async (req: Request): Promise<Response> => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
-  if (req.method !== 'POST') return createErrorResponse('Method not allowed', 405, 'METHOD_NOT_ALLOWED');
+  const preflight = handlePreflight(req);
+  if (preflight) return preflight;
+  const forbiddenOrigin = enforceOrigin(req);
+  if (forbiddenOrigin) return forbiddenOrigin;
+  if (req.method !== 'POST') return createErrorResponse('Method not allowed', 405, 'METHOD_NOT_ALLOWED', undefined, req);
 
   try {
     // CSRF fail-closed (req.clone antes de qualquer json())
@@ -60,7 +69,7 @@ serve(async (req: Request): Promise<Response> => {
     // Auth
     const authHeader = req.headers.get('Authorization') ?? '';
     if (!authHeader.startsWith('Bearer ')) {
-      return createErrorResponse('Autenticação obrigatória', 401, 'UNAUTHORIZED');
+      return createErrorResponse('Autenticação obrigatória', 401, 'UNAUTHORIZED', undefined, req);
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
@@ -72,7 +81,7 @@ serve(async (req: Request): Promise<Response> => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
     const { data: claimsData, error: claimsErr } = await userClient.auth.getUser();
-    if (claimsErr || !claimsData?.user?.id) return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
+    if (claimsErr || !claimsData?.user?.id) return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED', undefined, req);
     const userId = claimsData.user.id;
 
     // Payload
@@ -80,7 +89,7 @@ serve(async (req: Request): Promise<Response> => {
     if (_pe) return _pe;
     const raw = _pb;
     const parsed = BodySchema.safeParse(raw);
-    if (!parsed.success) return createErrorResponse('Payload inválido', 422, 'VALIDATION_ERROR');
+    if (!parsed.success) return createErrorResponse('Payload inválido', 422, 'VALIDATION_ERROR', undefined, req);
     const { empresaId, eventoId } = parsed.data;
 
     const supabase = createClient(supabaseUrl, serviceKey, {
@@ -90,14 +99,14 @@ serve(async (req: Request): Promise<Response> => {
     // Rate limit por usuário — evita rajadas de envios em massa (30 req / min)
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(supabase, { key: `esocial:${userId}`, limit: 30, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     // Tenant scope
     // Papel, não apenas vínculo: o padrão anterior (`!belongs && !isAdmin`)
     // era um OU — pertencer à empresa já bastava, e o is_admin apenas somava
     // o admin global. Qualquer colaborador autenticado passava.
     {
-      const authz = await requireRh(supabase, userId, empresaId);
+      const authz = await requireRh(supabase, userId, empresaId, req);
       if (authz.denied) return authz.denied;
     }
     const startTime = Date.now();
@@ -110,14 +119,27 @@ serve(async (req: Request): Promise<Response> => {
       .eq('id', eventoId)
       .eq('empresa_id', empresaId)
       .maybeSingle();
-    if (eError || !evento) return createErrorResponse('Evento não encontrado', 404, 'NOT_FOUND');
+    if (eError || !evento) return createErrorResponse('Evento não encontrado', 404, 'NOT_FOUND', undefined, req);
 
     // Idempotência: bloqueia retransmissão de evento já enviado
     if (evento.status === 'enviado' && evento.protocolo) {
       return new Response(JSON.stringify({
         success: true, protocolo: evento.protocolo, recibo: evento.recibo,
         alreadySent: true, tentativas: evento.tentativas_envio ?? 0,
-      }), { headers: { ...corsHeaders, ...NO_STORE, 'Content-Type': 'application/json' } });
+      }), { headers: { ...getCorsHeaders(req), ...NO_STORE, 'Content-Type': 'application/json' } });
+    }
+
+    // Esta versão não possui cliente SOAP nem assinatura ICP-Brasil real.
+    // Fora do sandbox explícito, parar antes de criar assinatura, protocolo,
+    // log de transmissão ou mutação que pareça aceite governamental.
+    if (!SIMULATE) {
+      return createErrorResponse(
+        'Transmissão produtiva eSocial indisponível: certificado e endpoint homologado não configurados',
+        503,
+        'ESOCIAL_TRANSPORT_UNAVAILABLE',
+        undefined,
+        req,
+      );
     }
 
     // Só reserva a chave depois de validar que há trabalho transmissível. Antes
@@ -130,16 +152,19 @@ serve(async (req: Request): Promise<Response> => {
       requestBody: { empresaId, eventoId },
       empresaId,
       userId,
+      request: req,
     });
     if (idem.replay) return idem.replay;
     if (idem.conflict) return idem.conflict;
 
+    try {
     // 2. Config
-    const { data: config } = await supabase
+    const { data: config, error: configError } = await supabase
       .from('configuracoes_esocial')
       .select('*')
       .eq('empresa_id', empresaId)
       .maybeSingle();
+    if (configError) throw configError;
 
     const ambiente = String(config?.ambiente || '2');
     const certificadoId = config?.certificado_id || evento.empresa.id;
@@ -148,62 +173,48 @@ serve(async (req: Request): Promise<Response> => {
     const xmlBase = montarXMLEvento(
       evento.tipo_evento, evento.empresa, evento.dados, ambiente, evento.competencia,
     );
-    const { xmlAssinado, assinatura, hash } = await assinarXMLEsocial(xmlBase, certificadoId);
+    const { xmlAssinado, assinatura, hash } = await assinarXmlSandboxNaoHomologado(xmlBase, certificadoId);
 
     // 4. Transmissão
     const tentativas = (evento.tentativas_envio || 0) + 1;
-    let success: boolean;
-    let protocolo: string | null;
-    let recibo: string | null;
-    let responseXml: string;
-    let erroGov: Record<string, string> | null;
-
-    if (SIMULATE) {
-      // Sandbox — nunca em prod (controlado por env)
-      await new Promise((r) => setTimeout(r, 200));
-      success = true; // sandbox otimista
-      protocolo = `PRT${crypto.randomUUID()}`;
-      recibo = `REC-${crypto.randomUUID().slice(0, 12)}`;
-      responseXml = `<retornoEvento><status>200</status><protocolo>${xe(protocolo)}</protocolo><recibo>${xe(recibo)}</recibo></retornoEvento>`;
-      erroGov = null;
-    } else {
-      // Produção deveria invocar cliente SOAP real; enquanto não integrado, falha fechada
-      success = false;
-      protocolo = null;
-      recibo = null;
-      responseXml = `<retornoEvento><status>503</status><erro>Integração eSocial não configurada</erro></retornoEvento>`;
-      erroGov = {
-        mensagem: 'Integração eSocial não configurada para produção',
-        codigo: '503',
-        detalhes: `Tentativa ${tentativas} — habilite ESOCIAL_SIMULATE=true em sandbox ou configure o cliente SOAP.`,
-      };
-    }
+    // Sandbox — sinalizado por env e nunca confundido com transporte oficial.
+    await new Promise((r) => setTimeout(r, 200));
+    const success = true;
+    const protocolo = `SANDBOX-PRT-${crypto.randomUUID()}`;
+    const recibo = `SANDBOX-REC-${crypto.randomUUID().slice(0, 12)}`;
+    const responseXml = `<retornoEvento ambiente="sandbox"><status>200</status><protocolo>${xe(protocolo)}</protocolo><recibo>${xe(recibo)}</recibo></retornoEvento>`;
+    const erroGov: Record<string, string> | null = null;
 
     // 5. Log de transmissão
-    await supabase.from('esocial_transmissao_logs').insert({
+    const { error: transmissionLogError } = await supabase.from('esocial_transmissao_logs').insert({
       evento_id: eventoId,
       empresa_id: empresaId,
-      status: success ? 'enviado' : 'erro',
+      status: 'simulado',
       request_xml: xmlAssinado,
       response_xml: responseXml,
       error_details: erroGov,
       duracao_ms: Math.round(Date.now() - startTime),
     });
+    if (transmissionLogError) throw transmissionLogError;
 
     // 6. Atualizar evento
-    await supabase
+    const { data: updatedEvent, error: updateError } = await supabase
       .from('esocial_eventos')
       .update({
-        status: success ? 'enviado' : 'erro',
+        status: 'simulado',
         protocolo, recibo, id_recibo: recibo,
         assinatura_xml: assinatura, hash_seguranca: hash,
         xml_envio: xmlAssinado, xml_retorno: responseXml,
         erros: erroGov, tentativas_envio: tentativas,
-        data_envio: success ? new Date().toISOString() : null,
-        data_processamento: success ? new Date().toISOString() : null,
+        data_envio: null,
+        data_processamento: new Date().toISOString(),
       })
       .eq('id', eventoId)
-      .eq('empresa_id', empresaId);
+      .eq('empresa_id', empresaId)
+      .select('id')
+      .maybeSingle();
+    if (updateError) throw updateError;
+    if (!updatedEvent) throw new Error('Evento perdeu o vínculo de empresa durante a transmissão');
 
     // 7. Auditoria bloqueante (não-repúdio) com integrity_hash canônico
     const auditPayload = {
@@ -211,7 +222,8 @@ serve(async (req: Request): Promise<Response> => {
       evento_id: eventoId,
       tipo_evento: evento.tipo_evento,
       ambiente,
-      success,
+      success: false,
+      simulated: true,
       tentativas,
       protocolo: protocolo ?? null,
       recibo: recibo ?? null,
@@ -223,20 +235,20 @@ serve(async (req: Request): Promise<Response> => {
     const { error: auditErr } = await supabase.from('audit_log').insert({
       tabela: 'esocial_eventos',
       registro_id: eventoId,
-      acao: 'ESOCIAL_TRANSMIT',
+      acao: 'ESOCIAL_SIMULATE',
       user_id: userId,
       dados_novos: { ...auditPayload, integrity_hash: auditHash },
     });
     if (auditErr) {
-      await failIdempotency(supabase, idem.id);
       throw auditErr;
     }
 
     const responseBody = {
       success,
+      simulated: true,
       protocolo,
       recibo,
-      error: erroGov?.mensagem,
+      error: undefined,
       tentativas,
       integrity_hash: auditHash,
     };
@@ -244,11 +256,15 @@ serve(async (req: Request): Promise<Response> => {
     await completeIdempotency(supabase, idem.id, responseStatus, responseBody);
     return new Response(JSON.stringify(responseBody), {
       status: responseStatus,
-      headers: { ...corsHeaders, ...NO_STORE, 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), ...NO_STORE, 'Content-Type': 'application/json' },
     });
+    } catch (processingError) {
+      try { await failIdempotency(supabase, idem.id); } catch { /* preserve original error */ }
+      throw processingError;
+    }
   } catch (error) {
     try { captureException(error, { fn: 'enviar-esocial' }); } catch { /* noop */ }
-    return createErrorResponse('Erro interno na transmissão eSocial', 500, 'INTERNAL_SERVER_ERROR');
+    return createErrorResponse('Erro interno na transmissão eSocial', 500, 'INTERNAL_SERVER_ERROR', undefined, req);
   }
 });
 

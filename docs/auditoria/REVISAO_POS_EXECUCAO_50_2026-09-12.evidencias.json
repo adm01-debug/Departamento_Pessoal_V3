@@ -1,0 +1,888 @@
+{
+  "revision": "pos-execucao-2026-09-12",
+  "latest_local_remediation": {
+    "observed_at_utc": "2026-09-12T20:43:01Z",
+    "branch": "codex/e50-remediation-20260912",
+    "base_commit": "b2456863a41db5023c0604e99a25e6786e599e69",
+    "promotion_state": "local_validated_remote_pending",
+    "canonical_migrations_scoped": 12,
+    "edge_entrypoints_checked": 60,
+    "edge_directories_changed": 55,
+    "postgres_disposable_suites_passed": 19,
+    "vitest": {
+      "files_passed": 468,
+      "tests_passed": 4904,
+      "tests_skipped": 1,
+      "statements_pct": 61.64,
+      "branches_pct": 56.66,
+      "functions_pct": 54.42,
+      "lines_pct": 65.95
+    },
+    "deno_tests_passed": 93,
+    "bridge_contract": {
+      "production_rpc_calls": 75,
+      "rpc_allowlist": 86,
+      "public_token_rpcs": 7,
+      "sensitive_table_calls_through_bridge": 0
+    },
+    "pre_deploy_e2e": {
+      "passed": 47,
+      "failed": 17,
+      "skipped": 6,
+      "not_run": 1,
+      "classification": "expected_remote_drift_before_sql_and_edge_promotion"
+    },
+    "remote_blockers_at_cutoff": [
+      "scoped SQL workflow not yet promoted to default branch",
+      "configured Supabase CLI credential returned HTTP 403 for the canonical project",
+      "SUPABASE_ACCESS_TOKEN secret required for the fail-closed Edge deploy workflow",
+      "E2E must be repeated after database and Edge deployment"
+    ],
+    "claims": {
+      "ten_out_of_ten": false,
+      "c4_completed": false,
+      "canonical_database_updated": false,
+      "canonical_edge_functions_updated": false
+    }
+  },
+  "observed_at_utc": "2026-09-12T16:53:31Z",
+  "project_ref": "frjbfeamybqsejlvmqbl",
+  "local_head": "a72b251ccb693f593fa147a48cb667e15553cdc6",
+  "origin_main": "b2456863a41db5023c0604e99a25e6786e599e69",
+  "tracked_tree_both": "5d4e0818e74f4e140ccb586d386ff7f1dc2b71fc",
+  "pr": {
+    "number": 100,
+    "state": "MERGED",
+    "merged_at": "2026-09-12T16:45:18Z"
+  },
+  "audit_mode": "read-only remote; reports only locally; no business rows exported",
+  "local_migrations": 654,
+  "database": {
+    "cron": {
+      "total": 50,
+      "active": 50
+    },
+    "views": {
+      "count": 44,
+      "anon_select": 1,
+      "without_invoker": 0
+    },
+    "buckets": [
+      {
+        "id": "comprovantes-despesas",
+        "limit": 10485760,
+        "public": false
+      },
+      {
+        "id": "contabilidade-anexos",
+        "limit": 20971520,
+        "public": false
+      },
+      {
+        "id": "relatorios-privados",
+        "limit": 20971520,
+        "public": false
+      },
+      {
+        "id": "sst-programas",
+        "limit": 20971520,
+        "public": false
+      },
+      {
+        "id": "afastamentos",
+        "limit": null,
+        "public": false
+      },
+      {
+        "id": "assinaturas",
+        "limit": null,
+        "public": false
+      },
+      {
+        "id": "avatars",
+        "limit": null,
+        "public": true
+      },
+      {
+        "id": "contratacao",
+        "limit": null,
+        "public": false
+      },
+      {
+        "id": "contratos-trabalho",
+        "limit": null,
+        "public": false
+      },
+      {
+        "id": "documentos",
+        "limit": null,
+        "public": false
+      },
+      {
+        "id": "documentos-admissao",
+        "limit": null,
+        "public": false
+      },
+      {
+        "id": "documentos-colaboradores",
+        "limit": 10485760,
+        "public": false
+      },
+      {
+        "id": "ferias-avisos",
+        "limit": null,
+        "public": false
+      },
+      {
+        "id": "ferias-coletivas-comunicados",
+        "limit": null,
+        "public": false
+      },
+      {
+        "id": "medidas-contestacoes",
+        "limit": null,
+        "public": false
+      },
+      {
+        "id": "medidas-disciplinares",
+        "limit": null,
+        "public": false
+      },
+      {
+        "id": "ponto-biometria",
+        "limit": null,
+        "public": false
+      },
+      {
+        "id": "recrutamento-curriculos",
+        "limit": null,
+        "public": false
+      }
+    ],
+    "identity": {
+      "db": "postgres",
+      "time": "2026-09-12T16:48:19.921274+00:00",
+      "user": "postgres"
+    },
+    "functions": [
+      {
+        "anon": false,
+        "proconfig": ["search_path=pg_catalog, public, pg_temp"],
+        "prosecdef": true,
+        "signature": "check_account_lockout(text)",
+        "authenticated": false
+      },
+      {
+        "anon": true,
+        "proconfig": ["search_path=public"],
+        "prosecdef": false,
+        "signature": "get_auth_empresa_id()",
+        "authenticated": true
+      },
+      {
+        "anon": false,
+        "proconfig": ["search_path=pg_catalog, public, pg_temp"],
+        "prosecdef": true,
+        "signature": "record_login_attempt(text,boolean,text)",
+        "authenticated": false
+      },
+      {
+        "anon": true,
+        "proconfig": ["search_path=public"],
+        "prosecdef": true,
+        "signature": "reset_login_attempts(text,text)",
+        "authenticated": true
+      },
+      {
+        "anon": false,
+        "proconfig": ["search_path=pg_catalog, public, extensions"],
+        "prosecdef": true,
+        "signature": "user_empresa_id()",
+        "authenticated": true
+      }
+    ],
+    "ledger_count": 369,
+    "public_tables": 363,
+    "last_migrations": [
+      {
+        "name": "p0_pgcrypto_routine_search_path",
+        "version": "20260912144208"
+      },
+      {
+        "name": "p1_function_search_path",
+        "version": "20260912143344"
+      },
+      {
+        "name": "p0_secdef_search_path",
+        "version": "20260912143239"
+      },
+      {
+        "name": "p0_views_revoke_public",
+        "version": "20260912143019"
+      },
+      {
+        "name": "p0_payroll_upsert_contract",
+        "version": "20260912142520"
+      },
+      {
+        "name": "p0_auth_lockout_contract",
+        "version": "20260912142506"
+      },
+      {
+        "name": "p0_hash_trigger_search_path",
+        "version": "20260912142449"
+      },
+      {
+        "name": "plano100_e012_secdef_permissions_helpers",
+        "version": "20260830000003"
+      },
+      {
+        "name": "plano100_e036_pii_access_logs",
+        "version": "20260830000002"
+      },
+      {
+        "name": "plano100_e028_storage_buckets_privados",
+        "version": "20260830000001"
+      },
+      {
+        "name": null,
+        "version": "20260731151430"
+      },
+      {
+        "name": null,
+        "version": "20260731151103"
+      }
+    ],
+    "disabled_triggers": [
+      {
+        "tgname": "trigger_alerta_divergencia",
+        "relname": "folhas_pagamento"
+      },
+      {
+        "tgname": "trigger_gerar_provisao",
+        "relname": "folhas_pagamento"
+      }
+    ],
+    "unvalidated_checks": 12
+  },
+  "edge": {
+    "local": 60,
+    "remote": 59,
+    "local_only": ["metabase-embed"],
+    "metadata": [
+      {
+        "slug": "adiantamento-salarial",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "alertas-dp",
+        "version": 7,
+        "verify_jwt": false
+      },
+      {
+        "slug": "assinaturaDigital",
+        "version": 5,
+        "verify_jwt": true
+      },
+      {
+        "slug": "assistente-ia",
+        "version": 6,
+        "verify_jwt": false
+      },
+      {
+        "slug": "auditoria",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "auth-gov-br",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "auth-login",
+        "version": 19,
+        "verify_jwt": false
+      },
+      {
+        "slug": "backup",
+        "version": 5,
+        "verify_jwt": true
+      },
+      {
+        "slug": "backup-automatico",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "cache",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "calcular-13-salario",
+        "version": 5,
+        "verify_jwt": true
+      },
+      {
+        "slug": "calcular-ferias",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "calcular-folha",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "calcular-provisoes",
+        "version": 5,
+        "verify_jwt": true
+      },
+      {
+        "slug": "calcular-rescisao",
+        "version": 5,
+        "verify_jwt": true
+      },
+      {
+        "slug": "cnab-remessa",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "consultarCEP",
+        "version": 7,
+        "verify_jwt": false
+      },
+      {
+        "slug": "consultarCNPJ",
+        "version": 7,
+        "verify_jwt": false
+      },
+      {
+        "slug": "criptografia",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "dctfweb",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "distribuir-holerites",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "emprestimo-consignado",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "enviar-esocial",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "enviar-relatorio",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "exportacao",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "external-db-bridge",
+        "version": 45,
+        "verify_jwt": false
+      },
+      {
+        "slug": "fechar-folha",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "fgts-digital",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "folha-metrics",
+        "version": 7,
+        "verify_jwt": false
+      },
+      {
+        "slug": "gerar-aej",
+        "version": 6,
+        "verify_jwt": false
+      },
+      {
+        "slug": "gerar-contrato-pdf",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "gerar-guias",
+        "version": 5,
+        "verify_jwt": true
+      },
+      {
+        "slug": "gerar-holerite",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "gerar-ltcat-os",
+        "version": 5,
+        "verify_jwt": true
+      },
+      {
+        "slug": "gerar-medida-disciplinar-pdf",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "gerar-pgr",
+        "version": 5,
+        "verify_jwt": true
+      },
+      {
+        "slug": "healthcheck",
+        "version": 7,
+        "verify_jwt": false
+      },
+      {
+        "slug": "importacao",
+        "version": 7,
+        "verify_jwt": false
+      },
+      {
+        "slug": "integracao",
+        "version": 5,
+        "verify_jwt": true
+      },
+      {
+        "slug": "limpeza",
+        "version": 5,
+        "verify_jwt": true
+      },
+      {
+        "slug": "metricas",
+        "version": 9,
+        "verify_jwt": false
+      },
+      {
+        "slug": "notificacao",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "OCR",
+        "version": 5,
+        "verify_jwt": true
+      },
+      {
+        "slug": "parse-afdt",
+        "version": 5,
+        "verify_jwt": true
+      },
+      {
+        "slug": "pix-lote",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "process-document-ocr",
+        "version": 5,
+        "verify_jwt": true
+      },
+      {
+        "slug": "processar-agendamentos",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "processar-ponto",
+        "version": 7,
+        "verify_jwt": false
+      },
+      {
+        "slug": "processar-ponto-offline",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "rateLimit",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "reabrir-folha",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "relatorio",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "sincronizar-bitrix",
+        "version": 5,
+        "verify_jwt": true
+      },
+      {
+        "slug": "validar-biometria",
+        "version": 6,
+        "verify_jwt": false
+      },
+      {
+        "slug": "warmup",
+        "version": 5,
+        "verify_jwt": true
+      },
+      {
+        "slug": "webhook",
+        "version": 6,
+        "verify_jwt": true
+      },
+      {
+        "slug": "alertas-preditivos",
+        "version": 2,
+        "verify_jwt": false
+      },
+      {
+        "slug": "metrics",
+        "version": 1,
+        "verify_jwt": false
+      },
+      {
+        "slug": "tabelas-dominio",
+        "version": 1,
+        "verify_jwt": true
+      }
+    ],
+    "sampled_bundles": [
+      {
+        "slug": "enviar-relatorio",
+        "path": "supabase/functions/enviar-relatorio/index.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "enviar-relatorio",
+        "path": "supabase/functions/_shared/csrf.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "enviar-relatorio",
+        "path": "supabase/functions/_shared/sentry.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "enviar-relatorio",
+        "path": "supabase/functions/_shared/contract.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "enviar-relatorio",
+        "path": "supabase/functions/_shared/safe-fetch.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "enviar-relatorio",
+        "path": "supabase/functions/_shared/authz.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "enviar-relatorio",
+        "path": "supabase/functions/enviar-relatorio/deliveryStatus.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "enviar-relatorio",
+        "path": "supabase/functions/_shared/resendDelivery.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "enviar-relatorio",
+        "path": "supabase/functions/enviar-relatorio/internalDispatch.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "enviar-relatorio",
+        "path": "supabase/functions/enviar-relatorio/reportContent.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "enviar-relatorio",
+        "path": "supabase/functions/_shared/rateLimit.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "alertas-dp",
+        "path": "supabase/functions/alertas-dp/index.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "alertas-dp",
+        "path": "supabase/functions/_shared/csrf.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "alertas-dp",
+        "path": "supabase/functions/_shared/sentry.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "alertas-dp",
+        "path": "supabase/functions/_shared/contract.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "alertas-dp",
+        "path": "supabase/functions/_shared/safe-fetch.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "alertas-dp",
+        "path": "supabase/functions/_shared/authz.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "alertas-dp",
+        "path": "supabase/functions/_shared/resendDelivery.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "alertas-dp",
+        "path": "supabase/functions/alertas-dp/deliveryStatus.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "alertas-dp",
+        "path": "supabase/functions/_shared/rateLimit.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "processar-agendamentos",
+        "path": "supabase/functions/processar-agendamentos/index.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "processar-agendamentos",
+        "path": "supabase/functions/_shared/csrf.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "processar-agendamentos",
+        "path": "supabase/functions/_shared/sentry.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "processar-agendamentos",
+        "path": "supabase/functions/_shared/contract.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "processar-agendamentos",
+        "path": "supabase/functions/_shared/safe-fetch.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "processar-agendamentos",
+        "path": "supabase/functions/processar-agendamentos/scheduleContract.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "processar-agendamentos",
+        "path": "supabase/functions/_shared/rateLimit.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "slug": "auth-login",
+        "path": "supabase/functions/auth-login/index.ts",
+        "exact": false,
+        "astEquivalent": false
+      },
+      {
+        "slug": "auth-login",
+        "path": "supabase/functions/_shared/contract.ts",
+        "exact": false,
+        "astEquivalent": false
+      },
+      {
+        "slug": "auth-login",
+        "path": "supabase/functions/_shared/rateLimit.ts",
+        "exact": false,
+        "astEquivalent": false
+      },
+      {
+        "slug": "auth-login",
+        "path": "supabase/functions/_shared/sentry.ts",
+        "exact": false,
+        "astEquivalent": false
+      }
+    ],
+    "bridge_bundle": [
+      {
+        "path": "supabase/functions/external-db-bridge/index.ts",
+        "exact": false,
+        "astEquivalent": false
+      },
+      {
+        "path": "supabase/functions/_shared/cache.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "path": "supabase/functions/_shared/csrf.ts",
+        "exact": false,
+        "astEquivalent": false
+      },
+      {
+        "path": "supabase/functions/_shared/rpc-error-logging.ts",
+        "exact": true,
+        "astEquivalent": true
+      },
+      {
+        "path": "supabase/functions/_shared/contract.ts",
+        "exact": false,
+        "astEquivalent": false
+      },
+      {
+        "path": "supabase/functions/external-db-bridge/validation.ts",
+        "exact": false,
+        "astEquivalent": false
+      },
+      {
+        "path": "supabase/functions/_shared/rateLimit.ts",
+        "exact": false,
+        "astEquivalent": false
+      }
+    ],
+    "comparison_scope": "5 bundles, 38 file occurrences; exact comparison and TS AST check. Not a hash certification of all 59 deployed bundles or secrets."
+  },
+  "ci": {
+    "main_run": 34706193697,
+    "status": "failure",
+    "failed_step": "Regressão de RLS sobre PII",
+    "flagged_policies": 17,
+    "vitest": {
+      "files": 468,
+      "passed": 4898
+    },
+    "coverage": {
+      "statements": 61.46,
+      "branches": 56.52,
+      "functions": 54.31,
+      "lines": 65.72
+    },
+    "typecheck_app_tests_e2e": "passed",
+    "lint": "passed",
+    "edge_helpers_passed": 81,
+    "edge_functions_type_errors_tolerated": 18,
+    "e2e_run": 34706193740,
+    "e2e": "blocked before browser: four E2E secrets absent",
+    "security_run": 34706193754,
+    "security": "success",
+    "production_deployment": 6412002461,
+    "production_status": "success",
+    "production_url": "https://departamento-pessoal-v3-mhejv14gc-juca1.vercel.app"
+  },
+  "local_tests": {
+    "vitest_targeted": {
+      "files": 6,
+      "passed": 80
+    },
+    "deno_helpers_and_schedule": {
+      "passed": 84,
+      "failed": 0
+    },
+    "plan_structure_checks": 231,
+    "canonical_config": "passed",
+    "baseline_structure": "passed"
+  },
+  "simulations": {
+    "streaming_clone_over_limit": {
+      "deadline_ms": 300,
+      "result": "pending until other clone branch canceled; then 413",
+      "scope": "local Deno real parser; stream intentionally left open"
+    },
+    "schedule_midnight": {
+      "configured": "23:50 America/Sao_Paulo",
+      "observed_at": "2026-09-13T03:00:00Z",
+      "should_run_result": false
+    },
+    "user_empresa_id": {
+      "mode": "BEGIN READ ONLY, SET LOCAL ROLE authenticated, synthetic claims, ROLLBACK",
+      "result": "returned arbitrary empresa_id from user_metadata",
+      "http_exploit_performed": false
+    },
+    "provisoes_upsert": {
+      "mode": "EXPLAIN only, no ANALYZE/no insert",
+      "sqlstate": "42P10"
+    },
+    "audit_view": {
+      "mode": "authenticated SELECT LIMIT 0",
+      "sqlstate": "42501",
+      "detail": "permission denied for table users"
+    },
+    "tokens": {
+      "anon_select_token": true,
+      "anon_update_used_at": true,
+      "active_rows_visible": 0,
+      "values_exported": false
+    },
+    "cors": {
+      "method": "OPTIONS",
+      "origin": "https://departamento-pessoal-v3-mhejv14gc-juca1.vercel.app",
+      "status": 403,
+      "hostile_status": 403
+    }
+  },
+  "stage_status": {
+    "partial": 42,
+    "external_evidence_or_config": 2,
+    "objective_not_demonstrated": 6,
+    "c4_proven": 0
+  },
+  "limitations": [
+    "No complete physical-schema diff or full baseline restore in this review",
+    "No production credential rotation or revocation tests",
+    "No complete role/tenant HTTP/E2E matrix",
+    "No provider delivery or financial/legal homologation",
+    "Readonly SQL role simulations are not a proof of end-to-end exploit",
+    "No GitHub secret contents retrieved; least-privilege role remains uncertified"
+  ]
+}

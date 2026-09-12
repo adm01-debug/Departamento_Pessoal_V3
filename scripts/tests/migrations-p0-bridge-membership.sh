@@ -57,6 +57,7 @@ for _ in $(seq 1 60); do
   fi
   sleep 1
 done
+
 [ "$ready" = "1" ] || { docker logs "$NAME" >&2; exit 1; }
 
 docker cp "$MIGRATION" "$NAME":/tmp/p0-bridge-membership.sql
@@ -96,6 +97,9 @@ for pass in 1 2; do
   run_psql -f /tmp/p0-bridge-membership.sql >/dev/null
   echo "migration pass $pass succeeded"
 done
+
+one_default_index="$(run_psql -Atc "SELECT count(*) FROM pg_index WHERE indrelid='public.user_empresas'::regclass AND indisunique AND pg_get_expr(indpred,indrelid)='(is_default IS TRUE)'")"
+[ "$one_default_index" = '1' ] || { echo 'partial unique default index is missing' >&2; exit 1; }
 
 for signature in 'public.get_my_user_empresas()' 'public.set_own_default_empresa(uuid)' 'public.admin_associar_usuario_empresa(uuid, uuid, boolean)'; do
   authenticated="$(run_psql -Atc "SELECT has_function_privilege('authenticated', '$signature', 'EXECUTE')")"
@@ -143,6 +147,8 @@ if find "$RESULT_DIR" -type f -size +0c | grep -q .; then
 fi
 default_count="$(run_psql -Atc "SELECT count(*) FROM public.user_empresas WHERE user_id = '$USER_A' AND is_default")"
 [ "$default_count" = '1' ] || { echo "concurrency left $default_count defaults" >&2; exit 1; }
+
+expect_failure 'duplicate key value violates unique constraint' "INSERT INTO public.user_empresas(user_id,empresa_id,is_default) VALUES ('$USER_A','$EMP_B2',true);"
 
 run_psql -c 'CREATE DATABASE p0_membership_missing_prerequisite' >/dev/null
 set +e
