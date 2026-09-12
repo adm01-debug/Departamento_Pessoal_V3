@@ -25,25 +25,17 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
   } = useQuery({
     queryKey: ['ponto-audit-logs', filterTabela],
     queryFn: async () => {
-      try {
-        let query = (supabase as any).from('audit_log').select('*');
+      let query = (supabase as any).from('audit_log').select('*');
 
-        if (filterTabela) {
-          query = query.eq('tabela', filterTabela);
-        } else {
-          query = query.or('tabela.eq.batidas_ponto,tabela.eq.registros_ponto,tabela.eq.solicitacoes_ajuste_ponto');
-        }
-
-        const { data, error: queryError } = await query.order('created_at', { ascending: false }).limit(100);
-        if (queryError) {
-          console.warn('[PontoAuditTimeline] audit_log access denied:', queryError.message);
-          return [];
-        }
-        return data || [];
-      } catch (e) {
-        console.warn('[PontoAuditTimeline] audit_log query failed:', e instanceof Error ? e.message : String(e));
-        return [];
+      if (filterTabela) {
+        query = query.eq('tabela', filterTabela);
+      } else {
+        query = query.or('tabela.eq.batidas_ponto,tabela.eq.registros_ponto,tabela.eq.solicitacoes_ajuste_ponto');
       }
+
+      const { data, error: queryError } = await query.order('created_at', { ascending: false }).limit(100);
+      if (queryError) throw queryError;
+      return data || [];
     },
     enabled: !!empresaAtual?.id,
   });
@@ -109,6 +101,11 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
             <div className="flex flex-col items-center justify-center h-full py-16 gap-3 text-muted-foreground">
               <AlertCircle className="h-8 w-8 opacity-40" />
               <p className="text-sm font-medium">Selecione uma empresa para ver a trilha de auditoria</p>
+            </div>
+          ) : error ? (
+            <div className="flex flex-col items-center justify-center h-full py-16 gap-3 text-destructive">
+              <AlertCircle className="h-8 w-8 opacity-60" />
+              <p className="text-sm font-medium">Não foi possível carregar a trilha de auditoria</p>
             </div>
           ) : filteredLogs.length === 0 && !isLoading ? (
             <div className="flex flex-col items-center justify-center h-full py-16 gap-3 text-muted-foreground">

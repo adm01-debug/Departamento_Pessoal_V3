@@ -13,7 +13,7 @@ O diagnóstico abaixo foi usado como entrada de uma nova rodada de implementaç�
 | TypeScript               | aplicação, testes e E2E sem erros                                                                                                                           |
 | ESLint/formatação        | `lint:ci` e `format:check:changed` aprovados                                                                                                                |
 | Vitest                   | 468 arquivos; 4.904 aprovados; 1 ignorado; cobertura real coletada                                                                                          |
-| Edge Functions           | 60/60 entrypoints aprovados no `deno check`; 93 testes Deno aprovados                                                                                       |
+| Edge Functions           | 60/60 entrypoints aprovados no `deno check`; 95 testes Deno aprovados                                                                                       |
 | Banco descartável        | 19/19 scripts PostgreSQL aprovados, incluindo reaplicação e preflight fail-closed                                                                           |
 | Contrato frontend/bridge | 75 RPCs literais de produção mapeadas; 86 allowlisted; 7 RPCs públicas limitadas a chave publicável; zero acesso do bridge às tabelas sensíveis verificadas |
 | Build                    | Vite/PWA de produção aprovado; avisos de tamanho de chunks continuam sendo dívida de performance, não falha de compilação                                   |

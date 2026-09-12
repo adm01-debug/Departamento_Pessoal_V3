@@ -91,6 +91,18 @@ describe('PontoAuditTimeline', () => {
     expect(screen.getByText(/Nenhum registro de auditoria/i)).toBeInTheDocument();
   });
 
+  it('distinguishes an unavailable audit feed from an empty feed', async () => {
+    const { useQuery } = await import('@tanstack/react-query');
+    vi.mocked(useQuery).mockReturnValueOnce({
+      data: [],
+      isLoading: false,
+      error: new Error('permission denied'),
+    } as any);
+    render(<PontoAuditTimeline />);
+    expect(screen.getByText(/Não foi possível carregar a trilha de auditoria/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Nenhum registro de auditoria encontrado/i)).not.toBeInTheDocument();
+  });
+
   it('renders Exportar CSV button', () => {
     render(<PontoAuditTimeline />);
     expect(screen.getByRole('button', { name: /Exportar Trilha/i })).toBeInTheDocument();

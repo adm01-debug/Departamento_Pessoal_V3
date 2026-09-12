@@ -18,7 +18,7 @@
       "functions_pct": 54.42,
       "lines_pct": 65.95
     },
-    "deno_tests_passed": 93,
+    "deno_tests_passed": 95,
     "bridge_contract": {
       "production_rpc_calls": 75,
       "rpc_allowlist": 86,

@@ -62,14 +62,6 @@ export const EventTimeline = memo(function EventTimeline({
     queryKey: ['audit-timeline', empresaId],
     enabled: !!empresaId,
     queryFn: async () => {
-      const { data, error } = await (supabaseBase.from('audit_log') as any)
-        .select('*')
-        .eq('empresa_id', empresaId!)
-        .order('timestamp', { ascending: false })
-        .limit(20);
-
-      if (error) throw error;
-
       // Fetch audit logs and compliance alerts
       const [auditResponse, complianceResponse] = await Promise.all([
         (supabaseBase as any)
@@ -87,6 +79,7 @@ export const EventTimeline = memo(function EventTimeline({
       ]);
 
       if (auditResponse.error) throw auditResponse.error;
+      if (complianceResponse.error) throw complianceResponse.error;
 
       const auditEvents = auditResponse.data.map((log: any) => ({
         id: log.id,

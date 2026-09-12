@@ -70,7 +70,7 @@ export default function FeriasPage() {
   const [calcResult, setCalcResult] = useState<UiRecord | null>(null);
   const queryClient = useQueryClient();
 
-  const { ferias, totalCount, isLoading, refetch } = useFerias({
+  const { ferias, totalCount, isLoading, isFetching, refetch } = useFerias({
     page,
     limit,
     search: search.length >= 3 ? search : undefined,
@@ -341,7 +341,7 @@ export default function FeriasPage() {
             ) : (
               <>
                 <div className="relative">
-                  {isLoading && ferias.length > 0 && (
+                  {isFetching && ferias.length > 0 && (
                     <div className="absolute inset-0 bg-background/40 backdrop-blur-[1px] z-10 flex items-center justify-center rounded-2xl">
                       <Loader2 className="h-8 w-8 animate-spin text-primary" />
                     </div>
