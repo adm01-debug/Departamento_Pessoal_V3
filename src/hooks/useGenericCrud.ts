@@ -102,7 +102,7 @@ export function useGenericCrud<T>({
       void queryClient.invalidateQueries({ queryKey: [queryKey] });
       toast.success(successMessages.delete || 'Registro excluído com sucesso');
       loggerService.info(`${queryKey} deleted`, { id });
-      void auditLogger.log({ tabela: queryKey, registro_id: id, acao: 'DELETE' });
+      void auditLogger.log({ tabela: queryKey, registro_id: id, acao: 'DELETE', empresa_id: empresaId });
     },
     onError: (err: Error) => {
       loggerService.error(`Failed to delete ${queryKey}`, {}, err);

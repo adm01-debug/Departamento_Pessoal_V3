@@ -103,9 +103,10 @@ serve(async (req: Request): Promise<Response> => {
       limit: 5,
       windowSec: 60,
     });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
-    const { body } = await parseJsonBody(req);
+    const { body, errorResponse } = await parseJsonBody(req);
+    if (errorResponse) return errorResponse;
     const bodyObj = (body ?? {}) as Record<string, unknown>;
     const empresaId = bodyObj?.empresaId;
 
@@ -121,7 +122,7 @@ serve(async (req: Request): Promise<Response> => {
 
     // Alertas carregam saúde ocupacional e anomalias de segurança. Vínculo ao
     // tenant não basta: a ação exige RH/admin e falha fechada se a RPC cair.
-    const authz = await requireRh(supabase, userData.user.id, empresaId);
+    const authz = await requireRh(supabase, userData.user.id, empresaId, req);
     if (authz.denied) return authz.denied;
 
     const hoje = new Date();
@@ -311,17 +312,18 @@ serve(async (req: Request): Promise<Response> => {
     const recipientUserIds = [
       ...new Set((roles ?? []).map((item) => item.user_id)),
     ];
-    const { data: profiles, error: profilesError } = recipientUserIds.length
-      ? await supabase
-        .from("profiles")
-        .select("user_id,email")
-        .in("user_id", recipientUserIds)
-        .not("email", "is", null)
+    const { data: recipients, error: recipientsError } = recipientUserIds.length
+      ? await supabase.rpc("get_company_rh_recipient_emails", {
+        p_empresa_id: empresaId,
+        p_limit: 50,
+      })
       : { data: [], error: null };
-    if (profilesError) throw profilesError;
-    const recipientEmails = (profiles ?? [])
-      .map((profile) => profile.email)
-      .filter((email): email is string => Boolean(email))
+    if (recipientsError) throw recipientsError;
+    const recipientEmails = (recipients ?? [])
+      .map((recipient: { email?: unknown }) => recipient.email)
+      .filter((email: unknown): email is string =>
+        typeof email === "string" && email.length > 0
+      )
       .slice(0, 50);
 
     // ── Construir HTML do e-mail ──────────────────────────────────────────

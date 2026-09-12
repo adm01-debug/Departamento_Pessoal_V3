@@ -8,7 +8,7 @@
 // - Mascaramento LGPD de chave PIX em logs
 // - BigInt centavos para eliminar drift de float
 
-import { createClient } from 'npm:@supabase/supabase-js@2';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
 import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
@@ -116,19 +116,18 @@ Deno.serve(async (req) => {
     }
     const userId = claims.user.id;
 
-    let body: unknown;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    body = _pb;
+    const body = _pb;
 
     const parsed = bodySchema.safeParse(body);
-    if (!parsed.success) return createValidationErrorResponse(parsed.error);
+    if (!parsed.success) return createValidationErrorResponse(parsed.error, req);
     const payload = parsed.data;
 
     // Rate limit — PIX lote é operação financeira pesada: 10 req / min / usuário
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(service, { key: `pix-lote:${userId}`, limit: 10, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     // ---------- CRIAR ----------
     if (payload.action === 'criar') {
@@ -137,7 +136,7 @@ Deno.serve(async (req) => {
     // era um OU — pertencer à empresa já bastava, e o is_admin apenas somava
     // o admin global. Qualquer colaborador autenticado passava.
     {
-      const authz = await requireRh(service, userId, payload.empresa_id);
+      const authz = await requireRh(service, userId, payload.empresa_id, req);
       if (authz.denied) return authz.denied;
     }
 
@@ -164,6 +163,7 @@ Deno.serve(async (req) => {
         requestBody: { empresa_id: payload.empresa_id, itens: payload.itens, valor_total_centavos: payload.valor_total_centavos },
         empresaId: payload.empresa_id,
         userId,
+        request: req,
       });
       if (idem.replay) return idem.replay;
       if (idem.conflict) return idem.conflict;
@@ -259,7 +259,7 @@ Deno.serve(async (req) => {
     // era um OU — pertencer à empresa já bastava, e o is_admin apenas somava
     // o admin global. Qualquer colaborador autenticado passava.
     {
-      const authz = await requireRh(service, userId, lote.empresa_id);
+      const authz = await requireRh(service, userId, lote.empresa_id, req);
       if (authz.denied) return authz.denied;
     }
 

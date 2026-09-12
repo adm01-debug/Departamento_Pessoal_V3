@@ -14,6 +14,7 @@ import { corsHeaders, createErrorResponse, validateRequest } from '../_shared/co
 import { notificacaoSchema } from '../_shared/schemas/common.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
+import { toNotificationPlainText } from './plainText.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -33,9 +34,6 @@ async function sha256Hex(input: string): Promise<string> {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input));
   return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, '0')).join('');
 }
-
-const stripHtml = (s: string) =>
-  s.replace(/<[^>]*>/g, '').replace(/[\u0000-\u001F\u007F]/g, '').trim();
 
 serve(async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') {
@@ -88,7 +86,7 @@ serve(async (req: Request): Promise<Response> => {
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(admin, { key: `notificacao:${userId}`, limit: 30, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     switch (body.action) {
       case 'enviar': {
@@ -98,8 +96,8 @@ serve(async (req: Request): Promise<Response> => {
         if (tenantDenied) return tenantDenied;
 
         // Sanitiza + re-valida tamanhos pós-strip
-        const safeAssunto = stripHtml(assunto).slice(0, 200);
-        const safeConteudo = stripHtml(conteudo).slice(0, 5000);
+        const safeAssunto = toNotificationPlainText(assunto).slice(0, 200);
+        const safeConteudo = toNotificationPlainText(conteudo).slice(0, 5000);
         if (!safeAssunto || !safeConteudo) {
           return createErrorResponse(
             'Conteúdo vazio após sanitização',
@@ -172,11 +170,12 @@ serve(async (req: Request): Promise<Response> => {
         };
         const auditHash = await sha256Hex(JSON.stringify(auditPayload) + userId);
         const { error: auditErr } = await admin.from('audit_log').insert({
-          user_id: userId,
+          tabela: 'notificacoes',
+          registro_id: empresaId,
           empresa_id: empresaId,
-          acao: 'SEND_NOTIFICATION',
-          entidade: 'notificacao',
-          dados_novos: { ...auditPayload, audit_hash: auditHash },
+          user_id: userId,
+          acao: 'SYSTEM_ACTION',
+          dados_novos: { evento: 'SEND_NOTIFICATION', ...auditPayload, audit_hash: auditHash },
         });
         if (auditErr) {
           console.error('[notificacao] AUDIT_BLOCKING_FAILURE:', auditErr.message);

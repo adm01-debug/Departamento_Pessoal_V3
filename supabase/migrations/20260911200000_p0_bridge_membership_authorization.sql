@@ -39,8 +39,22 @@ BEGIN
   ) THEN
     RAISE EXCEPTION 'P0 bridge membership authorization requires UNIQUE(user_id, empresa_id) on public.user_empresas';
   END IF;
+
+  IF EXISTS (
+    SELECT 1 FROM public.user_empresas
+    WHERE is_default IS TRUE
+    GROUP BY user_id HAVING count(*) > 1
+  ) THEN
+    RAISE EXCEPTION 'P0 bridge membership authorization found multiple default companies for one user';
+  END IF;
 END
 $preflight$;
+
+-- The RPCs serialize cooperating callers, while this partial unique index
+-- protects the invariant against every writer (including service jobs).
+CREATE UNIQUE INDEX IF NOT EXISTS user_empresas_one_default_per_user
+  ON public.user_empresas (user_id)
+  WHERE is_default IS TRUE;
 
 CREATE OR REPLACE FUNCTION public.get_my_user_empresas()
 RETURNS TABLE (
@@ -53,7 +67,7 @@ RETURNS TABLE (
 LANGUAGE sql
 STABLE
 SECURITY DEFINER
-SET search_path = public
+SET search_path = pg_catalog, public, pg_temp
 AS $function$
   SELECT ue.id, ue.user_id, ue.empresa_id, COALESCE(ue.is_default, false), ue.created_at
   FROM public.user_empresas ue
@@ -65,7 +79,7 @@ CREATE OR REPLACE FUNCTION public.set_own_default_empresa(p_empresa_id uuid)
 RETURNS void
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = pg_catalog, public, pg_temp
 AS $function$
 DECLARE
   v_user_id uuid := auth.uid();
@@ -113,7 +127,7 @@ RETURNS TABLE (
 )
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = pg_catalog, public, pg_temp
 AS $function$
 #variable_conflict use_column
 BEGIN

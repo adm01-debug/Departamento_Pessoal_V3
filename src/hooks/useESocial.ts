@@ -36,7 +36,11 @@ export function useESocial() {
       return await esocialService.enviarEvento(eventoId, empresaId);
     },
     onSuccess: (data) => {
-      toast.success(`Evento enviado — Protocolo: ${data.protocolo}`);
+      if (data.simulated) {
+        toast.info(`Simulação concluída — não transmitida ao Governo (${data.protocolo})`);
+      } else {
+        toast.success(`Evento enviado — Protocolo: ${data.protocolo}`);
+      }
       invalidate();
     },
     onError: (err: any) => handleServerError(err),
@@ -47,7 +51,11 @@ export function useESocial() {
       return await esocialService.reenviarEvento(eventoId, empresaId);
     },
     onSuccess: (data) => {
-      toast.success(`Evento reenviado — Protocolo: ${data.protocolo}`);
+      if (data.simulated) {
+        toast.info(`Simulação repetida — não transmitida ao Governo (${data.protocolo})`);
+      } else {
+        toast.success(`Evento reenviado — Protocolo: ${data.protocolo}`);
+      }
       invalidate();
     },
     onError: (err: any) => handleServerError(err),
@@ -90,8 +98,17 @@ export function useESocial() {
       }
       return results;
     },
-    onSuccess: () => {
-      toast.success('Lote enviado com sucesso');
+    onSuccess: (results) => {
+      const simulatedCount = results.filter((result) => result.simulated === true).length;
+      if (simulatedCount === results.length && results.length > 0) {
+        toast.info(`Lote simulado: ${simulatedCount} evento(s), sem transmissão ao Governo`);
+      } else if (simulatedCount > 0) {
+        toast.warning(
+          `Lote concluído parcialmente: ${results.length - simulatedCount} transmitido(s) e ${simulatedCount} simulado(s)`
+        );
+      } else {
+        toast.success('Lote enviado com sucesso');
+      }
       invalidate();
     },
     onError: (err: any) => handleServerError(err),
@@ -99,7 +116,7 @@ export function useESocial() {
 
   return {
     eventos: eventosQuery.data || [],
-    stats: statsQuery.data || { enviados: 0, pendentes: 0, erros: 0, conformidade: 100 },
+    stats: statsQuery.data || { enviados: 0, pendentes: 0, erros: 0, conformidade: null },
     config: configQuery.data,
     certificados: certificadosQuery.data || [],
     logs: logsQuery.data || [],

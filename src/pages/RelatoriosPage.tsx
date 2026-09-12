@@ -20,6 +20,7 @@ import { RelatoriosAnalyticsTab } from '@/components/relatorios/RelatoriosAnalyt
 import { RelatoriosExportTab, type ReportDef } from '@/components/relatorios/RelatoriosExportTab';
 import { RelatoriosAgendadosTab } from '@/components/relatorios/RelatoriosAgendadosTab';
 import { currentCompetenciaLocal, formatDateLocalISO } from '@/utils/dateLocal';
+import { auditoriaService } from '@/services/auditoriaService';
 
 const relatorios: ReportDef[] = [
   {
@@ -332,15 +333,16 @@ export default function RelatoriosPage() {
         exportCSV(r.title, r.rows, r.columns);
       }
 
-      await supabase.from('audit_log').insert({
+      await auditoriaService.registrarEvento({
         tabela: 'relatorios',
-        acao: 'EXPORTACAO',
+        acao: 'EXPORT',
         registro_id: id,
         dados_novos: {
           formato: exportFormat,
           titulo: r.title,
           registros: r.rows.length,
         },
+        empresa_id: empresaAtual.id,
       });
     } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao gerar relatório.'));

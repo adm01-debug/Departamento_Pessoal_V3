@@ -40,7 +40,6 @@ export default function AssinarContratoPage() {
   const [erro, setErro] = useState<string | null>(null);
   const [erroTipo, setErroTipo] = useState<'revogado' | 'expirado' | 'usado' | 'invalido' | 'generico' | null>(null);
 
-
   const [cpf, setCpf] = useState('');
   const [nome, setNome] = useState('');
   const [aceite, setAceite] = useState(false);
@@ -52,9 +51,12 @@ export default function AssinarContratoPage() {
     if (!token) return;
     setPreviewLoading(true);
     try {
-      const { data, error } = await supabase.rpc('contrato_preview_url_por_token' as any, {
-        p_token: token,
-      } as any);
+      const { data, error } = await supabase.rpc(
+        'contrato_preview_url_por_token' as any,
+        {
+          p_token: token,
+        } as any
+      );
       if (error) throw error;
       const res = data as unknown as { signed_url: string };
       if (!res?.signed_url) throw new Error('URL não disponível.');
@@ -67,7 +69,6 @@ export default function AssinarContratoPage() {
     }
   }
 
-
   useEffect(() => {
     let cancel = false;
     (async () => {
@@ -78,9 +79,12 @@ export default function AssinarContratoPage() {
         return;
       }
       try {
-        const { data, error } = await supabase.rpc('contrato_consultar_por_token' as any, {
-          p_token: token,
-        } as any);
+        const { data, error } = await supabase.rpc(
+          'contrato_consultar_por_token' as any,
+          {
+            p_token: token,
+          } as any
+        );
         if (cancel) return;
         if (error) throw error;
         setInfo(data as unknown as ContratoInfo);
@@ -96,7 +100,6 @@ export default function AssinarContratoPage() {
       } finally {
         if (!cancel) setLoading(false);
       }
-
     })();
     return () => {
       cancel = true;
@@ -121,15 +124,26 @@ export default function AssinarContratoPage() {
       } catch {
         /* silencioso */
       }
-      const { data, error } = await supabase.rpc('contrato_assinar_por_token' as any, {
-        p_token: token,
-        p_cpf: cpf.replace(/\D/g, ''),
-        p_nome_completo: nome.trim(),
-        p_ip: ip,
-        p_user_agent: navigator.userAgent,
-      } as any);
+      const { data, error } = await supabase.rpc(
+        'contrato_assinar_por_token' as any,
+        {
+          p_token: token,
+          p_cpf: cpf.replace(/\D/g, ''),
+          p_nome_completo: nome.trim(),
+          p_ip: ip,
+          p_user_agent: navigator.userAgent,
+        } as any
+      );
       if (error) throw error;
-      const res = data as unknown as { assinatura_hash: string; assinado_em: string };
+      const res = data as unknown as {
+        success: boolean;
+        assinatura_hash?: string;
+        assinado_em?: string;
+        message?: string;
+      };
+      if (!res.success || !res.assinatura_hash || !res.assinado_em) {
+        throw new Error(res.message || 'Falha ao validar os dados da assinatura.');
+      }
       setAssinado({ hash: res.assinatura_hash, em: res.assinado_em });
       toast.success('Contrato assinado com sucesso!');
     } catch (e) {
@@ -203,9 +217,7 @@ export default function AssinarContratoPage() {
             <CardDescription>{cfg.desc}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2 text-center text-xs text-muted-foreground">
-            {erroTipo !== 'generico' && (
-              <p className="font-mono break-all opacity-70">{erro}</p>
-            )}
+            {erroTipo !== 'generico' && <p className="font-mono break-all opacity-70">{erro}</p>}
             {(erroTipo === 'expirado' || erroTipo === 'revogado') && (
               <Button variant="outline" size="sm" onClick={() => window.location.reload()} className="mt-2">
                 <RotateCcw className="h-3.5 w-3.5 mr-1.5" /> Recarregar
@@ -216,8 +228,6 @@ export default function AssinarContratoPage() {
       </div>
     );
   }
-
-
 
   if (assinado) {
     return (
@@ -267,7 +277,7 @@ export default function AssinarContratoPage() {
                     type="button"
                     onClick={() => {
                       void navigator.clipboard.writeText(
-                        `${window.location.origin}/verificar-contrato/${assinado.hash}`,
+                        `${window.location.origin}/verificar-contrato/${assinado.hash}`
                       );
                       toast.success('Link de verificação copiado');
                     }}
@@ -295,7 +305,11 @@ export default function AssinarContratoPage() {
                   });
                   toast.success('Recibo baixado');
                 } catch (e) {
-                  loggerService.error('Erro ao gerar PDF do recibo', { hash: assinado.hash }, e instanceof Error ? e : new Error(String(e)));
+                  loggerService.error(
+                    'Erro ao gerar PDF do recibo',
+                    { hash: assinado.hash },
+                    e instanceof Error ? e : new Error(String(e))
+                  );
                   toast.error('Falha ao gerar recibo');
                 }
               }}
@@ -303,17 +317,14 @@ export default function AssinarContratoPage() {
               <FileText className="h-4 w-4 mr-2" /> Baixar recibo de assinatura (PDF)
             </Button>
             <p className="text-xs text-muted-foreground">
-              Guarde este comprovante. Uma cópia foi arquivada na empresa contratante e pode ser
-              auditada externamente a qualquer momento pelo link acima.
+              Guarde este comprovante. Uma cópia foi arquivada na empresa contratante e pode ser auditada externamente a
+              qualquer momento pelo link acima.
             </p>
           </CardContent>
         </Card>
       </div>
     );
   }
-
-  if (!info) return <></>;
-
 
   if (!info) return <></>;
 
@@ -326,8 +337,7 @@ export default function AssinarContratoPage() {
             <CardTitle>Assinatura Eletrônica de Contrato</CardTitle>
           </div>
           <CardDescription>
-            Confirme seus dados abaixo para assinar. Documento com validade jurídica conforme MP
-            2.200-2/2001.
+            Confirme seus dados abaixo para assinar. Documento com validade jurídica conforme MP 2.200-2/2001.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -356,17 +366,10 @@ export default function AssinarContratoPage() {
             </p>
           </div>
 
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full"
-            disabled={previewLoading}
-            onClick={handlePreview}
-          >
+          <Button type="button" variant="outline" className="w-full" disabled={previewLoading} onClick={handlePreview}>
             <FileText className="h-4 w-4 mr-2" />
             {previewLoading ? 'Gerando prévia…' : 'Ler contrato completo (PDF)'}
           </Button>
-
 
           <div>
             <Label htmlFor="nome">Nome completo</Label>
@@ -393,24 +396,14 @@ export default function AssinarContratoPage() {
           </div>
 
           <label className="flex items-start gap-2 text-sm cursor-pointer">
-            <input
-              type="checkbox"
-              className="mt-1"
-              checked={aceite}
-              onChange={(e) => setAceite(e.target.checked)}
-            />
+            <input type="checkbox" className="mt-1" checked={aceite} onChange={(e) => setAceite(e.target.checked)} />
             <span>
-              Declaro que li o contrato disponibilizado e aceito seus termos. Reconheço que esta
-              assinatura eletrônica tem validade jurídica e que meu IP e navegador serão registrados
-              para fins de auditoria.
+              Declaro que li o contrato disponibilizado e aceito seus termos. Reconheço que esta assinatura eletrônica
+              tem validade jurídica e que meu IP e navegador serão registrados para fins de auditoria.
             </span>
           </label>
 
-          <Button
-            className="w-full"
-            disabled={!canSubmit || submitting}
-            onClick={handleAssinar}
-          >
+          <Button className="w-full" disabled={!canSubmit || submitting} onClick={handleAssinar}>
             <ShieldCheck className="h-4 w-4 mr-2" />
             {submitting ? 'Assinando…' : 'Assinar contrato'}
           </Button>

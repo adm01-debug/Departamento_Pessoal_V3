@@ -56,10 +56,7 @@ export function RelatoriosAgendadosTab({ empresaId }: { empresaId: string }) {
 
   const criar = useMutation({
     mutationFn: async (d: ReportScheduleForm) => {
-      const { data: authData, error: authError } = await supabase.auth.getUser();
-      if (authError) throw authError;
-      const userId = authData.user?.id;
-      const payload = buildReportScheduleInsert(d, empresaId, userId ?? '');
+      const payload = buildReportScheduleInsert(d, empresaId);
       const { data, error } = await supabase.from('relatorios_agendados').insert([payload]).select().single();
       if (error) throw error;
       return data;

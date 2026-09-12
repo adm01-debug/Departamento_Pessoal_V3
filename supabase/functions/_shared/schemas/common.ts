@@ -12,7 +12,7 @@
 import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
 
 export const metricasSchema = z.object({
-  empresaId: z.string().uuid('ID da empresa deve ser um UUID válido').optional(),
+  empresaId: z.string().uuid('ID da empresa deve ser um UUID válido'),
 });
 
 export const webhookSchema = z.object({
@@ -35,7 +35,11 @@ export const cnpjSchema = z.object({
 
 export const holeriteSchema = z.object({
   colaboradorId: z.string().uuid('ID do colaborador deve ser um UUID válido'),
-  competencia: z.string().regex(/^\d{4}-\d{2}$/, 'Competência deve estar no formato AAAA-MM'),
+  competencia: z.string()
+    .regex(/^\d{4}-(?:0[1-9]|1[0-2])$/, 'Competência deve estar no formato AAAA-MM')
+    .refine((value) => value.startsWith('2025-') || value.startsWith('2026-'), {
+      message: 'Tabela INSS homologada somente para competências de 2025 e 2026',
+    }),
 });
 
 export const calcularFolhaSchema = z.object({

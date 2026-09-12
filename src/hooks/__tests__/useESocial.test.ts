@@ -1,17 +1,24 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-vi.mock('@/hooks/useEmpresas', async () =>
-  (await import('@/test/empresaMock')).useEmpresasMockModule()
-);
-
+vi.mock('@/hooks/useEmpresas', async () => (await import('@/test/empresaMock')).useEmpresasMockModule());
 
 const {
-  mockListarEventos, mockObterEstatisticas, mockEnviarEvento, mockReenviarEvento,
-  mockGerarEventosPeriodo, mockGetConfig, mockListarCertificados, mockListarTransmissaoLogs,
-  mockToastSuccess, mockToastError, mockHandleServerError,
+  mockListarEventos,
+  mockObterEstatisticas,
+  mockEnviarEvento,
+  mockReenviarEvento,
+  mockGerarEventosPeriodo,
+  mockGetConfig,
+  mockListarCertificados,
+  mockListarTransmissaoLogs,
+  mockToastSuccess,
+  mockToastError,
+  mockToastInfo,
+  mockToastWarning,
+  mockHandleServerError,
 } = vi.hoisted(() => ({
   mockListarEventos: vi.fn(),
   mockObterEstatisticas: vi.fn(),
@@ -23,6 +30,8 @@ const {
   mockListarTransmissaoLogs: vi.fn(),
   mockToastSuccess: vi.fn(),
   mockToastError: vi.fn(),
+  mockToastInfo: vi.fn(),
+  mockToastWarning: vi.fn(),
   mockHandleServerError: vi.fn(),
 }));
 
@@ -53,7 +62,12 @@ vi.mock('../useServerValidation', () => ({
 }));
 
 vi.mock('sonner', () => ({
-  toast: { success: mockToastSuccess, error: mockToastError },
+  toast: {
+    success: mockToastSuccess,
+    error: mockToastError,
+    info: mockToastInfo,
+    warning: mockToastWarning,
+  },
 }));
 
 import { useESocial } from '../useESocial';
@@ -108,5 +122,29 @@ describe('useESocial', () => {
     const { result } = renderHook(() => useESocial(), { wrapper });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
     expect(result.current.isSending).toBe(false);
+  });
+
+  it('does not claim a simulated batch was sent to the Government', async () => {
+    mockEnviarEvento.mockResolvedValue({ success: true, simulated: true, protocolo: 'SIM-1' });
+    const { result } = renderHook(() => useESocial(), { wrapper });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    act(() => result.current.enviarLote({ eventoIds: ['e1', 'e2'], empresaId: 'empresa-1' }));
+
+    await waitFor(() => expect(mockToastInfo).toHaveBeenCalledWith(expect.stringContaining('sem transmissão')));
+    expect(mockToastSuccess).not.toHaveBeenCalledWith('Lote enviado com sucesso');
+  });
+
+  it('reports mixed real and simulated batch outcomes explicitly', async () => {
+    mockEnviarEvento
+      .mockResolvedValueOnce({ success: true, protocolo: 'REAL-1' })
+      .mockResolvedValueOnce({ success: true, simulated: true, protocolo: 'SIM-1' });
+    const { result } = renderHook(() => useESocial(), { wrapper });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    act(() => result.current.enviarLote({ eventoIds: ['e1', 'e2'], empresaId: 'empresa-1' }));
+
+    await waitFor(() => expect(mockToastWarning).toHaveBeenCalledWith(expect.stringContaining('1 transmitido')));
+    expect(mockToastSuccess).not.toHaveBeenCalledWith('Lote enviado com sucesso');
   });
 });

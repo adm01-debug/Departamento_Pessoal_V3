@@ -147,6 +147,7 @@ export default function FolhaPagamentoPage() {
         tabela: 'folhas_pagamento',
         registro_id: resumo.id,
         acao: 'UPDATE',
+        empresa_id: empresaAtual?.id,
         dados_novos: { status: 'fechada', evento: 'ENCERRAMENTO_FOLHA' },
       });
       return data;

@@ -41,6 +41,23 @@ vi.mock('@/integrations/supabase/client', () => ({
   },
 }));
 
+vi.mock('@/integrations/supabase/client.base', () => ({
+  supabase: {
+    from: vi.fn(() => ({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      or: vi.fn().mockReturnThis(),
+      order: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockResolvedValue({ data: [], error: null }),
+    })),
+    channel: vi.fn(() => ({
+      on: vi.fn().mockReturnThis(),
+      subscribe: vi.fn(),
+    })),
+    removeChannel: vi.fn(),
+  },
+}));
+
 vi.mock('@/services/exportService', () => ({
   exportPontoCSV: vi.fn(),
 }));
@@ -72,6 +89,18 @@ describe('PontoAuditTimeline', () => {
   it('shows empty state when no logs', () => {
     render(<PontoAuditTimeline />);
     expect(screen.getByText(/Nenhum registro de auditoria/i)).toBeInTheDocument();
+  });
+
+  it('distinguishes an unavailable audit feed from an empty feed', async () => {
+    const { useQuery } = await import('@tanstack/react-query');
+    vi.mocked(useQuery).mockReturnValueOnce({
+      data: [],
+      isLoading: false,
+      error: new Error('permission denied'),
+    } as any);
+    render(<PontoAuditTimeline />);
+    expect(screen.getByText(/Não foi possível carregar a trilha de auditoria/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Nenhum registro de auditoria encontrado/i)).not.toBeInTheDocument();
   });
 
   it('renders Exportar CSV button', () => {

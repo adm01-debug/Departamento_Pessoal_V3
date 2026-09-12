@@ -123,7 +123,7 @@ serve(async (req: Request): Promise<Response> => {
     });
 
     const rl = await checkRateLimit(admin, { key: `gerar-contrato:${userId}`, limit: 30, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     // Resolve template + variáveis via RPCs (herdam RLS/permissão do usuário)
     let tmplId = template_id ?? null;
@@ -153,7 +153,7 @@ serve(async (req: Request): Promise<Response> => {
     // O isolamento de tenant já vem do RLS (vars são montadas pelo cliente do
     // usuário, não pelo admin). Falta a camada de papel: emitir contrato de
     // trabalho é ato de RH, não de qualquer colaborador da empresa.
-    const authz = await requireRh(admin, userId, empresaId);
+    const authz = await requireRh(admin, userId, empresaId, req);
     if (authz.denied) return authz.denied;
 
     // Corpo + cláusulas condicionais

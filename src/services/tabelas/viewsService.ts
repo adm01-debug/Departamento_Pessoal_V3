@@ -1,6 +1,12 @@
 import { supabase } from '@/integrations/supabase/client';
 import { loggerService } from '@/services/loggerService';
 
+function rethrowViewError(view: string, cause: unknown): never {
+  const error = cause instanceof Error ? cause : new Error(String(cause));
+  loggerService.error('Falha ao consultar view', { view }, error);
+  throw error;
+}
+
 export const viewsService = {
   alertasRH: async () => {
     try {
@@ -8,8 +14,7 @@ export const viewsService = {
       if (error) throw error;
       return data || [];
     } catch (e) {
-      loggerService.warn('View vw_alertas_rh not found or inaccessible', { view: 'vw_alertas_rh' });
-      return [];
+      return rethrowViewError('vw_alertas_rh', e);
     }
   },
   kpiTurnover: async () => {
@@ -18,8 +23,7 @@ export const viewsService = {
       if (error) throw error;
       return data || [];
     } catch (e) {
-      loggerService.warn('View vw_kpi_turnover not found or inaccessible', { view: 'vw_kpi_turnover' });
-      return [];
+      return rethrowViewError('vw_kpi_turnover', e);
     }
   },
   kpiAbsenteismo: async () => {
@@ -28,8 +32,7 @@ export const viewsService = {
       if (error) throw error;
       return data || [];
     } catch (e) {
-      loggerService.warn('View vw_kpi_absenteismo not found or inaccessible', { view: 'vw_kpi_absenteismo' });
-      return [];
+      return rethrowViewError('vw_kpi_absenteismo', e);
     }
   },
   kpiBeneficiosCusto: async () => {
@@ -38,7 +41,7 @@ export const viewsService = {
       if (error) throw error;
       return data || [];
     } catch (e) {
-      return [];
+      return rethrowViewError('vw_kpi_beneficios_custo', e);
     }
   },
   kpiPontoResumo: async () => {
@@ -47,7 +50,7 @@ export const viewsService = {
       if (error) throw error;
       return data || [];
     } catch (e) {
-      return [];
+      return rethrowViewError('vw_kpi_ponto_resumo', e);
     }
   },
   bancoHorasSaldo: async () => {
@@ -56,7 +59,7 @@ export const viewsService = {
       if (error) throw error;
       return data || [];
     } catch (e) {
-      return [];
+      return rethrowViewError('vw_banco_horas_saldo', e);
     }
   },
   feriasResumo: async () => {
@@ -65,7 +68,7 @@ export const viewsService = {
       if (error) throw error;
       return data || [];
     } catch (e) {
-      return [];
+      return rethrowViewError('vw_ferias_resumo', e);
     }
   },
   faltasMensal: async () => {
@@ -74,7 +77,7 @@ export const viewsService = {
       if (error) throw error;
       return data || [];
     } catch (e) {
-      return [];
+      return rethrowViewError('vw_faltas_mensal', e);
     }
   },
   cadastroIncompleto: async () => {
@@ -83,7 +86,7 @@ export const viewsService = {
       if (error) throw error;
       return data || [];
     } catch (e) {
-      return [];
+      return rethrowViewError('vw_cadastro_incompleto', e);
     }
   },
   colaboradoresCompleto: async (limit = 100) => {
@@ -92,7 +95,7 @@ export const viewsService = {
       if (error) throw error;
       return data || [];
     } catch (e) {
-      return [];
+      return rethrowViewError('vw_colaboradores_completo', e);
     }
   },
   dashboardTime: async () => {
@@ -101,7 +104,7 @@ export const viewsService = {
       if (error) throw error;
       return data || [];
     } catch (e) {
-      return [];
+      return rethrowViewError('vw_dashboard_time', e);
     }
   },
   batidasDia: async (data_ref: string) => {
@@ -110,7 +113,7 @@ export const viewsService = {
       if (error) throw error;
       return data || [];
     } catch (e) {
-      return [];
+      return rethrowViewError('vw_batidas_dia', e);
     }
   },
   batidasResumo: async () => {
@@ -119,7 +122,7 @@ export const viewsService = {
       if (error) throw error;
       return data || [];
     } catch (e) {
-      return [];
+      return rethrowViewError('vw_batidas_resumo', e);
     }
   },
   folhaPontoMensal: async () => {
@@ -128,7 +131,7 @@ export const viewsService = {
       if (error) throw error;
       return data || [];
     } catch (e) {
-      return [];
+      return rethrowViewError('vw_folha_ponto_mensal', e);
     }
   },
   alertasCompensacao: async () => {
@@ -137,7 +140,7 @@ export const viewsService = {
       if (error) throw error;
       return data || [];
     } catch (e) {
-      return [];
+      return rethrowViewError('vw_alertas_compensacao', e);
     }
   },
   saldoCompensacaoMensal: async () => {
@@ -146,7 +149,7 @@ export const viewsService = {
       if (error) throw error;
       return data || [];
     } catch (e) {
-      return [];
+      return rethrowViewError('vw_saldo_compensacao_mensal', e);
     }
   },
 };

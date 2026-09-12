@@ -77,9 +77,10 @@ Deno.serve(async (req) => {
     const rlAdmin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false, autoRefreshToken: false } });
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(rlAdmin, { key: `gerar-aej:${userId}`, limit: 5, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
-    const { body: _pb } = await parseJsonBody(req);
+    const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
+    if (_pe) return _pe;
     const body = (_pb ?? {}) as Record<string, unknown>;
     const empresa_id: string | undefined = body.empresa_id as string | undefined;
     const periodo_inicio: string | undefined = body.periodo_inicio as string | undefined;

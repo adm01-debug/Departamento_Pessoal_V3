@@ -123,10 +123,9 @@ Deno.serve(async (req) => {
     if (userErr || !userData?.user) return json({ error: 'Sessão inválida', code: 'UNAUTHORIZED' }, 401);
     const userId = userData.user.id;
 
-    let raw: unknown;
     const { body: parsedBody, errorResponse: payloadErr } = await parseJsonBody(req);
     if (payloadErr) return payloadErr;
-    raw = parsedBody;
+    const raw = parsedBody;
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) {
       return json({ error: 'Payload inválido', code: 'VALIDATION_ERROR', details: parsed.error.flatten() }, 422);
@@ -153,7 +152,7 @@ Deno.serve(async (req) => {
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(admin, { key: `calc-rescisao:${userId}`, limit: 30, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     // Tenant scope opcional (apenas se veio empresa_id/colaborador_id)
     let empresaIdFinal = empresa_id;
@@ -170,7 +169,7 @@ Deno.serve(async (req) => {
       // Papel, não apenas vínculo: o padrão anterior (`!belongs && !isAdmin`)
       // era um OU — pertencer à empresa já bastava, e o is_admin apenas somava
       // o admin global. Qualquer colaborador autenticado passava.
-      const authz = await requireRh(admin, userId, empresaIdFinal);
+      const authz = await requireRh(admin, userId, empresaIdFinal, req);
       if (authz.denied) return authz.denied;
     }
 

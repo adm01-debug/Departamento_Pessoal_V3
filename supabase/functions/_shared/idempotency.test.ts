@@ -26,6 +26,7 @@ type Row = {
   user_id: string | null;
   expires_at: string;
   completed_at: string | null;
+  created_at: string;
 };
 
 function createMockAdmin() {
@@ -73,6 +74,7 @@ function createMockAdmin() {
                   user_id: payload.user_id ?? null,
                   expires_at: new Date(Date.now() + 24 * 3600 * 1000).toISOString(),
                   completed_at: null,
+                  created_at: new Date().toISOString(),
                 };
                 store.set(ck, row);
                 return { data: { id: row.id }, error: null };
@@ -215,6 +217,22 @@ Deno.test("idempotency: reenvio após conclusão retorna REPLAY com mesmo body",
   }
 });
 
+Deno.test("idempotency: conclusão 204 sem body continua sendo replay de sucesso", async () => {
+  const { client } = createMockAdmin();
+  const first = await beginIdempotency(client, {
+    endpoint: ENDPOINT, key: KEY, requestBody: payload,
+  });
+  await completeIdempotency(client, first.id!, 204, undefined);
+
+  const replay = await beginIdempotency(client, {
+    endpoint: ENDPOINT, key: KEY, requestBody: payload,
+  });
+  assertEquals(replay.reason, "REPLAY");
+  assert(replay.replay);
+  assertEquals(replay.replay.status, 204);
+  assertEquals(await replay.replay.text(), "");
+});
+
 Deno.test("idempotency: mesma key com payload divergente → KEY_REUSE (409)", async () => {
   const { client } = createMockAdmin();
 
@@ -280,7 +298,7 @@ Deno.test("idempotency: key com formato inválido → 400 IDEMPOTENCY_KEY_INVALI
   await res.conflict!.text();
 });
 
-Deno.test("idempotency: retentativa após failed é permitida (RETRY_AFTER_FAILURE)", async () => {
+Deno.test("idempotency: falha registrada é terminal e repetida sem nova execução", async () => {
   const { client } = createMockAdmin();
 
   const first = await beginIdempotency(client, {
@@ -293,7 +311,26 @@ Deno.test("idempotency: retentativa após failed é permitida (RETRY_AFTER_FAILU
   const retry = await beginIdempotency(client, {
     endpoint: ENDPOINT, key: KEY, requestBody: payload,
   });
-  assertEquals(retry.reason, "RETRY_AFTER_FAILURE");
-  assert(retry.id);
-  assert(!retry.conflict && !retry.replay);
+  assertEquals(retry.reason, "REPLAY");
+  assert(retry.replay);
+  assertEquals(retry.replay.status, 500);
+  assertEquals(await retry.replay.json(), { error: "boom" });
+});
+
+Deno.test("idempotency: in_progress antigo nunca é recuperado sem reconciliação", async () => {
+  const { client, dump } = createMockAdmin();
+  const first = await beginIdempotency(client, {
+    endpoint: ENDPOINT, key: KEY, requestBody: payload,
+  });
+  assertEquals(first.reason, "NEW");
+  dump()[0].created_at = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+
+  const retry = await beginIdempotency(client, {
+    endpoint: ENDPOINT, key: KEY, requestBody: payload,
+  });
+  assertEquals(retry.reason, "INDETERMINATE");
+  assert(retry.conflict);
+  assertEquals(retry.conflict.status, 409);
+  const body = await retry.conflict.json();
+  assertEquals(body.error.code, "IDEMPOTENCY_STATE_INDETERMINATE");
 });

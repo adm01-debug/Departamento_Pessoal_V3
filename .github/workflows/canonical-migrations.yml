@@ -1,0 +1,255 @@
+name: Canonical database — scoped migrations
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Simular com ROLLBACK ou aplicar e registrar no ledger
+        required: true
+        default: validate
+        type: choice
+        options: [validate, apply]
+      confirm_project_ref:
+        description: Digite o project ref canônico para evitar alvo acidental
+        required: true
+        type: string
+
+concurrency:
+  group: canonical-database-migrations
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  scoped-migrations:
+    name: ${{ inputs.mode }} migrations no canônico
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+      CANONICAL_REF: frjbfeamybqsejlvmqbl
+      # workflow_dispatch input is untrusted. Expose it as data instead of
+      # interpolating it into the shell program below.
+      CONFIRM_PROJECT_REF: ${{ inputs.confirm_project_ref }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Validar confirmação e URL sem revelar segredo
+        run: |
+          set -euo pipefail
+          test "$CONFIRM_PROJECT_REF" = "$CANONICAL_REF" || {
+            echo '::error::Project ref de confirmação não corresponde ao canônico.'
+            exit 1
+          }
+          test -n "$SUPABASE_DB_URL" || {
+            echo '::error::SUPABASE_DB_URL ausente.'
+            exit 1
+          }
+          node scripts/validate-canonical-db-url.mjs
+
+      - name: Instalar cliente PostgreSQL
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client
+
+      - name: Confirmar conexão e pré-condições canônicas
+        run: |
+          set -euo pipefail
+          psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -At <<'SQL'
+          SELECT CASE
+            WHEN current_database() = 'postgres' THEN 'CANONICAL_CONNECTION_OK'
+            ELSE pg_catalog.current_database() || ':UNEXPECTED_DATABASE'
+          END;
+          DO $preflight$
+          DECLARE found integer; ledger_columns integer;
+          BEGIN
+            SELECT count(*) INTO found
+            FROM pg_catalog.pg_class c
+            JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+            WHERE (n.nspname,c.relname) IN (
+              ('auth','users'),('public','rate_limits'),('public','user_empresas'),
+              ('public','user_roles'),('public','relatorios_agendados'),
+              ('public','provisoes_folha'),('public','provisoes_mensais'),
+              ('public','colaboradores'),('public','audit_log'),('public','profiles'),
+              ('storage','buckets'),('storage','objects'),('public','admissoes'),
+              ('public','esocial_eventos'),('public','contrato_assinatura_tokens'),
+              ('public','contratos_gerados')
+            );
+            IF found <> 16 THEN
+              RAISE EXCEPTION 'canonical migration prerequisites missing (%/16)', found;
+            END IF;
+            IF to_regclass('supabase_migrations.schema_migrations') IS NULL THEN
+              RAISE EXCEPTION 'canonical migration ledger is missing';
+            END IF;
+            SELECT count(*) INTO ledger_columns
+            FROM information_schema.columns
+            WHERE table_schema='supabase_migrations'
+              AND table_name='schema_migrations'
+              AND column_name IN ('version','name','statements');
+            IF ledger_columns <> 3 THEN
+              RAISE EXCEPTION 'canonical migration ledger contract is incompatible';
+            END IF;
+          END
+          $preflight$;
+          SELECT 'MIGRATION_PREREQUISITES_OK';
+          SQL
+
+      - name: Preparar somente as migrações aprovadas
+        id: stage
+        run: |
+          set -euo pipefail
+          stage_dir="$(mktemp -d)"
+          mkdir -p "$stage_dir/supabase/migrations"
+          cp supabase/config.toml "$stage_dir/supabase/config.toml"
+          for migration in \
+            20260911194000_p0_restore_atomic_rate_limit.sql \
+            20260911200000_p0_bridge_membership_authorization.sql \
+            20260912190000_p0_identity_rls_authz.sql \
+            20260912191000_p0_token_table_acl.sql \
+            20260912192000_p0_report_schedule_claims.sql \
+            20260912193000_p1_atomic_provisions_contract.sql \
+            20260912194000_p1_report_schedule_authorship.sql \
+            20260912195000_p1_scoped_audit_trail.sql \
+            20260912200000_p1_backup_storage_bucket.sql \
+            20260912201000_p1_internal_notification_recipients.sql \
+            20260912202000_p1_pcs_contract.sql \
+            20260912203000_p1_security_cron_contract.sql \
+            20260912204000_p1_admission_esocial_claim.sql \
+            20260912205000_p1_payroll_audit_read_contract.sql \
+            20260912206000_p1_audit_action_contract.sql \
+            20260912207000_p1_idempotency_monitoring_contract.sql \
+            20260912208000_p1_company_payroll_tax_contract.sql \
+            20260912209000_p1_tenant_telemetry_contract.sql \
+            20260912210000_p1_report_dispatch_idempotency.sql
+          do
+            cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
+          done
+          echo "dir=$stage_dir" >> "$GITHUB_OUTPUT"
+
+      - name: Simular todas as mudanças no schema real e reverter
+        if: inputs.mode == 'validate'
+        run: |
+          set -euo pipefail
+          stage_dir="${{ steps.stage.outputs.dir }}"
+          {
+            echo 'BEGIN;'
+            for migration in "$stage_dir"/supabase/migrations/*.sql; do
+              printf '\\i %s\n' "$migration"
+            done
+            echo 'ROLLBACK;'
+          } | psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1
+          echo 'CANONICAL_MIGRATION_DRY_RUN_OK'
+
+      - name: Aplicar a lista fechada e registrar no ledger
+        if: inputs.mode == 'apply'
+        run: |
+          set -euo pipefail
+          stage_dir="${{ steps.stage.outputs.dir }}"
+          # Execute the same closed list validated above and record only those
+          # versions. This deliberately avoids `db push --include-all` and
+          # `migration repair`, which are unsafe while the historical local
+          # ledger differs from the canonical ledger.
+          {
+            echo 'BEGIN;'
+            for migration in "$stage_dir"/supabase/migrations/*.sql; do
+              filename="$(basename "$migration")"
+              version="${filename%%_*}"
+              name="${filename#*_}"
+              name="${name%.sql}"
+              printf '\\i %s\n' "$migration"
+              printf "INSERT INTO supabase_migrations.schema_migrations(version,name,statements) VALUES ('%s','%s',ARRAY[]::text[]) ON CONFLICT (version) DO NOTHING;\n" "$version" "$name"
+            done
+            echo 'COMMIT;'
+          } | psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1
+
+      - name: Verificar objetos e ledger
+        if: inputs.mode == 'apply'
+        run: |
+          set -euo pipefail
+          result="$(psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -At <<'SQL'
+          SELECT jsonb_build_object(
+            'rate_limit', to_regprocedure('public.edge_rate_limit_check(text,integer,integer,bigint)') IS NOT NULL,
+            'membership', to_regprocedure('public.get_my_user_empresas()') IS NOT NULL,
+            'authz', to_regprocedure('public.pode_gerir_rh_para(uuid,uuid)') IS NOT NULL,
+            'claims', to_regprocedure('public.claim_due_report_schedules(timestamptz,integer)') IS NOT NULL,
+            'provisions', to_regprocedure('public.replace_monthly_provisions(uuid,text,jsonb,uuid,jsonb)') IS NOT NULL,
+            'destination', to_regprocedure('public.report_destination_is_allowed(text,uuid)') IS NOT NULL,
+            'audit', to_regprocedure('public.get_audit_trail(uuid,integer,timestamptz,text,text,text[])') IS NOT NULL,
+            'recipients', to_regprocedure('public.get_company_rh_recipient_emails(uuid,integer)') IS NOT NULL,
+            'backup_bucket', EXISTS (SELECT 1 FROM storage.buckets WHERE id='backups' AND public IS FALSE),
+            'pcs_tables', (SELECT count(*) FROM pg_catalog.pg_class c
+              JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace
+              WHERE n.nspname='public' AND c.relname = ANY (ARRAY[
+                'pcs_planos','pcs_fatores','pcs_avaliacoes_cargo','pcs_grades','pcs_pesquisa_salarial'
+              ])) = 5,
+            'pcs_functions', to_regprocedure('public.pcs_gerar_grades(uuid,integer,numeric)') IS NOT NULL
+              AND to_regprocedure('public.pcs_enquadramento(uuid)') IS NOT NULL
+              AND to_regprocedure('public.pcs_grades_mercado(uuid)') IS NOT NULL
+              AND to_regprocedure('public.pcs_simular_impacto(uuid,numeric)') IS NOT NULL,
+            'security_cron_functions', to_regprocedure('public.sec_audit_policies_scan()') IS NOT NULL
+              AND to_regprocedure('public.sec_policy_regressions_purge()') IS NOT NULL
+              AND to_regprocedure('public.sec_verify_seals_scan()') IS NOT NULL,
+            'security_cron_jobs', (SELECT count(*) FROM cron.job WHERE (jobname,schedule,command) IN (
+              ('sec-audit-policies-daily','0 4 * * *','SELECT public.sec_audit_policies_scan();'),
+              ('sec-policy-regressions-purge','30 4 * * 0','SELECT public.sec_policy_regressions_purge();'),
+              ('sec-verify-seals-weekly','15 3 * * 1','SELECT public.sec_verify_seals_scan();')
+            )) = 3,
+            'admission_esocial', to_regprocedure('public.claim_admission_esocial_event(uuid,uuid)') IS NOT NULL
+              AND to_regprocedure('public.complete_admission_esocial_event(uuid,uuid,uuid,uuid,text,text)') IS NOT NULL
+              AND to_regprocedure('public.fail_admission_esocial_event(uuid,uuid,uuid,uuid)') IS NOT NULL
+              AND EXISTS (SELECT 1 FROM pg_catalog.pg_attribute
+                WHERE attrelid='public.esocial_eventos'::regclass AND attname='admissao_id' AND NOT attisdropped),
+            'contract_signature', to_regprocedure('public.contrato_assinar_por_token(text,text,text,inet,text)') IS NOT NULL
+              AND to_regprocedure('public.contrato_assinar_por_token(text,text,text,inet,text,text,text)') IS NULL,
+            'payroll_audit_read', EXISTS (
+              SELECT 1 FROM pg_catalog.pg_class
+              WHERE oid='public.vw_folha_compliance'::regclass
+                AND COALESCE(reloptions, ARRAY[]::text[]) @> ARRAY['security_invoker=true']
+            ) AND pg_get_viewdef('public.vw_folha_compliance'::regclass, true) LIKE '%PAYROLL_CLOSE%'
+              AND NOT has_table_privilege('anon','public.vw_folha_compliance','SELECT'),
+            'audit_actions', (
+              SELECT convalidated
+                AND pg_get_constraintdef(oid) LIKE '%STATUS_CHANGE%'
+                AND pg_get_constraintdef(oid) LIKE '%VISUALIZACAO%'
+                AND pg_get_constraintdef(oid) LIKE '%SIGN%'
+              FROM pg_catalog.pg_constraint
+              WHERE conrelid='public.audit_log'::regclass AND conname='audit_log_acao_check'
+            ),
+            'idempotency_monitor', pg_get_functiondef('public.check_idempotency_anomalies()'::regprocedure)
+              LIKE '%IDEMPOTENCY_STALE_IN_PROGRESS%',
+            'company_tax_contract', EXISTS (
+              SELECT 1 FROM pg_constraint WHERE conrelid='public.empresas'::regclass
+                AND conname='empresas_rat_fraction_check' AND convalidated
+            ) AND EXISTS (
+              SELECT 1 FROM information_schema.columns WHERE table_schema='public'
+                AND table_name='empresas' AND column_name='simples_anexo'
+            ),
+            'tenant_telemetry', EXISTS (
+              SELECT 1 FROM information_schema.columns WHERE table_schema='public'
+                AND table_name='query_telemetry' AND column_name='empresa_id'
+            ) AND EXISTS (
+              SELECT 1 FROM pg_catalog.pg_attribute
+              WHERE attrelid='public.mv_telemetry_dashboard'::regclass
+                AND attname='empresa_id' AND NOT attisdropped
+            ) AND NOT has_table_privilege('authenticated','public.query_telemetry','SELECT'),
+            'report_dispatch_idempotency', to_regclass('public.report_dispatch_attempts') IS NOT NULL
+              AND NOT has_table_privilege('authenticated','public.report_dispatch_attempts','SELECT'),
+            'ledger_count', (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = ANY (ARRAY[
+              '20260911194000','20260911200000','20260912190000','20260912191000','20260912192000',
+              '20260912193000','20260912194000','20260912195000','20260912200000','20260912201000',
+              '20260912202000','20260912203000','20260912204000','20260912205000','20260912206000',
+              '20260912207000','20260912208000','20260912209000','20260912210000'
+            ]))
+          );
+          SQL
+          )"
+          echo "$result"
+          node -e '
+            const result = JSON.parse(process.argv[1]);
+            const expectedTrue = ["rate_limit","membership","authz","claims","provisions","destination","audit","recipients","backup_bucket","pcs_tables","pcs_functions","security_cron_functions","security_cron_jobs","admission_esocial","contract_signature","payroll_audit_read","audit_actions","idempotency_monitor","company_tax_contract","tenant_telemetry","report_dispatch_idempotency"];
+            if (expectedTrue.some((key) => result[key] !== true) || Number(result.ledger_count) !== 19) process.exit(1);
+          ' "$result"
+          echo 'CANONICAL_SCOPED_MIGRATIONS_OK'

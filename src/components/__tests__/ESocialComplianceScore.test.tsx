@@ -16,14 +16,15 @@ describe('ESocialComplianceScore', () => {
     expect(screen.getByText('95%')).toBeInTheDocument();
   });
 
-  it('renders zero score when conformidade missing', () => {
+  it('renders an explicit no-data state when conformidade is missing', () => {
     render(<ESocialComplianceScore stats={{ enviados: 0, erros: 0 }} />);
-    expect(screen.getByText('0%')).toBeInTheDocument();
+    expect(screen.getByText('—')).toBeInTheDocument();
+    expect(screen.getByText('Sem eventos avaliados')).toBeInTheDocument();
   });
 
   it('shows "Ambiente Seguro" when score >= 95', () => {
     render(<ESocialComplianceScore stats={{ conformidade: 97, enviados: 100, erros: 0 }} />);
-    expect(screen.getByText('Ambiente Seguro')).toBeInTheDocument();
+    expect(screen.getByText('Eventos sem erro')).toBeInTheDocument();
   });
 
   it('shows "Riscos Detectados" when score < 95', () => {

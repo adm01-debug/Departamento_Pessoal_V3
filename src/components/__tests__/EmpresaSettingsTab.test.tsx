@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
@@ -26,6 +26,7 @@ vi.mock('@/components/ui/spinner', () => ({
 
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { EmpresaSettingsTab } from '../settings/EmpresaSettingsTab';
+import { toast } from 'sonner';
 
 const MOCK_EMPRESA = {
   id: 'emp-1',
@@ -38,12 +39,20 @@ const MOCK_EMPRESA = {
   uf: 'MG',
   email: 'contato@empresa.com',
   telefone: '(31) 3333-4444',
+  regime_tributario: 'lucro_real',
+  simples_anexo: null,
+  rat: 0.01,
+  fap: 1.2,
+  terceiros: 0.058,
+  aliquota_encargos_folha: 0.3,
 };
 
 describe('EmpresaSettingsTab', () => {
   it('shows spinner when loading', () => {
     vi.mocked(useEmpresas).mockReturnValue({
-      empresaAtual: null, loadingEmpresas: true, atualizarEmpresa: { mutate: vi.fn(), isPending: false },
+      empresaAtual: null,
+      loadingEmpresas: true,
+      atualizarEmpresa: { mutate: vi.fn(), isPending: false },
     } as any);
     render(<EmpresaSettingsTab />);
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
@@ -51,7 +60,9 @@ describe('EmpresaSettingsTab', () => {
 
   it('renders Dados da Empresa title', () => {
     vi.mocked(useEmpresas).mockReturnValue({
-      empresaAtual: null, loadingEmpresas: false, atualizarEmpresa: { mutate: vi.fn(), isPending: false },
+      empresaAtual: null,
+      loadingEmpresas: false,
+      atualizarEmpresa: { mutate: vi.fn(), isPending: false },
     } as any);
     render(<EmpresaSettingsTab />);
     expect(screen.getByText('Dados da Empresa')).toBeInTheDocument();
@@ -59,7 +70,9 @@ describe('EmpresaSettingsTab', () => {
 
   it('renders form labels', () => {
     vi.mocked(useEmpresas).mockReturnValue({
-      empresaAtual: null, loadingEmpresas: false, atualizarEmpresa: { mutate: vi.fn(), isPending: false },
+      empresaAtual: null,
+      loadingEmpresas: false,
+      atualizarEmpresa: { mutate: vi.fn(), isPending: false },
     } as any);
     render(<EmpresaSettingsTab />);
     expect(screen.getByText('Razão Social')).toBeInTheDocument();
@@ -69,7 +82,9 @@ describe('EmpresaSettingsTab', () => {
 
   it('renders Salvar Alterações button', () => {
     vi.mocked(useEmpresas).mockReturnValue({
-      empresaAtual: null, loadingEmpresas: false, atualizarEmpresa: { mutate: vi.fn(), isPending: false },
+      empresaAtual: null,
+      loadingEmpresas: false,
+      atualizarEmpresa: { mutate: vi.fn(), isPending: false },
     } as any);
     render(<EmpresaSettingsTab />);
     expect(screen.getByText('Salvar Alterações')).toBeInTheDocument();
@@ -77,7 +92,9 @@ describe('EmpresaSettingsTab', () => {
 
   it('pre-fills form from empresaAtual', () => {
     vi.mocked(useEmpresas).mockReturnValue({
-      empresaAtual: MOCK_EMPRESA, loadingEmpresas: false, atualizarEmpresa: { mutate: vi.fn(), isPending: false },
+      empresaAtual: MOCK_EMPRESA,
+      loadingEmpresas: false,
+      atualizarEmpresa: { mutate: vi.fn(), isPending: false },
     } as any);
     render(<EmpresaSettingsTab />);
     const input = screen.getByDisplayValue('Empresa Teste Ltda');
@@ -86,7 +103,9 @@ describe('EmpresaSettingsTab', () => {
 
   it('renders email label', () => {
     vi.mocked(useEmpresas).mockReturnValue({
-      empresaAtual: null, loadingEmpresas: false, atualizarEmpresa: { mutate: vi.fn(), isPending: false },
+      empresaAtual: null,
+      loadingEmpresas: false,
+      atualizarEmpresa: { mutate: vi.fn(), isPending: false },
     } as any);
     render(<EmpresaSettingsTab />);
     expect(screen.getByText('E-mail Corporativo')).toBeInTheDocument();
@@ -94,10 +113,52 @@ describe('EmpresaSettingsTab', () => {
 
   it('renders Cidade and UF labels', () => {
     vi.mocked(useEmpresas).mockReturnValue({
-      empresaAtual: null, loadingEmpresas: false, atualizarEmpresa: { mutate: vi.fn(), isPending: false },
+      empresaAtual: null,
+      loadingEmpresas: false,
+      atualizarEmpresa: { mutate: vi.fn(), isPending: false },
     } as any);
     render(<EmpresaSettingsTab />);
     expect(screen.getByText('Cidade')).toBeInTheDocument();
     expect(screen.getByText('UF')).toBeInTheDocument();
+  });
+
+  it('persiste percentuais fiscais como frações canônicas', () => {
+    const mutate = vi.fn();
+    vi.mocked(useEmpresas).mockReturnValue({
+      empresaAtual: MOCK_EMPRESA,
+      loadingEmpresas: false,
+      atualizarEmpresa: { mutate, isPending: false },
+    } as any);
+    render(<EmpresaSettingsTab />);
+    fireEvent.click(screen.getByText('Salvar Alterações'));
+    expect(mutate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'emp-1',
+        regime_tributario: 'lucro_real',
+        simples_anexo: null,
+        rat: 0.01,
+        fap: 1.2,
+        terceiros: 0.058,
+        aliquota_encargos_folha: 0.3,
+      })
+    );
+  });
+
+  it('recusa Simples sem anexo ou alíquota efetiva', () => {
+    const mutate = vi.fn();
+    vi.mocked(useEmpresas).mockReturnValue({
+      empresaAtual: {
+        ...MOCK_EMPRESA,
+        regime_tributario: 'simples_nacional',
+        simples_anexo: null,
+        aliquota_encargos_folha: null,
+      },
+      loadingEmpresas: false,
+      atualizarEmpresa: { mutate, isPending: false },
+    } as any);
+    render(<EmpresaSettingsTab />);
+    fireEvent.click(screen.getByText('Salvar Alterações'));
+    expect(mutate).not.toHaveBeenCalled();
+    expect(toast.error).toHaveBeenCalledWith('Informe o Anexo do Simples ou uma alíquota efetiva revisada.');
   });
 });

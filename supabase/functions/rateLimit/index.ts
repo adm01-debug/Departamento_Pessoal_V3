@@ -14,7 +14,7 @@ import { captureException } from '../_shared/sentry.ts';
 // server-side (limit ≤ 1000/janela, window ≤ 3600s), min = 1.
 
 const BodySchema = z.object({
-  key: z.string().min(1).max(128).regex(/^[a-zA-Z0-9:_\-\.]+$/, 'chave inválida'),
+  key: z.string().min(1).max(128).regex(/^[a-zA-Z0-9:_.-]+$/, 'chave inválida'),
   limit: z.number().int().min(1).max(1000).optional(),
   window_seconds: z.number().int().min(1).max(3600).optional(),
 });
@@ -70,9 +70,10 @@ serve(async (req: Request): Promise<Response> => {
       });
     }
 
-    const { body: _pb } = await parseJsonBody(req);
+    const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
+    if (_pe) return _pe;
     const parsed = BodySchema.safeParse(_pb ?? {});
-    if (!parsed.success) return createValidationErrorResponse(parsed.error);
+    if (!parsed.success) return createValidationErrorResponse(parsed.error, req);
 
     const limit = parsed.data.limit ?? 100;
     const windowSec = parsed.data.window_seconds ?? 60;

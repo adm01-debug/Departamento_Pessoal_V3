@@ -56,7 +56,7 @@ serve(async (req: Request): Promise<Response> => {
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(adminClient, { key: `backup:${userData.user.id}`, limit: 3, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     const { data: roles } = await adminClient
       .from('user_roles')
@@ -71,7 +71,8 @@ serve(async (req: Request): Promise<Response> => {
       });
     }
 
-    const { body: _pb } = await parseJsonBody(req);
+    const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
+    if (_pe) return _pe;
     const { empresaId } = (_pb as Record<string, unknown>) ?? { empresaId: null };
     const results: Record<string, any> = {};
     let totalRecords = 0;
@@ -96,9 +97,9 @@ serve(async (req: Request): Promise<Response> => {
     await adminClient.from('audit_log').insert({
       tabela: 'backup',
       registro_id: 'system',
-      acao: 'BACKUP',
+      acao: 'BACKUP_CREATED',
       user_id: userData.user.id,
-      dados_novos: { tables: results, total: totalRecords, empresa_id: empresaId },
+      dados_novos: { evento: 'BACKUP', tables: results, total: totalRecords, empresa_id: empresaId },
     });
 
     return new Response(JSON.stringify({

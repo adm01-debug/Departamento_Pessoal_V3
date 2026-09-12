@@ -4,6 +4,8 @@
 //   const csrf = await verifyCsrf(req);
 //   if (!csrf.ok) return csrf.response;
 
+import { getCorsHeaders } from './contract.ts';
+
 // EXTRA_ALLOWED_ORIGINS permite adicionar origens via env sem alterar código.
 // Formato: lista separada por vírgulas, ex: "https://app.exemplo.com,https://staging.exemplo.com"
 const _extraOrigins = (Deno.env.get('EXTRA_ALLOWED_ORIGINS') ?? '')
@@ -12,7 +14,7 @@ const _extraOrigins = (Deno.env.get('EXTRA_ALLOWED_ORIGINS') ?? '')
   .filter(Boolean);
 
 const ALLOWED_ORIGINS = [
-  'https://unified-harmony-hub.lovable.app',
+  'https://departamento-pessoal-v3.vercel.app',
   ..._extraOrigins,
 ];
 
@@ -47,7 +49,7 @@ export async function verifyCsrf(req: Request): Promise<CsrfResult> {
       ok: false,
       response: new Response(
         JSON.stringify({ error: 'CSRF: missing Origin/Referer header' }),
-        { status: 403, headers: { 'Content-Type': 'application/json' } },
+        { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
       ),
     };
   }
@@ -64,7 +66,7 @@ export async function verifyCsrf(req: Request): Promise<CsrfResult> {
         ok: false,
         response: new Response(
           JSON.stringify({ error: 'CSRF: origin not allowed', origin: host }),
-          { status: 403, headers: { 'Content-Type': 'application/json' } },
+          { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
         ),
       };
     }
@@ -73,7 +75,7 @@ export async function verifyCsrf(req: Request): Promise<CsrfResult> {
       ok: false,
       response: new Response(
         JSON.stringify({ error: 'CSRF: invalid Origin/Referer' }),
-        { status: 403, headers: { 'Content-Type': 'application/json' } },
+        { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
       ),
     };
   }
@@ -89,7 +91,7 @@ export async function verifyCsrf(req: Request): Promise<CsrfResult> {
         ok: false,
         response: new Response(
           JSON.stringify({ error: 'CSRF: token mismatch' }),
-          { status: 403, headers: { 'Content-Type': 'application/json' } },
+          { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
         ),
       };
     }

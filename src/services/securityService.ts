@@ -1,6 +1,8 @@
-import { supabase } from '@/integrations/supabase/client';
+// Tabelas de segurança estão deliberadamente fora do gateway genérico. Este
+// cliente fala com o PostgREST canônico usando o JWT do usuário, portanto as
+// policies RLS admin-only continuam sendo a fronteira de autorização.
+import { supabase } from '@/integrations/supabase/client.base';
 import { loggerService } from './loggerService';
-
 
 export interface SecurityAlert {
   id: string;
@@ -63,10 +65,7 @@ export const securityService = {
 
   async unblockIp(id: string) {
     if (!id) throw new Error('ID é obrigatório');
-    const { error } = await supabase
-      .from('blocked_ips')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from('blocked_ips').delete().eq('id', id);
     if (error) {
       loggerService.error('Error unblocking IP', { id }, error);
       throw error;
@@ -126,21 +125,18 @@ export const securityService = {
     return data || [];
   },
 
-  async resolveAlert(id: string, userId: string) {
+  async resolveAlert(id: string, note?: string) {
     if (!id) throw new Error('ID do alerta é obrigatório');
-    if (!userId) throw new Error('ID do usuário é obrigatório');
-    const { error } = await supabase
-      .from('security_alerts')
-      .update({
-        resolved: true,
-        resolved_by: userId,
-        resolved_at: new Date().toISOString()
-      } as any)
-      .eq('id', id);
+    // A autoria é derivada de auth.uid() dentro da RPC. Aceitar `resolved_by`
+    // vindo do browser permitiria a um admin forjar o autor da resolução.
+    const { error } = await supabase.rpc('resolve_security_alert', {
+      _alert_id: id,
+      _note: note || undefined,
+    });
     if (error) {
-      loggerService.error('Error resolving alert', { id, userId }, error);
+      loggerService.error('Error resolving alert', { id }, error);
       throw error;
     }
-    loggerService.info('Security alert resolved', { alertId: id, resolvedBy: userId });
-  }
+    loggerService.info('Security alert resolved', { alertId: id });
+  },
 };

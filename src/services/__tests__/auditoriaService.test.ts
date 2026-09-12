@@ -6,6 +6,74 @@ import { makeChain } from '@/test/chain';
 const EMPRESA_ID = 'test-empresa-id';
 const USER_ID = 'test-user-id';
 
+describe('auditoriaService.listarTrilha', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockRpc.mockResolvedValue({ data: [], error: null });
+  });
+
+  it('usa a RPC unificada com tenant e filtros explícitos', async () => {
+    await auditoriaService.listarTrilha({
+      empresa_id: EMPRESA_ID,
+      tabela: 'colaboradores',
+      registro_id: 'c1',
+      limite: 25,
+      antes_de: '2026-09-12T12:00:00.000Z',
+    });
+
+    expect(mockRpc).toHaveBeenCalledWith('get_audit_trail', {
+      p_empresa_id: EMPRESA_ID,
+      p_limit: 25,
+      p_before: '2026-09-12T12:00:00.000Z',
+      p_tabela: 'colaboradores',
+      p_registro_id: 'c1',
+      p_tabelas: null,
+    });
+    expect(mockFrom).not.toHaveBeenCalled();
+  });
+
+  it('aceita escopo global apenas como pedido explícito para a RPC autoritativa', async () => {
+    await auditoriaService.listarTrilha({ empresa_id: null });
+    expect(mockRpc.mock.calls[0][1]).toMatchObject({ p_empresa_id: null });
+  });
+
+  it('rejeita limites fora do contrato antes de consultar o banco', async () => {
+    await expect(auditoriaService.listarTrilha({ empresa_id: EMPRESA_ID, limite: 501 })).rejects.toThrow(/limite/);
+    expect(mockRpc).not.toHaveBeenCalled();
+  });
+
+  it('envia filtros de múltiplas tabelas à RPC antes do limite', async () => {
+    await auditoriaService.listarTrilha({
+      empresa_id: EMPRESA_ID,
+      tabelas: ['metas_okrs', 'feedbacks_360'],
+      limite: 30,
+    });
+    expect(mockRpc.mock.calls[0][1]).toMatchObject({
+      p_tabelas: ['metas_okrs', 'feedbacks_360'],
+      p_tabela: null,
+      p_limit: 30,
+    });
+  });
+
+  it('rejeita filtro singular e múltiplo simultâneos', async () => {
+    await expect(
+      auditoriaService.listarTrilha({
+        empresa_id: EMPRESA_ID,
+        tabela: 'metas_okrs',
+        tabelas: ['feedbacks_360'],
+      })
+    ).rejects.toThrow(/não ambos/);
+    expect(mockRpc).not.toHaveBeenCalled();
+  });
+
+  it('propaga falha da RPC e normaliza data nula', async () => {
+    mockRpc.mockResolvedValueOnce({ data: null, error: null });
+    await expect(auditoriaService.listarTrilha({ empresa_id: EMPRESA_ID })).resolves.toEqual([]);
+    mockRpc.mockResolvedValueOnce({ data: null, error: { message: 'denied' } });
+    await expect(auditoriaService.listarTrilha({ empresa_id: EMPRESA_ID })).rejects.toBeDefined();
+  });
+});
+
 const { mockFrom, mockGetUser, mockRpc } = vi.hoisted(() => ({
   mockFrom: vi.fn(),
   mockGetUser: vi.fn(),
@@ -145,11 +213,12 @@ describe('auditoriaService.logComVersao', () => {
   });
 });
 
-
 // ─── notificacaoService.listar ────────────────────────────────────────────────
 
 describe('notificacaoService.listar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns notifications without userId filter', async () => {
     const records = [{ id: 'n1', lida: false }];
@@ -185,11 +254,14 @@ describe('notificacaoService.listar', () => {
 // ─── notificacaoService.marcarComoLida ────────────────────────────────────────
 
 describe('notificacaoService.marcarComoLida', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates lida=true for given id', async () => {
     const chain = makeChain({ error: null });
-    const updateFn = chain.update; const eqFn = chain.eq;
+    const updateFn = chain.update;
+    const eqFn = chain.eq;
     mockFrom.mockReturnValue(chain);
 
     await notificacaoService.marcarComoLida(USER_ID, 'n1');
@@ -208,11 +280,15 @@ describe('notificacaoService.marcarComoLida', () => {
 // ─── notificacaoService.marcarTodasComoLidas ─────────────────────────────────
 
 describe('notificacaoService.marcarTodasComoLidas', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates lida=true filtered by user_id and lida=false', async () => {
     const chain = makeChain({ error: null });
-    const updateFn = chain.update; const eqFn1 = chain.eq; const eqFn2 = chain.eq;
+    const updateFn = chain.update;
+    const eqFn1 = chain.eq;
+    const eqFn2 = chain.eq;
     mockFrom.mockReturnValue(chain);
 
     await notificacaoService.marcarTodasComoLidas('u1');

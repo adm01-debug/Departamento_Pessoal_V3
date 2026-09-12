@@ -4,6 +4,7 @@
 // • Comparação facial real via Lovable AI Gateway (antes: Math.random())
 // • Sem foto de referência => falha fechada (antes: valid:true, fail-open)
 // • Erros genéricos ao cliente (antes: error.message vazado)
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
@@ -51,12 +52,11 @@ serve(async (req: Request): Promise<Response> => {
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(supabase, { key: `biometria:${userId}`, limit: 20, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
-    let raw: unknown;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    raw = _pb;
+    const raw = _pb;
     const { batidaId, fotoBase64, colaboradorId } = raw as Record<string, unknown>;
 
     if (!batidaId || !fotoBase64 || !colaboradorId ||

@@ -17,15 +17,20 @@ if ! git rev-parse --verify "$BASE_REF" >/dev/null 2>&1; then
   elif git rev-parse --verify HEAD~1 >/dev/null 2>&1; then
     BASE_REF="HEAD~1"
   else
-    echo "[format:check:changed] no base ref to diff against — skipping."
-    exit 0
+    echo "::error::[format:check:changed] no base ref is available; refusing a false-green format gate." >&2
+    exit 2
   fi
 fi
 
 mapfile -t CHANGED < <(
-  git diff --name-only --diff-filter=ACMR "$BASE_REF"...HEAD -- \
-    'src/**/*.ts' 'src/**/*.tsx' 'src/**/*.css' 'src/**/*.json' 'src/**/*.md' \
-    2>/dev/null || true
+  {
+    # Files already committed on the feature branch (the CI/PR case).
+    git diff --name-only --diff-filter=ACMR "$BASE_REF"...HEAD 2>/dev/null || true
+    # Staged and unstaged files in the local verification case.
+    git diff --name-only --diff-filter=ACMR HEAD 2>/dev/null || true
+    # Brand-new files are invisible to `git diff` until staged.
+    git ls-files --others --exclude-standard 2>/dev/null || true
+  } | awk '/^src\// && /\.(ts|tsx|css|json|md)$/' | LC_ALL=C sort -u
 )
 
 if [ "${#CHANGED[@]}" -eq 0 ]; then
@@ -34,4 +39,6 @@ if [ "${#CHANGED[@]}" -eq 0 ]; then
 fi
 
 echo "[format:check:changed] checking ${#CHANGED[@]} changed file(s) vs $BASE_REF..."
-exec bunx prettier --check "${CHANGED[@]}"
+# The lint job intentionally installs only Node.js. Use the project-local
+# Prettier through npm so this gate does not depend on a globally installed Bun.
+exec npx --no-install prettier --check "${CHANGED[@]}"

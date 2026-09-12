@@ -49,15 +49,7 @@ run_as_authenticated() {
 echo "Starting disposable $IMAGE database: $NAME"
 docker run -d --name "$NAME" -e POSTGRES_PASSWORD=test "$IMAGE" >/dev/null
 
-ready=0
-for _ in $(seq 1 60); do
-  if docker exec "$NAME" pg_isready -h 127.0.0.1 -U postgres >/dev/null 2>&1; then
-    ready=1
-    break
-  fi
-  sleep 1
-done
-[ "$ready" = "1" ] || { docker logs "$NAME" >&2; exit 1; }
+bash "$REPO_ROOT/scripts/tests/wait-for-postgres-container.sh" "$NAME"
 
 docker cp "$MIGRATION" "$NAME":/tmp/p0-bridge-membership.sql
 
@@ -97,6 +89,9 @@ for pass in 1 2; do
   echo "migration pass $pass succeeded"
 done
 
+one_default_index="$(run_psql -Atc "SELECT count(*) FROM pg_index WHERE indrelid='public.user_empresas'::regclass AND indisunique AND pg_get_expr(indpred,indrelid)='(is_default IS TRUE)'")"
+[ "$one_default_index" = '1' ] || { echo 'partial unique default index is missing' >&2; exit 1; }
+
 for signature in 'public.get_my_user_empresas()' 'public.set_own_default_empresa(uuid)' 'public.admin_associar_usuario_empresa(uuid, uuid, boolean)'; do
   authenticated="$(run_psql -Atc "SELECT has_function_privilege('authenticated', '$signature', 'EXECUTE')")"
   anon="$(run_psql -Atc "SELECT has_function_privilege('anon', '$signature', 'EXECUTE')")"
@@ -130,12 +125,14 @@ admin_default="$(run_psql -Atc "SELECT empresa_id FROM public.user_empresas WHER
 [ "$admin_default" = "$EMP_B2" ] || { echo "admin association did not atomically set target default" >&2; exit 1; }
 
 # Twenty competing tabs must still leave one and only one default.
+pids=()
 for i in $(seq 1 20); do
   target="$EMP_A1"
   [ $((i % 2)) -eq 0 ] && target="$EMP_A2"
   (run_as_authenticated "$USER_A" "SELECT public.set_own_default_empresa('$target');" >/dev/null) >"$RESULT_DIR/$i" 2>&1 &
+  pids+=("$!")
 done
-wait
+for pid in "${pids[@]}"; do wait "$pid" || { echo "concurrent default-company process failed" >&2; exit 1; }; done
 if find "$RESULT_DIR" -type f -size +0c | grep -q .; then
   echo "concurrent own-default call failed" >&2
   find "$RESULT_DIR" -type f -size +0c -exec cat {} + >&2
@@ -143,6 +140,8 @@ if find "$RESULT_DIR" -type f -size +0c | grep -q .; then
 fi
 default_count="$(run_psql -Atc "SELECT count(*) FROM public.user_empresas WHERE user_id = '$USER_A' AND is_default")"
 [ "$default_count" = '1' ] || { echo "concurrency left $default_count defaults" >&2; exit 1; }
+
+expect_failure 'duplicate key value violates unique constraint' "INSERT INTO public.user_empresas(user_id,empresa_id,is_default) VALUES ('$USER_A','$EMP_B2',true);"
 
 run_psql -c 'CREATE DATABASE p0_membership_missing_prerequisite' >/dev/null
 set +e

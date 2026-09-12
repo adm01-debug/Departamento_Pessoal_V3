@@ -15,16 +15,18 @@ export default defineConfig(({ mode }) => ({
     strictPort: true,
     proxy: {
       // Dev local: encaminha chamadas de edge functions para o Supabase remoto.
-      // O gate estrito (allowlist *.lovable.app) rejeita Origin localhost — o
-      // proxy reescreve Origin/Referer para um host da allowlist (somente dev).
+      // O gate estrito rejeita Origin localhost. O proxy reescreve
+      // Origin/Referer para o deployment Vercel canônico da allowlist (somente
+      // dev/E2E); isso testa a mesma política usada em produção sem liberar
+      // localhost na Edge Function publicada.
       '/functions/v1': {
         target: 'https://frjbfeamybqsejlvmqbl.supabase.co',
         changeOrigin: true,
         secure: true,
         configure(proxy) {
           proxy.on('proxyReq', (proxyReq) => {
-            proxyReq.setHeader('origin', 'https://unified-harmony-hub.lovable.app');
-            proxyReq.setHeader('referer', 'https://unified-harmony-hub.lovable.app/');
+            proxyReq.setHeader('origin', 'https://departamento-pessoal-v3.vercel.app');
+            proxyReq.setHeader('referer', 'https://departamento-pessoal-v3.vercel.app/');
           });
         },
       },

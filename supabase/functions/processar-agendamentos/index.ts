@@ -5,8 +5,8 @@ import { captureException } from "../_shared/sentry.ts";
 import { enforceOrigin, getCorsHeaders, handlePreflight } from "../_shared/contract.ts";
 import { safeFetch } from "../_shared/safe-fetch.ts";
 import {
+  claimedScheduleOccurrence,
   nextScheduleOccurrence,
-  shouldRunSchedule,
   summarizeScheduleResults,
   type ScheduleResult,
 } from "./scheduleContract.ts";
@@ -92,7 +92,7 @@ serve(async (req: Request): Promise<Response> => {
           limit: 5,
           windowSec: 60,
         });
-        if (!rl.allowed) return rateLimitResponse(rl);
+        if (!rl.allowed) return rateLimitResponse(rl, req);
 
         const { data: isAdmin } = await admin.rpc("is_admin", {
           _user_id: userData.user.id,
@@ -141,16 +141,20 @@ serve(async (req: Request): Promise<Response> => {
     });
 
     const agora = new Date();
+    const CONCURRENCY = 5;
 
-    const { data: agendamentos, error } = await supabase
-      .from("relatorios_agendados")
-      .select("*")
-      .eq("ativo", true)
-      .or(`proximo_envio.is.null,proximo_envio.lte.${agora.toISOString()}`);
+    // Claim atômico: duas invocações de cron nunca recebem a mesma agenda.
+    // O lease expira no banco após cinco minutos para recuperar workers que
+    // morreram sem liberar a linha. Claim somente o que começa imediatamente;
+    // uma fila local maior que o lease permitiria outro cron roubar as últimas
+    // ocorrências antes do início do envio.
+    const { data: agendamentos, error } = await supabase.rpc(
+      "claim_due_report_schedules",
+      { p_now: agora.toISOString(), p_limit: CONCURRENCY },
+    );
 
     if (error) throw error;
 
-    const CONCURRENCY = 5;
     const lista = agendamentos ?? [];
     type ProcessResult = ScheduleResult & {
       id: unknown;
@@ -162,11 +166,50 @@ serve(async (req: Request): Promise<Response> => {
     const resultados: ProcessResult[] = [];
 
     const processarUm = async (agendamento: Record<string, unknown>): Promise<ProcessResult> => {
+      const claimToken = typeof agendamento.dispatch_claim_token === "string"
+        ? agendamento.dispatch_claim_token
+        : null;
+      const releaseClaim = async (next: Date | null = null) => {
+        if (!claimToken || typeof agendamento.id !== "string") return false;
+        const { data, error: releaseError } = await supabase.rpc(
+          "finish_report_schedule_claim",
+          {
+            p_schedule_id: agendamento.id,
+            p_claim_token: claimToken,
+            p_next: next?.toISOString() ?? null,
+          },
+        );
+        if (releaseError) throw releaseError;
+        return data === true;
+      };
       try {
-        const deveExecutar = shouldRunSchedule(agendamento as Parameters<typeof shouldRunSchedule>[0], agora);
-        if (!deveExecutar) {
-          return { id: agendamento.id, status: "skipped" };
+        if (!claimToken) throw new Error("Agendamento recebido sem lease válido");
+        const occurrence = claimedScheduleOccurrence(
+          agendamento as Parameters<typeof claimedScheduleOccurrence>[0],
+          agora,
+        );
+        if (!occurrence) {
+          const proximoEnvio = nextScheduleOccurrence(
+            agendamento as Parameters<typeof nextScheduleOccurrence>[0],
+            agora,
+          );
+          if (!await releaseClaim(proximoEnvio)) {
+            throw new Error("Lease do agendamento expirou ao avançar ocorrência ignorada");
+          }
+          const skipMessage = agendamento.proximo_envio
+            ? "Ocorrência expirada não enviada; cursor avançado"
+            : "Agenda inicializada fora da janela; cursor avançado";
+          const { error: skipLogError } = await supabase.from("log_envio_relatorios").insert({
+            agendamento_id: agendamento.id,
+            status: "pendente",
+            mensagem: skipMessage,
+          });
+          if (skipLogError) {
+            console.error(`Erro ao registrar ocorrência ignorada ${agendamento.id}:`, skipLogError.message);
+          }
+          return { id: agendamento.id, status: "skipped", proximo_envio: proximoEnvio };
         }
+        const dispatchKey = `${String(agendamento.id)}:${occurrence.toISOString()}`;
 
         const response = await safeFetch(
           `${supabaseUrl}/functions/v1/enviar-relatorio`,
@@ -179,10 +222,12 @@ serve(async (req: Request): Promise<Response> => {
             },
             body: JSON.stringify({
               agendamentoId: agendamento.id,
+              claimToken,
               tipoRelatorio: agendamento.tipo_relatorio,
               formato: agendamento.formato,
               emailDestinatario: agendamento.email_destinatario,
               parametros: agendamento.parametros,
+              dispatchKey,
             }),
             timeoutMs: 30_000,
             tag: "dbbridge",
@@ -197,12 +242,9 @@ serve(async (req: Request): Promise<Response> => {
           throw new Error("A entrega do relatório não foi confirmada");
         }
         const proximoEnvio = nextScheduleOccurrence(agendamento as Parameters<typeof nextScheduleOccurrence>[0], agora);
-
-        const { error: updateError } = await supabase
-          .from("relatorios_agendados")
-          .update({ proximo_envio: proximoEnvio.toISOString() })
-          .eq("id", agendamento.id);
-        if (updateError) throw updateError;
+        if (!await releaseClaim(proximoEnvio)) {
+          throw new Error("Lease do agendamento expirou antes da confirmação");
+        }
 
         return {
           id: agendamento.id,
@@ -216,6 +258,12 @@ serve(async (req: Request): Promise<Response> => {
           ? agendamentoError.message
           : "Erro desconhecido";
         console.error(`Erro no agendamento ${agendamento.id}:`, msg);
+        try {
+          await releaseClaim();
+        } catch (releaseError) {
+          console.error(`Erro ao liberar lease do agendamento ${agendamento.id}:`,
+            releaseError instanceof Error ? releaseError.message : "erro desconhecido");
+        }
         await supabase.from("log_envio_relatorios").insert({
           agendamento_id: agendamento.id,
           status: "erro",

@@ -5,7 +5,9 @@ import { loggerService } from './loggerService';
 
 async function sha256Hex(data: string): Promise<string> {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(data));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  return Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
 }
 
 // Ordem lógica das etapas para validação
@@ -108,12 +110,13 @@ export const rescisaoService = {
         tabela: 'desligamentos',
         registro_id: id,
         acao: 'EXECUTE_CALC',
+        empresa_id: empresaId,
         dados_anteriores: { etapa: anterior.etapa, status: anterior.status },
         dados_novos: {
           etapa: novo.etapa,
           status: novo.status,
           valor_liquido: novo.valor_liquido,
-          hash_integridade: await sha256Hex(JSON.stringify(resultado))
+          hash_integridade: await sha256Hex(JSON.stringify(resultado)),
         },
       });
 
@@ -123,7 +126,12 @@ export const rescisaoService = {
     }
   },
 
-  async homologar(id: string, empresaId: string, etapa: 'rh' | 'financeiro' | 'juridico' | 'colaborador' = 'rh', parecer?: string): Promise<any> {
+  async homologar(
+    id: string,
+    empresaId: string,
+    etapa: 'rh' | 'financeiro' | 'juridico' | 'colaborador' = 'rh',
+    parecer?: string
+  ): Promise<any> {
     if (!empresaId) throw new Error('empresa_id é obrigatório');
     try {
       const { data: d, error: fetchError } = await supabase
@@ -139,9 +147,8 @@ export const rescisaoService = {
       }
 
       const { data: userData } = await supabase.auth.getUser();
-      const { error: homError } = await supabase
-        .from('homologacoes_rescisao')
-        .upsert({
+      const { error: homError } = await supabase.from('homologacoes_rescisao').upsert(
+        {
           desligamento_id: id,
           etapa,
           status: 'aprovado',
@@ -169,7 +176,7 @@ export const rescisaoService = {
         .update({
           status: novoStatus,
           etapa: proximaEtapa === 'finalizado' ? 'pagamento' : 'homologacao',
-          checklist_homologacao: proximaEtapa === 'finalizado'
+          checklist_homologacao: proximaEtapa === 'finalizado',
         })
         .eq('id', id)
         .eq('empresa_id', empresaId)
@@ -182,6 +189,7 @@ export const rescisaoService = {
         tabela: 'desligamentos',
         registro_id: id,
         acao: 'UPDATE',
+        empresa_id: empresaId,
         dados_novos: {
           status: novoStatus,
           etapa: proximaEtapa,
@@ -197,7 +205,7 @@ export const rescisaoService = {
     }
   },
 
-  async assinarDigitalmente(id: string, tipo: 'empresa' | 'colaborador', _empresaId?: string): Promise<any> {
+  async assinarDigitalmente(id: string, tipo: 'empresa' | 'colaborador', empresaId?: string): Promise<any> {
     try {
       // Delegado à RPC assinar_desligamento (SECURITY DEFINER):
       // - hash SHA-256 é calculado server-side (trigger bloqueia escrita direta);
@@ -214,6 +222,7 @@ export const rescisaoService = {
         tabela: 'desligamentos',
         registro_id: id,
         acao: 'SIGN',
+        empresa_id: empresaId,
         dados_novos: { tipo_assinatura: tipo },
       });
 
@@ -224,20 +233,23 @@ export const rescisaoService = {
     }
   },
 
-
   async processarPagamento(id: string, empresaId: string, comprovanteUrl?: string): Promise<any> {
     if (!empresaId) throw new Error('empresa_id é obrigatório');
     try {
       const { data: d, error: fetchError } = await supabase
         .from('desligamentos')
-        .select('colaborador_id, data_desligamento, valor_liquido, assinado_empresa, assinado_colaborador, checklist_homologacao')
+        .select(
+          'colaborador_id, data_desligamento, valor_liquido, assinado_empresa, assinado_colaborador, checklist_homologacao'
+        )
         .eq('id', id)
         .eq('empresa_id', empresaId)
         .single();
 
       if (fetchError) throw fetchError;
       if (!d.assinado_empresa || !d.assinado_colaborador) {
-        throw new Error('Pagamento bloqueado: rescisão deve ser assinada pela empresa e pelo colaborador antes do pagamento.');
+        throw new Error(
+          'Pagamento bloqueado: rescisão deve ser assinada pela empresa e pelo colaborador antes do pagamento.'
+        );
       }
       if (!d.checklist_homologacao) {
         throw new Error('Pagamento bloqueado: homologação não foi concluída.');
@@ -249,7 +261,7 @@ export const rescisaoService = {
           status: 'pago',
           etapa: 'finalizado',
           checklist_pagamento: true,
-          data_pagamento: new Date().toISOString()
+          data_pagamento: new Date().toISOString(),
         } as any)
         .eq('id', id)
         .eq('empresa_id', empresaId)
@@ -267,12 +279,18 @@ export const rescisaoService = {
         .eq('id', d.colaborador_id)
         .eq('empresa_id', empresaId);
 
-      if (colabError) loggerService.error('Erro ao desativar colaborador', { colaboradorId: d.colaborador_id, desligamentoId: id }, colabError);
+      if (colabError)
+        loggerService.error(
+          'Erro ao desativar colaborador',
+          { colaboradorId: d.colaborador_id, desligamentoId: id },
+          colabError
+        );
 
       await auditLogger.log({
         tabela: 'desligamentos',
         registro_id: id,
         acao: 'UPDATE',
+        empresa_id: empresaId,
         dados_novos: { status: 'pago', etapa: 'concluido', colaborador_desativado: true },
       });
 

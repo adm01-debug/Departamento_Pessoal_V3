@@ -4,6 +4,7 @@ import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
 import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
+import { BACKUP_AUDIT_READ_ACTIONS } from './backupAudit.ts';
 import {
   BACKUP_TABLE_ROW_LIMIT,
   BackupSnapshotError,
@@ -38,7 +39,7 @@ serve(async (req: Request): Promise<Response> => {
     const authHeader = req.headers.get('Authorization') ?? '';
     const jwt = authHeader.replace(/^Bearer\s+/i, '').trim();
     if (!jwt) {
-      return createErrorResponse('Não autenticado', 401, 'UNAUTHORIZED');
+      return createErrorResponse('Não autenticado', 401, 'UNAUTHORIZED', undefined, req);
     }
 
     const userClient = createClient(SUPABASE_URL, ANON_KEY, {
@@ -48,14 +49,15 @@ serve(async (req: Request): Promise<Response> => {
 
     const { data: claimsData, error: userErr } = await userClient.auth.getUser();
     if (userErr || !claimsData?.user?.id) {
-      return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
+      return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED', undefined, req);
     }
     const user = { id: claimsData.user.id };
 
     // 3) Validação
-    const { body: _pb } = await parseJsonBody(req);
+    const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
+    if (_pe) return _pe;
     const parsed = BodySchema.safeParse(_pb ?? {});
-    if (!parsed.success) return createValidationErrorResponse(parsed.error);
+    if (!parsed.success) return createValidationErrorResponse(parsed.error, req);
     const { action, empresaId, tables, destino } = parsed.data;
 
     const admin = createClient(SUPABASE_URL, SERVICE_KEY, {
@@ -65,7 +67,7 @@ serve(async (req: Request): Promise<Response> => {
     // 4) Admin-only (backup é operação sensível — expõe dados em massa)
     const { data: isAdmin } = await admin.rpc('is_admin', { _user_id: user.id });
     if (!isAdmin) {
-      return createErrorResponse('Somente administradores podem executar backups', 403, 'FORBIDDEN');
+      return createErrorResponse('Somente administradores podem executar backups', 403, 'FORBIDDEN', undefined, req);
     }
 
     // 5) Tenant scope: se empresaId for informado, exige vínculo
@@ -75,13 +77,13 @@ serve(async (req: Request): Promise<Response> => {
         _empresa_id: empresaId,
       });
       if (!belongs) {
-        return createErrorResponse('Sem acesso a esta empresa', 403, 'FORBIDDEN');
+        return createErrorResponse('Sem acesso a esta empresa', 403, 'FORBIDDEN', undefined, req);
       }
     }
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(admin, { key: `backup:${user.id}`, limit: 3, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     // 6) Whitelist de tabelas exportáveis (evita dump de auth/storage/vault)
     const ALLOWED_TABLES = new Set([
@@ -91,17 +93,20 @@ serve(async (req: Request): Promise<Response> => {
     ]);
     const targetTables = (tables ?? [...ALLOWED_TABLES]).filter((t) => ALLOWED_TABLES.has(t));
     if (targetTables.length === 0) {
-      return createErrorResponse('Nenhuma tabela válida para backup', 422, 'VALIDATION_ERROR');
+      return createErrorResponse('Nenhuma tabela válida para backup', 422, 'VALIDATION_ERROR', undefined, req);
     }
 
     if (action === 'status') {
-      const { data: last } = await admin
+      let q = admin
         .from('audit_log')
         .select('created_at, dados_novos')
-        .eq('acao', 'BACKUP_RUN')
+        .in('acao', [...BACKUP_AUDIT_READ_ACTIONS])
         .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+        .limit(1);
+      if (empresaId) q = q.contains('dados_novos', { empresa_id: empresaId });
+      const { data: lastRows, error: statusError } = await q;
+      if (statusError) return createErrorResponse('Falha ao consultar status do backup', 500, 'AUDIT_ERROR', undefined, req);
+      const last = lastRows?.[0] ?? null;
       return new Response(JSON.stringify({ ok: true, last }), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -110,9 +115,10 @@ serve(async (req: Request): Promise<Response> => {
 
     if (action === 'list') {
       let q = admin.from('audit_log').select('id, created_at, dados_novos')
-        .eq('acao', 'BACKUP_RUN').order('created_at', { ascending: false }).limit(50);
-      if (empresaId) q = q.eq('empresa_id', empresaId);
-      const { data: list } = await q;
+        .in('acao', [...BACKUP_AUDIT_READ_ACTIONS]).order('created_at', { ascending: false }).limit(50);
+      if (empresaId) q = q.contains('dados_novos', { empresa_id: empresaId });
+      const { data: list, error: listError } = await q;
+      if (listError) return createErrorResponse('Falha ao listar backups', 500, 'AUDIT_ERROR', undefined, req);
       return new Response(JSON.stringify({ ok: true, backups: list ?? [] }), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -121,7 +127,7 @@ serve(async (req: Request): Promise<Response> => {
 
     // action === 'run' — executa backup escopado por empresa (obrigatório)
     if (!empresaId) {
-      return createErrorResponse('empresaId é obrigatório para executar backup', 422, 'VALIDATION_ERROR');
+      return createErrorResponse('empresaId é obrigatório para executar backup', 422, 'VALIDATION_ERROR', undefined, req);
     }
 
     const snapshot: Record<string, unknown> = {};
@@ -144,7 +150,7 @@ serve(async (req: Request): Promise<Response> => {
             table,
             code: error.code,
           });
-          return createErrorResponse(error.publicMessage, error.httpStatus, error.code);
+          return createErrorResponse(error.publicMessage, error.httpStatus, error.code, undefined, req);
         }
         throw error;
       }
@@ -179,7 +185,7 @@ serve(async (req: Request): Promise<Response> => {
         });
       if (upErr && !/already exists/i.test(upErr.message)) {
         await captureException(upErr, { function: 'backup-automatico', empresaId });
-        return createErrorResponse('Falha ao gravar backup', 500, 'STORAGE_ERROR');
+        return createErrorResponse('Falha ao gravar backup', 500, 'STORAGE_ERROR', undefined, req);
       }
 
       // Verificação de integridade: re-download e compara hash
@@ -193,11 +199,11 @@ serve(async (req: Request): Promise<Response> => {
         integrityVerified = verifyHash === payloadHash;
         if (!integrityVerified) {
           await captureException(new Error('Backup integrity mismatch'), { path, expected: payloadHash, got: verifyHash });
-          return createErrorResponse('Falha de integridade no backup', 500, 'INTEGRITY_ERROR');
+          return createErrorResponse('Falha de integridade no backup', 500, 'INTEGRITY_ERROR', undefined, req);
         }
       } catch (verifyErr) {
         await captureException(verifyErr, { function: 'backup-automatico:verify', path });
-        return createErrorResponse('Falha ao verificar integridade do backup', 500, 'INTEGRITY_ERROR');
+        return createErrorResponse('Falha ao verificar integridade do backup', 500, 'INTEGRITY_ERROR', undefined, req);
       }
 
       const { data: signed } = await admin.storage
@@ -208,12 +214,13 @@ serve(async (req: Request): Promise<Response> => {
 
     // 7) Audit log com hash de integridade
     const { error: auditErr } = await admin.from('audit_log').insert({
+      tabela: 'backups',
+      registro_id: empresaId,
       user_id: user.id,
-      empresa_id: empresaId,
-      acao: 'BACKUP_RUN',
-      entidade: 'backup',
+      acao: 'BACKUP_CREATED',
       dados_novos: {
-        path, counts, tables: targetTables, destino,
+        evento: 'BACKUP_RUN',
+        empresa_id: empresaId, path, counts, tables: targetTables, destino,
         sha256: payloadHash, bytes: bytesSize, integrity_verified: integrityVerified,
       },
     });
@@ -235,6 +242,6 @@ serve(async (req: Request): Promise<Response> => {
     });
   } catch (err) {
     await captureException(err, { function: 'backup-automatico' });
-    return createErrorResponse('Erro interno no backup', 500, 'INTERNAL_SERVER_ERROR');
+    return createErrorResponse('Erro interno no backup', 500, 'INTERNAL_SERVER_ERROR', undefined, req);
   }
 });

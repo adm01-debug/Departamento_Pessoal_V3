@@ -7,7 +7,7 @@ export const pontoAuditService = {
       registro_id: registroId,
       acao: 'UPDATE',
       dados_anteriores: dadosAnteriores,
-      dados_novos: dadosNovos
+      dados_novos: dadosNovos,
     });
   },
 
@@ -16,7 +16,7 @@ export const pontoAuditService = {
       tabela: 'batidas_ponto',
       registro_id: registroId,
       acao: 'DELETE',
-      dados_anteriores: dadosAnteriores
+      dados_anteriores: dadosAnteriores,
     });
   },
 
@@ -25,7 +25,8 @@ export const pontoAuditService = {
       tabela: 'registros_ponto',
       registro_id: empresaId,
       acao: 'EXECUTE_CALC',
-      dados_novos: { action: acao, ...detalhes }
+      empresa_id: empresaId,
+      dados_novos: { action: acao, ...detalhes },
     });
-  }
+  },
 };

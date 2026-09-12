@@ -22,6 +22,10 @@ vi.mock('@/components/ui/badge', () => ({
   Badge: ({ children }: any) => <span>{children}</span>,
 }));
 
+vi.mock('@/hooks/useEmpresas', () => ({
+  useEmpresas: () => ({ empresaAtual: { id: 'empresa-001' } }),
+}));
+
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: vi.fn(() => ({
@@ -77,6 +81,14 @@ describe('PerformanceAuditTimeline', () => {
     vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false } as any);
     render(<PerformanceAuditTimeline />);
     expect(screen.getByText(/Nenhum registro de auditoria/i)).toBeInTheDocument();
+  });
+
+  it('distinguishes a query failure from an empty audit trail', async () => {
+    const { useQuery } = await import('@tanstack/react-query');
+    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false, error: new Error('denied') } as any);
+    render(<PerformanceAuditTimeline />);
+    expect(screen.getByRole('alert')).toHaveTextContent(/Não foi possível carregar/);
+    expect(screen.queryByText(/Nenhum registro de auditoria/i)).not.toBeInTheDocument();
   });
 
   it('renders acao badge when logs exist', async () => {

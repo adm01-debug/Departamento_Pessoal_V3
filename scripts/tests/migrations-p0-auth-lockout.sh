@@ -39,15 +39,7 @@ expect_failure() {
 echo "Starting disposable $IMAGE database: $NAME"
 docker run -d --name "$NAME" -e POSTGRES_PASSWORD=test "$IMAGE" >/dev/null
 
-ready=0
-for _ in $(seq 1 60); do
-  if docker exec "$NAME" pg_isready -h 127.0.0.1 -U postgres >/dev/null 2>&1; then
-    ready=1
-    break
-  fi
-  sleep 1
-done
-[ "$ready" = "1" ] || { docker logs "$NAME" >&2; exit 1; }
+bash "$REPO_ROOT/scripts/tests/wait-for-postgres-container.sh" "$NAME"
 
 docker cp "$MIGRATION" "$NAME":/tmp/p0-auth.sql
 

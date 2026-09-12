@@ -38,7 +38,7 @@ serve(async (req) => {
   const rlClient = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
   const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
   const rl = await checkRateLimit(rlClient, { key: `consultarCEP:${userData.user.id}`, limit: 30, windowSec: 60 });
-  if (!rl.allowed) return rateLimitResponse(rl);
+  if (!rl.allowed) return rateLimitResponse(rl, req);
 
   const { data, errorResponse } = await validateRequest(req, cepSchema);
   if (errorResponse) return errorResponse;

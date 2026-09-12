@@ -31,7 +31,56 @@ export interface AuditoriaRegistro {
   created_at: string;
 }
 
+export interface TrilhaAuditoriaFiltros {
+  /** NULL is accepted only for the global administrator feed. */
+  empresa_id: string | null;
+  tabela?: string;
+  tabelas?: string[];
+  registro_id?: string;
+  limite?: number;
+  antes_de?: string;
+}
+
+export interface TrilhaAuditoriaRegistro {
+  id: string;
+  created_at: string;
+  tabela: string | null;
+  registro_id: string | null;
+  acao: string | null;
+  user_id: string | null;
+  user_email: string | null;
+  user_nome: string | null;
+  status_anterior: string | null;
+  status_novo: string | null;
+  empresa_id: string | null;
+  dados_anteriores: Record<string, unknown> | null;
+  dados_novos: Record<string, unknown> | null;
+  campos_alterados: string[] | null;
+}
+
 export const auditoriaService = {
+  async listarTrilha(filtros: TrilhaAuditoriaFiltros): Promise<TrilhaAuditoriaRegistro[]> {
+    const limite = filtros.limite ?? 100;
+    if (!Number.isInteger(limite) || limite < 1 || limite > 500) {
+      throw new Error('limite da trilha deve estar entre 1 e 500');
+    }
+    if (filtros.tabela && filtros.tabelas) {
+      throw new Error('use tabela ou tabelas, não ambos');
+    }
+
+    const { data, error } = await supabase.rpc('get_audit_trail', {
+      p_empresa_id: filtros.empresa_id,
+      p_limit: limite,
+      p_before: filtros.antes_de ?? new Date().toISOString(),
+      p_tabela: filtros.tabela ?? null,
+      p_registro_id: filtros.registro_id ?? null,
+      p_tabelas: filtros.tabelas ?? null,
+    });
+
+    if (error) throw error;
+    return (data as unknown as TrilhaAuditoriaRegistro[]) || [];
+  },
+
   async listar(empresaId: string, filtros?: AuditoriaFiltros): Promise<AuditoriaRegistro[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório');
 
@@ -71,8 +120,29 @@ export const auditoriaService = {
       console.error('[auditoriaService] falha ao registrar auditoria', error.message);
     }
   },
-};
 
+  async registrarEvento(params: {
+    tabela: string;
+    registro_id: string;
+    acao: 'INSERT' | 'UPDATE' | 'DELETE' | 'VISUALIZACAO' | 'EXPORT' | 'EXECUTE_CALC' | 'SIGN';
+    dados_anteriores?: Json;
+    dados_novos?: Json;
+    empresa_id?: string;
+  }): Promise<void> {
+    const { error } = await supabase.rpc('registrar_auditoria', {
+      p_tabela: params.tabela,
+      p_registro_id: params.registro_id,
+      p_acao: params.acao,
+      p_dados_anteriores: params.dados_anteriores ?? null,
+      p_dados_novos: params.dados_novos ?? null,
+      p_empresa_id: params.empresa_id ?? null,
+    });
+
+    if (error) {
+      console.error('[auditoriaService] falha ao registrar evento', error.message);
+    }
+  },
+};
 
 export const notificacaoService = {
   async listar(userId: string) {
@@ -94,7 +164,11 @@ export const notificacaoService = {
   },
   async marcarTodasComoLidas(userId: string) {
     if (!userId) throw new Error('user_id obrigatório');
-    const { error } = await supabase.from('notificacoes').update({ lida: true }).eq('user_id', userId).eq('lida', false);
+    const { error } = await supabase
+      .from('notificacoes')
+      .update({ lida: true })
+      .eq('user_id', userId)
+      .eq('lida', false);
     if (error) throw error;
   },
 };

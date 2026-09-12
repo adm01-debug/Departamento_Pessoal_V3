@@ -46,15 +46,7 @@ expect_failure() {
 echo "Starting disposable $IMAGE database: $NAME"
 docker run -d --name "$NAME" -e POSTGRES_PASSWORD=test "$IMAGE" >/dev/null
 
-ready=0
-for _ in $(seq 1 60); do
-  if docker exec "$NAME" pg_isready -h 127.0.0.1 -U postgres >/dev/null 2>&1; then
-    ready=1
-    break
-  fi
-  sleep 1
-done
-[ "$ready" = "1" ] || { docker logs "$NAME" >&2; exit 1; }
+bash "$REPO_ROOT/scripts/tests/wait-for-postgres-container.sh" "$NAME"
 
 docker cp "$MIGRATION" "$NAME":/tmp/p0-rate-limit.sql
 
@@ -88,15 +80,19 @@ third="$(run_psql -qAtc "SET ROLE service_role; SELECT public.edge_rate_limit_ch
 [ "$first" = "true" ] && [ "$second" = "true" ] && [ "$third" = "false" ] || {
   echo "sequential limit contract failed: $first/$second/$third" >&2; exit 1;
 }
+reset_at="$(run_psql -qAtc "SET ROLE service_role; SELECT public.edge_rate_limit_check('serial', 2, 60, 1001)->>'reset';")"
+[ "$reset_at" = "1060" ] || { echo "rate-limit reset timestamp is wrong: $reset_at" >&2; exit 1; }
 
 # Twenty independent transactions race on the same key. The advisory lock must
 # allow exactly three requests, never N+1.
+pids=()
 for i in $(seq 1 20); do
   docker exec "$NAME" psql -X -qAt -U postgres -v ON_ERROR_STOP=1 -c \
     "SET ROLE service_role; SELECT public.edge_rate_limit_check('concurrent', 3, 60, 2000)->>'allowed';" \
     >"$RESULT_DIR/$i" &
+  pids+=("$!")
 done
-wait
+for pid in "${pids[@]}"; do wait "$pid" || { echo "concurrent rate-limit process failed" >&2; exit 1; }; done
 allowed_count="$(grep -h '^true$' "$RESULT_DIR"/* | wc -l | tr -d ' ')"
 [ "$allowed_count" = "3" ] || { echo "concurrent limiter allowed $allowed_count requests, expected 3" >&2; exit 1; }
 

@@ -7175,6 +7175,7 @@ export type Database = {
       }
       empresas: {
         Row: {
+          aliquota_encargos_folha: number | null
           aliquota_simples: number | null
           ativa: boolean | null
           bairro: string | null
@@ -7197,6 +7198,7 @@ export type Database = {
           rat: number | null
           razao_social: string
           regime_tributario: Database["public"]["Enums"]["regime_tributario"]
+          simples_anexo: string | null
           telefone: string | null
           terceiros: number | null
           uf: string | null
@@ -7213,6 +7215,7 @@ export type Database = {
           cor_identificacao?: string | null
           created_at?: string
           email?: string | null
+          aliquota_encargos_folha?: number | null
           fap?: number | null
           id?: string
           inscricao_estadual?: string | null
@@ -7225,6 +7228,7 @@ export type Database = {
           rat?: number | null
           razao_social: string
           regime_tributario?: Database["public"]["Enums"]["regime_tributario"]
+          simples_anexo?: string | null
           telefone?: string | null
           terceiros?: number | null
           uf?: string | null
@@ -7241,6 +7245,7 @@ export type Database = {
           cor_identificacao?: string | null
           created_at?: string
           email?: string | null
+          aliquota_encargos_folha?: number | null
           fap?: number | null
           id?: string
           inscricao_estadual?: string | null
@@ -7253,6 +7258,7 @@ export type Database = {
           rat?: number | null
           razao_social?: string
           regime_tributario?: Database["public"]["Enums"]["regime_tributario"]
+          simples_anexo?: string | null
           telefone?: string | null
           terceiros?: number | null
           uf?: string | null
@@ -7818,6 +7824,7 @@ export type Database = {
       }
       esocial_eventos: {
         Row: {
+          admissao_id: string | null
           assinatura_xml: string | null
           competencia: string | null
           created_at: string
@@ -7836,12 +7843,15 @@ export type Database = {
           status: string | null
           tentativas_envio: number | null
           tipo_evento: string
+          transmission_claim_token: string | null
+          transmission_claimed_at: string | null
           updated_at: string
           xml: string | null
           xml_envio: string | null
           xml_retorno: string | null
         }
         Insert: {
+          admissao_id?: string | null
           assinatura_xml?: string | null
           competencia?: string | null
           created_at?: string
@@ -7860,12 +7870,15 @@ export type Database = {
           status?: string | null
           tentativas_envio?: number | null
           tipo_evento: string
+          transmission_claim_token?: string | null
+          transmission_claimed_at?: string | null
           updated_at?: string
           xml?: string | null
           xml_envio?: string | null
           xml_retorno?: string | null
         }
         Update: {
+          admissao_id?: string | null
           assinatura_xml?: string | null
           competencia?: string | null
           created_at?: string
@@ -7884,12 +7897,21 @@ export type Database = {
           status?: string | null
           tentativas_envio?: number | null
           tipo_evento?: string
+          transmission_claim_token?: string | null
+          transmission_claimed_at?: string | null
           updated_at?: string
           xml?: string | null
           xml_envio?: string | null
           xml_retorno?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "esocial_eventos_admissao_id_fkey"
+            columns: ["admissao_id"]
+            isOneToOne: false
+            referencedRelation: "admissoes"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "esocial_eventos_empresa_id_fkey"
             columns: ["empresa_id"]
@@ -15906,6 +15928,7 @@ export type Database = {
           id: string
           valor_13_salario: number | null
           valor_ferias: number | null
+          valor_total: number
         }
         Insert: {
           colaborador_id: string
@@ -15916,6 +15939,7 @@ export type Database = {
           id?: string
           valor_13_salario?: number | null
           valor_ferias?: number | null
+          valor_total?: number
         }
         Update: {
           colaborador_id?: string
@@ -15926,6 +15950,7 @@ export type Database = {
           id?: string
           valor_13_salario?: number | null
           valor_ferias?: number | null
+          valor_total?: number
         }
         Relationships: [
           {
@@ -16089,6 +16114,7 @@ export type Database = {
           created_at: string
           duration_ms: number
           error_message: string | null
+          empresa_id: string | null
           id: string
           operation: string
           query_limit: number | null
@@ -16097,6 +16123,7 @@ export type Database = {
           rpc_name: string | null
           severity: string
           table_name: string | null
+          trace_id: string | null
           user_id: string | null
         }
         Insert: {
@@ -16104,6 +16131,7 @@ export type Database = {
           created_at?: string
           duration_ms?: number
           error_message?: string | null
+          empresa_id?: string | null
           id?: string
           operation: string
           query_limit?: number | null
@@ -16112,6 +16140,7 @@ export type Database = {
           rpc_name?: string | null
           severity?: string
           table_name?: string | null
+          trace_id?: string | null
           user_id?: string | null
         }
         Update: {
@@ -16119,6 +16148,7 @@ export type Database = {
           created_at?: string
           duration_ms?: number
           error_message?: string | null
+          empresa_id?: string | null
           id?: string
           operation?: string
           query_limit?: number | null
@@ -16127,6 +16157,7 @@ export type Database = {
           rpc_name?: string | null
           severity?: string
           table_name?: string | null
+          trace_id?: string | null
           user_id?: string | null
         }
         Relationships: []
@@ -16694,11 +16725,81 @@ export type Database = {
         }
         Relationships: []
       }
+      report_dispatch_attempts: {
+        Row: {
+          accepted_at: string | null
+          agendamento_id: string
+          content_sha256: string
+          created_at: string
+          dispatch_key_hash: string
+          empresa_id: string
+          html: string
+          id: string
+          provider_message_id: string | null
+          request_hash: string
+          signed_url: string
+          signed_url_expires_at: string
+          status: string
+          storage_path: string
+          subject: string
+          total_registros: number
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          agendamento_id: string
+          content_sha256: string
+          created_at?: string
+          dispatch_key_hash: string
+          empresa_id: string
+          html: string
+          id?: string
+          provider_message_id?: string | null
+          request_hash: string
+          signed_url: string
+          signed_url_expires_at: string
+          status?: string
+          storage_path: string
+          subject: string
+          total_registros: number
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          agendamento_id?: string
+          content_sha256?: string
+          created_at?: string
+          dispatch_key_hash?: string
+          empresa_id?: string
+          html?: string
+          id?: string
+          provider_message_id?: string | null
+          request_hash?: string
+          signed_url?: string
+          signed_url_expires_at?: string
+          status?: string
+          storage_path?: string
+          subject?: string
+          total_registros?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_dispatch_attempts_agendamento_id_fkey"
+            columns: ["agendamento_id"]
+            isOneToOne: false
+            referencedRelation: "relatorios_agendados"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       relatorios_agendados: {
         Row: {
           ativo: boolean | null
           created_at: string
           created_by: string | null
+          dispatch_claim_token: string | null
+          dispatch_claimed_at: string | null
           dia_mes: number | null
           dia_semana: number | null
           email_destinatario: string
@@ -16718,6 +16819,8 @@ export type Database = {
           ativo?: boolean | null
           created_at?: string
           created_by?: string | null
+          dispatch_claim_token?: string | null
+          dispatch_claimed_at?: string | null
           dia_mes?: number | null
           dia_semana?: number | null
           email_destinatario: string
@@ -16737,6 +16840,8 @@ export type Database = {
           ativo?: boolean | null
           created_at?: string
           created_by?: string | null
+          dispatch_claim_token?: string | null
+          dispatch_claimed_at?: string | null
           dia_mes?: number | null
           dia_semana?: number | null
           email_destinatario?: string
@@ -21003,6 +21108,26 @@ export type Database = {
           },
         ]
       }
+      mv_telemetry_dashboard: {
+        Row: {
+          avg_ms: number | null
+          empresa_id: string | null
+          error_count: number | null
+          hour: string | null
+          max_ms: number | null
+          min_ms: number | null
+          operation: string | null
+          p50_ms: number | null
+          p75_ms: number | null
+          p90_ms: number | null
+          p95_ms: number | null
+          p99_ms: number | null
+          query_count: number | null
+          severity: string | null
+          table_name: string | null
+        }
+        Relationships: []
+      }
       pontos_abertos: {
         Row: {
           colaborador_id: string | null
@@ -21591,6 +21716,32 @@ export type Database = {
           snapshot_at: string | null
           tables_total: number | null
           tables_with_rls: number | null
+        }
+        Relationships: []
+      }
+      v_telemetry_last_hour: {
+        Row: {
+          avg_ms: number | null
+          empresa_id: string | null
+          error_count: number | null
+          max_ms: number | null
+          operation: string | null
+          query_count: number | null
+          severity: string | null
+          table_name: string | null
+        }
+        Relationships: []
+      }
+      v_telemetry_slow_queries: {
+        Row: {
+          created_at: string | null
+          duration_ms: number | null
+          empresa_id: string | null
+          id: string | null
+          operation: string | null
+          severity: string | null
+          table_name: string | null
+          user_id: string | null
         }
         Relationships: []
       }
@@ -22513,6 +22664,29 @@ export type Database = {
           remaining_seconds: number
         }[]
       }
+      claim_due_report_schedules: {
+        Args: { p_limit?: number; p_now: string }
+        Returns: Database["public"]["Tables"]["relatorios_agendados"]["Row"][]
+      }
+      claim_admission_esocial_event: {
+        Args: { p_admissao_id: string; p_empresa_id: string }
+        Returns: Json
+      }
+      complete_admission_esocial_event: {
+        Args: {
+          p_admissao_id: string
+          p_empresa_id: string
+          p_evento_id: string
+          p_claim_token: string
+          p_protocolo: string
+          p_recibo?: string
+        }
+        Returns: undefined
+      }
+      fail_admission_esocial_event: {
+        Args: { p_admissao_id: string; p_empresa_id: string; p_evento_id: string; p_claim_token: string }
+        Returns: Json
+      }
       check_rate_limit: {
         Args: {
           check_endpoint: string
@@ -22662,6 +22836,10 @@ export type Database = {
         }
         Returns: Json
       }
+      finish_report_schedule_claim: {
+        Args: { p_claim_token: string; p_next?: string; p_schedule_id: string }
+        Returns: boolean
+      }
       eh_dia_valido_inicio_ferias: {
         Args: { p_data: string; p_empresa_id: string }
         Returns: {
@@ -22727,6 +22905,32 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_audit_trail: {
+        Args: {
+          p_before?: string
+          p_empresa_id?: string
+          p_limit?: number
+          p_registro_id?: string
+          p_tabela?: string
+          p_tabelas?: string[]
+        }
+        Returns: {
+          acao: string
+          campos_alterados: string[] | null
+          created_at: string
+          dados_anteriores: Json | null
+          dados_novos: Json | null
+          empresa_id: string | null
+          id: string
+          registro_id: string
+          status_anterior: string | null
+          status_novo: string | null
+          tabela: string
+          user_email: string | null
+          user_id: string | null
+          user_nome: string | null
+        }[]
+      }
       get_audit_trail_by_user: {
         Args: { _limit?: number; _user_id: string }
         Returns: {
@@ -22757,6 +22961,10 @@ export type Database = {
           runs_24h: number
           schedule: string
         }[]
+      }
+      get_company_rh_recipient_emails: {
+        Args: { p_empresa_id: string; p_limit?: number }
+        Returns: { email: string; user_id: string }[]
       }
       get_dlq_stats: {
         Args: never
@@ -23214,6 +23422,20 @@ export type Database = {
         Returns: boolean
       }
       process_lgpd_cleanup_queue: { Args: never; Returns: number }
+      replace_monthly_provisions: {
+        Args: {
+          p_audit_data: Json
+          p_competencia: string
+          p_empresa_id: string
+          p_rows: Json
+          p_user_id: string
+        }
+        Returns: number
+      }
+      report_destination_is_allowed: {
+        Args: { p_email: string; p_empresa_id: string }
+        Returns: boolean
+      }
       processar_ajuste_aprovado: {
         Args: { p_solicitacao_id: string }
         Returns: undefined

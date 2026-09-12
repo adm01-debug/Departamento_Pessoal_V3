@@ -3,12 +3,14 @@ export type ReportSchedule = {
   hora_envio: string;
   dia_semana?: number | null;
   dia_mes?: number | null;
+  proximo_envio?: string | Date | null;
 };
 
 export type ScheduleResult = { status: "processado" | "skipped" | "erro" };
 
 const BUSINESS_TIME_ZONE = "America/Sao_Paulo";
 const DUE_WINDOW_MS = 30 * 60 * 1000;
+const MAX_CATCH_UP_DELAY_MS = 24 * 60 * 60 * 1000;
 
 type LocalParts = { year: number; month: number; day: number; hour: number; minute: number };
 
@@ -73,14 +75,52 @@ function isCalendarDay(schedule: ReportSchedule, current: LocalParts): boolean {
   }
 }
 
-/** Returns true only after the scheduled instant and during its 30-minute window. */
-export function shouldRunSchedule(schedule: ReportSchedule, now: Date): boolean {
+/** Returns the deterministic occurrence inside the active 30-minute window. */
+export function scheduleOccurrenceInWindow(schedule: ReportSchedule, now: Date): Date | null {
   const current = localParts(now);
   const time = parseTime(schedule.hora_envio);
-  if (!time || !isCalendarDay(schedule, current)) return false;
-  const scheduledAt = asBusinessInstant({ ...current, ...time });
-  const elapsed = now.getTime() - scheduledAt.getTime();
-  return elapsed >= 0 && elapsed < DUE_WINDOW_MS;
+  if (!time) return null;
+
+  // A janela pode atravessar a meia-noite (ex.: 23:50 → 00:20). Avaliar só
+  // o dia civil atual perde a execução diária e também a semanal/mensal do
+  // dia anterior. As duas ocorrências possíveis são atual e D-1; nenhuma
+  // ocorrência mais antiga cabe numa janela de 30 minutos.
+  for (const candidate of [current, addDays(current, -1)]) {
+    if (!isCalendarDay(schedule, candidate)) continue;
+    const scheduledAt = asBusinessInstant({ ...candidate, ...time });
+    const elapsed = now.getTime() - scheduledAt.getTime();
+    if (elapsed >= 0 && elapsed < DUE_WINDOW_MS) return scheduledAt;
+  }
+  return null;
+}
+
+/** Returns true only after the scheduled instant and during its 30-minute window. */
+export function shouldRunSchedule(schedule: ReportSchedule, now: Date): boolean {
+  return scheduleOccurrenceInWindow(schedule, now) !== null;
+}
+
+/**
+ * Resolves the occurrence owned by a database claim.
+ *
+ * `proximo_envio` is the durable cursor and therefore wins over a recomputed
+ * calendar window. This permits bounded recovery after a scheduler outage.
+ * Very old cursors are deliberately not delivered: the caller advances them
+ * and records a skipped occurrence instead of sending stale payroll data.
+ */
+export function claimedScheduleOccurrence(
+  schedule: ReportSchedule,
+  now: Date,
+  maxCatchUpDelayMs = MAX_CATCH_UP_DELAY_MS,
+): Date | null {
+  if (schedule.proximo_envio) {
+    const due = schedule.proximo_envio instanceof Date
+      ? schedule.proximo_envio
+      : new Date(schedule.proximo_envio);
+    const delay = now.getTime() - due.getTime();
+    if (!Number.isFinite(due.getTime()) || delay < 0) return null;
+    return delay <= maxCatchUpDelayMs ? due : null;
+  }
+  return scheduleOccurrenceInWindow(schedule, now);
 }
 
 /** Computes the next occurrence, clamping day 29–31 to the month's final day. */
@@ -90,20 +130,31 @@ export function nextScheduleOccurrence(schedule: ReportSchedule, now: Date): Dat
   if (!time) throw new Error("hora_envio inválida");
   let target = { ...current, ...time };
   switch (schedule.frequencia) {
-    case "diario":
-      target = { ...addDays(target, 1), ...time };
+    case "diario": {
+      if (asBusinessInstant(target).getTime() <= now.getTime()) {
+        target = { ...addDays(target, 1), ...time };
+      }
       break;
+    }
     case "semanal": {
       if (!Number.isInteger(schedule.dia_semana) || schedule.dia_semana! < 0 || schedule.dia_semana! > 6) throw new Error("dia_semana inválido");
-      const days = (schedule.dia_semana! - weekday(current.year, current.month, current.day) + 7) % 7 || 7;
+      let days = (schedule.dia_semana! - weekday(current.year, current.month, current.day) + 7) % 7;
+      if (days === 0 && asBusinessInstant(target).getTime() <= now.getTime()) days = 7;
       target = { ...addDays(target, days), ...time };
       break;
     }
     case "mensal": {
       if (!Number.isInteger(schedule.dia_mes) || schedule.dia_mes! < 1 || schedule.dia_mes! > 31) throw new Error("dia_mes inválido");
-      const nextMonth = current.month === 12 ? 1 : current.month + 1;
-      const nextYear = current.month === 12 ? current.year + 1 : current.year;
-      target = { year: nextYear, month: nextMonth, day: Math.min(schedule.dia_mes!, daysInMonth(nextYear, nextMonth)), ...time };
+      target = {
+        ...current,
+        day: Math.min(schedule.dia_mes!, daysInMonth(current.year, current.month)),
+        ...time,
+      };
+      if (asBusinessInstant(target).getTime() <= now.getTime()) {
+        const nextMonth = current.month === 12 ? 1 : current.month + 1;
+        const nextYear = current.month === 12 ? current.year + 1 : current.year;
+        target = { year: nextYear, month: nextMonth, day: Math.min(schedule.dia_mes!, daysInMonth(nextYear, nextMonth)), ...time };
+      }
       break;
     }
   }

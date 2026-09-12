@@ -14,8 +14,12 @@ import {
   TABLE_DENYLIST, TENANT_SCOPED_TABLES, ADMIN_ONLY_WRITE_TABLES, RPC_ALLOWLIST, FILTER_OPS, NOT_EXTRA_OPS,
 } from "./validation.ts";
 import { BodySchema, toUpsertOptions } from "./request-schema.ts";
-import { extractTenantWriteScope, hasCompleteTenantWriteScope } from './tenantScope.ts';
-import { requiresAuthenticatedBridgeSession, requiresCallerScopedExternalClient } from './access.ts';
+import { extractTenantWriteScope, hasCompleteTenantWriteScope, preservesTenantOnUpdate } from './tenantScope.ts';
+import {
+  requiresAuthenticatedBridgeSession,
+  requiresCallerScopedExternalClient,
+  resolveExternalPublicKey,
+} from './access.ts';
 
 // -------------------- Headers --------------------
 const NO_STORE = { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" };
@@ -52,6 +56,7 @@ interface TelemetryMeta {
   status: "ok" | "error" | "slow" | "very_slow";
   error?: string;
   userId?: string | null;
+  empresaId?: string | null;
   traceId?: string | null; // P3-064: correlação distribuída
 }
 function classifySeverity(durationMs: number, hasError: boolean): TelemetryMeta["status"] {
@@ -80,6 +85,7 @@ type TelemetryRow = {
   severity: string;
   error_message: string | null;
   user_id: string | null;
+  empresa_id: string | null;
   trace_id: string | null; // P3-064: correlação distribuída
 };
 const TELEMETRY_MAX_BATCH = 25;
@@ -169,6 +175,7 @@ function emitTelemetry(meta: TelemetryMeta) {
     severity: meta.status,
     error_message: meta.error || null,
     user_id: meta.userId || null,
+    empresa_id: meta.empresaId || null,
     trace_id: meta.traceId || null, // P3-064
   };
 
@@ -385,6 +392,27 @@ Deno.serve(async (req) => {
   const filters = (body.filters ?? [])
     .map((f) => ({ ...f, value: sanitizeData(f.value) }))
     .filter((f) => f.op === "or" || (f.value !== null && f.value !== undefined && f.value !== "" && f.value !== "all"));
+  // Telemetria empresarial só é atribuída quando o tenant é inequívoco.
+  // Ausência/ambiguidade permanece NULL e nunca entra em KPIs por empresa.
+  let telemetryEmpresaId = (() => {
+    const candidates = new Set<string>();
+    const add = (value: unknown) => {
+      if (
+        typeof value === 'string' &&
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value)
+      ) candidates.add(value);
+    };
+    for (const filter of filters) {
+      if (filter.op === 'eq' && filter.column === (table === 'empresas' ? 'id' : 'empresa_id')) add(filter.value);
+    }
+    for (const row of Array.isArray(data) ? data : data ? [data] : []) {
+      add(table === 'empresas' ? row.id : row.empresa_id);
+    }
+    add(rpcArgs?.p_empresa_id);
+    add(rpcArgs?.empresa_id);
+    add(rpcArgs?._empresa_id);
+    return candidates.size === 1 ? [...candidates][0] : null;
+  })();
 
   // Generic reads, writes and protected RPCs require a verified user session.
   const isWrite = action === "insert" || action === "update" || action === "delete" || action === "upsert";
@@ -405,7 +433,7 @@ Deno.serve(async (req) => {
     const rlKey = isWrite ? `bridge-write:${rlIdentity}` : `bridge-read:${rlIdentity}`;
     const rlLimit = isWrite ? 30 : (user ? 100 : 20);
     const rl = await checkRateLimit(rlClient as any, { key: rlKey, limit: rlLimit, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
   }
 
   // Validação: table obrigatório para non-rpc + regex + denylist
@@ -459,7 +487,22 @@ Deno.serve(async (req) => {
   if (!externalUrl || !externalKey) {
     return jsonError(500, "NOT_CONFIGURED", "External database not configured");
   }
-  const externalClient = createClient(externalUrl, externalKey, { global: { fetch: timeoutFetch } });
+  const sameProject = (() => {
+    try {
+      return new URL(externalUrl).origin === new URL(supabaseUrl).origin;
+    } catch {
+      return false;
+    }
+  })();
+  const publicKey = resolveExternalPublicKey({
+    configuredPublicKey: Deno.env.get('EXTERNAL_DB_PUBLISHABLE_KEY'),
+    externalKey,
+    incomingApiKey: req.headers.get('apikey'),
+    sameProject,
+  });
+  const externalPublicClient = publicKey
+    ? createClient(externalUrl, publicKey, { global: { fetch: timeoutFetch } })
+    : null;
   // Every generic action executes with the caller JWT. `EXTERNAL_DB_KEY` can
   // be privileged; using it for a mutation would bypass external RLS and
   // role-based policies even after the bridge's local tenant check succeeds.
@@ -469,11 +512,13 @@ Deno.serve(async (req) => {
     : null;
   const externalDataClient = requiresCallerScopedExternalClient(action, rpcName)
     ? externalUserClient
-    : externalClient;
+    : externalPublicClient;
   if (!externalDataClient) {
     // This is defensive redundancy for the authentication gate above. Do not
     // ever fall back to EXTERNAL_DB_KEY for an authenticated generic action.
-    return jsonError(401, "UNAUTHORIZED", "Authentication required for this operation");
+    return requiresAuthenticatedBridgeSession(action, rpcName)
+      ? jsonError(401, "UNAUTHORIZED", "Authentication required for this operation")
+      : jsonError(503, "PUBLIC_DB_KEY_UNAVAILABLE", "Public database access is not configured safely");
   }
 
   // Cliente local (para verificação de tenant scope via RPC has_role/user_belongs_to_empresa)
@@ -504,6 +549,13 @@ Deno.serve(async (req) => {
         );
       }
       empresaIds = lookup.empresaIds;
+      if (action === 'update' && !preservesTenantOnUpdate(table, data, empresaIds)) {
+        return jsonError(
+          403,
+          'TENANT_REASSIGNMENT_DENIED',
+          `Generic updates may not reassign the tenant key of '${table}'`,
+        );
+      }
     } else {
       const tenantWriteScope = extractTenantWriteScope(table, data);
       if (!hasCompleteTenantWriteScope(tenantWriteScope)) {
@@ -523,6 +575,7 @@ Deno.serve(async (req) => {
     if (ADMIN_ONLY_WRITE_TABLES.has(table) && !scope.isAdmin) {
       return jsonError(403, "ADMIN_SCOPE_REQUIRED", `Administrative scope is required to write '${table}'`);
     }
+    if (!telemetryEmpresaId && empresaIds.size === 1) telemetryEmpresaId = [...empresaIds][0];
   }
 
   const selectColumns = columns || "*";
@@ -581,6 +634,7 @@ Deno.serve(async (req) => {
         operation: "select", table, limit: queryLimit, offset: queryOffset, countMode: queryCountMode,
         durationMs, status: classifySeverity(durationMs, !!error),
         recordCount: (selectData as unknown[] | null)?.length ?? 0, error: error?.message, userId: user?.id,
+        empresaId: telemetryEmpresaId,
         traceId, // P3-064
       });
       if (error) { console.error('[bridge] QUERY_ERROR:', error.message, error.hint); return jsonError(400, "QUERY_ERROR", "Falha na consulta"); }
@@ -596,7 +650,7 @@ Deno.serve(async (req) => {
       const insertData = (Array.isArray(data) ? data : [data]) as Record<string, unknown>[];
       const { data: r, error } = await externalDataClient.from(table!).insert(insertData).select();
       const durationMs = Math.round(performance.now() - t0);
-      emitTelemetry({ operation: "insert", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, traceId });
+      emitTelemetry({ operation: "insert", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, empresaId: telemetryEmpresaId, traceId });
       if (error) { console.error('[bridge] INSERT_ERROR:', error.message, error.hint); return jsonError(400, "INSERT_ERROR", "Falha na inserção"); }
       return jsonOk({ data: r, duration_ms: durationMs });
     }
@@ -610,7 +664,7 @@ Deno.serve(async (req) => {
         .upsert(upsertData, toUpsertOptions(body.onConflict))
         .select();
       const durationMs = Math.round(performance.now() - t0);
-      emitTelemetry({ operation: "upsert", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, traceId });
+      emitTelemetry({ operation: "upsert", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, empresaId: telemetryEmpresaId, traceId });
       if (error) { console.error('[bridge] UPSERT_ERROR:', error.message, error.hint); return jsonError(400, "UPSERT_ERROR", "Falha no upsert"); }
       return jsonOk({ data: r, duration_ms: durationMs });
     }
@@ -638,7 +692,7 @@ Deno.serve(async (req) => {
       }
       const { data: r, error } = await query.select();
       const durationMs = Math.round(performance.now() - t0);
-      emitTelemetry({ operation: "update", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, traceId });
+      emitTelemetry({ operation: "update", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, empresaId: telemetryEmpresaId, traceId });
       if (error) { console.error('[bridge] UPDATE_ERROR:', error.message, error.hint); return jsonError(400, "UPDATE_ERROR", "Falha na atualização"); }
       return jsonOk({ data: r, duration_ms: durationMs });
     }
@@ -665,7 +719,7 @@ Deno.serve(async (req) => {
       }
       const { data: r, error } = await query.select();
       const durationMs = Math.round(performance.now() - t0);
-      emitTelemetry({ operation: "delete", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, traceId });
+      emitTelemetry({ operation: "delete", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, empresaId: telemetryEmpresaId, traceId });
       if (error) { console.error('[bridge] DELETE_ERROR:', error.message, error.hint); return jsonError(400, "DELETE_ERROR", "Falha na exclusão"); }
       return jsonOk({ data: r, duration_ms: durationMs });
     }
@@ -685,6 +739,7 @@ Deno.serve(async (req) => {
         operation: "rpc", rpcName, durationMs, status: classifySeverity(durationMs, !!error),
         recordCount: Array.isArray(rpcData) ? rpcData.length : rpcData ? 1 : 0,
         error: error?.message, userId: user?.id,
+        empresaId: telemetryEmpresaId,
         traceId, // P3-064
       });
       // P1-017: log estruturado no servidor — details/hint/code sanitizados, NUNCA retornados ao cliente
