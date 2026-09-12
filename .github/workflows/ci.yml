@@ -110,6 +110,7 @@ jobs:
           node scripts/audit-security-config.mjs
           node scripts/validate-plan-50.mjs
           node scripts/audit-canonical-project.mjs
+          node scripts/tests/rebaseline-artifact.test.mjs
 
   p0-database-migrations:
     name: P0 database migration simulations

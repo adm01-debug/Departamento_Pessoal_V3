@@ -208,7 +208,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const message = typeof body.error === 'string' ? body.error : structuredError?.message;
         if (code === 'ACCOUNT_LOCKED' || res.status === 429) {
           const msg = message ?? 'Conta temporariamente bloqueada por excesso de tentativas.';
-          loggerService.warn('Login blocked - account locked or rate limited', { email, code });
+          loggerService.warn('Login blocked - account locked or rate limited', { code });
           throw new Error(msg);
         }
         throw new Error(message ?? 'Credenciais inválidas.');
@@ -233,7 +233,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw mfaErr;
       }
 
-      loggerService.info('User signed in', { email });
+      loggerService.info('User signed in');
 
       // P4-076: Pre-fetch dados críticos após login
       // - Não bloqueia a transição de página (fire-and-forget)
@@ -272,12 +272,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .then(() => loggerService.debug('Pre-fetch post-login concluído'))
         .catch((err) => {
           if (err instanceof Error && err.name === 'AbortError') return;
-          loggerService.warn('Pre-fetch post-login falhou (não bloqueia login)', { email });
+          loggerService.warn('Pre-fetch post-login falhou (não bloqueia login)');
         })
         .finally(() => window.clearTimeout(prefetchTimeout));
     } catch (e) {
       const err = e as AuthError | Error;
-      loggerService.warn('Sign in failed', { email, message: err.message });
+      loggerService.warn('Sign in failed', { reason: 'authentication_failed' });
       throw err;
     }
   }, []); // queryClient e supabase são singletons de módulo — deps estáveis, excluídas de propósito
@@ -325,7 +325,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error(`Senha fraca: ${pwCheck.errors.join('; ')}`);
     }
     if (pwCheck.warnings?.length) {
-      loggerService.warn('Password breach warning on signup', { email, warnings: pwCheck.warnings });
+      loggerService.warn('Password breach warning on signup', { warning_count: pwCheck.warnings.length });
     }
     try {
       const sanitizedName = sanitizePlainText(name.trim(), 100);
@@ -335,9 +335,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         options: { data: { name: sanitizedName } },
       });
       if (error) throw error;
-      loggerService.info('User signed up', { email });
+      loggerService.info('User signed up');
     } catch (e) {
-      loggerService.error('Sign up error', { email }, e as Error);
+      loggerService.error('Sign up error', {}, e as Error);
       throw e;
     }
   }, []);
@@ -348,9 +348,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         redirectTo: `${window.location.origin}/login`,
       });
       if (error) throw error;
-      loggerService.info('Password reset email sent', { email });
+      loggerService.info('Password reset email sent');
     } catch (e) {
-      loggerService.error('Password reset request error', { email }, e as Error);
+      loggerService.error('Password reset request error', {}, e as Error);
       throw e;
     }
   }, []);

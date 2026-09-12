@@ -80,15 +80,42 @@ describe('loggerService', () => {
     expect(mockFrom).not.toHaveBeenCalledWith('logs_sistema');
   });
 
-  it('should enrich context with url and user_agent', async () => {
-    await loggerService.error('Enriched error', { customKey: 'value' });
+  it('redacts PII, tokens and URL query strings before invoking the audit RPC', async () => {
+    await loggerService.error('Login for pessoa@example.com with token=top-secret', {
+      customKey: 'value',
+      email: 'pessoa@example.com',
+      password: 'senha-real',
+      cpf: '123.456.789-09',
+      userId: 'user-123',
+      callback_url: 'https://app.example.com/reset?token=top-secret#recovery',
+      nested: { access_token: 'eyJhbGciOiJIUzI1NiJ9.payload.signature' },
+    });
 
-    const callArg = mockRpc.mock.calls[0][1] as { p_contexto: Record<string, unknown> };
+    const callArg = mockRpc.mock.calls[0][1] as { p_mensagem: string; p_contexto: Record<string, unknown> };
     expect(callArg.p_contexto).toMatchObject({
       customKey: 'value',
-      url: expect.any(String),
-      user_agent: expect.any(String),
+      email: '[REDACTED]',
+      password: '[REDACTED]',
+      cpf: '[REDACTED]',
+      userId: '[REDACTED]',
+      callback_url: 'https://app.example.com/reset',
+      nested: { access_token: '[REDACTED]' },
     });
+    expect(callArg.p_contexto.url).toBe(`${window.location.origin}${window.location.pathname}`);
+    expect(callArg.p_contexto).not.toHaveProperty('user_agent');
+    expect(JSON.stringify(callArg)).not.toContain('pessoa@example.com');
+    expect(JSON.stringify(callArg)).not.toContain('top-secret');
+    expect(callArg.p_mensagem).toBe('Login for [REDACTED] with token=[REDACTED]');
+  });
+
+  it('handles circular context without losing the redaction boundary', async () => {
+    const circular: Record<string, unknown> = { email: 'pessoa@example.com' };
+    circular.self = circular;
+
+    await expect(loggerService.error('Circular context', circular)).resolves.toBeUndefined();
+
+    const callArg = mockRpc.mock.calls[0][1] as { p_contexto: Record<string, unknown> };
+    expect(callArg.p_contexto).toMatchObject({ email: '[REDACTED]', self: '[CIRCULAR]' });
   });
 
   it('keeps pre-auth logs local instead of calling a protected RPC', async () => {
