@@ -106,7 +106,9 @@ jobs:
             20260912201000_p1_internal_notification_recipients.sql \
             20260912202000_p1_pcs_contract.sql \
             20260912203000_p1_security_cron_contract.sql \
-            20260912204000_p1_admission_esocial_claim.sql
+            20260912204000_p1_admission_esocial_claim.sql \
+            20260912205000_p1_payroll_audit_read_contract.sql \
+            20260912206000_p1_audit_action_contract.sql
           do
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
           done
@@ -175,10 +177,24 @@ jobs:
                 WHERE attrelid='public.esocial_eventos'::regclass AND attname='admissao_id' AND NOT attisdropped),
             'contract_signature', to_regprocedure('public.contrato_assinar_por_token(text,text,text,inet,text)') IS NOT NULL
               AND to_regprocedure('public.contrato_assinar_por_token(text,text,text,inet,text,text,text)') IS NULL,
+            'payroll_audit_read', EXISTS (
+              SELECT 1 FROM pg_catalog.pg_class
+              WHERE oid='public.vw_folha_compliance'::regclass
+                AND COALESCE(reloptions, ARRAY[]::text[]) @> ARRAY['security_invoker=true']
+            ) AND pg_get_viewdef('public.vw_folha_compliance'::regclass, true) LIKE '%PAYROLL_CLOSE%'
+              AND NOT has_table_privilege('anon','public.vw_folha_compliance','SELECT'),
+            'audit_actions', (
+              SELECT convalidated
+                AND pg_get_constraintdef(oid) LIKE '%STATUS_CHANGE%'
+                AND pg_get_constraintdef(oid) LIKE '%VISUALIZACAO%'
+                AND pg_get_constraintdef(oid) LIKE '%SIGN%'
+              FROM pg_catalog.pg_constraint
+              WHERE conrelid='public.audit_log'::regclass AND conname='audit_log_acao_check'
+            ),
             'ledger_count', (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = ANY (ARRAY[
               '20260911194000','20260911200000','20260912190000','20260912191000','20260912192000',
               '20260912193000','20260912194000','20260912195000','20260912200000','20260912201000',
-              '20260912202000','20260912203000','20260912204000'
+              '20260912202000','20260912203000','20260912204000','20260912205000','20260912206000'
             ]))
           );
           SQL
@@ -186,7 +202,7 @@ jobs:
           echo "$result"
           node -e '
             const result = JSON.parse(process.argv[1]);
-            const expectedTrue = ["rate_limit","membership","authz","claims","provisions","destination","audit","recipients","backup_bucket","pcs_tables","pcs_functions","security_cron_functions","security_cron_jobs","admission_esocial","contract_signature"];
-            if (expectedTrue.some((key) => result[key] !== true) || Number(result.ledger_count) !== 13) process.exit(1);
+            const expectedTrue = ["rate_limit","membership","authz","claims","provisions","destination","audit","recipients","backup_bucket","pcs_tables","pcs_functions","security_cron_functions","security_cron_jobs","admission_esocial","contract_signature","payroll_audit_read","audit_actions"];
+            if (expectedTrue.some((key) => result[key] !== true) || Number(result.ledger_count) !== 15) process.exit(1);
           ' "$result"
           echo 'CANONICAL_SCOPED_MIGRATIONS_OK'

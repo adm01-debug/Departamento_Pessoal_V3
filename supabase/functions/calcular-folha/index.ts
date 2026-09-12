@@ -145,7 +145,7 @@ Deno.serve(async (req) => {
         await admin.from('audit_log').insert({
           tabela: 'idempotency_keys',
           registro_id: idem.existingId ?? idem.id ?? crypto.randomUUID(),
-        acao: idem.reason === 'REPLAY' ? 'IDEMPOTENCY_REPLAY' : 'IDEMPOTENCY_CONFLICT',
+          acao: idem.reason === 'REPLAY' ? 'IDEMPOTENCY_REPLAY' : 'IDEMPOTENCY_CONFLICT',
           user_id: userId,
           dados_novos: {
             endpoint: 'calcular-folha',

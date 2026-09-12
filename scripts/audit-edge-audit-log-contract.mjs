@@ -28,15 +28,54 @@ const allowedKeys = new Set([
 ]);
 const requiredKeys = ['acao', 'registro_id', 'tabela'];
 const allowedActions = new Set([
-  'INSERT', 'UPDATE', 'DELETE',
-  'PAYROLL_CALC', 'PAYROLL_CALC_BLOCKED', 'PAYROLL_CLOSE', 'PAYROLL_REOPEN',
-  'FERIAS_CALC', 'FERIAS_CANCEL', 'RESCISAO_CALC', 'PROVISOES_CALC',
-  'ESOCIAL_SEND', 'DECIMO_CALC', 'IDEMPOTENCY_REPLAY', 'IDEMPOTENCY_CONFLICT',
-  'BACKUP_CREATED', 'BACKUP_FAILED', 'SYSTEM_ACTION', 'AUTH_ACTION',
-  'EXPORT', 'IMPORT', 'VISUALIZACAO', 'EXECUTE_CALC', 'SIGN',
+  'INSERT',
+  'UPDATE',
+  'DELETE',
+  'PAYROLL_CALC',
+  'PAYROLL_CALC_BLOCKED',
+  'PAYROLL_CLOSE',
+  'PAYROLL_REOPEN',
+  'FERIAS_CALC',
+  'FERIAS_CANCEL',
+  'RESCISAO_CALC',
+  'PROVISOES_CALC',
+  'ESOCIAL_SEND',
+  'DECIMO_CALC',
+  'IDEMPOTENCY_REPLAY',
+  'IDEMPOTENCY_CONFLICT',
+  'BACKUP_CREATED',
+  'BACKUP_FAILED',
+  'SYSTEM_ACTION',
+  'AUTH_ACTION',
+  'EXPORT',
+  'IMPORT',
+  'VISUALIZACAO',
+  'EXECUTE_CALC',
+  'SIGN',
+  'STATUS_CHANGE',
 ]);
 const failures = [];
 let checked = 0;
+
+// Prevent the static Edge gate from drifting away from PostgreSQL. The
+// allowlist stays explicitly reviewed here, while the comparison below makes
+// either side fail if a migration or writer changes independently.
+const actionContractPath = join(root, 'supabase/migrations/20260912206000_p1_audit_action_contract.sql');
+const actionContractSql = readFileSync(actionContractPath, 'utf8');
+const actionConstraint = actionContractSql.match(
+  /ADD CONSTRAINT\s+audit_log_acao_check\s+CHECK\s*\(\s*acao\s+IN\s*\(([\s\S]*?)\)\s*\)/i
+);
+if (!actionConstraint) {
+  failures.push(`${relative(root, actionContractPath)}: definição audit_log_acao_check não encontrada`);
+} else {
+  const physicalActions = new Set([...actionConstraint[1].matchAll(/'([A-Z][A-Z0-9_]*)'/g)].map((match) => match[1]));
+  for (const action of allowedActions) {
+    if (!physicalActions.has(action)) failures.push(`audit_log_acao_check não aceita ação revisada: ${action}`);
+  }
+  for (const action of physicalActions) {
+    if (!allowedActions.has(action)) failures.push(`audit_log_acao_check contém ação não revisada: ${action}`);
+  }
+}
 
 function walk(dir) {
   const files = [];
@@ -64,22 +103,24 @@ function staticStringValues(node) {
 }
 
 function isAuditLogSource(node) {
-  return ts.isCallExpression(node)
-    && ts.isPropertyAccessExpression(node.expression)
-    && node.expression.name.text === 'from'
-    && node.arguments.length === 1
-    && ts.isStringLiteral(node.arguments[0])
-    && node.arguments[0].text === 'audit_log';
+  return (
+    ts.isCallExpression(node) &&
+    ts.isPropertyAccessExpression(node.expression) &&
+    node.expression.name.text === 'from' &&
+    node.arguments.length === 1 &&
+    ts.isStringLiteral(node.arguments[0]) &&
+    node.arguments[0].text === 'audit_log'
+  );
 }
 
 function collectAuditLogAliases(source) {
   const aliases = new Set();
   function visit(node) {
     if (
-      ts.isVariableDeclaration(node)
-      && ts.isIdentifier(node.name)
-      && node.initializer
-      && isAuditLogSource(node.initializer)
+      ts.isVariableDeclaration(node) &&
+      ts.isIdentifier(node.name) &&
+      node.initializer &&
+      isAuditLogSource(node.initializer)
     ) {
       aliases.add(node.name.text);
     }
@@ -134,7 +175,8 @@ for (const file of walk(functionsRoot)) {
           failures.push(`${location}: acao de audit_log deve ser uma constante auditável`);
         }
         for (const action of actionValues ?? []) {
-          if (!allowedActions.has(action)) failures.push(`${location}: acao incompatível com audit_log_acao_check: ${action}`);
+          if (!allowedActions.has(action))
+            failures.push(`${location}: acao incompatível com audit_log_acao_check: ${action}`);
         }
       }
     }

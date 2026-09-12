@@ -13,8 +13,8 @@ O diagnóstico abaixo foi usado como entrada de uma nova rodada de implementaç�
 | TypeScript               | aplicação, testes e E2E sem erros                                                                                                                                              |
 | ESLint/formatação        | `lint:ci`, `lint:edge` e `format:check:changed` aprovados                                                                                                                      |
 | Vitest                   | 468 arquivos; 4.922 aprovados; 1 ignorado; cobertura real: 61,94% statements, 57,02% branches, 54,52% functions e 66,24% lines                                                 |
-| Edge Functions           | 60/60 entrypoints aprovados no `deno check`; 102 testes Deno aprovados                                                                                                         |
-| Banco descartável        | 20/20 scripts PostgreSQL aprovados, incluindo reaplicação, concorrência, negações exatas e preflight fail-closed                                                               |
+| Edge Functions           | 60/60 entrypoints aprovados no `deno check`; 105 testes Deno aprovados                                                                                                         |
+| Banco descartável        | 22/22 scripts PostgreSQL aprovados, incluindo reaplicação, concorrência, RLS, negações exatas e preflight fail-closed                                                          |
 | Contrato de auditoria    | 24 inserts Edge validados por AST, inclusive aliases locais; frontend sem leitura direta de `audit_log`; autoria server-owned e isolamento por empresa simulados no PostgreSQL |
 | Contrato frontend/bridge | 79 RPCs literais de produção mapeadas; 90 allowlisted; 7 RPCs públicas limitadas a chave publicável; zero acesso do bridge às tabelas sensíveis verificadas                    |
 | Build                    | Vite/PWA de produção aprovado: 6.491 módulos e 267 entradas precache; avisos de chunks continuam dívida de performance                                                         |
@@ -40,13 +40,13 @@ O diagnóstico abaixo foi usado como entrada de uma nova rodada de implementaç�
 | RV-13 UI enganosa           | briefing por tenant/fail-closed, saúde sem eventos distinta de 100%, sync fictícia removida, paginação reiniciada e relatório recusa truncamento                           | E2E pós-deploy com duas empresas                                                    |
 | RV-14 drift Edge            | todos os entrypoints compilam e workflow manual canônico fail-closed foi criado                                                                                            | credencial Management API com acesso ao projeto e execução do deploy                |
 | RV-15 capacidades           | contrato PCS, bucket `backups`, destinatários internos e alvos dos três crons de segurança entregues                                                                       | aplicação, smoke real, eSocial homologado e restauração integral continuam externos |
-| RV-16 gates falsos-verdes   | Edge agora bloqueante, agenda incluída, 20 SQL suites no CI, formatação real, contrato bridge/frontend e URL canônica validados; DB/E2E autenticado não rodam código de PR | checks remotos verdes e proteção de branch revisada                                 |
+| RV-16 gates falsos-verdes   | Edge agora bloqueante, agenda incluída, 22 SQL suites no CI, formatação real, contrato bridge/frontend e URL canônica validados; DB/E2E autenticado não rodam código de PR | checks remotos verdes e proteção de branch revisada                                 |
 
 ### Ordem de promoção, sem atalhos
 
 1. Publicar o lote em branch e PR, mantendo `AUDIT_REPORT.pdf` fora do commit.
-2. Executar o workflow canônico em modo `validate`, que aplica exatamente 13 migrations numa única transação revertida.
-3. Executar o mesmo lote em modo `apply`; o CLI registra somente essas 13 versões no ledger — não há `db push` nem `migration repair` em massa.
+2. Executar o workflow canônico em modo `validate`, que aplica exatamente 15 migrations numa única transação revertida.
+3. Executar o mesmo lote em modo `apply`; o CLI registra somente essas 15 versões no ledger — não há `db push` nem `migration repair` em massa.
 4. Executar auditores e smoke tests contra o banco atualizado.
 5. Publicar as 60 Edge Functions sem `--prune`; o job exige `SUPABASE_ACCESS_TOKEN` com acesso ao projeto canônico e falha antes de escrever caso a autorização não exista.
 6. Executar Playwright com as quatro identidades sintéticas no SHA integrado e comparar o inventário remoto.

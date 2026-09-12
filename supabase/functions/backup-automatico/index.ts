@@ -4,6 +4,7 @@ import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
 import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
+import { BACKUP_AUDIT_READ_ACTIONS } from './backupAudit.ts';
 import {
   BACKUP_TABLE_ROW_LIMIT,
   BackupSnapshotError,
@@ -99,7 +100,7 @@ serve(async (req: Request): Promise<Response> => {
       let q = admin
         .from('audit_log')
         .select('created_at, dados_novos')
-        .eq('acao', 'BACKUP_RUN')
+        .in('acao', [...BACKUP_AUDIT_READ_ACTIONS])
         .order('created_at', { ascending: false })
         .limit(1);
       if (empresaId) q = q.contains('dados_novos', { empresa_id: empresaId });
@@ -114,7 +115,7 @@ serve(async (req: Request): Promise<Response> => {
 
     if (action === 'list') {
       let q = admin.from('audit_log').select('id, created_at, dados_novos')
-        .eq('acao', 'BACKUP_RUN').order('created_at', { ascending: false }).limit(50);
+        .in('acao', [...BACKUP_AUDIT_READ_ACTIONS]).order('created_at', { ascending: false }).limit(50);
       if (empresaId) q = q.contains('dados_novos', { empresa_id: empresaId });
       const { data: list, error: listError } = await q;
       if (listError) return createErrorResponse('Falha ao listar backups', 500, 'AUDIT_ERROR', undefined, req);

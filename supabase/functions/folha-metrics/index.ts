@@ -7,6 +7,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders, createErrorResponse } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { safeFetch } from '../_shared/safe-fetch.ts';
+import { normalizePayrollAuditAction, PAYROLL_AUDIT_READ_ACTIONS } from './auditActions.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -70,13 +71,14 @@ Deno.serve(async (req: Request) => {
       .from('audit_log')
       .select('acao')
       .eq('tabela', 'folhas_pagamento')
-      .in('acao', ['PAYROLL_CALC', 'CLOSE', 'REOPEN'])
+      .in('acao', [...PAYROLL_AUDIT_READ_ACTIONS])
       .gte('created_at', since);
     if (auditErr) return createErrorResponse('Falha ao ler audit', 500, 'AUDIT_ERROR');
 
     const auditByAcao: Record<string, number> = {};
     for (const r of audit ?? []) {
-      auditByAcao[r.acao ?? 'unknown'] = (auditByAcao[r.acao ?? 'unknown'] ?? 0) + 1;
+      const action = normalizePayrollAuditAction(r.acao);
+      auditByAcao[action] = (auditByAcao[action] ?? 0) + 1;
     }
 
     // Alertas Slack (opt-in via SLACK_WEBHOOK_URL). No-op se não configurado.

@@ -1,12 +1,16 @@
 #!/usr/bin/env node
 
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
 const checker = resolve('scripts/audit-edge-audit-log-contract.mjs');
+const actionContract = resolve('supabase/migrations/20260912206000_p1_audit_action_contract.sql');
 const fixtureRoot = mkdtempSync(join(tmpdir(), 'edge-audit-contract-'));
+const fixtureActionContract = join(fixtureRoot, 'supabase/migrations/20260912206000_p1_audit_action_contract.sql');
+mkdirSync(dirname(fixtureActionContract), { recursive: true });
+copyFileSync(actionContract, fixtureActionContract);
 
 function runFixture(source) {
   const target = join(fixtureRoot, 'supabase/functions/example/index.ts');
@@ -35,9 +39,9 @@ try {
     await audit.insert({ tabela: 'folhas_pagamento', acao: 'NOT_ALLOWED' });
   `);
   if (
-    invalid.status === 0
-    || !invalid.stderr.includes('coluna obrigatória ausente em audit_log: registro_id')
-    || !invalid.stderr.includes('acao incompatível com audit_log_acao_check: NOT_ALLOWED')
+    invalid.status === 0 ||
+    !invalid.stderr.includes('coluna obrigatória ausente em audit_log: registro_id') ||
+    !invalid.stderr.includes('acao incompatível com audit_log_acao_check: NOT_ALLOWED')
   ) {
     throw new Error(`invalid alias escaped the checker:\n${invalid.stdout}${invalid.stderr}`);
   }

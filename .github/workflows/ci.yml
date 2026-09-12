@@ -94,7 +94,7 @@ jobs:
         # aqui causam falhas silenciosas em produção.
         run: deno check --no-lock --node-modules-dir=false supabase/functions/external-db-bridge/index.ts
       - name: Testes unitários compartilhados das Edge Functions
-        run: deno test --allow-env --no-lock --node-modules-dir=false supabase/functions/_shared/*.test.ts supabase/functions/metrics/*.test.ts supabase/functions/metricas/*.test.ts supabase/functions/gerar-holerite/*.test.ts supabase/functions/auth-login/*.test.ts supabase/functions/backup-automatico/*.test.ts supabase/functions/alertas-dp/*.test.ts supabase/functions/enviar-esocial/*.test.ts supabase/functions/enviar-relatorio/*.test.ts supabase/functions/notificacao/*.test.ts supabase/functions/processar-agendamentos/*.test.ts supabase/functions/metabase-embed/*.test.ts supabase/functions/external-db-bridge/validation.test.ts supabase/functions/external-db-bridge/tenantScope.test.ts
+        run: deno test --allow-env --no-lock --node-modules-dir=false supabase/functions/_shared/*.test.ts supabase/functions/metrics/*.test.ts supabase/functions/metricas/*.test.ts supabase/functions/folha-metrics/*.test.ts supabase/functions/gerar-holerite/*.test.ts supabase/functions/auth-login/*.test.ts supabase/functions/backup-automatico/*.test.ts supabase/functions/alertas-dp/*.test.ts supabase/functions/enviar-esocial/*.test.ts supabase/functions/enviar-relatorio/*.test.ts supabase/functions/notificacao/*.test.ts supabase/functions/processar-agendamentos/*.test.ts supabase/functions/metabase-embed/*.test.ts supabase/functions/external-db-bridge/validation.test.ts supabase/functions/external-db-bridge/tenantScope.test.ts
       - name: Type-check de todas as Edge Functions (gate bloqueante)
         # Toda Edge Function publicada precisa compilar. O loop preserva o
         # inventário completo de falhas e só encerra com erro ao final, evitando
@@ -169,6 +169,8 @@ jobs:
           bash scripts/tests/migrations-p1-pcs-contract.sh
           bash scripts/tests/migrations-p1-security-cron-contract.sh
           bash scripts/tests/migrations-p1-admission-esocial-claim.sh
+          bash scripts/tests/migrations-p1-payroll-audit-read-contract.sh
+          bash scripts/tests/migrations-p1-audit-action-contract.sh
 
   db-integrity:
     name: Integridade do banco (search_path x extensões)
