@@ -26,8 +26,19 @@
 
 import { createErrorResponse } from './contract.ts';
 
-/** Cliente Supabase com service_role (tipagem mínima necessária aqui). */
-type AdminClient = {
+/**
+ * Cliente Supabase com service_role (tipagem mínima necessária aqui).
+ *
+ * Deliberadamente não genérico sobre `Database`: um caller que tipa seu
+ * próprio client como `SupabaseClient<Database>` (RPC overloads restritos
+ * a nomes/args reais) precisa de um downcast explícito e local
+ * (`admin as unknown as AdminClient`) para passá-lo aqui, já que um método
+ * `rpc` com overloads genéricos não é estruturalmente atribuível a esta
+ * assinatura simples. Isso é esperado e seguro: em runtime é a mesma
+ * chamada HTTP; só o TypeScript perde a checagem fina de nome/args de RPC
+ * dentro deste módulo, que nunca chama RPCs por literal de string aqui.
+ */
+export type AdminClient = {
   rpc: (
     fn: string,
     args: Record<string, unknown>,

@@ -6,7 +6,7 @@
 // - Cap 10.000 itens / R$ 50 mi por lote
 // - Auditoria bloqueante + hash SHA-256 do payload
 
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.112.4';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
 import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
