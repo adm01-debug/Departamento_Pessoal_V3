@@ -6,6 +6,16 @@
 > bloqueado por exigir uma ação humana deliberada. Não reabrir os itens
 > "corrigido" abaixo sem motivo novo — a causa raiz já foi isolada.
 
+> **Atualização — mesmo dia, após o primeiro push:** o CI real do GitHub
+> reprovou `Edge Functions (deno check)` no SHA publicado. `npm run
+ci:verify` local nunca rodou `deno check` de verdade (só
+> `audit-edge-syntax.mjs`, que valida sintaxe via AST do TypeScript, não
+> resolve imports remotos nem os tipos do banco). Investigado e corrigido
+> na seção [Bugs reais encontrados só no CI](#bugs-reais-encontrados-só-no-ci-não-no-simulacao-local),
+> incluindo um bug real de cálculo de IRRF, não só um erro de tipo. Também
+> corrigido o próprio gap de ferramentas: `scripts/typecheck-edge.sh` +
+> `npm run typecheck:edge` agora fazem parte do `ci:verify`.
+
 ## Por que este documento existe
 
 O pedido foi executar o plano com excelência "até 10/10", mas simulando
@@ -117,6 +127,65 @@ Functions (E51-013) segue bloqueado por falta do secret
 `SUPABASE_ACCESS_TOKEN` no repositório — não existe hoje (`gh secret
 list` não o lista); alguém com acesso ao dashboard do Supabase precisa
 gerá-lo primeiro.
+
+## Bugs reais encontrados só no CI (não no `ci:verify` local)
+
+O primeiro push (commit `226fade9d`) passou em todo o `ci:verify` local e
+na suíte Vitest completa, mas o job real `Edge Functions (deno check)`
+reprovou no GitHub. Comparado com o último run verde de `main`
+(`b2456863a`, que só falha em "Integridade do banco" — job que só roda
+fora de PR), confirmei que a regressão era exclusiva desta branch, não
+pré-existente. Causa raiz do gap: `npm run ci:verify` nunca executou
+`deno check` de verdade — só `scripts/audit-edge-syntax.mjs`, que analisa
+sintaxe via AST do compilador TypeScript e não resolve os imports remotos
+(`esm.sh`, `deno.land`) nem os tipos gerados do banco. Rodando `deno
+check` localmente (Deno 2.9.5, já instalado) reproduziu tudo em segundos.
+
+Quatro defeitos, todos introduzidos por esta branch (não por `main`):
+
+1. **Bug fiscal real, não só de tipo** —
+   `supabase/functions/calcular-folha/index.ts` filtrava dependentes de
+   IRRF com `.eq('ir_dependente', true)`, uma coluna aposentada há tempo
+   em favor de `dependentes.para_irrf` (migrations `20251216164756_...` e
+   `20260724001000_fix_dependentes_missing_para_columns.sql`). Sob a
+   tipagem antiga (`createClient<any>`), o erro do PostgREST ("column
+   ir_dependente does not exist") era descartado silenciosamente —
+   `const { data: depsRows }` nunca lia `error` — então **todo cálculo de
+   folha contava zero dependentes de IRRF para todo mundo**, retendo IRRF
+   a mais de qualquer colaborador com dependentes reais. Corrigido o nome
+   da coluna e parei de descartar o erro. Também removido um campo morto
+   (`dependentes_irrf` no select de `colaboradores`, nunca uma coluna real
+   ali, nunca lido depois de selecionado) e dado um tipo real ao
+   acumulador `itens` (era `Array<Record<string, unknown>>`, degradando
+   todo campo pra `unknown` a jusante).
+2. **Fronteira de tipo genérica quebrada** —
+   `_shared/authz.ts` define `AdminClient` como um tipo estrutural mínimo
+   de propósito (aceitar qualquer client, independente do `Database`
+   genérico). Trocar `calcular-folha` para `createClient<Database>`
+   quebrou a atribuição estrutural do `rpc` (overloads genéricos não são
+   atribuíveis a uma assinatura simples). Exportei `AdminClient` e fiz um
+   cast explícito no call site — não mudei `authz.ts` para depender de
+   `Database`, que quebraria o desacoplamento deliberado do módulo.
+3. **Duas versões pinadas do `@supabase/supabase-js` no mesmo grafo de
+   import** — esta branch pinou `_shared/folhaIntegrity.ts` e
+   `cnab-remessa/index.ts` em `@2.112.4`, enquanto todo o resto do
+   repositório (54 ocorrências) usa `@2` flutuante. `esm.sh` trata cada
+   especificador de versão como um módulo distinto, então um client criado
+   por um pin não é estruturalmente atribuível a uma função tipada contra
+   o outro, mesmo sendo a mesma biblioteca em runtime. Revertidos os dois
+   pins para `@2`, alinhando com a convenção dominante.
+4. **Gap de ferramentas corrigido na origem** — `scripts/typecheck-edge.sh`
+   - `npm run typecheck:edge`, agora dentro de `ci:verify`, espelham
+     exatamente o loop do CI (bridge primeiro, depois cada função). Não
+     entra na CI em si (`ci:verify` nunca é chamado por nenhum workflow —
+     cada job já roda seus próprios sub-comandos), então só passa a valer
+     para quem rodar localmente.
+
+Verificado com os comandos exatos do CI, não uma aproximação: `deno
+check` em todas as 60 Edge Functions não-bridge individualmente (0
+erros), o check do bridge (0 erros), os 110 testes Deno compartilhados
+(0 falhas), e de novo o `ci:verify` completo + Vitest completo (468
+arquivos / 4929 testes, 1 skip, zero regressão).
 
 ## Estado real após esta sessão
 
