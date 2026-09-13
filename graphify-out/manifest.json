@@ -168,9 +168,9 @@
     "semantic_hash": ""
   },
   "eslint.config.js": {
-    "mtime": 1789308020.939962,
-    "seen": 1789310563.051987,
-    "ast_hash": "1aa4477ffa847c98186f554d4e60d4a6",
+    "mtime": 1789310859.7881162,
+    "seen": 1789311478.8665073,
+    "ast_hash": "4f68cdfe087e43bef74bd492ea9bf729",
     "semantic_hash": ""
   },
   "lighthouserc.js": {
@@ -180,9 +180,9 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1789310493.6960423,
-    "seen": 1789310563.0520391,
-    "ast_hash": "983bd3d6611e5db9f3f2bf0662ab04e1",
+    "mtime": 1789311431.7531576,
+    "seen": 1789311478.8665485,
+    "ast_hash": "142c199b83282a57e54b59863e365142",
     "semantic_hash": ""
   },
   "playwright.config.ts": {
@@ -6204,9 +6204,9 @@
     "semantic_hash": ""
   },
   "src/services/__tests__/comunicacaoService.test.ts": {
-    "mtime": 1788115372.1480205,
-    "seen": 1788129206.8860862,
-    "ast_hash": "48bd94a90087a2a60892e4c71d1dfcdd",
+    "mtime": 1789311260.0148745,
+    "seen": 1789311478.884685,
+    "ast_hash": "895e7451e5baf1afa7b59d51c0249e53",
     "semantic_hash": ""
   },
   "src/services/__tests__/contabilidadeService.test.ts": {
@@ -6384,9 +6384,9 @@
     "semantic_hash": ""
   },
   "src/services/__tests__/pesquisaService.test.ts": {
-    "mtime": 1788115372.1480205,
-    "seen": 1788129206.8861525,
-    "ast_hash": "aadb5469a2d4d7854e8d67f0fdd5e211",
+    "mtime": 1789311260.0431223,
+    "seen": 1789311478.885157,
+    "ast_hash": "0fc3a4f8b07449ad4ab62f57fa092fbb",
     "semantic_hash": ""
   },
   "src/services/__tests__/pontoAbertoService.test.ts": {
@@ -6630,9 +6630,9 @@
     "semantic_hash": ""
   },
   "src/services/comunicacaoService.ts": {
-    "mtime": 1788115372.1517792,
-    "seen": 1788129206.8862486,
-    "ast_hash": "9bb5db8bf3d59db84363a94bb6599eb8",
+    "mtime": 1789311260.0556116,
+    "seen": 1789311478.8858967,
+    "ast_hash": "ee132f07c243e9e76b8664cd846f0546",
     "semantic_hash": ""
   },
   "src/services/contabilidadeService.ts": {
@@ -6864,9 +6864,9 @@
     "semantic_hash": ""
   },
   "src/services/pesquisaService.ts": {
-    "mtime": 1788115372.156379,
-    "seen": 1788129206.8863368,
-    "ast_hash": "b2ddc41222bb96dea52fd770de1be659",
+    "mtime": 1789311260.0667808,
+    "seen": 1789311478.8864772,
+    "ast_hash": "ca1c5fa4942e77a4600859bf5d5bdfdd",
     "semantic_hash": ""
   },
   "src/services/pontoAbertoService.ts": {
