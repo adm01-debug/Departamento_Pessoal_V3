@@ -88,6 +88,18 @@ export default tseslint.config(
   },
 
   {
+    // `no-explicit-any` (E51-025) tem orçamento e gate (scripts/ratchet-any.mjs)
+    // apenas para src/**. `lint:edge` roda com --max-warnings=0 sobre
+    // supabase/functions e não tem ratchet equivalente ainda (E51-029, etapa
+    // separada); sem este override, ligar a regra globalmente reprovaria
+    // lint:edge nos ~52 `any` pré-existentes ali, fora do escopo desta etapa.
+    files: ["supabase/functions/**/*.ts"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
+
+  {
     // Componentes de UI "vendored" (shadcn/ui) usam @ts-nocheck e ficam fora do
     // typecheck (excluídos no tsconfig). Permitimos diretivas ts-comment aqui.
     files: ["src/components/ui/**/*.{ts,tsx}"],
