@@ -2,6 +2,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { calcularRescisao } from '@/utils/rescisaoCalc';
 import { auditLogger } from '@/utils/auditLogger';
 import { loggerService } from './loggerService';
+import type { Tables } from '@/integrations/supabase/database.types';
 
 async function sha256Hex(data: string): Promise<string> {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(data));
@@ -12,6 +13,16 @@ async function sha256Hex(data: string): Promise<string> {
 
 // Ordem lógica das etapas para validação
 const ORDEM_ETAPAS = ['comunicacao', 'documentacao', 'calculo', 'homologacao', 'pagamento', 'finalizado'];
+
+export interface CalcularRescisaoParams {
+  salario_base?: number;
+  data_admissao?: string;
+  data_desligamento?: string;
+  tipo?: string;
+  aviso_trabalhado?: boolean;
+  ferias_vencidas?: boolean;
+  saldo_fgts?: number;
+}
 
 export const rescisaoService = {
   async validarTransicao(id: string, novaEtapa: string, empresaId: string): Promise<boolean> {
@@ -44,14 +55,24 @@ export const rescisaoService = {
     }
   },
 
-  async calcularESalvar(id: string, params: any, empresaId: string): Promise<any> {
+  async calcularESalvar(
+    id: string,
+    params: CalcularRescisaoParams,
+    empresaId: string
+  ): Promise<Tables<'desligamentos'>> {
     if (!id) throw new Error('ID do desligamento é obrigatório');
     if (!empresaId) throw new Error('empresa_id é obrigatório');
 
     try {
+      // `colaboradores` não tem `nome` (é `nome_completo`) nem `dependentes_irrf`
+      // (aposentado há tempo em favor de `dependentes.para_irrf`, mesmo caso do
+      // calcular-folha Edge Function). O embed anterior pedia as duas colunas
+      // inexistentes: sob `any` isso compilava, mas o PostgREST recusaria a
+      // query inteira em runtime, quebrando 100% das tentativas de calcular
+      // uma rescisão pela UI (chamador real: DesligamentoDetailSheet.tsx).
       const { data: anterior, error: fetchError } = await supabase
         .from('desligamentos')
-        .select('*, colaborador:colaboradores!desligamentos_colaborador_id_fkey(nome, data_admissao, dependentes_irrf)')
+        .select('*, colaborador:colaboradores!desligamentos_colaborador_id_fkey(data_admissao)')
         .eq('id', id)
         .eq('empresa_id', empresaId)
         .single();
@@ -60,26 +81,43 @@ export const rescisaoService = {
 
       await this.validarTransicao(id, 'calculo', empresaId);
 
+      const { data: depsRows, error: depsError } = await supabase
+        .from('dependentes')
+        .select('id')
+        .eq('colaborador_id', anterior.colaborador_id)
+        .eq('para_irrf', true);
+      if (depsError) throw depsError;
+      const dependentesIRRF = depsRows?.length ?? 0;
+
       const result = await calcularRescisao({
-        salario: params.salario_base || (anterior as Record<string, unknown>).salario_base,
-        dataAdmissao: (anterior.colaborador as any)?.data_admissao || params.data_admissao,
-        dataDesligamento: params.data_desligamento || (anterior as Record<string, unknown>).data_desligamento,
-        tipo: params.tipo || (anterior as Record<string, unknown>).tipo,
-        avisoTrabalhado:
-          params.aviso_trabalhado !== undefined
-            ? params.aviso_trabalhado
-            : (anterior as Record<string, unknown>).aviso_trabalhado,
-        feriasVencidas:
-          params.ferias_vencidas !== undefined
-            ? params.ferias_vencidas
-            : (anterior as Record<string, unknown>).ferias_vencidas_check,
-        saldoFGTS:
-          params.saldo_fgts !== undefined ? params.saldo_fgts : (anterior as Record<string, unknown>).saldo_fgts || 0,
-        dependentes: (anterior.colaborador as any)?.dependentes_irrf || 0,
+        salario: params.salario_base ?? anterior.salario_base,
+        dataAdmissao: anterior.colaborador?.data_admissao || params.data_admissao || '',
+        dataDesligamento: params.data_desligamento || anterior.data_desligamento,
+        tipo: params.tipo || anterior.tipo,
+        avisoTrabalhado: params.aviso_trabalhado ?? false,
+        feriasVencidas: params.ferias_vencidas ?? false,
+        saldoFGTS: params.saldo_fgts ?? 0,
+        dependentes: dependentesIRRF,
       });
       const resultado = result;
 
-      const dadosAtualizados = {
+      // SCHEMA GAP (achado ao remover `any` desta função, não corrigido aqui):
+      // `desligamentos` não tem coluna `detalhes_calculo`, mas
+      // DesligamentoDetailSheet.tsx:205 lê `d.detalhes_calculo || d` para
+      // montar o PDF da rescisão — ou seja, o código em dois lugares assume
+      // uma coluna que nunca existiu. Sob `any`, este `.update()` incluía
+      // `detalhes_calculo` no MESMO payload que os campos reais
+      // (saldo_salario, decimo_terceiro, ...): o PostgREST rejeita o UPDATE
+      // INTEIRO por uma chave inválida, então `calcularESalvar` sempre
+      // lançava aqui — nenhuma rescisão jamais foi salva com sucesso por
+      // este caminho. Removido do payload para o salvamento funcionar; os
+      // valores decompostos abaixo já são a fonte de verdade persistida.
+      // O fallback `|| d` do PDF passa a usar sempre a linha crua (campos
+      // snake_case, não o formato de RescisaoResult) — comportamento
+      // pré-existente, não alterado aqui. Requer migration própria
+      // (`ALTER TABLE desligamentos ADD COLUMN detalhes_calculo jsonb`) se o
+      // JSON completo for realmente necessário.
+      const dadosAtualizados: Partial<Tables<'desligamentos'>> = {
         saldo_salario: resultado.saldoSalario,
         decimo_terceiro: resultado.decimoTerceiro,
         ferias_proporcionais: resultado.feriasProporcionais,
@@ -90,7 +128,6 @@ export const rescisaoService = {
         total_proventos: resultado.totalProventos,
         total_descontos: resultado.totalDescontos,
         valor_liquido: resultado.totalLiquido,
-        detalhes_calculo: resultado,
         status: 'calculado',
         etapa: 'homologacao',
         checklist_calculo_rescisao: true,
@@ -98,7 +135,7 @@ export const rescisaoService = {
 
       const { data: novo, error: updateError } = await supabase
         .from('desligamentos')
-        .update(dadosAtualizados as any)
+        .update(dadosAtualizados)
         .eq('id', id)
         .eq('empresa_id', empresaId)
         .select()
@@ -131,7 +168,7 @@ export const rescisaoService = {
     empresaId: string,
     etapa: 'rh' | 'financeiro' | 'juridico' | 'colaborador' = 'rh',
     parecer?: string
-  ): Promise<any> {
+  ): Promise<Tables<'desligamentos'>> {
     if (!empresaId) throw new Error('empresa_id é obrigatório');
     try {
       const { data: d, error: fetchError } = await supabase
@@ -205,7 +242,7 @@ export const rescisaoService = {
     }
   },
 
-  async assinarDigitalmente(id: string, tipo: 'empresa' | 'colaborador', empresaId?: string): Promise<any> {
+  async assinarDigitalmente(id: string, tipo: 'empresa' | 'colaborador', empresaId?: string): Promise<boolean> {
     try {
       // Delegado à RPC assinar_desligamento (SECURITY DEFINER):
       // - hash SHA-256 é calculado server-side (trigger bloqueia escrita direta);
@@ -233,7 +270,11 @@ export const rescisaoService = {
     }
   },
 
-  async processarPagamento(id: string, empresaId: string, comprovanteUrl?: string): Promise<any> {
+  // `comprovanteUrl` nunca foi persistido pela versão anterior desta função
+  // (parâmetro aceito e nunca lido); preservado assim deliberadamente — não é
+  // escopo desta limpeza de tipos decidir se isso é um bug.
+  async processarPagamento(id: string, empresaId: string, comprovanteUrl?: string): Promise<Tables<'desligamentos'>> {
+    void comprovanteUrl;
     if (!empresaId) throw new Error('empresa_id é obrigatório');
     try {
       const { data: d, error: fetchError } = await supabase
@@ -262,7 +303,7 @@ export const rescisaoService = {
           etapa: 'finalizado',
           checklist_pagamento: true,
           data_pagamento: new Date().toISOString(),
-        } as any)
+        })
         .eq('id', id)
         .eq('empresa_id', empresaId)
         .select()
