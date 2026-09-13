@@ -56,8 +56,16 @@ CREATE TABLE public.admissoes(
 CREATE TABLE public.esocial_eventos(
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(), empresa_id uuid, tipo_evento text NOT NULL,
   competencia text, status text DEFAULT 'rascunho', dados jsonb DEFAULT '{}',
+  protocolo text, recibo text, id_recibo text, data_envio timestamptz,
   created_at timestamptz DEFAULT now(), updated_at timestamptz DEFAULT now()
 );
+-- Real RLS/grants for esocial_eventos are established by an earlier
+-- migration (this file only adds the transport-field trigger and the
+-- SECURITY DEFINER lifecycle RPCs), so both SELECT and UPDATE are already
+-- present in production. Without SELECT here, Postgres's own ACL check on
+-- the WHERE clause of a direct UPDATE rejects the statement before the
+-- trigger ever fires, making protect_esocial_transport_fields() untestable.
+GRANT SELECT, UPDATE ON public.esocial_eventos TO authenticated;
 CREATE TABLE public.audit_log_unified(
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(), source_table text, empresa_id uuid,
   user_id uuid, action text, entity text, entity_id text, payload jsonb,
@@ -120,9 +128,12 @@ expect_failure "SET ROLE authenticated; SELECT set_config('request.jwt.claim.sub
 expect_failure "SET ROLE anon; SELECT public.claim_admission_esocial_event('20000000-0000-0000-0000-000000000002','10000000-0000-0000-0000-000000000001');" 'permission denied'
 expect_failure "SET ROLE authenticated; SELECT set_config('request.jwt.claim.sub','aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',false); SELECT public.complete_admission_esocial_event('20000000-0000-0000-0000-000000000002','10000000-0000-0000-0000-000000000001','$event_id','$claim_token','','');" 'invalid admission eSocial completion'
 
+expect_failure "SET ROLE authenticated; SELECT set_config('request.jwt.claim.sub','aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',false); UPDATE public.esocial_eventos SET status='enviado',protocolo='FORGED' WHERE id='$event_id';" 'transport fields are service-owned'
+expect_failure "SET ROLE authenticated; SELECT set_config('request.jwt.claim.sub','aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',false); SELECT public.complete_admission_esocial_event('20000000-0000-0000-0000-000000000002','10000000-0000-0000-0000-000000000001','$event_id','$claim_token','FORGED',NULL);" 'matching persisted transport receipt'
+
 # The transport persists its receipt before the application completes the
 # admission. A lost completion response must be safe to replay afterwards.
-run_psql -qAtc "UPDATE public.esocial_eventos SET status='enviado' WHERE id='$event_id';" >/dev/null
+run_psql -qAtc "UPDATE public.esocial_eventos SET status='enviado',protocolo='PROTO-1',recibo='REC-1' WHERE id='$event_id';" >/dev/null
 run_psql -qAtc "SET ROLE authenticated; SELECT set_config('request.jwt.claim.sub','aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',false); SELECT public.complete_admission_esocial_event('20000000-0000-0000-0000-000000000002','10000000-0000-0000-0000-000000000001','$event_id','$claim_token','PROTO-1','REC-1');" >/dev/null
 run_psql -qAtc "SET ROLE authenticated; SELECT set_config('request.jwt.claim.sub','aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1',false); SELECT public.complete_admission_esocial_event('20000000-0000-0000-0000-000000000002','10000000-0000-0000-0000-000000000001','$event_id','$claim_token','PROTO-1','REC-1');" >/dev/null
 completed="$(run_psql -qAtc "SELECT status_esocial||':'||checklist_esocial_enviado||':'||protocolo_esocial FROM public.admissoes WHERE id='20000000-0000-0000-0000-000000000002';")"

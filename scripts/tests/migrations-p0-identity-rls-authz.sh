@@ -20,14 +20,21 @@ run_psql() {
 }
 
 expect_denied() {
+  # Matches SQLSTATE 42501 (insufficient_privilege) in verbose psql output,
+  # not the English phrase "permission denied". Native REVOKE-based denials
+  # and custom `RAISE EXCEPTION ... USING ERRCODE = '42501'` messages (e.g.
+  # get_user_scope_empresas, next_cnab_sequencial) both raise 42501 but do
+  # not share wording, so a text-only match produced false failures on the
+  # deliberately worded custom denials while the underlying behavior was
+  # correct.
   local sql="$1"
   local output status
   set +e
-  output="$(run_psql -c "$sql" 2>&1)"
+  output="$(run_psql -v VERBOSITY=verbose -c "$sql" 2>&1)"
   status=$?
   set -e
-  if [ "$status" -eq 0 ] || [[ "$output" != *"permission denied"* ]]; then
-    echo "expected permission denial" >&2
+  if [ "$status" -eq 0 ] || [[ "$output" != *"42501"* ]]; then
+    echo "expected permission denial (SQLSTATE 42501)" >&2
     echo "$output" >&2
     exit 1
   fi
@@ -64,6 +71,17 @@ AS $$ SELECT public.has_role(_user_id,'admin'::public.app_role) $$;
 CREATE OR REPLACE FUNCTION public.get_user_empresas(_user_id uuid)
 RETURNS SETOF uuid LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public
 AS $$ SELECT empresa_id FROM public.user_empresas WHERE user_id=_user_id $$;
+CREATE TABLE public.empresas(id uuid PRIMARY KEY, ativa boolean NOT NULL DEFAULT true);
+CREATE OR REPLACE FUNCTION public.get_user_scope_empresas(_user_id uuid)
+RETURNS SETOF uuid LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public
+AS $$ SELECT empresa_id FROM public.user_empresas WHERE user_id=_user_id $$;
+CREATE TABLE public.cnab_remessas(
+  id uuid PRIMARY KEY, empresa_id uuid NOT NULL, banco_codigo text NOT NULL,
+  sequencial_arquivo integer NOT NULL DEFAULT 1
+);
+CREATE OR REPLACE FUNCTION public.next_cnab_sequencial(p_empresa_id uuid,p_banco_codigo text)
+RETURNS integer LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public
+AS $$ SELECT 1 $$;
 
 CREATE OR REPLACE FUNCTION public.user_empresa_id()
 RETURNS uuid LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public
@@ -123,6 +141,11 @@ INSERT INTO public.user_empresas(user_id,empresa_id,is_default) VALUES
 ('00000000-0000-0000-0000-000000000001','10000000-0000-0000-0000-000000000001',true),
 ('00000000-0000-0000-0000-000000000002','20000000-0000-0000-0000-000000000002',true),
 ('00000000-0000-0000-0000-000000000003','10000000-0000-0000-0000-000000000001',true);
+INSERT INTO public.empresas(id) VALUES
+('10000000-0000-0000-0000-000000000001'),
+('20000000-0000-0000-0000-000000000002');
+INSERT INTO public.cnab_remessas(id,empresa_id,banco_codigo,sequencial_arquivo) VALUES
+('50000000-0000-0000-0000-000000000001','20000000-0000-0000-0000-000000000002','001',7);
 INSERT INTO public.user_roles VALUES
 ('00000000-0000-0000-0000-000000000003','rh'),
 ('00000000-0000-0000-0000-000000000099','admin');
@@ -155,6 +178,11 @@ global_admin_allowed="$(run_psql -qAtc "SET ROLE service_role; SELECT public.pod
 [ "$global_admin_allowed" = "t" ] || { echo "global admin without tenant membership was denied" >&2; exit 1; }
 
 expect_denied "SET ROLE authenticated; SELECT public.pode_gerir_rh_para('00000000-0000-0000-0000-000000000003','10000000-0000-0000-0000-000000000001');"
+expect_denied "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000001\",\"role\":\"authenticated\"}'; SELECT * FROM public.get_user_scope_empresas('00000000-0000-0000-0000-000000000002');"
+expect_denied "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000001\",\"role\":\"authenticated\"}'; SELECT public.next_cnab_sequencial('20000000-0000-0000-0000-000000000002','001');"
+[ "$(run_psql -qAtc "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000002\",\"role\":\"authenticated\"}'; SELECT public.next_cnab_sequencial('20000000-0000-0000-0000-000000000002','001');")" = '8' ] || {
+  echo 'legitimate tenant could not read its CNAB sequence' >&2; exit 1;
+}
 expect_denied "SET ROLE anon; SELECT public.reset_login_attempts('victim','email');"
 expect_denied "SET ROLE authenticated; SELECT * FROM public.v_audit_trail;"
 expect_denied "SET ROLE anon; SELECT * FROM public.v_system_health;"
