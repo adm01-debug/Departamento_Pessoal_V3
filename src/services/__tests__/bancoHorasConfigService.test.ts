@@ -38,10 +38,12 @@ function setupUpdateChain(data: any, error: any = null) {
 // ─── buscar ───────────────────────────────────────────────────────────────────
 
 describe('bancoHorasConfigService.buscar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns config for empresa', async () => {
-    const config = { id: 'bhc-1', empresa_id: 'emp-1', limite_horas: 40 };
+    const config = { id: 'bhc-1', empresa_id: 'emp-1', saldo_maximo_horas: 40 };
     setupMaybeSingleChain(config);
     const result = await bancoHorasConfigService.buscar('emp-1');
     expect(result).toEqual(config);
@@ -69,7 +71,9 @@ describe('bancoHorasConfigService.buscar', () => {
 // ─── salvar (new) ─────────────────────────────────────────────────────────────
 
 describe('bancoHorasConfigService.salvar (no existing config)', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts when no existing config found', async () => {
     const created = { id: 'bhc-new', empresa_id: 'emp-1' };
@@ -82,9 +86,7 @@ describe('bancoHorasConfigService.salvar (no existing config)', () => {
     const selectInsert = vi.fn().mockReturnValue({ maybeSingle: maybeSingleInsert });
     const insertFn = vi.fn().mockReturnValue({ select: selectInsert });
 
-    mockFrom
-      .mockReturnValueOnce({ select: selectBuscar })
-      .mockReturnValueOnce({ insert: insertFn });
+    mockFrom.mockReturnValueOnce({ select: selectBuscar }).mockReturnValueOnce({ insert: insertFn });
 
     const result = await bancoHorasConfigService.salvar({ empresa_id: 'emp-1' });
     expect(insertFn).toHaveBeenCalledWith({ empresa_id: 'emp-1' });
@@ -100,9 +102,7 @@ describe('bancoHorasConfigService.salvar (no existing config)', () => {
     const selectInsert = vi.fn().mockReturnValue({ maybeSingle: maybeSingleInsert });
     const insertFn = vi.fn().mockReturnValue({ select: selectInsert });
 
-    mockFrom
-      .mockReturnValueOnce({ select: selectBuscar })
-      .mockReturnValueOnce({ insert: insertFn });
+    mockFrom.mockReturnValueOnce({ select: selectBuscar }).mockReturnValueOnce({ insert: insertFn });
 
     await expect(bancoHorasConfigService.salvar({ empresa_id: 'emp-1' })).rejects.toThrow();
   });
@@ -111,11 +111,13 @@ describe('bancoHorasConfigService.salvar (no existing config)', () => {
 // ─── salvar (update) ──────────────────────────────────────────────────────────
 
 describe('bancoHorasConfigService.salvar (existing config)', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates when existing config found', async () => {
     const existing = { id: 'bhc-1', empresa_id: 'emp-1' };
-    const updated = { id: 'bhc-1', empresa_id: 'emp-1', limite_horas: 60 };
+    const updated = { id: 'bhc-1', empresa_id: 'emp-1', saldo_maximo_horas: 60 };
 
     const maybeSingleBuscar = vi.fn().mockResolvedValue({ data: existing, error: null });
     const eqBuscar = vi.fn().mockReturnValue({ maybeSingle: maybeSingleBuscar });
@@ -126,12 +128,10 @@ describe('bancoHorasConfigService.salvar (existing config)', () => {
     const eqUpdate = vi.fn().mockReturnValue({ select: selectUpdate });
     const updateFn = vi.fn().mockReturnValue({ eq: eqUpdate });
 
-    mockFrom
-      .mockReturnValueOnce({ select: selectBuscar })
-      .mockReturnValueOnce({ update: updateFn });
+    mockFrom.mockReturnValueOnce({ select: selectBuscar }).mockReturnValueOnce({ update: updateFn });
 
-    const result = await bancoHorasConfigService.salvar({ empresa_id: 'emp-1', limite_horas: 60 });
-    expect(updateFn).toHaveBeenCalledWith({ empresa_id: 'emp-1', limite_horas: 60 });
+    const result = await bancoHorasConfigService.salvar({ empresa_id: 'emp-1', saldo_maximo_horas: 60 });
+    expect(updateFn).toHaveBeenCalledWith({ empresa_id: 'emp-1', saldo_maximo_horas: 60 });
     expect(eqUpdate).toHaveBeenCalledWith('id', 'bhc-1');
     expect(result).toEqual(updated);
   });
@@ -148,9 +148,7 @@ describe('bancoHorasConfigService.salvar (existing config)', () => {
     const eqUpdate = vi.fn().mockReturnValue({ select: selectUpdate });
     const updateFn = vi.fn().mockReturnValue({ eq: eqUpdate });
 
-    mockFrom
-      .mockReturnValueOnce({ select: selectBuscar })
-      .mockReturnValueOnce({ update: updateFn });
+    mockFrom.mockReturnValueOnce({ select: selectBuscar }).mockReturnValueOnce({ update: updateFn });
 
     await expect(bancoHorasConfigService.salvar({ empresa_id: 'emp-1' })).rejects.toThrow();
   });

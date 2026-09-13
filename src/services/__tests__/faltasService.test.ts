@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deepChain } from '@/test/deepChain';
 import { faltasService } from '../faltasService';
+import type { Insertable } from '@/integrations/supabase/database.types';
 
 const EMPRESA_ID = 'test-empresa-id';
 
@@ -45,7 +46,12 @@ function setupUpdateChain(data: any, error: any = null) {
 
 function setupDeleteChain(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  const __delChain = {
+    then: (r: any) => Promise.resolve({ error }).then(r),
+    catch: (r: any) => Promise.resolve({ error }).catch(r),
+    finally: (r: any) => Promise.resolve({ error }).finally(r),
+    eq: eqFn,
+  };
   eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
@@ -55,7 +61,9 @@ function setupDeleteChain(error: any = null) {
 // ─── listar ───────────────────────────────────────────────────────────────────
 
 describe('faltasService.listar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns all faltas without empresa filter', async () => {
     const records = [{ id: 'f1', data: '2026-07-01' }];
@@ -85,9 +93,7 @@ describe('faltasService.listar', () => {
   it('includes colaborador join in select', async () => {
     const { selectFn } = setupListChain([]);
     await faltasService.listar(EMPRESA_ID);
-    expect(selectFn).toHaveBeenCalledWith(
-      expect.stringContaining('colaborador:colaboradores')
-    );
+    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('colaborador:colaboradores'));
   });
 
   it('throws on DB error', async () => {
@@ -99,7 +105,9 @@ describe('faltasService.listar', () => {
 // ─── buscarPorColaborador ─────────────────────────────────────────────────────
 
 describe('faltasService.buscarPorColaborador', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns faltas for given colaboradorId', async () => {
     const records = [{ id: 'f1', colaborador_id: 'c1' }];
@@ -125,31 +133,36 @@ describe('faltasService.buscarPorColaborador', () => {
 // ─── criar ────────────────────────────────────────────────────────────────────
 
 describe('faltasService.criar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new falta', async () => {
     const created = { id: 'f-new', data: '2026-07-10' };
     const { insertFn } = setupInsertChain(created);
-    const result = await faltasService.criar({ data: '2026-07-10' });
-    expect(insertFn).toHaveBeenCalledWith({ data: '2026-07-10' });
+    const payload = { data: '2026-07-10', colaborador_id: 'colab-1' };
+    const result = await faltasService.criar(payload);
+    expect(insertFn).toHaveBeenCalledWith(payload);
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(faltasService.criar({})).rejects.toThrow();
+    await expect(faltasService.criar({} as Insertable<'faltas'>)).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
     setupInsertChain(null, { message: 'fail' });
-    await expect(faltasService.criar({})).rejects.toBeDefined();
+    await expect(faltasService.criar({} as Insertable<'faltas'>)).rejects.toBeDefined();
   });
 });
 
 // ─── atualizar ────────────────────────────────────────────────────────────────
 
 describe('faltasService.atualizar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates and returns falta', async () => {
     const updated = { id: 'f1', justificada: true };
@@ -174,7 +187,9 @@ describe('faltasService.atualizar', () => {
 // ─── excluir ──────────────────────────────────────────────────────────────────
 
 describe('faltasService.excluir', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes falta by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();

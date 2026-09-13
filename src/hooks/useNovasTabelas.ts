@@ -1,5 +1,5 @@
 import type { MedidaDisciplinarInsert } from '@/types/medidasDisciplinares';
-import type { TablesInsert } from '@/integrations/supabase/types';
+import type { TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEmpresas } from './useEmpresas';
 import { batidasPontoService } from '@/services/batidasPontoService';
@@ -36,7 +36,10 @@ export function useRegistrarBatida() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (d: DataRecord) => batidasPontoService.registrar(d),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['batidas-ponto'] }); toast.success('Batida registrada'); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['batidas-ponto'] });
+      toast.success('Batida registrada');
+    },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
@@ -63,8 +66,11 @@ export function useFaltasColaborador(colaboradorId: string) {
 export function useCriarFalta() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (d: DataRecord) => faltasService.criar(d),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['faltas'] }); toast.success('Falta registrada'); },
+    mutationFn: (d: DataRecord) => faltasService.criar(d as TablesInsert<'faltas'>),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['faltas'] });
+      toast.success('Falta registrada');
+    },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
@@ -73,8 +79,12 @@ export function useAtualizarFalta() {
   const qc = useQueryClient();
   const { empresaAtual } = useEmpresas();
   return useMutation({
-    mutationFn: ({ id, ...d }: { id: string } & DataRecord) => faltasService.atualizar(id, d, empresaAtual!.id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['faltas'] }); toast.success('Falta atualizada'); },
+    mutationFn: ({ id, ...d }: { id: string } & DataRecord) =>
+      faltasService.atualizar(id, d as TablesUpdate<'faltas'>, empresaAtual!.id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['faltas'] });
+      toast.success('Falta atualizada');
+    },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
@@ -84,7 +94,10 @@ export function useExcluirFalta() {
   const { empresaAtual } = useEmpresas();
   return useMutation({
     mutationFn: (id: string) => faltasService.excluir(id, empresaAtual!.id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['faltas'] }); toast.success('Falta excluída'); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['faltas'] });
+      toast.success('Falta excluída');
+    },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
@@ -112,7 +125,10 @@ export function useCriarMedidaDisciplinar() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (d: MedidaDisciplinarInsert) => medidasDisciplinaresService.criar(d),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['medidas-disciplinares'] }); toast.success('Medida disciplinar registrada'); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['medidas-disciplinares'] });
+      toast.success('Medida disciplinar registrada');
+    },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
@@ -121,8 +137,12 @@ export function useAtualizarMedidaDisciplinar() {
   const qc = useQueryClient();
   const { empresaAtual } = useEmpresas();
   return useMutation({
-    mutationFn: ({ id, ...d }: { id: string } & DataRecord) => medidasDisciplinaresService.atualizar(id, d, empresaAtual!.id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['medidas-disciplinares'] }); toast.success('Medida atualizada'); },
+    mutationFn: ({ id, ...d }: { id: string } & DataRecord) =>
+      medidasDisciplinaresService.atualizar(id, d, empresaAtual!.id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['medidas-disciplinares'] });
+      toast.success('Medida atualizada');
+    },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
@@ -141,7 +161,10 @@ export function useCriarEpi() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (d: DataRecord) => episService.criar(d as TablesInsert<'epis'>),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['epis'] }); toast.success('EPI cadastrado'); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['epis'] });
+      toast.success('EPI cadastrado');
+    },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
@@ -151,7 +174,10 @@ export function useAtualizarEpi() {
   const { empresaAtual } = useEmpresas();
   return useMutation({
     mutationFn: ({ id, ...d }: { id: string } & DataRecord) => episService.atualizar(id, d, empresaAtual!.id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['epis'] }); toast.success('EPI atualizado'); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['epis'] });
+      toast.success('EPI atualizado');
+    },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
@@ -161,7 +187,10 @@ export function useExcluirEpi() {
   const { empresaAtual } = useEmpresas();
   return useMutation({
     mutationFn: (id: string) => episService.excluir(id, empresaAtual!.id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['epis'] }); toast.success('EPI excluído'); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['epis'] });
+      toast.success('EPI excluído');
+    },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
@@ -189,7 +218,10 @@ export function useCriarEpiEntrega() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (d: DataRecord) => episEntregasService.criar(d as TablesInsert<'epis_entregas'>),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['epis-entregas'] }); toast.success('Entrega de EPI registrada'); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['epis-entregas'] });
+      toast.success('Entrega de EPI registrada');
+    },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
@@ -198,8 +230,12 @@ export function useDevolverEpi() {
   const qc = useQueryClient();
   const { empresaAtual } = useEmpresas();
   return useMutation({
-    mutationFn: ({ id, dataDevolucao }: { id: string; dataDevolucao: string }) => episEntregasService.registrarDevolucao(id, dataDevolucao, empresaAtual!.id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['epis-entregas'] }); toast.success('Devolução registrada'); },
+    mutationFn: ({ id, dataDevolucao }: { id: string; dataDevolucao: string }) =>
+      episEntregasService.registrarDevolucao(id, dataDevolucao, empresaAtual!.id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['epis-entregas'] });
+      toast.success('Devolução registrada');
+    },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
@@ -216,8 +252,12 @@ export function useJornadaHorarios(jornadaId: string) {
 export function useSalvarGradeHorarios() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ jornadaId, horarios }: { jornadaId: string; horarios: any[] }) => jornadaHorariosService.salvarGrade(jornadaId, horarios),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['jornada-horarios'] }); toast.success('Grade horária salva'); },
+    mutationFn: ({ jornadaId, horarios }: { jornadaId: string; horarios: any[] }) =>
+      jornadaHorariosService.salvarGrade(jornadaId, horarios),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['jornada-horarios'] });
+      toast.success('Grade horária salva');
+    },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
@@ -236,7 +276,10 @@ export function useSalvarBancoHorasConfig() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (d: DataRecord) => bancoHorasConfigService.salvar(d),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['banco-horas-config'] }); toast.success('Configuração salva'); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['banco-horas-config'] });
+      toast.success('Configuração salva');
+    },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
   });
 }
