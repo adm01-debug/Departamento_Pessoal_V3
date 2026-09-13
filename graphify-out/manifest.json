@@ -7626,9 +7626,9 @@
     "semantic_hash": ""
   },
   "supabase/functions/_shared/authz.ts": {
-    "mtime": 1789245987.7759807,
-    "seen": 1789303025.4135952,
-    "ast_hash": "cee6acb07e5000234b139775ded93c44",
+    "mtime": 1789304039.9956815,
+    "seen": 1789304380.2872448,
+    "ast_hash": "f8d8a25052fa3e9f88b8c07e740e583e",
     "semantic_hash": ""
   },
   "supabase/functions/_shared/cache.ts": {
@@ -7650,9 +7650,9 @@
     "semantic_hash": ""
   },
   "supabase/functions/_shared/folhaIntegrity.ts": {
-    "mtime": 1789255931.3499348,
-    "seen": 1789303025.4136205,
-    "ast_hash": "4a4a963567d694920530031b057b96c3",
+    "mtime": 1789304173.230864,
+    "seen": 1789304380.2873886,
+    "ast_hash": "e29fb1ec21a6758228c770d3b0e03f55",
     "semantic_hash": ""
   },
   "supabase/functions/_shared/idempotency.test.ts": {
@@ -7854,9 +7854,9 @@
     "semantic_hash": ""
   },
   "supabase/functions/calcular-folha/index.ts": {
-    "mtime": 1789256223.2606983,
-    "seen": 1789303025.413846,
-    "ast_hash": "2b74555b0bdb23e5186e64dad75bb4ab",
+    "mtime": 1789304103.6694045,
+    "seen": 1789304380.2884767,
+    "ast_hash": "4055141b447b8adc270125bfc28c7f90",
     "semantic_hash": ""
   },
   "supabase/functions/calcular-provisoes/index.ts": {
@@ -7878,9 +7878,9 @@
     "semantic_hash": ""
   },
   "supabase/functions/cnab-remessa/index.ts": {
-    "mtime": 1789255931.3499348,
-    "seen": 1789303025.4138682,
-    "ast_hash": "0cb7af2fff48856cb65f98e7ce1e0ecd",
+    "mtime": 1789304178.0562384,
+    "seen": 1789304380.2885356,
+    "ast_hash": "2c7f7ab2023d69e620726275e68f1d43",
     "semantic_hash": ""
   },
   "supabase/functions/consultarCEP/index.ts": {
@@ -9596,9 +9596,9 @@
     "semantic_hash": ""
   },
   "docs/auditoria/README.md": {
-    "mtime": 1789301015.3921044,
-    "seen": 1789303025.4308574,
-    "ast_hash": "0bf6a64e472e7acdf5c704b006fe91d3",
+    "mtime": 1789303501.0784342,
+    "seen": 1789304380.3070436,
+    "ast_hash": "8d4432c327f3abd1bdeadd55890d9272",
     "semantic_hash": ""
   },
   "docs/guides/admissao-guide.md": {
@@ -15152,9 +15152,9 @@
     "semantic_hash": ""
   },
   "docs/auditoria/PLANO_MELHORIAS_50_ETAPAS_2026-09-13.md": {
-    "mtime": 1789300968.4173152,
-    "seen": 1789303025.4308565,
-    "ast_hash": "4ea19f3330dddfafad14535fed75f816",
+    "mtime": 1789303501.0576525,
+    "seen": 1789304380.3070416,
+    "ast_hash": "49e5b758f1d26641adfa5465c42b4003",
     "semantic_hash": ""
   },
   "docs/auditoria/REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-10.md": {
@@ -15287,6 +15287,12 @@
     "mtime": 1788193002.1168947,
     "seen": 1789303025.43238,
     "ast_hash": "ffafc022562728b4d9722dc454d6feda",
+    "semantic_hash": ""
+  },
+  "docs/auditoria/SIMULACAO_E_EXECUCAO_E51_2026-09-13.md": {
+    "mtime": 1789303709.5747366,
+    "seen": 1789304380.3071182,
+    "ast_hash": "cba8125a7159183ae988259db71bf2a0",
     "semantic_hash": ""
   }
 }
