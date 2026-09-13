@@ -54,6 +54,11 @@ const allowedActions = new Set([
   'SIGN',
   'STATUS_CHANGE',
 ]);
+// Present in audit_log_acao_check for historical rows read by
+// v_payroll_audit and similar reports, but no Edge Function may write them —
+// the AST scan below still checks writer values against `allowedActions`
+// only, never this set.
+const legacyReadOnlyActions = new Set(['CLOSE', 'REOPEN', 'BACKUP_RUN']);
 const failures = [];
 let checked = 0;
 
@@ -73,7 +78,9 @@ if (!actionConstraint) {
     if (!physicalActions.has(action)) failures.push(`audit_log_acao_check não aceita ação revisada: ${action}`);
   }
   for (const action of physicalActions) {
-    if (!allowedActions.has(action)) failures.push(`audit_log_acao_check contém ação não revisada: ${action}`);
+    if (!allowedActions.has(action) && !legacyReadOnlyActions.has(action)) {
+      failures.push(`audit_log_acao_check contém ação não revisada: ${action}`);
+    }
   }
 }
 
