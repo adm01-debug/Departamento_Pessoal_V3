@@ -14,7 +14,7 @@ BEGIN
     'provisoes_mensais', 'registros_ponto', 'faltas', 'esocial_eventos',
     'exames', 'folhas_pagamento', 'desligamentos', 'banco_horas',
     'solicitacoes_ajuste_ponto', 'documentos_assinatura',
-    'colaborador_beneficios', 'colaboradores'
+    'colaborador_beneficios', 'colaboradores', 'empresas', 'cnab_remessas'
   ]
   LOOP
     IF to_regclass('public.' || required_table) IS NULL THEN
@@ -25,6 +25,7 @@ BEGIN
   IF to_regprocedure('public.has_role(uuid,public.app_role)') IS NULL
      OR to_regprocedure('public.is_admin(uuid)') IS NULL
      OR to_regprocedure('public.get_user_empresas(uuid)') IS NULL
+     OR to_regprocedure('public.get_user_scope_empresas(uuid)') IS NULL
      OR to_regprocedure('public.reset_login_attempts(text,text)') IS NULL THEN
     RAISE EXCEPTION 'P0 identity/RLS remediation requires has_role, is_admin, get_user_empresas and reset_login_attempts';
   END IF;
@@ -32,6 +33,14 @@ BEGIN
   IF to_regclass('public.v_system_health') IS NULL
      OR to_regclass('public.v_audit_trail') IS NULL THEN
     RAISE EXCEPTION 'P0 identity/RLS remediation requires v_system_health and v_audit_trail';
+  END IF;
+
+  IF (
+    SELECT count(*) FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'user_empresas'
+      AND column_name IN ('id', 'is_default', 'created_at')
+  ) <> 3 THEN
+    RAISE EXCEPTION 'P0 identity/RLS remediation requires user_empresas.id, is_default and created_at';
   END IF;
 END
 $preflight$;
@@ -132,6 +141,79 @@ REVOKE ALL ON FUNCTION public.pode_gerir_rh(uuid) FROM PUBLIC, anon;
 REVOKE ALL ON FUNCTION public.pode_gerir_pessoas(uuid) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.pode_gerir_rh(uuid) TO authenticated, service_role;
 GRANT EXECUTE ON FUNCTION public.pode_gerir_pessoas(uuid) TO authenticated, service_role;
+
+-- The explicit user parameter is retained for compatibility, but an ordinary
+-- caller may only ask for its own scope. Administrators and service workers
+-- remain able to inspect another identity deliberately.
+CREATE OR REPLACE FUNCTION public.get_user_scope_empresas(_user_id uuid)
+RETURNS SETOF uuid
+LANGUAGE plpgsql
+STABLE
+SECURITY DEFINER
+SET search_path = pg_catalog, public, pg_temp
+AS $function$
+DECLARE
+  actor uuid := auth.uid();
+  service_request boolean := COALESCE(auth.jwt() ->> 'role', '') = 'service_role';
+BEGIN
+  IF _user_id IS NULL OR (
+    NOT service_request
+    AND (actor IS NULL OR (actor <> _user_id AND NOT public.is_admin(actor)))
+  ) THEN
+    RAISE EXCEPTION 'user scope outside caller authorization' USING ERRCODE = '42501';
+  END IF;
+
+  RETURN QUERY
+  SELECT e.id FROM public.empresas AS e
+  WHERE e.ativa IS TRUE AND public.is_admin(_user_id)
+  UNION
+  SELECT ue.empresa_id FROM public.user_empresas AS ue WHERE ue.user_id = _user_id;
+END
+$function$;
+REVOKE ALL ON FUNCTION public.get_user_scope_empresas(uuid) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.get_user_scope_empresas(uuid) TO authenticated, service_role;
+
+-- The legacy browser CNAB generator still calls this helper. Enforce tenant
+-- membership inside the SECURITY DEFINER body so a forged empresa_id cannot
+-- observe another company's sequence.
+CREATE OR REPLACE FUNCTION public.next_cnab_sequencial(
+  p_empresa_id uuid,
+  p_banco_codigo text
+)
+RETURNS integer
+LANGUAGE plpgsql
+STABLE
+SECURITY DEFINER
+SET search_path = pg_catalog, public, pg_temp
+AS $function$
+DECLARE
+  actor uuid := auth.uid();
+  service_request boolean := COALESCE(auth.jwt() ->> 'role', '') = 'service_role';
+  result integer;
+BEGIN
+  IF p_empresa_id IS NULL OR p_banco_codigo IS NULL OR btrim(p_banco_codigo) = '' THEN
+    RAISE EXCEPTION 'invalid CNAB sequence arguments' USING ERRCODE = '22023';
+  END IF;
+  IF NOT service_request AND (
+    actor IS NULL OR (
+      NOT public.is_admin(actor)
+      AND NOT EXISTS (
+        SELECT 1 FROM public.user_empresas ue
+        WHERE ue.user_id = actor AND ue.empresa_id = p_empresa_id
+      )
+    )
+  ) THEN
+    RAISE EXCEPTION 'CNAB sequence outside caller tenant' USING ERRCODE = '42501';
+  END IF;
+
+  SELECT COALESCE(MAX(cr.sequencial_arquivo), 0) + 1 INTO result
+  FROM public.cnab_remessas cr
+  WHERE cr.empresa_id = p_empresa_id AND cr.banco_codigo = p_banco_codigo;
+  RETURN result;
+END
+$function$;
+REVOKE ALL ON FUNCTION public.next_cnab_sequencial(uuid, text) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.next_cnab_sequencial(uuid, text) TO authenticated, service_role;
 
 -- Successful login is already recorded atomically by record_login_attempt.
 -- No browser caller may reset an arbitrary identifier.

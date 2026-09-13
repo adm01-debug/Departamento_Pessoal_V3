@@ -319,7 +319,11 @@ serve(async (req: Request): Promise<Response> => {
       })
       : { data: [], error: null };
     if (recipientsError) throw recipientsError;
+    const recipientUserIdSet = new Set(recipientUserIds);
     const recipientEmails = (recipients ?? [])
+      .filter((recipient: { user_id?: unknown }) =>
+        typeof recipient.user_id === "string" && recipientUserIdSet.has(recipient.user_id)
+      )
       .map((recipient: { email?: unknown }) => recipient.email)
       .filter((email: unknown): email is string =>
         typeof email === "string" && email.length > 0

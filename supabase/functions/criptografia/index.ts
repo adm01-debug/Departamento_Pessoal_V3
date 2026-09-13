@@ -103,7 +103,7 @@ serve(async (req: Request): Promise<Response> => {
 
     const raw = await req.text();
     if (raw.length > MAX_PAYLOAD_BYTES) {
-      return createErrorResponse('Payload excede 128KB', 413, 'PAYLOAD_TOO_LARGE');
+      return createErrorResponse('Payload excede 128KB', 413, 'PAYLOAD_TOO_LARGE', undefined, req);
     }
     const parsed = BodySchema.safeParse(JSON.parse(raw || '{}'));
     if (!parsed.success) return createValidationErrorResponse(parsed.error, req);

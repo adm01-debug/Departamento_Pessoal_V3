@@ -112,7 +112,8 @@ export const calculoLoteService = {
           const dependentesCount =
             colab.dependentes?.filter((d) => d.tipo === 'filho' || d.tipo === 'enteado').length || 0;
           const eventosVariaveis = colab.eventos_variaveis || [];
-          const jornada = Number(colab.jornada_horas_mensais) || 220;
+          const jornadaInformada = Number(colab.jornada_horas_mensais);
+          const jornada = Number.isFinite(jornadaInformada) && jornadaInformada > 0 ? jornadaInformada : 220;
 
           // 3.1 Integrar dados de PONTO ELETRÔNICO (Horas Extras e Faltas Aprovadas)
           const { data: registrosPonto } = await supabase

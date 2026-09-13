@@ -20,9 +20,9 @@ run_psql <<'SQL'
 CREATE TABLE public.audit_log(
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   acao text NOT NULL,
-  CONSTRAINT audit_log_acao_check CHECK (acao IN ('INSERT','UPDATE','DELETE'))
+  CONSTRAINT audit_log_acao_check CHECK (acao IN ('INSERT','UPDATE','DELETE','CLOSE','REOPEN','BACKUP_RUN'))
 );
-INSERT INTO public.audit_log(acao) VALUES ('INSERT');
+INSERT INTO public.audit_log(acao) VALUES ('INSERT'),('CLOSE'),('REOPEN'),('BACKUP_RUN');
 SQL
 
 for pass in 1 2; do
@@ -38,6 +38,7 @@ SELECT unnest(ARRAY[
   'FERIAS_CALC', 'FERIAS_CANCEL', 'RESCISAO_CALC', 'PROVISOES_CALC',
   'ESOCIAL_SEND', 'DECIMO_CALC', 'IDEMPOTENCY_REPLAY', 'IDEMPOTENCY_CONFLICT',
   'BACKUP_CREATED', 'BACKUP_FAILED', 'SYSTEM_ACTION', 'AUTH_ACTION',
+  'CLOSE', 'REOPEN', 'BACKUP_RUN',
   'EXPORT', 'IMPORT', 'VISUALIZACAO', 'EXECUTE_CALC', 'SIGN', 'STATUS_CHANGE'
 ]::text[]);
 SQL

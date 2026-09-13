@@ -4,9 +4,8 @@
 
 DO $preflight$
 BEGIN
-  IF to_regclass('public.audit_log') IS NULL
-     OR to_regclass('public.vw_folha_compliance') IS NULL THEN
-    RAISE EXCEPTION 'payroll audit read contract requires audit_log and vw_folha_compliance';
+  IF to_regclass('public.audit_log') IS NULL THEN
+    RAISE EXCEPTION 'payroll audit read contract requires audit_log';
   END IF;
   IF NOT EXISTS (
     SELECT 1 FROM pg_catalog.pg_attribute

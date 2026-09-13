@@ -36,8 +36,6 @@ ALTER TABLE public.audit_log ENABLE ROW LEVEL SECURITY;
 GRANT SELECT ON public.audit_log TO authenticated, service_role;
 CREATE POLICY audit_tenant_read ON public.audit_log FOR SELECT TO authenticated
 USING (empresa_id::text = current_setting('app.empresa_id', true));
-CREATE VIEW public.vw_folha_compliance AS SELECT id AS audit_id FROM public.audit_log;
-
 INSERT INTO public.audit_log(tabela,registro_id,acao,empresa_id,dados_novos) VALUES
   ('folhas_pagamento','folha-current','PAYROLL_CLOSE','10000000-0000-0000-0000-000000000001','{"competencia":"2026-09"}'),
   ('folhas_pagamento','folha-legacy','CLOSE','10000000-0000-0000-0000-000000000001','{"competencia":"2026-08"}'),
@@ -80,7 +78,7 @@ set +e
 missing="$(docker exec -i "$NAME" psql -X -U postgres -d missing_payroll_audit -v ON_ERROR_STOP=1 -f /tmp/migration.sql 2>&1)"
 status=$?
 set -e
-[ "$status" -ne 0 ] && [[ "$missing" == *'requires audit_log and vw_folha_compliance'* ]] || {
+[ "$status" -ne 0 ] && [[ "$missing" == *'requires audit_log'* ]] || {
   echo 'payroll audit preflight did not fail closed' >&2
   exit 1
 }

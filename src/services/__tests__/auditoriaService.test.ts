@@ -19,12 +19,14 @@ describe('auditoriaService.listarTrilha', () => {
       registro_id: 'c1',
       limite: 25,
       antes_de: '2026-09-12T12:00:00.000Z',
+      antes_de_id: '30000000-0000-4000-8000-000000000001',
     });
 
     expect(mockRpc).toHaveBeenCalledWith('get_audit_trail', {
       p_empresa_id: EMPRESA_ID,
       p_limit: 25,
       p_before: '2026-09-12T12:00:00.000Z',
+      p_before_id: '30000000-0000-4000-8000-000000000001',
       p_tabela: 'colaboradores',
       p_registro_id: 'c1',
       p_tabelas: null,

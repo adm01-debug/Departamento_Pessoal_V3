@@ -98,6 +98,15 @@ run_psql -qAtc "SET ROLE authenticated; SET \"request.jwt.claim.sub\"='00000000-
 [ "$(run_psql -Atc "SELECT created_by FROM public.relatorios_agendados WHERE id='$schedule_id'")" = '00000000-0000-4000-8000-000000000012' ]
 
 set +e
+lease_failure="$(run_psql -qAtc "SET ROLE authenticated; SET \"request.jwt.claim.sub\"='00000000-0000-4000-8000-000000000012';
+  UPDATE public.relatorios_agendados SET dispatch_claim_token=gen_random_uuid(),dispatch_claimed_at=now() WHERE id='$schedule_id';" 2>&1)"
+lease_status=$?
+set -e
+if [ "$lease_status" -eq 0 ] || [[ "$lease_failure" != *'dispatch lease is service-owned'* ]]; then
+  echo 'RH user changed a service-owned report lease' >&2; exit 1
+fi
+
+set +e
 outside_failure="$(run_psql -qAtc "SET ROLE authenticated; SET \"request.jwt.claim.sub\"='00000000-0000-4000-8000-000000000012';
   UPDATE public.relatorios_agendados SET email_destinatario='externo@outra.test' WHERE id='$schedule_id';" 2>&1)"
 outside_status=$?

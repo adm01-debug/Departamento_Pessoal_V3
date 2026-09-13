@@ -43,24 +43,28 @@ BEGIN
   v_raw_empresa := COALESCE(
     NULLIF(v_row ->> 'empresa_id', ''),
     NULLIF(v_row #>> '{dados_novos,empresa_id}', ''),
+    NULLIF(v_row #>> '{dados_novos,empresaId}', ''),
     NULLIF(v_row #>> '{dados_anteriores,empresa_id}', ''),
+    NULLIF(v_row #>> '{dados_anteriores,empresaId}', ''),
     NULLIF(v_row #>> '{payload,empresa_id}', ''),
+    NULLIF(v_row #>> '{payload,empresaId}', ''),
     NULLIF(v_row #>> '{payload,novos,empresa_id}', ''),
-    NULLIF(v_row #>> '{payload,dados_novos,empresa_id}', '')
+    NULLIF(v_row #>> '{payload,novos,empresaId}', ''),
+    NULLIF(v_row #>> '{payload,dados_novos,empresa_id}', ''),
+    NULLIF(v_row #>> '{payload,dados_novos,empresaId}', '')
   );
   IF v_raw_empresa ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' THEN
     v_empresa := v_raw_empresa::uuid;
   END IF;
 
-  BEGIN
-    v_user := COALESCE(
-      (v_row ->> 'user_id')::uuid,
-      (v_row ->> 'usuario_id')::uuid,
-      (v_row ->> 'created_by')::uuid
-    );
-  EXCEPTION WHEN OTHERS THEN
-    v_user := NULL;
-  END;
+  v_user := NULL;
+  BEGIN v_user := (v_row ->> 'user_id')::uuid; EXCEPTION WHEN OTHERS THEN NULL; END;
+  IF v_user IS NULL THEN
+    BEGIN v_user := (v_row ->> 'usuario_id')::uuid; EXCEPTION WHEN OTHERS THEN NULL; END;
+  END IF;
+  IF v_user IS NULL THEN
+    BEGIN v_user := (v_row ->> 'created_by')::uuid; EXCEPTION WHEN OTHERS THEN NULL; END;
+  END IF;
 
   v_action := COALESCE(v_row ->> 'action', v_row ->> 'acao', v_row ->> 'operation',
     v_row ->> 'operacao', v_row ->> 'event_type', v_row ->> 'tipo');
@@ -69,11 +73,11 @@ BEGIN
   v_entity_id := COALESCE(v_row ->> 'entity_id', v_row ->> 'record_id',
     v_row ->> 'registro_id', v_row ->> 'resource_id');
 
-  BEGIN
-    v_ip := COALESCE((v_row ->> 'ip_address')::inet, (v_row ->> 'ip')::inet);
-  EXCEPTION WHEN OTHERS THEN
-    v_ip := NULL;
-  END;
+  v_ip := NULL;
+  BEGIN v_ip := (v_row ->> 'ip_address')::inet; EXCEPTION WHEN OTHERS THEN NULL; END;
+  IF v_ip IS NULL THEN
+    BEGIN v_ip := (v_row ->> 'ip')::inet; EXCEPTION WHEN OTHERS THEN NULL; END;
+  END IF;
   v_ua := COALESCE(v_row ->> 'user_agent', v_row ->> 'useragent');
 
   BEGIN
@@ -115,7 +119,9 @@ WITH tenant_source AS (
     COALESCE(
       NULLIF(to_jsonb(a) ->> 'empresa_id', ''),
       NULLIF(a.dados_novos ->> 'empresa_id', ''),
-      NULLIF(a.dados_anteriores ->> 'empresa_id', '')
+      NULLIF(a.dados_novos ->> 'empresaId', ''),
+      NULLIF(a.dados_anteriores ->> 'empresa_id', ''),
+      NULLIF(a.dados_anteriores ->> 'empresaId', '')
     ) AS raw_empresa_id
   FROM public.audit_log AS a
 )
@@ -172,7 +178,9 @@ BEGIN
   IF scoped_empresa_id IS NULL THEN
     raw_empresa_id := COALESCE(
       NULLIF(p_dados_novos ->> 'empresa_id', ''),
-      NULLIF(p_dados_anteriores ->> 'empresa_id', '')
+      NULLIF(p_dados_novos ->> 'empresaId', ''),
+      NULLIF(p_dados_anteriores ->> 'empresa_id', ''),
+      NULLIF(p_dados_anteriores ->> 'empresaId', '')
     );
     IF raw_empresa_id ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' THEN
       scoped_empresa_id := raw_empresa_id::uuid;
@@ -214,6 +222,7 @@ COMMENT ON FUNCTION public.registrar_auditoria(text, text, text, jsonb, jsonb, u
 -- overloads would make calls with default arguments ambiguous in PostgREST.
 DROP FUNCTION IF EXISTS public.get_audit_trail(uuid, integer, timestamptz);
 DROP FUNCTION IF EXISTS public.get_audit_trail(uuid, integer, timestamptz, text, text);
+DROP FUNCTION IF EXISTS public.get_audit_trail(uuid, integer, timestamptz, text, text, text[]);
 
 CREATE OR REPLACE FUNCTION public.get_audit_trail(
   p_empresa_id uuid DEFAULT NULL,
@@ -221,7 +230,8 @@ CREATE OR REPLACE FUNCTION public.get_audit_trail(
   p_before timestamptz DEFAULT now(),
   p_tabela text DEFAULT NULL,
   p_registro_id text DEFAULT NULL,
-  p_tabelas text[] DEFAULT NULL
+  p_tabelas text[] DEFAULT NULL,
+  p_before_id uuid DEFAULT NULL
 )
 RETURNS TABLE (
   id uuid,
@@ -294,7 +304,10 @@ BEGIN
         a.payload -> 'new_values'
       ) AS new_data
     FROM public.audit_log_unified AS a
-    WHERE a.occurred_at < p_before
+    WHERE (a.occurred_at, a.id) < (
+        p_before,
+        COALESCE(p_before_id, 'ffffffff-ffff-ffff-ffff-ffffffffffff'::uuid)
+      )
       AND (p_tabela IS NULL OR a.entity = p_tabela)
       AND (p_tabelas IS NULL OR a.entity = ANY (p_tabelas))
       AND (p_registro_id IS NULL OR a.entity_id = p_registro_id)
@@ -328,9 +341,9 @@ BEGIN
 END
 $function$;
 
-REVOKE ALL ON FUNCTION public.get_audit_trail(uuid, integer, timestamptz, text, text, text[])
+REVOKE ALL ON FUNCTION public.get_audit_trail(uuid, integer, timestamptz, text, text, text[], uuid)
   FROM PUBLIC, anon;
-GRANT EXECUTE ON FUNCTION public.get_audit_trail(uuid, integer, timestamptz, text, text, text[])
+GRANT EXECUTE ON FUNCTION public.get_audit_trail(uuid, integer, timestamptz, text, text, text[], uuid)
   TO authenticated, service_role;
 
 DO $lock_legacy_view$
@@ -342,5 +355,5 @@ BEGIN
 END
 $lock_legacy_view$;
 
-COMMENT ON FUNCTION public.get_audit_trail(uuid, integer, timestamptz, text, text, text[]) IS
-  'Tenant-scoped unified audit feed for RH/admin with optional entity filters; avoids direct access to legacy audit tables.';
+COMMENT ON FUNCTION public.get_audit_trail(uuid, integer, timestamptz, text, text, text[], uuid) IS
+  'Tenant-scoped unified audit feed for RH/admin with optional entity filters and stable timestamp/id cursor.';

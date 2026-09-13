@@ -14,6 +14,7 @@ import { requireRh } from '../_shared/authz.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { beginIdempotency, completeIdempotency, failIdempotency, extractIdempotencyKey } from '../_shared/idempotency.ts';
 import { integrityHash as computeIntegrityHash } from '../_shared/integrityHash.ts';
+import type { Database } from '../../../src/integrations/supabase/types.ts';
 
 
 const FAIXAS_INSS = [
@@ -76,11 +77,7 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   let idempotencyId: string | undefined;
-  // Estas Edge Functions não compartilham o schema TypeScript do front-end no
-  // bundle de deploy. Sem um schema explícito, o supabase-js 2 infere `never`
-  // para todas as tabelas/RPCs. `any` aqui limita-se ao adaptador dinâmico do
-  // PostgREST; os payloads de entrada continuam validados pelo Zod abaixo.
-  let admin: ReturnType<typeof createClient<any>> | undefined;
+  let admin: ReturnType<typeof createClient<Database>> | undefined;
 
   try {
     const csrf = await verifyCsrf(req.clone());
@@ -110,7 +107,7 @@ Deno.serve(async (req) => {
     // (alguns navegadores/proxies removem headers custom em preflights antigos).
     const idempotencyKey = extractIdempotencyKey(req, data);
 
-    admin = createClient<any>(supabaseUrl, serviceKey, {
+    admin = createClient<Database>(supabaseUrl, serviceKey, {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 

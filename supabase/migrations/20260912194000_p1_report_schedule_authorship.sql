@@ -18,6 +18,25 @@ BEGIN
   ) THEN
     RAISE EXCEPTION 'report schedule authorship requires existing rows with empresa_id and created_by';
   END IF;
+
+  IF EXISTS (
+    SELECT 1
+    FROM public.relatorios_agendados AS ra
+    WHERE NOT EXISTS (
+      SELECT 1
+      FROM auth.users AS u
+      WHERE lower(u.email) = lower(btrim(ra.email_destinatario))
+        AND (
+          EXISTS (
+            SELECT 1 FROM public.user_empresas AS ue
+            WHERE ue.user_id = u.id AND ue.empresa_id = ra.empresa_id
+          )
+          OR public.is_admin(u.id)
+        )
+    )
+  ) THEN
+    RAISE EXCEPTION 'report schedule authorship requires existing destinations inside the company';
+  END IF;
 END
 $preflight$;
 
@@ -65,6 +84,12 @@ DECLARE
 BEGIN
   IF TG_OP = 'UPDATE' THEN
     NEW.created_by := OLD.created_by;
+    IF actor_id IS NOT NULL AND (
+      NEW.dispatch_claim_token IS DISTINCT FROM OLD.dispatch_claim_token
+      OR NEW.dispatch_claimed_at IS DISTINCT FROM OLD.dispatch_claimed_at
+    ) THEN
+      RAISE EXCEPTION 'report dispatch lease is service-owned' USING ERRCODE = '42501';
+    END IF;
   END IF;
 
   -- Requests made with a human JWT must never choose their author. Internal
@@ -107,7 +132,7 @@ ALTER TABLE public.relatorios_agendados
 DROP TRIGGER IF EXISTS tr_enforce_report_schedule_authorship
   ON public.relatorios_agendados;
 CREATE TRIGGER tr_enforce_report_schedule_authorship
-BEFORE INSERT OR UPDATE OF created_by, empresa_id, email_destinatario, parametros
+BEFORE INSERT OR UPDATE
 ON public.relatorios_agendados
 FOR EACH ROW EXECUTE FUNCTION public.enforce_report_schedule_authorship();
 

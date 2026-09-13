@@ -10,6 +10,13 @@ BEGIN
   IF to_regprocedure('public.pode_gerir_rh(uuid)') IS NULL THEN
     RAISE EXCEPTION 'admission eSocial claim requires public.pode_gerir_rh(uuid)';
   END IF;
+  IF (
+    SELECT count(*) FROM information_schema.columns
+    WHERE table_schema='public' AND table_name='esocial_eventos'
+      AND column_name IN ('status','protocolo','recibo','id_recibo','data_envio')
+  ) <> 5 THEN
+    RAISE EXCEPTION 'admission eSocial claim requires persisted transport evidence columns';
+  END IF;
 END
 $preflight$;
 
@@ -17,6 +24,35 @@ ALTER TABLE public.esocial_eventos
   ADD COLUMN IF NOT EXISTS admissao_id uuid,
   ADD COLUMN IF NOT EXISTS transmission_claim_token uuid,
   ADD COLUMN IF NOT EXISTS transmission_claimed_at timestamptz;
+
+-- Browser writes may edit draft business data, but transport evidence and the
+-- lease are service-owned. SECURITY DEFINER lifecycle RPCs run as their owner;
+-- direct PostgREST writes run as authenticated and are rejected here.
+CREATE OR REPLACE FUNCTION public.protect_esocial_transport_fields()
+RETURNS trigger
+LANGUAGE plpgsql
+SET search_path = pg_catalog, public, pg_temp
+AS $function$
+BEGIN
+  IF current_user = 'authenticated' AND (
+    NEW.status IS DISTINCT FROM OLD.status
+    OR NEW.protocolo IS DISTINCT FROM OLD.protocolo
+    OR NEW.recibo IS DISTINCT FROM OLD.recibo
+    OR NEW.id_recibo IS DISTINCT FROM OLD.id_recibo
+    OR NEW.data_envio IS DISTINCT FROM OLD.data_envio
+    OR NEW.transmission_claim_token IS DISTINCT FROM OLD.transmission_claim_token
+    OR NEW.transmission_claimed_at IS DISTINCT FROM OLD.transmission_claimed_at
+  ) THEN
+    RAISE EXCEPTION 'eSocial transport fields are service-owned' USING ERRCODE = '42501';
+  END IF;
+  RETURN NEW;
+END
+$function$;
+REVOKE ALL ON FUNCTION public.protect_esocial_transport_fields() FROM PUBLIC, anon, authenticated;
+DROP TRIGGER IF EXISTS tr_protect_esocial_transport_fields ON public.esocial_eventos;
+CREATE TRIGGER tr_protect_esocial_transport_fields
+BEFORE UPDATE ON public.esocial_eventos
+FOR EACH ROW EXECUTE FUNCTION public.protect_esocial_transport_fields();
 
 DO $constraint$
 BEGIN
@@ -179,6 +215,9 @@ DECLARE
   actor uuid := auth.uid();
   receipt text := COALESCE(NULLIF(btrim(p_protocolo), ''), NULLIF(btrim(p_recibo), ''));
   admission_status text;
+  persisted_status text;
+  persisted_protocol text;
+  persisted_receipt text;
 BEGIN
   IF actor IS NULL OR NOT public.pode_gerir_rh(p_empresa_id) THEN
     RAISE EXCEPTION 'not authorized to complete admission eSocial event' USING ERRCODE = '42501';
@@ -191,7 +230,9 @@ BEGIN
   FOR UPDATE;
   IF NOT FOUND THEN RAISE EXCEPTION 'admission not found in company' USING ERRCODE = 'P0002'; END IF;
 
-  PERFORM 1 FROM public.esocial_eventos
+  SELECT status, protocolo, recibo
+  INTO persisted_status, persisted_protocol, persisted_receipt
+  FROM public.esocial_eventos
   WHERE id = p_evento_id AND admissao_id = p_admissao_id
     AND empresa_id = p_empresa_id AND tipo_evento = 'S-2200'
   FOR UPDATE;
@@ -201,6 +242,12 @@ BEGIN
 
   -- A lost HTTP response after a committed completion is safe to retry.
   IF admission_status = 'enviado' THEN RETURN; END IF;
+  IF persisted_status <> 'enviado'
+     OR NULLIF(btrim(persisted_protocol), '') IS DISTINCT FROM NULLIF(btrim(p_protocolo), '')
+     OR NULLIF(btrim(persisted_receipt), '') IS DISTINCT FROM NULLIF(btrim(p_recibo), '') THEN
+    RAISE EXCEPTION 'eSocial completion requires matching persisted transport receipt'
+      USING ERRCODE = '23514';
+  END IF;
   IF NOT EXISTS (
     SELECT 1 FROM public.esocial_eventos
     WHERE id = p_evento_id AND empresa_id = p_empresa_id

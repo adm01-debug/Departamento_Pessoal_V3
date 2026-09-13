@@ -3,7 +3,7 @@ import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Upload, RefreshCw, Shield, Loader2, Banknote, Lock } from 'lucide-react';
-import { edgeFunctionsService } from '@/services/edgeFunctionsService';
+import { edgeFunctionsService, isDefinitiveIdempotencyFailure } from '@/services/edgeFunctionsService';
 import { PageLayout } from '@/components/layout';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -125,7 +125,10 @@ export default function FolhaPagamentoPage() {
       queryClient.invalidateQueries({ queryKey: ['folha-resumo', competencia, empresaId] });
       toast.success('Folha calculada no servidor com sucesso!');
     } catch (err) {
-      // Falha: mantém a mesma chave para permitir REPLAY seguro em retry manual
+      // Respostas 4xx confirmam que a operação não produziu efeito e liberam
+      // uma nova intenção após o usuário corrigir o domínio. Falhas de rede,
+      // timeout e 5xx preservam a chave para replay/reconciliação segura.
+      if (isDefinitiveIdempotencyFailure(err)) idemReset(intent);
       toast.error(safeErrorMessage(err, 'Erro ao calcular folha no servidor.'));
     } finally {
       setCalcServidor(false);

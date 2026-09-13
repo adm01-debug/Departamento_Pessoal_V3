@@ -22908,6 +22908,7 @@ export type Database = {
       get_audit_trail: {
         Args: {
           p_before?: string
+          p_before_id?: string
           p_empresa_id?: string
           p_limit?: number
           p_registro_id?: string

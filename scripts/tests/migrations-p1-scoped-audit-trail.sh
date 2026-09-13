@@ -136,8 +136,19 @@ run_psql -qAtc "INSERT INTO public.audit_log_unified(source_table,empresa_id,act
 domain_limited="$(run_psql -qAtc "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000001\",\"role\":\"authenticated\"}'; SELECT registro_id FROM public.get_audit_trail('10000000-0000-4000-8000-000000000001',1,clock_timestamp()+interval '1 second',NULL,NULL,ARRAY['metas_okrs']);")"
 [ "$domain_limited" = "target-old" ] || { echo "domain filter was applied after limit: $domain_limited" >&2; exit 1; }
 
+# Timestamp-only cursors skip rows when a page ends inside a same-instant
+# group. The composite timestamp/id cursor must return the remaining row.
+cursor_time="$(run_psql -qAtc "SELECT date_trunc('second',clock_timestamp())")"
+run_psql -qAtc "INSERT INTO public.audit_log_unified(id,source_table,empresa_id,action,entity,entity_id,occurred_at) VALUES
+  ('70000000-0000-4000-8000-000000000011','test','10000000-0000-4000-8000-000000000001','UPDATE','cursor_test','second','$cursor_time'),
+  ('70000000-0000-4000-8000-000000000010','test','10000000-0000-4000-8000-000000000001','UPDATE','cursor_test','first','$cursor_time');" >/dev/null
+first_cursor="$(run_psql -qAtc "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000001\",\"role\":\"authenticated\"}'; SELECT id FROM public.get_audit_trail('10000000-0000-4000-8000-000000000001',1,'$cursor_time'::timestamptz+interval '1 second','cursor_test');")"
+[ "$first_cursor" = '70000000-0000-4000-8000-000000000011' ] || { echo "first composite cursor page is wrong: $first_cursor" >&2; exit 1; }
+second_cursor="$(run_psql -qAtc "SET ROLE authenticated; SET request.jwt.claims='{\"sub\":\"00000000-0000-0000-0000-000000000001\",\"role\":\"authenticated\"}'; SELECT id FROM public.get_audit_trail('10000000-0000-4000-8000-000000000001',1,'$cursor_time','cursor_test',NULL,NULL,'$first_cursor');")"
+[ "$second_cursor" = '70000000-0000-4000-8000-000000000010' ] || { echo "same-timestamp cursor skipped a row: $second_cursor" >&2; exit 1; }
+
 # Future legacy inserts must be forwarded with the tenant populated.
-run_psql -qAtc "INSERT INTO public.audit_log(id,tabela,registro_id,acao,dados_novos) VALUES ('30000000-0000-4000-8000-000000000004','folha','r4','INSERT','{\"empresa_id\":\"10000000-0000-4000-8000-000000000001\"}');" >/dev/null
+run_psql -qAtc "INSERT INTO public.audit_log(id,tabela,registro_id,acao,dados_novos) VALUES ('30000000-0000-4000-8000-000000000004','folha','r4','INSERT','{\"empresaId\":\"10000000-0000-4000-8000-000000000001\"}');" >/dev/null
 forwarded_tenant="$(run_psql -qAtc "SELECT empresa_id FROM public.audit_log_unified WHERE source_id='30000000-0000-4000-8000-000000000004';")"
 [ "$forwarded_tenant" = "10000000-0000-4000-8000-000000000001" ] || { echo "future forwarding lost tenant: $forwarded_tenant" >&2; exit 1; }
 

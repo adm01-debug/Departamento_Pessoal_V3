@@ -39,6 +39,7 @@ export interface TrilhaAuditoriaFiltros {
   registro_id?: string;
   limite?: number;
   antes_de?: string;
+  antes_de_id?: string;
 }
 
 export interface TrilhaAuditoriaRegistro {
@@ -75,6 +76,7 @@ export const auditoriaService = {
       p_tabela: filtros.tabela ?? null,
       p_registro_id: filtros.registro_id ?? null,
       p_tabelas: filtros.tabelas ?? null,
+      p_before_id: filtros.antes_de_id ?? null,
     });
 
     if (error) throw error;

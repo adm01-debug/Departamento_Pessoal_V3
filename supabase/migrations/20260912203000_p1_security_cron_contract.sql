@@ -12,6 +12,20 @@ BEGIN
      OR to_regprocedure('public.is_admin(uuid)') IS NULL THEN
     RAISE EXCEPTION 'P1 security cron contract requires the core policy/seal auditors and is_admin';
   END IF;
+  IF (
+    SELECT count(*) FROM information_schema.columns
+    WHERE table_schema='public' AND table_name='historico_alertas'
+      AND (
+        (column_name IN ('tipo','nivel','mensagem') AND data_type='text')
+        OR (column_name IN ('valor','limite') AND data_type='numeric')
+      )
+  ) <> 5 THEN
+    RAISE EXCEPTION 'P1 security cron contract requires typed historico_alertas columns';
+  END IF;
+  IF pg_get_function_result('public.sec_verify_seals()'::regprocedure)
+       <> 'TABLE(tabela text, selados bigint, divergentes bigint)' THEN
+    RAISE EXCEPTION 'P1 security cron contract requires typed sec_verify_seals result';
+  END IF;
 END
 $preflight$;
 

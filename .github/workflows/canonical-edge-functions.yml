@@ -82,10 +82,17 @@ jobs:
           supabase functions list \
             --project-ref "$CANONICAL_REF" \
             --output json >/tmp/functions-after.json
-          local_count="$(find supabase/functions -mindepth 2 -maxdepth 2 -name index.ts | wc -l)"
-          remote_count="$(jq 'length' /tmp/functions-after.json)"
-          test "$remote_count" -ge "$local_count" || {
-            echo "::error::Inventário remoto incompleto: $remote_count remoto(s), $local_count local(is)."
+          find supabase/functions -mindepth 2 -maxdepth 2 -name index.ts -printf '%h\n' \
+            | xargs -r -n1 basename | LC_ALL=C sort -u >/tmp/slugs-local.txt
+          jq -r '.[].slug' /tmp/functions-after.json | LC_ALL=C sort -u >/tmp/slugs-remote.txt
+          missing="$(comm -23 /tmp/slugs-local.txt /tmp/slugs-remote.txt)"
+          test -z "$missing" || {
+            echo '::error::Inventário remoto não contém todos os slugs locais.'
+            while IFS= read -r slug; do
+              test -z "$slug" || echo "::error::Função ausente: $slug"
+            done <<<"$missing"
             exit 1
           }
+          local_count="$(wc -l </tmp/slugs-local.txt | tr -d ' ')"
+          remote_count="$(wc -l </tmp/slugs-remote.txt | tr -d ' ')"
           echo "CANONICAL_EDGE_DEPLOY_OK local=$local_count remote=$remote_count"

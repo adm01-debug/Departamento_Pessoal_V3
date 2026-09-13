@@ -94,13 +94,15 @@ serve(async (req: Request): Promise<Response> => {
       }
     }
 
-    await adminClient.from('audit_log').insert({
+    const { error: auditError } = await adminClient.from('audit_log').insert({
       tabela: 'backup',
-      registro_id: 'system',
+      registro_id: crypto.randomUUID(),
       acao: 'BACKUP_CREATED',
       user_id: userData.user.id,
+      empresa_id: typeof empresaId === 'string' ? empresaId : null,
       dados_novos: { evento: 'BACKUP', tables: results, total: totalRecords, empresa_id: empresaId },
     });
+    if (auditError) throw auditError;
 
     return new Response(JSON.stringify({
       success: true,

@@ -259,7 +259,11 @@ serve(async (req: Request): Promise<Response> => {
           : "Erro desconhecido";
         console.error(`Erro no agendamento ${agendamento.id}:`, msg);
         try {
-          await releaseClaim();
+          // Evita que a próxima execução do cron reivindique imediatamente a
+          // mesma ocorrência em falhas persistentes. A chave determinística de
+          // dispatch continua estável para o retry desta ocorrência.
+          const retryAt = new Date(Date.now() + 5 * 60_000);
+          await releaseClaim(retryAt);
         } catch (releaseError) {
           console.error(`Erro ao liberar lease do agendamento ${agendamento.id}:`,
             releaseError instanceof Error ? releaseError.message : "erro desconhecido");
