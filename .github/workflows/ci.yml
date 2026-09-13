@@ -60,6 +60,11 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Lint
         run: npm run lint:ci
+      - name: Orçamento de `any` por diretório (E51-025)
+        # lint:ci só limita o TOTAL de warnings; um PR pode remover 50 `any`
+        # em um diretório e adicionar 50 em outro sem mudar o total. Este
+        # gate falha por diretório individualmente, não pela soma.
+        run: npm run audit:ratchet-any
       - name: Lint Edge Functions
         run: npm run lint:edge
       - name: Format changed source files

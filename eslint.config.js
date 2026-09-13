@@ -38,7 +38,11 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "@typescript-eslint/no-unused-vars": "off",
-      "@typescript-eslint/no-explicit-any": "off",
+      // Dívida medida, não permitida por padrão. scripts/ratchet-any.mjs
+      // mantém um orçamento por diretório que só pode diminuir (E51-025);
+      // "warn" (não "error") porque lint:ci já impõe o teto via
+      // --max-warnings, e o ratchet reprova qualquer diretório que suba.
+      "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/no-empty-object-type": "off",
       "react-hooks/exhaustive-deps": "warn",
       // Regras do React Compiler (eslint-plugin-react-hooks v6+): sinalizam padrões
