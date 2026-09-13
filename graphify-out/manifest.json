@@ -168,9 +168,9 @@
     "semantic_hash": ""
   },
   "eslint.config.js": {
-    "mtime": 1788115372.0436177,
-    "seen": 1788129206.8835442,
-    "ast_hash": "1a3ff932de3a8f61b4326cc9fbec69b0",
+    "mtime": 1789308020.939962,
+    "seen": 1789310563.051987,
+    "ast_hash": "1aa4477ffa847c98186f554d4e60d4a6",
     "semantic_hash": ""
   },
   "lighthouserc.js": {
@@ -180,9 +180,9 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1789247342.0497017,
-    "seen": 1789303025.3902652,
-    "ast_hash": "399c300412bc1a9220bb42c2db4a55c1",
+    "mtime": 1789310493.6960423,
+    "seen": 1789310563.0520391,
+    "ast_hash": "983bd3d6611e5db9f3f2bf0662ab04e1",
     "semantic_hash": ""
   },
   "playwright.config.ts": {
@@ -4920,9 +4920,9 @@
     "semantic_hash": ""
   },
   "src/hooks/useNovasTabelas.ts": {
-    "mtime": 1788115372.1224515,
-    "seen": 1788129206.8854442,
-    "ast_hash": "762e2baded57c84984d47a9e3937ac94",
+    "mtime": 1789310302.477511,
+    "seen": 1789310563.0696852,
+    "ast_hash": "3689f8feb87344160409c3db585f4b7b",
     "semantic_hash": ""
   },
   "src/hooks/useNow.ts": {
@@ -5226,8 +5226,8 @@
     "semantic_hash": ""
   },
   "src/lib/utils.ts": {
-    "mtime": 1788115372.1329758,
-    "seen": 1788129206.8855314,
+    "mtime": 1789308252.7844813,
+    "seen": 1789310563.0706365,
     "ast_hash": "401a4be1f40703c3943873410a47ad2a",
     "semantic_hash": ""
   },
@@ -5850,9 +5850,9 @@
     "semantic_hash": ""
   },
   "src/pages/TreinamentosPage.tsx": {
-    "mtime": 1788115372.1442616,
-    "seen": 1788129206.8859391,
-    "ast_hash": "208dc7de5a69a12411d7477dc2499227",
+    "mtime": 1789310302.559588,
+    "seen": 1789310563.072979,
+    "ast_hash": "bbdfcafb759576b59f30ec6ce6642063",
     "semantic_hash": ""
   },
   "src/pages/TurnosPage.tsx": {
@@ -6126,15 +6126,15 @@
     "semantic_hash": ""
   },
   "src/services/__tests__/bancoHorasConfigService.test.ts": {
-    "mtime": 1788115372.1480162,
-    "seen": 1788129206.8860285,
-    "ast_hash": "2a6caef01379ea111f8b56adea16ccd3",
+    "mtime": 1789310302.5822136,
+    "seen": 1789310563.0739527,
+    "ast_hash": "1f2c5c1c6dec599c2b51375c95281d5d",
     "semantic_hash": ""
   },
   "src/services/__tests__/bancoHorasService.test.ts": {
-    "mtime": 1788115372.1480162,
-    "seen": 1788129206.8860302,
-    "ast_hash": "ec8dc1737bb20923a59bf20d0424b831",
+    "mtime": 1789310302.606099,
+    "seen": 1789310563.0739536,
+    "ast_hash": "84ad35c2db31323bf7ba1beae1364614",
     "semantic_hash": ""
   },
   "src/services/__tests__/baseService.test.ts": {
@@ -6174,9 +6174,9 @@
     "semantic_hash": ""
   },
   "src/services/__tests__/catalogoCursoService.test.ts": {
-    "mtime": 1788115372.1480162,
-    "seen": 1788129206.886077,
-    "ast_hash": "35215de576fde9fe536060c50be80e38",
+    "mtime": 1789310302.6341472,
+    "seen": 1789310563.07407,
+    "ast_hash": "5bcea3d987bd782bb2cad1739315a17f",
     "semantic_hash": ""
   },
   "src/services/__tests__/cnabLayoutService.test.ts": {
@@ -6300,9 +6300,9 @@
     "semantic_hash": ""
   },
   "src/services/__tests__/faltasService.test.ts": {
-    "mtime": 1788115372.1480205,
-    "seen": 1788129206.8861225,
-    "ast_hash": "c531080694cf969e7a27463e278ae6cb",
+    "mtime": 1789310302.6488798,
+    "seen": 1789310563.074483,
+    "ast_hash": "ad9a4b92b14af37ec0a8e53f87e9220f",
     "semantic_hash": ""
   },
   "src/services/__tests__/feriasService.test.ts": {
@@ -6552,9 +6552,9 @@
     "semantic_hash": ""
   },
   "src/services/bancoHorasConfigService.ts": {
-    "mtime": 1788115372.1517792,
-    "seen": 1788129206.8862047,
-    "ast_hash": "3f892bf7e94450743f83530cecf6d2a6",
+    "mtime": 1789308811.8071759,
+    "seen": 1789310563.0753112,
+    "ast_hash": "d89bc67f24d25bf505d3eff91af894fb",
     "semantic_hash": ""
   },
   "src/services/bancoHorasService.ts": {
@@ -6600,9 +6600,9 @@
     "semantic_hash": ""
   },
   "src/services/catalogoCursoService.ts": {
-    "mtime": 1788115372.1517792,
-    "seen": 1788129206.8862329,
-    "ast_hash": "729329bd7dd90c95ccab3ff4c2ac36d3",
+    "mtime": 1789310302.6656845,
+    "seen": 1789310563.075438,
+    "ast_hash": "4060cdecb6adbe14c7590a7779f3b80c",
     "semantic_hash": ""
   },
   "src/services/cnabLayoutService.ts": {
@@ -6726,9 +6726,9 @@
     "semantic_hash": ""
   },
   "src/services/esocialService.ts": {
-    "mtime": 1789253709.8104553,
-    "seen": 1789303025.4111786,
-    "ast_hash": "97b54565e610bac0eb39bb68028d6770",
+    "mtime": 1789309368.3334665,
+    "seen": 1789310563.0757875,
+    "ast_hash": "c7f5bc4d4f07d099161bec6cd50e5441",
     "semantic_hash": ""
   },
   "src/services/exportService.ts": {
@@ -6738,9 +6738,9 @@
     "semantic_hash": ""
   },
   "src/services/faltasService.ts": {
-    "mtime": 1788115372.1517792,
-    "seen": 1788129206.886288,
-    "ast_hash": "791993da93e030f66aa7715cf7b51d10",
+    "mtime": 1789308495.6153083,
+    "seen": 1789310563.0758047,
+    "ast_hash": "a6d9d26c2ba37f0458ba65fd96e419f8",
     "semantic_hash": ""
   },
   "src/services/feriasService.ts": {
@@ -6882,9 +6882,9 @@
     "semantic_hash": ""
   },
   "src/services/pontoMonitorService.ts": {
-    "mtime": 1788115372.156379,
-    "seen": 1788129206.8863423,
-    "ast_hash": "12f8c36b8d83256db9b12c13488c6566",
+    "mtime": 1789308736.0740178,
+    "seen": 1789310563.0762436,
+    "ast_hash": "324036ada94774c7a7b9daa6e7f189f4",
     "semantic_hash": ""
   },
   "src/services/pontoOfflineService.ts": {
@@ -6948,27 +6948,27 @@
     "semantic_hash": ""
   },
   "src/services/tabelas/__tests__/beneficiosService.test.ts": {
-    "mtime": 1788115372.158857,
-    "seen": 1788129206.8863688,
-    "ast_hash": "631348587de5124f4bc5133d636aca75",
+    "mtime": 1789310302.679116,
+    "seen": 1789310563.0764256,
+    "ast_hash": "6c4502f72869acc56413f25cf9f292be",
     "semantic_hash": ""
   },
   "src/services/tabelas/__tests__/documentosService.test.ts": {
-    "mtime": 1788115372.158857,
-    "seen": 1788129206.8863704,
-    "ast_hash": "2a7715b7e5d2298456c9b33ae7c3375c",
+    "mtime": 1789310302.6878216,
+    "seen": 1789310563.0764263,
+    "ast_hash": "427c7ee7b73ea89833dcb1d8935209ce",
     "semantic_hash": ""
   },
   "src/services/tabelas/__tests__/folhaService.test.ts": {
-    "mtime": 1788115372.158857,
-    "seen": 1788129206.8863764,
-    "ast_hash": "468170b6d0934a28867bf895f4a031e8",
+    "mtime": 1789310302.7037563,
+    "seen": 1789310563.076427,
+    "ast_hash": "d893ac594175176211154dcc6d9fca26",
     "semantic_hash": ""
   },
   "src/services/tabelas/__tests__/pontoService.test.ts": {
-    "mtime": 1788115372.158857,
-    "seen": 1788129206.8863795,
-    "ast_hash": "019a69d318b2ae6461febbbf29f74264",
+    "mtime": 1789310302.7121282,
+    "seen": 1789310563.0764275,
+    "ast_hash": "c13ec98be9f539bf62b0a9dbba160e60",
     "semantic_hash": ""
   },
   "src/services/tabelas/__tests__/rhService.test.ts": {
@@ -6990,21 +6990,21 @@
     "semantic_hash": ""
   },
   "src/services/tabelas/beneficiosService.ts": {
-    "mtime": 1788115372.158857,
-    "seen": 1788129206.8863928,
-    "ast_hash": "41ed626d4dade3fe5925ff0a3963558c",
+    "mtime": 1789310302.7207325,
+    "seen": 1789310563.0764883,
+    "ast_hash": "68b57da061685869c5343c9232dba969",
     "semantic_hash": ""
   },
   "src/services/tabelas/documentosService.ts": {
-    "mtime": 1788115372.158857,
-    "seen": 1788129206.8863955,
-    "ast_hash": "4aca0ff191d60b92fffc3a485ac78981",
+    "mtime": 1789310302.729633,
+    "seen": 1789310563.0764892,
+    "ast_hash": "7f879ffef3ce449c81d5633bb3160f68",
     "semantic_hash": ""
   },
   "src/services/tabelas/folhaService.ts": {
-    "mtime": 1788115372.158857,
-    "seen": 1788129206.8863978,
-    "ast_hash": "caa3474e517952df81e821eedbf2c5ba",
+    "mtime": 1789310302.7407763,
+    "seen": 1789310563.0764897,
+    "ast_hash": "0e88daf7963a0c584e1e4d5b1840e5ed",
     "semantic_hash": ""
   },
   "src/services/tabelas/index.ts": {
@@ -7014,9 +7014,9 @@
     "semantic_hash": ""
   },
   "src/services/tabelas/pontoService.ts": {
-    "mtime": 1788115372.158857,
-    "seen": 1788129206.886402,
-    "ast_hash": "db13c97bfee42f0e6f964b3abd508473",
+    "mtime": 1789309175.7310216,
+    "seen": 1789310563.0765097,
+    "ast_hash": "06f0aa9c1313581a24c4a2f5d9378b60",
     "semantic_hash": ""
   },
   "src/services/tabelas/rhService.ts": {
@@ -8432,9 +8432,9 @@
     "semantic_hash": ""
   },
   ".github/workflows/ci.yml": {
-    "mtime": 1789253923.6851757,
-    "seen": 1789303025.4274852,
-    "ast_hash": "74f15ae9393b76f66ed2988ae978a3f5",
+    "mtime": 1789308175.100726,
+    "seen": 1789310563.0967255,
+    "ast_hash": "7e358c2259758a7aae59e346a554b28c",
     "semantic_hash": ""
   },
   ".github/workflows/deploy.yml": {
@@ -15290,9 +15290,21 @@
     "semantic_hash": ""
   },
   "docs/auditoria/SIMULACAO_E_EXECUCAO_E51_2026-09-13.md": {
-    "mtime": 1789303709.5747366,
-    "seen": 1789304380.3071182,
-    "ast_hash": "cba8125a7159183ae988259db71bf2a0",
+    "mtime": 1789304623.6360664,
+    "seen": 1789310563.1005683,
+    "ast_hash": "3889c702efad3582a60d55418b368444",
+    "semantic_hash": ""
+  },
+  "scripts/ratchet-any.mjs": {
+    "mtime": 1789308077.6632953,
+    "seen": 1789310563.0525806,
+    "ast_hash": "ce12e109ea05c9f36e07caadd023c7d8",
+    "semantic_hash": ""
+  },
+  "scripts/typecheck-edge.sh": {
+    "mtime": 1789304474.6601758,
+    "seen": 1789310563.0536368,
+    "ast_hash": "4b69e0a8d555843f3b6a1717fed460ae",
     "semantic_hash": ""
   }
 }
