@@ -24,7 +24,7 @@
     "audit:secdef": "node scripts/audit-secdef-authz.mjs",
     "audit:embeds": "node scripts/audit-embed-hints.mjs",
     "audit:ratchet-any": "node scripts/ratchet-any.mjs",
-    "lint:ci": "eslint src --ext ts,tsx --max-warnings=1061",
+    "lint:ci": "eslint src --ext ts,tsx --max-warnings=1025",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json,md}\"",
     "format:check:changed": "bash scripts/format-check-changed.sh",
     "format:write": "prettier --write \"src/**/*.{ts,tsx,css,json,md}\"",
