@@ -180,9 +180,9 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1789311431.7531576,
-    "seen": 1789311478.8665485,
-    "ast_hash": "142c199b83282a57e54b59863e365142",
+    "mtime": 1789312632.9392755,
+    "seen": 1789312681.0633004,
+    "ast_hash": "b80d2c51b120ee1a425416724a12f3e8",
     "semantic_hash": ""
   },
   "playwright.config.ts": {
@@ -2370,9 +2370,9 @@
     "semantic_hash": ""
   },
   "src/components/desligamentos/DesligamentoDetailSheet.tsx": {
-    "mtime": 1788115372.087945,
-    "seen": 1788129206.8843203,
-    "ast_hash": "db4ece96f365cb043159d4ec37dbb288",
+    "mtime": 1789312471.0817504,
+    "seen": 1789312681.0705092,
+    "ast_hash": "f009dcf1d0863d408c57486bc95554dc",
     "semantic_hash": ""
   },
   "src/components/desligamentos/DesligamentoFilters.tsx": {
@@ -6228,9 +6228,9 @@
     "semantic_hash": ""
   },
   "src/services/__tests__/contratoService.test.ts": {
-    "mtime": 1788115372.1480205,
-    "seen": 1788129206.8860955,
-    "ast_hash": "08f42a9c8a2a47bf816db52974d27067",
+    "mtime": 1789312471.113776,
+    "seen": 1789312681.0824738,
+    "ast_hash": "0b414254e44cc163662ac34e7237d4b4",
     "semantic_hash": ""
   },
   "src/services/__tests__/contratoTemplateService.test.ts": {
@@ -6354,9 +6354,9 @@
     "semantic_hash": ""
   },
   "src/services/__tests__/lgpdService.test.ts": {
-    "mtime": 1788115372.1480205,
-    "seen": 1788129206.8861418,
-    "ast_hash": "8f4fc2000d2a161f9f25885d7105ab75",
+    "mtime": 1789312471.1344483,
+    "seen": 1789312681.0828047,
+    "ast_hash": "dafb2a52943e5031eedf8d39b75d6d7d",
     "semantic_hash": ""
   },
   "src/services/__tests__/localTrabalhoService.test.ts": {
@@ -6462,9 +6462,9 @@
     "semantic_hash": ""
   },
   "src/services/__tests__/rescisaoService.test.ts": {
-    "mtime": 1788115372.1480205,
-    "seen": 1788129206.886175,
-    "ast_hash": "e2db69ebec5a669b8c349b7a6b6fc7ac",
+    "mtime": 1789312471.1514904,
+    "seen": 1789312681.083099,
+    "ast_hash": "4e1d8e7e69f3faea18d4108ed623996b",
     "semantic_hash": ""
   },
   "src/services/__tests__/securityService.test.ts": {
@@ -6648,9 +6648,9 @@
     "semantic_hash": ""
   },
   "src/services/contratoService.ts": {
-    "mtime": 1788115372.1517792,
-    "seen": 1788129206.8862543,
-    "ast_hash": "b40a5acf96be2c20ec58ed4b29551bc8",
+    "mtime": 1789311564.9995577,
+    "seen": 1789312681.0835564,
+    "ast_hash": "5e7c7342619357f76a7360178ad89a1b",
     "semantic_hash": ""
   },
   "src/services/contratoTemplateService.ts": {
@@ -6678,9 +6678,9 @@
     "semantic_hash": ""
   },
   "src/services/despesaService.ts": {
-    "mtime": 1788115372.1517792,
-    "seen": 1788129206.8862686,
-    "ast_hash": "3fac80dc8e38e86c95f9a27259b5dcb8",
+    "mtime": 1789312471.171195,
+    "seen": 1789312681.0836341,
+    "ast_hash": "b48250652fe948d67983910a64f4fc9e",
     "semantic_hash": ""
   },
   "src/services/documentoService.ts": {
@@ -6822,9 +6822,9 @@
     "semantic_hash": ""
   },
   "src/services/lgpdService.ts": {
-    "mtime": 1788115372.156379,
-    "seen": 1788129206.8863177,
-    "ast_hash": "324ec489c623e0f0873480d32283c74e",
+    "mtime": 1789311676.0695317,
+    "seen": 1789312681.0840402,
+    "ast_hash": "37774e082ecb85da80f15d9c179825ae",
     "semantic_hash": ""
   },
   "src/services/localTrabalhoService.ts": {
@@ -6930,9 +6930,9 @@
     "semantic_hash": ""
   },
   "src/services/rescisaoService.ts": {
-    "mtime": 1789247806.1290178,
-    "seen": 1789303025.4115975,
-    "ast_hash": "12ff13cb70328efe66acf33130f70d7c",
+    "mtime": 1789312471.1933115,
+    "seen": 1789312681.084476,
+    "ast_hash": "3d61a6ad71c4bd175303b8d9e52d7a89",
     "semantic_hash": ""
   },
   "src/services/securityService.ts": {
