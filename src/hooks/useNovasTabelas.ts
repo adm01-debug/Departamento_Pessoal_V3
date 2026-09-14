@@ -35,7 +35,7 @@ export function useBatidasPontoDia(data: string) {
 export function useRegistrarBatida() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (d: DataRecord) => batidasPontoService.registrar(d),
+    mutationFn: (d: TablesInsert<'batidas_ponto'>) => batidasPontoService.registrar(d),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['batidas-ponto'] });
       toast.success('Batida registrada');
