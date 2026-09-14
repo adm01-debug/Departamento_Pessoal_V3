@@ -180,9 +180,9 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1789388463.5948794,
-    "seen": 1789388722.2892654,
-    "ast_hash": "a3dd69eaf363d4079cfc467fdde9bc48",
+    "mtime": 1789389613.0561705,
+    "seen": 1789389946.0246644,
+    "ast_hash": "8f06b55d2e66feeba2ffc4ef8b9d7cb3",
     "semantic_hash": ""
   },
   "playwright.config.ts": {
@@ -4116,9 +4116,9 @@
     "semantic_hash": ""
   },
   "src/hooks/__tests__/useColaboradorDetalhes.test.ts": {
-    "mtime": 1788115372.1156614,
-    "seen": 1788129206.8849094,
-    "ast_hash": "2802c069e5bba100a8974494fa35c992",
+    "mtime": 1789389708.573333,
+    "seen": 1789389946.0368052,
+    "ast_hash": "a9539e815805e6161b0df4b9779e3c2c",
     "semantic_hash": ""
   },
   "src/hooks/__tests__/useColaboradores.test.ts": {
@@ -4686,9 +4686,9 @@
     "semantic_hash": ""
   },
   "src/hooks/useColaboradorDetalhes.ts": {
-    "mtime": 1788115372.1224515,
-    "seen": 1788129206.885368,
-    "ast_hash": "f738ec74d02d7f400c74d33e5ec9e092",
+    "mtime": 1789389055.2108943,
+    "seen": 1789389946.038426,
+    "ast_hash": "5b647956a3ce8a94b89df1134a05c2d0",
     "semantic_hash": ""
   },
   "src/hooks/useColaboradorVinculo.ts": {
@@ -6192,9 +6192,9 @@
     "semantic_hash": ""
   },
   "src/services/__tests__/colaboradorDetalhesService.test.ts": {
-    "mtime": 1789058699.0864468,
-    "seen": 1789303025.4098063,
-    "ast_hash": "5e66f846bb59b3b58c86aca1f925f637",
+    "mtime": 1789389708.645253,
+    "seen": 1789389946.042566,
+    "ast_hash": "aed810a4acb801b55a9b3d94d87646df",
     "semantic_hash": ""
   },
   "src/services/__tests__/colaboradorService.test.ts": {
@@ -6618,9 +6618,9 @@
     "semantic_hash": ""
   },
   "src/services/colaboradorDetalhesService.ts": {
-    "mtime": 1789058699.0052547,
-    "seen": 1789303025.4109075,
-    "ast_hash": "712a4cf4e1879a64181da7e14aa199af",
+    "mtime": 1789389708.69906,
+    "seen": 1789389946.0438437,
+    "ast_hash": "520a07d266c90cf7498e81e2aa2a1fb7",
     "semantic_hash": ""
   },
   "src/services/colaboradorService.ts": {
