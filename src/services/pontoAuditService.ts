@@ -1,7 +1,10 @@
 import { auditLogger } from '@/utils/auditLogger';
+import type { Tables } from '@/integrations/supabase/database.types';
+
+type BatidaPonto = Partial<Tables<'batidas_ponto'>> | null;
 
 export const pontoAuditService = {
-  async logAdjustment(registroId: string, dadosAnteriores: any, dadosNovos: any) {
+  async logAdjustment(registroId: string, dadosAnteriores: BatidaPonto, dadosNovos: BatidaPonto) {
     await auditLogger.log({
       tabela: 'batidas_ponto',
       registro_id: registroId,
@@ -11,7 +14,7 @@ export const pontoAuditService = {
     });
   },
 
-  async logExclusion(registroId: string, dadosAnteriores: any) {
+  async logExclusion(registroId: string, dadosAnteriores: BatidaPonto) {
     await auditLogger.log({
       tabela: 'batidas_ponto',
       registro_id: registroId,
@@ -20,7 +23,7 @@ export const pontoAuditService = {
     });
   },
 
-  async logMassAction(empresaId: string, acao: string, detalhes: any) {
+  async logMassAction(empresaId: string, acao: string, detalhes: Record<string, unknown>) {
     await auditLogger.log({
       tabela: 'registros_ponto',
       registro_id: empresaId,

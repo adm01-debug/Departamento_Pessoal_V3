@@ -44,7 +44,12 @@ function setupUpdateChain(data: any, error: any = null) {
 
 function setupDeleteChain(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  const __delChain = {
+    then: (r: any) => Promise.resolve({ error }).then(r),
+    catch: (r: any) => Promise.resolve({ error }).catch(r),
+    finally: (r: any) => Promise.resolve({ error }).finally(r),
+    eq: eqFn,
+  };
   eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
@@ -54,7 +59,9 @@ function setupDeleteChain(error: any = null) {
 // ─── listar ───────────────────────────────────────────────────────────────────
 
 describe('intervaloService.listar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns intervalos without empresa filter', async () => {
     const records = [{ id: 'i1', nome: 'Almoço 1h' }];
@@ -88,7 +95,9 @@ describe('intervaloService.listar', () => {
 // ─── criar ────────────────────────────────────────────────────────────────────
 
 describe('intervaloService.criar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new intervalo', async () => {
     const created = { id: 'i-new', nome: 'Descanso 15min' };
@@ -100,19 +109,21 @@ describe('intervaloService.criar', () => {
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(intervaloService.criar({})).rejects.toThrow();
+    await expect(intervaloService.criar({ nome: 'Descanso 15min' })).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
     setupInsertChain(null, { message: 'fail' });
-    await expect(intervaloService.criar({})).rejects.toBeDefined();
+    await expect(intervaloService.criar({ nome: 'Descanso 15min' })).rejects.toBeDefined();
   });
 });
 
 // ─── atualizar ────────────────────────────────────────────────────────────────
 
 describe('intervaloService.atualizar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates and returns intervalo', async () => {
     const updated = { id: 'i1', duracao_minutos: 60 };
@@ -132,7 +143,9 @@ describe('intervaloService.atualizar', () => {
 // ─── excluir ──────────────────────────────────────────────────────────────────
 
 describe('intervaloService.excluir', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes intervalo by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();

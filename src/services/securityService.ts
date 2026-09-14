@@ -10,7 +10,7 @@ export interface SecurityAlert {
   severity: string;
   ip_address: string;
   user_id: string | null;
-  details: any;
+  details: Record<string, unknown> | null;
   resolved: boolean;
   resolved_by: string | null;
   resolved_at: string | null;
