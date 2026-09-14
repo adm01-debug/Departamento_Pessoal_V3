@@ -180,9 +180,9 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1789389613.0561705,
-    "seen": 1789389946.0246644,
-    "ast_hash": "8f06b55d2e66feeba2ffc4ef8b9d7cb3",
+    "mtime": 1789390547.652906,
+    "seen": 1789390694.0475173,
+    "ast_hash": "bdb42d6998f072f479ee71450032dc74",
     "semantic_hash": ""
   },
   "playwright.config.ts": {
@@ -3480,9 +3480,9 @@
     "semantic_hash": ""
   },
   "src/components/settings/UserRolesTab.tsx": {
-    "mtime": 1788115372.1060886,
-    "seen": 1788129206.8847306,
-    "ast_hash": "63eda16d33845ecbb9f57d4d1a3abb4b",
+    "mtime": 1789390429.0262566,
+    "seen": 1789390694.0582864,
+    "ast_hash": "5d9bdae32c8ff93ad9c9675ffc95b5a0",
     "semantic_hash": ""
   },
   "src/components/sst/GerarLtcatOsButton.tsx": {
@@ -5100,9 +5100,9 @@
     "semantic_hash": ""
   },
   "src/integrations/lovable/index.ts": {
-    "mtime": 1788115372.1307216,
-    "seen": 1788129206.8854995,
-    "ast_hash": "e1b1c47d77d5093a33ba40143cd8cecc",
+    "mtime": 1789390429.0352352,
+    "seen": 1789390694.0632484,
+    "ast_hash": "b2d767261cb6855c903a0698d7220094",
     "semantic_hash": ""
   },
   "src/integrations/supabase/client.base.ts": {
@@ -5112,15 +5112,15 @@
     "semantic_hash": ""
   },
   "src/integrations/supabase/client.ts": {
-    "mtime": 1789247475.125646,
-    "seen": 1789303025.4067335,
-    "ast_hash": "df9b6b1914fc7364f6fa010ee53612c0",
+    "mtime": 1789390081.1828914,
+    "seen": 1789390694.0633109,
+    "ast_hash": "26daf096faa960a7f79d2d6babcd1d19",
     "semantic_hash": ""
   },
   "src/integrations/supabase/database.types.ts": {
-    "mtime": 1788115372.1314754,
-    "seen": 1788129206.8855042,
-    "ast_hash": "679ce98cf9f94ab8f15e7724f9bad102",
+    "mtime": 1789390429.0446827,
+    "seen": 1789390694.0633116,
+    "ast_hash": "01237d39a135ae91170e0e533c3201ae",
     "semantic_hash": ""
   },
   "src/integrations/supabase/index.ts": {
@@ -6678,9 +6678,9 @@
     "semantic_hash": ""
   },
   "src/services/despesaService.ts": {
-    "mtime": 1789312471.171195,
-    "seen": 1789312681.0836341,
-    "ast_hash": "b48250652fe948d67983910a64f4fc9e",
+    "mtime": 1789390240.1990297,
+    "seen": 1789390694.068149,
+    "ast_hash": "0f7974f50c0ee6993b45eb0fad0d48fa",
     "semantic_hash": ""
   },
   "src/services/documentoService.ts": {
@@ -6894,9 +6894,9 @@
     "semantic_hash": ""
   },
   "src/services/pontoService.ts": {
-    "mtime": 1789388564.5264266,
-    "seen": 1789388722.3091424,
-    "ast_hash": "44377ac31581ce2a9aec270f4209882d",
+    "mtime": 1789390249.613554,
+    "seen": 1789390694.0688286,
+    "ast_hash": "53a82d04cd5ea451acf07a70ed590e58",
     "semantic_hash": ""
   },
   "src/services/pontosService.ts": {
@@ -7038,9 +7038,9 @@
     "semantic_hash": ""
   },
   "src/services/tabelasReferenciaService.ts": {
-    "mtime": 1789383475.9403594,
-    "seen": 1789384360.4013104,
-    "ast_hash": "6b815876b57b56c3526d0fd5b0d9b715",
+    "mtime": 1789390261.711841,
+    "seen": 1789390694.0693252,
+    "ast_hash": "88274214ced8e94f1cc0f60a78a76836",
     "semantic_hash": ""
   },
   "src/services/turnoService.ts": {
