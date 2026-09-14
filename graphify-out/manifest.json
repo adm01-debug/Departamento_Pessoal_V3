@@ -180,9 +180,9 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1789385265.020489,
-    "seen": 1789385579.5960703,
-    "ast_hash": "5dad9abad30fab57e8f6846ed6fb593f",
+    "mtime": 1789386018.116038,
+    "seen": 1789386272.6207473,
+    "ast_hash": "51bab96477179a55e0ce40281715497e",
     "semantic_hash": ""
   },
   "playwright.config.ts": {
@@ -6240,9 +6240,9 @@
     "semantic_hash": ""
   },
   "src/services/__tests__/controleAcessoService.test.ts": {
-    "mtime": 1788115372.1480205,
-    "seen": 1788129206.8861,
-    "ast_hash": "a33c6d21b3e5db6ced83dc6a2da5f0be",
+    "mtime": 1789386118.654561,
+    "seen": 1789386272.645736,
+    "ast_hash": "f105961bc57fbab8f6f5e2bb8f784d53",
     "semantic_hash": ""
   },
   "src/services/__tests__/departamentoService.test.ts": {
@@ -6324,9 +6324,9 @@
     "semantic_hash": ""
   },
   "src/services/__tests__/historicoContratoService.test.ts": {
-    "mtime": 1788115372.1480205,
-    "seen": 1788129206.8861315,
-    "ast_hash": "1ec8b2917c42dab196133a66bf473cb2",
+    "mtime": 1789386118.673336,
+    "seen": 1789386272.646065,
+    "ast_hash": "ad5311fcaaece756dd216efe1123006c",
     "semantic_hash": ""
   },
   "src/services/__tests__/horaExtraService.test.ts": {
@@ -6660,9 +6660,9 @@
     "semantic_hash": ""
   },
   "src/services/controleAcessoService.ts": {
-    "mtime": 1788115372.1517792,
-    "seen": 1788129206.8862576,
-    "ast_hash": "fc2e17740ccfe9eb31fad0e18e14674f",
+    "mtime": 1789386118.6870115,
+    "seen": 1789386272.6474445,
+    "ast_hash": "539d54cdf06948c902d005ef8bc81acc",
     "semantic_hash": ""
   },
   "src/services/departamentoService.ts": {
@@ -6708,9 +6708,9 @@
     "semantic_hash": ""
   },
   "src/services/empresaService.ts": {
-    "mtime": 1788115372.1517792,
-    "seen": 1788129206.8862784,
-    "ast_hash": "eff4b8e1fff396877481e426ef1c01ae",
+    "mtime": 1789386118.6980886,
+    "seen": 1789386272.647595,
+    "ast_hash": "ccb92df84e35833fdef861ca21c8ed0a",
     "semantic_hash": ""
   },
   "src/services/encryptionService.ts": {
@@ -6732,9 +6732,9 @@
     "semantic_hash": ""
   },
   "src/services/exportService.ts": {
-    "mtime": 1788115372.1517792,
-    "seen": 1788129206.8862855,
-    "ast_hash": "80514f1a0a54fef09ae49f8cca498ae6",
+    "mtime": 1789386118.7289195,
+    "seen": 1789386272.6476657,
+    "ast_hash": "3dd9635bc76641fc4b1d4bb5f4fbca75",
     "semantic_hash": ""
   },
   "src/services/faltasService.ts": {
@@ -6786,9 +6786,9 @@
     "semantic_hash": ""
   },
   "src/services/historicoContratoService.ts": {
-    "mtime": 1788115372.156379,
-    "seen": 1788129206.8863058,
-    "ast_hash": "0f2a3c3b63c74c1981178d670a59ef03",
+    "mtime": 1789386118.7361286,
+    "seen": 1789386272.6481214,
+    "ast_hash": "7da2bf4fa88d8949ceee7290c9b679a6",
     "semantic_hash": ""
   },
   "src/services/horaExtraService.ts": {
