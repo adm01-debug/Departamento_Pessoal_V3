@@ -2,18 +2,18 @@
 
 ## Corpus Check
 
-- 2495 files · ~1,724,775 words
+- 2495 files · ~1,724,866 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
 
-- 17345 nodes · 31605 edges · 2179 communities (1542 shown, 637 thin omitted)
+- 17347 nodes · 31610 edges · 2139 communities (1534 shown, 605 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 45 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
 
-- Built from commit: `fe179397`
+- Built from commit: `5a408169`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -27,15 +27,15 @@
 - App.tsx
 - "public"."colaboradores"
 - "public"."empresas"
-- ContratosGeradosPage.tsx
-- contract.ts
+- useContratosAssinaturaKPI.test.ts
+- csrf.ts
 - schemas/index.ts
 - useEmpresas
 - auth.users
 - "public"."audit_log_append_only"
-- useMoreGenericCrudHooks.test.ts
+- useGenericCrud
 - auth.users
-- FeriasProgramacaoPage.tsx
+- ObrigacoesFiscaisPage.tsx
 - InlineTabs.tsx
 - createErrorResponse
 - "public"."audit_log_append_only"
@@ -54,7 +54,7 @@
 - rateLimit.ts
 - 🔴 FASE 1: CRÍTICA (Testes - 355 itens)
 - supabase/types.ts
-- csrf.ts
+- contract.ts
 - Infraestrutura, deploy, backup e observabilidade
 - scripts
 - "public"."user_empresas"
@@ -62,24 +62,24 @@
 - hooks/index.ts
 - pcs.ts
 - useOrganograma.test.ts
-- usePontoMelhorado.ts
+- whatsappService.ts
 - useGerarComunicadoColetivas.ts
 - batidasPontoService.ts
 - trabalhistas.ts
 - workflowService.ts
 - 📋 PLANO DE MELHORIAS EXAUSTIVO - DEPARTAMENTO PESSOAL
-- PontoPage.tsx
+- LGPDPage.tsx
 - canalContabilidadeService.ts
 - 🎯 PLANO V6 - DEPARTAMENTO PESSOAL (747 ITENS)
 - 🎯 PLANO DE IMPLEMENTAÇÃO V19 - ANÁLISE EXAUSTIVA COMPLETA
 - 🔐 Relatório de Auditoria de Segurança e Backend
-- DesligamentoDetailSheet.tsx
+- public.ferias
 - 1.1 Componentes Sem Testes (300 itens)
-- useHistoricoContratos.ts
+- useESocial.ts
 - 🚀 Plano de Implementação V16 - Sistema Departamento Pessoal
 - PLANO_MASTER_V17_COMPLETO.md
 - @tanstack/react-query
-- avisoFeriasPDF.ts
+- FeriasActions.tsx
 - MedidasDisciplinaresPage.tsx
 - 🔴 FASE 1: TESTES DE COMPONENTES FALTANTES (147 itens)
 - 📅 CRONOGRAMA SUGERIDO
@@ -108,7 +108,7 @@
 - AI Context — Departamento Pessoal v2
 - BLOCO 1: SERVICES CRÍTICOS DE NEGÓCIO (V17-001 a V17-024)
 - Auditoria ao Vivo do Banco Canônico — Departamento Pessoal V3
-- calcularINSS
+- rescisaoCalc.ts
 - format.ts
 - 20260315195040_8d57b82c-f304-4067-9e43-1cac1c0a7c6c.sql
 - 20260516174828_ba0944ab-b72a-44d2-93a3-9abab3e715e0.sql
@@ -126,14 +126,14 @@
 - 🔧 Componentes UI (ALTO)
 - 5. Verificações pós-promoção
 - 20260912202000_p1_pcs_contract.sql
-- calculoLoteService.ts
+- useCalculoFolha.test.ts
 - Achados novos e remanescentes priorizados
 - ✅ SERVICES .real.ts (105/121 - 87%)
 - safe-fetch.ts
-- client.ts
+- AdminRoute.test.tsx
 - loggerService.test.ts
 - validation.test.ts
-- esocial/index.ts
+- ConfigPanels.tsx
 - 5. Análise das 22 dimensões
 - 📊 Monitoring & Observability — Departamento Pessoal v2
 - 🟡 P2 — QUALIDADE DE CÓDIGO E DX (22 itens, ~4 semanas)
@@ -148,7 +148,7 @@
 - renovate.json
 - calculoBeneficiosService.ts
 - useTabelasReferencia.ts
-- toast.tsx
+- Auditoria Técnica Exaustiva — Departamento Pessoal V3
 - 20260315193923_b1b7216e-7b7b-4ee9-9652-14599621e2df.sql
 - 4. Achados graves
 - Checklist de Validação Pós-Cutover
@@ -161,9 +161,9 @@
 - exclude
 - audit-bridge-frontend-contract.mjs
 - Column.tsx
-- desligamentoExcel.ts
-- required
-- DonutChart.tsx
+- useImportacaoColaboradores.ts
+- esocial/index.ts
+- dashboard/index.ts
 - FeriasService
 - external-db-bridge/index.ts
 - episService.ts
@@ -174,9 +174,9 @@
 - audit-edge-audit-log-contract.mjs
 - verify_rescisao_fix.cjs
 - passwordPolicy.ts
-- useReconciliacaoFolha.test.ts
+- FeriasReconciliacaoCard.tsx
 - securityService.ts
-- consultarCEP/index.ts
+- ESocialPagamentosAndSST.test.tsx
 - LooseQueryBuilder
 - 3. Achados graves
 - 3. Achados graves
@@ -196,7 +196,7 @@
 - services/index.ts
 - useFeriasCursor.ts
 - dominioService.ts
-- chain
+- NotificationContext.tsx
 - TelemetryFilters.tsx
 - 20260712211940_fd8bc9f9-8edb-4c33-918b-1d5b1e783716.sql
 - public.sec_verify_seals
@@ -206,14 +206,14 @@
 - Monitoramento e Alertas de Performance
 - 🔬 QA Exaustivo V26 — Relatório Final
 - sw-routing.test.mjs
-- tabelas.ts
+- folhaCalc.ts
 - usePeriodosAquisitivos.ts
 - medidasDisciplinaresService.test.ts
 - MainLayout.tsx
 - exportService.ts
 - AfastamentosPage.tsx
 - backupService.ts
-- rescisao.ts
+- scenarios.test.ts
 - 20260317002431_d47cf6c1-6edb-4f49-b716-fb1fc1278505.sql
 - 20260723104000_77b7944b-a241-45df-86b6-823ac17eb5cf.sql
 - 20260728183134_95da6131-3024-4af7-a655-448cdb2f6c97.sql
@@ -299,9 +299,9 @@
 - FolhaDashboard.tsx
 - folhaResumo.ts
 - use-toast.ts
-- metabase-embed/index.ts
+- gerar-holerite/index.ts
 - useNotificacoes.test.ts
-- auditHelper.ts
+- usePWA.ts
 - folhaPagamentoService.ts
 - "public"."log_audit_change"
 - public.medidas_disciplinares
@@ -361,17 +361,17 @@
 - compilerOptions
 - tsconfig.tests.json
 - ratchet-any.mjs
-- ContratoTokenTimelineDialog.tsx
-- tooltip.tsx
-- desligamentos/index.ts
+- useContratoTokenTimeline.ts
+- ExamesPage.tsx
+- DesligamentoDetailSheet.tsx
 - WorkflowDesigner.tsx
-- setupDeleteChain
-- RouteErrorBoundary.tsx
+- faltasService.test.ts
+- RouteErrorBoundary
 - form.tsx
 - useBruteForceProtection.ts
-- useCalcular13Salario.test.ts
+- useCalcular13Salario.ts
 - avaliacaoService.test.ts
-- useAdiantamento13.ts
+- pushNotificationService.test.ts
 - intervaloService.test.ts
 - NotificationItem.tsx
 - useExcelExport.test.ts
@@ -425,7 +425,7 @@
 - reportScheduleContract.ts
 - useReconciliacaoLogs.ts
 - calculoFerias.ts
-- hooks/useTranslation.ts
+- LanguageSelector.tsx
 - assistenteIAService.ts
 - useEmpresas.test.ts
 - setupDeleteChain
@@ -518,19 +518,19 @@
 - run-all.mjs
 - ErrorBoundary
 - useAssinaturaDigital.test.ts
-- Frontend — Páginas (lote 3/3: `src/pages/` iniciais N–Z)
+- Frontend — Componentes de domínio (`src/components/` exceto `ui/` e `__tests__/`)
 - bancoHorasService.test.ts
-- feriasPDF.ts
+- DesligamentoFilters.tsx
 - secureJsonParse
 - criptografia/index.ts
-- metricas/index.ts
+- consultarCEP/index.ts
 - 20251216170303_ade849cc-a455-493d-8d48-dae7d9f7e5d0.sql
 - 20251220140409_c447a74a-cabb-4b49-adf8-c26dd6c204fc.sql
 - 20260402112748_b18ef88b-ec9d-4690-b15b-b99e1aa75a75.sql
 - 20260512142601_9fe295a6-5736-4c05-9ca5-d4c4c0552d8a.sql
 - 20260512143254_b2edd72e-33da-46cc-b941-c5cf175a6ef8.sql
 - 20260513192749_b5058fc2-d067-4afe-a3d1-95ef70138970.sql
-- useESocial.ts
+- "public"."dados_estrangeiro"
 - public.adiantamentos_salariais
 - 20260723170000_fix_contratos_clt_trigger_e_revogado_em.sql
 - public.contrato_lembretes_pendentes
@@ -562,13 +562,13 @@
 - audit-rls-tenant-open.mjs
 - build-rebaseline.mjs
 - verify_bridge_contract.cjs
-- FeriasActions.test.tsx
+- 8. Roadmap de correção
 - dashboard/SectionHeader.tsx
 - DocumentoPreview.test.tsx
 - ColaboradorFilters.test.tsx
 - useExecutiveDashboard.test.ts
 - "public"."process_audit_log"
-- useImportacaoColaboradores.ts
+- E50-005 — Endurecer SECURITY DEFINER
 - retry.ts
 - CienciaMedidaPage.test.tsx
 - usePontosAbertos.ts
@@ -578,7 +578,7 @@
 - types/index.ts
 - cursorPagination.ts
 - Guia de Integração Gov.br (SERPRO)
-- template.ts
+- E51-033 — Metas de cobertura por domínio de risco
 - calcular-folha/e2e_concorrencia.test.ts
 - tenantScope.ts
 - fechar-folha/e2e_concorrencia.test.ts
@@ -649,7 +649,7 @@
 - pontoOfflineService.ts
 - Container.tsx
 - E51-047 — Atualizar CLAUDE.md, README e runbooks com o estado real
-- "public"."log_audit_change"
+- E51-034 — Testar handlers HTTP das Edge Functions
 - holeritePDF.ts
 - access.ts
 - request-schema.ts
@@ -699,7 +699,7 @@
 - 🛠️ ORDEM DE EXECUÇÃO RECOMENDADA
 - SEÇÃO 3: INTEGRIDADE DE DADOS E LÓGICA DE NEGÓCIOS
 - Simulação de Cenários — Evidência Quantitativa Pré-Correção
-- loggerService.ts
+- E51-036 — Matriz RLS automatizada por papel e tenant no CI
 - 5. Backend (Lovable Cloud)
 - Modelo lógico — Contratos e assinatura (E-072)
 - Guia de Deploy
@@ -722,11 +722,11 @@
 - migrations-p0-bridge-membership.sh
 - migrations-p0-payroll-upsert.sh
 - validate-canonical-db-url.test.mjs
-- desligamentoService.test.ts
+- E51-039 — Supply chain hermético: lockfile único e actions pinadas
 - E51-040 — Inventário e rotação de segredos com cadência
 - typecheck-edge.sh
-- DesligamentoChecklist.tsx
-- pesquisaService.test.ts
+- E51-003 — Restaurar formatação e tornar o Prettier pré-commit
+- E51-041 — Threat model e pentest sobre o SHA promovido
 - E51-011 — Aplicar o lote no canônico e registrar apenas as versões do manifesto
 - "public"."dados_estrangeiro"
 - 20251220135614_b391397c-d9fc-4e94-a157-0af1e99284a9.sql
@@ -800,12 +800,12 @@
 - migrations-p1-company-payroll-tax-contract.sh
 - migrations-p1-pcs-contract.sh
 - migrations-p1-scoped-audit-trail.sh
-- src/schemas/common.ts
-- erro
+- E51-043 — Timeouts, keyset pagination e cache no bridge
+- E51-045 — Redação de PII, logs padronizados e cabeçalhos CSP
 - Breadcrumb.tsx
 - useDocumentOCR.test.ts
 - previewAuthStorage.test.ts
-- useImportacaoColaboradores.test.ts
+- E51-046 — Acessibilidade WCAG 2.2 AA com axe no E2E
 - E51-019 — Fechar RV-02: enumeração e replay de tokens públicos remoto
 - result.ts
 - evaluationPDF.test.ts
@@ -1153,36 +1153,36 @@
 - E-028 — Restaurar baseline local do zero
 - E-029 — Restaurar baseline em staging hospedado descartável
 - E-030 — Reconciliar o ledger somente após baseline aprovado
-- E50-001 — Rotacionar credenciais comprometidas
+- E51-004 — Corrigir o ruleset da main: check obrigatório que nunca roda em PR
 - E50-034 — Criar integração com Supabase real
 - E50-003 — Fixar Supabase canônico e sincronizar Git
-- E50-035 — Automatizar matriz RLS por papel/tenant
-- E50-036 — Testar concorrência e idempotência
-- E50-037 — Executar E2E por papel e dispositivo
+- E51-005 — Desbloquear o healthcheck e deduplicar incidentes
+- E51-007 — Higiene de branches, stashes e main local
+- E51-008 — Tratar artefatos gerados: PDF fora do versionamento e grafo atualizado
 - E50-038 — Sanear supply chain e segredos
-- E50-039 — Executar threat model e pentest
+- E51-015 — Executar E2E autenticado pós-deploy e retestar os 17 reprovados
 - E50-040 — Eliminar ciclos, god files e duplicação
 - E50-041 — Fechar dívida de lint e tipos
-- E50-042 — Reduzir bundle e concluir PWA/mobile
+- E51-017 — Registrar aceite formal do lote nas etapas E50 correspondentes
 - E50-043 — Otimizar queries e paginação
 - E50-044 — Redigir PII e padronizar logs
-- E50-004 — Fechar as views anônimas
-- E50-045 — Corrigir métricas, health, SLOs e alertas
-- E50-046 — Garantir acessibilidade WCAG 2.2 AA
+- E51-018 — Fechar RV-01 e RV-03: matriz de tenant e policies no canônico
+- E51-023 — Fechar RV-12 e RV-13: probes CORS e E2E com duas empresas
+- E51-025 — Ligar `no-explicit-any` com baseline e orçamento decrescente
 - E50-047 — Tornar CI hermético e proteger main
 - E50-048 — Implantar staging, rollback e DR
-- E50-049 — Consolidar documentação e governança
-- E50-050 — Recertificar e decidir go-live
+- E51-027 — Eliminar `any` em páginas, componentes e hooks
+- E51-028 — Remover supressões: `eslint-disable` e `@ts-ignore`
 - E50-006 — Reconstruir RLS e ACLs
 - E50-007 — Restaurar hashes e triggers
 - E50-008 — Restaurar lockout e rate limit de Auth
 - E50-009 — Criar manifest físico determinístico
 - E50-010 — Classificar todo drift técnico e funcional
-- E50-011 — Aprovar ADR de baseline/squash
-- E50-012 — Construir baseline canônico
-- E50-013 — Restaurar RPCs e tabelas requeridas
+- E51-002 — Corrigir drift do contrato de ações de auditoria
+- E51-032 — Ambiente local reproduzível para simulações PostgreSQL
+- AnalyticsSection.test.tsx
 - E50-014 — Decidir e completar o módulo PCS
-- E50-016 — Versionar cron e rotinas periódicas
+- ExameKPIs.test.tsx
 - E50-017 — Validar constraints e normalizar triggers
 - E50-018 — Corrigir índices com EXPLAIN
 - E50-019 — Restaurar duas vezes e reconciliar ledger
@@ -1192,19 +1192,19 @@
 - E50-023 — Centralizar RBAC/ABAC server-side
 - E50-024 — Consolidar a engine de folha
 - E50-002 — Congelar dados reais e criar recuperação
-- E50-025 — Tornar ponto e banco de horas antifraude
+- FeriasRelatorioDialog.test.tsx
 - E50-026 — Consolidar férias, afastamentos e benefícios
-- E50-027 — Endurecer rescisões, contratos e assinaturas
+- GerenciamentoPeriodos.test.tsx
 - E50-028 — Validar obrigações legais, financeiro e integrações externas
 - E50-029 — Fechar SST, disciplina e LGPD
 - E50-030 — Comparar Edge Functions implantadas
 - E50-031 — Padronizar segurança das Edge Functions
-- E50-032 — Uniformizar validação e uploads
+- PontoClockRegister.test.tsx
 - E50-033 — Elevar testes unitários por risco
 - E51-001 — Publicar o lote local não commitado
-- rubricas.ts
+- rubricaValidator.ts
 - E51-035 — Testes de contrato bridge e frontend com Supabase efêmero
-- chain
+- ProtectedRoute.test.tsx
 - E51-038 — Manter testes sob typecheck estrito e sanear mocks
 - chain
 - currency-input.tsx
@@ -1212,9 +1212,9 @@
 - E51-006 — Unificar referências de projeto Supabase e remover integração Preview obsoleta
 - chain
 - ImportacaoPage.test.tsx
-- "public"."increment_version"
+- SSTExamesTab.test.tsx
 - admissao/SignaturePad.tsx
-- useCalcular13Salario.test.tsx
+- useAfastamentos.test.ts
 - E51-016 — Provar rollback do lote em ambiente efêmero
 - E51-024 — Fechar RV-15: buckets 19/19, PCS e crons de segurança com smoke real
 - E51-037 — Testes de concorrência e idempotência versionados
@@ -1289,14 +1289,14 @@
 - public.report_dispatch_attempts
 - "dp_data_catalog_updated_at"
 - "public"."impedir_alteracao_folha_fechada"
-- AfastamentoTable.test.tsx
-- FolhaPipeline.test.tsx
+- "public"."process_ferias_audit"
+- FolhaPagamentoPage.tsx
 - "public"."registrar_auditoria_sst"
-- MedidaWorkflowTimeline.test.tsx
+- "public"."processar_auditoria_premiacao"
 - capacitor.config.ts
 - .claude/CLAUDE.md
 - extraction-spec.md
-- clsx
+- cmdk
 - OrganogramaNode.test.tsx
 - date-fns
 - PortalOverviewTab.test.tsx
@@ -1310,8 +1310,8 @@
 - useRealtimeDashboard.test.ts
 - exceljs
 - useRealTimeSubscription.test.tsx
-- "public"."impedir_alteracao_batida_em_periodo_fechado"
-- "public"."sst_regimento_ass_imutavel"
+- @radix-ui/react-label
+- "ajuste_ponto_status_transition"
 - pre-commit script
 - jsdom
 - @lovable.dev/cloud-auth-js
@@ -1323,56 +1323,56 @@
 - jspdf-autotable
 - papaparse
 - qrcode
-- autoprefixer
-- @radix-ui/react-toast
+- "ajuste_ponto_status_transition"
+- "audit_status_change"
 - PortalFinanceiroTab.test.tsx
-- "detect_status_anomaly"
+- "dp_data_catalog_audit"
 - "trg_contrato_token_auditar"
-- "faltas_status_transition"
-- "pesquisas_status_transition"
+- "ferias_status_transition"
+- "public"."purge_audit_log_old"
 - @radix-ui/react-popover
 - useHorasExtras.test.ts
-- crypto-js
+- "trigger_gerar_provisao"
 - @radix-ui/react-scroll-area
 - @dnd-kit/core
-- @dnd-kit/sortable
+- "tr_calcular_total_provisao"
 - @radix-ui/react-slider
 - @radix-ui/react-slot
 - @radix-ui/react-switch
-- dompurify
-- eslint-plugin-react-refresh
-- globals
+- "tr_monitor_timeout"
+- "trg_enforce_batida_ponto_hash"
+- "trg_enforce_desligamento_hash"
 - react
-- @hookform/resolvers
+- "trg_enforce_esocial_evento_hash"
 - react-dom
 - react-helmet-async
-- husky
-- lint-staged
-- msw
-- qrcode.react
-- @radix-ui/react-alert-dialog
+- "tr_auto_generate_certificate"
+- "tr_create_onboarding_tasks"
+- "trg_folha_optimistic_lock"
+- "tr_update_candidatura_history"
+- "trg_admissao_auto_workflow"
 - sonner
-- @radix-ui/react-avatar
+- "trg_fprog_updated_at"
 - tailwind-merge
 - tailwindcss-animate
-- @radix-ui/react-checkbox
+- "trg_fwd_audit_unified"
 - @testing-library/dom
 - @types/crypto-js
-- @radix-ui/react-collapsible
-- @radix-ui/react-dialog
+- "tr_gerar_hash_batida_ponto"
+- "tr_gerar_conformidade_ponto"
 - vite-plugin-pwa
-- @radix-ui/react-dropdown-menu
-- @radix-ui/react-progress
-- @radix-ui/react-radio-group
-- @radix-ui/react-select
-- @radix-ui/react-separator
-- "tr_asos_auto_marcar_agendamento"
-- @radix-ui/react-tabs
-- "tr_calcular_prazo_cat"
-- @radix-ui/react-tooltip
-- "tr_enforce_cat_hash"
-- "trg_enforce_cnab_remessa_hash"
-- "trg_enforce_folha_pagamento_hash"
+- "trg_impedir_alteracao_desligamento_homologado"
+- "tr_impedir_alteracao_documento_assinado"
+- "tr_impedir_alteracao_epi_entrega_assinada"
+- "tr_audit_esocial_transmission"
+- "tr_proibir_delete_afastamento_encerrado"
+- "tr_proibir_delete_aso_emitido"
+- "tr_proibir_delete_documento_assinado"
+- "trg_proibir_delete_esocial_transmitido"
+- "trigger_auditoria_admissao"
+- "trg_ferias_validar_aquisitivo"
+- "trg_ferias_validar_inicio"
+- "trg_medida_aplicada_integrar"
 - deploy.sh
 - format-check-changed.sh
 - regenerate-supabase-types.sh
@@ -1401,19 +1401,19 @@
 - "tr_calcular_total_provisao"
 - "tr_monitor_timeout"
 - "tr_enforce_afastamento_hash"
-- "tr_enforce_aso_hash"
+- "tr_asos_validar_transicao"
 - "trg_enforce_batida_ponto_hash"
 - "tr_enforce_cat_hash"
 - "trg_enforce_cnab_remessa_hash"
 - "trg_enforce_desligamento_hash"
-- react-day-picker
-- "trg_fila_dlq_check"
+- "trg_medida_contest_set_prazo"
+- "trg_medida_contest_notify_after"
 - "trg_enforce_esocial_evento_hash"
 - "trg_enforce_ferias_hash"
-- "trg_enforce_folha_pagamento_hash"
+- "trg_periodos_aquisitivos_dobra"
 - "trg_enforce_holerite_signed_hash"
-- "tr_enforce_medida_disciplinar_hash"
-- react-hook-form
+- "trg_periodos_aquisitivos_recalc_dias"
+- "trg_extintor_vencimento"
 - "trg_fill_treinamento_instancias_empresa"
 - "tr_alert_severe_measure"
 - "tr_audit_biometric_failure"
@@ -1422,23 +1422,18 @@
 - "trg_consolidar_batidas"
 - "tr_create_onboarding_tasks"
 - "tr_notify_new_holerite"
-- "trg_fila_dlq_check"
-- "trg_folha_optimistic_lock"
+- "tr_update_fila_processamento_updated_at"
+- "trigger_alerta_divergencia"
 - "trg_workflow_admissao"
 - "tr_auto_start_workflow_on_hiring"
 - "tr_whatsapp_on_new_hiring"
-- react-router-dom
-- react-webcam
-- recharts
 - "trg_validar_medida_clt"
 - "trg_admissao_auto_workflow"
-- @sentry/react
 - "trg_fwd_audit_unified"
 - "tr_gerar_hash_batida_ponto"
 - useContratoTemplates.test.ts
 - "trg_gerar_qr_extintor"
 - "tr_gerar_conformidade_ponto"
-- @supabase/supabase-js
 - "tr_impedir_alteracao_aso_emitido"
 - "tr_impedir_alteracao_cat_transmitida"
 - "trg_impedir_alteracao_cnab_transmitida"
@@ -1448,8 +1443,6 @@
 - "trg_impedir_alteracao_esocial_transmitido"
 - "trg_impedir_alteracao_ferias_concluidas"
 - "trg_impedir_alteracao_holerite_assinado"
-- "tr_impedir_alteracao_medida_aplicada"
-- "trg_impedir_alteracao_periodo_ponto_fechado"
 - "trg_despesas_log"
 - "tr_audit_esocial_transmission"
 - "tr_proibir_delete_afastamento_encerrado"
@@ -1463,36 +1456,24 @@
 - "trg_proibir_delete_ferias_concluidas"
 - "trg_proibir_delete_folha_fechada"
 - "trg_proibir_delete_holerite_assinado"
-- "tr_proibir_delete_medida_aplicada"
 - "trg_proibir_delete_periodo_ponto_fechado"
 - "trigger_imutabilidade_ponto"
 - "trigger_auditoria_admissao"
 - "tr_auditoria_registros_ponto"
-- @tanstack/react-query
 - "trg_catalogo_infracoes_updated_at"
-- useIdempotencyKey
-- @types/dompurify
-- uuid
-- "trg_ferias_reconciliacao_alert"
-- zod
 - "trg_ferias_validar_inicio"
 - "trg_ferias_validar_split"
-- @playwright/test
 - "trg_medida_contest_set_prazo"
 - "trg_medida_contest_notify_after"
 - "trg_medida_esocial_aplicada"
-- prettier
 - "trg_periodos_aquisitivos_recalc_dias"
 - "trg_protect_assinatura"
 - "vagas_status_transition"
 - "tr_workflows_automation_start"
 - "trg_extintor_vencimento"
-- "tr_update_fila_processamento_updated_at"
 - "tr_folhas_updated_at"
 - "trg_validar_contrato_clt"
-- "trg_validar_medida_clt"
 - "trg_epi_item_ca"
-- "trg_proibir_delete_cnab_transmitida"
 - "pdis_status_transition"
 - _shared/schemas/colaborador.ts
 - 20251216174736_d4e02fb7-340d-4111-b73b-03788b004098.sql
@@ -1505,17 +1486,12 @@
 - 20260527125800_f2cc5838-a6f5-41c0-84d7-2d5fb3f6cf37.sql
 - 20260723152400_fix_create_ciencia_rate_limits.sql
 - "tr_asos_validar_transicao"
-- "tr_proibir_delete_epi_entrega_assinada"
 - "ciclos_status_transition"
 - "desligamentos_status_transition"
 - "dp_audit_log_integrity_check"
-- "trg_proibir_delete_holerite_assinado"
-- "trg_ferias_reconciliacao_alert"
-- "trg_ferias_validar_split"
 - "trg_consolidar_batidas"
 - "trigger_lgpd_limpeza_desligamento"
 - "trg_impedir_alteracao_esocial_transmitido"
-- "trg_protect_assinatura"
 - "trg_proibir_delete_periodo_ponto_fechado"
 - "tr_enforce_afastamento_hash"
 - "tr_enforce_aso_hash"
@@ -1531,15 +1507,12 @@
 - "tr_auto_start_workflow_on_hiring"
 - "tr_whatsapp_on_new_hiring"
 - "tr_update_admissao_checklist"
-- "tr_enforce_documento_assinatura_hash"
 - "tr_update_ferias_status"
 - "tr_enforce_epi_entrega_hash"
 - "trg_fill_treinamento_certificados_empresa"
 - "tr_gerar_hash_ponto"
 - "trg_gerar_qr_extintor"
-- "tr_update_admissao_checklist"
 - "tr_impedir_alteracao_afastamento_encerrado"
-- "tr_update_candidatura_history"
 - "tr_impedir_alteracao_cat_transmitida"
 - "tr_update_ferias_status"
 - "trg_impedir_alteracao_ferias_concluidas"
@@ -1550,12 +1523,9 @@
 - "tr_gerar_hash_ponto"
 - "tr_proibir_delete_cat_transmitida"
 - "trg_proibir_delete_desligamento_homologado"
-- "tr_impedir_alteracao_afastamento_encerrado"
-- "tr_updated_at_sst_cat"
 - "trg_proibir_delete_ferias_concluidas"
 - "trg_proibir_delete_folha_fechada"
 - "tr_proibir_delete_medida_aplicada"
-- "trg_bump_contab_thread"
 - "trigger_imutabilidade_ponto"
 - "tr_auditoria_registros_ponto"
 - "tr_updated_at_sst_cat"
@@ -1564,17 +1534,9 @@
 - "trg_ferias_gerar_rubricas"
 - "trg_ferias_validar_aquisitivo"
 - "trg_medida_aplicada_integrar"
-- "trg_periodos_aquisitivos_dobra"
-- "trigger_protecao_beneficio_lei"
 - "tr_validate_ponto"
-- "trigger_alerta_divergencia"
-- tailwindcss
-- @tailwindcss/postcss
-- @testing-library/jest-dom
 - "tr_folhas_updated_at"
 - "trigger_protecao_beneficio_lei"
-- @testing-library/user-event
-- @types/node
 - ferias_embed_test.ts
 - "auth"."oauth_client_states"
 - "auth"."schema_migrations"
@@ -1814,8 +1776,6 @@
 - "public"."dp_audit_log_2026_12"
 - "public"."dp_backup_runbook"
 - "public"."ponto_regras_aprovacao"
-- @types/react
-- vitest
 
 ## God Nodes (most connected - your core abstractions)
 
@@ -1836,108 +1796,103 @@
   src/components/**tests**/EmpresaSwitcher.test.tsx → src/hooks/useEmpresas.ts
 - `ColunaMes()` --calls--> `cn()` [EXTRACTED]
   src/components/ferias/programacao/KanbanMes.tsx → src/lib/utils.ts
-- `Step()` --calls--> `cn()` [EXTRACTED]
-  src/components/folha/CalculoFolhaWizard.tsx → src/lib/utils.ts
-- `PipelineStep()` --calls--> `cn()` [EXTRACTED]
-  src/components/folha/FolhaPipeline.tsx → src/lib/utils.ts
-- `gerar()` --calls--> `safeErrorMessage()` [EXTRACTED]
-  src/components/medidas-disciplinares/GerarLinkCienciaDialog.tsx → src/utils/safeError.ts
+- `SidebarMenuItem` --calls--> `cn()` [EXTRACTED]
+  src/components/layout/AppSidebar.tsx → src/lib/utils.ts
+- `SidebarMenuGroup` --calls--> `cn()` [EXTRACTED]
+  src/components/layout/AppSidebar.tsx → src/lib/utils.ts
+- `SystemStatus` --calls--> `cn()` [EXTRACTED]
+  src/components/layout/AppSidebar.tsx → src/lib/utils.ts
 
 ## Import Cycles
 
 - 2-file cycle: `src/components/layout/MainLayout.tsx -> src/components/layout/index.ts -> src/components/layout/MainLayout.tsx`
 
-## Communities (2179 total, 637 thin omitted)
+## Communities (2139 total, 605 thin omitted)
 
 ### Community 0 - "20260831_corrected_public.sql"
 
 Cohesion: 0.01
-Nodes (213): "dp_data_catalog_audit", "public"."audit_log_unified", "public"."audit_log_unified_archive", "public"."automacao_logs", "public"."bitrix24_config", "public"."bitrix24_sync_logs", "public"."condicoes_ingresso", "public"."config_afastamentos" (+205 more)
+Nodes (274): "audit_admissoes", "audit_afastamentos", "audit_beneficios", "audit_beneficios_colaborador", "audit_cargos", "audit_colaboradores", "audit_departamentos", "audit_desligamentos" (+266 more)
 
 ### Community 1 - "canonical_schema.sql"
 
 Cohesion: 0.01
-Nodes (181): "ajuste_ponto_status_transition", "public"."audit_log_unified", "public"."audit_log_unified_archive", "public"."automacao_logs", "public"."bitrix24_config", "public"."bitrix24_sync_logs", "public"."config_afastamentos", "public"."config_alertas_indicadores" (+173 more)
+Nodes (181): "public"."audit_log_unified", "public"."audit_log_unified_archive", "public"."automacao_logs", "public"."bitrix24_config", "public"."bitrix24_sync_logs", "public"."comunicados", "public"."comunicados_leituras", "public"."config_afastamentos" (+173 more)
 
 ### Community 2 - "card.tsx"
 
 Cohesion: 0.02
-Nodes (165): AdminOperacaoPage, OffenderStats, TelemetryTopOffendersProps, AuditRow, AdmissaoChecklistProps, AfastamentoStatsProps, LoginForm, LoginFormProps (+157 more)
+Nodes (178): AdminOperacaoPage, AdminSecurityPage, AssistenteIAPage, OffenderStats, TelemetryTopOffendersProps, AuditRow, AdmissaoChecklist(), AdmissaoChecklistProps (+170 more)
 
 ### Community 3 - "button.tsx"
 
-Cohesion: 0.06
-Nodes (158): departamentos, NovaAdmissaoDialogProps, AfastamentoDocumentManagerProps, ALLOWED_TYPES, BeneficioHistorico(), BeneficioHistoricoProps, TIPOS, TIPOS (+150 more)
+Cohesion: 0.05
+Nodes (155): departamentos, NovaAdmissaoDialogProps, BeneficioHistorico(), BeneficioHistoricoProps, TIPOS, TIPOS, BeneficiosTabProps, TIPOS_CONTA (+147 more)
 
 ### Community 4 - "cn"
 
-Cohesion: 0.01
-Nodes (211): BeneficioFormPage, DashboardExecutivoPage, DesignSystemPage, ESocialPage, PassivoTrabalhistaPage, Admissao, AdmissoesKanban(), Column() (+203 more)
+Cohesion: 0.02
+Nodes (139): BeneficioFormPage, DashboardExecutivoPage, DesignSystemPage, ESocialPage, PassivoTrabalhistaPage, Admissao, Column(), COLUMNS (+131 more)
 
 ### Community 5 - "App.tsx"
 
 Cohesion: 0.02
-Nodes (150): AdminAgendamentoExamesPage, AdminAsoWorkflowPage, AdminClinicasPartnersPage, AdminEpisFichasPage, AdminExtintoresPage, AdminIdempotenciaPage, AdminPontoDivergenciasPage, AdminSecurityPage (+142 more)
+Nodes (170): AdminAgendamentoExamesPage, AdminAsoWorkflowPage, AdminClinicasPartnersPage, AdminExtintoresPage, AdminIdempotenciaPage, AdminPontoDivergenciasPage, AdminRegimentoInternoPage, AdminSstDashboardPage (+162 more)
 
 ### Community 6 - ""public"."colaboradores""
 
 Cohesion: 0.02
-Nodes (178): "public"."escalas_trabalho", "public"."esocial_lotes", "public"."ajustes_ponto", "public"."anotacoes_colaborador", "public"."banco_horas", "public"."banco_horas_config", "public"."beneficiarios_plano", "public"."beneficiarios_seguro" (+170 more)
+Nodes (176): "public"."escalas_trabalho", "public"."esocial_lotes", "public"."ajustes_ponto", "public"."anotacoes_colaborador", "public"."banco_horas", "public"."banco_horas_config", "public"."beneficiarios_plano", "public"."beneficiarios_seguro" (+168 more)
 
 ### Community 7 - ""public"."empresas""
 
 Cohesion: 0.02
-Nodes (172): "public"."catalogo_infracoes", "public"."epis_fichas", "public"."epis_fichas_itens", "public"."ferias_solicitacoes", "public"."afastamentos", "public"."ajustes_ponto", "public"."anotacoes_colaborador", "public"."banco_horas" (+164 more)
+Nodes (171): "public"."catalogo_infracoes", "public"."epis_fichas", "public"."epis_fichas_itens", "public"."ferias_solicitacoes", "public"."afastamentos", "public"."ajustes_ponto", "public"."anotacoes_colaborador", "public"."banco_horas" (+163 more)
 
-### Community 8 - "ContratosGeradosPage.tsx"
-
-Cohesion: 0.06
-Nodes (41): ContratosGeradosPage, ContratoTemplatesPage, ContratosAssinaturaKPICard(), fmtHoras(), ContratosVencendoPanel(), fmtDias(), SEV_BADGE, LockoutMessage() (+33 more)
-
-### Community 9 - "contract.ts"
+### Community 9 - "csrf.ts"
 
 Cohesion: 0.04
-Nodes (48): bodySchema, noStore, TABLES, ALLOWED_TABLES, BodySchema, CacheEntry, cacheStore, BodySchema (+40 more)
+Nodes (50): bodySchema, noStore, TABLES, ALLOWED_TABLES, BodySchema, CacheEntry, cacheStore, BodySchema (+42 more)
 
 ### Community 10 - "schemas/index.ts"
 
-Cohesion: 0.07
-Nodes (15): AdmissaoSchema, AfastamentoSchema, BeneficioSchema, CargoSchema, ColaboradorSchema, DepartamentoSchema, DocumentoSchema, EmpresaSchema (+7 more)
+Cohesion: 0.05
+Nodes (24): AdmissaoSchema, AfastamentoSchema, BeneficioSchema, CargoSchema, ColaboradorSchema, auditoriaSchema, calcularFolhaSchema, cepSchema (+16 more)
 
 ### Community 11 - "useEmpresas"
 
 Cohesion: 0.02
-Nodes (182): AdminCatPage, AdminRegimentoInternoPage, FolhaPagamentoPage, AdmissaoChecklist(), Documento, DetalhesAdmissaoDialog(), DetalhesAdmissaoDialogProps, PerformanceAuditTimeline() (+174 more)
+Nodes (203): AdminCatPage, AdminEpisFichasPage, ContratoTemplatesPage, FeriasProgramacaoPage, AdminRoute(), AdminRouteProps, MfaState, AdmissoesKanban() (+195 more)
 
 ### Community 12 - "auth.users"
 
 Cohesion: 0.03
-Nodes (81): "public"."contabilidade_mensagens", "public"."adiantamentos_salariais", "public"."aej_geracoes", "public"."audit_log", "public"."audit_logs", "public"."auditoria", "public"."auditoria_contratual", "public"."auditoria_logs" (+73 more)
+Nodes (70): "public"."contabilidade_mensagens", "public"."adiantamentos_salariais", "public"."aej_geracoes", "public"."audit_log", "public"."audit_logs", "public"."auditoria", "public"."auditoria_contratual", "public"."auditoria_logs" (+62 more)
 
 ### Community 13 - ""public"."audit_log_append_only""
 
 Cohesion: 0.03
-Nodes (84): public.ciencia_rate_limits, "public"."audit_log_append_only"(), "public"."blocked_ips", "public"."check_brute_force"(), "public"."check_ciencia_rate_limit"(), "public"."check_login_lock"(), "public"."conformidade_ponto_logs", "public"."detectar_fraude_ponto"() (+76 more)
+Nodes (87): public.ciencia_rate_limits, "public"."audit_log_append_only"(), "public"."blocked_ips", "public"."candidatos", "public"."candidatura_na_minha_empresa"(), "public"."candidaturas", "public"."check_brute_force"(), "public"."check_ciencia_rate_limit"() (+79 more)
 
-### Community 14 - "useMoreGenericCrudHooks.test.ts"
+### Community 14 - "useGenericCrud"
 
-Cohesion: 0.17
-Nodes (7): { mockBeneficioService }, { mockUseGenericCrud, mockListarLogs, mockListarConfiguracoes, mockListarProrrogacoes }, { mockWebhookService }, useBeneficios(), useWebhookLogs(), useWebhooksAvancados(), BeneficioFormPage()
+Cohesion: 0.06
+Nodes (22): { mockBeneficioService }, { mockDesligamentoService }, { mockUseGenericCrud }, DEFAULT_MUTATION, DEFAULT_QUERY, mockService, { mockUseQuery, mockUseMutation, mockUseQueryClient }, { mockUseGenericCrud } (+14 more)
 
 ### Community 15 - "auth.users"
 
 Cohesion: 0.03
-Nodes (94): "public"."ferias_audit_log", "public"."sst_cat_testemunhas", "public"."adiantamentos_salariais", "public"."aej_geracoes", "public"."audit_log", "public"."audit_logs", "public"."auditoria", "public"."auditoria_contratual" (+86 more)
+Nodes (91): "public"."ferias_audit_log", "public"."sst_cat_testemunhas", "public"."adiantamentos_salariais", "public"."aej_geracoes", "public"."audit_log", "public"."audit_logs", "public"."auditoria", "public"."auditoria_contratual" (+83 more)
 
-### Community 16 - "FeriasProgramacaoPage.tsx"
+### Community 16 - "ObrigacoesFiscaisPage.tsx"
 
-Cohesion: 0.08
-Nodes (26): FeriasProgramacaoPage, FeriasSaldoReport(), CardProgramacao(), Props, ColunaMes(), KanbanMes(), MESES, Props (+18 more)
+Cohesion: 0.10
+Nodes (20): ObrigacoesFiscaisPage, DarfTab(), DarfTabProps, formatCurrency(), DctfTable(), DctfTableProps, formatCurrency(), SefipTable() (+12 more)
 
 ### Community 17 - "InlineTabs.tsx"
 
-Cohesion: 0.09
-Nodes (22): ConfiguracoesPage, BeneficiosSettingsTab(), ConfiguracoesGeraisTab(), AlertasKpiTab(), AuthUser, FolhaConfigTab(), IntegracoesTab(), NotificacoesTab() (+14 more)
+Cohesion: 0.05
+Nodes (38): ConfiguracoesPage, ContratosGeradosPage, LockoutMessage(), LockoutMessageProps, BeneficiosSettingsTab(), ConfiguracoesGeraisTab(), EmpresaSettingsTab(), percentToFraction() (+30 more)
 
 ### Community 18 - "createErrorResponse"
 
@@ -1957,7 +1912,7 @@ Nodes (78): "public"."audit_log_append_only", "trg_audit_archive_append_only", "
 ### Community 21 - "deepChain"
 
 Cohesion: 0.03
-Nodes (33): buildChains(), { mockFrom, mockToastSuccess, mockToastError }, buildListChain(), chain, { mockFrom, mockToastSuccess, mockToastError }, buildSelectChain(), chain, { mockFrom, mockToastSuccess, mockToastError } (+25 more)
+Nodes (36): buildChains(), { mockFrom, mockToastSuccess, mockToastError }, buildListChain(), chain, { mockFrom, mockToastSuccess, mockToastError }, buildSelectChain(), chain, { mockFrom, mockToastSuccess, mockToastError } (+28 more)
 
 ### Community 22 - ""public"."audit_log_append_only""
 
@@ -1976,18 +1931,18 @@ Nodes (44): AnotacoesTab(), AquisitivosTab(), ASOTab(), EstrangeiroTab(), Experi
 
 ### Community 25 - ""public"."user_empresas""
 
-Cohesion: 0.04
-Nodes (66): "public"."admissao_tokens", "public"."admissoes", "public"."afdt_divergencias", "public"."afdt_importacoes", "public"."assinar_desligamento"(), "public"."auto_vincular_admins_empresa"(), "public"."contrato_assinar_por_token"(), "public"."contrato_gerar_token_assinatura"() (+58 more)
+Cohesion: 0.05
+Nodes (64): "public"."admissao_tokens", "public"."admissoes", "public"."afdt_divergencias", "public"."afdt_importacoes", "public"."assinar_desligamento"(), "public"."auto_vincular_admins_empresa"(), "public"."contrato_assinar_por_token"(), "public"."contrato_gerar_token_assinatura"() (+56 more)
 
 ### Community 26 - "esocialService.ts"
 
-Cohesion: 0.08
-Nodes (27): MOCK_EVENTOS, ESocialPage(), getValidadoresDisponiveis(), validarEvento(), Admissao, Empresa, AdmissionESocialClaim, asJsonRecord() (+19 more)
+Cohesion: 0.07
+Nodes (28): ESocialAuditDialogProps, ESocialTimeline(), ESocialTimelineProps, MOCK_EVENTOS, EVENTOS, ESocialPage(), getValidadoresDisponiveis(), validarEvento() (+20 more)
 
 ### Community 27 - "makeChain"
 
-Cohesion: 0.05
-Nodes (44): notificacaoService, horaExtraService, CnabConfig, cnabService, WebhookConfig, webhookService, { mockFrom, mockGetUser, mockRpc }, setupListChain() (+36 more)
+Cohesion: 0.04
+Nodes (47): notificacaoService, listarEventos(), obterEstatisticas(), horaExtraService, { mockFrom, mockGetUser, mockRpc }, setupListChain(), { mockFrom, mockLoggerError }, TestService (+39 more)
 
 ### Community 28 - "P1 — restauração dos fluxos e controles condicionados"
 
@@ -1996,8 +1951,8 @@ Nodes (60): E-027 · [P1] · Storage — congelar inventário de buckets e consu
 
 ### Community 29 - "Plano de Melhorias e Correções — Ciclo 2 — 50 Etapas"
 
-Cohesion: 0.03
-Nodes (74): 10 subetapas, 10 subetapas, 10 subetapas, 10 subetapas, 10 subetapas, 10 subetapas, 10 subetapas, 10 subetapas (+66 more)
+Cohesion: 0.25
+Nodes (8): 10 subetapas, Checkpoints, Como a análise de 13/09 alimenta este plano, E51-031 — Eliminar ciclos de import e código morto com gate permanente, Gate final, Ondas, Plano de Melhorias e Correções — Ciclo 2 — 50 Etapas, Regras de execução
 
 ### Community 30 - "colaboradorDetalhesService.test.ts"
 
@@ -2011,8 +1966,8 @@ Nodes (41): atualizarCentroCusto(), atualizarContaBancaria(), atualizarFeriasApr
 
 ### Community 32 - "rateLimit.ts"
 
-Cohesion: 0.08
-Nodes (26): BodySchema, LockoutState, parseLockoutState(), BodySchema, esc(), evalCondicional(), formatValue(), get() (+18 more)
+Cohesion: 0.06
+Nodes (33): BodySchema, LockoutState, parseLockoutState(), BodySchema, esc(), evalCondicional(), formatValue(), get() (+25 more)
 
 ### Community 33 - "🔴 FASE 1: CRÍTICA (Testes - 355 itens)"
 
@@ -2021,13 +1976,13 @@ Nodes (53): 1.10 Beneficios Sem Testes (2 itens), 1.11 Bitrix24 Sem Testes (2 it
 
 ### Community 34 - "supabase/types.ts"
 
-Cohesion: 0.04
-Nodes (36): CompositeTypes, Constants, Database, DatabaseWithoutInternals, DefaultSchema, Enums, AsosComColaborador, automacaoService (+28 more)
+Cohesion: 0.05
+Nodes (37): CompositeTypes, Constants, Database, DatabaseWithoutInternals, DefaultSchema, Enums, Json, AuditoriaFiltros (+29 more)
 
-### Community 35 - "csrf.ts"
+### Community 35 - "contract.ts"
 
-Cohesion: 0.07
-Nodes (26): ALERT_EMAIL_UNAVAILABLE_MESSAGE, alertDeliveryHttpStatus(), AlertEmailDeliveryStatus, BodySchema, BodySchema, _corsHeaders, BodySchema, DEFAULT_ALLOWED_REDIRECT_ORIGINS (+18 more)
+Cohesion: 0.08
+Nodes (27): BodySchema, BodySchema, _corsHeaders, BodySchema, DEFAULT_ALLOWED_REDIRECT_ORIGINS, json(), BodySchema, json() (+19 more)
 
 ### Community 36 - "Infraestrutura, deploy, backup e observabilidade"
 
@@ -2041,8 +1996,8 @@ Nodes (51): scripts, audit:bridge-contract, audit:canonical-db-url, audit:canoni
 
 ### Community 38 - ""public"."user_empresas""
 
-Cohesion: 0.04
-Nodes (65): "public"."admissao_tokens", "public"."admissoes", "public"."afdt_divergencias", "public"."afdt_importacoes", "public"."assinar_aviso_ferias"(), "public"."assinar_desligamento"(), "public"."auto_vincular_admins_empresa"(), "public"."contrato_assinar_por_token"() (+57 more)
+Cohesion: 0.05
+Nodes (55): "public"."admissao_tokens", "public"."admissoes", "public"."afdt_divergencias", "public"."afdt_importacoes", "public"."assinar_desligamento"(), "public"."auto_vincular_admins_empresa"(), "public"."contrato_assinar_por_token"(), "public"."contrato_assinatura_tokens" (+47 more)
 
 ### Community 39 - "📋 CHECKLIST MASTER V18"
 
@@ -2061,18 +2016,18 @@ mockToastSuccess, mockToastError,
 
 ### Community 41 - "pcs.ts"
 
-Cohesion: 0.10
-Nodes (32): PcsPlanoHeaderProps, usePcsPlanos(), PlanoCargosSalariosPage(), pcsService, Functions, grausToJson(), IMPACTO_VAZIO, parseImpacto() (+24 more)
+Cohesion: 0.07
+Nodes (46): PcsAvaliacaoTab(), brl(), PcsBenchmarkTab(), PcsFatoresTab(), brl(), PcsGradesTab(), PcsPlanoHeaderProps, erro() (+38 more)
 
 ### Community 42 - "useOrganograma.test.ts"
 
 Cohesion: 0.20
 Nodes (5): buildChain(), chain, { mockFrom }, useOrganograma(), OrganogramaPage()
 
-### Community 43 - "usePontoMelhorado.ts"
+### Community 43 - "whatsappService.ts"
 
-Cohesion: 0.14
-Nodes (11): buildChain(), chain, { mockFrom, mockGetUser, mockToastSuccess, mockToastError }, SolicitacaoAjuste, usePontoMelhorado(), criarNotificacao(), notificacoesService, notificarAjustePonto() (+3 more)
+Cohesion: 0.06
+Nodes (24): buildChain(), chain, { mockFrom, mockGetUser, mockToastSuccess, mockToastError }, SolicitacaoAjuste, usePontoMelhorado(), AsosComColaborador, automacaoService, PeriodoComColaborador (+16 more)
 
 ### Community 44 - "useGerarComunicadoColetivas.ts"
 
@@ -2081,16 +2036,16 @@ Nodes (17): { mockUseMutation, mockUseQueryClient, mockStorage }, baixarComunica
 
 ### Community 45 - "batidasPontoService.ts"
 
-Cohesion: 0.04
-Nodes (36): {
+Cohesion: 0.05
+Nodes (29): {
 mockListar, mockBuscarRegistroHoje, mockRegistrar, mockValidarBiometria,
 mockToastSuccess, mockToastError,
-}, usePonto(), Json, BatidaComColaborador, BatidaPonto, batidasPontoService, PeriodoPonto, BatidaPonto (+28 more)
+}, usePonto(), Json, BatidaComColaborador, BatidaPonto, batidasPontoService, PeriodoPonto, BatidaPonto (+21 more)
 
 ### Community 46 - "trabalhistas.ts"
 
-Cohesion: 0.14
-Nodes (35): calcularAdicionalNoturno(), calcularAdicionalTransferencia(), calcularAuxilioDoenca(), calcularBancoHoras(), calcularComissao(), calcularDecimo13(), calcularDescontoVT(), calcularDiarias() (+27 more)
+Cohesion: 0.16
+Nodes (33): calcularAdicionalNoturno(), calcularAdicionalTransferencia(), calcularAuxilioDoenca(), calcularBancoHoras(), calcularComissao(), calcularDecimo13(), calcularDescontoVT(), calcularDiarias() (+25 more)
 
 ### Community 47 - "workflowService.ts"
 
@@ -2102,15 +2057,15 @@ Nodes (21): { mockFrom }, setupDeleteChain(), setupInsertChain(), setupListChain
 Cohesion: 0.05
 Nodes (40): 1.1 Services Stubs/Vazios (14 itens) - 56h, 1.2 Pages Vazias (2 itens) - 8h, 1.3 Integrações Vazias/Críticas (12 itens) - 48h, 2.1 UI-Advanced Components Stubs (76 itens) - 152h, 2.2 Schemas Zod Stubs (24 itens) - 48h, 3.1 Hooks Stubs (77 itens) - 154h, 3.2 Types Parciais (52 itens) - 104h, 4.1 Contexts Parciais (28 itens) - 56h (+32 more)
 
-### Community 49 - "PontoPage.tsx"
+### Community 49 - "LGPDPage.tsx"
 
-Cohesion: 0.06
-Nodes (37): FolhaCompliancePage, PontoPage, BeneficiosTab(), BeneficiosTabProps, NewLoanDialog(), MetricasFolhaDashboard(), AssinarEspelhoDialog(), AssinaturaResult (+29 more)
+Cohesion: 0.03
+Nodes (76): CargosPage, ColaboradoresPage, DepartamentosPage, FolhaCompliancePage, LGPDPage, RelatoriosPage, ColaboradorFilters(), QuickActionsGrid() (+68 more)
 
 ### Community 50 - "canalContabilidadeService.ts"
 
 Cohesion: 0.11
-Nodes (13): Json, AutorTipo, canalContabilidadeService, ThreadCategoria, ThreadPrioridade, ThreadStatus, { mockFrom, mockGetUser }, setupListThreadsChain() (+5 more)
+Nodes (12): AutorTipo, canalContabilidadeService, ThreadCategoria, ThreadPrioridade, ThreadStatus, { mockFrom, mockGetUser }, setupListThreadsChain(), chain (+4 more)
 
 ### Community 51 - "🎯 PLANO V6 - DEPARTAMENTO PESSOAL (747 ITENS)"
 
@@ -2127,20 +2082,34 @@ Nodes (38): 1.1 Testes E2E Pendentes (10 arquivos), 1.2 Services Pequenos (<500 
 Cohesion: 0.05
 Nodes (38): 🟠 Alta Prioridade (Próximas 2 Semanas), CATEGORIA 1 — RLS Policies Inseguras 🔴 CRÍTICO, CATEGORIA 2 — SECURITY DEFINER sem SET search_path 🟠 ALTO, CATEGORIA 3 — Views sem security_invoker 🟡 MÉDIO, CATEGORIA 4 — Chave Anônima Hardcoded no Client 🟠 ALTO, CATEGORIA 5 — Arquitetura do Bridge Proxy 🟠 ALTO, CATEGORIA 6 — Integridade de Dados 🟡 MÉDIO, CATEGORIA 7 — Performance 🟡 MÉDIO (+30 more)
 
-### Community 54 - "DesligamentoDetailSheet.tsx"
+### Community 54 - "public.ferias"
 
-Cohesion: 0.16
-Nodes (13): DesligamentoDetailSheet(), DetailSheetProps, ETAPA_LABELS, ETAPAS, fmt(), RescisaoRow(), MOCK_DESL, SheetContent (+5 more)
+Cohesion: 0.11
+Nodes (20): "public"."assinar_aviso_ferias"(), "public"."ferias_aprovacoes", "public"."ferias_aprovacoes_log", "public"."ferias_arquivos", "public"."gerar_alertas_preditivos_ia"(), "public"."gerar_rubricas_ferias"(), "public"."historico_ferias", "public"."periodos_aquisitivos" (+12 more)
 
 ### Community 55 - "1.1 Componentes Sem Testes (300 itens)"
 
 Cohesion: 0.05
 Nodes (37): 1.1 Componentes Sem Testes (300 itens), 1.2 Hooks Sem Testes (90 itens), 1.3 Services Sem Testes (10 itens), 1.4 Pages Sem Testes (44 itens), 1.5 Contexts Sem Testes (17 itens), 2.1 Schemas Zod Faltantes (26 itens), 2.2 Constants Faltantes (31 itens), 2.3 Utils/Helpers Faltantes (44 itens) (+29 more)
 
-### Community 56 - "useHistoricoContratos.ts"
+### Community 56 - "useESocial.ts"
 
-Cohesion: 0.16
-Nodes (7): HistoricoContratosTab(), MOCK_HISTORICO, { mockFrom, mockValidarDocumento, mockToastSuccess, mockToastError }, { mockListar, mockCriar, mockExcluir, mockToastSuccess, mockToastError }, useHistoricoContratos(), TEST_EMPRESA, TEST_EMPRESA_ID
+Cohesion: 0.12
+Nodes (9): { mockFrom, mockValidarDocumento, mockToastSuccess, mockToastError }, {
+mockListarEventos,
+mockObterEstatisticas,
+mockEnviarEvento,
+mockReenviarEvento,
+mockGerarEventosPeriodo,
+mockGetConfig,
+mockListarCertificados,
+mockListarTransmissaoLogs,
+mockToastSuccess,
+mockToastError,
+mockToastInfo,
+mockToastWarning,
+mockHandleServerError,
+}, { mockListar, mockCriar, mockExcluir, mockToastSuccess, mockToastError }, useESocial(), ServerErrorResponse, useServerValidation(), ValidationErrorField, TEST_EMPRESA (+1 more)
 
 ### Community 57 - "🚀 Plano de Implementação V16 - Sistema Departamento Pessoal"
 
@@ -2157,15 +2126,15 @@ Nodes (36): 1.1 SERVICES CRÍTICOS DE NEGÓCIO (20 itens), 1.2 SERVICES DE FOLHA
 Cohesion: 0.07
 Nodes (14): rpc, AUDIT_UNIFIED_LIMIT, UnifiedAuditSection(), MOCK_MOVIMENTACOES, MOCK_ANOTACAO, MOCK_ENTREVISTA, MOCK_TESTE, MOCK_LOGS (+6 more)
 
-### Community 60 - "avisoFeriasPDF.ts"
+### Community 60 - "FeriasActions.tsx"
 
-Cohesion: 0.29
-Nodes (8): AvisoFeriasInput, AvisoFeriasResult, fmtCurrency(), fmtDate(), gerarAvisoFeriasPDF(), sha256Hex(), MOCK_INPUT, { MockJsPDF, mockAutoTable }
+Cohesion: 0.08
+Nodes (23): AssinarAvisoDialog(), FeriasActions(), FeriasActionsProps, SOLICITACAO, BASE_SOLICITACAO, DEFAULT_PROPS, { mockUseMutation, mockUseQueryClient }, SolicitarAdiant13Input (+15 more)
 
 ### Community 61 - "MedidasDisciplinaresPage.tsx"
 
-Cohesion: 0.05
-Nodes (38): MedidasDisciplinaresPage, GerarLinkCienciaDialog(), gerar(), GerarLinkCienciaDialogProps, LinkGerado, MedidaContestacaoDialog(), baixarAnexo(), Props (+30 more)
+Cohesion: 0.03
+Nodes (59): MedidasDisciplinaresPage, SSTPage, GerarLinkCienciaDialog(), gerar(), Props, MedidasGravityScale(), CardMedida(), Coluna() (+51 more)
 
 ### Community 62 - "🔴 FASE 1: TESTES DE COMPONENTES FALTANTES (147 itens)"
 
@@ -2184,18 +2153,18 @@ Nodes (35): 1.1.1 Componentes A-B (50 itens), 1.1.2 Componentes C-D (60 itens), 
 
 ### Community 65 - "useToast.ts"
 
-Cohesion: 0.11
-Nodes (20): ToastActionElement, ToastProps, { mockFrom, mockToastFn }, mockPendencias, State, Pendencia, usePendencias(), Action (+12 more)
+Cohesion: 0.09
+Nodes (28): Toast, ToastAction, ToastActionElement, ToastClose, ToastDescription, ToastProps, ToastTitle, toastVariants (+20 more)
 
 ### Community 66 - "BaseService"
 
-Cohesion: 0.03
-Nodes (52): EmpresasPage, EntityGridPageContainer(), { mockCargoService }, { mockDeptService }, { mockDesligamentoService }, { mockUseGenericCrud }, DEFAULT_MUTATION, DEFAULT_QUERY (+44 more)
+Cohesion: 0.05
+Nodes (32): EmpresasPage, EntityGridPageContainer(), { mockCargoService }, { mockDeptService }, { mockUseGenericCrud }, useTodasEmpresas(), EmpresasPage(), BaseService (+24 more)
 
 ### Community 67 - "devDependencies"
 
-Cohesion: 0.05
-Nodes (37): babel-plugin-react-compiler, eslint, @eslint/js, eslint-plugin-react-hooks, devDependencies, babel-plugin-react-compiler, eslint, @eslint/js (+29 more)
+Cohesion: 0.03
+Nodes (67): autoprefixer, babel-plugin-react-compiler, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals, husky (+59 more)
 
 ### Community 68 - "canonical_storage_schema.sql"
 
@@ -2214,8 +2183,8 @@ Nodes (10): AdminTelemetriaPage, formatDuration(), TelemetryStatsCards(), Teleme
 
 ### Community 71 - "enviar-relatorio/index.ts"
 
-Cohesion: 0.10
-Nodes (23): REPORT_DELIVERY_FAILED_MESSAGE, REPORT_DELIVERY_UNAVAILABLE_MESSAGE, reportDeliveryHttpStatus(), ReportDeliveryStatus, reportEmailPayload(), ReportPayloadDescriptor, scheduledReportPath(), stableJson() (+15 more)
+Cohesion: 0.08
+Nodes (26): ALERT_EMAIL_UNAVAILABLE_MESSAGE, alertDeliveryHttpStatus(), AlertEmailDeliveryStatus, REPORT_DELIVERY_FAILED_MESSAGE, REPORT_DELIVERY_UNAVAILABLE_MESSAGE, reportDeliveryHttpStatus(), ReportDeliveryStatus, reportEmailPayload() (+18 more)
 
 ### Community 72 - "Testes de Components (280+ arquivos)"
 
@@ -2249,8 +2218,8 @@ Nodes (32): public.avaliacoes, public.compensacoes, public.process_queue, public
 
 ### Community 78 - "useNotificacoes.ts"
 
-Cohesion: 0.15
-Nodes (14): NotificationBell(), NotificacoesHook, defaultConfig, typeConfig, PopoverContent, NotificationContext, NotificationContextType, NotificationProvider() (+6 more)
+Cohesion: 0.23
+Nodes (8): NotificationBell(), NotificacoesHook, defaultConfig, NotificationCenter(), typeConfig, PopoverContent, ColaboradorRelation, useNotificacoes()
 
 ### Community 79 - "workflow-status.ts"
 
@@ -2259,8 +2228,8 @@ Nodes (31): AJUSTE_PONTO_STATUS, AjustePontoStatus, CICLO_AVALIACAO_STATUS, CICL
 
 ### Community 80 - "afastamentoService.ts"
 
-Cohesion: 0.13
-Nodes (18): AfastamentoService, sel(), AfastamentoComColaborador, AfastamentoFiltros, AfastamentoInsert, AfastamentoRow, AfastamentoUpdate, Cid10Row (+10 more)
+Cohesion: 0.10
+Nodes (22): AfastamentoService, sel(), { mockFrom }, setupListarChain(), setupThenabledChain(), chain, AfastamentoComColaborador, AfastamentoFiltros (+14 more)
 
 ### Community 81 - "useGrupo.ts"
 
@@ -2302,10 +2271,10 @@ Nodes (28): BLOCO 1: SERVICES CRÍTICOS DE NEGÓCIO (V17-001 a V17-024), BLOCO 2
 Cohesion: 0.07
 Nodes (29): 10. P0 — Storage incompleto, 11. P0 — Ledger e migrations não representam o banco, 12. P1 — Constraints, índices e estrutura operacional, 13. Jobs, Auth e observabilidade, 14. Resultado dos gates contra o banco vivo, 15. Ordem segura de correção, 16. Critérios mínimos de liberação, 17. Limites que permanecem (+21 more)
 
-### Community 89 - "calcularINSS"
+### Community 89 - "rescisaoCalc.ts"
 
-Cohesion: 0.21
-Nodes (13): calcularFerias(), calcularINSS(), calcularIRRF(), calcularEncargos(), calcularAvos(), calcularRescisao(), fmt(), RescisaoParams (+5 more)
+Cohesion: 0.18
+Nodes (13): auditCalculation(), FolhaResultado, signCalculation(), verifyCalculationIntegrity(), { mockAuditLog }, calcularAvos(), fmt(), RescisaoParams (+5 more)
 
 ### Community 90 - "format.ts"
 
@@ -2349,7 +2318,7 @@ Nodes (27): E-001 · [P0] · Cloudflare — bloquear imediatamente a rota públi
 
 ### Community 98 - "AdminDiagnosticoMigracaoPage.tsx"
 
-Cohesion: 0.14
+Cohesion: 0.13
 Nodes (14): AdminDiagnosticoMigracaoPage, bitrixBreaker, CircuitOptions, CircuitState, genericBreaker, resendBreaker, AdminDiagnosticoMigracaoPage(), Check (+6 more)
 
 ### Community 99 - "20260713124342_3f4be33a-2603-45eb-8719-65aa18ec19cc.sql"
@@ -2369,7 +2338,7 @@ Nodes (25): Antes, Arquitetura, 🚨 BUGS CRÍTICOS CORRIGIDOS, CATEGORIA 1: SIN
 
 ### Community 102 - "auditoria/README.md"
 
-Cohesion: 0.09
+Cohesion: 0.08
 Nodes (14): 1. Inventário de testes, 2. Resultado da execução unitária (sandbox), 3. Matriz: jornada crítica × cobertura E2E, 4. Matriz: módulo crítico × cobertura unitária, 5. Achados de qualidade de teste, 6. Top 15 comportamentos de maior risco NÃO testados (ranqueado), 7. Plano de bateria E2E proposto (para fase de execução), Matriz de Testes E2E e Cobertura Automatizada (+6 more)
 
 ### Community 103 - "What You Must Do When Invoked"
@@ -2392,11 +2361,6 @@ Nodes (23): 0. Princípios, 1. Pré-requisitos, 2. Baseline — reconciliação 
 Cohesion: 0.11
 Nodes (16): public.pcs_set_audit_fields, public.pcs_validate_factor, public.pcs_avaliacoes_cargo, public.pcs_fatores, public.pcs_grades, public.pcs_pesquisa_salarial, public.pcs_pode_gerir_plano(), public.pcs_pode_ver_plano() (+8 more)
 
-### Community 107 - "calculoLoteService.ts"
-
-Cohesion: 0.12
-Nodes (12): mockFolhaItemUpsert, mockProcessar, BatchProgress, BeneficioVinculo, calculoLoteService, COLABORADOR_FOLHA_SELECT, ColaboradorFolha, EventoFolha (+4 more)
-
 ### Community 108 - "Achados novos e remanescentes priorizados"
 
 Cohesion: 0.08
@@ -2409,13 +2373,8 @@ Nodes (23): Auxiliares (25/31), ✅ CALCULADORAS (18/18 - 100%), Comunicação (
 
 ### Community 110 - "safe-fetch.ts"
 
-Cohesion: 0.09
-Nodes (18): normalizePayrollAuditAction(), PAYROLL_AUDIT_READ_ACTIONS, NO_STORE, metabaseHealthCheck(), ALLOWED_BUCKETS, BodySchema, isAllowedFileUrl(), BodySchema (+10 more)
-
-### Community 111 - "client.ts"
-
-Cohesion: 0.03
-Nodes (66): AssistenteIAPage, PortalPage, AdminRoute(), AdminRouteProps, MfaState, MainLayout(), EmbedResponse, getAccessToken() (+58 more)
+Cohesion: 0.06
+Nodes (31): normalizePayrollAuditAction(), PAYROLL_AUDIT_READ_ACTIONS, NO_STORE, METABASE_UNAVAILABLE_MESSAGE, metabaseUnavailablePayload(), CONFIGURED_DASHBOARD_IDS, isConfiguredDashboard(), base64url_encode() (+23 more)
 
 ### Community 112 - "loggerService.test.ts"
 
@@ -2427,10 +2386,10 @@ Nodes (5): mockFrom, mockGetSession, mockInsert, mockRpc, mockRpcResult
 Cohesion: 0.13
 Nodes (21): ADMIN_ONLY_WRITE_TABLES, COLUMNS_RE, DANGEROUS_TOKENS, FILTER_OPS, IDENTIFIER_RE, isSafeColumnsExpr(), isSafeFilterColumn(), isSafeOrderColumn() (+13 more)
 
-### Community 114 - "esocial/index.ts"
+### Community 114 - "ConfigPanels.tsx"
 
-Cohesion: 0.32
-Nodes (11): ESocialData, ValidationError, ValidationResult, ValidationWarning, validadores, sugerirCorrecaoRubrica(), validarRubricaESocial(), presente() (+3 more)
+Cohesion: 0.16
+Nodes (13): IntegracoesPage, Bitrix24ConfigPanel(), CnabConfigPanel(), WebhookConfigPanel(), WhatsAppConfigPanel(), Integracao, integracoesFixas, IntegracoesPage() (+5 more)
 
 ### Community 115 - "5. Análise das 22 dimensões"
 
@@ -2484,8 +2443,8 @@ Nodes (22): 10. Evidência exigida por PR, 11. Definição de concluído, 1. Mis
 
 ### Community 125 - ""public"."ferias""
 
-Cohesion: 0.10
-Nodes (22): "public"."ferias_aprovacoes", "public"."ferias_aprovacoes_log", "public"."ferias_arquivos", "public"."assinar_aviso_ferias"(), "public"."ferias", "public"."gerar_alertas_preditivos_ia"(), "public"."gerar_rubricas_ferias"(), "public"."historico_ferias" (+14 more)
+Cohesion: 0.09
+Nodes (24): "public"."ferias_aprovacoes", "public"."ferias_aprovacoes_log", "public"."ferias_arquivos", "public"."assinar_aviso_ferias"(), "public"."ferias", "public"."gerar_alertas_preditivos_ia"(), "public"."gerar_rubricas_ferias"(), "public"."historico_ferias" (+16 more)
 
 ### Community 126 - "renovate.json"
 
@@ -2495,7 +2454,7 @@ Nodes (21): adm01-debug, before 6am on monday, config:base, dependencies, group:
 ### Community 127 - "calculoBeneficiosService.ts"
 
 Cohesion: 0.07
-Nodes (22): { mockCalcCustoMensal }, useValeTransporte(), BeneficiarioPlanoRow, BeneficioColaboradorRow, BeneficioRow, DependenteRow, dependentesService, planoSaudeService (+14 more)
+Nodes (23): { mockCalcCustoMensal }, useValeTransporte(), BeneficiarioPlanoRow, BeneficioColaboradorRow, BeneficioRow, DependenteRow, dependentesService, planoSaudeService (+15 more)
 
 ### Community 128 - "useTabelasReferencia.ts"
 
@@ -2506,10 +2465,10 @@ mockListarCentrosCusto, mockCriarCentroCusto,
 mockListarContasBancarias, mockCriarContaBancaria,
 }, useAtualizarCentroCusto() (+38 more)
 
-### Community 129 - "toast.tsx"
+### Community 129 - "Auditoria Técnica Exaustiva — Departamento Pessoal V3"
 
-Cohesion: 0.39
-Nodes (7): Toast, ToastAction, ToastClose, ToastDescription, ToastTitle, toastVariants, ToastViewport
+Cohesion: 0.20
+Nodes (10): 0. Resumo executivo, 10. Nota final de maturidade, 1. Metodologia e limites, 2. Inventário do sistema, 3. Evidência de execução, 6. Scorecard consolidado, 7. Top 10 ações por ROI, 9. Decisão de promoção (+2 more)
 
 ### Community 130 - "20260315193923_b1b7216e-7b7b-4ee9-9652-14599621e2df.sql"
 
@@ -2538,20 +2497,20 @@ Nodes (20): Antes, ✅ CHECKLIST PRÉ-DEPLOY, 🔧 CORREÇÕES CRÍTICAS, 🚀 D
 
 ### Community 135 - "main.tsx"
 
-Cohesion: 0.15
-Nodes (13): mockInvalidateQueries, mockMutate, Toaster(), ThemeToggle(), Toaster(), isInIframe, QueryProvider(), Theme (+5 more)
+Cohesion: 0.17
+Nodes (11): mockInvalidateQueries, mockMutate, Toaster(), isInIframe, QueryProvider(), Theme, ThemeContext, ThemeContextType (+3 more)
 
 ### Community 136 - "useOnMount"
 
-Cohesion: 0.14
-Nodes (8): SidebarProvider, {
+Cohesion: 0.21
+Nodes (6): SidebarProvider, {
 mockGetQueueSize,
 mockQueueRegistro,
 mockSyncOfflineQueue,
 mockToastWarning,
 mockToastSuccess,
 mockToastError,
-}, useIsMobile(), useMobile, useOnMount(), usePontoOffline(), BeforeInstallPromptEvent, usePWA()
+}, useIsMobile(), useMobile, useOnMount(), usePontoOffline()
 
 ### Community 137 - "errors/index.ts"
 
@@ -2578,29 +2537,27 @@ Nodes (17): access, accessPath, allowlist, bridgeTableCalls, calls, contract, co
 Cohesion: 0.12
 Nodes (16): alignClasses, Column, ColumnProps, gapClasses, justifyClasses, spanClasses, alignClasses, colsClasses (+8 more)
 
-### Community 142 - "desligamentoExcel.ts"
+### Community 142 - "useImportacaoColaboradores.ts"
 
-Cohesion: 0.13
-Nodes (18): brl(), linhasExport(), PcsEquidadeTab(), situacaoDe(), usePcsEquidade(), exportarDesligamentosExcel(), HEADERS, rowFor() (+10 more)
+Cohesion: 0.07
+Nodes (43): brl(), linhasExport(), PcsEquidadeTab(), situacaoDe(), buildSelectChain(), chain, {
+mockFrom, mockParseWorkbook, mockNormalizarCPF, mockToastSuccess, mockToastError,
+}, ImportRow (+35 more)
 
-### Community 143 - "required"
+### Community 143 - "esocial/index.ts"
 
-Cohesion: 0.32
-Nodes (21): cnpjValido(), cpfValido(), enumValido(), maxLen(), required(), competenciaValida(), validarInscricao(), validarS1000() (+13 more)
+Cohesion: 0.24
+Nodes (30): cnpjValido(), cpfValido(), enumValido(), ESocialData, maxLen(), required(), ValidationError, ValidationResult (+22 more)
 
-### Community 144 - "DonutChart.tsx"
+### Community 144 - "dashboard/index.ts"
 
-Cohesion: 0.40
-Nodes (4): DonutChart(), DonutChartProps, Segment, MOCK_SEGMENTS
+Cohesion: 0.08
+Nodes (24): AnimatedNumber(), AnimatedNumberProps, BarChartData, BarChartWidget, BarChartWidgetProps, DonutChart(), DonutChartProps, Segment (+16 more)
 
 ### Community 145 - "FeriasService"
 
-Cohesion: 0.07
-Nodes (18): CalendarioFerias(), MOCK_FERIAS, {
-mockListSolicitacoes, mockCriar, mockAtualizar, mockExcluir,
-mockAprovarGestor, mockAprovarRH,
-mockToastSuccess, mockToastError,
-}, useFerias(), buildCursorQuery(), CursorParams, CursorResult, encodeCursor() (+10 more)
+Cohesion: 0.08
+Nodes (14): buildCursorQuery(), CursorParams, CursorResult, encodeCursor(), extractNextCursor(), parseCursor(), useCursorPagination(), FeriasAprovacoesLog (+6 more)
 
 ### Community 146 - "external-db-bridge/index.ts"
 
@@ -2610,7 +2567,7 @@ Nodes (12): BRIDGE_QUERY_TIMEOUT_MS, emitTelemetry(), empresaIdColumnFor(), enqu
 ### Community 147 - "episService.ts"
 
 Cohesion: 0.06
-Nodes (20): Tables, TablesInsert, TablesUpdate, BeneficioService, Epi, EpiEntrega, EpiEntregaComRelacoes, EpiEntregaInsert (+12 more)
+Nodes (22): Tables, TablesInsert, TablesUpdate, BeneficioRow, BeneficioService, BeneficioVinculoRow, Epi, EpiEntrega (+14 more)
 
 ### Community 148 - "Arquitetura e Fluxo de Dados - RH ERP"
 
@@ -2644,18 +2601,23 @@ Nodes (18): admissoesBase, avisoTrabalhadoOpts, calcINSS(), calcIRRF(), calcular
 
 ### Community 154 - "passwordPolicy.ts"
 
-Cohesion: 0.57
-Nodes (5): checkPasswordBreach(), PasswordValidation, sha1(), validatePassword(), validatePasswordFull()
+Cohesion: 0.31
+Nodes (7): authService, { mockResetPasswordForEmail, mockUpdateUser, mockGetSession }, checkPasswordBreach(), PasswordValidation, sha1(), validatePassword(), validatePasswordFull()
+
+### Community 155 - "FeriasReconciliacaoCard.tsx"
+
+Cohesion: 0.29
+Nodes (7): FeriasReconciliacaoCard(), meta, MOCK_ROWS, { mockUseQuery }, ReconciliacaoRow, SituacaoReconciliacao, useReconciliacaoFolha()
 
 ### Community 156 - "securityService.ts"
 
+Cohesion: 0.12
+Nodes (10): supabaseBase, PiiAcao, RegistrarAcessoPIIOpts, BlockedIp, GeoBlockedAttempt, LoginAttempt, SecurityAlert, securityService (+2 more)
+
+### Community 157 - "ESocialPagamentosAndSST.test.tsx"
+
 Cohesion: 0.20
-Nodes (6): BlockedIp, GeoBlockedAttempt, LoginAttempt, SecurityAlert, securityService, { mockFrom, mockRpc, mockLoggerError, mockLoggerInfo }
-
-### Community 157 - "consultarCEP/index.ts"
-
-Cohesion: 0.10
-Nodes (16): CACHE, cache, cachedFetch(), CacheEntry, CachePolicy, cachePublic(), CacheStats, getCacheStats() (+8 more)
+Nodes (7): S1210Pagamentos(), S1210Pagamentos, S1210_DADOS_COM_PAGAMENTOS, S1210_DADOS_VAZIO, S2240_DADOS, DADOS_S1200, DADOS_S1210
 
 ### Community 158 - "LooseQueryBuilder"
 
@@ -2704,8 +2666,8 @@ Nodes (15): public.blocked_ips, public.check_rate_limit(), public.ip_whitelist, 
 
 ### Community 167 - "dependencies"
 
-Cohesion: 0.12
-Nodes (17): class-variance-authority, cmdk, decimal.js, @dnd-kit/utilities, dependencies, class-variance-authority, cmdk, decimal.js (+9 more)
+Cohesion: 0.03
+Nodes (73): class-variance-authority, clsx, crypto-js, decimal.js, @dnd-kit/sortable, @dnd-kit/utilities, dompurify, @hookform/resolvers (+65 more)
 
 ### Community 168 - "📦 Arquivos Criados"
 
@@ -2734,16 +2696,16 @@ Nodes (16): Build, Como Adicionar, Desenvolvimento, Dicas, Docker, 📦 Guia de 
 
 ### Community 173 - "useColaboradorDetalhes.test.ts"
 
-Cohesion: 0.18
-Nodes (9): EmergenciaTab(), MOCK_DEPENDENTES, MOCK_CONTATOS, {
+Cohesion: 0.24
+Nodes (7): EmergenciaTab(), MOCK_CONTATOS, {
 mockListarDependentes, mockCriarDependente, mockAtualizarDependente, mockExcluirDependente,
 mockListarContatosEmergencia, mockCriarContatoEmergencia, mockExcluirContatoEmergencia,
-}, useContatosEmergencia(), useCriarContatoEmergencia(), useCriarDependente(), useDependentes() (+1 more)
+}, useContatosEmergencia(), useCriarContatoEmergencia(), useCriarDependente(), useExcluirContatoEmergencia()
 
 ### Community 174 - "services/index.ts"
 
 Cohesion: 0.04
-Nodes (50): QueryBuilderType, Auditoria, Beneficio, Cargo, Colaborador, Database, Departamento, Empresa (+42 more)
+Nodes (58): QueryBuilderType, Auditoria, Beneficio, Cargo, Colaborador, Database, Departamento, Empresa (+50 more)
 
 ### Community 175 - "useFeriasCursor.ts"
 
@@ -2754,6 +2716,12 @@ Nodes (9): UseCursorPaginationOptions, UseCursorPaginationResult, useFeriasCurso
 
 Cohesion: 0.14
 Nodes (12): CBORow, CNAERow, DomainType, FeriadoRow, fetchDomainData(), getINSSTable(), getIRRFTable(), getRubricas() (+4 more)
+
+### Community 177 - "NotificationContext.tsx"
+
+Cohesion: 0.31
+Nodes (7): NotificationContext, NotificationContextType, NotificationProvider(), useNotifications, { mockToastSuccess, mockToastError, mockToastWarning, mockToastInfo,
+mockMarcarComoLida, mockMarcarTodasComoLidas }, wrapper(), Notificacao
 
 ### Community 178 - "TelemetryFilters.tsx"
 
@@ -2800,10 +2768,10 @@ Nodes (15): 1. Score geral (baseline), 2. Inventário de módulos (Fase 1), 3. F
 Cohesion: 0.13
 Nodes (11): caches, cacheStore, fireFetch(), listeners, results, safeFetchFn, sandbox, scenario() (+3 more)
 
-### Community 187 - "tabelas.ts"
+### Community 187 - "folhaCalc.ts"
 
-Cohesion: 0.27
-Nodes (13): ALIQUOTA_FGTS, DEDUCAO_DEPENDENTE_IRRF, DEDUCAO_SIMPLIFICADA_IRRF_2026, ENCARGOS_PADRAO, FAIXAS_INSS_2026, FAIXAS_IRRF_2026, FAIXAS_PLR_2026, LIMITE_ISENCAO_PLR (+5 more)
+Cohesion: 0.19
+Nodes (14): ALIQUOTA_FGTS, DEDUCAO_DEPENDENTE_IRRF, DEDUCAO_SIMPLIFICADA_IRRF_2026, ENCARGOS_PADRAO, FAIXAS_INSS_2026, FAIXAS_IRRF_2026, FAIXAS_PLR_2026, LIMITE_ISENCAO_PLR (+6 more)
 
 ### Community 188 - "usePeriodosAquisitivos.ts"
 
@@ -2818,27 +2786,27 @@ Nodes (4): { mockFrom }, setupDeleteChain(), setupListChain(), chain
 ### Community 190 - "MainLayout.tsx"
 
 Cohesion: 0.06
-Nodes (31): MainLayoutProps, MemoizedHeader, MemoizedSidebar, MobileBottomNav(), mobileItems, actions, MobileQuickActions(), QuickAction (+23 more)
+Nodes (32): MainLayoutProps, MemoizedHeader, MemoizedSidebar, MobileBottomNav(), mobileItems, actions, MobileQuickActions(), QuickAction (+24 more)
 
 ### Community 191 - "exportService.ts"
 
 Cohesion: 0.12
-Nodes (19): CustomState, ActionFunction, ActionState, FormState, useFormActionState(), useFormActionStateFallback(), UseFormActionStateReturn, isValidCNPJ() (+11 more)
+Nodes (20): CustomState, ActionFunction, ActionState, FormState, useFormActionState(), useFormActionStateFallback(), UseFormActionStateReturn, isValidCNPJ() (+12 more)
 
 ### Community 192 - "AfastamentosPage.tsx"
 
-Cohesion: 0.02
-Nodes (91): AdmissoesPage, AfastamentosPage, CalculadoraRescisaoPage, ColaboradorDetalhesPage, DesligamentosPage, FeriasPage, OrganogramaPage, PerfilPage (+83 more)
+Cohesion: 0.04
+Nodes (71): AfastamentosPage, PerfilPage, AfastamentoDocumentManager(), AfastamentoDocumentManagerProps, ALLOWED_TYPES, AfastamentoForm(), AfastamentoStats(), AfastamentoTable() (+63 more)
 
 ### Community 193 - "backupService.ts"
 
 Cohesion: 0.22
 Nodes (12): BACKUP_TABLES, BackupRecord, BackupRow, BackupTable, downloadBlob(), exportarBackupCSV(), exportarBackupJSON(), fetchBackupTables() (+4 more)
 
-### Community 194 - "rescisao.ts"
+### Community 194 - "scenarios.test.ts"
 
-Cohesion: 0.23
-Nodes (11): calcularAvisoPrevioIndenizado(), calcularAvos(), calcularMargemConsignado(), calcularMulta477(), calcularProRata(), calcularRescisao(), FAIXAS_SEGURO_DESEMPREGO_2026, BASE_PARAMS (+3 more)
+Cohesion: 0.14
+Nodes (18): calcularValeAlimentacao(), calcularAvisoPrevioIndenizado(), calcularAvos(), calcularMargemConsignado(), calcularMulta477(), calcularMultaFGTS(), calcularPLR(), calcularProRata() (+10 more)
 
 ### Community 195 - "20260317002431_d47cf6c1-6edb-4f49-b716-fb1fc1278505.sql"
 
@@ -2968,7 +2936,7 @@ Nodes (14): 3.10 Types (5 itens) - 10h, 3.11 Pages (3 itens) - 6h, 3.12 Dashboar
 ### Community 221 - "ESTADO_ATUAL.md"
 
 Cohesion: 0.14
-Nodes (9): 1. Cobertura, 2. Tabela de funcionalidades, 4. Lacunas (o que NÃO consegui verificar), Lógica — Services (parte 2/2: `src/services/`, arquivos g–z), 1. Cobertura, 2. Tabela de funcionalidades (por domínio), 3. Achados graves, 4. Lacunas (não verificado) (+1 more)
+Nodes (9): 1. Cobertura, 2. Tabela de funcionalidades, 3. Achados graves, 4. Lacunas (não verificado e por quê), Frontend — Páginas (lote 3/3: `src/pages/` iniciais N–Z), 1. Cobertura, 2. Tabela de funcionalidades, 4. Lacunas (o que NÃO consegui verificar) (+1 more)
 
 ### Community 222 - "3. Achados graves"
 
@@ -3192,8 +3160,8 @@ Nodes (12): 📋 CONCLUSÃO, DevOps ✅, 📦 ESTATÍSTICAS DO REPOSITÓRIO, �
 
 ### Community 266 - "4. Achados críticos transversais"
 
-Cohesion: 0.07
-Nodes (27): 0. Resumo executivo, 10. Nota final de maturidade, 1. Metodologia e limites, 2. Inventário do sistema, 3. Evidência de execução, 4. Achados críticos transversais, 6. Scorecard consolidado, 7. Top 10 ações por ROI (+19 more)
+Cohesion: 0.15
+Nodes (13): 4. Achados críticos transversais, A-001 — Divergência do projeto Supabase canônico, A-002 — Monitoramento remoto divergente do estado atual, A-003 — Cadeia de migrations não reproduzível, A-004 — Segurança física do banco reprovada ao vivo, A-005 — Gates de qualidade parcialmente permissivos, A-006 — Métrica de erro matematicamente inválida, A-007 — Vazamento potencial de PII em logs (+5 more)
 
 ### Community 267 - "Dados — Schema, Migrations e Drift"
 
@@ -3242,8 +3210,8 @@ Nodes (7): EmprestimosTable(), FinancialSummaryCards(), ADIANTAMENTOS, EMPRESTIM
 
 ### Community 276 - "ESocialEventViewer.tsx"
 
-Cohesion: 0.05
-Nodes (39): components, ESocialEventViewer(), S2200Admissao(), S2230Afastamento(), S1200Remuneracao(), S1210Pagamentos(), S1200Remuneracao, S1210Pagamentos (+31 more)
+Cohesion: 0.07
+Nodes (41): DependentesTab(), components, ESocialEventViewer(), S2200Admissao(), S2230Afastamento(), S1200Remuneracao(), S1200Remuneracao, S2200Admissao (+33 more)
 
 ### Community 277 - "FolhaDashboard.tsx"
 
@@ -3252,28 +3220,23 @@ Nodes (9): FolhaDashboard(), FolhaDashboardProps, competenciaAnterior(), compete
 
 ### Community 278 - "folhaResumo.ts"
 
-Cohesion: 0.29
-Nodes (5): useFolhaResumo(), buildFolhaResumo(), FolhaCabecalhoResumo, FolhaItemResumo, FolhaResumo
+Cohesion: 0.33
+Nodes (4): buildFolhaResumo(), FolhaCabecalhoResumo, FolhaItemResumo, FolhaResumo
 
 ### Community 279 - "use-toast.ts"
 
 Cohesion: 0.22
 Nodes (12): Action, actionTypes, dispatch(), genId(), listeners, memoryState, reducer(), State (+4 more)
 
-### Community 280 - "metabase-embed/index.ts"
+### Community 280 - "gerar-holerite/index.ts"
 
-Cohesion: 0.12
-Nodes (14): METABASE_UNAVAILABLE_MESSAGE, metabaseUnavailablePayload(), CONFIGURED_DASHBOARD_IDS, isConfiguredDashboard(), base64url_encode(), CachedToken, signJwt(), TOKEN_TTL_MS (+6 more)
+Cohesion: 0.32
+Nodes (4): calcularInssEmpregado(), InssBracket, TABLES, holeriteSchema
 
 ### Community 281 - "useNotificacoes.test.ts"
 
 Cohesion: 0.25
 Nodes (3): buildSelectChain(), chain, { mockFrom, mockGetUser }
-
-### Community 282 - "auditHelper.ts"
-
-Cohesion: 0.52
-Nodes (5): auditCalculation(), FolhaResultado, signCalculation(), verifyCalculationIntegrity(), { mockAuditLog }
 
 ### Community 283 - "folhaPagamentoService.ts"
 
@@ -3570,35 +3533,30 @@ Nodes (11): vitest/globals, compilerOptions, types, exclude, extends, include, n
 Cohesion: 0.18
 Nodes (10): allDirs, baselinePath, current, eslint, failures, root, totalBaseline, totalCurrent (+2 more)
 
-### Community 342 - "ContratoTokenTimelineDialog.tsx"
+### Community 342 - "useContratoTokenTimeline.ts"
 
-Cohesion: 0.27
-Nodes (8): ContratoTokenTimelineDialog(), EVENTO_META, formatDetalhes(), Props, MOCK_EVENTOS, { mockUseQuery }, ContratoTokenEvento, useContratoTokenTimeline()
+Cohesion: 0.28
+Nodes (6): ContratoTokenTimelineDialog(), formatDetalhes(), MOCK_EVENTOS, { mockUseQuery }, ContratoTokenEvento, useContratoTokenTimeline()
 
-### Community 343 - "tooltip.tsx"
-
-Cohesion: 0.05
-Nodes (39): ExamesPage, categoryLabels, EpiCatalogoTable(), EpiCatalogoTableProps, EpiCategoryChart(), EpiEntregasTable(), EpiEntregasTableProps, EpiKPIs() (+31 more)
-
-### Community 344 - "desligamentos/index.ts"
+### Community 343 - "ExamesPage.tsx"
 
 Cohesion: 0.14
-Nodes (12): DesligamentoFilters(), DesligamentoKPIs(), KPIProps, STATUS_MAP, StatusBadge(), TIPO_MAP, TipoBadge(), TurnoverChart() (+4 more)
+Nodes (14): ExamesPage, ExameFormDialog(), ExameKPIs(), ExameTable(), ExameTableProps, resultadoBadge(), tipoLabels, ExameTipoChart() (+6 more)
+
+### Community 344 - "DesligamentoDetailSheet.tsx"
+
+Cohesion: 0.07
+Nodes (30): CHECKLIST_ITEMS, ChecklistProps, DesligamentoChecklist(), DesligamentoDetailSheet(), DetailSheetProps, ETAPA_LABELS, ETAPAS, fmt() (+22 more)
 
 ### Community 345 - "WorkflowDesigner.tsx"
 
 Cohesion: 0.24
 Nodes (10): bezierPath(), NODE_TEMPLATES, nodeSize(), NodeTemplate, uid(), WfConnection, WfDesignerProps, WfNode (+2 more)
 
-### Community 346 - "setupDeleteChain"
+### Community 346 - "faltasService.test.ts"
 
-Cohesion: 0.47
-Nodes (3): setupDeleteChain(), setupListChain(), chain
-
-### Community 347 - "RouteErrorBoundary.tsx"
-
-Cohesion: 0.18
-Nodes (3): Props, RouteErrorBoundary, State
+Cohesion: 0.27
+Nodes (4): { mockFrom }, setupDeleteChain(), setupListChain(), chain
 
 ### Community 348 - "form.tsx"
 
@@ -3610,20 +3568,20 @@ Nodes (10): FormControl, FormDescription, FormFieldContext, FormFieldContextValu
 Cohesion: 0.27
 Nodes (9): rpcSpy, clearLocal(), INITIAL, LOCAL_KEY(), LocalCounter, LockState, readLocal(), useBruteForceProtection() (+1 more)
 
-### Community 350 - "useCalcular13Salario.test.ts"
+### Community 350 - "useCalcular13Salario.ts"
 
-Cohesion: 0.50
-Nodes (3): dados, { mockInvoke, mockToastSuccess, mockToastError }, resultado
+Cohesion: 0.15
+Nodes (11): formatCurrency(), Simulador13Dialog(), baseDados, dados, { mockInvoke }, { mockInvoke, mockToastSuccess, mockToastError }, mockResultado, resultado (+3 more)
 
 ### Community 351 - "avaliacaoService.test.ts"
 
-Cohesion: 0.25
-Nodes (5): avaliacaoService, { mockFrom }, setupDeleteChain(), setupListChain(), chain
+Cohesion: 0.31
+Nodes (4): { mockFrom }, setupDeleteChain(), setupListChain(), chain
 
-### Community 352 - "useAdiantamento13.ts"
+### Community 352 - "pushNotificationService.test.ts"
 
-Cohesion: 0.40
-Nodes (4): { mockUseMutation, mockUseQueryClient }, SolicitarAdiant13Input, SolicitarAdiant13Result, useSolicitarAdiantamento13()
+Cohesion: 0.29
+Nodes (6): mockGetSubscription, mockPushManager, mockReady, mockSubscribe, mockUnsubscribe, { mockUpsert, mockUpdate }
 
 ### Community 353 - "intervaloService.test.ts"
 
@@ -3890,10 +3848,10 @@ Nodes (5): FeriasReconciliacaoHistoricoCard(), MOCK_LOGS, { mockUseQuery }, Reco
 Cohesion: 0.25
 Nodes (7): MOCK_RESULT, { mockCalcular }, Params, useCalculoFeriasPreview(), calculoFerias, CalculoFeriasParams, CalculoFeriasResult
 
-### Community 406 - "hooks/useTranslation.ts"
+### Community 406 - "LanguageSelector.tsx"
 
-Cohesion: 0.27
-Nodes (9): getNestedValue(), getStoredLocale(), loadLocale(), Locale, LOCALE_CONFIG, resolvePlural(), SUPPORTED, translationCache (+1 more)
+Cohesion: 0.26
+Nodes (10): LanguageSelector(), getNestedValue(), getStoredLocale(), loadLocale(), Locale, LOCALE_CONFIG, resolvePlural(), SUPPORTED (+2 more)
 
 ### Community 407 - "assistenteIAService.ts"
 
@@ -4017,8 +3975,8 @@ Nodes (10): Bloco 1: Tenant Isolation (Passos 1-8), Bloco 2: Autorização (Pass
 
 ### Community 432 - "Plano Executivo de Melhorias — 50 Etapas"
 
-Cohesion: 0.20
-Nodes (10): 10 subetapas, 10 subetapas, Checkpoints, Checkpoints, E50-005 — Endurecer SECURITY DEFINER, E50-015 — Provisionar os 19 buckets, Gate final, Ondas (+2 more)
+Cohesion: 0.03
+Nodes (61): 10 subetapas, 10 subetapas, 10 subetapas, 10 subetapas, 10 subetapas, 10 subetapas, 10 subetapas, 10 subetapas (+53 more)
 
 ### Community 433 - "Componentes do Cálculo"
 
@@ -4164,7 +4122,7 @@ Nodes (4): MaliciousAdmissao, setupSupabaseMock(), setupSupabaseMockForModule(),
 ### Community 460 - "authz.ts"
 
 Cohesion: 0.06
-Nodes (23): BodySchema, DadosSchema, ListarSchema, NO_STORE, BodySchema, calcINSS(), calcIRRF(), FAIXAS_INSS (+15 more)
+Nodes (18): BodySchema, DadosSchema, ListarSchema, NO_STORE, BodySchema, bodySchema, debitoSchema, noStore (+10 more)
 
 ### Community 461 - "e2e_idempotencia.test.ts"
 
@@ -4356,20 +4314,20 @@ Nodes (3): ErrorBoundary, Props, State
 Cohesion: 0.25
 Nodes (6): mockInvalidateQueries, mockSingle, mockToastError, mockToastSuccess, mockUpdate, useAssinaturaDigital()
 
-### Community 499 - "Frontend — Páginas (lote 3/3: `src/pages/` iniciais N–Z)"
+### Community 499 - "Frontend — Componentes de domínio (`src/components/` exceto `ui/` e `__tests__/`)"
 
 Cohesion: 0.33
-Nodes (5): 1. Cobertura, 2. Tabela de funcionalidades, 3. Achados graves, 4. Lacunas (não verificado e por quê), Frontend — Páginas (lote 3/3: `src/pages/` iniciais N–Z)
+Nodes (5): 1. Cobertura, 2. Tabela de funcionalidades (por domínio), 3. Achados graves, 4. Lacunas (não verificado), Frontend — Componentes de domínio (`src/components/` exceto `ui/` e `__tests__/`)
 
 ### Community 500 - "bancoHorasService.test.ts"
 
 Cohesion: 0.31
 Nodes (4): bancoHorasService, { mockFrom }, parsePgIntervalToHours(), unitToHours()
 
-### Community 501 - "feriasPDF.ts"
+### Community 501 - "DesligamentoFilters.tsx"
 
-Cohesion: 0.50
-Nodes (3): feriasPDF, { MockJsPDF, mockSave, mockText, mockLine, mockAutoTable }, sampleSolicitacao
+Cohesion: 0.40
+Nodes (4): DesligamentoFilters(), FiltersProps, STATUS_OPTIONS, TIPO_OPTIONS
 
 ### Community 502 - "secureJsonParse"
 
@@ -4381,10 +4339,10 @@ Nodes (15): addRecentSearch(), CommandPalette(), renderGroup(), fuzzyMatch(), ge
 Cohesion: 0.25
 Nodes (5): BodySchema, decoder, deriveKey(), encoder, ownedBuffer()
 
-### Community 504 - "metricas/index.ts"
+### Community 504 - "consultarCEP/index.ts"
 
-Cohesion: 0.06
-Nodes (23): calcularInssEmpregado(), InssBracket, TABLES, DynamicSupabaseClient, getBridgeKpis(), safeCount(), assertTenantAccess(), NO_STORE_HEADERS (+15 more)
+Cohesion: 0.05
+Nodes (28): CACHE, assertTenantAccess(), NO_STORE_HEADERS, toNotificationPlainText(), cache, cachedFetch(), CacheEntry, CachePolicy (+20 more)
 
 ### Community 505 - "20251216170303_ade849cc-a455-493d-8d48-dae7d9f7e5d0.sql"
 
@@ -4416,24 +4374,10 @@ Nodes (8): public.competencias_config, public.metas_okrs, public.pdi_plano_desen
 Cohesion: 0.22
 Nodes (7): public.ferias_aprovacoes_log, public.fn_calculate_periodo_aquisitivo(), auth.users, public.colaboradores, public.ferias, public.fn_update_ferias_status_by_date, tr_update_ferias_status
 
-### Community 511 - "useESocial.ts"
+### Community 511 - ""public"."dados_estrangeiro""
 
-Cohesion: 0.29
-Nodes (5): {
-mockListarEventos,
-mockObterEstatisticas,
-mockEnviarEvento,
-mockReenviarEvento,
-mockGerarEventosPeriodo,
-mockGetConfig,
-mockListarCertificados,
-mockListarTransmissaoLogs,
-mockToastSuccess,
-mockToastError,
-mockToastInfo,
-mockToastWarning,
-mockHandleServerError,
-}, useESocial(), ServerErrorResponse, useServerValidation(), ValidationErrorField
+Cohesion: 0.33
+Nodes (6): "public"."condicoes_ingresso", "public"."dados_estrangeiro", "public"."descricoes_logradouro", "public"."paises", "public"."tempos_residencia", "public"."tipos_visto"
 
 ### Community 512 - "public.adiantamentos_salariais"
 
@@ -4590,6 +4534,11 @@ Nodes (7): output, publicDumpPath, remediationPaths, result, root, sanitizedDump
 Cohesion: 0.29
 Nodes (6): callBridge(), env, fs, path, results, run()
 
+### Community 543 - "8. Roadmap de correção"
+
+Cohesion: 0.50
+Nodes (4): 8. Roadmap de correção, Onda 1 — Quick Wins, 1–3 dias, Onda 2 — Sprint 1, 1–2 semanas, Onda 3 — Sprint 2, 2–4 semanas
+
 ### Community 544 - "dashboard/SectionHeader.tsx"
 
 Cohesion: 0.47
@@ -4615,10 +4564,10 @@ Nodes (5): makeChain(), chain, { mockFrom, mockRpc }, useExecutiveKPIs(), useStr
 Cohesion: 0.50
 Nodes (4): "public"."process_audit_log", "tr_audit_colaboradores", "trg_audit_colaboradores", "trg_audit_folha"
 
-### Community 549 - "useImportacaoColaboradores.ts"
+### Community 549 - "E50-005 — Endurecer SECURITY DEFINER"
 
-Cohesion: 0.35
-Nodes (11): ImportRow, useImportacaoColaboradores(), ParsedImportRow, ParseOptions, parseRows(), parseWorkbookBuffer(), readWorkbookRows(), normalizarCPF() (+3 more)
+Cohesion: 0.67
+Nodes (3): 10 subetapas, Checkpoints, E50-005 — Endurecer SECURITY DEFINER
 
 ### Community 550 - "retry.ts"
 
@@ -4629,11 +4578,6 @@ Nodes (7): computeDelay(), isRetryable(), parseRetryAfter(), retryEdgeFunction()
 
 Cohesion: 0.29
 Nodes (6): CienciaMedidaPage(), handleSubmit(), formatDate(), mensagemErro(), MEDIDA_VALIDA, TOKEN
-
-### Community 552 - "usePontosAbertos.ts"
-
-Cohesion: 0.18
-Nodes (6): { mockListar }, usePontosAbertos(), pontoAbertoService, { mockFrom }, setupChain(), chain
 
 ### Community 553 - "metabaseService.ts"
 
@@ -4660,10 +4604,10 @@ Nodes (6): CursorFilter, cursorToFilter(), decodeCursor(), encodeCursor(), fromB
 Cohesion: 0.25
 Nodes (7): 1. Variáveis de Ambiente (Secrets), 2. Checklist de Configuração por Ambiente, 3. Fluxo de Autenticação, 4. Troubleshooting, Desenvolvimento (Local/Staging), Guia de Integração Gov.br (SERPRO), Produção
 
-### Community 559 - "template.ts"
+### Community 559 - "E51-033 — Metas de cobertura por domínio de risco"
 
-Cohesion: 0.30
-Nodes (11): COLUMN_MAP, mapColumns(), normalizeHeader(), TEMPLATE_HEADERS, TEMPLATE_SAMPLE_ROW, XLSX_MIME, buildTemplateBuffer(), buildTemplateWorkbook() (+3 more)
+Cohesion: 0.67
+Nodes (3): 10 subetapas, Checkpoints, E51-033 — Metas de cobertura por domínio de risco
 
 ### Community 560 - "calcular-folha/e2e_concorrencia.test.ts"
 
@@ -5015,10 +4959,10 @@ Nodes (5): Container, ContainerProps, ContainerSize, paddingClasses, sizeClasses
 Cohesion: 0.67
 Nodes (3): 10 subetapas, Checkpoints, E51-047 — Atualizar CLAUDE.md, README e runbooks com o estado real
 
-### Community 631 - ""public"."log_audit_change""
+### Community 631 - "E51-034 — Testar handlers HTTP das Edge Functions"
 
-Cohesion: 0.15
-Nodes (13): "audit_admissoes", "audit_afastamentos", "audit_beneficios", "audit_beneficios_colaborador", "audit_cargos", "audit_colaboradores", "audit_departamentos", "audit_desligamentos" (+5 more)
+Cohesion: 0.67
+Nodes (3): 10 subetapas, Checkpoints, E51-034 — Testar handlers HTTP das Edge Functions
 
 ### Community 632 - "holeritePDF.ts"
 
@@ -5260,10 +5204,10 @@ Nodes (6): 3.1 Criptografia e Assinaturas Falsas (CRITICAL), 3.2 eSocial - Modo 
 Cohesion: 0.33
 Nodes (5): 1. Rescisão — 13º proporcional e férias proporcionais (K2/K3), 2. Folha — IRRF (K1), Conclusão, Simulação de Cenários — Evidência Quantitativa Pré-Correção, Verificação pós-correção (task 7 — K1-K5, H(K)4)
 
-### Community 681 - "loggerService.ts"
+### Community 681 - "E51-036 — Matriz RLS automatizada por papel e tenant no CI"
 
-Cohesion: 0.21
-Nodes (10): IMMEDIATE_LEVELS, logBuffer, LogEntry, LogLevel, PERSIST_LEVELS, redactLogContext(), redactLogText(), redactLogValue() (+2 more)
+Cohesion: 0.67
+Nodes (3): 10 subetapas, Checkpoints, E51-036 — Matriz RLS automatizada por papel e tenant no CI
 
 ### Community 682 - "5. Backend (Lovable Cloud)"
 
@@ -5375,25 +5319,25 @@ Nodes (4): expect_failure(), run_psql(), run_psql_db(), migrations-p0-payroll-up
 Cohesion: 0.47
 Nodes (4): validDirect, validPooler, CANONICAL_PROJECT_REF, validateCanonicalDbUrl()
 
-### Community 704 - "desligamentoService.test.ts"
+### Community 704 - "E51-039 — Supply chain hermético: lockfile único e actions pinadas"
 
-Cohesion: 0.22
-Nodes (8): mockDelete, mockEq, mockInsert, mockLimit, mockMaybeSingle, mockOrder, mockSelect, mockUpdate
+Cohesion: 0.67
+Nodes (3): 10 subetapas, Checkpoints, E51-039 — Supply chain hermético: lockfile único e actions pinadas
 
 ### Community 705 - "E51-040 — Inventário e rotação de segredos com cadência"
 
 Cohesion: 0.67
 Nodes (3): 10 subetapas, Checkpoints, E51-040 — Inventário e rotação de segredos com cadência
 
-### Community 707 - "DesligamentoChecklist.tsx"
+### Community 707 - "E51-003 — Restaurar formatação e tornar o Prettier pré-commit"
 
-Cohesion: 0.33
-Nodes (5): CHECKLIST_ITEMS, ChecklistProps, DesligamentoChecklist(), ALL_CHECKED, ALL_UNCHECKED
+Cohesion: 0.67
+Nodes (3): 10 subetapas, Checkpoints, E51-003 — Restaurar formatação e tornar o Prettier pré-commit
 
-### Community 708 - "pesquisaService.test.ts"
+### Community 708 - "E51-041 — Threat model e pentest sobre o SHA promovido"
 
-Cohesion: 0.21
-Nodes (4): { mockFrom }, setupDeleteChain(), setupListChain(), chain
+Cohesion: 0.67
+Nodes (3): 10 subetapas, Checkpoints, E51-041 — Threat model e pentest sobre o SHA promovido
 
 ### Community 709 - "E51-011 — Aplicar o lote no canônico e registrar apenas as versões do manifesto"
 
@@ -5735,27 +5679,25 @@ Nodes (3): expect_failure(), run_psql(), migrations-p1-pcs-contract.sh script
 Cohesion: 0.60
 Nodes (3): expect_denied(), run_psql(), migrations-p1-scoped-audit-trail.sh script
 
-### Community 782 - "src/schemas/common.ts"
+### Community 782 - "E51-043 — Timeouts, keyset pagination e cache no bridge"
 
-Cohesion: 0.18
-Nodes (9): auditoriaSchema, calcularFolhaSchema, cepSchema, cnpjSchema, healthcheckSchema, holeriteSchema, metricasSchema, notificacaoSchema (+1 more)
+Cohesion: 0.67
+Nodes (3): 10 subetapas, Checkpoints, E51-043 — Timeouts, keyset pagination e cache no bridge
 
-### Community 783 - "erro"
+### Community 783 - "E51-045 — Redação de PII, logs padronizados e cabeçalhos CSP"
 
-Cohesion: 0.25
-Nodes (8): brl(), PcsBenchmarkTab(), brl(), PcsGradesTab(), erro(), usePcsBenchmark(), usePcsGrades(), parseAderencia()
+Cohesion: 0.67
+Nodes (3): 10 subetapas, Checkpoints, E51-045 — Redação de PII, logs padronizados e cabeçalhos CSP
 
 ### Community 785 - "useDocumentOCR.test.ts"
 
 Cohesion: 0.40
 Nodes (3): mockGetPublicUrl, mockInvoke, mockUpload
 
-### Community 787 - "useImportacaoColaboradores.test.ts"
+### Community 787 - "E51-046 — Acessibilidade WCAG 2.2 AA com axe no E2E"
 
-Cohesion: 0.25
-Nodes (3): buildSelectChain(), chain, {
-mockFrom, mockParseWorkbook, mockNormalizarCPF, mockToastSuccess, mockToastError,
-}
+Cohesion: 0.67
+Nodes (3): 10 subetapas, Checkpoints, E51-046 — Acessibilidade WCAG 2.2 AA com axe no E2E
 
 ### Community 788 - "E51-019 — Fechar RV-02: enumeração e replay de tokens públicos remoto"
 
@@ -6694,8 +6636,8 @@ Nodes (3): 10 subetapas, Checkpoints, E51-029 — Zerar tolerância de warnings 
 
 ### Community 1026 - ""public"."fill_recrutamento_child_empresa""
 
-Cohesion: 0.01
-Nodes (99): "ajuste_ponto_status_transition", "audit_status_change", "dp_audit_log_no_delete", "dp_audit_log_no_update", "ferias_bloquear_gozo_sem_pagamento", "ferias_status_transition", "public"."purge_audit_log_old"(), del (+91 more)
+Cohesion: 0.50
+Nodes (4): "public"."fill_recrutamento_child_empresa", "trg_fill_rec_anotacoes_empresa", "trg_fill_rec_entrevistas_empresa", "trg_fill_rec_testes_empresa"
 
 ### Community 1027 - "afastamentoPDF.ts"
 
@@ -7267,10 +7209,10 @@ Nodes (3): 10 subetapas, Checkpoints de conclusão, E-029 — Restaurar baseline
 Cohesion: 0.67
 Nodes (3): 10 subetapas, Checkpoints de conclusão, E-030 — Reconciliar o ledger somente após baseline aprovado
 
-### Community 1143 - "E50-001 — Rotacionar credenciais comprometidas"
+### Community 1143 - "E51-004 — Corrigir o ruleset da main: check obrigatório que nunca roda em PR"
 
 Cohesion: 0.67
-Nodes (3): 10 subetapas, Checkpoints, E50-001 — Rotacionar credenciais comprometidas
+Nodes (3): 10 subetapas, Checkpoints, E51-004 — Corrigir o ruleset da main: check obrigatório que nunca roda em PR
 
 ### Community 1144 - "E50-034 — Criar integração com Supabase real"
 
@@ -7282,30 +7224,30 @@ Nodes (3): 10 subetapas, Checkpoints, E50-034 — Criar integração com Supabas
 Cohesion: 0.67
 Nodes (3): 10 subetapas, Checkpoints, E50-003 — Fixar Supabase canônico e sincronizar Git
 
-### Community 1146 - "E50-035 — Automatizar matriz RLS por papel/tenant"
+### Community 1146 - "E51-005 — Desbloquear o healthcheck e deduplicar incidentes"
 
 Cohesion: 0.67
-Nodes (3): 10 subetapas, Checkpoints, E50-035 — Automatizar matriz RLS por papel/tenant
+Nodes (3): 10 subetapas, Checkpoints, E51-005 — Desbloquear o healthcheck e deduplicar incidentes
 
-### Community 1147 - "E50-036 — Testar concorrência e idempotência"
-
-Cohesion: 0.67
-Nodes (3): 10 subetapas, Checkpoints, E50-036 — Testar concorrência e idempotência
-
-### Community 1148 - "E50-037 — Executar E2E por papel e dispositivo"
+### Community 1147 - "E51-007 — Higiene de branches, stashes e main local"
 
 Cohesion: 0.67
-Nodes (3): 10 subetapas, Checkpoints, E50-037 — Executar E2E por papel e dispositivo
+Nodes (3): 10 subetapas, Checkpoints, E51-007 — Higiene de branches, stashes e main local
+
+### Community 1148 - "E51-008 — Tratar artefatos gerados: PDF fora do versionamento e grafo atualizado"
+
+Cohesion: 0.67
+Nodes (3): 10 subetapas, Checkpoints, E51-008 — Tratar artefatos gerados: PDF fora do versionamento e grafo atualizado
 
 ### Community 1149 - "E50-038 — Sanear supply chain e segredos"
 
 Cohesion: 0.67
 Nodes (3): 10 subetapas, Checkpoints, E50-038 — Sanear supply chain e segredos
 
-### Community 1150 - "E50-039 — Executar threat model e pentest"
+### Community 1150 - "E51-015 — Executar E2E autenticado pós-deploy e retestar os 17 reprovados"
 
 Cohesion: 0.67
-Nodes (3): 10 subetapas, Checkpoints, E50-039 — Executar threat model e pentest
+Nodes (3): 10 subetapas, Checkpoints, E51-015 — Executar E2E autenticado pós-deploy e retestar os 17 reprovados
 
 ### Community 1151 - "E50-040 — Eliminar ciclos, god files e duplicação"
 
@@ -7317,10 +7259,10 @@ Nodes (3): 10 subetapas, Checkpoints, E50-040 — Eliminar ciclos, god files e d
 Cohesion: 0.67
 Nodes (3): 10 subetapas, Checkpoints, E50-041 — Fechar dívida de lint e tipos
 
-### Community 1153 - "E50-042 — Reduzir bundle e concluir PWA/mobile"
+### Community 1153 - "E51-017 — Registrar aceite formal do lote nas etapas E50 correspondentes"
 
 Cohesion: 0.67
-Nodes (3): 10 subetapas, Checkpoints, E50-042 — Reduzir bundle e concluir PWA/mobile
+Nodes (3): 10 subetapas, Checkpoints, E51-017 — Registrar aceite formal do lote nas etapas E50 correspondentes
 
 ### Community 1154 - "E50-043 — Otimizar queries e paginação"
 
@@ -7332,20 +7274,20 @@ Nodes (3): 10 subetapas, Checkpoints, E50-043 — Otimizar queries e paginação
 Cohesion: 0.67
 Nodes (3): 10 subetapas, Checkpoints, E50-044 — Redigir PII e padronizar logs
 
-### Community 1156 - "E50-004 — Fechar as views anônimas"
+### Community 1156 - "E51-018 — Fechar RV-01 e RV-03: matriz de tenant e policies no canônico"
 
 Cohesion: 0.67
-Nodes (3): 10 subetapas, Checkpoints, E50-004 — Fechar as views anônimas
+Nodes (3): 10 subetapas, Checkpoints, E51-018 — Fechar RV-01 e RV-03: matriz de tenant e policies no canônico
 
-### Community 1157 - "E50-045 — Corrigir métricas, health, SLOs e alertas"
-
-Cohesion: 0.67
-Nodes (3): 10 subetapas, Checkpoints, E50-045 — Corrigir métricas, health, SLOs e alertas
-
-### Community 1158 - "E50-046 — Garantir acessibilidade WCAG 2.2 AA"
+### Community 1157 - "E51-023 — Fechar RV-12 e RV-13: probes CORS e E2E com duas empresas"
 
 Cohesion: 0.67
-Nodes (3): 10 subetapas, Checkpoints, E50-046 — Garantir acessibilidade WCAG 2.2 AA
+Nodes (3): 10 subetapas, Checkpoints, E51-023 — Fechar RV-12 e RV-13: probes CORS e E2E com duas empresas
+
+### Community 1158 - "E51-025 — Ligar `no-explicit-any` com baseline e orçamento decrescente"
+
+Cohesion: 0.67
+Nodes (3): 10 subetapas, Checkpoints, E51-025 — Ligar `no-explicit-any` com baseline e orçamento decrescente
 
 ### Community 1159 - "E50-047 — Tornar CI hermético e proteger main"
 
@@ -7357,15 +7299,15 @@ Nodes (3): 10 subetapas, Checkpoints, E50-047 — Tornar CI hermético e protege
 Cohesion: 0.67
 Nodes (3): 10 subetapas, Checkpoints, E50-048 — Implantar staging, rollback e DR
 
-### Community 1161 - "E50-049 — Consolidar documentação e governança"
+### Community 1161 - "E51-027 — Eliminar `any` em páginas, componentes e hooks"
 
 Cohesion: 0.67
-Nodes (3): 10 subetapas, Checkpoints, E50-049 — Consolidar documentação e governança
+Nodes (3): 10 subetapas, Checkpoints, E51-027 — Eliminar `any` em páginas, componentes e hooks
 
-### Community 1162 - "E50-050 — Recertificar e decidir go-live"
+### Community 1162 - "E51-028 — Remover supressões: `eslint-disable` e `@ts-ignore`"
 
 Cohesion: 0.67
-Nodes (3): 10 subetapas, Checkpoints, E50-050 — Recertificar e decidir go-live
+Nodes (3): 10 subetapas, Checkpoints, E51-028 — Remover supressões: `eslint-disable` e `@ts-ignore`
 
 ### Community 1163 - "E50-006 — Reconstruir RLS e ACLs"
 
@@ -7392,30 +7334,20 @@ Nodes (3): 10 subetapas, Checkpoints, E50-009 — Criar manifest físico determi
 Cohesion: 0.67
 Nodes (3): 10 subetapas, Checkpoints, E50-010 — Classificar todo drift técnico e funcional
 
-### Community 1168 - "E50-011 — Aprovar ADR de baseline/squash"
+### Community 1168 - "E51-002 — Corrigir drift do contrato de ações de auditoria"
 
 Cohesion: 0.67
-Nodes (3): 10 subetapas, Checkpoints, E50-011 — Aprovar ADR de baseline/squash
+Nodes (3): 10 subetapas, Checkpoints, E51-002 — Corrigir drift do contrato de ações de auditoria
 
-### Community 1169 - "E50-012 — Construir baseline canônico"
-
-Cohesion: 0.67
-Nodes (3): 10 subetapas, Checkpoints, E50-012 — Construir baseline canônico
-
-### Community 1170 - "E50-013 — Restaurar RPCs e tabelas requeridas"
+### Community 1169 - "E51-032 — Ambiente local reproduzível para simulações PostgreSQL"
 
 Cohesion: 0.67
-Nodes (3): 10 subetapas, Checkpoints, E50-013 — Restaurar RPCs e tabelas requeridas
+Nodes (3): 10 subetapas, Checkpoints, E51-032 — Ambiente local reproduzível para simulações PostgreSQL
 
 ### Community 1171 - "E50-014 — Decidir e completar o módulo PCS"
 
 Cohesion: 0.67
 Nodes (3): 10 subetapas, Checkpoints, E50-014 — Decidir e completar o módulo PCS
-
-### Community 1172 - "E50-016 — Versionar cron e rotinas periódicas"
-
-Cohesion: 0.67
-Nodes (3): 10 subetapas, Checkpoints, E50-016 — Versionar cron e rotinas periódicas
 
 ### Community 1173 - "E50-017 — Validar constraints e normalizar triggers"
 
@@ -7462,20 +7394,10 @@ Nodes (3): 10 subetapas, Checkpoints, E50-024 — Consolidar a engine de folha
 Cohesion: 0.67
 Nodes (3): 10 subetapas, Checkpoints, E50-002 — Congelar dados reais e criar recuperação
 
-### Community 1182 - "E50-025 — Tornar ponto e banco de horas antifraude"
-
-Cohesion: 0.67
-Nodes (3): 10 subetapas, Checkpoints, E50-025 — Tornar ponto e banco de horas antifraude
-
 ### Community 1183 - "E50-026 — Consolidar férias, afastamentos e benefícios"
 
 Cohesion: 0.67
 Nodes (3): 10 subetapas, Checkpoints, E50-026 — Consolidar férias, afastamentos e benefícios
-
-### Community 1184 - "E50-027 — Endurecer rescisões, contratos e assinaturas"
-
-Cohesion: 0.67
-Nodes (3): 10 subetapas, Checkpoints, E50-027 — Endurecer rescisões, contratos e assinaturas
 
 ### Community 1185 - "E50-028 — Validar obrigações legais, financeiro e integrações externas"
 
@@ -7497,11 +7419,6 @@ Nodes (3): 10 subetapas, Checkpoints, E50-030 — Comparar Edge Functions implan
 Cohesion: 0.67
 Nodes (3): 10 subetapas, Checkpoints, E50-031 — Padronizar segurança das Edge Functions
 
-### Community 1189 - "E50-032 — Uniformizar validação e uploads"
-
-Cohesion: 0.67
-Nodes (3): 10 subetapas, Checkpoints, E50-032 — Uniformizar validação e uploads
-
 ### Community 1190 - "E50-033 — Elevar testes unitários por risco"
 
 Cohesion: 0.67
@@ -7512,10 +7429,10 @@ Nodes (3): 10 subetapas, Checkpoints, E50-033 — Elevar testes unitários por r
 Cohesion: 0.67
 Nodes (3): 10 subetapas, Checkpoints, E51-001 — Publicar o lote local não commitado
 
-### Community 1192 - "rubricas.ts"
+### Community 1192 - "rubricaValidator.ts"
 
-Cohesion: 0.50
-Nodes (3): RubricaPadrao, RUBRICAS_PADRAO, TipoRubrica
+Cohesion: 0.33
+Nodes (5): RubricaPadrao, RUBRICAS_PADRAO, TipoRubrica, sugerirCorrecaoRubrica(), validarRubricaESocial()
 
 ### Community 1193 - "E51-035 — Testes de contrato bridge e frontend com Supabase efêmero"
 
@@ -7536,16 +7453,6 @@ Nodes (4): CurrencyInput(), CurrencyInputProps, formatCurrency(), parseCurrency(
 
 Cohesion: 0.67
 Nodes (3): 10 subetapas, Checkpoints, E51-006 — Unificar referências de projeto Supabase e remover integração Preview obsoleta
-
-### Community 1202 - ""public"."increment_version""
-
-Cohesion: 0.40
-Nodes (5): "public"."increment_version", "tr_increment_version_cargos", "tr_increment_version_colab", "tr_increment_version_folhas", "tr_increment_version_ponto"
-
-### Community 1204 - "useCalcular13Salario.test.tsx"
-
-Cohesion: 0.50
-Nodes (3): baseDados, { mockInvoke }, mockResultado
 
 ### Community 1205 - "E51-016 — Provar rollback do lote em ambiente efêmero"
 
@@ -7687,26 +7594,36 @@ Nodes (3): "dp_data_catalog_updated_at", "dp_retention_updated_at", "public"."dp
 Cohesion: 0.67
 Nodes (3): "public"."impedir_alteracao_folha_fechada", "trg_impedir_alteracao_folha_fechada", "trigger_protecao_folha_fechada"
 
+### Community 1290 - ""public"."process_ferias_audit""
+
+Cohesion: 0.67
+Nodes (3): "public"."process_ferias_audit", "tr_audit_ferias_solicitacoes", "tr_audit_periodos_aquisitivos"
+
+### Community 1291 - "FolhaPagamentoPage.tsx"
+
+Cohesion: 0.05
+Nodes (42): FolhaPagamentoPage, CNABDialog(), CNABDialogProps, emptyConfig(), FGTSDigitalDashboard(), FolhaAuditTimeline(), FolhaComposicao(), formatCurrency() (+34 more)
+
 ### Community 1292 - ""public"."registrar_auditoria_sst""
 
 Cohesion: 0.67
 Nodes (3): "public"."registrar_auditoria_sst", "trigger_auditoria_sst_cat", "trigger_auditoria_sst_riscos"
 
-### Community 1312 - ""public"."impedir_alteracao_batida_em_periodo_fechado""
+### Community 1294 - ""public"."processar_auditoria_premiacao""
 
 Cohesion: 0.67
-Nodes (3): "public"."impedir_alteracao_batida_em_periodo_fechado", "trg_impedir_alteracao_batida_periodo_fechado_upd", "trg_impedir_delete_batida_periodo_fechado"
+Nodes (3): "public"."processar_auditoria_premiacao", "tr_auditoria_premiacoes_campanhas", "tr_auditoria_premiacoes_pagamentos"
 
-### Community 1313 - ""public"."sst_regimento_ass_imutavel""
+### Community 1405 - ""tr_asos_validar_transicao""
 
-Cohesion: 0.67
-Nodes (3): "public"."sst_regimento_ass_imutavel", "trg_regimento_ass_no_delete", "trg_regimento_ass_no_update"
+Cohesion: 0.03
+Nodes (40): "public"."asos_validar_transicao_status", "public"."enforce_aso_hash", "public"."enforce_documento_assinatura_hash", "public"."enforce_folha_pagamento_hash", "public"."enforce_medida_disciplinar_hash", "public"."fn_fila_dlq_check", "public"."fn_folha_optimistic_lock", "public"."fn_update_admissao_checklist" (+32 more)
 
 ## Knowledge Gaps
 
-- **6026 isolated node(s):** `capacitorConfig`, `AUTH_FILE`, `AUTH_FILE`, `AUTH_FILE_MOBILE`, `rotasAdmin` (+6021 more)
+- **6028 isolated node(s):** `capacitorConfig`, `AUTH_FILE`, `AUTH_FILE`, `AUTH_FILE_MOBILE`, `rotasAdmin` (+6023 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **637 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **605 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Work-memory lessons
 
@@ -7725,17 +7642,17 @@ Nodes (3): "public"."sst_regimento_ass_imutavel", "trg_regimento_ass_no_delete",
 
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Database` connect `supabase/types.ts` to `ContratosGeradosPage.tsx`, `pcs.ts`, `services/index.ts`, `client.ts`, `workflowService.ts`, `afastamentoService.ts`, `createErrorResponse`, `medidasDisciplinaresService.ts`, `esocialService.ts`, `calculoBeneficiosService.ts`?**
+- **Why does `Database` connect `supabase/types.ts` to `pcs.ts`, `whatsappService.ts`, `useEmpresas`, `services/index.ts`, `workflowService.ts`, `afastamentoService.ts`, `createErrorResponse`, `medidasDisciplinaresService.ts`, `esocialService.ts`, `calculoBeneficiosService.ts`?**
   _High betweenness centrality (0.012) - this node is a cross-community bridge._
-- **Why does `supabase` connect `card.tsx` to `button.tsx`, `cn`, `App.tsx`, `ContratosGeradosPage.tsx`, `useEmpresas`, `FeriasProgramacaoPage.tsx`, `InlineTabs.tsx`, `useAlertasPagamentoD2.ts`, `episService.ts`, `useReconciliacaoLogs.ts`, `FolhaDashboard.tsx`, `deepChain`, `assistenteIAService.ts`, `FeriasService`, `tabelas/index.ts`, `esocialService.ts`, `folhaPagamentoService.ts`, `makeChain`, `colaboradorDetalhesService.test.ts`, `tabelasReferenciaService.ts`, `supabase/types.ts`, `useExecutiveDashboard.test.ts`, `useAssinaturas.ts`, `useImportacaoColaboradores.ts`, `CienciaMedidaPage.test.tsx`, `usePontosAbertos.ts`, `loggerService.ts`, `pcs.ts`, `usePontoMelhorado.ts`, `useGerarComunicadoColetivas.ts`, `batidasPontoService.ts`, `services/index.ts`, `workflowService.ts`, `dominioService.ts`, `PontoPage.tsx`, `canalContabilidadeService.ts`, `@tanstack/react-query`, `usePeriodosAquisitivos.ts`, `MedidasDisciplinaresPage.tsx`, `AfastamentosPage.tsx`, `useToast.ts`, `backupService.ts`, `BaseService`, `AdminTelemetriaPage.tsx`, `HealthTrendCard.tsx`, `contratacaoService.xss.test.ts`, `useNotificacoes.ts`, `afastamentoService.ts`, `useGrupo.ts`, `medidasDisciplinaresService.ts`, `provisoesService.ts`, `ContratoTokenTimelineDialog.tsx`, `tooltip.tsx`, `avaliacaoService.test.ts`, `useAdiantamento13.ts`, `AdminDiagnosticoMigracaoPage.tsx`, `cnabService.ts`, `calculoLoteService.ts`, `client.ts`, `useAssinaturaDigital.test.ts`, `pontoOfflineService.ts`, `bancoHorasService.test.ts`, `useSecurityMonitor.ts`, `calculoBeneficiosService.ts`?**
-  _High betweenness centrality (0.011) - this node is a cross-community bridge._
-- **Why does `cn()` connect `cn` to `toast.tsx`, `card.tsx`, `button.tsx`, `App.tsx`, `main.tsx`, `ContratosGeradosPage.tsx`, `useOnMount`, `useEmpresas`, `Column.tsx`, `FeriasProgramacaoPage.tsx`, `FeriasService`, `InlineTabs.tsx`, `esocialService.ts`, `dashboard/SectionHeader.tsx`, `LayoutPrimitives.test.tsx`, `currency-input.tsx`, `PontoPage.tsx`, `TelemetryFilters.tsx`, `DesligamentoDetailSheet.tsx`, `MedidasDisciplinaresPage.tsx`, `MainLayout.tsx`, `AfastamentosPage.tsx`, `DesligamentoChecklist.tsx`, `useNotificacoes.ts`, `masks.ts`, `alert-dialog.tsx`, `tooltip.tsx`, `desligamentos/index.ts`, `WorkflowDesigner.tsx`, `form.tsx`, `sidebar.tsx`, `client.ts`, `Container.tsx`, `secureJsonParse`?**
+- **Why does `supabase` connect `useEmpresas` to `card.tsx`, `button.tsx`, `cn`, `App.tsx`, `FolhaPagamentoPage.tsx`, `useImportacaoColaboradores.ts`, `ObrigacoesFiscaisPage.tsx`, `InlineTabs.tsx`, `useAlertasPagamentoD2.ts`, `episService.ts`, `useReconciliacaoLogs.ts`, `FolhaDashboard.tsx`, `deepChain`, `assistenteIAService.ts`, `FeriasService`, `tabelas/index.ts`, `passwordPolicy.ts`, `FeriasReconciliacaoCard.tsx`, `esocialService.ts`, `folhaPagamentoService.ts`, `colaboradorDetalhesService.test.ts`, `makeChain`, `tabelasReferenciaService.ts`, `supabase/types.ts`, `useExecutiveDashboard.test.ts`, `useAssinaturas.ts`, `CienciaMedidaPage.test.tsx`, `pcs.ts`, `whatsappService.ts`, `useGerarComunicadoColetivas.ts`, `batidasPontoService.ts`, `services/index.ts`, `workflowService.ts`, `dominioService.ts`, `LGPDPage.tsx`, `canalContabilidadeService.ts`, `@tanstack/react-query`, `FeriasActions.tsx`, `MedidasDisciplinaresPage.tsx`, `usePeriodosAquisitivos.ts`, `AfastamentosPage.tsx`, `useToast.ts`, `backupService.ts`, `BaseService`, `AdminTelemetriaPage.tsx`, `HealthTrendCard.tsx`, `contratacaoService.xss.test.ts`, `useNotificacoes.ts`, `afastamentoService.ts`, `useGrupo.ts`, `medidasDisciplinaresService.ts`, `provisoesService.ts`, `useContratoTokenTimeline.ts`, `ExamesPage.tsx`, `useCalcular13Salario.ts`, `AdminDiagnosticoMigracaoPage.tsx`, `cnabService.ts`, `ConfigPanels.tsx`, `useAssinaturaDigital.test.ts`, `bancoHorasService.test.ts`, `pontoOfflineService.ts`, `useSecurityMonitor.ts`, `calculoBeneficiosService.ts`?**
+  _High betweenness centrality (0.012) - this node is a cross-community bridge._
+- **Why does `cn()` connect `cn` to `card.tsx`, `button.tsx`, `App.tsx`, `useOnMount`, `useEmpresas`, `FolhaPagamentoPage.tsx`, `Column.tsx`, `dashboard/index.ts`, `ObrigacoesFiscaisPage.tsx`, `InlineTabs.tsx`, `LanguageSelector.tsx`, `esocialService.ts`, `dashboard/SectionHeader.tsx`, `LayoutPrimitives.test.tsx`, `currency-input.tsx`, `LGPDPage.tsx`, `TelemetryFilters.tsx`, `MedidasDisciplinaresPage.tsx`, `MainLayout.tsx`, `AfastamentosPage.tsx`, `useToast.ts`, `useNotificacoes.ts`, `masks.ts`, `alert-dialog.tsx`, `ExamesPage.tsx`, `DesligamentoDetailSheet.tsx`, `WorkflowDesigner.tsx`, `form.tsx`, `sidebar.tsx`, `ConfigPanels.tsx`, `Container.tsx`, `secureJsonParse`?**
   _High betweenness centrality (0.009) - this node is a cross-community bridge._
 - **What connects `capacitorConfig`, `AUTH_FILE`, `AUTH_FILE` to the rest of the system?**
-  _6026 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _6028 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `20260831_corrected_public.sql` be split into smaller, more focused modules?**
-  _Cohesion score 0.006360553151157347 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.005480167014613779 - nodes in this community are weakly interconnected._
 - **Should `canonical_schema.sql` be split into smaller, more focused modules?**
-  _Cohesion score 0.007244206773618539 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.007272727272727273 - nodes in this community are weakly interconnected._
 - **Should `card.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.021626935364954535 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.020054517133956385 - nodes in this community are weakly interconnected._
