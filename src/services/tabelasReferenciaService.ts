@@ -5,7 +5,7 @@ import type { Tables, Insertable, Updatable } from '@/integrations/supabase/data
 async function listarReferencia(tabela: string, orderBy = 'nome'): Promise<unknown[]> {
   const { data, error } = await supabase.from(tabela).select('*').order(orderBy);
   if (error) throw error;
-  return data || [];
+  return (data as unknown[]) || [];
 }
 
 // =============================================

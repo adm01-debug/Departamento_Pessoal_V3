@@ -53,7 +53,7 @@ export const despesaService = {
       _observacoes: observacoes ?? null,
     });
     if (error) throw new Error(error.message || 'Falha ao aprovar despesa');
-    return data;
+    return data as AprovarDespesaResult;
   },
 
   async rejeitar(id: string, empresaId: string, motivo: string): Promise<RejeitarDespesaResult> {
@@ -69,7 +69,7 @@ export const despesaService = {
     if (!check) throw new Error('Despesa não encontrada ou sem permissão');
     const { data, error } = await supabase.rpc('rejeitar_despesa', { _despesa_id: id, _motivo: motivo });
     if (error) throw new Error(error.message || 'Falha ao rejeitar despesa');
-    return data;
+    return data as RejeitarDespesaResult;
   },
 
   async marcarPago(id: string, empresaId: string): Promise<Tables<'despesas'> | null> {

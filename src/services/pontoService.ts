@@ -121,7 +121,7 @@ export const pontoService = {
         throw rpcError;
       }
       if (!batida) throw new Error('Nenhum registro de batida de ponto foi retornado.');
-      return batida;
+      return batida as Tables<'batidas_ponto'>;
     } catch (e) {
       throw new Error(e instanceof Error ? e.message : 'Falha ao registrar ponto', { cause: e });
     }
