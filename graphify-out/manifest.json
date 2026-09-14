@@ -180,9 +180,9 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1789387607.2849233,
-    "seen": 1789387933.4406524,
-    "ast_hash": "d5ef85249e4be8e1412389beea52e88f",
+    "mtime": 1789388463.5948794,
+    "seen": 1789388722.2892654,
+    "ast_hash": "a3dd69eaf363d4079cfc467fdde9bc48",
     "semantic_hash": ""
   },
   "playwright.config.ts": {
@@ -6210,9 +6210,9 @@
     "semantic_hash": ""
   },
   "src/services/__tests__/contabilidadeService.test.ts": {
-    "mtime": 1788115372.1480205,
-    "seen": 1788129206.8860884,
-    "ast_hash": "57416e0408b7f7a66b0843708f5ffcb1",
+    "mtime": 1789388564.4525692,
+    "seen": 1789388722.3073628,
+    "ast_hash": "ff0d4200513b75a059e1fb8759b89109",
     "semantic_hash": ""
   },
   "src/services/__tests__/contratacaoService.test.ts": {
@@ -6312,9 +6312,9 @@
     "semantic_hash": ""
   },
   "src/services/__tests__/folhaPagamentoService.test.ts": {
-    "mtime": 1788115372.1480205,
-    "seen": 1788129206.8861265,
-    "ast_hash": "6e00a5bc49849c0a5d780932d4a6f6e7",
+    "mtime": 1789388564.4773939,
+    "seen": 1789388722.3076322,
+    "ast_hash": "ec9f88ee4b678151d9fc897fefe0ed4d",
     "semantic_hash": ""
   },
   "src/services/__tests__/folhaService.test.ts": {
@@ -6624,9 +6624,9 @@
     "semantic_hash": ""
   },
   "src/services/colaboradorService.ts": {
-    "mtime": 1788172862.740632,
-    "seen": 1789303025.4109085,
-    "ast_hash": "287d18302057106773ba731f488f59ee",
+    "mtime": 1789387974.561021,
+    "seen": 1789388722.3084564,
+    "ast_hash": "44392eb7ac4158c2be0e2804bd15ca98",
     "semantic_hash": ""
   },
   "src/services/comunicacaoService.ts": {
@@ -6636,9 +6636,9 @@
     "semantic_hash": ""
   },
   "src/services/contabilidadeService.ts": {
-    "mtime": 1788115372.1517792,
-    "seen": 1788129206.8862505,
-    "ast_hash": "b020c829afa908e5c3759065003e77db",
+    "mtime": 1789388564.4930024,
+    "seen": 1789388722.3084722,
+    "ast_hash": "2318c759ce99bffbcde0217ea332244d",
     "semantic_hash": ""
   },
   "src/services/contratacaoService.ts": {
@@ -6774,9 +6774,9 @@
     "semantic_hash": ""
   },
   "src/services/folhaPagamentoService.ts": {
-    "mtime": 1788115372.156379,
-    "seen": 1788129206.8863018,
-    "ast_hash": "b773f7187f965c1c143204b178111084",
+    "mtime": 1789388564.511968,
+    "seen": 1789388722.3088248,
+    "ast_hash": "475be10b680dc1903e0785146501662d",
     "semantic_hash": ""
   },
   "src/services/folhaService.ts": {
@@ -6894,9 +6894,9 @@
     "semantic_hash": ""
   },
   "src/services/pontoService.ts": {
-    "mtime": 1788115372.156379,
-    "seen": 1788129206.8863466,
-    "ast_hash": "8d82c710725b275568e06615869b9883",
+    "mtime": 1789388564.5264266,
+    "seen": 1789388722.3091424,
+    "ast_hash": "44377ac31581ce2a9aec270f4209882d",
     "semantic_hash": ""
   },
   "src/services/pontosService.ts": {
