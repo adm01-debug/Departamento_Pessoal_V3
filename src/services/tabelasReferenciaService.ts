@@ -1,12 +1,9 @@
 import { supabase } from '@/integrations/supabase/client';
-
-type DataRecord = any;
+import type { Tables, Insertable, Updatable } from '@/integrations/supabase/database.types';
 
 // Helper genérico para listar tabelas de referência
 async function listarReferencia(tabela: string, orderBy = 'nome'): Promise<unknown[]> {
-  const { data, error } = await supabase.from(tabela)
-    .select('*')
-    .order(orderBy);
+  const { data, error } = await supabase.from(tabela).select('*').order(orderBy);
   if (error) throw error;
   return data || [];
 }
@@ -41,17 +38,18 @@ export async function listarCentrosCusto(empresaId: string): Promise<unknown[]> 
   return data || [];
 }
 
-export async function criarCentroCusto(centro: DataRecord): Promise<any> {
-  const { data, error } = await supabase.from('centros_custo')
-    .insert([centro])
-    .select()
-    .maybeSingle();
+export async function criarCentroCusto(centro: Insertable<'centros_custo'>): Promise<Tables<'centros_custo'>> {
+  const { data, error } = await supabase.from('centros_custo').insert([centro]).select().maybeSingle();
   if (error) throw error;
   if (!data) throw new Error('Nenhum registro de centro de custo foi retornado.');
   return data;
 }
 
-export async function atualizarCentroCusto(id: string, dados: DataRecord, empresaId: string): Promise<void> {
+export async function atualizarCentroCusto(
+  id: string,
+  dados: Updatable<'centros_custo'>,
+  empresaId: string
+): Promise<void> {
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
   const { error } = await supabase.from('centros_custo').update(dados).eq('id', id).eq('empresa_id', empresaId);
   if (error) throw error;
@@ -68,7 +66,8 @@ export async function excluirCentroCusto(id: string, empresaId: string): Promise
 // =============================================
 export async function listarContasBancarias(colaboradorId: string, empresaId: string): Promise<unknown[]> {
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-  const { data, error } = await supabase.from('contas_bancarias')
+  const { data, error } = await supabase
+    .from('contas_bancarias')
     .select('*')
     .eq('colaborador_id', colaboradorId)
     .eq('empresa_id', empresaId)
@@ -77,17 +76,18 @@ export async function listarContasBancarias(colaboradorId: string, empresaId: st
   return data || [];
 }
 
-export async function criarContaBancaria(conta: DataRecord): Promise<any> {
-  const { data, error } = await supabase.from('contas_bancarias')
-    .insert([conta])
-    .select()
-    .maybeSingle();
+export async function criarContaBancaria(conta: Insertable<'contas_bancarias'>): Promise<Tables<'contas_bancarias'>> {
+  const { data, error } = await supabase.from('contas_bancarias').insert([conta]).select().maybeSingle();
   if (error) throw error;
   if (!data) throw new Error('Nenhum registro de conta bancária foi retornado.');
   return data;
 }
 
-export async function atualizarContaBancaria(id: string, dados: DataRecord, empresaId: string): Promise<void> {
+export async function atualizarContaBancaria(
+  id: string,
+  dados: Updatable<'contas_bancarias'>,
+  empresaId: string
+): Promise<void> {
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
   const { error } = await supabase.from('contas_bancarias').update(dados).eq('id', id).eq('empresa_id', empresaId);
   if (error) throw error;
@@ -102,8 +102,9 @@ export async function excluirContaBancaria(id: string, empresaId: string): Promi
 // =============================================
 // Dados de Estagiário
 // =============================================
-export async function obterDadosEstagiario(colaboradorId: string): Promise<unknown | null> {
-  const { data, error } = await supabase.from('dados_estagiario')
+export async function obterDadosEstagiario(colaboradorId: string): Promise<Tables<'dados_estagiario'> | null> {
+  const { data, error } = await supabase
+    .from('dados_estagiario')
     .select('*')
     .eq('colaborador_id', colaboradorId)
     .maybeSingle();
@@ -111,26 +112,32 @@ export async function obterDadosEstagiario(colaboradorId: string): Promise<unkno
   return data;
 }
 
-export async function salvarDadosEstagiario(colaboradorId: string, dados: DataRecord): Promise<any> {
+export async function salvarDadosEstagiario(
+  colaboradorId: string,
+  dados: Updatable<'dados_estagiario'>
+): Promise<Tables<'dados_estagiario'>> {
   try {
-    const res = await obterDadosEstagiario(colaboradorId);
-    const existing = (res ?? null) as DataRecord | null;
+    const existing = await obterDadosEstagiario(colaboradorId);
 
     if (existing) {
-      const { data, error } = await supabase.from('dados_estagiario')
+      const { data, error } = await supabase
+        .from('dados_estagiario')
         .update(dados)
         .eq('id', existing.id)
         .select()
         .maybeSingle();
       if (error) throw error;
-      return (data);
+      if (!data) throw new Error('Nenhum registro de dados de estagiário foi retornado.');
+      return data;
     } else {
-      const { data, error } = await supabase.from('dados_estagiario')
+      const { data, error } = await supabase
+        .from('dados_estagiario')
         .insert([{ ...dados, colaborador_id: colaboradorId }])
         .select()
         .maybeSingle();
       if (error) throw error;
-      return (data);
+      if (!data) throw new Error('Nenhum registro de dados de estagiário foi retornado.');
+      return data;
     }
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : 'Erro desconhecido';
@@ -142,7 +149,8 @@ export async function salvarDadosEstagiario(colaboradorId: string, dados: DataRe
 // Documentos Pessoais Arquivos
 // =============================================
 export async function listarDocumentosPessoais(colaboradorId: string): Promise<unknown[]> {
-  const { data, error } = await supabase.from('documentos_pessoais_arquivos')
+  const { data, error } = await supabase
+    .from('documentos_pessoais_arquivos')
     .select('*')
     .eq('colaborador_id', colaboradorId)
     .order('created_at', { ascending: false });
@@ -150,11 +158,10 @@ export async function listarDocumentosPessoais(colaboradorId: string): Promise<u
   return data || [];
 }
 
-export async function criarDocumentoPessoal(doc: DataRecord): Promise<any> {
-  const { data, error } = await supabase.from('documentos_pessoais_arquivos')
-    .insert([doc])
-    .select()
-    .maybeSingle();
+export async function criarDocumentoPessoal(
+  doc: Insertable<'documentos_pessoais_arquivos'>
+): Promise<Tables<'documentos_pessoais_arquivos'>> {
+  const { data, error } = await supabase.from('documentos_pessoais_arquivos').insert([doc]).select().maybeSingle();
   if (error) throw error;
   if (!data) throw new Error('Nenhum registro de documento pessoal foi retornado.');
   return data;
@@ -162,7 +169,11 @@ export async function criarDocumentoPessoal(doc: DataRecord): Promise<any> {
 
 export async function excluirDocumentoPessoal(colaboradorId: string, id: string): Promise<void> {
   if (!colaboradorId) throw new Error('colaborador_id obrigatório para isolamento de tenant');
-  const { error } = await supabase.from('documentos_pessoais_arquivos').delete().eq('id', id).eq('colaborador_id', colaboradorId);
+  const { error } = await supabase
+    .from('documentos_pessoais_arquivos')
+    .delete()
+    .eq('id', id)
+    .eq('colaborador_id', colaboradorId);
   if (error) throw error;
 }
 
@@ -170,7 +181,8 @@ export async function excluirDocumentoPessoal(colaboradorId: string, id: string)
 // Férias - Workflow de Aprovação
 // =============================================
 export async function listarFeriasAprovacoes(feriasId: string): Promise<unknown[]> {
-  const { data, error } = await supabase.from('ferias_aprovacoes')
+  const { data, error } = await supabase
+    .from('ferias_aprovacoes')
     .select('*')
     .eq('ferias_id', feriasId)
     .order('created_at');
@@ -178,17 +190,20 @@ export async function listarFeriasAprovacoes(feriasId: string): Promise<unknown[
   return data || [];
 }
 
-export async function criarFeriasAprovacao(aprovacao: DataRecord): Promise<any> {
-  const { data, error } = await supabase.from('ferias_aprovacoes')
-    .insert([aprovacao])
-    .select()
-    .maybeSingle();
+export async function criarFeriasAprovacao(
+  aprovacao: Insertable<'ferias_aprovacoes'>
+): Promise<Tables<'ferias_aprovacoes'>> {
+  const { data, error } = await supabase.from('ferias_aprovacoes').insert([aprovacao]).select().maybeSingle();
   if (error) throw error;
   if (!data) throw new Error('Nenhum registro de aprovação de férias foi retornado.');
   return data;
 }
 
-export async function atualizarFeriasAprovacao(feriasId: string, id: string, dados: DataRecord): Promise<void> {
+export async function atualizarFeriasAprovacao(
+  feriasId: string,
+  id: string,
+  dados: Updatable<'ferias_aprovacoes'>
+): Promise<void> {
   if (!feriasId) throw new Error('ferias_id obrigatório para isolamento de tenant');
   const { error } = await supabase.from('ferias_aprovacoes').update(dados).eq('id', id).eq('ferias_id', feriasId);
   if (error) throw error;
@@ -198,7 +213,8 @@ export async function atualizarFeriasAprovacao(feriasId: string, id: string, dad
 // Férias - Arquivos
 // =============================================
 export async function listarFeriasArquivos(feriasId: string): Promise<unknown[]> {
-  const { data, error } = await supabase.from('ferias_arquivos')
+  const { data, error } = await supabase
+    .from('ferias_arquivos')
     .select('*')
     .eq('ferias_id', feriasId)
     .order('created_at');
@@ -206,11 +222,8 @@ export async function listarFeriasArquivos(feriasId: string): Promise<unknown[]>
   return data || [];
 }
 
-export async function criarFeriasArquivo(arquivo: DataRecord): Promise<any> {
-  const { data, error } = await supabase.from('ferias_arquivos')
-    .insert([arquivo])
-    .select()
-    .maybeSingle();
+export async function criarFeriasArquivo(arquivo: Insertable<'ferias_arquivos'>): Promise<Tables<'ferias_arquivos'>> {
+  const { data, error } = await supabase.from('ferias_arquivos').insert([arquivo]).select().maybeSingle();
   if (error) throw error;
   if (!data) throw new Error('Nenhum registro de arquivo de férias foi retornado.');
   return data;
@@ -220,15 +233,16 @@ export async function criarFeriasArquivo(arquivo: DataRecord): Promise<any> {
 // Dependentes - Benefícios (vinculação)
 // =============================================
 export async function listarDependentesBeneficios(dependenteId: string): Promise<unknown[]> {
-  const { data, error } = await supabase.from('dependentes_beneficios')
-    .select('*')
-    .eq('dependente_id', dependenteId);
+  const { data, error } = await supabase.from('dependentes_beneficios').select('*').eq('dependente_id', dependenteId);
   if (error) throw error;
   return data || [];
 }
 
-export async function vincularDependenteBeneficio(vinculo: DataRecord): Promise<any> {
-  const { data, error } = await supabase.from('dependentes_beneficios')
+export async function vincularDependenteBeneficio(
+  vinculo: Insertable<'dependentes_beneficios'>
+): Promise<Tables<'dependentes_beneficios'>> {
+  const { data, error } = await supabase
+    .from('dependentes_beneficios')
     .upsert([vinculo], { onConflict: 'dependente_id,beneficio_id' })
     .select()
     .maybeSingle();
@@ -238,7 +252,8 @@ export async function vincularDependenteBeneficio(vinculo: DataRecord): Promise<
 }
 
 export async function desvincularDependenteBeneficio(dependenteId: string, beneficioId: string): Promise<void> {
-  const { error } = await supabase.from('dependentes_beneficios')
+  const { error } = await supabase
+    .from('dependentes_beneficios')
     .delete()
     .eq('dependente_id', dependenteId)
     .eq('beneficio_id', beneficioId);

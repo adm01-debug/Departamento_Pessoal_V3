@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deepChain } from '@/test/deepChain';
 import { admissaoService } from '../admissaoService';
+import type { Insertable } from '@/integrations/supabase/database.types';
 
 const EMPRESA_ID = 'test-empresa-id';
 
@@ -58,7 +59,9 @@ function setupAtualizarChain(data: any, error: any = null) {
 // ─── listarAdmissoes ──────────────────────────────────────────────────────────
 
 describe('admissaoService.listarAdmissoes', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('always scopes query by empresa_id (multi-tenant)', async () => {
     const records = [{ id: 'adm-1', nome_candidato: 'João' }];
@@ -95,7 +98,9 @@ describe('admissaoService.listarAdmissoes', () => {
 // ─── listar ───────────────────────────────────────────────────────────────────
 
 describe('admissaoService.listar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns { data, total } delegating to listarAdmissoes', async () => {
     const records = [{ id: 'adm-2' }, { id: 'adm-3' }];
@@ -115,7 +120,9 @@ describe('admissaoService.listar', () => {
 // ─── getAll (alias) ───────────────────────────────────────────────────────────
 
 describe('admissaoService.getAll', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('delegates to listarAdmissoes', async () => {
     const records = [{ id: 'adm-4' }];
@@ -128,30 +135,42 @@ describe('admissaoService.getAll', () => {
 // ─── create ───────────────────────────────────────────────────────────────────
 
 describe('admissaoService.create', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  const admissaoInsert: Insertable<'admissoes'> = {
+    nome: 'Maria',
+    cargo: 'Analista',
+    departamento: 'RH',
+    data_prevista: '2026-01-01',
+    salario_proposto: 3000,
+  };
 
   it('inserts and returns the created record', async () => {
-    const created = { id: 'new-adm', nome_candidato: 'Maria' };
+    const created = { id: 'new-adm', ...admissaoInsert };
     setupCriarChain(created);
-    const result = await admissaoService.create({ nome_candidato: 'Maria' });
+    const result = await admissaoService.create(admissaoInsert);
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupCriarChain(null);
-    await expect(admissaoService.create({})).rejects.toThrow();
+    await expect(admissaoService.create(admissaoInsert)).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
     setupCriarChain(null, { message: 'fail' });
-    await expect(admissaoService.create({})).rejects.toBeDefined();
+    await expect(admissaoService.create(admissaoInsert)).rejects.toBeDefined();
   });
 });
 
 // ─── concluir ─────────────────────────────────────────────────────────────────
 
 describe('admissaoService.concluir', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('calls update with etapa=concluida', async () => {
     const updated = { id: 'adm-1', etapa: 'concluida' };
@@ -169,7 +188,9 @@ describe('admissaoService.concluir', () => {
 // ─── cancelar ─────────────────────────────────────────────────────────────────
 
 describe('admissaoService.cancelar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('calls update with etapa=cancelada', async () => {
     const updated = { id: 'adm-1', etapa: 'cancelada' };
