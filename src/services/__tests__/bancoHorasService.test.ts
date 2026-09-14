@@ -174,7 +174,13 @@ describe('bancoHorasService', () => {
   describe('registrar', () => {
     it('calls insert and returns data', async () => {
       const inserted = { id: 'bh-1', tipo: 'credito', horas: '08:00:00' };
-      const payload = { tipo: 'credito', horas: '08:00:00', empresa_id: EMPRESA_ID };
+      const payload = {
+        tipo: 'credito',
+        horas: '08:00:00',
+        empresa_id: EMPRESA_ID,
+        colaborador_id: 'colab-1',
+        data: '2026-01-01',
+      };
       const maybeSingle = vi.fn().mockResolvedValue({ data: inserted, error: null });
       const select = vi.fn().mockReturnValue({ maybeSingle });
       const insert = vi.fn().mockReturnValue({ select });
@@ -190,7 +196,15 @@ describe('bancoHorasService', () => {
       const select = vi.fn().mockReturnValue({ maybeSingle });
       const insert = vi.fn().mockReturnValue({ select });
       mockFrom.mockReturnValue({ insert });
-      await expect(bancoHorasService.registrar({ empresa_id: EMPRESA_ID })).rejects.toBeDefined();
+      await expect(
+        bancoHorasService.registrar({
+          empresa_id: EMPRESA_ID,
+          colaborador_id: 'colab-1',
+          data: '2026-01-01',
+          horas: '08:00:00',
+          tipo: 'credito',
+        })
+      ).rejects.toBeDefined();
     });
   });
 });
