@@ -180,9 +180,9 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1789386591.3005738,
-    "seen": 1789386752.2541163,
-    "ast_hash": "5dd12f846ff98f983142ca29049ea502",
+    "mtime": 1789386962.2202096,
+    "seen": 1789387218.4858918,
+    "ast_hash": "66612b4325e27f8076620a70e53be8b9",
     "semantic_hash": ""
   },
   "playwright.config.ts": {
@@ -6132,9 +6132,9 @@
     "semantic_hash": ""
   },
   "src/services/__tests__/bancoHorasService.test.ts": {
-    "mtime": 1789310302.606099,
-    "seen": 1789310563.0739536,
-    "ast_hash": "84ad35c2db31323bf7ba1beae1364614",
+    "mtime": 1789386876.4232056,
+    "seen": 1789387218.5047119,
+    "ast_hash": "2a6ab7b59c6c36528e0b2b0ad2af014c",
     "semantic_hash": ""
   },
   "src/services/__tests__/baseService.test.ts": {
@@ -6558,9 +6558,9 @@
     "semantic_hash": ""
   },
   "src/services/bancoHorasService.ts": {
-    "mtime": 1788115372.1517792,
-    "seen": 1788129206.8862123,
-    "ast_hash": "3d5b8b38bdb1ae0ca6f7f238d487557c",
+    "mtime": 1789387070.816294,
+    "seen": 1789387218.5060022,
+    "ast_hash": "4fcab6b24ac31cf06d439b71b29b0ec7",
     "semantic_hash": ""
   },
   "src/services/baseService.ts": {
@@ -6576,9 +6576,9 @@
     "semantic_hash": ""
   },
   "src/services/beneficioService.ts": {
-    "mtime": 1788115372.1517792,
-    "seen": 1788129206.886219,
-    "ast_hash": "79d9cd261aba9c58a27dc026d7fc4559",
+    "mtime": 1789387070.8518598,
+    "seen": 1789387218.5060327,
+    "ast_hash": "5ee921b745e6afc21083df53dada7fd2",
     "semantic_hash": ""
   },
   "src/services/calculoBeneficiosService.ts": {
@@ -6684,9 +6684,9 @@
     "semantic_hash": ""
   },
   "src/services/documentoService.ts": {
-    "mtime": 1788115372.1517792,
-    "seen": 1788129206.8862703,
-    "ast_hash": "2c4cab97a0852653908810d35459b931",
+    "mtime": 1789387070.8589668,
+    "seen": 1789387218.5062823,
+    "ast_hash": "7b6c3b613c8b9198ff65f187f686b24f",
     "semantic_hash": ""
   },
   "src/services/dominioAlterdataService.ts": {
