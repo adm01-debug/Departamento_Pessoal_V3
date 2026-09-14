@@ -50,13 +50,18 @@ describe('contratacaoService.validarDocumento', () => {
     return { updateFn, eqFn };
   }
 
+  // Os 5 tipos abaixo são os únicos que o checklist real de admissão
+  // envia (DetalhesAdmissaoDialog) — a allowlist antiga (rg/cpf/cnh/...)
+  // não correspondia a nenhuma coluna `checklist_*` real nem a esses tipos;
+  // ver comentário em contratacaoService.validarDocumento.
+
   it('updates admissao document status and logs audit', async () => {
     const { updateFn, eqFn } = setupUpdateEqChain();
-    await contratacaoService.validarDocumento('adm-1', 'rg', 'validado', 'Ok', EMPRESA_ID);
+    await contratacaoService.validarDocumento('adm-1', 'documentos_pessoais', 'validado', 'Ok', EMPRESA_ID);
     expect(mockFrom).toHaveBeenCalledWith('admissoes');
     expect(updateFn).toHaveBeenCalledWith(
       expect.objectContaining({
-        checklist_rg: true,
+        checklist_documentos_pessoais: true,
       })
     );
     expect(eqFn).toHaveBeenCalledWith('id', 'adm-1');
@@ -71,19 +76,26 @@ describe('contratacaoService.validarDocumento', () => {
 
   it('sets document flag false when status is rejeitado', async () => {
     const { updateFn } = setupUpdateEqChain();
-    await contratacaoService.validarDocumento('adm-1', 'cnh', 'rejeitado', undefined, EMPRESA_ID);
+    await contratacaoService.validarDocumento('adm-1', 'contrato_assinado', 'rejeitado', undefined, EMPRESA_ID);
     expect(updateFn).toHaveBeenCalledWith(
       expect.objectContaining({
-        checklist_cnh: false,
+        checklist_contrato_assinado: false,
       })
+    );
+  });
+
+  it('throws for a document type the admission checklist does not send', async () => {
+    setupUpdateEqChain();
+    await expect(contratacaoService.validarDocumento('adm-1', 'rg', 'validado', 'Ok', EMPRESA_ID)).rejects.toThrow(
+      'Tipo de documento inválido: rg'
     );
   });
 
   it('throws wrapped error on DB failure', async () => {
     setupUpdateEqChain({ message: 'DB fail' });
-    await expect(contratacaoService.validarDocumento('adm-1', 'rg', 'validado', 'Ok', EMPRESA_ID)).rejects.toThrow(
-      'Falha ao validar documento de admissão'
-    );
+    await expect(
+      contratacaoService.validarDocumento('adm-1', 'documentos_pessoais', 'validado', 'Ok', EMPRESA_ID)
+    ).rejects.toThrow('Falha ao validar documento de admissão');
   });
 });
 

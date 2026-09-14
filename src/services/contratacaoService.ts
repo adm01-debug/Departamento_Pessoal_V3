@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { auditLogger } from '@/utils/auditLogger';
 import { Database } from '@/integrations/supabase/types';
+import type { Tables } from '@/integrations/supabase/database.types';
 import {
   claimEventoAdmissaoESocial,
   completeEventoAdmissaoESocial,
@@ -60,7 +61,7 @@ export const contratacaoService = {
 
           <p><strong>EMPREGADO:</strong> ${esc(admissao.nome)}<br>
           <strong>CPF:</strong> ${esc(admissao.cpf || '—')}<br>
-          <strong>ENDEREÇO:</strong> ${esc((admissao.metadata as Record<string, any>)?.endereco || 'Residência informada no cadastro')}</p>
+          <strong>ENDEREÇO:</strong> ${esc((admissao.metadata as Record<string, unknown> | null)?.endereco || 'Residência informada no cadastro')}</p>
         </div>
 
         <p>As partes acima qualificadas celebram o presente contrato sob as cláusulas seguintes:</p>
@@ -93,32 +94,47 @@ export const contratacaoService = {
     observacao?: string,
     empresaId?: string
   ): Promise<void> {
-    const ALLOWED_DOC_TYPES = [
-      'rg',
-      'cpf',
-      'ctps',
-      'titulo',
-      'reservista',
-      'comprovante_residencia',
-      'foto',
-      'certidao',
-      'pis',
-      'cnh',
-    ];
-    if (!ALLOWED_DOC_TYPES.includes(docType)) {
-      throw new Error(`Tipo de documento inválido: ${docType}`);
+    // Achado E51-026: a allowlist antiga (rg/cpf/titulo/reservista/
+    // comprovante_residencia/certidao/pis/cnh) não correspondia a nenhuma
+    // coluna `checklist_*` real, nem aos `tipo` que o checklist de admissão
+    // (DetalhesAdmissaoDialog) de fato envia — 4 dos 5 itens do checklist
+    // (documentos pessoais, comprovante de endereço, exame admissional,
+    // contrato assinado) sempre caíam nesse guard e retornavam "Tipo de
+    // documento inválido" antes de tocar o banco; só `ctps` por coincidência
+    // batia com a allowlist antiga E com uma coluna real. Corrigido para os
+    // 5 tipos reais, mapeados explicitamente (sem chave computada + `as any`).
+    const validado = status === 'validado';
+    let checklistUpdate: Partial<Tables<'admissoes'>>;
+    switch (docType) {
+      case 'documentos_pessoais':
+        checklistUpdate = { checklist_documentos_pessoais: validado };
+        break;
+      case 'comprovante_endereco':
+        checklistUpdate = { checklist_comprovante_endereco: validado };
+        break;
+      case 'ctps':
+        checklistUpdate = { checklist_ctps: validado };
+        break;
+      case 'exame_admissional':
+        checklistUpdate = { checklist_exame_admissional: validado };
+        break;
+      case 'contrato_assinado':
+        checklistUpdate = { checklist_contrato_assinado: validado };
+        break;
+      default:
+        throw new Error(`Tipo de documento inválido: ${docType}`);
     }
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     try {
       const { error } = await supabase
         .from('admissoes')
         .update({
-          [`checklist_${docType}`]: status === 'validado',
+          ...checklistUpdate,
           metadata: {
             obs: observacao,
             last_validation: new Date().toISOString(),
           },
-        } as any)
+        })
         .eq('id', admissaoId)
         .eq('empresa_id', empresaId);
 
@@ -142,7 +158,7 @@ export const contratacaoService = {
     }
   },
 
-  async enviarLinkCandidato(admissaoId: string, email: string): Promise<any> {
+  async enviarLinkCandidato(admissaoId: string, email: string): Promise<Tables<'admissao_tokens'>> {
     const token = secureToken(24);
     const expiracao = new Date();
     expiracao.setDate(expiracao.getDate() + 7);
