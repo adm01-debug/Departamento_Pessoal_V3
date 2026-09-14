@@ -1,11 +1,10 @@
 {
   "components": 335,
-  "hooks": 106,
+  "hooks": 100,
   "integrations": 6,
   "lib": 2,
   "pages": 399,
   "schemas": 1,
-  "services": 6,
   "setupTests.ts": 2,
   "types": 2,
   "utils": 42
