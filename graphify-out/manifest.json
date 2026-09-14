@@ -180,9 +180,9 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1789383366.0227907,
-    "seen": 1789384360.3780708,
-    "ast_hash": "1ec67b567209b8d9f0decd82b76d9fe4",
+    "mtime": 1789385265.020489,
+    "seen": 1789385579.5960703,
+    "ast_hash": "5dad9abad30fab57e8f6846ed6fb593f",
     "semantic_hash": ""
   },
   "playwright.config.ts": {
@@ -2904,9 +2904,9 @@
     "semantic_hash": ""
   },
   "src/components/integracoes/ConfigPanels.tsx": {
-    "mtime": 1788115372.0959003,
-    "seen": 1788129206.8845077,
-    "ast_hash": "22bdc2413d50414b406983dad67bbe46",
+    "mtime": 1789385390.608259,
+    "seen": 1789385579.605589,
+    "ast_hash": "4ed8ae98d27294dfe8ebb50cf53ed807",
     "semantic_hash": ""
   },
   "src/components/layout/AppSidebar.tsx": {
@@ -6336,15 +6336,15 @@
     "semantic_hash": ""
   },
   "src/services/__tests__/integracaoService.test.ts": {
-    "mtime": 1788115372.1480205,
-    "seen": 1788129206.8861356,
-    "ast_hash": "abc90205cc7f2283bbf36cedeb9a9046",
+    "mtime": 1789385390.6380076,
+    "seen": 1789385579.6165864,
+    "ast_hash": "7456ca22539811bb33de52c224f74a79",
     "semantic_hash": ""
   },
   "src/services/__tests__/intervaloService.test.ts": {
-    "mtime": 1788115372.1480205,
-    "seen": 1788129206.886138,
-    "ast_hash": "8260d80bc3a1d282d9a19dd357dfdd62",
+    "mtime": 1789385390.6536698,
+    "seen": 1789385579.6165872,
+    "ast_hash": "4c6af14262d466b1cdf6e7c3b27ad7f1",
     "semantic_hash": ""
   },
   "src/services/__tests__/jornadaHorariosService.test.ts": {
@@ -6804,15 +6804,15 @@
     "semantic_hash": ""
   },
   "src/services/integracaoService.ts": {
-    "mtime": 1788115372.156379,
-    "seen": 1788129206.8863106,
-    "ast_hash": "d8663991709b5ba10a01c83d0fc91bbb",
+    "mtime": 1789385390.6676135,
+    "seen": 1789385579.6180167,
+    "ast_hash": "79938be6352974553dc99fb8c45ac4ae",
     "semantic_hash": ""
   },
   "src/services/intervaloService.ts": {
-    "mtime": 1788115372.156379,
-    "seen": 1788129206.8863132,
-    "ast_hash": "ad4fc6217da5b6dc7f6adde719456e3e",
+    "mtime": 1789385390.6740973,
+    "seen": 1789385579.6180172,
+    "ast_hash": "0fafba0c5525ee0157a14dd82e673bf2",
     "semantic_hash": ""
   },
   "src/services/jornadaHorariosService.ts": {
@@ -6876,9 +6876,9 @@
     "semantic_hash": ""
   },
   "src/services/pontoAuditService.ts": {
-    "mtime": 1789247806.1003778,
-    "seen": 1789303025.4114826,
-    "ast_hash": "3595982f77891f092d777ccc0027c374",
+    "mtime": 1789384824.6380296,
+    "seen": 1789385579.6181998,
+    "ast_hash": "c1844c138fe9593dd0703a1f647eaa92",
     "semantic_hash": ""
   },
   "src/services/pontoMonitorService.ts": {
@@ -6912,15 +6912,15 @@
     "semantic_hash": ""
   },
   "src/services/provisaoService.ts": {
-    "mtime": 1788115372.156379,
-    "seen": 1788129206.886357,
-    "ast_hash": "f4fd103a8aa97b09bebddcf9d865a89e",
+    "mtime": 1789385390.6819143,
+    "seen": 1789385579.6182768,
+    "ast_hash": "f269f77d1461485093f729ec4ae9a2af",
     "semantic_hash": ""
   },
   "src/services/pushNotificationService.ts": {
-    "mtime": 1788115372.156379,
-    "seen": 1788129206.8863595,
-    "ast_hash": "d5c66f9cd9c27981232d549489e67519",
+    "mtime": 1789385390.6927178,
+    "seen": 1789385579.6182775,
+    "ast_hash": "dbeff1242cd5723bb6621da15d81644e",
     "semantic_hash": ""
   },
   "src/services/recrutamentoService.ts": {
@@ -6936,15 +6936,15 @@
     "semantic_hash": ""
   },
   "src/services/securityService.ts": {
-    "mtime": 1789245987.7759807,
-    "seen": 1789303025.4115987,
-    "ast_hash": "23d990c328c28854bd5c9c84cbdeac2d",
+    "mtime": 1789384512.7849936,
+    "seen": 1789385579.6183093,
+    "ast_hash": "ee552b1b04410992fee5058623a05df1",
     "semantic_hash": ""
   },
   "src/services/tabelas/__tests__/adminService.test.ts": {
-    "mtime": 1788115372.1587873,
-    "seen": 1788129206.8863678,
-    "ast_hash": "9603c04c49c608804fd0a40dff6c0487",
+    "mtime": 1789385498.2266476,
+    "seen": 1789385579.6183102,
+    "ast_hash": "752c2fbc768fe19308e361a47c5be482",
     "semantic_hash": ""
   },
   "src/services/tabelas/__tests__/beneficiosService.test.ts": {
@@ -6984,9 +6984,9 @@
     "semantic_hash": ""
   },
   "src/services/tabelas/adminService.ts": {
-    "mtime": 1788115372.158857,
-    "seen": 1788129206.8863885,
-    "ast_hash": "648267ab9fe9394eedd893dc317e91c4",
+    "mtime": 1789385390.7217028,
+    "seen": 1789385579.6184177,
+    "ast_hash": "5361683582b8a103153c2908b1799a16",
     "semantic_hash": ""
   },
   "src/services/tabelas/beneficiosService.ts": {
