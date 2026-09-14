@@ -180,9 +180,9 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1789386962.2202096,
-    "seen": 1789387218.4858918,
-    "ast_hash": "66612b4325e27f8076620a70e53be8b9",
+    "mtime": 1789387607.2849233,
+    "seen": 1789387933.4406524,
+    "ast_hash": "d5ef85249e4be8e1412389beea52e88f",
     "semantic_hash": ""
   },
   "playwright.config.ts": {
@@ -4356,9 +4356,9 @@
     "semantic_hash": ""
   },
   "src/hooks/__tests__/useNovasTabelas.test.ts": {
-    "mtime": 1788115372.1156614,
-    "seen": 1788129206.884979,
-    "ast_hash": "94c09096711713e0276cbad3895acf3d",
+    "mtime": 1789387757.5428708,
+    "seen": 1789387933.4546587,
+    "ast_hash": "b1086b8459c6379d301397283431067b",
     "semantic_hash": ""
   },
   "src/hooks/__tests__/useNow.test.ts": {
@@ -4920,9 +4920,9 @@
     "semantic_hash": ""
   },
   "src/hooks/useNovasTabelas.ts": {
-    "mtime": 1789310302.477511,
-    "seen": 1789310563.0696852,
-    "ast_hash": "3689f8feb87344160409c3db585f4b7b",
+    "mtime": 1789387384.1643932,
+    "seen": 1789387933.4561565,
+    "ast_hash": "90e571ae179363462946f1d54f5e1ee0",
     "semantic_hash": ""
   },
   "src/hooks/useNow.ts": {
@@ -5322,9 +5322,9 @@
     "semantic_hash": ""
   },
   "src/pages/AdmissoesPage.tsx": {
-    "mtime": 1788115372.1367443,
-    "seen": 1788129206.8857515,
-    "ast_hash": "f41345b7d0855061ca0d2826a3457bf8",
+    "mtime": 1789387757.6780274,
+    "seen": 1789387933.4573505,
+    "ast_hash": "930c8082283c80213a2adde9e1c27608",
     "semantic_hash": ""
   },
   "src/pages/AfastamentosPage.tsx": {
@@ -6144,9 +6144,9 @@
     "semantic_hash": ""
   },
   "src/services/__tests__/batidasPontoService.test.ts": {
-    "mtime": 1788115372.1480162,
-    "seen": 1788129206.886056,
-    "ast_hash": "211532931d383e9d0ff94d606dd16698",
+    "mtime": 1789387759.0957642,
+    "seen": 1789387933.4596572,
+    "ast_hash": "bb7eecefb5d07c6edadee41dd56239a9",
     "semantic_hash": ""
   },
   "src/services/__tests__/beneficioService.test.ts": {
@@ -6216,9 +6216,9 @@
     "semantic_hash": ""
   },
   "src/services/__tests__/contratacaoService.test.ts": {
-    "mtime": 1789254018.6451082,
-    "seen": 1789303025.409864,
-    "ast_hash": "63b56c76749d2762c2b94df9cb037b08",
+    "mtime": 1789387759.1934593,
+    "seen": 1789387933.4598405,
+    "ast_hash": "3e713a1d3ff7744032fb8ae50ea9a196",
     "semantic_hash": ""
   },
   "src/services/__tests__/contratacaoService.xss.test.ts": {
@@ -6330,9 +6330,9 @@
     "semantic_hash": ""
   },
   "src/services/__tests__/horaExtraService.test.ts": {
-    "mtime": 1788115372.1480205,
-    "seen": 1788129206.8861334,
-    "ast_hash": "649ade2c18034a40cd57c06c8a02d7f0",
+    "mtime": 1789387759.2408981,
+    "seen": 1789387933.4603136,
+    "ast_hash": "dca43adecf9e42644682be6e16b50990",
     "semantic_hash": ""
   },
   "src/services/__tests__/integracaoService.test.ts": {
@@ -6570,9 +6570,9 @@
     "semantic_hash": ""
   },
   "src/services/batidasPontoService.ts": {
-    "mtime": 1788115372.1517792,
-    "seen": 1788129206.8862174,
-    "ast_hash": "d6daef732b18c9b0c43f41dc271cdec7",
+    "mtime": 1789387759.2768908,
+    "seen": 1789387933.4611487,
+    "ast_hash": "a90bea879216babb4e2854464fbd1de5",
     "semantic_hash": ""
   },
   "src/services/beneficioService.ts": {
@@ -6642,9 +6642,9 @@
     "semantic_hash": ""
   },
   "src/services/contratacaoService.ts": {
-    "mtime": 1789253719.453783,
-    "seen": 1789303025.4109435,
-    "ast_hash": "8fa1e4202dbfbbf23122d0460b09a99e",
+    "mtime": 1789387411.1372244,
+    "seen": 1789387933.4613683,
+    "ast_hash": "3ef971395b485f7201b179c7ea7b4548",
     "semantic_hash": ""
   },
   "src/services/contratoService.ts": {
@@ -6792,9 +6792,9 @@
     "semantic_hash": ""
   },
   "src/services/horaExtraService.ts": {
-    "mtime": 1788115372.156379,
-    "seen": 1788129206.8863072,
-    "ast_hash": "e7efaa12075ac62aed196fe1c6790d8e",
+    "mtime": 1789387759.298499,
+    "seen": 1789387933.461878,
+    "ast_hash": "90d153466d295a5d308420791b27b1fe",
     "semantic_hash": ""
   },
   "src/services/index.ts": {
