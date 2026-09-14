@@ -180,9 +180,9 @@
     "semantic_hash": ""
   },
   "package.json": {
-    "mtime": 1789312632.9392755,
-    "seen": 1789312681.0633004,
-    "ast_hash": "b80d2c51b120ee1a425416724a12f3e8",
+    "mtime": 1789383366.0227907,
+    "seen": 1789384360.3780708,
+    "ast_hash": "1ec67b567209b8d9f0decd82b76d9fe4",
     "semantic_hash": ""
   },
   "playwright.config.ts": {
@@ -618,9 +618,9 @@
     "semantic_hash": ""
   },
   "src/components/__tests__/AdmissoesKanban.test.tsx": {
-    "mtime": 1788115372.0604954,
-    "seen": 1788129206.883808,
-    "ast_hash": "cc7f31857352f7639da58a737cf4fe23",
+    "mtime": 1789383475.6613567,
+    "seen": 1789384360.3800395,
+    "ast_hash": "f00cfd3527ecbba1885a22f91f5350e5",
     "semantic_hash": ""
   },
   "src/components/__tests__/AfastamentoDocumentManager.test.tsx": {
@@ -1998,9 +1998,9 @@
     "semantic_hash": ""
   },
   "src/components/admissoes/AdmissoesKanban.tsx": {
-    "mtime": 1788115372.0808551,
-    "seen": 1788129206.8841753,
-    "ast_hash": "e55e3dc0a7c8e0428ce4e720b5daa4b8",
+    "mtime": 1789383475.7016075,
+    "seen": 1789384360.3846862,
+    "ast_hash": "74b0b74b70154bdb78411a90a550e55a",
     "semantic_hash": ""
   },
   "src/components/admissoes/DetalhesAdmissaoDialog.tsx": {
@@ -2394,9 +2394,9 @@
     "semantic_hash": ""
   },
   "src/components/desligamentos/NovoDesligamentoDialog.tsx": {
-    "mtime": 1788115372.087945,
-    "seen": 1788129206.884328,
-    "ast_hash": "9fef4900b5a7e77118aa1517b443da06",
+    "mtime": 1789383475.7380946,
+    "seen": 1789384360.3860629,
+    "ast_hash": "ffe3cb011ee2d621913f6df8068e0958",
     "semantic_hash": ""
   },
   "src/components/desligamentos/TurnoverChart.tsx": {
@@ -5046,9 +5046,9 @@
     "semantic_hash": ""
   },
   "src/hooks/useTabelasReferencia.ts": {
-    "mtime": 1788115372.1254683,
-    "seen": 1788129206.8854837,
-    "ast_hash": "a6829ecb4b79e5ffd70dbb4387488bb6",
+    "mtime": 1789383475.7653794,
+    "seen": 1789384360.3949478,
+    "ast_hash": "9950f9989aec4531f8dd5897e01b54b1",
     "semantic_hash": ""
   },
   "src/hooks/useToast.ts": {
@@ -6084,9 +6084,9 @@
     "semantic_hash": ""
   },
   "src/services/__tests__/admissaoService.test.ts": {
-    "mtime": 1788115372.1478565,
-    "seen": 1788129206.8860147,
-    "ast_hash": "879f9be6a022ace0153f0f97742b9c77",
+    "mtime": 1789383475.785615,
+    "seen": 1789384360.398277,
+    "ast_hash": "d84425b55bc9ba0ffc5578e896a3039d",
     "semantic_hash": ""
   },
   "src/services/__tests__/afastamentoService.test.ts": {
@@ -6252,9 +6252,9 @@
     "semantic_hash": ""
   },
   "src/services/__tests__/desligamentoService.test.ts": {
-    "mtime": 1788115372.1480205,
-    "seen": 1788129206.886104,
-    "ast_hash": "252cd1d1c4a58c3584d47829c5720494",
+    "mtime": 1789383475.8009474,
+    "seen": 1789384360.3988292,
+    "ast_hash": "17d14d0210c30605a558efed11c3f75c",
     "semantic_hash": ""
   },
   "src/services/__tests__/despesaService.test.ts": {
@@ -6414,9 +6414,9 @@
     "semantic_hash": ""
   },
   "src/services/__tests__/pontoOfflineService.test.ts": {
-    "mtime": 1788172862.6936848,
-    "seen": 1789303025.4103863,
-    "ast_hash": "e9d38f0ddcb10d4b7952dd84baf4142a",
+    "mtime": 1789383475.812274,
+    "seen": 1789384360.3993878,
+    "ast_hash": "ded55ae708c46b3c93b0f784ce46870e",
     "semantic_hash": ""
   },
   "src/services/__tests__/pontoService.test.ts": {
@@ -6474,15 +6474,15 @@
     "semantic_hash": ""
   },
   "src/services/__tests__/tabelasReferenciaService.test.ts": {
-    "mtime": 1788115372.1480205,
-    "seen": 1788129206.8861794,
-    "ast_hash": "c6aff188a5fb35b9d81cf33f4426504d",
+    "mtime": 1789383475.863053,
+    "seen": 1789384360.399563,
+    "ast_hash": "8c20f64b7f55eb826d7450f22e92ce42",
     "semantic_hash": ""
   },
   "src/services/__tests__/turnoService.test.ts": {
-    "mtime": 1788115372.1480205,
-    "seen": 1788129206.8861809,
-    "ast_hash": "b71a5948a521e180bf3160ce833a57f4",
+    "mtime": 1789383475.8798509,
+    "seen": 1789384360.3995636,
+    "ast_hash": "7cc7c1e3e21bbb1713ec4c3e38e1c239",
     "semantic_hash": ""
   },
   "src/services/__tests__/webhookService.test.ts": {
@@ -6504,9 +6504,9 @@
     "semantic_hash": ""
   },
   "src/services/admissaoService.ts": {
-    "mtime": 1788115372.1480205,
-    "seen": 1788129206.886189,
-    "ast_hash": "9192b609495f6d773f7b0927677f59e4",
+    "mtime": 1789383475.8898354,
+    "seen": 1789384360.3996239,
+    "ast_hash": "8e2cd5420eac1fcf4f6838a5ab1acd82",
     "semantic_hash": ""
   },
   "src/services/afastamentoService.ts": {
@@ -6672,9 +6672,9 @@
     "semantic_hash": ""
   },
   "src/services/desligamentoService.ts": {
-    "mtime": 1788115372.1517792,
-    "seen": 1788129206.886266,
-    "ast_hash": "350c83ec4e0305d9f2e5cd90601399e5",
+    "mtime": 1789383475.9014812,
+    "seen": 1789384360.400116,
+    "ast_hash": "4e2d41ddd2680bbf03848176d8d46f0a",
     "semantic_hash": ""
   },
   "src/services/despesaService.ts": {
@@ -6828,9 +6828,9 @@
     "semantic_hash": ""
   },
   "src/services/localTrabalhoService.ts": {
-    "mtime": 1788115372.156379,
-    "seen": 1788129206.8863204,
-    "ast_hash": "ca7bd75707cc056893a29611a7adaf99",
+    "mtime": 1789383475.9059343,
+    "seen": 1789384360.4006133,
+    "ast_hash": "7f801624e2b0982e13fedacb1da931eb",
     "semantic_hash": ""
   },
   "src/services/loggerService.ts": {
@@ -6888,9 +6888,9 @@
     "semantic_hash": ""
   },
   "src/services/pontoOfflineService.ts": {
-    "mtime": 1788172862.7154198,
-    "seen": 1789303025.4114995,
-    "ast_hash": "65f342d3cd80e8a7e04d6ea385e7f1ad",
+    "mtime": 1789383475.9199543,
+    "seen": 1789384360.4007964,
+    "ast_hash": "37ed1552313f1811495c93b291ee87c1",
     "semantic_hash": ""
   },
   "src/services/pontoService.ts": {
@@ -7038,21 +7038,21 @@
     "semantic_hash": ""
   },
   "src/services/tabelasReferenciaService.ts": {
-    "mtime": 1788115372.158857,
-    "seen": 1788129206.8864121,
-    "ast_hash": "987f7ec90e342fbb29453ee4e0bb36b2",
+    "mtime": 1789383475.9403594,
+    "seen": 1789384360.4013104,
+    "ast_hash": "6b815876b57b56c3526d0fd5b0d9b715",
     "semantic_hash": ""
   },
   "src/services/turnoService.ts": {
-    "mtime": 1788115372.158857,
-    "seen": 1788129206.886414,
-    "ast_hash": "cbfe4399732283e67af3bb20e6560d2e",
+    "mtime": 1789383475.9486732,
+    "seen": 1789384360.4013114,
+    "ast_hash": "bafb0e7233ec36605be7170db23199b4",
     "semantic_hash": ""
   },
   "src/services/webhookService.ts": {
-    "mtime": 1788115372.158857,
-    "seen": 1788129206.886416,
-    "ast_hash": "1836a9de89a17081b6e18a9bb75b02bb",
+    "mtime": 1789383475.9557765,
+    "seen": 1789384360.4013128,
+    "ast_hash": "3e2ac4a6ba4b44b66378827c8afd2bc4",
     "semantic_hash": ""
   },
   "src/services/whatsappService.ts": {
