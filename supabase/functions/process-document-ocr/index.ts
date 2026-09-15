@@ -69,12 +69,11 @@ serve(async (req: Request): Promise<Response> => {
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(supabase, { key: `doc-ocr:${userId}`, limit: 10, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
-    let raw: unknown;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    raw = _pb;
+    const raw = _pb;
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) {
       return json({ valid: false, confidence: 0, error: 'Payload inválido' }, 422);

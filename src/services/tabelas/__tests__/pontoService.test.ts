@@ -24,7 +24,9 @@ function makeChain(data: any = [], error: any = null) {
 import { ajustesPontoService, periodosPontoService } from '../pontoService';
 
 describe('ajustesPontoService', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('listar queries ajustes_ponto', async () => {
     const chain = makeChain([{ id: 'ap1' }]);
@@ -44,7 +46,12 @@ describe('ajustesPontoService', () => {
   it('criar calls insert on ajustes_ponto', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await ajustesPontoService.criar({ colaborador_id: 'c1', tipo: 'entrada' });
+    await ajustesPontoService.criar({
+      colaborador_id: 'c1',
+      registro_ponto_id: 'rp1',
+      campo_alterado: 'horario_entrada',
+      motivo: 'Esquecimento de marcação',
+    });
     expect(chain.insert).toHaveBeenCalled();
   });
 
@@ -52,14 +59,14 @@ describe('ajustesPontoService', () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
     await ajustesPontoService.aprovar('col-1', 'ap-1', 'user-1');
-    expect(chain.update).toHaveBeenCalledWith(
-      expect.objectContaining({ status: 'aprovado', aprovado_por: 'user-1' })
-    );
+    expect(chain.update).toHaveBeenCalledWith(expect.objectContaining({ status: 'aprovado', aprovado_por: 'user-1' }));
   });
 });
 
 describe('periodosPontoService', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('listar queries periodos_ponto', async () => {
     const chain = makeChain([{ id: 'pp1' }]);
@@ -79,16 +86,14 @@ describe('periodosPontoService', () => {
   it('criar calls insert on periodos_ponto', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await periodosPontoService.criar({ empresa_id: 'emp-1', data_inicio: '2024-01-01' });
+    await periodosPontoService.criar({ competencia: '2024-01', data_inicio: '2024-01-01', data_fim: '2024-01-31' });
     expect(chain.insert).toHaveBeenCalled();
   });
 
   it('fechar calls update with status=fechado', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await periodosPontoService.fechar('emp-1', 'pp-1');
-    expect(chain.update).toHaveBeenCalledWith(
-      expect.objectContaining({ status: 'fechado' })
-    );
+    await periodosPontoService.fechar('pp-1');
+    expect(chain.update).toHaveBeenCalledWith(expect.objectContaining({ status: 'fechado' }));
   });
 });

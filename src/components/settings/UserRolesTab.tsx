@@ -10,25 +10,35 @@ import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { auditLogger } from '@/utils/auditLogger';
 import { safeErrorMessage } from '@/utils/safeError';
+import type { Enums } from '@/integrations/supabase/database.types';
+
+interface UserRoleRow {
+  id: string;
+  user_id: string;
+  role: Enums<'app_role'>;
+  created_at: string;
+}
 
 export function UserRolesTab() {
   const qc = useQueryClient();
   const { data: roles = [], isLoading } = useQuery({
     queryKey: ['user-roles-list'],
-    queryFn: async () => {
+    queryFn: async (): Promise<UserRoleRow[]> => {
       // user_roles está na TABLE_DENYLIST do bridge — leitura direta retorna
       // 403 mesmo para admins. Único caminho é esta RPC. Ver
       // 20260718230000_admin_role_management_rpc.sql (achado R1 da auditoria).
       const { data, error } = await supabase.rpc('admin_list_user_roles', {});
       if (error) throw error;
-      return data || [];
-    }});
+      return (data as UserRoleRow[]) || [];
+    },
+  });
 
   const upgradeToAdmin = useMutation({
     mutationFn: async (userId: string) => {
       const { error } = await supabase.rpc('admin_set_user_role', {
         _target_user_id: userId,
-        _role: 'admin'});
+        _role: 'admin',
+      });
       if (error) throw error;
     },
     onSuccess: (_, userId) => {
@@ -38,9 +48,11 @@ export function UserRolesTab() {
         tabela: 'user_roles',
         registro_id: userId,
         acao: 'UPDATE',
-        dados_novos: { role: 'admin', user_id: userId }});
+        dados_novos: { role: 'admin', user_id: userId },
+      });
     },
-    onError: (err: any) => toast.error(safeErrorMessage(err, 'Erro ao atualizar perfil do usuário.'))});
+    onError: (err: unknown) => toast.error(safeErrorMessage(err, 'Erro ao atualizar perfil do usuário.')),
+  });
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
@@ -70,7 +82,7 @@ export function UserRolesTab() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {roles.map((r: any) => (
+                {roles.map((r) => (
                   <TableRow key={r.id}>
                     <TableCell className="font-mono text-[10px]">{r.user_id}</TableCell>
                     <TableCell>

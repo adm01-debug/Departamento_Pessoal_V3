@@ -18,7 +18,9 @@ function makeSelectChain(data: any = [], error: any = null) {
 import { viewsService } from '../viewsService';
 
 describe('viewsService', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('alertasRH queries vw_alertas_rh and returns array', async () => {
     mockFrom.mockReturnValue(makeSelectChain([{ id: 'a1' }]));
@@ -27,10 +29,9 @@ describe('viewsService', () => {
     expect(Array.isArray(result)).toBe(true);
   });
 
-  it('alertasRH returns [] on error (view not found)', async () => {
+  it('alertasRH distinguishes schema failure from an empty result', async () => {
     mockFrom.mockReturnValue(makeSelectChain(null, new Error('relation does not exist')));
-    const result = await viewsService.alertasRH();
-    expect(result).toEqual([]);
+    await expect(viewsService.alertasRH()).rejects.toThrow('relation does not exist');
   });
 
   it('kpiTurnover queries vw_kpi_turnover', async () => {
@@ -40,10 +41,9 @@ describe('viewsService', () => {
     expect(Array.isArray(result)).toBe(true);
   });
 
-  it('kpiTurnover returns [] on error', async () => {
+  it('kpiTurnover propagates query errors instead of returning a false empty state', async () => {
     mockFrom.mockReturnValue(makeSelectChain(null, new Error('error')));
-    const result = await viewsService.kpiTurnover();
-    expect(result).toEqual([]);
+    await expect(viewsService.kpiTurnover()).rejects.toThrow('error');
   });
 
   it('kpiAbsenteismo queries vw_kpi_absenteismo', async () => {

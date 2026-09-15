@@ -48,13 +48,17 @@ function makeMockClient(opts: {
         current += 1;
       }
 
+      const oldestActive = state.rows
+        .filter(row => row.key === args.p_key)
+        .reduce((oldest, row) => Math.min(oldest, row.timestamp), args.p_now);
+
       return {
         data: {
           allowed,
           current,
           limit: args.p_limit,
           remaining: Math.max(0, args.p_limit - current),
-          reset: args.p_now,
+          reset: oldestActive + args.p_window_sec,
         },
         error: null,
       };
@@ -68,11 +72,15 @@ function makeMockClient(opts: {
 
 Deno.test('permite quando abaixo do limite e insere marcador', async () => {
   const { client, state } = makeMockClient({ initialRows: [] });
+  const before = Math.floor(Date.now() / 1000);
   const r = await checkRateLimit(client, { key: 'u:1:foo', limit: 5, windowSec: 60 });
   assertEquals(r.allowed, true);
   assertEquals(r.remaining, 4);
   assertEquals(r.limit, 5);
   assertEquals(r.windowSec, 60);
+  if (r.reset < before + 60 || r.reset > before + 61) {
+    throw new Error(`database reset must be the end of the oldest active window, got ${r.reset}`);
+  }
   assertEquals(state.inserts.length, 1);
   assertEquals(state.inserts[0].key, 'u:1:foo');
 });

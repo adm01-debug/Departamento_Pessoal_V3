@@ -11,7 +11,11 @@ function makeChain(data: any = [], error: any = null) {
   const result = { data, error };
   const maybeSingle = vi.fn().mockResolvedValue(result);
   const limit = vi.fn().mockReturnValue({ maybeSingle, then: (fn: any) => Promise.resolve(result).then(fn) });
-  const order = vi.fn().mockReturnValue({ limit, eq: vi.fn().mockResolvedValue(result), then: (fn: any) => Promise.resolve(result).then(fn) });
+  const order = vi.fn().mockReturnValue({
+    limit,
+    eq: vi.fn().mockResolvedValue(result),
+    then: (fn: any) => Promise.resolve(result).then(fn),
+  });
   const eq = vi.fn().mockReturnValue({ order, maybeSingle, then: (fn: any) => Promise.resolve(result).then(fn) });
   const deleteEqResult: any = { then: (fn: any) => Promise.resolve(result).then(fn) };
   const deleteEq = vi.fn().mockReturnValue(deleteEqResult);
@@ -19,7 +23,9 @@ function makeChain(data: any = [], error: any = null) {
   const delete_ = vi.fn().mockReturnValue({ eq: deleteEq });
   const upsert = vi.fn().mockResolvedValue(result);
   const insert = vi.fn().mockResolvedValue(result);
-  const select = vi.fn().mockReturnValue({ order, eq, maybeSingle, limit, then: (fn: any) => Promise.resolve(result).then(fn) });
+  const select = vi
+    .fn()
+    .mockReturnValue({ order, eq, maybeSingle, limit, then: (fn: any) => Promise.resolve(result).then(fn) });
   return { select, eq, order, upsert, insert, delete: delete_, maybeSingle, limit };
 }
 
@@ -31,7 +37,9 @@ import {
 } from '../adminService';
 
 describe('logEnvioRelatoriosService', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('listar queries log_envio_relatorios', async () => {
     const chain = makeChain([{ id: 'l1' }]);
@@ -41,18 +49,44 @@ describe('logEnvioRelatoriosService', () => {
     expect(Array.isArray(result)).toBe(true);
   });
 
-  it('listar with empresaId filters by empresa_id', async () => {
-    const chain = makeChain([]);
-    const eqFn = vi.fn().mockResolvedValue({ data: [], error: null });
-    chain.select.mockReturnValue({ order: vi.fn().mockReturnValue({ limit: vi.fn().mockReturnValue({ eq: eqFn, then: (fn: any) => Promise.resolve({ data: [], error: null }).then(fn) }), then: (fn: any) => Promise.resolve({ data: [], error: null }).then(fn) }) });
-    mockFrom.mockReturnValue(chain);
-    await logEnvioRelatoriosService.listar('emp-1');
-    expect(mockFrom).toHaveBeenCalledWith('log_envio_relatorios');
+  // `log_envio_relatorios` não tem `empresa_id` (só `agendamento_id`, FK
+  // para `relatorios_agendados`, que sim tem `empresa_id`) — com empresaId,
+  // o serviço busca em duas etapas: agendamentos da empresa, depois os logs
+  // desses agendamentos.
+  it('listar with empresaId filters via relatorios_agendados first', async () => {
+    const agendamentosEq = vi.fn().mockResolvedValue({ data: [{ id: 'ag-1' }], error: null });
+    const agendamentosChain = { select: vi.fn().mockReturnValue({ eq: agendamentosEq }) };
+
+    const logsResult = { data: [{ id: 'log-1', agendamento_id: 'ag-1' }], error: null };
+    const inFn = vi.fn().mockResolvedValue(logsResult);
+    const limitFn = vi.fn().mockReturnValue({ in: inFn });
+    const orderFn = vi.fn().mockReturnValue({ limit: limitFn });
+    const logsChain = { select: vi.fn().mockReturnValue({ order: orderFn }) };
+
+    mockFrom.mockReturnValueOnce(agendamentosChain).mockReturnValueOnce(logsChain);
+
+    const result = await logEnvioRelatoriosService.listar('emp-1');
+
+    expect(mockFrom).toHaveBeenNthCalledWith(1, 'relatorios_agendados');
+    expect(agendamentosEq).toHaveBeenCalledWith('empresa_id', 'emp-1');
+    expect(mockFrom).toHaveBeenNthCalledWith(2, 'log_envio_relatorios');
+    expect(inFn).toHaveBeenCalledWith('agendamento_id', ['ag-1']);
+    expect(result).toEqual([{ id: 'log-1', agendamento_id: 'ag-1' }]);
+  });
+
+  it('listar with empresaId returns [] when the empresa has no agendamentos', async () => {
+    const agendamentosEq = vi.fn().mockResolvedValue({ data: [], error: null });
+    mockFrom.mockReturnValueOnce({ select: vi.fn().mockReturnValue({ eq: agendamentosEq }) });
+    const result = await logEnvioRelatoriosService.listar('emp-1');
+    expect(result).toEqual([]);
+    expect(mockFrom).toHaveBeenCalledTimes(1);
   });
 });
 
 describe('relatoriosAgendadosService', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('listar queries relatorios_agendados', async () => {
     const chain = makeChain([{ id: 'r1' }]);
@@ -72,7 +106,12 @@ describe('relatoriosAgendadosService', () => {
   it('criar calls insert on relatorios_agendados', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await relatoriosAgendadosService.criar({ nome: 'Relatório A' });
+    await relatoriosAgendadosService.criar({
+      nome: 'Relatório A',
+      email_destinatario: 'rh@empresa.com',
+      frequencia: 'mensal',
+      tipo_relatorio: 'folha',
+    });
     expect(mockFrom).toHaveBeenCalledWith('relatorios_agendados');
     expect(chain.insert).toHaveBeenCalled();
   });
@@ -87,7 +126,9 @@ describe('relatoriosAgendadosService', () => {
 });
 
 describe('savedFiltersService', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('listar queries saved_filters by user_id', async () => {
     const chain = makeChain([{ id: 'f1' }]);
@@ -100,7 +141,7 @@ describe('savedFiltersService', () => {
   it('criar calls insert on saved_filters', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await savedFiltersService.criar({ user_id: 'u1', nome: 'Filtro' });
+    await savedFiltersService.criar({ user_id: 'u1', name: 'Filtro', entity_type: 'colaboradores' });
     expect(chain.insert).toHaveBeenCalled();
   });
 
@@ -113,7 +154,9 @@ describe('savedFiltersService', () => {
 });
 
 describe('bitrix24Service', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('getConfig queries bitrix24_config with limit/maybeSingle', async () => {
     const chain = makeChain({ id: 'b1', token: 'tok' });
@@ -125,7 +168,7 @@ describe('bitrix24Service', () => {
   it('saveConfig calls upsert on bitrix24_config', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await bitrix24Service.saveConfig({ token: 'new-tok' });
+    await bitrix24Service.saveConfig({ webhook_url: 'https://bitrix.example.com/hook' });
     expect(mockFrom).toHaveBeenCalledWith('bitrix24_config');
     expect(chain.upsert).toHaveBeenCalled();
   });

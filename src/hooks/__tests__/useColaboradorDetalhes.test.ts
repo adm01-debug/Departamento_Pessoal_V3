@@ -4,8 +4,13 @@ import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const {
-  mockListarDependentes, mockCriarDependente, mockAtualizarDependente, mockExcluirDependente,
-  mockListarContatosEmergencia, mockCriarContatoEmergencia, mockExcluirContatoEmergencia,
+  mockListarDependentes,
+  mockCriarDependente,
+  mockAtualizarDependente,
+  mockExcluirDependente,
+  mockListarContatosEmergencia,
+  mockCriarContatoEmergencia,
+  mockExcluirContatoEmergencia,
 } = vi.hoisted(() => ({
   mockListarDependentes: vi.fn(),
   mockCriarDependente: vi.fn(),
@@ -33,10 +38,7 @@ import {
   useCriarContatoEmergencia,
 } from '../useColaboradorDetalhes';
 
-vi.mock('@/hooks/useEmpresas', async () =>
-  (await import('@/test/empresaMock')).useEmpresasMockModule()
-);
-
+vi.mock('@/hooks/useEmpresas', async () => (await import('@/test/empresaMock')).useEmpresasMockModule());
 
 function wrapper({ children }: { children: React.ReactNode }) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
@@ -80,10 +82,20 @@ describe('useCriarDependente', () => {
     const { result } = renderHook(() => useCriarDependente(), { wrapper });
 
     await act(async () => {
-      await result.current.mutateAsync({ colaborador_id: 'col-1', nome: 'Filho' });
+      await result.current.mutateAsync({
+        colaborador_id: 'col-1',
+        nome: 'Filho',
+        data_nascimento: '2015-01-01',
+        parentesco: 'filho',
+      });
     });
 
-    expect(mockCriarDependente.mock.calls[0][0]).toEqual({ colaborador_id: 'col-1', nome: 'Filho' });
+    expect(mockCriarDependente.mock.calls[0][0]).toEqual({
+      colaborador_id: 'col-1',
+      nome: 'Filho',
+      data_nascimento: '2015-01-01',
+      parentesco: 'filho',
+    });
   });
 });
 
