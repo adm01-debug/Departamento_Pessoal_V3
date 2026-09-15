@@ -42,7 +42,9 @@ function setupUpdateChain(data: any, error: any = null) {
 // ─── listar ───────────────────────────────────────────────────────────────────
 
 describe('horaExtraService.listar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns records without empresa filter', async () => {
     const records = [{ id: 'he-1', status: 'pendente' }];
@@ -78,9 +80,7 @@ describe('horaExtraService.listar', () => {
   it('selects with colaborador join', async () => {
     const { selectFn } = setupListarChain([]);
     await horaExtraService.listar(EMPRESA_ID);
-    expect(selectFn).toHaveBeenCalledWith(
-      expect.stringContaining('colaborador:colaboradores')
-    );
+    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('colaborador:colaboradores'));
   });
 
   it('throws on DB error', async () => {
@@ -92,7 +92,9 @@ describe('horaExtraService.listar', () => {
 // ─── criar ────────────────────────────────────────────────────────────────────
 
 describe('horaExtraService.criar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns the created record', async () => {
     const created = { id: 'he-new', status: 'pendente' };
@@ -101,8 +103,9 @@ describe('horaExtraService.criar', () => {
     const insertFn = vi.fn().mockReturnValue({ select: selectFn });
     mockFrom.mockReturnValue({ insert: insertFn });
 
-    const result = await horaExtraService.criar({ colaborador_id: 'c1', horas: 2 });
-    expect(insertFn).toHaveBeenCalledWith({ colaborador_id: 'c1', horas: 2 });
+    const payload = { colaborador_id: 'c1', data: '2026-01-01', horas_solicitadas: 2, motivo: 'Fechamento mensal' };
+    const result = await horaExtraService.criar(payload);
+    expect(insertFn).toHaveBeenCalledWith(payload);
     expect(result).toEqual(created);
   });
 
@@ -112,7 +115,9 @@ describe('horaExtraService.criar', () => {
     const insertFn = vi.fn().mockReturnValue({ select: selectFn });
     mockFrom.mockReturnValue({ insert: insertFn });
 
-    await expect(horaExtraService.criar({})).rejects.toThrow();
+    await expect(
+      horaExtraService.criar({ colaborador_id: 'c1', data: '2026-01-01', horas_solicitadas: 2, motivo: 'Motivo' })
+    ).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
@@ -121,14 +126,18 @@ describe('horaExtraService.criar', () => {
     const insertFn = vi.fn().mockReturnValue({ select: selectFn });
     mockFrom.mockReturnValue({ insert: insertFn });
 
-    await expect(horaExtraService.criar({})).rejects.toBeDefined();
+    await expect(
+      horaExtraService.criar({ colaborador_id: 'c1', data: '2026-01-01', horas_solicitadas: 2, motivo: 'Motivo' })
+    ).rejects.toBeDefined();
   });
 });
 
 // ─── aprovar ──────────────────────────────────────────────────────────────────
 
 describe('horaExtraService.aprovar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates status to aprovada with aprovado_por', async () => {
     const updated = { id: 'he-1', status: 'aprovada' };
@@ -161,7 +170,9 @@ describe('horaExtraService.aprovar', () => {
 // ─── rejeitar ─────────────────────────────────────────────────────────────────
 
 describe('horaExtraService.rejeitar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates status to rejeitada', async () => {
     const { updateFn } = setupUpdateChain({ id: 'he-1', status: 'rejeitada' });
@@ -192,11 +203,14 @@ describe('horaExtraService.rejeitar', () => {
 // ─── excluir ──────────────────────────────────────────────────────────────────
 
 describe('horaExtraService.excluir', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('calls delete with the given id', async () => {
     const chain = makeChain({ error: null });
-    const deleteFn = chain.delete; const eqFn = chain.eq;
+    const deleteFn = chain.delete;
+    const eqFn = chain.eq;
     mockFrom.mockReturnValue(chain);
 
     await horaExtraService.excluir('he-1', EMPRESA_ID);

@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEmpresas } from './useEmpresas';
 import * as service from '@/services/colaboradorDetalhesService';
+import type { Updatable, Insertable } from '@/integrations/supabase/database.types';
 
 // Dependentes
 export function useDependentes(colaboradorId: string) {
@@ -16,7 +17,7 @@ export function useCriarDependente() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: service.criarDependente,
-    onSuccess: (_, vars: any) => qc.invalidateQueries({ queryKey: ['dependentes', vars.colaborador_id] }),
+    onSuccess: (_, vars) => qc.invalidateQueries({ queryKey: ['dependentes', vars.colaborador_id] }),
   });
 }
 
@@ -24,7 +25,7 @@ export function useAtualizarDependente() {
   const qc = useQueryClient();
   const { empresaAtual } = useEmpresas();
   return useMutation({
-    mutationFn: ({ id, dados }: { id: string; dados: Record<string, unknown> }) =>
+    mutationFn: ({ id, dados }: { id: string; dados: Updatable<'dependentes'> }) =>
       service.atualizarDependente(id, dados, empresaAtual!.id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['dependentes'] }),
   });
@@ -52,7 +53,7 @@ export function useCriarContatoEmergencia() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: service.criarContatoEmergencia,
-    onSuccess: (_, vars: any) => qc.invalidateQueries({ queryKey: ['contatos-emergencia', vars.colaborador_id] }),
+    onSuccess: (_, vars) => qc.invalidateQueries({ queryKey: ['contatos-emergencia', vars.colaborador_id] }),
   });
 }
 
@@ -78,7 +79,7 @@ export function useCriarRegistroSalarial() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: service.criarRegistroSalarial,
-    onSuccess: (_, vars: any) => qc.invalidateQueries({ queryKey: ['historico-salarial', vars.colaborador_id] }),
+    onSuccess: (_, vars) => qc.invalidateQueries({ queryKey: ['historico-salarial', vars.colaborador_id] }),
   });
 }
 
@@ -96,7 +97,7 @@ export function useCriarASO() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: service.criarASO,
-    onSuccess: (_, vars: any) => qc.invalidateQueries({ queryKey: ['asos', vars.colaborador_id] }),
+    onSuccess: (_, vars) => qc.invalidateQueries({ queryKey: ['asos', vars.colaborador_id] }),
   });
 }
 
@@ -113,7 +114,7 @@ export function useCriarFormacao() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: service.criarFormacao,
-    onSuccess: (_, vars: any) => qc.invalidateQueries({ queryKey: ['formacoes', vars.colaborador_id] }),
+    onSuccess: (_, vars) => qc.invalidateQueries({ queryKey: ['formacoes', vars.colaborador_id] }),
   });
 }
 
@@ -137,7 +138,7 @@ export function useDadosEstrangeiro(colaboradorId: string) {
 export function useSalvarDadosEstrangeiro() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ colaboradorId, dados }: { colaboradorId: string; dados: Record<string, unknown> }) =>
+    mutationFn: ({ colaboradorId, dados }: { colaboradorId: string; dados: Updatable<'dados_estrangeiro'> }) =>
       service.salvarDadosEstrangeiro(colaboradorId, dados),
     onSuccess: (_, vars) => qc.invalidateQueries({ queryKey: ['dados-estrangeiro', vars.colaboradorId] }),
   });
@@ -155,8 +156,13 @@ export function useDeficiencia(colaboradorId: string) {
 export function useSalvarDeficiencia() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ colaboradorId, dados }: { colaboradorId: string; dados: Record<string, unknown> }) =>
-      service.salvarDeficiencia(colaboradorId, dados),
+    mutationFn: ({
+      colaboradorId,
+      dados,
+    }: {
+      colaboradorId: string;
+      dados: Omit<Insertable<'deficiencias'>, 'colaborador_id'>;
+    }) => service.salvarDeficiencia(colaboradorId, dados),
     onSuccess: (_, vars) => qc.invalidateQueries({ queryKey: ['deficiencia', vars.colaboradorId] }),
   });
 }
@@ -173,8 +179,13 @@ export function usePeriodoExperiencia(colaboradorId: string) {
 export function useSalvarPeriodoExperiencia() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ colaboradorId, dados }: { colaboradorId: string; dados: Record<string, unknown> }) =>
-      service.salvarPeriodoExperiencia(colaboradorId, dados),
+    mutationFn: ({
+      colaboradorId,
+      dados,
+    }: {
+      colaboradorId: string;
+      dados: Omit<Insertable<'periodos_experiencia'>, 'colaborador_id'>;
+    }) => service.salvarPeriodoExperiencia(colaboradorId, dados),
     onSuccess: (_, vars) => qc.invalidateQueries({ queryKey: ['periodo-experiencia', vars.colaboradorId] }),
   });
 }
@@ -192,7 +203,7 @@ export function useCriarAnotacao() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: service.criarAnotacao,
-    onSuccess: (_, vars: any) => qc.invalidateQueries({ queryKey: ['anotacoes', vars.colaborador_id] }),
+    onSuccess: (_, vars) => qc.invalidateQueries({ queryKey: ['anotacoes', vars.colaborador_id] }),
   });
 }
 

@@ -12,7 +12,6 @@ vi.mock('@/utils/dateLocal', async (importOriginal) => ({
   todayLocalISO: () => '2024-07-24',
 }));
 
-
 function makeChain(data: any = [], error: any = null) {
   const result = { data, error };
   const order = vi.fn().mockResolvedValue(result);
@@ -40,7 +39,9 @@ import {
 } from '../beneficiosService';
 
 describe('beneficiariosPlanoService', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('listar queries beneficiarios_plano', async () => {
     const chain = makeChain([{ id: 'bp1' }]);
@@ -73,7 +74,9 @@ describe('beneficiariosPlanoService', () => {
 });
 
 describe('beneficiariosSeguroService', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('listar queries beneficiarios_seguro', async () => {
     const chain = makeChain([{ id: 'bs1' }]);
@@ -85,7 +88,7 @@ describe('beneficiariosSeguroService', () => {
   it('criar calls insert on beneficiarios_seguro', async () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
-    await beneficiariosSeguroService.criar({ seguro_vida_id: 's1' });
+    await beneficiariosSeguroService.criar({ seguro_vida_id: 's1', nome: 'João Beneficiário' });
     expect(chain.insert).toHaveBeenCalled();
   });
 
@@ -98,7 +101,9 @@ describe('beneficiariosSeguroService', () => {
 });
 
 describe('colaboradorBeneficiosService', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('listar queries colaborador_beneficios by colaborador_id', async () => {
     const chain = makeChain([{ id: 'cb1' }]);
@@ -117,7 +122,9 @@ describe('colaboradorBeneficiosService', () => {
 });
 
 describe('segurosColaboradoresService', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('listar queries seguros_colaboradores', async () => {
     const chain = makeChain([{ id: 'sc1' }]);

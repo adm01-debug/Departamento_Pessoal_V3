@@ -32,8 +32,22 @@ import { useQuery } from '@tanstack/react-query';
 import { EventTimeline } from '../dashboard/EventTimeline';
 
 const MOCK_EVENTS = [
-  { id: 'e1', title: 'Admissão: João', description: 'Novo colaborador', time: '09:00, 15 Jun', type: 'admissao' as const, raw_time: '2025-06-15T09:00:00Z' },
-  { id: 'e2', title: 'Alerta de Ponto', description: 'Batida fora do horário', time: '10:00, 15 Jun', type: 'alerta' as const, raw_time: '2025-06-15T10:00:00Z' },
+  {
+    id: 'e1',
+    title: 'Admissão: João',
+    description: 'Novo colaborador',
+    time: '09:00, 15 Jun',
+    type: 'admissao' as const,
+    raw_time: '2025-06-15T09:00:00Z',
+  },
+  {
+    id: 'e2',
+    title: 'Alerta de Ponto',
+    description: 'Batida fora do horário',
+    time: '10:00, 15 Jun',
+    type: 'alerta' as const,
+    raw_time: '2025-06-15T10:00:00Z',
+  },
 ];
 
 describe('EventTimeline', () => {
@@ -82,5 +96,21 @@ describe('EventTimeline', () => {
     vi.mocked(useQuery).mockReturnValue({ data: MOCK_EVENTS, isLoading: false, error: null } as any);
     render(<EventTimeline empresaId="emp-1" />);
     expect(screen.getByText('Admissão: João')).toBeInTheDocument();
+  });
+
+  it('shows a retryable error instead of an empty timeline when the query fails', async () => {
+    const refetch = vi.fn();
+    vi.mocked(useQuery).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: new Error('database unavailable'),
+      refetch,
+    } as any);
+    render(<EventTimeline empresaId="emp-1" />);
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Falha ao carregar os eventos recentes');
+    await userEvent.click(screen.getByRole('button', { name: 'Tentar novamente' }));
+    expect(refetch).toHaveBeenCalledOnce();
+    expect(screen.queryByText('Nenhum evento recente')).not.toBeInTheDocument();
   });
 });

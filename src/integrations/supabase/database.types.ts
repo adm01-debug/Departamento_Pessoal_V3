@@ -9,27 +9,61 @@ export type Database = SupabaseDatabase;
 export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
 export type Insertable<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Insert'];
 export type Updatable<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Update'];
+export type Enums<T extends keyof Database['public']['Enums']> = Database['public']['Enums'][T];
 
 // Common entity types - mapped from real tables
 export type Empresa = Tables<'empresas'>;
 export type Colaborador = Tables<'colaboradores'>;
-export type Departamento = Tables<'departamentos'> | { id: string; empresa_id: string; nome: string; descricao: string | null; codigo: string | null; ativo: boolean; created_at: string };
-export type Cargo = Tables<'rubricas_folha'> | { id: string; empresa_id: string; nome: string; descricao: string | null; cbo: string | null; salario_base: number | null; ativo: boolean; created_at: string };
+export type Departamento =
+  | Tables<'departamentos'>
+  | {
+      id: string;
+      empresa_id: string;
+      nome: string;
+      descricao: string | null;
+      codigo: string | null;
+      ativo: boolean;
+      created_at: string;
+    };
+export type Cargo =
+  | Tables<'rubricas_folha'>
+  | {
+      id: string;
+      empresa_id: string;
+      nome: string;
+      descricao: string | null;
+      cbo: string | null;
+      salario_base: number | null;
+      ativo: boolean;
+      created_at: string;
+    };
 export type FolhaPagamento = Tables<'folhas_pagamento'>;
 export type Ferias = Tables<'ferias'>;
 export type PontoRegistro = Tables<'registros_ponto'>;
-export type Beneficio = Tables<'tipos_beneficio'> | { id: string; empresa_id: string; nome: string; tipo: string; valor_padrao: number | null; ativo: boolean; created_at: string };
-export type Auditoria = Tables<'audit_log'> | { 
-  id: string; 
-  empresa_id: string | null; 
-  usuario_id: string; 
-  usuario_nome?: string;
-  acao: string; 
-  tabela: string | null; 
-  registro_id: string | null; 
-  dados_anteriores: Json | null; 
-  dados_novos: Json | null; 
-  created_at: string;
-  ip_address?: string | null;
-  user_agent?: string | null;
-};
+export type Beneficio =
+  | Tables<'tipos_beneficio'>
+  | {
+      id: string;
+      empresa_id: string;
+      nome: string;
+      tipo: string;
+      valor_padrao: number | null;
+      ativo: boolean;
+      created_at: string;
+    };
+export type Auditoria =
+  | Tables<'audit_log'>
+  | {
+      id: string;
+      empresa_id: string | null;
+      usuario_id: string;
+      usuario_nome?: string;
+      acao: string;
+      tabela: string | null;
+      registro_id: string | null;
+      dados_anteriores: Json | null;
+      dados_novos: Json | null;
+      created_at: string;
+      ip_address?: string | null;
+      user_agent?: string | null;
+    };

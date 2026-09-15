@@ -1,6 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deepChain } from '@/test/deepChain';
-import { criarNotificacao, notificarResultadoSync, notificarAjustePonto, notificacoesService } from '../notificacoesService';
+import {
+  criarNotificacao,
+  notificarResultadoSync,
+  notificarAjustePonto,
+  notificacoesService,
+} from '../notificacoesService';
 
 // ─── shared mock setup ────────────────────────────────────────────────────────
 
@@ -70,7 +75,9 @@ describe('criarNotificacao', () => {
   it('includes empresa_id and entidade fields when provided', async () => {
     const { insertFn } = setupInsertChain();
     await criarNotificacao({
-      titulo: 'T', mensagem: 'M', tipo: 'info',
+      titulo: 'T',
+      mensagem: 'M',
+      tipo: 'info',
       empresa_id: 'emp-1',
       entidade_id: 'ent-1',
       entidade_tipo: 'colaborador',
@@ -83,9 +90,7 @@ describe('criarNotificacao', () => {
 
   it('throws on DB error', async () => {
     setupInsertChain({ message: 'fail' });
-    await expect(
-      criarNotificacao({ titulo: 'T', mensagem: 'M', tipo: 'erro' })
-    ).rejects.toBeDefined();
+    await expect(criarNotificacao({ titulo: 'T', mensagem: 'M', tipo: 'erro' })).rejects.toBeDefined();
   });
 });
 
@@ -130,28 +135,28 @@ describe('notificarAjustePonto', () => {
   });
 
   it('creates aprovado notification when status=aprovado', async () => {
-    const colab = { id: 'c1', empresa_id: 'emp-1', email: 'a@b.com' };
+    const colab = { id: 'c1', empresa_id: 'emp-1', user_id: 'target-user' };
     const { selectFn, eqFn, maybeSingle } = setupColaboradorChain(colab);
     mockFrom
-      .mockReturnValueOnce({ select: selectFn })  // colaboradores query
+      .mockReturnValueOnce({ select: selectFn }) // colaboradores query
       .mockReturnValueOnce({ insert: vi.fn().mockResolvedValue({ error: null }) }); // insert
 
     await notificarAjustePonto('c1', 'aprovado');
     expect(eqFn).toHaveBeenCalledWith('id', 'c1');
+    expect(mockGetUser).toHaveBeenCalled();
   });
 
   it('creates recusado notification with motivo when status=recusado', async () => {
-    const colab = { id: 'c1', empresa_id: 'emp-1', email: 'a@b.com' };
+    const colab = { id: 'c1', empresa_id: 'emp-1', user_id: 'target-user' };
     const { selectFn } = setupColaboradorChain(colab);
     const insertFn = vi.fn().mockResolvedValue({ error: null });
-    mockFrom
-      .mockReturnValueOnce({ select: selectFn })
-      .mockReturnValueOnce({ insert: insertFn });
+    mockFrom.mockReturnValueOnce({ select: selectFn }).mockReturnValueOnce({ insert: insertFn });
 
     await notificarAjustePonto('c1', 'recusado', 'Horário inválido');
     const insertPayload = (insertFn as any).mock.calls[0][0];
     expect(insertPayload.tipo).toBe('erro');
     expect(insertPayload.mensagem).toContain('Horário inválido');
+    expect(insertPayload.user_id).toBe('target-user');
   });
 
   it('does not throw when colaborador is not found (returns undefined)', async () => {
@@ -161,12 +166,19 @@ describe('notificarAjustePonto', () => {
     await expect(notificarAjustePonto('c-unknown', 'aprovado')).resolves.toBeUndefined();
   });
 
-  it('returns undefined silently when colaborador DB query returns an error (null data)', async () => {
-    // The implementation only checks `if (colab)` (data), not the error field
+  it('propagates colaborador DB errors instead of treating outage as missing data', async () => {
     const { selectFn } = setupColaboradorChain(null, { message: 'db fail' });
     mockFrom.mockReturnValueOnce({ select: selectFn });
 
+    await expect(notificarAjustePonto('c1', 'aprovado')).rejects.toThrow('Falha ao notificar ajuste de ponto');
+  });
+
+  it('does not notify the current actor when colaborador has no linked user', async () => {
+    const { selectFn } = setupColaboradorChain({ id: 'c1', empresa_id: 'emp-1', user_id: null });
+    mockFrom.mockReturnValueOnce({ select: selectFn });
+
     await expect(notificarAjustePonto('c1', 'aprovado')).resolves.toBeUndefined();
+    expect(mockGetUser).not.toHaveBeenCalled();
   });
 });
 

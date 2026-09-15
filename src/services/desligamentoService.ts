@@ -1,16 +1,25 @@
 import { BaseService, ListOptions, ListResponse } from './baseService';
 import { auditLogger } from '@/utils/auditLogger';
+import type { Tables, Insertable, Updatable } from '@/integrations/supabase/database.types';
 
-class DesligamentoService extends BaseService<any> {
+type DesligamentoComColaborador = Tables<'desligamentos'> & {
+  colaborador: Pick<Tables<'colaboradores'>, 'nome_completo'> | null;
+};
+
+class DesligamentoService extends BaseService<
+  Tables<'desligamentos'>,
+  Insertable<'desligamentos'>,
+  Updatable<'desligamentos'>
+> {
   constructor() {
-    super('desligamentos', { 
-      defaultOrderBy: 'data_desligamento' 
+    super('desligamentos', {
+      defaultOrderBy: 'data_desligamento',
     });
   }
 
-  async listar(options: ListOptions = {}): Promise<ListResponse<any>> {
+  async listar(options: ListOptions = {}): Promise<ListResponse<DesligamentoComColaborador>> {
     const { filters } = options;
-    const empresaId = (filters as any)?.empresa_id;
+    const empresaId = filters?.empresa_id as string | undefined;
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
     let query = this.getQuery()
@@ -22,10 +31,10 @@ class DesligamentoService extends BaseService<any> {
 
     const { data, count, error } = await query;
     if (error) throw error;
-    return { data: (data as any[]) || [], total: count || 0 };
+    return { data: (data as DesligamentoComColaborador[]) || [], total: count || 0 };
   }
 
-  async criar(d: any): Promise<any> {
+  async criar(d: Insertable<'desligamentos'>): Promise<Tables<'desligamentos'>> {
     try {
       if (!d.colaborador_id) throw new Error('Colaborador é obrigatório');
       if (!d.data_desligamento) throw new Error('Data de desligamento é obrigatória');
@@ -36,7 +45,7 @@ class DesligamentoService extends BaseService<any> {
         ...d,
         motivo: d.motivo?.trim().slice(0, 1000) || null,
         status: d.status || 'pendente',
-        etapa: d.etapa || 'comunicacao'
+        etapa: d.etapa || 'comunicacao',
       };
 
       const data = await super.criar(sanitized);
@@ -56,7 +65,7 @@ class DesligamentoService extends BaseService<any> {
     }
   }
 
-  async atualizar(id: string, d: any, empresaId?: string): Promise<any> {
+  async atualizar(id: string, d: Updatable<'desligamentos'>, empresaId?: string): Promise<Tables<'desligamentos'>> {
     if (!id) throw new Error('ID é obrigatório');
 
     try {

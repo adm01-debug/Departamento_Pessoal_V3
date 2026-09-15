@@ -16,7 +16,9 @@ vi.mock('@/integrations/supabase/client', () => ({
 // ─── bancoHorasService ────────────────────────────────────────────────────────
 
 describe('bancoHorasService', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   // listarPorColaborador
   describe('listarPorColaborador', () => {
@@ -148,7 +150,7 @@ describe('bancoHorasService', () => {
     it('handles PostgreSQL interval with day component (e.g. "1 day 02:00:00")', async () => {
       setupSaldo([
         { tipo: 'credito', horas: '1 day 02:00:00' }, // 26h
-        { tipo: 'debito', horas: '2:00:00' },          // 2h
+        { tipo: 'debito', horas: '2:00:00' }, // 2h
       ]);
       const saldo = await bancoHorasService.getSaldo('colab-1', EMPRESA_ID);
       expect(saldo).toBeCloseTo(24, 5); // 26 - 2
@@ -172,7 +174,13 @@ describe('bancoHorasService', () => {
   describe('registrar', () => {
     it('calls insert and returns data', async () => {
       const inserted = { id: 'bh-1', tipo: 'credito', horas: '08:00:00' };
-      const payload = { tipo: 'credito', horas: '08:00:00', empresa_id: EMPRESA_ID };
+      const payload = {
+        tipo: 'credito',
+        horas: '08:00:00',
+        empresa_id: EMPRESA_ID,
+        colaborador_id: 'colab-1',
+        data: '2026-01-01',
+      };
       const maybeSingle = vi.fn().mockResolvedValue({ data: inserted, error: null });
       const select = vi.fn().mockReturnValue({ maybeSingle });
       const insert = vi.fn().mockReturnValue({ select });
@@ -188,7 +196,15 @@ describe('bancoHorasService', () => {
       const select = vi.fn().mockReturnValue({ maybeSingle });
       const insert = vi.fn().mockReturnValue({ select });
       mockFrom.mockReturnValue({ insert });
-      await expect(bancoHorasService.registrar({ empresa_id: EMPRESA_ID })).rejects.toBeDefined();
+      await expect(
+        bancoHorasService.registrar({
+          empresa_id: EMPRESA_ID,
+          colaborador_id: 'colab-1',
+          data: '2026-01-01',
+          horas: '08:00:00',
+          tipo: 'credito',
+        })
+      ).rejects.toBeDefined();
     });
   });
 });
@@ -196,7 +212,9 @@ describe('bancoHorasService', () => {
 // ─── bancoHorasConfigService ─────────────────────────────────────────────────
 
 describe('bancoHorasConfigService', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   describe('buscar', () => {
     it('queries banco_horas_config by empresa_id', async () => {
@@ -246,8 +264,8 @@ describe('bancoHorasConfigService', () => {
         return callCount === 1 ? { select } : { update };
       });
 
-      await bancoHorasConfigService.salvar({ empresa_id: 'emp-1', periodo: 'mensal' });
-      expect(update).toHaveBeenCalledWith({ empresa_id: 'emp-1', periodo: 'mensal' });
+      await bancoHorasConfigService.salvar({ empresa_id: 'emp-1', acordo_tipo: 'mensal' });
+      expect(update).toHaveBeenCalledWith({ empresa_id: 'emp-1', acordo_tipo: 'mensal' });
       expect(updateEq).toHaveBeenCalledWith('id', existing.id);
     });
 
@@ -267,8 +285,8 @@ describe('bancoHorasConfigService', () => {
         return callCount === 1 ? { select } : { insert };
       });
 
-      const result = await bancoHorasConfigService.salvar({ empresa_id: 'emp-2', periodo: 'semanal' });
-      expect(insert).toHaveBeenCalledWith({ empresa_id: 'emp-2', periodo: 'semanal' });
+      const result = await bancoHorasConfigService.salvar({ empresa_id: 'emp-2', acordo_tipo: 'semanal' });
+      expect(insert).toHaveBeenCalledWith({ empresa_id: 'emp-2', acordo_tipo: 'semanal' });
       expect(result).toEqual(inserted);
     });
   });

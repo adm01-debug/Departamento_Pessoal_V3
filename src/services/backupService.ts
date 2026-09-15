@@ -15,7 +15,7 @@ const BACKUP_TABLES = [
   'colaboradores',
   'admissoes',
   'registros_ponto',
-  'folha_pagamento',
+  'folhas_pagamento',
   'ferias',
   'beneficios',
   'departamentos',
@@ -56,7 +56,7 @@ async function fetchTableData(
   empresaId: string
 ): Promise<{ table: BackupTable; data: BackupRow[]; count: number }> {
   const { data, error, count } = await supabase
-    .from(table as any)
+    .from(table)
     .select('*', { count: 'exact' })
     .eq('empresa_id', empresaId)
     .limit(MAX_RECORDS_PER_TABLE);

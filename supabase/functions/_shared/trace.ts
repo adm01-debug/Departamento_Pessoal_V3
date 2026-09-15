@@ -109,15 +109,3 @@ export function getTraceContext(request: Request | null, body?: unknown): TraceC
 
   return { traceId, log: traceLog, withTrace };
 }
-
-/** Injeta trace_id no Sentry scope para correlação de erros. */
-export async function setSentryTrace(request: Request | null, body?: unknown): Promise<void> {
-  try {
-    // Dynamic import para não falhar se Sentry não estiver configurado
-    const { setTag } = await import('./sentry.ts');
-    const traceId = getOrCreateTraceId(request, body);
-    setTag('trace_id', traceId);
-  } catch {
-    // Sentry não disponível — silencioso
-  }
-}
