@@ -50,7 +50,12 @@ function setupUpdateChain(data: any, error: any = null) {
 
 function setupDeleteChain(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  const __delChain = {
+    then: (r: any) => Promise.resolve({ error }).then(r),
+    catch: (r: any) => Promise.resolve({ error }).catch(r),
+    finally: (r: any) => Promise.resolve({ error }).finally(r),
+    eq: eqFn,
+  };
   eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
@@ -60,7 +65,9 @@ function setupDeleteChain(error: any = null) {
 // ─── listarTurnos ─────────────────────────────────────────────────────────────
 
 describe('turnoService.listarTurnos', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns all turnos without empresa filter', async () => {
     const records = [{ id: 't1', nome: 'Manhã' }];
@@ -96,31 +103,37 @@ describe('turnoService.listarTurnos', () => {
 // ─── criarTurno ───────────────────────────────────────────────────────────────
 
 describe('turnoService.criarTurno', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  const turnoInsert = { nome: 'Noite', horario_inicio: '22:00', horario_fim: '06:00' };
 
   it('inserts and returns new turno', async () => {
-    const created = { id: 't-new', nome: 'Noite' };
+    const created = { id: 't-new', ...turnoInsert };
     const { insertFn } = setupInsertChain(created);
-    const result = await turnoService.criarTurno({ nome: 'Noite' });
-    expect(insertFn).toHaveBeenCalledWith({ nome: 'Noite' });
+    const result = await turnoService.criarTurno(turnoInsert);
+    expect(insertFn).toHaveBeenCalledWith(turnoInsert);
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(turnoService.criarTurno({})).rejects.toThrow();
+    await expect(turnoService.criarTurno(turnoInsert)).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
     setupInsertChain(null, { message: 'fail' });
-    await expect(turnoService.criarTurno({})).rejects.toBeDefined();
+    await expect(turnoService.criarTurno(turnoInsert)).rejects.toBeDefined();
   });
 });
 
 // ─── atualizarTurno ───────────────────────────────────────────────────────────
 
 describe('turnoService.atualizarTurno', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates and returns the turno', async () => {
     const updated = { id: 't1', nome: 'Tarde' };
@@ -140,7 +153,9 @@ describe('turnoService.atualizarTurno', () => {
 // ─── excluirTurno ─────────────────────────────────────────────────────────────
 
 describe('turnoService.excluirTurno', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes turno by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();
@@ -158,7 +173,9 @@ describe('turnoService.excluirTurno', () => {
 // ─── listarEscalas ────────────────────────────────────────────────────────────
 
 describe('turnoService.listarEscalas', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns all escalas without filters', async () => {
     const records = [{ id: 'e1', data: '2026-07-24' }];
@@ -188,12 +205,8 @@ describe('turnoService.listarEscalas', () => {
   it('includes colaborador and turno joins in select', async () => {
     const { selectFn } = setupListChain([]);
     await turnoService.listarEscalas(EMPRESA_ID);
-    expect(selectFn).toHaveBeenCalledWith(
-      expect.stringContaining('colaborador:colaboradores')
-    );
-    expect(selectFn).toHaveBeenCalledWith(
-      expect.stringContaining('turno:turnos')
-    );
+    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('colaborador:colaboradores'));
+    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('turno:turnos'));
   });
 
   it('throws on DB error', async () => {
@@ -205,26 +218,32 @@ describe('turnoService.listarEscalas', () => {
 // ─── criarEscala ──────────────────────────────────────────────────────────────
 
 describe('turnoService.criarEscala', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  const escalaInsert = { data: '2026-07-24', colaborador_id: 'c1', turno_id: 't1' };
 
   it('inserts and returns new escala', async () => {
-    const created = { id: 'e-new', data: '2026-07-24' };
+    const created = { id: 'e-new', ...escalaInsert };
     const { insertFn } = setupInsertChain(created);
-    const result = await turnoService.criarEscala({ data: '2026-07-24' });
-    expect(insertFn).toHaveBeenCalledWith({ data: '2026-07-24' });
+    const result = await turnoService.criarEscala(escalaInsert);
+    expect(insertFn).toHaveBeenCalledWith(escalaInsert);
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(turnoService.criarEscala({})).rejects.toThrow();
+    await expect(turnoService.criarEscala(escalaInsert)).rejects.toThrow();
   });
 });
 
 // ─── excluirEscala ────────────────────────────────────────────────────────────
 
 describe('turnoService.excluirEscala', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes escala by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();

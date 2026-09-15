@@ -13,7 +13,7 @@
 // criar clientes com `@2` em outras funções fazia os genéricos protegidos do
 // supabase-js divergirem durante o type-check das Edge Functions.
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { corsHeaders, createErrorResponse } from "./contract.ts";
+import { createErrorResponse, getCorsHeaders } from "./contract.ts";
 
 const KEY_MIN = 16;
 const KEY_MAX = 128;
@@ -25,6 +25,7 @@ export interface BeginIdempotencyParams {
   requestBody: unknown;
   empresaId?: string | null;
   userId?: string | null;
+  request?: Request;
 }
 
 export type IdempotencyReason =
@@ -33,8 +34,9 @@ export type IdempotencyReason =
   | 'KEY_INVALID'
   | 'KEY_REUSE'
   | 'IN_PROGRESS'
-  | 'STORE_ERROR'
-  | 'RETRY_AFTER_FAILURE';
+  | 'INDETERMINATE'
+  | 'PREVIOUS_FAILURE'
+  | 'STORE_ERROR';
 
 export interface BeginIdempotencyResult {
   /** Header não fornecido — segue fluxo sem idempotência */
@@ -101,6 +103,8 @@ export async function beginIdempotency(
         `Idempotency-Key inválida (${KEY_MIN}-${KEY_MAX} chars alfanuméricos)`,
         400,
         "IDEMPOTENCY_KEY_INVALID",
+        undefined,
+        params.request,
       ),
     };
   }
@@ -151,7 +155,7 @@ export async function beginIdempotency(
           replay: new Response(JSON.stringify(legacyRec.response_body), {
             status: legacyRec.response_status ?? 200,
             headers: {
-              ...corsHeaders,
+              ...getCorsHeaders(params.request),
               "Content-Type": "application/json",
               "Idempotent-Replay": "true",
             },
@@ -180,6 +184,8 @@ export async function beginIdempotency(
         "Falha ao registrar idempotência",
         500,
         "IDEMPOTENCY_STORE_ERROR",
+        undefined,
+        params.request,
       ),
     };
   }
@@ -195,70 +201,50 @@ export async function beginIdempotency(
         "Idempotency-Key já usada com payload diferente",
         409,
         "IDEMPOTENCY_KEY_REUSE",
+        undefined,
+        params.request,
       ),
     };
   }
 
   if (existing.status === "in_progress") {
-    // Registros in_progress com mais de 5 minutos são considerados zumbis (função caiu sem completar).
-    // Reutilizamos o registro para evitar deadlock permanente.
+    // An old in_progress row is an indeterminate outcome, not proof that the
+    // business mutation failed. Re-executing it can duplicate payroll/CNAB
+    // effects when the final bookkeeping UPDATE was the only failed step.
     const IN_PROGRESS_TTL_MS = 5 * 60 * 1000;
     const createdAt = existing.created_at ? new Date(existing.created_at).getTime() : null;
     const isStale = createdAt !== null && (Date.now() - createdAt) > IN_PROGRESS_TTL_MS;
-
-    if (!isStale) {
-      return {
-        skipped: false,
-        reason: 'IN_PROGRESS',
-        existingId: existing.id,
-        keyHash,
-        requestHash,
-        conflict: createErrorResponse(
-          "Requisição idempotente em andamento — tente novamente em instantes",
-          409,
-          "IDEMPOTENCY_IN_PROGRESS",
-        ),
-      };
-    }
-
-    // Registro zumbi — reclamar atomicamente (Codex P1: sem SELECT-then-UPDATE separado).
-    // O WHERE status='in_progress' garante que apenas um worker ganha a corrida.
-    const { data: claimed } = await admin
-      .from("idempotency_keys")
-      .update({ status: "in_progress", request_hash: requestHash, response_body: null, response_status: null, completed_at: null })
-      .eq("id", existing.id)
-      .eq("status", "in_progress")
-      .select("id")
-      .maybeSingle();
-    if (!claimed?.id) {
-      // Outro worker reclamou primeiro — rejeitar como in_progress
-      return {
-        skipped: false,
-        reason: 'IN_PROGRESS',
-        existingId: existing.id,
-        keyHash,
-        requestHash,
-        conflict: createErrorResponse(
-          "Requisição idempotente em andamento — tente novamente em instantes",
-          409,
-          "IDEMPOTENCY_IN_PROGRESS",
-        ),
-      };
-    }
-    return { skipped: false, id: existing.id, reason: 'RETRY_AFTER_FAILURE', existingId: existing.id, keyHash, requestHash };
+    return {
+      skipped: false,
+      reason: isStale ? 'INDETERMINATE' : 'IN_PROGRESS',
+      existingId: existing.id,
+      keyHash,
+      requestHash,
+      conflict: createErrorResponse(
+        isStale
+          ? "Resultado anterior indeterminado — reconcilie a operação antes de tentar novamente"
+          : "Requisição idempotente em andamento — tente novamente em instantes",
+        409,
+        isStale ? "IDEMPOTENCY_STATE_INDETERMINATE" : "IDEMPOTENCY_IN_PROGRESS",
+        undefined,
+        params.request,
+      ),
+    };
   }
 
-  if (existing.status === "completed" && existing.response_body) {
+  if (existing.status === "completed") {
+    const replayStatus = existing.response_status ?? 200;
+    const statusForbidsBody = replayStatus === 204 || replayStatus === 205 || replayStatus === 304;
     return {
       skipped: false,
       reason: 'REPLAY',
       existingId: existing.id,
       keyHash,
       requestHash,
-      replay: new Response(JSON.stringify(existing.response_body), {
-        status: existing.response_status ?? 200,
+      replay: new Response(statusForbidsBody ? null : JSON.stringify(existing.response_body ?? null), {
+        status: replayStatus,
         headers: {
-          ...corsHeaders,
+          ...getCorsHeaders(params.request),
           "Content-Type": "application/json",
           "Idempotent-Replay": "true",
         },
@@ -266,13 +252,41 @@ export async function beginIdempotency(
     };
   }
 
-  // status = 'failed' — permite nova tentativa reciclando o registro
-  await admin
-    .from("idempotency_keys")
-
-    .update({ status: "in_progress", request_hash: requestHash, response_body: null, response_status: null, completed_at: null })
-    .eq("id", existing.id);
-  return { skipped: false, id: existing.id, reason: 'RETRY_AFTER_FAILURE', existingId: existing.id, keyHash, requestHash };
+  // A failed key is also terminal. Reusing the same key to retry would erase
+  // the only durable evidence of the first attempt and can duplicate effects
+  // after a partial/indeterminate failure. Callers may submit a new operation
+  // with a new key after reconciling the domain state.
+  if (existing.response_body !== null && existing.response_body !== undefined) {
+    return {
+      skipped: false,
+      reason: 'REPLAY',
+      existingId: existing.id,
+      keyHash,
+      requestHash,
+      replay: new Response(JSON.stringify(existing.response_body), {
+        status: existing.response_status ?? 500,
+        headers: {
+          ...getCorsHeaders(params.request),
+          "Content-Type": "application/json",
+          "Idempotent-Replay": "true",
+        },
+      }),
+    };
+  }
+  return {
+    skipped: false,
+    reason: 'PREVIOUS_FAILURE',
+    existingId: existing.id,
+    keyHash,
+    requestHash,
+    conflict: createErrorResponse(
+      "Tentativa anterior falhou — reconcilie a operação e use uma nova chave",
+      409,
+      "IDEMPOTENCY_PREVIOUS_FAILURE",
+      undefined,
+      params.request,
+    ),
+  };
 }
 
 export async function completeIdempotency(
@@ -282,7 +296,7 @@ export async function completeIdempotency(
   body: unknown,
 ): Promise<void> {
   if (!id) return;
-  await admin
+  const { error } = await admin
     .from("idempotency_keys")
     .update({
       status: status >= 200 && status < 300 ? "completed" : "failed",
@@ -291,12 +305,14 @@ export async function completeIdempotency(
       completed_at: new Date().toISOString(),
     })
     .eq("id", id);
+  if (error) throw error;
 }
 
 export async function failIdempotency(admin: SupabaseClient, id: string | undefined): Promise<void> {
   if (!id) return;
-  await admin
+  const { error } = await admin
     .from("idempotency_keys")
     .update({ status: "failed", completed_at: new Date().toISOString() })
     .eq("id", id);
+  if (error) throw error;
 }

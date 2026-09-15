@@ -19,7 +19,9 @@ function setupListarChain(data: any[], error: any = null) {
 }
 
 describe('controleAcessoService.listar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns all records without filter', async () => {
     const records = [{ id: 'ca1', colaborador: { nome_completo: 'João' } }];
@@ -46,7 +48,9 @@ describe('controleAcessoService.listar', () => {
 });
 
 describe('controleAcessoService.registrar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns record', async () => {
     const created = { id: 'ca-new', colaborador_id: 'c1', tipo: 'entrada' };
@@ -64,7 +68,9 @@ describe('controleAcessoService.registrar', () => {
     const selectFn = vi.fn().mockReturnValue({ maybeSingle });
     const insertFn = vi.fn().mockReturnValue({ select: selectFn });
     mockFrom.mockReturnValue({ insert: insertFn });
-    await expect(controleAcessoService.registrar({})).rejects.toThrow('Nenhum registro de acesso foi retornado.');
+    await expect(controleAcessoService.registrar({ colaborador_id: 'c1', tipo: 'entrada' })).rejects.toThrow(
+      'Nenhum registro de acesso foi retornado.'
+    );
   });
 
   it('throws on DB error', async () => {
@@ -72,12 +78,14 @@ describe('controleAcessoService.registrar', () => {
     const selectFn = vi.fn().mockReturnValue({ maybeSingle });
     const insertFn = vi.fn().mockReturnValue({ select: selectFn });
     mockFrom.mockReturnValue({ insert: insertFn });
-    await expect(controleAcessoService.registrar({})).rejects.toBeDefined();
+    await expect(controleAcessoService.registrar({ colaborador_id: 'c1', tipo: 'entrada' })).rejects.toBeDefined();
   });
 });
 
 describe('controleAcessoService.excluir', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes record by id', async () => {
     const eqFn = vi.fn().mockResolvedValue({ error: null });

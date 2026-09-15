@@ -1,5 +1,20 @@
 import { supabase } from '@/integrations/supabase/client';
 import { CalculoResultado } from '@/utils/folhaCalc';
+import type { Tables } from '@/integrations/supabase/database.types';
+
+interface FolhaItemDetalhes {
+  horasExtras?: number;
+  dsr?: number;
+  decimoTerceiro?: number;
+  faixaInss?: string;
+  faixaIrrf?: string;
+  detalheEventos?: Array<{ codigo: string; descricao: string; tipo: 'provento' | 'desconto'; valor: number }>;
+}
+
+type FolhaItemComRelacoes = Tables<'folha_itens'> & {
+  colaborador: Tables<'colaboradores'> | null;
+  folha: Tables<'folhas_pagamento'> | null;
+};
 
 // sha256Hex removido: nenhum selo é mais calculado no navegador. Os hashes de
 // integridade (holerite, ponto, folha) são emitidos e verificados pelo banco.
@@ -34,16 +49,16 @@ export const folhaPagamentoService = {
         throw new Error('Dados da folha não encontrados');
       }
 
-      const folhaHeader = item.folha as any;
-      
-      const { data: emp } = await supabase
-        .from('empresas')
-        .select('*')
-        .eq('id', folhaHeader.empresa_id)
-        .single();
+      const { folha: folhaHeader, colaborador: colab } = item as FolhaItemComRelacoes;
+      if (!folhaHeader || !colab) {
+        throw new Error('Dados da folha não encontrados');
+      }
 
-      const colab = item.colaborador as any;
-      const detalhes = item.detalhes as any;
+      const { data: emp } = folhaHeader.empresa_id
+        ? await supabase.from('empresas').select('*').eq('id', folhaHeader.empresa_id).single()
+        : { data: null };
+
+      const detalhes = item.detalhes as FolhaItemDetalhes | null;
 
       const { data: holerite } = await supabase
         .from('holerites')
@@ -52,7 +67,7 @@ export const folhaPagamentoService = {
         .eq('colaborador_id', colaboradorId)
         .maybeSingle();
 
-      return ({
+      return {
         proventos: item.total_proventos || 0,
         descontos: item.total_descontos || 0,
         liquido: item.total_liquido || 0,
@@ -74,8 +89,8 @@ export const folhaPagamentoService = {
         cnpj: emp?.cnpj || 'N/A',
         assinado: holerite?.assinado || false,
         hashAssinatura: holerite?.hash_assinatura ?? undefined,
-        dataAssinatura: holerite?.data_assinatura ?? undefined
-      });
+        dataAssinatura: holerite?.data_assinatura ?? undefined,
+      };
     } catch (e) {
       throw new Error(e instanceof Error ? e.message : 'Falha ao gerar holerite', { cause: e });
     }
@@ -95,21 +110,40 @@ export const folhaPagamentoService = {
     try {
       const { data: colab } = await supabase
         .from('colaboradores')
-        .select('nome_completo, cpf, cargo')
+        .select('nome_completo, cpf, cargo, departamento, salario_base')
         .eq('id', colaboradorId)
         .single();
 
+      // BUG corrigido (E51-026, parcial): faltavam `colaborador_departamento`
+      // e `salario_base` (NOT NULL em `holerites`) e o `onConflict` da
+      // constraint `UNIQUE(folha_id, colaborador_id)` — sem ele, o upsert só
+      // colide pela PK `id` (nunca enviada aqui), então toda chamada tentava
+      // um INSERT novo e violava o NOT NULL antes mesmo de checar duplicidade.
+      // Nada no código-fonte (calcular-folha, fechar-folha) cria a linha de
+      // `holerites` antes disso — este era, na prática, o único caminho de
+      // escrita nessa tabela. O upsert aqui só preenche os campos mínimos
+      // (dados cadastrais do colaborador); os totais financeiros
+      // (proventos/descontos/líquido) continuam sem ser populados por
+      // nenhum fluxo, o que faz a checagem de integridade em
+      // `fechar-folha`/`folhaIntegrity.ts` (que soma `holerites` e compara
+      // com `folha_itens`) ficar sempre zerada — gap arquitetural real, fora
+      // do escopo de uma limpeza de tipos.
       const { data, error } = await supabase
         .from('holerites')
-        .upsert({
-          folha_id: folhaId,
-          colaborador_id: colaboradorId,
-          colaborador_nome: colab?.nome_completo || 'N/A',
-          colaborador_cpf: colab?.cpf || 'N/A',
-          colaborador_cargo: colab?.cargo || 'N/A',
-          data_assinatura: new Date().toISOString(),
-          assinado: true
-        } as any)
+        .upsert(
+          {
+            folha_id: folhaId,
+            colaborador_id: colaboradorId,
+            colaborador_nome: colab?.nome_completo || 'N/A',
+            colaborador_cpf: colab?.cpf || 'N/A',
+            colaborador_cargo: colab?.cargo || 'N/A',
+            colaborador_departamento: colab?.departamento || 'N/A',
+            salario_base: colab?.salario_base ?? 0,
+            data_assinatura: new Date().toISOString(),
+            assinado: true,
+          },
+          { onConflict: 'folha_id,colaborador_id' }
+        )
         .select('hash_assinatura')
         .single();
 
@@ -125,7 +159,6 @@ export const folhaPagamentoService = {
     }
   },
 
-
   /**
    * Finaliza e fecha a folha de competência.
    *
@@ -138,16 +171,14 @@ export const folhaPagamentoService = {
    */
   fecharFolha: async (
     folhaId: string,
-    opts?: { observacoes?: string },
+    opts?: { observacoes?: string }
   ): Promise<{ success: boolean; version: number; audit_hash: string; warnings: string[] }> => {
     try {
       const { validadorFolha } = await import('@/utils/folha/validadorFolha');
       const alertas = await validadorFolha.validarFolha(folhaId);
       const alertasCriticos = alertas.filter((a) => a.gravidade === 'alta');
       if (alertasCriticos.length > 0) {
-        throw new Error(
-          `Não é possível fechar a folha: existem ${alertasCriticos.length} alertas críticos.`,
-        );
+        throw new Error(`Não é possível fechar a folha: existem ${alertasCriticos.length} alertas críticos.`);
       }
 
       // 1) Snapshot de version + empresa_id (necessário para optimistic lock)
@@ -174,9 +205,10 @@ export const folhaPagamentoService = {
       });
 
       if (error) {
-        const msg = (error as { message?: string })?.message
-          ?? (data as { error?: { message?: string } })?.error?.message
-          ?? 'Falha ao fechar folha';
+        const msg =
+          (error as { message?: string })?.message ??
+          (data as { error?: { message?: string } })?.error?.message ??
+          'Falha ao fechar folha';
         throw new Error(msg);
       }
 
@@ -205,7 +237,7 @@ export const folhaPagamentoService = {
   reabrirFolha: async (
     folhaId: string,
     motivo: string,
-    opts?: { override_esocial?: boolean },
+    opts?: { override_esocial?: boolean }
   ): Promise<{ success: boolean; version: number; audit_hash: string }> => {
     try {
       const { data: folha, error: folhaErr } = await supabase
@@ -231,9 +263,10 @@ export const folhaPagamentoService = {
       });
 
       if (error) {
-        const msg = (error as { message?: string })?.message
-          ?? (data as { error?: { message?: string } })?.error?.message
-          ?? 'Falha ao reabrir folha';
+        const msg =
+          (error as { message?: string })?.message ??
+          (data as { error?: { message?: string } })?.error?.message ??
+          'Falha ao reabrir folha';
         throw new Error(msg);
       }
 
@@ -252,9 +285,7 @@ export const folhaPagamentoService = {
   },
 
   emitirPDF: async (folhaId: string): Promise<string> => {
-    
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 1500));
     return `https://storage.lovable.dev/holerites/holerite_${folhaId}.pdf`;
-  
-  }
+  },
 };

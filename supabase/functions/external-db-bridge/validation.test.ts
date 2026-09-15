@@ -16,7 +16,13 @@ import {
   FILTER_OPS,
   NOT_EXTRA_OPS,
 } from "./validation.ts";
-import { requiresAuthenticatedBridgeSession, requiresCallerScopedExternalClient } from './access.ts';
+import {
+  PUBLIC_RPCS,
+  isPrivilegedSupabaseKey,
+  requiresAuthenticatedBridgeSession,
+  requiresCallerScopedExternalClient,
+  resolveExternalPublicKey,
+} from './access.ts';
 import { BodySchema, ON_CONFLICT_COLUMNS_RE, toUpsertOptions } from "./request-schema.ts";
 
 let CASES = 0;
@@ -58,7 +64,7 @@ Deno.test("denylist: tabelas sensíveis presentes", () => {
   const mustDeny = [
     "user_empresas", "user_roles", "secrets", "vault", "ip_whitelist", "blocked_ips",
     "rate_limit_config", "rate_limit_logs", "login_attempts", "login_lockouts",
-    "login_rate_limits", "password_policies", "security_alerts", "audit_log",
+    "login_rate_limits", "password_policies", "security_alerts", "audit_log", "audit_log_unified",
     "geo_blocking_config", "geo_allowed_countries", "govbr_auth_state",
     "pii_access_logs", "pii_access_alerts",
   ];
@@ -152,7 +158,12 @@ Deno.test("operadores: allowlist", () => {
 // 8. RPC allowlist — só listadas passam; nomes sensíveis/injeção fora
 // ---------------------------------------------------------------------------
 Deno.test("rpc allowlist", () => {
-  for (const r of ["has_role","is_admin","admin_set_user_role","admin_associar_usuario_empresa","get_my_user_empresas","set_own_default_empresa","assinar_desligamento","get_admissao_por_token","registrar_batida_ponto"]) ok(RPC_ALLOWLIST.has(r), `rpc permitida: ${r}`);
+  for (const r of [
+    "has_role", "is_admin", "admin_set_user_role", "admin_associar_usuario_empresa",
+    "get_my_user_empresas", "set_own_default_empresa", "assinar_desligamento",
+    "get_admissao_por_token", "registrar_batida_ponto", "log_frontend_error",
+    "get_security_alerts_summary", "pcs_gerar_grades", "sst_dashboard_sla",
+  ]) ok(RPC_ALLOWLIST.has(r), `rpc permitida: ${r}`);
   for (const r of [
     "pg_sleep","drop_table","exec","delete_all_users","'; DROP","set_config","pg_read_file","dblink",
     "record_failed_login","reset_login_attempts","check_rate_limit","check_brute_force",
@@ -160,13 +171,30 @@ Deno.test("rpc allowlist", () => {
   ]) ok(!RPC_ALLOWLIST.has(r), `rpc proibida: ${r}`);
 });
 
-Deno.test("bridge auth: apenas RPC pública explícita dispensa sessão", () => {
+Deno.test("bridge auth: apenas RPCs públicas por token dispensam sessão", () => {
   for (const action of ["select", "insert", "update", "delete", "upsert"]) {
     ok(requiresAuthenticatedBridgeSession(action), `${action} deve exigir sessão`);
   }
   ok(requiresAuthenticatedBridgeSession("rpc", "set_own_default_empresa"), "RPC protegida exige sessão");
   ok(requiresAuthenticatedBridgeSession("rpc"), "RPC sem nome exige sessão");
-  ok(!requiresAuthenticatedBridgeSession("rpc", "get_admissao_por_token"), "única RPC pública é permitida sem sessão");
+  const expectedPublic = [
+    "get_admissao_por_token",
+    "contrato_consultar_por_token",
+    "contrato_preview_url_por_token",
+    "contrato_assinar_por_token",
+    "contrato_verificar_autenticidade_v2",
+    "medida_consultar_por_token",
+    "medida_registrar_ciencia_publica",
+  ];
+  ok(PUBLIC_RPCS.size === expectedPublic.length, "conjunto público deve permanecer mínimo e explícito");
+  for (const rpc of expectedPublic) {
+    ok(PUBLIC_RPCS.has(rpc), `RPC pública esperada: ${rpc}`);
+    ok(RPC_ALLOWLIST.has(rpc), `RPC pública também deve estar na allowlist: ${rpc}`);
+    ok(!requiresAuthenticatedBridgeSession("rpc", rpc), `${rpc} é permitida sem sessão`);
+  }
+  for (const rpc of ["resolve_security_alert", "contrato_revogar_token", "medida_aprovar"]) {
+    ok(requiresAuthenticatedBridgeSession("rpc", rpc), `${rpc} continua protegida por sessão`);
+  }
 });
 
 Deno.test("bridge data client: operações genéricas nunca usam credencial privilegiada", () => {
@@ -174,7 +202,43 @@ Deno.test("bridge data client: operações genéricas nunca usam credencial priv
     ok(requiresCallerScopedExternalClient(action), `${action} deve usar o JWT do chamador no banco externo`);
   }
   ok(requiresCallerScopedExternalClient("rpc", "set_own_default_empresa"), "RPC protegida deve usar o JWT do chamador");
-  ok(!requiresCallerScopedExternalClient("rpc", "get_admissao_por_token"), "a única RPC pública mantém o contrato sem sessão");
+  for (const rpc of PUBLIC_RPCS) {
+    ok(!requiresCallerScopedExternalClient("rpc", rpc), `${rpc} usa cliente público de menor privilégio`);
+  }
+});
+
+Deno.test("bridge public key: nunca usa service_role em RPC anônima", () => {
+  const servicePayload = btoa(JSON.stringify({ role: "service_role" }))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+  const serviceJwt = `header.${servicePayload}.signature`;
+  const anonPayload = btoa(JSON.stringify({ role: "anon" }))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+  const anonJwt = `header.${anonPayload}.signature`;
+
+  ok(isPrivilegedSupabaseKey("sb_secret_example"), "secret key moderna é privilegiada");
+  ok(isPrivilegedSupabaseKey(serviceJwt), "JWT service_role é privilegiado");
+  ok(!isPrivilegedSupabaseKey("sb_publishable_example"), "publishable key moderna não é privilegiada");
+  ok(!isPrivilegedSupabaseKey(anonJwt), "JWT anon não é privilegiado");
+  ok(resolveExternalPublicKey({
+    configuredPublicKey: "sb_publishable_configured",
+    externalKey: serviceJwt,
+    incomingApiKey: "sb_publishable_browser",
+    sameProject: true,
+  }) === "sb_publishable_configured", "chave pública configurada tem precedência");
+  ok(resolveExternalPublicKey({
+    externalKey: serviceJwt,
+    incomingApiKey: "sb_publishable_browser",
+    sameProject: true,
+  }) === "sb_publishable_browser", "apikey pública do mesmo projeto é aceita");
+  ok(resolveExternalPublicKey({
+    externalKey: serviceJwt,
+    incomingApiKey: "sb_publishable_other_project",
+    sameProject: false,
+  }) === null, "chave de outro projeto e service_role falham fechadas");
 });
 
 // ---------------------------------------------------------------------------
@@ -211,9 +275,9 @@ Deno.test("fuzz: payloads combinatórios de injeção sempre rejeitados", () => 
 // ---------------------------------------------------------------------------
 Deno.test("listas: sanidade e disjunção", () => {
   ok(TABLE_DENYLIST.size >= 15, "denylist com tamanho esperado");
-  // A superfície foi deliberadamente reduzida: rotinas de lockout, IP,
-  // rate-limit e manutenção não podem atravessar o bridge público.
-  ok(RPC_ALLOWLIST.size >= 15 && RPC_ALLOWLIST.size <= 25, "rpc allowlist com tamanho esperado");
+  // A lista cobre o contrato de produção do frontend, mas continua fechada:
+  // rotinas de lockout, IP, rate-limit e manutenção não atravessam o bridge.
+  ok(RPC_ALLOWLIST.size >= 75 && RPC_ALLOWLIST.size <= 100, "rpc allowlist com tamanho esperado");
   ok(ADMIN_ONLY_WRITE_TABLES.has("empresas"), "empresas exige escopo administrativo para escrita");
   // nenhuma tabela de negócio (tenant-scoped) pode estar simultaneamente na denylist
 });

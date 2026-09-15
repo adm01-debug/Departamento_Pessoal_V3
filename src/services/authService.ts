@@ -1,6 +1,7 @@
 // V25: Auth Service - Result Pattern & Enhanced Security
 import { supabase } from '@/integrations/supabase/client';
 import { validatePasswordFull } from '@/utils/passwordPolicy';
+import type { Session } from '@supabase/supabase-js';
 
 export const authService = {
   /**
@@ -14,7 +15,7 @@ export const authService = {
       if (error) {
         throw new Error(error.message || 'Falha ao enviar email de recuperação');
       }
-      return ({ success: true });
+      return { success: true };
     } catch (e) {
       throw new Error(e instanceof Error ? e.message : 'Erro inesperado no servidor de autenticação', { cause: e });
     }
@@ -33,7 +34,7 @@ export const authService = {
       if (error) {
         throw new Error(error.message || 'Falha ao atualizar senha');
       }
-      return ({ success: true, warnings: pwCheck.warnings });
+      return { success: true, warnings: pwCheck.warnings };
     } catch (e) {
       throw new Error(e instanceof Error ? e.message : 'Erro inesperado ao redefinir senha', { cause: e });
     }
@@ -42,15 +43,15 @@ export const authService = {
   /**
    * Verifica a sessão atual
    */
-  async getSession(): Promise<any> {
+  async getSession(): Promise<Session | null> {
     try {
       const { data, error } = await supabase.auth.getSession();
       if (error) throw error;
-      return (data.session);
+      return data.session;
     } catch (e) {
       throw new Error('Sessão inválida ou expirada', { cause: e });
     }
-  }
+  },
 };
 
 export default authService;

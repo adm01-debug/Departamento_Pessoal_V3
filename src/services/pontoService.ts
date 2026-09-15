@@ -3,6 +3,7 @@ import { pontoMonitorService } from './pontoMonitorService';
 import CryptoJS from 'crypto-js';
 import { format } from 'date-fns';
 import { formatDateLocalISO } from '@/utils/dateLocal';
+import type { Tables, Json } from '@/integrations/supabase/database.types';
 
 function getDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6371e3;
@@ -11,42 +12,38 @@ function getDistance(lat1: number, lon1: number, lat2: number, lon2: number): nu
   const Δφ = ((lat2 - lat1) * Math.PI) / 180;
   const Δλ = ((lon2 - lon1) * Math.PI) / 180;
 
-  const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-    Math.cos(φ1) * Math.cos(φ2) *
-    Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+  const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
   return R * c;
 }
 
 export const pontoService = {
-  async getSettings(empresaId: string): Promise<any | null> {
-    
+  async getSettings(empresaId: string): Promise<Tables<'configuracoes_ponto'> | null> {
     const { data, error } = await supabase
       .from('configuracoes_ponto')
       .select('*')
       .eq('empresa_id', empresaId)
       .maybeSingle();
-    
+
     if (error) throw error;
     return data;
-  
   },
 
   async registrar(
-    tipo: 'entrada' | 'saida_almoco' | 'retorno_almoco' | 'saida', 
+    tipo: 'entrada' | 'saida_almoco' | 'retorno_almoco' | 'saida',
     colaboradorId: string,
     options?: {
       latitude?: number;
       longitude?: number;
       precisao?: number;
       dispositivoId?: string;
-      metadata?: Record<string, any>;
+      metadata?: Json;
       foto_biometria_url?: string | null;
     }
-  ): Promise<any> {
+  ): Promise<Tables<'batidas_ponto'>> {
     if (!colaboradorId) throw new Error('Colaborador é obrigatório para registrar ponto.');
-    
+
     try {
       const now = new Date();
       const data = format(now, 'yyyy-MM-dd');
@@ -56,7 +53,7 @@ export const pontoService = {
         entrada: 'entrada',
         saida_almoco: 'saida',
         retorno_almoco: 'entrada',
-        saida: 'saida'
+        saida: 'saida',
       };
       const tipoNormalizado = tipoMap[tipo] || 'entrada';
 
@@ -68,20 +65,16 @@ export const pontoService = {
 
       if (colabError) throw colabError;
       if (!colab) throw new Error('Colaborador não encontrado.');
+      if (!colab.empresa_id) throw new Error('Colaborador sem empresa associada.');
 
-      const settingsRes = await this.getSettings(colab.empresa_id || '');
-      const settings = (settingsRes ?? null);
+      const settingsRes = await this.getSettings(colab.empresa_id);
+      const settings = settingsRes ?? null;
       let dentroRaio = true;
 
       if (settings?.exige_geolocalizacao && colab.locais_trabalho) {
-        const workplace = colab.locais_trabalho as any;
+        const workplace = colab.locais_trabalho as Pick<Tables<'locais_trabalho'>, 'latitude' | 'longitude'>;
         if (workplace.latitude && workplace.longitude && options?.latitude && options?.longitude) {
-          const distance = getDistance(
-            workplace.latitude,
-            workplace.longitude,
-            options.latitude,
-            options.longitude
-          );
+          const distance = getDistance(workplace.latitude, workplace.longitude, options.latitude, options.longitude);
           dentroRaio = distance <= (settings.raio_maximo_metros || 200);
 
           if (!dentroRaio && settings.exige_geolocalizacao) {
@@ -116,9 +109,9 @@ export const pontoService = {
         p_dentro_raio: dentroRaio,
         p_timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         p_hash_integridade: hashIntegridade,
-        p_foto_biometria_url: options?.foto_biometria_url ?? null,
-        p_metadata: options?.metadata ?? null,
-      } as any);
+        p_foto_biometria_url: options?.foto_biometria_url ?? undefined,
+        p_metadata: options?.metadata ?? undefined,
+      });
 
       if (rpcError) {
         const pgCode = (rpcError as { code?: string }).code;
@@ -128,14 +121,13 @@ export const pontoService = {
         throw rpcError;
       }
       if (!batida) throw new Error('Nenhum registro de batida de ponto foi retornado.');
-      return batida;
+      return batida as Tables<'batidas_ponto'>;
     } catch (e) {
       throw new Error(e instanceof Error ? e.message : 'Falha ao registrar ponto', { cause: e });
     }
   },
 
-  async buscarRegistroHoje(colaboradorId: string): Promise<any[]> {
-    
+  async buscarRegistroHoje(colaboradorId: string): Promise<Tables<'batidas_ponto'>[]> {
     const today = format(new Date(), 'yyyy-MM-dd');
     const { data, error } = await supabase
       .from('batidas_ponto')
@@ -145,11 +137,9 @@ export const pontoService = {
       .order('ordem', { ascending: true });
     if (error) throw error;
     return data || [];
-  
   },
 
-  async buscarRegistrosSemana(colaboradorId: string): Promise<any[]> {
-    
+  async buscarRegistrosSemana(colaboradorId: string): Promise<Tables<'registros_ponto'>[]> {
     const weekAgo = new Date();
     weekAgo.setDate(weekAgo.getDate() - 7);
     const { data, error } = await supabase
@@ -160,17 +150,23 @@ export const pontoService = {
       .order('data', { ascending: false });
     if (error) throw error;
     return data || [];
-  
   },
-  
-  async validarBiometria(batidaId: string, colaboradorId: string, fotoBase64: string): Promise<any> {
-    
-    const { data, error } = await supabase.functions.invoke('validar-biometria', {
-      body: { batidaId, colaboradorId, fotoBase64 }
+
+  async validarBiometria(
+    batidaId: string,
+    colaboradorId: string,
+    fotoBase64: string
+  ): Promise<{ valid: boolean; confidence: number; status: string; message?: string }> {
+    const { data, error } = await supabase.functions.invoke<{
+      valid: boolean;
+      confidence: number;
+      status: string;
+      message?: string;
+    }>('validar-biometria', {
+      body: { batidaId, colaboradorId, fotoBase64 },
     });
     if (error) throw error;
+    if (!data) throw new Error('Nenhuma resposta recebida ao validar biometria.');
     return data;
-  
-  }
+  },
 };
-

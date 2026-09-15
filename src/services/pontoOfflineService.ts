@@ -41,6 +41,15 @@ export interface OfflineRegistro {
   dispositivoId: string;
   hash?: string;
   foto_base64?: string | null;
+  has_photo_in_idb?: boolean;
+}
+
+interface OfflineSyncResponse {
+  success: boolean | number;
+  success_count?: number;
+  error_count?: number;
+  errors?: number;
+  details?: { id: string }[];
 }
 
 export const pontoOfflineService = {
@@ -55,7 +64,9 @@ export const pontoOfflineService = {
     });
   },
 
-  generateIntegrityHash: (data: any) => {
+  generateIntegrityHash: (
+    data: Pick<OfflineRegistro, 'empresa_id' | 'colaborador_id' | 'timestamp' | 'tipo' | 'dispositivoId'>
+  ) => {
     const payload = `${data.empresa_id}|${data.colaborador_id}|${data.timestamp}|${data.tipo}|${data.dispositivoId}`;
     return CryptoJS.SHA256(payload).toString();
   },
@@ -72,7 +83,7 @@ export const pontoOfflineService = {
         await db.put('photos', registro.foto_base64, id);
         // Não salvar o base64 no localStorage para economizar espaço
         entryWithId.foto_base64 = null;
-        (entryWithId as any).has_photo_in_idb = true;
+        entryWithId.has_photo_in_idb = true;
       } catch (e) {
         loggerService.error(
           'Falha ao salvar foto no IndexedDB',
@@ -141,7 +152,7 @@ export const pontoOfflineService = {
     const db = await pontoOfflineService.openDB();
     const queueWithPhotos = await Promise.all(
       queue.map(async (item) => {
-        if ((item as any).has_photo_in_idb) {
+        if (item.has_photo_in_idb) {
           const photo = await db.get('photos', item.id);
           return { ...item, foto_base64: photo };
         }
@@ -153,17 +164,17 @@ export const pontoOfflineService = {
     try {
       const { data, error } = (await supabase.functions.invoke('processar-ponto-offline', {
         body: { registros: queueWithPhotos },
-      })) as { data: any; error: any };
+      })) as { data: OfflineSyncResponse; error: { message: string } | null };
 
       if (error) throw error;
 
       if (data.success) {
-        synced = data.success_count || data.success;
-        errors = data.error_count || data.errors;
+        synced = data.success_count || Number(data.success);
+        errors = data.error_count || data.errors || 0;
 
         // Se houver erros específicos de registros, mantemos apenas os que falharam na fila
         if (data.details && data.details.length > 0) {
-          const failedIds = data.details.map((d: any) => d.id);
+          const failedIds = data.details.map((d) => d.id);
           queue.forEach((item) => {
             if (failedIds.includes(item.id)) remaining.push(item);
           });

@@ -5,14 +5,14 @@ class DocumentoService extends BaseService<Documento> {
   constructor() {
     super('documentos', {
       searchColumn: 'nome',
-      defaultOrderBy: 'created_at'
+      defaultOrderBy: 'created_at',
     });
   }
 
   async listar(options: ListOptions = {}): Promise<ListResponse<Documento>> {
     const { filters } = options;
-    const colabId = (filters as any)?.colaborador_id;
-    const empId = (filters as any)?.empresa_id;
+    const colabId = filters?.colaborador_id as string | undefined;
+    const empId = filters?.empresa_id as string | undefined;
     if (!empId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const data = await this.listarDocumentos(empId, colabId);
     return { data, total: data.length };
@@ -32,8 +32,6 @@ class DocumentoService extends BaseService<Documento> {
     if (error) throw error;
     return (data as Documento[]) || [];
   }
-
-
 }
 
 export const documentoService = new DocumentoService();

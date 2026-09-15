@@ -171,7 +171,7 @@ serve(async (req: Request): Promise<Response> => {
     });
 
     const rl = await checkRateLimit(admin, { key: `gerar-medida-pdf:${userId}`, limit: 20, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     // Buscar medida disciplinar
     const { data: medida, error: mErr } = await admin
@@ -185,7 +185,7 @@ serve(async (req: Request): Promise<Response> => {
     // Emitir a advertência/suspensão de outra pessoa é ato de RH. O gate
     // anterior só exigia vínculo com a empresa — o que permitia a um colega
     // gerar (e ler) o documento disciplinar de qualquer um, com CPF e cargo.
-    const authz = await requireRh(admin, userId, medida.empresa_id);
+    const authz = await requireRh(admin, userId, medida.empresa_id, req);
     if (authz.denied) return authz.denied;
 
     // Buscar colaborador e empresa
@@ -229,9 +229,9 @@ serve(async (req: Request): Promise<Response> => {
     await admin.from('audit_log').insert({
       tabela: 'medidas_disciplinares',
       registro_id: medida_id,
-      acao: 'PDF_GERADO',
+      acao: 'EXPORT',
       user_id: userId,
-      dados_novos: { path, hash, empresa_id: medida.empresa_id },
+      dados_novos: { evento: 'PDF_GERADO', path, hash, empresa_id: medida.empresa_id },
     });
 
     return new Response(

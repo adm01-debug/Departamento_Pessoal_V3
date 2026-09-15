@@ -58,7 +58,7 @@ const MOCK_ADMISSOES = [
     nome: 'Carlos Ferreira',
     cargo: 'Engenheiro de Software',
     departamento: 'TI',
-    etapa: 'solicitacao',
+    etapa: 'solicitacao' as const,
     data_prevista: '2026-08-01',
     salario_proposto: 8000,
   },
@@ -67,7 +67,7 @@ const MOCK_ADMISSOES = [
     nome: 'Ana Lima',
     cargo: 'Designer',
     departamento: 'Marketing',
-    etapa: 'documentos',
+    etapa: 'documentos' as const,
     data_prevista: null,
     salario_proposto: null,
   },
@@ -91,9 +91,11 @@ describe('AdmissoesKanban', () => {
 
   it('renders all 8 column labels', () => {
     const { container } = render(<AdmissoesKanban admissoes={[]} />);
-    ['Solicitação', 'Documentos', 'Validação', 'Pendente', 'Exame', 'Contrato', 'Assinatura', 'eSocial'].forEach(label => {
-      expect(container.textContent).toContain(label);
-    });
+    ['Solicitação', 'Documentos', 'Validação', 'Pendente', 'Exame', 'Contrato', 'Assinatura', 'eSocial'].forEach(
+      (label) => {
+        expect(container.textContent).toContain(label);
+      }
+    );
   });
 
   it('renders Solte aqui empty placeholder', () => {

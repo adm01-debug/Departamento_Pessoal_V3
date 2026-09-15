@@ -3,7 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
 import { z } from 'https://esm.sh/zod@3.23.8';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
-import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
+import { enforceOrigin, getCorsHeaders, handlePreflight, parseJsonBody } from '../_shared/contract.ts';
 import { safeFetch, safeGet } from '../_shared/safe-fetch.ts';
 
 const GOVBR_BASE_URL = Deno.env.get('GOVBR_BASE_URL') ?? 'https://sso.acesso.gov.br';
@@ -12,7 +12,7 @@ const GOVBR_TOKEN_URL = `${GOVBR_BASE_URL}/token`;
 const GOVBR_USERINFO_URL = `${GOVBR_BASE_URL}/userinfo`;
 
 const DEFAULT_ALLOWED_REDIRECT_ORIGINS = [
-  'https://unified-harmony-hub.lovable.app',
+  'https://departamento-pessoal-v3.vercel.app',
 ];
 
 function isAllowedRedirectUri(uri: string): boolean {
@@ -49,16 +49,19 @@ const BodySchema = z.discriminatedUnion('action', [
   }),
 ]);
 
-function json(body: unknown, status = 200): Response {
+function json(req: Request, body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
   });
 }
 
 serve(async (req: Request): Promise<Response> => {
-  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders });
-  if (req.method !== 'POST') return json({ success: false, error: 'Method not allowed' }, 405);
+  const preflight = handlePreflight(req);
+  if (preflight) return preflight;
+  const forbiddenOrigin = enforceOrigin(req);
+  if (forbiddenOrigin) return forbiddenOrigin;
+  if (req.method !== 'POST') return json(req, { success: false, error: 'Method not allowed' }, 405);
 
   try {
     const csrf = await verifyCsrf(req.clone());
@@ -71,7 +74,7 @@ serve(async (req: Request): Promise<Response> => {
     // JWT auth required for both actions
     const authHeader = req.headers.get('Authorization') ?? '';
     if (!authHeader.startsWith('Bearer ')) {
-      return json({ success: false, error: 'Autenticação obrigatória' }, 401);
+      return json(req, { success: false, error: 'Autenticação obrigatória' }, 401);
     }
 
     const userClient = createClient(supabaseUrl, anonKey, {
@@ -80,7 +83,7 @@ serve(async (req: Request): Promise<Response> => {
     });
     const { data: userData, error: userErr } = await userClient.auth.getUser();
     if (userErr || !userData?.user) {
-      return json({ success: false, error: 'Sessão inválida' }, 401);
+      return json(req, { success: false, error: 'Sessão inválida' }, 401);
     }
     const userId = userData.user.id;
 
@@ -91,26 +94,25 @@ serve(async (req: Request): Promise<Response> => {
     // Rate limit: 5 auth attempts per minute per user
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(supabase, { key: `govbr:${userId}`, limit: 5, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
-    let raw: unknown;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    raw = _pb;
+    const raw = _pb;
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) {
-      return json({ success: false, error: 'Payload inválido' }, 422);
+      return json(req, { success: false, error: 'Payload inválido' }, 422);
     }
     const body = parsed.data;
 
     if (body.action === 'get_auth_url') {
       if (!isAllowedRedirectUri(body.redirectUri)) {
-        return json({ success: false, error: 'URI de redirecionamento não permitida' }, 400);
+        return json(req, { success: false, error: 'URI de redirecionamento não permitida' }, 400);
       }
 
       const clientId = Deno.env.get('GOVBR_CLIENT_ID');
       if (!clientId) {
-        return json({ success: false, error: 'Gov.br não configurado' }, 503);
+        return json(req, { success: false, error: 'Gov.br não configurado' }, 503);
       }
 
       const newState = crypto.randomUUID();
@@ -133,7 +135,7 @@ serve(async (req: Request): Promise<Response> => {
         state: newState,
       });
 
-      return json({ success: true, url: `${GOVBR_AUTH_URL}?${params.toString()}` });
+      return json(req, { success: true, url: `${GOVBR_AUTH_URL}?${params.toString()}` });
     }
 
     if (body.action === 'callback') {
@@ -145,13 +147,13 @@ serve(async (req: Request): Promise<Response> => {
         .maybeSingle();
 
       if (!authState) {
-        return json({ success: false, error: 'Estado de autenticação inválido ou expirado' }, 400);
+        return json(req, { success: false, error: 'Estado de autenticação inválido ou expirado' }, 400);
       }
 
       // Check expiry
       if (authState.expires_at && new Date(authState.expires_at) < new Date()) {
         await supabase.from('govbr_auth_state').delete().eq('id', authState.id);
-        return json({ success: false, error: 'Estado expirado' }, 400);
+        return json(req, { success: false, error: 'Estado expirado' }, 400);
       }
 
       const clientId = Deno.env.get('GOVBR_CLIENT_ID') ?? '';
@@ -172,7 +174,7 @@ serve(async (req: Request): Promise<Response> => {
       });
 
       if (!tokenResponse.ok) {
-        return json({ success: false, error: 'Falha na troca de token com Gov.br' }, 502);
+        return json(req, { success: false, error: 'Falha na troca de token com Gov.br' }, 502);
       }
       const tokens = await tokenResponse.json();
 
@@ -183,7 +185,7 @@ serve(async (req: Request): Promise<Response> => {
       });
 
       if (!userResponse.ok) {
-        return json({ success: false, error: 'Falha ao obter dados do Gov.br' }, 502);
+        return json(req, { success: false, error: 'Falha ao obter dados do Gov.br' }, 502);
       }
       const userInfo = await userResponse.json();
 
@@ -196,12 +198,12 @@ serve(async (req: Request): Promise<Response> => {
 
       await supabase.from('govbr_auth_state').delete().eq('id', authState.id);
 
-      return json({ success: true, nivel: userInfo.nivel || 'Bronze' });
+      return json(req, { success: true, nivel: userInfo.nivel || 'Bronze' });
     }
 
-    return json({ success: false, error: 'Ação inválida' }, 400);
+    return json(req, { success: false, error: 'Ação inválida' }, 400);
   } catch (error: unknown) {
     try { captureException(error, { function: 'auth-gov-br' }); } catch { /* noop */ }
-    return json({ success: false, error: 'Erro interno' }, 500);
+    return json(req, { success: false, error: 'Erro interno' }, 500);
   }
 });

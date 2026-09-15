@@ -1,6 +1,13 @@
 import { supabase } from '@/integrations/supabase/client';
 import { auditLogger } from '@/utils/auditLogger';
 import { Database } from '@/integrations/supabase/types';
+import type { Tables } from '@/integrations/supabase/database.types';
+import {
+  claimEventoAdmissaoESocial,
+  completeEventoAdmissaoESocial,
+  enviarEvento,
+  failEventoAdmissaoESocial,
+} from './esocialService';
 
 // Escapa HTML para prevenir XSS em dados vindos do usuário/candidato.
 const esc = (v: unknown): string => {
@@ -18,7 +25,7 @@ const secureToken = (len = 24): string => {
   const bytes = new Uint8Array(len);
   crypto.getRandomValues(bytes);
   const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  return Array.from(bytes, b => alphabet[b % alphabet.length]).join('');
+  return Array.from(bytes, (b) => alphabet[b % alphabet.length]).join('');
 };
 
 type Empresa = Database['public']['Tables']['empresas']['Row'];
@@ -26,7 +33,6 @@ type Admissao = Database['public']['Tables']['admissoes']['Row'];
 
 export const contratacaoService = {
   async gerarTemplateContrato(admissaoId: string): Promise<string> {
-    
     const { data: admissao, error } = await supabase
       .from('admissoes')
       .select('*, empresa:empresas!admissoes_empresa_id_fkey(*)')
@@ -55,7 +61,7 @@ export const contratacaoService = {
 
           <p><strong>EMPREGADO:</strong> ${esc(admissao.nome)}<br>
           <strong>CPF:</strong> ${esc(admissao.cpf || '—')}<br>
-          <strong>ENDEREÇO:</strong> ${esc((admissao.metadata as Record<string, any>)?.endereco || 'Residência informada no cadastro')}</p>
+          <strong>ENDEREÇO:</strong> ${esc((admissao.metadata as Record<string, unknown> | null)?.endereco || 'Residência informada no cadastro')}</p>
         </div>
 
         <p>As partes acima qualificadas celebram o presente contrato sob as cláusulas seguintes:</p>
@@ -79,25 +85,56 @@ export const contratacaoService = {
         </div>
       </div>
     `;
-  
   },
 
-  async validarDocumento(admissaoId: string, docType: string, status: 'validado' | 'rejeitado', observacao?: string, empresaId?: string): Promise<void> {
-    const ALLOWED_DOC_TYPES = ['rg', 'cpf', 'ctps', 'titulo', 'reservista', 'comprovante_residencia', 'foto', 'certidao', 'pis', 'cnh'];
-    if (!ALLOWED_DOC_TYPES.includes(docType)) {
-      throw new Error(`Tipo de documento inválido: ${docType}`);
+  async validarDocumento(
+    admissaoId: string,
+    docType: string,
+    status: 'validado' | 'rejeitado',
+    observacao?: string,
+    empresaId?: string
+  ): Promise<void> {
+    // Achado E51-026: a allowlist antiga (rg/cpf/titulo/reservista/
+    // comprovante_residencia/certidao/pis/cnh) não correspondia a nenhuma
+    // coluna `checklist_*` real, nem aos `tipo` que o checklist de admissão
+    // (DetalhesAdmissaoDialog) de fato envia — 4 dos 5 itens do checklist
+    // (documentos pessoais, comprovante de endereço, exame admissional,
+    // contrato assinado) sempre caíam nesse guard e retornavam "Tipo de
+    // documento inválido" antes de tocar o banco; só `ctps` por coincidência
+    // batia com a allowlist antiga E com uma coluna real. Corrigido para os
+    // 5 tipos reais, mapeados explicitamente (sem chave computada + `as any`).
+    const validado = status === 'validado';
+    let checklistUpdate: Partial<Tables<'admissoes'>>;
+    switch (docType) {
+      case 'documentos_pessoais':
+        checklistUpdate = { checklist_documentos_pessoais: validado };
+        break;
+      case 'comprovante_endereco':
+        checklistUpdate = { checklist_comprovante_endereco: validado };
+        break;
+      case 'ctps':
+        checklistUpdate = { checklist_ctps: validado };
+        break;
+      case 'exame_admissional':
+        checklistUpdate = { checklist_exame_admissional: validado };
+        break;
+      case 'contrato_assinado':
+        checklistUpdate = { checklist_contrato_assinado: validado };
+        break;
+      default:
+        throw new Error(`Tipo de documento inválido: ${docType}`);
     }
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     try {
       const { error } = await supabase
         .from('admissoes')
         .update({
-          [`checklist_${docType}`]: status === 'validado',
+          ...checklistUpdate,
           metadata: {
             obs: observacao,
-            last_validation: new Date().toISOString()
-          }
-        } as any)
+            last_validation: new Date().toISOString(),
+          },
+        })
         .eq('id', admissaoId)
         .eq('empresa_id', empresaId);
 
@@ -107,21 +144,21 @@ export const contratacaoService = {
         tabela: 'admissoes',
         registro_id: admissaoId,
         acao: 'UPDATE',
-        dados_novos: { 
-          documento: docType, 
-          status, 
+        empresa_id: empresaId,
+        dados_novos: {
+          documento: docType,
+          status,
           observacao,
-          evento: 'VALIDACAO_DOCUMENTO'
-        }
+          evento: 'VALIDACAO_DOCUMENTO',
+        },
       });
-      return (undefined);
+      return undefined;
     } catch (e) {
       throw new Error('Falha ao validar documento de admissão', { cause: e });
     }
   },
 
-  async enviarLinkCandidato(admissaoId: string, email: string): Promise<any> {
-    
+  async enviarLinkCandidato(admissaoId: string, email: string): Promise<Tables<'admissao_tokens'>> {
     const token = secureToken(24);
     const expiracao = new Date();
     expiracao.setDate(expiracao.getDate() + 7);
@@ -139,16 +176,21 @@ export const contratacaoService = {
 
     if (error) throw error;
     return data;
-  
   },
 
   async enviarWhatsApp(admissaoId: string, telefone: string, token: string): Promise<void> {
     try {
       const baseUrl = window.location.origin;
       const link = `${baseUrl}/contratacao?token=${token}`;
-      const mensagem = encodeURIComponent(`Olá! 👋 Boas-vindas à nossa equipe!\n\nSeu processo de admissão digital está pronto. Acesse pelo link seguro: ${link}\n\nCódigo de Acesso: *${token}*`);
+      const mensagem = encodeURIComponent(
+        `Olá! 👋 Boas-vindas à nossa equipe!\n\nSeu processo de admissão digital está pronto. Acesse pelo link seguro: ${link}\n\nCódigo de Acesso: *${token}*`
+      );
 
-      const { data: admissao, error: admErr } = await supabase.from('admissoes').select('empresa_id').eq('id', admissaoId).maybeSingle();
+      const { data: admissao, error: admErr } = await supabase
+        .from('admissoes')
+        .select('empresa_id')
+        .eq('id', admissaoId)
+        .maybeSingle();
       if (admErr) throw admErr;
       if (!admissao) throw new Error('Admissão não encontrada — não é possível enviar notificação.');
 
@@ -158,7 +200,7 @@ export const contratacaoService = {
           await whatsappService.sendMessage({
             empresaId: admissao.empresa_id,
             phone: telefone,
-            message: `Olá! 👋 Boas-vindas!\n\nSeu processo de admissão digital está pronto: ${link}\n\nCódigo: *${token}*`
+            message: `Olá! 👋 Boas-vindas!\n\nSeu processo de admissão digital está pronto: ${link}\n\nCódigo: *${token}*`,
           });
         }
       } catch (e) {
@@ -170,9 +212,9 @@ export const contratacaoService = {
         tipo: 'whatsapp',
         canal: 'whatsapp',
         status: 'enviado',
-        mensagem: `Link de contratação enviado via WhatsApp`
+        mensagem: `Link de contratação enviado via WhatsApp`,
       });
-      return (undefined);
+      return undefined;
     } catch (e) {
       throw new Error('Falha ao enviar notificação via WhatsApp', { cause: e });
     }
@@ -180,36 +222,46 @@ export const contratacaoService = {
 
   async transmitirESocial(admissaoId: string, empresaId: string): Promise<boolean> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    let eventoId: string | null = null;
+    let claimToken: string | null = null;
     try {
-      const { data: admissao } = await supabase.from('admissoes').select('empresa_id').eq('id', admissaoId).eq('empresa_id', empresaId).single();
-      if (!admissao) throw new Error('Admissão não encontrada ou sem permissão');
+      const claim = await claimEventoAdmissaoESocial(admissaoId, empresaId);
+      eventoId = claim.eventoId;
+      claimToken = claim.claimToken;
+      if (claim.alreadySent) return true;
+      if (!claimToken) throw new Error('Concessão eSocial exclusiva ausente');
 
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const transmission = await enviarEvento(eventoId, empresaId, claimToken);
+      if (transmission.simulated) {
+        throw new Error('A simulação eSocial não pode concluir uma admissão real');
+      }
+      const receipt = transmission.protocolo || transmission.recibo;
+      if (!receipt) throw new Error('O eSocial não devolveu protocolo ou recibo verificável');
 
-      const { error } = await supabase
-        .from('admissoes')
-        .update({
-          etapa: 'esocial',
-          metadata: { esocial_protocol: `PROTO-${Math.random().toString(36).toUpperCase().slice(0, 10)}` } as any
-        })
-        .eq('id', admissaoId)
-        .eq('empresa_id', empresaId);
-        
-      if (error) throw error;
-      
-      await auditLogger.log({
-        tabela: 'admissoes',
-        registro_id: admissaoId,
-        acao: 'EXECUTE_CALC',
-        dados_novos: { evento: 'TRANSMISSAO_ESOCIAL_S2200', status: 'sucesso' }
-      });
-      
-      return (true);
+      await completeEventoAdmissaoESocial(
+        admissaoId,
+        empresaId,
+        eventoId,
+        claimToken,
+        transmission.protocolo,
+        transmission.recibo ?? null
+      );
+
+      return true;
     } catch (e) {
+      if (eventoId && claimToken) {
+        let recovery: 'failed' | 'already_sent' | 'not_recorded' | null = null;
+        try {
+          recovery = await failEventoAdmissaoESocial(admissaoId, empresaId, eventoId, claimToken);
+        } catch {
+          // A falha de recuperação não deve ocultar a causa da transmissão.
+        }
+        if (recovery === 'already_sent') return true;
+        if (recovery === 'not_recorded') {
+          throw new Error('Falha na transmissão para o eSocial: recuperação não registrada', { cause: e });
+        }
+      }
       throw new Error('Falha na transmissão para o eSocial', { cause: e });
     }
-  }
+  },
 };
-
-
-

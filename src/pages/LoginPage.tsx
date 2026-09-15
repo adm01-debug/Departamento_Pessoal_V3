@@ -19,7 +19,7 @@ import govbrLogo from '@/assets/govbr-logo.svg';
 
 const features = [
   { icon: Users, label: 'Gestão completa de Colaboradores', desc: 'Cadastro, documentos, benefícios e histórico' },
-  { icon: Shield, label: 'eSocial 100% Integrado', desc: 'Envio automático de eventos obrigatórios' },
+  { icon: Shield, label: 'Validação eSocial', desc: 'Validação de eventos; transmissão depende de homologação' },
   { icon: BarChart3, label: 'Relatórios Inteligentes', desc: 'Dashboards com KPIs em tempo real' },
   { icon: FileText, label: 'Folha de Pagamento', desc: 'Cálculos trabalhistas atualizados 2026' },
 ];
