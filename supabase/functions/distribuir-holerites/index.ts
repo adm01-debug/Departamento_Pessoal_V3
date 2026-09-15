@@ -48,12 +48,11 @@ serve(async (req: Request): Promise<Response> => {
   const rlClient = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
   const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
   const rl = await checkRateLimit(rlClient, { key: `distribuir-holerites:${userId}`, limit: 5, windowSec: 60 });
-  if (!rl.allowed) return rateLimitResponse(rl);
+  if (!rl.allowed) return rateLimitResponse(rl, req);
 
-  let body: { folha_id?: string; canais?: string[] };
   const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
   if (_pe) return _pe;
-  body = _pb as typeof body;
+  const body = _pb as { folha_id?: string; canais?: string[] };
 
   const folhaId = String(body.folha_id ?? '').trim();
   const canais = Array.isArray(body.canais) && body.canais.length
@@ -78,21 +77,8 @@ serve(async (req: Request): Promise<Response> => {
 
   // Distribuir holerites dispara e-mail/portal com PII de toda a folha:
   // é ato de RH, não de qualquer pessoa vinculada à empresa.
-  const authz = await requireRh(admin, userId, folha.empresa_id);
+  const authz = await requireRh(admin, userId, folha.empresa_id, req);
   if (authz.denied) return authz.denied;
-
-  // Idempotência transacional — evita distribuições duplicadas em rajada
-  const idemKey = extractIdempotencyKey(req, body);
-  const idem = await beginIdempotency(admin, {
-    endpoint: 'distribuir-holerites',
-    key: idemKey,
-    requestBody: { folha_id: folhaId, canais: [...canais].sort() },
-    empresaId: folha.empresa_id,
-    userId,
-  });
-  if (idem.replay) return idem.replay;
-  if (idem.conflict) return idem.conflict;
-
 
   // Busca holerites da folha
   const { data: holerites, error: hErr } = await admin
@@ -146,6 +132,20 @@ serve(async (req: Request): Promise<Response> => {
     }
   }
 
+  // Claim immediately before the first possible write. Read/validation
+  // failures above therefore remain safely retryable with the same key.
+  const idemKey = extractIdempotencyKey(req, body);
+  const idem = await beginIdempotency(admin, {
+    endpoint: 'distribuir-holerites',
+    key: idemKey,
+    requestBody: { folha_id: folhaId, canais: [...canais].sort() },
+    empresaId: folha.empresa_id,
+    userId,
+    request: req,
+  });
+  if (idem.replay) return idem.replay;
+  if (idem.conflict) return idem.conflict;
+
   if (inserts.length === 0) {
     const replayBody = { ok: true, novos: 0, ja_distribuidos: existentes.size, total: holerites.length };
     await completeIdempotency(admin, idem.id, 200, replayBody);
@@ -195,4 +195,3 @@ serve(async (req: Request): Promise<Response> => {
     return createErrorResponse('Erro interno', 500, 'INTERNAL_SERVER_ERROR');
   }
 });
-

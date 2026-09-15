@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deepChain } from '@/test/deepChain';
-import { contabilidadeService } from '../contabilidadeService';
+import { contabilidadeService, type LancamentoComContas } from '../contabilidadeService';
 
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
@@ -12,7 +12,6 @@ vi.mock('@/utils/dateLocal', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/utils/dateLocal')>()),
   todayLocalISO: () => '2026-07-24',
 }));
-
 
 // select → eq → order → resolvedValue
 function setupSelectEqOrder(data: any[], error: any = null) {
@@ -34,7 +33,9 @@ function setupSelectEq(data: any[], error: any = null) {
 // ─── listLancamentos ──────────────────────────────────────────────────────────
 
 describe('contabilidadeService.listLancamentos', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns lancamentos ordered by data_lancamento desc', async () => {
     const records = [{ id: 'l1', valor: 5000 }];
@@ -58,7 +59,9 @@ describe('contabilidadeService.listLancamentos', () => {
 // ─── listPlanoContas ──────────────────────────────────────────────────────────
 
 describe('contabilidadeService.listPlanoContas', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns plano de contas ordered by codigo', async () => {
     const records = [{ id: 'pc1', codigo: '1.1.01.001', nome: 'Caixa' }];
@@ -82,7 +85,9 @@ describe('contabilidadeService.listPlanoContas', () => {
 // ─── gerarLancamentosFolha ────────────────────────────────────────────────────
 
 describe('contabilidadeService.gerarLancamentosFolha', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   function setupGerarMocks(folha: any, plano: any[], insertError: any = null) {
     // 1st call: folhas_pagamento.select.eq.single
@@ -114,31 +119,31 @@ describe('contabilidadeService.gerarLancamentosFolha', () => {
   it('inserts lancamento with correct debit/credit accounts', async () => {
     const { insertFn } = setupGerarMocks(folha, plano);
     await contabilidadeService.gerarLancamentosFolha('emp-1', 'f1');
-    expect(insertFn).toHaveBeenCalledWith([expect.objectContaining({
-      empresa_id: 'emp-1',
-      folha_id: 'f1',
-      valor: 50000,
-      conta_debito_id: 'pc2',
-      conta_credito_id: 'pc1',
-      origem: 'folha',
-      status: 'pendente',
-    })]);
+    expect(insertFn).toHaveBeenCalledWith([
+      expect.objectContaining({
+        empresa_id: 'emp-1',
+        folha_id: 'f1',
+        valor: 50000,
+        conta_debito_id: 'pc2',
+        conta_credito_id: 'pc1',
+        origem: 'folha',
+        status: 'pendente',
+      }),
+    ]);
   });
 
   it('throws when plano de contas is incomplete', async () => {
     const incompletePlano = [{ id: 'pc1', codigo: '2.1.01.001' }]; // missing 3.1.01.001
     setupGerarMocks(folha, incompletePlano);
-    await expect(
-      contabilidadeService.gerarLancamentosFolha('emp-1', 'f1')
-    ).rejects.toThrow('Plano de contas incompleto');
+    await expect(contabilidadeService.gerarLancamentosFolha('emp-1', 'f1')).rejects.toThrow(
+      'Plano de contas incompleto'
+    );
   });
 
   it('throws wrapped error when insert fails', async () => {
     const { insertFn } = setupGerarMocks(folha, plano, { message: 'insert failed' });
     void insertFn; // referenced via mock
-    await expect(
-      contabilidadeService.gerarLancamentosFolha('emp-1', 'f1')
-    ).rejects.toThrow();
+    await expect(contabilidadeService.gerarLancamentosFolha('emp-1', 'f1')).rejects.toThrow();
   });
 });
 
@@ -146,12 +151,20 @@ describe('contabilidadeService.gerarLancamentosFolha', () => {
 
 describe('contabilidadeService.exportarSPED', () => {
   let listSpy: ReturnType<typeof vi.spyOn>;
-  afterEach(() => { listSpy?.mockRestore(); });
+  afterEach(() => {
+    listSpy?.mockRestore();
+  });
 
   it('generates SPED file with header and footer', async () => {
     const records = [
-      { id: 'l1', data_lancamento: '2026-07-01', valor: 1000, conta_debito: { codigo: '3.1' }, conta_credito: { codigo: '2.1' } },
-    ];
+      {
+        id: 'l1',
+        data_lancamento: '2026-07-01',
+        valor: 1000,
+        conta_debito: { codigo: '3.1' },
+        conta_credito: { codigo: '2.1' },
+      },
+    ] as unknown as LancamentoComContas[];
     listSpy = vi.spyOn(contabilidadeService, 'listLancamentos').mockResolvedValue(records);
     const sped = await contabilidadeService.exportarSPED('emp-1');
     expect(sped).toContain('|0000|LECD|');

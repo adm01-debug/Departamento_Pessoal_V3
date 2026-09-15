@@ -4,10 +4,13 @@ import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const {
-  mockListarBatidas, mockRegistrarBatida,
-  mockListarFaltas, mockListarFaltasColaborador,
+  mockListarBatidas,
+  mockRegistrarBatida,
+  mockListarFaltas,
+  mockListarFaltasColaborador,
   mockListarEpis,
-  mockToastSuccess, mockToastError,
+  mockToastSuccess,
+  mockToastError,
 } = vi.hoisted(() => ({
   mockListarBatidas: vi.fn(),
   mockRegistrarBatida: vi.fn(),
@@ -19,11 +22,21 @@ const {
 }));
 
 vi.mock('@/services/batidasPontoService', () => ({
-  batidasPontoService: { listar: mockListarBatidas, listarPorData: vi.fn().mockResolvedValue([]), registrar: mockRegistrarBatida },
+  batidasPontoService: {
+    listar: mockListarBatidas,
+    listarPorData: vi.fn().mockResolvedValue([]),
+    registrar: mockRegistrarBatida,
+  },
 }));
 
 vi.mock('@/services/faltasService', () => ({
-  faltasService: { listar: mockListarFaltas, buscarPorColaborador: mockListarFaltasColaborador, criar: vi.fn(), atualizar: vi.fn(), excluir: vi.fn() },
+  faltasService: {
+    listar: mockListarFaltas,
+    buscarPorColaborador: mockListarFaltasColaborador,
+    criar: vi.fn(),
+    atualizar: vi.fn(),
+    excluir: vi.fn(),
+  },
 }));
 
 vi.mock('@/services/medidasDisciplinaresService', () => ({
@@ -36,11 +49,21 @@ vi.mock('@/services/episService', () => ({
 }));
 
 vi.mock('@/services/jornadaHorariosService', () => ({
-  jornadaHorariosService: { listar: vi.fn().mockResolvedValue([]), criar: vi.fn(), atualizar: vi.fn(), excluir: vi.fn() },
+  jornadaHorariosService: {
+    listar: vi.fn().mockResolvedValue([]),
+    criar: vi.fn(),
+    atualizar: vi.fn(),
+    excluir: vi.fn(),
+  },
 }));
 
 vi.mock('@/services/bancoHorasConfigService', () => ({
-  bancoHorasConfigService: { listar: vi.fn().mockResolvedValue([]), criar: vi.fn(), atualizar: vi.fn(), excluir: vi.fn() },
+  bancoHorasConfigService: {
+    listar: vi.fn().mockResolvedValue([]),
+    criar: vi.fn(),
+    atualizar: vi.fn(),
+    excluir: vi.fn(),
+  },
 }));
 
 vi.mock('@/hooks/useEmpresas', () => ({
@@ -55,12 +78,7 @@ vi.mock('sonner', () => ({
   toast: { success: mockToastSuccess, error: mockToastError },
 }));
 
-import {
-  useBatidasPonto,
-  useRegistrarBatida,
-  useFaltas,
-  useFaltasColaborador,
-} from '../useNovasTabelas';
+import { useBatidasPonto, useRegistrarBatida, useFaltas, useFaltasColaborador } from '../useNovasTabelas';
 
 function wrapper({ children }: { children: React.ReactNode }) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
@@ -102,7 +120,13 @@ describe('useRegistrarBatida', () => {
     const { result } = renderHook(() => useRegistrarBatida(), { wrapper });
 
     await act(async () => {
-      await result.current.mutateAsync({ tipo: 'entrada', colaborador_id: 'col-1' });
+      await result.current.mutateAsync({
+        tipo: 'entrada',
+        colaborador_id: 'col-1',
+        data: '2026-01-01',
+        hora: '08:00',
+        ordem: 1,
+      });
     });
 
     expect(mockRegistrarBatida).toHaveBeenCalledWith(expect.objectContaining({ tipo: 'entrada' }));

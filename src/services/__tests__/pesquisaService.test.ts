@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deepChain } from '@/test/deepChain';
 import { makeChain } from '@/test/chain';
 import { pesquisaService } from '../pesquisaService';
+import type { Insertable } from '@/integrations/supabase/database.types';
 
 const EMPRESA_ID = 'test-empresa-id';
 
@@ -45,7 +46,12 @@ function setupUpdateChain(data: any, error: any = null) {
 
 function setupDeleteChain(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  const __delChain = {
+    then: (r: any) => Promise.resolve({ error }).then(r),
+    catch: (r: any) => Promise.resolve({ error }).catch(r),
+    finally: (r: any) => Promise.resolve({ error }).finally(r),
+    eq: eqFn,
+  };
   eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
@@ -72,7 +78,9 @@ function setupEqChain(data: any[], error: any = null) {
 // ─── listar ───────────────────────────────────────────────────────────────────
 
 describe('pesquisaService.listar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns pesquisas without empresa filter', async () => {
     const records = [{ id: 'p1', titulo: 'Clima Org' }];
@@ -100,7 +108,9 @@ describe('pesquisaService.listar', () => {
 // ─── criar ────────────────────────────────────────────────────────────────────
 
 describe('pesquisaService.criar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new pesquisa', async () => {
     const created = { id: 'p-new', titulo: 'NPS' };
@@ -112,14 +122,16 @@ describe('pesquisaService.criar', () => {
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(pesquisaService.criar({})).rejects.toThrow();
+    await expect(pesquisaService.criar({} as Insertable<'pesquisas'>)).rejects.toThrow();
   });
 });
 
 // ─── atualizar ────────────────────────────────────────────────────────────────
 
 describe('pesquisaService.atualizar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates and returns pesquisa', async () => {
     const updated = { id: 'p1', status: 'publicada' };
@@ -139,7 +151,9 @@ describe('pesquisaService.atualizar', () => {
 // ─── excluir ──────────────────────────────────────────────────────────────────
 
 describe('pesquisaService.excluir', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes pesquisa by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();
@@ -152,7 +166,9 @@ describe('pesquisaService.excluir', () => {
 // ─── listarPerguntas ──────────────────────────────────────────────────────────
 
 describe('pesquisaService.listarPerguntas', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns perguntas for given pesquisaId', async () => {
     const records = [{ id: 'q1', texto: 'Como você avalia?' }];
@@ -176,36 +192,38 @@ describe('pesquisaService.listarPerguntas', () => {
 // ─── criarPergunta ────────────────────────────────────────────────────────────
 
 describe('pesquisaService.criarPergunta', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new pergunta', async () => {
     const created = { id: 'q-new', texto: 'Nova pergunta' };
     const { insertFn } = setupInsertChain(created);
-    const result = await pesquisaService.criarPergunta({ texto: 'Nova pergunta' });
-    expect(insertFn).toHaveBeenCalledWith({ texto: 'Nova pergunta' });
+    const payload = { texto: 'Nova pergunta', pesquisa_id: 'p1' };
+    const result = await pesquisaService.criarPergunta(payload);
+    expect(insertFn).toHaveBeenCalledWith(payload);
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(pesquisaService.criarPergunta({})).rejects.toThrow();
+    await expect(pesquisaService.criarPergunta({} as Insertable<'pesquisas_perguntas'>)).rejects.toThrow();
   });
 });
 
 // ─── excluirPergunta ──────────────────────────────────────────────────────────
 
 describe('pesquisaService.excluirPergunta', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes pergunta by id after cross-tenant ownership check', async () => {
     // 1) pergunta → pesquisa_id | 2) pesquisa → empresa_id | 3) delete
     const pergChain: any = makeChain({ data: { pesquisa_id: 'p1' }, error: null });
     const pesqChain: any = makeChain({ data: { empresa_id: EMPRESA_ID }, error: null });
     const delChain: any = makeChain({ error: null });
-    mockFrom
-      .mockReturnValueOnce(pergChain)
-      .mockReturnValueOnce(pesqChain)
-      .mockReturnValueOnce(delChain);
+    mockFrom.mockReturnValueOnce(pergChain).mockReturnValueOnce(pesqChain).mockReturnValueOnce(delChain);
 
     await pesquisaService.excluirPergunta('q1', EMPRESA_ID);
     expect(delChain.eq).toHaveBeenCalledWith('id', 'q1');
@@ -224,26 +242,31 @@ describe('pesquisaService.excluirPergunta', () => {
 // ─── enviarResposta ───────────────────────────────────────────────────────────
 
 describe('pesquisaService.enviarResposta', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new resposta', async () => {
     const created = { id: 'r-new' };
     const { insertFn } = setupInsertChain(created);
-    const result = await pesquisaService.enviarResposta({ pesquisa_id: 'p1', nota: 8 });
-    expect(insertFn).toHaveBeenCalledWith({ pesquisa_id: 'p1', nota: 8 });
+    const payload = { pesquisa_id: 'p1', pergunta_id: 'q1', valor_numerico: 8 };
+    const result = await pesquisaService.enviarResposta(payload);
+    expect(insertFn).toHaveBeenCalledWith(payload);
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(pesquisaService.enviarResposta({})).rejects.toThrow();
+    await expect(pesquisaService.enviarResposta({} as Insertable<'pesquisas_respostas'>)).rejects.toThrow();
   });
 });
 
 // ─── listarRespostas ──────────────────────────────────────────────────────────
 
 describe('pesquisaService.listarRespostas', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns respostas for given pesquisaId', async () => {
     const records = [{ id: 'r1', nota: 9 }];

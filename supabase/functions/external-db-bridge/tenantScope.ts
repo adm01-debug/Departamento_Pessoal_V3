@@ -1,9 +1,9 @@
 /**
  * Tenant identifiers used by write operations in the generic DB bridge.
  *
- * The bridge authenticates with a service key against the external database,
- * so database RLS cannot be its only protection. A write without an explicit
- * tenant identifier must therefore be rejected before it reaches PostgREST.
+ * External writes carry the verified caller JWT and remain subject to RLS.
+ * This application-level scope check is independent defense in depth: an
+ * unscoped write is rejected before it reaches PostgREST.
  */
 export type BridgeWriteData =
   | Record<string, unknown>
@@ -48,4 +48,17 @@ export function extractTenantWriteScope(table: string, data: BridgeWriteData): T
 
 export function hasCompleteTenantWriteScope(scope: TenantWriteScope): boolean {
   return scope.rowCount > 0 && scope.missingTenantRows === 0 && scope.empresaIds.size > 0;
+}
+
+/** A generic UPDATE may preserve a tenant key, but may never reassign it. */
+export function preservesTenantOnUpdate(
+  table: string,
+  data: BridgeWriteData,
+  targetEmpresaIds: ReadonlySet<string>,
+): boolean {
+  if (!data || Array.isArray(data)) return !Array.isArray(data);
+  const tenantColumn = tenantColumnFor(table);
+  if (!Object.prototype.hasOwnProperty.call(data, tenantColumn)) return true;
+  const supplied = data[tenantColumn];
+  return typeof supplied === 'string' && targetEmpresaIds.size === 1 && targetEmpresaIds.has(supplied);
 }

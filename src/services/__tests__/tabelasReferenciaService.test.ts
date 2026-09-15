@@ -145,7 +145,9 @@ function setupDoubleEqOrderChain(data: any[], error: any = null) {
 // ─── Reference Tables ─────────────────────────────────────────────────────────
 
 describe('listarNacionalidades', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns records', async () => {
     const records = [{ id: 'n1', nome: 'Brasileira' }];
@@ -171,7 +173,9 @@ describe('listarNacionalidades', () => {
 });
 
 describe('listarTiposDesligamento', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('queries tipos_desligamento table', async () => {
     setupReferenceChain([]);
@@ -189,7 +193,9 @@ describe('listarTiposDesligamento', () => {
 // ─── Centros de Custo ─────────────────────────────────────────────────────────
 
 describe('listarCentrosCusto', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns centros with empresa filter', async () => {
     const records = [{ id: 'cc1', nome: 'TI' }];
@@ -221,7 +227,9 @@ describe('listarCentrosCusto', () => {
 });
 
 describe('criarCentroCusto', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts wrapped in array and returns new centro', async () => {
     const created = { id: 'cc-new', nome: 'Financeiro' };
@@ -233,17 +241,21 @@ describe('criarCentroCusto', () => {
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(criarCentroCusto({})).rejects.toThrow('Nenhum registro de centro de custo foi retornado.');
+    await expect(criarCentroCusto({ nome: 'Financeiro' })).rejects.toThrow(
+      'Nenhum registro de centro de custo foi retornado.'
+    );
   });
 
   it('throws on DB error', async () => {
     setupInsertChain(null, { message: 'fail' });
-    await expect(criarCentroCusto({})).rejects.toBeDefined();
+    await expect(criarCentroCusto({ nome: 'Financeiro' })).rejects.toBeDefined();
   });
 });
 
 describe('atualizarCentroCusto', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates centro by id and empresa_id', async () => {
     const { updateFn, eq1Fn } = setupUpdateDoubleEqChain();
@@ -259,7 +271,9 @@ describe('atualizarCentroCusto', () => {
 });
 
 describe('excluirCentroCusto', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes centro by id and empresa_id', async () => {
     const { deleteFn, eq1Fn } = setupDeleteDoubleEqChain();
@@ -277,7 +291,9 @@ describe('excluirCentroCusto', () => {
 // ─── Contas Bancárias ─────────────────────────────────────────────────────────
 
 describe('listarContasBancarias', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns contas for colaborador', async () => {
     const records = [{ id: 'cb1', colaborador_id: 'c1' }];
@@ -305,24 +321,30 @@ describe('listarContasBancarias', () => {
 });
 
 describe('criarContaBancaria', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts wrapped in array and returns new conta', async () => {
-    const created = { id: 'cb-new', banco: 'Bradesco' };
+    const created = { id: 'cb-new', colaborador_id: 'c1', banco_nome: 'Bradesco' };
     const { insertFn } = setupInsertChain(created);
-    const result = await criarContaBancaria({ banco: 'Bradesco' });
-    expect(insertFn).toHaveBeenCalledWith([{ banco: 'Bradesco' }]);
+    const result = await criarContaBancaria({ colaborador_id: 'c1', banco_nome: 'Bradesco' });
+    expect(insertFn).toHaveBeenCalledWith([{ colaborador_id: 'c1', banco_nome: 'Bradesco' }]);
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(criarContaBancaria({})).rejects.toThrow('Nenhum registro de conta bancária foi retornado.');
+    await expect(criarContaBancaria({ colaborador_id: 'c1' })).rejects.toThrow(
+      'Nenhum registro de conta bancária foi retornado.'
+    );
   });
 });
 
 describe('atualizarContaBancaria', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates conta by id and empresa_id', async () => {
     const { updateFn, eq1Fn } = setupUpdateDoubleEqChain();
@@ -338,7 +360,9 @@ describe('atualizarContaBancaria', () => {
 });
 
 describe('excluirContaBancaria', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes conta by id and empresa_id', async () => {
     const { deleteFn, eq1Fn } = setupDeleteDoubleEqChain();
@@ -356,7 +380,9 @@ describe('excluirContaBancaria', () => {
 // ─── Dados de Estagiário ──────────────────────────────────────────────────────
 
 describe('obterDadosEstagiario', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns dados for colaborador', async () => {
     const data = { id: 'de1', colaborador_id: 'c1' };
@@ -378,7 +404,9 @@ describe('obterDadosEstagiario', () => {
 });
 
 describe('salvarDadosEstagiario — insert when no existing record', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts with colaborador_id injected when not found', async () => {
     const inserted = { id: 'de-new', colaborador_id: 'c1', nivel: 'superior' };
@@ -400,7 +428,9 @@ describe('salvarDadosEstagiario — insert when no existing record', () => {
 });
 
 describe('salvarDadosEstagiario — update when existing record found', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates using existing.id', async () => {
     const existing = { id: 'de1', colaborador_id: 'c1' };
@@ -436,7 +466,9 @@ describe('salvarDadosEstagiario — update when existing record found', () => {
 // ─── Documentos Pessoais ──────────────────────────────────────────────────────
 
 describe('listarDocumentosPessoais', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns documentos for colaborador', async () => {
     const records = [{ id: 'dp1', colaborador_id: 'c1' }];
@@ -464,24 +496,30 @@ describe('listarDocumentosPessoais', () => {
 });
 
 describe('criarDocumentoPessoal', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts wrapped in array and returns new documento', async () => {
-    const created = { id: 'dp-new', tipo: 'CPF' };
+    const created = { id: 'dp-new', colaborador_id: 'c1', tipo_documento: 'CPF' };
     const { insertFn } = setupInsertChain(created);
-    const result = await criarDocumentoPessoal({ tipo: 'CPF' });
-    expect(insertFn).toHaveBeenCalledWith([{ tipo: 'CPF' }]);
+    const result = await criarDocumentoPessoal({ colaborador_id: 'c1', tipo_documento: 'CPF' });
+    expect(insertFn).toHaveBeenCalledWith([{ colaborador_id: 'c1', tipo_documento: 'CPF' }]);
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(criarDocumentoPessoal({})).rejects.toThrow('Nenhum registro de documento pessoal foi retornado.');
+    await expect(criarDocumentoPessoal({ colaborador_id: 'c1', tipo_documento: 'CPF' })).rejects.toThrow(
+      'Nenhum registro de documento pessoal foi retornado.'
+    );
   });
 });
 
 describe('excluirDocumentoPessoal', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes documento by colaborador and id', async () => {
     const { deleteFn, eq1Fn } = setupDeleteDoubleEqChain();
@@ -499,7 +537,9 @@ describe('excluirDocumentoPessoal', () => {
 // ─── Férias Aprovações ────────────────────────────────────────────────────────
 
 describe('listarFeriasAprovacoes', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns aprovacoes for ferias_id', async () => {
     const records = [{ id: 'fa1', ferias_id: 'f1' }];
@@ -527,24 +567,30 @@ describe('listarFeriasAprovacoes', () => {
 });
 
 describe('criarFeriasAprovacao', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts wrapped in array and returns new aprovacao', async () => {
-    const created = { id: 'fa-new', status: 'aprovado' };
+    const created = { id: 'fa-new', ferias_id: 'f1', tipo: 'aprovacao', status: 'aprovado' };
     const { insertFn } = setupInsertChain(created);
-    const result = await criarFeriasAprovacao({ status: 'aprovado' });
-    expect(insertFn).toHaveBeenCalledWith([{ status: 'aprovado' }]);
+    const result = await criarFeriasAprovacao({ ferias_id: 'f1', tipo: 'aprovacao', status: 'aprovado' });
+    expect(insertFn).toHaveBeenCalledWith([{ ferias_id: 'f1', tipo: 'aprovacao', status: 'aprovado' }]);
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(criarFeriasAprovacao({})).rejects.toThrow('Nenhum registro de aprovação de férias foi retornado.');
+    await expect(criarFeriasAprovacao({ ferias_id: 'f1', tipo: 'aprovacao' })).rejects.toThrow(
+      'Nenhum registro de aprovação de férias foi retornado.'
+    );
   });
 });
 
 describe('atualizarFeriasAprovacao', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates aprovacao by id and ferias_id', async () => {
     const { updateFn, eq1Fn } = setupUpdateDoubleEqChain();
@@ -562,7 +608,9 @@ describe('atualizarFeriasAprovacao', () => {
 // ─── Férias Arquivos ──────────────────────────────────────────────────────────
 
 describe('listarFeriasArquivos', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns arquivos for ferias_id', async () => {
     const records = [{ id: 'ar1', ferias_id: 'f1' }];
@@ -590,26 +638,32 @@ describe('listarFeriasArquivos', () => {
 });
 
 describe('criarFeriasArquivo', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts wrapped in array and returns new arquivo', async () => {
-    const created = { id: 'ar-new', nome: 'recibo.pdf' };
+    const created = { id: 'ar-new', ferias_id: 'f1', nome: 'recibo.pdf' };
     const { insertFn } = setupInsertChain(created);
-    const result = await criarFeriasArquivo({ nome: 'recibo.pdf' });
-    expect(insertFn).toHaveBeenCalledWith([{ nome: 'recibo.pdf' }]);
+    const result = await criarFeriasArquivo({ ferias_id: 'f1', nome: 'recibo.pdf' });
+    expect(insertFn).toHaveBeenCalledWith([{ ferias_id: 'f1', nome: 'recibo.pdf' }]);
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(criarFeriasArquivo({})).rejects.toThrow('Nenhum registro de arquivo de férias foi retornado.');
+    await expect(criarFeriasArquivo({ ferias_id: 'f1', nome: 'recibo.pdf' })).rejects.toThrow(
+      'Nenhum registro de arquivo de férias foi retornado.'
+    );
   });
 });
 
 // ─── Dependentes Benefícios ───────────────────────────────────────────────────
 
 describe('listarDependentesBeneficios', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns beneficios for dependente', async () => {
     const records = [{ id: 'db1', dependente_id: 'd1' }];
@@ -631,32 +685,37 @@ describe('listarDependentesBeneficios', () => {
 });
 
 describe('vincularDependenteBeneficio', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('upserts with onConflict and returns vinculo', async () => {
     const created = { id: 'v-new', dependente_id: 'd1', beneficio_id: 'b1' };
     const { upsertFn } = setupUpsertChain(created);
     const result = await vincularDependenteBeneficio({ dependente_id: 'd1', beneficio_id: 'b1' });
-    expect(upsertFn).toHaveBeenCalledWith(
-      [{ dependente_id: 'd1', beneficio_id: 'b1' }],
-      { onConflict: 'dependente_id,beneficio_id' }
-    );
+    expect(upsertFn).toHaveBeenCalledWith([{ dependente_id: 'd1', beneficio_id: 'b1' }], {
+      onConflict: 'dependente_id,beneficio_id',
+    });
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupUpsertChain(null);
-    await expect(vincularDependenteBeneficio({})).rejects.toThrow('Falha ao vincular dependente ao benefício.');
+    await expect(vincularDependenteBeneficio({ dependente_id: 'd1', beneficio_id: 'b1' })).rejects.toThrow(
+      'Falha ao vincular dependente ao benefício.'
+    );
   });
 
   it('throws on DB error', async () => {
     setupUpsertChain(null, { message: 'fail' });
-    await expect(vincularDependenteBeneficio({})).rejects.toBeDefined();
+    await expect(vincularDependenteBeneficio({ dependente_id: 'd1', beneficio_id: 'b1' })).rejects.toBeDefined();
   });
 });
 
 describe('desvincularDependenteBeneficio', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes vinculo by dependente_id and beneficio_id', async () => {
     const { deleteFn, eq1Fn, eq2Fn } = setupDeleteDoubleEqChain();

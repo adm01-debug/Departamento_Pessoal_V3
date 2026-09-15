@@ -25,9 +25,9 @@ describe('folhaPagamentoService', () => {
     it('should call upsert with correct data and return hash', async () => {
       const mockSelect = vi.fn().mockReturnThis();
       const mockEq = vi.fn().mockReturnThis();
-      const mockSingle = vi.fn().mockResolvedValue({ 
-        data: { nome_completo: 'João Silva', cpf: '123', cargo: 'Dev' }, 
-        error: null 
+      const mockSingle = vi.fn().mockResolvedValue({
+        data: { nome_completo: 'João Silva', cpf: '123', cargo: 'Dev', departamento: 'TI', salario_base: 5000 },
+        error: null,
       });
       // O serviço não calcula mais o hash no cliente: o selo é produzido
       // server-side pelo trigger `enforce_holerite_signed_hash` e devolvido
@@ -53,11 +53,23 @@ describe('folhaPagamentoService', () => {
 
       expect(hash).toBeDefined();
       expect(hash.length).toBe(64); // SHA-256 hex = 64 chars
-      expect(mockUpsert).toHaveBeenCalledWith(expect.objectContaining({
-        folha_id: 'folha-1',
-        colaborador_id: 'colab-1',
-        assinado: true,
-      }));
+      expect(mockUpsert).toHaveBeenCalledWith(
+        expect.objectContaining({
+          folha_id: 'folha-1',
+          colaborador_id: 'colab-1',
+          assinado: true,
+          // BUG corrigido: faltavam campos NOT NULL de `holerites`
+          // (colaborador_departamento, salario_base) — sem eles, a
+          // primeira assinatura de qualquer holerite sempre falhava.
+          colaborador_departamento: 'TI',
+          salario_base: 5000,
+        }),
+        // BUG corrigido: sem `onConflict` explícito, o upsert só colide pela
+        // PK `id` (nunca enviada aqui) — toda chamada tentava inserir uma
+        // linha nova e violava a constraint `UNIQUE(folha_id, colaborador_id)`
+        // em vez de atualizar o holerite existente.
+        { onConflict: 'folha_id,colaborador_id' }
+      );
     });
   });
 
@@ -65,7 +77,7 @@ describe('folhaPagamentoService', () => {
     it('should throw error if there are critical alerts', async () => {
       const { validadorFolha } = await import('@/utils/folha/validadorFolha');
       (validadorFolha.validarFolha as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce([
-        { gravidade: 'alta', mensagem: 'Erro crítico' }
+        { gravidade: 'alta', mensagem: 'Erro crítico' },
       ]);
 
       await expect(folhaPagamentoService.fecharFolha('folha-1')).rejects.toThrow(/existem 1 alertas críticos/);
@@ -144,7 +156,7 @@ describe('folhaPagamentoService', () => {
 
       const result = await folhaPagamentoService.reabrirFolha(
         'folha-1',
-        'Correção retroativa por erro de cálculo de INSS',
+        'Correção retroativa por erro de cálculo de INSS'
       );
 
       expect(result.success).toBe(true);
@@ -170,9 +182,9 @@ describe('folhaPagamentoService', () => {
         }),
       }));
 
-      await expect(
-        folhaPagamentoService.reabrirFolha('folha-1', 'Motivo qualquer aqui'),
-      ).rejects.toThrow(/não está fechada/);
+      await expect(folhaPagamentoService.reabrirFolha('folha-1', 'Motivo qualquer aqui')).rejects.toThrow(
+        /não está fechada/
+      );
     });
   });
 });
