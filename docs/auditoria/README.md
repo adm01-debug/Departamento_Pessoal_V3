@@ -6,6 +6,9 @@
 > - [`AUDITORIA_BANCO_CANONICO_AO_VIVO_2026-09-10.md`](./AUDITORIA_BANCO_CANONICO_AO_VIVO_2026-09-10.md);
 > - [`PLANO_100_ETAPAS_2026-09-10.md`](./PLANO_100_ETAPAS_2026-09-10.md);
 > - [`PLANO_MELHORIAS_50_ETAPAS_2026-09-10.md`](./PLANO_MELHORIAS_50_ETAPAS_2026-09-10.md) — versão executiva consolidada, com 500 subetapas e 200 checkpoints;
+
+- [`PLANO_MELHORIAS_50_ETAPAS_2026-09-13.md`](./PLANO_MELHORIAS_50_ETAPAS_2026-09-13.md) — **ciclo 2 (E51)**: continuação do E50 a partir da análise de sincronização de 13/09; publica o lote local, promove ao canônico com ledger exato, encerra os RV-01…RV-16 e converte dívida de tipos/cobertura em gates decrescentes;
+
 > - [`REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-10.md`](./REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-10.md) — validação das 50 etapas e inventário de funcionalidades parciais, sugeridas, simuladas ou órfãs;
 > - [`SIMULACAO_PRE_EXECUCAO_2026-09-10.md`](./SIMULACAO_PRE_EXECUCAO_2026-09-10.md) — gates validados antes da execução, cenários de regressão e ordem segura;
 > - [`HANDOFF_CLINE_REMEDIACAO_2026-09-10.md`](./HANDOFF_CLINE_REMEDIACAO_2026-09-10.md).

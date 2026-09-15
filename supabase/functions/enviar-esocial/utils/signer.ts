@@ -2,10 +2,12 @@ import { crypto } from "https://deno.land/std@0.168.0/crypto/mod.ts";
 import { encode as base64Encode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
 
 /**
- * Assina digitalmente um XML do eSocial utilizando padrões ICP-Brasil (Simulado via SHA-256)
- * Em um ambiente de produção real, utilizaríamos uma biblioteca de criptografia para certificados A1 (.pfx)
+ * Produz somente um artefato determinístico de SANDBOX para exercitar o fluxo.
+ * Não é XMLDSig nem assinatura ICP-Brasil e jamais pode ser chamada no ramo
+ * produtivo. O nome explícito impede que consumidores tratem este helper como
+ * capacidade de assinatura homologada.
  */
-export async function assinarXMLEsocial(xml: string, certificadoId: string): Promise<{ xmlAssinado: string, assinatura: string, hash: string }> {
+export async function assinarXmlSandboxNaoHomologado(xml: string, certificadoId: string): Promise<{ xmlAssinado: string, assinatura: string, hash: string }> {
   // 1. Limpeza e normalização do XML (Canonicalization simples)
   const xmlLimpo = xml.trim().replace(/>\s+</g, '><');
   

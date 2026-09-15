@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deepChain } from '@/test/deepChain';
 import { lgpdService } from '../lgpdService';
+import type { Insertable } from '@/integrations/supabase/database.types';
 
 const EMPRESA_ID = 'test-empresa-id';
 
@@ -50,7 +51,9 @@ function setupUpdateChain(data: any, error: any = null) {
 // ─── listarConsentimentos ─────────────────────────────────────────────────────
 
 describe('lgpdService.listarConsentimentos', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns consentimentos without empresa filter', async () => {
     const records = [{ id: 'lgc-1', aceito: true }];
@@ -80,9 +83,7 @@ describe('lgpdService.listarConsentimentos', () => {
   it('selects with colaborador join', async () => {
     const { selectFn } = setupListChain([]);
     await lgpdService.listarConsentimentos(EMPRESA_ID);
-    expect(selectFn).toHaveBeenCalledWith(
-      expect.stringContaining('colaborador:colaboradores')
-    );
+    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('colaborador:colaboradores'));
   });
 
   it('throws on DB error', async () => {
@@ -94,31 +95,36 @@ describe('lgpdService.listarConsentimentos', () => {
 // ─── criarConsentimento ───────────────────────────────────────────────────────
 
 describe('lgpdService.criarConsentimento', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns the new consentimento', async () => {
     const created = { id: 'lgc-new', aceito: true };
     const { insertFn } = setupInsertChain(created);
-    const result = await lgpdService.criarConsentimento({ aceito: true, colaborador_id: 'c1' });
-    expect(insertFn).toHaveBeenCalledWith({ aceito: true, colaborador_id: 'c1' });
+    const payload = { aceito: true, colaborador_id: 'c1', tipo: 'cookies' };
+    const result = await lgpdService.criarConsentimento(payload);
+    expect(insertFn).toHaveBeenCalledWith(payload);
     expect(result).toEqual(created);
   });
 
   it('throws when data is null (no record returned)', async () => {
     setupInsertChain(null);
-    await expect(lgpdService.criarConsentimento({})).rejects.toThrow();
+    await expect(lgpdService.criarConsentimento({} as Insertable<'lgpd_consentimentos'>)).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
     setupInsertChain(null, { message: 'fail' });
-    await expect(lgpdService.criarConsentimento({})).rejects.toBeDefined();
+    await expect(lgpdService.criarConsentimento({} as Insertable<'lgpd_consentimentos'>)).rejects.toBeDefined();
   });
 });
 
 // ─── revogarConsentimento ─────────────────────────────────────────────────────
 
 describe('lgpdService.revogarConsentimento', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates aceito=false and sets revogado_em', async () => {
     const updated = { id: 'lgc-1', aceito: false };
@@ -144,7 +150,9 @@ describe('lgpdService.revogarConsentimento', () => {
 // ─── listarSolicitacoes ───────────────────────────────────────────────────────
 
 describe('lgpdService.listarSolicitacoes', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns solicitacoes without empresa filter', async () => {
     const records = [{ id: 'lgs-1', tipo: 'exclusao' }];
@@ -174,7 +182,9 @@ describe('lgpdService.listarSolicitacoes', () => {
 // ─── criarSolicitacao ─────────────────────────────────────────────────────────
 
 describe('lgpdService.criarSolicitacao', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns the new solicitacao', async () => {
     const created = { id: 'lgs-new', tipo: 'portabilidade' };
@@ -186,14 +196,16 @@ describe('lgpdService.criarSolicitacao', () => {
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(lgpdService.criarSolicitacao({})).rejects.toThrow();
+    await expect(lgpdService.criarSolicitacao({} as Insertable<'lgpd_solicitacoes'>)).rejects.toThrow();
   });
 });
 
 // ─── atualizarSolicitacao ─────────────────────────────────────────────────────
 
 describe('lgpdService.atualizarSolicitacao', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates and returns the updated solicitacao', async () => {
     const updated = { id: 'lgs-1', status: 'concluida' };

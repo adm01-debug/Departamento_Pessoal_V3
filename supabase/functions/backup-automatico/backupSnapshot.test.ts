@@ -4,6 +4,11 @@ import {
   BackupSnapshotError,
   requireCompleteBackupTable,
 } from './backupSnapshot.ts';
+import { BACKUP_AUDIT_READ_ACTIONS } from './backupAudit.ts';
+
+Deno.test('consulta a ação física atual e preserva leitura do histórico legado', () => {
+  assertEquals(BACKUP_AUDIT_READ_ACTIONS, ['BACKUP_CREATED', 'BACKUP_RUN']);
+});
 
 Deno.test('aceita somente uma tabela cuja contagem confere com os dados exportados', () => {
   const result = requireCompleteBackupTable('colaboradores', {

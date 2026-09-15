@@ -114,10 +114,9 @@ serve(async (req: Request): Promise<Response> => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
-    let raw: unknown;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    raw = _pb;
+    const raw = _pb;
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) {
       return json({ success: false, error: 'Payload inválido', code: 'VALIDATION_ERROR', details: parsed.error.flatten() }, 422);
@@ -137,13 +136,13 @@ serve(async (req: Request): Promise<Response> => {
     // era um OU — pertencer à empresa já bastava, e o is_admin apenas somava
     // o admin global. Qualquer colaborador autenticado passava.
     {
-      const authz = await requireRh(supabase, userId, empresa_id);
+      const authz = await requireRh(supabase, userId, empresa_id, req);
       if (authz.denied) return authz.denied;
     }
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(supabase, { key: `gerar-guias:${userId}`, limit: 10, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     // Contagem prévia + cap
     const { count: totalColabs, error: countErr } = await supabase
@@ -278,9 +277,10 @@ serve(async (req: Request): Promise<Response> => {
     const { error: auditErr } = await supabase.from('audit_log').insert({
       tabela: 'guias_fiscais',
       registro_id: crypto.randomUUID(),
-      acao: 'GENERATE_GUIAS',
+      acao: 'SYSTEM_ACTION',
       user_id: userId,
       dados_novos: {
+        evento: 'GENERATE_GUIAS',
         empresa_id, competencia, tipo,
         total_colaboradores: totalColabs,
         guias_geradas: guias.length,

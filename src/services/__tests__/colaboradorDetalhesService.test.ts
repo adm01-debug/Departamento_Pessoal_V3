@@ -37,6 +37,7 @@ import {
   obterValoresCamposCustomizados,
   salvarValorCampoCustomizado,
 } from '../colaboradorDetalhesService';
+import type { Insertable } from '@/integrations/supabase/database.types';
 
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
@@ -180,23 +181,48 @@ describe('criarDependente', () => {
   });
 
   it('inserts and returns dependente', async () => {
-    const created = { id: 'd-new', nome: 'Ana' };
+    const payload = { colaborador_id: 'c1', nome: 'Ana', data_nascimento: '2010-01-01', parentesco: 'filha' };
+    const created = { id: 'd-new', ...payload };
     const { insertFn } = setupInsertChain(created);
-    expect(await criarDependente({ nome: 'Ana' })).toEqual(created);
-    expect(insertFn).toHaveBeenCalledWith([{ nome: 'Ana' }]);
+    expect(await criarDependente(payload)).toEqual(created);
+    expect(insertFn).toHaveBeenCalledWith([payload]);
   });
 });
+
+// `dependentes` não tem `empresa_id` (só `colaborador_id`) — atualizar e
+// excluir agora fazem uma checagem prévia via join com `colaboradores`
+// (verificarDependenteDaEmpresa) antes do UPDATE/DELETE por `id` puro.
+function setupVerificacaoDependenteChain(found: boolean) {
+  const maybeSingle = vi.fn().mockResolvedValue({ data: found ? { id: 'd1' } : null, error: null });
+  const eqEmpresa = vi.fn().mockReturnValue({ maybeSingle });
+  const eqId = vi.fn().mockReturnValue({ eq: eqEmpresa });
+  const selectFn = vi.fn().mockReturnValue({ eq: eqId });
+  return { selectFn };
+}
 
 describe('atualizarDependente', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('updates dependente by id', async () => {
+  it('verifies tenant ownership via join then updates dependente by id', async () => {
+    const { selectFn: verificacaoSelect } = setupVerificacaoDependenteChain(true);
     const { updateFn, eqFn } = setupUpdateEqChain();
+    mockFrom.mockReturnValueOnce({ select: verificacaoSelect }).mockReturnValueOnce({ update: updateFn });
+
     await atualizarDependente('d1', { nome: 'Ana Paula' }, EMPRESA_ID);
+
     expect(updateFn).toHaveBeenCalledWith({ nome: 'Ana Paula' });
     expect(eqFn).toHaveBeenCalledWith('id', 'd1');
+  });
+
+  it('throws when the dependente does not belong to the empresa', async () => {
+    const { selectFn: verificacaoSelect } = setupVerificacaoDependenteChain(false);
+    mockFrom.mockReturnValueOnce({ select: verificacaoSelect });
+
+    await expect(atualizarDependente('d1', { nome: 'Ana Paula' }, EMPRESA_ID)).rejects.toThrow(
+      'Dependente não encontrado ou sem permissão'
+    );
   });
 });
 
@@ -205,10 +231,23 @@ describe('excluirDependente', () => {
     vi.clearAllMocks();
   });
 
-  it('deletes dependente by id', async () => {
+  it('verifies tenant ownership via join then deletes dependente by id', async () => {
+    const { selectFn: verificacaoSelect } = setupVerificacaoDependenteChain(true);
     const { eqFn } = setupDeleteChain();
+    mockFrom.mockReturnValueOnce({ select: verificacaoSelect }).mockReturnValueOnce({
+      delete: vi.fn().mockReturnValue({ eq: eqFn }),
+    });
+
     await excluirDependente('d1', EMPRESA_ID);
+
     expect(eqFn).toHaveBeenCalledWith('id', 'd1');
+  });
+
+  it('throws when the dependente does not belong to the empresa', async () => {
+    const { selectFn: verificacaoSelect } = setupVerificacaoDependenteChain(false);
+    mockFrom.mockReturnValueOnce({ select: verificacaoSelect });
+
+    await expect(excluirDependente('d1', EMPRESA_ID)).rejects.toThrow('Dependente não encontrado ou sem permissão');
   });
 });
 
@@ -248,9 +287,11 @@ describe('criarContatoEmergencia', () => {
   });
 
   it('inserts and returns contato', async () => {
-    const created = { id: 'ce-new', nome: 'Maria' };
+    const payload = { colaborador_id: 'c1', nome: 'Maria' };
+    const created = { id: 'ce-new', ...payload };
     const { insertFn } = setupInsertChain(created);
-    expect(await criarContatoEmergencia({ nome: 'Maria' })).toEqual(created);
+    expect(await criarContatoEmergencia(payload)).toEqual(created);
+    expect(insertFn).toHaveBeenCalledWith([payload]);
   });
 });
 
@@ -288,10 +329,11 @@ describe('criarRegistroSalarial', () => {
   });
 
   it('inserts and returns registro', async () => {
-    const created = { id: 'hs-new', salario: 5000 };
+    const payload = { colaborador_id: 'c1', data_vigencia: '2026-01-01', motivo: 'promocao', salario_novo: 5000 };
+    const created = { id: 'hs-new', ...payload };
     const { insertFn } = setupInsertChain(created);
-    expect(await criarRegistroSalarial({ salario: 5000 })).toEqual(created);
-    expect(insertFn).toHaveBeenCalledWith([{ salario: 5000 }]);
+    expect(await criarRegistroSalarial(payload)).toEqual(created);
+    expect(insertFn).toHaveBeenCalledWith([payload]);
   });
 });
 
@@ -316,9 +358,11 @@ describe('criarASO', () => {
   });
 
   it('inserts and returns ASO', async () => {
-    const created = { id: 'a-new', tipo: 'Admissional' };
+    const payload = { colaborador_id: 'c1', data_exame: '2026-01-01', tipo: 'Admissional' };
+    const created = { id: 'a-new', ...payload };
     const { insertFn } = setupInsertChain(created);
-    expect(await criarASO({ tipo: 'Admissional' })).toEqual(created);
+    expect(await criarASO(payload)).toEqual(created);
+    expect(insertFn).toHaveBeenCalledWith([payload]);
   });
 });
 
@@ -342,9 +386,11 @@ describe('criarFormacao', () => {
   });
 
   it('inserts and returns formacao', async () => {
-    const created = { id: 'f-new', curso: 'Engenharia' };
-    setupInsertChain(created);
-    expect(await criarFormacao({ curso: 'Engenharia' })).toEqual(created);
+    const payload = { colaborador_id: 'c1', curso: 'Engenharia' };
+    const created = { id: 'f-new', ...payload };
+    const { insertFn } = setupInsertChain(created);
+    expect(await criarFormacao(payload)).toEqual(created);
+    expect(insertFn).toHaveBeenCalledWith([payload]);
   });
 });
 
@@ -386,10 +432,10 @@ describe('salvarDadosEstrangeiro', () => {
   });
 
   it('upserts with onConflict and returns data', async () => {
-    const upserted = { id: 'de1', colaborador_id: 'c1', visto: 'B1' };
+    const upserted = { id: 'de1', colaborador_id: 'c1', tipo_visto: 'B1' };
     const { upsertFn } = setupUpsertChain(upserted);
-    const result = await salvarDadosEstrangeiro('c1', { visto: 'B1' });
-    expect(upsertFn).toHaveBeenCalledWith({ visto: 'B1', colaborador_id: 'c1' }, { onConflict: 'colaborador_id' });
+    const result = await salvarDadosEstrangeiro('c1', { tipo_visto: 'B1' });
+    expect(upsertFn).toHaveBeenCalledWith({ tipo_visto: 'B1', colaborador_id: 'c1' }, { onConflict: 'colaborador_id' });
     expect(result).toEqual(upserted);
   });
 });
@@ -455,8 +501,8 @@ describe('salvarPeriodoExperiencia — insert when not found', () => {
     const insertFn = vi.fn().mockReturnValue({ select: select2 });
     mockFrom.mockReturnValueOnce({ insert: insertFn });
 
-    const result = await salvarPeriodoExperiencia('c1', { dias: 90 });
-    expect(insertFn).toHaveBeenCalledWith([{ dias: 90, colaborador_id: 'c1' }]);
+    const result = await salvarPeriodoExperiencia('c1', { data_inicio: '2026-01-01', dias_total: 90 });
+    expect(insertFn).toHaveBeenCalledWith([{ data_inicio: '2026-01-01', dias_total: 90, colaborador_id: 'c1' }]);
     expect(result).toEqual(inserted);
   });
 });
@@ -468,7 +514,7 @@ describe('salvarPeriodoExperiencia — update when found', () => {
 
   it('updates when existing record found', async () => {
     const existing = { id: 'pe1', colaborador_id: 'c1' };
-    const updated = { ...existing, dias: 120 };
+    const updated = { ...existing, dias_total: 120 };
     // First: obterPeriodoExperiencia → existing
     const maybeSingle1 = vi.fn().mockResolvedValue({ data: existing, error: null });
     const eq1 = vi.fn().mockReturnValue({ maybeSingle: maybeSingle1 });
@@ -482,8 +528,8 @@ describe('salvarPeriodoExperiencia — update when found', () => {
     const updateFn = vi.fn().mockReturnValue({ eq: eqForUpdate });
     mockFrom.mockReturnValueOnce({ update: updateFn });
 
-    const result = await salvarPeriodoExperiencia('c1', { dias: 120 });
-    expect(updateFn).toHaveBeenCalledWith({ dias: 120 });
+    const result = await salvarPeriodoExperiencia('c1', { data_inicio: '2026-01-01', dias_total: 120 });
+    expect(updateFn).toHaveBeenCalledWith({ data_inicio: '2026-01-01', dias_total: 120 });
     expect(eqForUpdate).toHaveBeenCalledWith('id', 'pe1');
     expect(result).toEqual(updated);
   });
@@ -509,9 +555,11 @@ describe('criarAnotacao', () => {
   });
 
   it('inserts and returns anotacao', async () => {
-    const created = { id: 'an-new', texto: 'Bom desempenho' };
+    const created = { id: 'an-new', conteudo: 'Bom desempenho' };
     setupInsertChain(created);
-    expect(await criarAnotacao({ texto: 'Bom desempenho' })).toEqual(created);
+    expect(await criarAnotacao({ colaborador_id: 'c1', titulo: 'Desempenho', conteudo: 'Bom desempenho' })).toEqual(
+      created
+    );
   });
 });
 
@@ -576,7 +624,7 @@ describe('criarTime', () => {
   // exige empresa_id IN get_user_empresas()), entao o registro "sumia" da tela
   // em vez de dar erro. Agora falha alto, antes de chegar ao banco.
   it('rejeita criacao sem empresa_id', async () => {
-    await expect(criarTime({ nome: 'Design' })).rejects.toThrow(/empresa_id obrigatório/);
+    await expect(criarTime({ nome: 'Design' } as Insertable<'times'>)).rejects.toThrow(/empresa_id obrigatório/);
   });
 });
 
@@ -661,7 +709,14 @@ describe('criarFeriasColetivas', () => {
   it('inserts and returns ferias coletivas', async () => {
     const created = { id: 'fc-new' };
     setupInsertChain(created);
-    expect(await criarFeriasColetivas({})).toEqual(created);
+    expect(
+      await criarFeriasColetivas({
+        empresa_id: EMPRESA_ID,
+        data_inicio: '2026-01-01',
+        data_fim: '2026-01-10',
+        dias: 10,
+      })
+    ).toEqual(created);
   });
 });
 
