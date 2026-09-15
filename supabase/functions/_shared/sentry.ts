@@ -45,7 +45,7 @@ const PARSED = parseDsn(DSN);
 /** Captures an exception non-blocking. Safe to call even if Sentry is disabled. */
 export async function captureException(
   err: unknown,
-  context: SentryContext,
+  context: SentryContext = {},
 ): Promise<void> {
   const functionName =
     (typeof context.function === 'string' && context.function.trim()) ||

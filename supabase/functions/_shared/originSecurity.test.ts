@@ -2,7 +2,7 @@ import { assertEquals } from 'https://deno.land/std@0.208.0/assert/mod.ts';
 import { enforceOrigin, getCorsHeaders, handlePreflight } from './contract.ts';
 import { verifyCsrf } from './csrf.ts';
 
-const CANONICAL_ORIGIN = 'https://unified-harmony-hub.lovable.app';
+const CANONICAL_ORIGIN = 'https://departamento-pessoal-v3.vercel.app';
 const WRONG_LEGACY_ORIGIN = 'https://sistema-dp.lovable.app';
 const UNCONFIGURED_PREVIEW =
   'https://id-preview--6b75936b-47df-442a-8778-2840c71d84af.lovable.app';

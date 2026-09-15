@@ -54,7 +54,7 @@ serve(async (req: Request): Promise<Response> => {
     const brOk = bridgeCheck.status === 'fulfilled'; // tabela pode não existir
     const allOk = dbOk && telOk;
 
-    const services: Record<string, { status: string; latency_ms?: number; error?: string }> = {
+    const services: Record<string, { status: string; latency_ms?: number; error?: string; note?: string }> = {
       database: {
         status: dbOk ? 'ok' : 'error',
         latency_ms: dbCheck.status === 'fulfilled' ? Date.now() - t0 : undefined,

@@ -26,6 +26,10 @@ vi.mock('@/components/ui/spinner', () => ({
   Spinner: () => <div data-testid="spinner" />,
 }));
 
+vi.mock('@/hooks/useEmpresas', () => ({
+  useEmpresas: () => ({ empresaAtual: { id: 'empresa-001' } }),
+}));
+
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: vi.fn(() => ({

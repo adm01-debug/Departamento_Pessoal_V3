@@ -47,6 +47,7 @@ DECLARE
   v_now bigint := coalesce(p_now, extract(epoch FROM now())::bigint);
   v_window_start bigint;
   v_current integer;
+  v_oldest bigint;
   v_allowed boolean;
 BEGIN
   IF p_key IS NULL OR length(p_key) = 0 OR length(p_key) > 512 THEN
@@ -69,8 +70,8 @@ BEGIN
    WHERE key = p_key
      AND "timestamp" < v_window_start;
 
-  SELECT count(*)::integer
-    INTO v_current
+  SELECT count(*)::integer, min("timestamp")
+    INTO v_current, v_oldest
     FROM public.rate_limits
    WHERE key = p_key
      AND "timestamp" >= v_window_start;
@@ -79,6 +80,7 @@ BEGIN
   IF v_allowed THEN
     INSERT INTO public.rate_limits (key, "timestamp") VALUES (p_key, v_now);
     v_current := v_current + 1;
+    v_oldest := coalesce(v_oldest, v_now);
   END IF;
 
   RETURN jsonb_build_object(
@@ -86,7 +88,9 @@ BEGIN
     'current', v_current,
     'limit', p_limit,
     'remaining', greatest(0, p_limit - v_current),
-    'reset', v_window_start + p_window_sec
+    -- Earliest active event expires at oldest+window. Returning v_now here
+    -- makes clients retry immediately and creates a thundering herd.
+    'reset', coalesce(v_oldest, v_now) + p_window_sec
   );
 END;
 $function$;

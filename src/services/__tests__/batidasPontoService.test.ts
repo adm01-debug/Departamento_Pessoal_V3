@@ -45,7 +45,9 @@ function setupInsertChain(data: any, error: any = null) {
 // ─── listar ───────────────────────────────────────────────────────────────────
 
 describe('batidasPontoService.listar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns batidas for colaborador', async () => {
     const records = [{ id: 'b1', colaborador_id: 'c1', data: '2026-07-24' }];
@@ -94,7 +96,9 @@ describe('batidasPontoService.listar', () => {
 // ─── listarPorData ────────────────────────────────────────────────────────────
 
 describe('batidasPontoService.listarPorData', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns batidas for given date', async () => {
     const records = [{ id: 'b1', data: '2026-07-24' }];
@@ -124,9 +128,7 @@ describe('batidasPontoService.listarPorData', () => {
   it('includes colaborador join in select', async () => {
     const { selectFn } = setupListChain([]);
     await batidasPontoService.listarPorData('2026-07-24', EMPRESA_ID);
-    expect(selectFn).toHaveBeenCalledWith(
-      expect.stringContaining('colaborador:colaboradores')
-    );
+    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('colaborador:colaboradores'));
   });
 
   it('throws on DB error', async () => {
@@ -138,31 +140,37 @@ describe('batidasPontoService.listarPorData', () => {
 // ─── registrar ────────────────────────────────────────────────────────────────
 
 describe('batidasPontoService.registrar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  const batidaInsert = { colaborador_id: 'c1', data: '2026-01-01', hora: '08:00', ordem: 1, tipo: 'entrada' };
 
   it('inserts and returns new batida', async () => {
-    const created = { id: 'b-new', hora: '08:00', tipo: 'entrada' };
+    const created = { id: 'b-new', ...batidaInsert };
     const { insertFn } = setupInsertChain(created);
-    const result = await batidasPontoService.registrar({ hora: '08:00', tipo: 'entrada' });
-    expect(insertFn).toHaveBeenCalledWith({ hora: '08:00', tipo: 'entrada' });
+    const result = await batidasPontoService.registrar(batidaInsert);
+    expect(insertFn).toHaveBeenCalledWith(batidaInsert);
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(batidasPontoService.registrar({})).rejects.toThrow();
+    await expect(batidasPontoService.registrar(batidaInsert)).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
     setupInsertChain(null, { message: 'fail' });
-    await expect(batidasPontoService.registrar({})).rejects.toBeDefined();
+    await expect(batidasPontoService.registrar(batidaInsert)).rejects.toBeDefined();
   });
 });
 
 // ─── ajustar ──────────────────────────────────────────────────────────────────
 
 describe('batidasPontoService.ajustar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates batida with ajustado=true and logs adjustment', async () => {
     const anterior = { id: 'b1', hora: '07:50' };
@@ -179,9 +187,7 @@ describe('batidasPontoService.ajustar', () => {
     const eqUpdate = vi.fn().mockReturnValue({ select: selectFn2 });
     const updateFn = vi.fn().mockReturnValue({ eq: eqUpdate });
 
-    mockFrom
-      .mockReturnValueOnce({ select: selectFn1 })
-      .mockReturnValueOnce({ update: updateFn });
+    mockFrom.mockReturnValueOnce({ select: selectFn1 }).mockReturnValueOnce({ update: updateFn });
 
     const result = await batidasPontoService.ajustar('b1', { hora: '08:00' }, EMPRESA_ID);
     expect(updateFn).toHaveBeenCalledWith({ hora: '08:00', ajustado: true });
@@ -199,20 +205,18 @@ describe('batidasPontoService.ajustar', () => {
     const eqUpdate = vi.fn().mockReturnValue({ select: selectFn2 });
     const updateFn = vi.fn().mockReturnValue({ eq: eqUpdate });
 
-    mockFrom
-      .mockReturnValueOnce({ select: selectFn1 })
-      .mockReturnValueOnce({ update: updateFn });
+    mockFrom.mockReturnValueOnce({ select: selectFn1 }).mockReturnValueOnce({ update: updateFn });
 
-    await expect(batidasPontoService.ajustar('b1', {}, EMPRESA_ID)).rejects.toThrow(
-      'Falha ao ajustar batida de ponto'
-    );
+    await expect(batidasPontoService.ajustar('b1', {}, EMPRESA_ID)).rejects.toThrow('Falha ao ajustar batida de ponto');
   });
 });
 
 // ─── fecharPeriodo ────────────────────────────────────────────────────────────
 
 describe('batidasPontoService.fecharPeriodo', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts a fechado period and returns the record', async () => {
     const periodo = { id: 'p1', status: 'fechado' };
@@ -236,8 +240,6 @@ describe('batidasPontoService.fecharPeriodo', () => {
     const insertFn = vi.fn().mockReturnValue({ select: selectFn });
     mockFrom.mockReturnValue({ insert: insertFn });
 
-    await expect(
-      batidasPontoService.fecharPeriodo('emp-1', '2026-07-01', '2026-07-31')
-    ).rejects.toBeDefined();
+    await expect(batidasPontoService.fecharPeriodo('emp-1', '2026-07-01', '2026-07-31')).rejects.toBeDefined();
   });
 });

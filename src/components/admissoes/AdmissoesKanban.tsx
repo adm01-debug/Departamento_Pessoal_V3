@@ -20,18 +20,21 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { formatDate } from '@/utils/format';
 import { GripVertical } from 'lucide-react';
+import type { Database } from '@/integrations/supabase/database.types';
+
+type EtapaAdmissao = Database['public']['Enums']['etapa_admissao'];
 
 type Admissao = {
   id: string;
   nome: string;
   cargo?: string | null;
   departamento?: string | null;
-  etapa: string;
+  etapa: EtapaAdmissao;
   data_prevista?: string | null;
   salario_proposto?: number | null;
 };
 
-const COLUMNS: { key: string; label: string; accent: string }[] = [
+const COLUMNS: { key: EtapaAdmissao; label: string; accent: string }[] = [
   { key: 'solicitacao', label: 'Solicitação', accent: 'from-muted to-muted/50' },
   { key: 'documentos', label: 'Documentos', accent: 'from-warning/20 to-warning/5' },
   { key: 'validacao', label: 'Validação', accent: 'from-info/20 to-info/5' },
@@ -74,12 +77,7 @@ function KanbanCard({ item, dragging }: { item: Admissao; dragging?: boolean }) 
 function DraggableCard({ item }: { item: Admissao }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: item.id });
   return (
-    <div
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      className={cn(isDragging && 'opacity-30')}
-    >
+    <div ref={setNodeRef} {...listeners} {...attributes} className={cn(isDragging && 'opacity-30')}>
       <KanbanCard item={item} />
     </div>
   );
@@ -108,7 +106,9 @@ function Column({
     >
       <div className="flex items-center justify-between mb-3 px-1">
         <h4 className="text-xs font-semibold uppercase tracking-wide text-foreground/80">{label}</h4>
-        <Badge variant="secondary" className="text-[10px] h-5 min-w-[22px]">{items.length}</Badge>
+        <Badge variant="secondary" className="text-[10px] h-5 min-w-[22px]">
+          {items.length}
+        </Badge>
       </div>
       <div className="flex-1 space-y-2 min-h-[100px] overflow-y-auto max-h-[calc(100vh-320px)]">
         {items.map((it) => (
@@ -129,7 +129,7 @@ export function AdmissoesKanban({ admissoes }: { admissoes: Admissao[] }) {
   const { empresaAtual } = useEmpresas();
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [optimistic, setOptimistic] = useState<Record<string, string>>({});
+  const [optimistic, setOptimistic] = useState<Record<string, EtapaAdmissao>>({});
 
   const grouped = useMemo(() => {
     const map: Record<string, Admissao[]> = {};
@@ -142,17 +142,14 @@ export function AdmissoesKanban({ admissoes }: { admissoes: Admissao[] }) {
     return map;
   }, [admissoes, optimistic]);
 
-  const activeItem = useMemo(
-    () => admissoes.find((a) => a.id === activeId) || null,
-    [activeId, admissoes]
-  );
+  const activeItem = useMemo(() => admissoes.find((a) => a.id === activeId) || null, [activeId, admissoes]);
 
   const handleDragStart = (e: DragStartEvent) => setActiveId(String(e.active.id));
 
   const handleDragEnd = async (e: DragEndEvent) => {
     setActiveId(null);
     const id = String(e.active.id);
-    const target = e.over?.id ? String(e.over.id) : null;
+    const target = e.over?.id ? (String(e.over.id) as EtapaAdmissao) : null;
     if (!target) return;
     const current = admissoes.find((a) => a.id === id);
     if (!current || current.etapa === target) return;
@@ -185,9 +182,7 @@ export function AdmissoesKanban({ admissoes }: { admissoes: Admissao[] }) {
           />
         ))}
       </div>
-      <DragOverlay dropAnimation={null}>
-        {activeItem ? <KanbanCard item={activeItem} dragging /> : null}
-      </DragOverlay>
+      <DragOverlay dropAnimation={null}>{activeItem ? <KanbanCard item={activeItem} dragging /> : null}</DragOverlay>
     </DndContext>
   );
 }

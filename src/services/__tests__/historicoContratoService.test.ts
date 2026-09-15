@@ -28,7 +28,12 @@ function setupInsertChain(data: any, error: any = null) {
 
 function setupDeleteChain(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  const __delChain = {
+    then: (r: any) => Promise.resolve({ error }).then(r),
+    catch: (r: any) => Promise.resolve({ error }).catch(r),
+    finally: (r: any) => Promise.resolve({ error }).finally(r),
+    eq: eqFn,
+  };
   eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
@@ -38,7 +43,9 @@ function setupDeleteChain(error: any = null) {
 // ─── listar ───────────────────────────────────────────────────────────────────
 
 describe('historicoContratoService.listar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns historico for given colaboradorId', async () => {
     const records = [{ id: 'h1', colaborador_id: 'c1', data_inicio: '2020-01-01' }];
@@ -73,31 +80,37 @@ describe('historicoContratoService.listar', () => {
 // ─── criar ────────────────────────────────────────────────────────────────────
 
 describe('historicoContratoService.criar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  const historicoInsert = { colaborador_id: 'c1', data_inicio: '2026-01-01' };
 
   it('inserts and returns new historico', async () => {
-    const created = { id: 'h-new', colaborador_id: 'c1' };
+    const created = { id: 'h-new', ...historicoInsert };
     const { insertFn } = setupInsertChain(created);
-    const result = await historicoContratoService.criar({ colaborador_id: 'c1' });
-    expect(insertFn).toHaveBeenCalledWith({ colaborador_id: 'c1' });
+    const result = await historicoContratoService.criar(historicoInsert);
+    expect(insertFn).toHaveBeenCalledWith(historicoInsert);
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(historicoContratoService.criar({})).rejects.toThrow();
+    await expect(historicoContratoService.criar(historicoInsert)).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
     setupInsertChain(null, { message: 'fail' });
-    await expect(historicoContratoService.criar({})).rejects.toBeDefined();
+    await expect(historicoContratoService.criar(historicoInsert)).rejects.toBeDefined();
   });
 });
 
 // ─── excluir ──────────────────────────────────────────────────────────────────
 
 describe('historicoContratoService.excluir', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes historico by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();

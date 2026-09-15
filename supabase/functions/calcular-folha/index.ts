@@ -10,10 +10,11 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { validateRequest, corsHeaders, createErrorResponse } from '../_shared/contract.ts';
 import { calcularFolhaSchema } from '../_shared/schemas/common.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
-import { requireRh } from '../_shared/authz.ts';
+import { requireRh, type AdminClient } from '../_shared/authz.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { beginIdempotency, completeIdempotency, failIdempotency, extractIdempotencyKey } from '../_shared/idempotency.ts';
 import { integrityHash as computeIntegrityHash } from '../_shared/integrityHash.ts';
+import type { Database } from '../../../src/integrations/supabase/types.ts';
 
 
 const FAIXAS_INSS = [
@@ -76,7 +77,7 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   let idempotencyId: string | undefined;
-  let admin: ReturnType<typeof createClient> | undefined;
+  let admin: ReturnType<typeof createClient<Database>> | undefined;
 
   try {
     const csrf = await verifyCsrf(req.clone());
@@ -91,7 +92,7 @@ Deno.serve(async (req) => {
     const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
-    const userClient = createClient(supabaseUrl, anonKey, {
+    const userClient = createClient<any>(supabaseUrl, anonKey, {
       global: { headers: { Authorization: authHeader } },
       auth: { persistSession: false, autoRefreshToken: false },
     });
@@ -106,21 +107,23 @@ Deno.serve(async (req) => {
     // (alguns navegadores/proxies removem headers custom em preflights antigos).
     const idempotencyKey = extractIdempotencyKey(req, data);
 
-    admin = createClient(supabaseUrl, serviceKey, {
+    admin = createClient<Database>(supabaseUrl, serviceKey, {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
     // Rate limit — cálculo de folha é pesado: 20 req / min / usuário
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(admin, { key: `calc-folha:${userId}`, limit: 20, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     // Tenant scope (antes de qualquer efeito colateral / idempotência)
     // Papel, não apenas vínculo: o padrão anterior (`!belongs && !isAdmin`)
     // era um OU — pertencer à empresa já bastava, e o is_admin apenas somava
     // o admin global. Qualquer colaborador autenticado passava.
     {
-      const authz = await requireRh(admin, userId, empresa_id);
+      // AdminClient is deliberately untyped over Database (see authz.ts);
+      // this narrows the strictly-typed client for that shared boundary.
+      const authz = await requireRh(admin as unknown as AdminClient, userId, empresa_id, req);
       if (authz.denied) return authz.denied;
     }
     // Idempotência — Onda 41
@@ -131,6 +134,7 @@ Deno.serve(async (req) => {
       requestBody: { empresa_id, competencia, user_id: userId },
       empresaId: empresa_id,
       userId,
+      request: req,
     });
 
     // Auditoria detalhada de conflito/replay/duplicidade de Idempotency-Key.
@@ -140,7 +144,7 @@ Deno.serve(async (req) => {
         await admin.from('audit_log').insert({
           tabela: 'idempotency_keys',
           registro_id: idem.existingId ?? idem.id ?? crypto.randomUUID(),
-          acao: `IDEMPOTENCY_${idem.reason}`,
+          acao: idem.reason === 'REPLAY' ? 'IDEMPOTENCY_REPLAY' : 'IDEMPOTENCY_CONFLICT',
           user_id: userId,
           dados_novos: {
             endpoint: 'calcular-folha',
@@ -225,27 +229,50 @@ Deno.serve(async (req) => {
     }
 
     // Chunked fetch
-    const itens: Array<Record<string, unknown>> = [];
+    interface FolhaItemCalculado {
+      colaborador_id: string;
+      nome: string;
+      cargo: string;
+      salario_bruto: number;
+      inss: number;
+      irrf: number;
+      fgts: number;
+      total_descontos: number;
+      salario_liquido: number;
+    }
+    const itens: FolhaItemCalculado[] = [];
     const totais = { bruto: 0, descontos: 0, liquido: 0, fgts: 0, inss: 0, irrf: 0 };
 
     for (let offset = 0; offset < totalColabs; offset += CHUNK_SIZE) {
       const { data: colabs, error: e } = await admin
         .from('colaboradores')
-        .select('id, nome_completo, salario_base, cargo, departamento, dependentes_irrf')
+        .select('id, nome_completo, salario_base, cargo, departamento')
         .eq('empresa_id', empresa_id)
         .eq('status', 'ativo')
         .range(offset, offset + CHUNK_SIZE - 1);
       if (e) throw e;
       if (!colabs?.length) break;
 
-      // Dependentes para fins de IRRF (public.dependentes.ir_dependente) — uma
+      // Dependentes para fins de IRRF (public.dependentes.para_irrf) — uma
       // única query em lote por chunk, evita N+1 por colaborador.
+      //
+      // `para_irrf` replaced the long-retired `ir_dependente` column (see
+      // 20251216164756_...sql / 20260724001000_fix_dependentes_missing_para_columns.sql).
+      // This call was never updated: under the previous `createClient<any>`
+      // typing PostgREST's "column ir_dependente does not exist" error was
+      // silently discarded (`const { data: depsRows }` never read `error`),
+      // so every payroll run counted zero IRRF dependents for every
+      // employee, overwithholding IRRF for anyone with real dependents.
+      // Now that `admin` is typed against the generated schema, this was
+      // a compile error instead of a silent runtime one; also stopped
+      // discarding the query's error going forward.
       const colabIds = colabs.map((c) => c.id);
-      const { data: depsRows } = await admin
+      const { data: depsRows, error: depsErr } = await admin
         .from('dependentes')
         .select('colaborador_id')
         .in('colaborador_id', colabIds)
-        .eq('ir_dependente', true);
+        .eq('para_irrf', true);
+      if (depsErr) throw depsErr;
       const dependentesPorColaborador = new Map<string, number>();
       for (const d of depsRows ?? []) {
         const key = d.colaborador_id as string;
