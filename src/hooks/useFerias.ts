@@ -30,7 +30,8 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
         tabela: 'ferias',
         registro_id: data.id,
         acao: 'INSERT',
-        dados_novos: data
+        empresa_id: empresaId,
+        dados_novos: data,
       });
       toast.success('Solicitação de férias criada com sucesso');
     },
@@ -48,7 +49,8 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
         tabela: 'ferias',
         registro_id: variables.id,
         acao: 'UPDATE',
-        dados_novos: variables.data
+        empresa_id: empresaId,
+        dados_novos: variables.data,
       });
       toast.success('Solicitação de férias atualizada');
     },
@@ -65,7 +67,8 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
       auditLogger.log({
         tabela: 'ferias',
         registro_id: id,
-        acao: 'DELETE'
+        acao: 'DELETE',
+        empresa_id: empresaId,
       });
       toast.success('Solicitação de férias excluída');
     },
@@ -98,6 +101,7 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
     ferias: query.data?.data || [],
     totalCount: query.data?.count || 0,
     isLoading: query.isLoading,
+    isFetching: query.isFetching,
     error: query.error,
     refetch: query.refetch,
     create: createMutation.mutateAsync,
@@ -110,4 +114,3 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
     isDeleting: deleteMutation.isPending,
   };
 }
-

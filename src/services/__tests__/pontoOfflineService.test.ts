@@ -42,7 +42,12 @@ describe('pontoOfflineService.generateIntegrityHash', () => {
   });
 
   it('is deterministic for the same input', () => {
-    const data = { colaborador_id: 'c1', timestamp: '2024-07-24T08:00:00Z', tipo: 'entrada', dispositivoId: 'dev-1' };
+    const data = {
+      colaborador_id: 'c1',
+      timestamp: '2024-07-24T08:00:00Z',
+      tipo: 'entrada',
+      dispositivoId: 'dev-1',
+    } as const;
     expect(pontoOfflineService.generateIntegrityHash({ empresa_id: 'e1', ...data })).toBe(
       pontoOfflineService.generateIntegrityHash({ empresa_id: 'e1', ...data })
     );

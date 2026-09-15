@@ -13,7 +13,7 @@ class FeriasService extends BaseService<Ferias> {
   constructor() {
     super('ferias', {
       searchColumn: 'colaborador_nome',
-      defaultOrderBy: 'data_inicio'
+      defaultOrderBy: 'data_inicio',
     });
   }
 
@@ -52,8 +52,10 @@ class FeriasService extends BaseService<Ferias> {
     const { page = 1, limit = 20, cursor, search, status } = params || {};
     const effectiveLimit = limit + 1; // Pegamos 1 a mais para saber se há mais páginas
 
-    let query = this.getQuery()
-      .select('*, colaborador:colaboradores!ferias_colaborador_id_fkey(nome_completo, foto_url)', { count: 'exact' });
+    let query = this.getQuery().select(
+      '*, colaborador:colaboradores!ferias_colaborador_id_fkey(nome_completo, foto_url)',
+      { count: 'exact' }
+    );
 
     query = query.eq('empresa_id', empresaId);
     if (status && status !== 'all') query = query.eq('status', status);
@@ -86,30 +88,16 @@ class FeriasService extends BaseService<Ferias> {
     const returnData = hasMore ? resultData.slice(0, limit) : resultData;
 
     // Calcula próximo cursor (ID do último item)
-    const nextCursor = hasMore && returnData.length > 0
-      ? Buffer.from(`id:${returnData[returnData.length - 1].id}:after`).toString('base64')
-      : null;
+    const nextCursor =
+      hasMore && returnData.length > 0
+        ? Buffer.from(`id:${returnData[returnData.length - 1].id}:after`).toString('base64')
+        : null;
 
     return {
       data: returnData,
       count: count || 0,
       nextCursor,
-      hasMore
-    };
-  }
-
-  async syncWithHub(empresaId: string): Promise<{ success: boolean; lastSync: string; recordsUpdated: number }> {
-    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { error } = await supabase
-      .from('ferias')
-      .select('id')
-      .eq('empresa_id', empresaId)
-      .limit(1);
-    if (error) throw error;
-    return {
-      success: true,
-      lastSync: new Date().toISOString(),
-      recordsUpdated: 0,
+      hasMore,
     };
   }
 
@@ -119,7 +107,7 @@ class FeriasService extends BaseService<Ferias> {
       .select('*')
       .eq('ferias_id', feriasId)
       .order('created_at', { ascending: true });
-    
+
     if (error) throw error;
     return data || [];
   }
@@ -130,7 +118,11 @@ class FeriasService extends BaseService<Ferias> {
     return data;
   }
 
-  async atualizarPeriodoAquisitivo(id: string, d: PeriodoAquisitivoUpdate, empresaId: string): Promise<PeriodoAquisitivo | null> {
+  async atualizarPeriodoAquisitivo(
+    id: string,
+    d: PeriodoAquisitivoUpdate,
+    empresaId: string
+  ): Promise<PeriodoAquisitivo | null> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await (supabase.from('periodos_aquisitivos') as unknown as QueryBuilderType)
       .update(d)
@@ -153,11 +145,14 @@ class FeriasService extends BaseService<Ferias> {
 
   async enviarContabilidade(id: string, empresaId: string, userId?: string): Promise<void> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { error } = await this.getQuery().update({
-      enviado_contabilidade: true,
-      enviado_contabilidade_em: new Date().toISOString(),
-      enviado_contabilidade_por: userId || null,
-    }).eq('id', id).eq('empresa_id', empresaId);
+    const { error } = await this.getQuery()
+      .update({
+        enviado_contabilidade: true,
+        enviado_contabilidade_em: new Date().toISOString(),
+        enviado_contabilidade_por: userId || null,
+      })
+      .eq('id', id)
+      .eq('empresa_id', empresaId);
     if (error) throw error;
   }
 
@@ -169,24 +164,30 @@ class FeriasService extends BaseService<Ferias> {
 
   async aprovarGestor(id: string, empresaId: string, userId?: string): Promise<void> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { error } = await this.getQuery().update({
-      status_aprovacao_gestor: 'aprovado',
-      aprovado_gestor: true,
-      aprovado_gestor_em: new Date().toISOString(),
-      aprovado_gestor_por: userId || null,
-    }).eq('id', id).eq('empresa_id', empresaId);
+    const { error } = await this.getQuery()
+      .update({
+        status_aprovacao_gestor: 'aprovado',
+        aprovado_gestor: true,
+        aprovado_gestor_em: new Date().toISOString(),
+        aprovado_gestor_por: userId || null,
+      })
+      .eq('id', id)
+      .eq('empresa_id', empresaId);
     if (error) throw error;
   }
 
   async aprovarRH(id: string, empresaId: string, userId?: string): Promise<void> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { error } = await this.getQuery().update({
-      status_aprovacao_rh: 'aprovado',
-      aprovado_rh: true,
-      aprovado_rh_em: new Date().toISOString(),
-      aprovado_rh_por: userId || null,
-      status: 'aprovada',
-    }).eq('id', id).eq('empresa_id', empresaId);
+    const { error } = await this.getQuery()
+      .update({
+        status_aprovacao_rh: 'aprovado',
+        aprovado_rh: true,
+        aprovado_rh_em: new Date().toISOString(),
+        aprovado_rh_por: userId || null,
+        status: 'aprovada',
+      })
+      .eq('id', id)
+      .eq('empresa_id', empresaId);
     if (error) throw error;
   }
 
@@ -209,12 +210,15 @@ class FeriasService extends BaseService<Ferias> {
 
   async cancelar(id: string, empresaId: string, userId?: string): Promise<void> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { error } = await this.getQuery().update({
-      cancelado: true,
-      cancelado_em: new Date().toISOString(),
-      cancelado_por: userId || null,
-      status: 'cancelada',
-    }).eq('id', id).eq('empresa_id', empresaId);
+    const { error } = await this.getQuery()
+      .update({
+        cancelado: true,
+        cancelado_em: new Date().toISOString(),
+        cancelado_por: userId || null,
+        status: 'cancelada',
+      })
+      .eq('id', id)
+      .eq('empresa_id', empresaId);
     if (error) throw error;
   }
 }

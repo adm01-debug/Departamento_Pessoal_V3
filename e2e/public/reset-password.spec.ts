@@ -33,7 +33,8 @@ test.describe('Recuperação de senha (público)', () => {
   });
 
   test('envia link de recuperação para email real e exibe confirmação', async ({ page }) => {
-    const email = process.env.E2E_USER_EMAIL ?? 'admin@teste.local';
+    test.skip(!process.env.E2E_USER_EMAIL, 'E2E_USER_EMAIL é restrito ao job integrado em main');
+    const email = process.env.E2E_USER_EMAIL!;
 
     await page.goto('/login');
     await page.getByRole('button', { name: /esqueci minha senha/i }).click();

@@ -13,28 +13,30 @@ const base: ReportScheduleForm = {
 
 describe('buildReportScheduleInsert', () => {
   it('alinha o agendamento diário ao contrato da Edge Function', () => {
-    expect(buildReportScheduleInsert(base, 'empresa-1', 'user-1')).toMatchObject({
+    const payload = buildReportScheduleInsert(base, 'empresa-1');
+    expect(payload).toMatchObject({
       formato: 'csv',
       empresa_id: 'empresa-1',
-      created_by: 'user-1',
       parametros: { empresaId: 'empresa-1' },
       dia_semana: null,
       dia_mes: null,
     });
+    expect(payload).not.toHaveProperty('created_by');
   });
 
   it('persiste apenas o calendário pertinente à frequência', () => {
-    expect(
-      buildReportScheduleInsert({ ...base, frequencia: 'semanal', dia_semana: 5 }, 'empresa-1', 'user-1')
-    ).toMatchObject({ dia_semana: 5, dia_mes: null });
+    expect(buildReportScheduleInsert({ ...base, frequencia: 'semanal', dia_semana: 5 }, 'empresa-1')).toMatchObject({
+      dia_semana: 5,
+      dia_mes: null,
+    });
 
-    expect(
-      buildReportScheduleInsert({ ...base, frequencia: 'mensal', dia_mes: 28 }, 'empresa-1', 'user-1')
-    ).toMatchObject({ dia_semana: null, dia_mes: 28 });
+    expect(buildReportScheduleInsert({ ...base, frequencia: 'mensal', dia_mes: 28 }, 'empresa-1')).toMatchObject({
+      dia_semana: null,
+      dia_mes: 28,
+    });
   });
 
-  it('falha fechada sem tenant ou autor', () => {
-    expect(() => buildReportScheduleInsert(base, '', 'user-1')).toThrow('empresa_id é obrigatório');
-    expect(() => buildReportScheduleInsert(base, 'empresa-1', '')).toThrow('Usuário autenticado é obrigatório');
+  it('falha fechada sem tenant', () => {
+    expect(() => buildReportScheduleInsert(base, '')).toThrow('empresa_id é obrigatório');
   });
 });

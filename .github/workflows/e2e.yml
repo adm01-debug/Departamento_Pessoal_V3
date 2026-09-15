@@ -2,17 +2,95 @@ name: E2E Tests (Playwright)
 
 on:
   pull_request:
-    branches: [main, master]
+    branches: [main]
   push:
-    branches: [main, master]
+    branches: [main]
+
+permissions:
+  contents: read
 
 concurrency:
   group: e2e-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  playwright-public:
+    name: Playwright público (PR)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      # URL e publishable key são identificadores públicos do frontend, não
+      # credenciais de escrita. Repository variables ficam disponíveis ao PR;
+      # as quatro identidades E2E permanecem exclusivamente no job de main.
+      VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+      VITE_SUPABASE_FUNCTIONS_BASE: /functions/v1
+      E2E_BASE_URL: http://127.0.0.1:4173
+      CI: true
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Validate public E2E configuration
+        run: |
+          test -n "$VITE_SUPABASE_URL" || { echo '::error::Repository variable VITE_SUPABASE_URL is missing'; exit 1; }
+          test -n "$VITE_SUPABASE_PUBLISHABLE_KEY" || { echo '::error::Repository variable VITE_SUPABASE_PUBLISHABLE_KEY is missing'; exit 1; }
+          test "$VITE_SUPABASE_URL" = 'https://frjbfeamybqsejlvmqbl.supabase.co' || { echo '::error::Public E2E target is not canonical'; exit 1; }
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Cache Bun install
+        uses: actions/cache@v6
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb', '**/bun.lock', '**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Cache Playwright browsers
+        id: playwright-public-cache
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/bun.lockb', '**/bun.lock', '**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install Playwright browsers
+        if: steps.playwright-public-cache.outputs.cache-hit != 'true'
+        run: bunx playwright install --with-deps chromium
+
+      - name: Install Playwright system deps
+        if: steps.playwright-public-cache.outputs.cache-hit == 'true'
+        run: bunx playwright install-deps chromium
+
+      - name: Run public Playwright E2E
+        run: bun run test:e2e:public
+
+      - name: Upload public Playwright report
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: playwright-public-report-${{ github.run_id }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 30
+
   playwright:
     name: Playwright E2E
+    # As quatro identidades são sintéticas, mas ainda concedem escrita no
+    # projeto canônico. Não expor suas credenciais a código de pull request.
+    # O gate autenticado roda no SHA já integrado em main.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -31,6 +109,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
 
       - name: Validate E2E configuration
         run: |
@@ -52,6 +132,7 @@ jobs:
             printf '::error::Required E2E configuration is missing: %s\n' "${missing[*]}"
             exit 1
           fi
+          test "$VITE_SUPABASE_URL" = 'https://frjbfeamybqsejlvmqbl.supabase.co' || { echo '::error::Authenticated E2E target is not canonical'; exit 1; }
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2

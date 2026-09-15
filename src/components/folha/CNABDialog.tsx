@@ -35,19 +35,28 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
   const [configEmpresaId, setConfigEmpresaId] = useState<string | null>(null);
   const [config, setConfig] = useState<CNABConfig>(() => emptyConfig());
   const empresaAtualIdRef = useRef<string | undefined>(empresaAtual?.id);
+  const openRef = useRef(false);
+  const contextVersionRef = useRef(0);
+  const operationVersionRef = useRef(0);
 
   useEffect(() => {
+    if (empresaAtualIdRef.current !== empresaAtual?.id) {
+      contextVersionRef.current += 1;
+      operationVersionRef.current += 1;
+    }
     empresaAtualIdRef.current = empresaAtual?.id;
   }, [empresaAtual?.id]);
 
   const loadConfig = useCallback(async (empresaId: string, razaoSocial?: string) => {
+    const requestVersion = contextVersionRef.current;
     setLoadingConfig(true);
     setConfigEmpresaId(null);
     try {
       const data = await cnabService.getConfig(empresaId);
       // A troca de empresa ou o fechamento do modal invalida a resposta que
       // chegou atrasada. Nunca reutilizar dados bancários entre tenants.
-      if (empresaAtualIdRef.current !== empresaId) return;
+      if (!openRef.current || empresaAtualIdRef.current !== empresaId || contextVersionRef.current !== requestVersion)
+        return;
       if (data) {
         setConfig({
           banco_codigo: data.banco_codigo,
@@ -69,7 +78,8 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
         err instanceof Error ? err : new Error(String(err))
       );
     } finally {
-      if (empresaAtualIdRef.current === empresaId) setLoadingConfig(false);
+      if (openRef.current && empresaAtualIdRef.current === empresaId && contextVersionRef.current === requestVersion)
+        setLoadingConfig(false);
     }
   }, []);
 
@@ -88,8 +98,14 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
   }, [open, empresaAtual?.id, empresaAtual?.razao_social, loadConfig]);
 
   const handleOpenChange = (nextOpen: boolean) => {
+    openRef.current = nextOpen;
+    contextVersionRef.current += 1;
+    operationVersionRef.current += 1;
     setOpen(nextOpen);
     if (!nextOpen) {
+      setLoading(false);
+      setSaving(false);
+      setLoadingConfig(false);
       setConfigEmpresaId(null);
       setConfig(emptyConfig());
     }
@@ -101,22 +117,43 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
       toast.error('A configuração da empresa atual ainda não foi carregada.');
       return;
     }
+    const empresaId = empresaAtual.id;
+    const requestVersion = contextVersionRef.current;
+    const operationVersion = ++operationVersionRef.current;
     setSaving(true);
     try {
-      await cnabService.saveConfig(empresaAtual.id, config);
+      await cnabService.saveConfig(empresaId, config);
+      if (!openRef.current || empresaAtualIdRef.current !== empresaId || contextVersionRef.current !== requestVersion)
+        return;
       toast.success('Configurações bancárias salvas!');
     } catch (err) {
-      toast.error(safeErrorMessage(err, 'Erro ao salvar configurações bancárias.'));
+      if (operationVersionRef.current === operationVersion) {
+        toast.error(safeErrorMessage(err, 'Erro ao salvar configurações bancárias.'));
+      }
     } finally {
-      setSaving(false);
+      if (operationVersionRef.current === operationVersion) setSaving(false);
     }
   };
 
   const handleGenerate = async () => {
     if (!empresaAtual?.id) return;
+    if (saving || loadingConfig || configEmpresaId !== empresaAtual.id) {
+      toast.error('A configuração da empresa atual ainda não foi carregada.');
+      return;
+    }
+    const empresaId = empresaAtual.id;
+    const contextVersion = contextVersionRef.current;
+    const operationVersion = ++operationVersionRef.current;
     setLoading(true);
     try {
-      const content = await cnabService.generateCNAB240(empresaAtual.id, folhaId);
+      const content = await cnabService.generateCNAB240(empresaId, folhaId);
+      if (
+        !openRef.current ||
+        empresaAtualIdRef.current !== empresaId ||
+        contextVersionRef.current !== contextVersion ||
+        operationVersionRef.current !== operationVersion
+      )
+        return;
 
       const blob = new Blob([content], { type: 'text/plain' });
       const url = window.URL.createObjectURL(blob);
@@ -129,19 +166,35 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
       document.body.removeChild(a);
 
       toast.success('Arquivo CNAB 240 (Remessa de Salários) gerado!');
-      setOpen(false);
+      handleOpenChange(false);
     } catch (err) {
-      toast.error(safeErrorMessage(err, 'Erro ao gerar arquivo CNAB.'));
+      if (operationVersionRef.current === operationVersion) {
+        toast.error(safeErrorMessage(err, 'Erro ao gerar arquivo CNAB.'));
+      }
     } finally {
-      setLoading(false);
+      if (operationVersionRef.current === operationVersion) setLoading(false);
     }
   };
 
   const handleGeneratePIX = async () => {
     if (!empresaAtual?.id) return;
+    if (saving || loadingConfig || configEmpresaId !== empresaAtual.id) {
+      toast.error('A configuração da empresa atual ainda não foi carregada.');
+      return;
+    }
+    const empresaId = empresaAtual.id;
+    const contextVersion = contextVersionRef.current;
+    const operationVersion = ++operationVersionRef.current;
     setLoading(true);
     try {
-      const content = await cnabService.generatePIXBatch(empresaAtual.id, folhaId);
+      const content = await cnabService.generatePIXBatch(empresaId, folhaId);
+      if (
+        !openRef.current ||
+        empresaAtualIdRef.current !== empresaId ||
+        contextVersionRef.current !== contextVersion ||
+        operationVersionRef.current !== operationVersion
+      )
+        return;
       const blob = new Blob([content], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -152,11 +205,13 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
       toast.success('Lote PIX analítico gerado com sucesso!');
-      setOpen(false);
+      handleOpenChange(false);
     } catch (err) {
-      toast.error(safeErrorMessage(err, 'Erro ao gerar lote PIX.'));
+      if (operationVersionRef.current === operationVersion) {
+        toast.error(safeErrorMessage(err, 'Erro ao gerar lote PIX.'));
+      }
     } finally {
-      setLoading(false);
+      if (operationVersionRef.current === operationVersion) setLoading(false);
     }
   };
 
@@ -262,7 +317,7 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
             <Button
               onClick={handleGenerate}
               className="rounded-xl gap-2 h-12 shadow-lg bg-gradient-to-r from-primary to-primary-glow"
-              disabled={loading}
+              disabled={loading || saving || loadingConfig || configEmpresaId !== empresaAtual?.id}
             >
               {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <FileDown className="h-5 w-5" />}
               <div className="flex flex-col items-start leading-tight">
@@ -274,7 +329,7 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
               onClick={handleGeneratePIX}
               variant="outline"
               className="rounded-xl gap-2 h-12 border-primary/30 hover:bg-primary/5"
-              disabled={loading}
+              disabled={loading || saving || loadingConfig || configEmpresaId !== empresaAtual?.id}
             >
               {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Zap className="h-5 w-5 text-amber-500" />}
               <div className="flex flex-col items-start leading-tight">
@@ -287,7 +342,7 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
           <div className="flex items-center gap-2 justify-center p-2 bg-success/5 rounded-lg border border-success/20">
             <ShieldCheck className="h-3.5 w-3.5 text-success" />
             <span className="text-[10px] text-success font-medium uppercase tracking-tighter">
-              Protocolo Bancário Seguro TLS 1.3 Ativo
+              Arquivo gerado localmente — revise antes do envio ao banco
             </span>
           </div>
         </div>

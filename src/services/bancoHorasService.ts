@@ -1,8 +1,9 @@
 import { supabase } from '@/integrations/supabase/client';
 import { parsePgIntervalToHours } from '@/utils/pgInterval';
+import type { Tables, Insertable } from '@/integrations/supabase/database.types';
 
 export const bancoHorasService = {
-  async listarPorColaborador(colaboradorId: string, empresaId: string): Promise<any[]> {
+  async listarPorColaborador(colaboradorId: string, empresaId: string): Promise<Tables<'banco_horas'>[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('banco_horas')
@@ -29,13 +30,12 @@ export const bancoHorasService = {
     if (error) throw error;
     if (!data) return 0;
     return data.reduce((saldo, item) => {
-      const horas = parsePgIntervalToHours((item as any).horas);
-      return (item as any).tipo === 'credito' ? saldo + horas : saldo - horas;
+      const horas = parsePgIntervalToHours(item.horas);
+      return item.tipo === 'credito' ? saldo + horas : saldo - horas;
     }, 0);
   },
 
-
-  async registrar(d: any): Promise<any> {
+  async registrar(d: Insertable<'banco_horas'>): Promise<Tables<'banco_horas'> | null> {
     if (!d.empresa_id) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase.from('banco_horas').insert(d).select().maybeSingle();
     if (error) throw error;

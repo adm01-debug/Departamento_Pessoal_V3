@@ -2,15 +2,13 @@ import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/integrations/supabase/client.base';
 import { PageTitle } from '@/components/PageTitle';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import {
-  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { AlertTriangle, CheckCircle2, RefreshCw, ShieldAlert } from 'lucide-react';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
@@ -48,7 +46,7 @@ function ResolveDialog({ alertId, onDone }: { alertId: string; onDone: () => voi
     mutationFn: async () => {
       const { data, error } = await supabase.rpc('resolve_security_alert', {
         _alert_id: alertId,
-        _note: note || null,
+        _note: note || undefined,
       });
       if (error) throw error;
       return data;
@@ -87,7 +85,9 @@ function ResolveDialog({ alertId, onDone }: { alertId: string; onDone: () => voi
           />
         </div>
         <DialogFooter>
-          <Button variant="ghost" onClick={() => setOpen(false)}>Cancelar</Button>
+          <Button variant="ghost" onClick={() => setOpen(false)}>
+            Cancelar
+          </Button>
           <Button onClick={() => mutation.mutate()} disabled={mutation.isPending}>
             {mutation.isPending ? 'Resolvendo...' : 'Confirmar'}
           </Button>
@@ -100,14 +100,15 @@ function ResolveDialog({ alertId, onDone }: { alertId: string; onDone: () => voi
 export default function AdminSecurityPage() {
   const [showResolved, setShowResolved] = useState(false);
 
-  const { data: alerts = [], isLoading, refetch, isRefetching } = useQuery<SecurityAlert[]>({
+  const {
+    data: alerts = [],
+    isLoading,
+    refetch,
+    isRefetching,
+  } = useQuery<SecurityAlert[]>({
     queryKey: ['security-alerts', showResolved],
     queryFn: async () => {
-      let q = supabase
-        .from('security_alerts')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(200);
+      let q = supabase.from('security_alerts').select('*').order('created_at', { ascending: false }).limit(200);
       if (!showResolved) q = q.eq('resolved', false);
       const { data, error } = await q;
       if (error) throw error;
@@ -133,25 +134,27 @@ export default function AdminSecurityPage() {
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm">Alertas abertos</CardTitle></CardHeader>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Alertas abertos</CardTitle>
+          </CardHeader>
           <CardContent className="text-3xl font-bold">{openCount}</CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm">Críticos</CardTitle></CardHeader>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Críticos</CardTitle>
+          </CardHeader>
           <CardContent className="text-3xl font-bold text-destructive">{criticalCount}</CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm">Total (últimos 200)</CardTitle></CardHeader>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Total (últimos 200)</CardTitle>
+          </CardHeader>
           <CardContent className="text-3xl font-bold">{alerts.length}</CardContent>
         </Card>
       </div>
 
       <div className="flex items-center gap-2">
-        <Button
-          variant={showResolved ? 'default' : 'outline'}
-          size="sm"
-          onClick={() => setShowResolved((v) => !v)}
-        >
+        <Button variant={showResolved ? 'default' : 'outline'} size="sm" onClick={() => setShowResolved((v) => !v)}>
           {showResolved ? 'Ocultar resolvidos' : 'Mostrar resolvidos'}
         </Button>
         <Button variant="outline" size="sm" onClick={() => refetch()} disabled={isRefetching}>

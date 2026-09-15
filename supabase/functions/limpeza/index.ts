@@ -39,7 +39,7 @@ serve(async (req: Request): Promise<Response> => {
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(adminClient, { key: `limpeza:${userData.user.id}`, limit: 3, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     const { data: roles } = await adminClient
       .from('user_roles')
