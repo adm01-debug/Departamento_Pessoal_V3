@@ -20,6 +20,13 @@ const SUPABASE_ANON = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
 // ausente não pode virar certificação verde de ACL/RLS não executada.
 const isCI = typeof process !== 'undefined' && !!(process.env.CI || process.env.GITHUB_ACTIONS);
 const hasCredentials = Boolean(SUPABASE_URL && SUPABASE_ANON);
+// PRs do Dependabot rodam com o store de segredos separado do repositório: as
+// variáveis acima chegam vazias por construção, não por regressão de ACL. Exigir
+// o gate ali deixaria toda atualização de dependência vermelha para sempre sem
+// provar nada sobre RLS. Em qualquer outro contexto (push em main, PR de branch
+// interna) o contrato continua obrigatório.
+const isDependabotRun =
+  process.env.GITHUB_ACTOR === 'dependabot[bot]' || (process.env.GITHUB_HEAD_REF ?? '').startsWith('dependabot/');
 const runLivePermissions = hasCredentials && (!isCI || process.env.RUN_LIVE_RLS_TESTS === 'true');
 const anon = runLivePermissions
   ? createClient(SUPABASE_URL, SUPABASE_ANON, {
@@ -28,7 +35,7 @@ const anon = runLivePermissions
   : (null as unknown as ReturnType<typeof createClient>);
 
 describe('Contrato do gate de permissões', () => {
-  it.skipIf(!isCI)('exige credenciais e opt-in explícito no CI', () => {
+  it.skipIf(!isCI || isDependabotRun)('exige credenciais e opt-in explícito no CI', () => {
     expect(hasCredentials).toBe(true);
     expect(process.env.RUN_LIVE_RLS_TESTS).toBe('true');
   });
