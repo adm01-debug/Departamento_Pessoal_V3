@@ -2,16 +2,16 @@
 // Since you've moved to an external DB, this file is kept for backward compatibility
 // but authentication should now be handled via your project's auth provider.
 
-import { supabase } from "../supabase/client";
+import { supabase } from '../supabase/client';
 
 export const lovable = {
   auth: {
-    signInWithOAuth: async (provider: "google" | "apple", opts?: any) => {
+    signInWithOAuth: async (provider: 'google' | 'apple', opts?: { redirect_uri?: string }) => {
       return supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: opts?.redirect_uri || window.location.origin
-        }
+          redirectTo: opts?.redirect_uri || window.location.origin,
+        },
       });
     },
   },

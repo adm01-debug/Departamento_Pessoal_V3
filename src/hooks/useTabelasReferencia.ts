@@ -1,19 +1,18 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as service from '@/services/tabelasReferenciaService';
 import { useEmpresas } from './useEmpresas';
-
-type DataRecord = Record<string, unknown>;
+import type { Insertable, Updatable } from '@/integrations/supabase/database.types';
 
 // =============================================
 // Helper for Result Pattern hooks
 // =============================================
-const useResultQuery = (key: any[], fn: () => Promise<any>, enabled: boolean = true) => 
+const useResultQuery = (key: any[], fn: () => Promise<any>, enabled: boolean = true) =>
   useQuery({
     queryKey: key,
     queryFn: async () => {
       return await fn();
     },
-    enabled
+    enabled,
   });
 
 // =============================================
@@ -25,15 +24,19 @@ export const useTiposAvisoPrevio = () => useResultQuery(['tipos-aviso-previo'], 
 export const useTiposDeficiencia = () => useResultQuery(['tipos-deficiencia'], service.listarTiposDeficiencia);
 export const useTiposPagamento = () => useResultQuery(['tipos-pagamento'], service.listarTiposPagamento);
 export const useTiposSalario = () => useResultQuery(['tipos-salario'], service.listarTiposSalario);
-export const useRelacionamentosDependentes = () => useResultQuery(['relacionamentos-dependentes'], service.listarRelacionamentosDependentes);
+export const useRelacionamentosDependentes = () =>
+  useResultQuery(['relacionamentos-dependentes'], service.listarRelacionamentosDependentes);
 export const useGenerosDocumento = () => useResultQuery(['generos-documento'], service.listarGenerosDocumento);
 export const useTiposVisto = () => useResultQuery(['tipos-visto'], service.listarTiposVisto);
 export const useCondicoesIngresso = () => useResultQuery(['condicoes-ingresso'], service.listarCondicoesIngresso);
 export const useTemposResidencia = () => useResultQuery(['tempos-residencia'], service.listarTemposResidencia);
-export const useDescricoesLogradouro = () => useResultQuery(['descricoes-logradouro'], service.listarDescricoesLogradouro);
+export const useDescricoesLogradouro = () =>
+  useResultQuery(['descricoes-logradouro'], service.listarDescricoesLogradouro);
 export const usePaises = () => useResultQuery(['paises'], service.listarPaises);
-export const useCategoriasTrabalhador = () => useResultQuery(['categorias-trabalhador'], service.listarCategoriasTrabalhador);
-export const useRelacionamentosContatoEmergencia = () => useResultQuery(['relacionamentos-contato-emergencia'], service.listarRelacionamentosContatoEmergencia);
+export const useCategoriasTrabalhador = () =>
+  useResultQuery(['categorias-trabalhador'], service.listarCategoriasTrabalhador);
+export const useRelacionamentosContatoEmergencia = () =>
+  useResultQuery(['relacionamentos-contato-emergencia'], service.listarRelacionamentosContatoEmergencia);
 export const useMotivosAfastamento = () => useResultQuery(['motivos-afastamento'], service.listarMotivosAfastamento);
 
 // =============================================
@@ -46,7 +49,7 @@ export function useCentrosCusto(empresaId?: string) {
 export function useCriarCentroCusto() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (data: DataRecord) => {
+    mutationFn: async (data: Insertable<'centros_custo'>) => {
       return await service.criarCentroCusto(data);
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['centros-custo'] }),
@@ -57,7 +60,7 @@ export function useAtualizarCentroCusto() {
   const qc = useQueryClient();
   const { empresaAtual } = useEmpresas();
   return useMutation({
-    mutationFn: async ({ id, dados }: { id: string; dados: DataRecord }) => {
+    mutationFn: async ({ id, dados }: { id: string; dados: Updatable<'centros_custo'> }) => {
       return await service.atualizarCentroCusto(id, dados, empresaAtual!.id);
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['centros-custo'] }),
@@ -90,10 +93,11 @@ export function useContasBancarias(colaboradorId: string) {
 export function useCriarContaBancaria() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (data: DataRecord) => {
+    mutationFn: async (data: Insertable<'contas_bancarias'>) => {
       return await service.criarContaBancaria(data);
     },
-    onSuccess: (_data: unknown, vars: DataRecord) => qc.invalidateQueries({ queryKey: ['contas-bancarias', vars.colaborador_id] }),
+    onSuccess: (_data: unknown, vars: Insertable<'contas_bancarias'>) =>
+      qc.invalidateQueries({ queryKey: ['contas-bancarias', vars.colaborador_id] }),
   });
 }
 
@@ -101,7 +105,7 @@ export function useAtualizarContaBancaria() {
   const qc = useQueryClient();
   const { empresaAtual } = useEmpresas();
   return useMutation({
-    mutationFn: async ({ id, dados }: { id: string; dados: DataRecord }) => {
+    mutationFn: async ({ id, dados }: { id: string; dados: Updatable<'contas_bancarias'> }) => {
       return await service.atualizarContaBancaria(id, dados, empresaAtual!.id);
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['contas-bancarias'] }),
@@ -123,16 +127,21 @@ export function useExcluirContaBancaria(colaboradorId: string) {
 // Dados de Estagiário
 // =============================================
 export function useDadosEstagiario(colaboradorId: string) {
-  return useResultQuery(['dados-estagiario', colaboradorId], () => service.obterDadosEstagiario(colaboradorId), !!colaboradorId);
+  return useResultQuery(
+    ['dados-estagiario', colaboradorId],
+    () => service.obterDadosEstagiario(colaboradorId),
+    !!colaboradorId
+  );
 }
 
 export function useSalvarDadosEstagiario() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ colaboradorId, dados }: { colaboradorId: string; dados: DataRecord }) => {
+    mutationFn: async ({ colaboradorId, dados }: { colaboradorId: string; dados: Updatable<'dados_estagiario'> }) => {
       return await service.salvarDadosEstagiario(colaboradorId, dados);
     },
-    onSuccess: (_data: unknown, vars: { colaboradorId: string; dados: DataRecord }) => qc.invalidateQueries({ queryKey: ['dados-estagiario', vars.colaboradorId] }),
+    onSuccess: (_data: unknown, vars: { colaboradorId: string; dados: Updatable<'dados_estagiario'> }) =>
+      qc.invalidateQueries({ queryKey: ['dados-estagiario', vars.colaboradorId] }),
   });
 }
 
@@ -140,16 +149,21 @@ export function useSalvarDadosEstagiario() {
 // Documentos Pessoais (upload tipado)
 // =============================================
 export function useDocumentosPessoais(colaboradorId: string) {
-  return useResultQuery(['documentos-pessoais', colaboradorId], () => service.listarDocumentosPessoais(colaboradorId), !!colaboradorId);
+  return useResultQuery(
+    ['documentos-pessoais', colaboradorId],
+    () => service.listarDocumentosPessoais(colaboradorId),
+    !!colaboradorId
+  );
 }
 
 export function useCriarDocumentoPessoal() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (data: DataRecord) => {
+    mutationFn: async (data: Insertable<'documentos_pessoais_arquivos'>) => {
       return await service.criarDocumentoPessoal(data);
     },
-    onSuccess: (_data: unknown, vars: DataRecord) => qc.invalidateQueries({ queryKey: ['documentos-pessoais', vars.colaborador_id] }),
+    onSuccess: (_data: unknown, vars: Insertable<'documentos_pessoais_arquivos'>) =>
+      qc.invalidateQueries({ queryKey: ['documentos-pessoais', vars.colaborador_id] }),
   });
 }
 
@@ -173,17 +187,26 @@ export function useFeriasAprovacoes(feriasId: string) {
 export function useCriarFeriasAprovacao() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (data: DataRecord) => {
+    mutationFn: async (data: Insertable<'ferias_aprovacoes'>) => {
       return await service.criarFeriasAprovacao(data);
     },
-    onSuccess: (_data: unknown, vars: DataRecord) => qc.invalidateQueries({ queryKey: ['ferias-aprovacoes', vars.ferias_id] }),
+    onSuccess: (_data: unknown, vars: Insertable<'ferias_aprovacoes'>) =>
+      qc.invalidateQueries({ queryKey: ['ferias-aprovacoes', vars.ferias_id] }),
   });
 }
 
 export function useAtualizarFeriasAprovacao() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, feriasId, dados }: { id: string; feriasId: string; dados: DataRecord }) => {
+    mutationFn: async ({
+      id,
+      feriasId,
+      dados,
+    }: {
+      id: string;
+      feriasId: string;
+      dados: Updatable<'ferias_aprovacoes'>;
+    }) => {
       return await service.atualizarFeriasAprovacao(feriasId, id, dados);
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['ferias-aprovacoes'] }),
@@ -200,10 +223,11 @@ export function useFeriasArquivos(feriasId: string) {
 export function useCriarFeriasArquivo() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (data: DataRecord) => {
+    mutationFn: async (data: Insertable<'ferias_arquivos'>) => {
       return await service.criarFeriasArquivo(data);
     },
-    onSuccess: (_data: unknown, vars: DataRecord) => qc.invalidateQueries({ queryKey: ['ferias-arquivos', vars.ferias_id] }),
+    onSuccess: (_data: unknown, vars: Insertable<'ferias_arquivos'>) =>
+      qc.invalidateQueries({ queryKey: ['ferias-arquivos', vars.ferias_id] }),
   });
 }
 
@@ -211,13 +235,17 @@ export function useCriarFeriasArquivo() {
 // Dependentes - Benefícios
 // =============================================
 export function useDependentesBeneficios(dependenteId: string) {
-  return useResultQuery(['dependentes-beneficios', dependenteId], () => service.listarDependentesBeneficios(dependenteId), !!dependenteId);
+  return useResultQuery(
+    ['dependentes-beneficios', dependenteId],
+    () => service.listarDependentesBeneficios(dependenteId),
+    !!dependenteId
+  );
 }
 
 export function useVincularDependenteBeneficio() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (data: DataRecord) => {
+    mutationFn: async (data: Insertable<'dependentes_beneficios'>) => {
       return await service.vincularDependenteBeneficio(data);
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['dependentes-beneficios'] }),

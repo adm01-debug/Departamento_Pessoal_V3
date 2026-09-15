@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deepChain } from '@/test/deepChain';
 import { catalogoCursoService } from '../catalogoCursoService';
+import type { Insertable } from '@/integrations/supabase/database.types';
 
 const EMPRESA_ID = 'test-empresa-id';
 
@@ -44,7 +45,12 @@ function setupUpdateChain(data: any, error: any = null) {
 
 function setupDeleteChain(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  const __delChain = {
+    then: (r: any) => Promise.resolve({ error }).then(r),
+    catch: (r: any) => Promise.resolve({ error }).catch(r),
+    finally: (r: any) => Promise.resolve({ error }).finally(r),
+    eq: eqFn,
+  };
   eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
@@ -54,7 +60,9 @@ function setupDeleteChain(error: any = null) {
 // ─── Cursos ───────────────────────────────────────────────────────────────────
 
 describe('catalogoCursoService.listarCursos', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns cursos without empresa filter', async () => {
     const records = [{ id: 'c1', nome: 'Excel Avançado' }];
@@ -86,7 +94,9 @@ describe('catalogoCursoService.listarCursos', () => {
 });
 
 describe('catalogoCursoService.criarCurso', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new curso', async () => {
     const created = { id: 'c-new', nome: 'Python' };
@@ -98,12 +108,14 @@ describe('catalogoCursoService.criarCurso', () => {
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(catalogoCursoService.criarCurso({})).rejects.toThrow();
+    await expect(catalogoCursoService.criarCurso({} as Insertable<'catalogo_cursos'>)).rejects.toThrow();
   });
 });
 
 describe('catalogoCursoService.atualizarCurso', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates and returns curso', async () => {
     const updated = { id: 'c1', carga_horaria: 20 };
@@ -121,7 +133,9 @@ describe('catalogoCursoService.atualizarCurso', () => {
 });
 
 describe('catalogoCursoService.excluirCurso', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes curso by id', async () => {
     const { eqFn } = setupDeleteChain();
@@ -133,7 +147,9 @@ describe('catalogoCursoService.excluirCurso', () => {
 // ─── Trilhas ──────────────────────────────────────────────────────────────────
 
 describe('catalogoCursoService.listarTrilhas', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns trilhas without empresa filter', async () => {
     const records = [{ id: 't1', titulo: 'Trilha Dev' }];
@@ -147,31 +163,35 @@ describe('catalogoCursoService.listarTrilhas', () => {
     expect(chain.eq).toHaveBeenCalledWith('empresa_id', 'emp-1');
   });
 
-  it('orders by titulo', async () => {
+  it('orders by nome', async () => {
     const { chain } = setupListChain([]);
     await catalogoCursoService.listarTrilhas(EMPRESA_ID);
-    expect(chain.order).toHaveBeenCalledWith('titulo');
+    expect(chain.order).toHaveBeenCalledWith('nome');
   });
 });
 
 describe('catalogoCursoService.criarTrilha', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new trilha', async () => {
-    const created = { id: 't-new', titulo: 'Liderança' };
+    const created = { id: 't-new', nome: 'Liderança' };
     const { insertFn } = setupInsertChain(created);
-    const result = await catalogoCursoService.criarTrilha({ titulo: 'Liderança', empresa_id: EMPRESA_ID });
+    const result = await catalogoCursoService.criarTrilha({ nome: 'Liderança', empresa_id: EMPRESA_ID });
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(catalogoCursoService.criarTrilha({})).rejects.toThrow();
+    await expect(catalogoCursoService.criarTrilha({} as Insertable<'trilhas_aprendizado'>)).rejects.toThrow();
   });
 });
 
 describe('catalogoCursoService.excluirTrilha', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes trilha by id', async () => {
     const { eqFn } = setupDeleteChain();
@@ -183,7 +203,9 @@ describe('catalogoCursoService.excluirTrilha', () => {
 // ─── Inscrições ───────────────────────────────────────────────────────────────
 
 describe('catalogoCursoService.listarInscricoes', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns inscricoes without filters', async () => {
     const records = [{ id: 'i1' }];
@@ -206,33 +228,37 @@ describe('catalogoCursoService.listarInscricoes', () => {
   it('includes colaborador and curso joins', async () => {
     const { selectFn } = setupListChain([]);
     await catalogoCursoService.listarInscricoes(EMPRESA_ID);
-    expect(selectFn).toHaveBeenCalledWith(
-      expect.stringContaining('colaborador:colaboradores')
-    );
-    expect(selectFn).toHaveBeenCalledWith(
-      expect.stringContaining('curso:catalogo_cursos')
-    );
+    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('colaborador:colaboradores'));
+    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('curso:catalogo_cursos'));
   });
 });
 
 describe('catalogoCursoService.criarInscricao', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new inscricao', async () => {
     const created = { id: 'i-new', curso_id: 'c1' };
     const { insertFn } = setupInsertChain(created);
-    const result = await catalogoCursoService.criarInscricao({ curso_id: 'c1', empresa_id: EMPRESA_ID });
+    const result = await catalogoCursoService.criarInscricao({
+      curso_id: 'c1',
+      empresa_id: EMPRESA_ID,
+      colaborador_id: 'colab-1',
+    });
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(catalogoCursoService.criarInscricao({})).rejects.toThrow();
+    await expect(catalogoCursoService.criarInscricao({} as Insertable<'inscricoes_cursos'>)).rejects.toThrow();
   });
 });
 
 describe('catalogoCursoService.atualizarInscricao', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates and returns inscricao', async () => {
     const updated = { id: 'i1', status: 'concluida' };
@@ -247,7 +273,9 @@ describe('catalogoCursoService.atualizarInscricao', () => {
 // ─── Trilhas-Cursos (vinculação) ──────────────────────────────────────────────
 
 describe('catalogoCursoService.listarTrilhasCursos', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns trilha cursos for given trilhaId', async () => {
     const orderFn = vi.fn().mockResolvedValue({ data: [{ id: 'tc1' }], error: null });
@@ -262,7 +290,9 @@ describe('catalogoCursoService.listarTrilhasCursos', () => {
 });
 
 describe('catalogoCursoService.vincularCursoTrilha', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns vinculo', async () => {
     const created = { id: 'v-new' };
@@ -274,7 +304,9 @@ describe('catalogoCursoService.vincularCursoTrilha', () => {
 });
 
 describe('catalogoCursoService.desvincularCursoTrilha', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes vinculo by id', async () => {
     const { eqFn } = setupDeleteChain();
@@ -286,7 +318,9 @@ describe('catalogoCursoService.desvincularCursoTrilha', () => {
 // ─── Feedback e Certificados ──────────────────────────────────────────────────
 
 describe('catalogoCursoService.registrarFeedback', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns feedback', async () => {
     const created = { id: 'fb-new', nota_satisfacao: 5 };
@@ -300,16 +334,39 @@ describe('catalogoCursoService.registrarFeedback', () => {
 });
 
 describe('catalogoCursoService.listarCertificados', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
-  it('returns certificados without filters', async () => {
-    // listarCertificados: select → optional eq×2 → order → await
+  // treinamento_certificados não tem empresa_id direto: a função primeiro
+  // busca os ids de catalogo_cursos da empresa, depois filtra
+  // treinamento_certificados por curso_id in (...) — ver o comentário de
+  // segurança em catalogoCursoService.ts.
+  it("returns certificados scoped to the empresa's cursos", async () => {
+    const cursosEq = vi.fn().mockResolvedValue({ data: [{ id: 'c1' }, { id: 'c2' }], error: null });
+    const cursosSelect = vi.fn().mockReturnValue({ eq: cursosEq });
+
     const orderFn = vi.fn().mockResolvedValue({ data: [{ id: 'cert1' }], error: null });
-    const eqFn = vi.fn().mockReturnValue({ order: orderFn });
-    const selectFn = vi.fn().mockReturnValue({ eq: eqFn, order: orderFn });
-    mockFrom.mockReturnValue({ select: selectFn });
+    const inFn = vi.fn().mockReturnValue({ order: orderFn });
+    const certSelect = vi.fn().mockReturnValue({ in: inFn });
+
+    mockFrom.mockImplementation((table: string) =>
+      table === 'catalogo_cursos' ? { select: cursosSelect } : { select: certSelect }
+    );
 
     const result = await catalogoCursoService.listarCertificados(EMPRESA_ID);
+    expect(cursosEq).toHaveBeenCalledWith('empresa_id', EMPRESA_ID);
+    expect(inFn).toHaveBeenCalledWith('curso_id', ['c1', 'c2']);
     expect(result).toEqual([{ id: 'cert1' }]);
+  });
+
+  it('returns an empty list without querying certificados when the empresa has no cursos', async () => {
+    const cursosEq = vi.fn().mockResolvedValue({ data: [], error: null });
+    const cursosSelect = vi.fn().mockReturnValue({ eq: cursosEq });
+    mockFrom.mockReturnValue({ select: cursosSelect });
+
+    const result = await catalogoCursoService.listarCertificados(EMPRESA_ID);
+    expect(result).toEqual([]);
+    expect(mockFrom).toHaveBeenCalledTimes(1);
   });
 });

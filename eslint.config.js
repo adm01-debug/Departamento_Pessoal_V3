@@ -38,7 +38,11 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "@typescript-eslint/no-unused-vars": "off",
-      "@typescript-eslint/no-explicit-any": "off",
+      // Dívida medida, não permitida por padrão. scripts/ratchet-any.mjs
+      // mantém um orçamento por diretório que só pode diminuir (E51-025);
+      // "warn" (não "error") porque lint:ci já impõe o teto via
+      // --max-warnings, e o ratchet reprova qualquer diretório que suba.
+      "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/no-empty-object-type": "off",
       "react-hooks/exhaustive-deps": "warn",
       // Regras do React Compiler (eslint-plugin-react-hooks v6+): sinalizam padrões
@@ -80,6 +84,18 @@ export default tseslint.config(
     files: ["src/utils/dateLocal.ts", "supabase/functions/**/*.ts"],
     rules: {
       "no-restricted-syntax": "off",
+    },
+  },
+
+  {
+    // `no-explicit-any` (E51-025) tem orçamento e gate (scripts/ratchet-any.mjs)
+    // apenas para src/**. `lint:edge` roda com --max-warnings=0 sobre
+    // supabase/functions e não tem ratchet equivalente ainda (E51-029, etapa
+    // separada); sem este override, ligar a regra globalmente reprovaria
+    // lint:edge nos ~52 `any` pré-existentes ali, fora do escopo desta etapa.
+    files: ["supabase/functions/**/*.ts"],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
     },
   },
 

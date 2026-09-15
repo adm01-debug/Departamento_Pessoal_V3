@@ -24,14 +24,20 @@ vi.mock('../useGenericCrud', () => ({
 
 vi.mock('@/services/webhookService', () => ({
   webhookService: {
-    listar: vi.fn(), criar: vi.fn(), atualizar: vi.fn(), excluir: vi.fn(),
+    listar: vi.fn(),
+    criar: vi.fn(),
+    atualizar: vi.fn(),
+    excluir: vi.fn(),
     listarLogs: mockListarLogs,
   },
 }));
 
 vi.mock('@/services/afastamentoService', () => ({
   afastamentoService: {
-    listar: vi.fn(), criar: vi.fn(), atualizar: vi.fn(), excluir: vi.fn(),
+    listar: vi.fn(),
+    criar: vi.fn(),
+    atualizar: vi.fn(),
+    excluir: vi.fn(),
     listarConfiguracoes: mockListarConfiguracoes,
     listarProrrogacoes: mockListarProrrogacoes,
     criarProrrogacao: vi.fn().mockResolvedValue({ id: 'p1' }),
@@ -42,14 +48,20 @@ vi.mock('@/services/afastamentoService', () => ({
 
 vi.mock('@/services/beneficioService', () => ({
   beneficioService: {
-    listar: vi.fn(), criar: vi.fn(), atualizar: vi.fn(), excluir: vi.fn(),
+    listar: vi.fn(),
+    criar: vi.fn(),
+    atualizar: vi.fn(),
+    excluir: vi.fn(),
     obterResumoCustos: vi.fn().mockResolvedValue({}),
   },
 }));
 
 vi.mock('@/services/colaboradorService', () => ({
   colaboradorService: {
-    listar: vi.fn(), criar: vi.fn(), atualizar: vi.fn(), excluir: vi.fn(),
+    listar: vi.fn(),
+    criar: vi.fn(),
+    atualizar: vi.fn(),
+    excluir: vi.fn(),
     getSummary: vi.fn().mockResolvedValue({}),
   },
 }));
@@ -139,6 +151,7 @@ describe('useAfastamentos', () => {
     renderHook(() => useAfastamentos(), { wrapper });
     expect(mockUseGenericCrud).toHaveBeenCalledWith(
       expect.objectContaining({
+        empresaId: 'emp-1',
         successMessages: expect.objectContaining({ create: expect.any(String) }),
       })
     );

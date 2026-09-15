@@ -6,7 +6,7 @@
 // - Cap 10.000 itens / R$ 50 mi por lote
 // - Auditoria bloqueante + hash SHA-256 do payload
 
-import { createClient } from 'npm:@supabase/supabase-js@2';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
 import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
@@ -76,13 +76,12 @@ Deno.serve(async (req) => {
     }
     const userId = claims.user.id;
 
-    let raw: unknown;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req, 512 * 1024);
     if (_pe) return _pe;
-    raw = _pb;
+    const raw = _pb;
 
     const parsed = bodySchema.safeParse(raw);
-    if (!parsed.success) return createValidationErrorResponse(parsed.error);
+    if (!parsed.success) return createValidationErrorResponse(parsed.error, req);
     const { empresa_id, banco_codigo, itens } = parsed.data;
 
     // Tenant scope
@@ -90,15 +89,26 @@ Deno.serve(async (req) => {
     // era um OU — pertencer à empresa já bastava, e o is_admin apenas somava
     // o admin global. Qualquer colaborador autenticado passava.
     {
-      const authz = await requireRh(service, userId, empresa_id);
+      const authz = await requireRh(service, userId, empresa_id, req);
       if (authz.denied) return authz.denied;
     }
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(service, { key: `cnab-remessa:${userId}`, limit: 10, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
-    // Idempotência transacional (shared helper)
+    // Cap financeiro
+    const totalCentavos = itens.reduce((acc, i) => acc + BigInt(i.valor_centavos), 0n);
+    if (totalCentavos > MAX_TOTAL_CENTAVOS) {
+      return createErrorResponse(
+        `Total do lote excede R$ ${Number(MAX_TOTAL_CENTAVOS) / 100}`,
+        422, 'AMOUNT_ABOVE_LIMIT',
+        undefined, req,
+      );
+    }
+
+    // Persist only after authentication and all deterministic validation. A
+    // rejected request must not leave an in_progress key behind.
     const idemKey = extractIdempotencyKey(req, parsed.data);
     const idem = await beginIdempotency(service, {
       endpoint: 'cnab-remessa',
@@ -106,19 +116,10 @@ Deno.serve(async (req) => {
       requestBody: { empresa_id, banco_codigo, itens },
       empresaId: empresa_id,
       userId,
+      request: req,
     });
     if (idem.replay) return idem.replay;
     if (idem.conflict) return idem.conflict;
-
-    // Cap financeiro
-    const totalCentavos = itens.reduce((acc, i) => acc + BigInt(i.valor_centavos), 0n);
-    if (totalCentavos > MAX_TOTAL_CENTAVOS) {
-      await failIdempotency(service, idem.id);
-      return createErrorResponse(
-        `Total do lote excede R$ ${Number(MAX_TOTAL_CENTAVOS) / 100}`,
-        422, 'AMOUNT_ABOVE_LIMIT',
-      );
-    }
 
     // Sequencial atômico: MAX + 1 por (empresa, banco)
     const { data: maxRow } = await service
@@ -206,4 +207,3 @@ Deno.serve(async (req) => {
     return createErrorResponse('Erro ao gerar remessa CNAB', 500, 'INTERNAL_ERROR');
   }
 });
-

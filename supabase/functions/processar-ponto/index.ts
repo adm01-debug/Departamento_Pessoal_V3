@@ -52,10 +52,9 @@ serve(async (req) => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
-    let body: any;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    body = _pb;
+    const body = _pb as any;
 
     const { colaboradorId, empresaId, data: dataRegistro } = body ?? {};
     if (!colaboradorId || !empresaId) {
@@ -77,7 +76,7 @@ serve(async (req) => {
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(supabase, { key: `proc-ponto:${userId}`, limit: 120, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     const dataRef = dataRegistro || new Date().toISOString().split('T')[0];
 
@@ -89,6 +88,7 @@ serve(async (req) => {
       requestBody: { colaboradorId, empresaId, data: dataRef },
       empresaId,
       userId,
+      request: req,
     });
     if (idem.replay) return idem.replay;
     if (idem.conflict) return idem.conflict;

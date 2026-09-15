@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { edgeFunctionsService } from '../edgeFunctionsService';
+import { EdgeFunctionInvokeError, edgeFunctionsService, isDefinitiveIdempotencyFailure } from '../edgeFunctionsService';
 
 const { mockInvoke, mockBitrixExecute, mockResendExecute, mockGenericExecute } = vi.hoisted(() => ({
   mockInvoke: vi.fn(),
@@ -158,6 +158,33 @@ describe('edgeFunctionsService error handling', () => {
   it('throws wrapped Error when invoke returns a supabase error object', async () => {
     mockInvoke.mockResolvedValue({ data: null, error: { message: 'Function not found' } });
     await expect(edgeFunctionsService.healthcheck()).rejects.toThrow('Function not found');
+  });
+
+  it('preserva status e código de uma rejeição HTTP definitiva', async () => {
+    mockInvoke.mockResolvedValue({
+      data: null,
+      error: { message: 'Edge Function returned a non-2xx status code' },
+      response: new Response(JSON.stringify({ error: 'Folha bloqueada', code: 'PAYROLL_LOCKED' }), { status: 409 }),
+    });
+    const error = await edgeFunctionsService
+      .calcularFolha({
+        empresaId: 'emp-1',
+        competencia: '2026-07',
+        idempotencyKey: 'idem-key',
+      })
+      .catch((caught) => caught);
+    expect(error).toBeInstanceOf(EdgeFunctionInvokeError);
+    expect(error).toMatchObject({ status: 409, code: 'PAYROLL_LOCKED', message: 'Folha bloqueada' });
+    expect(isDefinitiveIdempotencyFailure(error)).toBe(true);
+  });
+
+  it('mantém a chave para estado indeterminado ou falha de transporte', () => {
+    expect(
+      isDefinitiveIdempotencyFailure(
+        new EdgeFunctionInvokeError('reconcile', { status: 409, code: 'IDEMPOTENCY_STATE_INDETERMINATE' })
+      )
+    ).toBe(false);
+    expect(isDefinitiveIdempotencyFailure(new Error('Network timeout'))).toBe(false);
   });
 
   it('throws wrapped Error when invoke rejects with an exception', async () => {

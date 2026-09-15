@@ -16,3 +16,12 @@ export function toCsv(dados: unknown): string {
     ...arr.map((row) => headers.map((header) => escape((row as Record<string, unknown>)[header])).join(",")),
   ].join("\n");
 }
+
+/** Rejects silent truncation: a report must be complete or explicitly fail. */
+export function requireCompleteReportRows<T>(rows: T[] | null, maxRows: number): T[] {
+  const safeRows = rows ?? [];
+  if (safeRows.length > maxRows) {
+    throw new Error(`Relatório excede o limite explícito de ${maxRows} registros`);
+  }
+  return safeRows;
+}

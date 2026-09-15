@@ -1,5 +1,7 @@
 # Revisão de implementação das 50 etapas — 12/09/2026
 
+> **Registro histórico:** a revisão posterior à execução e ao merge da PR #100 está em [Revisão pós-execução das 50 etapas](REVISAO_POS_EXECUCAO_PLANO_50_2026-09-12.md). Ela acessou o canônico, conferiu main e atualiza os estados abaixo; preserve as evidências deste documento com seu SHA/data originais.
+
 ## Veredito
 
 **Não implementamos nem validamos integralmente todas as melhorias. Não há evidência suficiente para encerrar qualquer etapa no checkpoint C4.** Há entregas locais reais, novas regressões confirmadas e validações remotas pendentes. Não é tecnicamente defensável declarar 10/10 ou liberar go-live.
