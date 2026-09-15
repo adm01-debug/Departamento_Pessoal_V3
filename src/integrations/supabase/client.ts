@@ -25,7 +25,7 @@ if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
 
 // Base client usado para Auth/Storage. Toda I/O de dados vai pela bridge.
 // Exportado também como `supabaseBase` para uso em casos especiais (ex.: client.base.ts)
-// onde o proxy de bridge não deve mediar (audit_log, tabelas de sistema, etc).
+// onde o proxy de bridge não deve mediar (Auth, Storage e Realtime).
 export const supabaseBase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
     storage: brokeredPreviewStorage(),
@@ -125,7 +125,7 @@ interface BridgePayload {
   params?: Record<string, unknown>;
 }
 
-interface BridgeResponse<T = any> {
+interface BridgeResponse<T = unknown> {
   data: T | null;
   count?: number;
   error: { message: string } | null;
@@ -147,7 +147,7 @@ interface RpcBody {
   params?: Record<string, unknown>;
 }
 
-const callBridge = async <T = any>(
+const callBridge = async <T = unknown>(
   action: Action,
   target: string,
   payload: BridgePayload = {}
@@ -243,7 +243,7 @@ const callBridge = async <T = any>(
 type AnyFn = (...args: unknown[]) => unknown;
 
 // Resultado resolved de qualquer cadeia da bridge.
-type BridgeResult = { data: any; error: { message: string } | null; count?: number };
+type BridgeResult = { data: unknown; error: { message: string } | null; count?: number };
 
 // ── Chainable query builder types (P2-043) ─────────────────────────────────
 // Substitui o antigo QueryBuilder plano. Permite encadear .eq/.select/.single()
@@ -298,7 +298,7 @@ const createQueryBuilder = (table: string): TerminalQueryBuilder => {
     payload: { filters: [] },
   };
 
-  const exec = <T = any>() => callBridge<T>(state.action, table, state.payload);
+  const exec = <T = unknown>() => callBridge<T>(state.action, table, state.payload);
 
   const addFilter = (column: string, op: string, value: unknown): TerminalQueryBuilder => {
     // Se o valor for "undefined" ou "null" como string, converte para null real.
@@ -399,7 +399,7 @@ const createQueryBuilder = (table: string): TerminalQueryBuilder => {
 
 interface SupabaseProxyTarget {
   from: (table: string) => ChainableQueryBuilder;
-  rpc: (fn: string, params: Record<string, unknown>) => Promise<BridgeResponse<any>>;
+  rpc: (fn: string, params: Record<string, unknown>) => Promise<BridgeResponse<unknown>>;
   [key: string]: unknown;
 }
 

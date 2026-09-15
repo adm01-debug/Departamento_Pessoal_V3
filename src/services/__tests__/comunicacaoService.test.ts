@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deepChain } from '@/test/deepChain';
 import { comunicacaoService } from '../comunicacaoService';
+import type { Insertable, Updatable } from '@/integrations/supabase/database.types';
 
 const EMPRESA_ID = 'test-empresa-id';
 
@@ -44,7 +45,12 @@ function setupUpdateChain(data: any, error: any = null) {
 
 function setupDeleteChain(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  const __delChain = {
+    then: (r: any) => Promise.resolve({ error }).then(r),
+    catch: (r: any) => Promise.resolve({ error }).catch(r),
+    finally: (r: any) => Promise.resolve({ error }).finally(r),
+    eq: eqFn,
+  };
   eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
@@ -54,7 +60,9 @@ function setupDeleteChain(error: any = null) {
 // ─── listarComunicados ────────────────────────────────────────────────────────
 
 describe('comunicacaoService.listarComunicados', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns all comunicados without empresa filter', async () => {
     const records = [{ id: 'c1', titulo: 'Aviso' }];
@@ -90,7 +98,9 @@ describe('comunicacaoService.listarComunicados', () => {
 // ─── criarComunicado ──────────────────────────────────────────────────────────
 
 describe('comunicacaoService.criarComunicado', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new comunicado', async () => {
     const created = { id: 'c-new', titulo: 'Aviso Geral' };
@@ -102,39 +112,45 @@ describe('comunicacaoService.criarComunicado', () => {
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(comunicacaoService.criarComunicado({})).rejects.toThrow();
+    await expect(comunicacaoService.criarComunicado({} as Insertable<'comunicados'>)).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
     setupInsertChain(null, { message: 'fail' });
-    await expect(comunicacaoService.criarComunicado({})).rejects.toBeDefined();
+    await expect(comunicacaoService.criarComunicado({} as Insertable<'comunicados'>)).rejects.toBeDefined();
   });
 });
 
 // ─── atualizarComunicado ──────────────────────────────────────────────────────
 
 describe('comunicacaoService.atualizarComunicado', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates and returns comunicado', async () => {
-    const updated = { id: 'c1', publicado: true };
+    const updated = { id: 'c1', ativo: false };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    const result = await comunicacaoService.atualizarComunicado('c1', { publicado: true }, EMPRESA_ID);
-    expect(updateFn).toHaveBeenCalledWith({ publicado: true });
+    const result = await comunicacaoService.atualizarComunicado('c1', { ativo: false }, EMPRESA_ID);
+    expect(updateFn).toHaveBeenCalledWith({ ativo: false });
     expect(eqFn).toHaveBeenCalledWith('id', 'c1');
     expect(result).toEqual(updated);
   });
 
   it('throws when data is null', async () => {
     setupUpdateChain(null);
-    await expect(comunicacaoService.atualizarComunicado('c1', {}, EMPRESA_ID)).rejects.toThrow();
+    await expect(
+      comunicacaoService.atualizarComunicado('c1', {} as Updatable<'comunicados'>, EMPRESA_ID)
+    ).rejects.toThrow();
   });
 });
 
 // ─── excluirComunicado ────────────────────────────────────────────────────────
 
 describe('comunicacaoService.excluirComunicado', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes comunicado by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();
@@ -152,7 +168,9 @@ describe('comunicacaoService.excluirComunicado', () => {
 // ─── marcarLido ───────────────────────────────────────────────────────────────
 
 describe('comunicacaoService.marcarLido', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts leitura record', async () => {
     const { insertFn } = setupInsertChain({ id: 'l1' });
@@ -170,7 +188,9 @@ describe('comunicacaoService.marcarLido', () => {
 // ─── listarDenuncias ──────────────────────────────────────────────────────────
 
 describe('comunicacaoService.listarDenuncias', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns all denuncias without empresa filter', async () => {
     const records = [{ id: 'd1', tipo: 'assedio' }];
@@ -200,26 +220,31 @@ describe('comunicacaoService.listarDenuncias', () => {
 // ─── criarDenuncia ────────────────────────────────────────────────────────────
 
 describe('comunicacaoService.criarDenuncia', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new denuncia', async () => {
-    const created = { id: 'd-new', tipo: 'fraude' };
+    const created = { id: 'd-new', categoria: 'fraude' };
     const { insertFn } = setupInsertChain(created);
-    const result = await comunicacaoService.criarDenuncia({ tipo: 'fraude' });
-    expect(insertFn).toHaveBeenCalledWith({ tipo: 'fraude' });
+    const payload = { categoria: 'fraude', descricao: 'Relato de irregularidade financeira' };
+    const result = await comunicacaoService.criarDenuncia(payload);
+    expect(insertFn).toHaveBeenCalledWith(payload);
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(comunicacaoService.criarDenuncia({})).rejects.toThrow();
+    await expect(comunicacaoService.criarDenuncia({} as Insertable<'canal_etica'>)).rejects.toThrow();
   });
 });
 
 // ─── atualizarDenuncia ────────────────────────────────────────────────────────
 
 describe('comunicacaoService.atualizarDenuncia', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates and returns denuncia', async () => {
     const updated = { id: 'd1', status: 'em_analise' };
@@ -232,6 +257,8 @@ describe('comunicacaoService.atualizarDenuncia', () => {
 
   it('throws when data is null', async () => {
     setupUpdateChain(null);
-    await expect(comunicacaoService.atualizarDenuncia('d1', {}, EMPRESA_ID)).rejects.toThrow();
+    await expect(
+      comunicacaoService.atualizarDenuncia('d1', {} as Updatable<'canal_etica'>, EMPRESA_ID)
+    ).rejects.toThrow();
   });
 });

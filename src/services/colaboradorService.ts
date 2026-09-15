@@ -52,7 +52,7 @@ class ColaboradorService extends BaseService<Colaborador> {
     return { data: (data as Colaborador[]) || [], total: count || 0 };
   }
 
-  async getSummary(empresaId: string, filters: any = {}) {
+  async getSummary(empresaId: string, filters: { departamento?: string; cargo?: string } = {}) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
     // Optimized: Run counts in parallel using Supabase count feature
@@ -95,10 +95,10 @@ class ColaboradorService extends BaseService<Colaborador> {
   async getById(id: string) {
     return this.buscarPorId(id);
   }
-  async create(d: any) {
+  async create(d: Record<string, unknown>) {
     return this.criar(d);
   }
-  async update(id: string, d: any, empresaId: string) {
+  async update(id: string, d: Record<string, unknown>, empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     return this.atualizar(id, d, empresaId);
   }

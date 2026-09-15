@@ -158,7 +158,7 @@ serve(async (req: Request): Promise<Response> => {
     });
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(admin, { key: `relatorio:${userId}`, limit: 10, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     // 4) Validação Zod strict
     const { data: body, errorResponse } = await validateRequest(req, BodySchema);
@@ -257,11 +257,13 @@ serve(async (req: Request): Promise<Response> => {
     const auditHash = await sha256Hex(canonical);
 
     const { error: auditErr } = await admin.from('audit_log').insert({
+      tabela: 'relatorios',
+      registro_id: filtros.empresaId,
       user_id: userId,
-      empresa_id: filtros.empresaId,
-      acao: 'GENERATE_REPORT',
-      entidade: 'relatorio',
+      acao: 'EXPORT',
       dados_novos: {
+        evento: 'GENERATE_REPORT',
+        empresa_id: filtros.empresaId,
         tipo: filtros.tipo,
         filtros_canonical: canonical.slice(0, 4000),
         total_linhas: rows.length,

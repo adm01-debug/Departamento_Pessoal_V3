@@ -74,13 +74,12 @@ Deno.serve(async (req) => {
     }
     const userId = claims.user.id;
 
-    let raw: unknown;
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    raw = _pb;
+    const raw = _pb;
 
     const parsed = bodySchema.safeParse(raw);
-    if (!parsed.success) return createValidationErrorResponse(parsed.error);
+    if (!parsed.success) return createValidationErrorResponse(parsed.error, req);
     const p = parsed.data;
 
     // Tenant scope
@@ -88,13 +87,13 @@ Deno.serve(async (req) => {
     // era um OU — pertencer à empresa já bastava, e o is_admin apenas somava
     // o admin global. Qualquer colaborador autenticado passava.
     {
-      const authz = await requireRh(service, userId, p.empresa_id);
+      const authz = await requireRh(service, userId, p.empresa_id, req);
       if (authz.denied) return authz.denied;
     }
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(service, { key: `dctfweb:${userId}`, limit: 10, windowSec: 60 });
-    if (!rl.allowed) return rateLimitResponse(rl);
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     const compCheck = competenciaValida(p.competencia);
     if (!compCheck.ok) {

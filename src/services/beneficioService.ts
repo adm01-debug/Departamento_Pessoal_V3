@@ -8,10 +8,14 @@ type BeneficioVinculoRow = Tables<'beneficios_colaborador'> & {
   beneficio: Pick<Tables<'beneficios'>, 'id' | 'nome' | 'tipo' | 'empresa_id'>;
 };
 
-class BeneficioService extends BaseService<BeneficioRow, TablesInsert<'beneficios'>, Partial<TablesInsert<'beneficios'>>> {
+class BeneficioService extends BaseService<
+  BeneficioRow,
+  TablesInsert<'beneficios'>,
+  Partial<TablesInsert<'beneficios'>>
+> {
   constructor() {
-    super('beneficios', { 
-      defaultOrderBy: 'nome' 
+    super('beneficios', {
+      defaultOrderBy: 'nome',
     });
   }
 
@@ -48,7 +52,7 @@ class BeneficioService extends BaseService<BeneficioRow, TablesInsert<'beneficio
         tabela: 'beneficios',
         registro_id: data.id,
         acao: 'INSERT',
-        dados_novos: data
+        dados_novos: data,
       });
       return data;
     } catch (e) {
@@ -66,7 +70,7 @@ class BeneficioService extends BaseService<BeneficioRow, TablesInsert<'beneficio
         registro_id: id,
         acao: 'UPDATE',
         dados_anteriores: anterior,
-        dados_novos: data
+        dados_novos: data,
       });
 
       return data;
@@ -84,20 +88,29 @@ class BeneficioService extends BaseService<BeneficioRow, TablesInsert<'beneficio
         tabela: 'beneficios',
         registro_id: id,
         acao: 'DELETE',
-        dados_anteriores: anterior
+        dados_anteriores: anterior,
       });
     } catch (e) {
       throw new Error(e instanceof Error ? e.message : 'Falha ao excluir benefício', { cause: e });
     }
   }
 
-  async vincularColaborador(tipoBeneficioId: string, colaboradorId: string, dados: Partial<TablesInsert<'beneficios_colaborador'>>, empresaId: string): Promise<BeneficioVinculoRow> {
+  async vincularColaborador(
+    tipoBeneficioId: string,
+    colaboradorId: string,
+    dados: Partial<TablesInsert<'beneficios_colaborador'>>,
+    empresaId: string
+  ): Promise<BeneficioVinculoRow> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data, error } = await supabase.from('beneficios_colaborador').insert({
-      tipo_beneficio_id: tipoBeneficioId,
-      colaborador_id: colaboradorId,
-      ...dados
-    }).select().single();
+    const { data, error } = await supabase
+      .from('beneficios_colaborador')
+      .insert({
+        tipo_beneficio_id: tipoBeneficioId,
+        colaborador_id: colaboradorId,
+        ...dados,
+      })
+      .select()
+      .single();
     if (error) throw error;
     return data as unknown as BeneficioVinculoRow;
   }
@@ -114,10 +127,13 @@ class BeneficioService extends BaseService<BeneficioRow, TablesInsert<'beneficio
     return (data as unknown as BeneficioVinculoRow[]) || [];
   }
 
-  async obterResumoCustos(empresaId: string): Promise<Record<string, { empresa: number; colaborador: number; total: number }>> {
+  async obterResumoCustos(
+    empresaId: string
+  ): Promise<Record<string, { empresa: number; colaborador: number; total: number }>> {
     const { data, error } = await supabase
       .from('beneficios_colaborador')
-      .select(`
+      .select(
+        `
         id,
         valor,
         tipo_beneficio:tipos_beneficio!inner (
@@ -128,26 +144,37 @@ class BeneficioService extends BaseService<BeneficioRow, TablesInsert<'beneficio
         colaborador:colaboradores!inner (
           empresa_id
         )
-      `)
+      `
+      )
       .eq('colaborador.empresa_id', empresaId)
       .eq('status_vinculo', 'ativo');
 
     if (error) throw error;
 
-    return (data || []).reduce((acc: Record<string, { empresa: number; colaborador: number; total: number }>, item: any) => {
-      const tipo = item.tipo_beneficio.nome || 'Outros';
-      if (!acc[tipo]) acc[tipo] = { empresa: 0, colaborador: 0, total: 0 };
-      
-      const vTotal = Number(item.valor) || 0;
-      const descontoColab = Number(item.tipo_beneficio.desconto_colaborador) || 0;
-      const vColab = vTotal * descontoColab;
-      
-      acc[tipo].empresa += (vTotal - vColab);
-      acc[tipo].colaborador += vColab;
-      acc[tipo].total += vTotal;
-      
-      return acc;
-    }, {});
+    type ResumoRow = {
+      id: string;
+      valor: number;
+      tipo_beneficio: { id: string; nome: string | null; desconto_colaborador: number | null };
+      colaborador: { empresa_id: string | null };
+    };
+
+    return ((data as unknown as ResumoRow[]) || []).reduce(
+      (acc: Record<string, { empresa: number; colaborador: number; total: number }>, item) => {
+        const tipo = item.tipo_beneficio.nome || 'Outros';
+        if (!acc[tipo]) acc[tipo] = { empresa: 0, colaborador: 0, total: 0 };
+
+        const vTotal = Number(item.valor) || 0;
+        const descontoColab = Number(item.tipo_beneficio.desconto_colaborador) || 0;
+        const vColab = vTotal * descontoColab;
+
+        acc[tipo].empresa += vTotal - vColab;
+        acc[tipo].colaborador += vColab;
+        acc[tipo].total += vTotal;
+
+        return acc;
+      },
+      {}
+    );
   }
 }
 

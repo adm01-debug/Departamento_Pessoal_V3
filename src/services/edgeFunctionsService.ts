@@ -15,19 +15,59 @@ interface InvokeOptions {
   method?: string;
 }
 
+export class EdgeFunctionInvokeError extends Error {
+  readonly status?: number;
+  readonly code?: string;
+
+  constructor(message: string, options: { status?: number; code?: string; cause?: unknown } = {}) {
+    super(message, { cause: options.cause });
+    this.name = 'EdgeFunctionInvokeError';
+    this.status = options.status;
+    this.code = options.code;
+  }
+}
+
+export function isDefinitiveIdempotencyFailure(error: unknown): boolean {
+  if (!(error instanceof EdgeFunctionInvokeError)) return false;
+  if (error.code === 'IDEMPOTENCY_PREVIOUS_FAILURE') return true;
+  if (error.code === 'IDEMPOTENCY_IN_PROGRESS' || error.code === 'IDEMPOTENCY_STATE_INDETERMINATE') return false;
+  return (
+    error.status !== undefined && error.status >= 400 && error.status < 500 && ![408, 425, 429].includes(error.status)
+  );
+}
+
 const handleInvoke = async <T>(name: string, options: InvokeOptions, breaker = genericBreaker): Promise<T> => {
   try {
     return await breaker.execute(async () => {
-      const { data, error } = await supabase.functions.invoke(
+      const { data, error, response } = await supabase.functions.invoke(
         name,
         options as Parameters<typeof supabase.functions.invoke>[1]
       );
       if (error) {
-        throw new Error(error.message || `Erro ao chamar função ${name}`);
+        let payload: unknown;
+        if (response) {
+          try {
+            payload = await response.clone().json();
+          } catch {
+            payload = undefined;
+          }
+        }
+        const record = typeof payload === 'object' && payload !== null ? (payload as Record<string, unknown>) : null;
+        throw new EdgeFunctionInvokeError(
+          (record && typeof record.error === 'string' && record.error) ||
+            error.message ||
+            `Erro ao chamar função ${name}`,
+          {
+            status: response?.status,
+            code: record && typeof record.code === 'string' ? record.code : undefined,
+            cause: error,
+          }
+        );
       }
       return data as T;
     });
   } catch (e: unknown) {
+    if (e instanceof EdgeFunctionInvokeError) throw e;
     const msg = e instanceof Error ? e.message : `Falha crítica na comunicação com ${name}`;
     throw new Error(msg, { cause: e });
   }
