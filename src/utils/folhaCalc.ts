@@ -27,15 +27,31 @@ export interface CalculoResultado {
   }>;
 }
 
+export interface CalculoParams {
+  adicionais?: number;
+  descontosExtras?: number;
+  dependentes?: number;
+  horasExtras50?: number;
+  horasExtras100?: number;
+  meses13?: number;
+  parcela13?: 1 | 2;
+  jornada?: number;
+  horasFalta?: number;
+  diasUteis?: number;
+  domingosFeriados?: number;
+  eventos?: Array<{ codigo: string; descricao: string; tipo: 'provento' | 'desconto'; valor: number }>;
+}
+
 const TETO_INSS = FAIXAS_INSS_2026[FAIXAS_INSS_2026.length - 1].limite;
 
 function descreverFaixaInss(salarioBruto: number): string {
   if (salarioBruto >= TETO_INSS) return 'Teto (14%)';
-  const faixa = FAIXAS_INSS_2026.find((f, i) => {
-    const limiteAnterior = i === 0 ? 0 : FAIXAS_INSS_2026[i - 1].limite;
-    return salarioBruto > limiteAnterior && salarioBruto <= f.limite;
-  }) || FAIXAS_INSS_2026[FAIXAS_INSS_2026.length - 1];
-  
+  const faixa =
+    FAIXAS_INSS_2026.find((f, i) => {
+      const limiteAnterior = i === 0 ? 0 : FAIXAS_INSS_2026[i - 1].limite;
+      return salarioBruto > limiteAnterior && salarioBruto <= f.limite;
+    }) || FAIXAS_INSS_2026[FAIXAS_INSS_2026.length - 1];
+
   return `${(faixa.aliquota * 100).toFixed(1).replace('.0', '')}%`;
 }
 
@@ -53,7 +69,12 @@ export const folhaCalc = {
     faixa: descreverFaixaInss(salarioBruto),
   }),
 
-  calcularIRRF: (salarioBruto: number, inss: number, dependentes: number = 0, outrasDeducoes: number = 0): { valor: number; faixa: string } => {
+  calcularIRRF: (
+    salarioBruto: number,
+    inss: number,
+    dependentes: number = 0,
+    outrasDeducoes: number = 0
+  ): { valor: number; faixa: string } => {
     const valor = _irrf(salarioBruto, dependentes, outrasDeducoes);
     const base = salarioBruto - inss - dependentes * DEDUCAO_DEPENDENTE_IRRF - outrasDeducoes;
     return { valor, faixa: descreverFaixaIrrf(base) };
@@ -65,23 +86,7 @@ export const folhaCalc = {
   calcularDSR,
   calcular13Salario,
 
-  processar: (
-    salarioBase: number,
-    params: {
-      adicionais?: number;
-      descontosExtras?: number;
-      dependentes?: number;
-      horasExtras50?: number;
-      horasExtras100?: number;
-      meses13?: number;
-      parcela13?: 1 | 2;
-      jornada?: number;
-      horasFalta?: number;
-      diasUteis?: number;
-      domingosFeriados?: number;
-      eventos?: Array<{ codigo: string; descricao: string; tipo: 'provento' | 'desconto'; valor: number }>;
-    } = {}
-  ): CalculoResultado => {
+  processar: (salarioBase: number, params: CalculoParams = {}): CalculoResultado => {
     const {
       adicionais = 0,
       descontosExtras = 0,
@@ -94,36 +99,40 @@ export const folhaCalc = {
       horasFalta = 0,
       diasUteis = 26,
       domingosFeriados = 4,
-      eventos = []
+      eventos = [],
     } = params;
 
-    const detalheEventos: Array<{ codigo: string; descricao: string; tipo: 'provento' | 'desconto'; valor: number }> = [];
+    const detalheEventos: Array<{ codigo: string; descricao: string; tipo: 'provento' | 'desconto'; valor: number }> =
+      [];
 
     // 1. Proventos Fixos
     detalheEventos.push({ codigo: '1000', descricao: 'Salário Base', tipo: 'provento', valor: salarioBase });
 
     // 2. Horas Extras
     const valorHE50 = calcularHorasExtras(salarioBase, jornada, horasExtras50, 0.5);
-    if (valorHE50 > 0) detalheEventos.push({ codigo: '1001', descricao: 'Horas Extras 50%', tipo: 'provento', valor: valorHE50 });
-    
+    if (valorHE50 > 0)
+      detalheEventos.push({ codigo: '1001', descricao: 'Horas Extras 50%', tipo: 'provento', valor: valorHE50 });
+
     const valorHE100 = calcularHorasExtras(salarioBase, jornada, horasExtras100, 1.0);
-    if (valorHE100 > 0) detalheEventos.push({ codigo: '1002', descricao: 'Horas Extras 100%', tipo: 'provento', valor: valorHE100 });
-    
+    if (valorHE100 > 0)
+      detalheEventos.push({ codigo: '1002', descricao: 'Horas Extras 100%', tipo: 'provento', valor: valorHE100 });
+
     const totalHE = new Decimal(valorHE50).plus(valorHE100).toNumber();
-    
+
     // 3. DSR
-    const dsr = (diasUteis > 0 && domingosFeriados > 0) ? calcularDSR(totalHE, diasUteis, domingosFeriados) : 0;
-    if (dsr > 0) detalheEventos.push({ codigo: '1003', descricao: 'DSR sobre Horas Extras', tipo: 'provento', valor: dsr });
-    
+    const dsr = diasUteis > 0 && domingosFeriados > 0 ? calcularDSR(totalHE, diasUteis, domingosFeriados) : 0;
+    if (dsr > 0)
+      detalheEventos.push({ codigo: '1003', descricao: 'DSR sobre Horas Extras', tipo: 'provento', valor: dsr });
+
     // 4. 13º Salário
     let decimoTerceiro = 0;
     if (parcela13) {
       decimoTerceiro = calcular13Salario(salarioBase, meses13 || 12, parcela13);
-      detalheEventos.push({ 
-        codigo: parcela13 === 1 ? '1011' : '1012', 
-        descricao: `13º Salário - ${parcela13}ª Parcela`, 
-        tipo: 'provento', 
-        valor: decimoTerceiro 
+      detalheEventos.push({
+        codigo: parcela13 === 1 ? '1011' : '1012',
+        descricao: `13º Salário - ${parcela13}ª Parcela`,
+        tipo: 'provento',
+        valor: decimoTerceiro,
       });
     }
 
@@ -133,18 +142,17 @@ export const folhaCalc = {
     }
 
     // 6. Faltas
-    const valorFaltas = jornada > 0 
-      ? new Decimal(salarioBase).div(jornada).mul(horasFalta).toDecimalPlaces(2).toNumber() 
-      : 0;
+    const valorFaltas =
+      jornada > 0 ? new Decimal(salarioBase).div(jornada).mul(horasFalta).toDecimalPlaces(2).toNumber() : 0;
     if (valorFaltas > 0) {
       detalheEventos.push({ codigo: '5005', descricao: 'Faltas e Atrasos', tipo: 'desconto', valor: valorFaltas });
     }
 
     // 7. Eventos Customizados
-    eventos.forEach(ev => detalheEventos.push(ev));
+    eventos.forEach((ev) => detalheEventos.push(ev));
 
     const proventos = detalheEventos
-      .filter(e => e.tipo === 'provento')
+      .filter((e) => e.tipo === 'provento')
       .reduce((acc, curr) => acc.plus(curr.valor), new Decimal(0))
       .toNumber();
 
@@ -154,7 +162,12 @@ export const folhaCalc = {
     const { valor: inss, faixa: faixaInss } = folhaCalc.calcularINSS(baseTributavel);
     detalheEventos.push({ codigo: '5000', descricao: 'Desconto INSS', tipo: 'desconto', valor: inss });
 
-    const { valor: irrf, faixa: faixaIrrf } = folhaCalc.calcularIRRF(baseTributavel, inss, dependentes, descontosExtras);
+    const { valor: irrf, faixa: faixaIrrf } = folhaCalc.calcularIRRF(
+      baseTributavel,
+      inss,
+      dependentes,
+      descontosExtras
+    );
     if (irrf > 0) detalheEventos.push({ codigo: '5001', descricao: 'Desconto IRRF', tipo: 'desconto', valor: irrf });
 
     // 9. FGTS (Encargo)
@@ -162,30 +175,35 @@ export const folhaCalc = {
 
     // 10. Descontos Extras
     if (descontosExtras > 0) {
-      detalheEventos.push({ codigo: '5099', descricao: 'Descontos Diversos', tipo: 'desconto', valor: descontosExtras });
+      detalheEventos.push({
+        codigo: '5099',
+        descricao: 'Descontos Diversos',
+        tipo: 'desconto',
+        valor: descontosExtras,
+      });
     }
 
     const descontos = detalheEventos
-      .filter(e => e.tipo === 'desconto')
+      .filter((e) => e.tipo === 'desconto')
       .reduce((acc, curr) => acc.plus(curr.valor), new Decimal(0))
       .toNumber();
 
     const liquido = new Decimal(proventos).minus(descontos).toDecimalPlaces(2).toNumber();
 
-    return { 
-      proventos, 
-      descontos, 
-      liquido, 
-      inss, 
-      irrf, 
-      fgts, 
+    return {
+      proventos,
+      descontos,
+      liquido,
+      inss,
+      irrf,
+      fgts,
       horasExtras: totalHE,
       horasFalta,
       dsr,
       decimoTerceiro,
-      faixaInss, 
+      faixaInss,
       faixaIrrf,
-      detalheEventos
+      detalheEventos,
     };
   },
 };
