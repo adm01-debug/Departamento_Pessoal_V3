@@ -171,6 +171,39 @@ export const dashboardTooltips = {
     },
   },
 
+  /** "Passivo Trabalhista" (`PassivoTrabalhistaPage`) — área crítica de risco
+   * jurídico-financeiro. Público é RH experiente, então só levam tooltip as
+   * regras/thresholds específicos deste sistema (prazo de 2 anos p/ risco
+   * crítico, limiar de R$ 500 p/ divergência, o que compõe cada soma) — não
+   * conceitos universais de férias/13º/FGTS que esse público já conhece.
+   * Textos aprovados pelo time jurídico/contábil. */
+  passivoTrabalhista: {
+    passivoTotal:
+      'Soma de todas as provisões trabalhistas: férias + 1/3, 13º salário, FGTS, multa de 40% do FGTS e INSS patronal. Valor estimado para provisionamento contábil.',
+    fgtsMulta:
+      'FGTS acumulado + multa rescisória de 40% sobre o saldo do FGTS. Aplicável em caso de demissão sem justa causa.',
+    riscoCritico:
+      'Colaboradores com férias vencidas há 2 anos ou mais. Após esse prazo, a empresa pode ser autuada pelo Ministério do Trabalho e condenada ao pagamento em dobro.',
+    provisao13:
+      'Provisão acumulada de 1/12 do 13º salário por mês trabalhado, até a competência atual.',
+    divergencias:
+      'Diferenças entre o valor provisionado pelo sistema e o valor recalculado pela folha. Divergências acima de R$ 500 exigem investigação manual.',
+    diasSemFerias:
+      'Tempo acumulado desde o último período de férias. Acima de 730 dias (2 anos), o colaborador está em situação de risco crítico.',
+    feriasTerco:
+      'Provisão de férias + 1/3 constitucional sobre o salário base. Calculado proporcionalmente ao período aquisitivo.',
+    multaFgts:
+      'Estimativa da multa de 40% sobre o saldo do FGTS, aplicável em demissão sem justa causa.',
+    totalProvisionado:
+      'Soma de férias + FGTS + multa + 13º. Valor que a empresa já provisionou para custear uma possível rescisão.',
+    nivelRisco:
+      "Classificação: 'Crítico' (férias vencidas há 2+ anos), 'Alerta' (férias vencidas entre 1 e 2 anos), 'OK' (dentro do prazo).",
+    composicaoPassivo:
+      'Detalhamento dos componentes do passivo: férias + 1/3, 13º, FGTS, multa de 40% e INSS patronal.',
+    divergenciasTitulo:
+      'Diferenças identificadas entre o valor provisionado pelo sistema e o valor recalculado pela folha na competência atual. Divergências acima de R$ 500 exigem investigação manual pelo RH.',
+  },
+
   auditLog: {
     insert: 'Um novo registro foi criado nesta tabela.',
     update: 'Um registro existente foi alterado nesta tabela.',
