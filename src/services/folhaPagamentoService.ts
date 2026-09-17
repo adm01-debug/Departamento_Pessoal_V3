@@ -2,7 +2,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { CalculoResultado } from '@/utils/folhaCalc';
 import type { Tables } from '@/integrations/supabase/database.types';
 
-interface FolhaItemDetalhes {
+export interface FolhaItemDetalhes {
   horasExtras?: number;
   dsr?: number;
   decimoTerceiro?: number;

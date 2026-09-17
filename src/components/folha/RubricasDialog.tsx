@@ -1,30 +1,14 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow} from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Settings2, Plus, Trash2, Check, X, Save, Wrench, DownloadCloud, FileCode } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { validarRubricaESocial, sugerirCorrecaoRubrica } from '@/schemas/esocial';
@@ -42,31 +26,28 @@ export function RubricasDialog() {
     incide_fgts: true,
     incide_irrf: true,
     automatico: false,
-    ativo: true});
+    ativo: true,
+  });
   const queryClient = useQueryClient();
 
   const { data: rubricas, isLoading } = useQuery({
     queryKey: ['rubricas_folha'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('rubricas_folha')
-        .select('*')
-        .order('codigo', { ascending: true });
+      const { data, error } = await supabase.from('rubricas_folha').select('*').order('codigo', { ascending: true });
       if (error) throw error;
       return data;
-    }});
+    },
+  });
 
   const createMutation = useMutation({
     mutationFn: async (rubrica: typeof newRubrica) => {
       const validacao = validarRubricaESocial(rubrica);
       if (!validacao.valid) {
-        const errorMsg = validacao.errors.map(e => e.mensagem).join(', ');
+        const errorMsg = validacao.errors.map((e) => e.mensagem).join(', ');
         throw new Error(`Divergência eSocial: ${errorMsg}`);
       }
 
-      const { error } = await supabase
-        .from('rubricas_folha')
-        .insert(rubrica);
+      const { error } = await supabase.from('rubricas_folha').insert(rubrica);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -81,27 +62,27 @@ export function RubricasDialog() {
         incide_fgts: true,
         incide_irrf: true,
         automatico: false,
-        ativo: true});
+        ativo: true,
+      });
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       toast.error(safeErrorMessage(error, 'Erro ao criar rubrica.'));
-    }});
+    },
+  });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from('rubricas_folha')
-        .delete()
-        .eq('id', id);
+      const { error } = await supabase.from('rubricas_folha').delete().eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['rubricas_folha'] });
       toast.success('Rubrica removida com sucesso');
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       toast.error(safeErrorMessage(error, 'Erro ao remover rubrica.'));
-    }});
+    },
+  });
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -119,9 +100,9 @@ export function RubricasDialog() {
               Gestão de Rubricas (Eventos)
             </DialogTitle>
             <div className="flex items-center gap-2">
-              <Button 
+              <Button
                 variant="outline"
-                size="sm" 
+                size="sm"
                 className="gap-2 rounded-xl border-primary/20 text-primary hover:bg-primary/5"
                 onClick={() => {
                   if (confirm('Deseja importar as rubricas padrão do eSocial?')) {
@@ -133,11 +114,7 @@ export function RubricasDialog() {
                 <DownloadCloud className="h-4 w-4" />
                 <span className="hidden lg:inline">Importar Padrão</span>
               </Button>
-              <Button 
-                size="sm" 
-                className="gap-2 rounded-xl"
-                onClick={() => setIsAdding(!isAdding)}
-              >
+              <Button size="sm" className="gap-2 rounded-xl" onClick={() => setIsAdding(!isAdding)}>
                 {isAdding ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
                 {isAdding ? 'Cancelar' : 'Nova Rubrica'}
               </Button>
@@ -162,7 +139,7 @@ export function RubricasDialog() {
                 <Label htmlFor="tipo">Tipo</Label>
                 <Select
                   value={newRubrica.tipo}
-                  onValueChange={(val: any) => setNewRubrica({ ...newRubrica, tipo: val })}
+                  onValueChange={(val: 'provento' | 'desconto') => setNewRubrica({ ...newRubrica, tipo: val })}
                 >
                   <SelectTrigger id="tipo" className="rounded-xl">
                     <SelectValue />
@@ -191,7 +168,9 @@ export function RubricasDialog() {
                   checked={newRubrica.incide_inss}
                   onCheckedChange={(checked) => setNewRubrica({ ...newRubrica, incide_inss: !!checked })}
                 />
-                <Label htmlFor="inss" className="cursor-pointer text-xs">Incide INSS</Label>
+                <Label htmlFor="inss" className="cursor-pointer text-xs">
+                  Incide INSS
+                </Label>
               </div>
               <div className="flex items-center space-x-2">
                 <Checkbox
@@ -199,7 +178,9 @@ export function RubricasDialog() {
                   checked={newRubrica.incide_fgts}
                   onCheckedChange={(checked) => setNewRubrica({ ...newRubrica, incide_fgts: !!checked })}
                 />
-                <Label htmlFor="fgts" className="cursor-pointer text-xs">Incide FGTS</Label>
+                <Label htmlFor="fgts" className="cursor-pointer text-xs">
+                  Incide FGTS
+                </Label>
               </div>
               <div className="flex items-center space-x-2">
                 <Checkbox
@@ -207,11 +188,13 @@ export function RubricasDialog() {
                   checked={newRubrica.incide_irrf}
                   onCheckedChange={(checked) => setNewRubrica({ ...newRubrica, incide_irrf: !!checked })}
                 />
-                <Label htmlFor="irrf" className="cursor-pointer text-xs">Incide IRRF</Label>
+                <Label htmlFor="irrf" className="cursor-pointer text-xs">
+                  Incide IRRF
+                </Label>
               </div>
             </div>
             <div className="flex justify-end pt-2">
-              <Button 
+              <Button
                 onClick={() => createMutation.mutate(newRubrica)}
                 disabled={createMutation.isPending || !newRubrica.codigo || !newRubrica.descricao}
                 className="gap-2 rounded-xl w-full sm:w-auto"
@@ -252,28 +235,47 @@ export function RubricasDialog() {
               ) : (
                 rubricas?.map((rubrica) => (
                   <TableRow key={rubrica.id} className="hover:bg-muted/30 transition-colors group">
-                    <TableCell className="font-mono font-bold text-primary">
-                      {rubrica.codigo}
-                    </TableCell>
+                    <TableCell className="font-mono font-bold text-primary">{rubrica.codigo}</TableCell>
                     <TableCell className="font-medium font-body">{rubrica.descricao}</TableCell>
                     <TableCell>
-                      <Badge variant={rubrica.tipo === 'provento' ? 'outline' : 'destructive'} className={cn("capitalize font-body text-[10px]", rubrica.tipo === 'provento' && "bg-success/10 text-success border-success/20")}>
+                      <Badge
+                        variant={rubrica.tipo === 'provento' ? 'outline' : 'destructive'}
+                        className={cn(
+                          'capitalize font-body text-[10px]',
+                          rubrica.tipo === 'provento' && 'bg-success/10 text-success border-success/20'
+                        )}
+                      >
                         {rubrica.tipo}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-center">
-                      {rubrica.incide_inss ? <Check className="h-3.5 w-3.5 mx-auto text-success" /> : <X className="h-3.5 w-3.5 mx-auto text-muted-foreground/30" />}
+                      {rubrica.incide_inss ? (
+                        <Check className="h-3.5 w-3.5 mx-auto text-success" />
+                      ) : (
+                        <X className="h-3.5 w-3.5 mx-auto text-muted-foreground/30" />
+                      )}
                     </TableCell>
                     <TableCell className="text-center">
-                      {rubrica.incide_fgts ? <Check className="h-3.5 w-3.5 mx-auto text-success" /> : <X className="h-3.5 w-3.5 mx-auto text-muted-foreground/30" />}
+                      {rubrica.incide_fgts ? (
+                        <Check className="h-3.5 w-3.5 mx-auto text-success" />
+                      ) : (
+                        <X className="h-3.5 w-3.5 mx-auto text-muted-foreground/30" />
+                      )}
                     </TableCell>
                     <TableCell className="text-center">
-                      {rubrica.incide_irrf ? <Check className="h-3.5 w-3.5 mx-auto text-success" /> : <X className="h-3.5 w-3.5 mx-auto text-muted-foreground/30" />}
+                      {rubrica.incide_irrf ? (
+                        <Check className="h-3.5 w-3.5 mx-auto text-success" />
+                      ) : (
+                        <X className="h-3.5 w-3.5 mx-auto text-muted-foreground/30" />
+                      )}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-1">
                         {validarRubricaESocial(rubrica).valid ? (
-                          <Badge variant="outline" className="text-success border-success/30 bg-success/5 text-[9px] h-5">
+                          <Badge
+                            variant="outline"
+                            className="text-success border-success/30 bg-success/5 text-[9px] h-5"
+                          >
                             Conforme
                           </Badge>
                         ) : (
@@ -285,7 +287,7 @@ export function RubricasDialog() {
                               className="h-8 w-8 text-info hover:text-info hover:bg-info/10"
                               title="Ver XML eSocial"
                               onClick={() => {
-                                 toast.info("Visualização XML (S-1010) gerada com sucesso!");
+                                toast.info('Visualização XML (S-1010) gerada com sucesso!');
                               }}
                             >
                               <FileCode className="h-4 w-4" />
@@ -298,11 +300,18 @@ export function RubricasDialog() {
                               title="Corrigir divergência eSocial"
                               onClick={() => {
                                 const corrigida = sugerirCorrecaoRubrica(rubrica);
-                                if (corrigida && confirm('Deseja aplicar as correções automáticas do eSocial para esta rubrica?')) {
-                                  supabase.from('rubricas_folha').update(corrigida).eq('id', rubrica.id).then(() => {
-                                    queryClient.invalidateQueries({ queryKey: ['rubricas_folha'] });
-                                    toast.success('Rubrica saneada com sucesso!');
-                                  });
+                                if (
+                                  corrigida &&
+                                  confirm('Deseja aplicar as correções automáticas do eSocial para esta rubrica?')
+                                ) {
+                                  supabase
+                                    .from('rubricas_folha')
+                                    .update(corrigida)
+                                    .eq('id', rubrica.id)
+                                    .then(() => {
+                                      queryClient.invalidateQueries({ queryKey: ['rubricas_folha'] });
+                                      toast.success('Rubrica saneada com sucesso!');
+                                    });
                                 }
                               }}
                             >

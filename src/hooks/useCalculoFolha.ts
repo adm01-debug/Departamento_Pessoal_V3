@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { folhaCalc, CalculoResultado } from '@/utils/folhaCalc';
+import { folhaCalc, CalculoResultado, CalculoParams } from '@/utils/folhaCalc';
 import { calculoLoteService, BatchProgress } from '@/services/folha/calculoLoteService';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { loggerService } from '@/services/loggerService';
+import type { Json } from '@/integrations/supabase/database.types';
 
 export function useCalculoFolha() {
   const [resultado, setResultado] = useState<CalculoResultado | null>(null);
@@ -25,7 +26,7 @@ export function useCalculoFolha() {
       empresaId: string;
       competencia: string;
       salarioBase: number;
-      params?: any;
+      params?: CalculoParams;
     }) => {
       setIsCalculando(true);
 
@@ -76,7 +77,7 @@ export function useCalculoFolha() {
               inss_mes: res.inss,
               irrf_mes: res.irrf,
               fgts_mes: res.fgts,
-              detalhes: res as any,
+              detalhes: res as unknown as Json,
             },
             { onConflict: 'folha_id,colaborador_id' }
           )
@@ -96,7 +97,7 @@ export function useCalculoFolha() {
             liquido: res.liquido,
             base: salarioBase,
             params_used: params,
-          } as any,
+          } as unknown as Json,
         });
 
         return data;
