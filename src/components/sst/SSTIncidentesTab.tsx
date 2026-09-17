@@ -38,7 +38,7 @@ export function SSTIncidentesTab() {
     switch (tipo) {
       case 'quase_acidente': return <Badge variant="outline" className="border-info/30 text-info">Quase Acidente</Badge>;
       case 'acidente_leve': return <Badge variant="outline" className="border-warning/30 text-warning">Acidente Leve</Badge>;
-      case 'acidente_grave': return <Badge variant="outline" className="border-destructive/30 text-destructive font-bold">Acidente Grave</Badge>;
+      case 'acidente_grave': return <Badge variant="outline" className="border-destructive/30 text-destructive font-medium">Acidente Grave</Badge>;
       default: return <Badge variant="outline">{tipo}</Badge>;
     }
   };
@@ -50,8 +50,8 @@ export function SSTIncidentesTab() {
           <CardContent className="p-4 flex items-center gap-4">
             <div className="p-3 rounded-xl bg-destructive/10 text-destructive"><ShieldAlert className="h-5 w-5" /></div>
             <div>
-              <p className="text-2xl font-bold font-display">0</p>
-              <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Acidentes com Afastamento</p>
+              <p className="text-2xl font-medium font-display">0</p>
+              <p className="text-[10px] text-muted-foreground uppercase font-medium tracking-widest">Acidentes com Afastamento</p>
             </div>
           </CardContent>
         </Card>
@@ -59,8 +59,8 @@ export function SSTIncidentesTab() {
           <CardContent className="p-4 flex items-center gap-4">
             <div className="p-3 rounded-xl bg-warning/10 text-warning"><AlertCircle className="h-5 w-5" /></div>
             <div>
-              <p className="text-2xl font-bold font-display">2</p>
-              <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Incidentes este mês</p>
+              <p className="text-2xl font-medium font-display">2</p>
+              <p className="text-[10px] text-muted-foreground uppercase font-medium tracking-widest">Incidentes este mês</p>
             </div>
           </CardContent>
         </Card>
@@ -68,8 +68,8 @@ export function SSTIncidentesTab() {
           <CardContent className="p-4 flex items-center gap-4">
             <div className="p-3 rounded-xl bg-success/10 text-success"><CheckCircle2 className="h-5 w-5" /></div>
             <div>
-              <p className="text-2xl font-bold font-display">425</p>
-              <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Dias sem acidentes</p>
+              <p className="text-2xl font-medium font-display">425</p>
+              <p className="text-[10px] text-muted-foreground uppercase font-medium tracking-widest">Dias sem acidentes</p>
             </div>
           </CardContent>
         </Card>

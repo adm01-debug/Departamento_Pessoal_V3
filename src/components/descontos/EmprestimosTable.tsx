@@ -24,7 +24,7 @@ export function EmprestimosTable({ emprestimos, fmt }: any) {
             <TableCell>{fmt(e.valor_parcela)}</TableCell>
             <TableCell className="w-[200px]">
               <div className="space-y-1">
-                <div className="flex justify-between text-[10px] uppercase font-bold text-muted-foreground">
+                <div className="flex justify-between text-[10px] uppercase font-medium text-muted-foreground">
                   <span>{e.parcelas_pagas || 0} / {e.numero_parcelas}</span>
                   <span>{Math.round(((e.parcelas_pagas || 0) / e.numero_parcelas) * 100)}%</span>
                 </div>

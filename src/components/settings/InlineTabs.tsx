@@ -61,13 +61,13 @@ export function NotificacoesTab() {
         <CardContent className="space-y-6 pt-2 font-body">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-4 p-5 rounded-2xl bg-muted/20 border border-border/30">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-primary">Operacional</h4>
+              <h4 className="text-xs font-medium uppercase tracking-wider text-primary">Operacional</h4>
               <FormSwitch label="Novas Admissões" description="Notificar sobre novos processos iniciados" />
               <FormSwitch label="Férias Pendentes" description="Alertar sobre solicitações aguardando aprovação" />
               <FormSwitch label="Afastamentos" description="Informar quando um colaborador se afastar" />
             </div>
             <div className="space-y-4 p-5 rounded-2xl bg-muted/20 border border-border/30">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-warning">Compliance</h4>
+              <h4 className="text-xs font-medium uppercase tracking-wider text-warning">Compliance</h4>
               <FormSwitch label="Vencimento de ASO" description="Avisar 15 dias antes do vencimento" />
               <FormSwitch label="Treinamentos" description="Alertar sobre convocações de cursos" />
               <FormSwitch label="Logs de Erro" description="Notificar falhas críticas em integrações" />
@@ -198,16 +198,16 @@ export function AlertasKpiTab() {
                 </DialogHeader>
                 <div className="space-y-4 pt-4">
                   <div className="space-y-2">
-                    <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Tipo de Indicador</Label>
+                    <Label className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Tipo de Indicador</Label>
                     <Input value={form.tipo} onChange={e => setForm(p => ({ ...p, tipo: e.target.value }))} placeholder="Ex: turnover, absenteismo, horas_extras" className="rounded-xl border-border/40" />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Limite Atenção (%)</Label>
+                      <Label className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Limite Atenção (%)</Label>
                       <Input type="number" value={form.limite_atencao} onChange={e => setForm(p => ({ ...p, limite_atencao: e.target.value }))} placeholder="Ex: 10" className="rounded-xl border-border/40" />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Limite Crítico (%)</Label>
+                      <Label className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Limite Crítico (%)</Label>
                       <Input type="number" value={form.limite_critico} onChange={e => setForm(p => ({ ...p, limite_critico: e.target.value }))} placeholder="Ex: 20" className="rounded-xl border-border/40" />
                     </div>
                   </div>
@@ -236,14 +236,14 @@ export function AlertasKpiTab() {
                 <TableBody>
                   {alertasConfig.map((a: any) => (
                     <TableRow key={a.id} className="hover:bg-accent/10 transition-colors group">
-                      <TableCell className="font-body font-bold capitalize pl-6 py-4">{a.tipo?.replace(/_/g, ' ')}</TableCell>
+                      <TableCell className="font-body font-medium capitalize pl-6 py-4">{a.tipo?.replace(/_/g, ' ')}</TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="bg-warning/10 text-warning border-warning/30 font-bold px-2 py-0.5 rounded-lg">
+                        <Badge variant="outline" className="bg-warning/10 text-warning border-warning/30 font-medium px-2 py-0.5 rounded-lg">
                           {a.limite_atencao}%
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/30 font-bold px-2 py-0.5 rounded-lg">
+                        <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/30 font-medium px-2 py-0.5 rounded-lg">
                           {a.limite_critico}%
                         </Badge>
                       </TableCell>
@@ -300,7 +300,7 @@ export function IntegracoesTab() {
                 </div>
                 Bitrix24 CRM
               </CardTitle>
-              <Badge variant="outline" className="text-success border-success/30 bg-success/5 text-[9px] uppercase font-bold px-2 py-0">Conectado</Badge>
+              <Badge variant="outline" className="text-success border-success/30 bg-success/5 text-[9px] uppercase font-medium px-2 py-0">Conectado</Badge>
             </div>
             <CardDescription className="text-[11px]">Sincronização de talentos e estrutura</CardDescription>
           </CardHeader>
@@ -336,7 +336,7 @@ export function IntegracoesTab() {
                 </div>
                 RD Station
               </CardTitle>
-              <Badge variant="secondary" className="text-[9px] font-bold">EM BREVE</Badge>
+              <Badge variant="secondary" className="text-[9px] font-medium">EM BREVE</Badge>
             </div>
             <CardDescription className="text-[11px]">Exportação de dados para marketing</CardDescription>
           </CardHeader>
@@ -355,7 +355,7 @@ export function IntegracoesTab() {
                 </div>
                 Google Workspace
               </CardTitle>
-              <Badge variant="secondary" className="text-[9px] font-bold">EM BREVE</Badge>
+              <Badge variant="secondary" className="text-[9px] font-medium">EM BREVE</Badge>
             </div>
             <CardDescription className="text-[11px]">Provisionamento de contas e e-mail</CardDescription>
           </CardHeader>
@@ -389,12 +389,12 @@ export function IntegracoesTab() {
                 <TableBody>
                   {integracoes.map((i: any) => (
                     <TableRow key={i.id} className="hover:bg-accent/10 transition-colors group">
-                      <TableCell className="font-body font-bold pl-6 py-4">{i.nome}</TableCell>
+                      <TableCell className="font-body font-medium pl-6 py-4">{i.nome}</TableCell>
                       <TableCell className="text-xs text-muted-foreground font-mono">{i.tipo || '-'}</TableCell>
                       <TableCell className="text-center">
                         <Badge
                           variant={i.ativo ? 'default' : 'secondary'}
-                          className={`rounded-lg text-[10px] font-bold px-2 py-0.5 ${i.ativo ? 'bg-success/20 text-success border-success/30' : ''}`}
+                          className={`rounded-lg text-[10px] font-medium px-2 py-0.5 ${i.ativo ? 'bg-success/20 text-success border-success/30' : ''}`}
                         >
                           {i.ativo ? 'ATIVO' : 'INATIVO'}
                         </Badge>
@@ -465,11 +465,11 @@ export function WebhooksLogsTab() {
                   {webhooksLogs.map((w: any) => (
                     <TableRow key={w.id} className="hover:bg-accent/10 transition-colors">
                       <TableCell className="font-mono text-[10px] max-w-[200px] truncate pl-6 py-4 text-muted-foreground">{w.url || w.webhook_url || '-'}</TableCell>
-                      <TableCell className="text-xs font-bold text-foreground">{w.evento || w.event || '-'}</TableCell>
+                      <TableCell className="text-xs font-medium text-foreground">{w.evento || w.event || '-'}</TableCell>
                       <TableCell className="text-center">
                         <Badge
                           variant={w.status_code === 200 ? 'outline' : 'destructive'}
-                          className={`rounded-lg text-[10px] font-bold px-2 py-0.5 ${w.status_code === 200 ? 'bg-success/10 text-success border-success/30' : ''}`}
+                          className={`rounded-lg text-[10px] font-medium px-2 py-0.5 ${w.status_code === 200 ? 'bg-success/10 text-success border-success/30' : ''}`}
                         >
                           {w.status_code || w.status || '-'}
                         </Badge>

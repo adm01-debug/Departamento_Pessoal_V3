@@ -63,7 +63,7 @@ export default function AssinaturasPage(): React.ReactElement {
                   {isLoading ? (
                     <Skeleton className="h-7 w-10" />
                   ) : (
-                    <p className="text-2xl font-bold text-foreground">{s.value}</p>
+                    <p className="text-2xl font-medium text-foreground">{s.value}</p>
                   )}
                   <p className="text-xs text-muted-foreground">{s.label}</p>
                 </div>

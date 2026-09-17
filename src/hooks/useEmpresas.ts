@@ -4,7 +4,7 @@
  */
 import { useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, supabaseBase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { create } from "zustand";
@@ -136,16 +136,17 @@ export function useEmpresas(): UseEmpresasReturn {
 
   // Buscar empresas do usuário
   const { data: userEmpresas, isLoading: loadingEmpresas } = useQuery({
-    queryKey: ["user-empresas", user?.id],
-    enabled: !!user?.id,
+    queryKey: ["user-empresas"],
+    enabled: true,
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
     queryFn: async () => {
-      if (!user?.id) return [];
-      const { data, error } = await supabase
+      const { data: { user: authUser } } = await supabaseBase.auth.getUser();
+      if (!authUser?.id) return [];
+      const { data, error } = await supabaseBase
         .from("user_empresas")
         .select(`*`)
-        .eq("user_id", user.id);
+        .eq("user_id", authUser.id);
 
       if (error) throw error;
       return data as (UserEmpresa & { empresa: Empresa })[];
@@ -159,7 +160,7 @@ export function useEmpresas(): UseEmpresasReturn {
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
     queryFn: async () => {
-      const { data, error } = await supabase.from("empresas").select("*").order("razao_social");
+      const { data, error } = await supabaseBase.from("empresas").select("*").order("razao_social");
 
       if (error) {
         if (error.code === "42501") return [];
@@ -170,20 +171,25 @@ export function useEmpresas(): UseEmpresasReturn {
     },
   });
 
-  // Empresa atual - buscamos os dados da empresa separadamente se necessário
+  // Empresa atual - fallback chain (do mais específico ao mais geral):
+  // 1) empresa selecionada manualmente + vínculo + dados completos
+  // 2) empresa padrão (is_default=true) do usuário
+  // 3) PRIMEIRA empresa vinculada do usuário (sem precisar de todasEmpresas)
+  // 4) primeira empresa global (só para admins que viram todasEmpresas)
   const empresaVinculo = userEmpresas?.find((ue) => ue.empresa_id === empresaAtualId);
-  // Se não encontrar vínculo, mas houver ID selecionado, buscamos em todas as empresas
   const empresaAtualData = todasEmpresas?.find(e => e.id === (empresaVinculo?.empresa_id || empresaAtualId));
-
-
-  // Se não há empresa selecionada, usar a padrão
   const empresaDefaultVinculo = userEmpresas?.find((ue) => ue.is_default);
   const empresaDefault = todasEmpresas?.find(e => e.id === empresaDefaultVinculo?.empresa_id);
-  
-  // Determinamos a empresa "efetiva" (prioridade: Seleção atual > Padrão > Primeira da lista vinculada > Primeira da lista global)
-  const empresaPrimeiraVinculada = todasEmpresas?.find(e => userEmpresas && userEmpresas[0] && e.id === userEmpresas[0].empresa_id);
+  // P0-FIX: quando o usuário NÃO é admin, todasEmpresas é undefined. Sem o
+  // fallback abaixo, empresaAtual ficava null mesmo com vínculo válido.
+  const empresaPrimeiraVinculadaId = userEmpresas?.[0]?.empresa_id;
+  const empresaPrimeiraVinculada = todasEmpresas?.find(e => e.id === empresaPrimeiraVinculadaId);
   const empresaPrimeiraGlobal = todasEmpresas?.[0];
-  const empresaEfetiva = empresaAtualData || empresaDefault || empresaPrimeiraVinculada || empresaPrimeiraGlobal;
+  const empresaEfetiva =
+    empresaAtualData ||
+    empresaDefault ||
+    (empresaPrimeiraVinculadaId ? { id: empresaPrimeiraVinculadaId } as Empresa : undefined) ||
+    empresaPrimeiraGlobal;
 
 
   const primeiraEmpresaId = userEmpresas?.[0]?.empresa_id ?? null;
@@ -219,7 +225,7 @@ export function useEmpresas(): UseEmpresasReturn {
         ativa: empresa.ativa ?? true,
       };
 
-      const { data, error } = await supabase.from("empresas").insert(insertData).select().maybeSingle();
+      const { data, error } = await supabaseBase.from("empresas").insert(insertData).select().maybeSingle();
 
       if (error) throw error;
       return ensureSingleResult(data, "empresa");
@@ -239,9 +245,9 @@ export function useEmpresas(): UseEmpresasReturn {
     mutationFn: async ({ id, ...dados }: Partial<Empresa> & { id: string }) => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Sessão expirada. Faça login novamente.');
-      const { data: membership } = await supabase.from("user_empresas").select("id").eq("user_id", user.id).eq("empresa_id", id).maybeSingle();
+      const { data: membership } = await supabaseBase.from("user_empresas").select("id").eq("user_id", user.id).eq("empresa_id", id).maybeSingle();
       if (!membership) throw new Error('Sem permissão para atualizar esta empresa.');
-      const { data, error } = await supabase.from("empresas").update(dados).eq("id", id).select().maybeSingle();
+      const { data, error } = await supabaseBase.from("empresas").update(dados).eq("id", id).select().maybeSingle();
 
       if (error) throw error;
       return ensureSingleResult(data, "empresa");
@@ -267,7 +273,7 @@ export function useEmpresas(): UseEmpresasReturn {
       empresaId: string;
       isDefault?: boolean;
     }) => {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseBase
         .from("user_empresas")
         .insert({
           user_id: userId,
@@ -296,7 +302,7 @@ export function useEmpresas(): UseEmpresasReturn {
       if (!userData.user) throw new Error("Usuário não autenticado");
 
       // Remover padrão de todas
-      const { error: clearError } = await supabase
+      const { error: clearError } = await supabaseBase
         .from("user_empresas")
         .update({ is_default: false })
         .eq("user_id", userData.user.id);
@@ -304,7 +310,7 @@ export function useEmpresas(): UseEmpresasReturn {
       if (clearError) throw clearError;
 
       // Definir nova padrão
-      const { error } = await supabase
+      const { error } = await supabaseBase
         .from("user_empresas")
         .update({ is_default: true })
         .eq("user_id", userData.user.id)

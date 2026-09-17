@@ -19,7 +19,7 @@ export function UserRolesTab() {
       // user_roles está na TABLE_DENYLIST do bridge — leitura direta retorna
       // 403 mesmo para admins. Único caminho é esta RPC. Ver
       // 20260718230000_admin_role_management_rpc.sql (achado R1 da auditoria).
-      const { data, error } = await supabase.rpc('admin_list_user_roles', {});
+      const { data, error } = await supabase.rpc('admin_list_user_roles', {} as never);
       if (error) throw error;
       return data || [];
     }});
@@ -76,7 +76,7 @@ export function UserRolesTab() {
                     <TableCell>
                       <Badge
                         variant={r.role === 'admin' ? 'default' : 'secondary'}
-                        className="gap-1 rounded-full uppercase text-[10px] font-bold tracking-tight"
+                        className="gap-1 rounded-full uppercase text-[10px] font-medium tracking-tight"
                       >
                         {r.role === 'admin' ? <ShieldCheck className="h-3 w-3" /> : <Users className="h-3 w-3" />}
                         {r.role}

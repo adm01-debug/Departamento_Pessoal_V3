@@ -201,7 +201,7 @@ export default function AdmissoesPage() {
                     {etapa === 'todos' ? 'Todos' : etapaLabels[etapa] || etapa}
                     {count > 0 && (
                       <span className={cn(
-                        'min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-[10px] font-bold',
+                        'min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-[10px] font-medium',
                         isActive ? 'bg-primary-foreground/20 text-primary-foreground' : 'bg-muted-foreground/15 text-muted-foreground'
                       )}>
                         {count}

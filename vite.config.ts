@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 import { imagetools } from 'vite-imagetools';
@@ -6,10 +6,56 @@ import { componentTagger } from "lovable-tagger";
 import { VitePWA } from 'vite-plugin-pwa';
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 
-export default defineConfig(({ mode }) => ({
+// Origem que o allowlist das edge functions aceita (`_shared/contract.ts` e
+// `_shared/csrf.ts`). Usada só no proxy do dev server — ver comentário abaixo.
+const ALLOWED_FUNCTION_ORIGIN = 'https://sistema-dp.lovable.app';
+
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), 'VITE_');
+  const supabaseUrl = env.VITE_SUPABASE_URL;
+
+  return {
   server: {
     host: "::",
     port: 8080,
+    strictPort: true, // se 8080 estiver ocupada, falha em vez de escolher outra porta em silêncio
+    // Edge Functions via proxy do dev server (mesma origem → sem CORS).
+    //
+    // O gateway do Supabase Cloud responde `Access-Control-Allow-Origin:
+    // https://sistema-dp.lovable.app` para qualquer origem localhost (o
+    // allowlist do `_shared/contract.ts` só libera localhost quando a env
+    // EXTRA_ALLOWED_LOCAL_PORTS está setada no projeto). O preflight do
+    // `auth-login` era barrado pelo navegador e o fetch estourava antes de
+    // sair — a UI de login exibia "Email ou senha inválidos" para o que na
+    // verdade era um bloqueio de CORS.
+    //
+    // Roteando por `/functions/v1` o navegador vê uma chamada same-origin e
+    // não aplica CORS.
+    //
+    // No caminho do proxy os headers `Origin`/`Referer` são reescritos para uma
+    // origem do allowlist. Não basta removê-los: `_shared/csrf.ts` é fail-closed
+    // e responde 403 "CSRF: missing Origin/Referer header" quando não há
+    // nenhum dos dois — o que quebraria todas as funções protegidas
+    // (consultarCEP, metricas, external-db-bridge, ...). Reescrever satisfaz
+    // tanto `verifyCsrf()` quanto `enforceOrigin()`.
+    //
+    // Isso vale apenas para o dev server, na máquina do desenvolvedor: nada
+    // muda no build de produção nem no CORS do projeto Supabase.
+    ...(supabaseUrl
+      ? {
+          proxy: {
+            '/functions/v1': {
+              target: supabaseUrl,
+              changeOrigin: true,
+              secure: true,
+              headers: {
+                origin: ALLOWED_FUNCTION_ORIGIN,
+                referer: `${ALLOWED_FUNCTION_ORIGIN}/`,
+              },
+            },
+          },
+        }
+      : {}),
   },
   plugins: [
     // P1-022: Babel-based plugin required for React Compiler
@@ -131,4 +177,5 @@ export default defineConfig(({ mode }) => ({
       },
     },
   },
-}));
+  };
+});

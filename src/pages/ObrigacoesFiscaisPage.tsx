@@ -174,7 +174,7 @@ export default function ObrigacoesFiscaisPage() {
                            </div>
                            <div className="text-right">
                               <p className="text-xs text-muted-foreground mb-1">Impacto Estimado</p>
-                              <p className="text-lg font-bold text-primary font-display">+{formatCurrency(s.resultado?.impacto_total || 0)}</p>
+                              <p className="text-lg font-medium text-primary font-display">+{formatCurrency(s.resultado?.impacto_total || 0)}</p>
                            </div>
                         </CardContent>
                       </Card>

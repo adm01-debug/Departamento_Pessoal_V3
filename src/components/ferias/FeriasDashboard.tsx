@@ -126,14 +126,14 @@ export function FeriasDashboard({ data }: FeriasDashboardProps) {
                       <User className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold font-display group-hover:text-primary transition-colors">{f.colaborador?.nome_completo}</p>
+                      <p className="text-sm font-medium font-display group-hover:text-primary transition-colors">{f.colaborador?.nome_completo}</p>
                       <p className="text-[11px] text-muted-foreground font-body">
                         {format(new Date(f.data_inicio), 'dd/MM/yyyy')} — {format(new Date(f.data_fim), 'dd/MM/yyyy')}
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 font-bold px-2 py-0.5 rounded-lg text-xs">
+                    <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 font-medium px-2 py-0.5 rounded-lg text-xs">
                       {f.dias_ferias}d
                     </Badge>
                   </div>

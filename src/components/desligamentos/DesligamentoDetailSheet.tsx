@@ -163,8 +163,8 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
                 <RescisaoRow label="Multa FGTS" value={d.multa_fgts} />
                 <Separator className="my-2" />
                 <div className="bg-primary/5 rounded-xl p-3 flex justify-between items-center">
-                  <span className="font-display font-bold text-sm">Valor Líquido</span>
-                  <span className="font-display font-bold text-primary text-lg">{fmt(d.valor_liquido)}</span>
+                  <span className="font-display font-medium text-sm">Valor Líquido</span>
+                  <span className="font-display font-medium text-primary text-lg">{fmt(d.valor_liquido)}</span>
                 </div>
               </CardContent>
             </Card>

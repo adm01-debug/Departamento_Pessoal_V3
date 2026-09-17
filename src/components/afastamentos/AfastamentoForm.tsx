@@ -178,7 +178,7 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
             <div className="mt-2 p-3 bg-blue-50/50 border border-blue-100 rounded-lg animate-in fade-in slide-in-from-top-1">
               <div className="flex items-center gap-2 mb-2 text-blue-700">
                 <HistoryIcon className="h-3 w-3" />
-                <span className="text-[10px] font-bold uppercase tracking-wider">Afastamentos Recentes (60 dias)</span>
+                <span className="text-[10px] font-medium uppercase tracking-wider">Afastamentos Recentes (60 dias)</span>
               </div>
               <div className="space-y-1.5">
                 {historicoRecente.map(h => (
@@ -244,17 +244,17 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
               <div className="space-y-1">
                 <p className="text-xs font-semibold text-muted-foreground uppercase">Resumo de Pagamento</p>
                 <p className="text-sm">
-                  <span className="font-bold">{diasInfo.total} dias</span> de afastamento no total.
+                  <span className="font-medium">{diasInfo.total} dias</span> de afastamento no total.
                 </p>
               </div>
               <div className="flex gap-4">
                 <div className="text-center">
                   <p className="text-[10px] text-muted-foreground uppercase">Empresa</p>
-                  <p className="text-lg font-bold">{diasInfo.empresa}</p>
+                  <p className="text-lg font-medium">{diasInfo.empresa}</p>
                 </div>
                 <div className="text-center">
                   <p className="text-[10px] text-muted-foreground uppercase">INSS</p>
-                  <p className="text-lg font-bold text-warning">{diasInfo.inss}</p>
+                  <p className="text-lg font-medium text-warning">{diasInfo.inss}</p>
                 </div>
               </div>
             </div>
@@ -281,7 +281,7 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
               <Button variant="outline" className="w-full justify-between font-normal h-auto py-2.5">
                 {selectedCid ? (
                   <div className="flex flex-col items-start">
-                    <span className="font-bold text-primary">{selectedCid.codigo}</span>
+                    <span className="font-medium text-primary">{selectedCid.codigo}</span>
                     <span className="text-[10px] text-muted-foreground truncate max-w-[300px]">{selectedCid.descricao}</span>
                   </div>
                 ) : (
@@ -310,7 +310,7 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
                       ].map(c => (
                         <CommandItem key={c.codigo} onSelect={() => { setSelectedCid(c); setCidSearch(''); }}>
                           <Zap className="mr-2 h-3 w-3 text-amber-500" />
-                          <span className="font-bold mr-2">{c.codigo}</span>
+                          <span className="font-medium mr-2">{c.codigo}</span>
                           <span className="text-xs truncate">{c.descricao}</span>
                         </CommandItem>
                       ))}
@@ -329,7 +329,7 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
                               setCidSearch('');
                             }}
                           >
-                            <span className="font-bold mr-2 text-primary">{c.codigo}</span>
+                            <span className="font-medium mr-2 text-primary">{c.codigo}</span>
                             <span className="text-xs truncate">{c.descricao}</span>
                           </CommandItem>
                         ))}

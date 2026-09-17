@@ -38,10 +38,10 @@ export function PortalOverviewTab({ nome, data, completude, navigate }: PortalOv
           <div className="h-[3px] bg-gradient-to-r from-primary to-primary-glow" />
           <CardContent className="p-6 flex flex-col sm:flex-row gap-6 items-center">
             <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center ring-4 ring-primary/20">
-              <span className="text-2xl font-bold text-primary">{nome.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}</span>
+              <span className="text-2xl font-medium text-primary">{nome.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}</span>
             </div>
             <div className="flex-1 text-center sm:text-left">
-              <h2 className="text-xl font-display font-bold">{nome}</h2>
+              <h2 className="text-xl font-display font-medium">{nome}</h2>
               <p className="text-sm text-muted-foreground font-body">{data?.profile?.cargo || 'Colaborador'} • {data?.profile?.departamento || 'Geral'}</p>
               <div className="mt-3 max-w-xs">
                 <div className="flex justify-between text-xs text-muted-foreground mb-1">
@@ -176,7 +176,7 @@ export function PortalOverviewTab({ nome, data, completude, navigate }: PortalOv
 
       {/* Quick Actions */}
       <div>
-        <h2 className="text-h3 font-display font-bold mb-4">Acesso Rápido</h2>
+        <h2 className="text-h3 font-display font-medium mb-4">Acesso Rápido</h2>
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
           {quickActions.map(({ label, icon: Icon, path, gradient, desc }, i) => (
             <motion.div key={path} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 + i * 0.04 }}>

@@ -49,7 +49,12 @@
     --text-h3: 1.125rem;
     --text-body: 0.875rem;
     --text-caption: 0.75rem;
-    --text-overline: 0.625rem;
+    --text-overline: 0.6875rem;
+    /* Nível 1 (compacto) — títulos de card dentro de cards de altura fixa;
+       Nível 2 — dados/KPI em destaque (nenhum token existente batia com
+       24px/700 ao mesmo tempo). Ver plano de padronização tipográfica. */
+    --text-heading: 1rem;
+    --text-data: 1.5rem;
     --chart-1: 68 100% 48%;
     --chart-2: 142 71% 38%;
     --chart-3: 38 92% 50%;
@@ -96,24 +101,31 @@
     --sidebar-accent-foreground: 240 20% 10%;
     --sidebar-border: 240 8% 90%;
     --sidebar-ring: 68 100% 48%;
+
+    --data-foreground: 240 20% 10%;
   }
 
   .dark {
-    /* ─── DARK MODE (Bombon Dark — Lime Neon) ─── */
-    --background: 240 24% 5%;
-    --foreground: 60 10% 92%;
-    --card: 240 20% 8%;
-    --card-foreground: 60 10% 92%;
-    --popover: 240 20% 8%;
-    --popover-foreground: 60 10% 92%;
+    /* ─── DARK MODE (Bombon Dark — Lime Neon) ───
+       Superfícies (background/card/border/sidebar) retonadas para o azul-marinho
+       exato pedido em 2026-09: #0B131F / #111C2A / #1A2638 (convertido para HSL,
+       já que os tokens do projeto são consumidos via `hsl(var(--x))`). Cores de
+       marca/semânticas (primary lima, success, warning, info, destructive,
+       chart-*) permanecem intocadas — são a identidade do produto, não "chrome". */
+    --background: 216 48% 8%;
+    --foreground: 0 0% 88%;
+    --card: 214 42% 12%;
+    --card-foreground: 0 0% 85%;
+    --popover: 214 42% 12%;
+    --popover-foreground: 0 0% 85%;
     --primary: 68 100% 48%;
     --primary-foreground: 240 20% 6%;
     --primary-glow: 68 100% 60%;
-    --secondary: 240 16% 14%;
-    --secondary-foreground: 60 10% 92%;
-    --muted: 240 16% 14%;
-    --muted-foreground: 240 8% 55%;
-    --accent: 240 16% 14%;
+    --secondary: 216 16% 14%;
+    --secondary-foreground: 0 0% 85%;
+    --muted: 216 16% 14%;
+    --muted-foreground: 0 0% 58%;
+    --accent: 216 16% 14%;
     --accent-foreground: 60 10% 92%;
     --destructive: 0 63% 35%;
     --destructive-foreground: 60 10% 92%;
@@ -123,8 +135,8 @@
     --warning-foreground: 240 20% 6%;
     --info: 199 89% 50%;
     --info-foreground: 60 10% 92%;
-    --border: 240 16% 15%;
-    --input: 240 16% 15%;
+    --border: 216 37% 16%;
+    --input: 216 37% 16%;
     --ring: 68 100% 48%;
     --chart-1: 68 100% 48%;
     --chart-2: 160 60% 45%;
@@ -132,14 +144,16 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
 
+    --data-foreground: 0 0% 95%;
+
     /* Sidebar dark — Bombon style */
-    --sidebar-background: 240 24% 6%;
+    --sidebar-background: 216 48% 7%;
     --sidebar-foreground: 60 10% 92%;
     --sidebar-primary: 68 100% 48%;
     --sidebar-primary-foreground: 240 20% 6%;
-    --sidebar-accent: 240 16% 12%;
+    --sidebar-accent: 216 16% 12%;
     --sidebar-accent-foreground: 60 10% 92%;
-    --sidebar-border: 240 16% 13%;
+    --sidebar-border: 216 37% 14%;
     --sidebar-ring: 68 100% 48%;
   }
 }
@@ -161,14 +175,16 @@
   }
 
   /* Typography hierarchy */
-  .text-display-xl { font-size: var(--text-display-xl); line-height: 1.1; font-family: "Outfit", sans-serif; font-weight: 700; letter-spacing: -0.03em; }
-  .text-display { font-size: var(--text-display); line-height: 1.2; font-family: "Outfit", sans-serif; font-weight: 700; letter-spacing: -0.025em; }
+  .text-display-xl { font-size: var(--text-display-xl); line-height: 1.1; font-family: "Outfit", sans-serif; font-weight: 600; letter-spacing: -0.03em; }
+  .text-display { font-size: var(--text-display); line-height: 1.2; font-family: "Outfit", sans-serif; font-weight: 600; letter-spacing: -0.025em; }
   .text-h1 { font-size: var(--text-h1); line-height: 1.3; font-family: "Outfit", sans-serif; font-weight: 600; }
   .text-h2 { font-size: var(--text-h2); line-height: 1.35; font-family: "Outfit", sans-serif; font-weight: 600; }
   .text-h3 { font-size: var(--text-h3); line-height: 1.4; font-family: "Outfit", sans-serif; font-weight: 500; }
-  .text-body { font-size: var(--text-body); line-height: 1.5; font-family: "Plus Jakarta Sans", sans-serif; }
+  .text-body { font-size: var(--text-body); line-height: 1.5; font-family: "Plus Jakarta Sans", sans-serif; font-weight: 400; }
   .text-caption { font-size: var(--text-caption); line-height: 1.4; font-family: "Plus Jakarta Sans", sans-serif; }
-  .text-overline { font-size: var(--text-overline); line-height: 1.4; font-family: "Plus Jakarta Sans", sans-serif; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+  .text-overline { font-size: var(--text-overline); line-height: 1.4; font-family: "Plus Jakarta Sans", sans-serif; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 500; }
+  .text-heading { font-size: var(--text-heading); line-height: 1.3; font-family: "Outfit", sans-serif; font-weight: 600; }
+  .text-data { font-size: 1.5rem; line-height: 1; font-family: "Outfit", sans-serif; font-weight: 500; letter-spacing: -0.025em; color: hsl(var(--data-foreground)); }
 
   /* Focus ring - accessible */
   :focus-visible {
@@ -238,11 +254,121 @@
     @apply transition-transform duration-200 hover:scale-105;
   }
 
+  /* ─── Global Scrollbar Styles ─── */
+  /* Applied to html element for universal coverage */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.3) hsl(var(--border) / 0.15);
+  }
+
+  /* Webkit browsers (Chrome, Edge, Safari) */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--border) / 0.15);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 3px;
+    border: 0px solid transparent;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--muted-foreground) / 0.5);
+  }
+
+  /* Firefox specific */
+  * {
+    scrollbar-color: hsl(var(--muted-foreground) / 0.3) hsl(var(--border) / 0.15);
+    scrollbar-width: thin;
+  }
+
   .hover-glow {
     @apply transition-shadow duration-300 hover:shadow-glow;
   }
 
   .hover-lift {
     @apply transition-all duration-300 hover:-translate-y-0.5 hover:shadow-elevated;
+  }
+}
+
+/* Squash-and-stretch de entrada do Card. Escrita direto aqui (fora de
+   qualquer `@layer`), NÃO registrada em `tailwind.config.js`: `.animate-squash`
+   é uma classe CSS comum, não uma utility do Tailwind — por isso não dá pra
+   usar a variante `motion-safe:` do Tailwind nela (o JIT do Tailwind só sabe
+   prefixar variantes em cima de utilities que ele mesmo reconhece; uma classe
+   escrita à mão fora do seu pipeline não tem esse tratamento, e
+   `motion-safe:animate-squash` no className não geraria NENHUMA regra CSS —
+   ficaria inerte, a animação nunca tocaria pra ninguém). O `@media` abaixo
+   resolve `prefers-reduced-motion` do jeito que já funciona no resto do
+   arquivo: como nenhuma das duas regras está dentro de `@layer`, a de baixo
+   (mesma especificidade) vence a de cima na ordem normal da cascata — sem
+   precisar de nenhum truque de layer desta vez, já que não estamos brigando
+   com nada gerado pelo Tailwind.
+
+   Sem `opacity` em nenhum keyframe (só `transform` anima): não é uma rede de
+   segurança contra "JavaScript falhar" — uma animação CSS declarada direto no
+   `className` do primeiro render não depende de JS pra tocar nem pra
+   terminar, o browser cuida disso sozinho. É só uma escolha estética: o card
+   já nasce visível e "assenta" no lugar, em vez de sofrer fade-in. */
+@keyframes squashInSafe {
+  0% { transform: scale(1.05, 0.95) translateY(12px); }
+  60% { transform: scale(0.98, 1.02) translateY(-3px); }
+  100% { transform: scale(1, 1) translateY(0); }
+}
+
+.animate-squash {
+  /* `backwards`, não `both`: com `both`, o `transform` do último keyframe
+     (`scale(1,1) translateY(0)`) fica preso em prioridade de cascata de
+     "animação" para sempre — mais alta que qualquer `transform` que o
+     Framer Motion tente escrever depois (ex.: `whileHover={{ y: -2 }}` no
+     MetricCard, que usa `motion.create(Card)` direto neste mesmo nó, sem
+     wrapper). Isso trava interações baseadas em transform permanentemente
+     depois da primeira entrada. `backwards` resolve: mantém o estado do
+     keyframe 0% durante o delay (sem "pulo" visual ao iniciar), mas devolve
+     o controle de `transform` ao normal assim que a animação termina de
+     tocar — sem salto perceptível na troca, porque o keyframe final
+     (`scale(1,1) translateY(0)`) já É o "sem transform nenhum" padrão. */
+  animation: squashInSafe 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-squash {
+    animation: none;
+  }
+
+  /* Dropdowns de período do Dashboard Executivo (select.tsx) — mesmo
+     mecanismo acima: por não estarem dentro de nenhum `@layer`, essa regra
+     vence a utility `data-[state=...]:animate-in`/`animate-out` gerada pelo
+     Tailwind, sem precisar de `!important`. IMPORTANTE: o seletor mira
+     `.select-content-anim` (classe própria, sempre presente), não
+     `.animate-in`/`.animate-out` — essas duas nunca aparecem como classe
+     "pura" no elemento real, só prefixadas por variante
+     (`data-\[state\=open\]\:animate-in`), então um seletor `.animate-in`
+     aqui nunca bateria com o elemento. */
+  .select-content-anim {
+    animation: none;
+  }
+
+  .select-chevron {
+    transition: none;
+  }
+
+  /* Mesmos dois dropdowns de período, agora via DropdownMenu (não mais
+     Select) — mesmo mecanismo/motivo das duas regras acima, marcadores
+     próprios para não colidir com `.select-content-anim`/`.select-chevron`
+     (usados por Select em outras telas do app, fora do escopo desta troca). */
+  .dp-dropdown-anim-content {
+    animation: none;
+  }
+
+  .dp-dropdown-anim-chevron {
+    transition: none;
   }
 }

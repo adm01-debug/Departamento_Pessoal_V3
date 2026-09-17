@@ -51,7 +51,7 @@ function Section({ title, icon: Icon, children, delay = 0 }: {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.4 }}
     >
-      <h2 className="flex items-center gap-2.5 text-xl font-display font-bold mb-4">
+      <h2 className="flex items-center gap-2.5 text-xl font-display font-medium mb-4">
         <div className="p-2 rounded-xl gradient-primary">
           <Icon className="h-5 w-5 text-primary-foreground" />
         </div>
@@ -78,7 +78,7 @@ export default function DesignSystemPage() {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
-          <h1 className="text-3xl font-display font-bold tracking-tight">Design System</h1>
+          <h1 className="text-3xl font-display font-medium tracking-tight">Design System</h1>
           <p className="text-muted-foreground font-body mt-1">Task Gifts — Living Styleguide</p>
         </div>
       </motion.div>
@@ -118,7 +118,7 @@ export default function DesignSystemPage() {
             return (
               <div key={g.name} className={cn('h-24 rounded-2xl bg-gradient-to-r flex items-center gap-3 px-5 shadow-elevated', g.gradient)}>
                 <Icon className="h-6 w-6 text-primary-foreground" />
-                <span className="text-primary-foreground font-display font-bold">{g.name}</span>
+                <span className="text-primary-foreground font-display font-medium">{g.name}</span>
               </div>
             );
           })}
@@ -131,7 +131,7 @@ export default function DesignSystemPage() {
           <CardContent className="p-6 space-y-6">
             <div className="space-y-3">
               <p className="text-xs text-muted-foreground font-body uppercase tracking-wider">Display — Outfit</p>
-              <h1 className="text-4xl font-display font-bold tracking-tight">Heading 1 — Display Bold</h1>
+              <h1 className="text-4xl font-display font-medium tracking-tight">Heading 1 — Display Bold</h1>
               <h2 className="text-3xl font-display font-semibold">Heading 2 — Display Semibold</h2>
               <h3 className="text-2xl font-display font-medium">Heading 3 — Display Medium</h3>
               <h4 className="text-xl font-display font-medium">Heading 4 — Display Medium</h4>

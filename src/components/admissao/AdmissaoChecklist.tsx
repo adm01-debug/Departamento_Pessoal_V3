@@ -33,12 +33,12 @@ export function AdmissaoChecklist({ documentos, onValidate, isAdmin = false }: A
     <Card className="border-border/40 shadow-elevated rounded-2xl overflow-hidden bg-card/50 backdrop-blur-xs">
       <CardHeader className="pb-3 border-b border-border/10">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-display font-bold flex items-center gap-2">
+          <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
             <CheckCircle2 className="w-5 h-5 text-primary" />
             Checklist de Admissão
           </CardTitle>
           <div className="flex items-center gap-2">
-            <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+            <div className="text-[10px] font-medium text-muted-foreground uppercase tracking-widest">
               {concluidos}/{total} Concluídos
             </div>
             <div className="w-20 h-1.5 bg-muted rounded-full overflow-hidden">
@@ -71,7 +71,7 @@ export function AdmissaoChecklist({ documentos, onValidate, isAdmin = false }: A
                       {doc.nome}
                     </span>
                     {doc.obrigatorio && (
-                      <Badge variant="outline" className="text-[9px] h-4 bg-destructive/5 text-destructive border-destructive/20 uppercase font-bold px-1">
+                      <Badge variant="outline" className="text-[9px] h-4 bg-destructive/5 text-destructive border-destructive/20 uppercase font-medium px-1">
                         Obrigatório
                       </Badge>
                     )}
@@ -118,7 +118,7 @@ export function AdmissaoChecklist({ documentos, onValidate, isAdmin = false }: A
                   <Badge 
                     variant="secondary" 
                     className={cn(
-                      "text-[9px] font-bold uppercase tracking-wider px-1.5 py-0",
+                      "text-[9px] font-medium uppercase tracking-wider px-1.5 py-0",
                       doc.status === 'pendente' && "bg-warning/15 text-warning",
                       doc.status === 'enviado' && "bg-info/15 text-info",
                       doc.status === 'validado' && "bg-success/15 text-success",

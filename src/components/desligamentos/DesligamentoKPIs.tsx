@@ -48,7 +48,7 @@ export function DesligamentoKPIs({ desligamentos }: KPIProps) {
               </motion.div>
               <div className="min-w-0">
                 <p className="text-[10px] text-muted-foreground font-body truncate">{kpi.label}</p>
-                <p className="text-lg font-display font-bold truncate">{kpi.value}</p>
+                <p className="text-lg font-display font-semibold truncate">{kpi.value}</p>
               </div>
             </CardContent>
           </Card>

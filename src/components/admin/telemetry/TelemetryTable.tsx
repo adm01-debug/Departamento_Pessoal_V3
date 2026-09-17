@@ -95,7 +95,7 @@ export function TelemetryTable({ rows, isLoading }: TelemetryTableProps) {
                     <td className="p-3 font-mono text-xs font-medium">
                       {row.rpc_name || row.table_name || "-"}
                     </td>
-                    <td className="p-3 text-right font-mono font-bold tabular-nums">
+                    <td className="p-3 text-right font-mono font-medium tabular-nums">
                       <span className={row.duration_ms >= 8000 ? "text-destructive" : row.duration_ms >= 3000 ? "text-yellow-600" : ""}>
                         {formatDuration(row.duration_ms)}
                       </span>

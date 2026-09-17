@@ -149,7 +149,7 @@ export function DataTableToolbar({
       
       {filters && filters.length > 2 && (
         <div className="flex flex-wrap gap-2 items-center">
-          <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest mr-2">
+          <div className="flex items-center gap-2 text-[10px] font-medium text-muted-foreground uppercase tracking-widest mr-2">
             <Filter className="h-3 w-3" /> Filtros Adicionais
           </div>
           {filters.slice(2).map((filter) => (

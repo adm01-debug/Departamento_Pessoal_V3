@@ -185,7 +185,7 @@ export default function ProvisoesPage() {
                       <AlertCircle className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-warning-foreground">Inconsistências Detectadas</p>
+                      <p className="text-sm font-medium text-warning-foreground">Inconsistências Detectadas</p>
                       <p className="text-xs text-muted-foreground">{inconsistencias.length} colaboradores ativos estão sem salário base definido. As provisões para estes colaboradores serão zero.</p>
                     </div>
                   </div>
@@ -213,7 +213,7 @@ export default function ProvisoesPage() {
                             <kpi.icon className="h-3 w-3 text-primary-foreground" />
                           </div>
                         </div>
-                        <p className="text-xl font-display font-bold">
+                        <p className="text-xl font-display font-medium">
                           <AnimatedNumber value={kpi.value} format={formatCurrency} />
                         </p>
                         <p className="text-xs text-muted-foreground font-body">{kpi.label}</p>
@@ -324,7 +324,7 @@ export default function ProvisoesPage() {
                         <TableCell className="text-right font-body tabular-nums text-xs">{formatCurrency(p.valor_principal)}</TableCell>
                         <TableCell className="text-right font-body text-muted-foreground tabular-nums text-[10px]">{formatCurrency(p.encargos_inss)}</TableCell>
                         <TableCell className="text-right font-body text-muted-foreground tabular-nums text-[10px]">{formatCurrency(p.encargos_fgts)}</TableCell>
-                        <TableCell className="text-right font-display font-bold tabular-nums text-primary">{formatCurrency(p.total || 0)}</TableCell>
+                        <TableCell className="text-right font-display font-medium tabular-nums text-primary">{formatCurrency(p.total || 0)}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -370,7 +370,7 @@ export default function ProvisoesPage() {
                           </TableCell>
                           <TableCell className="text-muted-foreground">{log.duracao_ms ? `${log.duracao_ms}ms` : '-'}</TableCell>
                           <TableCell className="font-medium">{log.total_colaboradores || 0}</TableCell>
-                          <TableCell className="text-right font-mono font-bold text-primary">{formatCurrency(log.valor_total_provisionado || 0)}</TableCell>
+                          <TableCell className="text-right font-mono font-medium text-primary">{formatCurrency(log.valor_total_provisionado || 0)}</TableCell>
                         </TableRow>
                       ))
                     )}
@@ -390,7 +390,7 @@ export default function ProvisoesPage() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="bg-muted/30 p-4 border-b border-border/40 flex items-center justify-between">
-                <h3 className="font-display font-bold flex items-center gap-2">
+                <h3 className="font-display font-medium flex items-center gap-2">
                   <ShieldCheck className="h-4 w-4 text-primary" /> Detalhes da Auditoria
                 </h3>
                 <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => setSelectedLog(null)} aria-label="Fechar"><X className="h-4 w-4" /></Button>
@@ -398,19 +398,19 @@ export default function ProvisoesPage() {
               <div className="p-6 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="p-3 bg-muted/20 rounded-xl border border-border/30">
-                    <p className="text-[10px] text-muted-foreground uppercase font-bold mb-1">Status</p>
+                    <p className="text-[10px] text-muted-foreground uppercase font-medium mb-1">Status</p>
                     <Badge variant={selectedLog.status === 'CONCLUIDO' ? 'success' : 'destructive'} className="text-[10px]">
                       {selectedLog.status}
                     </Badge>
                   </div>
                   <div className="p-3 bg-muted/20 rounded-xl border border-border/30">
-                    <p className="text-[10px] text-muted-foreground uppercase font-bold mb-1">Duração</p>
+                    <p className="text-[10px] text-muted-foreground uppercase font-medium mb-1">Duração</p>
                     <p className="text-sm font-mono">{selectedLog.duracao_ms || 0}ms</p>
                   </div>
                 </div>
                 
                 <div className="space-y-2">
-                  <p className="text-[10px] text-muted-foreground uppercase font-bold">Rastreabilidade Técnica (JSON)</p>
+                  <p className="text-[10px] text-muted-foreground uppercase font-medium">Rastreabilidade Técnica (JSON)</p>
                   <pre className="p-4 bg-slate-950 text-slate-400 rounded-xl text-[10px] overflow-auto max-h-48 font-mono">
                     {JSON.stringify(selectedLog.metadados, null, 2)}
                   </pre>

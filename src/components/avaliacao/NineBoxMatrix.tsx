@@ -66,8 +66,8 @@ export function NineBoxMatrix({ data }: { data: any[] }) {
       <CardContent className="p-6">
         <div className="grid grid-cols-3 gap-3 aspect-square md:aspect-video max-w-5xl mx-auto relative">
           {/* Labels de Eixos */}
-          <div className="absolute -left-10 top-1/2 -rotate-90 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Potencial</div>
-          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Desempenho</div>
+          <div className="absolute -left-10 top-1/2 -rotate-90 text-[10px] font-medium text-muted-foreground uppercase tracking-widest">Potencial</div>
+          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-medium text-muted-foreground uppercase tracking-widest">Desempenho</div>
 
           {[3, 2, 1].map(pot => (
             [1, 2, 3].map(perf => {
@@ -78,9 +78,9 @@ export function NineBoxMatrix({ data }: { data: any[] }) {
                   key={key} 
                   className={`border-2 rounded-2xl p-4 flex flex-col items-center justify-center text-center transition-all hover:shadow-lg ${GRID_COLORS[key] || 'bg-muted/10 border-border/30 text-muted-foreground'}`}
                 >
-                  <p className="text-[10px] font-black uppercase tracking-tighter mb-1 opacity-80">{GRID_LABELS[key]}</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-wide mb-1 opacity-80">{GRID_LABELS[key]}</p>
                   <div className="relative">
-                    <p className="text-3xl font-display font-black leading-none">{employees.length}</p>
+                    <p className="text-3xl font-display font-semibold leading-snug">{employees.length}</p>
                   </div>
                   
                   {employees.length > 0 && (
@@ -88,14 +88,14 @@ export function NineBoxMatrix({ data }: { data: any[] }) {
                         {employees.slice(0, 4).map((e: any, idx: number) => (
                           <div 
                             key={e.id || idx} 
-                            className="h-6 w-6 rounded-full bg-white/60 border border-black/5 flex items-center justify-center text-[10px] font-bold shadow-xs" 
+                            className="h-6 w-6 rounded-full bg-white/60 border border-black/5 flex items-center justify-center text-[10px] font-medium shadow-xs" 
                             title={e.avaliado?.nome_completo}
                           >
                             {e.avaliado?.nome_completo?.charAt(0)}
                           </div>
                         ))}
                         {employees.length > 4 && (
-                          <div className="h-6 w-6 rounded-full bg-black/5 flex items-center justify-center text-[8px] font-bold">
+                          <div className="h-6 w-6 rounded-full bg-black/5 flex items-center justify-center text-[8px] font-medium">
                             +{employees.length - 4}
                           </div>
                         )}
@@ -109,24 +109,24 @@ export function NineBoxMatrix({ data }: { data: any[] }) {
         
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
            <div className="p-4 rounded-2xl bg-green-50 border border-green-200 flex flex-col gap-1">
-              <span className="text-[10px] font-bold text-green-700 uppercase tracking-wider">Alto Desempenho & Potencial</span>
+              <span className="text-[10px] font-medium text-green-700 uppercase tracking-wider">Alto Desempenho & Potencial</span>
               <div className="flex items-center justify-between">
-                <h4 className="text-xl font-display font-bold text-green-800">Estrelas</h4>
-                <Badge className="bg-green-600 text-white font-bold">{grid['3-3']?.length || 0}</Badge>
+                <h4 className="text-xl font-display font-medium text-green-800">Estrelas</h4>
+                <Badge className="bg-green-600 text-white font-medium">{grid['3-3']?.length || 0}</Badge>
               </div>
            </div>
            <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 flex flex-col gap-1">
-              <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wider">Base da Empresa</span>
+              <span className="text-[10px] font-medium text-blue-700 uppercase tracking-wider">Base da Empresa</span>
               <div className="flex items-center justify-between">
-                <h4 className="text-xl font-display font-bold text-blue-800">Core Players</h4>
-                <Badge className="bg-blue-600 text-white font-bold">{grid['2-2']?.length || 0}</Badge>
+                <h4 className="text-xl font-display font-medium text-blue-800">Core Players</h4>
+                <Badge className="bg-blue-600 text-white font-medium">{grid['2-2']?.length || 0}</Badge>
               </div>
            </div>
            <div className="p-4 rounded-2xl bg-red-50 border border-red-200 flex flex-col gap-1">
-              <span className="text-[10px] font-bold text-red-700 uppercase tracking-wider">Atenção Necessária</span>
+              <span className="text-[10px] font-medium text-red-700 uppercase tracking-wider">Atenção Necessária</span>
               <div className="flex items-center justify-between">
-                <h4 className="text-xl font-display font-bold text-red-800">Em Risco</h4>
-                <Badge className="bg-red-600 text-white font-bold">{grid['1-1']?.length || 0}</Badge>
+                <h4 className="text-xl font-display font-medium text-red-800">Em Risco</h4>
+                <Badge className="bg-red-600 text-white font-medium">{grid['1-1']?.length || 0}</Badge>
               </div>
            </div>
         </div>

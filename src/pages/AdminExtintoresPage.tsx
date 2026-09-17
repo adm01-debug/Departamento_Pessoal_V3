@@ -170,10 +170,10 @@ export default function AdminExtintoresPage() {
   ];
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="py-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
+          <h1 className="text-3xl font-medium flex items-center gap-2">
             <Flame className="h-8 w-8 text-primary" />
             Gestão de Extintores (NR-23)
           </h1>
@@ -236,7 +236,7 @@ export default function AdminExtintoresPage() {
                 <k.icon className={`h-5 w-5 ${k.color}`} />
                 <span className="text-xs text-muted-foreground">{k.label}</span>
               </div>
-              <p className="text-2xl font-bold mt-1">{k.value}</p>
+              <p className="text-2xl font-medium mt-1">{k.value}</p>
             </CardContent>
           </Card>
         ))}

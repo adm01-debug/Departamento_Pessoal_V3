@@ -52,7 +52,7 @@ export function BeneficiosTab({ colaboradorId }: BeneficiosTabProps) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-display font-bold flex items-center gap-2">
+        <h3 className="text-lg font-display font-medium flex items-center gap-2">
           <Gift className="h-5 w-5 text-primary" /> Benefícios Ativos
         </h3>
         

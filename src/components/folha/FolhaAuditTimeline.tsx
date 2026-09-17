@@ -51,7 +51,7 @@ export function FolhaAuditTimeline({ competencia }: { competencia: string }) {
                   
                   <div className="flex-1 space-y-1">
                     <div className="flex items-center justify-between">
-                      <Badge variant="outline" className="text-[9px] h-4 bg-background uppercase font-bold">
+                      <Badge variant="outline" className="text-[9px] h-4 bg-background uppercase font-medium">
                         {log.tipo_evento}
                       </Badge>
                       <span className="text-[10px] text-muted-foreground flex items-center gap-1">

@@ -67,7 +67,7 @@ export function MobileQuickActions({ open, onOpenChange }: { open: boolean; onOp
                   <Zap className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <h2 className="text-h2 font-display font-bold">Ações Rápidas</h2>
+                  <h2 className="text-h2 font-display font-medium">Ações Rápidas</h2>
                   <p className="text-caption text-muted-foreground">O que você deseja fazer agora?</p>
                 </div>
               </div>
@@ -90,7 +90,7 @@ export function MobileQuickActions({ open, onOpenChange }: { open: boolean; onOp
                     <action.icon className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-bold truncate">{action.label}</p>
+                    <p className="text-xs font-medium truncate">{action.label}</p>
                     <p className="text-[9px] text-muted-foreground truncate">{action.desc}</p>
                   </div>
                 </motion.button>

@@ -5,6 +5,7 @@ import { sanitizePlainText } from '@/utils/sanitizeHtml';
 import { loggerService } from '@/services/loggerService';
 import { queryClient } from '@/lib/queryClient';
 import { validatePasswordFull } from '@/utils/passwordPolicy';
+import { functionUrl } from '@/lib/functionsUrl';
 
 export type AppRole = 'admin' | 'moderator' | 'user';
 
@@ -171,10 +172,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error('VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY são obrigatórias');
       }
 
-      const res = await fetch(`${SUPABASE_URL}/functions/v1/auth-login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY },
-        body: JSON.stringify({ email, password })});
+      // `functionUrl` resolve para o proxy do dev server em desenvolvimento
+      // (same-origin, sem CORS) e para a URL absoluta do projeto em produção.
+      let res: Response;
+      try {
+        res = await fetch(functionUrl('auth-login'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY },
+          body: JSON.stringify({ email, password })});
+      } catch (networkErr) {
+        // Falha de rede/CORS — NÃO é credencial inválida. Reportar como tal
+        // evita que o usuário fique tentando senhas corretas contra um
+        // servidor inalcançável (e que a tentativa entre no contador de
+        // brute-force).
+        loggerService.error('Auth endpoint unreachable', { email }, networkErr as Error);
+        const netErr = new Error(
+          'Não foi possível contatar o servidor de autenticação. Verifique sua conexão e tente novamente.',
+        );
+        (netErr as Error & { code: string }).code = 'NETWORK_ERROR';
+        throw netErr;
+      }
 
       const body = await res.json().catch(() => ({})) as {
         success?: boolean;

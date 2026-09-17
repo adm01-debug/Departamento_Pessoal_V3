@@ -167,7 +167,7 @@ export default function RecrutamentoPage() {
 
                                 <div className="flex items-center justify-between">
                                   <div className="flex -space-x-2">
-                                    <div className="h-6 w-6 rounded-full bg-primary/10 border-2 border-white flex items-center justify-center text-[10px] font-bold text-primary">
+                                    <div className="h-6 w-6 rounded-full bg-primary/10 border-2 border-white flex items-center justify-center text-[10px] font-medium text-primary">
                                       {cand.candidato?.nome?.charAt(0)}
                                     </div>
                                   </div>
@@ -212,7 +212,7 @@ export default function RecrutamentoPage() {
                           <div className="flex justify-between items-start mb-2">
                             <Badge 
                               className={cn(
-                                "rounded-lg px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+                                "rounded-lg px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider",
                                 vaga.status === 'aberta' ? "bg-success/10 text-success border-success/20" : "bg-muted text-muted-foreground"
                               )}
                             >
@@ -223,7 +223,7 @@ export default function RecrutamentoPage() {
                               <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/5" aria-label="Excluir vaga"><Trash2 className="h-4 w-4" /></Button>
                             </div>
                           </div>
-                          <CardTitle className="text-xl font-display font-bold leading-tight group-hover:text-primary transition-colors">{vaga.titulo}</CardTitle>
+                          <CardTitle className="text-xl font-display font-medium leading-tight group-hover:text-primary transition-colors">{vaga.titulo}</CardTitle>
                           <CardDescription className="flex items-center gap-2 text-xs font-medium mt-1">
                             <Briefcase className="h-3 w-3" /> {vaga.departamento} 
                             <span className="h-1 w-1 rounded-full bg-muted-foreground/30" />
@@ -243,12 +243,12 @@ export default function RecrutamentoPage() {
 
                             <div className="pt-4 border-t border-border/40 flex items-center justify-between">
                               <div className="flex flex-col">
-                                <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">Candidatos</span>
-                                <span className="text-lg font-display font-bold text-primary">
+                                <span className="text-[10px] text-muted-foreground uppercase font-medium tracking-wide">Candidatos</span>
+                                <span className="text-lg font-display font-medium text-primary">
                                   {candidaturas.filter((c: CandidaturaComRelacoes) => c.vaga_id === vaga.id).length}
                                 </span>
                               </div>
-                              <Button className="rounded-xl h-9 px-4 text-xs font-bold shadow-xs group-hover:shadow-md transition-all">
+                              <Button className="rounded-xl h-9 px-4 text-xs font-medium shadow-xs group-hover:shadow-md transition-all">
                                 Gerenciar Vaga
                                 <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
                               </Button>
@@ -262,7 +262,7 @@ export default function RecrutamentoPage() {
                         <Plus className="h-6 w-6 text-muted-foreground group-hover:text-primary" />
                       </div>
                       <div className="text-center">
-                        <p className="font-bold text-sm">Criar Nova Vaga</p>
+                        <p className="font-medium text-sm">Criar Nova Vaga</p>
                         <p className="text-xs text-muted-foreground">Inicie um novo processo seletivo</p>
                       </div>
                     </button>
@@ -277,11 +277,11 @@ export default function RecrutamentoPage() {
                          <table className="w-full text-sm">
                            <thead>
                              <tr className="bg-muted/30 border-b">
-                               <th className="px-6 py-4 text-left font-bold text-[11px] uppercase tracking-wider text-muted-foreground">Candidato</th>
-                               <th className="px-6 py-4 text-left font-bold text-[11px] uppercase tracking-wider text-muted-foreground">Contato</th>
-                               <th className="px-6 py-4 text-left font-bold text-[11px] uppercase tracking-wider text-muted-foreground">Experiência</th>
-                               <th className="px-6 py-4 text-left font-bold text-[11px] uppercase tracking-wider text-muted-foreground">Pretensão</th>
-                               <th className="px-6 py-4 text-right font-bold text-[11px] uppercase tracking-wider text-muted-foreground">Ações</th>
+                               <th className="px-6 py-4 text-left font-medium text-[11px] uppercase tracking-wider text-muted-foreground">Candidato</th>
+                               <th className="px-6 py-4 text-left font-medium text-[11px] uppercase tracking-wider text-muted-foreground">Contato</th>
+                               <th className="px-6 py-4 text-left font-medium text-[11px] uppercase tracking-wider text-muted-foreground">Experiência</th>
+                               <th className="px-6 py-4 text-left font-medium text-[11px] uppercase tracking-wider text-muted-foreground">Pretensão</th>
+                               <th className="px-6 py-4 text-right font-medium text-[11px] uppercase tracking-wider text-muted-foreground">Ações</th>
                              </tr>
                            </thead>
                            <tbody className="divide-y divide-border/30">
@@ -289,11 +289,11 @@ export default function RecrutamentoPage() {
                                <tr key={cand.id} className="hover:bg-primary/[0.02] transition-colors group">
                                  <td className="px-6 py-4">
                                    <div className="flex items-center gap-3">
-                                     <div className="h-9 w-9 rounded-xl bg-primary/5 flex items-center justify-center text-primary font-bold">
+                                     <div className="h-9 w-9 rounded-xl bg-primary/5 flex items-center justify-center text-primary font-medium">
                                        {cand.nome?.charAt(0)}
                                      </div>
                                      <div>
-                                       <p className="font-bold text-sm text-foreground">{cand.nome}</p>
+                                       <p className="font-medium text-sm text-foreground">{cand.nome}</p>
                                        <p className="text-[10px] text-muted-foreground">{cand.origem || 'Website'}</p>
                                      </div>
                                    </div>
@@ -307,7 +307,7 @@ export default function RecrutamentoPage() {
                                  <td className="px-6 py-4">
                                    <Badge variant="secondary" className="rounded-lg bg-slate-100 font-medium">{cand.experiencia_anos} anos</Badge>
                                  </td>
-                                 <td className="px-6 py-4 font-display font-bold text-success">
+                                 <td className="px-6 py-4 font-display font-medium text-success">
                                    {cand.pretensao_salarial ? `R$ ${cand.pretensao_salarial.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : 'N/D'}
                                  </td>
                                  <td className="px-6 py-4 text-right">
@@ -337,8 +337,8 @@ export default function RecrutamentoPage() {
                             <stat.icon className="h-6 w-6" />
                           </div>
                           <div>
-                            <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">{stat.label}</p>
-                            <p className="text-2xl font-display font-bold">{stat.value}</p>
+                            <p className="text-[10px] uppercase font-medium text-muted-foreground tracking-widest">{stat.label}</p>
+                            <p className="text-2xl font-display font-medium">{stat.value}</p>
                           </div>
                         </CardContent>
                       </Card>
@@ -346,7 +346,7 @@ export default function RecrutamentoPage() {
                   </div>
 
                   <Card className="rounded-3xl border-border/40 overflow-hidden shadow-xs h-64">
-                    <CardHeader className="pb-0"><CardTitle className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Distribuição por Etapa</CardTitle></CardHeader>
+                    <CardHeader className="pb-0"><CardTitle className="text-sm font-medium uppercase tracking-widest text-muted-foreground">Distribuição por Etapa</CardTitle></CardHeader>
                     <CardContent className="h-full flex items-end gap-2 px-8 pb-8 pt-4">
                       {ETAPAS.map(e => {
                         const count = candidaturas.filter((c: CandidaturaComRelacoes) => (c.etapa || 'triagem') === e.id).length;
@@ -357,7 +357,7 @@ export default function RecrutamentoPage() {
                               className={cn("w-full rounded-t-lg transition-all duration-500 bg-primary/20 hover:bg-primary/40")} 
                               style={{ height: `${height}%` }}
                             />
-                            <span className="text-[10px] uppercase font-bold opacity-60">{e.label}</span>
+                            <span className="text-[10px] uppercase font-medium opacity-60">{e.label}</span>
                           </div>
                         );
                       })}
@@ -376,11 +376,11 @@ export default function RecrutamentoPage() {
               <>
                 <DialogHeader className="p-6 border-b bg-muted/20">
                   <div className="flex items-center gap-4">
-                    <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-bold text-xl">
+                    <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-medium text-xl">
                       {selectedCandidatura.candidato?.nome?.charAt(0)}
                     </div>
                     <div>
-                      <DialogTitle className="text-2xl font-display font-bold">{selectedCandidatura.candidato?.nome}</DialogTitle>
+                      <DialogTitle className="text-2xl font-display font-medium">{selectedCandidatura.candidato?.nome}</DialogTitle>
                       <p className="text-sm text-muted-foreground font-medium">{selectedCandidatura.vaga?.titulo} • {selectedCandidatura.vaga?.departamento}</p>
                     </div>
                   </div>
@@ -389,34 +389,34 @@ export default function RecrutamentoPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <Card className="border-border/40 bg-muted/10 shadow-none">
                       <CardContent className="p-4 flex flex-col gap-1">
-                        <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Contato</span>
+                        <span className="text-[10px] uppercase font-medium text-muted-foreground tracking-widest">Contato</span>
                         <p className="text-sm flex items-center gap-2"><Mail className="h-3.5 w-3.5" /> {selectedCandidatura.candidato?.email}</p>
                         <p className="text-sm flex items-center gap-2"><Phone className="h-3.5 w-3.5" /> {selectedCandidatura.candidato?.telefone || 'N/A'}</p>
                       </CardContent>
                     </Card>
                     <Card className="border-border/40 bg-muted/10 shadow-none">
                       <CardContent className="p-4 flex flex-col gap-1">
-                        <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Status Atual</span>
+                        <span className="text-[10px] uppercase font-medium text-muted-foreground tracking-widest">Status Atual</span>
                         <div className="flex items-center gap-2 mt-1">
-                          <Badge className="rounded-lg px-2 bg-primary/10 text-primary border-primary/20 capitalize font-bold">
+                          <Badge className="rounded-lg px-2 bg-primary/10 text-primary border-primary/20 capitalize font-medium">
                             {ETAPAS.find(e => e.id === (selectedCandidatura.etapa || 'triagem'))?.label}
                           </Badge>
-                          <span className="text-xs text-muted-foreground font-bold">Score: {selectedCandidatura.nota_geral || 'N/D'}</span>
+                          <span className="text-xs text-muted-foreground font-medium">Score: {selectedCandidatura.nota_geral || 'N/D'}</span>
                         </div>
                       </CardContent>
                     </Card>
                   </div>
 
                   <div>
-                    <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
+                    <h3 className="text-sm font-medium uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
                       <Clock className="h-4 w-4 text-primary" /> Timeline do Processo Seletivo
                     </h3>
                     <CandidatoTimeline candidaturaId={selectedCandidatura.id} />
                   </div>
                 </div>
                 <div className="p-6 border-t bg-muted/10 flex justify-end gap-3">
-                  <Button variant="outline" className="rounded-xl font-bold" onClick={() => setSelectedCandidatura(null)}>Fechar Janela</Button>
-                  <Button className="rounded-xl bg-gradient-to-r from-primary to-primary-glow font-bold shadow-lg">Avançar para Próxima Etapa</Button>
+                  <Button variant="outline" className="rounded-xl font-medium" onClick={() => setSelectedCandidatura(null)}>Fechar Janela</Button>
+                  <Button className="rounded-xl bg-gradient-to-r from-primary to-primary-glow font-medium shadow-lg">Avançar para Próxima Etapa</Button>
                 </div>
               </>
             )}

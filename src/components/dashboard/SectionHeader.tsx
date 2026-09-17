@@ -23,7 +23,7 @@ export function SectionHeader({ title, subtitle, icon: Icon, gradient = 'from-pr
           <Icon className="h-4 w-4 text-primary-foreground" />
         </div>
         <div>
-          <h2 className="text-h3 font-display font-semibold">{title}</h2>
+          <h2 className="text-sm font-display font-medium tracking-tight leading-snug">{title}</h2>
           {subtitle && <p className="text-caption text-muted-foreground font-body">{subtitle}</p>}
         </div>
       </div>

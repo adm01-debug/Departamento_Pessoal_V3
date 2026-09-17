@@ -11,8 +11,8 @@ export function S2300TSVInicio({ dados }: { dados: any }) {
           <CardContent className="p-4 flex items-start gap-3">
             <User className="h-4 w-4 text-primary mt-1" />
             <div>
-              <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">Identificação do Trabalhador</Label>
-              <p className="font-display font-bold text-sm">{dados.nmTrab || '-'}</p>
+              <Label className="text-[10px] uppercase text-muted-foreground font-medium tracking-wider">Identificação do Trabalhador</Label>
+              <p className="font-display font-medium text-sm">{dados.nmTrab || '-'}</p>
               <p className="text-[10px] text-muted-foreground italic">CPF: {maskCpfDisplay(dados.cpfTrab) || '-'}</p>
             </div>
           </CardContent>
@@ -22,8 +22,8 @@ export function S2300TSVInicio({ dados }: { dados: any }) {
           <CardContent className="p-4 flex items-start gap-3">
             <Calendar className="h-4 w-4 text-primary mt-1" />
             <div>
-              <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">Data de Início</Label>
-              <p className="font-display font-bold text-sm">{dados.dtInicio || '-'}</p>
+              <Label className="text-[10px] uppercase text-muted-foreground font-medium tracking-wider">Data de Início</Label>
+              <p className="font-display font-medium text-sm">{dados.dtInicio || '-'}</p>
               <p className="text-[10px] text-muted-foreground italic">Início da Prestação de Serviço</p>
             </div>
           </CardContent>
@@ -33,7 +33,7 @@ export function S2300TSVInicio({ dados }: { dados: any }) {
       <div className="p-4 rounded-xl border border-border/30 bg-muted/20">
         <div className="flex items-center gap-2 mb-3">
           <Briefcase className="h-4 w-4 text-muted-foreground" />
-          <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Informações Contratuais</span>
+          <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Informações Contratuais</span>
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

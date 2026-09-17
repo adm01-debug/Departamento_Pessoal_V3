@@ -11,8 +11,8 @@ export function S2210SST({ dados }: { dados: any }) {
           <CardContent className="p-4 flex items-start gap-3">
             <User className="h-4 w-4 text-primary mt-1" />
             <div>
-              <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">Trabalhador Acidentado</Label>
-              <p className="font-display font-bold text-sm">CPF: {maskCpfDisplay(dados.cpfTrab)}</p>
+              <Label className="text-[10px] uppercase text-muted-foreground font-medium tracking-wider">Trabalhador Acidentado</Label>
+              <p className="font-display font-medium text-sm">CPF: {maskCpfDisplay(dados.cpfTrab)}</p>
               {dados.nmTrab && <p className="text-xs text-muted-foreground">{dados.nmTrab}</p>}
             </div>
           </CardContent>
@@ -22,8 +22,8 @@ export function S2210SST({ dados }: { dados: any }) {
           <CardContent className="p-4 flex items-start gap-3">
             <Calendar className="h-4 w-4 text-destructive mt-1" />
             <div>
-              <Label className="text-[10px] uppercase text-destructive font-bold tracking-wider">Data do Acidente (CAT)</Label>
-              <p className="font-display font-bold text-sm text-destructive">{dados.dtAcid || '-'}</p>
+              <Label className="text-[10px] uppercase text-destructive font-medium tracking-wider">Data do Acidente (CAT)</Label>
+              <p className="font-display font-medium text-sm text-destructive">{dados.dtAcid || '-'}</p>
               <p className="text-[10px] text-destructive/70 italic">Horário: {dados.hrAcid || 'Não informado'}</p>
             </div>
           </CardContent>
@@ -33,7 +33,7 @@ export function S2210SST({ dados }: { dados: any }) {
       <div className="p-4 rounded-xl border border-destructive/10 bg-destructive/5">
         <div className="flex items-center gap-2 mb-3">
           <ShieldAlert className="h-4 w-4 text-destructive" />
-          <span className="text-xs font-bold uppercase tracking-widest text-destructive">Detalhes da Ocorrência</span>
+          <span className="text-xs font-medium uppercase tracking-widest text-destructive">Detalhes da Ocorrência</span>
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6">

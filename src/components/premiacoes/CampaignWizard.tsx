@@ -94,9 +94,9 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
               <div className="bg-primary/5 p-4 rounded-xl border border-primary/10 flex items-start gap-3">
                 <Sparkles className="h-5 w-5 text-primary mt-1" />
                 <div>
-                  <h4 className="text-sm font-bold text-primary">Inteligência de Incentivos</h4>
+                  <h4 className="text-sm font-medium text-primary">Inteligência de Incentivos</h4>
                   <p className="text-[10px] text-muted-foreground">Analise as metas atuais para sugerir as melhores regras de premiação.</p>
-                  <Button variant="link" className="p-0 h-auto text-[10px] font-bold text-primary" onClick={() => {
+                  <Button variant="link" className="p-0 h-auto text-[10px] font-medium text-primary" onClick={() => {
                     setRules([
                       ...rules,
                       { nome: 'Atingimento Meta Vendas', tipo_calculo: 'percentual_comissao', valor_base: 5, condicao_metrica: 'meta_vendas > 100%' },
@@ -109,7 +109,7 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
                 </div>
               </div>
               <div className="flex justify-between items-center pt-2">
-                <Label className="text-sm font-bold">Regras de Premiação</Label>
+                <Label className="text-sm font-medium">Regras de Premiação</Label>
                 <Button size="sm" variant="outline" className="h-8 text-[10px]" onClick={() => setRules([...rules, { nome: '', tipo_calculo: 'valor_fixo', valor_base: 0, condicao_metrica: '' }])}>
                   <Plus className="h-3 w-3 mr-1" /> Adicionar Regra
                 </Button>

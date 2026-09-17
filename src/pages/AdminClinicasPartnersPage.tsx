@@ -192,10 +192,10 @@ export default function AdminClinicasPartnersPage() {
         gradient="from-primary to-success"
       >
         <div className="grid gap-4 md:grid-cols-4 mb-6">
-          <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Total</CardTitle></CardHeader><CardContent><p className="text-3xl font-bold">{kpis.total}</p></CardContent></Card>
-          <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Ativas</CardTitle></CardHeader><CardContent><p className="text-3xl font-bold text-success">{kpis.ativas}</p></CardContent></Card>
-          <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Cidades cobertas</CardTitle></CardHeader><CardContent><p className="text-3xl font-bold">{kpis.cidades}</p></CardContent></Card>
-          <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Com geolocalização</CardTitle></CardHeader><CardContent><p className="text-3xl font-bold">{kpis.comGeo}</p></CardContent></Card>
+          <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Total</CardTitle></CardHeader><CardContent><p className="text-3xl font-medium">{kpis.total}</p></CardContent></Card>
+          <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Ativas</CardTitle></CardHeader><CardContent><p className="text-3xl font-medium text-success">{kpis.ativas}</p></CardContent></Card>
+          <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Cidades cobertas</CardTitle></CardHeader><CardContent><p className="text-3xl font-medium">{kpis.cidades}</p></CardContent></Card>
+          <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Com geolocalização</CardTitle></CardHeader><CardContent><p className="text-3xl font-medium">{kpis.comGeo}</p></CardContent></Card>
         </div>
 
         <Card>

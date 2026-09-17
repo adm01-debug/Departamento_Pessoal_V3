@@ -62,7 +62,7 @@ export function SSTProgramasTab() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="font-display font-bold text-sm">{getSigla(prog.tipo)}</p>
+                      <p className="font-display font-medium text-sm">{getSigla(prog.tipo)}</p>
                       <Badge variant="outline" className="text-[10px] font-body">{getNR(prog.tipo)}</Badge>
                     </div>
                     <p className="text-[10px] text-muted-foreground font-body truncate">{prog.titulo}</p>

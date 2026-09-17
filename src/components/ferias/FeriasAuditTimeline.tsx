@@ -121,7 +121,7 @@ export function FeriasAuditTimeline({ solicitacaoId }: FeriasAuditTimelineProps)
                 </div>
                 <div className="p-3 rounded-xl border border-border/20 bg-muted/10 hover:bg-muted/20 transition-colors space-y-2">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-bold font-display uppercase tracking-tight">
+                    <p className="text-sm font-medium font-display uppercase tracking-tight">
                       Aprovação {aprov.nivel}
                     </p>
                     <span className="text-[10px] text-muted-foreground font-body bg-background px-1.5 py-0.5 rounded-md border border-border/40">
@@ -143,7 +143,7 @@ export function FeriasAuditTimeline({ solicitacaoId }: FeriasAuditTimelineProps)
                   </div>
                   <div className="p-3 rounded-xl border border-border/20 bg-muted/10 hover:bg-muted/20 transition-colors space-y-2">
                     <div className="flex items-center justify-between">
-                      <p className="text-sm font-bold font-display">{formatPayload(log)}</p>
+                      <p className="text-sm font-medium font-display">{formatPayload(log)}</p>
                       <span className="text-[10px] text-muted-foreground font-body bg-background px-1.5 py-0.5 rounded-md border border-border/40">
                         {format(new Date(log.created_at), "dd 'de' MMM, HH:mm", { locale: ptBR })}
                       </span>

@@ -131,7 +131,11 @@ export default function LoginPage() {
         return;
       }
       const msg = typeof errObj.message === 'string' ? errObj.message : undefined;
-      if (msg && msg.includes('bloqueada')) {
+      if (errObj.code === 'NETWORK_ERROR') {
+        // Servidor de autenticação inalcançável (rede/CORS/função fora do ar):
+        // mostrar a causa real e não contabilizar como tentativa de senha errada.
+        setError(msg ?? 'Não foi possível contatar o servidor de autenticação.');
+      } else if (msg && msg.includes('bloqueada')) {
         // Bloqueio decidido pelo servidor (auth-login): reflete na UI em vez de
         // tratar como mais uma falha de senha.
         applyServerLock(email, 0);
@@ -222,7 +226,7 @@ export default function LoginPage() {
               <Zap className="h-6 w-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-2xl font-display font-bold text-white">Sistema DP</h1>
+              <h1 className="text-2xl font-display font-medium text-white">Sistema DP</h1>
               <p className="text-xs text-white/40 font-body tracking-wider uppercase">Departamento Pessoal</p>
             </div>
           </motion.div>
@@ -235,7 +239,7 @@ export default function LoginPage() {
             className="space-y-8"
           >
             <div>
-              <h2 className="text-4xl font-display font-bold text-white leading-tight mb-4">
+              <h2 className="text-4xl font-display font-medium text-white leading-tight mb-4">
                 Gestão completa do seu
                 <br />
                 <span className="text-primary">Departamento Pessoal</span>
@@ -298,7 +302,7 @@ export default function LoginPage() {
             <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center shadow-glow">
               <Zap className="h-5 w-5 text-primary-foreground" />
             </div>
-            <h1 className="text-xl font-display font-bold">Sistema DP</h1>
+            <h1 className="text-xl font-display font-medium">Sistema DP</h1>
           </div>
 
           <Card className="border border-border/30 shadow-elevated rounded-xl overflow-hidden">
@@ -529,7 +533,7 @@ export default function LoginPage() {
                         <>
                           <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover:opacity-10 transition-opacity" />
                           <img src={govbrLogo} alt="Gov.br" className="h-4 w-auto" />
-                          <span className="truncate font-bold">Gov.br</span>
+                          <span className="truncate font-medium">Gov.br</span>
                         </>
                       )}
                     </Button>

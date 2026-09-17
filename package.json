@@ -17,8 +17,6 @@
     "audit:rls-tenant": "node scripts/audit-rls-tenant-open.mjs",
     "audit:secdef": "node scripts/audit-secdef-authz.mjs",
     "audit:embeds": "node scripts/audit-embed-hints.mjs",
-
-
     "lint:ci": "eslint src --ext ts,tsx --max-warnings=18",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json,md}\"",
     "format:check:changed": "bash scripts/format-check-changed.sh",
@@ -40,6 +38,7 @@
     "cap:check": "./scripts/capacitor-build.sh --check"
   },
   "dependencies": {
+    "@base-ui-components/react": "1.0.0-rc.0",
     "@dnd-kit/core": "6.3.1",
     "@dnd-kit/sortable": "10.0.0",
     "@dnd-kit/utilities": "3.2.2",

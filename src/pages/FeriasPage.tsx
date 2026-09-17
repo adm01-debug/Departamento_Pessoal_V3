@@ -188,12 +188,12 @@ export default function FeriasPage() {
                 {calcResult && (
                   <Card className="border border-border/30 rounded-xl">
                     <CardContent className="p-4 space-y-2 text-sm font-body">
-                      {calcResult.ferias_brutas != null && <div className="flex justify-between"><span>Férias Brutas:</span><span className="font-bold">{fmt(calcResult.ferias_brutas)}</span></div>}
-                      {calcResult.terco_constitucional != null && <div className="flex justify-between"><span>1/3 Constitucional:</span><span className="font-bold">{fmt(calcResult.terco_constitucional)}</span></div>}
-                      {calcResult.abono_pecuniario != null && calcResult.abono_pecuniario > 0 && <div className="flex justify-between"><span>Abono Pecuniário:</span><span className="font-bold">{fmt(calcResult.abono_pecuniario)}</span></div>}
+                      {calcResult.ferias_brutas != null && <div className="flex justify-between"><span>Férias Brutas:</span><span className="font-medium">{fmt(calcResult.ferias_brutas)}</span></div>}
+                      {calcResult.terco_constitucional != null && <div className="flex justify-between"><span>1/3 Constitucional:</span><span className="font-medium">{fmt(calcResult.terco_constitucional)}</span></div>}
+                      {calcResult.abono_pecuniario != null && calcResult.abono_pecuniario > 0 && <div className="flex justify-between"><span>Abono Pecuniário:</span><span className="font-medium">{fmt(calcResult.abono_pecuniario)}</span></div>}
                       {calcResult.inss != null && <div className="flex justify-between"><span>INSS:</span><span className="text-destructive">-{fmt(calcResult.inss)}</span></div>}
                       {calcResult.irrf != null && <div className="flex justify-between"><span>IRRF:</span><span className="text-destructive">-{fmt(calcResult.irrf)}</span></div>}
-                      {calcResult.liquido != null && <div className="border-t border-border/30 pt-2 flex justify-between text-base font-bold"><span>Líquido:</span><span className="text-primary">{fmt(calcResult.liquido)}</span></div>}
+                      {calcResult.liquido != null && <div className="border-t border-border/30 pt-2 flex justify-between text-base font-medium"><span>Líquido:</span><span className="text-primary">{fmt(calcResult.liquido)}</span></div>}
                     </CardContent>
                   </Card>
                 )}
@@ -272,7 +272,7 @@ export default function FeriasPage() {
               </div>
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4 px-2">
                 <p className="text-xs text-muted-foreground order-2 sm:order-1">
-                  Mostrando <span className="font-bold text-foreground">{(page - 1) * limit + 1}</span> a <span className="font-bold text-foreground">{Math.min(page * limit, totalCount)}</span> de <span className="font-bold text-foreground">{totalCount}</span> solicitações
+                  Mostrando <span className="font-medium text-foreground">{(page - 1) * limit + 1}</span> a <span className="font-medium text-foreground">{Math.min(page * limit, totalCount)}</span> de <span className="font-medium text-foreground">{totalCount}</span> solicitações
                 </p>
                 <div className="flex items-center gap-2 order-1 sm:order-2">
                   <div className="flex items-center gap-1">

@@ -75,10 +75,10 @@ export function PontoStreakCard() {
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <div className="p-2 bg-primary/10 rounded-lg">
-                  <span className="text-xl font-display font-bold text-primary">Lvl {stats.level}</span>
+                  <span className="text-xl font-display font-medium text-primary">Lvl {stats.level}</span>
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase font-bold text-muted-foreground">Progresso do Nível</p>
+                  <p className="text-[10px] uppercase font-medium text-muted-foreground">Progresso do Nível</p>
                   <p className="text-[9px] text-muted-foreground">{stats.xp}% para o próximo nível</p>
                 </div>
               </div>
@@ -96,17 +96,17 @@ export function PontoStreakCard() {
               >
                 <Flame className="h-12 w-12 text-warning fill-warning" />
               </motion.div>
-              <p className="text-5xl font-display font-bold text-warning">{stats.currentStreak}</p>
+              <p className="text-5xl font-display font-medium text-warning">{stats.currentStreak}</p>
               <p className="text-sm text-muted-foreground font-body mt-1">dias consecutivos</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border/20">
               <div className="text-center">
-                <p className="text-2xl font-display font-bold">{stats.bestStreak}</p>
+                <p className="text-2xl font-display font-medium">{stats.bestStreak}</p>
                 <p className="text-xs text-muted-foreground font-body">Melhor streak</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl font-display font-bold">{stats.pontual}</p>
+                <p className="text-2xl font-display font-medium">{stats.pontual}</p>
                 <p className="text-xs text-muted-foreground font-body">Dias pontuais</p>
               </div>
             </div>
@@ -138,7 +138,7 @@ export function PontoStreakCard() {
                     <Icon className={`h-4 w-4 ${color}`} />
                   </div>
                   <div>
-                    <p className="text-xl font-display font-bold tracking-tight">{value}</p>
+                    <p className="text-xl font-display font-medium tracking-tight">{value}</p>
                     <p className="text-[10px] text-muted-foreground font-body">{label}</p>
                   </div>
                 </div>

@@ -151,7 +151,7 @@ export default function EmpresaFormPage() {
                       <div className="h-32 w-32 rounded-3xl bg-muted flex items-center justify-center border-2 border-dashed border-border/50 relative group cursor-pointer hover:bg-muted/80 transition-colors">
                         <Camera className="h-8 w-8 text-muted-foreground group-hover:text-primary transition-colors" />
                         <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 rounded-3xl transition-opacity flex items-center justify-center">
-                          <span className="text-[10px] font-bold uppercase text-primary">Logo Empresa</span>
+                          <span className="text-[10px] font-medium uppercase text-primary">Logo Empresa</span>
                         </div>
                       </div>
                       <Badge variant="outline" className="rounded-full">PNG / SVG</Badge>
@@ -160,7 +160,7 @@ export default function EmpresaFormPage() {
                       <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                         <div className="space-y-2">
                           <Label className="text-sm font-medium flex items-center gap-1.5">
-                            CNPJ <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter bg-muted px-1.5 rounded-md">Busca Automática</span>
+                            CNPJ <span className="text-[10px] text-muted-foreground uppercase font-medium tracking-wide bg-muted px-1.5 rounded-md">Busca Automática</span>
                           </Label>
                           <CNPJInput
                             // eslint-disable-next-line react-hooks/incompatible-library
@@ -244,7 +244,7 @@ export default function EmpresaFormPage() {
                 <CardContent className="space-y-6">
                   <div className="max-w-xs space-y-2">
                     <Label className="text-sm font-medium flex items-center gap-1.5">
-                      CEP <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter bg-muted px-1.5 rounded-md">Busca Automática</span>
+                      CEP <span className="text-[10px] text-muted-foreground uppercase font-medium tracking-wide bg-muted px-1.5 rounded-md">Busca Automática</span>
                     </Label>
                     <CEPInput value={watch('cep')} onAddressFound={handleAddressFound} />
                   </div>

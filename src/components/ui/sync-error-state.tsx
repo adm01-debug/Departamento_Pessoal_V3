@@ -25,7 +25,7 @@ export function SyncErrorState({ error, onRetry, entityName = "dados" }: SyncErr
     <div className="flex flex-col items-center justify-center p-8 w-full max-w-2xl mx-auto space-y-4">
       <Alert variant="destructive" className="border-destructive/30 bg-destructive/5 rounded-2xl shadow-xs overflow-hidden">
         <AlertCircle className="h-5 w-5" />
-        <AlertTitle className="font-display font-bold">Erro de Sincronização</AlertTitle>
+        <AlertTitle className="font-display font-medium">Erro de Sincronização</AlertTitle>
         <AlertDescription className="font-body text-sm mt-1">
           <p>Não foi possível carregar os {entityName} do banco externo.</p>
           
@@ -50,7 +50,7 @@ export function SyncErrorState({ error, onRetry, entityName = "dados" }: SyncErr
           <div className="mt-4 border-t border-destructive/10 pt-4">
             <button 
               onClick={() => setShowDetails(!showDetails)}
-              className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider opacity-70 hover:opacity-100 transition-opacity"
+              className="flex items-center gap-1 text-[11px] font-medium uppercase tracking-wider opacity-70 hover:opacity-100 transition-opacity"
             >
               {showDetails ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
               {showDetails ? 'Ocultar Detalhes Técnicos' : 'Ver Detalhes Técnicos'}
@@ -78,7 +78,7 @@ export function SyncErrorState({ error, onRetry, entityName = "dados" }: SyncErr
         <Button 
           variant="default" 
           onClick={onRetry} 
-          className="rounded-xl gap-2 font-bold shadow-glow bg-primary hover:bg-primary/90 min-w-[200px]"
+          className="rounded-xl gap-2 font-medium shadow-glow bg-primary hover:bg-primary/90 min-w-[200px]"
         >
           <RefreshCw className="h-4 w-4" />
           Tentar Novamente

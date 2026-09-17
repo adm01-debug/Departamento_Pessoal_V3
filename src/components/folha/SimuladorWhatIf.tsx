@@ -162,7 +162,7 @@ export function SimuladorWhatIf() {
                 <CardContent className="p-5 space-y-4">
                   <div className="text-center pb-2 border-b border-primary/10">
                     <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Custo Total Mensal (Aprox.)</p>
-                    <p className="text-3xl font-display font-bold text-primary">{formatCurrency(resultado.custoTotal)}</p>
+                    <p className="text-3xl font-display font-medium text-primary">{formatCurrency(resultado.custoTotal)}</p>
                     <p className="text-xs text-primary/70 mt-1 font-medium">Equivale a {resultado.multiplicador}x o salário nominal</p>
                   </div>
 

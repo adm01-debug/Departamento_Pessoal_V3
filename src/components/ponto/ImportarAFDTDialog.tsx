@@ -148,7 +148,7 @@ export function ImportarAFDTDialog() {
 
         <div className="space-y-4 py-2">
           <div className="space-y-2">
-            <label className="text-xs font-bold uppercase text-muted-foreground">Tipo de arquivo</label>
+            <label className="text-xs font-medium uppercase text-muted-foreground">Tipo de arquivo</label>
             <Select value={tipo} onValueChange={(v) => setTipo(v as Tipo)}>
               <SelectTrigger>
                 <SelectValue />
@@ -162,7 +162,7 @@ export function ImportarAFDTDialog() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-bold uppercase text-muted-foreground">Arquivo (.txt)</label>
+            <label className="text-xs font-medium uppercase text-muted-foreground">Arquivo (.txt)</label>
             <input
               ref={fileRef}
               type="file"
@@ -212,19 +212,19 @@ export function ImportarAFDTDialog() {
                 <div className="mt-3 pt-3 border-t border-border/40 grid grid-cols-4 gap-2 text-center text-xs">
                   <div>
                     <p className="text-muted-foreground">Total</p>
-                    <p className="font-bold tabular-nums">{reconc.total}</p>
+                    <p className="font-medium tabular-nums">{reconc.total}</p>
                   </div>
                   <div>
                     <p className="text-success">OK</p>
-                    <p className="font-bold tabular-nums text-success">{reconc.ok}</p>
+                    <p className="font-medium tabular-nums text-success">{reconc.ok}</p>
                   </div>
                   <div>
                     <p className="text-warning">S/ colab.</p>
-                    <p className="font-bold tabular-nums text-warning">{reconc.sem_colaborador}</p>
+                    <p className="font-medium tabular-nums text-warning">{reconc.sem_colaborador}</p>
                   </div>
                   <div>
                     <p className="text-destructive">S/ batida</p>
-                    <p className="font-bold tabular-nums text-destructive">{reconc.sem_batida}</p>
+                    <p className="font-medium tabular-nums text-destructive">{reconc.sem_batida}</p>
                   </div>
                 </div>
               )}

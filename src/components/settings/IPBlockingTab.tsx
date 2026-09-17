@@ -100,7 +100,7 @@ export function IPBlockingTab() {
             <div className={cn("h-[2px] bg-gradient-to-r", gradient)} />
             <CardContent className="p-3 flex items-center gap-3">
               <div className={cn("p-2 rounded-xl bg-gradient-to-br", gradient)}><Icon className="h-4 w-4 text-primary-foreground" /></div>
-              <div><p className="text-lg font-bold font-display">{value}</p><p className="text-[10px] text-muted-foreground font-body">{label}</p></div>
+              <div><p className="text-lg font-medium font-display">{value}</p><p className="text-[10px] text-muted-foreground font-body">{label}</p></div>
             </CardContent>
           </Card>
         ))}

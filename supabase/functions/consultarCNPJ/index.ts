@@ -1,6 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { validateRequest, corsHeaders, createErrorResponse } from '../_shared/contract.ts';
+import { validateRequest, corsHeaders, createErrorResponse, getCorsHeaders } from '../_shared/contract.ts';
 import { cnpjSchema } from '../_shared/schemas/common.ts';
 import { cachePublic, cachedFetch } from '../_shared/cache.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
@@ -12,14 +12,14 @@ import { safeFetch } from '../_shared/safe-fetch.ts';
 const CNPJ_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: getCorsHeaders(req) });
 
   const csrf = await verifyCsrf(req.clone());
   if (!csrf.ok) return csrf.response!;
 
   const authHeader = req.headers.get('Authorization') ?? '';
   if (!authHeader.startsWith('Bearer ')) {
-    return createErrorResponse('Autenticação obrigatória', 401, 'UNAUTHORIZED');
+    return createErrorResponse('Autenticação obrigatória', 401, 'UNAUTHORIZED', undefined, req);
   }
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
@@ -30,7 +30,7 @@ serve(async (req) => {
   });
   const { data: userData, error: userErr } = await userClient.auth.getUser();
   if (userErr || !userData?.user) {
-    return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
+    return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED', undefined, req);
   }
   const rlClient = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
   const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
@@ -70,7 +70,7 @@ serve(async (req) => {
       socios: (d.qsa || []).map((s: any) => ({ nome: s.nome_socio, qualificacao: s.qualificacao_socio })),
     }), {
       headers: {
-        ...corsHeaders,
+        ...getCorsHeaders(req),
         'Content-Type': 'application/json',
         // MP-032: CNPJ raramente muda — cache CDN 24h com SWR de 1h.
         ...cachePublic(86400, 3600),
@@ -80,9 +80,9 @@ serve(async (req) => {
 
   } catch (error: unknown) {
     if (error instanceof Error && error.message.startsWith('CNPJ lookup failed')) {
-      return createErrorResponse('CNPJ não encontrado', 404, 'NOT_FOUND');
+      return createErrorResponse('CNPJ não encontrado', 404, 'NOT_FOUND', undefined, req);
     }
     captureException(error);
-    return createErrorResponse('Erro interno', 500, 'INTERNAL_SERVER_ERROR');
+    return createErrorResponse('Erro interno', 500, 'INTERNAL_SERVER_ERROR', undefined, req);
   }
 });

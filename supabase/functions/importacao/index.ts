@@ -3,7 +3,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://esm.sh/zod@3.23.8';
-import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJsonBody } from '../_shared/contract.ts';
+import { corsHeaders, createErrorResponse, createValidationErrorResponse, parseJsonBody, getCorsHeaders } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { requireRh } from '../_shared/authz.ts';
@@ -98,8 +98,8 @@ function parseCSVStrict(text: string): Record<string, string>[] {
 }
 
 serve(async (req: Request): Promise<Response> => {
-  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders });
-  if (req.method !== 'POST') return createErrorResponse('Método não permitido', 405, 'METHOD_NOT_ALLOWED');
+  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: getCorsHeaders(req) });
+  if (req.method !== 'POST') return createErrorResponse('Método não permitido', 405, 'METHOD_NOT_ALLOWED', undefined, req);
 
   try {
     // 1) CSRF fail-closed
@@ -109,7 +109,7 @@ serve(async (req: Request): Promise<Response> => {
     // 2) Auth obrigatório
     const authHeader = req.headers.get('Authorization') ?? '';
     if (!authHeader.startsWith('Bearer ')) {
-      return createErrorResponse('Autenticação obrigatória', 401, 'UNAUTHORIZED');
+      return createErrorResponse('Autenticação obrigatória', 401, 'UNAUTHORIZED', undefined, req);
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
@@ -121,7 +121,7 @@ serve(async (req: Request): Promise<Response> => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
     const { data: userData, error: userErr } = await userClient.auth.getUser();
-    if (userErr || !userData?.user) return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
+    if (userErr || !userData?.user) return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED', undefined, req);
     const userId = userData.user.id;
 
     // 3) Validação de input via Zod (com limite de payload 512 KB para importações CSV)
@@ -130,7 +130,7 @@ serve(async (req: Request): Promise<Response> => {
     if (_plErr) return _plErr;
     raw = _body;
     const parsed = BodySchema.safeParse(raw);
-    if (!parsed.success) return createValidationErrorResponse(parsed.error);
+    if (!parsed.success) return createValidationErrorResponse(parsed.error, req);
     const { action, tabela, dados, formato, csvContent, empresaId } = parsed.data;
 
     const admin = createClient(supabaseUrl, serviceKey, {
@@ -147,7 +147,7 @@ serve(async (req: Request): Promise<Response> => {
 
     // 4) Tenant scope — obrigatório para tabelas multi-tenant
     if (TENANT_SCOPED_TABLES.has(tabela) && !empresaId && action !== 'template') {
-      return createErrorResponse('empresaId é obrigatório para esta tabela', 400, 'EMPRESA_REQUIRED');
+      return createErrorResponse('empresaId é obrigatório para esta tabela', 400, 'EMPRESA_REQUIRED', undefined, req);
     }
     if (empresaId) {
       // Importar grava em massa em tabelas de colaboradores, folha e
@@ -167,7 +167,7 @@ serve(async (req: Request): Promise<Response> => {
         contatos_emergencia: 'colaborador_cpf,nome,telefone,parentesco',
         documentos: 'colaborador_cpf,tipo,numero,orgao_emissor,data_emissao',
       };
-      return json({ success: true, data: { template: templates[tabela] ?? '', tabela } });
+      return json({ success: true, data: { template: templates[tabela] ?? '', tabela } }, 200, req);
     }
 
     // Materializa linhas
@@ -176,13 +176,13 @@ serve(async (req: Request): Promise<Response> => {
       try { rows = parseCSVStrict(csvContent); }
       catch (e) {
         return createErrorResponse(
-          e instanceof Error ? e.message : 'CSV inválido', 400, 'INVALID_CSV',
+          e instanceof Error ? e.message : 'CSV inválido', 400, 'INVALID_CSV', undefined, req,
         );
       }
     } else if (dados) {
       rows = Array.isArray(dados) ? dados as Record<string, unknown>[] : [dados as Record<string, unknown>];
     } else {
-      return createErrorResponse('Forneça csvContent (csv) ou dados (json)', 400, 'MISSING_PAYLOAD');
+      return createErrorResponse('Forneça csvContent (csv) ou dados (json)', 400, 'MISSING_PAYLOAD', undefined, req);
     }
 
     if (action === 'validar') {
@@ -199,13 +199,13 @@ serve(async (req: Request): Promise<Response> => {
       return json({
         success: true,
         data: { total: rows.length, errors, valid: errors.length === 0, preview: rows.slice(0, 5) },
-      });
+      }, 200, req);
     }
 
     // action === 'importar'
-    if (rows.length === 0) return createErrorResponse('Nenhum dado para importar', 400, 'EMPTY_PAYLOAD');
+    if (rows.length === 0) return createErrorResponse('Nenhum dado para importar', 400, 'EMPTY_PAYLOAD', undefined, req);
     if (rows.length > MAX_ROWS) {
-      return createErrorResponse(`Máximo ${MAX_ROWS} linhas por importação`, 413, 'TOO_MANY_ROWS');
+      return createErrorResponse(`Máximo ${MAX_ROWS} linhas por importação`, 413, 'TOO_MANY_ROWS', undefined, req);
     }
 
     // Normaliza campo 'nome' → 'nome_completo' em colaboradores (backward-compat com CSVs antigos)
@@ -258,16 +258,16 @@ serve(async (req: Request): Promise<Response> => {
     return json({
       success: true,
       data: { total: rows.length, inserted, errors: errorsCount, details: batchErrors.slice(0, 20) },
-    });
+    }, 200, req);
   } catch (error: unknown) {
     try { captureException(error, { fn: 'importacao' }); } catch { /* noop */ }
-    return createErrorResponse('Erro interno', 500, 'INTERNAL_SERVER_ERROR');
+    return createErrorResponse('Erro interno', 500, 'INTERNAL_SERVER_ERROR', undefined, req);
   }
 });
 
-function json(body: unknown, status = 200): Response {
+function json(body: unknown, status = 200, req?: Request): Response {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
   });
 }

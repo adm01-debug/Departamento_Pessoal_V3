@@ -16,7 +16,11 @@ export function QueryProvider({ children }: { children: ReactNode }) {
           queries: {
             staleTime: 5 * 60 * 1000,
             gcTime: 30 * 60 * 1000,
-            retry: 1,
+            // retry: false — CORS errors (TypeError: Failed to fetch) do NOT benefit de
+            // retry, pois o browser bloqueia a resposta com ACAO errado antes do JS
+            // enxergar o body. O retry apenas amplifica o loop de erros no console.
+            // Queries failed gracefully: React Query propaga o erro ao componente.
+            retry: false,
             refetchOnWindowFocus: false,
             refetchOnReconnect: true,
           },

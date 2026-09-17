@@ -115,14 +115,14 @@ export function PcsBenchmarkTab() {
             <TableBody>
               {pesquisas.map((p) => (
                 <TableRow key={p.id} className="border-b border-border/10 last:border-0">
-                  <TableCell className="py-3 pl-6 text-sm font-bold">{p.cargo_referencia}</TableCell>
+                  <TableCell className="py-3 pl-6 text-sm font-medium">{p.cargo_referencia}</TableCell>
                   <TableCell className="text-xs text-muted-foreground">{p.fonte}</TableCell>
                   <TableCell className="text-xs text-muted-foreground">{p.regiao || '—'}</TableCell>
                   <TableCell className="font-mono text-[11px]">
                     {new Date(`${p.data_referencia}T00:00:00`).toLocaleDateString('pt-BR')}
                   </TableCell>
                   <TableCell className="text-right text-sm">{brl(p.p25)}</TableCell>
-                  <TableCell className="text-right text-sm font-bold">{brl(p.p50)}</TableCell>
+                  <TableCell className="text-right text-sm font-medium">{brl(p.p50)}</TableCell>
                   <TableCell className="text-right text-sm">{brl(p.p75)}</TableCell>
                   <TableCell className="text-right text-sm">{brl(p.p90)}</TableCell>
                   <TableCell className="pr-4 text-right">

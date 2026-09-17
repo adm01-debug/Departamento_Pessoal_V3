@@ -84,8 +84,8 @@ export function PagamentoBancarioWizard({ folhaId }: { folhaId?: string }) {
               <Landmark className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-xl font-display font-bold">Liquidação de Folha</h2>
-              <p className="text-xs opacity-80 uppercase tracking-widest font-bold">Ambiente de Operações Bancárias</p>
+              <h2 className="text-xl font-display font-medium">Liquidação de Folha</h2>
+              <p className="text-xs opacity-80 uppercase tracking-widest font-medium">Ambiente de Operações Bancárias</p>
             </div>
           </div>
         </div>
@@ -111,7 +111,7 @@ export function PagamentoBancarioWizard({ folhaId }: { folhaId?: string }) {
                         <Zap className="h-8 w-8" />
                       </div>
                       <div>
-                        <p className="font-bold">Lote PIX</p>
+                        <p className="font-medium">Lote PIX</p>
                         <p className="text-[10px] text-muted-foreground leading-tight">Liquidação instantânea (24/7). Ideal para fintechs e bancos digitais.</p>
                       </div>
                     </CardContent>
@@ -129,7 +129,7 @@ export function PagamentoBancarioWizard({ folhaId }: { folhaId?: string }) {
                         <FileDown className="h-8 w-8" />
                       </div>
                       <div>
-                        <p className="font-bold">Remessa CNAB</p>
+                        <p className="font-medium">Remessa CNAB</p>
                         <p className="text-[10px] text-muted-foreground leading-tight">Padrão FEBRABAN 240. Ideal para grandes bancos e agendamento.</p>
                       </div>
                     </CardContent>
@@ -166,7 +166,7 @@ export function PagamentoBancarioWizard({ folhaId }: { folhaId?: string }) {
                         <Globe className="h-8 w-8 text-primary/40 animate-pulse" />
                       </div>
                     </div>
-                    <h3 className="text-lg font-display font-bold">Comunicando com o Banco...</h3>
+                    <h3 className="text-lg font-display font-medium">Comunicando com o Banco...</h3>
                     <p className="text-xs text-muted-foreground mt-2">Autenticando convênio e validando chaves de segurança</p>
                   </>
                 ) : (
@@ -174,7 +174,7 @@ export function PagamentoBancarioWizard({ folhaId }: { folhaId?: string }) {
                     <div className="p-5 rounded-full bg-primary/10 mb-4">
                       <ShieldCheck className="h-10 w-10 text-primary" />
                     </div>
-                    <h3 className="text-lg font-display font-bold">Confirmar Pagamento?</h3>
+                    <h3 className="text-lg font-display font-medium">Confirmar Pagamento?</h3>
                     <p className="text-sm text-muted-foreground max-w-sm mt-2 mb-8">
                       Você está prestes a iniciar a liquidação via {method?.toUpperCase()}. Esta ação é irreversível após o envio ao banco.
                     </p>
@@ -196,7 +196,7 @@ export function PagamentoBancarioWizard({ folhaId }: { folhaId?: string }) {
                 <div className="p-5 rounded-full bg-success/10 text-success mb-4 border-2 border-success/20">
                   <CheckCircle2 className="h-12 w-12" />
                 </div>
-                <h3 className="text-xl font-display font-bold">Operação Concluída!</h3>
+                <h3 className="text-xl font-display font-medium">Operação Concluída!</h3>
                 <p className="text-sm text-muted-foreground mt-2 mb-8">
                   {method === 'pix' 
                     ? "Os salários foram liquidados instantaneamente." 
@@ -206,7 +206,7 @@ export function PagamentoBancarioWizard({ folhaId }: { folhaId?: string }) {
                 <div className="p-4 bg-muted/20 rounded-2xl w-full border border-border/30 space-y-2 mb-6">
                   <div className="flex justify-between text-xs">
                     <span className="text-muted-foreground">Protocolo:</span>
-                    <span className="font-mono font-bold">{protocolo}</span>
+                    <span className="font-mono font-medium">{protocolo}</span>
                   </div>
                   <div className="flex justify-between text-xs">
                     <span className="text-muted-foreground">Autenticação Digital:</span>

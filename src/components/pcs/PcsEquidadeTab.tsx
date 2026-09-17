@@ -127,7 +127,7 @@ export function PcsEquidadeTab({ planoId }: { planoId: string | null }) {
               const situacao = situacaoDe(l.situacao);
               return (
                 <TableRow key={l.colaborador_id} className="border-b border-border/10 last:border-0">
-                  <TableCell className="py-3 pl-6 text-sm font-bold">{l.colaborador_nome}</TableCell>
+                  <TableCell className="py-3 pl-6 text-sm font-medium">{l.colaborador_nome}</TableCell>
                   <TableCell className="text-xs text-muted-foreground">{l.cargo_nome}</TableCell>
                   <TableCell><Badge variant="outline" className="text-[10px]">{l.grade_nome}</Badge></TableCell>
                   <TableCell className="text-right text-sm">{brl(l.salario_atual)}</TableCell>
@@ -135,7 +135,7 @@ export function PcsEquidadeTab({ planoId }: { planoId: string | null }) {
                     {brl(l.salario_min)} – {brl(l.salario_max)}
                   </TableCell>
                   <TableCell className="text-right text-sm">{Number(l.comparatio).toLocaleString('pt-BR')}</TableCell>
-                  <TableCell className="text-right text-sm font-bold">
+                  <TableCell className="text-right text-sm font-medium">
                     {Number(l.ajuste_necessario) > 0 ? brl(l.ajuste_necessario) : '—'}
                   </TableCell>
                   <TableCell>
@@ -162,8 +162,8 @@ function Stat({ titulo, valor, destaque = false }: { titulo: string; valor: stri
   return (
     <Card className="border-border/30 rounded-2xl bg-card/50">
       <CardContent className="p-4">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{titulo}</p>
-        <h3 className={`font-display text-xl font-bold ${destaque ? 'text-primary' : ''}`}>{valor}</h3>
+        <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">{titulo}</p>
+        <h3 className={`font-display text-xl font-medium ${destaque ? 'text-primary' : ''}`}>{valor}</h3>
       </CardContent>
     </Card>
   );

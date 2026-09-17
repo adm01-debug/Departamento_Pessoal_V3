@@ -71,7 +71,7 @@ export function PontoGeoAnalytics({ batidas }: { batidas: any[] }) {
                         const data = payload[0].payload;
                         return (
                           <div className="bg-background border border-border p-3 rounded-xl shadow-xl">
-                            <p className="text-xs font-bold mb-1">{data.name}</p>
+                            <p className="text-xs font-medium mb-1">{data.name}</p>
                             <p className="text-[10px] text-muted-foreground">Hora: {data.hora}</p>
                             <p className="text-[10px] text-muted-foreground">Distância: {Math.round(data.distancia)}m</p>
                             <Badge variant={data.dentro ? "outline" : "destructive"} className="mt-2 text-[9px]">
@@ -111,7 +111,7 @@ export function PontoGeoAnalytics({ batidas }: { batidas: any[] }) {
       <div className="space-y-6">
         <Card className="border border-border/40 shadow-xs rounded-2xl overflow-hidden">
           <CardHeader className="bg-muted/30 pb-2 text-center">
-            <CardTitle className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Índice de Geofencing</CardTitle>
+            <CardTitle className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Índice de Geofencing</CardTitle>
           </CardHeader>
           <CardContent className="pt-6 flex flex-col items-center">
             <div className="relative h-40 w-40 flex items-center justify-center">
@@ -139,19 +139,19 @@ export function PontoGeoAnalytics({ batidas }: { batidas: any[] }) {
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-3xl font-display font-bold">{Math.round(geoStats.percentDentro)}%</span>
-                <span className="text-[10px] text-muted-foreground font-bold">EM CONFORMIDADE</span>
+                <span className="text-3xl font-display font-medium">{Math.round(geoStats.percentDentro)}%</span>
+                <span className="text-[10px] text-muted-foreground font-medium">EM CONFORMIDADE</span>
               </div>
             </div>
             
             <div className="grid grid-cols-2 gap-4 w-full mt-6">
               <div className="p-3 rounded-xl bg-success/5 border border-success/10 text-center">
                 <p className="text-[10px] text-muted-foreground mb-1">DENTRO</p>
-                <p className="text-xl font-bold text-success">{geoStats.dentro}</p>
+                <p className="text-xl font-medium text-success">{geoStats.dentro}</p>
               </div>
               <div className="p-3 rounded-xl bg-destructive/5 border border-destructive/10 text-center">
                 <p className="text-[10px] text-muted-foreground mb-1">FORA</p>
-                <p className="text-xl font-bold text-destructive">{geoStats.fora}</p>
+                <p className="text-xl font-medium text-destructive">{geoStats.fora}</p>
               </div>
             </div>
           </CardContent>
@@ -161,8 +161,8 @@ export function PontoGeoAnalytics({ batidas }: { batidas: any[] }) {
           <CardContent className="p-4 flex items-center gap-4">
             <div className="p-3 bg-primary/20 rounded-xl text-primary"><Navigation className="h-6 w-6" /></div>
             <div>
-              <p className="text-[10px] uppercase text-muted-foreground font-bold">Distância Média</p>
-              <h3 className="text-xl font-display font-bold text-primary">{Math.round(geoStats.avgDist)} metros</h3>
+              <p className="text-[10px] uppercase text-muted-foreground font-medium">Distância Média</p>
+              <h3 className="text-xl font-display font-medium text-primary">{Math.round(geoStats.avgDist)} metros</h3>
               <p className="text-[10px] text-muted-foreground">do perímetro autorizado</p>
             </div>
           </CardContent>

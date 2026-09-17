@@ -34,17 +34,17 @@
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { corsHeaders } from '../_shared/contract.ts';
-import { safeFetch } from '../_shared/safe-fetch.ts';
+import { corsHeaders, safeFetch } from '../_shared/safe-fetch.ts';
+import { getCorsHeaders } from '../_shared/contract.ts';
 
 const OPENAI_API_KEY  = Deno.env.get('OPENAI_API_KEY') ?? '';
 const AI_GATEWAY_URL  = Deno.env.get('AI_GATEWAY_URL')  ?? '';
 
 serve(async (req: Request): Promise<Response> => {
-  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: getCorsHeaders(req) });
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 405, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -56,7 +56,7 @@ serve(async (req: Request): Promise<Response> => {
     const authHeader = req.headers.get('Authorization') ?? '';
     if (!authHeader.startsWith('Bearer ')) {
       return new Response(JSON.stringify({ error: 'Autenticação obrigatória' }), {
-        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -67,7 +67,7 @@ serve(async (req: Request): Promise<Response> => {
     const { data: userData, error: userErr } = await userClient.auth.getUser();
     if (userErr || !userData?.user) {
       return new Response(JSON.stringify({ error: 'Sessão inválida' }), {
-        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -81,7 +81,7 @@ serve(async (req: Request): Promise<Response> => {
 
     if (!empresaId || typeof empresaId !== 'string') {
       return new Response(JSON.stringify({ error: 'empresaId é obrigatório' }), {
-        status: 422, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 422, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -104,7 +104,7 @@ serve(async (req: Request): Promise<Response> => {
         mode,
         status: 'sem_colaboradores',
         alertas: [],
-      }), { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }), { status: 200, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
     const colabIds = colaboradores.map(c => c.id);
@@ -377,13 +377,13 @@ Responda em português brasileiro, tom profissional.`;
       geradoEm: new Date().toISOString(),
     }), {
       status: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
 
   } catch (err) {
     console.error('[alertas-preditivos] erro:', err);
     return new Response(JSON.stringify({ error: 'Erro interno' }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 });

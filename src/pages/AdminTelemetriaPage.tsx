@@ -3,7 +3,7 @@ import { useState } from "react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { supabaseBase } from "@/integrations/supabase/client";
 import { Activity, RefreshCw, Trash2, Download, FileText } from "lucide-react";
 import { TelemetryCharts } from "@/components/admin/telemetry/TelemetryCharts";
 import { TelemetryStatsCards } from "@/components/admin/telemetry/TelemetryStatsCards";
@@ -55,7 +55,7 @@ export default function AdminTelemetriaPage() {
     queryKey: ["query-telemetry", severityFilter, timeFilter, customDateFrom?.toISOString(), customDateTo?.toISOString()],
     queryFn: async () => {
       const { from, to } = getTimeThreshold();
-      let query = supabase.from("query_telemetry").select("*").gte("created_at", from).lte("created_at", to).order("created_at", { ascending: false }).limit(500);
+      let query = supabaseBase.from("query_telemetry").select("*").gte("created_at", from).lte("created_at", to).order("created_at", { ascending: false }).limit(500);
       if (severityFilter !== "all") query = query.eq("severity", severityFilter);
       const { data, error } = await query;
       if (error) throw error;
@@ -75,7 +75,7 @@ export default function AdminTelemetriaPage() {
 
   const handleCleanup = async () => {
     const threshold = new Date(Date.now() - 604800000).toISOString();
-    const { error } = await supabase.from("query_telemetry").delete().lt("created_at", threshold);
+    const { error } = await supabaseBase.from("query_telemetry").delete().lt("created_at", threshold);
     if (error) toast.error("Erro ao limpar dados antigos");
     else { toast.success("Dados com mais de 7 dias removidos"); refetch(); }
   };
@@ -132,7 +132,7 @@ export default function AdminTelemetriaPage() {
           <div className="flex items-center gap-3">
             <Activity className="h-7 w-7 text-primary" />
             <div>
-              <h1 className="text-2xl font-bold">Telemetria de Queries</h1>
+              <h1 className="text-2xl font-medium">Telemetria de Queries</h1>
               <p className="text-sm text-muted-foreground">Monitoramento de performance do banco externo</p>
             </div>
           </div>

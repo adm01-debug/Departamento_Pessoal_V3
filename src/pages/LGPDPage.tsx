@@ -236,7 +236,7 @@ export default function LGPDPage() {
                     <Icon className="h-4 w-4 text-primary-foreground" />
                   </div>
                   <div>
-                    <p className="text-lg font-bold font-display">{value}</p>
+                    <p className="text-lg font-medium font-display">{value}</p>
                     <p className="text-[10px] text-muted-foreground font-body">{label}</p>
                   </div>
                 </CardContent>
@@ -434,7 +434,7 @@ export default function LGPDPage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-2">
-                            <p className="font-display font-bold text-sm">{item.categoria}</p>
+                            <p className="font-display font-medium text-sm">{item.categoria}</p>
                             <Badge variant="outline" className="text-[10px] font-body">
                               {item.tabela}
                             </Badge>
@@ -515,12 +515,12 @@ export default function LGPDPage() {
                                 strokeLinecap="round"
                               />
                             </svg>
-                            <span className="absolute inset-0 flex items-center justify-center font-display font-bold text-lg">
+                            <span className="absolute inset-0 flex items-center justify-center font-display font-medium text-lg">
                               {score}%
                             </span>
                           </div>
                           <div>
-                            <p className="font-display font-bold text-lg">
+                            <p className="font-display font-medium text-lg">
                               {score >= 75 ? 'Bom' : score >= 50 ? 'Regular' : 'Crítico'}
                             </p>
                             <p className="text-xs text-muted-foreground font-body">

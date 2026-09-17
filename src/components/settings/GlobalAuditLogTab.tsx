@@ -133,7 +133,7 @@ export function GlobalAuditLogTab() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className={`text-[9px] uppercase font-bold tracking-tight ${
+                        <Badge variant="outline" className={`text-[9px] uppercase font-medium tracking-tight ${
                           log.acao === 'DELETE' ? 'border-destructive/30 text-destructive bg-destructive/5' :
                           log.acao === 'EXECUTE_CALC' ? 'border-primary/30 text-primary bg-primary/5' :
                           'border-info/30 text-info bg-info/5'
@@ -171,7 +171,7 @@ export function GlobalAuditLogTab() {
       <div className="bg-primary/5 p-4 rounded-2xl border border-primary/10 flex items-start gap-3">
         <ShieldText className="h-5 w-5 text-primary shrink-0" />
         <div className="space-y-1">
-          <p className="text-xs font-bold text-primary">Conformidade LGPD & REP-P</p>
+          <p className="text-xs font-medium text-primary">Conformidade LGPD & REP-P</p>
           <p className="text-[10px] text-muted-foreground leading-relaxed">
             Esta trilha de auditoria é imutável e registra todas as operações sensíveis do sistema. 
             Em caso de fiscalização, os dados aqui apresentados servem como prova de integridade dos processos de Folha e Ponto.

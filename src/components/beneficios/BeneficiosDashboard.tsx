@@ -44,7 +44,7 @@ export function BeneficiosDashboard({ beneficios }: { beneficios: any[] }) {
                     <kpi.icon className="h-3 w-3 text-primary-foreground" />
                   </div>
                 </div>
-                <p className="text-xl font-display font-bold">{kpi.value}</p>
+                <p className="text-xl font-display font-medium">{kpi.value}</p>
                 <p className="text-xs text-muted-foreground font-body">{kpi.label}</p>
               </CardContent>
             </Card>
@@ -112,7 +112,7 @@ export function BeneficiosDashboard({ beneficios }: { beneficios: any[] }) {
             <Info className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-sm font-bold text-info-foreground">Inteligência de Benefícios</p>
+            <p className="text-sm font-medium text-info-foreground">Inteligência de Benefícios</p>
             <p className="text-xs text-muted-foreground">O custo total de benefícios representa aproximadamente 12% da folha bruta total. Considere revisar o plano de saúde para otimizar custos no próximo semestre.</p>
           </div>
         </CardContent>

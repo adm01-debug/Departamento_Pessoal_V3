@@ -28,10 +28,10 @@ export function FeriasSaldoReport() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="text-[10px] uppercase font-bold">Colaborador</TableHead>
-                <TableHead className="text-[10px] uppercase font-bold text-center">Dias Disponíveis</TableHead>
-                <TableHead className="text-[10px] uppercase font-bold text-center">Progresso</TableHead>
-                <TableHead className="text-[10px] uppercase font-bold text-right">Status</TableHead>
+                <TableHead className="text-[10px] uppercase font-medium">Colaborador</TableHead>
+                <TableHead className="text-[10px] uppercase font-medium text-center">Dias Disponíveis</TableHead>
+                <TableHead className="text-[10px] uppercase font-medium text-center">Progresso</TableHead>
+                <TableHead className="text-[10px] uppercase font-medium text-right">Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -49,7 +49,7 @@ export function FeriasSaldoReport() {
                         <span className="text-[10px] text-muted-foreground">{c.departamento?.nome || 'Geral'}</span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-center font-display font-bold text-lg">
+                    <TableCell className="text-center font-display font-medium text-lg">
                       {saldo}
                     </TableCell>
                     <TableCell className="w-[120px]">

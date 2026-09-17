@@ -95,8 +95,8 @@ export function enforceOrigin(req: Request): Response | null {
   if (!origin) return null;
   if (isOriginAllowed(origin)) return null;
   return new Response(
-    JSON.stringify({ error: { code: 'FORBIDDEN_ORIGIN', message: 'Origin não autorizado' } }),
-    { status: 403, headers: { 'Content-Type': 'application/json', ...securityHeaders } }
+    JSON.stringify({ data: null, count: null, duration_ms: 0, error: 'Origin não autorizado', code: 'FORBIDDEN_ORIGIN' }),
+    { status: 200, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
   );
 }
 
@@ -108,7 +108,7 @@ export function handlePreflight(req: Request): Response | null {
   if (req.method !== 'OPTIONS') return null;
   const origin = req.headers.get('origin') || '';
   if (origin && !isOriginAllowed(origin)) {
-    return new Response(null, { status: 403, headers: securityHeaders });
+    return new Response(null, { status: 403, headers: getCorsHeaders(req) });
   }
   return new Response(null, { status: 204, headers: getCorsHeaders(req) });
 }

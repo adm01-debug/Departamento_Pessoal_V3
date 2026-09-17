@@ -131,7 +131,7 @@ export default function AssistenteIAPage() {
                 <div className="p-5 rounded-3xl bg-gradient-to-br from-primary/10 to-primary-glow/10 mb-6">
                   <Sparkles className="h-10 w-10 text-primary" />
                 </div>
-                <h2 className="text-h2 font-display font-bold mb-2">Olá! Sou o Assistente DP</h2>
+                <h2 className="text-h2 font-display font-medium mb-2">Olá! Sou o Assistente DP</h2>
                 <p className="text-body text-muted-foreground font-body max-w-md mb-6">
                   Posso ajudar com dúvidas trabalhistas, cálculos de rescisão, férias, INSS, IRRF e muito mais.
                 </p>

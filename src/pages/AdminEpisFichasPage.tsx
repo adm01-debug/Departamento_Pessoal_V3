@@ -68,7 +68,7 @@ export default function AdminEpisFichasPage() {
   };
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6 py-6">
       <PageHeader
         title="Fichas de EPI (NR-6)"
         description="Controle digital de entregas com evidência e assinatura eletrônica"
@@ -84,7 +84,7 @@ export default function AdminEpisFichasPage() {
           <Card key={k.label}>
             <CardContent className="p-4">
               <div className="text-xs text-muted-foreground">{k.label}</div>
-              <div className={`text-3xl font-bold ${k.cls}`}>{k.v}</div>
+              <div className={`text-3xl font-medium ${k.cls}`}>{k.v}</div>
             </CardContent>
           </Card>
         ))}

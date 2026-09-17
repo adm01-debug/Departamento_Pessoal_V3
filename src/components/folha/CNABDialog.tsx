@@ -207,7 +207,7 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
           
           <div className="flex items-center gap-2 justify-center p-2 bg-success/5 rounded-lg border border-success/20">
             <ShieldCheck className="h-3.5 w-3.5 text-success" />
-            <span className="text-[10px] text-success font-medium uppercase tracking-tighter">Protocolo Bancário Seguro TLS 1.3 Ativo</span>
+            <span className="text-[10px] text-success font-medium uppercase tracking-wide">Protocolo Bancário Seguro TLS 1.3 Ativo</span>
           </div>
         </div>
       </DialogContent>

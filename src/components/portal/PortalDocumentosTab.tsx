@@ -156,7 +156,7 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-h3 font-display font-bold">Gestão de Documentos</h2>
+        <h2 className="text-h3 font-display font-medium">Gestão de Documentos</h2>
         <Button 
           className="rounded-xl bg-gradient-to-r from-warning to-primary hover:opacity-90 shadow-lg font-body"
           onClick={() => setShowUpload(true)}

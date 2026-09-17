@@ -28,6 +28,14 @@ vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }: any) => <>{children}</>,
 }));
 
+// EventTimeline usa `useLocation()` para restringir o mock visual do Dashboard
+// (ver src/mocks/dashboardMockData.ts) à rota /dashboard — fora de um <Router>
+// esse hook lança. Um pathname fora de /dashboard também garante que estes
+// testes exercitam sempre o caminho de dados reais, como antes dessa flag existir.
+vi.mock('react-router-dom', () => ({
+  useLocation: () => ({ pathname: '/dashboard-executivo' }),
+}));
+
 import { useQuery } from '@tanstack/react-query';
 import { EventTimeline } from '../dashboard/EventTimeline';
 

@@ -80,12 +80,12 @@ export function PcsGradesTab({ planoId }: { planoId: string | null }) {
                 const aderencia = parseAderencia(g.aderencia);
                 return (
                   <TableRow key={g.grade_id} className="border-b border-border/10 last:border-0">
-                    <TableCell className="py-3 pl-6 text-sm font-bold">{g.grade_nome}</TableCell>
+                    <TableCell className="py-3 pl-6 text-sm font-medium">{g.grade_nome}</TableCell>
                     <TableCell className="font-mono text-[11px]">
                       {Number(g.pontos_min).toLocaleString('pt-BR')} – {Number(g.pontos_max).toLocaleString('pt-BR')}
                     </TableCell>
                     <TableCell className="text-right text-sm">{brl(g.salario_min)}</TableCell>
-                    <TableCell className="text-right text-sm font-bold">{brl(g.salario_medio)}</TableCell>
+                    <TableCell className="text-right text-sm font-medium">{brl(g.salario_medio)}</TableCell>
                     <TableCell className="text-right text-sm">{brl(g.salario_max)}</TableCell>
                     <TableCell className="text-right text-sm">{brl(g.mercado_p50)}</TableCell>
                     <TableCell className="text-right font-mono text-[11px]">

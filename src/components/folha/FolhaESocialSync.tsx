@@ -184,14 +184,14 @@ export function FolhaESocialSync({ competencia }: { competencia: string }) {
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-[11px]">
-                  <span className="font-bold uppercase tracking-wider text-muted-foreground">Divergências Local vs eSocial</span>
+                  <span className="font-medium uppercase tracking-wider text-muted-foreground">Divergências Local vs eSocial</span>
                   <Badge variant="outline" className="text-[9px] bg-success/5 text-success border-success/20">Auditado</Badge>
                 </div>
                 
                 <div className="p-2.5 rounded-lg bg-warning/5 border border-warning/10 flex items-start gap-3">
                   <AlertCircle className="h-4 w-4 text-warning shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-xs font-bold">Diferença de INSS (R$ 42,50)</p>
+                    <p className="text-xs font-medium">Diferença de INSS (R$ 42,50)</p>
                     <p className="text-[10px] text-muted-foreground">Rubrica 1003 (Horas Extras) com incidência divergente no S-1010.</p>
                   </div>
                 </div>
@@ -199,7 +199,7 @@ export function FolhaESocialSync({ competencia }: { competencia: string }) {
                 <div className="p-2.5 rounded-lg bg-success/5 border border-success/10 flex items-start gap-3">
                   <CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-xs font-bold">FGTS Digital Conciliado</p>
+                    <p className="text-xs font-medium">FGTS Digital Conciliado</p>
                     <p className="text-[10px] text-muted-foreground">Valores transmitidos coincidem 100% com o totalizador S-5003.</p>
                   </div>
                 </div>

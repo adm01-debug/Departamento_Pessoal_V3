@@ -98,7 +98,7 @@ export default function AvaliacaoPage() {
                       <TableRow key={c.id} className="hover:bg-accent/20 transition-colors">
                         <TableCell>
                           <div className="flex flex-col">
-                            <span className="font-bold text-sm">{c.nome}</span>
+                            <span className="font-medium text-sm">{c.nome}</span>
                             <span className="text-[10px] text-muted-foreground">{c.descricao}</span>
                           </div>
                         </TableCell>
@@ -122,16 +122,16 @@ export default function AvaliacaoPage() {
                   <div className="h-1 bg-primary/20" />
                   <CardContent className="p-6">
                     <div className="flex justify-between items-start mb-4">
-                      <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-tighter">{m.tipo}</Badge>
+                      <Badge variant="outline" className="text-[10px] font-medium uppercase tracking-wide">{m.tipo}</Badge>
                       <span className="text-[10px] text-muted-foreground flex items-center gap-1 font-mono">
                         <Calendar className="h-3 w-3" /> {new Date(m.data_limite).toLocaleDateString('pt-BR')}
                       </span>
                     </div>
-                    <h3 className="font-display font-bold text-sm mb-2">{m.titulo}</h3>
+                    <h3 className="font-display font-medium text-sm mb-2">{m.titulo}</h3>
                     <p className="text-xs text-muted-foreground line-clamp-2 mb-4">{m.descricao}</p>
                     
                     <div className="space-y-2">
-                      <div className="flex justify-between text-[10px] font-bold">
+                      <div className="flex justify-between text-[10px] font-medium">
                         <span>Progresso</span>
                         <span>{Math.round((m.valor_atual / m.valor_objetivo) * 100)}%</span>
                       </div>
@@ -139,7 +139,7 @@ export default function AvaliacaoPage() {
                     </div>
 
                     <div className="mt-4 pt-4 border-t border-border/10 flex items-center gap-2">
-                      <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
+                      <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-medium text-primary">
                         {m.colaborador?.nome_completo?.charAt(0)}
                       </div>
                       <span className="text-[10px] font-medium text-muted-foreground">{m.colaborador?.nome_completo}</span>
@@ -167,11 +167,11 @@ export default function AvaliacaoPage() {
                     <TableRow key={f.id} className="hover:bg-accent/10 transition-colors">
                       <TableCell className="font-medium text-sm">{f.avaliado?.nome_completo}</TableCell>
                       <TableCell className="text-sm text-muted-foreground">{f.avaliador?.nome_completo}</TableCell>
-                      <TableCell><Badge variant="outline" className="text-[10px] uppercase font-bold">{f.tipo}</Badge></TableCell>
+                      <TableCell><Badge variant="outline" className="text-[10px] uppercase font-medium">{f.tipo}</Badge></TableCell>
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center gap-1">
                           <Star className="h-3 w-3 text-warning fill-warning" />
-                          <span className="font-bold text-sm">{f.nota_geral}</span>
+                          <span className="font-medium text-sm">{f.nota_geral}</span>
                         </div>
                       </TableCell>
                       <TableCell className="text-[10px] text-muted-foreground font-mono">
@@ -194,9 +194,9 @@ export default function AvaliacaoPage() {
                         <TrendingUp className="h-5 w-5" />
                       </div>
                       <div>
-                        <h4 className="font-bold text-sm">{p.titulo}</h4>
+                        <h4 className="font-medium text-sm">{p.titulo}</h4>
                         <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-[10px] text-muted-foreground uppercase font-bold">{p.competencia_foco}</span>
+                          <span className="text-[10px] text-muted-foreground uppercase font-medium">{p.competencia_foco}</span>
                           <span className="h-1 w-1 rounded-full bg-muted-foreground/30" />
                           <span className="text-[10px] text-muted-foreground font-medium">{p.colaborador?.nome_completo}</span>
                         </div>
@@ -204,11 +204,11 @@ export default function AvaliacaoPage() {
                     </div>
                     <div className="flex items-center gap-6">
                       <div className="text-right">
-                        <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">Prazo</p>
-                        <p className="text-xs font-mono font-bold">{new Date(p.prazo).toLocaleDateString('pt-BR')}</p>
+                        <p className="text-[10px] text-muted-foreground uppercase font-medium tracking-wide">Prazo</p>
+                        <p className="text-xs font-mono font-medium">{new Date(p.prazo).toLocaleDateString('pt-BR')}</p>
                       </div>
                       <Badge className={cn(
-                        "text-[10px] font-bold uppercase",
+                        "text-[10px] font-medium uppercase",
                         p.status === 'concluido' ? "bg-success/10 text-success border-success/20" : "bg-warning/10 text-warning border-warning/20"
                       )}>
                         {p.status.replace('_', ' ')}

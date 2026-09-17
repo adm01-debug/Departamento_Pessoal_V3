@@ -165,7 +165,7 @@ export default function AfastamentosPage() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 p-2">
-                <DropdownMenuLabel className="text-xs uppercase text-muted-foreground font-bold">Status do Afastamento</DropdownMenuLabel>
+                <DropdownMenuLabel className="text-xs uppercase text-muted-foreground font-medium">Status do Afastamento</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => setFiltros({ ...filtros, status: undefined })}>Todos Status</DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setFiltros({ ...filtros, status: 'ativo' })} className="text-green-600 font-medium">Ativos</DropdownMenuItem>
@@ -174,7 +174,7 @@ export default function AfastamentosPage() {
                 <DropdownMenuItem onClick={() => setFiltros({ ...filtros, status: 'prorrogado' })} className="text-blue-600 font-medium">Prorrogados</DropdownMenuItem>
                 
                 <DropdownMenuSeparator />
-                <DropdownMenuLabel className="text-xs uppercase text-muted-foreground font-bold">Tipo de Licença</DropdownMenuLabel>
+                <DropdownMenuLabel className="text-xs uppercase text-muted-foreground font-medium">Tipo de Licença</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => setSelectedTipo(null)}>Todos Tipos</DropdownMenuItem>
                 <ScrollArea className="h-48">
@@ -323,7 +323,7 @@ export default function AfastamentosPage() {
                           <div key={af.id} className="relative pl-6 pb-4 border-l border-muted last:pb-0">
                             <div className="absolute left-[-5px] top-1 h-2.5 w-2.5 rounded-full bg-primary" />
                             <div className="space-y-1">
-                              <p className="text-xs font-bold truncate">{af.colaborador?.nome_completo}</p>
+                              <p className="text-xs font-medium truncate">{af.colaborador?.nome_completo}</p>
                               {af.data_pericia ? (
                                 <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground font-medium">
                                   <CalendarIcon className="h-3 w-3" />
@@ -350,7 +350,7 @@ export default function AfastamentosPage() {
 
             <Card className="border border-border/50 shadow-xs rounded-xl bg-card">
               <CardHeader className="pb-2">
-                <CardTitle className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                <CardTitle className="text-xs font-medium uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                   <TrendingUp className="h-3.5 w-3.5 text-primary" />
                   Volume Mensal
                 </CardTitle>
@@ -380,11 +380,11 @@ export default function AfastamentosPage() {
                   </ResponsiveContainer>
                 </div>
                 <div className="mt-4 space-y-3 pt-2 border-t">
-                  <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-wider">
+                  <div className="flex justify-between items-center text-[10px] font-medium uppercase tracking-wider">
                     <span className="text-muted-foreground">Impacto Direto</span>
                     <span className="text-foreground">{afastamentos.reduce<number>((acc, a: any) => acc + Number(a.dias_empresa || 0), 0)} dias pagos</span>
                   </div>
-                  <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-wider">
+                  <div className="flex justify-between items-center text-[10px] font-medium uppercase tracking-wider">
                     <span className="text-muted-foreground">Previdência</span>
                     <span className="text-orange-600">{afastamentos.filter((a: any) => (a.dias_inss || 0) > 0).length} casos ativos</span>
                   </div>

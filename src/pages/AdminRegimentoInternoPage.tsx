@@ -168,10 +168,10 @@ const AdminRegimentoInternoPage = () => {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="py-6 space-y-6">
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
+          <h1 className="text-2xl font-medium flex items-center gap-2">
             <ShieldCheck className="h-6 w-6 text-primary" /> Regimento Interno de SST
           </h1>
           <p className="text-sm text-muted-foreground">
@@ -228,7 +228,7 @@ const AdminRegimentoInternoPage = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{dash?.total_colaboradores ?? 0}</div>
+            <div className="text-3xl font-medium">{dash?.total_colaboradores ?? 0}</div>
           </CardContent>
         </Card>
         <Card>
@@ -238,7 +238,7 @@ const AdminRegimentoInternoPage = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">{dash?.assinados ?? 0}</div>
+            <div className="text-3xl font-medium">{dash?.assinados ?? 0}</div>
           </CardContent>
         </Card>
         <Card>
@@ -246,7 +246,7 @@ const AdminRegimentoInternoPage = () => {
             <CardTitle className="text-sm text-muted-foreground">Adesão</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <div className="text-3xl font-bold">{dash?.adesao_pct ?? 0}%</div>
+            <div className="text-3xl font-medium">{dash?.adesao_pct ?? 0}%</div>
             <Button
               size="sm"
               variant="outline"

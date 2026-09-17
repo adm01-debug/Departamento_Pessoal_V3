@@ -25,7 +25,7 @@ export function AdiantamentosTable({ adiantamentos, fmt, onUpdateStatus, cn }: a
             <TableCell>{a.competencia_desconto}</TableCell>
             <TableCell>
               <Badge className={cn(
-                "font-bold uppercase text-[10px] tracking-widest",
+                "font-medium uppercase text-[10px] tracking-widest",
                 a.status === 'pendente' && "bg-warning/20 text-warning border-warning/30",
                 a.status === 'aprovado' && "bg-success/20 text-success border-success/30",
                 a.status === 'rejeitado' && "bg-destructive/20 text-destructive border-destructive/30",

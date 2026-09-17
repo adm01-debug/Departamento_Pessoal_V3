@@ -7,6 +7,10 @@ interface MiniSparklineProps {
   width?: number;
   height?: number;
   className?: string;
+  /** Espessura do traço — padrão 1.5 (histórico), aumentar para dar mais destaque em cards maiores. */
+  strokeWidth?: number;
+  /** Opacidade do topo do degradê da área abaixo da linha — padrão 0.2 (histórico), aumentar para um preenchimento mais visível. */
+  fillOpacity?: number;
 }
 
 export function MiniSparkline({
@@ -15,6 +19,8 @@ export function MiniSparkline({
   width = 80,
   height = 28,
   className,
+  strokeWidth = 1.5,
+  fillOpacity = 0.2,
 }: MiniSparklineProps) {
   const ref = useRef<SVGSVGElement>(null);
   const isInView = useInView(ref, { once: true });
@@ -38,7 +44,7 @@ export function MiniSparkline({
     <svg ref={ref} width={width} height={height} className={className} viewBox={`0 0 ${width} ${height}`}>
       <defs>
         <linearGradient id={`spark-fill-${color.replace(/[^a-z0-9]/gi, '')}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={color} stopOpacity="0.2" />
+          <stop offset="0%" stopColor={color} stopOpacity={fillOpacity} />
           <stop offset="100%" stopColor={color} stopOpacity="0" />
         </linearGradient>
       </defs>
@@ -55,7 +61,7 @@ export function MiniSparkline({
             points={points}
             fill="none"
             stroke={color}
-            strokeWidth="1.5"
+            strokeWidth={strokeWidth}
             strokeLinecap="round"
             strokeLinejoin="round"
             initial={{ pathLength: 0, opacity: 0 }}

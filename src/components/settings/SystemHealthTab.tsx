@@ -189,7 +189,7 @@ export function SystemHealthTab() {
                 ) : (
                   <btn.icon className={cn("h-6 w-6", btn.color)} />
                 )}
-                <span className="text-xs font-bold uppercase tracking-tight">{btn.label}</span>
+                <span className="text-xs font-medium uppercase tracking-tight">{btn.label}</span>
               </Button>
             ))}
           </div>
@@ -209,7 +209,7 @@ export function SystemHealthTab() {
                 <Badge 
                   variant={healthData.status === 'healthy' ? 'default' : 'destructive'} 
                   className={cn(
-                    "rounded-full px-3 py-1 font-bold",
+                    "rounded-full px-3 py-1 font-medium",
                     healthData.status === 'healthy' ? 'bg-success/20 text-success border-success/30' : ''
                   )}
                 >
@@ -227,7 +227,7 @@ export function SystemHealthTab() {
                   <div className="flex items-center gap-4 text-xs font-mono">
                     <span className="text-muted-foreground">{svc.latency_ms}ms</span>
                     {svc.records != null && (
-                      <Badge variant="outline" className="rounded-md font-bold bg-muted/30">
+                      <Badge variant="outline" className="rounded-md font-medium bg-muted/30">
                         {svc.records} regs
                       </Badge>
                     )}
@@ -255,12 +255,12 @@ export function SystemHealthTab() {
               {Object.entries(cleanupResult.results || {}).map(([key, val]: [string, any]) => (
                 <div key={key} className="flex justify-between py-2 border-b border-border/10 last:border-0 text-sm font-body px-2">
                   <span className="text-muted-foreground capitalize">{key.replace(/_/g, ' ')}</span>
-                  <span className="font-bold text-orange-600">-{val}</span>
+                  <span className="font-medium text-orange-600">-{val}</span>
                 </div>
               ))}
               <div className="pt-4 mt-2 flex justify-between items-center border-t border-border/30">
-                <span className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Total Removido</span>
-                <span className="text-2xl font-display font-black text-primary">{cleanupResult.total_cleaned}</span>
+                <span className="text-sm font-medium uppercase tracking-wider text-muted-foreground">Total Removido</span>
+                <span className="text-2xl font-display font-semibold text-primary">{cleanupResult.total_cleaned}</span>
               </div>
             </CardContent>
           </Card>
@@ -279,8 +279,8 @@ export function SystemHealthTab() {
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
                 {Object.entries(backupResult.tables || {}).map(([table, info]: [string, any]) => (
                   <div key={table} className="p-3 rounded-xl bg-muted/20 border border-border/30 flex flex-col gap-1">
-                    <span className="text-[10px] font-bold text-muted-foreground truncate uppercase">{table}</span>
-                    <span className="text-sm font-mono font-bold">
+                    <span className="text-[10px] font-medium text-muted-foreground truncate uppercase">{table}</span>
+                    <span className="text-sm font-mono font-medium">
                       {info.error ? <span className="text-destructive">ERRO</span> : info.count}
                     </span>
                   </div>
@@ -288,12 +288,12 @@ export function SystemHealthTab() {
               </div>
               <div className="pt-6 mt-4 flex items-center justify-between border-t border-border/10">
                 <div className="space-y-1">
-                  <p className="text-sm font-bold text-primary">{backupResult.message || 'Backup processado com sucesso'}</p>
+                  <p className="text-sm font-medium text-primary">{backupResult.message || 'Backup processado com sucesso'}</p>
                   <p className="text-[10px] text-muted-foreground font-mono">ID: {backupId}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs text-muted-foreground uppercase font-bold tracking-widest">Registros Totais</p>
-                  <p className="text-3xl font-display font-black text-blue-600">{backupResult.total_records}</p>
+                  <p className="text-xs text-muted-foreground uppercase font-medium tracking-widest">Registros Totais</p>
+                  <p className="text-3xl font-display font-semibold text-blue-600">{backupResult.total_records}</p>
                 </div>
               </div>
             </CardContent>
@@ -304,7 +304,7 @@ export function SystemHealthTab() {
       {!healthData && !cleanupResult && !backupResult && (
         <div className="flex flex-col items-center justify-center py-12 text-muted-foreground opacity-20 border-2 border-dashed rounded-[2.5rem] border-border/40">
           <Activity className="h-16 w-16 mb-4" />
-          <p className="font-display text-xl font-bold uppercase tracking-widest">Aguardando Execução</p>
+          <p className="font-display text-xl font-medium uppercase tracking-widest">Aguardando Execução</p>
           <p className="text-sm font-body">Selecione uma ação acima para iniciar o diagnóstico</p>
         </div>
       )}

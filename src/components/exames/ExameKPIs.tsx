@@ -60,7 +60,7 @@ export function ExameKPIs({ data }: ExameKPIsProps) {
                           <span className="flex h-2 w-2 rounded-full bg-destructive animate-pulse" />
                         )}
                       </div>
-                      <p className="text-2xl font-display font-bold tracking-tight">{kpi.value}</p>
+                      <p className="text-2xl font-display font-semibold tracking-tight">{kpi.value}</p>
                       <p className="text-xs text-muted-foreground font-body mt-0.5">{kpi.label}</p>
                     </CardContent>
                   </Card>

@@ -195,7 +195,7 @@ export default function RubricasPage() {
                 <div className={cn("h-[2px] bg-gradient-to-r", gradient)} />
                 <CardContent className="p-3 flex items-center gap-3">
                   <div className={cn("p-2 rounded-xl bg-gradient-to-br", gradient)}><Icon className="h-4 w-4 text-primary-foreground" /></div>
-                  <div><p className="text-lg font-bold font-display">{value}</p><p className="text-[10px] text-muted-foreground font-body">{label}</p></div>
+                  <div><p className="text-lg font-medium font-display">{value}</p><p className="text-[10px] text-muted-foreground font-body">{label}</p></div>
                 </CardContent>
               </Card>
             </motion.div>
@@ -226,7 +226,7 @@ export default function RubricasPage() {
                   const TIcon = tc.icon;
                   return (
                     <motion.tr key={r.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.02 }} className="hover:bg-accent/30 transition-colors border-b border-border/10">
-                      <TableCell className="font-mono font-bold text-sm">{r.codigo}</TableCell>
+                      <TableCell className="font-mono font-medium text-sm">{r.codigo}</TableCell>
                       <TableCell className="font-body font-medium">{r.descricao}</TableCell>
                       <TableCell><Badge className={cn("font-body text-xs", tc.color)}><TIcon className="h-3 w-3 mr-1" />{tc.label}</Badge></TableCell>
                       <TableCell className="text-center">{r.incide_inss ? <CheckCircle className="h-4 w-4 text-success mx-auto" /> : <XCircle className="h-4 w-4 text-muted-foreground/30 mx-auto" />}</TableCell>

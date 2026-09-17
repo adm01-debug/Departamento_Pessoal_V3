@@ -18,38 +18,55 @@ vi.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
 }));
 
-import { QuickActionsGrid } from '../dashboard/QuickActionsGrid';
+vi.mock('@/components/ui/dropdown-menu', () => ({
+  DropdownMenu: ({ children }: any) => <div>{children}</div>,
+  DropdownMenuTrigger: ({ children }: any) => children,
+  DropdownMenuContent: ({ children }: any) => <div>{children}</div>,
+  DropdownMenuLabel: ({ children }: any) => <div>{children}</div>,
+  DropdownMenuSeparator: () => <hr />,
+  DropdownMenuItem: ({ children, onClick }: any) => (
+    <div role="menuitem" onClick={onClick}>{children}</div>
+  ),
+}));
+
+import { QuickActionsMenu } from '../dashboard/QuickActionsMenu';
 import { SectionHeader } from '../dashboard/SectionHeader';
 
-describe('QuickActionsGrid', () => {
-  it('renders Ações Rápidas title', () => {
-    render(<QuickActionsGrid />);
-    expect(screen.getByText('Ações Rápidas')).toBeInTheDocument();
+describe('QuickActionsMenu', () => {
+  it('renders Ações Rápidas label', () => {
+    render(<QuickActionsMenu />);
+    expect(screen.getAllByText('Ações Rápidas').length).toBeGreaterThan(0);
   });
 
   it('renders Novo Colaborador action', () => {
-    render(<QuickActionsGrid />);
+    render(<QuickActionsMenu />);
     expect(screen.getByText('Novo Colaborador')).toBeInTheDocument();
   });
 
   it('renders Calcular Folha action', () => {
-    render(<QuickActionsGrid />);
+    render(<QuickActionsMenu />);
     expect(screen.getByText('Calcular Folha')).toBeInTheDocument();
   });
 
   it('renders Férias / Ausências action', () => {
-    render(<QuickActionsGrid />);
+    render(<QuickActionsMenu />);
     expect(screen.getByText(/Férias/)).toBeInTheDocument();
   });
 
   it('renders Relatórios DP action', () => {
-    render(<QuickActionsGrid />);
+    render(<QuickActionsMenu />);
     expect(screen.getByText('Relatórios DP')).toBeInTheDocument();
   });
 
-  it('navigates when action button clicked', async () => {
+  it('keeps the quick access destinations (Workflows, Auditoria)', () => {
+    render(<QuickActionsMenu />);
+    expect(screen.getByText('Workflows')).toBeInTheDocument();
+    expect(screen.getByText('Auditoria')).toBeInTheDocument();
+  });
+
+  it('navigates when action clicked', async () => {
     const user = userEvent.setup();
-    render(<QuickActionsGrid />);
+    render(<QuickActionsMenu />);
     await user.click(screen.getByText('Novo Colaborador'));
     expect(mockNavigate).toHaveBeenCalledWith('/colaboradores/novo');
   });

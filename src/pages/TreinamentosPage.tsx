@@ -73,7 +73,7 @@ function TrilhaCursosSection({ trilhaId, cursos }: { trilhaId: string; cursos: a
   return (
     <div className="mt-4 pt-4 border-t border-border/40">
       <div className="flex items-center justify-between mb-4">
-        <h4 className="text-sm font-bold flex items-center gap-2">
+        <h4 className="text-sm font-medium flex items-center gap-2">
           <Link className="h-3.5 w-3.5 text-primary" /> 
           Cursos na Trilha ({vinculados.length})
         </h4>
@@ -129,7 +129,7 @@ function TrilhaCursosSection({ trilhaId, cursos }: { trilhaId: string; cursos: a
               className="flex items-center justify-between p-3 bg-white/50 border border-border/40 rounded-xl hover:shadow-xs transition-all group"
             >
               <div className="flex items-center gap-3">
-                <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
+                <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-medium text-primary">
                   {i + 1}
                 </div>
                 <div>
@@ -209,12 +209,12 @@ export default function TreinamentosPage() {
     <PageLayout title="Treinamentos 10/10" description="Gestão de treinamentos e desenvolvimento" icon={<GraduationCap className="h-5 w-5 text-primary-foreground" />} gradient="from-info to-primary">
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
-        <Card><CardContent className="pt-4 text-center"><Calendar className="h-6 w-6 mx-auto text-accent mb-1" /><p className="text-2xl font-bold">{treinamentos.length}</p><p className="text-xs text-muted-foreground">Treinamentos</p></CardContent></Card>
-        <Card><CardContent className="pt-4 text-center"><BookOpen className="h-6 w-6 mx-auto text-primary mb-1" /><p className="text-2xl font-bold">{cursos.length}</p><p className="text-xs text-muted-foreground">Cursos</p></CardContent></Card>
-        <Card><CardContent className="pt-4 text-center"><Award className="h-6 w-6 mx-auto text-success mb-1" /><p className="text-2xl font-bold">{cursos.filter((c: any) => c.obrigatorio).length}</p><p className="text-xs text-muted-foreground">Obrigatórios</p></CardContent></Card>
-        <Card><CardContent className="pt-4 text-center"><GraduationCap className="h-6 w-6 mx-auto text-warning mb-1" /><p className="text-2xl font-bold">{trilhas.length}</p><p className="text-xs text-muted-foreground">Trilhas</p></CardContent></Card>
-        <Card><CardContent className="pt-4 text-center"><Users className="h-6 w-6 mx-auto text-info mb-1" /><p className="text-2xl font-bold">{inscricoes.length}</p><p className="text-xs text-muted-foreground">Inscrições</p></CardContent></Card>
-        <Card><CardContent className="pt-4 text-center"><Video className="h-6 w-6 mx-auto text-purple-500 mb-1" /><p className="text-2xl font-bold">{instancias.length}</p><p className="text-xs text-muted-foreground">Turmas</p></CardContent></Card>
+        <Card><CardContent className="pt-4 text-center"><Calendar className="h-6 w-6 mx-auto text-accent mb-1" /><p className="text-2xl font-medium">{treinamentos.length}</p><p className="text-xs text-muted-foreground">Treinamentos</p></CardContent></Card>
+        <Card><CardContent className="pt-4 text-center"><BookOpen className="h-6 w-6 mx-auto text-primary mb-1" /><p className="text-2xl font-medium">{cursos.length}</p><p className="text-xs text-muted-foreground">Cursos</p></CardContent></Card>
+        <Card><CardContent className="pt-4 text-center"><Award className="h-6 w-6 mx-auto text-success mb-1" /><p className="text-2xl font-medium">{cursos.filter((c: any) => c.obrigatorio).length}</p><p className="text-xs text-muted-foreground">Obrigatórios</p></CardContent></Card>
+        <Card><CardContent className="pt-4 text-center"><GraduationCap className="h-6 w-6 mx-auto text-warning mb-1" /><p className="text-2xl font-medium">{trilhas.length}</p><p className="text-xs text-muted-foreground">Trilhas</p></CardContent></Card>
+        <Card><CardContent className="pt-4 text-center"><Users className="h-6 w-6 mx-auto text-info mb-1" /><p className="text-2xl font-medium">{inscricoes.length}</p><p className="text-xs text-muted-foreground">Inscrições</p></CardContent></Card>
+        <Card><CardContent className="pt-4 text-center"><Video className="h-6 w-6 mx-auto text-purple-500 mb-1" /><p className="text-2xl font-medium">{instancias.length}</p><p className="text-xs text-muted-foreground">Turmas</p></CardContent></Card>
       </div>
 
       {isLoading ? <div className="flex justify-center py-12"><Spinner /></div> : (

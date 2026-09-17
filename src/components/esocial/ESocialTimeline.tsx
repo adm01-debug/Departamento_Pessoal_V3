@@ -46,7 +46,7 @@ export function ESocialTimeline({ eventos }: ESocialTimelineProps) {
     return (
       <Card className="border border-border/30 rounded-2xl overflow-hidden p-12 text-center text-muted-foreground">
         <Clock className="h-12 w-12 mx-auto mb-4 opacity-20" />
-        <p className="font-bold">Sem histórico recente</p>
+        <p className="font-medium">Sem histórico recente</p>
         <p className="text-sm">Gere ou envie eventos para ver a timeline.</p>
       </Card>
     );
@@ -77,7 +77,7 @@ export function ESocialTimeline({ eventos }: ESocialTimelineProps) {
             
             <div className="flex flex-col gap-1">
               <div className="flex items-center justify-between">
-                <p className="text-sm font-bold font-display">{item.label}</p>
+                <p className="text-sm font-medium font-display">{item.label}</p>
                 <span className="text-[10px] text-muted-foreground bg-muted/30 px-2 py-0.5 rounded-full font-body">
                   {format(item.date, "dd 'de' MMM, HH:mm", { locale: ptBR })}
                 </span>

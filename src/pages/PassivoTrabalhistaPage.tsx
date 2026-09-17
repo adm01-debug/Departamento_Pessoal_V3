@@ -24,6 +24,80 @@ import { ChartSkeleton, KPICardSkeleton } from '@/components/ui/module-skeleton'
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#0088FE', '#00C49F'];
 
+// MOCK temporário só para visualizar o layout preenchido — remover quando não for mais necessário.
+const MOCK_PASSIVO_DATA = {
+  competencia: '2026-09',
+  totalLiability: 380540.32,
+  vacationLiability: 145200.5,
+  thirteenthLiability: 98340.12,
+  fgtsLiability: 19488.02,
+  multaFgtsLiability: 58464.06,
+  inssPatronalLiability: 59047.62,
+  chargesLiability: 136999.7,
+  riskEmployees: [
+    {
+      id: 'mock-1', nome: 'Carlos Eduardo Souza', salario: 6200,
+      diasAtraso: 812, nivel: 'critico' as const,
+      valorFerias: 6200, terco: 2066.67, valor13: 6200,
+      fgtsFerias: 661.33, fgts13: 496, multa: 5556.4,
+      totalProvisionado: 21180.4,
+      periodoAquisitivo: 'jun/23 → jun/24', dataVencimento: '2024-06-15',
+    },
+    {
+      id: 'mock-2', nome: 'Marina Albuquerque Lima', salario: 4800,
+      diasAtraso: 745, nivel: 'critico' as const,
+      valorFerias: 4800, terco: 1600, valor13: 4800,
+      fgtsFerias: 512, fgts13: 384, multa: 4300.8,
+      totalProvisionado: 16396.8,
+      periodoAquisitivo: 'ago/23 → ago/24', dataVencimento: '2024-08-22',
+    },
+    {
+      id: 'mock-3', nome: 'Rafael Nogueira Costa', salario: 3500,
+      diasAtraso: 402, nivel: 'alerta' as const,
+      valorFerias: 3500, terco: 1166.67, valor13: 3500,
+      fgtsFerias: 373.33, fgts13: 280, multa: 3136.4,
+      totalProvisionado: 11956.4,
+      periodoAquisitivo: 'jan/24 → jan/25', dataVencimento: '2025-01-10',
+    },
+    {
+      id: 'mock-4', nome: 'Juliana Martins Prado', salario: 5400,
+      diasAtraso: 388, nivel: 'alerta' as const,
+      valorFerias: 5400, terco: 1800, valor13: 5400,
+      fgtsFerias: 576, fgts13: 432, multa: 4838.4,
+      totalProvisionado: 18446.4,
+      periodoAquisitivo: 'fev/24 → fev/25', dataVencimento: '2025-02-03',
+    },
+    {
+      id: 'mock-5', nome: 'Thiago Ferreira Bastos', salario: 2900,
+      diasAtraso: 370, nivel: 'alerta' as const,
+      valorFerias: 2900, terco: 966.67, valor13: 2900,
+      fgtsFerias: 309.33, fgts13: 232, multa: 2598.4,
+      totalProvisionado: 9906.4,
+      periodoAquisitivo: 'mar/24 → mar/25', dataVencimento: '2025-03-18',
+    },
+  ] as RiskEmp[],
+  divergencias: [
+    { nome: 'Ana Paula Ribeiro', tipo: 'Férias', diff: 812.4 },
+    { nome: 'Bruno Kaique Alves', tipo: '13º', diff: 540.0 },
+    { nome: 'Fernanda Dias Melo', tipo: 'Férias', diff: 1204.75 },
+  ],
+  distribution: [
+    { name: 'Férias + 1/3', value: 145200.5 },
+    { name: '13º Salário', value: 98340.12 },
+    { name: 'FGTS (8%)', value: 19488.02 },
+    { name: 'Multa FGTS (40%)', value: 58464.06 },
+    { name: 'INSS Patronal (20%)', value: 59047.62 },
+  ],
+  projection: [
+    { mes: 'set/26', valor: 380540.32 },
+    { mes: 'out/26', valor: 386248.42 },
+    { mes: 'nov/26', valor: 391956.53 },
+    { mes: 'dez/26', valor: 397664.63 },
+    { mes: 'jan/27', valor: 403372.73 },
+    { mes: 'fev/27', valor: 409080.83 },
+  ],
+};
+
 const DIAS_POR_ANO = 30;
 const TERCO = 1 / 3;
 const ALIQ_FGTS = 0.08;
@@ -80,7 +154,7 @@ export default function PassivoTrabalhistaPage() {
     ? format(parseISO(folhaAtual.competencia), 'MMM/yyyy', { locale: ptBR })
     : format(new Date(), 'MMM/yyyy', { locale: ptBR });
 
-  const { data, isLoading, refetch } = useQuery({
+  const { data: realData, isLoading, refetch } = useQuery({
     queryKey: ['passivo-trabalhista-v2', empresaAtualId, folhaAtual?.competencia],
     enabled: !!empresaAtualId,
     queryFn: async () => {
@@ -98,7 +172,7 @@ export default function PassivoTrabalhistaPage() {
         .from('provisoes_mensais')
         .select('colaborador_id, tipo, total')
         .eq('empresa_id', empresaAtualId!)
-        .eq('competencia', folhaAtual?.competencia ?? format(new Date(), 'yyyy-MM'));
+        .eq('competencia', folhaAtual?.competencia ? `${folhaAtual.competencia}-01` : `${format(new Date(), 'yyyy-MM')}-01`);
       const provMap = new Map<string, number>();
       for (const p of (provs ?? [])) provMap.set(`${p.colaborador_id}_${p.tipo}`, Number(p.total));
 
@@ -175,6 +249,9 @@ export default function PassivoTrabalhistaPage() {
   const formatCurrency = (v: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
 
+  // MOCK temporário: usa dados fictícios quando não há dados reais, só para revisar o layout.
+  const data = realData ?? (!isLoading ? MOCK_PASSIVO_DATA : realData);
+
   return (
     <PageLayout 
       title="Passivo Trabalhista" 
@@ -232,7 +309,7 @@ export default function PassivoTrabalhistaPage() {
                     <Badge variant="secondary" className="bg-warning/20 text-warning border-warning/30 text-xs">Atenção</Badge>
                   )}
                 </div>
-                <h3 className="text-2xl font-display font-bold truncate">
+                <h3 className="text-2xl font-display font-medium truncate">
                   {typeof kpi.value === 'number' && (
                     kpi.label.includes('Risco') || kpi.label === 'Divergências'
                       ? kpi.value
@@ -367,7 +444,7 @@ export default function PassivoTrabalhistaPage() {
                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
                     <span className="text-muted-foreground">{item.name}</span>
                   </div>
-                  <span className="font-bold">{formatCurrency(item.value)}</span>
+                  <span className="font-medium">{formatCurrency(item.value)}</span>
                 </div>
               ))}
             </div>
@@ -420,7 +497,7 @@ export default function PassivoTrabalhistaPage() {
                       <td className="px-4 py-3 text-right font-mono text-xs">{formatCurrency(emp.valorFerias + emp.terco)}</td>
                       <td className="px-4 py-3 text-right font-mono text-xs text-warning">{formatCurrency(emp.fgtsFerias + emp.fgts13)}</td>
                       <td className="px-4 py-3 text-right font-mono text-xs text-destructive">{formatCurrency(emp.multa)}</td>
-                      <td className="px-4 py-3 text-right font-bold">{formatCurrency(emp.totalProvisionado)}</td>
+                      <td className="px-4 py-3 text-right font-medium">{formatCurrency(emp.totalProvisionado)}</td>
                       <td className="px-4 py-3 text-center">
                         <Badge variant={emp.nivel === 'critico' ? 'destructive' : 'outline'}
                           className={cn(emp.nivel === 'alerta' && "border-warning text-warning")}>

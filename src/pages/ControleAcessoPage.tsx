@@ -39,10 +39,10 @@ export default function ControleAcessoPage() {
     <PageTitle title="Controle de Acesso" description="Gerenciamento de permissões e acessos" />
     <PageLayout title="Controle de Presença & Acesso">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <Card><CardContent className="pt-4 flex items-center gap-3"><Fingerprint className="h-8 w-8 text-primary" /><div><p className="text-2xl font-bold">{registros.length}</p><p className="text-xs text-muted-foreground">Total registros</p></div></CardContent></Card>
-        <Card><CardContent className="pt-4 flex items-center gap-3"><LogIn className="h-8 w-8 text-success" /><div><p className="text-2xl font-bold">{entradas}</p><p className="text-xs text-muted-foreground">Entradas</p></div></CardContent></Card>
-        <Card><CardContent className="pt-4 flex items-center gap-3"><LogOut className="h-8 w-8 text-warning" /><div><p className="text-2xl font-bold">{saidas}</p><p className="text-xs text-muted-foreground">Saídas</p></div></CardContent></Card>
-        <Card><CardContent className="pt-4 flex items-center gap-3"><MapPin className="h-8 w-8 text-info" /><div><p className="text-2xl font-bold">{new Set(registros.map((r: any) => r.local).filter(Boolean)).size}</p><p className="text-xs text-muted-foreground">Locais</p></div></CardContent></Card>
+        <Card><CardContent className="pt-4 flex items-center gap-3"><Fingerprint className="h-8 w-8 text-primary" /><div><p className="text-2xl font-medium">{registros.length}</p><p className="text-xs text-muted-foreground">Total registros</p></div></CardContent></Card>
+        <Card><CardContent className="pt-4 flex items-center gap-3"><LogIn className="h-8 w-8 text-success" /><div><p className="text-2xl font-medium">{entradas}</p><p className="text-xs text-muted-foreground">Entradas</p></div></CardContent></Card>
+        <Card><CardContent className="pt-4 flex items-center gap-3"><LogOut className="h-8 w-8 text-warning" /><div><p className="text-2xl font-medium">{saidas}</p><p className="text-xs text-muted-foreground">Saídas</p></div></CardContent></Card>
+        <Card><CardContent className="pt-4 flex items-center gap-3"><MapPin className="h-8 w-8 text-info" /><div><p className="text-2xl font-medium">{new Set(registros.map((r: any) => r.local).filter(Boolean)).size}</p><p className="text-xs text-muted-foreground">Locais</p></div></CardContent></Card>
       </div>
 
       <div className="flex justify-end mb-4">

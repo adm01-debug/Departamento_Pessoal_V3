@@ -31,7 +31,7 @@ export function DarfTab({ totalFgts, totalInss }: DarfTabProps) {
               <Card key={label} className="border-border/30 rounded-xl">
                 <CardContent className="p-4 text-center">
                   <p className="text-xs text-muted-foreground font-body mb-1">{label}</p>
-                  <p className={`text-xl font-bold font-display ${color}`}>{value}</p>
+                  <p className={`text-xl font-medium font-display ${color}`}>{value}</p>
                   <p className="text-[10px] text-muted-foreground font-body mt-1">{venc}</p>
                 </CardContent>
               </Card>

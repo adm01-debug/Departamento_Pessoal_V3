@@ -244,7 +244,7 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-5xl font-display font-bold text-center mb-8 tabular-nums bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+          <div className="text-5xl font-display font-medium text-center mb-8 tabular-nums bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
             {time.toLocaleTimeString('pt-BR')}
           </div>
           <p className="text-center text-sm text-muted-foreground font-body mb-4">
@@ -306,8 +306,8 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
                   </motion.div>
                   <Card className="bg-background/90 backdrop-blur-md border-primary/30 p-4 shadow-2xl flex flex-col items-center gap-2">
                     <Sparkles className="h-8 w-8 text-primary animate-bounce" />
-                    <p className="font-display font-bold text-primary">Ponto Confirmado!</p>
-                    <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">
+                    <p className="font-display font-medium text-primary">Ponto Confirmado!</p>
+                    <p className="text-[10px] text-muted-foreground uppercase font-medium tracking-widest">
                       +50 XP • Assiduidade
                     </p>
                   </Card>
@@ -323,8 +323,8 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
                   <CheckCircle2 className="h-3.5 w-3.5" />
                 </div>
                 <div>
-                  <p className="text-[9px] uppercase font-bold text-muted-foreground">Último Registro</p>
-                  <p className="text-xs font-bold capitalize">
+                  <p className="text-[9px] uppercase font-medium text-muted-foreground">Último Registro</p>
+                  <p className="text-xs font-medium capitalize">
                     {ultimoRegistro.tipo.replace(/_/g, ' ')} às {ultimoRegistro.hora}
                   </p>
                 </div>

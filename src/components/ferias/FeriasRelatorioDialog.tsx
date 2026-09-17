@@ -123,7 +123,7 @@ export function FeriasRelatorioDialog({ stats, data, filters }: FeriasRelatorioD
               {filtered.slice(0, 5).map((item, idx) => (
                 <div key={idx} className="flex items-center justify-between text-xs border-b border-border/10 pb-2 last:border-0 last:pb-0">
                   <div className="flex flex-col">
-                    <span className="font-bold">{item.colaborador?.nome_completo || 'Colaborador'}</span>
+                    <span className="font-medium">{item.colaborador?.nome_completo || 'Colaborador'}</span>
                     <span className="text-[10px] text-muted-foreground">
                       {format(new Date(item.data_inicio), 'dd/MM/yy')} - {format(new Date(item.data_fim), 'dd/MM/yy')}
                     </span>

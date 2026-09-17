@@ -222,7 +222,7 @@ export function GerenciamentoPeriodos({ colaboradorId: initialColaboradorId }: G
                   <TableRow key={p.id} className="hover:bg-muted/20 border-border/40 transition-colors group">
                     <TableCell className="font-body font-medium">
                       <div className="flex flex-col">
-                        <span className="text-sm font-bold">#{p.numero_periodo}</span>
+                        <span className="text-sm font-medium">#{p.numero_periodo}</span>
                         <span className="text-[10px] text-muted-foreground">
                           {differenceInDays(new Date(p.data_fim), new Date(p.data_inicio)) + 1} dias corridos
                         </span>
@@ -231,7 +231,7 @@ export function GerenciamentoPeriodos({ colaboradorId: initialColaboradorId }: G
                     <TableCell className="font-body text-sm">{format(new Date(p.data_inicio), 'dd/MM/yyyy', { locale: ptBR })}</TableCell>
                     <TableCell className="font-body text-sm">{format(new Date(p.data_fim), 'dd/MM/yyyy', { locale: ptBR })}</TableCell>
                     <TableCell className="font-body">
-                      <Badge variant="outline" className="bg-primary/5 border-primary/20 text-primary font-bold">
+                      <Badge variant="outline" className="bg-primary/5 border-primary/20 text-primary font-medium">
                         {p.dias_direito} dias
                       </Badge>
                     </TableCell>

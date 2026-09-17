@@ -5,6 +5,14 @@ export default {
   theme: {
     container: { center: true, padding: '2rem', screens: { '2xl': '1400px' } },
     extend: {
+      spacing: {
+        // Único ponto de verdade para o espaçamento sidebar → conteúdo principal
+        // (aplicado no `<main>` de MainLayout.tsx via `p-page`). Reaproveita o
+        // token que já existia em index.css (`--space-page`) mas nunca tinha
+        // sido registrado aqui — sem isso, `p-page`/`pb-page` não geram CSS
+        // nenhum e cada página acabava definindo seu próprio padding manual.
+        page: 'var(--space-page)',
+      },
       fontFamily: {
         display: ['"Plus Jakarta Sans"', 'sans-serif'],
         body: ['"Outfit"', 'sans-serif'],

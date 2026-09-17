@@ -1,4 +1,4 @@
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseBase } from '@/integrations/supabase/client';
 import { loggerService } from './loggerService';
 import type { LooseQueryBuilder } from '@/types/queryBuilder';
 
@@ -40,7 +40,11 @@ export class BaseService<T, CreateDTO = Record<string, unknown>, UpdateDTO = Rec
    * métodos e da resposta — só o mapeamento coluna→tipo fica de fora.
    */
   protected getQuery(): LooseQueryBuilder {
-    return supabase.from(this.table as never) as unknown as LooseQueryBuilder;
+    // P0-CORS: usa supabaseBase (cliente direto do PostgREST) ao invés do proxy
+    // `supabase` que roteia via edge function external-db-bridge. O gateway do
+    // Supabase Cloud está reescrevendo ACAO em respostas autenticadas, bloqueando
+    // toda query. PostgREST via REST direto não passa por esse rewrite.
+    return supabaseBase.from(this.table as never) as unknown as LooseQueryBuilder;
   }
 
   async listar(options: ListOptions = {}): Promise<ListResponse<T>> {

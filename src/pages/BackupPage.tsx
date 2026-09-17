@@ -103,7 +103,7 @@ export default function BackupPage() {
                   </div>
                   <div>
                     <p className="text-muted-foreground font-body text-xs">{stat.label}</p>
-                    <p className="font-display font-bold text-lg">{stat.value}</p>
+                    <p className="font-display font-medium text-lg">{stat.value}</p>
                   </div>
                 </CardContent>
               </Card>

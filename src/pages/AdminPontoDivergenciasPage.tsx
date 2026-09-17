@@ -219,14 +219,14 @@ export default function AdminPontoDivergenciasPage() {
   };
 
   if (!empresaId) {
-    return <div className="p-8 text-muted-foreground">Selecione uma empresa.</div>;
+    return <div className="py-8 text-muted-foreground">Selecione uma empresa.</div>;
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6 py-6">
       <header className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Divergências AFDT</h1>
+          <h1 className="text-3xl font-medium tracking-tight">Divergências AFDT</h1>
           <p className="text-sm text-muted-foreground">
             Conciliação entre arquivo legal de ponto e batidas registradas no sistema.
           </p>
@@ -248,7 +248,7 @@ export default function AdminPontoDivergenciasPage() {
               <s.icon className={`h-8 w-8 ${s.color}`} />
               <div>
                 <p className="text-xs text-muted-foreground">{s.label}</p>
-                <p className="text-2xl font-bold tabular-nums">{s.value}</p>
+                <p className="text-2xl font-medium tabular-nums">{s.value}</p>
               </div>
             </CardContent>
           </Card>

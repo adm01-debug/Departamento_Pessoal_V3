@@ -72,7 +72,7 @@ export default function VerificarContratoPage() {
           <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
             <ShieldCheck className="h-7 w-7 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold">Verificação de Autenticidade</h1>
+          <h1 className="text-3xl font-medium">Verificação de Autenticidade</h1>
           <p className="text-muted-foreground">
             Valide a autenticidade de um contrato de trabalho assinado eletronicamente
             <br />conforme MP 2.200-2/2001

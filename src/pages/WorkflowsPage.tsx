@@ -124,7 +124,7 @@ export default function WorkflowsPage() {
             <Card className="border-border/30 rounded-2xl">
               <CardContent className="p-3 flex items-center gap-3">
                 <div className={cn("p-2 rounded-xl bg-gradient-to-br", gradient)}><Icon className="h-4 w-4 text-primary-foreground" /></div>
-                <div><p className="text-lg font-bold font-display">{value}</p><p className="text-[10px] text-muted-foreground font-body">{label}</p></div>
+                <div><p className="text-lg font-medium font-display">{value}</p><p className="text-[10px] text-muted-foreground font-body">{label}</p></div>
               </CardContent>
             </Card>
           </motion.div>
@@ -384,7 +384,7 @@ export default function WorkflowsPage() {
           <div className="bg-muted/30 p-6 border-b border-border/40">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-display font-bold flex items-center gap-2">
+                <h3 className="text-lg font-display font-medium flex items-center gap-2">
                   <History className="h-5 w-5 text-primary" /> Rastro de Automação
                 </h3>
                 <p className="text-xs text-muted-foreground font-body">ID: {selectedExec?.id}</p>
@@ -397,7 +397,7 @@ export default function WorkflowsPage() {
           
           <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto bg-card">
             <div className="space-y-4">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+              <h4 className="text-xs font-medium uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                 <Zap className="h-3 w-3 text-warning fill-warning" /> Linha do Tempo de Execução
               </h4>
               
@@ -408,7 +408,7 @@ export default function WorkflowsPage() {
                     <Play className="h-3 w-3" />
                   </div>
                   <div className="bg-muted/10 p-3 rounded-xl border border-border/30">
-                    <p className="text-xs font-bold font-display">Gatilho de Automação Acionado</p>
+                    <p className="text-xs font-medium font-display">Gatilho de Automação Acionado</p>
                     <p className="text-[10px] text-muted-foreground font-body mt-1">
                       A engine de workflows iniciou o processamento via `trigger_workflow_automation`.
                     </p>
@@ -422,7 +422,7 @@ export default function WorkflowsPage() {
                     <Mail className="h-3 w-3" />
                   </div>
                   <div className="bg-muted/10 p-3 rounded-xl border border-border/30">
-                    <p className="text-xs font-bold font-display">Notificação de Aprovação Enviada</p>
+                    <p className="text-xs font-medium font-display">Notificação de Aprovação Enviada</p>
                     <p className="text-[10px] text-muted-foreground font-body mt-1">
                       E-mail disparado para o aprovador Nível 1 (Gestor Direto).
                     </p>
@@ -436,7 +436,7 @@ export default function WorkflowsPage() {
                     <CheckCircle className="h-3 w-3" />
                   </div>
                   <div className="bg-muted/10 p-3 rounded-xl border border-border/30">
-                    <p className="text-xs font-bold font-display">Atualização de Estado do Workflow</p>
+                    <p className="text-xs font-medium font-display">Atualização de Estado do Workflow</p>
                     <p className="text-[10px] text-muted-foreground font-body mt-1">
                       Status alterado para `{selectedExec?.status}` com sucesso.
                     </p>
@@ -449,7 +449,7 @@ export default function WorkflowsPage() {
             <div className="p-4 bg-info/5 rounded-xl border border-info/10 flex items-start gap-3">
               <Bell className="h-4 w-4 text-info mt-0.5" />
               <div>
-                <p className="text-xs font-bold text-info">SLA de Aprovação Ativo</p>
+                <p className="text-xs font-medium text-info">SLA de Aprovação Ativo</p>
                 <p className="text-[10px] text-muted-foreground leading-tight">
                   A automação monitora este workflow a cada 15 minutos. Caso o SLA de 48h seja ultrapassado, um alerta de escalonamento será enviado à diretoria.
                 </p>

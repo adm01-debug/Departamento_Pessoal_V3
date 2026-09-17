@@ -364,7 +364,7 @@ export default function CalculadoraRescisaoPage() {
                           <span className="font-medium">R$ {fmt(val)}</span>
                         </div>
                       ))}
-                      <div className="flex justify-between text-xs font-display font-bold border-t border-border/30 pt-1">
+                      <div className="flex justify-between text-xs font-display font-medium border-t border-border/30 pt-1">
                         <span>Total Proventos</span>
                         <span className="text-success">R$ {fmt(result.totalProventos)}</span>
                       </div>
@@ -385,7 +385,7 @@ export default function CalculadoraRescisaoPage() {
                           <span className="font-medium text-destructive">R$ {fmt(val)}</span>
                         </div>
                       ))}
-                      <div className="flex justify-between text-xs font-display font-bold border-t border-border/30 pt-1">
+                      <div className="flex justify-between text-xs font-display font-medium border-t border-border/30 pt-1">
                         <span>Total Descontos</span>
                         <span className="text-destructive">R$ {fmt(result.totalDescontos)}</span>
                       </div>
@@ -408,7 +408,7 @@ export default function CalculadoraRescisaoPage() {
                     <Separator />
 
                     <div className="bg-primary/5 rounded-xl p-3">
-                      <div className="flex justify-between font-display font-bold">
+                      <div className="flex justify-between font-display font-medium">
                         <span>VALOR LÍQUIDO</span>
                         <span className="text-lg text-primary">R$ {fmt(result.totalLiquido)}</span>
                       </div>

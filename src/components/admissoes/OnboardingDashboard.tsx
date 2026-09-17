@@ -47,7 +47,7 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
                     <kpi.icon className="h-3 w-3 text-primary-foreground" />
                   </div>
                 </div>
-                <p className="text-xl font-display font-bold">{kpi.value}</p>
+                <p className="text-xl font-display font-medium">{kpi.value}</p>
                 <p className="text-xs text-muted-foreground font-body">{kpi.label}</p>
               </CardContent>
             </Card>

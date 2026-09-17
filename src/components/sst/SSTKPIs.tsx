@@ -66,8 +66,8 @@ export function SSTKPIs({ validos, vencendo, vencidos, totalEpis, totalEntregas 
                 <div className={cn("p-3 rounded-2xl bg-gradient-to-br mb-3 group-hover:scale-110 transition-transform duration-300", gradient)}>
                   <Icon className="h-6 w-6 text-white" />
                 </div>
-                <p className="text-2xl font-bold font-display tracking-tight">{value}</p>
-                <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest mt-1 opacity-80">{label}</p>
+                <p className="text-2xl font-semibold font-display tracking-tight">{value}</p>
+                <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-widest mt-1 opacity-80">{label}</p>
               </CardContent>
             </Card>
           </motion.div>
@@ -87,15 +87,15 @@ export function SSTKPIs({ validos, vencendo, vencidos, totalEpis, totalEntregas 
                   <TrendingUp className="h-8 w-8 text-green-600" />
                 </div>
                 <div>
-                  <h4 className="text-base font-bold text-foreground">Índice de Conformidade SST</h4>
+                  <h4 className="text-base font-semibold text-foreground">Índice de Conformidade SST</h4>
                   <p className="text-xs text-muted-foreground mt-0.5">Métrica geral de saúde ocupacional e segurança da empresa.</p>
                 </div>
               </div>
               
               <div className="flex-1 w-full max-w-md">
                 <div className="flex justify-between items-end mb-2.5">
-                  <span className="text-sm font-bold text-green-700">{Math.round(healthRate)}% Adequado</span>
-                  <span className="text-[10px] text-muted-foreground uppercase font-bold">Meta: 95%</span>
+                  <span className="text-sm font-semibold text-green-700">{Math.round(healthRate)}% Adequado</span>
+                  <span className="text-[10px] text-muted-foreground uppercase font-semibold">Meta: 95%</span>
                 </div>
                 <Progress value={healthRate} className="h-3 bg-green-100 rounded-full" />
                 <div className="mt-3 flex items-center justify-between">

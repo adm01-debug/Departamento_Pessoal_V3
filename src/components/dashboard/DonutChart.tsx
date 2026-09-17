@@ -12,9 +12,11 @@ interface DonutChartProps {
   size?: number;
   strokeWidth?: number;
   className?: string;
+  /** Legenda abaixo do gráfico. Desligue quando a lista for renderizada ao lado. */
+  showLegend?: boolean;
 }
 
-export function DonutChart({ segments, size = 140, strokeWidth = 16, className }: DonutChartProps) {
+export function DonutChart({ segments, size = 140, strokeWidth = 16, className, showLegend = true }: DonutChartProps) {
   const ref = useRef<SVGSVGElement>(null);
   const isInView = useInView(ref, { once: true });
 
@@ -64,30 +66,51 @@ export function DonutChart({ segments, size = 140, strokeWidth = 16, className }
               fill="none"
               stroke={seg.color}
               strokeWidth={strokeWidth}
-              strokeDasharray={dashArray}
               strokeDashoffset={strokeOffset}
               strokeLinecap="round"
-              initial={{ opacity: 0 }}
-              animate={isInView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.6, delay: 0.2 + i * 0.15 }}
+              // Traçado progressivo por segmento: anima o próprio `strokeDasharray`
+              // de "nada desenhado" (`0 circunferência`) até o valor final que já
+              // era estático (`dashArray`) — o `strokeDashoffset` (posição/rotação
+              // do segmento no anel) não muda, só o quanto dele já foi "desenhado".
+              // Framer Motion interpola os dois números do valor complexo
+              // (mesmo mecanismo usado por `boxShadow`/`clipPath`), sem precisar
+              // de useMotionValue/useTransform.
+              //
+              // `animate` sempre inclui `strokeDasharray` (nunca um objeto vazio
+              // `{}`): deixamos a chave "sem gerenciar" enquanto `!isInView`
+              // (primeiro render, antes do IntersectionObserver disparar) fazia
+              // o Framer Motion pular a aplicação síncrona do `initial` para esse
+              // atributo — o círculo ficava um instante sem `stroke-dasharray`
+              // nenhum, e o navegador desenha isso como traço sólido ao redor do
+              // círculo inteiro (um "flash" visível antes do traçado começar).
+              initial={{ strokeDasharray: `0 ${circumference}` }}
+              animate={{ strokeDasharray: isInView ? dashArray : `0 ${circumference}` }}
+              transition={{ duration: 0.6, delay: 0.2 + i * 0.15, ease: 'easeOut' }}
             />
           );
         })}
-        {/* Center text */}
-        <text x={center} y={center - 6} textAnchor="middle" className="fill-foreground font-display text-xl font-bold">{total}</text>
-        <text x={center} y={center + 12} textAnchor="middle" className="fill-muted-foreground font-body text-[10px]">Total</text>
+        {/* Center text — `dominantBaseline="central"` centraliza cada linha
+            verticalmente no seu próprio `y` (texto SVG por padrão usa a
+            baseline alfabética, não o centro do glifo, o que deixava o bloco
+            "42 / Total" visivelmente deslocado do centro real do gráfico).
+            Fonte um pouco maior (`text-xl`→`text-2xl`) para ficar
+            proporcional ao tamanho do gráfico. */}
+        <text x={center} y={center - 8} textAnchor="middle" dominantBaseline="central" className="fill-foreground text-data text-xl">{total}</text>
+        <text x={center} y={center + 11} textAnchor="middle" dominantBaseline="central" className="fill-muted-foreground text-caption">Total</text>
       </svg>
 
       {/* Legend */}
+      {showLegend && (
       <div className="mt-3 space-y-1.5">
         {segments.map((seg, i) => (
           <div key={i} className="flex items-center gap-2 text-caption">
             <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: seg.color }} />
             <span className="flex-1 text-muted-foreground font-body truncate">{seg.label}</span>
-            <span className="font-display font-semibold">{seg.value}</span>
+            <span className="font-display font-medium">{seg.value}</span>
           </div>
         ))}
       </div>
+      )}
     </div>
   );
 }

@@ -145,7 +145,7 @@ export function GestaoRegistrosPonto() {
                   <PopoverContent className="w-80 p-4" align="end">
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <h4 className="font-bold text-xs uppercase text-muted-foreground">Período</h4>
+                        <h4 className="font-medium text-xs uppercase text-muted-foreground">Período</h4>
                         <div className="flex items-center gap-2">
                           <Input
                             type="date"
@@ -163,7 +163,7 @@ export function GestaoRegistrosPonto() {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <h4 className="font-bold text-xs uppercase text-muted-foreground">Tipo de Exceção</h4>
+                        <h4 className="font-medium text-xs uppercase text-muted-foreground">Tipo de Exceção</h4>
                         <select 
                           value={tipoExcecao} 
                           onChange={(e) => setTipoExcecao(e.target.value)}
@@ -219,7 +219,7 @@ export function GestaoRegistrosPonto() {
               <AnimatePresence>
                 {selecionados.length > 0 && (
                   <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="flex items-center gap-2 bg-primary/10 px-3 py-1 rounded-lg border border-primary/20">
-                    <span className="text-[10px] font-bold text-primary">{selecionados.length} selecionados</span>
+                    <span className="text-[10px] font-medium text-primary">{selecionados.length} selecionados</span>
                     <Button variant="ghost" size="sm" className="h-7 px-2 text-[10px] text-primary hover:bg-primary/20" onClick={() => {
                       toast.success(`${selecionados.length} registros aprovados em lote!`);
                       setSelecionados([]);
@@ -266,8 +266,8 @@ export function GestaoRegistrosPonto() {
                   <CardContent className="p-4 flex items-center gap-3">
                     <div className="p-2 rounded-lg bg-primary/10 text-primary"><Smartphone className="h-5 w-5" /></div>
                     <div>
-                      <p className="text-[10px] uppercase text-muted-foreground font-bold">Status Quiosques</p>
-                      <p className="text-sm font-display font-bold">3 Ativos / 1 Offline</p>
+                      <p className="text-[10px] uppercase text-muted-foreground font-medium">Status Quiosques</p>
+                      <p className="text-sm font-display font-medium">3 Ativos / 1 Offline</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -275,8 +275,8 @@ export function GestaoRegistrosPonto() {
                   <CardContent className="p-4 flex items-center gap-3">
                     <div className="p-2 rounded-lg bg-success/10 text-success"><ShieldCheck className="h-5 w-5" /></div>
                     <div>
-                      <p className="text-[10px] uppercase text-muted-foreground font-bold">Conformidade (MTP 671)</p>
-                      <p className="text-sm font-display font-bold">100% Integridade</p>
+                      <p className="text-[10px] uppercase text-muted-foreground font-medium">Conformidade (MTP 671)</p>
+                      <p className="text-sm font-display font-medium">100% Integridade</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -284,8 +284,8 @@ export function GestaoRegistrosPonto() {
                   <CardContent className="p-4 flex items-center gap-3">
                     <div className="p-2 rounded-lg bg-info/10 text-info"><Activity className="h-5 w-5" /></div>
                     <div>
-                      <p className="text-[10px] uppercase text-muted-foreground font-bold">Tentativas de Sincronização</p>
-                      <p className="text-sm font-display font-bold">128 hoje (2 falhas)</p>
+                      <p className="text-[10px] uppercase text-muted-foreground font-medium">Tentativas de Sincronização</p>
+                      <p className="text-sm font-display font-medium">128 hoje (2 falhas)</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -345,7 +345,7 @@ export function GestaoRegistrosPonto() {
                             {r.colaborador?.foto_url ? (
                               <img src={r.colaborador.foto_url} alt="" className="h-7 w-7 rounded-full object-cover" />
                             ) : (
-                              <div className="h-7 w-7 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">
+                              <div className="h-7 w-7 rounded-full bg-muted flex items-center justify-center text-xs font-medium text-muted-foreground">
                                 {(r.colaborador?.nome_completo || '?')[0]}
                               </div>
                             )}
@@ -358,7 +358,7 @@ export function GestaoRegistrosPonto() {
                         <TableCell className="text-[10px] text-muted-foreground whitespace-nowrap">
                           {r.entrada_esperada ? `${r.entrada_esperada} - ${r.saida_esperada}` : 'Não def.'}
                         </TableCell>
-                        <TableCell className={`font-mono text-sm ${temAtraso ? 'text-destructive font-bold' : ''}`}>
+                        <TableCell className={`font-mono text-sm ${temAtraso ? 'text-destructive font-medium' : ''}`}>
                           {formatTime(r.entrada_1)}
                         </TableCell>
                         <TableCell className="font-mono text-sm">{formatTime(r.saida_intervalo)}</TableCell>

@@ -6,6 +6,8 @@
 
 // EXTRA_ALLOWED_ORIGINS permite adicionar origens via env sem alterar código.
 // Formato: lista separada por vírgulas, ex: "https://app.exemplo.com,https://staging.exemplo.com"
+import { getCorsHeaders } from './contract.ts';
+
 const _extraOrigins = (Deno.env.get('EXTRA_ALLOWED_ORIGINS') ?? '')
   .split(',')
   .map((o) => o.trim())
@@ -21,9 +23,9 @@ const LOVABLE_HOST_RE = /\.lovable\.(app|dev)$/;
 
 // Localhost only allowed when running Supabase locally (SUPABASE_URL points to localhost)
 const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-const IS_LOCAL_DEV = supabaseUrl.includes('localhost') || supabaseUrl.includes('127.0.0.1') ||
-                     Deno.env.get('SUPABASE_ENV') === 'local';
-
+const IS_LOCAL_DEV = supabaseUrl.includes("localhost") || supabaseUrl.includes("127.0.0.1") ||
+                     Deno.env.get("SUPABASE_ENV") === "local" ||
+                     !!Deno.env.get("EXTRA_ALLOWED_LOCAL_PORTS");
 export interface CsrfResult {
   ok: boolean;
   response?: Response;
@@ -50,7 +52,7 @@ export async function verifyCsrf(req: Request): Promise<CsrfResult> {
       ok: false,
       response: new Response(
         JSON.stringify({ error: 'CSRF: missing Origin/Referer header' }),
-        { status: 403, headers: { 'Content-Type': 'application/json' } },
+        { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
       ),
     };
   }
@@ -60,15 +62,16 @@ export async function verifyCsrf(req: Request): Promise<CsrfResult> {
     const host = url.hostname;
     const isAllowed =
       ALLOWED_ORIGINS.some((o) => source.startsWith(o)) ||
+
       LOVABLE_HOST_RE.test(host) ||
-      (IS_LOCAL_DEV && (host === 'localhost' || host === '127.0.0.1'));
+      (IS_LOCAL_DEV && (host === "localhost" || host === "127.0.0.1"));
 
     if (!isAllowed) {
       return {
         ok: false,
         response: new Response(
           JSON.stringify({ error: 'CSRF: origin not allowed', origin: host }),
-          { status: 403, headers: { 'Content-Type': 'application/json' } },
+          { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
         ),
       };
     }
@@ -77,7 +80,7 @@ export async function verifyCsrf(req: Request): Promise<CsrfResult> {
       ok: false,
       response: new Response(
         JSON.stringify({ error: 'CSRF: invalid Origin/Referer' }),
-        { status: 403, headers: { 'Content-Type': 'application/json' } },
+        { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
       ),
     };
   }
@@ -93,7 +96,7 @@ export async function verifyCsrf(req: Request): Promise<CsrfResult> {
         ok: false,
         response: new Response(
           JSON.stringify({ error: 'CSRF: token mismatch' }),
-          { status: 403, headers: { 'Content-Type': 'application/json' } },
+          { status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
         ),
       };
     }

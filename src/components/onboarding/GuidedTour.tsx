@@ -115,7 +115,7 @@ export const GuidedTour = memo(function GuidedTour() {
                 >
                   <CheckCircle2 className="h-10 w-10 text-success" />
                 </motion.div>
-                <h3 className="text-h1 font-display font-bold mb-2">Tour Concluído! 🎉</h3>
+                <h3 className="text-h1 font-display font-medium mb-2">Tour Concluído! 🎉</h3>
                 <p className="text-body text-muted-foreground font-body">
                   Você está pronto para usar o sistema. Explore cada módulo no seu ritmo!
                 </p>
@@ -164,7 +164,7 @@ export const GuidedTour = memo(function GuidedTour() {
                       >
                         {step.emoji}
                       </motion.span>
-                      <h3 className="text-h2 font-display font-bold mb-2">{step.title}</h3>
+                      <h3 className="text-h2 font-display font-medium mb-2">{step.title}</h3>
                       <p className="text-body text-muted-foreground font-body leading-relaxed">
                         {step.description}
                       </p>

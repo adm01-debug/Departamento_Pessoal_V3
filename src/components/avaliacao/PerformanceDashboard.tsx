@@ -38,7 +38,7 @@ export function PerformanceDashboard({ stats, feedbacks, metas }: { stats: any, 
               <div className={`h-[2px] bg-gradient-to-r ${kpi.gradient}`} />
               <CardContent className="pt-4">
                 <kpi.icon className={`h-6 w-6 mx-auto ${kpi.color} mb-1`} />
-                <p className="text-2xl font-bold">{kpi.value}</p>
+                <p className="text-2xl font-medium">{kpi.value}</p>
                 <p className="text-xs text-muted-foreground font-body">{kpi.label}</p>
               </CardContent>
             </Card>

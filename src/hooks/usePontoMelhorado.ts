@@ -33,12 +33,13 @@ export function usePontoMelhorado(empresaId?: string, colaboradorId?: string) {
 
   const { data: solicitacoes = [], isLoading } = useQuery({
     queryKey: ['solicitacoes-ajuste-ponto', empresaId, colaboradorId],
-    enabled: true,
+    enabled: !!empresaId,
     queryFn: async () => {
+      if (!empresaId) return [];
       let query = supabase
         .from('solicitacoes_ajuste_ponto')
         .select('*, colaborador:colaboradores(nome_completo)')
-        .eq('empresa_id', empresaId!)
+        .eq('empresa_id', empresaId)
         .order('created_at', { ascending: false });
 
       if (colaboradorId) {
@@ -86,8 +87,9 @@ export function usePontoMelhorado(empresaId?: string, colaboradorId?: string) {
 
   const responderSolicitacao = useMutation({
     mutationFn: async ({ id, status, observacoes }: { id: string; status: 'aprovado' | 'recusado'; observacoes?: string }) => {
+      if (!empresaId) throw new Error('empresa_id obrigatório para responder solicitação');
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       const { data, error } = await supabase
         .from('solicitacoes_ajuste_ponto')
         .update({
@@ -98,7 +100,7 @@ export function usePontoMelhorado(empresaId?: string, colaboradorId?: string) {
           updated_at: new Date().toISOString()
         })
         .eq('id', id)
-        .eq('empresa_id', empresaId!)
+        .eq('empresa_id', empresaId)
         .select()
         .single();
 

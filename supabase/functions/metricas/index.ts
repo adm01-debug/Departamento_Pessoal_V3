@@ -17,7 +17,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { metricasSchema } from '../_shared/schemas/common.ts';
-import { corsHeaders, createErrorResponse } from '../_shared/contract.ts';
+import { corsHeaders, createErrorResponse, getCorsHeaders } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { getOrCreateTraceId } from '../_shared/trace.ts';
@@ -138,7 +138,7 @@ async function getFolhaKpis(
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: corsHeaders });
+    return new Response(null, { status: 204, headers: getCorsHeaders(req) });
   }
 
   const traceId = getOrCreateTraceId(req, null);
@@ -151,7 +151,7 @@ serve(async (req) => {
     // Auth
     const authHeader = req.headers.get('Authorization') ?? '';
     if (!authHeader.startsWith('Bearer ')) {
-      return createErrorResponse('Autenticação obrigatória', 401, 'UNAUTHORIZED');
+      return createErrorResponse('Autenticação obrigatória', 401, 'UNAUTHORIZED', undefined, req);
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
@@ -159,7 +159,7 @@ serve(async (req) => {
     const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 
     if (!supabaseUrl || !serviceKey) {
-      return createErrorResponse('Configuração incompleta', 500, 'INTERNAL_ERROR');
+      return createErrorResponse('Configuração incompleta', 500, 'INTERNAL_ERROR', undefined, req);
     }
 
     // User
@@ -169,7 +169,7 @@ serve(async (req) => {
     });
     const { data: userData, error: userErr } = await userClient.auth.getUser();
     if (userErr || !userData?.user) {
-      return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
+      return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED', undefined, req);
     }
     const userId = userData.user.id;
 
@@ -180,12 +180,12 @@ serve(async (req) => {
       if (!empresaId && body?.empresaId) empresaId = body.empresaId;
     } catch { /* ignore */ }
 
-    if (!empresaId) return createErrorResponse('empresaId é obrigatório', 422, 'VALIDATION_ERROR');
+    if (!empresaId) return createErrorResponse('empresaId é obrigatório', 422, 'VALIDATION_ERROR', undefined, req);
 
     // Validate with Zod
     const parsed = metricasSchema.safeParse({ empresaId });
     if (!parsed.success) {
-      return createErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid', 422, 'VALIDATION_ERROR');
+      return createErrorResponse(parsed.error.issues[0]?.message ?? 'Invalid', 422, 'VALIDATION_ERROR', undefined, req);
     }
 
     // Tenant + admin check
@@ -194,7 +194,7 @@ serve(async (req) => {
       admin.rpc('user_belongs_to_empresa', { _user_id: userId, _empresa_id: empresaId }),
       admin.rpc('is_admin', { _user_id: userId }),
     ]);
-    if (!belongs && !isAdm) return createErrorResponse('Sem acesso a esta empresa', 403, 'FORBIDDEN');
+    if (!belongs && !isAdm) return createErrorResponse('Sem acesso a esta empresa', 403, 'FORBIDDEN', undefined, req);
 
     // Rate limit
     const rl = await checkRateLimit(admin, { key: `metricas:${userId}`, limit: 60, windowSec: 60 });
@@ -284,7 +284,7 @@ serve(async (req) => {
 
     return new Response(JSON.stringify(response), {
       headers: {
-        ...corsHeaders,
+        ...getCorsHeaders(req),
         'Content-Type': 'application/json',
         // Cache 60s: polling-friendly sem sobrecarregar DB
         'Cache-Control': 'private, max-age=60, stale-while-revalidate=30',
@@ -294,6 +294,6 @@ serve(async (req) => {
 
   } catch (error: unknown) {
     captureException(error, { fn: 'metricas', trace_id: traceId });
-    return createErrorResponse('Erro interno ao obter métricas', 500, 'INTERNAL_SERVER_ERROR');
+    return createErrorResponse('Erro interno ao obter métricas', 500, 'INTERNAL_SERVER_ERROR', undefined, req);
   }
 });

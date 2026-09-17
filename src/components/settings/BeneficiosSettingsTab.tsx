@@ -117,11 +117,11 @@ export function BeneficiosSettingsTab() {
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/30">
-                  <TableHead className="font-display font-bold">Plano</TableHead>
-                  <TableHead className="font-display font-bold">Tipo</TableHead>
-                  <TableHead className="font-display font-bold">Valor</TableHead>
-                  <TableHead className="font-display font-bold">Status</TableHead>
-                  <TableHead className="text-right font-display font-bold">Ações</TableHead>
+                  <TableHead className="font-display font-medium">Plano</TableHead>
+                  <TableHead className="font-display font-medium">Tipo</TableHead>
+                  <TableHead className="font-display font-medium">Valor</TableHead>
+                  <TableHead className="font-display font-medium">Status</TableHead>
+                  <TableHead className="text-right font-display font-medium">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

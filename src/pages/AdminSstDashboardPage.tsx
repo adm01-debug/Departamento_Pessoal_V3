@@ -29,8 +29,8 @@ export default function AdminSstDashboardPage() {
 
   if (isLoading || !data) {
     return (
-      <div className="container mx-auto p-6 space-y-6">
-        <h1 className="text-3xl font-bold">Dashboard SST</h1>
+      <div className="py-6 space-y-6">
+        <h1 className="text-3xl font-medium">Dashboard SST</h1>
         <div className="grid gap-4 md:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="h-32" />)}
         </div>
@@ -43,9 +43,9 @@ export default function AdminSstDashboardPage() {
     : 100;
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="py-6 space-y-6">
       <header>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard SST</h1>
+        <h1 className="text-3xl font-medium tracking-tight">Dashboard SST</h1>
         <p className="text-muted-foreground mt-1">SLA de saúde ocupacional, vencimentos de ASO/EPI e conformidade NR-7/NR-6</p>
       </header>
 
@@ -57,7 +57,7 @@ export default function AdminSstDashboardPage() {
         </CardHeader>
         <CardContent>
           <div className="flex items-baseline gap-3">
-            <span className="text-5xl font-bold">{conformidade}%</span>
+            <span className="text-5xl font-medium">{conformidade}%</span>
             <span className="text-sm text-muted-foreground">{data.asos.total - data.asos.vencidos} de {data.asos.total} válidos</span>
           </div>
           <Progress value={conformidade} className="mt-4" />
@@ -124,7 +124,7 @@ function KpiCard({ title, value, icon: Icon, tone = 'default', suffix }: KpiCard
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className={`text-3xl font-bold ${toneClass}`}>{value}{suffix ?? ''}</div>
+        <div className={`text-3xl font-medium ${toneClass}`}>{value}{suffix ?? ''}</div>
       </CardContent>
     </Card>
   );

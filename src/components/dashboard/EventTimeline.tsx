@@ -1,8 +1,8 @@
 import { memo, useMemo, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  UserPlus, UserMinus, Calendar, FileText, Clock, AlertTriangle, 
+import {
+  UserPlus, UserMinus, Calendar, FileText, Clock, AlertTriangle,
   type LucideIcon, ArrowUpDown, ShieldCheck, MapPin, Globe
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -12,6 +12,11 @@ import { ptBR } from 'date-fns/locale';
 import { useRealTimeSubscription } from '@/hooks/useRealTimeSubscription';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useLocation } from 'react-router-dom';
+// MOCK VISUAL — ver src/mocks/dashboardMockData.ts (só ativo em dev +
+// VITE_DASHBOARD_MOCK=true, E somente na rota /dashboard — o Dashboard
+// Executivo, que também usa este componente, permanece 100% com dados reais).
+import { isDashboardMockEnabled, mockTimelineEvents } from '@/mocks/dashboardMockData';
 
 export interface TimelineEvent {
   id: string;
@@ -38,9 +43,11 @@ interface EventTimelineProps {
   events?: TimelineEvent[];
   className?: string;
   empresaId?: string;
+  /** Limita quantos eventos aparecem (o resto continua contado, só não renderizado). */
+  maxItems?: number;
 }
 
-export const EventTimeline = memo(function EventTimeline({ events: initialEvents, className, empresaId }: EventTimelineProps) {
+export const EventTimeline = memo(function EventTimeline({ events: initialEvents, className, empresaId, maxItems }: EventTimelineProps) {
   const [filterType, setFilterType] = useState('all');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
 
@@ -94,18 +101,26 @@ export const EventTimeline = memo(function EventTimeline({ events: initialEvents
   useRealTimeSubscription('audit_log', ['audit-timeline', empresaId], empresaId);
   useRealTimeSubscription('conformidade_ponto_logs', ['audit-timeline', empresaId], empresaId);
 
+  // MOCK VISUAL — restrito à rota /dashboard: o Dashboard Executivo também
+  // renderiza este componente e deve permanecer 100% com dados reais mesmo
+  // com a flag ligada. Nenhuma chamada extra é feita; apenas troca o dado já
+  // resolvido pela query real acima. Remover estas 2 linhas desativa o mock.
+  const { pathname } = useLocation();
+  const mockActiveHere = isDashboardMockEnabled() && pathname === '/dashboard';
+
   const displayEvents = useMemo(() => {
-    const list = dbEvents || initialEvents || [];
+    const list = mockActiveHere ? mockTimelineEvents : (dbEvents || initialEvents || []);
     const filtered = filterType === 'all' ? list : list.filter(e => e.type === filterType);
-    
-    return filtered.sort((a, b) => {
+
+    const sorted = filtered.sort((a, b) => {
       const timeA = a.raw_time ? new Date(a.raw_time).getTime() : 0;
       const timeB = b.raw_time ? new Date(b.raw_time).getTime() : 0;
       return sortOrder === 'desc' ? timeB - timeA : timeA - timeB;
     });
-  }, [dbEvents, initialEvents, filterType, sortOrder]);
+    return maxItems ? sorted.slice(0, maxItems) : sorted;
+  }, [dbEvents, initialEvents, filterType, sortOrder, mockActiveHere, maxItems]);
 
-  if (isLoading) {
+  if (isLoading && !mockActiveHere) {
     return (
       <div className="space-y-4 py-4">
         {Array(3).fill(0).map((_, i) => (
@@ -186,10 +201,10 @@ export const EventTimeline = memo(function EventTimeline({ events: initialEvents
                 </div>
 
                 {/* Content */}
-                <div className={cn('pb-4 min-w-0', isLast && 'pb-0')}>
+                <div className={cn('pb-1.5 min-w-0', isLast && 'pb-0')}>
                   <p className="text-body font-body font-medium truncate leading-tight">{event.title}</p>
                   <p className="text-caption text-muted-foreground font-body truncate">{event.description}</p>
-                  <p className="text-[10px] text-muted-foreground/60 font-body mt-0.5">{event.time}</p>
+                  <p className="text-overline normal-case tracking-normal text-muted-foreground/60 mt-0.5">{event.time}</p>
                 </div>
               </motion.div>
             );

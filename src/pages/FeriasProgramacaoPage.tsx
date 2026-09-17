@@ -51,7 +51,8 @@ export default function FeriasProgramacaoPage() {
   }, [data]);
 
   return (
-    <div className="space-y-4 p-6">
+    // p-6 -> py-6: padding horizontal agora vem do <main> global (MainLayout)
+    <div className="space-y-4 py-6">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Programação Anual de Férias</h1>

@@ -97,7 +97,7 @@ export function RewardsApprovalHub({ pagamentos }: ApprovalHubProps) {
         {stages.map((stage) => (
           <Card key={stage.id} className="border-border/30 rounded-2xl shadow-xs bg-card/50 backdrop-blur-xs">
             <CardHeader className="py-4 border-b border-border/10">
-              <CardTitle className="text-xs font-bold flex items-center gap-2 uppercase tracking-tighter text-muted-foreground">
+              <CardTitle className="text-xs font-medium flex items-center gap-2 uppercase tracking-wide text-muted-foreground">
                 <stage.icon className="h-4 w-4 text-primary" />
                 {stage.label}
               </CardTitle>
@@ -110,12 +110,12 @@ export function RewardsApprovalHub({ pagamentos }: ApprovalHubProps) {
                   return (
                     <div key={p.id} className={`p-3 border rounded-xl transition-all ${hasDivergence ? 'border-amber-500/30 bg-amber-500/5' : 'border-border/20 hover:bg-muted/5'}`}>
                       <div className="flex justify-between items-start mb-1">
-                        <span className="text-[11px] font-bold truncate max-w-[120px]">{p.colaborador?.nome_completo}</span>
+                        <span className="text-[11px] font-medium truncate max-w-[120px]">{p.colaborador?.nome_completo}</span>
                         <Badge variant="secondary" className="text-[9px] font-mono">R$ {p.valor_aprovado || p.valor_calculado}</Badge>
                       </div>
                       
                       {stage.id === 'aprovado_financeiro' && p.status_conciliacao === 'divergente' && (
-                        <div className="flex items-center gap-1 mt-1 text-[9px] text-amber-600 font-bold">
+                        <div className="flex items-center gap-1 mt-1 text-[9px] text-amber-600 font-medium">
                           <AlertTriangle className="h-3 w-3" /> Divergência Detectada
                         </div>
                       )}
@@ -186,7 +186,7 @@ export function RewardsApprovalHub({ pagamentos }: ApprovalHubProps) {
                       
                       {p.historico_mudancas && p.historico_mudancas.length > 0 && (
                         <div className="mt-2 pt-2 border-t border-border/10">
-                          <p className="text-[8px] text-muted-foreground uppercase font-bold tracking-widest">Último Comentário</p>
+                          <p className="text-[8px] text-muted-foreground uppercase font-medium tracking-widest">Último Comentário</p>
                           <p className="text-[9px] text-muted-foreground italic truncate">
                             {p.historico_mudancas[p.historico_mudancas.length - 1].comentario}
                           </p>
@@ -208,14 +208,14 @@ export function RewardsApprovalHub({ pagamentos }: ApprovalHubProps) {
       {pagamentos.some(p => p.status === 'rejeitado') && (
         <Card className="border-destructive/20 bg-destructive/5 rounded-2xl">
           <CardHeader className="py-3 px-4 border-b border-destructive/10">
-            <CardTitle className="text-[10px] font-bold uppercase text-destructive flex items-center gap-2">
+            <CardTitle className="text-[10px] font-medium uppercase text-destructive flex items-center gap-2">
               <XCircle className="h-3 w-3" /> Pagamentos Rejeitados (Auditoria Necessária)
             </CardTitle>
           </CardHeader>
           <CardContent className="p-4 flex flex-wrap gap-3">
             {pagamentos.filter(p => p.status === 'rejeitado').map(p => (
               <div key={p.id} className="p-2 bg-background border border-destructive/20 rounded-xl text-[10px] flex items-center gap-3">
-                <span className="font-bold">{p.colaborador?.nome_completo}</span>
+                <span className="font-medium">{p.colaborador?.nome_completo}</span>
                 <span className="text-muted-foreground">R$ {p.valor_calculado}</span>
                 <Button variant="ghost" size="sm" className="h-6 text-[8px] text-primary" onClick={() => {
                   setSelectedPagamento(p);
@@ -245,11 +245,11 @@ export function RewardsApprovalHub({ pagamentos }: ApprovalHubProps) {
             <div className="p-4 bg-muted/30 rounded-2xl border border-border/10 space-y-2">
               <div className="flex justify-between text-xs">
                 <span className="text-muted-foreground">Valor Aprovado:</span>
-                <span className="font-bold font-mono">R$ {selectedPagamento?.valor_aprovado}</span>
+                <span className="font-medium font-mono">R$ {selectedPagamento?.valor_aprovado}</span>
               </div>
             </div>
             <div className="grid gap-2">
-              <label className="text-xs font-bold uppercase text-muted-foreground">Valor Real na Folha</label>
+              <label className="text-xs font-medium uppercase text-muted-foreground">Valor Real na Folha</label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">R$</span>
                 <input 
@@ -262,7 +262,7 @@ export function RewardsApprovalHub({ pagamentos }: ApprovalHubProps) {
               </div>
             </div>
             <div className="grid gap-2">
-              <label className="text-xs font-bold uppercase text-muted-foreground">Justificativa (Obrigatório se houver divergência)</label>
+              <label className="text-xs font-medium uppercase text-muted-foreground">Justificativa (Obrigatório se houver divergência)</label>
               <Textarea 
                 placeholder="Ex: Diferença de impostos retidos..."
                 className="rounded-xl resize-none text-xs"
@@ -296,12 +296,12 @@ export function RewardsApprovalHub({ pagamentos }: ApprovalHubProps) {
           </DialogHeader>
           <div className="py-4">
             <div className="p-4 bg-muted/30 rounded-2xl mb-4">
-              <p className="text-xs font-bold">{selectedPagamento?.colaborador?.nome_completo}</p>
+              <p className="text-xs font-medium">{selectedPagamento?.colaborador?.nome_completo}</p>
               <p className="text-[10px] text-muted-foreground">{selectedPagamento?.campanha?.nome}</p>
-              <p className="text-sm font-bold mt-2 text-primary">R$ {selectedPagamento?.valor_aprovado || selectedPagamento?.valor_calculado}</p>
+              <p className="text-sm font-medium mt-2 text-primary">R$ {selectedPagamento?.valor_aprovado || selectedPagamento?.valor_calculado}</p>
             </div>
             <div className="grid gap-2">
-              <label className="text-xs font-bold uppercase text-muted-foreground">Comentário / Justificativa</label>
+              <label className="text-xs font-medium uppercase text-muted-foreground">Comentário / Justificativa</label>
               <Textarea 
                 placeholder="Escreva aqui..."
                 className="rounded-xl resize-none text-xs h-24"

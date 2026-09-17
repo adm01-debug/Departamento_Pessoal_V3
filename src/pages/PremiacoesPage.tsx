@@ -112,10 +112,10 @@ export default function PremiacoesPage() {
           <Card className="border-border/40 shadow-xs bg-gradient-to-br from-card to-muted/20">
             <CardContent className="p-6">
               <div className="flex justify-between items-start">
-                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Total Aprovado</p>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Total Aprovado</p>
                 <div className="p-2 bg-success/10 rounded-lg text-success"><DollarSign className="h-4 w-4" /></div>
               </div>
-              <h3 className="text-2xl font-bold mt-2">{formatCurrency(stats.totalAprovado)}</h3>
+              <h3 className="text-2xl font-medium mt-2">{formatCurrency(stats.totalAprovado)}</h3>
               <p className="text-[10px] text-success flex items-center gap-1 mt-1 font-medium">
                 <ArrowUpRight className="h-3 w-3" /> +12% vs mês anterior
               </p>
@@ -125,10 +125,10 @@ export default function PremiacoesPage() {
           <Card className="border-border/40 shadow-xs">
             <CardContent className="p-6">
               <div className="flex justify-between items-start">
-                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Pendente (Calculado)</p>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Pendente (Calculado)</p>
                 <div className="p-2 bg-warning/10 rounded-lg text-warning"><AlertCircle className="h-4 w-4" /></div>
               </div>
-              <h3 className="text-2xl font-bold mt-2">{formatCurrency(stats.totalPendente)}</h3>
+              <h3 className="text-2xl font-medium mt-2">{formatCurrency(stats.totalPendente)}</h3>
               <p className="text-[10px] text-muted-foreground mt-1">Aguardando revisão manual</p>
             </CardContent>
           </Card>
@@ -136,10 +136,10 @@ export default function PremiacoesPage() {
           <Card className="border-border/40 shadow-xs">
             <CardContent className="p-6">
               <div className="flex justify-between items-start">
-                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Campanhas Ativas</p>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Campanhas Ativas</p>
                 <div className="p-2 bg-primary/10 rounded-lg text-primary"><Target className="h-4 w-4" /></div>
               </div>
-              <h3 className="text-2xl font-bold mt-2">{stats.campanhasAtivas}</h3>
+              <h3 className="text-2xl font-medium mt-2">{stats.campanhasAtivas}</h3>
               <p className="text-[10px] text-muted-foreground mt-1">Impactando 85% do time</p>
             </CardContent>
           </Card>
@@ -147,13 +147,13 @@ export default function PremiacoesPage() {
           <Card className={`border-border/40 shadow-xs ${stats.divergenciaCount > 0 ? 'bg-amber-500/5' : 'bg-primary/5'}`}>
             <CardContent className="p-6">
               <div className="flex justify-between items-start">
-                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Conciliação (Divergências)</p>
+                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Conciliação (Divergências)</p>
                 <div className={`p-2 rounded-lg ${stats.divergenciaCount > 0 ? 'bg-amber-500/10 text-amber-500' : 'bg-primary/10 text-primary'}`}>
                   {stats.divergenciaCount > 0 ? <AlertCircle className="h-4 w-4" /> : <ShieldCheck className="h-4 w-4" />}
                 </div>
               </div>
-              <h3 className="text-2xl font-bold mt-2">{stats.divergenciaCount}</h3>
-              <p className={`text-[10px] mt-1 ${stats.divergenciaCount > 0 ? 'text-amber-600 font-bold' : 'text-muted-foreground'}`}>
+              <h3 className="text-2xl font-medium mt-2">{stats.divergenciaCount}</h3>
+              <p className={`text-[10px] mt-1 ${stats.divergenciaCount > 0 ? 'text-amber-600 font-medium' : 'text-muted-foreground'}`}>
                 {stats.divergenciaCount > 0 ? 'Atenção necessária na auditoria' : 'Todos os valores conciliados'}
               </p>
             </CardContent>
@@ -186,7 +186,7 @@ export default function PremiacoesPage() {
                   <CardContent className="p-6">
                     <div className="flex justify-between items-start mb-4">
                       <div>
-                        <h3 className="font-display font-bold text-lg group-hover:text-primary transition-colors">{c.nome}</h3>
+                        <h3 className="font-display font-medium text-lg group-hover:text-primary transition-colors">{c.nome}</h3>
                         <p className="text-xs text-muted-foreground mt-1">{c.descricao}</p>
                       </div>
                       <Badge variant={c.status === 'ativo' ? 'default' : 'secondary'} className="rounded-full px-3">
@@ -196,7 +196,7 @@ export default function PremiacoesPage() {
 
                     <div className="grid grid-cols-2 gap-4 my-6">
                       <div className="space-y-1">
-                        <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter flex items-center gap-1">
+                        <p className="text-[10px] text-muted-foreground uppercase font-medium tracking-wide flex items-center gap-1">
                           <Calendar className="h-3 w-3" /> Período
                         </p>
                         <p className="text-xs font-semibold">
@@ -204,7 +204,7 @@ export default function PremiacoesPage() {
                         </p>
                       </div>
                       <div className="space-y-1">
-                        <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter flex items-center gap-1">
+                        <p className="text-[10px] text-muted-foreground uppercase font-medium tracking-wide flex items-center gap-1">
                           <DollarSign className="h-3 w-3" /> Orçamento
                         </p>
                         <p className="text-xs font-semibold">{formatCurrency(c.orcamento_estimado || 0)}</p>
@@ -212,7 +212,7 @@ export default function PremiacoesPage() {
                     </div>
 
                     <div className="space-y-3">
-                      <div className="flex justify-between text-[10px] font-bold">
+                      <div className="flex justify-between text-[10px] font-medium">
                         <span className="text-muted-foreground">Progresso do Orçamento</span>
                         <span>45%</span>
                       </div>
@@ -222,15 +222,15 @@ export default function PremiacoesPage() {
                     <div className="mt-6 pt-4 border-t border-border/10 flex justify-between items-center">
                       <div className="flex -space-x-2">
                         {[1, 2, 3].map(i => (
-                          <div key={i} className="h-7 w-7 rounded-full border-2 border-background bg-muted flex items-center justify-center text-[10px] font-bold">
+                          <div key={i} className="h-7 w-7 rounded-full border-2 border-background bg-muted flex items-center justify-center text-[10px] font-medium">
                             U{i}
                           </div>
                         ))}
-                        <div className="h-7 w-7 rounded-full border-2 border-background bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
+                        <div className="h-7 w-7 rounded-full border-2 border-background bg-primary/10 flex items-center justify-center text-[10px] font-medium text-primary">
                           +12
                         </div>
                       </div>
-                      <Button variant="ghost" size="sm" className="text-xs font-bold text-primary hover:bg-primary/5">
+                      <Button variant="ghost" size="sm" className="text-xs font-medium text-primary hover:bg-primary/5">
                         Gerenciar Regras <ArrowUpRight className="ml-1 h-3 w-3" />
                       </Button>
                     </div>
@@ -243,7 +243,7 @@ export default function PremiacoesPage() {
                   <div className="p-4 bg-muted/50 rounded-full mb-4">
                     <Trophy className="h-8 w-8 text-muted-foreground/50" />
                   </div>
-                  <h3 className="font-bold text-lg">Nenhuma campanha estratégica</h3>
+                  <h3 className="font-medium text-lg">Nenhuma campanha estratégica</h3>
                   <p className="text-sm text-muted-foreground max-w-xs mx-auto">Comece criando sua primeira campanha de incentivo para impulsionar a performance do time.</p>
                   <Button variant="outline" className="mt-6 rounded-xl">Criar Campanha agora</Button>
                 </Card>
@@ -262,7 +262,7 @@ export default function PremiacoesPage() {
               <CardHeader className="bg-muted/30 border-b border-border/10 p-6">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                   <div>
-                    <CardTitle className="text-sm font-bold flex items-center gap-2">
+                    <CardTitle className="text-sm font-medium flex items-center gap-2">
                       <FileText className="h-4 w-4 text-primary" />
                       Painel Gerencial de Auditoria & ROI v1.2
                     </CardTitle>
@@ -272,7 +272,7 @@ export default function PremiacoesPage() {
                     <div className="flex items-center gap-2 bg-background border border-border/50 rounded-xl px-3 py-1.5">
                       <Filter className="h-3 w-3 text-muted-foreground" />
                       <select 
-                        className="bg-transparent text-[10px] font-bold outline-hidden border-none"
+                        className="bg-transparent text-[10px] font-medium outline-hidden border-none"
                         value={periodoFiltro}
                         onChange={(e) => setPeriodoFiltro(e.target.value)}
                       >
@@ -283,7 +283,7 @@ export default function PremiacoesPage() {
                     </div>
                     <div className="flex items-center gap-2 bg-background border border-border/50 rounded-xl px-3 py-1.5">
                       <select 
-                        className="bg-transparent text-[10px] font-bold outline-hidden border-none"
+                        className="bg-transparent text-[10px] font-medium outline-hidden border-none"
                         value={unidadeFiltro}
                         onChange={(e) => setUnidadeFiltro(e.target.value)}
                       >
@@ -294,7 +294,7 @@ export default function PremiacoesPage() {
                     </div>
                     <div className="flex items-center gap-2 bg-background border border-border/50 rounded-xl px-3 py-1.5">
                       <select 
-                        className="bg-transparent text-[10px] font-bold outline-hidden border-none"
+                        className="bg-transparent text-[10px] font-medium outline-hidden border-none"
                         value={faixaMetaFiltro}
                         onChange={(e) => setFaixaMetaFiltro(e.target.value)}
                       >
@@ -303,10 +303,10 @@ export default function PremiacoesPage() {
                           <option>Meta {'>'} 120%</option>
                       </select>
                     </div>
-                    <Button variant="outline" size="sm" className="h-9 text-[10px] font-bold uppercase rounded-xl" onClick={() => handleExport('csv')}>
+                    <Button variant="outline" size="sm" className="h-9 text-[10px] font-medium uppercase rounded-xl" onClick={() => handleExport('csv')}>
                       <Download className="mr-1 h-3 w-3" /> CSV
                     </Button>
-                    <Button variant="outline" size="sm" className="h-9 text-[10px] font-bold uppercase rounded-xl" onClick={() => handleExport('pdf')}>
+                    <Button variant="outline" size="sm" className="h-9 text-[10px] font-medium uppercase rounded-xl" onClick={() => handleExport('pdf')}>
                       <FileText className="mr-1 h-3 w-3" /> PDF
                     </Button>
                   </div>
@@ -317,12 +317,12 @@ export default function PremiacoesPage() {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="bg-muted/10 border-b border-border/5">
-                        <th className="text-left p-4 font-bold text-[10px] uppercase text-muted-foreground tracking-widest">Colaborador</th>
-                        <th className="text-left p-4 font-bold text-[10px] uppercase text-muted-foreground tracking-widest">Campanha</th>
-                        <th className="text-left p-4 font-bold text-[10px] uppercase text-muted-foreground tracking-widest">Valor Aprovado</th>
-                        <th className="text-left p-4 font-bold text-[10px] uppercase text-muted-foreground tracking-widest">Folha Real</th>
-                        <th className="text-left p-4 font-bold text-[10px] uppercase text-muted-foreground tracking-widest">Status / Justificativa</th>
-                        <th className="text-right p-4 font-bold text-[10px] uppercase text-muted-foreground tracking-widest">Auditoria</th>
+                        <th className="text-left p-4 font-medium text-[10px] uppercase text-muted-foreground tracking-widest">Colaborador</th>
+                        <th className="text-left p-4 font-medium text-[10px] uppercase text-muted-foreground tracking-widest">Campanha</th>
+                        <th className="text-left p-4 font-medium text-[10px] uppercase text-muted-foreground tracking-widest">Valor Aprovado</th>
+                        <th className="text-left p-4 font-medium text-[10px] uppercase text-muted-foreground tracking-widest">Folha Real</th>
+                        <th className="text-left p-4 font-medium text-[10px] uppercase text-muted-foreground tracking-widest">Status / Justificativa</th>
+                        <th className="text-right p-4 font-medium text-[10px] uppercase text-muted-foreground tracking-widest">Auditoria</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border/5">
@@ -330,21 +330,21 @@ export default function PremiacoesPage() {
                         <tr key={p.id} className="hover:bg-accent/5 transition-colors group">
                           <td className="p-4">
                             <div className="flex items-center gap-2">
-                              <span className="font-bold text-xs">{p.colaborador?.nome_completo}</span>
+                              <span className="font-medium text-xs">{p.colaborador?.nome_completo}</span>
                             </div>
                           </td>
                           <td className="p-4">
                             <Badge variant="outline" className="text-[9px] font-medium border-border/50">{p.campanha?.nome}</Badge>
                           </td>
-                          <td className="p-4 font-mono font-bold text-xs">
+                          <td className="p-4 font-mono font-medium text-xs">
                             {formatCurrency(p.valor_aprovado || p.valor_calculado)}
                           </td>
-                          <td className="p-4 font-mono font-bold text-xs text-muted-foreground">
+                          <td className="p-4 font-mono font-medium text-xs text-muted-foreground">
                             {p.valor_folha_real ? formatCurrency(p.valor_folha_real) : '—'}
                           </td>
                           <td className="p-4">
                             <div className="flex flex-col gap-1">
-                              <Badge className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded-full w-fit ${
+                              <Badge className={`text-[9px] font-medium uppercase px-2 py-0.5 rounded-full w-fit ${
                                 p.status_conciliacao === 'conciliado' ? 'bg-success/10 text-success' : 
                                 p.status_conciliacao === 'divergente' ? 'bg-amber-500/10 text-amber-500' : 
                                 'bg-muted text-muted-foreground'
@@ -386,11 +386,11 @@ export default function PremiacoesPage() {
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="bg-muted/20 border-b border-border/10">
-                        <th className="text-left p-4 font-bold text-[10px] uppercase text-muted-foreground">Data/Hora</th>
-                        <th className="text-left p-4 font-bold text-[10px] uppercase text-muted-foreground">Usuário</th>
-                        <th className="text-left p-4 font-bold text-[10px] uppercase text-muted-foreground">Ação</th>
-                        <th className="text-left p-4 font-bold text-[10px] uppercase text-muted-foreground">Entidade</th>
-                        <th className="text-left p-4 font-bold text-[10px] uppercase text-muted-foreground">Motivo/Detalhes</th>
+                        <th className="text-left p-4 font-medium text-[10px] uppercase text-muted-foreground">Data/Hora</th>
+                        <th className="text-left p-4 font-medium text-[10px] uppercase text-muted-foreground">Usuário</th>
+                        <th className="text-left p-4 font-medium text-[10px] uppercase text-muted-foreground">Ação</th>
+                        <th className="text-left p-4 font-medium text-[10px] uppercase text-muted-foreground">Entidade</th>
+                        <th className="text-left p-4 font-medium text-[10px] uppercase text-muted-foreground">Motivo/Detalhes</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border/10">
@@ -403,7 +403,7 @@ export default function PremiacoesPage() {
                             RH / Admin
                           </td>
                           <td className="p-4">
-                            <Badge variant="outline" className="text-[9px] font-bold uppercase">
+                            <Badge variant="outline" className="text-[9px] font-medium uppercase">
                               {a.acao}
                             </Badge>
                           </td>

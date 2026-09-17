@@ -340,24 +340,24 @@ export function PontoAdjustmentRequests() {
                 <TabsContent value="info" className="space-y-4 mt-0">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="p-4 rounded-xl border bg-card">
-                      <p className="text-[10px] text-muted-foreground font-bold uppercase mb-2">Colaborador</p>
+                      <p className="text-[10px] text-muted-foreground font-medium uppercase mb-2">Colaborador</p>
                       <p className="font-semibold text-sm">{selectedRequest.colaborador?.nome_completo}</p>
                     </div>
                     <div className="p-4 rounded-xl border bg-card">
-                      <p className="text-[10px] text-muted-foreground font-bold uppercase mb-2">Data do Ponto</p>
+                      <p className="text-[10px] text-muted-foreground font-medium uppercase mb-2">Data do Ponto</p>
                       <p className="font-semibold text-sm">{format(parseISO(selectedRequest.data_ponto), 'dd/MM/yyyy')}</p>
                     </div>
                     <div className="p-4 rounded-xl border bg-card">
-                      <p className="text-[10px] text-muted-foreground font-bold uppercase mb-2">Hora Original</p>
+                      <p className="text-[10px] text-muted-foreground font-medium uppercase mb-2">Hora Original</p>
                       <p className="font-mono text-sm">{selectedRequest.hora_original || 'Original'}</p>
                     </div>
                     <div className="p-4 rounded-xl border bg-card">
-                      <p className="text-[10px] text-muted-foreground font-bold uppercase mb-2">Hora Sugerida</p>
+                      <p className="text-[10px] text-muted-foreground font-medium uppercase mb-2">Hora Sugerida</p>
                       <p className="font-mono text-sm text-primary">{selectedRequest.hora_sugerida}</p>
                     </div>
                   </div>
                   <div className="p-4 rounded-xl border bg-card">
-                    <p className="text-[10px] text-muted-foreground font-bold uppercase mb-2">Motivo do Ajuste</p>
+                    <p className="text-[10px] text-muted-foreground font-medium uppercase mb-2">Motivo do Ajuste</p>
                     <p className="text-sm">{selectedRequest.motivo}</p>
                   </div>
                 </TabsContent>
@@ -372,7 +372,7 @@ export function PontoAdjustmentRequests() {
                               <div className="absolute left-0 top-1.5 h-4 w-4 rounded-full border-2 border-primary bg-background z-10" />
                               <div className="bg-card rounded-xl p-4 border shadow-xs">
                                 <div className="flex items-center justify-between mb-2">
-                                  <span className="font-bold text-xs capitalize text-primary">{log.acao}</span>
+                                  <span className="font-medium text-xs capitalize text-primary">{log.acao}</span>
                                   <span className="text-[10px] text-muted-foreground">{new Date(log.created_at).toLocaleString('pt-BR')}</span>
                                 </div>
                                 <p className="text-xs text-muted-foreground">{log.user_email || 'Sistema'}</p>
@@ -395,7 +395,7 @@ export function PontoAdjustmentRequests() {
                       <div className="flex items-center gap-3">
                         <Shield className="h-6 w-6 text-success" />
                         <div>
-                          <h4 className="font-bold text-lg">Validação Portaria 671</h4>
+                          <h4 className="font-medium text-lg">Validação Portaria 671</h4>
                           <p className="text-xs text-muted-foreground">Integridade e rastreabilidade garantidas por SHA256.</p>
                         </div>
                       </div>
@@ -406,7 +406,7 @@ export function PontoAdjustmentRequests() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-1">
-                        <p className="text-[10px] text-muted-foreground font-bold uppercase">Timezone (Diff)</p>
+                        <p className="text-[10px] text-muted-foreground font-medium uppercase">Timezone (Diff)</p>
                         <div className="flex items-center gap-2">
                           <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
                           <div className="flex flex-col">
@@ -416,7 +416,7 @@ export function PontoAdjustmentRequests() {
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <p className="text-[10px] text-muted-foreground font-bold uppercase">Geofencing (Diff)</p>
+                        <p className="text-[10px] text-muted-foreground font-medium uppercase">Geofencing (Diff)</p>
                         <div className="flex flex-col">
                           <span className="text-[10px] text-muted-foreground line-through">Dentro do Raio (Original)</span>
                           <span className={`text-sm font-medium ${selectedRequest.relatorio_conformidade?.geofencing ? 'text-success' : 'text-warning'}`}>
@@ -425,13 +425,13 @@ export function PontoAdjustmentRequests() {
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <p className="text-[10px] text-muted-foreground font-bold uppercase">Divergência de Tempo</p>
+                        <p className="text-[10px] text-muted-foreground font-medium uppercase">Divergência de Tempo</p>
                         <p className="text-sm font-medium">
                           {selectedRequest.relatorio_conformidade?.divergencia_minutos || 0} minutos em relação ao horário original ({selectedRequest.hora_original || '--:--'})
                         </p>
                       </div>
                       <div className="space-y-1 col-span-2 pt-2 border-t">
-                        <p className="text-[10px] text-muted-foreground font-bold uppercase">Assinatura Digital de Integridade (SHA256)</p>
+                        <p className="text-[10px] text-muted-foreground font-medium uppercase">Assinatura Digital de Integridade (SHA256)</p>
                         <p className="text-[10px] font-mono break-all bg-muted p-2 rounded-lg border">
                           {selectedRequest.relatorio_conformidade?.sha256_integridade || 'Aguardando processamento'}
                         </p>

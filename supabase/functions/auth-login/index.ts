@@ -14,7 +14,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
-import { corsHeaders, createErrorResponse, parseJsonBody } from '../_shared/contract.ts';
+import { createErrorResponse, getCorsHeaders, parseJsonBody } from '../_shared/contract.ts';
 import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
 import { captureException } from '../_shared/sentry.ts';
 
@@ -45,10 +45,10 @@ function getClientIP(req: Request): string {
 
 serve(async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: corsHeaders });
+    return new Response(null, { status: 204, headers: getCorsHeaders(req) });
   }
   if (req.method !== 'POST') {
-    return createErrorResponse('Método não permitido', 405, 'METHOD_NOT_ALLOWED');
+    return createErrorResponse('Método não permitido', 405, 'METHOD_NOT_ALLOWED', undefined, req);
   }
 
   const ip = getClientIP(req);
@@ -69,7 +69,7 @@ serve(async (req: Request): Promise<Response> => {
     if (errorResponse) return errorResponse;
     const parsed = BodySchema.safeParse(pb ?? {});
     if (!parsed.success) {
-      return createErrorResponse('Dados de login inválidos', 400, 'VALIDATION_ERROR');
+      return createErrorResponse('Dados de login inválidos', 400, 'VALIDATION_ERROR', undefined, req);
     }
     const { email, password } = parsed.data;
 
@@ -99,7 +99,7 @@ serve(async (req: Request): Promise<Response> => {
           code: 'ACCOUNT_LOCKED',
           locked_until: lockedUntil,
         }),
-        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+        { status: 429, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
       );
     }
 
@@ -133,18 +133,18 @@ serve(async (req: Request): Promise<Response> => {
     if (!success) {
       return new Response(
         JSON.stringify({ success: false, error: errorMessage, code: 'INVALID_CREDENTIALS' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+        { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
       );
     }
 
     return new Response(
       JSON.stringify({ success: true, session: authData.session }),
-      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      { status: 200, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } },
     );
   } catch (err) {
     // Diagnóstico: sem esta linha o 500 era opaco e impossível de rastrear.
     console.error('[auth-login] falha inesperada:', (err as Error)?.name, (err as Error)?.message, (err as Error)?.stack);
     await captureException(err, { function: 'auth-login' });
-    return createErrorResponse('Erro interno', 500, 'INTERNAL_SERVER_ERROR');
+    return createErrorResponse('Erro interno', 500, 'INTERNAL_SERVER_ERROR', undefined, req);
   }
 });

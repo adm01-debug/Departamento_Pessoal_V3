@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
-  TrendingUp, Activity, PieChart,
+  TrendingUp, ArrowUp, Activity, PieChart,
   AlertCircle, UserPlus, UserMinus, Briefcase,
   CheckCircle2, Calendar, ChevronRight,
   ShieldCheck, Clock, Search, X,
@@ -34,9 +34,13 @@ import { ptBR } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { exportPortaria671PDF, exportPontoCSV } from '@/services/exportService';
+import { loggerService } from '@/services/loggerService';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRealTimeSubscription } from '@/hooks/useRealTimeSubscription';
+
+/** Gera nome de canal único para evitar colisão em StrictMode + re-subscription. */
+const uid = () => crypto.randomUUID().split('-')[0];
 /**
  * Sub-widgets extraídos para `./analytics/widgets` — reduz o tamanho deste
  * arquivo e permite reuso/teste isolado. Re-exportados aqui para preservar
@@ -48,6 +52,7 @@ export {
   donutColors,
   IndicatorRow,
   QuickStat,
+  MiniStat,
   PendenciaItem,
   AlertasRHWidget,
   CadastroIncompletoWidget,
@@ -58,9 +63,10 @@ import {
   donutColors,
   IndicatorRow,
   QuickStat,
+  MiniStat,
   PendenciaItem,
-  
-  
+
+
   ESocialMonitorWidget,
   type PendenciaSummary} from './analytics/widgets';
 export type { PendenciaSummary } from './analytics/widgets';
@@ -82,9 +88,20 @@ interface AnalyticsSectionProps {
   isLoadingPendencias: boolean;
   isEmptySystem: boolean;
   empresaId?: string;
+  /**
+   * `default` — composição histórica (barra de acesso rápido + 3 cards de
+   * topo + 5 cards de detalhe). Usada pelo Dashboard Executivo.
+   *
+   * `dashboard` — apenas a faixa de 4 cards de detalhe (Passivo, Movimentação,
+   * Ações em Destaque e Panorama), na proporção da referência do Dashboard.
+   * Os cards omitidos foram realocados para outros pontos da página; toda a
+   * lógica (realtime, modais de pendências e de notificações) segue montada.
+   */
+  variant?: 'default' | 'dashboard';
 }
 
-export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingPendencias, isEmptySystem, empresaId }: AnalyticsSectionProps) {
+export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingPendencias, isEmptySystem, empresaId, variant = 'default' }: AnalyticsSectionProps) {
+  const isDashboard = variant === 'dashboard';
   const { data: passivoAll } = useQuery({
     queryKey: ['passivo-summary', empresaId],
     enabled: !!empresaId,
@@ -104,6 +121,20 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
     { label: 'Abr', value: 61000 },
     { label: 'Mai', value: 58000 },
   ];
+
+  // Não há, hoje, um percentual real de "provisionamento" calculado a partir
+  // dos dados (só existe o valor acumulado `passivoTotal`). Este número já
+  // existia hardcoded como largura da barra antes desta mudança — mantido
+  // como está (não inventado agora) e agora também exibido como rótulo, em
+  // vez de um texto fixo desacoplado ("Crítico") sem relação com a barra.
+  const provisionamentoPct = 85;
+  // Idem: não existe, na base atual, uma variação percentual histórica do
+  // passivo total (nenhuma série/delta é calculada em nenhum hook). O badge
+  // de tendência ao lado do valor é, portanto, ilustrativo — mesmo
+  // tratamento que os KPIs do topo do Dashboard já usam hoje para os campos
+  // `trend` (ver `DashboardPage.tsx`, valores fixos como 2.5 / -1.2), não
+  // uma métrica computada nova.
+  const passivoTrendPct = 12;
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -141,7 +172,9 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
 
   useEffect(() => {
     if (!empresaId) return;
-    
+
+    const channelName = `notif-toast-${uid()}`;
+
     // Initial Load of Notifications
     const loadNotifs = async () => {
       const { data } = await supabase
@@ -152,11 +185,11 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
         .limit(20);
       if (data) setNotifications(data as Notificacao[]);
     };
-    loadNotifs();
+    void loadNotifs();
 
     // Subscribe to new notifications (Toast only, data refresh is handled by useRealTimeSubscription)
     const channel = supabase
-      .channel('notif-toast')
+      .channel(channelName)
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'notificacoes', filter: `empresa_id=eq.${empresaId}` },
@@ -167,10 +200,15 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
             icon: <Bell className="h-4 w-4 text-primary" />
           });
         }
-      )
-      .subscribe();
-      
-    return () => { supabase.removeChannel(channel); };
+      );
+
+    channel.subscribe((status) => {
+      if (status === 'CHANNEL_ERROR') {
+        loggerService.warn(`Realtime channel ${channelName} failed to subscribe`);
+      }
+    });
+
+    return () => { void supabase.removeChannel(channel); };
   }, [empresaId]);
 
   const markNotifRead = async (id: string) => {
@@ -187,8 +225,9 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
   // Real-time notifications for Ponto Logic
   useEffect(() => {
     if (!empresaId) return;
+    const channelName = `ponto-changes-${uid()}`;
     const channel = (supabase as any)
-      .channel('ponto-changes')
+      .channel(channelName)
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'solicitacoes_ajuste_ponto', filter: `empresa_id=eq.${empresaId}` },
@@ -201,9 +240,10 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
             });
           }
         }
-      )
-      .subscribe();
-    return () => { (supabase as any).removeChannel(channel); };
+      );
+
+    channel.subscribe();
+    return () => { void (supabase as any).removeChannel(channel); };
   }, [empresaId]);
 
   const filteredPendencias = useMemo(() => {
@@ -302,6 +342,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
   return (
     <>
       {/* Quick Access Top Bar */}
+      {!isDashboard && (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-2">
         <MotionCard 
           initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}
@@ -312,7 +353,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
             <Layers className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-sm font-bold font-display">Workflows</p>
+            <p className="text-sm font-medium font-display">Workflows</p>
             <p className="text-[10px] text-muted-foreground">Otimização de processos</p>
           </div>
         </MotionCard>
@@ -325,7 +366,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
             <Target className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-sm font-bold font-display">BI e Metas</p>
+            <p className="text-sm font-medium font-display">BI e Metas</p>
             <p className="text-[10px] text-muted-foreground">Indicadores estratégicos</p>
           </div>
         </MotionCard>
@@ -338,7 +379,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
             <Database className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-sm font-bold font-display">Auditoria</p>
+            <p className="text-sm font-medium font-display">Auditoria</p>
             <p className="text-[10px] text-muted-foreground">Conformidade de dados</p>
           </div>
         </MotionCard>
@@ -351,18 +392,20 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
             <Zap className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-sm font-bold font-display">IA Insights</p>
+            <p className="text-sm font-medium font-display">IA Insights</p>
             <p className="text-[10px] text-muted-foreground">Análise preditiva</p>
           </div>
         </MotionCard>
       </div>
+      )}
 
       {/* Row 1: 3-col analytics */}
+      {!isDashboard && (
       <div className="grid gap-4 grid-cols-1 lg:grid-cols-3">
         <MotionCard initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
           className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden group hover:border-primary/20 transition-all">
           <CardHeader className="pb-3 flex flex-row items-center justify-between">
-            <CardTitle className="flex items-center gap-2.5 text-h3 font-display">
+            <CardTitle className="flex items-center gap-2.5 font-display">
               <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-primary-glow">
                 <TrendingUp className="h-4 w-4 text-primary-foreground" />
               </div>
@@ -393,7 +436,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
         <MotionCard initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}
           className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden group hover:border-warning/20 transition-all">
           <CardHeader className="pb-3 flex flex-row items-center justify-between">
-            <CardTitle className="flex items-center gap-2.5 text-h3 font-display">
+            <CardTitle className="flex items-center gap-2.5 font-display">
               <div className="p-1.5 rounded-lg bg-gradient-to-br from-warning to-warning-glow">
                 <Bell className="h-4 w-4 text-white" />
               </div>
@@ -419,7 +462,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
                       <Bell className="h-3 w-3" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[11px] font-bold truncate">{n.titulo}</p>
+                      <p className="text-[11px] font-medium truncate">{n.titulo}</p>
                       <p className="text-[10px] text-muted-foreground line-clamp-1">{n.mensagem}</p>
                     </div>
                     {!n.lida && <button onClick={() => markNotifRead(n.id)} className="p-1 hover:bg-muted rounded-full"><Check className="h-3 w-3" /></button>}
@@ -437,7 +480,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
         <MotionCard initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
           className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden group hover:border-info/20 transition-all">
           <CardHeader className="pb-3 flex flex-row items-center justify-between">
-            <CardTitle className="flex items-center gap-2.5 text-h3 font-display">
+            <CardTitle className="flex items-center gap-2.5 font-display">
               <div className="p-1.5 rounded-lg bg-gradient-to-br from-info to-info/70">
                 <ShieldCheck className="h-4 w-4 text-white" />
               </div>
@@ -450,65 +493,218 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
           <CardContent><ESocialMonitorWidget /></CardContent>
         </MotionCard>
       </div>
+      )}
 
 
-      {/* Row 2: 4-col details */}
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Row 2. No Dashboard são 3 colunas (Passivo | Movimentação | Ações em
+          Destaque), na proporção da referência — "Panorama" não existe no
+          print e fica oculto aqui; suas métricas continuam visíveis no
+          Dashboard (Turnover/Absenteísmo no card "Saúde RH" e Headcount nos
+          KPIs e em "Movimentação"). O Dashboard Executivo segue com as 4. */}
+      <div className={cn(
+        'grid gap-4 grid-cols-1',
+        isDashboard
+          ? 'lg:grid-cols-3'
+          : 'sm:grid-cols-2 lg:grid-cols-4',
+      )}>
         {/* Passivo Trabalhista Widget */}
         <MotionCard initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.62 }}
-          className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden group hover:border-destructive/20 transition-all cursor-pointer"
+          className={cn(
+            'border overflow-hidden group hover:border-destructive/20 transition-all cursor-pointer',
+            isDashboard ? 'border-border/60 rounded-xl flex h-[220px] flex-col xl:order-1' : 'border-border/30 shadow-elevated rounded-2xl',
+          )}
           onClick={() => navigate('/passivo-trabalhista')}
         >
-          <CardHeader className="pb-3 flex flex-row items-center justify-between">
-            <CardTitle className="flex items-center gap-2.5 text-h3 font-display">
-              <div className="p-1.5 rounded-lg bg-gradient-to-br from-destructive to-destructive/70">
+          <CardHeader className={cn('pb-3 flex flex-row items-center justify-between', isDashboard && 'p-3 pb-2 space-y-0')}>
+            <CardTitle className="flex items-center gap-2.5 font-display text-base">
+              {/* Ícone com o tom mais saturado da paleta (#FF0000→#FF2C2C):
+                  é o primeiro elemento que o olho encontra, então recebe o
+                  vermelho mais "cru" — só no card do Dashboard; a variante
+                  do Executivo mantém o gradiente `destructive` de sempre. */}
+              <div className={cn(
+                'p-1.5 rounded-lg shrink-0',
+                isDashboard ? 'bg-gradient-to-br from-[#FF0000] to-[#FF2C2C]' : 'bg-gradient-to-br from-destructive to-destructive/70',
+              )}>
                 <Scale className="h-4 w-4 text-white" />
               </div>
-              Passivo (Risco)
+              {/* Header em duas linhas (título + subtítulo) — mesmo padrão de
+                  "Resumo Operacional"/"ListCard", só que a segunda linha vive
+                  dentro do próprio `CardTitle` (junto do ícone) porque na
+                  referência o ícone acompanha as duas linhas, não só a
+                  primeira. `leading-snug` no `<span>` do título sobrescreve
+                  o que o `<h3>` do `CardTitle` herda (`leading-none`), que
+                  senão vaza por herança de CSS. Subtítulo no mesmo padrão
+                  `.text-overline` + `normal-case tracking-normal` usado nos
+                  demais cards (Departamentos, Visão Geral da Empresa etc.) —
+                  cancela o uppercase/tracking largo do token, mantendo só o
+                  tamanho de 10px. */}
+              {isDashboard ? (
+                <span className="flex flex-col">
+                  <span className="leading-snug">Passivo Trabalhista (Risco)</span>
+                  <span className="mt-1 block text-overline font-normal normal-case tracking-normal text-muted-foreground">
+                    Valor acumulado e percentual de provisionamento.
+                  </span>
+                </span>
+              ) : (
+                'Passivo (Risco)'
+              )}
             </CardTitle>
-            <Button variant="ghost" size="icon" aria-label="Próximo" className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
-               <ChevronRight className="h-4 w-4" />
-            </Button>
+            {!isDashboard && (
+              <Button variant="ghost" size="icon" aria-label="Próximo" className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                 <ChevronRight className="h-4 w-4" />
+              </Button>
+            )}
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-end justify-between">
-              <div>
-                <p className="text-display font-display font-bold text-destructive">
+          {/* Sem `justify-between` no container: a linha do valor é que
+              recebe `flex-1` logo abaixo e absorve o espaço sobrando dentro
+              da altura fixa do card — ver comentário junto dela. */}
+          <CardContent className={cn('space-y-4', isDashboard && 'flex min-h-0 flex-1 flex-col gap-3 space-y-0 p-3 pt-0')}>
+            {/* Valor + badge de tendência viram uma COLUNA fixa (não mais uma
+                linha com `flex-wrap`): antes, em cards estreitos, a etiqueta
+                "↑12%" não cabia ao lado do valor grande e quebrava pra baixo
+                de forma imprevisível — sem hierarquia clara entre os dois.
+                Agora é sempre valor em cima (maior, dominante) e badge
+                pequeno embaixo, deterministicamente. `items-center` alinha
+                essa coluna contra o centro do sparkline, que ficou bem mais
+                alto que ela. */}
+            <div className={cn('flex items-center justify-between gap-4', isDashboard && 'flex-1')}>
+              <div className="min-w-0">
+                {/* Valor no tom médio da paleta (#FF2C2C) — vívido, mas um
+                    degrau abaixo do ícone, pra não competir com ele pela
+                    atenção. Fora do Dashboard, mantém `text-destructive` de
+                    sempre. Exceção deliberada ao Nível 2 padrão (24px/700,
+                    `.text-data`): pedido explícito para este valor ficar
+                    maior que os demais KPIs — `text-3xl` (30px, mesmo tamanho
+                    já usado aqui antes da padronização) sobrescreve só o
+                    tamanho; `.text-data` continua dando a família Outfit, o
+                    letter-spacing e o peso 700 (bold — não mais extrabold,
+                    revisado na passada de leveza tipográfica: o "maior" fica,
+                    o "mais grosso" não). Cabe sem sobrepor nada: a caixa do
+                    sparkline ao lado é fixa em 80px de altura, bem maior que
+                    a coluna valor+badge mesmo nesse tamanho. */}
+                <p className={cn(isDashboard ? 'text-data text-3xl text-[#FF2C2C]' : 'text-display text-destructive')}>
                   <AnimatedNumber value={stats?.passivoTotal || 0} format={(v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v)} />
                 </p>
-                <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Projeção Acumulada</p>
+                {isDashboard && (
+                  // Badge no tom mais claro da paleta (#FF5353) — deliberadamente
+                  // mais suave que o valor acima, reforçando que é uma nota
+                  // secundária (tendência), não o dado principal do card.
+                  // `.text-overline` (Nível 3 denso, 10px) — mesmo padrão do
+                  // badge de tendência do `MetricCard`.
+                  <span className="mt-1.5 inline-flex items-center gap-0.5 rounded-full bg-[#FF5353]/15 px-1.5 py-0.5 text-overline font-medium text-[#FF5353]">
+                    <ArrowUp className="h-3 w-3" />
+                    {passivoTrendPct}%
+                  </span>
+                )}
               </div>
+              {isDashboard && (
+                // `mr-1`: afasta o gráfico da borda direita do card sem
+                // encolher o ganho de tamanho pedido antes — o `gap-4` do
+                // container pai já separa do bloco de valor à esquerda.
+                // Cor no tom mais saturado (#FF0000), igual ao ícone: é um
+                // elemento gráfico, precisa do vermelho mais vívido pra se
+                // destacar contra o fundo escuro do card.
+                <div className="mr-1 h-20 w-32 shrink-0">
+                  {/* `width`/`height` em px batendo exatamente com a caixa
+                      (h-20=80px / w-32=128px) — sem isso o SVG renderiza no
+                      tamanho padrão do componente (80×28), bem menor que a
+                      caixa que o envolve. */}
+                  <MiniSparkline
+                    data={[40, 60, 45, 80, 55, 90]}
+                    color="#FF0000"
+                    width={128}
+                    height={80}
+                    strokeWidth={2.5}
+                    fillOpacity={0.55}
+                  />
+                </div>
+              )}
+            </div>
+
+            {!isDashboard && (
               <div className="h-10 w-20 opacity-60">
                 <MiniSparkline data={[40, 60, 45, 80, 55, 90]} color="hsl(var(--destructive))" />
               </div>
-            </div>
-            
-            <div className="space-y-2">
-               <div className="flex justify-between text-[11px]">
-                  <span className="text-muted-foreground font-medium">Provisionamento</span>
-                  <span className="font-bold text-destructive">Crítico</span>
-               </div>
-               <div className="h-1.5 bg-destructive/10 rounded-full overflow-hidden">
-                  <motion.div initial={{ width: 0 }} animate={{ width: '85%' }} transition={{ duration: 1.5, delay: 0.5 }} className="h-full bg-destructive rounded-full" />
-               </div>
+            )}
+
+            {/* Sem `mt-auto` aqui: agora é a linha do valor (`flex-1` acima)
+                que absorve o espaço sobrando, então este bloco já cai
+                naturalmente colado nela, sem precisar de uma margem extra
+                para "empurrar" — a folga vira respiro em volta do gráfico,
+                não um vão solto entre as duas seções. */}
+            <div className="space-y-1.5">
+              <div className="flex justify-between text-caption">
+                <span className="text-muted-foreground font-medium">Provisionamento</span>
+                {/* Mesmo tom do valor principal (#FF2C2C) — os dois números
+                    "hero" do card ficam no mesmo degrau da hierarquia. */}
+                <span className={cn('font-medium', isDashboard ? 'text-[#FF2C2C]' : 'text-destructive')}>{provisionamentoPct}%</span>
+              </div>
+              <div className="h-1.5 bg-destructive/10 rounded-full overflow-hidden">
+                {/* Degradê com 3 tons reais (não só opacidade do mesmo
+                    vermelho): mais claro no início, mais intenso perto do
+                    fim — reforça visualmente "risco subindo". */}
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${provisionamentoPct}%` }}
+                  transition={{ duration: 1.5, delay: 0.5 }}
+                  className={cn(
+                    'h-full rounded-full',
+                    isDashboard ? 'bg-gradient-to-r from-[#FF5353] via-[#FF2C2C] to-[#FF0000]' : 'bg-gradient-to-r from-destructive/60 via-destructive to-destructive',
+                  )}
+                />
+              </div>
             </div>
           </CardContent>
         </MotionCard>
 
         {/* Movimentação */}
         <MotionCard initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65 }}
-          className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2.5 text-h3 font-display">
-              <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary-glow to-primary">
-                <Activity className="h-4 w-4 text-primary-foreground" />
-              </div>
-              Movimentação
-            </CardTitle>
+          className={cn(
+            'border overflow-hidden',
+            isDashboard ? 'border-border/60 rounded-xl flex h-[220px] flex-col xl:order-2' : 'border-border/30 shadow-elevated rounded-2xl',
+          )}>
+          <CardHeader className={cn('pb-3', isDashboard && 'p-3 pb-2 space-y-0')}>
+            <div className="flex items-center justify-between gap-2">
+              <CardTitle className="flex items-center gap-2.5 font-display text-base">
+                <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary-glow to-primary shrink-0">
+                  <Activity className="h-4 w-4 text-primary-foreground" />
+                </div>
+                Movimentação
+              </CardTitle>
+              {/* `text-[10px]` além de `text-overline`: `Button` já injeta
+                  `text-sm` na própria base, que vence a cascata sobre o
+                  token customizado — só a escala nativa/arbitrária do
+                  Tailwind é reconhecida pelo `tailwind-merge` e substitui
+                  corretamente (mesmo mecanismo de "Ações em Destaque" logo
+                  abaixo e de vários badges já corrigidos). */}
+              {isDashboard && (
+                <Button variant="ghost" size="sm" onClick={() => navigate('/relatorios')} className="h-7 shrink-0 px-2 text-overline text-[10px] text-info normal-case tracking-normal hover:bg-info/5">
+                  Ver detalhes
+                </Button>
+              )}
+            </div>
+            {isDashboard && (
+              <p className="mt-1.5 text-overline font-normal text-muted-foreground normal-case tracking-normal">Este mês</p>
+            )}
           </CardHeader>
-          <CardContent className="space-y-3">
+          {/* Sem `justify-around`: os 3 tiles agora vêm de um `grid-cols-3`
+              (largura/gap determinísticos), não de espaço distribuído entre
+              itens soltos flutuando no meio do card. */}
+          <CardContent className={cn('space-y-3', isDashboard && 'flex min-h-0 flex-1 flex-col p-3 pt-0')}>
             {isLoadingStats ? (
-              <div className="space-y-3">{Array(3).fill(0).map((_, i) => <CardSkeleton key={i} className="h-16" />)}</div>
+              <div className={isDashboard ? 'grid grid-cols-3 gap-2' : 'space-y-3'}>
+                {Array(3).fill(0).map((_, i) => <CardSkeleton key={i} className={isDashboard ? 'h-20' : 'h-16'} />)}
+              </div>
+            ) : isDashboard ? (
+              // `content-center`: grid de 1 fileira auto-height — sem isso o
+              // `flex-1` do container deixa o espaço sobrando embaixo da
+              // fileira (grid não centraliza sozinho como o `items-center`
+              // do flex fazia antes).
+              <div className="grid flex-1 grid-cols-3 content-center gap-2">
+                <MiniStat label="Admissões" value={stats?.admissoesMes || 0} icon={UserPlus} tone="bg-primary/10 text-primary" index={0} />
+                <MiniStat label="Desligamentos" value={stats?.demissoesMes || 0} icon={UserMinus} tone="bg-destructive/10 text-destructive" index={1} />
+                <MiniStat label="Headcount" value={stats?.headcount || 0} icon={Briefcase} tone="bg-info/10 text-info" index={2} />
+              </div>
             ) : (
               <>
                 <QuickStat label="Admissões" value={stats?.admissoesMes || 0} icon={UserPlus} gradient="from-primary to-primary-glow" index={0} />
@@ -519,11 +715,14 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
           </CardContent>
         </MotionCard>
 
-        {/* Departamentos */}
+        {/* Departamentos — no Dashboard vive em card próprio na linha superior */}
         <MotionCard initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}
-          className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden">
+          className={cn(
+            'border border-border/30 shadow-elevated rounded-2xl overflow-hidden',
+            isDashboard && 'hidden',
+          )}>
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2.5 text-h3 font-display">
+            <CardTitle className="flex items-center gap-2.5 font-display">
               <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-primary-glow">
                 <PieChart className="h-4 w-4 text-primary-foreground" />
               </div>
@@ -546,52 +745,82 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
           </CardContent>
         </MotionCard>
 
-        {/* Indicadores */}
+        {/* Indicadores — "Panorama" na referência do Dashboard */}
         <MotionCard initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.75 }}
-          className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2.5 text-h3 font-display">
+          className={cn(
+            'border overflow-hidden',
+            isDashboard ? 'hidden' : 'border-border/30 shadow-elevated rounded-2xl',
+          )}>
+          <CardHeader className={cn('pb-3', isDashboard && 'p-3 pb-1.5 space-y-0')}>
+            <CardTitle className="flex items-center gap-2.5 font-display text-base">
               <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary/80 to-primary">
                 <TrendingUp className="h-4 w-4 text-primary-foreground" />
               </div>
-              Indicadores
+              {isDashboard ? 'Panorama' : 'Indicadores'}
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          {/* Mesma correção: as 3 linhas de indicador ancoram no topo. */}
+          <CardContent className={cn(isDashboard && 'flex min-h-0 flex-1 flex-col p-3 pt-0')}>
             {isLoadingStats ? (
               <div className="space-y-6">{Array(3).fill(0).map((_, i) => <CardSkeleton key={i} className="h-14 border-0 p-0" />)}</div>
             ) : (
-              <div className="space-y-5">
+              <div className={cn(isDashboard ? 'space-y-5' : 'space-y-5')}>
                 <IndicatorRow label="Turnover" value={stats?.turnover || 0} maxValue={20} />
                 <IndicatorRow label="Absenteísmo" value={stats?.absenteismo || 0} maxValue={10} />
-                <IndicatorRow label="Headcount" value={stats?.headcount || 0} maxValue={Math.max((stats?.headcount || 0) * 1.2, 10)} suffix="" />
+                <IndicatorRow label="Headcount" value={stats?.headcount || 0} maxValue={Math.max((stats?.headcount || 0) * 1.2, 10)} suffix="" direction="higher-better" />
               </div>
             )}
           </CardContent>
         </MotionCard>
 
-        {/* Pendências */}
+        {/* Pendências — "Ações em Destaque" na referência do Dashboard */}
         <MotionCard initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}
-          className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2.5 text-h3 font-display">
-              <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary/60 to-primary/90">
+          className={cn(
+            'border overflow-hidden',
+            isDashboard ? 'border-border/60 rounded-xl flex h-[220px] flex-col xl:order-3' : 'border-border/30 shadow-elevated rounded-2xl',
+          )}>
+          <CardHeader className={cn('pb-3 flex flex-row items-center justify-between', isDashboard && 'p-3 pb-1.5 space-y-0')}>
+            <CardTitle className="flex items-center gap-2 font-display whitespace-nowrap text-base">
+              <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary/60 to-primary/90 shrink-0">
                 <AlertCircle className="h-4 w-4 text-primary-foreground" />
               </div>
-              Pendências
+              {isDashboard ? 'Ações em Destaque' : 'Pendências'}
             </CardTitle>
+            {/* `text-[10px]` além de `text-overline`: mesmo bug de cascata
+                do botão "Ver detalhes" da Movimentação — `Button` injeta
+                `text-sm` na própria base e vencia o token customizado. */}
+            {isDashboard && (
+              <Button variant="ghost" size="sm" onClick={() => handleOpenDetail()} className="h-7 px-2 text-overline text-[10px] text-info normal-case tracking-normal hover:bg-info/5">
+                Ver todas
+              </Button>
+            )}
           </CardHeader>
-          <CardContent>
+          {/* Sem scroll interno no Dashboard: a referência mostra sempre um
+              número fixo e curto de itens (3), nunca rola. Com dados reais
+              podendo ter mais tipos de pendência que isso, mostramos os 3
+              mais relevantes aqui e o resto fica a um clique em "Ver todas"
+              — em vez de rolar dentro do card, ficando diferente do print.
+              `overflow-y-auto` fica só como rede de segurança: com altura
+              fixa (220px) e telas mais estreitas, 3 itens podem não caber
+              exatamente — sem isso o 3º item ficava cortado no meio. */}
+          <CardContent className={cn(isDashboard && 'flex min-h-0 flex-1 flex-col overflow-y-auto custom-scrollbar p-3 pt-0')}>
             {isLoadingPendencias ? (
               <div className="space-y-3">{Array(2).fill(0).map((_, i) => <CardSkeleton key={i} className="h-14 border-0 p-0" />)}</div>
             ) : pendencias && pendencias.length > 0 ? (
-              <div className="space-y-2">
-                {pendencias.map((p, i) => (
-                  <PendenciaItem 
-                    key={i} 
-                    pendencia={p} 
-                    index={i} 
+              // `justify-center` + `gap-2.5` (era `justify-between`, sem gap
+              // fixo): antes os 3 itens grudavam no topo (colados no header)
+              // e o `justify-between` jogava toda a folga da altura fixa do
+              // card como vão entre eles. Centralizar o grupo distribui essa
+              // folga também acima (afastando do título) e o gap fixo deixa
+              // o espaço entre os itens menor e consistente.
+              <div className={isDashboard ? 'flex flex-1 flex-col justify-center gap-2.5' : 'space-y-2'}>
+                {(isDashboard ? pendencias.slice(0, 3) : pendencias).map((p, i) => (
+                  <PendenciaItem
+                    key={i}
+                    pendencia={p}
+                    index={i}
                     onClick={() => handleOpenDetail(p.tipo)}
+                    variant={isDashboard ? 'dashboard' : 'default'}
                   />
                 ))}
               </div>
@@ -601,7 +830,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
                 <div className="p-4 rounded-2xl bg-gradient-to-br from-success/20 to-finance/10 mb-3">
                   <CheckCircle2 className="h-8 w-8 text-success" />
                 </div>
-                <p className="font-display font-semibold">Tudo em dia!</p>
+                <p className="font-display font-medium">Tudo em dia!</p>
                 <p className="text-caption text-muted-foreground font-body mt-1">Nenhuma pendência encontrada</p>
               </motion.div>
             )}
@@ -615,7 +844,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
           <DialogHeader className="p-6 pb-4 border-b border-border/10 bg-gradient-to-r from-primary/5 via-transparent to-transparent">
             <div className="flex items-center justify-between">
               <div>
-                <DialogTitle className="text-2xl font-display font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+                <DialogTitle className="text-2xl font-display font-medium bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
                   Lista de Pendências
                 </DialogTitle>
                 <DialogDescription className="text-muted-foreground">
@@ -730,8 +959,8 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
                             </div>
                             <div className="min-w-0">
                               <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                <h4 className="font-display font-bold text-lg leading-tight">{item.titulo}</h4>
-                                <Badge className={cn("text-[10px] font-bold uppercase tracking-wider py-0.5", getPriorityColor(item.prioridade))}>
+                                <h4 className="font-display font-medium text-lg leading-tight">{item.titulo}</h4>
+                                <Badge className={cn("text-[10px] font-medium uppercase tracking-wider py-0.5", getPriorityColor(item.prioridade))}>
                                   {item.prioridade}
                                 </Badge>
                                 <Badge variant="outline" className="text-[10px] opacity-70">
@@ -808,22 +1037,22 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
                                   <div className="p-3 rounded-xl bg-primary/5 border border-primary/10 flex items-center gap-2 group/card">
                                     <MapPin className="h-4 w-4 text-primary opacity-70 group-hover/card:scale-110 transition-transform" />
                                     <div className="text-[10px]">
-                                      <p className="text-muted-foreground font-bold uppercase">Timezone</p>
-                                      <p className="font-semibold text-foreground">{item.raw.relatorio_conformidade?.timezone || 'America/Sao_Paulo'}</p>
+                                      <p className="text-muted-foreground font-medium uppercase">Timezone</p>
+                                      <p className="font-medium text-foreground">{item.raw.relatorio_conformidade?.timezone || 'America/Sao_Paulo'}</p>
                                     </div>
                                   </div>
                                   <div className="p-3 rounded-xl bg-warning/5 border border-warning/10 flex items-center gap-2 group/card">
                                     <History className="h-4 w-4 text-warning opacity-70 group-hover/card:rotate-[-45deg] transition-transform" />
                                     <div className="text-[10px]">
-                                      <p className="text-muted-foreground font-bold uppercase">Hora Original</p>
-                                      <p className="font-semibold text-foreground">{item.raw.hora_original?.substring(0, 5) || 'Não registrada'}</p>
+                                      <p className="text-muted-foreground font-medium uppercase">Hora Original</p>
+                                      <p className="font-medium text-foreground">{item.raw.hora_original?.substring(0, 5) || 'Não registrada'}</p>
                                     </div>
                                   </div>
                                   <div className="p-3 rounded-xl bg-success/5 border border-success/10 flex items-center gap-2 group/card">
                                     <Shield className="h-4 w-4 text-success opacity-70 group-hover/card:scale-110 transition-transform" />
                                     <div className="text-[10px]">
-                                      <p className="text-muted-foreground font-bold uppercase">Geofencing</p>
-                                      <p className={cn("font-semibold", item.raw.relatorio_conformidade?.geofencing ? "text-success" : "text-destructive")}>
+                                      <p className="text-muted-foreground font-medium uppercase">Geofencing</p>
+                                      <p className={cn("font-medium", item.raw.relatorio_conformidade?.geofencing ? "text-success" : "text-destructive")}>
                                         {item.raw.relatorio_conformidade?.geofencing ? 'Dentro do Perímetro' : 'Fora do Perímetro'}
                                       </p>
                                     </div>
@@ -834,8 +1063,8 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
                               <TabsContent value="history" className="mt-0">
                                 <div className="p-4 rounded-xl bg-muted/20 border border-border/10">
                                   <div className="flex items-center justify-between text-[10px] mb-3 pb-2 border-b border-border/5">
-                                    <span className="font-bold text-muted-foreground uppercase">Campo</span>
-                                    <span className="font-bold text-muted-foreground uppercase text-right">Comparação (De → Para)</span>
+                                    <span className="font-medium text-muted-foreground uppercase">Campo</span>
+                                    <span className="font-medium text-muted-foreground uppercase text-right">Comparação (De → Para)</span>
                                   </div>
                                   <div className="space-y-2">
                                     <div className="flex justify-between text-[11px]">
@@ -843,7 +1072,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
                                       <span className="font-medium">
                                         <span className="text-destructive line-through opacity-70 mr-2">{item.raw.hora_original?.substring(0, 5) || '--:--'}</span>
                                         <ChevronRight className="h-3 w-3 inline text-muted-foreground mx-1" />
-                                        <span className="text-success font-bold ml-1">{item.raw.hora_sugerida?.substring(0, 5)}</span>
+                                        <span className="text-success font-medium ml-1">{item.raw.hora_sugerida?.substring(0, 5)}</span>
                                       </span>
                                     </div>
                                     <div className="flex justify-between text-[11px]">
@@ -930,7 +1159,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
                 <div className="p-6 rounded-3xl bg-muted/20 mb-4 border border-border/10">
                   <X className="h-12 w-12 text-muted-foreground/30" />
                 </div>
-                <h3 className="text-xl font-display font-bold">Nenhuma pendência</h3>
+                <h3 className="text-xl font-display font-medium">Nenhuma pendência</h3>
                 <p className="text-muted-foreground mt-2 max-w-xs mx-auto">
                   Não encontramos itens que correspondam à sua busca ou filtro.
                 </p>
@@ -955,7 +1184,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
           <DialogHeader className="p-6 pb-4 border-b border-border/10">
             <div className="flex items-center justify-between">
               <div>
-                <DialogTitle className="text-xl font-display font-bold">Central de Notificações</DialogTitle>
+                <DialogTitle className="text-xl font-display font-medium">Central de Notificações</DialogTitle>
                 <DialogDescription>Histórico de aprovações e ações do sistema.</DialogDescription>
               </div>
               <Button variant="ghost" size="sm" onClick={markAllRead} className="text-xs">Marcar todas como lidas</Button>
@@ -979,7 +1208,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-1">
-                          <h4 className="font-bold text-sm">{n.titulo}</h4>
+                          <h4 className="font-medium text-sm">{n.titulo}</h4>
                           <span className="text-[10px] text-muted-foreground">{format(new Date(n.created_at), "dd/MM/yyyy HH:mm")}</span>
                         </div>
                         <p className="text-xs text-muted-foreground">{n.mensagem}</p>

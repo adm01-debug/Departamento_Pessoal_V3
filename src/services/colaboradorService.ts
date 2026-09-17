@@ -1,6 +1,6 @@
 import { BaseService, ListOptions, ListResponse } from './baseService';
 import { Colaborador } from '@/types/entities';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseBase } from '@/integrations/supabase/client';
 
 class ColaboradorService extends BaseService<Colaborador> {
   constructor() {
@@ -56,7 +56,7 @@ class ColaboradorService extends BaseService<Colaborador> {
     const statuses = ['ativo', 'desligado', 'afastado', 'ferias'] as const;
 
     const countPromises = statuses.map(async (status) => {
-      let query = supabase
+      let query = supabaseBase
         .from('colaboradores')
         .select('id', { count: 'exact', head: true })
         .eq('status', status);

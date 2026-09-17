@@ -75,14 +75,14 @@ export function Simulador13Dialog() {
           {resultado && (
             <Card className="border border-border/30 rounded-xl">
               <CardContent className="p-4 space-y-2 text-sm">
-                <div className="flex justify-between"><span>Avos:</span><span className="font-bold">{resultado.avos}/12</span></div>
-                <div className="flex justify-between"><span>Valor Bruto:</span><span className="font-bold">{formatCurrency(resultado.proventos.valorBruto)}</span></div>
+                <div className="flex justify-between"><span>Avos:</span><span className="font-medium">{resultado.avos}/12</span></div>
+                <div className="flex justify-between"><span>Valor Bruto:</span><span className="font-medium">{formatCurrency(resultado.proventos.valorBruto)}</span></div>
                 <div className="flex justify-between"><span>INSS:</span><span className="text-destructive">-{formatCurrency(resultado.descontos.inss)}</span></div>
                 <div className="flex justify-between"><span>IRRF:</span><span className="text-destructive">-{formatCurrency(resultado.descontos.irrf)}</span></div>
                 {resultado.descontos.adiantamento1Parcela > 0 && (
                   <div className="flex justify-between"><span>Adiant. 1ª Parcela:</span><span className="text-destructive">-{formatCurrency(resultado.descontos.adiantamento1Parcela)}</span></div>
                 )}
-                <div className="border-t border-border/30 pt-2 flex justify-between text-base font-bold">
+                <div className="border-t border-border/30 pt-2 flex justify-between text-base font-medium">
                   <span>Líquido:</span><span className="text-primary">{formatCurrency(resultado.liquido)}</span>
                 </div>
                 <p className="text-xs text-muted-foreground">Pagamento até: {new Date(resultado.dataLimitePagamento).toLocaleDateString('pt-BR')}</p>

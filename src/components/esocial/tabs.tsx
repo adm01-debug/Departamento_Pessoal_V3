@@ -63,7 +63,7 @@ export function ESocialLogsTab({ logs, eventos, refreshLogs }: ESocialLogsTabPro
                   {logs.map((log: any) => (
                     <tr key={log.id} className="hover:bg-muted/30 transition-colors">
                       <td className="px-4 py-3 font-mono text-xs">{formatDateTime(log.created_at)}</td>
-                      <td className="px-4 py-3 font-bold">{eventos.find((e) => e.id === log.evento_id)?.tipo_evento || 'S-XXXX'}</td>
+                      <td className="px-4 py-3 font-medium">{eventos.find((e) => e.id === log.evento_id)?.tipo_evento || 'S-XXXX'}</td>
                       <td className="px-4 py-3">
                         <Badge variant={log.status === 'enviado' ? 'default' : 'destructive'} className="rounded-md">
                           {log.status}
@@ -81,16 +81,16 @@ export function ESocialLogsTab({ logs, eventos, refreshLogs }: ESocialLogsTabPro
                             </DialogHeader>
                             <div className="space-y-6 pt-4">
                               <div>
-                                <h4 className="text-sm font-bold mb-2">Request XML (Envio)</h4>
+                                <h4 className="text-sm font-medium mb-2">Request XML (Envio)</h4>
                                 <pre className="p-3 bg-muted rounded-lg text-[10px] overflow-x-auto border">{log.request_xml}</pre>
                               </div>
                               <div>
-                                <h4 className="text-sm font-bold mb-2">Response XML (Retorno Governo)</h4>
+                                <h4 className="text-sm font-medium mb-2">Response XML (Retorno Governo)</h4>
                                 <pre className="p-3 bg-muted rounded-lg text-[10px] overflow-x-auto border">{log.response_xml}</pre>
                               </div>
                               {log.error_details && (
                                 <div>
-                                  <h4 className="text-sm font-bold text-destructive mb-2">Detalhes do Erro</h4>
+                                  <h4 className="text-sm font-medium text-destructive mb-2">Detalhes do Erro</h4>
                                   <div className="p-3 bg-destructive/5 rounded-lg border border-destructive/20 text-xs">
                                     {JSON.stringify(log.error_details, null, 2)}
                                   </div>
@@ -153,7 +153,7 @@ export function ESocialConfigTab({
                     <ShieldCheck className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-bold text-sm">{c.subject}</p>
+                    <p className="font-medium text-sm">{c.subject}</p>
                     <p className="text-[10px] text-muted-foreground uppercase">Expira em: {formatDate(c.valid_to)}</p>
                   </div>
                 </div>
@@ -260,7 +260,7 @@ export function ESocialConfigTab({
               <div className="flex items-center gap-3">
                 <RadioGroupItem value="2" id="amb-2" />
                 <Label htmlFor="amb-2" className="cursor-pointer">
-                  <p className="font-bold">Produção Restrita (Homologação)</p>
+                  <p className="font-medium">Produção Restrita (Homologação)</p>
                   <p className="text-xs text-muted-foreground">Ambiente de testes sem valor fiscal</p>
                 </Label>
               </div>
@@ -276,7 +276,7 @@ export function ESocialConfigTab({
               <div className="flex items-center gap-3">
                 <RadioGroupItem value="1" id="amb-1" />
                 <Label htmlFor="amb-1" className="cursor-pointer">
-                  <p className="font-bold">Produção Real</p>
+                  <p className="font-medium">Produção Real</p>
                   <p className="text-xs text-muted-foreground">Envio oficial ao Governo Federal</p>
                 </Label>
               </div>
@@ -364,7 +364,7 @@ export function ESocialEventDetailsDialog({
 
             {selectedEvento?.mensagem_erro && (
               <div className="p-4 rounded-xl border border-destructive/20 bg-destructive/5 text-destructive text-sm font-body">
-                <p className="font-bold flex items-center gap-1.5 mb-1"><AlertCircle className="h-4 w-4" /> Erro na Transmissão:</p>
+                <p className="font-medium flex items-center gap-1.5 mb-1"><AlertCircle className="h-4 w-4" /> Erro na Transmissão:</p>
                 {selectedEvento.mensagem_erro}
               </div>
             )}

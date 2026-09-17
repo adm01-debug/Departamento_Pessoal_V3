@@ -50,7 +50,7 @@ function Step({ isActive, isCompleted, label, icon: Icon }: StepProps) {
         {isCompleted ? <CheckCircle2 className="h-6 w-6" /> : <Icon className="h-5 w-5" />}
       </div>
       <span className={cn(
-        "text-[10px] font-bold uppercase tracking-widest text-center",
+        "text-[10px] font-medium uppercase tracking-widest text-center",
         isActive ? "text-foreground" : "text-muted-foreground"
       )}>
         {label}
@@ -173,7 +173,7 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
               <Calculator className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-xl font-display font-bold">Assistente de Folha</h2>
+              <h2 className="text-xl font-display font-medium">Assistente de Folha</h2>
               <p className="text-xs opacity-80">Competência {competencia}</p>
             </div>
           </div>
@@ -210,7 +210,7 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
                     {pendingPoints && pendingPoints > 0 ? <AlertTriangle /> : <CheckCircle2 />}
                   </div>
                   <div>
-                    <p className="font-bold text-sm">Registros de Ponto</p>
+                    <p className="font-medium text-sm">Registros de Ponto</p>
                     <p className="text-xs text-muted-foreground">
                       {pendingPoints && pendingPoints > 0 
                         ? `Existem ${pendingPoints} batidas aguardando aprovação.` 
@@ -246,15 +246,15 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
                 className="space-y-4"
               >
                 <div className="p-4 rounded-2xl border border-border/30 bg-muted/20 space-y-3">
-                  <p className="text-sm font-bold">Verbas Variáveis e Eventos</p>
+                  <p className="text-sm font-medium">Verbas Variáveis e Eventos</p>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="p-3 bg-card rounded-xl border border-border/30">
-                      <p className="text-[10px] uppercase font-bold text-muted-foreground">Horas Extras (Estimadas)</p>
-                      <p className="text-lg font-display font-bold text-success">Calculado</p>
+                      <p className="text-[10px] uppercase font-medium text-muted-foreground">Horas Extras (Estimadas)</p>
+                      <p className="text-lg font-display font-medium text-success">Calculado</p>
                     </div>
                     <div className="p-3 bg-card rounded-xl border border-border/30">
-                      <p className="text-[10px] uppercase font-bold text-muted-foreground">DSR sobre Variáveis</p>
-                      <p className="text-lg font-display font-bold text-success">Automático</p>
+                      <p className="text-[10px] uppercase font-medium text-muted-foreground">DSR sobre Variáveis</p>
+                      <p className="text-lg font-display font-medium text-success">Automático</p>
                     </div>
                   </div>
                   <p className="text-[11px] text-muted-foreground">
@@ -284,7 +284,7 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
                     <div className="p-6 rounded-3xl bg-primary/10 mb-6">
                       <Calculator className="h-12 w-12 text-primary animate-pulse" />
                     </div>
-                    <h3 className="text-lg font-display font-bold">Pronto para calcular?</h3>
+                    <h3 className="text-lg font-display font-medium">Pronto para calcular?</h3>
                     <p className="text-sm text-muted-foreground max-w-xs mt-2 mb-8">
                       O motor de cálculo irá processar os tributos e encargos para todos os colaboradores ativos.
                     </p>
@@ -296,7 +296,7 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
                 ) : (
                   <>
                     <Loader2 className="h-16 w-16 text-primary animate-spin mb-6" />
-                    <h3 className="text-lg font-display font-bold text-primary">Processando Folha...</h3>
+                    <h3 className="text-lg font-display font-medium text-primary">Processando Folha...</h3>
                     <div className="w-full max-w-xs bg-muted rounded-full h-1.5 mt-6 overflow-hidden">
                       <motion.div 
                         className="h-full bg-primary" 
@@ -324,7 +324,7 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
                 <div className="p-5 rounded-full bg-success/10 text-success mb-4">
                   <CheckCircle2 className="h-12 w-12" />
                 </div>
-                <h3 className="text-xl font-display font-bold">Cálculo Finalizado!</h3>
+                <h3 className="text-xl font-display font-medium">Cálculo Finalizado!</h3>
                 <p className="text-sm text-muted-foreground mt-2 mb-4">
                   A folha da competência {competencia} foi encerrada com sucesso.
                 </p>

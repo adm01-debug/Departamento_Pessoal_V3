@@ -45,8 +45,8 @@ export default function OrganogramaPage() {
               <Building2 className="h-16 w-16" />
             </div>
             <CardContent className="p-6">
-              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest mb-1">Total de Departamentos</p>
-              <h3 className="text-3xl font-display font-bold">{stats.totalDeptos}</h3>
+              <p className="text-[10px] uppercase font-medium text-muted-foreground tracking-widest mb-1">Total de Departamentos</p>
+              <h3 className="text-3xl font-display font-medium">{stats.totalDeptos}</h3>
               <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
                 <TrendingUp className="h-3 w-3 text-success" /> Estrutura ativa
               </p>
@@ -58,8 +58,8 @@ export default function OrganogramaPage() {
               <Users className="h-16 w-16" />
             </div>
             <CardContent className="p-6">
-              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest mb-1">Colaboradores Ativos</p>
-              <h3 className="text-3xl font-display font-bold">{stats.totalColabs}</h3>
+              <p className="text-[10px] uppercase font-medium text-muted-foreground tracking-widest mb-1">Colaboradores Ativos</p>
+              <h3 className="text-3xl font-display font-medium">{stats.totalColabs}</h3>
               <p className="text-xs text-muted-foreground mt-2">Distribuídos na hierarquia</p>
             </CardContent>
           </Card>
@@ -91,7 +91,7 @@ export default function OrganogramaPage() {
         ) : (
           <div className="text-center py-20 border-2 border-dashed border-border/40 rounded-3xl opacity-40">
             <Building2 className="h-12 w-12 mx-auto mb-4" />
-            <p className="font-display font-bold">Nenhuma estrutura definida</p>
+            <p className="font-display font-medium">Nenhuma estrutura definida</p>
             <p className="text-sm">Cadastre departamentos e defina seus relacionamentos hierárquicos.</p>
           </div>
         )}

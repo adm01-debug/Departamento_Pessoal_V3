@@ -127,7 +127,7 @@ export function ESocialAuditDialog({ open, onOpenChange, eventos }: ESocialAudit
                   <ShieldCheck className="h-8 w-8 text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
                 </div>
                 <div className="space-y-2">
-                  <p className="font-bold text-sm animate-pulse">Analisando layouts e cruzando dados...</p>
+                  <p className="font-medium text-sm animate-pulse">Analisando layouts e cruzando dados...</p>
                   <Progress value={progress} className="h-1.5 w-64 mx-auto bg-primary/10" />
                   <p className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">{progress}% COMPLETO</p>
                 </div>
@@ -141,11 +141,11 @@ export function ESocialAuditDialog({ open, onOpenChange, eventos }: ESocialAudit
               >
                 <div className="flex items-center justify-between p-4 rounded-2xl bg-background border border-border/50 shadow-xs">
                   <div>
-                    <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Score de Conformidade</p>
-                    <p className="text-3xl font-display font-bold text-primary">{results?.score}%</p>
+                    <p className="text-xs text-muted-foreground uppercase font-medium tracking-wider">Score de Conformidade</p>
+                    <p className="text-3xl font-display font-medium text-primary">{results?.score}%</p>
                   </div>
                   <div className={cn(
-                    "h-12 w-12 rounded-full border-4 flex items-center justify-center font-bold text-lg",
+                    "h-12 w-12 rounded-full border-4 flex items-center justify-center font-medium text-lg",
                     results!.score > 80 ? "border-success/30 text-success" : 
                     results!.score > 50 ? "border-warning/30 text-warning" : 
                     "border-destructive/30 text-destructive"
@@ -155,7 +155,7 @@ export function ESocialAuditDialog({ open, onOpenChange, eventos }: ESocialAudit
                 </div>
 
                 <div className="space-y-3">
-                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest px-1">Alertas Detectados</p>
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest px-1">Alertas Detectados</p>
                   <div className="space-y-2 max-h-[200px] overflow-auto pr-1">
                     {results?.issues.map((issue, i) => (
                       <div key={i} className={cn(

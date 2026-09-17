@@ -41,7 +41,7 @@ export function MobileBottomNav() {
                     <div className="p-2 rounded-xl bg-gradient-to-br from-primary to-primary-glow shadow-glow-sm -mt-6 mb-1 text-primary-foreground transform active:scale-90 transition-transform">
                       <Icon className="h-6 w-6" aria-hidden="true" />
                     </div>
-                    <span className="text-[10px] font-body font-bold text-primary">{label}</span>
+                    <span className="text-[10px] font-body font-medium text-primary">{label}</span>
                   </button>
                 );
               }

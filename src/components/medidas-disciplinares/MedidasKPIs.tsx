@@ -92,7 +92,7 @@ export function MedidasKPIs({ stats }: MedidasKPIsProps) {
                           <span className="flex h-2 w-2 rounded-full bg-warning animate-pulse" />
                         )}
                       </div>
-                      <p className="text-2xl font-display font-bold tracking-tight">{value}</p>
+                      <p className="text-2xl font-display font-semibold tracking-tight">{value}</p>
                       <p className="text-xs text-muted-foreground font-body mt-0.5">{kpi.label}</p>
                     </CardContent>
                   </Card>

@@ -155,7 +155,7 @@ export function PortalMeusDadosTab({ nome, email, profile, userId, navigate }: P
           <Separator className="bg-border/20" />
 
           <div className="space-y-3">
-            <p className="text-[10px] font-bold uppercase text-muted-foreground">Tópicos de Interesse</p>
+            <p className="text-[10px] font-medium uppercase text-muted-foreground">Tópicos de Interesse</p>
             <div className="flex items-center justify-between">
               <span className="text-xs font-body">Vencimento de Férias</span>
               <Switch 

@@ -78,7 +78,7 @@ export default function BeneficioFormPage() {
             />
 
             <div className="flex flex-col gap-2 pt-8">
-               <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Elegibilidade</label>
+               <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Elegibilidade</label>
                <div className="flex items-center gap-2">
                  <input type="checkbox" {...register('obrigatorio')} id="obrigatorio" className="rounded border-border" />
                  <label htmlFor="obrigatorio" className="text-sm">Benefício Obrigatório (Convenção Coletiva)</label>

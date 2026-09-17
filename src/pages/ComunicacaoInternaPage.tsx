@@ -174,7 +174,7 @@ export default function ComunicacaoInternaPage() {
               <div className={cn("h-[2px] bg-gradient-to-r", s.gradient)} />
               <CardContent className="p-4 flex items-center gap-3">
                 <div className={cn("p-2 rounded-xl bg-gradient-to-br", s.gradient)}><s.icon className="h-4 w-4 text-primary-foreground" /></div>
-                <div><p className="text-xl font-display font-bold">{s.value}</p><p className="text-[11px] text-muted-foreground font-body">{s.label}</p></div>
+                <div><p className="text-xl font-display font-medium">{s.value}</p><p className="text-[11px] text-muted-foreground font-body">{s.label}</p></div>
               </CardContent>
             </Card>
           </motion.div>

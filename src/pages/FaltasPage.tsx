@@ -124,7 +124,7 @@ export default function FaltasPage() {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <Card className="border border-border/30 shadow-elevated rounded-2xl">
             <CardContent className="pt-4 text-center">
-              <p className="text-2xl font-display font-bold">{stats.total}</p>
+              <p className="text-2xl font-display font-medium">{stats.total}</p>
               <p className="text-sm text-muted-foreground font-body">Total</p>
             </CardContent>
           </Card>
@@ -132,7 +132,7 @@ export default function FaltasPage() {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
           <Card className="border border-border/30 shadow-elevated rounded-2xl">
             <CardContent className="pt-4 text-center">
-              <p className="text-2xl font-display font-bold text-success">{stats.justificadas}</p>
+              <p className="text-2xl font-display font-medium text-success">{stats.justificadas}</p>
               <p className="text-sm text-muted-foreground font-body">Justificadas</p>
             </CardContent>
           </Card>
@@ -140,7 +140,7 @@ export default function FaltasPage() {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
           <Card className="border border-border/30 shadow-elevated rounded-2xl">
             <CardContent className="pt-4 text-center">
-              <p className="text-2xl font-display font-bold text-destructive">{stats.injustificadas}</p>
+              <p className="text-2xl font-display font-medium text-destructive">{stats.injustificadas}</p>
               <p className="text-sm text-muted-foreground font-body">Injustificadas</p>
             </CardContent>
           </Card>
@@ -148,7 +148,7 @@ export default function FaltasPage() {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
           <Card className="border border-border/30 shadow-elevated rounded-2xl">
             <CardContent className="pt-4 text-center">
-              <p className="text-2xl font-display font-bold text-warning">{stats.pendentes}</p>
+              <p className="text-2xl font-display font-medium text-warning">{stats.pendentes}</p>
               <p className="text-sm text-muted-foreground font-body">Pendentes</p>
             </CardContent>
           </Card>
@@ -156,7 +156,7 @@ export default function FaltasPage() {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <Card className="border border-border/30 shadow-elevated rounded-2xl">
             <CardContent className="pt-4 text-center">
-              <p className="text-2xl font-display font-bold text-info">{stats.descontadas}</p>
+              <p className="text-2xl font-display font-medium text-info">{stats.descontadas}</p>
               <p className="text-sm text-muted-foreground font-body">Descontadas</p>
             </CardContent>
           </Card>

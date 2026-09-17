@@ -23,6 +23,7 @@ export function useColaboradores() {
     queryKey: 'colaboradores',
     service: colaboradorService,
     initialPageSize: 25,
+    enabled: !!empresaId,
     filters: {
       empresaId,
       status,

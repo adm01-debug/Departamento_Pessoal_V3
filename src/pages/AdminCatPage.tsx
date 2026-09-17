@@ -135,15 +135,16 @@ export default function AdminCatPage() {
         <CardTitle className="text-sm font-medium text-muted-foreground">{label}</CardTitle>
         <Icon className={`h-4 w-4 ${tone}`} />
       </CardHeader>
-      <CardContent><div className="text-2xl font-bold">{String(value ?? 0)}</div></CardContent>
+      <CardContent><div className="text-2xl font-medium">{String(value ?? 0)}</div></CardContent>
     </Card>
   );
 
+  // padding horizontal agora vem do <main> global (p-page)
   return (
-    <div className="p-6 space-y-6">
+    <div className="py-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2"><ShieldAlert className="h-7 w-7 text-destructive" />CAT Eletrônica (S-2210)</h1>
+          <h1 className="text-3xl font-medium flex items-center gap-2"><ShieldAlert className="h-7 w-7 text-destructive" />CAT Eletrônica (S-2210)</h1>
           <p className="text-muted-foreground text-sm">Comunicação de Acidente de Trabalho — envio ao eSocial dentro do prazo legal.</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>

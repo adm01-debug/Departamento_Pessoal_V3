@@ -9,13 +9,13 @@ import {
 import { integrityHash } from '../_shared/integrityHash.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
-import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
+import { corsHeaders, parseJsonBody, getCorsHeaders } from '../_shared/contract.ts';
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: getCorsHeaders(req) });
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 405,
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }, status: 405,
     });
   }
 
@@ -28,7 +28,7 @@ serve(async (req) => {
     const authHeader = req.headers.get('Authorization') ?? '';
     if (!authHeader.startsWith('Bearer ')) {
       return new Response(JSON.stringify({ error: 'Autenticação obrigatória', code: 'UNAUTHORIZED' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401,
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }, status: 401,
       });
     }
 
@@ -43,7 +43,7 @@ serve(async (req) => {
     const { data: userData, error: userErr } = await userClient.auth.getUser();
     if (userErr || !userData?.user) {
       return new Response(JSON.stringify({ error: 'Sessão inválida', code: 'UNAUTHORIZED' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401,
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }, status: 401,
       });
     }
     const userId = userData.user.id;
@@ -60,7 +60,7 @@ serve(async (req) => {
     const { colaboradorId, empresaId, data: dataRegistro } = body ?? {};
     if (!colaboradorId || !empresaId) {
       return new Response(JSON.stringify({ error: 'colaboradorId e empresaId obrigatórios' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400,
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }, status: 400,
       });
     }
 
@@ -71,7 +71,7 @@ serve(async (req) => {
     ]);
     if (!belongs && !isAdm) {
       return new Response(JSON.stringify({ error: 'Sem acesso a esta empresa', code: 'FORBIDDEN' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403,
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }, status: 403,
       });
     }
 
@@ -115,7 +115,7 @@ serve(async (req) => {
         };
         await completeIdempotency(supabase, idem.id, 200, empty);
         return new Response(JSON.stringify(empty), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         });
       }
 
@@ -210,7 +210,7 @@ serve(async (req) => {
 
       await completeIdempotency(supabase, idem.id, 200, responseBody);
       return new Response(JSON.stringify(responseBody), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     } catch (error: unknown) {
       await failIdempotency(supabase, idem.id);
@@ -219,7 +219,7 @@ serve(async (req) => {
   } catch (error) {
     try { captureException(error, { fn: 'processar-ponto' }); } catch { /* noop */ }
     return new Response(JSON.stringify({ error: 'Erro interno no processamento de ponto', code: 'INTERNAL_SERVER_ERROR' }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500,
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }, status: 500,
     });
   }
 });

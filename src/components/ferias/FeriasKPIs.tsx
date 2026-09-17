@@ -41,7 +41,7 @@ export function FeriasKPIs({ stats }: { stats: FeriasStats }) {
                       <Icon className={cn("h-5 w-5", color)} />
                     </div>
                     <div className="space-y-1">
-                      <p className="text-2xl font-display font-bold tracking-tight">{stats[key as keyof FeriasStats]}</p>
+                      <p className="text-2xl font-display font-semibold tracking-tight">{stats[key as keyof FeriasStats]}</p>
                       <p className="text-[10px] text-muted-foreground font-display uppercase tracking-widest">{label}</p>
                     </div>
                   </CardContent>

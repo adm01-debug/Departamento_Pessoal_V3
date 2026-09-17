@@ -24,16 +24,16 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
-import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
+import { corsHeaders, parseJsonBody, getCorsHeaders } from '../_shared/contract.ts';
 import { safeFetch } from '../_shared/safe-fetch.ts';
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 
 serve(async (req: Request): Promise<Response> => {
-  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: getCorsHeaders(req) });
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 405, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -48,7 +48,7 @@ serve(async (req: Request): Promise<Response> => {
     const authHeader = req.headers.get('Authorization') ?? '';
     if (!authHeader.startsWith('Bearer ')) {
       return new Response(JSON.stringify({ error: 'Autenticação obrigatória' }), {
-        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -59,7 +59,7 @@ serve(async (req: Request): Promise<Response> => {
     const { data: userData, error: userErr } = await userClient.auth.getUser();
     if (userErr || !userData?.user) {
       return new Response(JSON.stringify({ error: 'Sessão inválida' }), {
-        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -81,7 +81,7 @@ serve(async (req: Request): Promise<Response> => {
 
     if (!empresaId || typeof empresaId !== 'string') {
       return new Response(JSON.stringify({ error: 'empresaId é obrigatório' }), {
-        status: 422, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 422, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -95,7 +95,7 @@ serve(async (req: Request): Promise<Response> => {
     ]);
     if (!belongs && !isAdm) {
       return new Response(JSON.stringify({ error: 'Sem acesso a esta empresa' }), {
-        status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -226,7 +226,7 @@ serve(async (req: Request): Promise<Response> => {
     // ── Se nenhum alerta ─────────────────────────────────────────────────
     if (alertas.length === 0) {
       return new Response(JSON.stringify({ message: 'Nenhum alerta pendente', alertas: [] }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -355,14 +355,14 @@ serve(async (req: Request): Promise<Response> => {
       email_result: emailResult,
       alertas,
     }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
 
   } catch (error: unknown) {
     try { captureException(error, { fn: 'alertas-dp' }); } catch { /* noop */ }
     return new Response(JSON.stringify({ error: 'Erro interno' }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 });

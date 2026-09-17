@@ -62,7 +62,7 @@ export function ESocialConciliacao() {
               <span className="text-xs font-medium text-muted-foreground uppercase">Total Sistema</span>
               <TrendingUp className="h-4 w-4 text-success" />
             </div>
-            <div className="text-2xl font-bold font-display">{formatCurrency(14830.50)}</div>
+            <div className="text-2xl font-medium font-display">{formatCurrency(14830.50)}</div>
           </CardContent>
         </Card>
         
@@ -72,7 +72,7 @@ export function ESocialConciliacao() {
               <span className="text-xs font-medium text-muted-foreground uppercase">Total Governo (S-5001)</span>
               <FileText className="h-4 w-4 text-primary" />
             </div>
-            <div className="text-2xl font-bold font-display">{formatCurrency(14825.30)}</div>
+            <div className="text-2xl font-medium font-display">{formatCurrency(14825.30)}</div>
           </CardContent>
         </Card>
 
@@ -82,7 +82,7 @@ export function ESocialConciliacao() {
               <span className="text-xs font-medium text-muted-foreground uppercase">Divergência Total</span>
               <AlertTriangle className="h-4 w-4 text-destructive" />
             </div>
-            <div className="text-2xl font-bold font-display text-destructive">{formatCurrency(5.20)}</div>
+            <div className="text-2xl font-medium font-display text-destructive">{formatCurrency(5.20)}</div>
           </CardContent>
         </Card>
       </div>
@@ -122,7 +122,7 @@ export function ESocialConciliacao() {
                   <TableCell className="text-right text-sm font-display">{formatCurrency(item.sistema)}</TableCell>
                   <TableCell className="text-right text-sm font-display">{formatCurrency(item.governo)}</TableCell>
                   <TableCell className={cn(
-                    "text-right text-sm font-bold font-display",
+                    "text-right text-sm font-medium font-display",
                     item.diferenca > 0 ? "text-destructive" : "text-success"
                   )}>
                     {formatCurrency(item.diferenca)}
@@ -148,7 +148,7 @@ export function ESocialConciliacao() {
       <div className="p-4 rounded-xl border border-warning/30 bg-warning/5 flex items-start gap-3">
         <AlertTriangle className="h-5 w-5 text-warning shrink-0 mt-0.5" />
         <div>
-          <p className="text-sm font-bold text-warning-foreground">Por que há divergências?</p>
+          <p className="text-sm font-medium text-warning-foreground">Por que há divergências?</p>
           <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
             As divergências em rubricas previdenciárias geralmente ocorrem por arredondamentos na terceira casa decimal ou parametrização divergente de incidências. 
             Recomendamos revisar o cadastro de Rubricas (S-1010) e as alíquotas de RAT/FAP da empresa.

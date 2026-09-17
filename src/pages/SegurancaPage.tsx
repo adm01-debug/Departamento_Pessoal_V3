@@ -82,7 +82,7 @@ export default function SegurancaPage() {
                     </div>
                     <span className="text-sm font-medium text-muted-foreground">{stat.label}</span>
                   </div>
-                  <div className="text-3xl font-bold font-display">{stat.value}</div>
+                  <div className="text-3xl font-medium font-display">{stat.value}</div>
                 </CardContent>
               </Card>
             </motion.div>
@@ -169,7 +169,7 @@ export default function SegurancaPage() {
                       <TableCell className="text-xs font-body">{format(new Date(alert.created_at), 'dd/MM/yyyy HH:mm:ss')}</TableCell>
                       <TableCell className="font-medium text-sm">{alert.type}</TableCell>
                       <TableCell>
-                        <Badge variant={alert.severity === 'high' ? 'destructive' : 'warning'} className="text-[10px] uppercase font-bold">
+                        <Badge variant={alert.severity === 'high' ? 'destructive' : 'warning'} className="text-[10px] uppercase font-medium">
                           {alert.severity}
                         </Badge>
                       </TableCell>
@@ -260,7 +260,7 @@ export default function SegurancaPage() {
                     <TableRow><TableCell colSpan={5} className="text-center py-12 text-muted-foreground italic">Nenhum IP bloqueado no momento</TableCell></TableRow>
                   ) : blockedIps?.map(ip => (
                     <TableRow key={ip.id}>
-                      <TableCell className="font-mono text-sm font-bold">{ip.ip_address}</TableCell>
+                      <TableCell className="font-mono text-sm font-medium">{ip.ip_address}</TableCell>
                       <TableCell className="text-sm">{ip.reason}</TableCell>
                       <TableCell className="text-xs">{format(new Date(ip.blocked_at), 'dd/MM HH:mm')}</TableCell>
                       <TableCell className="text-xs">

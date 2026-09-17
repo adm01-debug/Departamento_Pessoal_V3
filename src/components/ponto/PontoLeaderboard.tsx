@@ -21,7 +21,7 @@ export function PontoLeaderboard() {
             <div className="flex items-center gap-2">
               <Trophy className="h-4 w-4 text-yellow-500" /> Ranking de Assiduidade
             </div>
-            <Badge variant="secondary" className="text-[9px] font-bold">MÊS ATUAL</Badge>
+            <Badge variant="secondary" className="text-[9px] font-medium">MÊS ATUAL</Badge>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -30,7 +30,7 @@ export function PontoLeaderboard() {
               <Star className="h-5 w-5 fill-yellow-500" />
             </div>
             <div>
-              <p className="text-xs font-bold text-yellow-700">Gamificação Ativa</p>
+              <p className="text-xs font-medium text-yellow-700">Gamificação Ativa</p>
               <p className="text-[10px] text-yellow-600/80 leading-tight">Ganhe pontos por bater o ponto no horário e manter seu streak!</p>
             </div>
           </div>
@@ -39,15 +39,15 @@ export function PontoLeaderboard() {
             {MOCK_LEADERBOARD.map((user, index) => (
               <div key={user.id} className="flex items-center justify-between p-2.5 rounded-xl bg-background/50 border border-border/40 hover:border-primary/20 transition-all group">
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-6 h-6 rounded-lg font-display font-bold text-xs bg-muted text-muted-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                  <div className="flex items-center justify-center w-6 h-6 rounded-lg font-display font-medium text-xs bg-muted text-muted-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                     {user.rank}
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold">
+                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-medium">
                       {user.name[0]}
                     </div>
                     <div>
-                      <p className="text-xs font-bold">{user.name}</p>
+                      <p className="text-xs font-medium">{user.name}</p>
                       <p className="text-[9px] text-muted-foreground flex items-center gap-1">
                         <TrendingUp className="h-2 w-2" /> {user.streak} dias de streak
                       </p>
@@ -55,8 +55,8 @@ export function PontoLeaderboard() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-display font-bold text-primary">{user.score}%</p>
-                  <p className="text-[9px] font-bold text-muted-foreground uppercase">Score</p>
+                  <p className="text-sm font-display font-medium text-primary">{user.score}%</p>
+                  <p className="text-[9px] font-medium text-muted-foreground uppercase">Score</p>
                 </div>
               </div>
             ))}

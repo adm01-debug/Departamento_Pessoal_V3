@@ -19,9 +19,14 @@ vi.mock('@/components/ui/dropdown-menu', () => ({
 import { DashboardHeader } from '../dashboard/DashboardHeader';
 
 describe('DashboardHeader', () => {
-  it('renders greeting with wave emoji', () => {
+  it('renders greeting', () => {
     render(<DashboardHeader greeting="Bom dia" isLoading={false} onRefresh={vi.fn()} />);
     expect(screen.getByText('Bom dia!')).toBeInTheDocument();
+  });
+
+  it('highlights the user name when provided', () => {
+    render(<DashboardHeader greeting="Bom dia" userName="Abner" isLoading={false} onRefresh={vi.fn()} />);
+    expect(screen.getByText('Abner!')).toBeInTheDocument();
   });
 
   it('renders subtitle text', () => {
@@ -44,18 +49,27 @@ describe('DashboardHeader', () => {
     expect(screen.getByRole('button', { name: /Configurações/i })).toBeInTheDocument();
   });
 
-  it('renders search input with placeholder', () => {
+  it('renders the current date and weekday', () => {
     render(<DashboardHeader greeting="Olá" isLoading={false} onRefresh={vi.fn()} />);
-    expect(screen.getByPlaceholderText(/Pesquisar colaboradores/i)).toBeInTheDocument();
+    const hoje = new Date();
+    const dia = String(hoje.getDate()).padStart(2, '0');
+    expect(screen.getByText(new RegExp(`^${dia} de `))).toBeInTheDocument();
   });
 
-  it('renders month filter button', () => {
-    render(<DashboardHeader greeting="Olá" isLoading={false} onRefresh={vi.fn()} />);
-    expect(screen.getByText('05/2026')).toBeInTheDocument();
+  it('renders the actions slot when provided', () => {
+    render(
+      <DashboardHeader
+        greeting="Olá"
+        isLoading={false}
+        onRefresh={vi.fn()}
+        actionsSlot={<button>Ações Rápidas</button>}
+      />,
+    );
+    expect(screen.getByText('Ações Rápidas')).toBeInTheDocument();
   });
 
-  it('renders Todos os Departamentos filter', () => {
-    render(<DashboardHeader greeting="Olá" isLoading={false} onRefresh={vi.fn()} />);
-    expect(screen.getByText('Todos os Departamentos')).toBeInTheDocument();
+  it('disables Sincronizar while loading', () => {
+    render(<DashboardHeader greeting="Olá" isLoading onRefresh={vi.fn()} />);
+    expect(screen.getByRole('button', { name: /Sincronizar/i })).toBeDisabled();
   });
 });

@@ -278,7 +278,7 @@ export function WorkflowDesigner({ initialNodes = [], initialConnections = [], o
       {/* ── Toolbar / sidebar ─────────────────────────────── */}
       <Card className="w-56 flex-shrink-0 rounded-2xl border-border/30 overflow-hidden">
         <div className="bg-muted/30 px-3 py-2 border-b border-border/30">
-          <p className="text-xs font-bold font-display text-muted-foreground uppercase tracking-wide">Elementos</p>
+          <p className="text-xs font-medium font-display text-muted-foreground uppercase tracking-wide">Elementos</p>
         </div>
         <CardContent className="p-2 space-y-1 overflow-y-auto">
           {NODE_TEMPLATES.map(t => {
@@ -514,7 +514,7 @@ export function WorkflowDesigner({ initialNodes = [], initialConnections = [], o
       {selectedNode && (
         <Card className="w-64 flex-shrink-0 rounded-2xl border-border/30 overflow-hidden">
           <div className="bg-muted/30 px-3 py-2 border-b border-border/30 flex items-center justify-between">
-            <p className="text-xs font-bold font-display text-muted-foreground uppercase tracking-wide">Propriedades</p>
+            <p className="text-xs font-medium font-display text-muted-foreground uppercase tracking-wide">Propriedades</p>
             <Button variant="ghost" size="sm" className="h-6 w-6 p-0 rounded-lg" onClick={() => setSelectedId(null)}>
               <X className="h-3 w-3" />
             </Button>

@@ -252,7 +252,7 @@ export function RubricasDialog() {
               ) : (
                 rubricas?.map((rubrica) => (
                   <TableRow key={rubrica.id} className="hover:bg-muted/30 transition-colors group">
-                    <TableCell className="font-mono font-bold text-primary">
+                    <TableCell className="font-mono font-medium text-primary">
                       {rubrica.codigo}
                     </TableCell>
                     <TableCell className="font-medium font-body">{rubrica.descricao}</TableCell>

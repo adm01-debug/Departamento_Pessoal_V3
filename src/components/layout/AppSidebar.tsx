@@ -182,7 +182,7 @@ const SidebarMenuItem = memo(function SidebarMenuItem({ item, isActive, collapse
       to={item.path}
       onMouseEnter={handleMouseEnter}
       className={cn(
-        "flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 group",
+        "flex items-center gap-3 px-3 py-1.5 rounded-lg transition-all duration-200 group",
         isActive ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground",
         collapsed && "justify-center px-2"
       )}
@@ -190,7 +190,10 @@ const SidebarMenuItem = memo(function SidebarMenuItem({ item, isActive, collapse
       <item.icon className={cn("w-4 h-4 shrink-0 transition-colors", isActive ? item.color : "text-sidebar-foreground group-hover:" + item.color)} />
       {!collapsed && (
         <>
-          <span className="text-sm font-medium truncate flex-1">{item.label}</span>
+          <span className={cn(
+            "text-[13px] tracking-wide leading-snug truncate flex-1",
+            isActive ? "font-medium dark:text-[hsl(80_100%_55%)]" : "font-normal dark:text-[hsl(0_0%_65%)]"
+          )}>{item.label}</span>
           {item.path === '/colaboradores' && <ColaboradoresCount />}
           {item.path === '/admin/security' && <SecurityAlertsCount />}
           {isActive && <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />}
@@ -215,9 +218,9 @@ const SidebarMenuGroup = memo(function SidebarMenuGroup({ group, collapsed, curr
   return (
     <Collapsible open={isOpen} onOpenChange={onToggle}>
       <CollapsibleTrigger asChild>
-        <button className={cn("flex items-center gap-3 w-full px-3 py-2 rounded-lg transition-all duration-200 group", "text-sidebar-foreground hover:bg-sidebar-accent/30", hasActiveItem && "bg-sidebar-accent/20")}>
+        <button className={cn("flex items-center gap-3 w-full px-3 py-1.5 rounded-lg transition-all duration-200 group", "text-sidebar-foreground hover:bg-sidebar-accent/30", hasActiveItem && "bg-sidebar-accent/20")}>
           <GroupIcon className={cn("w-4 h-4 shrink-0 transition-colors", hasActiveItem ? group.color : "text-sidebar-foreground/70")} />
-          <span className={cn("text-xs font-semibold uppercase tracking-wider flex-1 text-left", hasActiveItem ? "text-sidebar-foreground" : "text-sidebar-foreground/70")}>{group.label}</span>
+          <span className={cn("text-overline font-medium flex-1 text-left", hasActiveItem ? "text-sidebar-foreground" : "text-sidebar-foreground/70")}>{group.label}</span>
           <ChevronDown className={cn("w-4 h-4 text-sidebar-foreground/50 transition-transform duration-200", isOpen && "rotate-180")} />
           {hasActiveItem && <div className="w-1.5 h-1.5 rounded-full bg-primary" />}
         </button>
@@ -244,7 +247,7 @@ const ColaboradoresCount = memo(function ColaboradoresCount() {
   if (isLoading || !count) return null;
 
   return (
-    <span className="ml-auto bg-primary/10 text-primary text-[10px] font-bold px-1.5 py-0.5 rounded-full ring-1 ring-primary/20">
+    <span className="ml-auto bg-primary/10 text-primary text-overline font-medium px-1.5 py-0.5 rounded-full ring-1 ring-primary/20">
       {count}
     </span>
   );
@@ -265,7 +268,11 @@ const SecurityAlertsCount = memo(function SecurityAlertsCount() {
       return count || 0;
     },
     staleTime: 30_000,
-    refetchInterval: 60_000, // fallback caso realtime caia
+    // P0-CORS: quando o query está em estado de erro, refetchInterval vira
+    // retry imediato (não respeita o delay). Como security_alerts falha por
+    // CORS sem chance de recuperação no curto prazo, paramos o intervalo
+    // enquanto persistir o erro.
+    refetchInterval: (query) => (query.state.error ? false : 60_000),
     retry: false});
 
   // Realtime: invalida contador e página de alertas ao detectar mudança
@@ -292,7 +299,7 @@ const SecurityAlertsCount = memo(function SecurityAlertsCount() {
   if (!count) return null;
 
   return (
-    <span className="ml-auto bg-destructive/10 text-destructive text-[10px] font-bold px-1.5 py-0.5 rounded-full ring-1 ring-destructive/30 animate-pulse">
+    <span className="ml-auto bg-destructive/10 text-destructive text-overline font-medium px-1.5 py-0.5 rounded-full ring-1 ring-destructive/30 animate-pulse">
       {count > 99 ? '99+' : count}
     </span>
   );
@@ -329,7 +336,7 @@ const SystemStatus = memo(function SystemStatus({ collapsed }: { collapsed: bool
   return (
     <div className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-sidebar-accent/10 border border-sidebar-border/30">
       <div className={cn("w-1.5 h-1.5 rounded-full", isLoading ? "bg-muted animate-pulse" : isHealthy ? "bg-success" : "bg-destructive shadow-[0_0_8px_rgba(239,68,68,0.5)]")} />
-      <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+      <span className="text-overline font-medium text-muted-foreground">
         {isLoading ? "Verificando..." : isHealthy ? "Sistemas Online" : "Erro de Conexão"}
       </span>
     </div>
@@ -374,8 +381,8 @@ export function AppSidebar({ onSearchOpen }: AppSidebarProps) {
                   <Users className="w-4 h-4 text-primary-foreground" />
                 </div>
                 <div>
-                  <h1 className="font-display font-bold text-foreground text-sm">TIME | PROMO BRINDES</h1>
-                  <p className="text-[10px] text-muted-foreground">Sistema de Gestão de Pessoas</p>
+                  <h1 className="text-heading font-medium text-foreground">TIME | PROMO BRINDES</h1>
+                  <p className="text-overline normal-case tracking-normal text-muted-foreground">Gestão de Pessoas</p>
                 </div>
               </div>
             )}
@@ -402,7 +409,7 @@ export function AppSidebar({ onSearchOpen }: AppSidebarProps) {
         <div className="px-2 py-2">
           <Button variant="outline" className={cn("w-full justify-start gap-2 text-muted-foreground hover:text-foreground bg-sidebar-accent/30 border-sidebar-border", collapsed && "justify-center px-0")} onClick={onSearchOpen}>
             <Search className="h-4 w-4 shrink-0" />
-            {!collapsed && (<><span className="flex-1 text-left text-sm">Buscar...</span><kbd className="hidden md:inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground"><span className="text-xs">⌘</span>K</kbd></>)}
+            {!collapsed && (<><span className="flex-1 text-left text-body">Buscar...</span><kbd className="hidden md:inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-overline font-medium text-muted-foreground"><span className="text-xs">⌘</span>K</kbd></>)}
           </Button>
         </div>
 
@@ -456,7 +463,7 @@ export function AppSidebar({ onSearchOpen }: AppSidebarProps) {
               <Tooltip delayDuration={0}>
                 <TooltipTrigger asChild>
                   <NavLink to="/perfil" className={cn("w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center transition-colors", location.pathname === '/perfil' && "ring-2 ring-primary")}>
-                    <span className="text-xs font-semibold text-primary">{user?.name ? getInitials(user.name) : '??'}</span>
+                    <span className="text-caption font-medium text-primary">{user?.name ? getInitials(user.name) : '??'}</span>
                   </NavLink>
                 </TooltipTrigger>
                 <TooltipContent side="right">{user?.name || user?.email || 'Perfil'}</TooltipContent>
@@ -472,11 +479,11 @@ export function AppSidebar({ onSearchOpen }: AppSidebarProps) {
             <div className="space-y-2">
               <NavLink to="/perfil" className={cn("flex items-center gap-3 p-2 rounded-lg transition-colors", location.pathname === '/perfil' ? "bg-sidebar-accent" : "hover:bg-sidebar-accent/50")}>
                 <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center ring-2 ring-primary/20">
-                  <span className="text-xs font-semibold text-primary">{user?.name ? getInitials(user.name) : '??'}</span>
+                  <span className="text-caption font-medium text-primary">{user?.name ? getInitials(user.name) : '??'}</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">{user?.name || user?.email || 'Carregando...'}</p>
-                  <p className="text-xs text-muted-foreground truncate">Usuário</p>
+                  <p className="text-body font-medium text-foreground truncate">{user?.name || user?.email || 'Carregando...'}</p>
+                  <p className="text-caption text-muted-foreground truncate">Usuário</p>
                 </div>
               </NavLink>
               <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10" onClick={handleLogout}>

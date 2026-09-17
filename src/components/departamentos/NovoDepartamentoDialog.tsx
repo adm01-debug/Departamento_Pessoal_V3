@@ -87,7 +87,7 @@ export function NovoDepartamentoDialog({ open, onOpenChange, departamento }: Pro
 
           <div className="flex items-center justify-between rounded-xl border border-border/40 p-3">
             <div>
-              <Label className="font-bold">Departamento ativo</Label>
+              <Label className="font-medium">Departamento ativo</Label>
               <p className="text-xs text-muted-foreground">Inativos não aparecem em novos cadastros</p>
             </div>
             <Switch

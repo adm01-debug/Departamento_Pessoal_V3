@@ -122,7 +122,7 @@ export function GestaoPontoAnalytics({ registros }: { registros: any[] }) {
     <div className="space-y-6 mt-6">
       <div className="flex items-center justify-between mb-2">
         <div>
-          <h2 className="text-xl font-display font-bold">Painel de Gestão Estratégica</h2>
+          <h2 className="text-xl font-display font-medium">Painel de Gestão Estratégica</h2>
           <p className="text-sm text-muted-foreground">Monitoramento preditivo e conformidade MTP 671</p>
         </div>
         <div className="flex items-center gap-2">
@@ -141,9 +141,9 @@ export function GestaoPontoAnalytics({ registros }: { registros: any[] }) {
               <Badge variant={monthlyForecast.isOverBudget ? "destructive" : "secondary"} className="text-[10px] animate-pulse">Previsão IA</Badge>
             </div>
             <div>
-              <p className="text-[10px] uppercase text-muted-foreground font-bold mb-1">Custo Projetado (Horas)</p>
+              <p className="text-[10px] uppercase text-muted-foreground font-medium mb-1">Custo Projetado (Horas)</p>
               <div className="flex items-baseline gap-2">
-                <h3 className="text-2xl font-display font-bold text-primary">{Math.round(monthlyForecast.projection)}h</h3>
+                <h3 className="text-2xl font-display font-medium text-primary">{Math.round(monthlyForecast.projection)}h</h3>
                 <p className="text-xs text-muted-foreground">/ mês</p>
               </div>
               <p className="text-[10px] text-muted-foreground mt-2">Baseado na média de {monthlyForecast.last7DaysAverage.toFixed(1)}h diárias</p>
@@ -160,8 +160,8 @@ export function GestaoPontoAnalytics({ registros }: { registros: any[] }) {
               <Badge variant="outline" className="text-[10px]">Compliance CLT</Badge>
             </div>
             <div>
-              <p className="text-[10px] uppercase text-muted-foreground font-bold mb-1">Riscos de Passivo</p>
-              <h3 className={cn("text-2xl font-display font-bold", complianceStats.interjornadaViolations > 0 ? "text-destructive" : "text-success")}>
+              <p className="text-[10px] uppercase text-muted-foreground font-medium mb-1">Riscos de Passivo</p>
+              <h3 className={cn("text-2xl font-display font-medium", complianceStats.interjornadaViolations > 0 ? "text-destructive" : "text-success")}>
                 {complianceStats.interjornadaViolations > 0 ? 'ALTO RISCO' : 'BAIXO RISCO'}
               </h3>
               <p className="text-[10px] text-muted-foreground mt-2">{complianceStats.interjornadaViolations} violações de interjornada detectadas</p>
@@ -176,9 +176,9 @@ export function GestaoPontoAnalytics({ registros }: { registros: any[] }) {
               <Badge variant="outline" className="text-[10px]">Produtividade</Badge>
             </div>
             <div>
-              <p className="text-[10px] uppercase text-muted-foreground font-bold mb-1">Taxa de Assiduidade</p>
-              <h3 className="text-2xl font-display font-bold text-info">94.2%</h3>
-              <div className="flex items-center gap-1 text-[10px] text-success mt-2 font-bold">
+              <p className="text-[10px] uppercase text-muted-foreground font-medium mb-1">Taxa de Assiduidade</p>
+              <h3 className="text-2xl font-display font-medium text-info">94.2%</h3>
+              <div className="flex items-center gap-1 text-[10px] text-success mt-2 font-medium">
                 <Zap className="h-3 w-3" /> +2.1% em relação ao mês anterior
               </div>
             </div>
@@ -259,7 +259,7 @@ export function GestaoPontoAnalytics({ registros }: { registros: any[] }) {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <ShieldAlert className="h-4 w-4 text-destructive" />
-                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Interjornada</span>
+                    <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Interjornada</span>
                   </div>
                   <Badge variant={complianceStats.interjornadaViolations > 0 ? "destructive" : "outline"} className="text-[10px]">
                     {complianceStats.interjornadaViolations} ocorrências
@@ -276,7 +276,7 @@ export function GestaoPontoAnalytics({ registros }: { registros: any[] }) {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-warning" />
-                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Jornada Excedente</span>
+                    <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Jornada Excedente</span>
                   </div>
                   <Badge variant={complianceStats.excessiveWorkdays > 0 ? "warning" : "outline"} className="text-warning text-[10px]">
                     {complianceStats.excessiveWorkdays} ocorrências
@@ -293,7 +293,7 @@ export function GestaoPontoAnalytics({ registros }: { registros: any[] }) {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="h-4 w-4 text-orange-500" />
-                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Intervalo Mínimo</span>
+                    <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Intervalo Mínimo</span>
                   </div>
                   <Badge variant="outline" className="text-[10px]">
                     {complianceStats.shortIntervals} ocorrências

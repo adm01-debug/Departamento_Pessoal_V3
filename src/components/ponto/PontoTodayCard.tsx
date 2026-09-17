@@ -80,7 +80,7 @@ export function PontoTodayCard({ registroHoje }: PontoTodayCardProps) {
               <Timer className="h-4 w-4 text-info" /> Hoje
             </div>
             {registroHoje?.entrada_esperada && (
-              <Badge variant="outline" className="text-[9px] font-bold uppercase tracking-wider bg-muted/50">
+              <Badge variant="outline" className="text-[9px] font-medium uppercase tracking-wider bg-muted/50">
                 Escala: {registroHoje.entrada_esperada} - {registroHoje.saida_esperada}
               </Badge>
             )}
@@ -91,7 +91,7 @@ export function PontoTodayCard({ registroHoje }: PontoTodayCardProps) {
             <>
               {/* Progress Tracker */}
               <div className="space-y-2">
-                <div className="flex items-center justify-between text-[10px] font-bold uppercase text-muted-foreground">
+                <div className="flex items-center justify-between text-[10px] font-medium uppercase text-muted-foreground">
                   <span>Progresso da Jornada</span>
                   <span>{Math.round(progress)}%</span>
                 </div>
@@ -109,16 +109,16 @@ export function PontoTodayCard({ registroHoje }: PontoTodayCardProps) {
 
               <div className="grid grid-cols-3 gap-3">
                 <div className="p-2.5 rounded-2xl bg-success/5 border border-success/10 text-center group hover:bg-success/10 transition-colors">
-                  <p className="text-lg font-display font-bold text-success tabular-nums">{formatInterval(registroHoje.horas_trabalhadas)}</p>
-                  <p className="text-[9px] text-muted-foreground font-bold uppercase">Trabalhadas</p>
+                  <p className="text-lg font-display font-medium text-success tabular-nums">{formatInterval(registroHoje.horas_trabalhadas)}</p>
+                  <p className="text-[9px] text-muted-foreground font-medium uppercase">Trabalhadas</p>
                 </div>
                 <div className="p-2.5 rounded-2xl bg-info/5 border border-info/10 text-center group hover:bg-info/10 transition-colors">
-                  <p className="text-lg font-display font-bold text-info tabular-nums">{formatInterval(registroHoje.horas_extras)}</p>
-                  <p className="text-[9px] text-muted-foreground font-bold uppercase">Extras</p>
+                  <p className="text-lg font-display font-medium text-info tabular-nums">{formatInterval(registroHoje.horas_extras)}</p>
+                  <p className="text-[9px] text-muted-foreground font-medium uppercase">Extras</p>
                 </div>
                 <div className="p-2.5 rounded-2xl bg-destructive/5 border border-destructive/10 text-center group hover:bg-destructive/10 transition-colors">
-                  <p className="text-lg font-display font-bold text-destructive tabular-nums">{formatInterval(registroHoje.horas_falta)}</p>
-                  <p className="text-[9px] text-muted-foreground font-bold uppercase">Débito</p>
+                  <p className="text-lg font-display font-medium text-destructive tabular-nums">{formatInterval(registroHoje.horas_falta)}</p>
+                  <p className="text-[9px] text-muted-foreground font-medium uppercase">Débito</p>
                 </div>
               </div>
 
@@ -141,16 +141,16 @@ export function PontoTodayCard({ registroHoje }: PontoTodayCardProps) {
                 <div className="p-3 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <BrainCircuit className="h-4 w-4 text-primary animate-pulse" />
-                    <span className="text-[10px] font-bold uppercase text-primary">Previsão de Saída IA</span>
+                    <span className="text-[10px] font-medium uppercase text-primary">Previsão de Saída IA</span>
                   </div>
-                  <Badge variant="secondary" className="font-display font-bold text-sm bg-background/50">
+                  <Badge variant="secondary" className="font-display font-medium text-sm bg-background/50">
                     {estimatedEndTime}
                   </Badge>
                 </div>
               )}
 
               <div className="space-y-2.5">
-                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest flex items-center gap-2">
                   <Clock className="h-3 w-3" /> Linha do Tempo
                 </p>
                 <div className="space-y-2">
@@ -158,10 +158,10 @@ export function PontoTodayCard({ registroHoje }: PontoTodayCardProps) {
                     <div key={i} className="group relative flex items-center justify-between p-3 rounded-xl bg-muted/20 border border-transparent hover:border-primary/20 hover:bg-muted/40 transition-all">
                       <div className="flex items-center gap-3">
                         <div className="flex flex-col">
-                          <span className="text-[9px] font-bold text-muted-foreground uppercase">{p.label} - In</span>
+                          <span className="text-[9px] font-medium text-muted-foreground uppercase">{p.label} - In</span>
                           <div className="flex items-center gap-1.5">
                             <ArrowDownRight className="h-3 w-3 text-success" />
-                            <span className="text-sm font-display font-bold">{p.e || '--:--'}</span>
+                            <span className="text-sm font-display font-medium">{p.e || '--:--'}</span>
                           </div>
                         </div>
                       </div>
@@ -170,9 +170,9 @@ export function PontoTodayCard({ registroHoje }: PontoTodayCardProps) {
                       
                       <div className="flex items-center gap-3 text-right">
                         <div className="flex flex-col items-end">
-                          <span className="text-[9px] font-bold text-muted-foreground uppercase">{p.label} - Out</span>
+                          <span className="text-[9px] font-medium text-muted-foreground uppercase">{p.label} - Out</span>
                           <div className="flex items-center gap-1.5">
-                            <span className="text-sm font-display font-bold">{p.s || '--:--'}</span>
+                            <span className="text-sm font-display font-medium">{p.s || '--:--'}</span>
                             <ArrowUpRight className="h-3 w-3 text-destructive" />
                           </div>
                         </div>
@@ -187,7 +187,7 @@ export function PontoTodayCard({ registroHoje }: PontoTodayCardProps) {
                   {registroHoje.saida_intervalo && !registroHoje.retorno_intervalo && (
                     <div className="flex items-center justify-center gap-2 p-2 rounded-lg bg-orange-500/10 text-orange-500 border border-orange-500/20 animate-pulse">
                       <Coffee className="h-3 w-3" />
-                      <span className="text-[10px] font-bold uppercase">Em Intervalo de Almoço</span>
+                      <span className="text-[10px] font-medium uppercase">Em Intervalo de Almoço</span>
                     </div>
                   )}
                 </div>
@@ -201,7 +201,7 @@ export function PontoTodayCard({ registroHoje }: PontoTodayCardProps) {
                   <Clock className="h-10 w-10 text-primary animate-pulse" />
                 </div>
               </div>
-              <p className="text-sm font-display font-bold text-foreground">A jornada ainda não começou</p>
+              <p className="text-sm font-display font-medium text-foreground">A jornada ainda não começou</p>
               <p className="text-xs text-muted-foreground font-body mt-2 text-center max-w-[200px]">
                 Registre sua entrada no botão acima para iniciar o monitoramento.
               </p>

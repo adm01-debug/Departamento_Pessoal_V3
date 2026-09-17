@@ -50,8 +50,8 @@ export function Header({ onMenuClick, user, className }: HeaderProps) {
           className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-muted/50 rounded-lg border border-border/30 hover:border-primary/40 hover:bg-muted/80 transition-all group cursor-pointer"
           aria-label="Buscar (⌘K)"
         >
-          <Search className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-          <span className="text-body font-body text-muted-foreground/60 w-28 lg:w-40 text-left">Buscar...</span>
+          <Search className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+          <span className="text-body font-body text-muted-foreground/60 w-28 lg:w-72 text-left truncate">Busque por colaboradores, departamentos, processos...</span>
           <kbd className="hidden lg:inline-flex h-5 items-center gap-1 rounded border border-border/40 bg-muted px-1.5 text-overline font-mono text-muted-foreground">
             ⌘K
           </kbd>
@@ -61,7 +61,7 @@ export function Header({ onMenuClick, user, className }: HeaderProps) {
       <div className="flex items-center gap-3">
         {/* Sync Status Badge */}
         <div className={cn(
-          "hidden lg:flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[10px] font-bold uppercase tracking-wider",
+          "hidden lg:flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-overline font-medium",
           status === 'online' ? "bg-success/5 border-success/20 text-success" :
           status === 'slow' ? "bg-warning/5 border-warning/20 text-warning" :
           "bg-destructive/5 border-destructive/20 text-destructive"

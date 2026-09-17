@@ -40,7 +40,7 @@ export function AfastamentoTimeline({ afastamentoId }: AfastamentoTimelineProps)
           <Card className="border-border/50 shadow-xs">
             <CardHeader className="py-3 px-4 bg-muted/30">
               <div className="flex justify-between items-center">
-                <Badge variant="outline" className="text-[10px] uppercase font-bold">Registro Inicial</Badge>
+                <Badge variant="outline" className="text-[10px] uppercase font-medium">Registro Inicial</Badge>
                 {afastamento?.created_at && (
                   <span className="text-[10px] text-muted-foreground italic">
                     {format(new Date(afastamento.created_at), "dd 'de' MMMM, yyyy", { locale: ptBR })}
@@ -78,7 +78,7 @@ export function AfastamentoTimeline({ afastamentoId }: AfastamentoTimelineProps)
             <Card className="border-orange-100 shadow-xs">
               <CardHeader className="py-3 px-4 bg-orange-50/50">
                 <div className="flex justify-between items-center">
-                  <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-100 border-none text-[10px] uppercase font-bold">
+                  <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-100 border-none text-[10px] uppercase font-medium">
                     Prorrogação #{(prorrogacoes?.length || 0) - index}
                   </Badge>
                   <span className="text-[10px] text-muted-foreground italic">
@@ -89,7 +89,7 @@ export function AfastamentoTimeline({ afastamentoId }: AfastamentoTimelineProps)
               <CardContent className="py-4 px-4 space-y-4">
                 <div className="flex flex-col md:flex-row items-center gap-4 justify-between p-4 bg-orange-50/50 rounded-xl border border-orange-100/50">
                   <div className="flex-1 text-center md:text-left">
-                    <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Período Anterior</p>
+                    <p className="text-[10px] text-muted-foreground uppercase font-medium tracking-wider mb-1">Período Anterior</p>
                     <div className="flex items-center justify-center md:justify-start gap-2">
                       <Calendar className="h-4 w-4 text-muted-foreground" />
                       <span className="text-sm font-medium line-through opacity-60">
@@ -106,9 +106,9 @@ export function AfastamentoTimeline({ afastamentoId }: AfastamentoTimelineProps)
                   </div>
 
                   <div className="flex-1 text-center md:text-right">
-                    <p className="text-[10px] text-orange-600 uppercase font-bold tracking-wider mb-1">Novo Período</p>
+                    <p className="text-[10px] text-orange-600 uppercase font-medium tracking-wider mb-1">Novo Período</p>
                     <div className="flex items-center justify-center md:justify-end gap-2">
-                      <span className="text-base font-bold text-orange-700">
+                      <span className="text-base font-medium text-orange-700">
                         Até {prorr.data_fim_nova ? format(new Date(prorr.data_fim_nova), 'dd/MM/yyyy') : '-'}
                       </span>
                       <Badge className="bg-orange-500 text-white border-none text-[10px] h-5">EXTENDIDO</Badge>
@@ -122,8 +122,8 @@ export function AfastamentoTimeline({ afastamentoId }: AfastamentoTimelineProps)
                       <Plus className="h-4 w-4" />
                     </div>
                     <div>
-                      <p className="text-[9px] text-muted-foreground uppercase font-bold">Dias Adicionais</p>
-                      <p className="text-sm font-bold text-orange-700">
+                      <p className="text-[9px] text-muted-foreground uppercase font-medium">Dias Adicionais</p>
+                      <p className="text-sm font-medium text-orange-700">
                         +{afastamentoService.calcularDias(prorr.data_fim_antiga, prorr.data_fim_nova) - 1} dias de afastamento
                       </p>
                     </div>
@@ -134,8 +134,8 @@ export function AfastamentoTimeline({ afastamentoId }: AfastamentoTimelineProps)
                       <Clock className="h-4 w-4" />
                     </div>
                     <div>
-                      <p className="text-[9px] text-muted-foreground uppercase font-bold">Total Acumulado</p>
-                      <p className="text-sm font-bold text-blue-700">
+                      <p className="text-[9px] text-muted-foreground uppercase font-medium">Total Acumulado</p>
+                      <p className="text-sm font-medium text-blue-700">
                         {afastamentoService.calcularDias(afastamento?.data_inicio, prorr.data_fim_nova)} dias totais
                       </p>
                     </div>
@@ -174,7 +174,7 @@ export function AfastamentoTimeline({ afastamentoId }: AfastamentoTimelineProps)
             <Card className="border-blue-100 bg-blue-50/20 shadow-xs">
               <CardHeader className="py-3 px-4 bg-blue-50/40">
                 <div className="flex justify-between items-center">
-                  <Badge className="bg-blue-100 text-blue-700 border-none text-[10px] uppercase font-bold">
+                  <Badge className="bg-blue-100 text-blue-700 border-none text-[10px] uppercase font-medium">
                     Perícia Médica Agendada
                   </Badge>
                   <span className="text-[10px] text-blue-600 font-semibold">
@@ -189,7 +189,7 @@ export function AfastamentoTimeline({ afastamentoId }: AfastamentoTimelineProps)
                   </div>
                     <div className="space-y-3">
                       <div>
-                        <p className="text-sm font-bold text-blue-900">
+                        <p className="text-sm font-medium text-blue-900">
                           {format(new Date(afastamento.data_pericia), "dd 'de' MMMM, yyyy 'às' HH:mm", { locale: ptBR })}
                         </p>
                         <div className="flex flex-wrap gap-2 mt-1.5">
@@ -206,13 +206,13 @@ export function AfastamentoTimeline({ afastamentoId }: AfastamentoTimelineProps)
                       
                       {afastamento.motivo_pericia && (
                         <div className="bg-white/50 p-2 rounded border border-blue-100/50 text-[10px] italic">
-                          <span className="font-bold text-blue-800 not-italic mr-1">Motivo:</span>
+                          <span className="font-medium text-blue-800 not-italic mr-1">Motivo:</span>
                           "{afastamento.motivo_pericia}"
                         </div>
                       )}
 
                       <div className="p-2 bg-white rounded border border-blue-100 text-[11px] shadow-xs">
-                        <span className="font-bold text-blue-800 uppercase block mb-1 flex items-center gap-1">
+                        <span className="font-medium text-blue-800 uppercase block mb-1 flex items-center gap-1">
                           <AlertCircle className="h-3 w-3" />
                           Local da Perícia:
                         </span>
@@ -227,7 +227,7 @@ export function AfastamentoTimeline({ afastamentoId }: AfastamentoTimelineProps)
                           </div>
                           <p className="text-[11px] text-blue-700 mt-1">
                             Se a perícia confirmar a incapacidade, a prorrogação estimada será de 
-                            <span className="font-bold ml-1">+{afastamentoService.calcularDias(afastamento.data_fim_prevista, afastamento.data_pericia)} dias</span> até a data da avaliação.
+                            <span className="font-medium ml-1">+{afastamentoService.calcularDias(afastamento.data_fim_prevista, afastamento.data_pericia)} dias</span> até a data da avaliação.
                           </p>
                         </div>
                       )}

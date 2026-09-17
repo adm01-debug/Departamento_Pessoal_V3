@@ -74,7 +74,7 @@ export default function OnboardingPageContent() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-1.5">
-                    <div className="flex justify-between text-[11px] font-bold uppercase text-muted-foreground">
+                    <div className="flex justify-between text-[11px] font-medium uppercase text-muted-foreground">
                       <span>Progresso do Onboarding</span>
                       <span>{getProgresso(colab.tarefas)}%</span>
                     </div>
@@ -82,7 +82,7 @@ export default function OnboardingPageContent() {
                   </div>
 
                   <div className="space-y-2 pt-2">
-                    <p className="text-xs font-bold flex items-center gap-1.5 text-muted-foreground uppercase">
+                    <p className="text-xs font-medium flex items-center gap-1.5 text-muted-foreground uppercase">
                       <ListTodo className="h-3 w-3" /> Tarefas Críticas
                     </p>
                     {colab.tarefas?.map((tarefa: any) => (

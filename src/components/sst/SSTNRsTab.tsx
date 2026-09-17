@@ -26,7 +26,7 @@ export function SSTNRsTab() {
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <p className="font-display font-bold text-sm">{nr.nr}</p>
+                  <p className="font-display font-medium text-sm">{nr.nr}</p>
                   <p className="font-display font-semibold text-sm">— {nr.titulo}</p>
                 </div>
                 <p className="text-xs text-muted-foreground font-body">{nr.descricao}</p>

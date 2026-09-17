@@ -143,7 +143,7 @@ export default function NotificacoesPage() {
             <Card className="border border-border/30 rounded-2xl overflow-hidden">
               <div className={cn("h-[2px] bg-gradient-to-r", s.gradient)} />
               <CardContent className="p-4 text-center">
-                <p className="text-2xl font-display font-bold">{s.value}</p>
+                <p className="text-2xl font-display font-medium">{s.value}</p>
                 <p className="text-xs text-muted-foreground font-body">{s.label}</p>
               </CardContent>
             </Card>

@@ -139,7 +139,7 @@ export default function AdminOperacaoPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-muted-foreground uppercase">DLQ (fila morta)</p>
-                <p className="text-3xl font-bold mt-1">{totalDlq}</p>
+                <p className="text-3xl font-medium mt-1">{totalDlq}</p>
               </div>
               <ShieldAlert className={`h-8 w-8 ${totalDlq > 0 ? 'text-destructive' : 'text-muted-foreground'}`} />
             </div>
@@ -150,7 +150,7 @@ export default function AdminOperacaoPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-muted-foreground uppercase">Conflitos folha (7d)</p>
-                <p className="text-3xl font-bold mt-1">{totalConflitos}</p>
+                <p className="text-3xl font-medium mt-1">{totalConflitos}</p>
               </div>
               <GitBranch className={`h-8 w-8 ${totalConflitos > 5 ? 'text-yellow-500' : 'text-muted-foreground'}`} />
             </div>
@@ -161,7 +161,7 @@ export default function AdminOperacaoPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-muted-foreground uppercase">Endpoints com falha &gt; 5%</p>
-                <p className="text-3xl font-bold mt-1">{idemFailingHigh}</p>
+                <p className="text-3xl font-medium mt-1">{idemFailingHigh}</p>
               </div>
               <AlertTriangle className={`h-8 w-8 ${idemFailingHigh > 0 ? 'text-destructive' : 'text-muted-foreground'}`} />
             </div>

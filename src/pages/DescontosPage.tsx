@@ -122,7 +122,7 @@ export default function DescontosPage() {
       >
         <div className="flex items-center gap-2 mb-6 p-3 bg-primary/5 rounded-xl border border-primary/10">
           <Sparkles className="h-4 w-4 text-primary animate-pulse" />
-          <span className="text-xs font-bold text-primary uppercase tracking-tighter">Financial Wellness Hub 10/10 Ativado</span>
+          <span className="text-xs font-medium text-primary uppercase tracking-wide">Financial Wellness Hub 10/10 Ativado</span>
         </div>
 
         <FinancialSummaryCards 

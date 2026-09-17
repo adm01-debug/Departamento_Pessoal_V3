@@ -451,17 +451,17 @@ export default function FinanceiroBancarioPage() {
                   <div className="grid grid-cols-3 gap-4 mb-6">
                     <div className="p-4 rounded-xl glass border-border/20 text-center">
                       <p className="text-xs text-muted-foreground mb-1 uppercase">USD / BRL</p>
-                      <p className="text-xl font-bold font-display">R$ 5,24</p>
+                      <p className="text-xl font-medium font-display">R$ 5,24</p>
                       <span className="text-[10px] text-success font-medium">+0.42%</span>
                     </div>
                     <div className="p-4 rounded-xl glass border-border/20 text-center">
                       <p className="text-xs text-muted-foreground mb-1 uppercase">EUR / BRL</p>
-                      <p className="text-xl font-bold font-display">R$ 5,68</p>
+                      <p className="text-xl font-medium font-display">R$ 5,68</p>
                       <span className="text-[10px] text-destructive font-medium">-0.15%</span>
                     </div>
                     <div className="p-4 rounded-xl glass border-border/20 text-center">
                       <p className="text-xs text-muted-foreground mb-1 uppercase">GBP / BRL</p>
-                      <p className="text-xl font-bold font-display">R$ 6,55</p>
+                      <p className="text-xl font-medium font-display">R$ 6,55</p>
                       <span className="text-[10px] text-success font-medium">+0.12%</span>
                     </div>
                   </div>

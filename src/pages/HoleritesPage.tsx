@@ -108,7 +108,7 @@ export default function HoleritesPage() {
             </CardHeader>
             <CardContent className="pt-6 space-y-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase text-muted-foreground flex items-center gap-1">
+                <label className="text-[10px] font-medium uppercase text-muted-foreground flex items-center gap-1">
                   <Calendar className="w-3 h-3" /> Competência
                 </label>
                 <Input 
@@ -119,7 +119,7 @@ export default function HoleritesPage() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase text-muted-foreground flex items-center gap-1">
+                <label className="text-[10px] font-medium uppercase text-muted-foreground flex items-center gap-1">
                   <Search className="w-3 h-3" /> Colaborador
                 </label>
                 <Input 
@@ -146,7 +146,7 @@ export default function HoleritesPage() {
                     <div className={cn("h-1 bg-gradient-to-r", kpi.gradient)} />
                     <CardContent className="p-5">
                       <p className="text-xs text-muted-foreground font-medium mb-1">{kpi.label}</p>
-                      <p className="text-2xl font-display font-bold tabular-nums">
+                      <p className="text-2xl font-display font-medium tabular-nums">
                         <AnimatedNumber value={kpi.value} format={formatCurrency} />
                       </p>
                     </CardContent>
@@ -168,7 +168,7 @@ export default function HoleritesPage() {
                     <div className="w-16 h-16 rounded-3xl bg-muted/30 flex items-center justify-center mb-4">
                       <FileText className="w-8 h-8 text-muted-foreground/50" />
                     </div>
-                    <h3 className="font-display font-bold text-lg">Nenhum registro encontrado</h3>
+                    <h3 className="font-display font-medium text-lg">Nenhum registro encontrado</h3>
                     <p className="text-sm text-muted-foreground max-w-xs mt-1">
                       Não encontramos holerites para os filtros aplicados nesta competência.
                     </p>
@@ -178,11 +178,11 @@ export default function HoleritesPage() {
                     <Table>
                       <TableHeader>
                         <TableRow className="bg-muted/30 hover:bg-muted/30 border-b border-border/10">
-                          <TableHead className="font-display font-bold h-12">Colaborador</TableHead>
-                          <TableHead className="font-display font-bold h-12 text-right">Proventos</TableHead>
-                          <TableHead className="font-display font-bold h-12 text-right">Descontos</TableHead>
-                          <TableHead className="font-display font-bold h-12 text-right">Líquido</TableHead>
-                          <TableHead className="w-20 text-center font-display font-bold h-12">PDF</TableHead>
+                          <TableHead className="font-display font-medium h-12">Colaborador</TableHead>
+                          <TableHead className="font-display font-medium h-12 text-right">Proventos</TableHead>
+                          <TableHead className="font-display font-medium h-12 text-right">Descontos</TableHead>
+                          <TableHead className="font-display font-medium h-12 text-right">Líquido</TableHead>
+                          <TableHead className="w-20 text-center font-display font-medium h-12">PDF</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -199,8 +199,8 @@ export default function HoleritesPage() {
                               >
                                 <TableCell className="py-4">
                                   <div className="flex flex-col">
-                                    <span className="font-bold text-slate-800">{colab?.nome_completo || 'N/A'}</span>
-                                    <span className="text-[10px] text-muted-foreground uppercase tracking-tighter">
+                                    <span className="font-medium text-slate-800">{colab?.nome_completo || 'N/A'}</span>
+                                    <span className="text-[10px] text-muted-foreground uppercase tracking-wide">
                                       {colab?.cargo || 'CARGO N/D'} • CPF: {colab?.cpf || '---'}
                                     </span>
                                   </div>
@@ -211,7 +211,7 @@ export default function HoleritesPage() {
                                 <TableCell className="text-right text-rose-600 font-medium tabular-nums">
                                   {formatCurrency(Number(h.total_descontos))}
                                 </TableCell>
-                                <TableCell className="text-right font-display font-bold text-primary tabular-nums">
+                                <TableCell className="text-right font-display font-medium text-primary tabular-nums">
                                   {formatCurrency(Number(h.total_liquido))}
                                 </TableCell>
                                 <TableCell className="text-center">

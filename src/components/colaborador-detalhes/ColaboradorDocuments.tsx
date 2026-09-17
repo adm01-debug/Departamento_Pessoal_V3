@@ -59,7 +59,7 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-display font-bold">Gestão de Documentos Digitais</h3>
+          <h3 className="text-lg font-display font-medium">Gestão de Documentos Digitais</h3>
           <p className="text-sm text-muted-foreground">Repositório central de arquivos e contratos do colaborador</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
@@ -153,7 +153,7 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
                       <div className="p-2 bg-primary/10 rounded-lg">
                         <FileText className="h-5 w-5 text-primary" />
                       </div>
-                      <span className="font-bold text-sm">{doc.nome}</span>
+                      <span className="font-medium text-sm">{doc.nome}</span>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -166,7 +166,7 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
                   </TableCell>
                   <TableCell className="text-xs">
                     {doc.data_validade ? (
-                      <span className={new Date(doc.data_validade) < new Date() ? 'text-destructive font-bold' : 'text-success font-bold'}>
+                      <span className={new Date(doc.data_validade) < new Date() ? 'text-destructive font-medium' : 'text-success font-medium'}>
                         {format(new Date(doc.data_validade), "dd/MM/yyyy", { locale: ptBR })}
                       </span>
                     ) : (

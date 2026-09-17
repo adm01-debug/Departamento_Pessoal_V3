@@ -137,7 +137,7 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
                 <div className="flex flex-col gap-1.5">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-[10px] h-5 bg-primary/5 text-primary border-primary/20 font-bold uppercase tracking-wider">
+                      <Badge variant="outline" className="text-[10px] h-5 bg-primary/5 text-primary border-primary/20 font-medium uppercase tracking-wider">
                         {log.acao}
                       </Badge>
                       <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
@@ -153,7 +153,7 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
                       <span className="text-[10px] font-mono text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded border border-border/30">
                         REF: {(log.registro_id || '—').slice(0, 8)}
                       </span>
-                      <div className="flex items-center gap-1 text-[8px] text-success font-bold">
+                      <div className="flex items-center gap-1 text-[8px] text-success font-medium">
                         <ShieldCheck className="h-2 w-2" /> PROVA SHA256
                       </div>
                     </div>
@@ -171,7 +171,7 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
                       <div className="relative overflow-hidden mb-3">
                         <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/20 rounded-full" />
                         <div className="text-[10px] text-muted-foreground bg-primary/5 p-2.5 rounded-r-lg border border-l-0 border-primary/10">
-                          <p className="font-bold mb-1">Alteração Detectada:</p>
+                          <p className="font-medium mb-1">Alteração Detectada:</p>
                           <pre className="whitespace-pre-wrap">{JSON.stringify(log.dados_novos, null, 2)}</pre>
                         </div>
                       </div>

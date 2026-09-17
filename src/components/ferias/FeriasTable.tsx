@@ -75,7 +75,7 @@ export function FeriasTable({ data, ...actions }: FeriasTableProps) {
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col">
-                    <span className="text-sm font-bold">{s.colaborador?.nome_completo || '-'}</span>
+                    <span className="text-sm font-medium">{s.colaborador?.nome_completo || '-'}</span>
                     <span className="text-[10px] text-muted-foreground">{s.colaborador?.cargo?.nome || 'Colaborador'}</span>
                   </div>
                 </div>
@@ -87,7 +87,7 @@ export function FeriasTable({ data, ...actions }: FeriasTableProps) {
                 </div>
               </TableCell>
               <TableCell className="text-center">
-                <span className="inline-flex items-center justify-center h-7 w-7 rounded-lg bg-primary/10 text-primary font-display font-bold text-sm">
+                <span className="inline-flex items-center justify-center h-7 w-7 rounded-lg bg-primary/10 text-primary font-display font-medium text-sm">
                   {s.dias_gozo || s.dias_ferias || '-'}
                 </span>
               </TableCell>

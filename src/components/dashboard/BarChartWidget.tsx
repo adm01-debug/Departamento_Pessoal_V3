@@ -36,7 +36,7 @@ export const BarChartWidget = memo(function BarChartWidget({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 + i * 0.05 }}
-                className="text-[10px] font-bold font-display text-muted-foreground group-hover:text-foreground transition-colors"
+                className="text-[10px] font-medium font-display text-muted-foreground group-hover:text-foreground transition-colors"
               >
                 {item.value}
               </motion.span>

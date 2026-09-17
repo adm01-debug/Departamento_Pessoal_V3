@@ -194,7 +194,7 @@ export default function ESocialPage() {
                     {isLoading ? (
                       <Skeleton className="h-8 w-16" />
                     ) : (
-                      <div className="text-3xl font-display font-bold">{value}</div>
+                      <div className="text-3xl font-display font-medium">{value}</div>
                     )}
                     <p className="text-xs text-muted-foreground font-body mt-1">{label}</p>
                   </CardContent>
@@ -287,7 +287,7 @@ export default function ESocialPage() {
                   type="month" 
                   value={selectedCompetencia}
                   onChange={(e) => setSelectedCompetencia(e.target.value)}
-                  className="border-none bg-transparent h-7 w-32 focus-visible:ring-0 text-xs font-bold"
+                  className="border-none bg-transparent h-7 w-32 focus-visible:ring-0 text-xs font-medium"
                 />
               </div>
               <div className="relative w-full md:w-48">
@@ -329,7 +329,7 @@ export default function ESocialPage() {
                       <div className="flex items-center gap-3">
                         <Key className="h-8 w-8 text-success" />
                         <div>
-                          <p className="font-bold text-sm">e-CNPJ: {empresaAtual?.razao_social}</p>
+                          <p className="font-medium text-sm">e-CNPJ: {empresaAtual?.razao_social}</p>
                           <p className="text-xs text-muted-foreground">Vencimento: 12/12/2026 (Em 224 dias)</p>
                         </div>
                       </div>
@@ -425,7 +425,7 @@ export default function ESocialPage() {
                                   <AlertTriangle className="h-3.5 w-3.5 text-destructive animate-pulse cursor-help" />
                                 </TooltipTrigger>
                                 <TooltipContent className="bg-destructive text-destructive-foreground border-none max-w-[300px] p-3 rounded-xl shadow-glow">
-                                  <p className="font-bold mb-1">Erro de Transmissão:</p>
+                                  <p className="font-medium mb-1">Erro de Transmissão:</p>
                                   <p className="max-w-xs text-xs">{(e.erros as any)?.mensagem || (e.erros as any)?.validacao?.[0]?.mensagem || (e.erros as any)?.detalhes || 'Falha na recepção pelo Governo'}</p>
                                   {(e.erros as any)?.codigo && <p className="text-[10px] mt-2 opacity-80">Código: {(e.erros as any).codigo}</p>}
                                 </TooltipContent>
@@ -569,7 +569,7 @@ export default function ESocialPage() {
            </div>
            <div className="flex items-center justify-between">
               <span className="text-xs font-medium">Latência de Resposta</span>
-              <span className="text-xs font-bold">124ms</span>
+              <span className="text-xs font-medium">124ms</span>
            </div>
            <Button variant="ghost" className="w-full text-[10px] h-8 text-muted-foreground hover:text-primary rounded-xl gap-2">
               <Globe className="h-3 w-3" /> Ver Status da Infraestrutura

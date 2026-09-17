@@ -94,7 +94,7 @@ export function ConfiguracoesGeraisTab() {
                 </DialogHeader>
                 <div className="space-y-4 pt-4">
                   <div className="space-y-2">
-                    <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Chave</Label>
+                    <Label className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Chave</Label>
                     <Input 
                       value={form.chave} 
                       onChange={e => setForm(p => ({ ...p, chave: e.target.value }))} 
@@ -103,7 +103,7 @@ export function ConfiguracoesGeraisTab() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Valor</Label>
+                    <Label className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Valor</Label>
                     <Input 
                       value={form.valor} 
                       onChange={e => setForm(p => ({ ...p, valor: e.target.value }))} 
@@ -112,7 +112,7 @@ export function ConfiguracoesGeraisTab() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Descrição</Label>
+                    <Label className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Descrição</Label>
                     <Input 
                       value={form.descricao} 
                       onChange={e => setForm(p => ({ ...p, descricao: e.target.value }))} 
@@ -150,7 +150,7 @@ export function ConfiguracoesGeraisTab() {
                 <TableBody>
                   {configs.map((c: any) => (
                     <TableRow key={c.id} className="hover:bg-accent/10 transition-colors group">
-                      <TableCell className="font-mono text-[11px] font-bold text-primary pl-6 py-4">{c.chave}</TableCell>
+                      <TableCell className="font-mono text-[11px] font-medium text-primary pl-6 py-4">{c.chave}</TableCell>
                       <TableCell>
                         <Badge variant="secondary" className="font-mono text-[10px] bg-muted/50 border-border/40 px-2 py-0.5 rounded-lg font-medium">
                           {c.valor}
@@ -193,7 +193,7 @@ export function ConfiguracoesGeraisTab() {
       <div className="bg-primary/5 p-4 rounded-2xl border border-primary/10 flex items-start gap-3">
         <Database className="h-5 w-5 text-primary shrink-0 mt-0.5" />
         <div className="space-y-1">
-          <p className="text-xs font-bold text-primary uppercase tracking-wider">Gestão de Variáveis de Ambiente de DB</p>
+          <p className="text-xs font-medium text-primary uppercase tracking-wider">Gestão de Variáveis de Ambiente de DB</p>
           <p className="text-[11px] text-muted-foreground leading-relaxed">
             Estes parâmetros controlam o comportamento global do sistema, como timezones, IDs de integração padrão e flags de feature. 
             Alterações nestes campos impactam todos os usuários e módulos em tempo real.

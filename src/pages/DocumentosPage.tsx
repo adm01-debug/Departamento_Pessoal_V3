@@ -326,13 +326,13 @@ export default function DocumentosPage() {
               <div className="text-center space-y-4">
                 <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
                 <div className="space-y-1">
-                  <p className="font-display font-bold">Extraindo dados...</p>
+                  <p className="font-display font-medium">Extraindo dados...</p>
                   <p className="text-xs text-muted-foreground">Isso pode levar alguns segundos</p>
                 </div>
               </div>
             ) : ocrResult ? (
               <div className="w-full p-4 space-y-4">
-                <div className="flex items-center gap-2 text-success font-bold text-sm">
+                <div className="flex items-center gap-2 text-success font-medium text-sm">
                   <CheckCircle2 className="h-4 w-4" /> Dados Extraídos com Sucesso
                 </div>
                 <div className="space-y-2">

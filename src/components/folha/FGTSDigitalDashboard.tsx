@@ -54,22 +54,22 @@ export function FGTSDigitalDashboard() {
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="p-3 rounded-xl bg-muted/20 border border-border/30">
-            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Status Guia GFD</p>
+            <p className="text-[10px] text-muted-foreground uppercase font-medium tracking-wider">Status Guia GFD</p>
             <div className="flex items-center gap-2 mt-1">
               <CheckCircle2 className="h-4 w-4 text-success" />
               <span className="font-semibold text-sm">Gerada / Paga</span>
             </div>
           </div>
           <div className="p-3 rounded-xl bg-muted/20 border border-border/30">
-            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Vencimento</p>
+            <p className="text-[10px] text-muted-foreground uppercase font-medium tracking-wider">Vencimento</p>
             <p className="font-semibold text-sm mt-1">20/05/2026</p>
           </div>
           <div className="p-3 rounded-xl bg-muted/20 border border-border/30">
-            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Total Sistema</p>
+            <p className="text-[10px] text-muted-foreground uppercase font-medium tracking-wider">Total Sistema</p>
             <p className="font-semibold text-sm mt-1 text-primary">R$ 12.450,80</p>
           </div>
           <div className="p-3 rounded-xl bg-success/5 border border-success/30">
-            <p className="text-[10px] text-success uppercase font-bold tracking-wider">Total eSocial (S-5003)</p>
+            <p className="text-[10px] text-success uppercase font-medium tracking-wider">Total eSocial (S-5003)</p>
             <p className="font-semibold text-sm mt-1 text-success">R$ 12.450,80</p>
           </div>
         </div>
@@ -81,7 +81,7 @@ export function FGTSDigitalDashboard() {
                         <CloudSync className="h-4 w-4" />
                     </div>
                     <div className="text-xs">
-                        <p className="font-bold">Conciliação Automática Ativa</p>
+                        <p className="font-medium">Conciliação Automática Ativa</p>
                         <p className="text-[10px] text-muted-foreground">Monitorando divergências entre Folha e FGTS Digital em tempo real.</p>
                     </div>
                 </div>
@@ -94,7 +94,7 @@ export function FGTSDigitalDashboard() {
                         <FileText className="h-4 w-4" />
                     </div>
                     <div className="text-xs">
-                        <p className="font-bold">Guia GFD Mensal - Competência 04/2026</p>
+                        <p className="font-medium">Guia GFD Mensal - Competência 04/2026</p>
                         <p className="text-[10px] text-muted-foreground">Emitida via API Caixa em 05/05/2026</p>
                     </div>
                 </div>

@@ -108,7 +108,7 @@ export default function BeneficiosPage() {
                             {adesoes} colab.
                           </Badge>
                         </TableCell>
-                        <TableCell className="font-body text-right text-sm font-bold text-success">
+                        <TableCell className="font-body text-right text-sm font-medium text-success">
                           {formatCurrency((b.valor || 0) * adesoes)}
                         </TableCell>
                         <TableCell>

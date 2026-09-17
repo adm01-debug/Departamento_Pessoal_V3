@@ -11,8 +11,8 @@ export function S2399TSVTermino({ dados }: { dados: any }) {
           <CardContent className="p-4 flex items-start gap-3">
             <User className="h-4 w-4 text-primary mt-1" />
             <div>
-              <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">Identificação do Trabalhador</Label>
-              <p className="font-display font-bold text-sm">CPF: {maskCpfDisplay(dados.cpfTrab)}</p>
+              <Label className="text-[10px] uppercase text-muted-foreground font-medium tracking-wider">Identificação do Trabalhador</Label>
+              <p className="font-display font-medium text-sm">CPF: {maskCpfDisplay(dados.cpfTrab)}</p>
               <p className="text-[10px] text-muted-foreground italic">Matrícula: {dados.matricula || '-'}</p>
             </div>
           </CardContent>
@@ -22,8 +22,8 @@ export function S2399TSVTermino({ dados }: { dados: any }) {
           <CardContent className="p-4 flex items-start gap-3">
             <LogOut className="h-4 w-4 text-destructive mt-1" />
             <div>
-              <Label className="text-[10px] uppercase text-destructive font-bold tracking-wider">Término do TSV</Label>
-              <p className="font-display font-bold text-sm text-destructive">{dados.dtTerm || '-'}</p>
+              <Label className="text-[10px] uppercase text-destructive font-medium tracking-wider">Término do TSV</Label>
+              <p className="font-display font-medium text-sm text-destructive">{dados.dtTerm || '-'}</p>
               <p className="text-[10px] text-destructive/70 italic">Encerramento das atividades</p>
             </div>
           </CardContent>
@@ -33,7 +33,7 @@ export function S2399TSVTermino({ dados }: { dados: any }) {
       <div className="p-4 rounded-xl border border-border/30 bg-muted/20">
         <div className="flex items-center gap-2 mb-3">
           <FileText className="h-4 w-4 text-muted-foreground" />
-          <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Detalhes do Desligamento</span>
+          <span className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Detalhes do Desligamento</span>
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

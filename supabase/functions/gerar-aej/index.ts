@@ -1,7 +1,7 @@
 // Gera AEJ (Arquivo Eletrônico de Jornada) conforme Portaria MTP 671/2021 - Anexo I.
 // Layout MVP: Registro 1 (cabeçalho), 5 (colaboradores/vínculos), 3 (marcações), 9 (trailer).
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
-import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+import { getCorsHeaders } from '../_shared/contract.ts';
 import { parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
@@ -47,7 +47,7 @@ async function sha256Hex(text: string): Promise<string> {
 }
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method === "OPTIONS") return new Response("ok", { headers: getCorsHeaders(req) });
 
   try {
     const csrf = await verifyCsrf(req.clone());
@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "unauthorized" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -70,7 +70,7 @@ Deno.serve(async (req) => {
     const userId = userRes?.user?.id;
     if (!userId) {
       return new Response(JSON.stringify({ error: "unauthorized" }), {
-        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -87,7 +87,7 @@ Deno.serve(async (req) => {
 
     if (!empresa_id || !periodo_inicio || !periodo_fim) {
       return new Response(JSON.stringify({ error: "empresa_id, periodo_inicio, periodo_fim são obrigatórios" }), {
-        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -102,7 +102,7 @@ Deno.serve(async (req) => {
     }
     if (!authorized) {
       return new Response(JSON.stringify({ error: "forbidden" }), {
-        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 403, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
       });
     }
 
@@ -226,11 +226,11 @@ Deno.serve(async (req) => {
       total_colaboradores: colabValidos.length,
       colaboradores_sem_pis: semPis,
       conteudo, // TXT completo (base64 opcional em versões futuras)
-    }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }), { headers: { ...getCorsHeaders(req), "Content-Type": "application/json" } });
   } catch (e) {
     captureException(e, { fn: 'gerar-aej' });
     return new Response(JSON.stringify({ error: 'Erro interno' }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500, headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 });

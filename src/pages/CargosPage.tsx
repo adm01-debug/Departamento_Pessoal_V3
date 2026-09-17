@@ -68,8 +68,8 @@ export default function CargosPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-6">
           <Card className="border-border/30 rounded-2xl bg-card/50 shadow-xs">
             <CardContent className="p-4">
-              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Total Cargos</p>
-              <h3 className="text-2xl font-display font-bold">{total}</h3>
+              <p className="text-[10px] uppercase font-medium text-muted-foreground tracking-widest">Total Cargos</p>
+              <h3 className="text-2xl font-display font-medium">{total}</h3>
             </CardContent>
           </Card>
         </div>
@@ -86,15 +86,15 @@ export default function CargosPage() {
         <TableRow key={cargo.id} className="hover:bg-accent/20 transition-colors group border-b border-border/10 last:border-0">
           <TableCell className="py-4 pl-6">
             <div className="flex flex-col">
-              <span className="font-body font-bold text-sm text-foreground">{cargo.nome}</span>
+              <span className="font-body font-medium text-sm text-foreground">{cargo.nome}</span>
               {cargo.descricao && <span className="text-[10px] text-muted-foreground truncate max-w-[250px]">{cargo.descricao}</span>}
             </div>
           </TableCell>
           <TableCell className="font-mono text-[11px] font-medium">{cargo.cbo || 'Não inf.'}</TableCell>
           <TableCell>
-            <Badge variant="outline" className="text-[10px] font-bold border-border/50 bg-muted/30">Lvl {cargo.nivel_hierarquico || 1}</Badge>
+            <Badge variant="outline" className="text-[10px] font-medium border-border/50 bg-muted/30">Lvl {cargo.nivel_hierarquico || 1}</Badge>
           </TableCell>
-          <TableCell className="font-body text-right text-sm font-bold text-success">
+          <TableCell className="font-body text-right text-sm font-medium text-success">
             {cargo.salario_base ? formatCurrency(cargo.salario_base) : '-'}
           </TableCell>
           <TableCell>

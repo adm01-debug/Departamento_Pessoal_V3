@@ -100,7 +100,7 @@ export function AfastamentoTable({ data, onEdit, onProrrogacao, onDocuments, onT
                           </span>
                         </TooltipTrigger>
                         <TooltipContent side="top" className="bg-popover border-border shadow-xl">
-                          <p className="font-bold text-primary">{af.cid?.codigo}</p>
+                          <p className="font-medium text-primary">{af.cid?.codigo}</p>
                           <p className="text-xs max-w-[220px] leading-relaxed">{af.cid?.descricao || 'Sem descrição detalhada'}</p>
                         </TooltipContent>
                       </Tooltip>
@@ -116,7 +116,7 @@ export function AfastamentoTable({ data, onEdit, onProrrogacao, onDocuments, onT
                 </div>
               </TableCell>
               <TableCell className="text-center">
-                <div className="font-bold text-primary">{af.dias_total}</div>
+                <div className="font-medium text-primary">{af.dias_total}</div>
                 <div className="text-[10px] text-muted-foreground">dias totais</div>
               </TableCell>
               <TableCell>

@@ -121,28 +121,28 @@ export default function AdminSecurityPage() {
   const criticalCount = alerts.filter((a) => !a.resolved && a.severity === 'critical').length;
 
   return (
-    <div className="container mx-auto space-y-6 p-6">
+    <div className="space-y-6 py-6">
       <PageTitle
         title="Central de Segurança"
         description="Alertas de anomalias detectadas automaticamente pelo sistema"
       />
       <div className="flex items-center gap-2">
         <ShieldAlert className="h-6 w-6 text-primary" aria-hidden />
-        <h1 className="text-2xl font-bold">Central de Segurança</h1>
+        <h1 className="text-2xl font-medium">Central de Segurança</h1>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2"><CardTitle className="text-sm">Alertas abertos</CardTitle></CardHeader>
-          <CardContent className="text-3xl font-bold">{openCount}</CardContent>
+          <CardContent className="text-3xl font-medium">{openCount}</CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2"><CardTitle className="text-sm">Críticos</CardTitle></CardHeader>
-          <CardContent className="text-3xl font-bold text-destructive">{criticalCount}</CardContent>
+          <CardContent className="text-3xl font-medium text-destructive">{criticalCount}</CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2"><CardTitle className="text-sm">Total (últimos 200)</CardTitle></CardHeader>
-          <CardContent className="text-3xl font-bold">{alerts.length}</CardContent>
+          <CardContent className="text-3xl font-medium">{alerts.length}</CardContent>
         </Card>
       </div>
 

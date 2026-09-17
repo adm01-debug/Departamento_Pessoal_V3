@@ -69,7 +69,7 @@ export function NewLoanDialog({ colaboradores, onSave }: any) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             Registrar Empréstimo Consignado
-            <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-wider">Compliance L10.820</Badge>
+            <Badge variant="outline" className="text-[10px] font-medium uppercase tracking-wider">Compliance L10.820</Badge>
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-4">
@@ -114,7 +114,7 @@ export function NewLoanDialog({ colaboradores, onSave }: any) {
                 />
               </div>
               {!marginData.isValid && (
-                <p className="text-[10px] text-destructive flex items-center gap-1 font-bold">
+                <p className="text-[10px] text-destructive flex items-center gap-1 font-medium">
                   <AlertCircle className="h-3 w-3" /> Alerta: Parcela excede a margem permitida por lei.
                 </p>
               )}

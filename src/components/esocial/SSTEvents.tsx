@@ -11,8 +11,8 @@ export function S2220ASO({ dados }: { dados: any }) {
           <CardContent className="p-3 flex items-center gap-3">
             <User className="h-4 w-4 text-primary" />
             <div>
-              <Label className="text-[9px] uppercase text-muted-foreground font-bold">Trabalhador</Label>
-              <p className="text-xs font-bold">CPF: {maskCpfDisplay(dados.cpfTrab)}</p>
+              <Label className="text-[9px] uppercase text-muted-foreground font-medium">Trabalhador</Label>
+              <p className="text-xs font-medium">CPF: {maskCpfDisplay(dados.cpfTrab)}</p>
             </div>
           </CardContent>
         </Card>
@@ -20,8 +20,8 @@ export function S2220ASO({ dados }: { dados: any }) {
           <CardContent className="p-3 flex items-center gap-3">
             <Calendar className="h-4 w-4 text-primary" />
             <div>
-              <Label className="text-[9px] uppercase text-muted-foreground font-bold">Data do Exame (ASO)</Label>
-              <p className="text-xs font-bold">{dados.dtExame}</p>
+              <Label className="text-[9px] uppercase text-muted-foreground font-medium">Data do Exame (ASO)</Label>
+              <p className="text-xs font-medium">{dados.dtExame}</p>
             </div>
           </CardContent>
         </Card>
@@ -30,7 +30,7 @@ export function S2220ASO({ dados }: { dados: any }) {
       <div className="p-4 rounded-xl border border-primary/10 bg-primary/5">
         <div className="flex items-center gap-2 mb-3">
           <Microscope className="h-4 w-4 text-primary" />
-          <span className="text-xs font-bold uppercase tracking-widest text-primary">Informações do Exame</span>
+          <span className="text-xs font-medium uppercase tracking-widest text-primary">Informações do Exame</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1">
@@ -64,8 +64,8 @@ export function S2240AgentesNocivos({ dados }: { dados: any }) {
         <CardContent className="p-3 flex items-center gap-3">
           <User className="h-4 w-4 text-primary" />
           <div>
-            <Label className="text-[9px] uppercase text-muted-foreground font-bold">Trabalhador</Label>
-            <p className="text-xs font-bold">CPF: {maskCpfDisplay(dados.cpfTrab)}</p>
+            <Label className="text-[9px] uppercase text-muted-foreground font-medium">Trabalhador</Label>
+            <p className="text-xs font-medium">CPF: {maskCpfDisplay(dados.cpfTrab)}</p>
           </div>
         </CardContent>
       </Card>
@@ -73,7 +73,7 @@ export function S2240AgentesNocivos({ dados }: { dados: any }) {
       <div className="space-y-2">
         <div className="flex items-center gap-2 mb-1">
           <Wind className="h-4 w-4 text-warning" />
-          <span className="text-xs font-bold uppercase tracking-widest text-warning">Exposição a Agentes Nocivos</span>
+          <span className="text-xs font-medium uppercase tracking-widest text-warning">Exposição a Agentes Nocivos</span>
         </div>
         
         {agentes.map((ag: any, i: number) => (
@@ -81,13 +81,13 @@ export function S2240AgentesNocivos({ dados }: { dados: any }) {
             <div className="flex items-center gap-3">
               <Thermometer className="h-4 w-4 text-warning" />
               <div>
-                <p className="text-xs font-bold">Código Agente: {ag.codAgNoc}</p>
+                <p className="text-xs font-medium">Código Agente: {ag.codAgNoc}</p>
                 <p className="text-[10px] text-muted-foreground">Início da Condição: {dados.dtIniCondic}</p>
               </div>
             </div>
             <div className="flex items-center gap-1">
               <AlertCircle className="h-3 w-3 text-warning" />
-              <span className="text-[10px] font-bold text-warning uppercase">Risco Detectado</span>
+              <span className="text-[10px] font-medium text-warning uppercase">Risco Detectado</span>
             </div>
           </div>
         ))}

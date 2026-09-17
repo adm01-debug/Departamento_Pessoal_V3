@@ -186,7 +186,7 @@ export default function DesligamentosPage() {
                               <td className="px-4 py-3">
                                 <div className="flex items-center gap-2.5">
                                   <div className="h-8 w-8 rounded-full bg-destructive/10 flex items-center justify-center shrink-0">
-                                    <span className="text-xs font-display font-bold text-destructive">
+                                    <span className="text-xs font-display font-medium text-destructive">
                                       {(d.colaborador?.nome_completo || 'C')[0]}
                                     </span>
                                   </div>
@@ -245,7 +245,7 @@ export default function DesligamentosPage() {
                           <div className="flex items-center justify-between mb-2">
                             <div className="flex items-center gap-2.5">
                               <div className="h-9 w-9 rounded-full bg-destructive/10 flex items-center justify-center shrink-0">
-                                <span className="text-sm font-display font-bold text-destructive">
+                                <span className="text-sm font-display font-medium text-destructive">
                                   {(d.colaborador?.nome_completo || 'C')[0]}
                                 </span>
                               </div>
@@ -257,7 +257,7 @@ export default function DesligamentosPage() {
                               </div>
                             </div>
                             <div className="text-right">
-                              <p className="text-sm font-display font-bold">
+                              <p className="text-sm font-display font-medium">
                                 {d.valor_liquido ? `R$ ${d.valor_liquido.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : '—'}
                               </p>
                             </div>

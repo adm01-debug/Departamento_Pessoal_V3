@@ -261,7 +261,7 @@ export default function FolhaPagamentoPage() {
               <CardContent className="p-4 flex items-center gap-3">
                 <Shield className="h-5 w-5 text-primary" />
                 <div>
-                   <p className="text-xs font-bold">Cálculo Auditado</p>
+                   <p className="text-xs font-medium">Cálculo Auditado</p>
                    <p className="text-[10px] text-muted-foreground">Motor de cálculo validado pela Portaria 671 MTP.</p>
                 </div>
               </CardContent>

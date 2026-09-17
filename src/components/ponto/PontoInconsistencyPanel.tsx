@@ -135,7 +135,7 @@ export function PontoInconsistencyPanel({ registros }: { registros: any[] }) {
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-success/20 rounded-full text-success"><CheckCircle2 className="h-5 w-5" /></div>
                 <div>
-                  <p className="text-sm font-bold text-success-foreground">Tudo em conformidade!</p>
+                  <p className="text-sm font-medium text-success-foreground">Tudo em conformidade!</p>
                   <p className="text-[10px] text-muted-foreground">Você resolveu {resolvedIds.length} inconsistências hoje.</p>
                 </div>
               </div>
@@ -180,7 +180,7 @@ export function PontoInconsistencyPanel({ registros }: { registros: any[] }) {
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between mb-1">
-                      <p className="text-xs font-bold truncate group-hover:text-primary transition-colors">{inc.colaborador}</p>
+                      <p className="text-xs font-medium truncate group-hover:text-primary transition-colors">{inc.colaborador}</p>
                       <span className="text-[9px] text-muted-foreground font-mono bg-muted/50 px-1 rounded">{inc.data}</span>
                     </div>
                     <p className="text-[10px] text-muted-foreground leading-snug line-clamp-2">{inc.descricao}</p>
@@ -223,7 +223,7 @@ export function PontoInconsistencyPanel({ registros }: { registros: any[] }) {
           </AnimatePresence>
           {inconsistencies.length > 6 && (
             <motion.div layout className="flex flex-col items-center justify-center p-4 rounded-xl border border-dashed border-border/60 bg-muted/5">
-              <p className="text-[11px] text-muted-foreground font-bold mb-1">
+              <p className="text-[11px] text-muted-foreground font-medium mb-1">
                 + {inconsistencies.length - 6} CONFLITOS
               </p>
               <Button variant="link" size="sm" className="h-6 text-[10px] p-0 hovre:no-underline">Ver lista completa</Button>

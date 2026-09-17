@@ -344,7 +344,7 @@ export default function PontoPage() {
             </Button>
             <Button
               size="sm"
-              className="rounded-xl gap-1.5 font-bold shadow-lg shadow-primary/20 bg-gradient-to-r from-primary to-primary-glow border-none"
+              className="rounded-xl gap-1.5 font-medium shadow-lg shadow-primary/20 bg-gradient-to-r from-primary to-primary-glow border-none"
               onClick={() =>
                 toast.success('Relatório MTP 671 Gerado com Sucesso!', {
                   description: 'O documento foi assinado digitalmente e está disponível no histórico de auditoria.'})
@@ -366,7 +366,7 @@ export default function PontoPage() {
               <ShieldCheck className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-primary">
+              <p className="text-xs font-medium uppercase tracking-widest text-primary">
                 Ambiente Certificado MTP 671/21
               </p>
               <p className="text-[10px] text-muted-foreground">
@@ -377,11 +377,11 @@ export default function PontoPage() {
           <div className="flex items-center gap-2">
             <Badge
               variant="outline"
-              className="text-[9px] font-bold bg-success/10 text-success border-success/30 px-2 py-1"
+              className="text-[9px] font-medium bg-success/10 text-success border-success/30 px-2 py-1"
             >
               REP-P HOMOLOGADO
             </Badge>
-            <Badge variant="outline" className="text-[9px] font-bold bg-info/10 text-info border-info/30 px-2 py-1">
+            <Badge variant="outline" className="text-[9px] font-medium bg-info/10 text-info border-info/30 px-2 py-1">
               BIOMETRIA ATIVA
             </Badge>
           </div>
@@ -445,12 +445,12 @@ export default function PontoPage() {
                             <Clock className="h-5 w-5" />
                           </div>
                           <div>
-                            <p className="text-[10px] uppercase text-muted-foreground font-bold tracking-widest">
+                            <p className="text-[10px] uppercase text-muted-foreground font-medium tracking-widest">
                               Saldo Banco de Horas
                             </p>
                             <p
                               className={cn(
-                                'text-xl font-display font-bold',
+                                'text-xl font-display font-medium',
                                 bancoResumo.tipo === 'credito' ? 'text-success' : 'text-destructive'
                               )}
                             >
@@ -490,8 +490,8 @@ export default function PontoPage() {
                     <Zap className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-[10px] uppercase text-muted-foreground font-bold">Assiduidade</p>
-                    <p className="text-lg font-bold">98.5%</p>
+                    <p className="text-[10px] uppercase text-muted-foreground font-medium">Assiduidade</p>
+                    <p className="text-lg font-medium">98.5%</p>
                   </div>
                 </CardContent>
               </Card>
@@ -501,8 +501,8 @@ export default function PontoPage() {
                     <AlertCircle className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-[10px] uppercase text-muted-foreground font-bold">Inconsistências</p>
-                    <p className="text-lg font-bold">12</p>
+                    <p className="text-[10px] uppercase text-muted-foreground font-medium">Inconsistências</p>
+                    <p className="text-lg font-medium">12</p>
                   </div>
                 </CardContent>
               </Card>
@@ -512,8 +512,8 @@ export default function PontoPage() {
                     <BrainCircuit className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-[10px] uppercase text-muted-foreground font-bold">Previsão HE</p>
-                    <p className="text-lg font-bold">42h</p>
+                    <p className="text-[10px] uppercase text-muted-foreground font-medium">Previsão HE</p>
+                    <p className="text-lg font-medium">42h</p>
                   </div>
                 </CardContent>
               </Card>
@@ -523,8 +523,8 @@ export default function PontoPage() {
                     <ShieldCheck className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-[10px] uppercase text-muted-foreground font-bold">Compliance</p>
-                    <p className="text-lg font-bold">100%</p>
+                    <p className="text-[10px] uppercase text-muted-foreground font-medium">Compliance</p>
+                    <p className="text-lg font-medium">100%</p>
                   </div>
                 </CardContent>
               </Card>

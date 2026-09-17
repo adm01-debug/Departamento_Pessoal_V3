@@ -121,10 +121,10 @@ export default function DespesasPage() {
       <PageTitle title="Despesas e Reembolsos" description="Controle de despesas e reembolsos" />
       <PageLayout title="Reembolsos & Despesas">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <Card><CardContent className="pt-4 flex items-center gap-3"><Receipt className="h-8 w-8 text-primary" /><div><p className="text-2xl font-bold">{despesas.length}</p><p className="text-xs text-muted-foreground">Total</p></div></CardContent></Card>
-          <Card><CardContent className="pt-4 flex items-center gap-3"><Clock className="h-8 w-8 text-warning" /><div><p className="text-2xl font-bold">{despesas.filter((d: any) => d.status === 'pendente').length}</p><p className="text-xs text-muted-foreground">Pendentes</p></div></CardContent></Card>
-          <Card><CardContent className="pt-4 flex items-center gap-3"><DollarSign className="h-8 w-8 text-destructive" /><div><p className="text-2xl font-bold">{formatCurrency(totalPendente)}</p><p className="text-xs text-muted-foreground">Valor pendente</p></div></CardContent></Card>
-          <Card><CardContent className="pt-4 flex items-center gap-3"><CheckCircle className="h-8 w-8 text-success" /><div><p className="text-2xl font-bold">{formatCurrency(totalAprovado)}</p><p className="text-xs text-muted-foreground">Aprovado + folha + pago</p></div></CardContent></Card>
+          <Card><CardContent className="pt-4 flex items-center gap-3"><Receipt className="h-8 w-8 text-primary" /><div><p className="text-2xl font-medium">{despesas.length}</p><p className="text-xs text-muted-foreground">Total</p></div></CardContent></Card>
+          <Card><CardContent className="pt-4 flex items-center gap-3"><Clock className="h-8 w-8 text-warning" /><div><p className="text-2xl font-medium">{despesas.filter((d: any) => d.status === 'pendente').length}</p><p className="text-xs text-muted-foreground">Pendentes</p></div></CardContent></Card>
+          <Card><CardContent className="pt-4 flex items-center gap-3"><DollarSign className="h-8 w-8 text-destructive" /><div><p className="text-2xl font-medium">{formatCurrency(totalPendente)}</p><p className="text-xs text-muted-foreground">Valor pendente</p></div></CardContent></Card>
+          <Card><CardContent className="pt-4 flex items-center gap-3"><CheckCircle className="h-8 w-8 text-success" /><div><p className="text-2xl font-medium">{formatCurrency(totalAprovado)}</p><p className="text-xs text-muted-foreground">Aprovado + folha + pago</p></div></CardContent></Card>
         </div>
 
         <div className="flex justify-end mb-4">

@@ -41,7 +41,7 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
           <div className="relative">
             <Avatar className="h-8 w-8 ring-2 ring-border/50 transition-all group-hover:ring-primary/30">
               {user?.avatar && <AvatarImage src={user.avatar} />}
-              <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-primary-foreground text-xs font-bold">
+              <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-primary-foreground text-xs font-medium">
                 {initials}
               </AvatarFallback>
             </Avatar>
@@ -58,7 +58,7 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10 ring-2 ring-border/30">
               {user?.avatar && <AvatarImage src={user.avatar} />}
-              <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-primary-foreground text-sm font-bold">
+              <AvatarFallback className="bg-gradient-to-br from-primary to-primary-glow text-primary-foreground text-sm font-medium">
                 {initials}
               </AvatarFallback>
             </Avatar>
@@ -68,7 +68,7 @@ export function UserProfileMenu({ user }: UserProfileMenuProps) {
             </div>
           </div>
           <div className="mt-2.5 flex items-center gap-1.5">
-            <span className="px-2 py-0.5 rounded-full bg-success/15 text-success text-[10px] font-bold uppercase tracking-wider">Online</span>
+            <span className="px-2 py-0.5 rounded-full bg-success/15 text-success text-[10px] font-medium uppercase tracking-wider">Online</span>
           </div>
         </div>
 

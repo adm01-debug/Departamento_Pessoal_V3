@@ -193,7 +193,7 @@ export default function ColaboradorFormPage() {
                       <div className="h-32 w-32 rounded-3xl bg-muted flex items-center justify-center border-2 border-dashed border-border/50 relative group cursor-pointer hover:bg-muted/80 transition-colors">
                         <Camera className="h-8 w-8 text-muted-foreground group-hover:text-primary transition-colors" />
                         <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 rounded-3xl transition-opacity flex items-center justify-center">
-                          <span className="text-[10px] font-bold uppercase text-primary">Alterar Foto</span>
+                          <span className="text-[10px] font-medium uppercase text-primary">Alterar Foto</span>
                         </div>
                       </div>
                       <Badge variant="outline" className="rounded-full">Foto DP</Badge>

@@ -176,7 +176,7 @@ export default function ContabilidadePage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground font-body">Contas Ativas</p>
-                  <p className="text-xl font-display font-bold">{planoContas.length}</p>
+                  <p className="text-xl font-display font-medium">{planoContas.length}</p>
                 </div>
               </CardContent>
             </Card>
@@ -187,7 +187,7 @@ export default function ContabilidadePage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground font-body">Total Lançamentos</p>
-                  <p className="text-xl font-display font-bold">{lancamentos.length}</p>
+                  <p className="text-xl font-display font-medium">{lancamentos.length}</p>
                 </div>
               </CardContent>
             </Card>
@@ -198,7 +198,7 @@ export default function ContabilidadePage() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground font-body">Status SPED</p>
-                  <p className="text-xl font-display font-bold">Pronto para Envio</p>
+                  <p className="text-xl font-display font-medium">Pronto para Envio</p>
                 </div>
               </CardContent>
             </Card>
@@ -246,16 +246,16 @@ export default function ContabilidadePage() {
                           <TableCell>
                             <div className="flex flex-col gap-1">
                               <div className="flex items-center gap-1.5 text-xs">
-                                <span className="text-success font-bold uppercase w-4">D:</span>
+                                <span className="text-success font-medium uppercase w-4">D:</span>
                                 <span className="text-muted-foreground">{l.conta_debito?.codigo} - {l.conta_debito?.nome}</span>
                               </div>
                               <div className="flex items-center gap-1.5 text-xs">
-                                <span className="text-destructive font-bold uppercase w-4">C:</span>
+                                <span className="text-destructive font-medium uppercase w-4">C:</span>
                                 <span className="text-muted-foreground">{l.conta_credito?.codigo} - {l.conta_credito?.nome}</span>
                               </div>
                             </div>
                           </TableCell>
-                          <TableCell className="text-right font-display font-bold">{formatCurrency(l.valor ?? 0)}</TableCell>
+                          <TableCell className="text-right font-display font-medium">{formatCurrency(l.valor ?? 0)}</TableCell>
                           <TableCell><StatusBadge status={l.status ?? 'desconhecido'} variant="success" /></TableCell>
                         </TableRow>
                       ))}
@@ -286,7 +286,7 @@ export default function ContabilidadePage() {
                     <TableBody>
                       {planoContas.map(p => (
                         <TableRow key={p.id}>
-                          <TableCell className="font-mono font-bold">{p.codigo}</TableCell>
+                          <TableCell className="font-mono font-medium">{p.codigo}</TableCell>
                           <TableCell className="font-body">{p.nome}</TableCell>
                           <TableCell className="capitalize font-body text-xs">{p.tipo}</TableCell>
                           <TableCell className="capitalize font-body text-xs">{p.natureza}</TableCell>

@@ -99,7 +99,7 @@ export default function OnboardingPage() {
                         </CardHeader>
                         <CardContent className="space-y-4">
                           <div className="space-y-1.5">
-                            <div className="flex justify-between text-[11px] font-bold uppercase text-muted-foreground">
+                            <div className="flex justify-between text-[11px] font-medium uppercase text-muted-foreground">
                               <span>Progresso do Onboarding</span>
                               <span>{getProgresso(colab.tarefas)}%</span>
                             </div>
@@ -107,7 +107,7 @@ export default function OnboardingPage() {
                           </div>
 
                           <div className="space-y-2 pt-2">
-                            <p className="text-xs font-bold flex items-center gap-1.5 text-muted-foreground uppercase">
+                            <p className="text-xs font-medium flex items-center gap-1.5 text-muted-foreground uppercase">
                               <ListTodo className="h-3 w-3" /> Tarefas Críticas
                             </p>
                             {colab.tarefas?.map((tarefa: any) => (
@@ -163,14 +163,14 @@ export default function OnboardingPage() {
                    <Package className="h-6 w-6" />
                  </div>
                  <div>
-                   <h3 className="font-bold">Kit Desenvolvedor</h3>
+                   <h3 className="font-medium">Kit Desenvolvedor</h3>
                    <p className="text-xs text-muted-foreground">MacBook M3, Monitor 27", Headset</p>
                  </div>
                  <Button variant="outline" size="sm" className="rounded-xl w-full">Gerenciar Kit</Button>
                </Card>
                <button className="border-2 border-dashed rounded-2xl p-6 flex flex-col items-center justify-center gap-2 hover:border-primary/40 hover:bg-primary/5 transition-all text-muted-foreground">
                  <UserPlus className="h-8 w-8 opacity-20" />
-                 <span className="text-sm font-bold">Novo Perfil de Kit</span>
+                 <span className="text-sm font-medium">Novo Perfil de Kit</span>
                </button>
              </div>
           </TabsContent>

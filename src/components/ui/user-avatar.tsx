@@ -43,7 +43,7 @@ export function UserAvatar({ name, imageUrl, size = 'md', className }: UserAvata
   return (
     <Avatar className={cn(sizeClasses[size], 'ring-1 ring-border/20', className)}>
       {imageUrl && <AvatarImage src={imageUrl} alt={name} />}
-      <AvatarFallback className={cn('bg-gradient-to-br text-primary-foreground font-bold', gradient)}>
+      <AvatarFallback className={cn('bg-gradient-to-br text-primary-foreground font-medium', gradient)}>
         {initials}
       </AvatarFallback>
     </Avatar>

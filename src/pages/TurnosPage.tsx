@@ -51,9 +51,9 @@ export default function TurnosPage() {
       gradient="from-primary to-primary-glow"
     >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <Card><CardContent className="pt-4 flex items-center gap-3"><CalendarClock className="h-8 w-8 text-primary" /><div><p className="text-2xl font-bold">{turnos.length}</p><p className="text-xs text-muted-foreground">Turnos cadastrados</p></div></CardContent></Card>
-        <Card><CardContent className="pt-4 flex items-center gap-3"><Users className="h-8 w-8 text-info" /><div><p className="text-2xl font-bold">{escalas.length}</p><p className="text-xs text-muted-foreground">Escalas agendadas</p></div></CardContent></Card>
-        <Card><CardContent className="pt-4 flex items-center gap-3"><Clock className="h-8 w-8 text-success" /><div><p className="text-2xl font-bold">{turnos.filter((t: any) => t.ativo).length}</p><p className="text-xs text-muted-foreground">Turnos ativos</p></div></CardContent></Card>
+        <Card><CardContent className="pt-4 flex items-center gap-3"><CalendarClock className="h-8 w-8 text-primary" /><div><p className="text-2xl font-medium">{turnos.length}</p><p className="text-xs text-muted-foreground">Turnos cadastrados</p></div></CardContent></Card>
+        <Card><CardContent className="pt-4 flex items-center gap-3"><Users className="h-8 w-8 text-info" /><div><p className="text-2xl font-medium">{escalas.length}</p><p className="text-xs text-muted-foreground">Escalas agendadas</p></div></CardContent></Card>
+        <Card><CardContent className="pt-4 flex items-center gap-3"><Clock className="h-8 w-8 text-success" /><div><p className="text-2xl font-medium">{turnos.filter((t: any) => t.ativo).length}</p><p className="text-xs text-muted-foreground">Turnos ativos</p></div></CardContent></Card>
       </div>
 
       <Tabs defaultValue="turnos">

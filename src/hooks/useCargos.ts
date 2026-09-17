@@ -11,6 +11,7 @@ export function useCargos() {
     queryKey: `cargos:${empresaId ?? 'none'}`,
     service: cargoService,
     initialPageSize: 15,
+    enabled: !!empresaId,
     filters: empresaId ? { empresa_id: empresaId } : {},
     empresaId: empresaId ?? undefined,
     successMessages: {

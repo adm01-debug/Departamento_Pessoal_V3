@@ -1,6 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { validateRequest, corsHeaders, createErrorResponse } from '../_shared/contract.ts';
+import { validateRequest, corsHeaders, createErrorResponse, getCorsHeaders } from '../_shared/contract.ts';
 import { cepSchema } from '../_shared/schemas/common.ts';
 import { cachePublic, cachedFetch } from '../_shared/cache.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
@@ -15,14 +15,14 @@ const CACHE = cachePublic(60 * 60 * 24, 60 * 60);
 const CEP_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: getCorsHeaders(req) });
 
   const csrf = await verifyCsrf(req.clone());
   if (!csrf.ok) return csrf.response!;
 
   const authHeader = req.headers.get('Authorization') ?? '';
   if (!authHeader.startsWith('Bearer ')) {
-    return createErrorResponse('Autenticação obrigatória', 401, 'UNAUTHORIZED');
+    return createErrorResponse('Autenticação obrigatória', 401, 'UNAUTHORIZED', undefined, req);
   }
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const anonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
@@ -33,7 +33,7 @@ serve(async (req) => {
   });
   const { data: userData, error: userErr } = await userClient.auth.getUser();
   if (userErr || !userData?.user) {
-    return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
+    return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED', undefined, req);
   }
   const rlClient = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
   const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
@@ -45,7 +45,7 @@ serve(async (req) => {
 
   const { cep } = data!;
   const clean = cep.replace(/\D/g, '');
-  const headers = { ...corsHeaders, 'Content-Type': 'application/json', ...CACHE };
+  const headers = { ...getCorsHeaders(req), 'Content-Type': 'application/json', ...CACHE };
 
   try {
     const viaCepResult = await cachedFetch(
@@ -85,9 +85,9 @@ serve(async (req) => {
       }), { headers });
     }
 
-    return createErrorResponse('CEP não encontrado', 404, 'NOT_FOUND');
+    return createErrorResponse('CEP não encontrado', 404, 'NOT_FOUND', undefined, req);
   } catch (error: unknown) {
     captureException(error);
-    return createErrorResponse('Erro interno', 500, 'INTERNAL_SERVER_ERROR');
+    return createErrorResponse('Erro interno', 500, 'INTERNAL_SERVER_ERROR', undefined, req);
   }
 });

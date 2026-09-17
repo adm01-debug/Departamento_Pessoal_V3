@@ -77,7 +77,7 @@ export function ColaboradorHistory({ colaboradorId }: ColaboradorHistoryProps) {
                           <User className="h-3 w-3" /> {log.user_email || 'Sistema'}
                         </span>
                       </div>
-                      <span className="text-[10px] uppercase font-bold text-muted-foreground opacity-60 group-hover:opacity-100 transition-opacity">
+                      <span className="text-[10px] uppercase font-medium text-muted-foreground opacity-60 group-hover:opacity-100 transition-opacity">
                         {format(new Date(log.created_at), "dd 'de' MMMM 'às' HH:mm", { locale: ptBR })}
                       </span>
                     </div>
@@ -93,7 +93,7 @@ export function ColaboradorHistory({ colaboradorId }: ColaboradorHistoryProps) {
 
                           return (
                             <div key={campo} className="flex flex-wrap items-center gap-2 text-xs bg-background/50 p-2 rounded-lg border border-border/10">
-                              <span className="font-bold flex items-center gap-1 text-primary">
+                              <span className="font-medium flex items-center gap-1 text-primary">
                                 <Tag className="h-3 w-3" /> {campo.replace(/_/g, ' ')}:
                               </span>
                               <span className="text-muted-foreground line-through decoration-destructive/30">{String(de || 'vazio')}</span>

@@ -57,11 +57,12 @@ export default function ContratoTemplatesPage() {
     setOpenEditor(false);
   };
 
+  // Padding horizontal agora vem do <main> global (MainLayout); container/mx-auto removidos para evitar duplicação
   return (
-    <div className="container mx-auto py-6 space-y-6">
+    <div className="py-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
+          <h1 className="text-2xl font-medium flex items-center gap-2">
             <FileText className="h-6 w-6 text-primary" />
             Modelos de Contrato
           </h1>

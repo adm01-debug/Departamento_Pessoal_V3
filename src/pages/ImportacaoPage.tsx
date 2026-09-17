@@ -117,15 +117,15 @@ export default function ImportacaoPage() {
           <div className="grid grid-cols-3 gap-3">
             <Card className="border-border/30 rounded-2xl"><CardContent className="p-3 flex items-center gap-3">
               <CheckCircle className="h-8 w-8 text-success" />
-              <div><p className="text-lg font-bold font-display">{validCount}</p><p className="text-[10px] text-muted-foreground font-body">Válidos</p></div>
+              <div><p className="text-lg font-medium font-display">{validCount}</p><p className="text-[10px] text-muted-foreground font-body">Válidos</p></div>
             </CardContent></Card>
             <Card className="border-border/30 rounded-2xl"><CardContent className="p-3 flex items-center gap-3">
               <XCircle className="h-8 w-8 text-destructive" />
-              <div><p className="text-lg font-bold font-display">{errorCount}</p><p className="text-[10px] text-muted-foreground font-body">Erros</p></div>
+              <div><p className="text-lg font-medium font-display">{errorCount}</p><p className="text-[10px] text-muted-foreground font-body">Erros</p></div>
             </CardContent></Card>
             <Card className="border-border/30 rounded-2xl"><CardContent className="p-3 flex items-center gap-3">
               <AlertTriangle className="h-8 w-8 text-warning" />
-              <div><p className="text-lg font-bold font-display">{dupCount}</p><p className="text-[10px] text-muted-foreground font-body">Duplicados</p></div>
+              <div><p className="text-lg font-medium font-display">{dupCount}</p><p className="text-[10px] text-muted-foreground font-body">Duplicados</p></div>
             </CardContent></Card>
           </div>
 
@@ -188,11 +188,11 @@ export default function ImportacaoPage() {
       {step === 'done' && (
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="max-w-md mx-auto text-center space-y-4 py-12">
           <CheckCircle className="h-16 w-16 text-success mx-auto" />
-          <p className="font-display font-bold text-xl">Importação Concluída!</p>
+          <p className="font-display font-medium text-xl">Importação Concluída!</p>
           <div className="grid grid-cols-3 gap-3">
-            <Card className="border-border/30 rounded-xl"><CardContent className="p-3"><p className="text-lg font-bold text-success">{importResult.success}</p><p className="text-[10px] font-body text-muted-foreground">Importados</p></CardContent></Card>
-            <Card className="border-border/30 rounded-xl"><CardContent className="p-3"><p className="text-lg font-bold text-destructive">{importResult.errors}</p><p className="text-[10px] font-body text-muted-foreground">Erros</p></CardContent></Card>
-            <Card className="border-border/30 rounded-xl"><CardContent className="p-3"><p className="text-lg font-bold text-warning">{importResult.duplicates}</p><p className="text-[10px] font-body text-muted-foreground">Duplicados</p></CardContent></Card>
+            <Card className="border-border/30 rounded-xl"><CardContent className="p-3"><p className="text-lg font-medium text-success">{importResult.success}</p><p className="text-[10px] font-body text-muted-foreground">Importados</p></CardContent></Card>
+            <Card className="border-border/30 rounded-xl"><CardContent className="p-3"><p className="text-lg font-medium text-destructive">{importResult.errors}</p><p className="text-[10px] font-body text-muted-foreground">Erros</p></CardContent></Card>
+            <Card className="border-border/30 rounded-xl"><CardContent className="p-3"><p className="text-lg font-medium text-warning">{importResult.duplicates}</p><p className="text-[10px] font-body text-muted-foreground">Duplicados</p></CardContent></Card>
           </div>
           <Button onClick={() => { setStep('upload'); setRows([]); }} className="rounded-xl font-body">Nova Importação</Button>
         </motion.div>

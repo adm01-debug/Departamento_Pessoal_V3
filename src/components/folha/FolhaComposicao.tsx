@@ -74,7 +74,7 @@ export function FolhaComposicao({
                 <span className="text-body font-body">{item.label}</span>
                 <div className="flex items-center gap-2">
                   <span className="text-caption text-muted-foreground">{item.pct.toFixed(1)}%</span>
-                  <span className="text-body font-display font-bold">{formatCurrency(item.value)}</span>
+                  <span className="text-body font-display font-medium">{formatCurrency(item.value)}</span>
                 </div>
               </div>
               <div className="h-2 bg-muted/50 rounded-full overflow-hidden">

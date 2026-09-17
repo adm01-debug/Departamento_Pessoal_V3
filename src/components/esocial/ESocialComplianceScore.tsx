@@ -20,7 +20,7 @@ export function ESocialComplianceScore({ stats }: { stats: any }) {
   return (
     <Card className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden bg-gradient-to-br from-background to-muted/20">
       <CardHeader className="pb-2">
-        <CardTitle className="text-xs font-display font-bold text-muted-foreground uppercase tracking-widest flex items-center justify-between">
+        <CardTitle className="text-xs font-display font-medium text-muted-foreground uppercase tracking-widest flex items-center justify-between">
           <span>Score de Conformidade Fiscal</span>
           <Zap className="h-3 w-3 text-primary animate-pulse" />
         </CardTitle>
@@ -46,19 +46,19 @@ export function ESocialComplianceScore({ stats }: { stats: any }) {
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className={`text-3xl font-display font-bold ${getScoreColor(score)}`}>{score}%</span>
-              <span className="text-[9px] text-muted-foreground font-bold uppercase">Integridade</span>
+              <span className={`text-3xl font-display font-medium ${getScoreColor(score)}`}>{score}%</span>
+              <span className="text-[9px] text-muted-foreground font-medium uppercase">Integridade</span>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-2 w-full">
             <div className="p-2 rounded-xl bg-background border border-border/40 text-center">
-              <p className="text-[9px] text-muted-foreground uppercase font-bold">Eventos S-1200</p>
-              <p className="text-sm font-bold">{stats.enviados}</p>
+              <p className="text-[9px] text-muted-foreground uppercase font-medium">Eventos S-1200</p>
+              <p className="text-sm font-medium">{stats.enviados}</p>
             </div>
             <div className="p-2 rounded-xl bg-background border border-border/40 text-center">
-              <p className="text-[9px] text-muted-foreground uppercase font-bold">Erros Retornados</p>
-              <p className="text-sm font-bold text-destructive">{stats.erros}</p>
+              <p className="text-[9px] text-muted-foreground uppercase font-medium">Erros Retornados</p>
+              <p className="text-sm font-medium text-destructive">{stats.erros}</p>
             </div>
           </div>
 
@@ -69,7 +69,7 @@ export function ESocialComplianceScore({ stats }: { stats: any }) {
               <AlertTriangle className="h-4 w-4 text-warning mt-0.5" />
             )}
             <div>
-              <p className={`text-[11px] font-bold ${getScoreColor(score)}`}>
+              <p className={`text-[11px] font-medium ${getScoreColor(score)}`}>
                 {score >= 95 ? 'Ambiente Seguro' : 'Riscos Detectados'}
               </p>
               <p className="text-[10px] text-muted-foreground leading-tight">

@@ -73,7 +73,7 @@ export function RelatoriosAgendadosTab({ empresaId }: { empresaId: string }) {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-xl font-display font-bold">Relatórios Agendados</h2>
+          <h2 className="text-xl font-display font-medium">Relatórios Agendados</h2>
           <p className="text-sm text-muted-foreground font-body">Configure envios automáticos para sua caixa de entrada</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
@@ -154,12 +154,12 @@ export function RelatoriosAgendadosTab({ empresaId }: { empresaId: string }) {
                       <Clock className="h-5 w-5" />
                     </div>
                     <div>
-                      <h3 className="font-display font-bold text-sm">{a.nome}</h3>
+                      <h3 className="font-display font-medium text-sm">{a.nome}</h3>
                       <div className="flex items-center gap-3 mt-1">
-                        <span className="text-[10px] uppercase font-bold text-muted-foreground flex items-center gap-1">
+                        <span className="text-[10px] uppercase font-medium text-muted-foreground flex items-center gap-1">
                           <Calendar className="h-3 w-3" /> {a.frequencia} às {a.hora_envio}
                         </span>
-                        <span className="text-[10px] uppercase font-bold text-muted-foreground flex items-center gap-1">
+                        <span className="text-[10px] uppercase font-medium text-muted-foreground flex items-center gap-1">
                           <Mail className="h-3 w-3" /> {a.email_destinatario}
                         </span>
                       </div>

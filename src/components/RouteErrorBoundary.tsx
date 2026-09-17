@@ -50,7 +50,7 @@ export class RouteErrorBoundary extends Component<Props, State> {
             </div>
           </div>
           <div className="text-center space-y-3 max-w-lg">
-            <h2 className="text-2xl font-display font-bold text-foreground tracking-tight">
+            <h2 className="text-2xl font-display font-medium text-foreground tracking-tight">
               Instabilidade Detectada
             </h2>
             <p className="text-base text-muted-foreground font-body leading-relaxed">
@@ -58,7 +58,7 @@ export class RouteErrorBoundary extends Component<Props, State> {
             </p>
             {this.state.error && import.meta.env.DEV && (
               <div className="mt-6 p-4 bg-muted/30 border border-border/40 rounded-2xl text-left">
-                <p className="text-[10px] font-bold uppercase text-muted-foreground mb-2 tracking-widest">Stack Trace Resume</p>
+                <p className="text-[10px] font-medium uppercase text-muted-foreground mb-2 tracking-widest">Stack Trace Resume</p>
                 <code className="text-xs text-destructive/80 font-mono break-all line-clamp-3">
                   {this.state.error.message}
                 </code>

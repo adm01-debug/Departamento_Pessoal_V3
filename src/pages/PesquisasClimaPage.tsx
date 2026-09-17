@@ -57,10 +57,10 @@ export default function PesquisasClimaPage() {
     <PageTitle title="Pesquisas de Clima" description="Pesquisas de clima organizacional" />
     <PageLayout title="Pesquisas de Clima & eNPS">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <Card><CardContent className="pt-4 flex items-center gap-3"><ClipboardList className="h-8 w-8 text-primary" /><div><p className="text-2xl font-bold">{pesquisas.length}</p><p className="text-xs text-muted-foreground">Total</p></div></CardContent></Card>
-        <Card><CardContent className="pt-4 flex items-center gap-3"><TrendingUp className="h-8 w-8 text-success" /><div><p className="text-2xl font-bold">{ativas}</p><p className="text-xs text-muted-foreground">Ativas</p></div></CardContent></Card>
-        <Card><CardContent className="pt-4 flex items-center gap-3"><BarChart3 className="h-8 w-8 text-info" /><div><p className="text-2xl font-bold">{encerradas}</p><p className="text-xs text-muted-foreground">Encerradas</p></div></CardContent></Card>
-        <Card><CardContent className="pt-4 flex items-center gap-3"><Users className="h-8 w-8 text-warning" /><div><p className="text-2xl font-bold">—</p><p className="text-xs text-muted-foreground">Respostas Total</p></div></CardContent></Card>
+        <Card><CardContent className="pt-4 flex items-center gap-3"><ClipboardList className="h-8 w-8 text-primary" /><div><p className="text-2xl font-medium">{pesquisas.length}</p><p className="text-xs text-muted-foreground">Total</p></div></CardContent></Card>
+        <Card><CardContent className="pt-4 flex items-center gap-3"><TrendingUp className="h-8 w-8 text-success" /><div><p className="text-2xl font-medium">{ativas}</p><p className="text-xs text-muted-foreground">Ativas</p></div></CardContent></Card>
+        <Card><CardContent className="pt-4 flex items-center gap-3"><BarChart3 className="h-8 w-8 text-info" /><div><p className="text-2xl font-medium">{encerradas}</p><p className="text-xs text-muted-foreground">Encerradas</p></div></CardContent></Card>
+        <Card><CardContent className="pt-4 flex items-center gap-3"><Users className="h-8 w-8 text-warning" /><div><p className="text-2xl font-medium">—</p><p className="text-xs text-muted-foreground">Respostas Total</p></div></CardContent></Card>
       </div>
 
       <div className="flex justify-between items-center mb-4">

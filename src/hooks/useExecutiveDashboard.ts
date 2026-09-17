@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { supabaseBase } from '@/integrations/supabase/client';
 import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -36,18 +36,18 @@ export function useExecutiveKPIs(empresaId?: string, periodo: string = '6') {
         { count: pontoPendentes },
         ...monthResults
       ] = await Promise.all([
-        supabase.from('colaboradores').select('*', { count: 'exact', head: true }).eq('status', 'ativo').eq('empresa_id', empresaId!),
-        supabase.from('colaboradores').select('departamento').eq('status', 'ativo').eq('empresa_id', empresaId!),
-        supabase.from('folhas_pagamento').select('total_liquido').eq('competencia', mesAtual).eq('empresa_id', empresaId!),
-        supabase.from('folhas_pagamento').select('total_liquido').eq('competencia', mesAnterior).eq('empresa_id', empresaId!),
-        supabase.from('ferias').select('*', { count: 'exact', head: true }).eq('status', 'pendente').eq('empresa_id', empresaId!),
-        supabase.from('afastamentos').select('*', { count: 'exact', head: true }).in('status', ['ativo', 'prorrogado']).eq('empresa_id', empresaId!),
-        supabase.from('batidas_ponto').select('*', { count: 'exact', head: true }).eq('empresa_id', empresaId!).gte('data', inicioMes).gt('horas_falta', '00:00:00'),
-        supabase.from('solicitacoes_ajuste_ponto').select('*', { count: 'exact', head: true }).eq('status', 'enviado').eq('empresa_id', empresaId!),
+        supabaseBase.from('colaboradores').select('*', { count: 'exact', head: true }).eq('status', 'ativo').eq('empresa_id', empresaId!),
+        supabaseBase.from('colaboradores').select('departamento').eq('status', 'ativo').eq('empresa_id', empresaId!),
+        supabaseBase.from('folhas_pagamento').select('total_liquido').eq('competencia', mesAtual).eq('empresa_id', empresaId!),
+        supabaseBase.from('folhas_pagamento').select('total_liquido').eq('competencia', mesAnterior).eq('empresa_id', empresaId!),
+        supabaseBase.from('ferias').select('*', { count: 'exact', head: true }).eq('status', 'pendente').eq('empresa_id', empresaId!),
+        supabaseBase.from('afastamentos').select('*', { count: 'exact', head: true }).in('status', ['ativo', 'prorrogado']).eq('empresa_id', empresaId!),
+        supabaseBase.from('faltas').select('*', { count: 'exact', head: true }).eq('empresa_id', empresaId!).eq('tipo', 'injustificada').gte('data', inicioMes),
+        supabaseBase.from('solicitacoes_ajuste_ponto').select('*', { count: 'exact', head: true }).eq('status', 'enviado').eq('empresa_id', empresaId!),
         ...monthRanges.flatMap(m => [
-          supabase.from('colaboradores').select('*', { count: 'exact', head: true }).eq('empresa_id', empresaId!).gte('data_admissao', m.inicio).lte('data_admissao', m.fim),
-          supabase.from('desligamentos').select('*', { count: 'exact', head: true }).eq('empresa_id', empresaId!).gte('data_desligamento', m.inicio).lte('data_desligamento', m.fim),
-          supabase.from('folhas_pagamento').select('total_proventos, total_liquido, total_descontos').eq('competencia', m.comp).eq('empresa_id', empresaId!),
+          supabaseBase.from('colaboradores').select('*', { count: 'exact', head: true }).eq('empresa_id', empresaId!).gte('data_admissao', m.inicio).lte('data_admissao', m.fim),
+          supabaseBase.from('desligamentos').select('*', { count: 'exact', head: true }).eq('empresa_id', empresaId!).gte('data_desligamento', m.inicio).lte('data_desligamento', m.fim),
+          supabaseBase.from('folhas_pagamento').select('total_proventos, total_liquido, total_descontos').eq('competencia', m.comp).eq('empresa_id', empresaId!),
         ]),
       ]);
 
@@ -94,7 +94,7 @@ export function useStrategicFinancials(empresaId?: string) {
     queryKey: ['strategic-financials', empresaId],
     enabled: !!empresaId,
     queryFn: async () => {
-      const { data: projections } = await supabase.rpc('get_personnel_cost_projection', {
+      const { data: projections } = await supabaseBase.rpc('get_personnel_cost_projection', {
         p_empresa_id: empresaId!,
         p_months: 6,
       });

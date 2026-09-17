@@ -54,12 +54,12 @@ export function CandidatoTimeline({ candidaturaId }: CandidatoTimelineProps) {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                       {item.type === 'entrevista' ? 'Entrevista' : item.type === 'teste' ? 'Avaliação Técnica' : 'Anotação'}
                     </span>
                     {item.status && (
                       <Badge variant="outline" className={cn(
-                        "text-[9px] h-4 px-1.5 font-bold uppercase",
+                        "text-[9px] h-4 px-1.5 font-medium uppercase",
                         item.status === 'realizada' || item.status === 'entregue' ? "bg-success/10 text-success border-success/20" : 
                         item.status === 'agendada' || item.status === 'enviado' ? "bg-blue-50 text-blue-500 border-blue-200" :
                         "bg-muted text-muted-foreground"
@@ -80,7 +80,7 @@ export function CandidatoTimeline({ candidaturaId }: CandidatoTimelineProps) {
                       <p className="text-sm font-semibold">{item.feedback || 'Aguardando realização...'}</p>
                       <div className="flex items-center gap-4 text-[11px] text-muted-foreground">
                         <span className="flex items-center gap-1"><User className="h-3 w-3" /> Entrevistador</span>
-                        {item.nota && <span className="flex items-center gap-1 font-bold text-warning"><CheckCircle2 className="h-3 w-3" /> Nota {item.nota}/5</span>}
+                        {item.nota && <span className="flex items-center gap-1 font-medium text-warning"><CheckCircle2 className="h-3 w-3" /> Nota {item.nota}/5</span>}
                       </div>
                     </>
                   )}
@@ -89,7 +89,7 @@ export function CandidatoTimeline({ candidaturaId }: CandidatoTimelineProps) {
                     <>
                       <p className="text-sm font-semibold">{item.nome_teste}</p>
                       <div className="flex items-center gap-4 text-[11px] text-muted-foreground">
-                        {item.nota && <span className="flex items-center gap-1 font-bold text-primary">Resultado: {item.nota}</span>}
+                        {item.nota && <span className="flex items-center gap-1 font-medium text-primary">Resultado: {item.nota}</span>}
                         {item.comentarios && <p className="text-[10px] italic">"{item.comentarios}"</p>}
                       </div>
                     </>

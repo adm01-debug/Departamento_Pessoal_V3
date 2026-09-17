@@ -237,12 +237,12 @@ export default function ColaboradoresPage() {
                     className="absolute top-0 left-0 w-[2px] h-full bg-primary"
                   />
                 )}
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
+                <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground mb-1">
                   {opt.label}
                 </p>
                 <div className="flex items-end justify-between">
                   <p className={cn(
-                    "text-2xl font-display font-bold",
+                    "text-2xl font-display font-medium",
                     isActive ? "text-primary" : "text-foreground"
                   )}>
                     {count}
@@ -290,7 +290,7 @@ export default function ColaboradoresPage() {
             <div className="flex items-center gap-4">
               <UserAvatar name={c.nome_completo} size="md" className="rounded-xl shadow-xs group-hover:scale-110 transition-transform" />
               <div>
-                <p className="font-display font-bold text-base leading-tight group-hover:text-primary transition-colors">{c.nome_completo}</p>
+                <p className="font-display font-medium text-base leading-tight group-hover:text-primary transition-colors">{c.nome_completo}</p>
                 <p className="text-xs text-muted-foreground font-body mt-0.5">{c.email || 'Sem e-mail cadastrado'}</p>
               </div>
             </div>
@@ -298,13 +298,13 @@ export default function ColaboradoresPage() {
           <TableCell className="hidden sm:table-cell">
             <div className="flex flex-col">
               <span className="font-body font-medium text-sm">CPF: {c.cpf}</span>
-              <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">MAT: {c.matricula || 'N/A'}</span>
+              <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">MAT: {c.matricula || 'N/A'}</span>
             </div>
           </TableCell>
           <TableCell className="hidden md:table-cell">
             <div className="flex flex-col">
               <span className="font-body font-medium text-sm">{c.cargo}</span>
-              <span className="text-[10px] text-primary font-bold uppercase tracking-wider">{c.departamento}</span>
+              <span className="text-[10px] text-primary font-medium uppercase tracking-wider">{c.departamento}</span>
             </div>
           </TableCell>
           <TableCell><ColaboradorStatus status={c.status} /></TableCell>

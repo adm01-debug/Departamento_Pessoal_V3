@@ -26,6 +26,7 @@ interface UseGenericCrudOptions<T> {
   filters?: Record<string, unknown>;
   searchColumn?: string;
   empresaId?: string;
+  enabled?: boolean;
 }
 
 export function useGenericCrud<T>({
@@ -35,7 +36,8 @@ export function useGenericCrud<T>({
   successMessages = {},
   filters = {},
   searchColumn,
-  empresaId
+  empresaId,
+  enabled = true,
 }: UseGenericCrudOptions<T>) {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
@@ -54,6 +56,7 @@ export function useGenericCrud<T>({
 
   const query = useQuery({
     queryKey: [queryKey, { search, page, pageSize, filters }],
+    enabled,
     queryFn: async () => {
       try {
         const result = await service.listar({ search, page, pageSize, filters, searchColumn });

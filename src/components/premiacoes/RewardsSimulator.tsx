@@ -84,7 +84,7 @@ export function RewardsSimulator() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h3 className="text-lg font-bold">Simulador de ROI de Capital Humano 10/10</h3>
+          <h3 className="text-lg font-medium">Simulador de ROI de Capital Humano 10/10</h3>
           <p className="text-sm text-muted-foreground">Projete e compare cenários de premiação com snapshots de auditoria.</p>
         </div>
         <div className="flex gap-2">
@@ -108,14 +108,14 @@ export function RewardsSimulator() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Colaboradores</Label>
+                  <Label className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Colaboradores</Label>
                   <Badge variant="outline" className="font-mono bg-background">{employees}</Badge>
                 </div>
                 <Slider value={[employees]} onValueChange={([v]: number[]) => setEmployees(v)} max={1000} step={10} />
               </div>
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Salário Médio</Label>
+                  <Label className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Salário Médio</Label>
                   <Badge variant="outline" className="font-mono bg-background">{formatCurrency(avgSalary)}</Badge>
                 </div>
                 <Slider value={[avgSalary]} onValueChange={([v]: number[]) => setAvgSalary(v)} min={1500} max={30000} step={500} />
@@ -125,14 +125,14 @@ export function RewardsSimulator() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">% Bônus Alvo</Label>
+                  <Label className="text-xs font-medium uppercase tracking-widest text-muted-foreground">% Bônus Alvo</Label>
                   <Badge variant="secondary" className="font-mono">{bonusPercent}%</Badge>
                 </div>
                 <Slider value={[bonusPercent]} onValueChange={([v]: number[]) => setBonusPercent(v)} max={100} step={1} />
               </div>
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Atingimento de Meta</Label>
+                  <Label className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Atingimento de Meta</Label>
                   <Badge variant="secondary" className="font-mono">{performanceLevel}%</Badge>
                 </div>
                 <Slider value={[performanceLevel]} onValueChange={([v]: number[]) => setPerformanceLevel(v)} max={150} step={5} />
@@ -143,7 +143,7 @@ export function RewardsSimulator() {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-2">
-                    <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Redução de Turnover</Label>
+                    <Label className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Redução de Turnover</Label>
                     <Zap className="h-3 w-3 text-amber-500 fill-amber-500" />
                   </div>
                   <Badge variant="outline" className="font-mono text-amber-600 border-amber-200 bg-amber-50">{retentionImpact}%</Badge>
@@ -153,7 +153,7 @@ export function RewardsSimulator() {
             </div>
 
             <div className="h-[250px] w-full mt-8 p-6 bg-muted/20 rounded-3xl border border-border/5">
-              <h4 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
+              <h4 className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
                 <BarChartIcon className="h-3 w-3" /> {compareMode ? 'Comparativo de Cenários Salvos' : 'Impacto Financeiro Detalhado'}
               </h4>
               <ResponsiveContainer width="100%" height="100%">
@@ -178,10 +178,10 @@ export function RewardsSimulator() {
           <Card className="bg-primary text-primary-foreground border-none shadow-xl shadow-primary/20 rounded-3xl overflow-hidden relative">
             <Calculator className="absolute -right-4 -bottom-4 h-32 w-32 opacity-10 rotate-12" />
             <CardContent className="p-6">
-              <p className="text-[10px] font-bold uppercase tracking-widest opacity-80">Payout Estimado</p>
-              <h2 className="text-4xl font-bold mt-2 tracking-tighter">{formatCurrency(totalBudget)}</h2>
+              <p className="text-[10px] font-medium uppercase tracking-widest opacity-80">Payout Estimado</p>
+              <h2 className="text-4xl font-medium mt-2 tracking-tight">{formatCurrency(totalBudget)}</h2>
               <div className="mt-8 p-3 bg-white/10 rounded-2xl backdrop-blur-xs">
-                <div className="flex justify-between text-[10px] font-bold mb-2 uppercase tracking-tighter">
+                <div className="flex justify-between text-[10px] font-medium mb-2 uppercase tracking-wide">
                   <span>Eficiência de Capital</span>
                   <span>{roi.toFixed(2)}x</span>
                 </div>
@@ -196,9 +196,9 @@ export function RewardsSimulator() {
             <CardContent className="p-6">
               <div className="flex items-center gap-2 mb-2">
                 <TrendingUp className="h-4 w-4 text-success" />
-                <p className="text-[10px] font-bold uppercase tracking-widest text-success">Economia Direta</p>
+                <p className="text-[10px] font-medium uppercase tracking-widest text-success">Economia Direta</p>
               </div>
-              <h2 className="text-3xl font-bold text-success tracking-tighter">{formatCurrency(savings)}</h2>
+              <h2 className="text-3xl font-medium text-success tracking-tight">{formatCurrency(savings)}</h2>
               <p className="text-[10px] text-muted-foreground mt-2 leading-relaxed">
                 Snapshot de economia baseada em redução de <strong>{retentionImpact}%</strong> no turnover orgânico.
               </p>
@@ -210,7 +210,7 @@ export function RewardsSimulator() {
               <CardHeader className="p-4 pb-0 flex-row items-center justify-between space-y-0">
                 <div className="flex items-center gap-2">
                   <History className="h-3 w-3 text-muted-foreground" />
-                  <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Snapshots (Auditoria)</CardTitle>
+                  <CardTitle className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground">Snapshots (Auditoria)</CardTitle>
                 </div>
                 <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => {}} aria-label="Excluir snapshots">
                   <Trash2 className="h-3 w-3 text-muted-foreground" />
@@ -220,15 +220,15 @@ export function RewardsSimulator() {
                 {scenarios.map((s: any) => (
                   <div key={s.id} className="group relative flex flex-col gap-1 p-3 bg-background rounded-2xl border border-border/10 hover:border-primary/30 transition-all cursor-pointer" onClick={() => loadScenario(s)}>
                     <div className="flex justify-between items-center">
-                      <span className="text-[11px] font-bold">{s.name}</span>
+                      <span className="text-[11px] font-medium">{s.name}</span>
                       <span className="text-[9px] text-muted-foreground">{formatDateTime(s.created_at)}</span>
                     </div>
                     <div className="flex justify-between items-end mt-1">
-                      <span className="text-[10px] font-mono font-bold text-primary">{formatCurrency(s.resultados.totalBudget)}</span>
+                      <span className="text-[10px] font-mono font-medium text-primary">{formatCurrency(s.resultados.totalBudget)}</span>
                       <Badge variant="outline" className="text-[8px] h-4 bg-success/5 text-success border-success/20">{s.resultados.roi.toFixed(1)}x ROI</Badge>
                     </div>
                     <div className="hidden group-hover:block mt-2 pt-2 border-t border-border/10">
-                      <p className="text-[8px] text-muted-foreground uppercase font-bold tracking-widest">Logs de Cálculo (Snapshot)</p>
+                      <p className="text-[8px] text-muted-foreground uppercase font-medium tracking-widest">Logs de Cálculo (Snapshot)</p>
                       <ul className="text-[8px] text-muted-foreground list-disc pl-3 mt-1">
                         <li>Metas: {s.configuracoes.performanceLevel}%</li>
                         <li>Retenção: {s.configuracoes.retentionImpact}%</li>

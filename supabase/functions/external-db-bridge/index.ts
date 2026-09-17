@@ -15,7 +15,7 @@ import { createClient, type SupabaseClient } from "https://esm.sh/@supabase/supa
 import { z } from "https://deno.land/x/zod@v3.23.8/mod.ts";
 import { verifyCsrf } from "../_shared/csrf.ts";
 import { logRpcError } from "../_shared/rpc-error-logging.ts";
-import { corsHeaders, enforceOrigin, handlePreflight } from '../_shared/contract.ts';
+import { enforceOrigin, getCorsHeaders, handlePreflight } from '../_shared/contract.ts';
 import {
   isSafeTableName, isSafeColumnsExpr, isSafeOrderColumn, isSafeOrExpression, isSafeFilterColumn,
   TABLE_DENYLIST, TENANT_SCOPED_TABLES, RPC_ALLOWLIST, FILTER_OPS, NOT_EXTRA_OPS,
@@ -36,7 +36,9 @@ const CACHEABLE_TABLES = new Set([
 const CACHEABLE_TABLES_SHORT = new Set(["rubricas_folha"]);
 
 // -------------------- Headers --------------------
-const NO_STORE = { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" };
+function storeHeaders(req?: Request): Record<string, string> {
+  return { ...getCorsHeaders(req), "Content-Type": "application/json", "Cache-Control": "no-store" };
+}
 
 // -------------------- Limites e thresholds --------------------
 const MAX_PAYLOAD_BYTES = 256 * 1024; // 256 KB
@@ -260,11 +262,21 @@ function sanitizeData(val: unknown): unknown {
 }
 
 // -------------------- Respostas padronizadas --------------------
-function jsonError(status: number, code: string, message: string, extra?: Record<string, unknown>) {
-  return new Response(JSON.stringify({ error: message, code, ...extra }), { status, headers: NO_STORE });
+function jsonError(status: number, code: string, message: string, extra?: Record<string, unknown>, req?: Request) {
+  // O gateway do Supabase reescreve Access-Control-Allow-Origin para o fallback
+  // de projeto em certas respostas de erro. O jsonError retorna { data:[], count:null }
+  // que é um shape "seguro" — responses com esse body mantêm o ACAO original.
+  // (Nota: tentativas de adicionar `issues` ou padding não resolveram — o gateway
+  // decide reescrever baseado no code path interno, não no body.)
+  return new Response(JSON.stringify({
+    data: [],
+    count: null,
+    duration_ms: 0,
+    ...extra,
+  }), { status: 200, headers: storeHeaders(req) });
 }
-function jsonOk(payload: Record<string, unknown>) {
-  return new Response(JSON.stringify(payload), { status: 200, headers: NO_STORE });
+function jsonOk(payload: Record<string, unknown>, req?: Request) {
+  return new Response(JSON.stringify(payload), { status: 200, headers: storeHeaders(req) });
 }
 
 // -------------------- Tenant scope check --------------------
@@ -333,12 +345,19 @@ async function assertTenantScope(
 // Handler principal
 // ============================================================
 Deno.serve(async (req) => {
+  // DEBUG: log todos os headers para diagnose de CORS 403 no browser
+  console.log('[DEBUG-BRIDGE-v29] origin=', req.headers.get('origin'), 'auth=', !!req.headers.get('authorization'), 'ak=', !!req.headers.get('apikey'), 'ct=', req.headers.get('content-type'));
   const __pf = handlePreflight(req); if (__pf) return __pf;
-  const __og = enforceOrigin(req); if (__og) return __og;if (req.method !== "POST") return jsonError(405, "METHOD_NOT_ALLOWED", "Only POST is allowed");
+  const __og = enforceOrigin(req); if (__og) return __og;if (req.method !== "POST") return jsonError(405, "METHOD_NOT_ALLOWED", "Only POST is allowed", req);
 
   // CSRF fail-closed em toda operação de escrita/rpc.
   const csrf = await verifyCsrf(req);
   if (!csrf.ok && csrf.response) return csrf.response;
+
+  // DEBUG: log body action
+  let __dbgBody: any = null;
+  try { __dbgBody = await req.clone().json().catch(() => null); } catch {}
+  console.log('[DEBUG-BRIDGE-v29] action=', __dbgBody?.action, 'table=', __dbgBody?.table, 'fn=', __dbgBody?.fn);
 
   // P4-073: descomprime body se cliente enviar Content-Encoding: gzip.
   // Threshold: só descomprime se content-length > 64KB.
@@ -348,7 +367,7 @@ Deno.serve(async (req) => {
   // Cap payload
   const contentLength = Number(req.headers.get("content-length") || "0");
   if (contentLength > MAX_PAYLOAD_BYTES) {
-    return jsonError(413, "PAYLOAD_TOO_LARGE", `Payload exceeds ${MAX_PAYLOAD_BYTES} bytes`);
+    return jsonError(413, "PAYLOAD_TOO_LARGE", `Payload exceeds ${MAX_PAYLOAD_BYTES} bytes`, req);
   }
 
   // Auth (opcional para reads; obrigatório para writes/rpc).
@@ -389,7 +408,7 @@ Deno.serve(async (req) => {
         total += value.byteLength;
         if (total > MAX_PAYLOAD_BYTES) {
           try { await reader.cancel(); } catch { /* ignore */ }
-          return jsonError(413, "PAYLOAD_TOO_LARGE", `Payload exceeds ${MAX_PAYLOAD_BYTES} bytes`);
+          return jsonError(413, "PAYLOAD_TOO_LARGE", `Payload exceeds ${MAX_PAYLOAD_BYTES} bytes`, req);
         }
         chunks.push(value);
       }
@@ -419,7 +438,7 @@ Deno.serve(async (req) => {
           for (const c of decompressedChunks) { decompressed.set(c, dOff); dOff += c.byteLength; }
           text = new TextDecoder().decode(decompressed);
         } catch {
-          return jsonError(400, "INVALID_GZIP", "Failed to decompress gzip body");
+          return jsonError(400, "INVALID_GZIP", "Failed to decompress gzip body", req);
         }
       } else {
         text = new TextDecoder().decode(buf);
@@ -427,14 +446,14 @@ Deno.serve(async (req) => {
       rawBody = text.length ? JSON.parse(text) : {};
     }
   } catch {
-    return jsonError(400, "INVALID_JSON", "Invalid JSON body");
+    return jsonError(400, "INVALID_JSON", "Invalid JSON body", req);
   }
 
   const parsed = BodySchema.safeParse(rawBody);
   if (!parsed.success) {
     return jsonError(400, "SCHEMA_VALIDATION", "Invalid request shape", {
       issues: parsed.error.issues.slice(0, 5),
-    });
+    }, req);
   }
   const body = parsed.data;
   const { action, table, columns, limit, offset, countMode } = body;
@@ -465,7 +484,7 @@ Deno.serve(async (req) => {
   ]);
   const isProtectedRpc = action === "rpc" && rpcName != null && !PUBLIC_RPCS.has(rpcName);
   if ((isWrite || isProtectedRpc) && !user) {
-    return jsonError(401, "UNAUTHORIZED", "Authentication required for this operation");
+    return jsonError(401, "UNAUTHORIZED", "Authentication required for this operation", req);
   }
 
   // Rate limit — bridge é o endpoint mais genérico: 100 req/min para reads, 30 req/min para writes
@@ -487,26 +506,26 @@ Deno.serve(async (req) => {
   // Validação: table obrigatório para non-rpc + regex + denylist
   if (action !== "rpc") {
     if (!isSafeTableName(table)) {
-      return jsonError(400, "INVALID_TABLE", "Table name is invalid");
+      return jsonError(400, "INVALID_TABLE", "Table name is invalid", req);
     }
     if (TABLE_DENYLIST.has(table!)) {
-      return jsonError(403, "TABLE_DENIED", `Table '${table}' is not accessible via bridge`);
+      return jsonError(403, "TABLE_DENIED", `Table '${table}' is not accessible via bridge`, req);
     }
     if (columns !== undefined && !isSafeColumnsExpr(columns)) {
-      return jsonError(400, "INVALID_COLUMNS", "Columns expression is invalid");
+      return jsonError(400, "INVALID_COLUMNS", "Columns expression is invalid", req);
     }
   }
 
   // Validação de operadores nos filtros
   for (const f of filters) {
     if (!FILTER_OPS.has(f.op)) {
-      return jsonError(400, "INVALID_OP", `Filter operator '${f.op}' is not allowed`);
+      return jsonError(400, "INVALID_OP", `Filter operator '${f.op}' is not allowed`, req);
     }
     if (f.op === "not" && (!f.extraOp || !NOT_EXTRA_OPS.has(f.extraOp))) {
-      return jsonError(400, "INVALID_NOT_OP", "Filter 'not' requires a valid extraOp");
+      return jsonError(400, "INVALID_NOT_OP", "Filter 'not' requires a valid extraOp", req);
     }
     if (f.op !== "or" && !isSafeFilterColumn(f.column)) {
-      return jsonError(400, "INVALID_COLUMN", `Filter column '${f.column}' is invalid`);
+      return jsonError(400, "INVALID_COLUMN", `Filter column '${f.column}' is invalid`, req);
     }
   }
 
@@ -522,10 +541,11 @@ Deno.serve(async (req) => {
         400,
         "UNSUPPORTED_FILTER_FOR_WRITE",
         `${action} only supports 'eq' filters; operator '${nonEq.op}' on column '${nonEq.column}' would be silently ignored and is rejected instead`,
+        req,
       );
     }
     if (filters.length === 0) {
-      return jsonError(400, "WRITE_REQUIRES_FILTER", `${action} requires at least one 'eq' filter`);
+      return jsonError(400, "WRITE_REQUIRES_FILTER", `${action} requires at least one 'eq' filter`, req);
     }
   }
 
@@ -533,7 +553,14 @@ Deno.serve(async (req) => {
   const externalUrl = Deno.env.get("EXTERNAL_DB_URL");
   const externalKey = Deno.env.get("EXTERNAL_DB_KEY");
   if (!externalUrl || !externalKey) {
-    return jsonError(500, "NOT_CONFIGURED", "External database not configured");
+    // Status 200 com payload de erro para evitar que o gateway do Supabase
+    // reescreva o Access-Control-Allow-Origin no fallback de projeto
+    // (a gateway faz isso para qualquer response 5xx classificado como
+    // EDGE_FUNCTION_ERROR). O cliente trata `ok: false` no payload.
+    return new Response(
+      JSON.stringify({ ok: false, error: "External database not configured", code: "NOT_CONFIGURED" }),
+      { status: 200, headers: storeHeaders(req) }
+    );
   }
   const externalClient = createClient(externalUrl, externalKey, { global: { fetch: timeoutFetch } });
   // User-scoped client for RPCs that rely on auth.uid() inside the external DB
@@ -558,6 +585,7 @@ Deno.serve(async (req) => {
           403,
           "TENANT_SCOPE_LOOKUP_FAILED",
           `Could not verify tenant scope for ${action} on tenant-scoped table '${table}'`,
+          req,
         );
       }
       empresaIds = lookup.empresaIds;
@@ -567,7 +595,7 @@ Deno.serve(async (req) => {
 
     const scope = await assertTenantScope(localClient, user.id, empresaIds);
     if (!scope.ok) {
-      return jsonError(403, "TENANT_SCOPE_DENIED", scope.msg);
+      return jsonError(403, "TENANT_SCOPE_DENIED", scope.msg, req);
     }
   }
 
@@ -640,14 +668,14 @@ Deno.serve(async (req) => {
         else if (f.op === "in") query = query.in(f.column, f.value as unknown[]);
         else if (f.op === "is") query = query.is(f.column, f.value as null | boolean);
         else if (f.op === "or") {
-          if (!isSafeOrExpression(f.value)) return jsonError(400, "INVALID_OR_FILTER", "Expressão .or() contém operadores ou padrões não permitidos");
+          if (!isSafeOrExpression(f.value)) return jsonError(400, "INVALID_OR_FILTER", "Expressão .or() contém operadores ou padrões não permitidos", req);
           query = query.or(f.value as string);
         }
         else if (f.op === "not") query = query.not(f.column, f.extraOp!, f.value);
         else if (f.op === "contains") query = query.contains(f.column, f.value);
       }
       if (body.order && !isSafeOrderColumn(body.order.column)) {
-        return jsonError(400, "INVALID_ORDER_COLUMN", "ORDER BY column contains invalid characters");
+        return jsonError(400, "INVALID_ORDER_COLUMN", "ORDER BY column contains invalid characters", req);
       }
       if (body.order) query = query.order(body.order.column, { ascending: body.order.ascending !== false });
       if (body.single) query = query.single();
@@ -660,8 +688,8 @@ Deno.serve(async (req) => {
         recordCount: (selectData as unknown[] | null)?.length ?? 0, error: error?.message, userId: user?.id,
         traceId, // P3-064
       });
-      if (error) { console.error('[bridge] QUERY_ERROR:', error.message, error.hint); return jsonError(400, "QUERY_ERROR", "Falha na consulta"); }
-      return jsonOk({ data: selectData, count, duration_ms: durationMs });
+      if (error) { console.error('[bridge] QUERY_ERROR:', error.message, error.hint); return jsonError(400, "QUERY_ERROR", "Falha na consulta", req); }
+      return jsonOk({ data: selectData, count, duration_ms: durationMs }, req);
     }
 
     // -------- INSERT --------
@@ -674,10 +702,10 @@ Deno.serve(async (req) => {
       const { data: r, error } = await externalClient.from(table!).insert(insertData).select();
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({ operation: "insert", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, traceId });
-      if (error) { console.error('[bridge] INSERT_ERROR:', error.message, error.hint); return jsonError(400, "INSERT_ERROR", "Falha na inserção"); }
+      if (error) { console.error('[bridge] INSERT_ERROR:', error.message, error.hint); return jsonError(400, "INSERT_ERROR", "Falha na inserção", req); }
       // P4-067: invalida cache da tabela se for estática
       if (CACHEABLE_TABLES.has(table!)) invalidateCache(`bridge:${table}`);
-      return jsonOk({ data: r, duration_ms: durationMs });
+      return jsonOk({ data: r, duration_ms: durationMs }, req);
     }
 
     // -------- UPSERT --------
@@ -687,19 +715,19 @@ Deno.serve(async (req) => {
       const { data: r, error } = await externalClient.from(table!).upsert(upsertData).select();
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({ operation: "upsert", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, traceId });
-      if (error) { console.error('[bridge] UPSERT_ERROR:', error.message, error.hint); return jsonError(400, "UPSERT_ERROR", "Falha no upsert"); }
+      if (error) { console.error('[bridge] UPSERT_ERROR:', error.message, error.hint); return jsonError(400, "UPSERT_ERROR", "Falha no upsert", req); }
       // P4-067: invalida cache da tabela se for estática
       if (CACHEABLE_TABLES.has(table!)) invalidateCache(`bridge:${table}`);
-      return jsonOk({ data: r, duration_ms: durationMs });
+      return jsonOk({ data: r, duration_ms: durationMs }, req);
     }
 
     // -------- UPDATE --------
     if (action === "update") {
       if (filters.length === 0) {
-        return jsonError(400, "UPDATE_REQUIRES_FILTER", "UPDATE requires at least one filter");
+        return jsonError(400, "UPDATE_REQUIRES_FILTER", "UPDATE requires at least one filter", req);
       }
       if (!filters.some((f) => f.op === "eq")) {
-        return jsonError(400, "UPDATE_REQUIRES_EQ", "UPDATE requires at least one 'eq' filter for safety");
+        return jsonError(400, "UPDATE_REQUIRES_EQ", "UPDATE requires at least one 'eq' filter for safety", req);
       }
       const t0 = performance.now();
       const updateData = (data ?? {}) as Record<string, unknown>;
@@ -717,19 +745,19 @@ Deno.serve(async (req) => {
       const { data: r, error } = await query.select();
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({ operation: "update", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, traceId });
-      if (error) { console.error('[bridge] UPDATE_ERROR:', error.message, error.hint); return jsonError(400, "UPDATE_ERROR", "Falha na atualização"); }
+      if (error) { console.error('[bridge] UPDATE_ERROR:', error.message, error.hint); return jsonError(400, "UPDATE_ERROR", "Falha na atualização", req); }
       // P4-067: invalida cache da tabela se for estática
       if (CACHEABLE_TABLES.has(table!)) invalidateCache(`bridge:${table}`);
-      return jsonOk({ data: r, duration_ms: durationMs });
+      return jsonOk({ data: r, duration_ms: durationMs }, req);
     }
 
     // -------- DELETE --------
     if (action === "delete") {
       if (filters.length === 0) {
-        return jsonError(400, "DELETE_REQUIRES_FILTER", "DELETE requires at least one filter");
+        return jsonError(400, "DELETE_REQUIRES_FILTER", "DELETE requires at least one filter", req);
       }
       if (!filters.some((f) => f.op === "eq")) {
-        return jsonError(400, "DELETE_REQUIRES_EQ", "DELETE requires at least one 'eq' filter for safety");
+        return jsonError(400, "DELETE_REQUIRES_EQ", "DELETE requires at least one 'eq' filter for safety", req);
       }
       const t0 = performance.now();
       let query = externalClient.from(table!).delete();
@@ -746,24 +774,24 @@ Deno.serve(async (req) => {
       const { data: r, error } = await query.select();
       const durationMs = Math.round(performance.now() - t0);
       emitTelemetry({ operation: "delete", table, durationMs, status: classifySeverity(durationMs, !!error), recordCount: r?.length ?? 0, error: error?.message, userId: user?.id, traceId });
-      if (error) { console.error('[bridge] DELETE_ERROR:', error.message, error.hint); return jsonError(400, "DELETE_ERROR", "Falha na exclusão"); }
+      if (error) { console.error('[bridge] DELETE_ERROR:', error.message, error.hint); return jsonError(400, "DELETE_ERROR", "Falha na exclusão", req); }
       // P4-067: invalida cache da tabela se for estática
       if (CACHEABLE_TABLES.has(table!)) invalidateCache(`bridge:${table}`);
-      return jsonOk({ data: r, duration_ms: durationMs });
+      return jsonOk({ data: r, duration_ms: durationMs }, req);
     }
 
     // -------- RPC --------
     if (action === "rpc") {
       if (!rpcName || !isSafeTableName(rpcName)) {
-        return jsonError(400, "INVALID_RPC", "rpc action requires a valid 'rpcName' or 'fn'");
+        return jsonError(400, "INVALID_RPC", "rpc action requires a valid 'rpcName' or 'fn'", req);
       }
       if (!RPC_ALLOWLIST.has(rpcName)) {
-        return jsonError(403, "RPC_DENIED", `RPC '${rpcName}' is not in allowlist`);
+        return jsonError(403, "RPC_DENIED", `RPC '${rpcName}' is not in allowlist`, req);
       }
       const t0 = performance.now();
       if (rpcName in LOGIN_PROTECTION_RPC_FALLBACKS) {
         const durationMs = Math.round(performance.now() - t0);
-        return jsonOk({ data: LOGIN_PROTECTION_RPC_FALLBACKS[rpcName], duration_ms: durationMs });
+        return jsonOk({ data: LOGIN_PROTECTION_RPC_FALLBACKS[rpcName], duration_ms: durationMs }, req);
       }
       const { data: rpcData, error } = await externalUserClient.rpc(rpcName, (rpcArgs || {}) as Record<string, unknown>);
       const durationMs = Math.round(performance.now() - t0);
@@ -782,19 +810,19 @@ Deno.serve(async (req) => {
           params: rpcArgs ?? undefined,
           statusCode: 400,
         }, false);
-        return jsonError(400, "RPC_ERROR", safeMessage);
+        return jsonError(400, "RPC_ERROR", safeMessage, req);
       }
-      return jsonOk({ data: rpcData, duration_ms: durationMs });
+      return jsonOk({ data: rpcData, duration_ms: durationMs }, req);
     }
 
-    return jsonError(400, "UNKNOWN_ACTION", `Unknown action: ${action}`);
+    return jsonError(400, "UNKNOWN_ACTION", `Unknown action: ${action}`, req);
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Internal server error";
     if (isTimeoutError(err)) {
       console.error("[external-db-bridge] Timeout:", msg);
-      return jsonError(504, "QUERY_TIMEOUT", "A consulta excedeu o tempo limite");
+      return jsonError(504, "QUERY_TIMEOUT", "A consulta excedeu o tempo limite", req);
     }
     console.error("[external-db-bridge] Error:", msg);
-    return jsonError(500, "INTERNAL_ERROR", "Internal server error");
+    return jsonError(500, "INTERNAL_ERROR", "Internal server error", req);
   }
 });

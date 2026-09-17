@@ -144,11 +144,12 @@ export default function AdminAsoWorkflowPage() {
     setMotivoCancelamento('');
   };
 
+  // padding horizontal agora vem do <main> global (p-page)
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="py-6 space-y-6">
       <header className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">ASO Digital</h1>
+          <h1 className="text-3xl font-medium tracking-tight">ASO Digital</h1>
           <p className="text-muted-foreground mt-1">Workflow entre clínica parceira e RH — recebimento, validação e arquivamento</p>
         </div>
       </header>
@@ -156,19 +157,19 @@ export default function AdminAsoWorkflowPage() {
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground">Total</CardTitle></CardHeader>
-          <CardContent><div className="text-3xl font-bold">{kpis.total}</div></CardContent>
+          <CardContent><div className="text-3xl font-medium">{kpis.total}</div></CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Clock className="h-4 w-4"/>Aguardando RH</CardTitle></CardHeader>
-          <CardContent><div className="text-3xl font-bold">{kpis.pendentes_rh}</div></CardContent>
+          <CardContent><div className="text-3xl font-medium">{kpis.pendentes_rh}</div></CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Inbox className="h-4 w-4"/>Para validar</CardTitle></CardHeader>
-          <CardContent><div className="text-3xl font-bold">{kpis.recebidos}</div></CardContent>
+          <CardContent><div className="text-3xl font-medium">{kpis.recebidos}</div></CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><ShieldCheck className="h-4 w-4"/>Validados</CardTitle></CardHeader>
-          <CardContent><div className="text-3xl font-bold">{kpis.validados}</div></CardContent>
+          <CardContent><div className="text-3xl font-medium">{kpis.validados}</div></CardContent>
         </Card>
       </div>
 

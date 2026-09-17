@@ -290,7 +290,7 @@ function ContratacaoWorkflow({ token }: { token: string }) {
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
               <ShieldCheck className="w-5 h-5 text-white" />
             </div>
-            <span className="font-display font-bold text-slate-800">Contratação Digital</span>
+            <span className="font-display font-medium text-slate-800">Contratação Digital</span>
           </div>
           <Badge variant="secondary" className="font-mono text-[10px] tracking-widest bg-slate-100">
             #{token.slice(0, 8).toUpperCase()}
@@ -304,10 +304,10 @@ function ContratacaoWorkflow({ token }: { token: string }) {
           <CardContent className="p-6">
             <div className="space-y-4">
               <div className="flex justify-between items-center px-2">
-                <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Etapa {step + 1} de {STEPS.length}
                 </span>
-                <span className="text-xs font-bold text-primary">{Math.round(progress)}% Concluído</span>
+                <span className="text-xs font-medium text-primary">{Math.round(progress)}% Concluído</span>
               </div>
               <Progress value={progress} className="h-2 bg-slate-100" />
               <div className="flex justify-between relative pt-2">
@@ -327,7 +327,7 @@ function ContratacaoWorkflow({ token }: { token: string }) {
                     </div>
                     <span
                       className={cn(
-                        'text-[10px] font-bold uppercase tracking-tight hidden sm:block',
+                        'text-[10px] font-medium uppercase tracking-tight hidden sm:block',
                         i <= step ? 'text-slate-800' : 'text-slate-400'
                       )}
                     >
@@ -358,14 +358,14 @@ function ContratacaoWorkflow({ token }: { token: string }) {
                         <User className="w-5 h-5" />
                       </div>
                       <div>
-                        <h2 className="text-xl font-display font-bold">Dados Pessoais</h2>
+                        <h2 className="text-xl font-display font-medium">Dados Pessoais</h2>
                         <p className="text-xs text-muted-foreground">Confirme e complete suas informações básicas.</p>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-2 md:col-span-2">
-                        <Label className="font-bold flex items-center gap-2">
+                        <Label className="font-medium flex items-center gap-2">
                           <Fingerprint className="w-4 h-4 text-muted-foreground" /> Nome Completo
                         </Label>
                         <Input
@@ -376,7 +376,7 @@ function ContratacaoWorkflow({ token }: { token: string }) {
                       </div>
 
                       <div className="space-y-2">
-                        <Label className="font-bold flex items-center gap-2">
+                        <Label className="font-medium flex items-center gap-2">
                           <Fingerprint className="w-4 h-4 text-muted-foreground" /> CPF
                         </Label>
                         <CPFInput
@@ -387,7 +387,7 @@ function ContratacaoWorkflow({ token }: { token: string }) {
                       </div>
 
                       <div className="space-y-2">
-                        <Label className="font-bold flex items-center gap-2">
+                        <Label className="font-medium flex items-center gap-2">
                           <Calendar className="w-4 h-4 text-muted-foreground" /> Data de Nascimento
                         </Label>
                         <Input
@@ -399,7 +399,7 @@ function ContratacaoWorkflow({ token }: { token: string }) {
                       </div>
 
                       <div className="space-y-2">
-                        <Label className="font-bold flex items-center gap-2">
+                        <Label className="font-medium flex items-center gap-2">
                           <Mail className="w-4 h-4 text-muted-foreground" /> E-mail
                         </Label>
                         <Input
@@ -411,7 +411,7 @@ function ContratacaoWorkflow({ token }: { token: string }) {
                       </div>
 
                       <div className="space-y-2">
-                        <Label className="font-bold flex items-center gap-2">
+                        <Label className="font-medium flex items-center gap-2">
                           <Phone className="w-4 h-4 text-muted-foreground" /> Celular
                         </Label>
                         <PhoneInput
@@ -423,7 +423,7 @@ function ContratacaoWorkflow({ token }: { token: string }) {
 
                       <div className="space-y-2 md:col-span-2">
                         <div className="h-px bg-slate-100 my-2" />
-                        <Label className="font-bold flex items-center gap-2">
+                        <Label className="font-medium flex items-center gap-2">
                           <MapPin className="w-4 h-4 text-muted-foreground" /> CEP para busca de Endereço
                         </Label>
                         <CEPInput
@@ -437,11 +437,11 @@ function ContratacaoWorkflow({ token }: { token: string }) {
                       {formData.logradouro && (
                         <>
                           <div className="space-y-2 md:col-span-2">
-                            <Label className="font-bold">Logradouro</Label>
+                            <Label className="font-medium">Logradouro</Label>
                             <Input value={formData.logradouro} readOnly className="h-12 rounded-xl bg-slate-50" />
                           </div>
                           <div className="space-y-2">
-                            <Label className="font-bold text-primary">Número *</Label>
+                            <Label className="font-medium text-primary">Número *</Label>
                             <Input
                               value={formData.numero}
                               onChange={(e) => setFormData((p) => ({ ...p, numero: e.target.value }))}
@@ -450,7 +450,7 @@ function ContratacaoWorkflow({ token }: { token: string }) {
                             />
                           </div>
                           <div className="space-y-2">
-                            <Label className="font-bold">Cidade / UF</Label>
+                            <Label className="font-medium">Cidade / UF</Label>
                             <Input
                               value={`${formData.cidade} - ${formData.uf}`}
                               readOnly
@@ -465,7 +465,7 @@ function ContratacaoWorkflow({ token }: { token: string }) {
                       <Button
                         onClick={() => saveDados.mutate()}
                         disabled={saveDados.isPending || !formData.nome_completo || !formData.cpf}
-                        className="h-14 px-10 rounded-2xl text-lg font-bold shadow-glow"
+                        className="h-14 px-10 rounded-2xl text-lg font-medium shadow-glow"
                       >
                         {saveDados.isPending ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
                         Próxima Etapa <ArrowRight className="w-5 h-5 ml-2" />
@@ -481,7 +481,7 @@ function ContratacaoWorkflow({ token }: { token: string }) {
                         <Upload className="w-5 h-5" />
                       </div>
                       <div>
-                        <h2 className="text-xl font-display font-bold">Documentos Digitais</h2>
+                        <h2 className="text-xl font-display font-medium">Documentos Digitais</h2>
                         <p className="text-xs text-muted-foreground">Tire fotos legíveis ou envie arquivos PDF.</p>
                       </div>
                     </div>
@@ -537,7 +537,7 @@ function ContratacaoWorkflow({ token }: { token: string }) {
                                 )}
                               </div>
                               <div>
-                                <p className="font-bold text-slate-800">{doc.label}</p>
+                                <p className="font-medium text-slate-800">{doc.label}</p>
                                 <div className="flex gap-2 items-center">
                                   {doc.required && (
                                     <Badge
@@ -548,12 +548,12 @@ function ContratacaoWorkflow({ token }: { token: string }) {
                                     </Badge>
                                   )}
                                   {status?.status === 'uploading' && (
-                                    <span className="text-[10px] text-primary animate-pulse font-bold uppercase">
+                                    <span className="text-[10px] text-primary animate-pulse font-medium uppercase">
                                       Validando IA...
                                     </span>
                                   )}
                                   {status?.status === 'success' && (
-                                    <span className="text-[10px] text-success font-bold uppercase">Validado</span>
+                                    <span className="text-[10px] text-success font-medium uppercase">Validado</span>
                                   )}
                                 </div>
                               </div>
@@ -595,7 +595,7 @@ function ContratacaoWorkflow({ token }: { token: string }) {
                       <Button
                         onClick={() => markDocsUploaded.mutate()}
                         disabled={markDocsUploaded.isPending}
-                        className="h-14 px-10 rounded-2xl text-lg font-bold shadow-glow"
+                        className="h-14 px-10 rounded-2xl text-lg font-medium shadow-glow"
                       >
                         Tudo Pronto <ArrowRight className="w-5 h-5 ml-2" />
                       </Button>
@@ -610,7 +610,7 @@ function ContratacaoWorkflow({ token }: { token: string }) {
                         <FileText className="w-5 h-5" />
                       </div>
                       <div>
-                        <h2 className="text-xl font-display font-bold">Contrato de Trabalho</h2>
+                        <h2 className="text-xl font-display font-medium">Contrato de Trabalho</h2>
                         <p className="text-xs text-muted-foreground">Leia atentamente as cláusulas do seu contrato.</p>
                       </div>
                     </div>
@@ -631,7 +631,7 @@ function ContratacaoWorkflow({ token }: { token: string }) {
                       <div className="h-px bg-slate-200 my-8" />
 
                       <div className="space-y-6">
-                        <h4 className="font-bold text-sm uppercase text-slate-800 tracking-wider">
+                        <h4 className="font-medium text-sm uppercase text-slate-800 tracking-wider">
                           Assinatura Eletrônica
                         </h4>
                         <p className="text-sm italic">
@@ -650,7 +650,7 @@ function ContratacaoWorkflow({ token }: { token: string }) {
                         onClick={() => signContract.mutate()}
                         disabled={signContract.isPending || !signature}
                         className={cn(
-                          'h-14 px-10 rounded-2xl text-lg font-bold transition-all',
+                          'h-14 px-10 rounded-2xl text-lg font-medium transition-all',
                           signature
                             ? 'bg-success hover:bg-success/90 text-white shadow-success/20 shadow-lg'
                             : 'bg-slate-200 text-slate-400'
@@ -680,7 +680,7 @@ function ContratacaoWorkflow({ token }: { token: string }) {
                     </motion.div>
 
                     <div className="space-y-3">
-                      <h2 className="text-3xl font-display font-bold text-slate-800">Tudo Pronto!</h2>
+                      <h2 className="text-3xl font-display font-medium text-slate-800">Tudo Pronto!</h2>
                       <p className="text-lg text-muted-foreground max-w-md mx-auto">
                         Sua admissão digital foi concluída com sucesso. Seus dados e o contrato assinado já estão com o
                         RH.
@@ -688,22 +688,22 @@ function ContratacaoWorkflow({ token }: { token: string }) {
                     </div>
 
                     <div className="p-6 bg-slate-50 rounded-3xl border-2 border-slate-100 max-w-sm mx-auto space-y-4">
-                      <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">Próximos Passos</p>
+                      <p className="text-sm font-medium text-slate-500 uppercase tracking-widest">Próximos Passos</p>
                       <div className="space-y-3 text-left">
                         <div className="flex gap-3 items-center">
-                          <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
+                          <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-medium text-primary">
                             1
                           </div>
                           <p className="text-xs font-medium">Análise de documentos pelo RH</p>
                         </div>
                         <div className="flex gap-3 items-center opacity-50">
-                          <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold">
+                          <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-medium">
                             2
                           </div>
                           <p className="text-xs font-medium">Envio ao eSocial</p>
                         </div>
                         <div className="flex gap-3 items-center opacity-50">
-                          <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold">
+                          <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-medium">
                             3
                           </div>
                           <p className="text-xs font-medium">Liberação de acessos aos sistemas</p>
@@ -726,7 +726,7 @@ function ContratacaoWorkflow({ token }: { token: string }) {
       <div className="p-8 text-center text-slate-400">
         <div className="flex items-center justify-center gap-2 mb-2">
           <ShieldCheck className="w-4 h-4" />
-          <span className="text-[10px] font-bold uppercase tracking-widest">Processo Seguro & Criptografado</span>
+          <span className="text-[10px] font-medium uppercase tracking-widest">Processo Seguro & Criptografado</span>
         </div>
         <p className="text-[10px]">
           © {new Date().getFullYear()} Plataforma DP Inteligente. Todos os direitos reservados.

@@ -249,11 +249,12 @@ export default function ContratosGeradosPage() {
     toast.success(`${filtrados.length} contrato(s) exportado(s)`);
   };
 
+  // p-6 -> py-6: padding horizontal agora vem do <main> global (MainLayout)
   return (
-    <div className="p-6 space-y-6">
+    <div className="py-6 space-y-6">
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
+          <h1 className="text-2xl font-medium flex items-center gap-2">
             <FileText className="h-6 w-6" /> Contratos Gerados
           </h1>
           <p className="text-muted-foreground text-sm">

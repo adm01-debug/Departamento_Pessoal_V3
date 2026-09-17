@@ -103,7 +103,7 @@ export function CalendarioFerias() {
                   </div>
                   <div className="flex-1 space-y-1">
                     <div className="flex items-center justify-between">
-                      <h4 className="font-display font-bold text-sm">{f.colaborador?.nome_completo}</h4>
+                      <h4 className="font-display font-medium text-sm">{f.colaborador?.nome_completo}</h4>
                       <div className="flex items-center gap-2">
                         <StatusBadge status={f.status} />
                       </div>
@@ -136,7 +136,7 @@ export function CalendarioFerias() {
                     <User className="h-6 w-6" />
                   </div>
                   <div>
-                    <h3 className="font-display font-bold text-base">{selectedEvent.colaborador?.nome_completo}</h3>
+                    <h3 className="font-display font-medium text-base">{selectedEvent.colaborador?.nome_completo}</h3>
                     <p className="text-sm text-muted-foreground font-body">{selectedEvent.colaborador?.cargo?.nome || 'Cargo não definido'}</p>
                   </div>
                 </div>

@@ -95,7 +95,7 @@ export function AdminRoute({ children }: AdminRouteProps) {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-10 h-10 animate-spin text-primary opacity-20" />
-          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground animate-pulse">Verificando privilégios...</p>
+          <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground animate-pulse">Verificando privilégios...</p>
         </div>
       </div>
     );
@@ -122,7 +122,7 @@ export function AdminRoute({ children }: AdminRouteProps) {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-10 h-10 animate-spin text-primary opacity-20" />
-          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground animate-pulse">Verificando autenticação de dois fatores...</p>
+          <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground animate-pulse">Verificando autenticação de dois fatores...</p>
         </div>
       </div>
     );

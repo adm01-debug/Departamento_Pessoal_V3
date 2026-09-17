@@ -32,7 +32,7 @@ export function RelatoriosAnalyticsTab({ analytics }: RelatoriosAnalyticsTabProp
                     {up ? <ArrowUpRight className="h-3 w-3 mr-0.5" /> : <ArrowDownRight className="h-3 w-3 mr-0.5" />}{trend}
                   </Badge>
                 </div>
-                <p className="text-xl font-bold font-display">{value}</p>
+                <p className="text-xl font-medium font-display">{value}</p>
                 <p className="text-[10px] text-muted-foreground font-body">{label}</p>
               </CardContent>
             </Card>

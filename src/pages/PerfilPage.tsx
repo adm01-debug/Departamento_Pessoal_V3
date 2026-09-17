@@ -167,7 +167,7 @@ export default function PerfilPage() {
               <div className="flex items-center gap-3">
                 <Smartphone className="h-6 w-6 text-primary" />
                 <div>
-                  <p className="font-bold text-sm">Notificações Push (Navegador)</p>
+                  <p className="font-medium text-sm">Notificações Push (Navegador)</p>
                   <p className="text-xs text-muted-foreground">Receba alertas em tempo real sobre holerites e avisos.</p>
                 </div>
               </div>
@@ -189,7 +189,7 @@ export default function PerfilPage() {
               <div className="flex items-center gap-3">
                 <Monitor className="h-6 w-6 text-info" />
                 <div>
-                  <p className="font-bold text-sm">Aplicativo Web (PWA)</p>
+                  <p className="font-medium text-sm">Aplicativo Web (PWA)</p>
                   <p className="text-xs text-muted-foreground">Instale o sistema como um aplicativo no seu celular ou desktop.</p>
                 </div>
               </div>
@@ -208,7 +208,7 @@ export default function PerfilPage() {
               <div className="relative group">
                 <Avatar className="h-16 w-16 rounded-2xl border-2 border-primary/20">
                   <AvatarImage src={profile?.avatar_url || undefined} alt={nome} />
-                  <AvatarFallback className="rounded-2xl bg-gradient-to-br from-primary to-primary-glow text-primary-foreground font-display font-bold text-xl">
+                  <AvatarFallback className="rounded-2xl bg-gradient-to-br from-primary to-primary-glow text-primary-foreground font-display font-medium text-xl">
                     {initials}
                   </AvatarFallback>
                 </Avatar>
@@ -265,7 +265,7 @@ export default function PerfilPage() {
               <div className="flex items-center gap-3">
                 <ShieldCheck className="h-6 w-6 text-success" />
                 <div>
-                  <p className="font-bold text-sm">Autenticação de Dois Fatores (MFA)</p>
+                  <p className="font-medium text-sm">Autenticação de Dois Fatores (MFA)</p>
                   <p className="text-xs text-muted-foreground">Sua conta está protegida por MFA via aplicativo.</p>
                 </div>
               </div>
@@ -276,7 +276,7 @@ export default function PerfilPage() {
               <div className="flex items-center gap-3">
                 <History className="h-6 w-6 text-info" />
                 <div>
-                  <p className="font-bold text-sm">Último Acesso</p>
+                  <p className="font-medium text-sm">Último Acesso</p>
                   <p className="text-xs text-muted-foreground">{new Date().toLocaleString('pt-BR')} (IP: 187.64.21.XX)</p>
                 </div>
               </div>

@@ -2,7 +2,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
-import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
+import { corsHeaders, parseJsonBody, getCorsHeaders } from '../_shared/contract.ts';
 import { safeFetchWithRetry, FetchTimeoutError, FetchNetworkError } from '../_shared/safe-fetch.ts';
 
 const SYSTEM_PROMPT = `Voce e um assistente especialista em Departamento Pessoal brasileiro. Seu nome e "Assistente DP".
@@ -36,10 +36,10 @@ Tabelas de referencia 2026:
 - Multa FGTS demissao sem justa causa: 40%`;
 
 serve(async (req: Request): Promise<Response> => {
-  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: getCorsHeaders(req) });
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 405, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -55,7 +55,7 @@ serve(async (req: Request): Promise<Response> => {
     if (!authHeader.startsWith('Bearer ')) {
       return new Response(
         JSON.stringify({ error: 'Autenticacao obrigatoria' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
 
@@ -67,7 +67,7 @@ serve(async (req: Request): Promise<Response> => {
     if (userErr || !userData?.user) {
       return new Response(
         JSON.stringify({ error: 'Sessao invalida' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
     const userId = userData.user.id;
@@ -88,14 +88,14 @@ serve(async (req: Request): Promise<Response> => {
     if (!message || typeof message !== 'string' || message.length > 4000) {
       return new Response(
         JSON.stringify({ error: 'Mensagem inválida (máx 4000 caracteres)' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
 
     if (!Array.isArray(history) || history.length > 20) {
       return new Response(
         JSON.stringify({ error: 'Histórico inválido (máx 20 mensagens)' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
       );
     }
 
@@ -154,13 +154,13 @@ serve(async (req: Request): Promise<Response> => {
 
     return new Response(
       JSON.stringify({ response: aiResponse }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   } catch (error: unknown) {
     try { captureException(error, { fn: 'assistente-ia' }); } catch { /* noop */ }
     return new Response(
       JSON.stringify({ error: 'Erro interno' }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   }
 });

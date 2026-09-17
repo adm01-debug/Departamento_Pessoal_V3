@@ -40,7 +40,7 @@ export function OrganogramaNode({ node, level = 0 }: OrganogramaNodeProps) {
             </div>
             
             <div className="flex-1 min-w-0">
-              <p className="font-display font-bold text-sm truncate">{node.nome}</p>
+              <p className="font-display font-medium text-sm truncate">{node.nome}</p>
               <div className="flex items-center gap-2 mt-0.5">
                 <Badge variant="outline" className="text-[10px] h-4 px-1.5 font-medium border-border/50">
                   {node.colaboradores?.length || 0} colaboradores
@@ -75,13 +75,13 @@ export function OrganogramaNode({ node, level = 0 }: OrganogramaNodeProps) {
                       <div key={col.id} className="flex items-center gap-2 p-2 rounded-xl bg-background border border-border/20">
                         <Avatar className="h-8 w-8 border border-border/30">
                           <AvatarImage src={col.foto_url} />
-                          <AvatarFallback className="text-[10px] bg-primary/5 text-primary font-bold">
+                          <AvatarFallback className="text-[10px] bg-primary/5 text-primary font-medium">
                             {getInitials(col.nome_completo)}
                           </AvatarFallback>
                         </Avatar>
                         <div className="min-w-0 flex-1">
-                          <p className="text-[11px] font-bold truncate leading-tight">{col.nome_completo}</p>
-                          <p className="text-[9px] text-muted-foreground truncate uppercase tracking-tighter">{col.cargo || 'Membro'}</p>
+                          <p className="text-[11px] font-medium truncate leading-tight">{col.nome_completo}</p>
+                          <p className="text-[9px] text-muted-foreground truncate uppercase tracking-wide">{col.cargo || 'Membro'}</p>
                         </div>
                         {col.email && (
                           <a href={`mailto:${col.email}`} className="text-muted-foreground hover:text-primary transition-colors">

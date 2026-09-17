@@ -123,7 +123,7 @@ export default function FolhaPage() {
                       <kpi.icon className="h-3 w-3 text-primary-foreground" />
                     </div>
                   </div>
-                  <p className="text-lg font-display font-bold">
+                  <p className="text-lg font-display font-medium">
                     {kpi.isCurrency ? (
                       <AnimatedNumber value={kpi.value} format={formatCurrency} />
                     ) : (
@@ -167,7 +167,7 @@ export default function FolhaPage() {
                     <TableCell className="capitalize font-body text-muted-foreground">{(f.tipo || '').replace('_', ' ')}</TableCell>
                     <TableCell className="text-right text-success font-body font-semibold tabular-nums">{formatCurrency(f.total_proventos || 0)}</TableCell>
                     <TableCell className="text-right text-destructive font-body font-semibold tabular-nums">{formatCurrency(f.total_descontos || 0)}</TableCell>
-                    <TableCell className="text-right font-display font-bold tabular-nums">{formatCurrency(f.total_liquido || 0)}</TableCell>
+                    <TableCell className="text-right font-display font-medium tabular-nums">{formatCurrency(f.total_liquido || 0)}</TableCell>
                     <TableCell><FolhaStatus status={f.status} /></TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -214,21 +214,21 @@ export default function FolhaPage() {
                 <Card className="border border-border/30 rounded-2xl overflow-hidden" onClick={() => navigate('/folha/calcular')}>
                   <CardContent className="p-4 space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="font-display font-bold">{f.competencia}</span>
+                      <span className="font-display font-medium">{f.competencia}</span>
                       <FolhaStatus status={f.status} />
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-center">
                       <div>
                         <p className="text-[10px] text-muted-foreground font-body uppercase">Proventos</p>
-                        <p className="text-caption font-display font-bold text-success">{formatCurrency(f.total_proventos || 0)}</p>
+                        <p className="text-caption font-display font-medium text-success">{formatCurrency(f.total_proventos || 0)}</p>
                       </div>
                       <div>
                         <p className="text-[10px] text-muted-foreground font-body uppercase">Descontos</p>
-                        <p className="text-caption font-display font-bold text-destructive">{formatCurrency(f.total_descontos || 0)}</p>
+                        <p className="text-caption font-display font-medium text-destructive">{formatCurrency(f.total_descontos || 0)}</p>
                       </div>
                       <div>
                         <p className="text-[10px] text-muted-foreground font-body uppercase">Líquido</p>
-                        <p className="text-caption font-display font-bold">{formatCurrency(f.total_liquido || 0)}</p>
+                        <p className="text-caption font-display font-medium">{formatCurrency(f.total_liquido || 0)}</p>
                       </div>
                     </div>
                   </CardContent>

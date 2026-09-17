@@ -89,7 +89,7 @@ export function FolhaValidationAlerts({ resumo, competencia }: { resumo: FolhaRe
             </div>
             Audit Smart Validation
           </CardTitle>
-          <div className={cn("flex items-center gap-2 px-3 py-1 rounded-full border font-display font-bold text-xs transition-all", getScoreColor(finalScore))}>
+          <div className={cn("flex items-center gap-2 px-3 py-1 rounded-full border font-display font-medium text-xs transition-all", getScoreColor(finalScore))}>
             Score: {finalScore}/100
           </div>
         </div>
@@ -105,7 +105,7 @@ export function FolhaValidationAlerts({ resumo, competencia }: { resumo: FolhaRe
               className={cn(
                 "flex items-start gap-3 p-3 rounded-xl border text-body font-body transition-all hover:translate-x-1 cursor-default",
                 a.type === 'warning' && "bg-warning/5 border-warning/20 text-warning",
-                a.type === 'critical' && "bg-destructive/5 border-destructive/20 text-destructive font-bold",
+                a.type === 'critical' && "bg-destructive/5 border-destructive/20 text-destructive font-medium",
                 a.type === 'info' && "bg-info/5 border-info/20 text-info",
                 a.type === 'success' && "bg-success/5 border-success/20 text-success",
               )}
@@ -119,7 +119,7 @@ export function FolhaValidationAlerts({ resumo, competencia }: { resumo: FolhaRe
               <div className="flex-1">
                 <p className="text-xs leading-tight">{a.msg}</p>
                 {a.type === 'critical' && (
-                  <p className="text-[10px] opacity-70 mt-1 uppercase tracking-wider font-bold">Bloqueia Encerramento</p>
+                  <p className="text-[10px] opacity-70 mt-1 uppercase tracking-wider font-medium">Bloqueia Encerramento</p>
                 )}
               </div>
             </motion.div>
@@ -132,7 +132,7 @@ export function FolhaValidationAlerts({ resumo, competencia }: { resumo: FolhaRe
               className="bg-success/10 border border-success/20 p-4 rounded-xl text-center"
             >
               <CheckCircle className="h-8 w-8 text-success mx-auto mb-2" />
-              <p className="font-display font-bold text-success text-sm">Folha de Excelência!</p>
+              <p className="font-display font-medium text-success text-sm">Folha de Excelência!</p>
               <p className="text-[11px] text-success/80">Todos os critérios de auditoria foram atendidos.</p>
             </motion.div>
           )}

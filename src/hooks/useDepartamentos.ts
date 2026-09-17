@@ -11,6 +11,7 @@ export function useDepartamentos() {
     queryKey: `departamentos:${empresaId ?? 'none'}`,
     service: departamentoService,
     initialPageSize: 10,
+    enabled: !!empresaId,
     filters: empresaId ? { empresa_id: empresaId } : {},
     empresaId: empresaId ?? undefined,
     successMessages: {

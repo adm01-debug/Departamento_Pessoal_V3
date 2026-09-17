@@ -149,7 +149,7 @@ export default function PontoKioskPage() {
             <Fingerprint className="h-6 w-6 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="text-2xl font-display font-bold">Modo Quiosque</h1>
+            <h1 className="text-2xl font-display font-medium">Modo Quiosque</h1>
             <p className="text-muted-foreground text-sm flex items-center gap-1.5">
               <Smartphone className="h-3.5 w-3.5" /> Estação de Registro Compartilhada
             </p>
@@ -191,14 +191,14 @@ export default function PontoKioskPage() {
                   />
                 ))}
               </div>
-              <span className="text-[10px] font-bold text-primary uppercase tracking-widest">Assistente de Voz Ativo</span>
+              <span className="text-[10px] font-medium text-primary uppercase tracking-widest">Assistente de Voz Ativo</span>
             </motion.div>
           )}
         </AnimatePresence>
 
       <div className="max-w-md mx-auto mt-12">
         <div className="text-center mb-12">
-          <div className="text-7xl font-display font-bold tabular-nums mb-2">
+          <div className="text-7xl font-display font-medium tabular-nums mb-2">
             {time.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
           </div>
           <p className="text-muted-foreground font-body">
@@ -313,7 +313,7 @@ export default function PontoKioskPage() {
             <div className="mx-auto w-24 h-24 bg-success/20 rounded-full flex items-center justify-center mb-6">
               <Clock className="h-12 w-12 text-success animate-pulse" />
             </div>
-            <h2 className="text-3xl font-display font-bold mb-2">Ponto Registrado!</h2>
+            <h2 className="text-3xl font-display font-medium mb-2">Ponto Registrado!</h2>
             <p className="text-muted-foreground">Bom trabalho, {(selectedColab?.nome_completo ?? 'Colaborador').split(' ')[0]}.</p>
           </div>
         )}

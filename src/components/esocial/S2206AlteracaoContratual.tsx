@@ -15,8 +15,8 @@ export function S2206AlteracaoContratual({ dados }: { dados: any }) {
           <CardContent className="p-4 flex items-start gap-3">
             <User className="h-4 w-4 text-primary mt-1" />
             <div>
-              <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">Trabalhador</Label>
-              <p className="font-display font-bold text-sm">CPF: {maskCpfDisplay(dados.cpfTrab)}</p>
+              <Label className="text-[10px] uppercase text-muted-foreground font-medium tracking-wider">Trabalhador</Label>
+              <p className="font-display font-medium text-sm">CPF: {maskCpfDisplay(dados.cpfTrab)}</p>
               {dados.matricula && <p className="text-[10px] text-muted-foreground">Matrícula: {dados.matricula}</p>}
             </div>
           </CardContent>
@@ -26,8 +26,8 @@ export function S2206AlteracaoContratual({ dados }: { dados: any }) {
           <CardContent className="p-4 flex items-start gap-3">
             <Calendar className="h-4 w-4 text-primary mt-1" />
             <div>
-              <Label className="text-[10px] uppercase text-primary font-bold tracking-wider">Vigência da Alteração</Label>
-              <p className="font-display font-bold text-sm text-primary">{dados.dtAlteracao || '-'}</p>
+              <Label className="text-[10px] uppercase text-primary font-medium tracking-wider">Vigência da Alteração</Label>
+              <p className="font-display font-medium text-sm text-primary">{dados.dtAlteracao || '-'}</p>
               <p className="text-[10px] text-primary/70 italic">Novas condições contratuais</p>
             </div>
           </CardContent>
@@ -37,7 +37,7 @@ export function S2206AlteracaoContratual({ dados }: { dados: any }) {
       <div className="p-4 rounded-xl border border-primary/10 bg-primary/5">
         <div className="flex items-center gap-2 mb-3">
           <FileText className="h-4 w-4 text-primary" />
-          <span className="text-xs font-bold uppercase tracking-widest text-primary">Detalhamento das Mudanças</span>
+          <span className="text-xs font-medium uppercase tracking-widest text-primary">Detalhamento das Mudanças</span>
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -45,7 +45,7 @@ export function S2206AlteracaoContratual({ dados }: { dados: any }) {
             <Label className="text-[10px] text-muted-foreground flex items-center gap-1">
               <Banknote className="h-3 w-3" /> Remuneração Bruta
             </Label>
-            <p className="text-sm font-bold text-primary">{dados.vrSalFx ? formatCurrency(dados.vrSalFx) : '-'}</p>
+            <p className="text-sm font-medium text-primary">{dados.vrSalFx ? formatCurrency(dados.vrSalFx) : '-'}</p>
             <p className="text-[10px] text-muted-foreground">Unidade: {dados.undSalFixo || 'Mensal'}</p>
           </div>
           

@@ -68,7 +68,7 @@ export const auditoriaSchema = z.object({
     descricao: z.string().optional(),
     dados_anteriores: z.unknown().optional(),
     dados_novos: z.unknown().optional(),
-    ip_address: z.union([z.ipv4(), z.ipv6()]).optional(),
+    ip_address: z.string().refine((v) => /^(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)$|^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$/.test(v), { message: 'IP inválido' }).optional(),
     data_inicio: z.string().datetime().optional(),
     data_fim: z.string().datetime().optional(),
   }).optional(),

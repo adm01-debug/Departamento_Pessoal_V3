@@ -31,7 +31,7 @@ function FolhaKPI({ title, value, icon: Icon, gradient, index, tooltip }: {
               </TooltipProvider>
             )}
           </div>
-          <p className="text-xl font-display font-bold">
+          <p className="text-xl font-display font-semibold">
             <AnimatedNumber value={value} format={formatCurrency} />
           </p>
           <p className="text-[11px] text-muted-foreground font-body mt-1">{title}</p>

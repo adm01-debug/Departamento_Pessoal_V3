@@ -181,10 +181,10 @@ export default function AdminAgendamentoExamesPage() {
         gradient="from-primary to-success"
       >
         <div className="grid gap-4 md:grid-cols-4 mb-6">
-          <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Total</CardTitle></CardHeader><CardContent><p className="text-3xl font-bold">{kpis.total}</p></CardContent></Card>
-          <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Agendados</CardTitle></CardHeader><CardContent><p className="text-3xl font-bold text-primary">{kpis.agendados}</p></CardContent></Card>
-          <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Próximos 7 dias</CardTitle></CardHeader><CardContent><p className="text-3xl font-bold text-warning">{kpis.proximos7d}</p></CardContent></Card>
-          <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Realizados</CardTitle></CardHeader><CardContent><p className="text-3xl font-bold text-success">{kpis.realizados}</p></CardContent></Card>
+          <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Total</CardTitle></CardHeader><CardContent><p className="text-3xl font-medium">{kpis.total}</p></CardContent></Card>
+          <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Agendados</CardTitle></CardHeader><CardContent><p className="text-3xl font-medium text-primary">{kpis.agendados}</p></CardContent></Card>
+          <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Próximos 7 dias</CardTitle></CardHeader><CardContent><p className="text-3xl font-medium text-warning">{kpis.proximos7d}</p></CardContent></Card>
+          <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Realizados</CardTitle></CardHeader><CardContent><p className="text-3xl font-medium text-success">{kpis.realizados}</p></CardContent></Card>
         </div>
 
         <Card>

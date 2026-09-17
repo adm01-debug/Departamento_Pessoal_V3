@@ -4,7 +4,7 @@
 //
 // Segurança: JWT obrigatório, role admin/rh, CSRF fail-closed, no-store.
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { corsHeaders, createErrorResponse } from '../_shared/contract.ts';
+import { corsHeaders, createErrorResponse, getCorsHeaders } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { safeFetch } from '../_shared/safe-fetch.ts';
 
@@ -12,13 +12,13 @@ const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
 
-const NO_STORE = { ...corsHeaders, 'Content-Type': 'application/json', 'Cache-Control': 'no-store' };
-const jsonOk = (b: Record<string, unknown>) => new Response(JSON.stringify(b), { status: 200, headers: NO_STORE });
+const NO_STORE = (req: Request) => ({ ...getCorsHeaders(req), 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
+const jsonOk = (b: Record<string, unknown>, req: Request) => new Response(JSON.stringify(b), { status: 200, headers: NO_STORE(req) });
 
 Deno.serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: getCorsHeaders(req) });
   if (req.method !== 'GET' && req.method !== 'POST') {
-    return createErrorResponse('Method not allowed', 405, 'METHOD_NOT_ALLOWED');
+    return createErrorResponse('Method not allowed', 405, 'METHOD_NOT_ALLOWED', undefined, req);
   }
 
   try {
@@ -26,14 +26,14 @@ Deno.serve(async (req: Request) => {
     if (!csrf.ok) return csrf.response!;
 
     const jwt = (req.headers.get('Authorization') ?? '').replace(/^Bearer\s+/i, '').trim();
-    if (!jwt) return createErrorResponse('Não autenticado', 401, 'UNAUTHORIZED');
+    if (!jwt) return createErrorResponse('Não autenticado', 401, 'UNAUTHORIZED', undefined, req);
 
     const userClient = createClient(SUPABASE_URL, ANON_KEY, {
       global: { headers: { Authorization: `Bearer ${jwt}` } },
       auth: { persistSession: false, autoRefreshToken: false },
     });
     const { data: claims, error: claimsErr } = await userClient.auth.getUser();
-    if (claimsErr || !claims?.user?.id) return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED');
+    if (claimsErr || !claims?.user?.id) return createErrorResponse('Sessão inválida', 401, 'UNAUTHORIZED', undefined, req);
 
     const userId = claims.user.id;
     const admin = createClient(SUPABASE_URL, SERVICE_KEY, {
@@ -43,7 +43,7 @@ Deno.serve(async (req: Request) => {
     // Restringe a admin/rh
     const { data: roles } = await admin.rpc('get_user_roles', { _user_id: userId });
     const allowed = Array.isArray(roles) && roles.some((r: string) => r === 'admin' || r === 'rh');
-    if (!allowed) return createErrorResponse('Sem permissão', 403, 'FORBIDDEN');
+    if (!allowed) return createErrorResponse('Sem permissão', 403, 'FORBIDDEN', undefined, req);
 
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(admin, { key: `folha-metrics:${userId}`, limit: 30, windowSec: 60 });
@@ -56,7 +56,7 @@ Deno.serve(async (req: Request) => {
       .from('idempotency_keys')
       .select('status, endpoint')
       .gte('created_at', since);
-    if (idempErr) return createErrorResponse('Falha ao ler idempotency', 500, 'IDEMP_ERROR');
+    if (idempErr) return createErrorResponse('Falha ao ler idempotency', 500, 'IDEMP_ERROR', undefined, req);
 
     const idempByStatus: Record<string, number> = {};
     const idempByEndpoint: Record<string, number> = {};
@@ -72,7 +72,7 @@ Deno.serve(async (req: Request) => {
       .eq('tabela', 'folhas_pagamento')
       .in('acao', ['PAYROLL_CALC', 'CLOSE', 'REOPEN'])
       .gte('created_at', since);
-    if (auditErr) return createErrorResponse('Falha ao ler audit', 500, 'AUDIT_ERROR');
+    if (auditErr) return createErrorResponse('Falha ao ler audit', 500, 'AUDIT_ERROR', undefined, req);
 
     const auditByAcao: Record<string, number> = {};
     for (const r of audit ?? []) {
@@ -125,9 +125,9 @@ Deno.serve(async (req: Request) => {
         triggered: alerted,
         thresholds: { conflict: conflictThreshold, failed: failedThreshold },
       },
-    });
+    }, req);
   } catch (e) {
     console.error('[folha-metrics] erro:', (e as Error)?.message);
-    return createErrorResponse('Erro interno', 500, 'INTERNAL_ERROR');
+    return createErrorResponse('Erro interno', 500, 'INTERNAL_ERROR', undefined, req);
   }
 });

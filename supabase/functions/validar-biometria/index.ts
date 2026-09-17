@@ -7,14 +7,14 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
-import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
+import { corsHeaders, parseJsonBody, getCorsHeaders } from '../_shared/contract.ts';
 import { safeFetchWithRetry } from '../_shared/safe-fetch.ts';
 
 serve(async (req: Request): Promise<Response> => {
-  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders });
+  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: getCorsHeaders(req) });
   if (req.method !== 'POST') {
     return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 405, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
     });
   }
 
@@ -29,7 +29,7 @@ serve(async (req: Request): Promise<Response> => {
     const authHeader = req.headers.get('Authorization') ?? '';
     if (!authHeader.startsWith('Bearer ')) {
       return new Response(JSON.stringify({ error: 'Autenticacao obrigatoria' }), {
-        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -40,7 +40,7 @@ serve(async (req: Request): Promise<Response> => {
     const { data: userData, error: userErr } = await userClient.auth.getUser();
     if (userErr || !userData?.user) {
       return new Response(JSON.stringify({ error: 'Sessao invalida' }), {
-        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 401, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
     const userId = userData.user.id;
@@ -62,14 +62,14 @@ serve(async (req: Request): Promise<Response> => {
     if (!batidaId || !fotoBase64 || !colaboradorId ||
         typeof batidaId !== 'string' || typeof fotoBase64 !== 'string' || typeof colaboradorId !== 'string') {
       return new Response(JSON.stringify({ error: 'Parametros batidaId, fotoBase64 e colaboradorId sao obrigatorios' }), {
-        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 400, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
     // Cap base64 payload at 2MB
     if (fotoBase64.length > 2 * 1024 * 1024) {
       return new Response(JSON.stringify({ error: 'Foto excede limite de 2MB' }), {
-        status: 413, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 413, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -81,7 +81,7 @@ serve(async (req: Request): Promise<Response> => {
 
     if (cError || !colaborador) {
       return new Response(JSON.stringify({ error: 'Colaborador nao encontrado' }), {
-        status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 404, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -92,7 +92,7 @@ serve(async (req: Request): Promise<Response> => {
     });
     if (!belongs) {
       return new Response(JSON.stringify({ error: 'Sem acesso a este colaborador' }), {
-        status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 403, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -114,7 +114,7 @@ serve(async (req: Request): Promise<Response> => {
         valid: false,
         confidence: 0,
         message: 'Foto de referencia nao cadastrada. Batida requer validacao manual.'
-      }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
     }
 
     // Attempt real AI comparison via Lovable AI Gateway
@@ -191,12 +191,12 @@ serve(async (req: Request): Promise<Response> => {
       confidence,
       status,
       message: analysis,
-    }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }), { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } });
 
   } catch (error: unknown) {
     try { captureException(error, { fn: 'validar-biometria' }); } catch { /* noop */ }
     return new Response(JSON.stringify({ success: false, error: 'Erro interno na validacao' }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       status: 500,
     });
   }

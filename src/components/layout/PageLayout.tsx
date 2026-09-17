@@ -94,7 +94,7 @@ export function PageLayout({
                 </div>
               )}
               <div>
-                {title && <h1 className="text-2xl font-display font-bold tracking-tight">{title}</h1>}
+                {title && <h1 className="text-2xl font-display font-medium tracking-tight">{title}</h1>}
                 {description && <p className="text-muted-foreground font-body mt-0.5">{description}</p>}
               </div>
             </div>

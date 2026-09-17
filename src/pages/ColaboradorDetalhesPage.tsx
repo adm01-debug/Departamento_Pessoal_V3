@@ -98,23 +98,23 @@ export default function ColaboradorDetalhesPage() {
 
               <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-6">
                 <div className="space-y-1">
-                  <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Status</p>
+                  <p className="text-[10px] uppercase tracking-widest font-medium text-muted-foreground">Status</p>
                   <Badge variant={colaborador.status === 'ativo' ? 'default' : 'secondary'} className="rounded-full">
                     {colaborador.status}
                   </Badge>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Admissão</p>
+                  <p className="text-[10px] uppercase tracking-widest font-medium text-muted-foreground">Admissão</p>
                   <p className="font-display font-semibold">{colaborador.data_admissao}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Salário Atual</p>
+                  <p className="text-[10px] uppercase tracking-widest font-medium text-muted-foreground">Salário Atual</p>
                   <p className="font-display font-semibold text-primary">
                     {Number(colaborador.salario_base).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                   </p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Documento</p>
+                  <p className="text-[10px] uppercase tracking-widest font-medium text-muted-foreground">Documento</p>
                   <p className="font-mono text-sm">{colaborador.cpf}</p>
                 </div>
               </div>
@@ -153,7 +153,7 @@ export default function ColaboradorDetalhesPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Card className="md:col-span-2 border border-border/30 rounded-2xl overflow-hidden shadow-elevated">
                   <CardContent className="p-6 space-y-6">
-                    <div className="flex items-center gap-2 font-display font-bold text-lg">
+                    <div className="flex items-center gap-2 font-display font-medium text-lg">
                       <Info className="h-5 w-5 text-primary" /> Perfil Executivo
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -182,7 +182,7 @@ export default function ColaboradorDetalhesPage() {
                       </div>
                     </div>
                     <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10">
-                      <p className="text-xs text-primary font-bold uppercase tracking-wider mb-2">Observações Internas</p>
+                      <p className="text-xs text-primary font-medium uppercase tracking-wider mb-2">Observações Internas</p>
                       <p className="text-sm text-muted-foreground italic">"{colaborador.observacoes || 'Nenhuma observação registrada para este colaborador.'}"</p>
                     </div>
                   </CardContent>
@@ -190,7 +190,7 @@ export default function ColaboradorDetalhesPage() {
 
                 <Card className="border border-border/30 rounded-2xl overflow-hidden shadow-elevated">
                   <CardContent className="p-6 space-y-6">
-                    <div className="flex items-center gap-2 font-display font-bold text-lg">
+                    <div className="flex items-center gap-2 font-display font-medium text-lg">
                       <Calendar className="h-5 w-5 text-primary" /> Próximos Eventos
                     </div>
                     <div className="space-y-4">
@@ -199,7 +199,7 @@ export default function ColaboradorDetalhesPage() {
                           <Calendar className="h-4 w-4 text-warning" />
                         </div>
                         <div>
-                          <p className="text-xs font-bold">Férias</p>
+                          <p className="text-xs font-medium">Férias</p>
                           <p className="text-[10px] text-muted-foreground">Período vence em 45 dias</p>
                         </div>
                       </div>
@@ -208,7 +208,7 @@ export default function ColaboradorDetalhesPage() {
                           <Stethoscope className="h-4 w-4 text-success" />
                         </div>
                         <div>
-                          <p className="text-xs font-bold">Exame Periódico</p>
+                          <p className="text-xs font-medium">Exame Periódico</p>
                           <p className="text-[10px] text-muted-foreground">ASO em conformidade</p>
                         </div>
                       </div>

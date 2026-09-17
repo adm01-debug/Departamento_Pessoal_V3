@@ -48,7 +48,7 @@ export default function AdminIdempotenciaPage() {
     totals.total > 0 ? ((totals.failed / totals.total) * 100).toFixed(2) : '0.00';
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
+    <div className="space-y-6 py-4 md:py-6">
       <div className="flex items-center justify-between">
         <PageTitle title="Idempotência — Saúde Operacional" />
         <Button variant="outline" onClick={() => refetch()} disabled={isFetching}>
