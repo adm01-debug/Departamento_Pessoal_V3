@@ -73,7 +73,7 @@ export function MainLayout({ children }: MainLayoutProps) {
         />
         <main role="main" className="flex-1 overflow-auto p-page pb-20 lg:pb-page">
           <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-primary focus:text-primary-foreground">Pular para conteúdo</a>
-          <div id="main-content">
+          <div id="main-content" className="flex flex-col min-h-full">
             <PageTransition>
               {children || <Outlet />}
             </PageTransition>

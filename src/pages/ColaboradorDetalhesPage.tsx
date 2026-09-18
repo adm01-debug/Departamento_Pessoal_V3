@@ -26,6 +26,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger} from '@/components/ui/dropdown-menu';
+import { MOCK_MODE, findMockColaborador } from '@/mocks/colaboradoresMock';
 
 export default function ColaboradorDetalhesPage() {
   const { id } = useParams<{ id: string }>();
@@ -36,12 +37,19 @@ export default function ColaboradorDetalhesPage() {
   const [activeFinanceiroTab, setActiveFinanceiroTab] = useState('contas');
   const [activeDocumentosTab, setActiveDocumentosTab] = useState('pessoais');
 
-  const { data: colaborador, isLoading } = useQuery({
+  // MOCK TEMPORÁRIO — se o id corresponder a um colaborador fictício, usa o
+  // registro mockado em vez de consultar o banco. Ver src/mocks/colaboradoresMock.ts.
+  const mockColaborador = MOCK_MODE ? findMockColaborador(id) : undefined;
+
+  const { data: fetchedColaborador, isLoading: isLoadingFetched } = useQuery({
     queryKey: ['colaborador', id],
     queryFn: () => (colaboradorService as any).buscarPorId(id!),
-    enabled: !!id});
+    enabled: !!id && !mockColaborador});
 
-  useDataAccessLog('colaboradores', id, colaborador?.empresa_id);
+  const colaborador = mockColaborador ?? fetchedColaborador;
+  const isLoading = mockColaborador ? false : isLoadingFetched;
+
+  useDataAccessLog('colaboradores', mockColaborador ? undefined : id, mockColaborador ? undefined : colaborador?.empresa_id);
 
   if (isLoading) return <div className="flex items-center justify-center h-64"><Spinner /></div>;
   if (!colaborador) return <div className="p-6">Colaborador não encontrado</div>;

@@ -8,12 +8,14 @@ import { History, User, Clock, ArrowRight, Tag } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { motion } from 'framer-motion';
+import { MOCK_MODE, getMockAuditLog } from '@/mocks/colaboradoresMock';
 
 interface ColaboradorHistoryProps {
   colaboradorId: string;
 }
 
 export function ColaboradorHistory({ colaboradorId }: ColaboradorHistoryProps) {
+  const mockData = MOCK_MODE ? getMockAuditLog(colaboradorId) : undefined;
   const { data: logs, isLoading } = useQuery({
     queryKey: ['colaborador-history', colaboradorId],
     queryFn: async () => {
@@ -27,7 +29,8 @@ export function ColaboradorHistory({ colaboradorId }: ColaboradorHistoryProps) {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!colaboradorId,
+    enabled: !!colaboradorId && mockData === undefined,
+    initialData: mockData,
   });
 
   if (isLoading) return <div className="flex justify-center p-12"><Spinner /></div>;

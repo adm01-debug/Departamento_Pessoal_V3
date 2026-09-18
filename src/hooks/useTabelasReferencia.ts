@@ -1,19 +1,26 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as service from '@/services/tabelasReferenciaService';
 import { useEmpresas } from './useEmpresas';
+import {
+  MOCK_MODE,
+  getMockContasBancarias,
+  getMockDadosEstagiario,
+  getMockDocumentosPessoais,
+} from '@/mocks/colaboradoresMock';
 
 type DataRecord = Record<string, unknown>;
 
 // =============================================
 // Helper for Result Pattern hooks
 // =============================================
-const useResultQuery = (key: any[], fn: () => Promise<any>, enabled: boolean = true) => 
+const useResultQuery = (key: any[], fn: () => Promise<any>, enabled: boolean = true, initialData?: any) =>
   useQuery({
     queryKey: key,
     queryFn: async () => {
       return await fn();
     },
-    enabled
+    enabled,
+    initialData,
   });
 
 // =============================================
@@ -80,10 +87,12 @@ export function useExcluirCentroCusto() {
 // =============================================
 export function useContasBancarias(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
+  const mockData = MOCK_MODE ? getMockContasBancarias(colaboradorId) : undefined;
   return useResultQuery(
     ['contas-bancarias', colaboradorId, empresaAtual?.id],
     () => service.listarContasBancarias(colaboradorId, empresaAtual!.id),
-    !!colaboradorId && !!empresaAtual?.id
+    !!colaboradorId && !!empresaAtual?.id && mockData === undefined,
+    mockData
   );
 }
 
@@ -123,7 +132,13 @@ export function useExcluirContaBancaria(colaboradorId: string) {
 // Dados de Estagiário
 // =============================================
 export function useDadosEstagiario(colaboradorId: string) {
-  return useResultQuery(['dados-estagiario', colaboradorId], () => service.obterDadosEstagiario(colaboradorId), !!colaboradorId);
+  const mockData = MOCK_MODE ? getMockDadosEstagiario(colaboradorId) : undefined;
+  return useResultQuery(
+    ['dados-estagiario', colaboradorId],
+    () => service.obterDadosEstagiario(colaboradorId),
+    !!colaboradorId && mockData === undefined,
+    mockData
+  );
 }
 
 export function useSalvarDadosEstagiario() {
@@ -140,7 +155,13 @@ export function useSalvarDadosEstagiario() {
 // Documentos Pessoais (upload tipado)
 // =============================================
 export function useDocumentosPessoais(colaboradorId: string) {
-  return useResultQuery(['documentos-pessoais', colaboradorId], () => service.listarDocumentosPessoais(colaboradorId), !!colaboradorId);
+  const mockData = MOCK_MODE ? getMockDocumentosPessoais(colaboradorId) : undefined;
+  return useResultQuery(
+    ['documentos-pessoais', colaboradorId],
+    () => service.listarDocumentosPessoais(colaboradorId),
+    !!colaboradorId && mockData === undefined,
+    mockData
+  );
 }
 
 export function useCriarDocumentoPessoal() {

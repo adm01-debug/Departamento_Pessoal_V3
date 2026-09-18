@@ -3,14 +3,17 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { MOCK_MODE, getMockDocumentosDigitais } from '@/mocks/colaboradoresMock';
 
 export function useDocumentos(colaboradorId?: string) {
   const queryClient = useQueryClient();
   const { empresaAtualId } = useEmpresas();
+  const mockData = MOCK_MODE ? getMockDocumentosDigitais(colaboradorId) : undefined;
 
   const { data: documentos = [], isLoading } = useQuery({
     queryKey: ['documentos', empresaAtualId, colaboradorId],
-    enabled: !!empresaAtualId,
+    enabled: !!empresaAtualId && mockData === undefined,
+    initialData: mockData,
     queryFn: async () => {
        
       let query: any = supabase

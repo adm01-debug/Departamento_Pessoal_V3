@@ -1,14 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from './useEmpresas';
+import { MOCK_MODE, getMockOrganograma } from '@/mocks/colaboradoresMock';
 
 export function useOrganograma() {
   const { empresaAtual } = useEmpresas();
   const empresaId = empresaAtual?.id;
+  const mockData = MOCK_MODE ? getMockOrganograma() : undefined;
 
   const query = useQuery({
     queryKey: ['organograma_hierarquico', empresaId],
-    enabled: true,
+    enabled: mockData === undefined,
+    initialData: mockData,
     queryFn: async () => {
       // Buscar departamentos com informações de parentesco
       // Removido filtro de empresa_id para departamentos pois não existe no schema externo

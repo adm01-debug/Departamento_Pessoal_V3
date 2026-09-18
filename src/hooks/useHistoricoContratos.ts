@@ -3,17 +3,20 @@ import { historicoContratoService } from '@/services/historicoContratoService';
 import { useEmpresas } from './useEmpresas';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+import { MOCK_MODE, getMockHistoricoContratos } from '@/mocks/colaboradoresMock';
 
 export function useHistoricoContratos(colaboradorId: string) {
   const queryClient = useQueryClient();
   const { empresaAtual } = useEmpresas();
+  const mockData = MOCK_MODE ? getMockHistoricoContratos(colaboradorId) : undefined;
 
   const query = useQuery({
     queryKey: ['historico_contratos', colaboradorId, empresaAtual?.id],
     queryFn: async () => {
       return await historicoContratoService.listar(colaboradorId, empresaAtual!.id);
     },
-    enabled: !!colaboradorId && !!empresaAtual?.id,
+    enabled: !!colaboradorId && !!empresaAtual?.id && mockData === undefined,
+    initialData: mockData,
   });
 
   const criarMutation = useMutation({

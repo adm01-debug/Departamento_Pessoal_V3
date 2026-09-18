@@ -26,6 +26,7 @@ import { EntityPageContainer } from '@/components/layout/EntityPageContainer';
 import { Colaborador } from '@/types/entities';
 import { StatCardSkeleton } from '@/components/ui/module-skeleton';
 import { loggerService } from '@/services/loggerService';
+import { MOCK_MODE, MOCK_COLABORADORES, MOCK_SUMMARY } from '@/mocks/colaboradoresMock';
 
 export default function ColaboradoresPage() {
   const navigate = useNavigate();
@@ -157,18 +158,23 @@ export default function ColaboradoresPage() {
     }
   };
 
+  const itemsExibidos = MOCK_MODE ? (MOCK_COLABORADORES as unknown as Colaborador[]) : colaboradores;
+  const totalExibido = MOCK_MODE ? MOCK_COLABORADORES.length : total;
+  const summaryExibido = MOCK_MODE ? MOCK_SUMMARY : summary;
+  const isLoadingExibido = MOCK_MODE ? false : isLoading;
+
   return (
     <EntityPageContainer<Colaborador>
       pageTitle="Colaboradores"
       pageDescription="Gestão de colaboradores"
       title="Colaboradores"
-      description={`Gestão analítica de ${total} talentos da organização`}
+      description={`Gestão analítica de ${totalExibido} talentos da organização`}
       icon={<Users className="h-5 w-5 text-primary-foreground" />}
       gradient="from-primary to-primary-glow"
       entityName="colaborador"
-      items={colaboradores}
-      total={total}
-      isLoading={isLoading}
+      items={itemsExibidos}
+      total={totalExibido}
+      isLoading={isLoadingExibido}
       isFetching={isFetching}
       error={error}
       page={page}
@@ -213,9 +219,9 @@ export default function ColaboradoresPage() {
             const statusKey = opt.value;
             const isActive = status === statusKey;
             
-            if (!summary && isLoading) return <StatCardSkeleton key={i} />;
-            
-            const count = summary ? (summary as any)[statusKey] || 0 : 0;
+            if (!summaryExibido && isLoadingExibido) return <StatCardSkeleton key={i} />;
+
+            const count = summaryExibido ? (summaryExibido as any)[statusKey] || 0 : 0;
             
             return (
               <motion.button
