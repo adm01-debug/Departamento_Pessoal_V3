@@ -55,6 +55,17 @@ export interface Colaborador {
   status: Database['public']['Enums']['status_colaborador'];
   departamento?: string;
   cargo?: string;
+  cargo_id?: string | null;
+  cbo?: string | null;
+  centro_custo_id?: string | null;
+  centro_custo?: string | null;
+  local_trabalho_id?: string | null;
+  local_trabalho?: string | null;
+  time_id?: string | null;
+  jornada_semanal?: number | null;
+  horario_entrada?: string | null;
+  horario_saida?: string | null;
+  horario_intervalo?: number | null;
   empresa_id: string;
   version?: number;
   created_at?: string;

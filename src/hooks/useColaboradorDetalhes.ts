@@ -2,28 +2,24 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEmpresas } from './useEmpresas';
 import * as service from '@/services/colaboradorDetalhesService';
 import {
-  MOCK_MODE,
-  getMockDependentes,
-  getMockContatosEmergencia,
-  getMockHistoricoSalarial,
-  getMockASOs,
-  getMockFormacoes,
-  getMockDadosEstrangeiro,
-  getMockDeficiencia,
-  getMockPeriodoExperiencia,
-  getMockAnotacoes,
-  getMockPeriodosAquisitivos,
+  mockOr, getMockDependentes, getMockContatosEmergencia, getMockHistoricoSalarial,
+  getMockASOs, getMockFormacoes, getMockDadosEstrangeiro, getMockDeficiencia,
+  getMockPeriodoExperiencia, getMockAnotacoes, getMockPeriodosAquisitivos,
+  getMockHolerites, getMockFerias, getMockLotacoes, getMockCamposCustomizados,
+  getMockValoresCamposCustomizados, getMockTimes,
 } from '@/mocks/colaboradoresMock';
+
+// Cada hook abaixo faz um curto-circuito `mockOr(getMockX(...)) ?? service.x(...)`
+// antes da query real — ativo só em dev com VITE_COLABORADORES_MOCK=true (ver
+// src/mocks/colaboradoresMock.ts). Desligado, o comportamento é 100% real.
 
 // Dependentes
 export function useDependentes(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
-  const mockData = MOCK_MODE ? getMockDependentes(colaboradorId) : undefined;
   return useQuery({
     queryKey: ['dependentes', colaboradorId, empresaAtual?.id],
-    queryFn: () => service.listarDependentes(colaboradorId, empresaAtual!.id),
-    enabled: !!colaboradorId && !!empresaAtual?.id && mockData === undefined,
-    initialData: mockData,
+    queryFn: async () => mockOr(getMockDependentes(colaboradorId)) ?? service.listarDependentes(colaboradorId, empresaAtual!.id),
+    enabled: !!colaboradorId && !!empresaAtual?.id,
   });
 }
 
@@ -56,12 +52,10 @@ export function useExcluirDependente(colaboradorId: string) {
 
 // Contatos de Emergência
 export function useContatosEmergencia(colaboradorId: string) {
-  const mockData = MOCK_MODE ? getMockContatosEmergencia(colaboradorId) : undefined;
   return useQuery({
     queryKey: ['contatos-emergencia', colaboradorId],
-    queryFn: () => service.listarContatosEmergencia(colaboradorId),
-    enabled: !!colaboradorId && mockData === undefined,
-    initialData: mockData,
+    queryFn: async () => mockOr(getMockContatosEmergencia(colaboradorId)) ?? service.listarContatosEmergencia(colaboradorId),
+    enabled: !!colaboradorId,
   });
 }
 
@@ -70,6 +64,15 @@ export function useCriarContatoEmergencia() {
   return useMutation({
     mutationFn: service.criarContatoEmergencia,
     onSuccess: (_, vars: any) => qc.invalidateQueries({ queryKey: ['contatos-emergencia', vars.colaborador_id] }),
+  });
+}
+
+export function useAtualizarContatoEmergencia(colaboradorId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, dados }: { id: string; dados: Record<string, unknown> }) =>
+      service.atualizarContatoEmergencia(id, dados, colaboradorId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['contatos-emergencia', colaboradorId] }),
   });
 }
 
@@ -84,12 +87,10 @@ export function useExcluirContatoEmergencia(colaboradorId: string) {
 // Histórico Salarial
 export function useHistoricoSalarial(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
-  const mockData = MOCK_MODE ? getMockHistoricoSalarial(colaboradorId) : undefined;
   return useQuery({
     queryKey: ['historico-salarial', colaboradorId, empresaAtual?.id],
-    queryFn: () => service.listarHistoricoSalarial(colaboradorId, empresaAtual!.id),
-    enabled: !!colaboradorId && !!empresaAtual?.id && mockData === undefined,
-    initialData: mockData,
+    queryFn: async () => mockOr(getMockHistoricoSalarial(colaboradorId)) ?? service.listarHistoricoSalarial(colaboradorId, empresaAtual!.id),
+    enabled: !!colaboradorId && !!empresaAtual?.id,
   });
 }
 
@@ -104,12 +105,10 @@ export function useCriarRegistroSalarial() {
 // ASOs
 export function useASOs(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
-  const mockData = MOCK_MODE ? getMockASOs(colaboradorId) : undefined;
   return useQuery({
     queryKey: ['asos', colaboradorId, empresaAtual?.id],
-    queryFn: () => service.listarASOs(colaboradorId, empresaAtual!.id),
-    enabled: !!colaboradorId && !!empresaAtual?.id && mockData === undefined,
-    initialData: mockData,
+    queryFn: async () => mockOr(getMockASOs(colaboradorId)) ?? service.listarASOs(colaboradorId, empresaAtual!.id),
+    enabled: !!colaboradorId && !!empresaAtual?.id,
   });
 }
 
@@ -123,12 +122,10 @@ export function useCriarASO() {
 
 // Formações Acadêmicas
 export function useFormacoes(colaboradorId: string) {
-  const mockData = MOCK_MODE ? getMockFormacoes(colaboradorId) : undefined;
   return useQuery({
     queryKey: ['formacoes', colaboradorId],
-    queryFn: () => service.listarFormacoes(colaboradorId),
-    enabled: !!colaboradorId && mockData === undefined,
-    initialData: mockData,
+    queryFn: async () => mockOr(getMockFormacoes(colaboradorId)) ?? service.listarFormacoes(colaboradorId),
+    enabled: !!colaboradorId,
   });
 }
 
@@ -150,12 +147,13 @@ export function useExcluirFormacao(colaboradorId: string) {
 
 // Dados Estrangeiro
 export function useDadosEstrangeiro(colaboradorId: string) {
-  const mockData = MOCK_MODE ? getMockDadosEstrangeiro(colaboradorId) : undefined;
   return useQuery({
     queryKey: ['dados-estrangeiro', colaboradorId],
-    queryFn: () => service.obterDadosEstrangeiro(colaboradorId),
-    enabled: !!colaboradorId && mockData === undefined,
-    initialData: mockData,
+    queryFn: async () => {
+      const mock = mockOr(getMockDadosEstrangeiro(colaboradorId));
+      return mock !== undefined ? mock : service.obterDadosEstrangeiro(colaboradorId);
+    },
+    enabled: !!colaboradorId,
   });
 }
 
@@ -170,12 +168,13 @@ export function useSalvarDadosEstrangeiro() {
 
 // Deficiência (PCD)
 export function useDeficiencia(colaboradorId: string) {
-  const mockData = MOCK_MODE ? getMockDeficiencia(colaboradorId) : undefined;
   return useQuery({
     queryKey: ['deficiencia', colaboradorId],
-    queryFn: () => service.obterDeficiencia(colaboradorId),
-    enabled: !!colaboradorId && mockData === undefined,
-    initialData: mockData,
+    queryFn: async () => {
+      const mock = mockOr(getMockDeficiencia(colaboradorId));
+      return mock !== undefined ? mock : service.obterDeficiencia(colaboradorId);
+    },
+    enabled: !!colaboradorId,
   });
 }
 
@@ -190,12 +189,13 @@ export function useSalvarDeficiencia() {
 
 // Período de Experiência
 export function usePeriodoExperiencia(colaboradorId: string) {
-  const mockData = MOCK_MODE ? getMockPeriodoExperiencia(colaboradorId) : undefined;
   return useQuery({
     queryKey: ['periodo-experiencia', colaboradorId],
-    queryFn: () => service.obterPeriodoExperiencia(colaboradorId),
-    enabled: !!colaboradorId && mockData === undefined,
-    initialData: mockData,
+    queryFn: async () => {
+      const mock = mockOr(getMockPeriodoExperiencia(colaboradorId));
+      return mock !== undefined ? mock : service.obterPeriodoExperiencia(colaboradorId);
+    },
+    enabled: !!colaboradorId,
   });
 }
 
@@ -210,12 +210,10 @@ export function useSalvarPeriodoExperiencia() {
 
 // Anotações
 export function useAnotacoes(colaboradorId: string) {
-  const mockData = MOCK_MODE ? getMockAnotacoes(colaboradorId) : undefined;
   return useQuery({
     queryKey: ['anotacoes', colaboradorId],
-    queryFn: () => service.listarAnotacoes(colaboradorId),
-    enabled: !!colaboradorId && mockData === undefined,
-    initialData: mockData,
+    queryFn: async () => mockOr(getMockAnotacoes(colaboradorId)) ?? service.listarAnotacoes(colaboradorId),
+    enabled: !!colaboradorId,
   });
 }
 
@@ -238,12 +236,10 @@ export function useExcluirAnotacao(colaboradorId: string) {
 // Períodos Aquisitivos
 export function usePeriodosAquisitivos(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
-  const mockData = MOCK_MODE ? getMockPeriodosAquisitivos(colaboradorId) : undefined;
   return useQuery({
     queryKey: ['periodos-aquisitivos', colaboradorId, empresaAtual?.id],
-    queryFn: () => service.listarPeriodosAquisitivos(colaboradorId, empresaAtual!.id),
-    enabled: !!colaboradorId && !!empresaAtual?.id && mockData === undefined,
-    initialData: mockData,
+    queryFn: async () => mockOr(getMockPeriodosAquisitivos(colaboradorId)) ?? service.listarPeriodosAquisitivos(colaboradorId, empresaAtual!.id),
+    enabled: !!colaboradorId && !!empresaAtual?.id,
   });
 }
 
@@ -268,7 +264,7 @@ export function useTiposEstabilidade() {
 export function useTimes(empresaId?: string) {
   return useQuery({
     queryKey: ['times', empresaId],
-    queryFn: () => service.listarTimes(empresaId!),
+    queryFn: async () => mockOr(getMockTimes(empresaId)) ?? service.listarTimes(empresaId!),
     enabled: !!empresaId,
   });
 }
@@ -287,6 +283,33 @@ export function useCriarWebhook() {
   return useMutation({
     mutationFn: service.criarWebhook,
     onSuccess: () => qc.invalidateQueries({ queryKey: ['webhooks'] }),
+  });
+}
+
+// Holerites — resumo por colaborador (PARTE F)
+export function useHoleritesColaborador(colaboradorId: string) {
+  return useQuery({
+    queryKey: ['holerites-colaborador', colaboradorId],
+    queryFn: async () => mockOr(getMockHolerites(colaboradorId)) ?? service.listarHoleritesColaborador(colaboradorId),
+    enabled: !!colaboradorId,
+  });
+}
+
+// Férias — resumo por colaborador (PARTE E)
+export function useFeriasResumoColaborador(colaboradorId: string, empresaId?: string) {
+  return useQuery({
+    queryKey: ['ferias-resumo-colaborador', colaboradorId, empresaId],
+    queryFn: async () => mockOr(getMockFerias(colaboradorId)) ?? service.listarFeriasColaborador(colaboradorId, empresaId!),
+    enabled: !!colaboradorId && !!empresaId,
+  });
+}
+
+// Lotações
+export function useLotacoes(colaboradorId: string, empresaId?: string) {
+  return useQuery({
+    queryKey: ['lotacoes', colaboradorId, empresaId],
+    queryFn: async () => mockOr(getMockLotacoes(colaboradorId)) ?? service.listarLotacoes(colaboradorId, empresaId!),
+    enabled: !!colaboradorId && !!empresaId,
   });
 }
 
@@ -311,7 +334,24 @@ export function useCriarFeriasColetivas() {
 export function useCamposCustomizados(empresaId?: string) {
   return useQuery({
     queryKey: ['campos-customizados', empresaId],
-    queryFn: () => service.listarCamposCustomizados(empresaId!),
+    queryFn: async () => mockOr(getMockCamposCustomizados(empresaId)) ?? service.listarCamposCustomizados(empresaId!),
     enabled: !!empresaId,
+  });
+}
+
+export function useValoresCamposCustomizados(colaboradorId?: string) {
+  return useQuery({
+    queryKey: ['valores-campos-customizados', colaboradorId],
+    queryFn: async () => mockOr(getMockValoresCamposCustomizados(colaboradorId)) ?? service.obterValoresCamposCustomizados(colaboradorId!),
+    enabled: !!colaboradorId,
+  });
+}
+
+export function useSalvarValorCampoCustomizado(colaboradorId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ campoId, valor }: { campoId: string; valor: string }) =>
+      service.salvarValorCampoCustomizado(campoId, colaboradorId, valor),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['valores-campos-customizados', colaboradorId] }),
   });
 }

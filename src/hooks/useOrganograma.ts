@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from './useEmpresas';
-import { MOCK_MODE, getMockOrganograma } from '@/mocks/colaboradoresMock';
+import { mockOr, getMockOrganograma } from '@/mocks/colaboradoresMock';
 
 export function useOrganograma() {
   const { empresaAtual } = useEmpresas();
   const empresaId = empresaAtual?.id;
-  const mockData = MOCK_MODE ? getMockOrganograma() : undefined;
+  const mockData = mockOr(getMockOrganograma());
 
   const query = useQuery({
     queryKey: ['organograma_hierarquico', empresaId],

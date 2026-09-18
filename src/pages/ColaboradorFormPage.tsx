@@ -66,6 +66,10 @@ export const schema = z.object({
   data_admissao: z.string().min(1, 'Data obrigatória'),
   salario_base: z.number().positive('Salário deve ser positivo'),
   cargo: z.string().min(1, 'Cargo obrigatório'),
+  // PARTE C: passa a gravar também o FK real (cargos.id) além do nome em
+  // texto — permite exibir CBO via join com `cargos` no Dossiê sem duplicar
+  // dado. Opcional para não quebrar fluxos que ainda não selecionam via combobox.
+  cargo_id: z.string().optional(),
   departamento: z.string().min(1, 'Departamento obrigatório'),
   // Valores exatos do enum `tipo_contrato` do banco — 'autonomo' não existe.
   tipo_contrato: z.enum(['clt', 'pj', 'estagiario', 'temporario', 'intermitente', 'aprendiz']).default('clt'),
@@ -369,11 +373,14 @@ export default function ColaboradorFormPage() {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormSelect 
-                      label="Cargo" 
+                    <FormSelect
+                      label="Cargo"
                       value={watch('cargo')}
                       options={cargos.map(c => ({ value: c.nome, label: c.nome }))}
-                      onChange={(v) => setValue('cargo', v)}
+                      onChange={(v) => {
+                        setValue('cargo', v);
+                        setValue('cargo_id', cargos.find(c => c.nome === v)?.id);
+                      }}
                       error={errors.cargo?.message}
                     />
                     <FormSelect 

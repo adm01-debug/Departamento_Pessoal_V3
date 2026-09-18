@@ -1,12 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as service from '@/services/tabelasReferenciaService';
 import { useEmpresas } from './useEmpresas';
-import {
-  MOCK_MODE,
-  getMockContasBancarias,
-  getMockDadosEstagiario,
-  getMockDocumentosPessoais,
-} from '@/mocks/colaboradoresMock';
+import { mockOr, getMockContasBancarias, getMockDadosEstagiario, getMockDocumentosPessoais } from '@/mocks/colaboradoresMock';
 
 type DataRecord = Record<string, unknown>;
 
@@ -87,12 +82,10 @@ export function useExcluirCentroCusto() {
 // =============================================
 export function useContasBancarias(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
-  const mockData = MOCK_MODE ? getMockContasBancarias(colaboradorId) : undefined;
   return useResultQuery(
     ['contas-bancarias', colaboradorId, empresaAtual?.id],
-    () => service.listarContasBancarias(colaboradorId, empresaAtual!.id),
-    !!colaboradorId && !!empresaAtual?.id && mockData === undefined,
-    mockData
+    async () => mockOr(getMockContasBancarias(colaboradorId)) ?? service.listarContasBancarias(colaboradorId, empresaAtual!.id),
+    !!colaboradorId && !!empresaAtual?.id
   );
 }
 
@@ -138,12 +131,13 @@ export function useExcluirContaBancaria(colaboradorId: string) {
 // Dados de Estagiário
 // =============================================
 export function useDadosEstagiario(colaboradorId: string) {
-  const mockData = MOCK_MODE ? getMockDadosEstagiario(colaboradorId) : undefined;
   return useResultQuery(
     ['dados-estagiario', colaboradorId],
-    () => service.obterDadosEstagiario(colaboradorId),
-    !!colaboradorId && mockData === undefined,
-    mockData
+    async () => {
+      const mock = mockOr(getMockDadosEstagiario(colaboradorId));
+      return mock !== undefined ? mock : service.obterDadosEstagiario(colaboradorId);
+    },
+    !!colaboradorId
   );
 }
 
@@ -161,12 +155,10 @@ export function useSalvarDadosEstagiario() {
 // Documentos Pessoais (upload tipado)
 // =============================================
 export function useDocumentosPessoais(colaboradorId: string) {
-  const mockData = MOCK_MODE ? getMockDocumentosPessoais(colaboradorId) : undefined;
   return useResultQuery(
     ['documentos-pessoais', colaboradorId],
-    () => service.listarDocumentosPessoais(colaboradorId),
-    !!colaboradorId && mockData === undefined,
-    mockData
+    async () => mockOr(getMockDocumentosPessoais(colaboradorId)) ?? service.listarDocumentosPessoais(colaboradorId),
+    !!colaboradorId
   );
 }
 

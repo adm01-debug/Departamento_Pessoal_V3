@@ -7,6 +7,7 @@ import {
   excluirDependente,
   listarContatosEmergencia,
   criarContatoEmergencia,
+  atualizarContatoEmergencia,
   excluirContatoEmergencia,
   listarHistoricoSalarial,
   criarRegistroSalarial,
@@ -25,6 +26,9 @@ import {
   criarAnotacao,
   excluirAnotacao,
   listarPeriodosAquisitivos,
+  listarFeriasColaborador,
+  listarLotacoes,
+  listarHoleritesColaborador,
   listarTimes,
   criarTime,
   listarEtnias,
@@ -71,6 +75,16 @@ function setupEqOrderChain(data: any[], error: any = null) {
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, eqFn, orderFn };
+}
+
+// select → eq → order → limit → resolvedValue
+function setupEqOrderLimitChain(data: any[], error: any = null) {
+  const limitFn = vi.fn().mockResolvedValue({ data, error });
+  const orderFn = vi.fn().mockReturnValue({ limit: limitFn });
+  const eqFn = chainableEq({ data, error }, { order: orderFn });
+  const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
+  mockFrom.mockReturnValue({ select: selectFn });
+  return { selectFn, eqFn, orderFn, limitFn };
 }
 
 // select → eq → resolvedValue (no order)
@@ -204,7 +218,17 @@ describe('excluirDependente', () => {
 // ─── Contatos de Emergência ───────────────────────────────────────────────────
 
 describe('listarContatosEmergencia', () => {
-  it('always returns empty array (table not available)', async () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it('returns contatos de emergência for colaborador', async () => {
+    const records = [{ id: 'ce1', colaborador_id: 'c1', nome: 'Maria' }];
+    const { eqFn } = setupEqOrderChain(records);
+    expect(await listarContatosEmergencia('c1')).toEqual(records);
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
+  });
+
+  it('returns empty array when data is null', async () => {
+    setupEqOrderChain(null as any);
     expect(await listarContatosEmergencia('c1')).toEqual([]);
   });
 });
@@ -216,6 +240,18 @@ describe('criarContatoEmergencia', () => {
     const created = { id: 'ce-new', nome: 'Maria' };
     const { insertFn } = setupInsertChain(created);
     expect(await criarContatoEmergencia({ nome: 'Maria' })).toEqual(created);
+  });
+});
+
+describe('atualizarContatoEmergencia', () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it('updates contato scoped by id and colaboradorId', async () => {
+    const { updateFn, eqFn } = setupUpdateEqChain();
+    await atualizarContatoEmergencia('ce1', { nome: 'Maria Nova' }, 'c1');
+    expect(updateFn).toHaveBeenCalledWith({ nome: 'Maria Nova' });
+    expect(eqFn).toHaveBeenCalledWith('id', 'ce1');
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
   });
 });
 
@@ -471,6 +507,81 @@ describe('listarPeriodosAquisitivos', () => {
     const { eqFn } = setupEqOrderChain([]);
     await listarPeriodosAquisitivos('c1', EMPRESA_ID);
     expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
+  });
+});
+
+// ─── Férias (resumo por colaborador — PARTE E) ────────────────────────────────
+
+describe('listarFeriasColaborador', () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it('returns ferias for colaborador scoped by empresa', async () => {
+    const records = [{ id: 'f1', colaborador_id: 'c1', data_inicio: '2026-08-01' }];
+    const { eqFn } = setupEqOrderChain(records);
+    expect(await listarFeriasColaborador('c1', EMPRESA_ID)).toEqual(records);
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
+    expect(eqFn).toHaveBeenCalledWith('empresa_id', EMPRESA_ID);
+  });
+
+  it('returns empty array when data is null', async () => {
+    setupEqOrderChain(null as any);
+    expect(await listarFeriasColaborador('c1', EMPRESA_ID)).toEqual([]);
+  });
+
+  it('throws when empresaId is missing', async () => {
+    await expect(listarFeriasColaborador('c1', '')).rejects.toThrow('empresa_id obrigatório');
+  });
+});
+
+// ─── Lotações (PARTE C) ────────────────────────────────────────────────────────
+
+describe('listarLotacoes', () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it('returns lotacoes for colaborador scoped by empresa', async () => {
+    const records = [{ id: 'l1', colaborador_id: 'c1', nome: 'Matriz' }];
+    const { eqFn } = setupEqOrderChain(records);
+    expect(await listarLotacoes('c1', EMPRESA_ID)).toEqual(records);
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
+    expect(eqFn).toHaveBeenCalledWith('empresa_id', EMPRESA_ID);
+  });
+
+  it('throws when empresaId is missing', async () => {
+    await expect(listarLotacoes('c1', '')).rejects.toThrow('empresa_id obrigatório');
+  });
+});
+
+// ─── Holerites (resumo por colaborador — PARTE F) ─────────────────────────────
+
+describe('listarHoleritesColaborador', () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it('normalizes competencia from the joined folha and total_liquido from liquido', async () => {
+    setupEqOrderLimitChain([
+      { id: 'h1', liquido: 5000, total_proventos: 6000, assinado: true, created_at: '2026-01-05', folha: { competencia: '2026-01' } },
+    ]);
+    const result = await listarHoleritesColaborador('c1');
+    expect(result).toEqual([
+      { id: 'h1', competencia: '2026-01', total_liquido: 5000, total_proventos: 6000, assinado: true, created_at: '2026-01-05' },
+    ]);
+  });
+
+  it('falls back competencia to — when there is no folha joined', async () => {
+    setupEqOrderLimitChain([{ id: 'h2', liquido: 100, total_proventos: 120, assinado: false, created_at: '2026-01-01', folha: null }]);
+    const result = await listarHoleritesColaborador('c1');
+    expect(result[0].competencia).toBe('—');
+  });
+
+  it('filters by colaborador_id and limits to the given amount', async () => {
+    const { eqFn, limitFn } = setupEqOrderLimitChain([]);
+    await listarHoleritesColaborador('c1', 5);
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
+    expect(limitFn).toHaveBeenCalledWith(5);
+  });
+
+  it('returns empty array when data is null', async () => {
+    setupEqOrderLimitChain(null as any);
+    expect(await listarHoleritesColaborador('c1')).toEqual([]);
   });
 });
 

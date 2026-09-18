@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/react';
 vi.mock('@/hooks/useColaboradorDetalhes', () => ({
   useContatosEmergencia: vi.fn(),
   useCriarContatoEmergencia: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
+  useAtualizarContatoEmergencia: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
   useExcluirContatoEmergencia: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
 }));
 
@@ -31,8 +32,9 @@ vi.mock('@/components/ui/select', () => ({
   SelectItem: ({ children, value }: any) => <div data-value={value}>{children}</div>,
 }));
 
-import { useContatosEmergencia } from '@/hooks/useColaboradorDetalhes';
+import { useContatosEmergencia, useAtualizarContatoEmergencia } from '@/hooks/useColaboradorDetalhes';
 import { EmergenciaTab } from '../colaborador-detalhes/EmergenciaTab';
+import userEvent from '@testing-library/user-event';
 
 const MOCK_CONTATOS = [
   { id: 'e1', nome: 'Maria Silva', parentesco: 'Cônjuge', telefone: '(31) 3333-4444', celular: '(31) 99999-8888', email: 'maria@example.com' },
@@ -80,5 +82,23 @@ describe('EmergenciaTab', () => {
     render(<EmergenciaTab colaboradorId="col-1" />);
     expect(screen.getByText('(31) 3333-4444')).toBeInTheDocument();
     expect(screen.getByText('(31) 99999-8888')).toBeInTheDocument();
+  });
+
+  it('opens the dialog in edit mode with the contact data prefilled', async () => {
+    vi.mocked(useContatosEmergencia).mockReturnValue({ data: MOCK_CONTATOS, isLoading: false } as any);
+    render(<EmergenciaTab colaboradorId="col-1" />);
+    await userEvent.click(screen.getByRole('button', { name: 'Editar contato' }));
+    expect(screen.getByText('Editar Contato de Emergência')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('Maria Silva')).toBeInTheDocument();
+  });
+
+  it('calls atualizar with the edited id and colaboradorId scoping on save', async () => {
+    const mutateAsync = vi.fn().mockResolvedValue(undefined);
+    vi.mocked(useContatosEmergencia).mockReturnValue({ data: MOCK_CONTATOS, isLoading: false } as any);
+    vi.mocked(useAtualizarContatoEmergencia).mockReturnValue({ mutateAsync, isPending: false } as any);
+    render(<EmergenciaTab colaboradorId="col-1" />);
+    await userEvent.click(screen.getByRole('button', { name: 'Editar contato' }));
+    await userEvent.click(screen.getByText('Salvar'));
+    expect(mutateAsync).toHaveBeenCalledWith({ id: 'e1', dados: expect.objectContaining({ nome: 'Maria Silva' }) });
   });
 });

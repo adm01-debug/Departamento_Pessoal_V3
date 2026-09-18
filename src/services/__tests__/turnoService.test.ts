@@ -202,6 +202,53 @@ describe('turnoService.listarEscalas', () => {
   });
 });
 
+// select → eq → eq → order → limit → maybeSingle
+function setupSingleChain(data: any, error: any = null) {
+  const maybeSingle = vi.fn().mockResolvedValue({ data, error });
+  const chain: any = {};
+  chain.eq = vi.fn().mockReturnValue(chain);
+  chain.order = vi.fn().mockReturnValue(chain);
+  chain.limit = vi.fn().mockReturnValue({ maybeSingle });
+  const selectFn = vi.fn().mockReturnValue(chain);
+  mockFrom.mockReturnValue({ select: selectFn });
+  return { selectFn, chain, maybeSingle };
+}
+
+// ─── buscarEscalaAtual ────────────────────────────────────────────────────────
+
+describe('turnoService.buscarEscalaAtual', () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it('returns the most recent escala for the colaborador', async () => {
+    const escala = { id: 'e1', data: '2026-07-24', turno: { nome: 'Manhã' } };
+    setupSingleChain(escala);
+    const result = await turnoService.buscarEscalaAtual('col-1', EMPRESA_ID);
+    expect(result).toEqual(escala);
+  });
+
+  it('filters by colaborador_id and empresa_id', async () => {
+    const { chain } = setupSingleChain(null);
+    await turnoService.buscarEscalaAtual('col-1', EMPRESA_ID);
+    expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'col-1');
+    expect(chain.eq).toHaveBeenCalledWith('empresa_id', EMPRESA_ID);
+  });
+
+  it('returns null when there is no escala registered', async () => {
+    setupSingleChain(null);
+    const result = await turnoService.buscarEscalaAtual('col-1', EMPRESA_ID);
+    expect(result).toBeNull();
+  });
+
+  it('throws when empresaId is missing', async () => {
+    await expect(turnoService.buscarEscalaAtual('col-1', '')).rejects.toThrow('empresa_id obrigatório');
+  });
+
+  it('throws on DB error', async () => {
+    setupSingleChain(null, { message: 'fail' });
+    await expect(turnoService.buscarEscalaAtual('col-1', EMPRESA_ID)).rejects.toBeDefined();
+  });
+});
+
 // ─── criarEscala ──────────────────────────────────────────────────────────────
 
 describe('turnoService.criarEscala', () => {

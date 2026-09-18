@@ -22,10 +22,13 @@ export const avaliacaoService = {
   },
 
   // === Metas ===
-  async listarMetas(empresaId: string) {
+  // colaboradorId opcional (PARTE G): usado pelo Dossiê para mostrar só as
+  // metas do colaborador; sem ele, mantém o comportamento existente (empresa toda).
+  async listarMetas(empresaId: string, colaboradorId?: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     let q = supabase.from('metas_okrs').select('*, colaborador:colaboradores(nome_completo)').order('created_at', { ascending: false });
     q = q.eq('empresa_id', empresaId);
+    if (colaboradorId) q = q.eq('colaborador_id', colaboradorId);
     const { data, error } = await q;
     if (error) throw error;
     return data || [];
@@ -42,10 +45,11 @@ export const avaliacaoService = {
   },
 
   // === PDIs ===
-  async listarPDIs(empresaId: string) {
+  async listarPDIs(empresaId: string, colaboradorId?: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     let q = supabase.from('pdi_plano_desenvolvimento').select('*, colaborador:colaboradores(nome_completo)').order('created_at', { ascending: false });
     q = q.eq('empresa_id', empresaId);
+    if (colaboradorId) q = q.eq('colaborador_id', colaboradorId);
     const { data, error } = await q;
     if (error) throw error;
     return data || [];
@@ -62,7 +66,9 @@ export const avaliacaoService = {
   },
 
   // === Feedbacks ===
-  async listarFeedbacks(empresaId: string) {
+  // avaliadoId opcional (PARTE G): filtra pelo colaborador avaliado, não pelo
+  // avaliador — é o que o Dossiê do avaliado precisa mostrar.
+  async listarFeedbacks(empresaId: string, avaliadoId?: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     let q = supabase.from('feedbacks_360').select(`
       *,
@@ -70,6 +76,7 @@ export const avaliacaoService = {
       avaliador:colaboradores!feedbacks_360_avaliador_id_fkey(nome_completo)
     `).order('created_at', { ascending: false });
     q = q.eq('empresa_id', empresaId);
+    if (avaliadoId) q = q.eq('avaliado_id', avaliadoId);
     const { data, error } = await q;
     if (error) throw error;
     return data || [];

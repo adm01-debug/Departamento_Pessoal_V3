@@ -48,6 +48,23 @@ export const turnoService = {
 
   },
   
+  // PARTE D: escala atual de um colaborador (Dossiê — Jornada & Ponto). Não
+  // reusa listarEscalas() porque ele lista por data/empresa, não por
+  // colaborador — aqui buscamos só a última escala já registrada.
+  async buscarEscalaAtual(colaboradorId: string, empresaId: string): Promise<any | null> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { data, error } = await supabase
+      .from('escalas_trabalho')
+      .select('*, turno:turnos(nome, horario_inicio, horario_fim, cor)')
+      .eq('colaborador_id', colaboradorId)
+      .eq('empresa_id', empresaId)
+      .order('data', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+
   async criarEscala(d: any): Promise<any> {
     
     const { data, error } = await supabase.from('escalas_trabalho').insert(d).select().maybeSingle();

@@ -122,6 +122,19 @@ describe('avaliacaoService.listarMetas', () => {
     setupListChain(null as any);
     expect(await avaliacaoService.listarMetas(EMPRESA_ID)).toEqual([]);
   });
+
+  it('also filters by colaborador_id when provided (PARTE G)', async () => {
+    const { chain } = setupListChain([]);
+    await avaliacaoService.listarMetas(EMPRESA_ID, 'col-1');
+    expect(chain.eq).toHaveBeenCalledWith('empresa_id', EMPRESA_ID);
+    expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'col-1');
+  });
+
+  it('does not filter by colaborador_id when omitted', async () => {
+    const { chain } = setupListChain([]);
+    await avaliacaoService.listarMetas(EMPRESA_ID);
+    expect(chain.eq).not.toHaveBeenCalledWith('colaborador_id', expect.anything());
+  });
 });
 
 describe('avaliacaoService.criarMeta', () => {
@@ -165,6 +178,12 @@ describe('avaliacaoService.listarPDIs', () => {
     setupListChain(null as any);
     expect(await avaliacaoService.listarPDIs(EMPRESA_ID)).toEqual([]);
   });
+
+  it('also filters by colaborador_id when provided (PARTE G)', async () => {
+    const { chain } = setupListChain([]);
+    await avaliacaoService.listarPDIs(EMPRESA_ID, 'col-1');
+    expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'col-1');
+  });
 });
 
 describe('avaliacaoService.criarPDI', () => {
@@ -206,6 +225,12 @@ describe('avaliacaoService.listarFeedbacks', () => {
     const { chain } = setupListChain([]);
     await avaliacaoService.listarFeedbacks('emp-2');
     expect(chain.eq).toHaveBeenCalledWith('empresa_id', 'emp-2');
+  });
+
+  it('filters by avaliado_id (not avaliador_id) when provided (PARTE G)', async () => {
+    const { chain } = setupListChain([]);
+    await avaliacaoService.listarFeedbacks(EMPRESA_ID, 'col-1');
+    expect(chain.eq).toHaveBeenCalledWith('avaliado_id', 'col-1');
   });
 });
 

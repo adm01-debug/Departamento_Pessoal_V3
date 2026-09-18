@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { safeErrorMessage } from "@/utils/safeError";
+import { mockOr, getMockUserEmpresas } from "@/mocks/colaboradoresMock";
 
 import type { RegimeTributario } from "@/constants/regimes";
 
@@ -149,7 +150,15 @@ export function useEmpresas(): UseEmpresasReturn {
         .eq("user_id", authUser.id);
 
       if (error) throw error;
-      return data as (UserEmpresa & { empresa: Empresa })[];
+      const real = (data || []) as (UserEmpresa & { empresa: Empresa })[];
+      // Fallback só quando o usuário não tem NENHUM vínculo real — nunca
+      // esconde empresas de verdade. Sem isso, VITE_COLABORADORES_MOCK fica
+      // inalcançável: toda a área de Colaboradores exige empresa_id.
+      if (real.length === 0) {
+        const mock = mockOr(getMockUserEmpresas());
+        if (mock) return mock as unknown as (UserEmpresa & { empresa: Empresa })[];
+      }
+      return real;
     },
   });
 
@@ -188,6 +197,12 @@ export function useEmpresas(): UseEmpresasReturn {
   const empresaEfetiva =
     empresaAtualData ||
     empresaDefault ||
+    // `ue.empresa` só vem populado quando o join foi de fato embutido na
+    // query (não é o caso do `select('*')` real acima — este ramo é um
+    // no-op para dados reais, mas resolve o objeto completo no fallback de
+    // VITE_COLABORADORES_MOCK, que injeta `empresa` já aninhado).
+    empresaVinculo?.empresa ||
+    empresaDefaultVinculo?.empresa ||
     (empresaPrimeiraVinculadaId ? { id: empresaPrimeiraVinculadaId } as Empresa : undefined) ||
     empresaPrimeiraGlobal;
 

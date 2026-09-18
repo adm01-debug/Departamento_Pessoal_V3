@@ -522,6 +522,8 @@ describe('ColaboradorFormPage — payload sem dados bancários legados (PARTE 4E
     // demais campos continuam sendo enviados normalmente
     expect(payload.nome_completo).toBe('Ana Teste da Silva');
     expect(payload.cargo).toBe('Analista');
+    // PARTE C: seleção de cargo via combobox também grava o FK real (cargo_id)
+    expect(payload.cargo_id).toBe('c1');
     expect(payload.departamento).toBe('TI');
     expect(payload.empresa_id).toBe('emp-atual-1');
   });

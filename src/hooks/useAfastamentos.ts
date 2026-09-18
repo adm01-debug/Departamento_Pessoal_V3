@@ -6,6 +6,7 @@ import { auditLogger } from '@/utils/auditLogger';
 import { toast } from 'sonner';
 import { useGenericCrud } from './useGenericCrud';
 import { safeErrorMessage } from '@/utils/safeError';
+import { mockOr, getMockAfastamentos } from '@/mocks/colaboradoresMock';
 
 // P2-051 (batch 2026-07-26): filtros tipados para o useGenericCrud.
 // Cada chave é opcional e aceita string (filtro livre, id, status, etc.).
@@ -50,6 +51,18 @@ export function useAfastamentos() {
     filtros,
     setFiltros,
   };
+}
+
+// PARTE E: resumo por colaborador no Dossiê (situação atual + histórico
+// recente) — reusa afastamentoService.listarHistoricoRecente, já existente
+// e usado hoje só dentro do form de afastamento.
+export function useAfastamentosRecentes(colaboradorId: string, dias: number = 60) {
+  const { empresaAtual } = useEmpresas();
+  return useQuery({
+    queryKey: ['afastamentos-recentes', colaboradorId, empresaAtual?.id, dias],
+    queryFn: async () => mockOr(getMockAfastamentos(colaboradorId)) ?? afastamentoService.listarHistoricoRecente(colaboradorId, empresaAtual!.id, dias),
+    enabled: !!colaboradorId && !!empresaAtual?.id,
+  });
 }
 
 

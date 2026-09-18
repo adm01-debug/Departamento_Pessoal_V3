@@ -118,6 +118,20 @@ export const onboardingService = {
     const { error } = await supabase.from('onboarding_tarefas').update({ concluida: true, concluida_em: new Date().toISOString() } as any).eq('id', id).eq('onboarding_id', onboardingId);
     if (error) throw error;
   },
+  // PARTE G (Dossiê — Desenvolvimento): acha o onboarding_colaborador de UM
+  // colaborador, para depois buscar suas tarefas (onboarding_tarefas.onboarding_id).
+  buscarPorColaborador: async (colaboradorId: string, empresaId: string) => {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    const { data, error } = await supabase
+      .from('onboarding_colaborador')
+      .select('*')
+      .eq('colaborador_id', colaboradorId)
+      .eq('empresa_id', empresaId)
+      .order('created_at', { ascending: false })
+      .limit(1);
+    if (error) throw error;
+    return data?.[0] ?? null;
+  },
 };
 
 export const treinamentoParticipantesService = {
@@ -132,5 +146,16 @@ export const treinamentoParticipantesService = {
     if (!inscricaoId) throw new Error('inscricao_id obrigatório para isolamento de tenant');
     const { error } = await (supabase as any).from('treinamento_participantes').update({ presente: true }).eq('id', id).eq('inscricao_id', inscricaoId);
     if (error) throw error;
+  },
+  // PARTE G (Dossiê — Desenvolvimento): treinamentos de UM colaborador —
+  // listar() acima só filtra por inscricao_id (turma), não por colaborador.
+  listarPorColaborador: async (colaboradorId: string) => {
+    const { data, error } = await supabase
+      .from('treinamento_participantes' as any)
+      .select('*, treinamento:treinamentos(nome, data, carga_horaria)')
+      .eq('colaborador_id', colaboradorId)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
   },
 };

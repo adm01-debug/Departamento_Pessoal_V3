@@ -7,6 +7,7 @@ const {
   mockListarBatidas, mockRegistrarBatida,
   mockListarFaltas, mockListarFaltasColaborador,
   mockListarEpis,
+  mockGetSaldoBancoHoras, mockBuscarRegistrosSemana, mockBuscarEscalaAtual,
   mockToastSuccess, mockToastError,
 } = vi.hoisted(() => ({
   mockListarBatidas: vi.fn(),
@@ -14,6 +15,9 @@ const {
   mockListarFaltas: vi.fn(),
   mockListarFaltasColaborador: vi.fn(),
   mockListarEpis: vi.fn(),
+  mockGetSaldoBancoHoras: vi.fn(),
+  mockBuscarRegistrosSemana: vi.fn(),
+  mockBuscarEscalaAtual: vi.fn(),
   mockToastSuccess: vi.fn(),
   mockToastError: vi.fn(),
 }));
@@ -43,6 +47,18 @@ vi.mock('@/services/bancoHorasConfigService', () => ({
   bancoHorasConfigService: { listar: vi.fn().mockResolvedValue([]), criar: vi.fn(), atualizar: vi.fn(), excluir: vi.fn() },
 }));
 
+vi.mock('@/services/bancoHorasService', () => ({
+  bancoHorasService: { getSaldo: mockGetSaldoBancoHoras, listarPorColaborador: vi.fn().mockResolvedValue([]), registrar: vi.fn() },
+}));
+
+vi.mock('@/services/pontoService', () => ({
+  pontoService: { buscarRegistrosSemana: mockBuscarRegistrosSemana },
+}));
+
+vi.mock('@/services/turnoService', () => ({
+  turnoService: { buscarEscalaAtual: mockBuscarEscalaAtual },
+}));
+
 vi.mock('@/hooks/useEmpresas', () => ({
   useEmpresas: () => ({ empresaAtual: { id: 'emp-1' } }),
 }));
@@ -60,6 +76,9 @@ import {
   useRegistrarBatida,
   useFaltas,
   useFaltasColaborador,
+  useSaldoBancoHoras,
+  useRegistrosPontoSemana,
+  useEscalaAtual,
 } from '../useNovasTabelas';
 
 function wrapper({ children }: { children: React.ReactNode }) {
@@ -138,5 +157,60 @@ describe('useFaltasColaborador', () => {
   it('is disabled when no colaboradorId', () => {
     const { result } = renderHook(() => useFaltasColaborador(''), { wrapper });
     expect(mockListarFaltasColaborador).not.toHaveBeenCalled();
+  });
+});
+
+describe('useSaldoBancoHoras', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGetSaldoBancoHoras.mockResolvedValue(4.5);
+  });
+
+  it('calls bancoHorasService.getSaldo with colaboradorId and empresaId', async () => {
+    const { result } = renderHook(() => useSaldoBancoHoras('col-1'), { wrapper });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(mockGetSaldoBancoHoras).toHaveBeenCalledWith('col-1', 'emp-1');
+    expect(result.current.data).toBe(4.5);
+  });
+
+  it('is disabled when no colaboradorId', () => {
+    renderHook(() => useSaldoBancoHoras(''), { wrapper });
+    expect(mockGetSaldoBancoHoras).not.toHaveBeenCalled();
+  });
+});
+
+describe('useRegistrosPontoSemana', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockBuscarRegistrosSemana.mockResolvedValue([]);
+  });
+
+  it('calls pontoService.buscarRegistrosSemana with colaboradorId', async () => {
+    const { result } = renderHook(() => useRegistrosPontoSemana('col-1'), { wrapper });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(mockBuscarRegistrosSemana).toHaveBeenCalledWith('col-1');
+  });
+
+  it('is disabled when no colaboradorId', () => {
+    renderHook(() => useRegistrosPontoSemana(''), { wrapper });
+    expect(mockBuscarRegistrosSemana).not.toHaveBeenCalled();
+  });
+});
+
+describe('useEscalaAtual', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockBuscarEscalaAtual.mockResolvedValue(null);
+  });
+
+  it('calls turnoService.buscarEscalaAtual with colaboradorId and empresaId', async () => {
+    const { result } = renderHook(() => useEscalaAtual('col-1'), { wrapper });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(mockBuscarEscalaAtual).toHaveBeenCalledWith('col-1', 'emp-1');
+  });
+
+  it('is disabled when no colaboradorId', () => {
+    renderHook(() => useEscalaAtual(''), { wrapper });
+    expect(mockBuscarEscalaAtual).not.toHaveBeenCalled();
   });
 });

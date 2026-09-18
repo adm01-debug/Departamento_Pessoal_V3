@@ -1,10 +1,13 @@
 import { supabase } from '@/integrations/supabase/client';
 export const lgpdService = {
-  async listarConsentimentos(empresaId: string): Promise<any[]> {
+  // colaboradorId opcional (PARTE I — Dossiê): filtra os consentimentos de
+  // UM colaborador; sem ele, mantém o comportamento existente (empresa toda).
+  async listarConsentimentos(empresaId: string, colaboradorId?: string): Promise<any[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
     let q = supabase.from('lgpd_consentimentos').select('*, colaborador:colaboradores(nome_completo)').order('created_at', { ascending: false });
     q = q.eq('empresa_id', empresaId);
+    if (colaboradorId) q = q.eq('colaborador_id', colaboradorId);
     const { data, error } = await q;
     if (error) throw error;
     return data || [];

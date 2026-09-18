@@ -9,16 +9,22 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
 import { colaboradorService } from '@/services';
+import { cargoService } from '@/services/cargoService';
+import { localTrabalhoService } from '@/services/localTrabalhoService';
+import { useAuth } from '@/hooks/useAuth';
+import { useProximosEventos } from '@/hooks/useProximosEventos';
 import {
-  Users, Briefcase, ShieldCheck,
+  Users, ShieldCheck, Briefcase,
   Landmark, FileText, Info, Edit, MoreHorizontal, History as HistoryIcon,
-  MapPin, Calendar, Stethoscope, User as UserIcon, Gift
+  MapPin, Calendar, Stethoscope, User as UserIcon, GraduationCap, HeartPulse, Clock
 } from 'lucide-react';
 import {
   DependentesTab, EmergenciaTab, HistoricoSalarialTab, ExperienciaTab,
   ASOTab, FormacaoTab, EstrangeiroTab, PCDTab, AquisitivosTab, AnotacoesTab,
   ContasBancariasTab, DocumentosPessoaisTab, EstagiarioTab, HistoricoContratosTab,
-  ColaboradorHistory, BeneficiosTab, ColaboradorDocuments
+  ColaboradorHistory, BeneficiosTab, ColaboradorDocuments, CamposCustomizadosTab,
+  TrabalhoHierarquiaTab, JornadaPontoTab, FeriasResumoTab, AfastamentosTab, HoleritesTab,
+  DesenvolvimentoResumoTab, SSTResumoTab, ComplianceTab, TimelineFuncionalTab
 } from '@/components/colaborador-detalhes';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -26,30 +32,45 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger} from '@/components/ui/dropdown-menu';
-import { MOCK_MODE, findMockColaborador } from '@/mocks/colaboradoresMock';
 
 export default function ColaboradorDetalhesPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { isAdmin, hasRole } = useAuth();
+  const podeVerSalario = isAdmin || hasRole('rh' as any);
+
   const [activeMainTab, setActiveMainTab] = useState('geral');
   const [activePessoalTab, setActivePessoalTab] = useState('dependentes');
-  const [activeProfissionalTab, setActiveProfissionalTab] = useState('historico');
+  const [activeFeriasTab, setActiveFeriasTab] = useState('resumo');
   const [activeFinanceiroTab, setActiveFinanceiroTab] = useState('contas');
+  const [activeDesenvolvimentoTab, setActiveDesenvolvimentoTab] = useState('resumo');
+  const [activeSSTTab, setActiveSSTTab] = useState('aso');
   const [activeDocumentosTab, setActiveDocumentosTab] = useState('pessoais');
+  const [activeTimelineTab, setActiveTimelineTab] = useState('funcional');
 
-  // MOCK TEMPORÁRIO — se o id corresponder a um colaborador fictício, usa o
-  // registro mockado em vez de consultar o banco. Ver src/mocks/colaboradoresMock.ts.
-  const mockColaborador = MOCK_MODE ? findMockColaborador(id) : undefined;
-
-  const { data: fetchedColaborador, isLoading: isLoadingFetched } = useQuery({
+  // colaboradorService.buscarPorId cai nos 12 colaboradores fictícios de
+  // src/mocks/colaboradoresMock.ts quando VITE_COLABORADORES_MOCK=true (dev only).
+  const { data: colaborador, isLoading } = useQuery({
     queryKey: ['colaborador', id],
     queryFn: () => (colaboradorService as any).buscarPorId(id!),
-    enabled: !!id && !mockColaborador});
+    enabled: !!id});
 
-  const colaborador = mockColaborador ?? fetchedColaborador;
-  const isLoading = mockColaborador ? false : isLoadingFetched;
+  useDataAccessLog('colaboradores', id, colaborador?.empresa_id);
 
-  useDataAccessLog('colaboradores', mockColaborador ? undefined : id, mockColaborador ? undefined : colaborador?.empresa_id);
+  // Resumo: cargo (para CBO real via cargos.cbo) e local de trabalho —
+  // só buscados quando o colaborador tiver de fato cargo_id/local_trabalho_id
+  // preenchidos (nenhum formulário atual popula esses FKs ainda — ver PARTE 2/3).
+  const { data: cargoDetalhe } = useQuery({
+    queryKey: ['cargo-resumo', colaborador?.cargo_id],
+    queryFn: () => cargoService.buscarPorId(colaborador.cargo_id, colaborador.empresa_id),
+    enabled: !!colaborador?.cargo_id});
+
+  const { data: localTrabalhoDetalhe } = useQuery({
+    queryKey: ['local-trabalho-resumo', colaborador?.local_trabalho_id],
+    queryFn: () => localTrabalhoService.buscarPorId(colaborador.local_trabalho_id, colaborador.empresa_id),
+    enabled: !!colaborador?.local_trabalho_id});
+
+  const proximosEventos = useProximosEventos(id ?? '', colaborador?.empresa_id);
 
   if (isLoading) return <div className="flex items-center justify-center h-64"><Spinner /></div>;
   if (!colaborador) return <div className="p-6">Colaborador não encontrado</div>;
@@ -118,7 +139,9 @@ export default function ColaboradorDetalhesPage() {
                 <div className="space-y-1">
                   <p className="text-[10px] uppercase tracking-widest font-medium text-muted-foreground">Salário Atual</p>
                   <p className="font-display font-semibold text-primary">
-                    {Number(colaborador.salario_base).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                    {podeVerSalario
+                      ? Number(colaborador.salario_base).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                      : 'Restrito'}
                   </p>
                 </div>
                 <div className="space-y-1">
@@ -137,22 +160,31 @@ export default function ColaboradorDetalhesPage() {
               <Info className="h-4 w-4" /> Resumo
             </TabsTrigger>
             <TabsTrigger value="pessoal" className="rounded-lg font-body px-6 gap-2">
-              <Users className="h-4 w-4" /> Pessoal
+              <Users className="h-4 w-4" /> Dados Pessoais
             </TabsTrigger>
-            <TabsTrigger value="profissional" className="rounded-lg font-body px-6 gap-2">
-              <Briefcase className="h-4 w-4" /> Carreira
+            <TabsTrigger value="hierarquia" className="rounded-lg font-body px-6 gap-2">
+              <Briefcase className="h-4 w-4" /> Trabalho &amp; Hierarquia
+            </TabsTrigger>
+            <TabsTrigger value="jornada" className="rounded-lg font-body px-6 gap-2">
+              <Clock className="h-4 w-4" /> Jornada &amp; Ponto
+            </TabsTrigger>
+            <TabsTrigger value="ferias" className="rounded-lg font-body px-6 gap-2">
+              <Calendar className="h-4 w-4" /> Férias &amp; Afastamentos
             </TabsTrigger>
             <TabsTrigger value="financeiro" className="rounded-lg font-body px-6 gap-2">
-              <Landmark className="h-4 w-4" /> Financeiro
+              <Landmark className="h-4 w-4" /> Financeiro &amp; Benefícios
+            </TabsTrigger>
+            <TabsTrigger value="desenvolvimento" className="rounded-lg font-body px-6 gap-2">
+              <GraduationCap className="h-4 w-4" /> Desenvolvimento
+            </TabsTrigger>
+            <TabsTrigger value="sst" className="rounded-lg font-body px-6 gap-2">
+              <HeartPulse className="h-4 w-4" /> SST
             </TabsTrigger>
             <TabsTrigger value="documentos" className="rounded-lg font-body px-6 gap-2">
-              <FileText className="h-4 w-4" /> Documentação
+              <FileText className="h-4 w-4" /> Documentos &amp; Compliance
             </TabsTrigger>
-            <TabsTrigger value="beneficios" className="rounded-lg font-body px-6 gap-2">
-              <Gift className="h-4 w-4" /> Benefícios
-            </TabsTrigger>
-            <TabsTrigger value="historico" className="rounded-lg font-body px-6 gap-2">
-              <HistoryIcon className="h-4 w-4" /> Histórico
+            <TabsTrigger value="timeline" className="rounded-lg font-body px-6 gap-2">
+              <HistoryIcon className="h-4 w-4" /> Timeline
             </TabsTrigger>
           </TabsList>
 
@@ -167,25 +199,29 @@ export default function ColaboradorDetalhesPage() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                       <div className="space-y-4">
                         <div className="p-4 bg-muted/20 rounded-2xl border border-border/30">
-                          <p className="text-xs text-muted-foreground mb-1">Unidade / Local</p>
+                          <p className="text-xs text-muted-foreground mb-1">Local de Trabalho</p>
                           <p className="font-semibold flex items-center gap-2">
                             <MapPin className="h-4 w-4 text-muted-foreground" />
-                            {colaborador.cidade} - {colaborador.uf}
+                            {localTrabalhoDetalhe
+                              ? `${localTrabalhoDetalhe.nome}${localTrabalhoDetalhe.cidade ? ` — ${localTrabalhoDetalhe.cidade}/${localTrabalhoDetalhe.uf}` : ''}`
+                              : 'Não definido'}
                           </p>
                         </div>
-                        <div className="p-4 bg-muted/20 rounded-2xl border border-border/30">
-                          <p className="text-xs text-muted-foreground mb-1">CBO / Cargo</p>
-                          <p className="font-semibold">{colaborador.cargo}</p>
+                        <div className="p-4 bg-muted/20 rounded-2xl border border-border/30 grid grid-cols-2 gap-3">
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-1">Cargo</p>
+                            <p className="font-semibold">{cargoDetalhe?.nome ?? colaborador.cargo}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground mb-1">CBO</p>
+                            <p className="font-semibold">{cargoDetalhe?.cbo ?? colaborador.cbo ?? '—'}</p>
+                          </div>
                         </div>
                       </div>
                       <div className="space-y-4">
                         <div className="p-4 bg-muted/20 rounded-2xl border border-border/30">
                           <p className="text-xs text-muted-foreground mb-1">Email Profissional</p>
                           <p className="font-semibold text-sm truncate">{colaborador.email || 'Não informado'}</p>
-                        </div>
-                        <div className="p-4 bg-muted/20 rounded-2xl border border-border/30">
-                          <p className="text-xs text-muted-foreground mb-1">Gestor Direto</p>
-                          <p className="font-semibold">Nenhum associado</p>
                         </div>
                       </div>
                     </div>
@@ -202,24 +238,19 @@ export default function ColaboradorDetalhesPage() {
                       <Calendar className="h-5 w-5 text-primary" /> Próximos Eventos
                     </div>
                     <div className="space-y-4">
-                      <div className="flex items-center gap-3 p-3 rounded-xl border border-warning/20 bg-warning/5">
-                        <div className="h-8 w-8 rounded-lg bg-warning/10 flex items-center justify-center">
-                          <Calendar className="h-4 w-4 text-warning" />
+                      {proximosEventos.length === 0 ? (
+                        <p className="text-sm text-muted-foreground">Nenhum evento futuro identificado.</p>
+                      ) : proximosEventos.slice(0, 6).map((evento, i) => (
+                        <div key={i} className="flex items-center gap-3 p-3 rounded-xl border border-warning/20 bg-warning/5">
+                          <div className="h-8 w-8 rounded-lg bg-warning/10 flex items-center justify-center">
+                            {evento.tipo === 'aso' ? <Stethoscope className="h-4 w-4 text-warning" /> : <Calendar className="h-4 w-4 text-warning" />}
+                          </div>
+                          <div>
+                            <p className="text-xs font-medium">{evento.titulo}</p>
+                            <p className="text-[10px] text-muted-foreground">{evento.data}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-xs font-medium">Férias</p>
-                          <p className="text-[10px] text-muted-foreground">Período vence em 45 dias</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-3 p-3 rounded-xl border border-success/20 bg-success/5">
-                        <div className="h-8 w-8 rounded-lg bg-success/10 flex items-center justify-center">
-                          <Stethoscope className="h-4 w-4 text-success" />
-                        </div>
-                        <div>
-                          <p className="text-xs font-medium">Exame Periódico</p>
-                          <p className="text-[10px] text-muted-foreground">ASO em conformidade</p>
-                        </div>
-                      </div>
+                      ))}
                     </div>
                   </CardContent>
                 </Card>
@@ -234,39 +265,71 @@ export default function ColaboradorDetalhesPage() {
                 <TabsTrigger value="emergencia" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Contatos de Emergência</TabsTrigger>
                 <TabsTrigger value="pcd" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">PCD</TabsTrigger>
                 <TabsTrigger value="estrangeiro" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Estrangeiro</TabsTrigger>
+                <TabsTrigger value="customizados" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Campos Customizados</TabsTrigger>
               </TabsList>
               <TabsContent value="dependentes">{activePessoalTab === 'dependentes' && <DependentesTab colaboradorId={id!} />}</TabsContent>
               <TabsContent value="emergencia">{activePessoalTab === 'emergencia' && <EmergenciaTab colaboradorId={id!} />}</TabsContent>
               <TabsContent value="pcd">{activePessoalTab === 'pcd' && <PCDTab colaboradorId={id!} />}</TabsContent>
               <TabsContent value="estrangeiro">{activePessoalTab === 'estrangeiro' && <EstrangeiroTab colaboradorId={id!} />}</TabsContent>
+              <TabsContent value="customizados">{activePessoalTab === 'customizados' && <CamposCustomizadosTab colaboradorId={id!} />}</TabsContent>
             </Tabs>
           </TabsContent>
 
-          <TabsContent value="profissional">
-            <Tabs value={activeProfissionalTab} onValueChange={setActiveProfissionalTab} className="space-y-4">
+          <TabsContent value="hierarquia">
+            {activeMainTab === 'hierarquia' && <TrabalhoHierarquiaTab colaboradorId={id!} />}
+          </TabsContent>
+
+          <TabsContent value="jornada">
+            {activeMainTab === 'jornada' && <JornadaPontoTab colaboradorId={id!} />}
+          </TabsContent>
+
+          <TabsContent value="ferias">
+            <Tabs value={activeFeriasTab} onValueChange={setActiveFeriasTab} className="space-y-4">
               <TabsList className="bg-transparent h-auto p-0 gap-4 border-b border-border/20 rounded-none w-full justify-start overflow-x-auto no-scrollbar">
-                <TabsTrigger value="historico" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Histórico Salarial</TabsTrigger>
-                <TabsTrigger value="contratos" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Contratos</TabsTrigger>
-                <TabsTrigger value="experiencia" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Experiência Anterior</TabsTrigger>
-                <TabsTrigger value="formacao" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Formação</TabsTrigger>
-                <TabsTrigger value="aso" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">ASO / Exames</TabsTrigger>
+                <TabsTrigger value="resumo" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Férias</TabsTrigger>
+                <TabsTrigger value="aquisitivos" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Períodos Aquisitivos</TabsTrigger>
+                <TabsTrigger value="afastamentos" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Afastamentos</TabsTrigger>
               </TabsList>
-              <TabsContent value="historico">{activeProfissionalTab === 'historico' && <HistoricoSalarialTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="contratos">{activeProfissionalTab === 'contratos' && <HistoricoContratosTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="experiencia">{activeProfissionalTab === 'experiencia' && <ExperienciaTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="formacao">{activeProfissionalTab === 'formacao' && <FormacaoTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="aso">{activeProfissionalTab === 'aso' && <ASOTab colaboradorId={id!} />}</TabsContent>
+              <TabsContent value="resumo">{activeFeriasTab === 'resumo' && <FeriasResumoTab colaboradorId={id!} />}</TabsContent>
+              <TabsContent value="aquisitivos">{activeFeriasTab === 'aquisitivos' && <AquisitivosTab colaboradorId={id!} />}</TabsContent>
+              <TabsContent value="afastamentos">{activeFeriasTab === 'afastamentos' && <AfastamentosTab colaboradorId={id!} />}</TabsContent>
             </Tabs>
           </TabsContent>
 
           <TabsContent value="financeiro">
             <Tabs value={activeFinanceiroTab} onValueChange={setActiveFinanceiroTab} className="space-y-4">
-              <TabsList className="bg-transparent h-auto p-0 gap-4 border-b border-border/20 rounded-none w-full justify-start">
+              <TabsList className="bg-transparent h-auto p-0 gap-4 border-b border-border/20 rounded-none w-full justify-start overflow-x-auto no-scrollbar">
                 <TabsTrigger value="contas" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Contas Bancárias</TabsTrigger>
-                <TabsTrigger value="aquisitivos" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Períodos Aquisitivos</TabsTrigger>
+                <TabsTrigger value="beneficios" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Benefícios</TabsTrigger>
+                <TabsTrigger value="holerites" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Holerites</TabsTrigger>
               </TabsList>
               <TabsContent value="contas">{activeFinanceiroTab === 'contas' && <ContasBancariasTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="aquisitivos">{activeFinanceiroTab === 'aquisitivos' && <AquisitivosTab colaboradorId={id!} />}</TabsContent>
+              <TabsContent value="beneficios">{activeFinanceiroTab === 'beneficios' && <BeneficiosTab colaboradorId={id!} />}</TabsContent>
+              <TabsContent value="holerites">{activeFinanceiroTab === 'holerites' && <HoleritesTab colaboradorId={id!} />}</TabsContent>
+            </Tabs>
+          </TabsContent>
+
+          <TabsContent value="desenvolvimento">
+            <Tabs value={activeDesenvolvimentoTab} onValueChange={setActiveDesenvolvimentoTab} className="space-y-4">
+              <TabsList className="bg-transparent h-auto p-0 gap-4 border-b border-border/20 rounded-none w-full justify-start overflow-x-auto no-scrollbar">
+                <TabsTrigger value="resumo" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Treinamentos &amp; Avaliação</TabsTrigger>
+                <TabsTrigger value="experiencia" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Período de Experiência</TabsTrigger>
+                <TabsTrigger value="formacao" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Formação</TabsTrigger>
+              </TabsList>
+              <TabsContent value="resumo">{activeDesenvolvimentoTab === 'resumo' && <DesenvolvimentoResumoTab colaboradorId={id!} />}</TabsContent>
+              <TabsContent value="experiencia">{activeDesenvolvimentoTab === 'experiencia' && <ExperienciaTab colaboradorId={id!} />}</TabsContent>
+              <TabsContent value="formacao">{activeDesenvolvimentoTab === 'formacao' && <FormacaoTab colaboradorId={id!} />}</TabsContent>
+            </Tabs>
+          </TabsContent>
+
+          <TabsContent value="sst">
+            <Tabs value={activeSSTTab} onValueChange={setActiveSSTTab} className="space-y-4">
+              <TabsList className="bg-transparent h-auto p-0 gap-4 border-b border-border/20 rounded-none w-full justify-start overflow-x-auto no-scrollbar">
+                <TabsTrigger value="aso" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">ASO / Exames</TabsTrigger>
+                <TabsTrigger value="resumo" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">EPIs, Riscos &amp; CAT</TabsTrigger>
+              </TabsList>
+              <TabsContent value="aso">{activeSSTTab === 'aso' && <ASOTab colaboradorId={id!} />}</TabsContent>
+              <TabsContent value="resumo">{activeSSTTab === 'resumo' && <SSTResumoTab colaboradorId={id!} />}</TabsContent>
             </Tabs>
           </TabsContent>
 
@@ -276,6 +339,7 @@ export default function ColaboradorDetalhesPage() {
                 <TabsTrigger value="pessoais" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Documentos Pessoais</TabsTrigger>
                 <TabsTrigger value="anotacoes" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Anotações Internas</TabsTrigger>
                 <TabsTrigger value="estagiario" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Dados Estagiário</TabsTrigger>
+                <TabsTrigger value="compliance" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Compliance</TabsTrigger>
               </TabsList>
               <TabsContent value="pessoais">
                 {activeDocumentosTab === 'pessoais' && (
@@ -287,15 +351,23 @@ export default function ColaboradorDetalhesPage() {
               </TabsContent>
               <TabsContent value="anotacoes">{activeDocumentosTab === 'anotacoes' && <AnotacoesTab colaboradorId={id!} />}</TabsContent>
               <TabsContent value="estagiario">{activeDocumentosTab === 'estagiario' && <EstagiarioTab colaboradorId={id!} />}</TabsContent>
+              <TabsContent value="compliance">{activeDocumentosTab === 'compliance' && <ComplianceTab colaboradorId={id!} />}</TabsContent>
             </Tabs>
           </TabsContent>
 
-          <TabsContent value="beneficios">
-            {activeMainTab === 'beneficios' && <BeneficiosTab colaboradorId={id!} />}
-          </TabsContent>
-
-          <TabsContent value="historico">
-            {activeMainTab === 'historico' && <ColaboradorHistory colaboradorId={id!} />}
+          <TabsContent value="timeline">
+            <Tabs value={activeTimelineTab} onValueChange={setActiveTimelineTab} className="space-y-4">
+              <TabsList className="bg-transparent h-auto p-0 gap-4 border-b border-border/20 rounded-none w-full justify-start overflow-x-auto no-scrollbar">
+                <TabsTrigger value="funcional" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Timeline Funcional</TabsTrigger>
+                <TabsTrigger value="historico-salarial" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Histórico Salarial</TabsTrigger>
+                <TabsTrigger value="contratos" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Contratos</TabsTrigger>
+                <TabsTrigger value="auditoria" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Auditoria</TabsTrigger>
+              </TabsList>
+              <TabsContent value="funcional">{activeTimelineTab === 'funcional' && <TimelineFuncionalTab colaboradorId={id!} />}</TabsContent>
+              <TabsContent value="historico-salarial">{activeTimelineTab === 'historico-salarial' && <HistoricoSalarialTab colaboradorId={id!} />}</TabsContent>
+              <TabsContent value="contratos">{activeTimelineTab === 'contratos' && <HistoricoContratosTab colaboradorId={id!} />}</TabsContent>
+              <TabsContent value="auditoria">{activeTimelineTab === 'auditoria' && <ColaboradorHistory colaboradorId={id!} />}</TabsContent>
+            </Tabs>
           </TabsContent>
         </Tabs>
       </PageLayout>

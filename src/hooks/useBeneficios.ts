@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { beneficioService } from '@/services/beneficioService';
 import { useEmpresas } from './useEmpresas';
 import { useGenericCrud } from './useGenericCrud';
-import { MOCK_MODE, MOCK_PLANOS_BENEFICIO } from '@/mocks/colaboradoresMock';
+import { isColaboradoresMockEnabled, MOCK_PLANOS_BENEFICIO } from '@/mocks/colaboradoresMock';
 
 export function useBeneficios() {
   const { empresaAtual } = useEmpresas();
@@ -30,7 +30,7 @@ export function useBeneficios() {
   // carregando), usa planos fictícios só para o dropdown funcionar na
   // pré-visualização — nunca oculta planos reais já configurados.
   const beneficiosExibidos =
-    MOCK_MODE && !crud.isLoading && (!crud.items || (crud.items as unknown[]).length === 0)
+    isColaboradoresMockEnabled() && !crud.isLoading && (!crud.items || (crud.items as unknown[]).length === 0)
       ? MOCK_PLANOS_BENEFICIO
       : crud.items;
 

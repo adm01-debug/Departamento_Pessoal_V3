@@ -45,7 +45,13 @@ export async function excluirDependente(id: string, empresaId: string) {
 // Contatos de Emergência
 // =============================================
 export async function listarContatosEmergencia(colaboradorId: string) {
-  return []; // Tabela contatos_emergencia não encontrada no cache do banco externo
+  const { data, error } = await supabase
+    .from('contatos_emergencia')
+    .select('*')
+    .eq('colaborador_id', colaboradorId)
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return data || [];
 }
 
 export async function criarContatoEmergencia(contato: DadosInsert) {
@@ -56,6 +62,11 @@ export async function criarContatoEmergencia(contato: DadosInsert) {
     .maybeSingle();
   if (error) throw error;
   return data;
+}
+
+export async function atualizarContatoEmergencia(id: string, dados: DadosUpdate, colaboradorId: string) {
+  const { error } = await supabase.from('contatos_emergencia').update(dados).eq('id', id).eq('colaborador_id', colaboradorId);
+  if (error) throw error;
 }
 
 export async function excluirContatoEmergencia(colaboradorId: string, id: string) {
@@ -250,6 +261,63 @@ export async function criarAnotacao(anotacao: DadosInsert) {
 export async function excluirAnotacao(colaboradorId: string, id: string) {
   const { error } = await supabase.from('anotacoes_colaborador').delete().eq('id', id).eq('colaborador_id', colaboradorId);
   if (error) throw error;
+}
+
+// =============================================
+// Lotações (PARTE C: Trabalho & Hierarquia — sem hook/service prévio)
+// =============================================
+export async function listarLotacoes(colaboradorId: string, empresaId: string) {
+  if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+  const { data, error } = await supabase
+    .from('lotacoes')
+    .select('*')
+    .eq('colaborador_id', colaboradorId)
+    .eq('empresa_id', empresaId)
+    .order('nome');
+  if (error) throw error;
+  return data || [];
+}
+
+// =============================================
+// Férias — resumo por colaborador (PARTE E)
+// =============================================
+// Diferente de feriasService.listSolicitacoes (lista a empresa toda, sem
+// filtro por colaborador): aqui buscamos o histórico completo (qualquer
+// status) de UM colaborador, para próxima férias programada + histórico.
+export async function listarFeriasColaborador(colaboradorId: string, empresaId: string) {
+  if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+  const { data, error } = await supabase
+    .from('ferias')
+    .select('id, data_inicio, data_fim, dias_gozo, status')
+    .eq('colaborador_id', colaboradorId)
+    .eq('empresa_id', empresaId)
+    .order('data_inicio', { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
+// =============================================
+// Holerites — resumo por colaborador (PARTE F)
+// =============================================
+// Mesmo padrão de query já usado em src/pages/PortalPage.tsx (usePortalCompleto)
+// para "Meus Holerites" — aqui generalizado para o Dossiê administrativo.
+// Não toca a geração do holerite (gerar-holerite/folhaPagamentoService).
+export async function listarHoleritesColaborador(colaboradorId: string, limite: number = 12) {
+  const { data, error } = await supabase
+    .from('holerites')
+    .select('id, liquido, total_proventos, assinado, created_at, folha:folhas_pagamento!holerites_folha_id_fkey(competencia)')
+    .eq('colaborador_id', colaboradorId)
+    .order('created_at', { ascending: false })
+    .limit(limite);
+  if (error) throw error;
+  return (data || []).map((h: any) => ({
+    id: h.id,
+    competencia: h.folha?.competencia ?? '—',
+    total_liquido: h.liquido,
+    total_proventos: h.total_proventos,
+    assinado: h.assinado,
+    created_at: h.created_at,
+  }));
 }
 
 // =============================================

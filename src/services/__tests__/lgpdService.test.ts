@@ -89,6 +89,19 @@ describe('lgpdService.listarConsentimentos', () => {
     setupListChain([], { message: 'fail' });
     await expect(lgpdService.listarConsentimentos(EMPRESA_ID)).rejects.toBeDefined();
   });
+
+  it('also filters by colaborador_id when provided (PARTE I)', async () => {
+    const { chain } = setupListChain([]);
+    await lgpdService.listarConsentimentos(EMPRESA_ID, 'col-1');
+    expect(chain.eq).toHaveBeenCalledWith('empresa_id', EMPRESA_ID);
+    expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'col-1');
+  });
+
+  it('does not filter by colaborador_id when omitted', async () => {
+    const { chain } = setupListChain([]);
+    await lgpdService.listarConsentimentos(EMPRESA_ID);
+    expect(chain.eq).not.toHaveBeenCalledWith('colaborador_id', expect.anything());
+  });
 });
 
 // ─── criarConsentimento ───────────────────────────────────────────────────────

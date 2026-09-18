@@ -7,6 +7,7 @@ const { mockAfastamentoService } = vi.hoisted(() => ({
   mockAfastamentoService: {
     listar: vi.fn().mockResolvedValue({ data: [], total: 0 }),
     listarConfiguracoes: vi.fn().mockResolvedValue([]),
+    listarHistoricoRecente: vi.fn().mockResolvedValue([]),
     criar: vi.fn().mockResolvedValue({}),
     atualizar: vi.fn().mockResolvedValue({}),
     excluir: vi.fn().mockResolvedValue(undefined),
@@ -18,7 +19,7 @@ vi.mock('@/hooks/useEmpresas', () => ({ useEmpresas: () => ({ empresaAtual: { id
 vi.mock('@/utils/auditLogger', () => ({ auditLogger: { log: vi.fn() } }));
 vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
-import { useAfastamentos } from '../useAfastamentos';
+import { useAfastamentos, useAfastamentosRecentes } from '../useAfastamentos';
 
 function wrapper({ children }: { children: React.ReactNode }) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
@@ -53,5 +54,25 @@ describe('useAfastamentos', () => {
   it('exposes criar function', async () => {
     const { result } = renderHook(() => useAfastamentos(), { wrapper });
     expect(typeof result.current.criar).toBe('function');
+  });
+});
+
+describe('useAfastamentosRecentes', () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it('calls listarHistoricoRecente with colaboradorId, empresaId and default 60 dias', async () => {
+    const { result } = renderHook(() => useAfastamentosRecentes('col-1'), { wrapper });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(mockAfastamentoService.listarHistoricoRecente).toHaveBeenCalledWith('col-1', 'emp-1', 60);
+  });
+
+  it('accepts a custom dias window', async () => {
+    renderHook(() => useAfastamentosRecentes('col-1', 365), { wrapper });
+    await waitFor(() => expect(mockAfastamentoService.listarHistoricoRecente).toHaveBeenCalledWith('col-1', 'emp-1', 365));
+  });
+
+  it('is disabled when no colaboradorId', () => {
+    renderHook(() => useAfastamentosRecentes(''), { wrapper });
+    expect(mockAfastamentoService.listarHistoricoRecente).not.toHaveBeenCalled();
   });
 });

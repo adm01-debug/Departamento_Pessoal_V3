@@ -161,10 +161,8 @@ export default function ColaboradoresPage() {
     }
   };
 
-  // PARTE 2B: listagem passou a consumir sempre dados reais (useColaboradores).
-  // MOCK_MODE (em @/mocks/colaboradoresMock) permanece ativo apenas para o
-  // Dossiê do Colaborador (ColaboradorDetalhesPage e afins), que não é
-  // alterado nesta etapa — ver relatório para detalhes.
+  // colaboradorService.listar/getSummary caem nos 12 colaboradores fictícios
+  // de src/mocks/colaboradoresMock.ts quando VITE_COLABORADORES_MOCK=true (dev only).
   const itemsExibidos = colaboradores;
   const totalExibido = total;
   const summaryExibido = summary;

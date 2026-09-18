@@ -2,17 +2,18 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { MOCK_MODE, getMockBeneficiosColaborador } from '@/mocks/colaboradoresMock';
+import { mockOr, getMockBeneficiosColaborador } from '@/mocks/colaboradoresMock';
 
 export function useBeneficiosColaborador(colaboradorId?: string) {
   const queryClient = useQueryClient();
-  const mockData = MOCK_MODE ? getMockBeneficiosColaborador(colaboradorId) : undefined;
 
   const query = useQuery({
     queryKey: ['beneficios-colaborador', colaboradorId],
-    enabled: !!colaboradorId && mockData === undefined,
-    initialData: mockData,
+    enabled: !!colaboradorId,
     queryFn: async () => {
+      const mock = mockOr(getMockBeneficiosColaborador(colaboradorId));
+      if (mock !== undefined) return mock;
+
       const { data, error } = await supabase
         .from('beneficios_colaborador')
         .select(`

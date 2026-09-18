@@ -30,6 +30,7 @@ import {
   linhasTransporteService,
   notificacoesAdmissaoService,
   onboardingService,
+  treinamentoParticipantesService,
 } from '../rhService';
 
 describe('configAfastamentosService', () => {
@@ -132,5 +133,40 @@ describe('onboardingService', () => {
     mockFrom.mockReturnValue(chain);
     await onboardingService.listarTarefas('ob-1');
     expect(mockFrom).toHaveBeenCalledWith('onboarding_tarefas');
+  });
+
+  it('buscarPorColaborador queries onboarding_colaborador scoped by colaborador and empresa (PARTE G)', async () => {
+    const registro = { id: 'ob-1', colaborador_id: 'col-1' };
+    const chain = makeChain([registro]);
+    mockFrom.mockReturnValue(chain);
+    const result = await onboardingService.buscarPorColaborador('col-1', 'emp-1');
+    expect(mockFrom).toHaveBeenCalledWith('onboarding_colaborador');
+    expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'col-1');
+    expect(result).toEqual(registro);
+  });
+
+  it('buscarPorColaborador returns null when there is no onboarding for the colaborador', async () => {
+    const chain = makeChain([]);
+    mockFrom.mockReturnValue(chain);
+    const result = await onboardingService.buscarPorColaborador('col-1', 'emp-1');
+    expect(result).toBeNull();
+  });
+
+  it('buscarPorColaborador throws when empresaId is missing', async () => {
+    await expect(onboardingService.buscarPorColaborador('col-1', '')).rejects.toThrow('empresa_id obrigatório');
+  });
+});
+
+describe('treinamentoParticipantesService.listarPorColaborador', () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it('queries treinamento_participantes scoped by colaborador_id with treinamento join', async () => {
+    const registros = [{ id: 'tp1', colaborador_id: 'col-1', treinamento: { nome: 'NR-35' } }];
+    const chain = makeChain(registros);
+    mockFrom.mockReturnValue(chain);
+    const result = await treinamentoParticipantesService.listarPorColaborador('col-1');
+    expect(mockFrom).toHaveBeenCalledWith('treinamento_participantes');
+    expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'col-1');
+    expect(result).toEqual(registros);
   });
 });

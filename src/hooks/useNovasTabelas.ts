@@ -7,8 +7,15 @@ import { medidasDisciplinaresService } from '@/services/medidasDisciplinaresServ
 import { episService, episEntregasService } from '@/services/episService';
 import { jornadaHorariosService } from '@/services/jornadaHorariosService';
 import { bancoHorasConfigService } from '@/services/bancoHorasConfigService';
+import { bancoHorasService } from '@/services/bancoHorasService';
+import { pontoService } from '@/services/pontoService';
+import { turnoService } from '@/services/turnoService';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+import {
+  mockOr, getMockFaltas, getMockMedidasDisciplinares, getMockEpisEntregas,
+  getMockSaldoBancoHoras, getMockRegistrosPontoSemana, getMockEscalaAtual,
+} from '@/mocks/colaboradoresMock';
 
 type DataRecord = Record<string, unknown>;
 
@@ -54,7 +61,7 @@ export function useFaltasColaborador(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
   return useQuery({
     queryKey: ['faltas-colaborador', colaboradorId, empresaAtual?.id],
-    queryFn: () => faltasService.buscarPorColaborador(colaboradorId, empresaAtual!.id),
+    queryFn: async () => mockOr(getMockFaltas(colaboradorId)) ?? faltasService.buscarPorColaborador(colaboradorId, empresaAtual!.id),
     enabled: !!colaboradorId && !!empresaAtual?.id,
   });
 }
@@ -102,7 +109,7 @@ export function useMedidasDisciplinaresColaborador(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
   return useQuery({
     queryKey: ['medidas-disciplinares-colaborador', colaboradorId, empresaAtual?.id],
-    queryFn: () => medidasDisciplinaresService.buscarPorColaborador(colaboradorId, empresaAtual!.id),
+    queryFn: async () => mockOr(getMockMedidasDisciplinares(colaboradorId)) ?? medidasDisciplinaresService.buscarPorColaborador(colaboradorId, empresaAtual!.id),
     enabled: !!colaboradorId && !!empresaAtual?.id,
   });
 }
@@ -179,7 +186,7 @@ export function useEpisEntregasColaborador(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
   return useQuery({
     queryKey: ['epis-entregas-colaborador', colaboradorId, empresaAtual?.id],
-    queryFn: () => episEntregasService.buscarPorColaborador(colaboradorId, empresaAtual!.id),
+    queryFn: async () => mockOr(getMockEpisEntregas(colaboradorId)) ?? episEntregasService.buscarPorColaborador(colaboradorId, empresaAtual!.id),
     enabled: !!colaboradorId && !!empresaAtual?.id,
   });
 }
@@ -237,5 +244,34 @@ export function useSalvarBancoHorasConfig() {
     mutationFn: (d: DataRecord) => bancoHorasConfigService.salvar(d),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['banco-horas-config'] }); toast.success('Configuração salva'); },
     onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao processar operação.')),
+  });
+}
+
+// === BANCO DE HORAS (saldo por colaborador — PARTE D) ===
+export function useSaldoBancoHoras(colaboradorId: string) {
+  const { empresaAtual } = useEmpresas();
+  return useQuery({
+    queryKey: ['saldo-banco-horas', colaboradorId, empresaAtual?.id],
+    queryFn: async () => mockOr(getMockSaldoBancoHoras(colaboradorId)) ?? bancoHorasService.getSaldo(colaboradorId, empresaAtual!.id),
+    enabled: !!colaboradorId && !!empresaAtual?.id,
+  });
+}
+
+// === REGISTROS DE PONTO DA SEMANA (resumo — PARTE D) ===
+export function useRegistrosPontoSemana(colaboradorId: string) {
+  return useQuery({
+    queryKey: ['registros-ponto-semana', colaboradorId],
+    queryFn: async () => mockOr(getMockRegistrosPontoSemana(colaboradorId)) ?? pontoService.buscarRegistrosSemana(colaboradorId),
+    enabled: !!colaboradorId,
+  });
+}
+
+// === ESCALA ATUAL (PARTE D) ===
+export function useEscalaAtual(colaboradorId: string) {
+  const { empresaAtual } = useEmpresas();
+  return useQuery({
+    queryKey: ['escala-atual', colaboradorId, empresaAtual?.id],
+    queryFn: async () => mockOr(getMockEscalaAtual(colaboradorId)) ?? turnoService.buscarEscalaAtual(colaboradorId, empresaAtual!.id),
+    enabled: !!colaboradorId && !!empresaAtual?.id,
   });
 }

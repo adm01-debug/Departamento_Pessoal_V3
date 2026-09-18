@@ -4,6 +4,7 @@ import { useEmpresa } from '@/contexts/EmpresaContext';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { loggerService } from '@/services/loggerService';
+import { mockOr, getMockPontoHoje } from '@/mocks/colaboradoresMock';
 
 export function usePonto(colaboradorId?: string) {
   const { empresaAtual } = useEmpresa();
@@ -21,6 +22,8 @@ export function usePonto(colaboradorId?: string) {
     queryKey: ['ponto-hoje', colaboradorId],
     enabled: !!colaboradorId,
     queryFn: async () => {
+      const mock = mockOr(getMockPontoHoje(colaboradorId));
+      if (mock !== undefined) return mock;
       return await pontosService.buscarRegistroHoje(colaboradorId!);
     },
   });

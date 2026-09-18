@@ -11,7 +11,11 @@ export { useAdmissoes } from "./useAdmissoes";
 export { useAdmissaoWorkflow } from "./useAdmissaoWorkflow";
 export { useContratacaoDigital } from "./useContratacaoDigital";
 export { useAssinaturaDigital } from "./useAssinaturaDigital";
-export { useAfastamentos } from "./useAfastamentos";
+export { useAfastamentos, useAfastamentosRecentes } from "./useAfastamentos";
+export {
+  useMetasColaborador, usePDIsColaborador, useFeedbacksColaborador,
+  useCertificadosColaborador, useTreinamentosColaborador, useOnboardingColaborador,
+} from "./useDesenvolvimentoColaborador";
 export { useCargos } from "./useCargos";
 export { useDepartamentos } from "./useDepartamentos";
 export { useFerias } from "./useFerias";
@@ -47,6 +51,7 @@ export {
   useEpisEntregas, useEpisEntregasColaborador, useCriarEpiEntrega, useDevolverEpi,
   useJornadaHorarios, useSalvarGradeHorarios,
   useBancoHorasConfig, useSalvarBancoHorasConfig,
+  useSaldoBancoHoras, useRegistrosPontoSemana, useEscalaAtual,
 } from "./useNovasTabelas";
 
 // Colaborador Detalhes
@@ -61,9 +66,10 @@ export {
   usePeriodoExperiencia, useSalvarPeriodoExperiencia,
   useAnotacoes, useCriarAnotacao, useExcluirAnotacao,
   useEtnias, useIdentidadesGenero, useTiposAdmissao, useTiposEstabilidade,
-  useTimes, useWebhooks, useCriarWebhook,
+  useTimes, useWebhooks, useCriarWebhook, useLotacoes,
   useFeriasColetivas, useCriarFeriasColetivas,
-  useCamposCustomizados,
+  useCamposCustomizados, useValoresCamposCustomizados, useSalvarValorCampoCustomizado,
+  useFeriasResumoColaborador, useHoleritesColaborador,
 } from "./useColaboradorDetalhes";
 
 // Tabelas de Referência

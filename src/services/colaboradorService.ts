@@ -1,6 +1,7 @@
 import { BaseService, ListOptions, ListResponse } from './baseService';
 import { Colaborador } from '@/types/entities';
 import { supabaseBase } from '@/integrations/supabase/client';
+import { mockOr, MOCK_COLABORADORES, findMockColaborador } from '@/mocks/colaboradoresMock';
 
 class ColaboradorService extends BaseService<Colaborador> {
   constructor() {
@@ -22,6 +23,29 @@ class ColaboradorService extends BaseService<Colaborador> {
     const { status, departamento, cargo, empresaId } = filters;
 
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+
+    const mockList = mockOr(MOCK_COLABORADORES);
+    if (mockList) {
+      let items: unknown[] = [...mockList];
+      if (status && status !== 'all') items = items.filter((c: any) => c.status === status);
+      if (departamento && departamento !== 'all') items = items.filter((c: any) => c.departamento === departamento);
+      if (cargo && cargo !== 'all') items = items.filter((c: any) => c.cargo === cargo);
+      if (search) {
+        const s = search.toLowerCase();
+        const cpfDigits = search.replace(/\D/g, '');
+        items = items.filter((c: any) =>
+          c.nome_completo.toLowerCase().includes(s) ||
+          c.email.toLowerCase().includes(s) ||
+          c.matricula.toLowerCase().includes(s) ||
+          c.cargo.toLowerCase().includes(s) ||
+          c.departamento.toLowerCase().includes(s) ||
+          (!!cpfDigits && c.cpf.replace(/\D/g, '').includes(cpfDigits))
+        );
+      }
+      const total = items.length;
+      const from = (page - 1) * pageSize;
+      return { data: items.slice(from, from + pageSize) as unknown as Colaborador[], total };
+    }
 
     // Explicit column selection to prevent failures on missing optional columns in external DB
     const columns = 'id, nome_completo, cpf, email, status, data_admissao, empresa_id, matricula, foto_url, telefone, cargo, departamento';
@@ -67,6 +91,19 @@ class ColaboradorService extends BaseService<Colaborador> {
   async getSummary(empresaId: string, filters: any = {}) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
+    const mockList = mockOr(MOCK_COLABORADORES);
+    if (mockList) {
+      const { departamento, cargo } = filters;
+      let items: unknown[] = mockList;
+      if (departamento && departamento !== 'all') items = items.filter((c: any) => c.departamento === departamento);
+      if (cargo && cargo !== 'all') items = items.filter((c: any) => c.cargo === cargo);
+      const summary: Record<string, number> = { total: items.length };
+      for (const status of ['ativo', 'pendente', 'desligado', 'ferias', 'afastado'] as const) {
+        summary[status] = items.filter((c: any) => c.status === status).length;
+      }
+      return summary;
+    }
+
     // Optimized: Run counts in parallel using Supabase count feature.
     // Os cinco valores abaixo são exatamente o enum `status_colaborador` do
     // banco (fonte de verdade) — não existe "inativo" no schema real.
@@ -105,6 +142,12 @@ class ColaboradorService extends BaseService<Colaborador> {
   async list(empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     return (await this.listar({ filters: { empresaId }, pageSize: 1000 })).data;
+  }
+
+  async buscarPorId(id: string, empresaId?: string): Promise<Colaborador | null> {
+    const mock = mockOr(findMockColaborador(id));
+    if (mock) return mock;
+    return super.buscarPorId(id, empresaId);
   }
 
   async getById(id: string) { return this.buscarPorId(id); }
