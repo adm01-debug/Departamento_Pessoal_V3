@@ -24,7 +24,7 @@ class ColaboradorService extends BaseService<Colaborador> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
     // Explicit column selection to prevent failures on missing optional columns in external DB
-    const columns = 'id, nome_completo, cpf, email, status, data_admissao, empresa_id, matricula, foto_url, telefone';
+    const columns = 'id, nome_completo, cpf, email, status, data_admissao, empresa_id, matricula, foto_url, telefone, cargo, departamento';
     let query = this.getQuery().select(columns, { count: 'exact' });
 
     query = query.eq('empresa_id', empresaId);
@@ -33,8 +33,24 @@ class ColaboradorService extends BaseService<Colaborador> {
     if (cargo && cargo !== 'all') query = query.eq('cargo', cargo);
 
     if (search) {
+      // `cpf` é armazenado apenas com dígitos (ver CPFInput/ColaboradorFormPage),
+      // então a busca por CPF precisa remover TODA formatação (inclusive "-"),
+      // enquanto os demais campos usam a sanitização genérica (evita quebrar o
+      // ilike por causa dos caracteres especiais % e _).
       const s = search.replace(/[%_.,()]/g, '');
-      if (s) query = query.or(`nome_completo.ilike.%${s}%,cpf.ilike.%${s}%,email.ilike.%${s}%`);
+      const cpfDigits = search.replace(/\D/g, '');
+      const orParts: string[] = [];
+      if (s) {
+        orParts.push(
+          `nome_completo.ilike.%${s}%`,
+          `email.ilike.%${s}%`,
+          `matricula.ilike.%${s}%`,
+          `cargo.ilike.%${s}%`,
+          `departamento.ilike.%${s}%`
+        );
+      }
+      if (cpfDigits) orParts.push(`cpf.ilike.%${cpfDigits}%`);
+      if (orParts.length) query = query.or(orParts.join(','));
     }
 
     const from = (page - 1) * pageSize;
@@ -51,9 +67,11 @@ class ColaboradorService extends BaseService<Colaborador> {
   async getSummary(empresaId: string, filters: any = {}) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
-    // Optimized: Run counts in parallel using Supabase count feature
+    // Optimized: Run counts in parallel using Supabase count feature.
+    // Os cinco valores abaixo são exatamente o enum `status_colaborador` do
+    // banco (fonte de verdade) — não existe "inativo" no schema real.
     const { departamento, cargo } = filters;
-    const statuses = ['ativo', 'desligado', 'afastado', 'ferias'] as const;
+    const statuses = ['ativo', 'pendente', 'desligado', 'ferias', 'afastado'] as const;
 
     const countPromises = statuses.map(async (status) => {
       let query = supabaseBase
@@ -78,8 +96,6 @@ class ColaboradorService extends BaseService<Colaborador> {
 
     results.forEach(r => {
       summary[r.status] = r.count;
-      // UI compatibility mapping
-      if (r.status === 'desligado') summary.inativo = r.count;
     });
     
     return summary;

@@ -77,9 +77,46 @@ export async function listarContasBancarias(colaboradorId: string, empresaId: st
   return data || [];
 }
 
-export async function criarContaBancaria(conta: DataRecord): Promise<any> {
+// PARTE 4B: `empresaId` é obrigatório (mesma exigência de atualizarContaBancaria/
+// excluirContaBancaria) e NUNCA é aceito a partir de `conta.empresa_id` — o
+// valor informado aqui sempre prevalece sobre qualquer campo vindo da UI.
+export async function criarContaBancaria(conta: DataRecord, empresaId: string): Promise<any> {
+  if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+
+  const colaboradorId = (conta as { colaborador_id?: string })?.colaborador_id;
+  if (!colaboradorId) throw new Error('colaborador_id obrigatório para criar conta bancária');
+
+  // Confirma que o colaborador realmente pertence à empresa informada antes
+  // de inserir — nunca confia apenas no que a UI enviou.
+  const { data: colaborador, error: colaboradorError } = await supabase
+    .from('colaboradores')
+    .select('id, empresa_id')
+    .eq('id', colaboradorId)
+    .maybeSingle();
+  if (colaboradorError) throw colaboradorError;
+  if (!colaborador || (colaborador as { empresa_id?: string }).empresa_id !== empresaId) {
+    throw new Error('Colaborador não pertence à empresa atual — operação bloqueada por isolamento de tenant.');
+  }
+
+  // Proteção de aplicação contra uma segunda conta "principal" (não substitui
+  // uma constraint de banco: sob concorrência, duas requisições simultâneas
+  // ainda poderiam passar por esta checagem antes de qualquer uma inserir).
+  // Nunca desmarca a conta principal existente — apenas bloqueia a nova.
+  if ((conta as { principal?: boolean }).principal) {
+    const { count, error: principalError } = await supabase
+      .from('contas_bancarias')
+      .select('id', { count: 'exact', head: true })
+      .eq('colaborador_id', colaboradorId)
+      .eq('empresa_id', empresaId)
+      .eq('principal', true);
+    if (principalError) throw principalError;
+    if ((count || 0) > 0) {
+      throw new Error('Este colaborador já possui uma conta bancária principal.');
+    }
+  }
+
   const { data, error } = await supabase.from('contas_bancarias')
-    .insert([conta])
+    .insert([{ ...conta, empresa_id: empresaId }])
     .select()
     .maybeSingle();
   if (error) throw error;

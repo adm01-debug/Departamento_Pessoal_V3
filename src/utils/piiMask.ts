@@ -14,6 +14,16 @@ export function maskBankAccount(account: string | null | undefined): string {
   return MASK_CHAR.repeat(clean.length - 4) + clean.slice(-4);
 }
 
+// Chave Pix pode ser CPF/CNPJ/e-mail/telefone/aleatória — formatos
+// heterogêneos, então (ao contrário de maskBankAccount) não removemos
+// caracteres não numéricos. Mantém só os últimos 4 caracteres visíveis,
+// suficiente para identificar qual chave está cadastrada sem expor o valor.
+export function maskPixKey(chave: string | null | undefined): string {
+  if (!chave) return '';
+  if (chave.length <= 4) return MASK_CHAR.repeat(chave.length);
+  return MASK_CHAR.repeat(chave.length - 4) + chave.slice(-4);
+}
+
 export function maskPisDisplay(pis: string | null | undefined): string {
   if (!pis) return '';
   const digits = pis.replace(/\D/g, '');

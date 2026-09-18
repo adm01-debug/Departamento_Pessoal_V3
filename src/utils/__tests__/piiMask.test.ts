@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { maskCpfDisplay, maskBankAccount, maskPisDisplay, maskEmail } from '../piiMask';
+import { maskCpfDisplay, maskBankAccount, maskPisDisplay, maskEmail, maskPixKey } from '../piiMask';
 
 describe('maskCpfDisplay', () => {
   it('returns empty string for null', () => {
@@ -79,5 +79,32 @@ describe('maskEmail', () => {
   it('masks without domain entirely for invalid email', () => {
     const result = maskEmail('notanemail');
     expect(result).toMatch(/^•+$/);
+  });
+});
+
+// PARTE 4B: chave Pix (aba Contas Bancárias do Dossiê) deixou de ser exibida
+// em texto claro — só os últimos 4 caracteres ficam visíveis.
+describe('maskPixKey', () => {
+  it('returns empty string for null', () => {
+    expect(maskPixKey(null)).toBe('');
+  });
+
+  it('returns empty string for undefined', () => {
+    expect(maskPixKey(undefined)).toBe('');
+  });
+
+  it('masks all but last 4 characters of a CPF-style key', () => {
+    const result = maskPixKey('12345678900');
+    expect(result).toBe('•••••••8900');
+  });
+
+  it('masks all but last 4 characters of an email key (does not strip non-digits)', () => {
+    const result = maskPixKey('joao@empresa.com');
+    expect(result.endsWith('.com')).toBe(true);
+    expect(result).not.toContain('joao@empresa');
+  });
+
+  it('masks short key with fewer than 4 characters fully', () => {
+    expect(maskPixKey('abc')).toMatch(/^•{3}$/);
   });
 });

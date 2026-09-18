@@ -98,9 +98,15 @@ export function useContasBancarias(colaboradorId: string) {
 
 export function useCriarContaBancaria() {
   const qc = useQueryClient();
+  const { empresaAtual } = useEmpresas();
   return useMutation({
     mutationFn: async (data: DataRecord) => {
-      return await service.criarContaBancaria(data);
+      // PARTE 4B: empresa_id vem sempre do contexto (empresa atual selecionada
+      // no sistema), nunca de um campo do formulário de conta bancária.
+      if (!empresaAtual?.id) {
+        throw new Error('Nenhuma empresa selecionada. Selecione uma empresa antes de cadastrar uma conta bancária.');
+      }
+      return await service.criarContaBancaria(data, empresaAtual.id);
     },
     onSuccess: (_data: unknown, vars: DataRecord) => qc.invalidateQueries({ queryKey: ['contas-bancarias', vars.colaborador_id] }),
   });

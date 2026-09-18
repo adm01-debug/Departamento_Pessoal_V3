@@ -11,9 +11,13 @@ const { mockFrom, mockLoggerError } = vi.hoisted(() => ({
   mockLoggerError: vi.fn(),
 }));
 
-vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
-}));
+// `supabase` e `supabaseBase` são o mesmo cliente em produção (ver
+// src/integrations/supabase/client.ts) — o serviço usa `supabaseBase`
+// diretamente (P0-CORS), então o mock precisa expor as duas chaves.
+vi.mock('@/integrations/supabase/client', () => {
+  const client = { from: (...a: unknown[]) => deepChain(mockFrom(...a)) };
+  return { supabase: client, supabaseBase: client };
+});
 
 vi.mock('../loggerService', () => ({
   loggerService: { error: mockLoggerError },
@@ -72,6 +76,43 @@ describe('colaboradorService.listar', () => {
     );
   });
 
+  it('selects cargo and departamento columns explicitly', async () => {
+    const { selectFn } = setupListarChain([], 0);
+    await colaboradorService.listar({ filters: { empresaId: EMP } });
+    const columns = selectFn.mock.calls[0][0] as string;
+    expect(columns).toContain('cargo');
+    expect(columns).toContain('departamento');
+  });
+
+  it('searches by matricula, cargo and departamento in addition to nome/email', async () => {
+    const { orFn } = setupListarChain([], 0);
+    await colaboradorService.listar({ search: 'Vendas', filters: { empresaId: EMP } });
+    const orArg = orFn.mock.calls[0][0] as string;
+    expect(orArg).toContain('matricula.ilike.%Vendas%');
+    expect(orArg).toContain('cargo.ilike.%Vendas%');
+    expect(orArg).toContain('departamento.ilike.%Vendas%');
+    expect(orArg).toContain('nome_completo.ilike.%Vendas%');
+    expect(orArg).toContain('email.ilike.%Vendas%');
+  });
+
+  it('normalizes a formatted CPF search (dots and dash) to digits only', async () => {
+    const { orFn } = setupListarChain([], 0);
+    await colaboradorService.listar({ search: '123.456.789-00', filters: { empresaId: EMP } });
+    const orArg = orFn.mock.calls[0][0] as string;
+    // A cláusula de cpf precisa usar só dígitos (coluna armazena CPF sem
+    // pontuação); o traço pode aparecer nas cláusulas de outros campos
+    // (nome/email/etc.), que usam a sanitização genérica — isso é esperado.
+    expect(orArg).toContain('cpf.ilike.%12345678900%');
+    expect(orArg).not.toContain('cpf.ilike.%123456789-00%');
+  });
+
+  it('does not add a cpf clause when the search has no digits', async () => {
+    const { orFn } = setupListarChain([], 0);
+    await colaboradorService.listar({ search: 'Maria', filters: { empresaId: EMP } });
+    const orArg = orFn.mock.calls[0][0] as string;
+    expect(orArg).not.toContain('cpf.ilike');
+  });
+
   it('filters by empresa_id when provided', async () => {
     const { eqFn } = setupListarChain([], 0);
     await colaboradorService.listar({ filters: { empresaId: 'emp-1' } });
@@ -82,6 +123,18 @@ describe('colaboradorService.listar', () => {
     const { eqFn } = setupListarChain([], 0);
     await colaboradorService.listar({ filters: { empresaId: EMP, status: 'ativo' } });
     expect(eqFn).toHaveBeenCalledWith('status', 'ativo');
+  });
+
+  it('filters by status "pendente"', async () => {
+    const { eqFn } = setupListarChain([], 0);
+    await colaboradorService.listar({ filters: { empresaId: EMP, status: 'pendente' } });
+    expect(eqFn).toHaveBeenCalledWith('status', 'pendente');
+  });
+
+  it('filters by status "desligado"', async () => {
+    const { eqFn } = setupListarChain([], 0);
+    await colaboradorService.listar({ filters: { empresaId: EMP, status: 'desligado' } });
+    expect(eqFn).toHaveBeenCalledWith('status', 'desligado');
   });
 
   it('does NOT filter by status when status is "all"', async () => {
@@ -119,26 +172,29 @@ describe('colaboradorService.listar', () => {
 describe('colaboradorService.getSummary', () => {
   beforeEach(() => { vi.clearAllMocks(); });
 
-  it('returns total and per-status counts', async () => {
-    const counts = [5, 2, 1, 3]; // ativo, desligado, afastado, ferias
+  it('returns total and per-status counts for the five real statuses', async () => {
+    const counts = [5, 4, 2, 3, 1]; // ativo, pendente, desligado, ferias, afastado
     let callIdx = 0;
     mockFrom.mockImplementation(() => makeCountChain(counts[callIdx++]));
 
     const summary = await colaboradorService.getSummary(EMP);
     expect(summary.ativo).toBe(5);
+    expect(summary.pendente).toBe(4);
     expect(summary.desligado).toBe(2);
-    expect(summary.afastado).toBe(1);
     expect(summary.ferias).toBe(3);
-    expect(summary.total).toBe(11);
+    expect(summary.afastado).toBe(1);
+    expect(summary.total).toBe(15);
   });
 
-  it('maps desligado to inativo for UI compatibility', async () => {
-    const counts = [0, 3, 0, 0]; // desligado=3
+  it('does not create an artificial "inativo" key', async () => {
+    const counts = [0, 0, 3, 0, 0]; // desligado=3
     let callIdx = 0;
     mockFrom.mockImplementation(() => makeCountChain(counts[callIdx++]));
 
     const summary = await colaboradorService.getSummary(EMP);
-    expect(summary.inativo).toBe(3);
+    expect(summary.desligado).toBe(3);
+    expect(summary.inativo).toBeUndefined();
+    expect('inativo' in summary).toBe(false);
   });
 
   it('returns 0 total when all counts are 0', async () => {
@@ -147,11 +203,11 @@ describe('colaboradorService.getSummary', () => {
     expect(summary.total).toBe(0);
   });
 
-  it('applies empresa_id filter to all queries when provided', async () => {
+  it('applies empresa_id filter to all five status queries when provided', async () => {
     mockFrom.mockImplementation(() => makeCountChain(0));
     await colaboradorService.getSummary('emp-1');
-    // All 4 chains have .eq called (first for status, second for empresa_id)
-    expect(mockFrom).toHaveBeenCalledTimes(4);
+    // Uma chain por status real (ativo, pendente, desligado, ferias, afastado)
+    expect(mockFrom).toHaveBeenCalledTimes(5);
   });
 
   it('returns count 0 per status on DB error (graceful fallback)', async () => {

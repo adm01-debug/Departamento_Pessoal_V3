@@ -304,20 +304,101 @@ describe('listarContasBancarias', () => {
   });
 });
 
-describe('criarContaBancaria', () => {
+// PARTE 4B: criarContaBancaria agora exige empresaId explicitamente (mesmo
+// padrão de atualizarContaBancaria/excluirContaBancaria), confirma que o
+// colaborador pertence à empresa informada antes de inserir, e bloqueia uma
+// segunda conta "principal" para o mesmo colaborador sem desmarcar a antiga.
+describe('criarContaBancaria (PARTE 4B — tenant + principal)', () => {
   beforeEach(() => { vi.clearAllMocks(); });
 
-  it('inserts wrapped in array and returns new conta', async () => {
-    const created = { id: 'cb-new', banco: 'Bradesco' };
-    const { insertFn } = setupInsertChain(created);
-    const result = await criarContaBancaria({ banco: 'Bradesco' });
-    expect(insertFn).toHaveBeenCalledWith([{ banco: 'Bradesco' }]);
-    expect(result).toEqual(created);
+  function mockColaborador(empresaId: string | null) {
+    const maybeSingle = vi.fn().mockResolvedValue({
+      data: empresaId === null ? null : { id: 'c1', empresa_id: empresaId },
+      error: null,
+    });
+    const eqFn = vi.fn().mockReturnValue({ maybeSingle });
+    const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
+    mockFrom.mockReturnValueOnce({ select: selectFn });
+    return { selectFn, eqFn, maybeSingle };
+  }
+
+  function mockPrincipalCount(count: number) {
+    const response = { count, error: null };
+    const chain: any = {};
+    chain.eq = vi.fn().mockReturnValue(chain);
+    chain.then = (fn: any) => Promise.resolve(response).then(fn);
+    const selectFn = vi.fn().mockReturnValue(chain);
+    mockFrom.mockReturnValueOnce({ select: selectFn });
+    return { selectFn, chain };
+  }
+
+  function mockInsert(data: any, error: any = null) {
+    const maybeSingle = vi.fn().mockResolvedValue({ data, error });
+    const selectFn = vi.fn().mockReturnValue({ maybeSingle });
+    const insertFn = vi.fn().mockReturnValue({ select: selectFn });
+    mockFrom.mockReturnValueOnce({ insert: insertFn });
+    return { insertFn, selectFn, maybeSingle };
+  }
+
+  it('rejeita quando empresaId não é informado', async () => {
+    await expect(criarContaBancaria({ colaborador_id: 'c1' }, '')).rejects.toThrow('empresa_id obrigatório');
+  });
+
+  it('rejeita quando colaborador_id não é informado', async () => {
+    await expect(criarContaBancaria({}, 'emp-1')).rejects.toThrow('colaborador_id obrigatório');
+  });
+
+  it('rejeita quando o colaborador não existe', async () => {
+    mockColaborador(null);
+    await expect(criarContaBancaria({ colaborador_id: 'c1' }, 'emp-1')).rejects.toThrow('isolamento de tenant');
+  });
+
+  it('rejeita quando o colaborador pertence a outra empresa', async () => {
+    mockColaborador('emp-OUTRA');
+    await expect(criarContaBancaria({ colaborador_id: 'c1' }, 'emp-1')).rejects.toThrow('isolamento de tenant');
+  });
+
+  it('injeta empresa_id no insert e ignora qualquer empresa_id vindo do chamador', async () => {
+    mockColaborador('emp-1');
+    const { insertFn } = mockInsert({ id: 'cb-new', empresa_id: 'emp-1' });
+    await criarContaBancaria({ colaborador_id: 'c1', banco_nome: 'X', empresa_id: 'emp-FORJADA' }, 'emp-1');
+    expect(insertFn).toHaveBeenCalledWith([{ colaborador_id: 'c1', banco_nome: 'X', empresa_id: 'emp-1' }]);
+  });
+
+  it('permite criar a primeira conta principal quando nenhuma existe', async () => {
+    mockColaborador('emp-1');
+    mockPrincipalCount(0);
+    const { insertFn } = mockInsert({ id: 'cb-new' });
+    await criarContaBancaria({ colaborador_id: 'c1', principal: true }, 'emp-1');
+    expect(insertFn).toHaveBeenCalled();
+  });
+
+  it('bloqueia a criação de uma segunda conta principal para o mesmo colaborador', async () => {
+    mockColaborador('emp-1');
+    mockPrincipalCount(1);
+    await expect(criarContaBancaria({ colaborador_id: 'c1', principal: true }, 'emp-1'))
+      .rejects.toThrow('Este colaborador já possui uma conta bancária principal.');
+  });
+
+  it('não realiza insert nem qualquer alteração na conta principal existente ao bloquear', async () => {
+    mockColaborador('emp-1');
+    mockPrincipalCount(1);
+    await expect(criarContaBancaria({ colaborador_id: 'c1', principal: true }, 'emp-1')).rejects.toThrow();
+    // Só as duas checagens (colaborador + contagem de principal) ocorreram — nenhum insert/update.
+    expect(mockFrom).toHaveBeenCalledTimes(2);
+  });
+
+  it('permite criar uma conta não-principal mesmo já existindo uma principal (não faz a checagem de contagem)', async () => {
+    mockColaborador('emp-1');
+    const { insertFn } = mockInsert({ id: 'cb-new' });
+    await criarContaBancaria({ colaborador_id: 'c1', principal: false }, 'emp-1');
+    expect(insertFn).toHaveBeenCalled();
   });
 
   it('throws when data is null', async () => {
-    setupInsertChain(null);
-    await expect(criarContaBancaria({})).rejects.toThrow('Nenhum registro de conta bancária foi retornado.');
+    mockColaborador('emp-1');
+    mockInsert(null);
+    await expect(criarContaBancaria({ colaborador_id: 'c1' }, 'emp-1')).rejects.toThrow('Nenhum registro de conta bancária foi retornado.');
   });
 });
 

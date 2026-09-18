@@ -62,7 +62,9 @@ import {
   useCentrosCusto,
   useCriarCentroCusto,
   useContasBancarias,
+  useCriarContaBancaria,
 } from '../useTabelasReferencia';
+import { TEST_EMPRESA_ID } from '@/test/empresaMock';
 
 function wrapper({ children }: { children: React.ReactNode }) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
@@ -146,5 +148,25 @@ describe('useContasBancarias', () => {
     const { result } = renderHook(() => useContasBancarias('col-1'), { wrapper });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
     expect(mockListarContasBancarias).toHaveBeenCalledWith('col-1', '00000000-0000-0000-0000-0000000000e1');
+  });
+});
+
+// PARTE 4B: empresa_id passa a vir sempre da empresa atual do contexto
+// (useEmpresas), nunca de um campo informado pelo chamador.
+describe('useCriarContaBancaria', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockCriarContaBancaria.mockResolvedValue({ id: 'cb-new' });
+  });
+
+  it('chama criarContaBancaria com o empresaId da empresa atual do contexto', async () => {
+    const { result } = renderHook(() => useCriarContaBancaria(), { wrapper });
+    await act(async () => {
+      await result.current.mutateAsync({ colaborador_id: 'col-1', banco_nome: 'X' });
+    });
+    expect(mockCriarContaBancaria).toHaveBeenCalledWith(
+      { colaborador_id: 'col-1', banco_nome: 'X' },
+      TEST_EMPRESA_ID
+    );
   });
 });

@@ -1,3 +1,5 @@
+import type { Database } from '@/integrations/supabase/types';
+
 export interface Cargo {
   id: string;
   nome: string;
@@ -50,7 +52,7 @@ export interface Colaborador {
   nome_completo: string;
   cpf: string;
   email: string;
-  status: 'ativo' | 'afastado' | 'desligado';
+  status: Database['public']['Enums']['status_colaborador'];
   departamento?: string;
   cargo?: string;
   empresa_id: string;

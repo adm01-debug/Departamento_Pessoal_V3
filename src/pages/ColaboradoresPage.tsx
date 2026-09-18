@@ -26,12 +26,14 @@ import { EntityPageContainer } from '@/components/layout/EntityPageContainer';
 import { Colaborador } from '@/types/entities';
 import { StatCardSkeleton } from '@/components/ui/module-skeleton';
 import { loggerService } from '@/services/loggerService';
-import { MOCK_MODE, MOCK_COLABORADORES, MOCK_SUMMARY } from '@/mocks/colaboradoresMock';
 
 export default function ColaboradoresPage() {
   const navigate = useNavigate();
-  const { departamentos } = useDepartamentos();
-  const { cargos } = useCargos();
+  // pageSize alto (limite do BaseService) para que o dropdown de filtro liste
+  // todos os departamentos/cargos da empresa, sem afetar a paginação padrão
+  // usada pelas telas administrativas de Departamentos/Cargos.
+  const { departamentos } = useDepartamentos({ pageSize: 100 });
+  const { cargos } = useCargos({ pageSize: 100 });
   const { exportarExcel } = useExcelExport();
   const { exportarPDF } = usePDFExport();
   const { empresaAtual } = useEmpresas();
@@ -82,9 +84,10 @@ export default function ColaboradoresPage() {
     setPage(1);
   }, [setCargo, setPage]);
 
+  // Os cinco status refletem exatamente o enum `status_colaborador` do banco.
   const statusOptions = [
     { value: 'ativo', label: 'Ativos' },
-    { value: 'inativo', label: 'Inativos' },
+    { value: 'pendente', label: 'Pendentes' },
     { value: 'desligado', label: 'Desligados' },
     { value: 'ferias', label: 'Em Férias' },
     { value: 'afastado', label: 'Afastados' },
@@ -158,10 +161,14 @@ export default function ColaboradoresPage() {
     }
   };
 
-  const itemsExibidos = MOCK_MODE ? (MOCK_COLABORADORES as unknown as Colaborador[]) : colaboradores;
-  const totalExibido = MOCK_MODE ? MOCK_COLABORADORES.length : total;
-  const summaryExibido = MOCK_MODE ? MOCK_SUMMARY : summary;
-  const isLoadingExibido = MOCK_MODE ? false : isLoading;
+  // PARTE 2B: listagem passou a consumir sempre dados reais (useColaboradores).
+  // MOCK_MODE (em @/mocks/colaboradoresMock) permanece ativo apenas para o
+  // Dossiê do Colaborador (ColaboradorDetalhesPage e afins), que não é
+  // alterado nesta etapa — ver relatório para detalhes.
+  const itemsExibidos = colaboradores;
+  const totalExibido = total;
+  const summaryExibido = summary;
+  const isLoadingExibido = isLoading;
 
   return (
     <EntityPageContainer<Colaborador>

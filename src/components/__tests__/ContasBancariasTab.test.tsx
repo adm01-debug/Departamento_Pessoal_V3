@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 vi.mock('@/hooks/useTabelasReferencia', () => ({
   useContasBancarias: vi.fn(),
@@ -31,9 +32,9 @@ vi.mock('@/components/ui/select', () => ({
   SelectItem: ({ children, value }: any) => <div data-value={value}>{children}</div>,
 }));
 
-import { useContasBancarias } from '@/hooks/useTabelasReferencia';
+import { useContasBancarias, useCriarContaBancaria } from '@/hooks/useTabelasReferencia';
 import { ContasBancariasTab } from '../colaborador-detalhes/ContasBancariasTab';
-import { maskBankAccount } from '@/utils/piiMask';
+import { maskBankAccount, maskPixKey } from '@/utils/piiMask';
 
 const MOCK_CONTAS = [
   { id: 'c1', banco_nome: 'Banco do Brasil', banco_codigo: '001', agencia: '1234', conta: '56789-0', tipo_conta: 'Corrente', pix_tipo: 'CPF', pix_chave: '123.456.789-00', principal: true },
@@ -80,15 +81,159 @@ describe('ContasBancariasTab', () => {
     expect(screen.queryByText('56789-0')).not.toBeInTheDocument();
   });
 
-  it('renders pix info', () => {
+  it('renders pix info mascarada — chave Pix nunca aparece em texto claro (PARTE 4B)', () => {
     vi.mocked(useContasBancarias).mockReturnValue({ data: MOCK_CONTAS, isLoading: false } as any);
     render(<ContasBancariasTab colaboradorId="col-1" />);
-    expect(screen.getByText(/CPF: 123\.456/)).toBeInTheDocument();
+    expect(screen.getByText(new RegExp(`CPF: ${maskPixKey(MOCK_CONTAS[0].pix_chave)}`))).toBeInTheDocument();
+    expect(screen.queryByText(/123\.456\.789-00/)).not.toBeInTheDocument();
   });
 
   it('renders principal badge', () => {
     vi.mocked(useContasBancarias).mockReturnValue({ data: MOCK_CONTAS, isLoading: false } as any);
     render(<ContasBancariasTab colaboradorId="col-1" />);
     expect(screen.getAllByText('Sim').length).toBeGreaterThanOrEqual(1);
+  });
+
+  describe('aviso de conta principal (PARTE 4B)', () => {
+    it('não exibe alerta quando existe exatamente uma conta principal', () => {
+      vi.mocked(useContasBancarias).mockReturnValue({ data: MOCK_CONTAS, isLoading: false } as any);
+      render(<ContasBancariasTab colaboradorId="col-1" />);
+      expect(screen.queryByText(/Nenhuma conta principal/)).not.toBeInTheDocument();
+      expect(screen.queryByText(/Mais de uma conta principal/)).not.toBeInTheDocument();
+    });
+
+    it('exibe alerta quando nenhuma conta é principal', () => {
+      const contasSemPrincipal = [{ ...MOCK_CONTAS[0], principal: false }];
+      vi.mocked(useContasBancarias).mockReturnValue({ data: contasSemPrincipal, isLoading: false } as any);
+      render(<ContasBancariasTab colaboradorId="col-1" />);
+      expect(screen.getByText(/Nenhuma conta principal definida/)).toBeInTheDocument();
+    });
+
+    it('exibe alerta quando existe mais de uma conta principal', () => {
+      const duasPrincipais = [
+        { ...MOCK_CONTAS[0], id: 'c1', principal: true },
+        { ...MOCK_CONTAS[0], id: 'c2', principal: true },
+      ];
+      vi.mocked(useContasBancarias).mockReturnValue({ data: duasPrincipais, isLoading: false } as any);
+      render(<ContasBancariasTab colaboradorId="col-1" />);
+      expect(screen.getByText(/Mais de uma conta principal encontrada/)).toBeInTheDocument();
+    });
+
+    it('não exibe nenhum alerta de principal quando não há contas cadastradas', () => {
+      vi.mocked(useContasBancarias).mockReturnValue({ data: [], isLoading: false } as any);
+      render(<ContasBancariasTab colaboradorId="col-1" />);
+      expect(screen.queryByText(/Nenhuma conta principal/)).not.toBeInTheDocument();
+      expect(screen.queryByText(/Mais de uma conta principal/)).not.toBeInTheDocument();
+    });
+  });
+
+  describe('bloqueio de segunda conta principal no formulário (PARTE 4B)', () => {
+    it('não chama criar.mutateAsync ao tentar marcar uma segunda conta como principal', async () => {
+      const mutateAsync = vi.fn();
+      vi.mocked(useCriarContaBancaria).mockReturnValue({ mutateAsync, isPending: false } as any);
+      // já existe uma conta principal para este colaborador
+      vi.mocked(useContasBancarias).mockReturnValue({ data: MOCK_CONTAS, isLoading: false } as any);
+      render(<ContasBancariasTab colaboradorId="col-1" />);
+
+      // PARTE 4E: ordem dos textboxes agora inclui os dígitos opcionais entre
+      // agência/conta (banco_codigo, banco_nome, agencia, agencia_digito, conta, digito).
+      const [, nomeBanco, agencia, , conta] = screen.getAllByRole('textbox');
+      fireEvent.change(nomeBanco, { target: { value: 'Banco X' } });
+      fireEvent.change(agencia, { target: { value: '0001' } });
+      fireEvent.change(conta, { target: { value: '12345-6' } });
+      fireEvent.click(screen.getByRole('checkbox'));
+
+      await userEvent.click(screen.getByRole('button', { name: 'Salvar' }));
+
+      expect(mutateAsync).not.toHaveBeenCalled();
+    });
+
+    it('permite criar uma conta não-principal mesmo já existindo uma principal', async () => {
+      const mutateAsync = vi.fn().mockResolvedValue({ id: 'nova' });
+      vi.mocked(useCriarContaBancaria).mockReturnValue({ mutateAsync, isPending: false } as any);
+      vi.mocked(useContasBancarias).mockReturnValue({ data: MOCK_CONTAS, isLoading: false } as any);
+      render(<ContasBancariasTab colaboradorId="col-1" />);
+
+      // PARTE 4E: ordem dos textboxes agora inclui os dígitos opcionais entre
+      // agência/conta (banco_codigo, banco_nome, agencia, agencia_digito, conta, digito).
+      const [, nomeBanco, agencia, , conta] = screen.getAllByRole('textbox');
+      fireEvent.change(nomeBanco, { target: { value: 'Banco X' } });
+      fireEvent.change(agencia, { target: { value: '0001' } });
+      fireEvent.change(conta, { target: { value: '12345-6' } });
+      // checkbox "principal" NÃO marcado
+
+      await userEvent.click(screen.getByRole('button', { name: 'Salvar' }));
+
+      expect(mutateAsync).toHaveBeenCalledTimes(1);
+      expect(mutateAsync).toHaveBeenCalledWith(expect.objectContaining({ principal: false }));
+    });
+
+    it('permite criar a primeira conta principal quando nenhuma existe ainda', async () => {
+      const mutateAsync = vi.fn().mockResolvedValue({ id: 'nova' });
+      vi.mocked(useCriarContaBancaria).mockReturnValue({ mutateAsync, isPending: false } as any);
+      vi.mocked(useContasBancarias).mockReturnValue({ data: [], isLoading: false } as any);
+      render(<ContasBancariasTab colaboradorId="col-1" />);
+
+      // PARTE 4E: ordem dos textboxes agora inclui os dígitos opcionais entre
+      // agência/conta (banco_codigo, banco_nome, agencia, agencia_digito, conta, digito).
+      const [, nomeBanco, agencia, , conta] = screen.getAllByRole('textbox');
+      fireEvent.change(nomeBanco, { target: { value: 'Banco X' } });
+      fireEvent.change(agencia, { target: { value: '0001' } });
+      fireEvent.change(conta, { target: { value: '12345-6' } });
+      fireEvent.click(screen.getByRole('checkbox'));
+
+      await userEvent.click(screen.getByRole('button', { name: 'Salvar' }));
+
+      expect(mutateAsync).toHaveBeenCalledTimes(1);
+      expect(mutateAsync).toHaveBeenCalledWith(expect.objectContaining({ principal: true }));
+    });
+  });
+
+  describe('dígito da agência e da conta (PARTE 4E)', () => {
+    it('permite informar e persiste agencia_digito e digito ao criar uma conta', async () => {
+      const mutateAsync = vi.fn().mockResolvedValue({ id: 'nova' });
+      vi.mocked(useCriarContaBancaria).mockReturnValue({ mutateAsync, isPending: false } as any);
+      vi.mocked(useContasBancarias).mockReturnValue({ data: [], isLoading: false } as any);
+      render(<ContasBancariasTab colaboradorId="col-1" />);
+
+      const [, nomeBanco, agencia, agenciaDigito, conta, digito] = screen.getAllByRole('textbox');
+      fireEvent.change(nomeBanco, { target: { value: 'Banco X' } });
+      fireEvent.change(agencia, { target: { value: '0001' } });
+      fireEvent.change(agenciaDigito, { target: { value: '2' } });
+      fireEvent.change(conta, { target: { value: '12345' } });
+      fireEvent.change(digito, { target: { value: '6' } });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Salvar' }));
+
+      expect(mutateAsync).toHaveBeenCalledWith(
+        expect.objectContaining({ agencia_digito: '2', digito: '6' })
+      );
+    });
+
+    it('são opcionais — criar sem preenchê-los funciona normalmente', async () => {
+      const mutateAsync = vi.fn().mockResolvedValue({ id: 'nova' });
+      vi.mocked(useCriarContaBancaria).mockReturnValue({ mutateAsync, isPending: false } as any);
+      vi.mocked(useContasBancarias).mockReturnValue({ data: [], isLoading: false } as any);
+      render(<ContasBancariasTab colaboradorId="col-1" />);
+
+      const [, nomeBanco, agencia, , conta] = screen.getAllByRole('textbox');
+      fireEvent.change(nomeBanco, { target: { value: 'Banco X' } });
+      fireEvent.change(agencia, { target: { value: '0001' } });
+      fireEvent.change(conta, { target: { value: '12345' } });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Salvar' }));
+
+      expect(mutateAsync).toHaveBeenCalledWith(
+        expect.objectContaining({ agencia_digito: '', digito: '' })
+      );
+    });
+
+    it('exibe o dígito ao lado da agência/conta mascaradas quando presente', () => {
+      const contaComDigito = [{ ...MOCK_CONTAS[0], agencia_digito: '2', digito: '6' }];
+      vi.mocked(useContasBancarias).mockReturnValue({ data: contaComDigito, isLoading: false } as any);
+      render(<ContasBancariasTab colaboradorId="col-1" />);
+      expect(screen.getByText(`${maskBankAccount('1234')}-2`)).toBeInTheDocument();
+      expect(screen.getByText(`${maskBankAccount('56789-0')}-6`)).toBeInTheDocument();
+    });
   });
 });

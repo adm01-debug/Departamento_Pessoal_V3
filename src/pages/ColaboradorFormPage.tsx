@@ -27,8 +27,13 @@ import { useDepartamentos } from '@/hooks/useDepartamentos';
 import { useCargos } from '@/hooks/useCargos';
 import { useFormGuard } from '@/hooks/useFormGuard';
 import { useServerValidation } from '@/hooks/useServerValidation';
+import { useEmpresas } from '@/hooks/useEmpresas';
+import { ContasBancariasTab } from '@/components/colaborador-detalhes/ContasBancariasTab';
 
-const schema = z.object({
+// Exportado apenas para testes (validação direta dos enums corrigidos na
+// Parte 3A) — continua sendo o único schema efetivamente usado pelo formulário.
+// eslint-disable-next-line react-refresh/only-export-components
+export const schema = z.object({
   // Geral
   nome_completo: z.string().min(3, 'Nome deve ter no mínimo 3 caracteres'),
   nome_social: z.string().optional(),
@@ -37,11 +42,17 @@ const schema = z.object({
   telefone: z.string().optional(),
   celular: z.string().optional(),
   data_nascimento: z.string().min(1, 'Data de nascimento obrigatória'),
+  // DECISÃO DE NEGÓCIO NECESSÁRIA — SEXO "OUTRO": o enum `sexo` no banco só
+  // aceita 'masculino' | 'feminino' (ver src/integrations/supabase/types.ts).
+  // A opção 'outro' abaixo diverge do banco e falha ao salvar. Não alterada
+  // nesta etapa por ser uma decisão de produto, não técnica — ver auditoria
+  // da Parte 3 (será tratada separadamente).
   sexo: z.enum(['masculino', 'feminino', 'outro']).default('masculino'),
-  estado_civil: z.enum(['solteiro', 'casado', 'divorciado', 'viuvo', 'uniao_estavel']).default('solteiro'),
+  // Enum real do banco (estado_civil) inclui 'separado'.
+  estado_civil: z.enum(['solteiro', 'casado', 'divorciado', 'viuvo', 'uniao_estavel', 'separado']).default('solteiro'),
   nome_mae: z.string().min(1, 'Nome da mãe obrigatório'),
   nome_pai: z.string().optional(),
-  
+
   // Endereço
   cep: z.string().optional(),
   logradouro: z.string().optional(),
@@ -56,16 +67,19 @@ const schema = z.object({
   salario_base: z.number().positive('Salário deve ser positivo'),
   cargo: z.string().min(1, 'Cargo obrigatório'),
   departamento: z.string().min(1, 'Departamento obrigatório'),
-  tipo_contrato: z.enum(['clt', 'pj', 'estagio', 'temporario', 'autonomo']).default('clt'),
-  status: z.string().default('ativo'),
+  // Valores exatos do enum `tipo_contrato` do banco — 'autonomo' não existe.
+  tipo_contrato: z.enum(['clt', 'pj', 'estagiario', 'temporario', 'intermitente', 'aprendiz']).default('clt'),
+  // Valores exatos do enum `status_colaborador` do banco — 'inativo' não existe.
+  status: z.enum(['ativo', 'pendente', 'desligado', 'ferias', 'afastado']).default('ativo'),
   matricula: z.string().optional(),
 
-  // Bancário
-  banco_codigo: z.string().optional(),
-  agencia: z.string().optional(),
-  conta: z.string().optional(),
-  tipo_conta: z.string().optional(),
-  pix_chave: z.string().optional(),
+  // PARTE 4E: dados bancários deixaram de ser coletados por este formulário.
+  // colaboradores.banco_codigo/banco_nome/agencia/conta/tipo_conta/pix_chave/
+  // pix_tipo continuam existindo no banco (usados temporariamente pelo
+  // holerite legado — Parte 4D) e no tipo `Colaborador`, mas este formulário
+  // não os lê nem os grava mais. A única interface para dados bancários
+  // passa a ser `contas_bancarias`, via `ContasBancariasTab` (aba
+  // "Financeiro" abaixo, para colaboradores já existentes).
 
   // Documentos
   rg: z.string().optional(),
@@ -77,6 +91,28 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 type FormInput = z.input<typeof schema>;
 
+// PARTE 3B: colunas TEXT opcionais e nullable em `colaboradores` (confirmado
+// em src/integrations/supabase/types.ts — todas `?: string | null` nos tipos
+// Insert/Update). Strings vazias digitadas nesses campos viram `null` antes
+// de enviar ao service, em vez de gravar "" no banco. Não inclui campos
+// obrigatórios, enums, números, datas, CPF, dados bancários ou documentos —
+// esses não são tocados nesta normalização.
+// eslint-disable-next-line react-refresh/only-export-components
+export const NULLABLE_TEXT_FIELDS = [
+  'nome_social', 'nome_pai', 'telefone', 'celular', 'email',
+  'cep', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf',
+  'matricula',
+] as const satisfies readonly (keyof FormData)[];
+
+// eslint-disable-next-line react-refresh/only-export-components
+export function normalizarPayloadColaborador(data: FormData): Record<string, unknown> {
+  const payload: Record<string, unknown> = { ...data };
+  for (const field of NULLABLE_TEXT_FIELDS) {
+    if (payload[field] === '') payload[field] = null;
+  }
+  return payload;
+}
+
 export default function ColaboradorFormPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -85,9 +121,13 @@ export default function ColaboradorFormPage() {
   const { handleServerError } = useServerValidation<FormInput>();
   const [activeTab, setActiveTab] = useState('geral');
   const isEditing = !!id;
+  const { empresaAtual } = useEmpresas();
 
-  const { departamentos } = useDepartamentos();
-  const { cargos } = useCargos();
+  // pageSize alto (limite do BaseService) para listar todos os departamentos/
+  // cargos da empresa nos selects deste formulário — mesma técnica já
+  // aplicada aos dropdowns de filtro da listagem de Colaboradores.
+  const { departamentos } = useDepartamentos({ pageSize: 100 });
+  const { cargos } = useCargos({ pageSize: 100 });
 
   const { data: colaborador, isLoading } = useQuery({
     queryKey: ['colaborador', id],
@@ -114,7 +154,23 @@ export default function ColaboradorFormPage() {
   }, [colaborador, reset]);
 
   const mutation = useMutation({
-    mutationFn: (data: FormData) => isEditing ? (colaboradorService as any).atualizar(id!, data as any) : (colaboradorService as any).criar(data as any),
+    // PARTE 3A: empresa_id nunca é lido do formulário/usuário.
+    // - Criação: sempre usa a empresa atual do contexto (useEmpresas) —
+    //   `onSubmit` abaixo já garante que empresaAtual existe antes de chegar
+    //   aqui.
+    // - Edição: usa o empresa_id do próprio registro carregado (nunca o da
+    //   empresa atual do contexto), via o wrapper `update()` que preserva a
+    //   validação de tenant já existente em BaseService.atualizar.
+    mutationFn: (data: FormData) => {
+      // PARTE 3B: normaliza "" -> null nos campos TEXT opcionais/nullable
+      // antes de enviar — não mexe em obrigatórios, enums, números, datas,
+      // CPF, bancário ou documentos (ver NULLABLE_TEXT_FIELDS).
+      const payload = normalizarPayloadColaborador(data);
+      if (isEditing) {
+        return (colaboradorService as any).update(id!, payload, colaborador?.empresa_id);
+      }
+      return (colaboradorService as any).create({ ...payload, empresa_id: empresaAtual!.id });
+    },
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['colaboradores'] });
@@ -122,6 +178,26 @@ export default function ColaboradorFormPage() {
       navigate('/colaboradores');
     },
     onError: (err: any) => handleServerError(err, setError)});
+
+  const onSubmit = (data: FormData) => {
+    if (!isEditing) {
+      if (!empresaAtual?.id) {
+        notifyError('Nenhuma empresa selecionada', 'Selecione uma empresa antes de cadastrar um colaborador.');
+        return;
+      }
+    } else {
+      const colaboradorEmpresaId = colaborador?.empresa_id;
+      if (!colaboradorEmpresaId) {
+        notifyError('Empresa não identificada', 'Não foi possível identificar a empresa deste colaborador. Recarregue a página e tente novamente.');
+        return;
+      }
+      if (empresaAtual?.id && empresaAtual.id !== colaboradorEmpresaId) {
+        notifyError('Empresa divergente', 'Este colaborador pertence a outra empresa. Troque de empresa para editá-lo.');
+        return;
+      }
+    }
+    mutation.mutate(data);
+  };
 
   const handleAddressFound = (addr: Address) => {
     setValue('logradouro', addr.logradouro);
@@ -156,7 +232,7 @@ export default function ColaboradorFormPage() {
             </Button>
             <Button 
               className="h-11 rounded-xl px-6 gap-2 bg-primary text-primary-foreground shadow-glow hover:shadow-glow-lg transition-all"
-              onClick={handleSubmit((data) => mutation.mutate(data))}
+              onClick={handleSubmit(onSubmit)}
               disabled={mutation.isPending}
             >
               {mutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
@@ -210,32 +286,47 @@ export default function ColaboradorFormPage() {
                       </div>
 
                       <FormField label="Data Nascimento" type="date" {...register('data_nascimento')} error={errors.data_nascimento?.message} />
-                      
-                      <FormField label="Email Pessoal" type="email" {...register('email')} error={errors.email?.message} placeholder="joao@exemplo.com" />
-                      
+
+                      {/* PARTE 3B: rótulo neutro — `email` é usado de forma
+                          genérica em todo o sistema (inclusive vínculo de
+                          usuário/portal), não é exclusivamente "pessoal". */}
+                      <FormField label="E-mail" type="email" {...register('email')} error={errors.email?.message} placeholder="joao@exemplo.com" />
+
+                      {/* PARTE 3B: telefone e celular são colunas independentes
+                          no banco — cada uma com seu próprio campo, sem cópia
+                          automática entre elas (evita perder o telefone fixo
+                          já cadastrado ao editar só o celular, e vice-versa). */}
                       <div className="space-y-2">
-                        <label className="text-sm font-medium">Celular (WhatsApp)</label>
-                        <PhoneInput value={watch('celular') || watch('telefone')} onChange={(v) => setValue('celular', v)} />
+                        <label className="text-sm font-medium">Telefone</label>
+                        <PhoneInput value={watch('telefone')} onChange={(v) => setValue('telefone', v)} />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Celular / WhatsApp</label>
+                        <PhoneInput value={watch('celular')} onChange={(v) => setValue('celular', v)} />
                       </div>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-border/20">
-                    <FormSelect 
-                      label="Sexo" 
+                    {/* DECISÃO DE NEGÓCIO NECESSÁRIA — SEXO "OUTRO": opção mantida
+                        por ora (não é uma decisão técnica); ver comentário no
+                        schema acima e a auditoria da Parte 3. */}
+                    <FormSelect
+                      label="Sexo"
                       value={watch('sexo')}
-                      options={[{ value: 'masculino', label: 'Masculino' }, { value: 'feminino', label: 'Feminino' }, { value: 'outro', label: 'Outro' }]} 
-                      onChange={(v) => setValue('sexo', v as any)} 
+                      options={[{ value: 'masculino', label: 'Masculino' }, { value: 'feminino', label: 'Feminino' }, { value: 'outro', label: 'Outro' }]}
+                      onChange={(v) => setValue('sexo', v as any)}
                     />
-                    <FormSelect 
-                      label="Estado Civil" 
+                    <FormSelect
+                      label="Estado Civil"
                       value={watch('estado_civil')}
                       options={[
                         { value: 'solteiro', label: 'Solteiro(a)' }, { value: 'casado', label: 'Casado(a)' },
                         { value: 'divorciado', label: 'Divorciado(a)' }, { value: 'viuvo', label: 'Viúvo(a)' },
+                        { value: 'separado', label: 'Separado(a)' },
                         { value: 'uniao_estavel', label: 'União Estável' },
-                      ]} 
-                      onChange={(v) => setValue('estado_civil', v as any)} 
+                      ]}
+                      onChange={(v) => setValue('estado_civil', v as any)}
                     />
                     <FormField label="Matrícula Interna" {...register('matricula')} placeholder="Ex: 0001" />
                   </div>
@@ -265,14 +356,15 @@ export default function ColaboradorFormPage() {
                       <CurrencyInput value={watch('salario_base')} onChange={(v) => setValue('salario_base', v)} />
                       {errors.salario_base && <p className="text-xs text-destructive">{errors.salario_base.message}</p>}
                     </div>
-                    <FormSelect 
-                      label="Tipo de Contrato" 
+                    <FormSelect
+                      label="Tipo de Contrato"
                       value={watch('tipo_contrato')}
                       options={[
                         { value: 'clt', label: 'CLT (Efetivo)' }, { value: 'pj', label: 'PJ (Prestador)' },
-                        { value: 'estagio', label: 'Estágio' }, { value: 'temporario', label: 'Temporário' },
-                      ]} 
-                      onChange={(v) => setValue('tipo_contrato', v as any)} 
+                        { value: 'estagiario', label: 'Estágio' }, { value: 'temporario', label: 'Temporário' },
+                        { value: 'intermitente', label: 'Intermitente' }, { value: 'aprendiz', label: 'Aprendiz' },
+                      ]}
+                      onChange={(v) => setValue('tipo_contrato', v as any)}
                     />
                   </div>
 
@@ -294,16 +386,17 @@ export default function ColaboradorFormPage() {
                   </div>
 
                   <div className="pt-4 border-t border-border/20">
-                    <FormSelect 
-                      label="Status Atual" 
+                    <FormSelect
+                      label="Status Atual"
                       value={watch('status')}
                       options={[
-                        { value: 'ativo', label: 'Ativo' }, 
-                        { value: 'afastado', label: 'Afastado' },
+                        { value: 'ativo', label: 'Ativo' },
+                        { value: 'pendente', label: 'Pendente' },
+                        { value: 'desligado', label: 'Desligado' },
                         { value: 'ferias', label: 'Em Férias' },
-                        { value: 'inativo', label: 'Desligado' },
-                      ]} 
-                      onChange={(v) => setValue('status', v)} 
+                        { value: 'afastado', label: 'Afastado' },
+                      ]}
+                      onChange={(v) => setValue('status', v as any)}
                     />
                   </div>
                 </CardContent>
@@ -348,37 +441,28 @@ export default function ColaboradorFormPage() {
             </motion.div>
           </TabsContent>
 
-          {/* TAB FINANCEIRO */}
+          {/* TAB FINANCEIRO — PARTE 4E: única interface para dados bancários
+              passou a ser `contas_bancarias` (aba reutilizada do Dossiê).
+              Colaborador novo ainda não tem `id`, então não há como criar uma
+              conta bancária ainda (contas_bancarias.colaborador_id é NOT
+              NULL) — o cadastro bancário só fica disponível depois de salvar. */}
           <TabsContent value="bancario">
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-              <Card className="border border-border/30 rounded-2xl overflow-hidden shadow-elevated">
-                <CardHeader>
-                  <CardTitle className="font-display flex items-center gap-2">
-                    <Landmark className="h-5 w-5 text-primary" />
-                    Dados Bancários para Pagamento
-                  </CardTitle>
-                  <CardDescription>Configure como o colaborador receberá seus proventos</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField label="Código do Banco" {...register('banco_codigo')} placeholder="Ex: 001, 341, 033" />
-                    <FormSelect 
-                      label="Tipo de Conta" 
-                      value={watch('tipo_conta')}
-                      options={[
-                        { value: 'corrente', label: 'Conta Corrente' }, 
-                        { value: 'poupanca', label: 'Poupança' },
-                      ]}
-                      onChange={(v) => setValue('tipo_conta', v)}
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <FormField label="Agência" {...register('agencia')} />
-                    <FormField label="Conta com DV" {...register('conta')} />
-                    <FormField label="Chave PIX (Opcional)" {...register('pix_chave')} />
-                  </div>
-                </CardContent>
-              </Card>
+              {isEditing ? (
+                <ContasBancariasTab colaboradorId={id!} />
+              ) : (
+                <Card className="border border-dashed border-border/50 rounded-2xl overflow-hidden">
+                  <CardHeader>
+                    <CardTitle className="font-display flex items-center gap-2">
+                      <Landmark className="h-5 w-5 text-muted-foreground" />
+                      Dados Bancários para Pagamento
+                    </CardTitle>
+                    <CardDescription>
+                      Salve o colaborador primeiro — a conta bancária poderá ser cadastrada logo em seguida, nesta mesma aba.
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              )}
             </motion.div>
           </TabsContent>
 

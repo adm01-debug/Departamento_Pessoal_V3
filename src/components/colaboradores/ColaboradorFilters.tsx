@@ -44,7 +44,7 @@ export function ColaboradorFilters({
             <SelectContent>
               <SelectItem value="all">Todos Status</SelectItem>
               <SelectItem value="ativo">Ativo</SelectItem>
-              <SelectItem value="inativo">Inativo</SelectItem>
+              <SelectItem value="pendente">Pendente</SelectItem>
               <SelectItem value="desligado">Desligado</SelectItem>
               <SelectItem value="ferias">Férias</SelectItem>
               <SelectItem value="afastado">Afastado</SelectItem>
