@@ -48,7 +48,7 @@ export function QuickActionsMenu() {
         <Button variant="outline" size="sm" className="h-8 rounded-xl gap-2 shadow-xs hover:bg-background hover:text-foreground hover:shadow-glow">
           <Zap className="h-4 w-4 text-primary" />
           <span className="hidden sm:inline">Ações Rápidas</span>
-          <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+          <ChevronDown className="dp-dropdown-anim-chevron h-3.5 w-3.5 opacity-60 transition-transform duration-[165ms] ease-out group-data-[state=open]:rotate-180" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56 rounded-xl">

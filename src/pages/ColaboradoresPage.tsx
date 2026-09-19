@@ -1,18 +1,21 @@
-import { useCallback } from 'react';
-import { cn } from '@/lib/utils';
+import { useCallback, useState } from 'react';
 import { ColaboradorFilters } from '@/components/colaboradores/ColaboradorFilters';
-import { TableCell, TableRow } from '@/components/ui/table';
-import { ColaboradorStatus } from '@/components/ui/status-badge';
-import { Button } from '@/components/ui/button';
-import { UserAvatar } from '@/components/ui/user-avatar';
-import { Eye, Edit, Users, Download, FileSpreadsheet, FileText } from 'lucide-react';
+import { ColaboradorKpiCards } from '@/components/colaboradores/ColaboradorKpiCards';
+import { ColaboradorTable } from '@/components/colaboradores/ColaboradorTable';
+import { ColaboradorPagination } from '@/components/colaboradores/ColaboradorPagination';
+import { ColaboradorDirectoryGrid } from '@/components/colaboradores/ColaboradorDirectoryGrid';
+import { ColaboradorViewMode } from '@/components/colaboradores/ColaboradorViewSwitcher';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { FlowHoverButton } from '@/components/ui/flow-hover-button';
+import { cn } from '@/lib/utils';
+import { Users, Download, FileSpreadsheet, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { useExcelExport } from '@/hooks/useExcelExport';
 import { usePDFExport } from '@/hooks/usePDFExport';
 import { useDepartamentos } from '@/hooks/useDepartamentos';
 import { useCargos } from '@/hooks/useCargos';
 import { useColaboradores } from '@/hooks/useColaboradores';
+import { useVinculosResumo } from '@/hooks/useVinculos';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { colaboradorService } from '@/services/colaboradorService';
 import { toast } from 'sonner';
@@ -22,9 +25,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { EntityPageContainer } from '@/components/layout/EntityPageContainer';
-import { Colaborador } from '@/types/entities';
-import { StatCardSkeleton } from '@/components/ui/module-skeleton';
+import { PageLayout } from '@/components/layout';
+import { PageTitle } from '@/components/PageTitle';
+import { EmptyList, EmptySearch } from '@/components/ui/empty-state';
+import { SyncErrorState } from '@/components/ui/sync-error-state';
+import { TableSkeleton } from '@/components/ui/module-skeleton';
 import { loggerService } from '@/services/loggerService';
 
 export default function ColaboradoresPage() {
@@ -38,15 +43,16 @@ export default function ColaboradoresPage() {
   const { exportarPDF } = usePDFExport();
   const { empresaAtual } = useEmpresas();
 
-  const { 
-    colaboradores, 
+  const {
+    colaboradores,
     total,
-    isLoading, 
+    isLoading,
     isFetching,
     error,
     page,
     setPage,
     pageSize,
+    setPageSize,
     search,
     setSearch,
     status,
@@ -56,12 +62,34 @@ export default function ColaboradoresPage() {
     cargo,
     setCargo,
     refetch,
-    summary
+    summary,
+    departamentosDisponiveis,
+    cargosDisponiveis
   } = useColaboradores();
+
+  // Une os departamentos/cargos cadastrados nas telas administrativas com os
+  // valores realmente usados pelos colaboradores (colaboradorService.listarOpcoesFiltro).
+  // As duas fontes podem divergir — texto livre em `colaboradores` vs. tabelas
+  // mestre `departamentos`/`cargos` — e a união garante que o dropdown nunca
+  // fique vazio quando uma delas não tem dados para a empresa ativa.
+  const departamentosFiltro = Array.from(
+    new Set([...(departamentos ?? []).map((d) => d.nome), ...(departamentosDisponiveis ?? [])])
+  ).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+
+  const cargosFiltro = Array.from(
+    new Set([...(cargos ?? []).map((c) => c.nome), ...(cargosDisponiveis ?? [])])
+  ).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+
+  const [viewMode, setViewMode] = useState<ColaboradorViewMode>('tabela');
 
   const handlePageChange = useCallback((p: number) => {
     setPage(p);
   }, [setPage]);
+
+  const handlePageSizeChange = useCallback((size: number) => {
+    setPageSize(size);
+    setPage(1);
+  }, [setPageSize, setPage]);
 
   // Reset page when search or filters change
   const handleSearchChange = useCallback((val: string) => {
@@ -165,186 +193,138 @@ export default function ColaboradoresPage() {
   // de src/mocks/colaboradoresMock.ts quando VITE_COLABORADORES_MOCK=true (dev only).
   const itemsExibidos = colaboradores;
   const totalExibido = total;
-  const summaryExibido = summary;
+  const summaryExibido = summary as Record<string, number> | undefined;
   const isLoadingExibido = isLoading;
 
-  return (
-    <EntityPageContainer<Colaborador>
-      pageTitle="Colaboradores"
-      pageDescription="Gestão de colaboradores"
-      title="Colaboradores"
-      description={`Gestão analítica de ${totalExibido} talentos da organização`}
-      icon={<Users className="h-5 w-5 text-primary-foreground" />}
-      gradient="from-primary to-primary-glow"
-      entityName="colaborador"
-      items={itemsExibidos}
-      total={totalExibido}
-      isLoading={isLoadingExibido}
-      isFetching={isFetching}
-      error={error}
-      page={page}
-      pageSize={pageSize}
-      search={search}
-      onPageChange={handlePageChange}
-      onSearchChange={handleSearchChange}
-      onRefetch={refetch}
-      actions={
-        <div className="flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="h-11 rounded-xl gap-2 px-4 shadow-xs bg-card/50">
-                <Download className="h-4 w-4" />
-                <span>Exportar Dados</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="rounded-xl w-48">
-              <DropdownMenuItem onClick={handleExportExcel} className="gap-2 cursor-pointer py-2.5">
-                <FileSpreadsheet className="h-4 w-4 text-success" />
-                Excel (.xlsx)
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleExportPDF} className="gap-2 cursor-pointer py-2.5">
-                <FileText className="h-4 w-4 text-destructive" />
-                PDF (.pdf)
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          
-          <Button 
-            onClick={() => navigate('/colaboradores/novo')}
-            className="h-11 rounded-xl px-6 gap-2 bg-primary text-primary-foreground shadow-glow hover:shadow-glow-lg transition-all"
-          >
-            <Users className="h-4 w-4" />
-            Novo Colaborador
-          </Button>
-        </div>
-      }
-      stats={
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-          {statusOptions.map((opt, i) => {
-            const statusKey = opt.value;
-            const isActive = status === statusKey;
-            
-            if (!summaryExibido && isLoadingExibido) return <StatCardSkeleton key={i} />;
+  // Resumo de passagens/recontratação (coluna Vínculo) — 1 query para os ids
+  // da página atual, nunca uma por linha (ver useVinculosResumo).
+  const colaboradorIdsExibidos = itemsExibidos.map((c) => c.id);
+  const { data: passagensPorId } = useVinculosResumo(colaboradorIdsExibidos);
 
-            const count = summaryExibido ? (summaryExibido as any)[statusKey] || 0 : 0;
-            
-            return (
-              <motion.button
-                key={statusKey}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                onClick={() => setStatus(isActive ? 'all' : statusKey)}
-                className={cn(
-                  "p-4 rounded-2xl border transition-all text-left group relative overflow-hidden",
-                  isActive 
-                    ? "bg-primary/5 border-primary shadow-xs" 
-                    : "bg-card/50 border-border/40 hover:border-primary/20 hover:bg-card"
-                )}
-              >
-                {isActive && (
-                  <motion.div 
-                    layoutId="active-indicator"
-                    className="absolute top-0 left-0 w-[2px] h-full bg-primary"
-                  />
-                )}
-                <p className="text-[10px] font-medium uppercase tracking-widest text-muted-foreground mb-1">
-                  {opt.label}
-                </p>
-                <div className="flex items-end justify-between">
-                  <p className={cn(
-                    "text-2xl font-display font-medium",
-                    isActive ? "text-primary" : "text-foreground"
-                  )}>
-                    {count}
-                  </p>
-                  <Users className={cn(
-                    "h-4 w-4 transition-colors",
-                    isActive ? "text-primary" : "text-muted-foreground/30"
-                  )} />
-                </div>
-              </motion.button>
-            );
-          })}
-        </div>
-      }
-      customFilters={
+  const activeFilterChips = [
+    status !== 'all' && {
+      key: 'status',
+      label: `Status: ${statusOptions.find(o => o.value === status)?.label ?? status}`,
+      onRemove: () => handleStatusChange('all'),
+    },
+    departamento !== 'all' && {
+      key: 'departamento',
+      label: `Departamento: ${departamento}`,
+      onRemove: () => handleDeptoChange('all'),
+    },
+    cargo !== 'all' && {
+      key: 'cargo',
+      label: `Cargo: ${cargo}`,
+      onRemove: () => handleCargoChange('all'),
+    },
+  ].filter((f): f is { key: string; label: string; onRemove: () => void } => !!f);
+
+  const handleClearAllFilters = () => {
+    handleStatusChange('all');
+    handleDeptoChange('all');
+    handleCargoChange('all');
+  };
+
+  return (
+    <>
+      <PageTitle title="Colaboradores" description="Gestão de colaboradores" />
+      <PageLayout
+        title="Colaboradores"
+        description={`Gestão analítica de ${totalExibido} talentos da organização`}
+        icon={<Users className="h-5 w-5 text-primary-foreground" />}
+        gradient="from-primary to-primary-glow"
+        actions={
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                {/* Mesma animação "flow" (círculo que preenche o botão no hover) do
+                    botão "Sincronizar" do Dashboard principal — ver DashboardHeader.tsx. */}
+                <FlowHoverButton
+                  className={cn(
+                    buttonVariants({ variant: 'outline', size: 'sm' }),
+                    'gap-2 rounded-xl border-border/50 hover:border-primary/30 hover:bg-primary/5 transition-all font-body h-8 shadow-xs before:bg-primary hover:text-primary-foreground transition-colors',
+                  )}
+                  icon={<Download className="h-4 w-4" />}
+                >
+                  <span>Exportar Dados</span>
+                </FlowHoverButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="rounded-xl w-48">
+                <DropdownMenuItem onClick={handleExportExcel} className="gap-2 cursor-pointer py-2.5">
+                  <FileSpreadsheet className="h-4 w-4 text-success" />
+                  Excel (.xlsx)
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleExportPDF} className="gap-2 cursor-pointer py-2.5">
+                  <FileText className="h-4 w-4 text-destructive" />
+                  PDF (.pdf)
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Button
+              size="sm"
+              onClick={() => navigate('/colaboradores/novo')}
+              className="h-8 rounded-xl gap-2 bg-primary text-primary-foreground shadow-glow hover:shadow-glow-lg transition-all"
+            >
+              <Users className="h-4 w-4" />
+              Novo Colaborador
+            </Button>
+          </div>
+        }
+      >
+        <ColaboradorKpiCards
+          statusOptions={statusOptions}
+          activeStatus={status}
+          onToggle={(s) => setStatus(status === s ? 'all' : s)}
+          summary={summaryExibido}
+          isLoading={isLoadingExibido}
+        />
+
         <ColaboradorFilters
           onSearchChange={handleSearchChange}
           onStatusChange={handleStatusChange}
           onDeptoChange={handleDeptoChange}
           onCargoChange={handleCargoChange}
-          departamentos={departamentos}
-          cargos={cargos}
-          currentFilters={{
-            search,
-            status,
-            departamento,
-            cargo
-          }}
+          departamentos={departamentosFiltro}
+          cargos={cargosFiltro}
+          currentFilters={{ search, status, departamento, cargo }}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          activeFilterChips={activeFilterChips}
+          onClearAllFilters={handleClearAllFilters}
         />
-      }
-      columns={[
-        { header: 'Colaborador', className: 'pl-6' },
-        { header: 'Identificação', hidden: 'sm' },
-        { header: 'Posição', hidden: 'md' },
-        { header: 'Status' },
-        { header: 'Ações', className: 'pr-6 text-right', width: '120px' }
-      ]}
-      renderRow={(c) => (
-        <TableRow
-          key={c.id}
-          className="hover:bg-primary/5 border-b border-border/10 last:border-0 transition-colors cursor-pointer group"
-          onClick={() => navigate(`/colaboradores/${c.id}`)}
-        >
-          <TableCell className="py-4 pl-6">
-            <div className="flex items-center gap-4">
-              <UserAvatar name={c.nome_completo} size="md" className="rounded-xl shadow-xs group-hover:scale-110 transition-transform" />
-              <div>
-                <p className="font-display font-medium text-base leading-tight group-hover:text-primary transition-colors">{c.nome_completo}</p>
-                <p className="text-xs text-muted-foreground font-body mt-0.5">{c.email || 'Sem e-mail cadastrado'}</p>
-              </div>
-            </div>
-          </TableCell>
-          <TableCell className="hidden sm:table-cell">
-            <div className="flex flex-col">
-              <span className="font-body font-medium text-sm">CPF: {c.cpf}</span>
-              <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">MAT: {c.matricula || 'N/A'}</span>
-            </div>
-          </TableCell>
-          <TableCell className="hidden md:table-cell">
-            <div className="flex flex-col">
-              <span className="font-body font-medium text-sm">{c.cargo}</span>
-              <span className="text-[10px] text-primary font-medium uppercase tracking-wider">{c.departamento}</span>
-            </div>
-          </TableCell>
-          <TableCell><ColaboradorStatus status={c.status} /></TableCell>
-          <TableCell className="pr-6 text-right">
-            <div className="flex justify-end gap-1 opacity-40 group-hover:opacity-100 transition-opacity">
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="Visualizar"
-                className="h-9 w-9 rounded-xl hover:bg-info/10 text-info"
-                onClick={(e) => { e.stopPropagation(); navigate(`/colaboradores/${c.id}`); }}
-                title="Ver Perfil"
-              >
-                <Eye className="h-4.5 w-4.5" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="Editar"
-                className="h-9 w-9 rounded-xl hover:bg-primary/10 text-primary"
-                onClick={(e) => { e.stopPropagation(); navigate(`/colaboradores/editar/${c.id}`); }}
-                title="Editar"
-              >
-                <Edit className="h-4.5 w-4.5" />
-              </Button>
-            </div>
-          </TableCell>
-        </TableRow>
-      )}
-    />
+
+        {error ? (
+          <SyncErrorState error={error} onRetry={refetch} entityName="colaboradores" />
+        ) : isLoadingExibido ? (
+          <div className="space-y-4">
+            <TableSkeleton columns={6} rows={pageSize} />
+          </div>
+        ) : totalExibido === 0 ? (
+          <div className="flex flex-col items-center justify-center border border-dashed rounded-2xl bg-muted/10 p-4">
+            {search ? (
+              <EmptySearch search={search} onClear={() => handleSearchChange('')} />
+            ) : (
+              <EmptyList entityName="colaborador" onCreate={() => navigate('/colaboradores/novo')} />
+            )}
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {viewMode === 'diretorio' ? (
+              <ColaboradorDirectoryGrid items={itemsExibidos} isFetching={isFetching} passagensPorId={passagensPorId} />
+            ) : (
+              <ColaboradorTable items={itemsExibidos} isFetching={isFetching} passagensPorId={passagensPorId} />
+            )}
+            <ColaboradorPagination
+              page={page}
+              pageSize={pageSize}
+              total={totalExibido}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
+            />
+          </div>
+        )}
+      </PageLayout>
+    </>
   );
 }

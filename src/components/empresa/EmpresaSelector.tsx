@@ -66,7 +66,7 @@ export const EmpresaSelector = memo(function EmpresaSelector() {
               {empresaAtual?.nome_fantasia || empresaAtual?.razao_social || "Selecionar"}
             </span>
           </div>
-          <ChevronDown className="h-3 w-3 opacity-50" />
+          <ChevronDown className="dp-dropdown-anim-chevron h-3 w-3 opacity-50 transition-transform duration-[165ms] ease-out group-data-[state=open]:rotate-180" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[260px] max-h-[400px] overflow-y-auto">

@@ -28,6 +28,8 @@ describe('ColaboradorFilters', () => {
         onStatusChange={vi.fn()}
         onDeptoChange={vi.fn()}
         onCargoChange={vi.fn()}
+        viewMode="tabela"
+        onViewModeChange={vi.fn()}
         currentFilters={DEFAULT_FILTERS}
       />
     );
@@ -43,6 +45,8 @@ describe('ColaboradorFilters', () => {
         onStatusChange={vi.fn()}
         onDeptoChange={vi.fn()}
         onCargoChange={vi.fn()}
+        viewMode="tabela"
+        onViewModeChange={vi.fn()}
         currentFilters={DEFAULT_FILTERS}
       />
     );
@@ -57,6 +61,8 @@ describe('ColaboradorFilters', () => {
         onStatusChange={vi.fn()}
         onDeptoChange={vi.fn()}
         onCargoChange={vi.fn()}
+        viewMode="tabela"
+        onViewModeChange={vi.fn()}
         currentFilters={{ ...DEFAULT_FILTERS, search: 'Maria' }}
       />
     );
@@ -70,6 +76,8 @@ describe('ColaboradorFilters', () => {
         onStatusChange={vi.fn()}
         onDeptoChange={vi.fn()}
         onCargoChange={vi.fn()}
+        viewMode="tabela"
+        onViewModeChange={vi.fn()}
         currentFilters={DEFAULT_FILTERS}
       />
     );
@@ -84,6 +92,8 @@ describe('ColaboradorFilters', () => {
         onStatusChange={vi.fn()}
         onDeptoChange={vi.fn()}
         onCargoChange={vi.fn()}
+        viewMode="tabela"
+        onViewModeChange={vi.fn()}
         currentFilters={DEFAULT_FILTERS}
       />
     );
@@ -91,6 +101,6 @@ describe('ColaboradorFilters', () => {
     // portal quando aberto, então a lista de status válidos ('pendente' no
     // lugar do antigo 'inativo') é coberta diretamente no código-fonte do
     // componente e pelos testes de colaboradorService (filtro por status).
-    expect(screen.getByText('Todos Status')).toBeInTheDocument();
+    expect(screen.getByText('Todos os Status')).toBeInTheDocument();
   });
 });

@@ -16,8 +16,9 @@ import { useProximosEventos } from '@/hooks/useProximosEventos';
 import {
   Users, ShieldCheck, Briefcase,
   Landmark, FileText, Info, Edit, MoreHorizontal, History as HistoryIcon,
-  MapPin, Calendar, Stethoscope, User as UserIcon, GraduationCap, HeartPulse, Clock
+  MapPin, Calendar, Stethoscope, User as UserIcon, GraduationCap, HeartPulse, Clock, UserPlus
 } from 'lucide-react';
+import { RecontratarColaboradorDialog } from '@/components/colaboradores/RecontratarColaboradorDialog';
 import {
   DependentesTab, EmergenciaTab, HistoricoSalarialTab, ExperienciaTab,
   ASOTab, FormacaoTab, EstrangeiroTab, PCDTab, AquisitivosTab, AnotacoesTab,
@@ -47,6 +48,7 @@ export default function ColaboradorDetalhesPage() {
   const [activeSSTTab, setActiveSSTTab] = useState('aso');
   const [activeDocumentosTab, setActiveDocumentosTab] = useState('pessoais');
   const [activeTimelineTab, setActiveTimelineTab] = useState('funcional');
+  const [recontratarOpen, setRecontratarOpen] = useState(false);
 
   // colaboradorService.buscarPorId cai nos 12 colaboradores fictícios de
   // src/mocks/colaboradoresMock.ts quando VITE_COLABORADORES_MOCK=true (dev only).
@@ -103,6 +105,11 @@ export default function ColaboradorDetalhesPage() {
                 <DropdownMenuItem className="gap-2 cursor-pointer">
                   <FileText className="h-4 w-4" /> Exportar Ficha (PDF)
                 </DropdownMenuItem>
+                {colaborador?.status === 'desligado' && (
+                  <DropdownMenuItem className="gap-2 cursor-pointer" onClick={() => setRecontratarOpen(true)}>
+                    <UserPlus className="h-4 w-4" /> Recontratar Colaborador
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem className="gap-2 cursor-pointer text-destructive">
                   <MoreHorizontal className="h-4 w-4" /> Outras Ações
                 </DropdownMenuItem>
@@ -371,6 +378,13 @@ export default function ColaboradorDetalhesPage() {
           </TabsContent>
         </Tabs>
       </PageLayout>
+      {colaborador && (
+        <RecontratarColaboradorDialog
+          colaborador={colaborador}
+          open={recontratarOpen}
+          onOpenChange={setRecontratarOpen}
+        />
+      )}
     </>
   );
 }

@@ -587,12 +587,63 @@ export function getMockValoresCamposCustomizados(colaboradorId?: string): MockRe
   return [{ campo_customizado_id: 'mock-campo-camiseta', valor: 'M' }];
 }
 
+// Vínculos — histórico de passagens/recontratação (tabela `vinculos`).
+// Todos os 12 colaboradores fictícios têm 1 vínculo (a própria data_admissao);
+// mock-3 tem 2, para exercitar o badge "2ª passagem" na listagem e no Dossiê.
+const MOCK_DATA_DESLIGAMENTO_VINCULO_POR_ID: Record<string, string> = {
+  'mock-8': '2025-03-15',
+  'mock-11': '2024-05-20',
+};
+
+export function getMockVinculosPorColaborador(colaboradorId?: string): MockRecord[] | undefined {
+  const c = findMockColaborador(colaboradorId);
+  if (!c) return undefined;
+
+  if (c.id === 'mock-3') {
+    return [
+      { id: `${c.id}-vinculo-1`, colaborador_id: c.id, tipo: 'Admissão', categoria: null, data_inicio: '2016-02-10', data_fim: '2018-06-30', matricula: 'MAT003-A', status: 'encerrado', created_at: '2016-02-10T09:00:00Z' },
+      { id: `${c.id}-vinculo-2`, colaborador_id: c.id, tipo: 'Readmissão', categoria: null, data_inicio: c.data_admissao, data_fim: null, matricula: c.matricula, status: 'ativo', created_at: `${c.data_admissao}T09:00:00Z` },
+    ];
+  }
+
+  const dataFim = MOCK_DATA_DESLIGAMENTO_VINCULO_POR_ID[c.id] ?? null;
+  return [
+    { id: `${c.id}-vinculo-1`, colaborador_id: c.id, tipo: 'Admissão', categoria: null, data_inicio: c.data_admissao, data_fim: dataFim, matricula: c.matricula, status: dataFim ? 'encerrado' : 'ativo', created_at: `${c.data_admissao}T09:00:00Z` },
+  ];
+}
+
+export function getMockVinculosResumo(colaboradorIds: string[]): Record<string, MockRecord> | undefined {
+  const relevantes = colaboradorIds.filter((id) => !!findMockColaborador(id));
+  if (relevantes.length === 0) return undefined;
+
+  const result: Record<string, MockRecord> = {};
+  for (const id of relevantes) {
+    const vinculos = getMockVinculosPorColaborador(id) || [];
+    const ordenados = [...vinculos].sort((a, b) => String(a.data_inicio).localeCompare(String(b.data_inicio)));
+    const aberto = ordenados.find((v) => !v.data_fim);
+    result[id] = {
+      quantidadePassagens: ordenados.length,
+      quantidadeRecontratacoes: Math.max(ordenados.length - 1, 0),
+      primeiraAdmissao: ordenados[0]?.data_inicio ?? null,
+      admissaoAtual: (aberto ?? ordenados[ordenados.length - 1])?.data_inicio ?? null,
+    };
+  }
+  return result;
+}
+
 // Timeline Funcional — agrega os geradores acima num único EventoTimeline[]
 export function getMockTimelineFuncional(colaboradorId?: string): MockRecord[] | undefined {
   const c = findMockColaborador(colaboradorId);
   if (!c) return undefined;
+  const vinculosCronologicos = [...(getMockVinculosPorColaborador(colaboradorId) || [])].sort((a, b) => String(a.data_inicio).localeCompare(String(b.data_inicio)));
   const eventos: MockRecord[] = [
-    { data: c.data_admissao, tipo: 'admissao', titulo: 'Admissão', origem: 'colaboradores' },
+    ...vinculosCronologicos.map((v, i) => ({
+      data: v.data_inicio,
+      tipo: i === 0 ? 'admissao_inicial' : 'recontratacao',
+      titulo: i === 0 ? 'Admissão inicial' : `Recontratação (${i + 1}ª passagem)`,
+      descricao: v.tipo,
+      origem: 'vinculos',
+    })),
     ...(getMockHistoricoSalarial(colaboradorId) || []).map(h => ({ data: h.data_vigencia, tipo: 'salario', titulo: 'Alteração salarial', descricao: h.motivo, origem: 'historico_salarial' })),
     ...(getMockTreinamentos(colaboradorId) || []).filter(t => t.presente).map(t => ({ data: t.created_at, tipo: 'treinamento', titulo: `Treinamento: ${t.treinamento.nome}`, origem: 'treinamento_participantes' })),
     ...(getMockFeedbacks(colaboradorId) || []).map(f => ({ data: f.created_at, tipo: 'avaliacao', titulo: `Feedback 360 (${f.performance})`, origem: 'feedbacks_360' })),

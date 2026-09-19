@@ -19,6 +19,13 @@ export function useColaboradores() {
     enabled: !!empresaId,
   });
 
+  // Opções dos dropdowns de filtro — ver colaboradorService.listarOpcoesFiltro.
+  const { data: opcoesFiltro } = useQuery({
+    queryKey: ['colaboradores-opcoes-filtro', empresaId],
+    queryFn: () => colaboradorService.listarOpcoesFiltro(empresaId!),
+    enabled: !!empresaId,
+  });
+
   const crud = useGenericCrud<Colaborador>({
     queryKey: 'colaboradores',
     service: colaboradorService,
@@ -48,6 +55,8 @@ export function useColaboradores() {
     setCargo,
     summary,
     isLoadingSummary,
+    departamentosDisponiveis: opcoesFiltro?.departamentos || [],
+    cargosDisponiveis: opcoesFiltro?.cargos || [],
     criar: (data: any) => crud.criar({ ...data, empresa_id: empresaId }),
   };
 }

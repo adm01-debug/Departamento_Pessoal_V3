@@ -10,6 +10,7 @@ import { useHistoricoContratos } from './useHistoricoContratos';
 import { useMedidasDisciplinaresColaborador } from './useNovasTabelas';
 import { useTreinamentosColaborador, useFeedbacksColaborador, useOnboardingColaborador } from './useDesenvolvimentoColaborador';
 import { useEmpresas } from './useEmpresas';
+import { vinculoService } from '@/services/vinculoService';
 import { mockOr, getMockTimelineFuncional } from '@/mocks/colaboradoresMock';
 
 export interface EventoTimeline {
@@ -79,14 +80,38 @@ export function useTimelineFuncional(colaboradorId: string) {
     enabled: !!colaboradorId && !!empresaId,
   });
 
+  // Vínculos (histórico de passagens/recontratação) — distingue a 1ª
+  // admissão das recontratações seguintes. O desligamento em si já vem de
+  // `desligamentos` acima; aqui só entram os eventos de ENTRADA.
+  const { data: vinculos, isLoading: isLoadingVinculos } = useQuery({
+    queryKey: ['vinculos-colaborador', colaboradorId],
+    queryFn: () => vinculoService.listarPorColaborador(colaboradorId),
+    enabled: !!colaboradorId,
+  });
+
   const isLoading = isLoadingColaborador || isLoadingSalarial || isLoadingContratos || isLoadingCargo
     || isLoadingPromocoes || isLoadingTransferencias || isLoadingFerias || isLoadingAfastamentos
-    || isLoadingTreinamentos || isLoadingFeedbacks || onboarding.isLoading || isLoadingMedidas || isLoadingDesligamentos;
+    || isLoadingTreinamentos || isLoadingFeedbacks || onboarding.isLoading || isLoadingMedidas
+    || isLoadingDesligamentos || isLoadingVinculos;
 
   const eventos: EventoTimeline[] = [];
 
   const colab = colaborador as { data_admissao?: string } | null | undefined;
-  if (colab?.data_admissao) {
+  const listaVinculos = (vinculos as { id: string; data_inicio: string; tipo?: string }[] | undefined) || [];
+  if (listaVinculos.length > 0) {
+    // Cronológico (mais antigo primeiro) para distinguir 1ª admissão de recontratações.
+    const cronologica = [...listaVinculos].sort((a, b) => a.data_inicio.localeCompare(b.data_inicio));
+    cronologica.forEach((v, i) => {
+      eventos.push({
+        data: v.data_inicio,
+        tipo: i === 0 ? 'admissao_inicial' : 'recontratacao',
+        titulo: i === 0 ? 'Admissão inicial' : `Recontratação (${i + 1}ª passagem)`,
+        descricao: v.tipo,
+        origem: 'vinculos',
+      });
+    });
+  } else if (colab?.data_admissao) {
+    // Legado — sem nenhum vínculo registrado em `vinculos` ainda.
     eventos.push({ data: colab.data_admissao, tipo: 'admissao', titulo: 'Admissão', origem: 'colaboradores' });
   }
 

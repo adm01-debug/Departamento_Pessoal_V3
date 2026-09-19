@@ -7,6 +7,7 @@ import { cargoService } from '@/services/cargoService';
 import { localTrabalhoService } from '@/services/localTrabalhoService';
 import { useCentrosCusto } from '@/hooks/useTabelasReferencia';
 import { useTimes, useLotacoes } from '@/hooks/useColaboradorDetalhes';
+import { HistoricoVinculosCard } from './HistoricoVinculosCard';
 
 function Campo({ label, valor }: { label: string; valor: React.ReactNode }) {
   return (
@@ -86,6 +87,8 @@ export function TrabalhoHierarquiaTab({ colaboradorId }: { colaboradorId: string
           )}
         </CardContent>
       </Card>
+
+      <HistoricoVinculosCard colaboradorId={colaboradorId} />
 
       <Card className="border border-border/30 rounded-2xl overflow-hidden shadow-elevated">
         <CardContent className="p-6">

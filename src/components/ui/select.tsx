@@ -1,7 +1,15 @@
 import * as React from 'react';
 import * as SelectPrimitive from '@radix-ui/react-select';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Check, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import {
+  overlayChevronAnimClasses,
+  overlayContentCloseOnlyAnimClasses,
+  dropdownContentVariants,
+  dropdownItemVariants,
+  CHECK_INDICATOR_ANIM_CLASSES,
+} from '@/components/ui/motion-presets';
 
 const Select = SelectPrimitive.Root;
 const SelectGroup = SelectPrimitive.Group;
@@ -23,7 +31,7 @@ const SelectTrigger = React.forwardRef<
   >
     {children}
     <SelectPrimitive.Icon asChild>
-      <ChevronDown className="select-chevron h-4 w-4 opacity-50 transition-transform duration-[165ms] ease-out group-data-[state=open]:rotate-180" />
+      <ChevronDown className={cn('h-4 w-4 opacity-50', overlayChevronAnimClasses('select-chevron'))} />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ));
@@ -32,60 +40,89 @@ SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
 const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
->(({ className, children, position = 'popper', ...props }, ref) => (
-  <SelectPrimitive.Portal>
-    <SelectPrimitive.Content
-      ref={ref}
-      className={cn(
-        'relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md',
-        // Fade + slide vertical sutil (8px) + scale 0.98→1, ~180ms na abertura
-        // e ~150ms (mais rápido) no fechamento, `ease-out` — mesmo idioma
-        // `animate-in`/`animate-out` já usado em tooltip.tsx/sheet.tsx neste
-        // projeto. `select-content-anim`: classe própria e incondicional (sem
-        // prefixo de variante) só para o override de `prefers-reduced-motion`
-        // em index.css conseguir mirar o elemento — a classe *gerada* pelo
-        // Tailwind pra `data-[state=open]:animate-in` é literalmente
-        // `data-\[state\=open\]\:animate-in`, não `animate-in`, então um
-        // seletor `.animate-in` no CSS nunca bateria com o elemento real.
-        'select-content-anim',
-        'data-[state=open]:animate-in data-[state=closed]:animate-out',
-        'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
-        'data-[state=closed]:zoom-out-[.98] data-[state=open]:zoom-in-[.98]',
-        'data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2',
-        'data-[state=open]:duration-[180ms] data-[state=closed]:duration-[150ms] ease-out',
-        className,
-      )}
-      position={position}
-      {...props}
-    >
-      <SelectPrimitive.Viewport className="p-1">{children}</SelectPrimitive.Viewport>
-    </SelectPrimitive.Content>
-  </SelectPrimitive.Portal>
-));
+>(({ className, children, position = 'popper', ...props }, ref) => {
+  const prefersReducedMotion = useReducedMotion();
+  return (
+    <SelectPrimitive.Portal>
+      <SelectPrimitive.Content
+        ref={ref}
+        className={cn(
+          'relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md',
+          // Fechamento continua em CSS (Radix `data-state` + tailwindcss-animate):
+          // o wrapper Motion abaixo não usa `AnimatePresence`/estado controlado,
+          // então não tem como animar a SAÍDA sozinho — o Radix já unmonta o
+          // Content assim que fecha. Isso NÃO conflita com o Motion porque cobre
+          // um momento diferente (fechar) e uma propriedade que o Motion não
+          // toca neste elemento (o Motion anima o wrapper interno, nunca o
+          // `transform` deste Content, que é do Popper).
+          overlayContentCloseOnlyAnimClasses('select-content-anim'),
+          className,
+        )}
+        position={position}
+        {...props}
+      >
+        <SelectPrimitive.Viewport className="p-1">
+          {/* Wrapper Motion INTERNO real: Content/Viewport acima continuam
+              100% Radix (posicionamento/Popper/scroll/collision, intocados).
+              Só este `motion.div` anima opacity/scale/y — nunca escreve no
+              `transform` inline que o Radix usa pra posicionar o popup.
+              `staggerChildren`/`delayChildren` (em `dropdownContentVariants`)
+              orquestram a entrada sequencial dos `SelectItem` — ver lá. */}
+          <motion.div
+            initial="closed"
+            animate="open"
+            variants={dropdownContentVariants}
+            transition={prefersReducedMotion ? { duration: 0, staggerChildren: 0, delayChildren: 0 } : undefined}
+          >
+            {children}
+          </motion.div>
+        </SelectPrimitive.Viewport>
+      </SelectPrimitive.Content>
+    </SelectPrimitive.Portal>
+  );
+});
 SelectContent.displayName = SelectPrimitive.Content.displayName;
 
+// `motion.create(SelectPrimitive.Item)` foi testado e REJEITADO: dá erro de
+// tipo real (não só de ref) — `onDrag` do Framer Motion (gesto de arrastar)
+// colide com o `onDrag` nativo de DOM que o `Item` do Radix (é um `div` por
+// baixo) já aceita, TS2769 "No overload matches this call". Por isso o Item
+// Radix em si fica intocado (ref/seleção/teclado/Collection 100% originais)
+// e só o `SelectPrimitive.ItemText` — o único filho que participa do fluxo
+// flex do Item (o indicador de check é `absolute`, fora do fluxo) — é
+// envolvido por um `motion.span` que carrega os `dropdownItemVariants` e
+// herda open/closed do `motion.div` ancestral em `SelectContent`.
 const SelectItem = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
->(({ className, children, ...props }, ref) => (
-  <SelectPrimitive.Item
-    ref={ref}
-    className={cn(
-      // `transition-colors duration-150`: só o background/cor do texto anima
-      // suavemente no hover/foco — nada de posição/tamanho se move.
-      'relative flex w-full cursor-default select-none items-center rounded-xs py-1.5 pl-8 pr-2 text-sm outline-hidden transition-colors duration-150 focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-      className,
-    )}
-    {...props}
-  >
-    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-      <SelectPrimitive.ItemIndicator>
-        <Check className="h-4 w-4" />
-      </SelectPrimitive.ItemIndicator>
-    </span>
-    <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
-  </SelectPrimitive.Item>
-));
+>(({ className, children, ...props }, ref) => {
+  const prefersReducedMotion = useReducedMotion();
+  return (
+    <SelectPrimitive.Item
+      ref={ref}
+      className={cn(
+        // `transition-colors duration-150`: só o background/cor do texto anima
+        // suavemente no hover/foco — nada de posição/tamanho se move.
+        'relative flex w-full cursor-default select-none items-center rounded-xs py-1.5 pl-8 pr-2 text-sm outline-hidden transition-colors duration-150 focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+        className,
+      )}
+      {...props}
+    >
+      <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+        <SelectPrimitive.ItemIndicator className={CHECK_INDICATOR_ANIM_CLASSES}>
+          <Check className="h-4 w-4" />
+        </SelectPrimitive.ItemIndicator>
+      </span>
+      <motion.span
+        variants={dropdownItemVariants}
+        transition={prefersReducedMotion ? { duration: 0 } : undefined}
+        className="inline-flex w-full items-center"
+      >
+        <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+      </motion.span>
+    </SelectPrimitive.Item>
+  );
+});
 SelectItem.displayName = SelectPrimitive.Item.displayName;
 
 export { Select, SelectGroup, SelectValue, SelectTrigger, SelectContent, SelectItem };

@@ -397,13 +397,24 @@ export default function ColaboradorFormPage() {
                       label="Status Atual"
                       value={watch('status')}
                       options={[
-                        { value: 'ativo', label: 'Ativo' },
+                        // Reativar um colaborador desligado por aqui apagaria o
+                        // histórico de vínculos (sobrescreve data_admissao no
+                        // mesmo registro). Trava a transição desligado→ativo
+                        // neste form — o fluxo correto é "Recontratar
+                        // Colaborador" no Dossiê (cria vínculo novo, preserva
+                        // o anterior). Ver colaboradorService.recontratar.
+                        { value: 'ativo', label: 'Ativo', disabled: isEditing && colaborador?.status === 'desligado' },
                         { value: 'pendente', label: 'Pendente' },
                         { value: 'desligado', label: 'Desligado' },
                         { value: 'ferias', label: 'Em Férias' },
                         { value: 'afastado', label: 'Afastado' },
                       ]}
                       onChange={(v) => setValue('status', v as any)}
+                      description={
+                        isEditing && colaborador?.status === 'desligado'
+                          ? 'Para reativar este colaborador, use "Recontratar Colaborador" no Dossiê — isso preserva o histórico de vínculos.'
+                          : undefined
+                      }
                     />
                   </div>
                 </CardContent>

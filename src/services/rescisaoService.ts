@@ -2,6 +2,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { calcularRescisao } from '@/utils/rescisaoCalc';
 import { auditLogger } from '@/utils/auditLogger';
 import { loggerService } from './loggerService';
+import { vinculoService } from './vinculoService';
 
 async function sha256Hex(data: string): Promise<string> {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(data));
@@ -268,6 +269,11 @@ export const rescisaoService = {
         .eq('empresa_id', empresaId);
 
       if (colabError) loggerService.error('Erro ao desativar colaborador', { colaboradorId: d.colaborador_id, desligamentoId: id }, colabError);
+
+      // Fecha o vínculo em aberto (data_fim IS NULL) — fonte de verdade para
+      // contagem de passagens/recontratação (ver vinculoService). Best-effort,
+      // mesmo padrão de risco do update de `colaboradores` acima.
+      await vinculoService.fecharVinculoAberto(d.colaborador_id, d.data_desligamento);
 
       await auditLogger.log({
         tabela: 'desligamentos',

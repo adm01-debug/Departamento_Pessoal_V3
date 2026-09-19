@@ -541,23 +541,16 @@ export default function DashboardExecutivoPage() {
               (RadioGroup/RadioItem — mesma técnica de animação nativa do Radix que
               `DropdownMenuCheckboxes`, só que RadioItem porque é seleção única entre
               3 opções mutuamente exclusivas, não toggles independentes). Classe/estilo
-              do gatilho copiados 1:1 do `SelectTrigger` anterior — nada mudou visualmente. */}
+              do gatilho copiados 1:1 do `SelectTrigger` anterior — nada mudou visualmente.
+              Abertura/fechamento/stagger dos itens agora vêm de fábrica de
+              `ui/dropdown-menu.tsx` (design system) — não precisa mais repetir
+              `data-[state=...]:animate-in/out` nem `className="group"` aqui. */}
           <DropdownMenu>
-            <DropdownMenuTrigger className="group flex items-center justify-between border bg-background px-3 py-2 text-sm ring-offset-background focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-[140px] h-8 rounded-xl border-border/50 shadow-xs hover:border-primary/30 hover:bg-primary/5 transition-all">
+            <DropdownMenuTrigger className="flex items-center justify-between border bg-background px-3 py-2 text-sm ring-offset-background focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-[140px] h-8 rounded-xl border-border/50 shadow-xs hover:border-primary/30 hover:bg-primary/5 transition-all">
               {PERIODO_LABELS[periodo]}
               <ChevronDown className="dp-dropdown-anim-chevron h-4 w-4 opacity-50 transition-transform duration-[165ms] ease-out group-data-[state=open]:rotate-180" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className={cn(
-                'dp-dropdown-anim-content',
-                'data-[state=open]:animate-in data-[state=closed]:animate-out',
-                'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
-                'data-[state=closed]:zoom-out-[.98] data-[state=open]:zoom-in-[.98]',
-                'data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2',
-                'data-[state=open]:duration-[180ms] data-[state=closed]:duration-[150ms] ease-out',
-              )}
-            >
+            <DropdownMenuContent align="end">
               <DropdownMenuRadioGroup value={periodo} onValueChange={setPeriodo}>
                 <DropdownMenuRadioItem value="3">3 meses</DropdownMenuRadioItem>
                 <DropdownMenuRadioItem value="6">6 meses</DropdownMenuRadioItem>
@@ -680,21 +673,11 @@ export default function DashboardExecutivoPage() {
                   <p className="text-[11px] text-muted-foreground mt-1">Variação histórica de colaboradores no período selecionado</p>
                 </div>
                 <DropdownMenu>
-                  <DropdownMenuTrigger className="group flex items-center justify-between border bg-background px-3 py-2 ring-offset-background focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-[150px] h-8 rounded-lg text-xs shrink-0">
+                  <DropdownMenuTrigger className="flex items-center justify-between border bg-background px-3 py-2 ring-offset-background focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 w-[150px] h-8 rounded-lg text-xs shrink-0">
                     {PERIODO_LABELS_CARD[periodo]}
                     <ChevronDown className="dp-dropdown-anim-chevron h-4 w-4 opacity-50 transition-transform duration-[165ms] ease-out group-data-[state=open]:rotate-180" />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    className={cn(
-                      'dp-dropdown-anim-content',
-                      'data-[state=open]:animate-in data-[state=closed]:animate-out',
-                      'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
-                      'data-[state=closed]:zoom-out-[.98] data-[state=open]:zoom-in-[.98]',
-                      'data-[state=closed]:slide-out-to-top-2 data-[state=open]:slide-in-from-top-2',
-                      'data-[state=open]:duration-[180ms] data-[state=closed]:duration-[150ms] ease-out',
-                    )}
-                  >
+                  <DropdownMenuContent align="end">
                     <DropdownMenuRadioGroup value={periodo} onValueChange={setPeriodo}>
                       <DropdownMenuRadioItem value="3">Últimos 3 meses</DropdownMenuRadioItem>
                       <DropdownMenuRadioItem value="6">Últimos 6 meses</DropdownMenuRadioItem>

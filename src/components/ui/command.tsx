@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { Command as CommandPrimitive } from 'cmdk';
+import { motion, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Search } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { dropdownItemVariants } from '@/components/ui/motion-presets';
 
 const Command = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive>,
@@ -71,12 +73,39 @@ const CommandGroup = React.forwardRef<
 ));
 CommandGroup.displayName = CommandPrimitive.Group.displayName;
 
+// Mesma arquitetura de `DropdownMenuItem`/`SelectItem` (Motion real, mesmo
+// `dropdownItemVariants` — não uma cópia): `CommandPrimitive.Item` (cmdk, também
+// forwardRef) fica intocado, só `{children}` é envolvido. Dentro de
+// `CommandDialog` (Dialog, sem `motion.div` ancestral em "open"/"closed") a
+// propagação de variantes do Framer Motion simplesmente não encontra um
+// ancestral com esse estado — o item renderiza na pose padrão ("closed" nunca
+// é setado como `animate`, então o motion.span usa os valores do próprio
+// `initial` = `undefined` aqui, ou seja, sem estilo aplicado), sem quebrar
+// nada; Dialog tem linguagem de motion própria, fora deste escopo.
 const CommandItem = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>
->(({ className, ...props }, ref) => (
-  <CommandPrimitive.Item ref={ref} className={cn('relative flex cursor-default select-none items-center rounded-xs px-2 py-1.5 text-sm outline-hidden aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50', className)} {...props} />
-));
+>(({ className, children, ...props }, ref) => {
+  const prefersReducedMotion = useReducedMotion();
+  return (
+    <CommandPrimitive.Item
+      ref={ref}
+      className={cn(
+        'relative flex cursor-default select-none items-center rounded-xs px-2 py-1.5 text-sm outline-hidden aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+        className,
+      )}
+      {...props}
+    >
+      <motion.span
+        variants={dropdownItemVariants}
+        transition={prefersReducedMotion ? { duration: 0 } : undefined}
+        className="flex w-full items-center [gap:inherit]"
+      >
+        {children}
+      </motion.span>
+    </CommandPrimitive.Item>
+  );
+});
 CommandItem.displayName = CommandPrimitive.Item.displayName;
 
 const CommandSeparator = React.forwardRef<

@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { rescisaoService } from '../rescisaoService';
 import { supabase } from '@/integrations/supabase/client';
+import { vinculoService } from '../vinculoService';
 
 // Mock dependências
 vi.mock('@/integrations/supabase/client', () => ({
@@ -14,6 +15,12 @@ vi.mock('@/utils/auditLogger', () => ({
   auditLogger: {
     log: vi.fn().mockResolvedValue({}),
   },
+}));
+
+// Isola o teste de orquestração de processarPagamento da lógica interna de
+// vínculo (já coberta em vinculoService.test.ts).
+vi.mock('../vinculoService', () => ({
+  vinculoService: { fecharVinculoAberto: vi.fn().mockResolvedValue(undefined) },
 }));
 
 describe('rescisaoService', () => {
@@ -82,6 +89,78 @@ describe('rescisaoService', () => {
       (supabase.rpc as unknown as ReturnType<typeof vi.fn>) = mockRpc;
 
       await expect(rescisaoService.assinarDigitalmente('1', 'empresa')).rejects.toThrow(/ja assinou/);
+    });
+  });
+
+  describe('processarPagamento', () => {
+    const desligamentoRow = {
+      colaborador_id: 'colab-1',
+      data_desligamento: '2026-09-18',
+      valor_liquido: 1000,
+      assinado_empresa: true,
+      assinado_colaborador: true,
+      checklist_homologacao: true,
+    };
+
+    function mockDesligamentosEColaboradores() {
+      const desligamentosChain = {
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            eq: vi.fn().mockReturnValue({
+              single: vi.fn().mockResolvedValue({ data: desligamentoRow, error: null }),
+            }),
+          }),
+        }),
+        update: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            eq: vi.fn().mockReturnValue({
+              select: vi.fn().mockReturnValue({
+                single: vi.fn().mockResolvedValue({ data: { id: 'desl-1', status: 'pago' }, error: null }),
+              }),
+            }),
+          }),
+        }),
+      };
+      const colaboradoresChain = {
+        update: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            eq: vi.fn().mockResolvedValue({ error: null }),
+          }),
+        }),
+      };
+      (supabase.from as unknown as ReturnType<typeof vi.fn>).mockImplementation((table: string) => {
+        if (table === 'desligamentos') return desligamentosChain;
+        if (table === 'colaboradores') return colaboradoresChain;
+        return { select: vi.fn().mockReturnThis(), eq: vi.fn().mockReturnThis(), single: vi.fn().mockResolvedValue({ data: null, error: null }) };
+      });
+    }
+
+    it('fecha o vínculo em aberto do colaborador após confirmar o pagamento', async () => {
+      mockDesligamentosEColaboradores();
+
+      await rescisaoService.processarPagamento('desl-1', 'empresa-uuid-1');
+
+      expect(vinculoService.fecharVinculoAberto).toHaveBeenCalledWith('colab-1', '2026-09-18');
+    });
+
+    it('bloqueia o pagamento (e não fecha vínculo) se a rescisão não estiver assinada pelas duas partes', async () => {
+      (supabase.from as unknown as ReturnType<typeof vi.fn>).mockImplementation((table: string) => {
+        if (table === 'desligamentos') {
+          return {
+            select: vi.fn().mockReturnValue({
+              eq: vi.fn().mockReturnValue({
+                eq: vi.fn().mockReturnValue({
+                  single: vi.fn().mockResolvedValue({ data: { ...desligamentoRow, assinado_colaborador: false }, error: null }),
+                }),
+              }),
+            }),
+          };
+        }
+        return { select: vi.fn().mockReturnThis(), eq: vi.fn().mockReturnThis(), single: vi.fn().mockResolvedValue({ data: null, error: null }) };
+      });
+
+      await expect(rescisaoService.processarPagamento('desl-1', 'empresa-uuid-1')).rejects.toThrow(/assinada/);
+      expect(vinculoService.fecharVinculoAberto).not.toHaveBeenCalled();
     });
   });
 });

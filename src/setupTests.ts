@@ -40,6 +40,20 @@ class ResizeObserver {
 
 window.ResizeObserver = ResizeObserver;
 
+// Mock IntersectionObserver — jsdom não implementa (usado por `useInView` do
+// framer-motion, ex.: ColaboradorTable.tsx). Sem isso, qualquer componente
+// que chame `useInView` derruba o teste com `ReferenceError`. `isIntersecting`
+// nunca dispara `true` aqui, o que é aceitável: os testes verificam conteúdo
+// renderizado, não o estado de animação de entrada.
+class IntersectionObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+  takeRecords() { return []; }
+}
+
+window.IntersectionObserver = IntersectionObserver as unknown as typeof window.IntersectionObserver;
+
 // Polyfill URL.createObjectURL / revokeObjectURL for jsdom (used by Excel/PDF exports).
 if (typeof URL.createObjectURL !== 'function') {
   (URL as any).createObjectURL = vi.fn(() => 'blob:mock');

@@ -37,6 +37,10 @@ vi.mock('@/hooks/usePDFExport', () => ({
   usePDFExport: () => ({ exportarPDF: vi.fn() }),
 }));
 
+vi.mock('@/hooks/useVinculos', () => ({
+  useVinculosResumo: () => ({ data: {} }),
+}));
+
 // PageLayout/PageTitle puxam Helmet/Breadcrumbs/Tooltip — shells mínimos
 // para manter o teste focado na listagem (mesmo padrão de ImportacaoPage.test.tsx).
 vi.mock('@/components/layout', () => ({

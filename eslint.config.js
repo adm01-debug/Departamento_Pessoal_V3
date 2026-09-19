@@ -71,7 +71,44 @@ export default tseslint.config(
             "Não use `as never` em supabase.rpc()/.from() — anula o type-check do argumento. Regenere `src/integrations/supabase/types.ts` (as RPCs/tabelas já estão tipadas).",
         },
       ],
-
+      // Guard anti-regressão da linguagem de motion global dos overlays
+      // (Select/DropdownMenu/Popover — `ui/motion-presets.ts`). Importar o
+      // primitive Radix cru fora do próprio arquivo do design system recria
+      // exatamente o problema que a migração resolveu: uma nova tela ganharia
+      // Trigger/Content/Item SEM a animação, o chevron, o `[gap:inherit]` etc.
+      // — silenciosamente divergente do resto do sistema. Páginas devem
+      // sempre importar de `@/components/ui/select` / `dropdown-menu` /
+      // `popover`, nunca de `@radix-ui/react-*` diretamente.
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@radix-ui/react-select"],
+              message:
+                "Não importe @radix-ui/react-select diretamente — use @/components/ui/select (é o único lugar que já traz a animação global do design system).",
+            },
+            {
+              group: ["@radix-ui/react-dropdown-menu"],
+              message:
+                "Não importe @radix-ui/react-dropdown-menu diretamente — use @/components/ui/dropdown-menu (é o único lugar que já traz a animação global do design system).",
+            },
+            {
+              group: ["@radix-ui/react-popover"],
+              message:
+                "Não importe @radix-ui/react-popover diretamente — use @/components/ui/popover (é o único lugar que já traz a animação global do design system).",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    // O design system em si é o único lugar autorizado a importar os
+    // primitives Radix crus (é onde a animação global é implementada).
+    files: ["src/components/ui/select.tsx", "src/components/ui/dropdown-menu.tsx", "src/components/ui/popover.tsx"],
+    rules: {
+      "no-restricted-imports": "off",
     },
   },
   {

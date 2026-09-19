@@ -343,31 +343,27 @@
     animation: none;
   }
 
-  /* Dropdowns de período do Dashboard Executivo (select.tsx) — mesmo
-     mecanismo acima: por não estarem dentro de nenhum `@layer`, essa regra
-     vence a utility `data-[state=...]:animate-in`/`animate-out` gerada pelo
-     Tailwind, sem precisar de `!important`. IMPORTANTE: o seletor mira
-     `.select-content-anim` (classe própria, sempre presente), não
-     `.animate-in`/`.animate-out` — essas duas nunca aparecem como classe
-     "pura" no elemento real, só prefixadas por variante
-     (`data-\[state\=open\]\:animate-in`), então um seletor `.animate-in`
+  /* Fechamento (CSS) dos overlays que abrem lista de opções — a ABERTURA e o
+     stagger dos itens são Framer Motion de verdade (`ui/motion-presets.ts`
+     + `useReducedMotion()` em cada primitive: `select.tsx`,
+     `dropdown-menu.tsx`, `popover.tsx`, `command.tsx` — zeram
+     duration/stagger sozinhos via JS, não precisam de regra CSS aqui). Só o
+     FECHAMENTO continua em CSS puro (o wrapper Motion não cobre saída), daí
+     esta regra. Por não estar dentro de nenhum `@layer`, vence a utility
+     `data-[state=closed]:animate-out` gerada pelo Tailwind sem precisar de
+     `!important`. IMPORTANTE: os seletores miram as classes `*-anim`/
+     `*-chevron` (nome próprio, sempre presente), não `.animate-out` — essa
+     nunca aparece "pura" no elemento real, só prefixada por variante
+     (`data-\[state\=closed\]\:animate-out`), então um seletor `.animate-out`
      aqui nunca bateria com o elemento. */
-  .select-content-anim {
+  .select-content-anim,
+  .dp-dropdown-anim-content,
+  .dp-dropdown-anim-submenu,
+  .popover-content-anim {
     animation: none;
   }
 
-  .select-chevron {
-    transition: none;
-  }
-
-  /* Mesmos dois dropdowns de período, agora via DropdownMenu (não mais
-     Select) — mesmo mecanismo/motivo das duas regras acima, marcadores
-     próprios para não colidir com `.select-content-anim`/`.select-chevron`
-     (usados por Select em outras telas do app, fora do escopo desta troca). */
-  .dp-dropdown-anim-content {
-    animation: none;
-  }
-
+  .select-chevron,
   .dp-dropdown-anim-chevron {
     transition: none;
   }
