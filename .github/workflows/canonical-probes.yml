@@ -1,0 +1,155 @@
+name: Canonical database — read-only security probes
+
+# E51-018/E51-019: fecha os checkpoints remotos de RV-01/RV-02/RV-03/RV-04
+# provando, no banco canônico vivo, que:
+#   - user_empresa_id() ignora user_metadata forjado (RV-01)
+#   - medidas_ciencia_tokens não tem ACL/policy exposta (RV-02)
+#   - nenhuma policy permissiva (USING true) nas tabelas críticas (RV-03)
+#   - as RPCs de vínculo/autorização existem (RV-04)
+#   - as views de PII não são legíveis por anon
+# Tudo em transações READ ONLY com ROLLBACK: nenhuma escrita é possível.
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_project_ref:
+        description: Digite o project ref canônico para evitar alvo acidental
+        required: true
+        type: string
+
+concurrency:
+  group: canonical-database-probes
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  security-probes:
+    name: probes RV-01/02/03/04 no canônico
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+      CANONICAL_REF: frjbfeamybqsejlvmqbl
+      CONFIRM_PROJECT_REF: ${{ inputs.confirm_project_ref }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Validar confirmação e URL sem revelar segredo
+        run: |
+          set -euo pipefail
+          test "$CONFIRM_PROJECT_REF" = "$CANONICAL_REF" || {
+            echo '::error::Project ref de confirmação não corresponde ao canônico.'
+            exit 1
+          }
+          test -n "$SUPABASE_DB_URL" || {
+            echo '::error::SUPABASE_DB_URL ausente.'
+
+      - name: Executar probes read-only (ROLLBACK garantido)
+        id: probes
+        run: |
+          set -euo pipefail
+          read_only() {
+            psql "$SUPABASE_DB_URL" -X -At -v ON_ERROR_STOP=1 "$1"
+          }
+
+          # RV-01: authenticated com sub inexistente e user_metadata forjado
+          # deve receber NULL, nunca o valor forjado.
+          RV01=$(read_only <<'SQL'
+          BEGIN TRANSACTION READ ONLY;
+          SET LOCAL ROLE authenticated;
+          SET LOCAL request.jwt.claims TO '{"sub":"00000000-0000-0000-0000-00000000e151","role":"authenticated","user_metadata":{"empresa_id":"deadbeef-dead-beef-dead-beefdeadbeef"},"app_metadata":{}}';
+          SELECT COALESCE(public.user_empresa_id()::text, 'NULL');
+          ROLLBACK;
+          SQL
+          )
+          echo "rv01_forged_metadata_tenant=$RV01"
+
+          # RV-02: tokens sem SELECT para anon/authenticated e sem policy.
+          RV02=$(read_only <<'SQL'
+          BEGIN TRANSACTION READ ONLY;
+          SELECT (NOT has_table_privilege('anon','public.medidas_ciencia_tokens','SELECT'))
+             AND (NOT has_table_privilege('authenticated','public.medidas_ciencia_tokens','SELECT'))
+             AND (SELECT count(*) = 0 FROM pg_catalog.pg_policies
+                  WHERE schemaname='public' AND tablename='medidas_ciencia_tokens');
+          ROLLBACK;
+          SQL
+          )
+          echo "rv02_token_table_lockdown=$RV02"
+
+          # RV-03: zero policies permissivas nas tabelas críticas.
+          RV03=$(read_only <<'SQL'
+          BEGIN TRANSACTION READ ONLY;
+          SELECT count(*) FROM pg_catalog.pg_policies
+          WHERE schemaname='public'
+            AND tablename IN ('audit_log','cnab_configuracoes','historico_rescisoes')
+            AND regexp_replace(COALESCE(qual,''), '\s+', '', 'g') ~* '(^|\()(true)(\)|$)';
+          ROLLBACK;
+          SQL
+          )
+          echo "rv03_permissive_policies=$RV03"
+
+          # RV-04: RPCs de vínculo/autorização exigidas pelos callers.
+          RV04=$(read_only <<'SQL'
+          BEGIN TRANSACTION READ ONLY;
+          SELECT to_regprocedure('public.get_my_user_empresas()') IS NOT NULL
+             AND to_regprocedure('public.set_own_default_empresa(uuid)') IS NOT NULL
+             AND to_regprocedure('public.admin_associar_usuario_empresa(uuid,uuid)') IS NOT NULL
+             AND to_regprocedure('public.pode_gerir_rh_para(uuid,uuid)') IS NOT NULL
+             AND to_regprocedure('public.pode_gerir_pessoas_para(uuid,uuid)') IS NOT NULL;
+          ROLLBACK;
+          SQL
+          )
+          echo "rv04_rpcs_present=$RV04"
+
+          # Views de PII críticas não legíveis por anon (auditoria de 10/09).
+          VIEWS=$(read_only <<'SQL'
+          BEGIN TRANSACTION READ ONLY;
+          SELECT (NOT has_table_privilege('anon','public.vw_colaboradores_completo','SELECT'))
+             AND (NOT has_table_privilege('anon','public.v_audit_events_unified','SELECT'))
+             AND (NOT has_table_privilege('anon','public.dp_slow_queries','SELECT'))
+             AND (NOT has_table_privilege('anon','public.vw_banco_horas_saldo','SELECT'));
+          ROLLBACK;
+          SQL
+          )
+          echo "views_pii_anon_blocked=$VIEWS"
+
+          LEDGER=$(read_only <<'SQL'
+          BEGIN TRANSACTION READ ONLY;
+          SELECT count(*) FROM supabase_migrations.schema_migrations;
+          ROLLBACK;
+          SQL
+          )
+          echo "ledger_count=$LEDGER"
+
+          echo "result={\"rv01\":\"$RV01\",\"rv02\":\"$RV02\",\"rv03\":\"$RV03\",\"rv04\":\"$RV04\",\"views\":\"$VIEWS\",\"ledger\":\"$LEDGER\"}" >> "$GITHUB_OUTPUT"
+
+      - name: Verificar expectativas dos probes
+        env:
+          RESULT: ${{ steps.probes.outputs.result }}
+        run: |
+          set -euo pipefail
+          node -e '
+            const r = JSON.parse(process.argv[1]);
+            const failures = [];
+            if (r.rv01 !== "NULL") failures.push("RV-01: user_empresa_id() respondeu a metadata forjada: " + r.rv01);
+            if (r.rv02 !== "t") failures.push("RV-02: medidas_ciencia_tokens exposta (ACL ou policy)");
+            if (r.rv03 !== "0") failures.push("RV-03: " + r.rv03 + " policy(s) permissiva(s) nas tabelas críticas");
+            if (r.rv04 !== "t") failures.push("RV-04: RPCs de vínculo/autorização ausentes");
+            if (r.views !== "t") failures.push("Views de PII legíveis por anon");
+            if (failures.length) { console.error("PROBE_FAILURES:\n- " + failures.join("\n- ")); process.exit(1); }
+            console.log(JSON.stringify(r, null, 2));
+          ' "$RESULT"
+          echo 'CANONICAL_PROBES_OK'
+
+            exit 1
+          }
+          node scripts/validate-canonical-db-url.mjs
+
+      - name: Instalar cliente PostgreSQL
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client
