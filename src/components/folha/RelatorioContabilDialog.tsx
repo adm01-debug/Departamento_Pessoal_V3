@@ -6,6 +6,12 @@ import { FileSpreadsheet, Download, Loader2, BookOpen } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+import type { Tables } from '@/integrations/supabase/database.types';
+import type { FolhaItemDetalhes } from '@/services/folhaPagamentoService';
+
+type ItemContabil = Tables<'folha_itens'> & {
+  colaborador: Pick<Tables<'colaboradores'>, 'nome_completo' | 'departamento' | 'centro_custo' | 'cpf'> | null;
+};
 
 interface RelatorioContabilDialogProps {
   folhaId: string;
@@ -21,43 +27,58 @@ export function RelatorioContabilDialog({ folhaId }: RelatorioContabilDialogProp
       // Fetch folha items (detailed)
       const { data: itens, error: hError } = await supabase
         .from('folha_itens')
-        .select(`
+        .select(
+          `
           *,
           colaborador:colaboradores(nome_completo, departamento, centro_custo)
-        `)
+        `
+        )
         .eq('folha_id', folhaId);
-      
+
       if (hError) throw hError;
-      if (!itens || itens.length === 0) throw new Error('Nenhum dado encontrado para esta folha.');
+      const itensTyped = itens as ItemContabil[] | null;
+      if (!itensTyped || itensTyped.length === 0) throw new Error('Nenhum dado encontrado para esta folha.');
 
       // Header para Reconciliação Contábil Analítica (Padrão SPED/ERP)
       const csvLines = ['Data;Conta Contabil;Centro de Custo;Debito;Credito;Descricao;Colaborador;CPF'];
       const dataHoje = new Date().toLocaleDateString('pt-BR');
-      
-      itens.forEach(item => {
-        const colab = item.colaborador as any;
-        const detalhes = item.detalhes as any;
-        const eventos = detalhes?.detalheEventos || [];
-        const cc = colab.centro_custo || 'GERAL';
 
-        eventos.forEach((ev: any) => {
+      itensTyped.forEach((item) => {
+        const colab = item.colaborador;
+        const detalhes = item.detalhes as FolhaItemDetalhes | null;
+        const eventos = detalhes?.detalheEventos || [];
+        const cc = colab?.centro_custo || 'GERAL';
+
+        eventos.forEach((ev) => {
           const isProvento = ev.tipo === 'provento';
           // Lançamento de Provento (D: Despesa Salarial, C: Salários a Pagar)
           if (isProvento) {
-            csvLines.push(`${dataHoje};DESPESA_SALARIAL;${cc};${ev.valor.toFixed(2)};0;${ev.descricao};${colab.nome_completo};${colab.cpf || ''}`);
-            csvLines.push(`${dataHoje};SALARIOS_A_PAGAR;${cc};0;${ev.valor.toFixed(2)};${ev.descricao};${colab.nome_completo};${colab.cpf || ''}`);
+            csvLines.push(
+              `${dataHoje};DESPESA_SALARIAL;${cc};${ev.valor.toFixed(2)};0;${ev.descricao};${colab?.nome_completo};${colab?.cpf || ''}`
+            );
+            csvLines.push(
+              `${dataHoje};SALARIOS_A_PAGAR;${cc};0;${ev.valor.toFixed(2)};${ev.descricao};${colab?.nome_completo};${colab?.cpf || ''}`
+            );
           } else {
             // Lançamento de Desconto (D: Salários a Pagar, C: Conta de Passivo/Desconto)
-            csvLines.push(`${dataHoje};SALARIOS_A_PAGAR;${cc};${ev.valor.toFixed(2)};0;${ev.descricao};${colab.nome_completo};${colab.cpf || ''}`);
-            csvLines.push(`${dataHoje};PASSIVO_${ev.descricao.toUpperCase().replace(/\s/g, '_')};${cc};0;${ev.valor.toFixed(2)};Retencao ${ev.descricao};${colab.nome_completo};${colab.cpf || ''}`);
+            csvLines.push(
+              `${dataHoje};SALARIOS_A_PAGAR;${cc};${ev.valor.toFixed(2)};0;${ev.descricao};${colab?.nome_completo};${colab?.cpf || ''}`
+            );
+            csvLines.push(
+              `${dataHoje};PASSIVO_${ev.descricao.toUpperCase().replace(/\s/g, '_')};${cc};0;${ev.valor.toFixed(2)};Retencao ${ev.descricao};${colab?.nome_completo};${colab?.cpf || ''}`
+            );
           }
         });
 
         // Provisão de FGTS (Encargo Patronal)
         const fgts = Number(item.fgts_mes);
         if (fgts > 0) {
-          csvLines.push(`${dataHoje};DESPESA_FGTS;${cc};${fgts.toFixed(2)};0;Provisao FGTS;${colab.nome_completo};${colab.cpf || ''}`);
-          csvLines.push(`${dataHoje};FGTS_A_RECOLHER;${cc};0;${fgts.toFixed(2)};FGTS Mes;${colab.nome_completo};${colab.cpf || ''}`);
+          csvLines.push(
+            `${dataHoje};DESPESA_FGTS;${cc};${fgts.toFixed(2)};0;Provisao FGTS;${colab?.nome_completo};${colab?.cpf || ''}`
+          );
+          csvLines.push(
+            `${dataHoje};FGTS_A_RECOLHER;${cc};0;${fgts.toFixed(2)};FGTS Mes;${colab?.nome_completo};${colab?.cpf || ''}`
+          );
         }
       });
 
@@ -83,7 +104,11 @@ export function RelatorioContabilDialog({ folhaId }: RelatorioContabilDialogProp
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" variant="outline" className="rounded-xl gap-1.5 font-body border-primary/30 hover:bg-primary/5">
+        <Button
+          size="sm"
+          variant="outline"
+          className="rounded-xl gap-1.5 font-body border-primary/30 hover:bg-primary/5"
+        >
           <FileSpreadsheet className="h-4 w-4 text-primary" />
           <span className="hidden sm:inline">Conciliação Contábil</span>
         </Button>
@@ -97,7 +122,8 @@ export function RelatorioContabilDialog({ folhaId }: RelatorioContabilDialogProp
         </DialogHeader>
         <div className="py-4 space-y-4">
           <p className="text-sm text-muted-foreground">
-            Gere o arquivo de lançamentos contábeis analíticos por evento para importação no seu ERP (Domínio, Alterdata, Totvs, etc).
+            Gere o arquivo de lançamentos contábeis analíticos por evento para importação no seu ERP (Domínio,
+            Alterdata, Totvs, etc).
           </p>
           <Card className="border border-border/30 bg-muted/20">
             <CardContent className="p-4 text-xs space-y-2">
