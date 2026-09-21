@@ -29,11 +29,13 @@ import { RecontratarColaboradorDialog } from '@/components/colaboradores/Recontr
 import { AnimatedDossieTabsList, AnimatedDossieTabsTrigger } from '@/components/colaboradores/AnimatedDossieTabs';
 import {
   DependentesTab, EmergenciaTab, HistoricoSalarialTab, ExperienciaTab,
-  ASOTab, FormacaoTab, EstrangeiroTab, PCDTab, AquisitivosTab, AnotacoesTab,
+  FormacaoTab, EstrangeiroTab, PCDTab, AquisitivosTab, AnotacoesTab,
   ContasBancariasTab, DocumentosPessoaisTab, EstagiarioTab, HistoricoContratosTab,
   ColaboradorHistory, BeneficiosTab, ColaboradorDocuments, CamposCustomizadosTab,
   TrabalhoHierarquiaTab, JornadaPontoTab, FeriasResumoTab, AfastamentosTab, HoleritesTab,
-  DesenvolvimentoResumoTab, SSTResumoTab, ComplianceTab, TimelineFuncionalTab
+  DesenvolvimentoResumoTab, ComplianceTab, TimelineFuncionalTab,
+  PendenciasDialog, type PendenciaItem,
+  ProximosEventosDialog, type EventoDetalhado,
 } from '@/components/colaborador-detalhes';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -72,6 +74,108 @@ function formatTempoCasa(dataAdmissao?: string | null): string | null {
   if (anos > 0) partes.push(`${anos} ${anos === 1 ? 'ano' : 'anos'}`);
   if (meses > 0 || anos === 0) partes.push(`${meses} ${meses === 1 ? 'mês' : 'meses'}`);
   return partes.join(' e ');
+}
+
+// Usados nas descrições detalhadas do popup de Pendências — mesma
+// formatação pt-BR já usada no resto da página, só reaproveitada aqui
+// como helpers para não repetir `new Date(...).toLocaleDateString(...)`
+// dentro de cada `.map()` das pendências.
+function formatarDataBR(dataISO?: string | null): string {
+  if (!dataISO) return '—';
+  const data = new Date(dataISO);
+  if (Number.isNaN(data.getTime())) return '—';
+  return data.toLocaleDateString('pt-BR');
+}
+
+function formatarDataHoraBR(dataISO?: string | null): string {
+  if (!dataISO) return '—';
+  const data = new Date(dataISO);
+  if (Number.isNaN(data.getTime())) return '—';
+  return data.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+// Dias corridos entre a data informada e hoje — usado para dizer "vencido
+// há N dias" / "N dias de atraso" nas pendências.
+function diasDesde(dataISO?: string | null): number | null {
+  if (!dataISO) return null;
+  const data = new Date(dataISO);
+  if (Number.isNaN(data.getTime())) return null;
+  const hoje = new Date();
+  const msPorDia = 1000 * 60 * 60 * 24;
+  return Math.max(0, Math.floor((hoje.setHours(0, 0, 0, 0) - data.setHours(0, 0, 0, 0)) / msPorDia));
+}
+
+// Inverso do anterior — dias entre hoje e uma data futura, usado no popup
+// de Próximos Eventos ("em N dias"). `T00:00:00` evita o typo clássico de
+// `new Date('YYYY-MM-DD')` cair um dia antes em fusos negativos (BRT).
+function diasAte(dataISO?: string | null): number | null {
+  if (!dataISO) return null;
+  const data = new Date(`${dataISO}T00:00:00`);
+  if (Number.isNaN(data.getTime())) return null;
+  const hoje = new Date();
+  const msPorDia = 1000 * 60 * 60 * 24;
+  return Math.round((data.setHours(0, 0, 0, 0) - hoje.setHours(0, 0, 0, 0)) / msPorDia);
+}
+
+// Data por extenso (ex.: "Quinta-feira, 1 de outubro de 2026") — o popup
+// de Próximos Eventos mostra a data completa, não só dia/mês como no
+// card compacto.
+function formatarDataExtensoBR(dataISO?: string | null): string {
+  if (!dataISO) return '—';
+  const data = new Date(`${dataISO}T00:00:00`);
+  if (Number.isNaN(data.getTime())) return '—';
+  const texto = data.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  return texto.charAt(0).toUpperCase() + texto.slice(1);
+}
+
+// "Hoje" / "Amanhã" / "Em N dias" — mesmo texto usado pelo `countdownBadge`
+// de useProximosEventos.ts, só que aqui sempre calculado (o badge, pra
+// férias já programadas, mostra o status "Aprovado"/"Pendente" em vez da
+// contagem, mas o popup quer as duas informações lado a lado).
+function quandoLabel(dataISO: string): string {
+  const dias = diasAte(dataISO);
+  if (dias === null) return '';
+  if (dias <= 0) return 'Hoje';
+  if (dias === 1) return 'Amanhã';
+  return `Em ${dias} dias`;
+}
+
+// Explica o que o evento significa e por que o prazo importa — texto
+// específico por `tipo` (ver useProximosEventos.ts), no mesmo espírito do
+// `contexto` das Pendências.
+function contextoEvento(tipo: string, categoria: string, badgeLabel: string): string {
+  switch (tipo) {
+    case 'experiencia':
+      return 'Data em que o período de experiência do colaborador termina. É preciso decidir e formalizar antes disso se haverá efetivação, uma prorrogação (dentro do limite legal de 90 dias no total) ou desligamento — sem isso, o contrato pode virar prazo indeterminado automaticamente.';
+    case 'ferias_vencimento':
+      return 'Prazo final (período concessivo) para o colaborador usufruir as férias do período aquisitivo já completo. Se não forem concedidas até essa data, a empresa fica obrigada a pagá-las em dobro (art. 137 da CLT).';
+    case 'ferias_inicio':
+      return `Data de início das férias já programadas para o colaborador (${categoria}). Status atual: ${badgeLabel}.`;
+    case 'aso':
+      return 'Data em que a validade do ASO/exame periódico atual expira. É preciso agendar o próximo exame ocupacional antes disso para manter a conformidade com o PCMSO (NR-7) e evitar que o colaborador fique com o ASO vencido.';
+    case 'documento':
+      return 'Data de validade do documento pessoal cadastrado. Deve ser atualizado antes do vencimento para não travar processos de compliance, benefícios ou auditorias.';
+    case 'onboarding':
+      return 'Prazo da tarefa do plano de integração (onboarding) do colaborador. Se não for concluída até essa data, ela passa a contar como tarefa atrasada.';
+    default:
+      return '';
+  }
+}
+
+// Ícone por tipo de evento — mesma lógica visual usada nas Pendências,
+// só que cobrindo os 6 tipos que useProximosEventos.ts pode gerar.
+function iconeEvento(tipo: string): typeof Calendar {
+  switch (tipo) {
+    case 'experiencia':
+    case 'onboarding':
+      return GraduationCap;
+    case 'aso':
+      return HeartPulse;
+    case 'documento':
+      return FileText;
+    default:
+      return Calendar;
+  }
 }
 
 // Informações integradas em grid — sem mini-card/borda por campo (só
@@ -189,10 +293,11 @@ export default function ColaboradorDetalhesPage() {
   const [activeFeriasTab, setActiveFeriasTab] = useState('resumo');
   const [activeFinanceiroTab, setActiveFinanceiroTab] = useState('contas');
   const [activeDesenvolvimentoTab, setActiveDesenvolvimentoTab] = useState('resumo');
-  const [activeSSTTab, setActiveSSTTab] = useState('aso');
   const [activeDocumentosTab, setActiveDocumentosTab] = useState('pessoais');
   const [activeTimelineTab, setActiveTimelineTab] = useState('funcional');
   const [recontratarOpen, setRecontratarOpen] = useState(false);
+  const [pendenciasOpen, setPendenciasOpen] = useState(false);
+  const [eventosOpen, setEventosOpen] = useState(false);
 
   // colaboradorService.buscarPorId cai nos 12 colaboradores fictícios de
   // src/mocks/colaboradoresMock.ts quando VITE_COLABORADORES_MOCK=true (dev only).
@@ -223,6 +328,48 @@ export default function ColaboradorDetalhesPage() {
 
   const proximosEventos = useProximosEventos(id ?? '', colaborador?.empresa_id);
 
+  // Versão rica dos Próximos Eventos pro popup "Ver todos" — mesmos eventos
+  // do card compacto, com data por extenso, contagem de dias e uma
+  // explicação do que é/por que o prazo importa por tipo de evento, além
+  // de saber pra onde levar ao clicar (mesmo princípio das Pendências).
+  const eventosDetalhados: EventoDetalhado[] = proximosEventos.map((evento) => ({
+    icon: iconeEvento(evento.tipo),
+    titulo: evento.titulo,
+    categoria: evento.categoria,
+    dataFormatada: formatarDataExtensoBR(evento.data),
+    quandoLabel: quandoLabel(evento.data),
+    badge: evento.badge,
+    contexto: contextoEvento(evento.tipo, evento.categoria, evento.badge.label),
+    onClick: () => {
+      switch (evento.tipo) {
+        case 'experiencia':
+          setActiveDesenvolvimentoTab('experiencia');
+          setActiveMainTab('desenvolvimento');
+          break;
+        case 'ferias_vencimento':
+          setActiveFeriasTab('aquisitivos');
+          setActiveMainTab('ferias');
+          break;
+        case 'ferias_inicio':
+          setActiveFeriasTab('resumo');
+          setActiveMainTab('ferias');
+          break;
+        case 'aso':
+          navigate('/sst');
+          break;
+        case 'documento':
+          setActiveMainTab('documentos');
+          break;
+        case 'onboarding':
+          setActiveDesenvolvimentoTab('resumo');
+          setActiveMainTab('desenvolvimento');
+          break;
+        default:
+          setActiveMainTab('ferias');
+      }
+    },
+  }));
+
   // "Situação Atual" / "Pendências" (Resumo) reaproveitam as mesmas query keys
   // das abas Jornada & Ponto / Férias & Afastamentos / Desenvolvimento / SST —
   // sem refetch ao trocar de aba.
@@ -250,32 +397,59 @@ export default function ColaboradorDetalhesPage() {
   // Somente sinais reais de "precisa de ação agora" (nada company-wide, nada
   // inventado): ajustes de ponto aguardando aprovação, tarefas de onboarding
   // atrasadas, ASOs e documentos pessoais já vencidos.
+  // Cada pendência sabe pra onde levar ao ser clicada — abas internas do
+  // dossiê (setActiveMainTab) ou, no caso de ASO, o módulo SST/Saúde
+  // Ocupacional de verdade (rota própria em /sst — não existe mais aba
+  // "SST" aqui dentro do dossiê do colaborador).
+  // `contexto` explica o "porquê"/prazo de forma genérica pro tipo de
+  // pendência; `itens` lista cada ocorrência específica (o quê, quando,
+  // onde) pra dar informação suficiente pra resolver sem precisar abrir
+  // mais nada — usado só no popup "Ver todas".
   const pendencias = [
     ajustesPontoPendentes.length > 0 && {
       icon: Clock,
       texto: `${ajustesPontoPendentes.length} ajuste${ajustesPontoPendentes.length > 1 ? 's' : ''} de ponto pendente${ajustesPontoPendentes.length > 1 ? 's' : ''}`,
-      tab: 'jornada' as const,
+      contexto: 'Correções de marcação de ponto enviadas pelo colaborador e que aguardam aprovação do gestor. Enquanto pendente, o registro original permanece divergente e pode atrasar o fechamento da folha do período.',
+      itens: ajustesPontoPendentes.map((s: any) =>
+        `${formatarDataBR(s.data_ponto)} — ${s.tipo_ponto === 'entrada' ? 'Entrada' : 'Saída'}: ${s.hora_original ?? '—'} → ${s.hora_sugerida}${s.motivo ? ` (motivo: ${s.motivo})` : ''}, enviado em ${formatarDataHoraBR(s.created_at)}`
+      ),
+      onClick: () => setActiveMainTab('jornada'),
       severidade: 'media' as const,
     },
     onboarding.atrasadas.length > 0 && {
       icon: GraduationCap,
       texto: `${onboarding.atrasadas.length} tarefa${onboarding.atrasadas.length > 1 ? 's' : ''} de onboarding atrasada${onboarding.atrasadas.length > 1 ? 's' : ''}`,
-      tab: 'desenvolvimento' as const,
+      contexto: 'Tarefas do plano de integração do colaborador que já passaram do prazo sem serem concluídas. O atraso pode travar a liberação de acessos, equipamentos ou benefícios previstos para o período de adaptação.',
+      itens: onboarding.atrasadas.map((t: any) => {
+        const dias = diasDesde(t.data_prazo);
+        return `${t.titulo}${t.categoria ? ` (${t.categoria})` : ''} — prazo era ${formatarDataBR(t.data_prazo)}${dias !== null ? `, ${dias} dia${dias === 1 ? '' : 's'} de atraso` : ''}`;
+      }),
+      onClick: () => setActiveMainTab('desenvolvimento'),
       severidade: 'alta' as const,
     },
     asosVencidos.length > 0 && {
       icon: HeartPulse,
       texto: `${asosVencidos.length} ASO${asosVencidos.length > 1 ? 's' : ''} vencido${asosVencidos.length > 1 ? 's' : ''}`,
-      tab: 'sst' as const,
+      contexto: 'Atestado de Saúde Ocupacional com validade expirada. Pela NR-7 (PCMSO), o colaborador não deve permanecer em atividade sem um ASO válido — é preciso agendar um novo exame ocupacional o quanto antes para regularizar e evitar risco trabalhista.',
+      itens: asosVencidos.map((a: any) => {
+        const dias = diasDesde(a.data_validade);
+        return `${a.tipo} — validade venceu em ${formatarDataBR(a.data_validade)}${dias !== null ? ` (há ${dias} dia${dias === 1 ? '' : 's'})` : ''}, exame realizado em ${formatarDataBR(a.data_exame)}${a.medico_nome ? ` por ${a.medico_nome}` : ''}${a.clinica ? ` na ${a.clinica}` : ''}`;
+      }),
+      onClick: () => navigate('/sst'),
       severidade: 'alta' as const,
     },
     documentosVencidos.length > 0 && {
       icon: FileText,
       texto: `${documentosVencidos.length} documento${documentosVencidos.length > 1 ? 's' : ''} pessoal${documentosVencidos.length > 1 ? 'is' : ''} vencido${documentosVencidos.length > 1 ? 's' : ''}`,
-      tab: 'documentos' as const,
+      contexto: 'Documento pessoal cadastrado com validade expirada. Um documento vencido pode travar processos de compliance, geração de benefícios ou auditorias — vale pedir a atualização ao colaborador o quanto antes.',
+      itens: documentosVencidos.map((d: any) => {
+        const dias = diasDesde(d.data_validade);
+        return `${d.tipo_documento}${d.numero ? ` nº ${d.numero}` : ''} — validade venceu em ${formatarDataBR(d.data_validade)}${dias !== null ? ` (há ${dias} dia${dias === 1 ? '' : 's'})` : ''}${d.orgao_emissor ? `, emitido por ${d.orgao_emissor}` : ''}`;
+      }),
+      onClick: () => setActiveMainTab('documentos'),
       severidade: 'media' as const,
     },
-  ].filter(Boolean) as { icon: typeof Clock; texto: string; tab: string; severidade: 'alta' | 'media' }[];
+  ].filter(Boolean) as PendenciaItem[];
 
   // Cadastro do colaborador: nenhum % pronto existe no backend para
   // `colaboradores` — calculado só no frontend a partir de campos reais já
@@ -527,7 +701,7 @@ export default function ColaboradorDetalhesPage() {
                         </div>
                         <button
                           type="button"
-                          onClick={() => setActiveMainTab('ferias')}
+                          onClick={() => setEventosOpen(true)}
                           className="text-xs font-medium text-primary hover:underline"
                         >
                           Ver todos
@@ -695,7 +869,7 @@ export default function ColaboradorDetalhesPage() {
                         {pendencias.length > 0 && (
                           <button
                             type="button"
-                            onClick={() => setActiveMainTab(pendencias[0].tab)}
+                            onClick={() => setPendenciasOpen(true)}
                             className="text-xs font-medium text-primary hover:underline"
                           >
                             Ver todas
@@ -711,7 +885,7 @@ export default function ColaboradorDetalhesPage() {
                           <button
                             key={i}
                             type="button"
-                            onClick={() => setActiveMainTab(p.tab)}
+                            onClick={p.onClick}
                             className="w-full flex items-center gap-3 p-2.5 rounded-xl border border-border/30 hover:border-primary/20 hover:bg-muted/20 transition-colors text-left"
                           >
                             <p.icon className={`h-4 w-4 shrink-0 ${p.severidade === 'alta' ? 'text-destructive' : 'text-warning'}`} />
@@ -828,17 +1002,6 @@ export default function ColaboradorDetalhesPage() {
             </Tabs>
           </TabsContent>
 
-          <TabsContent value="sst">
-            <Tabs value={activeSSTTab} onValueChange={setActiveSSTTab} className="space-y-4">
-              <TabsList className="bg-transparent h-auto p-0 gap-4 border-b border-border/20 rounded-none w-full justify-start overflow-x-auto no-scrollbar">
-                <TabsTrigger value="aso" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">ASO / Exames</TabsTrigger>
-                <TabsTrigger value="resumo" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">EPIs, Riscos &amp; CAT</TabsTrigger>
-              </TabsList>
-              <TabsContent value="aso">{activeSSTTab === 'aso' && <ASOTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="resumo">{activeSSTTab === 'resumo' && <SSTResumoTab colaboradorId={id!} />}</TabsContent>
-            </Tabs>
-          </TabsContent>
-
           <TabsContent value="documentos">
             <Tabs value={activeDocumentosTab} onValueChange={setActiveDocumentosTab} className="space-y-4">
               <TabsList className="bg-transparent h-auto p-0 gap-4 border-b border-border/20 rounded-none w-full justify-start">
@@ -885,6 +1048,20 @@ export default function ColaboradorDetalhesPage() {
           onOpenChange={setRecontratarOpen}
         />
       )}
+
+      {/* "Ver todas" das Pendências abre aqui — em popup, não navega para
+          nenhuma aba. Cada item continua clicável e leva ao lugar certo
+          (aba interna do dossiê ou módulo externo, como SST), fechando o
+          popup em seguida. Animação de abrir/fechar (quadrado → barra →
+          caixa cheia, conteúdo em cascata, tudo espelhado ao fechar) mora
+          em PendenciasDialog — ver esse arquivo pra detalhes da coreografia. */}
+      <PendenciasDialog open={pendenciasOpen} onOpenChange={setPendenciasOpen} pendencias={pendencias} />
+
+      {/* "Ver todos" dos Próximos Eventos — mesma coreografia de
+          abertura/fechamento acima (AnimatedCascadeDialog compartilhado),
+          agora com data por extenso, contagem de dias e explicação do
+          porquê de cada prazo. */}
+      <ProximosEventosDialog open={eventosOpen} onOpenChange={setEventosOpen} eventos={eventosDetalhados} />
     </>
   );
 }

@@ -25,3 +25,7 @@ export { DesenvolvimentoResumoTab } from './DesenvolvimentoResumoTab';
 export { SSTResumoTab } from './SSTResumoTab';
 export { ComplianceTab } from './ComplianceTab';
 export { TimelineFuncionalTab } from './TimelineFuncionalTab';
+export { PendenciasDialog } from './PendenciasDialog';
+export type { PendenciaItem } from './PendenciasDialog';
+export { ProximosEventosDialog } from './ProximosEventosDialog';
+export type { EventoDetalhado } from './ProximosEventosDialog';
