@@ -6,6 +6,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { differenceInDays, parseISO, addDays, format } from 'date-fns';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { isMockEmpresaId } from '@/mocks/colaboradoresMock';
 
 interface ColaboradorRelation {
   id: string;
@@ -33,7 +34,11 @@ export function useNotificacoes() {
 
   const { data: notificacoes = [], isLoading, refetch } = useQuery({
     queryKey: ['notificacoes', empresaAtualId],
-    enabled: !!empresaAtualId,
+    // empresaAtualId cai para o id fictício da empresa-mock (ver
+    // colaboradoresMock.ts) quando o usuário não tem vínculo real — essa
+    // tabela é real (nunca mockada), então o id fictício só faria a query
+    // falhar (não é um UUID válido).
+    enabled: !!empresaAtualId && !isMockEmpresaId(empresaAtualId),
     staleTime: 2 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     refetchInterval: 60000,

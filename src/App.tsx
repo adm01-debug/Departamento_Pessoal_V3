@@ -2,8 +2,8 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { MainLayout } from '@/components/layout';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { AdminRoute } from '@/components/AdminRoute';
-import { RouteErrorBoundary } from '@/components/RouteErrorBoundary';
-import { lazy, Suspense } from 'react';
+import { RouteErrorBoundary, clearChunkReloadGuard } from '@/components/RouteErrorBoundary';
+import { lazy, Suspense, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSessionTimeout } from '@/hooks/useSessionTimeout';
 import { useSecureVisibility } from '@/hooks/useSecureVisibility';
@@ -159,11 +159,20 @@ function PageLoader() {
   );
 }
 
+function LazyPageMounted({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    clearChunkReloadGuard();
+  }, []);
+  return <>{children}</>;
+}
+
 function LazyPage({ Component }: { Component: React.LazyExoticComponent<() => React.ReactElement> }) {
   return (
     <RouteErrorBoundary>
       <Suspense fallback={<PageLoader />}>
-        <Component />
+        <LazyPageMounted>
+          <Component />
+        </LazyPageMounted>
       </Suspense>
     </RouteErrorBoundary>
   );

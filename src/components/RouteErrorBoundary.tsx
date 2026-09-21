@@ -13,6 +13,27 @@ interface State {
   error: Error | null;
 }
 
+// React.lazy() memoiza a Promise rejeitada do import() que falhou — resetar o
+// state do error boundary (ex.: clicando "Tentar novamente") NÃO refaz o
+// fetch, apenas relança a mesma rejeição já em cache. Esse padrão de erro
+// ("Failed to fetch dynamically imported module" etc.) normalmente é
+// transitório: o dev server reiniciou/recompilou (Vite) ou um novo deploy
+// trocou o hash dos chunks enquanto a aba já tinha o bundle antigo carregado.
+// A única forma real de recuperar é um reload completo do documento.
+const CHUNK_LOAD_ERROR_RE = /fetch dynamically imported module|error loading dynamically imported module|importing a module script failed/i;
+const CHUNK_RELOAD_KEY = 'chunk-reload-attempted';
+
+function isChunkLoadError(error: Error | null): boolean {
+  return !!error?.message && CHUNK_LOAD_ERROR_RE.test(error.message);
+}
+
+// Chamado quando uma rota lazy termina de montar com sucesso, liberando o
+// guard para que uma falha de chunk futura (em outra rota) ainda possa
+// se auto-recuperar com um reload.
+export function clearChunkReloadGuard() {
+  sessionStorage.removeItem(CHUNK_RELOAD_KEY);
+}
+
 export class RouteErrorBoundary extends Component<Props, State> {
   state: State = { hasError: false, error: null };
 
@@ -25,9 +46,24 @@ export class RouteErrorBoundary extends Component<Props, State> {
       componentStack: info.componentStack,
       location: window.location.pathname
     }, error);
+
+    // Auto-recupera uma única vez por sessão de aba: evita mostrar a tela de
+    // erro para o que costuma ser um hiccup transitório de carregamento de
+    // chunk. Se o reload não resolver (erro persiste), o guard em
+    // sessionStorage impede um loop infinito e cai na UI de erro normal.
+    if (isChunkLoadError(error) && !sessionStorage.getItem(CHUNK_RELOAD_KEY)) {
+      sessionStorage.setItem(CHUNK_RELOAD_KEY, '1');
+      window.location.reload();
+    }
   }
 
   handleRetry = () => {
+    if (isChunkLoadError(this.state.error)) {
+      // Resetar o state não adianta aqui (ver comentário acima) — precisa de
+      // um reload de verdade para buscar o módulo de novo.
+      window.location.reload();
+      return;
+    }
     this.setState({ hasError: false, error: null });
   };
 

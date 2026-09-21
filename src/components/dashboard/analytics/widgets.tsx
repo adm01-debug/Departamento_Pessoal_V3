@@ -337,7 +337,7 @@ export function CadastroIncompletoWidget() {
           initial={{ opacity: 0, x: -5 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: i * 0.05 }}
-          onClick={() => navigate(`/colaboradores/${c.id}/editar`)}
+          onClick={() => navigate(`/colaboradores/editar/${c.id}`)}
           className="flex items-center gap-3 p-2.5 rounded-xl glass text-sm hover:border-destructive/20 cursor-pointer group transition-all"
         >
           <div className="p-1.5 rounded-lg bg-destructive/10 text-destructive shrink-0 group-hover:bg-destructive group-hover:text-white transition-colors">

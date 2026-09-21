@@ -141,6 +141,19 @@ export default defineConfig(({ mode }) => {
   },
   optimizeDeps: {
     // force: true foi removido — forçar re-otimização a cada dev start prejudica a DX
+    //
+    // `include` abaixo é necessário (não redundante com o scan automático do
+    // Vite): com 100+ rotas lazy, várias delas usadas raramente em dev (ex.:
+    // ColaboradorFormPage), o scanner nem sempre descobre essas deps no
+    // cold start. Quando uma rota lazy é a PRIMEIRA a puxar `zod`/
+    // `@hookform/resolvers/zod`, o Vite re-otimiza on-demand e invalida
+    // requisições já em voo com "504 (Outdated Optimize Dep)" — o
+    // `import() dinâmico daquela rota rejeita com "Failed to fetch
+    // dynamically imported module", que o React.lazy() cacheia (não há
+    // como reexecutar sem full reload). Pré-declarar aqui garante que
+    // essas libs (usadas por praticamente todo *FormPage.tsx) já estejam
+    // otimizadas ANTES de qualquer rota ser visitada.
+    include: ['zod', '@hookform/resolvers/zod', 'react-hook-form'],
   },
   build: {
     // P3-053: source maps para Sentry — upload via @sentry/vite-plugin em CI

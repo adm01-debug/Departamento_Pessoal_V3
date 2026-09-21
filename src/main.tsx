@@ -125,13 +125,44 @@ if (import.meta.env.PROD) {
   });
 }
 
-// PWA Service Worker Registration
-if (!isInIframe && !isPreviewHost && 'serviceWorker' in navigator) {
+// Chunk-load recovery: depois de um novo deploy, o index.html antigo ainda em
+// cache do navegador referencia hashes de chunk que não existem mais no
+// servidor. O helper de preload dinâmico do Vite (usado nos import()
+// lazy das rotas) emite este evento em vez de deixar a Promise rejeitada
+// travar a UI — um reload busca o index.html/manifest atual e resolve.
+// Guard em sessionStorage evita loop caso o problema não seja esse chunk.
+window.addEventListener('vite:preloadError', () => {
+  const key = 'chunk-reload-attempted';
+  if (sessionStorage.getItem(key)) return;
+  sessionStorage.setItem(key, '1');
+  window.location.reload();
+});
+
+// PWA Service Worker Registration — produção apenas. Um SW ativo em dev
+// intercepta as próprias requisições de módulo do Vite (fetch do `sw-custom.js`
+// reconstrói a Response manualmente lendo o stream e recriando com os headers
+// originais — não preserva content-encoding/length de forma confiável para
+// conteúdo arbitrário). Resultado: "Failed to fetch dynamically imported
+// module" só no browser (nunca via curl/rede direta, que não passa pelo SW).
+if (import.meta.env.PROD && !isInIframe && !isPreviewHost && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw-custom.js')
       .then(reg => { if (import.meta.env.DEV) loggerService.info('Service Worker registrado', { scope: reg.scope }); })
       .catch(err => loggerService.error('Falha ao registrar Service Worker', {}, err instanceof Error ? err : new Error(String(err))));
   });
+} else if (import.meta.env.DEV && 'serviceWorker' in navigator) {
+  // Limpeza defensiva: um SW registrado numa sessão anterior (ex.: testando
+  // `vite preview`/build de produção nesta mesma porta) continua ativo e
+  // controlando a aba mesmo depois de voltar para `vite dev` — a guarda acima
+  // só evita um NOVO registro, não desfaz um já existente. Sem isso, o
+  // sintoma persiste indefinidamente até o SW ser removido manualmente via
+  // DevTools, o que não é óbvio para quem está apenas rodando `bun dev`.
+  navigator.serviceWorker.getRegistrations().then((regs) => {
+    regs.forEach((reg) => reg.unregister());
+  });
+  if ('caches' in window) {
+    caches.keys().then((names) => names.forEach((name) => caches.delete(name)));
+  }
 }
 
 // Env-var guard fail-fast: se VITE_SUPABASE_URL / VITE_SUPABASE_PUBLISHABLE_KEY
