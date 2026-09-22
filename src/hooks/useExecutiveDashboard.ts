@@ -98,12 +98,12 @@ export function useStrategicFinancials(empresaId?: string) {
         p_empresa_id: empresaId!,
         p_months: 6,
       });
-      const { data: budgets } = await supabase
+      const { data: budgets } = await supabaseBase
         .from('personnel_budget')
         .select('*')
         .eq('empresa_id', empresaId!)
         .eq('ano', new Date().getFullYear());
-      const { data: actuals } = await supabase
+      const { data: actuals } = await supabaseBase
         .from('folhas_pagamento')
         .select('total_proventos, total_liquido, total_descontos')
         .eq('empresa_id', empresaId!)

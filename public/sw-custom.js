@@ -53,13 +53,24 @@ async function staleWhileRevalidate(request, cacheName) {
 }
 
 // Gzipbomb-safe fetch wrapper: lê apenas os primeiros 4MB antes de entregar ao SW
-// (o worker parent rejeita payloads >4MB via DecompressionStream na Edge Function)
+// (o worker parent rejeita payloads >4MB via DecompressionStream na Edge Function).
+//
+// Mede o tamanho lendo um CLONE da resposta e devolve a resposta ORIGINAL
+// intocada quando está dentro do limite — nunca reconstrói um novo Response
+// a partir dos chunks lidos. Uma versão anterior fazia `new Response(blob,
+// { headers: response.headers, ... })`: como os chunks já vêm descomprimidos
+// pelo fetch(), mas os headers copiados ainda traziam `content-encoding`/
+// `content-length` do payload original (comprimido) na rede, o body e os
+// headers da resposta reconstruída ficavam inconsistentes — o browser
+// rejeitava essa resposta ao tentar consumi-la, o que aparecia como "Failed
+// to fetch dynamically imported module" (só no browser, nunca via
+// curl/rede direta, que não passa pelo SW) para qualquer módulo grande o
+// bastante para vir comprimido pelo servidor.
 async function safeFetch(request, maxBytes = 4 * 1024 * 1024) {
   const response = await fetch(request);
-  if (!response.ok) return response;
-  // Streaming: aborta após maxBytes lidos — protege contra oversized payloads
-  const reader = response.body.getReader();
-  const chunks = [];
+  if (!response.ok || !response.body) return response;
+
+  const reader = response.clone().body.getReader();
   let total = 0;
   try {
     while (true) {
@@ -70,13 +81,11 @@ async function safeFetch(request, maxBytes = 4 * 1024 * 1024) {
         reader.cancel();
         return new Response('Payload too large', { status: 413 });
       }
-      chunks.push(value);
     }
   } catch {
-    // Abort ou erro de leitura → propagar
+    // Erro ao medir o clone não deve impedir a resposta original de servir.
   }
-  const body = new Blob(chunks);
-  return new Response(body, { headers: response.headers, status: response.status });
+  return response;
 }
 
 // ── 1. Instalação ────────────────────────────────────────────

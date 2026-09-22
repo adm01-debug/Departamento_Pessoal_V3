@@ -153,7 +153,14 @@ export default defineConfig(({ mode }) => {
     // como reexecutar sem full reload). Pré-declarar aqui garante que
     // essas libs (usadas por praticamente todo *FormPage.tsx) já estejam
     // otimizadas ANTES de qualquer rota ser visitada.
-    include: ['zod', '@hookform/resolvers/zod', 'react-hook-form'],
+    //
+    // `@base-ui-components/react/tabs` é importado só por
+    // DashboardExecutivoPage.tsx (nenhuma outra rota) — exatamente o
+    // cenário acima ("rota lazy que é a PRIMEIRA a puxar" uma dep nova):
+    // reproduzia o mesmo "Failed to fetch dynamically imported module"
+    // só nessa página, mesmo depois de reload, porque a otimização
+    // on-demand invalidava o próprio import() dela em voo.
+    include: ['zod', '@hookform/resolvers/zod', 'react-hook-form', '@base-ui-components/react/tabs'],
   },
   build: {
     // P3-053: source maps para Sentry — upload via @sentry/vite-plugin em CI
