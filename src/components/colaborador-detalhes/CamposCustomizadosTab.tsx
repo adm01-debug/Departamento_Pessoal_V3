@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,11 +8,15 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
+import { cardVariants } from '@/components/dashboard/MetricCard';
+import { FileText } from 'lucide-react';
 import { toast } from 'sonner';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import {
   useCamposCustomizados, useValoresCamposCustomizados, useSalvarValorCampoCustomizado,
 } from '@/hooks/useColaboradorDetalhes';
+
+const MotionCard = motion.create(Card);
 
 interface CampoCustomizado {
   id: string;
@@ -25,7 +30,7 @@ interface CampoCustomizado {
 
 // Mesma lista de tipos usada na tela administrativa (src/components/settings/CamposCustomizadosTab.tsx)
 // — este componente só renderiza/edita os VALORES por colaborador, não as definições dos campos.
-export function CamposCustomizadosTab({ colaboradorId }: { colaboradorId: string }) {
+export function CamposCustomizadosTab({ colaboradorId, index = 0 }: { colaboradorId: string; index?: number }) {
   const { empresaAtual } = useEmpresas();
   const empresaId = empresaAtual?.id;
 
@@ -61,22 +66,24 @@ export function CamposCustomizadosTab({ colaboradorId }: { colaboradorId: string
   };
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-lg">Campos Customizados</CardTitle>
-        <Button size="sm" onClick={handleSalvarTudo} disabled={dirty.length === 0 || salvar.isPending}>
+    <MotionCard variant="elevated" custom={index} initial="hidden" animate="visible" variants={cardVariants} className="w-full h-full flex flex-col">
+      <CardHeader className="flex flex-row items-center justify-between pt-4 px-5 pb-3">
+        <CardTitle className="text-lg flex items-center gap-2">
+          <FileText className="h-4.5 w-4.5 text-primary" /> Campos Customizados
+        </CardTitle>
+        <Button size="sm" className="h-7 px-3 text-[11px]" onClick={handleSalvarTudo} disabled={dirty.length === 0 || salvar.isPending}>
           {salvar.isPending ? 'Salvando...' : 'Salvar'}
         </Button>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex flex-col justify-start px-5 pb-5">
         {isLoading ? (
           <Spinner />
         ) : campos.length === 0 ? (
           <p className="text-sm text-muted-foreground">Nenhum campo customizado ativo para esta empresa.</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {campos.map(campo => (
-              <div key={campo.id} className="space-y-1">
+              <div key={campo.id} className={`space-y-1 ${campo.tipo === 'textarea' ? 'sm:col-span-2' : ''}`}>
                 <Label>{campo.nome}{campo.obrigatorio && <span className="text-destructive"> *</span>}</Label>
                 {campo.tipo === 'textarea' && (
                   <Textarea
@@ -128,6 +135,6 @@ export function CamposCustomizadosTab({ colaboradorId }: { colaboradorId: string
           </div>
         )}
       </CardContent>
-    </Card>
+    </MotionCard>
   );
 }

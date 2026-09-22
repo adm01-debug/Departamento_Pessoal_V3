@@ -1,3 +1,4 @@
+export { DadosPessoaisTab } from './DadosPessoaisTab';
 export { DependentesTab } from './DependentesTab';
 export { EmergenciaTab } from './EmergenciaTab';
 export { HistoricoSalarialTab } from './HistoricoSalarialTab';

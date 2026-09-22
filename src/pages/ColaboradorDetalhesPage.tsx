@@ -28,10 +28,10 @@ import {
 import { RecontratarColaboradorDialog } from '@/components/colaboradores/RecontratarColaboradorDialog';
 import { AnimatedDossieTabsList, AnimatedDossieTabsTrigger } from '@/components/colaboradores/AnimatedDossieTabs';
 import {
-  DependentesTab, EmergenciaTab, HistoricoSalarialTab, ExperienciaTab,
-  FormacaoTab, EstrangeiroTab, PCDTab, AquisitivosTab, AnotacoesTab,
+  DadosPessoaisTab, HistoricoSalarialTab, ExperienciaTab,
+  FormacaoTab, AquisitivosTab, AnotacoesTab,
   ContasBancariasTab, DocumentosPessoaisTab, EstagiarioTab, HistoricoContratosTab,
-  ColaboradorHistory, BeneficiosTab, ColaboradorDocuments, CamposCustomizadosTab,
+  ColaboradorHistory, BeneficiosTab, ColaboradorDocuments,
   TrabalhoHierarquiaTab, JornadaPontoTab, FeriasResumoTab, AfastamentosTab, HoleritesTab,
   DesenvolvimentoResumoTab, ComplianceTab, TimelineFuncionalTab,
   PendenciasDialog, type PendenciaItem,
@@ -289,7 +289,6 @@ export default function ColaboradorDetalhesPage() {
   const navigate = useNavigate();
 
   const [activeMainTab, setActiveMainTab] = useState('geral');
-  const [activePessoalTab, setActivePessoalTab] = useState('dependentes');
   const [activeFeriasTab, setActiveFeriasTab] = useState('resumo');
   const [activeFinanceiroTab, setActiveFinanceiroTab] = useState('contas');
   const [activeDesenvolvimentoTab, setActiveDesenvolvimentoTab] = useState('resumo');
@@ -939,20 +938,7 @@ export default function ColaboradorDetalhesPage() {
           </TabsContent>
 
           <TabsContent value="pessoal">
-            <Tabs value={activePessoalTab} onValueChange={setActivePessoalTab} className="space-y-4">
-              <TabsList className="bg-transparent h-auto p-0 gap-4 border-b border-border/20 rounded-none w-full justify-start overflow-x-auto no-scrollbar">
-                <TabsTrigger value="dependentes" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Dependentes</TabsTrigger>
-                <TabsTrigger value="emergencia" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Contatos de Emergência</TabsTrigger>
-                <TabsTrigger value="pcd" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">PCD</TabsTrigger>
-                <TabsTrigger value="estrangeiro" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Estrangeiro</TabsTrigger>
-                <TabsTrigger value="customizados" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Campos Customizados</TabsTrigger>
-              </TabsList>
-              <TabsContent value="dependentes">{activePessoalTab === 'dependentes' && <DependentesTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="emergencia">{activePessoalTab === 'emergencia' && <EmergenciaTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="pcd">{activePessoalTab === 'pcd' && <PCDTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="estrangeiro">{activePessoalTab === 'estrangeiro' && <EstrangeiroTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="customizados">{activePessoalTab === 'customizados' && <CamposCustomizadosTab colaboradorId={id!} />}</TabsContent>
-            </Tabs>
+            {activeMainTab === 'pessoal' && <DadosPessoaisTab colaboradorId={id!} colaborador={colaborador} />}
           </TabsContent>
 
           <TabsContent value="hierarquia">
