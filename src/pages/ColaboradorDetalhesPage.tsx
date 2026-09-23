@@ -29,10 +29,10 @@ import { RecontratarColaboradorDialog } from '@/components/colaboradores/Recontr
 import { AnimatedDossieTabsList, AnimatedDossieTabsTrigger } from '@/components/colaboradores/AnimatedDossieTabs';
 import {
   DadosPessoaisTab, HistoricoSalarialTab, ExperienciaTab,
-  FormacaoTab, AquisitivosTab, AnotacoesTab,
+  FormacaoTab, AnotacoesTab,
   ContasBancariasTab, DocumentosPessoaisTab, EstagiarioTab, HistoricoContratosTab,
   ColaboradorHistory, BeneficiosTab, ColaboradorDocuments,
-  TrabalhoHierarquiaTab, JornadaPontoTab, FeriasResumoTab, AfastamentosTab, HoleritesTab,
+  TrabalhoHierarquiaTab, JornadaPontoTab, FeriasResumoTab, HoleritesTab,
   DesenvolvimentoResumoTab, ComplianceTab, TimelineFuncionalTab,
   PendenciasDialog, type PendenciaItem,
   ProximosEventosDialog, type EventoDetalhado,
@@ -289,7 +289,6 @@ export default function ColaboradorDetalhesPage() {
   const navigate = useNavigate();
 
   const [activeMainTab, setActiveMainTab] = useState('geral');
-  const [activeFeriasTab, setActiveFeriasTab] = useState('resumo');
   const [activeFinanceiroTab, setActiveFinanceiroTab] = useState('contas');
   const [activeDesenvolvimentoTab, setActiveDesenvolvimentoTab] = useState('resumo');
   const [activeDocumentosTab, setActiveDocumentosTab] = useState('pessoais');
@@ -346,11 +345,9 @@ export default function ColaboradorDetalhesPage() {
           setActiveMainTab('desenvolvimento');
           break;
         case 'ferias_vencimento':
-          setActiveFeriasTab('aquisitivos');
           setActiveMainTab('ferias');
           break;
         case 'ferias_inicio':
-          setActiveFeriasTab('resumo');
           setActiveMainTab('ferias');
           break;
         case 'aso':
@@ -950,16 +947,10 @@ export default function ColaboradorDetalhesPage() {
           </TabsContent>
 
           <TabsContent value="ferias">
-            <Tabs value={activeFeriasTab} onValueChange={setActiveFeriasTab} className="space-y-4">
-              <TabsList className="bg-transparent h-auto p-0 gap-4 border-b border-border/20 rounded-none w-full justify-start overflow-x-auto no-scrollbar">
-                <TabsTrigger value="resumo" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Férias</TabsTrigger>
-                <TabsTrigger value="aquisitivos" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Períodos Aquisitivos</TabsTrigger>
-                <TabsTrigger value="afastamentos" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Afastamentos</TabsTrigger>
-              </TabsList>
-              <TabsContent value="resumo">{activeFeriasTab === 'resumo' && <FeriasResumoTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="aquisitivos">{activeFeriasTab === 'aquisitivos' && <AquisitivosTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="afastamentos">{activeFeriasTab === 'afastamentos' && <AfastamentosTab colaboradorId={id!} />}</TabsContent>
-            </Tabs>
+            <FeriasResumoTab
+              colaboradorId={id!}
+              onVerTodosMarcos={() => { setActiveMainTab('timeline'); setActiveTimelineTab('funcional'); }}
+            />
           </TabsContent>
 
           <TabsContent value="financeiro">

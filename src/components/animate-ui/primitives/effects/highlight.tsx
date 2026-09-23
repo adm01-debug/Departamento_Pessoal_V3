@@ -197,9 +197,19 @@ function Highlight<T extends React.ElementType = 'div'>({
 
       const containerRect = localRef.current.getBoundingClientRect();
       const offset = boundsOffsetRef.current;
+      // `bounds`/`containerRect` são retângulos relativos ao VIEWPORT (já
+      // deslocados pelo scroll atual do container). Um `left`/`top` de
+      // posicionamento absoluto, porém, é lido pelo navegador no sistema de
+      // coordenadas do CONTEÚDO do container (independente de scroll) — por
+      // isso é preciso somar `scrollLeft`/`scrollTop` de volta ao calcular a
+      // diferença, senão o valor guardado já vem "descontado" do scroll do
+      // momento da medição, e ao ser reaplicado dentro do mesmo container
+      // rolável esse desconto é somado DE NOVO pelo scroll nativo (o
+      // indicador acaba deslocado por ~scrollLeft em relação à tab ativa
+      // sempre que o container não estiver no início do scroll).
       const newBounds: Bounds = {
-        top: bounds.top - containerRect.top + offset.top,
-        left: bounds.left - containerRect.left + offset.left,
+        top: bounds.top - containerRect.top + localRef.current.scrollTop + offset.top,
+        left: bounds.left - containerRect.left + localRef.current.scrollLeft + offset.left,
         width: bounds.width + offset.width,
         height: bounds.height + offset.height,
       };

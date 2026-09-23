@@ -207,11 +207,14 @@ export function getMockAnotacoes(colaboradorId?: string): MockRecord[] | undefin
   ];
 }
 
+// Campos alinhados com o schema real da tabela `periodos_aquisitivos` (ver
+// migração 20251216170845): `data_inicio`/`data_fim`/`dias_direito`/
+// `dias_descontados`/`data_limite_concessao`, consumidos por FeriasResumoTab.
 export function getMockPeriodosAquisitivos(colaboradorId?: string): MockRecord[] | undefined {
   const c = findMockColaborador(colaboradorId);
   if (!c) return undefined;
   return [
-    { id: `${c.id}-aquis-1`, inicio_aquisitivo: '2024-01-01', fim_aquisitivo: '2024-12-31', inicio_concessivo: '2025-01-01', fim_concessivo: '2025-12-31', saldo_atual: 30, faltas_periodo: 0, status: 'em_aberto' },
+    { id: `${c.id}-aquis-1`, data_inicio: '2025-12-01', data_fim: '2026-11-30', dias_direito: 30, dias_descontados: 3, status: 'em_aquisicao', data_limite_concessao: '2027-11-30' },
   ];
 }
 
@@ -398,6 +401,10 @@ export function getMockFerias(colaboradorId?: string): MockRecord[] | undefined 
   return [
     { id: `${c.id}-ferias-1`, data_inicio: '2025-07-01', data_fim: '2025-07-30', dias_gozo: 30, status: 'concluida' },
     { id: `${c.id}-ferias-2`, data_inicio: '2026-11-10', data_fim: '2026-11-24', dias_gozo: 15, status: 'aprovada' },
+    { id: `${c.id}-ferias-3`, data_inicio: '2025-01-06', data_fim: '2025-01-20', dias_gozo: 15, status: 'concluida' },
+    { id: `${c.id}-ferias-4`, data_inicio: '2024-07-08', data_fim: '2024-07-17', dias_gozo: 10, status: 'concluida' },
+    { id: `${c.id}-ferias-5`, data_inicio: '2024-01-15', data_fim: '2024-02-13', dias_gozo: 30, status: 'concluida' },
+    { id: `${c.id}-ferias-6`, data_inicio: '2023-06-05', data_fim: '2023-06-14', dias_gozo: 10, status: 'concluida' },
   ];
 }
 
