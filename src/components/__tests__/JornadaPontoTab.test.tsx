@@ -4,10 +4,14 @@ import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router-dom';
 
-const { mockBuscarPorId } = vi.hoisted(() => ({ mockBuscarPorId: vi.fn() }));
+const { mockBuscarPorId, mockObterJornadaColaborador } = vi.hoisted(() => ({
+  mockBuscarPorId: vi.fn(),
+  mockObterJornadaColaborador: vi.fn(),
+}));
 
 vi.mock('@/services', () => ({
   colaboradorService: { buscarPorId: mockBuscarPorId },
+  jornadaService: { obterJornadaColaborador: mockObterJornadaColaborador },
 }));
 vi.mock('@/hooks/useEmpresas', () => ({
   useEmpresas: () => ({ empresaAtual: { id: 'emp-1' } }),
@@ -46,18 +50,28 @@ describe('JornadaPontoTab', () => {
     vi.clearAllMocks();
   });
 
-  it('shows jornada semanal and horário from the colaborador record', async () => {
-    mockBuscarPorId.mockResolvedValue({
-      id: 'col-1', jornada_semanal: 44, horario_entrada: '08:00', horario_saida: '17:00',
+  it('shows jornada semanal from the colaborador record and escala from the jornada resolvida', async () => {
+    mockBuscarPorId.mockResolvedValue({ id: 'col-1', jornada_semanal: 44 });
+    mockObterJornadaColaborador.mockResolvedValue({
+      id: 'jor-1', horario_entrada: '08:00', horario_saida: '17:00', intervalo_minutos: 60, carga_horaria_semanal: 44,
     });
     render(<JornadaPontoTab colaboradorId="col-1" />, { wrapper });
 
     await waitFor(() => expect(screen.getByText('44h/semana')).toBeInTheDocument());
-    expect(screen.getByText('08:00 — 17:00')).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText('08:00 — 17:00')).toBeInTheDocument());
+  });
+
+  it('shows "Não definida" when no jornada resolves for the colaborador', async () => {
+    mockBuscarPorId.mockResolvedValue({ id: 'col-1' });
+    mockObterJornadaColaborador.mockResolvedValue(null);
+    render(<JornadaPontoTab colaboradorId="col-1" />, { wrapper });
+
+    await waitFor(() => expect(screen.getByText('Não definida')).toBeInTheDocument());
   });
 
   it('renders the ponto today and week summary widgets', async () => {
     mockBuscarPorId.mockResolvedValue({ id: 'col-1' });
+    mockObterJornadaColaborador.mockResolvedValue(null);
     render(<JornadaPontoTab colaboradorId="col-1" />, { wrapper });
 
     await waitFor(() => expect(screen.getByTestId('ponto-today')).toBeInTheDocument());

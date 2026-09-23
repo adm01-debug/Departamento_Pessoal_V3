@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
+import { cardVariants } from '@/components/dashboard/MetricCard';
 
 interface PontoWeekSummaryProps {
   registrosSemana: any[];
@@ -16,37 +17,69 @@ function formatInterval(val: any) {
   return '00:00';
 }
 
+function timeToMinutes(time: string) {
+  if (!time) return 0;
+  const [h, m] = time.split(':').map(Number);
+  return h * 60 + m;
+}
+
+/** Saldo do dia: extras (positivo), atraso/débito (negativo) ou neutro. */
+function formatSaldo(r: any): { texto: string; positivo: boolean; neutro: boolean } {
+  const extras = formatInterval(r.horas_extras);
+  if (timeToMinutes(extras) > 0) return { texto: `+${extras}`, positivo: true, neutro: false };
+
+  const atrasoMin = Number(r.atraso_minutos) || 0;
+  if (atrasoMin > 0) {
+    const h = Math.floor(atrasoMin / 60);
+    const m = atrasoMin % 60;
+    return { texto: `-${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`, positivo: false, neutro: false };
+  }
+
+  const falta = formatInterval(r.horas_falta);
+  if (timeToMinutes(falta) > 0) return { texto: `-${falta}`, positivo: false, neutro: false };
+
+  return { texto: '00:00', positivo: false, neutro: true };
+}
+
 export function PontoWeekSummary({ registrosSemana }: PontoWeekSummaryProps) {
   return (
-    <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-      <Card className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden">
-        <div className="h-[2px] bg-gradient-to-r from-primary to-primary-glow" />
-        <CardHeader>
-          <CardTitle className="font-display flex items-center gap-2">
+    <motion.div custom={5} variants={cardVariants} initial="hidden" animate="visible" className="h-full">
+      <Card className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden h-full">
+        <CardHeader className="p-4 pb-2">
+          <CardTitle className="font-display flex items-center gap-2 text-sm">
             <TrendingUp className="h-4 w-4 text-success" /> Últimos 7 dias
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 pt-0">
           {registrosSemana.length > 0 ? (
-            <div className="space-y-2">
-              {registrosSemana.slice(0, 7).map((r: any) => (
-                <div key={r.id} className="flex items-center justify-between p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
-                  <div>
-                    <p className="text-sm font-body font-medium">
+            <div className="space-y-0.5">
+              <div className="grid grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-3 px-2 pb-2 text-[9px] font-medium uppercase text-muted-foreground tracking-wider">
+                <span className="truncate">Dia</span>
+                <span className="text-center truncate">Trabalhado</span>
+                <span className="text-center truncate">Saldo</span>
+                <span className="text-center truncate">Status</span>
+              </div>
+              {registrosSemana.slice(0, 7).map((r: any) => {
+                const saldo = formatSaldo(r);
+                const atrasado = Number(r.atraso_minutos) > 0;
+                return (
+                  <div key={r.id} className="grid grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-3 items-center px-2 py-1.5 rounded-lg hover:bg-background/70 transition-colors">
+                    <span className="text-xs font-body font-medium truncate">
                       {new Date(r.data + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' })}
-                    </p>
+                    </span>
+                    <span className="text-xs font-body tabular-nums truncate text-center">{formatInterval(r.horas_trabalhadas)}</span>
+                    <span className={cn(
+                      "text-xs font-body tabular-nums font-medium truncate text-center",
+                      saldo.neutro ? "text-muted-foreground" : saldo.positivo ? "text-success" : "text-destructive"
+                    )}>
+                      {saldo.texto}
+                    </span>
+                    <span className="flex justify-center">
+                      <span className={cn("h-2 w-2 rounded-full", atrasado ? "bg-destructive" : "bg-success")} />
+                    </span>
                   </div>
-                  <div className="flex items-center gap-3 text-xs font-body">
-                    <span className="text-success font-medium">{formatInterval(r.horas_trabalhadas)}</span>
-                    {r.horas_extras && formatInterval(r.horas_extras) !== '00:00' && (
-                      <Badge variant="outline" className="text-[10px] h-5 px-1.5 text-info">+{formatInterval(r.horas_extras)}</Badge>
-                    )}
-                    {r.atraso_minutos > 0 && (
-                      <Badge variant="destructive" className="text-[10px] h-5 px-1.5">{r.atraso_minutos}m</Badge>
-                    )}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-8">

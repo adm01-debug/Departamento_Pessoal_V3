@@ -13,15 +13,18 @@ import { Spinner } from '@/components/ui/spinner';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
+import { jornadaService } from '@/services';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { Plus, Trash2 } from 'lucide-react';
+import { AlertTriangle, Pencil, Plus, Trash2 } from 'lucide-react';
 
 export default function JornadasPage() {
   const { empresaAtual } = useEmpresas();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ nome: '', tipo: 'padrao', carga_horaria_semanal: '44', horario_entrada: '08:00', horario_saida: '17:00', intervalo_minutos: '60' });
+  const [editando, setEditando] = useState<any | null>(null);
+  const [formEdicao, setFormEdicao] = useState({ nome: '', tipo: 'padrao', carga_horaria_semanal: '44', horario_entrada: '08:00', horario_saida: '17:00', intervalo_minutos: '60' });
 
   const { data: jornadas = [], isLoading } = useQuery({
     queryKey: ['jornadas', empresaAtual?.id],
@@ -52,6 +55,35 @@ export default function JornadasPage() {
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['jornadas'] }); toast.success('Jornada excluída!'); }});
+
+  const atualizar = useMutation({
+    mutationFn: async (d: typeof formEdicao) => {
+      if (!editando) throw new Error('Nenhuma jornada selecionada.');
+      return jornadaService.atualizarJornada(editando.id, {
+        ...d,
+        carga_horaria_semanal: Number(d.carga_horaria_semanal),
+        intervalo_minutos: Number(d.intervalo_minutos),
+      }, empresaAtual!.id);
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['jornadas'] });
+      qc.invalidateQueries({ queryKey: ['jornada-colaborador'] });
+      setEditando(null);
+      toast.success('Jornada atualizada!');
+    },
+    onError: (e: Error) => toast.error(safeErrorMessage(e, 'Erro ao atualizar jornada.'))});
+
+  function abrirEdicao(j: any) {
+    setFormEdicao({
+      nome: j.nome || '',
+      tipo: j.tipo || 'padrao',
+      carga_horaria_semanal: String(j.carga_horaria_semanal ?? ''),
+      horario_entrada: (j.horario_entrada || '').slice(0, 5),
+      horario_saida: (j.horario_saida || '').slice(0, 5),
+      intervalo_minutos: String(j.intervalo_minutos ?? ''),
+    });
+    setEditando(j);
+  }
 
   if (isLoading) return <PageLayout title="Jornadas"><Spinner /></PageLayout>;
 
@@ -103,7 +135,10 @@ export default function JornadasPage() {
                   <TableCell>{j.horario_entrada} — {j.horario_saida}</TableCell>
                   <TableCell>{j.carga_horaria_semanal}h/sem</TableCell>
                   <TableCell>{j.intervalo_minutos}min</TableCell>
-                  <TableCell><Button size="icon" variant="ghost" aria-label="Excluir" onClick={() => excluir.mutate(j.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
+                  <TableCell className="flex gap-1">
+                    <Button size="icon" variant="ghost" aria-label="Editar" onClick={() => abrirEdicao(j)}><Pencil className="h-4 w-4" /></Button>
+                    <Button size="icon" variant="ghost" aria-label="Excluir" onClick={() => excluir.mutate(j.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                  </TableCell>
                 </TableRow>
               ))}
               {jornadas.length === 0 && <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground">Nenhuma jornada cadastrada</TableCell></TableRow>}
@@ -111,6 +146,39 @@ export default function JornadasPage() {
           </Table>
         </CardContent>
       </Card>
+
+      <Dialog open={!!editando} onOpenChange={(o) => !o && setEditando(null)}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Editar Jornada</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div><Label>Nome *</Label><Input value={formEdicao.nome} onChange={e => setFormEdicao(p => ({ ...p, nome: e.target.value }))} /></div>
+            <div><Label>Tipo</Label>
+              <Select value={formEdicao.tipo} onValueChange={v => setFormEdicao(p => ({ ...p, tipo: v }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="padrao">Padrão</SelectItem>
+                  <SelectItem value="flexivel">Flexível</SelectItem>
+                  <SelectItem value="escala">Escala</SelectItem>
+                  <SelectItem value="noturno">Noturno</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div><Label>Entrada</Label><Input type="time" value={formEdicao.horario_entrada} onChange={e => setFormEdicao(p => ({ ...p, horario_entrada: e.target.value }))} /></div>
+              <div><Label>Saída</Label><Input type="time" value={formEdicao.horario_saida} onChange={e => setFormEdicao(p => ({ ...p, horario_saida: e.target.value }))} /></div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div><Label>Carga Semanal (h)</Label><Input type="number" value={formEdicao.carga_horaria_semanal} onChange={e => setFormEdicao(p => ({ ...p, carga_horaria_semanal: e.target.value }))} /></div>
+              <div><Label>Intervalo (min)</Label><Input type="number" value={formEdicao.intervalo_minutos} onChange={e => setFormEdicao(p => ({ ...p, intervalo_minutos: e.target.value }))} /></div>
+            </div>
+            <div className="flex items-start gap-2 p-3 rounded-xl bg-warning/10 border border-warning/20 text-xs text-warning">
+              <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
+              <span>Atenção: esta jornada pode ser utilizada por outros colaboradores. Alterações neste horário podem refletir em outros vínculos que utilizam esta jornada.</span>
+            </div>
+            <Button className="w-full" onClick={() => atualizar.mutate(formEdicao)} disabled={!formEdicao.nome || atualizar.isPending}>Salvar alterações</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </PageLayout>
     </>
   );

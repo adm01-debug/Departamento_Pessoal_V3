@@ -30,7 +30,8 @@ const MotionCard = motion.create(Card);
 // "Hierarquia": só fade + leve deslocamento horizontal, sem o "y" de
 // `cardVariants` (que é para os cards no nível da página, não elementos
 // internos de um card já visível).
-const hierarquiaItemVariants = {
+// eslint-disable-next-line react-refresh/only-export-components
+export const hierarquiaItemVariants = {
   hidden: { opacity: 0, x: -8 },
   visible: (i: number) => ({
     opacity: 1, x: 0,

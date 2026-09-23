@@ -1,12 +1,5 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  },
-}));
-
 import { PontoWeekSummary } from '../ponto/PontoWeekSummary';
 
 const REGISTROS = [
@@ -36,9 +29,9 @@ describe('PontoWeekSummary', () => {
     expect(screen.getByText('+00:30')).toBeInTheDocument();
   });
 
-  it('renders atraso badge when > 0', () => {
+  it('renders atraso as negative saldo when > 0', () => {
     render(<PontoWeekSummary registrosSemana={REGISTROS} />);
-    expect(screen.getByText('15m')).toBeInTheDocument();
+    expect(screen.getByText('-00:15')).toBeInTheDocument();
   });
 
   it('limits display to 7 entries', () => {

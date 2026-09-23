@@ -60,6 +60,18 @@ export default function PontoPage() {
   const { addOffline, offlineBatidasCount } = usePontoOffline();
   const { empresaAtual } = useEmpresas();
 
+  // Colaborador logado (email -> colaboradores.id): usado só para o card
+  // "Hoje" resolver/editar a própria escala (escalas_trabalho -> turnos).
+  const { data: meuColaboradorId } = useQuery({
+    queryKey: ['meu-colaborador-id', user?.id],
+    queryFn: async () => {
+      if (!user?.email) return null;
+      const { data } = await supabase.from('colaboradores').select('id').eq('email', user.email).maybeSingle();
+      return data?.id ?? null;
+    },
+    enabled: !!user?.email,
+  });
+
   const { data: locaisTrabalho } = useQuery({
     queryKey: ['locais-trabalho-ponto', empresaAtual?.id],
     queryFn: async () => {
@@ -418,7 +430,11 @@ export default function PontoPage() {
                 onRegistrar={registrar}
                 ultimoRegistro={batidasHoje?.[0]}
               />
-              <PontoTodayCard registroHoje={registroHoje} />
+              <PontoTodayCard
+                registroHoje={registroHoje}
+                colaboradorId={meuColaboradorId || ''}
+                empresaId={empresaAtual?.id}
+              />
               <div className="flex flex-col gap-6">
                 <PontoLeaderboard />
                 <PontoWeekSummary registrosSemana={registrosSemana} />

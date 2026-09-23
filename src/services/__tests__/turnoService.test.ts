@@ -285,3 +285,63 @@ describe('turnoService.excluirEscala', () => {
     await expect(turnoService.excluirEscala('e1', EMPRESA_ID)).rejects.toBeDefined();
   });
 });
+
+// ─── obterEscalaDoDia ─────────────────────────────────────────────────────────
+
+describe('turnoService.obterEscalaDoDia', () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it('returns the escala for the colaborador on the given date', async () => {
+    const escala = { id: 'e1', turno_id: 't1', turno: { nome: 'Comercial', horario_inicio: '08:00', horario_fim: '17:00' } };
+    setupSingleChain(escala);
+    const result = await turnoService.obterEscalaDoDia('col-1', EMPRESA_ID, '2026-09-23');
+    expect(result).toEqual(escala);
+  });
+
+  it('filters by colaborador_id, empresa_id and the exact date', async () => {
+    const { chain } = setupSingleChain(null);
+    await turnoService.obterEscalaDoDia('col-1', EMPRESA_ID, '2026-09-23');
+    expect(chain.eq).toHaveBeenCalledWith('colaborador_id', 'col-1');
+    expect(chain.eq).toHaveBeenCalledWith('empresa_id', EMPRESA_ID);
+    expect(chain.eq).toHaveBeenCalledWith('data', '2026-09-23');
+  });
+
+  it('returns null when there is no escala for that date', async () => {
+    setupSingleChain(null);
+    const result = await turnoService.obterEscalaDoDia('col-1', EMPRESA_ID, '2026-09-23');
+    expect(result).toBeNull();
+  });
+
+  it('throws when empresaId is missing', async () => {
+    await expect(turnoService.obterEscalaDoDia('col-1', '', '2026-09-23')).rejects.toThrow('empresa_id obrigatório');
+  });
+
+  it('throws on DB error', async () => {
+    setupSingleChain(null, { message: 'fail' });
+    await expect(turnoService.obterEscalaDoDia('col-1', EMPRESA_ID, '2026-09-23')).rejects.toBeDefined();
+  });
+});
+
+// ─── atualizarEscala ──────────────────────────────────────────────────────────
+
+describe('turnoService.atualizarEscala', () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it('updates only turno_id and returns the escala', async () => {
+    const updated = { id: 'e1', turno_id: 't2' };
+    const { updateFn, eqFn } = setupUpdateChain(updated);
+    const result = await turnoService.atualizarEscala('e1', { turno_id: 't2' }, EMPRESA_ID);
+    expect(updateFn).toHaveBeenCalledWith({ turno_id: 't2' });
+    expect(eqFn).toHaveBeenCalledWith('id', 'e1');
+    expect(result).toEqual(updated);
+  });
+
+  it('throws when data is null', async () => {
+    setupUpdateChain(null);
+    await expect(turnoService.atualizarEscala('e1', { turno_id: 't2' }, EMPRESA_ID)).rejects.toThrow();
+  });
+
+  it('throws when empresaId is missing', async () => {
+    await expect(turnoService.atualizarEscala('e1', { turno_id: 't2' }, '')).rejects.toThrow('empresa_id obrigatório');
+  });
+});
