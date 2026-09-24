@@ -61,7 +61,11 @@ jobs:
         run: |
           set -euo pipefail
           read_only() {
-            psql "$SUPABASE_DB_URL" -X -At -v ON_ERROR_STOP=1
+            # -q suprime os command tags (BEGIN/SET/ROLLBACK) que o psql ecoa
+            # por padrão a cada statement do stdin -- sem isso eles se
+            # misturavam ao resultado do SELECT dentro de $(...) e quebravam
+            # o parsing de $GITHUB_OUTPUT (\"Invalid format 'SET'\").
+            psql "$SUPABASE_DB_URL" -X -q -At -v ON_ERROR_STOP=1
           }
 
           # RV-01: authenticated com sub inexistente e user_metadata forjado
@@ -137,7 +141,7 @@ jobs:
           # SECURITY DEFINER sem autorização comprovada): dump do corpo real das
           # funções, direto do banco vivo -- não confiar nas migrations do repo,
           # que já provaram estar dessincronizadas da produção nesta mesma sessão.
-          psql "$SUPABASE_DB_URL" -X -At -v ON_ERROR_STOP=1 -F $'\x01' <<'SQL'
+          psql "$SUPABASE_DB_URL" -X -q -At -v ON_ERROR_STOP=1 -F $'\x01' <<'SQL'
           BEGIN TRANSACTION READ ONLY;
           SELECT p.proname, pg_get_functiondef(p.oid)
           FROM pg_proc p
