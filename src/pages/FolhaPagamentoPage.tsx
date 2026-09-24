@@ -2,18 +2,29 @@ import { PageTitle } from '@/components/PageTitle';
 import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Upload, RefreshCw, Shield, Loader2, Banknote, Lock } from 'lucide-react';
 import { edgeFunctionsService, isDefinitiveIdempotencyFailure } from '@/services/edgeFunctionsService';
+import { folhaPagamentoService } from '@/services/folhaPagamentoService';
 import { PageLayout } from '@/components/layout';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { useIdempotencyKey } from '@/hooks/useIdempotencyKey';
-import { auditLogger } from '@/utils/auditLogger';
 import { useDataAccessLog } from '@/hooks/useDataAccessLog';
 import { safeErrorMessage } from '@/utils/safeError';
+import { formatCurrency } from '@/utils/format';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   FolhaKPIs,
@@ -138,22 +149,7 @@ export default function FolhaPagamentoPage() {
   const encerrarFolha = useMutation({
     mutationFn: async () => {
       if (!resumo?.id) throw new Error('Nenhuma folha encontrada para encerramento');
-      const { data, error } = await supabase
-        .from('folhas_pagamento')
-        .update({ status: 'fechada' as any, data_fechamento: new Date().toISOString() })
-        .eq('id', resumo.id)
-        .select()
-        .single();
-      if (error) throw error;
-
-      await auditLogger.log({
-        tabela: 'folhas_pagamento',
-        registro_id: resumo.id,
-        acao: 'UPDATE',
-        empresa_id: empresaAtual?.id,
-        dados_novos: { status: 'fechada', evento: 'ENCERRAMENTO_FOLHA' },
-      });
-      return data;
+      return folhaPagamentoService.fecharFolha(resumo.id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['folha-resumo', competencia, empresaAtual?.id] });
@@ -211,16 +207,32 @@ export default function FolhaPagamentoPage() {
             <RubricasDialog />
             <Simulador13Dialog />
             <SimuladorWhatIf />
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => encerrarFolha.mutate()}
-              disabled={encerrarFolha.isPending || resumo?.status?.fechamento === 'fechado'}
-              className="rounded-xl gap-1.5 font-body border-destructive/30 text-destructive hover:bg-destructive/10"
-            >
-              {encerrarFolha.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Lock className="h-4 w-4" />}
-              <span className="hidden sm:inline">Encerrar</span>
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={encerrarFolha.isPending || resumo?.status?.fechamento === 'fechado'}
+                  className="rounded-xl gap-1.5 font-body border-destructive/30 text-destructive hover:bg-destructive/10"
+                >
+                  {encerrarFolha.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Lock className="h-4 w-4" />}
+                  <span className="hidden sm:inline">Encerrar</span>
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Encerrar folha de {competencia}?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Total líquido: {formatCurrency(resumo?.liquido ?? 0)}. Após o encerramento, alterações exigem
+                    reabertura com motivo e auditoria. A folha só fecha se não houver alertas críticos pendentes.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => encerrarFolha.mutate()}>Confirmar encerramento</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
             {resumo?.id && <PagamentoBancarioWizard folhaId={resumo.id} />}
             {resumo?.id && <CNABDialog folhaId={resumo.id} />}
             {resumo?.id && <RelatorioContabilDialog folhaId={resumo.id} />}
