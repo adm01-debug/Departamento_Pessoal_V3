@@ -111,7 +111,7 @@ jobs:
           # statements and fail with "policy already exists". Each dispatch
           # of this workflow targets only the NEW migrations for that batch.
           for migration in \
-            20260924210000_p0_rls_tenant_correlation_remediation.sql
+            20260924220000_p0_secdef_authz_remediation.sql
           do
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
           done
@@ -159,28 +159,28 @@ jobs:
           set -euo pipefail
           result="$(psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -At <<'SQL'
           SELECT jsonb_build_object(
-            'rubricas_folha_legado_removido', NOT EXISTS (
-              SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='rubricas_folha'
-                AND policyname='Authenticated can read rubricas_folha'
+            'mcp_query_sql_revoked', NOT (
+              has_function_privilege('anon', 'public.mcp_query_sql(text,integer,boolean)', 'EXECUTE')
+              OR has_function_privilege('authenticated', 'public.mcp_query_sql(text,integer,boolean)', 'EXECUTE')
             ),
-            'parametros_sistema_ok', EXISTS (
-              SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='parametros_sistema'
-                AND policyname='Users can view system parameters'
-                AND qual LIKE '%pertence_a_empresa%'
+            'registrar_batida_ponto_ok', EXISTS (
+              SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+              WHERE n.nspname = 'public' AND p.proname = 'registrar_batida_ponto'
+                AND p.prosrc LIKE '%sou_o_colaborador%'
             ),
-            'premiacoes_pagamentos_ok', EXISTS (
-              SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='premiacoes_pagamentos'
-                AND policyname='Premiacoes pagamentos scoped'
-                AND qual LIKE '%pertence_a_empresa%'
+            'clinicas_proximas_ok', EXISTS (
+              SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+              WHERE n.nspname = 'public' AND p.proname = 'clinicas_proximas'
+                AND p.prosrc LIKE '%pertence_a_empresa%'
             ),
-            'ledger_count', (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = '20260924210000')
+            'ledger_count', (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = '20260924220000')
           );
           SQL
           )"
           echo "$result"
           node -e '
             const result = JSON.parse(process.argv[1]);
-            const expectedTrue = ["rubricas_folha_legado_removido","parametros_sistema_ok","premiacoes_pagamentos_ok"];
+            const expectedTrue = ["mcp_query_sql_revoked","registrar_batida_ponto_ok","clinicas_proximas_ok"];
             if (expectedTrue.some((key) => result[key] !== true) || Number(result.ledger_count) !== 1) process.exit(1);
           ' "$result"
           echo 'CANONICAL_SCOPED_MIGRATIONS_OK'

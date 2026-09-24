@@ -137,32 +137,6 @@ jobs:
           )
           echo "ledger_count=$LEDGER"
 
-          # Diagnóstico único para o achado do audit-secdef-authz.mjs (28 funções
-          # SECURITY DEFINER sem autorização comprovada): dump do corpo real das
-          # funções, direto do banco vivo -- não confiar nas migrations do repo,
-          # que já provaram estar dessincronizadas da produção nesta mesma sessão.
-          psql "$SUPABASE_DB_URL" -X -q -At -v ON_ERROR_STOP=1 -F $'\x01' <<'SQL'
-          BEGIN TRANSACTION READ ONLY;
-          SELECT p.proname, pg_get_functiondef(p.oid)
-          FROM pg_proc p
-          JOIN pg_namespace n ON n.oid = p.pronamespace
-          WHERE n.nspname = 'public' AND p.proname IN (
-            'get_user_roles','processar_ajuste_aprovado','check_login_lock',
-            'record_failed_login','anonimizar_dados_pessoais',
-            'consumir_pendencias_medida_no_holerite','fn_link_gov_br_account',
-            'garantir_rubrica_suspensao','is_country_allowed','check_rate_limit',
-            'gerar_canonical_espelho_ponto','clinicas_proximas','is_ip_blocked',
-            'check_brute_force','verificar_pin_quiosque','calcular_prazo_cat',
-            'user_belongs_to_empresa','cleanup_ciencia_rate_limits',
-            'is_ip_whitelisted','gerar_rubricas_ferias','get_colaborador_banco_horas',
-            'reconciliar_ferias_folha_batch','registrar_batida_ponto',
-            'sst_regimento_assinar','validar_contrato_clt','validate_ponto_compliance',
-            'mcp_query_sql','sec_verify_seals'
-          )
-          ORDER BY p.proname;
-          ROLLBACK;
-          SQL
-
           echo "result={\"rv01\":\"$RV01\",\"rv02\":\"$RV02\",\"rv03\":\"$RV03\",\"rv04\":\"$RV04\",\"views\":\"$VIEWS\",\"ledger\":\"$LEDGER\"}" >> "$GITHUB_OUTPUT"
 
       - name: Verificar expectativas dos probes
