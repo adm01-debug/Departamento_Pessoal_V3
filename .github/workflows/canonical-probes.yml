@@ -137,6 +137,19 @@ jobs:
           )
           echo "ledger_count=$LEDGER"
 
+          DIAG=$(read_only <<'SQL'
+          BEGIN TRANSACTION READ ONLY;
+          SELECT tablename || ' | ' || policyname || ' | ' || cmd || ' | roles=' || roles::text
+            || E'\n  USING: ' || COALESCE(qual, '(none)')
+            || E'\n  WITH CHECK: ' || COALESCE(with_check, '(none)')
+          FROM pg_catalog.pg_policies
+          WHERE schemaname = 'public' AND tablename IN ('registros_ponto', 'ferias')
+          ORDER BY tablename, policyname;
+          ROLLBACK;
+          SQL
+          )
+          echo "$DIAG"
+
           echo "result={\"rv01\":\"$RV01\",\"rv02\":\"$RV02\",\"rv03\":\"$RV03\",\"rv04\":\"$RV04\",\"views\":\"$VIEWS\",\"ledger\":\"$LEDGER\"}" >> "$GITHUB_OUTPUT"
 
       - name: Verificar expectativas dos probes
