@@ -60,7 +60,7 @@ export function Bitrix24ConfigPanel() {
       // que importa (resolução de IP privado/loopback) roda no servidor a
       // cada sincronização, porque essa é a fronteira de segurança real.
       if (form.webhook_url) {
-        let parsed: URL | null = null;
+        let parsed: URL;
         try {
           parsed = new URL(form.webhook_url);
         } catch {
