@@ -25,6 +25,7 @@ import { useCargos } from '@/hooks/useCargos';
 import { useFormGuard } from '@/hooks/useFormGuard';
 import { useServerValidation } from '@/hooks/useServerValidation';
 import { useEmpresas } from '@/hooks';
+import { DefinirPinQuiosqueDialog } from '@/components/ponto/DefinirPinQuiosqueDialog';
 
 const schema = z.object({
   // Geral
@@ -175,6 +176,7 @@ export default function ColaboradorFormPage() {
         backTo="/colaboradores"
         actions={
           <div className="flex items-center gap-2">
+            {isEditing && id && <DefinirPinQuiosqueDialog colaboradorId={id} />}
             <Button
               variant="outline"
               className="h-11 rounded-xl px-4 shadow-xs bg-card/50"
