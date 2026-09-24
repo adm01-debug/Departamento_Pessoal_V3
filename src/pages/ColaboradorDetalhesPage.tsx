@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { PageTitle } from '@/components/PageTitle';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDataAccessLog } from '@/hooks/useDataAccessLog';
+import { useEmpresas } from '@/hooks/useEmpresas';
 import { useQuery } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -10,26 +11,52 @@ import { Badge } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
 import { colaboradorService } from '@/services';
 import {
-  Users, Briefcase, ShieldCheck,
-  Landmark, FileText, Info, Edit, MoreHorizontal, History as HistoryIcon,
-  MapPin, Calendar, Stethoscope, User as UserIcon, Gift
+  Users,
+  Briefcase,
+  ShieldCheck,
+  Landmark,
+  FileText,
+  Info,
+  Edit,
+  MoreHorizontal,
+  History as HistoryIcon,
+  MapPin,
+  Calendar,
+  Stethoscope,
+  User as UserIcon,
+  Gift,
 } from 'lucide-react';
 import {
-  DependentesTab, EmergenciaTab, HistoricoSalarialTab, ExperienciaTab,
-  ASOTab, FormacaoTab, EstrangeiroTab, PCDTab, AquisitivosTab, AnotacoesTab,
-  ContasBancariasTab, DocumentosPessoaisTab, EstagiarioTab, HistoricoContratosTab,
-  ColaboradorHistory, BeneficiosTab, ColaboradorDocuments
+  DependentesTab,
+  EmergenciaTab,
+  HistoricoSalarialTab,
+  ExperienciaTab,
+  ASOTab,
+  FormacaoTab,
+  EstrangeiroTab,
+  PCDTab,
+  AquisitivosTab,
+  AnotacoesTab,
+  ContasBancariasTab,
+  DocumentosPessoaisTab,
+  EstagiarioTab,
+  HistoricoContratosTab,
+  ColaboradorHistory,
+  BeneficiosTab,
+  ColaboradorDocuments,
 } from '@/components/colaborador-detalhes';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger} from '@/components/ui/dropdown-menu';
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export default function ColaboradorDetalhesPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { empresaAtual } = useEmpresas();
   const [activeMainTab, setActiveMainTab] = useState('geral');
   const [activePessoalTab, setActivePessoalTab] = useState('dependentes');
   const [activeProfissionalTab, setActiveProfissionalTab] = useState('historico');
@@ -37,13 +64,19 @@ export default function ColaboradorDetalhesPage() {
   const [activeDocumentosTab, setActiveDocumentosTab] = useState('pessoais');
 
   const { data: colaborador, isLoading } = useQuery({
-    queryKey: ['colaborador', id],
-    queryFn: () => (colaboradorService as any).buscarPorId(id!),
-    enabled: !!id});
+    queryKey: ['colaborador', id, empresaAtual?.id],
+    queryFn: () => colaboradorService.buscarPorId(id!, empresaAtual!.id),
+    enabled: !!id && !!empresaAtual?.id,
+  });
 
   useDataAccessLog('colaboradores', id, colaborador?.empresa_id);
 
-  if (isLoading) return <div className="flex items-center justify-center h-64"><Spinner /></div>;
+  if (isLoading)
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Spinner />
+      </div>
+    );
   if (!colaborador) return <div className="p-6">Colaborador não encontrado</div>;
 
   return (
@@ -56,9 +89,9 @@ export default function ColaboradorDetalhesPage() {
         gradient="from-primary to-primary-glow"
         actions={
           <div className="flex items-center gap-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               className="rounded-xl border-primary/30 text-primary hover:bg-primary/5"
               onClick={() => navigate(`/colaboradores/${id}/editar`)}
             >
@@ -89,7 +122,13 @@ export default function ColaboradorDetalhesPage() {
               <div className="relative group">
                 <div className="h-24 w-24 rounded-3xl bg-muted flex items-center justify-center border-2 border-border/30 overflow-hidden">
                   <UserIcon className="h-10 w-10 text-muted-foreground/30" />
-                  {colaborador.foto_url && <img src={colaborador.foto_url} alt={colaborador.nome_completo} className="h-full w-full object-cover" />}
+                  {colaborador.foto_url && (
+                    <img
+                      src={colaborador.foto_url}
+                      alt={colaborador.nome_completo}
+                      className="h-full w-full object-cover"
+                    />
+                  )}
                 </div>
                 <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-success border-2 border-card flex items-center justify-center">
                   <ShieldCheck className="h-3 w-3 text-white" />
@@ -182,8 +221,12 @@ export default function ColaboradorDetalhesPage() {
                       </div>
                     </div>
                     <div className="p-4 bg-primary/5 rounded-2xl border border-primary/10">
-                      <p className="text-xs text-primary font-bold uppercase tracking-wider mb-2">Observações Internas</p>
-                      <p className="text-sm text-muted-foreground italic">"{colaborador.observacoes || 'Nenhuma observação registrada para este colaborador.'}"</p>
+                      <p className="text-xs text-primary font-bold uppercase tracking-wider mb-2">
+                        Observações Internas
+                      </p>
+                      <p className="text-sm text-muted-foreground italic">
+                        "{colaborador.observacoes || 'Nenhuma observação registrada para este colaborador.'}"
+                      </p>
                     </div>
                   </CardContent>
                 </Card>
@@ -222,31 +265,90 @@ export default function ColaboradorDetalhesPage() {
           <TabsContent value="pessoal">
             <Tabs value={activePessoalTab} onValueChange={setActivePessoalTab} className="space-y-4">
               <TabsList className="bg-transparent h-auto p-0 gap-4 border-b border-border/20 rounded-none w-full justify-start overflow-x-auto no-scrollbar">
-                <TabsTrigger value="dependentes" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Dependentes</TabsTrigger>
-                <TabsTrigger value="emergencia" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Contatos de Emergência</TabsTrigger>
-                <TabsTrigger value="pcd" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">PCD</TabsTrigger>
-                <TabsTrigger value="estrangeiro" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Estrangeiro</TabsTrigger>
+                <TabsTrigger
+                  value="dependentes"
+                  className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
+                >
+                  Dependentes
+                </TabsTrigger>
+                <TabsTrigger
+                  value="emergencia"
+                  className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
+                >
+                  Contatos de Emergência
+                </TabsTrigger>
+                <TabsTrigger
+                  value="pcd"
+                  className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
+                >
+                  PCD
+                </TabsTrigger>
+                <TabsTrigger
+                  value="estrangeiro"
+                  className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
+                >
+                  Estrangeiro
+                </TabsTrigger>
               </TabsList>
-              <TabsContent value="dependentes">{activePessoalTab === 'dependentes' && <DependentesTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="emergencia">{activePessoalTab === 'emergencia' && <EmergenciaTab colaboradorId={id!} />}</TabsContent>
+              <TabsContent value="dependentes">
+                {activePessoalTab === 'dependentes' && <DependentesTab colaboradorId={id!} />}
+              </TabsContent>
+              <TabsContent value="emergencia">
+                {activePessoalTab === 'emergencia' && <EmergenciaTab colaboradorId={id!} />}
+              </TabsContent>
               <TabsContent value="pcd">{activePessoalTab === 'pcd' && <PCDTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="estrangeiro">{activePessoalTab === 'estrangeiro' && <EstrangeiroTab colaboradorId={id!} />}</TabsContent>
+              <TabsContent value="estrangeiro">
+                {activePessoalTab === 'estrangeiro' && <EstrangeiroTab colaboradorId={id!} />}
+              </TabsContent>
             </Tabs>
           </TabsContent>
 
           <TabsContent value="profissional">
             <Tabs value={activeProfissionalTab} onValueChange={setActiveProfissionalTab} className="space-y-4">
               <TabsList className="bg-transparent h-auto p-0 gap-4 border-b border-border/20 rounded-none w-full justify-start overflow-x-auto no-scrollbar">
-                <TabsTrigger value="historico" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Histórico Salarial</TabsTrigger>
-                <TabsTrigger value="contratos" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Contratos</TabsTrigger>
-                <TabsTrigger value="experiencia" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Experiência Anterior</TabsTrigger>
-                <TabsTrigger value="formacao" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Formação</TabsTrigger>
-                <TabsTrigger value="aso" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">ASO / Exames</TabsTrigger>
+                <TabsTrigger
+                  value="historico"
+                  className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
+                >
+                  Histórico Salarial
+                </TabsTrigger>
+                <TabsTrigger
+                  value="contratos"
+                  className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
+                >
+                  Contratos
+                </TabsTrigger>
+                <TabsTrigger
+                  value="experiencia"
+                  className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
+                >
+                  Experiência Anterior
+                </TabsTrigger>
+                <TabsTrigger
+                  value="formacao"
+                  className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
+                >
+                  Formação
+                </TabsTrigger>
+                <TabsTrigger
+                  value="aso"
+                  className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
+                >
+                  ASO / Exames
+                </TabsTrigger>
               </TabsList>
-              <TabsContent value="historico">{activeProfissionalTab === 'historico' && <HistoricoSalarialTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="contratos">{activeProfissionalTab === 'contratos' && <HistoricoContratosTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="experiencia">{activeProfissionalTab === 'experiencia' && <ExperienciaTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="formacao">{activeProfissionalTab === 'formacao' && <FormacaoTab colaboradorId={id!} />}</TabsContent>
+              <TabsContent value="historico">
+                {activeProfissionalTab === 'historico' && <HistoricoSalarialTab colaboradorId={id!} />}
+              </TabsContent>
+              <TabsContent value="contratos">
+                {activeProfissionalTab === 'contratos' && <HistoricoContratosTab colaboradorId={id!} />}
+              </TabsContent>
+              <TabsContent value="experiencia">
+                {activeProfissionalTab === 'experiencia' && <ExperienciaTab colaboradorId={id!} />}
+              </TabsContent>
+              <TabsContent value="formacao">
+                {activeProfissionalTab === 'formacao' && <FormacaoTab colaboradorId={id!} />}
+              </TabsContent>
               <TabsContent value="aso">{activeProfissionalTab === 'aso' && <ASOTab colaboradorId={id!} />}</TabsContent>
             </Tabs>
           </TabsContent>
@@ -254,20 +356,49 @@ export default function ColaboradorDetalhesPage() {
           <TabsContent value="financeiro">
             <Tabs value={activeFinanceiroTab} onValueChange={setActiveFinanceiroTab} className="space-y-4">
               <TabsList className="bg-transparent h-auto p-0 gap-4 border-b border-border/20 rounded-none w-full justify-start">
-                <TabsTrigger value="contas" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Contas Bancárias</TabsTrigger>
-                <TabsTrigger value="aquisitivos" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Períodos Aquisitivos</TabsTrigger>
+                <TabsTrigger
+                  value="contas"
+                  className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
+                >
+                  Contas Bancárias
+                </TabsTrigger>
+                <TabsTrigger
+                  value="aquisitivos"
+                  className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
+                >
+                  Períodos Aquisitivos
+                </TabsTrigger>
               </TabsList>
-              <TabsContent value="contas">{activeFinanceiroTab === 'contas' && <ContasBancariasTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="aquisitivos">{activeFinanceiroTab === 'aquisitivos' && <AquisitivosTab colaboradorId={id!} />}</TabsContent>
+              <TabsContent value="contas">
+                {activeFinanceiroTab === 'contas' && <ContasBancariasTab colaboradorId={id!} />}
+              </TabsContent>
+              <TabsContent value="aquisitivos">
+                {activeFinanceiroTab === 'aquisitivos' && <AquisitivosTab colaboradorId={id!} />}
+              </TabsContent>
             </Tabs>
           </TabsContent>
 
           <TabsContent value="documentos">
             <Tabs value={activeDocumentosTab} onValueChange={setActiveDocumentosTab} className="space-y-4">
               <TabsList className="bg-transparent h-auto p-0 gap-4 border-b border-border/20 rounded-none w-full justify-start">
-                <TabsTrigger value="pessoais" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Documentos Pessoais</TabsTrigger>
-                <TabsTrigger value="anotacoes" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Anotações Internas</TabsTrigger>
-                <TabsTrigger value="estagiario" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Dados Estagiário</TabsTrigger>
+                <TabsTrigger
+                  value="pessoais"
+                  className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
+                >
+                  Documentos Pessoais
+                </TabsTrigger>
+                <TabsTrigger
+                  value="anotacoes"
+                  className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
+                >
+                  Anotações Internas
+                </TabsTrigger>
+                <TabsTrigger
+                  value="estagiario"
+                  className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent"
+                >
+                  Dados Estagiário
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="pessoais">
                 {activeDocumentosTab === 'pessoais' && (
@@ -277,8 +408,12 @@ export default function ColaboradorDetalhesPage() {
                   </div>
                 )}
               </TabsContent>
-              <TabsContent value="anotacoes">{activeDocumentosTab === 'anotacoes' && <AnotacoesTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="estagiario">{activeDocumentosTab === 'estagiario' && <EstagiarioTab colaboradorId={id!} />}</TabsContent>
+              <TabsContent value="anotacoes">
+                {activeDocumentosTab === 'anotacoes' && <AnotacoesTab colaboradorId={id!} />}
+              </TabsContent>
+              <TabsContent value="estagiario">
+                {activeDocumentosTab === 'estagiario' && <EstagiarioTab colaboradorId={id!} />}
+              </TabsContent>
             </Tabs>
           </TabsContent>
 

@@ -2,6 +2,15 @@
 
 Data da coleta: 30/08/2026 · commit auditado: `8e86a1ebd9269a2b0a4d261bb3723f6a745cf3ca`
 
+> ⚠️ **Reverificação delta (24/09/2026, commit `6594b9af79ca`)** — ver § 3a. Das 34 achados
+> originais: **9 fechados**, **7 parciais**, **17 ainda abertos** (dois não reverificados por
+> falta de acesso ao Cloudflare Worker). Dois **achados novos P0** foram confirmados ativos em
+> produção agora: (1) `pix_itens` e mais 4 tabelas têm RLS baseada em claim de JWT forjável ou
+> sem correlação de tenant nenhuma — a própria CI (`audit-rls-pii`) reprova o commit atual por
+> isso; (2) o lote de migrations de hardening de RLS de 19–31/07/2026 nunca foi aplicado ao
+> banco vivo, apesar de estar no repositório — isso é a causa raiz de A-003 e A-009 seguirem
+> abertos mesmo com "correção" no código-fonte.
+
 ## 1. Estado geral
 
 1. Plataforma multiempresa de Departamento Pessoal em React/Vite, Supabase e um bridge para banco externo.
@@ -186,6 +195,10 @@ Evidência: após HMAC, timestamp e idempotência corretos, `webhook/index.ts:16
 Impacto: produtor recebe HTTP 200 e o operador vê “processed”, embora nenhuma entidade de negócio seja alterada.
 Causa raiz: handlers placeholder foram conectados ao acknowledgement definitivo.
 
+**Investigação de uso real (24/09/2026, sessão de execução do PLANO_50 — E50-38):**
+Confirmado ao vivo em produção: `webhook_logs` (tabela que registra toda chamada a este endpoint, mesmo as recusadas por HMAC/timestamp inválido) tem **0 linhas**. Ninguém nunca chamou este endpoint com sucesso. As duas tabelas de configuração de webhook de saída deste sistema, `webhooks` e `webhooks_config` (ambas outbound — este sistema chamando URLs externas), também têm **0 linhas** — nenhum webhook de saída foi configurado pela UI de Integrações. `webhookSchema` (`_shared/schemas/common.ts:18-24`) não restringe `event` a nenhum provedor conhecido, e não há evidência de código, rota ou UI que amarre este endpoint a nenhum sistema específico (a hipótese inicial de que seria o "webhook de assinatura de contrato" estava errada; um comentário em `integracaoService.ts:76` o chama de "sistema de webhook do módulo de ponto", mas isso não foi confirmado por nenhuma referência adicional).
+Decisão registrada (Joaquim, 24/09/2026): manter como está, sem remover e sem priorizar — não há consumidor real hoje. Reavaliar quando houver caso de uso concreto (ex.: relógio de ponto físico/REP, Zapier, provedor de assinatura eletrônica).
+
 ### Infraestrutura, deploy, backup e observabilidade
 
 #### A-018 · [P1] · backup — não há agendamento real e o “backup” é parcial
@@ -251,6 +264,82 @@ Evidência: run Unit Tests `33257013056` passou 4.841 testes (9 skips) em 459 ar
 Impacto: a grande quantidade de testes não cobre proporcionalmente decisões e integrações críticas que falharam nesta auditoria.
 Causa raiz: métrica volumétrica sem limiar de cobertura por módulo crítico.
 
+## 3a. Reverificação delta — 24/09/2026 (commit `6594b9af79ca587475a2b7370fd2c6b97cce1be9`)
+
+Metodologia: 53 commits e ~40 migrations separam este commit do commit auditado (30/08). Em vez
+de repetir as 10 fases do zero, reverifiquei cada um dos 34 achados originais com evidência nova
+(queries via MCP `SUPABASE_-_DEPARTAMENTO_PESSOAL_-_MCP` contra produção, leitura de código/migrations
+atuais, GitHub Actions/API) e cacei regressões introduzidas no intervalo. `supabase_db_migrations`
+confirma o ledger de produção sincronizado com os arquivos do repo até `20260912210000`.
+
+### Status por achado
+
+| Achado | Status | Nota |
+|---|---|---|
+| A-001 · MCP sem 2ª autenticação | **NÃO REVERIFICADO** | Cloudflare MCP falhou ao conectar nesta sessão; sem evidência de remediação no repo/migrations. Tratar como ainda aberto até confirmação. |
+| A-002 · 42 views sem RLS legíveis por anon | **FECHADO** | `20260911180000_p0_views_security_invoker.sql` + `20260911192000_p0_views_revoke_public.sql`, ambas no ledger de produção: `security_invoker=true` e `REVOKE ... FROM anon/PUBLIC` nas views listadas. |
+| A-003 · `USING (true)` em 5 tabelas | **PARCIAL** | `audit_log`, `cnab_configuracoes`, `historico_rescisoes` fechadas (`20260912190000_p0_identity_rls_authz.sql`). `integracao_logs` e `notificacoes_admissao` **seguem abertas em produção** — ver achado novo A-035. |
+| A-004 · 18 SECDEF sem `search_path` | **FECHADO** | 4 migrations (`p0_secdef_search_path`, `p1_function_search_path`, `p0_pgcrypto_routine_search_path`, `p0_hash_trigger_search_path`) cobrem ~54 rotinas, todas com preflight fail-closed. |
+| A-005 · zero buckets/policies de Storage | **FECHADO** | `supabase_storage_list_buckets` ao vivo retorna 18 buckets privados (+ `avatars` público, esperado), incluindo `ferias-avisos` e `backups`, criados 2026-09-11/15. |
+| A-006 · bridge não encaminha identidade | **FECHADO** | `external-db-bridge/index.ts:506-522` cria `externalUserClient` com o JWT do chamador; `requiresCallerScopedExternalClient` (`access.ts:33-35`) força esse client em SELECT/INSERT/UPDATE/DELETE/RPC não-públicas (`index.ts:603,651,665,682,709,736`). A chave estática só resta para as 7 RPCs públicas de onboarding. `TENANT_SCOPED_TABLES` continua com 21 tabelas, mas deixou de ser a defesa primária. |
+| A-007 · idempotency key nova a cada retry | **FECHADO** | `client.ts:65-68` gera a chave uma vez fora do loop de retry. |
+| A-008 · 109 SECDEF expostas sem `auth.uid()` | **PARCIAL** | As 9 funções citadas têm `REVOKE ... FROM anon/PUBLIC`. Mas `is_admin(uuid)` continua sem comparar `_user_id` com `auth.uid()` e com `GRANT EXECUTE TO authenticated` — qualquer autenticado enumera quem é admin. Ver achado novo A-036. |
+| A-009 · tenant-only anula policy por papel (6 tabelas) | **ABERTO** | 100% reproduzível hoje: `colaboradores`, `contas_bancarias`, `ferias`, `folha_itens`, `folhas_pagamento`, `registros_ponto` têm policy `FOR ALL` só por `empresa_id` coexistindo (OR) com a policy role-gated, que fica anulada. As migrations de correção de 29/07 nunca chegaram ao banco vivo — mesma causa raiz do achado novo A-035. |
+| A-010 · ponto online RPC bloqueada pelo bridge | **FECHADO** | `registrar_batida_ponto` está em `RPC_ALLOWLIST` (`validation.ts:133`). |
+| A-011 · quiosque simula biometria/geo fixa | **PARCIAL** | Simulação facial removida; geolocalização agora tenta GPS real com fallback documentado (`origem_geo`). Matrícula continua sendo o único "PIN" de identificação — sem segredo adicional. |
+| A-012 · form de colaborador sem `empresa_id` | **ABERTO — PIOROU** | `ColaboradorFormPage.tsx` ainda não tem `empresa_id` no schema/mutation. Como `baseService.atualizar` agora exige `empresaId` por padrão, **toda edição de colaborador lança exceção em runtime** (regressão funcional completa, não só risco de isolamento). |
+| A-013 · botão "Encerrar" ignora service oficial | **ABERTO** | `FolhaPagamentoPage.tsx:138-156` segue com `UPDATE` direto; `folhaPagamentoService.fecharFolha` não é chamado. |
+| A-014 · lockout contornável via `/auth/v1/token` nativo | **PARCIAL** | Fail-open de `check_account_lockout` corrigido (503 `LOGIN_PROTECTION_UNAVAILABLE`). O bypass do endpoint nativo GoTrue **continua aberto** — o próprio código documenta isso como risco aceito em comentário (`AuthContext.tsx:171-176`, `auth-login/index.ts:1-12`), sem hook GoTrue nem bloqueio no gateway. |
+| A-015 · `migrate-helper` com chave hardcoded | **FECHADO** | Diretório removido; `supabase/config.toml` documenta a remoção e recomenda rotação da chave (não confirmável se já rotacionada). |
+| A-016 · UI afirma eSocial/FGTS ativos sem transmissão real | **PARCIAL** | `LoginPage`/`IntegracoesPage` já são honestos (status "configurando", texto correto). `FGTSDigitalDashboard.tsx` **ainda afirma falsamente** "API Caixa Ativa"/"100% Sincronizado" com valores fixos (R$ 12.450,80 etc.), sem chamada real por trás. |
+| A-017/A-031 · Bitrix upsert quebrado + SSRF | **ABERTO** | Os 3 problemas originais persistem: `onConflict` em colunas sem constraint real (`departamentos.nome`, `colaboradores.email`); resposta `success:true` incondicional; `webhook_url` livre sem allowlist de host/bloqueio de IP privado em `safe-fetch.ts`. |
+| A-018 · backup parcial sem agendamento | **PARCIAL** | Bucket `backups` criado e escrita agora falha fechado (`BACKUP_INCOMPLETE`, 503) em vez de truncar silenciosamente. Cap de 10.000 linhas/tabela continua — empresa grande tem backup **falho**, não incompleto silencioso. Nenhum `cron.schedule` para `backup-automatico` encontrado nas migrations. |
+| A-019 · telemetria do bridge stale | **NÃO REVERIFICADO** | Fora do escopo desta rodada; recomenda-se nova consulta a `query_telemetry`. |
+| A-020 · TypeScript 7 quebra lint | **FECHADO** | `package.json:154` → `"typescript": "6.0.3"`. |
+| A-021 · env var errada em E2E/deploy, zero secrets | **FECHADO** | Workflows usam `VITE_SUPABASE_PUBLISHABLE_KEY`; 7 secrets e 3 variables confirmados no repo GitHub. |
+| A-022 · 7 gates SQL passam verdes sem banco | **PARCIAL** | Gate agora falha fechado se `SUPABASE_DB_URL` faltar, e está rodando de verdade (prova: reprovou o run mais recente por violação real de RLS — ver A-035). Mas o job `db-integrity` só roda em `push`/`dispatch`, **nunca em PR** — uma regressão pode ser mergeada sem passar por nenhum dos 7 gates. |
+| A-023 · `npm audit`/CodeQL suprimidos | **FECHADO** | `npm audit --audit-level=high` sem `\|\| true`; CodeQL habilitado e reportando (5 alertas `note`, arquivos de teste). |
+| A-024 · `main` sem proteção | **ABERTO** | `branches/main/protection` ainda 404. |
+| A-025 · CPF/matrícula únicos globalmente | **ABERTO** | Nenhuma migration tocou os constraints; confirmado ao vivo via `supabase_db_list_indexes`. |
+| A-026 · dashboards com métricas fictícias | **ABERTO** | `OnboardingDashboard.tsx` e `FGTSDigitalDashboard.tsx` mantêm dados fixos apresentados como reais. |
+| A-027 · IP do titular sem timeout | **ABERTO** | `AssinarContratoPage.tsx`/`VerificarContratoPage.tsx` seguem chamando `api.ipify.org` sem `AbortController`/timeout. |
+| A-028 · Nginx sem headers de hardening | **ABERTO** | `nginx.conf` (o arquivo real, servido pelo `Dockerfile`) segue sem CSP/HSTS/etc. |
+| A-029 · contrato de env incompleto | **NÃO REVERIFICADO** | Fora do escopo desta rodada. |
+| A-030 · build não reprodutível | **NÃO REVERIFICADO** | Fora do escopo desta rodada. |
+| A-032 · webhook marca `processed` sem efeito | **ABERTO** | `processWebhookV1/V2` seguem só `console.log`. |
+| A-033 · 1.132 `any` em contratos | **NÃO REVERIFICADO** | Fora do escopo desta rodada (baixa prioridade). |
+| A-034 · cobertura de testes | **NÃO REVERIFICADO** | Fora do escopo desta rodada. |
+
+### Achados novos
+
+#### A-035 · [P0] · banco/segurança — RLS ativa em produção falha isolamento de tenant em 5 tabelas, incluindo uma sem correlação nenhuma
+Evidência: o gate `audit-rls-pii` (que agora roda de verdade — ver A-022) reprovou o run de CI mais recente em `main` (id `35506735793`, mesmo commit do HEAD atual `6594b9a`), job "Integridade do banco", step "Regressão de RLS sobre PII", com 6 violações: `colaboradores."empresa_isolation_colaboradores"` e `dependentes."empresa_isolation_dependentes"` usam `empresa_id = public.get_auth_empresa_id()` (claim do JWT não verificada contra vínculo real); `ferias."empresa_isolation_ferias"` mesmo padrão; `provisoes_folha."Visualização por empresa provisoes"` usa `(auth.jwt() ->> 'empresa_id')::uuid` direto, mesma classe; `pix_itens."...PIX itens"` (INSERT e SELECT) usa `lote_id IN (SELECT id FROM pix_lotes)` **sem nenhuma correlação com tenant/usuário** — qualquer autenticado lê/insere itens PIX de qualquer empresa.
+Impacto: CPF, PIS, salário, dados bancários e lotes de pagamento PIX ficam sujeitos a leitura/escrita cross-tenant, em produção, agora.
+Como explorar: autenticar como usuário de uma empresa e, para `pix_itens`, fazer SELECT/INSERT sem filtro — a policy não impõe nenhum; para as demais, forjar/obter um JWT cujo claim `empresa_id` não corresponda ao vínculo real do usuário (o predicado confia no claim, não numa junção contra a tabela de vínculo).
+Causa raiz: ver A-036 — o lote de migrations que deveria corrigir exatamente essas tabelas nunca chegou ao banco vivo.
+
+#### A-036 · [P0] · governança/migrations — lote de hardening de RLS (19–31/07/2026, 12 arquivos) está no repositório mas não foi aplicado ao banco de produção
+Evidência: comparação sistemática entre o texto de `supabase/migrations/20260719120000_rls_fix_public_access_batch2.sql` e mais 11 arquivos de 28-31/07 com o estado ao vivo (`supabase_db_list_policies`) mostra que as policies que deveriam ser dropadas (`DROP POLICY IF EXISTS`) continuam vivas e as policies role-gated que deveriam ser criadas não existem — em pelo menos 2 casos o `DROP POLICY IF EXISTS` referencia um nome com erro de digitação (falta um til/cedilha) e por isso não dropa nada, silenciosamente, sem erro.
+Impacto: qualquer achado "corrigido pelo código-fonte" nesse intervalo de datas é enganoso — o schema vivo diverge do repositório. Isso é a causa raiz direta de A-003 (integracao_logs/notificacoes_admissao) e A-009 (as 6 tabelas) permanecerem abertos.
+Como explorar: não aplicável (achado estrutural, não de exploração direta).
+Causa raiz: migrations com `DROP POLICY IF EXISTS` de nome levemente incorreto falham silenciosamente (comportamento padrão do Postgres para `IF EXISTS`); não há verificação pós-migration que confirme que a policy antiga de fato sumiu, ao contrário do padrão fail-closed adotado nas migrations de 11-12/09 (que usam `RAISE EXCEPTION` se o alvo não existir/não bater o formato esperado).
+
+#### A-037 · [P1] · banco/segurança — `is_admin(uuid)` não verifica identidade do chamador
+Evidência: `supabase/migrations/20251220135248_07ac8a88-5e83-476f-900f-e6ea9bc68ff2.sql:49-62` define `is_admin(_user_id uuid)` só consultando `user_roles` pelo `_user_id` recebido, sem comparar com `auth.uid()`; nunca foi redefinida. `GRANT EXECUTE ... TO authenticated` confirmado em migrations posteriores (ex. `20260619184136:59`).
+Impacto: qualquer autenticado pode chamar `is_admin('<uuid arbitrário>')` e enumerar quem é admin em qualquer empresa — enumeração de papel/PII organizacional.
+Como explorar: `POST /rest/v1/rpc/is_admin` com `{"_user_id": "<uuid de outro tenant>"}` usando qualquer JWT autenticado.
+Causa raiz: função definer criada sem checar `auth.uid() = _user_id` ou papel do chamador.
+
+#### A-038 · [P1] · CI — suíte E2E autenticada está vermelha em `main` com 18 specs falhando
+Evidência: run `35506735807` (mesmo commit `6594b9a`) falhou em 18 specs Playwright cobrindo quase todos os módulos críticos autenticados: admin-operação, dashboard, colaboradores, folha, holerites, ponto, férias, eSocial, relatórios, configurações, contratos, PIX/espelho de ponto.
+Impacto: não há prova automatizada de que os fluxos críticos funcionam fim a fim no commit atual; correlação plausível com a regressão de RLS de A-035 (usuário não vê/não escreve dados por causa de policy errada), mas não investigado a fundo.
+Causa raiz: não determinada nesta rodada — requer triagem dedicada dos logs de cada spec.
+
+#### A-039 · [P1] · CI/governança — gate de integridade do banco não roda em Pull Request
+Evidência: `.github/workflows/ci.yml`, job `db-integrity` (linha ~192) tem `if: github.event_name != 'pull_request'` (linha ~197) — os 7 gates SQL (incluindo `audit-rls-pii`, que hoje pega regressões reais como A-035) só rodam em push/dispatch, nunca antes do merge.
+Impacto: uma PR pode introduzir exatamente o tipo de regressão de RLS/SECDEF que esses gates existem para bloquear, e será mergeada sem que nenhum deles rode — só falha depois, com o código já em `main`/produção.
+Causa raiz: o gate foi desabilitado para PR provavelmente para evitar exigir `SUPABASE_DB_URL` em PRs de fork/Dependabot (ver commit `e463db8`), mas a exceção foi generalizada para todo PR, não só os que não podem ter o secret.
+
 ## 4. Não verificado
 
 - Papel real de `EXTERNAL_DB_KEY`, policies e dados do banco externo: secrets e segundo banco não foram fornecidos.
@@ -261,6 +350,9 @@ Causa raiz: métrica volumétrica sem limiar de cobertura por módulo crítico.
 - Acessibilidade visual, contraste e quebra em dispositivos reais: não havia build local/dependências/browser instalados; a análise UX foi estática sobre telas abertas no código.
 - Restore/failover real: não existe evidência versionada ou log acessível de exercício.
 - Reachability das CVEs transitivas: o audit confirmou dependências vulneráveis, mas não prova que inputs remotos alcançam cada pacote.
+- (24/09/2026) A-001 (rota MCP exposta no Cloudflare Worker): o conector Cloudflare desta sessão falhou ao conectar; sem evidência de remediação no repo, deve ser tratado como ainda aberto até confirmação direta no Worker.
+- (24/09/2026) A-019, A-029, A-030, A-033, A-034: fora do escopo da reverificação delta desta rodada (metodologia focada nos 53 commits desde 30/08 e nos P0/P1); recomenda-se nova checagem pontual se a próxima auditoria total for solicitada.
+- (24/09/2026) Bloqueio metodológico: o MCP `SUPABASE_-_DEPARTAMENTO_PESSOAL_-_MCP` não expõe SQL arbitrário (sem `supabase_db_query`), só wrappers PostgREST (`db_list_policies`, `db_select` etc.) que não retornam o texto de `USING`/`WITH CHECK`. A confirmação de A-002/A-035/A-036 veio de ler o texto das migrations aplicadas (confirmadas pelo ledger `supabase_db_migrations`) e do log do gate `audit-rls-pii` no CI, não de uma query direta a `pg_policies.qual`.
 
 ## 5. Reprodutibilidade
 
@@ -280,7 +372,26 @@ gh api repos/adm01-debug/Departamento_Pessoal_V3/branches/main/protection
 gh secret list; gh variable list; gh api repos/adm01-debug/Departamento_Pessoal_V3/environments
 ```
 
-Consultas SQL somente leitura executadas via MCP:
+Reprodutibilidade da reverificação delta (24/09/2026):
+
+```text
+git log --oneline --since="2026-08-30"; ls supabase/migrations | sort | tail -60
+mcp__SUPABASE_-_DEPARTAMENTO_PESSOAL_-_MCP__supabase_db_migrations
+mcp__SUPABASE_-_DEPARTAMENTO_PESSOAL_-_MCP__supabase_storage_list_buckets
+mcp__SUPABASE_-_DEPARTAMENTO_PESSOAL_-_MCP__supabase_db_list_policies (table=colaboradores|contas_bancarias|ferias|folha_itens|folhas_pagamento|registros_ponto|audit_log|cnab_configuracoes|historico_rescisoes|integracao_logs|notificacoes_admissao|pix_itens|provisoes_folha)
+mcp__SUPABASE_-_DEPARTAMENTO_PESSOAL_-_MCP__supabase_db_list_functions(schema=public)
+mcp__SUPABASE_-_DEPARTAMENTO_PESSOAL_-_MCP__supabase_db_list_indexes(table=colaboradores)
+mcp__GITHUB_-_MCP_-_FOREVER__github_list_workflow_runs(branch=main, per_page=5)
+mcp__GITHUB_-_MCP_-_FOREVER__github_get_branch_protection(branch=main)
+mcp__GITHUB_-_MCP_-_FOREVER__github_list_actions_secrets · github_list_actions_variables
+mcp__GITHUB_-_MCP_-_FOREVER__github_list_code_scanning_alerts(per_page=5)
+mcp__GITHUB_-_MCP_-_FOREVER__github_list_pull_requests(state=open) — 10 abertas, todas dependabot, nenhuma toca AUDITORIA.md/PLANO_100.md
+git show e463db8 --stat; git show e463db8 -- .github/workflows/ci.yml scripts/
+Leitura direta de: supabase/functions/external-db-bridge/{index.ts,access.ts,validation.ts}, src/contexts/AuthContext.tsx, supabase/functions/auth-login/index.ts, src/integrations/supabase/client.ts, supabase/functions/{enviar-esocial,fgts-digital,dctfweb,sincronizar-bitrix,webhook,backup-automatico}/index.ts, supabase/functions/_shared/safe-fetch.ts, src/pages/{ColaboradorFormPage,FolhaPagamentoPage,PontoKioskPage,AssinarContratoPage,VerificarContratoPage}.tsx, src/components/{admissoes/OnboardingDashboard,folha/FGTSDigitalDashboard}.tsx, nginx.conf, package.json, .github/workflows/{ci,e2e,deploy,security}.yml, e ~15 arquivos de migration de 19/07–12/09/2026.
+Nenhum INSERT/UPDATE/DELETE/DDL foi executado nesta rodada; nenhuma correção foi aplicada (missão é somente leitura).
+```
+
+Consultas SQL somente leitura executadas via MCP (auditoria original, 30/08):
 
 ```sql
 SELECT version(), current_database();

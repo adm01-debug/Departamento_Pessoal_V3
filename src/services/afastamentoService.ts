@@ -192,6 +192,34 @@ class AfastamentoService extends BaseService<AfastamentoRow> {
     return data;
   }
 
+  async excluirDocumento(id: string, empresaId: string): Promise<void> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    // documentos_afastamento não carrega empresa_id: escopamos pelo pai — fail closed.
+    const { data: doc } = await supabase
+      .from('documentos_afastamento')
+      .select(sel('afastamento_id'))
+      .eq('id', id)
+      .maybeSingle<{ afastamento_id: string }>();
+    if (!doc?.afastamento_id) throw new Error('Documento não encontrado');
+
+    const { data: af } = await supabase
+      .from('afastamentos')
+      .select(sel('empresa_id'))
+      .eq('id', doc.afastamento_id)
+      .maybeSingle<{ empresa_id: string | null }>();
+    if (!af || af.empresa_id !== empresaId) {
+      throw new Error('Acesso negado: documento pertence a outro tenant');
+    }
+
+    const { error } = await supabase
+      .from('documentos_afastamento')
+      .delete()
+      .eq('id', id)
+      .eq('afastamento_id', doc.afastamento_id);
+
+    if (error) throw error;
+  }
+
   async listarProrrogacoes(afastamentoId?: string, empresaId?: string): Promise<ProrrogacaoComAfastamento[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     // !inner força INNER JOIN, habilitando o filtro por empresa_id no pai.

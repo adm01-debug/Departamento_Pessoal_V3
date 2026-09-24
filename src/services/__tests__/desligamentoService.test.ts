@@ -141,7 +141,7 @@ describe('desligamentoService', () => {
 
   describe('buscarPorId — validation', () => {
     it('should throw if id is empty', async () => {
-      await expect(desligamentoService.buscarPorId('')).rejects.toThrow('ID é obrigatório');
+      await expect(desligamentoService.buscarPorId('', EMPRESA_ID)).rejects.toThrow('ID é obrigatório');
     });
   });
 
