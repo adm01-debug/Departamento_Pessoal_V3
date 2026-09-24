@@ -9,6 +9,7 @@ export function useFolha(competencia?: string) {
   const crud = useGenericCrud<FolhaRecord>({
     queryKey: 'folhas',
     service: folhaService,
+    empresaId,
     filters: { empresa_id: empresaId, competencia },
   });
 
