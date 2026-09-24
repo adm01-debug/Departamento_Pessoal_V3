@@ -47,13 +47,25 @@ jobs:
           }
           test -n "$SUPABASE_DB_URL" || {
             echo '::error::SUPABASE_DB_URL ausente.'
+            exit 1
+          }
+          node scripts/validate-canonical-db-url.mjs
+
+      - name: Instalar cliente PostgreSQL
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client
 
       - name: Executar probes read-only (ROLLBACK garantido)
         id: probes
         run: |
           set -euo pipefail
           read_only() {
-            psql "$SUPABASE_DB_URL" -X -At -v ON_ERROR_STOP=1 "$1"
+            # -q suprime os command tags (BEGIN/SET/ROLLBACK) que o psql ecoa
+            # por padrão a cada statement do stdin -- sem isso eles se
+            # misturavam ao resultado do SELECT dentro de $(...) e quebravam
+            # o parsing de $GITHUB_OUTPUT (\"Invalid format 'SET'\").
+            psql "$SUPABASE_DB_URL" -X -q -At -v ON_ERROR_STOP=1
           }
 
           # RV-01: authenticated com sub inexistente e user_metadata forjado
@@ -144,12 +156,3 @@ jobs:
             console.log(JSON.stringify(r, null, 2));
           ' "$RESULT"
           echo 'CANONICAL_PROBES_OK'
-
-            exit 1
-          }
-          node scripts/validate-canonical-db-url.mjs
-
-      - name: Instalar cliente PostgreSQL
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq postgresql-client

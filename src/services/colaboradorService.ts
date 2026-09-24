@@ -86,14 +86,63 @@ class ColaboradorService extends BaseService<Colaborador> {
     return summary;
   }
 
+  /**
+   * E50-41: CPF/matrícula viraram identidade por empresa (E50-40 criou os
+   * índices únicos compostos `colaboradores_empresa_{cpf,matricula}_key`),
+   * mas as constraints globais antigas (`colaboradores_cpf_key`,
+   * `colaboradores_matricula_key`) ainda existem -- E50-42 só as remove
+   * depois de um ciclo de observação. Até lá, cadastrar a mesma pessoa em
+   * duas empresas segue bloqueado de fato pela constraint antiga; a
+   * mensagem tem que refletir isso, não fingir que já funciona.
+   */
+  private mapDuplicidadeError(e: unknown): unknown {
+    const pgCode = (e as { code?: string })?.code;
+    const msg = (e as { message?: string })?.message || '';
+    if (pgCode === '23505') {
+      if (msg.includes('colaboradores_empresa_cpf_key')) {
+        return new Error('Já existe um colaborador com este CPF nesta empresa.');
+      }
+      if (msg.includes('colaboradores_empresa_matricula_key')) {
+        return new Error('Já existe um colaborador com esta matrícula nesta empresa.');
+      }
+      if (msg.includes('colaboradores_cpf_key')) {
+        return new Error(
+          'Este CPF já está cadastrado em outra empresa do grupo. Vínculo em mais de uma empresa ainda não é suportado — contate o suporte.'
+        );
+      }
+      if (msg.includes('colaboradores_matricula_key')) {
+        return new Error('Esta matrícula já está em uso em outra empresa do grupo.');
+      }
+    }
+    // Erro não relacionado a duplicidade -- rethrow como veio, sem mascarar
+    // a mensagem original (PostgrestError não é instanceof Error).
+    return e;
+  }
+
+  async criar(payload: Record<string, unknown>): Promise<Colaborador> {
+    try {
+      return await super.criar(payload);
+    } catch (e) {
+      throw this.mapDuplicidadeError(e);
+    }
+  }
+
+  async atualizar(id: string, payload: Record<string, unknown>, empresaId: string): Promise<Colaborador> {
+    try {
+      return await super.atualizar(id, payload, empresaId);
+    } catch (e) {
+      throw this.mapDuplicidadeError(e);
+    }
+  }
+
   // Alias for backward compatibility
   async list(empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     return (await this.listar({ filters: { empresaId }, pageSize: 1000 })).data;
   }
 
-  async getById(id: string) {
-    return this.buscarPorId(id);
+  async getById(id: string, empresaId: string) {
+    return this.buscarPorId(id, empresaId);
   }
   async create(d: Record<string, unknown>) {
     return this.criar(d);

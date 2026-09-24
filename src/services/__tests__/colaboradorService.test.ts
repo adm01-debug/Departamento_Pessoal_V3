@@ -47,7 +47,9 @@ function makeCountChain(count: number, error: any = null) {
 // ─── listar ───────────────────────────────────────────────────────────────────
 
 describe('colaboradorService.listar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns data and total from supabase', async () => {
     const records = [{ id: '1', nome_completo: 'Alice' }];
@@ -67,9 +69,7 @@ describe('colaboradorService.listar', () => {
   it('adds or() filter when search is provided', async () => {
     const { orFn } = setupListarChain([], 0);
     await colaboradorService.listar({ search: 'Silva', filters: { empresaId: EMP } });
-    expect(orFn).toHaveBeenCalledWith(
-      expect.stringContaining('ilike.%Silva%')
-    );
+    expect(orFn).toHaveBeenCalledWith(expect.stringContaining('ilike.%Silva%'));
   });
 
   it('filters by empresa_id when provided', async () => {
@@ -117,7 +117,9 @@ describe('colaboradorService.listar', () => {
 // ─── getSummary ───────────────────────────────────────────────────────────────
 
 describe('colaboradorService.getSummary', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns total and per-status counts', async () => {
     const counts = [5, 2, 1, 3]; // ativo, desligado, afastado, ferias
@@ -165,7 +167,9 @@ describe('colaboradorService.getSummary', () => {
 // ─── list (alias) ─────────────────────────────────────────────────────────────
 
 describe('colaboradorService.list', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns array of colaboradores (delegates to listar)', async () => {
     const records = [{ id: 'c1', nome_completo: 'Bob' }];
@@ -179,5 +183,55 @@ describe('colaboradorService.list', () => {
     await colaboradorService.list('emp-1');
     // pageSize 1000 → range(0, 999)
     expect(rangeFn).toHaveBeenCalledWith(0, 999);
+  });
+});
+
+// ─── criar — mapeamento de duplicidade (E50-41) ────────────────────────────────
+
+function setupCriarChain(error: any) {
+  const maybeSingleFn = vi.fn().mockResolvedValue({ data: null, error });
+  const selectFn = vi.fn().mockReturnValue({ maybeSingle: maybeSingleFn });
+  const insertFn = vi.fn().mockReturnValue({ select: selectFn });
+  mockFrom.mockReturnValue({ insert: insertFn });
+}
+
+describe('colaboradorService.criar — mensagens de duplicidade por empresa', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('CPF duplicado na MESMA empresa (índice composto novo) -> mensagem escopada', async () => {
+    setupCriarChain({
+      code: '23505',
+      message: 'duplicate key value violates unique constraint "colaboradores_empresa_cpf_key"',
+    });
+    await expect(colaboradorService.criar({ cpf: '11111111111' })).rejects.toThrow(
+      'Já existe um colaborador com este CPF nesta empresa.'
+    );
+  });
+
+  it('matrícula duplicada na MESMA empresa -> mensagem escopada', async () => {
+    setupCriarChain({
+      code: '23505',
+      message: 'duplicate key value violates unique constraint "colaboradores_empresa_matricula_key"',
+    });
+    await expect(colaboradorService.criar({ matricula: '0001' })).rejects.toThrow(
+      'Já existe um colaborador com esta matrícula nesta empresa.'
+    );
+  });
+
+  it('CPF já existe em OUTRA empresa (constraint global antiga, ainda ativa) -> mensagem honesta sobre o bloqueio real', async () => {
+    setupCriarChain({
+      code: '23505',
+      message: 'duplicate key value violates unique constraint "colaboradores_cpf_key"',
+    });
+    await expect(colaboradorService.criar({ cpf: '22222222222' })).rejects.toThrow(/outra empresa do grupo/);
+  });
+
+  it('erro não relacionado a duplicidade passa direto (sem reescrever mensagem)', async () => {
+    setupCriarChain({ code: '42501', message: 'permission denied for table colaboradores' });
+    await expect(colaboradorService.criar({ cpf: '33333333333' })).rejects.toThrow(
+      'permission denied for table colaboradores'
+    );
   });
 });

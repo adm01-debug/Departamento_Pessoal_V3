@@ -98,10 +98,11 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
 
   const deleteMutation = useMutation({
     mutationFn: async (doc: any) => {
+      if (!empresaId) throw new Error('Empresa não identificada');
       if (doc.storage_path) {
         await supabase.storage.from(BUCKET).remove([doc.storage_path]);
       }
-      await documentoService.excluir(doc.id);
+      await documentoService.excluir(doc.id, empresaId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['portal-documentos'] });

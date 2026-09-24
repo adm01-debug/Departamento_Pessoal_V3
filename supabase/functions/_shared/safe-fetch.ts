@@ -24,11 +24,22 @@
  *   });
  */
 
+import { assertPublicHttpsUrl, UnsafeUrlError } from './ssrf-guard.ts';
+
 export interface SafeFetchOptions extends RequestInit {
   timeoutMs?: number;
   /** Tags para logging (ex: 'openai', 'govbr', 'whatsapp') */
   tag?: string;
 }
+
+/**
+ * E50-37: tags cujo destino vem de configuração gravada por um admin (não
+ * hardcoded no código) — precisam do guard de SSRF a cada request, inclusive
+ * revalidando cada redirect, porque o host pode ter sido trocado por
+ * qualquer coisa depois da última checagem.
+ */
+const SSRF_GUARDED_TAGS = new Set(['webhook']);
+const MAX_REDIRECTS = 5;
 
 export class FetchTimeoutError extends Error {
   readonly url: string;
@@ -95,12 +106,29 @@ export async function safeFetch(
   }, effectiveTimeout);
 
   try {
+    if (tag && SSRF_GUARDED_TAGS.has(tag)) {
+      // E50-37: destino vem de configuração gravada por admin — valida o
+      // host (bloqueia IP privado/loopback/link-local) antes de CADA hop,
+      // porque `redirect: 'follow'` padrão nunca revalida um redirect.
+      let currentUrl = url;
+      for (let i = 0; i <= MAX_REDIRECTS; i++) {
+        await assertPublicHttpsUrl(currentUrl);
+        const res = await fetch(currentUrl, { ...fetchOptions, redirect: 'manual', signal: controller.signal });
+        if (res.status >= 300 && res.status < 400 && res.headers.get('location')) {
+          currentUrl = new URL(res.headers.get('location')!, currentUrl).toString();
+          continue;
+        }
+        return res;
+      }
+      throw new UnsafeUrlError(url, 'excesso de redirects');
+    }
     const res = await fetch(url, {
       ...fetchOptions,
       signal: controller.signal,
     });
     return res;
   } catch (err) {
+    if (err instanceof UnsafeUrlError) throw err;
     if (err instanceof Error && err.name === 'AbortError') {
       // AbortError pode vir de timeout OU de cancelamento explícito.
       // Distinguimos pelo timer: se timer ainda está ativo, foi cancelamento.
