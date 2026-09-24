@@ -31,7 +31,7 @@ SELECT
     WHEN MAX(created_at) - MIN(created_at) < INTERVAL '1 minute'
     THEN COUNT(*) FILTER (WHERE success = false)
          / NULLIF(EXTRACT(EPOCH FROM (MAX(created_at) - MIN(created_at))), 0)
-         / 60)
+         / 60
     ELSE COUNT(*) FILTER (WHERE success = false)
          / NULLIF(EXTRACT(EPOCH FROM (MAX(created_at) - MIN(created_at))) / 60, 0)
   END                                                       AS failures_per_minute_proj,
@@ -135,17 +135,17 @@ FROM v_login_anomalies_email
 ORDER BY failed_attempts DESC, last_attempt DESC;
 
 -- 4. Índices para performance
+-- WHERE created_at >= NOW() - INTERVAL removido (24/09/2026): NOW() não é
+-- IMMUTABLE, Postgres rejeita função não-imutável em predicado de índice
+-- parcial (SQLSTATE 42P17). Índices completos nas mesmas colunas.
 CREATE INDEX IF NOT EXISTS idx_login_attempts_ip_hour
-  ON public.login_attempts (ip_address, created_at DESC)
-  WHERE created_at >= NOW() - INTERVAL '2 hours';
+  ON public.login_attempts (ip_address, created_at DESC);
 
 CREATE INDEX IF NOT EXISTS idx_login_attempts_email_hour
-  ON public.login_attempts (email, created_at DESC)
-  WHERE created_at >= NOW() - INTERVAL '2 hours';
+  ON public.login_attempts (email, created_at DESC);
 
 CREATE INDEX IF NOT EXISTS idx_login_attempts_success_hour
-  ON public.login_attempts (success, created_at DESC)
-  WHERE created_at >= NOW() - INTERVAL '2 hours';
+  ON public.login_attempts (success, created_at DESC);
 
 -- 5. Comentário de auditoria
 COMMENT ON VIEW v_login_anomalies IS
