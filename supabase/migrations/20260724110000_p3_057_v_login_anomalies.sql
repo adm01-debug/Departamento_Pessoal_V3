@@ -31,7 +31,7 @@ SELECT
     WHEN MAX(created_at) - MIN(created_at) < INTERVAL '1 minute'
     THEN COUNT(*) FILTER (WHERE success = false)
          / NULLIF(EXTRACT(EPOCH FROM (MAX(created_at) - MIN(created_at))), 0)
-         / 60)
+         / 60
     ELSE COUNT(*) FILTER (WHERE success = false)
          / NULLIF(EXTRACT(EPOCH FROM (MAX(created_at) - MIN(created_at))) / 60, 0)
   END                                                       AS failures_per_minute_proj,
