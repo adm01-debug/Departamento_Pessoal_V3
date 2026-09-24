@@ -722,6 +722,18 @@ Depende de: E50-40, E50-24
 Verificação: mesma pessoa é cadastrada em duas empresas; duplicata dentro da mesma empresa é recusada.
 Risco: relatórios que assumem CPF único global — levantar consumidores antes.
 
+**Status (24/09/2026): escopo reduzido, honesto sobre o que falta.** `colaboradorService.criar`/`atualizar`
+mapeiam `23505` pela constraint que disparou: `colaboradores_empresa_{cpf,matricula}_key` (novo índice
+composto, E50-40) → mensagem escopada por empresa; `colaboradores_cpf_key`/`colaboradores_matricula_key`
+(constraint global antiga, ainda ativa) → mensagem que **não finge** que cadastro cross-empresa já
+funciona, porque não funciona: a constraint antiga ainda bloqueia de fato até E50-42 (fora de escopo
+aqui, destrutiva, exige ciclo de observação). "Mesma pessoa em duas empresas" da verificação acima só
+é alcançável depois de E50-42. Testado com unit test (4 casos: cpf/matrícula duplicado na mesma
+empresa, cpf duplicado em outra empresa, erro não-relacionado passa sem reescrever mensagem — esse
+último pegou um bug real: o fallback inicial mascarava qualquer erro não-23505 com uma mensagem
+genérica, perdendo a causa real). Levantamento de consumidores que assumem CPF único global (risco
+citado acima) não foi feito — pendente antes de prosseguir para E50-42.
+
 ### E50-42 · [P1] · banco — remover as constraints globais antigas
 
 Corrige: A-025

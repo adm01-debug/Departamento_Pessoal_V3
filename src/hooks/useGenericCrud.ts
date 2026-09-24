@@ -9,8 +9,8 @@ import { safeErrorMessage } from '@/utils/safeError';
 interface ServiceInterface<T> {
   listar(options: ListOptions): Promise<ListResponse<T>>;
   criar(data: unknown): Promise<T>;
-  atualizar(id: string, data: unknown, empresaId?: string): Promise<T>;
-  excluir(id: string, empresaId?: string): Promise<void>;
+  atualizar(id: string, data: unknown, empresaId: string): Promise<T>;
+  excluir(id: string, empresaId: string): Promise<void>;
 }
 
 interface UseGenericCrudOptions<T> {
@@ -25,6 +25,13 @@ interface UseGenericCrudOptions<T> {
   filters?: Record<string, unknown>;
   searchColumn?: string;
   empresaId?: string;
+  /**
+   * false apenas para services sem isolamento por empresa (ex.: EmpresaService,
+   * RequireEmpresa=false no BaseService). Default true: atualizar/excluir exigem
+   * empresaId, senão o service (tipado via ServiceInterface) perderia a garantia
+   * de compilação que o BaseService dá — achado de auditoria adversarial (24/09/2026).
+   */
+  requireEmpresaId?: boolean;
 }
 
 export function useGenericCrud<T>({
@@ -35,6 +42,7 @@ export function useGenericCrud<T>({
   filters = {},
   searchColumn,
   empresaId,
+  requireEmpresaId = true,
 }: UseGenericCrudOptions<T>) {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
@@ -84,7 +92,15 @@ export function useGenericCrud<T>({
   });
 
   const atualizarMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => service.atualizar(id, data, empresaId),
+    mutationFn: ({ id, data }: { id: string; data: any }) => {
+      if (requireEmpresaId && !empresaId) {
+        throw new Error('empresaId obrigatório para atualizar (isolamento de tenant).');
+      }
+      // Cast: só chega aqui com empresaId undefined quando requireEmpresaId=false
+      // (exceção documentada, ex.: EmpresaService, cujo atualizar real aceita
+      // empresaId opcional apesar do ServiceInterface exigi-lo).
+      return service.atualizar(id, data, empresaId as string);
+    },
     onSuccess: (_, variables) => {
       void queryClient.invalidateQueries({ queryKey: [queryKey] });
       toast.success(successMessages.update || 'Registro atualizado com sucesso');
@@ -97,7 +113,12 @@ export function useGenericCrud<T>({
   });
 
   const excluirMutation = useMutation({
-    mutationFn: (id: string) => service.excluir(id, empresaId),
+    mutationFn: (id: string) => {
+      if (requireEmpresaId && !empresaId) {
+        throw new Error('empresaId obrigatório para excluir (isolamento de tenant).');
+      }
+      return service.excluir(id, empresaId as string);
+    },
     onSuccess: (_, id) => {
       void queryClient.invalidateQueries({ queryKey: [queryKey] });
       toast.success(successMessages.delete || 'Registro excluído com sucesso');
