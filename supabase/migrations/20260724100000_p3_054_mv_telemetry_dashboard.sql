@@ -10,8 +10,11 @@
 BEGIN;
 
 -- 1. Criar materialized view com agregações hourly
-CREATE MATERIALIZED VIEW IF NOT EXISTS mv_telemetry_dashboard
-WITH (timescaledb.continuous) AS
+-- timescaledb.continuous removido (24/09/2026): extensão não instalada neste
+-- Postgres (SQLSTATE 22023, "unrecognized parameter namespace"), fazia esta
+-- migration falhar em qualquer replay do zero. 20260912209000 já recria esta
+-- view como materialized view padrão (sem timescaledb), mesma correção aqui.
+CREATE MATERIALIZED VIEW IF NOT EXISTS mv_telemetry_dashboard AS
 SELECT
   date_trunc('hour', created_at) AS hour,
   table_name,
