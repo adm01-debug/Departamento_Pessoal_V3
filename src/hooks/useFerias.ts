@@ -40,7 +40,8 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: any }) => {
-      return await feriasService.atualizar(id, data);
+      if (!empresaId) throw new Error('empresa_id obrigatório para atualizar ferias (isolamento de tenant)');
+      return await feriasService.atualizar(id, data, empresaId);
     },
     onSuccess: (_, variables) => {
       qc.invalidateQueries({ queryKey: ['ferias', empresaId] });
@@ -59,7 +60,8 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      return await feriasService.excluir(id);
+      if (!empresaId) throw new Error('empresa_id obrigatório para excluir ferias (isolamento de tenant)');
+      return await feriasService.excluir(id, empresaId);
     },
     onSuccess: (_, id) => {
       qc.invalidateQueries({ queryKey: ['ferias', empresaId] });

@@ -67,6 +67,7 @@ class DesligamentoService extends BaseService<
 
   async atualizar(id: string, d: Updatable<'desligamentos'>, empresaId?: string): Promise<Tables<'desligamentos'>> {
     if (!id) throw new Error('ID é obrigatório');
+    if (!empresaId) throw new Error('empresa_id obrigatório para atualizar desligamentos (isolamento de tenant)');
 
     try {
       const anterior = await this.buscarPorId(id, empresaId);
@@ -90,6 +91,7 @@ class DesligamentoService extends BaseService<
 
   async excluir(id: string, empresaId?: string): Promise<void> {
     if (!id) throw new Error('ID é obrigatório');
+    if (!empresaId) throw new Error('empresa_id obrigatório para excluir desligamentos (isolamento de tenant)');
 
     try {
       const anterior = await this.buscarPorId(id, empresaId);

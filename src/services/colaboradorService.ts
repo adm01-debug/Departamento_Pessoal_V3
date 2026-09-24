@@ -92,8 +92,8 @@ class ColaboradorService extends BaseService<Colaborador> {
     return (await this.listar({ filters: { empresaId }, pageSize: 1000 })).data;
   }
 
-  async getById(id: string) {
-    return this.buscarPorId(id);
+  async getById(id: string, empresaId: string) {
+    return this.buscarPorId(id, empresaId);
   }
   async create(d: Record<string, unknown>) {
     return this.criar(d);

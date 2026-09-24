@@ -154,9 +154,14 @@ export function AdmissoesKanban({ admissoes }: { admissoes: Admissao[] }) {
     const current = admissoes.find((a) => a.id === id);
     if (!current || current.etapa === target) return;
 
+    if (!empresaAtual?.id) {
+      toast.error('Empresa ativa não carregada.');
+      return;
+    }
+
     setOptimistic((s) => ({ ...s, [id]: target }));
     try {
-      await admissaoService.atualizar(id, { etapa: target }, empresaAtual?.id);
+      await admissaoService.atualizar(id, { etapa: target }, empresaAtual.id);
       toast.success(`Movido para ${COLUMNS.find((c) => c.key === target)?.label ?? target}`);
       await qc.invalidateQueries({ queryKey: ['admissoes'] });
     } catch (err) {
