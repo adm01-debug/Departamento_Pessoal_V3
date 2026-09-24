@@ -58,7 +58,9 @@ function setupThenabledChain(data: any[], error: any = null) {
 // ─── listar ───────────────────────────────────────────────────────────────────
 
 describe('afastamentoService.listar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns data and total from supabase', async () => {
     const records = [{ id: 'af-1', status: 'ativo' }];
@@ -108,7 +110,9 @@ describe('afastamentoService.listar', () => {
 // ─── listarHistoricoRecente ───────────────────────────────────────────────────
 
 describe('afastamentoService.listarHistoricoRecente', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns records for given colaboradorId', async () => {
     const records = [{ id: 'af-2', colaborador_id: 'c1' }];
@@ -139,7 +143,9 @@ describe('afastamentoService.listarHistoricoRecente', () => {
 // ─── buscarCID ────────────────────────────────────────────────────────────────
 
 describe('afastamentoService.buscarCID', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns CID results', async () => {
     const cids = [{ codigo: 'J00', descricao: 'Resfriado' }];
@@ -190,7 +196,9 @@ describe('afastamentoService.buscarCID', () => {
 // ─── listarConfiguracoes ──────────────────────────────────────────────────────
 
 describe('afastamentoService.listarConfiguracoes', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns configuration records', async () => {
     const configs = [{ tipo: 'doenca', dias_empresa_maximo: 15 }];
@@ -253,8 +261,34 @@ describe('afastamentoService.calcularDias', () => {
 // ─── calcularDistribuicaoDias (pure) ─────────────────────────────────────────
 
 describe('afastamentoService.calcularDistribuicaoDias', () => {
-  const configDoenca: ConfigAfastamentoRow[] = [{ tipo: 'doenca', dias_empresa_maximo: 15, id: 'cfg-1', created_at: new Date().toISOString(), descricao: null, dias_maximos: null, dias_minimos: null, exige_cid: null, pago_empresa: null, pago_inss: null }];
-  const configSemLimite: ConfigAfastamentoRow[] = [{ tipo: 'licenca_maternidade', dias_empresa_maximo: 0, id: 'cfg-2', created_at: new Date().toISOString(), descricao: null, dias_maximos: null, dias_minimos: null, exige_cid: null, pago_empresa: null, pago_inss: null }];
+  const configDoenca: ConfigAfastamentoRow[] = [
+    {
+      tipo: 'doenca',
+      dias_empresa_maximo: 15,
+      id: 'cfg-1',
+      created_at: new Date().toISOString(),
+      descricao: null,
+      dias_maximos: null,
+      dias_minimos: null,
+      exige_cid: null,
+      pago_empresa: null,
+      pago_inss: null,
+    },
+  ];
+  const configSemLimite: ConfigAfastamentoRow[] = [
+    {
+      tipo: 'licenca_maternidade',
+      dias_empresa_maximo: 0,
+      id: 'cfg-2',
+      created_at: new Date().toISOString(),
+      descricao: null,
+      dias_maximos: null,
+      dias_minimos: null,
+      exige_cid: null,
+      pago_empresa: null,
+      pago_inss: null,
+    },
+  ];
 
   it('all days go to empresa when total <= maxEmpresa', () => {
     const result = afastamentoService.calcularDistribuicaoDias(10, 'doenca', configDoenca);
@@ -284,5 +318,66 @@ describe('afastamentoService.calcularDistribuicaoDias', () => {
     const result = afastamentoService.calcularDistribuicaoDias(30, 'licenca_maternidade', []);
     expect(result.empresa).toBe(30);
     expect(result.inss).toBe(0);
+  });
+});
+
+// ─── excluirDocumento ─────────────────────────────────────────────────────────
+
+describe('afastamentoService.excluirDocumento', () => {
+  beforeEach(() => {
+    mockFrom.mockReset();
+  });
+
+  it('rejeita sem empresaId (isolamento de tenant)', async () => {
+    await expect(afastamentoService.excluirDocumento('doc-1', '')).rejects.toThrow('empresa_id obrigatório');
+  });
+
+  it('rejeita quando o documento pertence a outra empresa', async () => {
+    mockFrom.mockImplementation((table: string) => {
+      if (table === 'documentos_afastamento') {
+        return {
+          select: () => ({
+            eq: () => ({ maybeSingle: () => Promise.resolve({ data: { afastamento_id: 'af-1' }, error: null }) }),
+          }),
+        };
+      }
+      if (table === 'afastamentos') {
+        return {
+          select: () => ({
+            eq: () => ({ maybeSingle: () => Promise.resolve({ data: { empresa_id: 'outra-empresa' }, error: null }) }),
+          }),
+        };
+      }
+      throw new Error(`tabela inesperada: ${table}`);
+    });
+
+    await expect(afastamentoService.excluirDocumento('doc-1', EMPRESA_ID)).rejects.toThrow('Acesso negado');
+  });
+
+  it('exclui o documento quando pertence à empresa informada', async () => {
+    let documentosCalls = 0;
+    mockFrom.mockImplementation((table: string) => {
+      if (table === 'documentos_afastamento') {
+        documentosCalls += 1;
+        if (documentosCalls === 1) {
+          return {
+            select: () => ({
+              eq: () => ({ maybeSingle: () => Promise.resolve({ data: { afastamento_id: 'af-1' }, error: null }) }),
+            }),
+          };
+        }
+        return { delete: () => ({ eq: () => ({ eq: () => Promise.resolve({ error: null }) }) }) };
+      }
+      if (table === 'afastamentos') {
+        return {
+          select: () => ({
+            eq: () => ({ maybeSingle: () => Promise.resolve({ data: { empresa_id: EMPRESA_ID }, error: null }) }),
+          }),
+        };
+      }
+      throw new Error(`tabela inesperada: ${table}`);
+    });
+
+    await expect(afastamentoService.excluirDocumento('doc-1', EMPRESA_ID)).resolves.toBeUndefined();
   });
 });

@@ -90,6 +90,7 @@ export function useProrrogacoesAfastamento(afastamentoId?: string) {
 
 export function useDocumentosAfastamento(afastamentoId?: string) {
   const queryClient = useQueryClient();
+  const { empresaAtual } = useEmpresas();
 
   const query = useQuery({
     queryKey: ['documentos-afastamento', afastamentoId],
@@ -109,7 +110,10 @@ export function useDocumentosAfastamento(afastamentoId?: string) {
   });
 
   const excluirMutation = useMutation({
-    mutationFn: (id: string) => (afastamentoService as any).excluir(id),
+    mutationFn: (id: string) => {
+      if (!empresaAtual?.id) throw new Error('Empresa ativa não carregada.');
+      return afastamentoService.excluirDocumento(id, empresaAtual.id);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['documentos-afastamento', afastamentoId] });
       toast.success('Documento excluído com sucesso');
