@@ -22,6 +22,45 @@ I (governança) → J (hardening e honestidade de produto).
 > atual de `main` por violação real de isolamento multiempresa. Nada dos blocos C–J deve começar
 > antes de A-01…A-08 estarem em produção.
 
+## Status de execução (24/09/2026, sessão de execução)
+
+**Aplicado e verificado em produção** (migrations `20260924140000`, `20260924141500`,
+`20260924143000` — cada uma validada com `mode=validate` antes de `mode=apply`, e confirmada por
+verificação pós-apply lendo `pg_policies` ao vivo, não só "sem erro"):
+
+- **E50-02/03/04/05 (parcial)** — `colaboradores`, `dependentes`, `ferias`, `provisoes_folha`,
+  `pix_lotes`, `pix_itens` fechados. Achado durante a execução, fora do escopo original: `cnab_remessas`
+  e `cnab_itens` tinham o mesmo padrão aberto (`roles: public`, "qualquer linha que exista") — corrigidos
+  junto.
+- **E50-18/19/20 (colaboradores/contas_bancarias/folha_itens/folhas_pagamento)** — policies tenant-only
+  sem checar papel substituídas por `pode_gerir_rh`/`pode_gerir_pessoas`.
+- **A-003 residual (integracao_logs, notificacoes_admissao)** — as duas policies `USING (true)` que
+  ainda anulavam a policy segura ao lado foram removidas.
+- **Achado novo, fora do PLANO_50 original**: depois de A-039 (o gate só roda em `push`/`dispatch`,
+  nunca em PR) ser confirmado na prática, disparei `ci.yml` via `workflow_dispatch` para obter uma
+  corrida real do `audit-rls-pii` pós-fix — ele apontou 2 violações novas em `audit_log`
+  ("Authenticated users can insert audit_logs" sem `WITH CHECK` correlacionando autor;
+  "Users can view relevant audit_logs" com branch `auth.jwt()->>'role'`). Corrigidas na mesma sessão
+  (migration `20260924143000`).
+- **E50-06 (harden `get_auth_empresa_id()` na origem)** — **não executado**: a investigação mostrou que
+  nenhuma das novas policies criadas depende dessa função (todas usam `get_user_empresas`/
+  `pertence_a_empresa`/`pode_gerir_rh`, já verificados como membership-based). Reescrever uma função
+  com esse alcance sem necessidade concreta foi descartado por risco/benefício.
+- **E50-16 (`is_admin(uuid)` verificar chamador)** — **avaliado e adiado deliberadamente**: dezenas de
+  policies já em produção chamam `public.is_admin(auth.uid())` diretamente no `USING`, o que exige
+  `EXECUTE` de `authenticated` na função. Revogar esse grant (o fix ingênuo) quebraria todas elas.
+  Corrigir de verdade exige mudar o corpo da função para permitir auto-consulta e negar consulta de
+  terceiro sem recursão — não tentado às pressas dentro desta sessão.
+- **E50-23/24 (`ColaboradorFormPage` sem `empresa_id`)** — corrigido (código, não banco).
+- **E50-26/27 (botão "Encerrar" folha)** — corrigido: usa `folhaPagamentoService.fecharFolha` +
+  confirmação nomeando competência e total líquido.
+
+**Ainda não executado** (blocos B remanescente, C remanescente, D remanescente, E, F, G, H, I, J —
+ver etapas individuais abaixo, nenhuma teve o texto alterado): reconciliação sistemática de todo o
+lote de migrations de 19-31/07 além do que já foi tratado ad-hoc, `registros_ponto`/`ferias` além do
+que já foi corrigido, triagem dos 18 specs E2E, lockout no GoTrue, quiosque, Bitrix/SSRF/webhook,
+CPF/matrícula, backup, gate de PR, proteção de `main`, dashboards falsos, headers Nginx.
+
 ---
 
 ## Bloco A — Contenção da exposição ativa (P0)
