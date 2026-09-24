@@ -80,8 +80,10 @@ SELECT
   table_name,
   operation,
   duration_ms,
-  severity,
-  status_code
+  severity
+  -- status_code removido (24/09/2026): mesma classe de bug do bytes_sent,
+  -- coluna nunca existiu em query_telemetry. 20260912209000 confirma
+  -- (mesma view recriada sem essa coluna).
 FROM query_telemetry
 WHERE created_at >= NOW() - INTERVAL '1 hour'
   AND duration_ms > 5000
