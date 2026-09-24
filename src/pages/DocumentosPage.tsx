@@ -106,11 +106,12 @@ export default function DocumentosPage() {
 
   const deleteMutation = useMutation({
     mutationFn: async (doc: any) => {
+      if (!empresaId) throw new Error('Empresa ativa não carregada.');
       if (doc.storage_path || doc.url) {
         const path = doc.storage_path || doc.url.split(`${BUCKET}/`).pop();
         if (path) await supabase.storage.from(BUCKET).remove([path]);
       }
-      await documentoService.excluir(doc.id);
+      await documentoService.excluir(doc.id, empresaId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['documentos'] });

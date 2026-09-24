@@ -60,7 +60,7 @@ class BeneficioService extends BaseService<
     }
   }
 
-  async atualizar(id: string, d: Partial<TablesInsert<'beneficios'>>, empresaId?: string): Promise<BeneficioRow> {
+  async atualizar(id: string, d: Partial<TablesInsert<'beneficios'>>, empresaId: string): Promise<BeneficioRow> {
     if (!empresaId) throw new Error('empresa_id obrigatório para atualizar beneficios (isolamento de tenant)');
     try {
       const anterior = await this.buscarPorId(id, empresaId);
