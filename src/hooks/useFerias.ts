@@ -40,7 +40,7 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: any }) => {
-      return await feriasService.atualizar(id, data);
+      return await feriasService.atualizar(id, data, empresaId);
     },
     onSuccess: (_, variables) => {
       qc.invalidateQueries({ queryKey: ['ferias', empresaId] });

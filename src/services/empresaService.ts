@@ -6,6 +6,7 @@ class EmpresaService extends BaseService<Empresa> {
     super('empresas', {
       searchColumn: 'razao_social',
       defaultOrderBy: 'razao_social',
+      requireEmpresaId: false,
     });
   }
 
