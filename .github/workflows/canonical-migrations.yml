@@ -111,7 +111,7 @@ jobs:
           # statements and fail with "policy already exists". Each dispatch
           # of this workflow targets only the NEW migrations for that batch.
           for migration in \
-            20260924143000_p1_audit_log_insert_select_authz.sql
+            20260924150000_p1_least_privilege_read_dependentes_pix_cnab.sql
           do
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
           done
@@ -159,19 +159,17 @@ jobs:
           set -euo pipefail
           result="$(psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -At <<'SQL'
           SELECT jsonb_build_object(
-            'insert_old_gone', NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='audit_log' AND policyname='Authenticated users can insert audit_logs'),
-            'insert_new_present', EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='audit_log' AND policyname='audit_log_self_insert'),
-            'select_old_gone', NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='audit_log' AND policyname='Users can view relevant audit_logs'),
-            'select_new_present', EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='audit_log' AND policyname='audit_log_self_read'),
-            'admin_read_kept', EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='audit_log' AND policyname='Admins podem ver todo audit_log'),
-            'ledger_count', (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = '20260924143000')
+            'dependentes_role_gated', EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='dependentes' AND policyname='dependentes_tenant_read' AND qual LIKE '%pode_gerir_pessoas%'),
+            'pix_itens_role_gated', EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='pix_itens' AND policyname='pix_itens_tenant_read' AND qual LIKE '%pode_gerir_rh%'),
+            'cnab_itens_role_gated', EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='cnab_itens' AND policyname='cnab_itens_tenant_read' AND qual LIKE '%pode_gerir_rh%'),
+            'ledger_count', (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = '20260924150000')
           );
           SQL
           )"
           echo "$result"
           node -e '
             const result = JSON.parse(process.argv[1]);
-            const expectedTrue = ["insert_old_gone","insert_new_present","select_old_gone","select_new_present","admin_read_kept"];
+            const expectedTrue = ["dependentes_role_gated","pix_itens_role_gated","cnab_itens_role_gated"];
             if (expectedTrue.some((key) => result[key] !== true) || Number(result.ledger_count) !== 1) process.exit(1);
           ' "$result"
           echo 'CANONICAL_SCOPED_MIGRATIONS_OK'
