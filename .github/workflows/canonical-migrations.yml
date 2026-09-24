@@ -111,7 +111,7 @@ jobs:
           # statements and fail with "policy already exists". Each dispatch
           # of this workflow targets only the NEW migrations for that batch.
           for migration in \
-            20260924160000_e50_33_pin_quiosque_ponto.sql
+            20260924170000_e50_34_unique_bitrix_upsert_keys.sql
           do
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
           done
@@ -159,19 +159,16 @@ jobs:
           set -euo pipefail
           result="$(psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -At <<'SQL'
           SELECT jsonb_build_object(
-            'empresas_column_present', EXISTS (SELECT 1 FROM information_schema.columns WHERE table_schema='public' AND table_name='empresas' AND column_name='exigir_pin_quiosque'),
-            'pin_table_present', EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema='public' AND table_name='colaboradores_pin'),
-            'pin_table_rls_enabled', (SELECT relrowsecurity FROM pg_class WHERE relnamespace='public'::regnamespace AND relname='colaboradores_pin'),
-            'admin_definir_pin_present', EXISTS (SELECT 1 FROM pg_proc WHERE proname='admin_definir_pin_quiosque'),
-            'verificar_pin_present', EXISTS (SELECT 1 FROM pg_proc WHERE proname='verificar_pin_quiosque'),
-            'ledger_count', (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = '20260924160000')
+            'departamentos_index_present', EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname='public' AND tablename='departamentos' AND indexname='departamentos_empresa_nome_key'),
+            'colaboradores_index_present', EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname='public' AND tablename='colaboradores' AND indexname='colaboradores_empresa_email_key'),
+            'ledger_count', (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = '20260924170000')
           );
           SQL
           )"
           echo "$result"
           node -e '
             const result = JSON.parse(process.argv[1]);
-            const expectedTrue = ["empresas_column_present","pin_table_present","pin_table_rls_enabled","admin_definir_pin_present","verificar_pin_present"];
+            const expectedTrue = ["departamentos_index_present","colaboradores_index_present"];
             if (expectedTrue.some((key) => result[key] !== true) || Number(result.ledger_count) !== 1) process.exit(1);
           ' "$result"
           echo 'CANONICAL_SCOPED_MIGRATIONS_OK'
