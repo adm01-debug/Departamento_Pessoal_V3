@@ -111,7 +111,7 @@ jobs:
           # statements and fail with "policy already exists". Each dispatch
           # of this workflow targets only the NEW migrations for that batch.
           for migration in \
-            20260924190000_p0_fix_search_path_pin_quiosque.sql
+            20260924200000_p0_rls_least_privilege_remediation.sql
           do
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
           done
@@ -159,24 +159,30 @@ jobs:
           set -euo pipefail
           result="$(psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -At <<'SQL'
           SELECT jsonb_build_object(
-            'admin_definir_pin_search_path_ok', EXISTS (
+            'sou_o_colaborador_ok', EXISTS (
               SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
-              WHERE n.nspname = 'public' AND p.proname = 'admin_definir_pin_quiosque'
-                AND array_to_string(p.proconfig, ',') LIKE '%search_path=pg_catalog, public, extensions, pg_temp%'
+              WHERE n.nspname = 'public' AND p.proname = 'sou_o_colaborador'
             ),
-            'verificar_pin_search_path_ok', EXISTS (
-              SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
-              WHERE n.nspname = 'public' AND p.proname = 'verificar_pin_quiosque'
-                AND array_to_string(p.proconfig, ',') LIKE '%search_path=pg_catalog, public, extensions, pg_temp%'
+            'holerites_self_read_ok', EXISTS (
+              SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='holerites'
+                AND policyname='holerites_self_read'
             ),
-            'ledger_count', (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = '20260924190000')
+            'adiantamentos_rh_gate_ok', EXISTS (
+              SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='adiantamentos_salariais'
+                AND policyname='adiantamentos_salariais_rh_manage'
+            ),
+            'lancamentos_folha_rh_gate_ok', EXISTS (
+              SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='lancamentos_folha'
+                AND policyname='lancamentos_folha_rh_manage'
+            ),
+            'ledger_count', (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = '20260924200000')
           );
           SQL
           )"
           echo "$result"
           node -e '
             const result = JSON.parse(process.argv[1]);
-            const expectedTrue = ["admin_definir_pin_search_path_ok","verificar_pin_search_path_ok"];
+            const expectedTrue = ["sou_o_colaborador_ok","holerites_self_read_ok","adiantamentos_rh_gate_ok","lancamentos_folha_rh_gate_ok"];
             if (expectedTrue.some((key) => result[key] !== true) || Number(result.ledger_count) !== 1) process.exit(1);
           ' "$result"
           echo 'CANONICAL_SCOPED_MIGRATIONS_OK'
