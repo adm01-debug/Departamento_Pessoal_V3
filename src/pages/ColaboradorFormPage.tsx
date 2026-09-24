@@ -27,6 +27,7 @@ import { useDepartamentos } from '@/hooks/useDepartamentos';
 import { useCargos } from '@/hooks/useCargos';
 import { useFormGuard } from '@/hooks/useFormGuard';
 import { useServerValidation } from '@/hooks/useServerValidation';
+import { useEmpresas } from '@/hooks';
 
 const schema = z.object({
   // Geral
@@ -88,11 +89,12 @@ export default function ColaboradorFormPage() {
 
   const { departamentos } = useDepartamentos();
   const { cargos } = useCargos();
+  const { empresaAtual } = useEmpresas();
 
   const { data: colaborador, isLoading } = useQuery({
-    queryKey: ['colaborador', id],
-    queryFn: () => (colaboradorService as any).buscarPorId(id!),
-    enabled: isEditing});
+    queryKey: ['colaborador', id, empresaAtual?.id],
+    queryFn: () => (colaboradorService as any).buscarPorId(id!, empresaAtual!.id),
+    enabled: isEditing && !!empresaAtual?.id});
 
 
   const { register, handleSubmit, formState: { errors, isDirty }, setValue, reset, watch, setError } = useForm<FormInput, unknown, FormData>({
@@ -114,7 +116,12 @@ export default function ColaboradorFormPage() {
   }, [colaborador, reset]);
 
   const mutation = useMutation({
-    mutationFn: (data: FormData) => isEditing ? (colaboradorService as any).atualizar(id!, data as any) : (colaboradorService as any).criar(data as any),
+    mutationFn: (data: FormData) => {
+      if (!empresaAtual?.id) throw new Error('Empresa atual não identificada');
+      return isEditing
+        ? (colaboradorService as any).atualizar(id!, data as any, empresaAtual.id)
+        : (colaboradorService as any).criar({ ...data, empresa_id: empresaAtual.id } as any);
+    },
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['colaboradores'] });
@@ -157,7 +164,7 @@ export default function ColaboradorFormPage() {
             <Button 
               className="h-11 rounded-xl px-6 gap-2 bg-primary text-primary-foreground shadow-glow hover:shadow-glow-lg transition-all"
               onClick={handleSubmit((data) => mutation.mutate(data))}
-              disabled={mutation.isPending}
+              disabled={mutation.isPending || !empresaAtual?.id}
             >
               {mutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
               <span>{isEditing ? 'Salvar Alterações' : 'Cadastrar agora'}</span>
