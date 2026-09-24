@@ -12,7 +12,7 @@ vi.mock('@/components/ui/dialog', () => ({
   DialogContent: ({ children }: any) => <div>{children}</div>,
   DialogHeader: ({ children }: any) => <div>{children}</div>,
   DialogTitle: ({ children }: any) => <div>{children}</div>,
-  DialogTrigger: ({ children, asChild }: any) => asChild ? children : <div>{children}</div>,
+  DialogTrigger: ({ children, asChild }: any) => (asChild ? children : <div>{children}</div>),
 }));
 
 vi.mock('@tanstack/react-query', () => ({
@@ -26,12 +26,7 @@ vi.mock('@/hooks/useEmpresas', () => ({
   useEmpresas: () => ({ empresaAtual: { id: 'empresa-1', exigir_pin_quiosque: false } }),
 }));
 
-import {
-  PreferenciasTab,
-  NotificacoesTab,
-  FolhaConfigTab,
-  PontoConfigTab,
-} from '../settings/InlineTabs';
+import { PreferenciasTab, NotificacoesTab, FolhaConfigTab, PontoConfigTab } from '../settings/InlineTabs';
 
 describe('PreferenciasTab', () => {
   it('renders Preferências de Interface title', () => {
