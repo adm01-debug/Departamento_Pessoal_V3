@@ -111,7 +111,7 @@ jobs:
           # statements and fail with "policy already exists". Each dispatch
           # of this workflow targets only the NEW migrations for that batch.
           for migration in \
-            20260924180000_e50_40_colaboradores_cpf_matricula_por_empresa.sql
+            20260924190000_p0_fix_search_path_pin_quiosque.sql
           do
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
           done
@@ -159,18 +159,24 @@ jobs:
           set -euo pipefail
           result="$(psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -At <<'SQL'
           SELECT jsonb_build_object(
-            'cpf_index_present', EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname='public' AND tablename='colaboradores' AND indexname='colaboradores_empresa_cpf_key'),
-            'matricula_index_present', EXISTS (SELECT 1 FROM pg_indexes WHERE schemaname='public' AND tablename='colaboradores' AND indexname='colaboradores_empresa_matricula_key'),
-            'old_cpf_constraint_kept', EXISTS (SELECT 1 FROM pg_constraint WHERE conname='colaboradores_cpf_key'),
-            'old_matricula_constraint_kept', EXISTS (SELECT 1 FROM pg_constraint WHERE conname='colaboradores_matricula_key'),
-            'ledger_count', (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = '20260924180000')
+            'admin_definir_pin_search_path_ok', EXISTS (
+              SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+              WHERE n.nspname = 'public' AND p.proname = 'admin_definir_pin_quiosque'
+                AND array_to_string(p.proconfig, ',') LIKE '%search_path=pg_catalog, public, extensions, pg_temp%'
+            ),
+            'verificar_pin_search_path_ok', EXISTS (
+              SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+              WHERE n.nspname = 'public' AND p.proname = 'verificar_pin_quiosque'
+                AND array_to_string(p.proconfig, ',') LIKE '%search_path=pg_catalog, public, extensions, pg_temp%'
+            ),
+            'ledger_count', (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = '20260924190000')
           );
           SQL
           )"
           echo "$result"
           node -e '
             const result = JSON.parse(process.argv[1]);
-            const expectedTrue = ["cpf_index_present","matricula_index_present","old_cpf_constraint_kept","old_matricula_constraint_kept"];
+            const expectedTrue = ["admin_definir_pin_search_path_ok","verificar_pin_search_path_ok"];
             if (expectedTrue.some((key) => result[key] !== true) || Number(result.ledger_count) !== 1) process.exit(1);
           ' "$result"
           echo 'CANONICAL_SCOPED_MIGRATIONS_OK'
