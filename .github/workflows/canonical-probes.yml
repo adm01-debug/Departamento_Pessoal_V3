@@ -47,6 +47,14 @@ jobs:
           }
           test -n "$SUPABASE_DB_URL" || {
             echo '::error::SUPABASE_DB_URL ausente.'
+            exit 1
+          }
+          node scripts/validate-canonical-db-url.mjs
+
+      - name: Instalar cliente PostgreSQL
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client
 
       - name: Executar probes read-only (ROLLBACK garantido)
         id: probes
@@ -170,12 +178,3 @@ jobs:
             console.log(JSON.stringify(r, null, 2));
           ' "$RESULT"
           echo 'CANONICAL_PROBES_OK'
-
-            exit 1
-          }
-          node scripts/validate-canonical-db-url.mjs
-
-      - name: Instalar cliente PostgreSQL
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq postgresql-client
