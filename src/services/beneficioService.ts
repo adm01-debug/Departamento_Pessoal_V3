@@ -60,7 +60,8 @@ class BeneficioService extends BaseService<
     }
   }
 
-  async atualizar(id: string, d: Partial<TablesInsert<'beneficios'>>, empresaId?: string): Promise<BeneficioRow> {
+  async atualizar(id: string, d: Partial<TablesInsert<'beneficios'>>, empresaId: string): Promise<BeneficioRow> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para atualizar beneficios (isolamento de tenant)');
     try {
       const anterior = await this.buscarPorId(id, empresaId);
       const data = await super.atualizar(id, d, empresaId);
@@ -80,6 +81,7 @@ class BeneficioService extends BaseService<
   }
 
   async excluir(id: string, empresaId?: string): Promise<void> {
+    if (!empresaId) throw new Error('empresa_id obrigatório para excluir beneficios (isolamento de tenant)');
     try {
       const anterior = await this.buscarPorId(id, empresaId);
       await super.excluir(id, empresaId);

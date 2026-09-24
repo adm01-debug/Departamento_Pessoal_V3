@@ -15,20 +15,41 @@ import { loggerService } from '@/services/loggerService';
 import type { UiRecord } from '@/types/uiRecord';
 import { useEmpresas } from '@/hooks/useEmpresas';
 
-// E-035: identificador estável do quiosque e ponto geográfico fixo de
-// fallback (usado somente quando o hardware do quiosque não expõe GPS).
-const KIOSK_DEVICE_ID = 'KIOSK-01';
+// E-035/E50-33: ponto geográfico fixo de fallback (usado somente quando o
+// hardware do quiosque não expõe GPS).
 const KIOSK_GEO_FIXO = { latitude: -23.5505, longitude: -46.6333 } as const;
+
+// E50-33: cada terminal físico gera e persiste seu próprio identificador na
+// primeira execução — substitui o `KIOSK-01` hardcoded que fazia todo
+// registro parecer vir do mesmo dispositivo fantasma, sem rastreabilidade
+// real de qual quiosque bateu o ponto.
+function getKioskDeviceId(): string {
+  const KEY = 'kiosk_device_id';
+  try {
+    let id = localStorage.getItem(KEY);
+    if (!id) {
+      id = `KIOSK-${crypto.randomUUID()}`;
+      localStorage.setItem(KEY, id);
+    }
+    return id;
+  } catch {
+    return 'KIOSK-SEM-PERSISTENCIA';
+  }
+}
 
 export default function PontoKioskPage() {
   const { empresaAtual } = useEmpresas();
+  const [deviceId] = useState(getKioskDeviceId);
   const [time, setTime] = useState(new Date());
   const [pin, setPin] = useState('');
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState<'pin' | 'action' | 'success'>('pin');
+  const [step, setStep] = useState<'pin' | 'segundo_fator' | 'action' | 'success'>('pin');
   const [selectedColab, setSelectedColab] = useState<UiRecord | null>(null);
   const [offlineQueueSize, setOfflineQueueSize] = useState(0);
   const [isSyncing, setIsSyncing] = useState(false);
+  // E50-33: segundo fator (PIN pessoal) — só exigido quando a empresa ativa
+  // habilitou `exigir_pin_quiosque`. Matrícula sozinha nunca mais autentica.
+  const [pinSeguranca, setPinSeguranca] = useState('');
 
   const handleSync = useCallback(async () => {
     if (isSyncing || !navigator.onLine) return;
@@ -82,18 +103,59 @@ export default function PontoKioskPage() {
       if (!colab) throw new Error('Matrícula inválida para a empresa ativa');
 
       setSelectedColab(colab);
-      setStep('action');
       const firstName = (colab.nome_completo ?? 'Colaborador').split(' ')[0];
-      speak(`Olá ${firstName}. Selecione o tipo de registro.`);
+      if (empresaAtual.exigir_pin_quiosque) {
+        // E50-33: matrícula é pública dentro da empresa — sozinha nunca
+        // autoriza a ação, só identifica quem tenta. Fail-closed: se o
+        // colaborador ainda não tem PIN cadastrado, o RPC abaixo recusa.
+        setStep('segundo_fator');
+        speak(`Olá ${firstName}. Digite seu PIN.`);
+      } else {
+        setStep('action');
+        speak(`Olá ${firstName}. Selecione o tipo de registro.`);
+      }
     } catch (e: unknown) {
       // E-035: falha de identificação também é auditada (tentativa inválida)
       loggerService.log('warn', 'KIOSK_PIN_INVALIDO', {
-        dispositivo_id: KIOSK_DEVICE_ID,
+        dispositivo_id: deviceId,
         erro: safeErrorMessage(e, 'falha'),
       });
       toast.error(safeErrorMessage(e, 'Erro ao registrar ponto.'));
       setPin('');
     } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSegundoFatorSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedColab || pinSeguranca.length < 4) return;
+    setLoading(true);
+    try {
+      const { data: ok, error } = await supabase.rpc('verificar_pin_quiosque', {
+        p_colaborador_id: selectedColab.id,
+        p_pin: pinSeguranca,
+      });
+      if (error) {
+        if (error.message?.includes('PIN_BLOQUEADO')) {
+          toast.error('Muitas tentativas erradas. Aguarde 5 minutos e tente novamente.');
+        } else {
+          throw error;
+        }
+      } else if (!ok) {
+        loggerService.log('warn', 'KIOSK_SEGUNDO_FATOR_INVALIDO', {
+          dispositivo_id: deviceId,
+          colaborador_id: selectedColab.id,
+        });
+        toast.error('PIN incorreto. Se você ainda não tem um PIN, procure o RH.');
+      } else {
+        setStep('action');
+        speak('PIN confirmado. Selecione o tipo de registro.');
+      }
+    } catch (e: unknown) {
+      toast.error(safeErrorMessage(e, 'Erro ao verificar PIN.'));
+    } finally {
+      setPinSeguranca('');
       setLoading(false);
     }
   };
@@ -136,7 +198,7 @@ export default function PontoKioskPage() {
         latitude: geoReal.latitude,
         longitude: geoReal.longitude,
         precisao: geoReal.precisao,
-        dispositivoId: KIOSK_DEVICE_ID,
+        dispositivoId: deviceId,
         metadata: { origem_geo: geoReal.origem, canal: 'kiosk' },
       };
 
@@ -154,7 +216,7 @@ export default function PontoKioskPage() {
         loggerService.log('warn', 'KIOSK_REGISTRO_OFFLINE', {
           tipo,
           colaborador_id: selectedColab.id,
-          dispositivo_id: KIOSK_DEVICE_ID,
+          dispositivo_id: deviceId,
           origem_geo: geoReal.origem,
         });
         toast.warning('Ponto registrado em modo OFFLINE (Quiosque).');
@@ -165,7 +227,7 @@ export default function PontoKioskPage() {
           tipo,
           colaborador_id: selectedColab.id,
           empresa_id: selectedColab.empresa_id,
-          dispositivo_id: KIOSK_DEVICE_ID,
+          dispositivo_id: deviceId,
           origem_geo: geoReal.origem,
           precisao_m: geoReal.precisao ?? null,
         });
@@ -177,6 +239,7 @@ export default function PontoKioskPage() {
       setTimeout(() => {
         setStep('pin');
         setPin('');
+        setPinSeguranca('');
         setSelectedColab(null);
       }, 3000);
     } catch (e: unknown) {
@@ -288,6 +351,50 @@ export default function PontoKioskPage() {
                   {loading ? 'Verificando...' : 'Confirmar'}
                 </Button>
               </form>
+            </CardContent>
+          </Card>
+        )}
+
+        {step === 'segundo_fator' && selectedColab && (
+          <Card className="shadow-2xl border-primary/20">
+            <CardHeader className="text-center">
+              <CardTitle className="font-display">
+                Olá, {(selectedColab.nome_completo ?? 'Colaborador').split(' ')[0]}!
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">Digite seu PIN pessoal</p>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSegundoFatorSubmit} className="space-y-4">
+                <Input
+                  type="password"
+                  autoComplete="off"
+                  inputMode="numeric"
+                  value={pinSeguranca}
+                  onChange={(e) => setPinSeguranca(e.target.value)}
+                  placeholder="••••"
+                  maxLength={6}
+                  className="text-center text-4xl h-16 tracking-[1em]"
+                  autoFocus
+                />
+                <Button
+                  className="w-full h-14 text-lg font-display rounded-xl"
+                  disabled={loading || pinSeguranca.length < 4}
+                >
+                  {loading ? 'Verificando...' : 'Confirmar PIN'}
+                </Button>
+              </form>
+              <Button
+                variant="ghost"
+                className="w-full mt-4"
+                onClick={() => {
+                  setStep('pin');
+                  setPin('');
+                  setPinSeguranca('');
+                  setSelectedColab(null);
+                }}
+              >
+                Cancelar
+              </Button>
             </CardContent>
           </Card>
         )}

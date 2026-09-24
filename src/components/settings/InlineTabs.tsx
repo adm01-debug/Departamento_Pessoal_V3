@@ -15,6 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Spinner } from '@/components/ui/spinner';
 import { FormField, FormSelect, FormSwitch } from '@/components/forms';
+import { useEmpresas } from '@/hooks/useEmpresas';
 
 type AuthUser = { name?: string } | null | undefined;
 
@@ -32,7 +33,10 @@ export function PreferenciasTab({ user }: { user: AuthUser }) {
             <FormField label="Nome de Exibição" defaultValue={user?.name || 'Usuário'} className="max-w-md" />
             <FormSelect
               label="Idioma do Sistema"
-              options={[{ value: 'pt-BR', label: 'Português (Brasil)' }, { value: 'en-US', label: 'English (US)' }]}
+              options={[
+                { value: 'pt-BR', label: 'Português (Brasil)' },
+                { value: 'en-US', label: 'English (US)' },
+              ]}
               className="max-w-md"
             />
             <div className="flex flex-col gap-4 p-4 rounded-2xl bg-muted/30 border border-border/20">
@@ -99,7 +103,9 @@ export function FolhaConfigTab() {
           <div className="p-4 rounded-2xl bg-muted/30 border border-border/20">
             <FormSwitch label="Cálculo Automático" description="Processar rubricas básicas no dia do fechamento" />
           </div>
-          <Button className="rounded-xl bg-gradient-to-r from-primary-glow to-primary hover:opacity-90 shadow-lg font-body px-8 h-11">Salvar Configurações</Button>
+          <Button className="rounded-xl bg-gradient-to-r from-primary-glow to-primary hover:opacity-90 shadow-lg font-body px-8 h-11">
+            Salvar Configurações
+          </Button>
         </CardContent>
       </Card>
     </motion.div>
@@ -107,6 +113,29 @@ export function FolhaConfigTab() {
 }
 
 export function PontoConfigTab() {
+  const qc = useQueryClient();
+  const { empresaAtual } = useEmpresas();
+
+  // E50-33: único switch desta aba com persistência real (os demais campos
+  // abaixo — Tolerância de Atraso, Exigir Geolocalização, Reconhecimento
+  // Facial, Ponto Offline — não gravam nada hoje; achado ainda sem item
+  // dedicado no PLANO_50.md).
+  const definirExigirPin = useMutation({
+    mutationFn: async (exigir: boolean) => {
+      if (!empresaAtual?.id) throw new Error('Nenhuma empresa selecionada');
+      const { error } = await supabase
+        .from('empresas')
+        .update({ exigir_pin_quiosque: exigir })
+        .eq('id', empresaAtual.id);
+      if (error) throw error;
+    },
+    onSuccess: (_data, exigir) => {
+      qc.invalidateQueries({ queryKey: ['todas-empresas'] });
+      toast.success(exigir ? 'PIN do quiosque agora é obrigatório.' : 'PIN do quiosque desativado.');
+    },
+    onError: (error: Error) => toast.error(safeErrorMessage(error, 'Erro ao atualizar configuração.')),
+  });
+
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
       <Card className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden bg-card">
@@ -123,8 +152,19 @@ export function PontoConfigTab() {
               <FormSwitch label="Reconhecimento Facial" description="Capturar foto em cada registro de jornada" />
               <FormSwitch label="Ponto Offline" description="Permitir batidas sem conexão com internet" />
             </div>
+            <div className="p-4 rounded-2xl bg-warning/5 border border-warning/20">
+              <FormSwitch
+                label="Exigir PIN no quiosque"
+                description="Matrícula sozinha não basta mais para bater ponto — cadastre o PIN de cada colaborador antes de ativar (tela de edição do colaborador)."
+                checked={empresaAtual?.exigir_pin_quiosque ?? false}
+                onCheckedChange={(v) => definirExigirPin.mutate(v)}
+                disabled={definirExigirPin.isPending || !empresaAtual?.id}
+              />
+            </div>
           </div>
-          <Button className="rounded-xl bg-gradient-to-r from-primary/60 to-primary/90 hover:opacity-90 shadow-lg font-body px-8 h-11">Atualizar Regras</Button>
+          <Button className="rounded-xl bg-gradient-to-r from-primary/60 to-primary/90 hover:opacity-90 shadow-lg font-body px-8 h-11">
+            Atualizar Regras
+          </Button>
         </CardContent>
       </Card>
     </motion.div>
@@ -184,7 +224,9 @@ export function AlertasKpiTab() {
               <CardTitle className="font-display text-xl flex items-center gap-2">
                 <Bell className="h-5 w-5 text-warning" /> Monitoramento de Indicadores
               </CardTitle>
-              <CardDescription className="font-body text-sm mt-1">Alertas automáticos baseados em limites de tolerância</CardDescription>
+              <CardDescription className="font-body text-sm mt-1">
+                Alertas automáticos baseados em limites de tolerância
+              </CardDescription>
             </div>
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
@@ -198,20 +240,47 @@ export function AlertasKpiTab() {
                 </DialogHeader>
                 <div className="space-y-4 pt-4">
                   <div className="space-y-2">
-                    <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Tipo de Indicador</Label>
-                    <Input value={form.tipo} onChange={e => setForm(p => ({ ...p, tipo: e.target.value }))} placeholder="Ex: turnover, absenteismo, horas_extras" className="rounded-xl border-border/40" />
+                    <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                      Tipo de Indicador
+                    </Label>
+                    <Input
+                      value={form.tipo}
+                      onChange={(e) => setForm((p) => ({ ...p, tipo: e.target.value }))}
+                      placeholder="Ex: turnover, absenteismo, horas_extras"
+                      className="rounded-xl border-border/40"
+                    />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Limite Atenção (%)</Label>
-                      <Input type="number" value={form.limite_atencao} onChange={e => setForm(p => ({ ...p, limite_atencao: e.target.value }))} placeholder="Ex: 10" className="rounded-xl border-border/40" />
+                      <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                        Limite Atenção (%)
+                      </Label>
+                      <Input
+                        type="number"
+                        value={form.limite_atencao}
+                        onChange={(e) => setForm((p) => ({ ...p, limite_atencao: e.target.value }))}
+                        placeholder="Ex: 10"
+                        className="rounded-xl border-border/40"
+                      />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Limite Crítico (%)</Label>
-                      <Input type="number" value={form.limite_critico} onChange={e => setForm(p => ({ ...p, limite_critico: e.target.value }))} placeholder="Ex: 20" className="rounded-xl border-border/40" />
+                      <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                        Limite Crítico (%)
+                      </Label>
+                      <Input
+                        type="number"
+                        value={form.limite_critico}
+                        onChange={(e) => setForm((p) => ({ ...p, limite_critico: e.target.value }))}
+                        placeholder="Ex: 20"
+                        className="rounded-xl border-border/40"
+                      />
                     </div>
                   </div>
-                  <Button onClick={() => criar.mutate(form)} disabled={!form.tipo || !form.limite_atencao || !form.limite_critico || criar.isPending} className="w-full rounded-xl shadow-glow h-11 mt-2">
+                  <Button
+                    onClick={() => criar.mutate(form)}
+                    disabled={!form.tipo || !form.limite_atencao || !form.limite_critico || criar.isPending}
+                    className="w-full rounded-xl shadow-glow h-11 mt-2"
+                  >
                     {criar.isPending ? <Spinner size="sm" className="mr-2" /> : <Save className="mr-2 h-4 w-4" />}
                     Salvar Configuração
                   </Button>
@@ -222,7 +291,11 @@ export function AlertasKpiTab() {
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            {isLoading ? <div className="p-12 flex justify-center"><Spinner size="lg" /></div> : (
+            {isLoading ? (
+              <div className="p-12 flex justify-center">
+                <Spinner size="lg" />
+              </div>
+            ) : (
               <Table>
                 <TableHeader>
                   <TableRow className="bg-muted/30 border-b border-border/20">
@@ -236,14 +309,22 @@ export function AlertasKpiTab() {
                 <TableBody>
                   {alertasConfig.map((a: any) => (
                     <TableRow key={a.id} className="hover:bg-accent/10 transition-colors group">
-                      <TableCell className="font-body font-bold capitalize pl-6 py-4">{a.tipo?.replace(/_/g, ' ')}</TableCell>
+                      <TableCell className="font-body font-bold capitalize pl-6 py-4">
+                        {a.tipo?.replace(/_/g, ' ')}
+                      </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="bg-warning/10 text-warning border-warning/30 font-bold px-2 py-0.5 rounded-lg">
+                        <Badge
+                          variant="outline"
+                          className="bg-warning/10 text-warning border-warning/30 font-bold px-2 py-0.5 rounded-lg"
+                        >
                           {a.limite_atencao}%
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/30 font-bold px-2 py-0.5 rounded-lg">
+                        <Badge
+                          variant="outline"
+                          className="bg-destructive/10 text-destructive border-destructive/30 font-bold px-2 py-0.5 rounded-lg"
+                        >
                           {a.limite_critico}%
                         </Badge>
                       </TableCell>
@@ -251,7 +332,13 @@ export function AlertasKpiTab() {
                         {new Date(a.updated_at).toLocaleDateString('pt-BR')}
                       </TableCell>
                       <TableCell className="text-right pr-6">
-                        <Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => excluir.mutate(a.id)} className="h-8 w-8 rounded-lg text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          aria-label="Excluir"
+                          onClick={() => excluir.mutate(a.id)}
+                          className="h-8 w-8 rounded-lg text-destructive hover:bg-destructive/10 opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </TableCell>
@@ -282,7 +369,10 @@ export function IntegracoesTab() {
     queryKey: ['integracoes'],
     queryFn: async () => {
       const { data, error } = await supabase.from('integracoes').select('*').order('nome');
-      if (error) { if (error.code === '42P01') return []; throw error; }
+      if (error) {
+        if (error.code === '42P01') return [];
+        throw error;
+      }
       return data || [];
     },
   });
@@ -300,7 +390,12 @@ export function IntegracoesTab() {
                 </div>
                 Bitrix24 CRM
               </CardTitle>
-              <Badge variant="outline" className="text-success border-success/30 bg-success/5 text-[9px] uppercase font-bold px-2 py-0">Conectado</Badge>
+              <Badge
+                variant="outline"
+                className="text-success border-success/30 bg-success/5 text-[9px] uppercase font-bold px-2 py-0"
+              >
+                Conectado
+              </Badge>
             </div>
             <CardDescription className="text-[11px]">Sincronização de talentos e estrutura</CardDescription>
           </CardHeader>
@@ -314,7 +409,9 @@ export function IntegracoesTab() {
                   try {
                     await edgeFunctionsService.sincronizarBitrix({ action: 'sync_all' });
                     toast.success('Sincronização Bitrix24 iniciada!');
-                  } catch (err) { toast.error(safeErrorMessage(err, 'Erro na sincronização.')); }
+                  } catch (err) {
+                    toast.error(safeErrorMessage(err, 'Erro na sincronização.'));
+                  }
                 }}
               >
                 <RefreshCw className="h-3.5 w-3.5" /> Sincronizar Agora
@@ -336,12 +433,21 @@ export function IntegracoesTab() {
                 </div>
                 RD Station
               </CardTitle>
-              <Badge variant="secondary" className="text-[9px] font-bold">EM BREVE</Badge>
+              <Badge variant="secondary" className="text-[9px] font-bold">
+                EM BREVE
+              </Badge>
             </div>
             <CardDescription className="text-[11px]">Exportação de dados para marketing</CardDescription>
           </CardHeader>
           <CardContent className="pt-0">
-            <Button variant="outline" size="sm" disabled className="w-full rounded-xl text-xs font-body h-9 border-dashed">Conectar Plataforma</Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled
+              className="w-full rounded-xl text-xs font-body h-9 border-dashed"
+            >
+              Conectar Plataforma
+            </Button>
           </CardContent>
         </Card>
 
@@ -355,12 +461,21 @@ export function IntegracoesTab() {
                 </div>
                 Google Workspace
               </CardTitle>
-              <Badge variant="secondary" className="text-[9px] font-bold">EM BREVE</Badge>
+              <Badge variant="secondary" className="text-[9px] font-bold">
+                EM BREVE
+              </Badge>
             </div>
             <CardDescription className="text-[11px]">Provisionamento de contas e e-mail</CardDescription>
           </CardHeader>
           <CardContent className="pt-0">
-            <Button variant="outline" size="sm" disabled className="w-full rounded-xl text-xs font-body h-9 border-dashed">Configurar Domínio</Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled
+              className="w-full rounded-xl text-xs font-body h-9 border-dashed"
+            >
+              Configurar Domínio
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -371,18 +486,26 @@ export function IntegracoesTab() {
           <CardTitle className="font-display text-xl flex items-center gap-2">
             <Plug className="h-5 w-5 text-primary" /> Atividade de Integração
           </CardTitle>
-          <CardDescription className="font-body text-sm mt-1">Status e controle de conexões de APIs de terceiros</CardDescription>
+          <CardDescription className="font-body text-sm mt-1">
+            Status e controle de conexões de APIs de terceiros
+          </CardDescription>
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            {isLoading ? <div className="p-12 flex justify-center"><Spinner size="lg" /></div> : (
+            {isLoading ? (
+              <div className="p-12 flex justify-center">
+                <Spinner size="lg" />
+              </div>
+            ) : (
               <Table>
                 <TableHeader>
                   <TableRow className="bg-muted/30 border-b border-border/20">
                     <TableHead className="font-display font-semibold py-4 pl-6">Nome</TableHead>
                     <TableHead className="font-display font-semibold">Tipo de Conector</TableHead>
                     <TableHead className="font-display font-semibold text-center">Status</TableHead>
-                    <TableHead className="font-display font-semibold hidden sm:table-cell">Última Sincronização</TableHead>
+                    <TableHead className="font-display font-semibold hidden sm:table-cell">
+                      Última Sincronização
+                    </TableHead>
                     <TableHead className="w-[60px]"></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -403,7 +526,12 @@ export function IntegracoesTab() {
                         {i.ultima_sync ? new Date(i.ultima_sync).toLocaleString('pt-BR') : 'Nunca sincronizado'}
                       </TableCell>
                       <TableCell>
-                        <Button variant="ghost" size="icon" aria-label="Configurações" className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          aria-label="Configurações"
+                          className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
                           <Settings className="h-4 w-4" />
                         </Button>
                       </TableCell>
@@ -433,8 +561,15 @@ export function WebhooksLogsTab() {
   const { data: webhooksLogs = [], isLoading } = useQuery({
     queryKey: ['webhooks-logs'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('webhooks_logs').select('*').order('created_at', { ascending: false }).limit(50);
-      if (error) { if (error.code === '42P01') return []; throw error; }
+      const { data, error } = await supabase
+        .from('webhooks_logs')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(50);
+      if (error) {
+        if (error.code === '42P01') return [];
+        throw error;
+      }
       return data || [];
     },
   });
@@ -447,24 +582,34 @@ export function WebhooksLogsTab() {
           <CardTitle className="font-display text-xl flex items-center gap-2">
             <Webhook className="h-5 w-5 text-primary" /> Atividade de Webhooks
           </CardTitle>
-          <CardDescription className="font-body text-sm mt-1">Últimos 50 eventos recebidos ou disparados via bridge</CardDescription>
+          <CardDescription className="font-body text-sm mt-1">
+            Últimos 50 eventos recebidos ou disparados via bridge
+          </CardDescription>
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            {isLoading ? <div className="p-12 flex justify-center"><Spinner size="lg" /></div> : (
+            {isLoading ? (
+              <div className="p-12 flex justify-center">
+                <Spinner size="lg" />
+              </div>
+            ) : (
               <Table>
                 <TableHeader>
                   <TableRow className="bg-muted/30 border-b border-border/20">
                     <TableHead className="font-display font-semibold py-4 pl-6">Endpoint/URL</TableHead>
                     <TableHead className="font-display font-semibold">Evento</TableHead>
                     <TableHead className="font-display font-semibold text-center">Status</TableHead>
-                    <TableHead className="font-display font-semibold hidden sm:table-cell pr-6 text-right">Data/Hora</TableHead>
+                    <TableHead className="font-display font-semibold hidden sm:table-cell pr-6 text-right">
+                      Data/Hora
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {webhooksLogs.map((w: any) => (
                     <TableRow key={w.id} className="hover:bg-accent/10 transition-colors">
-                      <TableCell className="font-mono text-[10px] max-w-[200px] truncate pl-6 py-4 text-muted-foreground">{w.url || w.webhook_url || '-'}</TableCell>
+                      <TableCell className="font-mono text-[10px] max-w-[200px] truncate pl-6 py-4 text-muted-foreground">
+                        {w.url || w.webhook_url || '-'}
+                      </TableCell>
                       <TableCell className="text-xs font-bold text-foreground">{w.evento || w.event || '-'}</TableCell>
                       <TableCell className="text-center">
                         <Badge

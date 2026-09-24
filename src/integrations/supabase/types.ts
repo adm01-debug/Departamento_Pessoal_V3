@@ -7186,6 +7186,7 @@ export type Database = {
           cor_identificacao: string | null
           created_at: string
           email: string | null
+          exigir_pin_quiosque: boolean
           fap: number | null
           id: string
           inscricao_estadual: string | null
@@ -7216,6 +7217,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           aliquota_encargos_folha?: number | null
+          exigir_pin_quiosque?: boolean
           fap?: number | null
           id?: string
           inscricao_estadual?: string | null
@@ -7246,6 +7248,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           aliquota_encargos_folha?: number | null
+          exigir_pin_quiosque?: boolean
           fap?: number | null
           id?: string
           inscricao_estadual?: string | null

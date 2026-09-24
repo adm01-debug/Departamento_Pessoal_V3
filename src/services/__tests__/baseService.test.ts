@@ -54,7 +54,9 @@ function setupMaybeSingleChain(data: any, error: any = null) {
 
 describe('BaseService.listar', () => {
   const service = new TestService();
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns data and total from supabase', async () => {
     const records = [{ id: '1', nome: 'Alice' }];
@@ -94,28 +96,30 @@ describe('BaseService.listar', () => {
 
 describe('BaseService.buscarPorId', () => {
   const service = new TestService();
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('throws when id is empty string', async () => {
-    await expect(service.buscarPorId('')).rejects.toThrow('ID é obrigatório');
+    await expect(service.buscarPorId('', 'emp-1')).rejects.toThrow('ID é obrigatório');
   });
 
   it('returns data when found', async () => {
     const record = { id: '1', nome: 'Bob' };
     setupMaybeSingleChain(record);
-    const result = await service.buscarPorId('1');
+    const result = await service.buscarPorId('1', 'emp-1');
     expect(result).toEqual(record);
   });
 
   it('returns null when not found', async () => {
     setupMaybeSingleChain(null);
-    const result = await service.buscarPorId('unknown');
+    const result = await service.buscarPorId('unknown', 'emp-1');
     expect(result).toBeNull();
   });
 
   it('throws on DB error', async () => {
     setupMaybeSingleChain(null, { message: 'fail' });
-    await expect(service.buscarPorId('1')).rejects.toBeDefined();
+    await expect(service.buscarPorId('1', 'emp-1')).rejects.toBeDefined();
     expect(mockLoggerError).toHaveBeenCalled();
   });
 });
@@ -124,7 +128,9 @@ describe('BaseService.buscarPorId', () => {
 
 describe('BaseService.criar', () => {
   const service = new TestService();
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns the created record', async () => {
     const created = { id: 'new-1', nome: 'Carol' };
@@ -162,7 +168,9 @@ describe('BaseService.criar', () => {
 
 describe('BaseService.excluir', () => {
   const service = new TestService();
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('calls delete with the given id', async () => {
     const chain = makeChain({ error: null });

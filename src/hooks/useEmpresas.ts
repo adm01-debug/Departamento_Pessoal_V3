@@ -41,6 +41,7 @@ export interface Empresa {
   aliquota_encargos_folha: number | null;
   cor_identificacao: string | null;
   ordem_exibicao: number | null;
+  exigir_pin_quiosque: boolean;
   created_at: string;
   updated_at: string;
 }

@@ -87,6 +87,29 @@ const ALLOWLIST = new Map([
   ['is_admin', 'Primitivo de autorização usado pelas políticas RLS.'],
   ['get_user_empresas', 'Primitivo de escopo de tenant usado por 289 políticas RLS.'],
   ['get_user_default_empresa', 'Primitivo de escopo de tenant.'],
+  [
+    'user_belongs_to_empresa',
+    'Primitivo de autorização (mesma categoria de has_role/is_admin): recebe ' +
+      '_user_id por parâmetro por design, usado internamente por RLS e pela ' +
+      'app. Exposição residual: enumeração booleana "user X pertence a empresa ' +
+      'Y", sem PII.',
+  ],
+  // Infraestrutura de segurança que precisa funcionar ANTES de existir sessão
+  // (checagem de rate-limit/lockout/bloqueio de IP/país no fluxo de login).
+  // Exigir auth.uid() aqui quebraria o próprio mecanismo de proteção do login.
+  ['check_login_lock', 'Checagem de bloqueio de login; roda antes da sessão existir.'],
+  ['check_rate_limit', 'Rate limiting por IP; roda antes da sessão existir.'],
+  ['check_brute_force', 'Detecção de força bruta no login; roda antes da sessão existir.'],
+  ['record_failed_login', 'Registro de tentativa de login falha; roda antes da sessão existir.'],
+  ['is_country_allowed', 'Geo-bloqueio; roda antes da sessão existir.'],
+  ['is_ip_blocked', 'Checagem de IP bloqueado; roda antes da sessão existir.'],
+  ['is_ip_whitelisted', 'Checagem de IP na whitelist; roda antes da sessão existir.'],
+  [
+    'verificar_pin_quiosque',
+    'PIN é o próprio mecanismo de autenticação do quiosque de ponto -- exigir ' +
+      'auth.uid() prévio inverteria o fluxo. Retorna só boolean, com lockout ' +
+      'após 5 tentativas (mesmo padrão de check_login_lock).',
+  ],
 ]);
 
 /**

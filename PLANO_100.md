@@ -4,6 +4,30 @@
 
 Princípios de execução: uma etapa por PR/sessão; migrations primeiro em preview; nenhuma mudança destrutiva sem expand-contract; promoção para produção somente após a verificação indicada. Tamanhos: S (até 1 dia), M (1–3 dias), L (mais de 3 dias).
 
+> ⚠️ **Reverificação delta (24/09/2026)** — status completo por achado em `AUDITORIA.md § 3a`.
+> Resumo do que já foi executado desde 30/08 (não reabrir sem novo achado):
+> **Feitas e confirmadas em produção:** E-005/E-006 (views), E-010/E-086/E-087 (search_path,
+> ampliado além do previsto), E-018/E-019/E-020/E-022/E-023 (bridge encaminha JWT do usuário),
+> E-028 (buckets de Storage criados), E-031 (idempotency key), E-038 (RPC `registrar_batida_ponto`
+> liberada), E-054 (remoção do `migrate-helper`), E-071 (TypeScript 6.0.3), E-073/E-074 (env/secrets
+> de CI), E-091 (npm audit + CodeQL fail-closed).
+> **Ainda pendentes, confirmadas reproduzíveis hoje:** E-007/E-008/E-009 (2 das 5 tabelas
+> `USING(true)` seguem abertas: `integracao_logs`, `notificacoes_admissao` — ver E-101), E-011 (RPC
+> `anonimizar_dados_pessoais` — não reverificado a fundo), E-034 a E-037 (as 6 tabelas
+> tenant-only sem checar papel seguem 100% abertas), E-040/E-041/E-042/E-043 (quiosque —
+> facial/geo corrigidos, matrícula-como-PIN aberto), E-044/E-045/E-046 (form de colaborador —
+> **piorou**, quebra runtime em toda edição), E-047/E-048/E-049 (botão "Encerrar" folha), E-050 a
+> E-053 (bypass do GoTrue nativo — time documentou como risco aceito, não mitigado), E-057
+> (FGTS Dashboard ainda mente sobre integração ativa), E-062 a E-065 (Bitrix — os 3 problemas
+> originais seguem abertos), E-080 (proteção de `main` — 404, sem mudança), E-081 a E-084
+> (CPF/matrícula únicos globalmente — nenhuma migration tocou o constraint), E-094 (headers Nginx —
+> zero mudança), E-098 (webhook `processed` sem efeito).
+> **Etapas novas E-101 a E-106** cobrem os achados novos A-035 a A-039 (RLS ao vivo quebrada em
+> `pix_itens`+4 tabelas, migrations de RLS nunca aplicadas ao banco vivo, `is_admin()` sem checar
+> chamador, E2E vermelho, gate de banco pulado em PR) — **E-101 e E-102 são P0 e devem ser
+> tratadas antes de qualquer etapa deste plano ainda não iniciada**, pois há exposição ativa
+> comprovada em produção agora.
+
 ## P0 — contenção e correção de exposição ativa
 
 ### E-001 · [P0] · Cloudflare — bloquear imediatamente a rota pública atual do MCP
@@ -1135,3 +1159,74 @@ Diff estimado: config + testes incrementais · L
 Depende de: E-032, E-039, E-046, E-049, E-053, E-061, E-065, E-098, E-099
 Verificação: CI falha ao remover um branch de autorização/erro; relatório supera baseline registrado dos módulos críticos.
 Risco: threshold global imediato gera testes frágeis; aplicar por módulo corrigido e subir progressivamente.
+
+## Apêndice — etapas da reverificação delta (24/09/2026)
+
+### E-101 · [P0] · banco — corrigir RLS de `pix_itens` e das 4 tabelas com claim de JWT não verificado
+Corrige: A-035
+Onde: tabela `pix_itens` (policies "...PIX itens" INSERT/SELECT) · `colaboradores`/`dependentes` ("empresa_isolation_*") · `ferias` ("empresa_isolation_ferias") · `provisoes_folha` ("Visualização por empresa provisoes")
+Classe (banco): destrutiva → dropar policy antiga substitui autorização em produção; exige expand-contract
+Ação:
+1. Criar policy nova em `pix_itens` que junte `lote_id` → `pix_lotes.empresa_id` → vínculo real do usuário (via tabela de membership, não claim de JWT), para SELECT e INSERT.
+2. Trocar `empresa_id = get_auth_empresa_id()` / `(auth.jwt()->>'empresa_id')::uuid` nas 4 policies restantes por predicado que verifica vínculo contra a tabela de membership do usuário (mesmo padrão de `get_user_empresas(auth.uid())` já usado em outras tabelas corrigidas).
+3. Só then dropar as policies antigas, na mesma migration, com verificação `RAISE EXCEPTION` se a policy antiga não existir com o texto esperado (fail-closed, ao contrário do padrão que causou A-036).
+Diff estimado: ~120 linhas · 1 migration + teste de regressão
+Depende de: —
+Verificação: `audit-rls-pii` volta a passar no CI (rodar o gate manualmente contra o banco); teste de integração autentica dois tenants e confirma que nenhum lê/escreve dado do outro em `pix_itens`/`colaboradores`/`dependentes`/`ferias`/`provisoes_folha`.
+Risco: mudar o predicado pode quebrar consultas que hoje dependem do claim solto; testar em preview com dado real replicado antes de promover. Rollback: manter a policy antiga comentada na migration seguinte por 1 ciclo, não em produção simultaneamente.
+
+### E-102 · [P0] · governança/migrations — reconciliar o banco de produção com o lote de RLS de 19–31/07/2026
+Corrige: A-036 (causa raiz de A-003 residual e A-009)
+Onde: `integracao_logs`, `notificacoes_admissao`, `colaboradores`, `contas_bancarias`, `ferias`, `folha_itens`, `folhas_pagamento`, `registros_ponto`
+Classe (banco): destrutiva → remove policies permissivas vivas; expand-contract
+Ação:
+1. Rodar diff de schema (`supabase db diff --linked` ou equivalente) entre o que os 12 arquivos de 19-31/07 pretendiam e o estado vivo, confirmando a lista completa de policies órfãs.
+2. Escrever UMA migration nova (não reaplicar as antigas) que dropa cada policy permissiva remanescente pelo nome exato confirmado ao vivo (não pelo nome do arquivo original, que tinha erro de digitação) e cria as policies role-gated (`pode_gerir_rh`, `is_admin`) que deveriam existir.
+3. Adicionar um teste de CI que falha se qualquer tabela sensível tiver mais de uma policy PERMISSIVE para o mesmo `cmd` sem uma delas ser estritamente mais restritiva (detecta o padrão "OR anula role-gate") — reforça E-009.
+Diff estimado: ~200 linhas · 1 migration + 1 teste de CI
+Depende de: E-101 (mesma classe de risco, mesmo ciclo de release)
+Verificação: `supabase_db_list_policies` ao vivo mostra só as policies novas para as 8 tabelas; teste de CI do passo 3 falha em fixture sintética com policy permissiva órfã.
+Risco: dropar a policy errada derruba acesso legítimo; preview obrigatório com smoke test dos fluxos de RH/folha/ponto antes de promover.
+
+### E-103 · [P1] · banco — `is_admin(uuid)` deve verificar o chamador
+Corrige: A-037
+Onde: função `public.is_admin(uuid)`, migration original `20251220135248_...sql:49-62`
+Ação:
+1. Redefinir `is_admin(_user_id uuid)` para exigir `_user_id = auth.uid()` OU chamador já admin (`is_admin(auth.uid())` interno sem recursão infinita — usar variante `_internal` ou checar direto em `user_roles` para o chamador).
+2. Revogar `EXECUTE` de `authenticated` genérico se a função continuar aceitando qualquer UUID; manter só para o próprio usuário ou para quem já é admin.
+Diff estimado: ~25 linhas · 1 migration
+Depende de: —
+Verificação: chamar `is_admin('<uuid de outro tenant>')` como usuário comum retorna erro de autorização ou sempre `false`, não vaza o papel real.
+Risco: funções internas que dependem de `is_admin(uuid)` para checar terceiros (não o próprio chamador) podem quebrar; levantar todos os call sites antes de aplicar (grep `is_admin(`).
+
+### E-104 · [P1] · CI — triar as 18 falhas de E2E autenticado em `main`
+Corrige: A-038
+Onde: `e2e/` specs autenticados (colaboradores, folha, holerites, ponto, férias, eSocial, relatórios, configurações, contratos, PIX)
+Ação:
+1. Rodar a suíte localmente contra preview e coletar a causa de cada uma das 18 falhas (provavelmente correlacionadas com E-101/E-102 — validar essa hipótese primeiro).
+2. Corrigir a causa raiz comum antes de tocar em specs individualmente; só ajustar specs cuja falha não vier da RLS.
+Diff estimado: variável, provavelmente absorvido por E-101/E-102 · M
+Depende de: E-101, E-102
+Verificação: `bun run test:e2e:auth` verde em preview após E-101/E-102.
+Risco: nenhum adicional além dos já listados em E-101/E-102.
+
+### E-105 · [P0] · CI — rodar o gate `db-integrity` também em Pull Request
+Corrige: A-039
+Onde: `.github/workflows/ci.yml`, job `db-integrity`, condição `if: github.event_name != 'pull_request'`
+Ação:
+1. Restringir a exceção só a PRs de Dependabot/forks sem acesso ao secret (`github.actor == 'dependabot[bot]'` ou `github.event.pull_request.head.repo.fork == true`), não a todo PR.
+2. Para PRs internos com acesso ao secret, rodar os 7 gates normalmente antes do merge.
+Diff estimado: ~15 linhas · ci.yml
+Depende de: —
+Verificação: abrir um PR interno de teste que reintroduz uma policy `USING(true)`; o job `db-integrity` deve reprovar antes do merge.
+Risco: PRs de fork continuam sem cobertura — documentar isso como limitação aceita, não regressão.
+
+### E-106 · [P2] · frontend — remover alegação de integração FGTS ativa do dashboard
+Corrige: A-016 (residual em `FGTSDigitalDashboard.tsx`)
+Onde: `src/components/folha/FGTSDigitalDashboard.tsx`
+Ação:
+1. Remover badges "API Caixa Ativa"/"100% Sincronizado" e os valores fixos (R$ 12.450,80 etc.); substituir por estado real vindo de `fgts-digital` ou por rótulo "configurando" (mesmo padrão já aplicado em `LoginPage`/`IntegracoesPage`).
+Diff estimado: ~40 linhas · S
+Depende de: —
+Verificação: dashboard não exibe nenhum dado fixo nem alega sincronização ativa sem chamada real correspondente.
+Risco: nenhum — é remoção de conteúdo enganoso, sem dependência de backend novo.
