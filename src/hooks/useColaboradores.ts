@@ -23,17 +23,18 @@ export function useColaboradores() {
     queryKey: 'colaboradores',
     service: colaboradorService,
     initialPageSize: 25,
+    empresaId,
     filters: {
       empresaId,
       status,
       departamento,
-      cargo
+      cargo,
     },
     successMessages: {
       create: 'Colaborador criado com sucesso',
       update: 'Colaborador atualizado',
-      delete: 'Colaborador excluído'
-    }
+      delete: 'Colaborador excluído',
+    },
   });
 
   return {
