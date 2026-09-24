@@ -55,12 +55,31 @@ export function Bitrix24ConfigPanel() {
   }
 
   const salvar = useMutation({
-    mutationFn: () => bitrix24Service.saveConfig({ ...form, id: config?.id || undefined }),
+    mutationFn: () => {
+      // E50-37: checagem de forma só para feedback imediato — a validação
+      // que importa (resolução de IP privado/loopback) roda no servidor a
+      // cada sincronização, porque essa é a fronteira de segurança real.
+      if (form.webhook_url) {
+        let parsed: URL | null = null;
+        try {
+          parsed = new URL(form.webhook_url);
+        } catch {
+          throw new Error('URL do webhook inválida.');
+        }
+        if (parsed.protocol !== 'https:') {
+          throw new Error('URL do webhook deve usar https.');
+        }
+        if (['localhost', '127.0.0.1', '0.0.0.0', '::1'].includes(parsed.hostname.toLowerCase())) {
+          throw new Error('URL do webhook não pode apontar para host local.');
+        }
+      }
+      return bitrix24Service.saveConfig({ ...form, id: config?.id || undefined });
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['bitrix24_config'] });
       toast.success('Configuração salva!');
     },
-    onError: () => toast.error('Erro ao salvar'),
+    onError: (err: unknown) => toast.error(safeErrorMessage(err, 'Erro ao salvar')),
   });
 
   const sincronizar = useMutation({
@@ -73,7 +92,15 @@ export function Bitrix24ConfigPanel() {
     },
     onSuccess: (res) => {
       qc.invalidateQueries({ queryKey: ['bitrix24_sync_logs'] });
-      toast.success(`Sincronização concluída: ${res.data.totals.success} sucessos.`);
+      const { success: sucessos, errors: erros } = res.data.totals;
+      // E50-36: a Edge agora reporta falha parcial de verdade (207/502) em
+      // vez de sempre success:true — refletir isso na UI em vez do toast de
+      // conclusão genérico.
+      if (res.success === false || erros > 0) {
+        toast.error(`Sincronização com falhas: ${sucessos} sucesso(s), ${erros} erro(s).`);
+      } else {
+        toast.success(`Sincronização concluída: ${sucessos} sucessos.`);
+      }
     },
     onError: (err: any) => toast.error(safeErrorMessage(err, 'Falha no Sync.')),
   });
