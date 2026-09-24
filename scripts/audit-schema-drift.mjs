@@ -30,6 +30,19 @@
  * Saída: 0 limpo, 1 com migration não aplicada. Sem banco alcançável encerra
  * em 0 avisando — um gate que não pôde rodar não deve reprovar o build, mas
  * também não deve se declarar aprovado em silêncio.
+ *
+ * ⚠️ NÃO LIGADO AO CI (24/09/2026) — testado contra produção e descartado
+ * nesta forma. `supabase_migrations.schema_migrations` tem 403 linhas
+ * cobrindo versões de 20260511 a hoje, mas só 403 dos 684 arquivos locais
+ * têm entrada correspondente — sem corte de data limpo, espalhado ao longo
+ * de todo o histórico. A convenção de gravar no ledger nunca foi seguida de
+ * forma consistente neste projeto (a maior parte da história foi aplicada
+ * por um caminho que não escreve nessa tabela), então o diff cru contra o
+ * ledger reprova ~40% das migrations existentes — inutilizável como gate,
+ * mesmo sabendo que pelo menos um subconjunto real (o lote de 19-31/07,
+ * A-036) genuinamente nunca rodou. Script mantido no repo porque a lógica
+ * está correta; falta uma forma confiável de estabelecer quais migrations
+ * pré-existentes são esperadas no ledger antes de religar isto ao CI.
  */
 
 import { execFileSync } from 'node:child_process';

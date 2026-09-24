@@ -264,13 +264,6 @@ jobs:
         # errada. O gate segue o fecho transitivo de chamadas para não reprovar
         # funções que delegam a checagem a um helper.
         run: node scripts/audit-secdef-authz.mjs
-      - name: Drift entre migrations do repositório e ledger de produção
-        # E50-10/13: migration presente em supabase/migrations/ sem registro
-        # em supabase_migrations.schema_migrations é o sinal mais forte,
-        # barato de checar, de que ela nunca rodou em produção (A-036: o lote
-        # de hardening de RLS de 19-31/07/2026 ficou nesse estado por meses,
-        # tornando enganoso qualquer achado "corrigido pelo código-fonte").
-        run: node scripts/audit-schema-drift.mjs
       - name: Integridade das dicas de relacionamento (PostgREST)
         # `.select('*, tabela!constraint(...)')` amarra o código a um nome de
         # constraint que nada valida: typecheck e testes com mock passam, e a
