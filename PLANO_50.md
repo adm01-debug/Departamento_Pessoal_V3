@@ -587,6 +587,12 @@ Verificação: evento suportado altera a entidade e o log; desconhecido não rec
 replay não duplica.
 Risco: produtores podem reenviar ao ver novo status — manter idempotência por `event_id`.
 
+**Status (24/09/2026): adiado deliberadamente, não bloqueado.** Investigação ao vivo (ver
+`AUDITORIA.md` § A-032) confirmou `webhook_logs`, `webhooks` e `webhooks_config` com 0 linhas em
+produção — nenhum consumidor real chamou este endpoint nem configurou webhook de saída. Decisão do
+Joaquim: manter como está, sem implementar handlers reais nem remover, até existir caso de uso
+concreto.
+
 ---
 
 ## Bloco G — Modelo de dados multiempresa (P1)

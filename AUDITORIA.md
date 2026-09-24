@@ -195,6 +195,10 @@ Evidência: após HMAC, timestamp e idempotência corretos, `webhook/index.ts:16
 Impacto: produtor recebe HTTP 200 e o operador vê “processed”, embora nenhuma entidade de negócio seja alterada.
 Causa raiz: handlers placeholder foram conectados ao acknowledgement definitivo.
 
+**Investigação de uso real (24/09/2026, sessão de execução do PLANO_50 — E50-38):**
+Confirmado ao vivo em produção: `webhook_logs` (tabela que registra toda chamada a este endpoint, mesmo as recusadas por HMAC/timestamp inválido) tem **0 linhas**. Ninguém nunca chamou este endpoint com sucesso. As duas tabelas de configuração de webhook de saída deste sistema, `webhooks` e `webhooks_config` (ambas outbound — este sistema chamando URLs externas), também têm **0 linhas** — nenhum webhook de saída foi configurado pela UI de Integrações. `webhookSchema` (`_shared/schemas/common.ts:18-24`) não restringe `event` a nenhum provedor conhecido, e não há evidência de código, rota ou UI que amarre este endpoint a nenhum sistema específico (a hipótese inicial de que seria o "webhook de assinatura de contrato" estava errada; um comentário em `integracaoService.ts:76` o chama de "sistema de webhook do módulo de ponto", mas isso não foi confirmado por nenhuma referência adicional).
+Decisão registrada (Joaquim, 24/09/2026): manter como está, sem remover e sem priorizar — não há consumidor real hoje. Reavaliar quando houver caso de uso concreto (ex.: relógio de ponto físico/REP, Zapier, provedor de assinatura eletrônica).
+
 ### Infraestrutura, deploy, backup e observabilidade
 
 #### A-018 · [P1] · backup — não há agendamento real e o “backup” é parcial
