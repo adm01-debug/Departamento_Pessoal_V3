@@ -1,5 +1,6 @@
 import { PageTitle } from '@/components/PageTitle';
 import { useState, useMemo } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
@@ -215,7 +216,11 @@ export default function FolhaPagamentoPage() {
                   disabled={encerrarFolha.isPending || resumo?.status?.fechamento === 'fechado'}
                   className="rounded-xl gap-1.5 font-body border-destructive/30 text-destructive hover:bg-destructive/10"
                 >
-                  {encerrarFolha.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Lock className="h-4 w-4" />}
+                  {encerrarFolha.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Lock className="h-4 w-4" />
+                  )}
                   <span className="hidden sm:inline">Encerrar</span>
                 </Button>
               </AlertDialogTrigger>

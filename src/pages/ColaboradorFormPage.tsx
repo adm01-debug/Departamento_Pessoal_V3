@@ -17,10 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { colaboradorService } from '@/services';
 import { useNotification } from '@/contexts';
-import { 
-  User, MapPin, Landmark, Briefcase, 
-  FileText, Save, Loader2, Camera
-} from 'lucide-react';
+import { User, MapPin, Landmark, Briefcase, FileText, Save, Loader2, Camera } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { useDepartamentos } from '@/hooks/useDepartamentos';
@@ -42,7 +39,7 @@ const schema = z.object({
   estado_civil: z.enum(['solteiro', 'casado', 'divorciado', 'viuvo', 'uniao_estavel']).default('solteiro'),
   nome_mae: z.string().min(1, 'Nome da mãe obrigatório'),
   nome_pai: z.string().optional(),
-  
+
   // Endereço
   cep: z.string().optional(),
   logradouro: z.string().optional(),
@@ -73,7 +70,8 @@ const schema = z.object({
   rg_orgao_emissor: z.string().optional(),
   pis_pasep: z.string().optional(),
   ctps_numero: z.string().optional(),
-  ctps_serie: z.string().optional()});
+  ctps_serie: z.string().optional(),
+});
 
 type FormData = z.infer<typeof schema>;
 type FormInput = z.input<typeof schema>;
@@ -94,17 +92,26 @@ export default function ColaboradorFormPage() {
   const { data: colaborador, isLoading } = useQuery({
     queryKey: ['colaborador', id, empresaAtual?.id],
     queryFn: () => (colaboradorService as any).buscarPorId(id!, empresaAtual!.id),
-    enabled: isEditing && !!empresaAtual?.id});
+    enabled: isEditing && !!empresaAtual?.id,
+  });
 
-
-  const { register, handleSubmit, formState: { errors, isDirty }, setValue, reset, watch, setError } = useForm<FormInput, unknown, FormData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isDirty },
+    setValue,
+    reset,
+    watch,
+    setError,
+  } = useForm<FormInput, unknown, FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { 
-      status: 'ativo', 
-      estado_civil: 'solteiro', 
+    defaultValues: {
+      status: 'ativo',
+      estado_civil: 'solteiro',
       tipo_contrato: 'clt',
-      sexo: 'masculino'
-    }});
+      sexo: 'masculino',
+    },
+  });
 
   // Proteção contra perda de dados
   useFormGuard(isDirty);
@@ -128,7 +135,8 @@ export default function ColaboradorFormPage() {
       success(isEditing ? 'Colaborador atualizado!' : 'Colaborador criado!');
       navigate('/colaboradores');
     },
-    onError: (err: any) => handleServerError(err, setError)});
+    onError: (err: any) => handleServerError(err, setError),
+  });
 
   const handleAddressFound = (addr: Address) => {
     setValue('logradouro', addr.logradouro);
@@ -138,7 +146,12 @@ export default function ColaboradorFormPage() {
     setValue('cep', addr.cep);
   };
 
-  if (isLoading) return <div className="flex justify-center p-12"><Spinner size="lg" /></div>;
+  if (isLoading)
+    return (
+      <div className="flex justify-center p-12">
+        <Spinner size="lg" />
+      </div>
+    );
 
   const tabs = [
     { id: 'geral', label: 'Dados Gerais', icon: User },
@@ -153,15 +166,23 @@ export default function ColaboradorFormPage() {
       <PageTitle title={isEditing ? colaborador?.nome_completo || 'Editar Colaborador' : 'Novo Colaborador'} />
       <PageLayout
         title={isEditing ? colaborador?.nome_completo : 'Novo Colaborador'}
-        description={isEditing ? `Perfil profissional · Matrícula ${colaborador?.matricula || 'N/A'}` : 'Cadastre as informações essenciais para a integração do novo talento'}
+        description={
+          isEditing
+            ? `Perfil profissional · Matrícula ${colaborador?.matricula || 'N/A'}`
+            : 'Cadastre as informações essenciais para a integração do novo talento'
+        }
         icon={<User className="h-5 w-5 text-primary-foreground" />}
         backTo="/colaboradores"
         actions={
           <div className="flex items-center gap-2">
-            <Button variant="outline" className="h-11 rounded-xl px-4 shadow-xs bg-card/50" onClick={() => navigate('/colaboradores')}>
+            <Button
+              variant="outline"
+              className="h-11 rounded-xl px-4 shadow-xs bg-card/50"
+              onClick={() => navigate('/colaboradores')}
+            >
               Cancelar
             </Button>
-            <Button 
+            <Button
               className="h-11 rounded-xl px-6 gap-2 bg-primary text-primary-foreground shadow-glow hover:shadow-glow-lg transition-all"
               onClick={handleSubmit((data) => mutation.mutate(data))}
               disabled={mutation.isPending || !empresaAtual?.id}
@@ -174,10 +195,10 @@ export default function ColaboradorFormPage() {
       >
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="bg-muted/50 rounded-xl p-1 border border-border/30 w-full justify-start overflow-x-auto no-scrollbar">
-            {tabs.map(tab => (
-              <TabsTrigger 
-                key={tab.id} 
-                value={tab.id} 
+            {tabs.map((tab) => (
+              <TabsTrigger
+                key={tab.id}
+                value={tab.id}
                 className="rounded-lg font-body data-[state=active]:bg-card data-[state=active]:shadow-xs px-6 gap-2"
               >
                 <tab.icon className="h-4 w-4" />
@@ -203,12 +224,24 @@ export default function ColaboradorFormPage() {
                           <span className="text-[10px] font-bold uppercase text-primary">Alterar Foto</span>
                         </div>
                       </div>
-                      <Badge variant="outline" className="rounded-full">Foto DP</Badge>
+                      <Badge variant="outline" className="rounded-full">
+                        Foto DP
+                      </Badge>
                     </div>
                     <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <FormField label="Nome Completo" {...register('nome_completo')} error={errors.nome_completo?.message} placeholder="Ex: João da Silva" />
-                      <FormField label="Nome Social / Apelido" {...register('nome_social')} error={errors.nome_social?.message} placeholder="Como o colaborador prefere ser chamado" />
-                      
+                      <FormField
+                        label="Nome Completo"
+                        {...register('nome_completo')}
+                        error={errors.nome_completo?.message}
+                        placeholder="Ex: João da Silva"
+                      />
+                      <FormField
+                        label="Nome Social / Apelido"
+                        {...register('nome_social')}
+                        error={errors.nome_social?.message}
+                        placeholder="Como o colaborador prefere ser chamado"
+                      />
+
                       <div className="space-y-2">
                         <label className="text-sm font-medium">CPF</label>
                         {/* eslint-disable-next-line react-hooks/incompatible-library */}
@@ -216,33 +249,53 @@ export default function ColaboradorFormPage() {
                         {errors.cpf && <p className="text-xs text-destructive">{errors.cpf.message}</p>}
                       </div>
 
-                      <FormField label="Data Nascimento" type="date" {...register('data_nascimento')} error={errors.data_nascimento?.message} />
-                      
-                      <FormField label="Email Pessoal" type="email" {...register('email')} error={errors.email?.message} placeholder="joao@exemplo.com" />
-                      
+                      <FormField
+                        label="Data Nascimento"
+                        type="date"
+                        {...register('data_nascimento')}
+                        error={errors.data_nascimento?.message}
+                      />
+
+                      <FormField
+                        label="Email Pessoal"
+                        type="email"
+                        {...register('email')}
+                        error={errors.email?.message}
+                        placeholder="joao@exemplo.com"
+                      />
+
                       <div className="space-y-2">
                         <label className="text-sm font-medium">Celular (WhatsApp)</label>
-                        <PhoneInput value={watch('celular') || watch('telefone')} onChange={(v) => setValue('celular', v)} />
+                        <PhoneInput
+                          value={watch('celular') || watch('telefone')}
+                          onChange={(v) => setValue('celular', v)}
+                        />
                       </div>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-border/20">
-                    <FormSelect 
-                      label="Sexo" 
+                    <FormSelect
+                      label="Sexo"
                       value={watch('sexo')}
-                      options={[{ value: 'masculino', label: 'Masculino' }, { value: 'feminino', label: 'Feminino' }, { value: 'outro', label: 'Outro' }]} 
-                      onChange={(v) => setValue('sexo', v as any)} 
+                      options={[
+                        { value: 'masculino', label: 'Masculino' },
+                        { value: 'feminino', label: 'Feminino' },
+                        { value: 'outro', label: 'Outro' },
+                      ]}
+                      onChange={(v) => setValue('sexo', v as any)}
                     />
-                    <FormSelect 
-                      label="Estado Civil" 
+                    <FormSelect
+                      label="Estado Civil"
                       value={watch('estado_civil')}
                       options={[
-                        { value: 'solteiro', label: 'Solteiro(a)' }, { value: 'casado', label: 'Casado(a)' },
-                        { value: 'divorciado', label: 'Divorciado(a)' }, { value: 'viuvo', label: 'Viúvo(a)' },
+                        { value: 'solteiro', label: 'Solteiro(a)' },
+                        { value: 'casado', label: 'Casado(a)' },
+                        { value: 'divorciado', label: 'Divorciado(a)' },
+                        { value: 'viuvo', label: 'Viúvo(a)' },
                         { value: 'uniao_estavel', label: 'União Estável' },
-                      ]} 
-                      onChange={(v) => setValue('estado_civil', v as any)} 
+                      ]}
+                      onChange={(v) => setValue('estado_civil', v as any)}
                     />
                     <FormField label="Matrícula Interna" {...register('matricula')} placeholder="Ex: 0001" />
                   </div>
@@ -266,51 +319,58 @@ export default function ColaboradorFormPage() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <FormField label="Data Admissão" type="date" {...register('data_admissao')} error={errors.data_admissao?.message} />
+                    <FormField
+                      label="Data Admissão"
+                      type="date"
+                      {...register('data_admissao')}
+                      error={errors.data_admissao?.message}
+                    />
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Salário Base</label>
                       <CurrencyInput value={watch('salario_base')} onChange={(v) => setValue('salario_base', v)} />
                       {errors.salario_base && <p className="text-xs text-destructive">{errors.salario_base.message}</p>}
                     </div>
-                    <FormSelect 
-                      label="Tipo de Contrato" 
+                    <FormSelect
+                      label="Tipo de Contrato"
                       value={watch('tipo_contrato')}
                       options={[
-                        { value: 'clt', label: 'CLT (Efetivo)' }, { value: 'pj', label: 'PJ (Prestador)' },
-                        { value: 'estagio', label: 'Estágio' }, { value: 'temporario', label: 'Temporário' },
-                      ]} 
-                      onChange={(v) => setValue('tipo_contrato', v as any)} 
+                        { value: 'clt', label: 'CLT (Efetivo)' },
+                        { value: 'pj', label: 'PJ (Prestador)' },
+                        { value: 'estagio', label: 'Estágio' },
+                        { value: 'temporario', label: 'Temporário' },
+                      ]}
+                      onChange={(v) => setValue('tipo_contrato', v as any)}
                     />
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormSelect 
-                      label="Cargo" 
+                    <FormSelect
+                      label="Cargo"
                       value={watch('cargo')}
-                      options={cargos.map(c => ({ value: c.nome, label: c.nome }))}
+                      options={cargos.map((c) => ({ value: c.nome, label: c.nome }))}
                       onChange={(v) => setValue('cargo', v)}
                       error={errors.cargo?.message}
                     />
-                    <FormSelect 
-                      label="Departamento" 
+                    <FormSelect
+                      label="Departamento"
                       value={watch('departamento')}
-                      options={departamentos.map(d => ({ value: d.nome, label: d.nome }))}
+                      options={departamentos.map((d) => ({ value: d.nome, label: d.nome }))}
                       onChange={(v) => setValue('departamento', v)}
                       error={errors.departamento?.message}
                     />
                   </div>
 
                   <div className="pt-4 border-t border-border/20">
-                    <FormSelect 
-                      label="Status Atual" 
+                    <FormSelect
+                      label="Status Atual"
                       value={watch('status')}
                       options={[
-                        { value: 'ativo', label: 'Ativo' }, 
+                        { value: 'ativo', label: 'Ativo' },
                         { value: 'afastado', label: 'Afastado' },
                         { value: 'ferias', label: 'Em Férias' },
                         { value: 'inativo', label: 'Desligado' },
-                      ]} 
-                      onChange={(v) => setValue('status', v)} 
+                      ]}
+                      onChange={(v) => setValue('status', v)}
                     />
                   </div>
                 </CardContent>
@@ -324,7 +384,9 @@ export default function ColaboradorFormPage() {
               <Card className="border border-border/30 rounded-2xl overflow-hidden shadow-elevated">
                 <CardHeader>
                   <CardTitle className="font-display">Endereço Residencial</CardTitle>
-                  <CardDescription>Local de moradia do colaborador para fins de benefícios e transporte</CardDescription>
+                  <CardDescription>
+                    Local de moradia do colaborador para fins de benefícios e transporte
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="max-w-xs space-y-2">
@@ -369,11 +431,11 @@ export default function ColaboradorFormPage() {
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField label="Código do Banco" {...register('banco_codigo')} placeholder="Ex: 001, 341, 033" />
-                    <FormSelect 
-                      label="Tipo de Conta" 
+                    <FormSelect
+                      label="Tipo de Conta"
                       value={watch('tipo_conta')}
                       options={[
-                        { value: 'corrente', label: 'Conta Corrente' }, 
+                        { value: 'corrente', label: 'Conta Corrente' },
                         { value: 'poupanca', label: 'Poupança' },
                       ]}
                       onChange={(v) => setValue('tipo_conta', v)}
