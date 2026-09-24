@@ -1,0 +1,6277 @@
+{
+  "rows": [
+    {
+      "index_name": "adiantamentos_salariais_pkey",
+      "table_name": "adiantamentos_salariais",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_adiantamentos_salariais_aprovado_por",
+      "table_name": "adiantamentos_salariais",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_adiantamentos_salariais_colaborador_id",
+      "table_name": "adiantamentos_salariais",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_adiantamentos_salariais_empresa_id",
+      "table_name": "adiantamentos_salariais",
+      "is_unique": false
+    },
+    {
+      "index_name": "admissao_tokens_pkey",
+      "table_name": "admissao_tokens",
+      "is_unique": true
+    },
+    {
+      "index_name": "admissao_tokens_token_key",
+      "table_name": "admissao_tokens",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_admissao_tokens_admissao_id",
+      "table_name": "admissao_tokens",
+      "is_unique": false
+    },
+    {
+      "index_name": "admissoes_pkey",
+      "table_name": "admissoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_admissoes_created_by",
+      "table_name": "admissoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_admissoes_empresa",
+      "table_name": "admissoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_admissoes_empresa_created",
+      "table_name": "admissoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "aej_geracoes_pkey",
+      "table_name": "aej_geracoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_aej_geracoes_empresa_periodo",
+      "table_name": "aej_geracoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_aej_geracoes_gerado_por",
+      "table_name": "aej_geracoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "uq_aej_geracoes_hash",
+      "table_name": "aej_geracoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "afastamentos_pkey",
+      "table_name": "afastamentos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_afastamentos_ativo",
+      "table_name": "afastamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_afastamentos_cid",
+      "table_name": "afastamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_afastamentos_cid_id",
+      "table_name": "afastamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_afastamentos_colab_status",
+      "table_name": "afastamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_afastamentos_colaborador_id",
+      "table_name": "afastamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_afastamentos_empresa_id",
+      "table_name": "afastamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_afastamentos_empresa_inicio",
+      "table_name": "afastamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "afdt_divergencias_pkey",
+      "table_name": "afdt_divergencias",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_afdt_div_emp_tipo",
+      "table_name": "afdt_divergencias",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_afdt_div_imp",
+      "table_name": "afdt_divergencias",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_afdt_div_pis_unresolved",
+      "table_name": "afdt_divergencias",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_afdt_diverg_registro_raw_id",
+      "table_name": "afdt_divergencias",
+      "is_unique": false
+    },
+    {
+      "index_name": "afdt_importacoes_pkey",
+      "table_name": "afdt_importacoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_afdt_imp_empresa",
+      "table_name": "afdt_importacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "afdt_registros_raw_pkey",
+      "table_name": "afdt_registros_raw",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_afdt_raw_cpf",
+      "table_name": "afdt_registros_raw",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_afdt_raw_data",
+      "table_name": "afdt_registros_raw",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_afdt_raw_imp",
+      "table_name": "afdt_registros_raw",
+      "is_unique": false
+    },
+    {
+      "index_name": "ajustes_ponto_pkey",
+      "table_name": "ajustes_ponto",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_ajustes_ponto_colaborador_id",
+      "table_name": "ajustes_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ajustes_ponto_registro_ponto_id",
+      "table_name": "ajustes_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "anotacoes_colaborador_pkey",
+      "table_name": "anotacoes_colaborador",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_anotacoes_col",
+      "table_name": "anotacoes_colaborador",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_anotacoes_colaborador_colaborador_id",
+      "table_name": "anotacoes_colaborador",
+      "is_unique": false
+    },
+    {
+      "index_name": "asos_pkey",
+      "table_name": "asos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_asos_agendamento",
+      "table_name": "asos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_asos_clinica_partner",
+      "table_name": "asos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_asos_col",
+      "table_name": "asos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_asos_colaborador_id",
+      "table_name": "asos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_asos_emitido_por_partner_user",
+      "table_name": "asos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_asos_empresa_id",
+      "table_name": "asos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_asos_empresa_tipo",
+      "table_name": "asos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_asos_recebido_rh_por",
+      "table_name": "asos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_asos_status",
+      "table_name": "asos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_asos_validade",
+      "table_name": "asos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_asos_validado_por",
+      "table_name": "asos",
+      "is_unique": false
+    },
+    {
+      "index_name": "audit_log_pkey",
+      "table_name": "audit_log",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_audit_log_acao",
+      "table_name": "audit_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_audit_log_created_at",
+      "table_name": "audit_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_audit_log_empresa_id",
+      "table_name": "audit_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_audit_log_registro_created",
+      "table_name": "audit_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_audit_log_registro_id",
+      "table_name": "audit_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_audit_log_status_change",
+      "table_name": "audit_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_audit_log_status_change_scan",
+      "table_name": "audit_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_audit_log_tabela",
+      "table_name": "audit_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_audit_log_user_created",
+      "table_name": "audit_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_audit_log_user_id",
+      "table_name": "audit_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "audit_log_unified_pkey",
+      "table_name": "audit_log_unified",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_audit_unified_empresa_occurred",
+      "table_name": "audit_log_unified",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_audit_unified_entity",
+      "table_name": "audit_log_unified",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_audit_unified_occurred_desc",
+      "table_name": "audit_log_unified",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_audit_unified_source",
+      "table_name": "audit_log_unified",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_audit_unified_tenant_entity_occurred",
+      "table_name": "audit_log_unified",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_audit_unified_user_occurred",
+      "table_name": "audit_log_unified",
+      "is_unique": false
+    },
+    {
+      "index_name": "uq_audit_unified_source",
+      "table_name": "audit_log_unified",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_audit_archive_empresa",
+      "table_name": "audit_log_unified_archive",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_audit_archive_occurred_at",
+      "table_name": "audit_log_unified_archive",
+      "is_unique": false
+    },
+    {
+      "index_name": "audit_logs_pkey",
+      "table_name": "audit_logs",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_audit_logs_created_at",
+      "table_name": "audit_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_audit_logs_empresa_id",
+      "table_name": "audit_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_audit_logs_user_id",
+      "table_name": "audit_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "auditoria_pkey",
+      "table_name": "auditoria",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_auditoria_created_at",
+      "table_name": "auditoria",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_auditoria_entidade",
+      "table_name": "auditoria",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_auditoria_usuario_id",
+      "table_name": "auditoria",
+      "is_unique": false
+    },
+    {
+      "index_name": "auditoria_contratual_pkey",
+      "table_name": "auditoria_contratual",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_auditoria_contratual_alterado_por",
+      "table_name": "auditoria_contratual",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_auditoria_contratual_colaborador_id",
+      "table_name": "auditoria_contratual",
+      "is_unique": false
+    },
+    {
+      "index_name": "auditoria_logs_pkey",
+      "table_name": "auditoria_logs",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_auditoria_logs_created",
+      "table_name": "auditoria_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_auditoria_logs_created_at",
+      "table_name": "auditoria_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_auditoria_logs_empresa_created",
+      "table_name": "auditoria_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_auditoria_logs_empresa_id",
+      "table_name": "auditoria_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_auditoria_logs_entidade",
+      "table_name": "auditoria_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_auditoria_logs_user",
+      "table_name": "auditoria_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_auditoria_logs_user_id",
+      "table_name": "auditoria_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "auth_gov_br_sessions_pkey",
+      "table_name": "auth_gov_br_sessions",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_auth_gov_br_sessions_user_id",
+      "table_name": "auth_gov_br_sessions",
+      "is_unique": false
+    },
+    {
+      "index_name": "automacao_logs_pkey",
+      "table_name": "automacao_logs",
+      "is_unique": true
+    },
+    {
+      "index_name": "banco_horas_pkey",
+      "table_name": "banco_horas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_banco_horas_colaborador_data",
+      "table_name": "banco_horas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_banco_horas_colaborador_id",
+      "table_name": "banco_horas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_banco_horas_empresa_id",
+      "table_name": "banco_horas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_banco_horas_registro_ponto_id",
+      "table_name": "banco_horas",
+      "is_unique": false
+    },
+    {
+      "index_name": "banco_horas_config_pkey",
+      "table_name": "banco_horas_config",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_banco_horas_config_empresa_id",
+      "table_name": "banco_horas_config",
+      "is_unique": false
+    },
+    {
+      "index_name": "batidas_ponto_colaborador_id_data_ordem_key",
+      "table_name": "batidas_ponto",
+      "is_unique": true
+    },
+    {
+      "index_name": "batidas_ponto_no_duplicate_batida",
+      "table_name": "batidas_ponto",
+      "is_unique": true
+    },
+    {
+      "index_name": "batidas_ponto_pkey",
+      "table_name": "batidas_ponto",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_batidas_anomalia_partial",
+      "table_name": "batidas_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_batidas_colab_data",
+      "table_name": "batidas_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_batidas_colab_data_desc",
+      "table_name": "batidas_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_batidas_empresa_data",
+      "table_name": "batidas_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_batidas_ponto_anomalia",
+      "table_name": "batidas_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_batidas_ponto_colab_data",
+      "table_name": "batidas_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_batidas_ponto_colaborador_data",
+      "table_name": "batidas_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_batidas_ponto_colaborador_id",
+      "table_name": "batidas_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_batidas_ponto_data",
+      "table_name": "batidas_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_batidas_ponto_empresa_data",
+      "table_name": "batidas_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_batidas_ponto_empresa_id",
+      "table_name": "batidas_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "beneficiarios_plano_pkey",
+      "table_name": "beneficiarios_plano",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_beneficiarios_plano_colaborador_id",
+      "table_name": "beneficiarios_plano",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_beneficiarios_plano_plano_saude_id",
+      "table_name": "beneficiarios_plano",
+      "is_unique": false
+    },
+    {
+      "index_name": "beneficiarios_seguro_pkey",
+      "table_name": "beneficiarios_seguro",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_beneficiarios_seguro_colaborador_id",
+      "table_name": "beneficiarios_seguro",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_beneficiarios_seguro_seguro_vida_id",
+      "table_name": "beneficiarios_seguro",
+      "is_unique": false
+    },
+    {
+      "index_name": "beneficio_arquivos_pkey",
+      "table_name": "beneficio_arquivos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_beneficio_arquivos_beneficio_id",
+      "table_name": "beneficio_arquivos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_beneficio_arquivos_empresa_id",
+      "table_name": "beneficio_arquivos",
+      "is_unique": false
+    },
+    {
+      "index_name": "beneficio_movimentacoes_pkey",
+      "table_name": "beneficio_movimentacoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_beneficio_movimentacoes_beneficio_id",
+      "table_name": "beneficio_movimentacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_beneficio_movimentacoes_colaborador_id",
+      "table_name": "beneficio_movimentacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_beneficio_movimentacoes_usuario_id",
+      "table_name": "beneficio_movimentacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "beneficio_regras_elegibilidade_pkey",
+      "table_name": "beneficio_regras_elegibilidade",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_beneficio_regras_elegibilidade_beneficio_id",
+      "table_name": "beneficio_regras_elegibilidade",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_beneficio_regras_elegibilidade_cargo_id",
+      "table_name": "beneficio_regras_elegibilidade",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_beneficio_regras_elegibilidade_departamento_id",
+      "table_name": "beneficio_regras_elegibilidade",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_beneficio_regras_elegibilidade_empresa_id",
+      "table_name": "beneficio_regras_elegibilidade",
+      "is_unique": false
+    },
+    {
+      "index_name": "beneficio_utilizacao_pkey",
+      "table_name": "beneficio_utilizacao",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_beneficio_utilizacao_beneficio_colaborador_id",
+      "table_name": "beneficio_utilizacao",
+      "is_unique": false
+    },
+    {
+      "index_name": "beneficios_pkey",
+      "table_name": "beneficios",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_beneficios_colaborador_id",
+      "table_name": "beneficios",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_beneficios_empresa_id",
+      "table_name": "beneficios",
+      "is_unique": false
+    },
+    {
+      "index_name": "beneficios_colaborador_colaborador_id_tipo_beneficio_id_key",
+      "table_name": "beneficios_colaborador",
+      "is_unique": true
+    },
+    {
+      "index_name": "beneficios_colaborador_pkey",
+      "table_name": "beneficios_colaborador",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_beneficios_colaborador_ativo",
+      "table_name": "beneficios_colaborador",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_beneficios_colaborador_colaborador",
+      "table_name": "beneficios_colaborador",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_beneficios_colaborador_colaborador_id",
+      "table_name": "beneficios_colaborador",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_beneficios_colaborador_created_by",
+      "table_name": "beneficios_colaborador",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_beneficios_colaborador_tipo",
+      "table_name": "beneficios_colaborador",
+      "is_unique": false
+    },
+    {
+      "index_name": "beneficios_colaboradores_pkey",
+      "table_name": "beneficios_colaboradores",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_beneficios_colaboradores_beneficio_id",
+      "table_name": "beneficios_colaboradores",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_beneficios_colaboradores_colaborador_id",
+      "table_name": "beneficios_colaboradores",
+      "is_unique": false
+    },
+    {
+      "index_name": "bitrix24_config_pkey",
+      "table_name": "bitrix24_config",
+      "is_unique": true
+    },
+    {
+      "index_name": "bitrix24_sync_logs_pkey",
+      "table_name": "bitrix24_sync_logs",
+      "is_unique": true
+    },
+    {
+      "index_name": "blocked_ips_ip_address_key",
+      "table_name": "blocked_ips",
+      "is_unique": true
+    },
+    {
+      "index_name": "blocked_ips_pkey",
+      "table_name": "blocked_ips",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_blocked_ips_blocked_by",
+      "table_name": "blocked_ips",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_blocked_ips_expires",
+      "table_name": "blocked_ips",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_blocked_ips_ip",
+      "table_name": "blocked_ips",
+      "is_unique": false
+    },
+    {
+      "index_name": "campos_customizados_pkey",
+      "table_name": "campos_customizados",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_campos_customizados_empresa_id",
+      "table_name": "campos_customizados",
+      "is_unique": false
+    },
+    {
+      "index_name": "canal_etica_pkey",
+      "table_name": "canal_etica",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_canal_etica_empresa_id",
+      "table_name": "canal_etica",
+      "is_unique": false
+    },
+    {
+      "index_name": "candidatos_pkey",
+      "table_name": "candidatos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_candidatos_empresa_id",
+      "table_name": "candidatos",
+      "is_unique": false
+    },
+    {
+      "index_name": "candidaturas_pkey",
+      "table_name": "candidaturas",
+      "is_unique": true
+    },
+    {
+      "index_name": "candidaturas_vaga_id_candidato_id_key",
+      "table_name": "candidaturas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_candidaturas_candidato_id",
+      "table_name": "candidaturas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_candidaturas_empresa_id",
+      "table_name": "candidaturas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_candidaturas_vaga",
+      "table_name": "candidaturas",
+      "is_unique": false
+    },
+    {
+      "index_name": "cargo_faixas_salariais_pkey",
+      "table_name": "cargo_faixas_salariais",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_cargo_faixas_salariais_cargo_id",
+      "table_name": "cargo_faixas_salariais",
+      "is_unique": false
+    },
+    {
+      "index_name": "cargos_pkey",
+      "table_name": "cargos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_cargos_departamento_id",
+      "table_name": "cargos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_cargos_empresa_id",
+      "table_name": "cargos",
+      "is_unique": false
+    },
+    {
+      "index_name": "catalogo_cursos_pkey",
+      "table_name": "catalogo_cursos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_catalogo_cursos_empresa_id",
+      "table_name": "catalogo_cursos",
+      "is_unique": false
+    },
+    {
+      "index_name": "catalogo_infracoes_empresa_id_codigo_key",
+      "table_name": "catalogo_infracoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "catalogo_infracoes_pkey",
+      "table_name": "catalogo_infracoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_catalogo_infracoes_empresa",
+      "table_name": "catalogo_infracoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "categorias_trabalhador_nome_key",
+      "table_name": "categorias_trabalhador",
+      "is_unique": true
+    },
+    {
+      "index_name": "categorias_trabalhador_pkey",
+      "table_name": "categorias_trabalhador",
+      "is_unique": true
+    },
+    {
+      "index_name": "centros_custo_pkey",
+      "table_name": "centros_custo",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_centros_custo_empresa_id",
+      "table_name": "centros_custo",
+      "is_unique": false
+    },
+    {
+      "index_name": "certificados_digitais_pkey",
+      "table_name": "certificados_digitais",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_certificados_digitais_empresa_id",
+      "table_name": "certificados_digitais",
+      "is_unique": false
+    },
+    {
+      "index_name": "ciclos_avaliacao_pkey",
+      "table_name": "ciclos_avaliacao",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_ciclos_avaliacao_empresa_id",
+      "table_name": "ciclos_avaliacao",
+      "is_unique": false
+    },
+    {
+      "index_name": "cid10_codigo_key",
+      "table_name": "cid10",
+      "is_unique": true
+    },
+    {
+      "index_name": "cid10_pkey",
+      "table_name": "cid10",
+      "is_unique": true
+    },
+    {
+      "index_name": "ciencia_rate_limits_pkey",
+      "table_name": "ciencia_rate_limits",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_ciencia_rate_limits_verif_contrato",
+      "table_name": "ciencia_rate_limits",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ciencia_rl_created",
+      "table_name": "ciencia_rate_limits",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ciencia_rl_ip_time",
+      "table_name": "ciencia_rate_limits",
+      "is_unique": false
+    },
+    {
+      "index_name": "clinicas_partners_cnpj_empresa_unique",
+      "table_name": "clinicas_partners",
+      "is_unique": true
+    },
+    {
+      "index_name": "clinicas_partners_pkey",
+      "table_name": "clinicas_partners",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_clinicas_partners_cidade_uf",
+      "table_name": "clinicas_partners",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_clinicas_partners_empresa_status",
+      "table_name": "clinicas_partners",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_clinicas_partners_geo",
+      "table_name": "clinicas_partners",
+      "is_unique": false
+    },
+    {
+      "index_name": "clinicas_horarios_unique",
+      "table_name": "clinicas_partners_horarios",
+      "is_unique": true
+    },
+    {
+      "index_name": "clinicas_partners_horarios_pkey",
+      "table_name": "clinicas_partners_horarios",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_clinicas_horarios_clinica_dia",
+      "table_name": "clinicas_partners_horarios",
+      "is_unique": false
+    },
+    {
+      "index_name": "clinicas_partners_servicos_pkey",
+      "table_name": "clinicas_partners_servicos",
+      "is_unique": true
+    },
+    {
+      "index_name": "clinicas_servicos_unique",
+      "table_name": "clinicas_partners_servicos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_clinicas_servicos_clinica",
+      "table_name": "clinicas_partners_servicos",
+      "is_unique": false
+    },
+    {
+      "index_name": "cnab_configuracoes_pkey",
+      "table_name": "cnab_configuracoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_cnab_configuracoes_empresa_id",
+      "table_name": "cnab_configuracoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "cnab_itens_pkey",
+      "table_name": "cnab_itens",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_cnab_itens_colaborador_id",
+      "table_name": "cnab_itens",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_cnab_itens_folha_item_id",
+      "table_name": "cnab_itens",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_cnab_itens_remessa_id",
+      "table_name": "cnab_itens",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_cnab_itens_seu_numero",
+      "table_name": "cnab_itens",
+      "is_unique": false
+    },
+    {
+      "index_name": "cnab_remessas_pkey",
+      "table_name": "cnab_remessas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_cnab_data",
+      "table_name": "cnab_remessas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_cnab_remessas_empresa_id",
+      "table_name": "cnab_remessas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_cnab_status",
+      "table_name": "cnab_remessas",
+      "is_unique": false
+    },
+    {
+      "index_name": "colaborador_beneficios_beneficio_id_colaborador_id_key",
+      "table_name": "colaborador_beneficios",
+      "is_unique": true
+    },
+    {
+      "index_name": "colaborador_beneficios_pkey",
+      "table_name": "colaborador_beneficios",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_colaborador_beneficios_colaborador_id",
+      "table_name": "colaborador_beneficios",
+      "is_unique": false
+    },
+    {
+      "index_name": "colaboradores_cpf_key",
+      "table_name": "colaboradores",
+      "is_unique": true
+    },
+    {
+      "index_name": "colaboradores_empresa_cpf_key",
+      "table_name": "colaboradores",
+      "is_unique": true
+    },
+    {
+      "index_name": "colaboradores_empresa_email_key",
+      "table_name": "colaboradores",
+      "is_unique": true
+    },
+    {
+      "index_name": "colaboradores_empresa_matricula_key",
+      "table_name": "colaboradores",
+      "is_unique": true
+    },
+    {
+      "index_name": "colaboradores_matricula_key",
+      "table_name": "colaboradores",
+      "is_unique": true
+    },
+    {
+      "index_name": "colaboradores_pkey",
+      "table_name": "colaboradores",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_colab_supervisor",
+      "table_name": "colaboradores",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_colaboradores_cargo_id",
+      "table_name": "colaboradores",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_colaboradores_categoria_trabalhador_id",
+      "table_name": "colaboradores",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_colaboradores_centro_custo_id",
+      "table_name": "colaboradores",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_colaboradores_cpf",
+      "table_name": "colaboradores",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_colaboradores_cpf_last4",
+      "table_name": "colaboradores",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_colaboradores_created_by",
+      "table_name": "colaboradores",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_colaboradores_empresa",
+      "table_name": "colaboradores",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_colaboradores_empresa_ativos",
+      "table_name": "colaboradores",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_colaboradores_empresa_created",
+      "table_name": "colaboradores",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_colaboradores_empresa_status",
+      "table_name": "colaboradores",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_colaboradores_genero_documento_id",
+      "table_name": "colaboradores",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_colaboradores_gestor_ferias_id",
+      "table_name": "colaboradores",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_colaboradores_local_trabalho_id",
+      "table_name": "colaboradores",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_colaboradores_nacionalidade_id",
+      "table_name": "colaboradores",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_colaboradores_tipo_pagamento_id",
+      "table_name": "colaboradores",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_colaboradores_tipo_salario_id",
+      "table_name": "colaboradores",
+      "is_unique": false
+    },
+    {
+      "index_name": "ux_colaboradores_cpf_hash",
+      "table_name": "colaboradores",
+      "is_unique": true
+    },
+    {
+      "index_name": "colaboradores_pin_pkey",
+      "table_name": "colaboradores_pin",
+      "is_unique": true
+    },
+    {
+      "index_name": "competencias_config_pkey",
+      "table_name": "competencias_config",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_competencias_config_empresa_id",
+      "table_name": "competencias_config",
+      "is_unique": false
+    },
+    {
+      "index_name": "competencias_matriz_pkey",
+      "table_name": "competencias_matriz",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_competencias_matriz_empresa_id",
+      "table_name": "competencias_matriz",
+      "is_unique": false
+    },
+    {
+      "index_name": "comunicados_pkey",
+      "table_name": "comunicados",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_comunicados_empresa_id",
+      "table_name": "comunicados",
+      "is_unique": false
+    },
+    {
+      "index_name": "comunicados_leituras_pkey",
+      "table_name": "comunicados_leituras",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_comunicados_leituras_comunicado_id",
+      "table_name": "comunicados_leituras",
+      "is_unique": false
+    },
+    {
+      "index_name": "condicoes_ingresso_nome_key",
+      "table_name": "condicoes_ingresso",
+      "is_unique": true
+    },
+    {
+      "index_name": "condicoes_ingresso_pkey",
+      "table_name": "condicoes_ingresso",
+      "is_unique": true
+    },
+    {
+      "index_name": "config_afastamentos_pkey",
+      "table_name": "config_afastamentos",
+      "is_unique": true
+    },
+    {
+      "index_name": "config_afastamentos_tipo_key",
+      "table_name": "config_afastamentos",
+      "is_unique": true
+    },
+    {
+      "index_name": "config_alertas_indicadores_pkey",
+      "table_name": "config_alertas_indicadores",
+      "is_unique": true
+    },
+    {
+      "index_name": "config_alertas_indicadores_tipo_key",
+      "table_name": "config_alertas_indicadores",
+      "is_unique": true
+    },
+    {
+      "index_name": "configuracoes_chave_key",
+      "table_name": "configuracoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "configuracoes_pkey",
+      "table_name": "configuracoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "configuracoes_alertas_pkey",
+      "table_name": "configuracoes_alertas",
+      "is_unique": true
+    },
+    {
+      "index_name": "configuracoes_esocial_empresa_id_key",
+      "table_name": "configuracoes_esocial",
+      "is_unique": true
+    },
+    {
+      "index_name": "configuracoes_esocial_pkey",
+      "table_name": "configuracoes_esocial",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_configuracoes_esocial_certificado_id",
+      "table_name": "configuracoes_esocial",
+      "is_unique": false
+    },
+    {
+      "index_name": "configuracoes_intervalo_pkey",
+      "table_name": "configuracoes_intervalo",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_configuracoes_intervalo_empresa_id",
+      "table_name": "configuracoes_intervalo",
+      "is_unique": false
+    },
+    {
+      "index_name": "configuracoes_ponto_empresa_id_key",
+      "table_name": "configuracoes_ponto",
+      "is_unique": true
+    },
+    {
+      "index_name": "configuracoes_ponto_pkey",
+      "table_name": "configuracoes_ponto",
+      "is_unique": true
+    },
+    {
+      "index_name": "conformidade_ponto_logs_pkey",
+      "table_name": "conformidade_ponto_logs",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_conformidade_ponto_logs_batida_id",
+      "table_name": "conformidade_ponto_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_conformidade_ponto_logs_empresa_id",
+      "table_name": "conformidade_ponto_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "contabilidade_contatos_empresa_id_email_key",
+      "table_name": "contabilidade_contatos",
+      "is_unique": true
+    },
+    {
+      "index_name": "contabilidade_contatos_pkey",
+      "table_name": "contabilidade_contatos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_contab_contatos_empresa",
+      "table_name": "contabilidade_contatos",
+      "is_unique": false
+    },
+    {
+      "index_name": "contabilidade_mensagens_pkey",
+      "table_name": "contabilidade_mensagens",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_contab_msg_autor_id",
+      "table_name": "contabilidade_mensagens",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_contab_msg_empresa_id",
+      "table_name": "contabilidade_mensagens",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_contab_msgs_thread",
+      "table_name": "contabilidade_mensagens",
+      "is_unique": false
+    },
+    {
+      "index_name": "contabilidade_threads_pkey",
+      "table_name": "contabilidade_threads",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_contab_threads_aberto_por",
+      "table_name": "contabilidade_threads",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_contab_threads_contato_id",
+      "table_name": "contabilidade_threads",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_contab_threads_empresa_ativ",
+      "table_name": "contabilidade_threads",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_contab_threads_status",
+      "table_name": "contabilidade_threads",
+      "is_unique": false
+    },
+    {
+      "index_name": "contas_bancarias_pkey",
+      "table_name": "contas_bancarias",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_contas_bancarias_colaborador_id",
+      "table_name": "contas_bancarias",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_contas_bancarias_empresa_id",
+      "table_name": "contas_bancarias",
+      "is_unique": false
+    },
+    {
+      "index_name": "contatos_emergencia_pkey",
+      "table_name": "contatos_emergencia",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_contatos_emergencia_col",
+      "table_name": "contatos_emergencia",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_contatos_emergencia_colaborador_id",
+      "table_name": "contatos_emergencia",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_contatos_emergencia_relacionamento_id",
+      "table_name": "contatos_emergencia",
+      "is_unique": false
+    },
+    {
+      "index_name": "contrato_assinatura_tokens_pkey",
+      "table_name": "contrato_assinatura_tokens",
+      "is_unique": true
+    },
+    {
+      "index_name": "contrato_assinatura_tokens_token_hash_key",
+      "table_name": "contrato_assinatura_tokens",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_contrato_tokens_ativo",
+      "table_name": "contrato_assinatura_tokens",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_contrato_tokens_contrato",
+      "table_name": "contrato_assinatura_tokens",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_contrato_tokens_expira",
+      "table_name": "contrato_assinatura_tokens",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_contrato_tokens_pending_reminder",
+      "table_name": "contrato_assinatura_tokens",
+      "is_unique": false
+    },
+    {
+      "index_name": "contrato_templates_pkey",
+      "table_name": "contrato_templates",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_contrato_templates_cargo",
+      "table_name": "contrato_templates",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_contrato_templates_empresa",
+      "table_name": "contrato_templates",
+      "is_unique": false
+    },
+    {
+      "index_name": "uq_contrato_templates_default",
+      "table_name": "contrato_templates",
+      "is_unique": true
+    },
+    {
+      "index_name": "contrato_token_eventos_pkey",
+      "table_name": "contrato_token_eventos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_ctk_eventos_contrato",
+      "table_name": "contrato_token_eventos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ctk_eventos_empresa",
+      "table_name": "contrato_token_eventos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ctk_eventos_token",
+      "table_name": "contrato_token_eventos",
+      "is_unique": false
+    },
+    {
+      "index_name": "contratos_pkey",
+      "table_name": "contratos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_contratos_colaborador_id",
+      "table_name": "contratos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_contratos_empresa_id",
+      "table_name": "contratos",
+      "is_unique": false
+    },
+    {
+      "index_name": "contratos_gerados_pkey",
+      "table_name": "contratos_gerados",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_contratos_gerados_admissao",
+      "table_name": "contratos_gerados",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_contratos_gerados_colaborador",
+      "table_name": "contratos_gerados",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_contratos_gerados_empresa",
+      "table_name": "contratos_gerados",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_contratos_gerados_hash",
+      "table_name": "contratos_gerados",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_contratos_gerados_vencimento",
+      "table_name": "contratos_gerados",
+      "is_unique": false
+    },
+    {
+      "index_name": "controle_acesso_pkey",
+      "table_name": "controle_acesso",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_controle_acesso_colaborador_id",
+      "table_name": "controle_acesso",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_controle_acesso_empresa_id",
+      "table_name": "controle_acesso",
+      "is_unique": false
+    },
+    {
+      "index_name": "convenios_pkey",
+      "table_name": "convenios",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_convenios_empresa_id",
+      "table_name": "convenios",
+      "is_unique": false
+    },
+    {
+      "index_name": "convenios_colaboradores_pkey",
+      "table_name": "convenios_colaboradores",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_convenios_colaboradores_colaborador_id",
+      "table_name": "convenios_colaboradores",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_convenios_colaboradores_convenio_id",
+      "table_name": "convenios_colaboradores",
+      "is_unique": false
+    },
+    {
+      "index_name": "curriculos_arquivos_pkey",
+      "table_name": "curriculos_arquivos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_curriculos_arquivos_candidato_id",
+      "table_name": "curriculos_arquivos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_curriculos_arquivos_empresa_id",
+      "table_name": "curriculos_arquivos",
+      "is_unique": false
+    },
+    {
+      "index_name": "dados_estagiario_pkey",
+      "table_name": "dados_estagiario",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_dados_estagiario_colaborador_id",
+      "table_name": "dados_estagiario",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_dados_estagiario_empresa_id",
+      "table_name": "dados_estagiario",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_dados_estagiario_supervisor_id",
+      "table_name": "dados_estagiario",
+      "is_unique": false
+    },
+    {
+      "index_name": "dados_estrangeiro_colaborador_id_key",
+      "table_name": "dados_estrangeiro",
+      "is_unique": true
+    },
+    {
+      "index_name": "dados_estrangeiro_pkey",
+      "table_name": "dados_estrangeiro",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_dados_estrangeiro_colaborador_id",
+      "table_name": "dados_estrangeiro",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_dados_estrangeiro_condicao_ingresso_id",
+      "table_name": "dados_estrangeiro",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_dados_estrangeiro_descricao_logradouro_id",
+      "table_name": "dados_estrangeiro",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_dados_estrangeiro_pais_id",
+      "table_name": "dados_estrangeiro",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_dados_estrangeiro_tempo_residencia_id",
+      "table_name": "dados_estrangeiro",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_dados_estrangeiro_tipo_visto_id",
+      "table_name": "dados_estrangeiro",
+      "is_unique": false
+    },
+    {
+      "index_name": "dctfweb_declaracoes_pkey",
+      "table_name": "dctfweb_declaracoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_dctfweb_declaracoes_empresa_id",
+      "table_name": "dctfweb_declaracoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "deficiencias_colaborador_id_key",
+      "table_name": "deficiencias",
+      "is_unique": true
+    },
+    {
+      "index_name": "deficiencias_pkey",
+      "table_name": "deficiencias",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_deficiencias_colaborador_id",
+      "table_name": "deficiencias",
+      "is_unique": false
+    },
+    {
+      "index_name": "departamentos_empresa_nome_key",
+      "table_name": "departamentos",
+      "is_unique": true
+    },
+    {
+      "index_name": "departamentos_pkey",
+      "table_name": "departamentos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_departamentos_departamento_pai_id",
+      "table_name": "departamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_departamentos_empresa_id",
+      "table_name": "departamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_departamentos_responsavel_id",
+      "table_name": "departamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "dependentes_pkey",
+      "table_name": "dependentes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_dependentes_colaborador_id",
+      "table_name": "dependentes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_dependentes_genero_documento_id",
+      "table_name": "dependentes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_dependentes_relacionamento_id",
+      "table_name": "dependentes",
+      "is_unique": false
+    },
+    {
+      "index_name": "dependentes_beneficios_dependente_id_beneficio_id_key",
+      "table_name": "dependentes_beneficios",
+      "is_unique": true
+    },
+    {
+      "index_name": "dependentes_beneficios_pkey",
+      "table_name": "dependentes_beneficios",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_dependentes_beneficios_beneficio_id",
+      "table_name": "dependentes_beneficios",
+      "is_unique": false
+    },
+    {
+      "index_name": "descricoes_logradouro_nome_key",
+      "table_name": "descricoes_logradouro",
+      "is_unique": true
+    },
+    {
+      "index_name": "descricoes_logradouro_pkey",
+      "table_name": "descricoes_logradouro",
+      "is_unique": true
+    },
+    {
+      "index_name": "desligamentos_pkey",
+      "table_name": "desligamentos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_desligamentos_colab_status",
+      "table_name": "desligamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_desligamentos_colaborador_id",
+      "table_name": "desligamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_desligamentos_created_by",
+      "table_name": "desligamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_desligamentos_data",
+      "table_name": "desligamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_desligamentos_empresa_created",
+      "table_name": "desligamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_desligamentos_empresa_id",
+      "table_name": "desligamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_desligamentos_status",
+      "table_name": "desligamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_desligamentos_tipo_aviso_previo_id",
+      "table_name": "desligamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_desligamentos_tipo_desligamento_id",
+      "table_name": "desligamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "despesas_pkey",
+      "table_name": "despesas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_despesas_colaborador",
+      "table_name": "despesas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_despesas_colaborador_id",
+      "table_name": "despesas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_despesas_empresa_id",
+      "table_name": "despesas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_despesas_empresa_status",
+      "table_name": "despesas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_despesas_folha",
+      "table_name": "despesas",
+      "is_unique": false
+    },
+    {
+      "index_name": "despesas_aprovacoes_log_pkey",
+      "table_name": "despesas_aprovacoes_log",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_despesas_log_despesa",
+      "table_name": "despesas_aprovacoes_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "documento_templates_pkey",
+      "table_name": "documento_templates",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_documento_templates_created_by",
+      "table_name": "documento_templates",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_documento_templates_empresa_id",
+      "table_name": "documento_templates",
+      "is_unique": false
+    },
+    {
+      "index_name": "documentos_pkey",
+      "table_name": "documentos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_documentos_colaborador_id",
+      "table_name": "documentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "documentos_admissao_pkey",
+      "table_name": "documentos_admissao",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_documentos_admissao_admissao_id",
+      "table_name": "documentos_admissao",
+      "is_unique": false
+    },
+    {
+      "index_name": "documentos_afastamento_pkey",
+      "table_name": "documentos_afastamento",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_documentos_afastamento_afastamento_id",
+      "table_name": "documentos_afastamento",
+      "is_unique": false
+    },
+    {
+      "index_name": "documentos_assinatura_pkey",
+      "table_name": "documentos_assinatura",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_documentos_assinatura_colaborador",
+      "table_name": "documentos_assinatura",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_documentos_assinatura_created",
+      "table_name": "documentos_assinatura",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_documentos_assinatura_empresa_id",
+      "table_name": "documentos_assinatura",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_documentos_assinatura_status",
+      "table_name": "documentos_assinatura",
+      "is_unique": false
+    },
+    {
+      "index_name": "documentos_colaborador_pkey",
+      "table_name": "documentos_colaborador",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_documentos_colaborador_colaborador_id",
+      "table_name": "documentos_colaborador",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_documentos_colaborador_created_by",
+      "table_name": "documentos_colaborador",
+      "is_unique": false
+    },
+    {
+      "index_name": "documentos_historico_pkey",
+      "table_name": "documentos_historico",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_documentos_historico_documento_id",
+      "table_name": "documentos_historico",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_documentos_historico_usuario_id",
+      "table_name": "documentos_historico",
+      "is_unique": false
+    },
+    {
+      "index_name": "documentos_pessoais_arquivos_pkey",
+      "table_name": "documentos_pessoais_arquivos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_documentos_pessoais_arquivos_colaborador_id",
+      "table_name": "documentos_pessoais_arquivos",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_config_enabled_idx",
+      "table_name": "dp_audit_config",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_config_pkey",
+      "table_name": "dp_audit_config",
+      "is_unique": true
+    },
+    {
+      "index_name": "dp_audit_config_table_name_key",
+      "table_name": "dp_audit_config",
+      "is_unique": true
+    },
+    {
+      "index_name": "dp_audit_log_actor_idx",
+      "table_name": "dp_audit_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_created_at_idx",
+      "table_name": "dp_audit_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_event_idx",
+      "table_name": "dp_audit_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_event_type_idx",
+      "table_name": "dp_audit_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_ip_idx",
+      "table_name": "dp_audit_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_payload_gin",
+      "table_name": "dp_audit_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_pkey",
+      "table_name": "dp_audit_log",
+      "is_unique": true
+    },
+    {
+      "index_name": "dp_audit_log_request_idx",
+      "table_name": "dp_audit_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_07_actor_user_id_idx",
+      "table_name": "dp_audit_log_2026_07",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_07_created_at_idx",
+      "table_name": "dp_audit_log_2026_07",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_07_event_idx",
+      "table_name": "dp_audit_log_2026_07",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_07_event_type_idx",
+      "table_name": "dp_audit_log_2026_07",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_07_ip_address_idx",
+      "table_name": "dp_audit_log_2026_07",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_07_payload_idx",
+      "table_name": "dp_audit_log_2026_07",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_07_pkey",
+      "table_name": "dp_audit_log_2026_07",
+      "is_unique": true
+    },
+    {
+      "index_name": "dp_audit_log_2026_07_request_id_idx",
+      "table_name": "dp_audit_log_2026_07",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_08_actor_user_id_idx",
+      "table_name": "dp_audit_log_2026_08",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_08_created_at_idx",
+      "table_name": "dp_audit_log_2026_08",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_08_event_idx",
+      "table_name": "dp_audit_log_2026_08",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_08_event_type_idx",
+      "table_name": "dp_audit_log_2026_08",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_08_ip_address_idx",
+      "table_name": "dp_audit_log_2026_08",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_08_payload_idx",
+      "table_name": "dp_audit_log_2026_08",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_08_pkey",
+      "table_name": "dp_audit_log_2026_08",
+      "is_unique": true
+    },
+    {
+      "index_name": "dp_audit_log_2026_08_request_id_idx",
+      "table_name": "dp_audit_log_2026_08",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_09_actor_user_id_idx",
+      "table_name": "dp_audit_log_2026_09",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_09_created_at_idx",
+      "table_name": "dp_audit_log_2026_09",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_09_event_idx",
+      "table_name": "dp_audit_log_2026_09",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_09_event_type_idx",
+      "table_name": "dp_audit_log_2026_09",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_09_ip_address_idx",
+      "table_name": "dp_audit_log_2026_09",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_09_payload_idx",
+      "table_name": "dp_audit_log_2026_09",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_09_pkey",
+      "table_name": "dp_audit_log_2026_09",
+      "is_unique": true
+    },
+    {
+      "index_name": "dp_audit_log_2026_09_request_id_idx",
+      "table_name": "dp_audit_log_2026_09",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_10_actor_user_id_idx",
+      "table_name": "dp_audit_log_2026_10",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_10_created_at_idx",
+      "table_name": "dp_audit_log_2026_10",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_10_event_idx",
+      "table_name": "dp_audit_log_2026_10",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_10_event_type_idx",
+      "table_name": "dp_audit_log_2026_10",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_10_ip_address_idx",
+      "table_name": "dp_audit_log_2026_10",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_10_payload_idx",
+      "table_name": "dp_audit_log_2026_10",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_10_pkey",
+      "table_name": "dp_audit_log_2026_10",
+      "is_unique": true
+    },
+    {
+      "index_name": "dp_audit_log_2026_10_request_id_idx",
+      "table_name": "dp_audit_log_2026_10",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_11_actor_user_id_idx",
+      "table_name": "dp_audit_log_2026_11",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_11_created_at_idx",
+      "table_name": "dp_audit_log_2026_11",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_11_event_idx",
+      "table_name": "dp_audit_log_2026_11",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_11_event_type_idx",
+      "table_name": "dp_audit_log_2026_11",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_11_ip_address_idx",
+      "table_name": "dp_audit_log_2026_11",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_11_payload_idx",
+      "table_name": "dp_audit_log_2026_11",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_11_pkey",
+      "table_name": "dp_audit_log_2026_11",
+      "is_unique": true
+    },
+    {
+      "index_name": "dp_audit_log_2026_11_request_id_idx",
+      "table_name": "dp_audit_log_2026_11",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_12_actor_user_id_idx",
+      "table_name": "dp_audit_log_2026_12",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_12_created_at_idx",
+      "table_name": "dp_audit_log_2026_12",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_12_event_idx",
+      "table_name": "dp_audit_log_2026_12",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_12_event_type_idx",
+      "table_name": "dp_audit_log_2026_12",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_12_ip_address_idx",
+      "table_name": "dp_audit_log_2026_12",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_12_payload_idx",
+      "table_name": "dp_audit_log_2026_12",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_2026_12_pkey",
+      "table_name": "dp_audit_log_2026_12",
+      "is_unique": true
+    },
+    {
+      "index_name": "dp_audit_log_2026_12_request_id_idx",
+      "table_name": "dp_audit_log_2026_12",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_default_actor_user_id_idx",
+      "table_name": "dp_audit_log_default",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_default_created_at_idx",
+      "table_name": "dp_audit_log_default",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_default_event_idx",
+      "table_name": "dp_audit_log_default",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_default_event_type_idx",
+      "table_name": "dp_audit_log_default",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_default_ip_address_idx",
+      "table_name": "dp_audit_log_default",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_default_payload_idx",
+      "table_name": "dp_audit_log_default",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_audit_log_default_pkey",
+      "table_name": "dp_audit_log_default",
+      "is_unique": true
+    },
+    {
+      "index_name": "dp_audit_log_default_request_id_idx",
+      "table_name": "dp_audit_log_default",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_backup_runbook_pkey",
+      "table_name": "dp_backup_runbook",
+      "is_unique": true
+    },
+    {
+      "index_name": "dp_backup_runbook_step_number_key",
+      "table_name": "dp_backup_runbook",
+      "is_unique": true
+    },
+    {
+      "index_name": "dp_data_catalog_pkey",
+      "table_name": "dp_data_catalog",
+      "is_unique": true
+    },
+    {
+      "index_name": "dp_data_catalog_sensitivity_idx",
+      "table_name": "dp_data_catalog",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_data_catalog_table_idx",
+      "table_name": "dp_data_catalog",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_data_catalog_table_name_column_name_key",
+      "table_name": "dp_data_catalog",
+      "is_unique": true
+    },
+    {
+      "index_name": "dp_environments_env_name_key",
+      "table_name": "dp_environments",
+      "is_unique": true
+    },
+    {
+      "index_name": "dp_environments_pkey",
+      "table_name": "dp_environments",
+      "is_unique": true
+    },
+    {
+      "index_name": "dp_mcp_config_config_key_key",
+      "table_name": "dp_mcp_config",
+      "is_unique": true
+    },
+    {
+      "index_name": "dp_mcp_config_pkey",
+      "table_name": "dp_mcp_config",
+      "is_unique": true
+    },
+    {
+      "index_name": "dp_retention_policy_enabled_idx",
+      "table_name": "dp_retention_policy",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_retention_policy_pkey",
+      "table_name": "dp_retention_policy",
+      "is_unique": true
+    },
+    {
+      "index_name": "dp_retention_policy_table_name_retention_days_action_key",
+      "table_name": "dp_retention_policy",
+      "is_unique": true
+    },
+    {
+      "index_name": "dp_user_roles_active_idx",
+      "table_name": "dp_user_roles",
+      "is_unique": false
+    },
+    {
+      "index_name": "dp_user_roles_pkey",
+      "table_name": "dp_user_roles",
+      "is_unique": true
+    },
+    {
+      "index_name": "dp_user_roles_user_id_role_key",
+      "table_name": "dp_user_roles",
+      "is_unique": true
+    },
+    {
+      "index_name": "dp_user_roles_user_idx",
+      "table_name": "dp_user_roles",
+      "is_unique": false
+    },
+    {
+      "index_name": "empresas_cnpj_key",
+      "table_name": "empresas",
+      "is_unique": true
+    },
+    {
+      "index_name": "empresas_pkey",
+      "table_name": "empresas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_empresas_ativa",
+      "table_name": "empresas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_empresas_ordem_exibicao",
+      "table_name": "empresas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_empresas_razao_social",
+      "table_name": "empresas",
+      "is_unique": false
+    },
+    {
+      "index_name": "emprestimos_consignados_pkey",
+      "table_name": "emprestimos_consignados",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_emprestimos_consignados_colaborador_id",
+      "table_name": "emprestimos_consignados",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_emprestimos_consignados_empresa_id",
+      "table_name": "emprestimos_consignados",
+      "is_unique": false
+    },
+    {
+      "index_name": "epis_pkey",
+      "table_name": "epis",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_epis_empresa_id",
+      "table_name": "epis",
+      "is_unique": false
+    },
+    {
+      "index_name": "epis_entregas_pkey",
+      "table_name": "epis_entregas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_epis_entregas_colaborador_id",
+      "table_name": "epis_entregas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_epis_entregas_empresa_id",
+      "table_name": "epis_entregas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_epis_entregas_epi_id",
+      "table_name": "epis_entregas",
+      "is_unique": false
+    },
+    {
+      "index_name": "epis_fichas_pkey",
+      "table_name": "epis_fichas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_epis_fichas_colab",
+      "table_name": "epis_fichas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_epis_fichas_empresa",
+      "table_name": "epis_fichas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_epis_fichas_responsavel_id",
+      "table_name": "epis_fichas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_epis_fichas_status",
+      "table_name": "epis_fichas",
+      "is_unique": false
+    },
+    {
+      "index_name": "epis_fichas_assinaturas_ficha_id_key",
+      "table_name": "epis_fichas_assinaturas",
+      "is_unique": true
+    },
+    {
+      "index_name": "epis_fichas_assinaturas_pkey",
+      "table_name": "epis_fichas_assinaturas",
+      "is_unique": true
+    },
+    {
+      "index_name": "epis_fichas_itens_pkey",
+      "table_name": "epis_fichas_itens",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_epis_fichas_itens_epi_id",
+      "table_name": "epis_fichas_itens",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_epis_itens_ficha",
+      "table_name": "epis_fichas_itens",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_epis_itens_status",
+      "table_name": "epis_fichas_itens",
+      "is_unique": false
+    },
+    {
+      "index_name": "escalas_pkey",
+      "table_name": "escalas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_escalas_empresa_id",
+      "table_name": "escalas",
+      "is_unique": false
+    },
+    {
+      "index_name": "escalas_trabalho_pkey",
+      "table_name": "escalas_trabalho",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_escalas_trabalho_colaborador_id",
+      "table_name": "escalas_trabalho",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_escalas_trabalho_empresa_id",
+      "table_name": "escalas_trabalho",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_escalas_trabalho_turno_id",
+      "table_name": "escalas_trabalho",
+      "is_unique": false
+    },
+    {
+      "index_name": "esocial_eventos_pkey",
+      "table_name": "esocial_eventos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_esocial_eventos_empresa_id",
+      "table_name": "esocial_eventos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_esocial_eventos_medida",
+      "table_name": "esocial_eventos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_esocial_status_comp",
+      "table_name": "esocial_eventos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_esocial_tipo",
+      "table_name": "esocial_eventos",
+      "is_unique": false
+    },
+    {
+      "index_name": "uq_esocial_eventos_admissao_s2200",
+      "table_name": "esocial_eventos",
+      "is_unique": true
+    },
+    {
+      "index_name": "esocial_lotes_pkey",
+      "table_name": "esocial_lotes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_esocial_lotes_empresa_id",
+      "table_name": "esocial_lotes",
+      "is_unique": false
+    },
+    {
+      "index_name": "esocial_transmissao_logs_pkey",
+      "table_name": "esocial_transmissao_logs",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_esocial_transmissao_logs_evento_id",
+      "table_name": "esocial_transmissao_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "etnias_nome_key",
+      "table_name": "etnias",
+      "is_unique": true
+    },
+    {
+      "index_name": "etnias_pkey",
+      "table_name": "etnias",
+      "is_unique": true
+    },
+    {
+      "index_name": "eventos_variaveis_pkey",
+      "table_name": "eventos_variaveis",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_eventos_variaveis_colaborador_id",
+      "table_name": "eventos_variaveis",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_eventos_variaveis_created_by",
+      "table_name": "eventos_variaveis",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_eventos_variaveis_origem_ferias",
+      "table_name": "eventos_variaveis",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_eventos_variaveis_rubrica_id",
+      "table_name": "eventos_variaveis",
+      "is_unique": false
+    },
+    {
+      "index_name": "uq_eventos_variaveis_ferias_rubrica",
+      "table_name": "eventos_variaveis",
+      "is_unique": true
+    },
+    {
+      "index_name": "exames_pkey",
+      "table_name": "exames",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_exames_colaborador_id",
+      "table_name": "exames",
+      "is_unique": false
+    },
+    {
+      "index_name": "exames_agendamentos_pkey",
+      "table_name": "exames_agendamentos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_exames_agend_clinica",
+      "table_name": "exames_agendamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_exames_agend_colaborador",
+      "table_name": "exames_agendamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_exames_agend_data",
+      "table_name": "exames_agendamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_exames_agend_empresa_status",
+      "table_name": "exames_agendamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "faltas_pkey",
+      "table_name": "faltas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_faltas_colab_data",
+      "table_name": "faltas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_faltas_colaborador_id",
+      "table_name": "faltas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_faltas_empresa_data",
+      "table_name": "faltas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_faltas_empresa_id",
+      "table_name": "faltas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_faltas_motivo_afastamento_id",
+      "table_name": "faltas",
+      "is_unique": false
+    },
+    {
+      "index_name": "feedbacks_360_pkey",
+      "table_name": "feedbacks_360",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_feedbacks_360_avaliado_id",
+      "table_name": "feedbacks_360",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_feedbacks_360_avaliador_id",
+      "table_name": "feedbacks_360",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_feedbacks_360_ciclo_id",
+      "table_name": "feedbacks_360",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_feedbacks_360_empresa_id",
+      "table_name": "feedbacks_360",
+      "is_unique": false
+    },
+    {
+      "index_name": "feriados_pkey",
+      "table_name": "feriados",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_feriados_empresa_id",
+      "table_name": "feriados",
+      "is_unique": false
+    },
+    {
+      "index_name": "ferias_pkey",
+      "table_name": "ferias",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_ferias_adiant13_empresa",
+      "table_name": "ferias",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ferias_colab_status",
+      "table_name": "ferias",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ferias_colaborador_id",
+      "table_name": "ferias",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ferias_data_inicio",
+      "table_name": "ferias",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ferias_empresa_id",
+      "table_name": "ferias",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ferias_empresa_inicio",
+      "table_name": "ferias",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ferias_empresa_status",
+      "table_name": "ferias",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ferias_pagamento_pend",
+      "table_name": "ferias",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ferias_periodo_aquisitivo_id",
+      "table_name": "ferias",
+      "is_unique": false
+    },
+    {
+      "index_name": "uq_ferias_adiant13_ano",
+      "table_name": "ferias",
+      "is_unique": true
+    },
+    {
+      "index_name": "ferias_aprovacoes_pkey",
+      "table_name": "ferias_aprovacoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_ferias_aprovacoes_ferias_id",
+      "table_name": "ferias_aprovacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "ferias_aprovacoes_log_pkey",
+      "table_name": "ferias_aprovacoes_log",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_ferias_aprovacoes_log_aprovador_id",
+      "table_name": "ferias_aprovacoes_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ferias_aprovacoes_log_ferias_id",
+      "table_name": "ferias_aprovacoes_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "ferias_arquivos_pkey",
+      "table_name": "ferias_arquivos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_ferias_arquivos_ferias_id",
+      "table_name": "ferias_arquivos",
+      "is_unique": false
+    },
+    {
+      "index_name": "ferias_audit_log_pkey",
+      "table_name": "ferias_audit_log",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_ferias_audit_entidade",
+      "table_name": "ferias_audit_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ferias_audit_log_created_at",
+      "table_name": "ferias_audit_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ferias_audit_log_empresa_id",
+      "table_name": "ferias_audit_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ferias_audit_log_usuario_id",
+      "table_name": "ferias_audit_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ferias_audit_usuario_id",
+      "table_name": "ferias_audit_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "ferias_coletivas_pkey",
+      "table_name": "ferias_coletivas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_ferias_coletivas_empresa_id",
+      "table_name": "ferias_coletivas",
+      "is_unique": false
+    },
+    {
+      "index_name": "ferias_programacao_pkey",
+      "table_name": "ferias_programacao",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_fprog_colaborador",
+      "table_name": "ferias_programacao",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_fprog_empresa_ano_mes",
+      "table_name": "ferias_programacao",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_fprog_ferias",
+      "table_name": "ferias_programacao",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_fprog_status",
+      "table_name": "ferias_programacao",
+      "is_unique": false
+    },
+    {
+      "index_name": "uq_fprog_unico_ativo",
+      "table_name": "ferias_programacao",
+      "is_unique": true
+    },
+    {
+      "index_name": "ferias_reconciliacao_logs_pkey",
+      "table_name": "ferias_reconciliacao_logs",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_ferias_reconc_logs_empresa",
+      "table_name": "ferias_reconciliacao_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ferias_reconciliacao_logs_empresa_executado",
+      "table_name": "ferias_reconciliacao_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ferias_reconciliacao_logs_pendencias",
+      "table_name": "ferias_reconciliacao_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "ferias_solicitacoes_pkey",
+      "table_name": "ferias_solicitacoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_ferias_solicitacoes_colaborador_id",
+      "table_name": "ferias_solicitacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ferias_solicitacoes_empresa_id",
+      "table_name": "ferias_solicitacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "fgts_digital_logs_pkey",
+      "table_name": "fgts_digital_logs",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_fgts_digital_logs_guia_id",
+      "table_name": "fgts_digital_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "fila_notificacoes_pkey",
+      "table_name": "fila_notificacoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_fila_notificacoes_status_scheduled",
+      "table_name": "fila_notificacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_fila_notificacoes_user_id",
+      "table_name": "fila_notificacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "fila_processamento_pkey",
+      "table_name": "fila_processamento",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_fila_dlq",
+      "table_name": "fila_processamento",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_fila_processamento_status",
+      "table_name": "fila_processamento",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_fila_processamento_usuario",
+      "table_name": "fila_processamento",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_fila_ready_to_process",
+      "table_name": "fila_processamento",
+      "is_unique": false
+    },
+    {
+      "index_name": "folha_assinaturas_pkey",
+      "table_name": "folha_assinaturas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_folha_assinaturas_assinante_id",
+      "table_name": "folha_assinaturas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_folha_assinaturas_folha_id",
+      "table_name": "folha_assinaturas",
+      "is_unique": false
+    },
+    {
+      "index_name": "folha_auditoria_pkey",
+      "table_name": "folha_auditoria",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_folha_auditoria_colaborador",
+      "table_name": "folha_auditoria",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_folha_auditoria_created_at",
+      "table_name": "folha_auditoria",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_folha_auditoria_criado_por",
+      "table_name": "folha_auditoria",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_folha_auditoria_folha",
+      "table_name": "folha_auditoria",
+      "is_unique": false
+    },
+    {
+      "index_name": "folha_eventos_auditoria_pkey",
+      "table_name": "folha_eventos_auditoria",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_folha_eventos_auditoria_folha_id",
+      "table_name": "folha_eventos_auditoria",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_folha_eventos_auditoria_usuario_id",
+      "table_name": "folha_eventos_auditoria",
+      "is_unique": false
+    },
+    {
+      "index_name": "folha_itens_folha_colaborador_unique",
+      "table_name": "folha_itens",
+      "is_unique": true
+    },
+    {
+      "index_name": "folha_itens_pkey",
+      "table_name": "folha_itens",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_folha_itens_colaborador_id",
+      "table_name": "folha_itens",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_folha_itens_folha_colab_covering",
+      "table_name": "folha_itens",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_folha_itens_folha_id",
+      "table_name": "folha_itens",
+      "is_unique": false
+    },
+    {
+      "index_name": "folha_lock_conflicts_pkey",
+      "table_name": "folha_lock_conflicts",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_folha_lock_conflicts_folha",
+      "table_name": "folha_lock_conflicts",
+      "is_unique": false
+    },
+    {
+      "index_name": "folhas_pagamento_empresa_comp_tipo_unique",
+      "table_name": "folhas_pagamento",
+      "is_unique": true
+    },
+    {
+      "index_name": "folhas_pagamento_pkey",
+      "table_name": "folhas_pagamento",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_folhas_empresa_competencia",
+      "table_name": "folhas_pagamento",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_folhas_empresa_status",
+      "table_name": "folhas_pagamento",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_folhas_pagamento_competencia",
+      "table_name": "folhas_pagamento",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_folhas_pagamento_created_by",
+      "table_name": "folhas_pagamento",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_folhas_pagamento_empresa_competencia",
+      "table_name": "folhas_pagamento",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_folhas_pagamento_empresa_id",
+      "table_name": "folhas_pagamento",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_folhas_pagamento_empresa_status",
+      "table_name": "folhas_pagamento",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_folhas_pagamento_id_version",
+      "table_name": "folhas_pagamento",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_folhas_pagamento_status",
+      "table_name": "folhas_pagamento",
+      "is_unique": false
+    },
+    {
+      "index_name": "formacoes_academicas_pkey",
+      "table_name": "formacoes_academicas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_formacoes_academicas_colaborador_id",
+      "table_name": "formacoes_academicas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_formacoes_col",
+      "table_name": "formacoes_academicas",
+      "is_unique": false
+    },
+    {
+      "index_name": "generos_documento_nome_key",
+      "table_name": "generos_documento",
+      "is_unique": true
+    },
+    {
+      "index_name": "generos_documento_pkey",
+      "table_name": "generos_documento",
+      "is_unique": true
+    },
+    {
+      "index_name": "geo_allowed_countries_country_code_key",
+      "table_name": "geo_allowed_countries",
+      "is_unique": true
+    },
+    {
+      "index_name": "geo_allowed_countries_pkey",
+      "table_name": "geo_allowed_countries",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_geo_allowed_countries_added_by",
+      "table_name": "geo_allowed_countries",
+      "is_unique": false
+    },
+    {
+      "index_name": "geo_blocked_attempts_pkey",
+      "table_name": "geo_blocked_attempts",
+      "is_unique": true
+    },
+    {
+      "index_name": "geo_blocking_config_pkey",
+      "table_name": "geo_blocking_config",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_geo_blocking_config_updated_by",
+      "table_name": "geo_blocking_config",
+      "is_unique": false
+    },
+    {
+      "index_name": "govbr_auth_state_pkey",
+      "table_name": "govbr_auth_state",
+      "is_unique": true
+    },
+    {
+      "index_name": "govbr_auth_state_state_key",
+      "table_name": "govbr_auth_state",
+      "is_unique": true
+    },
+    {
+      "index_name": "guias_fgts_pkey",
+      "table_name": "guias_fgts",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_guias_fgts_empresa_id",
+      "table_name": "guias_fgts",
+      "is_unique": false
+    },
+    {
+      "index_name": "guias_fgts_digital_pkey",
+      "table_name": "guias_fgts_digital",
+      "is_unique": true
+    },
+    {
+      "index_name": "guias_inss_pkey",
+      "table_name": "guias_inss",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_guias_inss_empresa_id",
+      "table_name": "guias_inss",
+      "is_unique": false
+    },
+    {
+      "index_name": "historico_alertas_pkey",
+      "table_name": "historico_alertas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_historico_alertas_created_at",
+      "table_name": "historico_alertas",
+      "is_unique": false
+    },
+    {
+      "index_name": "historico_calculos_folha_pkey",
+      "table_name": "historico_calculos_folha",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_historico_calculos_folha_criado_por",
+      "table_name": "historico_calculos_folha",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_historico_calculos_folha_empresa_id",
+      "table_name": "historico_calculos_folha",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_historico_calculos_folha_folha_id",
+      "table_name": "historico_calculos_folha",
+      "is_unique": false
+    },
+    {
+      "index_name": "historico_cargo_pkey",
+      "table_name": "historico_cargo",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_historico_cargo_colaborador_id",
+      "table_name": "historico_cargo",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_historico_cargo_created_by",
+      "table_name": "historico_cargo",
+      "is_unique": false
+    },
+    {
+      "index_name": "historico_contratos_pkey",
+      "table_name": "historico_contratos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_historico_contratos_colaborador_id",
+      "table_name": "historico_contratos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_historico_contratos_empresa_id",
+      "table_name": "historico_contratos",
+      "is_unique": false
+    },
+    {
+      "index_name": "historico_ferias_pkey",
+      "table_name": "historico_ferias",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_historico_ferias_ferias_id",
+      "table_name": "historico_ferias",
+      "is_unique": false
+    },
+    {
+      "index_name": "historico_rescisoes_pkey",
+      "table_name": "historico_rescisoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_historico_rescisoes_empresa_id",
+      "table_name": "historico_rescisoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "historico_salarial_pkey",
+      "table_name": "historico_salarial",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_historico_salarial_col",
+      "table_name": "historico_salarial",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_historico_salarial_colaborador_id",
+      "table_name": "historico_salarial",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_historico_salarial_empresa_created",
+      "table_name": "historico_salarial",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_historico_salarial_empresa_id",
+      "table_name": "historico_salarial",
+      "is_unique": false
+    },
+    {
+      "index_name": "holerite_distribuicoes_pkey",
+      "table_name": "holerite_distribuicoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_holerite_dist_folha",
+      "table_name": "holerite_distribuicoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_holerite_dist_status",
+      "table_name": "holerite_distribuicoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_holerite_distrib_holerite_id",
+      "table_name": "holerite_distribuicoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "holerites_folha_id_colaborador_id_key",
+      "table_name": "holerites",
+      "is_unique": true
+    },
+    {
+      "index_name": "holerites_pkey",
+      "table_name": "holerites",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_holerites_assinado",
+      "table_name": "holerites",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_holerites_assinado_partial",
+      "table_name": "holerites",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_holerites_colab_created",
+      "table_name": "holerites",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_holerites_colaborador_id",
+      "table_name": "holerites",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_holerites_folha",
+      "table_name": "holerites",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_holerites_folha_colab_covering",
+      "table_name": "holerites",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_holerites_folha_id",
+      "table_name": "holerites",
+      "is_unique": false
+    },
+    {
+      "index_name": "homologacoes_rescisao_pkey",
+      "table_name": "homologacoes_rescisao",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_homologacoes_desligamento",
+      "table_name": "homologacoes_rescisao",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_homologacoes_rescisao_usuario_id",
+      "table_name": "homologacoes_rescisao",
+      "is_unique": false
+    },
+    {
+      "index_name": "uq_homologacoes_desligamento_etapa",
+      "table_name": "homologacoes_rescisao",
+      "is_unique": true
+    },
+    {
+      "index_name": "ia_provisoes_alertas_pkey",
+      "table_name": "ia_provisoes_alertas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_ia_provisoes_alertas_empresa_id",
+      "table_name": "ia_provisoes_alertas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idempotency_keys_pkey",
+      "table_name": "idempotency_keys",
+      "is_unique": true
+    },
+    {
+      "index_name": "idempotency_keys_unique",
+      "table_name": "idempotency_keys",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_idempotency_expires",
+      "table_name": "idempotency_keys",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_idempotency_keys_empresa",
+      "table_name": "idempotency_keys",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_idempotency_keys_expires",
+      "table_name": "idempotency_keys",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_idempotency_status",
+      "table_name": "idempotency_keys",
+      "is_unique": false
+    },
+    {
+      "index_name": "identidades_genero_nome_key",
+      "table_name": "identidades_genero",
+      "is_unique": true
+    },
+    {
+      "index_name": "identidades_genero_pkey",
+      "table_name": "identidades_genero",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_inscricoes_cursos_colaborador_id",
+      "table_name": "inscricoes_cursos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_inscricoes_cursos_curso_id",
+      "table_name": "inscricoes_cursos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_inscricoes_cursos_empresa_id",
+      "table_name": "inscricoes_cursos",
+      "is_unique": false
+    },
+    {
+      "index_name": "inscricoes_cursos_pkey",
+      "table_name": "inscricoes_cursos",
+      "is_unique": true
+    },
+    {
+      "index_name": "integracao_logs_pkey",
+      "table_name": "integracao_logs",
+      "is_unique": true
+    },
+    {
+      "index_name": "integracoes_pkey",
+      "table_name": "integracoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_ip_whitelist_added_by",
+      "table_name": "ip_whitelist",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ip_whitelist_ip",
+      "table_name": "ip_whitelist",
+      "is_unique": false
+    },
+    {
+      "index_name": "ip_whitelist_ip_address_key",
+      "table_name": "ip_whitelist",
+      "is_unique": true
+    },
+    {
+      "index_name": "ip_whitelist_pkey",
+      "table_name": "ip_whitelist",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_itens_folha_colaborador_id",
+      "table_name": "itens_folha",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_itens_folha_folha_id",
+      "table_name": "itens_folha",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_itens_folha_rubrica_id",
+      "table_name": "itens_folha",
+      "is_unique": false
+    },
+    {
+      "index_name": "itens_folha_pkey",
+      "table_name": "itens_folha",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_jornadas_empresa_id",
+      "table_name": "jornadas",
+      "is_unique": false
+    },
+    {
+      "index_name": "jornadas_pkey",
+      "table_name": "jornadas",
+      "is_unique": true
+    },
+    {
+      "index_name": "jornadas_horarios_jornada_id_dia_semana_key",
+      "table_name": "jornadas_horarios",
+      "is_unique": true
+    },
+    {
+      "index_name": "jornadas_horarios_pkey",
+      "table_name": "jornadas_horarios",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_lancamentos_contabeis_conta_credito_id",
+      "table_name": "lancamentos_contabeis",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_lancamentos_contabeis_conta_debito_id",
+      "table_name": "lancamentos_contabeis",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_lancamentos_contabeis_empresa_id",
+      "table_name": "lancamentos_contabeis",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_lancamentos_contabeis_folha_id",
+      "table_name": "lancamentos_contabeis",
+      "is_unique": false
+    },
+    {
+      "index_name": "lancamentos_contabeis_pkey",
+      "table_name": "lancamentos_contabeis",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_lancamentos_folha_holerite_id",
+      "table_name": "lancamentos_folha",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_lancamentos_folha_rubrica_id",
+      "table_name": "lancamentos_folha",
+      "is_unique": false
+    },
+    {
+      "index_name": "lancamentos_folha_pkey",
+      "table_name": "lancamentos_folha",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_lgpd_consentimentos_colaborador_id",
+      "table_name": "lgpd_consentimentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_lgpd_consentimentos_empresa_id",
+      "table_name": "lgpd_consentimentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "lgpd_consentimentos_pkey",
+      "table_name": "lgpd_consentimentos",
+      "is_unique": true
+    },
+    {
+      "index_name": "lgpd_fila_limpeza_pkey",
+      "table_name": "lgpd_fila_limpeza",
+      "is_unique": true
+    },
+    {
+      "index_name": "lgpd_politicas_retencao_pkey",
+      "table_name": "lgpd_politicas_retencao",
+      "is_unique": true
+    },
+    {
+      "index_name": "lgpd_retencao_logs_pkey",
+      "table_name": "lgpd_retencao_logs",
+      "is_unique": true
+    },
+    {
+      "index_name": "lgpd_retencao_logs_tabela_key",
+      "table_name": "lgpd_retencao_logs",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_lgpd_solicitacoes_colaborador_id",
+      "table_name": "lgpd_solicitacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_lgpd_solicitacoes_empresa_id",
+      "table_name": "lgpd_solicitacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "lgpd_solicitacoes_pkey",
+      "table_name": "lgpd_solicitacoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_linhas_transporte_vale_transporte_id",
+      "table_name": "linhas_transporte",
+      "is_unique": false
+    },
+    {
+      "index_name": "linhas_transporte_pkey",
+      "table_name": "linhas_transporte",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_locais_trabalho_empresa_id",
+      "table_name": "locais_trabalho",
+      "is_unique": false
+    },
+    {
+      "index_name": "locais_trabalho_pkey",
+      "table_name": "locais_trabalho",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_log_envio_relatorios_agendamento_id",
+      "table_name": "log_envio_relatorios",
+      "is_unique": false
+    },
+    {
+      "index_name": "log_envio_relatorios_pkey",
+      "table_name": "log_envio_relatorios",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_login_attempts_email_ip",
+      "table_name": "login_attempts",
+      "is_unique": false
+    },
+    {
+      "index_name": "login_attempts_pkey",
+      "table_name": "login_attempts",
+      "is_unique": true
+    },
+    {
+      "index_name": "login_lockouts_identifier_identifier_type_key",
+      "table_name": "login_lockouts",
+      "is_unique": true
+    },
+    {
+      "index_name": "login_lockouts_pkey",
+      "table_name": "login_lockouts",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_login_rate_limits_identifier",
+      "table_name": "login_rate_limits",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_login_rate_limits_locked_until",
+      "table_name": "login_rate_limits",
+      "is_unique": false
+    },
+    {
+      "index_name": "login_rate_limits_identifier_identifier_type_key",
+      "table_name": "login_rate_limits",
+      "is_unique": true
+    },
+    {
+      "index_name": "login_rate_limits_pkey",
+      "table_name": "login_rate_limits",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_logs_integracoes_integracao_id",
+      "table_name": "logs_integracoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "logs_integracoes_pkey",
+      "table_name": "logs_integracoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_logs_sincronizacao_empresa_id",
+      "table_name": "logs_sincronizacao",
+      "is_unique": false
+    },
+    {
+      "index_name": "logs_sincronizacao_pkey",
+      "table_name": "logs_sincronizacao",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_logs_sistema_created_at",
+      "table_name": "logs_sistema",
+      "is_unique": false
+    },
+    {
+      "index_name": "logs_sistema_pkey",
+      "table_name": "logs_sistema",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_lotacoes_colaborador_id",
+      "table_name": "lotacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_lotacoes_empresa_id",
+      "table_name": "lotacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "lotacoes_pkey",
+      "table_name": "lotacoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_medidas_ciencia_tokens_empresa",
+      "table_name": "medidas_ciencia_tokens",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_medidas_ciencia_tokens_medida",
+      "table_name": "medidas_ciencia_tokens",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_medidas_ciencia_tokens_token",
+      "table_name": "medidas_ciencia_tokens",
+      "is_unique": false
+    },
+    {
+      "index_name": "medidas_ciencia_tokens_pkey",
+      "table_name": "medidas_ciencia_tokens",
+      "is_unique": true
+    },
+    {
+      "index_name": "medidas_ciencia_tokens_token_key",
+      "table_name": "medidas_ciencia_tokens",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_medidas_aprovador",
+      "table_name": "medidas_disciplinares",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_medidas_disciplinares_colaborador_id",
+      "table_name": "medidas_disciplinares",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_medidas_disciplinares_empresa_id",
+      "table_name": "medidas_disciplinares",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_medidas_empresa_data",
+      "table_name": "medidas_disciplinares",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_medidas_status_workflow",
+      "table_name": "medidas_disciplinares",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_medidas_tipo",
+      "table_name": "medidas_disciplinares",
+      "is_unique": false
+    },
+    {
+      "index_name": "medidas_disciplinares_pkey",
+      "table_name": "medidas_disciplinares",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_medidas_disciplinares_anexos_medida_id",
+      "table_name": "medidas_disciplinares_anexos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_medidas_disciplinares_anexos_uploaded_by",
+      "table_name": "medidas_disciplinares_anexos",
+      "is_unique": false
+    },
+    {
+      "index_name": "medidas_disciplinares_anexos_pkey",
+      "table_name": "medidas_disciplinares_anexos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_medida_contest_anexos_empresa",
+      "table_name": "medidas_disciplinares_contestacao_anexos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_medida_contest_anexos_medida",
+      "table_name": "medidas_disciplinares_contestacao_anexos",
+      "is_unique": false
+    },
+    {
+      "index_name": "medidas_disciplinares_contestacao_anexos_pkey",
+      "table_name": "medidas_disciplinares_contestacao_anexos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_med_integ_medida",
+      "table_name": "medidas_disciplinares_integracao",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_med_integ_pendentes",
+      "table_name": "medidas_disciplinares_integracao",
+      "is_unique": false
+    },
+    {
+      "index_name": "medidas_disciplinares_integracao_pkey",
+      "table_name": "medidas_disciplinares_integracao",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_medidas_wf_log_medida",
+      "table_name": "medidas_disciplinares_workflow_log",
+      "is_unique": false
+    },
+    {
+      "index_name": "medidas_disciplinares_workflow_log_pkey",
+      "table_name": "medidas_disciplinares_workflow_log",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_metas_okrs_ciclo_id",
+      "table_name": "metas_okrs",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_metas_okrs_colaborador_id",
+      "table_name": "metas_okrs",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_metas_okrs_empresa_id",
+      "table_name": "metas_okrs",
+      "is_unique": false
+    },
+    {
+      "index_name": "metas_okrs_pkey",
+      "table_name": "metas_okrs",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_metricas_processamento_timestamp",
+      "table_name": "metricas_processamento",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_metricas_processamento_timestamp_desc",
+      "table_name": "metricas_processamento",
+      "is_unique": false
+    },
+    {
+      "index_name": "metricas_processamento_pkey",
+      "table_name": "metricas_processamento",
+      "is_unique": true
+    },
+    {
+      "index_name": "motivos_afastamento_nome_key",
+      "table_name": "motivos_afastamento",
+      "is_unique": true
+    },
+    {
+      "index_name": "motivos_afastamento_pkey",
+      "table_name": "motivos_afastamento",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_mv_telemetry_tenant_key",
+      "table_name": "mv_telemetry_dashboard",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_mv_telemetry_tenant_p95",
+      "table_name": "mv_telemetry_dashboard",
+      "is_unique": false
+    },
+    {
+      "index_name": "nacionalidades_nome_key",
+      "table_name": "nacionalidades",
+      "is_unique": true
+    },
+    {
+      "index_name": "nacionalidades_pkey",
+      "table_name": "nacionalidades",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_notif_user_unread",
+      "table_name": "notificacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_notificacoes_created_at",
+      "table_name": "notificacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_notificacoes_empresa_created",
+      "table_name": "notificacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_notificacoes_empresa_created_desc",
+      "table_name": "notificacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_notificacoes_empresa_id",
+      "table_name": "notificacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_notificacoes_lida",
+      "table_name": "notificacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_notificacoes_tipo",
+      "table_name": "notificacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_notificacoes_user_id",
+      "table_name": "notificacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_notificacoes_user_unread",
+      "table_name": "notificacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "notificacoes_pkey",
+      "table_name": "notificacoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "uq_notif_ferias_d5_dia",
+      "table_name": "notificacoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_notificacoes_admissao_admissao_id",
+      "table_name": "notificacoes_admissao",
+      "is_unique": false
+    },
+    {
+      "index_name": "notificacoes_admissao_pkey",
+      "table_name": "notificacoes_admissao",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_onboarding_colab",
+      "table_name": "onboarding_colaborador",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_onboarding_colaborador_colaborador_id",
+      "table_name": "onboarding_colaborador",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_onboarding_colaborador_created_by",
+      "table_name": "onboarding_colaborador",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_onboarding_colaborador_empresa_id",
+      "table_name": "onboarding_colaborador",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_onboarding_colaborador_template_id",
+      "table_name": "onboarding_colaborador",
+      "is_unique": false
+    },
+    {
+      "index_name": "onboarding_colaborador_pkey",
+      "table_name": "onboarding_colaborador",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_onboarding_documentos_obrigatorios_empresa_id",
+      "table_name": "onboarding_documentos_obrigatorios",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_onboarding_documentos_obrigatorios_onboarding_id",
+      "table_name": "onboarding_documentos_obrigatorios",
+      "is_unique": false
+    },
+    {
+      "index_name": "onboarding_documentos_obrigatorios_pkey",
+      "table_name": "onboarding_documentos_obrigatorios",
+      "is_unique": true
+    },
+    {
+      "index_name": "onboarding_kits_pkey",
+      "table_name": "onboarding_kits",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_onboarding_tarefas_concluida_por",
+      "table_name": "onboarding_tarefas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_onboarding_tarefas_empresa_id",
+      "table_name": "onboarding_tarefas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_onboarding_tarefas_onboarding_id",
+      "table_name": "onboarding_tarefas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_onboarding_tarefas_template_tarefa_id",
+      "table_name": "onboarding_tarefas",
+      "is_unique": false
+    },
+    {
+      "index_name": "onboarding_tarefas_pkey",
+      "table_name": "onboarding_tarefas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_onboarding_template_tarefas_template_id",
+      "table_name": "onboarding_template_tarefas",
+      "is_unique": false
+    },
+    {
+      "index_name": "onboarding_template_tarefas_pkey",
+      "table_name": "onboarding_template_tarefas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_onboarding_templates_created_by",
+      "table_name": "onboarding_templates",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_onboarding_templates_empresa_id",
+      "table_name": "onboarding_templates",
+      "is_unique": false
+    },
+    {
+      "index_name": "onboarding_templates_pkey",
+      "table_name": "onboarding_templates",
+      "is_unique": true
+    },
+    {
+      "index_name": "paises_nome_key",
+      "table_name": "paises",
+      "is_unique": true
+    },
+    {
+      "index_name": "paises_pkey",
+      "table_name": "paises",
+      "is_unique": true
+    },
+    {
+      "index_name": "parametros_fiscais_pkey",
+      "table_name": "parametros_fiscais",
+      "is_unique": true
+    },
+    {
+      "index_name": "parametros_sistema_empresa_id_nome_key",
+      "table_name": "parametros_sistema",
+      "is_unique": true
+    },
+    {
+      "index_name": "parametros_sistema_pkey",
+      "table_name": "parametros_sistema",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_password_history_user_id",
+      "table_name": "password_history",
+      "is_unique": false
+    },
+    {
+      "index_name": "password_history_pkey",
+      "table_name": "password_history",
+      "is_unique": true
+    },
+    {
+      "index_name": "password_policies_pkey",
+      "table_name": "password_policies",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_password_reset_config_updated_by",
+      "table_name": "password_reset_config",
+      "is_unique": false
+    },
+    {
+      "index_name": "password_reset_config_pkey",
+      "table_name": "password_reset_config",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_password_reset_expires",
+      "table_name": "password_reset_requests",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_password_reset_requests_reviewed_by",
+      "table_name": "password_reset_requests",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_password_reset_status",
+      "table_name": "password_reset_requests",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_password_reset_user",
+      "table_name": "password_reset_requests",
+      "is_unique": false
+    },
+    {
+      "index_name": "password_reset_requests_pkey",
+      "table_name": "password_reset_requests",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_pcs_aval_cargo",
+      "table_name": "pcs_avaliacoes_cargo",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_pcs_aval_plano",
+      "table_name": "pcs_avaliacoes_cargo",
+      "is_unique": false
+    },
+    {
+      "index_name": "pcs_avaliacoes_cargo_pkey",
+      "table_name": "pcs_avaliacoes_cargo",
+      "is_unique": true
+    },
+    {
+      "index_name": "pcs_avaliacoes_cargo_plano_id_cargo_id_key",
+      "table_name": "pcs_avaliacoes_cargo",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_pcs_fatores_plano",
+      "table_name": "pcs_fatores",
+      "is_unique": false
+    },
+    {
+      "index_name": "pcs_fatores_pkey",
+      "table_name": "pcs_fatores",
+      "is_unique": true
+    },
+    {
+      "index_name": "pcs_fatores_plano_id_nome_key",
+      "table_name": "pcs_fatores",
+      "is_unique": true
+    },
+    {
+      "index_name": "pcs_fatores_plano_id_ordem_key",
+      "table_name": "pcs_fatores",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_pcs_grades_plano",
+      "table_name": "pcs_grades",
+      "is_unique": false
+    },
+    {
+      "index_name": "pcs_grades_pkey",
+      "table_name": "pcs_grades",
+      "is_unique": true
+    },
+    {
+      "index_name": "pcs_grades_plano_id_ordem_key",
+      "table_name": "pcs_grades",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_pcs_pesquisa_cargo",
+      "table_name": "pcs_pesquisa_salarial",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_pcs_pesquisa_empresa",
+      "table_name": "pcs_pesquisa_salarial",
+      "is_unique": false
+    },
+    {
+      "index_name": "pcs_pesquisa_salarial_pkey",
+      "table_name": "pcs_pesquisa_salarial",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_pcs_planos_empresa",
+      "table_name": "pcs_planos",
+      "is_unique": false
+    },
+    {
+      "index_name": "pcs_planos_empresa_id_nome_versao_key",
+      "table_name": "pcs_planos",
+      "is_unique": true
+    },
+    {
+      "index_name": "pcs_planos_pkey",
+      "table_name": "pcs_planos",
+      "is_unique": true
+    },
+    {
+      "index_name": "uq_pcs_plano_ativo_por_empresa",
+      "table_name": "pcs_planos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_pdi_plano_desenvolvimento_colaborador_id",
+      "table_name": "pdi_plano_desenvolvimento",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_pdi_plano_desenvolvimento_empresa_id",
+      "table_name": "pdi_plano_desenvolvimento",
+      "is_unique": false
+    },
+    {
+      "index_name": "pdi_plano_desenvolvimento_pkey",
+      "table_name": "pdi_plano_desenvolvimento",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_pdis_colaborador_id",
+      "table_name": "pdis",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_pdis_empresa_id",
+      "table_name": "pdis",
+      "is_unique": false
+    },
+    {
+      "index_name": "pdis_pkey",
+      "table_name": "pdis",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_pendencias_empresa_id",
+      "table_name": "pendencias",
+      "is_unique": false
+    },
+    {
+      "index_name": "pendencias_pkey",
+      "table_name": "pendencias",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_pensoes_colaborador_id",
+      "table_name": "pensoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "pensoes_pkey",
+      "table_name": "pensoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_periodos_aquisitivos_colaborador_id",
+      "table_name": "periodos_aquisitivos",
+      "is_unique": false
+    },
+    {
+      "index_name": "periodos_aquisitivos_colaborador_id_numero_periodo_key",
+      "table_name": "periodos_aquisitivos",
+      "is_unique": true
+    },
+    {
+      "index_name": "periodos_aquisitivos_pkey",
+      "table_name": "periodos_aquisitivos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_periodos_experiencia_col",
+      "table_name": "periodos_experiencia",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_periodos_experiencia_colaborador_id",
+      "table_name": "periodos_experiencia",
+      "is_unique": false
+    },
+    {
+      "index_name": "periodos_experiencia_pkey",
+      "table_name": "periodos_experiencia",
+      "is_unique": true
+    },
+    {
+      "index_name": "periodos_ponto_pkey",
+      "table_name": "periodos_ponto",
+      "is_unique": true
+    },
+    {
+      "index_name": "permissao_perfis_empresa_id_nome_key",
+      "table_name": "permissao_perfis",
+      "is_unique": true
+    },
+    {
+      "index_name": "permissao_perfis_pkey",
+      "table_name": "permissao_perfis",
+      "is_unique": true
+    },
+    {
+      "index_name": "permissao_recursos_nome_key",
+      "table_name": "permissao_recursos",
+      "is_unique": true
+    },
+    {
+      "index_name": "permissao_recursos_pkey",
+      "table_name": "permissao_recursos",
+      "is_unique": true
+    },
+    {
+      "index_name": "permissao_recursos_slug_key",
+      "table_name": "permissao_recursos",
+      "is_unique": true
+    },
+    {
+      "index_name": "permissions_pkey",
+      "table_name": "permissions",
+      "is_unique": true
+    },
+    {
+      "index_name": "permissions_role_resource_action_key",
+      "table_name": "permissions",
+      "is_unique": true
+    },
+    {
+      "index_name": "personnel_budget_empresa_id_departamento_ano_mes_key",
+      "table_name": "personnel_budget",
+      "is_unique": true
+    },
+    {
+      "index_name": "personnel_budget_pkey",
+      "table_name": "personnel_budget",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_pesquisas_empresa_id",
+      "table_name": "pesquisas",
+      "is_unique": false
+    },
+    {
+      "index_name": "pesquisas_pkey",
+      "table_name": "pesquisas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_pesquisas_perguntas_pesquisa_id",
+      "table_name": "pesquisas_perguntas",
+      "is_unique": false
+    },
+    {
+      "index_name": "pesquisas_perguntas_pkey",
+      "table_name": "pesquisas_perguntas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_pesquisas_respostas_colaborador_id",
+      "table_name": "pesquisas_respostas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_pesquisas_respostas_pergunta_id",
+      "table_name": "pesquisas_respostas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_pesquisas_respostas_pesquisa_id",
+      "table_name": "pesquisas_respostas",
+      "is_unique": false
+    },
+    {
+      "index_name": "pesquisas_respostas_pkey",
+      "table_name": "pesquisas_respostas",
+      "is_unique": true
+    },
+    {
+      "index_name": "pii_access_alerts_dedup",
+      "table_name": "pii_access_alerts",
+      "is_unique": true
+    },
+    {
+      "index_name": "pii_access_alerts_pkey",
+      "table_name": "pii_access_alerts",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_pii_access_logs_empresa_ts",
+      "table_name": "pii_access_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_pii_access_logs_tabela_ts",
+      "table_name": "pii_access_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_pii_access_logs_user_ts",
+      "table_name": "pii_access_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "pii_access_logs_pkey",
+      "table_name": "pii_access_logs",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_pix_itens_colaborador_id",
+      "table_name": "pix_itens",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_pix_itens_lote_id",
+      "table_name": "pix_itens",
+      "is_unique": false
+    },
+    {
+      "index_name": "pix_itens_pkey",
+      "table_name": "pix_itens",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_pix_lotes_empresa_id",
+      "table_name": "pix_lotes",
+      "is_unique": false
+    },
+    {
+      "index_name": "pix_lotes_pkey",
+      "table_name": "pix_lotes",
+      "is_unique": true
+    },
+    {
+      "index_name": "plano_contas_empresa_id_codigo_key",
+      "table_name": "plano_contas",
+      "is_unique": true
+    },
+    {
+      "index_name": "plano_contas_pkey",
+      "table_name": "plano_contas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_planos_saude_colaborador_id",
+      "table_name": "planos_saude",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_planos_saude_empresa_id",
+      "table_name": "planos_saude",
+      "is_unique": false
+    },
+    {
+      "index_name": "planos_saude_pkey",
+      "table_name": "planos_saude",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_ponto_ajustes_gestor_id",
+      "table_name": "ponto_ajustes",
+      "is_unique": false
+    },
+    {
+      "index_name": "ponto_ajustes_pkey",
+      "table_name": "ponto_ajustes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_ponto_auditoria_created_at",
+      "table_name": "ponto_auditoria",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ponto_auditoria_usuario_id",
+      "table_name": "ponto_auditoria",
+      "is_unique": false
+    },
+    {
+      "index_name": "ponto_auditoria_pkey",
+      "table_name": "ponto_auditoria",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_ponto_auditoria_fraude_batida_id",
+      "table_name": "ponto_auditoria_fraude",
+      "is_unique": false
+    },
+    {
+      "index_name": "ponto_auditoria_fraude_pkey",
+      "table_name": "ponto_auditoria_fraude",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_espelho_empresa_comp",
+      "table_name": "ponto_espelhos_assinados",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ponto_espelhos_assinados_colaborador_id",
+      "table_name": "ponto_espelhos_assinados",
+      "is_unique": false
+    },
+    {
+      "index_name": "ponto_espelhos_assinados_pkey",
+      "table_name": "ponto_espelhos_assinados",
+      "is_unique": true
+    },
+    {
+      "index_name": "uq_espelho_colab_competencia",
+      "table_name": "ponto_espelhos_assinados",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_revogacoes_espelho",
+      "table_name": "ponto_espelhos_revogacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "ponto_espelhos_revogacoes_pkey",
+      "table_name": "ponto_espelhos_revogacoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "ponto_regras_aprovacao_pkey",
+      "table_name": "ponto_regras_aprovacao",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_ponto_seguranca_blacklist_colaborador_id",
+      "table_name": "ponto_seguranca_blacklist",
+      "is_unique": false
+    },
+    {
+      "index_name": "ponto_seguranca_blacklist_dispositivo_id_key",
+      "table_name": "ponto_seguranca_blacklist",
+      "is_unique": true
+    },
+    {
+      "index_name": "ponto_seguranca_blacklist_pkey",
+      "table_name": "ponto_seguranca_blacklist",
+      "is_unique": true
+    },
+    {
+      "index_name": "portal_notificacoes_settings_pkey",
+      "table_name": "portal_notificacoes_settings",
+      "is_unique": true
+    },
+    {
+      "index_name": "portal_notificacoes_settings_user_id_key",
+      "table_name": "portal_notificacoes_settings",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_premiacoes_alertas_user_id",
+      "table_name": "premiacoes_alertas",
+      "is_unique": false
+    },
+    {
+      "index_name": "premiacoes_alertas_pkey",
+      "table_name": "premiacoes_alertas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_premiacoes_aud_created_at",
+      "table_name": "premiacoes_auditoria",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_premiacoes_aud_entidade",
+      "table_name": "premiacoes_auditoria",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_premiacoes_aud_usuario_id",
+      "table_name": "premiacoes_auditoria",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_premiacoes_auditoria_entidade",
+      "table_name": "premiacoes_auditoria",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_premiacoes_auditoria_usuario_id",
+      "table_name": "premiacoes_auditoria",
+      "is_unique": false
+    },
+    {
+      "index_name": "premiacoes_auditoria_pkey",
+      "table_name": "premiacoes_auditoria",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_premiacoes_campanhas_empresa_id",
+      "table_name": "premiacoes_campanhas",
+      "is_unique": false
+    },
+    {
+      "index_name": "premiacoes_campanhas_pkey",
+      "table_name": "premiacoes_campanhas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_premiacoes_cenarios_simulacao_criado_por",
+      "table_name": "premiacoes_cenarios_simulacao",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_premiacoes_cenarios_simulacao_empresa_id",
+      "table_name": "premiacoes_cenarios_simulacao",
+      "is_unique": false
+    },
+    {
+      "index_name": "premiacoes_cenarios_simulacao_pkey",
+      "table_name": "premiacoes_cenarios_simulacao",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_premiacoes_pagamentos_campanha_id",
+      "table_name": "premiacoes_pagamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_premiacoes_pagamentos_colaborador_id",
+      "table_name": "premiacoes_pagamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_premiacoes_pagamentos_folha",
+      "table_name": "premiacoes_pagamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_premiacoes_pagamentos_regra_id",
+      "table_name": "premiacoes_pagamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "premiacoes_pagamentos_pkey",
+      "table_name": "premiacoes_pagamentos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_premiacoes_regras_campanha_id",
+      "table_name": "premiacoes_regras",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_premiacoes_regras_meta_id",
+      "table_name": "premiacoes_regras",
+      "is_unique": false
+    },
+    {
+      "index_name": "premiacoes_regras_pkey",
+      "table_name": "premiacoes_regras",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_premiacoes_roi_cenarios_user_id",
+      "table_name": "premiacoes_roi_cenarios",
+      "is_unique": false
+    },
+    {
+      "index_name": "premiacoes_roi_cenarios_pkey",
+      "table_name": "premiacoes_roi_cenarios",
+      "is_unique": true
+    },
+    {
+      "index_name": "profiles_govbr_uid_key",
+      "table_name": "profiles",
+      "is_unique": true
+    },
+    {
+      "index_name": "profiles_pkey",
+      "table_name": "profiles",
+      "is_unique": true
+    },
+    {
+      "index_name": "profiles_user_id_key",
+      "table_name": "profiles",
+      "is_unique": true
+    },
+    {
+      "index_name": "promo_brindes_nome_key",
+      "table_name": "promo_brindes",
+      "is_unique": true
+    },
+    {
+      "index_name": "promo_brindes_pkey",
+      "table_name": "promo_brindes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_promocoes_cargo_anterior_id",
+      "table_name": "promocoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_promocoes_cargo_novo_id",
+      "table_name": "promocoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_promocoes_colaborador_id",
+      "table_name": "promocoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "promocoes_pkey",
+      "table_name": "promocoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_prorrogacoes_afastamento_afastamento_id",
+      "table_name": "prorrogacoes_afastamento",
+      "is_unique": false
+    },
+    {
+      "index_name": "prorrogacoes_afastamento_pkey",
+      "table_name": "prorrogacoes_afastamento",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_provisao_auditoria_usuario_id",
+      "table_name": "provisao_auditoria",
+      "is_unique": false
+    },
+    {
+      "index_name": "provisao_auditoria_pkey",
+      "table_name": "provisao_auditoria",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_provisao_logs_usuario_id",
+      "table_name": "provisao_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "provisao_logs_pkey",
+      "table_name": "provisao_logs",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_provisoes_folha_colaborador_id",
+      "table_name": "provisoes_folha",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_provisoes_folha_empresa_id",
+      "table_name": "provisoes_folha",
+      "is_unique": false
+    },
+    {
+      "index_name": "provisoes_folha_empresa_colaborador_competencia_key",
+      "table_name": "provisoes_folha",
+      "is_unique": true
+    },
+    {
+      "index_name": "provisoes_folha_pkey",
+      "table_name": "provisoes_folha",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_provisoes_colaborador",
+      "table_name": "provisoes_mensais",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_provisoes_empresa_competencia",
+      "table_name": "provisoes_mensais",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_provisoes_mensais_log_id",
+      "table_name": "provisoes_mensais",
+      "is_unique": false
+    },
+    {
+      "index_name": "provisoes_mensais_pkey",
+      "table_name": "provisoes_mensais",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_push_subscriptions_user_id",
+      "table_name": "push_subscriptions",
+      "is_unique": false
+    },
+    {
+      "index_name": "push_subscriptions_pkey",
+      "table_name": "push_subscriptions",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_query_telemetry_created_at",
+      "table_name": "query_telemetry",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_query_telemetry_empresa_created",
+      "table_name": "query_telemetry",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_query_telemetry_severity",
+      "table_name": "query_telemetry",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_query_telemetry_severity_created",
+      "table_name": "query_telemetry",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_query_telemetry_trace_id",
+      "table_name": "query_telemetry",
+      "is_unique": false
+    },
+    {
+      "index_name": "query_telemetry_pkey",
+      "table_name": "query_telemetry",
+      "is_unique": true
+    },
+    {
+      "index_name": "rate_limit_config_endpoint_key",
+      "table_name": "rate_limit_config",
+      "is_unique": true
+    },
+    {
+      "index_name": "rate_limit_config_pkey",
+      "table_name": "rate_limit_config",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_rate_limit_logs_ip_endpoint",
+      "table_name": "rate_limit_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_rate_limit_logs_user_id",
+      "table_name": "rate_limit_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "rate_limit_logs_pkey",
+      "table_name": "rate_limit_logs",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_rate_limits_key_timestamp",
+      "table_name": "rate_limits",
+      "is_unique": false
+    },
+    {
+      "index_name": "rate_limits_pkey",
+      "table_name": "rate_limits",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_recargas_vale_colaborador_id",
+      "table_name": "recargas_vale",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_recargas_vale_vale_id",
+      "table_name": "recargas_vale",
+      "is_unique": false
+    },
+    {
+      "index_name": "recargas_vale_pkey",
+      "table_name": "recargas_vale",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_recrutamento_agendamentos_candidatura_id",
+      "table_name": "recrutamento_agendamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_recrutamento_agendamentos_responsavel_id",
+      "table_name": "recrutamento_agendamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "recrutamento_agendamentos_pkey",
+      "table_name": "recrutamento_agendamentos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_recrutamento_anotacoes_candidatura_id",
+      "table_name": "recrutamento_anotacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_recrutamento_anotacoes_usuario_id",
+      "table_name": "recrutamento_anotacoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "recrutamento_anotacoes_pkey",
+      "table_name": "recrutamento_anotacoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_recrutamento_entrevistas_candidatura_id",
+      "table_name": "recrutamento_entrevistas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_recrutamento_entrevistas_entrevistador_id",
+      "table_name": "recrutamento_entrevistas",
+      "is_unique": false
+    },
+    {
+      "index_name": "recrutamento_entrevistas_pkey",
+      "table_name": "recrutamento_entrevistas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_recrutamento_testes_candidatura_id",
+      "table_name": "recrutamento_testes",
+      "is_unique": false
+    },
+    {
+      "index_name": "recrutamento_testes_pkey",
+      "table_name": "recrutamento_testes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_registros_ponto_colab_aprovado",
+      "table_name": "registros_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_registros_ponto_colab_data",
+      "table_name": "registros_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_registros_ponto_colaborador_data",
+      "table_name": "registros_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_registros_ponto_colaborador_id",
+      "table_name": "registros_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_registros_ponto_empresa_data",
+      "table_name": "registros_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_registros_ponto_empresa_id",
+      "table_name": "registros_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "registros_ponto_colaborador_data_uq",
+      "table_name": "registros_ponto",
+      "is_unique": true
+    },
+    {
+      "index_name": "registros_ponto_colaborador_id_data_key",
+      "table_name": "registros_ponto",
+      "is_unique": true
+    },
+    {
+      "index_name": "registros_ponto_pkey",
+      "table_name": "registros_ponto",
+      "is_unique": true
+    },
+    {
+      "index_name": "relacionamentos_contato_emergencia_nome_key",
+      "table_name": "relacionamentos_contato_emergencia",
+      "is_unique": true
+    },
+    {
+      "index_name": "relacionamentos_contato_emergencia_pkey",
+      "table_name": "relacionamentos_contato_emergencia",
+      "is_unique": true
+    },
+    {
+      "index_name": "relacionamentos_dependentes_nome_key",
+      "table_name": "relacionamentos_dependentes",
+      "is_unique": true
+    },
+    {
+      "index_name": "relacionamentos_dependentes_pkey",
+      "table_name": "relacionamentos_dependentes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_relatorios_agendados_created_by",
+      "table_name": "relatorios_agendados",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_relatorios_agendados_dispatch_claim",
+      "table_name": "relatorios_agendados",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_relatorios_agendados_empresa_id",
+      "table_name": "relatorios_agendados",
+      "is_unique": false
+    },
+    {
+      "index_name": "relatorios_agendados_pkey",
+      "table_name": "relatorios_agendados",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_report_dispatch_attempts_schedule",
+      "table_name": "report_dispatch_attempts",
+      "is_unique": false
+    },
+    {
+      "index_name": "report_dispatch_attempts_dispatch_key_hash_key",
+      "table_name": "report_dispatch_attempts",
+      "is_unique": true
+    },
+    {
+      "index_name": "report_dispatch_attempts_pkey",
+      "table_name": "report_dispatch_attempts",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_role_permissions_created_by",
+      "table_name": "role_permissions",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_role_permissions_permission",
+      "table_name": "role_permissions",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_role_permissions_role",
+      "table_name": "role_permissions",
+      "is_unique": false
+    },
+    {
+      "index_name": "role_permissions_pkey",
+      "table_name": "role_permissions",
+      "is_unique": true
+    },
+    {
+      "index_name": "role_permissions_role_permission_code_key",
+      "table_name": "role_permissions",
+      "is_unique": true
+    },
+    {
+      "index_name": "rubricas_folha_empresa_codigo_unique",
+      "table_name": "rubricas_folha",
+      "is_unique": true
+    },
+    {
+      "index_name": "rubricas_folha_pkey",
+      "table_name": "rubricas_folha",
+      "is_unique": true
+    },
+    {
+      "index_name": "saved_filters_pkey",
+      "table_name": "saved_filters",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_sec_policy_regressions_scan_at",
+      "table_name": "sec_policy_regressions",
+      "is_unique": false
+    },
+    {
+      "index_name": "sec_policy_regressions_pkey",
+      "table_name": "sec_policy_regressions",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_sec_seal_events_tabela_data",
+      "table_name": "sec_seal_events",
+      "is_unique": false
+    },
+    {
+      "index_name": "sec_seal_events_pkey",
+      "table_name": "sec_seal_events",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_security_alerts_open",
+      "table_name": "security_alerts",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_security_alerts_resolved_by",
+      "table_name": "security_alerts",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_security_alerts_type",
+      "table_name": "security_alerts",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_security_alerts_unresolved",
+      "table_name": "security_alerts",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_security_alerts_user_id",
+      "table_name": "security_alerts",
+      "is_unique": false
+    },
+    {
+      "index_name": "security_alerts_pkey",
+      "table_name": "security_alerts",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_sefip_arquivos_empresa_id",
+      "table_name": "sefip_arquivos",
+      "is_unique": false
+    },
+    {
+      "index_name": "sefip_arquivos_pkey",
+      "table_name": "sefip_arquivos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_seguros_colaboradores_colaborador_id",
+      "table_name": "seguros_colaboradores",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_seguros_colaboradores_seguro_vida_id",
+      "table_name": "seguros_colaboradores",
+      "is_unique": false
+    },
+    {
+      "index_name": "seguros_colaboradores_pkey",
+      "table_name": "seguros_colaboradores",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_seguros_vida_colaborador_id",
+      "table_name": "seguros_vida",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_seguros_vida_empresa_id",
+      "table_name": "seguros_vida",
+      "is_unique": false
+    },
+    {
+      "index_name": "seguros_vida_pkey",
+      "table_name": "seguros_vida",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_simulacoes_fiscais_empresa_id",
+      "table_name": "simulacoes_fiscais",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_simulacoes_fiscais_usuario_id",
+      "table_name": "simulacoes_fiscais",
+      "is_unique": false
+    },
+    {
+      "index_name": "simulacoes_fiscais_pkey",
+      "table_name": "simulacoes_fiscais",
+      "is_unique": true
+    },
+    {
+      "index_name": "sindicatos_pkey",
+      "table_name": "sindicatos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_sinistros_seguro_colaborador_id",
+      "table_name": "sinistros_seguro",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_sinistros_seguro_seguro_vida_id",
+      "table_name": "sinistros_seguro",
+      "is_unique": false
+    },
+    {
+      "index_name": "sinistros_seguro_pkey",
+      "table_name": "sinistros_seguro",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_solic_ajuste_pendente",
+      "table_name": "solicitacoes_ajuste_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_solicitacoes_ajuste_ponto_analisado_por",
+      "table_name": "solicitacoes_ajuste_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_solicitacoes_ajuste_ponto_aprovado_por",
+      "table_name": "solicitacoes_ajuste_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_solicitacoes_ajuste_ponto_colaborador_id",
+      "table_name": "solicitacoes_ajuste_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_solicitacoes_ajuste_ponto_empresa_id",
+      "table_name": "solicitacoes_ajuste_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "solicitacoes_ajuste_ponto_pkey",
+      "table_name": "solicitacoes_ajuste_ponto",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_solicitacoes_hora_extra_colaborador_id",
+      "table_name": "solicitacoes_hora_extra",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_solicitacoes_hora_extra_empresa_id",
+      "table_name": "solicitacoes_hora_extra",
+      "is_unique": false
+    },
+    {
+      "index_name": "solicitacoes_hora_extra_pkey",
+      "table_name": "solicitacoes_hora_extra",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_sst_cat_cat_origem_id",
+      "table_name": "sst_cat",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_sst_cat_colaborador_id",
+      "table_name": "sst_cat",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_sst_cat_created_by",
+      "table_name": "sst_cat",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_sst_cat_data",
+      "table_name": "sst_cat",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_sst_cat_empresa_id",
+      "table_name": "sst_cat",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_sst_cat_prazo",
+      "table_name": "sst_cat",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_sst_cat_retifica_cat_id",
+      "table_name": "sst_cat",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_sst_cat_status",
+      "table_name": "sst_cat",
+      "is_unique": false
+    },
+    {
+      "index_name": "sst_cat_pkey",
+      "table_name": "sst_cat",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_sst_cat_anexos_cat",
+      "table_name": "sst_cat_anexos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_sst_cat_anexos_uploaded_by",
+      "table_name": "sst_cat_anexos",
+      "is_unique": false
+    },
+    {
+      "index_name": "sst_cat_anexos_pkey",
+      "table_name": "sst_cat_anexos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_sst_cat_testemunhas_cat",
+      "table_name": "sst_cat_testemunhas",
+      "is_unique": false
+    },
+    {
+      "index_name": "sst_cat_testemunhas_pkey",
+      "table_name": "sst_cat_testemunhas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_sst_exposicao_riscos_colaborador_id",
+      "table_name": "sst_exposicao_riscos",
+      "is_unique": false
+    },
+    {
+      "index_name": "sst_exposicao_riscos_pkey",
+      "table_name": "sst_exposicao_riscos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_extintores_empresa",
+      "table_name": "sst_extintores",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_extintores_hidro",
+      "table_name": "sst_extintores",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_extintores_recarga",
+      "table_name": "sst_extintores",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_extintores_status",
+      "table_name": "sst_extintores",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_sst_extintores_created_by",
+      "table_name": "sst_extintores",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_sst_extintores_local_id",
+      "table_name": "sst_extintores",
+      "is_unique": false
+    },
+    {
+      "index_name": "sst_extintores_empresa_id_codigo_patrimonio_key",
+      "table_name": "sst_extintores",
+      "is_unique": true
+    },
+    {
+      "index_name": "sst_extintores_pkey",
+      "table_name": "sst_extintores",
+      "is_unique": true
+    },
+    {
+      "index_name": "sst_extintores_qr_code_key",
+      "table_name": "sst_extintores",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_insp_empresa_data",
+      "table_name": "sst_extintores_inspecoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_insp_extintor",
+      "table_name": "sst_extintores_inspecoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_sst_extint_insp_inspetor",
+      "table_name": "sst_extintores_inspecoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "sst_extintores_inspecoes_pkey",
+      "table_name": "sst_extintores_inspecoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_sst_incidentes_colaborador_id",
+      "table_name": "sst_incidentes",
+      "is_unique": false
+    },
+    {
+      "index_name": "sst_incidentes_pkey",
+      "table_name": "sst_incidentes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_ltcat_ativo_unico",
+      "table_name": "sst_ltcat_laudos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_ltcat_empresa",
+      "table_name": "sst_ltcat_laudos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_ltcat_status",
+      "table_name": "sst_ltcat_laudos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_sst_ltcat_gerado_por",
+      "table_name": "sst_ltcat_laudos",
+      "is_unique": false
+    },
+    {
+      "index_name": "sst_ltcat_laudos_pkey",
+      "table_name": "sst_ltcat_laudos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_sst_os_cargo",
+      "table_name": "sst_ordens_servico",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_sst_os_colab",
+      "table_name": "sst_ordens_servico",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_sst_os_empresa",
+      "table_name": "sst_ordens_servico",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_sst_os_gerado_por",
+      "table_name": "sst_ordens_servico",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_sst_os_status",
+      "table_name": "sst_ordens_servico",
+      "is_unique": false
+    },
+    {
+      "index_name": "sst_ordens_servico_pkey",
+      "table_name": "sst_ordens_servico",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_sst_programas_gerado_por",
+      "table_name": "sst_programas",
+      "is_unique": false
+    },
+    {
+      "index_name": "sst_programas_pkey",
+      "table_name": "sst_programas",
+      "is_unique": true
+    },
+    {
+      "index_name": "uq_sst_programa_ativo",
+      "table_name": "sst_programas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_regimento_ass_colab",
+      "table_name": "sst_regimento_assinaturas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_regimento_ass_empresa",
+      "table_name": "sst_regimento_assinaturas",
+      "is_unique": false
+    },
+    {
+      "index_name": "sst_regimento_assinaturas_documento_id_colaborador_id_key",
+      "table_name": "sst_regimento_assinaturas",
+      "is_unique": true
+    },
+    {
+      "index_name": "sst_regimento_assinaturas_pkey",
+      "table_name": "sst_regimento_assinaturas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_regimento_doc_empresa",
+      "table_name": "sst_regimento_documentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "sst_regimento_documentos_pkey",
+      "table_name": "sst_regimento_documentos",
+      "is_unique": true
+    },
+    {
+      "index_name": "uniq_regimento_publicado",
+      "table_name": "sst_regimento_documentos",
+      "is_unique": true
+    },
+    {
+      "index_name": "sst_regimento_interno_pkey",
+      "table_name": "sst_regimento_interno",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_sst_riscos_ambientais_local_id",
+      "table_name": "sst_riscos_ambientais",
+      "is_unique": false
+    },
+    {
+      "index_name": "sst_riscos_ambientais_pkey",
+      "table_name": "sst_riscos_ambientais",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_tarefas_onboarding_admissao_id",
+      "table_name": "tarefas_onboarding",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_tarefas_onboarding_responsavel_id",
+      "table_name": "tarefas_onboarding",
+      "is_unique": false
+    },
+    {
+      "index_name": "tarefas_onboarding_pkey",
+      "table_name": "tarefas_onboarding",
+      "is_unique": true
+    },
+    {
+      "index_name": "taxas_cambio_pkey",
+      "table_name": "taxas_cambio",
+      "is_unique": true
+    },
+    {
+      "index_name": "tempos_residencia_nome_key",
+      "table_name": "tempos_residencia",
+      "is_unique": true
+    },
+    {
+      "index_name": "tempos_residencia_pkey",
+      "table_name": "tempos_residencia",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_times_departamento_id",
+      "table_name": "times",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_times_empresa_id",
+      "table_name": "times",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_times_lider_id",
+      "table_name": "times",
+      "is_unique": false
+    },
+    {
+      "index_name": "times_nome_empresa_key",
+      "table_name": "times",
+      "is_unique": true
+    },
+    {
+      "index_name": "times_pkey",
+      "table_name": "times",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_times_brindes_brinde_id",
+      "table_name": "times_brindes",
+      "is_unique": false
+    },
+    {
+      "index_name": "times_brindes_pkey",
+      "table_name": "times_brindes",
+      "is_unique": true
+    },
+    {
+      "index_name": "times_brindes_time_id_brinde_id_key",
+      "table_name": "times_brindes",
+      "is_unique": true
+    },
+    {
+      "index_name": "tipos_admissao_nome_key",
+      "table_name": "tipos_admissao",
+      "is_unique": true
+    },
+    {
+      "index_name": "tipos_admissao_pkey",
+      "table_name": "tipos_admissao",
+      "is_unique": true
+    },
+    {
+      "index_name": "tipos_aviso_previo_nome_key",
+      "table_name": "tipos_aviso_previo",
+      "is_unique": true
+    },
+    {
+      "index_name": "tipos_aviso_previo_pkey",
+      "table_name": "tipos_aviso_previo",
+      "is_unique": true
+    },
+    {
+      "index_name": "tipos_beneficio_codigo_key",
+      "table_name": "tipos_beneficio",
+      "is_unique": true
+    },
+    {
+      "index_name": "tipos_beneficio_pkey",
+      "table_name": "tipos_beneficio",
+      "is_unique": true
+    },
+    {
+      "index_name": "tipos_deficiencia_nome_key",
+      "table_name": "tipos_deficiencia",
+      "is_unique": true
+    },
+    {
+      "index_name": "tipos_deficiencia_pkey",
+      "table_name": "tipos_deficiencia",
+      "is_unique": true
+    },
+    {
+      "index_name": "tipos_desligamento_nome_key",
+      "table_name": "tipos_desligamento",
+      "is_unique": true
+    },
+    {
+      "index_name": "tipos_desligamento_pkey",
+      "table_name": "tipos_desligamento",
+      "is_unique": true
+    },
+    {
+      "index_name": "tipos_estabilidade_nome_key",
+      "table_name": "tipos_estabilidade",
+      "is_unique": true
+    },
+    {
+      "index_name": "tipos_estabilidade_pkey",
+      "table_name": "tipos_estabilidade",
+      "is_unique": true
+    },
+    {
+      "index_name": "tipos_pagamento_nome_key",
+      "table_name": "tipos_pagamento",
+      "is_unique": true
+    },
+    {
+      "index_name": "tipos_pagamento_pkey",
+      "table_name": "tipos_pagamento",
+      "is_unique": true
+    },
+    {
+      "index_name": "tipos_salario_nome_key",
+      "table_name": "tipos_salario",
+      "is_unique": true
+    },
+    {
+      "index_name": "tipos_salario_pkey",
+      "table_name": "tipos_salario",
+      "is_unique": true
+    },
+    {
+      "index_name": "tipos_visto_nome_key",
+      "table_name": "tipos_visto",
+      "is_unique": true
+    },
+    {
+      "index_name": "tipos_visto_pkey",
+      "table_name": "tipos_visto",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_transferencias_colaborador_id",
+      "table_name": "transferencias",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_transferencias_departamento_anterior_id",
+      "table_name": "transferencias",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_transferencias_departamento_novo_id",
+      "table_name": "transferencias",
+      "is_unique": false
+    },
+    {
+      "index_name": "transferencias_pkey",
+      "table_name": "transferencias",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_treinamento_certificados_colaborador_id",
+      "table_name": "treinamento_certificados",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_treinamento_certificados_curso_id",
+      "table_name": "treinamento_certificados",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_treinamento_certificados_inscricao_id",
+      "table_name": "treinamento_certificados",
+      "is_unique": false
+    },
+    {
+      "index_name": "treinamento_certificados_codigo_autenticacao_key",
+      "table_name": "treinamento_certificados",
+      "is_unique": true
+    },
+    {
+      "index_name": "treinamento_certificados_pkey",
+      "table_name": "treinamento_certificados",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_treinamento_feedback_inscricao_id",
+      "table_name": "treinamento_feedback",
+      "is_unique": false
+    },
+    {
+      "index_name": "treinamento_feedback_pkey",
+      "table_name": "treinamento_feedback",
+      "is_unique": true
+    },
+    {
+      "index_name": "treinamento_feedbacks_inscricao_id_key",
+      "table_name": "treinamento_feedbacks",
+      "is_unique": true
+    },
+    {
+      "index_name": "treinamento_feedbacks_pkey",
+      "table_name": "treinamento_feedbacks",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_treinamento_instancias_curso_id",
+      "table_name": "treinamento_instancias",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_treinamento_instancias_instrutor_id",
+      "table_name": "treinamento_instancias",
+      "is_unique": false
+    },
+    {
+      "index_name": "treinamento_instancias_pkey",
+      "table_name": "treinamento_instancias",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_treinamento_participantes_colaborador_id",
+      "table_name": "treinamento_participantes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_treinamento_participantes_treinamento_id",
+      "table_name": "treinamento_participantes",
+      "is_unique": false
+    },
+    {
+      "index_name": "treinamento_participantes_pkey",
+      "table_name": "treinamento_participantes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_treinamentos_empresa_id",
+      "table_name": "treinamentos",
+      "is_unique": false
+    },
+    {
+      "index_name": "treinamentos_pkey",
+      "table_name": "treinamentos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_triagem_notas_candidatura_id",
+      "table_name": "triagem_notas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_triagem_notas_empresa_id",
+      "table_name": "triagem_notas",
+      "is_unique": false
+    },
+    {
+      "index_name": "triagem_notas_pkey",
+      "table_name": "triagem_notas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_trilha_auditoria_ponto_ponto_id",
+      "table_name": "trilha_auditoria_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_trilha_auditoria_ponto_usuario_id",
+      "table_name": "trilha_auditoria_ponto",
+      "is_unique": false
+    },
+    {
+      "index_name": "trilha_auditoria_ponto_pkey",
+      "table_name": "trilha_auditoria_ponto",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_trilhas_aprendizado_empresa_id",
+      "table_name": "trilhas_aprendizado",
+      "is_unique": false
+    },
+    {
+      "index_name": "trilhas_aprendizado_pkey",
+      "table_name": "trilhas_aprendizado",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_trilhas_cursos_curso_id",
+      "table_name": "trilhas_cursos",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_trilhas_cursos_trilha_id",
+      "table_name": "trilhas_cursos",
+      "is_unique": false
+    },
+    {
+      "index_name": "trilhas_cursos_pkey",
+      "table_name": "trilhas_cursos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_turnos_empresa_id",
+      "table_name": "turnos",
+      "is_unique": false
+    },
+    {
+      "index_name": "turnos_pkey",
+      "table_name": "turnos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_user_empresas_empresa",
+      "table_name": "user_empresas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_user_empresas_user",
+      "table_name": "user_empresas",
+      "is_unique": false
+    },
+    {
+      "index_name": "user_empresas_one_default_per_user",
+      "table_name": "user_empresas",
+      "is_unique": true
+    },
+    {
+      "index_name": "user_empresas_pkey",
+      "table_name": "user_empresas",
+      "is_unique": true
+    },
+    {
+      "index_name": "user_empresas_user_id_empresa_id_key",
+      "table_name": "user_empresas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_user_mfa_user",
+      "table_name": "user_mfa",
+      "is_unique": false
+    },
+    {
+      "index_name": "user_mfa_pkey",
+      "table_name": "user_mfa",
+      "is_unique": true
+    },
+    {
+      "index_name": "user_mfa_user_id_key",
+      "table_name": "user_mfa",
+      "is_unique": true
+    },
+    {
+      "index_name": "user_roles_pkey",
+      "table_name": "user_roles",
+      "is_unique": true
+    },
+    {
+      "index_name": "user_roles_user_id_role_key",
+      "table_name": "user_roles",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_user_sessions_token",
+      "table_name": "user_sessions",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_user_sessions_user",
+      "table_name": "user_sessions",
+      "is_unique": false
+    },
+    {
+      "index_name": "user_sessions_pkey",
+      "table_name": "user_sessions",
+      "is_unique": true
+    },
+    {
+      "index_name": "user_sessions_session_token_key",
+      "table_name": "user_sessions",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_vaga_entrevistas_candidatura_id",
+      "table_name": "vaga_entrevistas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_vaga_entrevistas_empresa_id",
+      "table_name": "vaga_entrevistas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_vaga_entrevistas_etapa_id",
+      "table_name": "vaga_entrevistas",
+      "is_unique": false
+    },
+    {
+      "index_name": "vaga_entrevistas_pkey",
+      "table_name": "vaga_entrevistas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_vaga_etapas_empresa_id",
+      "table_name": "vaga_etapas",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_vaga_etapas_vaga_id",
+      "table_name": "vaga_etapas",
+      "is_unique": false
+    },
+    {
+      "index_name": "vaga_etapas_pkey",
+      "table_name": "vaga_etapas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_vagas_empresa",
+      "table_name": "vagas",
+      "is_unique": false
+    },
+    {
+      "index_name": "vagas_pkey",
+      "table_name": "vagas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_vales_alimentacao_colaborador_id",
+      "table_name": "vales_alimentacao",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_vales_alimentacao_empresa_id",
+      "table_name": "vales_alimentacao",
+      "is_unique": false
+    },
+    {
+      "index_name": "vales_alimentacao_pkey",
+      "table_name": "vales_alimentacao",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_vales_transporte_colaborador_id",
+      "table_name": "vales_transporte",
+      "is_unique": false
+    },
+    {
+      "index_name": "vales_transporte_pkey",
+      "table_name": "vales_transporte",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_valores_campos_customizados_colaborador_id",
+      "table_name": "valores_campos_customizados",
+      "is_unique": false
+    },
+    {
+      "index_name": "valores_campos_customizados_campo_customizado_id_colaborado_key",
+      "table_name": "valores_campos_customizados",
+      "is_unique": true
+    },
+    {
+      "index_name": "valores_campos_customizados_pkey",
+      "table_name": "valores_campos_customizados",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_verbas_desligamento",
+      "table_name": "verbas_rescisorias",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_verbas_rescisorias_rubrica_id",
+      "table_name": "verbas_rescisorias",
+      "is_unique": false
+    },
+    {
+      "index_name": "verbas_rescisorias_pkey",
+      "table_name": "verbas_rescisorias",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_verification_tokens_token",
+      "table_name": "verification_tokens",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_verification_tokens_user_id",
+      "table_name": "verification_tokens",
+      "is_unique": false
+    },
+    {
+      "index_name": "verification_tokens_pkey",
+      "table_name": "verification_tokens",
+      "is_unique": true
+    },
+    {
+      "index_name": "verification_tokens_token_key",
+      "table_name": "verification_tokens",
+      "is_unique": true
+    },
+    {
+      "index_name": "versao_banco_pkey",
+      "table_name": "versao_banco",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_vinculos_colaborador_id",
+      "table_name": "vinculos",
+      "is_unique": false
+    },
+    {
+      "index_name": "vinculos_pkey",
+      "table_name": "vinculos",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_webauthn_challenges_expires",
+      "table_name": "webauthn_challenges",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_webauthn_challenges_user_id",
+      "table_name": "webauthn_challenges",
+      "is_unique": false
+    },
+    {
+      "index_name": "webauthn_challenges_pkey",
+      "table_name": "webauthn_challenges",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_webauthn_credentials_credential_id",
+      "table_name": "webauthn_credentials",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_webauthn_credentials_user_id",
+      "table_name": "webauthn_credentials",
+      "is_unique": false
+    },
+    {
+      "index_name": "webauthn_credentials_credential_id_key",
+      "table_name": "webauthn_credentials",
+      "is_unique": true
+    },
+    {
+      "index_name": "webauthn_credentials_pkey",
+      "table_name": "webauthn_credentials",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_webhook_logs_webhook_id",
+      "table_name": "webhook_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "webhook_logs_event_id_unique",
+      "table_name": "webhook_logs",
+      "is_unique": true
+    },
+    {
+      "index_name": "webhook_logs_pkey",
+      "table_name": "webhook_logs",
+      "is_unique": true
+    },
+    {
+      "index_name": "webhook_logs_status_created_idx",
+      "table_name": "webhook_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_webhooks_empresa_id",
+      "table_name": "webhooks",
+      "is_unique": false
+    },
+    {
+      "index_name": "webhooks_pkey",
+      "table_name": "webhooks",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_webhooks_config_empresa_id",
+      "table_name": "webhooks_config",
+      "is_unique": false
+    },
+    {
+      "index_name": "webhooks_config_pkey",
+      "table_name": "webhooks_config",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_webhooks_logs_webhook_id",
+      "table_name": "webhooks_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "webhooks_logs_pkey",
+      "table_name": "webhooks_logs",
+      "is_unique": true
+    },
+    {
+      "index_name": "whatsapp_config_empresa_id_key",
+      "table_name": "whatsapp_config",
+      "is_unique": true
+    },
+    {
+      "index_name": "whatsapp_config_pkey",
+      "table_name": "whatsapp_config",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_whatsapp_mensagens_logs_colaborador_id",
+      "table_name": "whatsapp_mensagens_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_whatsapp_mensagens_logs_template_id",
+      "table_name": "whatsapp_mensagens_logs",
+      "is_unique": false
+    },
+    {
+      "index_name": "whatsapp_mensagens_logs_pkey",
+      "table_name": "whatsapp_mensagens_logs",
+      "is_unique": true
+    },
+    {
+      "index_name": "whatsapp_templates_pkey",
+      "table_name": "whatsapp_templates",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_workflows_config_empresa_id",
+      "table_name": "workflows_config",
+      "is_unique": false
+    },
+    {
+      "index_name": "workflows_config_pkey",
+      "table_name": "workflows_config",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_workflows_definicoes_empresa_id",
+      "table_name": "workflows_definicoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "workflows_definicoes_pkey",
+      "table_name": "workflows_definicoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_workflows_etapas_workflow_id",
+      "table_name": "workflows_etapas",
+      "is_unique": false
+    },
+    {
+      "index_name": "workflows_etapas_pkey",
+      "table_name": "workflows_etapas",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_workflows_execucoes_empresa_id",
+      "table_name": "workflows_execucoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_workflows_execucoes_etapa_atual_id",
+      "table_name": "workflows_execucoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_workflows_execucoes_workflow_id",
+      "table_name": "workflows_execucoes",
+      "is_unique": false
+    },
+    {
+      "index_name": "workflows_execucoes_pkey",
+      "table_name": "workflows_execucoes",
+      "is_unique": true
+    },
+    {
+      "index_name": "idx_workflows_historico_etapa_id",
+      "table_name": "workflows_historico",
+      "is_unique": false
+    },
+    {
+      "index_name": "idx_workflows_historico_execucao_id",
+      "table_name": "workflows_historico",
+      "is_unique": false
+    },
+    {
+      "index_name": "workflows_historico_pkey",
+      "table_name": "workflows_historico",
+      "is_unique": true
+    }
+  ],
+  "count": 1254,
+  "truncated": false,
+  "limit": 3000
+}

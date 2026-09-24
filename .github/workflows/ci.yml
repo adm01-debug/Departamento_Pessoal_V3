@@ -143,6 +143,7 @@ jobs:
           node scripts/audit-bridge-frontend-contract.mjs
           node scripts/validate-plan-50.mjs
           node scripts/audit-canonical-project.mjs
+          node scripts/audit-migration-style.mjs
           node scripts/tests/rebaseline-artifact.test.mjs
           node scripts/tests/validate-canonical-db-url.test.mjs
 
