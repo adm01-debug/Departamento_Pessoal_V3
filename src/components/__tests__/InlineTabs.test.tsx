@@ -19,6 +19,11 @@ vi.mock('@tanstack/react-query', () => ({
   useQuery: () => ({ data: [], isLoading: false }),
   useMutation: () => ({ mutate: vi.fn(), isPending: false }),
   useQueryClient: () => ({ invalidateQueries: vi.fn() }),
+  QueryClient: vi.fn(),
+}));
+
+vi.mock('@/hooks/useEmpresas', () => ({
+  useEmpresas: () => ({ empresaAtual: { id: 'empresa-1', exigir_pin_quiosque: false } }),
 }));
 
 import {
