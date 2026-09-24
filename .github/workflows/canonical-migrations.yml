@@ -111,7 +111,7 @@ jobs:
           # statements and fail with "policy already exists". Each dispatch
           # of this workflow targets only the NEW migrations for that batch.
           for migration in \
-            20260924220000_p0_secdef_authz_remediation.sql
+            20260924230000_p0_secdef_revoke_public_grant.sql
           do
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
           done
@@ -173,7 +173,7 @@ jobs:
               WHERE n.nspname = 'public' AND p.proname = 'clinicas_proximas'
                 AND p.prosrc LIKE '%pertence_a_empresa%'
             ),
-            'ledger_count', (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = '20260924220000')
+            'ledger_count', (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = '20260924230000')
           );
           SQL
           )"
