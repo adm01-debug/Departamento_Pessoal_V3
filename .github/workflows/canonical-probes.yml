@@ -137,6 +137,14 @@ jobs:
           )
           echo "ledger_count=$LEDGER"
 
+          LEDGER_MINMAX=$(read_only <<'SQL'
+          BEGIN TRANSACTION READ ONLY;
+          SELECT min(version) || '..' || max(version) FROM supabase_migrations.schema_migrations;
+          ROLLBACK;
+          SQL
+          )
+          echo "ledger_minmax=$LEDGER_MINMAX"
+
           echo "result={\"rv01\":\"$RV01\",\"rv02\":\"$RV02\",\"rv03\":\"$RV03\",\"rv04\":\"$RV04\",\"views\":\"$VIEWS\",\"ledger\":\"$LEDGER\"}" >> "$GITHUB_OUTPUT"
 
       - name: Verificar expectativas dos probes
