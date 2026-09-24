@@ -111,7 +111,7 @@ jobs:
           # statements and fail with "policy already exists". Each dispatch
           # of this workflow targets only the NEW migrations for that batch.
           for migration in \
-            20260924141500_p0_role_gate_bancarias_folha_ponto_logs.sql
+            20260924143000_p1_audit_log_insert_select_authz.sql
           do
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
           done
@@ -159,26 +159,19 @@ jobs:
           set -euo pipefail
           result="$(psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -At <<'SQL'
           SELECT jsonb_build_object(
-            'contas_bancarias_old_gone', NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='contas_bancarias' AND policyname='tenant_contas_bancarias'),
-            'contas_bancarias_new_present', EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='contas_bancarias' AND policyname='contas_bancarias_rh_manage'),
-            'folha_itens_old_gone', NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='folha_itens' AND policyname='Folha itens scoped via folha'),
-            'folha_itens_new_present', EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='folha_itens' AND policyname='folha_itens_rh_manage'),
-            'folhas_old_gone', NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='folhas_pagamento' AND policyname IN ('Empresa vê suas próprias folhas','Folhas scoped by empresa','Gestão de folha por cargo','Leitura por empresa','empresa_isolation_folhas','folhas_pagamento_tenant_select','tenant_folhas_pagamento')),
-            'folhas_new_present', (SELECT count(*) FROM pg_policies WHERE schemaname='public' AND tablename='folhas_pagamento' AND policyname IN ('folhas_rh_manage','folhas_gestor_read')) = 2,
-            'ponto_old_gone', NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='registros_ponto' AND policyname='empresa_isolation_ponto'),
-            'ponto_kept', EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='registros_ponto' AND policyname='tenant_registros_ponto'),
-            'integracao_logs_old_gone', NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='integracao_logs' AND policyname='Apenas admin pode ver logs de integração'),
-            'integracao_logs_new_present', EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='integracao_logs' AND policyname='integracao_logs_admin_read'),
-            'notificacoes_old_gone', NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='notificacoes_admissao' AND policyname='RH pode ver notificacoes'),
-            'notificacoes_kept', EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='notificacoes_admissao' AND policyname='Tenant scoped notificacoes_admissao'),
-            'ledger_count', (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = '20260924141500')
+            'insert_old_gone', NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='audit_log' AND policyname='Authenticated users can insert audit_logs'),
+            'insert_new_present', EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='audit_log' AND policyname='audit_log_self_insert'),
+            'select_old_gone', NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='audit_log' AND policyname='Users can view relevant audit_logs'),
+            'select_new_present', EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='audit_log' AND policyname='audit_log_self_read'),
+            'admin_read_kept', EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='audit_log' AND policyname='Admins podem ver todo audit_log'),
+            'ledger_count', (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = '20260924143000')
           );
           SQL
           )"
           echo "$result"
           node -e '
             const result = JSON.parse(process.argv[1]);
-            const expectedTrue = ["contas_bancarias_old_gone","contas_bancarias_new_present","folha_itens_old_gone","folha_itens_new_present","folhas_old_gone","folhas_new_present","ponto_old_gone","ponto_kept","integracao_logs_old_gone","integracao_logs_new_present","notificacoes_old_gone","notificacoes_kept"];
+            const expectedTrue = ["insert_old_gone","insert_new_present","select_old_gone","select_new_present","admin_read_kept"];
             if (expectedTrue.some((key) => result[key] !== true) || Number(result.ledger_count) !== 1) process.exit(1);
           ' "$result"
           echo 'CANONICAL_SCOPED_MIGRATIONS_OK'
