@@ -187,6 +187,7 @@ describe('useGenericCrud', () => {
         useGenericCrud({
           queryKey: 'test',
           service,
+          empresaId: 'emp-1',
           successMessages: { update: 'Cargo atualizado!' },
         }),
       { wrapper }
@@ -216,6 +217,7 @@ describe('useGenericCrud', () => {
         useGenericCrud({
           queryKey: 'test',
           service,
+          empresaId: 'emp-1',
           successMessages: { delete: 'Removido com sucesso!' },
         }),
       { wrapper }
@@ -245,7 +247,9 @@ describe('useGenericCrud', () => {
     const { toast } = await import('sonner');
     service.excluir.mockRejectedValue(new Error('Não encontrado'));
     const wrapper = createWrapper();
-    const { result } = renderHook(() => useGenericCrud({ queryKey: 'test', service }), { wrapper });
+    const { result } = renderHook(() => useGenericCrud({ queryKey: 'test', service, empresaId: 'emp-1' }), {
+      wrapper,
+    });
     await act(async () => {
       try {
         await result.current.excluir('99');

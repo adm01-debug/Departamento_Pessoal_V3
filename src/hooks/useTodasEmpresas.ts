@@ -6,12 +6,13 @@ export function useTodasEmpresas() {
   const crud = useGenericCrud<Empresa>({
     queryKey: 'todas-empresas-list',
     service: empresaService,
+    requireEmpresaId: false,
     initialPageSize: 12,
     successMessages: {
       create: 'Empresa criada',
       update: 'Empresa atualizada',
-      delete: 'Empresa excluída'
-    }
+      delete: 'Empresa excluída',
+    },
   });
 
   return {
