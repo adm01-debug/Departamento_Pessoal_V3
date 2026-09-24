@@ -28,10 +28,11 @@ SELECT
   PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY duration_ms) AS p95_ms,
   PERCENTILE_CONT(0.99) WITHIN GROUP (ORDER BY duration_ms) AS p99_ms,
   -- Erros
-  COUNT(*) FILTER (WHERE severity IN ('error', 'fatal')) AS error_count,
-  -- Bytes processados
-  AVG(bytes_sent) FILTER (WHERE bytes_sent IS NOT NULL) AS avg_bytes_sent,
-  SUM(bytes_sent) FILTER (WHERE bytes_sent IS NOT NULL) AS total_bytes_sent
+  COUNT(*) FILTER (WHERE severity IN ('error', 'fatal')) AS error_count
+  -- bytes_sent removido (24/09/2026): coluna nunca existiu em query_telemetry,
+  -- fazia esta migration falhar em qualquer replay do zero (CI Supabase Preview
+  -- de toda PR). Produção não é afetada: 20260912209000_p1_tenant_telemetry_contract
+  -- já dropa (CASCADE) e recria esta view sem essas colunas, com empresa_id.
 FROM query_telemetry
 WHERE created_at >= NOW() - INTERVAL '90 days'
 GROUP BY 1, 2, 3, 4
