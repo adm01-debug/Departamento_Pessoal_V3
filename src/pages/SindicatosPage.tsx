@@ -66,7 +66,9 @@ export default function SindicatosPage() {
                   <div><Label>Email</Label><Input value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} /></div>
                 </div>
                 <div><Label>Data-base</Label><Input value={form.data_base} onChange={e => setForm(p => ({ ...p, data_base: e.target.value }))} placeholder="Ex: Janeiro" /></div>
-                <Button className="w-full" onClick={() => criar.mutate(form)} disabled={!form.nome}>Salvar</Button>
+                <div className="flex justify-end pt-1">
+                  <Button size="sm" onClick={() => criar.mutate(form)} disabled={!form.nome}>Salvar</Button>
+                </div>
               </div>
             </DialogContent>
           </Dialog>

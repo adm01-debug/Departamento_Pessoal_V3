@@ -130,7 +130,7 @@ export default function DespesasPage() {
         <div className="flex justify-end mb-4">
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild><Button><Plus className="mr-2 h-4 w-4" />Nova Despesa</Button></DialogTrigger>
-            <DialogContent className="max-w-lg">
+            <DialogContent>
               <DialogHeader><DialogTitle>Registrar despesa</DialogTitle></DialogHeader>
               <div className="space-y-4">
                 <div>

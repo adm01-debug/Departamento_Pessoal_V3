@@ -38,7 +38,7 @@ export function DocumentosPessoaisTab({ colaboradorId }: { colaboradorId: string
         <CardTitle className="text-lg">Documentos Pessoais</CardTitle>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild><Button size="sm"><Plus className="mr-1 h-4 w-4" />Adicionar</Button></DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-[460px]">
             <DialogHeader><DialogTitle>Novo Documento Pessoal</DialogTitle></DialogHeader>
             <div className="grid gap-3">
               <div><Label>Tipo *</Label>
@@ -54,7 +54,9 @@ export function DocumentosPessoaisTab({ colaboradorId }: { colaboradorId: string
                 <div><Label>Data Validade</Label><Input type="date" value={form.data_validade} onChange={e => setForm(f => ({ ...f, data_validade: e.target.value }))} /></div>
               </div>
               <div><Label>URL do Arquivo</Label><Input value={form.arquivo_url} onChange={e => setForm(f => ({ ...f, arquivo_url: e.target.value }))} placeholder="https://..." /></div>
-              <Button onClick={handleSubmit} disabled={criar.isPending}>Salvar</Button>
+              <div className="flex justify-end pt-1">
+                <Button size="sm" className="rounded-lg px-4" onClick={handleSubmit} disabled={criar.isPending}>Salvar</Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>

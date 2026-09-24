@@ -36,7 +36,7 @@ export function FormacaoTab({ colaboradorId }: { colaboradorId: string }) {
         <CardTitle className="text-lg">Formação Acadêmica</CardTitle>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild><Button size="sm"><Plus className="mr-1 h-4 w-4" />Adicionar</Button></DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-[440px]">
             <DialogHeader><DialogTitle>Nova Formação</DialogTitle></DialogHeader>
             <div className="grid gap-3">
               <div><Label>Escolaridade *</Label>
@@ -48,7 +48,9 @@ export function FormacaoTab({ colaboradorId }: { colaboradorId: string }) {
               <div><Label>Curso</Label><Input value={form.curso} onChange={e => setForm(f => ({ ...f, curso: e.target.value }))} /></div>
               <div><Label>Instituição</Label><Input value={form.instituicao} onChange={e => setForm(f => ({ ...f, instituicao: e.target.value }))} /></div>
               <div><Label>Ano Conclusão</Label><Input type="number" min="1950" max="2030" value={form.ano_conclusao} onChange={e => setForm(f => ({ ...f, ano_conclusao: e.target.value }))} /></div>
-              <Button onClick={handleSubmit} disabled={criar.isPending}>Salvar</Button>
+              <div className="flex justify-end pt-1">
+                <Button size="sm" className="rounded-lg px-4" onClick={handleSubmit} disabled={criar.isPending}>Salvar</Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>

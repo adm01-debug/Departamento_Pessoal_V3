@@ -89,6 +89,27 @@ vi.mock('@/components/forms', async (importOriginal) => {
   };
 });
 
+// DatePicker (Popover + Calendar do Radix) é tão pouco confiável em jsdom
+// quanto o Select acima — e, diferente dele, navegar o calendário mês a mês
+// até 1990 num teste não é viável. Mesmo princípio da troca do FormSelect:
+// um `<input type="date">` nativo com o MESMO contrato de evento
+// (`onChange` recebendo `e.target.value`) que `Input` (ui/input.tsx) já usa
+// internamente — os testes continuam preenchendo a data com `fireEvent.change`
+// normalmente, só a implementação do widget muda.
+vi.mock('@/components/ui/date-picker', () => ({
+  DatePicker: ({ value, onChange, id, name, disabled, placeholder }: any) => (
+    <input
+      type="date"
+      id={id}
+      name={name}
+      value={value ?? ''}
+      disabled={disabled}
+      placeholder={placeholder}
+      onChange={(e) => onChange?.(e.target.value)}
+    />
+  ),
+}));
+
 function renderPage(path: string) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
   return render(

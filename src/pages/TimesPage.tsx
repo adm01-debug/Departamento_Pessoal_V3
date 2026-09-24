@@ -79,10 +79,12 @@ export default function TimesPage() {
               <div className="space-y-3">
                 <div><Label>Nome *</Label><Input value={form.nome} onChange={e => setForm(p => ({ ...p, nome: e.target.value }))} /></div>
                 <div><Label>Descrição</Label><Textarea value={form.descricao} onChange={e => setForm(p => ({ ...p, descricao: e.target.value }))} /></div>
-                <Button className="w-full" onClick={() => handleSubmit.mutate(form)} disabled={!form.nome || handleSubmit.isPending}>
-                  {handleSubmit.isPending ? <Spinner className="mr-2 h-4 w-4" /> : null}
-                  {editingItem ? 'Salvar Alterações' : 'Salvar'}
-                </Button>
+                <div className="flex justify-end pt-1">
+                  <Button size="sm" onClick={() => handleSubmit.mutate(form)} disabled={!form.nome || handleSubmit.isPending}>
+                    {handleSubmit.isPending ? <Spinner className="mr-2 h-4 w-4" /> : null}
+                    {editingItem ? 'Salvar Alterações' : 'Salvar'}
+                  </Button>
+                </div>
               </div>
             </DialogContent>
           </Dialog>

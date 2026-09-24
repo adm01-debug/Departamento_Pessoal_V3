@@ -270,11 +270,12 @@ export function MedidasKanban() {
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => { setRejeitarOpen(null); setMotivo(''); }}>
+            <Button variant="outline" size="sm" onClick={() => { setRejeitarOpen(null); setMotivo(''); }}>
               Cancelar
             </Button>
             <Button
               variant="destructive"
+              size="sm"
               disabled={motivo.trim().length < 5 || rejeitar.isPending}
               onClick={() => rejeitarOpen && rejeitar.mutate({ id: rejeitarOpen, m: motivo.trim() })}
             >

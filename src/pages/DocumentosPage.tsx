@@ -308,7 +308,7 @@ export default function DocumentosPage() {
 
       {/* OCR Dialog */}
       <Dialog open={!!selectedDocForOcr} onOpenChange={(o) => { if(!o) setSelectedDocForOcr(null); }}>
-        <DialogContent className="max-w-md rounded-2xl">
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <div className="flex items-center gap-2 mb-2">
               <div className="p-2 rounded-xl bg-primary/10 text-primary">
@@ -321,7 +321,7 @@ export default function DocumentosPage() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="py-6 min-h-[200px] flex flex-col items-center justify-center border rounded-2xl bg-muted/20">
+          <div className="py-5 min-h-[200px] flex flex-col items-center justify-center border rounded-2xl bg-muted/20">
             {isProcessingOcr ? (
               <div className="text-center space-y-4">
                 <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto" />
@@ -343,7 +343,7 @@ export default function DocumentosPage() {
                     </div>
                   ))}
                 </div>
-                <Button className="w-full rounded-xl gap-2" onClick={() => {
+                <Button className="w-full gap-2" onClick={() => {
                   toast.info('Dados prontos para preenchimento automático!');
                   setSelectedDocForOcr(null);
                 }}>
@@ -359,20 +359,20 @@ export default function DocumentosPage() {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setSelectedDocForOcr(null)} className="rounded-xl">Fechar</Button>
+            <Button variant="outline" onClick={() => setSelectedDocForOcr(null)}>Fechar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Timeline Dialog */}
       <Dialog open={!!selectedDocForTimeline} onOpenChange={(o) => { if(!o) setSelectedDocForTimeline(null); }}>
-        <DialogContent className="max-w-md rounded-2xl">
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="font-display">Histórico do Documento</DialogTitle>
           </DialogHeader>
           {selectedDocForTimeline && <DocumentoTimeline documentoId={selectedDocForTimeline.id} />}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setSelectedDocForTimeline(null)} className="rounded-xl">Fechar</Button>
+            <Button variant="outline" onClick={() => setSelectedDocForTimeline(null)}>Fechar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -386,7 +386,7 @@ export default function DocumentosPage() {
 
       {/* Upload Dialog */}
       <Dialog open={showUpload} onOpenChange={setShowUpload}>
-        <DialogContent className="rounded-2xl">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle className="font-display">Enviar Documento</DialogTitle>
           </DialogHeader>
@@ -395,7 +395,7 @@ export default function DocumentosPage() {
               <div className="space-y-2">
                 <Label className="font-body text-xs">Tipo de Documento</Label>
                 <Select value={tipo} onValueChange={setTipo}>
-                  <SelectTrigger className="rounded-xl"><SelectValue placeholder="Selecione" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
                   <SelectContent>
                     {TIPOS_DOCUMENTO.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
                   </SelectContent>
@@ -404,7 +404,7 @@ export default function DocumentosPage() {
               <div className="space-y-2">
                 <Label className="font-body text-xs">Colaborador (Opcional)</Label>
                 <Select value={colaboradorId} onValueChange={setColaboradorId}>
-                  <SelectTrigger className="rounded-xl"><SelectValue placeholder="Geral" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder="Geral" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="geral">Geral / Empresa</SelectItem>
                     {colaboradores?.map((c: any) => (
@@ -418,7 +418,7 @@ export default function DocumentosPage() {
               <Label className="font-body">Arquivo</Label>
               <div
                 onClick={() => fileRef.current?.click()}
-                className="border-2 border-dashed border-border/50 rounded-xl p-6 text-center cursor-pointer hover:border-primary/50 transition-colors"
+                className="border-2 border-dashed border-border/50 rounded-xl p-5 text-center cursor-pointer hover:border-primary/50 transition-colors"
               >
                 {file ? (
                   <div className="flex items-center justify-center gap-2">
@@ -437,8 +437,8 @@ export default function DocumentosPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowUpload(false)} className="rounded-xl">Cancelar</Button>
-            <Button onClick={handleUpload} disabled={uploading} className="rounded-xl bg-gradient-to-r from-warning to-primary">
+            <Button variant="outline" onClick={() => setShowUpload(false)}>Cancelar</Button>
+            <Button onClick={handleUpload} disabled={uploading} className="bg-gradient-to-r from-warning to-primary">
               {uploading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Upload className="h-4 w-4 mr-2" />}
               Enviar Documento
             </Button>

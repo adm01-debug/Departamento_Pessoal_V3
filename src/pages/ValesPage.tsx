@@ -158,7 +158,9 @@ export default function ValesPage() {
                     <div><Label>Mês de Referência</Label><Input type="month" value={recForm.mes_referencia} onChange={e => setRecForm(p => ({ ...p, mes_referencia: e.target.value }))} /></div>
                     <div><Label>Valor (R$)</Label><Input type="number" value={recForm.valor} onChange={e => setRecForm(p => ({ ...p, valor: e.target.value }))} /></div>
                   </div>
-                  <Button onClick={() => criarRecarga.mutate(recForm)} disabled={!recForm.valor || criarRecarga.isPending} className="w-full">{criarRecarga.isPending ? 'Salvando...' : 'Registrar'}</Button>
+                  <div className="flex justify-end pt-1">
+                    <Button size="sm" onClick={() => criarRecarga.mutate(recForm)} disabled={!recForm.valor || criarRecarga.isPending}>{criarRecarga.isPending ? 'Salvando...' : 'Registrar'}</Button>
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>

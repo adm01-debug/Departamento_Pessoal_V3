@@ -261,24 +261,23 @@ export function GerenciamentoPeriodos({ colaboradorId: initialColaboradorId }: G
       </Card>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="rounded-2xl">
+        <DialogContent className="max-w-[460px]">
           <DialogHeader>
             <DialogTitle>{editingPeriodo ? 'Editar Período' : 'Novo Período'}</DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-2 gap-4 py-4">
+          <div className="grid grid-cols-2 gap-3 py-2">
             <div className="space-y-2">
               <Label>Número Período</Label>
-              <Input 
-                type="number" 
-                value={form.numero_periodo} 
+              <Input
+                type="number"
+                value={form.numero_periodo}
                 onChange={e => setForm(p => ({ ...p, numero_periodo: e.target.value }))}
-                className="rounded-xl"
               />
             </div>
             <div className="space-y-2">
               <Label>Status</Label>
               <Select value={form.status} onValueChange={v => setForm(p => ({ ...p, status: v }))}>
-                <SelectTrigger className="rounded-xl">
+                <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -290,38 +289,35 @@ export function GerenciamentoPeriodos({ colaboradorId: initialColaboradorId }: G
             </div>
             <div className="space-y-2">
               <Label>Data Início</Label>
-              <Input 
-                type="date" 
-                value={form.data_inicio} 
+              <Input
+                type="date"
+                value={form.data_inicio}
                 onChange={e => setForm(p => ({ ...p, data_inicio: e.target.value }))}
-                className="rounded-xl"
               />
             </div>
             <div className="space-y-2">
               <Label>Data Fim</Label>
-              <Input 
-                type="date" 
-                value={form.data_fim} 
+              <Input
+                type="date"
+                value={form.data_fim}
                 onChange={e => setForm(p => ({ ...p, data_fim: e.target.value }))}
-                className="rounded-xl"
               />
             </div>
             <div className="space-y-2">
               <Label>Dias de Direito</Label>
-              <Input 
-                type="number" 
-                value={form.dias_direito} 
+              <Input
+                type="number"
+                value={form.dias_direito}
                 onChange={e => setForm(p => ({ ...p, dias_direito: e.target.value }))}
-                className="rounded-xl"
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)} className="rounded-xl">Cancelar</Button>
-            <Button 
-              onClick={handleSave} 
+            <Button variant="outline" size="sm" onClick={() => setIsDialogOpen(false)}>Cancelar</Button>
+            <Button
+              size="sm"
+              onClick={handleSave}
               disabled={createMutation.isPending || updateMutation.isPending}
-              className="rounded-xl"
             >
               {createMutation.isPending || updateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
               Salvar

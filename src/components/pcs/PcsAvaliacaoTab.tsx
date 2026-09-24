@@ -142,9 +142,11 @@ export function PcsAvaliacaoTab({ planoId }: { planoId: string | null }) {
               <span className="text-muted-foreground">Prévia ponderada</span>
               <strong>{previa.toLocaleString('pt-BR')} pts</strong>
             </div>
-            <Button className="w-full" onClick={salvarAvaliacao} disabled={salvar.isPending}>
-              Salvar avaliação
-            </Button>
+            <div className="flex justify-end pt-1">
+              <Button size="sm" className="rounded-lg px-4" onClick={salvarAvaliacao} disabled={salvar.isPending}>
+                Salvar avaliação
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

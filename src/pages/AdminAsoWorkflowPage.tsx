@@ -230,7 +230,7 @@ export default function AdminAsoWorkflowPage() {
       </Card>
 
       <Dialog open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-[520px]">
           <DialogHeader>
             <DialogTitle>ASO — {selected?.colaboradores?.nome_completo}</DialogTitle>
           </DialogHeader>

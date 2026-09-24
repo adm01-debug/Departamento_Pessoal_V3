@@ -204,13 +204,13 @@ export default function AuditoriaPage() {
 
       <Dialog open={!!selectedLog} onOpenChange={() => setSelectedLog(null)}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0 border-border/30 shadow-elevated rounded-2xl">
-          <DialogHeader className="p-6 pb-2">
+          <DialogHeader className="p-4 pb-2">
             <div className="flex items-center gap-3 mb-2">
               <div className="p-2 bg-primary/10 rounded-xl">
                 <Shield className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <DialogTitle className="font-display text-xl">Detalhes do Log</DialogTitle>
+                <DialogTitle className="font-display">Detalhes do Log</DialogTitle>
                 <DialogDescription className="font-body">
                   Registro de alteração na tabela <span className="font-semibold text-foreground">{selectedLog?.tabela}</span>
                 </DialogDescription>
@@ -218,8 +218,8 @@ export default function AuditoriaPage() {
             </div>
           </DialogHeader>
 
-          <ScrollArea className="flex-1 p-6 pt-2">
-            <div className="grid grid-cols-2 gap-4 mb-6">
+          <ScrollArea className="flex-1 p-5 pt-2">
+            <div className="grid grid-cols-2 gap-4 mb-4">
               <Card className="bg-muted/30 border-none shadow-none">
                 <CardContent className="p-4 flex flex-col gap-1">
                   <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Data e Hora</span>

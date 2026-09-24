@@ -122,7 +122,7 @@ export function CalendarioFerias() {
         </div>
 
         <Dialog open={!!selectedEvent} onOpenChange={(open) => !open && setSelectedEvent(null)}>
-          <DialogContent className="max-w-md rounded-2xl">
+          <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 font-display">
                 <FileText className="h-5 w-5 text-primary" /> 
@@ -130,29 +130,29 @@ export function CalendarioFerias() {
               </DialogTitle>
             </DialogHeader>
             {selectedEvent && (
-              <div className="space-y-6 pt-4">
-                <div className="flex items-center gap-4 bg-muted/30 p-4 rounded-2xl border border-border/40">
-                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                    <User className="h-6 w-6" />
+              <div className="space-y-4 pt-2">
+                <div className="flex items-center gap-2.5">
+                  <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                    <User className="h-4 w-4" />
                   </div>
-                  <div>
-                    <h3 className="font-display font-medium text-base">{selectedEvent.colaborador?.nome_completo}</h3>
-                    <p className="text-sm text-muted-foreground font-body">{selectedEvent.colaborador?.cargo?.nome || 'Cargo não definido'}</p>
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium truncate">{selectedEvent.colaborador?.nome_completo}</p>
+                    <p className="text-[10px] text-muted-foreground">{selectedEvent.colaborador?.cargo?.nome || 'Cargo não definido'}</p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
                     <p className="text-xs text-muted-foreground font-body">Data Início</p>
-                    <p className="font-display font-semibold">{format(new Date(selectedEvent.data_inicio), 'dd/MM/yyyy')}</p>
+                    <p className="font-display font-medium">{format(new Date(selectedEvent.data_inicio), 'dd/MM/yyyy')}</p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-xs text-muted-foreground font-body">Data Fim</p>
-                    <p className="font-display font-semibold">{format(new Date(selectedEvent.data_fim), 'dd/MM/yyyy')}</p>
+                    <p className="font-display font-medium">{format(new Date(selectedEvent.data_fim), 'dd/MM/yyyy')}</p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-xs text-muted-foreground font-body">Total de Dias</p>
-                    <p className="font-display font-semibold">{selectedEvent.dias_ferias} dias</p>
+                    <p className="font-display font-medium">{selectedEvent.dias_ferias} dias</p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-xs text-muted-foreground font-body">Status</p>
@@ -162,24 +162,26 @@ export function CalendarioFerias() {
 
                 <Separator className="bg-border/40" />
 
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Abono Pecuniário</span>
-                    <Badge variant={selectedEvent.abono_pecuniario ? "default" : "secondary"}>
+                    <Badge variant={selectedEvent.abono_pecuniario ? "default" : "secondary"} size="sm">
                       {selectedEvent.abono_pecuniario ? 'Sim' : 'Não'}
                     </Badge>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Adiantamento 13º</span>
-                    <Badge variant={selectedEvent.adiantamento_13 ? "default" : "secondary"}>
+                    <Badge variant={selectedEvent.adiantamento_13 ? "default" : "secondary"} size="sm">
                       {selectedEvent.adiantamento_13 ? 'Sim' : 'Não'}
                     </Badge>
                   </div>
                 </div>
 
-                <Button className="w-full rounded-xl font-body" variant="outline" onClick={() => setSelectedEvent(null)}>
-                  Fechar
-                </Button>
+                <div className="flex justify-end pt-1">
+                  <Button size="sm" variant="outline" onClick={() => setSelectedEvent(null)}>
+                    Fechar
+                  </Button>
+                </div>
               </div>
             )}
           </DialogContent>

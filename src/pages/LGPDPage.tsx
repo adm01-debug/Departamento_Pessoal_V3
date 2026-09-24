@@ -146,7 +146,7 @@ export default function LGPDPage() {
                 Nova Solicitação
               </Button>
             </DialogTrigger>
-            <DialogContent className="rounded-2xl">
+            <DialogContent>
               <DialogHeader>
                 <DialogTitle className="font-display">Solicitação LGPD (Art. 18)</DialogTitle>
               </DialogHeader>
@@ -198,13 +198,16 @@ export default function LGPDPage() {
                     Prazo legal: 15 dias corridos (Art. 18, §5° LGPD)
                   </p>
                 </div>
-                <Button
-                  className="w-full rounded-xl bg-gradient-to-r from-primary to-primary-glow"
-                  onClick={() => criarSol.mutate()}
-                  disabled={!formSol.colaborador_id || criarSol.isPending}
-                >
-                  {criarSol.isPending ? 'Registrando...' : 'Registrar Solicitação'}
-                </Button>
+                <div className="flex justify-end pt-1">
+                  <Button
+                    size="sm"
+                    className="rounded-lg px-4 bg-gradient-to-r from-primary to-primary-glow"
+                    onClick={() => criarSol.mutate()}
+                    disabled={!formSol.colaborador_id || criarSol.isPending}
+                  >
+                    {criarSol.isPending ? 'Registrando...' : 'Registrar Solicitação'}
+                  </Button>
+                </div>
               </div>
             </DialogContent>
           </Dialog>

@@ -75,9 +75,9 @@ export default function PensoesPage() {
       <div className="flex justify-end">
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild><Button><Plus className="mr-2 h-4 w-4" />Nova Pensão</Button></DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-[520px]">
             <DialogHeader><DialogTitle>Nova Pensão</DialogTitle></DialogHeader>
-            <div className="space-y-4">
+            <div className="space-y-3">
               <div><Label>Colaborador</Label>
                 <Select value={form.colaborador_id} onValueChange={v => setForm(p => ({ ...p, colaborador_id: v }))}>
                   <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
@@ -92,16 +92,18 @@ export default function PensoesPage() {
                   <SelectContent><SelectItem value="alimenticia">Alimentícia</SelectItem><SelectItem value="judicial">Judicial</SelectItem></SelectContent>
                 </Select>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div><Label>Percentual (%)</Label><Input type="number" value={form.percentual} onChange={e => setForm(p => ({ ...p, percentual: e.target.value }))} /></div>
                 <div><Label>Valor Fixo (R$)</Label><Input type="number" value={form.valor_fixo} onChange={e => setForm(p => ({ ...p, valor_fixo: e.target.value }))} /></div>
               </div>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-3">
                 <div><Label>Banco</Label><Input value={form.banco} onChange={e => setForm(p => ({ ...p, banco: e.target.value }))} /></div>
                 <div><Label>Agência</Label><Input value={form.agencia} onChange={e => setForm(p => ({ ...p, agencia: e.target.value }))} /></div>
                 <div><Label>Conta</Label><Input value={form.conta} onChange={e => setForm(p => ({ ...p, conta: e.target.value }))} /></div>
               </div>
-              <Button onClick={() => criar.mutate(form)} disabled={!form.colaborador_id || !form.beneficiario} className="w-full">Salvar</Button>
+              <div className="flex justify-end pt-1">
+                <Button size="sm" onClick={() => criar.mutate(form)} disabled={!form.colaborador_id || !form.beneficiario}>Salvar</Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>

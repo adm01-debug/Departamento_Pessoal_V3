@@ -99,22 +99,22 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] p-0 overflow-hidden rounded-3xl border-none shadow-2xl">
-        <DialogHeader className="p-6 bg-gradient-to-r from-primary/10 via-background to-background border-b border-border/10">
+      <DialogContent className="max-w-3xl max-h-[90vh] p-0 overflow-hidden rounded-3xl border-none shadow-2xl">
+        <DialogHeader className="p-5 bg-gradient-to-r from-primary/10 via-background to-background border-b border-border/10">
           <div className="flex items-start justify-between">
             <div className="space-y-1">
-              <DialogTitle className="text-2xl font-display font-medium flex items-center gap-2">
+              <DialogTitle className="font-display flex items-center gap-2">
                 {admissao.nome}
                 <Badge variant="outline" className="text-[10px] uppercase font-medium tracking-widest bg-primary/5 text-primary border-primary/20">
                   {admissao.etapa}
                 </Badge>
               </DialogTitle>
-              <DialogDescription className="text-sm">
+              <DialogDescription>
                 Gerenciamento de admissão digital • Iniciada em {format(new Date(admissao.created_at), "dd 'de' MMMM", { locale: ptBR })}
               </DialogDescription>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" className="rounded-xl gap-2 h-9 text-xs">
+              <Button variant="outline" size="sm" className="gap-2 h-9 text-xs">
                 <ExternalLink className="w-4 h-4" /> Ver Portal
               </Button>
             </div>
@@ -122,16 +122,16 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
         </DialogHeader>
 
         <Tabs defaultValue="geral" className="w-full">
-          <TabsList className="w-full justify-start h-12 bg-muted/30 rounded-none px-6 border-b border-border/5">
+          <TabsList className="w-full justify-start h-12 bg-muted/30 rounded-none px-5 border-b border-border/5">
             <TabsTrigger value="geral" className="gap-2 data-[state=active]:bg-background"><User className="w-4 h-4" /> Geral</TabsTrigger>
             <TabsTrigger value="documentos" className="gap-2 data-[state=active]:bg-background"><FileText className="w-4 h-4" /> Documentos</TabsTrigger>
             <TabsTrigger value="workflow" className="gap-2 data-[state=active]:bg-background"><History className="w-4 h-4" /> Histórico</TabsTrigger>
           </TabsList>
 
           <ScrollArea className="h-[500px]">
-            <div className="p-6">
-              <TabsContent value="geral" className="m-0 space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="p-5">
+              <TabsContent value="geral" className="m-0 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-4">
                     <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Informações da Vaga</h4>
                     <div className="grid gap-3 bg-muted/20 p-4 rounded-2xl border border-border/5">
@@ -177,29 +177,27 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
                   </div>
                 </div>
 
-                <div className="bg-primary/5 p-4 rounded-2xl border border-primary/10 flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
-                    <Clock className="w-6 h-6 text-primary" />
-                  </div>
+                <div className="flex items-center gap-2.5">
+                  <Clock className="h-4 w-4 text-primary shrink-0" />
                   <div>
-                    <h5 className="text-sm font-medium text-primary">Status do Workflow</h5>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs font-medium text-primary">Status do Workflow</p>
+                    <p className="text-[10px] text-muted-foreground">
                       {workflow?.status === 'em_andamento' ? 'Processo em andamento. Aguardando documentos.' : 'Aguardando início do processo.'}
                     </p>
                   </div>
                 </div>
 
                 <div className="bg-success/5 p-4 rounded-2xl border border-success/10 flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-success/20 flex items-center justify-center">
-                      <ShieldCheck className="w-6 h-6 text-success" />
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-success/20 flex items-center justify-center shrink-0">
+                      <ShieldCheck className="w-4 h-4 text-success" />
                     </div>
                     <div>
-                      <h5 className="text-sm font-medium text-success">eSocial: Admissão (S-2200)</h5>
+                      <p className="text-xs font-medium text-success">eSocial: Admissão (S-2200)</p>
                       <div className="flex flex-col gap-0.5">
-                        <p className="text-xs text-muted-foreground">
-                          {admissao.status_esocial === 'enviado' 
-                            ? `Protocolo: ${admissao.protocolo_esocial || 'Sincronizado'}` 
+                        <p className="text-[11px] text-muted-foreground">
+                          {admissao.status_esocial === 'enviado'
+                            ? `Protocolo: ${admissao.protocolo_esocial || 'Sincronizado'}`
                             : 'Sincronize os dados do colaborador com o Governo Federal.'}
                         </p>
                         {admissao.data_transmissao_esocial && (
@@ -210,14 +208,14 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
                       </div>
                     </div>
                   </div>
-                  <Button 
-                    size="sm" 
-                    variant="outline" 
-                    className="rounded-xl border-success/30 text-success hover:bg-success/10 h-10 gap-2 font-medium"
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="rounded-xl border-success/30 text-success hover:bg-success/10 gap-2 font-medium"
                     onClick={handleEnvioESocial}
                     disabled={admissao.status_esocial === 'enviado'}
                   >
-                    <Send className="w-4 h-4" /> 
+                    <Send className="w-3.5 h-3.5" />
                     {admissao.status_esocial === 'enviado' ? 'Transmitido' : 'Transmitir Agora'}
                   </Button>
                 </div>

@@ -71,7 +71,9 @@ export default function TurnosPage() {
                 </div>
                 <div><Label>Intervalo (min)</Label><Input type="number" value={form.intervalo_minutos} onChange={e => setForm(p => ({ ...p, intervalo_minutos: Number(e.target.value) }))} /></div>
                 <div><Label>Cor</Label><Input type="color" value={form.cor} onChange={e => setForm(p => ({ ...p, cor: e.target.value }))} className="h-10" /></div>
-                <Button className="w-full" onClick={() => criar.mutate()} disabled={!form.nome || criar.isPending}>{criar.isPending ? 'Criando...' : 'Criar Turno'}</Button>
+                <div className="flex justify-end pt-1">
+                  <Button size="sm" onClick={() => criar.mutate()} disabled={!form.nome || criar.isPending}>{criar.isPending ? 'Criando...' : 'Criar Turno'}</Button>
+                </div>
               </div>
             </DialogContent>
           </Dialog>

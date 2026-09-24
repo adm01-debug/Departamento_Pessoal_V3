@@ -37,7 +37,7 @@ function PipelineStep({ step, status, index, isLast }: { step: typeof stepConfig
         <div className={cn(
           "relative p-3 rounded-2xl border-2 transition-all",
           isDone ? "bg-success/10 border-success/30" : "bg-card border-border/30",
-          !isDone && index === 0 && "border-primary/50 shadow-glow-sm"
+          !isDone && index === 0 && "border-primary/50"
         )}>
           <Icon className={cn("h-5 w-5", isDone ? "text-success" : "text-muted-foreground")} />
           {isDone && (

@@ -199,7 +199,7 @@ export function FeriasColetivasTab() {
       </CardContent>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-md rounded-2xl">
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="font-display">Gerar comunicados de férias coletivas</DialogTitle>
             <DialogDescription className="text-xs">

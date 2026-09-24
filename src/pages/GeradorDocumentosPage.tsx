@@ -256,7 +256,7 @@ export default function GeradorDocumentosPage() {
 
       {/* Generation Dialog */}
       <Dialog open={!!selectedTemplate} onOpenChange={() => setSelectedTemplate(null)}>
-        <DialogContent className="rounded-2xl max-w-md">
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="font-display flex items-center gap-2">
               {template && <div className={cn("p-2 rounded-xl bg-gradient-to-br", template.gradient)}>
@@ -270,7 +270,7 @@ export default function GeradorDocumentosPage() {
               <Label className="font-body font-medium">Colaborador</Label>
               {isLoading ? <Spinner /> : (
                 <Select value={selectedColaborador} onValueChange={setSelectedColaborador}>
-                  <SelectTrigger className="rounded-xl"><SelectValue placeholder="Selecione o colaborador" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder="Selecione o colaborador" /></SelectTrigger>
                   <SelectContent>
                     {colaboradores.map((c: any) => (
                       <SelectItem key={c.id} value={c.id}>
@@ -298,10 +298,10 @@ export default function GeradorDocumentosPage() {
             )}
           </div>
           <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => handleGenerate('preview')} disabled={generating || !selectedColaborador} className="rounded-xl font-body">
+            <Button variant="outline" onClick={() => handleGenerate('preview')} disabled={generating || !selectedColaborador} className="font-body">
               <Eye className="h-4 w-4 mr-2" />Visualizar
             </Button>
-            <Button onClick={() => handleGenerate('download')} disabled={generating || !selectedColaborador} className="rounded-xl bg-gradient-to-r from-primary to-primary-glow font-body">
+            <Button onClick={() => handleGenerate('download')} disabled={generating || !selectedColaborador} className="bg-gradient-to-r from-primary to-primary-glow font-body">
               {generating ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Download className="h-4 w-4 mr-2" />}
               Gerar PDF
             </Button>

@@ -54,7 +54,7 @@ export function ContratoTokenTimelineDialog({ tokenId, open, onOpenChange }: Pro
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <History className="h-5 w-5 text-primary" />
@@ -72,7 +72,7 @@ export function ContratoTokenTimelineDialog({ tokenId, open, onOpenChange }: Pro
             ))}
           </div>
         ) : !data || data.length === 0 ? (
-          <div className="rounded-md border bg-muted/30 p-6 text-center text-sm text-muted-foreground">
+          <div className="rounded-md border bg-muted/30 p-5 text-center text-sm text-muted-foreground">
             Nenhum evento registrado ainda.
           </div>
         ) : (

@@ -79,7 +79,7 @@ export function ESocialLogsTab({ logs, eventos, refreshLogs }: ESocialLogsTabPro
                             <DialogHeader>
                               <DialogTitle>Detalhes da Transmissão</DialogTitle>
                             </DialogHeader>
-                            <div className="space-y-6 pt-4">
+                            <div className="space-y-4 pt-4">
                               <div>
                                 <h4 className="text-sm font-medium mb-2">Request XML (Envio)</h4>
                                 <pre className="p-3 bg-muted rounded-lg text-[10px] overflow-x-auto border">{log.request_xml}</pre>
@@ -226,9 +226,11 @@ export function ESocialConfigTab({
                   <Label>Identificação (Ex: e-CNPJ Empresa)</Label>
                   <Input name="subject" placeholder="Nome para o certificado" required />
                 </div>
-                <Button type="submit" className="w-full rounded-xl bg-gradient-to-r from-primary to-primary-glow">
-                  Salvar Certificado
-                </Button>
+                <div className="flex justify-end pt-1">
+                  <Button type="submit" size="sm" className="rounded-lg px-4 bg-gradient-to-r from-primary to-primary-glow">
+                    Salvar Certificado
+                  </Button>
+                </div>
               </form>
             </DialogContent>
           </Dialog>
@@ -313,20 +315,20 @@ export function ESocialEventDetailsDialog({
   return (
     <Dialog open={!!selectedEvento} onOpenChange={(o) => { if (!o) onClose(); }}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0 border-border/30 shadow-elevated rounded-2xl">
-        <DialogHeader className="p-6 pb-2">
+        <DialogHeader className="p-4 pb-2">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-primary/10 rounded-xl">
               <FileCheck className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <DialogTitle className="font-display text-xl">{selectedEvento?.tipo_evento} - Detalhes da Transmissão</DialogTitle>
+              <DialogTitle className="font-display">{selectedEvento?.tipo_evento} - Detalhes da Transmissão</DialogTitle>
               <DialogDescription className="font-body">Histórico de envio e retorno do eSocial</DialogDescription>
             </div>
           </div>
         </DialogHeader>
 
-        <ScrollArea className="flex-1 p-6 pt-2">
-          <div className="grid grid-cols-2 gap-4 mb-6">
+        <ScrollArea className="flex-1 p-5 pt-2">
+          <div className="grid grid-cols-2 gap-4 mb-4">
             <Card className="bg-muted/30 border-none shadow-none">
               <CardContent className="p-4 flex flex-col gap-1">
                 <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Status</span>

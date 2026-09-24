@@ -90,21 +90,21 @@ export function FeriasRelatorioDialog({ stats, data, filters }: FeriasRelatorioD
           <FileDown className="h-4 w-4" /> Relatório PDF
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-md rounded-2xl">
+      <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 font-display">
             <FileDown className="h-5 w-5 text-primary" /> Gerar Relatório de Férias
           </DialogTitle>
         </DialogHeader>
         
-        <div className="py-4 space-y-6">
-          <div className="space-y-3">
-            <Label className="text-sm font-medium font-body">Selecione o Período</Label>
+        <div className="py-3 space-y-4">
+          <div className="space-y-2">
+            <Label className="text-xs font-medium font-body">Selecione o Período</Label>
             <Select value={periodo} onValueChange={setPeriodo}>
-              <SelectTrigger className="rounded-xl border-border/40">
+              <SelectTrigger className="border-border/40">
                 <SelectValue placeholder="Selecione o período" />
               </SelectTrigger>
-              <SelectContent className="rounded-xl">
+              <SelectContent>
                 <SelectItem value="6_meses">Últimos 6 meses</SelectItem>
                 <SelectItem value="ano_atual">Ano Atual ({new Date().getFullYear()})</SelectItem>
                 <SelectItem value="vencidos">Períodos Vencidos / Críticos</SelectItem>
@@ -113,7 +113,7 @@ export function FeriasRelatorioDialog({ stats, data, filters }: FeriasRelatorioD
             </Select>
           </div>
 
-          <div className="p-4 rounded-xl bg-muted/30 border border-border/20 space-y-3">
+          <div className="p-3 rounded-xl bg-muted/30 border border-border/20 space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Pré-visualização Rápida</span>
               <Badge variant="outline" className="text-[10px] h-4 font-body">{filtered.length} registros</Badge>
@@ -146,16 +146,18 @@ export function FeriasRelatorioDialog({ stats, data, filters }: FeriasRelatorioD
         </div>
 
         <DialogFooter className="gap-2 sm:gap-0">
-          <Button 
-            variant="ghost" 
-            className="rounded-xl font-body"
+          <Button
+            variant="ghost"
+            size="sm"
+            className="font-body"
             onClick={() => setPreviewOpen(true)}
             disabled={filtered.length === 0}
           >
             <Eye className="h-4 w-4 mr-2" /> Visualizar
           </Button>
-          <Button 
-            className="rounded-xl bg-gradient-to-r from-primary-glow to-primary font-body flex-1 sm:flex-none"
+          <Button
+            size="sm"
+            className="bg-gradient-to-r from-primary-glow to-primary font-body flex-1 sm:flex-none"
             onClick={handleDownload}
             disabled={loading || filtered.length === 0}
           >

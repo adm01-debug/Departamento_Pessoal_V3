@@ -189,14 +189,14 @@ export function CNABDialog({ folhaId }: CNABDialogProps) {
           </Card>
 
           <div className="grid grid-cols-2 gap-3 pt-2">
-            <Button onClick={handleGenerate} className="rounded-xl gap-2 h-12 shadow-lg bg-gradient-to-r from-primary to-primary-glow" disabled={loading}>
+            <Button onClick={handleGenerate} className="gap-2 shadow-lg bg-gradient-to-r from-primary to-primary-glow" disabled={loading}>
               {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <FileDown className="h-5 w-5" />}
               <div className="flex flex-col items-start leading-tight">
                 <span className="text-sm">CNAB 240</span>
                 <span className="text-[10px] opacity-70">Remessa FEBRABAN</span>
               </div>
             </Button>
-            <Button onClick={handleGeneratePIX} variant="outline" className="rounded-xl gap-2 h-12 border-primary/30 hover:bg-primary/5" disabled={loading}>
+            <Button onClick={handleGeneratePIX} variant="outline" className="gap-2 border-primary/30 hover:bg-primary/5" disabled={loading}>
               {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Zap className="h-5 w-5 text-amber-500" />}
               <div className="flex flex-col items-start leading-tight">
                 <span className="text-sm">PIX Analítico</span>

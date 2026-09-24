@@ -102,9 +102,11 @@ export function BeneficiosSettingsTab() {
                     <Label>Valor Mensal (R$)</Label>
                     <Input type="number" value={form.valor} onChange={e => setForm(p => ({ ...p, valor: e.target.value }))} placeholder="0.00" />
                   </div>
-                  <Button onClick={() => criar.mutate(form)} disabled={!form.nome || criar.isPending} className="w-full rounded-xl">
-                    {criar.isPending ? 'Salvando...' : 'Salvar Plano'}
-                  </Button>
+                  <div className="flex justify-end pt-1">
+                    <Button size="sm" onClick={() => criar.mutate(form)} disabled={!form.nome || criar.isPending}>
+                      {criar.isPending ? 'Salvando...' : 'Salvar Plano'}
+                    </Button>
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>

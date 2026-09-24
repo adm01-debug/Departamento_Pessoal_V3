@@ -76,7 +76,7 @@ export default function RecrutamentoPage() {
               <DialogTrigger asChild>
                 <Button className="rounded-xl shadow-lg"><Plus className="h-4 w-4 mr-2" />Nova Vaga</Button>
               </DialogTrigger>
-              <DialogContent className="max-w-xl">
+              <DialogContent>
                 <DialogHeader><DialogTitle>Anunciar Nova Vaga</DialogTitle></DialogHeader>
                 <div className="grid grid-cols-2 gap-4 pt-4">
                   <div className="grid gap-1"><Label>Título da Vaga</Label><Input placeholder="Ex: Desenvolvedor Senior" /></div>
@@ -84,7 +84,9 @@ export default function RecrutamentoPage() {
                   <div className="grid gap-1"><Label>Modalidade</Label><Input placeholder="Remoto, Híbrido, Presencial" /></div>
                   <div className="grid gap-1"><Label>Quantidade</Label><Input type="number" defaultValue={1} /></div>
                   <div className="grid gap-1 col-span-2"><Label>Requisitos (separados por vírgula)</Label><Input placeholder="React, TypeScript, Node.js..." /></div>
-                  <Button className="col-span-2 mt-2">Publicar Vaga</Button>
+                  <div className="col-span-2 flex justify-end pt-1">
+                    <Button size="sm" className="rounded-lg px-4">Publicar Vaga</Button>
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>
@@ -374,18 +376,18 @@ export default function RecrutamentoPage() {
           <DialogContent className="max-w-2xl rounded-3xl h-[85vh] flex flex-col p-0 overflow-hidden border-none shadow-elevated">
             {selectedCandidatura && (
               <>
-                <DialogHeader className="p-6 border-b bg-muted/20">
+                <DialogHeader className="p-5 border-b bg-muted/20">
                   <div className="flex items-center gap-4">
                     <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-medium text-xl">
                       {selectedCandidatura.candidato?.nome?.charAt(0)}
                     </div>
                     <div>
-                      <DialogTitle className="text-2xl font-display font-medium">{selectedCandidatura.candidato?.nome}</DialogTitle>
+                      <DialogTitle className="font-display">{selectedCandidatura.candidato?.nome}</DialogTitle>
                       <p className="text-sm text-muted-foreground font-medium">{selectedCandidatura.vaga?.titulo} • {selectedCandidatura.vaga?.departamento}</p>
                     </div>
                   </div>
                 </DialogHeader>
-                <div className="flex-1 overflow-y-auto p-6 space-y-8 custom-scrollbar">
+                <div className="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar">
                   <div className="grid grid-cols-2 gap-4">
                     <Card className="border-border/40 bg-muted/10 shadow-none">
                       <CardContent className="p-4 flex flex-col gap-1">
@@ -414,9 +416,9 @@ export default function RecrutamentoPage() {
                     <CandidatoTimeline candidaturaId={selectedCandidatura.id} />
                   </div>
                 </div>
-                <div className="p-6 border-t bg-muted/10 flex justify-end gap-3">
-                  <Button variant="outline" className="rounded-xl font-medium" onClick={() => setSelectedCandidatura(null)}>Fechar Janela</Button>
-                  <Button className="rounded-xl bg-gradient-to-r from-primary to-primary-glow font-medium shadow-lg">Avançar para Próxima Etapa</Button>
+                <div className="p-5 border-t bg-muted/10 flex justify-end gap-2">
+                  <Button variant="outline" size="sm" className="rounded-lg font-medium" onClick={() => setSelectedCandidatura(null)}>Fechar Janela</Button>
+                  <Button size="sm" className="rounded-lg font-medium">Avançar para Próxima Etapa</Button>
                 </div>
               </>
             )}

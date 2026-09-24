@@ -111,7 +111,7 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-lg rounded-2xl">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="font-display flex items-center gap-2">
             <UserMinus className="h-5 w-5 text-destructive" />
@@ -124,7 +124,7 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
           <div>
             <Label htmlFor="desl-colaborador" className="font-body text-xs">Colaborador *</Label>
             <Select value={form.colaborador_id} onValueChange={(v) => set('colaborador_id', v)}>
-              <SelectTrigger id="desl-colaborador" className="rounded-xl">
+              <SelectTrigger id="desl-colaborador">
                 <SelectValue placeholder={loadingColab ? 'Carregando...' : 'Selecione o colaborador'} />
               </SelectTrigger>
               <SelectContent>
@@ -140,12 +140,12 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label htmlFor="desl-data" className="font-body text-xs">Data Desligamento *</Label>
-              <Input id="desl-data" type="date" value={form.data_desligamento} onChange={(e) => set('data_desligamento', e.target.value)} className="rounded-xl" />
+              <Input id="desl-data" type="date" value={form.data_desligamento} onChange={(e) => set('data_desligamento', e.target.value)} />
             </div>
             <div>
               <Label htmlFor="desl-tipo" className="font-body text-xs">Tipo de Rescisão *</Label>
               <Select value={form.tipo} onValueChange={(v) => set('tipo', v)}>
-                <SelectTrigger id="desl-tipo" className="rounded-xl"><SelectValue /></SelectTrigger>
+                <SelectTrigger id="desl-tipo"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="sem_justa_causa">Sem Justa Causa</SelectItem>
                   <SelectItem value="com_justa_causa">Com Justa Causa</SelectItem>
@@ -166,18 +166,18 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
             </div>
             <div>
               <Label htmlFor="desl-saldo-fgts" className="font-body text-xs">Saldo FGTS Estimado (R$)</Label>
-              <Input id="desl-saldo-fgts" type="number" value={form.saldo_fgts} onChange={(e) => set('saldo_fgts', e.target.value)} className="rounded-xl" placeholder="0.00" />
+              <Input id="desl-saldo-fgts" type="number" value={form.saldo_fgts} onChange={(e) => set('saldo_fgts', e.target.value)} placeholder="0.00" />
             </div>
           </div>
 
           <div>
             <Label htmlFor="desl-aviso-previo" className="font-body text-xs">Data Aviso Prévio</Label>
-            <Input id="desl-aviso-previo" type="date" value={form.data_aviso_previo} onChange={(e) => set('data_aviso_previo', e.target.value)} className="rounded-xl" />
+            <Input id="desl-aviso-previo" type="date" value={form.data_aviso_previo} onChange={(e) => set('data_aviso_previo', e.target.value)} />
           </div>
 
           <div>
             <Label htmlFor="desl-motivo" className="font-body text-xs">Motivo</Label>
-            <Textarea id="desl-motivo" value={form.motivo} onChange={(e) => set('motivo', e.target.value)} className="rounded-xl resize-none" rows={2} placeholder="Descreva o motivo do desligamento..." />
+            <Textarea id="desl-motivo" value={form.motivo} onChange={(e) => set('motivo', e.target.value)} className="resize-none" rows={2} placeholder="Descreva o motivo do desligamento..." />
           </div>
 
           <div className="flex items-center justify-between">
@@ -189,7 +189,7 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
             <Switch id="desl-remover-beneficios" checked={form.remover_beneficios} onCheckedChange={(v) => set('remover_beneficios', v)} />
           </div>
 
-          <Button onClick={handleSubmit} disabled={loading} className="w-full rounded-xl bg-gradient-to-r from-destructive to-destructive/70 font-body">
+          <Button onClick={handleSubmit} disabled={loading} className="w-full bg-gradient-to-r from-destructive to-destructive/70 font-body">
             {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UserMinus className="h-4 w-4 mr-2" />}
             Registrar Desligamento
           </Button>

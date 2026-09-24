@@ -106,14 +106,16 @@ export default function ObrigacoesFiscaisPage() {
             </Button>
             <Dialog open={openGuia} onOpenChange={setOpenGuia}>
               <DialogTrigger asChild><Button className="rounded-xl bg-gradient-to-r from-primary to-primary-glow font-body"><Plus className="mr-2 h-4 w-4" />Gerar Guia</Button></DialogTrigger>
-              <DialogContent className="rounded-2xl">
+              <DialogContent>
                 <DialogHeader><DialogTitle className="font-display">Gerar Guia de Recolhimento</DialogTitle></DialogHeader>
                 <div className="space-y-4">
                   <div><Label className="font-body">Tipo</Label><Select value={guiaForm.tipo} onValueChange={v => setGuiaForm(p => ({ ...p, tipo: v }))}><SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="fgts">FGTS (GRF)</SelectItem><SelectItem value="inss">GPS / INSS</SelectItem></SelectContent></Select></div>
                   <div><Label className="font-body">Competência</Label><Input value={competencia} disabled className="rounded-xl" /></div>
                   <div><Label className="font-body">Valor (R$)</Label><Input type="number" step="0.01" value={guiaForm.valor} onChange={e => setGuiaForm(p => ({ ...p, valor: e.target.value }))} placeholder="0,00" className="rounded-xl" /></div>
                   <div><Label className="font-body">Data de Vencimento</Label><Input type="date" value={guiaForm.vencimento} onChange={e => setGuiaForm(p => ({ ...p, vencimento: e.target.value }))} className="rounded-xl" /></div>
-                  <Button className="w-full rounded-xl bg-gradient-to-r from-primary to-primary-glow" onClick={() => gerarGuia.mutate()} disabled={!guiaForm.valor || gerarGuia.isPending}>{gerarGuia.isPending ? 'Gerando...' : 'Gerar Guia'}</Button>
+                  <div className="flex justify-end pt-1">
+                    <Button size="sm" className="rounded-lg px-4 bg-gradient-to-r from-primary to-primary-glow" onClick={() => gerarGuia.mutate()} disabled={!guiaForm.valor || gerarGuia.isPending}>{gerarGuia.isPending ? 'Gerando...' : 'Gerar Guia'}</Button>
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>

@@ -305,7 +305,12 @@ export async function listarFeriasColaborador(colaboradorId: string, empresaId: 
 export async function listarHoleritesColaborador(colaboradorId: string, limite: number = 12) {
   const { data, error } = await supabase
     .from('holerites')
-    .select('id, liquido, total_proventos, assinado, created_at, folha:folhas_pagamento!holerites_folha_id_fkey(competencia)')
+    .select(`
+      id, liquido, total_proventos, total_descontos, assinado, created_at,
+      colaborador_nome, colaborador_cpf, colaborador_cargo,
+      salario_base, valor_inss, valor_irrf, valor_fgts,
+      folha:folhas_pagamento!holerites_folha_id_fkey(competencia)
+    `)
     .eq('colaborador_id', colaboradorId)
     .order('created_at', { ascending: false })
     .limit(limite);
@@ -315,8 +320,16 @@ export async function listarHoleritesColaborador(colaboradorId: string, limite: 
     competencia: h.folha?.competencia ?? '—',
     total_liquido: h.liquido,
     total_proventos: h.total_proventos,
+    total_descontos: h.total_descontos,
     assinado: h.assinado,
     created_at: h.created_at,
+    colaborador_nome: h.colaborador_nome,
+    colaborador_cpf: h.colaborador_cpf,
+    colaborador_cargo: h.colaborador_cargo,
+    salario_base: h.salario_base,
+    valor_inss: h.valor_inss,
+    valor_irrf: h.valor_irrf,
+    valor_fgts: h.valor_fgts,
   }));
 }
 

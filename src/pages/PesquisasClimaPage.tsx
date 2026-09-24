@@ -88,7 +88,9 @@ export default function PesquisasClimaPage() {
                 <div><Label>Data Fim</Label><Input type="date" value={form.data_fim} onChange={e => setForm(p => ({ ...p, data_fim: e.target.value }))} /></div>
               </div>
               <div className="flex items-center gap-2"><Switch checked={form.anonima} onCheckedChange={v => setForm(p => ({ ...p, anonima: v }))} /><Label>Respostas anônimas</Label></div>
-              <Button className="w-full" onClick={() => criar.mutate()} disabled={!form.titulo || criar.isPending}>{criar.isPending ? 'Criando...' : 'Criar Pesquisa'}</Button>
+              <div className="flex justify-end pt-1">
+                <Button size="sm" className="rounded-lg px-4" onClick={() => criar.mutate()} disabled={!form.titulo || criar.isPending}>{criar.isPending ? 'Criando...' : 'Criar Pesquisa'}</Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>

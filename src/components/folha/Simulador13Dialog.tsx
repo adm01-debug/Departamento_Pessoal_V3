@@ -68,7 +68,7 @@ export function Simulador13Dialog() {
               <Input type="number" min="0" value={form.dependentes} onChange={e => setForm(p => ({ ...p, dependentes: e.target.value }))} />
             </div>
           </div>
-          <Button onClick={handleCalc} disabled={loading || !form.salario || !form.dataAdmissao} className="w-full rounded-xl">
+          <Button onClick={handleCalc} disabled={loading || !form.salario || !form.dataAdmissao} className="w-full">
             {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Calculator className="h-4 w-4 mr-2" />}
             Calcular 13º
           </Button>

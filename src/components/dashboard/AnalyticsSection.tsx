@@ -841,10 +841,10 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
       {/* Modal de Detalhes de Pendências */}
       <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0 gap-0 rounded-2xl border-border/40 shadow-2xl glass">
-          <DialogHeader className="p-6 pb-4 border-b border-border/10 bg-gradient-to-r from-primary/5 via-transparent to-transparent">
+          <DialogHeader className="p-5 pb-3 border-b border-border/10 bg-gradient-to-r from-primary/5 via-transparent to-transparent">
             <div className="flex items-center justify-between">
               <div>
-                <DialogTitle className="text-2xl font-display font-medium bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+                <DialogTitle className="font-display">
                   Lista de Pendências
                 </DialogTitle>
                 <DialogDescription className="text-muted-foreground">
@@ -870,7 +870,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
                     variant={filterType === type ? 'default' : 'outline'}
                     size="sm"
                     className={cn(
-                      "rounded-lg h-11 px-4 font-medium transition-all text-xs whitespace-nowrap",
+                      "rounded-lg px-4 font-medium transition-all text-xs whitespace-nowrap",
                       filterType === type ? "shadow-lg shadow-primary/20" : "bg-muted/20 border-border/10"
                     )}
                     onClick={() => setFilterType(type)}
@@ -906,7 +906,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
             </AnimatePresence>
           </DialogHeader>
 
-          <div className="flex-1 overflow-y-auto p-6 custom-scrollbar bg-muted/5">
+          <div className="flex-1 overflow-y-auto p-5 custom-scrollbar bg-muted/5">
             <div className="flex items-center gap-3 mb-4 p-1 px-2">
               <Checkbox 
                 id="select-all" 
@@ -959,7 +959,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
                             </div>
                             <div className="min-w-0">
                               <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                <h4 className="font-display font-medium text-lg leading-tight">{item.titulo}</h4>
+                                <h4 className="font-display font-medium text-sm leading-tight">{item.titulo}</h4>
                                 <Badge className={cn("text-[10px] font-medium uppercase tracking-wider py-0.5", getPriorityColor(item.prioridade))}>
                                   {item.prioridade}
                                 </Badge>
@@ -967,7 +967,7 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
                                   {format(new Date(item.criado_at), "dd 'de' MMM, HH:mm", { locale: ptBR })}
                                 </Badge>
                               </div>
-                              <p className="text-muted-foreground text-sm line-clamp-2 leading-relaxed">
+                              <p className="text-muted-foreground text-xs line-clamp-2 leading-relaxed">
                                 {item.descricao}
                               </p>
                             </div>
@@ -1034,25 +1034,25 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
                               
                               <TabsContent value="highlights" className="mt-0">
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                  <div className="p-3 rounded-xl bg-primary/5 border border-primary/10 flex items-center gap-2 group/card">
-                                    <MapPin className="h-4 w-4 text-primary opacity-70 group-hover/card:scale-110 transition-transform" />
-                                    <div className="text-[10px]">
-                                      <p className="text-muted-foreground font-medium uppercase">Timezone</p>
-                                      <p className="font-medium text-foreground">{item.raw.relatorio_conformidade?.timezone || 'America/Sao_Paulo'}</p>
+                                  <div className="flex items-center gap-2.5">
+                                    <MapPin className="h-4 w-4 text-primary shrink-0" />
+                                    <div>
+                                      <p className="text-[10px] font-medium uppercase text-muted-foreground">Timezone</p>
+                                      <p className="text-xs font-medium text-foreground">{item.raw.relatorio_conformidade?.timezone || 'America/Sao_Paulo'}</p>
                                     </div>
                                   </div>
-                                  <div className="p-3 rounded-xl bg-warning/5 border border-warning/10 flex items-center gap-2 group/card">
-                                    <History className="h-4 w-4 text-warning opacity-70 group-hover/card:rotate-[-45deg] transition-transform" />
-                                    <div className="text-[10px]">
-                                      <p className="text-muted-foreground font-medium uppercase">Hora Original</p>
-                                      <p className="font-medium text-foreground">{item.raw.hora_original?.substring(0, 5) || 'Não registrada'}</p>
+                                  <div className="flex items-center gap-2.5">
+                                    <History className="h-4 w-4 text-warning shrink-0" />
+                                    <div>
+                                      <p className="text-[10px] font-medium uppercase text-muted-foreground">Hora Original</p>
+                                      <p className="text-xs font-medium text-foreground">{item.raw.hora_original?.substring(0, 5) || 'Não registrada'}</p>
                                     </div>
                                   </div>
-                                  <div className="p-3 rounded-xl bg-success/5 border border-success/10 flex items-center gap-2 group/card">
-                                    <Shield className="h-4 w-4 text-success opacity-70 group-hover/card:scale-110 transition-transform" />
-                                    <div className="text-[10px]">
-                                      <p className="text-muted-foreground font-medium uppercase">Geofencing</p>
-                                      <p className={cn("font-medium", item.raw.relatorio_conformidade?.geofencing ? "text-success" : "text-destructive")}>
+                                  <div className="flex items-center gap-2.5">
+                                    <Shield className="h-4 w-4 text-success shrink-0" />
+                                    <div>
+                                      <p className="text-[10px] font-medium uppercase text-muted-foreground">Geofencing</p>
+                                      <p className={cn("text-xs font-medium", item.raw.relatorio_conformidade?.geofencing ? "text-success" : "text-destructive")}>
                                         {item.raw.relatorio_conformidade?.geofencing ? 'Dentro do Perímetro' : 'Fora do Perímetro'}
                                       </p>
                                     </div>
@@ -1156,22 +1156,22 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-20 text-center">
-                <div className="p-6 rounded-3xl bg-muted/20 mb-4 border border-border/10">
+                <div className="p-4 rounded-3xl bg-muted/20 mb-4 border border-border/10">
                   <X className="h-12 w-12 text-muted-foreground/30" />
                 </div>
-                <h3 className="text-xl font-display font-medium">Nenhuma pendência</h3>
-                <p className="text-muted-foreground mt-2 max-w-xs mx-auto">
+                <h3 className="text-sm font-display font-medium">Nenhuma pendência</h3>
+                <p className="text-xs text-muted-foreground mt-2 max-w-xs mx-auto">
                   Não encontramos itens que correspondam à sua busca ou filtro.
                 </p>
-                <Button variant="outline" className="mt-6 rounded-xl px-8" onClick={() => { setSearchQuery(""); setFilterType("all"); }}>
+                <Button variant="outline" size="sm" className="mt-6 rounded-xl px-4" onClick={() => { setSearchQuery(""); setFilterType("all"); }}>
                   Limpar Filtros
                 </Button>
               </div>
             )}
           </div>
 
-          <DialogFooter className="p-6 border-t border-border/10 bg-muted/5">
-            <Button variant="outline" className="rounded-xl px-8" onClick={() => setIsDetailOpen(false)}>
+          <DialogFooter className="p-5 border-t border-border/10 bg-muted/5">
+            <Button variant="outline" size="sm" className="rounded-xl px-4" onClick={() => setIsDetailOpen(false)}>
               Fechar
             </Button>
           </DialogFooter>
@@ -1180,17 +1180,17 @@ export function AnalyticsSection({ stats, pendencias, isLoadingStats, isLoadingP
 
       {/* Central de Notificações Modal */}
       <Dialog open={isNotifOpen} onOpenChange={setIsNotifOpen}>
-        <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col p-0 rounded-2xl border-border/40 shadow-2xl glass">
-          <DialogHeader className="p-6 pb-4 border-b border-border/10">
+        <DialogContent className="max-w-xl max-h-[80vh] flex flex-col p-0 rounded-2xl border-border/40 shadow-2xl glass">
+          <DialogHeader className="p-5 pb-3 border-b border-border/10">
             <div className="flex items-center justify-between">
               <div>
-                <DialogTitle className="text-xl font-display font-medium">Central de Notificações</DialogTitle>
+                <DialogTitle className="font-display">Central de Notificações</DialogTitle>
                 <DialogDescription>Histórico de aprovações e ações do sistema.</DialogDescription>
               </div>
               <Button variant="ghost" size="sm" onClick={markAllRead} className="text-xs">Marcar todas como lidas</Button>
             </div>
           </DialogHeader>
-          <div className="flex-1 overflow-y-auto p-6 bg-muted/5">
+          <div className="flex-1 overflow-y-auto p-5 bg-muted/5">
             {notifications.length > 0 ? (
               <div className="space-y-3">
                 {notifications.map((n) => (

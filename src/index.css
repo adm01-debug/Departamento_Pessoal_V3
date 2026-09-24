@@ -186,9 +186,26 @@
   .text-heading { font-size: var(--text-heading); line-height: 1.3; font-family: "Outfit", sans-serif; font-weight: 600; }
   .text-data { font-size: 1.5rem; line-height: 1; font-family: "Outfit", sans-serif; font-weight: 500; letter-spacing: -0.025em; color: hsl(var(--data-foreground)); }
 
-  /* Focus ring - accessible */
+  /* Focus ring - accessible.
+     `ring-inset` (sem ring-offset): o anel de foco desenha DENTRO da própria
+     caixa do elemento, então nunca é cortado por um ancestral com
+     `overflow-hidden` (cards/dialogs usam isso o tempo todo) nem cria uma
+     segunda borda "vazando" para fora do border-radius do campo. */
   :focus-visible {
-    @apply outline-hidden ring-2 ring-ring ring-offset-2 ring-offset-background;
+    @apply outline-hidden ring-2 ring-ring ring-inset;
+  }
+
+  /* Inputs numéricos: remove os spinners nativos (claros, quebram o dark
+     mode) sem tocar em `appearance` de outros controles (checkbox, radio,
+     select) — escopado só a `input[type="number"]`. Navegação por teclado
+     (setas/incremento) continua funcionando normalmente. */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
   }
 }
 

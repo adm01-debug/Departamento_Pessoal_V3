@@ -87,7 +87,9 @@ export function PcsBenchmarkTab() {
                   {campo('p90', 'P90', 'number')}
                 </div>
                 {campo('amostra', 'Tamanho da amostra', 'number')}
-                <Button className="w-full" onClick={submit} disabled={criar.isPending}>Salvar referência</Button>
+                <div className="flex justify-end pt-1">
+                  <Button size="sm" className="rounded-lg px-4" onClick={submit} disabled={criar.isPending}>Salvar referência</Button>
+                </div>
               </div>
             </DialogContent>
           </Dialog>

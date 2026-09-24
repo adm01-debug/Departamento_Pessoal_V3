@@ -37,7 +37,7 @@ export function AnotacoesTab({ colaboradorId }: { colaboradorId: string }) {
         <CardTitle className="text-lg">Anotações</CardTitle>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild><Button size="sm"><Plus className="mr-1 h-4 w-4" />Nova Anotação</Button></DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-[440px]">
             <DialogHeader><DialogTitle>Nova Anotação</DialogTitle></DialogHeader>
             <div className="grid gap-3">
               <div><Label>Título *</Label><Input value={form.titulo} onChange={e => setForm(f => ({ ...f, titulo: e.target.value }))} /></div>
@@ -48,7 +48,9 @@ export function AnotacoesTab({ colaboradorId }: { colaboradorId: string }) {
                 </Select>
               </div>
               <div><Label>Conteúdo</Label><Textarea rows={4} value={form.conteudo} onChange={e => setForm(f => ({ ...f, conteudo: e.target.value }))} /></div>
-              <Button onClick={handleSubmit} disabled={criar.isPending}>Salvar</Button>
+              <div className="flex justify-end pt-1">
+                <Button size="sm" className="rounded-lg px-4" onClick={handleSubmit} disabled={criar.isPending}>Salvar</Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>

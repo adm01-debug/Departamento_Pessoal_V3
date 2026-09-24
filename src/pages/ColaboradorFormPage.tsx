@@ -289,7 +289,18 @@ export default function ColaboradorFormPage() {
                         {errors.cpf && <p className="text-xs text-destructive">{errors.cpf.message}</p>}
                       </div>
 
-                      <FormField label="Data Nascimento" type="date" {...register('data_nascimento')} error={errors.data_nascimento?.message} />
+                      {/* `type="date"` vira o `DatePicker` do Design System (ver
+                          src/components/ui/input.tsx) — controlado, não pode usar
+                          `register()` (uncontrolled/baseado em ref); mesmo padrão
+                          watch/setValue já usado acima para CPFInput/PhoneInput. */}
+                      <FormField
+                        label="Data Nascimento"
+                        type="date"
+                        name="data_nascimento"
+                        value={watch('data_nascimento')}
+                        onChange={(e) => setValue('data_nascimento', e.target.value)}
+                        error={errors.data_nascimento?.message}
+                      />
 
                       {/* PARTE 3B: rótulo neutro — `email` é usado de forma
                           genérica em todo o sistema (inclusive vínculo de
@@ -354,7 +365,14 @@ export default function ColaboradorFormPage() {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <FormField label="Data Admissão" type="date" {...register('data_admissao')} error={errors.data_admissao?.message} />
+                    <FormField
+                      label="Data Admissão"
+                      type="date"
+                      name="data_admissao"
+                      value={watch('data_admissao')}
+                      onChange={(e) => setValue('data_admissao', e.target.value)}
+                      error={errors.data_admissao?.message}
+                    />
                     <div className="space-y-2">
                       <label className="text-sm font-medium">Salário Base</label>
                       <CurrencyInput value={watch('salario_base')} onChange={(v) => setValue('salario_base', v)} />

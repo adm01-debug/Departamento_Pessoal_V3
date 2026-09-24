@@ -41,7 +41,7 @@ export function HistoricoSalarialTab({ colaboradorId }: { colaboradorId: string 
         <CardTitle className="text-lg">Histórico Salarial</CardTitle>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild><Button size="sm"><Plus className="mr-1 h-4 w-4" />Nova Alteração</Button></DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-[440px]">
             <DialogHeader><DialogTitle>Registrar Alteração Salarial</DialogTitle></DialogHeader>
             <div className="grid gap-3">
               <div><Label>Novo Salário *</Label><Input type="number" step="0.01" min="0" value={form.salario_novo} onChange={e => setForm(f => ({ ...f, salario_novo: e.target.value }))} /></div>
@@ -53,7 +53,9 @@ export function HistoricoSalarialTab({ colaboradorId }: { colaboradorId: string 
               </div>
               <div><Label>Data Vigência *</Label><Input type="date" value={form.data_vigencia} onChange={e => setForm(f => ({ ...f, data_vigencia: e.target.value }))} /></div>
               <div><Label>Descrição</Label><Textarea value={form.descricao} onChange={e => setForm(f => ({ ...f, descricao: e.target.value }))} /></div>
-              <Button onClick={handleSubmit} disabled={criar.isPending}>Salvar</Button>
+              <div className="flex justify-end pt-1">
+                <Button size="sm" className="rounded-lg px-4" onClick={handleSubmit} disabled={criar.isPending}>Salvar</Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>

@@ -37,7 +37,7 @@ export function ASOTab({ colaboradorId }: { colaboradorId: string }) {
         <CardTitle className="text-lg">Atestados de Saúde Ocupacional</CardTitle>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild><Button size="sm"><Plus className="mr-1 h-4 w-4" />Novo ASO</Button></DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-[460px]">
             <DialogHeader><DialogTitle>Registrar ASO</DialogTitle></DialogHeader>
             <div className="grid gap-3">
               <div><Label>Tipo *</Label>
@@ -46,8 +46,10 @@ export function ASOTab({ colaboradorId }: { colaboradorId: string }) {
                   <SelectContent>{TIPOS.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
-              <div><Label>Data Exame *</Label><Input type="date" value={form.data_exame} onChange={e => setForm(f => ({ ...f, data_exame: e.target.value }))} /></div>
-              <div><Label>Data Validade</Label><Input type="date" value={form.data_validade} onChange={e => setForm(f => ({ ...f, data_validade: e.target.value }))} /></div>
+              <div className="grid grid-cols-2 gap-3">
+                <div><Label>Data Exame *</Label><Input type="date" value={form.data_exame} onChange={e => setForm(f => ({ ...f, data_exame: e.target.value }))} /></div>
+                <div><Label>Data Validade</Label><Input type="date" value={form.data_validade} onChange={e => setForm(f => ({ ...f, data_validade: e.target.value }))} /></div>
+              </div>
               <div><Label>Resultado</Label>
                 <Select value={form.resultado} onValueChange={v => setForm(f => ({ ...f, resultado: v }))}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
@@ -58,10 +60,14 @@ export function ASOTab({ colaboradorId }: { colaboradorId: string }) {
                   </SelectContent>
                 </Select>
               </div>
-              <div><Label>Médico</Label><Input value={form.medico_nome} onChange={e => setForm(f => ({ ...f, medico_nome: e.target.value }))} /></div>
-              <div><Label>CRM</Label><Input value={form.medico_crm} onChange={e => setForm(f => ({ ...f, medico_crm: e.target.value }))} /></div>
+              <div className="grid grid-cols-2 gap-3">
+                <div><Label>Médico</Label><Input value={form.medico_nome} onChange={e => setForm(f => ({ ...f, medico_nome: e.target.value }))} /></div>
+                <div><Label>CRM</Label><Input value={form.medico_crm} onChange={e => setForm(f => ({ ...f, medico_crm: e.target.value }))} /></div>
+              </div>
               <div><Label>Clínica</Label><Input value={form.clinica} onChange={e => setForm(f => ({ ...f, clinica: e.target.value }))} /></div>
-              <Button onClick={handleSubmit} disabled={criar.isPending}>Salvar</Button>
+              <div className="flex justify-end pt-1">
+                <Button size="sm" className="rounded-lg px-4" onClick={handleSubmit} disabled={criar.isPending}>Salvar</Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>

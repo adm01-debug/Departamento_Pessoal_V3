@@ -128,8 +128,8 @@ export function RelatoriosAgendadosTab({ empresaId }: { empresaId: string }) {
                 </div>
               </div>
               <DialogFooter className="pt-4">
-                <Button variant="outline" onClick={() => setOpen(false)} className="rounded-xl">Cancelar</Button>
-                <Button onClick={() => criar.mutate(form)} disabled={!form.nome || !form.email_destinatario} className="rounded-xl bg-primary shadow-glow">Agendar</Button>
+                <Button variant="outline" size="sm" onClick={() => setOpen(false)} className="rounded-xl">Cancelar</Button>
+                <Button size="sm" onClick={() => criar.mutate(form)} disabled={!form.nome || !form.email_destinatario} className="rounded-xl bg-primary">Agendar</Button>
               </DialogFooter>
             </div>
           </DialogContent>

@@ -107,7 +107,7 @@ export function RelatorioContabilDialog({ folhaId }: RelatorioContabilDialogProp
               <p>• Encargos Patronais (FGTS/INSS)</p>
             </CardContent>
           </Card>
-          <Button onClick={handleExport} className="w-full rounded-xl gap-2 h-11" disabled={loading}>
+          <Button onClick={handleExport} className="w-full gap-2" disabled={loading}>
             {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Download className="h-5 w-5" />}
             Gerar Lançamentos Contábeis
           </Button>

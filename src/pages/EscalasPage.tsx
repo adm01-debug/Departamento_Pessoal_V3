@@ -82,7 +82,9 @@ export default function EscalasPage() {
                 <div><Label>Saída</Label><Input type="time" value={form.horario_saida} onChange={e => setForm(p => ({ ...p, horario_saida: e.target.value }))} /></div>
               </div>
               <div><Label>Intervalo (min)</Label><Input type="number" value={form.intervalo_minutos} onChange={e => setForm(p => ({ ...p, intervalo_minutos: e.target.value }))} /></div>
-              <Button onClick={() => criar.mutate(form)} disabled={!form.nome} className="w-full">Salvar</Button>
+              <div className="flex justify-end pt-1">
+                <Button size="sm" onClick={() => criar.mutate(form)} disabled={!form.nome}>Salvar</Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>

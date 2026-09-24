@@ -226,13 +226,15 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label>Data de Início</Label>
-          <Input type="date" {...register('data_inicio')} />
+          {/* `type="date"` vira o `DatePicker` do Design System — controlado,
+              não pode usar `register()` (uncontrolled/baseado em ref). */}
+          <Input type="date" value={watchInicio} onChange={(e) => setValue('data_inicio', e.target.value)} />
           {errors.data_inicio && <p className="text-xs text-destructive">{errors.data_inicio.message as string}</p>}
         </div>
 
         <div className="space-y-2">
           <Label>Data de Fim Prevista</Label>
-          <Input type="date" {...register('data_fim_prevista')} />
+          <Input type="date" value={watchFim} onChange={(e) => setValue('data_fim_prevista', e.target.value)} />
           {errors.data_fim_prevista && <p className="text-xs text-destructive">{errors.data_fim_prevista.message as string}</p>}
         </div>
       </div>

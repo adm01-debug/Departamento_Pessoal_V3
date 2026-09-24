@@ -78,19 +78,19 @@ export function PagamentoBancarioWizard({ folhaId }: { folhaId?: string }) {
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-xl overflow-hidden p-0 gap-0 border-border/40">
-        <div className="bg-gradient-to-r from-success to-primary p-6 text-white">
+        <div className="bg-gradient-to-r from-success to-primary p-5 text-white">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 rounded-xl bg-white/20 backdrop-blur-xs">
               <Landmark className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-xl font-display font-medium">Liquidação de Folha</h2>
+              <h2 className="text-base font-display font-medium">Liquidação de Folha</h2>
               <p className="text-xs opacity-80 uppercase tracking-widest font-medium">Ambiente de Operações Bancárias</p>
             </div>
           </div>
         </div>
 
-        <div className="p-6">
+        <div className="p-5">
           <AnimatePresence mode="wait">
             {currentStep === 1 && (
               <motion.div 
@@ -145,7 +145,7 @@ export function PagamentoBancarioWizard({ folhaId }: { folhaId?: string }) {
 
                 <DialogFooter className="pt-4">
                   <Button variant="outline" className="rounded-xl" onClick={() => setIsOpen(false)}>Cancelar</Button>
-                  <Button className="rounded-xl px-8" disabled={!method} onClick={() => setCurrentStep(2)}>
+                  <Button className="rounded-xl" disabled={!method} onClick={() => setCurrentStep(2)}>
                     Prosseguir <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
                 </DialogFooter>
@@ -166,7 +166,7 @@ export function PagamentoBancarioWizard({ folhaId }: { folhaId?: string }) {
                         <Globe className="h-8 w-8 text-primary/40 animate-pulse" />
                       </div>
                     </div>
-                    <h3 className="text-lg font-display font-medium">Comunicando com o Banco...</h3>
+                    <h3 className="text-base font-display font-medium">Comunicando com o Banco...</h3>
                     <p className="text-xs text-muted-foreground mt-2">Autenticando convênio e validando chaves de segurança</p>
                   </>
                 ) : (
@@ -174,7 +174,7 @@ export function PagamentoBancarioWizard({ folhaId }: { folhaId?: string }) {
                     <div className="p-5 rounded-full bg-primary/10 mb-4">
                       <ShieldCheck className="h-10 w-10 text-primary" />
                     </div>
-                    <h3 className="text-lg font-display font-medium">Confirmar Pagamento?</h3>
+                    <h3 className="text-base font-display font-medium">Confirmar Pagamento?</h3>
                     <p className="text-sm text-muted-foreground max-w-sm mt-2 mb-8">
                       Você está prestes a iniciar a liquidação via {method?.toUpperCase()}. Esta ação é irreversível após o envio ao banco.
                     </p>
@@ -196,7 +196,7 @@ export function PagamentoBancarioWizard({ folhaId }: { folhaId?: string }) {
                 <div className="p-5 rounded-full bg-success/10 text-success mb-4 border-2 border-success/20">
                   <CheckCircle2 className="h-12 w-12" />
                 </div>
-                <h3 className="text-xl font-display font-medium">Operação Concluída!</h3>
+                <h3 className="text-base font-display font-medium">Operação Concluída!</h3>
                 <p className="text-sm text-muted-foreground mt-2 mb-8">
                   {method === 'pix' 
                     ? "Os salários foram liquidados instantaneamente." 

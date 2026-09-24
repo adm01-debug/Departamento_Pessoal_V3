@@ -40,6 +40,6 @@ describe('HoleritesTab', () => {
       isLoading: false,
     } as any);
     render(<HoleritesTab colaboradorId="col-1" />);
-    expect(screen.getByText('Pendente de assinatura')).toBeInTheDocument();
+    expect(screen.getByText('Pendente')).toBeInTheDocument();
   });
 });

@@ -222,7 +222,9 @@ export default function FaltasPage() {
 
                   <div><Label>URL Documento/Atestado</Label><Input value={form.documento_anexo} onChange={e => setForm(p => ({ ...p, documento_anexo: e.target.value }))} placeholder="https://..." /></div>
                   <div><Label>Motivo</Label><Textarea value={form.motivo} onChange={e => setForm(p => ({ ...p, motivo: e.target.value }))} /></div>
-                  <Button className="w-full rounded-xl" onClick={() => criar.mutate(form)} disabled={!form.colaborador_id || !form.data}>Salvar</Button>
+                  <div className="flex justify-end pt-1">
+                    <Button size="sm" onClick={() => criar.mutate(form)} disabled={!form.colaborador_id || !form.data}>Salvar</Button>
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>

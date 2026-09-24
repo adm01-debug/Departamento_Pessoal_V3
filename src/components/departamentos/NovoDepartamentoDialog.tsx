@@ -53,7 +53,7 @@ export function NovoDepartamentoDialog({ open, onOpenChange, departamento }: Pro
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[520px]">
+      <DialogContent className="sm:max-w-[430px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 font-display">
             <Building2 className="h-5 w-5 text-primary" />
@@ -98,10 +98,10 @@ export function NovoDepartamentoDialog({ open, onOpenChange, departamento }: Pro
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
+          <Button variant="outline" size="sm" onClick={() => onOpenChange(false)} disabled={saving}>
             Cancelar
           </Button>
-          <Button onClick={handleSave} disabled={saving} className="gap-2 rounded-xl shadow-glow">
+          <Button size="sm" onClick={handleSave} disabled={saving} className="gap-2 rounded-xl">
             {saving ? <Spinner size="sm" /> : <Save className="h-4 w-4" />}
             {departamento ? 'Salvar' : 'Criar Departamento'}
           </Button>

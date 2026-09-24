@@ -63,9 +63,13 @@ describe('GerarAEJDialog', () => {
     expect(screen.getByRole('button', { name: /Fechar/i })).toBeInTheDocument();
   });
 
-  it('renders date inputs', () => {
+  it('renders date pickers instead of native date inputs', () => {
     render(<GerarAEJDialog />);
-    const dateInputs = document.querySelectorAll('input[type="date"]');
-    expect(dateInputs.length).toBe(2);
+    // `Input type="date"` não renderiza mais `<input type="date">` nativo —
+    // vira um botão que abre o `DatePicker` do Design System (ver
+    // src/components/ui/input.tsx). Confere as 2 datas (Início/Fim) pelo
+    // placeholder do botão, já que ambas começam vazias.
+    expect(document.querySelectorAll('input[type="date"]').length).toBe(0);
+    expect(screen.getAllByText('Selecionar data')).toHaveLength(2);
   });
 });

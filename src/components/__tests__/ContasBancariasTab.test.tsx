@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event';
 vi.mock('@/hooks/useTabelasReferencia', () => ({
   useContasBancarias: vi.fn(),
   useCriarContaBancaria: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
+  useAtualizarContaBancaria: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
   useExcluirContaBancaria: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
 }));
 
@@ -18,6 +19,15 @@ vi.mock('@/components/ui/dialog', () => ({
   DialogHeader: ({ children }: any) => <div>{children}</div>,
   DialogTitle: ({ children }: any) => <h2>{children}</h2>,
   DialogTrigger: ({ children }: any) => children,
+}));
+
+// Mesma permissividade do mock de `dialog` acima (ignora `open`, sempre
+// renderiza o conteúdo) — o botão "+ Adicionar" abre um `AnimatedCascadeDialog`
+// (Radix real + framer-motion, sem mock próprio) em vez do `Dialog` mockado
+// acima; sem isto, o formulário só apareceria no DOM depois de um clique real,
+// quebrando os testes que preenchem os campos diretamente.
+vi.mock('@/components/ui/animated-cascade-dialog', () => ({
+  AnimatedCascadeDialog: ({ items }: any) => <div role="dialog">{items}</div>,
 }));
 
 vi.mock('@/components/ui/spinner', () => ({
@@ -141,7 +151,12 @@ describe('ContasBancariasTab', () => {
       fireEvent.change(nomeBanco, { target: { value: 'Banco X' } });
       fireEvent.change(agencia, { target: { value: '0001' } });
       fireEvent.change(conta, { target: { value: '12345-6' } });
-      fireEvent.click(screen.getByRole('checkbox'));
+      // getAllByRole (não getByRole): o dialog de edição (sempre montado por
+      // causa do mock permissivo de `Dialog`/`AnimatedCascadeDialog` acima)
+      // também renderiza o checkbox "Conta principal" do seu próprio
+      // formulário — o [0] é sempre o do formulário de CRIAÇÃO, que vem
+      // primeiro na árvore.
+      fireEvent.click(screen.getAllByRole('checkbox')[0]);
 
       await userEvent.click(screen.getByRole('button', { name: 'Salvar' }));
 
@@ -180,7 +195,12 @@ describe('ContasBancariasTab', () => {
       fireEvent.change(nomeBanco, { target: { value: 'Banco X' } });
       fireEvent.change(agencia, { target: { value: '0001' } });
       fireEvent.change(conta, { target: { value: '12345-6' } });
-      fireEvent.click(screen.getByRole('checkbox'));
+      // getAllByRole (não getByRole): o dialog de edição (sempre montado por
+      // causa do mock permissivo de `Dialog`/`AnimatedCascadeDialog` acima)
+      // também renderiza o checkbox "Conta principal" do seu próprio
+      // formulário — o [0] é sempre o do formulário de CRIAÇÃO, que vem
+      // primeiro na árvore.
+      fireEvent.click(screen.getAllByRole('checkbox')[0]);
 
       await userEvent.click(screen.getByRole('button', { name: 'Salvar' }));
 

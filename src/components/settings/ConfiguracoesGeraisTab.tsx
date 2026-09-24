@@ -84,46 +84,48 @@ export function ConfiguracoesGeraisTab() {
             </div>
             <Dialog open={openNew} onOpenChange={setOpenNew}>
               <DialogTrigger asChild>
-                <Button className="rounded-xl shadow-glow gap-2">
+                <Button className="rounded-xl gap-2">
                   <Plus className="h-4 w-4" /> Nova Config
                 </Button>
               </DialogTrigger>
-              <DialogContent className="rounded-2xl max-w-md">
+              <DialogContent className="max-w-[420px]">
                 <DialogHeader>
                   <DialogTitle className="font-display">Nova Chave de Configuração</DialogTitle>
                 </DialogHeader>
-                <div className="space-y-4 pt-4">
-                  <div className="space-y-2">
-                    <Label className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Chave</Label>
-                    <Input 
-                      value={form.chave} 
-                      onChange={e => setForm(p => ({ ...p, chave: e.target.value }))} 
-                      placeholder="Ex: app.timezone" 
+                <div className="space-y-3 pt-2">
+                  <div className="space-y-1">
+                    <Label>Chave</Label>
+                    <Input
+                      value={form.chave}
+                      onChange={e => setForm(p => ({ ...p, chave: e.target.value }))}
+                      placeholder="Ex: app.timezone"
                       className="rounded-xl border-border/40"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Valor</Label>
-                    <Input 
-                      value={form.valor} 
-                      onChange={e => setForm(p => ({ ...p, valor: e.target.value }))} 
-                      placeholder="Ex: America/Sao_Paulo" 
+                  <div className="space-y-1">
+                    <Label>Valor</Label>
+                    <Input
+                      value={form.valor}
+                      onChange={e => setForm(p => ({ ...p, valor: e.target.value }))}
+                      placeholder="Ex: America/Sao_Paulo"
                       className="rounded-xl border-border/40"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Descrição</Label>
-                    <Input 
-                      value={form.descricao} 
-                      onChange={e => setForm(p => ({ ...p, descricao: e.target.value }))} 
-                      placeholder="Para que serve esta chave?" 
+                  <div className="space-y-1">
+                    <Label>Descrição</Label>
+                    <Input
+                      value={form.descricao}
+                      onChange={e => setForm(p => ({ ...p, descricao: e.target.value }))}
+                      placeholder="Para que serve esta chave?"
                       className="rounded-xl border-border/40"
                     />
                   </div>
-                  <Button onClick={() => criar.mutate(form)} disabled={!form.chave || !form.valor || criar.isPending} className="w-full rounded-xl shadow-glow h-11 mt-2">
-                    {criar.isPending ? <Spinner size="sm" className="mr-2" /> : <Save className="mr-2 h-4 w-4" />}
-                    Salvar Parâmetro
-                  </Button>
+                  <div className="flex justify-end pt-1">
+                    <Button size="sm" onClick={() => criar.mutate(form)} disabled={!form.chave || !form.valor || criar.isPending}>
+                      {criar.isPending ? <Spinner size="sm" className="mr-2" /> : <Save className="mr-2 h-4 w-4" />}
+                      Salvar Parâmetro
+                    </Button>
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>

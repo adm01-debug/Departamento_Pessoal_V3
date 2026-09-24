@@ -10,6 +10,7 @@ import { useSecureVisibility } from '@/hooks/useSecureVisibility';
 import { useSecurityMonitor } from '@/hooks/useSecurityMonitor';
 import { useStaggerCards } from '@/hooks/use-stagger-cards';
 
+import MeasureTestPage from '@/pages/__MeasureTestPage';
 // Core pages with optimized pre-loading
 import LoginPage from '@/pages/LoginPage';
 import DashboardPage from '@/pages/DashboardPage';
@@ -193,6 +194,7 @@ export default function App() {
       <Route path="/verificar-contrato" element={<LazyPage Component={VerificarContratoPage} />} />
       <Route path="/verificar-contrato/:hash" element={<LazyPage Component={VerificarContratoPage} />} />
       <Route path="/ciencia-medida/:token" element={<LazyPage Component={CienciaMedidaPage} />} />
+      <Route path="/__measure-test" element={<MeasureTestPage />} />
 
 
       <Route

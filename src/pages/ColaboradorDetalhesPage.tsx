@@ -23,7 +23,7 @@ import {
   Users, ShieldCheck, Briefcase, ArrowLeft, AlertTriangle, ChevronRight,
   Landmark, FileText, Info, Edit, MoreHorizontal, History as HistoryIcon,
   MapPin, Calendar, Stethoscope, User as UserIcon, GraduationCap, HeartPulse, Clock, UserPlus,
-  Zap, ClipboardCheck, IdCard, Mail, BarChart3, ArrowLeftRight, Activity,
+  Zap, ClipboardCheck, IdCard, Mail, BarChart3, ArrowLeftRight, Activity, DollarSign,
 } from 'lucide-react';
 import { RecontratarColaboradorDialog } from '@/components/colaboradores/RecontratarColaboradorDialog';
 import { AnimatedDossieTabsList, AnimatedDossieTabsTrigger } from '@/components/colaboradores/AnimatedDossieTabs';
@@ -33,11 +33,13 @@ import {
   ContasBancariasTab, DocumentosPessoaisTab, EstagiarioTab, HistoricoContratosTab,
   ColaboradorHistory, BeneficiosTab, ColaboradorDocuments,
   TrabalhoHierarquiaTab, JornadaPontoTab, FeriasResumoTab, HoleritesTab,
+  FinanceiroKpiRow, ResumoRemuneracaoCard, HoleritesPreviewCard, FinanceiroPendenciasCard,
   DesenvolvimentoResumoTab, ComplianceTab, TimelineFuncionalTab,
   PendenciasDialog, type PendenciaItem,
   ProximosEventosDialog, type EventoDetalhado,
 } from '@/components/colaborador-detalhes';
 import { Card, CardContent } from '@/components/ui/card';
+import { AnimatedCascadeDialog } from '@/components/ui/animated-cascade-dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -289,13 +291,17 @@ export default function ColaboradorDetalhesPage() {
   const navigate = useNavigate();
 
   const [activeMainTab, setActiveMainTab] = useState('geral');
-  const [activeFinanceiroTab, setActiveFinanceiroTab] = useState('contas');
   const [activeDesenvolvimentoTab, setActiveDesenvolvimentoTab] = useState('resumo');
   const [activeDocumentosTab, setActiveDocumentosTab] = useState('pessoais');
   const [activeTimelineTab, setActiveTimelineTab] = useState('funcional');
   const [recontratarOpen, setRecontratarOpen] = useState(false);
   const [pendenciasOpen, setPendenciasOpen] = useState(false);
   const [eventosOpen, setEventosOpen] = useState(false);
+  // "Financeiro & Benefícios" é um dashboard único — Dados bancários, Resumo,
+  // Benefícios, Holerites e Pendências ficam todos visíveis ao mesmo tempo,
+  // sem sub-abas. "Ver todos" (no card "Holerites recentes") abre a lista
+  // completa neste dialog.
+  const [holeritesDialogOpen, setHoleritesDialogOpen] = useState(false);
 
   // colaboradorService.buscarPorId cai nos 12 colaboradores fictícios de
   // src/mocks/colaboradoresMock.ts quando VITE_COLABORADORES_MOCK=true (dev only).
@@ -954,16 +960,40 @@ export default function ColaboradorDetalhesPage() {
           </TabsContent>
 
           <TabsContent value="financeiro">
-            <Tabs value={activeFinanceiroTab} onValueChange={setActiveFinanceiroTab} className="space-y-4">
-              <TabsList className="bg-transparent h-auto p-0 gap-4 border-b border-border/20 rounded-none w-full justify-start overflow-x-auto no-scrollbar">
-                <TabsTrigger value="contas" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Contas Bancárias</TabsTrigger>
-                <TabsTrigger value="beneficios" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Benefícios</TabsTrigger>
-                <TabsTrigger value="holerites" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Holerites</TabsTrigger>
-              </TabsList>
-              <TabsContent value="contas">{activeFinanceiroTab === 'contas' && <ContasBancariasTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="beneficios">{activeFinanceiroTab === 'beneficios' && <BeneficiosTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="holerites">{activeFinanceiroTab === 'holerites' && <HoleritesTab colaboradorId={id!} />}</TabsContent>
-            </Tabs>
+            <div className="space-y-3">
+              {/* Linha 1 — 4 KPIs, sempre visível. */}
+              <FinanceiroKpiRow colaboradorId={id!} colaborador={colaborador} />
+
+              {/* Linha 2 — Dados bancários + Resumo da remuneração lado a lado. */}
+              <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-3 items-start">
+                <ContasBancariasTab colaboradorId={id!} />
+                <ResumoRemuneracaoCard colaboradorId={id!} colaborador={colaborador} />
+              </div>
+
+              {/* Linha 3 — Benefícios + Holerites recentes lado a lado. */}
+              <div className="grid grid-cols-1 lg:grid-cols-[1.45fr_1fr] gap-3 items-start">
+                <BeneficiosTab colaboradorId={id!} />
+                <HoleritesPreviewCard colaboradorId={id!} onVerTodos={() => setHoleritesDialogOpen(true)} />
+              </div>
+
+              {/* Linha 4 — Pendências e alertas, largura total. */}
+              <FinanceiroPendenciasCard colaboradorId={id!} />
+            </div>
+
+            {/* Lista completa de holerites — mesma coreografia de abertura/
+                fechamento do "Ver todas" das Pendências (AnimatedCascadeDialog):
+                a prévia (linha 3) mostra os mais recentes, o dialog mostra
+                todos, sem precisar de um painel dedicado que escondesse as
+                outras seções. */}
+            <AnimatedCascadeDialog
+              open={holeritesDialogOpen}
+              onOpenChange={setHoleritesDialogOpen}
+              title="Holerites"
+              titleIcon={DollarSign}
+              emptyMessage="Nenhum holerite encontrado para este colaborador."
+              items={[<HoleritesTab key="holerites" colaboradorId={id!} hideHeader />]}
+              className="max-w-[620px]"
+            />
           </TabsContent>
 
           <TabsContent value="desenvolvimento">

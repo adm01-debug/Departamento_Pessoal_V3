@@ -117,7 +117,7 @@ export function FeriasTable({ data, ...actions }: FeriasTableProps) {
                         <History className="h-3.5 w-3.5" /> Ver Trilha
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-md rounded-2xl">
+                    <DialogContent className="max-w-md">
                       <DialogHeader>
                         <DialogTitle className="flex items-center gap-2 font-display">
                           <History className="h-5 w-5 text-primary" /> Trilha de Auditoria

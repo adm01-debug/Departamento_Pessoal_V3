@@ -27,7 +27,7 @@ interface EditarJornadaDialogProps {
 export function EditarJornadaDialog({ open, onOpenChange, jornada, empresaId }: EditarJornadaDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm rounded-2xl">
+      <DialogContent className="max-w-sm">
         {jornada && (
           <EditarJornadaForm key={jornada.id} jornada={jornada} empresaId={empresaId} onDone={() => onOpenChange(false)} />
         )}

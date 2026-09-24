@@ -149,7 +149,9 @@ export function EmergenciaTab({ colaboradorId, index = 0 }: { colaboradorId: str
           <div><Label>Telefone</Label><Input value={form.telefone} onChange={e => setForm(f => ({ ...f, telefone: e.target.value }))} /></div>
           <div><Label>Celular</Label><Input value={form.celular} onChange={e => setForm(f => ({ ...f, celular: e.target.value }))} /></div>
           <div><Label>Email</Label><Input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} /></div>
-          <Button onClick={handleSubmit} disabled={criar.isPending || atualizar.isPending}>Salvar</Button>
+          <div className="flex justify-end pt-1">
+            <Button size="sm" className="rounded-lg px-4" onClick={handleSubmit} disabled={criar.isPending || atualizar.isPending}>Salvar</Button>
+          </div>
         </div>,
       ]}
     />

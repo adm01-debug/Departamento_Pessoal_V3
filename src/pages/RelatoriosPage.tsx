@@ -295,7 +295,7 @@ export default function RelatoriosPage() {
           <TabsContent value="agendados"><RelatoriosAgendadosTab empresaId={empresaAtual?.id || ''} /></TabsContent>
         </Tabs>
         <Dialog open={!!emailDialog} onOpenChange={(o) => { if (!o) setEmailDialog(null); }}>
-          <DialogContent className="max-w-md rounded-2xl">
+          <DialogContent className="max-w-md">
             <DialogHeader><DialogTitle className="flex items-center gap-2 font-display"><Mail className="h-5 w-5" /> Enviar Relatório por Email</DialogTitle></DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2"><Label className="font-body">Destinatários (separados por vírgula)</Label><Input placeholder="email@empresa.com" value={emailTo} onChange={e => setEmailTo(e.target.value)} className="rounded-xl" /></div>

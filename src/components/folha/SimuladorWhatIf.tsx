@@ -107,7 +107,7 @@ export function SimuladorWhatIf() {
           </DialogTitle>
         </DialogHeader>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
           <div className="space-y-4">
             <div className="space-y-2">
               <Label>Título da Simulação</Label>
@@ -150,7 +150,7 @@ export function SimuladorWhatIf() {
               </div>
             </div>
 
-            <Button onClick={calcularImpacto} className="w-full rounded-xl gap-2 shadow-lg" disabled={loading}>
+            <Button onClick={calcularImpacto} className="w-full gap-2 shadow-lg" disabled={loading}>
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Calculator className="h-4 w-4" />}
               Calcular Impacto Real
             </Button>
@@ -161,27 +161,27 @@ export function SimuladorWhatIf() {
               <Card className="border-primary/20 bg-primary/5 rounded-2xl overflow-hidden">
                 <CardContent className="p-5 space-y-4">
                   <div className="text-center pb-2 border-b border-primary/10">
-                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Custo Total Mensal (Aprox.)</p>
-                    <p className="text-3xl font-display font-medium text-primary">{formatCurrency(resultado.custoTotal)}</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Custo Total Mensal (Aprox.)</p>
+                    <p className="text-[15px] font-display font-semibold text-primary">{formatCurrency(resultado.custoTotal)}</p>
                     <p className="text-xs text-primary/70 mt-1 font-medium">Equivale a {resultado.multiplicador}x o salário nominal</p>
                   </div>
 
                   <div className="space-y-2.5 text-sm">
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Salário Nominal</span>
-                      <span className="font-semibold">{formatCurrency(resultado.salario)}</span>
+                      <span className="font-medium">{formatCurrency(resultado.salario)}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Encargos Diretos (INSS/FGTS)</span>
-                      <span className="font-semibold">{formatCurrency(resultado.totalEncargos)}</span>
+                      <span className="font-medium">{formatCurrency(resultado.totalEncargos)}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Provisões (Férias/13º)</span>
-                      <span className="font-semibold">{formatCurrency(resultado.totalProvisoes)}</span>
+                      <span className="font-medium">{formatCurrency(resultado.totalProvisoes)}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Benefícios Estipulados</span>
-                      <span className="font-semibold">{formatCurrency(resultado.beneficios)}</span>
+                      <span className="font-medium">{formatCurrency(resultado.beneficios)}</span>
                     </div>
                   </div>
 
@@ -197,7 +197,7 @@ export function SimuladorWhatIf() {
                 </CardContent>
               </Card>
             ) : (
-              <div className="h-full flex flex-col items-center justify-center text-center p-8 border-2 border-dashed border-border/40 rounded-2xl bg-muted/20">
+              <div className="h-full flex flex-col items-center justify-center text-center p-5 border-2 border-dashed border-border/40 rounded-2xl bg-muted/20">
                 <PieChart className="h-12 w-12 text-muted-foreground/30 mb-3" />
                 <p className="text-sm text-muted-foreground font-body">Preencha os parâmetros e clique em calcular para visualizar o impacto fiscal detalhado.</p>
               </div>

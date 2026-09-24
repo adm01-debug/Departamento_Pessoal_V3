@@ -162,10 +162,12 @@ export default function CanalContabilidadePage() {
                             </Select>
                           </div>
                           <div><Label>Mensagem</Label><Textarea rows={5} value={threadForm.mensagemInicial} onChange={e => setThreadForm(p => ({ ...p, mensagemInicial: e.target.value }))} /></div>
-                          <Button className="w-full" onClick={() => criarThread.mutate()}
-                            disabled={!threadForm.assunto || !threadForm.mensagemInicial || criarThread.isPending}>
-                            {criarThread.isPending ? 'Enviando…' : 'Enviar solicitação'}
-                          </Button>
+                          <div className="flex justify-end pt-1">
+                            <Button size="sm" className="rounded-lg px-4" onClick={() => criarThread.mutate()}
+                              disabled={!threadForm.assunto || !threadForm.mensagemInicial || criarThread.isPending}>
+                              {criarThread.isPending ? 'Enviando…' : 'Enviar solicitação'}
+                            </Button>
+                          </div>
                         </div>
                       </DialogContent>
                     </Dialog>

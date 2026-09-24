@@ -206,7 +206,7 @@ export default function ComunicacaoInternaPage() {
             </Select>
             <Dialog open={openCom} onOpenChange={setOpenCom}>
               <DialogTrigger asChild><Button className="rounded-xl"><Plus className="mr-2 h-4 w-4" />Novo Comunicado</Button></DialogTrigger>
-              <DialogContent className="sm:max-w-lg">
+              <DialogContent>
                 <DialogHeader><DialogTitle>Novo Comunicado</DialogTitle></DialogHeader>
                 <div className="space-y-4">
                   <div><Label>Título</Label><Input value={formCom.titulo} onChange={e => setFormCom(p => ({ ...p, titulo: e.target.value }))} placeholder="Título do comunicado" /></div>
@@ -223,9 +223,11 @@ export default function ComunicacaoInternaPage() {
                     </div>
                   </div>
                   <div><Label>Conteúdo</Label><Textarea value={formCom.conteudo} onChange={e => setFormCom(p => ({ ...p, conteudo: e.target.value }))} rows={5} placeholder="Escreva o comunicado..." /></div>
-                  <Button className="w-full rounded-xl" onClick={() => criarCom.mutate()} disabled={!formCom.titulo || criarCom.isPending}>
-                    <Send className="h-4 w-4 mr-2" />{criarCom.isPending ? 'Publicando...' : 'Publicar Comunicado'}
-                  </Button>
+                  <div className="flex justify-end pt-1">
+                    <Button size="sm" className="rounded-lg px-4" onClick={() => criarCom.mutate()} disabled={!formCom.titulo || criarCom.isPending}>
+                      <Send className="h-3.5 w-3.5 mr-1.5" />{criarCom.isPending ? 'Publicando...' : 'Publicar Comunicado'}
+                    </Button>
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>
@@ -265,7 +267,9 @@ export default function ComunicacaoInternaPage() {
                     </Select>
                   </div>
                   <div><Label>Descrição</Label><Textarea value={formEtica.descricao} onChange={e => setFormEtica(p => ({ ...p, descricao: e.target.value }))} rows={4} placeholder="Descreva a situação..." /></div>
-                  <Button className="w-full rounded-xl" onClick={() => criarEtica.mutate()} disabled={!formEtica.descricao || criarEtica.isPending}>{criarEtica.isPending ? 'Registrando...' : 'Enviar Relato (Anônimo)'}</Button>
+                  <div className="flex justify-end pt-1">
+                    <Button size="sm" className="rounded-lg px-4" onClick={() => criarEtica.mutate()} disabled={!formEtica.descricao || criarEtica.isPending}>{criarEtica.isPending ? 'Registrando...' : 'Enviar Relato (Anônimo)'}</Button>
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>

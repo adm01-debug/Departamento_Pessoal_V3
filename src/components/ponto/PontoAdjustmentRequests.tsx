@@ -315,10 +315,10 @@ export function PontoAdjustmentRequests() {
 
       <Dialog open={!!selectedRequest} onOpenChange={() => setSelectedRequest(null)}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden flex flex-col p-0">
-          <DialogHeader className="p-6 border-b">
+          <DialogHeader className="p-5 border-b">
             <div className="flex items-center justify-between">
               <div>
-                <DialogTitle className="flex items-center gap-2 text-xl">
+                <DialogTitle className="flex items-center gap-2">
                   <FileText className="h-5 w-5 text-primary" /> Detalhes da Solicitação
                 </DialogTitle>
                 <DialogDescription>
@@ -328,50 +328,50 @@ export function PontoAdjustmentRequests() {
             </div>
           </DialogHeader>
 
-          <div className="flex-1 overflow-y-auto p-6 bg-muted/5">
+          <div className="flex-1 overflow-y-auto p-5 bg-muted/5">
             {selectedRequest && (
               <Tabs defaultValue="info" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 mb-6">
+                <TabsList className="grid w-full grid-cols-3 mb-4">
                   <TabsTrigger value="info">Informações</TabsTrigger>
                   <TabsTrigger value="audit">Auditoria</TabsTrigger>
                   <TabsTrigger value="conformidade">Conformidade 671</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="info" className="space-y-4 mt-0">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="p-4 rounded-xl border bg-card">
-                      <p className="text-[10px] text-muted-foreground font-medium uppercase mb-2">Colaborador</p>
-                      <p className="font-semibold text-sm">{selectedRequest.colaborador?.nome_completo}</p>
+                <TabsContent value="info" className="space-y-3 mt-0">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="p-3 rounded-xl border bg-card">
+                      <p className="text-[10px] text-muted-foreground font-medium uppercase mb-1.5">Colaborador</p>
+                      <p className="font-medium text-sm">{selectedRequest.colaborador?.nome_completo}</p>
                     </div>
-                    <div className="p-4 rounded-xl border bg-card">
-                      <p className="text-[10px] text-muted-foreground font-medium uppercase mb-2">Data do Ponto</p>
-                      <p className="font-semibold text-sm">{format(parseISO(selectedRequest.data_ponto), 'dd/MM/yyyy')}</p>
+                    <div className="p-3 rounded-xl border bg-card">
+                      <p className="text-[10px] text-muted-foreground font-medium uppercase mb-1.5">Data do Ponto</p>
+                      <p className="font-medium text-sm">{format(parseISO(selectedRequest.data_ponto), 'dd/MM/yyyy')}</p>
                     </div>
-                    <div className="p-4 rounded-xl border bg-card">
-                      <p className="text-[10px] text-muted-foreground font-medium uppercase mb-2">Hora Original</p>
+                    <div className="p-3 rounded-xl border bg-card">
+                      <p className="text-[10px] text-muted-foreground font-medium uppercase mb-1.5">Hora Original</p>
                       <p className="font-mono text-sm">{selectedRequest.hora_original || 'Original'}</p>
                     </div>
-                    <div className="p-4 rounded-xl border bg-card">
-                      <p className="text-[10px] text-muted-foreground font-medium uppercase mb-2">Hora Sugerida</p>
+                    <div className="p-3 rounded-xl border bg-card">
+                      <p className="text-[10px] text-muted-foreground font-medium uppercase mb-1.5">Hora Sugerida</p>
                       <p className="font-mono text-sm text-primary">{selectedRequest.hora_sugerida}</p>
                     </div>
                   </div>
-                  <div className="p-4 rounded-xl border bg-card">
-                    <p className="text-[10px] text-muted-foreground font-medium uppercase mb-2">Motivo do Ajuste</p>
+                  <div className="p-3 rounded-xl border bg-card">
+                    <p className="text-[10px] text-muted-foreground font-medium uppercase mb-1.5">Motivo do Ajuste</p>
                     <p className="text-sm">{selectedRequest.motivo}</p>
                   </div>
                 </TabsContent>
 
                 <TabsContent value="audit" className="mt-0">
                   <ScrollArea className="h-[300px] pr-4">
-                    <div className="space-y-6 relative before:absolute before:inset-0 before:left-2 before:w-0.5 before:bg-muted">
+                    <div className="space-y-4 relative before:absolute before:inset-0 before:left-2 before:w-0.5 before:bg-muted">
                       {requestAuditLogs.length > 0 ? (
                         requestAuditLogs
                           .map((log: TrilhaAuditoriaPonto) => (
                             <div key={log.id} className="relative pl-8">
                               <div className="absolute left-0 top-1.5 h-4 w-4 rounded-full border-2 border-primary bg-background z-10" />
-                              <div className="bg-card rounded-xl p-4 border shadow-xs">
-                                <div className="flex items-center justify-between mb-2">
+                              <div className="bg-card rounded-xl p-3 border shadow-xs">
+                                <div className="flex items-center justify-between mb-1.5">
                                   <span className="font-medium text-xs capitalize text-primary">{log.acao}</span>
                                   <span className="text-[10px] text-muted-foreground">{new Date(log.created_at).toLocaleString('pt-BR')}</span>
                                 </div>
@@ -389,13 +389,13 @@ export function PontoAdjustmentRequests() {
                   </ScrollArea>
                 </TabsContent>
 
-                <TabsContent value="conformidade" className="space-y-4 mt-0">
-                  <div className="p-6 rounded-2xl bg-primary/5 border border-primary/20">
-                    <div className="flex items-center justify-between mb-6">
+                <TabsContent value="conformidade" className="space-y-3 mt-0">
+                  <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20">
+                    <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <Shield className="h-6 w-6 text-success" />
                         <div>
-                          <h4 className="font-medium text-lg">Validação Portaria 671</h4>
+                          <h4 className="font-medium text-sm">Validação Portaria 671</h4>
                           <p className="text-xs text-muted-foreground">Integridade e rastreabilidade garantidas por SHA256.</p>
                         </div>
                       </div>
@@ -404,7 +404,7 @@ export function PontoAdjustmentRequests() {
                       </Button>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <div className="space-y-1">
                         <p className="text-[10px] text-muted-foreground font-medium uppercase">Timezone (Diff)</p>
                         <div className="flex items-center gap-2">
@@ -443,17 +443,17 @@ export function PontoAdjustmentRequests() {
             )}
           </div>
 
-          <DialogFooter className="p-6 border-t bg-muted/5 flex justify-between items-center">
+          <DialogFooter className="p-5 border-t bg-muted/5 flex justify-between items-center">
             <div className="flex gap-2">
               {selectedRequest?.status === 'pendente' && (
                 <>
-                  <Button variant="gradient-success" className="gap-2" onClick={() => {
+                  <Button size="sm" variant="gradient-success" className="gap-2" onClick={() => {
                     mutation.mutate({ id: selectedRequest.id, status: 'aprovado' });
                     setSelectedRequest(null);
                   }}>
                     <CheckCircle2 className="h-4 w-4" /> Aprovar
                   </Button>
-                  <Button variant="destructive" className="gap-2" onClick={() => {
+                  <Button size="sm" variant="destructive" className="gap-2" onClick={() => {
                     mutation.mutate({ id: selectedRequest.id, status: 'recusado' });
                     setSelectedRequest(null);
                   }}>
@@ -462,7 +462,7 @@ export function PontoAdjustmentRequests() {
                 </>
               )}
             </div>
-            <Button variant="outline" onClick={() => setSelectedRequest(null)}>Fechar</Button>
+            <Button size="sm" variant="outline" onClick={() => setSelectedRequest(null)}>Fechar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

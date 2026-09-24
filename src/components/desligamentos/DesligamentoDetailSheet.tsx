@@ -111,14 +111,14 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
         </SheetHeader>
 
         <Tabs defaultValue="detalhes" className="w-full">
-          <TabsList className="w-full rounded-xl">
+          <TabsList className="w-full">
             <TabsTrigger value="detalhes" className="flex-1 rounded-lg text-xs font-body">Detalhes</TabsTrigger>
             <TabsTrigger value="checklist" className="flex-1 rounded-lg text-xs font-body">Checklist</TabsTrigger>
             <TabsTrigger value="rescisao" className="flex-1 rounded-lg text-xs font-body">Rescisão</TabsTrigger>
           </TabsList>
 
           <TabsContent value="detalhes" className="mt-4 space-y-4">
-            <Card className="border-border/30 rounded-xl">
+            <Card className="border-border/30">
               <CardContent className="p-4 space-y-3">
                 <InfoRow icon={User} label="Colaborador" value={d.colaborador?.nome_completo || '—'} />
                 <InfoRow icon={Calendar} label="Data Desligamento" value={d.data_desligamento ? new Date(d.data_desligamento).toLocaleDateString('pt-BR') : '—'} />
@@ -130,7 +130,7 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
 
             {/* Etapa / Timeline */}
             {d.etapa && (
-              <Card className="border-border/30 rounded-xl">
+              <Card className="border-border/30">
                 <CardHeader className="pb-2 p-4">
                   <CardTitle className="text-xs font-display">Etapa Atual</CardTitle>
                 </CardHeader>
@@ -146,7 +146,7 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
           </TabsContent>
 
           <TabsContent value="rescisao" className="mt-4 space-y-4">
-            <Card className="border-border/30 rounded-xl">
+            <Card className="border-border/30">
               <CardContent className="p-4 space-y-2">
                 <RescisaoRow label="Saldo de Salário" value={d.saldo_salario} />
                 <RescisaoRow label="13º Proporcional" value={d.decimo_terceiro} />
@@ -164,7 +164,7 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
                 <Separator className="my-2" />
                 <div className="bg-primary/5 rounded-xl p-3 flex justify-between items-center">
                   <span className="font-display font-medium text-sm">Valor Líquido</span>
-                  <span className="font-display font-medium text-primary text-lg">{fmt(d.valor_liquido)}</span>
+                  <span className="font-display font-medium text-primary text-base">{fmt(d.valor_liquido)}</span>
                 </div>
               </CardContent>
             </Card>
@@ -173,7 +173,7 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
               <Button
                 onClick={handleCalcular}
                 disabled={calculating || d.status === 'homologado' || d.status === 'finalizado'}
-                className="rounded-xl font-body bg-primary hover:bg-primary-glow"
+                className="font-body bg-primary hover:bg-primary-glow"
               >
                 {calculating ? <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> : <Calculator className="h-4 w-4 mr-2" />}
                 {d.valor_liquido ? 'Recalcular' : 'Calcular Agora'}
@@ -183,7 +183,7 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
                 onClick={handleHomologar}
                 disabled={homologating || d.status === 'homologado' || d.status === 'finalizado' || !d.valor_liquido}
                 variant="outline"
-                className="rounded-xl font-body border-success/50 hover:bg-success/10 text-success"
+                className="font-body border-success/50 hover:bg-success/10 text-success"
               >
                 {homologating ? <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> : <CheckCircle className="h-4 w-4 mr-2" />}
                 Homologar
@@ -205,7 +205,7 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
                    gerarPDFRescisao(form, d.detalhes_calculo || d);
                 }}
                 variant="outline"
-                className="w-full rounded-xl font-body gap-2"
+                className="w-full font-body gap-2"
               >
                 <Download className="h-4 w-4" /> Download TRCT assinado
               </Button>
@@ -215,7 +215,7 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
             <Button
               onClick={() => navigate('/calculadora-rescisao')}
               variant="ghost"
-              className="w-full rounded-xl font-body text-xs text-muted-foreground"
+              className="w-full font-body text-xs text-muted-foreground"
             >
               Abrir Calculadora Avançada
             </Button>
@@ -242,8 +242,8 @@ function InfoRow({ icon: Icon, label, value }: { icon: any; label: string; value
 function RescisaoRow({ label, value, bold, className }: { label: string; value: number | null; bold?: boolean; className?: string }) {
   return (
     <div className="flex justify-between text-xs font-body">
-      <span className={bold ? 'font-semibold' : ''}>{label}</span>
-      <span className={`${bold ? 'font-semibold' : ''} ${className || ''}`}>{fmt(value)}</span>
+      <span className={bold ? 'font-medium' : ''}>{label}</span>
+      <span className={`${bold ? 'font-medium' : ''} ${className || ''}`}>{fmt(value)}</span>
     </div>
   );
 }

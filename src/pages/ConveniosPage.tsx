@@ -118,7 +118,9 @@ export default function ConveniosPage() {
                     </Select>
                   </div>
                   <div><Label>Limite Global (R$)</Label><Input type="number" value={form.limite_global} onChange={e => setForm(p => ({ ...p, limite_global: e.target.value }))} /></div>
-                  <Button onClick={() => criar.mutate(form)} disabled={!form.nome} className="w-full">Salvar</Button>
+                  <div className="flex justify-end pt-1">
+                    <Button size="sm" onClick={() => criar.mutate(form)} disabled={!form.nome}>Salvar</Button>
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>
@@ -164,7 +166,9 @@ export default function ConveniosPage() {
                     </Select>
                   </div>
                   <div><Label>Limite Individual (R$)</Label><Input type="number" value={vincForm.limite_individual} onChange={e => setVincForm(p => ({ ...p, limite_individual: e.target.value }))} /></div>
-                  <Button onClick={() => criarVinculo.mutate(vincForm)} disabled={!vincForm.convenio_id || !vincForm.colaborador_id || criarVinculo.isPending} className="w-full">{criarVinculo.isPending ? 'Salvando...' : 'Vincular'}</Button>
+                  <div className="flex justify-end pt-1">
+                    <Button size="sm" onClick={() => criarVinculo.mutate(vincForm)} disabled={!vincForm.convenio_id || !vincForm.colaborador_id || criarVinculo.isPending}>{criarVinculo.isPending ? 'Salvando...' : 'Vincular'}</Button>
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>

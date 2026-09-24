@@ -103,7 +103,9 @@ export default function MovimentacoesPage() {
                     </div>
                     <div><Label>Data *</Label><Input type="date" value={formTransf.data_efetivacao} onChange={e => setFormTransf(p => ({ ...p, data_efetivacao: e.target.value }))} /></div>
                     <div><Label>Motivo</Label><Textarea value={formTransf.motivo} onChange={e => setFormTransf(p => ({ ...p, motivo: e.target.value }))} /></div>
-                    <Button className="w-full" onClick={() => criarTransf.mutate(formTransf)} disabled={!formTransf.colaborador_id || !formTransf.data_efetivacao}>Salvar</Button>
+                    <div className="flex justify-end pt-1">
+                      <Button size="sm" className="rounded-lg px-4" onClick={() => criarTransf.mutate(formTransf)} disabled={!formTransf.colaborador_id || !formTransf.data_efetivacao}>Salvar</Button>
+                    </div>
                   </div>
                 </DialogContent>
               </Dialog>
@@ -149,7 +151,9 @@ export default function MovimentacoesPage() {
                       <div><Label>Novo Salário</Label><Input type="number" value={formPromo.novo_salario} onChange={e => setFormPromo(p => ({ ...p, novo_salario: e.target.value }))} /></div>
                     </div>
                     <div><Label>Motivo</Label><Textarea value={formPromo.motivo} onChange={e => setFormPromo(p => ({ ...p, motivo: e.target.value }))} /></div>
-                    <Button className="w-full" onClick={() => criarPromo.mutate(formPromo)} disabled={!formPromo.colaborador_id || !formPromo.data_promocao}>Salvar</Button>
+                    <div className="flex justify-end pt-1">
+                      <Button size="sm" className="rounded-lg px-4" onClick={() => criarPromo.mutate(formPromo)} disabled={!formPromo.colaborador_id || !formPromo.data_promocao}>Salvar</Button>
+                    </div>
                   </div>
                 </DialogContent>
               </Dialog>

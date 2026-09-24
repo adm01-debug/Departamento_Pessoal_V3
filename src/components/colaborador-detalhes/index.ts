@@ -22,6 +22,7 @@ export { JornadaPontoTab } from './JornadaPontoTab';
 export { FeriasResumoTab } from './FeriasResumoTab';
 export { AfastamentosTab } from './AfastamentosTab';
 export { HoleritesTab } from './HoleritesTab';
+export { FinanceiroKpiRow, ResumoRemuneracaoCard, HoleritesPreviewCard, FinanceiroPendenciasCard } from './FinanceiroResumoCards';
 export { DesenvolvimentoResumoTab } from './DesenvolvimentoResumoTab';
 export { SSTResumoTab } from './SSTResumoTab';
 export { ComplianceTab } from './ComplianceTab';

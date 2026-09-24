@@ -138,7 +138,9 @@ export function DependentesTab({ colaboradorId, index = 0 }: { colaboradorId: st
             <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.salario_familia} onChange={e => setForm(f => ({ ...f, salario_familia: e.target.checked }))} />Salário Família</label>
             <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.incapacidade_fisica_mental} onChange={e => setForm(f => ({ ...f, incapacidade_fisica_mental: e.target.checked }))} />Incapacidade F/M</label>
           </div>
-          <Button onClick={handleSubmit} disabled={criar.isPending}>Salvar</Button>
+          <div className="flex justify-end pt-1">
+            <Button size="sm" className="rounded-lg px-4" onClick={handleSubmit} disabled={criar.isPending}>Salvar</Button>
+          </div>
         </div>,
       ]}
     />

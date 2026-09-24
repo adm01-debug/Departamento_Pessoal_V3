@@ -75,7 +75,9 @@ export default function ControleAcessoPage() {
                 <div><Label>Local</Label><Input value={form.local} onChange={e => setForm(p => ({ ...p, local: e.target.value }))} placeholder="Ex: Sede" /></div>
                 <div><Label>Área</Label><Input value={form.area} onChange={e => setForm(p => ({ ...p, area: e.target.value }))} placeholder="Ex: Recepção" /></div>
               </div>
-              <Button className="w-full" onClick={() => registrar.mutate()} disabled={!form.colaborador_id || registrar.isPending}>{registrar.isPending ? 'Registrando...' : 'Registrar'}</Button>
+              <div className="flex justify-end pt-1">
+                <Button size="sm" className="rounded-lg px-4" onClick={() => registrar.mutate()} disabled={!form.colaborador_id || registrar.isPending}>{registrar.isPending ? 'Registrando...' : 'Registrar'}</Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>

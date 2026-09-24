@@ -359,13 +359,16 @@ export default function MedidasDisciplinaresPage() {
                 <Textarea value={form.descricao} onChange={e => setForm(p => ({ ...p, descricao: e.target.value }))} placeholder="Descreva detalhadamente a ocorrência..." rows={4} />
               </div>
 
-              <Button
-                className="w-full rounded-xl"
-                onClick={() => criar.mutate(form)}
-                disabled={!form.colaborador_id || !form.data_ocorrencia || !form.descricao}
-              >
-                Registrar Medida Disciplinar
-              </Button>
+              <div className="flex justify-end pt-1">
+                <Button
+                  size="sm"
+                  className="rounded-lg px-4"
+                  onClick={() => criar.mutate(form)}
+                  disabled={!form.colaborador_id || !form.data_ocorrencia || !form.descricao}
+                >
+                  Registrar Medida Disciplinar
+                </Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>

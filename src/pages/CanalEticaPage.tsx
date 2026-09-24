@@ -80,7 +80,9 @@ export default function CanalEticaPage() {
                 <input type="checkbox" checked={form.anonimo} onChange={e => setForm(p => ({ ...p, anonimo: e.target.checked }))} />
                 <Label>Denúncia anônima</Label>
               </div>
-              <Button onClick={() => criar.mutate(form)} disabled={!form.categoria || !form.descricao} className="w-full">Registrar</Button>
+              <div className="flex justify-end pt-1">
+                <Button size="sm" onClick={() => criar.mutate(form)} disabled={!form.categoria || !form.descricao} className="rounded-lg px-4">Registrar</Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>

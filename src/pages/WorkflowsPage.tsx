@@ -147,13 +147,13 @@ export default function WorkflowsPage() {
                 <Plus className="mr-2 h-4 w-4" />Novo Workflow
               </Button>
             </DialogTrigger>
-            <DialogContent className="rounded-2xl max-w-lg">
+            <DialogContent>
               <DialogHeader><DialogTitle className="font-display">Novo Workflow de Aprovação</DialogTitle></DialogHeader>
               <div className="space-y-4">
-                <div><Label className="font-body">Nome</Label><Input value={form.nome} onChange={e => setForm(p => ({ ...p, nome: e.target.value }))} placeholder="Ex: Aprovação de Férias" className="rounded-xl" /></div>
+                <div><Label className="font-body">Nome</Label><Input value={form.nome} onChange={e => setForm(p => ({ ...p, nome: e.target.value }))} placeholder="Ex: Aprovação de Férias" /></div>
                 <div><Label className="font-body">Tipo</Label>
                   <Select value={form.tipo} onValueChange={v => setForm(p => ({ ...p, tipo: v }))}>
-                    <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {['ferias', 'afastamento', 'ajuste_ponto', 'despesa', 'documento', 'admissao', 'desligamento', 'custom'].map(t => (
                         <SelectItem key={t} value={t}>{tipoIcons[t]} {t.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</SelectItem>
@@ -163,7 +163,7 @@ export default function WorkflowsPage() {
                 </div>
                 <div><Label className="font-body">Nº de Etapas de Aprovação</Label>
                   <Select value={String(numEtapas)} onValueChange={v => { const n = Number(v); setNumEtapas(n); setForm(p => ({ ...p, etapas: ETAPAS_PADRAO.slice(0, n) })); }}>
-                    <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="1">1 etapa</SelectItem>
                       <SelectItem value="2">2 etapas</SelectItem>
@@ -179,7 +179,7 @@ export default function WorkflowsPage() {
                     {form.etapas.map((etapa, i) => (
                       <div key={i} className="flex items-center gap-2">
                         <div className="bg-background rounded-lg p-2 border border-border/40 text-center min-w-[100px]">
-                          <p className="text-xs font-display font-semibold">{etapa.nome}</p>
+                          <p className="text-xs font-display font-medium">{etapa.nome}</p>
                           <p className="text-[10px] text-muted-foreground font-body flex items-center justify-center gap-1">
                             <Timer className="h-3 w-3" />{etapa.sla_horas}h SLA
                           </p>
@@ -194,10 +194,12 @@ export default function WorkflowsPage() {
                   </div>
                 </div>
 
-                <div><Label className="font-body">Descrição</Label><Textarea value={form.descricao} onChange={e => setForm(p => ({ ...p, descricao: e.target.value }))} className="rounded-xl" /></div>
-                <Button className="w-full rounded-xl bg-gradient-to-r from-primary to-primary-glow font-body" onClick={() => criar.mutate()} disabled={!form.nome || criar.isPending}>
-                  {criar.isPending ? 'Criando...' : 'Criar Workflow'}
-                </Button>
+                <div><Label className="font-body">Descrição</Label><Textarea value={form.descricao} onChange={e => setForm(p => ({ ...p, descricao: e.target.value }))} /></div>
+                <div className="flex justify-end pt-1">
+                  <Button size="sm" className="bg-gradient-to-r from-primary to-primary-glow font-body" onClick={() => criar.mutate()} disabled={!form.nome || criar.isPending}>
+                    {criar.isPending ? 'Criando...' : 'Criar Workflow'}
+                  </Button>
+                </div>
               </div>
             </DialogContent>
           </Dialog>
@@ -380,8 +382,8 @@ export default function WorkflowsPage() {
 
       {/* Audit Log Modal */}
       <Dialog open={showLog} onOpenChange={setShowLog}>
-        <DialogContent className="max-w-2xl rounded-2xl overflow-hidden p-0 gap-0 border-border/40">
-          <div className="bg-muted/30 p-6 border-b border-border/40">
+        <DialogContent className="max-w-[640px] rounded-2xl overflow-hidden p-0 gap-0 border-border/40">
+          <div className="bg-muted/30 p-5 border-b border-border/40">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-display font-medium flex items-center gap-2">
@@ -395,7 +397,7 @@ export default function WorkflowsPage() {
             </div>
           </div>
           
-          <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto bg-card">
+          <div className="p-5 space-y-4 max-h-[60vh] overflow-y-auto bg-card">
             <div className="space-y-4">
               <h4 className="text-xs font-medium uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                 <Zap className="h-3 w-3 text-warning fill-warning" /> Linha do Tempo de Execução
@@ -457,7 +459,7 @@ export default function WorkflowsPage() {
             </div>
           </div>
 
-          <DialogFooter className="p-6 bg-muted/30 border-t border-border/40">
+          <DialogFooter className="p-5 bg-muted/30 border-t border-border/40">
             <Button variant="outline" className="rounded-xl font-body" onClick={() => setShowLog(false)}>Fechar Rastro</Button>
             {selectedExec?.status === 'pendente' && (
               <Button className="rounded-xl bg-gradient-to-r from-primary to-primary-glow font-body" onClick={() => { aprovar.mutate(selectedExec.id!); setShowLog(false); }}>

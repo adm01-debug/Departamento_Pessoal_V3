@@ -92,7 +92,7 @@ function TrilhaCursosSection({ trilhaId, cursos }: { trilhaId: string; cursos: a
               <div className="grid gap-2">
                 <Label>Selecione o Curso</Label>
                 <Select value={selCurso} onValueChange={setSelCurso}>
-                  <SelectTrigger className="rounded-xl">
+                  <SelectTrigger>
                     <SelectValue placeholder="Escolha um curso do catálogo" />
                   </SelectTrigger>
                   <SelectContent>
@@ -103,13 +103,16 @@ function TrilhaCursosSection({ trilhaId, cursos }: { trilhaId: string; cursos: a
                   </SelectContent>
                 </Select>
               </div>
-              <Button 
-                onClick={() => vincular.mutate()} 
-                disabled={!selCurso || vincular.isPending}
-                className="rounded-xl w-full"
-              >
-                {vincular.isPending ? 'Vinculando...' : 'Vincular à Trilha'}
-              </Button>
+              <div className="flex justify-end pt-1">
+                <Button
+                  size="sm"
+                  className="rounded-lg px-4"
+                  onClick={() => vincular.mutate()}
+                  disabled={!selCurso || vincular.isPending}
+                >
+                  {vincular.isPending ? 'Vinculando...' : 'Vincular à Trilha'}
+                </Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>
@@ -242,7 +245,9 @@ export default function TreinamentosPage() {
                       <div><Label>Carga Horária (h)</Label><Input type="number" value={treinForm.carga_horaria} onChange={e => setTreinForm(p => ({ ...p, carga_horaria: e.target.value }))} /></div>
                     </div>
                     <div><Label>Descrição</Label><Textarea value={treinForm.descricao} onChange={e => setTreinForm(p => ({ ...p, descricao: e.target.value }))} /></div>
-                    <Button onClick={() => criarTrein.mutate()} disabled={!treinForm.nome || criarTrein.isPending}>{criarTrein.isPending ? 'Salvando...' : 'Salvar'}</Button>
+                    <div className="flex justify-end pt-1">
+                      <Button size="sm" className="rounded-lg px-4" onClick={() => criarTrein.mutate()} disabled={!treinForm.nome || criarTrein.isPending}>{criarTrein.isPending ? 'Salvando...' : 'Salvar'}</Button>
+                    </div>
                   </div>
                 </DialogContent>
               </Dialog>
@@ -340,7 +345,9 @@ export default function TreinamentosPage() {
                     </div>
                     <div className="flex items-center gap-2"><Switch checked={cursoForm.obrigatorio} onCheckedChange={v => setCursoForm(p => ({ ...p, obrigatorio: v }))} /><Label>Obrigatório</Label></div>
                     <div><Label>Descrição</Label><Textarea value={cursoForm.descricao} onChange={e => setCursoForm(p => ({ ...p, descricao: e.target.value }))} /></div>
-                    <Button onClick={() => criarCurso.mutate()} disabled={!cursoForm.nome || criarCurso.isPending}>{criarCurso.isPending ? 'Salvando...' : 'Salvar'}</Button>
+                    <div className="flex justify-end pt-1">
+                      <Button size="sm" className="rounded-lg px-4" onClick={() => criarCurso.mutate()} disabled={!cursoForm.nome || criarCurso.isPending}>{criarCurso.isPending ? 'Salvando...' : 'Salvar'}</Button>
+                    </div>
                   </div>
                 </DialogContent>
               </Dialog>
@@ -381,7 +388,9 @@ export default function TreinamentosPage() {
                       </Select>
                     </div>
                     <div><Label>Descrição</Label><Textarea value={trilhaForm.descricao} onChange={e => setTrilhaForm(p => ({ ...p, descricao: e.target.value }))} /></div>
-                    <Button onClick={() => criarTrilha.mutate()} disabled={!trilhaForm.titulo || criarTrilha.isPending}>{criarTrilha.isPending ? 'Salvando...' : 'Salvar'}</Button>
+                    <div className="flex justify-end pt-1">
+                      <Button size="sm" className="rounded-lg px-4" onClick={() => criarTrilha.mutate()} disabled={!trilhaForm.titulo || criarTrilha.isPending}>{criarTrilha.isPending ? 'Salvando...' : 'Salvar'}</Button>
+                    </div>
                   </div>
                 </DialogContent>
               </Dialog>
@@ -424,7 +433,9 @@ export default function TreinamentosPage() {
                       </Select>
                     </div>
                     <div><Label>Data Início</Label><Input type="date" value={inscForm.data_inicio} onChange={e => setInscForm(p => ({ ...p, data_inicio: e.target.value }))} /></div>
-                    <Button onClick={() => criarInsc.mutate()} disabled={!inscForm.colaborador_id || !inscForm.curso_id || criarInsc.isPending}>{criarInsc.isPending ? 'Salvando...' : 'Inscrever'}</Button>
+                    <div className="flex justify-end pt-1">
+                      <Button size="sm" className="rounded-lg px-4" onClick={() => criarInsc.mutate()} disabled={!inscForm.colaborador_id || !inscForm.curso_id || criarInsc.isPending}>{criarInsc.isPending ? 'Salvando...' : 'Inscrever'}</Button>
+                    </div>
                   </div>
                 </DialogContent>
               </Dialog>

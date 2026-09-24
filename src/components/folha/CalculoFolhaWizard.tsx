@@ -44,7 +44,7 @@ function Step({ isActive, isCompleted, label, icon: Icon }: StepProps) {
       <div className={cn(
         "h-10 w-10 rounded-full flex items-center justify-center transition-all duration-300 z-10",
         isCompleted ? "bg-success text-success-foreground" : 
-        isActive ? "bg-primary text-primary-foreground shadow-glow" : 
+        isActive ? "bg-primary text-primary-foreground" :
         "bg-muted text-muted-foreground"
       )}>
         {isCompleted ? <CheckCircle2 className="h-6 w-6" /> : <Icon className="h-5 w-5" />}
@@ -167,13 +167,13 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-xl overflow-hidden p-0 gap-0">
-        <div className="bg-gradient-to-r from-primary to-primary-glow p-6 text-primary-foreground">
-          <div className="flex items-center gap-3 mb-6">
+        <div className="bg-gradient-to-r from-primary to-primary-glow p-5 text-primary-foreground">
+          <div className="flex items-center gap-3 mb-4">
             <div className="p-2 rounded-xl bg-white/20 backdrop-blur-xs">
               <Calculator className="h-5 w-5" />
             </div>
             <div>
-              <h2 className="text-xl font-display font-medium">Assistente de Folha</h2>
+              <h2 className="text-base font-display font-medium">Assistente de Folha</h2>
               <p className="text-xs opacity-80">Competência {competencia}</p>
             </div>
           </div>
@@ -181,18 +181,18 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
           <div className="flex items-center justify-between relative">
             <div className="absolute top-5 left-0 right-0 h-[2px] bg-white/20 -z-0 mx-8" />
             {steps.map((s) => (
-              <Step 
-                key={s.id} 
-                isActive={currentStep === s.id} 
-                isCompleted={currentStep > s.id} 
-                label={s.label} 
-                icon={s.icon} 
+              <Step
+                key={s.id}
+                isActive={currentStep === s.id}
+                isCompleted={currentStep > s.id}
+                label={s.label}
+                icon={s.icon}
               />
             ))}
           </div>
         </div>
 
-        <div className="p-6">
+        <div className="p-5">
           <AnimatePresence mode="wait">
             {currentStep === 1 && (
               <motion.div 
@@ -202,24 +202,24 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-4"
               >
-                <div className="flex items-center gap-3 p-4 bg-muted/30 rounded-2xl border border-border/30">
+                <div className="flex items-center gap-2.5">
                   <div className={cn(
-                    "p-2 rounded-xl",
+                    "h-7 w-7 rounded-lg flex items-center justify-center shrink-0",
                     pendingPoints && pendingPoints > 0 ? "bg-warning/10 text-warning" : "bg-success/10 text-success"
                   )}>
-                    {pendingPoints && pendingPoints > 0 ? <AlertTriangle /> : <CheckCircle2 />}
+                    {pendingPoints && pendingPoints > 0 ? <AlertTriangle className="h-3.5 w-3.5" /> : <CheckCircle2 className="h-3.5 w-3.5" />}
                   </div>
                   <div>
-                    <p className="font-medium text-sm">Registros de Ponto</p>
-                    <p className="text-xs text-muted-foreground">
-                      {pendingPoints && pendingPoints > 0 
-                        ? `Existem ${pendingPoints} batidas aguardando aprovação.` 
+                    <p className="text-xs font-medium">Registros de Ponto</p>
+                    <p className="text-[10px] text-muted-foreground">
+                      {pendingPoints && pendingPoints > 0
+                        ? `Existem ${pendingPoints} batidas aguardando aprovação.`
                         : "Todos os registros de ponto estão aprovados."}
                     </p>
                   </div>
                 </div>
 
-                <div className="p-4 rounded-2xl border border-border/30 text-sm space-y-2">
+                <div className="p-4 border border-border/30 text-sm space-y-2">
                   <p className="font-semibold">O que será verificado:</p>
                   <ul className="space-y-1 text-xs text-muted-foreground">
                     <li className="flex items-center gap-2"><div className="h-1 w-1 rounded-full bg-primary" /> Faltas não justificadas</li>
@@ -229,8 +229,8 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
                 </div>
 
                 <div className="flex justify-end gap-3 pt-4">
-                  <Button variant="outline" className="rounded-xl" onClick={() => setIsOpen(false)}>Cancelar</Button>
-                  <Button className="rounded-xl gap-2" onClick={() => setCurrentStep(2)}>
+                  <Button variant="outline" onClick={() => setIsOpen(false)}>Cancelar</Button>
+                  <Button className="gap-2" onClick={() => setCurrentStep(2)}>
                     Prosseguir <ArrowRight className="h-4 w-4" />
                   </Button>
                 </div>
@@ -245,16 +245,16 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-4"
               >
-                <div className="p-4 rounded-2xl border border-border/30 bg-muted/20 space-y-3">
+                <div className="p-4 border border-border/30 bg-muted/20 space-y-3">
                   <p className="text-sm font-medium">Verbas Variáveis e Eventos</p>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="p-3 bg-card rounded-xl border border-border/30">
                       <p className="text-[10px] uppercase font-medium text-muted-foreground">Horas Extras (Estimadas)</p>
-                      <p className="text-lg font-display font-medium text-success">Calculado</p>
+                      <p className="text-sm font-display font-medium text-success">Calculado</p>
                     </div>
                     <div className="p-3 bg-card rounded-xl border border-border/30">
                       <p className="text-[10px] uppercase font-medium text-muted-foreground">DSR sobre Variáveis</p>
-                      <p className="text-lg font-display font-medium text-success">Automático</p>
+                      <p className="text-sm font-display font-medium text-success">Automático</p>
                     </div>
                   </div>
                   <p className="text-[11px] text-muted-foreground">
@@ -263,8 +263,8 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
                 </div>
 
                 <div className="flex justify-end gap-3 pt-4">
-                  <Button variant="outline" className="rounded-xl" onClick={() => setCurrentStep(1)}>Voltar</Button>
-                  <Button className="rounded-xl gap-2" onClick={() => setCurrentStep(3)}>
+                  <Button variant="outline" onClick={() => setCurrentStep(1)}>Voltar</Button>
+                  <Button className="gap-2" onClick={() => setCurrentStep(3)}>
                     Iniciar Cálculo <ArrowRight className="h-4 w-4" />
                   </Button>
                 </div>
@@ -281,22 +281,22 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
               >
                 {!isProcessing ? (
                   <>
-                    <div className="p-6 rounded-3xl bg-primary/10 mb-6">
+                    <div className="p-6 bg-primary/10 mb-6">
                       <Calculator className="h-12 w-12 text-primary animate-pulse" />
                     </div>
-                    <h3 className="text-lg font-display font-medium">Pronto para calcular?</h3>
+                    <h3 className="text-base font-display font-medium">Pronto para calcular?</h3>
                     <p className="text-sm text-muted-foreground max-w-xs mt-2 mb-8">
                       O motor de cálculo irá processar os tributos e encargos para todos os colaboradores ativos.
                     </p>
                     <div className="flex gap-3">
-                      <Button variant="outline" className="rounded-xl" onClick={() => setCurrentStep(2)}>Revisar</Button>
-                      <Button className="rounded-xl px-8 shadow-glow" onClick={handleCalculate}>Confirmar e Calcular</Button>
+                      <Button variant="outline" onClick={() => setCurrentStep(2)}>Revisar</Button>
+                      <Button onClick={handleCalculate}>Confirmar e Calcular</Button>
                     </div>
                   </>
                 ) : (
                   <>
                     <Loader2 className="h-16 w-16 text-primary animate-spin mb-6" />
-                    <h3 className="text-lg font-display font-medium text-primary">Processando Folha...</h3>
+                    <h3 className="text-base font-display font-medium text-primary">Processando Folha...</h3>
                     <div className="w-full max-w-xs bg-muted rounded-full h-1.5 mt-6 overflow-hidden">
                       <motion.div 
                         className="h-full bg-primary" 
@@ -324,7 +324,7 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
                 <div className="p-5 rounded-full bg-success/10 text-success mb-4">
                   <CheckCircle2 className="h-12 w-12" />
                 </div>
-                <h3 className="text-xl font-display font-medium">Cálculo Finalizado!</h3>
+                <h3 className="text-base font-display font-medium">Cálculo Finalizado!</h3>
                 <p className="text-sm text-muted-foreground mt-2 mb-4">
                   A folha da competência {competencia} foi encerrada com sucesso.
                 </p>
@@ -393,7 +393,7 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
                   </Button>
                 </div>
 
-                <Button className="w-full rounded-xl" onClick={() => setIsOpen(false)}>Concluir</Button>
+                <Button className="w-full" onClick={() => setIsOpen(false)}>Concluir</Button>
               </motion.div>
             )}
           </AnimatePresence>

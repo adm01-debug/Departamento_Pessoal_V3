@@ -116,9 +116,9 @@ export function IPBlockingTab() {
                 <Plus className="h-4 w-4 mr-1" />Bloquear IP
               </Button>
             </DialogTrigger>
-            <DialogContent className="rounded-2xl">
+            <DialogContent className="max-w-[440px]">
               <DialogHeader><DialogTitle className="font-display">Bloquear IP</DialogTitle></DialogHeader>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <div>
                   <Label className="font-body">Endereço IP</Label>
                   <Input value={form.ip_address} onChange={e => setForm(p => ({ ...p, ip_address: e.target.value }))} placeholder="192.168.1.1" className="rounded-xl font-mono" />
@@ -137,9 +137,11 @@ export function IPBlockingTab() {
                     <Input type="number" value={form.hours} onChange={e => setForm(p => ({ ...p, hours: e.target.value }))} className="rounded-xl" />
                   </div>
                 )}
-                <Button className="w-full rounded-xl bg-gradient-to-r from-destructive to-warning" onClick={() => bloquear.mutate()} disabled={!form.ip_address || bloquear.isPending}>
-                  {bloquear.isPending ? 'Bloqueando...' : 'Bloquear IP'}
-                </Button>
+                <div className="flex justify-end pt-1">
+                  <Button size="sm" className="rounded-xl bg-gradient-to-r from-destructive to-warning" onClick={() => bloquear.mutate()} disabled={!form.ip_address || bloquear.isPending}>
+                    {bloquear.isPending ? 'Bloqueando...' : 'Bloquear IP'}
+                  </Button>
+                </div>
               </div>
             </DialogContent>
           </Dialog>

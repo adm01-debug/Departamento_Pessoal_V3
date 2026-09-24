@@ -192,7 +192,7 @@ export default function AdminAgendamentoExamesPage() {
             <CardTitle className="flex items-center gap-2"><CalendarClock className="h-5 w-5" />Agendamentos</CardTitle>
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild><Button><Plus className="mr-2 h-4 w-4" /> Novo agendamento</Button></DialogTrigger>
-              <DialogContent className="max-w-3xl max-h-[92vh] overflow-y-auto">
+              <DialogContent className="max-w-[640px] max-h-[92vh] overflow-y-auto">
                 <DialogHeader><DialogTitle>Novo agendamento por geolocalização</DialogTitle></DialogHeader>
                 <div className="grid gap-4 md:grid-cols-2">
                   <div>
@@ -247,12 +247,12 @@ export default function AdminAgendamentoExamesPage() {
                     <div className="md:col-span-2 border rounded-md">
                       <Table>
                         <TableHeader>
-                          <TableRow>
-                            <TableHead className="w-8"></TableHead>
-                            <TableHead>Clínica</TableHead>
-                            <TableHead>Cidade/UF</TableHead>
-                            <TableHead>SLA</TableHead>
-                            <TableHead className="text-right">Distância</TableHead>
+                          <TableRow className="hover:bg-transparent">
+                            <TableHead className="h-6 w-8 px-2"></TableHead>
+                            <TableHead className="h-6 px-2 text-[11px] font-medium">Clínica</TableHead>
+                            <TableHead className="h-6 px-2 text-[11px] font-medium">Cidade/UF</TableHead>
+                            <TableHead className="h-6 px-2 text-[11px] font-medium">SLA</TableHead>
+                            <TableHead className="h-6 px-2 text-[11px] font-medium text-right">Distância</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -262,14 +262,14 @@ export default function AdminAgendamentoExamesPage() {
                               className={`cursor-pointer ${clinicaEscolhida?.id === c.id ? 'bg-primary/10' : ''}`}
                               onClick={() => setClinicaEscolhida(c)}
                             >
-                              <TableCell><input type="radio" checked={clinicaEscolhida?.id === c.id} onChange={() => setClinicaEscolhida(c)} /></TableCell>
-                              <TableCell>
+                              <TableCell className="px-2 py-1.5"><input type="radio" checked={clinicaEscolhida?.id === c.id} onChange={() => setClinicaEscolhida(c)} /></TableCell>
+                              <TableCell className="px-2 py-1.5 text-[12.5px]">
                                 <div className="font-medium">{c.razao_social}</div>
-                                {c.nome_fantasia && <div className="text-xs text-muted-foreground">{c.nome_fantasia}</div>}
+                                {c.nome_fantasia && <div className="text-[10px] text-muted-foreground">{c.nome_fantasia}</div>}
                               </TableCell>
-                              <TableCell>{c.cidade}/{c.uf}</TableCell>
-                              <TableCell>{c.sla_medio_min ? `${c.sla_medio_min} min` : '—'}</TableCell>
-                              <TableCell className="text-right font-mono">{c.distancia_km} km</TableCell>
+                              <TableCell className="px-2 py-1.5 text-[12.5px]">{c.cidade}/{c.uf}</TableCell>
+                              <TableCell className="px-2 py-1.5 text-[12.5px]">{c.sla_medio_min ? `${c.sla_medio_min} min` : '—'}</TableCell>
+                              <TableCell className="px-2 py-1.5 text-[12.5px] text-right font-mono">{c.distancia_km} km</TableCell>
                             </TableRow>
                           ))}
                         </TableBody>

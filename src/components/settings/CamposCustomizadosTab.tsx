@@ -135,7 +135,7 @@ export function CamposCustomizadosTab() {
                 <Plus className="h-4 w-4 mr-1" />Novo Campo
               </Button>
             </DialogTrigger>
-            <DialogContent className="rounded-2xl">
+            <DialogContent>
               <DialogHeader>
                 <DialogTitle className="font-display">{editId ? 'Editar Campo' : 'Novo Campo Customizado'}</DialogTitle>
               </DialogHeader>
@@ -170,13 +170,16 @@ export function CamposCustomizadosTab() {
                   <Label className="font-body">Campo obrigatório?</Label>
                   <Switch checked={form.obrigatorio} onCheckedChange={v => setForm(p => ({ ...p, obrigatorio: v }))} />
                 </div>
-                <Button
-                  className="w-full rounded-xl bg-gradient-to-r from-primary to-primary-glow"
-                  onClick={() => salvar.mutate()}
-                  disabled={!form.nome || salvar.isPending}
-                >
-                  {salvar.isPending ? 'Salvando...' : editId ? 'Atualizar' : 'Criar Campo'}
-                </Button>
+                <div className="flex justify-end pt-1">
+                  <Button
+                    size="sm"
+                    className="rounded-xl bg-gradient-to-r from-primary to-primary-glow"
+                    onClick={() => salvar.mutate()}
+                    disabled={!form.nome || salvar.isPending}
+                  >
+                    {salvar.isPending ? 'Salvando...' : editId ? 'Atualizar' : 'Criar Campo'}
+                  </Button>
+                </div>
               </div>
             </DialogContent>
           </Dialog>

@@ -54,7 +54,9 @@ function BeneficiariosSeguroSection({ seguroId }: { seguroId: string }) {
               <div><Label>CPF</Label><Input value={form.cpf} onChange={e => setForm(p => ({ ...p, cpf: e.target.value }))} /></div>
               <div><Label>Parentesco</Label><Input value={form.parentesco} onChange={e => setForm(p => ({ ...p, parentesco: e.target.value }))} /></div>
               <div><Label>% do Capital</Label><Input type="number" value={form.percentual} onChange={e => setForm(p => ({ ...p, percentual: e.target.value }))} /></div>
-              <Button onClick={() => criar.mutate()} disabled={!form.nome}>Incluir</Button>
+              <div className="flex justify-end pt-1">
+                <Button size="sm" onClick={() => criar.mutate()} disabled={!form.nome}>Incluir</Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>
@@ -178,20 +180,22 @@ export default function SegurosVidaPage() {
           <div className="flex justify-end mb-4">
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild><Button><Plus className="mr-2 h-4 w-4" />Novo Seguro</Button></DialogTrigger>
-              <DialogContent>
+              <DialogContent className="max-w-[500px]">
                 <DialogHeader><DialogTitle>Novo Seguro de Vida</DialogTitle></DialogHeader>
-                <div className="space-y-4">
+                <div className="space-y-3">
                   <div><Label>Seguradora</Label><Input value={form.seguradora} onChange={e => setForm(p => ({ ...p, seguradora: e.target.value }))} /></div>
                   <div><Label>Nº Apólice</Label><Input value={form.numero_apolice} onChange={e => setForm(p => ({ ...p, numero_apolice: e.target.value }))} /></div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <div><Label>Capital Segurado</Label><Input type="number" value={form.capital_segurado} onChange={e => setForm(p => ({ ...p, capital_segurado: e.target.value }))} /></div>
                     <div><Label>Prêmio Mensal</Label><Input type="number" value={form.premio_mensal} onChange={e => setForm(p => ({ ...p, premio_mensal: e.target.value }))} /></div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <div><Label>Início</Label><Input type="date" value={form.data_inicio} onChange={e => setForm(p => ({ ...p, data_inicio: e.target.value }))} /></div>
                     <div><Label>Fim</Label><Input type="date" value={form.data_fim} onChange={e => setForm(p => ({ ...p, data_fim: e.target.value }))} /></div>
                   </div>
-                  <Button onClick={() => criar.mutate(form)} disabled={!form.seguradora} className="w-full">Salvar</Button>
+                  <div className="flex justify-end pt-1">
+                    <Button size="sm" onClick={() => criar.mutate(form)} disabled={!form.seguradora}>Salvar</Button>
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>
@@ -248,7 +252,9 @@ export default function SegurosVidaPage() {
                       <SelectContent>{colaboradores.map((c: any) => <SelectItem key={c.id} value={c.id}>{c.nome_completo}</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
-                  <Button onClick={() => vincular.mutate()} disabled={!vincForm.seguro_vida_id || !vincForm.colaborador_id} className="w-full">Vincular</Button>
+                  <div className="flex justify-end pt-1">
+                    <Button size="sm" onClick={() => vincular.mutate()} disabled={!vincForm.seguro_vida_id || !vincForm.colaborador_id}>Vincular</Button>
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>
@@ -277,9 +283,9 @@ export default function SegurosVidaPage() {
           <div className="flex justify-end mb-4">
             <Dialog open={openSin} onOpenChange={setOpenSin}>
               <DialogTrigger asChild><Button><Plus className="mr-2 h-4 w-4" />Registrar Sinistro</Button></DialogTrigger>
-              <DialogContent>
+              <DialogContent className="max-w-[520px]">
                 <DialogHeader><DialogTitle>Registrar Sinistro</DialogTitle></DialogHeader>
-                <div className="space-y-4">
+                <div className="space-y-3">
                   <div><Label>Seguro</Label>
                     <Select value={sinForm.seguro_vida_id} onValueChange={v => setSinForm(p => ({ ...p, seguro_vida_id: v }))}>
                       <SelectTrigger><SelectValue placeholder="Selecione a apólice" /></SelectTrigger>
@@ -292,7 +298,7 @@ export default function SegurosVidaPage() {
                       <SelectContent>{colaboradores.map((c: any) => <SelectItem key={c.id} value={c.id}>{c.nome_completo}</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <div><Label>Tipo</Label>
                       <Select value={sinForm.tipo} onValueChange={v => setSinForm(p => ({ ...p, tipo: v }))}>
                         <SelectTrigger><SelectValue placeholder="Tipo" /></SelectTrigger>
@@ -308,7 +314,9 @@ export default function SegurosVidaPage() {
                     <div><Label>Data</Label><Input type="date" value={sinForm.data_sinistro} onChange={e => setSinForm(p => ({ ...p, data_sinistro: e.target.value }))} /></div>
                   </div>
                   <div><Label>Descrição</Label><Textarea value={sinForm.descricao} onChange={e => setSinForm(p => ({ ...p, descricao: e.target.value }))} /></div>
-                  <Button onClick={() => criarSinistro.mutate(sinForm)} disabled={criarSinistro.isPending} className="w-full">{criarSinistro.isPending ? 'Salvando...' : 'Registrar'}</Button>
+                  <div className="flex justify-end pt-1">
+                    <Button size="sm" onClick={() => criarSinistro.mutate(sinForm)} disabled={criarSinistro.isPending}>{criarSinistro.isPending ? 'Salvando...' : 'Registrar'}</Button>
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>

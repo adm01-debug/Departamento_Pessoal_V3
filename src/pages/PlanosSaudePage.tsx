@@ -65,7 +65,9 @@ function BeneficiariosPlanoSection({ planoId }: { planoId: string }) {
                   </SelectContent>
                 </Select>
               </div>
-              <Button onClick={() => criar.mutate()} disabled={!form.nome}>Incluir</Button>
+              <div className="flex justify-end pt-1">
+                <Button size="sm" onClick={() => criar.mutate()} disabled={!form.nome}>Incluir</Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>
@@ -154,7 +156,7 @@ export default function PlanosSaudePage() {
               <h3 className="text-lg font-semibold">Planos</h3>
               <Dialog open={openPlano} onOpenChange={setOpenPlano}>
                 <DialogTrigger asChild><Button size="sm"><Plus className="h-4 w-4 mr-1" />Novo Plano</Button></DialogTrigger>
-                <DialogContent>
+                <DialogContent className="max-w-[500px]">
                   <DialogHeader><DialogTitle>Cadastrar Plano</DialogTitle></DialogHeader>
                   <div className="space-y-3">
                     <div><Label>Nome *</Label><Input value={formPlano.nome} onChange={e => setFormPlano(p => ({ ...p, nome: e.target.value }))} /></div>
@@ -172,7 +174,9 @@ export default function PlanosSaudePage() {
                       <div><Label>Valor Mensal</Label><Input type="number" value={formPlano.valor_mensal} onChange={e => setFormPlano(p => ({ ...p, valor_mensal: e.target.value }))} /></div>
                       <div><Label>Coparticipação %</Label><Input type="number" value={formPlano.coparticipacao} onChange={e => setFormPlano(p => ({ ...p, coparticipacao: e.target.value }))} /></div>
                     </div>
-                    <Button className="w-full" onClick={() => criarPlano.mutate(formPlano)} disabled={!formPlano.nome}>Salvar</Button>
+                    <div className="flex justify-end pt-1">
+                      <Button size="sm" onClick={() => criarPlano.mutate(formPlano)} disabled={!formPlano.nome}>Salvar</Button>
+                    </div>
                   </div>
                 </DialogContent>
               </Dialog>
@@ -210,7 +214,7 @@ export default function PlanosSaudePage() {
               <h3 className="text-lg font-semibold">Seguros</h3>
               <Dialog open={openSeguro} onOpenChange={setOpenSeguro}>
                 <DialogTrigger asChild><Button size="sm"><Plus className="h-4 w-4 mr-1" />Novo Seguro</Button></DialogTrigger>
-                <DialogContent>
+                <DialogContent className="max-w-[500px]">
                   <DialogHeader><DialogTitle>Cadastrar Seguro</DialogTitle></DialogHeader>
                   <div className="space-y-3">
                     <div><Label>Nome *</Label><Input value={formSeguro.nome} onChange={e => setFormSeguro(p => ({ ...p, nome: e.target.value }))} /></div>
@@ -223,7 +227,9 @@ export default function PlanosSaudePage() {
                       <div><Label>Valor Mensal</Label><Input type="number" value={formSeguro.valor_mensal} onChange={e => setFormSeguro(p => ({ ...p, valor_mensal: e.target.value }))} /></div>
                       <div><Label>Capital Segurado</Label><Input type="number" value={formSeguro.capital_segurado} onChange={e => setFormSeguro(p => ({ ...p, capital_segurado: e.target.value }))} /></div>
                     </div>
-                    <Button className="w-full" onClick={() => criarSeguro.mutate(formSeguro)} disabled={!formSeguro.nome}>Salvar</Button>
+                    <div className="flex justify-end pt-1">
+                      <Button size="sm" onClick={() => criarSeguro.mutate(formSeguro)} disabled={!formSeguro.nome}>Salvar</Button>
+                    </div>
                   </div>
                 </DialogContent>
               </Dialog>

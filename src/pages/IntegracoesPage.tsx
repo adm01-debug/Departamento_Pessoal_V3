@@ -83,7 +83,7 @@ export default function IntegracoesPage() {
               <Dialog open={whatsappOpen} onOpenChange={setWhatsappOpen}>
                 <DialogTrigger asChild><Button variant="outline" className="w-full rounded-xl border-border/40 hover:bg-muted font-body transition-colors">Configurar Integração</Button></DialogTrigger>
                 <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden rounded-2xl">
-                  <DialogHeader className="p-6 bg-muted/20 border-b border-border/10"><DialogTitle className="font-display">Integração WhatsApp — Evolution API</DialogTitle></DialogHeader>
+                  <DialogHeader className="p-5 bg-muted/20 border-b border-border/10"><DialogTitle className="font-display">Integração WhatsApp — Evolution API</DialogTitle></DialogHeader>
                   <WhatsAppConfigPanel />
                 </DialogContent>
               </Dialog>
@@ -105,7 +105,7 @@ export default function IntegracoesPage() {
               <Dialog open={cnabOpen} onOpenChange={setCnabOpen}>
                 <DialogTrigger asChild><Button variant="outline" size="sm" className="w-full rounded-xl font-body gap-2 group-hover:border-primary/30"><Settings className="h-3.5 w-3.5" />Configurar</Button></DialogTrigger>
                 <DialogContent className="max-w-4xl max-h-[85vh] overflow-hidden flex flex-col p-0">
-                  <DialogHeader className="p-6 pb-2"><DialogTitle>Bancos (CNAB) — Configuração & Remessas</DialogTitle></DialogHeader>
+                  <DialogHeader className="p-5 pb-2"><DialogTitle>Bancos (CNAB) — Configuração & Remessas</DialogTitle></DialogHeader>
                   <CnabConfigPanel />
                 </DialogContent>
               </Dialog>
@@ -127,7 +127,7 @@ export default function IntegracoesPage() {
               <Dialog open={webhookOpen} onOpenChange={setWebhookOpen}>
                 <DialogTrigger asChild><Button variant="outline" size="sm" className="w-full rounded-xl font-body gap-2 group-hover:border-primary/30"><Settings className="h-3.5 w-3.5" />Configurar</Button></DialogTrigger>
                 <DialogContent className="max-w-4xl max-h-[85vh] overflow-hidden flex flex-col p-0">
-                  <DialogHeader className="p-6 pb-2"><DialogTitle>Webhooks — Notificações Externas</DialogTitle></DialogHeader>
+                  <DialogHeader className="p-5 pb-2"><DialogTitle>Webhooks — Notificações Externas</DialogTitle></DialogHeader>
                   <WebhookConfigPanel />
                 </DialogContent>
               </Dialog>

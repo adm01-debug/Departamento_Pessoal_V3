@@ -72,14 +72,14 @@ export default function FeriadosPage() {
           <DialogTrigger asChild>
             <Button className="rounded-xl bg-gradient-to-r from-primary-glow to-primary hover:opacity-90 shadow-lg font-body"><Plus className="h-4 w-4 mr-2" />Novo Feriado</Button>
           </DialogTrigger>
-          <DialogContent className="rounded-2xl">
+          <DialogContent>
             <DialogHeader><DialogTitle className="font-display">Cadastrar Feriado</DialogTitle></DialogHeader>
             <div className="space-y-4">
-              <div><Label className="font-body">Nome</Label><Input value={nome} onChange={e => setNome(e.target.value)} className="rounded-xl" /></div>
-              <div><Label className="font-body">Data</Label><Input type="date" value={data} onChange={e => setData(e.target.value)} className="rounded-xl" /></div>
+              <div><Label className="font-body">Nome</Label><Input value={nome} onChange={e => setNome(e.target.value)} /></div>
+              <div><Label className="font-body">Data</Label><Input type="date" value={data} onChange={e => setData(e.target.value)} /></div>
               <div><Label className="font-body">Tipo</Label>
                 <Select value={tipo} onValueChange={setTipo}>
-                  <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="nacional">Nacional</SelectItem>
                     <SelectItem value="estadual">Estadual</SelectItem>
@@ -88,7 +88,9 @@ export default function FeriadosPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <Button onClick={() => criarFeriado.mutate()} disabled={!nome || !data} className="w-full rounded-xl font-body">Salvar</Button>
+              <div className="flex justify-end pt-1">
+                <Button size="sm" onClick={() => criarFeriado.mutate()} disabled={!nome || !data} className="font-body">Salvar</Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>

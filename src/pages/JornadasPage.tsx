@@ -120,7 +120,9 @@ export default function JornadasPage() {
                     <div><Label>Carga Semanal (h)</Label><Input type="number" value={form.carga_horaria_semanal} onChange={e => setForm(p => ({ ...p, carga_horaria_semanal: e.target.value }))} /></div>
                     <div><Label>Intervalo (min)</Label><Input type="number" value={form.intervalo_minutos} onChange={e => setForm(p => ({ ...p, intervalo_minutos: e.target.value }))} /></div>
                   </div>
-                  <Button className="w-full" onClick={() => criar.mutate(form)} disabled={!form.nome}>Salvar</Button>
+                  <div className="flex justify-end pt-1">
+                    <Button size="sm" onClick={() => criar.mutate(form)} disabled={!form.nome}>Salvar</Button>
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>
@@ -175,7 +177,9 @@ export default function JornadasPage() {
               <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
               <span>Atenção: esta jornada pode ser utilizada por outros colaboradores. Alterações neste horário podem refletir em outros vínculos que utilizam esta jornada.</span>
             </div>
-            <Button className="w-full" onClick={() => atualizar.mutate(formEdicao)} disabled={!formEdicao.nome || atualizar.isPending}>Salvar alterações</Button>
+            <div className="flex justify-end pt-1">
+              <Button size="sm" onClick={() => atualizar.mutate(formEdicao)} disabled={!formEdicao.nome || atualizar.isPending}>Salvar alterações</Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

@@ -235,7 +235,7 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
 
       {/* Upload Dialog */}
       <Dialog open={showUpload} onOpenChange={setShowUpload}>
-        <DialogContent className="rounded-2xl">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle className="font-display">Enviar Documento</DialogTitle>
           </DialogHeader>
@@ -253,7 +253,7 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
               <Label className="font-body text-xs">Arquivo</Label>
               <div
                 onClick={() => fileRef.current?.click()}
-                className="border-2 border-dashed border-border/50 rounded-xl p-8 text-center cursor-pointer hover:border-primary/50 transition-colors bg-muted/20"
+                className="border-2 border-dashed border-border/50 rounded-xl p-5 text-center cursor-pointer hover:border-primary/50 transition-colors bg-muted/20"
               >
                 {file ? (
                   <div className="flex flex-col items-center gap-2">
@@ -270,27 +270,30 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
               </div>
               <input ref={fileRef} type="file" className="hidden" onChange={e => setFile(e.target.files?.[0] || null)} />
             </div>
-            <Button 
-              className="w-full rounded-xl bg-gradient-to-r from-warning to-primary h-11"
-              onClick={handleUpload}
-              disabled={uploading || !file || !tipo}
-            >
-              {uploading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Upload className="h-4 w-4 mr-2" />}
-              Enviar Documento
-            </Button>
+            <div className="flex justify-end pt-1">
+              <Button
+                size="sm"
+                className="rounded-xl bg-gradient-to-r from-warning to-primary"
+                onClick={handleUpload}
+                disabled={uploading || !file || !tipo}
+              >
+                {uploading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Upload className="h-4 w-4 mr-2" />}
+                Enviar Documento
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
 
       {/* Signature Dialog */}
       <Dialog open={!!docToSign} onOpenChange={(o) => !o && setDocToSign(null)}>
-        <DialogContent className="sm:max-w-lg rounded-2xl">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle className="font-display">Assinatura de Documento</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <p className="text-sm text-muted-foreground font-body">
-              Você está assinando digitalmente o documento: <span className="font-semibold text-foreground">{docToSign?.nome}</span>. 
+            <p className="text-xs text-muted-foreground font-body">
+              Você está assinando digitalmente o documento: <span className="font-medium text-foreground">{docToSign?.nome}</span>.
               Sua assinatura manuscrita será vinculada a este registro com validade jurídica interna.
             </p>
             <SignatureCanvas 

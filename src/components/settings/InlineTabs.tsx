@@ -188,33 +188,35 @@ export function AlertasKpiTab() {
             </div>
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
-                <Button className="rounded-xl shadow-glow gap-2">
+                <Button className="rounded-xl gap-2">
                   <Plus className="h-4 w-4" /> Novo Alerta
                 </Button>
               </DialogTrigger>
-              <DialogContent className="rounded-2xl max-w-md">
+              <DialogContent className="max-w-md">
                 <DialogHeader>
                   <DialogTitle className="font-display">Configurar Limite de Indicador</DialogTitle>
                 </DialogHeader>
-                <div className="space-y-4 pt-4">
-                  <div className="space-y-2">
-                    <Label className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Tipo de Indicador</Label>
-                    <Input value={form.tipo} onChange={e => setForm(p => ({ ...p, tipo: e.target.value }))} placeholder="Ex: turnover, absenteismo, horas_extras" className="rounded-xl border-border/40" />
+                <div className="space-y-3 pt-2">
+                  <div className="space-y-1">
+                    <Label>Tipo de Indicador</Label>
+                    <Input value={form.tipo} onChange={e => setForm(p => ({ ...p, tipo: e.target.value }))} placeholder="Ex: turnover, absenteismo, horas_extras" className="border-border/40" />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Limite Atenção (%)</Label>
-                      <Input type="number" value={form.limite_atencao} onChange={e => setForm(p => ({ ...p, limite_atencao: e.target.value }))} placeholder="Ex: 10" className="rounded-xl border-border/40" />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <Label>Limite Atenção (%)</Label>
+                      <Input type="number" value={form.limite_atencao} onChange={e => setForm(p => ({ ...p, limite_atencao: e.target.value }))} placeholder="Ex: 10" className="border-border/40" />
                     </div>
-                    <div className="space-y-2">
-                      <Label className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Limite Crítico (%)</Label>
-                      <Input type="number" value={form.limite_critico} onChange={e => setForm(p => ({ ...p, limite_critico: e.target.value }))} placeholder="Ex: 20" className="rounded-xl border-border/40" />
+                    <div className="space-y-1">
+                      <Label>Limite Crítico (%)</Label>
+                      <Input type="number" value={form.limite_critico} onChange={e => setForm(p => ({ ...p, limite_critico: e.target.value }))} placeholder="Ex: 20" className="border-border/40" />
                     </div>
                   </div>
-                  <Button onClick={() => criar.mutate(form)} disabled={!form.tipo || !form.limite_atencao || !form.limite_critico || criar.isPending} className="w-full rounded-xl shadow-glow h-11 mt-2">
-                    {criar.isPending ? <Spinner size="sm" className="mr-2" /> : <Save className="mr-2 h-4 w-4" />}
-                    Salvar Configuração
-                  </Button>
+                  <div className="flex justify-end pt-1">
+                    <Button size="sm" onClick={() => criar.mutate(form)} disabled={!form.tipo || !form.limite_atencao || !form.limite_critico || criar.isPending}>
+                      {criar.isPending ? <Spinner size="sm" className="mr-2" /> : <Save className="mr-2 h-4 w-4" />}
+                      Salvar Configuração
+                    </Button>
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>

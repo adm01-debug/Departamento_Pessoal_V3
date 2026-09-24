@@ -223,6 +223,8 @@ export function getMockContasBancarias(colaboradorId?: string): MockRecord[] | u
   if (!c) return undefined;
   return [
     { id: `${c.id}-conta-1`, banco_codigo: '341', banco_nome: 'Itaú Unibanco', agencia: '1234', conta: '56789-0', tipo_conta: 'Corrente', pix_tipo: 'Email', pix_chave: c.email, principal: true },
+    { id: `${c.id}-conta-2`, banco_codigo: '001', banco_nome: 'Banco do Brasil', agencia: '4321', conta: '98765-4', tipo_conta: 'Poupança', pix_tipo: 'CPF', pix_chave: c.cpf, principal: false },
+    { id: `${c.id}-conta-3`, banco_codigo: '260', banco_nome: 'Nubank', agencia: '0001', conta: '12345-6', tipo_conta: 'Corrente', pix_tipo: 'Telefone', pix_chave: (c as any).telefone, principal: false },
   ];
 }
 
@@ -252,6 +254,8 @@ export function getMockBeneficiosColaborador(colaboradorId?: string): MockRecord
   return [
     { id: `${c.id}-benef-1`, valor: 600, desconto: 0, data_inicio: c.data_admissao, status_vinculo: 'ativo', beneficio: { nome: 'Vale Refeição', tipo: 'alimentacao' } },
     { id: `${c.id}-benef-2`, valor: 350, desconto: 35, data_inicio: c.data_admissao, status_vinculo: 'ativo', beneficio: { nome: 'Plano de Saúde', tipo: 'saude' } },
+    { id: `${c.id}-benef-3`, valor: 220, desconto: 0, data_inicio: c.data_admissao, status_vinculo: 'ativo', beneficio: { nome: 'Vale Transporte', tipo: 'transporte' } },
+    { id: `${c.id}-benef-4`, valor: 80, desconto: 15, data_inicio: c.data_admissao, status_vinculo: 'ativo', beneficio: { nome: 'Seguro de Vida', tipo: 'seguro' } },
   ];
 }
 
@@ -413,9 +417,24 @@ export function getMockHolerites(colaboradorId?: string): MockRecord[] | undefin
   const c = findMockColaborador(colaboradorId);
   if (!c) return undefined;
   const salario = (c as any).salario_base || 3000;
+  const liquido = Math.round(salario * 0.82);
+  const base = {
+    colaborador_nome: c.nome_completo,
+    colaborador_cpf: (c as any).cpf ?? '—',
+    colaborador_cargo: (c as any).cargo ?? '—',
+    salario_base: salario,
+    total_proventos: salario,
+    total_descontos: salario - liquido,
+    total_liquido: liquido,
+    valor_inss: Math.round(salario * 0.09),
+    valor_irrf: Math.round(salario * 0.05),
+    valor_fgts: Math.round(salario * 0.08),
+  };
   return [
-    { id: `${c.id}-hol-1`, competencia: '2026-07', total_proventos: salario, total_liquido: Math.round(salario * 0.82), assinado: true, created_at: '2026-08-01' },
-    { id: `${c.id}-hol-2`, competencia: '2026-08', total_proventos: salario, total_liquido: Math.round(salario * 0.82), assinado: false, created_at: '2026-09-01' },
+    { id: `${c.id}-hol-2`, competencia: '2026-08', assinado: false, created_at: '2026-09-01', ...base },
+    { id: `${c.id}-hol-1`, competencia: '2026-07', assinado: true, created_at: '2026-08-01', ...base },
+    { id: `${c.id}-hol-3`, competencia: '2026-06', assinado: true, created_at: '2026-07-01', ...base },
+    { id: `${c.id}-hol-4`, competencia: '2026-05', assinado: true, created_at: '2026-06-01', ...base },
   ];
 }
 

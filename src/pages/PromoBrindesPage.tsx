@@ -129,7 +129,7 @@ export default function PromoBrindesPage() {
               <DialogTrigger asChild>
                 <Button><Plus className="h-4 w-4 mr-2" />Novo Brinde</Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[500px]">
+              <DialogContent>
                 <DialogHeader>
                   <DialogTitle>{editingItem ? 'Editar Brinde' : 'Novo Brinde'}</DialogTitle>
                 </DialogHeader>

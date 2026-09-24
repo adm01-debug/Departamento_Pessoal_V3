@@ -231,7 +231,7 @@ export default function FinanceiroBancarioPage() {
                     <Settings className="h-4 w-4" /> Configurar Banco
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[500px]">
+                <DialogContent className="max-w-[500px]">
                   <DialogHeader>
                     <DialogTitle className="font-display">Configuração Bancária</DialogTitle>
                     <CardDescription>Informe os dados para geração do arquivo CNAB 240</CardDescription>

@@ -362,9 +362,11 @@ export default function ESocialPage() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <Button onClick={handleCriar} disabled={!novoTipo || !empresaAtual?.id} className="w-full rounded-xl bg-gradient-to-r from-primary to-primary-glow text-primary-foreground">
-                    Criar Evento
-                  </Button>
+                  <div className="flex justify-end pt-1">
+                    <Button size="sm" onClick={handleCriar} disabled={!novoTipo || !empresaAtual?.id} className="rounded-lg px-4 bg-gradient-to-r from-primary to-primary-glow text-primary-foreground">
+                      Criar Evento
+                    </Button>
+                  </div>
                 </div>
               </DialogContent>
             </Dialog>

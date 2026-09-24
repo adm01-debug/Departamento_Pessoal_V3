@@ -231,7 +231,7 @@ export function RewardsApprovalHub({ pagamentos }: ApprovalHubProps) {
       )}
 
       <Dialog open={isReconcileOpen} onOpenChange={setIsReconcileOpen}>
-        <DialogContent className="sm:max-w-[425px] rounded-3xl">
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Search className="h-5 w-5 text-primary" />
@@ -278,7 +278,7 @@ export function RewardsApprovalHub({ pagamentos }: ApprovalHubProps) {
         </DialogContent>
       </Dialog>
       <Dialog open={isApprovalDialogOpen} onOpenChange={setIsApprovalDialogOpen}>
-        <DialogContent className="sm:max-w-[425px] rounded-3xl">
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               {pendingAction?.nextStatus === 'rejeitado' ? (

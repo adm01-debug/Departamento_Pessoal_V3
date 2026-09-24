@@ -44,6 +44,13 @@ vi.mock('@/services/batidasPontoService', () => ({
 vi.mock('@/utils/dateLocal', () => ({
   formatDateLocalISO: (d: Date) => d.toISOString().split('T')[0],
   todayLocalISO: () => '2026-07-24',
+  // Usado pelo `DatePicker` (ver src/components/ui/date-picker.tsx) por trás
+  // de qualquer `Input type="date"` renderizado neste componente.
+  parseDateLocalISO: (iso?: string | null) => {
+    if (!iso) return undefined;
+    const [y, m, d] = iso.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  },
 }));
 
 vi.mock('./PontoInconsistencyPanel', () => ({

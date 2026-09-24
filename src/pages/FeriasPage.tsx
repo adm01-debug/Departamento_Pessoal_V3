@@ -174,20 +174,22 @@ export default function FeriasPage() {
                 <Calculator className="h-4 w-4" />Simulador
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md rounded-2xl">
+            <DialogContent className="max-w-md">
               <DialogHeader><DialogTitle className="flex items-center gap-2 font-display"><Calculator className="h-5 w-5" /> Simulador de Férias</DialogTitle></DialogHeader>
               <div className="space-y-4">
-                <div className="space-y-2"><Label className="font-body">Salário Base (R$)</Label><Input type="number" placeholder="5000.00" value={calcForm.salario} onChange={e => setCalcForm(p => ({ ...p, salario: e.target.value }))} className="rounded-xl" /></div>
+                <div className="space-y-2"><Label className="font-body">Salário Base (R$)</Label><Input type="number" placeholder="5000.00" value={calcForm.salario} onChange={e => setCalcForm(p => ({ ...p, salario: e.target.value }))} /></div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2"><Label className="font-body">Dias de Férias</Label><Input type="number" min="1" max="30" value={calcForm.diasFerias} onChange={e => setCalcForm(p => ({ ...p, diasFerias: e.target.value }))} className="rounded-xl" /></div>
-                  <div className="space-y-2"><Label className="font-body">Dias Abono</Label><Input type="number" min="0" max="10" value={calcForm.diasAbono} onChange={e => setCalcForm(p => ({ ...p, diasAbono: e.target.value }))} className="rounded-xl" /></div>
+                  <div className="space-y-2"><Label className="font-body">Dias de Férias</Label><Input type="number" min="1" max="30" value={calcForm.diasFerias} onChange={e => setCalcForm(p => ({ ...p, diasFerias: e.target.value }))} /></div>
+                  <div className="space-y-2"><Label className="font-body">Dias Abono</Label><Input type="number" min="0" max="10" value={calcForm.diasAbono} onChange={e => setCalcForm(p => ({ ...p, diasAbono: e.target.value }))} /></div>
                 </div>
-                <Button onClick={handleCalcFerias} disabled={calcLoading || !calcForm.salario} className="w-full rounded-xl bg-gradient-to-r from-primary-glow to-primary font-body">
-                  {calcLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Calculator className="h-4 w-4 mr-2" />}Calcular
-                </Button>
+                <div className="flex justify-end pt-1">
+                  <Button size="sm" onClick={handleCalcFerias} disabled={calcLoading || !calcForm.salario} className="bg-gradient-to-r from-primary-glow to-primary font-body">
+                    {calcLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Calculator className="h-4 w-4 mr-2" />}Calcular
+                  </Button>
+                </div>
                 {calcResult && (
                   <Card className="border border-border/30 rounded-xl">
-                    <CardContent className="p-4 space-y-2 text-sm font-body">
+                    <CardContent className="p-3 space-y-1.5 text-sm font-body">
                       {calcResult.ferias_brutas != null && <div className="flex justify-between"><span>Férias Brutas:</span><span className="font-medium">{fmt(calcResult.ferias_brutas)}</span></div>}
                       {calcResult.terco_constitucional != null && <div className="flex justify-between"><span>1/3 Constitucional:</span><span className="font-medium">{fmt(calcResult.terco_constitucional)}</span></div>}
                       {calcResult.abono_pecuniario != null && calcResult.abono_pecuniario > 0 && <div className="flex justify-between"><span>Abono Pecuniário:</span><span className="font-medium">{fmt(calcResult.abono_pecuniario)}</span></div>}

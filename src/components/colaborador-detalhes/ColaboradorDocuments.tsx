@@ -64,67 +64,65 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="rounded-xl shadow-glow">
+            <Button>
               <Plus className="h-4 w-4 mr-2" /> Novo Documento
             </Button>
           </DialogTrigger>
-          <DialogContent className="rounded-2xl max-w-md">
+          <DialogContent className="max-w-[460px]">
             <DialogHeader>
               <DialogTitle className="font-display">Adicionar Novo Documento</DialogTitle>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="space-y-2">
+            <div className="grid gap-3">
+              <div className="space-y-1">
                 <Label>Nome do Documento *</Label>
-                <Input 
-                  placeholder="Ex: Contrato de Trabalho 2024" 
-                  value={form.nome} 
+                <Input
+                  placeholder="Ex: Contrato de Trabalho 2024"
+                  value={form.nome}
                   onChange={e => setForm(f => ({ ...f, nome: e.target.value }))}
-                  className="rounded-xl"
                 />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Label>Tipo de Documento</Label>
                 <Select value={form.tipo} onValueChange={v => setForm(f => ({ ...f, tipo: v }))}>
-                  <SelectTrigger className="rounded-xl">
+                  <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="rounded-xl">
+                  <SelectContent>
                     {TIPOS.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Label>Data de Validade (opcional)</Label>
-                <Input 
-                  type="date" 
-                  value={form.data_validade} 
+                <Input
+                  type="date"
+                  value={form.data_validade}
                   onChange={e => setForm(f => ({ ...f, data_validade: e.target.value }))}
-                  className="rounded-xl"
                 />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Label>URL / Link do Arquivo</Label>
-                <Input 
-                  placeholder="https://..." 
-                  value={form.url} 
+                <Input
+                  placeholder="https://..."
+                  value={form.url}
                   onChange={e => setForm(f => ({ ...f, url: e.target.value }))}
-                  className="rounded-xl"
                 />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Label>Observações</Label>
-                <Input 
-                  placeholder="Notas internas..." 
-                  value={form.observacoes} 
+                <Input
+                  placeholder="Notas internas..."
+                  value={form.observacoes}
                   onChange={e => setForm(f => ({ ...f, observacoes: e.target.value }))}
-                  className="rounded-xl"
                 />
               </div>
             </div>
-            <Button onClick={handleSubmit} className="w-full rounded-xl" disabled={criarDocumento.isPending}>
-              {criarDocumento.isPending ? <Spinner className="mr-2" /> : <Shield className="h-4 w-4 mr-2" />}
-              Salvar Documento com Segurança
-            </Button>
+            <div className="flex justify-end pt-1">
+              <Button size="sm" className="rounded-lg px-4" onClick={handleSubmit} disabled={criarDocumento.isPending}>
+                {criarDocumento.isPending ? <Spinner className="mr-1.5 h-3.5 w-3.5" /> : <Shield className="h-3.5 w-3.5 mr-1.5" />}
+                Salvar Documento com Segurança
+              </Button>
+            </div>
           </DialogContent>
         </Dialog>
       </div>

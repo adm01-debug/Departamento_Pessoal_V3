@@ -45,7 +45,7 @@ export function RecontratarColaboradorDialog({ colaborador, open, onOpenChange }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="rounded-2xl sm:max-w-md">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Recontratar {colaborador.nome_completo}</DialogTitle>
           <DialogDescription>

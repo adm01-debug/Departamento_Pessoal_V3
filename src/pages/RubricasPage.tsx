@@ -143,12 +143,12 @@ export default function RubricasPage() {
                   <Plus className="mr-2 h-4 w-4" />Nova Rubrica
                 </Button>
               </DialogTrigger>
-              <DialogContent className="rounded-2xl max-w-lg">
+              <DialogContent>
                 <DialogHeader><DialogTitle className="font-display">{editId ? 'Editar Rubrica' : 'Nova Rubrica'}</DialogTitle></DialogHeader>
                 <div className="space-y-4">
                   <div className="grid grid-cols-3 gap-3">
-                    <div><Label className="font-body">Código</Label><Input value={form.codigo} onChange={e => setForm(p => ({ ...p, codigo: e.target.value }))} placeholder="001" className="rounded-xl font-mono" /></div>
-                    <div className="col-span-2"><Label className="font-body">Descrição</Label><Input value={form.descricao} onChange={e => setForm(p => ({ ...p, descricao: e.target.value }))} placeholder="Salário Base" className="rounded-xl" /></div>
+                    <div><Label className="font-body">Código</Label><Input value={form.codigo} onChange={e => setForm(p => ({ ...p, codigo: e.target.value }))} placeholder="001" className="font-mono" /></div>
+                    <div className="col-span-2"><Label className="font-body">Descrição</Label><Input value={form.descricao} onChange={e => setForm(p => ({ ...p, descricao: e.target.value }))} placeholder="Salário Base" /></div>
                   </div>
                   <div><Label className="font-body">Tipo</Label>
                     <Select value={form.tipo} onValueChange={v => setForm(p => ({ ...p, tipo: v as TipoEvento }))}>

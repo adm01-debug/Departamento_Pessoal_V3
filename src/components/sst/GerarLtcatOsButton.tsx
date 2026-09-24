@@ -85,7 +85,7 @@ export function GerarLtcatOsButton() {
           Gerar LTCAT / OS
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Gerar Documento Técnico SST</DialogTitle>
           <DialogDescription>

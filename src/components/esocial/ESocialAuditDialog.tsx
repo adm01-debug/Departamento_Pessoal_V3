@@ -80,13 +80,13 @@ export function ESocialAuditDialog({ open, onOpenChange, eventos }: ESocialAudit
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md border-border/30 shadow-elevated rounded-2xl p-0 overflow-hidden">
-        <div className="bg-gradient-to-br from-primary/10 to-primary/5 p-6 border-b border-primary/10">
+        <div className="bg-gradient-to-br from-primary/10 to-primary/5 p-4 border-b border-primary/10">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-primary/20 text-primary">
               <ShieldAlert className="h-6 w-6" />
             </div>
             <div>
-              <DialogTitle className="font-display text-xl">Auditoria Proativa IA</DialogTitle>
+              <DialogTitle className="font-display">Auditoria Proativa IA</DialogTitle>
               <DialogDescription className="font-body text-primary/70">
                 Verificação profunda de conformidade eSocial
               </DialogDescription>
@@ -94,33 +94,33 @@ export function ESocialAuditDialog({ open, onOpenChange, eventos }: ESocialAudit
           </div>
         </div>
 
-        <div className="p-6">
+        <div className="p-5">
           <AnimatePresence mode="wait">
             {!isScanning && !results ? (
-              <motion.div 
+              <motion.div
                 key="initial"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 className="text-center space-y-4"
               >
-                <div className="p-6 rounded-2xl bg-muted/30 border border-dashed border-border/50">
+                <div className="p-4 rounded-2xl bg-muted/30 border border-dashed border-border/50">
                   <Sparkles className="h-10 w-10 text-primary/40 mx-auto mb-3" />
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     Nossa IA analisará todos os eventos da competência atual, buscando inconsistências, dados faltantes e riscos de autuação fiscal.
                   </p>
                 </div>
-                <Button onClick={startScan} className="w-full rounded-xl bg-gradient-to-r from-primary to-primary-glow h-11">
+                <Button onClick={startScan} className="w-full rounded-xl bg-gradient-to-r from-primary to-primary-glow">
                   Iniciar Varredura Completa
                 </Button>
               </motion.div>
             ) : isScanning ? (
-              <motion.div 
+              <motion.div
                 key="scanning"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="py-12 text-center space-y-6"
+                className="py-12 text-center space-y-4"
               >
                 <div className="relative inline-block">
                   <Loader2 className="h-16 w-16 text-primary animate-spin opacity-20" />
@@ -137,15 +137,15 @@ export function ESocialAuditDialog({ open, onOpenChange, eventos }: ESocialAudit
                 key="results"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="space-y-6"
+                className="space-y-4"
               >
                 <div className="flex items-center justify-between p-4 rounded-2xl bg-background border border-border/50 shadow-xs">
                   <div>
                     <p className="text-xs text-muted-foreground uppercase font-medium tracking-wider">Score de Conformidade</p>
-                    <p className="text-3xl font-display font-medium text-primary">{results?.score}%</p>
+                    <p className="text-2xl font-display font-medium text-primary">{results?.score}%</p>
                   </div>
                   <div className={cn(
-                    "h-12 w-12 rounded-full border-4 flex items-center justify-center font-medium text-lg",
+                    "h-12 w-12 rounded-full border-4 flex items-center justify-center font-medium text-base",
                     results!.score > 80 ? "border-success/30 text-success" : 
                     results!.score > 50 ? "border-warning/30 text-warning" : 
                     "border-destructive/30 text-destructive"

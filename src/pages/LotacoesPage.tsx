@@ -59,7 +59,9 @@ export default function LotacoesPage() {
               <div><Label>Nome</Label><Input value={form.nome} onChange={e => setForm(p => ({ ...p, nome: e.target.value }))} /></div>
               <div><Label>Código</Label><Input value={form.codigo} onChange={e => setForm(p => ({ ...p, codigo: e.target.value }))} /></div>
               <div><Label>Endereço</Label><Input value={form.endereco} onChange={e => setForm(p => ({ ...p, endereco: e.target.value }))} /></div>
-              <Button onClick={() => criar.mutate(form)} disabled={!form.nome} className="w-full">Salvar</Button>
+              <div className="flex justify-end pt-1">
+                <Button size="sm" onClick={() => criar.mutate(form)} disabled={!form.nome}>Salvar</Button>
+              </div>
             </div>
           </DialogContent>
         </Dialog>

@@ -102,12 +102,12 @@ export default function SSTPage() {
                 <Plus className="mr-2 h-4 w-4" />Registrar Incidente
               </Button>
             </DialogTrigger>
-            <DialogContent className="rounded-2xl">
+            <DialogContent>
               <DialogHeader><DialogTitle className="font-display">Registrar Incidente / Quase Acidente</DialogTitle></DialogHeader>
               <div className="space-y-4">
                 <div><Label className="font-body">Tipo</Label>
                   <Select value={incidenteForm.tipo} onValueChange={v => setIncidenteForm(p => ({ ...p, tipo: v }))}>
-                    <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="quase_acidente">Quase Acidente</SelectItem>
                       <SelectItem value="acidente_leve">Acidente Leve</SelectItem>
@@ -116,17 +116,17 @@ export default function SSTPage() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div><Label className="font-body">Local</Label><Input value={incidenteForm.local} onChange={e => setIncidenteForm(p => ({ ...p, local: e.target.value }))} placeholder="Ex: Galpão 2, Setor B" className="rounded-xl" /></div>
+                <div><Label className="font-body">Local</Label><Input value={incidenteForm.local} onChange={e => setIncidenteForm(p => ({ ...p, local: e.target.value }))} placeholder="Ex: Galpão 2, Setor B" /></div>
                 <div><Label className="font-body">Gravidade (1-5)</Label>
                   <Select value={incidenteForm.gravidade} onValueChange={v => setIncidenteForm(p => ({ ...p, gravidade: v }))}>
-                    <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {RISCO_LEVELS.map(r => <SelectItem key={r.value} value={String(r.value)}>{r.value} — {r.label}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
-                <div><Label className="font-body">Descrição detalhada</Label><Textarea value={incidenteForm.descricao} onChange={e => setIncidenteForm(p => ({ ...p, descricao: e.target.value }))} className="rounded-xl" rows={4} /></div>
-                <Button className="w-full rounded-xl bg-gradient-to-r from-destructive to-warning" onClick={() => { toast.success('Incidente registrado!'); setOpenIncidente(false); }}>
+                <div><Label className="font-body">Descrição detalhada</Label><Textarea value={incidenteForm.descricao} onChange={e => setIncidenteForm(p => ({ ...p, descricao: e.target.value }))} rows={4} /></div>
+                <Button className="w-full bg-gradient-to-r from-destructive to-warning" onClick={() => { toast.success('Incidente registrado!'); setOpenIncidente(false); }}>
                   Registrar Incidente
                 </Button>
               </div>

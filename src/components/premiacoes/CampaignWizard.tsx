@@ -67,7 +67,7 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid gap-6 py-4">
+        <div className="grid gap-4 py-4">
           {step === 1 ? (
             <div className="space-y-4">
               <div className="grid grid-cols-1 gap-2">
