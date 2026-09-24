@@ -61,7 +61,7 @@ jobs:
         run: |
           set -euo pipefail
           read_only() {
-            psql "$SUPABASE_DB_URL" -X -At -v ON_ERROR_STOP=1 "$1"
+            psql "$SUPABASE_DB_URL" -X -At -v ON_ERROR_STOP=1
           }
 
           # RV-01: authenticated com sub inexistente e user_metadata forjado
