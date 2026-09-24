@@ -105,13 +105,13 @@ jobs:
           mkdir -p "$stage_dir/supabase/migrations"
           cp supabase/config.toml "$stage_dir/supabase/config.toml"
           # NOTE: this list is intentionally replaced on every scoped batch,
-          # not accumulated. The previous batch (19 files, 2026-09-11/12) is
-          # already applied and recorded in supabase_migrations.schema_migrations;
+          # not accumulated. The previous batch (20260924192541) is already
+          # applied and recorded in supabase_migrations.schema_migrations;
           # re-listing it here would re-run non-idempotent CREATE POLICY
           # statements and fail with "policy already exists". Each dispatch
           # of this workflow targets only the NEW migrations for that batch.
           for migration in \
-            20260924192541_p1_registros_ponto_role_policy.sql
+            20260924310000_p0_batidas_ponto_role_gate.sql
           do
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
           done
@@ -159,25 +159,25 @@ jobs:
           set -euo pipefail
           result="$(psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -At <<'SQL'
           SELECT jsonb_build_object(
-            'tenant_registros_ponto_dropped', NOT EXISTS (
+            'bp_old_policies_dropped', NOT EXISTS (
               SELECT 1 FROM pg_catalog.pg_policies
-              WHERE schemaname = 'public' AND tablename = 'registros_ponto'
-                AND policyname = 'tenant_registros_ponto'
+              WHERE schemaname = 'public' AND tablename = 'batidas_ponto'
+                AND policyname IN ('bp_ins', 'bp_upd', 'bp_del')
             ),
-            'registros_ponto_write_ok', EXISTS (
-              SELECT 1 FROM pg_catalog.pg_policies
-              WHERE schemaname = 'public' AND tablename = 'registros_ponto'
-                AND policyname = 'registros_ponto_write'
-                AND qual LIKE '%sou_o_colaborador%'
-            ),
-            'ledger_count', (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = '20260924192541')
+            'bp_role_gate_ok', (
+              SELECT count(*) FROM pg_catalog.pg_policies
+              WHERE schemaname = 'public' AND tablename = 'batidas_ponto'
+                AND policyname IN ('bp_ins_role_gate', 'bp_upd_role_gate', 'bp_del_role_gate')
+                AND (qual LIKE '%sou_o_colaborador%' OR with_check LIKE '%sou_o_colaborador%')
+            ) = 3,
+            'ledger_count', (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = '20260924310000')
           );
           SQL
           )"
           echo "$result"
           node -e '
             const result = JSON.parse(process.argv[1]);
-            const expectedTrue = ["tenant_registros_ponto_dropped","registros_ponto_write_ok"];
+            const expectedTrue = ["bp_old_policies_dropped","bp_role_gate_ok"];
             if (expectedTrue.some((key) => result[key] !== true) || Number(result.ledger_count) !== 1) process.exit(1);
           ' "$result"
           echo 'CANONICAL_SCOPED_MIGRATIONS_OK'
