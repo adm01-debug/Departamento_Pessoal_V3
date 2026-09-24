@@ -191,10 +191,13 @@ jobs:
 
   db-integrity:
     name: Integridade do banco (search_path x extensões)
-    # Nunca entregar uma URL administrativa do banco a código ainda não
-    # integrado. PRs validam migrations em PostgreSQL descartável; a auditoria
-    # viva roda somente a partir de main ou por despacho manual do workflow.
-    if: github.event_name != 'pull_request'
+    # E50-46: antes rodava só fora de PR — uma regressão de RLS/PII só era
+    # detectada DEPOIS do merge em main. Agora roda em PR também, mas só
+    # quando o PR é do próprio repositório (não fork) e não é Dependabot —
+    # forks já não recebem secrets do GitHub por padrão (a checagem abaixo
+    # de DATABASE_URL ausente cobre esse caso), e não faz sentido dar a um
+    # bot de dependências acesso à URL administrativa do banco canônico.
+    if: github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]')
     runs-on: ubuntu-latest
     # Este é deliberadamente um gate de banco canônico, não uma análise
     # estática. Sem uma conexão de auditoria, um "verde" não é evidência de

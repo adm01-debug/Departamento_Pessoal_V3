@@ -161,6 +161,10 @@ export const RPC_ALLOWLIST = new Set<string>([
   // onboarding público (candidato) — lookup exato por token, ver
   // 20260718220000_rls_remediacao_auditoria.sql (achado L3 da auditoria)
   "get_admissao_por_token",
+  // E50-33: segundo fator do quiosque de ponto — hash nunca sai do banco,
+  // as duas verificam permissão/lockout por dentro (ver
+  // 20260924160000_e50_33_pin_quiosque_ponto.sql)
+  "admin_definir_pin_quiosque", "verificar_pin_quiosque",
 ]);
 
 // -------------------- Allowlist de operadores --------------------

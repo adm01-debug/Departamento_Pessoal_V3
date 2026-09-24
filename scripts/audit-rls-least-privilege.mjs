@@ -133,6 +133,20 @@ const ISENCOES = new Map([
     'user_empresas:Usuários podem ver suas associações',
     'Somente leitura das próprias associações; não concede escrita.',
   ],
+  [
+    'colaboradores:colaboradores_tenant_read',
+    'Leitura tenant-wide deliberada: 4 telas compartilhadas (diretório, seleção ' +
+      'de gestor, agenda de equipe, busca em formulários) dependem de listar ' +
+      'colegas do mesmo tenant sem exigir papel de RH. Escrita já é RH-only via ' +
+      'colaboradores_rh_manage.',
+  ],
+  [
+    'canal_etica:canal_etica_reportar',
+    'Canal de ética é anônimo por design (coluna `anonimo`, sem colaborador_id) ' +
+      '— autoatendimento de denúncia precisa ficar aberto a qualquer colaborador ' +
+      'do tenant. Leitura e tratamento da denúncia são RH-only via ' +
+      'canal_etica_rh_manage.',
+  ],
 ]);
 
 const QUERY = `

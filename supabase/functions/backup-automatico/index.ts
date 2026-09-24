@@ -6,9 +6,9 @@ import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { BACKUP_AUDIT_READ_ACTIONS } from './backupAudit.ts';
 import {
-  BACKUP_TABLE_ROW_LIMIT,
+  BACKUP_PAGE_SIZE,
   BackupSnapshotError,
-  requireCompleteBackupTable,
+  fetchAllRowsPaginated,
 } from './backupSnapshot.ts';
 
 // Onda 22: hardening completo — auth JWT, CSRF, admin-only, tenant scope, audit,
@@ -133,14 +133,21 @@ serve(async (req: Request): Promise<Response> => {
     const snapshot: Record<string, unknown> = {};
     const counts: Record<string, number> = {};
     for (const table of targetTables) {
-      const result = await admin
-        .from(table)
-        .select('*', { count: 'exact' })
-        .eq('empresa_id', empresaId)
-        .limit(BACKUP_TABLE_ROW_LIMIT); // hard cap — proteção contra OOM
-
       try {
-        const complete = requireCompleteBackupTable(table, result);
+        // E50-43: pagina por keyset em BACKUP_PAGE_SIZE até esgotar a
+        // tabela, em vez de um único limit() que fazia tudo acima do cap
+        // falhar o backup inteiro silenciosamente.
+        const complete = await fetchAllRowsPaginated(table, async (afterId) => {
+          let q = admin
+            .from(table)
+            .select('*', { count: afterId ? undefined : 'exact' })
+            .eq('empresa_id', empresaId)
+            .order('id', { ascending: true })
+            .limit(BACKUP_PAGE_SIZE);
+          if (afterId) q = q.gt('id', afterId);
+          const { data, count, error } = await q;
+          return { data, count: afterId ? null : count, error };
+        });
         snapshot[table] = complete.data;
         counts[table] = complete.count;
       } catch (error) {

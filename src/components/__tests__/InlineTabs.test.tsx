@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
@@ -12,21 +12,23 @@ vi.mock('@/components/ui/dialog', () => ({
   DialogContent: ({ children }: any) => <div>{children}</div>,
   DialogHeader: ({ children }: any) => <div>{children}</div>,
   DialogTitle: ({ children }: any) => <div>{children}</div>,
-  DialogTrigger: ({ children, asChild }: any) => asChild ? children : <div>{children}</div>,
+  DialogTrigger: ({ children, asChild }: any) => (asChild ? children : <div>{children}</div>),
 }));
+
+const { mutateMock } = vi.hoisted(() => ({ mutateMock: vi.fn() }));
 
 vi.mock('@tanstack/react-query', () => ({
   useQuery: () => ({ data: [], isLoading: false }),
-  useMutation: () => ({ mutate: vi.fn(), isPending: false }),
+  useMutation: () => ({ mutate: mutateMock, isPending: false }),
   useQueryClient: () => ({ invalidateQueries: vi.fn() }),
+  QueryClient: vi.fn(),
 }));
 
-import {
-  PreferenciasTab,
-  NotificacoesTab,
-  FolhaConfigTab,
-  PontoConfigTab,
-} from '../settings/InlineTabs';
+vi.mock('@/hooks/useEmpresas', () => ({
+  useEmpresas: () => ({ empresaAtual: { id: 'empresa-1', exigir_pin_quiosque: false } }),
+}));
+
+import { PreferenciasTab, NotificacoesTab, FolhaConfigTab, PontoConfigTab } from '../settings/InlineTabs';
 
 describe('PreferenciasTab', () => {
   it('renders Preferências de Interface title', () => {
@@ -103,5 +105,21 @@ describe('PontoConfigTab', () => {
   it('renders Ponto Offline switch', () => {
     render(<PontoConfigTab />);
     expect(screen.getByText('Ponto Offline')).toBeInTheDocument();
+  });
+
+  it('renders Exigir PIN no quiosque switch reading exigir_pin_quiosque=false', () => {
+    render(<PontoConfigTab />);
+    expect(screen.getByText('Exigir PIN no quiosque')).toBeInTheDocument();
+    const switches = screen.getAllByRole('switch');
+    // 4 switches nesta aba: Geolocalização, Facial, Offline, e o PIN por último.
+    expect(switches[switches.length - 1]).toHaveAttribute('aria-checked', 'false');
+  });
+
+  it('chamar o switch Exigir PIN no quiosque dispara mutate com o valor invertido', () => {
+    mutateMock.mockClear();
+    render(<PontoConfigTab />);
+    const switches = screen.getAllByRole('switch');
+    fireEvent.click(switches[switches.length - 1]);
+    expect(mutateMock).toHaveBeenCalledWith(true);
   });
 });
