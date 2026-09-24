@@ -111,7 +111,7 @@ jobs:
           # statements and fail with "policy already exists". Each dispatch
           # of this workflow targets only the NEW migrations for that batch.
           for migration in \
-            20260924140000_p0_close_live_rls_gap_pix_cnab_colaboradores.sql
+            20260924141500_p0_role_gate_bancarias_folha_ponto_logs.sql
           do
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
           done
@@ -159,30 +159,26 @@ jobs:
           set -euo pipefail
           result="$(psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -At <<'SQL'
           SELECT jsonb_build_object(
-            'colaboradores_old_gone', NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='colaboradores' AND policyname IN ('Admins manage employees in their empresas','Usuários podem ver colaboradores da sua empresa','Usuários podem atualizar colaboradores da sua empresa','Usuários podem deletar colaboradores da sua empresa','Usuários podem inserir colaboradores na sua empresa','empresa_isolation_colaboradores')),
-            'colaboradores_new_present', (SELECT count(*) FROM pg_policies WHERE schemaname='public' AND tablename='colaboradores' AND policyname IN ('colaboradores_rh_manage','colaboradores_tenant_read')) = 2,
-            'dependentes_old_gone', NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='dependentes' AND policyname IN ('empresa_isolation_dependentes','tenant_dependentes')),
-            'dependentes_new_present', (SELECT count(*) FROM pg_policies WHERE schemaname='public' AND tablename='dependentes' AND policyname IN ('dependentes_rh_manage','dependentes_tenant_read')) = 2,
-            'ferias_old_gone', NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='ferias' AND policyname IN ('empresa_isolation_ferias','tenant_ferias')),
-            'ferias_new_present', (SELECT count(*) FROM pg_policies WHERE schemaname='public' AND tablename='ferias' AND policyname IN ('ferias_rh_manage','ferias_gestor_read')) = 2,
-            'provisoes_old_gone', NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='provisoes_folha' AND policyname='Visualização por empresa provisoes'),
-            'provisoes_new_present', EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='provisoes_folha' AND policyname='provisoes_folha_rh_read'),
-            'pix_lotes_old_gone', NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='pix_lotes' AND policyname IN ('Empresas can view their own PIX lotes','Empresas can insert their own PIX lotes')),
-            'pix_lotes_new_present', (SELECT count(*) FROM pg_policies WHERE schemaname='public' AND tablename='pix_lotes' AND policyname IN ('pix_lotes_rh_manage','pix_lotes_tenant_read')) = 2,
-            'pix_itens_old_gone', NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='pix_itens' AND policyname IN ('Empresas can view their own PIX itens','Empresas can insert their own PIX itens')),
-            'pix_itens_new_present', (SELECT count(*) FROM pg_policies WHERE schemaname='public' AND tablename='pix_itens' AND policyname IN ('pix_itens_rh_manage','pix_itens_tenant_read')) = 2,
-            'cnab_remessas_old_gone', NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='cnab_remessas' AND policyname IN ('Empresas can view their own CNAB remessas','Empresas can insert their own CNAB remessas','Users can insert their company remessas','Users can see their company remessas')),
-            'cnab_remessas_new_present', (SELECT count(*) FROM pg_policies WHERE schemaname='public' AND tablename='cnab_remessas' AND policyname IN ('cnab_remessas_rh_manage','cnab_remessas_tenant_read')) = 2,
-            'cnab_itens_old_gone', NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='cnab_itens' AND policyname IN ('Empresas can view their own CNAB itens','Empresas can insert their own CNAB itens','Users can see their company cnab items')),
-            'cnab_itens_new_present', (SELECT count(*) FROM pg_policies WHERE schemaname='public' AND tablename='cnab_itens' AND policyname IN ('cnab_itens_rh_manage','cnab_itens_tenant_read')) = 2,
-            'ledger_count', (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = '20260924140000')
+            'contas_bancarias_old_gone', NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='contas_bancarias' AND policyname='tenant_contas_bancarias'),
+            'contas_bancarias_new_present', EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='contas_bancarias' AND policyname='contas_bancarias_rh_manage'),
+            'folha_itens_old_gone', NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='folha_itens' AND policyname='Folha itens scoped via folha'),
+            'folha_itens_new_present', EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='folha_itens' AND policyname='folha_itens_rh_manage'),
+            'folhas_old_gone', NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='folhas_pagamento' AND policyname IN ('Empresa vê suas próprias folhas','Folhas scoped by empresa','Gestão de folha por cargo','Leitura por empresa','empresa_isolation_folhas','folhas_pagamento_tenant_select','tenant_folhas_pagamento')),
+            'folhas_new_present', (SELECT count(*) FROM pg_policies WHERE schemaname='public' AND tablename='folhas_pagamento' AND policyname IN ('folhas_rh_manage','folhas_gestor_read')) = 2,
+            'ponto_old_gone', NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='registros_ponto' AND policyname='empresa_isolation_ponto'),
+            'ponto_kept', EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='registros_ponto' AND policyname='tenant_registros_ponto'),
+            'integracao_logs_old_gone', NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='integracao_logs' AND policyname='Apenas admin pode ver logs de integração'),
+            'integracao_logs_new_present', EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='integracao_logs' AND policyname='integracao_logs_admin_read'),
+            'notificacoes_old_gone', NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='notificacoes_admissao' AND policyname='RH pode ver notificacoes'),
+            'notificacoes_kept', EXISTS (SELECT 1 FROM pg_policies WHERE schemaname='public' AND tablename='notificacoes_admissao' AND policyname='Tenant scoped notificacoes_admissao'),
+            'ledger_count', (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = '20260924141500')
           );
           SQL
           )"
           echo "$result"
           node -e '
             const result = JSON.parse(process.argv[1]);
-            const expectedTrue = ["colaboradores_old_gone","colaboradores_new_present","dependentes_old_gone","dependentes_new_present","ferias_old_gone","ferias_new_present","provisoes_old_gone","provisoes_new_present","pix_lotes_old_gone","pix_lotes_new_present","pix_itens_old_gone","pix_itens_new_present","cnab_remessas_old_gone","cnab_remessas_new_present","cnab_itens_old_gone","cnab_itens_new_present"];
+            const expectedTrue = ["contas_bancarias_old_gone","contas_bancarias_new_present","folha_itens_old_gone","folha_itens_new_present","folhas_old_gone","folhas_new_present","ponto_old_gone","ponto_kept","integracao_logs_old_gone","integracao_logs_new_present","notificacoes_old_gone","notificacoes_kept"];
             if (expectedTrue.some((key) => result[key] !== true) || Number(result.ledger_count) !== 1) process.exit(1);
           ' "$result"
           echo 'CANONICAL_SCOPED_MIGRATIONS_OK'
