@@ -18,18 +18,33 @@ export interface ListResponse<T> {
   total: number;
 }
 
-export class BaseService<T, CreateDTO = Record<string, unknown>, UpdateDTO = Record<string, unknown>> {
+/**
+ * Quando RequireEmpresa é true (padrão), `atualizar`/`buscarPorId` exigem o
+ * argumento empresaId em tempo de compilação — não só em runtime. Serviços
+ * de entidades sem coluna empresa_id (ex.: a própria tabela `empresas`)
+ * passam `false` no 4º type param e no `options.requireEmpresaId`.
+ */
+type EmpresaIdArg<RequireEmpresa extends boolean> = RequireEmpresa extends false
+  ? [empresaId?: string]
+  : [empresaId: string];
+
+export class BaseService<
+  T,
+  CreateDTO = Record<string, unknown>,
+  UpdateDTO = Record<string, unknown>,
+  RequireEmpresa extends boolean = true,
+> {
   constructor(
     protected table: string,
     protected options: {
       searchColumn?: string;
       defaultOrderBy?: string;
       useVersioning?: boolean;
-      requireEmpresaId?: boolean;
+      requireEmpresaId?: RequireEmpresa;
     } = {}
   ) {
     if (this.options.requireEmpresaId === undefined) {
-      this.options.requireEmpresaId = true;
+      this.options.requireEmpresaId = true as RequireEmpresa;
     }
   }
 
@@ -51,7 +66,7 @@ export class BaseService<T, CreateDTO = Record<string, unknown>, UpdateDTO = Rec
       orderBy = this.options.defaultOrderBy || 'nome',
       orderAscending = true,
       filters = {},
-      searchColumn = this.options.searchColumn || 'nome'
+      searchColumn = this.options.searchColumn || 'nome',
     } = options;
 
     const search = rawSearch?.slice(0, 200);
@@ -82,9 +97,7 @@ export class BaseService<T, CreateDTO = Record<string, unknown>, UpdateDTO = Rec
       const from = (page - 1) * pageSize;
       const to = from + pageSize - 1;
 
-      const { data, count, error } = await query
-        .order(orderBy, { ascending: orderAscending })
-        .range(from, to);
+      const { data, count, error } = await query.order(orderBy, { ascending: orderAscending }).range(from, to);
 
       if (error) throw error;
       return { data: (data as T[]) || [], total: count || 0 };
@@ -94,7 +107,8 @@ export class BaseService<T, CreateDTO = Record<string, unknown>, UpdateDTO = Rec
     }
   }
 
-  async buscarPorId(id: string, empresaId?: string): Promise<T | null> {
+  async buscarPorId(id: string, ...args: EmpresaIdArg<RequireEmpresa>): Promise<T | null> {
+    const [empresaId] = args;
     if (!id) throw new Error('ID é obrigatório');
     try {
       let query = this.getQuery().select('*').eq('id', id);
@@ -114,7 +128,7 @@ export class BaseService<T, CreateDTO = Record<string, unknown>, UpdateDTO = Rec
         .insert(payload as CreateDTO)
         .select()
         .maybeSingle();
-      
+
       if (error) throw error;
       if (!data) throw new Error(`Nenhum registro de ${this.table} foi retornado após criação.`);
       return data as T;
@@ -124,19 +138,19 @@ export class BaseService<T, CreateDTO = Record<string, unknown>, UpdateDTO = Rec
     }
   }
 
-  async atualizar(id: string, payload: UpdateDTO, empresaId?: string): Promise<T> {
+  async atualizar(id: string, payload: UpdateDTO, ...args: EmpresaIdArg<RequireEmpresa>): Promise<T> {
+    const [empresaId] = args;
     try {
       if (this.options.requireEmpresaId && !empresaId) {
         throw new Error(`empresa_id obrigatório para atualizar ${this.table} (isolamento de tenant)`);
       }
-      let query = this.getQuery().update(payload as Record<string, unknown>).eq('id', id);
+      let query = this.getQuery()
+        .update(payload as Record<string, unknown>)
+        .eq('id', id);
       if (empresaId) query = query.eq('empresa_id', empresaId);
 
       if (this.options.useVersioning) {
-        const { data: current, error: currentError } = await this.getQuery()
-          .select('version')
-          .eq('id', id)
-          .single();
+        const { data: current, error: currentError } = await this.getQuery().select('version').eq('id', id).single();
 
         if (currentError) throw currentError;
         query = query.eq('version', (current as { version: number } | null)?.version || 1);
@@ -171,5 +185,3 @@ export class BaseService<T, CreateDTO = Record<string, unknown>, UpdateDTO = Rec
     }
   }
 }
-
-

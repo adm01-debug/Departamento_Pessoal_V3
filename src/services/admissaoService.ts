@@ -30,8 +30,8 @@ class AdmissaoService extends BaseService<Tables<'admissoes'>, Insertable<'admis
     return this.listarAdmissoes(empresaId);
   }
 
-  async getById(id: string) {
-    return this.buscarPorId(id);
+  async getById(id: string, empresaId: string) {
+    return this.buscarPorId(id, empresaId);
   }
   async create(d: Insertable<'admissoes'>) {
     return this.criar(d);

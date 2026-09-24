@@ -1,7 +1,7 @@
 import { BaseService, ListOptions, ListResponse } from './baseService';
 import { Empresa } from '@/types/entities';
 
-class EmpresaService extends BaseService<Empresa> {
+class EmpresaService extends BaseService<Empresa, Record<string, unknown>, Record<string, unknown>, false> {
   constructor() {
     super('empresas', {
       searchColumn: 'razao_social',

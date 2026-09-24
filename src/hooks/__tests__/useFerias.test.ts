@@ -4,9 +4,14 @@ import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const {
-  mockListSolicitacoes, mockCriar, mockAtualizar, mockExcluir,
-  mockAprovarGestor, mockAprovarRH,
-  mockToastSuccess, mockToastError,
+  mockListSolicitacoes,
+  mockCriar,
+  mockAtualizar,
+  mockExcluir,
+  mockAprovarGestor,
+  mockAprovarRH,
+  mockToastSuccess,
+  mockToastError,
 } = vi.hoisted(() => ({
   mockListSolicitacoes: vi.fn(),
   mockCriar: vi.fn(),
@@ -87,20 +92,18 @@ describe('useFerias', () => {
       await result.current.create({ colaborador_id: 'col-1' });
     });
 
-    expect(mockCriar).toHaveBeenCalledWith(
-      expect.objectContaining({ colaborador_id: 'col-1', empresa_id: 'emp-1' })
-    );
+    expect(mockCriar).toHaveBeenCalledWith(expect.objectContaining({ colaborador_id: 'col-1', empresa_id: 'emp-1' }));
   });
 
   it('create shows success toast', async () => {
     mockCriar.mockResolvedValue({ id: 'f1' });
     const { result } = renderHook(() => useFerias(), { wrapper });
 
-    await act(async () => { await result.current.create({}); });
+    await act(async () => {
+      await result.current.create({});
+    });
 
-    await waitFor(() =>
-      expect(mockToastSuccess).toHaveBeenCalledWith('Solicitação de férias criada com sucesso')
-    );
+    await waitFor(() => expect(mockToastSuccess).toHaveBeenCalledWith('Solicitação de férias criada com sucesso'));
   });
 
   it('update calls feriasService.atualizar with id and data', async () => {
@@ -111,32 +114,30 @@ describe('useFerias', () => {
       await result.current.update({ id: 'f1', data: { status: 'aprovada' } });
     });
 
-    expect(mockAtualizar).toHaveBeenCalledWith('f1', { status: 'aprovada' });
-    await waitFor(() =>
-      expect(mockToastSuccess).toHaveBeenCalledWith('Solicitação de férias atualizada')
-    );
+    expect(mockAtualizar).toHaveBeenCalledWith('f1', { status: 'aprovada' }, 'emp-1');
+    await waitFor(() => expect(mockToastSuccess).toHaveBeenCalledWith('Solicitação de férias atualizada'));
   });
 
   it('remove calls feriasService.excluir with id', async () => {
     mockExcluir.mockResolvedValue(undefined);
     const { result } = renderHook(() => useFerias(), { wrapper });
 
-    await act(async () => { await result.current.remove('f1'); });
+    await act(async () => {
+      await result.current.remove('f1');
+    });
 
-    expect(mockExcluir).toHaveBeenCalledWith('f1');
-    await waitFor(() =>
-      expect(mockToastSuccess).toHaveBeenCalledWith('Solicitação de férias excluída')
-    );
+    expect(mockExcluir).toHaveBeenCalledWith('f1', 'emp-1');
+    await waitFor(() => expect(mockToastSuccess).toHaveBeenCalledWith('Solicitação de férias excluída'));
   });
 
   it('shows error toast when create fails', async () => {
     mockCriar.mockRejectedValue(new Error('server error'));
     const { result } = renderHook(() => useFerias(), { wrapper });
 
-    await act(async () => { await result.current.create({}).catch(() => {}); });
+    await act(async () => {
+      await result.current.create({}).catch(() => {});
+    });
 
-    await waitFor(() =>
-      expect(mockToastError).toHaveBeenCalledWith(expect.stringContaining('server error'))
-    );
+    await waitFor(() => expect(mockToastError).toHaveBeenCalledWith(expect.stringContaining('server error')));
   });
 });
