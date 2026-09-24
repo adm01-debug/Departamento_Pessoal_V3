@@ -118,7 +118,8 @@ export function PontoConfigTab() {
 
   // E50-33: único switch desta aba com persistência real (os demais campos
   // abaixo — Tolerância de Atraso, Exigir Geolocalização, Reconhecimento
-  // Facial, Ponto Offline — não gravam nada hoje; ver achado de Bloco J).
+  // Facial, Ponto Offline — não gravam nada hoje; achado ainda sem item
+  // dedicado no PLANO_50.md).
   const definirExigirPin = useMutation({
     mutationFn: async (exigir: boolean) => {
       if (!empresaAtual?.id) throw new Error('Nenhuma empresa selecionada');

@@ -136,7 +136,11 @@ serve(async (req: Request): Promise<Response> => {
         results.departamentos = { processed: departments.length };
       } catch (e: unknown) {
         results.departamentos = { error: e instanceof Error ? e.message : 'unknown' };
+        // Conta como processado-e-falho: sem isso, uma falha antes do loop de
+        // itens (ex. webhook fora do ar) deixava totalProcessed em 0 e o
+        // status final saía 207 (falha parcial) para um caso de falha total.
         totalErrors++;
+        totalProcessed++;
       }
     }
 
@@ -165,6 +169,7 @@ serve(async (req: Request): Promise<Response> => {
       } catch (e: unknown) {
         results.colaboradores = { error: e instanceof Error ? e.message : 'unknown' };
         totalErrors++;
+        totalProcessed++;
       }
     }
 

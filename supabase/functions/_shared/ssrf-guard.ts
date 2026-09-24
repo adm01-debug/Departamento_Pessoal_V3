@@ -49,9 +49,18 @@ function isPrivateOrReservedIPv6(ip: string): boolean {
   if (norm.startsWith('fe80:') || norm.startsWith('fe8') || norm.startsWith('fe9') || norm.startsWith('fea') || norm.startsWith('feb')) return true; // link-local fe80::/10
   if (norm.startsWith('fc') || norm.startsWith('fd')) return true; // unique-local fc00::/7
   if (norm.startsWith('::ffff:')) {
-    // IPv4-mapped — valida a parte v4
-    const v4 = norm.split(':').pop() ?? '';
+    // IPv4-mapped — valida a parte v4. O WHATWG URL normaliza para forma
+    // hexadecimal comprimida (ex.: "::ffff:7f00:1"), não decimal pontuada,
+    // então os dois formatos precisam ser tratados.
+    const v4 = norm.slice('::ffff:'.length);
     if (v4.includes('.')) return isPrivateOrReservedIPv4(v4);
+    const hexParts = v4.split(':');
+    if (hexParts.length === 2 && hexParts.every((p) => /^[0-9a-f]{1,4}$/.test(p))) {
+      const hi = parseInt(hexParts[0], 16);
+      const lo = parseInt(hexParts[1], 16);
+      const decimal = `${(hi >> 8) & 0xff}.${hi & 0xff}.${(lo >> 8) & 0xff}.${lo & 0xff}`;
+      return isPrivateOrReservedIPv4(decimal);
+    }
   }
   return false;
 }
@@ -74,7 +83,10 @@ export async function assertPublicHttpsUrl(rawUrl: string): Promise<void> {
   if (parsed.protocol !== 'https:') {
     throw new UnsafeUrlError(rawUrl, 'apenas https é permitido');
   }
-  const hostname = parsed.hostname.toLowerCase();
+  // parsed.hostname de um literal IPv6 vem com colchetes (ex.: "[::1]"), por
+  // spec WHATWG — sem remover isso, nenhuma comparação abaixo nunca bate e a
+  // checagem de IPv6 inteira vira no-op.
+  const hostname = parsed.hostname.replace(/^\[|\]$/g, '').toLowerCase();
   if (BLOCKED_HOSTNAMES.has(hostname)) {
     throw new UnsafeUrlError(rawUrl, 'host bloqueado');
   }
