@@ -111,7 +111,7 @@ jobs:
           # statements and fail with "policy already exists". Each dispatch
           # of this workflow targets only the NEW migrations for that batch.
           for migration in \
-            20260924230000_p0_secdef_revoke_public_grant.sql
+            20260924240000_p0_fix_processar_ajuste_search_path.sql
           do
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
           done
@@ -173,14 +173,19 @@ jobs:
               WHERE n.nspname = 'public' AND p.proname = 'clinicas_proximas'
                 AND p.prosrc LIKE '%pertence_a_empresa%'
             ),
-            'ledger_count', (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = '20260924230000')
+            'processar_ajuste_search_path_ok', EXISTS (
+              SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+              WHERE n.nspname = 'public' AND p.proname = 'processar_ajuste_aprovado'
+                AND p.proconfig::text LIKE '%search_path%extensions%'
+            ),
+            'ledger_count', (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE version = '20260924240000')
           );
           SQL
           )"
           echo "$result"
           node -e '
             const result = JSON.parse(process.argv[1]);
-            const expectedTrue = ["mcp_query_sql_revoked","registrar_batida_ponto_ok","clinicas_proximas_ok"];
+            const expectedTrue = ["mcp_query_sql_revoked","registrar_batida_ponto_ok","clinicas_proximas_ok","processar_ajuste_search_path_ok"];
             if (expectedTrue.some((key) => result[key] !== true) || Number(result.ledger_count) !== 1) process.exit(1);
           ' "$result"
           echo 'CANONICAL_SCOPED_MIGRATIONS_OK'
