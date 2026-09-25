@@ -28,12 +28,12 @@ import {
 import { RecontratarColaboradorDialog } from '@/components/colaboradores/RecontratarColaboradorDialog';
 import { AnimatedDossieTabsList, AnimatedDossieTabsTrigger } from '@/components/colaboradores/AnimatedDossieTabs';
 import {
-  DadosPessoaisTab, HistoricoSalarialTab,
-  ContasBancariasTab, HistoricoContratosTab,
-  ColaboradorHistory, BeneficiosTab,
+  DadosPessoaisTab,
+  ContasBancariasTab,
+  BeneficiosTab,
   TrabalhoHierarquiaTab, JornadaPontoTab, FeriasResumoTab, HoleritesTab,
   FinanceiroKpiRow, ResumoRemuneracaoCard, HoleritesPreviewCard, FinanceiroPendenciasCard,
-  DesenvolvimentoResumoTab, DocumentosComplianceResumoTab, TimelineFuncionalTab,
+  DesenvolvimentoResumoTab, DocumentosComplianceResumoTab, HistoricoColaborador,
   PendenciasDialog, type PendenciaItem,
   ProximosEventosDialog, type EventoDetalhado,
 } from '@/components/colaborador-detalhes';
@@ -290,7 +290,6 @@ export default function ColaboradorDetalhesPage() {
   const navigate = useNavigate();
 
   const [activeMainTab, setActiveMainTab] = useState('geral');
-  const [activeTimelineTab, setActiveTimelineTab] = useState('funcional');
   const [recontratarOpen, setRecontratarOpen] = useState(false);
   const [pendenciasOpen, setPendenciasOpen] = useState(false);
   const [eventosOpen, setEventosOpen] = useState(false);
@@ -950,7 +949,7 @@ export default function ColaboradorDetalhesPage() {
           <TabsContent value="ferias">
             <FeriasResumoTab
               colaboradorId={id!}
-              onVerTodosMarcos={() => { setActiveMainTab('timeline'); setActiveTimelineTab('funcional'); }}
+              onVerTodosMarcos={() => setActiveMainTab('timeline')}
             />
           </TabsContent>
 
@@ -1000,18 +999,13 @@ export default function ColaboradorDetalhesPage() {
           </TabsContent>
 
           <TabsContent value="timeline">
-            <Tabs value={activeTimelineTab} onValueChange={setActiveTimelineTab} className="space-y-4">
-              <TabsList className="bg-transparent h-auto p-0 gap-4 border-b border-border/20 rounded-none w-full justify-start overflow-x-auto no-scrollbar">
-                <TabsTrigger value="funcional" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Timeline Funcional</TabsTrigger>
-                <TabsTrigger value="historico-salarial" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Histórico Salarial</TabsTrigger>
-                <TabsTrigger value="contratos" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Contratos</TabsTrigger>
-                <TabsTrigger value="auditoria" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Auditoria</TabsTrigger>
-              </TabsList>
-              <TabsContent value="funcional">{activeTimelineTab === 'funcional' && <TimelineFuncionalTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="historico-salarial">{activeTimelineTab === 'historico-salarial' && <HistoricoSalarialTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="contratos">{activeTimelineTab === 'contratos' && <HistoricoContratosTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="auditoria">{activeTimelineTab === 'auditoria' && <ColaboradorHistory colaboradorId={id!} />}</TabsContent>
-            </Tabs>
+            {activeMainTab === 'timeline' && (
+              <HistoricoColaborador
+                colaboradorId={id!}
+                proximosEventos={proximosEventos}
+                onVerTodosProximosEventos={() => setEventosOpen(true)}
+              />
+            )}
           </TabsContent>
         </Tabs>
         </div>

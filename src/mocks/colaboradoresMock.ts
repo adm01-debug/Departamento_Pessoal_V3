@@ -15,7 +15,7 @@ import { formatDateLocalISO, addDaysLocal } from '@/utils/dateLocal';
 // useNovasTabelas.ts, useTabelasReferencia.ts, useBeneficiosColaborador.ts,
 // useDocumentos.ts, useHistoricoContratos.ts, useSSTColaborador.ts,
 // useDesenvolvimentoColaborador.ts, useComplianceColaborador.ts,
-// useTimelineFuncional.ts, usePonto.ts, useOrganograma.ts, useBeneficios.ts
+// useHistoricoColaborador.ts, usePonto.ts, useOrganograma.ts, useBeneficios.ts
 // e colaboradorService.ts.
 //
 // ⚠️ Os botões "Adicionar/Salvar" dessas sub-abas continuam chamando as
@@ -743,24 +743,82 @@ export function getMockVinculosResumo(colaboradorIds: string[]): Record<string, 
   return result;
 }
 
-// Timeline Funcional — agrega os geradores acima num único EventoTimeline[]
+function mockFormatCurrency(v: number | null | undefined): string {
+  if (v === null || v === undefined) return '—';
+  return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+function mockFormatDateBR(iso: string | null | undefined): string {
+  if (!iso) return '—';
+  const [y, m, d] = String(iso).slice(0, 10).split('-');
+  if (!y || !m || !d) return String(iso);
+  return `${d}/${m}/${y}`;
+}
+
+// Histórico do Colaborador — agrega os geradores acima num único
+// TimelineEvent[] (ver src/types/timelineEvent.ts), no mesmo formato rico
+// que useHistoricoColaborador.ts produz a partir dos dados reais.
 export function getMockTimelineFuncional(colaboradorId?: string): MockRecord[] | undefined {
   const c = findMockColaborador(colaboradorId);
   if (!c) return undefined;
   const vinculosCronologicos = [...(getMockVinculosPorColaborador(colaboradorId) || [])].sort((a, b) => String(a.data_inicio).localeCompare(String(b.data_inicio)));
   const eventos: MockRecord[] = [
     ...vinculosCronologicos.map((v, i) => ({
-      data: v.data_inicio,
-      tipo: i === 0 ? 'admissao_inicial' : 'recontratacao',
-      titulo: i === 0 ? 'Admissão inicial' : `Recontratação (${i + 1}ª passagem)`,
-      descricao: v.tipo,
-      origem: 'vinculos',
+      id: `vinculo-${v.id}`, date: v.data_inicio, type: i === 0 ? 'vinculo' : 'vinculo',
+      title: i === 0 ? 'Admissão inicial' : `Recontratação (${i + 1}ª passagem)`,
+      description: v.tipo, source: 'vinculos',
     })),
-    ...(getMockHistoricoSalarial(colaboradorId) || []).map(h => ({ data: h.data_vigencia, tipo: 'salario', titulo: 'Alteração salarial', descricao: h.motivo, origem: 'historico_salarial' })),
-    ...(getMockTreinamentos(colaboradorId) || []).filter(t => t.presente).map(t => ({ data: t.created_at, tipo: 'treinamento', titulo: `Treinamento: ${t.treinamento.nome}`, origem: 'treinamento_participantes' })),
-    ...(getMockFeedbacks(colaboradorId) || []).map(f => ({ data: f.created_at, tipo: 'avaliacao', titulo: `Feedback 360 (${f.performance})`, origem: 'feedbacks_360' })),
-    ...(getMockFerias(colaboradorId) || []).map(f => ({ data: f.data_inicio, tipo: 'ferias', titulo: `Férias (${f.status})`, descricao: `${f.data_inicio} a ${f.data_fim}`, origem: 'ferias' })),
-    ...(getMockMedidasDisciplinares(colaboradorId) || []).map(m => ({ data: m.data_ocorrencia, tipo: 'medida_disciplinar', titulo: `Medida disciplinar: ${m.tipo}`, descricao: m.gravidade, origem: 'medidas_disciplinares' })),
+    ...(getMockHistoricoSalarial(colaboradorId) || []).map(h => ({
+      id: `salario-${h.id}`, date: h.data_vigencia, type: 'salario', title: 'Alteração salarial',
+      description: h.salario_anterior != null ? `De ${mockFormatCurrency(h.salario_anterior)} para ${mockFormatCurrency(h.salario_novo)}` : `Novo salário: ${mockFormatCurrency(h.salario_novo)}`,
+      secondary: [h.motivo, h.descricao].filter(Boolean).join(' — ') || undefined,
+      source: 'historico_salarial',
+    })),
+    ...(getMockHistoricoContratos(colaboradorId) || []).map(ct => ({
+      id: `contrato-${ct.id}`, date: ct.data_inicio, type: 'contrato', title: `Alteração contratual (${ct.tipo_contrato ?? '—'})`,
+      description: ct.motivo_alteracao || undefined,
+      secondary: [ct.cargo && `Cargo: ${ct.cargo}`, ct.departamento && `Depto: ${ct.departamento}`, ct.carga_horaria_semanal ? `${ct.carga_horaria_semanal}h/semana` : undefined, ct.salario ? mockFormatCurrency(ct.salario) : undefined].filter(Boolean).join(' · ') || undefined,
+      source: 'historico_contratos',
+    })),
+    ...(getMockTreinamentos(colaboradorId) || []).filter(t => t.presente).map(t => ({
+      id: `treinamento-${t.id}`, date: t.created_at, type: 'treinamento', title: `Treinamento: ${t.treinamento.nome}`,
+      description: t.treinamento.descricao || undefined,
+      secondary: t.treinamento.carga_horaria ? `Carga horária: ${t.treinamento.carga_horaria}h` : undefined,
+      source: 'treinamento_participantes',
+    })),
+    ...(getMockFeedbacks(colaboradorId) || []).map(f => ({
+      id: `avaliacao-${f.id}`, date: f.created_at, type: 'avaliacao', title: 'Feedback 360 concluído',
+      description: [f.nota_geral != null ? `Nota geral: ${f.nota_geral}` : undefined, f.performance].filter(Boolean).join(' · ') || undefined,
+      source: 'feedbacks_360',
+    })),
+    ...(getMockFerias(colaboradorId) || []).map(f => ({
+      id: `ferias-${f.id}`, date: f.data_inicio, type: 'ferias', title: `Férias (${f.status})`,
+      description: `${mockFormatDateBR(f.data_inicio)} a ${mockFormatDateBR(f.data_fim)}${f.dias_gozo ? ` · ${f.dias_gozo} dias` : ''}`,
+      source: 'ferias',
+    })),
+    ...(getMockAfastamentos(colaboradorId) || []).map(a => ({
+      id: `afastamento-${a.id}`, date: a.data_inicio, type: 'afastamento', title: `Afastamento (${a.tipo})`,
+      description: a.status || undefined,
+      secondary: a.data_fim_real ? `Encerrado em ${mockFormatDateBR(a.data_fim_real)}` : undefined,
+      source: 'afastamentos',
+    })),
+    ...(getMockMedidasDisciplinares(colaboradorId) || []).map(m => ({
+      id: `medida-${m.id}`, date: m.data_ocorrencia, type: 'medida_disciplinar', title: `Medida disciplinar: ${m.tipo}`,
+      description: m.gravidade || undefined, source: 'medidas_disciplinares',
+    })),
+    ...(getMockAuditLog(colaboradorId) || []).map(log => {
+      const alteracoes = (log.campos_alterados || [])
+        .map((campo: string) => ({ campo, de: log.dados_anteriores?.[campo], para: log.dados_novos?.[campo] }))
+        .filter((ch: { de: unknown; para: unknown }) => ch.de !== ch.para);
+      return {
+        id: `auditoria-${log.id}`, date: log.created_at, type: 'auditoria',
+        title: log.acao === 'INSERT' ? 'Registro criado' : log.acao === 'UPDATE' ? 'Cadastro atualizado' : 'Registro excluído',
+        description: log.acao === 'UPDATE' ? `${alteracoes.length} campo(s) alterado(s)` : undefined,
+        secondary: log.user_email ? `Por ${log.user_email}` : undefined,
+        source: 'audit_log',
+        auditDetail: { acao: log.acao, userEmail: log.user_email, alteracoes },
+      };
+    }),
   ];
-  return eventos.filter(e => !!e.data).sort((a, b) => String(b.data).localeCompare(String(a.data)));
+  return eventos.filter(e => !!e.date).sort((a, b) => String(b.date).localeCompare(String(a.date)));
 }

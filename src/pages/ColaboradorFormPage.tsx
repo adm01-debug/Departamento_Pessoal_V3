@@ -481,12 +481,21 @@ export default function ColaboradorFormPage() {
               passou a ser `contas_bancarias` (aba reutilizada do Dossiê).
               Colaborador novo ainda não tem `id`, então não há como criar uma
               conta bancária ainda (contas_bancarias.colaborador_id é NOT
-              NULL) — o cadastro bancário só fica disponível depois de salvar. */}
+              NULL) — o cadastro bancário só fica disponível depois de salvar.
+
+              PREVIEW TEMPORÁRIO (remover antes de commitar): com colaborador
+              novo, renderiza ContasBancariasTab com colaboradorId="mock-1"
+              (dados fictícios via VITE_COLABORADORES_MOCK, já habilitado no
+              .env.local) só para visualizar o layout da tabela preenchida
+              nesta mesma tela. O placeholder original ("Salve o colaborador
+              primeiro...") fica comentado logo abaixo para restaurar depois. */}
           <TabsContent value="bancario">
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
               {isEditing ? (
                 <ContasBancariasTab colaboradorId={id!} />
               ) : (
+                <ContasBancariasTab colaboradorId="mock-1" />
+                /* Estado real de "colaborador novo" (sem id ainda):
                 <Card className="border border-dashed border-border/50 rounded-2xl overflow-hidden">
                   <CardHeader>
                     <CardTitle className="font-display flex items-center gap-2">
@@ -498,6 +507,7 @@ export default function ColaboradorFormPage() {
                     </CardDescription>
                   </CardHeader>
                 </Card>
+                */
               )}
             </motion.div>
           </TabsContent>
