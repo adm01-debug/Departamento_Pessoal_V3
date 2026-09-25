@@ -24,6 +24,7 @@ export { AfastamentosTab } from './AfastamentosTab';
 export { HoleritesTab } from './HoleritesTab';
 export { FinanceiroKpiRow, ResumoRemuneracaoCard, HoleritesPreviewCard, FinanceiroPendenciasCard } from './FinanceiroResumoCards';
 export { DesenvolvimentoResumoTab } from './DesenvolvimentoResumoTab';
+export { DocumentosComplianceResumoTab } from './DocumentosComplianceResumoTab';
 export { SSTResumoTab } from './SSTResumoTab';
 export { ComplianceTab } from './ComplianceTab';
 export { TimelineFuncionalTab } from './TimelineFuncionalTab';

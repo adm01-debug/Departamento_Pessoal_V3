@@ -205,6 +205,11 @@ export function getMockAnotacoes(colaboradorId?: string): MockRecord[] | undefin
   if (!c) return undefined;
   return [
     { id: `${c.id}-nota-1`, titulo: 'Integração concluída', conteudo: `${firstName(c.nome_completo)} concluiu o processo de integração com feedback positivo do gestor.`, tipo: 'elogio', data: c.data_admissao },
+    // Itens extras só pra exercitar o scroll interno do card "Anotações
+    // Internas" no modo demo (ver PrazosAlertasCard/AnotacoesInternasCard).
+    { id: `${c.id}-nota-2`, titulo: 'Feedback de desempenho', conteudo: `Avaliação trimestral de ${firstName(c.nome_completo)} — pontos fortes em colaboração e proatividade, oportunidade de desenvolvimento em gestão de tempo.`, tipo: 'feedback', data: '2025-06-20' },
+    { id: `${c.id}-nota-3`, titulo: 'Ajuste de horário aprovado', conteudo: 'Solicitação de horário flexível aprovada pelo gestor direto, válida a partir do próximo ciclo.', tipo: 'geral', data: '2025-09-02' },
+    { id: `${c.id}-nota-4`, titulo: 'Atraso registrado', conteudo: 'Colaborador notificado sobre atraso recorrente na entrada; orientação verbal registrada.', tipo: 'advertencia', data: '2025-11-14' },
   ];
 }
 
@@ -238,6 +243,12 @@ export function getMockDocumentosPessoais(colaboradorId?: string): MockRecord[] 
     // Vencido de propósito — só pra exercitar o card "Pendências" (scroll com
     // várias pendências) no modo demo.
     { id: `${c.id}-doc-cnh`, tipo_documento: 'CNH', numero: '00000000000', orgao_emissor: 'DETRAN/SP', data_emissao: '2020-05-10', data_validade: '2026-08-01' },
+    // Itens extras só pra exercitar o scroll interno do card "Documentos
+    // Pessoais" no modo demo (ver DocumentosPessoaisCard).
+    { id: `${c.id}-doc-ctps`, tipo_documento: 'CTPS', numero: '1234567-8901', orgao_emissor: 'MTE', data_emissao: '2015-02-20', data_validade: null },
+    { id: `${c.id}-doc-titulo`, tipo_documento: 'Título Eleitor', numero: '1234 5678 9012', orgao_emissor: 'TSE', data_emissao: '2013-05-12', data_validade: null },
+    { id: `${c.id}-doc-pis`, tipo_documento: 'PIS/PASEP', numero: '123.45678.90-1', orgao_emissor: 'Caixa Econômica', data_emissao: '2010-03-10', data_validade: null },
+    { id: `${c.id}-doc-reservista`, tipo_documento: 'Certificado Reservista', numero: '9876543210', orgao_emissor: 'Exército Brasileiro', data_emissao: '2011-01-15', data_validade: null },
   ];
 }
 
@@ -264,8 +275,14 @@ export function getMockDocumentosDigitais(colaboradorId?: string): MockRecord[] 
   const c = findMockColaborador(colaboradorId);
   if (!c) return undefined;
   return [
-    { id: `${c.id}-arq-1`, nome: 'Contrato de Trabalho', tipo: 'Contrato de Trabalho', url: '', data_validade: null, created_at: c.data_admissao },
-    { id: `${c.id}-arq-2`, nome: 'RG e CPF digitalizados', tipo: 'Outros', url: '', data_validade: null, created_at: c.data_admissao },
+    { id: `${c.id}-arq-1`, nome: 'Contrato de Trabalho', tipo: 'Contrato de Trabalho', url: '', mime_type: 'application/pdf', data_validade: null, created_at: c.data_admissao },
+    { id: `${c.id}-arq-2`, nome: 'RG e CPF digitalizados', tipo: 'Outros', url: '', mime_type: 'image/jpeg', data_validade: null, created_at: c.data_admissao },
+    // Itens extras só pra exercitar o scroll interno do card "Gestão de
+    // Documentos Digitais" no modo demo (ver DocumentosDigitaisCard).
+    { id: `${c.id}-arq-3`, nome: 'Aditivo Contratual 2024', tipo: 'Aditivo Contratual', url: '', mime_type: 'application/pdf', data_validade: null, created_at: '2024-03-01' },
+    { id: `${c.id}-arq-4`, nome: 'Acordo de Confidencialidade', tipo: 'Acordo de Confidencialidade', url: '', mime_type: 'application/pdf', data_validade: null, created_at: c.data_admissao },
+    { id: `${c.id}-arq-5`, nome: 'ASO Admissional', tipo: 'Exame Médico (ASO)', url: '', mime_type: 'application/pdf', data_validade: '2025-12-01', created_at: c.data_admissao },
+    { id: `${c.id}-arq-6`, nome: 'Comprovante Vale Refeição', tipo: 'Vale Refeição', url: '', mime_type: 'image/png', data_validade: null, created_at: '2024-06-10' },
   ];
 }
 
@@ -455,10 +472,19 @@ export function getMockAfastamentos(colaboradorId?: string): MockRecord[] | unde
 export function getMockMedidasDisciplinares(colaboradorId?: string): MockRecord[] | undefined {
   const c = findMockColaborador(colaboradorId);
   if (!c) return undefined;
+  // Itens extras só pra exercitar o scroll interno do card "Status de
+  // Compliance" no modo demo (ver StatusComplianceCard).
+  const extras: MockRecord[] = [
+    { id: `${c.id}-medida-2`, tipo: 'Advertência escrita', data_ocorrencia: '2025-04-22', gravidade: 'media' },
+    { id: `${c.id}-medida-3`, tipo: 'Orientação sobre uso de EPI', data_ocorrencia: '2025-08-03', gravidade: 'leve' },
+    { id: `${c.id}-medida-4`, tipo: 'Suspensão disciplinar', data_ocorrencia: '2025-10-12', gravidade: 'grave' },
+    { id: `${c.id}-medida-5`, tipo: 'Advertência verbal', data_ocorrencia: '2025-12-01', gravidade: 'leve' },
+    { id: `${c.id}-medida-6`, tipo: 'Orientação sobre pontualidade', data_ocorrencia: '2026-01-20', gravidade: 'leve' },
+  ];
   if (c.id === 'mock-8') {
-    return [{ id: `${c.id}-medida-1`, tipo: 'Advertência verbal', data_ocorrencia: '2024-11-10', gravidade: 'leve' }];
+    return [{ id: `${c.id}-medida-1`, tipo: 'Advertência verbal', data_ocorrencia: '2024-11-10', gravidade: 'leve' }, ...extras];
   }
-  return [{ id: `${c.id}-medida-1`, tipo: 'Orientação verbal', data_ocorrencia: c.data_admissao, gravidade: 'leve' }];
+  return [{ id: `${c.id}-medida-1`, tipo: 'Orientação verbal', data_ocorrencia: c.data_admissao, gravidade: 'leve' }, ...extras];
 }
 
 export function getMockConsentimentosLGPD(colaboradorId?: string): MockRecord[] | undefined {
@@ -467,6 +493,12 @@ export function getMockConsentimentosLGPD(colaboradorId?: string): MockRecord[] 
   return [
     { id: `${c.id}-lgpd-1`, tipo: 'Termo de Uso de Dados Pessoais', versao: '1.0', aceito: true },
     { id: `${c.id}-lgpd-2`, tipo: 'Consentimento para Biometria (Ponto)', versao: '1.2', aceito: true },
+    // Itens extras só pra exercitar o scroll interno do card "Status de
+    // Compliance" no modo demo (ver StatusComplianceCard).
+    { id: `${c.id}-lgpd-3`, tipo: 'Consentimento para Geolocalização', versao: '1.0', aceito: false },
+    { id: `${c.id}-lgpd-4`, tipo: 'Política de Monitoramento de E-mail', versao: '2.0', aceito: true },
+    { id: `${c.id}-lgpd-5`, tipo: 'Consentimento para Uso de Imagem', versao: '1.0', aceito: true },
+    { id: `${c.id}-lgpd-6`, tipo: 'Política de Compartilhamento com Parceiros', versao: '1.0', aceito: false },
   ];
 }
 

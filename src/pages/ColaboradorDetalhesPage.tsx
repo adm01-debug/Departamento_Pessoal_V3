@@ -29,12 +29,11 @@ import { RecontratarColaboradorDialog } from '@/components/colaboradores/Recontr
 import { AnimatedDossieTabsList, AnimatedDossieTabsTrigger } from '@/components/colaboradores/AnimatedDossieTabs';
 import {
   DadosPessoaisTab, HistoricoSalarialTab,
-  AnotacoesTab,
-  ContasBancariasTab, DocumentosPessoaisTab, EstagiarioTab, HistoricoContratosTab,
-  ColaboradorHistory, BeneficiosTab, ColaboradorDocuments,
+  ContasBancariasTab, HistoricoContratosTab,
+  ColaboradorHistory, BeneficiosTab,
   TrabalhoHierarquiaTab, JornadaPontoTab, FeriasResumoTab, HoleritesTab,
   FinanceiroKpiRow, ResumoRemuneracaoCard, HoleritesPreviewCard, FinanceiroPendenciasCard,
-  DesenvolvimentoResumoTab, ComplianceTab, TimelineFuncionalTab,
+  DesenvolvimentoResumoTab, DocumentosComplianceResumoTab, TimelineFuncionalTab,
   PendenciasDialog, type PendenciaItem,
   ProximosEventosDialog, type EventoDetalhado,
 } from '@/components/colaborador-detalhes';
@@ -291,7 +290,6 @@ export default function ColaboradorDetalhesPage() {
   const navigate = useNavigate();
 
   const [activeMainTab, setActiveMainTab] = useState('geral');
-  const [activeDocumentosTab, setActiveDocumentosTab] = useState('pessoais');
   const [activeTimelineTab, setActiveTimelineTab] = useState('funcional');
   const [recontratarOpen, setRecontratarOpen] = useState(false);
   const [pendenciasOpen, setPendenciasOpen] = useState(false);
@@ -998,25 +996,7 @@ export default function ColaboradorDetalhesPage() {
           </TabsContent>
 
           <TabsContent value="documentos">
-            <Tabs value={activeDocumentosTab} onValueChange={setActiveDocumentosTab} className="space-y-4">
-              <TabsList className="bg-transparent h-auto p-0 gap-4 border-b border-border/20 rounded-none w-full justify-start">
-                <TabsTrigger value="pessoais" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Documentos Pessoais</TabsTrigger>
-                <TabsTrigger value="anotacoes" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Anotações Internas</TabsTrigger>
-                <TabsTrigger value="estagiario" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Dados Estagiário</TabsTrigger>
-                <TabsTrigger value="compliance" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Compliance</TabsTrigger>
-              </TabsList>
-              <TabsContent value="pessoais">
-                {activeDocumentosTab === 'pessoais' && (
-                  <div className="space-y-8">
-                    <DocumentosPessoaisTab colaboradorId={id!} />
-                    <ColaboradorDocuments colaboradorId={id!} />
-                  </div>
-                )}
-              </TabsContent>
-              <TabsContent value="anotacoes">{activeDocumentosTab === 'anotacoes' && <AnotacoesTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="estagiario">{activeDocumentosTab === 'estagiario' && <EstagiarioTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="compliance">{activeDocumentosTab === 'compliance' && <ComplianceTab colaboradorId={id!} />}</TabsContent>
-            </Tabs>
+            <DocumentosComplianceResumoTab colaboradorId={id!} />
           </TabsContent>
 
           <TabsContent value="timeline">

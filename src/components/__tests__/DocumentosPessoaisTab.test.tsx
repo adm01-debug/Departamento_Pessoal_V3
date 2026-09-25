@@ -4,7 +4,11 @@ import { render, screen } from '@testing-library/react';
 vi.mock('@/hooks/useTabelasReferencia', () => ({
   useDocumentosPessoais: vi.fn(),
   useCriarDocumentoPessoal: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
-  useExcluirDocumentoPessoal: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
+  useExcluirDocumentoPessoal: vi.fn(() => ({ mutate: vi.fn(), mutateAsync: vi.fn(), isPending: false })),
+}));
+
+vi.mock('@/hooks/useEmpresas', () => ({
+  useEmpresas: () => ({ empresaAtualId: 'empresa-001' }),
 }));
 
 vi.mock('sonner', () => ({

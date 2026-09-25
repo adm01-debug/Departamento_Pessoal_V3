@@ -6,8 +6,12 @@ vi.mock('@/hooks/useDocumentos', () => ({
     documentos: [],
     isLoading: false,
     criarDocumento: { mutateAsync: vi.fn(), isPending: false },
-    excluirDocumento: { mutate: vi.fn() },
+    excluirDocumento: { mutate: vi.fn(), mutateAsync: vi.fn() },
   })),
+}));
+
+vi.mock('@/hooks/useEmpresas', () => ({
+  useEmpresas: () => ({ empresaAtualId: 'empresa-001' }),
 }));
 
 vi.mock('@/components/ui/card', () => ({

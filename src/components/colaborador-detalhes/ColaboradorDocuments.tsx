@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { LucideIcon } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,23 +9,94 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Spinner } from '@/components/ui/spinner';
-import { Plus, Trash2, FileText, ExternalLink, Shield } from 'lucide-react';
+import { Plus, Trash2, FileText, FileImage, FileSpreadsheet, FileArchive, File as FileIcon, ExternalLink, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 import { useDocumentos } from '@/hooks/useDocumentos';
+import { useEmpresas } from '@/hooks/useEmpresas';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { safeHref } from '@/utils/safeUrl';
+import { safeErrorMessage } from '@/utils/safeError';
+import { FileUploadField } from './documentos/FileUploadField';
+import { uploadDocumentFile, removeDocumentFile, resolveDocumentUrl } from '@/services/documentUploadService';
+
+const BUCKET = 'documentos';
+
+/** Extensões de arquivo agrupadas por "família" visual (cor + ícone). */
+type DocFileKind = 'pdf' | 'image' | 'word' | 'excel' | 'archive' | 'unknown';
+
+const EXTENSION_KIND: Record<string, DocFileKind> = {
+  pdf: 'pdf',
+  jpg: 'image', jpeg: 'image', png: 'image', webp: 'image', gif: 'image',
+  doc: 'word', docx: 'word',
+  xls: 'excel', xlsx: 'excel', csv: 'excel',
+  zip: 'archive', rar: 'archive', '7z': 'archive',
+};
+
+// Fallback usado apenas quando não há extensão identificável (nem por URL,
+// nem por mime_type) — tipos contratuais/textuais tendem a ser PDF na prática.
+const TIPO_FALLBACK_KIND: Record<string, DocFileKind> = {
+  'Contrato de Trabalho': 'pdf',
+  'Aditivo Contratual': 'pdf',
+  'Acordo de Confidencialidade': 'pdf',
+  'Exame Médico (ASO)': 'pdf',
+};
+
+const KIND_STYLE: Record<DocFileKind, { icon: LucideIcon; className: string }> = {
+  pdf: { icon: FileText, className: 'text-destructive' },
+  image: { icon: FileImage, className: 'text-success' },
+  word: { icon: FileText, className: 'text-info' },
+  excel: { icon: FileSpreadsheet, className: 'text-success' },
+  archive: { icon: FileArchive, className: 'text-warning' },
+  unknown: { icon: FileIcon, className: 'text-muted-foreground' },
+};
+
+const MIME_EXTENSION: Record<string, string> = {
+  'application/pdf': 'pdf',
+  'image/jpeg': 'jpg',
+  'image/jpg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'image/gif': 'gif',
+  'application/msword': 'doc',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+  'application/vnd.ms-excel': 'xls',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
+  'text/csv': 'csv',
+  'application/zip': 'zip',
+  'application/x-rar-compressed': 'rar',
+};
+
+/** Extrai a extensão do nome do arquivo a partir da URL, ignorando query
+ * string/hash (signed URLs do Supabase costumam ter `?token=...`). */
+function getUrlExtension(url?: string | null): string {
+  if (!url) return '';
+  const withoutParams = url.split(/[?#]/)[0];
+  const fileName = withoutParams.split('/').pop() || '';
+  const dotIndex = fileName.lastIndexOf('.');
+  return dotIndex > 0 ? fileName.slice(dotIndex + 1).toLowerCase() : '';
+}
+
+/** Determina ícone + cor do documento: 1) extensão real da URL, 2) mime_type
+ * (quando disponível), 3) heurística pelo `tipo` cadastrado, 4) genérico. */
+function getDocumentFileType(doc: { url?: string | null; mime_type?: string | null; tipo?: string | null }) {
+  const ext = getUrlExtension(doc.url) || MIME_EXTENSION[doc.mime_type || ''] || '';
+  const kind = EXTENSION_KIND[ext] ?? TIPO_FALLBACK_KIND[doc.tipo || ''] ?? 'unknown';
+  return KIND_STYLE[kind];
+}
 
 export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string }) {
   const { documentos, isLoading, criarDocumento, excluirDocumento } = useDocumentos(colaboradorId);
+  const { empresaAtualId } = useEmpresas();
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ 
-    nome: '', 
-    tipo: 'Outros', 
-    url: '', 
-    observacoes: '', 
-    data_validade: '' 
+  const [form, setForm] = useState({
+    nome: '',
+    tipo: 'Outros',
+    observacoes: '',
+    data_validade: '',
   });
+  const [file, setFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const TIPOS = [
     'Contrato de Trabalho',
@@ -38,20 +110,69 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
     'Outros'
   ];
 
+  const resetForm = () => {
+    setForm({ nome: '', tipo: 'Outros', observacoes: '', data_validade: '' });
+    setFile(null);
+  };
+
   const handleSubmit = async () => {
     if (!form.nome) {
       toast.error('Nome do documento é obrigatório');
       return;
     }
+    if (!empresaAtualId) {
+      toast.error('Empresa não identificada.');
+      return;
+    }
+
+    let uploaded: Awaited<ReturnType<typeof uploadDocumentFile>> | null = null;
+    if (file) {
+      setUploading(true);
+      try {
+        uploaded = await uploadDocumentFile(file, { bucket: BUCKET, empresaId: empresaAtualId, colaboradorId, categoria: 'documentos-digitais' });
+      } catch (e) {
+        setUploading(false);
+        toast.error(safeErrorMessage(e, 'Erro ao enviar arquivo.'));
+        return;
+      }
+      setUploading(false);
+    }
+
     try {
-      await criarDocumento.mutateAsync({ 
-        ...form, 
-        colaborador_id: colaboradorId 
+      await criarDocumento.mutateAsync({
+        ...form,
+        colaborador_id: colaboradorId,
+        ...(uploaded ? { storage_path: uploaded.storage_path, nome_arquivo: uploaded.nome_arquivo, tamanho: uploaded.tamanho, mime_type: uploaded.mime_type } : {}),
       });
       setOpen(false);
-      setForm({ nome: '', tipo: 'Outros', url: '', observacoes: '', data_validade: '' });
-    } catch (err) {
-      toast.error('Erro ao salvar documento');
+      resetForm();
+    } catch (e) {
+      if (uploaded) await removeDocumentFile(BUCKET, uploaded.storage_path).catch(() => {});
+      toast.error(safeErrorMessage(e, 'Erro ao salvar documento.'));
+    }
+  };
+
+  const handleAbrir = async (doc: any) => {
+    try {
+      const url = await resolveDocumentUrl(doc, BUCKET);
+      if (!url) { toast.error('Arquivo não encontrado.'); return; }
+      window.open(safeHref(url), '_blank', 'noopener');
+    } catch (e) {
+      toast.error(safeErrorMessage(e, 'Erro ao abrir documento.'));
+    }
+  };
+
+  const handleExcluir = async (doc: any) => {
+    if (!confirm('Tem certeza que deseja excluir este documento permanentemente?')) return;
+    try {
+      await excluirDocumento.mutateAsync(doc.id);
+    } catch {
+      return; // excluirDocumento já mostra o toast de erro
+    }
+    if (doc.storage_path) {
+      removeDocumentFile(BUCKET, doc.storage_path).catch(() =>
+        toast.error('Documento excluído, mas houve falha ao remover o arquivo do armazenamento.')
+      );
     }
   };
 
@@ -101,12 +222,8 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
                 />
               </div>
               <div className="space-y-1">
-                <Label>URL / Link do Arquivo</Label>
-                <Input
-                  placeholder="https://..."
-                  value={form.url}
-                  onChange={e => setForm(f => ({ ...f, url: e.target.value }))}
-                />
+                <Label>Arquivo</Label>
+                <FileUploadField file={file} onFileChange={setFile} uploading={uploading} disabled={criarDocumento.isPending} />
               </div>
               <div className="space-y-1">
                 <Label>Observações</Label>
@@ -118,9 +235,9 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
               </div>
             </div>
             <div className="flex justify-end pt-1">
-              <Button size="sm" className="rounded-lg px-4" onClick={handleSubmit} disabled={criarDocumento.isPending}>
-                {criarDocumento.isPending ? <Spinner className="mr-1.5 h-3.5 w-3.5" /> : <Shield className="h-3.5 w-3.5 mr-1.5" />}
-                Salvar Documento com Segurança
+              <Button size="sm" className="rounded-lg px-4" onClick={handleSubmit} disabled={criarDocumento.isPending || uploading}>
+                {(criarDocumento.isPending || uploading) ? <Spinner className="mr-1.5 h-3.5 w-3.5" /> : <Shield className="h-3.5 w-3.5 mr-1.5" />}
+                {uploading ? 'Enviando arquivo...' : 'Salvar Documento com Segurança'}
               </Button>
             </div>
           </DialogContent>
@@ -144,13 +261,13 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
             ) : documentos.length === 0 ? (
               <TableRow><TableCell colSpan={5} className="h-32 text-center text-muted-foreground font-body italic">Nenhum documento anexado.</TableCell></TableRow>
             ) : (
-              documentos.map((doc: any) => (
+              documentos.map((doc: any) => {
+                const { icon: DocIcon, className: docIconClassName } = getDocumentFileType({ ...doc, url: doc.nome_arquivo || doc.url });
+                return (
                 <TableRow key={doc.id} className="group transition-colors hover:bg-muted/10">
                   <TableCell className="py-4 pl-6">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-primary/10 rounded-lg">
-                        <FileText className="h-5 w-5 text-primary" />
-                      </div>
+                      <DocIcon className={`h-5 w-5 shrink-0 ${docIconClassName}`} aria-hidden="true" />
                       <span className="font-medium text-sm">{doc.nome}</span>
                     </div>
                   </TableCell>
@@ -173,13 +290,13 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
                   </TableCell>
                   <TableCell className="pr-6 text-right">
                     <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      {doc.url && (
+                      {(doc.storage_path || doc.url) && (
                         <Button
                           variant="ghost"
                           size="icon"
                           aria-label="Abrir em nova aba"
                           className="h-8 w-8 rounded-lg hover:bg-info/10 text-info"
-                          onClick={() => window.open(safeHref(doc.url), '_blank', 'noopener')}
+                          onClick={() => handleAbrir(doc)}
                         >
                           <ExternalLink className="h-4 w-4" />
                         </Button>
@@ -189,18 +306,15 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
                         size="icon"
                         aria-label="Excluir"
                         className="h-8 w-8 rounded-lg hover:bg-destructive/10 text-destructive"
-                        onClick={() => {
-                          if (confirm('Tem certeza que deseja excluir este documento permanentemente?')) {
-                            excluirDocumento.mutate(doc.id);
-                          }
-                        }}
+                        onClick={() => handleExcluir(doc)}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>
                 </TableRow>
-              ))
+                );
+              })
             )}
           </TableBody>
         </Table>
