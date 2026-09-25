@@ -196,6 +196,7 @@ export function getMockFormacoes(colaboradorId?: string): MockRecord[] | undefin
   if (!c) return undefined;
   return [
     { id: `${c.id}-form-1`, tipo_escolaridade: 'Superior completo', curso: `${c.cargo}`, instituicao: 'Universidade Federal', ano_conclusao: 2016 },
+    { id: `${c.id}-form-2`, tipo_escolaridade: 'Pós-graduação', curso: `Gestão de ${c.departamento}`, instituicao: 'FGV', ano_conclusao: 2021 },
   ];
 }
 
@@ -473,15 +474,31 @@ export function getMockConsentimentosLGPD(colaboradorId?: string): MockRecord[] 
 export function getMockCertificados(colaboradorId?: string): MockRecord[] | undefined {
   const c = findMockColaborador(colaboradorId);
   if (!c) return undefined;
-  return [{ id: `${c.id}-cert-1`, curso: { nome: `Excelência em ${c.cargo}` } }];
+  return [
+    { id: `${c.id}-cert-1`, curso: { nome: `Excelência em ${c.cargo}` }, instituicao: 'ABRH', data_emissao: '2023-11-10' },
+    { id: `${c.id}-cert-2`, curso: { nome: 'LGPD — Lei Geral de Proteção de Dados' }, instituicao: 'Enap', data_emissao: '2022-06-02' },
+  ];
 }
 
 export function getMockTreinamentos(colaboradorId?: string): MockRecord[] | undefined {
   const c = findMockColaborador(colaboradorId);
   if (!c) return undefined;
   return [
-    { id: `${c.id}-trein-1`, presente: true, created_at: '2026-04-15', treinamento: { nome: 'Integração e Cultura Organizacional' } },
-    { id: `${c.id}-trein-2`, presente: false, created_at: '2026-08-20', treinamento: { nome: 'NR-17 Ergonomia' } },
+    { id: `${c.id}-trein-1`, presente: true, created_at: '2026-04-15', treinamento: { nome: 'Integração e Cultura Organizacional', descricao: 'Trilha de integração', carga_horaria: 8 } },
+    { id: `${c.id}-trein-2`, presente: false, created_at: '2026-08-20', treinamento: { nome: 'NR-17 Ergonomia', descricao: 'Saúde e Segurança', carga_horaria: 4 } },
+    { id: `${c.id}-trein-3`, presente: true, created_at: '2026-02-10', treinamento: { nome: 'Comunicação Assertiva', descricao: 'Desenvolvimento Pessoal', carga_horaria: 6 } },
+    { id: `${c.id}-trein-4`, presente: true, created_at: '2025-11-05', treinamento: { nome: 'Liderança e Gestão de Equipes', descricao: 'Liderança', carga_horaria: 12 } },
+    { id: `${c.id}-trein-5`, presente: true, created_at: '2025-08-22', treinamento: { nome: 'Diversidade e Inclusão', descricao: 'Cultura Organizacional', carga_horaria: 4 } },
+  ];
+}
+
+export function getMockCursos(): MockRecord[] {
+  return [
+    { id: 'mock-curso-1', nome: 'Integração e Cultura Organizacional' },
+    { id: 'mock-curso-2', nome: 'NR-17 Ergonomia' },
+    { id: 'mock-curso-3', nome: 'Comunicação Assertiva' },
+    { id: 'mock-curso-4', nome: 'Liderança e Gestão de Equipes' },
+    { id: 'mock-curso-5', nome: 'Diversidade e Inclusão' },
   ];
 }
 
@@ -501,6 +518,16 @@ export function getMockMetas(colaboradorId?: string): MockRecord[] | undefined {
   const c = findMockColaborador(colaboradorId);
   if (!c) return undefined;
   return [{ id: `${c.id}-meta-1`, titulo: 'Concluir certificação da área até o fim do trimestre', progresso: 65 }];
+}
+
+export function getMockCompetencias(colaboradorId?: string): MockRecord[] | undefined {
+  const c = findMockColaborador(colaboradorId);
+  if (!c) return undefined;
+  return [
+    { id: `${c.id}-comp-1`, nome: 'Comunicação', percentual: 90 },
+    { id: `${c.id}-comp-2`, nome: 'Organização', percentual: 80 },
+    { id: `${c.id}-comp-3`, nome: 'Conhecimento técnico', percentual: 75 },
+  ];
 }
 
 export function getMockOnboardingRegistro(colaboradorId?: string): MockRecord | undefined {

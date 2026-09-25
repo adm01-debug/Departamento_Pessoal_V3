@@ -1,99 +1,45 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Spinner } from '@/components/ui/spinner';
-import {
-  useCertificadosColaborador, useTreinamentosColaborador,
-  useFeedbacksColaborador, usePDIsColaborador, useMetasColaborador,
-  useOnboardingColaborador,
-} from '@/hooks';
+import { useLayoutEffect, useRef, useState } from 'react';
+import { FormacaoQualificacoesCard } from './desenvolvimento/FormacaoQualificacoesCard';
+import { TreinamentosCard } from './desenvolvimento/TreinamentosCard';
+import { DesenvolvimentoProfissionalCard } from './desenvolvimento/DesenvolvimentoProfissionalCard';
+import { JornadaInternaCard } from './desenvolvimento/JornadaInternaCard';
 
-function Secao({ titulo, isLoading, vazio, children }: { titulo: string; isLoading: boolean; vazio: boolean; children: React.ReactNode }) {
-  return (
-    <Card className="border border-border/30 rounded-2xl overflow-hidden shadow-elevated">
-      <CardContent className="p-6 space-y-3">
-        <p className="text-sm font-medium">{titulo}</p>
-        {isLoading ? <Spinner /> : vazio ? (
-          <p className="text-sm text-muted-foreground">Nenhum registro encontrado.</p>
-        ) : children}
-      </CardContent>
-    </Card>
-  );
-}
-
+/** Área "Desenvolvimento" do dossiê do colaborador — dashboard compacto em
+ * grid de 2 colunas (mesmo padrão de proporções assimétricas já usado na aba
+ * "Financeiro & Benefícios": `grid-cols-[Xfr_Yfr]`), reunindo Formação,
+ * Treinamentos, Avaliação/PDI/Metas e Onboarding/Período de Experiência —
+ * antes espalhados em 3 sub-abas e numa pilha vertical de cards únicos. */
 export function DesenvolvimentoResumoTab({ colaboradorId }: { colaboradorId: string }) {
-  const { data: certificados, isLoading: isLoadingCert } = useCertificadosColaborador(colaboradorId);
-  const { data: treinamentos, isLoading: isLoadingTrein } = useTreinamentosColaborador(colaboradorId);
-  const { data: feedbacks, isLoading: isLoadingFeedback } = useFeedbacksColaborador(colaboradorId);
-  const { data: pdis, isLoading: isLoadingPDI } = usePDIsColaborador(colaboradorId);
-  const { data: metas, isLoading: isLoadingMetas } = useMetasColaborador(colaboradorId);
-  const onboarding = useOnboardingColaborador(colaboradorId);
+  // "Treinamentos" é a referência de altura fixa (nunca alterado); este wrapper
+  // só observa a altura já renderizada dele via ResizeObserver — não muda nada
+  // do próprio card — para espelhar em "Formação & Qualificações", que passa a
+  // ter altura fixa igual, em vez de um max-height chutado que desalinha
+  // sempre que a quantidade de itens de um dos dois cards mudar.
+  const treinamentosRef = useRef<HTMLDivElement>(null);
+  const [treinamentosHeight, setTreinamentosHeight] = useState<number>();
+
+  useLayoutEffect(() => {
+    const el = treinamentosRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver(([entry]) => {
+      if (entry) setTreinamentosHeight(entry.contentRect.height);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <div className="space-y-6">
-      <Secao titulo="Onboarding" isLoading={onboarding.isLoading} vazio={!onboarding.onboarding}>
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-sm">
-            <span>{onboarding.concluidas.length}/{onboarding.tarefas.length} tarefas concluídas</span>
-            <span className="text-muted-foreground">{onboarding.progresso}%</span>
-          </div>
-          <Progress value={onboarding.progresso ?? 0} />
-          {onboarding.atrasadas.length > 0 && (
-            <p className="text-xs text-destructive">{onboarding.atrasadas.length} tarefa(s) atrasada(s)</p>
-          )}
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] gap-4 items-start">
+        <FormacaoQualificacoesCard colaboradorId={colaboradorId} matchHeight={treinamentosHeight} />
+        <div ref={treinamentosRef}>
+          <TreinamentosCard colaboradorId={colaboradorId} />
         </div>
-      </Secao>
-
-      <Secao titulo="Treinamentos" isLoading={isLoadingTrein} vazio={!treinamentos?.length}>
-        <div className="flex flex-wrap gap-2">
-          {(treinamentos as any[] || []).map(t => (
-            <Badge key={t.id} variant={t.presente ? 'default' : 'secondary'} className="rounded-full">
-              {t.treinamento?.nome ?? 'Treinamento'} {t.presente ? '✓' : '(pendente)'}
-            </Badge>
-          ))}
-        </div>
-      </Secao>
-
-      <Secao titulo="Certificados" isLoading={isLoadingCert} vazio={!certificados?.length}>
-        <div className="flex flex-wrap gap-2">
-          {(certificados as any[] || []).map(c => (
-            <Badge key={c.id} variant="outline" className="rounded-full">{c.curso?.nome ?? 'Curso'}</Badge>
-          ))}
-        </div>
-      </Secao>
-
-      <Secao titulo="Avaliação / Feedback 360" isLoading={isLoadingFeedback} vazio={!feedbacks?.length}>
-        <div className="space-y-2">
-          {(feedbacks as any[] || []).map(f => (
-            <div key={f.id} className="flex items-center justify-between text-sm p-2 rounded-lg bg-muted/20">
-              <span>Ciclo — nota geral: {f.nota_geral ?? '—'}</span>
-              <Badge variant="secondary">{f.performance ?? '—'}</Badge>
-            </div>
-          ))}
-        </div>
-      </Secao>
-
-      <Secao titulo="PDI — Plano de Desenvolvimento Individual" isLoading={isLoadingPDI} vazio={!pdis?.length}>
-        <div className="space-y-2">
-          {(pdis as any[] || []).map(p => (
-            <div key={p.id} className="flex items-center justify-between text-sm p-2 rounded-lg bg-muted/20">
-              <span>{p.titulo ?? p.acao_desenvolvimento}</span>
-              <Badge variant="outline">{p.status}</Badge>
-            </div>
-          ))}
-        </div>
-      </Secao>
-
-      <Secao titulo="Metas / OKRs" isLoading={isLoadingMetas} vazio={!metas?.length}>
-        <div className="space-y-2">
-          {(metas as any[] || []).map(m => (
-            <div key={m.id} className="flex items-center justify-between text-sm p-2 rounded-lg bg-muted/20">
-              <span>{m.titulo}</span>
-              <span className="text-muted-foreground">{m.progresso ?? 0}%</span>
-            </div>
-          ))}
-        </div>
-      </Secao>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,0.9fr)] gap-4 items-start">
+        <DesenvolvimentoProfissionalCard colaboradorId={colaboradorId} />
+        <JornadaInternaCard colaboradorId={colaboradorId} />
+      </div>
     </div>
   );
 }

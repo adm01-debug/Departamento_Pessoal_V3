@@ -15,6 +15,7 @@ export { useAfastamentos, useAfastamentosRecentes } from "./useAfastamentos";
 export {
   useMetasColaborador, usePDIsColaborador, useFeedbacksColaborador,
   useCertificadosColaborador, useTreinamentosColaborador, useOnboardingColaborador,
+  useCompetenciasColaborador,
 } from "./useDesenvolvimentoColaborador";
 export { useCargos } from "./useCargos";
 export { useDepartamentos } from "./useDepartamentos";
@@ -60,7 +61,7 @@ export {
   useContatosEmergencia, useCriarContatoEmergencia, useExcluirContatoEmergencia,
   useHistoricoSalarial, useCriarRegistroSalarial,
   useASOs, useCriarASO,
-  useFormacoes, useCriarFormacao, useExcluirFormacao,
+  useFormacoes, useCriarFormacao, useExcluirFormacao, useAtualizarFormacao,
   useDadosEstrangeiro, useSalvarDadosEstrangeiro,
   useDeficiencia, useSalvarDeficiencia,
   usePeriodoExperiencia, useSalvarPeriodoExperiencia,

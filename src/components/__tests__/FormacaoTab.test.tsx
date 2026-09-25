@@ -5,6 +5,7 @@ vi.mock('@/hooks/useColaboradorDetalhes', () => ({
   useFormacoes: vi.fn(),
   useCriarFormacao: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
   useExcluirFormacao: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
+  useAtualizarFormacao: vi.fn(() => ({ mutateAsync: vi.fn(), isPending: false })),
 }));
 
 vi.mock('sonner', () => ({

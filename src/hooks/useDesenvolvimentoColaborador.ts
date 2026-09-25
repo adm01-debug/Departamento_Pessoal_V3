@@ -10,6 +10,7 @@ import { todayLocalISO } from '@/utils/dateLocal';
 import {
   mockOr, getMockMetas, getMockPDIs, getMockFeedbacks, getMockCertificados,
   getMockTreinamentos, getMockOnboardingRegistro, getMockOnboardingTarefas,
+  getMockCompetencias,
 } from '@/mocks/colaboradoresMock';
 
 export function useMetasColaborador(colaboradorId: string) {
@@ -45,6 +46,18 @@ export function useCertificadosColaborador(colaboradorId: string) {
     queryKey: ['certificados-colaborador', colaboradorId, empresaAtual?.id],
     queryFn: async () => mockOr(getMockCertificados(colaboradorId)) ?? catalogoCursoService.listarCertificados(empresaAtual!.id, colaboradorId),
     enabled: !!colaboradorId && !!empresaAtual?.id,
+  });
+}
+
+// Não existe hoje nenhuma tabela com nota/percentual de competência por
+// colaborador (só `competencias_config`, um catálogo global de nomes) — fora
+// do modo mock, resolve pra lista vazia em vez de chamar um serviço que não
+// existe.
+export function useCompetenciasColaborador(colaboradorId: string) {
+  return useQuery({
+    queryKey: ['competencias-colaborador', colaboradorId],
+    queryFn: async () => mockOr(getMockCompetencias(colaboradorId)) ?? [],
+    enabled: !!colaboradorId,
   });
 }
 

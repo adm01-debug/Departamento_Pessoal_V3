@@ -152,7 +152,7 @@ export const treinamentoParticipantesService = {
   listarPorColaborador: async (colaboradorId: string) => {
     const { data, error } = await supabase
       .from('treinamento_participantes' as any)
-      .select('*, treinamento:treinamentos(nome, data, carga_horaria)')
+      .select('*, treinamento:treinamentos(nome, descricao, data, carga_horaria)')
       .eq('colaborador_id', colaboradorId)
       .order('created_at', { ascending: false });
     if (error) throw error;

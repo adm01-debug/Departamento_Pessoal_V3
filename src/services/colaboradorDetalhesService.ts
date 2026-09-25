@@ -152,6 +152,18 @@ export async function excluirFormacao(colaboradorId: string, id: string) {
   if (error) throw error;
 }
 
+export async function atualizarFormacao(colaboradorId: string, id: string, dados: any) {
+  const { data, error } = await supabase
+    .from('formacoes_academicas')
+    .update(dados)
+    .eq('id', id)
+    .eq('colaborador_id', colaboradorId)
+    .select()
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
 // =============================================
 // Dados de Estrangeiro
 // =============================================

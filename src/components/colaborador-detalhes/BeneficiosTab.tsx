@@ -66,7 +66,7 @@ export function BeneficiosTab({ colaboradorId }: BeneficiosTabProps) {
       <CardContent className="p-3">
         <div className="flex items-center justify-between mb-1.5">
           <h3 className="text-sm font-display font-medium flex items-center gap-2">
-            <Gift className="h-4 w-4 text-primary" /> Benefícios Ativos
+            <Gift className="h-5 w-5 text-primary" /> Benefícios Ativos
           </h3>
 
           <Button size="sm" className="h-7 px-3 text-xs rounded-xl gap-1.5 shadow-xs" onClick={() => setIsDialogOpen(true)}>

@@ -227,7 +227,7 @@ export function ContasBancariasTab({ colaboradorId }: { colaboradorId: string })
     >
       <CardHeader className="flex flex-row items-center justify-between px-4 py-3.5 space-y-0 border-b border-border/20 shrink-0">
         <CardTitle className="text-sm font-display font-medium flex items-center gap-2">
-          <Landmark className="h-4 w-4 text-primary" /> Contas Bancárias
+          <Landmark className="h-5 w-5 text-primary" /> Contas Bancárias
         </CardTitle>
         <Button size="sm" className="h-7 px-3 text-xs rounded-xl" onClick={() => setOpen(true)}><Plus className="mr-1 h-3.5 w-3.5" />Adicionar</Button>
       </CardHeader>

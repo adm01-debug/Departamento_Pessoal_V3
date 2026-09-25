@@ -189,7 +189,7 @@ function SecaoHeader({
   return (
     <div className="flex items-start justify-between gap-3 mb-3">
       <div className="flex items-center gap-2 min-w-0">
-        <Icon className="h-4 w-4 text-primary shrink-0" />
+        <Icon className="h-5 w-5 text-primary shrink-0" />
         <div className="min-w-0">
           <p className="text-sm font-medium leading-none truncate">{titulo}</p>
           {subtitulo && <p className="text-xs text-muted-foreground mt-1 truncate">{subtitulo}</p>}

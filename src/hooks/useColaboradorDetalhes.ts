@@ -145,6 +145,14 @@ export function useExcluirFormacao(colaboradorId: string) {
   });
 }
 
+export function useAtualizarFormacao(colaboradorId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, dados }: { id: string; dados: Record<string, any> }) => service.atualizarFormacao(colaboradorId, id, dados),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['formacoes', colaboradorId] }),
+  });
+}
+
 // Dados Estrangeiro
 export function useDadosEstrangeiro(colaboradorId: string) {
   return useQuery({

@@ -183,7 +183,7 @@ export function ResumoRemuneracaoCard({ colaboradorId, colaborador }: { colabora
     <MotionCard custom={5} initial="hidden" animate="visible" variants={cardVariants} className="border border-border/30 rounded-2xl shadow-elevated">
       <CardContent className="p-4">
         <div className="flex items-center gap-2 font-display font-medium text-sm mb-1">
-          <BarChart3 className="h-4 w-4 text-primary" /> Resumo da remuneração
+          <BarChart3 className="h-5 w-5 text-primary" /> Resumo da remuneração
         </div>
         {isLoading ? (
           <div className="flex items-center justify-center py-4"><Spinner /></div>
@@ -289,7 +289,7 @@ export function HoleritesPreviewCard({ colaboradorId, onVerTodos }: { colaborado
       <CardContent className="p-3 flex flex-col">
         <div className="flex items-center justify-between gap-2 mb-1.5">
           <div className="flex items-center gap-2 font-display font-medium text-sm">
-            <DollarSign className="h-4 w-4 text-primary" /> Holerites recentes
+            <DollarSign className="h-5 w-5 text-primary" /> Holerites recentes
           </div>
           {onVerTodos && recentes.length > 0 && (
             <button

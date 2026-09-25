@@ -28,8 +28,8 @@ import {
 import { RecontratarColaboradorDialog } from '@/components/colaboradores/RecontratarColaboradorDialog';
 import { AnimatedDossieTabsList, AnimatedDossieTabsTrigger } from '@/components/colaboradores/AnimatedDossieTabs';
 import {
-  DadosPessoaisTab, HistoricoSalarialTab, ExperienciaTab,
-  FormacaoTab, AnotacoesTab,
+  DadosPessoaisTab, HistoricoSalarialTab,
+  AnotacoesTab,
   ContasBancariasTab, DocumentosPessoaisTab, EstagiarioTab, HistoricoContratosTab,
   ColaboradorHistory, BeneficiosTab, ColaboradorDocuments,
   TrabalhoHierarquiaTab, JornadaPontoTab, FeriasResumoTab, HoleritesTab,
@@ -291,7 +291,6 @@ export default function ColaboradorDetalhesPage() {
   const navigate = useNavigate();
 
   const [activeMainTab, setActiveMainTab] = useState('geral');
-  const [activeDesenvolvimentoTab, setActiveDesenvolvimentoTab] = useState('resumo');
   const [activeDocumentosTab, setActiveDocumentosTab] = useState('pessoais');
   const [activeTimelineTab, setActiveTimelineTab] = useState('funcional');
   const [recontratarOpen, setRecontratarOpen] = useState(false);
@@ -347,7 +346,6 @@ export default function ColaboradorDetalhesPage() {
     onClick: () => {
       switch (evento.tipo) {
         case 'experiencia':
-          setActiveDesenvolvimentoTab('experiencia');
           setActiveMainTab('desenvolvimento');
           break;
         case 'ferias_vencimento':
@@ -363,7 +361,6 @@ export default function ColaboradorDetalhesPage() {
           setActiveMainTab('documentos');
           break;
         case 'onboarding':
-          setActiveDesenvolvimentoTab('resumo');
           setActiveMainTab('desenvolvimento');
           break;
         default:
@@ -997,16 +994,7 @@ export default function ColaboradorDetalhesPage() {
           </TabsContent>
 
           <TabsContent value="desenvolvimento">
-            <Tabs value={activeDesenvolvimentoTab} onValueChange={setActiveDesenvolvimentoTab} className="space-y-4">
-              <TabsList className="bg-transparent h-auto p-0 gap-4 border-b border-border/20 rounded-none w-full justify-start overflow-x-auto no-scrollbar">
-                <TabsTrigger value="resumo" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Treinamentos &amp; Avaliação</TabsTrigger>
-                <TabsTrigger value="experiencia" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Período de Experiência</TabsTrigger>
-                <TabsTrigger value="formacao" className="data-[state=active]:border-primary border-b-2 border-transparent rounded-none px-1 pb-2 shadow-none bg-transparent">Formação</TabsTrigger>
-              </TabsList>
-              <TabsContent value="resumo">{activeDesenvolvimentoTab === 'resumo' && <DesenvolvimentoResumoTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="experiencia">{activeDesenvolvimentoTab === 'experiencia' && <ExperienciaTab colaboradorId={id!} />}</TabsContent>
-              <TabsContent value="formacao">{activeDesenvolvimentoTab === 'formacao' && <FormacaoTab colaboradorId={id!} />}</TabsContent>
-            </Tabs>
+            {activeMainTab === 'desenvolvimento' && <DesenvolvimentoResumoTab colaboradorId={id!} />}
           </TabsContent>
 
           <TabsContent value="documentos">
