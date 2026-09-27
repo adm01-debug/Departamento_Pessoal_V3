@@ -43,7 +43,6 @@ function extractMessage(error: unknown): string {
     }
     return '';
   }
-  if (error === null || error === undefined) return '';
   return String(error);
 }
 
@@ -57,7 +56,7 @@ export function safeErrorMessage(error: unknown, fallback = 'Ocorreu um erro. Te
   if (/permission denied/i.test(msg)) return USER_FRIENDLY_MESSAGES.permission;
   if (/row-level security/i.test(msg)) return USER_FRIENDLY_MESSAGES.rls;
 
-  if (INTERNAL_PATTERNS.some(p => p.test(msg))) {
+  if (INTERNAL_PATTERNS.some((p) => p.test(msg))) {
     return fallback;
   }
 

@@ -2,16 +2,21 @@
 
 MIT License — Copyright (c) 2026 AtomicaBR / Promo Brindes
 
+[![CI](https://github.com/adm01-debug/Departamento_Pessoal_V3/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/adm01-debug/Departamento_Pessoal_V3/actions/workflows/ci.yml)
+[![Security](https://github.com/adm01-debug/Departamento_Pessoal_V3/actions/workflows/security.yml/badge.svg?branch=main)](https://github.com/adm01-debug/Departamento_Pessoal_V3/actions/workflows/security.yml)
+[![E2E](https://github.com/adm01-debug/Departamento_Pessoal_V3/actions/workflows/e2e.yml/badge.svg?branch=main)](https://github.com/adm01-debug/Departamento_Pessoal_V3/actions/workflows/e2e.yml)
+[![Healthcheck](https://github.com/adm01-debug/Departamento_Pessoal_V3/actions/workflows/healthcheck.yml/badge.svg)](https://github.com/adm01-debug/Departamento_Pessoal_V3/actions/workflows/healthcheck.yml)
+
 ## Status Atual
 
 | Item | Status |
 |------|--------|
-| **Última atualização** | 22/07/2026 |
-| **Open Issues/PRs** | 0 ✅ |
+| **Última atualização** | 27/09/2026 |
+| **Open Issues/PRs** | ver badges acima |
 | **CI Pipeline** | Active (typecheck + lint + test + e2e) |
-| **Dependabot** | Weekly, up-to-date |
+| **Dependabot** | Weekly npm/actions/docker |
 | **Node** | 22 LTS (Docker) |
-| **Deploy** | Netlify (CI automático) |
+| **Deploy** | Vercel (preview + production) |
 
 ## Stack
 

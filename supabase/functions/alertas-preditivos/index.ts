@@ -163,7 +163,7 @@ serve(async (req: Request): Promise<Response> => {
             colaboradorId: colab.id,
             nome: colab.nome_completo,
             sinal: 'faltas_frequentes',
-            nivel: qtd >= 6 ? 'critica' : qtd >= 4 ? 'alta' : 'media',
+            nivel: qtd >= 6 ? 'critica' : 'alta',
             justificativa: `${qtd} falta(s) nos últimos 60 dias — acima do limiar de 3`,
             metrica: qtd,
           });

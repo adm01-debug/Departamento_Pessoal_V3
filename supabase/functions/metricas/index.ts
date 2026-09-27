@@ -185,7 +185,7 @@ serve(async (req) => {
     let empresaId: string | undefined;
     try {
       const body = await req.clone().json();
-      if (!empresaId && body?.empresaId) empresaId = body.empresaId;
+      if (body?.empresaId) empresaId = body.empresaId;
     } catch { /* ignore */ }
 
     if (!empresaId) return createErrorResponse('empresaId é obrigatório', 422, 'VALIDATION_ERROR');

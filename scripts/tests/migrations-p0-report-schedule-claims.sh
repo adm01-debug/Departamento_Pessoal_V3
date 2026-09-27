@@ -4,7 +4,7 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 MIGRATION="$REPO_ROOT/supabase/migrations/20260912192000_p0_report_schedule_claims.sql"
-IMAGE="${MIGTEST_IMAGE:-postgres:17-alpine}"
+IMAGE="${MIGTEST_IMAGE:-postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24}"
 NAME="dp-p0-report-claims-$$"
 RESULT_DIR="$(mktemp -d)"
 

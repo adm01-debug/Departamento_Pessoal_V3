@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 # ============================================================================
 # PLANO_100 · Runner de validação das migrations em Postgres real
-# Sobe postgres:17-alpine (docker), aplica stubs Supabase + drift simulado +
+# Sobe postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24 (docker), aplica stubs Supabase + drift simulado +
 # as migrations 20260830*_plano100_* (2 passes = idempotência) e a suíte de
 # asserts comportamentais. Qualquer falha → exit ≠ 0.
 # Uso: bash scripts/tests/migrations-plano100.sh
-# Vars: MIGTEST_IMAGE (default postgres:17-alpine), MIGTEST_KEEP=1 p/ inspecionar
+# Vars: MIGTEST_IMAGE (default postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24), MIGTEST_KEEP=1 p/ inspecionar
 # ============================================================================
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-IMAGE="${MIGTEST_IMAGE:-postgres:17-alpine}"
+IMAGE="${MIGTEST_IMAGE:-postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24}"
 NAME="dp-migtest-$$"
 FIXTURES="$REPO_ROOT/supabase/tests/plano100"
 MIGS=$(ls "$REPO_ROOT"/supabase/migrations/2026083*_plano100_*.sql 2>/dev/null | sort)

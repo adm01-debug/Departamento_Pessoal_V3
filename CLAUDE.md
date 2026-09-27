@@ -1,7 +1,7 @@
-# AI Context — Departamento Pessoal v2
+# AI Context — Departamento Pessoal v3
 
 > Documentação para agentes de IA (Hermes, Claude Code, Cursor, Copilot, etc)
-> Última atualização: 23/07/2026
+> Última atualização: 27/09/2026
 > Mantenedor: Hermes Agent (AtomicaBR Ops/Dev)
 
 > ⚠️ **Correções de auditoria (23/07/2026)** — revisão do batch anterior:
@@ -63,13 +63,18 @@
 │   │   └── BRIDGE_PERFORMANCE.md # 10 gaps do bridge
 │   └── ...
 ├── .github/
-│   ├── workflows/                # GitHub Actions (7 workflows)
-│   │   ├── ci.yml                # CI principal (typecheck+lint+test)
-│   │   ├── deploy.yml            # Deploy preview
+│   ├── workflows/                # GitHub Actions (10 workflows)
+│   │   ├── ci.yml                # CI principal (typecheck+lint+test+edge+security+migrations+db)
+│   │   ├── deploy.yml            # Deploy preview (Vercel via integração Git)
 │   │   ├── security.yml          # CodeQL + npm audit
-│   │   ├── e2e.yml               # Playwright E2E
-│   │   └── branch-protection.yml # Proteção de branch
-│   └── dependabot.yml            # Dependabot (grouped updates)
+│   │   ├── e2e.yml               # Playwright E2E (public PR + authenticated main)
+│   │   ├── healthcheck.yml       # Healthcheck agendado a cada 6h
+│   │   ├── canonical-probes.yml  # Probes RV-01/02/03/04 no canônico
+│   │   ├── canonical-migrations.yml # Migrations no canônico (workflow_dispatch)
+│   │   ├── canonical-edge-functions.yml # Deploy Edge Functions no canônico
+│   │   ├── db-tests.yml          # Testes PostgreSQL 17 isolados
+│   │   └── branch-protection.yml # CONGELADO — ver E01; não executar
+│   └── dependabot.yml            # Dependabot: npm+docker+github-actions (semanal)
 ├── config/                       # Config filters
 ├── docker/                       # Dockerfiles auxiliares
 ├── scripts/                      # Scripts de build/audit
@@ -81,11 +86,20 @@
 ### Pipelines CI/CD
 | Workflow | Gatilho | Ações |
 |----------|---------|-------|
-| **ci.yml** | push/PR/workflow_dispatch | Bun→Node fallback, typecheck, lint, test |
-| **deploy.yml** | PR preview/workflow_dispatch | Build + Deploy Netlify preview |
+| **ci.yml** | push/PR/workflow_dispatch | typecheck, lint, test:coverage, deno check, security-config, migrations P0/P1, db-integrity |
+| **deploy.yml** | PR / workflow_dispatch | Valida build (Vercel deploy via integração Git) |
 | **security.yml** | push/PR/schedule/workflow_dispatch | CodeQL + npm audit |
-| **e2e.yml** | push/PR | Playwright tests |
-| **branch-protection.yml** | workflow_dispatch | API para proteger main (requer PAT) |
+| **e2e.yml** | push/PR | Playwright público (PR) + autenticado (main only) |
+| **healthcheck.yml** | schedule (*/6h) | Healthcheck de produção + abre issue se falhar |
+| **canonical-probes.yml** | workflow_dispatch | Probes RV-01–04 no canônico |
+| **canonical-migrations.yml** | workflow_dispatch | Migrations no canônico (dry-run ou apply) |
+| **canonical-edge-functions.yml** | workflow_dispatch | Deploy Edge Functions no canônico |
+| **db-tests.yml** | push/PR | Testes de migrations em Postgres 17 descartável |
+| **branch-protection.yml** | CONGELADO (if: false) | E01 — não executar até E04+E07 |
+
+**Regras do merge (E09 — via API 27/09/2026):** squash-only, delete branch on merge, allow update branch.
+
+**Ruleset main (ID 21934736):** 7 required_status_checks — baseline em `infra/github/ruleset-main.json`.
 
 ### Segurança do Bridge (external-db-bridge)
 ```
@@ -174,28 +188,62 @@ POST-only gateway (32KB file, 729 lines)
 ├── Deploy: Bun → Node fallback adicionado
 ├── Dockerfile: npm ci → npm install
 ```
+
+### Sessão 2 — 27/09/2026 (Claude Sonnet 4.6)
+**Branch:** `claude/great-rubin-c50zcx` | **PR:** #145 (draft) | **Plano:** 100 etapas
+
+#### O que foi feito:
+```
+🔒 WORKFLOWS AUDIT — plano docs/auditoria/PLANO_100_WORKFLOWS_2026-09-27.md
+├── E01 — branch-protection.yml congelado (if: false); evita destruir ruleset
+├── E02 — infra/github/ruleset-main.json: baseline dos 7 required_status_checks
+├── E08 — scripts/audit-required-checks.mjs: gate que valida required checks ↔ jobs
+├── E09 ⚙️ — repo: squash-only, delete-branch-on-merge, allow-update-branch (API)
+├── E21 — fallback morto VITE_SUPABASE_ANON_KEY removido de ci.yml/deploy.yml/healthcheck.yml
+├── E31 — package.json: engines + packageManager declarados
+├── E32/E62-E64 — dependabot.yml: ignore TS≥6.1.0; docker eco; actions semanal; grupo npm
+├── E33 — timeout-minutes em todos os 12 jobs que não tinham (ci×7, security, deploy,
+│          healthcheck, canonical-edge/migrations/probes)
+├── E35 — ci.yml: trigger branches: [master] removido (só main)
+├── E44 — permissions: contents: read no topo de deploy.yml e security.yml
+├── E53/E54 — e2e.yml: retention reduzida; CI_BRANCH injetado;
+│             playwright.config.ts: retries=0 em PR, 2 em main
+├── E87 — PULL_REQUEST_TEMPLATE.md: seção "verificado de verdade" adicionada
+├── E88 — ISSUE_TEMPLATE: bug/feature removidos; config.yml blank_issues=false
+├── E89 — FUNDING.yml removido
+├── E91 — README.md: badges CI/Security/E2E/Healthcheck; CLAUDE.md atualizado
+├── E93 ⚙️ — labels criados: e2e-main, ci, security, canonical
+└── E96 — scripts/tests/workflows-contract.test.mjs: 5 contratos em todos os workflows
+```
+
 ---
 
 ## ✅ Estado Atual
 
 ### Status dos Workflows
 ```
-CI (ci.yml)              → configurado com Node fallback 🟡 (precisa: Settings→Actions)
-Security (security.yml)  → CodeQL ativado 🟡 (precisa Settings)
-Deploy (deploy.yml)      → Netlify preview 🟡 (precisa secrets)
-E2E (e2e.yml)            → Playwright ✅ (não modificado)
-Dependabot               → Groups ativos ✅ (23 PRs merged na sessão)
+CI (ci.yml)              → 7 jobs, todos com timeout, trigger master removido ✅
+Security (security.yml)  → CodeQL ativo, permissions top-level adicionado ✅
+Deploy (deploy.yml)      → Vercel (integração Git), permissions adicionado ✅
+E2E (e2e.yml)            → CI_BRANCH injetado, retries calibrados ✅
+Healthcheck (healthcheck.yml) → timeout 5min adicionado ✅
+Canônicos (×3)           → timeout adicionado, environment: production ✅
+Dependabot               → npm+docker+github-actions semanal; TS≥6.1 ignorado ✅
+Branch ruleset           → 7 required checks, baseline em infra/github/ ✅
 ```
 
-### Métricas
+### Métricas (27/09/2026)
 | Indicador | Valor |
 |-----------|-------|
-| Open Issues | ~7 (Dependabot automáticos) |
-| Open PRs | ~7 (Dependabot automáticos) |
-| TypeScript strict | ✅ Ativado |
-| `any` types no app | ✅ Compatível com `strict` (0 erros de tipo no CI) |
-| Testes | ✅ Configurados |
+| Open PRs | #145 draft (auditoria workflows) |
+| TypeScript strict | ✅ strict: true + noImplicitAny (0 erros no src) |
+| Testes com tipo | ⚠️ 232 erros latentes em `__tests__` (excluídos do tsconfig) |
 | Cobertura | ✅ v8 configurada |
+| Merge strategy | ✅ squash-only (allow_merge_commit=false) |
+| Branch delete | ✅ delete_branch_on_merge=true |
+| Ruleset | ✅ 21934736 — 7 required checks — baseline em infra/github/ |
+| Workflows com timeout | ✅ 100% (12 jobs adicionados na sessão 2) |
+| supply chain | ⚠️ actions ainda com tag (não SHA) — E66 pendente |
 | Branch protection | ❌ Não ativo (Settings manual) |
 
 ---

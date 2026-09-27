@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Runbook de Incidentes
+    url: https://github.com/adm01-debug/Departamento_Pessoal_V3/blob/main/infra/runbooks/BRIDGE_PERFORMANCE.md
+    about: Consulte o runbook antes de abrir um incidente de produção.

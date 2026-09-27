@@ -3,7 +3,7 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 MIGRATION="$REPO_ROOT/supabase/migrations/20260912201000_p1_internal_notification_recipients.sql"
-IMAGE="${MIGTEST_IMAGE:-postgres:17-alpine}"
+IMAGE="${MIGTEST_IMAGE:-postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24}"
 NAME="dp-p1-notification-recipients-$$"
 cleanup() { [ "${MIGTEST_KEEP:-0}" = "1" ] || docker rm -f "$NAME" >/dev/null 2>&1 || true; }
 trap cleanup EXIT

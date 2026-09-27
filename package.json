@@ -3,6 +3,10 @@
   "version": "18.0.1",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
+  "packageManager": "npm@10.x",
   "scripts": {
     "dev": "vite",
     "build": "node scripts/check-dependencies.js && node scripts/generate-audit-pdf.js && vite build",
@@ -24,6 +28,7 @@
     "audit:secdef": "node scripts/audit-secdef-authz.mjs",
     "audit:embeds": "node scripts/audit-embed-hints.mjs",
     "audit:ratchet-any": "node scripts/ratchet-any.mjs",
+    "audit:ratchet-warnings": "node scripts/ratchet-lint-warnings.mjs",
     "lint:ci": "eslint src --ext ts,tsx --max-warnings=881",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json,md}\"",
     "format:check:changed": "bash scripts/format-check-changed.sh",

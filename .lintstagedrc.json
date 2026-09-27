@@ -1,5 +1,6 @@
 {
   "*.{ts,tsx}": ["eslint --fix", "prettier --write"],
   "*.{json,md,css}": ["prettier --write"],
-  "*.{test,spec}.{ts,tsx}": ["vitest related --run"]
+  "*.{test,spec}.{ts,tsx}": ["vitest related --run"],
+  ".github/workflows/*.{yml,yaml}": ["actionlint"]
 }

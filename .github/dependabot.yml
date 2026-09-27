@@ -1,5 +1,6 @@
 version: 2
 updates:
+  # ─── npm ────────────────────────────────────────────────────────────────────
   - package-ecosystem: npm
     directory: /
     schedule:
@@ -11,6 +12,11 @@ updates:
     labels:
       - dependencies
       - javascript
+    # E62: TypeScript >=6.1.0 quebra typescript-eslint (peer >=4.8.4 <6.1.0).
+    # Ver CLAUDE.md — NÃO remover sem confirmar suporte do typescript-eslint.
+    ignore:
+      - dependency-name: typescript
+        versions: [">=6.1.0"]
     groups:
       radix-ui:
         patterns:
@@ -33,11 +39,46 @@ updates:
         update-types:
           - minor
           - patch
+      # E64: catch-all para minor/patch de tudo mais — 1 PR/semana em vez de N individuais.
+      minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
 
+  # ─── github-actions ─────────────────────────────────────────────────────────
+  # E32: semanal (era mensal) + grupo único — 1 PR/semana para todas as actions.
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: monthly
+      interval: weekly
+      day: tuesday
+      time: "09:00"
+      timezone: America/Sao_Paulo
+    open-pull-requests-limit: 5
     labels:
       - ci
       - dependencies
+    groups:
+      actions:
+        patterns:
+          - "*"
+
+  # ─── docker ─────────────────────────────────────────────────────────────────
+  # E63: Dockerfile, Dockerfile.prod, docker-compose.dev.yml, docker-compose.prod.yml
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+      day: wednesday
+      time: "09:00"
+      timezone: America/Sao_Paulo
+    open-pull-requests-limit: 3
+    labels:
+      - dependencies
+      - docker
+    groups:
+      docker-base:
+        patterns:
+          - "*"

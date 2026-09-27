@@ -25,6 +25,7 @@ jobs:
   scoped-migrations:
     name: ${{ inputs.mode }} migrations no canônico
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     environment: production
     env:
       SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
@@ -33,7 +34,7 @@ jobs:
       # interpolating it into the shell program below.
       CONFIRM_PROJECT_REF: ${{ inputs.confirm_project_ref }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
 
