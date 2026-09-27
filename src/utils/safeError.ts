@@ -43,7 +43,6 @@ function extractMessage(error: unknown): string {
     }
     return '';
   }
-  if (error === null || error === undefined) return '';
   return String(error);
 }
 

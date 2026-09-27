@@ -37,7 +37,6 @@ serve(async (req: Request): Promise<Response> => {
     const cronHeader = req.headers.get("X-Cron-Secret") ?? "";
 
     let authorized = false;
-    let triggeredBy = "cron";
 
     // Path 1: Cron secret (for pg_cron / external scheduler)
     // Constant-time comparison: HMAC both values with a fixed key, compare HMACs
@@ -63,7 +62,6 @@ serve(async (req: Request): Promise<Response> => {
       }
       if (diff === 0) {
         authorized = true;
-        triggeredBy = "cron";
       }
     }
 
@@ -99,7 +97,6 @@ serve(async (req: Request): Promise<Response> => {
         });
         if (isAdmin) {
           authorized = true;
-          triggeredBy = userData.user.id;
         }
       }
     }

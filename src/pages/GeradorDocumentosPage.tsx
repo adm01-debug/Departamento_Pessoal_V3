@@ -149,7 +149,6 @@ function gerarPDF(template: string, colaborador: any, empresa: any) {
 
   // Footer with signatures
   y = 240;
-  if (y > 250) { doc.addPage(); y = 200; }
   doc.setFontSize(10);
   doc.text(`${empresa?.cidade || '____'}, ${hoje}`, pageWidth / 2, y, { align: 'center' });
   y += 25;

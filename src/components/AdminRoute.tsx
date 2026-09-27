@@ -50,8 +50,8 @@ export function AdminRoute({ children }: AdminRouteProps) {
         }
         return;
       }
-      // No MFA enrolled at all
-      if (!cancelled) setMfaState('missing');
+      // No MFA enrolled at all — reached only when cancelled is false (no await taken this path)
+      setMfaState('missing');
     }).catch(() => {
       // Fail-closed: cannot verify MFA status → block access, not grant it
       if (!cancelled) {

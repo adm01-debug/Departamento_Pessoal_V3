@@ -283,7 +283,6 @@ Deno.serve(async (req) => {
   // P4-073: descomprime body se cliente enviar Content-Encoding: gzip.
   // Threshold: só descomprime se content-length > 64KB.
   const contentEncoding = req.headers.get('content-encoding')?.toLowerCase();
-  const acceptGzip = req.headers.get('accept-encoding')?.toLowerCase().includes('gzip');
 
   // Cap payload
   const contentLength = Number(req.headers.get("content-length") || "0");

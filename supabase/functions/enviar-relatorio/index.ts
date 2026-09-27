@@ -352,7 +352,7 @@ serve(async (req: Request): Promise<Response> => {
     let totalRegistros: number;
     let contentHash: string;
     let path: string;
-    let signedUrl: string;
+    let signedUrl = '';
     let subject: string;
     let html: string;
 
@@ -360,7 +360,6 @@ serve(async (req: Request): Promise<Response> => {
       totalRegistros = priorAttempt.total_registros;
       contentHash = priorAttempt.content_sha256;
       path = priorAttempt.storage_path;
-      signedUrl = priorAttempt.signed_url;
       subject = priorAttempt.subject;
       html = priorAttempt.html;
     } else {
