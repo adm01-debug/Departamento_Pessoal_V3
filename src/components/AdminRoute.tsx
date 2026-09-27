@@ -29,38 +29,43 @@ export function AdminRoute({ children }: AdminRouteProps) {
     if (!isReady || !isAdmin || !user) return;
 
     let cancelled = false;
-    supabase.auth.mfa.getAuthenticatorAssuranceLevel().then(async ({ data }) => {
-      if (cancelled) return;
-      // Session already at aal2 — MFA fully satisfied
-      if (data?.currentLevel === 'aal2') {
-        setMfaState('verified');
-        return;
-      }
-      // nextLevel aal2 means user enrolled TOTP but this session is still at aal1.
-      // Must complete TOTP challenge — do NOT grant access until aal2 is reached.
-      if (data?.nextLevel === 'aal2') {
-        const { data: factors } = await supabase.auth.mfa.listFactors();
-        const totp = factors?.totp?.find(f => f.status === 'verified');
-        if (totp && !cancelled) {
-          setFactorId(totp.id);
-          setMfaState('pending-challenge');
-          loggerService.warn('Admin session at aal1 with enrolled MFA — requiring challenge', { userId: user.id });
-        } else if (!cancelled) {
+    supabase.auth.mfa
+      .getAuthenticatorAssuranceLevel()
+      .then(async ({ data }) => {
+        if (cancelled) return;
+        // Session already at aal2 — MFA fully satisfied
+        if (data?.currentLevel === 'aal2') {
+          setMfaState('verified');
+          return;
+        }
+        // nextLevel aal2 means user enrolled TOTP but this session is still at aal1.
+        // Must complete TOTP challenge — do NOT grant access until aal2 is reached.
+        if (data?.nextLevel === 'aal2') {
+          const { data: factors } = await supabase.auth.mfa.listFactors();
+          const totp = factors?.totp?.find((f) => f.status === 'verified');
+          if (totp && !cancelled) {
+            setFactorId(totp.id);
+            setMfaState('pending-challenge');
+            loggerService.warn('Admin session at aal1 with enrolled MFA — requiring challenge', { userId: user.id });
+          } else if (!cancelled) {
+            setMfaState('missing');
+          }
+          return;
+        }
+        // No MFA enrolled at all — reached only when cancelled is false (no await taken this path)
+        setMfaState('missing');
+      })
+      .catch(() => {
+        // Fail-closed: cannot verify MFA status → block access, not grant it
+        if (!cancelled) {
+          loggerService.warn('AdminRoute: MFA check failed — blocking access (fail-closed)', { userId: user?.id });
           setMfaState('missing');
         }
-        return;
-      }
-      // No MFA enrolled at all — reached only when cancelled is false (no await taken this path)
-      setMfaState('missing');
-    }).catch(() => {
-      // Fail-closed: cannot verify MFA status → block access, not grant it
-      if (!cancelled) {
-        loggerService.warn('AdminRoute: MFA check failed — blocking access (fail-closed)', { userId: user?.id });
-        setMfaState('missing');
-      }
-    });
+      });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [isReady, isAdmin, user]);
 
   useEffect(() => {
@@ -95,7 +100,9 @@ export function AdminRoute({ children }: AdminRouteProps) {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-10 h-10 animate-spin text-primary opacity-20" />
-          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground animate-pulse">Verificando privilégios...</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground animate-pulse">
+            Verificando privilégios...
+          </p>
         </div>
       </div>
     );
@@ -122,7 +129,9 @@ export function AdminRoute({ children }: AdminRouteProps) {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-10 h-10 animate-spin text-primary opacity-20" />
-          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground animate-pulse">Verificando autenticação de dois fatores...</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground animate-pulse">
+            Verificando autenticação de dois fatores...
+          </p>
         </div>
       </div>
     );
@@ -153,15 +162,17 @@ export function AdminRoute({ children }: AdminRouteProps) {
               maxLength={7}
               placeholder="000 000"
               value={totpCode}
-              onChange={e => setTotpCode(e.target.value)}
+              onChange={(e) => setTotpCode(e.target.value)}
               className="text-center text-xl tracking-widest rounded-xl"
               disabled={challengeLoading}
             />
           </div>
-          {challengeError && (
-            <p className="text-sm text-destructive text-center">{challengeError}</p>
-          )}
-          <Button type="submit" className="w-full gap-2" disabled={challengeLoading || totpCode.replace(/\s/g, '').length < 6}>
+          {challengeError && <p className="text-sm text-destructive text-center">{challengeError}</p>}
+          <Button
+            type="submit"
+            className="w-full gap-2"
+            disabled={challengeLoading || totpCode.replace(/\s/g, '').length < 6}
+          >
             {challengeLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
             Verificar
           </Button>
@@ -179,14 +190,11 @@ export function AdminRoute({ children }: AdminRouteProps) {
         <div className="space-y-2 max-w-md">
           <h2 className="text-h2 font-display text-foreground">Autenticação de Dois Fatores Obrigatória</h2>
           <p className="text-body text-muted-foreground">
-            Contas de administrador requerem MFA habilitado para acessar áreas privilegiadas.
-            Configure o autenticador de dois fatores antes de prosseguir.
+            Contas de administrador requerem MFA habilitado para acessar áreas privilegiadas. Configure o autenticador
+            de dois fatores antes de prosseguir.
           </p>
         </div>
-        <Button
-          className="gap-2"
-          onClick={() => navigate('/perfil?tab=seguranca')}
-        >
+        <Button className="gap-2" onClick={() => navigate('/perfil?tab=seguranca')}>
           <ShieldCheck className="h-4 w-4" />
           Configurar MFA agora
         </Button>
