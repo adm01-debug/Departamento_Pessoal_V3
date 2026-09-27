@@ -68,7 +68,30 @@ gh workflow run canonical-migrations.yml \
 
 ---
 
-## 5. Atualizar a lista de migrações em `canonical-migrations.yml`
+## 5. Como disparar `canonical-probes.yml`
+
+```bash
+gh workflow run canonical-probes.yml \
+  -f confirm_project_ref=frjbfeamybqsejlvmqbl
+```
+
+O workflow executa `node scripts/probes/run-probes.mjs` (E71) com os 6 probes:
+
+| Probe | O que verifica | Saída esperada |
+|-------|----------------|----------------|
+| `rv01` | `user_empresa_id()` ignora `user_metadata` forjado | `NULL` |
+| `rv02` | `medidas_ciencia_tokens` sem ACL nem policy | `t` |
+| `rv03` | Zero policies permissivas (`USING true`) nas tabelas críticas | `0` |
+| `rv04` | RPCs de vínculo/autorização presentes | `t` |
+| `views` | Views de PII ilegíveis para `anon` | `t` |
+| `ledger` | Contagem de migrações (informativo) | qualquer inteiro |
+
+**Critério de sucesso:** log termina com `CANONICAL_PROBES_OK`.  
+**Teste local:** `SUPABASE_DB_URL="postgresql://..." node scripts/probes/run-probes.mjs`
+
+---
+
+## 6. Atualizar a lista de migrações em `canonical-migrations.yml`
 
 A lista de migrações está no step **"Preparar somente as migrações aprovadas"** (`stage_dir` loop). Regra:
 
@@ -78,7 +101,7 @@ A lista de migrações está no step **"Preparar somente as migrações aprovada
 
 ---
 
-## 6. Rotação de segredos
+## 7. Rotação de segredos
 
 | Secret | Onde fica | Rotacionar em |
 |--------|-----------|---------------|
@@ -90,7 +113,7 @@ Ao rotacionar o `SUPABASE_DB_URL`, verifique também os workflows que o consomem
 
 ---
 
-## 7. Diagnóstico de falhas comuns
+## 8. Diagnóstico de falhas comuns
 
 | Sintoma | Causa provável | Ação |
 |---------|---------------|------|
@@ -103,7 +126,7 @@ Ao rotacionar o `SUPABASE_DB_URL`, verifique também os workflows que o consomem
 
 ---
 
-## 8. Contratos e gates
+## 9. Contratos e gates
 
 O workflow `db-tests.yml` (PostgreSQL descartável) valida as migrações do PLANO_100 via `scripts/tests/migrations-plano100.sh`. Ele **não** toca o banco canônico — é seguro rodar a qualquer momento.
 
