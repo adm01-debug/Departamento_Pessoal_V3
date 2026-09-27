@@ -22,7 +22,8 @@ export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
+  // E54: PR=0 retries (flakiness aparece onde é barato corrigir); main=2 (absorve intermitência de infra).
+  retries: process.env.CI_BRANCH === 'main' ? 2 : 0,
   // Vite transforma módulos na primeira carga. Limitar a concorrência local
   // evita timeout por contenção de CPU e mantém a mesma ordem de grandeza da
   // execução de CI, sem esconder falhas por retries.

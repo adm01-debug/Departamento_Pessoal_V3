@@ -1,4 +1,8 @@
 name: Protect Main Branch
+# DESABILITADO (E01 — plano 100 etapas, 27/09/2026).
+# Motivo: o payload atual usa PUT sem a regra required_status_checks; executar
+# destruiria os 7 checks obrigatórios do ruleset 21934736.
+# Reabilitar APENAS após E04 (payload completo validado em modo diff=E07).
 on:
   workflow_dispatch:
 
@@ -7,6 +11,7 @@ permissions:
 
 jobs:
   protect:
+    if: false   # E01 — congelado até E04+E07 serem concluídos
     runs-on: ubuntu-latest
     steps:
       - name: Protect main branch
