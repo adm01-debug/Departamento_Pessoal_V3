@@ -6,7 +6,7 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 LEGACY_MIGRATION="$REPO_ROOT/supabase/migrations/20260911180000_p0_views_security_invoker.sql"
 MIGRATION="$REPO_ROOT/supabase/migrations/20260911192000_p0_views_revoke_public.sql"
-IMAGE="${MIGTEST_IMAGE:-postgres:17-alpine}"
+IMAGE="${MIGTEST_IMAGE:-postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24}"
 NAME="dp-p0-view-acl-$$"
 
 command -v docker >/dev/null || { echo "docker is required" >&2; exit 1; }

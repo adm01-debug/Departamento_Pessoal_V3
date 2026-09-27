@@ -2,7 +2,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 MIGRATION="$ROOT/supabase/migrations/20260912208000_p1_company_payroll_tax_contract.sql"
-NAME="dp-p1-tax-contract-$$"; IMAGE="${MIGTEST_IMAGE:-postgres:17-alpine}"
+NAME="dp-p1-tax-contract-$$"; IMAGE="${MIGTEST_IMAGE:-postgres:17-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24}"
 cleanup(){ docker rm -f "$NAME" >/dev/null 2>&1 || true; }; trap cleanup EXIT
 psqlc(){ docker exec -i "$NAME" psql -X -U postgres -v ON_ERROR_STOP=1 "$@"; }
 reject(){ local sql="$1"; set +e; psqlc -c "$sql" >/dev/null 2>&1; local s=$?; set -e; [ "$s" -ne 0 ] || { echo "expected rejection: $sql" >&2; exit 1; }; }
