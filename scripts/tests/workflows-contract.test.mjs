@@ -21,7 +21,6 @@ function pass(msg) {
   console.log(`  ok:   ${msg}`);
 }
 
-const SHA_RE = /uses:\s+\S+@([0-9a-f]{40})/;
 const USES_RE = /uses:\s+(\S+)/g;
 const RUN_INTERPOLATION_RE = /\$\{\{\s*github\.event\.|inputs\./;
 
@@ -33,8 +32,6 @@ for (const file of files) {
   console.log(`\n── ${file}`);
 
   // 1. Todos os jobs têm timeout-minutes (salvo jobs desabilitados com if:false)
-  // Detecta blocos de jobs pela indentação padrão YAML
-  const jobTimeoutMatches = [...raw.matchAll(/^\s{2}[\w-]+:\s*\n([\s\S]*?)(?=^\s{2}[\w-]+:|$)/gm)];
   const hasTimeout = raw.includes('timeout-minutes');
   // Heurística: workflows com jobs reais devem ter pelo menos 1 timeout-minutes
   const hasIfFalse = raw.includes('if: false');
