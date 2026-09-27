@@ -150,6 +150,7 @@ jobs:
           node scripts/audit-migration-style.mjs
           node scripts/tests/rebaseline-artifact.test.mjs
           node scripts/tests/validate-canonical-db-url.test.mjs
+          node scripts/tests/workflows-contract.test.mjs
 
   p0-database-migrations:
     name: P0 database migration simulations
