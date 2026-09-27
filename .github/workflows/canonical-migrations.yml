@@ -25,6 +25,7 @@ jobs:
   scoped-migrations:
     name: ${{ inputs.mode }} migrations no canônico
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     environment: production
     env:
       SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}

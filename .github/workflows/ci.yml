@@ -22,6 +22,7 @@ jobs:
   typecheck:
     name: Type Check
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
         with:
@@ -48,6 +49,7 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
         with:
@@ -73,6 +75,7 @@ jobs:
   test:
     name: Unit Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     env:
       VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || '' }}
       VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY || '' }}
@@ -92,6 +95,7 @@ jobs:
   edge-functions:
     name: Edge Functions (deno check)
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
         with:
@@ -127,6 +131,7 @@ jobs:
   security-config:
     name: Config de segurança (E-077, estático)
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v7
         with:
@@ -150,6 +155,7 @@ jobs:
   p0-database-migrations:
     name: P0 database migration simulations
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     # Os scripts de simulação SQL não fazem chamadas à API do GitHub. Mantém o
     # token mínimo e evita deixá-lo no git config enquanto executam SQL de PR.
     permissions:
@@ -200,6 +206,7 @@ jobs:
     # bot de dependências acesso à URL administrativa do banco canônico.
     if: github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]')
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     # Este é deliberadamente um gate de banco canônico, não uma análise
     # estática. Sem uma conexão de auditoria, um "verde" não é evidência de
     # RLS, grants, funções ou triggers reais.
