@@ -19,6 +19,9 @@ on:
       - 'supabase/tests/plano100/**'
       - 'scripts/tests/migrations-plano100.sh'
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}

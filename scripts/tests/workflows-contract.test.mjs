@@ -65,10 +65,14 @@ for (const file of files) {
   }
 
   // 3. run: não interpola github.event.* ou inputs.* diretamente (injeção de script)
+  // Contextos seguros: YAML key-value (env vars, name:, if:, uses:, with:…)
+  // Só flagra linhas que NÃO são YAML key: value (exceto run: direto)
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
+    const trimmed = line.trimStart();
+    if (/^[\w][\w-]*:\s/.test(trimmed) && !trimmed.startsWith('run:')) continue;
     if (RUN_INTERPOLATION_RE.test(line)) {
-      fail(`${file}:${i + 1}: interpolação perigosa em run: "${line.trim()}" (D20/E20)`);
+      fail(`${file}:${i + 1}: interpolação perigosa em run: "${trimmed}" (D20/E20)`);
     }
   }
 
@@ -80,9 +84,11 @@ for (const file of files) {
   }
 
   // 5. concurrency: presente em workflows com pull_request trigger
-  if (raw.includes('pull_request') && !raw.includes('concurrency:')) {
+  // Usa regex para distinguir o trigger YAML de usos do texto em run:/env:
+  const hasPrTrigger = /^\s{0,4}pull_request:/m.test(raw);
+  if (hasPrTrigger && !raw.includes('concurrency:')) {
     fail(`${file}: trigger pull_request sem concurrency: (cancelamento de runs duplicadas)`);
-  } else if (raw.includes('pull_request')) {
+  } else if (hasPrTrigger) {
     pass(`concurrency: presente`);
   }
 }
