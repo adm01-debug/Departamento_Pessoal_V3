@@ -30,7 +30,7 @@ jobs:
       CI: true
       CI_BRANCH: ${{ github.ref_name }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
 
@@ -41,12 +41,12 @@ jobs:
           test "$VITE_SUPABASE_URL" = 'https://frjbfeamybqsejlvmqbl.supabase.co' || { echo '::error::Public E2E target is not canonical'; exit 1; }
 
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version: latest
 
       - name: Cache Bun install
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ~/.bun/install/cache
           key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb', '**/bun.lock', '**/package.json') }}
@@ -58,7 +58,7 @@ jobs:
 
       - name: Cache Playwright browsers
         id: playwright-public-cache
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('**/bun.lockb', '**/bun.lock', '**/package.json') }}
@@ -77,7 +77,7 @@ jobs:
         run: bun run test:e2e:public
 
       - name: Upload public Playwright report
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: always()
         with:
           name: playwright-public-report-${{ github.run_id }}
@@ -96,7 +96,7 @@ jobs:
     timeout-minutes: 30
     env:
       VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY || secrets.VITE_SUPABASE_ANON_KEY }}
+      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
       VITE_SUPABASE_FUNCTIONS_BASE: /functions/v1
       E2E_USER_EMAIL: ${{ secrets.E2E_USER_EMAIL }}
       E2E_USER_PASSWORD: ${{ secrets.E2E_USER_PASSWORD }}
@@ -110,7 +110,7 @@ jobs:
       CI_BRANCH: ${{ github.ref_name }}
 
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
 
@@ -137,13 +137,13 @@ jobs:
           test "$VITE_SUPABASE_URL" = 'https://frjbfeamybqsejlvmqbl.supabase.co' || { echo '::error::Authenticated E2E target is not canonical'; exit 1; }
 
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version: latest
 
       # Cache dependências do Bun (~50% redução no install)
       - name: Cache Bun install
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ~/.bun/install/cache
           key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb', '**/bun.lock', '**/package.json') }}
@@ -156,7 +156,7 @@ jobs:
       # Cache dos binários do Chromium (~90% redução no download)
       - name: Cache Playwright browsers
         id: playwright-cache
-        uses: actions/cache@v6
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('**/bun.lockb', '**/bun.lock', '**/package.json') }}
@@ -176,7 +176,7 @@ jobs:
         run: bun run test:e2e
 
       - name: Upload Playwright report
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: always()
         with:
           name: playwright-report-${{ github.run_id }}
@@ -186,7 +186,7 @@ jobs:
           retention-days: 14
 
       - name: Upload traces on failure
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         if: failure()
         with:
           name: playwright-traces-${{ github.run_id }}
