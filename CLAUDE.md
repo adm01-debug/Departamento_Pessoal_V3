@@ -335,7 +335,7 @@ Gateway hardening com JWT validation, CSRF fail-closed, rate limiting, tenant is
 
 ### Médios
 | Gap | Impacto | Solução |
-|-----|---------|--------|
+|-----|---------|---------|
 | `bun.lock` — bun-version pinado | Risco de lockfile divergir resolvido em e2e.yml (sessão 4) | Cron sync-bun-lock cobre cenários restantes |
 | SonarCloud sem token | Análise estática não roda | PR #155 verde — configurar SONAR_TOKEN e mergear |
 | Usuários E2E inexistentes | E2E autenticado falha em produção | Criar admin@teste.local + user@teste.local em frjbfeamybqsejlvmqbl.supabase.co/auth |
