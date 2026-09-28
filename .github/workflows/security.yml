@@ -84,7 +84,7 @@ jobs:
 
       - name: Install dependencies
         if: steps.check.outputs.skip == 'false'
-        run: npm install --no-fund
+        run: npm install --ignore-scripts --no-fund
 
       - name: Run tests (coverage)
         if: steps.check.outputs.skip == 'false'
