@@ -1038,17 +1038,19 @@ export default function ColaboradorFormPage() {
                 </Card>
                 */
               )}
-              <Card className="border border-border/30 rounded-2xl overflow-hidden shadow-elevated">
-                <StepFooter
-                  activeIndex={activeIndex}
-                  isLastStep={isLastStep}
-                  isEditing={isEditing}
-                  isSubmitting={mutation.isPending}
-                  onVoltar={handleVoltarEtapa}
-                  onRascunho={handleSalvarRascunho}
-                  onProximo={handleProximaEtapa}
-                />
-              </Card>
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 5 * 0.15, duration: 0.5 }}>
+                <Card className="border border-border/30 rounded-2xl overflow-hidden shadow-elevated">
+                  <StepFooter
+                    activeIndex={activeIndex}
+                    isLastStep={isLastStep}
+                    isEditing={isEditing}
+                    isSubmitting={mutation.isPending}
+                    onVoltar={handleVoltarEtapa}
+                    onRascunho={handleSalvarRascunho}
+                    onProximo={handleProximaEtapa}
+                  />
+                </Card>
+              </motion.div>
             </motion.div>
           </TabsContent>
 
