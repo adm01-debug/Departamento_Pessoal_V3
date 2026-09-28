@@ -2,6 +2,7 @@ import { useGenericCrud } from './useGenericCrud';
 import { departamentoService } from '@/services/departamentoService';
 import { useEmpresas } from './useEmpresas';
 import { Departamento } from '@/types/entities';
+import { getMockDepartamentos } from '@/mocks/colaboradoresMock';
 
 interface UseDepartamentosOptions {
   /**
@@ -31,8 +32,15 @@ export function useDepartamentos(options: UseDepartamentosOptions = {}) {
     }
   });
 
+  // Empresa fictícia (VITE_COLABORADORES_MOCK): `departamentos` reais não
+  // existem no banco para o `empresa_id` fictício — sem isso, o select de
+  // Departamento do formulário de colaborador fica vazio no modo demo. Só
+  // entra quando a consulta real não trouxe nada, nunca esconde
+  // departamentos reais.
+  const mockDepartamentos = crud.items.length === 0 ? getMockDepartamentos(empresaId) : undefined;
+
   return {
     ...crud,
-    departamentos: crud.items,
+    departamentos: (mockDepartamentos as Departamento[] | undefined) ?? crud.items,
   };
 }

@@ -146,7 +146,10 @@ async function irParaAbaProfissional() {
 
 function preencherDadosProfissionais() {
   fireEvent.change(screen.getByLabelText('Data Admissão'), { target: { value: '2024-01-10' } });
-  fireEvent.change(screen.getByPlaceholderText('R$ 0,00'), { target: { value: '300000' } });
+  // Salário Base usa `CurrencyInput showPrefix` (aba Profissional redesenhada):
+  // "R$" vira um prefixo fixo fora do input, então o placeholder real do
+  // campo passou a ser só "0,00" (sem repetir o "R$" que já aparece ao lado).
+  fireEvent.change(screen.getByPlaceholderText('0,00'), { target: { value: '300000' } });
   fireEvent.change(screen.getByLabelText('Cargo'), { target: { value: 'Analista' } });
   fireEvent.change(screen.getByLabelText('Departamento'), { target: { value: 'TI' } });
 }

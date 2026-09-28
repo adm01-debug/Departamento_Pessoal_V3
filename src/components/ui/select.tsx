@@ -40,7 +40,7 @@ SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
 const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
->(({ className, children, position = 'popper', ...props }, ref) => {
+>(({ className, children, position = 'popper', sideOffset = 4, ...props }, ref) => {
   const prefersReducedMotion = useReducedMotion();
   return (
     <SelectPrimitive.Portal>
@@ -59,6 +59,14 @@ const SelectContent = React.forwardRef<
           className,
         )}
         position={position}
+        // `sideOffset = 4`: mesmo padrão já usado por `DropdownMenuContent`/
+        // `PopoverContent` (dropdown-menu.tsx/popover.tsx) — sem isso, o
+        // Radix Select usa o default interno (0px), colando o popup direto
+        // na borda do trigger. Visualmente isso lê como uma lista "grudada"
+        // no campo em vez de um cartão flutuante e elevado (sombra some
+        // encostada no trigger) — mesma animação de entrada/saída dos outros
+        // dois, mas sem o respiro que faz ela ser percebida.
+        sideOffset={sideOffset}
         {...props}
       >
         <SelectPrimitive.Viewport className="p-1">

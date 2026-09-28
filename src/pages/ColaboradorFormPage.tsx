@@ -23,7 +23,7 @@ import {
   User, MapPin, Landmark, Briefcase,
   FileText, Save, Loader2, Camera,
   IdCard, Phone, Users, Sparkles, Upload, ShieldCheck,
-  ArrowRight, ArrowLeft, X,
+  ArrowRight, ArrowLeft, X, Info, Link2, Building2, DollarSign,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -540,7 +540,16 @@ export default function ColaboradorFormPage() {
                             onChange={(e) => setValue('data_nascimento', e.target.value)}
                             error={errors.data_nascimento?.message}
                           />
-                          <FormField label="Matrícula Interna" {...register('matricula')} placeholder="Ex: 0001" />
+                          {/* Controlado (em vez de register) para ficar em sincronia com o
+                              campo espelho na aba "Profissional" (bloco Remuneração e
+                              Identificação) — mesma matrícula, exibida nas duas abas. */}
+                          <FormField
+                            label="Matrícula Interna"
+                            name="matricula"
+                            value={watch('matricula')}
+                            onChange={(e) => setValue('matricula', e.target.value)}
+                            placeholder="Ex: 0001"
+                          />
                         </div>
                       </motion.div>
 
@@ -659,97 +668,187 @@ export default function ColaboradorFormPage() {
           <TabsContent value="profissional">
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
               <Card className="border border-border/30 rounded-2xl overflow-hidden shadow-elevated">
-                <CardContent className="p-6 space-y-6">
-                  <div className="flex items-center gap-2.5">
-                    <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                      <Briefcase className="h-4.5 w-4.5 text-primary" />
+                <CardContent className="p-6 space-y-5">
+                  {/* Header principal — mantém o mesmo ícone/tratamento circular
+                      já usado no header da aba "Geral" (h-9 w-9 rounded-xl
+                      bg-primary/10). Aviso informativo à direita reaproveita o
+                      mesmo padrão do "showTip" da aba Geral (border-primary/20
+                      bg-primary/5), só que discreto e sempre visível. */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0 * 0.15, duration: 0.5 }}
+                    className="flex flex-col sm:flex-row sm:items-start justify-between gap-4"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                        <Briefcase className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <h2 className="font-display font-medium text-base leading-tight">Dados Profissionais</h2>
+                        <p className="text-sm text-muted-foreground leading-tight">Informações sobre o vínculo, estrutura organizacional e remuneração do colaborador.</p>
+                      </div>
                     </div>
-                    <div>
-                      <h2 className="font-display font-medium text-base leading-tight">Dados Profissionais</h2>
-                      <p className="text-sm text-muted-foreground leading-tight">Cargo, departamento e remuneração</p>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <FormField
-                      label="Data Admissão"
-                      type="date"
-                      name="data_admissao"
-                      value={watch('data_admissao')}
-                      onChange={(e) => setValue('data_admissao', e.target.value)}
-                      error={errors.data_admissao?.message}
-                    />
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium leading-none">Salário Base</label>
-                      <CurrencyInput value={watch('salario_base')} onChange={(v) => setValue('salario_base', v)} />
-                      {errors.salario_base && <p className="text-xs text-destructive">{errors.salario_base.message}</p>}
-                    </div>
-                    <FormSelect
-                      label="Tipo de Contrato"
-                      value={watch('tipo_contrato')}
-                      options={[
-                        { value: 'clt', label: 'CLT (Efetivo)' }, { value: 'pj', label: 'PJ (Prestador)' },
-                        { value: 'estagiario', label: 'Estágio' }, { value: 'temporario', label: 'Temporário' },
-                        { value: 'intermitente', label: 'Intermitente' }, { value: 'aprendiz', label: 'Aprendiz' },
-                      ]}
-                      onChange={(v) => setValue('tipo_contrato', v as any)}
-                    />
-                  </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormSelect
-                      label="Cargo"
-                      value={watch('cargo')}
-                      options={cargos.map(c => ({ value: c.nome, label: c.nome }))}
-                      onChange={(v) => {
-                        setValue('cargo', v);
-                        setValue('cargo_id', cargos.find(c => c.nome === v)?.id);
-                      }}
-                      error={errors.cargo?.message}
-                    />
-                    <FormSelect 
-                      label="Departamento" 
-                      value={watch('departamento')}
-                      options={departamentos.map(d => ({ value: d.nome, label: d.nome }))}
-                      onChange={(v) => setValue('departamento', v)}
-                      error={errors.departamento?.message}
-                    />
-                  </div>
+                    <div className="flex items-start gap-2 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 sm:w-[30%] shrink-0">
+                      <Info className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+                      <p className="text-[11px] text-muted-foreground leading-snug">
+                        Mantenha as informações profissionais sempre atualizadas para garantir uma gestão precisa e em conformidade.
+                      </p>
+                    </div>
+                  </motion.div>
 
-                  <div className="pt-4 border-t border-border/20">
-                    <FormSelect
-                      label="Status Atual"
-                      value={watch('status')}
-                      options={[
-                        // Reativar um colaborador desligado por aqui apagaria o
-                        // histórico de vínculos (sobrescreve data_admissao no
-                        // mesmo registro). Trava a transição desligado→ativo
-                        // neste form — o fluxo correto é "Recontratar
-                        // Colaborador" no Dossiê (cria vínculo novo, preserva
-                        // o anterior). Ver colaboradorService.recontratar.
-                        { value: 'ativo', label: 'Ativo', disabled: isEditing && colaborador?.status === 'desligado' },
-                        { value: 'pendente', label: 'Pendente' },
-                        { value: 'desligado', label: 'Desligado' },
-                        { value: 'ferias', label: 'Em Férias' },
-                        { value: 'afastado', label: 'Afastado' },
-                      ]}
-                      onChange={(v) => setValue('status', v as any)}
-                      description={
-                        isEditing && colaborador?.status === 'desligado'
-                          ? 'Para reativar este colaborador, use "Recontratar Colaborador" no Dossiê — isso preserva o histórico de vínculos.'
-                          : undefined
-                      }
-                    />
-                  </div>
+                  {/* Bloco 1 — Vínculo */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1 * 0.15, duration: 0.5 }}
+                    className="space-y-3"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <Link2 className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-medium leading-tight">Vínculo</h3>
+                        <p className="text-xs text-muted-foreground leading-tight">Dados sobre o tipo de contratação e status atual do colaborador.</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <FormField
+                        label="Data Admissão"
+                        type="date"
+                        name="data_admissao"
+                        value={watch('data_admissao')}
+                        onChange={(e) => setValue('data_admissao', e.target.value)}
+                        error={errors.data_admissao?.message}
+                      />
+                      <FormSelect
+                        label="Tipo de Contrato"
+                        value={watch('tipo_contrato')}
+                        options={[
+                          { value: 'clt', label: 'CLT (Efetivo)' }, { value: 'pj', label: 'PJ (Prestador)' },
+                          { value: 'estagiario', label: 'Estágio' }, { value: 'temporario', label: 'Temporário' },
+                          { value: 'intermitente', label: 'Intermitente' }, { value: 'aprendiz', label: 'Aprendiz' },
+                        ]}
+                        onChange={(v) => setValue('tipo_contrato', v as any)}
+                      />
+                      <FormSelect
+                        label="Status Atual"
+                        value={watch('status')}
+                        options={[
+                          // Reativar um colaborador desligado por aqui apagaria o
+                          // histórico de vínculos (sobrescreve data_admissao no
+                          // mesmo registro). Trava a transição desligado→ativo
+                          // neste form — o fluxo correto é "Recontratar
+                          // Colaborador" no Dossiê (cria vínculo novo, preserva
+                          // o anterior). Ver colaboradorService.recontratar.
+                          { value: 'ativo', label: 'Ativo', disabled: isEditing && colaborador?.status === 'desligado' },
+                          { value: 'pendente', label: 'Pendente' },
+                          { value: 'desligado', label: 'Desligado' },
+                          { value: 'ferias', label: 'Em Férias' },
+                          { value: 'afastado', label: 'Afastado' },
+                        ]}
+                        onChange={(v) => setValue('status', v as any)}
+                        description={
+                          isEditing && colaborador?.status === 'desligado'
+                            ? 'Para reativar este colaborador, use "Recontratar Colaborador" no Dossiê — isso preserva o histórico de vínculos.'
+                            : undefined
+                        }
+                      />
+                    </div>
+                  </motion.div>
+
+                  {/* Bloco 2 — Estrutura Interna */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 2 * 0.15, duration: 0.5 }}
+                    className="space-y-3 pt-4 border-t border-border/20"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <Building2 className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-medium leading-tight">Estrutura Interna</h3>
+                        <p className="text-xs text-muted-foreground leading-tight">Cargo e departamento onde o colaborador está alocado.</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormSelect
+                        label="Cargo"
+                        value={watch('cargo')}
+                        options={cargos.map(c => ({ value: c.nome, label: c.nome }))}
+                        onChange={(v) => {
+                          setValue('cargo', v);
+                          setValue('cargo_id', cargos.find(c => c.nome === v)?.id);
+                        }}
+                        error={errors.cargo?.message}
+                        // Fica no meio do card: sem isso, o Radix detecta
+                        // pouco espaço abaixo do trigger em viewports mais
+                        // curtas e abre o menu pra cima, cobrindo o cabeçalho
+                        // da página (breadcrumbs/busca) em vez do próprio
+                        // formulário.
+                        avoidCollisions={false}
+                      />
+                      <FormSelect
+                        label="Departamento"
+                        value={watch('departamento')}
+                        options={departamentos.map(d => ({ value: d.nome, label: d.nome }))}
+                        onChange={(v) => setValue('departamento', v)}
+                        error={errors.departamento?.message}
+                        avoidCollisions={false}
+                      />
+                    </div>
+                  </motion.div>
+
+                  {/* Bloco 3 — Remuneração e Identificação. Matrícula Interna é a
+                      mesma `matricula` do form (controlada via watch/setValue),
+                      espelhada aqui e na aba "Geral" para bater com a referência
+                      visual sem duplicar dado. */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 3 * 0.15, duration: 0.5 }}
+                    className="space-y-3 pt-4 border-t border-border/20"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <DollarSign className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-medium leading-tight">Remuneração e Identificação</h3>
+                        <p className="text-xs text-muted-foreground leading-tight">Informações salariais e identificadores internos da empresa.</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium leading-none">Salário Base</label>
+                        <CurrencyInput value={watch('salario_base')} onChange={(v) => setValue('salario_base', v)} showPrefix />
+                        {errors.salario_base && <p className="text-xs text-destructive">{errors.salario_base.message}</p>}
+                      </div>
+                      <FormField
+                        label="Matrícula Interna"
+                        name="matricula"
+                        value={watch('matricula')}
+                        onChange={(e) => setValue('matricula', e.target.value)}
+                        placeholder="Ex: 0001"
+                      />
+                    </div>
+                  </motion.div>
                 </CardContent>
-                <StepFooter
-                  activeIndex={activeIndex}
-                  isLastStep={isLastStep}
-                  isEditing={isEditing}
-                  isSubmitting={mutation.isPending}
-                  onVoltar={handleVoltarEtapa}
-                  onRascunho={handleSalvarRascunho}
-                  onProximo={handleProximaEtapa}
-                />
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 4 * 0.15, duration: 0.5 }}>
+                  <StepFooter
+                    activeIndex={activeIndex}
+                    isLastStep={isLastStep}
+                    isEditing={isEditing}
+                    isSubmitting={mutation.isPending}
+                    onVoltar={handleVoltarEtapa}
+                    onRascunho={handleSalvarRascunho}
+                    onProximo={handleProximaEtapa}
+                  />
+                </motion.div>
               </Card>
             </motion.div>
           </TabsContent>

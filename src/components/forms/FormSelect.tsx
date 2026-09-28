@@ -20,9 +20,17 @@ interface FormSelectProps {
   disabled?: boolean;
   className?: string;
   required?: boolean;
+  /**
+   * Por padrão (`undefined`, comportamento nativo do Radix) o menu pode
+   * abrir pra cima quando falta espaço abaixo do trigger. Passe `false`
+   * quando o campo precisa abrir sempre pra baixo mesmo perto do fim da
+   * viewport (ex.: campo no meio de um card longo, onde abrir pra cima
+   * cobriria o cabeçalho da página).
+   */
+  avoidCollisions?: boolean;
 }
 
-export function FormSelect({ label, error, description, placeholder = 'Selecione...', options, value, onChange, disabled, className, required }: FormSelectProps) {
+export function FormSelect({ label, error, description, placeholder = 'Selecione...', options, value, onChange, disabled, className, required, avoidCollisions }: FormSelectProps) {
   return (
     <div className="space-y-2">
       {label && (
@@ -35,7 +43,7 @@ export function FormSelect({ label, error, description, placeholder = 'Selecione
         <SelectTrigger className={cn(error && 'border-destructive', className)}>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent avoidCollisions={avoidCollisions}>
           {options.map((opt) => (
             <SelectItem key={opt.value} value={opt.value} disabled={opt.disabled}>{opt.label}</SelectItem>
           ))}

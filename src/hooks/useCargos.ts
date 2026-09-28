@@ -2,6 +2,7 @@ import { useGenericCrud } from './useGenericCrud';
 import { cargoService } from '@/services/cargoService';
 import { useEmpresas } from './useEmpresas';
 import { Cargo } from '@/types/entities';
+import { getMockCargos } from '@/mocks/colaboradoresMock';
 
 interface UseCargosOptions {
   /**
@@ -31,9 +32,15 @@ export function useCargos(options: UseCargosOptions = {}) {
     }
   });
 
+  // Empresa fictícia (VITE_COLABORADORES_MOCK): `cargos` reais não existem no
+  // banco para o `empresa_id` fictício — sem isso, o select de Cargo do
+  // formulário de colaborador fica vazio no modo demo. Só entra quando a
+  // consulta real não trouxe nada, nunca esconde cargos reais.
+  const mockCargos = crud.items.length === 0 ? getMockCargos(empresaId) : undefined;
+
   return {
     ...crud,
-    cargos: crud.items,
+    cargos: (mockCargos as Cargo[] | undefined) ?? crud.items,
     criar: (data: any) => crud.criar({ ...data, empresa_id: empresaId }),
   };
 }

@@ -408,6 +408,52 @@ export const MOCK_PLANOS_BENEFICIO: MockRecord[] = [
   { id: 'mock-plano-4', nome: 'Seguro de Vida', tipo: 'vida', valor: 45 },
 ];
 
+// Cargos/Departamentos da MOCK_EMPRESA — `cargoService`/`departamentoService`
+// não estão no escopo documentado no topo (consultam a tabela real via
+// BaseService), então sem isso os selects de "Cargo"/"Departamento" do
+// formulário de colaborador ficam vazios no modo demo (nenhum registro real
+// existe para o `empresa_id` fictício). Nomes espelham os já usados em
+// `cargo`/`departamento` de MOCK_COLABORADORES, para bater com o valor
+// selecionado ao editar um colaborador fictício. Consumido por
+// useCargos.ts/useDepartamentos.ts via isMockEmpresaId(), nunca esconde
+// cargos/departamentos reais de uma empresa de verdade.
+export const MOCK_CARGOS: MockRecord[] = [
+  { id: 'mock-cargo-analista-rh', nome: 'Analista de RH', empresa_id: MOCK_EMPRESA.id },
+  { id: 'mock-cargo-gerente-rh', nome: 'Gerente de RH', empresa_id: MOCK_EMPRESA.id },
+  { id: 'mock-cargo-dev-frontend', nome: 'Desenvolvedor Frontend', empresa_id: MOCK_EMPRESA.id },
+  { id: 'mock-cargo-dev-backend', nome: 'Desenvolvedor Backend', empresa_id: MOCK_EMPRESA.id },
+  { id: 'mock-cargo-coord-financeira', nome: 'Coordenadora Financeira', empresa_id: MOCK_EMPRESA.id },
+  { id: 'mock-cargo-analista-fiscal', nome: 'Analista Fiscal', empresa_id: MOCK_EMPRESA.id },
+  { id: 'mock-cargo-vendedor-externo', nome: 'Vendedor Externo', empresa_id: MOCK_EMPRESA.id },
+  { id: 'mock-cargo-supervisor-comercial', nome: 'Supervisor Comercial', empresa_id: MOCK_EMPRESA.id },
+  { id: 'mock-cargo-assistente-adm', nome: 'Assistente Administrativo', empresa_id: MOCK_EMPRESA.id },
+  { id: 'mock-cargo-recepcionista', nome: 'Recepcionista', empresa_id: MOCK_EMPRESA.id },
+  { id: 'mock-cargo-designer-grafico', nome: 'Designer Gráfico', empresa_id: MOCK_EMPRESA.id },
+  { id: 'mock-cargo-gerente-produto', nome: 'Gerente de Produto', empresa_id: MOCK_EMPRESA.id },
+  { id: 'mock-cargo-estoquista', nome: 'Estoquista', empresa_id: MOCK_EMPRESA.id },
+];
+
+export const MOCK_DEPARTAMENTOS: MockRecord[] = [
+  { id: 'mock-depto-rh', nome: 'Recursos Humanos', empresa_id: MOCK_EMPRESA.id },
+  { id: 'mock-depto-tecnologia', nome: 'Tecnologia', empresa_id: MOCK_EMPRESA.id },
+  { id: 'mock-depto-produto', nome: 'Produto', empresa_id: MOCK_EMPRESA.id },
+  { id: 'mock-depto-financeiro', nome: 'Financeiro', empresa_id: MOCK_EMPRESA.id },
+  { id: 'mock-depto-comercial', nome: 'Comercial', empresa_id: MOCK_EMPRESA.id },
+  { id: 'mock-depto-administrativo', nome: 'Administrativo', empresa_id: MOCK_EMPRESA.id },
+  { id: 'mock-depto-marketing', nome: 'Marketing', empresa_id: MOCK_EMPRESA.id },
+  { id: 'mock-depto-logistica', nome: 'Logística', empresa_id: MOCK_EMPRESA.id },
+];
+
+export function getMockCargos(empresaId?: string): MockRecord[] | undefined {
+  if (!isMockEmpresaId(empresaId)) return undefined;
+  return mockOr(MOCK_CARGOS);
+}
+
+export function getMockDepartamentos(empresaId?: string): MockRecord[] | undefined {
+  if (!isMockEmpresaId(empresaId)) return undefined;
+  return mockOr(MOCK_DEPARTAMENTOS);
+}
+
 // ============================================================================
 // Geradores adicionais — cobrem as sub-abas do dossiê que ainda não tinham
 // mock (Férias, Holerites, Afastamentos, Compliance, Desenvolvimento,
