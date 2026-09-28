@@ -964,8 +964,10 @@ export default function ColaboradorDetalhesPage() {
                 <ResumoRemuneracaoCard colaboradorId={id!} colaborador={colaborador} />
               </div>
 
-              {/* Linha 3 — Benefícios + Holerites recentes lado a lado. */}
-              <div className="grid grid-cols-1 lg:grid-cols-[1.45fr_1fr] gap-3 items-start">
+              {/* Linha 3 — Benefícios + Holerites recentes lado a lado (mesma
+                  altura: Holerites recentes se estica para acompanhar o card
+                  de Benefícios, que dita a altura da fileira). */}
+              <div className="grid grid-cols-1 lg:grid-cols-[1.45fr_1fr] gap-3 items-stretch">
                 <BeneficiosTab colaboradorId={id!} />
                 <HoleritesPreviewCard colaboradorId={id!} onVerTodos={() => setHoleritesDialogOpen(true)} />
               </div>

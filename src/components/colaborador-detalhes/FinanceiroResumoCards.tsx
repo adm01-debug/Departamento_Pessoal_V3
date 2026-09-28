@@ -285,8 +285,8 @@ export function HoleritesPreviewCard({ colaboradorId, onVerTodos }: { colaborado
   const recentes = holerites.slice(0, 6);
 
   return (
-    <MotionCard custom={6} initial="hidden" animate="visible" variants={cardVariants} className="border border-border/30 rounded-2xl shadow-elevated">
-      <CardContent className="p-3 flex flex-col">
+    <MotionCard custom={6} initial="hidden" animate="visible" variants={cardVariants} className="border border-border/30 rounded-2xl shadow-elevated h-full">
+      <CardContent className="p-3 flex flex-col h-full">
         <div className="flex items-center justify-between gap-2 mb-1.5">
           <div className="flex items-center gap-2 font-display font-medium text-sm">
             <DollarSign className="h-5 w-5 text-primary" /> Holerites recentes
@@ -302,11 +302,11 @@ export function HoleritesPreviewCard({ colaboradorId, onVerTodos }: { colaborado
           )}
         </div>
         {isLoading ? (
-          <div className="flex items-center justify-center py-4"><Spinner /></div>
+          <div className="flex-1 flex items-center justify-center py-4"><Spinner /></div>
         ) : !recentes.length ? (
           <p className="text-sm text-muted-foreground">Nenhum holerite encontrado.</p>
         ) : (
-          <div className="max-h-[240px] -mx-1 overflow-x-auto overflow-y-scroll">
+          <div className="flex-1 min-h-0 -mx-1 overflow-x-auto overflow-y-scroll">
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-transparent">

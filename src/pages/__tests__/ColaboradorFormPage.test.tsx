@@ -133,6 +133,11 @@ function preencherDadosGerais() {
   fireEvent.change(screen.getByPlaceholderText('000.000.000-00'), { target: { value: '12345678900' } });
   fireEvent.change(screen.getByLabelText('Data Nascimento'), { target: { value: '1990-05-20' } });
   fireEvent.change(screen.getByLabelText('Nome da Mãe'), { target: { value: 'Mãe da Ana' } });
+  // E-mail e Celular passaram a ser obrigatórios — sem preenchê-los aqui, o
+  // submit é bloqueado pela validação antes de chegar em `onSubmit`.
+  fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'ana.teste@empresa.com' } });
+  const [, celularInputPadrao] = screen.getAllByPlaceholderText('(00) 00000-0000');
+  fireEvent.change(celularInputPadrao, { target: { value: '11988887777' } });
 }
 
 async function irParaAbaProfissional() {
@@ -156,9 +161,9 @@ const COLABORADOR_EXISTENTE = {
   id: 'colab-1',
   nome_completo: 'Maria Existente',
   cpf: '98765432100',
-  email: '',
+  email: 'maria@empresa.com',
   telefone: '',
-  celular: '',
+  celular: '11999998888',
   data_nascimento: '1985-03-15',
   sexo: 'feminino',
   estado_civil: 'casado',
@@ -286,6 +291,8 @@ describe('schema — enums alinhados ao banco (Parte 3A)', () => {
   const base = {
     nome_completo: 'Ana Teste',
     cpf: '12345678900',
+    email: 'ana@empresa.com',
+    celular: '11988887777',
     data_nascimento: '1990-01-01',
     nome_mae: 'Mãe Teste',
     data_admissao: '2020-01-01',

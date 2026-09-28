@@ -19,12 +19,18 @@ interface FormSelectProps {
   onChange?: (value: string) => void;
   disabled?: boolean;
   className?: string;
+  required?: boolean;
 }
 
-export function FormSelect({ label, error, description, placeholder = 'Selecione...', options, value, onChange, disabled, className }: FormSelectProps) {
+export function FormSelect({ label, error, description, placeholder = 'Selecione...', options, value, onChange, disabled, className, required }: FormSelectProps) {
   return (
     <div className="space-y-2">
-      {label && <Label className={cn(error && 'text-destructive')}>{label}</Label>}
+      {label && (
+        <div className="flex items-center gap-0.5">
+          <Label className={cn(error && 'text-destructive')}>{label}</Label>
+          {required && <span className="text-destructive text-sm leading-none" aria-hidden="true">*</span>}
+        </div>
+      )}
       <Select value={value} onValueChange={onChange} disabled={disabled}>
         <SelectTrigger className={cn(error && 'border-destructive', className)}>
           <SelectValue placeholder={placeholder} />
