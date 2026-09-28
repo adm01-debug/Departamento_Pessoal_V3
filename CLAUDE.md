@@ -216,6 +216,29 @@ POST-only gateway (32KB file, 729 lines)
 └── E96 — scripts/tests/workflows-contract.test.mjs: 5 contratos em todos os workflows
 ```
 
+### Sessão 3 — 28/09/2026 (Claude Sonnet 4.6)
+**Branch:** `claude/chore-e03-e48-260928` | **PR:** #153
+
+#### O que foi feito:
+```
+🔒 E03 — Branch protection em main ativada via API
+│   required_pull_request_reviews (count=0, sem aprovação obrigatória)
+│   allow_force_pushes=false, allow_deletions=false
+│   required_conversation_resolution=true
+│   ⚠️  enforce_admins=false (CI/CD não bloqueado)
+
+🔑 E48 — Secrets E2E atualizados para credenciais conhecidas
+│   E2E_USER_EMAIL=admin@teste.local
+│   E2E_USER_PASSWORD=Admin@2026!
+│   E2E_NON_ADMIN_EMAIL=user@teste.local
+│   E2E_NON_ADMIN_PASSWORD=User@2026!
+│   (coincidem com os fallbacks de auth.setup.ts / auth-non-admin.setup.ts)
+│   ⚠️  Usuários devem existir em frjbfeamybqsejlvmqbl.supabase.co Auth
+│       — verificar na dashboard Supabase se E2E ainda falhar
+
+✅ E66 — Confirmado já completo na Sessão 2 (recon da sessão 3 confirmou SHA-pinning)
+```
+
 ---
 
 ## ✅ Estado Atual
@@ -230,12 +253,13 @@ Healthcheck (healthcheck.yml) → timeout 5min adicionado ✅
 Canônicos (×3)           → timeout adicionado, environment: production ✅
 Dependabot               → npm+docker+github-actions semanal; TS≥6.1 ignorado ✅
 Branch ruleset           → 7 required checks, baseline em infra/github/ ✅
+Branch protection (main) → PRs obrigatórias, force-push bloqueado ✅
 ```
 
-### Métricas (27/09/2026)
+### Métricas (28/09/2026)
 | Indicador | Valor |
 |-----------|-------|
-| Open PRs | #145 draft (auditoria workflows) |
+| Open PRs | 7 dependabot |
 | TypeScript strict | ✅ strict: true + noImplicitAny (0 erros no src) |
 | Testes com tipo | ⚠️ 232 erros latentes em `__tests__` (excluídos do tsconfig) |
 | Cobertura | ✅ v8 configurada |
@@ -243,8 +267,9 @@ Branch ruleset           → 7 required checks, baseline em infra/github/ ✅
 | Branch delete | ✅ delete_branch_on_merge=true |
 | Ruleset | ✅ 21934736 — 7 required checks — baseline em infra/github/ |
 | Workflows com timeout | ✅ 100% (12 jobs adicionados na sessão 2) |
-| supply chain | ⚠️ actions ainda com tag (não SHA) — E66 pendente |
-| Branch protection | ❌ Não ativo (Settings manual) |
+| supply chain (SHA-pin) | ✅ Todas as actions fixadas por SHA (E66 — sessão 2) |
+| Branch protection | ✅ Ativo via API (sessão 3) — PRs obrigatórias |
+| E2E secrets | ✅ Rotacionados (sessão 3) — aguardando validação em main |
 
 ---
 
