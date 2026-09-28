@@ -1,7 +1,7 @@
 # AI Context — Departamento Pessoal v3
 
 > Documentação para agentes de IA (Hermes, Claude Code, Cursor, Copilot, etc)
-> Última atualização: 27/09/2026
+> Última atualização: 28/09/2026
 > Mantenedor: Hermes Agent (AtomicaBR Ops/Dev)
 
 > ⚠️ **Correções de auditoria (23/07/2026)** — revisão do batch anterior:
@@ -239,6 +239,34 @@ POST-only gateway (32KB file, 729 lines)
 ✅ E66 — Confirmado já completo na Sessão 2 (recon da sessão 3 confirmou SHA-pinning)
 ```
 
+### Sessão 4 — 28/09/2026 (Claude Sonnet 4.6)
+**Branches:** `claude/fix-e2e-bun-lockfile-260928` (PR #154, merged) · `claude/feat-sonarcloud-260928-0045` (PR #155, CI verde, aguardando merge) · `claude/great-rubin-c50zcx` (este arquivo)
+
+#### O que foi feito:
+```
+🔧 MELHORIA 2 — bun lockfile + patch segurança (PR #154 → merged SHA 50e29626)
+├── e2e.yml: bun-version: latest → 1.3.14 (nos 2 jobs playwright)
+│   Causa raiz: Bun v1.4.2 (latest) escrevia lockfileVersion:3;
+│   Bun 1.3.14 não consegue ler → "Unknown lockfile version" em CI
+├── bun.lock regenerado com Bun 1.3.14 (lockfileVersion:1)
+└── @testing-library/dom 10.4.1 → 10.4.2 (Dependabot PR #147, patch de segurança)
+
+🔒 MELHORIA 3 — SonarCloud análise estática (PR #155 — CI verde, aguardando merge)
+├── sonar-project.properties criado
+│   key=adm01-debug_Departamento_Pessoal_V3, org=adm01-debug
+│   exclui arquivos de teste; lcov.info como coverage report
+├── security.yml: job `sonarcloud` adicionado após CodeQL
+│   skip gracioso sem SONAR_TOKEN (::notice:: + exit 0 — CI nunca quebra)
+│   SHA-pinado: SonarSource/sonarqube-scan-action@ba9859... (v8.2.2)
+│   Para ativar: criar projeto sonarcloud.io (org adm01-debug) + SONAR_TOKEN como repo secret
+└── CI verificado: 100% verde — 7 required checks + E2E + Security + Deploy ✅
+
+⛔ MELHORIA 1 — BLOQUEADA (ação manual obrigatória)
+│   Criar usuários E2E em frjbfeamybqsejlvmqbl.supabase.co Auth:
+│   admin@teste.local / Admin@2026! · user@teste.local / User@2026!
+└── MCP Departamento Pessoal somente leitura — sem supabase_auth_create_user
+```
+
 ---
 
 ## ✅ Estado Atual
@@ -248,7 +276,8 @@ POST-only gateway (32KB file, 729 lines)
 CI (ci.yml)              → 7 jobs, todos com timeout, trigger master removido ✅
 Security (security.yml)  → CodeQL ativo, permissions top-level adicionado ✅
 Deploy (deploy.yml)      → Vercel (integração Git), permissions adicionado ✅
-E2E (e2e.yml)            → CI_BRANCH injetado, retries calibrados ✅
+E2E (e2e.yml)            → CI_BRANCH injetado, retries calibrados, bun-version: 1.3.14 fixado ✅
+SonarCloud (security.yml)→ ⏳ PR #155 verde — aguarda SONAR_TOKEN + merge
 Healthcheck (healthcheck.yml) → timeout 5min adicionado ✅
 Canônicos (×3)           → timeout adicionado, environment: production ✅
 Dependabot               → npm+docker+github-actions semanal; TS≥6.1 ignorado ✅
@@ -259,7 +288,7 @@ Branch protection (main) → PRs obrigatórias, force-push bloqueado ✅
 ### Métricas (28/09/2026)
 | Indicador | Valor |
 |-----------|-------|
-| Open PRs | 7 dependabot |
+| Open PRs | 7 dependabot + PR #155 (SonarCloud, CI verde) |
 | TypeScript strict | ✅ strict: true + noImplicitAny (0 erros no src) |
 | Testes com tipo | ⚠️ 232 erros latentes em `__tests__` (excluídos do tsconfig) |
 | Cobertura | ✅ v8 configurada |
@@ -269,7 +298,8 @@ Branch protection (main) → PRs obrigatórias, force-push bloqueado ✅
 | Workflows com timeout | ✅ 100% (12 jobs adicionados na sessão 2) |
 | supply chain (SHA-pin) | ✅ Todas as actions fixadas por SHA (E66 — sessão 2) |
 | Branch protection | ✅ Ativo via API (sessão 3) — PRs obrigatórias |
-| E2E secrets | ✅ Rotacionados (sessão 3) — aguardando validação em main |
+| E2E secrets | ✅ Rotacionados (sessão 3) — ⚠️ usuários E2E ainda não criados em frjbfeamybqsejlvmqbl |
+| bun-version | ✅ Fixado em 1.3.14 no e2e.yml (sessão 4) — lockfile estável |
 
 ---
 
@@ -306,8 +336,9 @@ Gateway hardening com JWT validation, CSRF fail-closed, rate limiting, tenant is
 ### Médios
 | Gap | Impacto | Solução |
 |-----|---------|---------|
-| `bun.lock` precisa sync manual | Lockfile desatualizado após bumps | Cron sync-bun-lock já roda (30min) |
-| SonarCloud sem token | Análise estática não roda | Adicionar SONAR_TOKEN nas secrets |
+| `bun.lock` — bun-version pinado | Risco de lockfile divergir resolvido em e2e.yml (sessão 4) | Cron sync-bun-lock cobre cenários restantes |
+| SonarCloud sem token | Análise estática não roda | PR #155 verde — configurar SONAR_TOKEN e mergear |
+| Usuários E2E inexistentes | E2E autenticado falha em produção | Criar admin@teste.local + user@teste.local em frjbfeamybqsejlvmqbl.supabase.co/auth |
 | Deploy Netlify sem secrets | Preview não deploya | Adicionar NETLIFY_AUTH_TOKEN + SITE_ID |
 
 ### Baixos
