@@ -143,7 +143,7 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "6.1.1",
     "@vitejs/plugin-react-swc": "^4.3.3",
-    "@vitest/coverage-v8": "4.1.11",
+    "@vitest/coverage-v8": "5.0.1",
     "autoprefixer": "^10.6.1",
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^10.10.0",
