@@ -464,9 +464,13 @@ describe('normalizarPayloadColaborador (Parte 3B — "" -> null)', () => {
     pix_chave: '',
     rg: '',
     rg_orgao_emissor: '',
+    rg_uf: '',
+    rg_data_emissao: '',
+    rg_data_validade: '',
     pis_pasep: '',
     ctps_numero: '',
     ctps_serie: '',
+    ctps_uf: '',
   };
 
   it.each(NULLABLE_TEXT_FIELDS)('converte "%s" vazio para null', (field) => {
@@ -493,9 +497,11 @@ describe('normalizarPayloadColaborador (Parte 3B — "" -> null)', () => {
     const payload = normalizarPayloadColaborador(dataCompleta);
     expect(payload.rg).toBe('');
     expect(payload.rg_orgao_emissor).toBe('');
+    expect(payload.rg_uf).toBe('');
     expect(payload.pis_pasep).toBe('');
     expect(payload.ctps_numero).toBe('');
     expect(payload.ctps_serie).toBe('');
+    expect(payload.ctps_uf).toBe('');
   });
 
   it('não altera CPF', () => {

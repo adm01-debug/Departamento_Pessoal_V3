@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ComponentProps } from 'react';
 import { PageLayout } from '@/components/layout';
 import { FormField, FormSelect } from '@/components/forms';
 import { CPFInput } from '@/components/ui/cpf-input';
@@ -15,8 +15,24 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { FlowHoverButton } from '@/components/ui/flow-hover-button';
 import { Spinner } from '@/components/ui/spinner';
 import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
+// Mesmo mecanismo de highlight deslizante (spring físico via
+// getBoundingClientRect, `mode="parent"`) já usado na tablist master do
+// Dossiê (`AnimatedDossieTabs.tsx`/`ColaboradorDetalhesPage`) — aqui aplicado
+// direto (sem componente wrapper à parte) porque o conteúdo de cada trigger
+// do stepper (círculo numerado + label + sublabel + underline) é específico
+// deste formulário, sem equivalente reutilizável. Contexto de tabs 100%
+// isolado do `Tabs`/`TabsContent` do Radix logo abaixo — sincronizado só via
+// o mesmo par `activeTab`/`setActiveTab`, exatamente como no Dossiê.
+import {
+  Tabs as StepperTabs,
+  TabsList as StepperTabsList,
+  TabsTrigger as StepperTabsTrigger,
+  TabsHighlight as StepperTabsHighlight,
+  TabsHighlightItem as StepperTabsHighlightItem,
+} from '@/components/animate-ui/primitives/animate/tabs';
 import { colaboradorService } from '@/services';
 import { useNotification } from '@/contexts';
 import {
@@ -45,6 +61,21 @@ function WhatsAppIcon({ className }: { className?: string }) {
     </svg>
   );
 }
+
+// Opções de UF para os selects de "UF de emissão" (RG) e "CTPS UF" — não há
+// hoje nenhuma lista de UFs compartilhada no projeto (o campo "UF" do
+// endereço, mais abaixo, é texto livre); mantida local a este form.
+const UFS_BRASIL = [
+  { value: 'AC', label: 'Acre' }, { value: 'AL', label: 'Alagoas' }, { value: 'AP', label: 'Amapá' },
+  { value: 'AM', label: 'Amazonas' }, { value: 'BA', label: 'Bahia' }, { value: 'CE', label: 'Ceará' },
+  { value: 'DF', label: 'Distrito Federal' }, { value: 'ES', label: 'Espírito Santo' }, { value: 'GO', label: 'Goiás' },
+  { value: 'MA', label: 'Maranhão' }, { value: 'MT', label: 'Mato Grosso' }, { value: 'MS', label: 'Mato Grosso do Sul' },
+  { value: 'MG', label: 'Minas Gerais' }, { value: 'PA', label: 'Pará' }, { value: 'PB', label: 'Paraíba' },
+  { value: 'PR', label: 'Paraná' }, { value: 'PE', label: 'Pernambuco' }, { value: 'PI', label: 'Piauí' },
+  { value: 'RJ', label: 'Rio de Janeiro' }, { value: 'RN', label: 'Rio Grande do Norte' }, { value: 'RS', label: 'Rio Grande do Sul' },
+  { value: 'RO', label: 'Rondônia' }, { value: 'RR', label: 'Roraima' }, { value: 'SC', label: 'Santa Catarina' },
+  { value: 'SP', label: 'São Paulo' }, { value: 'SE', label: 'Sergipe' }, { value: 'TO', label: 'Tocantins' },
+];
 
 // Exportado apenas para testes (validação direta dos enums corrigidos na
 // Parte 3A) — continua sendo o único schema efetivamente usado pelo formulário.
@@ -104,9 +135,13 @@ export const schema = z.object({
   // Documentos
   rg: z.string().optional(),
   rg_orgao_emissor: z.string().optional(),
+  rg_uf: z.string().optional(),
+  rg_data_emissao: z.string().optional(),
+  rg_data_validade: z.string().optional(),
   pis_pasep: z.string().optional(),
   ctps_numero: z.string().optional(),
-  ctps_serie: z.string().optional()});
+  ctps_serie: z.string().optional(),
+  ctps_uf: z.string().optional()});
 
 type FormData = z.infer<typeof schema>;
 type FormInput = z.input<typeof schema>;
@@ -115,13 +150,18 @@ type FormInput = z.input<typeof schema>;
 // em src/integrations/supabase/types.ts — todas `?: string | null` nos tipos
 // Insert/Update). Strings vazias digitadas nesses campos viram `null` antes
 // de enviar ao service, em vez de gravar "" no banco. Não inclui campos
-// obrigatórios, enums, números, datas, CPF, dados bancários ou documentos —
+// obrigatórios, enums, números, CPF, dados bancários ou demais documentos —
 // esses não são tocados nesta normalização.
+// Exceção: `rg_data_emissao`/`rg_data_validade` são colunas `date` (não
+// TEXT), mas entram aqui porque o botão "Limpar" do DatePicker
+// (`date-picker.tsx`) chama `onChange('')` — sem essa normalização, um ""
+// enviado direto a uma coluna `date` do Postgres quebra o insert/update
+// (22007) em vez de virar NULL sozinho.
 // eslint-disable-next-line react-refresh/only-export-components
 export const NULLABLE_TEXT_FIELDS = [
   'nome_social', 'nome_pai', 'telefone',
   'cep', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf',
-  'matricula',
+  'matricula', 'rg_data_emissao', 'rg_data_validade',
 ] as const satisfies readonly (keyof FormData)[];
 
 // Campos de "Dados Gerais" que bloqueiam avanço/envio quando vazios — usado
@@ -170,11 +210,11 @@ function StepFooter({
       </div>
       <div className="flex items-center gap-2 shrink-0">
         {activeIndex > 0 && (
-          <Button type="button" variant="ghost" size="sm" className="h-8 rounded-lg gap-1.5 text-xs" onClick={onVoltar}>
+          <Button type="button" size="sm" className="h-8 rounded-lg gap-1.5 text-xs px-4" onClick={onVoltar}>
             <ArrowLeft className="h-3.5 w-3.5" /> Voltar
           </Button>
         )}
-        <Button type="button" variant="outline" size="sm" className="h-8 rounded-lg gap-1.5 text-xs px-3" onClick={onRascunho}>
+        <Button type="button" variant="outline" size="sm" className="h-8 rounded-lg gap-1.5 text-xs px-3 hover:bg-background hover:text-foreground hover:shadow-glow" onClick={onRascunho}>
           <Save className="h-3.5 w-3.5" /> Salvar rascunho
         </Button>
         <Button type="button" size="sm" className="h-8 rounded-lg gap-1.5 text-xs px-4" onClick={onProximo} disabled={isSubmitting}>
@@ -358,15 +398,16 @@ export default function ColaboradorFormPage() {
         backTo="/colaboradores"
         actions={
           <div className="flex items-center gap-2">
-            <Button variant="outline" className="h-11 rounded-xl px-4 shadow-xs bg-card/50" onClick={() => navigate('/colaboradores')}>
+            <Button variant="outline" size="sm" className="rounded-xl shadow-xs bg-card/50 hover:bg-background hover:text-foreground hover:shadow-glow" onClick={() => navigate('/colaboradores')}>
               Cancelar
             </Button>
-            <Button 
-              className="h-11 rounded-xl px-6 gap-2 bg-primary text-primary-foreground shadow-glow hover:shadow-glow-lg transition-all"
+            <Button
+              size="sm"
+              className="rounded-xl gap-1.5 bg-primary text-primary-foreground shadow-glow hover:shadow-glow-lg transition-all"
               onClick={handleSubmit(onSubmit, onInvalid)}
               disabled={mutation.isPending}
             >
-              {mutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+              {mutation.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
               <span>{isEditing ? 'Salvar Alterações' : 'Cadastrar agora'}</span>
             </Button>
           </div>
@@ -380,42 +421,56 @@ export default function ColaboradorFormPage() {
               qualquer uma) é preservada, igual à tablist anterior. */}
           <div className="rounded-2xl border border-border/30 bg-card/50 shadow-elevated p-3">
             <div className="flex items-center gap-4">
-              <TabsList className="flex flex-1 justify-between h-auto bg-transparent p-0 gap-2">
-                {tabs.map((tab, index) => {
-                  const isActive = tab.id === activeTab;
-                  const isDone = index < activeIndex;
-                  return (
-                    <TabsTrigger
-                      key={tab.id}
-                      value={tab.id}
-                      className={cn(
-                        'flex items-center gap-2.5 px-3 py-1.5 rounded-xl shrink-0 text-left justify-start',
-                        'data-[state=active]:bg-primary/10 data-[state=active]:shadow-none hover:bg-muted/50'
-                      )}
-                    >
-                      <span
-                        className={cn(
-                          'flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold shrink-0 transition-colors',
-                          isActive
-                            ? 'bg-primary text-primary-foreground'
-                            : isDone
-                              ? 'bg-primary/15 text-primary'
-                              : 'bg-muted text-muted-foreground'
-                        )}
-                      >
-                        {index + 1}
-                      </span>
-                      <span className="hidden sm:block">
-                        <span className={cn('block text-sm font-medium leading-tight whitespace-nowrap', !isActive && 'text-muted-foreground')}>
-                          {tab.label}
-                        </span>
-                        <span className="block text-xs text-muted-foreground leading-tight whitespace-nowrap">{tab.sublabel}</span>
-                        {isActive && <span className="block h-0.5 w-8 bg-primary rounded-full mt-1" />}
-                      </span>
-                    </TabsTrigger>
-                  );
-                })}
-              </TabsList>
+              <StepperTabs value={activeTab} onValueChange={setActiveTab} className="flex-1 min-w-0">
+                {/* `Omit<HighlightProps, ...>` num tipo união colapsa pras props
+                    comuns a TODAS as variantes (`keyof` de união = interseção),
+                    perdendo `containerClassName` (só existe na variante
+                    `mode="parent"`) — mesmo cast usado em `AnimatedDossieTabsList`
+                    pra contornar essa limitação de tipo da lib vendorizada. */}
+                <StepperTabsHighlight
+                  {...({
+                    mode: 'parent' as const,
+                    className: 'rounded-xl bg-primary/10',
+                    containerClassName: 'h-auto',
+                    transition: { type: 'spring' as const, stiffness: 220, damping: 24, mass: 0.7 },
+                  } as unknown as ComponentProps<typeof StepperTabsHighlight>)}
+                >
+                  <StepperTabsList className="flex justify-between gap-2">
+                    {tabs.map((tab, index) => {
+                      const isActive = tab.id === activeTab;
+                      const isDone = index < activeIndex;
+                      return (
+                        <StepperTabsHighlightItem key={tab.id} value={tab.id} asChild>
+                          <StepperTabsTrigger
+                            value={tab.id}
+                            className="relative z-10 flex items-center gap-2.5 px-3 py-1.5 rounded-xl shrink-0 text-left justify-start hover:bg-muted/50 transition-colors"
+                          >
+                            <span
+                              className={cn(
+                                'flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold shrink-0 transition-colors',
+                                isActive
+                                  ? 'bg-primary text-primary-foreground'
+                                  : isDone
+                                    ? 'bg-primary/15 text-primary'
+                                    : 'bg-muted text-muted-foreground'
+                              )}
+                            >
+                              {index + 1}
+                            </span>
+                            <span className="hidden sm:block">
+                              <span className={cn('block text-sm font-medium leading-tight whitespace-nowrap', !isActive && 'text-muted-foreground')}>
+                                {tab.label}
+                              </span>
+                              <span className="block text-xs text-muted-foreground leading-tight whitespace-nowrap">{tab.sublabel}</span>
+                              {isActive && <span className="block h-0.5 w-8 bg-primary rounded-full mt-1" />}
+                            </span>
+                          </StepperTabsTrigger>
+                        </StepperTabsHighlightItem>
+                      );
+                    })}
+                  </StepperTabsList>
+                </StepperTabsHighlight>
+              </StepperTabs>
               <div className="flex flex-col gap-1.5 shrink-0 w-56">
                 <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">Etapa {activeIndex + 1} de {tabs.length}</span>
                 <div className="flex items-center gap-2">
@@ -1058,35 +1113,128 @@ export default function ColaboradorFormPage() {
           <TabsContent value="documentos">
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
               <Card className="border border-border/30 rounded-2xl overflow-hidden shadow-elevated">
-                <CardContent className="p-6 space-y-6">
-                  <div className="flex items-center gap-2.5">
-                    <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                      <FileText className="h-4.5 w-4.5 text-primary" />
+                <CardContent className="p-6 space-y-5">
+                  {/* Header — ícone + título/subtítulo à esquerda, status eSocial à direita */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0 * 0.15, duration: 0.5 }}
+                    className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 pb-5 border-b border-border/20"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                        <FileText className="h-4.5 w-4.5 text-primary" />
+                      </div>
+                      <div>
+                        <h2 className="font-display font-medium text-base leading-tight">Documentação</h2>
+                        <p className="text-sm text-muted-foreground leading-tight">Dados cadastrais e trabalhistas do colaborador</p>
+                      </div>
                     </div>
-                    <div>
-                      <h2 className="font-display font-medium text-base leading-tight">Documentos Complementares (eSocial)</h2>
-                      <p className="text-sm text-muted-foreground leading-tight">Informações obrigatórias para o envio de eventos</p>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Badge variant="outline" size="sm" className="gap-1.5 text-muted-foreground">
+                        <FileText className="h-3 w-3" /> eSocial
+                      </Badge>
+                      <Badge variant="warning" size="sm" className="gap-1.5">
+                        <span className="h-1.5 w-1.5 rounded-full bg-warning shrink-0" /> Documentação obrigatória
+                      </Badge>
                     </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField label="RG / Identidade" {...register('rg')} />
-                    <FormField label="Órgão Emissor" {...register('rg_orgao_emissor')} placeholder="Ex: SSP/SP" />
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <FormField label="PIS/PASEP" {...register('pis_pasep')} />
-                    <FormField label="CTPS Número" {...register('ctps_numero')} />
-                    <FormField label="CTPS Série" {...register('ctps_serie')} />
-                  </div>
+                  </motion.div>
+
+                  {/* Seção 1 — Identificação civil */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1 * 0.15, duration: 0.5 }}
+                    className="space-y-3"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <IdCard className="h-4 w-4 text-primary shrink-0" />
+                      <div>
+                        <h3 className="text-sm font-medium leading-tight">Identificação civil</h3>
+                        <p className="text-xs text-muted-foreground leading-tight">Dados do documento de identificação do colaborador.</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                      <FormField label="RG / Identidade" {...register('rg')} />
+                      <FormField label="Órgão Emissor" {...register('rg_orgao_emissor')} placeholder="Ex: SSP/SP" />
+                      <FormSelect
+                        label="UF de emissão"
+                        value={watch('rg_uf')}
+                        options={UFS_BRASIL}
+                        onChange={(v) => setValue('rg_uf', v)}
+                      />
+                      <FormField
+                        label="Data de emissão"
+                        type="date"
+                        name="rg_data_emissao"
+                        value={watch('rg_data_emissao')}
+                        onChange={(e) => setValue('rg_data_emissao', e.target.value)}
+                        error={errors.rg_data_emissao?.message}
+                      />
+                      <FormField
+                        label="Data de validade"
+                        type="date"
+                        name="rg_data_validade"
+                        value={watch('rg_data_validade')}
+                        onChange={(e) => setValue('rg_data_validade', e.target.value)}
+                        error={errors.rg_data_validade?.message}
+                        description="Opcional"
+                      />
+                    </div>
+                  </motion.div>
+
+                  {/* Seção 2 — Dados trabalhistas */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 2 * 0.15, duration: 0.5 }}
+                    className="space-y-3 pt-4 border-t border-border/20"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <Briefcase className="h-4 w-4 text-primary shrink-0" />
+                      <div>
+                        <h3 className="text-sm font-medium leading-tight">Dados trabalhistas</h3>
+                        <p className="text-xs text-muted-foreground leading-tight">Informações para registro trabalhista e previdenciário.</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                      <FormField label="PIS/PASEP" {...register('pis_pasep')} />
+                      <FormField label="CTPS Número" {...register('ctps_numero')} />
+                      <FormField label="CTPS Série" {...register('ctps_serie')} />
+                      <FormSelect
+                        label="CTPS UF"
+                        value={watch('ctps_uf')}
+                        options={UFS_BRASIL}
+                        onChange={(v) => setValue('ctps_uf', v)}
+                      />
+                    </div>
+                  </motion.div>
+
+                  {/* Banner — arquivos digitalizados ficam no dossiê (Gestão de
+                      Documentos Digitais), não neste formulário de cadastro.
+                      Só aparece em edição: cadastro novo ainda não tem
+                      colaborador_id para o dossiê existir. */}
+                  {isEditing && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 3 * 0.15, duration: 0.5 }}
+                      className="flex items-center gap-2.5 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2.5"
+                    >
+                      <Info className="h-3.5 w-3.5 text-primary shrink-0" />
+                      <p className="text-xs text-muted-foreground flex-1">
+                        Os arquivos digitalizados são gerenciados na área Gestão de Documentos Digitais.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => navigate(`/colaboradores/${id}?tab=documentos`)}
+                        className="text-xs font-medium text-primary hover:underline inline-flex items-center gap-1 shrink-0"
+                      >
+                        Ver documentos digitais <ArrowRight className="h-3 w-3" />
+                      </button>
+                    </motion.div>
+                  )}
                 </CardContent>
-                <StepFooter
-                  activeIndex={activeIndex}
-                  isLastStep={isLastStep}
-                  isEditing={isEditing}
-                  isSubmitting={mutation.isPending}
-                  onVoltar={handleVoltarEtapa}
-                  onRascunho={handleSalvarRascunho}
-                  onProximo={handleProximaEtapa}
-                />
               </Card>
             </motion.div>
           </TabsContent>

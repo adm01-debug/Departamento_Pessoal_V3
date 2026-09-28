@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { PageTitle } from '@/components/PageTitle';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useDataAccessLog } from '@/hooks/useDataAccessLog';
 import { useQuery } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
@@ -288,8 +288,17 @@ function DonutProgress({ value, size = 60, strokeWidth = 7 }: { value: number; s
 export default function ColaboradorDetalhesPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
-  const [activeMainTab, setActiveMainTab] = useState('geral');
+  // Suporta abrir o dossiê direto numa aba específica via `?tab=documentos`
+  // (usado pelo link "Ver documentos digitais" do formulário de cadastro) —
+  // lido só na montagem, a navegação entre abas depois disso continua 100%
+  // local (activeMainTab), sem sincronizar de volta pra URL.
+  const TABS_VALIDAS = ['geral', 'pessoal', 'hierarquia', 'jornada', 'ferias', 'financeiro', 'desenvolvimento', 'documentos', 'timeline'];
+  const [activeMainTab, setActiveMainTab] = useState(() => {
+    const tab = searchParams.get('tab');
+    return tab && TABS_VALIDAS.includes(tab) ? tab : 'geral';
+  });
   const [recontratarOpen, setRecontratarOpen] = useState(false);
   const [pendenciasOpen, setPendenciasOpen] = useState(false);
   const [eventosOpen, setEventosOpen] = useState(false);
