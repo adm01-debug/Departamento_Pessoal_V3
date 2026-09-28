@@ -329,7 +329,7 @@ Gateway hardening com JWT validation, CSRF fail-closed, rate limiting, tenant is
 
 ### Críticos
 | Gap | Impacto | Solução |
-|-----|---------|---------|
+|-----|---------|--------|
 | CI não roda em repo privado | Pipeline não executa | Settings → Actions → Allow |
 | Branch protection inativo | Push direto p/ main sem review | Settings → Branches → Add rule |
 
@@ -343,7 +343,7 @@ Gateway hardening com JWT validation, CSRF fail-closed, rate limiting, tenant is
 
 ### Baixos
 | Gap | Impacto | Solução |
-|-----|---------|---------|
+|-----|---------|--------|
 | `noUnusedLocals:true` pode alertar | Warnings no build | Aceitar ou limpar |
 | Testes fora do typecheck | 232 erros de tipo latentes em `__tests__` | Incluir testes no `tsconfig` e sanear gradualmente |
 
