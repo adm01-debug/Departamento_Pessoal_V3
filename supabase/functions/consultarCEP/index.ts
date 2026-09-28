@@ -87,7 +87,7 @@ serve(async (req) => {
 
     return createErrorResponse('CEP não encontrado', 404, 'NOT_FOUND', undefined, req);
   } catch (error: unknown) {
-    captureException(error);
+    captureException(error, { function: 'consultarCEP' });
     return createErrorResponse('Erro interno', 500, 'INTERNAL_SERVER_ERROR', undefined, req);
   }
 });

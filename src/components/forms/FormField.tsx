@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { forwardRef } from 'react';
 
 interface FormFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
+  label?: React.ReactNode;
   error?: string;
   description?: string;
 }

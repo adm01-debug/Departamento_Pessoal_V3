@@ -24,6 +24,7 @@ import {
   FileText, Save, Loader2, Camera,
   IdCard, Phone, Users, Sparkles, Upload, ShieldCheck,
   ArrowRight, ArrowLeft, X, Info, Link2, Building2, DollarSign,
+  Search, Hash, Route, Map as MapIcon,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -857,49 +858,150 @@ export default function ColaboradorFormPage() {
           <TabsContent value="endereco">
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
               <Card className="border border-border/30 rounded-2xl overflow-hidden shadow-elevated">
-                <CardContent className="p-6 space-y-6">
-                  <div className="flex items-center gap-2.5">
-                    <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                      <MapPin className="h-4.5 w-4.5 text-primary" />
+                <CardContent className="p-6 space-y-5">
+                  {/* Header principal — mesmo tratamento das abas "Geral" e
+                      "Profissional" (ícone circular + título/subtítulo à
+                      esquerda, aviso informativo discreto à direita). */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0 * 0.15, duration: 0.5 }}
+                    className="flex flex-col sm:flex-row sm:items-start justify-between gap-4"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                        <MapPin className="h-4.5 w-4.5 text-primary" />
+                      </div>
+                      <div>
+                        <h2 className="font-display font-medium text-base leading-tight">Endereço Residencial</h2>
+                        <p className="text-sm text-muted-foreground leading-tight">Local de moradia do colaborador para fins de benefícios e transporte</p>
+                      </div>
                     </div>
-                    <div>
-                      <h2 className="font-display font-medium text-base leading-tight">Endereço Residencial</h2>
-                      <p className="text-sm text-muted-foreground leading-tight">Local de moradia do colaborador para fins de benefícios e transporte</p>
-                    </div>
-                  </div>
-                  <div className="max-w-xs space-y-2">
-                    <label className="text-sm font-medium leading-none">CEP</label>
-                    <CEPInput value={watch('cep')} onAddressFound={handleAddressFound} />
-                  </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="flex items-start gap-2 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 sm:w-[30%] shrink-0">
+                      <Info className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+                      <p className="text-[11px] text-muted-foreground leading-snug">
+                        Mantenha o endereço atualizado para garantir seus benefícios e facilitar o transporte.
+                      </p>
+                    </div>
+                  </motion.div>
+
+                  {/* Bloco de instrução do CEP */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1 * 0.15, duration: 0.5 }}
+                    className="flex items-start gap-2.5 rounded-xl border border-primary/20 bg-primary/10 px-4 py-3"
+                  >
+                    <div className="h-7 w-7 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+                      <Search className="h-3.5 w-3.5 text-primary" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium leading-tight">Preencha o CEP para buscar automaticamente o endereço.</p>
+                      <p className="text-xs text-muted-foreground leading-snug mt-0.5">
+                        Ao informar o CEP, os campos de logradouro, bairro, cidade e UF serão preenchidos automaticamente.
+                      </p>
+                    </div>
+                  </motion.div>
+
+                  {/* Linha do CEP */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 2 * 0.15, duration: 0.5 }}
+                    className="flex flex-col sm:flex-row sm:items-start gap-4"
+                  >
+                    <div className="w-full sm:w-64 space-y-2 shrink-0">
+                      <label className="flex items-center gap-1.5 text-sm font-medium leading-none">
+                        <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
+                        CEP
+                      </label>
+                      <CEPInput value={watch('cep')} onAddressFound={handleAddressFound} buttonLabel="Buscar CEP" />
+                    </div>
+
+                    <div className="hidden sm:block w-px self-stretch bg-border/60 mt-6" />
+
+                    <div className="pt-0 sm:pt-6">
+                      <p className="text-xs text-muted-foreground leading-tight">Não sabe o CEP?</p>
+                      <p className="text-xs leading-tight mt-0.5">
+                        Consulte no{' '}
+                        <a
+                          href="https://buscacepinter.correios.com.br/app/endereco/index.php"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-primary font-medium hover:underline"
+                        >
+                          site dos Correios
+                        </a>
+                        .
+                      </p>
+                    </div>
+                  </motion.div>
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 3 * 0.15, duration: 0.5 }}
+                    className="grid grid-cols-1 md:grid-cols-3 gap-4"
+                  >
                     <div className="md:col-span-2">
-                      <FormField label="Logradouro" {...register('logradouro')} placeholder="Rua, Avenida, etc" />
+                      <FormField
+                        label={<span className="flex items-center gap-1.5"><Route className="h-3.5 w-3.5 text-muted-foreground" />Logradouro</span>}
+                        {...register('logradouro')}
+                        placeholder="Rua, Avenida, etc"
+                      />
                     </div>
-                    <FormField label="Número" {...register('numero')} />
-                  </div>
+                    <FormField
+                      label={<span className="flex items-center gap-1.5"><Hash className="h-3.5 w-3.5 text-muted-foreground" />Número</span>}
+                      {...register('numero')}
+                    />
+                  </motion.div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField label="Bairro" {...register('bairro')} />
-                    <FormField label="Complemento" {...register('complemento')} />
-                  </div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 4 * 0.15, duration: 0.5 }}
+                    className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                  >
+                    <FormField
+                      label={<span className="flex items-center gap-1.5"><Building2 className="h-3.5 w-3.5 text-muted-foreground" />Bairro</span>}
+                      {...register('bairro')}
+                    />
+                    <FormField
+                      label={<span className="flex items-center gap-1.5"><FileText className="h-3.5 w-3.5 text-muted-foreground" />Complemento</span>}
+                      {...register('complemento')}
+                    />
+                  </motion.div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 5 * 0.15, duration: 0.5 }}
+                    className="grid grid-cols-1 md:grid-cols-3 gap-4"
+                  >
                     <div className="md:col-span-2">
-                      <FormField label="Cidade" {...register('cidade')} />
+                      <FormField
+                        label={<span className="flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5 text-muted-foreground" />Cidade</span>}
+                        {...register('cidade')}
+                      />
                     </div>
-                    <FormField label="UF" {...register('uf')} />
-                  </div>
+                    <FormField
+                      label={<span className="flex items-center gap-1.5"><MapIcon className="h-3.5 w-3.5 text-muted-foreground" />UF</span>}
+                      {...register('uf')}
+                    />
+                  </motion.div>
                 </CardContent>
-                <StepFooter
-                  activeIndex={activeIndex}
-                  isLastStep={isLastStep}
-                  isEditing={isEditing}
-                  isSubmitting={mutation.isPending}
-                  onVoltar={handleVoltarEtapa}
-                  onRascunho={handleSalvarRascunho}
-                  onProximo={handleProximaEtapa}
-                />
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 6 * 0.15, duration: 0.5 }}>
+                  <StepFooter
+                    activeIndex={activeIndex}
+                    isLastStep={isLastStep}
+                    isEditing={isEditing}
+                    isSubmitting={mutation.isPending}
+                    onVoltar={handleVoltarEtapa}
+                    onRascunho={handleSalvarRascunho}
+                    onProximo={handleProximaEtapa}
+                  />
+                </motion.div>
               </Card>
             </motion.div>
           </TabsContent>
