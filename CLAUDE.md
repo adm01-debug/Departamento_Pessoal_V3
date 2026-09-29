@@ -1,7 +1,7 @@
 # AI Context — Departamento Pessoal v3
 
 > Documentação para agentes de IA (Hermes, Claude Code, Cursor, Copilot, etc)
-> Última atualização: 28/09/2026
+> Última atualização: 29/09/2026
 > Mantenedor: Hermes Agent (AtomicaBR Ops/Dev)
 
 > ⚠️ **Correções de auditoria (23/07/2026)** — revisão do batch anterior:
@@ -10,7 +10,7 @@
 > - Corrigidos 3 erros de tipo de mock em `loggerService.test.ts` (vitest 4).
 > ✅ **Resolvido (28/07/2026)** — `tsconfig.app.json` foi removido (era órfão). O único config é `tsconfig.json` (raiz), o mesmo que o CI roda via `tsgo --noEmit`, agora com **`strict: true` + `noImplicitAny: true`** e **0 erros** (17 erros reais corrigidos em 7 arquivos).
 > ✅ **Resolvido (28/07/2026)** — `build.minify` migrado para a forma de objeto do Vite 8/OXC (`{ type: 'oxc', compress: { dropConsole: [...] } }`). Auditoria do bundle: os `console.*` remanescentes são **100% de vendor chunks** (jspdf, vendor-react, vendor-supabase), sem PII e sem origem no nosso código.
-> - ⚠️ Pendente: arquivos de teste (`**/*.test.ts(x)`, `__tests__/`) seguem **excluídos** do typecheck — 232 erros de tipo sob strict apenas em testes.
+> ✅ **Resolvido (29/09/2026)** — `typecheck:tests` roda limpo (0 erros); nota de 232 erros latentes removida.
 
 ## 📋 Sumário
 1. [Stack & Arquitetura](#-stack--arquitetura)
@@ -267,6 +267,31 @@ POST-only gateway (32KB file, 729 lines)
 └── MCP Departamento Pessoal somente leitura — sem supabase_auth_create_user
 ```
 
+### Sessão 5 — 29/09/2026 (Claude Sonnet 4.6)
+**Branches:** `claude/fix-sonarcloud-autoscan-conflict-260929-1250` (PR #162, merged) · `claude/fix-fast-uri-audit-260929-1400` (PR #163, merged)
+
+#### O que foi feito:
+```
+🔒 PR #163 — fast-uri 3.1.6 → 3.1.8 (segurança alta, merged SHA 2b4e053)
+│   GHSA-qw65-cvwx-89v3 + GHSA-58mr-gqgx-xq4g (high severity)
+│   package.json: overrides range corrigido >=3.0.0 <=3.1.6 → 3.1.8
+│   package-lock.json + bun.lock regenerados
+│   npm audit --audit-level=high: 0 vulnerabilidades após fix
+│   CI 100% verde antes do merge
+
+🔧 PR #162 — SonarCloud CI scanner removido de security.yml (merged)
+│   Job `sonarcloud` conflitava com Automatic Analysis do GitHub App (exit code 3)
+│   Causa: ambos os modos não coexistem — CI scanner falha quando Automatic Analysis ativo
+│   Solução: manter apenas Automatic Analysis (zero-config, já verde)
+│   sonar-project.properties + SONAR_TOKEN preservados para futura migração
+└── CI 100% verde (branch atualizado com fix fast-uri de main antes do merge)
+
+⛔ BLOQUEADO — ação manual obrigatória
+│   Criar usuários E2E em frjbfeamybqsejlvmqbl.supabase.co Auth:
+│   admin@teste.local / Admin@2026! · user@teste.local / User@2026!
+└── MCP Departamento Pessoal V3 somente leitura — sem supabase_auth_create_user
+```
+
 ---
 
 ## ✅ Estado Atual
@@ -277,7 +302,7 @@ CI (ci.yml)              → 7 jobs, todos com timeout, trigger master removido 
 Security (security.yml)  → CodeQL ativo, permissions top-level adicionado ✅
 Deploy (deploy.yml)      → Vercel (integração Git), permissions adicionado ✅
 E2E (e2e.yml)            → CI_BRANCH injetado, retries calibrados, bun-version: 1.3.14 fixado ✅
-SonarCloud (security.yml)→ ⏳ PR #155 verde — aguarda SONAR_TOKEN + merge
+SonarCloud               → ✅ Automatic Analysis (GitHub App) — job CI removido (PR #162)
 Healthcheck (healthcheck.yml) → timeout 5min adicionado ✅
 Canônicos (×3)           → timeout adicionado, environment: production ✅
 Dependabot               → npm+docker+github-actions semanal; TS≥6.1 ignorado ✅
@@ -285,12 +310,12 @@ Branch ruleset           → 7 required checks, baseline em infra/github/ ✅
 Branch protection (main) → PRs obrigatórias, force-push bloqueado ✅
 ```
 
-### Métricas (28/09/2026)
+### Métricas (29/09/2026)
 | Indicador | Valor |
 |-----------|-------|
-| Open PRs | 7 dependabot + PR #155 (SonarCloud, CI verde) |
+| Open PRs | 7 dependabot |
 | TypeScript strict | ✅ strict: true + noImplicitAny (0 erros no src) |
-| Testes com tipo | ⚠️ 232 erros latentes em `__tests__` (excluídos do tsconfig) |
+| Testes com tipo | ✅ 0 erros (typecheck:tests runs clean) |
 | Cobertura | ✅ v8 configurada |
 | Merge strategy | ✅ squash-only (allow_merge_commit=false) |
 | Branch delete | ✅ delete_branch_on_merge=true |
@@ -300,6 +325,7 @@ Branch protection (main) → PRs obrigatórias, force-push bloqueado ✅
 | Branch protection | ✅ Ativo via API (sessão 3) — PRs obrigatórias |
 | E2E secrets | ✅ Rotacionados (sessão 3) — ⚠️ usuários E2E ainda não criados em frjbfeamybqsejlvmqbl |
 | bun-version | ✅ Fixado em 1.3.14 no e2e.yml (sessão 4) — lockfile estável |
+| fast-uri | ✅ 3.1.8 (sessão 5, PR #163) — 0 vulns high/critical |
 
 ---
 
@@ -335,9 +361,8 @@ Gateway hardening com JWT validation, CSRF fail-closed, rate limiting, tenant is
 
 ### Médios
 | Gap | Impacto | Solução |
-|-----|---------|---------|
+|-----|---------|----------|
 | `bun.lock` — bun-version pinado | Risco de lockfile divergir resolvido em e2e.yml (sessão 4) | Cron sync-bun-lock cobre cenários restantes |
-| SonarCloud sem token | Análise estática não roda | PR #155 verde — configurar SONAR_TOKEN e mergear |
 | Usuários E2E inexistentes | E2E autenticado falha em produção | Criar admin@teste.local + user@teste.local em frjbfeamybqsejlvmqbl.supabase.co/auth |
 | Deploy Netlify sem secrets | Preview não deploya | Adicionar NETLIFY_AUTH_TOKEN + SITE_ID |
 
@@ -345,7 +370,6 @@ Gateway hardening com JWT validation, CSRF fail-closed, rate limiting, tenant is
 | Gap | Impacto | Solução |
 |-----|---------|--------|
 | `noUnusedLocals:true` pode alertar | Warnings no build | Aceitar ou limpar |
-| Testes fora do typecheck | 232 erros de tipo latentes em `__tests__` | Incluir testes no `tsconfig` e sanear gradualmente |
 
 ---
 
@@ -354,10 +378,10 @@ Gateway hardening com JWT validation, CSRF fail-closed, rate limiting, tenant is
 ### Imediatos (settings do GitHub)
 1. **Settings → Actions → General → Allow GitHub Actions** ✅ Habilita CI
 2. **Settings → Branches → Add rule → main** ✅ Protege branch
-3. **Adicionar secrets**: NETLIFY_AUTH_TOKEN, NETLIFY_SITE_ID, SONAR_TOKEN
+3. **Adicionar secrets**: NETLIFY_AUTH_TOKEN, NETLIFY_SITE_ID
 
 ### Curto Prazo
-1. Rodar `bun install` local + push `bun.lock` para CI ficar verde
+1. Criar usuários E2E em frjbfeamybqsejlvmqbl.supabase.co Auth (admin@teste.local + user@teste.local)
 2. Revisar Bridge runbook (`infra/runbooks/BRIDGE_PERFORMANCE.md`)
 3. Adicionar query timeout no external-db-bridge (AbortController)
 4. Implementar keyset pagination para tabelas >100K registros
