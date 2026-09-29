@@ -33,6 +33,7 @@ export { usePDFExport } from "./usePDFExport";
 export { useExcelExport } from "./useExcelExport";
 export { useESocial } from "./useESocial";
 export { useLocaisTrabalho } from "./useLocaisTrabalho";
+export { useLotacoesCatalogo, useLotacaoPrincipal, useDefinirLotacaoPrincipal } from "./useColaboradorLotacao";
 export { useHistoricoContratos } from "./useHistoricoContratos";
 export { useHorasExtras } from "./useHorasExtras";
 export { useConfiguracoesIntervalo } from "./useConfiguracoesIntervalo";

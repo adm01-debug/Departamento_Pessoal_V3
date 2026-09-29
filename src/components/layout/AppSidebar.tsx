@@ -28,7 +28,13 @@ import { DownloadCloud } from 'lucide-react';
 interface MenuItem { icon: LucideIcon; label: string; path: string; color: string; }
 interface MenuGroup { id: string; label: string; icon: LucideIcon; color: string; items: MenuItem[]; }
 
-const menuGroups: MenuGroup[] = [
+// Exportado só para teste (AppSidebar.test.tsx) — o componente em si segue
+// não exportando nada além do default; renderizar a árvore inteira do
+// sidebar em teste exigiria mockar auth/PWA/notificações/edge functions que
+// hoje não têm mock nenhum neste arquivo, então a wiring rota↔item é
+// validada direto nesta config (é ela quem alimenta o `to` do NavLink).
+// eslint-disable-next-line react-refresh/only-export-components
+export const menuGroups: MenuGroup[] = [
   {
     id: 'principal',
     label: 'Principal',
@@ -101,7 +107,10 @@ const menuGroups: MenuGroup[] = [
       { icon: Briefcase, label: 'Cargos', path: '/cargos', color: 'text-warning' },
       { icon: TrendingUp, label: 'Cargos & Salários (PCS)', path: '/cargos-salarios', color: 'text-success' },
       { icon: Building2, label: 'Departamentos', path: '/departamentos', color: 'text-info' },
+      { icon: Users, label: 'Times & Equipes', path: '/times', color: 'text-primary' },
+      { icon: Wallet, label: 'Centros de Custo', path: '/centros-custo', color: 'text-warning' },
       { icon: MapPin, label: 'Locais de Trabalho', path: '/locais-trabalho', color: 'text-success' },
+      { icon: Network, label: 'Lotações', path: '/lotacoes', color: 'text-info' },
     ]
   },
   {

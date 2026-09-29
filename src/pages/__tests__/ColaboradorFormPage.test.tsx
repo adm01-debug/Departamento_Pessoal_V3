@@ -33,6 +33,47 @@ const { mockUseDepartamentos, mockUseCargos } = vi.hoisted(() => ({
 vi.mock('@/hooks/useDepartamentos', () => ({ useDepartamentos: mockUseDepartamentos }));
 vi.mock('@/hooks/useCargos', () => ({ useCargos: mockUseCargos }));
 
+// Bloco "Estrutura Interna"/"Alocação" (aba Profissional redesenhada) passou
+// a consumir Time/Centro de custo/Local de trabalho/Lotações via `@/hooks`
+// (barrel) — sem mocká-los aqui, os hooks reais chamam os services (via
+// useGenericCrud/useQuery) e batem no mock global do Supabase de
+// setupTests.ts, que não cobre todo caminho de erro desses services
+// (loggerService.flush referencia `supabaseBase`, não exportado pelo mock).
+// Mesmo padrão de mock de useDepartamentos/useCargos acima, só que pelo
+// barrel — é por ele que ColaboradorFormPage importa esses 4 hooks.
+const { mockUseTimes, mockUseCentrosCusto, mockUseLocaisTrabalho, mockUseLotacoesCatalogo, mockUseLotacaoPrincipal } = vi.hoisted(() => ({
+  mockUseTimes: vi.fn(() => ({ data: [{ id: 't1', nome: 'Time de Recursos Humanos', ativo: true }] })),
+  mockUseCentrosCusto: vi.fn(() => ({ data: [{ id: 'cc1', nome: 'Recursos Humanos', codigo: 'CC-050', ativo: true }] })),
+  mockUseLocaisTrabalho: vi.fn(() => ({ locais: [{ id: 'lt1', nome: 'Sede São Paulo', ativo: true }] })),
+  mockUseLotacoesCatalogo: vi.fn(() => ({ data: [{ id: 'lo1', nome: 'Unidade São Paulo/SP', codigo: null, ativa: true }] })),
+  mockUseLotacaoPrincipal: vi.fn(() => ({
+    data: { id: 'lo1', nome: 'Unidade São Paulo/SP', codigo: null, ativa: true } as { id: string; nome: string; codigo: string | null; ativa: boolean } | null,
+  })),
+}));
+vi.mock('@/hooks', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/hooks')>();
+  return {
+    ...actual,
+    useTimes: mockUseTimes,
+    useCentrosCusto: mockUseCentrosCusto,
+    useLocaisTrabalho: mockUseLocaisTrabalho,
+    useLotacoesCatalogo: mockUseLotacoesCatalogo,
+    useLotacaoPrincipal: mockUseLotacaoPrincipal,
+  };
+});
+
+// A aba Profissional agora persiste a lotação principal chamando o service
+// diretamente (não via hook/mutation) depois que o colaborador existe — ver
+// mutationFn de ColaboradorFormPage.tsx. Mockado à parte do
+// colaboradorService para poder afirmar exatamente quando/com o quê é
+// chamado, sem depender do mock global do Supabase.
+const { mockDefinirPrincipal } = vi.hoisted(() => ({
+  mockDefinirPrincipal: vi.fn().mockResolvedValue(undefined),
+}));
+vi.mock('@/services/colaboradorLotacaoService', () => ({
+  colaboradorLotacaoService: { definirPrincipal: mockDefinirPrincipal },
+}));
+
 const { notifySuccess, notifyErrorMock } = vi.hoisted(() => ({
   notifySuccess: vi.fn(),
   notifyErrorMock: vi.fn(),
@@ -145,7 +186,7 @@ async function irParaAbaProfissional() {
 }
 
 function preencherDadosProfissionais() {
-  fireEvent.change(screen.getByLabelText('Data Admissão'), { target: { value: '2024-01-10' } });
+  fireEvent.change(screen.getByLabelText('Data de admissão'), { target: { value: '2024-01-10' } });
   // Salário Base usa `CurrencyInput showPrefix` (aba Profissional redesenhada):
   // "R$" vira um prefixo fixo fora do input, então o placeholder real do
   // campo passou a ser só "0,00" (sem repetir o "R$" que já aparece ao lado).
@@ -186,6 +227,11 @@ const COLABORADOR_EXISTENTE = {
   tipo_contrato: 'clt',
   status: 'ativo',
   matricula: 'MAT001',
+  time_id: 't1',
+  centro_custo_id: 'cc1',
+  centro_custo: 'Recursos Humanos',
+  local_trabalho_id: 'lt1',
+  local_trabalho: 'Sede São Paulo',
   banco_codigo: '',
   agencia: '',
   conta: '',
@@ -457,6 +503,8 @@ describe('normalizarPayloadColaborador (Parte 3B — "" -> null)', () => {
     tipo_contrato: 'clt',
     status: 'ativo',
     matricula: '',
+    centro_custo: '',
+    local_trabalho: '',
     banco_codigo: '',
     agencia: '',
     conta: '',
@@ -615,5 +663,175 @@ describe('ColaboradorFormPage — aba Financeiro reutiliza ContasBancariasTab (P
 
     expect(screen.queryByTestId('contas-bancarias-tab')).not.toBeInTheDocument();
     expect(screen.getByText(/Salve o colaborador primeiro/i)).toBeInTheDocument();
+  });
+});
+
+// Aba "Profissional" redesenhada — fonte única de edição dos campos que o
+// card "Vínculo & Alocação" (TrabalhoHierarquiaTab.tsx, não tocado por esta
+// tarefa) exibe. Cobre os itens 39/40 do pedido: opções carregando, edição
+// pré-preenchendo os selects por ID, salvamento persistindo id+texto
+// sincronizados, e Unidade/Lotação permanecendo somente leitura.
+describe('ColaboradorFormPage — Aba Profissional: mapeamento para "Vínculo & Alocação"', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockUseDepartamentos.mockReturnValue({ departamentos: [{ id: 'd1', nome: 'TI' }] });
+    mockUseCargos.mockReturnValue({ cargos: [{ id: 'c1', nome: 'Analista' }] });
+    // `vi.clearAllMocks()` não desfaz um `.mockReturnValue(...)` de um teste
+    // anterior (só limpa `.mock.calls`) — reafirma o default aqui pra nenhum
+    // teste desta suíte depender da ordem de execução dos outros.
+    mockUseLotacoesCatalogo.mockReturnValue({ data: [{ id: 'lo1', nome: 'Unidade São Paulo/SP', codigo: null, ativa: true }] });
+    mockUseLotacaoPrincipal.mockReturnValue({ data: { id: 'lo1', nome: 'Unidade São Paulo/SP', codigo: null, ativa: true } });
+  });
+
+  it('carrega as opções de Time, Centro de custo e Local de trabalho na aba Profissional', async () => {
+    mockUseEmpresas.mockReturnValue({ empresaAtual: { id: 'emp-1' } });
+    renderPage('/colaboradores/novo');
+    await irParaAbaProfissional();
+
+    expect(screen.getByRole('option', { name: 'Time de Recursos Humanos' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'CC-050 Recursos Humanos' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'Sede São Paulo' })).toBeInTheDocument();
+  });
+
+  it('edição pré-preenche Time/Centro de custo/Local de trabalho com os IDs (FK) corretos, não com o texto', async () => {
+    mockBuscarPorId.mockResolvedValue({ ...COLABORADOR_EXISTENTE });
+    mockUseEmpresas.mockReturnValue({ empresaAtual: { id: 'emp-colaborador-1' } });
+    renderPage('/colaboradores/editar/colab-1');
+
+    await waitFor(() => expect(screen.getByLabelText('Nome Completo')).toHaveValue('Maria Existente'));
+    await irParaAbaProfissional();
+
+    expect(screen.getByLabelText('Time')).toHaveValue('t1');
+    expect(screen.getByLabelText('Centro de custo')).toHaveValue('cc1');
+    expect(screen.getByLabelText('Local de trabalho')).toHaveValue('lt1');
+  });
+
+  it('alterar Time/Centro de custo/Local de trabalho e salvar envia o novo FK e o texto sincronizado', async () => {
+    mockBuscarPorId.mockResolvedValue({ ...COLABORADOR_EXISTENTE });
+    mockUseEmpresas.mockReturnValue({ empresaAtual: { id: 'emp-colaborador-1' } });
+    mockUseTimes.mockReturnValue({ data: [{ id: 't1', nome: 'Time de Recursos Humanos', ativo: true }, { id: 't2', nome: 'Time Administrativo', ativo: true }] });
+    mockUseCentrosCusto.mockReturnValue({ data: [{ id: 'cc1', nome: 'Recursos Humanos', codigo: 'CC-050', ativo: true }, { id: 'cc2', nome: 'Administrativo', codigo: 'CC-070', ativo: true }] });
+    mockUseLocaisTrabalho.mockReturnValue({ locais: [{ id: 'lt1', nome: 'Sede São Paulo', ativo: true }, { id: 'lt2', nome: 'Filial Campinas', ativo: true }] });
+    renderPage('/colaboradores/editar/colab-1');
+
+    await waitFor(() => expect(screen.getByLabelText('Nome Completo')).toHaveValue('Maria Existente'));
+    await irParaAbaProfissional();
+
+    fireEvent.change(screen.getByLabelText('Time'), { target: { value: 't2' } });
+    fireEvent.change(screen.getByLabelText('Centro de custo'), { target: { value: 'cc2' } });
+    fireEvent.change(screen.getByLabelText('Local de trabalho'), { target: { value: 'lt2' } });
+    await userEvent.click(screen.getByRole('button', { name: /Salvar Alterações/i }));
+
+    await waitFor(() => expect(mockUpdate).toHaveBeenCalledTimes(1));
+    const payload = mockUpdate.mock.calls[0][1];
+    expect(payload.time_id).toBe('t2');
+    expect(payload.centro_custo_id).toBe('cc2');
+    expect(payload.centro_custo).toBe('Administrativo');
+    expect(payload.local_trabalho_id).toBe('lt2');
+    expect(payload.local_trabalho).toBe('Filial Campinas');
+  });
+
+  it('"Unidade / Lotação principal" é um Select real alimentado pelo catálogo /lotacoes', async () => {
+    mockUseEmpresas.mockReturnValue({ empresaAtual: { id: 'emp-1' } });
+    renderPage('/colaboradores/novo');
+    await irParaAbaProfissional();
+
+    expect(screen.getByLabelText('Unidade / Lotação principal')).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'Unidade São Paulo/SP' })).toBeInTheDocument();
+  });
+
+  it('edição pré-preenche "Unidade / Lotação principal" com o vínculo já salvo (colaborador_lotacoes.principal=true)', async () => {
+    mockBuscarPorId.mockResolvedValue({ ...COLABORADOR_EXISTENTE });
+    mockUseEmpresas.mockReturnValue({ empresaAtual: { id: 'emp-colaborador-1' } });
+    renderPage('/colaboradores/editar/colab-1');
+
+    await waitFor(() => expect(screen.getByLabelText('Nome Completo')).toHaveValue('Maria Existente'));
+    await irParaAbaProfissional();
+
+    await waitFor(() => expect(screen.getByLabelText('Unidade / Lotação principal')).toHaveValue('lo1'));
+  });
+
+  it('trocar a lotação principal e salvar chama definirPrincipal DEPOIS que o colaborador foi atualizado, com o novo lotacao_id', async () => {
+    mockBuscarPorId.mockResolvedValue({ ...COLABORADOR_EXISTENTE });
+    mockUseEmpresas.mockReturnValue({ empresaAtual: { id: 'emp-colaborador-1' } });
+    mockUseLotacoesCatalogo.mockReturnValue({
+      data: [
+        { id: 'lo1', nome: 'Unidade São Paulo/SP', codigo: null, ativa: true },
+        { id: 'lo2', nome: 'Unidade Campinas/SP', codigo: null, ativa: true },
+      ],
+    });
+    renderPage('/colaboradores/editar/colab-1');
+
+    await waitFor(() => expect(screen.getByLabelText('Nome Completo')).toHaveValue('Maria Existente'));
+    await irParaAbaProfissional();
+
+    fireEvent.change(screen.getByLabelText('Unidade / Lotação principal'), { target: { value: 'lo2' } });
+    await userEvent.click(screen.getByRole('button', { name: /Salvar Alterações/i }));
+
+    await waitFor(() => expect(mockUpdate).toHaveBeenCalledTimes(1));
+    // O colaborador salvo (mockUpdate resolve com { id: 'colab-1' }) precisa
+    // existir antes da chamada — definirPrincipal usa esse id, não o `id` da
+    // rota diretamente, para também cobrir corretamente o fluxo de criação.
+    expect(mockDefinirPrincipal).toHaveBeenCalledWith('colab-1', 'lo2', 'emp-colaborador-1');
+    // Nunca envia lotacao_principal_id dentro do payload de colaboradores —
+    // não existe essa coluna na tabela.
+    const payload = mockUpdate.mock.calls[0][1];
+    expect(payload).not.toHaveProperty('lotacao_principal_id');
+  });
+
+  it('novo colaborador: só persiste a lotação principal depois de criado, usando o ID retornado pelo create', async () => {
+    mockUseEmpresas.mockReturnValue({ empresaAtual: { id: 'emp-atual-1' } });
+    renderPage('/colaboradores/novo');
+
+    await preencherDadosMinimos();
+    fireEvent.change(screen.getByLabelText('Unidade / Lotação principal'), { target: { value: 'lo1' } });
+    await userEvent.click(screen.getByRole('button', { name: /Cadastrar agora/i }));
+
+    await waitFor(() => expect(mockCreate).toHaveBeenCalledTimes(1));
+    // mockCreate resolve com { id: 'novo-id' } — é esse id (não algum id
+    // local inexistente) que precisa ser usado para vincular a lotação.
+    expect(mockDefinirPrincipal).toHaveBeenCalledWith('novo-id', 'lo1', 'emp-atual-1');
+  });
+
+  it('não chama definirPrincipal quando nenhuma lotação foi selecionada (campo continua opcional)', async () => {
+    mockUseEmpresas.mockReturnValue({ empresaAtual: { id: 'emp-atual-1' } });
+    mockUseLotacaoPrincipal.mockReturnValue({ data: null });
+    renderPage('/colaboradores/novo');
+
+    await preencherDadosMinimos();
+    await userEvent.click(screen.getByRole('button', { name: /Cadastrar agora/i }));
+
+    await waitFor(() => expect(mockCreate).toHaveBeenCalledTimes(1));
+    expect(mockDefinirPrincipal).not.toHaveBeenCalled();
+  });
+
+  it('colaborador antigo com centro_custo/local_trabalho em texto (sem *_id) resolve o Select pelo nome, sem apagar o dado', async () => {
+    mockBuscarPorId.mockResolvedValue({
+      ...COLABORADOR_EXISTENTE,
+      centro_custo_id: null,
+      centro_custo: 'Recursos Humanos',
+      local_trabalho_id: null,
+      local_trabalho: 'Sede São Paulo',
+    });
+    mockUseEmpresas.mockReturnValue({ empresaAtual: { id: 'emp-colaborador-1' } });
+    renderPage('/colaboradores/editar/colab-1');
+
+    await waitFor(() => expect(screen.getByLabelText('Nome Completo')).toHaveValue('Maria Existente'));
+    await irParaAbaProfissional();
+
+    // 'cc1'/'lt1' são os IDs mockados em useCentrosCusto/useLocaisTrabalho
+    // para os nomes 'Recursos Humanos'/'Sede São Paulo' — a resolução só
+    // funciona se o texto salvo bater com o nome de um cadastro real.
+    await waitFor(() => expect(screen.getByLabelText('Centro de custo')).toHaveValue('cc1'));
+    await waitFor(() => expect(screen.getByLabelText('Local de trabalho')).toHaveValue('lt1'));
+  });
+
+  it('Matrícula Interna deixou de ser editável na aba "Dados Gerais" (fonte única em Profissional)', async () => {
+    mockUseEmpresas.mockReturnValue({ empresaAtual: { id: 'emp-1' } });
+    renderPage('/colaboradores/novo');
+
+    expect(screen.queryByLabelText('Matrícula Interna')).not.toBeInTheDocument();
+    await irParaAbaProfissional();
+    expect(screen.getByLabelText('Matrícula Interna')).toBeInTheDocument();
   });
 });

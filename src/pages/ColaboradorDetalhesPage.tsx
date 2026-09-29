@@ -969,7 +969,7 @@ export default function ColaboradorDetalhesPage() {
 
               {/* Linha 2 — Dados bancários + Resumo da remuneração lado a lado. */}
               <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-3 items-start">
-                <ContasBancariasTab colaboradorId={id!} />
+                <ContasBancariasTab colaboradorId={id!} capHeight />
                 <ResumoRemuneracaoCard colaboradorId={id!} colaborador={colaborador} />
               </div>
 

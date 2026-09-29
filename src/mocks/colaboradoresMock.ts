@@ -454,6 +454,24 @@ export function getMockDepartamentos(empresaId?: string): MockRecord[] | undefin
   return mockOr(MOCK_DEPARTAMENTOS);
 }
 
+// Centros de Custo da empresa (catálogo, /centros-custo) — alimenta o Select
+// "Centro de custo" da aba Profissional. Ao contrário de getMockCargos/
+// getMockDepartamentos acima, NÃO gateado por isMockEmpresaId(): ao editar um
+// colaborador fictício, `colaborador.empresa_id` vem como `'mock'` (ver
+// MOCK_COLABORADORES), não `MOCK_EMPRESA.id` ('mock-empresa-1') — o gate
+// estrito nunca bateria. Só `mockOr` (liga/desliga com a env var) protege
+// contra vazar pra uma empresa real, mesmo padrão de getMockTimes abaixo.
+export const MOCK_CENTROS_CUSTO: MockRecord[] = [
+  { id: 'mock-cc-rh', nome: 'Recursos Humanos', codigo: 'CC-050', ativo: true },
+  { id: 'mock-cc-administrativo', nome: 'Administrativo', codigo: 'CC-070', ativo: true },
+  { id: 'mock-cc-comercial', nome: 'Comercial', codigo: 'CC-030', ativo: true },
+  { id: 'mock-cc-operacoes', nome: 'Operações, Financeiro & Marketing', codigo: 'CC-090', ativo: true },
+];
+
+export function getMockCentrosCusto(empresaId?: string): MockRecord[] | undefined {
+  return mockOr(MOCK_CENTROS_CUSTO);
+}
+
 // ============================================================================
 // Geradores adicionais — cobrem as sub-abas do dossiê que ainda não tinham
 // mock (Férias, Holerites, Afastamentos, Compliance, Desenvolvimento,
@@ -702,11 +720,38 @@ export function getMockSstRiscos(colaboradorId?: string): MockRecord[] | undefin
   return [{ id: `${c.id}-risco-1`, agente_nocivo_codigo: '01.01.001', epi_eficaz: true, status_esocial: 'transmitido', data_inicio_exposicao: c.data_admissao, data_fim_exposicao: null }];
 }
 
-// Hierarquia — Lotações
+// Hierarquia — Lotações (heurística antiga "primeira ativa", por colaborador
+// — mantida só porque `useLotacoes`/useColaboradorDetalhes.ts ainda existe,
+// sem consumidor real desde que o card passou a usar colaborador_lotacoes).
 export function getMockLotacoes(colaboradorId?: string): MockRecord[] | undefined {
   const c = findMockColaborador(colaboradorId);
   if (!c) return undefined;
   return [{ id: `${c.id}-lotacao-1`, nome: `Unidade ${c.cidade}/${c.uf}`, ativa: true }];
+}
+
+// Unidade / Lotação principal — fonte real (colaborador_lotacoes.principal =
+// true, ver colaboradorLotacaoService.ts), usada tanto pelo card "Vínculo &
+// Alocação" quanto para pré-preencher o Select na aba Profissional. Deriva
+// da cidade/uf do próprio colaborador fictício, preservando o mesmo texto
+// ("Unidade São Paulo/SP") que a heurística antiga acima já mostrava.
+export function getMockLotacaoPrincipal(colaboradorId?: string): MockRecord | undefined {
+  const c = findMockColaborador(colaboradorId);
+  if (!c) return undefined;
+  return { id: `mock-lotacao-principal-${c.id}`, nome: `Unidade ${c.cidade}/${c.uf}`, codigo: null, ativa: true };
+}
+
+// Lotações da empresa (catálogo, /lotacoes) — alimenta o Select "Unidade /
+// Lotação principal" da aba Profissional. Distinto de getMockLotacoes acima
+// (que é por colaborador): este é o catálogo compartilhado, ungateado por
+// isMockEmpresaId() pelo mesmo motivo do getMockCentrosCusto acima.
+export const MOCK_LOTACOES_CATALOGO: MockRecord[] = [
+  { id: 'mock-lotacao-sp', nome: 'Unidade São Paulo/SP', codigo: null, ativa: true },
+  { id: 'mock-lotacao-campinas', nome: 'Unidade Campinas/SP', codigo: null, ativa: true },
+  { id: 'mock-lotacao-rj', nome: 'Unidade Rio de Janeiro/RJ', codigo: null, ativa: true },
+];
+
+export function getMockLotacoesCatalogo(empresaId?: string): MockRecord[] | undefined {
+  return mockOr(MOCK_LOTACOES_CATALOGO);
 }
 
 // Hierarquia — Local de Trabalho (chave = `colaborador.local_trabalho_id`, ver MOCK_COLABORADORES)
@@ -715,6 +760,20 @@ export function getMockLocalTrabalho(localTrabalhoId?: string): MockRecord | und
   const c = findMockColaborador(localTrabalhoId.replace('mock-local-', ''));
   if (!c) return undefined;
   return { id: localTrabalhoId, nome: `Sede ${c.cidade}`, cidade: c.cidade, uf: c.uf };
+}
+
+// Locais de Trabalho da empresa (catálogo, /locais-trabalho) — alimenta o
+// Select "Local de trabalho" da aba Profissional. Distinto de
+// getMockLocalTrabalho acima (singular, por ID, usado pelo card): este é o
+// catálogo compartilhado de opções.
+export const MOCK_LOCAIS_TRABALHO: MockRecord[] = [
+  { id: 'mock-local-sede-sp', nome: 'Sede São Paulo', ativo: true },
+  { id: 'mock-local-filial-campinas', nome: 'Filial Campinas', ativo: true },
+  { id: 'mock-local-filial-rj', nome: 'Filial Rio de Janeiro', ativo: true },
+];
+
+export function getMockLocaisTrabalho(empresaId?: string): MockRecord[] | undefined {
+  return mockOr(MOCK_LOCAIS_TRABALHO);
 }
 
 // Hierarquia — Times da empresa (chave = `colaborador.time_id`, ver MOCK_COLABORADORES)

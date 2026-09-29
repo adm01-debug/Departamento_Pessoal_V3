@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as service from '@/services/tabelasReferenciaService';
 import { useEmpresas } from './useEmpresas';
-import { mockOr, getMockContasBancarias, getMockDadosEstagiario, getMockDocumentosPessoais } from '@/mocks/colaboradoresMock';
+import { mockOr, getMockContasBancarias, getMockDadosEstagiario, getMockDocumentosPessoais, getMockCentrosCusto } from '@/mocks/colaboradoresMock';
 
 type DataRecord = Record<string, unknown>;
 
@@ -42,7 +42,13 @@ export const useMotivosAfastamento = () => useResultQuery(['motivos-afastamento'
 // Centros de Custo (CRUD)
 // =============================================
 export function useCentrosCusto(empresaId?: string) {
-  return useResultQuery(['centros-custo', empresaId], () => service.listarCentrosCusto(empresaId!), !!empresaId);
+  // getMockCentrosCusto já faz o próprio gate (mockOr) internamente — sem
+  // wrap duplo aqui.
+  return useResultQuery(
+    ['centros-custo', empresaId],
+    async () => getMockCentrosCusto(empresaId) ?? service.listarCentrosCusto(empresaId!),
+    !!empresaId
+  );
 }
 
 export function useCriarCentroCusto() {

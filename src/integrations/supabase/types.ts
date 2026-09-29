@@ -12203,6 +12203,58 @@ export type Database = {
           },
         ]
       }
+      colaborador_lotacoes: {
+        Row: {
+          colaborador_id: string
+          created_at: string
+          empresa_id: string
+          id: string
+          lotacao_id: string
+          principal: boolean
+          updated_at: string
+        }
+        Insert: {
+          colaborador_id: string
+          created_at?: string
+          empresa_id: string
+          id?: string
+          lotacao_id: string
+          principal?: boolean
+          updated_at?: string
+        }
+        Update: {
+          colaborador_id?: string
+          created_at?: string
+          empresa_id?: string
+          id?: string
+          lotacao_id?: string
+          principal?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "colaborador_lotacoes_colaborador_id_fkey"
+            columns: ["colaborador_id"]
+            isOneToOne: false
+            referencedRelation: "colaboradores"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "colaborador_lotacoes_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "colaborador_lotacoes_lotacao_id_fkey"
+            columns: ["lotacao_id"]
+            isOneToOne: false
+            referencedRelation: "lotacoes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       medidas_ciencia_tokens: {
         Row: {
           acao: string | null

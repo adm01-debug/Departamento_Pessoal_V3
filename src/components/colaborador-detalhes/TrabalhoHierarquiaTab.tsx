@@ -15,7 +15,8 @@ import { colaboradorService } from '@/services';
 import { cargoService } from '@/services/cargoService';
 import { localTrabalhoService } from '@/services/localTrabalhoService';
 import { useCentrosCusto } from '@/hooks/useTabelasReferencia';
-import { useTimes, useLotacoes } from '@/hooks/useColaboradorDetalhes';
+import { useTimes } from '@/hooks/useColaboradorDetalhes';
+import { useLotacaoPrincipal } from '@/hooks/useColaboradorLotacao';
 import { useVinculosColaborador } from '@/hooks/useVinculos';
 import { ColaboradorStatus } from '@/components/ui/status-badge';
 import { cardVariants } from '@/components/dashboard/MetricCard';
@@ -272,8 +273,14 @@ export function TrabalhoHierarquiaTab({ colaboradorId }: { colaboradorId: string
   const { data: times } = useTimes(empresaId);
   const timeDetalhe = (times as any[] | undefined)?.find(t => t.id === colaborador?.time_id);
 
-  const { data: lotacoes, isLoading: isLoadingLotacoes } = useLotacoes(colaboradorId, empresaId);
-  const lotacaoPrincipal = (lotacoes as any[] | undefined)?.find(l => l.ativa !== false) ?? (lotacoes as any[] | undefined)?.[0];
+  // Fonte real do vínculo colaborador<->lotação (colaborador_lotacoes.principal
+  // = true) — substitui a heurística antiga "primeira lotação ativa" sobre
+  // `lotacoes.colaborador_id`, que nunca era populada por nenhum fluxo do
+  // app (auditoria: só existia leitura, nunca escrita, dessa coluna).
+  // `lotacoes` mantido como array de 0/1 item só para não mexer no JSX
+  // abaixo (mesmo .map/mesmas classes), que já lidava com essa forma.
+  const { data: lotacaoPrincipal, isLoading: isLoadingLotacoes } = useLotacaoPrincipal(colaboradorId, empresaId);
+  const lotacoes = lotacaoPrincipal ? [lotacaoPrincipal] : [];
 
   // Mesma query key usada no Resumo (ColaboradorDetalhesPage) pro card
   // "Informações Profissionais" — reaproveita o cache do gestor direto.

@@ -34,6 +34,7 @@ import {
   TabsHighlightItem as StepperTabsHighlightItem,
 } from '@/components/animate-ui/primitives/animate/tabs';
 import { colaboradorService } from '@/services';
+import { colaboradorLotacaoService } from '@/services/colaboradorLotacaoService';
 import { useNotification } from '@/contexts';
 import {
   User, MapPin, Landmark, Briefcase,
@@ -46,6 +47,7 @@ import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useDepartamentos } from '@/hooks/useDepartamentos';
 import { useCargos } from '@/hooks/useCargos';
+import { useLocaisTrabalho, useTimes, useCentrosCusto, useLotacoesCatalogo, useLotacaoPrincipal } from '@/hooks';
 import { useFormGuard } from '@/hooks/useFormGuard';
 import { useServerValidation } from '@/hooks/useServerValidation';
 import { useEmpresas } from '@/hooks/useEmpresas';
@@ -123,6 +125,20 @@ export const schema = z.object({
   // Valores exatos do enum `status_colaborador` do banco — 'inativo' não existe.
   status: z.enum(['ativo', 'pendente', 'desligado', 'ferias', 'afastado']).default('ativo'),
   matricula: z.string().optional(),
+  // Aba Profissional — bloco "Estrutura Interna"/"Alocação": mesmo padrão
+  // ID+texto já usado em cargo/cargo_id acima (grava o FK real + o nome em
+  // texto, que é o que o card "Vínculo & Alocação" usa como fallback quando
+  // não consegue resolver o join — ver TrabalhoHierarquiaTab.tsx).
+  time_id: z.string().optional(),
+  centro_custo_id: z.string().optional(),
+  centro_custo: z.string().optional(),
+  local_trabalho_id: z.string().optional(),
+  local_trabalho: z.string().optional(),
+  // Não é coluna de `colaboradores` — persistida à parte em
+  // `colaborador_lotacoes` (ver onSubmit) depois que o colaborador existe.
+  // Campo só de UI: nunca é enviado dentro do payload de
+  // criar/atualizar colaborador (normalizarPayloadColaborador não o inclui).
+  lotacao_principal_id: z.string().optional(),
 
   // PARTE 4E: dados bancários deixaram de ser coletados por este formulário.
   // colaboradores.banco_codigo/banco_nome/agencia/conta/tipo_conta/pix_chave/
@@ -162,6 +178,7 @@ export const NULLABLE_TEXT_FIELDS = [
   'nome_social', 'nome_pai', 'telefone',
   'cep', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf',
   'matricula', 'rg_data_emissao', 'rg_data_validade',
+  'centro_custo', 'local_trabalho',
 ] as const satisfies readonly (keyof FormData)[];
 
 // Campos de "Dados Gerais" que bloqueiam avanço/envio quando vazios — usado
@@ -179,6 +196,10 @@ export function normalizarPayloadColaborador(data: FormData): Record<string, unk
   for (const field of NULLABLE_TEXT_FIELDS) {
     if (payload[field] === '') payload[field] = null;
   }
+  // `lotacao_principal_id` não é coluna de `colaboradores` — persistida à
+  // parte em `colaborador_lotacoes` (ver onSubmit), nunca no payload de
+  // criar/atualizar colaborador.
+  delete payload.lotacao_principal_id;
   return payload;
 }
 
@@ -254,8 +275,23 @@ export default function ColaboradorFormPage() {
     queryFn: () => (colaboradorService as any).buscarPorId(id!),
     enabled: isEditing});
 
+  // Mesma empresa que o card "Vínculo & Alocação" usa para resolver Time/
+  // Centro de custo (ver TrabalhoHierarquiaTab.tsx): a do próprio registro em
+  // edição, não a selecionada no contexto — evita listar opções de outra
+  // empresa se o usuário tiver trocado de empresa no meio da edição.
+  const empresaIdEfetivo = isEditing ? colaborador?.empresa_id : empresaAtual?.id;
+  const { data: centrosCusto } = useCentrosCusto(empresaIdEfetivo);
+  const { data: times } = useTimes(empresaIdEfetivo);
+  const { locais } = useLocaisTrabalho({ pageSize: 100 });
+  // Unidade/Lotação principal — agora editável: catálogo (/lotacoes, só
+  // ativas) alimenta o Select; `lotacaoPrincipalAtual` pré-preenche o valor
+  // em edição a partir de `colaborador_lotacoes.principal = true` (mesma
+  // fonte que o card "Vínculo & Alocação" passou a usar — nada de heurística
+  // "primeira ativa" aqui).
+  const { data: lotacoesCatalogo } = useLotacoesCatalogo(empresaIdEfetivo);
+  const { data: lotacaoPrincipalAtual } = useLotacaoPrincipal(id, empresaIdEfetivo);
 
-  const { register, handleSubmit, formState: { errors, isDirty }, setValue, reset, watch, setError, trigger } = useForm<FormInput, unknown, FormData>({
+  const { register, handleSubmit, formState: { errors, isDirty }, setValue, getValues, reset, watch, setError, trigger } = useForm<FormInput, unknown, FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
       status: 'ativo',
@@ -281,6 +317,44 @@ export default function ColaboradorFormPage() {
     }
   }, [colaborador, reset]);
 
+  // Compatibilidade com colaboradores antigos: registros gravados antes do
+  // FK existir podem ter só o texto preenchido (`centro_custo`/
+  // `local_trabalho`) com o `*_id` nulo — sem isso, o Select ficaria vazio
+  // mesmo já havendo um valor salvo. Resolve o FK pelo nome só para exibição
+  // (setValue sem shouldDirty não marca o form como alterado); nada é
+  // persistido no banco até o usuário efetivamente salvar. Roda de novo
+  // quando os cadastros mestres terminam de carregar (podem chegar depois do
+  // colaborador), mas nunca sobrescreve uma seleção já feita (própria ou já
+  // resolvida) — verificado via getValues, não via `watch` (que criaria
+  // dependência circular de re-render neste efeito).
+  useEffect(() => {
+    if (!colaborador) return;
+    if (!colaborador.centro_custo_id && colaborador.centro_custo && !getValues('centro_custo_id')) {
+      const match = (centrosCusto as any[] | undefined)?.find((c) => c.nome === colaborador.centro_custo);
+      if (match) setValue('centro_custo_id', match.id);
+    }
+    if (!colaborador.local_trabalho_id && colaborador.local_trabalho && !getValues('local_trabalho_id')) {
+      const match = (locais as any[] | undefined)?.find((l) => l.nome === colaborador.local_trabalho);
+      if (match) setValue('local_trabalho_id', match.id);
+    }
+  }, [colaborador, centrosCusto, locais, setValue, getValues]);
+
+  // Pré-preenche o Select "Unidade / Lotação principal" com o vínculo já
+  // salvo em `colaborador_lotacoes` — não vem no objeto `colaborador` (não é
+  // coluna de `colaboradores`), então não é coberto pelo `reset()` acima; ao
+  // contrário, o PRÓPRIO `reset(colaborador as any)` (efeito anterior) apaga
+  // este campo (fica fora do objeto resetado) sempre que `colaborador` muda
+  // — por isso `colaborador` também entra nas deps aqui, pra este efeito
+  // reaplicar o valor depois de cada reset, não só quando `lotacaoPrincipalAtual`
+  // muda. Guarda por `getValues` pelo mesmo motivo do efeito de
+  // compatibilidade acima: nunca sobrescreve uma escolha que o usuário já
+  // fez nesta sessão.
+  useEffect(() => {
+    if (lotacaoPrincipalAtual?.id && !getValues('lotacao_principal_id')) {
+      setValue('lotacao_principal_id', lotacaoPrincipalAtual.id);
+    }
+  }, [lotacaoPrincipalAtual, colaborador, setValue, getValues]);
+
   const mutation = useMutation({
     // PARTE 3A: empresa_id nunca é lido do formulário/usuário.
     // - Criação: sempre usa a empresa atual do contexto (useEmpresas) —
@@ -289,19 +363,42 @@ export default function ColaboradorFormPage() {
     // - Edição: usa o empresa_id do próprio registro carregado (nunca o da
     //   empresa atual do contexto), via o wrapper `update()` que preserva a
     //   validação de tenant já existente em BaseService.atualizar.
-    mutationFn: (data: FormData) => {
+    mutationFn: async (data: FormData) => {
       // PARTE 3B: normaliza "" -> null nos campos TEXT opcionais/nullable
       // antes de enviar — não mexe em obrigatórios, enums, números, datas,
       // CPF, bancário ou documentos (ver NULLABLE_TEXT_FIELDS).
       const payload = normalizarPayloadColaborador(data);
-      if (isEditing) {
-        return (colaboradorService as any).update(id!, payload, colaborador?.empresa_id);
+      const saved = isEditing
+        ? await (colaboradorService as any).update(id!, payload, colaborador?.empresa_id)
+        : await (colaboradorService as any).create({ ...payload, empresa_id: empresaAtual!.id });
+
+      // Lotação principal não é coluna de `colaboradores` — só pode ser
+      // persistida DEPOIS que o colaborador existe (em criação, `saved.id`
+      // só existe neste ponto), e só quando algo foi selecionado (o campo
+      // continua opcional).
+      const empresaIdParaLotacao = isEditing ? colaborador?.empresa_id : empresaAtual?.id;
+      if (data.lotacao_principal_id && saved?.id && empresaIdParaLotacao) {
+        await colaboradorLotacaoService.definirPrincipal(saved.id, data.lotacao_principal_id, empresaIdParaLotacao);
       }
-      return (colaboradorService as any).create({ ...payload, empresa_id: empresaAtual!.id });
+
+      return saved;
     },
 
-    onSuccess: () => {
+    onSuccess: (saved: any) => {
       queryClient.invalidateQueries({ queryKey: ['colaboradores'] });
+      // O card "Vínculo & Alocação" (TrabalhoHierarquiaTab) resolve
+      // cargo/local/time/centro de custo/lotação principal via queries
+      // próprias, separadas de ['colaborador', id] — sem invalidar essas
+      // aqui, o card continuaria mostrando o valor antigo até essas queries
+      // expirarem sozinhas.
+      if (isEditing) {
+        queryClient.invalidateQueries({ queryKey: ['colaborador', id] });
+      }
+      queryClient.invalidateQueries({ queryKey: ['cargo-resumo'] });
+      queryClient.invalidateQueries({ queryKey: ['local-trabalho-resumo'] });
+      queryClient.invalidateQueries({ queryKey: ['times'] });
+      queryClient.invalidateQueries({ queryKey: ['centros-custo'] });
+      queryClient.invalidateQueries({ queryKey: ['lotacao-principal', saved?.id ?? id] });
       success(isEditing ? 'Colaborador atualizado!' : 'Colaborador criado!');
       navigate('/colaboradores');
     },
@@ -576,7 +673,7 @@ export default function ColaboradorFormPage() {
                             <FormField label="Nome Social / Apelido" {...register('nome_social')} error={errors.nome_social?.message} placeholder="Como o colaborador prefere ser chamado" />
                           </div>
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div className="space-y-2">
                             <label className="text-sm font-medium leading-none">CPF <span className="text-destructive" aria-hidden="true">*</span></label>
                             <CPFInput value={watch('cpf')} onChange={(v) => setValue('cpf', v)} />
@@ -596,16 +693,10 @@ export default function ColaboradorFormPage() {
                             onChange={(e) => setValue('data_nascimento', e.target.value)}
                             error={errors.data_nascimento?.message}
                           />
-                          {/* Controlado (em vez de register) para ficar em sincronia com o
-                              campo espelho na aba "Profissional" (bloco Remuneração e
-                              Identificação) — mesma matrícula, exibida nas duas abas. */}
-                          <FormField
-                            label="Matrícula Interna"
-                            name="matricula"
-                            value={watch('matricula')}
-                            onChange={(e) => setValue('matricula', e.target.value)}
-                            placeholder="Ex: 0001"
-                          />
+                          {/* Matrícula Interna deixou de ser editável aqui — fonte
+                              única de edição passa a ser a aba "Profissional"
+                              (bloco Remuneração e Identificação), evitando o mesmo
+                              input editável duplicado em duas abas. */}
                         </div>
                       </motion.div>
 
@@ -729,7 +820,10 @@ export default function ColaboradorFormPage() {
                       já usado no header da aba "Geral" (h-9 w-9 rounded-xl
                       bg-primary/10). Aviso informativo à direita reaproveita o
                       mesmo padrão do "showTip" da aba Geral (border-primary/20
-                      bg-primary/5), só que discreto e sempre visível. */}
+                      bg-primary/5), só que discreto e sempre visível — agora
+                      deixando explícito que estes dados alimentam o card
+                      "Vínculo & Alocação" do Dossiê (TrabalhoHierarquiaTab),
+                      que não é tocado por este formulário. */}
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -742,14 +836,14 @@ export default function ColaboradorFormPage() {
                       </div>
                       <div>
                         <h2 className="font-display font-medium text-base leading-tight">Dados Profissionais</h2>
-                        <p className="text-sm text-muted-foreground leading-tight">Informações sobre o vínculo, estrutura organizacional e remuneração do colaborador.</p>
+                        <p className="text-sm text-muted-foreground leading-tight">Informações sobre o vínculo, estrutura organizacional, alocação e remuneração do colaborador.</p>
                       </div>
                     </div>
 
                     <div className="flex items-start gap-2 rounded-xl border border-primary/20 bg-primary/5 px-3 py-2 sm:w-[30%] shrink-0">
                       <Info className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
                       <p className="text-[11px] text-muted-foreground leading-snug">
-                        Mantenha as informações profissionais sempre atualizadas para garantir uma gestão precisa e em conformidade.
+                        Os dados desta etapa alimentam o card &quot;Vínculo &amp; Alocação&quot; na visão geral do colaborador.
                       </p>
                     </div>
                   </motion.div>
@@ -772,7 +866,7 @@ export default function ColaboradorFormPage() {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField
-                        label="Data Admissão"
+                        label="Data de admissão"
                         type="date"
                         name="data_admissao"
                         value={watch('data_admissao')}
@@ -780,7 +874,7 @@ export default function ColaboradorFormPage() {
                         error={errors.data_admissao?.message}
                       />
                       <FormSelect
-                        label="Tipo de Contrato"
+                        label="Tipo de contrato"
                         value={watch('tipo_contrato')}
                         options={[
                           { value: 'clt', label: 'CLT (Efetivo)' }, { value: 'pj', label: 'PJ (Prestador)' },
@@ -790,7 +884,7 @@ export default function ColaboradorFormPage() {
                         onChange={(v) => setValue('tipo_contrato', v as any)}
                       />
                       <FormSelect
-                        label="Status Atual"
+                        label="Status atual"
                         value={watch('status')}
                         options={[
                           // Reativar um colaborador desligado por aqui apagaria o
@@ -815,7 +909,11 @@ export default function ColaboradorFormPage() {
                     </div>
                   </motion.div>
 
-                  {/* Bloco 2 — Estrutura Interna */}
+                  {/* Bloco 2 — Estrutura Interna. Time/Centro de custo gravam
+                      apenas o FK (*_id) — não existe coluna de texto para
+                      "time" e o card já resolve os nomes via join (ver
+                      TrabalhoHierarquiaTab.tsx); Centro de custo grava FK +
+                      nome em texto, mesmo padrão ID+texto do Cargo abaixo. */}
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -828,14 +926,15 @@ export default function ColaboradorFormPage() {
                       </div>
                       <div>
                         <h3 className="text-sm font-medium leading-tight">Estrutura Interna</h3>
-                        <p className="text-xs text-muted-foreground leading-tight">Cargo e departamento onde o colaborador está alocado.</p>
+                        <p className="text-xs text-muted-foreground leading-tight">Cargo, departamento, time e centro de custo onde o colaborador está alocado.</p>
                       </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormSelect
                         label="Cargo"
                         value={watch('cargo')}
-                        options={cargos.map(c => ({ value: c.nome, label: c.nome }))}
+                        placeholder={cargos.length ? 'Selecione...' : 'Nenhum cargo cadastrado'}
+                        options={cargos.map(c => ({ value: c.nome, label: c.ativo === false ? `${c.nome} (inativo)` : c.nome }))}
                         onChange={(v) => {
                           setValue('cargo', v);
                           setValue('cargo_id', cargos.find(c => c.nome === v)?.id);
@@ -851,22 +950,95 @@ export default function ColaboradorFormPage() {
                       <FormSelect
                         label="Departamento"
                         value={watch('departamento')}
-                        options={departamentos.map(d => ({ value: d.nome, label: d.nome }))}
+                        placeholder={departamentos.length ? 'Selecione...' : 'Nenhum departamento cadastrado'}
+                        options={departamentos.map(d => ({ value: d.nome, label: d.ativo === false ? `${d.nome} (inativo)` : d.nome }))}
                         onChange={(v) => setValue('departamento', v)}
                         error={errors.departamento?.message}
+                        avoidCollisions={false}
+                      />
+                      <FormSelect
+                        label="Time"
+                        value={watch('time_id') ?? ''}
+                        placeholder={times?.length ? 'Selecione...' : 'Nenhum time cadastrado'}
+                        options={(times as any[] | undefined ?? []).map(t => ({ value: t.id, label: t.ativo === false ? `${t.nome} (inativo)` : t.nome }))}
+                        onChange={(v) => setValue('time_id', v)}
+                        avoidCollisions={false}
+                      />
+                      <FormSelect
+                        label="Centro de custo"
+                        value={watch('centro_custo_id') ?? ''}
+                        placeholder={centrosCusto?.length ? 'Selecione...' : 'Nenhum centro de custo cadastrado'}
+                        options={(centrosCusto as any[] | undefined ?? []).map(c => ({
+                          value: c.id,
+                          label: `${c.codigo ? `${c.codigo} ` : ''}${c.nome}${c.ativo === false ? ' (inativo)' : ''}`,
+                        }))}
+                        onChange={(v) => {
+                          setValue('centro_custo_id', v);
+                          setValue('centro_custo', (centrosCusto as any[] | undefined)?.find(c => c.id === v)?.nome);
+                        }}
                         avoidCollisions={false}
                       />
                     </div>
                   </motion.div>
 
-                  {/* Bloco 3 — Remuneração e Identificação. Matrícula Interna é a
-                      mesma `matricula` do form (controlada via watch/setValue),
-                      espelhada aqui e na aba "Geral" para bater com a referência
-                      visual sem duplicar dado. */}
+                  {/* Bloco 3 — Alocação. "Local de trabalho" grava FK + nome em
+                      texto (mesmo padrão ID+texto de Cargo/Centro de custo).
+                      "Unidade / Lotação principal" agora é um Select real:
+                      opções vêm do catálogo /lotacoes (só ativas) e, ao
+                      salvar, o vínculo é gravado em `colaborador_lotacoes`
+                      (tabela de associação — nunca cria lotação nova aqui,
+                      só referencia uma já cadastrada em Estrutura). */}
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 3 * 0.15, duration: 0.5 }}
+                    className="space-y-3 pt-4 border-t border-border/20"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <MapPin className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-medium leading-tight">Alocação</h3>
+                        <p className="text-xs text-muted-foreground leading-tight">Local físico e unidade de lotação principal do colaborador.</p>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormSelect
+                        label="Local de trabalho"
+                        value={watch('local_trabalho_id') ?? ''}
+                        placeholder={locais?.length ? 'Selecione...' : 'Nenhum local de trabalho cadastrado'}
+                        options={(locais as any[] | undefined ?? []).map(l => ({
+                          value: l.id,
+                          label: l.ativo === false ? `${l.nome} (inativo)` : l.nome,
+                        }))}
+                        onChange={(v) => {
+                          setValue('local_trabalho_id', v);
+                          setValue('local_trabalho', (locais as any[] | undefined)?.find(l => l.id === v)?.nome);
+                        }}
+                        avoidCollisions={false}
+                      />
+                      <FormSelect
+                        label="Unidade / Lotação principal"
+                        value={watch('lotacao_principal_id') ?? ''}
+                        placeholder={lotacoesCatalogo?.length ? 'Selecione...' : 'Nenhuma lotação cadastrada'}
+                        options={(lotacoesCatalogo ?? []).map((l) => ({
+                          value: l.id,
+                          label: l.codigo ? `${l.codigo} ${l.nome}` : l.nome,
+                        }))}
+                        onChange={(v) => setValue('lotacao_principal_id', v)}
+                        avoidCollisions={false}
+                      />
+                    </div>
+                  </motion.div>
+
+                  {/* Bloco 4 — Remuneração e Identificação. Matrícula Interna
+                      passou a ser editada só aqui — a "Dados Gerais" mostra o
+                      mesmo valor, mas sem input editável duplicado. */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 4 * 0.15, duration: 0.5 }}
                     className="space-y-3 pt-4 border-t border-border/20"
                   >
                     <div className="flex items-center gap-2.5">
@@ -894,7 +1066,7 @@ export default function ColaboradorFormPage() {
                     </div>
                   </motion.div>
                 </CardContent>
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 4 * 0.15, duration: 0.5 }}>
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 5 * 0.15, duration: 0.5 }}>
                   <StepFooter
                     activeIndex={activeIndex}
                     isLastStep={isLastStep}

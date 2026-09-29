@@ -218,7 +218,16 @@ function ContaCard({
   );
 }
 
-export function ContasBancariasTab({ colaboradorId }: { colaboradorId: string }) {
+export function ContasBancariasTab({
+  colaboradorId,
+  // Trava a altura em `lg:` (com scroll interno na lista) para nivelar com
+  // o card "Resumo da remuneração", vizinho só na aba "Financeiro &
+  // Benefícios" do Dossiê (`ColaboradorDetalhesPage`). Não usado nas duas
+  // instâncias deste componente dentro do formulário de cadastro/edição
+  // (`ColaboradorFormPage`, aba "Financeiro" — lá o card fica sozinho, sem
+  // nenhum vizinho pra nivelar, então a lista deve aparecer inteira).
+  capHeight = false,
+}: { colaboradorId: string; capHeight?: boolean }) {
   const { data, isLoading } = useContasBancarias(colaboradorId);
   const criar = useCriarContaBancaria();
   const atualizar = useAtualizarContaBancaria();
@@ -295,48 +304,51 @@ export function ContasBancariasTab({ colaboradorId }: { colaboradorId: string })
   const outras = Array.isArray(data) ? data.filter((c: any) => !c.principal) : [];
 
   return (
-    // Sem altura fixa: o card cresce com o conteúdo (nº de contas). No grid
-    // "financeiro" da página de detalhes ele fica ao lado do card "Resumo da
-    // remuneração" com `items-start`, então alturas diferentes entre os dois
-    // não quebram o layout — só deixam de ficar visualmente niveladas.
+    // `capHeight` trava a altura a partir de `lg:` (com scroll interno na
+    // lista) para nivelar com o card "Resumo da remuneração" — só faz
+    // sentido quando este card tem esse vizinho ao lado (aba "Financeiro &
+    // Benefícios" do Dossiê). `205px` não é um número arbitrário: é a
+    // altura real do card "Resumo da remuneração" (FinanceiroResumoCards.tsx)
+    // — CardContent `p-4` (32px) + linha do título `text-sm`/20px + `mb-1`/
+    // 4px (24px) + 4x `LinhaResumo` (`py-2` 16px + `text-sm` 20px = 36px
+    // cada, 144px) + 3 bordas de 1px entre linhas (3px) + borda do card
+    // (2px) = 205px. Se esse card vizinho for alterado, recalcular aqui
+    // também. Sem `capHeight` (uso deste componente dentro do formulário de
+    // cadastro/edição, aba "Financeiro" — sem nenhum vizinho pra nivelar), o
+    // card cresce livremente com o nº de contas, sem scroll, como sempre foi.
     <MotionCard
       custom={4}
       initial="hidden"
       animate="visible"
       variants={cardVariants}
-      className="border border-border/30 rounded-2xl overflow-hidden shadow-elevated"
+      className={cn(
+        'border border-border/30 rounded-2xl overflow-hidden shadow-elevated',
+        capHeight && 'lg:max-h-[205px] lg:flex lg:flex-col'
+      )}
     >
-      <CardContent className="p-4 sm:p-5 space-y-4">
-        {/* Cabeçalho — ícone + título/subtítulo à esquerda, ação à direita */}
+      <CardContent className={cn('p-4 space-y-2', capHeight && 'lg:flex lg:flex-col lg:h-full lg:min-h-0')}>
+        {/* Cabeçalho compacto — ícone + título + nota de segurança inline,
+            ação à direita, tudo numa linha só. Substitui o cabeçalho
+            grande (ícone em caixa + subtítulo) e o banner de segurança em
+            bloco separado que existiam antes: juntos consumiam ~140px, não
+            sobrando espaço pra nenhuma conta aparecer dentro do
+            `lg:max-h-[205px]` do card (ver comentário acima). */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0 * 0.15, duration: 0.5 }}
-          className="flex flex-col sm:flex-row sm:items-start justify-between gap-3"
+          className={cn('flex items-center justify-between gap-3', capHeight && 'lg:shrink-0')}
         >
-          <div className="flex items-center gap-2.5">
-            <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-              <Landmark className="h-4.5 w-4.5 text-primary" />
-            </div>
-            <div>
-              <h3 className="font-display font-medium text-sm leading-tight">Contas Bancárias</h3>
-              <p className="text-xs text-muted-foreground leading-tight">Dados bancários utilizados para pagamento do colaborador.</p>
-            </div>
+          <div className="flex items-center gap-2 min-w-0">
+            <Landmark className="h-4 w-4 text-primary shrink-0" />
+            <h3 className="font-display font-medium text-sm leading-tight truncate">Contas Bancárias</h3>
+            <span className="hidden sm:inline-flex items-center gap-1 text-[10px] text-info shrink-0">
+              <ShieldCheck className="h-3 w-3" /> Dados protegidos
+            </span>
           </div>
-          <Button size="sm" className="h-8 px-3 text-xs rounded-xl shrink-0" onClick={() => setOpen(true)}>
-            <Plus className="mr-1 h-3.5 w-3.5" />Adicionar conta
+          <Button size="sm" className="h-7 px-2.5 text-xs rounded-lg gap-1 shrink-0" onClick={() => setOpen(true)}>
+            <Plus className="h-3.5 w-3.5" />Adicionar
           </Button>
-        </motion.div>
-
-        {/* Banner de segurança */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1 * 0.15, duration: 0.5 }}
-          className="flex items-center gap-2 rounded-lg border border-info/20 bg-info/5 px-3 py-2"
-        >
-          <ShieldCheck className="h-3.5 w-3.5 text-info shrink-0" />
-          <p className="text-xs text-info">Seus dados estão protegidos e são exibidos parcialmente por segurança.</p>
         </motion.div>
 
         <AnimatedCascadeDialog
@@ -356,6 +368,9 @@ export function ContasBancariasTab({ colaboradorId }: { colaboradorId: string })
           ]}
         />
 
+        {/* Só esta região rola (`lg:overflow-y-auto`) quando o card está com
+            altura travada — o cabeçalho acima fica sempre visível. */}
+        <div className={cn('space-y-4', capHeight && 'lg:flex-1 lg:min-h-0 lg:overflow-y-auto lg:pr-1')}>
         {isLoading ? (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 2 * 0.15, duration: 0.5 }} className="flex items-center justify-center py-6">
             <Spinner />
@@ -437,6 +452,7 @@ export function ContasBancariasTab({ colaboradorId }: { colaboradorId: string })
             )}
           </>
         )}
+        </div>
       </CardContent>
 
       <AnimatedCascadeDialog
