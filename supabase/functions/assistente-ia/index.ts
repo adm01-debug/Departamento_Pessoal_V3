@@ -5,6 +5,116 @@ import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody, getCorsHeaders } from '../_shared/contract.ts';
 import { safeFetchWithRetry, FetchTimeoutError, FetchNetworkError } from '../_shared/safe-fetch.ts';
 
+/**
+ * Gateway de IA (API compatível com OpenAI).
+ *
+ * CORREÇÃO do bug "Servidor do assistente temporariamente indisponível":
+ * o host anterior (`ai-gateway.lovable.dev`) NÃO existe em DNS — resposta
+ * NXDOMAIN. O `fetch` da edge function morria com erro de rede antes de sair
+ * da máquina, o retry (3 tentativas com backoff 2s+4s) só aumentava a espera
+ * (~7,6s) e a função terminava em 500 `{"error":"Erro interno"}`, que o
+ * frontend traduzia no toast genérico. O host correto é
+ * `ai.gateway.lovable.dev` (verificado: responde 405 para GET e 401 para POST
+ * com chave inválida, ou seja, endpoint vivo e compatível).
+ *
+ * `AI_GATEWAY_URL` (mesma variável já usada por `alertas-preditivos`) permite
+ * apontar para outro gateway compatível sem precisar de novo deploy.
+ */
+const AI_GATEWAY_URL = (Deno.env.get('AI_GATEWAY_URL') ?? 'https://ai.gateway.lovable.dev/v1')
+  .replace(/\/+$/, '');
+
+/** Modelo usado nas respostas. `AI_MODEL` evita redeploy se o modelo for descontinuado. */
+const AI_MODEL = Deno.env.get('AI_MODEL') ?? 'google/gemini-2.5-flash';
+
+/** Erro devolvido pelo próprio gateway de IA (status HTTP + corpo). */
+class AiGatewayError extends Error {
+  readonly upstreamStatus: number;
+  readonly body: string;
+
+  constructor(upstreamStatus: number, body: string) {
+    super(`AI gateway respondeu HTTP ${upstreamStatus}`);
+    this.name = 'AiGatewayError';
+    this.upstreamStatus = upstreamStatus;
+    this.body = body;
+  }
+}
+
+/** Secret da credencial de IA ausente no projeto. */
+class AiKeyMissingError extends Error {
+  constructor() {
+    super('LOVABLE_API_KEY nao configurada no projeto');
+    this.name = 'AiKeyMissingError';
+  }
+}
+
+/**
+ * Traduz a falha real para { status HTTP, mensagem }. Nunca devolve "erro
+ * escondido": o status reflete o que realmente aconteceu (402 créditos, 429
+ * rate limit, 502/504 provedor indisponível/lento, 503 credencial inválida),
+ * de modo que o operador consiga diagnosticar pela resposta e pelos logs.
+ */
+function describeAiFailure(error: unknown): { status: number; message: string } {
+  if (error instanceof AiKeyMissingError) {
+    return {
+      status: 503,
+      message: 'Assistente IA não configurado no servidor (LOVABLE_API_KEY ausente).',
+    };
+  }
+
+  if (error instanceof AiGatewayError) {
+    if (error.upstreamStatus === 402) {
+      return {
+        status: 402,
+        message:
+          'Os créditos de IA do workspace acabaram. Recarregue os créditos para o assistente voltar a responder.',
+      };
+    }
+    if (error.upstreamStatus === 429) {
+      return {
+        status: 429,
+        message: 'Limite de requisições excedido. Tente novamente em alguns minutos.',
+      };
+    }
+    if (error.upstreamStatus === 401 || error.upstreamStatus === 403) {
+      return {
+        status: 503,
+        message: 'Assistente IA com credencial inválida ou expirada (LOVABLE_API_KEY).',
+      };
+    }
+    return {
+      status: 502,
+      message: `Provedor de IA indisponível (HTTP ${error.upstreamStatus}). Tente novamente em instantes.`,
+    };
+  }
+
+  if (error instanceof FetchTimeoutError) {
+    return {
+      status: 504,
+      message: 'O provedor de IA não respondeu a tempo. Tente novamente em instantes.',
+    };
+  }
+
+  if (error instanceof FetchNetworkError) {
+    return {
+      status: 502,
+      message: 'Não foi possível alcançar o provedor de IA. Tente novamente em instantes.',
+    };
+  }
+
+  return { status: 500, message: 'Erro interno' };
+}
+
+/** Detalhe técnico para log/observabilidade — não é enviado ao cliente. */
+function describeAiCause(error: unknown): string {
+  if (error instanceof AiGatewayError) {
+    return `${error.name} HTTP ${error.upstreamStatus}: ${error.body.slice(0, 300)}`;
+  }
+  if (error instanceof Error) {
+    return `${error.name}: ${error.message}`;
+  }
+  return String(error);
+}
+
 const SYSTEM_PROMPT = `Voce e um assistente especialista em Departamento Pessoal brasileiro. Seu nome e "Assistente DP".
 
 Voce tem conhecimento profundo sobre:
@@ -79,10 +189,8 @@ serve(async (req: Request): Promise<Response> => {
     const rl = await checkRateLimit(admin, { key: `assistente-ia:${userId}`, limit: 20, windowSec: 60 });
     if (!rl.allowed) return rateLimitResponse(rl);
 
-    let raw: unknown;
-    const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
+    const { body: raw, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    raw = _pb;
     const { message, history = [] } = raw as { message?: string; history?: unknown[] };
 
     if (!message || typeof message !== 'string' || message.length > 4000) {
@@ -101,7 +209,7 @@ serve(async (req: Request): Promise<Response> => {
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY not configured');
+      throw new AiKeyMissingError();
     }
 
     const messages = [
@@ -111,7 +219,7 @@ serve(async (req: Request): Promise<Response> => {
     ];
 
     const response = await safeFetchWithRetry(
-      'https://ai-gateway.lovable.dev/v1/chat/completions',
+      `${AI_GATEWAY_URL}/chat/completions`,
       {
         method: 'POST',
         headers: {
@@ -119,7 +227,7 @@ serve(async (req: Request): Promise<Response> => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'google/gemini-2.5-flash',
+          model: AI_MODEL,
           messages,
           max_tokens: 2048,
           temperature: 0.3,
@@ -131,36 +239,38 @@ serve(async (req: Request): Promise<Response> => {
         maxAttempts: 3,
         baseDelayMs: 2_000,
         onRetry: (attempt, err, delay) => {
-          console.error(`[assistente-ia] Retry ${attempt}/3 em ${delay}ms — ${err.message}`);
+          console.error(`[assistente-ia] Retry ${attempt}/3 em ${delay}ms (${AI_GATEWAY_URL}) — ${err.message}`);
         },
         tag: 'openai',
       }
     );
 
     if (!response.ok) {
+      // Corpo do gateway é preservado no erro para aparecer no log e virar
+      // status/mensagem específicos em `describeAiFailure` (sem "Erro interno").
       const errText = await response.text().catch(() => '');
-      if (response.status === 429) {
-        throw new Error('Limite de requisições excedido. Tente novamente em alguns minutos.');
-      }
-      if (response.status === 401 || response.status === 403) {
-        captureException?.(new Error(`AI API auth error [${response.status}]`));
-        throw new Error('Erro de configuração do assistente IA.');
-      }
-      throw new Error(`Erro do assistente IA [${response.status}]: ${errText}`);
+      throw new AiGatewayError(response.status, errText);
     }
 
     const data = await response.json();
     const aiResponse = data.choices?.[0]?.message?.content || 'Nao foi possivel gerar uma resposta.';
 
     return new Response(
-      JSON.stringify({ response: aiResponse }),
+      JSON.stringify({
+        response: aiResponse,
+        model: data.model ?? AI_MODEL,
+        tokens: data.usage?.total_tokens ?? undefined,
+      }),
       { headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   } catch (error: unknown) {
-    try { captureException(error, { fn: 'assistente-ia' }); } catch { /* noop */ }
+    const failure = describeAiFailure(error);
+    // Log sempre com a causa REAL (o cliente recebe só a mensagem amigável).
+    console.error(`[assistente-ia] Falha (HTTP ${failure.status}): ${describeAiCause(error)}`);
+    try { await captureException(error, { fn: 'assistente-ia' }); } catch { /* noop */ }
     return new Response(
-      JSON.stringify({ error: 'Erro interno' }),
-      { status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
+      JSON.stringify({ error: failure.message }),
+      { status: failure.status, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' } }
     );
   }
 });

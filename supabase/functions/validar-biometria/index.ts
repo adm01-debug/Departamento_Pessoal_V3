@@ -53,10 +53,8 @@ serve(async (req: Request): Promise<Response> => {
     const rl = await checkRateLimit(supabase, { key: `biometria:${userId}`, limit: 20, windowSec: 60 });
     if (!rl.allowed) return rateLimitResponse(rl);
 
-    let raw: unknown;
-    const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
+    const { body: raw, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    raw = _pb;
     const { batidaId, fotoBase64, colaboradorId } = raw as Record<string, unknown>;
 
     if (!batidaId || !fotoBase64 || !colaboradorId ||
@@ -127,8 +125,10 @@ serve(async (req: Request): Promise<Response> => {
       try {
         const promptIA = `Compare estas duas imagens de rostos. A primeira URL e a foto de referencia do colaborador "${colaborador.nome_completo}": ${colaborador.foto_referencia_url}. A segunda e a foto capturada em base64. Responda APENAS um JSON: {"match": boolean, "confidence": number (0-1), "analysis": "string"}. match=true se confianca >= 0.85.`;
 
+        // Host corrigido: `ai-gateway.lovable.dev` não existe em DNS (NXDOMAIN);
+        // o gateway de IA da Lovable responde em `ai.gateway.lovable.dev`.
         const response = await safeFetchWithRetry(
-          'https://ai-gateway.lovable.dev/v1/chat/completions',
+          'https://ai.gateway.lovable.dev/v1/chat/completions',
           {
             method: 'POST',
             headers: {

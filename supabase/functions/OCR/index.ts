@@ -99,10 +99,8 @@ serve(async (req: Request): Promise<Response> => {
     const rl = await checkRateLimit(supabase, { key: `ocr:${userId}`, limit: 10, windowSec: 60 });
     if (!rl.allowed) return rateLimitResponse(rl);
 
-    let raw: unknown;
-    const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
+    const { body: raw, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
-    raw = _pb;
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) {
       return json({ success: false, error: 'Payload inválido', details: parsed.error.flatten() }, 422);
@@ -133,8 +131,11 @@ serve(async (req: Request): Promise<Response> => {
     };
     const prompt = prompts[documentType] || prompts.generic;
 
+    // Host corrigido: `api.lovable.dev/v1/chat/completions` responde 404
+    // (nunca foi o endpoint de chat completions). O gateway de IA é
+    // `ai.gateway.lovable.dev`.
     const aiResponse = await safeFetchWithRetry(
-      'https://api.lovable.dev/v1/chat/completions',
+      'https://ai.gateway.lovable.dev/v1/chat/completions',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${lovableApiKey}` },
