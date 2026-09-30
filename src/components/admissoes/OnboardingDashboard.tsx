@@ -24,12 +24,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { MetricCard } from '@/components/dashboard/MetricCard';
+import { MetricCard, cardVariants } from '@/components/dashboard/MetricCard';
 import { DonutChart } from '@/components/dashboard/DonutChart';
 import { donutColors } from '@/components/dashboard/analytics/widgets';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/utils/format';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import {
   AlertCircle,
@@ -188,10 +188,26 @@ function percentual(parcial: number, total: number): number {
 /* ─── Blocos de UI compartilhados ─────────────────────────────────────────── */
 
 /**
+ * Mesma animação de entrada dos KPI Cards do Dashboard Executivo: fade + subida
+ * de 20px, stagger de 0.08s por índice e 0.4s de duração — reaproveitada via
+ * `cardVariants` IMPORTADO de `dashboard/MetricCard.tsx` (não uma cópia), para
+ * que os cards de Admissões nunca divirjam da referência. O `motion.create(Card)`
+ * é o mesmo padrão usado lá (`DashboardExecutivoPage.tsx`): a Motion entra no
+ * PRÓPRIO nó do card, sem wrapper novo — nada de `div` a mais entre a grade e o
+ * casco, então layout, largura, altura, cores e o scroll interno seguem
+ * exatamente os de antes.
+ */
+const MotionCard = motion.create(Card);
+
+/**
  * Painel de conteúdo da área de Admissões: cabeçalho com chip de ícone, título,
  * subtítulo contextual e ação no canto direito. É o mesmo casco para os dois
  * painéis analíticos e para os quatro widgets — o que garante consistência
  * entre eles.
+ *
+ * `index` é a posição do card na ordem de leitura da tela: é o `custom` que o
+ * `cardVariants` usa para o atraso da cascata (KPIs 0-3 → analíticos 4-5 →
+ * widgets 6-9). Ele NÃO muda o casco nem a grade — só o `delay` da entrada.
  */
 function PanelCard({
   icon: Icon,
@@ -207,6 +223,7 @@ function PanelCard({
    * largura total na segunda — evita título/subtítulo quebrando em card estreito.
    */
   headerStacked = false,
+  index = 0,
 }: {
   icon: React.ElementType;
   title: string;
@@ -222,6 +239,8 @@ function PanelCard({
   compact?: boolean;
   /** Cabeçalho em duas linhas: título e ação em cima, subtítulo embaixo. */
   headerStacked?: boolean;
+  /** Posição na cascata de entrada (ver o comentário do `PanelCard`). */
+  index?: number;
 }) {
   const chip = (
     <div
@@ -243,7 +262,14 @@ function PanelCard({
   const gapTexto = compact ? 'gap-2' : 'gap-3';
 
   return (
-    <Card variant="elevated" className={cn('flex h-full flex-col overflow-hidden rounded-2xl', className)}>
+    <MotionCard
+      custom={index}
+      variants={cardVariants}
+      initial="hidden"
+      animate="visible"
+      variant="elevated"
+      className={cn('flex h-full flex-col overflow-hidden rounded-2xl', className)}
+    >
       {headerStacked ? (
         <CardHeader className={cn('flex flex-col space-y-0', compact ? 'gap-1.5' : 'gap-2', paddingCabecalho)}>
           <div className="flex items-start justify-between gap-2">
@@ -275,7 +301,7 @@ function PanelCard({
       >
         {children}
       </CardContent>
-    </Card>
+    </MotionCard>
   );
 }
 
@@ -384,15 +410,54 @@ const TEMPO_MEDIO_FALLBACK = [
 ];
 
 /**
- * Altura fixa dos quatro widgets: as listas internas rolam (`overflow-y-auto`)
- * e o card nunca cresce — os quatro ficam sempre com a mesma altura.
+ * Altura fixa dos quatro widgets: as listas internas rolam (`overflow-y-auto`
+ * + `scroll-interno`) e o card nunca cresce — os quatro ficam sempre com a
+ * mesma altura, qualquer que seja o volume de itens.
  *
- * 256px é o menor valor medido em que as quatro linhas de "Ações Prioritárias"
- * e de "Próximas Admissões" (linha mais alta: avatar + nome + data + selo) e as
- * três de "SLA & Alertas" mais o rodapé aparecem inteiras em 1024/1440/1920,
- * mesmo com o título quebrando em duas linhas.
+ * 256px é o valor medido do casco em 1024/1440/1920 (header 75px + miolo
+ * 180px, mais a borda de 1px de cada lado), inclusive com o título quebrando
+ * em duas linhas.
+ *
+ * O scroll é sempre do MIOLO, nunca do cabeçalho: o `<CardHeader>` do
+ * `PanelCard` fica fora do container com `overflow-y-auto`. Quem recebe
+ * `overflow-y-auto scroll-interno` são exatamente três containers:
+ *   • "Ações Prioritárias" — div das 4 contagens;
+ *   • "Próximas Admissões" — div dos colaboradores; o selo de etapa está
+ *     dentro da linha e rola junto com ela (nunca sobra para o selo sair do
+ *     card);
+ *   • "SLA & Alertas" — div dos 3 indicadores + o bloco "Taxa de conclusão",
+ *     que agora é o último filho DELA e rola junto (ver `ALTURA_LISTA_WIDGET`).
+ * A barra é fina e discreta (6px, tinta de `--muted-foreground`, só quando há
+ * overflow) e cai na faixa de 8px que o `-mx-2` já deixa fora da área de texto
+ * — por isso ela nunca encosta no nome nem no selo à direita.
  */
 const ALTURA_WIDGET = 'h-[256px]';
+
+/**
+ * Altura fixa da VIEWPORT rolável das três listas: é ela — e não o `flex-1` —
+ * que decide quanto conteúdo aparece antes do corte.
+ *
+ * Medido no card real (312×256 na grade de 4 colunas, viewport 1600px): header
+ * 75px + miolo 180px, dos quais 16px são o `pb-4` do `CardContent` — sobram
+ * 164px para a lista. Com `min-h-0 flex-1` o container CRESCIA até esses 164px
+ * enquanto o conteúdo real cabia inteiro (4 linhas de 36px + 2px de
+ * `space-y-0.5` = 150px em "Ações Prioritárias" e "Próximas Admissões"; 3
+ * linhas + 8px + rodapé = 155px em "SLA & Alertas"), então
+ * `scrollHeight === clientHeight` e nenhuma barra era desenhada.
+ *
+ * 136px é a altura que exibe 3 linhas COMPLETAS (3×36 + 2 gaps de 2px = 112px)
+ * e a maior parte da 4ª — a linha cortada fica sendo a dica de "há mais
+ * abaixo":
+ *   • "Ações Prioritárias" / "Próximas Admissões" → 150 − 136 = 14px ocultos;
+ *   • "SLA & Alertas" → 155 − 136 = 19px ocultos (a "Taxa de conclusão" mostra
+ *     o topo e o restante vem pela roda do mouse/arrasto da barra).
+ * Os 24px que sobram no miolo (164 − 4 do `mt-1` − 136) são respiro antes do
+ * `pb-4` do card; a altura EXTERNA (`h-[256px]`) não muda em nenhum dos três.
+ * Como o container não é mais `flex-1`, ele mantém o `flex-shrink` padrão do
+ * flexbox: em telas estreitas, onde o cabeçalho quebra e o miolo encolhe, a
+ * viewport cede junto em vez de estourar o `overflow-hidden` do casco.
+ */
+const ALTURA_LISTA_WIDGET = 'h-[136px]';
 
 /**
  * Tipografia da legenda do card "Distribuição por Área".
@@ -582,230 +647,260 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
 
   return (
     <div className="space-y-4">
-      {/* ── 1. KPIs ───────────────────────────────────────────────────────── */}
-      {/* Sem `sparkline`: os KPI de Admissões não têm micro gráfico no canto
+      {/* `AnimatePresence` local, sem props: a rota de Admissões já vive dentro de
+          <AnimatePresence initial={false}> (PageTransition.tsx) e esse contexto de
+          presença é lido por QUALQUER `motion.*` descendente — com
+          `initial={false}` a Motion pula o keyframe inicial e a cascata nem chega
+          a tocar (é o mesmo caso já documentado e contornado em
+          OrganogramaTree.tsx, HistoricoColaborador.tsx e
+          HeadcountOverviewCard.tsx). Um contexto de presença novo aqui
+          (initial=true por padrão) devolve o keyframe `hidden` a todos os cards
+          desta tela de uma vez, sem repetir a blindagem card a card. Ele não
+          renderiza DOM: layout, cores, tipografia, tamanhos e o scroll interno
+          dos widgets seguem idênticos.
+          A cascata é a MESMA dos KPI Cards do Dashboard Executivo e segue a
+          ordem visual da página — KPIs (0-3, o `index` do `MetricCard`),
+          analíticos (4-5) e widgets (6-9), na leitura esquerda → direita,
+          linha de cima antes da de baixo. Como a animação é por
+          `initial="hidden"` + `animate="visible"` com alvo constante, hover e
+          re-render (trocar o período de um gráfico, por exemplo) NÃO
+          reanimam: só a montagem da tela. */}
+      <AnimatePresence>
+        {/* ── 1. KPIs ───────────────────────────────────────────────────────── */}
+        {/* Sem `sparkline`: os KPI de Admissões não têm micro gráfico no canto
           direito — toda a largura do card fica com o ícone, o título, o valor e
-          a frase de apoio, que assim aparece inteira (ver `MetricCard`). */}
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {stats.kpis.map((kpi, index) => (
-          <MetricCard
-            key={kpi.label}
-            index={index}
-            title={kpi.label}
-            value={String(kpi.valor)}
-            icon={kpi.icon}
-            tone={kpi.tone}
-            trend={kpi.trend}
-            description={kpi.trend ? undefined : kpi.descricao}
-            className="rounded-2xl border-border/40 shadow-elevated"
-          />
-        ))}
-      </div>
-
-      {/* ── 2. Área analítica ─────────────────────────────────────────────── */}
-      <div className="grid gap-4 xl:grid-cols-2">
-        <PanelCard
-          icon={TrendingUp}
-          title="Tempo Médio de Admissão (dias)"
-          subtitle="Média do fluxo completo, da abertura ao eSocial"
-          compact
-          action={
-            <PeriodoSelector
-              label="Período do tempo médio de admissão"
-              options={PERIODOS_TEMPO}
-              value={periodoTempo}
-              onChange={setPeriodoTempo}
+          a frase de apoio, que assim aparece inteira (ver `MetricCard`).
+          A entrada em cascata vem do próprio `MetricCard` (o `index` alimenta o
+          `custom` do `cardVariants`, o mesmo do Dashboard Executivo): aqui o
+          `index` do `.map` já entrega 0-3, os quatro primeiros da fila. */}
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {stats.kpis.map((kpi, index) => (
+            <MetricCard
+              key={kpi.label}
+              index={index}
+              title={kpi.label}
+              value={String(kpi.valor)}
+              icon={kpi.icon}
+              tone={kpi.tone}
+              trend={kpi.trend}
+              description={kpi.trend ? undefined : kpi.descricao}
+              className="rounded-2xl border-border/40 shadow-elevated"
             />
-          }
-        >
-          {/* Sem cartão flutuante e sem rodapé de média: o gráfico ocupa a
+          ))}
+        </div>
+
+        {/* ── 2. Área analítica ─────────────────────────────────────────────── */}
+        <div className="grid gap-4 xl:grid-cols-2">
+          <PanelCard
+            icon={TrendingUp}
+            title="Tempo Médio de Admissão (dias)"
+            subtitle="Média do fluxo completo, da abertura ao eSocial"
+            compact
+            index={4}
+            action={
+              <PeriodoSelector
+                label="Período do tempo médio de admissão"
+                options={PERIODOS_TEMPO}
+                value={periodoTempo}
+                onChange={setPeriodoTempo}
+              />
+            }
+          >
+            {/* Sem cartão flutuante e sem rodapé de média: o gráfico ocupa a
               altura inteira do miolo (`flex-1`) e centraliza a série. */}
-          <div className="relative mt-1 min-h-[188px] w-full flex-1">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={serieTempo} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="adm-tempo-fill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.32} />
-                    <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="hsl(var(--border))" />
-                <XAxis
-                  dataKey="month"
-                  tickLine={false}
-                  axisLine={false}
-                  dy={4}
-                  tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
-                />
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  width={34}
-                  allowDecimals={false}
-                  tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
-                />
-                <Tooltip
-                  cursor={{ stroke: 'hsl(var(--primary))', strokeDasharray: '4 4' }}
-                  contentStyle={{
-                    background: 'hsl(var(--popover))',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: 12,
-                    fontSize: 12,
-                    color: 'hsl(var(--popover-foreground))',
-                  }}
-                  formatter={(value) => [`${value} dias`, 'Tempo médio']}
-                  labelFormatter={(label) => `Mês: ${label}`}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="days"
-                  stroke="hsl(var(--primary))"
-                  strokeWidth={2}
-                  fill="url(#adm-tempo-fill)"
-                  dot={{ r: 2.5, fill: 'hsl(var(--primary))', strokeWidth: 0 }}
-                  activeDot={{ r: 4, stroke: 'hsl(var(--card))', strokeWidth: 2 }}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </PanelCard>
+            <div className="relative mt-1 min-h-[188px] w-full flex-1">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={serieTempo} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="adm-tempo-fill" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.32} />
+                      <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="hsl(var(--border))" />
+                  <XAxis
+                    dataKey="month"
+                    tickLine={false}
+                    axisLine={false}
+                    dy={4}
+                    tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
+                  />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    width={34}
+                    allowDecimals={false}
+                    tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
+                  />
+                  <Tooltip
+                    cursor={{ stroke: 'hsl(var(--primary))', strokeDasharray: '4 4' }}
+                    contentStyle={{
+                      background: 'hsl(var(--popover))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: 12,
+                      fontSize: 12,
+                      color: 'hsl(var(--popover-foreground))',
+                    }}
+                    formatter={(value) => [`${value} dias`, 'Tempo médio']}
+                    labelFormatter={(label) => `Mês: ${label}`}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="days"
+                    stroke="hsl(var(--primary))"
+                    strokeWidth={2}
+                    fill="url(#adm-tempo-fill)"
+                    dot={{ r: 2.5, fill: 'hsl(var(--primary))', strokeWidth: 0 }}
+                    activeDot={{ r: 4, stroke: 'hsl(var(--card))', strokeWidth: 2 }}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </PanelCard>
 
-        <PanelCard
-          icon={ShieldCheck}
-          title="Funil de Onboarding por Etapa"
-          subtitle="Total de admissões no período"
-          compact
-          action={
-            <PeriodoSelector
-              label="Período do funil de onboarding"
-              options={PERIODOS_FUNIL}
-              value={periodoFunil}
-              onChange={setPeriodoFunil}
-            />
-          }
-        >
-          {funil.length === 0 ? (
-            <PanelEmpty>Nenhuma admissão no período selecionado.</PanelEmpty>
-          ) : (
-            <ul className="mt-1 flex flex-1 flex-col justify-between gap-1.5">
-              {funil.map((item, index) => (
-                <li key={item.etapa} className="grid grid-cols-[96px_1fr_32px_40px] items-center gap-2.5">
-                  <span className="truncate text-right text-caption font-body text-muted-foreground" title={item.label}>
-                    {item.label}
-                  </span>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-muted/40">
-                    <motion.div
-                      className="h-full rounded-full bg-gradient-to-r from-primary/70 to-primary"
-                      initial={{ width: 0 }}
-                      animate={{ width: `${percentual(item.total, maiorFunil)}%` }}
-                      transition={{ duration: 0.6, delay: index * 0.05, ease: [0.25, 0.46, 0.45, 0.94] }}
-                    />
-                  </div>
-                  <span className="text-right font-display text-caption font-medium tabular-nums text-foreground">
-                    {item.total}
-                  </span>
-                  <span className="text-right text-overline font-body tabular-nums text-muted-foreground">
-                    {percentual(item.total, totalFunil)}%
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </PanelCard>
-      </div>
-
-      {/* ── 3. Widgets ────────────────────────────────────────────────────── */}
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <PanelCard
-          icon={Zap}
-          title="Ações Prioritárias"
-          subtitle="Itens que precisam da sua atenção"
-          action={<PanelAction label="Ver todas" />}
-          compact
-          headerStacked
-          className={ALTURA_WIDGET}
-        >
-          {stats.prioridades.every((item) => item.total === 0) ? (
-            <PanelEmpty>Nenhuma pendência aberta.</PanelEmpty>
-          ) : (
-            <div className="-mx-2 mt-1 min-h-0 flex-1 space-y-0.5 overflow-y-auto">
-              {stats.prioridades.map((item) => (
-                <WidgetRow key={item.id} icon={item.icon} tone={item.tone}>
-                  <div className="flex items-baseline gap-2">
-                    <span className={cn('font-display text-base font-medium tabular-nums', TONE_TEXT[item.tone])}>
+          <PanelCard
+            icon={ShieldCheck}
+            title="Funil de Onboarding por Etapa"
+            subtitle="Total de admissões no período"
+            compact
+            index={5}
+            action={
+              <PeriodoSelector
+                label="Período do funil de onboarding"
+                options={PERIODOS_FUNIL}
+                value={periodoFunil}
+                onChange={setPeriodoFunil}
+              />
+            }
+          >
+            {funil.length === 0 ? (
+              <PanelEmpty>Nenhuma admissão no período selecionado.</PanelEmpty>
+            ) : (
+              <ul className="mt-1 flex flex-1 flex-col justify-between gap-1.5">
+                {funil.map((item, index) => (
+                  <li key={item.etapa} className="grid grid-cols-[96px_1fr_32px_40px] items-center gap-2.5">
+                    <span
+                      className="truncate text-right text-caption font-body text-muted-foreground"
+                      title={item.label}
+                    >
+                      {item.label}
+                    </span>
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-muted/40">
+                      <motion.div
+                        className="h-full rounded-full bg-gradient-to-r from-primary/70 to-primary"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${percentual(item.total, maiorFunil)}%` }}
+                        transition={{ duration: 0.6, delay: index * 0.05, ease: [0.25, 0.46, 0.45, 0.94] }}
+                      />
+                    </div>
+                    <span className="text-right font-display text-caption font-medium tabular-nums text-foreground">
                       {item.total}
                     </span>
-                    <span className="truncate text-caption font-body text-foreground">{item.label}</span>
-                  </div>
-                </WidgetRow>
-              ))}
-            </div>
-          )}
-        </PanelCard>
+                    <span className="text-right text-overline font-body tabular-nums text-muted-foreground">
+                      {percentual(item.total, totalFunil)}%
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </PanelCard>
+        </div>
 
-        <PanelCard
-          icon={Calendar}
-          title="Próximas Admissões"
-          subtitle="Colaboradores com início em breve"
-          action={<PanelAction label="Ver todas" />}
-          compact
-          headerStacked
-          className={ALTURA_WIDGET}
-        >
-          {stats.proximas.length === 0 ? (
-            <PanelEmpty>Sem admissões agendadas.</PanelEmpty>
-          ) : (
-            <div className="-mx-2 mt-1 min-h-0 flex-1 space-y-0.5 overflow-y-auto">
-              {stats.proximas.map((admissao) => (
-                <div
-                  key={String(admissao.id ?? admissao.nome)}
-                  className="flex items-center gap-2 rounded-xl px-2 py-1 transition-colors hover:bg-muted/40"
-                >
-                  <span className="grid h-7 w-7 shrink-0 place-items-center rounded-xl bg-muted/60 font-display text-[11px] font-medium text-muted-foreground">
-                    {iniciais(admissao.nome)}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-caption font-body font-medium leading-tight text-foreground">
-                      {admissao.nome}
-                    </p>
-                    <p className="truncate text-overline leading-none font-body text-muted-foreground">
-                      {formatDate(admissao.data_prevista)}
-                    </p>
-                  </div>
-                  <Badge
-                    variant="outline"
-                    size="sm"
-                    className={cn(
-                      'shrink-0 border-0',
-                      ETAPA_BADGE[admissao.etapa ?? ''] ?? 'bg-muted/50 text-muted-foreground'
-                    )}
+        {/* ── 3. Widgets ────────────────────────────────────────────────────── */}
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <PanelCard
+            icon={Zap}
+            title="Ações Prioritárias"
+            subtitle="Itens que precisam da sua atenção"
+            action={<PanelAction label="Ver todas" />}
+            compact
+            index={6}
+            headerStacked
+            className={ALTURA_WIDGET}
+          >
+            {stats.prioridades.every((item) => item.total === 0) ? (
+              <PanelEmpty>Nenhuma pendência aberta.</PanelEmpty>
+            ) : (
+              <div className={cn('-mx-2 mt-1 min-h-0 space-y-0.5 overflow-y-auto scroll-interno', ALTURA_LISTA_WIDGET)}>
+                {stats.prioridades.map((item) => (
+                  <WidgetRow key={item.id} icon={item.icon} tone={item.tone}>
+                    <div className="flex items-baseline gap-2">
+                      <span className={cn('font-display text-base font-medium tabular-nums', TONE_TEXT[item.tone])}>
+                        {item.total}
+                      </span>
+                      <span className="truncate text-caption font-body text-foreground">{item.label}</span>
+                    </div>
+                  </WidgetRow>
+                ))}
+              </div>
+            )}
+          </PanelCard>
+
+          <PanelCard
+            icon={Calendar}
+            title="Próximas Admissões"
+            subtitle="Colaboradores com início em breve"
+            action={<PanelAction label="Ver todas" />}
+            compact
+            index={7}
+            headerStacked
+            className={ALTURA_WIDGET}
+          >
+            {stats.proximas.length === 0 ? (
+              <PanelEmpty>Sem admissões agendadas.</PanelEmpty>
+            ) : (
+              <div className={cn('-mx-2 mt-1 min-h-0 space-y-0.5 overflow-y-auto scroll-interno', ALTURA_LISTA_WIDGET)}>
+                {stats.proximas.map((admissao) => (
+                  <div
+                    key={String(admissao.id ?? admissao.nome)}
+                    className="flex items-center gap-2 rounded-xl px-2 py-1 transition-colors hover:bg-muted/40"
                   >
-                    {ETAPA_LABELS[admissao.etapa ?? ''] ?? admissao.etapa}
-                  </Badge>
-                </div>
-              ))}
-            </div>
-          )}
-        </PanelCard>
+                    <span className="grid h-7 w-7 shrink-0 place-items-center rounded-xl bg-muted/60 font-display text-[11px] font-medium text-muted-foreground">
+                      {iniciais(admissao.nome)}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-caption font-body font-medium leading-tight text-foreground">
+                        {admissao.nome}
+                      </p>
+                      <p className="truncate text-overline leading-none font-body text-muted-foreground">
+                        {formatDate(admissao.data_prevista)}
+                      </p>
+                    </div>
+                    <Badge
+                      variant="outline"
+                      size="sm"
+                      className={cn(
+                        'shrink-0 border-0',
+                        ETAPA_BADGE[admissao.etapa ?? ''] ?? 'bg-muted/50 text-muted-foreground'
+                      )}
+                    >
+                      {ETAPA_LABELS[admissao.etapa ?? ''] ?? admissao.etapa}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            )}
+          </PanelCard>
 
-        <PanelCard
-          icon={PieChart}
-          title="Distribuição por Área"
-          subtitle="Total de admissões no período"
-          action={<PanelAction label="Ver detalhes" />}
-          compact
-          headerStacked
-          className={ALTURA_WIDGET}
-          // `px-2.5` no lugar do `px-4` do modo compacto: 12px a mais de
-          // largura útil para a legenda, sem mexer na largura nem na altura do
-          // card (o cabeçalho continua no `px-4` de sempre).
-          contentClassName="px-2.5"
-        >
-          {stats.porArea.length === 0 ? (
-            <PanelEmpty>Sem áreas com admissões.</PanelEmpty>
-          ) : (
-            <div className="@container mt-2 flex min-h-0 flex-1 items-center gap-2">
-              {/* `@container` no invólucro (donut + legenda): é a largura desta
+          <PanelCard
+            icon={PieChart}
+            title="Distribuição por Área"
+            subtitle="Total de admissões no período"
+            action={<PanelAction label="Ver detalhes" />}
+            compact
+            index={8}
+            headerStacked
+            className={ALTURA_WIDGET}
+            // `px-2.5` no lugar do `px-4` do modo compacto: 12px a mais de
+            // largura útil para a legenda, sem mexer na largura nem na altura do
+            // card (o cabeçalho continua no `px-4` de sempre).
+            contentClassName="px-2.5"
+          >
+            {stats.porArea.length === 0 ? (
+              <PanelEmpty>Sem áreas com admissões.</PanelEmpty>
+            ) : (
+              <div className="@container mt-2 flex min-h-0 flex-1 items-center gap-2">
+                {/* `@container` no invólucro (donut + legenda): é a largura desta
                   linha que serve de referência para a variante de container de
                   `LEGENDA_AREA` (fallback dos cards estreitos). O `gap-2` (8px,
                   era `gap-0.5`/2px) é o respiro horizontal entre o anel e a
@@ -817,148 +912,179 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
                   iguais (33,7px acima × 34,8px abaixo em 1440; o ~1px que resta
                   é a entrelinha do subtítulo), e o `items-center` mantém donut e
                   legenda centrados entre si. */}
-              {/* Coluna esquerda: largura fixa do donut, ~10% menor que os
+                {/* Coluna esquerda: largura fixa do donut, ~10% menor que os
                   124px/14px que este card usava antes (112px de diâmetro, anel
                   de 13px — mesma ordem de espessura relativa do anel dos
                   128px/14px de `DepartmentsCard`), para o gráfico continuar
                   dominante mas com mais respiro até a legenda. O `shrink-0`
                   garante que ele nunca encolhe: quem cede espaço é a legenda,
                   que continua exibindo todos os nomes por inteiro. */}
-              <DonutChart
-                segments={stats.porArea.map((area, index) => ({
-                  label: area.nome,
-                  value: area.count,
-                  color: donutColors[index % donutColors.length],
-                }))}
-                size={112}
-                strokeWidth={13}
-                showLegend={false}
-                className="shrink-0"
-              />
-              {/* Coluna direita: `flex-1 min-w-0` recebe toda a sobra (12px do
+                <DonutChart
+                  segments={stats.porArea.map((area, index) => ({
+                    label: area.nome,
+                    value: area.count,
+                    color: donutColors[index % donutColors.length],
+                  }))}
+                  size={112}
+                  strokeWidth={13}
+                  showLegend={false}
+                  className="shrink-0"
+                />
+                {/* Coluna direita: `flex-1 min-w-0` recebe toda a sobra (12px do
                   donut menor, menos 6px do `gap` maior). */}
-              <ul className="grid min-w-0 flex-1 gap-1.5">
-                {stats.porArea.map((area, index) => (
-                  <li
-                    key={area.nome}
-                    // `minmax(0,1fr)` deixa a coluna do nome encolher até o
-                    // próprio texto; percentual e quantidade ficam em colunas
-                    // próprias alinhadas à direita, então os números se alinham
-                    // na vertical em todas as linhas (`tabular-nums`).
-                    className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-x-1"
-                  >
-                    <span className="flex min-w-0 items-center gap-1">
-                      <i
-                        className="h-1.5 w-1.5 shrink-0 rounded-full"
-                        style={{ backgroundColor: donutColors[index % donutColors.length] }}
-                        aria-hidden
-                      />
-                      {/* Sem `truncate`/`text-ellipsis` e sem reticências: o
+                <ul className="grid min-w-0 flex-1 gap-1.5">
+                  {stats.porArea.map((area, index) => (
+                    <li
+                      key={area.nome}
+                      // `minmax(0,1fr)` deixa a coluna do nome encolher até o
+                      // próprio texto; percentual e quantidade ficam em colunas
+                      // próprias alinhadas à direita, então os números se alinham
+                      // na vertical em todas as linhas (`tabular-nums`).
+                      className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-x-1"
+                    >
+                      <span className="flex min-w-0 items-center gap-1">
+                        <i
+                          className="h-1.5 w-1.5 shrink-0 rounded-full"
+                          style={{ backgroundColor: donutColors[index % donutColors.length] }}
+                          aria-hidden
+                        />
+                        {/* Sem `truncate`/`text-ellipsis` e sem reticências: o
                           nome é sempre exibido por inteiro e em uma única linha
                           (`whitespace-nowrap`); o `tracking-tight` (mesmo do
                           título do card) só aperta o espacejamento entre as
                           letras, sem cortar nada. */}
+                        <span
+                          className={cn(
+                            'min-w-0 whitespace-nowrap font-body tracking-tight text-muted-foreground',
+                            LEGENDA_AREA
+                          )}
+                        >
+                          {area.nome}
+                        </span>
+                      </span>
+                      <span className={cn('text-right tabular-nums text-muted-foreground', LEGENDA_AREA)}>
+                        {percentual(area.count, lista.length)}%
+                      </span>
+                      {/* Sem `min-w`: `tabular-nums` + alinhamento à direita já
+                        alinham 1, 2 ou 3 dígitos na mesma coluna. */}
+                      <span
+                        className={cn('text-right font-display font-medium tabular-nums text-foreground', LEGENDA_AREA)}
+                      >
+                        {area.count}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </PanelCard>
+
+          <PanelCard
+            icon={Gauge}
+            title="SLA & Alertas"
+            subtitle="Status do processo de admissão"
+            action={<PanelAction label="Ver detalhes" />}
+            compact
+            index={9}
+            headerStacked
+            className={ALTURA_WIDGET}
+          >
+            {stats.emAndamento.length === 0 ? (
+              <PanelEmpty>Nenhum processo em andamento.</PanelEmpty>
+            ) : (
+              <div
+                className={cn(
+                  '-mx-2 mt-1 flex min-h-0 flex-col gap-2 overflow-y-auto scroll-interno',
+                  ALTURA_LISTA_WIDGET
+                )}
+              >
+                {/* Agora rola o MIOLO INTEIRO — os três indicadores e, no fim, o
+                  bloco "Taxa de conclusão": juntos somam ~155px (3×36 + os
+                  gaps + o rodapé), 19px a mais que os 136px da viewport
+                  (`ALTURA_LISTA_WIDGET`). É esse excedente que garante
+                  `scrollHeight > clientHeight` — sem ele a barra nem aparecia.
+                  Os filhos não encolhem (o `min-height: auto` do flexbox trava
+                  cada um no tamanho do próprio conteúdo), então o excesso vira
+                  rolagem em vez de achatamento.
+                  O `-mx-2` do container abre a faixa onde a barra corre e o
+                  `mx-2` do rodapé mantém o bloco dentro dela (medido: o rodapé
+                  termina 8px antes da barra) — sem esse `mx-2` a barra passaria
+                  por cima da borda arredondada da direita. O preço é o rodapé
+                  nascer com a largura do miolo já descontada a barra: os 10px
+                  do `scrollbar-width: thin` do Chromium, que ignora o
+                  `width: 6px` do `::-webkit-scrollbar` declarado em
+                  `src/index.css`. */}
+                <div className="space-y-0.5">
+                  {[
+                    {
+                      id: 'sla',
+                      label: 'Dentro do SLA',
+                      total: stats.noSla,
+                      icon: CheckCircle,
+                      tone: 'success' as Tone,
+                    },
+                    {
+                      id: 'risco',
+                      label: 'Em risco',
+                      total: stats.emRisco.length,
+                      icon: AlertTriangle,
+                      tone: 'warning' as Tone,
+                    },
+                    {
+                      id: 'atrasadas',
+                      label: 'Atrasadas',
+                      total: stats.atrasadas.length,
+                      icon: AlertCircle,
+                      tone: 'destructive' as Tone,
+                    },
+                  ].map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center gap-2 rounded-xl px-2 py-1 transition-colors hover:bg-muted/40"
+                    >
+                      <div className={cn('grid h-7 w-7 shrink-0 place-items-center rounded-lg', TONE_CHIP[item.tone])}>
+                        <item.icon className="h-3.5 w-3.5" />
+                      </div>
+                      <span className="min-w-0 flex-1 truncate text-caption font-body text-foreground">
+                        {item.label}
+                      </span>
+                      <span className="font-display text-caption font-medium tabular-nums text-foreground">
+                        {item.total}
+                      </span>
+                      <span className={cn('w-9 text-right text-overline font-body tabular-nums', TONE_TEXT[item.tone])}>
+                        {percentual(item.total, stats.emAndamento.length)}%
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mx-2 flex shrink-0 items-center justify-between gap-2 rounded-xl border border-border/40 bg-muted/20 px-2.5 py-2">
+                  <span className="flex items-center gap-1.5 text-caption font-body text-muted-foreground">
+                    <TrendingUp className="h-3.5 w-3.5 text-primary" />
+                    Taxa de conclusão
+                  </span>
+                  <span className="flex items-baseline gap-1.5">
+                    <span className="font-display text-base font-medium leading-none tabular-nums text-foreground">
+                      {stats.taxaConclusao}%
+                    </span>
+                    {stats.variacaoConclusao && (
                       <span
                         className={cn(
-                          'min-w-0 whitespace-nowrap font-body tracking-tight text-muted-foreground',
-                          LEGENDA_AREA
+                          'text-caption font-medium tabular-nums',
+                          stats.variacaoConclusao.value >= 0 ? 'text-success' : 'text-destructive'
                         )}
                       >
-                        {area.nome}
+                        {stats.variacaoConclusao.value >= 0 ? '+' : ''}
+                        {stats.variacaoConclusao.value}%
                       </span>
-                    </span>
-                    <span className={cn('text-right tabular-nums text-muted-foreground', LEGENDA_AREA)}>
-                      {percentual(area.count, lista.length)}%
-                    </span>
-                    {/* Sem `min-w`: `tabular-nums` + alinhamento à direita já
-                        alinham 1, 2 ou 3 dígitos na mesma coluna. */}
-                    <span
-                      className={cn('text-right font-display font-medium tabular-nums text-foreground', LEGENDA_AREA)}
-                    >
-                      {area.count}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </PanelCard>
-
-        <PanelCard
-          icon={Gauge}
-          title="SLA & Alertas"
-          subtitle="Status do processo de admissão"
-          action={<PanelAction label="Ver detalhes" />}
-          compact
-          headerStacked
-          className={ALTURA_WIDGET}
-        >
-          {stats.emAndamento.length === 0 ? (
-            <PanelEmpty>Nenhum processo em andamento.</PanelEmpty>
-          ) : (
-            <div className="flex min-h-0 flex-1 flex-col gap-2">
-              <div className="-mx-2 min-h-0 flex-1 space-y-0.5 overflow-y-auto">
-                {[
-                  { id: 'sla', label: 'Dentro do SLA', total: stats.noSla, icon: CheckCircle, tone: 'success' as Tone },
-                  {
-                    id: 'risco',
-                    label: 'Em risco',
-                    total: stats.emRisco.length,
-                    icon: AlertTriangle,
-                    tone: 'warning' as Tone,
-                  },
-                  {
-                    id: 'atrasadas',
-                    label: 'Atrasadas',
-                    total: stats.atrasadas.length,
-                    icon: AlertCircle,
-                    tone: 'destructive' as Tone,
-                  },
-                ].map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex items-center gap-2 rounded-xl px-2 py-1 transition-colors hover:bg-muted/40"
-                  >
-                    <div className={cn('grid h-7 w-7 shrink-0 place-items-center rounded-lg', TONE_CHIP[item.tone])}>
-                      <item.icon className="h-3.5 w-3.5" />
-                    </div>
-                    <span className="min-w-0 flex-1 truncate text-caption font-body text-foreground">{item.label}</span>
-                    <span className="font-display text-caption font-medium tabular-nums text-foreground">
-                      {item.total}
-                    </span>
-                    <span className={cn('w-9 text-right text-overline font-body tabular-nums', TONE_TEXT[item.tone])}>
-                      {percentual(item.total, stats.emAndamento.length)}%
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex shrink-0 items-center justify-between gap-2 rounded-xl border border-border/40 bg-muted/20 px-2.5 py-2">
-                <span className="flex items-center gap-1.5 text-caption font-body text-muted-foreground">
-                  <TrendingUp className="h-3.5 w-3.5 text-primary" />
-                  Taxa de conclusão
-                </span>
-                <span className="flex items-baseline gap-1.5">
-                  <span className="font-display text-base font-medium leading-none tabular-nums text-foreground">
-                    {stats.taxaConclusao}%
+                    )}
                   </span>
-                  {stats.variacaoConclusao && (
-                    <span
-                      className={cn(
-                        'text-caption font-medium tabular-nums',
-                        stats.variacaoConclusao.value >= 0 ? 'text-success' : 'text-destructive'
-                      )}
-                    >
-                      {stats.variacaoConclusao.value >= 0 ? '+' : ''}
-                      {stats.variacaoConclusao.value}%
-                    </span>
-                  )}
-                </span>
+                </div>
               </div>
-            </div>
-          )}
-        </PanelCard>
-      </div>
+            )}
+          </PanelCard>
+        </div>
+      </AnimatePresence>
     </div>
   );
 }

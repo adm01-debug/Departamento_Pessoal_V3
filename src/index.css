@@ -289,6 +289,53 @@
     scrollbar-width: none;
   }
 
+  /* ─── Scroll interno das listas de card (cabeçalho fixo no topo) ───
+     Usada por `OnboardingDashboard.tsx` nas três listas de widget — "Ações
+     Prioritárias", "Próximas Admissões" e "SLA & Alertas". O casco do card é
+     `h-[256px]` + `overflow-hidden` e o cabeçalho fica FORA do container com
+     `overflow-y-auto`, então quem rola é só o miolo: o título/subtítulo não
+     saem do topo e o card nunca cresce para acomodar mais itens.
+
+     A barra é a do resto do app (6px, tinta de `--muted-foreground` — regra
+     global mais abaixo neste arquivo), redeclarada aqui de propósito: estas
+     listas são o único lugar onde o scroll é esperado, então o visual não deve
+     depender só da regra global. A diferença é o trilho: aqui ele é
+     transparente em vez de levemente tingido, porque dentro do miolo do card o
+     trilho tingido aparecia como uma faixa opaca de 6px sobre o fundo. Ela só
+     aparece quando há overflow (`overflow-y: auto` no elemento) e nada é
+     reservado antes disso — `scrollbar-gutter` fica de fora de propósito,
+     porque reservar a canaleta sempre tiraria 6px da largura útil das linhas
+     mesmo sem overflow. Como o container é `-mx-2`, a barra cai justamente na
+     faixa de 8px que já sobra fora da área de texto: ela não encosta no texto
+     nem no badge da direita.
+
+     `overscroll-behavior: contain`: no fim da lista a roda do mouse para na
+     lista em vez de continuar rolando a página junto (scroll chaining). */
+  .scroll-interno {
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.35) transparent;
+  }
+
+  .scroll-interno::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .scroll-interno::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: 9999px;
+  }
+
+  .scroll-interno::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted-foreground) / 0.35);
+    border-radius: 9999px;
+  }
+
+  .scroll-interno::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--muted-foreground) / 0.55);
+  }
+
   /* Glassmorphism */
   .glass {
     @apply bg-card/60 backdrop-blur-[16px] border border-border/50 shadow-glass;

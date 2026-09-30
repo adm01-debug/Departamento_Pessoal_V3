@@ -64,6 +64,16 @@ const MOCK_ADMISSOES = [
   { id: '4', etapa: 'cancelada' },
 ];
 
+/**
+ * Fixture com data prevista: sem `data_prevista` válida a lista de "Próximas
+ * Admissões" cai no estado vazio (`PanelEmpty`) e não chega a montar o
+ * container com scroll interno.
+ */
+const MOCK_ADMISSOES_COM_DATA = [
+  { id: '1', nome: 'Ana Souza', etapa: 'documentos', data_prevista: '2026-12-01' },
+  { id: '2', nome: 'Bruno Lima', etapa: 'exame', data_prevista: '2026-12-02' },
+];
+
 describe('OnboardingDashboard', () => {
   it('renders Total Iniciadas KPI', () => {
     render(<OnboardingDashboard admissoes={MOCK_ADMISSOES} />);
@@ -119,5 +129,60 @@ describe('OnboardingDashboard', () => {
     expect(screen.getByText('em pipeline agora')).toBeInTheDocument();
     expect(screen.getByText('concluídas no período')).toBeInTheDocument();
     expect(screen.getByText('processos encerrados no período')).toBeInTheDocument();
+  });
+
+  // ─── Scroll interno (cabeçalho fixo, lista rolando dentro do card) ───────
+  // As 3 listas são os ÚNICOS containers com `overflow-y-auto` +
+  // `scroll-interno` + ALTURA EXPLÍCITA (`ALTURA_LISTA_WIDGET` = `h-[136px]`).
+  // O cabeçalho (título/subtítulo) fica FORA dele e — no "SLA & Alertas" — o
+  // bloco "Taxa de conclusão" fica DENTRO, como último filho: é ele que faz o
+  // conteúdo passar da viewport e a barra existir de verdade.
+  it('dá overflow próprio a exatamente 3 listas, e não ao resto do dashboard', () => {
+    // Fixture com data prevista: é ela que faz a 3ª lista ("Próximas
+    // Admissões") sair do estado vazio e montar o container com scroll.
+    render(<OnboardingDashboard admissoes={MOCK_ADMISSOES_COM_DATA} />);
+    const regioes = document.querySelectorAll('.scroll-interno');
+    expect(regioes).toHaveLength(3);
+    regioes.forEach((regiao) => {
+      expect(regiao).toHaveClass('overflow-y-auto');
+      // Altura explícita: com `flex-1` o container esticava até o miolo do card
+      // (164px) e, como o conteúdo real cabe ali (150/155px), a viewport ficava
+      // maior que a lista — `scrollHeight === clientHeight`, barra nenhuma.
+      expect(regiao).toHaveClass('h-[136px]');
+      expect(regiao).not.toHaveClass('flex-1');
+    });
+    // O card "Distribuição por Área" (o donut) não entra no scroll interno.
+    expect(screen.getByText('Distribuição por Área').closest('.scroll-interno')).toBeNull();
+  });
+
+  it('rola a lista de ações prioritárias sem o título do card dentro do scroll', () => {
+    render(<OnboardingDashboard admissoes={MOCK_ADMISSOES} />);
+    const regiao = screen.getByText('documentos pendentes').closest('.scroll-interno');
+    expect(regiao).not.toBeNull();
+    expect(regiao!.textContent).not.toContain('Ações Prioritárias');
+    expect(regiao!.textContent).not.toContain('Itens que precisam da sua atenção');
+  });
+
+  it('rola a lista de próximas admissões com o selo de etapa dentro da linha', () => {
+    render(<OnboardingDashboard admissoes={MOCK_ADMISSOES_COM_DATA} />);
+    const regiao = screen.getByText('Ana Souza').closest('.scroll-interno');
+    expect(regiao).not.toBeNull();
+    // O selo faz parte da linha que rola: nunca sobra para ele sair do card.
+    expect(regiao!.textContent).toContain('Docs Pendentes');
+    expect(regiao!.textContent).toContain('Bruno Lima');
+  });
+
+  it('rola o SLA & Alertas com o rodapé "Taxa de conclusão" dentro do scroll', () => {
+    render(<OnboardingDashboard admissoes={MOCK_ADMISSOES} />);
+    const regiao = screen.getByText('Dentro do SLA').closest('.scroll-interno');
+    expect(regiao).not.toBeNull();
+    // Os três indicadores rolam junto com o bloco final…
+    expect(regiao!.textContent).toContain('Em risco');
+    expect(regiao!.textContent).toContain('Atrasadas');
+    // …e o bloco final faz parte da MESMA área rolável: 3 linhas + rodapé dão
+    // ~155px de conteúdo para uma viewport de 136px — é esse excedente que
+    // garante a barra de rolagem no card.
+    expect(regiao!.textContent).toContain('Taxa de conclusão');
+    expect(screen.getByText('Taxa de conclusão').closest('.scroll-interno')).toBe(regiao);
   });
 });

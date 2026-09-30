@@ -1,0 +1,158 @@
+URL ap├│s login: http://localhost:8080/dashboard
+
+=== LOAD /admissoes ÔÇö aba Dashboard (sampler autom├ítico) ÔÇö 22 n├│s em anima├º├úo de entrada ===
+  start=    0ms             dur=159ms   x= 271 y=  10  inline0=0|translateX(-8.54859px) ramp=[673:0 683:0.319005 691:0.319005 703:0.319005] "Voltar"
+  start=  531ms (+531ms)    dur=278ms   x= 286 y= 168  inline0=0|                     ramp=[1214:0.284693 1242:0.868448 1391:0.953854 1470:0.995748] ""
+  start=  559ms (+28ms)     dur=ÔÇö       x= 273 y= 246  inline0=0|translateY(20px)     ramp=[1214:0 1242:0.0542671] "Total Iniciadas400%vs. per├¡odo ant"
+  start=    ÔÇöms             dur=ÔÇö       x= 561 y= 246  inline0=0|translateY(20px)     ramp=[1214:0 1242:0] "Em Andamento330%vs. per├¡odo anteri"
+  start=    ÔÇöms             dur=ÔÇö       x= 849 y= 246  inline0=0|translateY(20px)     ramp=[1214:0 1242:0] "Finalizadas5conclu├¡das no per├¡odo"
+  start=    ÔÇöms             dur=ÔÇö       x=1137 y= 246  inline0=0|translateY(20px)     ramp=[1214:0 1242:0] "Canceladas2processos encerrados no"
+  start=    ÔÇöms             dur=ÔÇö       x= 266 y= 376  inline0=0|translateY(20px)     ramp=[1214:0 1242:0] "Tempo M├®dio de Admiss├úo (dias)M├®di"
+  start=    ÔÇöms             dur=ÔÇö       x= 842 y= 376  inline0=0|translateY(20px)     ramp=[1214:0 1242:0] "Funil de Onboarding por EtapaTotal"
+  start=    ÔÇöms             dur=ÔÇö       x= 273 y= 692  inline0=0|translateY(20px)     ramp=[1214:0 1242:0] "A├º├Áes Priorit├íriasVer todasItens q"
+  start=    ÔÇöms             dur=ÔÇö       x= 561 y= 692  inline0=0|translateY(20px)     ramp=[1214:0 1242:0] "Pr├│ximas Admiss├ÁesVer todasColabor"
+  start=    ÔÇöms             dur=ÔÇö       x= 849 y= 692  inline0=0|translateY(20px)     ramp=[1214:0 1242:0] "Distribui├º├úo por ├üreaVer detalhesT"
+  start=    ÔÇöms             dur=ÔÇö       x=1137 y= 692  inline0=0|translateY(20px)     ramp=[1214:0 1242:0] "SLA & AlertasVer detalhesStatus do"
+  start=  787ms (+228ms)    dur=332ms   x= 273 y= 246  inline0=0|translateY(20px)     ramp=[1391:0 1470:0.0818952 1482:0.387858 1492:0.457016] "Total Iniciadas400%vs. per├¡odo ant"
+  start=  809ms (+22ms)     dur=384ms   x= 561 y= 246  inline0=0|translateY(20px)     ramp=[1391:0 1470:0 1482:0.0198459 1492:0.0973971] "Em Andamento330%vs. per├¡odo anteri"
+  start=  905ms (+96ms)     dur=372ms   x= 849 y= 246  inline0=0|translateY(20px)     ramp=[1391:0 1470:0 1482:0 1492:0] "Finalizadas5conclu├¡das no per├¡odo"
+  start=  969ms (+64ms)     dur=392ms   x=1137 y= 246  inline0=0|translateY(20px)     ramp=[1391:0 1470:0 1482:0 1492:0] "Canceladas2processos encerrados no"
+  start= 1043ms (+74ms)     dur=401ms   x= 266 y= 376  inline0=0|translateY(20px)     ramp=[1391:0 1470:0 1482:0 1492:0] "Tempo M├®dio de Admiss├úo (dias)M├®di"
+  start= 1130ms (+87ms)     dur=380ms   x= 842 y= 376  inline0=0|translateY(20px)     ramp=[1391:0 1470:0 1482:0 1492:0] "Funil de Onboarding por EtapaTotal"
+  start= 1211ms (+81ms)     dur=399ms   x= 273 y= 692  inline0=0|translateY(20px)     ramp=[1391:0 1470:0 1482:0 1492:0] "A├º├Áes Priorit├íriasVer todasItens q"
+  start= 1277ms (+66ms)     dur=421ms   x= 561 y= 692  inline0=0|translateY(20px)     ramp=[1391:0 1470:0 1482:0 1492:0] "Pr├│ximas Admiss├ÁesVer todasColabor"
+  start= 1361ms (+84ms)     dur=412ms   x= 849 y= 692  inline0=0|translateY(20px)     ramp=[1391:0 1470:0 1482:0 1492:0] "Distribui├º├úo por ├üreaVer detalhesT"
+  start= 1444ms (+83ms)     dur=412ms   x=1137 y= 692  inline0=0|translateY(20px)     ramp=[1391:0 1470:0 1482:0 1492:0] "SLA & AlertasVer detalhesStatus do"
+  ÔåÆ 13 cards: 1┬║ start=0ms, ├║ltimo start=1444ms, janela=1444ms
+N├│s com anima├º├úo nativa (WAAPI) no 1┬║ avistamento: {"total":26,"comAnimacao":22,"exemplos":[{"id":"q1","text":"Voltar","n":1},{"id":"q2","text":"","n":0},{"id":"q3","text":"","n":0},{"id":"q4","text":"","n":0},{"id":"q5","text":"Admiss├ÁesGerencie o processo de ad","n":0}]}
+
+DOM ap├│s o load: {
+  "probes": 16,
+  "pendentes": 2,
+  "paineis": [
+    {
+      "state": "inactive",
+      "hidden": true,
+      "rect": "0x0",
+      "text": ""
+    },
+    {
+      "state": "active",
+      "hidden": false,
+      "rect": "1136x698",
+      "text": "Total Iniciadas400%vs. per├¡odo anteriorE"
+    },
+    {
+      "state": "inactive",
+      "hidden": true,
+      "rect": "0x0",
+      "text": ""
+    },
+    {
+      "state": "inactive",
+      "hidden": true,
+      "rect": "0x0",
+      "text": ""
+    },
+    {
+      "state": "inactive",
+      "hidden": true,
+      "rect": "0x0",
+      "text": ""
+    }
+  ]
+}
+Board pr├®-montado na carga (aba Dashboard ativa): {
+  "cardsNoLOAD": 0,
+  "amostra": []
+}
+
+=== HOVER no 1┬║ KPI (esperado: 0 n├│s em entrada) ÔÇö 0 n├│s em anima├º├úo de entrada ===
+
+=== TAB Kanban (cascade dos cards do board) ÔÇö 17 n├│s em anima├º├úo de entrada ===
+  start=    0ms             dur=383ms   x= 559 y= 477  inline0=0|translateY(20px)     ramp=[429:0 431:0 445:0 454:0] "Leonardo Peixoto CunhaAnalista de "
+  start=    0ms (+0ms)      dur=383ms   x= 559 y= 570  inline0=0|translateY(20px)     ramp=[429:0 431:0 445:0 454:0] "Rafael Teixeira MouraDesigner Gr├íf"
+  start=    0ms (+0ms)      dur=383ms   x= 831 y= 291  inline0=0|translateY(20px)     ramp=[429:0 431:0 445:0 454:0] "Vanessa Lima PortelaAnalista de Ve"
+  start=    0ms (+0ms)      dur=383ms   x= 831 y= 384  inline0=0|translateY(20px)     ramp=[429:0 431:0 445:0 454:0] "Igor Moreira PachecoSupervisor de "
+  start=    0ms (+0ms)      dur=383ms   x= 831 y= 477  inline0=0|translateY(20px)     ramp=[429:0 431:0 445:0 454:0] "Gustavo Nunes BarbosaT├®cnico de Se"
+  start=    0ms (+0ms)      dur=383ms   x= 831 y= 570  inline0=0|translateY(20px)     ramp=[429:0 431:0 445:0 454:0] "Sabrina Correia MeloAnalista de Tr"
+  start=    0ms (+0ms)      dur=383ms   x=1103 y= 291  inline0=0|translateY(20px)     ramp=[429:0 431:0 445:0 454:0] "J├®ssica Almeida CamposAssistente d"
+  start=    0ms (+0ms)      dur=383ms   x=1103 y= 384  inline0=0|translateY(20px)     ramp=[429:0 431:0 445:0 454:0] "Yasmin Ferraz CoutinhoAnalista Jur"
+  start=    0ms (+0ms)      dur=383ms   x=1103 y= 477  inline0=0|translateY(20px)     ramp=[429:0 431:0 445:0 454:0] "Aline Cristina DuarteAnalista Cont"
+  start=    0ms (+0ms)      dur=383ms   x=1103 y= 570  inline0=0|translateY(20px)     ramp=[429:0 431:0 445:0 454:0] "Paulo Cesar BittencourtAnalista de"
+  start=    0ms (+0ms)      dur=383ms   x=1919 y= 477  inline0=0|translateY(20px)     ramp=[429:0 431:0 445:0 454:0] "Andr├® Luiz FurtadoT├®cnico de Supor"
+  start=    0ms (+0ms)      dur=383ms   x=1919 y= 570  inline0=0|translateY(20px)     ramp=[429:0 431:0 445:0 454:0] "Jo├úo Pedro SantosAssistente Admini"
+  start=    0ms (+0ms)      dur=383ms   x=2191 y= 291  inline0=0|translateY(20px)     ramp=[429:0 431:0 445:0 454:0] "D├®bora Figueiredo AntunesAnalista "
+  start=    0ms (+0ms)      dur=383ms   x=2191 y= 384  inline0=0|translateY(20px)     ramp=[429:0 431:0 445:0 454:0] "Ol├¡via Martins RangelGerente de Pr"
+  start=    0ms (+0ms)      dur=383ms   x=2191 y= 477  inline0=0|translateY(20px)     ramp=[429:0 431:0 445:0 454:0] "Diego Ramos SiqueiraMotoristaOpera"
+  start=    0ms (+0ms)      dur=383ms   x=2191 y= 570  inline0=0|translateY(20px)     ramp=[429:0 431:0 445:0 454:0] "Pedro Almeida SouzaAnalista de TIT"
+  start=    0ms (+0ms)      dur=383ms   x=2191 y= 663  inline0=0|translateY(20px)     ramp=[429:0 431:0 445:0 454:0] "Ana Silva SantosAnalista de Market"
+  ÔåÆ 17 cards: 1┬║ start=0ms, ├║ltimo start=0ms, janela=0ms
+
+Board renderizado: {
+  "total": 33,
+  "porColuna": {
+    "Solicita├º├úo": [
+      "Tiago Nogueira",
+      "K├ítia Regina",
+      "Gabriela Monteiro",
+      "Patr├¡cia Gomes"
+    ],
+    "Documentos": [
+      "Wesley Sousa",
+      "Helena Cardoso",
+      "Leonardo Peixoto",
+      "Rafael Teixeira"
+    ],
+    "Valida├º├úo": [
+      "Vanessa Lima",
+      "Igor Moreira",
+      "Gustavo Nunes",
+      "Sabrina Correia"
+    ],
+    "Pendente": [
+      "J├®ssica Almeida",
+      "Yasmin Ferraz",
+      "Aline Cristina",
+      "Paulo Cesar"
+    ],
+    "Exame": [
+      "Mariana Souza",
+      "Bruno Henrique",
+      "Z├®lia Barbosa",
+      "Lucas Ferreira"
+    ],
+    "Contrato": [
+      "Camila Fontes",
+      "Fernanda Ribeiro",
+      "Rodrigo Estev├úo",
+      "Beatriz Prado"
+    ],
+    "Assinatura": [
+      "Nathan Oliveira",
+      "Carla Souza",
+      "Andr├® Luiz",
+      "Jo├úo Pedro"
+    ],
+    "eSocial": [
+      "D├®bora Figueiredo",
+      "Ol├¡via Martins",
+      "Diego Ramos",
+      "Pedro Almeida",
+      "Ana Silva"
+    ]
+  }
+}
+
+=== TAB Onboarding (cards de jornada) ÔÇö 0 n├│s em anima├º├úo de entrada ===
+
+=== DRAG "Patr├¡cia Gomes Vieira" ÔåÆ coluna de "Helena Cardoso Brito" (esperado: opacity 1 est├ível, sem subida de 20px) ===
+  amostras: 118 | opacity m├¡nima no board: Infinity | y inicial=undefined y final=undefined
+  frames com opacity < 0.98: 0
+  primeiros frames p├│s-drop: []
+
+=== P├ôS-DRAG: nenhum card deve refazer a entrada ÔÇö 0 n├│s em anima├º├úo de entrada ===
+
+=== TAB Dashboard (volta ÔÇö n├úo deve reanimar) ÔÇö 0 n├│s em anima├º├úo de entrada ===
+
+=== FILTRO na aba Gest├úo ÔÇö 0 n├│s em anima├º├úo de entrada ===
