@@ -256,9 +256,7 @@ function PanelCard({
           {descricao}
         </CardHeader>
       ) : (
-        <CardHeader
-          className={cn('flex flex-row items-start justify-between space-y-0', gapTexto, paddingCabecalho)}
-        >
+        <CardHeader className={cn('flex flex-row items-start justify-between space-y-0', gapTexto, paddingCabecalho)}>
           <div className={cn('flex min-w-0 items-start', gapTexto)}>
             {chip}
             <div className="min-w-0">
@@ -272,7 +270,9 @@ function PanelCard({
       {/* `min-h-0` é o que permite ao miolo encolher abaixo do conteúdo: sem ele
           as listas dos widgets (card com altura fixa) estouram o card em vez de
           rolar dentro dele. */}
-      <CardContent className={cn('flex min-h-0 flex-1 flex-col pt-0', compact ? 'px-4 pb-4' : 'px-5 pb-5', contentClassName)}>
+      <CardContent
+        className={cn('flex min-h-0 flex-1 flex-col pt-0', compact ? 'px-4 pb-4' : 'px-5 pb-5', contentClassName)}
+      >
         {children}
       </CardContent>
     </Card>
@@ -397,15 +397,35 @@ const ALTURA_WIDGET = 'h-[256px]';
 /**
  * Tipografia da legenda do card "Distribuição por Área".
  *
- * O card só tem 232px de largura em 1280px (breakpoint `xl`, 4 colunas) e
- * ~200px de miolo útil: com a fonte padrão (`text-caption`, 12px) o donut de
- * 104px deixava apenas 84px para a legenda e nomes como "Administrativo"
- * (78px) eram cortados com reticências. A legenda usa então 1px a menos
- * (11px) com entrelinha curta, e o restante da linha foi compactado (donut
- * menor, `gap` de 4px, colunas numéricas sem largura fixa) para que todos os
- * seis nomes apareçam completos em uma única linha, sem `truncate`.
+ * O donut tem 112px de diâmetro e anel de 13px: 9,7% menor que os 124px/14px
+ * que este card usava antes e 12,5% menor que os 128px/14px do
+ * `DepartmentsCard` (a referência) — é o mesmo par do `EventTypesSummary`
+ * (112/13). O anel mantém a espessura relativa na mesma ordem (~11,6% do
+ * diâmetro, contra 11,3% e 10,9%), então o gráfico continua visualmente
+ * dominante — só um degrau menor, para abrir o respiro entre o anel e a
+ * lista. Ele é `shrink-0`: NUNCA encolhe para a legenda caber. O espaço que a
+ * legenda ganha vem de dentro do próprio card — fonte 2px menor que a do
+ * `text-caption` (12px) com entrelinha curta, `px-2.5` no miolo (10px em vez
+ * dos 16px do modo compacto), `gap-x` de
+ * 4px entre nome/percentual/quantidade, `tracking-tight` no nome (mesmo do
+ * título) e percentual/quantidade em colunas próprias alinhadas à direita
+ * (`tabular-nums`), sem largura fixa. Nada é truncado e nada usa reticências:
+ * os nomes saem completos, em uma única linha (`whitespace-nowrap`).
+ *
+ * O `gap` entre donut e legenda é de 8px (era 2px) com o donut 12px menor: o
+ * respiro sai de graça, porque a legenda termina com ~6px MAIS largura útil
+ * que antes.
+ *
+ * A variante de container (`@max-[240px]`) é o último recurso: quando a linha
+ * inteira (donut + legenda, ver `@container` no invólucro) fica abaixo de
+ * 240px — o que só acontece em viewports < ~1400px, onde a grade de 4 colunas
+ * espreme o card — a legenda cai para 9px em vez de encostar no percentual.
+ * Em 1280px de viewport o card fica mais estreito que o próprio conteúdo
+ * (232px de card para 112px de donut + 6 nomes completos): é um limite físico
+ * do layout de 4 colunas, e a escolha é manter o gráfico no tamanho da
+ * referência em vez de encolher mais ou cortar nome.
  */
-const LEGENDA_AREA = 'text-[11px] leading-tight';
+const LEGENDA_AREA = 'text-[10px] leading-tight @max-[240px]:text-[9px]';
 
 export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
   // MOCK VISUAL — ver src/mocks/admissoesMock.ts (dev + VITE_ADMISSOES_MOCK=true).
@@ -444,9 +464,7 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
         const area = a.departamento?.trim() || 'Não informado';
         mapa.set(area, (mapa.get(area) ?? 0) + 1);
       });
-      const ordenado = [...mapa.entries()]
-        .map(([nome, count]) => ({ nome, count }))
-        .sort((a, b) => b.count - a.count);
+      const ordenado = [...mapa.entries()].map(([nome, count]) => ({ nome, count })).sort((a, b) => b.count - a.count);
       // Acima de 6 áreas o restante vira "Outros" para a rosca continuar fechando
       // no total real (o centro do `DonutChart` soma os segmentos exibidos).
       if (ordenado.length <= 6) return ordenado;
@@ -490,10 +508,38 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
     ];
 
     const kpis = [
-      { label: 'Total Iniciadas', valor: lista.length, icon: UserPlus, tone: 'primary' as Tone, descricao: 'processos no período', amostra: lista },
-      { label: 'Em Andamento', valor: emAndamento.length, icon: Clock, tone: 'info' as Tone, descricao: 'em pipeline agora', amostra: emAndamento },
-      { label: 'Finalizadas', valor: concluidas.length, icon: CheckCircle, tone: 'success' as Tone, descricao: 'concluídas no período', amostra: concluidas },
-      { label: 'Canceladas', valor: canceladas.length, icon: AlertCircle, tone: 'destructive' as Tone, descricao: 'processos encerrados no período', amostra: canceladas },
+      {
+        label: 'Total Iniciadas',
+        valor: lista.length,
+        icon: UserPlus,
+        tone: 'primary' as Tone,
+        descricao: 'processos no período',
+        amostra: lista,
+      },
+      {
+        label: 'Em Andamento',
+        valor: emAndamento.length,
+        icon: Clock,
+        tone: 'info' as Tone,
+        descricao: 'em pipeline agora',
+        amostra: emAndamento,
+      },
+      {
+        label: 'Finalizadas',
+        valor: concluidas.length,
+        icon: CheckCircle,
+        tone: 'success' as Tone,
+        descricao: 'concluídas no período',
+        amostra: concluidas,
+      },
+      {
+        label: 'Canceladas',
+        valor: canceladas.length,
+        icon: AlertCircle,
+        tone: 'destructive' as Tone,
+        descricao: 'processos encerrados no período',
+        amostra: canceladas,
+      },
     ].map((kpi) => ({
       ...kpi,
       trend: variacaoDePeriodo(kpi.amostra, agora),
@@ -644,10 +690,7 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
             <ul className="mt-1 flex flex-1 flex-col justify-between gap-1.5">
               {funil.map((item, index) => (
                 <li key={item.etapa} className="grid grid-cols-[96px_1fr_32px_40px] items-center gap-2.5">
-                  <span
-                    className="truncate text-right text-caption font-body text-muted-foreground"
-                    title={item.label}
-                  >
+                  <span className="truncate text-right text-caption font-body text-muted-foreground" title={item.label}>
                     {item.label}
                   </span>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-muted/40">
@@ -753,51 +796,84 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
           compact
           headerStacked
           className={ALTURA_WIDGET}
+          // `px-2.5` no lugar do `px-4` do modo compacto: 12px a mais de
+          // largura útil para a legenda, sem mexer na largura nem na altura do
+          // card (o cabeçalho continua no `px-4` de sempre).
+          contentClassName="px-2.5"
         >
           {stats.porArea.length === 0 ? (
             <PanelEmpty>Sem áreas com admissões.</PanelEmpty>
           ) : (
-            <div className="mt-1 flex min-h-0 flex-1 items-center gap-1.5">
-              {/* Donut reduzido de 104px para 64px: é o espaço que a legenda
-                  precisa para exibir os nomes completos em 1 linha (ver
-                  `LEGENDA_AREA`). Cores, dados e espessura relativa do anel
-                  permanecem iguais. */}
+            <div className="@container mt-2 flex min-h-0 flex-1 items-center gap-2">
+              {/* `@container` no invólucro (donut + legenda): é a largura desta
+                  linha que serve de referência para a variante de container de
+                  `LEGENDA_AREA` (fallback dos cards estreitos). O `gap-2` (8px,
+                  era `gap-0.5`/2px) é o respiro horizontal entre o anel e a
+                  lista. O `mt-2` (8px) é o recentro vertical do gráfico: o casco
+                  do card tem mais respiro embaixo (`pb-4`, 16px, do miolo) do
+                  que acima (`pb-2`, 8px, do cabeçalho), então sem essa folga o
+                  donut ficava ~4,5px acima do centro óptico. Com ela, o vão
+                  subtítulo→anel e o vão anel→base do card ficam praticamente
+                  iguais (33,7px acima × 34,8px abaixo em 1440; o ~1px que resta
+                  é a entrelinha do subtítulo), e o `items-center` mantém donut e
+                  legenda centrados entre si. */}
+              {/* Coluna esquerda: largura fixa do donut, ~10% menor que os
+                  124px/14px que este card usava antes (112px de diâmetro, anel
+                  de 13px — mesma ordem de espessura relativa do anel dos
+                  128px/14px de `DepartmentsCard`), para o gráfico continuar
+                  dominante mas com mais respiro até a legenda. O `shrink-0`
+                  garante que ele nunca encolhe: quem cede espaço é a legenda,
+                  que continua exibindo todos os nomes por inteiro. */}
               <DonutChart
                 segments={stats.porArea.map((area, index) => ({
                   label: area.nome,
                   value: area.count,
                   color: donutColors[index % donutColors.length],
                 }))}
-                size={60}
-                strokeWidth={9}
+                size={112}
+                strokeWidth={13}
                 showLegend={false}
                 className="shrink-0"
               />
+              {/* Coluna direita: `flex-1 min-w-0` recebe toda a sobra (12px do
+                  donut menor, menos 6px do `gap` maior). */}
               <ul className="grid min-w-0 flex-1 gap-1.5">
                 {stats.porArea.map((area, index) => (
-                  <li key={area.nome} className="grid grid-cols-[1fr_auto_auto] items-center gap-1">
+                  <li
+                    key={area.nome}
+                    // `minmax(0,1fr)` deixa a coluna do nome encolher até o
+                    // próprio texto; percentual e quantidade ficam em colunas
+                    // próprias alinhadas à direita, então os números se alinham
+                    // na vertical em todas as linhas (`tabular-nums`).
+                    className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-x-1"
+                  >
                     <span className="flex min-w-0 items-center gap-1">
                       <i
                         className="h-1.5 w-1.5 shrink-0 rounded-full"
                         style={{ backgroundColor: donutColors[index % donutColors.length] }}
                         aria-hidden
                       />
-                      {/* Sem `truncate`/`text-ellipsis`: o nome é sempre exibido
-                          por inteiro e em uma única linha (`whitespace-nowrap`). */}
-                      <span className={cn('min-w-0 whitespace-nowrap font-body text-muted-foreground', LEGENDA_AREA)}>
+                      {/* Sem `truncate`/`text-ellipsis` e sem reticências: o
+                          nome é sempre exibido por inteiro e em uma única linha
+                          (`whitespace-nowrap`); o `tracking-tight` (mesmo do
+                          título do card) só aperta o espacejamento entre as
+                          letras, sem cortar nada. */}
+                      <span
+                        className={cn(
+                          'min-w-0 whitespace-nowrap font-body tracking-tight text-muted-foreground',
+                          LEGENDA_AREA
+                        )}
+                      >
                         {area.nome}
                       </span>
                     </span>
                     <span className={cn('text-right tabular-nums text-muted-foreground', LEGENDA_AREA)}>
                       {percentual(area.count, lista.length)}%
                     </span>
+                    {/* Sem `min-w`: `tabular-nums` + alinhamento à direita já
+                        alinham 1, 2 ou 3 dígitos na mesma coluna. */}
                     <span
-                      className={cn(
-                        // `min-w-3.5` (14px) alinha a coluna de quantidade entre as
-                        // linhas (1 vs 2 dígitos) sem cortar contagens de 3 dígitos.
-                        'min-w-3.5 text-right font-display font-medium tabular-nums text-foreground',
-                        LEGENDA_AREA
-                      )}
+                      className={cn('text-right font-display font-medium tabular-nums text-foreground', LEGENDA_AREA)}
                     >
                       {area.count}
                     </span>
@@ -824,8 +900,20 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
               <div className="-mx-2 min-h-0 flex-1 space-y-0.5 overflow-y-auto">
                 {[
                   { id: 'sla', label: 'Dentro do SLA', total: stats.noSla, icon: CheckCircle, tone: 'success' as Tone },
-                  { id: 'risco', label: 'Em risco', total: stats.emRisco.length, icon: AlertTriangle, tone: 'warning' as Tone },
-                  { id: 'atrasadas', label: 'Atrasadas', total: stats.atrasadas.length, icon: AlertCircle, tone: 'destructive' as Tone },
+                  {
+                    id: 'risco',
+                    label: 'Em risco',
+                    total: stats.emRisco.length,
+                    icon: AlertTriangle,
+                    tone: 'warning' as Tone,
+                  },
+                  {
+                    id: 'atrasadas',
+                    label: 'Atrasadas',
+                    total: stats.atrasadas.length,
+                    icon: AlertCircle,
+                    tone: 'destructive' as Tone,
+                  },
                 ].map((item) => (
                   <div
                     key={item.id}
@@ -835,13 +923,10 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
                       <item.icon className="h-3.5 w-3.5" />
                     </div>
                     <span className="min-w-0 flex-1 truncate text-caption font-body text-foreground">{item.label}</span>
-                    <span className="font-display text-caption font-medium tabular-nums text-foreground">{item.total}</span>
-                    <span
-                      className={cn(
-                        'w-9 text-right text-overline font-body tabular-nums',
-                        TONE_TEXT[item.tone]
-                      )}
-                    >
+                    <span className="font-display text-caption font-medium tabular-nums text-foreground">
+                      {item.total}
+                    </span>
+                    <span className={cn('w-9 text-right text-overline font-body tabular-nums', TONE_TEXT[item.tone])}>
                       {percentual(item.total, stats.emAndamento.length)}%
                     </span>
                   </div>
