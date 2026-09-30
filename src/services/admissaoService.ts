@@ -1,4 +1,6 @@
 import { BaseService, ListOptions, ListResponse } from './baseService';
+// MOCK VISUAL — ver src/mocks/admissoesMock.ts
+import { mockAdmissaoCriada, mockAdmissaoAtualizada } from '@/mocks/admissoesMock';
 
 class AdmissaoService extends BaseService<any> {
   constructor() {
@@ -27,6 +29,23 @@ class AdmissaoService extends BaseService<any> {
   // Aliases
   async getAll(empresaId: string) { return this.listarAdmissoes(empresaId); }
 
+
+  // ── MOCK VISUAL — ver src/mocks/admissoesMock.ts ──────────────────────────
+  // Em modo demonstrativo as escritas são absorvidas em memória para a UI
+  // continuar responsiva (Kanban, Nova Admissão, Concluir/Cancelar) sem gravar
+  // nada no Supabase. Fora do modo mock os guards devolvem undefined e o
+  // comportamento original é mantido intacto.
+  async criar(d: any) {
+    const mock = mockAdmissaoCriada(d);
+    if (mock) return mock;
+    return super.criar(d);
+  }
+
+  async atualizar(id: string, d: any, empresaId?: string) {
+    const mock = mockAdmissaoAtualizada(id, d);
+    if (mock) return mock;
+    return super.atualizar(id, d, empresaId);
+  }
 
   async getById(id: string) { return this.buscarPorId(id); }
   async create(d: any) { return this.criar(d); }

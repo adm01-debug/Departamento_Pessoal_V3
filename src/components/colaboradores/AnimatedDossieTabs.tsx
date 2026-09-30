@@ -1,16 +1,16 @@
 import * as React from 'react';
-import {
-  Tabs as AnimateTabsPrimitive,
-  TabsList as AnimateTabsListPrimitive,
-  TabsTrigger as AnimateTabsTriggerPrimitive,
-  TabsHighlight,
-  TabsHighlightItem,
-} from '@/components/animate-ui/primitives/animate/tabs';
+import { AnimatedTabsList, AnimatedTabsTrigger } from '@/components/ui/animated-tabs';
+import { cn } from '@/lib/utils';
 
 /**
  * Tablist master do Dossiê de Colaboradores com highlight deslizante — usa
  * o mecanismo OFICIAL do Animate UI (`@animate-ui/components-animate-tabs`:
  * `TabsHighlight`/`TabsHighlightItem`), em `mode="parent"`.
+ *
+ * A mecânica da animação (indicador persistente + mola) foi extraída para
+ * `src/components/ui/animated-tabs.tsx` — fonte única do padrão de troca de
+ * abas do app — e este arquivo passou a ser só a skin do Dossiê: os mesmos
+ * classNames de antes, nenhuma regra de posicionamento/animação própria.
  *
  * Por quê `mode="parent"` e não o `mode="children"` (padrão do componente
  * pré-estilizado do Animate UI, `components/animate/tabs.tsx`): em
@@ -48,63 +48,63 @@ const LIST_CONTAINER_CLASSNAME =
 const TRIGGER_CLASSNAME =
   'inline-flex items-center justify-center whitespace-nowrap font-medium ring-offset-background transition-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 relative z-10 rounded-lg font-body px-4 py-2 text-sm gap-1.5 data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:shadow-none';
 
+const HIGHLIGHT_CLASSNAME = 'rounded-lg bg-background shadow-xs';
+
+/**
+ * Skin do container/indicador + layout da `<div role="tablist">`.
+ *
+ * `listClassName` é opcional e serve SÓ para áreas que precisam distribuir as
+ * abas por toda a largura (Admissões: `flex w-full items-stretch` com
+ * `flex-1` em cada trigger). Omitido — como no Dossiê de Colaboradores — vale
+ * o padrão de `AnimatedTabsList` (`flex items-center`, largura do conteúdo),
+ * ou seja: nenhuma classe efetiva muda para quem não passa a prop.
+ */
 export function AnimatedDossieTabsList({
   value,
   onValueChange,
   children,
+  listClassName,
 }: {
   value: string;
   onValueChange: (value: string) => void;
   children: React.ReactNode;
+  /** Layout da tablist. Padrão: `flex items-center` (skin do Dossiê). */
+  listClassName?: string;
 }) {
-  // Bug de first-mount do pacote instalado (`Highlight`, mode="parent", em
-  // primitives/effects/highlight.tsx): no primeiro commit, o efeito de
-  // `HighlightItem` que reporta os bounds do trigger ativo roda ANTES do
-  // efeito de `Highlight` que inicializa a ref pra onde esse report escreve
-  // (`safeSetBoundsRef`) — ordem normal de effects React (filho antes do
-  // pai), então a primeira chamada é descartada em silêncio e nenhum
-  // highlight aparece até a primeira troca de aba (confirmado: funciona a
-  // partir do primeiro clique, nunca no mount). Qualquer re-render seguinte
-  // já resolve sozinho, porque a closure de `setBounds` muda de identidade
-  // a cada render de `Highlight` e isso reexecuta o efeito de
-  // `HighlightItem`. Fix: forçar UM re-render inofensivo logo após o mount
-  // — não é lógica de animação/posição nova, só garante que o "assentamento"
-  // que o próprio pacote já faz sozinho aconteça também na primeira pintura.
-  const [, forceSettle] = React.useState(0);
-  React.useEffect(() => {
-    forceSettle((n) => n + 1);
-  }, []);
-
-  const parentModeProps = {
-    mode: 'parent' as const,
-    className: 'rounded-lg bg-background shadow-xs',
-    containerClassName: LIST_CONTAINER_CLASSNAME,
-    transition: { type: 'spring' as const, stiffness: 220, damping: 24, mass: 0.7 },
-  };
-
   return (
-    <AnimateTabsPrimitive value={value} onValueChange={onValueChange}>
-      <TabsHighlight {...(parentModeProps as unknown as React.ComponentProps<typeof TabsHighlight>)}>
-        <AnimateTabsListPrimitive className="flex items-center">
-          {children}
-        </AnimateTabsListPrimitive>
-      </TabsHighlight>
-    </AnimateTabsPrimitive>
+    <AnimatedTabsList
+      value={value}
+      onValueChange={onValueChange}
+      containerClassName={LIST_CONTAINER_CLASSNAME}
+      highlightClassName={HIGHLIGHT_CLASSNAME}
+      listClassName={listClassName}
+    >
+      {children}
+    </AnimatedTabsList>
   );
 }
 
+/**
+ * Trigger da skin do Dossiê. `className` é opcional e vai SOMADO à skin
+ * (via `cn`, que resolve conflito de utilitários): Admissões passa `flex-1`
+ * para cada aba ocupar exatamente 1/5 da tablist. Sem a prop, a string de
+ * classe do trigger é literalmente `TRIGGER_CLASSNAME` — o Dossiê continua
+ * renderizando exatamente o mesmo DOM.
+ */
 export function AnimatedDossieTabsTrigger({
   value,
   children,
+  className,
 }: {
   value: string;
   children: React.ReactNode;
+  /** Classes extras somadas à skin do trigger (ex.: `flex-1` em Admissões). */
+  className?: string;
 }) {
   return (
-    <TabsHighlightItem value={value} asChild>
-      <AnimateTabsTriggerPrimitive value={value} className={TRIGGER_CLASSNAME}>
-        {children}
-      </AnimateTabsTriggerPrimitive>
-    </TabsHighlightItem>
+    <AnimatedTabsTrigger value={value} className={className ? cn(TRIGGER_CLASSNAME, className) : TRIGGER_CLASSNAME}>
+      {children}
+    </AnimatedTabsTrigger>
   );
 }
+

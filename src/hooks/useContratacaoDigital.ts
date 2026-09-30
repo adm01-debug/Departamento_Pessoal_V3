@@ -4,6 +4,8 @@ import { toast } from 'sonner';
 import { contratacaoService } from '@/services/contratacaoService';
 import { safeErrorMessage } from '@/utils/safeError';
 import { useEmpresas } from '@/hooks/useEmpresas';
+// MOCK VISUAL — ver src/mocks/admissoesMock.ts
+import { mockValidarDocumento } from '@/mocks/admissoesMock';
 
 export function useContratacaoDigital() {
   const queryClient = useQueryClient();
@@ -37,6 +39,8 @@ export function useContratacaoDigital() {
       status: 'validado' | 'rejeitado',
       observacao?: string
     }) => {
+      // MOCK VISUAL — valida o documento fictício em memória (nada é gravado).
+      if (mockValidarDocumento(admissaoId, docType, status, observacao)) return { admissaoId, docType, status };
       return await contratacaoService.validarDocumento(admissaoId, docType, status, observacao, empresaAtual?.id);
     },
     onSuccess: () => {

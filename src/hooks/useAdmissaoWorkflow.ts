@@ -3,15 +3,21 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from './useEmpresas';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+// MOCK VISUAL — ver src/mocks/admissoesMock.ts
+import { isAdmissoesMockEnabled, isMockId, getMockWorkflow } from '@/mocks/admissoesMock';
 
 export function useAdmissaoWorkflow(admissaoId?: string) {
   const queryClient = useQueryClient();
   const { empresaAtualId } = useEmpresas();
+  // MOCK VISUAL — ver src/mocks/admissoesMock.ts (dev + VITE_ADMISSOES_MOCK=true).
+  const mockAtivo = isAdmissoesMockEnabled() && isMockId(admissaoId);
 
   const { data: workflow, isLoading } = useQuery({
-    queryKey: ['admissao-workflow', admissaoId],
+    queryKey: ['admissao-workflow', admissaoId, mockAtivo ? 'mock' : 'real'],
     enabled: !!admissaoId,
-    queryFn: async () => {
+    queryFn: async (): Promise<any> => {
+      // MOCK VISUAL — devolve o workflow fictício da admissão demonstrativa.
+      if (mockAtivo) return getMockWorkflow(admissaoId) ?? null;
       const { data, error } = await supabase
         .from('workflows_execucoes')
         .select('*, workflow:workflows_definicoes(*), historico:workflows_historico(*)')

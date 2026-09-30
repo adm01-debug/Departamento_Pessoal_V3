@@ -3,17 +3,22 @@ import { admissaoService } from '@/services';
 import { useEmpresas } from './useEmpresas';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+// MOCK VISUAL — ver src/mocks/admissoesMock.ts
+import { isAdmissoesMockEnabled, getMockAdmissoes } from '@/mocks/admissoesMock';
 
 export function useAdmissoes() {
   const { empresaAtual } = useEmpresas();
   const queryClient = useQueryClient();
   const empresaId = empresaAtual?.id;
+  // MOCK VISUAL — ver src/mocks/admissoesMock.ts (dev + VITE_ADMISSOES_MOCK=true).
+  const mockAtivo = isAdmissoesMockEnabled();
 
   const query = useQuery<any[]>({
-    queryKey: ['admissoes', empresaId],
-    queryFn: () => admissaoService.listarAdmissoes(empresaId!),
+    queryKey: ['admissoes', empresaId, mockAtivo ? 'mock' : 'real'],
+    queryFn: async () => (mockAtivo ? getMockAdmissoes() : admissaoService.listarAdmissoes(empresaId!)),
     // Guard: evita fetch sem tenant (possível vazamento cross-empresa via RLS frouxa).
-    enabled: !!empresaId,
+    // No modo mock não há fetch (apenas a lista fictícia em memória).
+    enabled: mockAtivo || !!empresaId,
   });
 
   const invalidate = () =>

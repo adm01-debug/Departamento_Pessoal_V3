@@ -8,13 +8,19 @@ import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
+// MOCK VISUAL — ver src/mocks/admissoesMock.ts
+import { isAdmissoesMockEnabled, getMockOnboarding, mockConcluirTarefaOnboarding } from '@/mocks/admissoesMock';
 
 export default function OnboardingPageContent() {
   const queryClient = useQueryClient();
+  // MOCK VISUAL — ver src/mocks/admissoesMock.ts (dev + VITE_ADMISSOES_MOCK=true).
+  const mockAtivo = isAdmissoesMockEnabled();
 
   const { data: onboarding = [], isLoading } = useQuery({
     queryKey: ['onboarding-list'],
     queryFn: async () => {
+      // MOCK VISUAL — lista fictícia de integrações (com tarefas).
+      if (mockAtivo) return getMockOnboarding();
       const { data, error } = await supabase
         .from('admissoes')
         .select(`
@@ -30,6 +36,8 @@ export default function OnboardingPageContent() {
 
   const concluirTarefa = useMutation({
     mutationFn: async (tarefaId: string) => {
+      // MOCK VISUAL — baixa a tarefa fictícia em memória (nada é gravado no banco).
+      if (mockConcluirTarefaOnboarding(tarefaId)) return;
       const { error } = await supabase
         .from('tarefas_onboarding')
         .update({ concluida: true, concluida_em: new Date().toISOString() })

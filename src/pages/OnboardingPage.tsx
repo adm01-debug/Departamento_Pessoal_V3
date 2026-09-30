@@ -12,14 +12,20 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Progress } from '@/components/ui/progress';
+// MOCK VISUAL — ver src/mocks/admissoesMock.ts
+import { isAdmissoesMockEnabled, getMockOnboarding, mockConcluirTarefaOnboarding } from '@/mocks/admissoesMock';
 
 export default function OnboardingPage() {
   const [activeTab, setActiveTab] = useState('ativos');
   const qc = useQueryClient();
+  // MOCK VISUAL — ver src/mocks/admissoesMock.ts (dev + VITE_ADMISSOES_MOCK=true).
+  const mockAtivo = isAdmissoesMockEnabled();
 
   const { data: onboarding = [], isLoading } = useQuery({
     queryKey: ['onboarding-list'],
     queryFn: async () => {
+      // MOCK VISUAL — lista fictícia de integrações (com tarefas).
+      if (mockAtivo) return getMockOnboarding();
       const { data, error } = await supabase
         .from('admissoes')
         .select(`
@@ -35,6 +41,8 @@ export default function OnboardingPage() {
 
   const concluirTarefa = useMutation({
     mutationFn: async (tarefaId: string) => {
+      // MOCK VISUAL — baixa a tarefa fictícia em memória (nada é gravado no banco).
+      if (mockConcluirTarefaOnboarding(tarefaId)) return;
       const { error } = await supabase
         .from('tarefas_onboarding')
         .update({ concluida: true, concluida_em: new Date().toISOString() })
@@ -52,6 +60,9 @@ export default function OnboardingPage() {
     const concluidas = tarefas.filter(t => t.concluida).length;
     return Math.round((concluidas / tarefas.length) * 100);
   };
+
+  // MOCK VISUAL — integrações fictícias 100% concluídas (aba "Concluídos").
+  const concluidosMock = mockAtivo ? onboarding.filter((o) => getProgresso(o.tarefas) === 100) : [];
 
   return (
     <>
@@ -149,11 +160,57 @@ export default function OnboardingPage() {
           </TabsContent>
 
           <TabsContent value="concluidos">
-            <Card className="rounded-2xl border-dashed border-2 p-12 text-center text-muted-foreground">
-              <CheckCircle2 className="h-12 w-12 mx-auto mb-4 opacity-20 text-success" />
-              <p className="font-display font-medium">Histórico de Integrações Concluídas</p>
-              <p className="text-sm">Todos os colaboradores recentes já estão 100% integrados.</p>
-            </Card>
+            {/* MOCK VISUAL — com o modo demonstrativo ligado lista as integrações 100% concluídas. */}
+            {concluidosMock.length > 0 ? (
+              <div className="grid gap-6 md:grid-cols-2">
+                {concluidosMock.map((colab) => (
+                  <motion.div key={colab.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                    <Card className="border-border/40 overflow-hidden">
+                      <div className="h-1 bg-gradient-to-r from-success to-emerald-400" />
+                      <CardHeader className="pb-3">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <CardTitle className="text-lg font-display">{colab.nome}</CardTitle>
+                            <CardDescription>{colab.cargo} • {colab.departamento}</CardDescription>
+                          </div>
+                          <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
+                            Integrado em: {new Date(colab.data_prevista).toLocaleDateString('pt-BR')}
+                          </Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <div className="space-y-1.5">
+                          <div className="flex justify-between text-[11px] font-medium uppercase text-muted-foreground">
+                            <span>Progresso do Onboarding</span>
+                            <span>100%</span>
+                          </div>
+                          <Progress value={100} className="h-1.5 bg-muted" />
+                        </div>
+                        <div className="space-y-2 pt-2">
+                          <p className="text-xs font-medium flex items-center gap-1.5 text-muted-foreground uppercase">
+                            <ListTodo className="h-3 w-3" /> Etapas concluídas
+                          </p>
+                          {colab.tarefas?.map((tarefa: any) => (
+                            <div key={tarefa.id} className="flex items-center gap-3 p-2.5 rounded-lg bg-muted/30 border border-border/10">
+                              <div className="h-4 w-4 rounded-full bg-success border-2 border-success flex items-center justify-center">
+                                <CheckCircle2 className="h-3 w-3 text-white" />
+                              </div>
+                              <span className="text-xs font-medium text-muted-foreground line-through">{tarefa.titulo}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <Card className="rounded-2xl border-dashed border-2 p-12 text-center text-muted-foreground">
+                <CheckCircle2 className="h-12 w-12 mx-auto mb-4 opacity-20 text-success" />
+                <p className="font-display font-medium">Histórico de Integrações Concluídas</p>
+                <p className="text-sm">Todos os colaboradores recentes já estão 100% integrados.</p>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="kits">

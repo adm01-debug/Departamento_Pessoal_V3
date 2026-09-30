@@ -1,6 +1,8 @@
 import { supabase } from '@/integrations/supabase/client';
 import { auditLogger } from '@/utils/auditLogger';
 import { Database } from '@/integrations/supabase/types';
+// MOCK VISUAL — ver src/mocks/admissoesMock.ts
+import { mockEnviarLinkCandidato, mockEnviarWhatsApp } from '@/mocks/admissoesMock';
 
 // Escapa HTML para prevenir XSS em dados vindos do usuário/candidato.
 const esc = (v: unknown): string => {
@@ -122,6 +124,11 @@ export const contratacaoService = {
 
   async enviarLinkCandidato(admissaoId: string, email: string): Promise<any> {
     
+    // MOCK VISUAL — ver src/mocks/admissoesMock.ts: para ids fictícios devolve um
+    // token em memória, sem gravar nada em `admissao_tokens`.
+    const mockToken = mockEnviarLinkCandidato(admissaoId, email);
+    if (mockToken) return mockToken;
+
     const token = secureToken(24);
     const expiracao = new Date();
     expiracao.setDate(expiracao.getDate() + 7);
@@ -143,6 +150,9 @@ export const contratacaoService = {
   },
 
   async enviarWhatsApp(admissaoId: string, telefone: string, token: string): Promise<void> {
+    // MOCK VISUAL — ver src/mocks/admissoesMock.ts: nada é enviado para ids fictícios.
+    if (mockEnviarWhatsApp(admissaoId)) return;
+
     try {
       const baseUrl = window.location.origin;
       const link = `${baseUrl}/contratacao?token=${token}`;

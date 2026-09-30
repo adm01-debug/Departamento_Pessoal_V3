@@ -21,7 +21,7 @@ export const cardVariants = {
  * Tom do ícone. Neutro por padrão (primary): vermelho fica reservado a risco e
  * âmbar a atenção — não há cor por card, como pede o design system.
  */
-export type MetricTone = 'primary' | 'warning' | 'destructive' | 'muted' | 'info' | 'accent';
+export type MetricTone = 'primary' | 'warning' | 'destructive' | 'muted' | 'info' | 'accent' | 'success';
 
 const toneStyles: Record<MetricTone, string> = {
   primary: 'bg-primary/10 text-primary',
@@ -30,6 +30,10 @@ const toneStyles: Record<MetricTone, string> = {
   muted: 'bg-muted text-muted-foreground',
   info: 'bg-info/10 text-info',
   accent: 'bg-xp/10 text-xp',
+  // `success` adicionado junto do redesign de Admissões (KPI "Finalizadas" usa o
+  // verde semântico do sistema). É só mais um valor do union: nenhum call site
+  // existente muda de aparência.
+  success: 'bg-success/10 text-success',
 };
 
 interface MetricCardProps {
@@ -49,6 +53,8 @@ interface MetricCardProps {
   route?: string;
   /** Texto explicativo do KPI, exibido num ícone `[i]` ao lado do título. */
   tooltip?: string;
+  /** Classes extras no card (ex.: sombra/raio do contexto que o hospeda). */
+  className?: string;
 }
 
 const defaultRoutes: Record<string, string> = {
@@ -59,7 +65,7 @@ const defaultRoutes: Record<string, string> = {
 };
 
 export function MetricCard({
-  title, value, rawValue, icon: Icon, trend, description, tone = 'primary', sparkline, index = 0, formatFn, route, tooltip,
+  title, value, rawValue, icon: Icon, trend, description, tone = 'primary', sparkline, index = 0, formatFn, route, tooltip, className,
 }: MetricCardProps) {
   const isPositive = trend && trend.value >= 0;
   const target = route ?? defaultRoutes[title];
@@ -75,6 +81,7 @@ export function MetricCard({
         'group relative h-full overflow-hidden border border-border/60 hover:border-primary/40',
         'transition-all duration-500 rounded-xl',
         target && 'cursor-pointer',
+        className,
       )}
       onClick={() => { if (target) window.location.assign(target); }}
     >
@@ -109,7 +116,13 @@ export function MetricCard({
             )}
           </div>
           {(description || trend) && (
-            <div className="flex items-center gap-1.5 mt-1 min-w-0">
+            // Linha de apoio: indicador (percentual/status) imediatamente à
+            // esquerda do texto, tudo alinhado à esquerda (`text-left`).
+            // `flex-wrap` + ausência de `truncate`: a frase aparece INTEIRA —
+            // quebra para a linha seguinte se a largura não bastar, em vez de
+            // virar reticências cortando o sentido ("processos encerrados no
+            // período" → "processos encerr…").
+            <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5 text-left">
               {trend && (
                 // Sem `cn()`: combinada com `text-success`/`text-destructive` na
                 // mesma chamada, o tailwind-merge derrubava `text-overline` e o
@@ -120,7 +133,12 @@ export function MetricCard({
                   {Math.abs(trend.value)}%
                 </span>
               )}
-              <span className="text-xs font-normal tracking-wide leading-snug text-muted-foreground truncate normal-case">
+              {/* `text-pretty` (text-wrap: pretty): quando a frase precisa de duas
+                  linhas, evita a última palavra órfã ("processos encerrados no /
+                  período" → "processos encerrados / no período"). Não altera
+                  fonte nem tamanho; em navegador sem suporte o texto apenas
+                  segue o quebra-linha padrão. */}
+              <span className="text-pretty text-xs font-normal tracking-wide leading-snug text-muted-foreground normal-case">
                 {description || trend?.label}
               </span>
             </div>

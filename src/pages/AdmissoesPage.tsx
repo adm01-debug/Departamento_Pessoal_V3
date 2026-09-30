@@ -24,10 +24,24 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { contratacaoService } from '@/services/contratacaoService';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
+// A tablist de Admissões tem a MESMA aparência da área de Colaboradores: em vez
+// de recriar as classes, consome a skin exportada por `AnimatedDossieTabs`
+// (fonte única da tablist do app) — container `bg-muted/50 rounded-xl p-1
+// border border-border/30`, indicador `rounded-lg bg-background shadow-xs` e
+// trigger transparente (`data-[state=active]:bg-transparent text-primary`),
+// tudo por cima do mecanismo de `ui/animated-tabs` (indicador persistente
+// movido por mola, o mesmo das duas áreas).
+import {
+  AnimatedDossieTabsList as AnimatedTabsList,
+  AnimatedDossieTabsTrigger as AnimatedTabsTrigger,
+} from '@/components/colaboradores/AnimatedDossieTabs';
 import { OnboardingDashboard } from '@/components/admissoes/OnboardingDashboard';
 import OnboardingPageContent from '@/components/admissoes/OnboardingPageContent';
 import type { LooseRow } from '@/types/db';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+// MOCK VISUAL — ver src/mocks/admissoesMock.ts
+import { isAdmissoesMockEnabled, isMockId, getMockAuditoria } from '@/mocks/admissoesMock';
 
 
 const etapaLabels: Record<string, string> = {
@@ -54,18 +68,69 @@ const etapaGradients: Record<string, string> = {
 
 const etapaFilters = ['todos', ...Object.keys(etapaLabels)] as const;
 
+/**
+ * Abas internas do módulo. A ordem é a mesma da navegação: visão geral →
+ * operação (candidatos/kanban) → jornada (onboarding) → conformidade.
+ */
+const abasAdmissoes = [
+  { value: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { value: 'gestao', label: 'Gestão de Candidatos', icon: List },
+  { value: 'kanban', label: 'Kanban', icon: Kanban },
+  { value: 'onboarding', label: 'Onboarding', icon: Rocket },
+  { value: 'auditoria', label: 'Auditoria', icon: History },
+] as const;
+
+
+/** Cores de status usadas na trilha de auditoria (MOCK VISUAL). */
+const auditoriaStatusClasses: Record<string, string> = {
+  sucesso: 'bg-success/15 text-success',
+  pendente: 'bg-warning/15 text-warning',
+  falha: 'bg-destructive/15 text-destructive',
+};
+
 export default function AdmissoesPage() {
   const navigate = useNavigate();
 
   const { admissoes, isLoading } = useAdmissoes();
   const [search, setSearch] = useState('');
   const [etapaFilter, setEtapaFilter] = useState('todos');
+  // Aba ativa em estado próprio: a tablist animada (AnimatedTabsList) e o
+  // `<Tabs>` do Radix que controla o conteúdo leem o MESMO valor — é assim que
+  // o Dossiê de Colaboradores mantém lista e painel em sincronia.
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [sendingLink, setSendingLink] = useState<string | null>(null);
   const [selectedAdmissao, setSelectedAdmissao] = useState<LooseRow<'admissoes'> | null>(null);
+
+  // MOCK VISUAL — ver src/mocks/admissoesMock.ts (dev + VITE_ADMISSOES_MOCK=true).
+  const [auditoriaBusca, setAuditoriaBusca] = useState('');
+  const auditoria = useMemo(() => (isAdmissoesMockEnabled() ? getMockAuditoria() : []), []);
+  const auditoriaFiltrada = useMemo(() => {
+    const termo = auditoriaBusca.trim().toLowerCase();
+    if (!termo) return auditoria;
+    return auditoria.filter((evento) =>
+      [evento.candidato, evento.cargo, evento.departamento, evento.acao, evento.responsavel, evento.protocolo]
+        .filter(Boolean)
+        .some((valor) => String(valor).toLowerCase().includes(termo))
+    );
+  }, [auditoria, auditoriaBusca]);
+  const auditoriaResumo = useMemo(
+    () => ({
+      total: auditoria.length,
+      sucesso: auditoria.filter((evento) => evento.status === 'sucesso').length,
+      pendente: auditoria.filter((evento) => evento.status === 'pendente').length,
+      falha: auditoria.filter((evento) => evento.status === 'falha').length,
+    }),
+    [auditoria]
+  );
 
   const handleEnviarLink = async (admissao: any) => {
     if (!admissao.email) {
       toast.error('Candidato sem e-mail cadastrado');
+      return;
+    }
+    // MOCK VISUAL — candidato fictício: simula o envio sem disparar e-mail real.
+    if (isMockId(admissao.id)) {
+      toast.success(`Link de contratação gerado para ${admissao.email} (demonstração).`);
       return;
     }
     setSendingLink(admissao.id);
@@ -82,6 +147,11 @@ export default function AdmissoesPage() {
   const handleEnviarWhatsApp = async (admissao: any) => {
     if (!admissao.telefone) {
       toast.error('Candidato sem telefone cadastrado');
+      return;
+    }
+    // MOCK VISUAL — candidato fictício: simula o link sem gerar token/abrir WhatsApp.
+    if (isMockId(admissao.id)) {
+      toast.success(`Link de contratação preparado para ${admissao.telefone} (demonstração).`);
       return;
     }
     setSendingLink(admissao.id);
@@ -133,26 +203,39 @@ export default function AdmissoesPage() {
       gradient="from-primary to-primary-glow"
       actions={<NovaAdmissaoDialog />}
     >
-      <Tabs defaultValue="dashboard" className="space-y-6">
-        <TabsList className="bg-muted/50 p-1 rounded-xl">
-          <TabsTrigger value="dashboard" className="rounded-lg gap-2">
-            <LayoutDashboard className="h-4 w-4" /> Dashboard
-          </TabsTrigger>
-          <TabsTrigger value="gestao" className="rounded-lg gap-2">
-            <List className="h-4 w-4" /> Gestão de Candidatos
-          </TabsTrigger>
-          <TabsTrigger value="kanban" className="rounded-lg gap-2">
-            <Kanban className="h-4 w-4" /> Kanban
-          </TabsTrigger>
-          <TabsTrigger value="onboarding" className="rounded-lg gap-2">
-            <Rocket className="h-4 w-4" /> Onboarding
-          </TabsTrigger>
-          <TabsTrigger value="auditoria" className="rounded-lg gap-2">
-            <History className="h-4 w-4" /> Auditoria
-          </TabsTrigger>
-        </TabsList>
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        {/* Tablist com a MESMA aparência da área de Colaboradores: a skin vem
+            de `AnimatedDossieTabs` (container `bg-muted/50 rounded-xl p-1 border
+            border-border/30`, indicador `rounded-lg bg-background shadow-xs`,
+            trigger transparente com `text-primary` no estado ativo) e o
+            mecanismo vem de `ui/animated-tabs` — indicador único e persistente,
+            medido no trigger ativo e movido pela mola
+            (`stiffness 220 / damping 24 / mass 0.7`). Quem pinta a aba ativa é
+            o indicador, nunca o botão: nenhum fundo/borda instantâneo em
+            `data-state=active` cobre o slide.
 
-        <TabsContent value="kanban" className="space-y-4">
+            LAYOUT (só desta área — cores, ícones, fonte, altura e labels não
+            mudam): a tablist é `flex w-full` e cada trigger é `flex-1`, então
+            as 5 abas dividem 100% da barra em partes iguais e o conteúdo de
+            cada uma fica centralizado dentro da própria célula. Nada é
+            dimensionado pelo texto (`w-fit`/`max-content`) — era isso que
+            deixava as abas amontoadas à esquerda com sobra à direita em telas
+            largas.
+            `flex-1` (= `flex: 1 1 0%`) mantém o `min-width: auto` do flex:
+            quando a célula igual não couber o rótulo (abaixo de ~1270px de
+            viewport, onde "Gestão de Candidatos" já pede 190px), a aba para no
+            tamanho natural do conteúdo em vez de cortar/apagar texto, e o
+            `overflow-x-auto` do container assume com scroll — mesma leitura de
+            hoje no mobile, sem nenhuma altura nova. */}
+        <AnimatedTabsList value={activeTab} onValueChange={setActiveTab} listClassName="flex w-full items-stretch">
+          {abasAdmissoes.map(({ value, label, icon: Icon }) => (
+            <AnimatedTabsTrigger key={value} value={value} className="flex-1">
+              <Icon className="h-3.5 w-3.5" /> {label}
+            </AnimatedTabsTrigger>
+          ))}
+        </AnimatedTabsList>
+
+        <TabsContent value="kanban" className="mt-6 space-y-4">
           {isLoading ? (
             <div className="flex justify-center p-12"><Spinner size="lg" /></div>
           ) : (
@@ -160,7 +243,7 @@ export default function AdmissoesPage() {
           )}
         </TabsContent>
 
-        <TabsContent value="dashboard" className="space-y-6">
+        <TabsContent value="dashboard" className="mt-6 space-y-6">
           {isLoading ? (
             <div className="flex justify-center p-12"><Spinner size="lg" /></div>
           ) : (
@@ -168,11 +251,11 @@ export default function AdmissoesPage() {
           )}
         </TabsContent>
 
-        <TabsContent value="onboarding" className="space-y-6">
+        <TabsContent value="onboarding" className="mt-6 space-y-6">
           <OnboardingPageContent />
         </TabsContent>
 
-        <TabsContent value="gestao" className="space-y-6">
+        <TabsContent value="gestao" className="mt-6 space-y-6">
           <div className="space-y-3">
             <div className="relative max-w-sm">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -220,7 +303,7 @@ export default function AdmissoesPage() {
           ) : filtered.length === 0 ? (
             <EmptySearch search={search} onClear={() => { setSearch(''); setEtapaFilter('todos'); }} />
           ) : (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
               {filtered.map((admissao: any, i: number) => (
                 <motion.div key={admissao.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
                   <Card className="group border border-border/30 hover:border-border/60 shadow-elevated hover:shadow-glow transition-all duration-300 rounded-2xl overflow-hidden">
@@ -285,21 +368,134 @@ export default function AdmissoesPage() {
           )}
         </TabsContent>
 
-        <TabsContent value="auditoria">
-           <Card className="border border-border/30 rounded-2xl overflow-hidden shadow-xs">
-             <CardHeader className="bg-muted/30">
-               <CardTitle className="text-sm font-display flex items-center gap-2">
-                 <History className="h-4 w-4 text-primary" /> Histórico de Auditoria - Admissões
-               </CardTitle>
-             </CardHeader>
-             <CardContent className="py-8 text-center">
+        <TabsContent value="auditoria" className="mt-6">
+          {/* MOCK VISUAL — com o modo demonstrativo ligado exibe a trilha de auditoria fictícia completa. */}
+          {auditoria.length > 0 ? (
+            <div className="space-y-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="relative flex-1 min-w-[220px] max-w-sm">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Buscar por candidato, ação, responsável ou protocolo..."
+                    value={auditoriaBusca}
+                    onChange={e => setAuditoriaBusca(e.target.value)}
+                    className="pl-9 rounded-xl border-border/30 bg-card"
+                  />
+                </div>
+                {[
+                  { label: 'Eventos', value: auditoriaResumo.total, className: 'bg-muted/50 text-foreground' },
+                  { label: 'Sucesso', value: auditoriaResumo.sucesso, className: 'bg-success/15 text-success' },
+                  { label: 'Pendentes', value: auditoriaResumo.pendente, className: 'bg-warning/15 text-warning' },
+                  { label: 'Falhas', value: auditoriaResumo.falha, className: 'bg-destructive/15 text-destructive' },
+                ].map(item => (
+                  <span
+                    key={item.label}
+                    className={cn(
+                      'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-caption font-body font-medium',
+                      item.className
+                    )}
+                  >
+                    {item.label}
+                    <span className="font-semibold">{item.value}</span>
+                  </span>
+                ))}
+              </div>
+
+              <Card className="border border-border/30 rounded-2xl overflow-hidden shadow-xs">
+                <CardHeader className="bg-muted/30">
+                  <CardTitle className="text-sm font-display flex items-center gap-2">
+                    <History className="h-4 w-4 text-primary" /> Histórico de Auditoria - Admissões
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <div className="max-h-[560px] overflow-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="w-[150px]">Data/Hora</TableHead>
+                          <TableHead>Candidato</TableHead>
+                          <TableHead>Ação</TableHead>
+                          <TableHead className="w-[130px]">Etapa</TableHead>
+                          <TableHead className="w-[150px]">eSocial</TableHead>
+                          <TableHead className="w-[110px]">Status</TableHead>
+                          <TableHead className="w-[160px]">Responsável</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {auditoriaFiltrada.map(evento => (
+                          <TableRow key={evento.id}>
+                            <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
+                              {new Date(evento.data_hora).toLocaleString('pt-BR')}
+                            </TableCell>
+                            <TableCell className="text-xs">
+                              <span className="font-medium text-foreground">{evento.candidato}</span>
+                              <span className="block text-muted-foreground">
+                                {evento.cargo} • {evento.departamento}
+                              </span>
+                            </TableCell>
+                            <TableCell className="text-xs">
+                              <span className="font-medium text-foreground">{evento.acao}</span>
+                              <span className="block text-muted-foreground">{evento.detalhe}</span>
+                            </TableCell>
+                            <TableCell className="text-xs">
+                              <Badge
+                                variant="outline"
+                                className={cn('border-0', etapaGradients[evento.etapa] || 'bg-muted/50 text-muted-foreground')}
+                              >
+                                {etapaLabels[evento.etapa] || evento.etapa}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-xs">
+                              {evento.evento_esocial ? (
+                                <>
+                                  <span className="font-medium text-foreground">{evento.evento_esocial}</span>
+                                  <span className="block text-muted-foreground">{evento.protocolo || 'aguardando recibo'}</span>
+                                </>
+                              ) : (
+                                <span className="text-muted-foreground">—</span>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-xs">
+                              <span
+                                className={cn(
+                                  'inline-flex items-center px-2 py-0.5 rounded-md text-overline font-body font-medium uppercase',
+                                  auditoriaStatusClasses[evento.status] || 'bg-muted/50 text-muted-foreground'
+                                )}
+                              >
+                                {evento.status}
+                              </span>
+                            </TableCell>
+                            <TableCell className="text-xs text-muted-foreground">{evento.responsavel}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+
+                    {auditoriaFiltrada.length === 0 && (
+                      <p className="text-caption font-body text-muted-foreground text-center py-8">
+                        Nenhum evento encontrado para a busca informada.
+                      </p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          ) : (
+            <Card className="border border-border/30 rounded-2xl overflow-hidden shadow-xs">
+              <CardHeader className="bg-muted/30">
+                <CardTitle className="text-sm font-display flex items-center gap-2">
+                  <History className="h-4 w-4 text-primary" /> Histórico de Auditoria - Admissões
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="py-8 text-center">
                 <History className="h-12 w-12 text-muted-foreground/20 mx-auto mb-3" />
                 <p className="text-sm text-muted-foreground">O monitoramento de auditoria eSocial e admissão digital está ativo.</p>
                 <Button variant="link" className="text-xs text-primary mt-2" onClick={() => navigate('/configuracoes/logs')}>
                   Ver Logs Globais
                 </Button>
-             </CardContent>
-           </Card>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
       </Tabs>
 

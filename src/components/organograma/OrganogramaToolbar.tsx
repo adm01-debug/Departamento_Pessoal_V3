@@ -1,5 +1,5 @@
 import { Search, ChevronsDownUp, ChevronsUpDown } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { cardVariants } from '@/components/dashboard/MetricCard';
@@ -61,6 +61,14 @@ interface OrganogramaToolbarProps {
  * e os estados do botão continuam exatamente os mesmos; o wrapper só entra no
  * lugar dele como item do flex, por isso leva o `shrink-0` (senão, em tela
  * estreita, o botão poderia transbordar por cima da busca).
+ *
+ * Esses mesmos wrappers — que já são o nó animado — carregam a microanimação dos
+ * botões (`whileHover="hover"` + `whileTap`, ver `MICRO_ACAO`/`TAP_ACAO` logo
+ * abaixo) e o ícone de cada ação virou um `motion.span` com as variantes do seu
+ * lado (`ICONE_EXPANDIR`/`ICONE_RECOLHER`). O `span` não muda nada de fora: mesma
+ * caixa de 20px que o ícone ocupava com o `mr-1.5` dentro, nenhum item novo no
+ * flex, e o botão segue com `onClick`, rótulo, foco, tinta e `active:scale`
+ * intactos.
  */
 const LIME_DESTAQUE = [
   'h-11 shrink-0 border-primary bg-primary text-primary-foreground shadow-glow',
@@ -68,6 +76,50 @@ const LIME_DESTAQUE = [
   'active:border-primary active:bg-primary-glow active:text-primary-foreground active:scale-[0.99]',
   'focus-visible:border-primary focus-visible:bg-primary focus-visible:text-primary-foreground focus-visible:ring-primary-foreground',
 ].join(' ');
+
+/**
+ * Microanimação das duas ações: o mesmo "gesto de 2px" que o MetricCard já usa no
+ * hover (`whileHover={{ y: -2 }}`), só que aqui o alvo é o ÍCONE do botão, não o
+ * cartão — quem passa o mouse vê a seta apontar para onde a árvore vai mexer.
+ *
+ * 180ms com a MESMA curva da cascata de entrada (`cardVariants`, o cubic-bezier
+ * `[0.25, 0.46, 0.45, 0.94]`): é resposta de gesto, não transição de tela.
+ */
+const MICRO_ACAO = { duration: 0.18, ease: [0.25, 0.46, 0.45, 0.94] } as const;
+
+/**
+ * Feedback de pressionar. Fica no WRAPPER (o `motion.div` que já carrega a
+ * entrada), nunca no botão: assim o botão continua sem `style` inline e o
+ * `active:scale-[0.99]` de `LIME_DESTAQUE` segue valendo — ver a nota "por que o
+ * wrapper" acima.
+ */
+const TAP_ACAO = { scale: 0.98, transition: MICRO_ACAO };
+
+/**
+ * Variantes do ícone de uma ação, com as DUAS chaves que o ícone precisa ter:
+ *
+ *   - `visible` — rótulo que o ícone já herda do wrapper (`animate="visible"` do
+ *     `cardVariants`). Não é entrada aqui, é REPOUSO: `y: 0` com o `MICRO_ACAO`,
+ *     que garante a VOLTA do hover como tween de 180ms. Sem esta chave, a Motion
+ *     animaria o `y` que o hover deixou para trás com a transição padrão dela —
+ *     uma mola, que passa do ponto antes de parar;
+ *   - `hover` — rótulo disparado pelo `whileHover="hover"` do wrapper. É
+ *     PROPAGAÇÃO de variante: o ícone não tem `whileHover` próprio, então o gesto
+ *     do botão inteiro vale para ele (o hover não fica preso aos 14px do ícone).
+ *
+ * O deslocamento aponta para onde a árvore vai: "Expandir tudo" desce (+2px),
+ * "Recolher tudo" sobe (-2px). Só `y` — nada de cor, tamanho, opacidade ou
+ * rotação: o ícone não muda de aparência, muda de posição.
+ */
+function variantesIconeAcao(deslocamentoEmPx: number): Variants {
+  return {
+    visible: { y: 0, transition: MICRO_ACAO },
+    hover: { y: deslocamentoEmPx, transition: MICRO_ACAO },
+  };
+}
+
+const ICONE_EXPANDIR = variantesIconeAcao(2);
+const ICONE_RECOLHER = variantesIconeAcao(-2);
 
 export function OrganogramaToolbar({ search, onSearchChange, onExpandAll, onCollapseAll }: OrganogramaToolbarProps) {
   return (
@@ -93,10 +145,14 @@ export function OrganogramaToolbar({ search, onSearchChange, onExpandAll, onColl
         variants={cardVariants}
         initial="hidden"
         animate="visible"
+        whileHover="hover"
+        whileTap={TAP_ACAO}
         className="shrink-0"
       >
         <Button variant="outline" size="default" className={LIME_DESTAQUE} onClick={onExpandAll}>
-          <ChevronsUpDown className="h-3.5 w-3.5 mr-1.5" />
+          <motion.span variants={ICONE_EXPANDIR} className="inline-flex">
+            <ChevronsUpDown className="h-3.5 w-3.5 mr-1.5" />
+          </motion.span>
           Expandir tudo
         </Button>
       </motion.div>
@@ -106,10 +162,14 @@ export function OrganogramaToolbar({ search, onSearchChange, onExpandAll, onColl
         variants={cardVariants}
         initial="hidden"
         animate="visible"
+        whileHover="hover"
+        whileTap={TAP_ACAO}
         className="shrink-0"
       >
         <Button variant="outline" size="default" className={LIME_DESTAQUE} onClick={onCollapseAll}>
-          <ChevronsDownUp className="h-3.5 w-3.5 mr-1.5" />
+          <motion.span variants={ICONE_RECOLHER} className="inline-flex">
+            <ChevronsDownUp className="h-3.5 w-3.5 mr-1.5" />
+          </motion.span>
           Recolher tudo
         </Button>
       </motion.div>

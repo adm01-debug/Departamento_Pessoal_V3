@@ -3,6 +3,8 @@ import * as esocialService from '@/services/esocialService';
 import { toast } from 'sonner';
 import { useServerValidation } from './useServerValidation';
 import { useEmpresas } from './useEmpresas';
+// MOCK VISUAL — ver src/mocks/admissoesMock.ts
+import { mockTransmitirESocial } from '@/mocks/admissoesMock';
 
 export function useESocial() {
   const queryClient = useQueryClient();
@@ -33,6 +35,10 @@ export function useESocial() {
 
   const enviarMutation = useMutation({
     mutationFn: async ({ eventoId, empresaId }: { eventoId: string; empresaId: string }) => {
+      // MOCK VISUAL — transmite o evento fictício em memória e devolve um recibo
+      // demonstrativo (o backend do eSocial nunca é chamado nestes ids).
+      const mock = mockTransmitirESocial(eventoId);
+      if (mock) return mock;
       return await esocialService.enviarEvento(eventoId, empresaId);
     },
     onSuccess: (data) => {
