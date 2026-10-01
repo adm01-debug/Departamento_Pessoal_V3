@@ -1,4 +1,26 @@
 -- 1) Coluna de hash + backfill idempotente
+-- Tabela existe em prod (schema canônico) mas não é criada por nenhuma
+-- migration anterior (drift). CREATE IF NOT EXISTS espelha o canônico.
+CREATE TABLE IF NOT EXISTS public.medidas_ciencia_tokens (
+  id              uuid        DEFAULT gen_random_uuid() NOT NULL PRIMARY KEY,
+  medida_id       uuid        NOT NULL,
+  empresa_id      uuid        NOT NULL,
+  colaborador_id  uuid        NOT NULL,
+  token           text        NOT NULL,
+  expires_at      timestamptz DEFAULT (now() + interval '7 days') NOT NULL,
+  used_at         timestamptz,
+  ip_address      text,
+  user_agent      text,
+  geolocation     jsonb,
+  acao            text,
+  motivo_recusa   text,
+  assinatura_hash text,
+  created_at      timestamptz DEFAULT now() NOT NULL,
+  created_by      uuid,
+  CONSTRAINT medidas_ciencia_tokens_acao_check
+    CHECK (acao = ANY (ARRAY['ciencia'::text, 'recusa'::text]))
+);
+
 ALTER TABLE public.medidas_ciencia_tokens
   ADD COLUMN IF NOT EXISTS token_hash TEXT;
 
