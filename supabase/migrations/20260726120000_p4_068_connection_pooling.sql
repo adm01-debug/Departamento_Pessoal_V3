@@ -29,6 +29,8 @@
 -- 3. FUNÇÕES PARA MONITORAR POOL
 -- =============================================================================
 
+CREATE SCHEMA IF NOT EXISTS admin;
+
 -- View de estatísticas do pool
 CREATE OR REPLACE VIEW admin.v_pgbouncer_stats AS
 SELECT
