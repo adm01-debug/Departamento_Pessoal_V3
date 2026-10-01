@@ -52,7 +52,7 @@ const dropped = new Set();
 for (const m of allSql.matchAll(/DROP\s+TABLE\s+(?:IF\s+EXISTS\s+)?(?:public\.)?(\w+)/gi)) {
   dropped.add(m[1].toLowerCase());
 }
-const live = [...created].filter((t) => !dropped.has(t) && !KEYWORDS.has(t)).sort();
+const live = [...created].filter((t) => !dropped.has(t) && !KEYWORDS.has(t)).sort((a, b) => a.localeCompare(b));
 
 const types = readFileSync(resolve(root, 'src/integrations/supabase/types.ts'), 'utf8');
 const tablesSection = types.includes('Tables: {')
@@ -63,7 +63,7 @@ for (const m of tablesSection.matchAll(/^\s{6}(\w+):\s*\{$/gm)) {
   typed.add(m[1].toLowerCase());
 }
 
-const missing = live.filter((t) => !typed.has(t)).sort();
+const missing = live.filter((t) => !typed.has(t)).sort((a, b) => a.localeCompare(b));
 
 if (write) {
   writeFileSync(baselinePath, JSON.stringify(missing, null, 2) + '\n');

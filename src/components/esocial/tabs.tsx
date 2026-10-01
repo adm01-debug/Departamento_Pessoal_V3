@@ -464,7 +464,7 @@ export function ESocialEventDetailsDialog({
                   aria-label="Copiar"
                   className="absolute top-2 right-2 h-7 w-7 opacity-0 group-hover/json:opacity-100 transition-opacity"
                   onClick={() => {
-                    navigator.clipboard.writeText(JSON.stringify(selectedEvento?.dados || {}, null, 2));
+                    void navigator.clipboard.writeText(JSON.stringify(selectedEvento?.dados || {}, null, 2));
                     toast.success('JSON copiado');
                   }}
                 >

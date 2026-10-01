@@ -170,7 +170,7 @@ export default function ESocialPage() {
 
   const handleCriar = () => {
     if (!novoTipo || !empresaAtual?.id) return;
-    criarEvento({ empresa_id: empresaAtual.id, tipo_evento: novoTipo });
+    void criarEvento({ empresa_id: empresaAtual.id, tipo_evento: novoTipo });
     setNovoTipo('');
     setDialogOpen(false);
   };

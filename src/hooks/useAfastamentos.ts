@@ -69,7 +69,7 @@ export function useProrrogacoesAfastamento(afastamentoId?: string) {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['prorrogacoes-afastamento'] });
       queryClient.invalidateQueries({ queryKey: ['afastamentos'] });
-      auditLogger.log({
+      void auditLogger.log({
         tabela: 'prorrogacoes_afastamento',
         registro_id: data?.id ?? '',
         acao: 'INSERT',

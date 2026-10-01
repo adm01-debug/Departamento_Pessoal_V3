@@ -65,7 +65,7 @@ serve(async (req: Request): Promise<Response> => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
     });
   } catch (error: unknown) {
-    captureException(error, { fn: 'healthcheck' });
+    await captureException(error, { fn: 'healthcheck' });
     return createErrorResponse('Erro interno', 500, 'INTERNAL_SERVER_ERROR');
   }
 });
