@@ -66,6 +66,11 @@ jobs:
         # em um diretório e adicionar 50 em outro sem mudar o total. Este
         # gate falha por diretório individualmente, não pela soma.
         run: npm run audit:ratchet-any
+      - name: Drift de tipos × migrations
+        # Tabela criada por migration sem entrada em types.ts abre janela para
+        # queries untyped. Ratchet: baseline lista divergências conhecidas,
+        # qualquer divergência nova reprova o PR.
+        run: npm run audit:types-drift
       - name: Lint Edge Functions
         run: npm run lint:edge
       - name: Format changed source files

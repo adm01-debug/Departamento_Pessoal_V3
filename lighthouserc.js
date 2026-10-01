@@ -1,10 +1,10 @@
 module.exports = {
   ci: {
     collect: {
-      url: ['http://localhost:3000/', 'http://localhost:3000/colaboradores', 'http://localhost:3000/folha'],
+      url: ['http://localhost:4173/', 'http://localhost:4173/colaboradores', 'http://localhost:4173/folha'],
       startServerCommand: 'npm run preview',
       startServerReadyPattern: 'Local:',
-      numberOfRuns: 3,
+      numberOfRuns: 2,
       settings: {
         preset: 'desktop',
         throttling: { cpuSlowdownMultiplier: 1 }

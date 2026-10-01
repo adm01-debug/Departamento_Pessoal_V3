@@ -1,8 +1,8 @@
 {
-  "components": 333,
-  "hooks": 100,
+  "components": 304,
+  "hooks": 91,
   "lib": 2,
-  "pages": 399,
+  "pages": 283,
   "schemas": 1,
   "setupTests.ts": 2,
   "types": 2,
