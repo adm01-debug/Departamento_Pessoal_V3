@@ -64,9 +64,15 @@ $function$;
 REVOKE EXECUTE ON FUNCTION public.sec_audit_policies_scan()        FROM anon, authenticated;
 REVOKE EXECUTE ON FUNCTION public.sec_verify_seals()               FROM anon, authenticated;
 REVOKE EXECUTE ON FUNCTION public.sec_policy_regressions_purge()   FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.cleanup_ciencia_rate_limits()    FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.check_ciencia_rate_limit(text, text, integer, integer)
-  FROM anon, authenticated;
+DO $$
+BEGIN
+  IF to_regprocedure('public.cleanup_ciencia_rate_limits()') IS NOT NULL THEN
+    EXECUTE 'REVOKE EXECUTE ON FUNCTION public.cleanup_ciencia_rate_limits() FROM anon, authenticated';
+  END IF;
+  IF to_regprocedure('public.check_ciencia_rate_limit(text,text,integer,integer)') IS NOT NULL THEN
+    EXECUTE 'REVOKE EXECUTE ON FUNCTION public.check_ciencia_rate_limit(text, text, integer, integer) FROM anon, authenticated';
+  END IF;
+END $$;
 REVOKE EXECUTE ON FUNCTION public.consumir_pendencias_medida_no_holerite(uuid, uuid, text)
   FROM anon, authenticated;
 REVOKE EXECUTE ON FUNCTION public.garantir_rubrica_suspensao(uuid) FROM anon, authenticated;
