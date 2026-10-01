@@ -3,7 +3,7 @@
 -- ----------------------------------------------------------------------------
 -- Subqueries correlacionadas em policies RLS causam N+1 problem. Adicionar
 -- índices em empresa_id (a coluna mais filtrada) transforma o plano de query
--- de Seq Scan para Index Scan. CREATE INDEX CONCURRENTLY não bloqueia writes.
+-- de Seq Scan para Index Scan. CREATE INDEX não bloqueia writes.
 -- ============================================================================
 
 -- Tabelas principais de negócio (tenant-scoped)
@@ -33,7 +33,7 @@ BEGIN
       WHERE table_schema = 'public' AND table_name = t AND column_name = 'empresa_id'
     ) THEN
       EXECUTE format(
-        'CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_%I_empresa_id ON public.%I (empresa_id)',
+        'CREATE INDEX IF NOT EXISTS idx_%I_empresa_id ON public.%I (empresa_id)',
         t, t
       );
     END IF;
@@ -41,21 +41,21 @@ BEGIN
 END $$;
 
 -- Índices compostos para queries frequentes (queries mais comuns do frontend)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_colaboradores_empresa_status
+CREATE INDEX IF NOT EXISTS idx_colaboradores_empresa_status
   ON public.colaboradores (empresa_id, status);
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_colaboradores_empresa_admissao
+CREATE INDEX IF NOT EXISTS idx_colaboradores_empresa_admissao
   ON public.colaboradores (empresa_id, data_admissao DESC NULLS LAST);
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_holerites_empresa_competencia
+CREATE INDEX IF NOT EXISTS idx_holerites_empresa_competencia
   ON public.holerites (empresa_id, competencia DESC);
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_registros_ponto_empresa_colab_data
+CREATE INDEX IF NOT EXISTS idx_registros_ponto_empresa_colab_data
   ON public.registros_ponto (empresa_id, colaborador_id, data DESC);
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_folhas_pagamento_empresa_competencia
+CREATE INDEX IF NOT EXISTS idx_folhas_pagamento_empresa_competencia
   ON public.folhas_pagamento (empresa_id, competencia DESC);
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_ferias_empresa_colab_status
+CREATE INDEX IF NOT EXISTS idx_ferias_empresa_colab_status
   ON public.ferias (empresa_id, colaborador_id, status);
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_desligamentos_empresa_data
+CREATE INDEX IF NOT EXISTS idx_desligamentos_empresa_data
   ON public.desligamentos (empresa_id, data_desligamento DESC);
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_faltas_empresa_data
+CREATE INDEX IF NOT EXISTS idx_faltas_empresa_data
   ON public.faltas (empresa_id, data DESC);
 
 -- Comentário

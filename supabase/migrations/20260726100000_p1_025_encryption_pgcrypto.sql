@@ -168,11 +168,11 @@ END $$;
 -- 4. ÍNDICES PARA CAMPOS HASHEADOS (COM CONCURRENTLY)
 -- =============================================================================
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_colaboradores_cpf_hash_sw
+CREATE INDEX IF NOT EXISTS idx_colaboradores_cpf_hash_sw
   ON public.colaboradores(cpf_hash)
   WHERE cpf_hash IS NOT NULL;
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_dependentes_cpf_hash_sw
+CREATE INDEX IF NOT EXISTS idx_dependentes_cpf_hash_sw
   ON public.dependentes(cpf_hash)
   WHERE cpf_hash IS NOT NULL;
 

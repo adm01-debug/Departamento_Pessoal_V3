@@ -55,23 +55,23 @@ GROUP BY datname;
 
 -- Índices que otimizam queries frequentes (NÃO bloqueiam — CONCURRENTLY)
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_colaboradores_empresa_ativo_sw
+CREATE INDEX IF NOT EXISTS idx_colaboradores_empresa_ativo_sw
   ON public.colaboradores(empresa_id, status)
   WHERE status = 'ativo';
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_folhas_pagamento_competencia_sw
+CREATE INDEX IF NOT EXISTS idx_folhas_pagamento_competencia_sw
   ON public.folhas_pagamento(competencia DESC);
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_folhas_pagamento_status_sw
+CREATE INDEX IF NOT EXISTS idx_folhas_pagamento_status_sw
   ON public.folhas_pagamento(status, competencia DESC);
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_registros_ponto_colab_data_sw
+CREATE INDEX IF NOT EXISTS idx_registros_ponto_colab_data_sw
   ON public.registros_ponto(colaborador_id, data DESC);
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_ajustes_ponto_status_sw
+CREATE INDEX IF NOT EXISTS idx_ajustes_ponto_status_sw
   ON public.ajustes_ponto(status, created_at DESC);
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_solicitacoes_ajuste_ponto_status_sw
+CREATE INDEX IF NOT EXISTS idx_solicitacoes_ajuste_ponto_status_sw
   ON public.solicitacoes_ajuste_ponto(status, created_at DESC);
 
 -- =============================================================================
