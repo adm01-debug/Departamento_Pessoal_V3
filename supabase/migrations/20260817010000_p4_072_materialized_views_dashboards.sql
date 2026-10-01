@@ -49,10 +49,10 @@ CREATE MATERIALIZED VIEW mv_kpi_turnover_absenteismo AS
       empresa_id,
       DATE_TRUNC('month', data_desligamento) AS mes,
       COUNT(*)                                AS total_desligamentos,
-      -- Desligamentos por motivo
-      COUNT(*) FILTER (WHERE motivo IN ('dispensa','dispensa sem justa causa')) AS por_contrato,
-      COUNT(*) FILTER (WHERE motivo IN ('pedido demissao','rescisao amigavel')) AS por_colaborador,
-      COUNT(*) FILTER (WHERE motivo IN ('justa causa','abandono','termino_contrato')) AS por_outros
+      -- Desligamentos por categoria (tipo enum persistido pelo formulário)
+      COUNT(*) FILTER (WHERE tipo IN ('sem_justa_causa','fim_contrato')) AS por_contrato,
+      COUNT(*) FILTER (WHERE tipo IN ('pedido_demissao','acordo'))      AS por_colaborador,
+      COUNT(*) FILTER (WHERE tipo IN ('justa_causa','falecimento'))     AS por_outros
     FROM desligamentos
     WHERE data_desligamento >= CURRENT_DATE - INTERVAL '12 months'
       AND data_desligamento < CURRENT_DATE + INTERVAL '1 day'
@@ -182,17 +182,22 @@ CREATE MATERIALIZED VIEW mv_passivo_trabalhista AS
   ferias_vencidas AS (
     SELECT
       c.empresa_id,
-      COUNT(*)                                       AS qtde_colabs_vencidas,
-      SUM(f.dias_gozo * (c.salario_base / 30))           AS provisoes_ferias,
-      SUM(f.dias_gozo * (c.salario_base / 30) * 0.3333)  AS provisoes_terco,
+      COUNT(DISTINCT pa.colaborador_id)                       AS qtde_colabs_vencidas,
+      SUM(pa_dias * (c.salario_base / 30))                    AS provisoes_ferias,
+      SUM(pa_dias * (c.salario_base / 30) * 0.3333)           AS provisoes_terco,
       SUM(
-        (f.dias_gozo * (c.salario_base / 30))
-        + (f.dias_gozo * (c.salario_base / 30) * 0.3333)
-      ) * 0.08                                       AS provisoes_fgts_ferias
-    FROM ferias f
-    JOIN colaboradores c ON c.id = f.colaborador_id
-    WHERE f.status = 'vencida'
-      AND f.dias_gozo > 0
+        (pa_dias * (c.salario_base / 30))
+        + (pa_dias * (c.salario_base / 30) * 0.3333)
+      ) * 0.08                                              AS provisoes_fgts_ferias
+    FROM (
+      SELECT
+        colaborador_id,
+        GREATEST(dias_direito - dias_descontados, 0) AS pa_dias
+      FROM periodos_aquisitivos
+      WHERE status = 'vencido'
+    ) pa
+    JOIN colaboradores c ON c.id = pa.colaborador_id
+    WHERE pa.pa_dias > 0
     GROUP BY c.empresa_id
   ),
   ultimo_dezembro AS (

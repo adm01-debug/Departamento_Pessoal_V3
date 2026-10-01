@@ -150,16 +150,11 @@ SELECT
   c.id AS colaborador_id,
   c.nome_completo AS colaborador_nome,
   c.data_admissao,
-  -- Dias de direito por ano trabalhado (30 dias por ano)
+  -- Dias de direito por ano trabalhado (30 dias por ano),
+  -- menos os dias efetivamente consumidos/agendados (dias_gozo).
   GREATEST(0, (EXTRACT(YEAR FROM AGE(NOW(), c.data_admissao)) * 30
     - COALESCE(
         (SELECT SUM(f.dias_gozo)
-         FROM public.ferias f WHERE f.colaborador_id = c.id
-           AND f.status IN ('aprovada','agendada','programada','em_gozo','concluida')),
-        0
-      )
-    - COALESCE(
-        (SELECT SUM(f.saldo_gasto)
          FROM public.ferias f WHERE f.colaborador_id = c.id
            AND f.status IN ('aprovada','agendada','programada','em_gozo','concluida')),
         0

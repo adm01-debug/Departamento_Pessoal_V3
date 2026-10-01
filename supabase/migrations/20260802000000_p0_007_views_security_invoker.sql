@@ -136,37 +136,29 @@ JOIN public.colaboradores c ON c.id = rp.colaborador_id
 WHERE rp.tipo_dia IS NOT NULL AND rp.tipo_dia <> 'normal';
 
 -- ---------- vw_matriz_nine_box ----------
+-- A view canônica agrega feedbacks_360 (performance/potencial), não a tabela
+-- avaliacoes — recria a mesma projeção com security_invoker.
 DROP VIEW IF EXISTS public.vw_matriz_nine_box;
--- A tabela avaliacoes (schema de pagamentos) não tem performance_score:
--- a view só é criada quando as colunas esperadas existem (drift-tolerante).
 DO $$
 BEGIN
-  IF EXISTS (SELECT 1 FROM information_schema.columns
-             WHERE table_schema = 'public' AND table_name = 'avaliacoes'
-               AND column_name = 'performance_score')
-     AND EXISTS (SELECT 1 FROM information_schema.columns
-                 WHERE table_schema = 'public' AND table_name = 'avaliacoes'
-                   AND column_name = 'potencial_score') THEN
+  IF to_regclass('public.feedbacks_360') IS NOT NULL THEN
     EXECUTE $view$
       CREATE VIEW public.vw_matriz_nine_box
         WITH (security_invoker = true) AS
       SELECT
-        c.empresa_id,
-        a.colaborador_id,
+        f.avaliado_id,
         c.nome_completo,
-        a.performance_score,
-        a.potencial_score,
-        CASE
-          WHEN a.performance_score >= 4 AND a.potencial_score >= 4 THEN 'estrela'
-          WHEN a.performance_score >= 4 AND a.potencial_score < 4  THEN 'especialista'
-          WHEN a.performance_score < 4  AND a.potencial_score >= 4 THEN 'aprendiz'
-          ELSE 'core'
-        END AS quadrante
-      FROM public.avaliacoes a
-      JOIN public.colaboradores c ON c.id = a.colaborador_id
+        f.empresa_id,
+        AVG(f.performance)::NUMERIC(3,2) AS media_performance,
+        AVG(f.potencial)::NUMERIC(3,2)   AS media_potencial,
+        COUNT(f.id) AS total_avaliacoes
+      FROM public.feedbacks_360 f
+      JOIN public.colaboradores c ON f.avaliado_id = c.id
+      WHERE f.status = 'concluido'
+      GROUP BY f.avaliado_id, c.nome_completo, f.empresa_id
     $view$;
   ELSE
-    RAISE NOTICE 'vw_matriz_nine_box não criada: avaliacoes sem performance_score/potencial_score';
+    RAISE NOTICE 'vw_matriz_nine_box não criada: tabela feedbacks_360 ausente';
   END IF;
 END $$;
 
@@ -246,11 +238,25 @@ SELECT
   rp.colaborador_id,
   c.empresa_id,
   TO_CHAR(rp.data, 'YYYY-MM') AS competencia,
-  SUM(EXTRACT(EPOCH FROM (rp.saida_1 - rp.entrada_1)) / 3600) AS horas_trabalhadas,
+  SUM(
+    (
+      COALESCE(EXTRACT(EPOCH FROM (rp.saida_1 - rp.entrada_1)), 0)
+      + COALESCE(EXTRACT(EPOCH FROM (rp.saida_2 - rp.entrada_2)), 0)
+      + COALESCE(EXTRACT(EPOCH FROM (rp.saida_3 - rp.entrada_3)), 0)
+      + COALESCE(EXTRACT(EPOCH FROM (NULLIF(rp.saida_4, '')::time - NULLIF(rp.entrada_4, '')::time)), 0)
+      + COALESCE(EXTRACT(EPOCH FROM (NULLIF(rp.saida_5, '')::time - NULLIF(rp.entrada_5, '')::time)), 0)
+      + COALESCE(EXTRACT(EPOCH FROM (NULLIF(rp.saida_6, '')::time - NULLIF(rp.entrada_6, '')::time)), 0)
+    ) / 3600
+  ) AS horas_trabalhadas,
   COUNT(*) AS total_batidas
 FROM public.registros_ponto rp
 JOIN public.colaboradores c ON c.id = rp.colaborador_id
 WHERE rp.saida_1 IS NOT NULL
+   OR rp.saida_2 IS NOT NULL
+   OR rp.saida_3 IS NOT NULL
+   OR NULLIF(rp.saida_4, '') IS NOT NULL
+   OR NULLIF(rp.saida_5, '') IS NOT NULL
+   OR NULLIF(rp.saida_6, '') IS NOT NULL
 GROUP BY rp.colaborador_id, c.empresa_id, TO_CHAR(rp.data, 'YYYY-MM');
 
 -- ---------- vw_saldo_compensacao_mensal + vw_alertas_compensacao ----------

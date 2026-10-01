@@ -118,11 +118,14 @@ BEGIN
   END IF;
 
   -- SECURITY DEFINER: exige membership no tenant (service role passa com uid NULL)
-  IF auth.uid() IS NOT NULL
-     AND v_empresa IS NOT NULL
-     AND NOT public.is_admin(auth.uid())
-     AND NOT (v_empresa = ANY (SELECT public.get_user_empresas(auth.uid()))) THEN
-    RAISE EXCEPTION 'Acesso negado para a empresa informada';
+  IF auth.uid() IS NOT NULL THEN
+    IF v_empresa IS NULL THEN
+      RAISE EXCEPTION 'empresa_id não identificado para o contexto informado';
+    END IF;
+    IF NOT public.is_admin(auth.uid())
+       AND NOT (v_empresa = ANY (SELECT public.get_user_empresas(auth.uid()))) THEN
+      RAISE EXCEPTION 'Acesso negado para a empresa informada';
+    END IF;
   END IF;
 
   -- Direciona para a tabela correta baseada no contexto
