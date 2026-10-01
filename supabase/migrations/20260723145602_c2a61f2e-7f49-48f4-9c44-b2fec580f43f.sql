@@ -100,10 +100,12 @@ GRANT ALL ON public.contrato_assinatura_tokens TO service_role;
 
 ALTER TABLE public.contrato_assinatura_tokens ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "contrato_tokens_read" ON public.contrato_assinatura_tokens;
 CREATE POLICY "contrato_tokens_read" ON public.contrato_assinatura_tokens
   FOR SELECT TO authenticated
   USING (public.user_belongs_to_empresa(auth.uid(), empresa_id));
 
+DROP POLICY IF EXISTS "contrato_tokens_write" ON public.contrato_assinatura_tokens;
 CREATE POLICY "contrato_tokens_write" ON public.contrato_assinatura_tokens
   FOR INSERT TO authenticated
   WITH CHECK (

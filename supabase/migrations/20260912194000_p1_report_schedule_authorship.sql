@@ -148,10 +148,12 @@ CREATE POLICY relatorios_agendados_select ON public.relatorios_agendados
   FOR SELECT TO authenticated USING (public.pode_gerir_rh(empresa_id));
 CREATE POLICY relatorios_agendados_insert ON public.relatorios_agendados
   FOR INSERT TO authenticated WITH CHECK (public.pode_gerir_rh(empresa_id));
+DROP POLICY IF EXISTS "relatorios_agendados_update" ON public.relatorios_agendados;
 CREATE POLICY relatorios_agendados_update ON public.relatorios_agendados
   FOR UPDATE TO authenticated
   USING (public.pode_gerir_rh(empresa_id))
   WITH CHECK (public.pode_gerir_rh(empresa_id));
+DROP POLICY IF EXISTS "relatorios_agendados_delete" ON public.relatorios_agendados;
 CREATE POLICY relatorios_agendados_delete ON public.relatorios_agendados
   FOR DELETE TO authenticated USING (public.pode_gerir_rh(empresa_id));
 

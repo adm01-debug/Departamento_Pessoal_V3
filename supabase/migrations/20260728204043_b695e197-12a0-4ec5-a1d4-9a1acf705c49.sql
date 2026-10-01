@@ -5,6 +5,7 @@
 DROP POLICY IF EXISTS "Users can manage their company docs" ON public.documentos_afastamento;
 DROP POLICY IF EXISTS "Users can manage their company prorrogacoes" ON public.prorrogacoes_afastamento;
 
+DROP POLICY IF EXISTS "documentos_afastamento_tenant_all" ON public.documentos_afastamento;
 CREATE POLICY "documentos_afastamento_tenant_all"
 ON public.documentos_afastamento FOR ALL TO authenticated
 USING (
@@ -22,6 +23,7 @@ WITH CHECK (
   )
 );
 
+DROP POLICY IF EXISTS "prorrogacoes_afastamento_tenant_all" ON public.prorrogacoes_afastamento;
 CREATE POLICY "prorrogacoes_afastamento_tenant_all"
 ON public.prorrogacoes_afastamento FOR ALL TO authenticated
 USING (

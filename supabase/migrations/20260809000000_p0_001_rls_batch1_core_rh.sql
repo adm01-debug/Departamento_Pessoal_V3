@@ -8,19 +8,23 @@
 
 -- colaboradores
 DROP POLICY IF EXISTS "Allow all" ON public.colaboradores;
+DROP POLICY IF EXISTS "colaboradores_tenant_select" ON public.colaboradores;
 CREATE POLICY "colaboradores_tenant_select" ON public.colaboradores
   FOR SELECT TO authenticated
   USING (empresa_id = public.get_auth_empresa_id());
+DROP POLICY IF EXISTS "colaboradores_tenant_insert" ON public.colaboradores;
 CREATE POLICY "colaboradores_tenant_insert" ON public.colaboradores
   FOR INSERT TO authenticated
   WITH CHECK (
     empresa_id = public.get_auth_empresa_id()
     AND (public.is_admin(auth.uid()) OR public.has_role(auth.uid(), 'rh'))
   );
+DROP POLICY IF EXISTS "colaboradores_tenant_update" ON public.colaboradores;
 CREATE POLICY "colaboradores_tenant_update" ON public.colaboradores
   FOR UPDATE TO authenticated
   USING (empresa_id = public.get_auth_empresa_id())
   WITH CHECK (empresa_id = public.get_auth_empresa_id());
+DROP POLICY IF EXISTS "colaboradores_tenant_delete" ON public.colaboradores;
 CREATE POLICY "colaboradores_tenant_delete" ON public.colaboradores
   FOR DELETE TO authenticated
   USING (
@@ -30,6 +34,7 @@ CREATE POLICY "colaboradores_tenant_delete" ON public.colaboradores
 
 -- ferias
 DROP POLICY IF EXISTS "Allow all" ON public.ferias;
+DROP POLICY IF EXISTS "ferias_tenant_all" ON public.ferias;
 CREATE POLICY "ferias_tenant_all" ON public.ferias
   FOR ALL TO authenticated
   USING (empresa_id = public.get_auth_empresa_id())
@@ -37,6 +42,7 @@ CREATE POLICY "ferias_tenant_all" ON public.ferias
 
 -- pontos (legado)
 DROP POLICY IF EXISTS "Allow all" ON public.pontos;
+DROP POLICY IF EXISTS "pontos_tenant_all" ON public.pontos;
 CREATE POLICY "pontos_tenant_all" ON public.pontos
   FOR ALL TO authenticated
   USING (
@@ -56,6 +62,7 @@ CREATE POLICY "pontos_tenant_all" ON public.pontos
 
 -- folhas (legado)
 DROP POLICY IF EXISTS "Allow all" ON public.folhas;
+DROP POLICY IF EXISTS "folhas_tenant_all" ON public.folhas;
 CREATE POLICY "folhas_tenant_all" ON public.folhas
   FOR ALL TO authenticated
   USING (
@@ -75,6 +82,7 @@ CREATE POLICY "folhas_tenant_all" ON public.folhas
 
 -- folhas_pagamento
 DROP POLICY IF EXISTS "Authenticated users can manage folhas" ON public.folhas_pagamento;
+DROP POLICY IF EXISTS "folhas_pagamento_tenant_all" ON public.folhas_pagamento;
 CREATE POLICY "folhas_pagamento_tenant_all" ON public.folhas_pagamento
   FOR ALL TO authenticated
   USING (empresa_id = public.get_auth_empresa_id())
@@ -82,6 +90,7 @@ CREATE POLICY "folhas_pagamento_tenant_all" ON public.folhas_pagamento
 
 -- holerites
 DROP POLICY IF EXISTS "Authenticated users can manage holerites" ON public.holerites;
+DROP POLICY IF EXISTS "holerites_tenant_all" ON public.holerites;
 CREATE POLICY "holerites_tenant_all" ON public.holerites
   FOR ALL TO authenticated
   USING (empresa_id = public.get_auth_empresa_id())
@@ -89,25 +98,29 @@ CREATE POLICY "holerites_tenant_all" ON public.holerites
 
 -- lancamentos_folha
 DROP POLICY IF EXISTS "Authenticated users can manage lancamentos" ON public.lancamentos_folha;
+DROP POLICY IF EXISTS "lancamentos_folha_tenant_all" ON public.lancamentos_folha;
 CREATE POLICY "lancamentos_folha_tenant_all" ON public.lancamentos_folha
   FOR ALL TO authenticated
   USING (
     EXISTS (
-      SELECT 1 FROM public.folhas_pagamento f
-      WHERE f.id = lancamentos_folha.folha_id
+      SELECT 1 FROM public.holerites h
+      JOIN public.folhas_pagamento f ON f.id = h.folha_id
+      WHERE h.id = lancamentos_folha.holerite_id
         AND f.empresa_id = public.get_auth_empresa_id()
     )
   )
   WITH CHECK (
     EXISTS (
-      SELECT 1 FROM public.folhas_pagamento f
-      WHERE f.id = lancamentos_folha.folha_id
+      SELECT 1 FROM public.holerites h
+      JOIN public.folhas_pagamento f ON f.id = h.folha_id
+      WHERE h.id = lancamentos_folha.holerite_id
         AND f.empresa_id = public.get_auth_empresa_id()
     )
   );
 
 -- eventos_variaveis
 DROP POLICY IF EXISTS "Authenticated users can manage eventos_variaveis" ON public.eventos_variaveis;
+DROP POLICY IF EXISTS "eventos_variaveis_tenant_all" ON public.eventos_variaveis;
 CREATE POLICY "eventos_variaveis_tenant_all" ON public.eventos_variaveis
   FOR ALL TO authenticated
   USING (empresa_id = public.get_auth_empresa_id())
@@ -116,12 +129,14 @@ CREATE POLICY "eventos_variaveis_tenant_all" ON public.eventos_variaveis
 -- rubricas_folha
 DROP POLICY IF EXISTS "Authenticated users can view rubricas" ON public.rubricas_folha;
 DROP POLICY IF EXISTS "Authenticated users can manage rubricas" ON public.rubricas_folha;
+DROP POLICY IF EXISTS "rubricas_folha_tenant_select" ON public.rubricas_folha;
 CREATE POLICY "rubricas_folha_tenant_select" ON public.rubricas_folha
   FOR SELECT TO authenticated
   USING (
     empresa_id = public.get_auth_empresa_id()
     OR empresa_id IS NULL  -- rubricas globais (somente leitura)
   );
+DROP POLICY IF EXISTS "rubricas_folha_tenant_write" ON public.rubricas_folha;
 CREATE POLICY "rubricas_folha_tenant_write" ON public.rubricas_folha
   FOR ALL TO authenticated
   USING (

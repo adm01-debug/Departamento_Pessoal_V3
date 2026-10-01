@@ -55,6 +55,7 @@ DROP POLICY IF EXISTS "Histórico acessível por documento" ON public.documentos
 CREATE POLICY "Histórico acessível por documento" ON public.documentos_historico
     FOR ALL USING (true); -- Ajustado via trigger/app logic
 
+DROP POLICY IF EXISTS "Assinaturas acessíveis por empresa" ON public.documentos_assinatura;
 CREATE POLICY "Assinaturas acessíveis por empresa" ON public.documentos_assinatura
     FOR ALL USING (empresa_id IN (SELECT id FROM public.empresas));
 

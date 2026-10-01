@@ -114,12 +114,12 @@ SELECT
   c.nome_completo,
   c.empresa_id,
   rp.data,
-  EXTRACT(EPOCH FROM (now() - rp.entrada::timestamp)) / 3600 AS horas_aberto
+  EXTRACT(EPOCH FROM (now() - (rp.data::timestamp + rp.entrada_1))) / 3600 AS horas_aberto
 FROM public.registros_ponto rp
 JOIN public.colaboradores c ON c.id = rp.colaborador_id
-WHERE rp.saida IS NULL
-  AND rp.entrada IS NOT NULL
-  AND rp.entrada::date = CURRENT_DATE;
+WHERE rp.saida_1 IS NULL
+  AND rp.entrada_1 IS NOT NULL
+  AND rp.data = CURRENT_DATE;
 
 -- ---------- excecoes_ponto ----------
 DROP VIEW IF EXISTS public.excecoes_ponto;
@@ -129,30 +129,46 @@ SELECT
   rp.colaborador_id,
   c.empresa_id,
   rp.data,
-  rp.tipo_excecao,
+  rp.tipo_dia AS tipo_excecao,
   rp.justificativa
 FROM public.registros_ponto rp
 JOIN public.colaboradores c ON c.id = rp.colaborador_id
-WHERE rp.tipo_excecao IS NOT NULL;
+WHERE rp.tipo_dia IS NOT NULL AND rp.tipo_dia <> 'normal';
 
 -- ---------- vw_matriz_nine_box ----------
 DROP VIEW IF EXISTS public.vw_matriz_nine_box;
-CREATE VIEW public.vw_matriz_nine_box
-  WITH (security_invoker = true) AS
-SELECT
-  c.empresa_id,
-  a.colaborador_id,
-  c.nome_completo,
-  a.performance_score,
-  a.potencial_score,
-  CASE
-    WHEN a.performance_score >= 4 AND a.potencial_score >= 4 THEN 'estrela'
-    WHEN a.performance_score >= 4 AND a.potencial_score < 4  THEN 'especialista'
-    WHEN a.performance_score < 4  AND a.potencial_score >= 4 THEN 'aprendiz'
-    ELSE 'core'
-  END AS quadrante
-FROM public.avaliacoes a
-JOIN public.colaboradores c ON c.id = a.colaborador_id;
+-- A tabela avaliacoes (schema de pagamentos) não tem performance_score:
+-- a view só é criada quando as colunas esperadas existem (drift-tolerante).
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns
+             WHERE table_schema = 'public' AND table_name = 'avaliacoes'
+               AND column_name = 'performance_score')
+     AND EXISTS (SELECT 1 FROM information_schema.columns
+                 WHERE table_schema = 'public' AND table_name = 'avaliacoes'
+                   AND column_name = 'potencial_score') THEN
+    EXECUTE $view$
+      CREATE VIEW public.vw_matriz_nine_box
+        WITH (security_invoker = true) AS
+      SELECT
+        c.empresa_id,
+        a.colaborador_id,
+        c.nome_completo,
+        a.performance_score,
+        a.potencial_score,
+        CASE
+          WHEN a.performance_score >= 4 AND a.potencial_score >= 4 THEN 'estrela'
+          WHEN a.performance_score >= 4 AND a.potencial_score < 4  THEN 'especialista'
+          WHEN a.performance_score < 4  AND a.potencial_score >= 4 THEN 'aprendiz'
+          ELSE 'core'
+        END AS quadrante
+      FROM public.avaliacoes a
+      JOIN public.colaboradores c ON c.id = a.colaborador_id
+    $view$;
+  ELSE
+    RAISE NOTICE 'vw_matriz_nine_box não criada: avaliacoes sem performance_score/potencial_score';
+  END IF;
+END $$;
 
 -- ---------- vw_passivo_trabalhista_consolidado ----------
 DROP VIEW IF EXISTS public.vw_passivo_trabalhista_consolidado;
@@ -162,26 +178,36 @@ SELECT
   c.empresa_id,
   c.id AS colaborador_id,
   c.nome_completo,
-  COALESCE(SUM(pf.v_provisao_ferias), 0) AS provisao_ferias,
-  COALESCE(SUM(pf.v_provisao_13), 0)     AS provisao_13,
-  COALESCE(SUM(pf.v_multa_fgts), 0)      AS multa_fgts
+  COALESCE(SUM(pf.valor_ferias), 0)      AS provisao_ferias,
+  COALESCE(SUM(pf.valor_13_salario), 0)  AS provisao_13,
+  COALESCE(SUM(pf.encargos_provisao), 0) AS multa_fgts
 FROM public.colaboradores c
 LEFT JOIN public.provisoes_folha pf ON pf.colaborador_id = c.id
 GROUP BY c.empresa_id, c.id, c.nome_completo;
 
 -- ---------- vw_metricas_fila ----------
-DROP VIEW IF EXISTS public.vw_metricas_fila;
-CREATE VIEW public.vw_metricas_fila
-  WITH (security_invoker = true) AS
-SELECT
-  fila,
-  empresa_id,
-  COUNT(*) FILTER (WHERE status = 'pending') AS pending,
-  COUNT(*) FILTER (WHERE status = 'processing') AS processing,
-  COUNT(*) FILTER (WHERE status = 'completed')  AS completed,
-  COUNT(*) FILTER (WHERE status = 'failed')     AS failed
-FROM public.process_queue
-GROUP BY fila, empresa_id;
+-- process_queue não existe no schema canônico (tabela aspiracional) — pular.
+DO $$
+BEGIN
+  IF to_regclass('public.process_queue') IS NOT NULL THEN
+    EXECUTE $view$
+      DROP VIEW IF EXISTS public.vw_metricas_fila;
+      CREATE VIEW public.vw_metricas_fila
+        WITH (security_invoker = true) AS
+      SELECT
+        fila,
+        empresa_id,
+        COUNT(*) FILTER (WHERE status = 'pending') AS pending,
+        COUNT(*) FILTER (WHERE status = 'processing') AS processing,
+        COUNT(*) FILTER (WHERE status = 'completed')  AS completed,
+        COUNT(*) FILTER (WHERE status = 'failed')     AS failed
+      FROM public.process_queue
+      GROUP BY fila, empresa_id;
+    $view$;
+  ELSE
+    RAISE NOTICE 'vw_metricas_fila não criada: process_queue ausente';
+  END IF;
+END $$;
 
 -- ---------- vw_batidas_dia ----------
 DROP VIEW IF EXISTS public.vw_batidas_dia;
@@ -192,8 +218,8 @@ SELECT
   c.empresa_id,
   rp.data,
   COUNT(*) AS total_batidas,
-  MIN(rp.entrada) AS primeira_entrada,
-  MAX(rp.saida)   AS ultima_saida
+  MIN(rp.entrada_1) AS primeira_entrada,
+  MAX(rp.saida_1)   AS ultima_saida
 FROM public.registros_ponto rp
 JOIN public.colaboradores c ON c.id = rp.colaborador_id
 GROUP BY rp.colaborador_id, c.empresa_id, rp.data;
@@ -207,7 +233,7 @@ SELECT
   c.empresa_id,
   f.status,
   COUNT(*) AS total_ferias,
-  SUM(f.dias_ferias) AS dias_totais
+  SUM(f.dias_gozo) AS dias_totais
 FROM public.ferias f
 JOIN public.colaboradores c ON c.id = f.colaborador_id
 GROUP BY f.colaborador_id, c.empresa_id, f.status;
@@ -220,39 +246,48 @@ SELECT
   rp.colaborador_id,
   c.empresa_id,
   TO_CHAR(rp.data, 'YYYY-MM') AS competencia,
-  SUM(EXTRACT(EPOCH FROM (rp.saida - rp.entrada)) / 3600) AS horas_trabalhadas,
+  SUM(EXTRACT(EPOCH FROM (rp.saida_1 - rp.entrada_1)) / 3600) AS horas_trabalhadas,
   COUNT(*) AS total_batidas
 FROM public.registros_ponto rp
 JOIN public.colaboradores c ON c.id = rp.colaborador_id
-WHERE rp.saida IS NOT NULL
+WHERE rp.saida_1 IS NOT NULL
 GROUP BY rp.colaborador_id, c.empresa_id, TO_CHAR(rp.data, 'YYYY-MM');
 
--- ---------- vw_saldo_compensacao_mensal ----------
-DROP VIEW IF EXISTS public.vw_saldo_compensacao_mensal;
-CREATE VIEW public.vw_saldo_compensacao_mensal
-  WITH (security_invoker = true) AS
-SELECT
-  cc.colaborador_id,
-  c.empresa_id,
-  TO_CHAR(cc.data, 'YYYY-MM') AS competencia,
-  SUM(cc.horas) AS horas_compensadas
-FROM public.compensacoes cc
-JOIN public.colaboradores c ON c.id = cc.colaborador_id
-GROUP BY cc.colaborador_id, c.empresa_id, TO_CHAR(cc.data, 'YYYY-MM');
+-- ---------- vw_saldo_compensacao_mensal + vw_alertas_compensacao ----------
+-- compensacoes não existe no schema canônico (tabela aspiracional) — pular.
+DO $$
+BEGIN
+  IF to_regclass('public.compensacoes') IS NOT NULL THEN
+    EXECUTE $view$
+      DROP VIEW IF EXISTS public.vw_saldo_compensacao_mensal;
+      CREATE VIEW public.vw_saldo_compensacao_mensal
+        WITH (security_invoker = true) AS
+      SELECT
+        cc.colaborador_id,
+        c.empresa_id,
+        TO_CHAR(cc.data, 'YYYY-MM') AS competencia,
+        SUM(cc.horas) AS horas_compensadas
+      FROM public.compensacoes cc
+      JOIN public.colaboradores c ON c.id = cc.colaborador_id
+      GROUP BY cc.colaborador_id, c.empresa_id, TO_CHAR(cc.data, 'YYYY-MM');
 
--- ---------- vw_alertas_compensacao ----------
-DROP VIEW IF EXISTS public.vw_alertas_compensacao;
-CREATE VIEW public.vw_alertas_compensacao
-  WITH (security_invoker = true) AS
-SELECT
-  c.empresa_id,
-  cc.colaborador_id,
-  c.nome_completo,
-  cc.data,
-  cc.horas
-FROM public.compensacoes cc
-JOIN public.colaboradores c ON c.id = cc.colaborador_id
-WHERE cc.horas > 10;
+      DROP VIEW IF EXISTS public.vw_alertas_compensacao;
+      CREATE VIEW public.vw_alertas_compensacao
+        WITH (security_invoker = true) AS
+      SELECT
+        c.empresa_id,
+        cc.colaborador_id,
+        c.nome_completo,
+        cc.data,
+        cc.horas
+      FROM public.compensacoes cc
+      JOIN public.colaboradores c ON c.id = cc.colaborador_id
+      WHERE cc.horas > 10;
+    $view$;
+  ELSE
+    RAISE NOTICE 'views de compensação não criadas: tabela compensacoes ausente';
+  END IF;
+END $$;
 
 -- ---------- vw_kpi_beneficios_custo ----------
 DROP VIEW IF EXISTS public.vw_kpi_beneficios_custo;

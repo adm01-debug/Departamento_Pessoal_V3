@@ -99,12 +99,12 @@ SELECT
   m.admissoes,
   m.desligamentos,
   m.admissoes + m.desligamentos AS total_movimentacao,
-  -- Headcount no início do mês (lookup simples)
+  -- Headcount no início do mês (admitidos antes do mês começar)
   (
     SELECT COUNT(*)
     FROM public.colaboradores c
     WHERE c.empresa_id = m.empresa_id
-      AND c.data_admissao < m.mes + INTERVAL '1 month'
+      AND c.data_admissao < m.mes
       AND (c.data_desligamento IS NULL OR c.data_desligamento >= m.mes)
   ) AS headcount_inicio,
   -- Headcount no fim do mês
@@ -122,7 +122,7 @@ SELECT
         (
           (SELECT COUNT(*) FROM public.colaboradores c
            WHERE c.empresa_id = m.empresa_id
-             AND c.data_admissao < m.mes + INTERVAL '1 month'
+             AND c.data_admissao < m.mes
              AND (c.data_desligamento IS NULL OR c.data_desligamento >= m.mes)
           )
         +
@@ -154,12 +154,14 @@ SELECT
   GREATEST(0, (EXTRACT(YEAR FROM AGE(NOW(), c.data_admissao)) * 30
     - COALESCE(
         (SELECT SUM(f.dias_gozo)
-         FROM public.ferias f WHERE f.colaborador_id = c.id),
+         FROM public.ferias f WHERE f.colaborador_id = c.id
+           AND f.status IN ('aprovada','agendada','programada','em_gozo','concluida')),
         0
       )
     - COALESCE(
         (SELECT SUM(f.saldo_gasto)
-         FROM public.ferias f WHERE f.colaborador_id = c.id),
+         FROM public.ferias f WHERE f.colaborador_id = c.id
+           AND f.status IN ('aprovada','agendada','programada','em_gozo','concluida')),
         0
       )
   )) AS saldo_dias,

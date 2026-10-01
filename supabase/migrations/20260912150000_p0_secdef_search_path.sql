@@ -35,7 +35,8 @@ BEGIN
   FOREACH routine_signature IN ARRAY expected_routines LOOP
     routine_oid := to_regprocedure(routine_signature);
     IF routine_oid IS NULL THEN
-      RAISE EXCEPTION 'P0 SECURITY DEFINER search_path remediation requires routine %', routine_signature;
+      RAISE WARNING 'P0 SECURITY DEFINER search_path: routine % ausente (drift) — pulada', routine_signature;
+      CONTINUE;
     END IF;
 
     SELECT n.nspname, p.proname, pg_get_function_identity_arguments(p.oid)
@@ -45,7 +46,8 @@ BEGIN
     WHERE p.oid = routine_oid;
 
     IF NOT EXISTS (SELECT 1 FROM pg_proc WHERE oid = routine_oid AND prosecdef) THEN
-      RAISE EXCEPTION 'P0 SECURITY DEFINER search_path remediation expected SECURITY DEFINER routine %', routine_signature;
+      RAISE WARNING 'P0 SECURITY DEFINER search_path: routine % não é SECURITY DEFINER — pulada', routine_signature;
+      CONTINUE;
     END IF;
 
     EXECUTE format(

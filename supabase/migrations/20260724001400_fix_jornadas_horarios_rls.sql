@@ -17,6 +17,7 @@ DROP POLICY IF EXISTS "jh_mod" ON public.jornadas_horarios;
 DROP POLICY IF EXISTS "jornadas_horarios_select" ON public.jornadas_horarios;
 DROP POLICY IF EXISTS "jornadas_horarios_all" ON public.jornadas_horarios;
 
+DROP POLICY IF EXISTS "jornadas_horarios_tenant" ON public.jornadas_horarios;
 CREATE POLICY "jornadas_horarios_tenant"
   ON public.jornadas_horarios
   FOR ALL

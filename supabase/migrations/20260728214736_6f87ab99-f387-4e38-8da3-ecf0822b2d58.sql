@@ -69,6 +69,7 @@ WITH CHECK (
   AND empresa_id IN (SELECT public.get_user_empresas(auth.uid()))
 );
 
+DROP POLICY IF EXISTS "sst_regimento_interno_privileged_update" ON public.sst_regimento_interno;
 CREATE POLICY "sst_regimento_interno_privileged_update"
 ON public.sst_regimento_interno FOR UPDATE TO authenticated
 USING (
@@ -86,6 +87,7 @@ WITH CHECK (
   AND empresa_id IN (SELECT public.get_user_empresas(auth.uid()))
 );
 
+DROP POLICY IF EXISTS "sst_regimento_interno_privileged_delete" ON public.sst_regimento_interno;
 CREATE POLICY "sst_regimento_interno_privileged_delete"
 ON public.sst_regimento_interno FOR DELETE TO authenticated
 USING (

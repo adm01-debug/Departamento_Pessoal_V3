@@ -77,7 +77,7 @@ export default function AfastamentosPage() {
   const stats = {
     total: afastamentos.length,
     ativos: afastamentos.filter((a) => a.status === 'ativo').length,
-    pendentes: afastamentos.filter((a) => a.data_pericia != null).length,
+    pendentes: afastamentos.filter((a) => a.status === 'ativo' && a.data_pericia != null).length,
     finalizados: afastamentos.filter((a) => a.status === 'encerrado').length,
     diasTotais: afastamentos.reduce<number>((sum, a) => sum + Number(a.dias_total || 0), 0),
   };
@@ -92,7 +92,10 @@ export default function AfastamentosPage() {
 
     const matchTipo = !selectedTipo || a.tipo === selectedTipo;
     const matchStatus =
-      !filtros.status || (filtros.status === 'aguardando_inss' ? a.data_pericia != null : a.status === filtros.status);
+      !filtros.status ||
+      (filtros.status === 'aguardando_inss'
+        ? a.status === 'ativo' && a.data_pericia != null
+        : a.status === filtros.status);
 
     return matchSearch && matchCID && matchTipo && matchStatus;
   });

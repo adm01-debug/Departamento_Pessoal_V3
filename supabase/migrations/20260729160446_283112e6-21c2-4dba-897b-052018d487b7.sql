@@ -1,6 +1,7 @@
 -- times_brindes: leitura estava com USING (true) -> correlaciona pelo time.
 DROP POLICY IF EXISTS "Times brindes visiveis para autenticados" ON public.times_brindes;
 
+DROP POLICY IF EXISTS "tenant_times_brindes_select" ON public.times_brindes;
 CREATE POLICY "tenant_times_brindes_select"
 ON public.times_brindes
 FOR SELECT

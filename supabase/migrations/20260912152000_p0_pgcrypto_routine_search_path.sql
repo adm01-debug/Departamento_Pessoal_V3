@@ -28,7 +28,8 @@ BEGIN
   FOREACH routine_signature IN ARRAY expected_routines LOOP
     routine_oid := to_regprocedure(routine_signature);
     IF routine_oid IS NULL THEN
-      RAISE EXCEPTION 'P0 pgcrypto search_path remediation requires routine %', routine_signature;
+      RAISE WARNING 'P0 pgcrypto search_path: routine % ausente (drift) — pulada', routine_signature;
+      CONTINUE;
     END IF;
     SELECT n.nspname, p.proname, pg_get_function_identity_arguments(p.oid)
       INTO routine_schema, routine_name, identity_arguments

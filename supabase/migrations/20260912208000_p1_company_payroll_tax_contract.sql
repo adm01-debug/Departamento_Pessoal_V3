@@ -22,6 +22,9 @@ ALTER TABLE public.empresas
 
 -- The bootstrap schema historically created this column as nullable varchar.
 -- Convert through text so this migration is idempotent for either physical type.
+-- Drop the existing default first: it can't be auto-cast across the type swap.
+ALTER TABLE public.empresas
+  ALTER COLUMN regime_tributario DROP DEFAULT;
 ALTER TABLE public.empresas
   ALTER COLUMN regime_tributario TYPE text USING regime_tributario::text;
 UPDATE public.empresas

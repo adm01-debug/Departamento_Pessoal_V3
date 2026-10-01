@@ -1,3 +1,20 @@
+-- Reconcilia colunas canônicas: quando esocial_eventos foi criada por
+-- 005_esocial_auditoria.sql (schema legado), estas colunas ficam ausentes.
+ALTER TABLE public.esocial_eventos
+  ADD COLUMN IF NOT EXISTS dados jsonb DEFAULT '{}'::jsonb,
+  ADD COLUMN IF NOT EXISTS competencia text,
+  ADD COLUMN IF NOT EXISTS protocolo text,
+  ADD COLUMN IF NOT EXISTS erros jsonb,
+  ADD COLUMN IF NOT EXISTS xml text,
+  ADD COLUMN IF NOT EXISTS assinatura_xml text,
+  ADD COLUMN IF NOT EXISTS hash_seguranca text,
+  ADD COLUMN IF NOT EXISTS recibo text,
+  ADD COLUMN IF NOT EXISTS id_recibo text,
+  ADD COLUMN IF NOT EXISTS tentativas_envio integer DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS proxima_tentativa timestamptz,
+  ADD COLUMN IF NOT EXISTS data_processamento timestamptz,
+  ADD COLUMN IF NOT EXISTS hash_arquivo text;
+
 CREATE OR REPLACE FUNCTION public.sec_verify_seals()
 RETURNS TABLE (tabela TEXT, selados BIGINT, divergentes BIGINT)
 LANGUAGE sql

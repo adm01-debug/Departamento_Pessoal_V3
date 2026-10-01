@@ -46,16 +46,16 @@ CREATE INDEX IF NOT EXISTS idx_colaboradores_dep_cargo
 --        AND data_hora >= ? AND data_hora < ?
 --        ORDER BY data_hora
 CREATE INDEX IF NOT EXISTS idx_registros_ponto_empresa_colab_data
-  ON registros_ponto(empresa_id, colaborador_id, data_hora DESC);
+  ON registros_ponto(empresa_id, colaborador_id, data DESC);
 
 -- Query: Batidas do dia — ponto aberto, marcar entrada
 CREATE INDEX IF NOT EXISTS idx_registros_ponto_data_aberto
-  ON registros_ponto(data_hora, empresa_id)
-  WHERE status = 'aberto';
+  ON registros_ponto(data, empresa_id)
+  WHERE saida_1 IS NULL;
 
 -- Query: Ausências detectadas — 谁 não bateu ponto hoje
 CREATE INDEX IF NOT EXISTS idx_registros_ponto_sem_batida
-  ON registros_ponto(empresa_id, data_hora DESC);
+  ON registros_ponto(empresa_id, data DESC);
 
 
 -- ── 3. FÉRIAS ─────────────────────────────────────────────────
@@ -70,6 +70,8 @@ CREATE INDEX IF NOT EXISTS idx_ferias_empresa_status
   ON ferias(empresa_id, status) WHERE status IN ('solicitada', 'aprovada', 'programada');
 
 -- Query: Férias que vencem nos próximos 30 dias (alerta DP)
+-- Reconcilia coluna canônica ausente em schemas legados.
+ALTER TABLE public.ferias ADD COLUMN IF NOT EXISTS data_fim date;
 CREATE INDEX IF NOT EXISTS idx_ferias_vencendo
   ON ferias(data_fim)
   WHERE status NOT IN ('concluida', 'cancelada');
@@ -93,24 +95,34 @@ CREATE INDEX IF NOT EXISTS idx_afastamentos_tipo_data
 CREATE INDEX IF NOT EXISTS idx_folhas_pagamento_empresa_competencia
   ON folhas_pagamento(empresa_id, competencia DESC);
 
--- Query: Status de geração (gerando / processando / calculado)
+-- Query: Folhas em andamento (status válidos do enum status_folha)
 CREATE INDEX IF NOT EXISTS idx_folhas_pagamento_empresa_status
   ON folhas_pagamento(empresa_id, status)
-  WHERE status IN ('gerando', 'processando');
+  WHERE status IN ('aberta', 'calculada');
 
 -- Query: Cálculos de um colaborador específico
-CREATE INDEX IF NOT EXISTS idx_calculos_folha_colaborador_competencia
-  ON calculos_folha(colaborador_id, competencia DESC);
+-- calculos_folha não existe no schema canônico (tabela aspiracional) — pular.
+DO $$
+BEGIN
+  IF to_regclass('public.calculos_folha') IS NOT NULL THEN
+    EXECUTE $sql$
+      CREATE INDEX IF NOT EXISTS idx_calculos_folha_colaborador_competencia
+        ON calculos_folha(colaborador_id, competencia DESC);
+    $sql$;
+  ELSE
+    RAISE NOTICE 'idx_calculos_folha_colaborador_competencia ignorado: calculos_folha ausente';
+  END IF;
+END $$;
 
 
 -- ── 6. HOLERITES ───────────────────────────────────────────────
 -- Query: SELECT * FROM holerites WHERE empresa_id = ? AND competencia = ?
 CREATE INDEX IF NOT EXISTS idx_holerites_empresa_competencia
-  ON holerites(empresa_id, competencia DESC);
+  ON holerites(empresa_id, folha_id DESC);
 
 -- Query: Holerite de um colaborador específico
 CREATE INDEX IF NOT EXISTS idx_holerites_colaborador_competencia
-  ON holerites(colaborador_id, competencia DESC);
+  ON holerites(colaborador_id, folha_id DESC);
 
 -- Query: Status de holerite (pago / pendente)
 CREATE INDEX IF NOT EXISTS idx_holerites_empresa_status
@@ -125,7 +137,7 @@ CREATE INDEX IF NOT EXISTS idx_desligamentos_empresa_data
 
 -- Query: Motivo do desligamento (estatísticas de turnover)
 CREATE INDEX IF NOT EXISTS idx_desligamentos_motivo_data
-  ON desligamentos(motivo_desligamento, data_desligamento DESC);
+  ON desligamentos(motivo, data_desligamento DESC);
 
 
 -- ── 8. LANÇAMENTOS CONTÁBEIS ──────────────────────────────────
@@ -151,8 +163,8 @@ CREATE INDEX IF NOT EXISTS idx_provisoes_colaborador_competencia
 -- ── 10. eSOCIAL ────────────────────────────────────────────────
 -- Query: Eventos pendentes de envio
 CREATE INDEX IF NOT EXISTS idx_esocial_eventos_empresa_status
-  ON esocial_eventos(empresa_id, status_envio, data_criacao DESC)
-  WHERE status_envio IN ('pendente', 'erro', 'rejeitado');
+  ON esocial_eventos(empresa_id, status, created_at DESC)
+  WHERE status IN ('pendente', 'erro', 'rejeitado');
 
 -- Query: Eventos por tipo S-XXXX em批
 CREATE INDEX IF NOT EXISTS idx_esocial_eventos_tipo_competencia
@@ -166,7 +178,7 @@ CREATE INDEX IF NOT EXISTS idx_auditoria_empresa_data
 
 -- Query: Auditoria por tabela + registro (track de mudanças)
 CREATE INDEX IF NOT EXISTS idx_auditoria_tabela_registro
-  ON auditoria(nome_tabela, registro_id, created_at DESC);
+  ON auditoria(tabela, registro_id, created_at DESC);
 
 
 -- ── 12. NOTIFICAÇÕES ──────────────────────────────────────────
@@ -178,7 +190,7 @@ CREATE INDEX IF NOT EXISTS idx_notificacoes_usuario_status
 -- ── 13. BANCO DE HORAS ────────────────────────────────────────
 -- Query: Saldo do banco por colaborador
 CREATE INDEX IF NOT EXISTS idx_banco_horas_colaborador_data
-  ON banco_horas(colaborador_id, data_referencia DESC);
+  ON banco_horas(colaborador_id, data DESC);
 
 
 -- ── 14. CONTRATOS ──────────────────────────────────────────────
@@ -190,9 +202,19 @@ CREATE INDEX IF NOT EXISTS idx_contratos_empresa_status_vcto
 
 -- ── 15. ALERTAS ────────────────────────────────────────────────
 -- Query: Alertas não resolvidos por empresa
-CREATE INDEX IF NOT EXISTS idx_alertas_empresa_resolvido
-  ON alertas(empresa_id, resolvido, created_at DESC)
-  WHERE resolvido = false;
+-- alertas não existe no schema canônico (tabela aspiracional) — pular.
+DO $$
+BEGIN
+  IF to_regclass('public.alertas') IS NOT NULL THEN
+    EXECUTE $sql$
+      CREATE INDEX IF NOT EXISTS idx_alertas_empresa_resolvido
+        ON alertas(empresa_id, resolvido, created_at DESC)
+        WHERE resolvido = false;
+    $sql$;
+  ELSE
+    RAISE NOTICE 'idx_alertas_empresa_resolvido ignorado: tabela alertas ausente';
+  END IF;
+END $$;
 
 COMMIT;
 

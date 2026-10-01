@@ -43,9 +43,8 @@ export default function EPIsPage() {
   const [formEpi, setFormEpi] = useState({
     nome: '',
     ca: '',
-    validade_meses: '',
     categoria: 'cabeca',
-    ca_validade: '',
+    validade_ca: '',
     fabricante: '',
     unidade_medida: 'un',
     estoque_atual: '0',
@@ -79,7 +78,6 @@ export default function EPIsPage() {
       episService.criar({
         ...d,
         empresa_id: empresaAtual?.id,
-        validade_meses: Number(d.validade_meses) || null,
         estoque_atual: Number(d.estoque_atual) || 0,
         estoque_minimo: Number(d.estoque_minimo) || 0,
       } as unknown as TablesInsert<'epis'>),
@@ -89,9 +87,8 @@ export default function EPIsPage() {
       setFormEpi({
         nome: '',
         ca: '',
-        validade_meses: '',
         categoria: 'cabeca',
-        ca_validade: '',
+        validade_ca: '',
         fabricante: '',
         unidade_medida: 'un',
         estoque_atual: '0',
@@ -257,8 +254,8 @@ export default function EPIsPage() {
                             <Label>Validade CA</Label>
                             <Input
                               type="date"
-                              value={formEpi.ca_validade}
-                              onChange={(e) => setFormEpi((p) => ({ ...p, ca_validade: e.target.value }))}
+                              value={formEpi.validade_ca}
+                              onChange={(e) => setFormEpi((p) => ({ ...p, validade_ca: e.target.value }))}
                             />
                           </div>
                           <div className="col-span-2">
@@ -267,15 +264,6 @@ export default function EPIsPage() {
                               value={formEpi.fabricante}
                               onChange={(e) => setFormEpi((p) => ({ ...p, fabricante: e.target.value }))}
                               placeholder="Ex.: 3M Brasil"
-                            />
-                          </div>
-                          <div>
-                            <Label>Validade Uso (meses)</Label>
-                            <Input
-                              type="number"
-                              min={1}
-                              value={formEpi.validade_meses}
-                              onChange={(e) => setFormEpi((p) => ({ ...p, validade_meses: e.target.value }))}
                             />
                           </div>
                           <div>

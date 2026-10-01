@@ -17,6 +17,10 @@
 -- PROPOSTA DE CONSOLIDAÇÃO: VIEWS UNIFICADAS
 -- =============================================================================
 
+-- Tenant persistente para documentos gerais (tabela canônica não tem empresa_id)
+ALTER TABLE public.documentos
+  ADD COLUMN IF NOT EXISTS empresa_id UUID REFERENCES public.empresas(id);
+
 -- View unificada de documentos (não destrutivo - não migra dados)
 CREATE OR REPLACE VIEW public.v_documentos_unificado AS
 SELECT
@@ -56,7 +60,7 @@ UNION ALL
 SELECT
   'geral'::TEXT as contexto,
   d.id,
-  c.empresa_id,
+  COALESCE(d.empresa_id, c.empresa_id),
   NULL::UUID as referencia_id,
   d.tipo,
   d.nome as titulo,
@@ -104,7 +108,23 @@ SECURITY DEFINER
 AS $$
 DECLARE
   v_id UUID;
+  v_empresa UUID := p_empresa_id;
 BEGIN
+  -- Deriva o tenant a partir da referência quando não informado
+  IF v_empresa IS NULL AND p_contexto = 'admissao' THEN
+    SELECT empresa_id INTO v_empresa FROM public.admissoes WHERE id = p_referencia_id;
+  ELSIF v_empresa IS NULL AND p_contexto = 'afastamento' THEN
+    SELECT empresa_id INTO v_empresa FROM public.afastamentos WHERE id = p_referencia_id;
+  END IF;
+
+  -- SECURITY DEFINER: exige membership no tenant (service role passa com uid NULL)
+  IF auth.uid() IS NOT NULL
+     AND v_empresa IS NOT NULL
+     AND NOT public.is_admin(auth.uid())
+     AND NOT (v_empresa = ANY (SELECT public.get_user_empresas(auth.uid()))) THEN
+    RAISE EXCEPTION 'Acesso negado para a empresa informada';
+  END IF;
+
   -- Direciona para a tabela correta baseada no contexto
   CASE p_contexto
     WHEN 'admissao' THEN
@@ -127,8 +147,8 @@ BEGIN
 
     ELSE
       INSERT INTO public.documentos
-        (colaborador_id, tipo, nome, url)
-      VALUES (p_referencia_id, p_tipo, p_titulo, p_arquivo_url)
+        (empresa_id, colaborador_id, tipo, nome, url)
+      VALUES (v_empresa, p_referencia_id, p_tipo, p_titulo, p_arquivo_url)
       RETURNING id INTO v_id;
   END CASE;
 
@@ -168,6 +188,13 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
 BEGIN
+  -- SECURITY DEFINER: exige membership no tenant (service role passa com uid NULL)
+  IF auth.uid() IS NOT NULL
+     AND NOT public.is_admin(auth.uid())
+     AND NOT (p_empresa_id = ANY (SELECT public.get_user_empresas(auth.uid()))) THEN
+    RAISE EXCEPTION 'Acesso negado para a empresa informada';
+  END IF;
+
   RETURN QUERY
   SELECT * FROM public.v_documentos_unificado
   WHERE empresa_id = p_empresa_id

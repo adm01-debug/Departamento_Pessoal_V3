@@ -42,7 +42,8 @@ export interface ProrrogacaoComAfastamento extends ProrrogacaoAfastamentoRow {
 
 /** Filtros aceitos pela listagem/exportação de afastamentos. */
 export interface AfastamentoFiltros {
-  status?: StatusAfastamento;
+  /** 'aguardando_inss' é status sintético (traduzido para ativo+perícia no service). */
+  status?: StatusAfastamento | 'aguardando_inss';
   tipo?: TipoAfastamento;
   empresa_id?: string;
 }

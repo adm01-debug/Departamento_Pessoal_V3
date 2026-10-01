@@ -79,21 +79,26 @@ ALTER TABLE public.beneficios_colaboradores ENABLE ROW LEVEL SECURITY;
 DO $$ 
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Empresa vê suas próprias rubricas') THEN
-        CREATE POLICY "Empresa vê suas próprias rubricas" ON public.rubricas_folha FOR ALL USING (empresa_id IN (SELECT empresa_id FROM public.user_empresas WHERE user_id = auth.uid()));
+        DROP POLICY IF EXISTS "Empresa vê suas próprias rubricas" ON public.rubricas_folha;
+CREATE POLICY "Empresa vê suas próprias rubricas" ON public.rubricas_folha FOR ALL USING (empresa_id IN (SELECT empresa_id FROM public.user_empresas WHERE user_id = auth.uid()));
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Empresa vê suas próprias folhas') THEN
-        CREATE POLICY "Empresa vê suas próprias folhas" ON public.folhas_pagamento FOR ALL USING (empresa_id IN (SELECT empresa_id FROM public.user_empresas WHERE user_id = auth.uid()));
+        DROP POLICY IF EXISTS "Empresa vê suas próprias folhas" ON public.folhas_pagamento;
+CREATE POLICY "Empresa vê suas próprias folhas" ON public.folhas_pagamento FOR ALL USING (empresa_id IN (SELECT empresa_id FROM public.user_empresas WHERE user_id = auth.uid()));
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Empresa vê seus benefícios') THEN
-        CREATE POLICY "Empresa vê seus benefícios" ON public.beneficios FOR ALL USING (empresa_id IN (SELECT empresa_id FROM public.user_empresas WHERE user_id = auth.uid()));
+        DROP POLICY IF EXISTS "Empresa vê seus benefícios" ON public.beneficios;
+CREATE POLICY "Empresa vê seus benefícios" ON public.beneficios FOR ALL USING (empresa_id IN (SELECT empresa_id FROM public.user_empresas WHERE user_id = auth.uid()));
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Acesso aos itens via folha') THEN
-        CREATE POLICY "Acesso aos itens via folha" ON public.itens_folha FOR ALL USING (
+        DROP POLICY IF EXISTS "Acesso aos itens via folha" ON public.itens_folha;
+CREATE POLICY "Acesso aos itens via folha" ON public.itens_folha FOR ALL USING (
             EXISTS (SELECT 1 FROM public.folhas_pagamento f WHERE f.id = folha_id AND f.empresa_id IN (SELECT empresa_id FROM public.user_empresas WHERE user_id = auth.uid()))
         );
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Empresa vê benefícios dos colaboradores') THEN
-        CREATE POLICY "Empresa vê benefícios dos colaboradores" ON public.beneficios_colaboradores FOR ALL USING (
+        DROP POLICY IF EXISTS "Empresa vê benefícios dos colaboradores" ON public.beneficios_colaboradores;
+CREATE POLICY "Empresa vê benefícios dos colaboradores" ON public.beneficios_colaboradores FOR ALL USING (
             EXISTS (SELECT 1 FROM public.colaboradores c WHERE c.id = colaborador_id AND c.empresa_id IN (SELECT empresa_id FROM public.user_empresas WHERE user_id = auth.uid()))
         );
     END IF;

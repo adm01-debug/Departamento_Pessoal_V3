@@ -185,6 +185,7 @@ DROP POLICY IF EXISTS "Only admin can decrypt PII" ON public.colaboradores;
 
 -- Cria policy restritiva: apenas SELECT, não permite SELECT em colunas sensíveis
 -- A lógica de descriptografia deve ser via RPC com verificação de role
+DROP POLICY IF EXISTS "colaboradores_pii_select" ON public.colaboradores;
 CREATE POLICY "colaboradores_pii_select" ON public.colaboradores
   FOR SELECT
   TO authenticated

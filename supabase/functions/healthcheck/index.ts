@@ -7,19 +7,18 @@ import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
 serve(async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders });
 
-  const supabase = createClient(
-    Deno.env.get('SUPABASE_URL') ?? '',
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
-    { auth: { persistSession: false, autoRefreshToken: false } },
-  );
-
-  // Rate limit distribuído (tabela rate_limits via RPC atômico) — compartilhado
-  // entre instâncias de edge function; fallback em memória se o RPC falhar.
-  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
-  const rl = await checkRateLimit(supabase, { key: `healthcheck:${ip}`, limit: 10, windowSec: 60 });
-  if (!rl.allowed) return rateLimitResponse(rl, req);
-
   try {
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      { auth: { persistSession: false, autoRefreshToken: false } },
+    );
+
+    // Rate limit distribuído (tabela rate_limits via RPC atômico) — compartilhado
+    // entre instâncias de edge function; fallback em memória se o RPC falhar.
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+    const rl = await checkRateLimit(supabase, { key: `healthcheck:${ip}`, limit: 10, windowSec: 60 });
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     // P3-056: checks internos paralelos. Latência reportada por check.
     const t0 = Date.now();

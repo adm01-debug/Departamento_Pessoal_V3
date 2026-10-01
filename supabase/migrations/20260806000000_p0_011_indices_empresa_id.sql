@@ -45,8 +45,8 @@ CREATE INDEX IF NOT EXISTS idx_colaboradores_empresa_status
   ON public.colaboradores (empresa_id, status);
 CREATE INDEX IF NOT EXISTS idx_colaboradores_empresa_admissao
   ON public.colaboradores (empresa_id, data_admissao DESC NULLS LAST);
-CREATE INDEX IF NOT EXISTS idx_holerites_empresa_competencia
-  ON public.holerites (empresa_id, competencia DESC);
+CREATE INDEX IF NOT EXISTS idx_holerites_folha_colaborador
+  ON public.holerites (folha_id, colaborador_id);
 CREATE INDEX IF NOT EXISTS idx_registros_ponto_empresa_colab_data
   ON public.registros_ponto (empresa_id, colaborador_id, data DESC);
 CREATE INDEX IF NOT EXISTS idx_folhas_pagamento_empresa_competencia

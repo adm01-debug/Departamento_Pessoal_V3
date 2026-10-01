@@ -78,6 +78,7 @@ CREATE POLICY "coletivas_comunicados_select" ON storage.objects
     AND public.user_belongs_to_empresa(auth.uid(), ((storage.foldername(name))[1])::uuid)
   );
 
+DROP POLICY IF EXISTS "coletivas_comunicados_insert" ON storage;
 CREATE POLICY "coletivas_comunicados_insert" ON storage.objects
   FOR INSERT TO authenticated
   WITH CHECK (
@@ -86,6 +87,7 @@ CREATE POLICY "coletivas_comunicados_insert" ON storage.objects
     AND (public.has_role(auth.uid(),'admin'::app_role) OR public.has_role(auth.uid(),'rh'::app_role))
   );
 
+DROP POLICY IF EXISTS "coletivas_comunicados_update" ON storage;
 CREATE POLICY "coletivas_comunicados_update" ON storage.objects
   FOR UPDATE TO authenticated
   USING (
@@ -94,6 +96,7 @@ CREATE POLICY "coletivas_comunicados_update" ON storage.objects
     AND (public.has_role(auth.uid(),'admin'::app_role) OR public.has_role(auth.uid(),'rh'::app_role))
   );
 
+DROP POLICY IF EXISTS "coletivas_comunicados_delete" ON storage;
 CREATE POLICY "coletivas_comunicados_delete" ON storage.objects
   FOR DELETE TO authenticated
   USING (
