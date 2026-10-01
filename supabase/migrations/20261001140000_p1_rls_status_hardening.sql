@@ -51,8 +51,7 @@ BEGIN
       WHERE schemaname = 'public' AND tablename = 'feriados_brasileiros'
         AND policyname = 'authenticated_read_feriados_brasileiros'
     ) THEN
-      DROP POLICY IF EXISTS "authenticated_read_feriados_brasileiros" ON public.feriados_brasileiros;
-CREATE POLICY authenticated_read_feriados_brasileiros
+      CREATE POLICY authenticated_read_feriados_brasileiros
         ON public.feriados_brasileiros FOR SELECT TO authenticated USING (true);
     END IF;
   END IF;

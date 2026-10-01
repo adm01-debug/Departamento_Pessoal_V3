@@ -45,7 +45,7 @@ expect_failure() {
   fi
 }
 
-view_names="$(sed -nE 's/^ALTER VIEW public\."([^"]+)".*/\1/p' "$LEGACY_MIGRATION")"
+view_names="$(sed -nE "s/^[[:space:]]*'([a-z0-9_]+)',?[[:space:]]*$/\1/p" "$LEGACY_MIGRATION")"
 view_count="$(printf '%s\n' "$view_names" | sed '/^$/d' | wc -l | tr -d ' ')"
 [ "$view_count" = "42" ] || { echo "expected 42 view fixtures, found $view_count" >&2; exit 1; }
 

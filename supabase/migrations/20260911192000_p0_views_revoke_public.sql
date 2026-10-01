@@ -33,6 +33,16 @@ BEGIN
   FROM unnest(expected_views) AS expected(name)
   WHERE to_regclass(format('public.%I', name)) IS NULL;
 
+  -- Fail-closed: se NENHUMA das views esperadas existe, o pré-requisito não foi
+  -- atendido (banco errado ou camada de views ausente) — aborta em vez de
+  -- passar silenciosamente. Drift parcial é tolerado com WARNING.
+  IF missing_views IS NOT NULL
+     AND array_length(missing_views, 1) = array_length(expected_views, 1) THEN
+    RAISE EXCEPTION
+      'P0 view ACL remediation requires all % expected views (nenhuma encontrada)',
+      array_length(expected_views, 1);
+  END IF;
+
   IF missing_views IS NOT NULL THEN
     RAISE WARNING
       'P0 view ACL remediation: % views ausentes (drift) serão puladas: %',
@@ -56,7 +66,7 @@ BEGIN
                        WHERE relation.relkind = 'v');
   END IF;
 
-  FOREACH view_name IN ARRAY expected_views LOOP
+  FOREACH view_name IN ARRAY COALESCE(expected_views, '{}') LOOP
     EXECUTE format('ALTER VIEW public.%I SET (security_invoker = true)', view_name);
     -- PUBLIC is implicit for anon/authenticated roles; revoke it explicitly.
     EXECUTE format('REVOKE ALL PRIVILEGES ON TABLE public.%I FROM PUBLIC, anon', view_name);
