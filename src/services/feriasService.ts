@@ -3,6 +3,8 @@ import { Ferias } from '@/types/entities';
 import { supabase, type QueryBuilderType } from '@/integrations/supabase/client';
 import type { Insertable, Tables, Updatable } from '@/integrations/supabase/database.types';
 import { parseCursor } from '@/lib/cursor';
+import { feriasSchema } from '@/schemas/ferias';
+import { validateInput } from '@/schemas/validate';
 
 type PeriodoAquisitivo = Tables<'periodos_aquisitivos'>;
 type PeriodoAquisitivoInsert = Insertable<'periodos_aquisitivos'>;
@@ -15,6 +17,16 @@ class FeriasService extends BaseService<Ferias> {
       searchColumn: 'colaborador_nome',
       defaultOrderBy: 'data_inicio',
     });
+  }
+
+  async criar(payload: Record<string, unknown>): Promise<Ferias> {
+    validateInput(feriasSchema, payload, 'feriasService.criar');
+    return super.criar(payload);
+  }
+
+  async atualizar(id: string, payload: Record<string, unknown>, empresaId: string): Promise<Ferias> {
+    validateInput(feriasSchema, payload, 'feriasService.atualizar');
+    return super.atualizar(id, payload, empresaId);
   }
 
   async listar(options: ListOptions = {}): Promise<ListResponse<Ferias>> {

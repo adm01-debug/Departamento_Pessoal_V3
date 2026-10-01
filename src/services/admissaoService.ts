@@ -1,11 +1,23 @@
 import { BaseService, ListOptions, ListResponse } from './baseService';
 import type { Tables, Insertable, Updatable } from '@/integrations/supabase/database.types';
+import { admissaoSchema } from '@/schemas/admissao';
+import { validateInput } from '@/schemas/validate';
 
 class AdmissaoService extends BaseService<Tables<'admissoes'>, Insertable<'admissoes'>, Updatable<'admissoes'>> {
   constructor() {
     super('admissoes', {
       defaultOrderBy: 'data_prevista',
     });
+  }
+
+  async criar(d: Insertable<'admissoes'>): Promise<Tables<'admissoes'>> {
+    validateInput(admissaoSchema, d as Record<string, unknown>, 'admissaoService.criar');
+    return super.criar(d);
+  }
+
+  async atualizar(id: string, d: Updatable<'admissoes'>, empresaId: string): Promise<Tables<'admissoes'>> {
+    validateInput(admissaoSchema, d as Record<string, unknown>, 'admissaoService.atualizar');
+    return super.atualizar(id, d, empresaId);
   }
 
   async listar(options: ListOptions = {}): Promise<ListResponse<Tables<'admissoes'>>> {

@@ -6,6 +6,8 @@ import { pontoIntegracaoUtils } from '@/utils/folha/pontoIntegracaoUtils';
 import { safeErrorMessage } from '@/utils/safeError';
 import { formatDateLocalISO } from '@/utils/dateLocal';
 import { loggerService } from '../loggerService';
+import { folhaSchema } from '@/schemas/folha';
+import { validateInput } from '@/schemas/validate';
 
 export interface BatchProgress {
   total: number;
@@ -84,6 +86,11 @@ export const calculoLoteService = {
 
       let folhaId = header?.id;
       if (!folhaId) {
+        validateInput(
+          folhaSchema,
+          { empresa_id: empresaId, competencia, status: 'aberta', tipo: 'mensal' },
+          'folhaPagamento.criar'
+        );
         const { data: newHeader, error: createError } = await supabase
           .from('folhas_pagamento')
           .insert({
