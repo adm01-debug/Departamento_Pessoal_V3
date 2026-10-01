@@ -34,6 +34,20 @@ CREATE TABLE IF NOT EXISTS public.backup_logs (
   metadata        JSONB       DEFAULT '{}'
 );
 
+-- backup_logs já pode existir criada por 005_esocial_auditoria.sql com
+-- colunas diferentes (data_inicio/data_fim/erro). Garante o schema desta
+-- migration via ADD COLUMN IF NOT EXISTS (idempotente nos dois casos).
+ALTER TABLE public.backup_logs
+  ADD COLUMN IF NOT EXISTS acao           TEXT        NOT NULL DEFAULT 'run',
+  ADD COLUMN IF NOT EXISTS started_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
+  ADD COLUMN IF NOT EXISTS finished_at    TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS duration_ms    INTEGER,
+  ADD COLUMN IF NOT EXISTS records_count  INTEGER     DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS tables_count   INTEGER     DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS error_message  TEXT,
+  ADD COLUMN IF NOT EXISTS storage_path   TEXT,
+  ADD COLUMN IF NOT EXISTS metadata       JSONB       DEFAULT '{}';
+
 CREATE INDEX IF NOT EXISTS idx_backup_logs_empresa
   ON public.backup_logs (empresa_id, started_at DESC);
 
@@ -97,7 +111,7 @@ BEGIN
   RETURN QUERY
   SELECT
     bl.empresa_id,
-    e.nome AS empresa_nome,
+    e.nome_fantasia AS empresa_nome,
     MAX(bl.started_at)              AS last_backup_at,
     EXTRACT(EPOCH FROM (now() - MAX(bl.started_at)))::INTEGER / 3600 AS hours_since,
     MAX(bl.records_count)           AS records_backup,
@@ -106,7 +120,7 @@ BEGIN
   LEFT JOIN public.empresas e ON e.id = bl.empresa_id
   WHERE bl.status IN ('success', 'partial')
     AND bl.started_at < now() - INTERVAL '24 hours'
-  GROUP BY bl.empresa_id, e.nome
+  GROUP BY bl.empresa_id, e.nome_fantasia
   ORDER BY hours_since DESC;
 END;
 $$;
@@ -122,7 +136,7 @@ COMMENT ON FUNCTION public.alert_stale_backup IS
 ALTER TABLE public.backup_logs
   ALTER COLUMN started_at SET STATISTICS 500;
 
-COMMENT ON COLUMN public.backup_logs IS
+COMMENT ON COLUMN public.backup_logs.started_at IS
   'Retenção: 90 dias. Backup de dados: política de storage do Supabase (30d padrão em Pro).';
 
 -- ── 5. Integração com lgpd_purge_log (P3-065) ───────────────
