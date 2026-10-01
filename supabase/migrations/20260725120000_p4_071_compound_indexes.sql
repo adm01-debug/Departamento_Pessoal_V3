@@ -28,8 +28,8 @@ CREATE INDEX IF NOT EXISTS idx_colaboradores_empresa_status_admissao
   WHERE status IN ('ativo', 'ferias', 'afastado', 'admissao');
 
 CREATE INDEX IF NOT EXISTS idx_colaboradores_empresa_depto_status
-  ON public.colaboradores (empresa_id, departamento_id, status)
-  WHERE departamento_id IS NOT NULL;
+  ON public.colaboradores (empresa_id, departamento, status)
+  WHERE departamento IS NOT NULL;
 
 CREATE INDEX IF NOT EXISTS idx_colaboradores_empresa_cpf
   ON public.colaboradores (empresa_id, cpf)
@@ -116,12 +116,12 @@ CREATE INDEX IF NOT EXISTS idx_esocial_empresa_created
 
 -- ── Auditoria (LGPD P3-065) ──────────────────────────────────
 CREATE INDEX IF NOT EXISTS idx_auditoria_usuario_data
-  ON public.auditoria (user_id, created_at DESC)
-  WHERE user_id IS NOT NULL;
+  ON public.auditoria (usuario_id, created_at DESC)
+  WHERE usuario_id IS NOT NULL;
 
 CREATE INDEX IF NOT EXISTS idx_auditoria_tabela_registro
-  ON public.auditoria (tabela_nome, registro_id, created_at DESC)
-  WHERE tabela_nome IS NOT NULL;
+  ON public.auditoria (tabela, registro_id, created_at DESC)
+  WHERE tabela IS NOT NULL;
 
 -- ── Logs de sistema ──────────────────────────────────────────
 CREATE INDEX IF NOT EXISTS idx_logs_sistema_data_nivel
