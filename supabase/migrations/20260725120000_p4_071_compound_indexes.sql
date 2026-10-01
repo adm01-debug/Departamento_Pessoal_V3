@@ -125,8 +125,7 @@ CREATE INDEX IF NOT EXISTS idx_auditoria_tabela_registro
 
 -- ── Logs de sistema ──────────────────────────────────────────
 CREATE INDEX IF NOT EXISTS idx_logs_sistema_data_nivel
-  ON public.logs_sistema (created_at DESC, nivel)
-  WHERE created_at >= NOW() - INTERVAL '30 days';
+  ON public.logs_sistema (created_at DESC, nivel);
 
 -- ── Query planos para validação em staging ────────────────────
 --

@@ -55,9 +55,7 @@ CREATE INDEX IF NOT EXISTS idx_registros_ponto_data_aberto
 
 -- Query: Ausências detectadas — 谁 não bateu ponto hoje
 CREATE INDEX IF NOT EXISTS idx_registros_ponto_sem_batida
-  ON registros_ponto(empresa_id, data_hora DESC)
-  WHERE data_hora >= CURRENT_DATE - INTERVAL '1 day'
-    AND data_hora < CURRENT_DATE;
+  ON registros_ponto(empresa_id, data_hora DESC);
 
 
 -- ── 3. FÉRIAS ─────────────────────────────────────────────────
@@ -74,8 +72,7 @@ CREATE INDEX IF NOT EXISTS idx_ferias_empresa_status
 -- Query: Férias que vencem nos próximos 30 dias (alerta DP)
 CREATE INDEX IF NOT EXISTS idx_ferias_vencendo
   ON ferias(data_fim)
-  WHERE status NOT IN ('concluida', 'cancelada')
-    AND data_fim BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '30 days';
+  WHERE status NOT IN ('concluida', 'cancelada');
 
 
 -- ── 4. AFASTAMENTOS ────────────────────────────────────────────
@@ -188,8 +185,7 @@ CREATE INDEX IF NOT EXISTS idx_banco_horas_colaborador_data
 -- Query: Contratos por empresa + status
 CREATE INDEX IF NOT EXISTS idx_contratos_empresa_status_vcto
   ON contratos(empresa_id, status, data_fim)
-  WHERE status IN ('ativo', 'prorrogado')
-    AND data_fim BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '90 days';
+  WHERE status IN ('ativo', 'prorrogado');
 
 
 -- ── 15. ALERTAS ────────────────────────────────────────────────
