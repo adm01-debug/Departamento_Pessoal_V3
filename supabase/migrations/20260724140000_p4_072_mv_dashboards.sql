@@ -54,8 +54,10 @@ SELECT
   MIN(f.total_bruto)   FILTER (WHERE f.total_bruto IS NOT NULL)   AS piso_salarial,
   MAX(f.total_bruto)   FILTER (WHERE f.total_bruto IS NOT NULL)   AS teto_salarial,
   SUM(f.total_bruto)   FILTER (WHERE f.total_bruto IS NOT NULL)
-    / NULLIF(COUNT(DISTINCT f.colaborador_id), 0)
-    FILTER (WHERE f.total_bruto IS NOT NULL)               AS custo_medio
+    / NULLIF(
+        COUNT(DISTINCT f.colaborador_id) FILTER (WHERE f.total_bruto IS NOT NULL),
+        0
+      )                                                  AS custo_medio
 FROM public.folhas f
 WHERE f.competencia >= NOW() - INTERVAL '3 years'
 GROUP BY 1, 2
