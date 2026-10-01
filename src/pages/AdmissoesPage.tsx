@@ -68,13 +68,16 @@ const etapaLabels: Record<string, string> = {
   cancelada: 'Cancelada',
 };
 
+// Vermelho dos estados críticos desta área (cancelada / falha / atrasado):
+// variante VIBRANTE `destructive-vivid` — o `--destructive` do tema fica
+// apagado sobre o navy do dark (ver `src/index.css`).
 const etapaGradients: Record<string, string> = {
   documentos: 'bg-warning/15 text-warning border-0',
   validacao: 'bg-info/15 text-info border-0',
   exame: 'bg-warning/15 text-warning border-0',
   contrato: 'bg-info/15 text-info border-0',
   concluida: 'bg-success/15 text-success border-0',
-  cancelada: 'bg-destructive/15 text-destructive border-0',
+  cancelada: 'bg-destructive-vivid/15 text-destructive-vivid border-0',
   esocial: 'bg-primary/15 text-primary border-0',
 };
 
@@ -136,7 +139,7 @@ const abasAdmissoes = [
 const auditoriaStatusClasses: Record<string, string> = {
   sucesso: 'bg-success/15 text-success',
   pendente: 'bg-warning/15 text-warning',
-  falha: 'bg-destructive/15 text-destructive',
+  falha: 'bg-destructive-vivid/15 text-destructive-vivid',
 };
 
 export default function AdmissoesPage() {
@@ -303,7 +306,13 @@ export default function AdmissoesPage() {
                 <Spinner size="lg" />
               </div>
             ) : (
-              <OnboardingDashboard admissoes={admissoes || []} />
+              // `onAbrirAba` dá destino REAL aos botões "Resolver agora" dos
+              // modais do dashboard (Ações Prioritárias → "Gestão de Candidatos",
+              // onde ficam a validação do documento e o reenvio do link de
+              // contratação). Sem essa prop os modais continuam funcionando: eles
+              // apenas não exibem o botão quando o único destino seria uma aba
+              // interna do próprio módulo.
+              <OnboardingDashboard admissoes={admissoes || []} onAbrirAba={(aba) => setActiveTab(aba)} />
             )}
           </TabsContent>
 
@@ -505,7 +514,7 @@ export default function AdmissoesPage() {
                       {
                         label: 'Falhas',
                         value: auditoriaResumo.falha,
-                        className: 'bg-destructive/15 text-destructive',
+                        className: 'bg-destructive-vivid/15 text-destructive-vivid',
                       },
                     ].map((item) => (
                       <span

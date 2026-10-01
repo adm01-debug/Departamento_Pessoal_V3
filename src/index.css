@@ -23,6 +23,13 @@
     --accent-foreground: 240 20% 10%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
+    /* ─── ADMISSÕES — variante VIBRANTE do vermelho (`destructive-vivid`) ───
+       Membro da mesma família semântica do `--destructive`, consumido SÓ pela
+       área de Admissões (Dashboard, Gestão de Candidatos, Kanban, Onboarding,
+       Auditoria e seus modais). No tema claro ela repete o `--destructive` —
+       que já é vivo e passa AA sobre o branco —, então quem justifica o token
+       é o valor do `.dark`, logo abaixo. */
+    --destructive-vivid: 0 72% 51%;
     --success: 142 71% 38%;
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
@@ -139,6 +146,13 @@
     --accent-foreground: 60 10% 92%;
     --destructive: 0 63% 35%;
     --destructive-foreground: 60 10% 92%;
+    /* Admissões: o `--destructive` deste tema (0 63% 35% ≈ #912121) rende só
+       ~2:1 de contraste sobre o navy do card/fundo — vermelho apagado, ilegível
+       em texto, ícone, número, selo e barra. A variante vibrante (#EF4343,
+       ≈ `red-500` #EF4444) sobe para ~4,5:1 no `--card` e ~4,9:1 no
+       `--background`, mantendo fundo escuro/translúcido (nada de glow nem de
+       fundo cheio). Nenhuma outra área do sistema consome este token. */
+    --destructive-vivid: 0 84% 60%;
     --success: 142 76% 40%;
     --success-foreground: 60 10% 92%;
     --warning: 38 92% 52%;

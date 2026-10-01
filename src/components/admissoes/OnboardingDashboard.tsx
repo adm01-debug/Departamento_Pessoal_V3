@@ -15,6 +15,7 @@
  * já presentes no produto e as fontes `font-display` / `font-body`.
  */
 import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -44,6 +45,7 @@ import {
   FileText,
   Gauge,
   ListTodo,
+  type LucideIcon,
   PieChart,
   ShieldAlert,
   ShieldCheck,
@@ -53,6 +55,32 @@ import {
 } from 'lucide-react';
 // MOCK VISUAL — ver src/mocks/admissoesMock.ts
 import { isAdmissoesMockEnabled, MOCK_TEMPO_MEDIO_ADMISSAO } from '@/mocks/admissoesMock';
+// Fonte única dos rótulos/selos de etapa, do checklist e das tintas de tom —
+// o mesmo módulo que os modais de detalhe leem, para que card e modal nunca
+// mostrem rótulo ou cor diferentes para a mesma informação.
+import {
+  CHECKLIST_ADMISSAO,
+  ETAPA_BADGE,
+  ETAPA_FLUXO,
+  ETAPA_LABELS,
+  TONE_CHIP,
+  TONE_TEXT,
+  type CampoChecklist,
+  type Tone,
+} from './admissoesComum';
+// Modais dos quatro widgets (mesma base/coreografia do popup de Pendências da
+// área de Colaboradores). Eles recebem os dados JÁ derivados daqui — a
+// matemática do card e a lista do modal saem sempre da mesma fonte.
+import {
+  AcoesPrioritariasDialog,
+  DistribuicaoAreaDialog,
+  ProximasAdmissoesDialog,
+  SlaAlertasDialog,
+  type AdmissaoDetalhe,
+  type AreaDetalhe,
+  type PrioridadeDetalhe,
+  type SlaSegmento,
+} from './admissoesDashboardModais';
 
 /** Registro mínimo que este dashboard lê (admissão real ou fictícia). */
 type AdmissaoLike = {
@@ -63,56 +91,24 @@ type AdmissaoLike = {
   etapa?: string | null;
   data_prevista?: string | null;
   created_at?: string | null;
+  /** Texto registrado pelo RH na admissão (andamento/pendência). */
+  observacoes?: string | null;
+  /** Situação e protocolo da transmissão do S-2200. */
+  status_esocial?: string | null;
+  protocolo_esocial?: string | null;
+  /** Checklist obrigatório da admissão (colunas reais, podem vir nulas). */
+  checklist_documentos_pessoais?: boolean | null;
+  checklist_comprovante_endereco?: boolean | null;
+  checklist_foto?: boolean | null;
+  checklist_ctps?: boolean | null;
+  checklist_exame_admissional?: boolean | null;
+  checklist_contrato_assinado?: boolean | null;
+  checklist_esocial_enviado?: boolean | null;
+  /** JSON livre da admissão — é dele que sai o `responsavel` do processo. */
+  metadata?: { responsavel?: string | null } | null;
 };
-
-type Tone = 'primary' | 'info' | 'success' | 'warning' | 'destructive';
 
 const DIA_MS = 24 * 60 * 60 * 1000;
-
-/** Rótulos de etapa — mesma nomenclatura usada nas demais abas do módulo. */
-const ETAPA_LABELS: Record<string, string> = {
-  solicitacao: 'Solicitação',
-  documentos: 'Docs Pendentes',
-  validacao: 'Em Validação',
-  pendente: 'Pendente',
-  exame: 'Exame',
-  contrato: 'Contrato',
-  assinatura: 'Assinatura',
-  esocial: 'eSocial',
-  concluida: 'Concluída',
-  cancelada: 'Cancelada',
-};
-
-/** Badge de etapa (ações prioritárias / próximas admissões). */
-const ETAPA_BADGE: Record<string, string> = {
-  solicitacao: 'bg-muted/60 text-muted-foreground',
-  documentos: 'bg-warning/15 text-warning',
-  validacao: 'bg-info/15 text-info',
-  pendente: 'bg-warning/15 text-warning',
-  exame: 'bg-warning/15 text-warning',
-  contrato: 'bg-info/15 text-info',
-  assinatura: 'bg-primary/15 text-primary',
-  esocial: 'bg-primary/15 text-primary',
-  concluida: 'bg-success/15 text-success',
-  cancelada: 'bg-destructive/15 text-destructive',
-};
-
-/** Chip de ícone colorido e tinta de texto por tom semântico. */
-const TONE_CHIP: Record<Tone, string> = {
-  primary: 'bg-primary/10 text-primary',
-  info: 'bg-info/10 text-info',
-  success: 'bg-success/10 text-success',
-  warning: 'bg-warning/10 text-warning',
-  destructive: 'bg-destructive/10 text-destructive',
-};
-
-const TONE_TEXT: Record<Tone, string> = {
-  primary: 'text-primary',
-  info: 'text-info',
-  success: 'text-success',
-  warning: 'text-warning',
-  destructive: 'text-destructive',
-};
 
 /* ─── Derivações puras (mesma entrada → mesma saída) ──────────────────────── */
 
@@ -185,6 +181,112 @@ function percentual(parcial: number, total: number): number {
   return total > 0 ? Math.round((parcial / total) * 100) : 0;
 }
 
+/**
+ * Ordena por `data_prevista` crescente (a mais próxima primeiro). Registros sem
+ * data válida vão para o fim — o card não os exibe, mas a função também é usada
+ * por listas que podem contê-los.
+ */
+function ordenarPorDataPrevista<T extends AdmissaoLike>(itens: T[]): T[] {
+  return [...itens].sort((a, b) => {
+    const da = dataValida(a.data_prevista)?.getTime() ?? Number.POSITIVE_INFINITY;
+    const db = dataValida(b.data_prevista)?.getTime() ?? Number.POSITIVE_INFINITY;
+    return da - db;
+  });
+}
+
+/**
+ * Dias entre a data prevista e o início de HOJE, arredondados para cima:
+ * `> 0` ainda falta, `0` vence hoje, `< 0` atraso e `null` sem data cadastrada.
+ *
+ * O arredondamento existe porque a coluna é uma data (hora zero): comparando o
+ * timestamp direto, "amanhã" cairia em 0,x de dia. Com `ceil`, o número
+ * mostrado no modal bate com a régua de classificação do card.
+ */
+function diasAteHoje(valor: string | null | undefined, hoje: number): number | null {
+  const data = dataValida(valor);
+  if (!data) return null;
+  return Math.ceil((data.getTime() - hoje) / DIA_MS);
+}
+
+/**
+ * Mesma régua de prazo que o card usa: `atrasada` quando a data prevista já
+ * passou do início de hoje, `risco` quando vence nos próximos 7 dias e `dentro`
+ * no restante — inclusive quando a admissão não tem data prevista cadastrada.
+ */
+function slaDaAdmissao(a: AdmissaoLike, hoje: number): SlaSegmento {
+  const data = dataValida(a.data_prevista);
+  if (!data) return 'dentro';
+  const t = data.getTime();
+  if (t < hoje) return 'atrasada';
+  return t < hoje + 7 * DIA_MS ? 'risco' : 'dentro';
+}
+
+/**
+ * Checklist da admissão: quantos itens estão marcados e quais faltam.
+ * Retorna `null` quando a base não traz nenhum dos sete campos (aí o modal
+ * avisa, em vez de mostrar um checklist vazio como se tudo estivesse ok).
+ */
+function checklistDaAdmissao(a: AdmissaoLike) {
+  const itens = CHECKLIST_ADMISSAO.filter((item) => typeof a[item.campo] === 'boolean');
+  if (itens.length === 0) return null;
+  const faltantes = itens.filter((item) => a[item.campo] !== true).map((item) => item.label);
+  return { total: itens.length, concluidos: itens.length - faltantes.length, faltantes };
+}
+
+/**
+ * Progresso da admissão em 0-100, com a origem do número:
+ *   • checklist preenchido → itens concluídos ÷ total de itens do checklist;
+ *   • sem checklist na base → posição da etapa no fluxo de 8 etapas (aproximação).
+ * O rótulo da origem acompanha o valor para o modal nunca mostrar um percentual
+ * sem dizer de onde ele veio.
+ */
+function progressoDaAdmissao(a: AdmissaoLike): { valor: number; base: string } {
+  const checklist = checklistDaAdmissao(a);
+  if (checklist) {
+    return {
+      valor: percentual(checklist.concluidos, checklist.total),
+      base: `checklist ${checklist.concluidos}/${checklist.total}`,
+    };
+  }
+  const indice = ETAPA_FLUXO.indexOf((a.etapa ?? '') as (typeof ETAPA_FLUXO)[number]);
+  if (indice < 0) return { valor: 0, base: 'etapa não reconhecida no fluxo' };
+  return { valor: percentual(indice + 1, ETAPA_FLUXO.length), base: `etapa ${indice + 1}/${ETAPA_FLUXO.length}` };
+}
+
+/**
+ * Traduz uma admissão para o formato dos modais: os campos do banco como
+ * vieram + os derivados (dias, SLA, progresso, pendências e responsável).
+ * `indice` só serve de chave estável quando a admissão não tem `id`.
+ */
+function detalharAdmissao(a: AdmissaoLike, hoje: number, indice: number): AdmissaoDetalhe {
+  const checklist = checklistDaAdmissao(a);
+  const progresso = progressoDaAdmissao(a);
+  return {
+    id: String(a.id ?? `admissao-${indice}`),
+    nome: a.nome?.trim() || 'Candidato sem nome',
+    cargo: a.cargo ?? null,
+    departamento: a.departamento ?? null,
+    etapa: a.etapa ?? null,
+    dataPrevista: a.data_prevista ?? null,
+    dias: diasAteHoje(a.data_prevista, hoje),
+    sla: slaDaAdmissao(a, hoje),
+    responsavel: a.metadata?.responsavel?.trim() || 'Não atribuído',
+    progresso: progresso.valor,
+    progressoBase: progresso.base,
+    pendencias: checklist
+      ? checklist.faltantes
+      : ['Checklist de documentos não preenchido nesta base — conferir no detalhe da admissão.'],
+    observacao: a.observacoes ?? null,
+    statusEsocial: a.status_esocial ?? null,
+    protocoloEsocial: a.protocolo_esocial ?? null,
+  };
+}
+
+/** Detalha uma lista inteira na ordem em que ela veio. */
+function detalharLista(itens: AdmissaoLike[], hoje: number): AdmissaoDetalhe[] {
+  return itens.map((item, indice) => detalharAdmissao(item, hoje, indice));
+}
+
 /* ─── Blocos de UI compartilhados ─────────────────────────────────────────── */
 
 /**
@@ -200,7 +302,7 @@ function percentual(parcial: number, total: number): number {
 const MotionCard = motion.create(Card);
 
 /**
- * Painel de conteúdo da área de Admissões: cabeçalho com chip de ícone, título,
+ * Painel de conteúdo da área de Admissões: cabeçalho com ícone SOLTO, título,
  * subtítulo contextual e ação no canto direito. É o mesmo casco para os dois
  * painéis analíticos e para os quatro widgets — o que garante consistência
  * entre eles.
@@ -219,7 +321,7 @@ function PanelCard({
   contentClassName,
   compact = false,
   /**
-   * Cabeçalho em duas linhas: (chip + título + ação) na primeira e subtítulo de
+   * Cabeçalho em duas linhas: (ícone + título + ação) na primeira e subtítulo de
    * largura total na segunda — evita título/subtítulo quebrando em card estreito.
    */
   headerStacked = false,
@@ -233,8 +335,10 @@ function PanelCard({
   className?: string;
   contentClassName?: string;
   /**
-   * Casco denso: mesmo desenho, com paddings, chip e título um degrau menores.
+   * Casco denso: mesmo desenho, com paddings e título um degrau menores.
    * Usado só pelos dois painéis analíticos — os widgets seguem no casco padrão.
+   * O ícone do título NÃO encolhe junto: ele tem 20px nas duas variantes, para
+   * que os seis cabeçalhos fiquem idênticos (ver `icone`).
    */
   compact?: boolean;
   /** Cabeçalho em duas linhas: título e ação em cima, subtítulo embaixo. */
@@ -242,16 +346,15 @@ function PanelCard({
   /** Posição na cascata de entrada (ver o comentário do `PanelCard`). */
   index?: number;
 }) {
-  const chip = (
-    <div
-      className={cn(
-        'grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary ring-1 ring-inset ring-primary/20',
-        compact && 'h-8 w-8 rounded-lg'
-      )}
-    >
-      <Icon className={cn('h-4 w-4', compact && 'h-3.5 w-3.5')} />
-    </div>
-  );
+  /**
+   * Ícone do título — SOLTO, direto sobre o fundo do card: sem caixa, sem
+   * `background`, sem `ring`/borda e sem `rounded`. É o mesmo desenho da
+   * referência da área de Colaboradores (`ColaboradorDetalhesPage.tsx`:
+   * `flex items-center gap-2` + `<Icon className="h-5 w-5 text-primary" />`),
+   * então são 20px de ícone com 8px de folga até o texto, na cor `primary` —
+   * a mesma que o antigo chip já aplicava.
+   */
+  const icone = <Icon className="h-5 w-5 shrink-0 text-primary" />;
   const titulo = (
     <CardTitle className={cn('font-display leading-tight', compact ? 'text-sm' : 'text-heading')}>{title}</CardTitle>
   );
@@ -260,6 +363,8 @@ function PanelCard({
   ) : null;
   const paddingCabecalho = compact ? 'px-4 pb-2 pt-3' : 'px-5 pb-3 pt-5';
   const gapTexto = compact ? 'gap-2' : 'gap-3';
+  /** Folga entre o ícone do título e o texto (8px, igual à referência). */
+  const gapIcone = 'gap-2';
 
   return (
     <MotionCard
@@ -273,8 +378,10 @@ function PanelCard({
       {headerStacked ? (
         <CardHeader className={cn('flex flex-col space-y-0', compact ? 'gap-1.5' : 'gap-2', paddingCabecalho)}>
           <div className="flex items-start justify-between gap-2">
-            <div className={cn('flex min-w-0 items-start', gapTexto)}>
-              {chip}
+            {/* `items-center`: o ícone centraliza na LINHA do título (aqui ele é
+                o único vizinho do `<CardTitle>`), como na referência. */}
+            <div className={cn('flex min-w-0 items-center', gapIcone)}>
+              {icone}
               {titulo}
             </div>
             {action && <div className="shrink-0">{action}</div>}
@@ -283,8 +390,12 @@ function PanelCard({
         </CardHeader>
       ) : (
         <CardHeader className={cn('flex flex-row items-start justify-between space-y-0', gapTexto, paddingCabecalho)}>
-          <div className={cn('flex min-w-0 items-start', gapTexto)}>
-            {chip}
+          {/* Aqui o vizinho do ícone é a coluna título + subtítulo: `items-start`
+              prende o ícone à primeira linha (o título) e mantém o subtítulo
+              exatamente onde estava, alinhado sob o título — nenhum `px`
+              adicional, nenhum recuo novo. */}
+          <div className={cn('flex min-w-0 items-start', gapIcone)}>
+            {icone}
             <div className="min-w-0">
               {titulo}
               {descricao}
@@ -365,15 +476,28 @@ function PeriodoSelector({
   );
 }
 
-/** Linha escaneável dos widgets: chip de ícone, conteúdo livre e chevron. */
+/**
+ * Linha escaneável do widget "Ações Prioritárias": chip de ícone + conteúdo.
+ *
+ * SEM chevron à direita (e como consequência sem o grupo `group/row`, que só
+ * existia para animar a seta no hover): as linhas não navegam para lugar
+ * nenhum — quem leva à fila completa é o "Ver todas" do cabeçalho —, então a
+ * seta era ruído visual e reservava 14px de largura + os 8px do `gap` só para
+ * si. Sem ela o conteúdo recebe esses 22px e passa a alinhar com a borda de
+ * texto do card, o mesmo eixo do título e do botão de ação.
+ *
+ * O resto da linha é o de sempre: `px-2 py-1` (a caixa de 36px de altura, que
+ * depende do chip de 28px + os 2×4px do padding, não muda), `rounded-xl`,
+ * `gap-2` entre chip e conteúdo, `min-w-0 flex-1` no miolo e o
+ * `transition-colors` + `HOVER_LINHA_WIDGET` do hover escuro.
+ */
 function WidgetRow({ icon: Icon, tone, children }: { icon: React.ElementType; tone: Tone; children: React.ReactNode }) {
   return (
-    <div className="group/row flex items-center gap-2 rounded-xl px-2 py-1 transition-colors hover:bg-muted/40">
+    <div className={cn('flex items-center gap-2 rounded-xl px-2 py-1 transition-colors', HOVER_LINHA_WIDGET)}>
       <div className={cn('grid h-7 w-7 shrink-0 place-items-center rounded-lg', TONE_CHIP[tone])}>
         <Icon className="h-3.5 w-3.5" />
       </div>
       <div className="min-w-0 flex-1">{children}</div>
-      <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground/50 transition-transform group-hover/row:translate-x-0.5" />
     </div>
   );
 }
@@ -414,9 +538,13 @@ const TEMPO_MEDIO_FALLBACK = [
  * + `scroll-interno`) e o card nunca cresce — os quatro ficam sempre com a
  * mesma altura, qualquer que seja o volume de itens.
  *
- * 256px é o valor medido do casco em 1024/1440/1920 (header 75px + miolo
- * 180px, mais a borda de 1px de cada lado), inclusive com o título quebrando
- * em duas linhas.
+ * 256px é o valor medido do casco em 1024/1440/1920 (header 69,5px + miolo
+ * 185,5px, mais a borda de 1px de cada lado), inclusive com o título quebrando
+ * em duas linhas. O header é 6px mais baixo que antes do ícone solto: o antigo
+ * chip do título (`h-8 w-8`) era o item mais alto da linha do cabeçalho e agora
+ * quem manda é o botão de ação, de 24px. O casco segue com os MESMOS 256px —
+ * os 6px só viram respiro a mais no miolo, e a viewport rolável (`h-[136px]`)
+ * não muda em nada.
  *
  * O scroll é sempre do MIOLO, nunca do cabeçalho: o `<CardHeader>` do
  * `PanelCard` fica fora do container com `overflow-y-auto`. Quem recebe
@@ -438,9 +566,9 @@ const ALTURA_WIDGET = 'h-[256px]';
  * que decide quanto conteúdo aparece antes do corte.
  *
  * Medido no card real (312×256 na grade de 4 colunas, viewport 1600px): header
- * 75px + miolo 180px, dos quais 16px são o `pb-4` do `CardContent` — sobram
- * 164px para a lista. Com `min-h-0 flex-1` o container CRESCIA até esses 164px
- * enquanto o conteúdo real cabia inteiro (4 linhas de 36px + 2px de
+ * 69,5px + miolo 185,5px, dos quais 16px são o `pb-4` do `CardContent` — sobram
+ * 169,5px para a lista. Com `min-h-0 flex-1` o container CRESCIA até esses
+ * 169,5px enquanto o conteúdo real cabia inteiro (4 linhas de 36px + 2px de
  * `space-y-0.5` = 150px em "Ações Prioritárias" e "Próximas Admissões"; 3
  * linhas + 8px + rodapé = 155px em "SLA & Alertas"), então
  * `scrollHeight === clientHeight` e nenhuma barra era desenhada.
@@ -451,13 +579,33 @@ const ALTURA_WIDGET = 'h-[256px]';
  *   • "Ações Prioritárias" / "Próximas Admissões" → 150 − 136 = 14px ocultos;
  *   • "SLA & Alertas" → 155 − 136 = 19px ocultos (a "Taxa de conclusão" mostra
  *     o topo e o restante vem pela roda do mouse/arrasto da barra).
- * Os 24px que sobram no miolo (164 − 4 do `mt-1` − 136) são respiro antes do
+ * Os ~30px que sobram no miolo (169,5 − 4 do `mt-1` − 136) são respiro antes do
  * `pb-4` do card; a altura EXTERNA (`h-[256px]`) não muda em nenhum dos três.
  * Como o container não é mais `flex-1`, ele mantém o `flex-shrink` padrão do
  * flexbox: em telas estreitas, onde o cabeçalho quebra e o miolo encolhe, a
  * viewport cede junto em vez de estourar o `overflow-hidden` do casco.
  */
 const ALTURA_LISTA_WIDGET = 'h-[136px]';
+
+/**
+ * Hover das linhas internas dos três widgets — "Ações Prioritárias", "Próximas
+ * Admissões" e "SLA & Alertas".
+ *
+ * É a MESMA classe do card "Últimos 7 dias" (`PontoWeekSummary.tsx`:
+ * `hover:bg-background/70 transition-colors`) e não o `bg-muted/40` que estas
+ * três listas usavam: sobre o navy do card (`--card`, L 12%) o `--muted` deste
+ * tema é mais CLARO (L 14%), então o realce antigo acendia a linha em vez de
+ * escurecê-la — o oposto do que a referência faz. O `--background` (L 8%) é a
+ * única superfície mais escura que o card nos dois temas, então `/70` dá o
+ * mesmo escurecimento discreto do card de referência, sem virar faixa opaca.
+ *
+ * Sem borda, sem `ring` e sem sombra: a referência também não usa, e um
+ * `border` novo mudaria a caixa da linha (o requisito é não alterar
+ * dimensões). `transition-colors` já cobre `background-color` e
+ * `border-color`, e as linhas não têm `onClick` — logo nenhuma recebe
+ * `cursor-pointer` (a referência também não tem: lá o realce é só leitura).
+ */
+const HOVER_LINHA_WIDGET = 'hover:bg-background/70';
 
 /**
  * Tipografia da legenda do card "Distribuição por Área".
@@ -492,11 +640,49 @@ const ALTURA_LISTA_WIDGET = 'h-[136px]';
  */
 const LEGENDA_AREA = 'text-[10px] leading-tight @max-[240px]:text-[9px]';
 
-export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
+/**
+ * Abas internas de Admissões para onde os modais podem levar o RH. O módulo não
+ * cria rota nova: as ações dos modais só existem quando há um destino REAL —
+ * uma aba desta própria página, `/exames` ou `/esocial`.
+ */
+export type AbaAdmissoes = 'gestao' | 'kanban' | 'onboarding';
+
+export function OnboardingDashboard({
+  admissoes,
+  onAbrirAba,
+}: {
+  admissoes: any[];
+  /**
+   * Leva o usuário para uma aba interna do módulo (ex.: "Gestão de Candidatos").
+   * Opcional: sem ela, os itens que só têm uma aba como destino não exibem o
+   * botão "Resolver agora" — melhor não mostrar ação do que mostrar uma que não
+   * leva a lugar nenhum.
+   */
+  onAbrirAba?: (aba: AbaAdmissoes) => void;
+}) {
   // MOCK VISUAL — ver src/mocks/admissoesMock.ts (dev + VITE_ADMISSOES_MOCK=true).
   const mockAtivo = isAdmissoesMockEnabled();
+  const navigate = useNavigate();
   const [periodoTempo, setPeriodoTempo] = useState('12');
   const [periodoFunil, setPeriodoFunil] = useState('6');
+  // Abertura dos quatro modais de detalhe (um por widget com atalho no cabeçalho).
+  const [acoesAbertas, setAcoesAbertas] = useState(false);
+  const [proximasAbertas, setProximasAbertas] = useState(false);
+  const [areasAbertas, setAreasAbertas] = useState(false);
+  const [slaAberto, setSlaAberto] = useState(false);
+
+  /**
+   * Destino real de cada família de pendência (o "Resolver agora" do modal).
+   * Documentos e contratos são resolvidos na aba "Gestão de Candidatos" — é lá
+   * que ficam a validação do documento e o reenvio do link de contratação. O ASO
+   * tem tela própria em `/exames` e o S-2200 em `/esocial`.
+   */
+  const resolverDaPrioridade = (id: string): (() => void) | undefined => {
+    if (id === 'exames') return () => navigate('/exames');
+    if (id === 'esocial') return () => navigate('/esocial');
+    if (!onAbrirAba) return undefined;
+    return () => onAbrirAba('gestao');
+  };
 
   const agora = useMemo(() => new Date(), []);
   const hoje = useMemo(() => inicioDoDia(agora), [agora]);
@@ -518,10 +704,10 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
       return t >= hoje && t < hoje + 7 * DIA_MS;
     });
 
-    const proximas = [...emAndamento]
-      .filter((a) => dataValida(a.data_prevista))
-      .sort((a, b) => dataValida(a.data_prevista)!.getTime() - dataValida(b.data_prevista)!.getTime())
-      .slice(0, 4);
+    // A fila ordenada é a MESMA para o card (que exibe as 4 primeiras) e para o
+    // modal (que exibe todas) — o card só fatia o resultado, sem recalcular.
+    const proximasOrdenadas = ordenarPorDataPrevista(emAndamento.filter((a) => dataValida(a.data_prevista)));
+    const proximas = proximasOrdenadas.slice(0, 4);
 
     const porArea = (() => {
       const mapa = new Map<string, number>();
@@ -537,40 +723,61 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
       return [...ordenado.slice(0, 5), { nome: 'Outros', count: resto }];
     })();
 
-    const prioridades: { id: string; label: string; total: number; icon: React.ElementType; tone: Tone }[] = [
+    // As quatro FAMÍLIAS de pendência do card. Cada fila é derivada uma única
+    // vez e alimenta tanto o número do card (`total`) quanto o detalhe do modal
+    // — assim os dois nunca divergem. Os filtros são exatamente os de antes.
+    const filaDocumentos = lista.filter((a) => a.etapa === 'documentos');
+    const filaExamesAtrasados = emAndamento.filter((a) => {
+      if (a.etapa !== 'exame') return false;
+      const data = dataValida(a.data_prevista);
+      return data ? data.getTime() < hoje : false;
+    });
+    const filaContratos = lista.filter((a) => a.etapa === 'contrato' || a.etapa === 'assinatura');
+    const filaEsocial = canceladas;
+    const filaPorPrioridade: Record<string, AdmissaoLike[]> = {
+      documentos: filaDocumentos,
+      exames: filaExamesAtrasados,
+      contratos: filaContratos,
+      esocial: filaEsocial,
+    };
+
+    const prioridades: Omit<PrioridadeDetalhe, 'candidatos'>[] = [
       {
         id: 'documentos',
         label: 'documentos pendentes',
-        total: lista.filter((a) => a.etapa === 'documentos').length,
+        total: filaDocumentos.length,
         icon: FileText,
         tone: 'destructive',
       },
       {
         id: 'exames',
         label: 'exames em atraso',
-        total: emAndamento.filter((a) => {
-          if (a.etapa !== 'exame') return false;
-          const data = dataValida(a.data_prevista);
-          return data ? data.getTime() < hoje : false;
-        }).length,
+        total: filaExamesAtrasados.length,
         icon: CalendarClock,
         tone: 'warning',
       },
       {
         id: 'contratos',
         label: 'contratos aguardando assinatura',
-        total: lista.filter((a) => a.etapa === 'contrato' || a.etapa === 'assinatura').length,
+        total: filaContratos.length,
         icon: ListTodo,
         tone: 'warning',
       },
       {
         id: 'esocial',
         label: 'falha no eSocial',
-        total: canceladas.length,
+        total: filaEsocial.length,
         icon: ShieldAlert,
         tone: 'destructive',
       },
     ];
+
+    // Detalhe de cada família: a MESMA fila, ordenada pela data prevista mais
+    // próxima (as vencidas primeiro) e traduzida para leitura no modal.
+    const prioridadesDetalhe: PrioridadeDetalhe[] = prioridades.map((item) => ({
+      ...item,
+      candidatos: detalharLista(ordenarPorDataPrevista(filaPorPrioridade[item.id] ?? []), hoje),
+    }));
 
     const kpis = [
       {
@@ -610,13 +817,42 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
       trend: variacaoDePeriodo(kpi.amostra, agora),
     }));
 
+    /**
+     * Lista de TODAS as áreas, sem o agrupamento em "Outros" que o card faz
+     * acima de 6 fatias — é ela que o modal exibe. A ordenação (quantidade
+     * decrescente) é a mesma do `porArea`, então as cinco primeiras posições
+     * batem com as do anel; `variacao` reusa a mesma janela de 30 dias dos KPIs
+     * e fica `null` quando não há base anterior (nenhum número é inventado).
+     */
+    const areasCompletas: AreaDetalhe[] = (() => {
+      const mapa = new Map<string, AdmissaoLike[]>();
+      lista.forEach((a) => {
+        const area = a.departamento?.trim() || 'Não informado';
+        mapa.set(area, [...(mapa.get(area) ?? []), a]);
+      });
+      return [...mapa.entries()]
+        .map(([nome, registros]) => ({
+          nome,
+          count: registros.length,
+          percentual: percentual(registros.length, lista.length),
+          variacao: variacaoDePeriodo(registros, agora)?.value ?? null,
+        }))
+        .sort((a, b) => b.count - a.count)
+        .map((area, indice) => ({ ...area, posicao: indice + 1 }));
+    })();
+
+    // Partição exata de `emAndamento` pela régua de prazo: todo processo cai em
+    // um — e só um — dos três grupos. `noSla` é derivado DELA (e não de uma
+    // subtração) para o número do card e a lista do modal nunca divergirem.
+    const dentroDoSla = emAndamento.filter((a) => slaDaAdmissao(a, hoje) === 'dentro');
+
     return {
       concluidas,
       canceladas,
       emAndamento,
       atrasadas,
       emRisco,
-      noSla: emAndamento.length - atrasadas.length - emRisco.length,
+      noSla: dentroDoSla.length,
       proximas,
       porArea,
       prioridades,
@@ -624,6 +860,13 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
       funil: contarPorEtapa(lista),
       taxaConclusao: percentual(concluidas.length, lista.length),
       variacaoConclusao: variacaoDePeriodo(concluidas, agora),
+      /* Detalhes consumidos pelos modais dos quatro widgets. */
+      prioridadesDetalhe,
+      proximasDetalhe: detalharLista(proximasOrdenadas, hoje),
+      areasCompletas,
+      dentroDoSlaDetalhe: detalharLista(dentroDoSla, hoje),
+      emRiscoDetalhe: detalharLista(emRisco, hoje),
+      atrasadasDetalhe: detalharLista(atrasadas, hoje),
     };
   }, [lista, agora, hoje]);
 
@@ -672,7 +915,12 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
           a frase de apoio, que assim aparece inteira (ver `MetricCard`).
           A entrada em cascata vem do próprio `MetricCard` (o `index` alimenta o
           `custom` do `cardVariants`, o mesmo do Dashboard Executivo): aqui o
-          `index` do `.map` já entrega 0-3, os quatro primeiros da fila. */}
+          `index` do `.map` já entrega 0-3, os quatro primeiros da fila.
+          `vividRed`: pede ao `MetricCard` a variante VIBRANTE do vermelho
+          (`--destructive-vivid`, ver `src/index.css`) — o `--destructive` do
+          tema é um vinho escuro que desaparece no navy. Vale para o chip do KPI
+          "Canceladas" e para o selo de tendência negativa; é a flag que mantém
+          o vermelho legível sem tocar no vermelho do Dashboard Executivo. */}
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {stats.kpis.map((kpi, index) => (
             <MetricCard
@@ -682,6 +930,7 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
               value={String(kpi.valor)}
               icon={kpi.icon}
               tone={kpi.tone}
+              vividRed
               trend={kpi.trend}
               description={kpi.trend ? undefined : kpi.descricao}
               className="rounded-2xl border-border/40 shadow-elevated"
@@ -709,52 +958,79 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
             {/* Sem cartão flutuante e sem rodapé de média: o gráfico ocupa a
               altura inteira do miolo (`flex-1`) e centraliza a série. */}
             <div className="relative mt-1 min-h-[188px] w-full flex-1">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={serieTempo} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="adm-tempo-fill" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.32} />
-                      <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="hsl(var(--border))" />
-                  <XAxis
-                    dataKey="month"
-                    tickLine={false}
-                    axisLine={false}
-                    dy={4}
-                    tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
-                  />
-                  <YAxis
-                    tickLine={false}
-                    axisLine={false}
-                    width={34}
-                    allowDecimals={false}
-                    tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
-                  />
-                  <Tooltip
-                    cursor={{ stroke: 'hsl(var(--primary))', strokeDasharray: '4 4' }}
-                    contentStyle={{
-                      background: 'hsl(var(--popover))',
-                      border: '1px solid hsl(var(--border))',
-                      borderRadius: 12,
-                      fontSize: 12,
-                      color: 'hsl(var(--popover-foreground))',
-                    }}
-                    formatter={(value) => [`${value} dias`, 'Tempo médio']}
-                    labelFormatter={(label) => `Mês: ${label}`}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="days"
-                    stroke="hsl(var(--primary))"
-                    strokeWidth={2}
-                    fill="url(#adm-tempo-fill)"
-                    dot={{ r: 2.5, fill: 'hsl(var(--primary))', strokeWidth: 0 }}
-                    activeDot={{ r: 4, stroke: 'hsl(var(--card))', strokeWidth: 2 }}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+              {/* `AnimatePresence` local (sem props): mesma técnica do card
+                  "Visão Geral da Empresa" (`HeadcountOverviewCard.tsx`) — blinda o
+                  `motion.rect` do clip-path abaixo contra o `initial={false}` de
+                  `PageTransition.tsx`, que se propagaria por contexto e bloquearia
+                  a animação de entrada quando /admissoes é a primeira rota da
+                  sessão (login novo, F5, restart). */}
+              <AnimatePresence>
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={serieTempo} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="adm-tempo-fill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.32} />
+                        <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                      </linearGradient>
+                      {/* Clip-path animado (Framer Motion, não a animação nativa do
+                        Recharts): a linha e a área ficam escondidas além do limite
+                        direito deste retângulo, que cresce de 0 a 100% da largura —
+                        revelando o desenho da esquerda pra direita. Mesma técnica,
+                        mesma duração (2.5s) e mesmo easing (`easeInOut`) do card
+                        "Visão Geral da Empresa" (`HeadcountOverviewCard.tsx`). */}
+                      <clipPath id="adm-tempo-reveal-clip">
+                        <motion.rect
+                          key={serieTempo.length}
+                          x="0"
+                          y="0"
+                          height="100%"
+                          initial={{ width: 0 }}
+                          animate={{ width: '100%' }}
+                          transition={{ duration: 2.5, ease: 'easeInOut' }}
+                        />
+                      </clipPath>
+                    </defs>
+                    <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="hsl(var(--border))" />
+                    <XAxis
+                      dataKey="month"
+                      tickLine={false}
+                      axisLine={false}
+                      dy={4}
+                      tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
+                    />
+                    <YAxis
+                      tickLine={false}
+                      axisLine={false}
+                      width={34}
+                      allowDecimals={false}
+                      tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
+                    />
+                    <Tooltip
+                      cursor={{ stroke: 'hsl(var(--primary))', strokeDasharray: '4 4' }}
+                      contentStyle={{
+                        background: 'hsl(var(--popover))',
+                        border: '1px solid hsl(var(--border))',
+                        borderRadius: 12,
+                        fontSize: 12,
+                        color: 'hsl(var(--popover-foreground))',
+                      }}
+                      formatter={(value) => [`${value} dias`, 'Tempo médio']}
+                      labelFormatter={(label) => `Mês: ${label}`}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="days"
+                      stroke="hsl(var(--primary))"
+                      strokeWidth={2}
+                      fill="url(#adm-tempo-fill)"
+                      dot={{ r: 2.5, fill: 'hsl(var(--primary))', strokeWidth: 0 }}
+                      activeDot={{ r: 4, stroke: 'hsl(var(--card))', strokeWidth: 2 }}
+                      isAnimationActive={false}
+                      clipPath="url(#adm-tempo-reveal-clip)"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </AnimatePresence>
             </div>
           </PanelCard>
 
@@ -786,8 +1062,15 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
                       {item.label}
                     </span>
                     <div className="h-2 w-full overflow-hidden rounded-full bg-muted/40">
+                      {/* Preenchimento: degradê HORIZONTAL verde success → verde
+                          lime, direto dos tokens do design system (`--success` →
+                          `--primary` — o tema "Bombon Lime"; o mesmo par já usado
+                          em `PagamentoBancarioWizard.tsx` e
+                          `FGTSDigitalDashboard.tsx`). Trilho (`bg-muted/40`),
+                          altura (`h-2`), arredondamento (`rounded-full`) e a
+                          largura animada (logo abaixo) seguem intactos. */}
                       <motion.div
-                        className="h-full rounded-full bg-gradient-to-r from-primary/70 to-primary"
+                        className="h-full rounded-full bg-gradient-to-r from-success to-primary"
                         initial={{ width: 0 }}
                         animate={{ width: `${percentual(item.total, maiorFunil)}%` }}
                         transition={{ duration: 0.6, delay: index * 0.05, ease: [0.25, 0.46, 0.45, 0.94] }}
@@ -812,7 +1095,7 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
             icon={Zap}
             title="Ações Prioritárias"
             subtitle="Itens que precisam da sua atenção"
-            action={<PanelAction label="Ver todas" />}
+            action={<PanelAction label="Ver todas" onClick={() => setAcoesAbertas(true)} />}
             compact
             index={6}
             headerStacked
@@ -825,7 +1108,14 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
                 {stats.prioridades.map((item) => (
                   <WidgetRow key={item.id} icon={item.icon} tone={item.tone}>
                     <div className="flex items-baseline gap-2">
-                      <span className={cn('font-display text-base font-medium tabular-nums', TONE_TEXT[item.tone])}>
+                      {/* `shrink-0` no número: com os 22px que a antiga seta
+                          liberava, quem cresce é a label (`truncate` logo ao
+                          lado, agora com a largura útil inteira) e quem cede
+                          em card estreito também é ela — o número nunca é
+                          cortado nem comprimido. */}
+                      <span
+                        className={cn('shrink-0 font-display text-base font-medium tabular-nums', TONE_TEXT[item.tone])}
+                      >
                         {item.total}
                       </span>
                       <span className="truncate text-caption font-body text-foreground">{item.label}</span>
@@ -840,7 +1130,7 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
             icon={Calendar}
             title="Próximas Admissões"
             subtitle="Colaboradores com início em breve"
-            action={<PanelAction label="Ver todas" />}
+            action={<PanelAction label="Ver todas" onClick={() => setProximasAbertas(true)} />}
             compact
             index={7}
             headerStacked
@@ -853,7 +1143,7 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
                 {stats.proximas.map((admissao) => (
                   <div
                     key={String(admissao.id ?? admissao.nome)}
-                    className="flex items-center gap-2 rounded-xl px-2 py-1 transition-colors hover:bg-muted/40"
+                    className={cn('flex items-center gap-2 rounded-xl px-2 py-1 transition-colors', HOVER_LINHA_WIDGET)}
                   >
                     <span className="grid h-7 w-7 shrink-0 place-items-center rounded-xl bg-muted/60 font-display text-[11px] font-medium text-muted-foreground">
                       {iniciais(admissao.nome)}
@@ -886,7 +1176,7 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
             icon={PieChart}
             title="Distribuição por Área"
             subtitle="Total de admissões no período"
-            action={<PanelAction label="Ver detalhes" />}
+            action={<PanelAction label="Ver detalhes" onClick={() => setAreasAbertas(true)} />}
             compact
             index={8}
             headerStacked
@@ -983,7 +1273,7 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
             icon={Gauge}
             title="SLA & Alertas"
             subtitle="Status do processo de admissão"
-            action={<PanelAction label="Ver detalhes" />}
+            action={<PanelAction label="Ver detalhes" onClick={() => setSlaAberto(true)} />}
             compact
             index={9}
             headerStacked
@@ -1040,7 +1330,10 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
                   ].map((item) => (
                     <div
                       key={item.id}
-                      className="flex items-center gap-2 rounded-xl px-2 py-1 transition-colors hover:bg-muted/40"
+                      className={cn(
+                        'flex items-center gap-2 rounded-xl px-2 py-1 transition-colors',
+                        HOVER_LINHA_WIDGET
+                      )}
                     >
                       <div className={cn('grid h-7 w-7 shrink-0 place-items-center rounded-lg', TONE_CHIP[item.tone])}>
                         <item.icon className="h-3.5 w-3.5" />
@@ -1058,20 +1351,37 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
                   ))}
                 </div>
 
-                <div className="mx-2 flex shrink-0 items-center justify-between gap-2 rounded-xl border border-border/40 bg-muted/20 px-2.5 py-2">
-                  <span className="flex items-center gap-1.5 text-caption font-body text-muted-foreground">
-                    <TrendingUp className="h-3.5 w-3.5 text-primary" />
+                {/* Rodapé de RESUMO do card: é o único item de leitura POSITIVA
+                    dos quatro, então é o único pintado com a cor semântica de
+                    sucesso — ícone, rótulo e valor no mesmo tom, sobre o fundo
+                    `success/10` e a borda `success/20`. Nada de glow (o sistema
+                    não usa brilho em superfícies) e nada de verde neon: só o
+                    token `--success` já existente (142 71% 38% no claro /
+                    142 76% 40% no escuro). Contraste medido no browser: 5,4:1
+                    no tema dark — o "contraste alto" pedido — e 2,9:1 no claro,
+                    que é o teto do próprio token quando o texto é verde sobre
+                    tinta verde: `text-success` sobre o card branco já é 3,2:1,
+                    como no "27%" de "Dentro do SLA" e no delta "+x%" daqui.
+                    Geometria intacta: mesmo `rounded-xl`, mesmo `border` de
+                    1px, mesmos `px-2.5 py-2` e o mesmo `mx-2` de antes — mudou
+                    só a tinta, então nem o card, nem a altura (136px) da
+                    viewport de rolagem se movem. */}
+                <div className="mx-2 flex shrink-0 items-center justify-between gap-2 rounded-xl border border-success/20 bg-success/10 px-2.5 py-2">
+                  <span className="flex items-center gap-1.5 text-caption font-body text-success">
+                    {/* O ícone não declara cor própria: herda o `text-success`
+                        do rótulo, para que os dois nunca saiam de sincronia. */}
+                    <TrendingUp className="h-3.5 w-3.5" />
                     Taxa de conclusão
                   </span>
                   <span className="flex items-baseline gap-1.5">
-                    <span className="font-display text-base font-medium leading-none tabular-nums text-foreground">
+                    <span className="font-display text-base font-medium leading-none tabular-nums text-success">
                       {stats.taxaConclusao}%
                     </span>
                     {stats.variacaoConclusao && (
                       <span
                         className={cn(
                           'text-caption font-medium tabular-nums',
-                          stats.variacaoConclusao.value >= 0 ? 'text-success' : 'text-destructive'
+                          stats.variacaoConclusao.value >= 0 ? 'text-success' : 'text-destructive-vivid'
                         )}
                       >
                         {stats.variacaoConclusao.value >= 0 ? '+' : ''}
@@ -1085,6 +1395,45 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
           </PanelCard>
         </div>
       </AnimatePresence>
+
+      {/* ── Modais de detalhe dos quatro widgets ───────────────────────────────
+          Cada atalho do cabeçalho ("Ver todas" / "Ver detalhes") abre o modal
+          correspondente, construído sobre o MESMO `AnimatedCascadeDialog` do
+          popup "Pendências" da área de Colaboradores — overlay, blur, botão X,
+          tamanho, transição e scroll interno idênticos (nada de um segundo
+          padrão de modal). Ficam FORA do `AnimatePresence` das faixas de cards
+          porque não pertencem ao fluxo do layout: eles abrem em portal, por
+          cima da tela, e não empurram nem medem nada dos cards.
+
+          Os dados vêm do `stats` (o mesmo objeto que alimenta os cards), então
+          o número exibido no card e a lista do modal nunca divergem. A única
+          coisa montada aqui, no ato do render, é o destino do "Resolver agora",
+          que depende da navegação (aba interna, `/exames` ou `/esocial`). */}
+      <AcoesPrioritariasDialog
+        open={acoesAbertas}
+        onOpenChange={setAcoesAbertas}
+        itens={stats.prioridadesDetalhe.map((item) => ({ ...item, resolver: resolverDaPrioridade(item.id) }))}
+      />
+      <ProximasAdmissoesDialog
+        open={proximasAbertas}
+        onOpenChange={setProximasAbertas}
+        admissoes={stats.proximasDetalhe}
+      />
+      <DistribuicaoAreaDialog
+        open={areasAbertas}
+        onOpenChange={setAreasAbertas}
+        areas={stats.areasCompletas}
+        total={lista.length}
+      />
+      <SlaAlertasDialog
+        open={slaAberto}
+        onOpenChange={setSlaAberto}
+        dentro={stats.dentroDoSlaDetalhe}
+        risco={stats.emRiscoDetalhe}
+        atrasadas={stats.atrasadasDetalhe}
+        taxaConclusao={stats.taxaConclusao}
+        variacaoConclusao={stats.variacaoConclusao?.value ?? null}
+      />
     </div>
   );
 }

@@ -25,7 +25,10 @@ export default {
         foreground: 'hsl(var(--foreground))',
         primary: { DEFAULT: 'hsl(var(--primary))', foreground: 'hsl(var(--primary-foreground))', glow: 'hsl(var(--primary-glow))' },
         secondary: { DEFAULT: 'hsl(var(--secondary))', foreground: 'hsl(var(--secondary-foreground))' },
-        destructive: { DEFAULT: 'hsl(var(--destructive))', foreground: 'hsl(var(--destructive-foreground))' },
+        // `vivid`: variante VIBRANTE do vermelho, consumida SÓ pela área de Admissões (`text-destructive-vivid`,
+        // `bg-destructive-vivid/15`…) — no dark o `--destructive` do tema fica quase ilegível sobre o navy.
+        // Valores por tema em `src/index.css`. (`primary.glow` é o precedente desse tipo de variante.)
+        destructive: { DEFAULT: 'hsl(var(--destructive))', foreground: 'hsl(var(--destructive-foreground))', vivid: 'hsl(var(--destructive-vivid))' },
         muted: { DEFAULT: 'hsl(var(--muted))', foreground: 'hsl(var(--muted-foreground))' },
         accent: { DEFAULT: 'hsl(var(--accent))', foreground: 'hsl(var(--accent-foreground))' },
         popover: { DEFAULT: 'hsl(var(--popover))', foreground: 'hsl(var(--popover-foreground))' },

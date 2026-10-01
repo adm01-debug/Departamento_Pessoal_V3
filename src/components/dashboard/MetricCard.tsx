@@ -12,7 +12,8 @@ const MotionCard = motion.create(Card);
 export const cardVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: (i: number) => ({
-    opacity: 1, y: 0,
+    opacity: 1,
+    y: 0,
     transition: { delay: i * 0.08, duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] as const },
   }),
 };
@@ -55,6 +56,15 @@ interface MetricCardProps {
   tooltip?: string;
   /** Classes extras no card (ex.: sombra/raio do contexto que o hospeda). */
   className?: string;
+  /**
+   * Área de Admissões: quando ESTE card pinta de vermelho — chip do tom
+   * `destructive` (KPI "Canceladas") e selo de tendência negativa — usa a
+   * variante VIBRANTE do token (`--destructive-vivid`, ver `src/index.css`) em
+   * vez do `--destructive` do tema, que no dark (0 63% 35%) fica com ~2:1 de
+   * contraste sobre o navy e o alerta some no fundo. Default `false`: nenhum
+   * outro call site muda de aparência.
+   */
+  vividRed?: boolean;
 }
 
 const defaultRoutes: Record<string, string> = {
@@ -65,10 +75,27 @@ const defaultRoutes: Record<string, string> = {
 };
 
 export function MetricCard({
-  title, value, rawValue, icon: Icon, trend, description, tone = 'primary', sparkline, index = 0, formatFn, route, tooltip, className,
+  title,
+  value,
+  rawValue,
+  icon: Icon,
+  trend,
+  description,
+  tone = 'primary',
+  sparkline,
+  index = 0,
+  formatFn,
+  route,
+  tooltip,
+  className,
+  vividRed = false,
 }: MetricCardProps) {
   const isPositive = trend && trend.value >= 0;
   const target = route ?? defaultRoutes[title];
+  /** Tinta vermelha do card (chip + tendência) — variante vibrante em Admissões. */
+  const red = vividRed ? 'text-destructive-vivid' : 'text-destructive';
+  const chipTone =
+    tone === 'destructive' && vividRed ? 'bg-destructive-vivid/10 text-destructive-vivid' : toneStyles[tone];
 
   return (
     <MotionCard
@@ -81,15 +108,19 @@ export function MetricCard({
         'group relative h-full overflow-hidden border border-border/60 hover:border-primary/40',
         'transition-all duration-500 rounded-xl',
         target && 'cursor-pointer',
-        className,
+        className
       )}
-      onClick={() => { if (target) window.location.assign(target); }}
+      onClick={() => {
+        if (target) window.location.assign(target);
+      }}
     >
       <CardContent className="relative flex h-full items-center gap-2.5 p-3">
-        <div className={cn(
-          'grid h-9 w-9 shrink-0 place-items-center rounded-full transition-transform duration-300 group-hover:scale-105',
-          toneStyles[tone],
-        )}>
+        <div
+          className={cn(
+            'grid h-9 w-9 shrink-0 place-items-center rounded-full transition-transform duration-300 group-hover:scale-105',
+            chipTone
+          )}
+        >
           <Icon className="h-4 w-4" />
         </div>
 
@@ -109,7 +140,9 @@ export function MetricCard({
             {rawValue !== undefined ? (
               <AnimatedNumber
                 value={rawValue}
-                format={formatFn || (typeof value === 'string' && value.includes('R$') ? (n) => formatCurrency(n) : undefined)}
+                format={
+                  formatFn || (typeof value === 'string' && value.includes('R$') ? (n) => formatCurrency(n) : undefined)
+                }
               />
             ) : (
               value
@@ -128,7 +161,9 @@ export function MetricCard({
                 // mesma chamada, o tailwind-merge derrubava `text-overline` e o
                 // selo de tendência renderizava no tamanho padrão do navegador
                 // (16px) em vez do token de 10px.
-                <span className={`inline-flex items-center gap-0.5 text-xs font-medium tracking-normal leading-snug shrink-0 ${isPositive ? 'text-success' : 'text-destructive'}`}>
+                <span
+                  className={`inline-flex items-center gap-0.5 text-xs font-medium tracking-normal leading-snug shrink-0 ${isPositive ? 'text-success' : red}`}
+                >
                   {isPositive ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
                   {Math.abs(trend.value)}%
                 </span>
@@ -154,8 +189,10 @@ export function MetricCard({
 }
 
 function formatCurrency(value: number): string {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency", currency: "BRL",
-    minimumFractionDigits: 0, maximumFractionDigits: 0,
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(value);
 }

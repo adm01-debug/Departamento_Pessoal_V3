@@ -3,11 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export interface Documento {
   id: string;
@@ -26,7 +22,7 @@ interface AdmissaoChecklistProps {
 
 export function AdmissaoChecklist({ documentos, onValidate, isAdmin = false }: AdmissaoChecklistProps) {
   const total = documentos.length;
-  const concluidos = documentos.filter(d => d.status === 'validado').length;
+  const concluidos = documentos.filter((d) => d.status === 'validado').length;
   const progresso = total > 0 ? (concluidos / total) * 100 : 0;
 
   return (
@@ -42,10 +38,7 @@ export function AdmissaoChecklist({ documentos, onValidate, isAdmin = false }: A
               {concluidos}/{total} Concluídos
             </div>
             <div className="w-20 h-1.5 bg-muted rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-primary transition-all duration-500" 
-                style={{ width: `${progresso}%` }} 
-              />
+              <div className="h-full bg-primary transition-all duration-500" style={{ width: `${progresso}%` }} />
             </div>
           </div>
         </div>
@@ -53,30 +46,34 @@ export function AdmissaoChecklist({ documentos, onValidate, isAdmin = false }: A
       <CardContent className="p-0">
         <div className="divide-y divide-border/5">
           {documentos.map((doc) => (
-            <div 
-              key={doc.id} 
+            <div
+              key={doc.id}
               className={cn(
-                "flex items-center gap-4 p-4 transition-all hover:bg-muted/30",
-                doc.status === 'validado' ? "bg-success/5" : 
-                doc.status === 'rejeitado' ? "bg-destructive/5" : ""
+                'flex items-center gap-4 p-4 transition-all hover:bg-muted/30',
+                doc.status === 'validado' ? 'bg-success/5' : doc.status === 'rejeitado' ? 'bg-destructive-vivid/5' : ''
               )}
             >
               <div className="flex-1 space-y-1">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className={cn(
-                      "text-sm font-body font-medium",
-                      doc.status === 'validado' ? "text-success" : "text-foreground"
-                    )}>
+                    <span
+                      className={cn(
+                        'text-sm font-body font-medium',
+                        doc.status === 'validado' ? 'text-success' : 'text-foreground'
+                      )}
+                    >
                       {doc.nome}
                     </span>
                     {doc.obrigatorio && (
-                      <Badge variant="outline" className="text-[9px] h-4 bg-destructive/5 text-destructive border-destructive/20 uppercase font-medium px-1">
+                      <Badge
+                        variant="outline"
+                        className="text-[9px] h-4 bg-destructive-vivid/5 text-destructive-vivid border-destructive-vivid/20 uppercase font-medium px-1"
+                      >
                         Obrigatório
                       </Badge>
                     )}
                   </div>
-                  
+
                   {isAdmin && doc.status === 'enviado' && (
                     <div className="flex items-center gap-1">
                       <TooltipProvider>
@@ -92,42 +89,46 @@ export function AdmissaoChecklist({ documentos, onValidate, isAdmin = false }: A
                               <CheckCircle2 className="w-4 h-4" />
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent><p className="text-[10px]">Validar Documento</p></TooltipContent>
+                          <TooltipContent>
+                            <p className="text-[10px]">Validar Documento</p>
+                          </TooltipContent>
                         </Tooltip>
-                        
+
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button
                               variant="ghost"
                               size="icon"
                               aria-label="Rejeitar"
-                              className="w-7 h-7 rounded-lg text-destructive hover:bg-destructive/10"
+                              className="w-7 h-7 rounded-lg text-destructive-vivid hover:bg-destructive-vivid/10"
                               onClick={() => onValidate?.(doc.tipo || doc.id, 'rejeitado')}
                             >
                               <XCircle className="w-4 h-4" />
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent><p className="text-[10px]">Rejeitar Documento</p></TooltipContent>
+                          <TooltipContent>
+                            <p className="text-[10px]">Rejeitar Documento</p>
+                          </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
                     </div>
                   )}
                 </div>
-                
+
                 <div className="flex items-center gap-3">
-                  <Badge 
-                    variant="secondary" 
+                  <Badge
+                    variant="secondary"
                     className={cn(
-                      "text-[9px] font-medium uppercase tracking-wider px-1.5 py-0",
-                      doc.status === 'pendente' && "bg-warning/15 text-warning",
-                      doc.status === 'enviado' && "bg-info/15 text-info",
-                      doc.status === 'validado' && "bg-success/15 text-success",
-                      doc.status === 'rejeitado' && "bg-destructive/15 text-destructive"
+                      'text-[9px] font-medium uppercase tracking-wider px-1.5 py-0',
+                      doc.status === 'pendente' && 'bg-warning/15 text-warning',
+                      doc.status === 'enviado' && 'bg-info/15 text-info',
+                      doc.status === 'validado' && 'bg-success/15 text-success',
+                      doc.status === 'rejeitado' && 'bg-destructive-vivid/15 text-destructive-vivid'
                     )}
                   >
                     {doc.status}
                   </Badge>
-                  
+
                   {doc.observacao && (
                     <span className="text-[10px] text-muted-foreground flex items-center gap-1 italic">
                       <AlertCircle className="w-3 h-3" /> {doc.observacao}

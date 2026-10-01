@@ -2,7 +2,26 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
-  motion: { div: ({ children }: any) => <div>{children}</div> },
+  // Mock completo (mesma convenção de `OnboardingDashboard.test.tsx`): o
+  // componente reaproveita `cardVariants` de `MetricCard`
+  // (src/components/dashboard), e esse módulo avalia `motion.create(Card)` já na
+  // CARGA — sem `create` aqui, o import quebra com "motion.create is not a
+  // function". O `AnimatePresence` é o escudo de entrada que envolve a lista.
+  // Os elementos só rendem `children`, sem repassar props de animação ao DOM.
+  motion: {
+    create:
+      (Component: any) =>
+      ({ children, ...rest }: any) => <Component {...rest}>{children}</Component>,
+    div: ({ children }: any) => <div>{children}</div>,
+    span: ({ children }: any) => <span>{children}</span>,
+    li: ({ children }: any) => <li>{children}</li>,
+    circle: () => <circle />,
+    polygon: () => <polygon />,
+    polyline: () => <polyline />,
+  },
+  AnimatePresence: ({ children }: any) => <>{children}</>,
+  useInView: () => true,
+  useReducedMotion: () => false,
 }));
 
 vi.mock('@tanstack/react-query', () => ({
@@ -42,7 +61,9 @@ vi.mock('@/components/ui/card', () => ({
 
 vi.mock('@/components/ui/button', () => ({
   Button: ({ children, onClick, disabled }: any) => (
-    <button onClick={onClick} disabled={disabled}>{children}</button>
+    <button onClick={onClick} disabled={disabled}>
+      {children}
+    </button>
   ),
 }));
 
