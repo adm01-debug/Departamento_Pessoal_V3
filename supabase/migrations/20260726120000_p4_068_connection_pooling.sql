@@ -33,13 +33,11 @@
 CREATE OR REPLACE VIEW admin.v_pgbouncer_stats AS
 SELECT
   datname as database,
-  sum(num_connections) as total_connections,
-  sum(num_active_connections) as active_connections,
-  sum(num_idle_connections) as idle_connections,
-  sum(num_waited) as total_waits,
-  avg(avg_wait) as avg_wait_ms,
-  sum(avg_sent) as bytes_sent,
-  sum(avg_recv) as bytes_received
+  count(*) as total_connections,
+  count(*) FILTER (WHERE state = 'active') as active_connections,
+  count(*) FILTER (WHERE state = 'idle') as idle_connections,
+  count(*) FILTER (WHERE state = 'idle in transaction') as idle_in_tx_connections,
+  count(*) FILTER (WHERE wait_event IS NOT NULL) as waiting_connections
 FROM pg_stat_activity
 WHERE datname = current_database()
 GROUP BY datname;
@@ -106,7 +104,7 @@ $$;
 CREATE OR REPLACE VIEW admin.v_slow_queries AS
 SELECT
   now() - query_start as duration,
-  usename as user,
+  usename as username,
   datname as database,
   state,
   left(query, 200) as query_preview,
