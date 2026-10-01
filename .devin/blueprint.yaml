@@ -1,0 +1,31 @@
+# https://docs.devin.ai/onboard-devin/environment-yaml
+# engines: node 22.x + .npmrc engine-strict; bun.lock está desatualizado — use npm, não bun.
+initialize: |
+  export NVM_DIR="$HOME/.nvm"
+  . "$NVM_DIR/nvm.sh"
+  nvm install 22
+  # actionlint é exigido pelo lint-staged em commits que tocam .github/workflows
+  mkdir -p "$HOME/.local/bin"
+  curl -fsSL "https://github.com/rhysd/actionlint/releases/download/v1.7.8/actionlint_1.7.8_linux_amd64.tar.gz" -o /tmp/actionlint.tgz
+  tar -xzf /tmp/actionlint.tgz -C "$HOME/.local/bin" actionlint
+  rm /tmp/actionlint.tgz
+  echo "PATH=$HOME/.local/bin:$PATH" >> "$ENVRC"
+maintenance: |
+  export NVM_DIR="$HOME/.nvm"
+  . "$NVM_DIR/nvm.sh"
+  nvm use 22
+  npm install
+knowledge:
+  - name: lint
+    contents: |
+      # nvm use 22 && npm run lint:ci  (eslint --max-warnings=728)
+  - name: test
+    contents: |
+      # nvm use 22 && npx vitest run
+  - name: typecheck
+    contents: |
+      # nvm use 22 && npx tsc --noEmit  (TS pinned <6.1.0)
+  - name: notes
+    contents: |
+      # Node 22 obrigatório (engine-strict). npm, não bun (bun.lock desatualizado).
+      # Commits que tocam .github/workflows exigem actionlint no PATH (instalado em ~/.local/bin).
