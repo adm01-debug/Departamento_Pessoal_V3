@@ -192,7 +192,7 @@ CREATE MATERIALIZED VIEW mv_passivo_trabalhista AS
     FROM (
       SELECT
         colaborador_id,
-        GREATEST(dias_direito - dias_descontados, 0) AS pa_dias
+        GREATEST(dias_direito - COALESCE(dias_descontados, 0), 0) AS pa_dias
       FROM periodos_aquisitivos
       WHERE status = 'vencido'
     ) pa
