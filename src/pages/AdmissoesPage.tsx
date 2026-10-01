@@ -2,27 +2,14 @@ import { PageTitle } from '@/components/PageTitle';
 import { useState, useMemo } from 'react';
 import { useAdmissoes } from '@/hooks/useAdmissoes';
 import { PageLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
-import { EmptyList, EmptySearch } from '@/components/ui/empty-state';
 import { NovaAdmissaoDialog } from '@/components/admissoes/NovaAdmissaoDialog';
 import { DetalhesAdmissaoDialog } from '@/components/admissoes/DetalhesAdmissaoDialog';
-import {
-  UserPlus,
-  Search,
-  ExternalLink,
-  Mail,
-  MessageSquare,
-  Send,
-  LayoutDashboard,
-  List,
-  History,
-  Rocket,
-  Kanban,
-} from 'lucide-react';
+import { UserPlus, Search, LayoutDashboard, List, History, Rocket, Kanban } from 'lucide-react';
 import { AdmissoesKanban } from '@/components/admissoes/AdmissoesKanban';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -51,6 +38,7 @@ import {
 } from '@/components/colaboradores/AnimatedDossieTabs';
 import { OnboardingDashboard } from '@/components/admissoes/OnboardingDashboard';
 import OnboardingPageContent from '@/components/admissoes/OnboardingPageContent';
+import { GestaoCandidatos } from '@/components/admissoes/GestaoCandidatos';
 import type { LooseRow } from '@/types/db';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 // MOCK VISUAL — ver src/mocks/admissoesMock.ts
@@ -81,8 +69,6 @@ const etapaGradients: Record<string, string> = {
   esocial: 'bg-primary/15 text-primary border-0',
 };
 
-const etapaFilters = ['todos', ...Object.keys(etapaLabels)] as const;
-
 /**
  * Cards de Admissões com a MESMA animação de entrada dos KPI Cards do Dashboard
  * Executivo (fade + subida de 20px, cadência de 0.08s por card, 0.4s de
@@ -93,17 +79,6 @@ const etapaFilters = ['todos', ...Object.keys(etapaLabels)] as const;
  * nada muda de layout, cor, tamanho ou tipografia.
  */
 const MotionCard = motion.create(Card);
-
-/**
- * Teto do `custom` (posição do card na fila da cascata) — MESMA trava de
- * `ColaboradorDirectoryGrid.tsx`/`DIRECTORY_MAX_STAGGER_INDEX`. A lista de
- * "Gestão de Candidatos" é a base inteira de admissões (20+ cards): com a
- * cadência real do `cardVariants` (0.08s por card) o último card da grade
- * entraria segundos depois do primeiro. Do 6º card em diante todos entram na
- * mesma leva, preservando a leitura esquerda → direita, linha de cima antes da
- * de baixo.
- */
-const GESTAO_MAX_STAGGER_INDEX = 5;
 
 /**
  * Escudo de entrada (ver comentário grande abaixo): a rota já vem de um
@@ -146,8 +121,6 @@ export default function AdmissoesPage() {
   const navigate = useNavigate();
 
   const { admissoes, isLoading } = useAdmissoes();
-  const [search, setSearch] = useState('');
-  const [etapaFilter, setEtapaFilter] = useState('todos');
   // Aba ativa em estado próprio: a tablist animada (AnimatedTabsList) e o
   // `<Tabs>` do Radix que controla o conteúdo leem o MESMO valor — é assim que
   // o Dossiê de Colaboradores mantém lista e painel em sincronia.
@@ -223,31 +196,6 @@ export default function AdmissoesPage() {
     }
   };
 
-  const filtered = useMemo(() => {
-    let result = (admissoes as any[]) || [];
-    if (etapaFilter !== 'todos') {
-      result = result.filter((a: any) => a.etapa === etapaFilter);
-    }
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      result = result.filter(
-        (a: any) =>
-          a.nome?.toLowerCase().includes(q) ||
-          a.cargo?.toLowerCase().includes(q) ||
-          a.departamento?.toLowerCase().includes(q)
-      );
-    }
-    return result;
-  }, [admissoes, search, etapaFilter]);
-
-  const etapaCounts = useMemo(() => {
-    const counts: Record<string, number> = { todos: (admissoes as any[])?.length || 0 };
-    (admissoes as any[])?.forEach((a: any) => {
-      counts[a.etapa] = (counts[a.etapa] || 0) + 1;
-    });
-    return counts;
-  }, [admissoes]);
-
   return (
     <>
       <PageTitle title="Admissões" description="Gestão de processos admissionais" />
@@ -321,171 +269,14 @@ export default function AdmissoesPage() {
           </TabsContent>
 
           <TabsContent value="gestao" className="mt-6 space-y-6">
-            <div className="space-y-3">
-              <div className="relative max-w-sm">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Buscar por nome, cargo ou departamento..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-9 rounded-xl border-border/30 bg-card"
-                />
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {etapaFilters.map((etapa) => {
-                  const count = etapaCounts[etapa] || 0;
-                  const isActive = etapaFilter === etapa;
-                  return (
-                    <button
-                      key={etapa}
-                      onClick={() => setEtapaFilter(etapa)}
-                      className={cn(
-                        'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-caption font-body font-medium transition-all',
-                        isActive
-                          ? 'bg-primary text-primary-foreground shadow-glow-sm'
-                          : 'bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground'
-                      )}
-                    >
-                      {etapa === 'todos' ? 'Todos' : etapaLabels[etapa] || etapa}
-                      {count > 0 && (
-                        <span
-                          className={cn(
-                            'min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-[10px] font-medium',
-                            isActive
-                              ? 'bg-primary-foreground/20 text-primary-foreground'
-                              : 'bg-muted-foreground/15 text-muted-foreground'
-                          )}
-                        >
-                          {count}
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <CardsEntrada>
-              {isLoading ? (
-                <div className="flex justify-center p-8">
-                  <Spinner size="lg" />
-                </div>
-              ) : (admissoes?.length || 0) === 0 ? (
-                <EmptyList entityName="admissão" />
-              ) : filtered.length === 0 ? (
-                <EmptySearch
-                  search={search}
-                  onClear={() => {
-                    setSearch('');
-                    setEtapaFilter('todos');
-                  }}
-                />
-              ) : (
-                <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-                  {filtered.map((admissao: any, i: number) => (
-                    /* Mesma cascata dos KPI Cards do Dashboard Executivo
-                   (`cardVariants`): o `custom` é a POSIÇÃO do card na grade, o
-                   que faz a leitura esquerda → direita, linha de cima antes da
-                   de baixo. O `motion.div` continua exatamente onde estava (é
-                   ele o item da grade e o `<Card>` de dentro segue com altura
-                   natural) — só a animação mudou. O índice é limitado por
-                   `GESTAO_MAX_STAGGER_INDEX` (mesma trava do
-                   `ColaboradorDirectoryGrid.tsx`): a lista inteira passa de 20
-                   cards e, sem o teto, o último entraria segundos depois do
-                   primeiro. Ela é de MONTAGEM: como o
-                   `animate` é um alvo fixo (`visible`), trocar de aba, reabrir
-                   o painel ou re-renderizar por estado não reanima; o que
-                   reanima é a lista mudar de fato (filtro/busca), quando os
-                   cards são outros. */
-                    <motion.div
-                      key={admissao.id}
-                      custom={Math.min(i, GESTAO_MAX_STAGGER_INDEX)}
-                      variants={cardVariants}
-                      initial="hidden"
-                      animate="visible"
-                    >
-                      <Card className="group border border-border/30 hover:border-border/60 shadow-elevated hover:shadow-glow transition-all duration-300 rounded-2xl overflow-hidden">
-                        <div className="h-[2px] bg-gradient-to-r from-primary to-primary-glow opacity-60 group-hover:opacity-100 transition-opacity" />
-                        <CardHeader className="pb-2">
-                          <div className="flex items-center justify-between">
-                            <CardTitle className="text-base font-display">{admissao.nome}</CardTitle>
-                            <Badge
-                              className={etapaGradients[admissao.etapa] || 'bg-muted text-muted-foreground border-0'}
-                            >
-                              {etapaLabels[admissao.etapa] || admissao.etapa}
-                            </Badge>
-                          </div>
-                        </CardHeader>
-                        <CardContent className="text-sm text-muted-foreground space-y-1 font-body">
-                          <p>
-                            <strong className="text-foreground">Cargo:</strong> {admissao.cargo}
-                          </p>
-                          <p>
-                            <strong className="text-foreground">Departamento:</strong> {admissao.departamento}
-                          </p>
-                          <p>
-                            <strong className="text-foreground">Data prevista:</strong>{' '}
-                            {new Date(admissao.data_prevista).toLocaleDateString('pt-BR')}
-                          </p>
-                          <p>
-                            <strong className="text-foreground">Salário:</strong>{' '}
-                            {Number(admissao.salario_proposto).toLocaleString('pt-BR', {
-                              style: 'currency',
-                              currency: 'BRL',
-                            })}
-                          </p>
-                        </CardContent>
-                        <CardFooter className="pt-2 flex gap-2 border-t border-border/10 bg-muted/5">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="flex-1 text-xs rounded-xl hover:bg-primary/10 hover:text-primary"
-                                disabled={sendingLink === admissao.id}
-                              >
-                                {sendingLink === admissao.id ? (
-                                  <Spinner size="sm" className="mr-2" />
-                                ) : (
-                                  <Send className="w-3 h-3 mr-2" />
-                                )}
-                                Enviar Link
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="rounded-xl">
-                              <DropdownMenuItem
-                                onClick={() => handleEnviarLink(admissao)}
-                                className="gap-2 cursor-pointer"
-                              >
-                                <Mail className="w-4 h-4 text-primary" />
-                                Enviar por E-mail
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => handleEnviarWhatsApp(admissao)}
-                                className="gap-2 cursor-pointer"
-                              >
-                                <MessageSquare className="w-4 h-4 text-success" />
-                                Enviar por WhatsApp
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="flex-1 text-xs rounded-xl hover:bg-info/10 hover:text-info"
-                            onClick={() => setSelectedAdmissao(admissao)}
-                          >
-                            <ExternalLink className="w-3 h-3 mr-2" />
-                            Detalhes
-                          </Button>
-                        </CardFooter>
-                      </Card>
-                    </motion.div>
-                  ))}
-                </div>
-              )}
-            </CardsEntrada>
+            <GestaoCandidatos
+              admissoes={admissoes || []}
+              isLoading={isLoading}
+              sendingLink={sendingLink}
+              onEnviarLink={handleEnviarLink}
+              onEnviarWhatsApp={handleEnviarWhatsApp}
+              onOpenDetalhes={(admissao) => setSelectedAdmissao(admissao)}
+            />
           </TabsContent>
 
           <TabsContent value="auditoria" className="mt-6">
