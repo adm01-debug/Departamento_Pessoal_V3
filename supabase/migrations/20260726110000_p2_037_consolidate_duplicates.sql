@@ -21,49 +21,52 @@
 CREATE OR REPLACE VIEW public.v_documentos_unificado AS
 SELECT
   'admissao'::TEXT as contexto,
-  id,
-  empresa_id,
-  admissao_id as referencia_id,
-  tipo_documento as tipo,
+  d.id,
+  a.empresa_id,
+  d.admissao_id as referencia_id,
+  d.tipo,
   NULL::TEXT as titulo,
-  arquivo_url,
+  d.url as arquivo_url,
   NULL::TEXT as conteudo_html,
-  status,
-  created_at,
-  updated_at
-FROM public.documentos_admissao
+  NULL::TEXT as status,
+  d.created_at,
+  NULL::TIMESTAMPTZ as updated_at
+FROM public.documentos_admissao d
+JOIN public.admissoes a ON a.id = d.admissao_id
 
 UNION ALL
 
 SELECT
   'afastamento'::TEXT as contexto,
-  id,
-  empresa_id,
-  afastamento_id as referencia_id,
-  tipo_documento as tipo,
+  d.id,
+  af.empresa_id,
+  d.afastamento_id as referencia_id,
+  d.tipo,
   NULL::TEXT as titulo,
-  arquivo_url,
+  d.url as arquivo_url,
   NULL::TEXT as conteudo_html,
   NULL::TEXT as status,
-  created_at,
-  updated_at
-FROM public.documentos_afastamento
+  d.created_at,
+  NULL::TIMESTAMPTZ as updated_at
+FROM public.documentos_afastamento d
+JOIN public.afastamentos af ON af.id = d.afastamento_id
 
 UNION ALL
 
 SELECT
   'geral'::TEXT as contexto,
-  id,
-  empresa_id,
+  d.id,
+  c.empresa_id,
   NULL::UUID as referencia_id,
-  tipo,
-  titulo,
-  arquivo_url,
-  conteudo_html,
-  status,
-  created_at,
-  updated_at
-FROM public.documentos
+  d.tipo,
+  d.nome as titulo,
+  d.url as arquivo_url,
+  NULL::TEXT as conteudo_html,
+  NULL::TEXT as status,
+  d.created_at,
+  d.updated_at
+FROM public.documentos d
+LEFT JOIN public.colaboradores c ON c.id = d.colaborador_id
 
 UNION ALL
 
@@ -89,7 +92,7 @@ CREATE OR REPLACE FUNCTION public.documento_registrar(
   p_contexto TEXT,
   p_empresa_id UUID,
   p_referencia_id UUID DEFAULT NULL,
-  p_tipo TEXT,
+  p_tipo TEXT DEFAULT 'outro',
   p_titulo TEXT DEFAULT NULL,
   p_arquivo_url TEXT DEFAULT NULL,
   p_conteudo_html TEXT DEFAULT NULL,
@@ -106,14 +109,14 @@ BEGIN
   CASE p_contexto
     WHEN 'admissao' THEN
       INSERT INTO public.documentos_admissao
-        (empresa_id, admissao_id, tipo_documento, arquivo_url, status)
-      VALUES (p_empresa_id, p_referencia_id, p_tipo, p_arquivo_url, p_status)
+        (admissao_id, tipo, url)
+      VALUES (p_referencia_id, p_tipo, p_arquivo_url)
       RETURNING id INTO v_id;
 
     WHEN 'afastamento' THEN
       INSERT INTO public.documentos_afastamento
-        (empresa_id, afastamento_id, tipo_documento, arquivo_url)
-      VALUES (p_empresa_id, p_referencia_id, p_tipo, p_arquivo_url)
+        (afastamento_id, tipo, url)
+      VALUES (p_referencia_id, p_tipo, p_arquivo_url)
       RETURNING id INTO v_id;
 
     WHEN 'sst_regimento' THEN
@@ -124,8 +127,8 @@ BEGIN
 
     ELSE
       INSERT INTO public.documentos
-        (empresa_id, tipo, titulo, arquivo_url, conteudo_html, status)
-      VALUES (p_empresa_id, p_tipo, p_titulo, p_arquivo_url, p_conteudo_html, p_status)
+        (colaborador_id, tipo, nome, url)
+      VALUES (p_referencia_id, p_tipo, p_titulo, p_arquivo_url)
       RETURNING id INTO v_id;
   END CASE;
 
