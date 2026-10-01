@@ -7,13 +7,7 @@
 DO $migration$
 DECLARE
   routine_signature text;
-BEGIN
-  IF to_regprocedure('public.dp_mig_set_search_path(text,boolean)') IS NULL THEN
-    RAISE WARNING 'P1 search_path: helper dp_mig_set_search_path ausente (20260912150000 não aplicada?) — série pulada';
-    RETURN;
-  END IF;
-
-  FOREACH routine_signature IN ARRAY ARRAY[
+  routines text[] := ARRAY[
     'public.dp_assert_rls(text)',
     'public.dp_set_updated_at()',
     'public.dp_soft_delete_trigger()',
@@ -23,8 +17,14 @@ BEGIN
     'public.fill_treinamento_instancias_empresa()',
     'public.gerar_hash_ponto()',
     'public.get_personnel_cost_projection(uuid,integer)'
-  ] LOOP
-    PERFORM public.dp_mig_set_search_path(routine_signature);
+  ];
+BEGIN
+  IF to_regprocedure('public.dp_mig_set_search_path(text,boolean,boolean)') IS NULL THEN
+    RAISE EXCEPTION 'requires routine public.dp_mig_set_search_path (aplique 20260912150000 antes)';
+  END IF;
+
+  FOREACH routine_signature IN ARRAY routines LOOP
+    PERFORM public.dp_mig_set_search_path(routine_signature, false, true);
   END LOOP;
 END
 $migration$;

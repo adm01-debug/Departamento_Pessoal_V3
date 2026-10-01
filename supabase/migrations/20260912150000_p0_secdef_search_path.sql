@@ -10,7 +10,8 @@
 
 CREATE OR REPLACE FUNCTION public.dp_mig_set_search_path(
   p_signature text,
-  p_prosecdef_only boolean DEFAULT false
+  p_prosecdef_only boolean DEFAULT false,
+  p_fail_closed boolean DEFAULT false
 )
 RETURNS void
 LANGUAGE plpgsql
@@ -23,6 +24,9 @@ DECLARE
 BEGIN
   routine_oid := to_regprocedure(p_signature);
   IF routine_oid IS NULL THEN
+    IF p_fail_closed THEN
+      RAISE EXCEPTION 'requires routine %', p_signature;
+    END IF;
     RAISE WARNING 'dp_mig_set_search_path: routine % ausente (drift) — pulada', p_signature;
     RETURN;
   END IF;
@@ -45,16 +49,15 @@ BEGIN
 END
 $fn$;
 
-ALTER FUNCTION public.dp_mig_set_search_path(text, boolean)
+ALTER FUNCTION public.dp_mig_set_search_path(text, boolean, boolean)
   SET search_path = pg_catalog, public, extensions;
 
-REVOKE ALL ON FUNCTION public.dp_mig_set_search_path(text, boolean) FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.dp_mig_set_search_path(text, boolean, boolean) FROM PUBLIC;
 
 DO $migration$
 DECLARE
   routine_signature text;
-BEGIN
-  FOREACH routine_signature IN ARRAY ARRAY[
+  routines text[] := ARRAY[
     'public.dp_audit_log_immutable()',
     'public.dp_audit_log_prevent_future()',
     'public.dp_catalog_pii(text,text,public.dp_pii_sensitivity,text,text,integer)',
@@ -73,8 +76,10 @@ BEGIN
     'public.dp_run_retention(uuid)',
     'public.dp_track_pii_access()',
     'public.user_empresa_id()'
-  ] LOOP
-    PERFORM public.dp_mig_set_search_path(routine_signature, true);
+  ];
+BEGIN
+  FOREACH routine_signature IN ARRAY routines LOOP
+    PERFORM public.dp_mig_set_search_path(routine_signature, true, true);
   END LOOP;
 END
 $migration$;

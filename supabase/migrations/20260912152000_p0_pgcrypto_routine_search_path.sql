@@ -7,13 +7,7 @@
 DO $migration$
 DECLARE
   routine_signature text;
-BEGIN
-  IF to_regprocedure('public.dp_mig_set_search_path(text,boolean)') IS NULL THEN
-    RAISE WARNING 'P0 pgcrypto search_path: helper dp_mig_set_search_path ausente (20260912150000 não aplicada?) — série pulada';
-    RETURN;
-  END IF;
-
-  FOREACH routine_signature IN ARRAY ARRAY[
+  routines text[] := ARRAY[
     'public.assinar_desligamento(uuid,text)',
     'public.assinar_espelho_ponto(uuid,text,inet,text)',
     'public.contrato_assinar_por_token(text,text,text,inet,text)',
@@ -28,8 +22,14 @@ BEGIN
     'public.sst_regimento_assinar(uuid,uuid,text,text)',
     'public.sst_regimento_publicar(uuid)',
     'public.verificar_espelho_ponto(uuid)'
-  ] LOOP
-    PERFORM public.dp_mig_set_search_path(routine_signature);
+  ];
+BEGIN
+  IF to_regprocedure('public.dp_mig_set_search_path(text,boolean,boolean)') IS NULL THEN
+    RAISE EXCEPTION 'requires routine public.dp_mig_set_search_path (aplique 20260912150000 antes)';
+  END IF;
+
+  FOREACH routine_signature IN ARRAY routines LOOP
+    PERFORM public.dp_mig_set_search_path(routine_signature, false, true);
   END LOOP;
 END
 $migration$;
