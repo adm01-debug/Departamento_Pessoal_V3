@@ -48,6 +48,8 @@ $fn$;
 ALTER FUNCTION public.dp_mig_set_search_path(text, boolean)
   SET search_path = pg_catalog, public, extensions;
 
+REVOKE ALL ON FUNCTION public.dp_mig_set_search_path(text, boolean) FROM PUBLIC;
+
 DO $migration$
 DECLARE
   routine_signature text;
