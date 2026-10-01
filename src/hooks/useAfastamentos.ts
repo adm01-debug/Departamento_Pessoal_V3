@@ -6,6 +6,7 @@ import { auditLogger } from '@/utils/auditLogger';
 import { toast } from 'sonner';
 import { useGenericCrud } from './useGenericCrud';
 import { safeErrorMessage } from '@/utils/safeError';
+import type { ProrrogacaoAfastamentoInsert, AfastamentoCrudItem } from '@/types/afastamentos';
 
 // P2-051 (batch 2026-07-26): filtros tipados para o useGenericCrud.
 // Cada chave é opcional e aceita string (filtro livre, id, status, etc.).
@@ -24,7 +25,7 @@ export function useAfastamentos() {
   const empresaId = empresaAtual?.id;
   const [filtros, setFiltros] = useState<AfastamentoFiltros>({});
 
-  const crud = useGenericCrud<unknown>({
+  const crud = useGenericCrud<AfastamentoCrudItem>({
     queryKey: 'afastamentos',
     service: afastamentoService,
     empresaId,
@@ -64,13 +65,13 @@ export function useProrrogacoesAfastamento(afastamentoId?: string) {
   });
 
   const criarMutation = useMutation({
-    mutationFn: (data: any) => afastamentoService.criarProrrogacao(data, empresaAtual!.id),
+    mutationFn: (data: ProrrogacaoAfastamentoInsert) => afastamentoService.criarProrrogacao(data, empresaAtual!.id),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['prorrogacoes-afastamento'] });
       queryClient.invalidateQueries({ queryKey: ['afastamentos'] });
       auditLogger.log({
         tabela: 'prorrogacoes_afastamento',
-        registro_id: (data as any).id,
+        registro_id: data?.id ?? '',
         acao: 'INSERT',
         empresa_id: empresaAtual!.id,
         dados_novos: data,

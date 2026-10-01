@@ -26,11 +26,18 @@ export interface AfastamentoComColaborador extends AfastamentoRow {
   colaborador: ColaboradorResumo | null;
 }
 
+/**
+ * Item de afastamento como visto pelo CRUD/UI: a linha base mais o join
+ * opcional de colaborador retornado por `listar`. Campo de join opcional
+ * para que `BaseService.criar` (que retorna a Row pura) continue atribuível.
+ */
+export type AfastamentoCrudItem = AfastamentoRow & {
+  colaborador?: ColaboradorResumo | null;
+};
+
 /** Prorrogação com o afastamento pai e o colaborador (join do `listarProrrogacoes`). */
 export interface ProrrogacaoComAfastamento extends ProrrogacaoAfastamentoRow {
-  afastamento:
-    | (AfastamentoRow & { colaborador: { nome_completo: string | null } | null })
-    | null;
+  afastamento: (AfastamentoRow & { colaborador: { nome_completo: string | null } | null }) | null;
 }
 
 /** Filtros aceitos pela listagem/exportação de afastamentos. */

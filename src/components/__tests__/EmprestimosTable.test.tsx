@@ -20,7 +20,7 @@ vi.mock('@/components/ui/progress', () => ({
 
 import { EmprestimosTable } from '../descontos/EmprestimosTable';
 
-const fmt = (v: number) => `R$ ${v.toFixed(2)}`;
+const fmt = (v: number | null) => `R$ ${(v ?? 0).toFixed(2)}`;
 
 const MOCK_EMPRESTIMOS = [
   {

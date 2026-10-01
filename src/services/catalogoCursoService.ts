@@ -1,6 +1,27 @@
 import { supabase, type QueryBuilderType } from '@/integrations/supabase/client';
 import type { Insertable, Tables, Updatable } from '@/integrations/supabase/database.types';
 
+/** Linha de trilhas_cursos com o join `curso` retornado por `listarTrilhasCursos`. */
+export type InscricaoComJoins = Tables<'inscricoes_cursos'> & {
+  colaborador: Pick<Tables<'colaboradores'>, 'nome_completo'> | null;
+  curso: Pick<Tables<'catalogo_cursos'>, 'nome'> | null;
+};
+
+export type CertificadoComJoins = Tables<'treinamento_certificados'> & {
+  colaborador: Pick<Tables<'colaboradores'>, 'nome_completo'> | null;
+  curso: Pick<Tables<'catalogo_cursos'>, 'nome' | 'carga_horaria'> | null;
+};
+
+export type TrilhaCursoComCurso = Tables<'trilhas_cursos'> & {
+  curso: Pick<Tables<'catalogo_cursos'>, 'id' | 'nome' | 'carga_horaria'> | null;
+};
+
+/** Instância com os joins `curso` e `instrutor` retornados por `listarInstancias`. */
+export type InstanciaComJoins = Tables<'treinamento_instancias'> & {
+  curso: Pick<Tables<'catalogo_cursos'>, 'nome'> | null;
+  instrutor: Pick<Tables<'colaboradores'>, 'nome_completo'> | null;
+};
+
 const ensure = <T>(d: T | null, e: string): T => {
   if (!d) throw new Error(`Nenhum registro de ${e} retornado.`);
   return d;
@@ -65,7 +86,7 @@ export const catalogoCursoService = {
     const { error } = await supabase.from('trilhas_aprendizado').delete().eq('id', id).eq('empresa_id', empresaId);
     if (error) throw error;
   },
-  async listarInscricoes(empresaId: string, cursoId?: string): Promise<Tables<'inscricoes_cursos'>[]> {
+  async listarInscricoes(empresaId: string, cursoId?: string): Promise<InscricaoComJoins[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     let q = supabase
       .from('inscricoes_cursos')
@@ -75,7 +96,7 @@ export const catalogoCursoService = {
     if (cursoId) q = q.eq('curso_id', cursoId);
     const { data, error } = await q;
     if (error) throw error;
-    return (data as Tables<'inscricoes_cursos'>[] | null) || [];
+    return (data as InscricaoComJoins[] | null) || [];
   },
   async criarInscricao(d: Insertable<'inscricoes_cursos'>): Promise<Tables<'inscricoes_cursos'>> {
     if (!d.empresa_id) throw new Error('empresa_id obrigatório');
@@ -100,14 +121,14 @@ export const catalogoCursoService = {
     return ensure(data, 'inscrição');
   },
 
-  async listarTrilhasCursos(trilhaId: string): Promise<Tables<'trilhas_cursos'>[]> {
+  async listarTrilhasCursos(trilhaId: string): Promise<TrilhaCursoComCurso[]> {
     const { data, error } = await supabase
       .from('trilhas_cursos')
       .select('*, curso:catalogo_cursos(id, nome, carga_horaria)')
       .eq('trilha_id', trilhaId)
       .order('ordem');
     if (error) throw error;
-    return (data as Tables<'trilhas_cursos'>[] | null) || [];
+    return (data as TrilhaCursoComCurso[] | null) || [];
   },
   async vincularCursoTrilha(d: {
     trilha_id: string;
@@ -134,7 +155,7 @@ export const catalogoCursoService = {
   // verdade por TreinamentosPage.tsx, então a página quebraria ao carregar
   // instâncias. RLS já garante o isolamento; não há filtro de aplicação
   // correspondente a repor.
-  async listarInstancias(cursoId?: string): Promise<Tables<'treinamento_instancias'>[]> {
+  async listarInstancias(cursoId?: string): Promise<InstanciaComJoins[]> {
     let q = supabase
       .from('treinamento_instancias')
       .select(
@@ -144,7 +165,7 @@ export const catalogoCursoService = {
     if (cursoId) q = q.eq('curso_id', cursoId);
     const { data, error } = await q;
     if (error) throw error;
-    return (data as Tables<'treinamento_instancias'>[] | null) || [];
+    return (data as InstanciaComJoins[] | null) || [];
   },
   async criarInstancia(d: Insertable<'treinamento_instancias'>): Promise<Tables<'treinamento_instancias'> | null> {
     const { data, error } = await supabase.from('treinamento_instancias').insert(d).select().maybeSingle();
@@ -186,7 +207,7 @@ export const catalogoCursoService = {
   // coluna inexistente; sob `any` compilava, mas a página de treinamentos
   // (TreinamentosPage.tsx) que chama isto de verdade sempre falharia ao
   // carregar certificados.
-  async listarCertificados(empresaId: string, colaboradorId?: string): Promise<Tables<'treinamento_certificados'>[]> {
+  async listarCertificados(empresaId: string, colaboradorId?: string): Promise<CertificadoComJoins[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const cursoIdsQuery = await supabase.from('catalogo_cursos').select('id').eq('empresa_id', empresaId);
     if (cursoIdsQuery.error) throw cursoIdsQuery.error;
@@ -203,7 +224,7 @@ export const catalogoCursoService = {
     if (colaboradorId) q = q.eq('colaborador_id', colaboradorId);
     const { data, error } = await q.order('data_emissao', { ascending: false });
     if (error) throw error;
-    return (data as Tables<'treinamento_certificados'>[] | null) || [];
+    return (data as CertificadoComJoins[] | null) || [];
   },
 
   async getCertificado(id: string): Promise<Tables<'treinamento_certificados'>> {

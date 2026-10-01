@@ -8,25 +8,45 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { StatusBadge } from '@/components/ui/status-badge';
-import {
-  RefreshCw, Key, Plus, ShieldCheck, Globe, Info, FileCheck, AlertCircle, Download,
-} from 'lucide-react';
+import { RefreshCw, Key, Plus, ShieldCheck, Globe, Info, FileCheck, AlertCircle, Download } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatDate, formatDateTime } from '@/utils/format';
 import { toast } from 'sonner';
 import { ESocialEventViewer } from '@/components/esocial/ESocialEventViewer';
+import type { Tables } from '@/integrations/supabase/database.types';
+import type { ESocialEvento, ESocialConfig } from '@/services/esocialService';
+
+type AdicionarCertificadoPayload = Parameters<typeof import('@/services/esocialService').adicionarCertificado>[0];
 
 /* ============================ Logs de Transmissão ============================ */
 
+export interface ESocialLogItem {
+  id: string;
+  evento_id?: string | null;
+  status?: string | null;
+  duracao_ms?: number | null;
+  error_details?: unknown;
+  request_xml?: string | null;
+  response_xml?: string | null;
+  created_at?: string | null;
+}
+
 export interface ESocialLogsTabProps {
-  logs: any[];
-  eventos: any[];
+  logs: ESocialLogItem[];
+  eventos: ESocialEvento[];
   refreshLogs: () => void;
 }
 
@@ -60,10 +80,12 @@ export function ESocialLogsTab({ logs, eventos, refreshLogs }: ESocialLogsTabPro
                   </tr>
                 </thead>
                 <tbody className="divide-y">
-                  {logs.map((log: any) => (
+                  {logs.map((log) => (
                     <tr key={log.id} className="hover:bg-muted/30 transition-colors">
                       <td className="px-4 py-3 font-mono text-xs">{formatDateTime(log.created_at)}</td>
-                      <td className="px-4 py-3 font-bold">{eventos.find((e) => e.id === log.evento_id)?.tipo_evento || 'S-XXXX'}</td>
+                      <td className="px-4 py-3 font-bold">
+                        {eventos.find((e) => e.id === log.evento_id)?.tipo_evento || 'S-XXXX'}
+                      </td>
                       <td className="px-4 py-3">
                         <Badge variant={log.status === 'enviado' ? 'default' : 'destructive'} className="rounded-md">
                           {log.status}
@@ -73,7 +95,9 @@ export function ESocialLogsTab({ logs, eventos, refreshLogs }: ESocialLogsTabPro
                       <td className="px-4 py-3 text-right">
                         <Dialog>
                           <DialogTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-8 rounded-lg">Ver Detalhes</Button>
+                            <Button variant="ghost" size="sm" className="h-8 rounded-lg">
+                              Ver Detalhes
+                            </Button>
                           </DialogTrigger>
                           <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
                             <DialogHeader>
@@ -82,13 +106,17 @@ export function ESocialLogsTab({ logs, eventos, refreshLogs }: ESocialLogsTabPro
                             <div className="space-y-6 pt-4">
                               <div>
                                 <h4 className="text-sm font-bold mb-2">Request XML (Envio)</h4>
-                                <pre className="p-3 bg-muted rounded-lg text-[10px] overflow-x-auto border">{log.request_xml}</pre>
+                                <pre className="p-3 bg-muted rounded-lg text-[10px] overflow-x-auto border">
+                                  {log.request_xml}
+                                </pre>
                               </div>
                               <div>
                                 <h4 className="text-sm font-bold mb-2">Response XML (Retorno Governo)</h4>
-                                <pre className="p-3 bg-muted rounded-lg text-[10px] overflow-x-auto border">{log.response_xml}</pre>
+                                <pre className="p-3 bg-muted rounded-lg text-[10px] overflow-x-auto border">
+                                  {log.response_xml}
+                                </pre>
                               </div>
-                              {log.error_details && (
+                              {log.error_details != null && (
                                 <div>
                                   <h4 className="text-sm font-bold text-destructive mb-2">Detalhes do Erro</h4>
                                   <div className="p-3 bg-destructive/5 rounded-lg border border-destructive/20 text-xs">
@@ -114,16 +142,27 @@ export function ESocialLogsTab({ logs, eventos, refreshLogs }: ESocialLogsTabPro
 
 /* ================================ Config Tab ================================ */
 
+export interface CertificadoItem {
+  id: string;
+  subject?: string | null;
+  ativo?: boolean | null;
+  valid_to?: string | null;
+}
+
 export interface ESocialConfigTabProps {
-  certificados: any[];
-  config: any;
-  empresaAtual: any;
+  certificados: CertificadoItem[];
+  config: ESocialConfig | null | undefined;
+  empresaAtual: { id: string; cnpj?: string | null } | null | undefined;
   salvarConfig: (payload: { empresa_id: string; ambiente: string; certificado_id?: string }) => void;
-  adicionarCertificado: (payload: any) => void;
+  adicionarCertificado: (payload: AdicionarCertificadoPayload) => void;
 }
 
 export function ESocialConfigTab({
-  certificados, config, empresaAtual, salvarConfig, adicionarCertificado,
+  certificados,
+  config,
+  empresaAtual,
+  salvarConfig,
+  adicionarCertificado,
 }: ESocialConfigTabProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -140,16 +179,21 @@ export function ESocialConfigTab({
               Nenhum certificado cadastrado
             </div>
           ) : (
-            certificados.map((c: any) => (
+            certificados.map((c) => (
               <div
                 key={c.id}
                 className={cn(
                   'p-4 rounded-xl border flex items-center justify-between transition-all',
-                  config?.certificado_id === c.id ? 'border-primary bg-primary/5 shadow-xs' : 'border-border/20',
+                  config?.certificado_id === c.id ? 'border-primary bg-primary/5 shadow-xs' : 'border-border/20'
                 )}
               >
                 <div className="flex items-center gap-3">
-                  <div className={cn('p-2 rounded-lg', c.ativo ? 'bg-success/10 text-success' : 'bg-muted text-muted-foreground')}>
+                  <div
+                    className={cn(
+                      'p-2 rounded-lg',
+                      c.ativo ? 'bg-success/10 text-success' : 'bg-muted text-muted-foreground'
+                    )}
+                  >
                     <ShieldCheck className="h-5 w-5" />
                   </div>
                   <div>
@@ -167,7 +211,11 @@ export function ESocialConfigTab({
                       className="text-xs h-7 px-2 rounded-lg"
                       onClick={() =>
                         empresaAtual?.id &&
-                        salvarConfig({ empresa_id: empresaAtual.id, ambiente: config?.ambiente || '2', certificado_id: c.id })
+                        salvarConfig({
+                          empresa_id: empresaAtual.id,
+                          ambiente: config?.ambiente || '2',
+                          certificado_id: c.id,
+                        })
                       }
                     >
                       Usar este
@@ -247,14 +295,18 @@ export function ESocialConfigTab({
             value={config?.ambiente || '2'}
             onValueChange={(v) =>
               empresaAtual?.id &&
-              salvarConfig({ empresa_id: empresaAtual.id, ambiente: v, certificado_id: config?.certificado_id ?? undefined })
+              salvarConfig({
+                empresa_id: empresaAtual.id,
+                ambiente: v,
+                certificado_id: config?.certificado_id ?? undefined,
+              })
             }
             className="grid gap-4"
           >
             <div
               className={cn(
                 'flex items-center justify-between p-4 rounded-xl border transition-all cursor-pointer',
-                config?.ambiente === '2' ? 'border-info bg-info/5' : 'border-border/20',
+                config?.ambiente === '2' ? 'border-info bg-info/5' : 'border-border/20'
               )}
             >
               <div className="flex items-center gap-3">
@@ -264,13 +316,15 @@ export function ESocialConfigTab({
                   <p className="text-xs text-muted-foreground">Ambiente de testes sem valor fiscal</p>
                 </Label>
               </div>
-              <Badge variant="outline" className="text-info border-info/30">Recomendado</Badge>
+              <Badge variant="outline" className="text-info border-info/30">
+                Recomendado
+              </Badge>
             </div>
 
             <div
               className={cn(
                 'flex items-center justify-between p-4 rounded-xl border transition-all cursor-pointer',
-                config?.ambiente === '1' ? 'border-warning bg-warning/5' : 'border-border/20',
+                config?.ambiente === '1' ? 'border-warning bg-warning/5' : 'border-border/20'
               )}
             >
               <div className="flex items-center gap-3">
@@ -280,15 +334,17 @@ export function ESocialConfigTab({
                   <p className="text-xs text-muted-foreground">Envio oficial ao Governo Federal</p>
                 </Label>
               </div>
-              <Badge variant="outline" className="text-warning border-warning/30">Oficial</Badge>
+              <Badge variant="outline" className="text-warning border-warning/30">
+                Oficial
+              </Badge>
             </div>
           </RadioGroup>
 
           <div className="p-4 rounded-xl bg-muted/30 border border-border/10 flex gap-3 text-xs text-muted-foreground">
             <Info className="h-4 w-4 shrink-0 text-primary" />
             <p>
-              A alteração para Produção Real requer que todos os eventos anteriores (S-1000) tenham sido enviados e aceitos no
-              ambiente oficial.
+              A alteração para Produção Real requer que todos os eventos anteriores (S-1000) tenham sido enviados e
+              aceitos no ambiente oficial.
             </p>
           </div>
         </CardContent>
@@ -300,18 +356,27 @@ export function ESocialConfigTab({
 /* =========================== Event Details Dialog =========================== */
 
 export interface ESocialEventDetailsDialogProps {
-  selectedEvento: any | null;
+  selectedEvento: ESocialEvento | null;
   onClose: () => void;
-  statusVariant: (s: string) => string;
-  onExportXML: (evento: any) => void;
-  onValidar: (evento: any) => void;
+  statusVariant: (s: string) => 'success' | 'warning' | 'error' | 'info' | 'default';
+  onExportXML: (evento: ESocialEvento) => void;
+  onValidar: (evento: ESocialEvento) => void;
 }
 
 export function ESocialEventDetailsDialog({
-  selectedEvento, onClose, statusVariant, onExportXML, onValidar,
+  selectedEvento,
+  onClose,
+  statusVariant,
+  onExportXML,
+  onValidar,
 }: ESocialEventDetailsDialogProps) {
   return (
-    <Dialog open={!!selectedEvento} onOpenChange={(o) => { if (!o) onClose(); }}>
+    <Dialog
+      open={!!selectedEvento}
+      onOpenChange={(o) => {
+        if (!o) onClose();
+      }}
+    >
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0 border-border/30 shadow-elevated rounded-2xl">
         <DialogHeader className="p-6 pb-2">
           <div className="flex items-center gap-3 mb-2">
@@ -319,7 +384,9 @@ export function ESocialEventDetailsDialog({
               <FileCheck className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <DialogTitle className="font-display text-xl">{selectedEvento?.tipo_evento} - Detalhes da Transmissão</DialogTitle>
+              <DialogTitle className="font-display text-xl">
+                {selectedEvento?.tipo_evento} - Detalhes da Transmissão
+              </DialogTitle>
               <DialogDescription className="font-body">Histórico de envio e retorno do eSocial</DialogDescription>
             </div>
           </div>
@@ -330,50 +397,66 @@ export function ESocialEventDetailsDialog({
             <Card className="bg-muted/30 border-none shadow-none">
               <CardContent className="p-4 flex flex-col gap-1">
                 <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Status</span>
-                <StatusBadge status={selectedEvento?.status || 'pendente'} variant={statusVariant(selectedEvento?.status || 'pendente') as any} />
+                <StatusBadge
+                  status={selectedEvento?.status || 'pendente'}
+                  variant={statusVariant(selectedEvento?.status || 'pendente')}
+                />
               </CardContent>
             </Card>
             <Card className="bg-muted/30 border-none shadow-none">
               <CardContent className="p-4 flex flex-col gap-1">
-                <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Data de Envio</span>
-                <span className="text-sm font-medium">{formatDate(selectedEvento?.data_envio || selectedEvento?.created_at)}</span>
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                  Data de Envio
+                </span>
+                <span className="text-sm font-medium">
+                  {formatDate(selectedEvento?.data_envio || selectedEvento?.created_at)}
+                </span>
               </CardContent>
             </Card>
             <Card className="bg-muted/30 border-none shadow-none">
               <CardContent className="p-4 flex flex-col gap-1">
-                <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Recibo / Protocolo</span>
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                  Recibo / Protocolo
+                </span>
                 <span className="text-sm font-mono">{selectedEvento?.protocolo || 'Aguardando transmissão'}</span>
               </CardContent>
             </Card>
             <Card className="bg-muted/30 border-none shadow-none">
               <CardContent className="p-4 flex flex-col gap-1">
-                <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Ambiente</span>
-                <Badge variant="outline" className="w-fit flex gap-1 items-center"><Globe className="h-3 w-3" /> Produção</Badge>
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                  Ambiente
+                </span>
+                <Badge variant="outline" className="w-fit flex gap-1 items-center">
+                  <Globe className="h-3 w-3" /> Produção
+                </Badge>
               </CardContent>
             </Card>
           </div>
 
           <div className="space-y-4">
             <div className="p-4 bg-background rounded-xl border shadow-xs">
-              <Label className="text-[11px] uppercase tracking-widest text-muted-foreground mb-3 block">Conteúdo Estruturado</Label>
-              <ESocialEventViewer
-                tipo={selectedEvento?.tipo_evento}
-                dados={selectedEvento?.dados_evento || selectedEvento?.dados || {}}
-              />
+              <Label className="text-[11px] uppercase tracking-widest text-muted-foreground mb-3 block">
+                Conteúdo Estruturado
+              </Label>
+              <ESocialEventViewer tipo={selectedEvento?.tipo_evento ?? ''} dados={selectedEvento?.dados || {}} />
             </div>
 
-            {selectedEvento?.mensagem_erro && (
+            {selectedEvento?.erros && (
               <div className="p-4 rounded-xl border border-destructive/20 bg-destructive/5 text-destructive text-sm font-body">
-                <p className="font-bold flex items-center gap-1.5 mb-1"><AlertCircle className="h-4 w-4" /> Erro na Transmissão:</p>
-                {selectedEvento.mensagem_erro}
+                <p className="font-bold flex items-center gap-1.5 mb-1">
+                  <AlertCircle className="h-4 w-4" /> Erro na Transmissão:
+                </p>
+                <pre className="text-xs whitespace-pre-wrap">{JSON.stringify(selectedEvento.erros, null, 2)}</pre>
               </div>
             )}
 
             <div>
-              <Label className="text-[11px] uppercase tracking-widest text-muted-foreground mb-1.5 block">Dados do Evento (JSON)</Label>
+              <Label className="text-[11px] uppercase tracking-widest text-muted-foreground mb-1.5 block">
+                Dados do Evento (JSON)
+              </Label>
               <div className="relative group/json">
                 <pre className="text-[10px] p-4 bg-muted rounded-xl border font-mono max-h-[300px] overflow-auto">
-                  {JSON.stringify(selectedEvento?.dados_evento || selectedEvento?.dados || {}, null, 2)}
+                  {JSON.stringify(selectedEvento?.dados || {}, null, 2)}
                 </pre>
                 <Button
                   variant="ghost"
@@ -381,9 +464,7 @@ export function ESocialEventDetailsDialog({
                   aria-label="Copiar"
                   className="absolute top-2 right-2 h-7 w-7 opacity-0 group-hover/json:opacity-100 transition-opacity"
                   onClick={() => {
-                    navigator.clipboard.writeText(
-                      JSON.stringify(selectedEvento?.dados_evento || selectedEvento?.dados || {}, null, 2),
-                    );
+                    navigator.clipboard.writeText(JSON.stringify(selectedEvento?.dados || {}, null, 2));
                     toast.success('JSON copiado');
                   }}
                 >
@@ -395,7 +476,9 @@ export function ESocialEventDetailsDialog({
             {selectedEvento?.xml && (
               <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
                 <div className="flex items-center justify-between mb-1.5">
-                  <Label className="text-[11px] uppercase tracking-widest text-muted-foreground block">Conteúdo XML Assinado</Label>
+                  <Label className="text-[11px] uppercase tracking-widest text-muted-foreground block">
+                    Conteúdo XML Assinado
+                  </Label>
                   <Badge variant="outline" className="text-[9px] h-4 gap-1 border-primary/20 bg-primary/5 text-primary">
                     <ShieldCheck className="h-2.5 w-2.5" /> SHA-256 Assinado
                   </Badge>
@@ -411,17 +494,29 @@ export function ESocialEventDetailsDialog({
         <div className="p-4 bg-muted/20 border-t border-border/20 flex justify-between items-center">
           <div className="flex gap-2">
             {selectedEvento?.xml && (
-              <Button variant="outline" size="sm" onClick={() => onExportXML(selectedEvento)} className="rounded-xl h-9 gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onExportXML(selectedEvento)}
+                className="rounded-xl h-9 gap-2"
+              >
                 <Download className="h-4 w-4" /> Exportar XML
               </Button>
             )}
             {selectedEvento?.status === 'pendente' && (
-              <Button variant="outline" size="sm" onClick={() => onValidar(selectedEvento)} className="rounded-xl h-9 gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onValidar(selectedEvento)}
+                className="rounded-xl h-9 gap-2"
+              >
                 <ShieldCheck className="h-4 w-4" /> Validar Agora
               </Button>
             )}
           </div>
-          <Button variant="default" onClick={onClose} className="rounded-xl h-9 px-6">Fechar</Button>
+          <Button variant="default" onClick={onClose} className="rounded-xl h-9 px-6">
+            Fechar
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

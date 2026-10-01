@@ -2,13 +2,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Landmark, Wallet, AlertCircle } from 'lucide-react';
 
 interface EmprestimoItem {
-  status: string;
-  valor_parcela: number;
+  status: string | null;
+  valor_parcela: number | null;
 }
 
 interface AdiantamentoItem {
-  status: string;
-  valor_solicitado: number | string;
+  status: string | null;
+  valor_solicitado: number | string | null;
 }
 
 interface FinancialSummaryCardsProps {
@@ -23,12 +23,21 @@ export function FinancialSummaryCards({ emprestimos, adiantamentos, fmt }: Finan
       <Card className="bg-gradient-to-br from-primary/10 to-transparent border-primary/20">
         <CardHeader className="pb-2">
           <CardDescription>Empréstimos Ativos</CardDescription>
-          <CardTitle className="text-2xl">{emprestimos.filter((e: EmprestimoItem) => e.status === 'ativo').length}</CardTitle>
+          <CardTitle className="text-2xl">
+            {emprestimos.filter((e: EmprestimoItem) => e.status === 'ativo').length}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Landmark className="h-3 w-3" />
-            Total Retido: {fmt(emprestimos.reduce((acc: number, e: EmprestimoItem) => acc + (e.status === 'ativo' ? e.valor_parcela : 0), 0))} / mês
+            Total Retido:{' '}
+            {fmt(
+              emprestimos.reduce(
+                (acc: number, e: EmprestimoItem) => acc + (e.status === 'ativo' ? (e.valor_parcela ?? 0) : 0),
+                0
+              )
+            )}{' '}
+            / mês
           </div>
         </CardContent>
       </Card>
@@ -36,12 +45,19 @@ export function FinancialSummaryCards({ emprestimos, adiantamentos, fmt }: Finan
       <Card className="bg-gradient-to-br from-warning/10 to-transparent border-warning/20">
         <CardHeader className="pb-2">
           <CardDescription>Adiantamentos Pendentes</CardDescription>
-          <CardTitle className="text-2xl">{adiantamentos.filter((a: AdiantamentoItem) => a.status === 'pendente').length}</CardTitle>
+          <CardTitle className="text-2xl">
+            {adiantamentos.filter((a: AdiantamentoItem) => a.status === 'pendente').length}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Wallet className="h-3 w-3" />
-            Valor a Liberar: {fmt(adiantamentos.filter((a: AdiantamentoItem) => a.status === 'pendente').reduce((acc: number, a: AdiantamentoItem) => acc + Number(a.valor_solicitado), 0))}
+            Valor a Liberar:{' '}
+            {fmt(
+              adiantamentos
+                .filter((a: AdiantamentoItem) => a.status === 'pendente')
+                .reduce((acc: number, a: AdiantamentoItem) => acc + Number(a.valor_solicitado ?? 0), 0)
+            )}
           </div>
         </CardContent>
       </Card>

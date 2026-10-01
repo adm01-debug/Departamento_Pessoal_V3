@@ -44,9 +44,10 @@ export interface Empresa {
   updated_at?: string;
 }
 
-
 export interface Colaborador {
   id: string;
+  /** Vínculo com `auth.users` quando o colaborador tem acesso ao sistema. */
+  user_id?: string | null;
   nome_completo: string;
   cpf: string;
   email: string;
@@ -64,7 +65,6 @@ export interface Colaborador {
   observacoes?: string;
   matricula?: string;
 }
-
 
 export interface Ferias {
   id: string;
@@ -127,4 +127,3 @@ export interface Periodo {
   dataInicio: string;
   dataFim: string;
 }
-

@@ -46,6 +46,7 @@ import { DocumentoTimeline } from '@/components/documents/DocumentoTimeline';
 import { DocumentoPreview } from '@/components/documents/DocumentoPreview';
 import { useSearchParams } from 'react-router-dom';
 import { Documento } from '@/types';
+import type { DocumentoListItem } from '@/services/documentoService';
 const BUCKET = 'documentos';
 const TIPOS_DOCUMENTO = [
   'Contrato',
@@ -80,16 +81,16 @@ export default function DocumentosPage() {
     fields?: Record<string, string>;
     raw?: unknown;
   }
-  const [selectedDocForOcr, setSelectedDocForOcr] = useState<unknown>(null);
+  const [selectedDocForOcr, setSelectedDocForOcr] = useState<DocumentoListItem | null>(null);
   const [ocrResult, setOcrResult] = useState<OcrResult | null>(null);
   const [isProcessingOcr, setIsProcessingOcr] = useState(false);
-  const [selectedDocForTimeline, setSelectedDocForTimeline] = useState<Documento | null>(null);
-  const [selectedDocForPreview, setSelectedDocForPreview] = useState<Documento | null>(null);
+  const [selectedDocForTimeline, setSelectedDocForTimeline] = useState<DocumentoListItem | null>(null);
+  const [selectedDocForPreview, setSelectedDocForPreview] = useState<DocumentoListItem | null>(null);
   const { empresaAtual } = useEmpresas();
   const empresaId = empresaAtual?.id;
   const queryClient = useQueryClient();
 
-  const { data: documentos, isLoading } = useQuery<any[]>({
+  const { data: documentos, isLoading } = useQuery({
     queryKey: ['documentos', empresaId, colaboradorFilter],
     queryFn: () =>
       documentoService.listarDocumentos(empresaId!, colaboradorFilter === 'todos' ? undefined : colaboradorFilter),
@@ -105,7 +106,7 @@ export default function DocumentosPage() {
   const colaboradores = colaboradoresRes?.data || [];
 
   const deleteMutation = useMutation({
-    mutationFn: async (doc: any) => {
+    mutationFn: async (doc: DocumentoListItem) => {
       if (!empresaId) throw new Error('Empresa ativa não carregada.');
       if (doc.storage_path || doc.url) {
         const path = doc.storage_path || doc.url.split(`${BUCKET}/`).pop();
@@ -165,16 +166,20 @@ export default function DocumentosPage() {
     }
   };
 
-  const handleOCR = async (doc: any) => {
+  const handleOCR = async (doc: DocumentoListItem) => {
     setSelectedDocForOcr(doc);
     setOcrResult(null);
     setIsProcessingOcr(true);
     try {
       const path = doc.storage_path || doc.url?.split(`${BUCKET}/`).pop();
+      if (!path) {
+        toast.error('Arquivo não encontrado');
+        return;
+      }
       const result = await edgeFunctionsService.ocrDocumento({
         bucket: BUCKET,
         filePath: path,
-        documentType: (doc.tipo || '').toLowerCase() as any,
+        documentType: toOcrDocumentType(doc.tipo),
       });
       setOcrResult(result as OcrResult);
       toast.success('Processamento concluído!');
@@ -185,7 +190,7 @@ export default function DocumentosPage() {
     }
   };
 
-  const handleDownload = async (doc: any) => {
+  const handleDownload = async (doc: DocumentoListItem) => {
     try {
       const path = doc.storage_path || doc.url?.split(`${BUCKET}/`).pop();
       if (!path) {
@@ -207,18 +212,23 @@ export default function DocumentosPage() {
     }
   };
 
-  const handleView = async (doc: any) => {
+  const handleView = async (doc: DocumentoListItem) => {
     setSelectedDocForPreview(doc);
   };
 
-  const formatSize = (bytes: number) => {
+  const toOcrDocumentType = (tipo: string | undefined): 'cpf' | 'rg' | 'ctps' | 'comprovante_endereco' | undefined => {
+    const t = (tipo || '').toLowerCase();
+    return t === 'cpf' || t === 'rg' || t === 'ctps' || t === 'comprovante_endereco' ? t : undefined;
+  };
+
+  const formatSize = (bytes: number | null | undefined) => {
     if (!bytes) return '-';
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
-  const filtered = documentos?.filter((d: any) => {
+  const filtered = documentos?.filter((d) => {
     const searchMatch =
       !search ||
       (d.nome || d.nome_arquivo || '').toLowerCase().includes(search.toLowerCase()) ||
@@ -277,7 +287,7 @@ export default function DocumentosPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="todos">Todos Colaboradores</SelectItem>
-                {colaboradores?.map((c: any) => (
+                {colaboradores?.map((c) => (
                   <SelectItem key={c.id} value={c.id}>
                     {c.nome_completo}
                   </SelectItem>
@@ -324,7 +334,7 @@ export default function DocumentosPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filtered.map((doc: any) => (
+                {filtered.map((doc) => (
                   <TableRow key={doc.id} className="hover:bg-accent/30 transition-colors">
                     <TableCell className="font-body font-medium flex items-center gap-2">
                       <File className="h-4 w-4 text-muted-foreground shrink-0" />
@@ -419,9 +429,8 @@ export default function DocumentosPage() {
                 <DialogTitle className="font-display">Análise de Documento (IA)</DialogTitle>
               </div>
               <DialogDescription>
-                Processando o arquivo{' '}
-                <span className="font-semibold">{(selectedDocForOcr as Documento)?.nome || 'documento'}</span> para
-                extração automática de dados.
+                Processando o arquivo <span className="font-semibold">{selectedDocForOcr?.nome || 'documento'}</span>{' '}
+                para extração automática de dados.
               </DialogDescription>
             </DialogHeader>
 
@@ -440,7 +449,7 @@ export default function DocumentosPage() {
                     <CheckCircle2 className="h-4 w-4" /> Dados Extraídos com Sucesso
                   </div>
                   <div className="space-y-2">
-                    {Object.entries(ocrResult.data || {}).map(([key, value]: [string, any]) => (
+                    {Object.entries(ocrResult.data || {}).map(([key, value]) => (
                       <div key={key} className="flex justify-between border-b border-border/10 py-1.5 text-xs">
                         <span className="text-muted-foreground capitalize">{key.replace(/_/g, ' ')}:</span>
                         <span className="font-mono font-medium">{String(value)}</span>
@@ -531,7 +540,7 @@ export default function DocumentosPage() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="geral">Geral / Empresa</SelectItem>
-                      {colaboradores?.map((c: any) => (
+                      {colaboradores?.map((c) => (
                         <SelectItem key={c.id} value={c.id}>
                           {c.nome_completo}
                         </SelectItem>

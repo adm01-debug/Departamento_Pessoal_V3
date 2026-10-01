@@ -189,7 +189,7 @@ export default function MedidasDisciplinaresPage() {
 
   const filtered = useMemo(
     () =>
-      medidas.filter((m: any) => {
+      medidas.filter((m) => {
         if (tipoFilter && tipoFilter !== 'all' && m.tipo !== tipoFilter) return false;
         if (search) {
           const nome = (m.colaborador?.nome_completo || '').toLowerCase();
@@ -203,13 +203,13 @@ export default function MedidasDisciplinaresPage() {
   const stats = useMemo(
     () => ({
       total: medidas.length,
-      advertenciasVerbais: medidas.filter((m: any) => m.tipo === 'advertencia_verbal').length,
-      advertenciasEscritas: medidas.filter((m: any) => m.tipo === 'advertencia_escrita').length,
-      suspensoes: medidas.filter((m: any) => m.tipo === 'suspensao').length,
-      justaCausa: medidas.filter((m: any) => m.tipo === 'justa_causa').length,
-      pendenteCiencia: medidas.filter((m: any) => !m.colaborador_ciente && !m.recusa_assinatura).length,
-      recusas: medidas.filter((m: any) => m.recusa_assinatura).length,
-      ultimosMeses: medidas.filter((m: any) => {
+      advertenciasVerbais: medidas.filter((m) => m.tipo === 'advertencia_verbal').length,
+      advertenciasEscritas: medidas.filter((m) => m.tipo === 'advertencia_escrita').length,
+      suspensoes: medidas.filter((m) => m.tipo === 'suspensao').length,
+      justaCausa: medidas.filter((m) => m.tipo === 'justa_causa').length,
+      pendenteCiencia: medidas.filter((m) => !m.colaborador_ciente && !m.recusa_assinatura).length,
+      recusas: medidas.filter((m) => m.recusa_assinatura).length,
+      ultimosMeses: medidas.filter((m) => {
         const d = new Date(m.data_ocorrencia);
         const now = new Date();
         return d >= new Date(now.getFullYear(), now.getMonth() - 3, 1);
@@ -271,7 +271,7 @@ export default function MedidasDisciplinaresPage() {
                       <SelectValue placeholder="Selecione o colaborador" />
                     </SelectTrigger>
                     <SelectContent>
-                      {colaboradores.map((c: any) => (
+                      {colaboradores.map((c) => (
                         <SelectItem key={c.id} value={c.id}>
                           {c.nome_completo}
                         </SelectItem>
@@ -518,9 +518,7 @@ export default function MedidasDisciplinaresPage() {
           onOpenChange={(v) => !v && setContestMedida(null)}
           isRHOrAdmin={isRHOrAdmin}
           colaboradorUserId={
-            contestMedida
-              ? ((colaboradores as any[]).find((c: any) => c.id === contestMedida.colaborador_id)?.user_id ?? null)
-              : null
+            contestMedida ? (colaboradores.find((c) => c.id === contestMedida?.colaborador_id)?.user_id ?? null) : null
           }
         />
       </PageLayout>

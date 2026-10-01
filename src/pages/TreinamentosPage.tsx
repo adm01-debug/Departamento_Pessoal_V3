@@ -18,6 +18,7 @@ import { catalogoCursoService, colaboradorService } from '@/services';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { GraduationCap, Plus, BookOpen, Award, Users, Trash2, Link, Calendar, Video } from 'lucide-react';
+import type { Tables } from '@/integrations/supabase/database.types';
 import { motion } from 'framer-motion';
 
 // === Treinamentos Service (tabela treinamentos) ===
@@ -48,7 +49,7 @@ const treinamentosService = {
 };
 
 // Sub-component for managing courses within a trilha
-function TrilhaCursosSection({ trilhaId, cursos }: { trilhaId: string; cursos: any[] }) {
+function TrilhaCursosSection({ trilhaId, cursos }: { trilhaId: string; cursos: Tables<'catalogo_cursos'>[] }) {
   const qc = useQueryClient();
   const [addOpen, setAddOpen] = useState(false);
   const [selCurso, setSelCurso] = useState('');
@@ -83,7 +84,7 @@ function TrilhaCursosSection({ trilhaId, cursos }: { trilhaId: string; cursos: a
     },
   });
 
-  const cursosDisponiveis = cursos.filter((c) => !vinculados.some((v: any) => v.curso_id === c.id));
+  const cursosDisponiveis = cursos.filter((c) => !vinculados.some((v) => v.curso_id === c.id));
 
   return (
     <div className="mt-4 pt-4 border-t border-border/40">
@@ -111,7 +112,7 @@ function TrilhaCursosSection({ trilhaId, cursos }: { trilhaId: string; cursos: a
                     <SelectValue placeholder="Escolha um curso do catálogo" />
                   </SelectTrigger>
                   <SelectContent>
-                    {cursosDisponiveis.map((c: any) => (
+                    {cursosDisponiveis.map((c) => (
                       <SelectItem key={c.id} value={c.id}>
                         {c.nome} ({c.carga_horaria}h)
                       </SelectItem>
@@ -142,7 +143,7 @@ function TrilhaCursosSection({ trilhaId, cursos }: { trilhaId: string; cursos: a
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-          {vinculados.map((v: any, i: number) => (
+          {vinculados.map((v, i: number) => (
             <motion.div
               key={v.id}
               initial={{ opacity: 0, x: -10 }}
@@ -154,10 +155,8 @@ function TrilhaCursosSection({ trilhaId, cursos }: { trilhaId: string; cursos: a
                   {i + 1}
                 </div>
                 <div>
-                  <p className="text-sm font-semibold truncate max-w-[150px]">{(v as any).curso?.nome || 'Curso'}</p>
-                  <p className="text-[10px] text-muted-foreground">
-                    {(v as any).curso?.carga_horaria || 0} horas de conteúdo
-                  </p>
+                  <p className="text-sm font-semibold truncate max-w-[150px]">{v.curso?.nome || 'Curso'}</p>
+                  <p className="text-[10px] text-muted-foreground">{v.curso?.carga_horaria || 0} horas de conteúdo</p>
                 </div>
               </div>
               <Button
@@ -351,7 +350,7 @@ export default function TreinamentosPage() {
         <Card>
           <CardContent className="pt-4 text-center">
             <Award className="h-6 w-6 mx-auto text-success mb-1" />
-            <p className="text-2xl font-bold">{cursos.filter((c: any) => c.obrigatorio).length}</p>
+            <p className="text-2xl font-bold">{cursos.filter((c) => c.obrigatorio).length}</p>
             <p className="text-xs text-muted-foreground">Obrigatórios</p>
           </CardContent>
         </Card>
@@ -467,7 +466,7 @@ export default function TreinamentosPage() {
                         </TableCell>
                       </TableRow>
                     ) : (
-                      treinamentos.map((t: any) => (
+                      treinamentos.map((t) => (
                         <TableRow key={t.id}>
                           <TableCell className="font-medium">{t.nome}</TableCell>
                           <TableCell>{t.data || '—'}</TableCell>
@@ -515,7 +514,7 @@ export default function TreinamentosPage() {
                         </TableCell>
                       </TableRow>
                     ) : (
-                      certificados.map((cert: any) => (
+                      certificados.map((cert) => (
                         <TableRow key={cert.id} className="hover:bg-muted/30">
                           <TableCell className="font-medium">{cert.colaborador?.nome_completo}</TableCell>
                           <TableCell>{cert.curso?.nome}</TableCell>
@@ -660,7 +659,7 @@ export default function TreinamentosPage() {
                         </TableCell>
                       </TableRow>
                     ) : (
-                      cursos.map((c: any) => (
+                      cursos.map((c) => (
                         <TableRow key={c.id}>
                           <TableCell className="font-medium">{c.nome}</TableCell>
                           <TableCell>{c.categoria || '—'}</TableCell>
@@ -792,7 +791,7 @@ export default function TreinamentosPage() {
                           <SelectValue placeholder="Selecione" />
                         </SelectTrigger>
                         <SelectContent>
-                          {colaboradores.map((c: any) => (
+                          {colaboradores.map((c) => (
                             <SelectItem key={c.id} value={c.id}>
                               {c.nome_completo}
                             </SelectItem>
@@ -810,7 +809,7 @@ export default function TreinamentosPage() {
                           <SelectValue placeholder="Selecione" />
                         </SelectTrigger>
                         <SelectContent>
-                          {cursos.map((c: any) => (
+                          {cursos.map((c) => (
                             <SelectItem key={c.id} value={c.id}>
                               {c.nome}
                             </SelectItem>
@@ -855,7 +854,7 @@ export default function TreinamentosPage() {
                         </TableCell>
                       </TableRow>
                     ) : (
-                      inscricoes.map((i: any) => (
+                      inscricoes.map((i) => (
                         <TableRow key={i.id}>
                           <TableCell>{i.colaborador?.nome_completo || '—'}</TableCell>
                           <TableCell>{i.curso?.nome || '—'}</TableCell>
@@ -889,7 +888,7 @@ export default function TreinamentosPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {instancias.map((i: any) => (
+                    {instancias.map((i) => (
                       <TableRow key={i.id}>
                         <TableCell className="font-medium">{i.curso?.nome || '—'}</TableCell>
                         <TableCell>{i.instrutor?.nome_completo || '—'}</TableCell>
