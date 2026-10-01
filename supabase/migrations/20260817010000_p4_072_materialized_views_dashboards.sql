@@ -99,16 +99,8 @@ WITH NO DATA;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_turnover_pk
   ON mv_kpi_turnover_absenteismo(empresa_id, mes);
 
--- RLS: view materializada ainda precisa de security_invoker
+-- security_invoker não é suportado em MATERIALIZED VIEW (nem em PG17): omitido em mv_kpi_turnover_absenteismo.
 -- (dados de salário são agregados, não individuais)
-DO $guard$
-BEGIN
-  IF current_setting('server_version_num')::int >= 170000 THEN
-    EXECUTE $sql$ALTER MATERIALIZED VIEW mv_kpi_turnover_absenteismo SET (security_invoker = true)$sql$;
-  ELSE
-    RAISE NOTICE 'security_invoker em MV requer PG17+; ignorado em mv_kpi_turnover_absenteismo';
-  END IF;
-END $guard$;
 
 
 -- ── 2. MV: Dashboard de headcount + department breakdown ───────
@@ -157,14 +149,7 @@ WITH NO DATA;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_headcount_pk
   ON mv_dashboard_headcount(empresa_id, mes);
 
-DO $guard$
-BEGIN
-  IF current_setting('server_version_num')::int >= 170000 THEN
-    EXECUTE $sql$ALTER MATERIALIZED VIEW mv_dashboard_headcount SET (security_invoker = true)$sql$;
-  ELSE
-    RAISE NOTICE 'security_invoker em MV requer PG17+; ignorado em mv_dashboard_headcount';
-  END IF;
-END $guard$;
+-- security_invoker não é suportado em MATERIALIZED VIEW (nem em PG17): omitido em mv_dashboard_headcount.
 
 
 -- ── 3. MV: Passivo trabalhista consolidado ─────────────────────
@@ -241,14 +226,7 @@ WITH NO DATA;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_passivo_pk
   ON mv_passivo_trabalhista(empresa_id);
 
-DO $guard$
-BEGIN
-  IF current_setting('server_version_num')::int >= 170000 THEN
-    EXECUTE $sql$ALTER MATERIALIZED VIEW mv_passivo_trabalhista SET (security_invoker = true)$sql$;
-  ELSE
-    RAISE NOTICE 'security_invoker em MV requer PG17+; ignorado em mv_passivo_trabalhista';
-  END IF;
-END $guard$;
+-- security_invoker não é suportado em MATERIALIZED VIEW (nem em PG17): omitido em mv_passivo_trabalhista.
 
 
 -- ── 4. MV: eSocial — status de envio por evento ─────────────
@@ -276,14 +254,7 @@ WITH NO DATA;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_esocial_pk
   ON mv_esocial_status(empresa_id, competencia, tipo_evento, status);
 
-DO $guard$
-BEGIN
-  IF current_setting('server_version_num')::int >= 170000 THEN
-    EXECUTE $sql$ALTER MATERIALIZED VIEW mv_esocial_status SET (security_invoker = true)$sql$;
-  ELSE
-    RAISE NOTICE 'security_invoker em MV requer PG17+; ignorado em mv_esocial_status';
-  END IF;
-END $guard$;
+-- security_invoker não é suportado em MATERIALIZED VIEW (nem em PG17): omitido em mv_esocial_status.
 
 
 -- ── TABELA DE FERIADOS BRASILEIROS (P4-072) ───────────────────
@@ -391,14 +362,7 @@ WITH NO DATA;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_absenteismo_pk
   ON mv_absenteismo_mensal(empresa_id, mes);
 
-DO $guard$
-BEGIN
-  IF current_setting('server_version_num')::int >= 170000 THEN
-    EXECUTE $sql$ALTER MATERIALIZED VIEW mv_absenteismo_mensal SET (security_invoker = true)$sql$;
-  ELSE
-    RAISE NOTICE 'security_invoker em MV requer PG17+; ignorado em mv_absenteismo_mensal';
-  END IF;
-END $guard$;
+-- security_invoker não é suportado em MATERIALIZED VIEW (nem em PG17): omitido em mv_absenteismo_mensal.
 
 
 -- ── REFRESH INICIAL (síncrono — primeira criação) ──────────────
