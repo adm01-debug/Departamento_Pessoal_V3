@@ -40,6 +40,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { OnboardingDashboard } from '@/components/admissoes/OnboardingDashboard';
 import OnboardingPageContent from '@/components/admissoes/OnboardingPageContent';
 import type { LooseRow } from '@/types/db';
+import type { Tables } from '@/integrations/supabase/database.types';
 
 const etapaLabels: Record<string, string> = {
   solicitacao: 'Solicitação',
@@ -74,7 +75,7 @@ export default function AdmissoesPage() {
   const [sendingLink, setSendingLink] = useState<string | null>(null);
   const [selectedAdmissao, setSelectedAdmissao] = useState<LooseRow<'admissoes'> | null>(null);
 
-  const handleEnviarLink = async (admissao: any) => {
+  const handleEnviarLink = async (admissao: Tables<'admissoes'>) => {
     if (!admissao.email) {
       toast.error('Candidato sem e-mail cadastrado');
       return;
@@ -90,7 +91,7 @@ export default function AdmissoesPage() {
     }
   };
 
-  const handleEnviarWhatsApp = async (admissao: any) => {
+  const handleEnviarWhatsApp = async (admissao: Tables<'admissoes'>) => {
     if (!admissao.telefone) {
       toast.error('Candidato sem telefone cadastrado');
       return;
@@ -109,14 +110,14 @@ export default function AdmissoesPage() {
   };
 
   const filtered = useMemo(() => {
-    let result = (admissoes as any[]) || [];
+    let result = admissoes;
     if (etapaFilter !== 'todos') {
-      result = result.filter((a: any) => a.etapa === etapaFilter);
+      result = result.filter((a) => a.etapa === etapaFilter);
     }
     if (search.trim()) {
       const q = search.toLowerCase();
       result = result.filter(
-        (a: any) =>
+        (a) =>
           a.nome?.toLowerCase().includes(q) ||
           a.cargo?.toLowerCase().includes(q) ||
           a.departamento?.toLowerCase().includes(q)
@@ -126,8 +127,8 @@ export default function AdmissoesPage() {
   }, [admissoes, search, etapaFilter]);
 
   const etapaCounts = useMemo(() => {
-    const counts: Record<string, number> = { todos: (admissoes as any[])?.length || 0 };
-    (admissoes as any[])?.forEach((a: any) => {
+    const counts: Record<string, number> = { todos: admissoes.length };
+    admissoes.forEach((a) => {
       counts[a.etapa] = (counts[a.etapa] || 0) + 1;
     });
     return counts;
@@ -168,7 +169,7 @@ export default function AdmissoesPage() {
                 <Spinner size="lg" />
               </div>
             ) : (
-              <AdmissoesKanban admissoes={(admissoes as any[]) || []} />
+              <AdmissoesKanban admissoes={admissoes} />
             )}
           </TabsContent>
 
@@ -247,7 +248,7 @@ export default function AdmissoesPage() {
               />
             ) : (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {filtered.map((admissao: any, i: number) => (
+                {filtered.map((admissao, i) => (
                   <motion.div
                     key={admissao.id}
                     initial={{ opacity: 0, y: 15 }}
