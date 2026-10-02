@@ -227,7 +227,9 @@ BEGIN
   IF v_token IS NULL THEN
     RAISE EXCEPTION 'token invalido ou expirado' USING ERRCODE = 'P0002';
   END IF;
-  IF _url IS NULL OR _url NOT LIKE 'admissao_%/%' THEN
+  -- O path precisa pertencer à admissão do próprio token — sem isso um token
+  -- válido poderia registrar (e depois vincular) path de outra admissão.
+  IF _url IS NULL OR _url NOT LIKE 'admissao_' || v_token.admissao_id::text || '/%' THEN
     RAISE EXCEPTION 'path de documento fora do escopo da admissao' USING ERRCODE = '22023';
   END IF;
 

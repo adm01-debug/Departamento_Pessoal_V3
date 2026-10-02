@@ -47,14 +47,23 @@ const PII_KEY =
 /**
  * Mascara recursivamente valores de chaves sensíveis em payloads
  * arbitrários (ex.: dados_novos da trilha de auditoria). Não altera
- * estrutura nem valores de chaves não sensíveis.
+ * estrutura nem valores de chaves não sensíveis. A proteção contra
+ * estruturas cíclicas usa WeakSet — não há limite de profundidade, então
+ * chaves sensíveis são mascaradas em qualquer nível de aninhamento.
  */
-export function maskPiiDeep(value: unknown, depth = 0): unknown {
-  if (depth > 8 || value === null || typeof value !== 'object') return value;
-  if (Array.isArray(value)) return value.map((v) => maskPiiDeep(v, depth + 1));
+export function maskPiiDeep(value: unknown, seen: WeakSet<object> = new WeakSet()): unknown {
+  if (value === null || typeof value !== 'object') return value;
+  if (seen.has(value)) return MASK_CHAR.repeat(4);
+  seen.add(value);
+  if (Array.isArray(value)) {
+    const arr = value.map((v) => maskPiiDeep(v, seen));
+    seen.delete(value); // libera refs compartilhadas (não-cíclicas) entre irmãos
+    return arr;
+  }
   const out: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
-    out[k] = PII_KEY.test(k) && v != null ? MASK_CHAR.repeat(4) : maskPiiDeep(v, depth + 1);
+    out[k] = PII_KEY.test(k) && v != null ? MASK_CHAR.repeat(4) : maskPiiDeep(v, seen);
   }
+  seen.delete(value);
   return out;
 }

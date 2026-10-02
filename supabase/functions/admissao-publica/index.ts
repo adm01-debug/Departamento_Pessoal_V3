@@ -1,6 +1,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders, createErrorResponse, getCorsHeaders, handlePreflight, enforceOrigin } from '../_shared/contract.ts';
+import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
 
@@ -27,6 +28,8 @@ serve(async (req: Request): Promise<Response> => {
   if (preflight) return preflight;
   const originDenied = enforceOrigin(req);
   if (originDenied) return originDenied;
+  const csrf = await verifyCsrf(req.clone());
+  if (!csrf.ok) return csrf.response;
   if (req.method !== 'POST') return createErrorResponse('Method not allowed', 405, 'METHOD_NOT_ALLOWED', undefined, req);
 
   try {
@@ -101,6 +104,12 @@ serve(async (req: Request): Promise<Response> => {
 
     if (rpcErr) {
       await captureException(rpcErr, { fn: 'admissao-publica', step: 'registrar_documento' });
+      // Não deixa arquivo órfão no bucket: se o registro falhou, o objeto
+      // fica sem referência e cada retry criaria outro.
+      const { error: cleanupErr } = await supabase.storage.from(BUCKET).remove([storagePath]);
+      if (cleanupErr) {
+        await captureException(cleanupErr, { fn: 'admissao-publica', step: 'cleanup_orphan', path: storagePath });
+      }
       return createErrorResponse('Documento enviado, mas falhou ao registrar', 500, 'REGISTER_FAILED', undefined, req);
     }
 

@@ -179,6 +179,9 @@ Deno.test("bridge auth: apenas RPCs públicas por token dispensam sessão", () =
   ok(requiresAuthenticatedBridgeSession("rpc"), "RPC sem nome exige sessão");
   const expectedPublic = [
     "get_admissao_por_token",
+    "admissao_salvar_dados",
+    "admissao_marcar_documentos",
+    "admissao_assinar_contrato",
     "contrato_consultar_por_token",
     "contrato_preview_url_por_token",
     "contrato_assinar_por_token",
