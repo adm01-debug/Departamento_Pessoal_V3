@@ -1,4 +1,4 @@
-# ADR 001: Padrão Result e Resiliência em Serviços
+# ADR 0006: Padrão Result e Resiliência em Serviços
 
 ## Status
 

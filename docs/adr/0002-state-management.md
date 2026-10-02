@@ -1,4 +1,4 @@
-# ADR 002: Gerenciamento de Estado
+# ADR 0002: Gerenciamento de Estado
 
 ## Status
 

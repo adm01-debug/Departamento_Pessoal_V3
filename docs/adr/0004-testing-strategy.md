@@ -1,4 +1,4 @@
-# ADR 004: Estratégia de Testes
+# ADR 0004: Estratégia de Testes
 
 ## Status
 

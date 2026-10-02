@@ -1,4 +1,4 @@
-# ADR 003: Autenticação
+# ADR 0003: Autenticação
 
 ## Status
 
