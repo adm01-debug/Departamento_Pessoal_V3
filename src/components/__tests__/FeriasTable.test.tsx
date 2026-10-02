@@ -33,10 +33,13 @@ vi.mock('@/components/ui/dialog', () => ({
 }));
 
 import { FeriasTable } from '../ferias/FeriasTable';
+import type { Ferias } from '@/types/entities';
 
-const MOCK_DATA = [
+const MOCK_DATA: Ferias[] = [
   {
     id: 'fer-001',
+    colaborador_id: 'c1',
+    empresa_id: 'e1',
     data_inicio: '2026-12-01',
     data_fim: '2026-12-30',
     dias_gozo: 30,
@@ -45,11 +48,10 @@ const MOCK_DATA = [
     cancelado: false,
     abono_pecuniario: false,
     adiantamento_13: false,
-    pagamento_confirmado: false,
     colaborador: {
       nome_completo: 'João Silva',
       foto_url: null,
-      cargo: { nome: 'Analista' },
+      cargo: 'Analista',
     },
   },
 ];

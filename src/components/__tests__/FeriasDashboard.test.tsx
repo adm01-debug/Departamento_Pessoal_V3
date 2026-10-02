@@ -16,13 +16,16 @@ vi.mock('recharts', () => ({
 }));
 
 import { FeriasDashboard } from '../ferias/FeriasDashboard';
+import type { Ferias } from '@/types/entities';
 
 const FUTURE_DATE = '2027-01-15';
 const FUTURE_END = '2027-02-14';
 
-const MOCK_DATA = [
+const MOCK_DATA: Ferias[] = [
   {
     id: 'f1',
+    colaborador_id: 'c1',
+    empresa_id: 'e1',
     data_inicio: FUTURE_DATE,
     data_fim: FUTURE_END,
     status: 'aprovada',
@@ -31,6 +34,8 @@ const MOCK_DATA = [
   },
   {
     id: 'f2',
+    colaborador_id: 'c2',
+    empresa_id: 'e1',
     data_inicio: '2026-03-01',
     data_fim: '2026-03-30',
     status: 'concluida',

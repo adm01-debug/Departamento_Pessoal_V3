@@ -64,17 +64,16 @@ class FeriasService extends BaseService<Ferias> {
     const { page = 1, limit = 20, cursor, search, status } = params || {};
     const effectiveLimit = limit + 1; // Pegamos 1 a mais para saber se há mais páginas
 
-    let query = this.getQuery().select(
-      '*, colaborador:colaboradores!ferias_colaborador_id_fkey(nome_completo, foto_url)',
-      { count: 'exact' }
-    );
+    let query = this.getQuery().select('*, colaborador:colaboradores!inner(nome_completo, foto_url)', {
+      count: 'exact',
+    });
 
     query = query.eq('empresa_id', empresaId);
     if (status && status !== 'all') query = query.eq('status', status);
 
     if (search && search.length >= 3) {
       const escapedSearch = search.replace(/[%_\\]/g, '\\$&');
-      query = query.ilike('colaborador_nome', `%${escapedSearch}%`);
+      query = query.ilike('colaboradores.nome_completo', `%${escapedSearch}%`);
     }
 
     // Cursor-based pagination (preferido) ou offset-based (backward compatibility)

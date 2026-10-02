@@ -27,17 +27,23 @@ vi.mock('@/utils/feriasPDF', () => ({
 }));
 
 import { FeriasRelatorioDialog } from '../ferias/FeriasRelatorioDialog';
+import type { Ferias } from '@/types/entities';
+import type { FeriasKpiStats } from '@/utils/feriasPDF';
 
-const MOCK_STATS = {
+const MOCK_STATS: FeriasKpiStats = {
   total: 10,
   aprovadas: 5,
   pendentes: 3,
   vencidas: 2,
+  emGozo: 1,
+  abonoPecuniario: 0,
 };
 
-const MOCK_DATA = [
+const MOCK_DATA: Ferias[] = [
   {
     id: 'fer-001',
+    colaborador_id: 'c1',
+    empresa_id: 'e1',
     data_inicio: '2026-06-01',
     data_fim: '2026-06-30',
     status: 'aprovada',
@@ -45,6 +51,8 @@ const MOCK_DATA = [
   },
   {
     id: 'fer-002',
+    colaborador_id: 'c2',
+    empresa_id: 'e1',
     data_inicio: '2026-05-01',
     data_fim: '2026-05-20',
     status: 'pendente',

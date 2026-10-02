@@ -24,11 +24,11 @@ export function useFeriasAprovacao() {
         titulo: 'Férias Aprovadas pelo Gestor',
         mensagem: 'Uma solicitação de férias foi aprovada pelo gestor e agora aguarda o RH.',
         entidade_tipo: 'ferias',
-        entidade_id: id
+        entidade_id: id,
       });
       toast.success('Aprovação do gestor registrada com sucesso');
     },
-    onError: (error: any) => toast.error(safeErrorMessage(error, 'Erro ao aprovar férias.')),
+    onError: (error) => toast.error(safeErrorMessage(error, 'Erro ao aprovar férias.')),
   });
 
   const aprovarRH = useMutation({
@@ -40,11 +40,11 @@ export function useFeriasAprovacao() {
         titulo: 'Férias Confirmadas!',
         mensagem: 'O RH aprovou as férias. O processo está concluído.',
         entidade_tipo: 'ferias',
-        entidade_id: id
+        entidade_id: id,
       });
       toast.success('Aprovação do RH registrada. Férias confirmadas!');
     },
-    onError: (error: any) => toast.error(safeErrorMessage(error, 'Erro ao aprovar férias.')),
+    onError: (error) => toast.error(safeErrorMessage(error, 'Erro ao aprovar férias.')),
   });
 
   const enviarContabilidade = useMutation({
@@ -53,7 +53,7 @@ export function useFeriasAprovacao() {
       invalidate();
       toast.success('Solicitação enviada para a contabilidade');
     },
-    onError: (error: any) => toast.error(safeErrorMessage(error, 'Erro ao enviar para contabilidade.')),
+    onError: (error) => toast.error(safeErrorMessage(error, 'Erro ao enviar para contabilidade.')),
   });
 
   const rejeitar = useMutation({
@@ -65,11 +65,11 @@ export function useFeriasAprovacao() {
         titulo: 'Férias Rejeitadas',
         mensagem: 'Uma solicitação de férias foi rejeitada.',
         entidade_tipo: 'ferias',
-        entidade_id: id
+        entidade_id: id,
       });
       toast.warning('Solicitação de férias rejeitada');
     },
-    onError: (error: any) => toast.error(safeErrorMessage(error, 'Erro ao rejeitar férias.')),
+    onError: (error) => toast.error(safeErrorMessage(error, 'Erro ao rejeitar férias.')),
   });
 
   const cancelar = useMutation({
@@ -78,7 +78,7 @@ export function useFeriasAprovacao() {
       invalidate();
       toast.info('Solicitação de férias cancelada');
     },
-    onError: (error: any) => toast.error(safeErrorMessage(error, 'Erro ao cancelar férias.')),
+    onError: (error) => toast.error(safeErrorMessage(error, 'Erro ao cancelar férias.')),
   });
 
   return {
@@ -87,11 +87,11 @@ export function useFeriasAprovacao() {
     enviarContabilidade: enviarContabilidade.mutateAsync,
     rejeitar: rejeitar.mutateAsync,
     cancelar: cancelar.mutateAsync,
-    isLoading: 
-      aprovarGestor.isPending || 
-      aprovarRH.isPending || 
-      enviarContabilidade.isPending || 
-      rejeitar.isPending || 
+    isLoading:
+      aprovarGestor.isPending ||
+      aprovarRH.isPending ||
+      enviarContabilidade.isPending ||
+      rejeitar.isPending ||
       cancelar.isPending,
   };
 }

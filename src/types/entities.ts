@@ -91,10 +91,21 @@ export interface Ferias {
   aprovado_rh?: boolean | null;
   aprovado_gestor?: boolean | null;
   abono_pecuniario?: boolean | null;
+  adiantamento_13?: boolean | null;
+  adiantamento_13o?: boolean | null;
+  aviso_pdf_url?: string | null;
+  enviado_contabilidade?: boolean | null;
+  cancelado?: boolean | null;
+  pagamento_confirmado_em?: string | null;
+  dias_gozo?: number;
+  dias_ferias?: number | null;
   colaborador?: {
     nome_completo: string;
-    foto_url: string | null;
-  };
+    foto_url?: string | null;
+    cpf?: string;
+    cargo?: string | null;
+    departamento?: string | null;
+  } | null;
 }
 
 export interface Documento {

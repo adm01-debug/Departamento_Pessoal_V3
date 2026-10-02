@@ -20,7 +20,9 @@ vi.mock('@/components/ui/dialog', () => ({
 
 vi.mock('@/components/ui/button', () => ({
   Button: ({ children, disabled, onClick }: any) => (
-    <button disabled={disabled} onClick={onClick}>{children}</button>
+    <button disabled={disabled} onClick={onClick}>
+      {children}
+    </button>
   ),
 }));
 
@@ -30,7 +32,13 @@ vi.mock('@/components/ui/checkbox', () => ({
   ),
 }));
 
-const SOLICITACAO = {
+import type { Ferias } from '@/types/entities';
+
+const SOLICITACAO: Ferias = {
+  id: 'sol-1',
+  colaborador_id: 'c1',
+  empresa_id: 'e1',
+  status: 'pendente',
   colaborador: { nome_completo: 'Carlos Andrade' },
   data_inicio: '2026-08-01',
   data_fim: '2026-08-30',

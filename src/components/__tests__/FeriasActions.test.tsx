@@ -44,7 +44,18 @@ vi.mock('@/utils/feriasPDF', () => ({
 
 import { FeriasActions } from '../ferias/FeriasActions';
 
-const BASE_SOLICITACAO = { id: 'sol-1', aprovado_gestor: false, aprovado_rh: false, enviado_contabilidade: false, cancelado: false, status: 'pendente' };
+const BASE_SOLICITACAO = {
+  id: 'sol-1',
+  colaborador_id: 'c1',
+  empresa_id: 'e1',
+  data_inicio: '2026-01-10',
+  data_fim: '2026-01-30',
+  aprovado_gestor: false,
+  aprovado_rh: false,
+  enviado_contabilidade: false,
+  cancelado: false,
+  status: 'pendente',
+} as const;
 
 const DEFAULT_PROPS = {
   solicitacao: BASE_SOLICITACAO,
@@ -90,12 +101,16 @@ describe('FeriasActions', () => {
   });
 
   it('returns null when solicitacao is cancelado', () => {
-    const { container } = render(<FeriasActions {...DEFAULT_PROPS} solicitacao={{ ...BASE_SOLICITACAO, cancelado: true }} />);
+    const { container } = render(
+      <FeriasActions {...DEFAULT_PROPS} solicitacao={{ ...BASE_SOLICITACAO, cancelado: true }} />
+    );
     expect(container.firstChild).toBeNull();
   });
 
   it('returns null when status is rejeitada', () => {
-    const { container } = render(<FeriasActions {...DEFAULT_PROPS} solicitacao={{ ...BASE_SOLICITACAO, status: 'rejeitada' }} />);
+    const { container } = render(
+      <FeriasActions {...DEFAULT_PROPS} solicitacao={{ ...BASE_SOLICITACAO, status: 'rejeitada' }} />
+    );
     expect(container.firstChild).toBeNull();
   });
 
