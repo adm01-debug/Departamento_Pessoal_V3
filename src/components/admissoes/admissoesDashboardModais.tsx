@@ -31,7 +31,7 @@ import { Progress } from '@/components/ui/progress';
 import { AnimatedCascadeDialog } from '@/components/ui/animated-cascade-dialog';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/utils/format';
-import { ETAPA_BADGE, ETAPA_LABELS, TONE_BADGE, TONE_TEXT, type Tone, type ToneSelo } from './admissoesComum';
+import { ETAPA_BADGE, ETAPA_LABELS, TONE_BADGE, TONE_TEXT, proximaAcaoDaEtapa, type Tone, type ToneSelo } from './admissoesComum';
 
 /* ─── Contrato de dados (o dashboard deriva, o modal exibe) ───────────────── */
 
@@ -118,24 +118,6 @@ const SLA_INFO: Record<SlaSegmento, { label: string; badge: ToneSelo; tone: Tone
   risco: { label: 'Em risco', badge: 'warning', tone: 'warning' },
   atrasada: { label: 'Atrasado', badge: 'destructive', tone: 'destructive' },
 };
-
-/** Próxima ação recomendada por etapa (orientação de processo, não dado do banco). */
-const ETAPA_PROXIMA_ACAO: Record<string, string> = {
-  solicitacao: 'Confirmar os dados da requisição com o gestor e abrir a coleta de documentos.',
-  documentos: 'Cobrar do candidato os documentos do checklist abaixo e conferir os recebidos.',
-  validacao: 'Validar os documentos enviados e liberar o exame admissional.',
-  pendente: 'Retomar a pendência registrada na observação da admissão e destravar a etapa.',
-  exame: 'Confirmar o agendamento/resultado do ASO admissional e anexar o documento.',
-  contrato: 'Gerar/enviar o contrato para assinatura (link por e-mail ou WhatsApp).',
-  assinatura: 'Acompanhar a assinatura digital e cobrar o candidato quando o prazo vencer.',
-  esocial: 'Transmitir o evento S-2200 e conferir o protocolo devolvido.',
-  concluida: 'Nada a fazer: o processo está concluído.',
-  cancelada: 'Revisar o motivo do cancelamento e reabrir a admissão, se for o caso.',
-};
-
-function proximaAcaoDaEtapa(etapa?: string | null): string {
-  return ETAPA_PROXIMA_ACAO[etapa ?? ''] ?? 'Conferir a etapa da admissão no módulo e definir o próximo passo.';
-}
 
 /* ─── Blocos de UI compartilhados pelos quatro modais ─────────────────────── */
 

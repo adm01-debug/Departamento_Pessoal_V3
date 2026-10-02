@@ -127,6 +127,17 @@ export default function AdmissoesPage() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [sendingLink, setSendingLink] = useState<string | null>(null);
   const [selectedAdmissao, setSelectedAdmissao] = useState<LooseRow<'admissoes'> | null>(null);
+  /**
+   * A admissão que o modal de detalhes MANTÉM enquanto a janela sai de cena.
+   *
+   * Só o ato de ABRIR (`onOpenDetalhes`) escreve aqui. Fechar zera apenas o
+   * `selectedAdmissao` (e com ele o `open`), então o `key`/`admissao` do modal
+   * continuam apontando para a mesma admissão durante o fechamento — é o que
+   * deixa o `AnimatePresence` (dentro do modal) animar a SAÍDA; sem isso o `key`
+   * trocaria no mesmo instante e a árvore seria desmontada antes de animar.
+   * Abrir OUTRA admissão segue recriando o estado interno, porque o `key` muda.
+   */
+  const [admissaoDoModal, setAdmissaoDoModal] = useState<LooseRow<'admissoes'> | null>(null);
 
   // MOCK VISUAL — ver src/mocks/admissoesMock.ts (dev + VITE_ADMISSOES_MOCK=true).
   const [auditoriaBusca, setAuditoriaBusca] = useState('');
@@ -269,14 +280,29 @@ export default function AdmissoesPage() {
           </TabsContent>
 
           <TabsContent value="gestao" className="mt-6 space-y-6">
-            <GestaoCandidatos
-              admissoes={admissoes || []}
-              isLoading={isLoading}
-              sendingLink={sendingLink}
-              onEnviarLink={handleEnviarLink}
-              onEnviarWhatsApp={handleEnviarWhatsApp}
-              onOpenDetalhes={(admissao) => setSelectedAdmissao(admissao)}
-            />
+            {/* `CardsEntrada` (mesmo escudo de contexto da aba Auditoria):
+                sem ele, o `initial={false}` publicado pela rota
+                (`PageTransition.tsx`) viaja por CONTEXTO até os `motion.div`
+                internos dos overlays desta tela (`SelectContent`/
+                `DropdownMenuContent`) — o Radix os monta em PORTAL, mas o
+                contexto React atravessa o portal — e o menu abre "seco", sem o
+                keyframe de abertura do sistema. O `AnimatePresence` local, sem
+                props, cria um contexto novo com `initial` verdadeiro. */}
+            <CardsEntrada>
+              <GestaoCandidatos
+                admissoes={admissoes || []}
+                isLoading={isLoading}
+                sendingLink={sendingLink}
+                onEnviarLink={handleEnviarLink}
+                onEnviarWhatsApp={handleEnviarWhatsApp}
+                onOpenDetalhes={(admissao) => {
+                  // Abre a janela: guarda a admissão nos DOIS estados (o `open` e
+                  // o conteúdo do modal). Ver `admissaoDoModal`.
+                  setSelectedAdmissao(admissao);
+                  setAdmissaoDoModal(admissao);
+                }}
+              />
+            </CardsEntrada>
           </TabsContent>
 
           <TabsContent value="auditoria" className="mt-6">
@@ -445,7 +471,8 @@ export default function AdmissoesPage() {
       </PageLayout>
 
       <DetalhesAdmissaoDialog
-        admissao={selectedAdmissao}
+        key={admissaoDoModal?.id ?? 'sem-admissao'}
+        admissao={admissaoDoModal}
         open={!!selectedAdmissao}
         onOpenChange={(open) => !open && setSelectedAdmissao(null)}
       />

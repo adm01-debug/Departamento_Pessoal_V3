@@ -128,3 +128,30 @@ export const CHECKLIST_ADMISSAO: readonly { campo: CampoChecklist; label: string
   { campo: 'checklist_contrato_assinado', label: 'Contrato assinado' },
   { campo: 'checklist_esocial_enviado', label: 'eSocial (S-2200) enviado' },
 ];
+
+/**
+ * Próxima ação recomendada por etapa (orientação de processo, não dado do banco).
+ *
+ * Fonte ÚNICA da "próxima ação" da área de Admissões: os modais de widget do
+ * dashboard (`admissoesDashboardModais.tsx`) e a janela de detalhes da admissão
+ * (`admissoes/DetalhesAdmissaoDialog.tsx`) leem ESTE mapa via `proximaAcaoDaEtapa`
+ * — assim o bloco "Próxima ação" da janela e a coluna dos modais mostram o MESMO
+ * texto para a mesma etapa, sem uma segunda cópia que possa divergir.
+ */
+export const ETAPA_PROXIMA_ACAO: Record<string, string> = {
+  solicitacao: 'Confirmar os dados da requisição com o gestor e abrir a coleta de documentos.',
+  documentos: 'Cobrar do candidato os documentos do checklist abaixo e conferir os recebidos.',
+  validacao: 'Validar os documentos enviados e liberar o exame admissional.',
+  pendente: 'Retomar a pendência registrada na observação da admissão e destravar a etapa.',
+  exame: 'Confirmar o agendamento/resultado do ASO admissional e anexar o documento.',
+  contrato: 'Gerar/enviar o contrato para assinatura (link por e-mail ou WhatsApp).',
+  assinatura: 'Acompanhar a assinatura digital e cobrar o candidato quando o prazo vencer.',
+  esocial: 'Transmitir o evento S-2200 e conferir o protocolo devolvido.',
+  concluida: 'Nada a fazer: o processo está concluído.',
+  cancelada: 'Revisar o motivo do cancelamento e reabrir a admissão, se for o caso.',
+};
+
+/** Próxima ação para uma etapa — cai num texto-guia quando a etapa é desconhecida. */
+export function proximaAcaoDaEtapa(etapa?: string | null): string {
+  return ETAPA_PROXIMA_ACAO[etapa ?? ''] ?? 'Conferir a etapa da admissão no módulo e definir o próximo passo.';
+}

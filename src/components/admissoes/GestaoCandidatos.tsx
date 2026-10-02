@@ -23,8 +23,8 @@
  * apresentação + estado de UI (filtros, ordenação, página, visualização).
  * ============================================================================
  */
-import { useMemo, useState, type ElementType } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { useMemo, useState, useTransition, type ElementType } from 'react';
+import { AnimatePresence, motion, type Variants } from 'framer-motion';
 import {
   AlertCircle,
   ArrowUpDown,
@@ -58,6 +58,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { InfoTooltip } from '@/components/ui/info-tooltip';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
@@ -137,6 +138,78 @@ const ORDENACOES: readonly { value: string; label: string }[] = [
 
 /** Idade máxima da cascata de entrada (mesma trava do restante do módulo). */
 const MAX_STAGGER = 5;
+
+/* ─── Orquestração da ENTRADA em ONDAS (overlap suave) ──────────────────────
+ * A animação VISUAL de cada peça continua sendo a MESMA `cardVariants` dos KPI
+ * Cards do Dashboard Executivo (opacity 0→1, y 20→0, 0.4s, `[0.25, 0.46, 0.45,
+ * 0.94]`), importada de `dashboard/MetricCard.tsx`.
+ *
+ * A ORDEM continua de cima para baixo (filtros → chips → card → linhas), mas as
+ * ondas se SOBREPÕEM: cada grupo tem um deslocamento ABSOLUTO curto a partir do
+ * mount e o próximo começa ~120–200ms depois — ninguém fica "esperando a vez".
+ * Nada de `PRÓXIMA_ETAPA = ETAPA_ANTERIOR_FIM`; offsets absolutos, fáceis de
+ * afinar no olho:
+ *
+ *   FILTROS   início 0,05s · stagger 28ms
+ *   CHIPS     início 0,18s · stagger 22ms
+ *   CARD      início 0,38s
+ *   LINHAS    início 0,52s · stagger 40ms
+ *
+ * Os KPIs (acima) rodam a própria animação, intactos, em paralelo.
+ * `cardVariants` calcula `delay = custom × 0.08s`; `slot()` converte o atraso em
+ * SEGUNDOS para o `custom` que ela espera — nenhum valor visual é reescrito. */
+const INICIO_FILTROS = 0.05;
+const PASSO_FILTROS = 0.028;
+const INICIO_CHIPS = 0.18;
+const PASSO_CHIPS = 0.022;
+const INICIO_CARD = 0.38;
+const INICIO_LINHAS = 0.52;
+const PASSO_LINHAS = 0.04;
+
+const PASSO_CARD_VARIANTS = 0.08; // == passo de delay da `cardVariants`
+const slot = (segundos: number) => segundos / PASSO_CARD_VARIANTS;
+
+/** `custom` da `cardVariants` para o item `i` da onda de FILTROS. */
+const slotFiltro = (i: number) => slot(INICIO_FILTROS + i * PASSO_FILTROS);
+/** `custom` da `cardVariants` para o chip `j` da onda de CHIPS. */
+const slotChip = (j: number) => slot(INICIO_CHIPS + j * PASSO_CHIPS);
+
+/**
+ * Cascata de entrada das linhas da tabela. Cada linha "nasce de DENTRO PARA
+ * FORA": abre do centro (`scaleX: 0.94 → 1`, com `transform-origin: center`
+ * pela classe `origin-center` no `<tr>`), sobe 10px (`y: 10 → 0`) e aparece de
+ * `opacity: 0 → 1`.
+ *
+ * Onda própria: `delay = INICIO_LINHAS (0,52s) + i × 40ms`. Ela entra ~140ms
+ * depois de o card "Candidatos" COMEÇAR a subir (overlap suave) — a tela ganha
+ * vida rápido, sem a tabela "esperar a vez".
+ *
+ * Só `opacity` e `transform` animam (nada de width/height/left/top → sem
+ * reflow). SEM `clip-path`: animar `clip-path` num `table-row` é inconsistente
+ * entre navegadores — o efeito de "abrir do centro" vem do `scaleX` com
+ * `origin-center`.
+ *
+ * NÃO usamos `useReducedMotion()` aqui de propósito (decisão explícita do
+ * produto): queremos a cascata visível MESMO com `prefers-reduced-motion`
+ * ligado no sistema.
+ */
+const linhaTabelaVariants: Variants = {
+  hidden: { opacity: 0, y: 10, scaleX: 0.94 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    scaleX: 1,
+    transition: {
+      duration: 0.8,
+      delay: INICIO_LINHAS + i * PASSO_LINHAS,
+      ease: [0.22, 1, 0.36, 1] as const,
+    },
+  }),
+};
+
+/** `Card` animável pela MESMA `cardVariants` dos KPIs — `motion.create(Card)`,
+ *  exatamente o caminho do `DashboardExecutivoPage`. */
+const MotionCard = motion.create(Card);
 
 export type GestaoVisualizacao = 'tabela' | 'cards';
 
@@ -320,15 +393,17 @@ function AcoesCandidato({ admissao, sendingLink, onEnviarLink, onEnviarWhatsApp,
   const enviando = sendingLink === admissao.id;
   return (
     <div className="flex items-center justify-end gap-1">
-      <Button
-        variant="ghost"
-        size="icon"
-        className="h-8 w-8 rounded-lg text-info hover:bg-info/10 hover:text-info"
-        onClick={() => onOpenDetalhes(admissao)}
-        aria-label={`Ver detalhes de ${admissao.nome ?? 'candidato'}`}
-      >
-        <Eye className="h-4 w-4" />
-      </Button>
+      <InfoTooltip content="Ver detalhes">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 rounded-lg text-info hover:bg-info/10 hover:text-info"
+          onClick={() => onOpenDetalhes(admissao)}
+          aria-label={`Ver detalhes de ${admissao.nome ?? 'candidato'}`}
+        >
+          <Eye className="h-4 w-4" />
+        </Button>
+      </InfoTooltip>
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -472,13 +547,17 @@ function EtapaPills({
 }) {
   return (
     <div className="flex flex-nowrap items-center gap-1.5 overflow-x-auto">
-      {ETAPA_PILULAS.map((pill) => {
+      {ETAPA_PILULAS.map((pill, index) => {
         const isAtivo = ativo === pill.value;
         const count = contagens[pill.value] ?? 0;
         return (
-          <button
+          <motion.button
             key={pill.value}
             type="button"
+            custom={slotChip(index)}
+            variants={cardVariants}
+            initial="hidden"
+            animate="visible"
             onClick={() => onSelecionar(pill.value)}
             aria-pressed={isAtivo}
             className={cn(
@@ -499,14 +578,40 @@ function EtapaPills({
             >
               {count}
             </span>
-          </button>
+          </motion.button>
         );
       })}
     </div>
   );
 }
 
-/** Alternância Tabela/Cards (Tabela é o padrão). */
+/**
+ * Alternância Tabela/Cards (Tabela é o padrão).
+ *
+ * INDICADOR ÚNICO, CSS PURO (SEM Framer Motion): dois botões de largura IDÊNTICA
+ * e UMA `div` lime permanente, `absolute`, do tamanho de UM botão, POR BAIXO
+ * deles (`relative z-10`). O slide é uma `transition` NATIVA de `transform`
+ * (`translate3d`), que roda no compositor/GPU — nenhum JS anima quadro a quadro.
+ *
+ * ESTADO VISUAL SEPARADO DA TROCA PESADA (a causa das microtravadas): `visual`
+ * (local) move o indicador IMEDIATAMENTE no clique; a troca REAL de conteúdo
+ * (Tabela ↔ Cards, que remonta tabela/grade) é disparada em `startTransition`,
+ * isto é, como atualização NÃO urgente. O React pinta o novo `transform` no
+ * trabalho urgente e processa o render pesado DEPOIS — o slide já está rodando
+ * na GPU e não é bloqueado pelo commit da lista.
+ *
+ * POR QUE `grid-cols-2` E NÃO `flex-1`: num container de largura automática,
+ * dois itens `flex-1` NÃO ficam com a mesma largura quando os rótulos diferem
+ * ("Tabela" é mais largo que "Cards"): o item mais largo trava no próprio
+ * `min-content` e o outro fica menor — e aí o indicador (50%) desalinha. Duas
+ * colunas `1fr` garantem larguras IGUAIS, sem cortar texto.
+ *
+ * GEOMETRIA (sem medir DOM): container `p-1` (4px). O indicador fica em
+ * `left: 4px` e `width: calc(50% - 4px)` — metade da caixa de padding (que é o
+ * referencial de um filho absoluto) menos os 4px de padding —, ou seja,
+ * exatamente a largura de UM botão. Assim `translate3d(100%,0,0)` (100% da
+ * PRÓPRIA largura) cai exatamente sobre o 2º botão.
+ */
 function VisualizacaoToggle({
   value,
   onChange,
@@ -518,25 +623,52 @@ function VisualizacaoToggle({
     { value: 'tabela', label: 'Tabela', icon: Table2 },
     { value: 'cards', label: 'Cards', icon: LayoutGrid },
   ];
+  // Estado VISUAL (só do indicador): muda na hora e dirige apenas o `transform`.
+  const [visual, setVisual] = useState<GestaoVisualizacao>(value);
+  const [, startTransition] = useTransition();
+
+  const trocar = (v: GestaoVisualizacao) => {
+    if (v === visual) return;
+    // 1) URGENTE: aplica o `transform` novo agora → o navegador inicia a
+    //    transição de `transform` (GPU) já neste quadro.
+    setVisual(v);
+    // 2) NÃO urgente: a troca REAL de visão (render pesado de tabela/grade) vai
+    //    como transição do React, fora do caminho crítico do slide.
+    startTransition(() => onChange(v));
+  };
+
   return (
-    <div className="flex items-center gap-1 rounded-xl border border-border/40 bg-card/50 p-1">
-      {opcoes.map(({ value: v, label, icon: Icon }) => (
-        <Button
-          key={v}
-          type="button"
-          size="sm"
-          variant="ghost"
-          aria-pressed={value === v}
-          onClick={() => onChange(v)}
-          className={cn(
-            'h-8 gap-1.5 rounded-lg border border-transparent px-3 text-muted-foreground',
-            value === v && 'border-primary text-primary hover:bg-primary/10 hover:text-primary'
-          )}
-        >
-          <Icon className="h-3.5 w-3.5" />
-          {label}
-        </Button>
-      ))}
+    <div className="relative grid grid-cols-2 rounded-xl border border-border/40 bg-card/50 p-1">
+      {/* UM contorno único e permanente — CSS puro, só `transform` (GPU). */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute top-1 bottom-1 left-1 w-[calc(50%_-_4px)] rounded-lg border border-primary"
+        style={{
+          transform: visual === 'cards' ? 'translate3d(100%,0,0)' : 'translate3d(0,0,0)',
+          transition: 'transform 420ms cubic-bezier(0.22, 1, 0.36, 1)',
+          willChange: 'transform',
+        }}
+      />
+      {opcoes.map(({ value: v, label, icon: Icon }) => {
+        const ativo = visual === v;
+        return (
+          <Button
+            key={v}
+            type="button"
+            size="sm"
+            variant="ghost"
+            aria-pressed={ativo}
+            onClick={() => trocar(v)}
+            className={cn(
+              'relative z-10 h-8 gap-1.5 rounded-lg border border-transparent px-3',
+              ativo ? 'text-primary hover:bg-primary/10 hover:text-primary' : 'text-muted-foreground'
+            )}
+          >
+            <Icon className="h-3.5 w-3.5" />
+            {label}
+          </Button>
+        );
+      })}
     </div>
   );
 }
@@ -557,6 +689,7 @@ function TabelaCandidatos({
   selecionados,
   onToggleTodos,
   onToggleLinha,
+  chaveCascata,
   sendingLink,
   onEnviarLink,
   onEnviarWhatsApp,
@@ -567,6 +700,9 @@ function TabelaCandidatos({
   selecionados: Set<string>;
   onToggleTodos: (marcar: boolean) => void;
   onToggleLinha: (id: string, marcar: boolean) => void;
+  /** Muda quando a LISTA muda de identidade (página/ordenação/filtros). É o
+   *  `key` do `<tbody>`, então reativa a cascata de entrada das linhas. */
+  chaveCascata: string;
 } & Omit<AcoesProps, 'admissao'>) {
   const idsPagina = itens.map(chaveDe);
   const todosMarcados = idsPagina.length > 0 && idsPagina.every((id) => selecionados.has(id));
@@ -594,56 +730,80 @@ function TabelaCandidatos({
           <TableHead className={cn(HEAD_CLASS, 'w-[96px] text-right')}>Ações</TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody>
-        {itens.map((a) => {
-          const id = chaveDe(a);
-          const marcado = selecionados.has(id);
-          return (
-            <TableRow
-              key={id}
-              data-state={marcado ? 'selected' : undefined}
-              className="border-border/20 transition-colors hover:bg-muted/30"
-            >
-              <TableCell className="py-3 pr-0">
-                <Checkbox
-                  checked={marcado}
-                  onCheckedChange={(v) => onToggleLinha(id, v === true)}
-                  aria-label={`Selecionar ${a.nome ?? 'candidato'}`}
-                />
-              </TableCell>
-              <TableCell className="py-3">
-                <div className="flex items-center gap-2.5">
-                  <CandidatoAvatar nome={a.nome} />
-                  <span className="truncate text-sm font-medium text-foreground">{a.nome || 'Candidato sem nome'}</span>
-                </div>
-              </TableCell>
-              <TableCell className="py-3 text-xs text-muted-foreground">{a.cargo || '—'}</TableCell>
-              <TableCell className="py-3 text-xs text-muted-foreground">{a.departamento || '—'}</TableCell>
-              <TableCell className="py-3">
-                <EtapaBadge etapa={a.etapa} />
-              </TableCell>
-              <TableCell className="py-3">
-                <ProgressoBar admissao={a} />
-              </TableCell>
-              <TableCell className="py-3">
-                <PrazoCell admissao={a} hoje={hoje} />
-              </TableCell>
-              <TableCell className="py-3">
-                <ResponsavelCell nome={responsavelDe(a)} />
-              </TableCell>
-              <TableCell className="py-3 text-right">
-                <AcoesCandidato
-                  admissao={a}
-                  sendingLink={sendingLink}
-                  onEnviarLink={onEnviarLink}
-                  onEnviarWhatsApp={onEnviarWhatsApp}
-                  onOpenDetalhes={onOpenDetalhes}
-                />
-              </TableCell>
-            </TableRow>
-          );
-        })}
-      </TableBody>
+      {/* `AnimatePresence` LOCAL sem props: a troca Tabela/Cards publica
+          `initial={false}` (o `AnimatePresence mode="wait"` que envolve as duas
+          visões) e esse valor viaja por CONTEXTO até cada `motion.tr` — que então
+          PULARIA o keyframe `hidden` e as linhas apareceriam prontas, sem
+          cascata. Um contexto de presença novo (sem props, `initial`
+          verdadeiro) devolve a cascata a esta subárvore — mesmo recurso do
+          `CardsEntrada` de `AdmissoesPage`. Não renderiza DOM.
+          `key={chaveCascata}`: quando a lista muda de identidade (página,
+          ordenação, filtros) o tbody remonta e a cascata toca de novo — sem
+          reanimar a cada hover/tecla (a busca fica FORA da chave). */}
+      <AnimatePresence>
+        <TableBody key={chaveCascata}>
+          {itens.map((a, i) => {
+            const id = chaveDe(a);
+            const marcado = selecionados.has(id);
+            return (
+              <motion.tr
+                key={id}
+                custom={i}
+                variants={linhaTabelaVariants}
+                initial="hidden"
+                animate="visible"
+                data-state={marcado ? 'selected' : undefined}
+                className={cn(
+                  // Classes BASE do `TableRow` (ui/table) + os ajustes desta tela.
+                  // `motion.tr` puro (não `motion.create(TableRow)`) preserva o
+                  // ref/forwardRef — mesmo motivo documentado no `ColaboradorTable`.
+                  // `origin-center`: o `scaleX` abre a linha a partir do CENTRO.
+                  'border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted',
+                  'border-border/20 hover:bg-muted/30',
+                  'origin-center'
+                )}
+              >
+                <TableCell className="py-3 pr-0">
+                  <Checkbox
+                    checked={marcado}
+                    onCheckedChange={(v) => onToggleLinha(id, v === true)}
+                    aria-label={`Selecionar ${a.nome ?? 'candidato'}`}
+                  />
+                </TableCell>
+                <TableCell className="py-3">
+                  <div className="flex items-center gap-2.5">
+                    <CandidatoAvatar nome={a.nome} />
+                    <span className="truncate text-sm font-medium text-foreground">{a.nome || 'Candidato sem nome'}</span>
+                  </div>
+                </TableCell>
+                <TableCell className="py-3 text-xs text-muted-foreground">{a.cargo || '—'}</TableCell>
+                <TableCell className="py-3 text-xs text-muted-foreground">{a.departamento || '—'}</TableCell>
+                <TableCell className="py-3">
+                  <EtapaBadge etapa={a.etapa} />
+                </TableCell>
+                <TableCell className="py-3">
+                  <ProgressoBar admissao={a} />
+                </TableCell>
+                <TableCell className="py-3">
+                  <PrazoCell admissao={a} hoje={hoje} />
+                </TableCell>
+                <TableCell className="py-3">
+                  <ResponsavelCell nome={responsavelDe(a)} />
+                </TableCell>
+                <TableCell className="py-3 text-right">
+                  <AcoesCandidato
+                    admissao={a}
+                    sendingLink={sendingLink}
+                    onEnviarLink={onEnviarLink}
+                    onEnviarWhatsApp={onEnviarWhatsApp}
+                    onOpenDetalhes={onOpenDetalhes}
+                  />
+                </TableCell>
+              </motion.tr>
+            );
+          })}
+        </TableBody>
+      </AnimatePresence>
     </Table>
   );
 }
@@ -736,8 +896,9 @@ function MenuCardCandidato({ admissao, sendingLink, onEnviarLink, onEnviarWhatsA
 
 /**
  * Grade de cards — a ficha compacta da referência do RH, em quatro faixas:
- *   1. TOPO: `[avatar] Nome ... [Selo] [⋮]`, com o CARGO completo na 2ª linha
- *      do bloco de identidade (alinhado sob o início do nome);
+ *   1. TOPO: `[avatar] [Nome + Cargo] … [Selo] [⋮]` — a tag/status fica SEMPRE
+ *      no canto superior direito e NUNCA desce para baixo do nome (ver o
+ *      contrato do header);
  *   2. PROGRESSO: barra larga + percentual, em uma linha baixa;
  *   3. INFORMAÇÕES: `Departamento` / `Admissão prevista` / `Salário` LADO A
  *      LADO (summary card), cada um com ícone + rótulo pequeno + valor;
@@ -747,13 +908,14 @@ function MenuCardCandidato({ admissao, sendingLink, onEnviarLink, onEnviarWhatsA
  * DENSIDADE (o objetivo desta rodada): o card é montado como faixas de ALTURA
  * MÍNIMA, com o espaço distribuído na HORIZONTAL. Medido em Chromium real
  * (Playwright, com os dados reais da tela): com os três blocos de informação
- * empilhados o card tinha 258px de altura a 1920px (e 329px a 1280px, onde
- * topo e rodapé também quebravam); com a terceira faixa na horizontal a altura
- * cai para ≈180px a 1920px (≈30% mais baixo). O pior caso medido é ≈258px, de
- * 1280 a 1366px: nessa faixa de largura só o par `[Selo] [⋮]` do topo e as
- * ações do rodapé descem UMA linha cada, e ainda assim o card (≈273px) segue
- * mais largo do que alto. Em nenhuma largura há campo cortado ou com "…".
- * Os respiros são curtos de propósito (`gap-y-1` no topo, `mt-1.5`/`mt-2` +
+ * empilhados o card tinha 258px de altura a 1920px (e 329px a 1280px); com a
+ * terceira faixa na horizontal a altura cai para ≈180px a 1920px (≈30% mais
+ * baixo). O TOPO NUNCA QUEBRA: a tag/status fica sempre no canto superior
+ * direito e, quando falta largura, quem trunca é o NOME (ver o contrato do
+ * header). No RODAPÉ, se o nome do responsável for longo, o par de ações
+ * [Enviar Link + Detalhes] desce UMA linha inteiro — o card ainda segue mais
+ * largo do que alto.
+ * Os respiros são curtos de propósito (`gap-3` no topo, `mt-1.5`/`mt-2` +
  * `pt-2` entre as faixas) e as duas divisórias são as MESMAS bordas sutis de
  * antes (`border-border/20`): elas separam identidade / resumo / ações sem
  * virar "card dentro de card".
@@ -777,25 +939,20 @@ function MenuCardCandidato({ admissao, sendingLink, onEnviarLink, onEnviarWhatsA
  * tela já usa.
  *
  * FUNDO DO CARD (rodada desta vez — SÓ pintura: nenhum tamanho, espaçamento,
- * tipografia, ícone, selo ou botão mudou): o `bg-card/40` deixava o card
- * praticamente da cor da página — `--card` tem 12% de luminância e
- * `--background` 8%, então 40% de card sobre o fundo dá ≈ rgb(14,22,35) contra
- * rgb(11,18,30): três níveis de diferença, invisíveis na prática. Agora a base
- * é `bg-card/85` (escura e sólida, ≈ rgb(17,27,41)) e SOBRE ela entra um
- * gradiente vertical com o verde `--success` do tema — `from-success/12` no
- * topo, `via-success/0` no miolo e `to-success/8` na base. O miolo usa
- * `success/0` (verde de alfa zero) em vez de `transparent` de propósito:
- * `transparent` é `rgba(0,0,0,0)` e puxa a interpolação para o cinza, sujando o
- * degradê. Os stops ficam entre 8% e 12% de alfa — o card continua navy e o
- * verde aparece como nuance, nunca como protagonista. Acompanham a borda
- * `border-border/60` (antes `/30`, sumia no fundo) e a sombra
- * `shadow-sm shadow-black/40` (1–2px de profundidade, discreta). No hover a
- * borda pega o mesmo verde (`hover:border-success/35`), a base fecha em
- * `bg-card` cheio e a sombra sobe um degrau (`hover:shadow-md`) — o mesmo
- * "levemente mais destacado" de antes, agora com o acento `success` no lugar do
- * lime do `primary`. Como o gradiente é `background-image` e a base é
- * `background-color`, os dois convivem sem conflito e nada mais no card precisa
- * de `relative`/`overflow-hidden`.
+ * tipografia, ícone, selo ou botão mudou): o card é uma superfície NEUTRA —
+ * separa-se do fundo pelo degrau de luminância + borda + sombra, NUNCA por
+ * colorir a superfície. A base é `bg-card/85` (navy/charcoal de `--card` a 85%
+ * sobre o `--background` da página — ≈ rgb(17,27,41) sobre rgb(11,18,30), só um
+ * nível de diferença, sem gradiente). Foi REMOVIDO o degradê vertical com o
+ * verde `--success` (`from-success/12 … to-success/8`) que pesava a superfície e
+ * competia com as cores semânticas dos badges — o verde agora existe SÓ nos
+ * badges/indicadores/barra de progresso, nunca no fundo permanente do card. A
+ * borda é neutra e discreta (`border-border/40`) e a sombra é mínima
+ * (`shadow-sm shadow-black/25`, 1–2px, sem glow). No hover a base fecha em
+ * `bg-card` cheio (um degrau mais claro, ainda navy) e a borda recebe um fio
+ * neutro de destaque (`hover:border-primary/25`); a sombra sobe discretamente
+ * (`hover:shadow-md`). Como só `background-color` é usada, nada mais no card
+ * precisa de `relative`/`overflow-hidden`.
  *
  * NADA além do LAYOUT (na rodada da densidade) e do FUNDO (nesta rodada) mudou:
  * ícones (`lucide-react`), tipografia (`font-*`), `rounded-xl` do card e TODA a
@@ -829,37 +986,39 @@ function CardsCandidatos({
             variants={cardVariants}
             initial="hidden"
             animate="visible"
-            className="flex flex-col rounded-xl border border-border/60 bg-card/85 bg-gradient-to-b from-success/12 via-success/0 to-success/8 p-3.5 shadow-sm shadow-black/40 transition-[background-color,border-color,box-shadow] hover:border-success/35 hover:bg-card hover:shadow-md"
+            className="flex flex-col rounded-xl border border-border/40 bg-card/85 p-3.5 shadow-sm shadow-black/25 transition-[background-color,border-color,box-shadow] hover:border-primary/25 hover:bg-card hover:shadow-md"
           >
-            {/* TOPO — identidade (avatar + nome + cargo) e, à direita, o selo de
-                etapa com o menu ⋮, na MESMA linha: `[avatar] Nome ... [Selo] [⋮]`
-                com o CARGO logo abaixo do nome — a faixa 1 da referência.
-                O cargo entra como 2ª linha do bloco de identidade (ao lado do
-                avatar), então nasce alinhado ao INÍCIO DO NOME sem recuo fixo:
-                era o `pl-[50px]` que garfava a largura do cargo em `inner - 50`
-                e fazia "Analista de Departamento Pessoal" (245px medidos) sair
-                do card quando ele ficava com ≈213px de largura útil.
-                Sem `truncate` em lugar nenhum: nome e selo ficam em UMA linha
-                (`whitespace-nowrap`) e, se os dois não couberem lado a lado (nome
-                longo + selo longo — o caso medido de "Débora Figueiredo Antunes",
-                183px, a 1280px), o `flex-wrap` desce o par [Selo + ⋮] INTEIRO
-                para a linha de baixo, com o `ml-auto` encostado à direita. O
-                `gap-y-1` (4px) mantém essa quebra barata; `items-center` alinha o
-                avatar à altura média das duas linhas de texto.
-                O cargo é texto livre: é o ÚNICO parágrafo do card que pode
-                ocupar duas linhas quando o card é estreito (quebra entre
-                palavras, `break-words`), nunca com reticências. */}
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-              <div className="flex items-center gap-2.5">
-                <CandidatoAvatar nome={a.nome} className="h-9 w-9 shrink-0" />
-                <div>
-                  <p className="whitespace-nowrap text-sm font-medium leading-tight text-foreground">
-                    {a.nome || 'Candidato sem nome'}
-                  </p>
-                  <p className="mt-0.5 break-words text-xs leading-tight text-muted-foreground">{a.cargo || '—'}</p>
-                </div>
+            {/* TOPO — identidade à esquerda e status/ações FIXOS no topo-direita.
+                REGRA DEFINITIVA: TODA tag/status fica SEMPRE no canto superior
+                direito — nunca abaixo do nome, nunca em 2 linhas, em card nenhum.
+                O header é UMA linha em `flex items-start` e NÃO tem `flex-wrap`
+                (num flex sem wrap um item JAMAIS desce para a linha de baixo).
+                São três blocos, nesta ordem:
+                  a) AVATAR à esquerda, `shrink-0`;
+                  b) bloco de texto nome+cargo (`flex-1 min-w-0` + `flex-col`) —
+                     é o ÚNICO que cede espaço: nome e cargo truncam em 1 linha
+                     com reticências (`truncate` + `overflow-hidden` +
+                     `whitespace-nowrap` + `text-ellipsis`);
+                  c) bloco status/ações (`shrink-0 whitespace-nowrap self-start
+                     items-center`): o `shrink-0` RESERVA a largura natural da tag
+                     + menu (a maior tag do sistema — "Aguardando Exame",
+                     "Em Validação", "Docs Pendentes" — cabe inteira), o
+                     `whitespace-nowrap` impede qualquer quebra e o `self-start`
+                     ancora o bloco ao TOPO-direita.
+                Quando falta espaço, quem trunca é o NOME (prioridade menor que a
+                tag): a tag nunca é esmagada nem reposicionada. */}
+
+            <div className="flex items-start gap-3">
+              <CandidatoAvatar nome={a.nome} className="h-9 w-9 shrink-0" />
+              <div className="flex min-w-0 flex-1 flex-col">
+                <p className="truncate overflow-hidden text-ellipsis whitespace-nowrap text-[15px] font-semibold leading-tight text-foreground">
+                  {a.nome || 'Candidato sem nome'}
+                </p>
+                <p className="mt-0.5 truncate overflow-hidden text-ellipsis whitespace-nowrap text-xs leading-tight text-muted-foreground">
+                  {a.cargo || '—'}
+                </p>
               </div>
-              <div className="ml-auto flex shrink-0 items-center gap-0.5">
+              <div className="flex shrink-0 items-center gap-2 self-start whitespace-nowrap">
                 <EtapaBadge etapa={a.etapa} />
                 <MenuCardCandidato
                   admissao={a}
@@ -914,11 +1073,11 @@ function CardsCandidatos({
               />
             </div>
 
-            {/* RODAPÉ — faixa 4: responsável à esquerda, ações à direita. Mesmo
-                contrato do topo: `flex-wrap` + nome em `whitespace-nowrap`. Se o
-                nome do responsável for longo, o bloco [Enviar Link + Detalhes]
-                (atômico, `shrink-0`) desce inteiro — o nome continua completo,
-                sem "…". */}
+            {/* RODAPÉ — faixa 4: responsável à esquerda, ações à direita. Aqui NÃO
+                há truncamento (ao contrário do header): `flex-wrap` + nome em
+                `whitespace-nowrap`. Se o nome do responsável for longo, o bloco
+                [Enviar Link + Detalhes] (atômico, `shrink-0`) desce inteiro — o
+                nome continua completo, sem "…". */}
             <div className="mt-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 border-t border-border/20 pt-2">
               <div className="flex flex-1 items-center gap-2">
                 <Avatar className="h-6 w-6 shrink-0 border border-border/40">
@@ -1228,6 +1387,15 @@ export function GestaoCandidatos({
   const visiveis = useMemo(() => ordenados.slice(inicioIdx, inicioIdx + porPagina), [ordenados, inicioIdx, porPagina]);
 
   /**
+   * Chave da CASCATA de entrada da tabela: muda quando a LISTA muda de
+   * identidade — página, ordenação e filtros. É o `key` do `<tbody>`, então
+   * qualquer uma dessas trocas remonta as linhas e a cascata toca de novo.
+   * A BUSCA textual fica FORA de propósito: reanimar a cada tecla seria o
+   * "exagero" a evitar (a tabela piscaria enquanto se digita).
+   */
+  const cascataChave = `${paginaAtual}|${ordenacao}|${departamento}|${cargo}|${status}|${responsavel}|${periodo}|${salarioMin}|${somenteAtrasados}|${etapa}`;
+
+  /**
    * Toda troca de filtro/ordenação/quantidade volta para a 1ª página — feito no
    * PRÓPRIO handler (mesmo padrão de `ColaboradoresPage`) em vez de um efeito,
    * que só reagiria depois do render.
@@ -1416,7 +1584,13 @@ export function GestaoCandidatos({
             {/* Busca: único item elástico (`flex-1` = basis 0 + grow 1) e com
                 piso de `min-w-[180px]` para nunca ser esmagada — é sempre o
                 maior elemento da linha. `h-10` = mesma altura dos filtros. */}
-            <div className="relative min-w-[180px] flex-1">
+            <motion.div
+              custom={slotFiltro(0)}
+              variants={cardVariants}
+              initial="hidden"
+              animate="visible"
+              className="relative min-w-[180px] flex-1"
+            >
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 value={busca}
@@ -1425,7 +1599,7 @@ export function GestaoCandidatos({
                 aria-label="Buscar candidatos"
                 className="h-10 rounded-lg border-border/40 bg-card pl-9"
               />
-            </div>
+            </motion.div>
 
             {/* Filtros: MESMA largura controlada (136px), mesma altura (h-10) e
                 mesmo gap — ritmo uniforme. Os 136px saem da medição real do
@@ -1438,47 +1612,63 @@ export function GestaoCandidatos({
                 `min-w-[100px]` deixa encolher quando a coluna aperta (aí sim o
                 valor corta com "…" — `[&>span:last-child]:truncate` —, nunca
                 quebra a linha). */}
-            <FiltroSelect
-              label="Departamento"
-              value={departamento}
-              onChange={comReset(setDepartamento)}
-              options={opcoesDepartamento}
-              className="w-[136px] min-w-[100px]"
-            />
-            <FiltroSelect
-              label="Cargo"
-              value={cargo}
-              onChange={comReset(setCargo)}
-              options={opcoesCargo}
-              className="w-[136px] min-w-[100px]"
-            />
-            <FiltroSelect
-              label="Status"
-              value={status}
-              onChange={comReset(setStatus)}
-              options={opcoesStatus}
-              className="w-[136px] min-w-[100px]"
-            />
-            <FiltroSelect
-              label="Responsável"
-              value={responsavel}
-              onChange={comReset(setResponsavel)}
-              options={opcoesResponsavel}
-              className="w-[136px] min-w-[100px]"
-            />
-            <FiltroSelect
-              label="Período"
-              value={periodo}
-              onChange={comReset(setPeriodo)}
-              options={PERIODOS}
-              className="w-[136px] min-w-[100px]"
-            />
+            <motion.div custom={slotFiltro(1)} variants={cardVariants} initial="hidden" animate="visible">
+              <FiltroSelect
+                label="Departamento"
+                value={departamento}
+                onChange={comReset(setDepartamento)}
+                options={opcoesDepartamento}
+                className="w-[136px] min-w-[100px]"
+              />
+            </motion.div>
+            <motion.div custom={slotFiltro(2)} variants={cardVariants} initial="hidden" animate="visible">
+              <FiltroSelect
+                label="Cargo"
+                value={cargo}
+                onChange={comReset(setCargo)}
+                options={opcoesCargo}
+                className="w-[136px] min-w-[100px]"
+              />
+            </motion.div>
+            <motion.div custom={slotFiltro(3)} variants={cardVariants} initial="hidden" animate="visible">
+              <FiltroSelect
+                label="Status"
+                value={status}
+                onChange={comReset(setStatus)}
+                options={opcoesStatus}
+                className="w-[136px] min-w-[100px]"
+              />
+            </motion.div>
+            <motion.div custom={slotFiltro(4)} variants={cardVariants} initial="hidden" animate="visible">
+              <FiltroSelect
+                label="Responsável"
+                value={responsavel}
+                onChange={comReset(setResponsavel)}
+                options={opcoesResponsavel}
+                className="w-[136px] min-w-[100px]"
+              />
+            </motion.div>
+            <motion.div custom={slotFiltro(5)} variants={cardVariants} initial="hidden" animate="visible">
+              <FiltroSelect
+                label="Período"
+                value={periodo}
+                onChange={comReset(setPeriodo)}
+                options={PERIODOS}
+                className="w-[136px] min-w-[100px]"
+              />
+            </motion.div>
 
             {/* Ações: bloco atômico (`shrink-0`) no fim da MESMA linha — como a
                 busca (`flex-1`) consome toda a sobra, não sobra espaço livre
                 para `ml-auto` (que fica em 0, inócuo, mas mantido por clareza
                 caso a linha passe a ter folga). */}
-            <div className="ml-auto flex shrink-0 items-center gap-2">
+            <motion.div
+              custom={slotFiltro(6)}
+              variants={cardVariants}
+              initial="hidden"
+              animate="visible"
+              className="ml-auto flex shrink-0 items-center gap-2"
+            >
               <CollapsibleTrigger asChild>
                 <Button variant="outline" size="sm" className="h-10 gap-2 rounded-lg border-border/40 bg-card text-xs">
                   <SlidersHorizontal className="h-3.5 w-3.5" />
@@ -1541,38 +1731,72 @@ export function GestaoCandidatos({
                 <FilterX className="h-3.5 w-3.5" />
                 Limpar filtros
               </Button>
-            </div>
+            </motion.div>
           </div>
 
-          <CollapsibleContent>
-            <div className="mt-2 flex flex-wrap items-center gap-4 rounded-xl border border-border/30 bg-muted/20 p-3">
-              <div className="flex items-center gap-2">
-                <label htmlFor="gestao-salario-min" className="text-xs text-muted-foreground">
-                  Salário mínimo
-                </label>
-                <Input
-                  id="gestao-salario-min"
-                  type="number"
-                  inputMode="numeric"
-                  min={0}
-                  value={salarioMin}
-                  onChange={(e) => aoFiltrarSalario(e.target.value)}
-                  placeholder="R$ 0"
-                  className="h-8 w-28 rounded-lg border-border/40 bg-card text-xs"
-                />
-              </div>
-              <label className="flex cursor-pointer items-center gap-2 text-xs text-muted-foreground">
-                <Checkbox checked={somenteAtrasados} onCheckedChange={(v) => aoMarcarAtrasados(v === true)} />
-                Somente em atraso
-              </label>
-            </div>
+          {/* `forceMount` + framer-motion no lugar do `animate-accordion-down`
+              (keyframe do Tailwind): aquela classe lê
+              `--radix-accordion-content-height`, variável que só o primitivo
+              Accordion define — o Collapsible usa outro nome, então a transição
+              CSS nunca dispara o `animationend` que ele espera. Controlando a
+              ALTURA aqui (0 ↔ "auto") a ABERTURA e o FECHAMENTO animam nos dois
+              sentidos, sem depender de variável do Radix — MESMO padrão do
+              `HistoryYearGroup` (ease/durações idênticos). O
+              `AnimatePresence initial={false}` é local; o `motion.div` só entra
+              quando o painel abre, e é o `CardsEntrada` da aba (ver
+              `AdmissoesPage`) que garante o contexto de presença com `initial`
+              verdadeiro. */}
+          <CollapsibleContent forceMount>
+            <AnimatePresence initial={false}>
+              {maisFiltros && (
+                <motion.div
+                  key="mais-filtros"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{
+                    height: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] as const },
+                    opacity: { duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] as const },
+                  }}
+                  style={{ overflow: 'hidden' }}
+                >
+                  <div className="mt-2 flex flex-wrap items-center gap-4 rounded-xl border border-border/30 bg-muted/20 p-3">
+                    <div className="flex items-center gap-2">
+                      <label htmlFor="gestao-salario-min" className="text-xs text-muted-foreground">
+                        Salário mínimo
+                      </label>
+                      <Input
+                        id="gestao-salario-min"
+                        type="number"
+                        inputMode="numeric"
+                        min={0}
+                        value={salarioMin}
+                        onChange={(e) => aoFiltrarSalario(e.target.value)}
+                        placeholder="R$ 0"
+                        className="h-8 w-28 rounded-lg border-border/40 bg-card text-xs"
+                      />
+                    </div>
+                    <label className="flex cursor-pointer items-center gap-2 text-xs text-muted-foreground">
+                      <Checkbox checked={somenteAtrasados} onCheckedChange={(v) => aoMarcarAtrasados(v === true)} />
+                      Somente em atraso
+                    </label>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </CollapsibleContent>
         </Collapsible>
 
         <EtapaPills ativo={etapa} contagens={contagens} onSelecionar={comReset(setEtapa)} />
       </div>
       {/* ── 4-7. Container principal: cabeçalho + tabela/cards + paginação ── */}
-      <Card className="overflow-hidden rounded-2xl border-border/40 bg-card/60 shadow-xs">
+      <MotionCard
+        custom={slot(INICIO_CARD)}
+        variants={cardVariants}
+        initial="hidden"
+        animate="visible"
+        className="overflow-hidden rounded-2xl border-border/40 bg-card/60 shadow-xs"
+      >
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/30 px-4 py-3">
           <h2 className="flex items-center gap-2 font-display text-sm font-medium text-foreground">
             <List className="h-4 w-4 text-primary" />
@@ -1675,6 +1899,7 @@ export function GestaoCandidatos({
                     selecionados={selecionados}
                     onToggleTodos={toggleTodos}
                     onToggleLinha={toggleLinha}
+                    chaveCascata={cascataChave}
                     {...acoes}
                   />
                 ) : (
@@ -1696,7 +1921,7 @@ export function GestaoCandidatos({
             />
           </>
         )}
-      </Card>
+      </MotionCard>
     </div>
   );
 }

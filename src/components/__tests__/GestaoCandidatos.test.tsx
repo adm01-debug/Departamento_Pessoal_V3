@@ -8,21 +8,34 @@ import { formatCurrency } from '@/utils/format';
  * `framer-motion` é o MESMO de `OnboardingDashboard.test.tsx` — os elementos só
  * rendem `children`, sem repassar props de animação ao DOM.
  */
-vi.mock('framer-motion', () => ({
-  motion: {
-    create:
-      (Component: any) =>
-      ({ children, ...rest }: any) => <Component {...rest}>{children}</Component>,
-    div: ({ children }: any) => <div>{children}</div>,
-    span: ({ children }: any) => <span>{children}</span>,
-    circle: () => <circle />,
-    polygon: () => <polygon />,
-    polyline: () => <polyline />,
-  },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
-  useInView: () => true,
-  useReducedMotion: () => false,
-}));
+vi.mock('framer-motion', () => {
+  // Props de ANIMAÇÃO do Framer Motion (não existem no DOM) — descartadas no
+  // mock; todo o resto (className, onClick, aria-pressed, type, data-*) passa
+  // adiante para o elemento real.
+  const MOTION_PROPS = new Set([
+    'custom', 'variants', 'initial', 'animate', 'exit', 'whileHover', 'whileTap', 'transition', 'layoutId',
+  ]);
+  const semMotion = (props: any) => {
+    const out: any = {};
+    for (const [k, v] of Object.entries(props)) if (!MOTION_PROPS.has(k)) out[k] = v;
+    return out;
+  };
+  return {
+    motion: {
+      create: (Component: any) => (props: any) => <Component {...semMotion(props)} />,
+      div: (props: any) => <div {...semMotion(props)} />,
+      span: (props: any) => <span {...semMotion(props)} />,
+      tr: (props: any) => <tr {...semMotion(props)} />,
+      button: (props: any) => <button {...semMotion(props)} />,
+      circle: () => <circle />,
+      polygon: () => <polygon />,
+      polyline: () => <polyline />,
+    },
+    AnimatePresence: ({ children }: any) => <>{children}</>,
+    useInView: () => true,
+    useReducedMotion: () => false,
+  };
+});
 
 // O `MiniSparkline` é mockado (com testid) só para provar que os KPI Cards
 // desta tela NÃO o renderizam: o card aprovado é de área única (ícone + bloco
@@ -198,6 +211,40 @@ describe('GestaoCandidatos', () => {
     expect(screen.getByRole('button', { name: /Cards/ })).toHaveAttribute('aria-pressed', 'true');
   });
 
+  /* Contorno ÚNICO e PERMANENTE do toggle Tabela/Cards: existe UM só indicador
+     lime, `absolute`, sempre montado como IRMÃO dos botões (nunca dentro do
+     botão ativo) e deslizando por baixo deles. Os botões NÃO desenham a própria
+     borda — só trocam de cor. A troca de visão apenas reposiciona esse MESMO nó
+     (o `aria-pressed` continua igual); a lógica não muda. */
+  it('usa UM contorno lime permanente (irmão dos botões) — sem borda por botão', () => {
+    montar();
+
+    const tabela = screen.getByRole('button', { name: /Tabela/ });
+    const cards = screen.getByRole('button', { name: /Cards/ });
+    const toggle = tabela.parentElement as HTMLElement;
+
+    // Nenhum botão carrega `border-primary` no próprio className: a borda lime
+    // não pode ser criada/removida por botão.
+    expect(tabela.className).not.toContain('border-primary');
+    expect(cards.className).not.toContain('border-primary');
+
+    // Existe UM contorno só, `absolute`, e ele é IRMÃO dos botões (nunca filho
+    // de um deles — ou seja, não "nasce" dentro do botão ativo).
+    const contornos = () => [...toggle.querySelectorAll<HTMLElement>('[class*="border-primary"]')];
+    expect(contornos()).toHaveLength(1);
+    expect(contornos()[0]).toHaveClass('absolute');
+    expect(tabela.contains(contornos()[0])).toBe(false);
+    expect(cards.contains(contornos()[0])).toBe(false);
+
+    // Ao alternar, o MESMO nó permanece montado (não some nem reaparece).
+    fireEvent.click(cards);
+    expect(contornos()).toHaveLength(1);
+    fireEvent.click(tabela);
+    expect(contornos()).toHaveLength(1);
+  });
+
+
+
   /* ─── Contrato de diagramação do CARD (visão Cards) ──────────────────────
      A ficha da referência é DENSA e HORIZONTAL, em QUATRO faixas: no topo
      `[avatar] Nome ... [Status] [⋮]`, com o CARGO completo na linha de baixo
@@ -260,64 +307,92 @@ describe('GestaoCandidatos', () => {
     expect(classes).not.toContain('minmax(');
   });
 
-  /* Contrato de LEGIBILIDADE do card: nenhum campo é cortado por reticências
-     (`truncate`/`text-ellipsis`/`line-clamp`). NOME, VALORES e RESPONSÁVEL saem
-     COMPLETOS, cada um em UMA linha (`whitespace-nowrap`).
-     Dois textos quebram ENTRE PALAVRAS, nunca com "…":
-       • o CARGO é texto livre — com o recuo fixo (`pl-[50px]`) ele saía para
-         fora do card ("Analista de Departamento Pessoal" mede 245px contra
-         213px úteis a 1100px);
-       • os RÓTULOS das três infos — como os blocos ficam LADO A LADO, cada um
-         tem 1/3 do card (≈86px a 1280px) e "Admissão prevista" com o ícone mede
-         ≈103px; em `whitespace-nowrap` invadiria o bloco vizinho (o `gap-x-2`
-         do trilho tem só 8px). Quebrar em duas linhas custa 12,5px e preserva o
-         contrato da visão: os três blocos SEMPRE na mesma horizontal.
-     Os VALORES das infos ficam em `whitespace-nowrap`: o maior dado real
-     ("R$ 11.200,00", ≈74px medidos) cabe nos ≈86px da coluna mais estreita. */
-  it('entrega nome, valores e responsável em UMA linha — só cargo e rótulos podem quebrar', () => {
+  /* Contrato do HEADER do card (visão Cards): o status/ações (selo de etapa +
+     menu ⋮) ficam FIXOS no topo-direita e NUNCA descem para baixo do nome. Para
+     isso o header é UMA linha em `flex items-start` (sem `flex-wrap`) — o avatar
+     é `shrink-0`, o bloco nome/cargo é `flex-1 min-w-0` e é ele que CEDE espaço:
+     nome e cargo são TRUNCADOS em 1 linha com reticências (`truncate` + as
+     utilidades explícitas `overflow-hidden`/`text-ellipsis`/`whitespace-nowrap`),
+     então a largura do nome nunca empurra o selo/menu. O bloco da direita é
+     atômico, em linha única e ancorado ao TOPO (`shrink-0 whitespace-nowrap
+     self-start`) — a tag nunca cai para a linha de baixo. */
+  it('fixa o status/ações no topo-direita e trunca nome e cargo em 1 linha', () => {
     const { container } = montar();
     fireEvent.click(screen.getByRole('button', { name: /Cards/ }));
 
     const cards = [...gradeCards(container)!.children] as HTMLElement[];
     expect(cards).toHaveLength(4);
 
-    /** Os cargos dos mocks — os únicos parágrafos que podem ocupar 2 linhas. */
-    const cargos = ['Analista de RH', 'Motorista', 'Contadora', 'Técnico de Suporte'];
+    cards.forEach((card) => {
+      // O header é o 1º filho do card: linha horizontal alinhada ao TOPO, sem
+      // `flex-wrap` — o selo/menu nunca pode cair para a linha de baixo.
+      const topo = card.children[0];
+      expect(topo).toHaveClass('flex', 'items-start');
+      expect(topo).not.toHaveClass('flex-wrap');
+
+      const [avatar, blocoTexto, blocoDireita] = [...topo.children] as HTMLElement[];
+      // a) avatar fixo à esquerda.
+      expect(avatar).toHaveClass('shrink-0');
+      // b) bloco de texto elástico e encolhível — é ele que cede espaço.
+      expect(blocoTexto).toHaveClass('flex-1', 'min-w-0');
+      // c) bloco status/ações atômico, em linha única, ancorado ao TOPO-direita.
+      expect(blocoDireita).toHaveClass('shrink-0', 'items-center', 'gap-2', 'self-start', 'whitespace-nowrap');
+      // É o ÚLTIMO bloco do header — fica sempre à DIREITA do texto.
+      expect(topo.lastElementChild).toBe(blocoDireita);
+      // A tag (selo de etapa) e o menu ⋮ moram AQUI, nunca no bloco de texto.
+      const selo = blocoDireita.children[0] as HTMLElement;
+      expect(selo.tagName).toBe('DIV');
+      expect(selo).toHaveClass('whitespace-nowrap', 'shrink-0');
+      expect(blocoDireita.querySelector('button')).toBeTruthy();
+
+      // Nome e cargo moram no bloco de texto e TRUNCAM em 1 linha.
+      const paragrafosTopo = [...blocoTexto.querySelectorAll('p')];
+      expect(paragrafosTopo).toHaveLength(2);
+      paragrafosTopo.forEach((p) =>
+        expect(p).toHaveClass('truncate', 'overflow-hidden', 'text-ellipsis', 'whitespace-nowrap')
+      );
+      // O cargo nasce alinhado ao início do nome (vizinho avatar), sem recuo fixo.
+      expect(paragrafosTopo[1].className).not.toMatch(/pl-\[/);
+    });
+  });
+
+  /* Fora do header NENHUM dado é cortado: os VALORES das três infos e o
+     RESPONSÁVEL saem COMPLETOS em `whitespace-nowrap`. Só os RÓTULOS das infos
+     quebram ENTRE PALAVRAS — como os blocos ficam LADO A LADO (1/3 cada), o
+     rótulo mais longo ("Admissão prevista" com ícone, ≈103px) não cabe em ≈86px
+     a 1280px; quebrar em 2 linhas custa 12,5px e preserva o contrato de manter
+     os três blocos na MESMA horizontal. Os VALORES ficam em `whitespace-nowrap`:
+     o maior dado real ("R$ 11.200,00", ≈74px) cabe na coluna mais estreita. */
+  it('entrega valores e responsável em UMA linha — sem reticências', () => {
+    const { container } = montar();
+    fireEvent.click(screen.getByRole('button', { name: /Cards/ }));
+
+    const cards = [...gradeCards(container)!.children] as HTMLElement[];
+    expect(cards).toHaveLength(4);
+
+    /** Rótulos das infos que podem quebrar + o rótulo fixo "Responsável". */
+    const excecoes = ['Responsável', 'Departamento', 'Admissão prevista', 'Salário'];
 
     cards.forEach((card) => {
-      // Nenhum nó do card corta texto por reticências (o "…" da referência proibido).
-      expect(card.innerHTML).not.toMatch(/truncate|text-ellipsis|line-clamp/);
-      // Todos os parágrafos de DADO (nome, valores das infos e responsável) ficam
-      // em UMA linha. EXCEÇÕES — as duas documentadas no comentário do teste: o
-      // CARGO (texto livre) e os RÓTULOS das infos (que quebram entre palavras
-      // para não invadir o vizinho); mais o rótulo fixo "Responsável" (palavra
-      // única, sem risco de quebra).
-      const excecoes = ['Responsável', 'Departamento', 'Admissão prevista', 'Salário', ...cargos];
-      [...card.querySelectorAll('p')]
+      const topo = card.children[0];
+      const foraDoHeader = [...card.querySelectorAll('p')].filter((p) => !topo.contains(p));
+      // Nenhum parágrafo FORA do header corta texto por reticências.
+      foraDoHeader.forEach((p) => expect(p.className).not.toMatch(/truncate|text-ellipsis|line-clamp/));
+      // Todos os parágrafos de DADO (valores + responsável) ficam em UMA linha.
+      foraDoHeader
         .filter((p) => !excecoes.includes(p.textContent ?? ''))
         .forEach((p) => expect(p).toHaveClass('whitespace-nowrap'));
 
-      // O CARGO mora no bloco de identidade, logo abaixo do nome (2º `p` do
-      // topo), alinhado ao início do nome pelo vizinho avatar — sem recuo fixo.
-      const topo = card.children[0];
-      const paragrafosTopo = [...topo.querySelectorAll('p')];
-      expect(paragrafosTopo).toHaveLength(2);
-      expect(paragrafosTopo[0]).toHaveClass('whitespace-nowrap');
-      expect(paragrafosTopo[1]).toHaveClass('break-words');
-      expect(paragrafosTopo[1].className).not.toMatch(/pl-\[/);
-
       // As três informações ficam LADO A LADO — um bloco por terço do card
-      // (`flex-1` + `min-w-0`), nunca empilhadas: era o empilhamento (um bloco
-      // por linha, ~64px por coluna a 1280px) que empurrava "Admissão prevista"
-      // sobre o vizinho.
-      const trilhoInfos = [...card.querySelectorAll('p')]
+      // (`flex-1` + `min-w-0`), nunca empilhadas.
+      const trilhoInfos = foraDoHeader
         .find((p) => p.textContent === 'Departamento')
         ?.closest<HTMLElement>('div.flex.items-start');
       expect(trilhoInfos).toBeTruthy();
       const blocosInfo = [...trilhoInfos!.children] as HTMLElement[];
       expect(blocosInfo).toHaveLength(3);
       blocosInfo.forEach((bloco) => expect(bloco).toHaveClass('flex-1', 'min-w-0'));
-      // Nada de grade de colunas dentro do card (o defeito da coluna de ~64px).
+      // Nada de grade de colunas dentro do card.
       expect(card.querySelector('[class*="grid-cols-"]')).toBeNull();
     });
   });
