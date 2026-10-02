@@ -255,7 +255,19 @@ export default function AdmissoesPage() {
                 <Spinner size="lg" />
               </div>
             ) : (
-              <AdmissoesKanban admissoes={(admissoes as any[]) || []} />
+              <AdmissoesKanban
+                isActive={activeTab === 'kanban'}
+                admissoes={(admissoes as any[]) || []}
+                sendingLink={sendingLink}
+                onEnviarLink={handleEnviarLink}
+                onEnviarWhatsApp={handleEnviarWhatsApp}
+                // Mesmo destino da tabela de candidatos (ver `GestaoCandidatos`):
+                // guarda a admissão nos DOIS estados — o `open` e o conteúdo modal.
+                onOpenDetalhes={(admissao) => {
+                  setSelectedAdmissao(admissao);
+                  setAdmissaoDoModal(admissao);
+                }}
+              />
             )}
           </TabsContent>
 

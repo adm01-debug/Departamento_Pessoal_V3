@@ -30,6 +30,13 @@
        que já é vivo e passa AA sobre o branco —, então quem justifica o token
        é o valor do `.dark`, logo abaixo. */
     --destructive-vivid: 0 72% 51%;
+    /* ─── ADMISSÕES — acento TURQUESA do board (`aqua`, etapa eSocial) ───
+       Membro novo da mesma família de tokens exclusivos da área de Admissões
+       (como `--destructive-vivid`): o brand/jetons semânticos não têm matiz
+       entre o ciano (`--chart-2`) e o azul (`--info`), e a referência do Kanban
+       pede as duas cores ao mesmo tempo — Validação em ciano e eSocial em
+       turquesa. Valor por tema logo abaixo. */
+    --aqua: 174 72% 36%;
     --success: 142 71% 38%;
     --success-foreground: 0 0% 100%;
     --warning: 38 92% 50%;
@@ -153,6 +160,8 @@
        `--background`, mantendo fundo escuro/translúcido (nada de glow nem de
        fundo cheio). Nenhuma outra área do sistema consome este token. */
     --destructive-vivid: 0 84% 60%;
+    /* Turquesa do board de Admissões (etapa eSocial) — ver a nota do `:root`. */
+    --aqua: 174 70% 46%;
     --success: 142 76% 40%;
     --success-foreground: 60 10% 92%;
     --warning: 38 92% 52%;
@@ -564,5 +573,148 @@
   .select-chevron,
   .dp-dropdown-anim-chevron {
     transition: none;
+  }
+}
+
+/* ============================================================================
+   KANBAN (Admissões) — ENTRADA DAS COLUNAS EM CSS PURO.
+
+   O "brotar" é `height` REAL (0px → `var(--kanban-final-height)`, a altura FINAL do
+   slot medida em px pelo JS — sem ambiguidade de `%`): nada de
+   `scaleY`, `clipPath`, `translateY`-simulando ou fade. O JavaScript NÃO controla a
+   altura — só mede o slot, liga/desliga a classe de disparo DEPOIS de a coluna estar
+   visível + 2 frames (`isActive`, ver `KanbanColumn.tsx`).
+
+   Hierarquia (ver `KanbanColumn.tsx`):
+     .kanban-lane-slot   → altura FINAL, transparente (sem bg/borda/sombra), `items-end`
+       .kanban-column-visual → ÚNICA superfície visível; cresce de baixo para cima
+         .kb-gradient       → degradê da etapa (overlay; aparece DEPOIS do crescimento)
+         .kb-header / .kb-list > .kanban-card / .kb-footer → conteúdo
+
+   As classes:
+     .kanban-em-entrada      → enquanto a coreografia roda (delays por `--kanban-index`)
+     .kanban-coluna-concluida→ depois de terminar: altura 100% fixa e tudo visível
+                               (cards novos/movidos entram JÁ visíveis).
+   ========================================================================== */
+
+/* Estado base: coluna FECHADA e conteúdo visível (mas recortado pelo overflow) —
+   é o `.kanban-em-entrada` que esconde o conteúdo enquanto a coluna cresce. */
+.kanban-column-visual {
+  height: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+@keyframes kanban-column-grow {
+  from {
+    height: 0px;
+  }
+  to {
+    height: var(--kanban-final-height, 100%);
+  }
+}
+@keyframes kanban-gradient-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes kanban-header-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes kanban-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(-18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes kanban-footer-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 1. CRESCIMENTO — a coluna sobe do rodapé até o topo (700ms), uma após a outra
+      (140ms por coluna). `both` mantém o `from` durante o delay e o `to` no fim. */
+.kanban-em-entrada {
+  animation: kanban-column-grow 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--kanban-index, 0) * 140ms);
+}
+
+/* 2. COR (degradê) — só depois que a coluna praticamente cresceu. */
+.kanban-em-entrada .kb-gradient {
+  animation: kanban-gradient-in 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--kanban-index, 0) * 140ms + 620ms);
+}
+
+/* 3. CABEÇALHO. */
+.kanban-em-entrada .kb-header {
+  animation: kanban-header-in 250ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--kanban-index, 0) * 140ms + 780ms);
+}
+
+/* 4. CARDS — descem de cima para baixo, 80ms entre um e outro. */
+.kanban-em-entrada .kanban-card {
+  animation: kanban-card-in 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--kanban-index, 0) * 140ms + 980ms + var(--card-index, 0) * 80ms);
+}
+
+/* 5. RODAPÉ — por último (o delay considera a quantidade de cards). */
+.kanban-em-entrada .kb-footer {
+  animation: kanban-footer-in 250ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--kanban-index, 0) * 140ms + var(--kanban-footer-delay, 1300ms));
+}
+
+/* Depois da entrada: altura final estável e tudo visível (sem depender de fill da
+   animação) — é o que garante que cards adicionados/movidos depois entrem visíveis. */
+.kanban-coluna-concluida {
+  height: 100%;
+}
+
+/* `prefers-reduced-motion`: o Kanban MANTÉM o crescimento de baixo para cima (mais
+   rápido e simplificado) — NUNCA `animation: none` nem `height: 100%`, para a
+   coluna jamais aparecer pronta em altura total. O conteúdo entra só com fade
+   (sem `translateY`, sem cascata exagerada). */
+@media (prefers-reduced-motion: reduce) {
+  .kanban-em-entrada {
+    animation-name: kanban-column-grow;
+    animation-duration: 380ms;
+    animation-timing-function: ease-out;
+    animation-fill-mode: both;
+    animation-delay: calc(var(--kanban-index, 0) * 60ms);
+  }
+  .kanban-em-entrada .kb-gradient {
+    animation: kanban-gradient-in 200ms ease-out both;
+    animation-delay: calc(var(--kanban-index, 0) * 60ms + 320ms);
+  }
+  .kanban-em-entrada .kb-header {
+    animation: kanban-gradient-in 180ms ease-out both;
+    animation-delay: calc(var(--kanban-index, 0) * 60ms + 400ms);
+  }
+  .kanban-em-entrada .kanban-card {
+    animation: kanban-gradient-in 180ms ease-out both;
+    animation-delay: calc(var(--kanban-index, 0) * 60ms + 460ms + var(--card-index, 0) * 40ms);
+  }
+  .kanban-em-entrada .kb-footer {
+    animation: kanban-gradient-in 180ms ease-out both;
+    animation-delay: calc(var(--kanban-index, 0) * 60ms + var(--kanban-footer-delay-reduzido, 560ms));
   }
 }
