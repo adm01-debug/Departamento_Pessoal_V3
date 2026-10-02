@@ -16,7 +16,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { documentoService } from '@/services';
 import type { DocumentoListItem } from '@/services/documentoService';
 import { supabase } from '@/integrations/supabase/client';
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { validateUploadFile } from '@/utils/uploadValidation';
@@ -49,6 +49,29 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
     queryFn: () => documentoService.listarDocumentos(empresaId!, colaboradorId),
     enabled: !!colaboradorId && !!empresaId,
   });
+
+  const { data: assinaturas = [] } = useQuery({
+    queryKey: ['portal-assinaturas', colaboradorId],
+    enabled: !!colaboradorId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('documentos_assinatura')
+        .select('conteudo_url')
+        .eq('colaborador_id', colaboradorId!);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  // `documentos` não tem coluna de storage — o path vem da URL assinada gravada em `url`.
+  const docPath = (doc: DocumentoListItem) => doc.url?.split(`${BUCKET}/`).pop()?.split('?')[0];
+  const signedPaths = useMemo(
+    () =>
+      new Set(
+        assinaturas.map((a) => a.conteudo_url?.split(`${BUCKET}/`).pop()?.split('?')[0]).filter((p): p is string => !!p)
+      ),
+    [assinaturas]
+  );
 
   const handleUpload = async () => {
     if (!file || !tipo || !colaboradorId || !empresaId) {
@@ -96,8 +119,9 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
   const deleteMutation = useMutation({
     mutationFn: async (doc: DocumentoListItem) => {
       if (!empresaId) throw new Error('Empresa não identificada');
-      if (doc.storage_path) {
-        await supabase.storage.from(BUCKET).remove([doc.storage_path]);
+      const path = doc.storage_path || docPath(doc);
+      if (path) {
+        await supabase.storage.from(BUCKET).remove([path]);
       }
       await documentoService.excluir(doc.id, empresaId);
     },
@@ -109,7 +133,7 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
 
   const handleDownload = async (doc: DocumentoListItem) => {
     try {
-      const path = doc.storage_path || doc.url?.split(`${BUCKET}/`).pop()?.split('?')[0];
+      const path = doc.storage_path || docPath(doc);
       if (!path) return;
       const { data, error } = await supabase.storage.from(BUCKET).download(path);
       if (error) throw error;
@@ -154,6 +178,7 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
       if (signErr) throw signErr;
 
       queryClient.invalidateQueries({ queryKey: ['portal-documentos'] });
+      queryClient.invalidateQueries({ queryKey: ['portal-assinaturas'] });
       toast.success('Documento assinado com sucesso!');
       setDocToSign(null);
     } catch (e: unknown) {
@@ -245,7 +270,7 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
                     </div>
                   </div>
                   <div className="flex gap-1">
-                    {doc.tipo === 'Contrato' && (
+                    {doc.tipo === 'Contrato' && !signedPaths.has(docPath(doc) ?? '') && (
                       <Button
                         variant="ghost"
                         size="icon"

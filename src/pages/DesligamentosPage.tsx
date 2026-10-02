@@ -34,7 +34,6 @@ import {
   NovoDesligamentoDialog,
   TurnoverChart,
 } from '@/components/desligamentos';
-import type { LooseRow } from '@/types/db';
 export default function DesligamentosPage() {
   const { desligamentos, isLoading } = useDesligamentos();
   const { empresaAtual } = useEmpresas();
@@ -45,7 +44,7 @@ export default function DesligamentosPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
   const [tipoFilter, setTipoFilter] = useState('todos');
-  const [selectedDesligamento, setSelectedDesligamento] = useState<LooseRow<'desligamentos'> | null>(null);
+  const [selectedDesligamento, setSelectedDesligamento] = useState<DesligamentoComColaborador | null>(null);
   const [showDetail, setShowDetail] = useState(false);
   const [showNovo, setShowNovo] = useState(false);
   const [showChart, setShowChart] = useState(true);
@@ -79,7 +78,7 @@ export default function DesligamentosPage() {
       queryClient.invalidateQueries({ queryKey: ['desligamentos'] });
       toast.success('Desligamento excluído');
     } catch (err) {
-      loggerService.error(
+      void loggerService.error(
         'Erro ao excluir desligamento',
         { id, empresaId: empresaAtual?.id },
         err instanceof Error ? err : new Error(String(err))

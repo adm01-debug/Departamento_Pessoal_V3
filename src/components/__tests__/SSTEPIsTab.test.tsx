@@ -10,8 +10,20 @@ vi.mock('framer-motion', () => ({
 import { SSTEPIsTab } from '../sst/SSTEPIsTab';
 
 const MOCK_EPIS = [
-  { id: 'epi-001', nome: 'Capacete de Segurança', ca: 'CA-12345', categoria: 'Proteção da Cabeça', validade_meses: 24 },
-  { id: 'epi-002', nome: 'Luva de Proteção', ca: 'CA-67890', categoria: 'Proteção das Mãos', validade_meses: 12 },
+  {
+    id: 'epi-001',
+    nome: 'Capacete de Segurança',
+    ca: 'CA-12345',
+    categoria: 'Proteção da Cabeça',
+    ca_validade: '2028-01-01',
+  },
+  {
+    id: 'epi-002',
+    nome: 'Luva de Proteção',
+    ca: 'CA-67890',
+    categoria: 'Proteção das Mãos',
+    ca_validade: '2027-01-01',
+  },
 ];
 
 const MOCK_ENTREGAS = [

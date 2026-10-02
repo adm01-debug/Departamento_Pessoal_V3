@@ -22,7 +22,7 @@ export function Bitrix24ConfigPanel() {
   const qc = useQueryClient();
   const [tab, setTab] = useState('config');
 
-  const { data: config, isLoading: loadConfig } = useQuery<any>({
+  const { data: config, isLoading: loadConfig } = useQuery({
     queryKey: ['bitrix24_config'],
     queryFn: () => bitrix24Service.getConfig(),
   });
@@ -102,7 +102,7 @@ export function Bitrix24ConfigPanel() {
         toast.success(`Sincronização concluída: ${sucessos} sucessos.`);
       }
     },
-    onError: (err: any) => toast.error(safeErrorMessage(err, 'Falha no Sync.')),
+    onError: (err) => toast.error(safeErrorMessage(err, 'Falha no Sync.')),
   });
 
   if (loadConfig)
@@ -214,9 +214,11 @@ export function Bitrix24ConfigPanel() {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    logs.map((l: any) => (
+                    logs.map((l) => (
                       <TableRow key={l.id}>
-                        <TableCell className="text-xs">{new Date(l.created_at).toLocaleString('pt-BR')}</TableCell>
+                        <TableCell className="text-xs">
+                          {l.created_at ? new Date(l.created_at).toLocaleString('pt-BR') : '—'}
+                        </TableCell>
                         <TableCell>
                           <Badge variant="outline">{l.tipo}</Badge>
                         </TableCell>
@@ -294,12 +296,14 @@ export function CnabConfigPanel() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  remessas.map((r: any) => (
+                  remessas.map((r) => (
                     <TableRow key={r.id}>
-                      <TableCell className="text-xs">{new Date(r.created_at).toLocaleString('pt-BR')}</TableCell>
-                      <TableCell className="font-medium text-sm">{r.banco_nome || 'Banco do Brasil'}</TableCell>
+                      <TableCell className="text-xs">
+                        {r.created_at ? new Date(r.created_at).toLocaleString('pt-BR') : '—'}
+                      </TableCell>
+                      <TableCell className="font-medium text-sm">{r.banco_codigo || '—'}</TableCell>
                       <TableCell className="font-mono text-xs">
-                        {r.nome_arquivo || `REMESSA_${r.id.slice(0, 8)}.txt`}
+                        {`REMESSA_${r.sequencial_arquivo ?? r.id.slice(0, 8)}.txt`}
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline" className="bg-success/10 text-success border-0">
@@ -415,7 +419,7 @@ export function WebhookConfigPanel() {
                   Clique em "Novo Webhook" para começar
                 </div>
               ) : (
-                webhooks.map((w: any) => (
+                webhooks.map((w) => (
                   <Card key={w.id} className="border-border/30 overflow-hidden group">
                     <CardContent className="p-4 flex items-center justify-between">
                       <div className="flex items-center gap-4">
@@ -423,7 +427,9 @@ export function WebhookConfigPanel() {
                           <Zap className="h-5 w-5 text-primary" />
                         </div>
                         <div>
-                          <h4 className="font-medium text-sm">{w.nome}</h4>
+                          <h4 className="font-medium text-sm">
+                            {(w.eventos as string[] | null)?.join(', ') || 'Webhook'}
+                          </h4>
                           <p className="text-xs font-mono text-muted-foreground">{w.url}</p>
                         </div>
                       </div>
@@ -470,10 +476,12 @@ export function WebhookConfigPanel() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  logs.map((l: any) => (
+                  logs.map((l) => (
                     <TableRow key={l.id}>
-                      <TableCell className="text-xs">{new Date(l.created_at).toLocaleString('pt-BR')}</TableCell>
-                      <TableCell className="text-sm">{l.webhook_nome || 'Webhook Principal'}</TableCell>
+                      <TableCell className="text-xs">
+                        {l.created_at ? new Date(l.created_at).toLocaleString('pt-BR') : '—'}
+                      </TableCell>
+                      <TableCell className="text-sm">{l.webhook_id ? l.webhook_id.slice(0, 8) : 'Webhook'}</TableCell>
                       <TableCell>
                         <Badge variant="outline" className="text-[10px]">
                           {l.evento || 'colaborador.criado'}
@@ -487,7 +495,7 @@ export function WebhookConfigPanel() {
                         )}
                       </TableCell>
                       <TableCell className="text-xs font-mono max-w-[150px] truncate text-muted-foreground">
-                        {l.response_body || '—'}
+                        {typeof l.resposta === 'string' ? l.resposta : '—'}
                       </TableCell>
                     </TableRow>
                   ))

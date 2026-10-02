@@ -39,8 +39,7 @@ import { contratacaoService } from '@/services/contratacaoService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { OnboardingDashboard } from '@/components/admissoes/OnboardingDashboard';
 import OnboardingPageContent from '@/components/admissoes/OnboardingPageContent';
-import type { LooseRow } from '@/types/db';
-import type { Tables } from '@/integrations/supabase/database.types';
+import type { Tables } from '@/integrations/supabase/types';
 
 const etapaLabels: Record<string, string> = {
   solicitacao: 'Solicitação',
@@ -73,7 +72,7 @@ export default function AdmissoesPage() {
   const [search, setSearch] = useState('');
   const [etapaFilter, setEtapaFilter] = useState('todos');
   const [sendingLink, setSendingLink] = useState<string | null>(null);
-  const [selectedAdmissao, setSelectedAdmissao] = useState<LooseRow<'admissoes'> | null>(null);
+  const [selectedAdmissao, setSelectedAdmissao] = useState<Tables<'admissoes'> | null>(null);
 
   const handleEnviarLink = async (admissao: Tables<'admissoes'>) => {
     if (!admissao.email) {

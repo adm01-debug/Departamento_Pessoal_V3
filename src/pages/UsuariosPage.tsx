@@ -21,35 +21,50 @@ export default function UsuariosPage() {
 
   return (
     <>
-    <PageTitle title="Usuários" description="Gestão de usuários do sistema" />
-    <PageLayout title="Usuários" description="Gestão de usuários do sistema" icon={<UserCog className="h-5 w-5 text-primary-foreground" />} gradient="from-primary to-primary-glow">
-      {isLoading ? (
-        <div className="flex justify-center p-8"><Spinner size="lg" /></div>
-      ) : !profiles?.length ? (
-        <EmptyList entityName="usuário" />
-      ) : (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-2xl border border-border/30 overflow-hidden shadow-elevated">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-muted/30 hover:bg-muted/30">
-                <TableHead className="font-display font-semibold">Nome</TableHead>
-                <TableHead className="font-display font-semibold">Email</TableHead>
-                <TableHead className="font-display font-semibold">Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {profiles.map((u: any) => (
-                <TableRow key={u.id} className="hover:bg-accent/30 transition-colors">
-                  <TableCell className="font-body font-medium">{u.nome || 'Sem nome'}</TableCell>
-                  <TableCell className="font-body">{u.email || '-'}</TableCell>
-                  <TableCell><Badge variant="outline" className="bg-success/10 text-success">Ativo</Badge></TableCell>
+      <PageTitle title="Usuários" description="Gestão de usuários do sistema" />
+      <PageLayout
+        title="Usuários"
+        description="Gestão de usuários do sistema"
+        icon={<UserCog className="h-5 w-5 text-primary-foreground" />}
+        gradient="from-primary to-primary-glow"
+      >
+        {isLoading ? (
+          <div className="flex justify-center p-8">
+            <Spinner size="lg" />
+          </div>
+        ) : !profiles?.length ? (
+          <EmptyList entityName="usuário" />
+        ) : (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="rounded-2xl border border-border/30 overflow-hidden shadow-elevated"
+          >
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/30 hover:bg-muted/30">
+                  <TableHead className="font-display font-semibold">Nome</TableHead>
+                  <TableHead className="font-display font-semibold">Telefone</TableHead>
+                  <TableHead className="font-display font-semibold">Status</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </motion.div>
-      )}
-    </PageLayout>
+              </TableHeader>
+              <TableBody>
+                {profiles.map((u) => (
+                  <TableRow key={u.id} className="hover:bg-accent/30 transition-colors">
+                    <TableCell className="font-body font-medium">{u.nome || 'Sem nome'}</TableCell>
+                    <TableCell className="font-body">{u.telefone || '-'}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="bg-success/10 text-success">
+                        Ativo
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </motion.div>
+        )}
+      </PageLayout>
     </>
   );
 }

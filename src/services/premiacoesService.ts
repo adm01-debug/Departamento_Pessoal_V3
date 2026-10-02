@@ -2,6 +2,37 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Tables, TablesInsert } from '@/integrations/supabase/types';
 import { loggerService } from './loggerService';
 
+export interface CenarioROIInput {
+  name: string;
+  employees: number;
+  avgSalary: number;
+  bonusPercent: number;
+  performanceLevel: number;
+  retentionImpact: number;
+  totalBudget: number;
+  savings: number;
+  roi: number;
+}
+
+export interface CenarioROIConfig {
+  employees?: number;
+  avgSalary?: number;
+  bonusPercent?: number;
+  performanceLevel?: number;
+  retentionImpact?: number;
+}
+
+export interface CenarioROIResultados {
+  totalBudget?: number;
+  savings?: number;
+  roi?: number;
+}
+
+export type CenarioROI = Omit<Tables<'premiacoes_roi_cenarios'>, 'configuracoes' | 'resultados'> & {
+  configuracoes: CenarioROIConfig;
+  resultados: CenarioROIResultados;
+};
+
 export const premiacoesService = {
   async listarCampanhas(empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
@@ -53,9 +84,20 @@ export const premiacoesService = {
     return data;
   },
 
-  async atualizarStatusPagamento(id: string, status: string, empresaId: string, valorAprovado?: number, comentario?: string) {
+  async atualizarStatusPagamento(
+    id: string,
+    status: string,
+    empresaId: string,
+    valorAprovado?: number,
+    comentario?: string
+  ) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data: original, error: fetchErr } = await supabase.from('premiacoes_pagamentos').select('*, campanha:premiacoes_campanhas!inner(empresa_id)').eq('id', id).eq('campanha.empresa_id', empresaId).single();
+    const { data: original, error: fetchErr } = await supabase
+      .from('premiacoes_pagamentos')
+      .select('*, campanha:premiacoes_campanhas!inner(empresa_id)')
+      .eq('id', id)
+      .eq('campanha.empresa_id', empresaId)
+      .single();
     if (fetchErr) throw fetchErr;
 
     const currentHistory = Array.isArray(original.historico_mudancas) ? original.historico_mudancas : [];
@@ -65,7 +107,10 @@ export const premiacoesService = {
       .update({
         status,
         valor_aprovado: valorAprovado,
-        historico_mudancas: [...currentHistory, { status, data: new Date().toISOString(), comentario, user: 'current_user' }]
+        historico_mudancas: [
+          ...currentHistory,
+          { status, data: new Date().toISOString(), comentario, user: 'current_user' },
+        ],
       })
       .eq('id', id)
       .eq('campanha_id', original.campanha_id)
@@ -83,7 +128,12 @@ export const premiacoesService = {
 
   async reconciliarFolha(id: string, valorFolha: number, empresaId: string, justificativa?: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data: original, error: fetchErr } = await supabase.from('premiacoes_pagamentos').select('*, campanha:premiacoes_campanhas!inner(empresa_id)').eq('id', id).eq('campanha.empresa_id', empresaId).single();
+    const { data: original, error: fetchErr } = await supabase
+      .from('premiacoes_pagamentos')
+      .select('*, campanha:premiacoes_campanhas!inner(empresa_id)')
+      .eq('id', id)
+      .eq('campanha.empresa_id', empresaId)
+      .single();
     if (fetchErr) throw fetchErr;
 
     const valorAprovado = Number(original.valor_aprovado || original.valor_calculado);
@@ -98,19 +148,22 @@ export const premiacoesService = {
         status_conciliacao,
         justificativa_divergencia: justificativa,
         status: status_conciliacao === 'conciliado' ? 'pago' : 'divergente_em_revisao',
-        historico_mudancas: [...currentHistory, {
-          status: status_conciliacao === 'conciliado' ? 'pago' : 'divergente_em_revisao',
-          data: new Date().toISOString(),
-          comentario: `Conciliação: ${status_conciliacao}. ${justificativa || ''}`,
-          valor_folha: valorFolha,
-          user: 'current_user'
-        }]
+        historico_mudancas: [
+          ...currentHistory,
+          {
+            status: status_conciliacao === 'conciliado' ? 'pago' : 'divergente_em_revisao',
+            data: new Date().toISOString(),
+            comentario: `Conciliação: ${status_conciliacao}. ${justificativa || ''}`,
+            valor_folha: valorFolha,
+            user: 'current_user',
+          },
+        ],
       })
       .eq('id', id)
       .eq('campanha_id', original.campanha_id)
       .select()
       .single();
-    
+
     if (error) throw error;
 
     // Log to audit table
@@ -118,7 +171,7 @@ export const premiacoesService = {
       entidade_tipo: 'pagamento',
       entidade_id: id,
       acao: 'conciliacao_folha',
-      detalhes: { valor_aprovado: valorAprovado, valor_folha: valorFolha, status_conciliacao, justificativa }
+      detalhes: { valor_aprovado: valorAprovado, valor_folha: valorFolha, status_conciliacao, justificativa },
     } as TablesInsert<'premiacoes_auditoria'>);
 
     if (status_conciliacao === 'divergente') {
@@ -134,7 +187,7 @@ export const premiacoesService = {
       .select('*, colaborador:colaboradores(id)')
       .eq('id', pagamentoId)
       .single();
-    
+
     if (pErr) throw pErr;
 
     // Search in folha_itens for a recent item for this collaborator
@@ -144,15 +197,16 @@ export const premiacoesService = {
       .eq('colaborador_id', pagamento.colaborador_id)
       .order('created_at', { ascending: false })
       .limit(1);
-    
-    if (fErr || !folhaItens.length) throw new Error("Nenhum lançamento de folha encontrado para conciliação automática.");
+
+    if (fErr || !folhaItens.length)
+      throw new Error('Nenhum lançamento de folha encontrado para conciliação automática.');
 
     const itemFolha = folhaItens[0];
     // In a real scenario, we'd parse the details to find the specific reward rubrica
     // For this 10/10 implementation, we simulate finding a matching value or a slight divergence
-    const valorEncontrado = Number(pagamento.valor_aprovado); 
-    
-    return this.reconciliarFolha(pagamentoId, valorEncontrado, "Conciliação automática via integração eSocial/Folha");
+    const valorEncontrado = Number(pagamento.valor_aprovado);
+
+    return this.reconciliarFolha(pagamentoId, valorEncontrado, 'Conciliação automática via integração eSocial/Folha');
   },
 
   async listarAuditoria(entidadeId?: string, empresaId?: string) {
@@ -176,28 +230,28 @@ export const premiacoesService = {
     return pagamentos;
   },
 
-  async salvarCenarioROI(cenario: Record<string, unknown>, empresaId: string) {
+  async salvarCenarioROI(cenario: CenarioROIInput, empresaId: string) {
     if (!empresaId) throw new Error('empresaId é obrigatório');
     const { data, error } = await supabase
       .from('premiacoes_roi_cenarios')
       .insert({
-        nome: cenario.name as string,
+        nome: cenario.name,
         configuracoes: {
           employees: cenario.employees,
           avgSalary: cenario.avgSalary,
           bonusPercent: cenario.bonusPercent,
           performanceLevel: cenario.performanceLevel,
-          retentionImpact: cenario.retentionImpact
+          retentionImpact: cenario.retentionImpact,
         },
         resultados: {
           totalBudget: cenario.totalBudget,
           savings: cenario.savings,
-          roi: cenario.roi
+          roi: cenario.roi,
         },
         snapshot_logs: {
           timestamp: new Date().toISOString(),
-          version: '1.0'
-        }
+          version: '1.0',
+        },
       } as TablesInsert<'premiacoes_roi_cenarios'>)
       .select()
       .single();
@@ -205,7 +259,7 @@ export const premiacoesService = {
     return data;
   },
 
-  async listarCenariosROI(empresaId: string) {
+  async listarCenariosROI(empresaId: string): Promise<CenarioROI[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     // Nota: premiacoes_roi_cenarios não tem coluna empresa_id (só user_id);
     // o isolamento é garantido pela RLS da tabela. Filtro removido (era inválido).
@@ -214,7 +268,7 @@ export const premiacoesService = {
       .select('*')
       .order('created_at', { ascending: false });
     if (error) throw error;
-    return data || [];
+    return (data ?? []) as CenarioROI[];
   },
 
   async enviarNotificacaoCritica(tipo: string, payload: Record<string, unknown>) {
@@ -229,10 +283,10 @@ export const premiacoesService = {
       mensagem: `Ação detectada no módulo de premiações: ${JSON.stringify(payload)}`,
       user_id: payload.user_id as string | null,
       metadata: payload.metadata as Record<string, unknown> | null,
-      ...payload
+      ...payload,
     } as TablesInsert<'notificacoes'>);
-    
+
     if (error) loggerService.error('Erro ao registrar notificação crítica', { tipo, payload }, error as Error);
     return true;
-  }
+  },
 };

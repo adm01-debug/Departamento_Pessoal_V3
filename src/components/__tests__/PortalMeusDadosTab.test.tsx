@@ -35,11 +35,12 @@ vi.mock('@/components/ui/dialog', () => ({
 }));
 
 import { PortalMeusDadosTab } from '../portal/PortalMeusDadosTab';
+import type { Tables } from '@/integrations/supabase/types';
 
 const DEFAULT_PROPS = {
   nome: 'João Silva',
   email: 'joao@empresa.com',
-  profile: { cargo: 'Analista', departamento: 'TI', telefone: '(11) 99999-0000' },
+  profile: { cargo: 'Analista', departamento: 'TI', telefone: '(11) 99999-0000' } as unknown as Tables<'profiles'>,
   userId: 'usr-001',
   navigate: vi.fn(),
 };

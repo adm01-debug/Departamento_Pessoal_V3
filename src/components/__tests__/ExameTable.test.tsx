@@ -12,11 +12,12 @@ vi.mock('framer-motion', () => ({
 vi.mock('@/components/ui/tooltip', () => ({
   TooltipProvider: ({ children }: any) => <>{children}</>,
   Tooltip: ({ children }: any) => <>{children}</>,
-  TooltipTrigger: ({ children, asChild }: any) => asChild ? children : <div>{children}</div>,
+  TooltipTrigger: ({ children, asChild }: any) => (asChild ? children : <div>{children}</div>),
   TooltipContent: ({ children }: any) => <div>{children}</div>,
 }));
 
 import { ExameTable } from '../exames/ExameTable';
+import type { Tables } from '@/integrations/supabase/types';
 
 const FUTURE_DATE = '2099-12-31';
 const PAST_DATE = '2020-01-01';
@@ -40,7 +41,7 @@ const DATA = [
     resultado: 'inapto',
     nome_medico: null,
   },
-];
+] as unknown as (Tables<'exames'> & { colaborador?: { nome_completo?: string | null } | null })[];
 
 describe('ExameTable', () => {
   it('renders table headers', () => {

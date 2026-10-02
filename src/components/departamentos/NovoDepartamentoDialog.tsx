@@ -1,5 +1,13 @@
+import { Departamento } from '@/types/entities';
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,12 +17,13 @@ import { Spinner } from '@/components/ui/spinner';
 import { useDepartamentos } from '@/hooks/useDepartamentos';
 import { useSyncedState } from '@/hooks/useSyncedState';
 import { toast } from 'sonner';
+import type { Tables } from '@/integrations/supabase/types';
 import { Building2, Save } from 'lucide-react';
 
 interface Props {
   open: boolean;
   onOpenChange: (o: boolean) => void;
-  departamento?: any;
+  departamento?: Departamento | null;
 }
 
 export function NovoDepartamentoDialog({ open, onOpenChange, departamento }: Props) {
@@ -25,7 +34,6 @@ export function NovoDepartamentoDialog({ open, onOpenChange, departamento }: Pro
     departamento,
     (d) => ({
       nome: d?.nome || '',
-      descricao: d?.descricao || '',
       ativo: d?.ativo !== false,
     }),
     open
@@ -59,9 +67,7 @@ export function NovoDepartamentoDialog({ open, onOpenChange, departamento }: Pro
             <Building2 className="h-5 w-5 text-primary" />
             {departamento ? 'Editar Departamento' : 'Novo Departamento'}
           </DialogTitle>
-          <DialogDescription>
-            Cadastre uma unidade ou centro de custo da empresa.
-          </DialogDescription>
+          <DialogDescription>Cadastre uma unidade ou centro de custo da empresa.</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
@@ -69,19 +75,9 @@ export function NovoDepartamentoDialog({ open, onOpenChange, departamento }: Pro
             <Label>Nome *</Label>
             <Input
               value={form.nome}
-              onChange={(e) => setForm(p => ({ ...p, nome: e.target.value }))}
+              onChange={(e) => setForm((p) => ({ ...p, nome: e.target.value }))}
               placeholder="Ex: Recursos Humanos"
               autoFocus
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label>Descrição</Label>
-            <Textarea
-              value={form.descricao}
-              onChange={(e) => setForm(p => ({ ...p, descricao: e.target.value }))}
-              placeholder="Breve descrição do departamento"
-              rows={3}
             />
           </div>
 
@@ -90,10 +86,7 @@ export function NovoDepartamentoDialog({ open, onOpenChange, departamento }: Pro
               <Label className="font-bold">Departamento ativo</Label>
               <p className="text-xs text-muted-foreground">Inativos não aparecem em novos cadastros</p>
             </div>
-            <Switch
-              checked={form.ativo}
-              onCheckedChange={(v) => setForm(p => ({ ...p, ativo: v }))}
-            />
+            <Switch checked={form.ativo} onCheckedChange={(v) => setForm((p) => ({ ...p, ativo: v }))} />
           </div>
         </div>
 

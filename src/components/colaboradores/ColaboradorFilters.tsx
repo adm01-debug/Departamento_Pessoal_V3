@@ -1,22 +1,23 @@
+import type { Cargo, Departamento } from '@/types/entities';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-export function ColaboradorFilters({ 
-  onSearchChange, 
-  onStatusChange, 
+export function ColaboradorFilters({
+  onSearchChange,
+  onStatusChange,
   onDeptoChange,
   onCargoChange,
   departamentos = [],
   cargos = [],
-  currentFilters
-}: { 
+  currentFilters,
+}: {
   onSearchChange: (v: string) => void;
   onStatusChange: (v: string) => void;
   onDeptoChange: (v: string) => void;
   onCargoChange: (v: string) => void;
-  departamentos?: any[];
-  cargos?: any[];
+  departamentos?: Pick<Departamento, 'id' | 'nome'>[];
+  cargos?: Pick<Cargo, 'id' | 'nome'>[];
   currentFilters: {
     search: string;
     status: string;
@@ -29,8 +30,8 @@ export function ColaboradorFilters({
       <div className="flex flex-col md:flex-row gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input 
-            placeholder="Buscar por nome, CPF ou e-mail..." 
+          <Input
+            placeholder="Buscar por nome, CPF ou e-mail..."
             value={currentFilters.search}
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-9 rounded-xl border-border/40 focus:ring-primary/20"
@@ -57,8 +58,10 @@ export function ColaboradorFilters({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos Departamentos</SelectItem>
-              {departamentos.map(d => (
-                <SelectItem key={d.id} value={d.nome}>{d.nome}</SelectItem>
+              {departamentos.map((d) => (
+                <SelectItem key={d.id} value={d.nome}>
+                  {d.nome}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -69,8 +72,10 @@ export function ColaboradorFilters({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos Cargos</SelectItem>
-              {cargos.map(c => (
-                <SelectItem key={c.id} value={c.nome}>{c.nome}</SelectItem>
+              {cargos.map((c) => (
+                <SelectItem key={c.id} value={c.nome}>
+                  {c.nome}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>

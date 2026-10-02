@@ -1,3 +1,4 @@
+import type { Tables } from '@/integrations/supabase/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
@@ -19,18 +20,20 @@ const tipoColors: Record<string, string> = {
 };
 
 interface ExameTipoChartProps {
-  data: any[];
+  data: Tables<'exames'>[];
 }
 
 export function ExameTipoChart({ data }: ExameTipoChartProps) {
   const total = data.length || 1;
   const tipos = Object.keys(tipoLabels);
-  const distribution = tipos.map(t => ({
-    key: t,
-    label: tipoLabels[t],
-    count: data.filter((e: any) => e.tipo === t).length,
-    color: tipoColors[t] || 'bg-muted-foreground/40',
-  })).filter(c => c.count > 0);
+  const distribution = tipos
+    .map((t) => ({
+      key: t,
+      label: tipoLabels[t],
+      count: data.filter((e) => e.tipo === t).length,
+      color: tipoColors[t] || 'bg-muted-foreground/40',
+    }))
+    .filter((c) => c.count > 0);
 
   return (
     <Card className="border border-border/30 shadow-elevated rounded-2xl">
@@ -48,7 +51,9 @@ export function ExameTipoChart({ data }: ExameTipoChartProps) {
                     <div className="space-y-1 cursor-default">
                       <div className="flex justify-between text-xs font-body">
                         <span className="text-muted-foreground">{cat.label}</span>
-                        <span className="font-medium">{cat.count} ({pct}%)</span>
+                        <span className="font-medium">
+                          {cat.count} ({pct}%)
+                        </span>
                       </div>
                       <div className="h-2 rounded-full bg-muted/50 overflow-hidden">
                         <motion.div

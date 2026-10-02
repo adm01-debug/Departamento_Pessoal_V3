@@ -18,13 +18,13 @@ interface EntityGridPageContainerProps<T> {
   icon: ReactNode;
   gradient: string;
   actions?: ReactNode;
-  
+
   // Query State
   items: T[];
   total: number;
   isLoading: boolean;
   isFetching: boolean;
-  error: any;
+  error: unknown;
   isRefreshing?: boolean;
   page: number;
   pageSize: number;
@@ -34,7 +34,7 @@ interface EntityGridPageContainerProps<T> {
   onRefetch: () => void;
   onAdd?: () => void;
   addLabel?: string;
-  
+
   // Customization
   searchPlaceholder?: string;
   entityName: string;
@@ -69,11 +69,11 @@ export function EntityGridPageContainer<T extends { id: string | number }>({
   entityName,
   renderItem,
   stats,
-  gridClassName = "grid gap-4 md:grid-cols-2 lg:grid-cols-3",
+  gridClassName = 'grid gap-4 md:grid-cols-2 lg:grid-cols-3',
   skeletonCount = 6,
   customFilters,
   onAdd,
-  addLabel
+  addLabel,
 }: EntityGridPageContainerProps<T>) {
   const totalPages = Math.ceil(total / pageSize);
   const hasFilters = search !== '';
@@ -81,19 +81,13 @@ export function EntityGridPageContainer<T extends { id: string | number }>({
   return (
     <>
       <PageTitle title={pageTitle} description={pageDescription} />
-      <PageLayout
-        title={title}
-        description={description}
-        icon={icon}
-        gradient={gradient}
-        actions={actions}
-      >
+      <PageLayout title={title} description={description} icon={icon} gradient={gradient} actions={actions}>
         {stats}
 
         {customFilters || (
-          <DataTableToolbar 
-            search={search} 
-            onSearchChange={onSearchChange} 
+          <DataTableToolbar
+            search={search}
+            onSearchChange={onSearchChange}
             searchPlaceholder={searchPlaceholder || `Buscar por nome...`}
             onRefresh={onRefetch}
             isRefreshing={isRefreshing}
@@ -106,7 +100,9 @@ export function EntityGridPageContainer<T extends { id: string | number }>({
           <SyncErrorState error={error} onRetry={onRefetch} entityName={entityName + 's'} />
         ) : isLoading ? (
           <div className={gridClassName}>
-            {Array.from({ length: skeletonCount }).map((_, i) => <GridCardSkeleton key={i} />)}
+            {Array.from({ length: skeletonCount }).map((_, i) => (
+              <GridCardSkeleton key={i} />
+            ))}
           </div>
         ) : total === 0 ? (
           <div className="flex flex-col items-center justify-center border border-dashed rounded-2xl bg-muted/10 p-4">
@@ -124,11 +120,11 @@ export function EntityGridPageContainer<T extends { id: string | number }>({
                   <Spinner size="lg" />
                 </div>
               )}
-              
+
               {items.map((item, i) => renderItem(item, i))}
             </div>
 
-            <DataTablePagination 
+            <DataTablePagination
               currentPage={page}
               totalPages={totalPages}
               totalItems={total}

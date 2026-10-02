@@ -12,7 +12,9 @@ vi.mock('@/components/ui/dialog', () => ({
 
 vi.mock('@/components/ui/button', () => ({
   Button: ({ children, disabled, onClick }: any) => (
-    <button disabled={disabled} onClick={onClick}>{children}</button>
+    <button disabled={disabled} onClick={onClick}>
+      {children}
+    </button>
   ),
 }));
 
@@ -57,11 +59,7 @@ describe('NovoDepartamentoDialog', () => {
 
   it('renders Editar Departamento title when departamento provided', () => {
     render(
-      <NovoDepartamentoDialog
-        open={true}
-        onOpenChange={vi.fn()}
-        departamento={{ id: 'd1', nome: 'RH', descricao: '', ativo: true }}
-      />
+      <NovoDepartamentoDialog open={true} onOpenChange={vi.fn()} departamento={{ id: 'd1', nome: 'RH', ativo: true }} />
     );
     expect(screen.getByText('Editar Departamento')).toBeInTheDocument();
   });
@@ -88,11 +86,7 @@ describe('NovoDepartamentoDialog', () => {
 
   it('renders Salvar button when editing', () => {
     render(
-      <NovoDepartamentoDialog
-        open={true}
-        onOpenChange={vi.fn()}
-        departamento={{ id: 'd1', nome: 'RH', descricao: '', ativo: true }}
-      />
+      <NovoDepartamentoDialog open={true} onOpenChange={vi.fn()} departamento={{ id: 'd1', nome: 'RH', ativo: true }} />
     );
     expect(screen.getByRole('button', { name: /Salvar/i })).toBeInTheDocument();
   });

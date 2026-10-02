@@ -31,7 +31,9 @@ vi.mock('@/components/ui/badge', () => ({
 
 vi.mock('@/components/ui/button', () => ({
   Button: ({ children, onClick, disabled }: any) => (
-    <button onClick={onClick} disabled={disabled}>{children}</button>
+    <button onClick={onClick} disabled={disabled}>
+      {children}
+    </button>
   ),
 }));
 
@@ -52,6 +54,7 @@ vi.mock('@/components/ui/tooltip', () => ({
 }));
 
 import { MedidasTable } from '../medidas-disciplinares/MedidasTable';
+import type { MedidaDisciplinarComColaborador } from '@/types/medidasDisciplinares';
 
 const MOCK_DATA = [
   {
@@ -65,7 +68,7 @@ const MOCK_DATA = [
     testemunha_1: 'Maria Santos',
     colaborador: { nome_completo: 'Carlos Oliveira' },
   },
-];
+] as unknown as MedidaDisciplinarComColaborador[];
 
 describe('MedidasTable', () => {
   it('renders table column header Colaborador', () => {
@@ -99,9 +102,7 @@ describe('MedidasTable', () => {
   });
 
   it('renders with empty data without error', () => {
-    expect(() =>
-      render(<MedidasTable data={[]} onMarcarCiencia={vi.fn()} onExcluir={vi.fn()} />)
-    ).not.toThrow();
+    expect(() => render(<MedidasTable data={[]} onMarcarCiencia={vi.fn()} onExcluir={vi.fn()} />)).not.toThrow();
   });
 
   it('renders Ações column header', () => {

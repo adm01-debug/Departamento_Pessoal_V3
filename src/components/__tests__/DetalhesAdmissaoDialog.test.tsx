@@ -20,9 +20,7 @@ vi.mock('@/hooks/useEmpresas', () => ({
 }));
 
 vi.mock('@/components/admissao/AdmissaoChecklist', () => ({
-  AdmissaoChecklist: ({ documentos }: any) => (
-    <div data-testid="checklist">{documentos?.length} docs</div>
-  ),
+  AdmissaoChecklist: ({ documentos }: any) => <div data-testid="checklist">{documentos?.length} docs</div>,
 }));
 
 vi.mock('@/utils/piiMask', () => ({
@@ -45,9 +43,7 @@ vi.mock('@/components/ui/badge', () => ({
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick }: any) => (
-    <button onClick={onClick}>{children}</button>
-  ),
+  Button: ({ children, onClick }: any) => <button onClick={onClick}>{children}</button>,
 }));
 
 vi.mock('@/components/ui/scroll-area', () => ({
@@ -58,10 +54,15 @@ vi.mock('@/components/ui/tabs', () => ({
   Tabs: ({ children }: any) => <div>{children}</div>,
   TabsContent: ({ children, value }: any) => <div data-value={value}>{children}</div>,
   TabsList: ({ children }: any) => <div role="tablist">{children}</div>,
-  TabsTrigger: ({ children, value }: any) => <button role="tab" data-value={value}>{children}</button>,
+  TabsTrigger: ({ children, value }: any) => (
+    <button role="tab" data-value={value}>
+      {children}
+    </button>
+  ),
 }));
 
 import { DetalhesAdmissaoDialog } from '../admissoes/DetalhesAdmissaoDialog';
+import type { Tables } from '@/integrations/supabase/types';
 
 const MOCK_ADMISSAO = {
   id: 'adm-1',
@@ -79,13 +80,11 @@ const MOCK_ADMISSAO = {
   checklist_ctps: false,
   checklist_exame_admissional: false,
   checklist_contrato_assinado: false,
-};
+} as unknown as Tables<'admissoes'>;
 
 describe('DetalhesAdmissaoDialog', () => {
   it('returns null when admissao is null', () => {
-    const { container } = render(
-      <DetalhesAdmissaoDialog admissao={null} open={true} onOpenChange={vi.fn()} />
-    );
+    const { container } = render(<DetalhesAdmissaoDialog admissao={null} open={true} onOpenChange={vi.fn()} />);
     expect(container.firstChild).toBeNull();
   });
 

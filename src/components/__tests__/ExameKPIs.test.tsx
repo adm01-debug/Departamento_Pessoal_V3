@@ -8,6 +8,7 @@ vi.mock('framer-motion', () => ({
 }));
 
 import { ExameKPIs } from '../exames/ExameKPIs';
+import type { Tables } from '@/integrations/supabase/types';
 
 const FUTURE_DATE = '2099-12-31';
 const PAST_DATE = '2020-01-01';
@@ -22,7 +23,7 @@ const DATA = [
   { id: '4', resultado: 'apto_restricao', data_validade: FUTURE_DATE },
   { id: '5', resultado: null, data_validade: FUTURE_DATE },
   { id: '6', resultado: 'apto', data_validade: PAST_DATE },
-];
+] as unknown as Tables<'exames'>[];
 
 describe('ExameKPIs', () => {
   it('renders all 6 KPI labels', () => {
@@ -52,7 +53,7 @@ describe('ExameKPIs', () => {
   });
 
   it('shows vencendo message when near future', () => {
-    const nearData = [{ id: '7', resultado: 'apto', data_validade: NEAR_DATE }];
+    const nearData = [{ id: '7', resultado: 'apto', data_validade: NEAR_DATE }] as unknown as Tables<'exames'>[];
     render(<ExameKPIs data={nearData} />);
     expect(screen.getByText(/vencendo nos próximos 30 dias/)).toBeInTheDocument();
   });

@@ -10,12 +10,12 @@ export function useContratacaoDigital() {
   const { empresaAtual } = useEmpresas();
 
   const atualizarEtapa = useMutation({
-    mutationFn: async ({ tokenId, campos }: { tokenId: string, campos: any }) => {
+    mutationFn: async ({ tokenId, campos }: { tokenId: string; campos: Record<string, unknown> }) => {
       const { data, error } = await supabase
         .from('admissao_tokens')
         .update({
           ...campos,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', tokenId)
         .select()
@@ -31,11 +31,16 @@ export function useContratacaoDigital() {
   });
 
   const validarDocumento = useMutation({
-    mutationFn: async ({ admissaoId, docType, status, observacao }: {
-      admissaoId: string,
-      docType: string,
-      status: 'validado' | 'rejeitado',
-      observacao?: string
+    mutationFn: async ({
+      admissaoId,
+      docType,
+      status,
+      observacao,
+    }: {
+      admissaoId: string;
+      docType: string;
+      status: 'validado' | 'rejeitado';
+      observacao?: string;
     }) => {
       return await contratacaoService.validarDocumento(admissaoId, docType, status, observacao, empresaAtual?.id);
     },

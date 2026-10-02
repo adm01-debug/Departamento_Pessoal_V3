@@ -36,7 +36,7 @@ export function AfastamentoDocumentManager({ afastamentoId }: AfastamentoDocumen
       toast.error('Tipo de arquivo não suportado. Use PDF, JPG ou PNG.');
       return false;
     }
-    
+
     // 3. Verificação de integridade básica
     if (file.size === 0) {
       toast.error('O arquivo está vazio ou corrompido.');
@@ -47,35 +47,40 @@ export function AfastamentoDocumentManager({ afastamentoId }: AfastamentoDocumen
     try {
       const buffer = await file.slice(0, 8).arrayBuffer();
       const header = new Uint8Array(buffer);
-      
+
       let isValidHeader = false;
-      let fileDescription = "";
-      
+      let fileDescription = '';
+
       if (file.type === 'application/pdf') {
         // PDF: %PDF-1. (25 50 44 46 2d 31 2e)
         isValidHeader = header[0] === 0x25 && header[1] === 0x50 && header[2] === 0x44 && header[3] === 0x46;
-        fileDescription = "Documento Digital PDF (ISO 32000)";
+        fileDescription = 'Documento Digital PDF (ISO 32000)';
       } else if (file.type === 'image/jpeg') {
         // JPEG: FF D8 FF
-        isValidHeader = header[0] === 0xFF && header[1] === 0xD8 && header[2] === 0xFF;
-        fileDescription = "Imagem JPEG / Fotografia";
+        isValidHeader = header[0] === 0xff && header[1] === 0xd8 && header[2] === 0xff;
+        fileDescription = 'Imagem JPEG / Fotografia';
       } else if (file.type === 'image/png') {
         // PNG: 89 50 4E 47 0D 0A 1A 0A
-        isValidHeader = header[0] === 0x89 && header[1] === 0x50 && header[2] === 0x4E && header[3] === 0x47;
-        fileDescription = "Imagem PNG com Transparência";
+        isValidHeader = header[0] === 0x89 && header[1] === 0x50 && header[2] === 0x4e && header[3] === 0x47;
+        fileDescription = 'Imagem PNG com Transparência';
       }
 
       if (!isValidHeader) {
         toast.error('Erro de Segurança', {
-          description: 'A assinatura digital do arquivo não corresponde à extensão. O arquivo pode estar corrompido ou mascarado.',
-          icon: <AlertTriangle className="h-4 w-4 text-destructive" />
+          description:
+            'A assinatura digital do arquivo não corresponde à extensão. O arquivo pode estar corrompido ou mascarado.',
+          icon: <AlertTriangle className="h-4 w-4 text-destructive" />,
         });
         return false;
       }
 
       // Feedback de Qualidade
     } catch (e: unknown) {
-      loggerService.error('Erro na validação de metadados', { fileName: file.name }, e instanceof Error ? e : undefined);
+      loggerService.error(
+        'Erro na validação de metadados',
+        { fileName: file.name },
+        e instanceof Error ? e : undefined
+      );
       return false;
     }
 
@@ -90,7 +95,7 @@ export function AfastamentoDocumentManager({ afastamentoId }: AfastamentoDocumen
         setFile(selectedFile);
         toast.success(`Arquivo "${selectedFile.name}" validado com sucesso!`, {
           icon: <ShieldCheck className="h-4 w-4 text-green-500" />,
-          description: "Assinatura digital e integridade verificadas."
+          description: 'Assinatura digital e integridade verificadas.',
         });
       } else {
         e.target.value = '';
@@ -107,11 +112,18 @@ export function AfastamentoDocumentManager({ afastamentoId }: AfastamentoDocumen
       const input = document.getElementById('file-upload') as HTMLInputElement;
       if (input) input.value = '';
     } catch (error) {
-      loggerService.error('Erro no upload de documento de afastamento', { afastamentoId }, error instanceof Error ? error : new Error(String(error)));
-      const message = error && typeof error === 'object' && 'message' in error ? (error as unknown as { message: string }).message : 'Ocorreu um erro técnico ao realizar o upload.';
+      loggerService.error(
+        'Erro no upload de documento de afastamento',
+        { afastamentoId },
+        error instanceof Error ? error : new Error(String(error))
+      );
+      const message =
+        error && typeof error === 'object' && 'message' in error
+          ? (error as unknown as { message: string }).message
+          : 'Ocorreu um erro técnico ao realizar o upload.';
       toast.error('Erro no Upload', {
         description: message,
-        icon: <AlertTriangle className="h-4 w-4 text-destructive" />
+        icon: <AlertTriangle className="h-4 w-4 text-destructive" />,
       });
     }
   };
@@ -147,20 +159,16 @@ export function AfastamentoDocumentManager({ afastamentoId }: AfastamentoDocumen
             </div>
             <div className="space-y-2">
               <Label>Arquivo</Label>
-              <Input 
+              <Input
                 id="file-upload"
-                type="file" 
+                type="file"
                 accept=".pdf,.jpg,.jpeg,.png"
                 onChange={handleFileChange}
                 className="cursor-pointer file:cursor-pointer hover:bg-muted/50 transition-colors"
               />
             </div>
           </div>
-          <Button 
-            className="w-full mt-4" 
-            disabled={!file || isUploading}
-            onClick={handleUpload}
-          >
+          <Button className="w-full mt-4" disabled={!file || isUploading} onClick={handleUpload}>
             {isUploading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -182,18 +190,19 @@ export function AfastamentoDocumentManager({ afastamentoId }: AfastamentoDocumen
           Documentos Anexados ({documentos?.length || 0})
         </h4>
 
-        
         {isLoading ? (
-          <div className="flex justify-center p-4"><Spinner /></div>
+          <div className="flex justify-center p-4">
+            <Spinner />
+          </div>
         ) : !documentos || documentos.length === 0 ? (
           <div className="text-center py-8 border rounded-lg bg-card text-muted-foreground text-sm">
             Nenhum documento anexado.
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-2">
-            {documentos?.map((doc: any) => (
-              <div 
-                key={doc.id} 
+            {documentos?.map((doc) => (
+              <div
+                key={doc.id}
                 className="flex items-center justify-between p-3 border rounded-lg bg-card hover:bg-accent/5 transition-colors"
               >
                 <div className="flex items-center gap-3">

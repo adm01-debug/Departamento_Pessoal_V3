@@ -34,6 +34,7 @@ vi.mock('@/utils/safeError', () => ({
 }));
 
 import { RewardsApprovalHub } from '../premiacoes/RewardsApprovalHub';
+import type { PagamentoComColaborador } from '../premiacoes/RewardsApprovalHub';
 
 const MOCK_PAGAMENTOS = [
   {
@@ -50,7 +51,7 @@ const MOCK_PAGAMENTOS = [
     valor_aprovado: 2000,
     colaborador: { nome_completo: 'Maria Souza' },
   },
-];
+] as unknown as PagamentoComColaborador[];
 
 describe('RewardsApprovalHub', () => {
   it('renders Aguardando Gestor stage', () => {

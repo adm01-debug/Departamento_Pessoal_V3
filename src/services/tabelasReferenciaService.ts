@@ -64,7 +64,10 @@ export async function excluirCentroCusto(id: string, empresaId: string): Promise
 // =============================================
 // Contas Bancárias
 // =============================================
-export async function listarContasBancarias(colaboradorId: string, empresaId: string): Promise<unknown[]> {
+export async function listarContasBancarias(
+  colaboradorId: string,
+  empresaId: string
+): Promise<Tables<'contas_bancarias'>[]> {
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
   const { data, error } = await supabase
     .from('contas_bancarias')
@@ -148,7 +151,9 @@ export async function salvarDadosEstagiario(
 // =============================================
 // Documentos Pessoais Arquivos
 // =============================================
-export async function listarDocumentosPessoais(colaboradorId: string): Promise<unknown[]> {
+export async function listarDocumentosPessoais(
+  colaboradorId: string
+): Promise<Tables<'documentos_pessoais_arquivos'>[]> {
   const { data, error } = await supabase
     .from('documentos_pessoais_arquivos')
     .select('*')

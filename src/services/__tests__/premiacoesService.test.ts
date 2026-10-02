@@ -3,18 +3,25 @@ import type { Mock } from 'vitest';
 import { deepChain } from '@/test/deepChain';
 import { premiacoesService } from '../premiacoesService';
 import { makeChain } from '@/test/chain';
+import type { CenarioROIInput } from '../premiacoesService';
 
 const EMPRESA_ID = 'test-empresa-id';
 
 type SelectChain = { eq: ReturnType<typeof vi.fn>; order: ReturnType<typeof vi.fn>; filter: ReturnType<typeof vi.fn> };
-type InsertChain = { select: ReturnType<typeof vi.fn>; then: (fn: unknown) => unknown; catch: (fn: unknown) => unknown };
+type InsertChain = {
+  select: ReturnType<typeof vi.fn>;
+  then: (fn: unknown) => unknown;
+  catch: (fn: unknown) => unknown;
+};
 
 const { mockFrom } = vi.hoisted<{ mockFrom: Mock<(...args: any[]) => any> }>(() => ({
-  mockFrom: vi.fn<(table: string) => {
-    select: () => SelectChain;
-    insert: (data?: unknown) => InsertChain;
-    update: (data: unknown) => { eq: ReturnType<typeof vi.fn> };
-  }>(),
+  mockFrom: vi.fn<
+    (table: string) => {
+      select: () => SelectChain;
+      insert: (data?: unknown) => InsertChain;
+      update: (data: unknown) => { eq: ReturnType<typeof vi.fn> };
+    }
+  >(),
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -59,7 +66,9 @@ const makeUpdateSingleMock = makeStandaloneChain;
 // ─── listarCampanhas ──────────────────────────────────────────────────────────
 
 describe('premiacoesService.listarCampanhas', () => {
-  beforeEach(() => { vi.resetAllMocks(); });
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
 
   it('returns campanhas without empresa filter', async () => {
     const records = [{ id: 'c1', nome: 'Campanha Q1' }];
@@ -87,7 +96,9 @@ describe('premiacoesService.listarCampanhas', () => {
 // ─── listarRegras ─────────────────────────────────────────────────────────────
 
 describe('premiacoesService.listarRegras', () => {
-  beforeEach(() => { vi.resetAllMocks(); });
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
 
   it('returns regras for campanha', async () => {
     const records = [{ id: 'r1', campanha_id: 'c1' }];
@@ -106,7 +117,9 @@ describe('premiacoesService.listarRegras', () => {
 // ─── listarPagamentos ─────────────────────────────────────────────────────────
 
 describe('premiacoesService.listarPagamentos', () => {
-  beforeEach(() => { vi.resetAllMocks(); });
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
 
   it('returns pagamentos without filters', async () => {
     const records = [{ id: 'pg1' }];
@@ -126,7 +139,6 @@ describe('premiacoesService.listarPagamentos', () => {
     expect(chain.eq).toHaveBeenCalledWith('campanha.empresa_id', 'emp-1');
   });
 
-
   it('returns empty array when data is null', async () => {
     setupPagamentosChain(null as any);
     expect(await premiacoesService.listarPagamentos(undefined, EMPRESA_ID)).toEqual([]);
@@ -136,7 +148,9 @@ describe('premiacoesService.listarPagamentos', () => {
 // ─── criarCampanha ────────────────────────────────────────────────────────────
 
 describe('premiacoesService.criarCampanha', () => {
-  beforeEach(() => { vi.resetAllMocks(); });
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
 
   it('inserts and returns new campanha', async () => {
     const created = { id: 'c-new', nome: 'Nova Campanha' };
@@ -158,24 +172,32 @@ describe('premiacoesService.criarCampanha', () => {
 
   it('throws on DB error', async () => {
     setupInsertSingleChain(null, { message: 'fail' });
-    await expect(premiacoesService.criarCampanha({
-      nome: 'X',
-      empresa_id: 'emp-1',
-      data_inicio: '2026-01-01',
-      data_fim: '2026-12-31',
-    })).rejects.toBeDefined();
+    await expect(
+      premiacoesService.criarCampanha({
+        nome: 'X',
+        empresa_id: 'emp-1',
+        data_inicio: '2026-01-01',
+        data_fim: '2026-12-31',
+      })
+    ).rejects.toBeDefined();
   });
 });
 
 // ─── criarRegra ───────────────────────────────────────────────────────────────
 
 describe('premiacoesService.criarRegra', () => {
-  beforeEach(() => { vi.resetAllMocks(); });
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
 
   it('inserts and returns new regra', async () => {
     const created = { id: 'r-new', titulo: 'metas' };
     const { insertFn } = setupInsertSingleChain(created);
-    const result = await premiacoesService.criarRegra({ campanha_id: 'c-1', titulo: 'metas', tipo_calculo: 'valor_fixo' });
+    const result = await premiacoesService.criarRegra({
+      campanha_id: 'c-1',
+      titulo: 'metas',
+      tipo_calculo: 'valor_fixo',
+    });
     expect(insertFn).toHaveBeenCalledWith({ campanha_id: 'c-1', titulo: 'metas', tipo_calculo: 'valor_fixo' });
     expect(result).toEqual(created);
   });
@@ -184,7 +206,9 @@ describe('premiacoesService.criarRegra', () => {
 // ─── atualizarStatusPagamento ────────────────────────────────────────────────
 
 describe('premiacoesService.atualizarStatusPagamento', () => {
-  beforeEach(() => { vi.resetAllMocks(); });
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
 
   it('fetches, updates and returns pagamento', async () => {
     const original = { id: 'pg1', historico_mudancas: [] };
@@ -225,7 +249,9 @@ describe('premiacoesService.atualizarStatusPagamento', () => {
 // ─── reconciliarFolha ─────────────────────────────────────────────────────────
 
 describe('premiacoesService.reconciliarFolha', () => {
-  beforeEach(() => { vi.resetAllMocks(); });
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
 
   it('sets status conciliado when valores match', async () => {
     const original = { id: 'pg1', valor_aprovado: 1000, historico_mudancas: [] };
@@ -253,7 +279,9 @@ describe('premiacoesService.reconciliarFolha', () => {
 // ─── listarAuditoria ──────────────────────────────────────────────────────────
 
 describe('premiacoesService.listarAuditoria', () => {
-  beforeEach(() => { vi.resetAllMocks(); });
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
 
   it('returns auditoria records', async () => {
     const records = [{ id: 'a1', acao: 'INSERT' }];
@@ -271,7 +299,9 @@ describe('premiacoesService.listarAuditoria', () => {
 // ─── salvarCenarioROI ─────────────────────────────────────────────────────────
 
 describe('premiacoesService.salvarCenarioROI', () => {
-  beforeEach(() => { vi.resetAllMocks(); });
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
 
   it('inserts cenario and returns result', async () => {
     const created = { id: 'roi-new' };
@@ -294,14 +324,16 @@ describe('premiacoesService.salvarCenarioROI', () => {
 
   it('throws on DB error', async () => {
     setupInsertSingleChain(null, { message: 'fail' });
-    await expect(premiacoesService.salvarCenarioROI({}, EMPRESA_ID)).rejects.toBeDefined();
+    await expect(premiacoesService.salvarCenarioROI({} as CenarioROIInput, EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
 // ─── listarCenariosROI ────────────────────────────────────────────────────────
 
 describe('premiacoesService.listarCenariosROI', () => {
-  beforeEach(() => { vi.resetAllMocks(); });
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
 
   it('returns cenarios ordered by created_at desc', async () => {
     const records = [{ id: 'roi1' }];
@@ -315,7 +347,9 @@ describe('premiacoesService.listarCenariosROI', () => {
 // ─── enviarNotificacaoCritica ─────────────────────────────────────────────────
 
 describe('premiacoesService.enviarNotificacaoCritica', () => {
-  beforeEach(() => { vi.resetAllMocks(); });
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
 
   it('inserts into notificacoes and returns true', async () => {
     const { insertFn } = setupInsertDirectChain();

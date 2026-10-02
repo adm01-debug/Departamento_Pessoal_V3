@@ -434,7 +434,7 @@ export default function PontoPage() {
                 onRegistrar={registrar}
                 ultimoRegistro={batidasHoje?.[0]}
               />
-              <PontoTodayCard registroHoje={registroHoje} />
+              <PontoTodayCard registroHoje={registroHoje ?? null} />
               <div className="flex flex-col gap-6">
                 <PontoLeaderboard />
                 <PontoWeekSummary registrosSemana={registrosSemana} />

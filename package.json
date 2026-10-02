@@ -30,7 +30,7 @@
     "audit:ratchet-any": "node scripts/ratchet-any.mjs",
     "audit:ratchet-warnings": "node scripts/ratchet-lint-warnings.mjs",
     "audit:types-drift": "node scripts/audit-types-drift.mjs",
-    "lint:ci": "eslint src --ext ts,tsx --max-warnings=449",
+    "lint:ci": "eslint src --ext ts,tsx --max-warnings=4",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json,md}\"",
     "format:check:changed": "bash scripts/format-check-changed.sh",
     "format:write": "prettier --write \"src/**/*.{ts,tsx,css,json,md}\"",

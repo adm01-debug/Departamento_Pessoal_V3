@@ -30,54 +30,59 @@ export function FolhaESocialSync({ competencia }: { competencia: string }) {
     return `${ano}-${mes}`;
   }, [competencia]);
 
-  const { data: eventosRaw, isLoading, refetch } = useQuery({
+  const {
+    data: eventosRaw,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ['esocial-events-sync', compFormatada, empresaAtual?.id],
     queryFn: () => listarEventosPorCompetencia(empresaAtual!.id, compFormatada),
-    enabled: !!empresaAtual?.id
+    enabled: !!empresaAtual?.id,
   });
 
   const events = useMemo((): ESocialEventStatus[] => {
-    if (!eventosRaw) return [
-      { event: 'S-1200 - Remuneração', type: 'S-1200', status: 'pending', total: 0, processed: 0 },
-      { event: 'S-1210 - Pagamentos', type: 'S-1210', status: 'pending', total: 0, processed: 0 },
-      { event: 'S-1299 - Fechamento', type: 'S-1299', status: 'pending', total: 1, processed: 0 },
-    ];
+    if (!eventosRaw)
+      return [
+        { event: 'S-1200 - Remuneração', type: 'S-1200', status: 'pending', total: 0, processed: 0 },
+        { event: 'S-1210 - Pagamentos', type: 'S-1210', status: 'pending', total: 0, processed: 0 },
+        { event: 'S-1299 - Fechamento', type: 'S-1299', status: 'pending', total: 1, processed: 0 },
+      ];
 
-    const s1200 = eventosRaw.filter(e => e.tipo_evento === 'S-1200');
-    const s1210 = eventosRaw.filter(e => e.tipo_evento === 'S-1210');
-    const s1299 = eventosRaw.filter(e => e.tipo_evento === 'S-1299');
+    const s1200 = eventosRaw.filter((e) => e.tipo_evento === 'S-1200');
+    const s1210 = eventosRaw.filter((e) => e.tipo_evento === 'S-1210');
+    const s1299 = eventosRaw.filter((e) => e.tipo_evento === 'S-1299');
 
-    const getStatus = (evs: any[]) => {
+    const getStatus = (evs: { status?: string | null }[]) => {
       if (evs.length === 0) return 'pending';
-      if (evs.some(e => e.status === 'erro')) return 'error';
-      if (evs.every(e => e.status === 'enviado')) return 'accepted';
+      if (evs.some((e) => e.status === 'erro')) return 'error';
+      if (evs.every((e) => e.status === 'enviado')) return 'accepted';
       return 'sent';
     };
 
     return [
-      { 
-        event: 'S-1200 - Remuneração', 
+      {
+        event: 'S-1200 - Remuneração',
         type: 'S-1200',
-        status: getStatus(s1200), 
-        total: s1200.length || 0, 
-        processed: s1200.filter(e => e.status === 'enviado').length,
-        lastUpdate: s1200[0]?.updated_at 
+        status: getStatus(s1200),
+        total: s1200.length || 0,
+        processed: s1200.filter((e) => e.status === 'enviado').length,
+        lastUpdate: s1200[0]?.updated_at,
       },
-      { 
-        event: 'S-1210 - Pagamentos', 
+      {
+        event: 'S-1210 - Pagamentos',
         type: 'S-1210',
-        status: getStatus(s1210), 
-        total: s1210.length || 0, 
-        processed: s1210.filter(e => e.status === 'enviado').length,
-        lastUpdate: s1210[0]?.updated_at
+        status: getStatus(s1210),
+        total: s1210.length || 0,
+        processed: s1210.filter((e) => e.status === 'enviado').length,
+        lastUpdate: s1210[0]?.updated_at,
       },
-      { 
-        event: 'S-1299 - Fechamento', 
+      {
+        event: 'S-1299 - Fechamento',
         type: 'S-1299',
-        status: getStatus(s1299), 
-        total: 1, 
-        processed: s1299.filter(e => e.status === 'enviado').length,
-        lastUpdate: s1299[0]?.updated_at
+        status: getStatus(s1299),
+        total: 1,
+        processed: s1299.filter((e) => e.status === 'enviado').length,
+        lastUpdate: s1299[0]?.updated_at,
       },
     ];
   }, [eventosRaw]);
@@ -92,10 +97,10 @@ export function FolhaESocialSync({ competencia }: { competencia: string }) {
     }
   };
 
-  const overallProgress = events.reduce((acc, ev) => acc + ev.total, 0) > 0
-    ? (events.reduce((acc, ev) => acc + ev.processed, 0) / events.reduce((acc, ev) => acc + ev.total, 0)) * 100
-    : 0;
-
+  const overallProgress =
+    events.reduce((acc, ev) => acc + ev.total, 0) > 0
+      ? (events.reduce((acc, ev) => acc + ev.processed, 0) / events.reduce((acc, ev) => acc + ev.total, 0)) * 100
+      : 0;
 
   return (
     <Card className="border border-border/30 rounded-2xl overflow-hidden shadow-xs">
@@ -114,7 +119,7 @@ export function FolhaESocialSync({ competencia }: { competencia: string }) {
           onClick={handleSync}
           disabled={isSyncing}
         >
-          <RefreshCw className={cn("h-4 w-4 text-muted-foreground", isSyncing && "animate-spin")} />
+          <RefreshCw className={cn('h-4 w-4 text-muted-foreground', isSyncing && 'animate-spin')} />
         </Button>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -128,7 +133,7 @@ export function FolhaESocialSync({ competencia }: { competencia: string }) {
 
         <div className="space-y-3">
           {events.map((ev, i) => (
-            <motion.div 
+            <motion.div
               key={ev.event}
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
@@ -143,7 +148,9 @@ export function FolhaESocialSync({ competencia }: { competencia: string }) {
                 {getStatusBadge(ev.status)}
               </div>
               <div className="flex items-center justify-between pl-6 text-[11px] font-body text-muted-foreground">
-                <span>{ev.processed} de {ev.total} colaboradores</span>
+                <span>
+                  {ev.processed} de {ev.total} colaboradores
+                </span>
                 {ev.lastUpdate && (
                   <span className="flex items-center gap-1">
                     <Clock className="h-3 w-3" />
@@ -156,16 +163,16 @@ export function FolhaESocialSync({ competencia }: { competencia: string }) {
         </div>
 
         <div className="flex gap-2">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             className="flex-1 rounded-xl gap-2 font-body text-xs border-info/20 text-info hover:bg-info/5 h-9"
             onClick={() => window.open('/esocial', '_blank', 'noopener')}
           >
             <ExternalLink className="h-3.5 w-3.5" />
             Painel Geral
           </Button>
-          <Button 
-            variant="default" 
+          <Button
+            variant="default"
             className="flex-1 rounded-xl gap-2 font-body text-xs bg-info hover:bg-info/90 h-9"
             onClick={() => setShowConciliation(!showConciliation)}
           >
@@ -184,15 +191,21 @@ export function FolhaESocialSync({ competencia }: { competencia: string }) {
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-[11px]">
-                  <span className="font-bold uppercase tracking-wider text-muted-foreground">Divergências Local vs eSocial</span>
-                  <Badge variant="outline" className="text-[9px] bg-success/5 text-success border-success/20">Auditado</Badge>
+                  <span className="font-bold uppercase tracking-wider text-muted-foreground">
+                    Divergências Local vs eSocial
+                  </span>
+                  <Badge variant="outline" className="text-[9px] bg-success/5 text-success border-success/20">
+                    Auditado
+                  </Badge>
                 </div>
-                
+
                 <div className="p-2.5 rounded-lg bg-warning/5 border border-warning/10 flex items-start gap-3">
                   <AlertCircle className="h-4 w-4 text-warning shrink-0 mt-0.5" />
                   <div>
                     <p className="text-xs font-bold">Diferença de INSS (R$ 42,50)</p>
-                    <p className="text-[10px] text-muted-foreground">Rubrica 1003 (Horas Extras) com incidência divergente no S-1010.</p>
+                    <p className="text-[10px] text-muted-foreground">
+                      Rubrica 1003 (Horas Extras) com incidência divergente no S-1010.
+                    </p>
                   </div>
                 </div>
 
@@ -200,7 +213,9 @@ export function FolhaESocialSync({ competencia }: { competencia: string }) {
                   <CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" />
                   <div>
                     <p className="text-xs font-bold">FGTS Digital Conciliado</p>
-                    <p className="text-[10px] text-muted-foreground">Valores transmitidos coincidem 100% com o totalizador S-5003.</p>
+                    <p className="text-[10px] text-muted-foreground">
+                      Valores transmitidos coincidem 100% com o totalizador S-5003.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -214,18 +229,45 @@ export function FolhaESocialSync({ competencia }: { competencia: string }) {
 
 const getStatusIcon = (status: ESocialEventStatus['status']) => {
   switch (status) {
-    case 'accepted': return <CheckCircle2 className="h-4 w-4 text-success" />;
-    case 'sent': return <Clock className="h-4 w-4 text-info animate-pulse" />;
-    case 'error': return <AlertCircle className="h-4 w-4 text-destructive" />;
-    default: return <Send className="h-4 w-4 text-muted-foreground" />;
+    case 'accepted':
+      return <CheckCircle2 className="h-4 w-4 text-success" />;
+    case 'sent':
+      return <Clock className="h-4 w-4 text-info animate-pulse" />;
+    case 'error':
+      return <AlertCircle className="h-4 w-4 text-destructive" />;
+    default:
+      return <Send className="h-4 w-4 text-muted-foreground" />;
   }
 };
 
 const getStatusBadge = (status: ESocialEventStatus['status']) => {
   switch (status) {
-    case 'accepted': return <Badge variant="outline" className="bg-success/10 text-success border-success/20 font-body text-[10px]">Aceito</Badge>;
-    case 'sent': return <Badge variant="outline" className="bg-info/10 text-info border-info/20 font-body text-[10px]">Transmitido</Badge>;
-    case 'error': return <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/20 font-body text-[10px]">Erro</Badge>;
-    default: return <Badge variant="outline" className="bg-muted/10 text-muted-foreground border-border font-body text-[10px]">Pendente</Badge>;
+    case 'accepted':
+      return (
+        <Badge variant="outline" className="bg-success/10 text-success border-success/20 font-body text-[10px]">
+          Aceito
+        </Badge>
+      );
+    case 'sent':
+      return (
+        <Badge variant="outline" className="bg-info/10 text-info border-info/20 font-body text-[10px]">
+          Transmitido
+        </Badge>
+      );
+    case 'error':
+      return (
+        <Badge
+          variant="outline"
+          className="bg-destructive/10 text-destructive border-destructive/20 font-body text-[10px]"
+        >
+          Erro
+        </Badge>
+      );
+    default:
+      return (
+        <Badge variant="outline" className="bg-muted/10 text-muted-foreground border-border font-body text-[10px]">
+          Pendente
+        </Badge>
+      );
   }
 };

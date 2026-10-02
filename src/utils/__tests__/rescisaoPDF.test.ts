@@ -41,6 +41,7 @@ vi.mock('@/services/auditoriaService', () => ({
 }));
 
 import { gerarPDFRescisao } from '../rescisaoPDF';
+import type { AuditoriaPdf } from '../rescisaoPDF';
 
 const sampleForm = {
   nomeColaborador: 'Maria Costa',
@@ -106,7 +107,7 @@ describe('gerarPDFRescisao', () => {
   });
 
   it('works when auditoria is provided directly', async () => {
-    const auditoria = { id: 'audit-1', created_at: new Date().toISOString() };
+    const auditoria = { id: 'audit-1', created_at: new Date().toISOString() } as unknown as AuditoriaPdf;
     await expect(gerarPDFRescisao(sampleForm, sampleResult as any, auditoria)).resolves.toBeUndefined();
     expect(mockSave).toHaveBeenCalled();
   });

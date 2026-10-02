@@ -9,6 +9,7 @@ vi.mock('framer-motion', () => ({
 
 import { MedidasKPIs } from '../medidas-disciplinares/MedidasKPIs';
 import { MedidasGravityScale } from '../medidas-disciplinares/MedidasGravityScale';
+import type { MedidaDisciplinarComColaborador } from '@/types/medidasDisciplinares';
 
 const STATS = {
   total: 20,
@@ -27,7 +28,7 @@ const MEDIDAS = [
   { id: '3', tipo: 'advertencia_escrita' },
   { id: '4', tipo: 'suspensao' },
   { id: '5', tipo: 'justa_causa' },
-];
+] as unknown as MedidaDisciplinarComColaborador[];
 
 describe('MedidasKPIs', () => {
   it('renders Total Registros label', () => {

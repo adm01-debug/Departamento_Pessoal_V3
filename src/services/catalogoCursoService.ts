@@ -150,7 +150,7 @@ export const catalogoCursoService = {
   // tenant é feito pela RLS via curso_id → catalogo_cursos.empresa_id
   // (migration 20260724001500_fix_treinamento_rls_cross_tenant.sql). O
   // `.eq('empresa_id', ...)` que existia aqui antes referenciava uma
-  // coluna inexistente: sob a tipagem antiga (`any`) compilava, mas o
+  // coluna inexistente: sob a tipagem antiga genérica compilava, mas o
   // PostgREST recusaria a query em runtime — e esta função É chamada de
   // verdade por TreinamentosPage.tsx, então a página quebraria ao carregar
   // instâncias. RLS já garante o isolamento; não há filtro de aplicação
@@ -192,7 +192,7 @@ export const catalogoCursoService = {
     return data;
   },
 
-  // SEGURANÇA (achado ao remover `any` desta função, não corrigido aqui):
+  // SEGURANÇA (achado ao eliminar casts genéricos desta função, não corrigido aqui):
   // `treinamento_certificados` não tem empresa_id direto, e a RLS em
   // 20260513193156_...sql ("RH e Gestores veem todos os certificados")
   // NÃO tem escopo de tenant — qualquer usuário com role admin/rh/gestor
@@ -204,7 +204,7 @@ export const catalogoCursoService = {
   // defesa em profundidade na aplicação, não substitui a correção de RLS.
   //
   // O `.eq('empresa_id', ...)` que existia aqui antes referenciava uma
-  // coluna inexistente; sob `any` compilava, mas a página de treinamentos
+  // coluna inexistente; sob a tipagem genérica anterior compilava, mas a página de treinamentos
   // (TreinamentosPage.tsx) que chama isto de verdade sempre falharia ao
   // carregar certificados.
   async listarCertificados(empresaId: string, colaboradorId?: string): Promise<CertificadoComJoins[]> {

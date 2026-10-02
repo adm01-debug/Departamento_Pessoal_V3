@@ -73,7 +73,7 @@ export default function DocumentosPage() {
   const [colaboradorId, setColaboradorId] = useSyncedState(urlColaboradorId, (id) => id || '');
   const [file, setFile] = useState<File | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
-  // P2-050: tipo concreto para OCR result (era any, escondia bugs)
+  // P2-050: tipo concreto para OCR result (antes sem tipo, escondia bugs)
   interface OcrResult {
     text: string;
     confidence?: number;

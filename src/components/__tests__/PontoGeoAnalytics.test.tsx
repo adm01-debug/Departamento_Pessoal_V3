@@ -20,6 +20,7 @@ vi.mock('recharts', () => ({
 }));
 
 import { PontoGeoAnalytics } from '../ponto/PontoGeoAnalytics';
+import type { BatidaGeo } from '../ponto/PontoGeoAnalytics';
 
 const MOCK_BATIDAS = [
   {
@@ -34,8 +35,8 @@ const MOCK_BATIDAS = [
   {
     id: 'bat-002',
     dentro_raio: false,
-    latitude: -23.5510,
-    longitude: -46.6340,
+    latitude: -23.551,
+    longitude: -46.634,
     distancia_local_metros: 250,
     hora: '17:30',
     colaborador: { nome_completo: 'Maria Souza' },
@@ -43,13 +44,13 @@ const MOCK_BATIDAS = [
   {
     id: 'bat-003',
     dentro_raio: true,
-    latitude: -23.5500,
-    longitude: -46.6330,
+    latitude: -23.55,
+    longitude: -46.633,
     distancia_local_metros: 30,
     hora: '09:00',
     colaborador: { nome_completo: 'Carlos Lima' },
   },
-];
+] as unknown as BatidaGeo[];
 
 describe('PontoGeoAnalytics', () => {
   it('returns null when batidas is empty', () => {

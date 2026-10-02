@@ -71,8 +71,8 @@ export const auditLogger = {
     tabela: string;
     registro_id: string;
     acao: 'INSERT' | 'UPDATE' | 'DELETE' | 'EXECUTE_CALC' | 'SIGN';
-    dados_anteriores?: any;
-    dados_novos?: any;
+    dados_anteriores?: unknown;
+    dados_novos?: unknown;
     empresa_id?: string;
   }) {
     try {

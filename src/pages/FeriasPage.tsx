@@ -116,7 +116,7 @@ export default function FeriasPage() {
       setCalcResult(result as UiRecord);
       toast.success('Cálculo validado pelo servidor');
     } catch (err) {
-      loggerService.error(
+      void loggerService.error(
         'Erro no cálculo server-side de férias',
         { empresaId: empresaAtual?.id },
         err instanceof Error ? err : new Error(String(err))

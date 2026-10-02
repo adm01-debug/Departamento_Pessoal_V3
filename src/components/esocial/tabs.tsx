@@ -438,7 +438,10 @@ export function ESocialEventDetailsDialog({
               <Label className="text-[11px] uppercase tracking-widest text-muted-foreground mb-3 block">
                 Conteúdo Estruturado
               </Label>
-              <ESocialEventViewer tipo={selectedEvento?.tipo_evento ?? ''} dados={selectedEvento?.dados || {}} />
+              <ESocialEventViewer
+                tipo={selectedEvento?.tipo_evento ?? ''}
+                dados={(selectedEvento?.dados || {}) as Record<string, unknown>}
+              />
             </div>
 
             {selectedEvento?.erros && (

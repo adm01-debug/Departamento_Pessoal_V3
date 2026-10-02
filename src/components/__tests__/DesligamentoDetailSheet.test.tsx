@@ -49,7 +49,9 @@ vi.mock('@/components/ui/separator', () => ({
 
 vi.mock('@/components/ui/button', () => ({
   Button: ({ children, onClick, disabled }: any) => (
-    <button onClick={onClick} disabled={disabled}>{children}</button>
+    <button onClick={onClick} disabled={disabled}>
+      {children}
+    </button>
   ),
 }));
 
@@ -63,6 +65,7 @@ vi.mock('../desligamentos/DesligamentoChecklist', () => ({
 }));
 
 import { DesligamentoDetailSheet } from '../desligamentos/DesligamentoDetailSheet';
+import type { DesligamentoComColaborador } from '@/services/desligamentoService';
 
 const MOCK_DESL = {
   id: 'd-001',
@@ -84,13 +87,11 @@ const MOCK_DESL = {
   total_proventos: 3100,
   total_descontos: 200,
   liquido: 2900,
-};
+} as unknown as DesligamentoComColaborador & { detalhes_calculo?: { inss?: number; irrf?: number } | null };
 
 describe('DesligamentoDetailSheet', () => {
   it('returns null when desligamento is null', () => {
-    const { container } = render(
-      <DesligamentoDetailSheet desligamento={null} open={true} onClose={vi.fn()} />
-    );
+    const { container } = render(<DesligamentoDetailSheet desligamento={null} open={true} onClose={vi.fn()} />);
     expect(container.firstChild).toBeNull();
   });
 

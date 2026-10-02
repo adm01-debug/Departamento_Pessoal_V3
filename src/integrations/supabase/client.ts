@@ -247,9 +247,9 @@ type BridgeResult = { data: unknown; error: { message: string } | null; count?: 
 
 // ── Chainable query builder types (P2-043) ─────────────────────────────────
 // Substitui o antigo QueryBuilder plano. Permite encadear .eq/.select/.single()
-// sem `as any` e sem warnings do compilador.
+// sem casts genéricos e sem warnings do compilador.
 //
-// P2-043: CENTENA de `as any` nos services era causada por QueryBuilder retornando
+// P2-043: CENTENA de casts genéricos nos services era causada por QueryBuilder retornando
 // QueryBuilder em todos os métodos — TypeScript não distinguia early vs terminal
 // stages da cadeia. Com tipos chainable, cada método retorna o tipo correto.
 interface TerminalQueryBuilder {
@@ -286,7 +286,7 @@ interface TerminalQueryBuilder {
 }
 
 // Tipo de retorno de supabase.from(table) — todos os métodos disponíveis,
-// encadeáveis, sem `as any`.
+// encadeáveis, sem casts genéricos.
 type ChainableQueryBuilder = TerminalQueryBuilder;
 
 // Tipo exportado de supabase.from(table) — visível externamente via Module augmentation.

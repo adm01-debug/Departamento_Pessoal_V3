@@ -11,6 +11,7 @@ vi.mock('framer-motion', () => ({
 
 import { MedidasTable } from '../medidas-disciplinares/MedidasTable';
 import { MedidasTimeline } from '../medidas-disciplinares/MedidasTimeline';
+import type { MedidaDisciplinarComColaborador } from '@/types/medidasDisciplinares';
 
 const MEDIDAS = [
   {
@@ -37,7 +38,7 @@ const MEDIDAS = [
     testemunhas: null,
     numero_ocorrencia: 2,
   },
-];
+] as unknown as MedidaDisciplinarComColaborador[];
 
 describe('MedidasTable', () => {
   it('shows empty state when no data (desktop)', () => {

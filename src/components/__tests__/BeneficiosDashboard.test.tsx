@@ -22,11 +22,12 @@ vi.mock('recharts', () => ({
 }));
 
 import { BeneficiosDashboard } from '../beneficios/BeneficiosDashboard';
+import type { BeneficioComAdesao } from '../beneficios/BeneficiosDashboard';
 
 const BENEFICIOS = [
   { nome: 'Plano de Saúde', tipo: 'saude', valor: 400, beneficios_colaborador: [{ count: 5 }] },
   { nome: 'Vale Alimentação', tipo: 'alimentacao', valor: 600, beneficios_colaborador: [{ count: 10 }] },
-];
+] as unknown as BeneficioComAdesao[];
 
 describe('BeneficiosDashboard', () => {
   it('renders Investimento Total label', () => {

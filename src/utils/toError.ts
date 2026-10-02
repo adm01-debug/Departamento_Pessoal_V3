@@ -1,6 +1,6 @@
 /**
  * Helper para converter `unknown` (de catch) em Error tipado.
- * Substitui o pattern `catch (err: any)` que era onipresente no código.
+ * Substitui o pattern `catch (err) sem tipo` que era onipresente no código.
  * Use sempre que precisar de uma stack trace ou mensagem segura.
  *
  * @example

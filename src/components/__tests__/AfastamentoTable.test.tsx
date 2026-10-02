@@ -22,6 +22,9 @@ vi.mock('@/components/ui/dropdown-menu', () => ({
 }));
 
 import { AfastamentoTable } from '../afastamentos/AfastamentoTable';
+import type { ComponentProps } from 'react';
+
+type Item = ComponentProps<typeof AfastamentoTable>['data'][number];
 
 const MOCK_DATA = [
   {
@@ -41,7 +44,7 @@ const MOCK_DATA = [
 ];
 
 const DEFAULT_PROPS = {
-  data: MOCK_DATA,
+  data: MOCK_DATA as unknown as Item[],
   onEdit: vi.fn(),
   onProrrogacao: vi.fn(),
   onDocuments: vi.fn(),

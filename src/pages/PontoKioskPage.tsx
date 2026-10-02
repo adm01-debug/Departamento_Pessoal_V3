@@ -187,7 +187,7 @@ export default function PontoKioskPage() {
       );
     });
 
-  const registrar = async (tipo: any) => {
+  const registrar = async (tipo: 'entrada' | 'saida_almoco' | 'retorno_almoco' | 'saida') => {
     setLoading(true);
     try {
       // E-035: geolocalização real do dispositivo (padrão captureGeo do

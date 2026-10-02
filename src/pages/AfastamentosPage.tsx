@@ -44,7 +44,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { BarChart, Bar, XAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell } from 'recharts';
-import type { UiRecord } from '@/types/uiRecord';
+
 const tipoLabels: Partial<Record<TipoAfastamento, string>> = {
   doenca: 'Doença',
   acidente_trabalho: 'Acidente Trabalho',
@@ -72,7 +72,7 @@ export default function AfastamentosPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDocOpen, setIsDocOpen] = useState(false);
   const [isTimelineOpen, setIsTimelineOpen] = useState(false);
-  const [selectedAfastamento, setSelectedAfastamento] = useState<UiRecord | null>(null);
+  const [selectedAfastamento, setSelectedAfastamento] = useState<AfastamentoCrudItem | null>(null);
 
   const stats = {
     total: afastamentos.length,
@@ -282,7 +282,7 @@ export default function AfastamentosPage() {
                       await gerarAfastamentosPDF('Relatório de Afastamentos e Auditoria Detalhada', dataToExport, {
                         cid: filtros.cid,
                         status: filtros.status,
-                        tipo: selectedTipo,
+                        tipo: selectedTipo ?? undefined,
                       });
                       toast.success('Exportação PDF concluída com excelência');
                     } catch (e) {
@@ -477,7 +477,7 @@ export default function AfastamentosPage() {
             <DialogTitle>{selectedAfastamento ? 'Editar Afastamento' : 'Novo Registro de Afastamento'}</DialogTitle>
           </DialogHeader>
           <AfastamentoForm
-            initialData={selectedAfastamento}
+            initialData={selectedAfastamento ? { ...selectedAfastamento, cid: null } : undefined}
             onSuccess={() => {
               setIsFormOpen(false);
               setSelectedAfastamento(null);

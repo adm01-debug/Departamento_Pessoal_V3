@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Spinner } from '@/components/ui/spinner';
 import { supabase } from '@/integrations/supabase/client';
+import type { Tables, TablesInsert } from '@/integrations/supabase/types';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { Plus, Trash2, Edit2, CheckCircle, XCircle } from 'lucide-react';
@@ -54,26 +55,33 @@ export function CamposCustomizadosTab() {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!empresaAtual?.id});
+    enabled: !!empresaAtual?.id,
+  });
 
   const salvar = useMutation({
     mutationFn: async () => {
       const nome = form.nome.trim().slice(0, 100);
       if (!nome) throw new Error('Nome do campo é obrigatório.');
-      if (!TIPOS_CAMPO.some(t => t.value === form.tipo)) throw new Error('Tipo de campo inválido.');
-      if (!SECOES.some(s => s.value === form.secao)) throw new Error('Seção inválida.');
+      if (!TIPOS_CAMPO.some((t) => t.value === form.tipo)) throw new Error('Tipo de campo inválido.');
+      if (!SECOES.some((s) => s.value === form.secao)) throw new Error('Seção inválida.');
 
-      const opcoes = form.tipo === 'selecao' && form.opcoes
-        ? form.opcoes.split(',').map(o => o.trim().slice(0, 100)).filter(Boolean).slice(0, 50)
-        : null;
+      const opcoes =
+        form.tipo === 'selecao' && form.opcoes
+          ? form.opcoes
+              .split(',')
+              .map((o) => o.trim().slice(0, 100))
+              .filter(Boolean)
+              .slice(0, 50)
+          : null;
 
-      const payload: any = {
+      const payload: TablesInsert<'campos_customizados'> = {
         nome,
         tipo: form.tipo,
         secao: form.secao,
         obrigatorio: form.obrigatorio,
         empresa_id: empresaAtual?.id,
-        opcoes};
+        opcoes,
+      };
 
       if (editId) {
         const { error } = await supabase.from('campos_customizados').update(payload).eq('id', editId);
@@ -91,14 +99,16 @@ export function CamposCustomizadosTab() {
       setEditId(null);
       setForm(emptyForm);
     },
-    onError: (err: any) => toast.error(safeErrorMessage(err, 'Erro ao salvar campo customizado.'))});
+    onError: (err) => toast.error(safeErrorMessage(err, 'Erro ao salvar campo customizado.')),
+  });
 
   const toggleAtivo = useMutation({
     mutationFn: async ({ id, ativo }: { id: string; ativo: boolean }) => {
       const { error } = await supabase.from('campos_customizados').update({ ativo }).eq('id', id);
       if (error) throw error;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['campos-customizados'] })});
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['campos-customizados'] }),
+  });
 
   const excluir = useMutation({
     mutationFn: async (id: string) => {
@@ -108,20 +118,27 @@ export function CamposCustomizadosTab() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['campos-customizados'] });
       toast.success('Campo removido');
-    }});
+    },
+  });
 
-  const handleEdit = (campo: any) => {
+  const handleEdit = (campo: Tables<'campos_customizados'>) => {
     setEditId(campo.id);
     setForm({
       nome: campo.nome,
       tipo: campo.tipo,
       secao: campo.secao || 'outros',
       obrigatorio: campo.obrigatorio || false,
-      opcoes: Array.isArray(campo.opcoes) ? campo.opcoes.join(', ') : ''});
+      opcoes: Array.isArray(campo.opcoes) ? campo.opcoes.join(', ') : '',
+    });
     setOpen(true);
   };
 
-  if (isLoading) return <div className="flex justify-center p-8"><Spinner size="lg" /></div>;
+  if (isLoading)
+    return (
+      <div className="flex justify-center p-8">
+        <Spinner size="lg" />
+      </div>
+    );
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
@@ -129,10 +146,20 @@ export function CamposCustomizadosTab() {
         <div className="h-[2px] bg-gradient-to-r from-primary to-info" />
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="font-display">Campos Customizados</CardTitle>
-          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { setEditId(null); setForm(emptyForm); } }}>
+          <Dialog
+            open={open}
+            onOpenChange={(v) => {
+              setOpen(v);
+              if (!v) {
+                setEditId(null);
+                setForm(emptyForm);
+              }
+            }}
+          >
             <DialogTrigger asChild>
               <Button size="sm" className="rounded-xl bg-gradient-to-r from-primary to-primary-glow font-body">
-                <Plus className="h-4 w-4 mr-1" />Novo Campo
+                <Plus className="h-4 w-4 mr-1" />
+                Novo Campo
               </Button>
             </DialogTrigger>
             <DialogContent className="rounded-2xl">
@@ -142,33 +169,62 @@ export function CamposCustomizadosTab() {
               <div className="space-y-4">
                 <div>
                   <Label className="font-body">Nome do Campo</Label>
-                  <Input value={form.nome} onChange={e => setForm(p => ({ ...p, nome: e.target.value }))} placeholder="Ex: Número do Crachá" className="rounded-xl" />
+                  <Input
+                    value={form.nome}
+                    onChange={(e) => setForm((p) => ({ ...p, nome: e.target.value }))}
+                    placeholder="Ex: Número do Crachá"
+                    className="rounded-xl"
+                  />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <Label className="font-body">Tipo</Label>
-                    <Select value={form.tipo} onValueChange={v => setForm(p => ({ ...p, tipo: v }))}>
-                      <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
-                      <SelectContent>{TIPOS_CAMPO.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}</SelectContent>
+                    <Select value={form.tipo} onValueChange={(v) => setForm((p) => ({ ...p, tipo: v }))}>
+                      <SelectTrigger className="rounded-xl">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {TIPOS_CAMPO.map((t) => (
+                          <SelectItem key={t.value} value={t.value}>
+                            {t.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
                     </Select>
                   </div>
                   <div>
                     <Label className="font-body">Seção</Label>
-                    <Select value={form.secao} onValueChange={v => setForm(p => ({ ...p, secao: v }))}>
-                      <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
-                      <SelectContent>{SECOES.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}</SelectContent>
+                    <Select value={form.secao} onValueChange={(v) => setForm((p) => ({ ...p, secao: v }))}>
+                      <SelectTrigger className="rounded-xl">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {SECOES.map((s) => (
+                          <SelectItem key={s.value} value={s.value}>
+                            {s.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
                     </Select>
                   </div>
                 </div>
                 {form.tipo === 'selecao' && (
                   <div>
                     <Label className="font-body">Opções (separadas por vírgula)</Label>
-                    <Input value={form.opcoes} onChange={e => setForm(p => ({ ...p, opcoes: e.target.value }))} placeholder="Opção 1, Opção 2, Opção 3" className="rounded-xl" />
+                    <Input
+                      value={form.opcoes}
+                      onChange={(e) => setForm((p) => ({ ...p, opcoes: e.target.value }))}
+                      placeholder="Opção 1, Opção 2, Opção 3"
+                      className="rounded-xl"
+                    />
                   </div>
                 )}
                 <div className="flex items-center justify-between">
                   <Label className="font-body">Campo obrigatório?</Label>
-                  <Switch checked={form.obrigatorio} onCheckedChange={v => setForm(p => ({ ...p, obrigatorio: v }))} />
+                  <Switch
+                    checked={form.obrigatorio}
+                    onCheckedChange={(v) => setForm((p) => ({ ...p, obrigatorio: v }))}
+                  />
                 </div>
                 <Button
                   className="w-full rounded-xl bg-gradient-to-r from-primary to-primary-glow"
@@ -200,34 +256,48 @@ export function CamposCustomizadosTab() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {campos.map((c: any) => (
+                {campos.map((c) => (
                   <TableRow key={c.id} className="hover:bg-accent/30 transition-colors">
                     <TableCell className="font-body font-medium">{c.nome}</TableCell>
                     <TableCell>
                       <Badge variant="outline" className="font-body text-xs">
-                        {TIPOS_CAMPO.find(t => t.value === c.tipo)?.label || c.tipo}
+                        {TIPOS_CAMPO.find((t) => t.value === c.tipo)?.label || c.tipo}
                       </Badge>
                     </TableCell>
                     <TableCell className="font-body text-sm">
-                      {SECOES.find(s => s.value === c.secao)?.label || c.secao || '—'}
+                      {SECOES.find((s) => s.value === c.secao)?.label || c.secao || '—'}
                     </TableCell>
                     <TableCell>
-                      {c.obrigatorio
-                        ? <CheckCircle className="h-4 w-4 text-success" />
-                        : <XCircle className="h-4 w-4 text-muted-foreground/40" />}
+                      {c.obrigatorio ? (
+                        <CheckCircle className="h-4 w-4 text-success" />
+                      ) : (
+                        <XCircle className="h-4 w-4 text-muted-foreground/40" />
+                      )}
                     </TableCell>
                     <TableCell>
                       <Switch
                         checked={c.ativo !== false}
-                        onCheckedChange={v => toggleAtivo.mutate({ id: c.id, ativo: v })}
+                        onCheckedChange={(v) => toggleAtivo.mutate({ id: c.id, ativo: v })}
                       />
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
-                        <Button size="icon" variant="ghost" aria-label="Editar" className="h-7 w-7" onClick={() => handleEdit(c)}>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          aria-label="Editar"
+                          className="h-7 w-7"
+                          onClick={() => handleEdit(c)}
+                        >
                           <Edit2 className="h-3.5 w-3.5" />
                         </Button>
-                        <Button size="icon" variant="ghost" aria-label="Excluir" className="h-7 w-7 text-destructive" onClick={() => excluir.mutate(c.id)}>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          aria-label="Excluir"
+                          className="h-7 w-7 text-destructive"
+                          onClick={() => excluir.mutate(c.id)}
+                        >
                           <Trash2 className="h-3.5 w-3.5" />
                         </Button>
                       </div>

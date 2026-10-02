@@ -73,7 +73,7 @@ class FeriasService extends BaseService<Ferias> {
 
     if (search && search.length >= 3) {
       const escapedSearch = search.replace(/[%_\\]/g, '\\$&');
-      query = query.ilike('colaboradores.nome_completo', `%${escapedSearch}%`);
+      query = query.ilike('colaborador.nome_completo', `%${escapedSearch}%`);
     }
 
     // Cursor-based pagination (preferido) ou offset-based (backward compatibility)

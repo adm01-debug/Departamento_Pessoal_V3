@@ -68,7 +68,7 @@ export default function AssinarContratoPage() {
 
   useEffect(() => {
     let cancel = false;
-    (async () => {
+    void (async () => {
       if (!token || token.length < 16) {
         setErro('Token de assinatura inválido.');
         setErroTipo('invalido');
@@ -296,7 +296,7 @@ export default function AssinarContratoPage() {
                   });
                   toast.success('Recibo baixado');
                 } catch (e) {
-                  loggerService.error(
+                  void loggerService.error(
                     'Erro ao gerar PDF do recibo',
                     { hash: assinado.hash },
                     e instanceof Error ? e : new Error(String(e))

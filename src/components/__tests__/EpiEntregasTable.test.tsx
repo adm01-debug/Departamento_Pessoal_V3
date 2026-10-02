@@ -12,11 +12,12 @@ vi.mock('framer-motion', () => ({
 vi.mock('@/components/ui/tooltip', () => ({
   TooltipProvider: ({ children }: any) => <>{children}</>,
   Tooltip: ({ children }: any) => <>{children}</>,
-  TooltipTrigger: ({ children, asChild }: any) => asChild ? children : <div>{children}</div>,
+  TooltipTrigger: ({ children, asChild }: any) => (asChild ? children : <div>{children}</div>),
   TooltipContent: ({ children }: any) => <div>{children}</div>,
 }));
 
 import { EpiEntregasTable } from '../epis/EpiEntregasTable';
+import type { Tables } from '@/integrations/supabase/types';
 
 const DATA = [
   {
@@ -35,7 +36,10 @@ const DATA = [
     data_devolucao: '2024-09-01',
     quantidade: 1,
   },
-];
+] as unknown as (Tables<'epis_entregas'> & {
+  epi?: { ca_validade?: string | null; nome?: string | null; ca?: string | null } | null;
+  colaborador?: { nome_completo?: string | null } | null;
+})[];
 
 describe('EpiEntregasTable', () => {
   it('renders table headers', () => {

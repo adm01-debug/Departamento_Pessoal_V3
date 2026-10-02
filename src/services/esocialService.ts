@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { validarEvento, getValidadoresDisponiveis, type ValidationResult } from '@/schemas/esocial';
 export type { ValidationResult } from '@/schemas/esocial';
 import type { ESocialData } from '@/schemas/esocial/helpers';
-import { gerarXmlESocial } from '@/utils/esocialXmlGenerator';
+import { gerarXmlESocial, type ESocialDados } from '@/utils/esocialXmlGenerator';
 import { loggerService } from './loggerService';
 import type { Json, Tables } from '@/integrations/supabase/database.types';
 export interface ESocialEvento {
@@ -115,7 +115,7 @@ export async function criarEvento(evento: {
     try {
       xml = gerarXmlESocial({
         tipo: evento.tipo_evento,
-        dados: evento.dados,
+        dados: (evento.dados ?? {}) as ESocialDados,
         empresa,
         ambiente: '2',
       });

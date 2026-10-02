@@ -3,7 +3,7 @@
  * de banco selecionada (drawer/dialog de detalhes) antes de existir um tipo
  * gerado específico para a query.
  *
- * Por que `any` no valor: as linhas vêm de selects dinâmicos (com joins e
+ * Por que tipagem solta no valor: as linhas vêm de selects dinâmicos (com joins e
  * aliases) cujo shape não é conhecido em tempo de compilação. Usar `unknown`
  * obrigaria um cast em cada leitura no JSX, sem ganho real de segurança —
  * a validação de fato acontece no banco (RLS) e nos schemas Zod.

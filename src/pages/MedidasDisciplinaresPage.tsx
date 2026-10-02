@@ -13,6 +13,7 @@ import {
   MedidaContestacaoDialog,
   GerarLinkCienciaDialog,
 } from '@/components/medidas-disciplinares';
+import type { MedidaDisciplinarComColaborador } from '@/types/medidasDisciplinares';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -84,7 +85,7 @@ export default function MedidasDisciplinaresPage() {
   const [form, setForm] = useState(initialForm);
   const [search, setSearch] = useState('');
   const [tipoFilter, setTipoFilter] = useState('');
-  const [contestMedida, setContestMedida] = useState<Record<string, unknown> | null>(null);
+  const [contestMedida, setContestMedida] = useState<MedidaDisciplinarComColaborador | null>(null);
   const [linkMedida, setLinkMedida] = useState<Record<string, unknown> | null>(null);
 
   const { user } = useAuth();

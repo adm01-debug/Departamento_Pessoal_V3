@@ -3,9 +3,21 @@ import { Card, CardContent } from '@/components/ui/card';
 import { User, Calendar, Banknote, Briefcase, Clock, FileText } from 'lucide-react';
 import { maskCpfDisplay } from '@/utils/piiMask';
 
-export function S2206AlteracaoContratual({ dados }: { dados: any }) {
-  const formatCurrency = (val: number) => {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+export function S2206AlteracaoContratual({ dados }: { dados: Record<string, unknown> }) {
+  const d = dados as {
+    cbos?: string;
+    codCargo?: string;
+    cpfTrab?: string;
+    dtAlteracao?: string;
+    matricula?: string;
+    nmCargo?: string;
+    qtdHrsSem?: number | string;
+    tpJornada?: string;
+    undSalFixo?: string;
+    vrSalFx?: number | string;
+  };
+  const formatCurrency = (val: number | string) => {
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(val));
   };
 
   return (
@@ -15,9 +27,11 @@ export function S2206AlteracaoContratual({ dados }: { dados: any }) {
           <CardContent className="p-4 flex items-start gap-3">
             <User className="h-4 w-4 text-primary mt-1" />
             <div>
-              <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">Trabalhador</Label>
-              <p className="font-display font-bold text-sm">CPF: {maskCpfDisplay(dados.cpfTrab)}</p>
-              {dados.matricula && <p className="text-[10px] text-muted-foreground">Matrícula: {dados.matricula}</p>}
+              <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">
+                Trabalhador
+              </Label>
+              <p className="font-display font-bold text-sm">CPF: {maskCpfDisplay(d.cpfTrab)}</p>
+              {d.matricula && <p className="text-[10px] text-muted-foreground">Matrícula: {d.matricula}</p>}
             </div>
           </CardContent>
         </Card>
@@ -26,8 +40,10 @@ export function S2206AlteracaoContratual({ dados }: { dados: any }) {
           <CardContent className="p-4 flex items-start gap-3">
             <Calendar className="h-4 w-4 text-primary mt-1" />
             <div>
-              <Label className="text-[10px] uppercase text-primary font-bold tracking-wider">Vigência da Alteração</Label>
-              <p className="font-display font-bold text-sm text-primary">{dados.dtAlteracao || '-'}</p>
+              <Label className="text-[10px] uppercase text-primary font-bold tracking-wider">
+                Vigência da Alteração
+              </Label>
+              <p className="font-display font-bold text-sm text-primary">{d.dtAlteracao || '-'}</p>
               <p className="text-[10px] text-primary/70 italic">Novas condições contratuais</p>
             </div>
           </CardContent>
@@ -39,30 +55,30 @@ export function S2206AlteracaoContratual({ dados }: { dados: any }) {
           <FileText className="h-4 w-4 text-primary" />
           <span className="text-xs font-bold uppercase tracking-widest text-primary">Detalhamento das Mudanças</span>
         </div>
-        
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="space-y-1">
             <Label className="text-[10px] text-muted-foreground flex items-center gap-1">
               <Banknote className="h-3 w-3" /> Remuneração Bruta
             </Label>
-            <p className="text-sm font-bold text-primary">{dados.vrSalFx ? formatCurrency(dados.vrSalFx) : '-'}</p>
-            <p className="text-[10px] text-muted-foreground">Unidade: {dados.undSalFixo || 'Mensal'}</p>
+            <p className="text-sm font-bold text-primary">{d.vrSalFx ? formatCurrency(d.vrSalFx) : '-'}</p>
+            <p className="text-[10px] text-muted-foreground">Unidade: {d.undSalFixo || 'Mensal'}</p>
           </div>
-          
+
           <div className="space-y-1">
             <Label className="text-[10px] text-muted-foreground flex items-center gap-1">
               <Briefcase className="h-3 w-3" /> Novo Cargo/Função
             </Label>
-            <p className="text-xs font-semibold">{dados.nmCargo || 'Não alterado'}</p>
-            {dados.codCargo && <p className="text-[10px] text-muted-foreground">CBO: {dados.cbos || '-'}</p>}
+            <p className="text-xs font-semibold">{d.nmCargo || 'Não alterado'}</p>
+            {d.codCargo && <p className="text-[10px] text-muted-foreground">CBO: {d.cbos || '-'}</p>}
           </div>
 
           <div className="space-y-1">
             <Label className="text-[10px] text-muted-foreground flex items-center gap-1">
               <Clock className="h-3 w-3" /> Jornada de Trabalho
             </Label>
-            <p className="text-xs font-semibold">{dados.qtdHrsSem || '-'}h Semanais</p>
-            <p className="text-[10px] text-muted-foreground">Tipo: {dados.tpJornada || 'Padrão'}</p>
+            <p className="text-xs font-semibold">{d.qtdHrsSem || '-'}h Semanais</p>
+            <p className="text-[10px] text-muted-foreground">Tipo: {d.tpJornada || 'Padrão'}</p>
           </div>
         </div>
       </div>

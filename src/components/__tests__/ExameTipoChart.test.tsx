@@ -10,18 +10,19 @@ vi.mock('framer-motion', () => ({
 vi.mock('@/components/ui/tooltip', () => ({
   TooltipProvider: ({ children }: any) => <>{children}</>,
   Tooltip: ({ children }: any) => <>{children}</>,
-  TooltipTrigger: ({ children, asChild }: any) => asChild ? children : <div>{children}</div>,
+  TooltipTrigger: ({ children, asChild }: any) => (asChild ? children : <div>{children}</div>),
   TooltipContent: ({ children }: any) => <div>{children}</div>,
 }));
 
 import { ExameTipoChart } from '../exames/ExameTipoChart';
+import type { Tables } from '@/integrations/supabase/types';
 
 const DATA = [
   { id: '1', tipo: 'admissional' },
   { id: '2', tipo: 'admissional' },
   { id: '3', tipo: 'periodico' },
   { id: '4', tipo: 'demissional' },
-];
+] as unknown as Tables<'exames'>[];
 
 describe('ExameTipoChart', () => {
   it('renders Exames por Tipo title', () => {

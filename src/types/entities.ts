@@ -108,6 +108,19 @@ export interface Ferias {
   } | null;
 }
 
+/** ASO com embed de colaborador (select `colaborador:colaboradores(nome_completo, departamento)`). */
+export type AsoComColaborador = import('@/integrations/supabase/database.types').Tables<'asos'> & {
+  colaborador?: { nome_completo: string; departamento: string | null } | null;
+};
+
+/** Subconjunto de ASO usado em listagens/gráficos (fixtures de teste parciais compilam). */
+export type AsoResumo = Pick<
+  import('@/integrations/supabase/database.types').Tables<'asos'>,
+  'id' | 'tipo' | 'data_exame' | 'data_validade' | 'medico_nome'
+> & {
+  colaborador?: { nome_completo?: string | null; departamento?: string | null } | null;
+};
+
 export interface Documento {
   id: string;
   nome: string;

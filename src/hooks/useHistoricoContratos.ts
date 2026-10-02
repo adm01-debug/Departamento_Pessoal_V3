@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import type { TablesInsert } from '@/integrations/supabase/types';
 import { historicoContratoService } from '@/services/historicoContratoService';
 import { useEmpresas } from './useEmpresas';
 import { toast } from 'sonner';
@@ -17,7 +18,7 @@ export function useHistoricoContratos(colaboradorId: string) {
   });
 
   const criarMutation = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: Omit<TablesInsert<'historico_contratos'>, 'colaborador_id'>) => {
       return await historicoContratoService.criar({ ...data, colaborador_id: colaboradorId });
     },
     onSuccess: () => {
@@ -45,4 +46,3 @@ export function useHistoricoContratos(colaboradorId: string) {
     excluir: excluirMutation.mutateAsync,
   };
 }
-

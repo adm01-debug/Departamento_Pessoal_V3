@@ -10,18 +10,19 @@ vi.mock('framer-motion', () => ({
 vi.mock('@/components/ui/tooltip', () => ({
   TooltipProvider: ({ children }: any) => <>{children}</>,
   Tooltip: ({ children }: any) => <>{children}</>,
-  TooltipTrigger: ({ children, asChild }: any) => asChild ? children : <div>{children}</div>,
+  TooltipTrigger: ({ children, asChild }: any) => (asChild ? children : <div>{children}</div>),
   TooltipContent: ({ children }: any) => <div>{children}</div>,
 }));
 
 import { MedidasGravityScale } from '../medidas-disciplinares/MedidasGravityScale';
+import type { MedidaDisciplinarComColaborador } from '@/types/medidasDisciplinares';
 
 const MEDIDAS = [
   { tipo: 'advertencia_verbal' },
   { tipo: 'advertencia_verbal' },
   { tipo: 'suspensao' },
   { tipo: 'justa_causa' },
-];
+] as unknown as MedidaDisciplinarComColaborador[];
 
 describe('MedidasGravityScale', () => {
   it('renders Distribuição por Gravidade title', () => {

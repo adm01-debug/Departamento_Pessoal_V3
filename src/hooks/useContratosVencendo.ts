@@ -40,7 +40,7 @@ export function useContratosVencendo() {
     queryFn: async (): Promise<ContratoVencendoRow[]> => {
       if (!empresaId) return [];
       const { data, error } = await supabase
-        .from('v_contratos_vencendo' as any)
+        .from('v_contratos_vencendo')
         .select('*')
         .eq('empresa_id', empresaId)
         .order('data_fim', { ascending: true })
@@ -54,9 +54,7 @@ export function useContratosVencendo() {
 
   const ordenados = useMemo(() => {
     const list = [...(query.data ?? [])];
-    return list.sort(
-      (a, b) => SEVERIDADE_ORDER[a.severidade] - SEVERIDADE_ORDER[b.severidade],
-    );
+    return list.sort((a, b) => SEVERIDADE_ORDER[a.severidade] - SEVERIDADE_ORDER[b.severidade]);
   }, [query.data]);
 
   const resumo = useMemo(() => {

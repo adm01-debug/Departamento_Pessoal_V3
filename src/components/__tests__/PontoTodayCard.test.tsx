@@ -8,6 +8,7 @@ vi.mock('framer-motion', () => ({
 }));
 
 import { PontoTodayCard } from '../ponto/PontoTodayCard';
+import type { Tables } from '@/integrations/supabase/types';
 
 const REGISTRO = {
   entrada_esperada: '08:00',
@@ -25,7 +26,7 @@ const REGISTRO = {
   saida_antecipada_minutos: 0,
   saida_intervalo: null,
   retorno_intervalo: null,
-};
+} as unknown as Tables<'registros_ponto'>;
 
 describe('PontoTodayCard', () => {
   it('renders Hoje title', () => {

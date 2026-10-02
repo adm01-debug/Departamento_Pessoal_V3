@@ -12,11 +12,12 @@ vi.mock('framer-motion', () => ({
 vi.mock('@/components/ui/tooltip', () => ({
   TooltipProvider: ({ children }: any) => <>{children}</>,
   Tooltip: ({ children }: any) => <>{children}</>,
-  TooltipTrigger: ({ children, asChild }: any) => asChild ? children : <div>{children}</div>,
+  TooltipTrigger: ({ children, asChild }: any) => (asChild ? children : <div>{children}</div>),
   TooltipContent: ({ children }: any) => <div>{children}</div>,
 }));
 
 import { EpiCatalogoTable } from '../epis/EpiCatalogoTable';
+import type { Tables } from '@/integrations/supabase/types';
 
 const DATA = [
   {
@@ -39,7 +40,7 @@ const DATA = [
     estoque_minimo: 10,
     validade_ca: null,
   },
-];
+] as unknown as Tables<'epis'>[];
 
 describe('EpiCatalogoTable', () => {
   it('renders table headers', () => {
