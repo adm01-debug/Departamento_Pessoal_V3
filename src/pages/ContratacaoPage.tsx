@@ -46,7 +46,7 @@ const STEPS = [
   { id: 'assinatura', label: 'Assinatura', icon: PenTool },
 ] as const;
 
-function ContratacaoWorkflow({ token }: { token: string }) {
+function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInvalidToken: () => void }) {
   const [step, setStep] = useState(0);
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
@@ -247,6 +247,24 @@ function ContratacaoWorkflow({ token }: { token: string }) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-10 h-10 animate-spin text-primary" />
+      </div>
+    );
+
+  // Token da URL que não resolve (inválido/expirado): mostra erro em vez de
+  // montar o workflow — sem isso os passos andavam sem salvar nada.
+  if (!tokenData)
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4 bg-slate-50">
+        <Card className="w-full max-w-md border-0 shadow-xl rounded-3xl">
+          <CardContent className="p-8 text-center space-y-4">
+            <ShieldCheck className="w-12 h-12 text-destructive mx-auto" />
+            <h2 className="font-display font-bold text-xl text-slate-800">Link inválido ou expirado</h2>
+            <p className="text-sm text-muted-foreground">Confira o link recebido por e-mail ou peça um novo ao RH.</p>
+            <Button onClick={onInvalidToken} className="w-full">
+              Digitar código manualmente
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
 
@@ -715,7 +733,11 @@ export default function ContratacaoPage(): React.ReactElement {
   return (
     <>
       <PageTitle title="Admissão Digital" description="Portal de Contratação do Candidato" />
-      {!validToken ? <TokenInput onValidToken={setValidToken} /> : <ContratacaoWorkflow token={validToken} />}
+      {!validToken ? (
+        <TokenInput onValidToken={setValidToken} />
+      ) : (
+        <ContratacaoWorkflow token={validToken} onInvalidToken={() => setValidToken(null)} />
+      )}
     </>
   );
 }
