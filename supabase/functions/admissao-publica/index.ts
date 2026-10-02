@@ -29,7 +29,7 @@ serve(async (req: Request): Promise<Response> => {
   const originDenied = enforceOrigin(req);
   if (originDenied) return originDenied;
   const csrf = await verifyCsrf(req.clone());
-  if (!csrf.ok) return csrf.response;
+  if (!csrf.ok) return csrf.response!;
   if (req.method !== 'POST') return createErrorResponse('Method not allowed', 405, 'METHOD_NOT_ALLOWED', undefined, req);
 
   try {
