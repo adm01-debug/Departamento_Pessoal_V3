@@ -1,9 +1,10 @@
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { User, Calendar, Briefcase, Contact } from 'lucide-react';
-import { maskCpfDisplay } from '@/utils/piiMask';
+import { usePiiMask } from '@/hooks/usePiiMask';
 
 export function S2300TSVInicio({ dados }: { dados: Record<string, unknown> }) {
+  const pii = usePiiMask();
   const d = dados as { codCateg?: string; cpfTrab?: string; dtInicio?: string; natAtividade?: number; nmTrab?: string };
   return (
     <div className="space-y-4 font-body">
@@ -16,7 +17,7 @@ export function S2300TSVInicio({ dados }: { dados: Record<string, unknown> }) {
                 Identificação do Trabalhador
               </Label>
               <p className="font-display font-bold text-sm">{d.nmTrab || '-'}</p>
-              <p className="text-[10px] text-muted-foreground italic">CPF: {maskCpfDisplay(d.cpfTrab) || '-'}</p>
+              <p className="text-[10px] text-muted-foreground italic">CPF: {pii.cpf(d.cpfTrab) || '-'}</p>
             </div>
           </CardContent>
         </Card>

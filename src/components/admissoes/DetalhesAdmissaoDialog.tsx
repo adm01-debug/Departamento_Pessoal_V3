@@ -12,7 +12,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useESocial } from '@/hooks/useESocial';
 import { useEmpresas } from '@/hooks/useEmpresas';
-import { maskCpfDisplay } from '@/utils/piiMask';
+import { usePiiMask } from '@/hooks/usePiiMask';
 
 interface DetalhesAdmissaoDialogProps {
   admissao: Tables<'admissoes'> | null;
@@ -21,6 +21,7 @@ interface DetalhesAdmissaoDialogProps {
 }
 
 export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: DetalhesAdmissaoDialogProps) {
+  const pii = usePiiMask();
   const { validarDocumento } = useContratacaoDigital();
   const { workflow } = useAdmissaoWorkflow(admissao?.id);
   const { enviarEvento } = useESocial();
@@ -175,7 +176,7 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">CPF:</span>
                         <span className="font-medium text-foreground">
-                          {admissao.cpf ? maskCpfDisplay(admissao.cpf) : 'Não informado'}
+                          {admissao.cpf ? pii.cpf(admissao.cpf) : 'Não informado'}
                         </span>
                       </div>
                     </div>

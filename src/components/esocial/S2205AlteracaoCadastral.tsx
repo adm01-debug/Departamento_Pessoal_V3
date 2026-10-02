@@ -1,9 +1,10 @@
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { User, Calendar, MapPin, GraduationCap, Heart, Hash } from 'lucide-react';
-import { maskCpfDisplay } from '@/utils/piiMask';
+import { usePiiMask } from '@/hooks/usePiiMask';
 
 export function S2205AlteracaoCadastral({ dados }: { dados: Record<string, unknown> }) {
+  const pii = usePiiMask();
   const d = dados as {
     cpfTrab?: string;
     dtAlteracao?: string;
@@ -28,7 +29,7 @@ export function S2205AlteracaoCadastral({ dados }: { dados: Record<string, unkno
               </Label>
               <p className="font-display font-bold text-sm">{d.nmTrab || '-'}</p>
               <p className="text-[10px] text-muted-foreground flex items-center gap-1 mt-1">
-                <Hash className="h-3 w-3" /> CPF: {maskCpfDisplay(d.cpfTrab) || '-'}
+                <Hash className="h-3 w-3" /> CPF: {pii.cpf(d.cpfTrab) || '-'}
               </p>
             </div>
           </CardContent>

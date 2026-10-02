@@ -2,13 +2,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Banknote, User, Calendar, Hash, FileText, CheckCircle2 } from 'lucide-react';
-import { maskCpfDisplay } from '@/utils/piiMask';
+import { usePiiMask } from '@/hooks/usePiiMask';
 
 type DetVerba = { codRubr?: string; vrRubr?: number };
 type DmDev = { ideDmDev?: string; infoPerApur?: { ideEstabLot?: { detVerbas?: DetVerba[] }[] } };
 type InfoPgto = { dtPgto?: string; tpPgto?: string };
 
 export function S1200Remuneracao({ dados }: { dados: Record<string, unknown> }) {
+  const pii = usePiiMask();
   const dmDev = (dados.dmDev || []) as DmDev[];
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
@@ -22,7 +23,7 @@ export function S1200Remuneracao({ dados }: { dados: Record<string, unknown> }) 
             <User className="h-4 w-4 text-primary" />
             <div>
               <Label className="text-[9px] uppercase text-muted-foreground font-bold">Trabalhador</Label>
-              <p className="text-xs font-bold">CPF: {maskCpfDisplay(dados.cpfTrab as string | undefined)}</p>
+              <p className="text-xs font-bold">CPF: {pii.cpf(dados.cpfTrab as string | undefined)}</p>
             </div>
           </CardContent>
         </Card>

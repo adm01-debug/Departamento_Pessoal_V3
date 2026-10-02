@@ -2,9 +2,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { User, Calendar, Briefcase, Clock, Activity } from 'lucide-react';
-import { maskCpfDisplay } from '@/utils/piiMask';
+import { usePiiMask } from '@/hooks/usePiiMask';
 
 export function S2200Admissao({ dados }: { dados: Record<string, unknown> }) {
+  const pii = usePiiMask();
   const d = dados as {
     cbos?: string;
     codCargo?: string;
@@ -35,7 +36,7 @@ export function S2200Admissao({ dados }: { dados: Record<string, unknown> }) {
                 Identificação do Trabalhador
               </Label>
               <p className="font-display font-bold text-sm">{d.nmTrab || 'Não informado'}</p>
-              <p className="text-[10px] text-muted-foreground mt-0.5 font-medium">CPF: {maskCpfDisplay(d.cpfTrab)}</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5 font-medium">CPF: {pii.cpf(d.cpfTrab)}</p>
               <div className="flex gap-1.5 mt-2">
                 <Badge variant="secondary" className="text-[9px] h-4 rounded-md">
                   Matrícula: {d.matricula || '-'}
@@ -95,6 +96,7 @@ export function S2200Admissao({ dados }: { dados: Record<string, unknown> }) {
 }
 
 export function S2230Afastamento({ dados }: { dados: Record<string, unknown> }) {
+  const pii = usePiiMask();
   const d = dados as {
     codMotAfast?: string;
     cpfTrab?: string;
@@ -113,7 +115,7 @@ export function S2230Afastamento({ dados }: { dados: Record<string, unknown> }) 
               <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">
                 Identificação do Trabalhador
               </Label>
-              <p className="font-display font-bold text-sm">CPF: {maskCpfDisplay(d.cpfTrab)}</p>
+              <p className="font-display font-bold text-sm">CPF: {pii.cpf(d.cpfTrab)}</p>
               <p className="text-[10px] text-muted-foreground mt-0.5">Afastamento Temporário</p>
             </div>
           </CardContent>

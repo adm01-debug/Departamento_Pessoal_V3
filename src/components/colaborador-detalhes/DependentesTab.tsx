@@ -11,7 +11,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useDependentes, useCriarDependente, useExcluirDependente } from '@/hooks/useColaboradorDetalhes';
-import { maskCpfDisplay } from '@/utils/piiMask';
+import { usePiiMask } from '@/hooks/usePiiMask';
 
 const PARENTESCOS = [
   'Cônjuge',
@@ -36,6 +36,7 @@ const initialForm = {
 };
 
 export function DependentesTab({ colaboradorId }: { colaboradorId: string }) {
+  const pii = usePiiMask();
   const { data, isLoading } = useDependentes(colaboradorId);
   const criar = useCriarDependente();
   const excluir = useExcluirDependente(colaboradorId);
@@ -168,7 +169,7 @@ export function DependentesTab({ colaboradorId }: { colaboradorId: string }) {
                 <TableRow key={d.id}>
                   <TableCell>{d.nome}</TableCell>
                   <TableCell>{d.parentesco}</TableCell>
-                  <TableCell>{d.cpf ? maskCpfDisplay(d.cpf) : '-'}</TableCell>
+                  <TableCell>{d.cpf ? pii.cpf(d.cpf) : '-'}</TableCell>
                   <TableCell>{d.ir ? <Badge>Sim</Badge> : 'Não'}</TableCell>
                   <TableCell>{d.salario_familia ? <Badge>Sim</Badge> : 'Não'}</TableCell>
                   <TableCell>

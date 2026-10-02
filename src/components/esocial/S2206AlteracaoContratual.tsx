@@ -1,9 +1,10 @@
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { User, Calendar, Banknote, Briefcase, Clock, FileText } from 'lucide-react';
-import { maskCpfDisplay } from '@/utils/piiMask';
+import { usePiiMask } from '@/hooks/usePiiMask';
 
 export function S2206AlteracaoContratual({ dados }: { dados: Record<string, unknown> }) {
+  const pii = usePiiMask();
   const d = dados as {
     cbos?: string;
     codCargo?: string;
@@ -30,7 +31,7 @@ export function S2206AlteracaoContratual({ dados }: { dados: Record<string, unkn
               <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">
                 Trabalhador
               </Label>
-              <p className="font-display font-bold text-sm">CPF: {maskCpfDisplay(d.cpfTrab)}</p>
+              <p className="font-display font-bold text-sm">CPF: {pii.cpf(d.cpfTrab)}</p>
               {d.matricula && <p className="text-[10px] text-muted-foreground">Matrícula: {d.matricula}</p>}
             </div>
           </CardContent>

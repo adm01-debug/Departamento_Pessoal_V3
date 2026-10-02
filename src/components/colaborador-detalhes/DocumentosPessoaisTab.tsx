@@ -15,7 +15,7 @@ import {
   useCriarDocumentoPessoal,
   useExcluirDocumentoPessoal,
 } from '@/hooks/useTabelasReferencia';
-import { maskCpfDisplay, maskPisDisplay } from '@/utils/piiMask';
+import { usePiiMask } from '@/hooks/usePiiMask';
 
 const TIPOS = [
   'RG',
@@ -33,6 +33,7 @@ const TIPOS = [
 ];
 
 export function DocumentosPessoaisTab({ colaboradorId }: { colaboradorId: string }) {
+  const pii = usePiiMask();
   const { data, isLoading } = useDocumentosPessoais(colaboradorId);
   const criar = useCriarDocumentoPessoal();
   const excluir = useExcluirDocumentoPessoal(colaboradorId);
@@ -172,9 +173,9 @@ export function DocumentosPessoaisTab({ colaboradorId }: { colaboradorId: string
                   <TableCell>
                     {d.numero
                       ? d.tipo_documento === 'CPF'
-                        ? maskCpfDisplay(d.numero)
+                        ? pii.cpf(d.numero)
                         : d.tipo_documento === 'PIS/PASEP'
-                          ? maskPisDisplay(d.numero)
+                          ? pii.pis(d.numero)
                           : d.numero
                       : '-'}
                   </TableCell>

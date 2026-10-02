@@ -1,9 +1,10 @@
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { User, LogOut, FileText } from 'lucide-react';
-import { maskCpfDisplay } from '@/utils/piiMask';
+import { usePiiMask } from '@/hooks/usePiiMask';
 
 export function S2399TSVTermino({ dados }: { dados: Record<string, unknown> }) {
+  const pii = usePiiMask();
   const d = dados as { cpfTrab?: string; dtTerm?: string; matricula?: string; mtvDeslig?: string; verbasResc?: string };
   return (
     <div className="space-y-4 font-body">
@@ -15,7 +16,7 @@ export function S2399TSVTermino({ dados }: { dados: Record<string, unknown> }) {
               <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">
                 Identificação do Trabalhador
               </Label>
-              <p className="font-display font-bold text-sm">CPF: {maskCpfDisplay(d.cpfTrab)}</p>
+              <p className="font-display font-bold text-sm">CPF: {pii.cpf(d.cpfTrab)}</p>
               <p className="text-[10px] text-muted-foreground italic">Matrícula: {d.matricula || '-'}</p>
             </div>
           </CardContent>

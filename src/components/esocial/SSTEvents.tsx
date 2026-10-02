@@ -1,9 +1,10 @@
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { User, Calendar, ShieldCheck, Microscope, Thermometer, Wind, AlertCircle } from 'lucide-react';
-import { maskCpfDisplay } from '@/utils/piiMask';
+import { usePiiMask } from '@/hooks/usePiiMask';
 
 export function S2220ASO({ dados }: { dados: Record<string, unknown> }) {
+  const pii = usePiiMask();
   const d = dados as { cpfTrab?: string; dtExame?: string; tpExame?: string };
   return (
     <div className="space-y-4 font-body">
@@ -13,7 +14,7 @@ export function S2220ASO({ dados }: { dados: Record<string, unknown> }) {
             <User className="h-4 w-4 text-primary" />
             <div>
               <Label className="text-[9px] uppercase text-muted-foreground font-bold">Trabalhador</Label>
-              <p className="text-xs font-bold">CPF: {maskCpfDisplay(d.cpfTrab)}</p>
+              <p className="text-xs font-bold">CPF: {pii.cpf(d.cpfTrab)}</p>
             </div>
           </CardContent>
         </Card>
@@ -62,6 +63,7 @@ export function S2220ASO({ dados }: { dados: Record<string, unknown> }) {
 }
 
 export function S2240AgentesNocivos({ dados }: { dados: Record<string, unknown> }) {
+  const pii = usePiiMask();
   const d = dados as { cpfTrab?: string; dtIniCondic?: string; infoExpRisco?: { codAgNoc?: string }[] };
   const agentes = d.infoExpRisco || [];
 
@@ -72,7 +74,7 @@ export function S2240AgentesNocivos({ dados }: { dados: Record<string, unknown> 
           <User className="h-4 w-4 text-primary" />
           <div>
             <Label className="text-[9px] uppercase text-muted-foreground font-bold">Trabalhador</Label>
-            <p className="text-xs font-bold">CPF: {maskCpfDisplay(d.cpfTrab)}</p>
+            <p className="text-xs font-bold">CPF: {pii.cpf(d.cpfTrab)}</p>
           </div>
         </CardContent>
       </Card>

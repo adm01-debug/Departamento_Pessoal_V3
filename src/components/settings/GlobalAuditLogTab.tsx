@@ -11,9 +11,10 @@ import { auditoriaService } from '@/services/auditoriaService';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import { exportPontoCSV } from '@/services/exportService';
-import { maskEmail } from '@/utils/piiMask';
+import { usePiiMask } from '@/hooks/usePiiMask';
 
 export function GlobalAuditLogTab() {
+  const pii = usePiiMask();
   const [search, setSearch] = useState('');
   const [tabelaFilter, setTabelaFilter] = useState('todas');
 
@@ -136,7 +137,7 @@ export function GlobalAuditLogTab() {
                             <User className="h-3 w-3 text-primary" />
                           </div>
                           <span className="text-xs font-medium truncate max-w-[150px]">
-                            {log.user_email ? maskEmail(log.user_email) : 'Sistema'}
+                            {log.user_email ? pii.email(log.user_email) : 'Sistema'}
                           </span>
                         </div>
                       </TableCell>
