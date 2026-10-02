@@ -14,7 +14,7 @@ export const vagaSchema = z.object({
   requisitos: z.string().max(10000).nullable().optional(),
   beneficios_oferecidos: z.string().max(5000).nullable().optional(),
   modalidade: z.string().max(50).nullable().optional(),
-  tipo_contrato: z.enum(['clt', 'pj', 'estagiario', 'temporario']).nullable().optional(),
+  tipo_contrato: z.enum(['clt', 'pj', 'estagiario', 'temporario', 'intermitente', 'aprendiz']).nullable().optional(),
   quantidade: z.number().int().min(1).nullable().optional(),
   faixa_salarial_min: z.number().min(0).nullable().optional(),
   faixa_salarial_max: z.number().min(0).nullable().optional(),

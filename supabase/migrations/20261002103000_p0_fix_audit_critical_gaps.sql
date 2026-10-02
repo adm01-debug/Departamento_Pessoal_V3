@@ -87,7 +87,49 @@ END;
 $$;
 
 -- ----------------------------------------------------------------------------
--- 4. Portal público /contratacao — RPCs de escrita por token
+-- 4. Tabelas tenant sem RLS + views definer legíveis por anon
+--
+-- medidas_disciplinares_integracao: RLS desligado + ALL para authenticated —
+--   qualquer usuário lia/ESCREVIA a trilha de integração medida->folha de
+--   TODAS as empresas. Liga RLS com SELECT tenant-scoped (mesmo padrão
+--   rls_tenant_or_admin das demais); escritas só via RPCs/service_role.
+-- ciencia_rate_limits: idem — DELETE revogava a proteção anti-brute-force
+--   da verificação pública. Só é lida/escrita por funções SECURITY DEFINER
+--   e service_role → revoga tudo de clientes.
+-- v_login_anomalies*/v_documentos_unificado: views SECURITY DEFINER
+--   implícitas legíveis por anon (telemetria de login e metadados/URLs de
+--   documentos de todas as empresas) → revoga anon.
+-- ----------------------------------------------------------------------------
+DO $$
+DECLARE
+  v text;
+BEGIN
+  IF to_regclass('public.medidas_disciplinares_integracao') IS NOT NULL THEN
+    EXECUTE 'ALTER TABLE public.medidas_disciplinares_integracao ENABLE ROW LEVEL SECURITY';
+    EXECUTE 'REVOKE ALL ON public.medidas_disciplinares_integracao FROM anon';
+    EXECUTE 'REVOKE INSERT, UPDATE, DELETE ON public.medidas_disciplinares_integracao FROM authenticated';
+    EXECUTE 'DROP POLICY IF EXISTS "mdi_tenant_select" ON public.medidas_disciplinares_integracao';
+    EXECUTE 'CREATE POLICY "mdi_tenant_select" ON public.medidas_disciplinares_integracao FOR SELECT TO authenticated USING (public.rls_tenant_or_admin(empresa_id))';
+  END IF;
+
+  IF to_regclass('public.ciencia_rate_limits') IS NOT NULL THEN
+    EXECUTE 'ALTER TABLE public.ciencia_rate_limits ENABLE ROW LEVEL SECURITY';
+    EXECUTE 'REVOKE ALL ON public.ciencia_rate_limits FROM anon, authenticated';
+    EXECUTE 'GRANT SELECT ON public.ciencia_rate_limits TO service_role';
+  END IF;
+
+  FOR v IN VALUES
+    ('v_login_anomalies'), ('v_login_anomalies_email'), ('v_login_anomalies_ip'), ('v_documentos_unificado')
+  LOOP
+    IF to_regclass('public.' || v) IS NOT NULL THEN
+      EXECUTE format('REVOKE ALL ON public.%I FROM anon', v);
+    END IF;
+  END LOOP;
+END;
+$$;
+
+-- ----------------------------------------------------------------------------
+-- 5. Portal público /contratacao — RPCs de escrita por token
 --
 -- Desde 2026-07 (P0-004) INSERT/UPDATE/DELETE em admissao_tokens estão
 -- revogados de anon E authenticated, mas a página pública fazia writes
@@ -115,7 +157,7 @@ $$;
 
 REVOKE ALL ON FUNCTION public._admissao_token_row(TEXT) FROM PUBLIC;
 
--- 4a. Salvar dados pessoais do candidato (etapa 1 do portal)
+-- 5a. Salvar dados pessoais do candidato (etapa 1 do portal)
 CREATE OR REPLACE FUNCTION public.admissao_salvar_dados(
   _token TEXT,
   _nome TEXT,
@@ -152,7 +194,7 @@ BEGIN
 END;
 $$;
 
--- 4b. Marcar etapa de documentos enviados
+-- 5b. Marcar etapa de documentos enviados
 CREATE OR REPLACE FUNCTION public.admissao_marcar_documentos(_token TEXT)
 RETURNS VOID
 LANGUAGE plpgsql
@@ -173,7 +215,7 @@ BEGIN
 END;
 $$;
 
--- 4c. Assinar contrato (etapa final — grava assinatura + IP de auditoria)
+-- 5c. Assinar contrato (etapa final — grava assinatura + IP de auditoria)
 CREATE OR REPLACE FUNCTION public.admissao_assinar_contrato(
   _token TEXT,
   _assinatura_base64 TEXT,
@@ -205,7 +247,7 @@ BEGIN
 END;
 $$;
 
--- 4d. Registrar metadados de um documento enviado (o arquivo vai pela
+-- 5d. Registrar metadados de um documento enviado (o arquivo vai pela
 --     edge function admissao-publica, que faz upload com service_role e
 --     depois chama esta RPC com o storage path gerado)
 CREATE OR REPLACE FUNCTION public.admissao_registrar_documento(
