@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { avaliacaoService } from '@/services/avaliacaoService';
-import { colaboradorService } from '@/services';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { Target, Users, TrendingUp, Star, LayoutGrid, History, BarChart2, Calendar } from 'lucide-react';
@@ -56,11 +55,6 @@ export default function AvaliacaoPage() {
   const { data: competencias = [], isLoading: loadComp } = useQuery({
     queryKey: ['competencias', empresaAtual?.id],
     queryFn: () => avaliacaoService.listarCompetencias(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
-  });
-  const { data: colaboradores = [] } = useQuery({
-    queryKey: ['colaboradores', empresaAtual?.id],
-    queryFn: () => colaboradorService.list(empresaAtual!.id),
     enabled: !!empresaAtual?.id,
   });
 
