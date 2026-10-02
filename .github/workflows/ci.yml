@@ -102,6 +102,33 @@ jobs:
       - name: Unit Tests
         run: npm run test:coverage
 
+  lighthouse:
+    name: Lighthouse & orçamento de bundle (E51-030)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || '' }}
+      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY || '' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: '22'
+      - name: Install
+        run: npm install --no-audit --no-fund
+      - name: Build
+        run: npm run build
+      - name: Orçamento de bundle
+        # E51-030: baseline em scripts/.bundle-budget.json — o tamanho do
+        # bundle só pode descer; afrouxar exige editar o baseline no PR.
+        run: npm run audit:bundle
+      - name: Lighthouse CI (rotas públicas)
+        # Rotas autenticadas redirecionam para /login sem credenciais — o
+        # audit cobre /login e /verificar-contrato, as páginas públicas.
+        run: npx -y @lhci/cli@0.14.0 autorun
+
   edge-functions:
     name: Edge Functions (deno check)
     runs-on: ubuntu-latest

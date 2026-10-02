@@ -47,6 +47,7 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:lighthouse": "npm run build && npx -y @lhci/cli@0.14.0 autorun",
+    "audit:bundle": "node scripts/check-bundle-budget.mjs",
     "test:e2e:ui": "playwright test --ui",
     "test:migrations": "bash scripts/tests/migrations-plano100.sh",
     "test:migrations:p0": "bash scripts/tests/migrations-p0-hash-search-path.sh",

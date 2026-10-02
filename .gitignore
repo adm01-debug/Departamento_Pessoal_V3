@@ -44,3 +44,7 @@ graphify-out/*
 # Artefato gerado por `npm run build` / `npm run audit:pdf` (scripts/generate-audit-pdf.js).
 # Regenerado a cada build; versioná-lo só produz diffs binários sem sinal (E51-008).
 AUDIT_REPORT.pdf
+
+# Lighthouse CI artifacts
+.lighthouseci/
+assertion-results.json
