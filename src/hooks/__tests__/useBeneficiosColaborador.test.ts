@@ -40,11 +40,13 @@ function buildChains(selectData: any[] = [], insertData: any = null) {
   const deleteChain: any = {
     eq: vi.fn().mockResolvedValue({ error: null }),
   };
-  mockFrom.mockReturnValue(deepChain({
-    select: vi.fn().mockReturnValue(selectChain),
-    insert: vi.fn().mockReturnValue(insertChain),
-    delete: vi.fn().mockReturnValue(deleteChain),
-  }) as any);
+  mockFrom.mockReturnValue(
+    deepChain({
+      select: vi.fn().mockReturnValue(selectChain),
+      insert: vi.fn().mockReturnValue(insertChain),
+      delete: vi.fn().mockReturnValue(deleteChain),
+    }) as any
+  );
   return { selectChain, insertChain, deleteChain };
 }
 
@@ -100,7 +102,7 @@ describe('useBeneficiosColaborador', () => {
     });
 
     await act(async () => {
-      await result.current.vincularBeneficio({ beneficio_id: 'ben-1' });
+      await result.current.vincularBeneficio({ tipo_beneficio_id: 'ben-1' });
     });
 
     await waitFor(() => expect(mockToastSuccess).toHaveBeenCalledWith('Benefício vinculado com sucesso!'));

@@ -61,8 +61,12 @@ export const colaboradorBeneficiosService = {
   },
 };
 
+export type SeguroColaboradorVinculo = Tables<'seguros_colaboradores'> & {
+  colaborador: { nome_completo: string } | null;
+};
+
 export const segurosColaboradoresService = {
-  listar: async (seguroId?: string): Promise<Tables<'seguros_colaboradores'>[]> => {
+  listar: async (seguroId?: string): Promise<SeguroColaboradorVinculo[]> => {
     let q = supabase
       .from('seguros_colaboradores')
       .select('*, colaborador:colaboradores(nome_completo)')
@@ -70,7 +74,7 @@ export const segurosColaboradoresService = {
     if (seguroId) q = q.eq('seguro_vida_id', seguroId);
     const { data, error } = await q;
     if (error) throw error;
-    return (data as Tables<'seguros_colaboradores'>[] | null) || [];
+    return (data as SeguroColaboradorVinculo[] | null) || [];
   },
   vincular: async (d: Insertable<'seguros_colaboradores'>): Promise<void> => {
     const { error } = await supabase.from('seguros_colaboradores').insert(d);

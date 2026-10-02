@@ -1,7 +1,8 @@
 import { todayLocalISO } from '@/utils/dateLocal';
 import { Card, CardContent } from '@/components/ui/card';
 import { useBeneficiosColaborador } from '@/hooks/useBeneficiosColaborador';
-import { useBeneficios } from '@/hooks/useBeneficios';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -16,38 +17,60 @@ interface BeneficiosTabProps {
   colaboradorId: string;
 }
 
+type VinculoForm = {
+  tipo_beneficio_id: string;
+  valor: number;
+  desconto: number;
+  data_inicio: string;
+};
+
 export function BeneficiosTab({ colaboradorId }: BeneficiosTabProps) {
   const { beneficios, isLoading, vincularBeneficio, desvincularBeneficio } = useBeneficiosColaborador(colaboradorId);
-  const { beneficios: planosDisponiveis } = useBeneficios();
+  const { data: planosDisponiveis = [] } = useQuery({
+    queryKey: ['tipos-beneficio-ativos'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('tipos_beneficio')
+        .select('id, nome, codigo, valor_padrao')
+        .eq('ativo', true)
+        .order('nome');
+      if (error) throw error;
+      return data;
+    },
+  });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  
-  const { register, handleSubmit, reset, watch, control } = useForm({
+
+  const { register, handleSubmit, reset, watch, control } = useForm<VinculoForm>({
     defaultValues: {
-      beneficio_id: '',
+      tipo_beneficio_id: '',
       valor: 0,
       desconto: 0,
       data_inicio: todayLocalISO(),
-      quantidade_diaria: 2
-    }
+    },
   });
 
   // eslint-disable-next-line react-hooks/incompatible-library
-  const selectedPlanId = watch('beneficio_id');
-  const selectedPlan = Array.isArray(planosDisponiveis) ? (planosDisponiveis as any[]).find((p: any) => p.id === selectedPlanId) : null;
+  const selectedPlanId = watch('tipo_beneficio_id');
+  const selectedPlan = planosDisponiveis.find((p) => p.id === selectedPlanId) ?? null;
 
   const formatCurrency = (v: number | null) => (v ?? 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-  const onVincular = async (data: any) => {
+  const onVincular = async (data: VinculoForm) => {
     await vincularBeneficio({
       ...data,
-      valor: data.valor || (selectedPlan as any)?.valor || 0,
-      status_vinculo: 'ativo'
+      valor: data.valor || selectedPlan?.valor_padrao || 0,
+      status_vinculo: 'ativo',
     });
     setIsDialogOpen(false);
     reset();
   };
 
-  if (isLoading) return <div className="flex justify-center p-8"><Spinner /></div>;
+  if (isLoading)
+    return (
+      <div className="flex justify-center p-8">
+        <Spinner />
+      </div>
+    );
 
   return (
     <div className="space-y-6">
@@ -55,7 +78,7 @@ export function BeneficiosTab({ colaboradorId }: BeneficiosTabProps) {
         <h3 className="text-lg font-display font-bold flex items-center gap-2">
           <Gift className="h-5 w-5 text-primary" /> Benefícios Ativos
         </h3>
-        
+
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button size="sm" className="rounded-xl gap-2 shadow-xs">
@@ -68,13 +91,13 @@ export function BeneficiosTab({ colaboradorId }: BeneficiosTabProps) {
             </DialogHeader>
             <form onSubmit={handleSubmit(onVincular)} className="space-y-4 pt-4">
               <Controller
-                name="beneficio_id"
+                name="tipo_beneficio_id"
                 control={control}
                 rules={{ required: true }}
                 render={({ field }) => (
-                  <FormSelect 
-                    label="Plano de Benefício" 
-                    options={Array.isArray(planosDisponiveis) ? planosDisponiveis.map((p: any) => ({ value: p.id, label: `${p.nome} (${p.tipo})` })) : []}
+                  <FormSelect
+                    label="Plano de Benefício"
+                    options={planosDisponiveis.map((p) => ({ value: p.id, label: p.nome }))}
                     value={field.value}
                     onChange={field.onChange}
                   />
@@ -82,32 +105,38 @@ export function BeneficiosTab({ colaboradorId }: BeneficiosTabProps) {
               />
 
               <div className="grid grid-cols-2 gap-4">
-                <FormField label="Valor (R$)" type="number" step="0.01" {...register('valor')} placeholder={(selectedPlan as any)?.valor?.toString()} />
+                <FormField
+                  label="Valor (R$)"
+                  type="number"
+                  step="0.01"
+                  {...register('valor')}
+                  placeholder={selectedPlan?.valor_padrao?.toString()}
+                />
                 <FormField label="Desconto (R$)" type="number" step="0.01" {...register('desconto')} />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <FormField label="Data Início" type="date" {...register('data_inicio')} />
-                {(selectedPlan as any)?.tipo === 'transporte' && (
-                  <FormField label="Passagens/Dia" type="number" {...register('quantidade_diaria')} />
-                )}
               </div>
 
-              <Button type="submit" className="w-full rounded-xl mt-4">Vincular Agora</Button>
+              <Button type="submit" className="w-full rounded-xl mt-4">
+                Vincular Agora
+              </Button>
             </form>
           </DialogContent>
         </Dialog>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-         <Card className="border-info/20 bg-info/5 rounded-2xl md:col-span-3">
-            <CardContent className="p-4 flex items-center gap-3">
-               <Info className="h-5 w-5 text-info" />
-               <p className="text-xs text-info-foreground font-body">
-                 Os valores de desconto em folha são calculados automaticamente com base nas regras de cada benefício e no salário base do colaborador.
-               </p>
-            </CardContent>
-         </Card>
+        <Card className="border-info/20 bg-info/5 rounded-2xl md:col-span-3">
+          <CardContent className="p-4 flex items-center gap-3">
+            <Info className="h-5 w-5 text-info" />
+            <p className="text-xs text-info-foreground font-body">
+              Os valores de desconto em folha são calculados automaticamente com base nas regras de cada benefício e no
+              salário base do colaborador.
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
       <Card className="border border-border/30 rounded-2xl overflow-hidden shadow-elevated">
@@ -132,24 +161,34 @@ export function BeneficiosTab({ colaboradorId }: BeneficiosTabProps) {
                   </TableCell>
                 </TableRow>
               ) : (
-                beneficios?.map((b: any) => (
+                beneficios?.map((b) => (
                   <TableRow key={b.id} className="hover:bg-accent/30 transition-colors">
-                    <TableCell className="font-body font-medium">{b.beneficio?.nome}</TableCell>
+                    <TableCell className="font-body font-medium">{b.tipo_beneficio?.nome}</TableCell>
                     <TableCell className="font-body capitalize text-xs">
-                       <Badge variant="outline" className="font-normal border-muted-foreground/20">
-                         {b.beneficio?.tipo || '-'}
-                       </Badge>
+                      <Badge variant="outline" className="font-normal border-muted-foreground/20">
+                        {b.tipo_beneficio?.codigo || '-'}
+                      </Badge>
                     </TableCell>
-                    <TableCell className="font-body text-success font-semibold text-sm">{formatCurrency(b.valor)}</TableCell>
-                    <TableCell className="font-body text-destructive font-semibold text-sm">{formatCurrency(b.desconto)}</TableCell>
+                    <TableCell className="font-body text-success font-semibold text-sm">
+                      {formatCurrency(b.valor)}
+                    </TableCell>
+                    <TableCell className="font-body text-destructive font-semibold text-sm">
+                      {formatCurrency(b.desconto)}
+                    </TableCell>
                     <TableCell className="font-body text-[10px] text-center">
-                       <div className="flex items-center justify-center gap-1 text-muted-foreground">
-                          <Calendar className="h-3 w-3" />
-                          {b.data_inicio ? new Date(b.data_inicio).toLocaleDateString('pt-BR') : '-'}
-                       </div>
+                      <div className="flex items-center justify-center gap-1 text-muted-foreground">
+                        <Calendar className="h-3 w-3" />
+                        {b.data_inicio ? new Date(b.data_inicio).toLocaleDateString('pt-BR') : '-'}
+                      </div>
                     </TableCell>
                     <TableCell>
-                      <Badge className={b.status_vinculo === 'ativo' ? 'bg-success/15 text-success border-0 text-[10px] rounded-full' : 'bg-muted text-muted-foreground border-0 text-[10px] rounded-full'}>
+                      <Badge
+                        className={
+                          b.status_vinculo === 'ativo'
+                            ? 'bg-success/15 text-success border-0 text-[10px] rounded-full'
+                            : 'bg-muted text-muted-foreground border-0 text-[10px] rounded-full'
+                        }
+                      >
                         {b.status_vinculo === 'ativo' ? 'Ativo' : 'Inativo'}
                       </Badge>
                     </TableCell>

@@ -91,7 +91,7 @@ export default function PontoPage() {
         .eq('email', user.email || '')
         .maybeSingle();
       if (!colab) return null;
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('registros_ponto')
         .select('*')
         .eq('colaborador_id', colab.id)
@@ -123,7 +123,7 @@ export default function PontoPage() {
       if (!colab) return [];
       const w = new Date();
       w.setDate(w.getDate() - 7);
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('registros_ponto')
         .select('*')
         .eq('colaborador_id', colab.id)
@@ -244,7 +244,7 @@ export default function PontoPage() {
         return undefined;
       }
 
-      const batida = await (pontoService as any).registrar(tipo, colab.id, {
+      const batida = await pontoService.registrar(tipo, colab.id, {
         latitude: geo?.lat,
         longitude: geo?.lng,
         precisao: geo?.accuracy ? Math.round(geo.accuracy) : undefined,
@@ -319,7 +319,7 @@ export default function PontoPage() {
     <>
       <PageTitle title="Registro de Ponto" description="Controle de ponto eletrônico" />
       <PageLayout
-        title={`Olá, ${(user as any)?.user_metadata?.nome_completo?.split(' ')[0] || 'Colaborador'}`}
+        title={`Olá, ${user?.name?.split(' ')[0] || 'Colaborador'}`}
         description={
           new Date().getHours() < 12
             ? 'Bom dia! Pronto para iniciar?'
@@ -607,10 +607,10 @@ export default function PontoPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {batidasHoje.slice(0, 5).map((b: any) => (
+                    {batidasHoje.slice(0, 5).map((b) => (
                       <TableRow key={b.id} className="hover:bg-accent/30 transition-colors">
                         <TableCell className="font-body font-medium">
-                          {(b as any).colaborador?.nome_completo || b.colaborador_id?.slice(0, 8)}
+                          {b.colaborador?.nome_completo || b.colaborador_id?.slice(0, 8)}
                         </TableCell>
                         <TableCell className="font-body font-mono">{b.hora}</TableCell>
                         <TableCell>
