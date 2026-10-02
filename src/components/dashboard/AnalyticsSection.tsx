@@ -167,11 +167,6 @@ export function AnalyticsSection({
     responderSolicitacao,
   } = usePontoMelhorado(empresaId);
 
-  // Stats for the visual widgets
-  const totalPendentes =
-    (dbPendencias?.length || 0) + (pontoSolicitacoes?.filter((s) => s.status === 'enviado').length || 0);
-  const highPriorityCount = dbPendencias?.filter((p) => p.prioridade === 'alta').length || 0;
-
   // Real-time Subscriptions for Auto-refresh
   useRealTimeSubscription('solicitacoes_ajuste_ponto', ['solicitacoes-ajuste-ponto', empresaId], empresaId);
   useRealTimeSubscription('notificacoes', ['notificacoes', empresaId], empresaId);

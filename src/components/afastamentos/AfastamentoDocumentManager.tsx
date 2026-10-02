@@ -49,20 +49,16 @@ export function AfastamentoDocumentManager({ afastamentoId }: AfastamentoDocumen
       const header = new Uint8Array(buffer);
 
       let isValidHeader = false;
-      let fileDescription = '';
 
       if (file.type === 'application/pdf') {
         // PDF: %PDF-1. (25 50 44 46 2d 31 2e)
         isValidHeader = header[0] === 0x25 && header[1] === 0x50 && header[2] === 0x44 && header[3] === 0x46;
-        fileDescription = 'Documento Digital PDF (ISO 32000)';
       } else if (file.type === 'image/jpeg') {
         // JPEG: FF D8 FF
         isValidHeader = header[0] === 0xff && header[1] === 0xd8 && header[2] === 0xff;
-        fileDescription = 'Imagem JPEG / Fotografia';
       } else if (file.type === 'image/png') {
         // PNG: 89 50 4E 47 0D 0A 1A 0A
         isValidHeader = header[0] === 0x89 && header[1] === 0x50 && header[2] === 0x4e && header[3] === 0x47;
-        fileDescription = 'Imagem PNG com Transparência';
       }
 
       if (!isValidHeader) {
