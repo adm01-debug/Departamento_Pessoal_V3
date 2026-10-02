@@ -148,8 +148,11 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
     }
   };
 
+  const [signing, setSigning] = useState(false);
+
   const handleSaveSignature = async (base64: string) => {
-    if (!docToSign || !colaboradorId) return;
+    if (!docToSign || !colaboradorId || signing) return;
+    setSigning(true);
 
     try {
       // 1. Upload signature image
@@ -163,7 +166,21 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
       if (uploadErr) throw uploadErr;
 
       // 2. Register the signature (documentos_assinatura is the signing ledger;
-      // `documentos` has no status/documento_id columns).
+      // `documentos` has no status/documento_id columns, so the link to the
+      // original document is `conteudo_url` = the document's own storage URL).
+      // Dedupe: a ledger row for the same document already marks it signed.
+      const { data: alreadySigned } = await supabase
+        .from('documentos_assinatura')
+        .select('id')
+        .eq('colaborador_id', colaboradorId)
+        .eq('conteudo_url', docToSign.url)
+        .limit(1);
+      if (alreadySigned && alreadySigned.length > 0) {
+        toast.success('Documento já assinado anteriormente.');
+        setDocToSign(null);
+        return;
+      }
+
       const { error: signErr } = await supabase.from('documentos_assinatura').insert({
         titulo: docToSign.nome,
         tipo_documento: docToSign.tipo,
@@ -183,6 +200,8 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
       setDocToSign(null);
     } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao assinar documento.'));
+    } finally {
+      setSigning(false);
     }
   };
 
@@ -382,7 +401,7 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
               <span className="font-semibold text-foreground">{docToSign?.nome}</span>. Sua assinatura manuscrita será
               vinculada a este registro com validade jurídica interna.
             </p>
-            <SignatureCanvas onSave={handleSaveSignature} onCancel={() => setDocToSign(null)} />
+            <SignatureCanvas onSave={handleSaveSignature} onCancel={() => setDocToSign(null)} disabled={signing} />
           </div>
         </DialogContent>
       </Dialog>
