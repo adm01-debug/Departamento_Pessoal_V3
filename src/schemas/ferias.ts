@@ -15,7 +15,7 @@ export const feriasSchemaBase = z.object({
   periodo_aquisitivo_id: z.string().uuid('Período aquisitivo obrigatório').optional(),
   data_inicio: z.string().min(1, 'Data de início obrigatória'),
   data_fim: z.string().min(1, 'Data de fim obrigatória'),
-  dias_ferias: z.number().min(5, 'Mínimo de 5 dias por período (Art. 134 §1º CLT)').max(30, 'Máximo de 30 dias'),
+  dias_gozo: z.number().min(5, 'Mínimo de 5 dias por período (Art. 134 §1º CLT)').max(30, 'Máximo de 30 dias'),
   dias_abono: z.number().min(0).max(10, 'Abono pecuniário máximo: 10 dias (Art. 143 CLT)').default(0),
   observacoes: z.string().optional(),
   empresa_id: z.string().uuid().optional(),

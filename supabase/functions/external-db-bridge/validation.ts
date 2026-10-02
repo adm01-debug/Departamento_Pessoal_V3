@@ -81,6 +81,8 @@ export const TABLE_DENYLIST = new Set<string>([
   "audit_log_unified",
   "pii_access_logs",
   "pii_access_alerts",
+  // PINs de quiosque de ponto — mutação só via RPCs dedicadas.
+  "colaboradores_pin",
   "geo_blocking_config",
   "geo_allowed_countries",
   "govbr_auth_state",
