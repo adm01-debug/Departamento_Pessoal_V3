@@ -23,11 +23,13 @@ END
 $preflight$;
 
 DROP POLICY IF EXISTS "Authenticated users can insert audit_logs" ON public.audit_log;
+DROP POLICY IF EXISTS "audit_log_self_insert" ON public.audit_log;
 CREATE POLICY "audit_log_self_insert" ON public.audit_log
   FOR INSERT TO authenticated
   WITH CHECK (user_id = auth.uid());
 
 DROP POLICY IF EXISTS "Users can view relevant audit_logs" ON public.audit_log;
+DROP POLICY IF EXISTS "audit_log_self_read" ON public.audit_log;
 CREATE POLICY "audit_log_self_read" ON public.audit_log
   FOR SELECT TO authenticated
   USING (user_id = auth.uid());

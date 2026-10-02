@@ -230,7 +230,7 @@ describe('notificacaoService.listar', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as any);
+    setupListChain(null as never);
     const result = await notificacaoService.listar(USER_ID);
     expect(result).toEqual([]);
   });

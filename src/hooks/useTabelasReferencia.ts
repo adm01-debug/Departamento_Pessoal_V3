@@ -6,7 +6,7 @@ import type { Insertable, Updatable } from '@/integrations/supabase/database.typ
 // =============================================
 // Helper for Result Pattern hooks
 // =============================================
-const useResultQuery = (key: any[], fn: () => Promise<any>, enabled: boolean = true) =>
+const useResultQuery = <T>(key: unknown[], fn: () => Promise<T>, enabled: boolean = true) =>
   useQuery({
     queryKey: key,
     queryFn: async () => {

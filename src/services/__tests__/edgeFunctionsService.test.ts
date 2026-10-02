@@ -23,7 +23,7 @@ vi.mock('@/lib/circuitBreaker', () => ({
 describe('edgeFunctionsService.dispararAlertasDP', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGenericExecute.mockImplementation((fn: any) => fn());
+    mockGenericExecute.mockImplementation((fn: (v?: unknown) => unknown) => fn());
   });
 
   it('calls invoke with "alertas-dp" and an explicit tenant', async () => {
@@ -50,7 +50,7 @@ describe('edgeFunctionsService.dispararAlertasDP', () => {
 describe('edgeFunctionsService.enviarRelatorioEmail', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockResendExecute.mockImplementation((fn: any) => fn());
+    mockResendExecute.mockImplementation((fn: (v?: unknown) => unknown) => fn());
   });
 
   it('calls invoke with "enviar-relatorio" and uses resendBreaker', async () => {
@@ -82,7 +82,7 @@ describe('edgeFunctionsService.enviarRelatorioEmail', () => {
 describe('edgeFunctionsService.sincronizarBitrix', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockBitrixExecute.mockImplementation((fn: any) => fn());
+    mockBitrixExecute.mockImplementation((fn: (v?: unknown) => unknown) => fn());
   });
 
   it('calls invoke with "sincronizar-bitrix" and uses bitrixBreaker', async () => {
@@ -100,7 +100,7 @@ describe('edgeFunctionsService.sincronizarBitrix', () => {
 describe('edgeFunctionsService.healthcheck', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGenericExecute.mockImplementation((fn: any) => fn());
+    mockGenericExecute.mockImplementation((fn: (v?: unknown) => unknown) => fn());
   });
 
   it('calls invoke with "healthcheck" and empty body', async () => {
@@ -116,7 +116,7 @@ describe('edgeFunctionsService.healthcheck', () => {
 describe('edgeFunctionsService.calcularFolha', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGenericExecute.mockImplementation((fn: any) => fn());
+    mockGenericExecute.mockImplementation((fn: (v?: unknown) => unknown) => fn());
   });
 
   it('calls invoke with idempotency_key when provided', async () => {
@@ -152,7 +152,7 @@ describe('edgeFunctionsService.calcularFolha', () => {
 describe('edgeFunctionsService error handling', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGenericExecute.mockImplementation((fn: any) => fn());
+    mockGenericExecute.mockImplementation((fn: (v?: unknown) => unknown) => fn());
   });
 
   it('throws wrapped Error when invoke returns a supabase error object', async () => {

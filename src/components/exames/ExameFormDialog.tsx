@@ -1,3 +1,4 @@
+import type { Tables } from '@/integrations/supabase/types';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -21,7 +22,7 @@ const resultados = [
 ];
 
 interface ExameFormDialogProps {
-  colaboradores: any[];
+  colaboradores: Pick<Tables<'colaboradores'>, 'id' | 'nome_completo'>[];
   onSubmit: (form: {
     colaborador_id: string;
     tipo: string;
@@ -34,7 +35,15 @@ interface ExameFormDialogProps {
   isPending?: boolean;
 }
 
-const emptyForm = { colaborador_id: '', tipo: '', data_exame: '', data_validade: '', medico: '', crm: '', resultado: '' };
+const emptyForm = {
+  colaborador_id: '',
+  tipo: '',
+  data_exame: '',
+  data_validade: '',
+  medico: '',
+  crm: '',
+  resultado: '',
+};
 
 export function ExameFormDialog({ colaboradores, onSubmit, isPending }: ExameFormDialogProps) {
   const [open, setOpen] = useState(false);
@@ -50,7 +59,8 @@ export function ExameFormDialog({ colaboradores, onSubmit, isPending }: ExameFor
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button size="sm" className="rounded-xl shrink-0">
-          <Plus className="h-4 w-4 mr-1" />Novo Exame
+          <Plus className="h-4 w-4 mr-1" />
+          Novo Exame
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -60,11 +70,15 @@ export function ExameFormDialog({ colaboradores, onSubmit, isPending }: ExameFor
         <div className="space-y-3">
           <div>
             <Label>Colaborador *</Label>
-            <Select value={form.colaborador_id} onValueChange={v => setForm(p => ({ ...p, colaborador_id: v }))}>
-              <SelectTrigger><SelectValue placeholder="Selecione o colaborador" /></SelectTrigger>
+            <Select value={form.colaborador_id} onValueChange={(v) => setForm((p) => ({ ...p, colaborador_id: v }))}>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione o colaborador" />
+              </SelectTrigger>
               <SelectContent>
-                {colaboradores.map(c => (
-                  <SelectItem key={c.id} value={c.id}>{c.nome_completo}</SelectItem>
+                {colaboradores.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.nome_completo}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -72,11 +86,15 @@ export function ExameFormDialog({ colaboradores, onSubmit, isPending }: ExameFor
 
           <div>
             <Label>Tipo de Exame *</Label>
-            <Select value={form.tipo} onValueChange={v => setForm(p => ({ ...p, tipo: v }))}>
-              <SelectTrigger><SelectValue placeholder="Selecione o tipo" /></SelectTrigger>
+            <Select value={form.tipo} onValueChange={(v) => setForm((p) => ({ ...p, tipo: v }))}>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione o tipo" />
+              </SelectTrigger>
               <SelectContent>
-                {tiposExame.map(t => (
-                  <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+                {tiposExame.map((t) => (
+                  <SelectItem key={t.value} value={t.value}>
+                    {t.label}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -85,32 +103,52 @@ export function ExameFormDialog({ colaboradores, onSubmit, isPending }: ExameFor
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label>Data do Exame</Label>
-              <Input type="date" value={form.data_exame} onChange={e => setForm(p => ({ ...p, data_exame: e.target.value }))} />
+              <Input
+                type="date"
+                value={form.data_exame}
+                onChange={(e) => setForm((p) => ({ ...p, data_exame: e.target.value }))}
+              />
             </div>
             <div>
               <Label>Validade</Label>
-              <Input type="date" value={form.data_validade} onChange={e => setForm(p => ({ ...p, data_validade: e.target.value }))} />
+              <Input
+                type="date"
+                value={form.data_validade}
+                onChange={(e) => setForm((p) => ({ ...p, data_validade: e.target.value }))}
+              />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label>Médico Responsável</Label>
-              <Input value={form.medico} onChange={e => setForm(p => ({ ...p, medico: e.target.value }))} placeholder="Dr. Nome" />
+              <Input
+                value={form.medico}
+                onChange={(e) => setForm((p) => ({ ...p, medico: e.target.value }))}
+                placeholder="Dr. Nome"
+              />
             </div>
             <div>
               <Label>CRM</Label>
-              <Input value={form.crm} onChange={e => setForm(p => ({ ...p, crm: e.target.value }))} placeholder="12345/UF" />
+              <Input
+                value={form.crm}
+                onChange={(e) => setForm((p) => ({ ...p, crm: e.target.value }))}
+                placeholder="12345/UF"
+              />
             </div>
           </div>
 
           <div>
             <Label>Resultado</Label>
-            <Select value={form.resultado} onValueChange={v => setForm(p => ({ ...p, resultado: v }))}>
-              <SelectTrigger><SelectValue placeholder="Selecione o resultado" /></SelectTrigger>
+            <Select value={form.resultado} onValueChange={(v) => setForm((p) => ({ ...p, resultado: v }))}>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione o resultado" />
+              </SelectTrigger>
               <SelectContent>
-                {resultados.map(r => (
-                  <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
+                {resultados.map((r) => (
+                  <SelectItem key={r.value} value={r.value}>
+                    {r.label}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>

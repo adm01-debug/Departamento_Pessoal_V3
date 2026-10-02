@@ -4,21 +4,16 @@ import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // ── hoisted mock fns (available inside vi.mock factories) ──────────────────────
-const {
-  mockListarAdmissoes,
-  mockCriar,
-  mockAtualizar,
-  mockToastSuccess,
-  mockToastError,
-  mockUseEmpresas,
-} = vi.hoisted(() => ({
-  mockListarAdmissoes: vi.fn(),
-  mockCriar: vi.fn(),
-  mockAtualizar: vi.fn(),
-  mockToastSuccess: vi.fn(),
-  mockToastError: vi.fn(),
-  mockUseEmpresas: vi.fn(),
-}));
+const { mockListarAdmissoes, mockCriar, mockAtualizar, mockToastSuccess, mockToastError, mockUseEmpresas } = vi.hoisted(
+  () => ({
+    mockListarAdmissoes: vi.fn(),
+    mockCriar: vi.fn(),
+    mockAtualizar: vi.fn(),
+    mockToastSuccess: vi.fn(),
+    mockToastError: vi.fn(),
+    mockUseEmpresas: vi.fn(),
+  })
+);
 
 // ── module mocks ───────────────────────────────────────────────────────────────
 vi.mock('@/services', () => ({
@@ -111,12 +106,21 @@ describe('useAdmissoes', () => {
     const { result } = renderHook(() => useAdmissoes(), { wrapper: makeWrapper() });
 
     await act(async () => {
-      await result.current.criar({ nome: 'Maria', cargo: 'Desenvolvedora' });
+      await result.current.criar({
+        nome: 'Maria',
+        cargo: 'Desenvolvedora',
+        departamento: 'TI',
+        data_prevista: '2026-10-15',
+        salario_proposto: 5000,
+      });
     });
 
     expect(mockCriar).toHaveBeenCalledWith({
       nome: 'Maria',
       cargo: 'Desenvolvedora',
+      departamento: 'TI',
+      data_prevista: '2026-10-15',
+      salario_proposto: 5000,
       empresa_id: 'empresa-1',
     });
   });
@@ -125,7 +129,13 @@ describe('useAdmissoes', () => {
     const { result } = renderHook(() => useAdmissoes(), { wrapper: makeWrapper() });
 
     await act(async () => {
-      await result.current.criar({ nome: 'Maria' });
+      await result.current.criar({
+        nome: 'Maria',
+        cargo: 'Desenvolvedora',
+        departamento: 'TI',
+        data_prevista: '2026-10-15',
+        salario_proposto: 5000,
+      });
     });
 
     expect(mockToastSuccess).toHaveBeenCalledWith('Admissão criada com sucesso');
@@ -149,7 +159,13 @@ describe('useAdmissoes', () => {
 
     await act(async () => {
       try {
-        await result.current.criar({ nome: 'Maria' });
+        await result.current.criar({
+          nome: 'Maria',
+          cargo: 'Desenvolvedora',
+          departamento: 'TI',
+          data_prevista: '2026-10-15',
+          salario_proposto: 5000,
+        });
       } catch {
         // expected: mutateAsync re-throws on error
       }

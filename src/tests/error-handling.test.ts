@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { 
-  AppError, 
-  ValidationError, 
-  AuthError, 
-  NetworkError, 
+import {
+  AppError,
+  ValidationError,
+  AuthError,
+  NetworkError,
   PermissionError,
   getErrorMessage,
-  isAppError 
+  isAppError,
 } from '../errors/AppError';
 
 describe('Error Handling Suite', () => {
@@ -28,10 +28,9 @@ describe('Error Handling Suite', () => {
 
   it('should return correct message via getErrorMessage', () => {
     const msg = 'Test Error';
-    const appError = new AppError(msg, 'TEST_CODE' as any);
+    const appError = new AppError(msg, 'TEST_CODE' as never);
     expect(getErrorMessage(appError)).toBe(msg);
     expect(getErrorMessage(new Error('Normal Error'))).toBe('Normal Error');
     expect(getErrorMessage('String error')).toBe('String error');
   });
 });
-

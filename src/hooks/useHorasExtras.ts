@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import type { TablesInsert } from '@/integrations/supabase/types';
 import { horaExtraService } from '@/services/horaExtraService';
 import { useEmpresas } from './useEmpresas';
 import { useAuth } from './useAuth';
@@ -18,7 +19,8 @@ export function useHorasExtras() {
   });
 
   const criarMutation = useMutation({
-    mutationFn: (data: any) => horaExtraService.criar({ ...data, empresa_id: empresaId, created_by: user?.id }),
+    mutationFn: (data: Omit<TablesInsert<'solicitacoes_hora_extra'>, 'empresa_id' | 'created_by'>) =>
+      horaExtraService.criar({ ...data, empresa_id: empresaId ?? null, created_by: user?.id ?? null }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['solicitacoes_hora_extra'] });
       toast.success('Solicitação de hora extra criada');
@@ -27,7 +29,8 @@ export function useHorasExtras() {
   });
 
   const aprovarMutation = useMutation({
-    mutationFn: ({ id, obs }: { id: string; obs?: string }) => horaExtraService.aprovar(id, user?.id || '', empresaId!, obs),
+    mutationFn: ({ id, obs }: { id: string; obs?: string }) =>
+      horaExtraService.aprovar(id, user?.id || '', empresaId!, obs),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['solicitacoes_hora_extra'] });
       toast.success('Hora extra aprovada');
@@ -36,7 +39,8 @@ export function useHorasExtras() {
   });
 
   const rejeitarMutation = useMutation({
-    mutationFn: ({ id, obs }: { id: string; obs?: string }) => horaExtraService.rejeitar(id, user?.id || '', empresaId!, obs),
+    mutationFn: ({ id, obs }: { id: string; obs?: string }) =>
+      horaExtraService.rejeitar(id, user?.id || '', empresaId!, obs),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['solicitacoes_hora_extra'] });
       toast.success('Hora extra rejeitada');

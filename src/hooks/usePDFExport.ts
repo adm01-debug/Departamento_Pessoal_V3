@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 
 export function usePDFExport() {
-  const exportarPDF = useCallback(async (titulo: string, dados: any[], colunas: string[]) => {
+  const exportarPDF = useCallback(async (titulo: string, dados: Record<string, unknown>[], colunas: string[]) => {
     try {
       const { default: jsPDF } = await import('jspdf');
       const { default: autoTable } = await import('jspdf-autotable');
@@ -17,7 +17,7 @@ export function usePDFExport() {
       autoTable(doc, {
         startY: 36,
         head: [colunas],
-        body: dados.map(item => colunas.map(col => String(item[col] ?? ''))),
+        body: dados.map((item) => colunas.map((col) => String(item[col] ?? ''))),
         styles: { fontSize: 8 },
         headStyles: { fillColor: [99, 102, 241] },
       });

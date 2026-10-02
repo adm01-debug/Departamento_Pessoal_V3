@@ -1,11 +1,12 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
+  AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
 }));
 
 vi.mock('sonner', () => ({
@@ -59,16 +60,20 @@ vi.mock('./PontoGeoAnalytics', () => ({
 }));
 
 vi.mock('@/components/ui/tabs', () => ({
-  Tabs: ({ children }: any) => <div>{children}</div>,
-  TabsList: ({ children }: any) => <div role="tablist">{children}</div>,
-  TabsTrigger: ({ children, value }: any) => <button role="tab" data-value={value}>{children}</button>,
-  TabsContent: ({ children }: any) => <div>{children}</div>,
+  Tabs: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  TabsList: ({ children }: { children?: ReactNode }) => <div role="tablist">{children}</div>,
+  TabsTrigger: ({ children, value }: { children?: ReactNode; value?: string }) => (
+    <button role="tab" data-value={value}>
+      {children}
+    </button>
+  ),
+  TabsContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/popover', () => ({
-  Popover: ({ children }: any) => <div>{children}</div>,
-  PopoverTrigger: ({ children }: any) => children,
-  PopoverContent: ({ children }: any) => <div>{children}</div>,
+  Popover: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  PopoverTrigger: ({ children }: { children?: ReactNode }) => children,
+  PopoverContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/checkbox', () => ({
@@ -79,50 +84,61 @@ import { useQuery } from '@tanstack/react-query';
 import { GestaoRegistrosPonto } from '../ponto/GestaoRegistrosPonto';
 
 const MOCK_REGISTROS = [
-  { id: 'r1', data: '2026-07-24', colaborador: { nome_completo: 'João Silva', cargo: 'Analista', departamento: 'TI', foto_url: null }, entrada_1: '08:00', saida_1: '17:00', saida_intervalo: '12:00', retorno_intervalo: '13:00', horas_trabalhadas: '08:00', horas_extras: '00:00', atraso_minutos: 0 },
+  {
+    id: 'r1',
+    data: '2026-07-24',
+    colaborador: { nome_completo: 'João Silva', cargo: 'Analista', departamento: 'TI', foto_url: null },
+    entrada_1: '08:00',
+    saida_1: '17:00',
+    saida_intervalo: '12:00',
+    retorno_intervalo: '13:00',
+    horas_trabalhadas: '08:00',
+    horas_extras: '00:00',
+    atraso_minutos: 0,
+  },
 ];
 
 describe('GestaoRegistrosPonto', () => {
   it('renders Controle de Ponto title', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
     render(<GestaoRegistrosPonto />);
     expect(screen.getByText(/Controle de Ponto/)).toBeInTheDocument();
   });
 
   it('renders Filtros Avançados button', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
     render(<GestaoRegistrosPonto />);
     expect(screen.getByText('Filtros Avançados')).toBeInTheDocument();
   });
 
   it('renders search input', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
     render(<GestaoRegistrosPonto />);
     expect(screen.getByPlaceholderText(/Buscar/i)).toBeInTheDocument();
   });
 
   it('renders export buttons', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
     render(<GestaoRegistrosPonto />);
     expect(screen.getByText('CSV')).toBeInTheDocument();
     expect(screen.getByText('PDF')).toBeInTheDocument();
   });
 
   it('renders colaborador name in table when data loaded', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_REGISTROS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_REGISTROS, isLoading: false } as never);
     render(<GestaoRegistrosPonto />);
     expect(screen.getByText('João Silva')).toBeInTheDocument();
   });
 
   it('renders table headers when data present', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_REGISTROS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_REGISTROS, isLoading: false } as never);
     render(<GestaoRegistrosPonto />);
     expect(screen.getByText('Colaborador')).toBeInTheDocument();
     expect(screen.getByText('Trabalhadas')).toBeInTheDocument();
   });
 
   it('shows empty state when no registros', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
     render(<GestaoRegistrosPonto />);
     expect(screen.getByText(/Nenhum registro encontrado/)).toBeInTheDocument();
   });

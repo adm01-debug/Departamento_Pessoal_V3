@@ -18,7 +18,7 @@ vi.mock('@/contexts/AuthContext', () => ({
 }));
 
 vi.mock('zustand/middleware', () => ({
-  persist: (fn: any) => fn,
+  persist: (fn: (v?: unknown) => unknown) => fn,
 }));
 
 const sampleEmpresa = {

@@ -5,18 +5,19 @@ import { useFolhaAuditoria } from '@/hooks/useFolhaAuditoria';
 import { formatDateLocalISO } from '@/utils/dateLocal';
 import { safeHref } from '@/utils/safeUrl';
 
-import {
-  Dialog,
-  DialogContent,
-  
-  
-  DialogTrigger} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { 
-  Calculator, CheckCircle2, Clock, 
-  AlertTriangle, ArrowRight, Loader2,
-  FileText, Landmark, Download
+import {
+  Calculator,
+  CheckCircle2,
+  Clock,
+  AlertTriangle,
+  ArrowRight,
+  Loader2,
+  FileText,
+  Landmark,
+  Download,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -41,18 +42,24 @@ interface StepProps {
 function Step({ isActive, isCompleted, label, icon: Icon }: StepProps) {
   return (
     <div className="flex flex-col items-center gap-2 flex-1 relative">
-      <div className={cn(
-        "h-10 w-10 rounded-full flex items-center justify-center transition-all duration-300 z-10",
-        isCompleted ? "bg-success text-success-foreground" : 
-        isActive ? "bg-primary text-primary-foreground shadow-glow" : 
-        "bg-muted text-muted-foreground"
-      )}>
+      <div
+        className={cn(
+          'h-10 w-10 rounded-full flex items-center justify-center transition-all duration-300 z-10',
+          isCompleted
+            ? 'bg-success text-success-foreground'
+            : isActive
+              ? 'bg-primary text-primary-foreground shadow-glow'
+              : 'bg-muted text-muted-foreground'
+        )}
+      >
         {isCompleted ? <CheckCircle2 className="h-6 w-6" /> : <Icon className="h-5 w-5" />}
       </div>
-      <span className={cn(
-        "text-[10px] font-bold uppercase tracking-widest text-center",
-        isActive ? "text-foreground" : "text-muted-foreground"
-      )}>
+      <span
+        className={cn(
+          'text-[10px] font-bold uppercase tracking-widest text-center',
+          isActive ? 'text-foreground' : 'text-muted-foreground'
+        )}
+      >
         {label}
       </span>
     </div>
@@ -85,60 +92,72 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
         .lte('data', formatDateLocalISO(new Date(parseInt(ano, 10), parseInt(mes, 10), 0)));
       return count || 0;
     },
-    enabled: isOpen && currentStep === 1});
+    enabled: isOpen && currentStep === 1,
+  });
 
   const handleCalculate = async () => {
     setIsProcessing(true);
     try {
       // 1. Validação Final de Rubricas
       const rubricas = await rubricasFolhaService.listar(empresaAtualId!);
-      const rubricasInvalidas = rubricas.filter(r => !validarRubricaESocial(r).valid);
-      
+      const rubricasInvalidas = rubricas.filter((r) => !validarRubricaESocial(r).valid);
+
       if (rubricasInvalidas.length > 0) {
-        throw new Error(`Existem ${rubricasInvalidas.length} rubricas com divergências eSocial. Corrija-as antes de calcular.`);
+        throw new Error(
+          `Existem ${rubricasInvalidas.length} rubricas com divergências eSocial. Corrija-as antes de calcular.`
+        );
       }
 
       // 2. Executar cálculo em lote via hook
       const [mes, ano] = competencia.split('/');
       const competenciaDB = `${ano}-${mes}`;
-      
+
       const resultadoLote = await executarCalculoLote({
         empresaId: empresaAtualId!,
-        competencia: competenciaDB
-      });
-
-      // 3. Registrar fechamento automático da fase de processamento na auditoria
-      await (supabase as any).from('folha_auditoria').insert({
-        tipo_evento: 'CALCULO',
-        mensagem: `Assistente de cálculo finalizado para a competência ${competencia}. Todos os colaboradores foram processados com conformidade eSocial e integração de benefícios.`,
-        severidade: 'INFO',
-        detalhes: { wizard: 'CalculoFolhaWizard', timestamp: new Date().toISOString(), versao_motor: '2.0.26', compliance: '100%', integracao: ['Ponto', 'Beneficios'] }
+        competencia: competenciaDB,
       });
 
       // Busca um resumo para exibição final
       const { data: itens } = await supabase
         .from('folha_itens')
-        .select(`
+        .select(
+          `
           *,
           folha:folhas_pagamento(*)
-        `)
+        `
+        )
         .eq('folha.competencia', competenciaDB)
         .eq('folha.empresa_id', empresaAtualId!)
         .limit(1);
 
       if (itens && itens.length > 0) {
         setCurrentFolhaId(itens[0].folha_id);
-        const detalhes = itens[0].detalhes as any;
+
+        // 3. Registrar fechamento automático da fase de processamento na auditoria
+        await supabase.from('folha_auditoria').insert({
+          folha_id: itens[0].folha_id,
+          tipo_evento: 'CALCULO',
+          mensagem: `Assistente de cálculo finalizado para a competência ${competencia}. Todos os colaboradores foram processados com conformidade eSocial e integração de benefícios.`,
+          severidade: 'INFO',
+          detalhes: {
+            wizard: 'CalculoFolhaWizard',
+            timestamp: new Date().toISOString(),
+            versao_motor: '2.0.26',
+            compliance: '100%',
+            integracao: ['Ponto', 'Beneficios'],
+          },
+        });
+        const detalhes = itens[0].detalhes as unknown as CalculoResultado;
         setResultadoCalculo({
           ...detalhes,
           horasFalta: detalhes.horasFalta || 0,
           faixaInss: detalhes.faixaInss || 'Progressiva',
-          faixaIrrf: detalhes.faixaIrrf || 'Progressiva'
+          faixaIrrf: detalhes.faixaIrrf || 'Progressiva',
         });
       }
 
       toast.info(`Cálculo em lote concluído: ${resultadoLote.success} sucessos.`);
-      
+
       queryClient.invalidateQueries({ queryKey: ['folha-resumo', competencia] });
       setCurrentStep(4);
     } catch (err) {
@@ -156,7 +175,13 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
   ];
 
   return (
-    <Dialog open={isOpen} onOpenChange={(o) => { setIsOpen(o); if (!o) setCurrentStep(1); }}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(o) => {
+        setIsOpen(o);
+        if (!o) setCurrentStep(1);
+      }}
+    >
       <DialogTrigger asChild>
         <Button
           size="sm"
@@ -181,12 +206,12 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
           <div className="flex items-center justify-between relative">
             <div className="absolute top-5 left-0 right-0 h-[2px] bg-white/20 -z-0 mx-8" />
             {steps.map((s) => (
-              <Step 
-                key={s.id} 
-                isActive={currentStep === s.id} 
-                isCompleted={currentStep > s.id} 
-                label={s.label} 
-                icon={s.icon} 
+              <Step
+                key={s.id}
+                isActive={currentStep === s.id}
+                isCompleted={currentStep > s.id}
+                label={s.label}
+                icon={s.icon}
               />
             ))}
           </div>
@@ -195,26 +220,28 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
         <div className="p-6">
           <AnimatePresence mode="wait">
             {currentStep === 1 && (
-              <motion.div 
-                key="step1" 
-                initial={{ opacity: 0, x: 20 }} 
-                animate={{ opacity: 1, x: 0 }} 
+              <motion.div
+                key="step1"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-4"
               >
                 <div className="flex items-center gap-3 p-4 bg-muted/30 rounded-2xl border border-border/30">
-                  <div className={cn(
-                    "p-2 rounded-xl",
-                    pendingPoints && pendingPoints > 0 ? "bg-warning/10 text-warning" : "bg-success/10 text-success"
-                  )}>
+                  <div
+                    className={cn(
+                      'p-2 rounded-xl',
+                      pendingPoints && pendingPoints > 0 ? 'bg-warning/10 text-warning' : 'bg-success/10 text-success'
+                    )}
+                  >
                     {pendingPoints && pendingPoints > 0 ? <AlertTriangle /> : <CheckCircle2 />}
                   </div>
                   <div>
                     <p className="font-bold text-sm">Registros de Ponto</p>
                     <p className="text-xs text-muted-foreground">
-                      {pendingPoints && pendingPoints > 0 
-                        ? `Existem ${pendingPoints} batidas aguardando aprovação.` 
-                        : "Todos os registros de ponto estão aprovados."}
+                      {pendingPoints && pendingPoints > 0
+                        ? `Existem ${pendingPoints} batidas aguardando aprovação.`
+                        : 'Todos os registros de ponto estão aprovados.'}
                     </p>
                   </div>
                 </div>
@@ -222,14 +249,22 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
                 <div className="p-4 rounded-2xl border border-border/30 text-sm space-y-2">
                   <p className="font-semibold">O que será verificado:</p>
                   <ul className="space-y-1 text-xs text-muted-foreground">
-                    <li className="flex items-center gap-2"><div className="h-1 w-1 rounded-full bg-primary" /> Faltas não justificadas</li>
-                    <li className="flex items-center gap-2"><div className="h-1 w-1 rounded-full bg-primary" /> Banco de horas pendente</li>
-                    <li className="flex items-center gap-2"><div className="h-1 w-1 rounded-full bg-primary" /> Afastamentos vigentes</li>
+                    <li className="flex items-center gap-2">
+                      <div className="h-1 w-1 rounded-full bg-primary" /> Faltas não justificadas
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="h-1 w-1 rounded-full bg-primary" /> Banco de horas pendente
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="h-1 w-1 rounded-full bg-primary" /> Afastamentos vigentes
+                    </li>
                   </ul>
                 </div>
 
                 <div className="flex justify-end gap-3 pt-4">
-                  <Button variant="outline" className="rounded-xl" onClick={() => setIsOpen(false)}>Cancelar</Button>
+                  <Button variant="outline" className="rounded-xl" onClick={() => setIsOpen(false)}>
+                    Cancelar
+                  </Button>
                   <Button className="rounded-xl gap-2" onClick={() => setCurrentStep(2)}>
                     Prosseguir <ArrowRight className="h-4 w-4" />
                   </Button>
@@ -238,10 +273,10 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
             )}
 
             {currentStep === 2 && (
-              <motion.div 
-                key="step2" 
-                initial={{ opacity: 0, x: 20 }} 
-                animate={{ opacity: 1, x: 0 }} 
+              <motion.div
+                key="step2"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 className="space-y-4"
               >
@@ -263,7 +298,9 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
                 </div>
 
                 <div className="flex justify-end gap-3 pt-4">
-                  <Button variant="outline" className="rounded-xl" onClick={() => setCurrentStep(1)}>Voltar</Button>
+                  <Button variant="outline" className="rounded-xl" onClick={() => setCurrentStep(1)}>
+                    Voltar
+                  </Button>
                   <Button className="rounded-xl gap-2" onClick={() => setCurrentStep(3)}>
                     Iniciar Cálculo <ArrowRight className="h-4 w-4" />
                   </Button>
@@ -272,10 +309,10 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
             )}
 
             {currentStep === 3 && (
-              <motion.div 
-                key="step3" 
-                initial={{ opacity: 0, x: 20 }} 
-                animate={{ opacity: 1, x: 0 }} 
+              <motion.div
+                key="step3"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 className="flex flex-col items-center justify-center py-12 text-center"
               >
@@ -289,8 +326,12 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
                       O motor de cálculo irá processar os tributos e encargos para todos os colaboradores ativos.
                     </p>
                     <div className="flex gap-3">
-                      <Button variant="outline" className="rounded-xl" onClick={() => setCurrentStep(2)}>Revisar</Button>
-                      <Button className="rounded-xl px-8 shadow-glow" onClick={handleCalculate}>Confirmar e Calcular</Button>
+                      <Button variant="outline" className="rounded-xl" onClick={() => setCurrentStep(2)}>
+                        Revisar
+                      </Button>
+                      <Button className="rounded-xl px-8 shadow-glow" onClick={handleCalculate}>
+                        Confirmar e Calcular
+                      </Button>
                     </div>
                   </>
                 ) : (
@@ -298,16 +339,18 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
                     <Loader2 className="h-16 w-16 text-primary animate-spin mb-6" />
                     <h3 className="text-lg font-display font-bold text-primary">Processando Folha...</h3>
                     <div className="w-full max-w-xs bg-muted rounded-full h-1.5 mt-6 overflow-hidden">
-                      <motion.div 
-                        className="h-full bg-primary" 
-                        initial={{ width: "0%" }} 
-                        animate={{ width: `${progressoLote ? (progressoLote.current / progressoLote.total) * 100 : 5}%` }} 
+                      <motion.div
+                        className="h-full bg-primary"
+                        initial={{ width: '0%' }}
+                        animate={{
+                          width: `${progressoLote ? (progressoLote.current / progressoLote.total) * 100 : 5}%`,
+                        }}
                       />
                     </div>
                     <p className="text-xs text-muted-foreground mt-4">
-                      {progressoLote 
-                        ? `Processando: ${progressoLote.current} de ${progressoLote.total} (${progressoLote.success} sucessos)` 
-                        : "Sincronizando dados de ponto eletrônico..."}
+                      {progressoLote
+                        ? `Processando: ${progressoLote.current} de ${progressoLote.total} (${progressoLote.success} sucessos)`
+                        : 'Sincronizando dados de ponto eletrônico...'}
                     </p>
                   </>
                 )}
@@ -315,9 +358,9 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
             )}
 
             {currentStep === 4 && (
-              <motion.div 
-                key="step4" 
-                initial={{ opacity: 0, scale: 0.95 }} 
+              <motion.div
+                key="step4"
+                initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="flex flex-col items-center justify-center py-6 text-center"
               >
@@ -331,7 +374,7 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
 
                 {resultadoCalculo && (
                   <div className="w-full mb-6 scale-90 origin-top">
-                    <FolhaComposicao 
+                    <FolhaComposicao
                       totalProventos={resultadoCalculo.proventos}
                       totalDescontos={resultadoCalculo.descontos}
                       inss={resultadoCalculo.inss}
@@ -348,8 +391,8 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
                 )}
 
                 <div className="grid grid-cols-2 gap-3 w-full max-w-sm mb-6">
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="rounded-xl gap-2 h-16 flex-col"
                     onClick={async () => {
                       if (currentFolhaId) {
@@ -365,8 +408,8 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
                     <Download className="h-4 w-4" />
                     <span className="text-[10px]">Holerites (PDF)</span>
                   </Button>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="rounded-xl gap-2 h-16 flex-col"
                     onClick={async () => {
                       if (currentFolhaId && empresaAtualId) {
@@ -393,7 +436,9 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
                   </Button>
                 </div>
 
-                <Button className="w-full rounded-xl" onClick={() => setIsOpen(false)}>Concluir</Button>
+                <Button className="w-full rounded-xl" onClick={() => setIsOpen(false)}>
+                  Concluir
+                </Button>
               </motion.div>
             )}
           </AnimatePresence>

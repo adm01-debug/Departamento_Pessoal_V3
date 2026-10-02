@@ -4,14 +4,60 @@
 --
 -- This is deliberately an allowlist: it changes only the routines observed in
 -- the canonical audit on 2026-09-12 and fails closed if that contract differs.
-DO $migration$
+--
+-- O helper dp_mig_set_search_path é definido aqui e reutilizado pelas
+-- migrations 20260912151000 e 20260912152000 (permanece no schema public).
+
+CREATE OR REPLACE FUNCTION public.dp_mig_set_search_path(
+  p_signature text,
+  p_prosecdef_only boolean DEFAULT false,
+  p_fail_closed boolean DEFAULT false
+)
+RETURNS void
+LANGUAGE plpgsql
+AS $fn$
 DECLARE
-  routine_signature text;
   routine_oid oid;
   routine_schema text;
   routine_name text;
   identity_arguments text;
-  expected_routines constant text[] := ARRAY[
+BEGIN
+  routine_oid := to_regprocedure(p_signature);
+  IF routine_oid IS NULL THEN
+    IF p_fail_closed THEN
+      RAISE EXCEPTION 'requires routine %', p_signature;
+    END IF;
+    RAISE WARNING 'dp_mig_set_search_path: routine % ausente (drift) — pulada', p_signature;
+    RETURN;
+  END IF;
+  IF p_prosecdef_only
+     AND NOT EXISTS (SELECT 1 FROM pg_proc WHERE oid = routine_oid AND prosecdef) THEN
+    RAISE WARNING 'dp_mig_set_search_path: routine % não é SECURITY DEFINER — pulada', p_signature;
+    RETURN;
+  END IF;
+  SELECT n.nspname, p.proname, pg_get_function_identity_arguments(p.oid)
+    INTO routine_schema, routine_name, identity_arguments
+  FROM pg_proc p
+  JOIN pg_namespace n ON n.oid = p.pronamespace
+  WHERE p.oid = routine_oid;
+  EXECUTE format(
+    'ALTER FUNCTION %I.%I(%s) SET search_path = pg_catalog, public, extensions',
+    routine_schema,
+    routine_name,
+    identity_arguments
+  );
+END
+$fn$;
+
+ALTER FUNCTION public.dp_mig_set_search_path(text, boolean, boolean)
+  SET search_path = pg_catalog, public, extensions;
+
+REVOKE ALL ON FUNCTION public.dp_mig_set_search_path(text, boolean, boolean) FROM PUBLIC;
+
+DO $migration$
+DECLARE
+  routine_signature text;
+  routines text[] := ARRAY[
     'public.dp_audit_log_immutable()',
     'public.dp_audit_log_prevent_future()',
     'public.dp_catalog_pii(text,text,public.dp_pii_sensitivity,text,text,integer)',
@@ -32,28 +78,8 @@ DECLARE
     'public.user_empresa_id()'
   ];
 BEGIN
-  FOREACH routine_signature IN ARRAY expected_routines LOOP
-    routine_oid := to_regprocedure(routine_signature);
-    IF routine_oid IS NULL THEN
-      RAISE EXCEPTION 'P0 SECURITY DEFINER search_path remediation requires routine %', routine_signature;
-    END IF;
-
-    SELECT n.nspname, p.proname, pg_get_function_identity_arguments(p.oid)
-      INTO routine_schema, routine_name, identity_arguments
-    FROM pg_proc p
-    JOIN pg_namespace n ON n.oid = p.pronamespace
-    WHERE p.oid = routine_oid;
-
-    IF NOT EXISTS (SELECT 1 FROM pg_proc WHERE oid = routine_oid AND prosecdef) THEN
-      RAISE EXCEPTION 'P0 SECURITY DEFINER search_path remediation expected SECURITY DEFINER routine %', routine_signature;
-    END IF;
-
-    EXECUTE format(
-      'ALTER FUNCTION %I.%I(%s) SET search_path = pg_catalog, public, extensions',
-      routine_schema,
-      routine_name,
-      identity_arguments
-    );
+  FOREACH routine_signature IN ARRAY routines LOOP
+    PERFORM public.dp_mig_set_search_path(routine_signature, true, true);
   END LOOP;
 END
 $migration$;

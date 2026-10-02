@@ -1,6 +1,6 @@
 /**
  * @fileoverview Tipos do módulo PCS (Plano de Cargos e Salários).
- * Todos derivados do schema real — nada de `any`, nada de shape inventado.
+ * Todos derivados do schema real — nada de tipagem solta, nada de shape inventado.
  */
 import type { Database, Json } from '@/integrations/supabase/types';
 
@@ -37,9 +37,7 @@ export const PCS_ADERENCIA_LABEL: Record<PcsAderencia, string> = {
 
 /** Narrowing do texto vindo do banco para a união conhecida. */
 export function parseAderencia(valor: string | null): PcsAderencia {
-  return valor === 'abaixo_mercado' || valor === 'acima_mercado' || valor === 'alinhado'
-    ? valor
-    : 'sem_referencia';
+  return valor === 'abaixo_mercado' || valor === 'acima_mercado' || valor === 'alinhado' ? valor : 'sem_referencia';
 }
 
 /** Status possíveis de um plano — espelha o CHECK do banco. */

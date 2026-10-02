@@ -148,7 +148,7 @@ function ContratacaoWorkflow({ token }: { token: string }) {
       setStep(1);
       window.scrollTo(0, 0);
     },
-    onError: (err: any) => toast.error(safeErrorMessage(err, 'Erro ao salvar dados.')),
+    onError: (err) => toast.error(safeErrorMessage(err, 'Erro ao salvar dados.')),
   });
 
   const markDocsUploaded = useMutation({
@@ -169,7 +169,7 @@ function ContratacaoWorkflow({ token }: { token: string }) {
       setStep(2);
       window.scrollTo(0, 0);
     },
-    onError: (err: any) => toast.error(safeErrorMessage(err, 'Erro ao processar contratação.')),
+    onError: (err) => toast.error(safeErrorMessage(err, 'Erro ao processar contratação.')),
   });
 
   const signContract = useMutation({
@@ -193,7 +193,7 @@ function ContratacaoWorkflow({ token }: { token: string }) {
       setStep(3);
       window.scrollTo(0, 0);
     },
-    onError: (err: any) => toast.error(safeErrorMessage(err, 'Erro ao processar contratação.')),
+    onError: (err) => toast.error(safeErrorMessage(err, 'Erro ao processar contratação.')),
   });
 
   const handleAddressFound = (addr: Address) => {
@@ -224,7 +224,7 @@ function ContratacaoWorkflow({ token }: { token: string }) {
         // 2. Registrar na tabela documentos_admissao.
         // As colunas reais são tipo/url/nome_arquivo/validado — o insert
         // anterior usava tipo_documento/storage_path/status (inexistentes),
-        // e o `as any` escondia o erro do TypeScript: todo upload falhava.
+        // e o cast anterior escondia o erro do TypeScript: todo upload falhava.
         const { error: dbErr } = await supabase.from('documentos_admissao').insert({
           admissao_id: tokenData!.admissao_id,
           tipo: docType,

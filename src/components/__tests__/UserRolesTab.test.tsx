@@ -1,9 +1,10 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
 }));
 
@@ -41,44 +42,44 @@ const MOCK_ROLES = [
 
 describe('UserRolesTab', () => {
   it('shows spinner when loading', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: true } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: true } as never);
     render(<UserRolesTab />);
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
   });
 
   it('renders Perfis de Usuário title', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
     render(<UserRolesTab />);
     expect(screen.getByText('Perfis de Usuário')).toBeInTheDocument();
   });
 
   it('shows empty state when no roles', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
     render(<UserRolesTab />);
     expect(screen.getByText('Nenhum perfil customizado configurado.')).toBeInTheDocument();
   });
 
   it('renders role badges', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_ROLES, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_ROLES, isLoading: false } as never);
     render(<UserRolesTab />);
     expect(screen.getByText('admin')).toBeInTheDocument();
     expect(screen.getByText('user')).toBeInTheDocument();
   });
 
   it('renders user_id in table', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_ROLES, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_ROLES, isLoading: false } as never);
     render(<UserRolesTab />);
     expect(screen.getByText('user-abc-123')).toBeInTheDocument();
   });
 
   it('shows Tornar Admin for non-admin users', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_ROLES, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_ROLES, isLoading: false } as never);
     render(<UserRolesTab />);
     expect(screen.getByText('Tornar Admin')).toBeInTheDocument();
   });
 
   it('renders Informação de Segurança card', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
     render(<UserRolesTab />);
     expect(screen.getByText('Informação de Segurança')).toBeInTheDocument();
   });

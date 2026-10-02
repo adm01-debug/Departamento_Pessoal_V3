@@ -55,10 +55,12 @@ ALTER TABLE public.logs_sistema ENABLE ROW LEVEL SECURITY;
 DO $$ 
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can insert their own logs' AND tablename = 'logs_sistema') THEN
-        CREATE POLICY "Users can insert their own logs" ON public.logs_sistema FOR INSERT WITH CHECK (auth.uid() = user_id);
+        DROP POLICY IF EXISTS "Users can insert their own logs" ON public.logs_sistema;
+CREATE POLICY "Users can insert their own logs" ON public.logs_sistema FOR INSERT WITH CHECK (auth.uid() = user_id);
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Admins can see all logs' AND tablename = 'logs_sistema') THEN
-        CREATE POLICY "Admins can see all logs" ON public.logs_sistema FOR SELECT USING (
+        DROP POLICY IF EXISTS "Admins can see all logs" ON public.logs_sistema;
+CREATE POLICY "Admins can see all logs" ON public.logs_sistema FOR SELECT USING (
             EXISTS (
                 SELECT 1 FROM auth.users 
                 WHERE id = auth.uid() 

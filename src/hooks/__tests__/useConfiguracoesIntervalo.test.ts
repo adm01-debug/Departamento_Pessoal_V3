@@ -3,10 +3,7 @@ import { renderHook, act, waitFor } from '@testing-library/react';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-const {
-  mockListar, mockCriar, mockAtualizar, mockExcluir,
-  mockToastSuccess, mockToastError,
-} = vi.hoisted(() => ({
+const { mockListar, mockCriar, mockAtualizar, mockExcluir, mockToastSuccess, mockToastError } = vi.hoisted(() => ({
   mockListar: vi.fn(),
   mockCriar: vi.fn(),
   mockAtualizar: vi.fn(),
@@ -69,7 +66,7 @@ describe('useConfiguracoesIntervalo', () => {
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     await act(async () => {
-      await result.current.criar({ duracao_minutos: 60 });
+      await result.current.criar({ duracao_minutos: 60, nome: 'Almoço', tipo: 'almoco' });
     });
 
     expect(mockCriar).toHaveBeenCalledWith(expect.objectContaining({ duracao_minutos: 60, empresa_id: 'emp-1' }));

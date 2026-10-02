@@ -1,8 +1,9 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
-  motion: { div: ({ children }: any) => <div>{children}</div> },
+  motion: { div: ({ children }: { children?: ReactNode }) => <div>{children}</div> },
 }));
 
 vi.mock('@tanstack/react-query', () => ({
@@ -29,25 +30,27 @@ vi.mock('sonner', () => ({
 }));
 
 vi.mock('@/components/ui/progress', () => ({
-  Progress: ({ value }: any) => <div role="progressbar" aria-valuenow={value} />,
+  Progress: ({ value }: { value?: number }) => <div role="progressbar" aria-valuenow={value} />,
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children }: any) => <div>{children}</div>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
-  CardHeader: ({ children }: any) => <div>{children}</div>,
-  CardTitle: ({ children }: any) => <h3>{children}</h3>,
-  CardDescription: ({ children }: any) => <p>{children}</p>,
+  Card: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardTitle: ({ children }: { children?: ReactNode }) => <h3>{children}</h3>,
+  CardDescription: ({ children }: { children?: ReactNode }) => <p>{children}</p>,
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, disabled }: any) => (
-    <button onClick={onClick} disabled={disabled}>{children}</button>
+  Button: ({ children, onClick, disabled }: { children?: ReactNode; onClick?: () => void; disabled?: boolean }) => (
+    <button onClick={onClick} disabled={disabled}>
+      {children}
+    </button>
   ),
 }));
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children }: any) => <span>{children}</span>,
+  Badge: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
 }));
 
 vi.mock('@/lib/utils', () => ({
@@ -73,56 +76,56 @@ const MOCK_ONBOARDING = [
 
 describe('OnboardingPageContent', () => {
   it('shows loading spinner while fetching', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: true } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: true } as never);
     const { container } = render(<OnboardingPageContent />);
     expect(container.querySelector('.animate-spin')).toBeInTheDocument();
   });
 
   it('shows empty state when no onboarding data', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
     render(<OnboardingPageContent />);
     expect(screen.getByText('Nenhum onboarding ativo')).toBeInTheDocument();
   });
 
   it('shows empty state description', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
     render(<OnboardingPageContent />);
     expect(screen.getByText('Inicie uma nova admissão para ver a jornada aqui.')).toBeInTheDocument();
   });
 
   it('renders colaborador name from onboarding data', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_ONBOARDING, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_ONBOARDING, isLoading: false } as never);
     render(<OnboardingPageContent />);
     expect(screen.getByText('Lucas Mendes')).toBeInTheDocument();
   });
 
   it('renders Progresso do Onboarding text', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_ONBOARDING, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_ONBOARDING, isLoading: false } as never);
     render(<OnboardingPageContent />);
     expect(screen.getByText('Progresso do Onboarding')).toBeInTheDocument();
   });
 
   it('renders Tarefas Críticas section', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_ONBOARDING, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_ONBOARDING, isLoading: false } as never);
     render(<OnboardingPageContent />);
     expect(screen.getByText('Tarefas Críticas')).toBeInTheDocument();
   });
 
   it('renders task titles from onboarding', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_ONBOARDING, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_ONBOARDING, isLoading: false } as never);
     render(<OnboardingPageContent />);
     expect(screen.getByText('Criar conta de e-mail')).toBeInTheDocument();
   });
 
   it('renders Enviar E-mail de Boas-Vindas button', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_ONBOARDING, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_ONBOARDING, isLoading: false } as never);
     render(<OnboardingPageContent />);
     expect(screen.getByText(/Enviar E-mail de Boas-Vindas/i)).toBeInTheDocument();
   });
 
   it('shows no-tasks message when tarefas array is empty', () => {
     const data = [{ ...MOCK_ONBOARDING[0], tarefas: [] }];
-    vi.mocked(useQuery).mockReturnValue({ data, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data, isLoading: false } as never);
     render(<OnboardingPageContent />);
     expect(screen.getByText('Nenhuma tarefa pendente para esta etapa.')).toBeInTheDocument();
   });

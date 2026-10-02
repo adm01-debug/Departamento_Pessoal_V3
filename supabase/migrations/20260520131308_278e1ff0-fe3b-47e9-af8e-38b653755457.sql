@@ -57,9 +57,11 @@ DROP POLICY IF EXISTS "Users can view rewards rules" ON public.premiacoes_regras
 CREATE POLICY "Users can view rewards rules" ON public.premiacoes_regras
     FOR SELECT USING (true); -- Filtered by campaign access in app
 
+DROP POLICY IF EXISTS "Users can manage rewards rules" ON public.premiacoes_regras;
 CREATE POLICY "Users can manage rewards rules" ON public.premiacoes_regras
     FOR ALL USING (true); -- Filtered by campaign access in app
 
+DROP POLICY IF EXISTS "Users can view rewards payments" ON public.premiacoes_pagamentos;
 CREATE POLICY "Users can view rewards payments" ON public.premiacoes_pagamentos
     FOR SELECT USING (true);
 

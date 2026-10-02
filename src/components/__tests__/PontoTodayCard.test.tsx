@@ -1,13 +1,15 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
 }));
 
 import { PontoTodayCard } from '../ponto/PontoTodayCard';
+import type { Tables } from '@/integrations/supabase/types';
 
 const REGISTRO = {
   entrada_esperada: '08:00',
@@ -25,7 +27,7 @@ const REGISTRO = {
   saida_antecipada_minutos: 0,
   saida_intervalo: null,
   retorno_intervalo: null,
-};
+} as unknown as Tables<'registros_ponto'>;
 
 describe('PontoTodayCard', () => {
   it('renders Hoje title', () => {

@@ -18,7 +18,7 @@ export function useAdmissaoWorkflow(admissaoId?: string) {
         .eq('entidade_id', admissaoId || '')
         .eq('entidade_tipo', 'admissao')
         .maybeSingle();
-      
+
       if (error) throw error;
       return data;
     },
@@ -26,6 +26,13 @@ export function useAdmissaoWorkflow(admissaoId?: string) {
 
   const iniciarWorkflow = useMutation({
     mutationFn: async (dados: { workflow_id: string }) => {
+      const { data: primeiraEtapa } = await supabase
+        .from('workflows_etapas')
+        .select('id')
+        .eq('workflow_id', dados.workflow_id)
+        .eq('ordem', 1)
+        .maybeSingle();
+
       const { data: execucao, error: execError } = await supabase
         .from('workflows_execucoes')
         .insert({
@@ -34,9 +41,9 @@ export function useAdmissaoWorkflow(admissaoId?: string) {
           entidade_id: admissaoId || '',
           entidade_tipo: 'admissao',
           status: 'em_andamento',
-          etapa_atual: 1,
-          metadata: { iniciado_em: new Date().toISOString() }
-        } as any)
+          etapa_atual_id: primeiraEtapa?.id ?? null,
+          metadata: { iniciado_em: new Date().toISOString() },
+        })
         .select()
         .single();
 
@@ -47,7 +54,7 @@ export function useAdmissaoWorkflow(admissaoId?: string) {
         const { error: admissaoUpdateError } = await supabase
           .from('admissoes')
           .update({
-            etapa: 'documentos' as any
+            etapa: 'documentos',
           })
           .eq('id', admissaoId)
           .eq('empresa_id', empresaAtualId!);
@@ -60,23 +67,21 @@ export function useAdmissaoWorkflow(admissaoId?: string) {
         .select('email')
         .eq('id', admissaoId || '')
         .single();
-      
+
       if (admissao?.email) {
         const bytes = new Uint8Array(24);
         crypto.getRandomValues(bytes);
         const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-        const token = Array.from(bytes, b => ALPHABET[b % ALPHABET.length]).join('');
+        const token = Array.from(bytes, (b) => ALPHABET[b % ALPHABET.length]).join('');
         const expiracao = new Date();
         expiracao.setDate(expiracao.getDate() + 7);
 
-        const { error: tokenError } = await supabase
-          .from('admissao_tokens')
-          .insert({
-            admissao_id: admissaoId || '',
-            token: token,
-            email_candidato: admissao.email,
-            data_expiracao: expiracao.toISOString(),
-          });
+        const { error: tokenError } = await supabase.from('admissao_tokens').insert({
+          admissao_id: admissaoId || '',
+          token: token,
+          email_candidato: admissao.email,
+          data_expiracao: expiracao.toISOString(),
+        });
         if (tokenError) throw tokenError;
       }
 
@@ -84,7 +89,7 @@ export function useAdmissaoWorkflow(admissaoId?: string) {
       await supabase.from('workflows_historico').insert({
         execucao_id: execucao.id,
         acao: 'Workflow iniciado',
-        observacoes: 'Workflow de admissão iniciado automaticamente.'
+        observacoes: 'Workflow de admissão iniciado automaticamente.',
       });
 
       return execucao;
@@ -98,13 +103,37 @@ export function useAdmissaoWorkflow(admissaoId?: string) {
   });
 
   const avancarEtapa = useMutation({
-    mutationFn: async ({ execucaoId, proximaEtapa, observacao }: { execucaoId: string, proximaEtapa: number, observacao?: string }) => {
+    mutationFn: async ({
+      execucaoId,
+      proximaEtapa,
+      observacao,
+    }: {
+      execucaoId: string;
+      proximaEtapa: number;
+      observacao?: string;
+    }) => {
+      const { data: execucaoAtual, error: fetchError } = await supabase
+        .from('workflows_execucoes')
+        .select('workflow_id')
+        .eq('id', execucaoId)
+        .eq('empresa_id', empresaAtualId!)
+        .single();
+      if (fetchError) throw fetchError;
+
+      const { data: etapa, error: etapaError } = await supabase
+        .from('workflows_etapas')
+        .select('id')
+        .eq('workflow_id', execucaoAtual.workflow_id)
+        .eq('ordem', proximaEtapa)
+        .maybeSingle();
+      if (etapaError) throw etapaError;
+
       const { data: execucao, error: execError } = await supabase
         .from('workflows_execucoes')
         .update({
-          etapa_atual: proximaEtapa,
-          updated_at: new Date().toISOString()
-        } as any)
+          etapa_atual_id: etapa?.id ?? null,
+          updated_at: new Date().toISOString(),
+        })
         .eq('id', execucaoId)
         .eq('empresa_id', empresaAtualId!)
         .select()
@@ -115,7 +144,7 @@ export function useAdmissaoWorkflow(admissaoId?: string) {
       await supabase.from('workflows_historico').insert({
         execucao_id: execucaoId,
         acao: `Mudança para Etapa ${proximaEtapa}`,
-        observacoes: observacao || `Avanço para a etapa ${proximaEtapa}`
+        observacoes: observacao || `Avanço para a etapa ${proximaEtapa}`,
       });
 
       return execucao;

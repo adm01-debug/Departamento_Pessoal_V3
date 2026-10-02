@@ -37,7 +37,12 @@ function setupInsertSelectMaybeSingle(data: any, error: any = null) {
 // update → eq → resolvedValue
 function setupUpdateEq(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  const __delChain = {
+    then: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).then(r),
+    catch: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).catch(r),
+    finally: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).finally(r),
+    eq: eqFn,
+  };
   eqFn.mockReturnValue(__delChain);
   const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ update: updateFn });
@@ -51,9 +56,9 @@ function setupListThreadsChain(data: any[], error: any = null) {
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
   chain.limit = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { chain };
@@ -62,7 +67,9 @@ function setupListThreadsChain(data: any[], error: any = null) {
 // ─── listContatos ─────────────────────────────────────────────────────────────
 
 describe('canalContabilidadeService.listContatos', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns contacts ordered by nome', async () => {
     const records = [{ id: 'c1', nome: 'Contador A', email: 'a@escritorio.com' }];
@@ -73,7 +80,7 @@ describe('canalContabilidadeService.listContatos', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupSelectEqOrder(null as any);
+    setupSelectEqOrder(null as never);
     expect(await canalContabilidadeService.listContatos('emp-1')).toEqual([]);
   });
 
@@ -86,7 +93,9 @@ describe('canalContabilidadeService.listContatos', () => {
 // ─── criarContato ─────────────────────────────────────────────────────────────
 
 describe('canalContabilidadeService.criarContato', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns created contact', async () => {
     const record = { id: 'c2', nome: 'Joana Silva', email: 'joana@escrit.com', empresa_id: 'emp-1' };
@@ -97,11 +106,13 @@ describe('canalContabilidadeService.criarContato', () => {
       telefone: '11999990000',
     });
     expect(result).toEqual(record);
-    expect(insertFn).toHaveBeenCalledWith(expect.objectContaining({
-      nome: 'Joana Silva',
-      email: 'joana@escrit.com',
-      empresa_id: 'emp-1',
-    }));
+    expect(insertFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        nome: 'Joana Silva',
+        email: 'joana@escrit.com',
+        empresa_id: 'emp-1',
+      })
+    );
   });
 
   it('throws on DB error', async () => {
@@ -115,7 +126,9 @@ describe('canalContabilidadeService.criarContato', () => {
 // ─── toggleContato ────────────────────────────────────────────────────────────
 
 describe('canalContabilidadeService.toggleContato', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates ativo flag without error', async () => {
     const { updateFn, eqFn } = setupUpdateEq();
@@ -133,7 +146,9 @@ describe('canalContabilidadeService.toggleContato', () => {
 // ─── listThreads ──────────────────────────────────────────────────────────────
 
 describe('canalContabilidadeService.listThreads', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns threads when no status filter is applied', async () => {
     const records = [{ id: 't1', assunto: 'Folha de julho', status: 'aberto' }];
@@ -156,7 +171,7 @@ describe('canalContabilidadeService.listThreads', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListThreadsChain(null as any);
+    setupListThreadsChain(null as never);
     expect(await canalContabilidadeService.listThreads('emp-1')).toEqual([]);
   });
 
@@ -177,7 +192,7 @@ describe('canalContabilidadeService.criarThread', () => {
   it('creates thread and calls enviarMensagem with initial message', async () => {
     const thread = { id: 'th1', assunto: 'Dúvida FGTS', empresa_id: 'emp-1' };
     const { insertFn } = setupInsertSelectMaybeSingle(thread);
-    const enviarSpy = vi.spyOn(canalContabilidadeService, 'enviarMensagem').mockResolvedValue({} as any);
+    const enviarSpy = vi.spyOn(canalContabilidadeService, 'enviarMensagem').mockResolvedValue({} as never);
 
     const result = await canalContabilidadeService.criarThread('emp-1', {
       assunto: 'Dúvida FGTS',
@@ -186,13 +201,15 @@ describe('canalContabilidadeService.criarThread', () => {
     });
 
     expect(result).toEqual(thread);
-    expect(insertFn).toHaveBeenCalledWith(expect.objectContaining({
-      empresa_id: 'emp-1',
-      assunto: 'Dúvida FGTS',
-      categoria: 'folha',
-      prioridade: 'normal',
-      aberto_por: 'user-1',
-    }));
+    expect(insertFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        empresa_id: 'emp-1',
+        assunto: 'Dúvida FGTS',
+        categoria: 'folha',
+        prioridade: 'normal',
+        aberto_por: 'user-1',
+      })
+    );
     expect(enviarSpy).toHaveBeenCalledWith('th1', 'emp-1', 'Olá, preciso de ajuda.', 'rh');
 
     enviarSpy.mockRestore();
@@ -201,7 +218,7 @@ describe('canalContabilidadeService.criarThread', () => {
   it('uses provided prioridade and contato_id', async () => {
     const thread = { id: 'th2', assunto: 'Urgente', empresa_id: 'emp-1' };
     setupInsertSelectMaybeSingle(thread);
-    const enviarSpy = vi.spyOn(canalContabilidadeService, 'enviarMensagem').mockResolvedValue({} as any);
+    const enviarSpy = vi.spyOn(canalContabilidadeService, 'enviarMensagem').mockResolvedValue({} as never);
 
     await canalContabilidadeService.criarThread('emp-1', {
       assunto: 'Urgente',
@@ -219,7 +236,7 @@ describe('canalContabilidadeService.criarThread', () => {
 
   it('throws "Falha ao criar thread" when insert returns null', async () => {
     setupInsertSelectMaybeSingle(null);
-    const enviarSpy = vi.spyOn(canalContabilidadeService, 'enviarMensagem').mockResolvedValue({} as any);
+    const enviarSpy = vi.spyOn(canalContabilidadeService, 'enviarMensagem').mockResolvedValue({} as never);
 
     await expect(
       canalContabilidadeService.criarThread('emp-1', {
@@ -234,7 +251,7 @@ describe('canalContabilidadeService.criarThread', () => {
 
   it('throws on DB insert error', async () => {
     setupInsertSelectMaybeSingle(null, { message: 'insert error' });
-    const enviarSpy = vi.spyOn(canalContabilidadeService, 'enviarMensagem').mockResolvedValue({} as any);
+    const enviarSpy = vi.spyOn(canalContabilidadeService, 'enviarMensagem').mockResolvedValue({} as never);
 
     await expect(
       canalContabilidadeService.criarThread('emp-1', {
@@ -251,7 +268,9 @@ describe('canalContabilidadeService.criarThread', () => {
 // ─── atualizarStatus ──────────────────────────────────────────────────────────
 
 describe('canalContabilidadeService.atualizarStatus', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates status without resolvido_em for non-resolvido status', async () => {
     const { updateFn } = setupUpdateEq();
@@ -277,7 +296,9 @@ describe('canalContabilidadeService.atualizarStatus', () => {
 // ─── listMensagens ────────────────────────────────────────────────────────────
 
 describe('canalContabilidadeService.listMensagens', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns messages ordered by created_at ascending', async () => {
     const records = [
@@ -291,7 +312,7 @@ describe('canalContabilidadeService.listMensagens', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupSelectEqOrder(null as any);
+    setupSelectEqOrder(null as never);
     expect(await canalContabilidadeService.listMensagens('th1')).toEqual([]);
   });
 
@@ -314,26 +335,26 @@ describe('canalContabilidadeService.enviarMensagem', () => {
     const { insertFn } = setupInsertSelectMaybeSingle(record);
     const result = await canalContabilidadeService.enviarMensagem('th1', 'emp-1', 'Olá', 'rh');
     expect(result).toEqual(record);
-    expect(insertFn).toHaveBeenCalledWith(expect.objectContaining({
-      thread_id: 'th1',
-      empresa_id: 'emp-1',
-      corpo: 'Olá',
-      autor_tipo: 'rh',
-      autor_id: 'user-1',
-      autor_nome: 'a@b.com',
-    }));
+    expect(insertFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        thread_id: 'th1',
+        empresa_id: 'emp-1',
+        corpo: 'Olá',
+        autor_tipo: 'rh',
+        autor_id: 'user-1',
+        autor_nome: 'a@b.com',
+      })
+    );
   });
 
   it('throws "Mensagem vazia" when corpo is empty string', async () => {
-    await expect(
-      canalContabilidadeService.enviarMensagem('th1', 'emp-1', '', 'rh')
-    ).rejects.toThrow('Mensagem vazia');
+    await expect(canalContabilidadeService.enviarMensagem('th1', 'emp-1', '', 'rh')).rejects.toThrow('Mensagem vazia');
   });
 
   it('throws "Mensagem vazia" when corpo is only whitespace', async () => {
-    await expect(
-      canalContabilidadeService.enviarMensagem('th1', 'emp-1', '   ', 'rh')
-    ).rejects.toThrow('Mensagem vazia');
+    await expect(canalContabilidadeService.enviarMensagem('th1', 'emp-1', '   ', 'rh')).rejects.toThrow(
+      'Mensagem vazia'
+    );
   });
 
   it('trims corpo before inserting', async () => {

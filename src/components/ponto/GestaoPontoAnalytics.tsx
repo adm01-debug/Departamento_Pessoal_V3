@@ -1,26 +1,44 @@
+import type { Tables } from '@/integrations/supabase/types';
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
-  Cell, PieChart, Pie, Legend, AreaChart, Area 
+import {
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+  PieChart,
+  Pie,
+  Legend,
+  AreaChart,
+  Area,
 } from 'recharts';
-import { 
-  Activity, Users, Clock, ShieldAlert, Gavel, 
-  TrendingUp, AlertTriangle, Zap, BrainCircuit, ShieldCheck
+import {
+  Activity,
+  Users,
+  Clock,
+  ShieldAlert,
+  Gavel,
+  TrendingUp,
+  AlertTriangle,
+  Zap,
+  BrainCircuit,
+  ShieldCheck,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
-export function GestaoPontoAnalytics({ registros }: { registros: any[] }) {
+export function GestaoPontoAnalytics({ registros }: { registros: Tables<'registros_ponto'>[] }) {
   // 1. Process attendance status distribution
   const statusDistribution = useMemo(() => {
-    const counts = { 'No Horário': 0, 'Atrasos': 0, 'Faltas': 0, 'Incompletos': 0 };
-    
-    registros.forEach(r => {
+    const counts = { 'No Horário': 0, Atrasos: 0, Faltas: 0, Incompletos: 0 };
+
+    registros.forEach((r) => {
       if (!r.entrada_1 && !r.saida_1) counts['Faltas']++;
       else if (r.entrada_1 && !r.saida_1) counts['Incompletos']++;
-      else if (r.atraso_minutos > 0) counts['Atrasos']++;
+      else if ((r.atraso_minutos ?? 0) > 0) counts['Atrasos']++;
       else counts['No Horário']++;
     });
 
@@ -31,7 +49,7 @@ export function GestaoPontoAnalytics({ registros }: { registros: any[] }) {
   const monthlyForecast = useMemo(() => {
     // Group by day to see trends
     const dailyHours: Record<string, number> = {};
-    registros.forEach(r => {
+    registros.forEach((r) => {
       if (r.horas_trabalhadas) {
         const [h, m] = String(r.horas_trabalhadas).split(':').map(Number);
         const mins = (h || 0) * 60 + (m || 0);
@@ -40,23 +58,24 @@ export function GestaoPontoAnalytics({ registros }: { registros: any[] }) {
     });
 
     const dates = Object.keys(dailyHours).sort();
-    const values = dates.map(d => dailyHours[d] / 60); // Hours
+    const values = dates.map((d) => dailyHours[d] / 60); // Hours
 
     // Very simple linear projection if we have enough data
-    const last7DaysAverage = values.length > 0 ? values.slice(-7).reduce((a, b) => a + b, 0) / Math.min(values.length, 7) : 0;
-    
+    const last7DaysAverage =
+      values.length > 0 ? values.slice(-7).reduce((a, b) => a + b, 0) / Math.min(values.length, 7) : 0;
+
     // Total accumulated vs Expected (8h/day per active collaborator)
     const totalAccumulated = values.reduce((a, b) => a + b, 0);
-    const uniqueColabs = new Set(registros.map(r => r.colaborador_id)).size;
+    const uniqueColabs = new Set(registros.map((r) => r.colaborador_id)).size;
     const daysPassed = values.length;
     const remainingDays = 30 - daysPassed; // Simplified month
-    const projection = totalAccumulated + (last7DaysAverage * Math.max(0, remainingDays));
-    
+    const projection = totalAccumulated + last7DaysAverage * Math.max(0, remainingDays);
+
     return {
       projection,
       last7DaysAverage,
       totalAccumulated,
-      isOverBudget: projection > (uniqueColabs * 160) // 160h/month baseline
+      isOverBudget: projection > uniqueColabs * 160, // 160h/month baseline
     };
   }, [registros]);
 
@@ -65,7 +84,7 @@ export function GestaoPontoAnalytics({ registros }: { registros: any[] }) {
     const hours: Record<string, number> = {};
     for (let i = 6; i <= 20; i++) hours[`${String(i).padStart(2, '0')}:00`] = 0;
 
-    registros.forEach(r => {
+    registros.forEach((r) => {
       if (r.entrada_1) {
         const hour = r.entrada_1.split(':')[0] + ':00';
         if (hours[hour] !== undefined) hours[hour]++;
@@ -103,12 +122,12 @@ export function GestaoPontoAnalytics({ registros }: { registros: any[] }) {
         const match = String(current.horas_trabalhadas).match(/(\d+):/);
         if (match && parseInt(match[1]) >= 10) excessiveWorkdays++;
       }
-      
+
       // Intervalo (simplified check)
       if (current.saida_intervalo && current.retorno_intervalo) {
         const [sh, sm] = current.saida_intervalo.split(':').map(Number);
         const [rh, rm] = current.retorno_intervalo.split(':').map(Number);
-        const diff = (rh * 60 + rm) - (sh * 60 + sm);
+        const diff = rh * 60 + rm - (sh * 60 + sm);
         if (diff > 0 && diff < 60) shortIntervals++;
       }
     }
@@ -133,38 +152,76 @@ export function GestaoPontoAnalytics({ registros }: { registros: any[] }) {
       </div>
 
       {/* Predictive Top Banner */}
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="grid grid-cols-1 md:grid-cols-3 gap-4"
+      >
         <Card className="bg-gradient-to-br from-primary/10 to-transparent border-primary/20">
           <CardContent className="p-4 flex flex-col justify-between h-full">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-2 bg-primary/20 rounded-lg text-primary"><BrainCircuit className="h-5 w-5" /></div>
-              <Badge variant={monthlyForecast.isOverBudget ? "destructive" : "secondary"} className="text-[10px] animate-pulse">Previsão IA</Badge>
+              <div className="p-2 bg-primary/20 rounded-lg text-primary">
+                <BrainCircuit className="h-5 w-5" />
+              </div>
+              <Badge
+                variant={monthlyForecast.isOverBudget ? 'destructive' : 'secondary'}
+                className="text-[10px] animate-pulse"
+              >
+                Previsão IA
+              </Badge>
             </div>
             <div>
               <p className="text-[10px] uppercase text-muted-foreground font-bold mb-1">Custo Projetado (Horas)</p>
               <div className="flex items-baseline gap-2">
-                <h3 className="text-2xl font-display font-bold text-primary">{Math.round(monthlyForecast.projection)}h</h3>
+                <h3 className="text-2xl font-display font-bold text-primary">
+                  {Math.round(monthlyForecast.projection)}h
+                </h3>
                 <p className="text-xs text-muted-foreground">/ mês</p>
               </div>
-              <p className="text-[10px] text-muted-foreground mt-2">Baseado na média de {monthlyForecast.last7DaysAverage.toFixed(1)}h diárias</p>
+              <p className="text-[10px] text-muted-foreground mt-2">
+                Baseado na média de {monthlyForecast.last7DaysAverage.toFixed(1)}h diárias
+              </p>
             </div>
           </CardContent>
         </Card>
 
-        <Card className={cn("bg-gradient-to-br from-transparent border-border/40", complianceStats.interjornadaViolations > 0 ? "to-destructive/5 border-destructive/20" : "to-success/5 border-success/20")}>
+        <Card
+          className={cn(
+            'bg-gradient-to-br from-transparent border-border/40',
+            complianceStats.interjornadaViolations > 0
+              ? 'to-destructive/5 border-destructive/20'
+              : 'to-success/5 border-success/20'
+          )}
+        >
           <CardContent className="p-4 flex flex-col justify-between h-full">
             <div className="flex items-center justify-between mb-4">
-              <div className={cn("p-2 rounded-lg", complianceStats.interjornadaViolations > 0 ? "bg-destructive/20 text-destructive" : "bg-success/20 text-success")}>
+              <div
+                className={cn(
+                  'p-2 rounded-lg',
+                  complianceStats.interjornadaViolations > 0
+                    ? 'bg-destructive/20 text-destructive'
+                    : 'bg-success/20 text-success'
+                )}
+              >
                 <Gavel className="h-5 w-5" />
               </div>
-              <Badge variant="outline" className="text-[10px]">Compliance CLT</Badge>
+              <Badge variant="outline" className="text-[10px]">
+                Compliance CLT
+              </Badge>
             </div>
             <div>
               <p className="text-[10px] uppercase text-muted-foreground font-bold mb-1">Riscos de Passivo</p>
-              <h3 className={cn("text-2xl font-display font-bold", complianceStats.interjornadaViolations > 0 ? "text-destructive" : "text-success")}>
+              <h3
+                className={cn(
+                  'text-2xl font-display font-bold',
+                  complianceStats.interjornadaViolations > 0 ? 'text-destructive' : 'text-success'
+                )}
+              >
                 {complianceStats.interjornadaViolations > 0 ? 'ALTO RISCO' : 'BAIXO RISCO'}
               </h3>
-              <p className="text-[10px] text-muted-foreground mt-2">{complianceStats.interjornadaViolations} violações de interjornada detectadas</p>
+              <p className="text-[10px] text-muted-foreground mt-2">
+                {complianceStats.interjornadaViolations} violações de interjornada detectadas
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -172,8 +229,12 @@ export function GestaoPontoAnalytics({ registros }: { registros: any[] }) {
         <Card className="bg-gradient-to-br from-info/10 to-transparent border-info/20">
           <CardContent className="p-4 flex flex-col justify-between h-full">
             <div className="flex items-center justify-between mb-4">
-              <div className="p-2 bg-info/20 rounded-lg text-info"><TrendingUp className="h-5 w-5" /></div>
-              <Badge variant="outline" className="text-[10px]">Produtividade</Badge>
+              <div className="p-2 bg-info/20 rounded-lg text-info">
+                <TrendingUp className="h-5 w-5" />
+              </div>
+              <Badge variant="outline" className="text-[10px]">
+                Produtividade
+              </Badge>
             </div>
             <div>
               <p className="text-[10px] uppercase text-muted-foreground font-bold mb-1">Taxa de Assiduidade</p>
@@ -230,17 +291,27 @@ export function GestaoPontoAnalytics({ registros }: { registros: any[] }) {
                 <AreaChart data={hourDistribution}>
                   <defs>
                     <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--muted))" />
                   <XAxis dataKey="hour" fontSize={10} />
                   <YAxis fontSize={10} />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: 'hsl(var(--background))', borderRadius: '8px', border: '1px solid hsl(var(--border))' }}
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--background))',
+                      borderRadius: '8px',
+                      border: '1px solid hsl(var(--border))',
+                    }}
                   />
-                  <Area type="monotone" dataKey="count" stroke="hsl(var(--primary))" fillOpacity={1} fill="url(#colorCount)" />
+                  <Area
+                    type="monotone"
+                    dataKey="count"
+                    stroke="hsl(var(--primary))"
+                    fillOpacity={1}
+                    fill="url(#colorCount)"
+                  />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -259,15 +330,21 @@ export function GestaoPontoAnalytics({ registros }: { registros: any[] }) {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <ShieldAlert className="h-4 w-4 text-destructive" />
-                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Interjornada</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Interjornada
+                    </span>
                   </div>
-                  <Badge variant={complianceStats.interjornadaViolations > 0 ? "destructive" : "outline"} className="text-[10px]">
+                  <Badge
+                    variant={complianceStats.interjornadaViolations > 0 ? 'destructive' : 'outline'}
+                    className="text-[10px]"
+                  >
                     {complianceStats.interjornadaViolations} ocorrências
                   </Badge>
                 </div>
                 <div className="bg-background/50 p-3 rounded-xl border border-border/50">
                   <p className="text-[10px] text-muted-foreground leading-relaxed">
-                    A CLT exige 11h consecutivas de descanso entre jornadas. O sistema detectou possíveis violações que podem gerar horas extras a 100%.
+                    A CLT exige 11h consecutivas de descanso entre jornadas. O sistema detectou possíveis violações que
+                    podem gerar horas extras a 100%.
                   </p>
                 </div>
               </div>
@@ -276,15 +353,21 @@ export function GestaoPontoAnalytics({ registros }: { registros: any[] }) {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Clock className="h-4 w-4 text-warning" />
-                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Jornada Excedente</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Jornada Excedente
+                    </span>
                   </div>
-                  <Badge variant={complianceStats.excessiveWorkdays > 0 ? "warning" : "outline"} className="text-warning text-[10px]">
+                  <Badge
+                    variant={complianceStats.excessiveWorkdays > 0 ? 'warning' : 'outline'}
+                    className="text-warning text-[10px]"
+                  >
                     {complianceStats.excessiveWorkdays} ocorrências
                   </Badge>
                 </div>
                 <div className="bg-background/50 p-3 rounded-xl border border-border/50">
                   <p className="text-[10px] text-muted-foreground leading-relaxed">
-                    Jornadas acima de 10h diárias são proibidas por lei, salvo exceções específicas. Mantenha o monitoramento ativo.
+                    Jornadas acima de 10h diárias são proibidas por lei, salvo exceções específicas. Mantenha o
+                    monitoramento ativo.
                   </p>
                 </div>
               </div>
@@ -293,7 +376,9 @@ export function GestaoPontoAnalytics({ registros }: { registros: any[] }) {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="h-4 w-4 text-orange-500" />
-                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Intervalo Mínimo</span>
+                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Intervalo Mínimo
+                    </span>
                   </div>
                   <Badge variant="outline" className="text-[10px]">
                     {complianceStats.shortIntervals} ocorrências
@@ -301,7 +386,8 @@ export function GestaoPontoAnalytics({ registros }: { registros: any[] }) {
                 </div>
                 <div className="bg-background/50 p-3 rounded-xl border border-border/50">
                   <p className="text-[10px] text-muted-foreground leading-relaxed">
-                    Intervalos inferiores a 1h (para jornadas acima de 6h) são passíveis de indenização. Automatize alertas para os gestores.
+                    Intervalos inferiores a 1h (para jornadas acima de 6h) são passíveis de indenização. Automatize
+                    alertas para os gestores.
                   </p>
                 </div>
               </div>

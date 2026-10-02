@@ -15,7 +15,9 @@ import { SignaturePad } from '@/components/sst/SignaturePad';
 async function sha256(text: string) {
   const buf = new TextEncoder().encode(text);
   const hash = await crypto.subtle.digest('SHA-256', buf);
-  return Array.from(new Uint8Array(hash)).map((b) => b.toString(16).padStart(2, '0')).join('');
+  return Array.from(new Uint8Array(hash))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
 }
 
 export default function AdminEpisFichasPage() {
@@ -29,20 +31,24 @@ export default function AdminEpisFichasPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('epis_fichas')
-        .select('id, tipo_movimento, status, responsavel_nome, created_at, assinada_em, colaboradores(nome_completo), epis_fichas_itens(id, descricao, ca, quantidade, status_item)')
+        .select(
+          'id, tipo_movimento, status, responsavel_nome, created_at, assinada_em, colaboradores(nome_completo), epis_fichas_itens(id, descricao, ca, quantidade, status_item)'
+        )
         .eq('empresa_id', empresaAtual!.id)
         .order('created_at', { ascending: false })
         .limit(200);
       if (error) throw error;
       return data ?? [];
     },
-    staleTime: 5 * 60_000});
+    staleTime: 5 * 60_000,
+  });
 
   const kpis = {
     total: fichas.length,
     pendentes: fichas.filter((f) => f.status === 'pendente').length,
     assinadas: fichas.filter((f) => f.status === 'assinada').length,
-    recusas: fichas.filter((f) => f.status === 'recusada').length};
+    recusas: fichas.filter((f) => f.status === 'recusada').length,
+  };
 
   const assinar = async (fichaId: string, dataUrl: string) => {
     try {
@@ -52,12 +58,17 @@ export default function AdminEpisFichasPage() {
         assinatura_tipo: 'canvas',
         assinatura_dados: dataUrl,
         hash_sha256: hash,
-        user_agent: navigator.userAgent});
+        user_agent: navigator.userAgent,
+      });
       if (sigErr) throw sigErr;
-      const { error: updErr } = await supabase.from('epis_fichas').update({
-        status: 'assinada',
-        assinada_em: new Date().toISOString(),
-        hash_sha256: hash}).eq('id', fichaId);
+      const { error: updErr } = await supabase
+        .from('epis_fichas')
+        .update({
+          status: 'assinada',
+          assinada_em: new Date().toISOString(),
+          hash_sha256: hash,
+        })
+        .eq('id', fichaId);
       if (updErr) throw updErr;
       toast.success('Ficha assinada — hash registrado para integridade');
       setSignOpen(null);
@@ -103,17 +114,22 @@ export default function AdminEpisFichasPage() {
             <div className="py-10 text-center text-muted-foreground">Nenhuma ficha registrada ainda.</div>
           )}
           <div className="space-y-3">
-            {fichas.map((f: any) => (
+            {fichas.map((f) => (
               <div key={f.id} className="rounded-lg border p-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="font-medium">{f.colaboradores?.nome_completo ?? '—'}</div>
                     <div className="text-xs text-muted-foreground">
-                      {f.tipo_movimento} • Responsável: {f.responsavel_nome} • {new Date(f.created_at).toLocaleString('pt-BR')}
+                      {f.tipo_movimento} • Responsável: {f.responsavel_nome} •{' '}
+                      {new Date(f.created_at).toLocaleString('pt-BR')}
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Badge variant={f.status === 'assinada' ? 'default' : f.status === 'pendente' ? 'secondary' : 'destructive'}>
+                    <Badge
+                      variant={
+                        f.status === 'assinada' ? 'default' : f.status === 'pendente' ? 'secondary' : 'destructive'
+                      }
+                    >
                       {f.status}
                     </Badge>
                     {f.status === 'pendente' && (
@@ -135,10 +151,14 @@ export default function AdminEpisFichasPage() {
                 </div>
                 {f.epis_fichas_itens?.length > 0 && (
                   <ul className="mt-3 space-y-1 text-sm">
-                    {f.epis_fichas_itens.map((it: any) => (
+                    {f.epis_fichas_itens.map((it) => (
                       <li key={it.id} className="flex justify-between border-t pt-1">
-                        <span>{it.descricao} {it.ca && <span className="text-xs text-muted-foreground">(CA {it.ca})</span>}</span>
-                        <span className="text-xs">Qtd: {it.quantidade} • {it.status_item}</span>
+                        <span>
+                          {it.descricao} {it.ca && <span className="text-xs text-muted-foreground">(CA {it.ca})</span>}
+                        </span>
+                        <span className="text-xs">
+                          Qtd: {it.quantidade} • {it.status_item}
+                        </span>
                       </li>
                     ))}
                   </ul>

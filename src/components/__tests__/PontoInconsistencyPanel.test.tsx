@@ -1,11 +1,12 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
+    div: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <div {...rest}>{children}</div>,
   },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
+  AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
 }));
 
 vi.mock('sonner', () => ({
@@ -13,6 +14,7 @@ vi.mock('sonner', () => ({
 }));
 
 import { PontoInconsistencyPanel } from '../ponto/PontoInconsistencyPanel';
+import type { RegistroComColaborador } from '../ponto/PontoInconsistencyPanel';
 
 const SHORT_BREAK_REGISTROS = [
   {
@@ -25,7 +27,7 @@ const SHORT_BREAK_REGISTROS = [
     saida_intervalo: '12:00',
     retorno_intervalo: '12:30',
   },
-];
+] as unknown as RegistroComColaborador[];
 
 describe('PontoInconsistencyPanel', () => {
   it('renders without crash when registros is empty', () => {

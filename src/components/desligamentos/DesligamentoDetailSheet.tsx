@@ -7,9 +7,12 @@ import { StatusBadge, TipoBadge } from './DesligamentoStatusBadge';
 import { DesligamentoChecklist } from './DesligamentoChecklist';
 import { Calculator, Download, FileText, User, Calendar, DollarSign, RefreshCw, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { desligamentoService } from '@/services/desligamentoService';
+import { desligamentoService, type DesligamentoComColaborador } from '@/services/desligamentoService';
 import { rescisaoService } from '@/services/rescisaoService';
 import { gerarPDFRescisao } from '@/utils/rescisaoPDF';
+import type { RescisaoResult } from '@/utils/rescisaoCalc';
+import type { Updatable } from '@/integrations/supabase/database.types';
+import type { LucideIcon } from 'lucide-react';
 
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -17,7 +20,7 @@ import { safeErrorMessage } from '@/utils/safeError';
 import { useState } from 'react';
 
 interface DetailSheetProps {
-  desligamento: any | null;
+  desligamento: (DesligamentoComColaborador & { detalhes_calculo?: { inss?: number; irrf?: number } | null }) | null;
   open: boolean;
   onClose: () => void;
 }
@@ -39,7 +42,7 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
   const handleChecklistToggle = async (key: string, value: boolean) => {
     try {
       // Regras de transição de etapa baseadas no checklist
-      const updates: any = { [key]: value };
+      const updates: Updatable<'desligamentos'> = { [key]: value };
 
       if (key === 'checklist_comunicacao' && value) {
         updates.etapa = 'documentacao';
@@ -49,7 +52,7 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
         if (d.etapa === 'documentacao') updates.etapa = 'calculo';
       }
 
-      await desligamentoService.atualizar(d.id, updates, d.empresa_id);
+      await desligamentoService.atualizar(d.id, updates, d.empresa_id ?? '');
       queryClient.invalidateQueries({ queryKey: ['desligamentos'] });
       toast.success('Checklist atualizado');
     } catch (err) {
@@ -68,14 +71,14 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
         d.id,
         {
           salario_base: d.salario_base,
-          data_admissao: d.colaborador?.data_admissao || d.data_admissao, // Fallback
+          data_admissao: d.colaborador?.data_admissao ?? '',
           data_desligamento: d.data_desligamento,
           tipo: d.tipo || 'sem_justa_causa',
-          aviso_trabalhado: d.aviso_trabalhado ?? false,
-          ferias_vencidas: d.ferias_vencidas_check ?? false,
-          saldo_fgts: d.saldo_fgts ?? 0,
+          aviso_trabalhado: false,
+          ferias_vencidas: false,
+          saldo_fgts: 0,
         },
-        d.empresa_id
+        d.empresa_id ?? ''
       );
       queryClient.invalidateQueries({ queryKey: ['desligamentos'] });
       toast.success('Rescisão calculada com sucesso');
@@ -89,7 +92,7 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
   const handleHomologar = async () => {
     setHomologating(true);
     try {
-      await rescisaoService.homologar(d.id, d.empresa_id);
+      await rescisaoService.homologar(d.id, d.empresa_id ?? '');
       queryClient.invalidateQueries({ queryKey: ['desligamentos'] });
       toast.success('Homologação concluída');
     } catch (err) {
@@ -171,11 +174,13 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
                 <Separator className="my-2" />
                 <RescisaoRow label="Total Proventos" value={d.total_proventos} bold className="text-success" />
                 <RescisaoRow label="Total Descontos" value={d.total_descontos} bold className="text-destructive" />
-                <div className="flex justify-between text-[10px] font-body text-muted-foreground px-1">
-                  <span>
-                    (INSS: {fmt((d as any).inss)} / IRRF: {fmt((d as any).irrf)})
-                  </span>
-                </div>
+                {d.detalhes_calculo && (
+                  <div className="flex justify-between text-[10px] font-body text-muted-foreground px-1">
+                    <span>
+                      (INSS: {fmt(d.detalhes_calculo.inss ?? null)} / IRRF: {fmt(d.detalhes_calculo.irrf ?? null)})
+                    </span>
+                  </div>
+                )}
                 <RescisaoRow label="Multa FGTS" value={d.multa_fgts} />
                 <Separator className="my-2" />
                 <div className="bg-primary/5 rounded-xl p-3 flex justify-between items-center">
@@ -218,15 +223,16 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
               <Button
                 onClick={() => {
                   const form = {
-                    nomeColaborador: d.colaborador?.nome_completo,
-                    cpf: d.colaborador?.cpf,
-                    cargo: d.colaborador?.cargo,
-                    dataAdmissao: d.colaborador?.data_admissao,
+                    ...d,
+                    empresa_id: d.empresa_id ?? '',
+                    nomeColaborador: d.colaborador?.nome_completo ?? null,
+                    cpf: d.colaborador?.cpf ?? null,
+                    cargo: d.colaborador?.cargo ?? null,
+                    dataAdmissao: d.colaborador?.data_admissao ?? null,
                     dataDesligamento: d.data_desligamento,
                     tipo: d.tipo,
-                    ...d,
                   };
-                  gerarPDFRescisao(form, d.detalhes_calculo || d);
+                  gerarPDFRescisao(form, (d.detalhes_calculo || d) as unknown as RescisaoResult);
                 }}
                 variant="outline"
                 className="w-full rounded-xl font-body gap-2"
@@ -249,7 +255,7 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
   );
 }
 
-function InfoRow({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
+function InfoRow({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: string }) {
   return (
     <div className="flex items-start gap-2.5">
       <Icon className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />

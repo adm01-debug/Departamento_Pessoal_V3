@@ -51,7 +51,7 @@ export function PerformanceAuditTimeline() {
                 Nenhum registro de auditoria disponível.
               </div>
             ) : (
-              logs.map((log: any, idx: number) => (
+              logs.map((log, idx) => (
                 <motion.div
                   key={log.id}
                   initial={{ opacity: 0, x: -5 }}
@@ -60,13 +60,13 @@ export function PerformanceAuditTimeline() {
                   className="flex gap-3 relative before:absolute before:left-[11px] before:top-6 before:bottom-[-16px] before:w-[1px] before:bg-border/40 last:before:hidden"
                 >
                   <div className="h-6 w-6 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 z-10">
-                    {getIcon(log.tabela)}
+                    {getIcon(log.tabela ?? '')}
                   </div>
 
                   <div className="flex-1 space-y-1">
                     <div className="flex items-center justify-between">
                       <Badge variant="outline" className="text-[9px] h-4 bg-background uppercase font-bold">
-                        {log.acao} - {log.tabela.replace('_', ' ')}
+                        {log.acao} - {(log.tabela ?? '').replace('_', ' ')}
                       </Badge>
                       <span className="text-[10px] text-muted-foreground flex items-center gap-1">
                         <Calendar className="h-3 w-3" />{' '}

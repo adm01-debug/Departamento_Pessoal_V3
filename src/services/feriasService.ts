@@ -3,6 +3,8 @@ import { Ferias } from '@/types/entities';
 import { supabase, type QueryBuilderType } from '@/integrations/supabase/client';
 import type { Insertable, Tables, Updatable } from '@/integrations/supabase/database.types';
 import { parseCursor } from '@/lib/cursor';
+import { feriasSchema } from '@/schemas/ferias';
+import { validateInput } from '@/schemas/validate';
 
 type PeriodoAquisitivo = Tables<'periodos_aquisitivos'>;
 type PeriodoAquisitivoInsert = Insertable<'periodos_aquisitivos'>;
@@ -15,6 +17,16 @@ class FeriasService extends BaseService<Ferias> {
       searchColumn: 'colaborador_nome',
       defaultOrderBy: 'data_inicio',
     });
+  }
+
+  async criar(payload: Record<string, unknown>): Promise<Ferias> {
+    validateInput(feriasSchema, payload, 'feriasService.criar');
+    return super.criar(payload);
+  }
+
+  async atualizar(id: string, payload: Record<string, unknown>, empresaId: string): Promise<Ferias> {
+    validateInput(feriasSchema, payload, 'feriasService.atualizar');
+    return super.atualizar(id, payload, empresaId);
   }
 
   async listar(options: ListOptions = {}): Promise<ListResponse<Ferias>> {
@@ -52,17 +64,16 @@ class FeriasService extends BaseService<Ferias> {
     const { page = 1, limit = 20, cursor, search, status } = params || {};
     const effectiveLimit = limit + 1; // Pegamos 1 a mais para saber se há mais páginas
 
-    let query = this.getQuery().select(
-      '*, colaborador:colaboradores!ferias_colaborador_id_fkey(nome_completo, foto_url)',
-      { count: 'exact' }
-    );
+    let query = this.getQuery().select('*, colaborador:colaboradores!inner(nome_completo, foto_url)', {
+      count: 'exact',
+    });
 
     query = query.eq('empresa_id', empresaId);
     if (status && status !== 'all') query = query.eq('status', status);
 
     if (search && search.length >= 3) {
       const escapedSearch = search.replace(/[%_\\]/g, '\\$&');
-      query = query.ilike('colaborador_nome', `%${escapedSearch}%`);
+      query = query.ilike('colaborador.nome_completo', `%${escapedSearch}%`);
     }
 
     // Cursor-based pagination (preferido) ou offset-based (backward compatibility)

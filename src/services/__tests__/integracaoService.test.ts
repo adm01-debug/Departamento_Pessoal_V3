@@ -110,7 +110,7 @@ describe('cnabService.getRemessas', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupOrderLimitChain(null as any);
+    setupOrderLimitChain(null as never);
     const result = await cnabService.getRemessas(EMPRESA_ID);
     expect(result).toEqual([]);
   });
@@ -145,7 +145,7 @@ describe('webhookService.listar', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupOrderChain(null as any);
+    setupOrderChain(null as never);
     const result = await webhookService.listar(EMPRESA_ID);
     expect(result).toEqual([]);
   });
@@ -228,7 +228,7 @@ describe('webhookService.getLogs', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupOrderLimitChain(null as any);
+    setupOrderLimitChain(null as never);
     const result = await webhookService.getLogs(EMPRESA_ID);
     expect(result).toEqual([]);
   });

@@ -1,13 +1,20 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('react-router-dom', () => ({
   useLocation: vi.fn(),
-  Link: ({ children, to, ...props }: any) => <a href={to} {...props}>{children}</a>,
+  Link: ({ children, to, ...props }: { children?: ReactNode; to?: string; [key: string]: unknown }) => (
+    <a href={to} {...props}>
+      {children}
+    </a>
+  ),
 }));
 
 vi.mock('framer-motion', () => ({
-  motion: { nav: ({ children, ...props }: any) => <nav {...props}>{children}</nav> },
+  motion: {
+    nav: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <nav {...props}>{children}</nav>,
+  },
 }));
 
 vi.mock('@/lib/utils', () => ({ cn: (...c: string[]) => c.filter(Boolean).join(' ') }));
@@ -21,7 +28,7 @@ import { Breadcrumbs } from '../layout/Breadcrumbs';
 import { useLocation } from 'react-router-dom';
 
 const mockLocation = (pathname: string) => {
-  vi.mocked(useLocation).mockReturnValue({ pathname } as any);
+  vi.mocked(useLocation).mockReturnValue({ pathname } as never);
 };
 
 describe('Breadcrumbs', () => {

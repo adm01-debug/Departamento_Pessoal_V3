@@ -19,12 +19,14 @@ const { mockFrom, mockLog, mockLoggerError } = vi.hoisted<{
   mockLog: ReturnType<typeof vi.fn>;
   mockLoggerError: ReturnType<typeof vi.fn>;
 }>(() => ({
-  mockFrom: vi.fn<(table: string) => {
-    select: () => SelectChain;
-    insert: (data: unknown) => InsertChain;
-    update: (data: unknown) => UpdateChain;
-    delete: () => DeleteChain;
-  }>(),
+  mockFrom: vi.fn<
+    (table: string) => {
+      select: () => SelectChain;
+      insert: (data: unknown) => InsertChain;
+      update: (data: unknown) => UpdateChain;
+      delete: () => DeleteChain;
+    }
+  >(),
   mockLog: vi.fn<() => Promise<void>>(),
   mockLoggerError: vi.fn<() => void>(),
 }));
@@ -48,7 +50,7 @@ vi.mock('../loggerService', () => ({
  * isolamento multi-tenant.
  */
 function setupChain(data: any = null, extra: Record<string, unknown> = {}) {
-  const chain = makeChain({ data, ...extra } as any);
+  const chain = makeChain({ data, ...extra } as never);
   mockFrom.mockReturnValue(chain);
   return {
     chain,
@@ -80,8 +82,7 @@ function standaloneChain(data: any = null, error: any = null) {
   };
 }
 
-const setupListarChain = (data: any[], count = 0, error: any = null) =>
-  setupChain(data, { count, error });
+const setupListarChain = (data: any[], count = 0, error: any = null) => setupChain(data, { count, error });
 const setupListComAdesaoChain = (data: any[], error: any = null) => setupChain(data, { error });
 const makeInsertMaybeSingleMock = standaloneChain;
 const makeBuscarMock = standaloneChain;
@@ -93,7 +94,9 @@ const makeSelectEqMock = (data: any[], error: any = null, _eqCount = 1) => stand
 // ─── listar ───────────────────────────────────────────────────────────────────
 
 describe('beneficioService.listar', () => {
-  beforeEach(() => { vi.resetAllMocks(); });
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
 
   it('returns data and total without filters', async () => {
     const records = [{ id: 'b1', nome: 'VT' }];
@@ -103,7 +106,7 @@ describe('beneficioService.listar', () => {
   });
 
   it('returns empty data when null', async () => {
-    setupListarChain(null as any, 0);
+    setupListarChain(null as never, 0);
     const result = await beneficioService.listar({ filters: { empresa_id: EMPRESA_ID } });
     expect(result).toEqual({ data: [], total: 0 });
   });
@@ -135,7 +138,9 @@ describe('beneficioService.listar', () => {
 // ─── listComAdesao ────────────────────────────────────────────────────────────
 
 describe('beneficioService.listComAdesao', () => {
-  beforeEach(() => { vi.resetAllMocks(); });
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
 
   it('queries with empresa_id and returns data', async () => {
     const records = [{ id: 'b1', beneficios_colaborador: [{ count: 3 }] }];
@@ -146,7 +151,7 @@ describe('beneficioService.listComAdesao', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListComAdesaoChain(null as any);
+    setupListComAdesaoChain(null as never);
     const result = await beneficioService.listComAdesao('emp-1');
     expect(result).toEqual([]);
   });
@@ -160,7 +165,10 @@ describe('beneficioService.listComAdesao', () => {
 // ─── criar ────────────────────────────────────────────────────────────────────
 
 describe('beneficioService.criar', () => {
-  beforeEach(() => { vi.clearAllMocks(); mockLog.mockResolvedValue(undefined); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockLog.mockResolvedValue(undefined);
+  });
 
   it('inserts beneficio and logs audit INSERT', async () => {
     const created = { id: 'b-new', nome: 'VR', tipo: 'alimentacao' };
@@ -169,11 +177,13 @@ describe('beneficioService.criar', () => {
 
     const result = await beneficioService.criar({ nome: 'VR' });
     expect(result).toEqual(created);
-    expect(mockLog).toHaveBeenCalledWith(expect.objectContaining({
-      tabela: 'beneficios',
-      acao: 'INSERT',
-      dados_novos: created,
-    }));
+    expect(mockLog).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tabela: 'beneficios',
+        acao: 'INSERT',
+        dados_novos: created,
+      })
+    );
   });
 
   it('throws wrapped error on DB failure', async () => {
@@ -186,7 +196,10 @@ describe('beneficioService.criar', () => {
 // ─── atualizar ────────────────────────────────────────────────────────────────
 
 describe('beneficioService.atualizar', () => {
-  beforeEach(() => { vi.clearAllMocks(); mockLog.mockResolvedValue(undefined); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockLog.mockResolvedValue(undefined);
+  });
 
   it('fetches anterior, updates and logs audit UPDATE', async () => {
     const anterior = { id: 'b1', nome: 'VT' };
@@ -195,18 +208,18 @@ describe('beneficioService.atualizar', () => {
     const buscarMock = makeBuscarMock(anterior);
     const updateMock = makeUpdateMaybeSingleMock(updated);
 
-    mockFrom
-      .mockReturnValueOnce({ select: buscarMock.selectFn })
-      .mockReturnValueOnce({ update: updateMock.updateFn });
+    mockFrom.mockReturnValueOnce({ select: buscarMock.selectFn }).mockReturnValueOnce({ update: updateMock.updateFn });
 
     const result = await beneficioService.atualizar('b1', { nome: 'VT Plus' }, EMPRESA_ID);
     expect(result).toEqual(updated);
-    expect(mockLog).toHaveBeenCalledWith(expect.objectContaining({
-      tabela: 'beneficios',
-      acao: 'UPDATE',
-      dados_anteriores: anterior,
-      dados_novos: updated,
-    }));
+    expect(mockLog).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tabela: 'beneficios',
+        acao: 'UPDATE',
+        dados_anteriores: anterior,
+        dados_novos: updated,
+      })
+    );
   });
 
   it('throws wrapped error when buscarPorId fails', async () => {
@@ -219,24 +232,27 @@ describe('beneficioService.atualizar', () => {
 // ─── excluir ──────────────────────────────────────────────────────────────────
 
 describe('beneficioService.excluir', () => {
-  beforeEach(() => { vi.clearAllMocks(); mockLog.mockResolvedValue(undefined); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockLog.mockResolvedValue(undefined);
+  });
 
   it('fetches anterior, deletes and logs audit DELETE', async () => {
     const anterior = { id: 'b1', nome: 'VT' };
     const buscarMock = makeBuscarMock(anterior);
     const deleteMock = makeDeleteEqMock();
 
-    mockFrom
-      .mockReturnValueOnce({ select: buscarMock.selectFn })
-      .mockReturnValueOnce({ delete: deleteMock.deleteFn });
+    mockFrom.mockReturnValueOnce({ select: buscarMock.selectFn }).mockReturnValueOnce({ delete: deleteMock.deleteFn });
 
     await beneficioService.excluir('b1', EMPRESA_ID);
     expect(deleteMock.eqFn).toHaveBeenCalledWith('id', 'b1');
-    expect(mockLog).toHaveBeenCalledWith(expect.objectContaining({
-      tabela: 'beneficios',
-      acao: 'DELETE',
-      dados_anteriores: anterior,
-    }));
+    expect(mockLog).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tabela: 'beneficios',
+        acao: 'DELETE',
+        dados_anteriores: anterior,
+      })
+    );
   });
 
   it('throws wrapped error on DB failure', async () => {
@@ -249,7 +265,9 @@ describe('beneficioService.excluir', () => {
 // ─── vincularColaborador ──────────────────────────────────────────────────────
 
 describe('beneficioService.vincularColaborador', () => {
-  beforeEach(() => { vi.resetAllMocks(); });
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
 
   it('inserts into beneficios_colaborador and returns data', async () => {
     const vinculo = { id: 'v1', tipo_beneficio_id: 'b1', colaborador_id: 'c1' };
@@ -257,11 +275,13 @@ describe('beneficioService.vincularColaborador', () => {
     mockFrom.mockReturnValue({ insert: insertFn });
 
     const result = await beneficioService.vincularColaborador('b1', 'c1', { valor: 100 }, EMPRESA_ID);
-    expect(insertFn).toHaveBeenCalledWith(expect.objectContaining({
-      tipo_beneficio_id: 'b1',
-      colaborador_id: 'c1',
-      valor: 100,
-    }));
+    expect(insertFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tipo_beneficio_id: 'b1',
+        colaborador_id: 'c1',
+        valor: 100,
+      })
+    );
     expect(result).toEqual(vinculo);
   });
 
@@ -275,7 +295,9 @@ describe('beneficioService.vincularColaborador', () => {
 // ─── listarPorColaborador ─────────────────────────────────────────────────────
 
 describe('beneficioService.listarPorColaborador', () => {
-  beforeEach(() => { vi.resetAllMocks(); });
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
 
   it('queries by colaborador_id and returns data', async () => {
     const records = [{ id: 'v1', beneficio: { nome: 'VT' } }];
@@ -300,7 +322,9 @@ describe('beneficioService.listarPorColaborador', () => {
 // ─── obterResumoCustos ────────────────────────────────────────────────────────
 
 describe('beneficioService.obterResumoCustos', () => {
-  beforeEach(() => { vi.resetAllMocks(); });
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
 
   function setupResumoCustos(data: any[], error: any = null) {
     const { chain, selectFn } = setupChain(data, { error });
@@ -326,9 +350,7 @@ describe('beneficioService.obterResumoCustos', () => {
   });
 
   it('groups null tipo as Outros', async () => {
-    const data = [
-      { valor: 75, tipo_beneficio: { nome: null, desconto_colaborador: 0.5 } },
-    ];
+    const data = [{ valor: 75, tipo_beneficio: { nome: null, desconto_colaborador: 0.5 } }];
     setupResumoCustos(data);
     const result = await beneficioService.obterResumoCustos('emp-1');
     expect(result['Outros']).toEqual({ empresa: 37.5, colaborador: 37.5, total: 75 });
@@ -342,7 +364,7 @@ describe('beneficioService.obterResumoCustos', () => {
   });
 
   it('returns empty object when data is null', async () => {
-    setupResumoCustos(null as any);
+    setupResumoCustos(null as never);
     const result = await beneficioService.obterResumoCustos('emp-1');
     expect(result).toEqual({});
   });

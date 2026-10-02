@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
@@ -15,13 +16,17 @@ vi.mock('@/hooks/useEmpresas', () => ({
 }));
 
 vi.mock('@/components/ui/scroll-area', () => ({
-  ScrollArea: ({ children }: any) => <div>{children}</div>,
+  ScrollArea: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/tabs', () => ({
-  Tabs: ({ children }: any) => <div>{children}</div>,
-  TabsList: ({ children }: any) => <div role="tablist">{children}</div>,
-  TabsTrigger: ({ children, value }: any) => <button role="tab" data-value={value}>{children}</button>,
+  Tabs: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  TabsList: ({ children }: { children?: ReactNode }) => <div role="tablist">{children}</div>,
+  TabsTrigger: ({ children, value }: { children?: ReactNode; value?: string }) => (
+    <button role="tab" data-value={value}>
+      {children}
+    </button>
+  ),
 }));
 
 import { FeriasAuditTimeline } from '../ferias/FeriasAuditTimeline';
@@ -82,8 +87,8 @@ describe('FeriasAuditTimeline', () => {
   it('renders user email when logs provided', async () => {
     const { useQuery } = await import('@tanstack/react-query');
     vi.mocked(useQuery)
-      .mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any)
-      .mockReturnValueOnce({ data: [], isLoading: false } as any);
+      .mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as never)
+      .mockReturnValueOnce({ data: [], isLoading: false } as never);
     render(<FeriasAuditTimeline solicitacaoId="sol-001" />);
     expect(screen.getByText('rh@empresa.com')).toBeInTheDocument();
   });
@@ -91,8 +96,8 @@ describe('FeriasAuditTimeline', () => {
   it('renders aprovacao nivel when aprovacoes provided', async () => {
     const { useQuery } = await import('@tanstack/react-query');
     vi.mocked(useQuery)
-      .mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any)
-      .mockReturnValueOnce({ data: MOCK_APROVACOES, isLoading: false } as any);
+      .mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as never)
+      .mockReturnValueOnce({ data: MOCK_APROVACOES, isLoading: false } as never);
     render(<FeriasAuditTimeline solicitacaoId="sol-001" />);
     expect(screen.getAllByText(/Aprova.*o RH/i).length).toBeGreaterThanOrEqual(1);
   });

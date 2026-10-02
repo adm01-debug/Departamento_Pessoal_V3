@@ -15,7 +15,7 @@ export interface User {
   roles: AppRole[];
 }
 
-interface AuthContextType {
+export interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
@@ -28,7 +28,8 @@ interface AuthContextType {
   resetPassword: (email: string) => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+// eslint-disable-next-line react-refresh/only-export-components
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AUTH_INIT_TIMEOUT_MS = 10000;
 const USER_ROLES_TIMEOUT_MS = 5000;

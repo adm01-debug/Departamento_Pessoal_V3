@@ -15,6 +15,7 @@
 -- OU quem gerencia RH/pessoas da empresa -- preservando o escopo de tenant
 -- idêntico ao original.
 
+DROP POLICY IF EXISTS "registros_ponto_write" ON public.registros_ponto;
 CREATE POLICY registros_ponto_write ON public.registros_ponto
   FOR ALL TO authenticated
   USING (

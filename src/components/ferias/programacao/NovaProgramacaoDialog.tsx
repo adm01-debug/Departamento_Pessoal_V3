@@ -80,7 +80,7 @@ export function NovaProgramacaoDialog({ open, onOpenChange, ano, mesInicial }: P
                 <SelectValue placeholder="Selecione..." />
               </SelectTrigger>
               <SelectContent>
-                {(colaboradores ?? []).map((c: any) => (
+                {(colaboradores ?? []).map((c) => (
                   <SelectItem key={c.id} value={c.id}>
                     {c.nome_completo}
                   </SelectItem>
@@ -123,7 +123,7 @@ export function NovaProgramacaoDialog({ open, onOpenChange, ano, mesInicial }: P
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {periodos.map((p: any) => (
+                  {periodos.map((p) => (
                     <SelectItem key={p.id} value={p.id}>
                       {p.data_inicio} — {p.data_fim} {p.status ? `(${p.status})` : ''}
                     </SelectItem>

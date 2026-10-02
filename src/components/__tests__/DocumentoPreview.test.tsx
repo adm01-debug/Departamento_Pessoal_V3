@@ -1,16 +1,19 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children }: any) => <div>{children}</div>,
-  DialogContent: ({ children }: any) => <div>{children}</div>,
-  DialogHeader: ({ children }: any) => <div>{children}</div>,
-  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
+  Dialog: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, ...props }: any) => (
-    <button onClick={onClick} {...props}>{children}</button>
+  Button: ({ children, onClick, ...props }: { children?: ReactNode; onClick?: () => void; [key: string]: unknown }) => (
+    <button onClick={onClick} {...props}>
+      {children}
+    </button>
   ),
 }));
 
@@ -49,9 +52,7 @@ const UNKNOWN_DOC = {
 
 describe('DocumentoPreview', () => {
   it('renders null when documento is null', () => {
-    const { container } = render(
-      <DocumentoPreview documento={null} isOpen={true} onClose={vi.fn()} />
-    );
+    const { container } = render(<DocumentoPreview documento={null} isOpen={true} onClose={vi.fn()} />);
     expect(container.firstChild).toBeNull();
   });
 
@@ -66,16 +67,12 @@ describe('DocumentoPreview', () => {
   });
 
   it('renders iframe for PDF document', () => {
-    const { container } = render(
-      <DocumentoPreview documento={PDF_DOC} isOpen={true} onClose={vi.fn()} />
-    );
+    const { container } = render(<DocumentoPreview documento={PDF_DOC} isOpen={true} onClose={vi.fn()} />);
     expect(container.querySelector('iframe')).toBeInTheDocument();
   });
 
   it('renders img for image document', () => {
-    const { container } = render(
-      <DocumentoPreview documento={IMAGE_DOC} isOpen={true} onClose={vi.fn()} />
-    );
+    const { container } = render(<DocumentoPreview documento={IMAGE_DOC} isOpen={true} onClose={vi.fn()} />);
     expect(container.querySelector('img')).toBeInTheDocument();
   });
 
@@ -90,9 +87,7 @@ describe('DocumentoPreview', () => {
   });
 
   it('renders document tipo in subtitle', () => {
-    const { container } = render(
-      <DocumentoPreview documento={PDF_DOC} isOpen={true} onClose={vi.fn()} />
-    );
+    const { container } = render(<DocumentoPreview documento={PDF_DOC} isOpen={true} onClose={vi.fn()} />);
     expect(container.textContent).toMatch(/contrato/i);
   });
 });

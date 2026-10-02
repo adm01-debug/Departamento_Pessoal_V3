@@ -1,20 +1,43 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, disabled, ...props }: any) => (
-    <button onClick={onClick} disabled={disabled} {...props}>{children}</button>
+  Button: ({
+    children,
+    onClick,
+    disabled,
+    ...props
+  }: {
+    children?: ReactNode;
+    onClick?: () => void;
+    disabled?: boolean;
+    [key: string]: unknown;
+  }) => (
+    <button onClick={onClick} disabled={disabled} {...props}>
+      {children}
+    </button>
   ),
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children, open, onOpenChange }: any) => (
-    <div data-open={open} onClick={() => onOpenChange?.(!open)}>{children}</div>
+  Dialog: ({
+    children,
+    open,
+    onOpenChange,
+  }: {
+    children?: ReactNode;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
+  }) => (
+    <div data-open={open} onClick={() => onOpenChange?.(!open)}>
+      {children}
+    </div>
   ),
-  DialogTrigger: ({ children }: any) => <div data-testid="trigger">{children}</div>,
-  DialogContent: ({ children }: any) => <div data-testid="dialog-content">{children}</div>,
-  DialogHeader: ({ children }: any) => <div>{children}</div>,
-  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
+  DialogTrigger: ({ children }: { children?: ReactNode }) => <div data-testid="trigger">{children}</div>,
+  DialogContent: ({ children }: { children?: ReactNode }) => <div data-testid="dialog-content">{children}</div>,
+  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
 }));
 
 vi.mock('@/components/ui/input', () => ({
@@ -22,19 +45,31 @@ vi.mock('@/components/ui/input', () => ({
 }));
 
 vi.mock('@/components/ui/select', () => ({
-  Select: ({ children, onValueChange, value }: any) => (
+  Select: ({
+    children,
+    onValueChange,
+    value,
+  }: {
+    children?: ReactNode;
+    onValueChange?: (value: string) => void;
+    value?: string;
+  }) => (
     <select value={value} onChange={(e) => onValueChange?.(e.target.value)} data-testid="select">
       {children}
     </select>
   ),
-  SelectTrigger: ({ children }: any) => <>{children}</>,
-  SelectContent: ({ children }: any) => <>{children}</>,
-  SelectValue: ({ placeholder }: any) => <option value="">{placeholder}</option>,
-  SelectItem: ({ value, children }: any) => <option value={value}>{children}</option>,
+  SelectTrigger: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  SelectContent: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  SelectValue: ({ placeholder }: { children?: ReactNode; placeholder?: string }) => (
+    <option value="">{placeholder}</option>
+  ),
+  SelectItem: ({ value, children }: { value?: string; children?: ReactNode }) => (
+    <option value={value}>{children}</option>
+  ),
 }));
 
 vi.mock('@/components/ui/label', () => ({
-  Label: ({ children }: any) => <label>{children}</label>,
+  Label: ({ children }: { children?: ReactNode }) => <label>{children}</label>,
 }));
 
 vi.mock('lucide-react', () => ({ Plus: () => <span>+</span> }));
@@ -99,8 +134,6 @@ describe('ExameFormDialog', () => {
     const btn = screen.getByText('Registrar Exame').closest('button')!;
     fireEvent.click(btn);
 
-    expect(onSubmit).toHaveBeenCalledWith(
-      expect.objectContaining({ colaborador_id: 'col-1', tipo: 'admissional' })
-    );
+    expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ colaborador_id: 'col-1', tipo: 'admissional' }));
   });
 });

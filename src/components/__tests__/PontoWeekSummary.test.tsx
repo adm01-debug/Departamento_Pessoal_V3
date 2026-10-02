@@ -1,9 +1,10 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
 }));
 
@@ -43,8 +44,11 @@ describe('PontoWeekSummary', () => {
 
   it('limits display to 7 entries', () => {
     const many = Array.from({ length: 10 }, (_, i) => ({
-      id: `r${i}`, data: `2025-07-${String(i + 1).padStart(2, '0')}`,
-      horas_trabalhadas: '08:00', horas_extras: null, atraso_minutos: 0,
+      id: `r${i}`,
+      data: `2025-07-${String(i + 1).padStart(2, '0')}`,
+      horas_trabalhadas: '08:00',
+      horas_extras: null,
+      atraso_minutos: 0,
     }));
     render(<PontoWeekSummary registrosSemana={many} />);
     const rows = screen.getAllByText('08:00');

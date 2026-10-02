@@ -1,3 +1,4 @@
+import type { ComponentType } from 'react';
 import { S1200Remuneracao } from './S1200Remuneracao';
 import { S1210Pagamentos } from './S1210Pagamentos';
 import { S2200Admissao } from './S2200Admissao';
@@ -12,7 +13,7 @@ import { S2400CDP } from './S2400CDP';
 import { S2210SST } from './S2210SST';
 import { S2220ASO, S2240AgentesNocivos } from './SSTEvents';
 
-const components: Record<string, any> = {
+const components: Record<string, ComponentType<{ dados: Record<string, unknown> }>> = {
   'S-1200': S1200Remuneracao,
   'S-1210': S1210Pagamentos,
   'S-2200': S2200Admissao,
@@ -29,9 +30,9 @@ const components: Record<string, any> = {
   'S-2400': S2400CDP,
 };
 
-export function ESocialEventViewer({ tipo, dados }: { tipo: string; dados: any }) {
+export function ESocialEventViewer({ tipo, dados }: { tipo: string; dados: Record<string, unknown> }) {
   const Component = components[tipo];
-  
+
   if (!Component) {
     return (
       <div className="p-4 bg-muted/20 rounded-xl border border-dashed text-center">
@@ -40,6 +41,6 @@ export function ESocialEventViewer({ tipo, dados }: { tipo: string; dados: any }
       </div>
     );
   }
-  
+
   return <Component dados={dados} />;
 }

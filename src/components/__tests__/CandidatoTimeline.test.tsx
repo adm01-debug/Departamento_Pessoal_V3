@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
@@ -6,12 +7,12 @@ vi.mock('@/components/ui/spinner', () => ({
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children }: any) => <div>{children}</div>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
+  Card: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children }: any) => <span>{children}</span>,
+  Badge: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -66,56 +67,56 @@ const MOCK_ANOTACAO = {
 describe('CandidatoTimeline', () => {
   it('renders Spinner when loading', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: undefined, isLoading: true } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: undefined, isLoading: true } as never);
     render(<CandidatoTimeline candidaturaId="cand-001" />);
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
   });
 
   it('renders empty state when timeline is empty', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false } as never);
     render(<CandidatoTimeline candidaturaId="cand-001" />);
     expect(screen.getByText(/Inicie o processo para ver o histórico/i)).toBeInTheDocument();
   });
 
   it('renders Entrevista type label', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: [MOCK_ENTREVISTA], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: [MOCK_ENTREVISTA], isLoading: false } as never);
     render(<CandidatoTimeline candidaturaId="cand-001" />);
     expect(screen.getByText('Entrevista')).toBeInTheDocument();
   });
 
   it('renders Avaliação Técnica type label', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: [MOCK_TESTE], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: [MOCK_TESTE], isLoading: false } as never);
     render(<CandidatoTimeline candidaturaId="cand-001" />);
     expect(screen.getByText('Avaliação Técnica')).toBeInTheDocument();
   });
 
   it('renders Anotação type label', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: [MOCK_ANOTACAO], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: [MOCK_ANOTACAO], isLoading: false } as never);
     render(<CandidatoTimeline candidaturaId="cand-001" />);
     expect(screen.getByText('Anotação')).toBeInTheDocument();
   });
 
   it('renders status badge for entrevista', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: [MOCK_ENTREVISTA], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: [MOCK_ENTREVISTA], isLoading: false } as never);
     render(<CandidatoTimeline candidaturaId="cand-001" />);
     expect(screen.getByText('realizada')).toBeInTheDocument();
   });
 
   it('renders anotacao text in italic block', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: [MOCK_ANOTACAO], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: [MOCK_ANOTACAO], isLoading: false } as never);
     const { container } = render(<CandidatoTimeline candidaturaId="cand-001" />);
     expect(container.textContent).toContain('Candidato com perfil excepcional');
   });
 
   it('renders nota for teste item', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: [MOCK_TESTE], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: [MOCK_TESTE], isLoading: false } as never);
     const { container } = render(<CandidatoTimeline candidaturaId="cand-001" />);
     expect(container.textContent).toContain('Resultado: 8');
   });

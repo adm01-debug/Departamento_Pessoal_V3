@@ -13,12 +13,28 @@ import { useAfastamentos } from '@/hooks/useAfastamentos';
 import { afastamentoService } from '@/services/afastamentoService';
 import { useColaboradores } from '@/hooks/useColaboradores';
 import { useEmpresas } from '@/hooks/useEmpresas';
-import { Search, Stethoscope, AlertTriangle, Calendar as CalendarIcon, Zap, History as HistoryIcon } from 'lucide-react';
+import {
+  Search,
+  Stethoscope,
+  AlertTriangle,
+  Calendar as CalendarIcon,
+  Zap,
+  History as HistoryIcon,
+} from 'lucide-react';
 import { formatDate } from '@/utils/format';
 import type { AfastamentoRow } from '@/types/afastamentos';
+import type { Tables } from '@/integrations/supabase/types';
 import { loggerService } from '@/services/loggerService';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from '@/components/ui/command';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+} from '@/components/ui/command';
 import { cn } from '@/lib/utils';
 const schema = z.object({
   colaborador_id: z.string().min(1, 'Colaborador é obrigatório'),
@@ -32,11 +48,12 @@ const schema = z.object({
   status: z.string().default('ativo'),
   data_pericia: z.string().optional().nullable(),
   local_pericia: z.string().optional().nullable(),
-  protocolo_inss: z.string().optional().nullable()});
+  numero_beneficio: z.string().optional().nullable(),
+});
 
 interface AfastamentoFormProps {
   onSuccess: () => void;
-  initialData?: any;
+  initialData?: Partial<Tables<'afastamentos'>> & { cid?: { id: string; codigo: string; descricao: string } | null };
 }
 
 export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps) {
@@ -59,12 +76,28 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
 
   const [isVerificandoHistorico, setIsVerificandoHistorico] = useState(false);
 
-  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<z.input<typeof schema>, unknown, z.infer<typeof schema>>({
     resolver: zodResolver(schema),
-    defaultValues: initialData || {
-      status: 'ativo',
-      tipo: 'doenca'
-    }
+    defaultValues: {
+      colaborador_id: initialData?.colaborador_id ?? '',
+      tipo: initialData?.tipo ?? 'doenca',
+      data_inicio: initialData?.data_inicio ?? '',
+      data_fim_prevista: initialData?.data_fim_prevista ?? '',
+      cid_id: initialData?.cid_id ?? '',
+      nome_medico: initialData?.nome_medico ?? '',
+      crm_medico: initialData?.crm_medico ?? '',
+      observacoes: initialData?.observacoes ?? '',
+      status: initialData?.status ?? 'ativo',
+      data_pericia: initialData?.data_pericia ?? null,
+      local_pericia: initialData?.local_pericia ?? null,
+      numero_beneficio: initialData?.numero_beneficio ?? null,
+    },
   });
 
   // eslint-disable-next-line react-hooks/incompatible-library
@@ -81,19 +114,23 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
           const res = await afastamentoService.listarHistoricoRecente(watchColaboradorId, empresaAtual.id);
           setHistoricoRecente(res);
         } catch (e: unknown) {
-          loggerService.error('Erro ao carregar histórico de afastamentos', { colaboradorId: watchColaboradorId }, e instanceof Error ? e : undefined);
+          loggerService.error(
+            'Erro ao carregar histórico de afastamentos',
+            { colaboradorId: watchColaboradorId },
+            e instanceof Error ? e : undefined
+          );
         } finally {
           setIsVerificandoHistorico(false);
         }
       }
     };
     carregarHistorico();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchColaboradorId]);
 
   useEffect(() => {
     if (watchInicio && watchFim) {
-      const total = afastamentoService.calcularDias(watchInicio, watchFim);
+      const total = afastamentoService.calcularDias(watchInicio ?? '', watchFim ?? '');
       const distribuicao = afastamentoService.calcularDistribuicaoDias(total, watchTipo, configs);
       setDiasInfo({ total, ...distribuicao });
     }
@@ -111,13 +148,14 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
     return () => clearTimeout(timer);
   }, [cidSearch]);
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: z.infer<typeof schema>) => {
     try {
       const payload = {
         ...data,
         cid_id: selectedCid?.id,
         dias_empresa: diasInfo.empresa,
-        dias_inss: diasInfo.inss};
+        dias_inss: diasInfo.inss,
+      };
 
       if (initialData?.id) {
         await atualizar({ id: initialData.id, data: payload });
@@ -126,7 +164,11 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
       }
       onSuccess();
     } catch (error: unknown) {
-      loggerService.error('Erro ao salvar afastamento', { initialDataId: initialData?.id }, error instanceof Error ? error : undefined);
+      loggerService.error(
+        'Erro ao salvar afastamento',
+        { initialDataId: initialData?.id },
+        error instanceof Error ? error : undefined
+      );
     }
   };
 
@@ -137,16 +179,13 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
           <Label>Colaborador</Label>
           <Popover>
             <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                className="w-full justify-between"
-              >
+              <Button variant="outline" role="combobox" className="w-full justify-between">
                 {(() => {
                   const currentId = watch('colaborador_id');
                   return currentId && Array.isArray(colaboradores)
-                    ? (colaboradores as any[]).find((c: any) => c.id === currentId)?.nome_completo 
-                    : "Selecionar colaborador...";
+                    ? (colaboradores as { id: string; nome_completo: string | null }[]).find((c) => c.id === currentId)
+                        ?.nome_completo
+                    : 'Selecionar colaborador...';
                 })()}
 
                 <Search className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -158,22 +197,21 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
                 <CommandList>
                   <CommandEmpty>Nenhum colaborador encontrado.</CommandEmpty>
                   <CommandGroup>
-                    {Array.isArray(colaboradores) && (colaboradores as any[]).map((c: any) => (
-                      <CommandItem
-                        key={c.id}
-                        onSelect={() => setValue('colaborador_id', c.id)}
-                      >
-                        {c.nome_completo}
-                      </CommandItem>
-                    ))}
-
+                    {Array.isArray(colaboradores) &&
+                      (colaboradores as { id: string; nome_completo: string | null }[]).map((c) => (
+                        <CommandItem key={c.id} onSelect={() => setValue('colaborador_id', c.id)}>
+                          {c.nome_completo}
+                        </CommandItem>
+                      ))}
                   </CommandGroup>
                 </CommandList>
               </Command>
             </PopoverContent>
           </Popover>
-          {errors.colaborador_id && <p className="text-xs text-destructive">{errors.colaborador_id.message as string}</p>}
-          
+          {errors.colaborador_id && (
+            <p className="text-xs text-destructive">{errors.colaborador_id.message as string}</p>
+          )}
+
           {historicoRecente.length > 0 && (
             <div className="mt-2 p-3 bg-blue-50/50 border border-blue-100 rounded-lg animate-in fade-in slide-in-from-top-1">
               <div className="flex items-center gap-2 mb-2 text-blue-700">
@@ -181,10 +219,14 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
                 <span className="text-[10px] font-bold uppercase tracking-wider">Afastamentos Recentes (60 dias)</span>
               </div>
               <div className="space-y-1.5">
-                {historicoRecente.map(h => (
+                {historicoRecente.map((h) => (
                   <div key={h.id} className="text-[11px] flex justify-between items-center text-blue-800">
-                    <span>{formatDate(h.data_inicio)} - {h.dias_total} dias</span>
-                    <Badge variant="outline" className="h-4 text-[9px] bg-white/50 border-blue-200">CID: {h.cid || 'N/A'}</Badge>
+                    <span>
+                      {formatDate(h.data_inicio)} - {h.dias_total} dias
+                    </span>
+                    <Badge variant="outline" className="h-4 text-[9px] bg-white/50 border-blue-200">
+                      CID: {h.cid || 'N/A'}
+                    </Badge>
                   </div>
                 ))}
                 <p className="text-[9px] text-muted-foreground italic mt-2">
@@ -197,9 +239,9 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
 
         <div className="space-y-2">
           <Label>Motivo do Afastamento</Label>
-          <Select 
+          <Select
             defaultValue={initialData?.tipo || 'doenca'}
-            onValueChange={(val) => setValue('tipo', val)}
+            onValueChange={(val) => setValue('tipo', val as z.infer<typeof schema>['tipo'])}
           >
             <SelectTrigger>
               <SelectValue placeholder="Selecione o motivo" />
@@ -233,12 +275,19 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
         <div className="space-y-2">
           <Label>Data de Fim Prevista</Label>
           <Input type="date" {...register('data_fim_prevista')} />
-          {errors.data_fim_prevista && <p className="text-xs text-destructive">{errors.data_fim_prevista.message as string}</p>}
+          {errors.data_fim_prevista && (
+            <p className="text-xs text-destructive">{errors.data_fim_prevista.message as string}</p>
+          )}
         </div>
       </div>
 
       {diasInfo.total > 0 && (
-        <Card className={cn("border-l-4", diasInfo.inss > 0 ? "border-l-warning bg-warning/5" : "border-l-primary bg-primary/5")}>
+        <Card
+          className={cn(
+            'border-l-4',
+            diasInfo.inss > 0 ? 'border-l-warning bg-warning/5' : 'border-l-primary bg-primary/5'
+          )}
+        >
           <CardContent className="p-4">
             <div className="flex justify-between items-center">
               <div className="space-y-1">
@@ -273,7 +322,7 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
           <Stethoscope className="h-4 w-4 text-primary" />
           <h3 className="text-sm font-semibold">Dados Médicos</h3>
         </div>
-        
+
         <div className="space-y-2">
           <Label>CID-10</Label>
           <Popover>
@@ -282,7 +331,9 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
                 {selectedCid ? (
                   <div className="flex flex-col items-start">
                     <span className="font-bold text-primary">{selectedCid.codigo}</span>
-                    <span className="text-[10px] text-muted-foreground truncate max-w-[300px]">{selectedCid.descricao}</span>
+                    <span className="text-[10px] text-muted-foreground truncate max-w-[300px]">
+                      {selectedCid.descricao}
+                    </span>
                   </div>
                 ) : (
                   <span className="text-muted-foreground">Buscar CID por código ou descrição...</span>
@@ -292,14 +343,12 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
             </PopoverTrigger>
             <PopoverContent className="w-[450px] p-0 shadow-2xl" align="start">
               <Command shouldFilter={false}>
-                <CommandInput 
-                  placeholder="Pesquisar CID (ex: Z76)..." 
-                  value={cidSearch} 
-                  onValueChange={setCidSearch}
-                />
+                <CommandInput placeholder="Pesquisar CID (ex: Z76)..." value={cidSearch} onValueChange={setCidSearch} />
                 <CommandList>
-                  {cidResults.length === 0 && cidSearch.length > 2 && <CommandEmpty>Nenhum CID encontrado para "{cidSearch}".</CommandEmpty>}
-                  
+                  {cidResults.length === 0 && cidSearch.length > 2 && (
+                    <CommandEmpty>Nenhum CID encontrado para "{cidSearch}".</CommandEmpty>
+                  )}
+
                   {cidSearch.length <= 2 && (
                     <CommandGroup heading="CIDs Frequentes">
                       {[
@@ -307,8 +356,14 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
                         { id: '2', codigo: 'R51', descricao: 'Cefaléia' },
                         { id: '3', codigo: 'J06.9', descricao: 'Infecção respiratória aguda' },
                         { id: '4', codigo: 'Z02.7', descricao: 'Exame para fins de atestado médico' },
-                      ].map(c => (
-                        <CommandItem key={c.codigo} onSelect={() => { setSelectedCid(c); setCidSearch(''); }}>
+                      ].map((c) => (
+                        <CommandItem
+                          key={c.codigo}
+                          onSelect={() => {
+                            setSelectedCid(c);
+                            setCidSearch('');
+                          }}
+                        >
                           <Zap className="mr-2 h-3 w-3 text-amber-500" />
                           <span className="font-bold mr-2">{c.codigo}</span>
                           <span className="text-xs truncate">{c.descricao}</span>
@@ -360,7 +415,7 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
             <CalendarIcon className="h-4 w-4 text-warning" />
             <h3 className="text-sm font-semibold">Agendamento de Perícia (INSS)</h3>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Data da Perícia</Label>
@@ -368,7 +423,7 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
             </div>
             <div className="space-y-2">
               <Label>Protocolo INSS</Label>
-              <Input placeholder="Número do benefício/protocolo" {...register('protocolo_inss')} />
+              <Input placeholder="Número do benefício/protocolo" {...register('numero_beneficio')} />
             </div>
           </div>
           <div className="space-y-2">
@@ -385,7 +440,7 @@ export function AfastamentoForm({ onSuccess, initialData }: AfastamentoFormProps
 
       <div className="sticky bottom-0 bg-background pt-2 border-t">
         <Button type="submit" className="w-full" disabled={isCriando || isAtualizando}>
-          {isCriando || isAtualizando ? 'Processando...' : (initialData ? 'Salvar Alterações' : 'Concluir Registro')}
+          {isCriando || isAtualizando ? 'Processando...' : initialData ? 'Salvar Alterações' : 'Concluir Registro'}
         </Button>
       </div>
     </form>

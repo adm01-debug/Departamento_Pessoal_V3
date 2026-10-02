@@ -24,9 +24,9 @@ function makeChain(result: any) {
   chain.gt = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
   chain.limit = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve(result).then(fn);
-  chain.catch = (fn: any) => Promise.resolve(result).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve(result).finally(fn);
+  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn);
+  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(result).catch(fn);
+  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(result).finally(fn);
   return chain;
 }
 

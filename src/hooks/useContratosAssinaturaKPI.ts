@@ -44,7 +44,7 @@ export function useContratosAssinaturaKPI() {
     queryFn: async (): Promise<ContratoAssinaturaKPI | null> => {
       if (!empresaId) return null;
       const { data, error } = await supabase
-        .from('v_contratos_assinatura_kpi' as any)
+        .from('v_contratos_assinatura_kpi')
         .select('*')
         .eq('empresa_id', empresaId)
         .maybeSingle();
@@ -60,7 +60,7 @@ export function useContratosAssinaturaKPI() {
     queryFn: async (): Promise<ContratoTokenPendente[]> => {
       if (!empresaId) return [];
       const { data, error } = await supabase
-        .from('v_contratos_tokens_pendentes' as any)
+        .from('v_contratos_tokens_pendentes')
         .select('*')
         .eq('empresa_id', empresaId)
         .order('expira_em', { ascending: true })

@@ -1,16 +1,17 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { DctfTable, SefipTable } from '../obrigacoes/DeclaracoesTable';
+import type { Tables } from '@/integrations/supabase/types';
 
 const DCTF_DATA = [
-  { id: '1', competencia: '2024-06', status: 'paga', data_envio: '2024-06-30T00:00:00', valor_total: 5000 },
-  { id: '2', competencia: '2024-07', status: 'pendente', data_envio: null, valor_total: null },
-];
+  { id: '1', competencia: '2024-06', status: 'paga', data_transmissao: '2024-06-30T00:00:00', total_debitos: 5000 },
+  { id: '2', competencia: '2024-07', status: 'pendente', data_transmissao: null, total_debitos: null },
+] as unknown as Tables<'dctfweb_declaracoes'>[];
 
 const SEFIP_DATA = [
-  { id: '1', competencia: '2024-06', status: 'enviada', arquivo_url: 'https://example.com/sefip.txt' },
-  { id: '2', competencia: '2024-07', status: 'pendente', arquivo_url: null },
-];
+  { id: '1', competencia: '2024-06', status: 'enviada', conteudo: 'conteudo-sefip' },
+  { id: '2', competencia: '2024-07', status: 'pendente', conteudo: null },
+] as unknown as Tables<'sefip_arquivos'>[];
 
 describe('DctfTable', () => {
   it('renders table headers', () => {

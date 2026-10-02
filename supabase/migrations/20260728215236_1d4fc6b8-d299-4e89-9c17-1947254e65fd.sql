@@ -36,6 +36,7 @@ COMMENT ON FUNCTION public.get_auth_empresa_id() IS
 -- =========================================================
 DROP POLICY IF EXISTS "empresa_isolation_colaboradores" ON public.colaboradores;
 
+DROP POLICY IF EXISTS "colaboradores_tenant_all" ON public.colaboradores;
 CREATE POLICY "colaboradores_tenant_all"
 ON public.colaboradores FOR ALL TO authenticated
 USING (public.pertence_a_empresa(empresa_id))
@@ -46,6 +47,7 @@ WITH CHECK (public.pertence_a_empresa(empresa_id));
 -- =========================================================
 DROP POLICY IF EXISTS "empresa_isolation_dependentes" ON public.dependentes;
 
+DROP POLICY IF EXISTS "dependentes_tenant_all" ON public.dependentes;
 CREATE POLICY "dependentes_tenant_all"
 ON public.dependentes FOR ALL TO authenticated
 USING (
@@ -68,6 +70,7 @@ WITH CHECK (
 -- =========================================================
 DROP POLICY IF EXISTS "empresa_isolation_ferias" ON public.ferias;
 
+DROP POLICY IF EXISTS "ferias_tenant_all" ON public.ferias;
 CREATE POLICY "ferias_tenant_all"
 ON public.ferias FOR ALL TO authenticated
 USING (public.pertence_a_empresa(empresa_id))
@@ -78,6 +81,7 @@ WITH CHECK (public.pertence_a_empresa(empresa_id));
 -- =========================================================
 DROP POLICY IF EXISTS "Visualização por empresa provisoes" ON public.provisoes_folha;
 
+DROP POLICY IF EXISTS "provisoes_folha_tenant_select" ON public.provisoes_folha;
 CREATE POLICY "provisoes_folha_tenant_select"
 ON public.provisoes_folha FOR SELECT TO authenticated
 USING (public.pertence_a_empresa(empresa_id));

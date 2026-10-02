@@ -57,7 +57,7 @@ AS $$
 DECLARE
   secret_key text;
 BEGIN
-  IF plaintext IS NULL THEN RETURN NULL END IF;
+  IF plaintext IS NULL THEN RETURN NULL; END IF;
 
   -- Tenta usar Supabase Vault primeiro
   BEGIN
@@ -87,7 +87,7 @@ AS $$
 DECLARE
   secret_key text;
 BEGIN
-  IF ciphertext IS NULL THEN RETURN NULL END IF;
+  IF ciphertext IS NULL THEN RETURN NULL; END IF;
 
   BEGIN
     SELECT decrypted_secret INTO secret_key

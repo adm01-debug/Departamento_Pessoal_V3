@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresa } from '@/contexts';
 import { useDebounce } from '@/hooks/useDebounce';
-import { maskCpfDisplay } from '@/utils/piiMask';
+import { usePiiMask } from '@/hooks/usePiiMask';
 import { secureJsonParse } from '@/utils/secureJson';
 import { UserAvatar } from '@/components/ui/user-avatar';
 import { ColaboradorStatus } from '@/components/ui/status-badge';
@@ -357,6 +357,7 @@ export function CommandPalette({
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }) {
+  const pii = usePiiMask();
   const [internalOpen, setInternalOpen] = useState(false);
   const open = externalOpen !== undefined ? externalOpen : internalOpen;
   const setOpen = setExternalOpen !== undefined ? setExternalOpen : setInternalOpen;
@@ -445,7 +446,7 @@ export function CommandPalette({
       items.push({
         id: `colab-${c.id}`,
         label: c.nome_completo,
-        description: `${c.cpf ? maskCpfDisplay(c.cpf) : ''} · ${c.cargo || ''}`,
+        description: `${c.cpf ? pii.cpf(c.cpf) : ''} · ${c.cargo || ''}`,
         status: c.status,
         icon: User,
         category: 'pessoa',
@@ -468,7 +469,7 @@ export function CommandPalette({
     });
 
     return items;
-  }, [dbColaboradores, dbEmpresas]);
+  }, [dbColaboradores, dbEmpresas, pii]);
 
   // Filter static commands
   const filteredStatic = useMemo(() => {

@@ -7,7 +7,7 @@ vi.mock('@/integrations/supabase/client', () => ({
       eq: vi.fn().mockReturnThis(),
       order: vi.fn().mockReturnThis(),
       ilike: vi.fn().mockReturnThis(),
-      then: (fn: any) => Promise.resolve({ data: [], error: null }).then(fn),
+      then: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).then(fn),
     })),
   },
 }));

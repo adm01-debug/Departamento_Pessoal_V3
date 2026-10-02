@@ -37,7 +37,7 @@ END;
 $$;
 
 -- 2) Helper genérico para criar trigger de log com EXCEPTION
-CREATE OR REPLACE FUNCTION public._safe_audit_trigger(p_tabela TEXT)
+CREATE OR REPLACE FUNCTION public._safe_audit_trigger()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -50,7 +50,7 @@ BEGIN
     -- que não devem bloquear a operação principal.
     PERFORM 1;
   EXCEPTION WHEN OTHERS THEN
-    RAISE WARNING '[%] trigger error: %', p_tabela, SQLERRM;
+    RAISE WARNING '[%] trigger error: %', TG_ARGV[0], SQLERRM;
   END;
   RETURN COALESCE(NEW, OLD);
 END;
@@ -71,5 +71,5 @@ END $$;
 
 COMMENT ON FUNCTION public.calcular_provisao_mensal() IS
   '[P1-026] Trigger agora tolera falhas de provisão sem bloquear a folha principal.';
-COMMENT ON FUNCTION public._safe_audit_trigger IS
+COMMENT ON FUNCTION public._safe_audit_trigger() IS
   '[P1-026] Helper para triggers que não devem bloquear a operação pai.';

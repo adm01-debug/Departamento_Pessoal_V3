@@ -25,6 +25,7 @@ import { safeErrorMessage } from '@/utils/safeError';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts';
 import { supabase } from '@/integrations/supabase/client';
+import type { Tables } from '@/integrations/supabase/types';
 interface PontoClockRegisterProps {
   time: Date;
   loading: string | null;
@@ -33,7 +34,7 @@ interface PontoClockRegisterProps {
     tipo: 'entrada' | 'saida_almoco' | 'retorno_almoco' | 'saida',
     options?: { foto_biometria_url?: string | null; foto_base64?: string | null }
   ) => Promise<{ biometriaValida?: boolean } | undefined>;
-  ultimoRegistro?: any;
+  ultimoRegistro?: Tables<'batidas_ponto'>;
 }
 
 const buttons = [
@@ -92,7 +93,7 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
     };
   }, [stream]);
 
-  const startScan = async (tipo: any) => {
+  const startScan = async (tipo: 'entrada' | 'saida_almoco' | 'retorno_almoco' | 'saida') => {
     setSelectedTipo(tipo);
     setShowFaceScan(true);
     setScanProgress(0);
@@ -130,7 +131,10 @@ export function PontoClockRegister({ time, loading, geoStatus, onRegistrar, ulti
     }
   };
 
-  const captureAndFinalize = async (tipo: any, mediaStream: MediaStream) => {
+  const captureAndFinalize = async (
+    tipo: 'entrada' | 'saida_almoco' | 'retorno_almoco' | 'saida',
+    mediaStream: MediaStream
+  ) => {
     let fotoUrl: string | null = null;
     let fotoBase64: string | null = null;
     setScanStage('Capturando foto...');
