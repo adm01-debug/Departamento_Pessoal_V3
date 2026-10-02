@@ -48,4 +48,31 @@ describe('usePiiMask', () => {
     expect(result.current.cpf(undefined)).toBe('');
     expect(result.current.bankAccount('')).toBe('');
   });
+
+  it('pix mascara por tipo: CPF, email e chave genérica', () => {
+    const { result } = renderHook(() => usePiiMask(), { wrapper: withRoles(['user']) });
+    expect(result.current.pix('CPF', '123.456.789-01')).toBe('•••.•••.•••-01');
+    expect(result.current.pix('Email', 'user@test.com')).toBe('u••r@test.com');
+    expect(result.current.pix('Telefone', '11987654321')).toBe('•••••••4321');
+    // admin vê tudo em claro
+    const { result: admin } = renderHook(() => usePiiMask(), { wrapper: withRoles(['admin']) });
+    expect(admin.current.pix('CPF', '123.456.789-01')).toBe('123.456.789-01');
+  });
+
+  it('deep mascara chaves sensíveis em payloads aninhados (auditoria)', () => {
+    const { result } = renderHook(() => usePiiMask(), { wrapper: withRoles(['user']) });
+    const out = result.current.deep({
+      id: 'x',
+      cpf: '12345678901',
+      meta: { salario: 5000, nome: 'Ana' },
+      lista: [{ email: 'a@b.c' }],
+    }) as Record<string, unknown>;
+    expect(out.id).toBe('x');
+    expect(out.cpf).toBe('••••');
+    const meta = out.meta as Record<string, unknown>;
+    expect(meta.salario).toBe('••••');
+    expect(meta.nome).toBe('Ana');
+    const lista = out.lista as Array<Record<string, unknown>>;
+    expect(lista[0].email).toBe('••••');
+  });
 });

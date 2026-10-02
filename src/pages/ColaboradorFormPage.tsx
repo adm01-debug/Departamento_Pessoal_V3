@@ -36,8 +36,8 @@ const schema = z.object({
   telefone: z.string().optional(),
   celular: z.string().optional(),
   data_nascimento: z.string().min(1, 'Data de nascimento obrigatória'),
-  sexo: z.enum(['masculino', 'feminino', 'outro']).default('masculino'),
-  estado_civil: z.enum(['solteiro', 'casado', 'divorciado', 'viuvo', 'uniao_estavel']).default('solteiro'),
+  sexo: z.enum(['masculino', 'feminino']).default('masculino'),
+  estado_civil: z.enum(['solteiro', 'casado', 'divorciado', 'viuvo', 'separado', 'uniao_estavel']).default('solteiro'),
   nome_mae: z.string().min(1, 'Nome da mãe obrigatório'),
   nome_pai: z.string().optional(),
 
@@ -55,7 +55,7 @@ const schema = z.object({
   salario_base: z.number().positive('Salário deve ser positivo'),
   cargo: z.string().min(1, 'Cargo obrigatório'),
   departamento: z.string().min(1, 'Departamento obrigatório'),
-  tipo_contrato: z.enum(['clt', 'pj', 'estagio', 'temporario', 'autonomo']).default('clt'),
+  tipo_contrato: z.enum(['clt', 'pj', 'estagiario', 'temporario', 'intermitente', 'aprendiz']).default('clt'),
   status: z.string().default('ativo'),
   matricula: z.string().optional(),
 
@@ -283,7 +283,6 @@ export default function ColaboradorFormPage() {
                       options={[
                         { value: 'masculino', label: 'Masculino' },
                         { value: 'feminino', label: 'Feminino' },
-                        { value: 'outro', label: 'Outro' },
                       ]}
                       onChange={(v) => setValue('sexo', v as FormData['sexo'])}
                     />
@@ -295,6 +294,7 @@ export default function ColaboradorFormPage() {
                         { value: 'casado', label: 'Casado(a)' },
                         { value: 'divorciado', label: 'Divorciado(a)' },
                         { value: 'viuvo', label: 'Viúvo(a)' },
+                        { value: 'separado', label: 'Separado(a)' },
                         { value: 'uniao_estavel', label: 'União Estável' },
                       ]}
                       onChange={(v) => setValue('estado_civil', v as FormData['estado_civil'])}
@@ -338,8 +338,10 @@ export default function ColaboradorFormPage() {
                       options={[
                         { value: 'clt', label: 'CLT (Efetivo)' },
                         { value: 'pj', label: 'PJ (Prestador)' },
-                        { value: 'estagio', label: 'Estágio' },
+                        { value: 'estagiario', label: 'Estagiário' },
                         { value: 'temporario', label: 'Temporário' },
+                        { value: 'intermitente', label: 'Intermitente' },
+                        { value: 'aprendiz', label: 'Jovem Aprendiz' },
                       ]}
                       onChange={(v) => setValue('tipo_contrato', v as FormData['tipo_contrato'])}
                     />

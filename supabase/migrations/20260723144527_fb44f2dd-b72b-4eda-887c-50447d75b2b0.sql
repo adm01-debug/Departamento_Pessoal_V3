@@ -110,7 +110,7 @@ CREATE TRIGGER trg_contratos_gerados_updated
 -- =========================================================
 -- Storage policies (bucket 'contratos-trabalho')
 -- =========================================================
-DROP POLICY IF EXISTS "contratos-trabalho read" ON storage;
+DROP POLICY IF EXISTS "contratos-trabalho read" ON storage.objects;
 CREATE POLICY "contratos-trabalho read"
   ON storage.objects FOR SELECT TO authenticated
   USING (
@@ -121,7 +121,7 @@ CREATE POLICY "contratos-trabalho read"
     )
   );
 
-DROP POLICY IF EXISTS "contratos-trabalho write" ON storage;
+DROP POLICY IF EXISTS "contratos-trabalho write" ON storage.objects;
 CREATE POLICY "contratos-trabalho write"
   ON storage.objects FOR INSERT TO authenticated
   WITH CHECK (

@@ -30,6 +30,13 @@ verify_jwt = false
 [functions.metrics]
 verify_jwt = false
 
+# admissao-publica: portal público /contratacao — candidatos NÃO têm JWT.
+# Autenticação própria por token de admissão (>=16 chars, não expirado);
+# escopo: apenas upload de documento registrado via RPC token-scoped.
+# Rate limit distribuído por IP (30/min).
+[functions.admissao-publica]
+verify_jwt = false
+
 # Webhook inbound é chamado por sistemas externos sem JWT de usuário;
 # autenticação própria via HMAC (x-hub-signature-256) com fail-closed
 # (E-030: sem secret configurado → 503, nunca aceita sem verificar).

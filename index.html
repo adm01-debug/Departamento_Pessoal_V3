@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- MP-004 (hardened): CSP em modo enforce. Notas:
          - 'unsafe-eval' removido de script-src (Vite/SWC prod não requerem).
-         - 'unsafe-inline' em script-src mantido apenas por compat. com o
-           bundle inicial injetado pelo Vite; migrar para nonces em próxima
-           iteração server-side.
+         - 'unsafe-inline' removido de script-src, alinhado aos headers de
+           produção (vercel.json/netlify.toml) — meta e header não podem
+           divergir, senão testes locais mascaram violações de prod.
          - upgrade-insecure-requests força https em qualquer subresource http.
          - worker-src blob: necessário para o service worker da vite-plugin-pwa.
          - frame-src 'none' bloqueia iframes de terceiros (nenhum é usado). -->
     <!-- QA V26: `frame-ancestors` removido — a diretiva é ignorada quando entregue via <meta>
          (gera console warning). Deve ser configurada apenas via header HTTP no servidor. -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.lovable.app https://*.lovable.dev https://*.sentry.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.lovable.app https://*.lovable.dev https://api.pwnedpasswords.com https://*.sentry.io https://viacep.com.br https://brasilapi.com.br; worker-src 'self' blob:; manifest-src 'self'; media-src 'self' blob: data:; frame-src 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests;" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://*.lovable.app https://*.lovable.dev https://*.sentry.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.lovable.app https://*.lovable.dev https://api.pwnedpasswords.com https://api.ipify.org https://*.sentry.io https://viacep.com.br https://brasilapi.com.br; worker-src 'self' blob:; manifest-src 'self'; media-src 'self' blob: data:; frame-src 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests;" />
     <meta http-equiv="X-Content-Type-Options" content="nosniff" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <title>Sistema DP - Departamento Pessoal</title>

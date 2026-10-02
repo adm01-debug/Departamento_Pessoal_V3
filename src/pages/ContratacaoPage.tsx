@@ -116,31 +116,18 @@ function ContratacaoWorkflow({ token }: { token: string }) {
     mutationFn: async () => {
       if (!tokenData?.id) return;
 
-      // Update tokens status
-      const { error: tokenError } = await supabase
-        .from('admissao_tokens')
-        .update({
-          dados_preenchidos: true,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', tokenData.id);
+      // Writes vão por RPCs SECURITY DEFINER token-scoped — INSERT/UPDATE
+      // direto em admissao_tokens/admissoes é revogado desde o P0-004.
+      const { error } = await supabase.rpc('admissao_salvar_dados', {
+        _token: token,
+        _nome: formData.nome_completo,
+        _cpf: formData.cpf,
+        _data_nascimento: formData.data_nascimento || null,
+        _email: formData.email,
+        _telefone: formData.telefone,
+      });
 
-      if (tokenError) throw tokenError;
-
-      // Also update the admission record with the new data
-      const { error: admError } = await supabase
-        .from('admissoes')
-        .update({
-          nome: formData.nome_completo,
-          cpf: formData.cpf,
-          data_nascimento: formData.data_nascimento,
-          email: formData.email,
-          telefone: formData.telefone,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', tokenData.admissao_id);
-
-      if (admError) throw admError;
+      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['contratacao-token'] });
@@ -154,13 +141,7 @@ function ContratacaoWorkflow({ token }: { token: string }) {
   const markDocsUploaded = useMutation({
     mutationFn: async () => {
       if (!tokenData?.id) return;
-      const { error } = await supabase
-        .from('admissao_tokens')
-        .update({
-          documentos_enviados: true,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', tokenData.id);
+      const { error } = await supabase.rpc('admissao_marcar_documentos', { _token: token });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -175,16 +156,22 @@ function ContratacaoWorkflow({ token }: { token: string }) {
   const signContract = useMutation({
     mutationFn: async () => {
       if (!tokenData?.id || !signature) return;
-      const { error } = await supabase
-        .from('admissao_tokens')
-        .update({
-          contrato_assinado: true,
-          assinado_em: new Date().toISOString(),
-          assinatura_base64: signature,
-          ip_assinatura: 'client-ip', // In production, this would be the actual IP
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', tokenData.id);
+      // IP real do signatário para a trilha de auditoria; falha na
+      // consulta não bloqueia a assinatura.
+      let ipAssinatura: string | null = null;
+      try {
+        const res = await fetch('https://api.ipify.org?format=json');
+        const body = (await res.json()) as { ip?: string };
+        ipAssinatura = body.ip ?? null;
+      } catch {
+        /* consulta de IP é best-effort */
+      }
+
+      const { error } = await supabase.rpc('admissao_assinar_contrato', {
+        _token: token,
+        _assinatura_base64: signature,
+        _ip: ipAssinatura,
+      });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -212,29 +199,19 @@ function ContratacaoWorkflow({ token }: { token: string }) {
       const result = await processDocument(file, docType);
 
       if (result.valid) {
-        // 1. Upload real para o storage
-        const ext = file.name.split('.').pop();
-        // eslint-disable-next-line react-hooks/purity
-        const storagePath = `admissao_${tokenData?.admissao_id}/${docType}_${Date.now()}.${ext}`;
+        // Upload via edge function admissao-publica — uploads anônimos
+        // diretos no Storage foram revogados; a função valida o token e
+        // registra em documentos_admissao via RPC token-scoped.
+        const uploadForm = new FormData();
+        uploadForm.append('token', token ?? '');
+        uploadForm.append('tipo', docType);
+        uploadForm.append('file', file);
 
-        const { error: uploadErr } = await supabase.storage.from('documentos').upload(storagePath, file);
-
-        if (uploadErr) throw uploadErr;
-
-        // 2. Registrar na tabela documentos_admissao.
-        // As colunas reais são tipo/url/nome_arquivo/validado — o insert
-        // anterior usava tipo_documento/storage_path/status (inexistentes),
-        // e o cast anterior escondia o erro do TypeScript: todo upload falhava.
-        const { error: dbErr } = await supabase.from('documentos_admissao').insert({
-          admissao_id: tokenData!.admissao_id,
-          tipo: docType,
-          nome_arquivo: file.name,
-          url: storagePath,
-          tamanho_bytes: file.size,
-          validado: false,
+        const { error: uploadErr } = await supabase.functions.invoke('admissao-publica', {
+          body: uploadForm,
         });
 
-        if (dbErr) throw dbErr;
+        if (uploadErr) throw uploadErr;
 
         setUploadedDocs((prev) => ({
           ...prev,
