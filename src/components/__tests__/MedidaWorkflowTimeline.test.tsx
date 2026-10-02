@@ -55,16 +55,16 @@ const MOCK_LOG = [
   {
     id: 'log-1',
     acao: 'enviar_aprovacao',
-    from_status: 'rascunho',
-    to_status: 'pendente_aprovacao',
+    de_status: 'rascunho',
+    para_status: 'pendente_aprovacao',
     observacao: 'Enviado para RH',
     created_at: '2026-07-01T09:00:00Z',
   },
   {
     id: 'log-2',
     acao: 'aprovar',
-    from_status: 'pendente_aprovacao',
-    to_status: 'aprovada',
+    de_status: 'pendente_aprovacao',
+    para_status: 'aprovada',
     observacao: null,
     created_at: '2026-07-01T10:00:00Z',
   },
@@ -109,21 +109,26 @@ describe('MedidaWorkflowTimeline', () => {
   it('uses correct queryKey with medidaId', () => {
     mockUseQuery.mockReturnValue({ data: [], isLoading: false });
     render(<MedidaWorkflowTimeline medidaId="m-42" />);
-    expect(mockUseQuery).toHaveBeenCalledWith(
-      expect.objectContaining({ queryKey: ['medida-workflow-log', 'm-42'] })
-    );
+    expect(mockUseQuery).toHaveBeenCalledWith(expect.objectContaining({ queryKey: ['medida-workflow-log', 'm-42'] }));
   });
 
   it('is enabled when medidaId is provided', () => {
     mockUseQuery.mockReturnValue({ data: [], isLoading: false });
     render(<MedidaWorkflowTimeline medidaId="m-1" />);
-    expect(mockUseQuery).toHaveBeenCalledWith(
-      expect.objectContaining({ enabled: true })
-    );
+    expect(mockUseQuery).toHaveBeenCalledWith(expect.objectContaining({ enabled: true }));
   });
 
   it('shows fallback label for unknown acao type', () => {
-    const unknownLog = [{ id: 'l1', acao: 'unknown_action', from_status: null, to_status: null, observacao: null, created_at: '2026-07-01T10:00:00Z' }];
+    const unknownLog = [
+      {
+        id: 'l1',
+        acao: 'unknown_action',
+        from_status: null,
+        to_status: null,
+        observacao: null,
+        created_at: '2026-07-01T10:00:00Z',
+      },
+    ];
     mockUseQuery.mockReturnValue({ data: unknownLog, isLoading: false });
     render(<MedidaWorkflowTimeline medidaId="m-1" />);
     expect(screen.getByText('unknown_action')).toBeInTheDocument();

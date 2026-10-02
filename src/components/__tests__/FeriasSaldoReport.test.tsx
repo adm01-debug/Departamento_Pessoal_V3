@@ -24,12 +24,12 @@ const MOCK_COLABORADORES = [
   {
     id: 'col-001',
     nome_completo: 'João Silva',
-    departamento: { nome: 'TI' },
+    departamento: 'TI',
   },
   {
     id: 'col-002',
     nome_completo: 'Maria Souza',
-    departamento: { nome: 'RH' },
+    departamento: 'RH',
   },
 ];
 
