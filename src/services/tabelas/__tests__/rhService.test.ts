@@ -103,7 +103,7 @@ describe('feriasSolicitacoesService', () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
     await feriasSolicitacoesService.criar({
-      colaborador_id: 'c1',
+      colaborador_id: '00000000-0000-4000-8000-000000000002',
       data_inicio: '2026-01-10',
       data_fim: '2026-01-20',
     });
