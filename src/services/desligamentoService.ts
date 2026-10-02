@@ -2,8 +2,8 @@ import { BaseService, ListOptions, ListResponse } from './baseService';
 import { auditLogger } from '@/utils/auditLogger';
 import type { Tables, Insertable, Updatable } from '@/integrations/supabase/database.types';
 
-type DesligamentoComColaborador = Tables<'desligamentos'> & {
-  colaborador: Pick<Tables<'colaboradores'>, 'nome_completo'> | null;
+export type DesligamentoComColaborador = Tables<'desligamentos'> & {
+  colaborador?: Pick<Tables<'colaboradores'>, 'nome_completo'> | null;
 };
 
 class DesligamentoService extends BaseService<

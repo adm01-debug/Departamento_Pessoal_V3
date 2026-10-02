@@ -71,10 +71,26 @@ export interface Ferias {
   colaborador_id: string;
   data_inicio: string;
   data_fim: string;
-  status: 'pendente' | 'aprovada' | 'rejeitada' | 'cancelada';
+  status:
+    | 'pendente'
+    | 'solicitada'
+    | 'programada'
+    | 'aprovada'
+    | 'aprovado'
+    | 'rejeitada'
+    | 'em_gozo'
+    | 'gozando'
+    | 'em_andamento'
+    | 'concluida'
+    | 'vencida'
+    | 'cancelada'
+    | 'paga';
   empresa_id: string;
   created_at?: string;
   colaborador_nome?: string;
+  aprovado_rh?: boolean | null;
+  aprovado_gestor?: boolean | null;
+  abono_pecuniario?: boolean | null;
   colaborador?: {
     nome_completo: string;
     foto_url: string | null;

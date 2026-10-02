@@ -27,7 +27,7 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
     onSuccess: (data) => {
       qc.invalidateQueries({ queryKey: ['ferias', empresaId] });
       qc.invalidateQueries({ queryKey: ['periodos-aquisitivos'] });
-      auditLogger.log({
+      void auditLogger.log({
         tabela: 'ferias',
         registro_id: data.id,
         acao: 'INSERT',
@@ -47,7 +47,7 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
     onSuccess: (_, variables) => {
       qc.invalidateQueries({ queryKey: ['ferias', empresaId] });
       qc.invalidateQueries({ queryKey: ['periodos-aquisitivos'] });
-      auditLogger.log({
+      void auditLogger.log({
         tabela: 'ferias',
         registro_id: variables.id,
         acao: 'UPDATE',
@@ -67,7 +67,7 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
     onSuccess: (_, id) => {
       qc.invalidateQueries({ queryKey: ['ferias', empresaId] });
       qc.invalidateQueries({ queryKey: ['periodos-aquisitivos'] });
-      auditLogger.log({
+      void auditLogger.log({
         tabela: 'ferias',
         registro_id: id,
         acao: 'DELETE',

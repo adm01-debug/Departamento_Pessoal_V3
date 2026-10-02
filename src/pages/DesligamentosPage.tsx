@@ -17,7 +17,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { desligamentoService } from '@/services/desligamentoService';
+import { desligamentoService, type DesligamentoComColaborador } from '@/services/desligamentoService';
 import { useQueryClient } from '@tanstack/react-query';
 import { useDataAccessLog } from '@/hooks/useDataAccessLog';
 import { useEmpresas } from '@/hooks/useEmpresas';
@@ -51,7 +51,7 @@ export default function DesligamentosPage() {
   const [showChart, setShowChart] = useState(true);
 
   const filtered = useMemo(() => {
-    return (desligamentos || []).filter((d: any) => {
+    return (desligamentos || []).filter((d) => {
       const matchSearch =
         !search ||
         (d.colaborador?.nome_completo || '').toLowerCase().includes(search.toLowerCase()) ||
@@ -62,7 +62,7 @@ export default function DesligamentosPage() {
     });
   }, [desligamentos, search, statusFilter, tipoFilter]);
 
-  const openDetail = (d: any) => {
+  const openDetail = (d: DesligamentoComColaborador) => {
     setSelectedDesligamento(d);
     setShowDetail(true);
   };
@@ -144,14 +144,14 @@ export default function DesligamentosPage() {
               <AnimatePresence>
                 {!isLoading && Array.isArray(desligamentos) && (desligamentos?.length || 0) > 0 && (
                   <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-                    <DesligamentoKPIs desligamentos={desligamentos as any[]} />
+                    <DesligamentoKPIs desligamentos={desligamentos} />
                   </motion.div>
                 )}
               </AnimatePresence>
 
               {/* Turnover Chart */}
               {!isLoading && Array.isArray(desligamentos) && (desligamentos?.length || 0) > 0 && showChart && (
-                <TurnoverChart desligamentos={desligamentos as any[]} />
+                <TurnoverChart desligamentos={desligamentos} />
               )}
 
               {/* Filters */}
@@ -204,7 +204,7 @@ export default function DesligamentosPage() {
                             </tr>
                           </thead>
                           <tbody>
-                            {filtered.map((d: any, i: number) => (
+                            {filtered.map((d, i) => (
                               <motion.tr
                                 key={d.id}
                                 initial={{ opacity: 0 }}
@@ -294,7 +294,7 @@ export default function DesligamentosPage() {
 
                       {/* Mobile card list */}
                       <div className="md:hidden divide-y divide-border/20">
-                        {filtered.map((d: any, i: number) => (
+                        {filtered.map((d, i) => (
                           <motion.div
                             key={d.id}
                             initial={{ opacity: 0, y: 8 }}

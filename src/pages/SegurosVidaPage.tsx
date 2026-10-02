@@ -220,16 +220,14 @@ export default function SegurosVidaPage() {
 
   const criarSinistro = useMutation({
     mutationFn: async (d: typeof sinForm) => {
-      const { error } = await supabase
-        .from('sinistros_seguro')
-        .insert({
-          seguro_vida_id: d.seguro_vida_id || null,
-          colaborador_id: d.colaborador_id || null,
-          tipo: d.tipo || null,
-          data_sinistro: d.data_sinistro || null,
-          descricao: d.descricao || null,
-          status: 'aberto',
-        });
+      const { error } = await supabase.from('sinistros_seguro').insert({
+        seguro_vida_id: d.seguro_vida_id || null,
+        colaborador_id: d.colaborador_id || null,
+        tipo: d.tipo || null,
+        data_sinistro: d.data_sinistro || null,
+        descricao: d.descricao || null,
+        status: 'aberto',
+      });
       if (error) throw error;
     },
     onSuccess: () => {

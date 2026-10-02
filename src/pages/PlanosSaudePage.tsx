@@ -202,7 +202,7 @@ export default function PlanosSaudePage() {
           numero_carteirinha: d.numero_carteirinha || null,
           empresa_id: empresaAtual?.id,
           valor_mensal: d.valor_mensal ? Number(d.valor_mensal) : null,
-          coparticipacao_teto: d.coparticipacao ? Number(d.coparticipacao) : null,
+          percentual_colaborador: d.coparticipacao ? Number(d.coparticipacao) : null,
         })
         .select()
         .maybeSingle();

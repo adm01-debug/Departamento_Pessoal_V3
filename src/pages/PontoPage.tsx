@@ -275,7 +275,7 @@ export default function PontoPage() {
           }
           return { biometriaValida: !!bio?.valid };
         } catch (bioErr) {
-          loggerService.error(
+          void loggerService.error(
             'Erro na validação biométrica',
             { colaboradorId: colab.id, batidaId: batida.id },
             bioErr instanceof Error ? bioErr : new Error(String(bioErr))

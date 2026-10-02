@@ -35,7 +35,7 @@ export function BeneficiosTab({ colaboradorId }: BeneficiosTabProps) {
         .eq('ativo', true)
         .order('nome');
       if (error) throw error;
-      return data;
+      return data ?? [];
     },
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);

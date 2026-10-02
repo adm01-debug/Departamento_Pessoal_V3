@@ -140,15 +140,13 @@ export default function ObrigacoesFiscaisPage() {
     mutationFn: async () => {
       const [mes, ano] = competencia.split('/');
       const table: GuiaTabela = guiaForm.tipo === 'fgts' ? 'guias_fgts' : 'guias_inss';
-      const { error } = await supabase
-        .from(table)
-        .insert({
-          empresa_id: empresaAtual?.id,
-          competencia: `${ano}-${mes}`,
-          valor_total: parseFloat(guiaForm.valor) || 0,
-          data_vencimento: guiaForm.vencimento || null,
-          status: 'gerada',
-        });
+      const { error } = await supabase.from(table).insert({
+        empresa_id: empresaAtual?.id,
+        competencia: `${ano}-${mes}`,
+        valor_total: parseFloat(guiaForm.valor) || 0,
+        data_vencimento: guiaForm.vencimento || null,
+        status: 'gerada',
+      });
       if (error) throw error;
     },
     onSuccess: () => {
