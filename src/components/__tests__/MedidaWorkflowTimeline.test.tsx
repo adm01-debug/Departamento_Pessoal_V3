@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
@@ -16,19 +17,19 @@ vi.mock('@/services', () => ({
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
+    div: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <div {...rest}>{children}</div>,
   },
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
-  CardHeader: ({ children }: any) => <div>{children}</div>,
-  CardTitle: ({ children }: any) => <h2>{children}</h2>,
+  Card: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <div {...rest}>{children}</div>,
+  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
 }));
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children }: any) => <span>{children}</span>,
+  Badge: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
 }));
 
 vi.mock('lucide-react', () => ({

@@ -1,9 +1,10 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('recharts', () => ({
-  ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
-  BarChart: ({ children }: any) => <div>{children}</div>,
+  ResponsiveContainer: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  BarChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   Bar: () => null,
   XAxis: () => null,
   YAxis: () => null,
@@ -14,7 +15,7 @@ vi.mock('recharts', () => ({
 }));
 
 vi.mock('@/components/ui/slider', () => ({
-  Slider: ({ value }: any) => <input type="range" defaultValue={value?.[0]} readOnly />,
+  Slider: ({ value }: { value?: string }) => <input type="range" defaultValue={value?.[0]} readOnly />,
 }));
 
 vi.mock('@tanstack/react-query', () => ({

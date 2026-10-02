@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
@@ -39,16 +40,17 @@ vi.mock('@/utils/safeError', () => ({
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children, open }: any) => (open ? <div role="dialog">{children}</div> : null),
-  DialogContent: ({ children }: any) => <div>{children}</div>,
-  DialogHeader: ({ children }: any) => <div>{children}</div>,
-  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
-  DialogDescription: ({ children }: any) => <p>{children}</p>,
-  DialogFooter: ({ children }: any) => <div>{children}</div>,
+  Dialog: ({ children, open }: { children?: ReactNode; open?: boolean }) =>
+    open ? <div role="dialog">{children}</div> : null,
+  DialogContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
+  DialogDescription: ({ children }: { children?: ReactNode }) => <p>{children}</p>,
+  DialogFooter: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, disabled }: any) => (
+  Button: ({ children, onClick, disabled }: { children?: ReactNode; onClick?: () => void; disabled?: boolean }) => (
     <button onClick={onClick} disabled={disabled}>
       {children}
     </button>
@@ -56,20 +58,28 @@ vi.mock('@/components/ui/button', () => ({
 }));
 
 vi.mock('@/components/ui/textarea', () => ({
-  Textarea: ({ value, onChange, ...rest }: any) => <textarea value={value} onChange={onChange} {...rest} />,
+  Textarea: ({
+    value,
+    onChange,
+    ...rest
+  }: {
+    value?: string;
+    onChange?: (e: unknown) => void;
+    [key: string]: unknown;
+  }) => <textarea value={value} onChange={onChange} {...rest} />,
 }));
 
 vi.mock('@/components/ui/label', () => ({
-  Label: ({ children }: any) => <label>{children}</label>,
+  Label: ({ children }: { children?: ReactNode }) => <label>{children}</label>,
 }));
 
 vi.mock('@/components/ui/alert', () => ({
-  Alert: ({ children }: any) => <div role="alert">{children}</div>,
-  AlertDescription: ({ children }: any) => <span>{children}</span>,
+  Alert: ({ children }: { children?: ReactNode }) => <div role="alert">{children}</div>,
+  AlertDescription: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
 }));
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children }: any) => <span>{children}</span>,
+  Badge: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
 }));
 
 vi.mock('@/components/ui/separator', () => ({

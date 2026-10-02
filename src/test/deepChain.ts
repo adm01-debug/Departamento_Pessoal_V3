@@ -20,8 +20,7 @@ import { vi } from 'vitest';
 
 type AnyRecord = Record<string | symbol, unknown>;
 
-const isPlainObject = (v: unknown): v is AnyRecord =>
-  typeof v === 'object' && v !== null && !Array.isArray(v);
+const isPlainObject = (v: unknown): v is AnyRecord => typeof v === 'object' && v !== null && !Array.isArray(v);
 
 const isPromiseLike = (v: unknown): v is PromiseLike<unknown> =>
   isPlainObject(v) && typeof (v as { then?: unknown }).then === 'function';
@@ -34,7 +33,7 @@ const isPromiseLike = (v: unknown): v is PromiseLike<unknown> =>
  */
 export function deepChain(
   target: unknown,
-  fallback: { data: unknown; error: unknown; count?: unknown } = { data: null, error: null },
+  fallback: { data: unknown; error: unknown; count?: unknown } = { data: null, error: null }
 ): unknown {
   // Promise já resolvida pelo mock: ainda assim precisa aceitar métodos extras
   // (`.limit()`, `.eq()` de tenant) adicionados depois que o teste foi escrito.
@@ -49,7 +48,7 @@ export function deepChain(
     get(obj, prop, receiver) {
       if (prop === 'then') {
         // Torna o chain aguardável mesmo quando o mock não define terminal.
-        return (onOk: (v: unknown) => unknown, onErr?: (e: unknown) => unknown) =>
+        return (onOk: (v?: unknown) => unknown, onErr?: (e: unknown) => unknown) =>
           Promise.resolve(fallback).then(onOk, onErr);
       }
       if (typeof prop === 'symbol') return Reflect.get(obj, prop, receiver);
@@ -72,7 +71,10 @@ export function deepChain(
 
       // Método ausente no mock legado: devolve o próprio chain.
       if (!generated.has(prop)) {
-        generated.set(prop, vi.fn(() => proxy));
+        generated.set(
+          prop,
+          vi.fn(() => proxy)
+        );
       }
       return generated.get(prop);
     },
@@ -91,14 +93,18 @@ function promiseChain(promise: PromiseLike<unknown>): unknown {
   const proxy: unknown = new Proxy({} as AnyRecord, {
     get(_obj, prop) {
       if (prop === 'then') {
-        return (onOk: (v: unknown) => unknown, onErr?: (e: unknown) => unknown) =>
+        return (onOk: (v?: unknown) => unknown, onErr?: (e: unknown) => unknown) =>
           Promise.resolve(promise).then(onOk, onErr);
       }
       if (prop === 'catch') return (onErr: (e: unknown) => unknown) => Promise.resolve(promise).catch(onErr);
       if (prop === 'finally') return (fn: () => void) => Promise.resolve(promise).finally(fn);
       if (typeof prop === 'symbol') return undefined;
       const key = prop as string;
-      if (!generated.has(key)) generated.set(key, vi.fn(() => proxy));
+      if (!generated.has(key))
+        generated.set(
+          key,
+          vi.fn(() => proxy)
+        );
       return generated.get(key);
     },
   });

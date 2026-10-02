@@ -1,29 +1,30 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
+    div: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <div {...rest}>{children}</div>,
   },
 }));
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children, ...rest }: any) => <span {...rest}>{children}</span>,
+  Badge: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <span {...rest}>{children}</span>,
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
-  CardHeader: ({ children }: any) => <div>{children}</div>,
-  CardTitle: ({ children }: any) => <h2>{children}</h2>,
+  Card: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <div {...rest}>{children}</div>,
+  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
 }));
 
 vi.mock('@/components/ui/tooltip', () => ({
-  Tooltip: ({ children }: any) => <>{children}</>,
-  TooltipContent: ({ children }: any) => <div role="tooltip">{children}</div>,
-  TooltipProvider: ({ children }: any) => <>{children}</>,
-  TooltipTrigger: ({ children, asChild }: any) => <>{children}</>,
+  Tooltip: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  TooltipContent: ({ children }: { children?: ReactNode }) => <div role="tooltip">{children}</div>,
+  TooltipProvider: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  TooltipTrigger: ({ children, asChild }: { children?: ReactNode; asChild?: boolean }) => <>{children}</>,
 }));
 
 vi.mock('lucide-react', () => ({

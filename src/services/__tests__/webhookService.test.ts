@@ -85,7 +85,7 @@ describe('webhookService', () => {
     });
 
     it('returns empty array when data is null', async () => {
-      setupListarChain(null as any, 0);
+      setupListarChain(null as never, 0);
 
       const result = await webhookService.listar({});
 

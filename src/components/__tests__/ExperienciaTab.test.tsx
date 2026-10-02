@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -16,11 +17,13 @@ vi.mock('@/components/ui/spinner', () => ({
 }));
 
 vi.mock('@/components/ui/select', () => ({
-  Select: ({ children }: any) => <div>{children}</div>,
-  SelectTrigger: ({ children }: any) => <button>{children}</button>,
-  SelectValue: ({ placeholder }: any) => <span>{placeholder || ''}</span>,
-  SelectContent: ({ children }: any) => <div>{children}</div>,
-  SelectItem: ({ children, value }: any) => <div data-value={value}>{children}</div>,
+  Select: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  SelectTrigger: ({ children }: { children?: ReactNode }) => <button>{children}</button>,
+  SelectValue: ({ placeholder }: { children?: ReactNode; placeholder?: string }) => <span>{placeholder || ''}</span>,
+  SelectContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  SelectItem: ({ children, value }: { children?: ReactNode; value?: string }) => (
+    <div data-value={value}>{children}</div>
+  ),
 }));
 
 import { usePeriodoExperiencia } from '@/hooks/useColaboradorDetalhes';
@@ -36,45 +39,45 @@ const MOCK_DATA = {
 
 describe('ExperienciaTab', () => {
   it('shows spinner when loading', () => {
-    vi.mocked(usePeriodoExperiencia).mockReturnValue({ data: undefined, isLoading: true } as any);
+    vi.mocked(usePeriodoExperiencia).mockReturnValue({ data: undefined, isLoading: true } as never);
     render(<ExperienciaTab colaboradorId="col-1" />);
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
   });
 
   it('renders Período de Experiência title', () => {
-    vi.mocked(usePeriodoExperiencia).mockReturnValue({ data: null, isLoading: false } as any);
+    vi.mocked(usePeriodoExperiencia).mockReturnValue({ data: null, isLoading: false } as never);
     render(<ExperienciaTab colaboradorId="col-1" />);
     expect(screen.getByText('Período de Experiência')).toBeInTheDocument();
   });
 
   it('shows empty form message when no data', () => {
-    vi.mocked(usePeriodoExperiencia).mockReturnValue({ data: null, isLoading: false } as any);
+    vi.mocked(usePeriodoExperiencia).mockReturnValue({ data: null, isLoading: false } as never);
     render(<ExperienciaTab colaboradorId="col-1" />);
     expect(screen.getByText(/Nenhum período cadastrado/)).toBeInTheDocument();
   });
 
   it('renders data fields when data exists', () => {
-    vi.mocked(usePeriodoExperiencia).mockReturnValue({ data: MOCK_DATA, isLoading: false } as any);
+    vi.mocked(usePeriodoExperiencia).mockReturnValue({ data: MOCK_DATA, isLoading: false } as never);
     render(<ExperienciaTab colaboradorId="col-1" />);
     expect(screen.getByText('2024-01-01')).toBeInTheDocument();
     expect(screen.getByText('45+45')).toBeInTheDocument();
   });
 
   it('renders status badge when data exists', () => {
-    vi.mocked(usePeriodoExperiencia).mockReturnValue({ data: MOCK_DATA, isLoading: false } as any);
+    vi.mocked(usePeriodoExperiencia).mockReturnValue({ data: MOCK_DATA, isLoading: false } as never);
     render(<ExperienciaTab colaboradorId="col-1" />);
     expect(screen.getByText('Em andamento')).toBeInTheDocument();
   });
 
   it('renders Editar button when data exists', () => {
-    vi.mocked(usePeriodoExperiencia).mockReturnValue({ data: MOCK_DATA, isLoading: false } as any);
+    vi.mocked(usePeriodoExperiencia).mockReturnValue({ data: MOCK_DATA, isLoading: false } as never);
     render(<ExperienciaTab colaboradorId="col-1" />);
     expect(screen.getByText('Editar')).toBeInTheDocument();
   });
 
   it('shows Cancelar when editing', async () => {
     const user = userEvent.setup();
-    vi.mocked(usePeriodoExperiencia).mockReturnValue({ data: MOCK_DATA, isLoading: false } as any);
+    vi.mocked(usePeriodoExperiencia).mockReturnValue({ data: MOCK_DATA, isLoading: false } as never);
     render(<ExperienciaTab colaboradorId="col-1" />);
     await user.click(screen.getByText('Editar'));
     expect(screen.getByText('Cancelar')).toBeInTheDocument();

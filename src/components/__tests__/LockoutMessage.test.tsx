@@ -1,8 +1,9 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
-  motion: { div: ({ children }: any) => <div>{children}</div> },
+  motion: { div: ({ children }: { children?: ReactNode }) => <div>{children}</div> },
 }));
 
 import { LockoutMessage } from '../login/LockoutMessage';

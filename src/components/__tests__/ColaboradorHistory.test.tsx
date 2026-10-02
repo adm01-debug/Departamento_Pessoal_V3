@@ -1,25 +1,26 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children }: any) => <div>{children}</div>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
-  CardHeader: ({ children }: any) => <div>{children}</div>,
-  CardTitle: ({ children }: any) => <h3>{children}</h3>,
+  Card: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardTitle: ({ children }: { children?: ReactNode }) => <h3>{children}</h3>,
 }));
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children }: any) => <span>{children}</span>,
+  Badge: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
 }));
 
 vi.mock('@/components/ui/scroll-area', () => ({
-  ScrollArea: ({ children }: any) => <div>{children}</div>,
+  ScrollArea: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/spinner', () => ({
@@ -76,56 +77,56 @@ const MOCK_LOGS = [
 describe('ColaboradorHistory', () => {
   it('renders Spinner when loading', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: undefined, isLoading: true } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: undefined, isLoading: true } as never);
     render(<ColaboradorHistory colaboradorId="col-001" />);
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
   });
 
   it('renders Histórico de Alterações title', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false } as never);
     render(<ColaboradorHistory colaboradorId="col-001" />);
     expect(screen.getByText(/Histórico de Alterações/i)).toBeInTheDocument();
   });
 
   it('renders empty state message', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false } as never);
     render(<ColaboradorHistory colaboradorId="col-001" />);
     expect(screen.getByText(/Nenhuma alteração registrada/i)).toBeInTheDocument();
   });
 
   it('renders Atualização badge for UPDATE log', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as never);
     render(<ColaboradorHistory colaboradorId="col-001" />);
     expect(screen.getByText('Atualização')).toBeInTheDocument();
   });
 
   it('renders Admissão/Criação badge for INSERT log', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as never);
     render(<ColaboradorHistory colaboradorId="col-001" />);
     expect(screen.getByText('Admissão/Criação')).toBeInTheDocument();
   });
 
   it('renders user email', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as never);
     render(<ColaboradorHistory colaboradorId="col-001" />);
     expect(screen.getByText('rh@empresa.com')).toBeInTheDocument();
   });
 
   it('renders campo name for changed field', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as never);
     const { container } = render(<ColaboradorHistory colaboradorId="col-001" />);
     expect(container.textContent).toContain('cargo');
   });
 
   it('renders INSERT initial record message', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as never);
     render(<ColaboradorHistory colaboradorId="col-001" />);
     expect(screen.getByText(/Registro inicial do colaborador/i)).toBeInTheDocument();
   });

@@ -1,21 +1,24 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children }: any) => <div>{children}</div>,
-  DialogContent: ({ children }: any) => <div role="dialog">{children}</div>,
-  DialogHeader: ({ children }: any) => <div>{children}</div>,
-  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
-  DialogTrigger: ({ children }: any) => children,
-  DialogFooter: ({ children }: any) => <div>{children}</div>,
+  Dialog: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogContent: ({ children }: { children?: ReactNode }) => <div role="dialog">{children}</div>,
+  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
+  DialogTrigger: ({ children }: { children?: ReactNode }) => children,
+  DialogFooter: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/select', () => ({
-  Select: ({ children }: any) => <div>{children}</div>,
-  SelectTrigger: ({ children }: any) => <button>{children}</button>,
-  SelectValue: ({ placeholder }: any) => <span>{placeholder}</span>,
-  SelectContent: ({ children }: any) => <div>{children}</div>,
-  SelectItem: ({ children, value }: any) => <div data-value={value}>{children}</div>,
+  Select: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  SelectTrigger: ({ children }: { children?: ReactNode }) => <button>{children}</button>,
+  SelectValue: ({ placeholder }: { children?: ReactNode; placeholder?: string }) => <span>{placeholder}</span>,
+  SelectContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  SelectItem: ({ children, value }: { children?: ReactNode; value?: string }) => (
+    <div data-value={value}>{children}</div>
+  ),
 }));
 
 vi.mock('@/hooks/useEmpresas', () => ({

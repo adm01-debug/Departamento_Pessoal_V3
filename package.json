@@ -28,6 +28,7 @@
     "audit:secdef": "node scripts/audit-secdef-authz.mjs",
     "audit:embeds": "node scripts/audit-embed-hints.mjs",
     "audit:ratchet-any": "node scripts/ratchet-any.mjs",
+    "audit:ratchet-any-tests": "node scripts/ratchet-any-tests.mjs",
     "audit:ratchet-warnings": "node scripts/ratchet-lint-warnings.mjs",
     "audit:types-drift": "node scripts/audit-types-drift.mjs",
     "lint:ci": "eslint src --ext ts,tsx --max-warnings=4",

@@ -46,9 +46,9 @@ function setupListChain(data: any[], error: any = null) {
   const chain: any = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, chain };
@@ -162,7 +162,7 @@ describe('listarNacionalidades', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupReferenceChain(null as any);
+    setupReferenceChain(null as never);
     expect(await listarNacionalidades()).toEqual([]);
   });
 
@@ -204,7 +204,7 @@ describe('listarCentrosCusto', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as any);
+    setupListChain(null as never);
     expect(await listarCentrosCusto('emp-1')).toEqual([]);
   });
 
@@ -310,7 +310,7 @@ describe('listarContasBancarias', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupDoubleEqOrderChain(null as any);
+    setupDoubleEqOrderChain(null as never);
     expect(await listarContasBancarias('c1', 'emp-1')).toEqual([]);
   });
 
@@ -485,7 +485,7 @@ describe('listarDocumentosPessoais', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupEqOrderChain(null as any);
+    setupEqOrderChain(null as never);
     expect(await listarDocumentosPessoais('c1')).toEqual([]);
   });
 
@@ -556,7 +556,7 @@ describe('listarFeriasAprovacoes', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupEqOrderChain(null as any);
+    setupEqOrderChain(null as never);
     expect(await listarFeriasAprovacoes('f1')).toEqual([]);
   });
 
@@ -627,7 +627,7 @@ describe('listarFeriasArquivos', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupEqOrderChain(null as any);
+    setupEqOrderChain(null as never);
     expect(await listarFeriasArquivos('f1')).toEqual([]);
   });
 
@@ -674,7 +674,7 @@ describe('listarDependentesBeneficios', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupEqResolveChain(null as any);
+    setupEqResolveChain(null as never);
     expect(await listarDependentesBeneficios('d1')).toEqual([]);
   });
 

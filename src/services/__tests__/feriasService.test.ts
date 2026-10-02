@@ -29,9 +29,9 @@ function setupListChain(data: any[], count: number, error: any = null) {
 function setupUpdateChain(error: any = null) {
   const eqFn = vi.fn();
   const __delChain = {
-    then: (r: any) => Promise.resolve({ error }).then(r),
-    catch: (r: any) => Promise.resolve({ error }).catch(r),
-    finally: (r: any) => Promise.resolve({ error }).finally(r),
+    then: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).then(r),
+    catch: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).catch(r),
+    finally: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).finally(r),
     eq: eqFn,
   };
   eqFn.mockReturnValue(__delChain);
@@ -56,7 +56,7 @@ describe('feriasService.listSolicitacoes', () => {
   });
 
   it('returns empty data when supabase returns null', async () => {
-    setupListChain(null as any, null as any);
+    setupListChain(null as never, null as never);
     const result = await feriasService.listSolicitacoes(EMPRESA_ID);
     expect(result.data).toEqual([]);
     expect(result.count).toBe(0);
@@ -364,7 +364,7 @@ describe('feriasService.excluirPeriodoAquisitivo', () => {
 
   it('calls delete with the given id', async () => {
     const eqFn = vi.fn();
-    const delChain: any = { eq: eqFn, then: (r: any) => Promise.resolve({ error: null }).then(r) };
+    const delChain: any = { eq: eqFn, then: (r: (v?: unknown) => unknown) => Promise.resolve({ error: null }).then(r) };
     eqFn.mockReturnValue(delChain);
     const deleteFn = vi.fn().mockReturnValue(delChain);
     mockFrom.mockReturnValue({ delete: deleteFn });
@@ -376,7 +376,10 @@ describe('feriasService.excluirPeriodoAquisitivo', () => {
 
   it('throws on DB error', async () => {
     const eqFn = vi.fn();
-    const delChain: any = { eq: eqFn, then: (r: any) => Promise.resolve({ error: { message: 'fail' } }).then(r) };
+    const delChain: any = {
+      eq: eqFn,
+      then: (r: (v?: unknown) => unknown) => Promise.resolve({ error: { message: 'fail' } }).then(r),
+    };
     eqFn.mockReturnValue(delChain);
     const deleteFn = vi.fn().mockReturnValue(delChain);
     mockFrom.mockReturnValue({ delete: deleteFn });

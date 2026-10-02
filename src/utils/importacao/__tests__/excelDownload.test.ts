@@ -3,13 +3,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 const { mockWriteBuffer, mockAddWorksheet, mockAddRow, MockWorkbook } = vi.hoisted(() => {
   const mockAddRow = vi.fn();
   const mockWs = {
-    columns: [] as any[],
+    columns: [] as never[],
     addRow: mockAddRow,
   };
   const mockWriteBuffer = vi.fn().mockResolvedValue(new ArrayBuffer(8));
   const mockAddWorksheet = vi.fn().mockReturnValue(mockWs);
   // Vitest 4 requires 'function' or 'class' (not arrow) for constructor mocks
-  const MockWorkbook = vi.fn().mockImplementation(function(this: any) {
+  const MockWorkbook = vi.fn().mockImplementation(function (this: any) {
     this.addWorksheet = mockAddWorksheet;
     this.xlsx = { writeBuffer: mockWriteBuffer };
   });
@@ -39,11 +39,11 @@ describe('downloadWorkbook', () => {
     vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:url');
     vi.spyOn(URL, 'revokeObjectURL').mockImplementation(mockRevokeObjectURL);
     const anchor = { href: '', download: '', click: mockClick };
-    vi.spyOn(document, 'createElement').mockReturnValue(anchor as any);
+    vi.spyOn(document, 'createElement').mockReturnValue(anchor as never);
   });
 
   it('calls writeBuffer and creates object URL', async () => {
-    const wb = new MockWorkbook() as any;
+    const wb = new MockWorkbook() as never;
     await downloadWorkbook(wb, 'test.xlsx');
     expect(mockWriteBuffer).toHaveBeenCalled();
     expect(URL.createObjectURL).toHaveBeenCalled();
@@ -51,15 +51,15 @@ describe('downloadWorkbook', () => {
 
   it('sets download filename on anchor and clicks it', async () => {
     const anchor = { href: '', download: '', click: mockClick };
-    vi.spyOn(document, 'createElement').mockReturnValue(anchor as any);
-    const wb = new MockWorkbook() as any;
+    vi.spyOn(document, 'createElement').mockReturnValue(anchor as never);
+    const wb = new MockWorkbook() as never;
     await downloadWorkbook(wb, 'relatorio.xlsx');
     expect(anchor.download).toBe('relatorio.xlsx');
     expect(mockClick).toHaveBeenCalled();
   });
 
   it('revokes object URL after click', async () => {
-    const wb = new MockWorkbook() as any;
+    const wb = new MockWorkbook() as never;
     await downloadWorkbook(wb, 'file.xlsx');
     expect(mockRevokeObjectURL).toHaveBeenCalledWith('blob:url');
   });
@@ -68,9 +68,9 @@ describe('downloadWorkbook', () => {
 describe('buildTabularWorkbook', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    const mockWs = { columns: [] as any[], addRow: mockAddRow };
+    const mockWs = { columns: [] as never[], addRow: mockAddRow };
     mockAddWorksheet.mockReturnValue(mockWs);
-    MockWorkbook.mockImplementation(function(this: any) {
+    MockWorkbook.mockImplementation(function (this: any) {
       this.addWorksheet = mockAddWorksheet;
       this.xlsx = { writeBuffer: mockWriteBuffer };
     });
@@ -83,7 +83,14 @@ describe('buildTabularWorkbook', () => {
   });
 
   it('adds rows for each data row', () => {
-    buildTabularWorkbook('Data', ['Name', 'Age'], [['Alice', 30], ['Bob', 25]]);
+    buildTabularWorkbook(
+      'Data',
+      ['Name', 'Age'],
+      [
+        ['Alice', 30],
+        ['Bob', 25],
+      ]
+    );
     expect(mockAddRow).toHaveBeenCalledTimes(2);
     expect(mockAddRow).toHaveBeenCalledWith(['Alice', 30]);
     expect(mockAddRow).toHaveBeenCalledWith(['Bob', 25]);
@@ -100,7 +107,7 @@ describe('buildTabularWorkbook', () => {
   });
 
   it('sets columns with correct headers', () => {
-    const ws = { columns: [] as any[], addRow: mockAddRow };
+    const ws = { columns: [] as never[], addRow: mockAddRow };
     mockAddWorksheet.mockReturnValue(ws);
     buildTabularWorkbook('S', ['Name', 'Age'], []);
     expect(ws.columns[0]).toMatchObject({ header: 'Name', key: 'Name' });

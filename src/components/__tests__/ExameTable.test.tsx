@@ -1,19 +1,21 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    tr: ({ children, ...rest }: any) => <tr {...rest}>{children}</tr>,
-    div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
+    tr: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <tr {...rest}>{children}</tr>,
+    div: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <div {...rest}>{children}</div>,
   },
 }));
 
 vi.mock('@/components/ui/tooltip', () => ({
-  TooltipProvider: ({ children }: any) => <>{children}</>,
-  Tooltip: ({ children }: any) => <>{children}</>,
-  TooltipTrigger: ({ children, asChild }: any) => (asChild ? children : <div>{children}</div>),
-  TooltipContent: ({ children }: any) => <div>{children}</div>,
+  TooltipProvider: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  Tooltip: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  TooltipTrigger: ({ children, asChild }: { children?: ReactNode; asChild?: boolean }) =>
+    asChild ? children : <div>{children}</div>,
+  TooltipContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 import { ExameTable } from '../exames/ExameTable';

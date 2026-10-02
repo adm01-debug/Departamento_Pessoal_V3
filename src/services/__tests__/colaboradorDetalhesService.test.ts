@@ -58,8 +58,8 @@ function chainableEq(response: any, extra: Record<string, unknown> = {}) {
   eqFn.mockImplementation(() => ({
     eq: eqFn,
     ...extra,
-    then: (r: (v: unknown) => unknown) => Promise.resolve(response).then(r),
-    catch: (r: (v: unknown) => unknown) => Promise.resolve(response).catch(r),
+    then: (r: (v?: unknown) => unknown) => Promise.resolve(response).then(r),
+    catch: (r: (v?: unknown) => unknown) => Promise.resolve(response).catch(r),
     finally: (r: () => void) => Promise.resolve(response).finally(r),
   }));
   return eqFn;
@@ -97,9 +97,9 @@ function setupListChain(data: any[], error: any = null) {
   const chain: any = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, chain };
@@ -165,7 +165,7 @@ describe('listarDependentes', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupEqOrderChain(null as any);
+    setupEqOrderChain(null as never);
     expect(await listarDependentes('c1', EMPRESA_ID)).toEqual([]);
   });
 
@@ -269,7 +269,7 @@ describe('listarContatosEmergencia', () => {
   });
 
   it('normalizes a null response to an empty list', async () => {
-    setupEqOrderChain(null as any);
+    setupEqOrderChain(null as never);
     await expect(listarContatosEmergencia('c1')).resolves.toEqual([]);
   });
 

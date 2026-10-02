@@ -1,11 +1,14 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
-    button: ({ children, ...rest }: any) => <button {...rest}>{children}</button>,
+    div: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <div {...rest}>{children}</div>,
+    button: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => (
+      <button {...rest}>{children}</button>
+    ),
   },
 }));
 

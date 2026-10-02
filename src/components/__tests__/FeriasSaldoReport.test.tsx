@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
@@ -7,15 +8,15 @@ vi.mock('@/hooks', () => ({
 }));
 
 vi.mock('@/components/ui/scroll-area', () => ({
-  ScrollArea: ({ children }: any) => <div>{children}</div>,
+  ScrollArea: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/skeleton', () => ({
-  Skeleton: ({ className }: any) => <div data-testid="skeleton" className={className} />,
+  Skeleton: ({ className }: { className?: string }) => <div data-testid="skeleton" className={className} />,
 }));
 
 vi.mock('@/components/ui/progress', () => ({
-  Progress: ({ value }: any) => <div data-testid="progress" data-value={value} />,
+  Progress: ({ value }: { value?: string }) => <div data-testid="progress" data-value={value} />,
 }));
 
 import { FeriasSaldoReport } from '../ferias/FeriasSaldoReport';
@@ -61,21 +62,21 @@ describe('FeriasSaldoReport', () => {
 
   it('shows skeleton when loading', async () => {
     const { useColaboradores } = await import('@/hooks');
-    vi.mocked(useColaboradores).mockReturnValueOnce({ colaboradores: [], isLoading: true } as any);
+    vi.mocked(useColaboradores).mockReturnValueOnce({ colaboradores: [], isLoading: true } as never);
     render(<FeriasSaldoReport />);
     expect(screen.getByTestId('skeleton')).toBeInTheDocument();
   });
 
   it('renders colaborador name when data provided', async () => {
     const { useColaboradores } = await import('@/hooks');
-    vi.mocked(useColaboradores).mockReturnValueOnce({ colaboradores: MOCK_COLABORADORES, isLoading: false } as any);
+    vi.mocked(useColaboradores).mockReturnValueOnce({ colaboradores: MOCK_COLABORADORES, isLoading: false } as never);
     render(<FeriasSaldoReport />);
     expect(screen.getByText('João Silva')).toBeInTheDocument();
   });
 
   it('renders departamento name when data provided', async () => {
     const { useColaboradores } = await import('@/hooks');
-    vi.mocked(useColaboradores).mockReturnValueOnce({ colaboradores: MOCK_COLABORADORES, isLoading: false } as any);
+    vi.mocked(useColaboradores).mockReturnValueOnce({ colaboradores: MOCK_COLABORADORES, isLoading: false } as never);
     render(<FeriasSaldoReport />);
     expect(screen.getByText('TI')).toBeInTheDocument();
   });

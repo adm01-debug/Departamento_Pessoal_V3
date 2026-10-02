@@ -3,9 +3,7 @@ import { renderHook, act } from '@testing-library/react';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-const {
-  mockFrom, mockParseWorkbook, mockNormalizarCPF, mockToastSuccess, mockToastError,
-} = vi.hoisted(() => ({
+const { mockFrom, mockParseWorkbook, mockNormalizarCPF, mockToastSuccess, mockToastError } = vi.hoisted(() => ({
   mockFrom: vi.fn(),
   mockParseWorkbook: vi.fn(),
   mockNormalizarCPF: vi.fn((cpf: string) => cpf),
@@ -37,9 +35,9 @@ function buildSelectChain(data: any[]) {
   const chain: any = {};
   chain.select = vi.fn().mockReturnValue(chain);
   chain.eq = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve({ data, error: null }).then(fn);
-  chain.catch = (fn: any) => Promise.resolve({ data, error: null }).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve({ data, error: null }).finally(fn);
+  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve({ data, error: null }).then(fn);
+  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve({ data, error: null }).catch(fn);
+  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve({ data, error: null }).finally(fn);
   chain.insert = vi.fn().mockResolvedValue({ error: null });
   return chain;
 }
@@ -75,7 +73,7 @@ describe('useImportacaoColaboradores', () => {
       { nome_completo: 'Bob', cpf: '456', status: 'invalido', erros: ['CPF inválido'] },
     ];
     mockParseWorkbook.mockResolvedValue(parsedRows);
-    const mockFile = { arrayBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(8)) } as any;
+    const mockFile = { arrayBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(8)) } as never;
 
     const { result } = renderHook(() => useImportacaoColaboradores(), { wrapper });
 
@@ -92,7 +90,7 @@ describe('useImportacaoColaboradores', () => {
     const chain = buildSelectChain(existingCols);
     mockFrom.mockReturnValue(chain);
     mockParseWorkbook.mockResolvedValue([]);
-    const mockFile = { arrayBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(8)) } as any;
+    const mockFile = { arrayBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(8)) } as never;
 
     const { result } = renderHook(() => useImportacaoColaboradores(), { wrapper });
 
@@ -116,25 +114,27 @@ describe('useImportacaoColaboradores', () => {
     const { result } = renderHook(() => useImportacaoColaboradores(), { wrapper });
 
     act(() => {
-      result.current.setRows(rows as any);
+      result.current.setRows(rows as never);
     });
 
     await act(async () => {
       await result.current.importar();
     });
 
-    expect(chain.insert).toHaveBeenCalledWith(expect.objectContaining({
-      nome_completo: 'Alice',
-      empresa_id: 'emp-1',
-      status: 'ativo',
-    }));
+    expect(chain.insert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        nome_completo: 'Alice',
+        empresa_id: 'emp-1',
+        status: 'ativo',
+      })
+    );
     expect(chain.insert).toHaveBeenCalledTimes(1);
     expect(mockToastSuccess).toHaveBeenCalledWith('1 colaboradores importados');
   });
 
   it('processarArquivo shows error toast and rethrows on failure', async () => {
     mockParseWorkbook.mockRejectedValue(new Error('parse error'));
-    const mockFile = { arrayBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(8)) } as any;
+    const mockFile = { arrayBuffer: vi.fn().mockResolvedValue(new ArrayBuffer(8)) } as never;
 
     const { result } = renderHook(() => useImportacaoColaboradores(), { wrapper });
 

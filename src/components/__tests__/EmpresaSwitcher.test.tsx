@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
@@ -10,26 +11,32 @@ vi.mock('@/hooks/useGrupo', () => ({
 }));
 
 vi.mock('@/components/ui/popover', () => ({
-  Popover: ({ children }: any) => <div>{children}</div>,
-  PopoverTrigger: ({ children }: any) => children,
-  PopoverContent: ({ children }: any) => <div>{children}</div>,
+  Popover: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  PopoverTrigger: ({ children }: { children?: ReactNode }) => children,
+  PopoverContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/scroll-area', () => ({
-  ScrollArea: ({ children }: any) => <div>{children}</div>,
+  ScrollArea: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/tooltip', () => ({
-  Tooltip: ({ children }: any) => <div>{children}</div>,
-  TooltipTrigger: ({ children }: any) => children,
-  TooltipContent: ({ children }: any) => <div>{children}</div>,
+  Tooltip: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  TooltipTrigger: ({ children }: { children?: ReactNode }) => children,
+  TooltipContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { useGrupo } from '@/hooks/useGrupo';
 import { EmpresaSwitcher } from '../layout/EmpresaSwitcher';
 
-const MOCK_EMPRESA = { id: 'e1', nome_fantasia: 'Empresa Alpha', razao_social: 'Alpha Ltda', cnpj: '00.000.000/0001-00', ativa: true };
+const MOCK_EMPRESA = {
+  id: 'e1',
+  nome_fantasia: 'Empresa Alpha',
+  razao_social: 'Alpha Ltda',
+  cnpj: '00.000.000/0001-00',
+  ativa: true,
+};
 
 function setupEmpresas(overrides: any = {}) {
   vi.mocked(useEmpresas).mockReturnValue({
@@ -41,13 +48,13 @@ function setupEmpresas(overrides: any = {}) {
     trocarEmpresa: vi.fn(),
     temMultiplasEmpresas: true,
     ...overrides,
-  } as any);
+  } as never);
   vi.mocked(useGrupo).mockReturnValue({
     empresas: [MOCK_EMPRESA],
     coresPorEmpresa: { e1: '#3b82f6' },
     regimePorEmpresa: { e1: { labelCurto: 'Lucro Real' } },
     totalAtivas: 1,
-  } as any);
+  } as never);
 }
 
 describe('EmpresaSwitcher', () => {
@@ -78,7 +85,7 @@ describe('EmpresaSwitcher', () => {
       coresPorEmpresa: {},
       regimePorEmpresa: {},
       totalAtivas: 2,
-    } as any);
+    } as never);
     render(<EmpresaSwitcher />);
     expect(screen.getByText(/2 empresas ativas/)).toBeInTheDocument();
   });
@@ -110,7 +117,7 @@ describe('EmpresaSwitcher', () => {
       coresPorEmpresa: {},
       regimePorEmpresa: {},
       totalAtivas: 0,
-    } as any);
+    } as never);
     render(<EmpresaSwitcher />);
     expect(screen.getByText(/Nenhuma empresa disponível/)).toBeInTheDocument();
   });

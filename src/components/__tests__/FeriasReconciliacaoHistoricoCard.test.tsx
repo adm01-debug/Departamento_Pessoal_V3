@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
@@ -6,14 +7,14 @@ vi.mock('@/hooks/ferias/useReconciliacaoLogs', () => ({
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children }: any) => <div>{children}</div>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
-  CardHeader: ({ children }: any) => <div>{children}</div>,
-  CardTitle: ({ children }: any) => <h3>{children}</h3>,
+  Card: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardTitle: ({ children }: { children?: ReactNode }) => <h3>{children}</h3>,
 }));
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children }: any) => <span>{children}</span>,
+  Badge: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
 }));
 
 vi.mock('@/components/ui/skeleton', () => ({
@@ -21,9 +22,9 @@ vi.mock('@/components/ui/skeleton', () => ({
 }));
 
 vi.mock('@/components/ui/alert', () => ({
-  Alert: ({ children }: any) => <div role="alert">{children}</div>,
-  AlertDescription: ({ children }: any) => <p>{children}</p>,
-  AlertTitle: ({ children }: any) => <strong>{children}</strong>,
+  Alert: ({ children }: { children?: ReactNode }) => <div role="alert">{children}</div>,
+  AlertDescription: ({ children }: { children?: ReactNode }) => <p>{children}</p>,
+  AlertTitle: ({ children }: { children?: ReactNode }) => <strong>{children}</strong>,
 }));
 
 import { FeriasReconciliacaoHistoricoCard } from '../ferias/FeriasReconciliacaoHistoricoCard';
@@ -41,7 +42,7 @@ describe('FeriasReconciliacaoHistoricoCard', () => {
 
   it('shows skeleton when loading', async () => {
     const { useReconciliacaoLogs } = await import('@/hooks/ferias/useReconciliacaoLogs');
-    vi.mocked(useReconciliacaoLogs).mockReturnValueOnce({ data: undefined, isLoading: true } as any);
+    vi.mocked(useReconciliacaoLogs).mockReturnValueOnce({ data: undefined, isLoading: true } as never);
     render(<FeriasReconciliacaoHistoricoCard />);
     expect(screen.getByTestId('skeleton')).toBeInTheDocument();
   });
@@ -49,16 +50,18 @@ describe('FeriasReconciliacaoHistoricoCard', () => {
   it('renders log rows when data provided', async () => {
     const { useReconciliacaoLogs } = await import('@/hooks/ferias/useReconciliacaoLogs');
     vi.mocked(useReconciliacaoLogs).mockReturnValueOnce({
-      data: [{
-        id: 'log-1',
-        executado_em: '2026-07-24T03:15:00Z',
-        verificadas: 10,
-        corrigidas: 0,
-        restantes: 0,
-        duracao_ms: 320,
-      }],
+      data: [
+        {
+          id: 'log-1',
+          executado_em: '2026-07-24T03:15:00Z',
+          verificadas: 10,
+          corrigidas: 0,
+          restantes: 0,
+          duracao_ms: 320,
+        },
+      ],
       isLoading: false,
-    } as any);
+    } as never);
     render(<FeriasReconciliacaoHistoricoCard />);
     expect(screen.getByText('Consistente')).toBeInTheDocument();
   });
@@ -66,16 +69,18 @@ describe('FeriasReconciliacaoHistoricoCard', () => {
   it('renders pendente badge when restantes > 0', async () => {
     const { useReconciliacaoLogs } = await import('@/hooks/ferias/useReconciliacaoLogs');
     vi.mocked(useReconciliacaoLogs).mockReturnValueOnce({
-      data: [{
-        id: 'log-2',
-        executado_em: '2026-07-24T03:15:00Z',
-        verificadas: 5,
-        corrigidas: 1,
-        restantes: 3,
-        duracao_ms: 450,
-      }],
+      data: [
+        {
+          id: 'log-2',
+          executado_em: '2026-07-24T03:15:00Z',
+          verificadas: 5,
+          corrigidas: 1,
+          restantes: 3,
+          duracao_ms: 450,
+        },
+      ],
       isLoading: false,
-    } as any);
+    } as never);
     render(<FeriasReconciliacaoHistoricoCard />);
     expect(screen.getByText(/3 pendente/i)).toBeInTheDocument();
   });
@@ -90,7 +95,7 @@ describe('FeriasReconciliacaoHistoricoCard', () => {
       restantes: 5,
       duracao_ms: 400,
     }));
-    vi.mocked(useReconciliacaoLogs).mockReturnValueOnce({ data: logs, isLoading: false } as any);
+    vi.mocked(useReconciliacaoLogs).mockReturnValueOnce({ data: logs, isLoading: false } as never);
     render(<FeriasReconciliacaoHistoricoCard />);
     expect(screen.getByText(/SLA de reconciliação/i)).toBeInTheDocument();
   });
@@ -98,16 +103,18 @@ describe('FeriasReconciliacaoHistoricoCard', () => {
   it('shows duration text in log row', async () => {
     const { useReconciliacaoLogs } = await import('@/hooks/ferias/useReconciliacaoLogs');
     vi.mocked(useReconciliacaoLogs).mockReturnValueOnce({
-      data: [{
-        id: 'log-3',
-        executado_em: '2026-07-24T03:15:00Z',
-        verificadas: 8,
-        corrigidas: 2,
-        restantes: 0,
-        duracao_ms: 512,
-      }],
+      data: [
+        {
+          id: 'log-3',
+          executado_em: '2026-07-24T03:15:00Z',
+          verificadas: 8,
+          corrigidas: 2,
+          restantes: 0,
+          duracao_ms: 512,
+        },
+      ],
       isLoading: false,
-    } as any);
+    } as never);
     render(<FeriasReconciliacaoHistoricoCard />);
     expect(screen.getAllByText(/512 ms/i).length).toBeGreaterThanOrEqual(1);
   });
@@ -122,7 +129,7 @@ describe('FeriasReconciliacaoHistoricoCard', () => {
       restantes: 0,
       duracao_ms: 300,
     }));
-    vi.mocked(useReconciliacaoLogs).mockReturnValueOnce({ data: logs, isLoading: false } as any);
+    vi.mocked(useReconciliacaoLogs).mockReturnValueOnce({ data: logs, isLoading: false } as never);
     render(<FeriasReconciliacaoHistoricoCard />);
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });

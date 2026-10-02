@@ -1,13 +1,14 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render as rtlRender, screen } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import userEvent from '@testing-library/user-event';
 
 vi.mock('@/components/ui/tooltip', () => ({
-  TooltipProvider: ({ children }: any) => <>{children}</>,
-  Tooltip: ({ children }: any) => <>{children}</>,
-  TooltipTrigger: ({ children }: any) => children,
-  TooltipContent: ({ children }: any) => <div>{children}</div>,
+  TooltipProvider: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  Tooltip: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  TooltipTrigger: ({ children }: { children?: ReactNode }) => children,
+  TooltipContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 // O hook real consome o AuthContext; em teste unitário isolamos a dependência.

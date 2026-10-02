@@ -14,7 +14,9 @@ const { MockJsPDF } = vi.hoisted(() => {
       pageSize: { getWidth: () => 210, getHeight: () => 297 },
     },
   };
-  const MockJsPDF = vi.fn().mockImplementation(function () { return mockDoc; });
+  const MockJsPDF = vi.fn().mockImplementation(function () {
+    return mockDoc;
+  });
   return { MockJsPDF };
 });
 
@@ -59,7 +61,9 @@ describe('gerarComunicadoMTE', () => {
       output: vi.fn().mockReturnValue(new ArrayBuffer(8)),
       internal: { pageSize: { getWidth: () => 210, getHeight: () => 297 } },
     };
-    MockJsPDF.mockImplementation(function () { return freshDoc; });
+    MockJsPDF.mockImplementation(function () {
+      return freshDoc;
+    });
   });
 
   it('returns a Blob', async () => {
@@ -96,7 +100,7 @@ describe('gerarComunicadoMTE', () => {
 
   it('handles coletiva without departamentos', async () => {
     const input = { ...MOCK_INPUT, coletiva: { ...MOCK_INPUT.coletiva, departamentos: null } };
-    await expect(gerarComunicadoMTE(input as any)).resolves.toBeDefined();
+    await expect(gerarComunicadoMTE(input as never)).resolves.toBeDefined();
   });
 });
 
@@ -114,7 +118,9 @@ describe('gerarComunicadoSindicato', () => {
       output: vi.fn().mockReturnValue(new ArrayBuffer(8)),
       internal: { pageSize: { getWidth: () => 210, getHeight: () => 297 } },
     };
-    MockJsPDF.mockImplementation(function () { return freshDoc; });
+    MockJsPDF.mockImplementation(function () {
+      return freshDoc;
+    });
   });
 
   it('returns a Blob', async () => {

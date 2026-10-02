@@ -1,18 +1,19 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
 }));
 
 vi.mock('recharts', () => ({
-  ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
-  LineChart: ({ children }: any) => <div>{children}</div>,
+  ResponsiveContainer: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  LineChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   Line: () => null,
-  BarChart: ({ children }: any) => <div>{children}</div>,
-  Bar: ({ children }: any) => <div>{children}</div>,
+  BarChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  Bar: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   Cell: () => null,
   XAxis: () => null,
   YAxis: () => null,
@@ -71,21 +72,21 @@ describe('PontoCharts', () => {
 
   it('renders Tendência Semanal card title when data provided', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_REGISTROS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_REGISTROS, isLoading: false } as never);
     render(<PontoCharts />);
     expect(screen.getByText('Tendência Semanal')).toBeInTheDocument();
   });
 
   it('renders Horários de Entrada card title when data provided', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_REGISTROS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_REGISTROS, isLoading: false } as never);
     render(<PontoCharts />);
     expect(screen.getByText('Horários de Entrada')).toBeInTheDocument();
   });
 
   it('renders both card headings when data provided', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_REGISTROS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_REGISTROS, isLoading: false } as never);
     render(<PontoCharts />);
     const headings = screen.getAllByRole('heading');
     expect(headings.length).toBeGreaterThanOrEqual(2);
@@ -93,21 +94,21 @@ describe('PontoCharts', () => {
 
   it('renders grid layout when data provided', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_REGISTROS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_REGISTROS, isLoading: false } as never);
     const { container } = render(<PontoCharts />);
     expect(container.querySelector('.grid')).toBeInTheDocument();
   });
 
   it('renders card containers when data provided', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_REGISTROS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_REGISTROS, isLoading: false } as never);
     const { container } = render(<PontoCharts />);
     expect(container.querySelector('[class*="rounded-2xl"]')).toBeInTheDocument();
   });
 
   it('renders legend text when data provided', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_REGISTROS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_REGISTROS, isLoading: false } as never);
     const { container } = render(<PontoCharts />);
     expect(container.textContent).toContain('Pontual');
     expect(container.textContent).toContain('Atrasado');
@@ -115,7 +116,7 @@ describe('PontoCharts', () => {
 
   it('renders wrapper element when data provided', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_REGISTROS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_REGISTROS, isLoading: false } as never);
     const { container } = render(<PontoCharts />);
     expect(container.firstChild).not.toBeNull();
   });

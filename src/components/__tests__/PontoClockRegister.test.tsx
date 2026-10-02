@@ -1,11 +1,12 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
+  AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
 }));
 
 vi.mock('sonner', () => ({
@@ -38,10 +39,10 @@ vi.mock('@/utils/safeError', () => ({
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children }: any) => <div>{children}</div>,
-  DialogContent: ({ children }: any) => <div role="dialog">{children}</div>,
-  DialogHeader: ({ children }: any) => <div>{children}</div>,
-  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
+  Dialog: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogContent: ({ children }: { children?: ReactNode }) => <div role="dialog">{children}</div>,
+  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
 }));
 
 import { PontoClockRegister } from '../ponto/PontoClockRegister';
@@ -88,7 +89,7 @@ describe('PontoClockRegister', () => {
 
   it('disables buttons when loading', () => {
     render(<PontoClockRegister time={MOCK_TIME} loading="entrada" geoStatus="capturing" onRegistrar={onRegistrar} />);
-    const entradaBtn = screen.getAllByRole('button').find(b => b.hasAttribute('disabled'));
+    const entradaBtn = screen.getAllByRole('button').find((b) => b.hasAttribute('disabled'));
     expect(entradaBtn).toBeDefined();
   });
 });

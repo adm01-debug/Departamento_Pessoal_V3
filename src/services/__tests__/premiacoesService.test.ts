@@ -77,7 +77,7 @@ describe('premiacoesService.listarCampanhas', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupOrderChain(null as any);
+    setupOrderChain(null as never);
     expect(await premiacoesService.listarCampanhas(EMPRESA_ID)).toEqual([]);
   });
 
@@ -109,7 +109,7 @@ describe('premiacoesService.listarRegras', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupEqResolveChain(null as any);
+    setupEqResolveChain(null as never);
     expect(await premiacoesService.listarRegras('c1', EMPRESA_ID)).toEqual([]);
   });
 });
@@ -140,7 +140,7 @@ describe('premiacoesService.listarPagamentos', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupPagamentosChain(null as any);
+    setupPagamentosChain(null as never);
     expect(await premiacoesService.listarPagamentos(undefined, EMPRESA_ID)).toEqual([]);
   });
 });

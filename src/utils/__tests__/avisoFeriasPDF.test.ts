@@ -19,7 +19,9 @@ const { MockJsPDF, mockAutoTable } = vi.hoisted(() => {
     },
     lastAutoTable: { finalY: 80 },
   };
-  const MockJsPDF = vi.fn().mockImplementation(function () { return mockDoc; });
+  const MockJsPDF = vi.fn().mockImplementation(function () {
+    return mockDoc;
+  });
   const mockAutoTable = vi.fn().mockImplementation((doc: any) => {
     doc.lastAutoTable = { finalY: 80 };
   });
@@ -72,8 +74,12 @@ describe('gerarAvisoFeriasPDF', () => {
       },
       lastAutoTable: { finalY: 80 },
     };
-    MockJsPDF.mockImplementation(function () { return freshDoc; });
-    mockAutoTable.mockImplementation((doc: any) => { doc.lastAutoTable = { finalY: 80 }; });
+    MockJsPDF.mockImplementation(function () {
+      return freshDoc;
+    });
+    mockAutoTable.mockImplementation((doc: any) => {
+      doc.lastAutoTable = { finalY: 80 };
+    });
   });
 
   it('returns a Blob', async () => {
@@ -115,7 +121,7 @@ describe('gerarAvisoFeriasPDF', () => {
 
   it('handles missing empresa data gracefully', async () => {
     const input = { ...MOCK_INPUT, empresa: null };
-    await expect(gerarAvisoFeriasPDF(input as any)).resolves.toBeDefined();
+    await expect(gerarAvisoFeriasPDF(input as never)).resolves.toBeDefined();
   });
 
   it('handles missing assinatura (returns pending placeholder hash)', async () => {

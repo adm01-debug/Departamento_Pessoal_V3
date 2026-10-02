@@ -97,29 +97,29 @@ describe('gerarPDFRescisao', () => {
   });
 
   it('creates a jsPDF instance and saves the PDF', async () => {
-    await gerarPDFRescisao(sampleForm, sampleResult as any);
+    await gerarPDFRescisao(sampleForm, sampleResult as never);
     expect(MockJsPDF).toHaveBeenCalledTimes(1);
     expect(mockSave).toHaveBeenCalledWith(expect.stringContaining('.pdf'));
   });
 
   it('works without an auditoria record', async () => {
-    await expect(gerarPDFRescisao(sampleForm, sampleResult as any)).resolves.toBeUndefined();
+    await expect(gerarPDFRescisao(sampleForm, sampleResult as never)).resolves.toBeUndefined();
   });
 
   it('works when auditoria is provided directly', async () => {
     const auditoria = { id: 'audit-1', created_at: new Date().toISOString() } as unknown as AuditoriaPdf;
-    await expect(gerarPDFRescisao(sampleForm, sampleResult as any, auditoria)).resolves.toBeUndefined();
+    await expect(gerarPDFRescisao(sampleForm, sampleResult as never, auditoria)).resolves.toBeUndefined();
     expect(mockSave).toHaveBeenCalled();
   });
 
   it('handles minimal form fields without throwing', async () => {
     const minimalForm = { nomeColaborador: 'Test', tipo: 'pedido_demissao' };
-    await expect(gerarPDFRescisao(minimalForm, sampleResult as any)).resolves.toBeUndefined();
+    await expect(gerarPDFRescisao(minimalForm, sampleResult as never)).resolves.toBeUndefined();
   });
 
   it('queries the tenant-scoped audit RPC when record and company are available', async () => {
     mockListarTrilha.mockResolvedValue([{ id: 'audit-rpc' }]);
-    await gerarPDFRescisao({ ...sampleForm, id: 'desl-1', empresa_id: 'empresa-1' }, sampleResult as any);
+    await gerarPDFRescisao({ ...sampleForm, id: 'desl-1', empresa_id: 'empresa-1' }, sampleResult as never);
     expect(mockListarTrilha).toHaveBeenCalledWith({
       empresa_id: 'empresa-1',
       tabela: 'desligamentos',
@@ -131,7 +131,7 @@ describe('gerarPDFRescisao', () => {
   it('still generates an unsigned draft when audit enrichment is unavailable', async () => {
     mockListarTrilha.mockRejectedValue(new Error('audit unavailable'));
     await expect(
-      gerarPDFRescisao({ ...sampleForm, id: 'desl-1', empresa_id: 'empresa-1' }, sampleResult as any)
+      gerarPDFRescisao({ ...sampleForm, id: 'desl-1', empresa_id: 'empresa-1' }, sampleResult as never)
     ).resolves.toBeUndefined();
     expect(mockSave).toHaveBeenCalled();
   });

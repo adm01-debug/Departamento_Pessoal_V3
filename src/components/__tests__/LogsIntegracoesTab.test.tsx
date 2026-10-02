@@ -1,9 +1,10 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
 }));
 
@@ -49,31 +50,31 @@ const MOCK_LOGS = [
 
 describe('LogsIntegracoesTab', () => {
   it('shows spinner when loading', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: true } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: true } as never);
     render(<LogsIntegracoesTab />);
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
   });
 
   it('renders Logs de Integrações title', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
     render(<LogsIntegracoesTab />);
     expect(screen.getByText('Logs de Integrações')).toBeInTheDocument();
   });
 
   it('renders subtitle with record count', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
     render(<LogsIntegracoesTab />);
     expect(screen.getByText('Últimos 100 registros de sincronização')).toBeInTheDocument();
   });
 
   it('shows empty state when no logs', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
     render(<LogsIntegracoesTab />);
     expect(screen.getByText('Nenhum log de integração encontrado')).toBeInTheDocument();
   });
 
   it('renders table headers', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_LOGS, isLoading: false } as never);
     render(<LogsIntegracoesTab />);
     expect(screen.getByText('Integração')).toBeInTheDocument();
     expect(screen.getByText('Ação')).toBeInTheDocument();
@@ -81,21 +82,21 @@ describe('LogsIntegracoesTab', () => {
   });
 
   it('renders integracao_id in table', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_LOGS, isLoading: false } as never);
     render(<LogsIntegracoesTab />);
     expect(screen.getByText('esocial')).toBeInTheDocument();
     expect(screen.getByText('fgts-digital')).toBeInTheDocument();
   });
 
   it('renders tipo in table', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_LOGS, isLoading: false } as never);
     render(<LogsIntegracoesTab />);
     expect(screen.getByText('SYNC')).toBeInTheDocument();
     expect(screen.getByText('EXPORT')).toBeInTheDocument();
   });
 
   it('renders status badges', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_LOGS, isLoading: false } as never);
     render(<LogsIntegracoesTab />);
     expect(screen.getByText('sucesso')).toBeInTheDocument();
     expect(screen.getByText('erro')).toBeInTheDocument();

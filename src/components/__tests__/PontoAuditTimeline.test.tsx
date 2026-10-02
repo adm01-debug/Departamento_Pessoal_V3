@@ -1,9 +1,10 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
 }));
 
@@ -97,7 +98,7 @@ describe('PontoAuditTimeline', () => {
       data: [],
       isLoading: false,
       error: new Error('permission denied'),
-    } as any);
+    } as never);
     render(<PontoAuditTimeline />);
     expect(screen.getByText(/Não foi possível carregar a trilha de auditoria/i)).toBeInTheDocument();
     expect(screen.queryByText(/Nenhum registro de auditoria encontrado/i)).not.toBeInTheDocument();
@@ -110,21 +111,21 @@ describe('PontoAuditTimeline', () => {
 
   it('renders log acao badge when logs provided', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as never);
     render(<PontoAuditTimeline />);
     expect(screen.getByText('UPDATE')).toBeInTheDocument();
   });
 
   it('renders log tabela when logs provided', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as never);
     render(<PontoAuditTimeline />);
     expect(screen.getByText(/Entidade: registros_ponto/)).toBeInTheDocument();
   });
 
   it('renders user email in log', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as never);
     render(<PontoAuditTimeline />);
     expect(screen.getByText('admin@empresa.com')).toBeInTheDocument();
   });

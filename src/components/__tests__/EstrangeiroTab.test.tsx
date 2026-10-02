@@ -16,38 +16,38 @@ const DATA = { pais_origem: 'Portugal', tipo_visto: 'Permanente', data_chegada: 
 
 describe('EstrangeiroTab', () => {
   it('renders Dados de Estrangeiro title', () => {
-    vi.mocked(useDadosEstrangeiro).mockReturnValue({ data: DATA, isLoading: false } as any);
+    vi.mocked(useDadosEstrangeiro).mockReturnValue({ data: DATA, isLoading: false } as never);
     render(<EstrangeiroTab colaboradorId="col-1" />);
     expect(screen.getByText('Dados de Estrangeiro')).toBeInTheDocument();
   });
 
   it('shows country in read mode', () => {
-    vi.mocked(useDadosEstrangeiro).mockReturnValue({ data: DATA, isLoading: false } as any);
+    vi.mocked(useDadosEstrangeiro).mockReturnValue({ data: DATA, isLoading: false } as never);
     render(<EstrangeiroTab colaboradorId="col-1" />);
     expect(screen.getByText('Portugal')).toBeInTheDocument();
   });
 
   it('shows Sim badge for reside_brasil = true', () => {
-    vi.mocked(useDadosEstrangeiro).mockReturnValue({ data: DATA, isLoading: false } as any);
+    vi.mocked(useDadosEstrangeiro).mockReturnValue({ data: DATA, isLoading: false } as never);
     render(<EstrangeiroTab colaboradorId="col-1" />);
     expect(screen.getByText('Sim')).toBeInTheDocument();
   });
 
   it('shows no-data message when no data', () => {
-    vi.mocked(useDadosEstrangeiro).mockReturnValue({ data: null, isLoading: false } as any);
+    vi.mocked(useDadosEstrangeiro).mockReturnValue({ data: null, isLoading: false } as never);
     render(<EstrangeiroTab colaboradorId="col-1" />);
     expect(screen.getByText('Nenhum dado cadastrado.')).toBeInTheDocument();
   });
 
   it('shows Editar button when data exists', () => {
-    vi.mocked(useDadosEstrangeiro).mockReturnValue({ data: DATA, isLoading: false } as any);
+    vi.mocked(useDadosEstrangeiro).mockReturnValue({ data: DATA, isLoading: false } as never);
     render(<EstrangeiroTab colaboradorId="col-1" />);
     expect(screen.getByText('Editar')).toBeInTheDocument();
   });
 
   it('shows form on Editar click', async () => {
     const user = userEvent.setup();
-    vi.mocked(useDadosEstrangeiro).mockReturnValue({ data: DATA, isLoading: false } as any);
+    vi.mocked(useDadosEstrangeiro).mockReturnValue({ data: DATA, isLoading: false } as never);
     render(<EstrangeiroTab colaboradorId="col-1" />);
     await user.click(screen.getByText('Editar'));
     expect(screen.getByText('Salvar')).toBeInTheDocument();

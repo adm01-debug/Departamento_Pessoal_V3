@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
@@ -23,24 +24,24 @@ vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 vi.mock('@/utils/safeError', () => ({ safeErrorMessage: vi.fn((e: any, d: string) => d) }));
 
 vi.mock('@/components/ui/sheet', () => ({
-  Sheet: ({ children }: any) => <div>{children}</div>,
-  SheetContent: ({ children }: any) => <div>{children}</div>,
-  SheetHeader: ({ children }: any) => <div>{children}</div>,
-  SheetTitle: ({ children }: any) => <h2>{children}</h2>,
+  Sheet: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  SheetContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  SheetHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  SheetTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
 }));
 
 vi.mock('@/components/ui/tabs', () => ({
-  Tabs: ({ children }: any) => <div>{children}</div>,
-  TabsList: ({ children }: any) => <div role="tablist">{children}</div>,
-  TabsTrigger: ({ children }: any) => <button>{children}</button>,
-  TabsContent: ({ children }: any) => <div>{children}</div>,
+  Tabs: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  TabsList: ({ children }: { children?: ReactNode }) => <div role="tablist">{children}</div>,
+  TabsTrigger: ({ children }: { children?: ReactNode }) => <button>{children}</button>,
+  TabsContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children }: any) => <div>{children}</div>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
-  CardHeader: ({ children }: any) => <div>{children}</div>,
-  CardTitle: ({ children }: any) => <h3>{children}</h3>,
+  Card: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardTitle: ({ children }: { children?: ReactNode }) => <h3>{children}</h3>,
 }));
 
 vi.mock('@/components/ui/separator', () => ({
@@ -48,7 +49,7 @@ vi.mock('@/components/ui/separator', () => ({
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, disabled }: any) => (
+  Button: ({ children, onClick, disabled }: { children?: ReactNode; onClick?: () => void; disabled?: boolean }) => (
     <button onClick={onClick} disabled={disabled}>
       {children}
     </button>
@@ -56,8 +57,8 @@ vi.mock('@/components/ui/button', () => ({
 }));
 
 vi.mock('../desligamentos/DesligamentoStatusBadge', () => ({
-  StatusBadge: ({ status }: any) => <span data-testid="status-badge">{status}</span>,
-  TipoBadge: ({ tipo }: any) => <span data-testid="tipo-badge">{tipo}</span>,
+  StatusBadge: ({ status }: { status?: string }) => <span data-testid="status-badge">{status}</span>,
+  TipoBadge: ({ tipo }: { children?: ReactNode; tipo?: string }) => <span data-testid="tipo-badge">{tipo}</span>,
 }));
 
 vi.mock('../desligamentos/DesligamentoChecklist', () => ({

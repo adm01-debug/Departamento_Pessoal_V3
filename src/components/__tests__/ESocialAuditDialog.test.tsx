@@ -1,28 +1,32 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
-  motion: { div: ({ children }: any) => <div>{children}</div> },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
+  motion: { div: ({ children }: { children?: ReactNode }) => <div>{children}</div> },
+  AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children, open }: any) => open ? <div role="dialog">{children}</div> : null,
-  DialogContent: ({ children }: any) => <div>{children}</div>,
-  DialogHeader: ({ children }: any) => <div>{children}</div>,
-  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
-  DialogDescription: ({ children }: any) => <p>{children}</p>,
-  DialogFooter: ({ children }: any) => <div>{children}</div>,
+  Dialog: ({ children, open }: { children?: ReactNode; open?: boolean }) =>
+    open ? <div role="dialog">{children}</div> : null,
+  DialogContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
+  DialogDescription: ({ children }: { children?: ReactNode }) => <p>{children}</p>,
+  DialogFooter: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, disabled }: any) => (
-    <button onClick={onClick} disabled={disabled}>{children}</button>
+  Button: ({ children, onClick, disabled }: { children?: ReactNode; onClick?: () => void; disabled?: boolean }) => (
+    <button onClick={onClick} disabled={disabled}>
+      {children}
+    </button>
   ),
 }));
 
 vi.mock('@/components/ui/progress', () => ({
-  Progress: ({ value }: any) => <div role="progressbar" aria-valuenow={value} />,
+  Progress: ({ value }: { value?: number }) => <div role="progressbar" aria-valuenow={value} />,
 }));
 
 vi.mock('@/lib/utils', () => ({
@@ -82,9 +86,7 @@ describe('ESocialAuditDialog', () => {
   });
 
   it('renders with empty eventos array without error', () => {
-    expect(() =>
-      render(<ESocialAuditDialog open={true} onOpenChange={vi.fn()} eventos={[]} />)
-    ).not.toThrow();
+    expect(() => render(<ESocialAuditDialog open={true} onOpenChange={vi.fn()} eventos={[]} />)).not.toThrow();
   });
 
   it('shows Iniciar Varredura button when eventos have errors', () => {

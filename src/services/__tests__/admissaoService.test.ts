@@ -26,9 +26,9 @@ function setupListarAdmissoesChain(data: any[], error: any = null) {
   const response = { data, error };
   const chain: any = {};
   chain.eq = vi.fn().mockResolvedValue(response);
-  chain.then = (fn: any) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
   const orderFn = vi.fn().mockReturnValue(chain);
   const selectFn = vi.fn().mockReturnValue({ order: orderFn });
   mockFrom.mockReturnValue({ select: selectFn });
@@ -72,7 +72,7 @@ describe('admissaoService.listarAdmissoes', () => {
   });
 
   it('returns empty array when supabase returns null', async () => {
-    setupListarAdmissoesChain(null as any);
+    setupListarAdmissoesChain(null as never);
     const result = await admissaoService.listarAdmissoes(EMPRESA_ID);
     expect(result).toEqual([]);
   });
@@ -105,7 +105,7 @@ describe('admissaoService.listar', () => {
   it('returns { data, total } delegating to listarAdmissoes', async () => {
     const records = [{ id: 'adm-2' }, { id: 'adm-3' }];
     setupListarAdmissoesChain(records);
-    const result = await admissaoService.listar({ filters: { empresa_id: EMPRESA_ID } } as any);
+    const result = await admissaoService.listar({ filters: { empresa_id: EMPRESA_ID } } as never);
     expect(result.data).toEqual(records);
     expect(result.total).toBe(2);
   });

@@ -1,21 +1,22 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('@/components/ui/table', () => ({
-  Table: ({ children }: any) => <table>{children}</table>,
-  TableHeader: ({ children }: any) => <thead>{children}</thead>,
-  TableBody: ({ children }: any) => <tbody>{children}</tbody>,
-  TableRow: ({ children }: any) => <tr>{children}</tr>,
-  TableHead: ({ children }: any) => <th>{children}</th>,
-  TableCell: ({ children }: any) => <td>{children}</td>,
+  Table: ({ children }: { children?: ReactNode }) => <table>{children}</table>,
+  TableHeader: ({ children }: { children?: ReactNode }) => <thead>{children}</thead>,
+  TableBody: ({ children }: { children?: ReactNode }) => <tbody>{children}</tbody>,
+  TableRow: ({ children }: { children?: ReactNode }) => <tr>{children}</tr>,
+  TableHead: ({ children }: { children?: ReactNode }) => <th>{children}</th>,
+  TableCell: ({ children }: { children?: ReactNode }) => <td>{children}</td>,
 }));
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children }: any) => <span>{children}</span>,
+  Badge: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
 }));
 
 vi.mock('@/components/ui/progress', () => ({
-  Progress: ({ value }: any) => <div role="progressbar" aria-valuenow={value} />,
+  Progress: ({ value }: { value?: number }) => <div role="progressbar" aria-valuenow={value} />,
 }));
 
 import { EmprestimosTable } from '../descontos/EmprestimosTable';

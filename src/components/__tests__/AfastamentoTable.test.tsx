@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
@@ -6,19 +7,19 @@ vi.mock('@/hooks/useAfastamentos', () => ({
 }));
 
 vi.mock('@/components/ui/tooltip', () => ({
-  TooltipProvider: ({ children }: any) => <>{children}</>,
-  Tooltip: ({ children }: any) => <>{children}</>,
-  TooltipTrigger: ({ children }: any) => children,
-  TooltipContent: ({ children }: any) => <div>{children}</div>,
+  TooltipProvider: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  Tooltip: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  TooltipTrigger: ({ children }: { children?: ReactNode }) => children,
+  TooltipContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/dropdown-menu', () => ({
-  DropdownMenu: ({ children }: any) => <div>{children}</div>,
-  DropdownMenuTrigger: ({ children }: any) => children,
-  DropdownMenuContent: ({ children }: any) => <div>{children}</div>,
-  DropdownMenuLabel: ({ children }: any) => <div>{children}</div>,
+  DropdownMenu: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DropdownMenuTrigger: ({ children }: { children?: ReactNode }) => children,
+  DropdownMenuContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DropdownMenuLabel: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   DropdownMenuSeparator: () => <hr />,
-  DropdownMenuItem: ({ children }: any) => <div role="menuitem">{children}</div>,
+  DropdownMenuItem: ({ children }: { children?: ReactNode }) => <div role="menuitem">{children}</div>,
 }));
 
 import { AfastamentoTable } from '../afastamentos/AfastamentoTable';
