@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deepChain } from '@/test/deepChain';
 import { workflowService } from '../workflowService';
 
-const EMPRESA_ID = 'test-empresa-id';
+const EMPRESA_ID = '00000000-0000-4000-8000-000000000001';
 
 // ─── shared mock setup ────────────────────────────────────────────────────────
 
@@ -72,7 +72,7 @@ describe('workflowService.listarDefinicoes', () => {
   });
 
   it('returns definitions without empresa filter', async () => {
-    const records = [{ id: 'wf-1', nome: 'Admissão' }];
+    const records = [{ id: '00000000-0000-4000-8000-000000000007', nome: 'Admissão' }];
     setupListChain(records);
     const result = await workflowService.listarDefinicoes(EMPRESA_ID);
     expect(result).toEqual(records);
@@ -86,8 +86,8 @@ describe('workflowService.listarDefinicoes', () => {
 
   it('applies empresa_id filter when provided', async () => {
     const { chain } = setupListChain([]);
-    await workflowService.listarDefinicoes('emp-1');
-    expect(chain.eq).toHaveBeenCalledWith('empresa_id', 'emp-1');
+    await workflowService.listarDefinicoes('00000000-0000-4000-8000-000000000001');
+    expect(chain.eq).toHaveBeenCalledWith('empresa_id', '00000000-0000-4000-8000-000000000001');
   });
 
   it('orders by created_at descending', async () => {
@@ -136,24 +136,32 @@ describe('workflowService.atualizarDefinicao', () => {
   });
 
   it('updates with id eq and returns updated definition', async () => {
-    const updated = { id: 'wf-1', nome: 'Atualizado' };
+    const updated = { id: '00000000-0000-4000-8000-000000000007', nome: 'Atualizado' };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    const result = await workflowService.atualizarDefinicao('wf-1', { nome: 'Atualizado' }, EMPRESA_ID);
+    const result = await workflowService.atualizarDefinicao(
+      '00000000-0000-4000-8000-000000000007',
+      { nome: 'Atualizado' },
+      EMPRESA_ID
+    );
     expect(updateFn).toHaveBeenCalledWith(
       expect.objectContaining({ nome: 'Atualizado', updated_at: expect.any(String) })
     );
-    expect(eqFn).toHaveBeenCalledWith('id', 'wf-1');
+    expect(eqFn).toHaveBeenCalledWith('id', '00000000-0000-4000-8000-000000000007');
     expect(result).toEqual(updated);
   });
 
   it('throws when data is null', async () => {
     setupUpdateChain(null);
-    await expect(workflowService.atualizarDefinicao('wf-1', {}, EMPRESA_ID)).rejects.toThrow();
+    await expect(
+      workflowService.atualizarDefinicao('00000000-0000-4000-8000-000000000007', {}, EMPRESA_ID)
+    ).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
     setupUpdateChain(null, { message: 'fail' });
-    await expect(workflowService.atualizarDefinicao('wf-1', {}, EMPRESA_ID)).rejects.toBeDefined();
+    await expect(
+      workflowService.atualizarDefinicao('00000000-0000-4000-8000-000000000007', {}, EMPRESA_ID)
+    ).rejects.toBeDefined();
   });
 });
 
@@ -166,14 +174,16 @@ describe('workflowService.excluirDefinicao', () => {
 
   it('calls delete with given id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();
-    await workflowService.excluirDefinicao('wf-1', EMPRESA_ID);
+    await workflowService.excluirDefinicao('00000000-0000-4000-8000-000000000007', EMPRESA_ID);
     expect(deleteFn).toHaveBeenCalled();
-    expect(eqFn).toHaveBeenCalledWith('id', 'wf-1');
+    expect(eqFn).toHaveBeenCalledWith('id', '00000000-0000-4000-8000-000000000007');
   });
 
   it('throws on DB error', async () => {
     setupDeleteChain({ message: 'fail' });
-    await expect(workflowService.excluirDefinicao('wf-1', EMPRESA_ID)).rejects.toBeDefined();
+    await expect(
+      workflowService.excluirDefinicao('00000000-0000-4000-8000-000000000007', EMPRESA_ID)
+    ).rejects.toBeDefined();
   });
 });
 
@@ -185,22 +195,22 @@ describe('workflowService.listarEtapas', () => {
   });
 
   it('returns etapas filtered by workflowId', async () => {
-    const records = [{ id: 'et-1', workflow_id: 'wf-1', ordem: 1 }];
+    const records = [{ id: 'et-1', workflow_id: '00000000-0000-4000-8000-000000000007', ordem: 1 }];
     const { chain } = setupListChain(records);
-    const result = await workflowService.listarEtapas('wf-1');
+    const result = await workflowService.listarEtapas('00000000-0000-4000-8000-000000000007');
     expect(result).toEqual(records);
-    expect(chain.eq).toHaveBeenCalledWith('workflow_id', 'wf-1');
+    expect(chain.eq).toHaveBeenCalledWith('workflow_id', '00000000-0000-4000-8000-000000000007');
   });
 
   it('returns empty array when data is null', async () => {
     setupListChain(null as never);
-    const result = await workflowService.listarEtapas('wf-1');
+    const result = await workflowService.listarEtapas('00000000-0000-4000-8000-000000000007');
     expect(result).toEqual([]);
   });
 
   it('throws on DB error', async () => {
     setupListChain([], { message: 'fail' });
-    await expect(workflowService.listarEtapas('wf-1')).rejects.toBeDefined();
+    await expect(workflowService.listarEtapas('00000000-0000-4000-8000-000000000007')).rejects.toBeDefined();
   });
 });
 
@@ -212,10 +222,13 @@ describe('workflowService.criarEtapa', () => {
   });
 
   it('inserts and returns the new step', async () => {
-    const created = { id: 'et-new', workflow_id: 'wf-1', nome: 'Revisão' };
+    const created = { id: 'et-new', workflow_id: '00000000-0000-4000-8000-000000000007', nome: 'Revisão' };
     const { insertFn } = setupInsertChain(created);
-    const result = await workflowService.criarEtapa({ workflow_id: 'wf-1', nome: 'Revisão' });
-    expect(insertFn).toHaveBeenCalledWith({ workflow_id: 'wf-1', nome: 'Revisão' });
+    const result = await workflowService.criarEtapa({
+      workflow_id: '00000000-0000-4000-8000-000000000007',
+      nome: 'Revisão',
+    });
+    expect(insertFn).toHaveBeenCalledWith({ workflow_id: '00000000-0000-4000-8000-000000000007', nome: 'Revisão' });
     expect(result).toEqual(created);
   });
 
@@ -234,13 +247,13 @@ describe('workflowService.excluirEtapa', () => {
 
   it('calls delete with given id', async () => {
     const { eqFn } = setupDeleteChain();
-    await workflowService.excluirEtapa('wf-1', 'et-1');
+    await workflowService.excluirEtapa('00000000-0000-4000-8000-000000000007', 'et-1');
     expect(eqFn).toHaveBeenCalledWith('id', 'et-1');
   });
 
   it('throws on DB error', async () => {
     setupDeleteChain({ message: 'fail' });
-    await expect(workflowService.excluirEtapa('wf-1', 'et-1')).rejects.toBeDefined();
+    await expect(workflowService.excluirEtapa('00000000-0000-4000-8000-000000000007', 'et-1')).rejects.toBeDefined();
   });
 });
 
@@ -261,8 +274,8 @@ describe('workflowService.listarExecucoes', () => {
 
   it('filters by empresa_id when provided', async () => {
     const { chain } = setupListChain([]);
-    await workflowService.listarExecucoes('emp-1');
-    expect(chain.eq).toHaveBeenCalledWith('empresa_id', 'emp-1');
+    await workflowService.listarExecucoes('00000000-0000-4000-8000-000000000001');
+    expect(chain.eq).toHaveBeenCalledWith('empresa_id', '00000000-0000-4000-8000-000000000001');
   });
 
   it('throws on DB error', async () => {
@@ -279,10 +292,10 @@ describe('workflowService.criarExecucao', () => {
   });
 
   it('inserts and returns new execution', async () => {
-    const created = { id: 'ex-new', workflow_id: 'wf-1' };
+    const created = { id: 'ex-new', workflow_id: '00000000-0000-4000-8000-000000000007' };
     const { insertFn } = setupInsertChain(created);
-    const result = await workflowService.criarExecucao({ workflow_id: 'wf-1' });
-    expect(insertFn).toHaveBeenCalledWith({ workflow_id: 'wf-1' });
+    const result = await workflowService.criarExecucao({ workflow_id: '00000000-0000-4000-8000-000000000007' });
+    expect(insertFn).toHaveBeenCalledWith({ workflow_id: '00000000-0000-4000-8000-000000000007' });
     expect(result).toEqual(created);
   });
 

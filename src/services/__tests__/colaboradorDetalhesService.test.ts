@@ -46,7 +46,7 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // Tenant isolation: todo serviço exige empresa_id explícito.
-const EMPRESA_ID = 'empresa-test-id';
+const EMPRESA_ID = '00000000-0000-4000-8000-000000000001';
 
 /**
  * Cria um mock de `.eq()` que é ao mesmo tempo ENCADEÁVEL (permite
@@ -158,20 +158,20 @@ describe('listarDependentes', () => {
   });
 
   it('returns dependentes for colaborador', async () => {
-    const records = [{ id: 'd1', colaborador_id: 'c1' }];
+    const records = [{ id: 'd1', colaborador_id: '00000000-0000-4000-8000-000000000002' }];
     const { eqFn } = setupEqOrderChain(records);
-    expect(await listarDependentes('c1', EMPRESA_ID)).toEqual(records);
-    expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
+    expect(await listarDependentes('00000000-0000-4000-8000-000000000002', EMPRESA_ID)).toEqual(records);
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', '00000000-0000-4000-8000-000000000002');
   });
 
   it('returns empty array when data is null', async () => {
     setupEqOrderChain(null as never);
-    expect(await listarDependentes('c1', EMPRESA_ID)).toEqual([]);
+    expect(await listarDependentes('00000000-0000-4000-8000-000000000002', EMPRESA_ID)).toEqual([]);
   });
 
   it('throws on DB error', async () => {
     setupEqOrderChain([], { message: 'fail' });
-    await expect(listarDependentes('c1', EMPRESA_ID)).rejects.toBeDefined();
+    await expect(listarDependentes('00000000-0000-4000-8000-000000000002', EMPRESA_ID)).rejects.toBeDefined();
   });
 });
 
@@ -181,7 +181,12 @@ describe('criarDependente', () => {
   });
 
   it('inserts and returns dependente', async () => {
-    const payload = { colaborador_id: 'c1', nome: 'Ana', data_nascimento: '2010-01-01', parentesco: 'filha' };
+    const payload = {
+      colaborador_id: '00000000-0000-4000-8000-000000000002',
+      nome: 'Ana',
+      data_nascimento: '2010-01-01',
+      parentesco: 'filha',
+    };
     const created = { id: 'd-new', ...payload };
     const { insertFn } = setupInsertChain(created);
     expect(await criarDependente(payload)).toEqual(created);
@@ -259,23 +264,23 @@ describe('listarContatosEmergencia', () => {
   });
 
   it('returns contacts for the requested colaborador ordered by creation date', async () => {
-    const records = [{ id: 'ce1', colaborador_id: 'c1', nome: 'Maria' }];
+    const records = [{ id: 'ce1', colaborador_id: '00000000-0000-4000-8000-000000000002', nome: 'Maria' }];
     const { eqFn, orderFn } = setupEqOrderChain(records);
 
-    await expect(listarContatosEmergencia('c1')).resolves.toEqual(records);
+    await expect(listarContatosEmergencia('00000000-0000-4000-8000-000000000002')).resolves.toEqual(records);
     expect(mockFrom).toHaveBeenCalledWith('contatos_emergencia');
-    expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', '00000000-0000-4000-8000-000000000002');
     expect(orderFn).toHaveBeenCalledWith('created_at', { ascending: false });
   });
 
   it('normalizes a null response to an empty list', async () => {
     setupEqOrderChain(null as never);
-    await expect(listarContatosEmergencia('c1')).resolves.toEqual([]);
+    await expect(listarContatosEmergencia('00000000-0000-4000-8000-000000000002')).resolves.toEqual([]);
   });
 
   it('propagates database errors instead of presenting an empty list', async () => {
     setupEqOrderChain([], { message: 'database unavailable' });
-    await expect(listarContatosEmergencia('c1')).rejects.toMatchObject({
+    await expect(listarContatosEmergencia('00000000-0000-4000-8000-000000000002')).rejects.toMatchObject({
       message: 'database unavailable',
     });
   });
@@ -287,7 +292,7 @@ describe('criarContatoEmergencia', () => {
   });
 
   it('inserts and returns contato', async () => {
-    const payload = { colaborador_id: 'c1', nome: 'Maria' };
+    const payload = { colaborador_id: '00000000-0000-4000-8000-000000000002', nome: 'Maria' };
     const created = { id: 'ce-new', ...payload };
     const { insertFn } = setupInsertChain(created);
     expect(await criarContatoEmergencia(payload)).toEqual(created);
@@ -302,7 +307,7 @@ describe('excluirContatoEmergencia', () => {
 
   it('deletes contato by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await excluirContatoEmergencia('c1', 'ce1');
+    await excluirContatoEmergencia('00000000-0000-4000-8000-000000000002', 'ce1');
     expect(eqFn).toHaveBeenCalledWith('id', 'ce1');
   });
 });
@@ -317,8 +322,8 @@ describe('listarHistoricoSalarial', () => {
   it('returns historico for colaborador ordered by data_vigencia desc', async () => {
     const records = [{ id: 'hs1' }];
     const { eqFn, orderFn } = setupEqOrderChain(records);
-    expect(await listarHistoricoSalarial('c1', EMPRESA_ID)).toEqual(records);
-    expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
+    expect(await listarHistoricoSalarial('00000000-0000-4000-8000-000000000002', EMPRESA_ID)).toEqual(records);
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', '00000000-0000-4000-8000-000000000002');
     expect(orderFn).toHaveBeenCalledWith('data_vigencia', { ascending: false });
   });
 });
@@ -329,7 +334,12 @@ describe('criarRegistroSalarial', () => {
   });
 
   it('inserts and returns registro', async () => {
-    const payload = { colaborador_id: 'c1', data_vigencia: '2026-01-01', motivo: 'promocao', salario_novo: 5000 };
+    const payload = {
+      colaborador_id: '00000000-0000-4000-8000-000000000002',
+      data_vigencia: '2026-01-01',
+      motivo: 'promocao',
+      salario_novo: 5000,
+    };
     const created = { id: 'hs-new', ...payload };
     const { insertFn } = setupInsertChain(created);
     expect(await criarRegistroSalarial(payload)).toEqual(created);
@@ -347,8 +357,8 @@ describe('listarASOs', () => {
   it('returns ASOs for colaborador', async () => {
     const records = [{ id: 'a1' }];
     const { eqFn } = setupEqOrderChain(records);
-    expect(await listarASOs('c1', EMPRESA_ID)).toEqual(records);
-    expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
+    expect(await listarASOs('00000000-0000-4000-8000-000000000002', EMPRESA_ID)).toEqual(records);
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', '00000000-0000-4000-8000-000000000002');
   });
 });
 
@@ -358,7 +368,11 @@ describe('criarASO', () => {
   });
 
   it('inserts and returns ASO', async () => {
-    const payload = { colaborador_id: 'c1', data_exame: '2026-01-01', tipo: 'Admissional' };
+    const payload = {
+      colaborador_id: '00000000-0000-4000-8000-000000000002',
+      data_exame: '2026-01-01',
+      tipo: 'Admissional',
+    };
     const created = { id: 'a-new', ...payload };
     const { insertFn } = setupInsertChain(created);
     expect(await criarASO(payload)).toEqual(created);
@@ -375,8 +389,8 @@ describe('listarFormacoes', () => {
 
   it('returns formacoes for colaborador', async () => {
     const { eqFn } = setupEqOrderChain([]);
-    await listarFormacoes('c1');
-    expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
+    await listarFormacoes('00000000-0000-4000-8000-000000000002');
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', '00000000-0000-4000-8000-000000000002');
   });
 });
 
@@ -386,7 +400,7 @@ describe('criarFormacao', () => {
   });
 
   it('inserts and returns formacao', async () => {
-    const payload = { colaborador_id: 'c1', curso: 'Engenharia' };
+    const payload = { colaborador_id: '00000000-0000-4000-8000-000000000002', curso: 'Engenharia' };
     const created = { id: 'f-new', ...payload };
     const { insertFn } = setupInsertChain(created);
     expect(await criarFormacao(payload)).toEqual(created);
@@ -401,7 +415,7 @@ describe('excluirFormacao', () => {
 
   it('deletes formacao by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await excluirFormacao('c1', 'f1');
+    await excluirFormacao('00000000-0000-4000-8000-000000000002', 'f1');
     expect(eqFn).toHaveBeenCalledWith('id', 'f1');
   });
 });
@@ -414,15 +428,15 @@ describe('obterDadosEstrangeiro', () => {
   });
 
   it('returns data for colaborador', async () => {
-    const data = { id: 'de1', colaborador_id: 'c1' };
+    const data = { id: 'de1', colaborador_id: '00000000-0000-4000-8000-000000000002' };
     const { eqFn } = setupEqMaybeSingleChain(data);
-    expect(await obterDadosEstrangeiro('c1')).toEqual(data);
-    expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
+    expect(await obterDadosEstrangeiro('00000000-0000-4000-8000-000000000002')).toEqual(data);
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', '00000000-0000-4000-8000-000000000002');
   });
 
   it('returns null when not found', async () => {
     setupEqMaybeSingleChain(null);
-    expect(await obterDadosEstrangeiro('c1')).toBeNull();
+    expect(await obterDadosEstrangeiro('00000000-0000-4000-8000-000000000002')).toBeNull();
   });
 });
 
@@ -432,10 +446,13 @@ describe('salvarDadosEstrangeiro', () => {
   });
 
   it('upserts with onConflict and returns data', async () => {
-    const upserted = { id: 'de1', colaborador_id: 'c1', tipo_visto: 'B1' };
+    const upserted = { id: 'de1', colaborador_id: '00000000-0000-4000-8000-000000000002', tipo_visto: 'B1' };
     const { upsertFn } = setupUpsertChain(upserted);
-    const result = await salvarDadosEstrangeiro('c1', { tipo_visto: 'B1' });
-    expect(upsertFn).toHaveBeenCalledWith({ tipo_visto: 'B1', colaborador_id: 'c1' }, { onConflict: 'colaborador_id' });
+    const result = await salvarDadosEstrangeiro('00000000-0000-4000-8000-000000000002', { tipo_visto: 'B1' });
+    expect(upsertFn).toHaveBeenCalledWith(
+      { tipo_visto: 'B1', colaborador_id: '00000000-0000-4000-8000-000000000002' },
+      { onConflict: 'colaborador_id' }
+    );
     expect(result).toEqual(upserted);
   });
 });
@@ -450,8 +467,8 @@ describe('obterDeficiencia', () => {
   it('returns deficiencia for colaborador', async () => {
     const data = { id: 'def1' };
     const { eqFn } = setupEqMaybeSingleChain(data);
-    expect(await obterDeficiencia('c1')).toEqual(data);
-    expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
+    expect(await obterDeficiencia('00000000-0000-4000-8000-000000000002')).toEqual(data);
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', '00000000-0000-4000-8000-000000000002');
   });
 });
 
@@ -463,8 +480,11 @@ describe('salvarDeficiencia', () => {
   it('upserts with onConflict colaborador_id', async () => {
     const upserted = { id: 'def-new' };
     const { upsertFn } = setupUpsertChain(upserted);
-    await salvarDeficiencia('c1', { tipo: 'visual' });
-    expect(upsertFn).toHaveBeenCalledWith({ tipo: 'visual', colaborador_id: 'c1' }, { onConflict: 'colaborador_id' });
+    await salvarDeficiencia('00000000-0000-4000-8000-000000000002', { tipo: 'visual' });
+    expect(upsertFn).toHaveBeenCalledWith(
+      { tipo: 'visual', colaborador_id: '00000000-0000-4000-8000-000000000002' },
+      { onConflict: 'colaborador_id' }
+    );
   });
 });
 
@@ -478,8 +498,8 @@ describe('obterPeriodoExperiencia', () => {
   it('returns periodo for colaborador', async () => {
     const data = { id: 'pe1' };
     const { eqFn } = setupEqMaybeSingleChain(data);
-    expect(await obterPeriodoExperiencia('c1')).toEqual(data);
-    expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
+    expect(await obterPeriodoExperiencia('00000000-0000-4000-8000-000000000002')).toEqual(data);
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', '00000000-0000-4000-8000-000000000002');
   });
 });
 
@@ -489,7 +509,7 @@ describe('salvarPeriodoExperiencia — insert when not found', () => {
   });
 
   it('inserts when no existing record', async () => {
-    const inserted = { id: 'pe-new', colaborador_id: 'c1' };
+    const inserted = { id: 'pe-new', colaborador_id: '00000000-0000-4000-8000-000000000002' };
     // First: obterPeriodoExperiencia → null
     const maybeSingle1 = vi.fn().mockResolvedValue({ data: null, error: null });
     const eq1 = vi.fn().mockReturnValue({ maybeSingle: maybeSingle1 });
@@ -501,8 +521,13 @@ describe('salvarPeriodoExperiencia — insert when not found', () => {
     const insertFn = vi.fn().mockReturnValue({ select: select2 });
     mockFrom.mockReturnValueOnce({ insert: insertFn });
 
-    const result = await salvarPeriodoExperiencia('c1', { data_inicio: '2026-01-01', dias_total: 90 });
-    expect(insertFn).toHaveBeenCalledWith([{ data_inicio: '2026-01-01', dias_total: 90, colaborador_id: 'c1' }]);
+    const result = await salvarPeriodoExperiencia('00000000-0000-4000-8000-000000000002', {
+      data_inicio: '2026-01-01',
+      dias_total: 90,
+    });
+    expect(insertFn).toHaveBeenCalledWith([
+      { data_inicio: '2026-01-01', dias_total: 90, colaborador_id: '00000000-0000-4000-8000-000000000002' },
+    ]);
     expect(result).toEqual(inserted);
   });
 });
@@ -513,7 +538,7 @@ describe('salvarPeriodoExperiencia — update when found', () => {
   });
 
   it('updates when existing record found', async () => {
-    const existing = { id: 'pe1', colaborador_id: 'c1' };
+    const existing = { id: 'pe1', colaborador_id: '00000000-0000-4000-8000-000000000002' };
     const updated = { ...existing, dias_total: 120 };
     // First: obterPeriodoExperiencia → existing
     const maybeSingle1 = vi.fn().mockResolvedValue({ data: existing, error: null });
@@ -528,7 +553,10 @@ describe('salvarPeriodoExperiencia — update when found', () => {
     const updateFn = vi.fn().mockReturnValue({ eq: eqForUpdate });
     mockFrom.mockReturnValueOnce({ update: updateFn });
 
-    const result = await salvarPeriodoExperiencia('c1', { data_inicio: '2026-01-01', dias_total: 120 });
+    const result = await salvarPeriodoExperiencia('00000000-0000-4000-8000-000000000002', {
+      data_inicio: '2026-01-01',
+      dias_total: 120,
+    });
     expect(updateFn).toHaveBeenCalledWith({ data_inicio: '2026-01-01', dias_total: 120 });
     expect(eqForUpdate).toHaveBeenCalledWith('id', 'pe1');
     expect(result).toEqual(updated);
@@ -544,8 +572,8 @@ describe('listarAnotacoes', () => {
 
   it('returns anotacoes for colaborador', async () => {
     const { eqFn } = setupEqOrderChain([{ id: 'an1' }]);
-    await listarAnotacoes('c1');
-    expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
+    await listarAnotacoes('00000000-0000-4000-8000-000000000002');
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', '00000000-0000-4000-8000-000000000002');
   });
 });
 
@@ -557,9 +585,13 @@ describe('criarAnotacao', () => {
   it('inserts and returns anotacao', async () => {
     const created = { id: 'an-new', conteudo: 'Bom desempenho' };
     setupInsertChain(created);
-    expect(await criarAnotacao({ colaborador_id: 'c1', titulo: 'Desempenho', conteudo: 'Bom desempenho' })).toEqual(
-      created
-    );
+    expect(
+      await criarAnotacao({
+        colaborador_id: '00000000-0000-4000-8000-000000000002',
+        titulo: 'Desempenho',
+        conteudo: 'Bom desempenho',
+      })
+    ).toEqual(created);
   });
 });
 
@@ -570,7 +602,7 @@ describe('excluirAnotacao', () => {
 
   it('deletes anotacao by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await excluirAnotacao('c1', 'an1');
+    await excluirAnotacao('00000000-0000-4000-8000-000000000002', 'an1');
     expect(eqFn).toHaveBeenCalledWith('id', 'an1');
   });
 });
@@ -584,8 +616,8 @@ describe('listarPeriodosAquisitivos', () => {
 
   it('returns periodos for colaborador', async () => {
     const { eqFn } = setupEqOrderChain([]);
-    await listarPeriodosAquisitivos('c1', EMPRESA_ID);
-    expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
+    await listarPeriodosAquisitivos('00000000-0000-4000-8000-000000000002', EMPRESA_ID);
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', '00000000-0000-4000-8000-000000000002');
   });
 });
 
@@ -604,8 +636,8 @@ describe('listarTimes', () => {
 
   it('filters by empresa_id when provided', async () => {
     const { chain } = setupListChain([]);
-    await listarTimes('emp-1');
-    expect(chain.eq).toHaveBeenCalledWith('empresa_id', 'emp-1');
+    await listarTimes('00000000-0000-4000-8000-000000000001');
+    expect(chain.eq).toHaveBeenCalledWith('empresa_id', '00000000-0000-4000-8000-000000000001');
   });
 });
 
@@ -615,9 +647,9 @@ describe('criarTime', () => {
   });
 
   it('inserts and returns time', async () => {
-    const created = { id: 't-new', nome: 'Design', empresa_id: 'emp-1' };
+    const created = { id: 't-new', nome: 'Design', empresa_id: '00000000-0000-4000-8000-000000000001' };
     setupInsertChain(created);
-    expect(await criarTime({ nome: 'Design', empresa_id: 'emp-1' })).toEqual(created);
+    expect(await criarTime({ nome: 'Design', empresa_id: '00000000-0000-4000-8000-000000000001' })).toEqual(created);
   });
 
   // Regressao: time sem tenant ficava invisivel para todos (a politica de RLS
@@ -657,8 +689,8 @@ describe('listarWebhooks', () => {
 
   it('filters by empresa_id when provided', async () => {
     const { chain } = setupListChain([]);
-    await listarWebhooks('emp-1');
-    expect(chain.eq).toHaveBeenCalledWith('empresa_id', 'emp-1');
+    await listarWebhooks('00000000-0000-4000-8000-000000000001');
+    expect(chain.eq).toHaveBeenCalledWith('empresa_id', '00000000-0000-4000-8000-000000000001');
   });
 });
 
@@ -696,8 +728,8 @@ describe('listarFeriasColetivas', () => {
   it('returns ferias coletivas for empresa', async () => {
     const records = [{ id: 'fc1' }];
     const { eqFn } = setupEqOrderChain(records);
-    expect(await listarFeriasColetivas('emp-1')).toEqual(records);
-    expect(eqFn).toHaveBeenCalledWith('empresa_id', 'emp-1');
+    expect(await listarFeriasColetivas('00000000-0000-4000-8000-000000000001')).toEqual(records);
+    expect(eqFn).toHaveBeenCalledWith('empresa_id', '00000000-0000-4000-8000-000000000001');
   });
 });
 
@@ -736,8 +768,8 @@ describe('listarCamposCustomizados', () => {
 
   it('filters by empresa_id when provided', async () => {
     const { chain } = setupListChain([]);
-    await listarCamposCustomizados('emp-1');
-    expect(chain.eq).toHaveBeenCalledWith('empresa_id', 'emp-1');
+    await listarCamposCustomizados('00000000-0000-4000-8000-000000000001');
+    expect(chain.eq).toHaveBeenCalledWith('empresa_id', '00000000-0000-4000-8000-000000000001');
   });
 });
 
@@ -749,8 +781,8 @@ describe('obterValoresCamposCustomizados', () => {
   it('returns valores for colaborador', async () => {
     const records = [{ id: 'v1' }];
     const { eqFn } = setupEqResolveChain(records);
-    expect(await obterValoresCamposCustomizados('c1')).toEqual(records);
-    expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
+    expect(await obterValoresCamposCustomizados('00000000-0000-4000-8000-000000000002')).toEqual(records);
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', '00000000-0000-4000-8000-000000000002');
   });
 });
 
@@ -762,9 +794,9 @@ describe('salvarValorCampoCustomizado', () => {
   it('upserts with onConflict and returns data', async () => {
     const upserted = { id: 'v-new' };
     const { upsertFn } = setupUpsertChain(upserted);
-    const result = await salvarValorCampoCustomizado('campo-1', 'c1', 'SP');
+    const result = await salvarValorCampoCustomizado('campo-1', '00000000-0000-4000-8000-000000000002', 'SP');
     expect(upsertFn).toHaveBeenCalledWith(
-      { campo_customizado_id: 'campo-1', colaborador_id: 'c1', valor: 'SP' },
+      { campo_customizado_id: 'campo-1', colaborador_id: '00000000-0000-4000-8000-000000000002', valor: 'SP' },
       { onConflict: 'campo_customizado_id,colaborador_id' }
     );
     expect(result).toEqual(upserted);

@@ -3,7 +3,7 @@ import { deepChain } from '@/test/deepChain';
 import { catalogoCursoService } from '../catalogoCursoService';
 import type { Insertable } from '@/integrations/supabase/database.types';
 
-const EMPRESA_ID = 'test-empresa-id';
+const EMPRESA_ID = '00000000-0000-4000-8000-000000000001';
 
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
@@ -65,7 +65,7 @@ describe('catalogoCursoService.listarCursos', () => {
   });
 
   it('returns cursos without empresa filter', async () => {
-    const records = [{ id: 'c1', nome: 'Excel Avançado' }];
+    const records = [{ id: '00000000-0000-4000-8000-000000000002', nome: 'Excel Avançado' }];
     setupListChain(records);
     expect(await catalogoCursoService.listarCursos(EMPRESA_ID)).toEqual(records);
   });
@@ -77,8 +77,8 @@ describe('catalogoCursoService.listarCursos', () => {
 
   it('filters by empresa_id when provided', async () => {
     const { chain } = setupListChain([]);
-    await catalogoCursoService.listarCursos('emp-1');
-    expect(chain.eq).toHaveBeenCalledWith('empresa_id', 'emp-1');
+    await catalogoCursoService.listarCursos('00000000-0000-4000-8000-000000000001');
+    expect(chain.eq).toHaveBeenCalledWith('empresa_id', '00000000-0000-4000-8000-000000000001');
   });
 
   it('orders by nome', async () => {
@@ -118,17 +118,23 @@ describe('catalogoCursoService.atualizarCurso', () => {
   });
 
   it('updates and returns curso', async () => {
-    const updated = { id: 'c1', carga_horaria: 20 };
+    const updated = { id: '00000000-0000-4000-8000-000000000002', carga_horaria: 20 };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    const result = await catalogoCursoService.atualizarCurso('c1', { carga_horaria: 20 }, EMPRESA_ID);
+    const result = await catalogoCursoService.atualizarCurso(
+      '00000000-0000-4000-8000-000000000002',
+      { carga_horaria: 20 },
+      EMPRESA_ID
+    );
     expect(updateFn).toHaveBeenCalledWith({ carga_horaria: 20 });
-    expect(eqFn).toHaveBeenCalledWith('id', 'c1');
+    expect(eqFn).toHaveBeenCalledWith('id', '00000000-0000-4000-8000-000000000002');
     expect(result).toEqual(updated);
   });
 
   it('throws when data is null', async () => {
     setupUpdateChain(null);
-    await expect(catalogoCursoService.atualizarCurso('c1', {}, EMPRESA_ID)).rejects.toThrow();
+    await expect(
+      catalogoCursoService.atualizarCurso('00000000-0000-4000-8000-000000000002', {}, EMPRESA_ID)
+    ).rejects.toThrow();
   });
 });
 
@@ -139,8 +145,8 @@ describe('catalogoCursoService.excluirCurso', () => {
 
   it('deletes curso by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await catalogoCursoService.excluirCurso('c1', EMPRESA_ID);
-    expect(eqFn).toHaveBeenCalledWith('id', 'c1');
+    await catalogoCursoService.excluirCurso('00000000-0000-4000-8000-000000000002', EMPRESA_ID);
+    expect(eqFn).toHaveBeenCalledWith('id', '00000000-0000-4000-8000-000000000002');
   });
 });
 
@@ -152,15 +158,15 @@ describe('catalogoCursoService.listarTrilhas', () => {
   });
 
   it('returns trilhas without empresa filter', async () => {
-    const records = [{ id: 't1', titulo: 'Trilha Dev' }];
+    const records = [{ id: '00000000-0000-4000-8000-000000000005', titulo: 'Trilha Dev' }];
     setupListChain(records);
     expect(await catalogoCursoService.listarTrilhas(EMPRESA_ID)).toEqual(records);
   });
 
   it('filters by empresa_id when provided', async () => {
     const { chain } = setupListChain([]);
-    await catalogoCursoService.listarTrilhas('emp-1');
-    expect(chain.eq).toHaveBeenCalledWith('empresa_id', 'emp-1');
+    await catalogoCursoService.listarTrilhas('00000000-0000-4000-8000-000000000001');
+    expect(chain.eq).toHaveBeenCalledWith('empresa_id', '00000000-0000-4000-8000-000000000001');
   });
 
   it('orders by nome', async () => {
@@ -195,8 +201,8 @@ describe('catalogoCursoService.excluirTrilha', () => {
 
   it('deletes trilha by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await catalogoCursoService.excluirTrilha('t1', EMPRESA_ID);
-    expect(eqFn).toHaveBeenCalledWith('id', 't1');
+    await catalogoCursoService.excluirTrilha('00000000-0000-4000-8000-000000000005', EMPRESA_ID);
+    expect(eqFn).toHaveBeenCalledWith('id', '00000000-0000-4000-8000-000000000005');
   });
 });
 
@@ -215,14 +221,14 @@ describe('catalogoCursoService.listarInscricoes', () => {
 
   it('filters by curso_id when provided', async () => {
     const { chain } = setupListChain([]);
-    await catalogoCursoService.listarInscricoes(EMPRESA_ID, 'c1');
-    expect(chain.eq).toHaveBeenCalledWith('curso_id', 'c1');
+    await catalogoCursoService.listarInscricoes(EMPRESA_ID, '00000000-0000-4000-8000-000000000002');
+    expect(chain.eq).toHaveBeenCalledWith('curso_id', '00000000-0000-4000-8000-000000000002');
   });
 
   it('filters by empresa_id when provided', async () => {
     const { chain } = setupListChain([]);
-    await catalogoCursoService.listarInscricoes('emp-1');
-    expect(chain.eq).toHaveBeenCalledWith('empresa_id', 'emp-1');
+    await catalogoCursoService.listarInscricoes('00000000-0000-4000-8000-000000000001');
+    expect(chain.eq).toHaveBeenCalledWith('empresa_id', '00000000-0000-4000-8000-000000000001');
   });
 
   it('includes colaborador and curso joins', async () => {
@@ -239,12 +245,12 @@ describe('catalogoCursoService.criarInscricao', () => {
   });
 
   it('inserts and returns new inscricao', async () => {
-    const created = { id: 'i-new', curso_id: 'c1' };
+    const created = { id: 'i-new', curso_id: '00000000-0000-4000-8000-000000000002' };
     const { insertFn } = setupInsertChain(created);
     const result = await catalogoCursoService.criarInscricao({
-      curso_id: 'c1',
+      curso_id: '00000000-0000-4000-8000-000000000002',
       empresa_id: EMPRESA_ID,
-      colaborador_id: 'colab-1',
+      colaborador_id: '00000000-0000-4000-8000-000000000004',
     });
     expect(result).toEqual(created);
   });
@@ -283,9 +289,9 @@ describe('catalogoCursoService.listarTrilhasCursos', () => {
     const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockReturnValue({ select: selectFn });
 
-    const result = await catalogoCursoService.listarTrilhasCursos('t1');
+    const result = await catalogoCursoService.listarTrilhasCursos('00000000-0000-4000-8000-000000000005');
     expect(result).toEqual([{ id: 'tc1' }]);
-    expect(eqFn).toHaveBeenCalledWith('trilha_id', 't1');
+    expect(eqFn).toHaveBeenCalledWith('trilha_id', '00000000-0000-4000-8000-000000000005');
   });
 });
 
@@ -297,8 +303,14 @@ describe('catalogoCursoService.vincularCursoTrilha', () => {
   it('inserts and returns vinculo', async () => {
     const created = { id: 'v-new' };
     const { insertFn } = setupInsertChain(created);
-    const result = await catalogoCursoService.vincularCursoTrilha({ trilha_id: 't1', curso_id: 'c1' });
-    expect(insertFn).toHaveBeenCalledWith({ trilha_id: 't1', curso_id: 'c1' });
+    const result = await catalogoCursoService.vincularCursoTrilha({
+      trilha_id: '00000000-0000-4000-8000-000000000005',
+      curso_id: '00000000-0000-4000-8000-000000000002',
+    });
+    expect(insertFn).toHaveBeenCalledWith({
+      trilha_id: '00000000-0000-4000-8000-000000000005',
+      curso_id: '00000000-0000-4000-8000-000000000002',
+    });
     expect(result).toEqual(created);
   });
 });
@@ -310,7 +322,7 @@ describe('catalogoCursoService.desvincularCursoTrilha', () => {
 
   it('deletes vinculo by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await catalogoCursoService.desvincularCursoTrilha('v1', 't1');
+    await catalogoCursoService.desvincularCursoTrilha('v1', '00000000-0000-4000-8000-000000000005');
     expect(eqFn).toHaveBeenCalledWith('id', 'v1');
   });
 });
@@ -343,7 +355,9 @@ describe('catalogoCursoService.listarCertificados', () => {
   // treinamento_certificados por curso_id in (...) — ver o comentário de
   // segurança em catalogoCursoService.ts.
   it("returns certificados scoped to the empresa's cursos", async () => {
-    const cursosEq = vi.fn().mockResolvedValue({ data: [{ id: 'c1' }, { id: 'c2' }], error: null });
+    const cursosEq = vi
+      .fn()
+      .mockResolvedValue({ data: [{ id: '00000000-0000-4000-8000-000000000002' }, { id: 'c2' }], error: null });
     const cursosSelect = vi.fn().mockReturnValue({ eq: cursosEq });
 
     const orderFn = vi.fn().mockResolvedValue({ data: [{ id: 'cert1' }], error: null });
@@ -356,7 +370,7 @@ describe('catalogoCursoService.listarCertificados', () => {
 
     const result = await catalogoCursoService.listarCertificados(EMPRESA_ID);
     expect(cursosEq).toHaveBeenCalledWith('empresa_id', EMPRESA_ID);
-    expect(inFn).toHaveBeenCalledWith('curso_id', ['c1', 'c2']);
+    expect(inFn).toHaveBeenCalledWith('curso_id', ['00000000-0000-4000-8000-000000000002', 'c2']);
     expect(result).toEqual([{ id: 'cert1' }]);
   });
 

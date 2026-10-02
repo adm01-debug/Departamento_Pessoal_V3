@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deepChain } from '@/test/deepChain';
 import { recrutamentoService } from '../recrutamentoService';
 
-const EMPRESA_ID = 'test-empresa-id';
+const EMPRESA_ID = '00000000-0000-4000-8000-000000000001';
 
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
@@ -64,7 +64,7 @@ describe('recrutamentoService.listarVagas', () => {
   });
 
   it('returns vagas without empresa filter', async () => {
-    const records = [{ id: 'v1', titulo: 'Dev Senior' }];
+    const records = [{ id: '00000000-0000-4000-8000-000000000008', titulo: 'Dev Senior' }];
     setupListChain(records);
     expect(await recrutamentoService.listarVagas(EMPRESA_ID)).toEqual(records);
   });
@@ -111,17 +111,23 @@ describe('recrutamentoService.atualizarVaga', () => {
   });
 
   it('updates and returns vaga', async () => {
-    const updated = { id: 'v1', status: 'fechada' };
+    const updated = { id: '00000000-0000-4000-8000-000000000008', status: 'fechada' };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    const result = await recrutamentoService.atualizarVaga('v1', { status: 'fechada' }, EMPRESA_ID);
+    const result = await recrutamentoService.atualizarVaga(
+      '00000000-0000-4000-8000-000000000008',
+      { status: 'fechada' },
+      EMPRESA_ID
+    );
     expect(updateFn).toHaveBeenCalledWith({ status: 'fechada' });
-    expect(eqFn).toHaveBeenCalledWith('id', 'v1');
+    expect(eqFn).toHaveBeenCalledWith('id', '00000000-0000-4000-8000-000000000008');
     expect(result).toEqual(updated);
   });
 
   it('throws when data is null', async () => {
     setupUpdateChain(null);
-    await expect(recrutamentoService.atualizarVaga('v1', {}, EMPRESA_ID)).rejects.toThrow();
+    await expect(
+      recrutamentoService.atualizarVaga('00000000-0000-4000-8000-000000000008', {}, EMPRESA_ID)
+    ).rejects.toThrow();
   });
 });
 
@@ -132,8 +138,8 @@ describe('recrutamentoService.excluirVaga', () => {
 
   it('deletes vaga by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await recrutamentoService.excluirVaga('v1', EMPRESA_ID);
-    expect(eqFn).toHaveBeenCalledWith('id', 'v1');
+    await recrutamentoService.excluirVaga('00000000-0000-4000-8000-000000000008', EMPRESA_ID);
+    expect(eqFn).toHaveBeenCalledWith('id', '00000000-0000-4000-8000-000000000008');
   });
 });
 
@@ -145,7 +151,7 @@ describe('recrutamentoService.listarCandidatos', () => {
   });
 
   it('returns candidatos without empresa filter', async () => {
-    const records = [{ id: 'ca1', nome: 'João' }];
+    const records = [{ id: '00000000-0000-4000-8000-000000000009', nome: 'João' }];
     setupListChain(records);
     expect(await recrutamentoService.listarCandidatos(EMPRESA_ID)).toEqual(records);
   });
@@ -186,11 +192,15 @@ describe('recrutamentoService.atualizarCandidato', () => {
   });
 
   it('updates and returns candidato', async () => {
-    const updated = { id: 'ca1', status: 'aprovado' };
+    const updated = { id: '00000000-0000-4000-8000-000000000009', status: 'aprovado' };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    const result = await recrutamentoService.atualizarCandidato('ca1', { status: 'aprovado' }, EMPRESA_ID);
+    const result = await recrutamentoService.atualizarCandidato(
+      '00000000-0000-4000-8000-000000000009',
+      { status: 'aprovado' },
+      EMPRESA_ID
+    );
     expect(updateFn).toHaveBeenCalledWith({ status: 'aprovado' });
-    expect(eqFn).toHaveBeenCalledWith('id', 'ca1');
+    expect(eqFn).toHaveBeenCalledWith('id', '00000000-0000-4000-8000-000000000009');
     expect(result).toEqual(updated);
   });
 });
@@ -202,8 +212,8 @@ describe('recrutamentoService.excluirCandidato', () => {
 
   it('deletes candidato by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await recrutamentoService.excluirCandidato('ca1', EMPRESA_ID);
-    expect(eqFn).toHaveBeenCalledWith('id', 'ca1');
+    await recrutamentoService.excluirCandidato('00000000-0000-4000-8000-000000000009', EMPRESA_ID);
+    expect(eqFn).toHaveBeenCalledWith('id', '00000000-0000-4000-8000-000000000009');
   });
 });
 
@@ -222,8 +232,8 @@ describe('recrutamentoService.listarCandidaturas', () => {
 
   it('filters by vaga_id when provided', async () => {
     const { chain } = setupListChain([]);
-    await recrutamentoService.listarCandidaturas(EMPRESA_ID, 'v1');
-    expect(chain.eq).toHaveBeenCalledWith('vaga_id', 'v1');
+    await recrutamentoService.listarCandidaturas(EMPRESA_ID, '00000000-0000-4000-8000-000000000008');
+    expect(chain.eq).toHaveBeenCalledWith('vaga_id', '00000000-0000-4000-8000-000000000008');
   });
 
   it('includes candidato and vaga joins', async () => {
@@ -240,9 +250,16 @@ describe('recrutamentoService.criarCandidatura', () => {
   });
 
   it('inserts and returns new candidatura', async () => {
-    const created = { id: 'cu-new', vaga_id: 'v1', candidato_id: 'ca1' };
+    const created = {
+      id: 'cu-new',
+      vaga_id: '00000000-0000-4000-8000-000000000008',
+      candidato_id: '00000000-0000-4000-8000-000000000009',
+    };
     const { insertFn } = setupInsertChain(created);
-    const result = await recrutamentoService.criarCandidatura({ vaga_id: 'v1', candidato_id: 'ca1' });
+    const result = await recrutamentoService.criarCandidatura({
+      vaga_id: '00000000-0000-4000-8000-000000000008',
+      candidato_id: '00000000-0000-4000-8000-000000000009',
+    });
     expect(result).toEqual(created);
   });
 });

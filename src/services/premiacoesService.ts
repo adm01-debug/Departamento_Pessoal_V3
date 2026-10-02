@@ -1,6 +1,8 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables, TablesInsert } from '@/integrations/supabase/types';
 import { loggerService } from './loggerService';
+import { validateInput } from '@/schemas/validate';
+import { premiacaoRegraSchema, cenarioRoiInputSchema } from '@/schemas/workflowsPremiacoesCnab';
 
 export interface CenarioROIInput {
   name: string;
@@ -79,6 +81,7 @@ export const premiacoesService = {
   },
 
   async criarRegra(d: TablesInsert<'premiacoes_regras'>) {
+    validateInput(premiacaoRegraSchema, d, 'premiacoes.criarRegra');
     const { data, error } = await supabase.from('premiacoes_regras').insert(d).select().single();
     if (error) throw error;
     return data;
@@ -232,6 +235,7 @@ export const premiacoesService = {
 
   async salvarCenarioROI(cenario: CenarioROIInput, empresaId: string) {
     if (!empresaId) throw new Error('empresaId é obrigatório');
+    validateInput(cenarioRoiInputSchema, cenario, 'premiacoes.salvarCenarioROI');
     const { data, error } = await supabase
       .from('premiacoes_roi_cenarios')
       .insert({

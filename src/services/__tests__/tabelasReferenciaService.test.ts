@@ -296,27 +296,27 @@ describe('listarContasBancarias', () => {
   });
 
   it('returns contas for colaborador', async () => {
-    const records = [{ id: 'cb1', colaborador_id: 'c1' }];
+    const records = [{ id: 'cb1', colaborador_id: '00000000-0000-4000-8000-000000000002' }];
     const { eq1Fn } = setupDoubleEqOrderChain(records);
-    const result = await listarContasBancarias('c1', 'emp-1');
+    const result = await listarContasBancarias('00000000-0000-4000-8000-000000000002', 'emp-1');
     expect(result).toEqual(records);
-    expect(eq1Fn).toHaveBeenCalledWith('colaborador_id', 'c1');
+    expect(eq1Fn).toHaveBeenCalledWith('colaborador_id', '00000000-0000-4000-8000-000000000002');
   });
 
   it('orders by principal descending', async () => {
     const { orderFn } = setupDoubleEqOrderChain([]);
-    await listarContasBancarias('c1', 'emp-1');
+    await listarContasBancarias('00000000-0000-4000-8000-000000000002', 'emp-1');
     expect(orderFn).toHaveBeenCalledWith('principal', { ascending: false });
   });
 
   it('returns empty array when data is null', async () => {
     setupDoubleEqOrderChain(null as never);
-    expect(await listarContasBancarias('c1', 'emp-1')).toEqual([]);
+    expect(await listarContasBancarias('00000000-0000-4000-8000-000000000002', 'emp-1')).toEqual([]);
   });
 
   it('throws on DB error', async () => {
     setupDoubleEqOrderChain([], { message: 'fail' });
-    await expect(listarContasBancarias('c1', 'emp-1')).rejects.toBeDefined();
+    await expect(listarContasBancarias('00000000-0000-4000-8000-000000000002', 'emp-1')).rejects.toBeDefined();
   });
 });
 
@@ -326,16 +326,21 @@ describe('criarContaBancaria', () => {
   });
 
   it('inserts wrapped in array and returns new conta', async () => {
-    const created = { id: 'cb-new', colaborador_id: 'c1', banco_nome: 'Bradesco' };
+    const created = { id: 'cb-new', colaborador_id: '00000000-0000-4000-8000-000000000002', banco_nome: 'Bradesco' };
     const { insertFn } = setupInsertChain(created);
-    const result = await criarContaBancaria({ colaborador_id: 'c1', banco_nome: 'Bradesco' });
-    expect(insertFn).toHaveBeenCalledWith([{ colaborador_id: 'c1', banco_nome: 'Bradesco' }]);
+    const result = await criarContaBancaria({
+      colaborador_id: '00000000-0000-4000-8000-000000000002',
+      banco_nome: 'Bradesco',
+    });
+    expect(insertFn).toHaveBeenCalledWith([
+      { colaborador_id: '00000000-0000-4000-8000-000000000002', banco_nome: 'Bradesco' },
+    ]);
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(criarContaBancaria({ colaborador_id: 'c1' })).rejects.toThrow(
+    await expect(criarContaBancaria({ colaborador_id: '00000000-0000-4000-8000-000000000002' })).rejects.toThrow(
       'Nenhum registro de conta bancária foi retornado.'
     );
   });
@@ -385,21 +390,21 @@ describe('obterDadosEstagiario', () => {
   });
 
   it('returns dados for colaborador', async () => {
-    const data = { id: 'de1', colaborador_id: 'c1' };
+    const data = { id: 'de1', colaborador_id: '00000000-0000-4000-8000-000000000002' };
     const { eqFn } = setupEqMaybeSingleChain(data);
-    const result = await obterDadosEstagiario('c1');
+    const result = await obterDadosEstagiario('00000000-0000-4000-8000-000000000002');
     expect(result).toEqual(data);
-    expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', '00000000-0000-4000-8000-000000000002');
   });
 
   it('returns null when not found', async () => {
     setupEqMaybeSingleChain(null);
-    expect(await obterDadosEstagiario('c1')).toBeNull();
+    expect(await obterDadosEstagiario('00000000-0000-4000-8000-000000000002')).toBeNull();
   });
 
   it('throws on DB error', async () => {
     setupEqMaybeSingleChain(null, { message: 'fail' });
-    await expect(obterDadosEstagiario('c1')).rejects.toBeDefined();
+    await expect(obterDadosEstagiario('00000000-0000-4000-8000-000000000002')).rejects.toBeDefined();
   });
 });
 
@@ -409,7 +414,7 @@ describe('salvarDadosEstagiario — insert when no existing record', () => {
   });
 
   it('inserts with colaborador_id injected when not found', async () => {
-    const inserted = { id: 'de-new', colaborador_id: 'c1', nivel: 'superior' };
+    const inserted = { id: 'de-new', colaborador_id: '00000000-0000-4000-8000-000000000002', nivel: 'superior' };
     // First call: obterDadosEstagiario → null
     const maybeSingle1 = vi.fn().mockResolvedValue({ data: null, error: null });
     const eq1Fn = vi.fn().mockReturnValue({ maybeSingle: maybeSingle1 });
@@ -421,8 +426,10 @@ describe('salvarDadosEstagiario — insert when no existing record', () => {
     const insertFn = vi.fn().mockReturnValue({ select: select2Fn });
     mockFrom.mockReturnValueOnce({ insert: insertFn });
 
-    const result = await salvarDadosEstagiario('c1', { nivel: 'superior' });
-    expect(insertFn).toHaveBeenCalledWith([{ nivel: 'superior', colaborador_id: 'c1' }]);
+    const result = await salvarDadosEstagiario('00000000-0000-4000-8000-000000000002', { nivel: 'superior' });
+    expect(insertFn).toHaveBeenCalledWith([
+      { nivel: 'superior', colaborador_id: '00000000-0000-4000-8000-000000000002' },
+    ]);
     expect(result).toEqual(inserted);
   });
 });
@@ -433,7 +440,7 @@ describe('salvarDadosEstagiario — update when existing record found', () => {
   });
 
   it('updates using existing.id', async () => {
-    const existing = { id: 'de1', colaborador_id: 'c1' };
+    const existing = { id: 'de1', colaborador_id: '00000000-0000-4000-8000-000000000002' };
     const updated = { ...existing, nivel: 'superior' };
     // First call: obterDadosEstagiario → existing
     const maybeSingle1 = vi.fn().mockResolvedValue({ data: existing, error: null });
@@ -447,7 +454,7 @@ describe('salvarDadosEstagiario — update when existing record found', () => {
     const updateFn = vi.fn().mockReturnValue({ eq: updateEqFn });
     mockFrom.mockReturnValueOnce({ update: updateFn });
 
-    const result = await salvarDadosEstagiario('c1', { nivel: 'superior' });
+    const result = await salvarDadosEstagiario('00000000-0000-4000-8000-000000000002', { nivel: 'superior' });
     expect(updateFn).toHaveBeenCalledWith({ nivel: 'superior' });
     expect(updateEqFn).toHaveBeenCalledWith('id', 'de1');
     expect(result).toEqual(updated);
@@ -459,7 +466,9 @@ describe('salvarDadosEstagiario — update when existing record found', () => {
     const select1Fn = vi.fn().mockReturnValue({ eq: eq1Fn });
     mockFrom.mockReturnValueOnce({ select: select1Fn });
 
-    await expect(salvarDadosEstagiario('c1', {})).rejects.toThrow('Falha ao salvar dados de estagiário');
+    await expect(salvarDadosEstagiario('00000000-0000-4000-8000-000000000002', {})).rejects.toThrow(
+      'Falha ao salvar dados de estagiário'
+    );
   });
 });
 
@@ -471,27 +480,27 @@ describe('listarDocumentosPessoais', () => {
   });
 
   it('returns documentos for colaborador', async () => {
-    const records = [{ id: 'dp1', colaborador_id: 'c1' }];
+    const records = [{ id: 'dp1', colaborador_id: '00000000-0000-4000-8000-000000000002' }];
     const { eqFn } = setupEqOrderChain(records);
-    const result = await listarDocumentosPessoais('c1');
+    const result = await listarDocumentosPessoais('00000000-0000-4000-8000-000000000002');
     expect(result).toEqual(records);
-    expect(eqFn).toHaveBeenCalledWith('colaborador_id', 'c1');
+    expect(eqFn).toHaveBeenCalledWith('colaborador_id', '00000000-0000-4000-8000-000000000002');
   });
 
   it('orders by created_at descending', async () => {
     const { orderFn } = setupEqOrderChain([]);
-    await listarDocumentosPessoais('c1');
+    await listarDocumentosPessoais('00000000-0000-4000-8000-000000000002');
     expect(orderFn).toHaveBeenCalledWith('created_at', { ascending: false });
   });
 
   it('returns empty array when data is null', async () => {
     setupEqOrderChain(null as never);
-    expect(await listarDocumentosPessoais('c1')).toEqual([]);
+    expect(await listarDocumentosPessoais('00000000-0000-4000-8000-000000000002')).toEqual([]);
   });
 
   it('throws on DB error', async () => {
     setupEqOrderChain([], { message: 'fail' });
-    await expect(listarDocumentosPessoais('c1')).rejects.toBeDefined();
+    await expect(listarDocumentosPessoais('00000000-0000-4000-8000-000000000002')).rejects.toBeDefined();
   });
 });
 
@@ -501,18 +510,23 @@ describe('criarDocumentoPessoal', () => {
   });
 
   it('inserts wrapped in array and returns new documento', async () => {
-    const created = { id: 'dp-new', colaborador_id: 'c1', tipo_documento: 'CPF' };
+    const created = { id: 'dp-new', colaborador_id: '00000000-0000-4000-8000-000000000002', tipo_documento: 'CPF' };
     const { insertFn } = setupInsertChain(created);
-    const result = await criarDocumentoPessoal({ colaborador_id: 'c1', tipo_documento: 'CPF' });
-    expect(insertFn).toHaveBeenCalledWith([{ colaborador_id: 'c1', tipo_documento: 'CPF' }]);
+    const result = await criarDocumentoPessoal({
+      colaborador_id: '00000000-0000-4000-8000-000000000002',
+      tipo_documento: 'CPF',
+    });
+    expect(insertFn).toHaveBeenCalledWith([
+      { colaborador_id: '00000000-0000-4000-8000-000000000002', tipo_documento: 'CPF' },
+    ]);
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(criarDocumentoPessoal({ colaborador_id: 'c1', tipo_documento: 'CPF' })).rejects.toThrow(
-      'Nenhum registro de documento pessoal foi retornado.'
-    );
+    await expect(
+      criarDocumentoPessoal({ colaborador_id: '00000000-0000-4000-8000-000000000002', tipo_documento: 'CPF' })
+    ).rejects.toThrow('Nenhum registro de documento pessoal foi retornado.');
   });
 });
 
@@ -542,27 +556,27 @@ describe('listarFeriasAprovacoes', () => {
   });
 
   it('returns aprovacoes for ferias_id', async () => {
-    const records = [{ id: 'fa1', ferias_id: 'f1' }];
+    const records = [{ id: 'fa1', ferias_id: '00000000-0000-4000-8000-000000000003' }];
     const { eqFn } = setupEqOrderChain(records);
-    const result = await listarFeriasAprovacoes('f1');
+    const result = await listarFeriasAprovacoes('00000000-0000-4000-8000-000000000003');
     expect(result).toEqual(records);
-    expect(eqFn).toHaveBeenCalledWith('ferias_id', 'f1');
+    expect(eqFn).toHaveBeenCalledWith('ferias_id', '00000000-0000-4000-8000-000000000003');
   });
 
   it('orders by created_at ascending', async () => {
     const { orderFn } = setupEqOrderChain([]);
-    await listarFeriasAprovacoes('f1');
+    await listarFeriasAprovacoes('00000000-0000-4000-8000-000000000003');
     expect(orderFn).toHaveBeenCalledWith('created_at');
   });
 
   it('returns empty array when data is null', async () => {
     setupEqOrderChain(null as never);
-    expect(await listarFeriasAprovacoes('f1')).toEqual([]);
+    expect(await listarFeriasAprovacoes('00000000-0000-4000-8000-000000000003')).toEqual([]);
   });
 
   it('throws on DB error', async () => {
     setupEqOrderChain([], { message: 'fail' });
-    await expect(listarFeriasAprovacoes('f1')).rejects.toBeDefined();
+    await expect(listarFeriasAprovacoes('00000000-0000-4000-8000-000000000003')).rejects.toBeDefined();
   });
 });
 
@@ -572,18 +586,29 @@ describe('criarFeriasAprovacao', () => {
   });
 
   it('inserts wrapped in array and returns new aprovacao', async () => {
-    const created = { id: 'fa-new', ferias_id: 'f1', tipo: 'aprovacao', status: 'aprovado' };
+    const created = {
+      id: 'fa-new',
+      ferias_id: '00000000-0000-4000-8000-000000000003',
+      tipo: 'aprovacao',
+      status: 'aprovado',
+    };
     const { insertFn } = setupInsertChain(created);
-    const result = await criarFeriasAprovacao({ ferias_id: 'f1', tipo: 'aprovacao', status: 'aprovado' });
-    expect(insertFn).toHaveBeenCalledWith([{ ferias_id: 'f1', tipo: 'aprovacao', status: 'aprovado' }]);
+    const result = await criarFeriasAprovacao({
+      ferias_id: '00000000-0000-4000-8000-000000000003',
+      tipo: 'aprovacao',
+      status: 'aprovado',
+    });
+    expect(insertFn).toHaveBeenCalledWith([
+      { ferias_id: '00000000-0000-4000-8000-000000000003', tipo: 'aprovacao', status: 'aprovado' },
+    ]);
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(criarFeriasAprovacao({ ferias_id: 'f1', tipo: 'aprovacao' })).rejects.toThrow(
-      'Nenhum registro de aprovação de férias foi retornado.'
-    );
+    await expect(
+      criarFeriasAprovacao({ ferias_id: '00000000-0000-4000-8000-000000000003', tipo: 'aprovacao' })
+    ).rejects.toThrow('Nenhum registro de aprovação de férias foi retornado.');
   });
 });
 
@@ -594,14 +619,14 @@ describe('atualizarFeriasAprovacao', () => {
 
   it('updates aprovacao by id and ferias_id', async () => {
     const { updateFn, eq1Fn } = setupUpdateDoubleEqChain();
-    await atualizarFeriasAprovacao('f1', 'fa1', { status: 'rejeitado' });
+    await atualizarFeriasAprovacao('00000000-0000-4000-8000-000000000003', 'fa1', { status: 'rejeitado' });
     expect(updateFn).toHaveBeenCalledWith({ status: 'rejeitado' });
     expect(eq1Fn).toHaveBeenCalledWith('id', 'fa1');
   });
 
   it('throws on DB error', async () => {
     setupUpdateDoubleEqChain({ message: 'fail' });
-    await expect(atualizarFeriasAprovacao('f1', 'fa1', {})).rejects.toBeDefined();
+    await expect(atualizarFeriasAprovacao('00000000-0000-4000-8000-000000000003', 'fa1', {})).rejects.toBeDefined();
   });
 });
 
@@ -613,27 +638,27 @@ describe('listarFeriasArquivos', () => {
   });
 
   it('returns arquivos for ferias_id', async () => {
-    const records = [{ id: 'ar1', ferias_id: 'f1' }];
+    const records = [{ id: 'ar1', ferias_id: '00000000-0000-4000-8000-000000000003' }];
     const { eqFn } = setupEqOrderChain(records);
-    const result = await listarFeriasArquivos('f1');
+    const result = await listarFeriasArquivos('00000000-0000-4000-8000-000000000003');
     expect(result).toEqual(records);
-    expect(eqFn).toHaveBeenCalledWith('ferias_id', 'f1');
+    expect(eqFn).toHaveBeenCalledWith('ferias_id', '00000000-0000-4000-8000-000000000003');
   });
 
   it('orders by created_at', async () => {
     const { orderFn } = setupEqOrderChain([]);
-    await listarFeriasArquivos('f1');
+    await listarFeriasArquivos('00000000-0000-4000-8000-000000000003');
     expect(orderFn).toHaveBeenCalledWith('created_at');
   });
 
   it('returns empty array when data is null', async () => {
     setupEqOrderChain(null as never);
-    expect(await listarFeriasArquivos('f1')).toEqual([]);
+    expect(await listarFeriasArquivos('00000000-0000-4000-8000-000000000003')).toEqual([]);
   });
 
   it('throws on DB error', async () => {
     setupEqOrderChain([], { message: 'fail' });
-    await expect(listarFeriasArquivos('f1')).rejects.toBeDefined();
+    await expect(listarFeriasArquivos('00000000-0000-4000-8000-000000000003')).rejects.toBeDefined();
   });
 });
 
@@ -643,18 +668,18 @@ describe('criarFeriasArquivo', () => {
   });
 
   it('inserts wrapped in array and returns new arquivo', async () => {
-    const created = { id: 'ar-new', ferias_id: 'f1', nome: 'recibo.pdf' };
+    const created = { id: 'ar-new', ferias_id: '00000000-0000-4000-8000-000000000003', nome: 'recibo.pdf' };
     const { insertFn } = setupInsertChain(created);
-    const result = await criarFeriasArquivo({ ferias_id: 'f1', nome: 'recibo.pdf' });
-    expect(insertFn).toHaveBeenCalledWith([{ ferias_id: 'f1', nome: 'recibo.pdf' }]);
+    const result = await criarFeriasArquivo({ ferias_id: '00000000-0000-4000-8000-000000000003', nome: 'recibo.pdf' });
+    expect(insertFn).toHaveBeenCalledWith([{ ferias_id: '00000000-0000-4000-8000-000000000003', nome: 'recibo.pdf' }]);
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(criarFeriasArquivo({ ferias_id: 'f1', nome: 'recibo.pdf' })).rejects.toThrow(
-      'Nenhum registro de arquivo de férias foi retornado.'
-    );
+    await expect(
+      criarFeriasArquivo({ ferias_id: '00000000-0000-4000-8000-000000000003', nome: 'recibo.pdf' })
+    ).rejects.toThrow('Nenhum registro de arquivo de férias foi retornado.');
   });
 });
 

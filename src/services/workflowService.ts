@@ -1,6 +1,8 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { QueryBuilderType } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
+import { validateInput } from '@/schemas/validate';
+import { workflowDefinicaoSchema, workflowEtapaSchema } from '@/schemas/workflowsPremiacoesCnab';
 
 // ── Tipos ───────────────────────────────────────────────────────────────────
 
@@ -131,6 +133,7 @@ export const workflowService = {
   },
 
   async criarDefinicao(d: Record<string, unknown>): Promise<unknown> {
+    validateInput(workflowDefinicaoSchema, d, 'workflows.criarDefinicao');
     const { data, error } = await supabase
       .from('workflows_definicoes')
       .insert(d as WorkflowsDefinicoesInsert)
@@ -142,6 +145,7 @@ export const workflowService = {
   },
 
   async atualizarDefinicao(id: string, d: Record<string, unknown>, empresaId: string): Promise<unknown> {
+    validateInput(workflowDefinicaoSchema, d, 'workflows.atualizarDefinicao');
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('workflows_definicoes')
@@ -172,6 +176,7 @@ export const workflowService = {
   },
 
   async criarEtapa(d: Record<string, unknown>): Promise<Etapa> {
+    validateInput(workflowEtapaSchema, d, 'workflows.criarEtapa');
     const { data, error } = await supabase
       .from('workflows_etapas')
       .insert(d as WorkflowsEtapasInsert)

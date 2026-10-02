@@ -7,11 +7,7 @@ import { z } from 'zod';
  * exigidos aqui — essa responsabilidade é do banco — o que evita falsas
  * rejeições em payloads de updates e callers com shapes parciais.
  */
-export function validateInput(
-  schema: z.ZodObject<z.ZodRawShape>,
-  payload: Record<string, unknown>,
-  contexto: string
-): void {
+export function validateInput(schema: z.ZodObject<z.ZodRawShape>, payload: object, contexto: string): void {
   const result = schema.partial().safeParse(payload);
   if (!result.success) {
     const issue = result.error.issues[0];

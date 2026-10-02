@@ -5,7 +5,7 @@ import { premiacoesService } from '../premiacoesService';
 import { makeChain } from '@/test/chain';
 import type { CenarioROIInput } from '../premiacoesService';
 
-const EMPRESA_ID = 'test-empresa-id';
+const EMPRESA_ID = '00000000-0000-4000-8000-000000000001';
 
 type SelectChain = { eq: ReturnType<typeof vi.fn>; order: ReturnType<typeof vi.fn>; filter: ReturnType<typeof vi.fn> };
 type InsertChain = {
@@ -71,7 +71,7 @@ describe('premiacoesService.listarCampanhas', () => {
   });
 
   it('returns campanhas without empresa filter', async () => {
-    const records = [{ id: 'c1', nome: 'Campanha Q1' }];
+    const records = [{ id: '00000000-0000-4000-8000-000000000002', nome: 'Campanha Q1' }];
     setupOrderChain(records);
     expect(await premiacoesService.listarCampanhas(EMPRESA_ID)).toEqual(records);
   });
@@ -83,8 +83,8 @@ describe('premiacoesService.listarCampanhas', () => {
 
   it('filters by empresa_id when provided', async () => {
     const { chain } = setupOrderChain([]);
-    await premiacoesService.listarCampanhas('emp-1');
-    expect(chain.eq).toHaveBeenCalledWith('empresa_id', 'emp-1');
+    await premiacoesService.listarCampanhas('00000000-0000-4000-8000-000000000001');
+    expect(chain.eq).toHaveBeenCalledWith('empresa_id', '00000000-0000-4000-8000-000000000001');
   });
 
   it('throws on DB error', async () => {
@@ -101,16 +101,16 @@ describe('premiacoesService.listarRegras', () => {
   });
 
   it('returns regras for campanha', async () => {
-    const records = [{ id: 'r1', campanha_id: 'c1' }];
+    const records = [{ id: 'r1', campanha_id: '00000000-0000-4000-8000-000000000002' }];
     const { eqFn } = setupEqResolveChain(records);
-    const result = await premiacoesService.listarRegras('c1', EMPRESA_ID);
+    const result = await premiacoesService.listarRegras('00000000-0000-4000-8000-000000000002', EMPRESA_ID);
     expect(result).toEqual(records);
-    expect(eqFn).toHaveBeenCalledWith('campanha_id', 'c1');
+    expect(eqFn).toHaveBeenCalledWith('campanha_id', '00000000-0000-4000-8000-000000000002');
   });
 
   it('returns empty array when data is null', async () => {
     setupEqResolveChain(null as never);
-    expect(await premiacoesService.listarRegras('c1', EMPRESA_ID)).toEqual([]);
+    expect(await premiacoesService.listarRegras('00000000-0000-4000-8000-000000000002', EMPRESA_ID)).toEqual([]);
   });
 });
 
@@ -129,14 +129,14 @@ describe('premiacoesService.listarPagamentos', () => {
 
   it('filters by campanha_id when provided', async () => {
     const { chain } = setupPagamentosChain([]);
-    await premiacoesService.listarPagamentos('c1', EMPRESA_ID);
-    expect(chain.eq).toHaveBeenCalledWith('campanha_id', 'c1');
+    await premiacoesService.listarPagamentos('00000000-0000-4000-8000-000000000002', EMPRESA_ID);
+    expect(chain.eq).toHaveBeenCalledWith('campanha_id', '00000000-0000-4000-8000-000000000002');
   });
 
   it('escopa por empresa_id via join !inner na campanha', async () => {
     const { chain } = setupPagamentosChain([]);
-    await premiacoesService.listarPagamentos(undefined, 'emp-1');
-    expect(chain.eq).toHaveBeenCalledWith('campanha.empresa_id', 'emp-1');
+    await premiacoesService.listarPagamentos(undefined, '00000000-0000-4000-8000-000000000001');
+    expect(chain.eq).toHaveBeenCalledWith('campanha.empresa_id', '00000000-0000-4000-8000-000000000001');
   });
 
   it('returns empty array when data is null', async () => {
@@ -157,13 +157,13 @@ describe('premiacoesService.criarCampanha', () => {
     const { insertFn } = setupInsertSingleChain(created);
     const result = await premiacoesService.criarCampanha({
       nome: 'Nova Campanha',
-      empresa_id: 'emp-1',
+      empresa_id: '00000000-0000-4000-8000-000000000001',
       data_inicio: '2026-01-01',
       data_fim: '2026-12-31',
     });
     expect(insertFn).toHaveBeenCalledWith({
       nome: 'Nova Campanha',
-      empresa_id: 'emp-1',
+      empresa_id: '00000000-0000-4000-8000-000000000001',
       data_inicio: '2026-01-01',
       data_fim: '2026-12-31',
     });
@@ -175,7 +175,7 @@ describe('premiacoesService.criarCampanha', () => {
     await expect(
       premiacoesService.criarCampanha({
         nome: 'X',
-        empresa_id: 'emp-1',
+        empresa_id: '00000000-0000-4000-8000-000000000001',
         data_inicio: '2026-01-01',
         data_fim: '2026-12-31',
       })
@@ -194,11 +194,15 @@ describe('premiacoesService.criarRegra', () => {
     const created = { id: 'r-new', titulo: 'metas' };
     const { insertFn } = setupInsertSingleChain(created);
     const result = await premiacoesService.criarRegra({
-      campanha_id: 'c-1',
+      campanha_id: '00000000-0000-4000-8000-000000000006',
       titulo: 'metas',
       tipo_calculo: 'valor_fixo',
     });
-    expect(insertFn).toHaveBeenCalledWith({ campanha_id: 'c-1', titulo: 'metas', tipo_calculo: 'valor_fixo' });
+    expect(insertFn).toHaveBeenCalledWith({
+      campanha_id: '00000000-0000-4000-8000-000000000006',
+      titulo: 'metas',
+      tipo_calculo: 'valor_fixo',
+    });
     expect(result).toEqual(created);
   });
 });

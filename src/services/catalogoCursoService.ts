@@ -1,5 +1,7 @@
 import { supabase, type QueryBuilderType } from '@/integrations/supabase/client';
 import type { Insertable, Tables, Updatable } from '@/integrations/supabase/database.types';
+import { validateInput } from '@/schemas/validate';
+import { cursoSchema, trilhaSchema, inscricaoCursoSchema } from '@/schemas/cursos';
 
 /** Linha de trilhas_cursos com o join `curso` retornado por `listarTrilhasCursos`. */
 export type InscricaoComJoins = Tables<'inscricoes_cursos'> & {
@@ -40,6 +42,7 @@ export const catalogoCursoService = {
   },
   async criarCurso(d: Insertable<'catalogo_cursos'>): Promise<Tables<'catalogo_cursos'>> {
     if (!d.empresa_id) throw new Error('empresa_id obrigatório');
+    validateInput(cursoSchema, d, 'catalogo.criarCurso');
     const { data, error } = await supabase.from('catalogo_cursos').insert(d).select().maybeSingle();
     if (error) throw error;
     return ensure(data, 'curso');
@@ -50,6 +53,7 @@ export const catalogoCursoService = {
     empresaId: string
   ): Promise<Tables<'catalogo_cursos'>> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    validateInput(cursoSchema, d, 'catalogo.atualizarCurso');
     const { data, error } = await supabase
       .from('catalogo_cursos')
       .update(d)
@@ -77,6 +81,7 @@ export const catalogoCursoService = {
   },
   async criarTrilha(d: Insertable<'trilhas_aprendizado'>): Promise<Tables<'trilhas_aprendizado'>> {
     if (!d.empresa_id) throw new Error('empresa_id obrigatório');
+    validateInput(trilhaSchema, d, 'catalogo.criarTrilha');
     const { data, error } = await supabase.from('trilhas_aprendizado').insert(d).select().maybeSingle();
     if (error) throw error;
     return ensure(data, 'trilha');
@@ -100,6 +105,7 @@ export const catalogoCursoService = {
   },
   async criarInscricao(d: Insertable<'inscricoes_cursos'>): Promise<Tables<'inscricoes_cursos'>> {
     if (!d.empresa_id) throw new Error('empresa_id obrigatório');
+    validateInput(inscricaoCursoSchema, d, 'catalogo.criarInscricao');
     const { data, error } = await supabase.from('inscricoes_cursos').insert(d).select().maybeSingle();
     if (error) throw error;
     return ensure(data, 'inscrição');
@@ -110,6 +116,7 @@ export const catalogoCursoService = {
     empresaId: string
   ): Promise<Tables<'inscricoes_cursos'>> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    validateInput(inscricaoCursoSchema, d, 'catalogo.atualizarInscricao');
     const { data, error } = await supabase
       .from('inscricoes_cursos')
       .update(d)
