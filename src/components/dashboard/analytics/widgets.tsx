@@ -12,9 +12,17 @@ import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
-  Activity, AlertCircle, UserPlus, Briefcase,
-  CheckCircle2, AlertTriangle, Calendar, ChevronRight,
-  ShieldCheck, Clock, ExternalLink,
+  Activity,
+  AlertCircle,
+  UserPlus,
+  Briefcase,
+  CheckCircle2,
+  AlertTriangle,
+  Calendar,
+  ChevronRight,
+  ShieldCheck,
+  Clock,
+  ExternalLink,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AnimatedNumber } from '../AnimatedNumber';
@@ -36,8 +44,16 @@ export const donutColors = [
 ];
 
 /** Indicador com barra animada — usado nos KPIs do dashboard. */
-export function IndicatorRow({ label, value, maxValue = 10, suffix = '%' }: {
-  label: string; value: number; maxValue?: number; suffix?: string;
+export function IndicatorRow({
+  label,
+  value,
+  maxValue = 10,
+  suffix = '%',
+}: {
+  label: string;
+  value: number;
+  maxValue?: number;
+  suffix?: string;
 }) {
   const percentage = Math.min((value / maxValue) * 100, 100);
   const getColor = () => {
@@ -50,7 +66,10 @@ export function IndicatorRow({ label, value, maxValue = 10, suffix = '%' }: {
     <div className="space-y-2.5">
       <div className="flex items-center justify-between">
         <span className="text-body font-body font-medium">{label}</span>
-        <span className="text-body font-display font-bold">{value.toFixed(1)}{suffix}</span>
+        <span className="text-body font-display font-bold">
+          {value.toFixed(1)}
+          {suffix}
+        </span>
       </div>
       <div className="h-2.5 bg-muted/80 rounded-full overflow-hidden">
         <motion.div
@@ -65,8 +84,18 @@ export function IndicatorRow({ label, value, maxValue = 10, suffix = '%' }: {
 }
 
 /** Cartão numérico compacto com ícone gradiente. */
-export function QuickStat({ label, value, icon: Icon, gradient, index = 0 }: {
-  label: string; value: number; icon: React.ElementType; gradient: string; index?: number;
+export function QuickStat({
+  label,
+  value,
+  icon: Icon,
+  gradient,
+  index = 0,
+}: {
+  label: string;
+  value: number;
+  icon: React.ElementType;
+  gradient: string;
+  index?: number;
 }) {
   return (
     <motion.div
@@ -75,7 +104,12 @@ export function QuickStat({ label, value, icon: Icon, gradient, index = 0 }: {
       transition={{ delay: index * 0.1 }}
       className="flex items-center gap-3.5 p-3.5 rounded-xl glass hover:border-border/60 transition-all group"
     >
-      <div className={cn('p-2.5 rounded-xl bg-gradient-to-br shadow-lg group-hover:scale-110 transition-transform', gradient)}>
+      <div
+        className={cn(
+          'p-2.5 rounded-xl bg-gradient-to-br shadow-lg group-hover:scale-110 transition-transform',
+          gradient
+        )}
+      >
         <Icon className="h-4 w-4 text-primary-foreground" />
       </div>
       <div>
@@ -95,8 +129,14 @@ export interface PendenciaSummary {
   icone: 'ferias' | 'afastamentos' | 'admissoes' | 'assinaturas' | 'ponto' | 'documentos';
 }
 
-export function PendenciaItem({ pendencia, index, onClick }: {
-  pendencia: PendenciaSummary; index: number; onClick?: () => void;
+export function PendenciaItem({
+  pendencia,
+  index,
+  onClick,
+}: {
+  pendencia: PendenciaSummary;
+  index: number;
+  onClick?: () => void;
 }) {
   const iconMap: Record<string, React.ElementType> = {
     ferias: Calendar,
@@ -131,7 +171,9 @@ export function PendenciaItem({ pendencia, index, onClick }: {
         <p className="text-body font-body font-medium truncate">{pendencia.descricao}</p>
       </div>
       <div className="flex items-center gap-1.5">
-        <span className="text-caption font-bold bg-primary/10 text-primary px-2.5 py-1 rounded-full">{pendencia.quantidade}</span>
+        <span className="text-caption font-bold bg-primary/10 text-primary px-2.5 py-1 rounded-full">
+          {pendencia.quantidade}
+        </span>
         <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />
       </div>
     </motion.div>
@@ -148,16 +190,19 @@ export function AlertasRHWidget() {
   });
 
   if (isLoading) return <CardSkeleton className="h-32 border-0 p-0" />;
-  if (!alertas.length) return (
-    <div className="flex flex-col items-center justify-center py-8 text-center">
-      <div className="p-3 rounded-2xl bg-muted/50 mb-3"><Activity className="h-6 w-6 text-muted-foreground" /></div>
-      <p className="text-caption text-muted-foreground font-body">Nenhum alerta de RH</p>
-    </div>
-  );
+  if (!alertas.length)
+    return (
+      <div className="flex flex-col items-center justify-center py-8 text-center">
+        <div className="p-3 rounded-2xl bg-muted/50 mb-3">
+          <Activity className="h-6 w-6 text-muted-foreground" />
+        </div>
+        <p className="text-caption text-muted-foreground font-body">Nenhum alerta de RH</p>
+      </div>
+    );
 
   return (
     <div className="space-y-2 max-h-48 overflow-y-auto pr-1 custom-scrollbar">
-      {alertas.slice(0, 8).map((a: any, i: number) => (
+      {alertas.slice(0, 8).map((a, i) => (
         <motion.div
           key={i}
           initial={{ opacity: 0, x: -5 }}
@@ -166,16 +211,23 @@ export function AlertasRHWidget() {
           onClick={() => navigate('/relatorios')}
           className="flex items-center gap-3 p-2.5 rounded-xl glass text-sm hover:border-primary/20 cursor-pointer group transition-all"
         >
-          <div className={cn(
-            'p-1.5 rounded-lg shrink-0',
-            a.prioridade === 'alta' ? 'bg-destructive/10 text-destructive' :
-            a.prioridade === 'media' ? 'bg-warning/10 text-warning' : 'bg-info/10 text-info',
-          )}>
+          <div
+            className={cn(
+              'p-1.5 rounded-lg shrink-0',
+              a.tipo === 'alta'
+                ? 'bg-destructive/10 text-destructive'
+                : a.tipo === 'media'
+                  ? 'bg-warning/10 text-warning'
+                  : 'bg-info/10 text-info'
+            )}
+          >
             <AlertTriangle className="h-3.5 w-3.5" />
           </div>
-          <span className="flex-1 truncate text-body font-body text-xs font-medium">{a.descricao || a.tipo || 'Alerta de sistema'}</span>
+          <span className="flex-1 truncate text-body font-body text-xs font-medium">
+            {a.titulo || a.mensagem || 'Alerta de sistema'}
+          </span>
           <Badge variant="outline" className="text-[9px] uppercase font-bold tracking-tight opacity-70">
-            {a.prioridade || 'Normal'}
+            {a.tipo || 'Normal'}
           </Badge>
         </motion.div>
       ))}
@@ -193,16 +245,19 @@ export function CadastroIncompletoWidget() {
   });
 
   if (isLoading) return <CardSkeleton className="h-32 border-0 p-0" />;
-  if (!incompletos.length) return (
-    <div className="flex flex-col items-center justify-center py-8 text-center">
-      <div className="p-3 rounded-2xl bg-gradient-to-br from-success/20 to-finance/10 mb-3"><CheckCircle2 className="h-6 w-6 text-success" /></div>
-      <p className="text-caption text-muted-foreground font-body">Todos os cadastros estão completos</p>
-    </div>
-  );
+  if (!incompletos.length)
+    return (
+      <div className="flex flex-col items-center justify-center py-8 text-center">
+        <div className="p-3 rounded-2xl bg-gradient-to-br from-success/20 to-finance/10 mb-3">
+          <CheckCircle2 className="h-6 w-6 text-success" />
+        </div>
+        <p className="text-caption text-muted-foreground font-body">Todos os cadastros estão completos</p>
+      </div>
+    );
 
   return (
     <div className="space-y-2 max-h-48 overflow-y-auto pr-1 custom-scrollbar">
-      {incompletos.slice(0, 8).map((c: any, i: number) => (
+      {incompletos.slice(0, 8).map((c, i) => (
         <motion.div
           key={i}
           initial={{ opacity: 0, x: -5 }}
@@ -216,7 +271,9 @@ export function CadastroIncompletoWidget() {
           </div>
           <div className="flex-1 min-w-0">
             <p className="truncate text-xs font-semibold font-display">{c.nome_completo || 'Colaborador'}</p>
-            <p className="text-[10px] text-muted-foreground truncate">{c.campos_faltantes || 'Dados pendentes'}</p>
+            <p className="text-[10px] text-muted-foreground truncate">
+              {Array.isArray(c.campos_faltantes) ? c.campos_faltantes.join(', ') : 'Dados pendentes'}
+            </p>
           </div>
           <ChevronRight className="h-3 w-3 text-muted-foreground opacity-30 group-hover:opacity-100 transition-opacity" />
         </motion.div>
@@ -235,7 +292,9 @@ export function ESocialMonitorWidget() {
           <ShieldCheck className="h-4 w-4 text-success" />
           <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Compliance eSocial</span>
         </div>
-        <Badge variant="outline" className="text-[10px] bg-success/5 text-success border-success/20">98% Aceitação</Badge>
+        <Badge variant="outline" className="text-[10px] bg-success/5 text-success border-success/20">
+          98% Aceitação
+        </Badge>
       </div>
 
       <div className="p-3 rounded-xl bg-muted/20 border border-border/30 space-y-2">

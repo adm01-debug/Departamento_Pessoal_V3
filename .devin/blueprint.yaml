@@ -1,0 +1,47 @@
+# https://docs.devin.ai/onboard-devin/environment-yaml
+# engines: node 22.x + .npmrc engine-strict; bun.lock está desatualizado — use npm, não bun.
+initialize: |
+  export NVM_DIR="$HOME/.nvm"
+  . "$NVM_DIR/nvm.sh"
+  nvm install 22
+  # actionlint é exigido pelo lint-staged em commits que tocam .github/workflows
+  mkdir -p "$HOME/.local/bin"
+  curl -fsSL "https://github.com/rhysd/actionlint/releases/download/v1.7.8/actionlint_1.7.8_linux_amd64.tar.gz" -o /tmp/actionlint.tgz
+  tar -xzf /tmp/actionlint.tgz -C "$HOME/.local/bin" actionlint
+  rm /tmp/actionlint.tgz
+  echo "PATH=$HOME/.local/bin:$PATH" >> "$ENVRC"
+  # graphify: grafo de conhecimento do repo (parser SQL das migrations exige extra [sql])
+  python3 -m pip install --quiet "graphifyy[sql]"
+maintenance: |
+  export NVM_DIR="$HOME/.nvm"
+  . "$NVM_DIR/nvm.sh"
+  nvm use 22
+  npm install
+knowledge:
+  - name: lint
+    contents: |
+      # nvm use 22 && npm run lint:ci  (eslint --max-warnings=728)
+  - name: test
+    contents: |
+      # nvm use 22 && npx vitest run
+  - name: typecheck
+    contents: |
+      # nvm use 22 && npx tsc --noEmit  (TS pinned <6.1.0)
+  - name: notes
+    contents: |
+      # Node 22 obrigatório (engine-strict). npm, não bun (bun.lock desatualizado).
+  - name: dev-server
+    contents: |
+      # npm run dev precisa de .env.local com VITE_SUPABASE_URL=https://frjbfeamybqsejlvmqbl.supabase.co
+      # e VITE_SUPABASE_PUBLISHABLE_KEY=<anon key> (recuperável: git show 9b148d4d9^:.env → VITE_SUPABASE_ANON_KEY)
+  - name: browser-testing
+    contents: |
+      # Login de teste: credenciais E2E_* nas secrets do repo (criadas em frjbfeamybqsejlvmqbl).
+      # Previews Vercel ficam atrás de SSO (Deployment Protection) — serve dist/ local p/ testar.
+      # Definir localStorage 'dp-tour-completed' antes do login p/ pular o tour.
+      # Commits que tocam .github/workflows exigem actionlint no PATH (instalado em ~/.local/bin).
+  - name: graphify
+    contents: |
+      # npm run graph:update (incremental) | npm run graph:rebuild (full)
+      # graphify query "pergunta" | graphify path "A" "B" | graphify explain "Nó"
+      # Saída em graphify-out/ (gitignored; GRAPH_REPORT.md + manifest.json commitados)

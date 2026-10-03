@@ -1,22 +1,23 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children }: any) => <div>{children}</div>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
+  Card: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/label', () => ({
-  Label: ({ children }: any) => <label>{children}</label>,
+  Label: ({ children }: { children?: ReactNode }) => <label>{children}</label>,
 }));
 
 vi.mock('@/components/ui/table', () => ({
-  Table: ({ children }: any) => <table>{children}</table>,
-  TableHeader: ({ children }: any) => <thead>{children}</thead>,
-  TableBody: ({ children }: any) => <tbody>{children}</tbody>,
-  TableRow: ({ children }: any) => <tr>{children}</tr>,
-  TableHead: ({ children }: any) => <th>{children}</th>,
-  TableCell: ({ children }: any) => <td>{children}</td>,
+  Table: ({ children }: { children?: ReactNode }) => <table>{children}</table>,
+  TableHeader: ({ children }: { children?: ReactNode }) => <thead>{children}</thead>,
+  TableBody: ({ children }: { children?: ReactNode }) => <tbody>{children}</tbody>,
+  TableRow: ({ children }: { children?: ReactNode }) => <tr>{children}</tr>,
+  TableHead: ({ children }: { children?: ReactNode }) => <th>{children}</th>,
+  TableCell: ({ children }: { children?: ReactNode }) => <td>{children}</td>,
 }));
 
 vi.mock('@/utils/piiMask', () => ({
@@ -49,9 +50,7 @@ const DADOS_S1200 = {
 
 const DADOS_S1210 = {
   cpfTrab: '12345678900',
-  infoPgto: [
-    { dtPgto: '2024-07-05', tpPgto: '2', perRef: '2024-07', vrLiq: 4200 },
-  ],
+  infoPgto: [{ dtPgto: '2024-07-05', tpPgto: '2', perRef: '2024-07', vrLiq: 4200 }],
 };
 
 describe('S1200Remuneracao', () => {

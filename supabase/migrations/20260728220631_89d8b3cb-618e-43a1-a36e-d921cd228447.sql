@@ -65,5 +65,9 @@ BEGIN
   RETURN jsonb_build_object('ok', true, 'hash_assinatura', v_hash_ass);
 END;
 $function$;
-
-REVOKE EXECUTE ON FUNCTION public.sst_regimento_assinar(uuid, uuid, text, text) FROM anon;
+DO $guard$
+BEGIN
+  IF to_regprocedure('public.sst_regimento_assinar(uuid,uuid,text,text)') IS NOT NULL THEN
+    EXECUTE $sql$REVOKE EXECUTE ON FUNCTION public.sst_regimento_assinar(uuid, uuid, text, text) FROM anon;$sql$;
+  END IF;
+END $guard$;

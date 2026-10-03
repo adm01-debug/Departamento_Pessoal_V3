@@ -1,3 +1,4 @@
+import type { MedidaDisciplinarComColaborador } from '@/types/medidasDisciplinares';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -28,14 +29,14 @@ const tipoColors: Record<string, string> = {
 };
 
 interface MedidasTimelineProps {
-  medidas: any[];
+  medidas: MedidaDisciplinarComColaborador[];
   onMarcarCiencia: (id: string) => void;
 }
 
 export function MedidasTimeline({ medidas, onMarcarCiencia }: MedidasTimelineProps) {
-  const sorted = [...medidas].sort((a, b) =>
-    new Date(b.data_ocorrencia).getTime() - new Date(a.data_ocorrencia).getTime()
-  ).slice(0, 10);
+  const sorted = [...medidas]
+    .sort((a, b) => new Date(b.data_ocorrencia).getTime() - new Date(a.data_ocorrencia).getTime())
+    .slice(0, 10);
 
   if (sorted.length === 0) return null;
 
@@ -59,7 +60,7 @@ export function MedidasTimeline({ medidas, onMarcarCiencia }: MedidasTimelinePro
                 const colorClass = tipoColors[m.tipo] || 'bg-muted text-muted-foreground border-border';
                 let formattedDate: string;
                 try {
-                  formattedDate = format(parseISO(m.data_ocorrencia), "dd MMM yyyy", { locale: ptBR });
+                  formattedDate = format(parseISO(m.data_ocorrencia), 'dd MMM yyyy', { locale: ptBR });
                 } catch {
                   formattedDate = m.data_ocorrencia;
                 }
@@ -75,7 +76,9 @@ export function MedidasTimeline({ medidas, onMarcarCiencia }: MedidasTimelinePro
                     {/* Icon node */}
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <div className={`relative z-10 flex items-center justify-center h-8 w-8 rounded-full border ${colorClass} shrink-0`}>
+                        <div
+                          className={`relative z-10 flex items-center justify-center h-8 w-8 rounded-full border ${colorClass} shrink-0`}
+                        >
                           <Icon className="h-3.5 w-3.5" />
                         </div>
                       </TooltipTrigger>
@@ -108,9 +111,7 @@ export function MedidasTimeline({ medidas, onMarcarCiencia }: MedidasTimelinePro
                           </button>
                         )}
                       </div>
-                      <p className="text-xs text-muted-foreground mt-0.5 truncate font-body">
-                        {m.descricao}
-                      </p>
+                      <p className="text-xs text-muted-foreground mt-0.5 truncate font-body">{m.descricao}</p>
                       <span className="text-[10px] text-muted-foreground/70 font-body">
                         {formattedDate}
                         {m.artigo_clt && ` · ${m.artigo_clt.replace('_', ' ').replace('art ', 'Art. ')}`}

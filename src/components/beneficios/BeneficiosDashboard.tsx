@@ -1,23 +1,45 @@
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  Legend,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+} from 'recharts';
 import { Gift, Users, Wallet, TrendingUp, Info } from 'lucide-react';
 import { motion } from 'framer-motion';
+import type { Tables } from '@/integrations/supabase/types';
 
-export function BeneficiosDashboard({ beneficios }: { beneficios: any[] }) {
+export type BeneficioComAdesao = Tables<'beneficios'> & { beneficios_colaborador?: { count: number }[] | null };
+
+export function BeneficiosDashboard({ beneficios }: { beneficios: BeneficioComAdesao[] }) {
   const stats = useMemo(() => {
-    const totalCusto = beneficios.reduce((acc, b) => acc + (b.valor || 0) * (b.beneficios_colaborador?.[0]?.count || 0), 0);
+    const totalCusto = beneficios.reduce(
+      (acc, b) => acc + (b.valor || 0) * (b.beneficios_colaborador?.[0]?.count || 0),
+      0
+    );
     const totalAdesoes = beneficios.reduce((acc, b) => acc + (b.beneficios_colaborador?.[0]?.count || 0), 0);
-    const tiposCount = beneficios.reduce((acc: any, b) => {
-      acc[b.tipo || 'Outros'] = (acc[b.tipo || 'Outros'] || 0) + (b.beneficios_colaborador?.[0]?.count || 0);
+    const tiposCount = beneficios.reduce<Record<string, number>>((acc, b) => {
+      const tipo = b.tipo || 'Outros';
+      acc[tipo] = (acc[tipo] || 0) + (b.beneficios_colaborador?.[0]?.count || 0);
       return acc;
     }, {});
 
     const chartData = Object.entries(tiposCount).map(([name, value]) => ({ name, value }));
-    const costData = beneficios.map(b => ({
-      name: b.nome,
-      custo: (b.valor || 0) * (b.beneficios_colaborador?.[0]?.count || 0)
-    })).sort((a, b) => b.custo - a.custo).slice(0, 5);
+    const costData = beneficios
+      .map((b) => ({
+        name: b.nome,
+        custo: (b.valor || 0) * (b.beneficios_colaborador?.[0]?.count || 0),
+      }))
+      .sort((a, b) => b.custo - a.custo)
+      .slice(0, 5);
 
     return { totalCusto, totalAdesoes, chartData, costData };
   }, [beneficios]);
@@ -30,12 +52,27 @@ export function BeneficiosDashboard({ beneficios }: { beneficios: any[] }) {
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Investimento Total', value: formatCurrency(stats.totalCusto), icon: Wallet, gradient: 'from-primary to-primary-glow' },
+          {
+            label: 'Investimento Total',
+            value: formatCurrency(stats.totalCusto),
+            icon: Wallet,
+            gradient: 'from-primary to-primary-glow',
+          },
           { label: 'Total de Adesões', value: stats.totalAdesoes, icon: Users, gradient: 'from-success to-success/70' },
           { label: 'Benefícios Ativos', value: beneficios.length, icon: Gift, gradient: 'from-info to-info/70' },
-          { label: 'Ticket Médio', value: formatCurrency(stats.totalAdesoes > 0 ? stats.totalCusto / stats.totalAdesoes : 0), icon: TrendingUp, gradient: 'from-warning to-warning/70' },
+          {
+            label: 'Ticket Médio',
+            value: formatCurrency(stats.totalAdesoes > 0 ? stats.totalCusto / stats.totalAdesoes : 0),
+            icon: TrendingUp,
+            gradient: 'from-warning to-warning/70',
+          },
         ].map((kpi, i) => (
-          <motion.div key={kpi.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
+          <motion.div
+            key={kpi.label}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.05 }}
+          >
             <Card className="border border-border/30 rounded-2xl overflow-hidden">
               <div className={`h-[2px] bg-gradient-to-r ${kpi.gradient}`} />
               <CardContent className="p-4">
@@ -76,7 +113,7 @@ export function BeneficiosDashboard({ beneficios }: { beneficios: any[] }) {
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(v: any) => [`${v} adisões`, 'Total']} />
+                  <Tooltip formatter={(v) => [`${v} adisões`, 'Total']} />
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>
@@ -97,7 +134,7 @@ export function BeneficiosDashboard({ beneficios }: { beneficios: any[] }) {
                   <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="hsl(var(--muted))" />
                   <XAxis type="number" hide />
                   <YAxis dataKey="name" type="category" fontSize={10} width={100} />
-                  <Tooltip formatter={(v: any) => formatCurrency(v)} />
+                  <Tooltip formatter={(v) => formatCurrency(Number(v))} />
                   <Bar dataKey="custo" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -113,7 +150,10 @@ export function BeneficiosDashboard({ beneficios }: { beneficios: any[] }) {
           </div>
           <div>
             <p className="text-sm font-bold text-info-foreground">Inteligência de Benefícios</p>
-            <p className="text-xs text-muted-foreground">O custo total de benefícios representa aproximadamente 12% da folha bruta total. Considere revisar o plano de saúde para otimizar custos no próximo semestre.</p>
+            <p className="text-xs text-muted-foreground">
+              O custo total de benefícios representa aproximadamente 12% da folha bruta total. Considere revisar o plano
+              de saúde para otimizar custos no próximo semestre.
+            </p>
           </div>
         </CardContent>
       </Card>

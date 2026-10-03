@@ -18,12 +18,12 @@ import { safeHref } from '@/utils/safeUrl';
 export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string }) {
   const { documentos, isLoading, criarDocumento, excluirDocumento } = useDocumentos(colaboradorId);
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ 
-    nome: '', 
-    tipo: 'Outros', 
-    url: '', 
-    observacoes: '', 
-    data_validade: '' 
+  const [form, setForm] = useState({
+    nome: '',
+    tipo: 'Outros',
+    url: '',
+    observacoes: '',
+    data_validade: '',
   });
 
   const TIPOS = [
@@ -35,7 +35,7 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
     'Exame Médico (ASO)',
     'EPI',
     'Treinamento',
-    'Outros'
+    'Outros',
   ];
 
   const handleSubmit = async () => {
@@ -44,9 +44,9 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
       return;
     }
     try {
-      await criarDocumento.mutateAsync({ 
-        ...form, 
-        colaborador_id: colaboradorId 
+      await criarDocumento.mutateAsync({
+        ...form,
+        colaborador_id: colaboradorId,
       });
       setOpen(false);
       setForm({ nome: '', tipo: 'Outros', url: '', observacoes: '', data_validade: '' });
@@ -75,48 +75,52 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
             <div className="grid gap-4 py-4">
               <div className="space-y-2">
                 <Label>Nome do Documento *</Label>
-                <Input 
-                  placeholder="Ex: Contrato de Trabalho 2024" 
-                  value={form.nome} 
-                  onChange={e => setForm(f => ({ ...f, nome: e.target.value }))}
+                <Input
+                  placeholder="Ex: Contrato de Trabalho 2024"
+                  value={form.nome}
+                  onChange={(e) => setForm((f) => ({ ...f, nome: e.target.value }))}
                   className="rounded-xl"
                 />
               </div>
               <div className="space-y-2">
                 <Label>Tipo de Documento</Label>
-                <Select value={form.tipo} onValueChange={v => setForm(f => ({ ...f, tipo: v }))}>
+                <Select value={form.tipo} onValueChange={(v) => setForm((f) => ({ ...f, tipo: v }))}>
                   <SelectTrigger className="rounded-xl">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
-                    {TIPOS.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                    {TIPOS.map((t) => (
+                      <SelectItem key={t} value={t}>
+                        {t}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
                 <Label>Data de Validade (opcional)</Label>
-                <Input 
-                  type="date" 
-                  value={form.data_validade} 
-                  onChange={e => setForm(f => ({ ...f, data_validade: e.target.value }))}
+                <Input
+                  type="date"
+                  value={form.data_validade}
+                  onChange={(e) => setForm((f) => ({ ...f, data_validade: e.target.value }))}
                   className="rounded-xl"
                 />
               </div>
               <div className="space-y-2">
                 <Label>URL / Link do Arquivo</Label>
-                <Input 
-                  placeholder="https://..." 
-                  value={form.url} 
-                  onChange={e => setForm(f => ({ ...f, url: e.target.value }))}
+                <Input
+                  placeholder="https://..."
+                  value={form.url}
+                  onChange={(e) => setForm((f) => ({ ...f, url: e.target.value }))}
                   className="rounded-xl"
                 />
               </div>
               <div className="space-y-2">
                 <Label>Observações</Label>
-                <Input 
-                  placeholder="Notas internas..." 
-                  value={form.observacoes} 
-                  onChange={e => setForm(f => ({ ...f, observacoes: e.target.value }))}
+                <Input
+                  placeholder="Notas internas..."
+                  value={form.observacoes}
+                  onChange={(e) => setForm((f) => ({ ...f, observacoes: e.target.value }))}
                   className="rounded-xl"
                 />
               </div>
@@ -142,11 +146,19 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              <TableRow><TableCell colSpan={5} className="h-32 text-center"><Spinner /></TableCell></TableRow>
+              <TableRow>
+                <TableCell colSpan={5} className="h-32 text-center">
+                  <Spinner />
+                </TableCell>
+              </TableRow>
             ) : documentos.length === 0 ? (
-              <TableRow><TableCell colSpan={5} className="h-32 text-center text-muted-foreground font-body italic">Nenhum documento anexado.</TableCell></TableRow>
+              <TableRow>
+                <TableCell colSpan={5} className="h-32 text-center text-muted-foreground font-body italic">
+                  Nenhum documento anexado.
+                </TableCell>
+              </TableRow>
             ) : (
-              documentos.map((doc: any) => (
+              documentos.map((doc) => (
                 <TableRow key={doc.id} className="group transition-colors hover:bg-muted/10">
                   <TableCell className="py-4 pl-6">
                     <div className="flex items-center gap-3">
@@ -162,12 +174,18 @@ export function ColaboradorDocuments({ colaboradorId }: { colaboradorId: string 
                     </Badge>
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground">
-                    {format(new Date(doc.created_at), "dd/MM/yyyy", { locale: ptBR })}
+                    {format(new Date(doc.created_at), 'dd/MM/yyyy', { locale: ptBR })}
                   </TableCell>
                   <TableCell className="text-xs">
                     {doc.data_validade ? (
-                      <span className={new Date(doc.data_validade) < new Date() ? 'text-destructive font-bold' : 'text-success font-bold'}>
-                        {format(new Date(doc.data_validade), "dd/MM/yyyy", { locale: ptBR })}
+                      <span
+                        className={
+                          new Date(doc.data_validade) < new Date()
+                            ? 'text-destructive font-bold'
+                            : 'text-success font-bold'
+                        }
+                      >
+                        {format(new Date(doc.data_validade), 'dd/MM/yyyy', { locale: ptBR })}
                       </span>
                     ) : (
                       <span className="text-muted-foreground opacity-50">—</span>

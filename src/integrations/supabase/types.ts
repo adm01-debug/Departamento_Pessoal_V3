@@ -6722,6 +6722,7 @@ export type Database = {
           colaborador_id: string | null
           created_at: string
           data_validade: string | null
+          empresa_id: string | null
           id: string
           nome: string
           observacoes: string | null
@@ -6735,6 +6736,7 @@ export type Database = {
           colaborador_id?: string | null
           created_at?: string
           data_validade?: string | null
+          empresa_id?: string | null
           id?: string
           nome: string
           observacoes?: string | null
@@ -6748,6 +6750,7 @@ export type Database = {
           colaborador_id?: string | null
           created_at?: string
           data_validade?: string | null
+          empresa_id?: string | null
           id?: string
           nome?: string
           observacoes?: string | null

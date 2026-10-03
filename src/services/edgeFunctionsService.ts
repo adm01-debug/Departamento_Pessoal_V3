@@ -2,6 +2,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { bitrixBreaker, resendBreaker, genericBreaker } from '@/lib/circuitBreaker';
 import { retryWithIdempotency } from '@/lib/retry';
 import { loggerService } from '@/services/loggerService';
+import type { RescisaoResult } from '@/utils/rescisaoCalc';
 
 // NOTA: não enviamos headers customizados (ex.: 'x-request-id') nas invocações de
 // edge functions. O CORS das funções (supabase/functions/_shared/contract.ts) só
@@ -173,7 +174,7 @@ export const edgeFunctionsService = {
     saldo_fgts: number;
     ferias_vencidas: boolean;
     dependentes_irrf: number;
-  }) => handleInvoke('calcular-rescisao', { body: params }),
+  }) => handleInvoke<{ resultado?: RescisaoResult }>('calcular-rescisao', { body: params }),
 
   /** Exportação server-side */
   exportarDados: async (params: { tabela: string; formato: 'csv' | 'json'; filtros?: Record<string, unknown> }) =>

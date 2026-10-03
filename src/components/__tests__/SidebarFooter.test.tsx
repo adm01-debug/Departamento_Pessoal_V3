@@ -1,16 +1,17 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 
 vi.mock('@/components/ui/avatar', () => ({
-  Avatar: ({ children }: any) => <div>{children}</div>,
-  AvatarFallback: ({ children }: any) => <span>{children}</span>,
+  Avatar: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  AvatarFallback: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
   AvatarImage: () => null,
 }));
 
 vi.mock('@/components/ui/tooltip', () => ({
-  Tooltip: ({ children }: any) => <div>{children}</div>,
-  TooltipTrigger: ({ children }: any) => <div>{children}</div>,
-  TooltipContent: ({ children }: any) => <div>{children}</div>,
+  Tooltip: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  TooltipTrigger: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  TooltipContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('lucide-react', () => ({

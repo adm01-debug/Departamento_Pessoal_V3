@@ -1,5 +1,14 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables, Insertable, Updatable } from '@/integrations/supabase/database.types';
+import { validateInput } from '@/schemas/validate';
+import {
+  centroCustoSchema,
+  contaBancariaSchema,
+  dadosEstagiarioSchema,
+  documentoPessoalSchema,
+  feriasAprovacaoSchema,
+  feriasArquivoSchema,
+} from '@/schemas/referencias';
 
 // Helper genérico para listar tabelas de referência
 async function listarReferencia(tabela: string, orderBy = 'nome'): Promise<unknown[]> {
@@ -39,6 +48,7 @@ export async function listarCentrosCusto(empresaId: string): Promise<unknown[]> 
 }
 
 export async function criarCentroCusto(centro: Insertable<'centros_custo'>): Promise<Tables<'centros_custo'>> {
+  validateInput(centroCustoSchema, centro, 'criarCentroCusto');
   const { data, error } = await supabase.from('centros_custo').insert([centro]).select().maybeSingle();
   if (error) throw error;
   if (!data) throw new Error('Nenhum registro de centro de custo foi retornado.');
@@ -51,6 +61,7 @@ export async function atualizarCentroCusto(
   empresaId: string
 ): Promise<void> {
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+  validateInput(centroCustoSchema, dados, 'atualizarCentroCusto');
   const { error } = await supabase.from('centros_custo').update(dados).eq('id', id).eq('empresa_id', empresaId);
   if (error) throw error;
 }
@@ -64,7 +75,10 @@ export async function excluirCentroCusto(id: string, empresaId: string): Promise
 // =============================================
 // Contas Bancárias
 // =============================================
-export async function listarContasBancarias(colaboradorId: string, empresaId: string): Promise<unknown[]> {
+export async function listarContasBancarias(
+  colaboradorId: string,
+  empresaId: string
+): Promise<Tables<'contas_bancarias'>[]> {
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
   const { data, error } = await supabase
     .from('contas_bancarias')
@@ -77,6 +91,7 @@ export async function listarContasBancarias(colaboradorId: string, empresaId: st
 }
 
 export async function criarContaBancaria(conta: Insertable<'contas_bancarias'>): Promise<Tables<'contas_bancarias'>> {
+  validateInput(contaBancariaSchema, conta, 'criarContaBancaria');
   const { data, error } = await supabase.from('contas_bancarias').insert([conta]).select().maybeSingle();
   if (error) throw error;
   if (!data) throw new Error('Nenhum registro de conta bancária foi retornado.');
@@ -89,6 +104,7 @@ export async function atualizarContaBancaria(
   empresaId: string
 ): Promise<void> {
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+  validateInput(contaBancariaSchema, dados, 'atualizarContaBancaria');
   const { error } = await supabase.from('contas_bancarias').update(dados).eq('id', id).eq('empresa_id', empresaId);
   if (error) throw error;
 }
@@ -117,6 +133,7 @@ export async function salvarDadosEstagiario(
   dados: Updatable<'dados_estagiario'>
 ): Promise<Tables<'dados_estagiario'>> {
   try {
+    validateInput(dadosEstagiarioSchema, { ...dados, colaborador_id: colaboradorId }, 'salvarDadosEstagiario');
     const existing = await obterDadosEstagiario(colaboradorId);
 
     if (existing) {
@@ -148,7 +165,9 @@ export async function salvarDadosEstagiario(
 // =============================================
 // Documentos Pessoais Arquivos
 // =============================================
-export async function listarDocumentosPessoais(colaboradorId: string): Promise<unknown[]> {
+export async function listarDocumentosPessoais(
+  colaboradorId: string
+): Promise<Tables<'documentos_pessoais_arquivos'>[]> {
   const { data, error } = await supabase
     .from('documentos_pessoais_arquivos')
     .select('*')
@@ -161,6 +180,7 @@ export async function listarDocumentosPessoais(colaboradorId: string): Promise<u
 export async function criarDocumentoPessoal(
   doc: Insertable<'documentos_pessoais_arquivos'>
 ): Promise<Tables<'documentos_pessoais_arquivos'>> {
+  validateInput(documentoPessoalSchema, doc, 'criarDocumentoPessoal');
   const { data, error } = await supabase.from('documentos_pessoais_arquivos').insert([doc]).select().maybeSingle();
   if (error) throw error;
   if (!data) throw new Error('Nenhum registro de documento pessoal foi retornado.');
@@ -193,6 +213,7 @@ export async function listarFeriasAprovacoes(feriasId: string): Promise<unknown[
 export async function criarFeriasAprovacao(
   aprovacao: Insertable<'ferias_aprovacoes'>
 ): Promise<Tables<'ferias_aprovacoes'>> {
+  validateInput(feriasAprovacaoSchema, aprovacao, 'criarFeriasAprovacao');
   const { data, error } = await supabase.from('ferias_aprovacoes').insert([aprovacao]).select().maybeSingle();
   if (error) throw error;
   if (!data) throw new Error('Nenhum registro de aprovação de férias foi retornado.');
@@ -223,6 +244,7 @@ export async function listarFeriasArquivos(feriasId: string): Promise<unknown[]>
 }
 
 export async function criarFeriasArquivo(arquivo: Insertable<'ferias_arquivos'>): Promise<Tables<'ferias_arquivos'>> {
+  validateInput(feriasArquivoSchema, arquivo, 'criarFeriasArquivo');
   const { data, error } = await supabase.from('ferias_arquivos').insert([arquivo]).select().maybeSingle();
   if (error) throw error;
   if (!data) throw new Error('Nenhum registro de arquivo de férias foi retornado.');

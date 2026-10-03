@@ -2,9 +2,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ShieldCheck, AlertTriangle, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export function ESocialComplianceScore({ stats }: { stats: any }) {
+export function ESocialComplianceScore({
+  stats,
+}: {
+  stats: { conformidade?: number | null; enviados?: number; erros?: number };
+}) {
   const hasScore = typeof stats.conformidade === 'number';
-  const score = hasScore ? stats.conformidade : 0;
+  const score = stats.conformidade ?? 0;
+  const enviados = stats.enviados ?? 0;
+  const erros = stats.erros ?? 0;
 
   const getScoreColor = (s: number) => {
     if (s >= 95) return 'text-success';
@@ -67,11 +73,11 @@ export function ESocialComplianceScore({ stats }: { stats: any }) {
           <div className="grid grid-cols-2 gap-2 w-full">
             <div className="p-2 rounded-xl bg-background border border-border/40 text-center">
               <p className="text-[9px] text-muted-foreground uppercase font-bold">Eventos S-1200</p>
-              <p className="text-sm font-bold">{stats.enviados}</p>
+              <p className="text-sm font-bold">{enviados}</p>
             </div>
             <div className="p-2 rounded-xl bg-background border border-border/40 text-center">
               <p className="text-[9px] text-muted-foreground uppercase font-bold">Erros Retornados</p>
-              <p className="text-sm font-bold text-destructive">{stats.erros}</p>
+              <p className="text-sm font-bold text-destructive">{erros}</p>
             </div>
           </div>
 

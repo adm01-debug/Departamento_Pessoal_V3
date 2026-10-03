@@ -1,9 +1,17 @@
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { User, Calendar, Heart, Shield } from 'lucide-react';
-import { maskCpfDisplay } from '@/utils/piiMask';
+import { usePiiMask } from '@/hooks/usePiiMask';
 
-export function S2400CDP({ dados }: { dados: any }) {
+export function S2400CDP({ dados }: { dados: Record<string, unknown> }) {
+  const pii = usePiiMask();
+  const d = dados as {
+    cpfBenef?: string;
+    dtIniBenef?: string;
+    indOrigemBenef?: string;
+    nmBenef?: string;
+    tpBenef?: string;
+  };
   return (
     <div className="space-y-4 font-body">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -11,9 +19,11 @@ export function S2400CDP({ dados }: { dados: any }) {
           <CardContent className="p-4 flex items-start gap-3">
             <User className="h-4 w-4 text-primary mt-1" />
             <div>
-              <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">Beneficiário</Label>
-              <p className="font-display font-bold text-sm">CPF: {maskCpfDisplay(dados.cpfBenef)}</p>
-              {dados.nmBenef && <p className="text-xs text-muted-foreground">{dados.nmBenef}</p>}
+              <Label className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider">
+                Beneficiário
+              </Label>
+              <p className="font-display font-bold text-sm">CPF: {pii.cpf(d.cpfBenef)}</p>
+              {d.nmBenef && <p className="text-xs text-muted-foreground">{d.nmBenef}</p>}
             </div>
           </CardContent>
         </Card>
@@ -23,7 +33,7 @@ export function S2400CDP({ dados }: { dados: any }) {
             <Calendar className="h-4 w-4 text-primary mt-1" />
             <div>
               <Label className="text-[10px] uppercase text-primary font-bold tracking-wider">Início do Benefício</Label>
-              <p className="font-display font-bold text-sm text-primary">{dados.dtIniBenef || '-'}</p>
+              <p className="font-display font-bold text-sm text-primary">{d.dtIniBenef || '-'}</p>
               <p className="text-[10px] text-primary/70 italic">Concessão previdenciária</p>
             </div>
           </CardContent>
@@ -35,19 +45,21 @@ export function S2400CDP({ dados }: { dados: any }) {
           <Shield className="h-4 w-4 text-primary" />
           <span className="text-xs font-bold uppercase tracking-widest text-primary">Informações do Benefício</span>
         </div>
-        
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1">
             <Label className="text-[10px] text-muted-foreground">Tipo de Benefício</Label>
             <div className="flex items-center gap-2">
               <Heart className="h-3 w-3 text-primary" />
-              <span className="text-xs font-semibold">{dados.tpBenef || 'Previdenciário'}</span>
+              <span className="text-xs font-semibold">{d.tpBenef || 'Previdenciário'}</span>
             </div>
           </div>
-          
+
           <div className="space-y-1">
             <Label className="text-[10px] text-muted-foreground">Origem</Label>
-            <p className="text-xs font-semibold uppercase">{dados.indOrigemBenef === '1' ? 'Processo Judicial' : 'Concessão Administrativa'}</p>
+            <p className="text-xs font-semibold uppercase">
+              {d.indOrigemBenef === '1' ? 'Processo Judicial' : 'Concessão Administrativa'}
+            </p>
           </div>
         </div>
       </div>

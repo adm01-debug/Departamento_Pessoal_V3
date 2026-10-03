@@ -4,87 +4,60 @@
 -- forward migration makes the canonical deployment auditable without replaying
 -- the historical migration chain.
 
-ALTER VIEW public."dp_audit_log_colaborador" SET (security_invoker = true);
-REVOKE SELECT ON public."dp_audit_log_colaborador" FROM anon;
-ALTER VIEW public."dp_audit_log_rh" SET (security_invoker = true);
-REVOKE SELECT ON public."dp_audit_log_rh" FROM anon;
-ALTER VIEW public."dp_data_catalog_public" SET (security_invoker = true);
-REVOKE SELECT ON public."dp_data_catalog_public" FROM anon;
-ALTER VIEW public."dp_security_advisors" SET (security_invoker = true);
-REVOKE SELECT ON public."dp_security_advisors" FROM anon;
-ALTER VIEW public."dp_slow_queries" SET (security_invoker = true);
-REVOKE SELECT ON public."dp_slow_queries" FROM anon;
-ALTER VIEW public."excecoes_ponto" SET (security_invoker = true);
-REVOKE SELECT ON public."excecoes_ponto" FROM anon;
-ALTER VIEW public."pontos_abertos" SET (security_invoker = true);
-REVOKE SELECT ON public."pontos_abertos" FROM anon;
-ALTER VIEW public."v_alertas_timeout" SET (security_invoker = true);
-REVOKE SELECT ON public."v_alertas_timeout" FROM anon;
-ALTER VIEW public."v_audit_events_unified" SET (security_invoker = true);
-REVOKE SELECT ON public."v_audit_events_unified" FROM anon;
-ALTER VIEW public."v_audit_legacy" SET (security_invoker = true);
-REVOKE SELECT ON public."v_audit_legacy" FROM anon;
-ALTER VIEW public."v_audit_trail" SET (security_invoker = true);
-REVOKE SELECT ON public."v_audit_trail" FROM anon;
-ALTER VIEW public."v_contrato_token_timeline" SET (security_invoker = true);
-REVOKE SELECT ON public."v_contrato_token_timeline" FROM anon;
-ALTER VIEW public."v_contratos_assinatura_kpi" SET (security_invoker = true);
-REVOKE SELECT ON public."v_contratos_assinatura_kpi" FROM anon;
-ALTER VIEW public."v_contratos_tokens_pendentes" SET (security_invoker = true);
-REVOKE SELECT ON public."v_contratos_tokens_pendentes" FROM anon;
-ALTER VIEW public."v_contratos_vencendo" SET (security_invoker = true);
-REVOKE SELECT ON public."v_contratos_vencendo" FROM anon;
-ALTER VIEW public."v_ferias_adiant13_elegibilidade" SET (security_invoker = true);
-REVOKE SELECT ON public."v_ferias_adiant13_elegibilidade" FROM anon;
-ALTER VIEW public."v_ferias_alerta_pagamento_d2" SET (security_invoker = true);
-REVOKE SELECT ON public."v_ferias_alerta_pagamento_d2" FROM anon;
-ALTER VIEW public."v_ferias_alertas_criticos" SET (security_invoker = true);
-REVOKE SELECT ON public."v_ferias_alertas_criticos" FROM anon;
-ALTER VIEW public."v_ferias_folha_reconciliacao" SET (security_invoker = true);
-REVOKE SELECT ON public."v_ferias_folha_reconciliacao" FROM anon;
-ALTER VIEW public."v_idempotency_metrics" SET (security_invoker = true);
-REVOKE SELECT ON public."v_idempotency_metrics" FROM anon;
-ALTER VIEW public."v_slow_queries_top50" SET (security_invoker = true);
-REVOKE SELECT ON public."v_slow_queries_top50" FROM anon;
-ALTER VIEW public."vw_alertas_compensacao" SET (security_invoker = true);
-REVOKE SELECT ON public."vw_alertas_compensacao" FROM anon;
-ALTER VIEW public."vw_alertas_rh" SET (security_invoker = true);
-REVOKE SELECT ON public."vw_alertas_rh" FROM anon;
-ALTER VIEW public."vw_banco_horas_saldo" SET (security_invoker = true);
-REVOKE SELECT ON public."vw_banco_horas_saldo" FROM anon;
-ALTER VIEW public."vw_batidas_dia" SET (security_invoker = true);
-REVOKE SELECT ON public."vw_batidas_dia" FROM anon;
-ALTER VIEW public."vw_batidas_resumo" SET (security_invoker = true);
-REVOKE SELECT ON public."vw_batidas_resumo" FROM anon;
-ALTER VIEW public."vw_cadastro_incompleto" SET (security_invoker = true);
-REVOKE SELECT ON public."vw_cadastro_incompleto" FROM anon;
-ALTER VIEW public."vw_colaboradores_completo" SET (security_invoker = true);
-REVOKE SELECT ON public."vw_colaboradores_completo" FROM anon;
-ALTER VIEW public."vw_dashboard_time" SET (security_invoker = true);
-REVOKE SELECT ON public."vw_dashboard_time" FROM anon;
-ALTER VIEW public."vw_espelho_ponto_mensal" SET (security_invoker = true);
-REVOKE SELECT ON public."vw_espelho_ponto_mensal" FROM anon;
-ALTER VIEW public."vw_faltas_mensal" SET (security_invoker = true);
-REVOKE SELECT ON public."vw_faltas_mensal" FROM anon;
-ALTER VIEW public."vw_ferias_resumo" SET (security_invoker = true);
-REVOKE SELECT ON public."vw_ferias_resumo" FROM anon;
-ALTER VIEW public."vw_folha_compliance" SET (security_invoker = true);
-REVOKE SELECT ON public."vw_folha_compliance" FROM anon;
-ALTER VIEW public."vw_folha_ponto_mensal" SET (security_invoker = true);
-REVOKE SELECT ON public."vw_folha_ponto_mensal" FROM anon;
-ALTER VIEW public."vw_kpi_absenteismo" SET (security_invoker = true);
-REVOKE SELECT ON public."vw_kpi_absenteismo" FROM anon;
-ALTER VIEW public."vw_kpi_beneficios_custo" SET (security_invoker = true);
-REVOKE SELECT ON public."vw_kpi_beneficios_custo" FROM anon;
-ALTER VIEW public."vw_kpi_ponto_resumo" SET (security_invoker = true);
-REVOKE SELECT ON public."vw_kpi_ponto_resumo" FROM anon;
-ALTER VIEW public."vw_kpi_turnover" SET (security_invoker = true);
-REVOKE SELECT ON public."vw_kpi_turnover" FROM anon;
-ALTER VIEW public."vw_matriz_nine_box" SET (security_invoker = true);
-REVOKE SELECT ON public."vw_matriz_nine_box" FROM anon;
-ALTER VIEW public."vw_metricas_fila" SET (security_invoker = true);
-REVOKE SELECT ON public."vw_metricas_fila" FROM anon;
-ALTER VIEW public."vw_passivo_trabalhista_consolidado" SET (security_invoker = true);
-REVOKE SELECT ON public."vw_passivo_trabalhista_consolidado" FROM anon;
-ALTER VIEW public."vw_saldo_compensacao_mensal" SET (security_invoker = true);
-REVOKE SELECT ON public."vw_saldo_compensacao_mensal" FROM anon;
+DO $$
+DECLARE
+  view_name text;
+  expected_views text[] := ARRAY[
+    'dp_audit_log_colaborador',
+    'dp_audit_log_rh',
+    'dp_data_catalog_public',
+    'dp_security_advisors',
+    'dp_slow_queries',
+    'excecoes_ponto',
+    'pontos_abertos',
+    'v_alertas_timeout',
+    'v_audit_events_unified',
+    'v_audit_legacy',
+    'v_audit_trail',
+    'v_contrato_token_timeline',
+    'v_contratos_assinatura_kpi',
+    'v_contratos_tokens_pendentes',
+    'v_contratos_vencendo',
+    'v_ferias_adiant13_elegibilidade',
+    'v_ferias_alerta_pagamento_d2',
+    'v_ferias_alertas_criticos',
+    'v_ferias_folha_reconciliacao',
+    'v_idempotency_metrics',
+    'v_slow_queries_top50',
+    'vw_alertas_compensacao',
+    'vw_alertas_rh',
+    'vw_banco_horas_saldo',
+    'vw_batidas_dia',
+    'vw_batidas_resumo',
+    'vw_cadastro_incompleto',
+    'vw_colaboradores_completo',
+    'vw_dashboard_time',
+    'vw_espelho_ponto_mensal',
+    'vw_faltas_mensal',
+    'vw_ferias_resumo',
+    'vw_folha_compliance',
+    'vw_folha_ponto_mensal',
+    'vw_kpi_absenteismo',
+    'vw_kpi_beneficios_custo',
+    'vw_kpi_ponto_resumo',
+    'vw_kpi_turnover',
+    'vw_matriz_nine_box',
+    'vw_metricas_fila',
+    'vw_passivo_trabalhista_consolidado',
+    'vw_saldo_compensacao_mensal'
+  ];
+BEGIN
+  FOREACH view_name IN ARRAY expected_views LOOP
+    IF to_regclass('public.' || view_name) IS NOT NULL THEN
+      EXECUTE format('ALTER VIEW public.%I SET (security_invoker = true)', view_name);
+      EXECUTE format('REVOKE SELECT ON public.%I FROM anon', view_name);
+    ELSE
+      RAISE NOTICE 'view public.% ausente (drift) — ACL não alterada', view_name;
+    END IF;
+  END LOOP;
+END $$;

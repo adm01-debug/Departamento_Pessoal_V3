@@ -35,9 +35,9 @@ function makeListChain(data: any[], error: any = null) {
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
   chain.limit = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, chain };
@@ -57,7 +57,9 @@ function makeSingleChain(data: any, error: any = null) {
 // ─── listar ───────────────────────────────────────────────────────────────────
 
 describe('contratoTemplateService.listar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns templates list', async () => {
     const templates = [{ id: 'tpl-1', nome: 'CLT Padrão', tipo_contrato: 'clt_indeterminado' }];
@@ -67,7 +69,7 @@ describe('contratoTemplateService.listar', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    makeListChain(null as any);
+    makeListChain(null as never);
     const result = await contratoTemplateService.listar(EMPRESA_ID);
     expect(result).toEqual([]);
   });
@@ -81,7 +83,9 @@ describe('contratoTemplateService.listar', () => {
 // ─── obter ────────────────────────────────────────────────────────────────────
 
 describe('contratoTemplateService.obter', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns template by id', async () => {
     const tpl = { id: 'tpl-1', nome: 'Estágio' };
@@ -106,7 +110,9 @@ describe('contratoTemplateService.obter', () => {
 // ─── salvar (insert) ──────────────────────────────────────────────────────────
 
 describe('contratoTemplateService.salvar — insert (no id)', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts new template and returns it', async () => {
     const newTpl = { id: 'tpl-new', nome: 'PJ', tipo_contrato: 'pj', empresa_id: EMPRESA_ID, corpo_html: '<p/>' };
@@ -132,7 +138,12 @@ describe('contratoTemplateService.salvar — insert (no id)', () => {
     mockFrom.mockReturnValue({ insert: insertFn });
 
     await expect(
-      contratoTemplateService.salvar({ empresa_id: EMPRESA_ID, nome: 'X', tipo_contrato: 'clt_indeterminado', corpo_html: '' })
+      contratoTemplateService.salvar({
+        empresa_id: EMPRESA_ID,
+        nome: 'X',
+        tipo_contrato: 'clt_indeterminado',
+        corpo_html: '',
+      })
     ).rejects.toBeDefined();
   });
 });
@@ -140,10 +151,18 @@ describe('contratoTemplateService.salvar — insert (no id)', () => {
 // ─── salvar (update) ──────────────────────────────────────────────────────────
 
 describe('contratoTemplateService.salvar — update (with id)', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates existing template and returns it', async () => {
-    const updated = { id: 'tpl-1', nome: 'Updated', tipo_contrato: 'clt_indeterminado', empresa_id: EMPRESA_ID, corpo_html: '<p/>' };
+    const updated = {
+      id: 'tpl-1',
+      nome: 'Updated',
+      tipo_contrato: 'clt_indeterminado',
+      empresa_id: EMPRESA_ID,
+      corpo_html: '<p/>',
+    };
     const singleFn = vi.fn().mockResolvedValue({ data: updated, error: null });
     const selectFn = vi.fn().mockReturnValue({ single: singleFn });
     const eqFn = vi.fn().mockReturnValue({ select: selectFn });
@@ -166,7 +185,9 @@ describe('contratoTemplateService.salvar — update (with id)', () => {
 // ─── excluir ──────────────────────────────────────────────────────────────────
 
 describe('contratoTemplateService.excluir', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes by id', async () => {
     const eqFn = vi.fn().mockResolvedValue({ error: null });
@@ -189,7 +210,9 @@ describe('contratoTemplateService.excluir', () => {
 // ─── listarGerados ────────────────────────────────────────────────────────────
 
 describe('contratoTemplateService.listarGerados', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns gerados list', async () => {
     const gerados = [{ id: 'g-1', status: 'gerado' }];
@@ -199,7 +222,7 @@ describe('contratoTemplateService.listarGerados', () => {
   });
 
   it('returns empty array on null data', async () => {
-    makeListChain(null as any);
+    makeListChain(null as never);
     const result = await contratoTemplateService.listarGerados(EMPRESA_ID);
     expect(result).toEqual([]);
   });
@@ -208,7 +231,9 @@ describe('contratoTemplateService.listarGerados', () => {
 // ─── downloadUrl ─────────────────────────────────────────────────────────────
 
 describe('contratoTemplateService.downloadUrl', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns signed url', async () => {
     const createSignedUrl = vi.fn().mockResolvedValue({ data: { signedUrl: 'https://signed.url' }, error: null });
@@ -229,17 +254,21 @@ describe('contratoTemplateService.downloadUrl', () => {
 // ─── listarEventos ────────────────────────────────────────────────────────────
 
 describe('contratoTemplateService.listarEventos', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns events for contrato', async () => {
-    const events = [{ id: 'ev-1', evento: 'visualizado', detalhes: null, ip: '1.1.1.1', user_agent: null, created_at: '2026-07-24' }];
+    const events = [
+      { id: 'ev-1', evento: 'visualizado', detalhes: null, ip: '1.1.1.1', user_agent: null, created_at: '2026-07-24' },
+    ];
     makeListChain(events);
     const result = await contratoTemplateService.listarEventos('c-1');
     expect(result).toEqual(events);
   });
 
   it('returns empty array on null', async () => {
-    makeListChain(null as any);
+    makeListChain(null as never);
     const result = await contratoTemplateService.listarEventos('c-1');
     expect(result).toEqual([]);
   });

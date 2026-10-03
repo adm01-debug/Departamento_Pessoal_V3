@@ -14,16 +14,18 @@ function setupChain(data: any[], error: any = null) {
   const response = { data, error };
   const chain: any = {};
   chain.eq = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, chain };
 }
 
 describe('pontoAbertoService.listar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns pontos without filter', async () => {
     const records = [{ id: 'p1', colaborador_id: 'c1' }];
@@ -32,7 +34,7 @@ describe('pontoAbertoService.listar', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupChain(null as any);
+    setupChain(null as never);
     expect(await pontoAbertoService.listar(EMPRESA_ID)).toEqual([]);
   });
 

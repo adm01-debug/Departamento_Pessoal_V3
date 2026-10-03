@@ -3,8 +3,8 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { AdiantamentosTable } from '../descontos/AdiantamentosTable';
 
-const cn = (...args: any[]) => args.filter(Boolean).join(' ');
-const fmt = (v: number) => `R$ ${v.toFixed(2)}`;
+const cn = (...args: unknown[]) => args.filter(Boolean).join(' ');
+const fmt = (v: number | null) => `R$ ${(v ?? 0).toFixed(2)}`;
 
 const SAMPLE = [
   {

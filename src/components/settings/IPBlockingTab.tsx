@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { TablesInsert } from '@/integrations/supabase/types';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -46,7 +47,7 @@ export function IPBlockingTab() {
       const reason = form.reason.trim().slice(0, 200);
       const hours = Math.max(1, Math.min(8760, Number(form.hours) || 24));
 
-      const payload: any = {
+      const payload: TablesInsert<'blocked_ips'> = {
         ip_address: ip,
         reason: reason || null,
         permanent: form.permanent,
@@ -66,7 +67,7 @@ export function IPBlockingTab() {
       setOpen(false);
       setForm({ ip_address: '', reason: '', permanent: true, hours: '24' });
     },
-    onError: (err: any) => toast.error(safeErrorMessage(err, 'Erro ao bloquear IP.')),
+    onError: (err) => toast.error(safeErrorMessage(err, 'Erro ao bloquear IP.')),
   });
 
   const desbloquear = useMutation({
@@ -80,7 +81,7 @@ export function IPBlockingTab() {
     },
   });
 
-  const ativos = blockedIps.filter((ip: any) => ip.permanent || !ip.expires_at || new Date(ip.expires_at) > new Date());
+  const ativos = blockedIps.filter((ip) => ip.permanent || !ip.expires_at || new Date(ip.expires_at) > new Date());
   const expirados = blockedIps.length - ativos.length;
 
   if (isLoading)
@@ -203,7 +204,7 @@ export function IPBlockingTab() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {blockedIps.map((ip: any) => {
+                {blockedIps.map((ip) => {
                   const ativo = ip.permanent || !ip.expires_at || new Date(ip.expires_at) > new Date();
                   return (
                     <TableRow

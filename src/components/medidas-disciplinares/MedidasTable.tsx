@@ -4,22 +4,36 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
-import { Trash2, Users, CheckCircle2, XCircle, ExternalLink, AlertTriangle, FileDown, Loader2, MessageSquareWarning, Link2 } from 'lucide-react';
+import {
+  Trash2,
+  Users,
+  CheckCircle2,
+  XCircle,
+  ExternalLink,
+  AlertTriangle,
+  FileDown,
+  Loader2,
+  MessageSquareWarning,
+  Link2,
+} from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { safeHref } from '@/utils/safeUrl';
+import type { MedidaDisciplinarComColaborador } from '@/types/medidasDisciplinares';
 
 const tipoLabels: Record<string, string> = {
   advertencia_verbal: 'Adv. Verbal',
   advertencia_escrita: 'Adv. Escrita',
   suspensao: 'Suspensão',
-  justa_causa: 'Justa Causa'};
+  justa_causa: 'Justa Causa',
+};
 
 const gravidade: Record<string, 'secondary' | 'default' | 'destructive'> = {
   advertencia_verbal: 'secondary',
   advertencia_escrita: 'default',
   suspensao: 'destructive',
-  justa_causa: 'destructive'};
+  justa_causa: 'destructive',
+};
 
 const artigosCLT: Record<string, string> = {
   art_482_a: 'Art. 482, a — Improbidade',
@@ -33,22 +47,34 @@ const artigosCLT: Record<string, string> = {
   art_482_i: 'Art. 482, i — Insubordinação',
   art_482_j: 'Art. 482, j — Abandono',
   art_482_k: 'Art. 482, k — Ato lesivo',
-  outro: 'Outro'};
+  outro: 'Outro',
+};
 
 interface MedidasTableProps {
-  data: any[];
+  data: MedidaDisciplinarComColaborador[];
   onMarcarCiencia: (id: string) => void;
   onExcluir: (id: string) => void;
   onGerarPDF?: (id: string) => void;
-  onAbrirContestacao?: (m: any) => void;
-  onGerarLinkCiencia?: (m: any) => void;
+  onAbrirContestacao?: (m: MedidaDisciplinarComColaborador) => void;
+  onGerarLinkCiencia?: (m: MedidaDisciplinarComColaborador) => void;
   gerandoPDFId?: string | null;
 }
 
-export function MedidasTable({ data, onMarcarCiencia, onExcluir, onGerarPDF, onAbrirContestacao, onGerarLinkCiencia, gerandoPDFId }: MedidasTableProps) {
-
+export function MedidasTable({
+  data,
+  onMarcarCiencia,
+  onExcluir,
+  onGerarPDF,
+  onAbrirContestacao,
+  onGerarLinkCiencia,
+  gerandoPDFId,
+}: MedidasTableProps) {
   const formatDate = (d: string) => {
-    try { return format(parseISO(d), 'dd/MM/yyyy', { locale: ptBR }); } catch { return d; }
+    try {
+      return format(parseISO(d), 'dd/MM/yyyy', { locale: ptBR });
+    } catch {
+      return d;
+    }
   };
 
   return (
@@ -116,12 +142,22 @@ export function MedidasTable({ data, onMarcarCiencia, onExcluir, onGerarPDF, onA
                           <TooltipTrigger asChild>
                             <div className="flex items-center gap-1 cursor-default">
                               <Users className="h-3 w-3 text-muted-foreground" />
-                              <span className="text-xs">{[m.testemunha_1_nome, m.testemunha_2_nome].filter(Boolean).length}</span>
+                              <span className="text-xs">
+                                {[m.testemunha_1_nome, m.testemunha_2_nome].filter(Boolean).length}
+                              </span>
                             </div>
                           </TooltipTrigger>
                           <TooltipContent className="text-xs">
-                            <div>{m.testemunha_1_nome}{m.testemunha_1_cpf && ` (${m.testemunha_1_cpf})`}</div>
-                            {m.testemunha_2_nome && <div>{m.testemunha_2_nome}{m.testemunha_2_cpf && ` (${m.testemunha_2_cpf})`}</div>}
+                            <div>
+                              {m.testemunha_1_nome}
+                              {m.testemunha_1_cpf && ` (${m.testemunha_1_cpf})`}
+                            </div>
+                            {m.testemunha_2_nome && (
+                              <div>
+                                {m.testemunha_2_nome}
+                                {m.testemunha_2_cpf && ` (${m.testemunha_2_cpf})`}
+                              </div>
+                            )}
                           </TooltipContent>
                         </Tooltip>
                       ) : (
@@ -188,38 +224,66 @@ export function MedidasTable({ data, onMarcarCiencia, onExcluir, onGerarPDF, onA
                                 disabled={gerandoPDFId === m.id}
                                 aria-label="Gerar documento PDF"
                               >
-                                {gerandoPDFId === m.id
-                                  ? <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
-                                  : <FileDown className="h-3.5 w-3.5 text-primary" />}
+                                {gerandoPDFId === m.id ? (
+                                  <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                                ) : (
+                                  <FileDown className="h-3.5 w-3.5 text-primary" />
+                                )}
                               </Button>
                             </TooltipTrigger>
-                            <TooltipContent>{m.pdf_url ? 'Regerar documento assinável' : 'Gerar documento assinável (PDF)'}</TooltipContent>
+                            <TooltipContent>
+                              {m.pdf_url ? 'Regerar documento assinável' : 'Gerar documento assinável (PDF)'}
+                            </TooltipContent>
                           </Tooltip>
                         )}
                         {onGerarLinkCiencia && !m.colaborador_ciente && !m.recusa_assinatura && (
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button size="icon" variant="ghost" className="h-7 w-7 rounded-lg" onClick={() => onGerarLinkCiencia(m)} aria-label="Gerar link de ciência">
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="h-7 w-7 rounded-lg"
+                                onClick={() => onGerarLinkCiencia(m)}
+                                aria-label="Gerar link de ciência"
+                              >
                                 <Link2 className="h-3.5 w-3.5 text-muted-foreground" />
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>Gerar link de ciência digital</TooltipContent>
                           </Tooltip>
                         )}
-                        {onAbrirContestacao && ['aplicada','contestada'].includes(m.status_workflow) && (
+                        {onAbrirContestacao && ['aplicada', 'contestada'].includes(m.status_workflow ?? '') && (
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button size="icon" variant="ghost" className="h-7 w-7 rounded-lg" onClick={() => onAbrirContestacao(m)} aria-label="Contestação">
-                                <MessageSquareWarning className={`h-3.5 w-3.5 ${m.status_workflow === 'contestada' ? 'text-warning' : 'text-muted-foreground'}`} />
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="h-7 w-7 rounded-lg"
+                                onClick={() => onAbrirContestacao(m)}
+                                aria-label="Contestação"
+                              >
+                                <MessageSquareWarning
+                                  className={`h-3.5 w-3.5 ${m.status_workflow === 'contestada' ? 'text-warning' : 'text-muted-foreground'}`}
+                                />
                               </Button>
                             </TooltipTrigger>
-                            <TooltipContent>{m.status_workflow === 'contestada' ? 'Contestação pendente de resposta' : 'Ver / contestar'}</TooltipContent>
+                            <TooltipContent>
+                              {m.status_workflow === 'contestada'
+                                ? 'Contestação pendente de resposta'
+                                : 'Ver / contestar'}
+                            </TooltipContent>
                           </Tooltip>
                         )}
 
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Button size="icon" variant="ghost" className="h-7 w-7 rounded-lg" onClick={() => onExcluir(m.id)} aria-label="Excluir">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-7 w-7 rounded-lg"
+                              onClick={() => onExcluir(m.id)}
+                              aria-label="Excluir"
+                            >
                               <Trash2 className="h-3.5 w-3.5 text-destructive" />
                             </Button>
                           </TooltipTrigger>
@@ -265,15 +329,30 @@ export function MedidasTable({ data, onMarcarCiencia, onExcluir, onGerarPDF, onA
                   <span className="text-[10px] text-muted-foreground">{formatDate(m.data_ocorrencia)}</span>
                   <div className="flex items-center gap-2">
                     {m.colaborador_ciente ? (
-                      <Badge variant="secondary" className="text-[10px]">Ciente</Badge>
+                      <Badge variant="secondary" className="text-[10px]">
+                        Ciente
+                      </Badge>
                     ) : m.recusa_assinatura ? (
-                      <Badge variant="destructive" className="text-[10px]">Recusou</Badge>
+                      <Badge variant="destructive" className="text-[10px]">
+                        Recusou
+                      </Badge>
                     ) : (
-                      <Button size="sm" variant="outline" className="h-6 text-[10px] rounded-lg" onClick={() => onMarcarCiencia(m.id)}>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-6 text-[10px] rounded-lg"
+                        onClick={() => onMarcarCiencia(m.id)}
+                      >
                         Ciência
                       </Button>
                     )}
-                    <Button size="icon" variant="ghost" className="h-7 w-7 rounded-lg" onClick={() => onExcluir(m.id)} aria-label="Excluir">
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-7 w-7 rounded-lg"
+                      onClick={() => onExcluir(m.id)}
+                      aria-label="Excluir"
+                    >
                       <Trash2 className="h-3.5 w-3.5 text-destructive" />
                     </Button>
                   </div>
@@ -281,9 +360,7 @@ export function MedidasTable({ data, onMarcarCiencia, onExcluir, onGerarPDF, onA
               </motion.div>
             ))}
             {data.length === 0 && (
-              <div className="text-center py-8 text-muted-foreground text-sm font-body">
-                Nenhuma medida encontrada
-              </div>
+              <div className="text-center py-8 text-muted-foreground text-sm font-body">Nenhuma medida encontrada</div>
             )}
           </div>
         </TooltipProvider>

@@ -1,9 +1,10 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
 }));
 
@@ -60,49 +61,49 @@ describe('SSTProgramasTab', () => {
 
   it('renders PGR sigla when programs provided', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_PROGRAMAS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_PROGRAMAS, isLoading: false } as never);
     render(<SSTProgramasTab />);
     expect(screen.getByText('PGR')).toBeInTheDocument();
   });
 
   it('renders NR badge for PGR', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_PROGRAMAS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_PROGRAMAS, isLoading: false } as never);
     render(<SSTProgramasTab />);
     expect(screen.getByText('NR-1/9')).toBeInTheDocument();
   });
 
   it('renders PCMSO sigla when programs provided', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_PROGRAMAS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_PROGRAMAS, isLoading: false } as never);
     render(<SSTProgramasTab />);
     expect(screen.getByText('PCMSO')).toBeInTheDocument();
   });
 
   it('renders program titulo', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_PROGRAMAS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_PROGRAMAS, isLoading: false } as never);
     render(<SSTProgramasTab />);
     expect(screen.getByText('Programa de Gerenciamento de Riscos')).toBeInTheDocument();
   });
 
   it('shows spinner when loading', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: true } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: true } as never);
     const { container } = render(<SSTProgramasTab />);
     expect(container.querySelector('.animate-spin')).toBeInTheDocument();
   });
 
   it('renders correctly with empty empresaAtual (no empresa)', async () => {
     const { useEmpresa } = await import('@/contexts');
-    vi.mocked(useEmpresa).mockReturnValueOnce({ empresaAtual: null } as any);
+    vi.mocked(useEmpresa).mockReturnValueOnce({ empresaAtual: null } as never);
     render(<SSTProgramasTab />);
     expect(screen.getByText('Nenhum programa ou laudo cadastrado.')).toBeInTheDocument();
   });
 
   it('renders NR-7 badge for PCMSO', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_PROGRAMAS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_PROGRAMAS, isLoading: false } as never);
     render(<SSTProgramasTab />);
     expect(screen.getByText('NR-7')).toBeInTheDocument();
   });

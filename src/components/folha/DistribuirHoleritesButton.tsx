@@ -71,7 +71,10 @@ export function DistribuirHoleritesButton({ competencia }: Props) {
   });
 
   const canaisSelecionados = useMemo(
-    () => Object.entries(selected).filter(([, v]) => v).map(([k]) => k),
+    () =>
+      Object.entries(selected)
+        .filter(([, v]) => v)
+        .map(([k]) => k),
     [selected]
   );
 
@@ -93,7 +96,7 @@ export function DistribuirHoleritesButton({ competencia }: Props) {
       qc.invalidateQueries({ queryKey: ['notificacoes'] });
       setOpen(false);
     },
-    onError: (err: any) => toast.error(safeErrorMessage(err, 'Falha na distribuição de holerites.')),
+    onError: (err) => toast.error(safeErrorMessage(err, 'Falha na distribuição de holerites.')),
   });
 
   return (
@@ -133,7 +136,12 @@ export function DistribuirHoleritesButton({ competencia }: Props) {
                   {s && (
                     <p className="text-[10px] text-muted-foreground mt-1">
                       Já enviados: <span className="text-success font-medium">{s.enviado}</span>
-                      {s.falhou > 0 && <> · Falhas: <span className="text-destructive">{s.falhou}</span></>}
+                      {s.falhou > 0 && (
+                        <>
+                          {' '}
+                          · Falhas: <span className="text-destructive">{s.falhou}</span>
+                        </>
+                      )}
                     </p>
                   )}
                 </div>

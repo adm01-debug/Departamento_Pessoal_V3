@@ -1,16 +1,18 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
-    tr: ({ children, ...rest }: any) => <tr {...rest}>{children}</tr>,
+    div: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <div {...rest}>{children}</div>,
+    tr: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <tr {...rest}>{children}</tr>,
   },
 }));
 
 import { MedidasTable } from '../medidas-disciplinares/MedidasTable';
 import { MedidasTimeline } from '../medidas-disciplinares/MedidasTimeline';
+import type { MedidaDisciplinarComColaborador } from '@/types/medidasDisciplinares';
 
 const MEDIDAS = [
   {
@@ -37,7 +39,7 @@ const MEDIDAS = [
     testemunhas: null,
     numero_ocorrencia: 2,
   },
-];
+] as unknown as MedidaDisciplinarComColaborador[];
 
 describe('MedidasTable', () => {
   it('shows empty state when no data (desktop)', () => {

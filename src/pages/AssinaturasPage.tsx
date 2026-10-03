@@ -7,13 +7,24 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
-  PenTool, FileText, CheckCircle2, Clock, AlertCircle, Search,
-  Send, Eye, Download, XCircle, Users, RefreshCw
+  PenTool,
+  FileText,
+  CheckCircle2,
+  Clock,
+  AlertCircle,
+  Search,
+  Send,
+  Eye,
+  Download,
+  XCircle,
+  Users,
+  RefreshCw,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAssinaturas } from '@/hooks/useAssinaturas';
 
-const statusConfig: Record<string, { label: string; color: string; icon: any }> = {
+const statusConfig: Record<string, { label: string; color: string; icon: LucideIcon }> = {
   pendente: { label: 'Pendente', color: 'bg-warning/10 text-warning border-warning/30', icon: Clock },
   assinado: { label: 'Assinado', color: 'bg-success/10 text-success border-success/30', icon: CheckCircle2 },
   expirado: { label: 'Expirado', color: 'bg-muted text-muted-foreground border-border', icon: AlertCircle },
@@ -26,10 +37,11 @@ export default function AssinaturasPage(): React.ReactElement {
   const { documentos, stats, isLoading, refetch } = useAssinaturas();
 
   const filtered = documentos
-    .filter(d => filter === 'todos' || d.status === filter)
-    .filter(d =>
-      d.titulo.toLowerCase().includes(search.toLowerCase()) ||
-      d.colaborador.toLowerCase().includes(search.toLowerCase())
+    .filter((d) => filter === 'todos' || d.status === filter)
+    .filter(
+      (d) =>
+        d.titulo.toLowerCase().includes(search.toLowerCase()) ||
+        d.colaborador.toLowerCase().includes(search.toLowerCase())
     );
 
   return (
@@ -44,7 +56,9 @@ export default function AssinaturasPage(): React.ReactElement {
             <Button variant="outline" size="icon" onClick={() => refetch()} aria-label="Atualizar">
               <RefreshCw className="w-4 h-4" />
             </Button>
-            <Button><Send className="w-4 h-4 mr-2" /> Enviar para Assinatura</Button>
+            <Button>
+              <Send className="w-4 h-4 mr-2" /> Enviar para Assinatura
+            </Button>
           </div>
         }
       >
@@ -55,10 +69,10 @@ export default function AssinaturasPage(): React.ReactElement {
             { label: 'Pendentes', value: stats.pendentes, icon: Clock, color: 'text-warning' },
             { label: 'Assinados', value: stats.assinados, icon: CheckCircle2, color: 'text-success' },
             { label: 'Expirados', value: stats.expirados, icon: AlertCircle, color: 'text-muted-foreground' },
-          ].map(s => (
+          ].map((s) => (
             <Card key={s.label}>
               <CardContent className="p-4 flex items-center gap-3">
-                <s.icon className={cn("w-8 h-8", s.color)} />
+                <s.icon className={cn('w-8 h-8', s.color)} />
                 <div>
                   {isLoading ? (
                     <Skeleton className="h-7 w-10" />
@@ -76,11 +90,22 @@ export default function AssinaturasPage(): React.ReactElement {
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input placeholder="Buscar documento ou colaborador..." className="pl-10" value={search} onChange={e => setSearch(e.target.value)} />
+            <Input
+              placeholder="Buscar documento ou colaborador..."
+              className="pl-10"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
           </div>
           <div className="flex gap-2 flex-wrap">
-            {['todos', 'pendente', 'assinado', 'expirado', 'recusado'].map(f => (
-              <Button key={f} variant={filter === f ? 'default' : 'outline'} size="sm" onClick={() => setFilter(f)} className="capitalize">
+            {['todos', 'pendente', 'assinado', 'expirado', 'recusado'].map((f) => (
+              <Button
+                key={f}
+                variant={filter === f ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setFilter(f)}
+                className="capitalize"
+              >
                 {f === 'todos' ? 'Todos' : statusConfig[f]?.label || f}
               </Button>
             ))}
@@ -90,7 +115,7 @@ export default function AssinaturasPage(): React.ReactElement {
         {/* Loading state */}
         {isLoading && (
           <div className="space-y-3">
-            {[1, 2, 3].map(i => (
+            {[1, 2, 3].map((i) => (
               <Card key={i}>
                 <CardContent className="p-4 flex items-center gap-4">
                   <Skeleton className="w-10 h-10 rounded-lg" />
@@ -108,7 +133,7 @@ export default function AssinaturasPage(): React.ReactElement {
         {/* Documents */}
         {!isLoading && (
           <div className="space-y-3">
-            {filtered.map(doc => {
+            {filtered.map((doc) => {
               const sc = statusConfig[doc.status];
               const StatusIcon = sc.icon;
               return (
@@ -129,17 +154,24 @@ export default function AssinaturasPage(): React.ReactElement {
                         {doc.assinadoEm && (
                           <>
                             <span>·</span>
-                            <span className="text-success">Assinado em {new Date(doc.assinadoEm).toLocaleDateString('pt-BR')}</span>
+                            <span className="text-success">
+                              Assinado em {new Date(doc.assinadoEm).toLocaleDateString('pt-BR')}
+                            </span>
                           </>
                         )}
                       </div>
                     </div>
-                    <Badge variant="outline" className={cn("shrink-0", sc.color)}>
-                      <StatusIcon className="w-3 h-3 mr-1" />{sc.label}
+                    <Badge variant="outline" className={cn('shrink-0', sc.color)}>
+                      <StatusIcon className="w-3 h-3 mr-1" />
+                      {sc.label}
                     </Badge>
                     <div className="flex gap-1 shrink-0">
-                      <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Visualizar documento"><Eye className="w-4 h-4" /></Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Baixar documento"><Download className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Visualizar documento">
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Baixar documento">
+                        <Download className="w-4 h-4" />
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>

@@ -1,10 +1,11 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
 }));
 
@@ -14,7 +15,12 @@ vi.mock('sonner', () => ({
 
 vi.mock('@/services/edgeFunctionsService', () => ({
   edgeFunctionsService: {
-    healthcheck: vi.fn().mockResolvedValue({ status: 'healthy', services: {}, total_latency_ms: 12, timestamp: new Date().toISOString() }),
+    healthcheck: vi.fn().mockResolvedValue({
+      status: 'healthy',
+      services: {},
+      total_latency_ms: 12,
+      timestamp: new Date().toISOString(),
+    }),
     limpezaDados: vi.fn().mockResolvedValue({ total_cleaned: 5, results: {} }),
     backupServidor: vi.fn().mockResolvedValue({ message: 'Backup OK', total_records: 100, tables: {} }),
     dispararAlertasDP: vi.fn().mockResolvedValue({}),

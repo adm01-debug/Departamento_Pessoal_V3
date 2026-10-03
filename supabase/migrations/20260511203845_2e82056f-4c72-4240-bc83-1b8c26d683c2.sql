@@ -12,7 +12,8 @@ ALTER TABLE public.epis ENABLE ROW LEVEL SECURITY;
 DO $$ 
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Empresas can manage their own epis' AND tablename = 'epis') THEN
-        CREATE POLICY "Empresas can manage their own epis" 
+        DROP POLICY IF EXISTS "Empresas can manage their own epis" ON public.epis;
+CREATE POLICY "Empresas can manage their own epis" 
         ON public.epis 
         FOR ALL 
         USING (empresa_id IN (SELECT id FROM empresas));

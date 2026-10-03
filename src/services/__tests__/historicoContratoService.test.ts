@@ -29,9 +29,9 @@ function setupInsertChain(data: any, error: any = null) {
 function setupDeleteChain(error: any = null) {
   const eqFn = vi.fn();
   const __delChain = {
-    then: (r: any) => Promise.resolve({ error }).then(r),
-    catch: (r: any) => Promise.resolve({ error }).catch(r),
-    finally: (r: any) => Promise.resolve({ error }).finally(r),
+    then: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).then(r),
+    catch: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).catch(r),
+    finally: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).finally(r),
     eq: eqFn,
   };
   eqFn.mockReturnValue(__delChain);
@@ -55,7 +55,7 @@ describe('historicoContratoService.listar', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as any);
+    setupListChain(null as never);
     expect(await historicoContratoService.listar('c1', EMPRESA_ID)).toEqual([]);
   });
 

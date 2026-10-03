@@ -7,6 +7,10 @@ export type DespesaStatus =
 export type DespesaTipo =
   'reembolso' | 'adiantamento' | 'despesa_viagem' | 'material' | 'alimentacao' | 'transporte' | 'outro';
 
+export type DespesaComColaborador = Tables<'despesas'> & {
+  colaborador: { nome_completo: string } | null;
+};
+
 type AprovarDespesaResult = Database['public']['Functions']['aprovar_despesa']['Returns'];
 type RejeitarDespesaResult = Database['public']['Functions']['rejeitar_despesa']['Returns'];
 
@@ -14,7 +18,7 @@ export const despesaService = {
   async listar(
     empresaId: string,
     opts: { from?: number; to?: number; status?: DespesaStatus } = {}
-  ): Promise<Tables<'despesas'>[]> {
+  ): Promise<DespesaComColaborador[]> {
     if (!empresaId) throw new Error('empresaId é obrigatório para listar despesas (multi-tenant).');
     const from = opts.from ?? 0;
     const to = opts.to ?? 499;

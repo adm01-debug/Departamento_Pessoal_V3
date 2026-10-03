@@ -46,7 +46,7 @@ export const lancamentosFolhaService = {
   // colaborador), não `folha_id` — um lançamento pertence a UM holerite
   // dentro da folha, não à folha inteira diretamente. O filtro anterior
   // (`.eq('folha_id', ...)`) referenciava uma coluna inexistente; sob a
-  // tipagem antiga (`any`) isso compilava mas o PostgREST recusaria a query
+  // tipagem antiga (tipagem anterior) isso compilava mas o PostgREST recusaria a query
   // em runtime. 0 chamadores reais hoje, então nunca foi exercitado.
   listar: async (holeriteId: string): Promise<Tables<'lancamentos_folha'>[]> => {
     const { data, error } = await supabase

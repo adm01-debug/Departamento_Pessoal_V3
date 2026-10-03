@@ -16,11 +16,15 @@ export function PontoStreakCard() {
     queryKey: ['registros-ponto-30d', user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
-      const { data: colab } = await supabase.from('colaboradores').select('id').eq('email', user.email || '').maybeSingle();
+      const { data: colab } = await supabase
+        .from('colaboradores')
+        .select('id')
+        .eq('email', user.email || '')
+        .maybeSingle();
       if (!colab) return [];
       const d = new Date();
       d.setDate(d.getDate() - 30);
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('registros_ponto')
         .select('data, atraso_minutos, horas_trabalhadas, entrada_1')
         .eq('colaborador_id', colab.id)
@@ -29,17 +33,22 @@ export function PontoStreakCard() {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!user?.id});
+    enabled: !!user?.id,
+  });
 
   const stats = useMemo(() => {
-    let pontual = 0, atrasado = 0, ausente = 0, bestStreak = 0, tempStreak = 0;
+    let pontual = 0,
+      atrasado = 0,
+      ausente = 0,
+      bestStreak = 0,
+      tempStreak = 0;
 
-    const sorted = [...registros30d].sort((a: any, b: any) => a.data.localeCompare(b.data));
-    sorted.forEach((r: any) => {
+    const sorted = [...registros30d].sort((a, b) => a.data.localeCompare(b.data));
+    sorted.forEach((r) => {
       if (!r.entrada_1) {
         ausente++;
         tempStreak = 0;
-      } else if (r.atraso_minutos > 0) {
+      } else if ((r.atraso_minutos ?? 0) > 0) {
         atrasado++;
         tempStreak = 0;
       } else {
@@ -57,7 +66,6 @@ export function PontoStreakCard() {
     const xp = (pontual % 10) * 10;
 
     return { pontual, atrasado, ausente, currentStreak, bestStreak, taxa, level, xp };
-
   }, [registros30d]);
 
   return (
@@ -89,8 +97,8 @@ export function PontoStreakCard() {
             <Progress value={stats.xp} className="h-1.5 mb-6" />
 
             <div className="text-center relative">
-              <motion.div 
-                animate={{ scale: [1, 1.1, 1] }} 
+              <motion.div
+                animate={{ scale: [1, 1.1, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
                 className="absolute -top-4 -right-2 opacity-20"
               >
@@ -128,7 +136,13 @@ export function PontoStreakCard() {
           {[
             { icon: CheckCircle2, label: 'Pontuais', value: stats.pontual, color: 'text-success', bg: 'bg-success/10' },
             { icon: Timer, label: 'Atrasados', value: stats.atrasado, color: 'text-warning', bg: 'bg-warning/10' },
-            { icon: XCircle, label: 'Ausências', value: stats.ausente, color: 'text-destructive', bg: 'bg-destructive/10' },
+            {
+              icon: XCircle,
+              label: 'Ausências',
+              value: stats.ausente,
+              color: 'text-destructive',
+              bg: 'bg-destructive/10',
+            },
             { icon: Target, label: 'Taxa %', value: `${stats.taxa.toFixed(0)}%`, color: 'text-info', bg: 'bg-info/10' },
           ].map(({ icon: Icon, label, value, color, bg }) => (
             <Card key={label} className="border border-border/30 shadow-xs rounded-xl overflow-hidden">

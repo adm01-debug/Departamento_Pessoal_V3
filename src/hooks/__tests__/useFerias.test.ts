@@ -2,6 +2,20 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import type { Insertable } from '@/integrations/supabase/database.types';
+
+const feriasPayload: Insertable<'ferias'> = {
+  colaborador_id: 'col-1',
+  periodo_aquisitivo_id: 'pa-1',
+  data_inicio: '2026-11-01',
+  data_fim: '2026-11-30',
+  dias_gozo: 30,
+  salario_base: 3000,
+  valor_ferias: 3000,
+  valor_terco: 1000,
+  valor_total: 4000,
+  valor_liquido: 4000,
+};
 
 const {
   mockListSolicitacoes,
@@ -89,7 +103,7 @@ describe('useFerias', () => {
     const { result } = renderHook(() => useFerias(), { wrapper });
 
     await act(async () => {
-      await result.current.create({ colaborador_id: 'col-1' });
+      await result.current.create(feriasPayload);
     });
 
     expect(mockCriar).toHaveBeenCalledWith(expect.objectContaining({ colaborador_id: 'col-1', empresa_id: 'emp-1' }));
@@ -100,7 +114,7 @@ describe('useFerias', () => {
     const { result } = renderHook(() => useFerias(), { wrapper });
 
     await act(async () => {
-      await result.current.create({});
+      await result.current.create(feriasPayload);
     });
 
     await waitFor(() => expect(mockToastSuccess).toHaveBeenCalledWith('Solicitação de férias criada com sucesso'));
@@ -135,7 +149,7 @@ describe('useFerias', () => {
     const { result } = renderHook(() => useFerias(), { wrapper });
 
     await act(async () => {
-      await result.current.create({}).catch(() => {});
+      await result.current.create(feriasPayload).catch(() => {});
     });
 
     await waitFor(() => expect(mockToastError).toHaveBeenCalledWith(expect.stringContaining('server error')));

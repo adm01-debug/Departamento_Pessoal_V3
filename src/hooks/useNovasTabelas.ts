@@ -252,7 +252,7 @@ export function useJornadaHorarios(jornadaId: string) {
 export function useSalvarGradeHorarios() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ jornadaId, horarios }: { jornadaId: string; horarios: any[] }) =>
+    mutationFn: ({ jornadaId, horarios }: { jornadaId: string; horarios: TablesInsert<'jornadas_horarios'>[] }) =>
       jornadaHorariosService.salvarGrade(jornadaId, horarios),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['jornada-horarios'] });

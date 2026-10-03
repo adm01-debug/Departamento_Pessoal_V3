@@ -67,7 +67,7 @@ export const rescisaoService = {
       // `colaboradores` não tem `nome` (é `nome_completo`) nem `dependentes_irrf`
       // (aposentado há tempo em favor de `dependentes.para_irrf`, mesmo caso do
       // calcular-folha Edge Function). O embed anterior pedia as duas colunas
-      // inexistentes: sob `any` isso compilava, mas o PostgREST recusaria a
+      // inexistentes: sob a tipagem genérica anterior isso compilava, mas o PostgREST recusaria a
       // query inteira em runtime, quebrando 100% das tentativas de calcular
       // uma rescisão pela UI (chamador real: DesligamentoDetailSheet.tsx).
       const { data: anterior, error: fetchError } = await supabase
@@ -101,11 +101,11 @@ export const rescisaoService = {
       });
       const resultado = result;
 
-      // SCHEMA GAP (achado ao remover `any` desta função, não corrigido aqui):
+      // SCHEMA GAP (achado ao eliminar casts genéricos desta função, não corrigido aqui):
       // `desligamentos` não tem coluna `detalhes_calculo`, mas
       // DesligamentoDetailSheet.tsx:205 lê `d.detalhes_calculo || d` para
       // montar o PDF da rescisão — ou seja, o código em dois lugares assume
-      // uma coluna que nunca existiu. Sob `any`, este `.update()` incluía
+      // uma coluna que nunca existiu. Sob a tipagem genérica anterior, este `.update()` incluía
       // `detalhes_calculo` no MESMO payload que os campos reais
       // (saldo_salario, decimo_terceiro, ...): o PostgREST rejeita o UPDATE
       // INTEIRO por uma chave inválida, então `calcularESalvar` sempre

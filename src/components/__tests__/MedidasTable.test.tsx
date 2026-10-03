@@ -1,12 +1,13 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    tr: ({ children }: any) => <tr>{children}</tr>,
-    div: ({ children }: any) => <div>{children}</div>,
+    tr: ({ children }: { children?: ReactNode }) => <tr>{children}</tr>,
+    div: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
+  AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
 }));
 
 vi.mock('date-fns', () => ({
@@ -21,37 +22,40 @@ vi.mock('@/utils/safeUrl', () => ({
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children }: any) => <div>{children}</div>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
+  Card: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children }: any) => <span>{children}</span>,
+  Badge: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, disabled }: any) => (
-    <button onClick={onClick} disabled={disabled}>{children}</button>
+  Button: ({ children, onClick, disabled }: { children?: ReactNode; onClick?: () => void; disabled?: boolean }) => (
+    <button onClick={onClick} disabled={disabled}>
+      {children}
+    </button>
   ),
 }));
 
 vi.mock('@/components/ui/table', () => ({
-  Table: ({ children }: any) => <table>{children}</table>,
-  TableBody: ({ children }: any) => <tbody>{children}</tbody>,
-  TableCell: ({ children, ...rest }: any) => <td {...rest}>{children}</td>,
-  TableHead: ({ children }: any) => <th>{children}</th>,
-  TableHeader: ({ children }: any) => <thead>{children}</thead>,
-  TableRow: ({ children, ...rest }: any) => <tr {...rest}>{children}</tr>,
+  Table: ({ children }: { children?: ReactNode }) => <table>{children}</table>,
+  TableBody: ({ children }: { children?: ReactNode }) => <tbody>{children}</tbody>,
+  TableCell: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <td {...rest}>{children}</td>,
+  TableHead: ({ children }: { children?: ReactNode }) => <th>{children}</th>,
+  TableHeader: ({ children }: { children?: ReactNode }) => <thead>{children}</thead>,
+  TableRow: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <tr {...rest}>{children}</tr>,
 }));
 
 vi.mock('@/components/ui/tooltip', () => ({
-  Tooltip: ({ children }: any) => <>{children}</>,
-  TooltipContent: ({ children }: any) => <div>{children}</div>,
-  TooltipProvider: ({ children }: any) => <>{children}</>,
-  TooltipTrigger: ({ children }: any) => <>{children}</>,
+  Tooltip: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  TooltipContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  TooltipProvider: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  TooltipTrigger: ({ children }: { children?: ReactNode }) => <>{children}</>,
 }));
 
 import { MedidasTable } from '../medidas-disciplinares/MedidasTable';
+import type { MedidaDisciplinarComColaborador } from '@/types/medidasDisciplinares';
 
 const MOCK_DATA = [
   {
@@ -65,7 +69,7 @@ const MOCK_DATA = [
     testemunha_1: 'Maria Santos',
     colaborador: { nome_completo: 'Carlos Oliveira' },
   },
-];
+] as unknown as MedidaDisciplinarComColaborador[];
 
 describe('MedidasTable', () => {
   it('renders table column header Colaborador', () => {
@@ -99,9 +103,7 @@ describe('MedidasTable', () => {
   });
 
   it('renders with empty data without error', () => {
-    expect(() =>
-      render(<MedidasTable data={[]} onMarcarCiencia={vi.fn()} onExcluir={vi.fn()} />)
-    ).not.toThrow();
+    expect(() => render(<MedidasTable data={[]} onMarcarCiencia={vi.fn()} onExcluir={vi.fn()} />)).not.toThrow();
   });
 
   it('renders Ações column header', () => {

@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { supabase } from '@/integrations/supabase/client';
+import type { Tables } from '@/integrations/supabase/types';
 import { useEmpresa } from '@/contexts';
 import { FileText, Download, Eye, FileSignature, ScrollText, Shield, UserCheck, Loader2, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -85,7 +86,12 @@ const TEMPLATES = [
   },
 ];
 
-function gerarPDF(template: string, colaborador: any, empresa: any) {
+function gerarPDF(
+  template: string,
+  colaborador:
+    Pick<Tables<'colaboradores'>, 'nome_completo' | 'cpf' | 'cargo' | 'salario_base' | 'data_admissao'> | undefined,
+  empresa: Pick<Tables<'empresas'>, 'razao_social' | 'cnpj' | 'cidade'> | null | undefined
+) {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
   const margin = 20;
@@ -264,7 +270,7 @@ export default function GeradorDocumentosPage() {
     }
     setGenerating(true);
     try {
-      const colaborador = colaboradores.find((c: any) => c.id === selectedColaborador);
+      const colaborador = colaboradores.find((c) => c.id === selectedColaborador);
       const pdf = gerarPDF(selectedTemplate!, colaborador, empresaAtual);
       const templateName = TEMPLATES.find((t) => t.id === selectedTemplate)?.title || 'documento';
 
@@ -378,7 +384,7 @@ export default function GeradorDocumentosPage() {
                       <SelectValue placeholder="Selecione o colaborador" />
                     </SelectTrigger>
                     <SelectContent>
-                      {colaboradores.map((c: any) => (
+                      {colaboradores.map((c) => (
                         <SelectItem key={c.id} value={c.id}>
                           {c.nome_completo} — {c.cargo || 'Sem cargo'}
                         </SelectItem>
@@ -394,7 +400,7 @@ export default function GeradorDocumentosPage() {
                   className="bg-muted/30 rounded-xl p-3 space-y-1"
                 >
                   {(() => {
-                    const c = colaboradores.find((c: any) => c.id === selectedColaborador);
+                    const c = colaboradores.find((c) => c.id === selectedColaborador);
                     return c ? (
                       <>
                         <p className="text-xs font-body">

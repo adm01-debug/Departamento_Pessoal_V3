@@ -1,19 +1,26 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('@/lib/utils', () => ({ cn: (...c: any[]) => c.filter(Boolean).join(' ') }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children, id, className }: any) => (
-    <div data-testid="card" id={id} className={className}>{children}</div>
+  Card: ({ children, id, className }: { children?: ReactNode; id?: string; className?: string }) => (
+    <div data-testid="card" id={id} className={className}>
+      {children}
+    </div>
   ),
-  CardHeader: ({ children, className }: any) => (
-    <div data-testid="card-header" className={className}>{children}</div>
+  CardHeader: ({ children, className }: { children?: ReactNode; className?: string }) => (
+    <div data-testid="card-header" className={className}>
+      {children}
+    </div>
   ),
-  CardTitle: ({ children }: any) => <h3 data-testid="card-title">{children}</h3>,
-  CardDescription: ({ children }: any) => <p data-testid="card-desc">{children}</p>,
-  CardContent: ({ children, className }: any) => (
-    <div data-testid="card-content" className={className}>{children}</div>
+  CardTitle: ({ children }: { children?: ReactNode }) => <h3 data-testid="card-title">{children}</h3>,
+  CardDescription: ({ children }: { children?: ReactNode }) => <p data-testid="card-desc">{children}</p>,
+  CardContent: ({ children, className }: { children?: ReactNode; className?: string }) => (
+    <div data-testid="card-content" className={className}>
+      {children}
+    </div>
   ),
 }));
 
@@ -26,7 +33,12 @@ import { Section } from '../layout/Section';
 
 describe('Row', () => {
   it('renders children', () => {
-    render(<Row><span>item-a</span><span>item-b</span></Row>);
+    render(
+      <Row>
+        <span>item-a</span>
+        <span>item-b</span>
+      </Row>
+    );
     expect(screen.getByText('item-a')).toBeTruthy();
     expect(screen.getByText('item-b')).toBeTruthy();
   });
@@ -117,7 +129,12 @@ describe('Column', () => {
 
 describe('Grid', () => {
   it('renders children', () => {
-    render(<Grid><div>child-1</div><div>child-2</div></Grid>);
+    render(
+      <Grid>
+        <div>child-1</div>
+        <div>child-2</div>
+      </Grid>
+    );
     expect(screen.getByText('child-1')).toBeTruthy();
     expect(screen.getByText('child-2')).toBeTruthy();
   });
@@ -177,17 +194,29 @@ describe('Section', () => {
   });
 
   it('renders description in section mode', () => {
-    render(<Section title="T" description="A helpful description">x</Section>);
+    render(
+      <Section title="T" description="A helpful description">
+        x
+      </Section>
+    );
     expect(screen.getByText('A helpful description')).toBeTruthy();
   });
 
   it('renders actions in section mode', () => {
-    render(<Section title="T" actions={<button>Action</button>}>x</Section>);
+    render(
+      <Section title="T" actions={<button>Action</button>}>
+        x
+      </Section>
+    );
     expect(screen.getByText('Action')).toBeTruthy();
   });
 
   it('renders icon in section mode', () => {
-    render(<Section title="T" icon={<span data-testid="icon">★</span>}>x</Section>);
+    render(
+      <Section title="T" icon={<span data-testid="icon">★</span>}>
+        x
+      </Section>
+    );
     expect(screen.getByTestId('icon')).toBeTruthy();
   });
 
@@ -202,7 +231,11 @@ describe('Section', () => {
   });
 
   it('renders as Card when asCard=true', () => {
-    render(<Section asCard title="Card Section">content</Section>);
+    render(
+      <Section asCard title="Card Section">
+        content
+      </Section>
+    );
     expect(screen.getByTestId('card')).toBeTruthy();
     expect(screen.getByTestId('card-title')).toBeTruthy();
     expect(screen.getByText('Card Section')).toBeTruthy();
@@ -214,23 +247,39 @@ describe('Section', () => {
   });
 
   it('renders card description when provided in card mode', () => {
-    render(<Section asCard title="T" description="Card desc">x</Section>);
+    render(
+      <Section asCard title="T" description="Card desc">
+        x
+      </Section>
+    );
     expect(screen.getByTestId('card-desc')).toBeTruthy();
     expect(screen.getByText('Card desc')).toBeTruthy();
   });
 
   it('renders card actions when provided in card mode', () => {
-    render(<Section asCard title="T" actions={<button>Card Act</button>}>x</Section>);
+    render(
+      <Section asCard title="T" actions={<button>Card Act</button>}>
+        x
+      </Section>
+    );
     expect(screen.getByText('Card Act')).toBeTruthy();
   });
 
   it('renders card icon when provided in card mode', () => {
-    render(<Section asCard title="T" icon={<span data-testid="card-icon">◆</span>}>x</Section>);
+    render(
+      <Section asCard title="T" icon={<span data-testid="card-icon">◆</span>}>
+        x
+      </Section>
+    );
     expect(screen.getByTestId('card-icon')).toBeTruthy();
   });
 
   it('applies id prop in card mode', () => {
-    render(<Section asCard id="card-anchor">x</Section>);
+    render(
+      <Section asCard id="card-anchor">
+        x
+      </Section>
+    );
     expect(screen.getByTestId('card').id).toBe('card-anchor');
   });
 

@@ -28,12 +28,14 @@ $$;
 -- rescisão). Vira gestão exclusiva de RH.
 DROP POLICY IF EXISTS "Usuarios inserem proprias rescisoes" ON public.historico_rescisoes;
 DROP POLICY IF EXISTS "Rescisoes por empresa" ON public.historico_rescisoes;
+DROP POLICY IF EXISTS "historico_rescisoes_rh_manage" ON public.historico_rescisoes;
 CREATE POLICY historico_rescisoes_rh_manage ON public.historico_rescisoes
   FOR ALL TO authenticated
   USING (public.pode_gerir_rh(empresa_id))
   WITH CHECK (public.pode_gerir_rh(empresa_id));
 
 DROP POLICY IF EXISTS tenant_asos ON public.asos;
+DROP POLICY IF EXISTS "asos_rh_manage" ON public.asos;
 CREATE POLICY asos_rh_manage ON public.asos
   FOR ALL TO authenticated
   USING (public.pode_gerir_rh(empresa_id))
@@ -41,6 +43,7 @@ CREATE POLICY asos_rh_manage ON public.asos
 
 DROP POLICY IF EXISTS "Afastamentos scoped by empresa" ON public.afastamentos;
 DROP POLICY IF EXISTS tenant_afastamentos ON public.afastamentos;
+DROP POLICY IF EXISTS "afastamentos_manage" ON public.afastamentos;
 CREATE POLICY afastamentos_manage ON public.afastamentos
   FOR ALL TO authenticated
   USING (public.pode_gerir_rh(empresa_id) OR public.pode_gerir_pessoas(empresa_id))
@@ -50,6 +53,7 @@ DROP POLICY IF EXISTS medidas_disciplinares_delete ON public.medidas_disciplinar
 DROP POLICY IF EXISTS medidas_disciplinares_insert ON public.medidas_disciplinares;
 DROP POLICY IF EXISTS medidas_disciplinares_select ON public.medidas_disciplinares;
 DROP POLICY IF EXISTS medidas_disciplinares_update ON public.medidas_disciplinares;
+DROP POLICY IF EXISTS "medidas_disciplinares_manage" ON public.medidas_disciplinares;
 CREATE POLICY medidas_disciplinares_manage ON public.medidas_disciplinares
   FOR ALL TO authenticated
   USING (public.pode_gerir_rh(empresa_id) OR public.pode_gerir_pessoas(empresa_id))
@@ -60,6 +64,7 @@ DROP POLICY IF EXISTS tenant_desligamentos_delete ON public.desligamentos;
 DROP POLICY IF EXISTS tenant_desligamentos_insert ON public.desligamentos;
 DROP POLICY IF EXISTS tenant_desligamentos_select ON public.desligamentos;
 DROP POLICY IF EXISTS tenant_desligamentos_update ON public.desligamentos;
+DROP POLICY IF EXISTS "desligamentos_rh_manage" ON public.desligamentos;
 CREATE POLICY desligamentos_rh_manage ON public.desligamentos
   FOR ALL TO authenticated
   USING (public.pode_gerir_rh(empresa_id))
@@ -70,12 +75,14 @@ CREATE POLICY desligamentos_rh_manage ON public.desligamentos
 -- todas as empresas da base, sem tenant scope. Role "public" também incluía
 -- anon.
 DROP POLICY IF EXISTS "Gestores podem gerenciar adiantamentos da empresa" ON public.adiantamentos_salariais;
+DROP POLICY IF EXISTS "adiantamentos_salariais_rh_manage" ON public.adiantamentos_salariais;
 CREATE POLICY adiantamentos_salariais_rh_manage ON public.adiantamentos_salariais
   FOR ALL TO authenticated
   USING (public.pode_gerir_rh(empresa_id))
   WITH CHECK (public.pode_gerir_rh(empresa_id));
 
 DROP POLICY IF EXISTS "Gestores podem gerenciar empréstimos da empresa" ON public.emprestimos_consignados;
+DROP POLICY IF EXISTS "emprestimos_consignados_rh_manage" ON public.emprestimos_consignados;
 CREATE POLICY emprestimos_consignados_rh_manage ON public.emprestimos_consignados
   FOR ALL TO authenticated
   USING (public.pode_gerir_rh(empresa_id))
@@ -86,21 +93,25 @@ CREATE POLICY emprestimos_consignados_rh_manage ON public.emprestimos_consignado
 -- continuar aberto a qualquer colaborador do tenant. Leitura/tratamento da
 -- denúncia (SELECT/UPDATE/DELETE) fica restrita a RH.
 DROP POLICY IF EXISTS empresa_canal_etica ON public.canal_etica;
+DROP POLICY IF EXISTS "canal_etica_reportar" ON public.canal_etica;
 CREATE POLICY canal_etica_reportar ON public.canal_etica
   FOR INSERT TO authenticated
   WITH CHECK (empresa_id IS NULL OR public.pertence_a_empresa(empresa_id));
+DROP POLICY IF EXISTS "canal_etica_rh_manage" ON public.canal_etica;
 CREATE POLICY canal_etica_rh_manage ON public.canal_etica
   FOR ALL TO authenticated
   USING (public.pode_gerir_rh(empresa_id))
   WITH CHECK (public.pode_gerir_rh(empresa_id));
 
 DROP POLICY IF EXISTS tenant_historico_salarial ON public.historico_salarial;
+DROP POLICY IF EXISTS "historico_salarial_rh_manage" ON public.historico_salarial;
 CREATE POLICY historico_salarial_rh_manage ON public.historico_salarial
   FOR ALL TO authenticated
   USING (public.pode_gerir_rh(empresa_id))
   WITH CHECK (public.pode_gerir_rh(empresa_id));
 
 DROP POLICY IF EXISTS empresa_lgpd_solicitacoes ON public.lgpd_solicitacoes;
+DROP POLICY IF EXISTS "lgpd_solicitacoes_rh_manage" ON public.lgpd_solicitacoes;
 CREATE POLICY lgpd_solicitacoes_rh_manage ON public.lgpd_solicitacoes
   FOR ALL TO authenticated
   USING (public.pode_gerir_rh(empresa_id))
@@ -108,6 +119,7 @@ CREATE POLICY lgpd_solicitacoes_rh_manage ON public.lgpd_solicitacoes
 
 -- Tabelas sem empresa_id direto: gate via join em colaboradores.
 DROP POLICY IF EXISTS tenant_anotacoes_colaborador ON public.anotacoes_colaborador;
+DROP POLICY IF EXISTS "anotacoes_colaborador_manage" ON public.anotacoes_colaborador;
 CREATE POLICY anotacoes_colaborador_manage ON public.anotacoes_colaborador
   FOR ALL TO authenticated
   USING (EXISTS (
@@ -122,6 +134,7 @@ CREATE POLICY anotacoes_colaborador_manage ON public.anotacoes_colaborador
   ));
 
 DROP POLICY IF EXISTS tenant_beneficiarios_plano ON public.beneficiarios_plano;
+DROP POLICY IF EXISTS "beneficiarios_plano_rh_manage" ON public.beneficiarios_plano;
 CREATE POLICY beneficiarios_plano_rh_manage ON public.beneficiarios_plano
   FOR ALL TO authenticated
   USING (EXISTS (
@@ -134,6 +147,7 @@ CREATE POLICY beneficiarios_plano_rh_manage ON public.beneficiarios_plano
   ));
 
 DROP POLICY IF EXISTS tenant_documentos_pessoais_arquivos ON public.documentos_pessoais_arquivos;
+DROP POLICY IF EXISTS "documentos_pessoais_arquivos_rh_manage" ON public.documentos_pessoais_arquivos;
 CREATE POLICY documentos_pessoais_arquivos_rh_manage ON public.documentos_pessoais_arquivos
   FOR ALL TO authenticated
   USING (EXISTS (
@@ -147,6 +161,7 @@ CREATE POLICY documentos_pessoais_arquivos_rh_manage ON public.documentos_pessoa
 
 DROP POLICY IF EXISTS exames_tenant_select ON public.exames;
 DROP POLICY IF EXISTS tenant_exames ON public.exames;
+DROP POLICY IF EXISTS "exames_rh_manage" ON public.exames;
 CREATE POLICY exames_rh_manage ON public.exames
   FOR ALL TO authenticated
   USING (EXISTS (
@@ -162,6 +177,7 @@ CREATE POLICY exames_rh_manage ON public.exames
 -- gerenciar seus contatos de emergência e formações acadêmicas sem depender
 -- de papel de RH/gestor.
 DROP POLICY IF EXISTS tenant_contatos_emergencia ON public.contatos_emergencia;
+DROP POLICY IF EXISTS "contatos_emergencia_self_or_rh" ON public.contatos_emergencia;
 CREATE POLICY contatos_emergencia_self_or_rh ON public.contatos_emergencia
   FOR ALL TO authenticated
   USING (
@@ -182,6 +198,7 @@ CREATE POLICY contatos_emergencia_self_or_rh ON public.contatos_emergencia
   );
 
 DROP POLICY IF EXISTS tenant_formacoes_academicas ON public.formacoes_academicas;
+DROP POLICY IF EXISTS "formacoes_academicas_self_or_rh" ON public.formacoes_academicas;
 CREATE POLICY formacoes_academicas_self_or_rh ON public.formacoes_academicas
   FOR ALL TO authenticated
   USING (
@@ -207,9 +224,11 @@ CREATE POLICY formacoes_academicas_self_or_rh ON public.formacoes_academicas
 -- passa a gestão a ser exclusiva de RH via join em colaboradores.
 DROP POLICY IF EXISTS "Colaboradores podem ver seus próprios documentos" ON public.documentos_colaborador;
 DROP POLICY IF EXISTS tenant_documentos_colaborador ON public.documentos_colaborador;
+DROP POLICY IF EXISTS "documentos_colaborador_self_read" ON public.documentos_colaborador;
 CREATE POLICY documentos_colaborador_self_read ON public.documentos_colaborador
   FOR SELECT TO authenticated
   USING (public.sou_o_colaborador(colaborador_id));
+DROP POLICY IF EXISTS "documentos_colaborador_rh_manage" ON public.documentos_colaborador;
 CREATE POLICY documentos_colaborador_rh_manage ON public.documentos_colaborador
   FOR ALL TO authenticated
   USING (EXISTS (
@@ -223,9 +242,11 @@ CREATE POLICY documentos_colaborador_rh_manage ON public.documentos_colaborador
 
 DROP POLICY IF EXISTS "Colaboradores podem ver seus próprios holerites" ON public.holerites;
 DROP POLICY IF EXISTS tenant_holerites ON public.holerites;
+DROP POLICY IF EXISTS "holerites_self_read" ON public.holerites;
 CREATE POLICY holerites_self_read ON public.holerites
   FOR SELECT TO authenticated
   USING (public.sou_o_colaborador(colaborador_id));
+DROP POLICY IF EXISTS "holerites_rh_manage" ON public.holerites;
 CREATE POLICY holerites_rh_manage ON public.holerites
   FOR ALL TO authenticated
   USING (EXISTS (
@@ -239,6 +260,7 @@ CREATE POLICY holerites_rh_manage ON public.holerites
 
 -- lancamentos_folha só tem holerite_id — join de 2 níveis até colaboradores.
 DROP POLICY IF EXISTS tenant_lancamentos_folha ON public.lancamentos_folha;
+DROP POLICY IF EXISTS "lancamentos_folha_rh_manage" ON public.lancamentos_folha;
 CREATE POLICY lancamentos_folha_rh_manage ON public.lancamentos_folha
   FOR ALL TO authenticated
   USING (EXISTS (

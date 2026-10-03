@@ -6,6 +6,7 @@
 DROP POLICY IF EXISTS "Usuários autenticados podem visualizar auditoria" ON public.folha_auditoria;
 DROP POLICY IF EXISTS "Usuários autenticados podem inserir auditoria" ON public.folha_auditoria;
 
+DROP POLICY IF EXISTS "folha_auditoria_tenant_select" ON public.folha_auditoria;
 CREATE POLICY "folha_auditoria_tenant_select"
 ON public.folha_auditoria FOR SELECT TO authenticated
 USING (
@@ -26,6 +27,7 @@ GRANT ALL ON public.folha_auditoria TO service_role;
 -- sst_regimento_interno: escopo de empresa
 DROP POLICY IF EXISTS "Leitura para autenticados" ON public.sst_regimento_interno;
 
+DROP POLICY IF EXISTS "sst_regimento_interno_tenant_select" ON public.sst_regimento_interno;
 CREATE POLICY "sst_regimento_interno_tenant_select"
 ON public.sst_regimento_interno FOR SELECT TO authenticated
 USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));

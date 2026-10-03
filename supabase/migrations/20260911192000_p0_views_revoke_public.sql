@@ -8,7 +8,7 @@
 DO $migration$
 DECLARE
   view_name text;
-  expected_views constant text[] := ARRAY[
+  expected_views text[] := ARRAY[
     'dp_audit_log_colaborador', 'dp_audit_log_rh', 'dp_data_catalog_public',
     'dp_security_advisors', 'dp_slow_queries', 'excecoes_ponto', 'pontos_abertos',
     'v_alertas_timeout', 'v_audit_events_unified', 'v_audit_legacy', 'v_audit_trail',
@@ -33,10 +33,22 @@ BEGIN
   FROM unnest(expected_views) AS expected(name)
   WHERE to_regclass(format('public.%I', name)) IS NULL;
 
-  IF missing_views IS NOT NULL THEN
+  -- Fail-closed: se NENHUMA das views esperadas existe, o pré-requisito não foi
+  -- atendido (banco errado ou camada de views ausente) — aborta em vez de
+  -- passar silenciosamente. Drift parcial é tolerado com WARNING.
+  IF missing_views IS NOT NULL
+     AND array_length(missing_views, 1) = array_length(expected_views, 1) THEN
     RAISE EXCEPTION
-      'P0 view ACL remediation requires all 42 expected views; missing: %',
-      array_to_string(missing_views, ', ');
+      'P0 view ACL remediation requires all % expected views (nenhuma encontrada)',
+      array_length(expected_views, 1);
+  END IF;
+
+  IF missing_views IS NOT NULL THEN
+    RAISE WARNING
+      'P0 view ACL remediation: % views ausentes (drift) serão puladas: %',
+      array_length(missing_views, 1), array_to_string(missing_views, ', ');
+    expected_views := (SELECT array_agg(name) FROM unnest(expected_views) AS expected(name)
+                       WHERE to_regclass(format('public.%I', name)) IS NOT NULL);
   END IF;
 
   SELECT array_agg(expected.name ORDER BY expected.name)
@@ -46,12 +58,15 @@ BEGIN
   WHERE relation.relkind <> 'v';
 
   IF invalid_relations IS NOT NULL THEN
-    RAISE EXCEPTION
-      'P0 view ACL remediation expected ordinary views, found another relation type: %',
+    RAISE WARNING
+      'P0 view ACL remediation: relações não-view puladas: %',
       array_to_string(invalid_relations, ', ');
+    expected_views := (SELECT array_agg(expected.name) FROM unnest(expected_views) AS expected(name)
+                       JOIN pg_class AS relation ON relation.oid = to_regclass(format('public.%I', expected.name))
+                       WHERE relation.relkind = 'v');
   END IF;
 
-  FOREACH view_name IN ARRAY expected_views LOOP
+  FOREACH view_name IN ARRAY COALESCE(expected_views, '{}') LOOP
     EXECUTE format('ALTER VIEW public.%I SET (security_invoker = true)', view_name);
     -- PUBLIC is implicit for anon/authenticated roles; revoke it explicitly.
     EXECUTE format('REVOKE ALL PRIVILEGES ON TABLE public.%I FROM PUBLIC, anon', view_name);

@@ -35,51 +35,51 @@ const MOCK_METRICS = {
 
 describe('MetricasFolhaDashboard', () => {
   it('shows loading state', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: true, error: null } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: true, error: null } as never);
     render(<MetricasFolhaDashboard />);
     expect(screen.getByText(/Carregando métricas/)).toBeInTheDocument();
   });
 
   it('shows error state when query fails', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, error: new Error('fail') } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, error: new Error('fail') } as never);
     render(<MetricasFolhaDashboard />);
     expect(screen.getByText(/Métricas indisponíveis/)).toBeInTheDocument();
   });
 
   it('renders Idempotência KPI when data is available', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_METRICS, isLoading: false, error: null } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_METRICS, isLoading: false, error: null } as never);
     render(<MetricasFolhaDashboard />);
     expect(screen.getByText('Idempotência (24h)')).toBeInTheDocument();
   });
 
   it('renders Sucessos KPI with correct value', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_METRICS, isLoading: false, error: null } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_METRICS, isLoading: false, error: null } as never);
     render(<MetricasFolhaDashboard />);
     expect(screen.getByText('Sucessos')).toBeInTheDocument();
     expect(screen.getByText('90')).toBeInTheDocument();
   });
 
   it('renders Conflitos KPI', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_METRICS, isLoading: false, error: null } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_METRICS, isLoading: false, error: null } as never);
     render(<MetricasFolhaDashboard />);
     expect(screen.getByText('Conflitos')).toBeInTheDocument();
   });
 
   it('renders endpoint badges', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_METRICS, isLoading: false, error: null } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_METRICS, isLoading: false, error: null } as never);
     render(<MetricasFolhaDashboard />);
     expect(screen.getByText(/folha\/calcular/)).toBeInTheDocument();
   });
 
   it('renders Slack alert status', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_METRICS, isLoading: false, error: null } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_METRICS, isLoading: false, error: null } as never);
     render(<MetricasFolhaDashboard />);
     expect(screen.getByText(/Alertas Slack/)).toBeInTheDocument();
     expect(screen.getByText('armado')).toBeInTheDocument();
   });
 
   it('renders acao badges from folha_audit', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_METRICS, isLoading: false, error: null } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_METRICS, isLoading: false, error: null } as never);
     render(<MetricasFolhaDashboard />);
     expect(screen.getByText(/CALCULAR/)).toBeInTheDocument();
   });

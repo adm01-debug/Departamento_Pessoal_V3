@@ -49,7 +49,7 @@ describe('bancoHorasService', () => {
     });
 
     it('returns empty array when data is null', async () => {
-      setupList(null as any);
+      setupList(null as never);
       const result = await bancoHorasService.listarPorColaborador('colab-1', EMPRESA_ID);
       expect(result).toEqual([]);
     });
@@ -67,7 +67,7 @@ describe('bancoHorasService', () => {
       const eq: any = vi.fn();
       eq.mockImplementation(() => ({
         eq,
-        then: (resolve: (v: unknown) => unknown) => Promise.resolve({ data, error }).then(resolve),
+        then: (resolve: (v?: unknown) => unknown) => Promise.resolve({ data, error }).then(resolve),
       }));
       const select = vi.fn().mockReturnValue({ eq });
       mockFrom.mockReturnValue({ select });

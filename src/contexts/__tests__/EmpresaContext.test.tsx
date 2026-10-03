@@ -9,8 +9,11 @@ const { mockTrocarEmpresa, mockInvalidateQueries } = vi.hoisted(() => ({
 }));
 
 const sampleEmpresa = {
-  id: 'emp-1', razao_social: 'Teste Ltda', nome_fantasia: 'Teste',
-  cnpj: '12.345.678/0001-99', ativa: true,
+  id: 'emp-1',
+  razao_social: 'Teste Ltda',
+  nome_fantasia: 'Teste',
+  cnpj: '12.345.678/0001-99',
+  ativa: true,
 };
 
 vi.mock('@/hooks/useEmpresas', () => ({
@@ -26,20 +29,18 @@ import { EmpresaProvider, useEmpresa } from '../EmpresaContext';
 
 function createWrapper() {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  qc.invalidateQueries = mockInvalidateQueries as any;
+  qc.invalidateQueries = mockInvalidateQueries as never;
   return ({ children }: { children: React.ReactNode }) =>
-    React.createElement(QueryClientProvider, { client: qc },
-      React.createElement(EmpresaProvider, null, children)
-    );
+    React.createElement(QueryClientProvider, { client: qc }, React.createElement(EmpresaProvider, null, children));
 }
 
 describe('useEmpresa', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('throws when used outside EmpresaProvider', () => {
-    expect(() => renderHook(() => useEmpresa())).toThrow(
-      'useEmpresa must be used within EmpresaProvider'
-    );
+    expect(() => renderHook(() => useEmpresa())).toThrow('useEmpresa must be used within EmpresaProvider');
   });
 
   it('provides empresaAtual from useEmpresas', () => {
@@ -60,19 +61,25 @@ describe('useEmpresa', () => {
 
   it('setEmpresaAtual calls trocarEmpresa with empresa id', () => {
     const { result } = renderHook(() => useEmpresa(), { wrapper: createWrapper() });
-    act(() => { result.current.setEmpresaAtual(sampleEmpresa as any); });
+    act(() => {
+      result.current.setEmpresaAtual(sampleEmpresa as never);
+    });
     expect(mockTrocarEmpresa).toHaveBeenCalledWith('emp-1');
   });
 
   it('setEmpresaAtual with null does not call trocarEmpresa', () => {
     const { result } = renderHook(() => useEmpresa(), { wrapper: createWrapper() });
-    act(() => { result.current.setEmpresaAtual(null); });
+    act(() => {
+      result.current.setEmpresaAtual(null);
+    });
     expect(mockTrocarEmpresa).not.toHaveBeenCalled();
   });
 
   it('refresh calls queryClient.invalidateQueries for expected keys', async () => {
     const { result } = renderHook(() => useEmpresa(), { wrapper: createWrapper() });
-    await act(async () => { await result.current.refresh(); });
+    await act(async () => {
+      await result.current.refresh();
+    });
     expect(mockInvalidateQueries).toHaveBeenCalledTimes(3);
   });
 });

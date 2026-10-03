@@ -33,10 +33,12 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON public.contrato_templates TO authenticat
 GRANT ALL ON public.contrato_templates TO service_role;
 ALTER TABLE public.contrato_templates ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "contrato_templates_read" ON public.contrato_templates;
 CREATE POLICY "contrato_templates_read"
   ON public.contrato_templates FOR SELECT TO authenticated
   USING (public.user_belongs_to_empresa(auth.uid(), empresa_id));
 
+DROP POLICY IF EXISTS "contrato_templates_write" ON public.contrato_templates;
 CREATE POLICY "contrato_templates_write"
   ON public.contrato_templates FOR ALL TO authenticated
   USING (
@@ -84,10 +86,12 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON public.contratos_gerados TO authenticate
 GRANT ALL ON public.contratos_gerados TO service_role;
 ALTER TABLE public.contratos_gerados ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "contratos_gerados_read" ON public.contratos_gerados;
 CREATE POLICY "contratos_gerados_read"
   ON public.contratos_gerados FOR SELECT TO authenticated
   USING (public.user_belongs_to_empresa(auth.uid(), empresa_id));
 
+DROP POLICY IF EXISTS "contratos_gerados_write" ON public.contratos_gerados;
 CREATE POLICY "contratos_gerados_write"
   ON public.contratos_gerados FOR ALL TO authenticated
   USING (
@@ -106,6 +110,7 @@ CREATE TRIGGER trg_contratos_gerados_updated
 -- =========================================================
 -- Storage policies (bucket 'contratos-trabalho')
 -- =========================================================
+DROP POLICY IF EXISTS "contratos-trabalho read" ON storage;
 CREATE POLICY "contratos-trabalho read"
   ON storage.objects FOR SELECT TO authenticated
   USING (
@@ -116,6 +121,7 @@ CREATE POLICY "contratos-trabalho read"
     )
   );
 
+DROP POLICY IF EXISTS "contratos-trabalho write" ON storage;
 CREATE POLICY "contratos-trabalho write"
   ON storage.objects FOR INSERT TO authenticated
   WITH CHECK (

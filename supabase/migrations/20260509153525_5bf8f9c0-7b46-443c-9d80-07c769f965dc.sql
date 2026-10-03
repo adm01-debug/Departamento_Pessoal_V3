@@ -41,6 +41,7 @@ DROP POLICY IF EXISTS "Empresas gerenciam suas proprias folhas" ON public.folhas
 CREATE POLICY "Empresas gerenciam suas proprias folhas" ON public.folhas_pagamento
 FOR ALL TO authenticated USING (true); -- Em prod: vincular ao empresa_id do user
 
+DROP POLICY IF EXISTS "Empresas gerenciam itens da folha" ON public.folha_itens;
 CREATE POLICY "Empresas gerenciam itens da folha" ON public.folha_itens
 FOR ALL TO authenticated USING (true);
 

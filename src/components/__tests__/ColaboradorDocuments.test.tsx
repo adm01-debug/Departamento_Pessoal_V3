@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
@@ -11,37 +12,41 @@ vi.mock('@/hooks/useDocumentos', () => ({
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children }: any) => <div>{children}</div>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
-  CardHeader: ({ children }: any) => <div>{children}</div>,
-  CardTitle: ({ children }: any) => <h3>{children}</h3>,
+  Card: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardTitle: ({ children }: { children?: ReactNode }) => <h3>{children}</h3>,
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children }: any) => <div>{children}</div>,
-  DialogContent: ({ children }: any) => <div>{children}</div>,
-  DialogHeader: ({ children }: any) => <div>{children}</div>,
-  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
-  DialogTrigger: ({ children }: any) => <div>{children}</div>,
+  Dialog: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
+  DialogTrigger: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/table', () => ({
-  Table: ({ children }: any) => <table>{children}</table>,
-  TableHeader: ({ children }: any) => <thead>{children}</thead>,
-  TableBody: ({ children }: any) => <tbody>{children}</tbody>,
-  TableRow: ({ children }: any) => <tr>{children}</tr>,
-  TableHead: ({ children }: any) => <th>{children}</th>,
-  TableCell: ({ children, colSpan }: any) => <td colSpan={colSpan}>{children}</td>,
+  Table: ({ children }: { children?: ReactNode }) => <table>{children}</table>,
+  TableHeader: ({ children }: { children?: ReactNode }) => <thead>{children}</thead>,
+  TableBody: ({ children }: { children?: ReactNode }) => <tbody>{children}</tbody>,
+  TableRow: ({ children }: { children?: ReactNode }) => <tr>{children}</tr>,
+  TableHead: ({ children }: { children?: ReactNode }) => <th>{children}</th>,
+  TableCell: ({ children, colSpan }: { children?: ReactNode; colSpan?: number }) => (
+    <td colSpan={colSpan}>{children}</td>
+  ),
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, disabled }: any) => (
-    <button onClick={onClick} disabled={disabled}>{children}</button>
+  Button: ({ children, onClick, disabled }: { children?: ReactNode; onClick?: () => void; disabled?: boolean }) => (
+    <button onClick={onClick} disabled={disabled}>
+      {children}
+    </button>
   ),
 }));
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children }: any) => <span>{children}</span>,
+  Badge: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
 }));
 
 vi.mock('@/components/ui/input', () => ({
@@ -49,14 +54,16 @@ vi.mock('@/components/ui/input', () => ({
 }));
 
 vi.mock('@/components/ui/label', () => ({
-  Label: ({ children }: any) => <label>{children}</label>,
+  Label: ({ children }: { children?: ReactNode }) => <label>{children}</label>,
 }));
 
 vi.mock('@/components/ui/select', () => ({
-  Select: ({ children }: any) => <div>{children}</div>,
-  SelectContent: ({ children }: any) => <div>{children}</div>,
-  SelectItem: ({ children, value }: any) => <div data-value={value}>{children}</div>,
-  SelectTrigger: ({ children }: any) => <button>{children}</button>,
+  Select: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  SelectContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  SelectItem: ({ children, value }: { children?: ReactNode; value?: string }) => (
+    <div data-value={value}>{children}</div>
+  ),
+  SelectTrigger: ({ children }: { children?: ReactNode }) => <button>{children}</button>,
   SelectValue: () => null,
 }));
 
@@ -108,7 +115,7 @@ describe('ColaboradorDocuments', () => {
       isLoading: true,
       criarDocumento: { mutateAsync: vi.fn(), isPending: false },
       excluirDocumento: { mutate: vi.fn() },
-    } as any);
+    } as never);
     render(<ColaboradorDocuments colaboradorId="col-001" />);
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
   });

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
@@ -12,8 +13,22 @@ vi.mock('@/hooks/useAfastamentos', () => ({
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, disabled, onClick, asChild, ...props }: any) => (
-    <button disabled={disabled} onClick={onClick} {...props}>{children}</button>
+  Button: ({
+    children,
+    disabled,
+    onClick,
+    asChild,
+    ...props
+  }: {
+    children?: ReactNode;
+    disabled?: boolean;
+    onClick?: () => void;
+    asChild?: boolean;
+    [key: string]: unknown;
+  }) => (
+    <button disabled={disabled} onClick={onClick} {...props}>
+      {children}
+    </button>
   ),
 }));
 
@@ -22,20 +37,22 @@ vi.mock('@/components/ui/input', () => ({
 }));
 
 vi.mock('@/components/ui/label', () => ({
-  Label: ({ children }: any) => <label>{children}</label>,
+  Label: ({ children }: { children?: ReactNode }) => <label>{children}</label>,
 }));
 
 vi.mock('@/components/ui/select', () => ({
-  Select: ({ children }: any) => <div>{children}</div>,
-  SelectContent: ({ children }: any) => <div>{children}</div>,
-  SelectItem: ({ children, value }: any) => <div data-value={value}>{children}</div>,
-  SelectTrigger: ({ children }: any) => <button>{children}</button>,
+  Select: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  SelectContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  SelectItem: ({ children, value }: { children?: ReactNode; value?: string }) => (
+    <div data-value={value}>{children}</div>
+  ),
+  SelectTrigger: ({ children }: { children?: ReactNode }) => <button>{children}</button>,
   SelectValue: () => null,
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children }: any) => <div>{children}</div>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
+  Card: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/spinner', () => ({
@@ -94,7 +111,7 @@ describe('AfastamentoDocumentManager', () => {
       upload: vi.fn(),
       isUploading: false,
       excluir: vi.fn(),
-    } as any);
+    } as never);
     render(<AfastamentoDocumentManager afastamentoId="af-001" />);
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
   });

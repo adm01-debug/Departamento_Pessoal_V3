@@ -32,8 +32,18 @@ $$;
 
 REVOKE ALL ON FUNCTION public.get_my_permissions() FROM PUBLIC, anon;
 REVOKE ALL ON FUNCTION public.get_user_tenants() FROM PUBLIC, anon;
-GRANT EXECUTE ON FUNCTION public.get_my_permissions() TO authenticated, service_role;
-GRANT EXECUTE ON FUNCTION public.get_user_tenants() TO authenticated, service_role;
+DO $guard$
+BEGIN
+  IF to_regprocedure('public.get_my_permissions()') IS NOT NULL THEN
+    EXECUTE $sql$GRANT EXECUTE ON FUNCTION public.get_my_permissions() TO authenticated, service_role;$sql$;
+  END IF;
+END $guard$;
+DO $guard$
+BEGIN
+  IF to_regprocedure('public.get_user_tenants()') IS NOT NULL THEN
+    EXECUTE $sql$GRANT EXECUTE ON FUNCTION public.get_user_tenants() TO authenticated, service_role;$sql$;
+  END IF;
+END $guard$;
 
 DO $$
 DECLARE

@@ -11,11 +11,18 @@ import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { Input } from '@/components/ui/input';
 import { useState, useMemo } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { exportPortaria671PDF } from '@/services/exportService';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Checkbox } from '@/components/ui/checkbox';
 import { format, parseISO } from 'date-fns';
 
 interface SolicitacaoAjustePonto {
@@ -56,7 +63,7 @@ export function PontoAdjustmentRequests() {
   const { empresaAtual } = useEmpresas();
   const queryClient = useQueryClient();
   const [selectedRequest, setSelectedRequest] = useState<SolicitacaoAjustePonto | null>(null);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const { data: solicitacoes = [], isLoading } = useQuery({
@@ -71,41 +78,43 @@ export function PontoAdjustmentRequests() {
       if (error) throw error;
       return (data || []) as SolicitacaoAjustePonto[];
     },
-    enabled: !!empresaAtual?.id});
+    enabled: !!empresaAtual?.id,
+  });
 
   const { data: requestAuditLogs = [], isLoading: isLoadingAudit } = useQuery({
     queryKey: ['trilha-auditoria-ponto', selectedRequest?.id],
     queryFn: async () => {
       if (!selectedRequest?.id) return [];
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('trilha_auditoria_ponto')
         .select('*')
-        .eq('registro_id', selectedRequest.id)
+        .eq('ponto_id', selectedRequest.id)
         .order('created_at', { ascending: false });
       if (error) throw error;
       return (data || []) as TrilhaAuditoriaPonto[];
     },
-    enabled: !!selectedRequest?.id});
+    enabled: !!selectedRequest?.id,
+  });
 
   const mutation = useMutation({
-    mutationFn: async ({ id, status, observacoes }: { id: string, status: string, observacoes?: string }) => {
+    mutationFn: async ({ id, status, observacoes }: { id: string; status: string; observacoes?: string }) => {
       // Ajuste para garantir que usamos o status correto do ENUM (recusado ao invés de rejeitado)
       const finalStatus = status === 'rejeitado' ? 'recusado' : status;
 
       const { error: updateError } = await supabase
         .from('solicitacoes_ajuste_ponto')
-        .update({ 
-          status: finalStatus, 
-          observacoes_gestor: observacoes, 
-          updated_at: new Date().toISOString() 
+        .update({
+          status: finalStatus,
+          observacoes_gestor: observacoes,
+          updated_at: new Date().toISOString(),
         })
         .eq('id', id);
-      
+
       if (updateError) throw updateError;
 
       if (finalStatus === 'aprovado') {
         const { error: applyError } = await supabase.rpc('processar_ajuste_aprovado', {
-          p_solicitacao_id: id
+          p_solicitacao_id: id,
         });
         if (applyError) throw applyError;
       }
@@ -116,25 +125,27 @@ export function PontoAdjustmentRequests() {
     },
     onError: (error: unknown) => {
       toast.error(safeErrorMessage(error, 'Erro ao processar solicitação de ajuste.'));
-    }
+    },
   });
 
   const batchMutation = useMutation({
-    mutationFn: async ({ ids, status }: { ids: string[], status: 'aprovado' | 'recusado' }) => {
-      const results: BatchMutationResult[] = await Promise.all(ids.map(async (id) => {
-        try {
-          await mutation.mutateAsync({ id, status });
-          return { id, success: true };
-        } catch (e: unknown) {
-          return { id, success: false, error: e instanceof Error ? e.message : String(e) };
-        }
-      }));
+    mutationFn: async ({ ids, status }: { ids: string[]; status: 'aprovado' | 'recusado' }) => {
+      const results: BatchMutationResult[] = await Promise.all(
+        ids.map(async (id) => {
+          try {
+            await mutation.mutateAsync({ id, status });
+            return { id, success: true };
+          } catch (e: unknown) {
+            return { id, success: false, error: e instanceof Error ? e.message : String(e) };
+          }
+        })
+      );
       return results;
     },
     onSuccess: (results: BatchMutationResult[]) => {
-      const successful = results.filter(r => r.success).length;
-      const failed = results.filter(r => !r.success).length;
-      
+      const successful = results.filter((r) => r.success).length;
+      const failed = results.filter((r) => !r.success).length;
+
       if (failed === 0) {
         toast.success(`${successful} solicitações processadas em lote.`);
       } else {
@@ -142,24 +153,24 @@ export function PontoAdjustmentRequests() {
       }
       setSelectedIds([]);
       queryClient.invalidateQueries({ queryKey: ['solicitacoes-ajuste-ponto'] });
-    }
+    },
   });
 
   const toggleSelect = (id: string) => {
-    setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
   };
 
   const toggleSelectAll = () => {
     if (selectedIds.length === filteredSolicitacoes.length) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(filteredSolicitacoes.map(s => s.id));
+      setSelectedIds(filteredSolicitacoes.map((s) => s.id));
     }
   };
 
   // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const filteredSolicitacoes = useMemo(() => {
-    return solicitacoes.filter((s: SolicitacaoAjustePonto) => 
+    return solicitacoes.filter((s: SolicitacaoAjustePonto) =>
       s.colaborador?.nome_completo.toLowerCase().includes(search.toLowerCase())
     );
   }, [solicitacoes, search]);
@@ -179,13 +190,15 @@ export function PontoAdjustmentRequests() {
             <CardTitle className="font-display flex items-center gap-2">
               <Clock className="h-4 w-4 text-warning" /> Solicitações de Ajuste
             </CardTitle>
-            <Badge variant="outline" className="text-[10px]">{solicitacoes.filter((s: SolicitacaoAjustePonto) => s.status === 'pendente').length} Pendentes</Badge>
+            <Badge variant="outline" className="text-[10px]">
+              {solicitacoes.filter((s: SolicitacaoAjustePonto) => s.status === 'pendente').length} Pendentes
+            </Badge>
           </div>
           <div className="relative w-full sm:w-64">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <Input 
-              placeholder="Buscar colaborador..." 
-              className="pl-8 h-8 text-xs" 
+            <Input
+              placeholder="Buscar colaborador..."
+              className="pl-8 h-8 text-xs"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -196,10 +209,18 @@ export function PontoAdjustmentRequests() {
             <div className="flex items-center justify-between mb-4 p-3 bg-primary/5 rounded-lg border border-primary/20 animate-in fade-in slide-in-from-top-2">
               <span className="text-sm font-medium">{selectedIds.length} selecionados</span>
               <div className="flex gap-2">
-                <Button size="sm" variant="gradient-success" onClick={() => batchMutation.mutate({ ids: selectedIds, status: 'aprovado' })}>
+                <Button
+                  size="sm"
+                  variant="gradient-success"
+                  onClick={() => batchMutation.mutate({ ids: selectedIds, status: 'aprovado' })}
+                >
                   Aprovar em Lote
                 </Button>
-                <Button size="sm" variant="destructive" onClick={() => batchMutation.mutate({ ids: selectedIds, status: 'recusado' })}>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => batchMutation.mutate({ ids: selectedIds, status: 'recusado' })}
+                >
                   Rejeitar em Lote
                 </Button>
                 <Button size="sm" variant="outline" onClick={() => setSelectedIds([])}>
@@ -212,7 +233,10 @@ export function PontoAdjustmentRequests() {
             <TableHeader>
               <TableRow className="bg-muted/30 hover:bg-muted/30">
                 <TableHead className="w-10">
-                  <Checkbox checked={selectedIds.length === filteredSolicitacoes.length && filteredSolicitacoes.length > 0} onCheckedChange={toggleSelectAll} />
+                  <Checkbox
+                    checked={selectedIds.length === filteredSolicitacoes.length && filteredSolicitacoes.length > 0}
+                    onCheckedChange={toggleSelectAll}
+                  />
                 </TableHead>
                 <TableHead>Colaborador</TableHead>
                 <TableHead>Data</TableHead>
@@ -222,7 +246,6 @@ export function PontoAdjustmentRequests() {
                 <TableHead>Risco IA</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
-
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -236,10 +259,7 @@ export function PontoAdjustmentRequests() {
                 filteredSolicitacoes.map((s: SolicitacaoAjustePonto) => (
                   <TableRow key={s.id} className="group transition-colors hover:bg-muted/10">
                     <TableCell>
-                      <Checkbox 
-                        checked={selectedIds.includes(s.id)} 
-                        onCheckedChange={() => toggleSelect(s.id)} 
-                      />
+                      <Checkbox checked={selectedIds.includes(s.id)} onCheckedChange={() => toggleSelect(s.id)} />
                     </TableCell>
                     <TableCell className="font-medium">
                       <div className="flex flex-col">
@@ -252,30 +272,44 @@ export function PontoAdjustmentRequests() {
                       </div>
                     </TableCell>
                     <TableCell>{format(parseISO(s.data_ponto), 'dd/MM/yyyy')}</TableCell>
-                    <TableCell><Badge variant="outline" className="text-[10px]">{s.tipo_ponto}</Badge></TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="text-[10px]">
+                        {s.tipo_ponto}
+                      </Badge>
+                    </TableCell>
                     <TableCell className="font-mono text-xs">{s.hora_sugerida?.substring(0, 5)}</TableCell>
-                    <TableCell className="max-w-[200px] truncate text-xs text-muted-foreground" title={s.motivo}>{s.motivo}</TableCell>
+                    <TableCell className="max-w-[200px] truncate text-xs text-muted-foreground" title={s.motivo}>
+                      {s.motivo}
+                    </TableCell>
                     <TableCell>
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <div className="flex items-center gap-1.5 cursor-help">
-                              <Badge variant={s.id.length % 3 === 0 ? "success" : "warning"} className="text-[9px] px-1.5 py-0">
-                                {s.id.length % 3 === 0 ? "Baixo" : "Médio"}
+                              <Badge
+                                variant={s.id.length % 3 === 0 ? 'success' : 'warning'}
+                                className="text-[9px] px-1.5 py-0"
+                              >
+                                {s.id.length % 3 === 0 ? 'Baixo' : 'Médio'}
                               </Badge>
                               {s.id.length % 3 === 0 && <Zap className="h-3 w-3 text-success fill-success" />}
                             </div>
                           </TooltipTrigger>
                           <TooltipContent className="text-[10px] max-w-[200px]">
-                            {s.id.length % 3 === 0 
-                              ? "A IA confirmou que este horário é compatível com o histórico e geolocalização do colaborador." 
-                              : "O horário sugerido diverge da média histórica do colaborador em 15 minutos."}
+                            {s.id.length % 3 === 0
+                              ? 'A IA confirmou que este horário é compatível com o histórico e geolocalização do colaborador.'
+                              : 'O horário sugerido diverge da média histórica do colaborador em 15 minutos.'}
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={s.status === 'pendente' ? 'secondary' : s.status === 'aprovado' ? 'success' : 'destructive'} className="capitalize text-[10px]">
+                      <Badge
+                        variant={
+                          s.status === 'pendente' ? 'secondary' : s.status === 'aprovado' ? 'success' : 'destructive'
+                        }
+                        className="capitalize text-[10px]"
+                      >
                         {s.status}
                       </Badge>
                     </TableCell>
@@ -285,7 +319,12 @@ export function PontoAdjustmentRequests() {
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-primary" onClick={() => showDetails(s)}>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="h-8 w-8 text-muted-foreground hover:text-primary"
+                                onClick={() => showDetails(s)}
+                              >
                                 <History className="h-4 w-4" />
                               </Button>
                             </TooltipTrigger>
@@ -295,10 +334,20 @@ export function PontoAdjustmentRequests() {
 
                         {s.status === 'pendente' && (
                           <>
-                            <Button size="icon" variant="ghost" className="h-8 w-8 text-success hover:bg-success/10" onClick={() => mutation.mutate({ id: s.id, status: 'aprovado' })}>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8 text-success hover:bg-success/10"
+                              onClick={() => mutation.mutate({ id: s.id, status: 'aprovado' })}
+                            >
                               <CheckCircle2 className="h-4 w-4" />
                             </Button>
-                            <Button size="icon" variant="ghost" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={() => mutation.mutate({ id: s.id, status: 'recusado' })}>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                              onClick={() => mutation.mutate({ id: s.id, status: 'recusado' })}
+                            >
                               <XCircle className="h-4 w-4" />
                             </Button>
                           </>
@@ -321,9 +370,7 @@ export function PontoAdjustmentRequests() {
                 <DialogTitle className="flex items-center gap-2 text-xl">
                   <FileText className="h-5 w-5 text-primary" /> Detalhes da Solicitação
                 </DialogTitle>
-                <DialogDescription>
-                  Informações completas, trilha de auditoria e conformidade legal.
-                </DialogDescription>
+                <DialogDescription>Informações completas, trilha de auditoria e conformidade legal.</DialogDescription>
               </div>
             </div>
           </DialogHeader>
@@ -345,7 +392,9 @@ export function PontoAdjustmentRequests() {
                     </div>
                     <div className="p-4 rounded-xl border bg-card">
                       <p className="text-[10px] text-muted-foreground font-bold uppercase mb-2">Data do Ponto</p>
-                      <p className="font-semibold text-sm">{format(parseISO(selectedRequest.data_ponto), 'dd/MM/yyyy')}</p>
+                      <p className="font-semibold text-sm">
+                        {format(parseISO(selectedRequest.data_ponto), 'dd/MM/yyyy')}
+                      </p>
                     </div>
                     <div className="p-4 rounded-xl border bg-card">
                       <p className="text-[10px] text-muted-foreground font-bold uppercase mb-2">Hora Original</p>
@@ -366,19 +415,20 @@ export function PontoAdjustmentRequests() {
                   <ScrollArea className="h-[300px] pr-4">
                     <div className="space-y-6 relative before:absolute before:inset-0 before:left-2 before:w-0.5 before:bg-muted">
                       {requestAuditLogs.length > 0 ? (
-                        requestAuditLogs
-                          .map((log: TrilhaAuditoriaPonto) => (
-                            <div key={log.id} className="relative pl-8">
-                              <div className="absolute left-0 top-1.5 h-4 w-4 rounded-full border-2 border-primary bg-background z-10" />
-                              <div className="bg-card rounded-xl p-4 border shadow-xs">
-                                <div className="flex items-center justify-between mb-2">
-                                  <span className="font-bold text-xs capitalize text-primary">{log.acao}</span>
-                                  <span className="text-[10px] text-muted-foreground">{new Date(log.created_at).toLocaleString('pt-BR')}</span>
-                                </div>
-                                <p className="text-xs text-muted-foreground">{log.user_email || 'Sistema'}</p>
+                        requestAuditLogs.map((log: TrilhaAuditoriaPonto) => (
+                          <div key={log.id} className="relative pl-8">
+                            <div className="absolute left-0 top-1.5 h-4 w-4 rounded-full border-2 border-primary bg-background z-10" />
+                            <div className="bg-card rounded-xl p-4 border shadow-xs">
+                              <div className="flex items-center justify-between mb-2">
+                                <span className="font-bold text-xs capitalize text-primary">{log.acao}</span>
+                                <span className="text-[10px] text-muted-foreground">
+                                  {new Date(log.created_at).toLocaleString('pt-BR')}
+                                </span>
                               </div>
+                              <p className="text-xs text-muted-foreground">{log.user_email || 'Sistema'}</p>
                             </div>
-                          ))
+                          </div>
+                        ))
                       ) : (
                         <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
                           <History className="h-8 w-8 mb-2 opacity-20" />
@@ -396,10 +446,17 @@ export function PontoAdjustmentRequests() {
                         <Shield className="h-6 w-6 text-success" />
                         <div>
                           <h4 className="font-bold text-lg">Validação Portaria 671</h4>
-                          <p className="text-xs text-muted-foreground">Integridade e rastreabilidade garantidas por SHA256.</p>
+                          <p className="text-xs text-muted-foreground">
+                            Integridade e rastreabilidade garantidas por SHA256.
+                          </p>
                         </div>
                       </div>
-                      <Button variant="outline" size="sm" className="gap-2" onClick={() => exportPortaria671PDF(selectedRequest)}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-2"
+                        onClick={() => exportPortaria671PDF(selectedRequest)}
+                      >
                         <Download className="h-4 w-4" /> Exportar PDF
                       </Button>
                     </div>
@@ -410,16 +467,24 @@ export function PontoAdjustmentRequests() {
                         <div className="flex items-center gap-2">
                           <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
                           <div className="flex flex-col">
-                            <span className="text-[10px] text-muted-foreground line-through">America/Sao_Paulo (Original)</span>
-                            <span className="text-sm font-medium text-primary">{selectedRequest.relatorio_conformidade?.timezone || 'America/Sao_Paulo'}</span>
+                            <span className="text-[10px] text-muted-foreground line-through">
+                              America/Sao_Paulo (Original)
+                            </span>
+                            <span className="text-sm font-medium text-primary">
+                              {selectedRequest.relatorio_conformidade?.timezone || 'America/Sao_Paulo'}
+                            </span>
                           </div>
                         </div>
                       </div>
                       <div className="space-y-1">
                         <p className="text-[10px] text-muted-foreground font-bold uppercase">Geofencing (Diff)</p>
                         <div className="flex flex-col">
-                          <span className="text-[10px] text-muted-foreground line-through">Dentro do Raio (Original)</span>
-                          <span className={`text-sm font-medium ${selectedRequest.relatorio_conformidade?.geofencing ? 'text-success' : 'text-warning'}`}>
+                          <span className="text-[10px] text-muted-foreground line-through">
+                            Dentro do Raio (Original)
+                          </span>
+                          <span
+                            className={`text-sm font-medium ${selectedRequest.relatorio_conformidade?.geofencing ? 'text-success' : 'text-warning'}`}
+                          >
                             {selectedRequest.relatorio_conformidade?.geofencing ? 'VÁLIDO' : 'NÃO VERIFICADO'}
                           </span>
                         </div>
@@ -427,11 +492,14 @@ export function PontoAdjustmentRequests() {
                       <div className="space-y-1">
                         <p className="text-[10px] text-muted-foreground font-bold uppercase">Divergência de Tempo</p>
                         <p className="text-sm font-medium">
-                          {selectedRequest.relatorio_conformidade?.divergencia_minutos || 0} minutos em relação ao horário original ({selectedRequest.hora_original || '--:--'})
+                          {selectedRequest.relatorio_conformidade?.divergencia_minutos || 0} minutos em relação ao
+                          horário original ({selectedRequest.hora_original || '--:--'})
                         </p>
                       </div>
                       <div className="space-y-1 col-span-2 pt-2 border-t">
-                        <p className="text-[10px] text-muted-foreground font-bold uppercase">Assinatura Digital de Integridade (SHA256)</p>
+                        <p className="text-[10px] text-muted-foreground font-bold uppercase">
+                          Assinatura Digital de Integridade (SHA256)
+                        </p>
                         <p className="text-[10px] font-mono break-all bg-muted p-2 rounded-lg border">
                           {selectedRequest.relatorio_conformidade?.sha256_integridade || 'Aguardando processamento'}
                         </p>
@@ -447,22 +515,32 @@ export function PontoAdjustmentRequests() {
             <div className="flex gap-2">
               {selectedRequest?.status === 'pendente' && (
                 <>
-                  <Button variant="gradient-success" className="gap-2" onClick={() => {
-                    mutation.mutate({ id: selectedRequest.id, status: 'aprovado' });
-                    setSelectedRequest(null);
-                  }}>
+                  <Button
+                    variant="gradient-success"
+                    className="gap-2"
+                    onClick={() => {
+                      mutation.mutate({ id: selectedRequest.id, status: 'aprovado' });
+                      setSelectedRequest(null);
+                    }}
+                  >
                     <CheckCircle2 className="h-4 w-4" /> Aprovar
                   </Button>
-                  <Button variant="destructive" className="gap-2" onClick={() => {
-                    mutation.mutate({ id: selectedRequest.id, status: 'recusado' });
-                    setSelectedRequest(null);
-                  }}>
+                  <Button
+                    variant="destructive"
+                    className="gap-2"
+                    onClick={() => {
+                      mutation.mutate({ id: selectedRequest.id, status: 'recusado' });
+                      setSelectedRequest(null);
+                    }}
+                  >
                     <XCircle className="h-4 w-4" /> Rejeitar
                   </Button>
                 </>
               )}
             </div>
-            <Button variant="outline" onClick={() => setSelectedRequest(null)}>Fechar</Button>
+            <Button variant="outline" onClick={() => setSelectedRequest(null)}>
+              Fechar
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

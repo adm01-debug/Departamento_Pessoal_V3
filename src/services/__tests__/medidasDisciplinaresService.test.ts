@@ -16,9 +16,9 @@ function setupListChain(data: any[], error: any = null) {
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
   chain.returns = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, chain };
@@ -45,7 +45,12 @@ function setupUpdateChain(data: any, error: any = null) {
 
 function setupDeleteChain(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  const __delChain = {
+    then: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).then(r),
+    catch: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).catch(r),
+    finally: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).finally(r),
+    eq: eqFn,
+  };
   eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
@@ -55,7 +60,9 @@ function setupDeleteChain(error: any = null) {
 // ─── listar ───────────────────────────────────────────────────────────────────
 
 describe('medidasDisciplinaresService.listar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns all medidas without empresa filter', async () => {
     const records = [{ id: 'm1', tipo: 'advertencia' }];
@@ -65,7 +72,7 @@ describe('medidasDisciplinaresService.listar', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as any);
+    setupListChain(null as never);
     const result = await medidasDisciplinaresService.listar(EMPRESA_ID);
     expect(result).toEqual([]);
   });
@@ -85,9 +92,7 @@ describe('medidasDisciplinaresService.listar', () => {
   it('includes colaborador join', async () => {
     const { selectFn } = setupListChain([]);
     await medidasDisciplinaresService.listar(EMPRESA_ID);
-    expect(selectFn).toHaveBeenCalledWith(
-      expect.stringContaining('colaborador:colaboradores')
-    );
+    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('colaborador:colaboradores'));
   });
 
   it('throws on DB error', async () => {
@@ -99,7 +104,9 @@ describe('medidasDisciplinaresService.listar', () => {
 // ─── buscarPorColaborador ─────────────────────────────────────────────────────
 
 describe('medidasDisciplinaresService.buscarPorColaborador', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns medidas for given colaboradorId', async () => {
     const records = [{ id: 'm1', colaborador_id: 'c1' }];
@@ -110,7 +117,7 @@ describe('medidasDisciplinaresService.buscarPorColaborador', () => {
   });
 
   it('returns empty array when no medidas', async () => {
-    setupListChain(null as any);
+    setupListChain(null as never);
     const result = await medidasDisciplinaresService.buscarPorColaborador('c-x', EMPRESA_ID);
     expect(result).toEqual([]);
   });
@@ -125,31 +132,59 @@ describe('medidasDisciplinaresService.buscarPorColaborador', () => {
 // ─── criar ────────────────────────────────────────────────────────────────────
 
 describe('medidasDisciplinaresService.criar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new medida', async () => {
     const created = { id: 'm-new', tipo: 'suspensao' };
     const { insertFn } = setupInsertChain(created);
-    const result = await medidasDisciplinaresService.criar({ tipo: 'suspensao', colaborador_id: 'colab-1', descricao: 'teste', data_ocorrencia: '2026-08-08' });
-    expect(insertFn).toHaveBeenCalledWith({ tipo: 'suspensao', colaborador_id: 'colab-1', descricao: 'teste', data_ocorrencia: '2026-08-08' });
+    const result = await medidasDisciplinaresService.criar({
+      tipo: 'suspensao',
+      colaborador_id: 'colab-1',
+      descricao: 'teste',
+      data_ocorrencia: '2026-08-08',
+    });
+    expect(insertFn).toHaveBeenCalledWith({
+      tipo: 'suspensao',
+      colaborador_id: 'colab-1',
+      descricao: 'teste',
+      data_ocorrencia: '2026-08-08',
+    });
     expect(result).toEqual(created);
   });
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(medidasDisciplinaresService.criar({ tipo: 'suspensao', colaborador_id: 'colab-1', descricao: 'teste', data_ocorrencia: '2026-08-08' })).rejects.toThrow();
+    await expect(
+      medidasDisciplinaresService.criar({
+        tipo: 'suspensao',
+        colaborador_id: 'colab-1',
+        descricao: 'teste',
+        data_ocorrencia: '2026-08-08',
+      })
+    ).rejects.toThrow();
   });
 
   it('throws on DB error', async () => {
     setupInsertChain(null, { message: 'fail' });
-    await expect(medidasDisciplinaresService.criar({ tipo: 'suspensao', colaborador_id: 'colab-1', descricao: 'teste', data_ocorrencia: '2026-08-08' })).rejects.toBeDefined();
+    await expect(
+      medidasDisciplinaresService.criar({
+        tipo: 'suspensao',
+        colaborador_id: 'colab-1',
+        descricao: 'teste',
+        data_ocorrencia: '2026-08-08',
+      })
+    ).rejects.toBeDefined();
   });
 });
 
 // ─── atualizar ────────────────────────────────────────────────────────────────
 
 describe('medidasDisciplinaresService.atualizar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates and returns medida', async () => {
     const updated = { id: 'm1', status: 'concluida' };
@@ -174,7 +209,9 @@ describe('medidasDisciplinaresService.atualizar', () => {
 // ─── excluir ──────────────────────────────────────────────────────────────────
 
 describe('medidasDisciplinaresService.excluir', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes medida by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();

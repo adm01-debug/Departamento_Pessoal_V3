@@ -85,9 +85,9 @@ BEGIN
 END;
 $$;
 
-GRANT EXECUTE ON FUNCTION public.registrar_auditoria TO authenticated;
+GRANT EXECUTE ON FUNCTION public.registrar_auditoria(text, text, uuid, jsonb, jsonb) TO authenticated;
 
-COMMENT ON FUNCTION public.registrar_auditoria IS
+COMMENT ON FUNCTION public.registrar_auditoria(text, text, uuid, jsonb, jsonb) IS
   '[P0-005] RPC único para inserir auditoria. Valida tabela + operação, extrai tenant do JWT.';
 
 COMMENT ON TABLE public.auditoria IS

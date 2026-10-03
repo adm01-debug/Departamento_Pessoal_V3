@@ -16,6 +16,7 @@ DROP POLICY IF EXISTS "anon_admissao_tokens_select" ON public.admissao_tokens;
 
 -- Política correta: anon pode tentar lookup, mas SÓ do token que apresentar
 -- via header. Tentar ler todos retorna 0 rows.
+DROP POLICY IF EXISTS "anon_select_own_token_via_header" ON public.admissao_tokens;
 CREATE POLICY "anon_select_own_token_via_header" ON public.admissao_tokens
   FOR SELECT TO anon, authenticated
   USING (
@@ -30,11 +31,15 @@ REVOKE INSERT, UPDATE, DELETE ON public.admissao_tokens FROM anon;
 REVOKE INSERT, UPDATE, DELETE ON public.admissao_tokens FROM authenticated;
 
 -- ---------- logs_sistema ----------
+-- Coluna de tenant esperada pela policy abaixo (ausente em schemas legados)
+ALTER TABLE public.logs_sistema ADD COLUMN IF NOT EXISTS empresa_id UUID;
+
 DROP POLICY IF EXISTS "Anyone can insert logs" ON public.logs_sistema;
 DROP POLICY IF EXISTS "anon_insert_logs" ON public.logs_sistema;
 DROP POLICY IF EXISTS "logs_sistema_anon_insert" ON public.logs_sistema;
 
 -- Apenas authenticated pode inserir logs (com isolamento de tenant)
+DROP POLICY IF EXISTS "authenticated_insert_logs" ON public.logs_sistema;
 CREATE POLICY "authenticated_insert_logs" ON public.logs_sistema
   FOR INSERT TO authenticated
   WITH CHECK (
@@ -46,6 +51,7 @@ CREATE POLICY "authenticated_insert_logs" ON public.logs_sistema
   );
 
 -- SELECT: apenas admins da empresa leem logs
+DROP POLICY IF EXISTS "admin_select_logs" ON public.logs_sistema;
 CREATE POLICY "admin_select_logs" ON public.logs_sistema
   FOR SELECT TO authenticated
   USING (public.is_admin(auth.uid()));

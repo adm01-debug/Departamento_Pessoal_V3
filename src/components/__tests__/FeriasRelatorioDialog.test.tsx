@@ -1,21 +1,24 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children }: any) => <div>{children}</div>,
-  DialogContent: ({ children }: any) => <div role="dialog">{children}</div>,
-  DialogHeader: ({ children }: any) => <div>{children}</div>,
-  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
-  DialogTrigger: ({ children }: any) => children,
-  DialogFooter: ({ children }: any) => <div>{children}</div>,
+  Dialog: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogContent: ({ children }: { children?: ReactNode }) => <div role="dialog">{children}</div>,
+  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
+  DialogTrigger: ({ children }: { children?: ReactNode }) => children,
+  DialogFooter: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/select', () => ({
-  Select: ({ children }: any) => <div>{children}</div>,
-  SelectTrigger: ({ children }: any) => <button>{children}</button>,
-  SelectValue: ({ placeholder }: any) => <span>{placeholder}</span>,
-  SelectContent: ({ children }: any) => <div>{children}</div>,
-  SelectItem: ({ children, value }: any) => <div data-value={value}>{children}</div>,
+  Select: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  SelectTrigger: ({ children }: { children?: ReactNode }) => <button>{children}</button>,
+  SelectValue: ({ placeholder }: { children?: ReactNode; placeholder?: string }) => <span>{placeholder}</span>,
+  SelectContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  SelectItem: ({ children, value }: { children?: ReactNode; value?: string }) => (
+    <div data-value={value}>{children}</div>
+  ),
 }));
 
 vi.mock('@/hooks/useEmpresas', () => ({
@@ -27,17 +30,23 @@ vi.mock('@/utils/feriasPDF', () => ({
 }));
 
 import { FeriasRelatorioDialog } from '../ferias/FeriasRelatorioDialog';
+import type { Ferias } from '@/types/entities';
+import type { FeriasKpiStats } from '@/utils/feriasPDF';
 
-const MOCK_STATS = {
+const MOCK_STATS: FeriasKpiStats = {
   total: 10,
   aprovadas: 5,
   pendentes: 3,
   vencidas: 2,
+  emGozo: 1,
+  abonoPecuniario: 0,
 };
 
-const MOCK_DATA = [
+const MOCK_DATA: Ferias[] = [
   {
     id: 'fer-001',
+    colaborador_id: 'c1',
+    empresa_id: 'e1',
     data_inicio: '2026-06-01',
     data_fim: '2026-06-30',
     status: 'aprovada',
@@ -45,6 +54,8 @@ const MOCK_DATA = [
   },
   {
     id: 'fer-002',
+    colaborador_id: 'c2',
+    empresa_id: 'e1',
     data_inicio: '2026-05-01',
     data_fim: '2026-05-20',
     status: 'pendente',

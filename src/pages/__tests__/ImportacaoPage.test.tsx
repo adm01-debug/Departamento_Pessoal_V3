@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -37,7 +38,7 @@ vi.mock('@/integrations/supabase/client', () => ({
 
 // PageLayout / PageTitle: minimal shells to keep the render fast + focused.
 vi.mock('@/components/layout', () => ({
-  PageLayout: ({ children }: any) => <div data-testid="page-layout">{children}</div>,
+  PageLayout: ({ children }: { children?: ReactNode }) => <div data-testid="page-layout">{children}</div>,
 }));
 vi.mock('@/components/PageTitle', () => ({
   PageTitle: () => null,
@@ -96,9 +97,7 @@ describe('ImportacaoPage (integração)', () => {
     await userEvent.upload(input, file);
 
     // Wait for preview step to render.
-    await waitFor(() =>
-      expect(screen.getByRole('button', { name: /Importar 1 Colaboradores/i })).toBeInTheDocument()
-    );
+    await waitFor(() => expect(screen.getByRole('button', { name: /Importar 1 Colaboradores/i })).toBeInTheDocument());
     expect(screen.getByText('Ana Souza')).toBeInTheDocument();
     expect(screen.getByText(/Válidos/)).toBeInTheDocument();
   });
@@ -112,9 +111,7 @@ describe('ImportacaoPage (integração)', () => {
     const input = document.querySelector('input[type="file"]') as HTMLInputElement;
     await userEvent.upload(input, file);
 
-    await waitFor(() =>
-      expect(screen.getByRole('button', { name: /Importar 0 Colaboradores/i })).toBeDisabled()
-    );
+    await waitFor(() => expect(screen.getByRole('button', { name: /Importar 0 Colaboradores/i })).toBeDisabled());
     expect(screen.getByText(/CPF inválido/)).toBeInTheDocument();
   });
 
@@ -155,9 +152,7 @@ describe('ImportacaoPage (integração)', () => {
     const input = document.querySelector('input[type="file"]') as HTMLInputElement;
     await userEvent.upload(input, file);
 
-    await waitFor(() =>
-      expect(screen.getByRole('button', { name: /Cancelar/i })).toBeInTheDocument()
-    );
+    await waitFor(() => expect(screen.getByRole('button', { name: /Cancelar/i })).toBeInTheDocument());
     fireEvent.click(screen.getByRole('button', { name: /Cancelar/i }));
     expect(screen.getByText(/Arraste ou clique para selecionar/i)).toBeInTheDocument();
   });
@@ -165,9 +160,7 @@ describe('ImportacaoPage (integração)', () => {
   it('dispara download do modelo ao clicar em "Baixar Modelo"', async () => {
     renderPage();
     // Spy on anchor.click so we don't actually navigate.
-    const clickSpy = vi
-      .spyOn(HTMLAnchorElement.prototype, 'click')
-      .mockImplementation(() => {});
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
     await userEvent.click(screen.getByRole('button', { name: /Baixar Modelo/i }));
     await waitFor(() => expect(clickSpy).toHaveBeenCalled());
     expect(toastSuccess).toHaveBeenCalledWith('Modelo baixado!');

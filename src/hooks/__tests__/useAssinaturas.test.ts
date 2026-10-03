@@ -22,9 +22,9 @@ function buildChain(data: any[]) {
   const chain: any = {};
   chain.select = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve({ data, error: null }).then(fn);
-  chain.catch = (fn: any) => Promise.resolve({ data, error: null }).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve({ data, error: null }).finally(fn);
+  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve({ data, error: null }).then(fn);
+  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve({ data, error: null }).catch(fn);
+  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve({ data, error: null }).finally(fn);
   return chain;
 }
 
@@ -59,16 +59,18 @@ describe('useAssinaturas', () => {
   it('maps token to DocumentoAssinatura with pendente status', async () => {
     const futureDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     const now = new Date().toISOString();
-    const tokens = [{
-      id: 't1',
-      admissao_id: 'adm-1',
-      email_candidato: 'john@test.com',
-      data_expiracao: futureDate.toISOString(),
-      contrato_assinado: null,
-      assinado_em: null,
-      created_at: now,
-      admissoes: { nome: 'John Doe', cargo: 'Developer' },
-    }];
+    const tokens = [
+      {
+        id: 't1',
+        admissao_id: 'adm-1',
+        email_candidato: 'john@test.com',
+        data_expiracao: futureDate.toISOString(),
+        contrato_assinado: null,
+        assinado_em: null,
+        created_at: now,
+        admissoes: { nome: 'John Doe', cargo: 'Developer' },
+      },
+    ];
     mockFrom.mockImplementation(() => buildChain(tokens));
     const { result } = renderHook(() => useAssinaturas(), { wrapper });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
@@ -84,12 +86,18 @@ describe('useAssinaturas', () => {
 
   it('sets status to assinado when contrato_assinado is truthy', async () => {
     const signedAt = new Date().toISOString();
-    const tokens = [{
-      id: 't1', admissao_id: 'adm-1', email_candidato: 'x@test.com',
-      data_expiracao: new Date(Date.now() + 86400000).toISOString(),
-      contrato_assinado: true, assinado_em: signedAt,
-      created_at: new Date().toISOString(), admissoes: null,
-    }];
+    const tokens = [
+      {
+        id: 't1',
+        admissao_id: 'adm-1',
+        email_candidato: 'x@test.com',
+        data_expiracao: new Date(Date.now() + 86400000).toISOString(),
+        contrato_assinado: true,
+        assinado_em: signedAt,
+        created_at: new Date().toISOString(),
+        admissoes: null,
+      },
+    ];
     mockFrom.mockImplementation(() => buildChain(tokens));
     const { result } = renderHook(() => useAssinaturas(), { wrapper });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
@@ -98,12 +106,18 @@ describe('useAssinaturas', () => {
   });
 
   it('sets status to expirado when expired and not signed', async () => {
-    const tokens = [{
-      id: 't1', admissao_id: 'adm-1', email_candidato: 'x@test.com',
-      data_expiracao: new Date(Date.now() - 86400000).toISOString(),
-      contrato_assinado: null, assinado_em: null,
-      created_at: new Date().toISOString(), admissoes: null,
-    }];
+    const tokens = [
+      {
+        id: 't1',
+        admissao_id: 'adm-1',
+        email_candidato: 'x@test.com',
+        data_expiracao: new Date(Date.now() - 86400000).toISOString(),
+        contrato_assinado: null,
+        assinado_em: null,
+        created_at: new Date().toISOString(),
+        admissoes: null,
+      },
+    ];
     mockFrom.mockImplementation(() => buildChain(tokens));
     const { result } = renderHook(() => useAssinaturas(), { wrapper });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
@@ -112,12 +126,18 @@ describe('useAssinaturas', () => {
   });
 
   it('uses email_candidato as colaborador name when admissoes is null', async () => {
-    const tokens = [{
-      id: 't1', admissao_id: 'adm-1', email_candidato: 'cand@test.com',
-      data_expiracao: new Date(Date.now() + 86400000).toISOString(),
-      contrato_assinado: null, assinado_em: null,
-      created_at: new Date().toISOString(), admissoes: null,
-    }];
+    const tokens = [
+      {
+        id: 't1',
+        admissao_id: 'adm-1',
+        email_candidato: 'cand@test.com',
+        data_expiracao: new Date(Date.now() + 86400000).toISOString(),
+        contrato_assinado: null,
+        assinado_em: null,
+        created_at: new Date().toISOString(),
+        admissoes: null,
+      },
+    ];
     mockFrom.mockImplementation(() => buildChain(tokens));
     const { result } = renderHook(() => useAssinaturas(), { wrapper });
     await waitFor(() => expect(result.current.isLoading).toBe(false));

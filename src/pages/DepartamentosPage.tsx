@@ -8,37 +8,48 @@ import { useNavigate } from 'react-router-dom';
 import { NovoDepartamentoDialog } from '@/components/departamentos/NovoDepartamentoDialog';
 import { EntityPageContainer } from '@/components/layout/EntityPageContainer';
 import { Departamento } from '@/types/entities';
-import type { LooseRow } from '@/types/db';
 export default function DepartamentosPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editando, setEditando] = useState<LooseRow<'departamentos'> | null>(null);
-  const { 
-    departamentos, 
-    total, 
-    isLoading, 
+  const [editando, setEditando] = useState<Departamento | null>(null);
+  const {
+    departamentos,
+    total,
+    isLoading,
     isFetching,
     error,
-    page, 
-    setPage, 
-    pageSize, 
-    search, 
+    page,
+    setPage,
+    pageSize,
+    search,
     setSearch,
     refetch,
-    isRefreshing
+    isRefreshing,
   } = useDepartamentos();
 
-  const handleSearchChange = useCallback((val: string) => {
-    setSearch(val);
-    setPage(1);
-  }, [setSearch, setPage]);
+  const handleSearchChange = useCallback(
+    (val: string) => {
+      setSearch(val);
+      setPage(1);
+    },
+    [setSearch, setPage]
+  );
 
-  const handlePageChange = useCallback((p: number) => {
-    setPage(p);
-  }, [setPage]);
+  const handlePageChange = useCallback(
+    (p: number) => {
+      setPage(p);
+    },
+    [setPage]
+  );
   const navigate = useNavigate();
 
-  const abrirNovo = () => { setEditando(null); setDialogOpen(true); };
-  const abrirEditar = (d: any) => { setEditando(d); setDialogOpen(true); };
+  const abrirNovo = () => {
+    setEditando(null);
+    setDialogOpen(true);
+  };
+  const abrirEditar = (d: Departamento) => {
+    setEditando(d);
+    setDialogOpen(true);
+  };
 
   return (
     <>
@@ -67,8 +78,13 @@ export default function DepartamentosPage() {
         addLabel="Novo Departamento"
         actions={
           <div className="flex gap-2">
-            <Button variant="outline" className="h-11 rounded-xl font-bold bg-card/50 shadow-xs" onClick={() => navigate('/organograma')}>
-              <GitBranch className="h-4 w-4 mr-2" />Ver Organograma
+            <Button
+              variant="outline"
+              className="h-11 rounded-xl font-bold bg-card/50 shadow-xs"
+              onClick={() => navigate('/organograma')}
+            >
+              <GitBranch className="h-4 w-4 mr-2" />
+              Ver Organograma
             </Button>
           </div>
         }
@@ -77,7 +93,7 @@ export default function DepartamentosPage() {
           { header: 'C. Custo' },
           { header: 'Estrutura' },
           { header: 'Status' },
-          { header: '', width: '100px' }
+          { header: '', width: '100px' },
         ]}
         renderRow={(dept) => (
           <TableRow key={dept.id} className="hover:bg-accent/20 transition-colors group">
@@ -86,7 +102,7 @@ export default function DepartamentosPage() {
                 <span className="font-body font-bold text-sm text-foreground">{dept.nome}</span>
                 {dept.id && (
                   <span className="text-[9px] text-muted-foreground uppercase font-mono tracking-tighter opacity-50">
-                    ID: {dept.id.slice(0,8)}
+                    ID: {dept.id.slice(0, 8)}
                   </span>
                 )}
               </div>
@@ -109,15 +125,21 @@ export default function DepartamentosPage() {
               )}
             </TableCell>
             <TableCell>
-              <Badge className={dept.ativo !== false ? 'bg-success/10 text-success border-0 text-[10px]' : 'bg-muted text-muted-foreground border-0 text-[10px]'}>
+              <Badge
+                className={
+                  dept.ativo !== false
+                    ? 'bg-success/10 text-success border-0 text-[10px]'
+                    : 'bg-muted text-muted-foreground border-0 text-[10px]'
+                }
+              >
                 {dept.ativo !== false ? 'Ativo' : 'Inativo'}
               </Badge>
             </TableCell>
             <TableCell className="text-right">
-              <Button 
-                onClick={() => abrirEditar(dept)} 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                onClick={() => abrirEditar(dept)}
+                variant="ghost"
+                size="sm"
                 className="h-7 text-[10px] font-bold gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
               >
                 DETALHES <ArrowRight className="h-3 w-3" />

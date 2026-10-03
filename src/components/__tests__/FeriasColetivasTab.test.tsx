@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
@@ -12,7 +13,9 @@ vi.mock('@/hooks/useEmpresas', () => ({
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: vi.fn(() => ({
-      select: vi.fn(() => ({ eq: vi.fn(() => ({ order: vi.fn(() => ({ limit: vi.fn(() => ({ data: [], error: null })) })) })) })),
+      select: vi.fn(() => ({
+        eq: vi.fn(() => ({ order: vi.fn(() => ({ limit: vi.fn(() => ({ data: [], error: null })) })) })),
+      })),
     })),
   },
 }));
@@ -31,20 +34,22 @@ vi.mock('date-fns', () => ({ format: vi.fn(() => '24/07/26') }));
 vi.mock('date-fns/locale', () => ({ ptBR: {} }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children }: any) => <div>{children}</div>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
-  CardHeader: ({ children }: any) => <div>{children}</div>,
-  CardTitle: ({ children }: any) => <h3>{children}</h3>,
+  Card: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardTitle: ({ children }: { children?: ReactNode }) => <h3>{children}</h3>,
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, disabled }: any) => (
-    <button onClick={onClick} disabled={disabled}>{children}</button>
+  Button: ({ children, onClick, disabled }: { children?: ReactNode; onClick?: () => void; disabled?: boolean }) => (
+    <button onClick={onClick} disabled={disabled}>
+      {children}
+    </button>
   ),
 }));
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children }: any) => <span>{children}</span>,
+  Badge: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
 }));
 
 vi.mock('@/components/ui/input', () => ({
@@ -52,25 +57,25 @@ vi.mock('@/components/ui/input', () => ({
 }));
 
 vi.mock('@/components/ui/label', () => ({
-  Label: ({ children }: any) => <label>{children}</label>,
+  Label: ({ children }: { children?: ReactNode }) => <label>{children}</label>,
 }));
 
 vi.mock('@/components/ui/table', () => ({
-  Table: ({ children }: any) => <table>{children}</table>,
-  TableHeader: ({ children }: any) => <thead>{children}</thead>,
-  TableBody: ({ children }: any) => <tbody>{children}</tbody>,
-  TableRow: ({ children }: any) => <tr>{children}</tr>,
-  TableHead: ({ children }: any) => <th>{children}</th>,
-  TableCell: ({ children }: any) => <td>{children}</td>,
+  Table: ({ children }: { children?: ReactNode }) => <table>{children}</table>,
+  TableHeader: ({ children }: { children?: ReactNode }) => <thead>{children}</thead>,
+  TableBody: ({ children }: { children?: ReactNode }) => <tbody>{children}</tbody>,
+  TableRow: ({ children }: { children?: ReactNode }) => <tr>{children}</tr>,
+  TableHead: ({ children }: { children?: ReactNode }) => <th>{children}</th>,
+  TableCell: ({ children }: { children?: ReactNode }) => <td>{children}</td>,
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children }: any) => <div>{children}</div>,
-  DialogContent: ({ children }: any) => <div>{children}</div>,
-  DialogHeader: ({ children }: any) => <div>{children}</div>,
-  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
-  DialogFooter: ({ children }: any) => <div>{children}</div>,
-  DialogDescription: ({ children }: any) => <p>{children}</p>,
+  Dialog: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
+  DialogFooter: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogDescription: ({ children }: { children?: ReactNode }) => <p>{children}</p>,
 }));
 
 import { FeriasColetivasTab } from '../ferias/FeriasColetivasTab';
@@ -88,7 +93,7 @@ describe('FeriasColetivasTab', () => {
 
   it('shows loading spinner when loading', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: undefined, isLoading: true, refetch: vi.fn() } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: undefined, isLoading: true, refetch: vi.fn() } as never);
     const { container } = render(<FeriasColetivasTab />);
     expect(container.querySelector('svg') || screen.queryByText(/Nenhuma/i)).toBeDefined();
   });
@@ -96,23 +101,25 @@ describe('FeriasColetivasTab', () => {
   it('renders table headers when coletivas present', async () => {
     const { useQuery } = await import('@tanstack/react-query');
     vi.mocked(useQuery).mockReturnValueOnce({
-      data: [{
-        id: 'c1',
-        data_inicio: '2026-07-01',
-        data_fim: '2026-07-15',
-        dias: 15,
-        status: 'aprovada',
-        departamentos: ['RH', 'TI'],
-        comunicado_mte_path: null,
-        comunicado_mte_hash: null,
-        comunicado_sindicato_path: null,
-        comunicado_sindicato_hash: null,
-        comunicado_sindicato_nome: null,
-        comunicado_gerado_em: null,
-      }],
+      data: [
+        {
+          id: 'c1',
+          data_inicio: '2026-07-01',
+          data_fim: '2026-07-15',
+          dias: 15,
+          status: 'aprovada',
+          departamentos: ['RH', 'TI'],
+          comunicado_mte_path: null,
+          comunicado_mte_hash: null,
+          comunicado_sindicato_path: null,
+          comunicado_sindicato_hash: null,
+          comunicado_sindicato_nome: null,
+          comunicado_gerado_em: null,
+        },
+      ],
       isLoading: false,
       refetch: vi.fn(),
-    } as any);
+    } as never);
     render(<FeriasColetivasTab />);
     expect(screen.getByText('Período')).toBeInTheDocument();
   });
@@ -120,10 +127,25 @@ describe('FeriasColetivasTab', () => {
   it('renders Dias column header', async () => {
     const { useQuery } = await import('@tanstack/react-query');
     vi.mocked(useQuery).mockReturnValueOnce({
-      data: [{ id: 'c2', data_inicio: '2026-08-01', data_fim: '2026-08-10', dias: 10, status: 'planejada', departamentos: null, comunicado_mte_path: null, comunicado_mte_hash: null, comunicado_sindicato_path: null, comunicado_sindicato_hash: null, comunicado_sindicato_nome: null, comunicado_gerado_em: null }],
+      data: [
+        {
+          id: 'c2',
+          data_inicio: '2026-08-01',
+          data_fim: '2026-08-10',
+          dias: 10,
+          status: 'planejada',
+          departamentos: null,
+          comunicado_mte_path: null,
+          comunicado_mte_hash: null,
+          comunicado_sindicato_path: null,
+          comunicado_sindicato_hash: null,
+          comunicado_sindicato_nome: null,
+          comunicado_gerado_em: null,
+        },
+      ],
       isLoading: false,
       refetch: vi.fn(),
-    } as any);
+    } as never);
     render(<FeriasColetivasTab />);
     expect(screen.getByText('Dias')).toBeInTheDocument();
   });
@@ -131,10 +153,25 @@ describe('FeriasColetivasTab', () => {
   it('renders Comunicados column header', async () => {
     const { useQuery } = await import('@tanstack/react-query');
     vi.mocked(useQuery).mockReturnValueOnce({
-      data: [{ id: 'c3', data_inicio: '2026-08-01', data_fim: '2026-08-10', dias: 10, status: null, departamentos: null, comunicado_mte_path: null, comunicado_mte_hash: null, comunicado_sindicato_path: null, comunicado_sindicato_hash: null, comunicado_sindicato_nome: null, comunicado_gerado_em: null }],
+      data: [
+        {
+          id: 'c3',
+          data_inicio: '2026-08-01',
+          data_fim: '2026-08-10',
+          dias: 10,
+          status: null,
+          departamentos: null,
+          comunicado_mte_path: null,
+          comunicado_mte_hash: null,
+          comunicado_sindicato_path: null,
+          comunicado_sindicato_hash: null,
+          comunicado_sindicato_nome: null,
+          comunicado_gerado_em: null,
+        },
+      ],
       isLoading: false,
       refetch: vi.fn(),
-    } as any);
+    } as never);
     render(<FeriasColetivasTab />);
     expect(screen.getByText('Comunicados')).toBeInTheDocument();
   });
@@ -147,10 +184,25 @@ describe('FeriasColetivasTab', () => {
   it('renders Todos when departamentos is null', async () => {
     const { useQuery } = await import('@tanstack/react-query');
     vi.mocked(useQuery).mockReturnValueOnce({
-      data: [{ id: 'c4', data_inicio: '2026-07-01', data_fim: '2026-07-10', dias: 10, status: 'aprovada', departamentos: null, comunicado_mte_path: null, comunicado_mte_hash: null, comunicado_sindicato_path: null, comunicado_sindicato_hash: null, comunicado_sindicato_nome: null, comunicado_gerado_em: null }],
+      data: [
+        {
+          id: 'c4',
+          data_inicio: '2026-07-01',
+          data_fim: '2026-07-10',
+          dias: 10,
+          status: 'aprovada',
+          departamentos: null,
+          comunicado_mte_path: null,
+          comunicado_mte_hash: null,
+          comunicado_sindicato_path: null,
+          comunicado_sindicato_hash: null,
+          comunicado_sindicato_nome: null,
+          comunicado_gerado_em: null,
+        },
+      ],
       isLoading: false,
       refetch: vi.fn(),
-    } as any);
+    } as never);
     render(<FeriasColetivasTab />);
     expect(screen.getByText('Todos')).toBeInTheDocument();
   });

@@ -1,9 +1,10 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
 }));
 
@@ -42,7 +43,9 @@ describe('FeriasInsights', () => {
   });
 
   it('shows success insight when no issues', () => {
-    render(<FeriasInsights stats={{ total: 10, pendentes: 1, aprovadas: 8, emGozo: 1, vencidas: 0, abonoPecuniario: 1 }} />);
+    render(
+      <FeriasInsights stats={{ total: 10, pendentes: 1, aprovadas: 8, emGozo: 1, vencidas: 0, abonoPecuniario: 1 }} />
+    );
     expect(screen.getByText('Excelência Operacional')).toBeInTheDocument();
   });
 

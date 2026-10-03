@@ -38,7 +38,13 @@ class AfastamentoService extends BaseService<AfastamentoRow> {
       });
 
     query = query.eq('empresa_id', empId);
-    if (filters.status) query = query.eq('status', filters.status);
+    // 'aguardando_inss' é um status sintético (não existe no enum): traduz para
+    // afastamento ativo com perícia agendada.
+    if (filters.status === 'aguardando_inss') {
+      query = query.eq('status', 'ativo').not('data_pericia', 'is', null);
+    } else if (filters.status) {
+      query = query.eq('status', filters.status);
+    }
     if (filters.tipo) query = query.eq('tipo', filters.tipo);
 
     const { data, count, error } = await query

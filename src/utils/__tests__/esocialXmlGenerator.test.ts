@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { gerarXmlESocial } from '../esocialXmlGenerator';
+import type { ESocialDados } from '../esocialXmlGenerator';
 
 const empresa = {
   cnpj: '12.345.678/0001-90',
@@ -114,12 +115,12 @@ describe('gerarXmlESocial', () => {
 
   describe('Generic event type', () => {
     it('generates generic event for unknown types', () => {
-      const xml = gerarXmlESocial({ tipo: 'S-9999', dados: { foo: 'bar' }, empresa });
+      const xml = gerarXmlESocial({ tipo: 'S-9999', dados: { foo: 'bar' } as unknown as ESocialDados, empresa });
       expect(xml).toContain('<evento Id=');
     });
 
     it('includes serialized dados in generic event', () => {
-      const xml = gerarXmlESocial({ tipo: 'S-9999', dados: { value: 42 }, empresa });
+      const xml = gerarXmlESocial({ tipo: 'S-9999', dados: { value: 42 } as unknown as ESocialDados, empresa });
       expect(xml).toContain('"value":42');
     });
   });

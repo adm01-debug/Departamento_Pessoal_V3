@@ -2,12 +2,18 @@ import { describe, it, expect, vi } from 'vitest';
 
 const { pontoFns, batidasFns, monitorMock, auditMock, offlineMock } = vi.hoisted(() => {
   const pontoFns = {
-    registrar: vi.fn(), getSettings: vi.fn(), buscarRegistroHoje: vi.fn(),
-    buscarRegistrosSemana: vi.fn(), validarBiometria: vi.fn(),
+    registrar: vi.fn(),
+    getSettings: vi.fn(),
+    buscarRegistroHoje: vi.fn(),
+    buscarRegistrosSemana: vi.fn(),
+    validarBiometria: vi.fn(),
   };
   const batidasFns = {
-    listar: vi.fn(), listarPorData: vi.fn(), ajustar: vi.fn(),
-    excluir: vi.fn(), fecharPeriodo: vi.fn(),
+    listar: vi.fn(),
+    listarPorData: vi.fn(),
+    ajustar: vi.fn(),
+    excluir: vi.fn(),
+    fecharPeriodo: vi.fn(),
   };
   return {
     pontoFns,
@@ -20,16 +26,21 @@ const { pontoFns, batidasFns, monitorMock, auditMock, offlineMock } = vi.hoisted
 
 vi.mock('@/services/pontoService', () => ({
   pontoService: {
-    registrar: pontoFns.registrar, getSettings: pontoFns.getSettings,
-    buscarRegistroHoje: pontoFns.buscarRegistroHoje, buscarRegistrosSemana: pontoFns.buscarRegistrosSemana,
+    registrar: pontoFns.registrar,
+    getSettings: pontoFns.getSettings,
+    buscarRegistroHoje: pontoFns.buscarRegistroHoje,
+    buscarRegistrosSemana: pontoFns.buscarRegistrosSemana,
     validarBiometria: pontoFns.validarBiometria,
   },
 }));
 
 vi.mock('@/services/batidasPontoService', () => ({
   batidasPontoService: {
-    listar: batidasFns.listar, listarPorData: batidasFns.listarPorData,
-    ajustar: batidasFns.ajustar, excluir: batidasFns.excluir, fecharPeriodo: batidasFns.fecharPeriodo,
+    listar: batidasFns.listar,
+    listarPorData: batidasFns.listarPorData,
+    ajustar: batidasFns.ajustar,
+    excluir: batidasFns.excluir,
+    fecharPeriodo: batidasFns.fecharPeriodo,
   },
 }));
 
@@ -71,7 +82,7 @@ describe('pontosService facade', () => {
   });
 
   it('exposes ajustar from batidasPontoService', () => {
-    pontosService.ajustar('id-1', {} as any, 'e1');
+    pontosService.ajustar('id-1', {} as never, 'e1');
     expect(batidasFns.ajustar).toHaveBeenCalledWith('id-1', {}, 'e1');
   });
 

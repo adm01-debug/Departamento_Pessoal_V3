@@ -46,7 +46,7 @@ describe('contabilidadeService.listLancamentos', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupSelectEqOrder(null as any);
+    setupSelectEqOrder(null as never);
     expect(await contabilidadeService.listLancamentos('emp-1')).toEqual([]);
   });
 
@@ -72,7 +72,7 @@ describe('contabilidadeService.listPlanoContas', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupSelectEqOrder(null as any);
+    setupSelectEqOrder(null as never);
     expect(await contabilidadeService.listPlanoContas('emp-1')).toEqual([]);
   });
 

@@ -61,7 +61,8 @@ BEGIN
   --    derrubar as antigas -- policies PERMISSIVE se combinam por OR, então
   --    ter as duas vivas ao mesmo tempo não abre brecha nova (a antiga já
   --    é mais ampla que a nova); só depois do DROP a proteção passa a valer.
-  CREATE POLICY bp_ins_role_gate ON public.batidas_ponto
+  DROP POLICY IF EXISTS "bp_ins_role_gate" ON public.batidas_ponto;
+CREATE POLICY bp_ins_role_gate ON public.batidas_ponto
     FOR INSERT TO authenticated
     WITH CHECK (
       empresa_id IN (SELECT public.get_user_empresas(auth.uid()))
@@ -72,7 +73,8 @@ BEGIN
       )
     );
 
-  CREATE POLICY bp_upd_role_gate ON public.batidas_ponto
+  DROP POLICY IF EXISTS "bp_upd_role_gate" ON public.batidas_ponto;
+CREATE POLICY bp_upd_role_gate ON public.batidas_ponto
     FOR UPDATE TO authenticated
     USING (
       empresa_id IN (SELECT public.get_user_empresas(auth.uid()))
@@ -91,7 +93,8 @@ BEGIN
       )
     );
 
-  CREATE POLICY bp_del_role_gate ON public.batidas_ponto
+  DROP POLICY IF EXISTS "bp_del_role_gate" ON public.batidas_ponto;
+CREATE POLICY bp_del_role_gate ON public.batidas_ponto
     FOR DELETE TO authenticated
     USING (
       empresa_id IN (SELECT public.get_user_empresas(auth.uid()))

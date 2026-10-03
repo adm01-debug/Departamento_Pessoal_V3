@@ -30,12 +30,12 @@ BEGIN;
 -- Tabela: ferias
 -- Colunas reais: periodo_aquisitivo_inicio, periodo_aquisitivo_fim,
 --                dias_gozo (total dias fruídos), dias_abono, dias_vendidos
-CREATE OR REPLACE MATERIALIZED VIEW IF NOT EXISTS public.mv_saldo_ferias AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS public.mv_saldo_ferias AS
 SELECT
   f.id                                  AS ferias_id,
   f.colaborador_id,
   c.empresa_id,
-  c.nome                                AS colaborador_nome,
+  c.nome_completo                                AS colaborador_nome,
   c.data_admissao,
   f.periodo_aquisitivo_inicio,
   f.periodo_aquisitivo_fim,
@@ -47,17 +47,16 @@ SELECT
   -- Provisão mensal de férias (1/12 do salário + 1/3 sobre o 1/12)
   -- = (salário / 30) * 30 / 12 * (1 + 1/3) = salário / 12 * 4/3
   ROUND(
-    (c.salario / 12) * (1 + 1.0/3.0)
+    (c.salario_base / 12) * (1 + 1.0/3.0)
   , 2)                                  AS provisao_mensal_ferias,
   -- Valor total provisioned: saldo em dias × diária + 1/3
   ROUND(
-    GREATEST(0, 30 - COALESCE(f.dias_gozo, 0)) * (c.salario / 30)
-    + (GREATEST(0, 30 - COALESCE(f.dias_gozo, 0)) * (c.salario / 30) / 3)
+    GREATEST(0, 30 - COALESCE(f.dias_gozo, 0)) * (c.salario_base / 30)
+    + (GREATEST(0, 30 - COALESCE(f.dias_gozo, 0)) * (c.salario_base / 30) / 3)
   , 2)                                  AS valor_provisao_ferias,
   f.status                              AS status_periodo,
   f.dias_abono,
-  f.dias_vendidos,
-  c.salario,
+  c.salario_base,
   NOW()                                 AS computed_at
 FROM public.ferias f
 JOIN public.colaboradores c ON c.id = f.colaborador_id
@@ -76,27 +75,27 @@ CREATE INDEX IF NOT EXISTS idx_mv_saldo_ferias_colab
 
 -- ── 2. View: provisão de 13º ──────────────────────────────────
 -- Colunas reais de colaboradores: salario EXISTS
-CREATE OR REPLACE MATERIALIZED VIEW IF NOT EXISTS public.mv_provisao_13 AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS public.mv_provisao_13 AS
 SELECT
   c.id                              AS colaborador_id,
   c.empresa_id,
-  c.nome                            AS colaborador_nome,
-  c.salario,
+  c.nome_completo                            AS colaborador_nome,
+  c.salario_base,
   -- Provisão mensal = salário / 12
-  ROUND(c.salario / 12, 2)          AS provisao_mensal_13,
+  ROUND(c.salario_base / 12, 2)          AS provisao_mensal_13,
   -- Meses devidos até mês atual
   GREATEST(0, EXTRACT(MONTH FROM CURRENT_DATE) - 1) AS meses_devidos,
   -- Valor acumulado: salário / 12 × meses devidos
   ROUND(
-    c.salario / 12 * GREATEST(0, EXTRACT(MONTH FROM CURRENT_DATE) - 1)
+    c.salario_base / 12 * GREATEST(0, EXTRACT(MONTH FROM CURRENT_DATE) - 1)
   , 2)                              AS valor_acumulado_13,
   -- 13º completo em dezembro
   CASE WHEN EXTRACT(MONTH FROM CURRENT_DATE) = 12
-    THEN c.salario ELSE 0 END        AS valor_dezembro,
+    THEN c.salario_base ELSE 0 END        AS valor_dezembro,
   -- Primeiro ano: fração proporcional
   CASE
     WHEN EXTRACT(YEAR FROM c.data_admissao) = EXTRACT(YEAR FROM CURRENT_DATE)
-    THEN ROUND(c.salario / 12
+    THEN ROUND(c.salario_base / 12
       * GREATEST(0, EXTRACT(MONTH FROM AGE(CURRENT_DATE, c.data_admissao)))
     , 2)
     ELSE 0
@@ -114,20 +113,20 @@ CREATE INDEX IF NOT EXISTS idx_mv_provisao_13_empresa
   ON public.mv_provisao_13 (empresa_id);
 
 -- ── 3. View: FGTS mensal e multa ───────────────────────────────
-CREATE OR REPLACE MATERIALIZED VIEW IF NOT EXISTS public.mv_fgts_passivo AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS public.mv_fgts_passivo AS
 SELECT
   c.id                              AS colaborador_id,
   c.empresa_id,
-  c.nome                            AS colaborador_nome,
-  c.salario,
+  c.nome_completo                            AS colaborador_nome,
+  c.salario_base,
   -- FGTS empregador = 8% do salário
-  ROUND(c.salario * 0.08, 2)      AS fgts_mensal,
+  ROUND(c.salario_base * 0.08, 2)      AS fgts_mensal,
   -- Provisão mensal de FGTS = salário / 12 * 0.08
-  ROUND(c.salario * 0.08 / 12, 2) AS provisao_mensal_fgts,
+  ROUND(c.salario_base * 0.08 / 12, 2) AS provisao_mensal_fgts,
   -- Multa 40% sobre saldo estimado (≈ salário × 3.2 = 8% × 40% × 12 meses)
-  ROUND(c.salario * 3.2, 2)       AS provisao_multa_estimada,
+  ROUND(c.salario_base * 3.2, 2)       AS provisao_multa_estimada,
   -- INSS Patronal: 20% + 3% RAT + 8% Salário-Educação = 31%
-  ROUND(c.salario * 0.31 / 12, 2) AS provisao_inss_patronal_mensal,
+  ROUND(c.salario_base * 0.31 / 12, 2) AS provisao_inss_patronal_mensal,
   c.data_admissao,
   c.data_desligamento,
   (c.data_desligamento IS NOT NULL) AS is_desligado,
@@ -143,11 +142,11 @@ CREATE INDEX IF NOT EXISTS idx_mv_fgts_passivo_empresa
   ON public.mv_fgts_passivo (empresa_id);
 
 -- ── 4. View consolidada: passivo total ─────────────────────────
-CREATE OR REPLACE MATERIALIZED VIEW IF NOT EXISTS public.mv_passivo_trabalhista AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS public.mv_passivo_trabalhista AS
 SELECT
-  f.empresa_id,
-  f.colaborador_id,
-  f.colaborador_nome,
+  fgts.empresa_id,
+  fgts.colaborador_id,
+  fgts.colaborador_nome,
   COALESCE(sf.valor_provisao_ferias, 0)       AS provisao_ferias,
   COALESCE(sf.provisao_mensal_ferias, 0)      AS provisao_mensal_ferias,
   COALESCE(t13.valor_acumulado_13, 0)          AS provisao_13,
@@ -170,15 +169,15 @@ SELECT
     + COALESCE(fgts.provisao_mensal_fgts, 0)
     + COALESCE(fgts.provisao_inss_patronal_mensal, 0)
   )::DECIMAL(15,2)                           AS total_provisao_mensal,
-  f.data_admissao,
-  f.salario,
-  f.data_desligamento,
+  fgts.data_admissao,
+  fgts.salario_base,
+  fgts.data_desligamento,
   fgts.is_desligado,
-  f.computed_at,
+  fgts.computed_at,
   NOW()                                       AS updated_at
-FROM public.mv_fgts_passivo f
-LEFT JOIN public.mv_saldo_ferias sf  ON sf.colaborador_id = f.colaborador_id
-LEFT JOIN public.mv_provisao_13  t13 ON t13.colaborador_id = f.colaborador_id
+FROM public.mv_fgts_passivo fgts
+LEFT JOIN public.mv_saldo_ferias sf  ON sf.colaborador_id = fgts.colaborador_id
+LEFT JOIN public.mv_provisao_13  t13 ON t13.colaborador_id = fgts.colaborador_id
 WITH NO DATA;
 
 CREATE INDEX IF NOT EXISTS idx_mv_passivo_empresa
@@ -217,7 +216,7 @@ SELECT
   SUM(provisao_multa_fgts)::DECIMAL(15,2)      AS total_multa_fgts,
   SUM(provisao_inss_patronal)::DECIMAL(15,2)   AS total_inss_patronal,
   SUM(total_provisao_mensal)::DECIMAL(15,2)     AS total_provisao_mensal,
-  AVG(total_passivo / NULLIF(salario, 0))::DECIMAL(5,2) AS meses_salarios_passivo,
+  AVG(total_passivo / NULLIF(salario_base, 0))::DECIMAL(5,2) AS meses_salarios_passivo,
   MAX(updated_at)                               AS ultimo_calculo,
   COUNT(CASE WHEN is_desligado THEN 1 END)      AS desligados_com_passivo
 FROM public.mv_passivo_trabalhista

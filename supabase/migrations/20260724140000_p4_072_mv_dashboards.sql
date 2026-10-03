@@ -37,27 +37,28 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_headcount_daily_pk
   ON mv_headcount_daily (empresa_id, snapshot_date, status, departamento);
 
 -- ── 2. mv_folha_summary ────────────────────────────────────
--- Resumo mensal de folha de pagamento por empresa.
--- Colunas: total_bruto, total_descontos, total_liquido, total_fgts,headcount_folha.
+-- Resumo mensal de folha de pagamento por empresa (header: folhas_pagamento).
+-- Colunas: total_bruto(=proventos), total_descontos, total_liquido, total_fgts,
+-- total_inss(=patronal), headcount_folha(=total_colaboradores).
 CREATE MATERIALIZED VIEW IF NOT EXISTS mv_folha_summary
 WITH (fillfactor = 80) AS
 SELECT
   f.empresa_id,
-  DATE_TRUNC('month', f.competencia)::DATE AS competencia_month,
-  COUNT(DISTINCT f.colaborador_id)                     AS headcount_folha,
-  SUM(f.total_bruto)   FILTER (WHERE f.total_bruto IS NOT NULL)   AS total_bruto,
-  SUM(f.total_descontos) FILTER (WHERE f.total_descontos IS NOT NULL) AS total_descontos,
-  SUM(f.total_liquido) FILTER (WHERE f.total_liquido IS NOT NULL)  AS total_liquido,
-  SUM(f.total_fgts)    FILTER (WHERE f.total_fgts IS NOT NULL)    AS total_fgts,
-  SUM(f.total_inss)    FILTER (WHERE f.total_inss IS NOT NULL)    AS total_inss,
-  AVG(f.total_bruto)   FILTER (WHERE f.total_bruto IS NOT NULL)   AS salario_medio,
-  MIN(f.total_bruto)   FILTER (WHERE f.total_bruto IS NOT NULL)   AS piso_salarial,
-  MAX(f.total_bruto)   FILTER (WHERE f.total_bruto IS NOT NULL)   AS teto_salarial,
-  SUM(f.total_bruto)   FILTER (WHERE f.total_bruto IS NOT NULL)
-    / NULLIF(COUNT(DISTINCT f.colaborador_id), 0)
-    FILTER (WHERE f.total_bruto IS NOT NULL)               AS custo_medio
-FROM public.folhas f
-WHERE f.competencia >= NOW() - INTERVAL '3 years'
+  to_date(f.competencia || '-01', 'YYYY-MM-DD') AS competencia_month,
+  SUM(f.total_colaboradores)                               AS headcount_folha,
+  SUM(f.total_proventos)                                   AS total_bruto,
+  SUM(f.total_descontos)                                   AS total_descontos,
+  SUM(f.total_liquido)                                     AS total_liquido,
+  SUM(f.total_fgts)                                        AS total_fgts,
+  SUM(f.total_inss_patronal)                               AS total_inss,
+  SUM(f.total_proventos) / NULLIF(SUM(f.total_colaboradores), 0)
+                                                           AS salario_medio,
+  MIN(f.total_proventos / NULLIF(f.total_colaboradores, 0)) AS piso_salarial,
+  MAX(f.total_proventos / NULLIF(f.total_colaboradores, 0)) AS teto_salarial,
+  SUM(f.total_proventos) / NULLIF(SUM(f.total_colaboradores), 0)
+                                                           AS custo_medio
+FROM public.folhas_pagamento f
+WHERE to_date(f.competencia || '-01', 'YYYY-MM-DD') >= NOW() - INTERVAL '3 years'
 GROUP BY 1, 2
 WITH NO DATA;
 
@@ -69,15 +70,28 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_folha_summary_pk
 -- Fórmula: (admissões + desligamentos) / headcount_inicio * 100.
 CREATE MATERIALIZED VIEW IF NOT EXISTS mv_turnover_rate
 WITH (fillfactor = 80) AS
-WITH mensal AS (
+WITH meses AS (
+  SELECT generate_series(
+    DATE_TRUNC('month', NOW() - INTERVAL '3 years')::date,
+    DATE_TRUNC('month', NOW())::date,
+    '1 month'::interval
+  )::date AS mes
+),
+mensal AS (
   SELECT
-    empresa_id,
-    DATE_TRUNC('month', created_at)::DATE AS mes,
-    COUNT(*) FILTER (WHERE status = 'admissao')  AS admissoes,
-    COUNT(*) FILTER (WHERE status = 'desligado') AS desligamentos
-  FROM public.colaboradores
-  WHERE created_at >= NOW() - INTERVAL '3 years'
-  GROUP BY 1, 2
+    e.empresa_id,
+    m.mes,
+    (SELECT COUNT(*) FROM public.colaboradores c
+      WHERE c.empresa_id = e.empresa_id
+        AND DATE_TRUNC('month', c.data_admissao)::date = m.mes
+    ) AS admissoes,
+    (SELECT COUNT(*) FROM public.colaboradores c
+      WHERE c.empresa_id = e.empresa_id
+        AND c.data_desligamento IS NOT NULL
+        AND DATE_TRUNC('month', c.data_desligamento)::date = m.mes
+    ) AS desligamentos
+  FROM (SELECT DISTINCT empresa_id FROM public.colaboradores) e
+  CROSS JOIN meses m
 )
 SELECT
   m.empresa_id,
@@ -85,13 +99,13 @@ SELECT
   m.admissoes,
   m.desligamentos,
   m.admissoes + m.desligamentos AS total_movimentacao,
-  -- Headcount no início do mês (lookup simples)
+  -- Headcount no início do mês (admitidos antes do mês começar)
   (
     SELECT COUNT(*)
     FROM public.colaboradores c
     WHERE c.empresa_id = m.empresa_id
-      AND c.data_admissao < m.mes + INTERVAL '1 month'
-      AND (c.data_demissao IS NULL OR c.data_demissao >= m.mes)
+      AND c.data_admissao < m.mes
+      AND (c.data_desligamento IS NULL OR c.data_desligamento >= m.mes)
   ) AS headcount_inicio,
   -- Headcount no fim do mês
   (
@@ -99,7 +113,7 @@ SELECT
     FROM public.colaboradores c
     WHERE c.empresa_id = m.empresa_id
       AND c.data_admissao <= m.mes + INTERVAL '1 month' - INTERVAL '1 day'
-      AND (c.data_demissao IS NULL OR c.data_demissao >= m.mes + INTERVAL '1 month' - INTERVAL '1 day')
+      AND (c.data_desligamento IS NULL OR c.data_desligamento >= m.mes + INTERVAL '1 month' - INTERVAL '1 day')
   ) AS headcount_fim,
   -- Taxa de turnover: média dos dois headcounts
   ROUND(
@@ -108,14 +122,14 @@ SELECT
         (
           (SELECT COUNT(*) FROM public.colaboradores c
            WHERE c.empresa_id = m.empresa_id
-             AND c.data_admissao < m.mes + INTERVAL '1 month'
-             AND (c.data_demissao IS NULL OR c.data_demissao >= m.mes)
+             AND c.data_admissao < m.mes
+             AND (c.data_desligamento IS NULL OR c.data_desligamento >= m.mes)
           )
         +
           (SELECT COUNT(*) FROM public.colaboradores c
            WHERE c.empresa_id = m.empresa_id
              AND c.data_admissao <= m.mes + INTERVAL '1 month' - INTERVAL '1 day'
-             AND (c.data_demissao IS NULL OR c.data_demissao >= m.mes + INTERVAL '1 month' - INTERVAL '1 day')
+             AND (c.data_desligamento IS NULL OR c.data_desligamento >= m.mes + INTERVAL '1 month' - INTERVAL '1 day')
           )
         )::numeric / 2, 0
       ) * 100, 2
@@ -134,18 +148,15 @@ SELECT
   c.empresa_id,
   c.departamento,
   c.id AS colaborador_id,
-  c.nome AS colaborador_nome,
+  c.nome_completo AS colaborador_nome,
   c.data_admissao,
-  -- Dias de direito por ano trabalhado (30 dias por ano)
+  -- Dias de direito por ano trabalhado (30 dias por ano),
+  -- menos os dias efetivamente consumidos/agendados (dias_gozo).
   GREATEST(0, (EXTRACT(YEAR FROM AGE(NOW(), c.data_admissao)) * 30
     - COALESCE(
-        (SELECT SUM(f.dias_ferias)
-         FROM public.ferias f WHERE f.colaborador_id = c.id),
-        0
-      )
-    - COALESCE(
-        (SELECT SUM(f.dias_vencidos_utilizados)
-         FROM public.ferias f WHERE f.colaborador_id = c.id),
+        (SELECT SUM(f.dias_gozo)
+         FROM public.ferias f WHERE f.colaborador_id = c.id
+           AND f.status IN ('aprovada','agendada','programada','em_gozo','concluida')),
         0
       )
   )) AS saldo_dias,
@@ -174,11 +185,11 @@ WITH (fillfactor = 80) AS
 SELECT
   a.empresa_id,
   DATE_TRUNC('month', a.data_inicio)::DATE AS mes,
-  a.tipo_afastamento,
+  a.tipo AS tipo_afastamento,
   COUNT(*)                                            AS total_afastamentos,
-  SUM(a.dias_afastamento) FILTER (WHERE a.dias_afastamento IS NOT NULL)
+  SUM(a.dias_total) FILTER (WHERE a.dias_total IS NOT NULL)
                                                       AS dias_totais,
-  AVG(a.dias_afastamento) FILTER (WHERE a.dias_afastamento IS NOT NULL)
+  AVG(a.dias_total) FILTER (WHERE a.dias_total IS NOT NULL)
                                                       AS media_dias,
   COUNT(*) FILTER (WHERE a.status = 'ativo')         AS em_andamento,
   COUNT(*) FILTER (WHERE a.status = 'encerrado')     AS encerrados
@@ -193,37 +204,37 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_afastamento_summary_pk
 -- ── 6. View de refresh status ──────────────────────────────
 CREATE OR REPLACE VIEW v_dashboard_refresh_status AS
 SELECT
-  'mv_headcount_daily'         AS view_name, relname AS table_name,
+  'mv_headcount_daily'         AS view_name, pg_class.relname AS table_name,
   n_live_tup::BIGINT          AS row_count,
   last_vacuum, last_autovacuum, last_analyze, last_autoanalyze,
   GREATEST(COALESCE(last_autovacuum, last_vacuum),
            COALESCE(last_autoanalyze, last_analyze)) AS last_refresh_hint
 FROM pg_stat_user_tables
-JOIN pg_class ON relname = 'mv_headcount_daily'
+JOIN pg_class ON pg_class.relname = 'mv_headcount_daily'
 UNION ALL
-SELECT 'mv_folha_summary', relname, n_live_tup::BIGINT,
+SELECT 'mv_folha_summary', pg_class.relname, n_live_tup::BIGINT,
   last_vacuum, last_autovacuum, last_analyze, last_autoanalyze,
   GREATEST(COALESCE(last_autovacuum, last_vacuum),
            COALESCE(last_autoanalyze, last_analyze))
-FROM pg_stat_user_tables JOIN pg_class ON relname = 'mv_folha_summary'
+FROM pg_stat_user_tables JOIN pg_class ON pg_class.relname = 'mv_folha_summary'
 UNION ALL
-SELECT 'mv_turnover_rate', relname, n_live_tup::BIGINT,
+SELECT 'mv_turnover_rate', pg_class.relname, n_live_tup::BIGINT,
   last_vacuum, last_autovacuum, last_analyze, last_autoanalyze,
   GREATEST(COALESCE(last_autovacuum, last_vacuum),
            COALESCE(last_autoanalyze, last_analyze))
-FROM pg_stat_user_tables JOIN pg_class ON relname = 'mv_turnover_rate'
+FROM pg_stat_user_tables JOIN pg_class ON pg_class.relname = 'mv_turnover_rate'
 UNION ALL
-SELECT 'mv_ferias_balance', relname, n_live_tup::BIGINT,
+SELECT 'mv_ferias_balance', pg_class.relname, n_live_tup::BIGINT,
   last_vacuum, last_autovacuum, last_analyze, last_autoanalyze,
   GREATEST(COALESCE(last_autovacuum, last_vacuum),
            COALESCE(last_autoanalyze, last_analyze))
-FROM pg_stat_user_tables JOIN pg_class ON relname = 'mv_ferias_balance'
+FROM pg_stat_user_tables JOIN pg_class ON pg_class.relname = 'mv_ferias_balance'
 UNION ALL
-SELECT 'mv_afastamento_summary', relname, n_live_tup::BIGINT,
+SELECT 'mv_afastamento_summary', pg_class.relname, n_live_tup::BIGINT,
   last_vacuum, last_autovacuum, last_analyze, last_autoanalyze,
   GREATEST(COALESCE(last_autovacuum, last_vacuum),
            COALESCE(last_autoanalyze, last_analyze))
-FROM pg_stat_user_tables JOIN pg_class ON relname = 'mv_afastamento_summary';
+FROM pg_stat_user_tables JOIN pg_class ON pg_class.relname = 'mv_afastamento_summary';
 
 -- ── 7. Função de refresh com concurrently (não bloqueia reads) ─
 CREATE OR REPLACE FUNCTION public.refresh_dashboard_views()

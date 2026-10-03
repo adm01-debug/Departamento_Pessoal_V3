@@ -10,22 +10,30 @@ vi.mock('@/integrations/supabase/client', () => ({
 function makeChain(data: any = [], error: any = null) {
   const result = { data, error };
   const maybeSingle = vi.fn().mockResolvedValue(result);
-  const limit = vi.fn().mockReturnValue({ maybeSingle, then: (fn: any) => Promise.resolve(result).then(fn) });
+  const limit = vi
+    .fn()
+    .mockReturnValue({ maybeSingle, then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn) });
   const order = vi.fn().mockReturnValue({
     limit,
     eq: vi.fn().mockResolvedValue(result),
-    then: (fn: any) => Promise.resolve(result).then(fn),
+    then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
   });
-  const eq = vi.fn().mockReturnValue({ order, maybeSingle, then: (fn: any) => Promise.resolve(result).then(fn) });
-  const deleteEqResult: any = { then: (fn: any) => Promise.resolve(result).then(fn) };
+  const eq = vi
+    .fn()
+    .mockReturnValue({ order, maybeSingle, then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn) });
+  const deleteEqResult: any = { then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn) };
   const deleteEq = vi.fn().mockReturnValue(deleteEqResult);
   deleteEqResult.eq = deleteEq;
   const delete_ = vi.fn().mockReturnValue({ eq: deleteEq });
   const upsert = vi.fn().mockResolvedValue(result);
   const insert = vi.fn().mockResolvedValue(result);
-  const select = vi
-    .fn()
-    .mockReturnValue({ order, eq, maybeSingle, limit, then: (fn: any) => Promise.resolve(result).then(fn) });
+  const select = vi.fn().mockReturnValue({
+    order,
+    eq,
+    maybeSingle,
+    limit,
+    then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
+  });
   return { select, eq, order, upsert, insert, delete: delete_, maybeSingle, limit };
 }
 

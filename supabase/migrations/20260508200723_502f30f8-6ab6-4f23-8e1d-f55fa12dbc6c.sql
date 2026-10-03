@@ -18,6 +18,7 @@ CREATE POLICY "Users can view simulations of their companies"
 ON public.simulacoes_fiscais FOR SELECT 
 USING (true); -- Simplificando para evitar dependência de user_empresas se não existir exatamente assim
 
+DROP POLICY IF EXISTS "Users can create simulations" ON public.simulacoes_fiscais;
 CREATE POLICY "Users can create simulations" 
 ON public.simulacoes_fiscais FOR INSERT 
 WITH CHECK (true);

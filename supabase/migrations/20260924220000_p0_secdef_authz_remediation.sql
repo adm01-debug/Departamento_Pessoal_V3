@@ -25,19 +25,58 @@
 -- CRÍTICO: decodifica base64 e executa SQL arbitrário (inclusive não-SELECT,
 -- via branch `EXECUTE decoded_sql`) como o dono da função. Não pode ficar
 -- alcançável por anon/authenticated em hipótese alguma.
-REVOKE EXECUTE ON FUNCTION public.mcp_query_sql(text, integer, boolean) FROM anon, authenticated;
-
-REVOKE EXECUTE ON FUNCTION public.anonimizar_dados_pessoais(uuid) FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.cleanup_ciencia_rate_limits() FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.reconciliar_ferias_folha_batch() FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.sec_verify_seals() FROM anon, authenticated;
+DO $guard$
+BEGIN
+  IF to_regprocedure('public.mcp_query_sql(text,integer,boolean)') IS NOT NULL THEN
+    EXECUTE $sql$REVOKE EXECUTE ON FUNCTION public.mcp_query_sql(text, integer, boolean) FROM anon, authenticated;$sql$;
+  END IF;
+END $guard$;
+DO $guard$
+BEGIN
+  IF to_regprocedure('public.anonimizar_dados_pessoais(uuid)') IS NOT NULL THEN
+    EXECUTE $sql$REVOKE EXECUTE ON FUNCTION public.anonimizar_dados_pessoais(uuid) FROM anon, authenticated;$sql$;
+  END IF;
+END $guard$;
+DO $guard$
+BEGIN
+  IF to_regprocedure('public.cleanup_ciencia_rate_limits()') IS NOT NULL THEN
+    EXECUTE $sql$REVOKE EXECUTE ON FUNCTION public.cleanup_ciencia_rate_limits() FROM anon, authenticated;$sql$;
+  END IF;
+END $guard$;
+DO $guard$
+BEGIN
+  IF to_regprocedure('public.reconciliar_ferias_folha_batch()') IS NOT NULL THEN
+    EXECUTE $sql$REVOKE EXECUTE ON FUNCTION public.reconciliar_ferias_folha_batch() FROM anon, authenticated;$sql$;
+  END IF;
+END $guard$;
+DO $guard$
+BEGIN
+  IF to_regprocedure('public.sec_verify_seals()') IS NOT NULL THEN
+    EXECUTE $sql$REVOKE EXECUTE ON FUNCTION public.sec_verify_seals() FROM anon, authenticated;$sql$;
+  END IF;
+END $guard$;
 
 -- Funções de trigger: disparo do trigger não passa pela checagem de EXECUTE
 -- (o executor invoca o C function pointer diretamente), então revogar aqui
 -- não quebra os triggers já criados -- só fecha a chamada direta via RPC.
-REVOKE EXECUTE ON FUNCTION public.calcular_prazo_cat() FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.validar_contrato_clt() FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.validate_ponto_compliance() FROM anon, authenticated;
+DO $guard$
+BEGIN
+  IF to_regprocedure('public.calcular_prazo_cat()') IS NOT NULL THEN
+    EXECUTE $sql$REVOKE EXECUTE ON FUNCTION public.calcular_prazo_cat() FROM anon, authenticated;$sql$;
+  END IF;
+END $guard$;
+DO $guard$
+BEGIN
+  IF to_regprocedure('public.validar_contrato_clt()') IS NOT NULL THEN
+    EXECUTE $sql$REVOKE EXECUTE ON FUNCTION public.validar_contrato_clt() FROM anon, authenticated;$sql$;
+  END IF;
+END $guard$;
+DO $guard$
+BEGIN
+  IF to_regprocedure('public.validate_ponto_compliance()') IS NOT NULL THEN
+    EXECUTE $sql$REVOKE EXECUTE ON FUNCTION public.validate_ponto_compliance() FROM anon, authenticated;$sql$;
+  END IF;
+END $guard$;
 
 -- ── Grupo 2: authz real no corpo (deriva do dado, não confia no id recebido) ──
 

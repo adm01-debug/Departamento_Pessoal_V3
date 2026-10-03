@@ -28,8 +28,8 @@ const STATUS_OPTIONS: Array<{ value: ProgramacaoStatus | 'all'; label: string }>
 
 export default function FeriasProgramacaoPage() {
   const { hasRole } = useAuth();
-  const isRH = hasRole('rh' as any) || hasRole('admin');
-  const canManage = isRH || hasRole('gestor' as any);
+  const isRH = hasRole('admin') || hasRole('moderator');
+  const canManage = isRH;
 
   const [ano, setAno] = useState<number>(new Date().getFullYear());
   const [status, setStatus] = useState<ProgramacaoStatus | 'all'>('all');
@@ -56,7 +56,8 @@ export default function FeriasProgramacaoPage() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Programação Anual de Férias</h1>
           <p className="text-sm text-muted-foreground">
-            Planeje as férias do time por mês. Fluxo: gestor sugere → gestor aprova → RH aprova → converte em solicitação.
+            Planeje as férias do time por mês. Fluxo: gestor sugere → gestor aprova → RH aprova → converte em
+            solicitação.
           </p>
         </div>
         {canManage && (
@@ -75,15 +76,27 @@ export default function FeriasProgramacaoPage() {
 
       <div className="flex flex-wrap items-center gap-2">
         <Select value={String(ano)} onValueChange={(v) => setAno(Number(v))}>
-          <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="w-32">
+            <SelectValue />
+          </SelectTrigger>
           <SelectContent>
-            {ANOS.map((a) => <SelectItem key={a} value={String(a)}>{a}</SelectItem>)}
+            {ANOS.map((a) => (
+              <SelectItem key={a} value={String(a)}>
+                {a}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
         <Select value={status} onValueChange={(v) => setStatus(v as ProgramacaoStatus | 'all')}>
-          <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="w-48">
+            <SelectValue />
+          </SelectTrigger>
           <SelectContent>
-            {STATUS_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+            {STATUS_OPTIONS.map((o) => (
+              <SelectItem key={o.value} value={o.value}>
+                {o.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
         <Input

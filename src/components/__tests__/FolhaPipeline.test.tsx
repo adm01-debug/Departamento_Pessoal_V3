@@ -1,15 +1,16 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
+    div: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <div {...rest}>{children}</div>,
   },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
+  AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
 }));
 
 vi.mock('@/components/PageTitle', () => ({
-  PageTitle: ({ children }: any) => <title>{children}</title>,
+  PageTitle: ({ children }: { children?: ReactNode }) => <title>{children}</title>,
 }));
 
 import { FolhaPipeline } from '../folha/FolhaPipeline';

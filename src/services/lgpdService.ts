@@ -1,8 +1,15 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Insertable, Tables, Updatable } from '@/integrations/supabase/database.types';
 
+export type LgpdConsentimentoComColaborador = Tables<'lgpd_consentimentos'> & {
+  colaborador: { nome_completo: string } | null;
+};
+export type LgpdSolicitacaoComColaborador = Tables<'lgpd_solicitacoes'> & {
+  colaborador: { nome_completo: string } | null;
+};
+
 export const lgpdService = {
-  async listarConsentimentos(empresaId: string): Promise<Tables<'lgpd_consentimentos'>[]> {
+  async listarConsentimentos(empresaId: string): Promise<LgpdConsentimentoComColaborador[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
     let q = supabase
@@ -12,7 +19,7 @@ export const lgpdService = {
     q = q.eq('empresa_id', empresaId);
     const { data, error } = await q;
     if (error) throw error;
-    return data || [];
+    return (data as LgpdConsentimentoComColaborador[] | null) || [];
   },
 
   async criarConsentimento(d: Insertable<'lgpd_consentimentos'>): Promise<Tables<'lgpd_consentimentos'>> {
@@ -36,7 +43,7 @@ export const lgpdService = {
     return data;
   },
 
-  async listarSolicitacoes(empresaId: string): Promise<Tables<'lgpd_solicitacoes'>[]> {
+  async listarSolicitacoes(empresaId: string): Promise<LgpdSolicitacaoComColaborador[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
     let q = supabase
@@ -46,7 +53,7 @@ export const lgpdService = {
     q = q.eq('empresa_id', empresaId);
     const { data, error } = await q;
     if (error) throw error;
-    return data || [];
+    return (data as LgpdSolicitacaoComColaborador[] | null) || [];
   },
 
   async criarSolicitacao(d: Insertable<'lgpd_solicitacoes'>): Promise<Tables<'lgpd_solicitacoes'>> {

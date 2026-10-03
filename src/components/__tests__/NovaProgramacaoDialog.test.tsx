@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 
@@ -14,9 +15,7 @@ vi.mock('@/hooks/useColaboradores', () => ({
 
 vi.mock('@/hooks/usePeriodosAquisitivos', () => ({
   usePeriodosAquisitivos: () => ({
-    periodos: [
-      { id: 'pa-1', data_inicio: '2025-01-01', data_fim: '2025-12-31', status: 'em_andamento' },
-    ],
+    periodos: [{ id: 'pa-1', data_inicio: '2025-01-01', data_fim: '2025-12-31', status: 'em_andamento' }],
   }),
 }));
 
@@ -27,17 +26,29 @@ vi.mock('@/hooks/ferias/useProgramacaoFerias', () => ({
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, disabled, variant }: any) => (
-    <button onClick={onClick} disabled={disabled} data-variant={variant}>{children}</button>
+  Button: ({
+    children,
+    onClick,
+    disabled,
+    variant,
+  }: {
+    children?: ReactNode;
+    onClick?: () => void;
+    disabled?: boolean;
+    variant?: string;
+  }) => (
+    <button onClick={onClick} disabled={disabled} data-variant={variant}>
+      {children}
+    </button>
   ),
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children, open }: any) => open ? <div>{children}</div> : null,
-  DialogContent: ({ children }: any) => <div data-testid="dialog-content">{children}</div>,
-  DialogHeader: ({ children }: any) => <div>{children}</div>,
-  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
-  DialogFooter: ({ children }: any) => <div data-testid="footer">{children}</div>,
+  Dialog: ({ children, open }: { children?: ReactNode; open?: boolean }) => (open ? <div>{children}</div> : null),
+  DialogContent: ({ children }: { children?: ReactNode }) => <div data-testid="dialog-content">{children}</div>,
+  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
+  DialogFooter: ({ children }: { children?: ReactNode }) => <div data-testid="footer">{children}</div>,
 }));
 
 vi.mock('@/components/ui/input', () => ({
@@ -45,7 +56,7 @@ vi.mock('@/components/ui/input', () => ({
 }));
 
 vi.mock('@/components/ui/label', () => ({
-  Label: ({ children }: any) => <label>{children}</label>,
+  Label: ({ children }: { children?: ReactNode }) => <label>{children}</label>,
 }));
 
 vi.mock('@/components/ui/textarea', () => ({
@@ -53,24 +64,34 @@ vi.mock('@/components/ui/textarea', () => ({
 }));
 
 vi.mock('@/components/ui/select', () => ({
-  Select: ({ children, onValueChange, value }: any) => (
+  Select: ({
+    children,
+    onValueChange,
+    value,
+  }: {
+    children?: ReactNode;
+    onValueChange?: (value: string) => void;
+    value?: string;
+  }) => (
     <select value={value} onChange={(e) => onValueChange?.(e.target.value)} data-testid="select">
       {children}
     </select>
   ),
-  SelectTrigger: ({ children }: any) => <>{children}</>,
-  SelectContent: ({ children }: any) => <>{children}</>,
-  SelectValue: ({ placeholder }: any) => <option value="">{placeholder ?? ''}</option>,
-  SelectItem: ({ value, children }: any) => <option value={value}>{children}</option>,
+  SelectTrigger: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  SelectContent: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  SelectValue: ({ placeholder }: { children?: ReactNode; placeholder?: string }) => (
+    <option value="">{placeholder ?? ''}</option>
+  ),
+  SelectItem: ({ value, children }: { value?: string; children?: ReactNode }) => (
+    <option value={value}>{children}</option>
+  ),
 }));
 
 import { NovaProgramacaoDialog } from '../ferias/programacao/NovaProgramacaoDialog';
 
 describe('NovaProgramacaoDialog', () => {
   it('renders nothing when closed', () => {
-    const { container } = render(
-      <NovaProgramacaoDialog open={false} onOpenChange={vi.fn()} ano={2026} />
-    );
+    const { container } = render(<NovaProgramacaoDialog open={false} onOpenChange={vi.fn()} ano={2026} />);
     expect(container.firstChild).toBeNull();
   });
 
@@ -116,8 +137,8 @@ describe('NovaProgramacaoDialog', () => {
 
     fireEvent.click(screen.getByText('Salvar').closest('button')!);
 
-    await vi.waitFor(() => expect(mockMutateAsync).toHaveBeenCalledWith(
-      expect.objectContaining({ colaborador_id: 'col-1', ano: 2026 })
-    ));
+    await vi.waitFor(() =>
+      expect(mockMutateAsync).toHaveBeenCalledWith(expect.objectContaining({ colaborador_id: 'col-1', ano: 2026 }))
+    );
   });
 });

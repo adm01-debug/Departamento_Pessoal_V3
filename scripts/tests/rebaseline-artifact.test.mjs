@@ -51,12 +51,38 @@ try {
   // needs an append-only migration containing exactly the same view hardening.
   const rolloutPath = join(root, 'supabase/migrations/20260911180000_p0_views_security_invoker.sql');
   const baselineViewPath = join(root, 'supabase/rebaseline/20260902_view_security_invoker_remediation.sql');
-  const statementLines = /^(?:ALTER VIEW|REVOKE SELECT ON) .+$/gm;
-  const rolloutStatements = (await readFile(rolloutPath, 'utf8')).match(statementLines) ?? [];
-  const baselineStatements = (await readFile(baselineViewPath, 'utf8')).match(statementLines) ?? [];
+  // The rollout migration applies the hardening programmatically (FOREACH over
+  // an expected_views array), so parity is checked on the view set and on the
+  // two operations applied to every entry.
+  const rollout = await readFile(rolloutPath, 'utf8');
+  const baseline = await readFile(baselineViewPath, 'utf8');
+  const baselineViews = new Set(
+    [...baseline.matchAll(/^ALTER VIEW public\."([^"]+)"/gm)].map((m) => m[1]),
+  );
+  const rolloutViews = new Set(
+    [...rollout.matchAll(/^\s*'([a-z0-9_]+)',?\s*$/gm)].map((m) => m[1]),
+  );
 
-  if (rolloutStatements.length !== 84 || rolloutStatements.join('\n') !== baselineStatements.join('\n')) {
-    throw new Error('A migration incremental de views não corresponde exatamente à remediação da baseline');
+  const baselineRevokes = (baseline.match(/^REVOKE SELECT ON /gm) ?? []).length;
+  const missingInRollout = [...baselineViews].filter((v) => !rolloutViews.has(v));
+  const extraInRollout = [...rolloutViews].filter((v) => !baselineViews.has(v));
+  const appliesAlter = /ALTER VIEW public\.%I SET \(security_invoker = true\)/.test(rollout);
+  const appliesRevoke = /REVOKE SELECT ON public\.%I FROM anon/.test(rollout);
+
+  if (
+    baselineViews.size !== 42 ||
+    baselineRevokes !== 42 ||
+    missingInRollout.length > 0 ||
+    extraInRollout.length > 0 ||
+    !appliesAlter ||
+    !appliesRevoke
+  ) {
+    throw new Error(
+      `A migration incremental de views não replica a remediação da baseline ` +
+        `(baseline=${baselineViews.size}/${baselineRevokes} ` +
+        `faltando=${missingInRollout.join(',') || 'nenhuma'} ` +
+        `extras=${extraInRollout.join(',') || 'nenhuma'} alter=${appliesAlter} revoke=${appliesRevoke})`,
+    );
   }
 
   console.log(`✅ baseline inclui ${orderedMarkers.length} camadas de remediação e a migration P0 replica 42 views`);

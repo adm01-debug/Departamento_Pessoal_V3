@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts';
 import { useEmpresas } from './useEmpresas';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import { gerarAvisoFeriasPDF } from '@/utils/avisoFeriasPDF';
+import { gerarAvisoFeriasPDF, type AvisoFeriasInput } from '@/utils/avisoFeriasPDF';
 
 /**
  * Assina eletronicamente o Aviso de Férias:
@@ -20,9 +20,9 @@ export function useAssinarAvisoFerias() {
 
   const mutation = useMutation({
     mutationFn: async (payload: {
-      ferias: { id: string };
-      colaborador: object;
-      empresa: { id?: string };
+      ferias: { id: string } & AvisoFeriasInput['ferias'];
+      colaborador: AvisoFeriasInput['colaborador'];
+      empresa: AvisoFeriasInput['empresa'];
     }) => {
       const empresaId = empresaAtual?.id || payload.empresa?.id;
       if (!empresaId) throw new Error('Empresa não selecionada');
@@ -42,12 +42,10 @@ export function useAssinarAvisoFerias() {
 
       // 3. Upload
       const path = `${empresaId}/${payload.ferias.id}.pdf`;
-      const { error: upErr } = await supabase.storage
-        .from('ferias-avisos')
-        .upload(path, pdf.blob, {
-          upsert: true,
-          contentType: 'application/pdf',
-        });
+      const { error: upErr } = await supabase.storage.from('ferias-avisos').upload(path, pdf.blob, {
+        upsert: true,
+        contentType: 'application/pdf',
+      });
       if (upErr) throw upErr;
 
       // 4. RPC de assinatura
@@ -70,9 +68,7 @@ export function useAssinarAvisoFerias() {
 
   const baixarAvisoAssinado = async (empresaId: string, feriasId: string) => {
     const path = `${empresaId}/${feriasId}.pdf`;
-    const { data, error } = await supabase.storage
-      .from('ferias-avisos')
-      .createSignedUrl(path, 60);
+    const { data, error } = await supabase.storage.from('ferias-avisos').createSignedUrl(path, 60);
     if (error) {
       toast.error(safeErrorMessage(error, 'Erro ao gerar link do aviso.'));
       return;

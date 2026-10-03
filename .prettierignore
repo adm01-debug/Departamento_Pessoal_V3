@@ -11,3 +11,6 @@ public
 *.min.*
 bun.lockb
 package-lock.json
+
+# archives: snapshots historicos, nao reformatar
+docs/_archive/**

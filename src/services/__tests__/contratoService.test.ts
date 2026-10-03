@@ -19,9 +19,9 @@ function setupListChain(data: any[], error: any = null) {
   const chain: any = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, chain };
@@ -63,7 +63,7 @@ describe('contratoService.listar', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as any);
+    setupListChain(null as never);
     const result = await contratoService.listar(EMPRESA_ID);
     expect(result).toEqual([]);
   });
@@ -147,7 +147,7 @@ describe('contratoService.buscarPorColaborador', () => {
   });
 
   it('returns empty array when no contratos', async () => {
-    setupListChain(null as any);
+    setupListChain(null as never);
     const result = await contratoService.buscarPorColaborador('col-x', EMPRESA_ID);
     expect(result).toEqual([]);
   });

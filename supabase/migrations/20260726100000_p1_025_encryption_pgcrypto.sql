@@ -168,11 +168,11 @@ END $$;
 -- 4. ÍNDICES PARA CAMPOS HASHEADOS (COM CONCURRENTLY)
 -- =============================================================================
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_colaboradores_cpf_hash_sw
+CREATE INDEX IF NOT EXISTS idx_colaboradores_cpf_hash_sw
   ON public.colaboradores(cpf_hash)
   WHERE cpf_hash IS NOT NULL;
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_dependentes_cpf_hash_sw
+CREATE INDEX IF NOT EXISTS idx_dependentes_cpf_hash_sw
   ON public.dependentes(cpf_hash)
   WHERE cpf_hash IS NOT NULL;
 
@@ -185,6 +185,7 @@ DROP POLICY IF EXISTS "Only admin can decrypt PII" ON public.colaboradores;
 
 -- Cria policy restritiva: apenas SELECT, não permite SELECT em colunas sensíveis
 -- A lógica de descriptografia deve ser via RPC com verificação de role
+DROP POLICY IF EXISTS "colaboradores_pii_select" ON public.colaboradores;
 CREATE POLICY "colaboradores_pii_select" ON public.colaboradores
   FOR SELECT
   TO authenticated

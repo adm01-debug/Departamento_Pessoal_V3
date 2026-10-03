@@ -20,6 +20,7 @@ import { useEmpresas } from '@/hooks/useEmpresas';
 import { edgeFunctionsService } from '@/services/edgeFunctionsService';
 import { useQuery } from '@tanstack/react-query';
 import { useDataAccessLog } from '@/hooks/useDataAccessLog';
+import type { Json, Database } from '@/integrations/supabase/types';
 
 export default function CalculadoraRescisaoPage() {
   const { user } = useAuth();
@@ -41,7 +42,8 @@ export default function CalculadoraRescisaoPage() {
     feriasVencidas: false,
     saldoFGTS: '',
     motivoDesligamento: '',
-    observacoes: ''});
+    observacoes: '',
+  });
   const [result, setResult] = useState<RescisaoResult | null>(null);
   const [saving, setSaving] = useState(false);
   const [calcServidor, setCalcServidor] = useState(false);
@@ -60,7 +62,7 @@ export default function CalculadoraRescisaoPage() {
         cargo: data.cargo || '',
         salario: data.salario_base?.toString() || '',
         dataAdmissao: data.data_admissao || '',
-        saldoFGTS: (data as Record<string, unknown>).saldo_fgts_estimado?.toString() || ''}));
+      }));
       toast.success('Dados do colaborador importados!');
     } catch (err) {
       toast.error('Erro ao buscar colaborador');
@@ -82,7 +84,8 @@ export default function CalculadoraRescisaoPage() {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!empresaAtual?.id});
+    enabled: !!empresaAtual?.id,
+  });
 
   const handleCalcServidor = async () => {
     if (!form.salario || !form.dataAdmissao || !form.dataDesligamento) {
@@ -99,9 +102,10 @@ export default function CalculadoraRescisaoPage() {
         aviso_previo: form.avisoTrabalhado ? 'trabalhado' : 'indenizado',
         saldo_fgts: Number(form.saldoFGTS || 0),
         ferias_vencidas: form.feriasVencidas,
-        dependentes_irrf: 0});
+        dependentes_irrf: 0,
+      });
 
-      const data = result as any;
+      const data = result;
       if (data?.resultado) {
         setResult(data.resultado);
         toast.success('Rescisão calculada no servidor!');
@@ -128,7 +132,8 @@ export default function CalculadoraRescisaoPage() {
       tipo: form.tipo,
       avisoTrabalhado: form.avisoTrabalhado,
       feriasVencidas: form.feriasVencidas,
-      saldoFGTS: Number(form.saldoFGTS || 0)});
+      saldoFGTS: Number(form.saldoFGTS || 0),
+    });
 
     setResult(result);
     toast.success('Rescisão calculada com sucesso!');
@@ -157,22 +162,26 @@ export default function CalculadoraRescisaoPage() {
           total_proventos: result.totalProventos,
           total_descontos: result.totalDescontos,
           total_liquido: result.totalLiquido,
-          resultado: result as any})
+          resultado: result as unknown as Json,
+        })
         .select()
         .single();
 
       if (histError) throw histError;
 
       // 2. Integration with Desligamentos Table
-      if (form.dataDesligamento) {
+      const colabDesl = colaboradores.find((c) => c.nome_completo === form.nomeColaborador);
+      if (form.dataDesligamento && colabDesl) {
         const { error: deslError } = await supabase.from('desligamentos').insert({
           empresa_id: empresaAtual.id,
-          colaborador_id: colaboradores.find((c) => c.nome_completo === form.nomeColaborador)?.id,
+          colaborador_id: colabDesl.id,
           data_desligamento: form.dataDesligamento,
+          tipo: form.tipo as Database['public']['Enums']['tipo_desligamento'],
           motivo: form.tipo.replace(/_/g, ' '),
-          valor_rescisao: result.totalLiquido,
+          valor_liquido: result.totalLiquido,
           status: 'pendente',
-          created_by: user.id} as any);
+          created_by: user.id,
+        });
 
         if (!deslError) {
           toast.success('Desligamento registrado no módulo de Pessoas!');
@@ -185,9 +194,9 @@ export default function CalculadoraRescisaoPage() {
     } finally {
       setSaving(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result, form, user]);
-  const set = (k: string, v: any) => setForm((p) => ({ ...p, [k]: v }));
+  const set = (k: keyof typeof form, v: string | boolean) => setForm((p) => ({ ...p, [k]: v }));
 
   return (
     <>
@@ -215,7 +224,7 @@ export default function CalculadoraRescisaoPage() {
                     <SelectValue placeholder="Selecione para preencher automaticamente" />
                   </SelectTrigger>
                   <SelectContent>
-                    {colaboradores.map((c: any) => (
+                    {colaboradores.map((c) => (
                       <SelectItem key={c.id} value={c.id}>
                         {c.nome_completo}
                       </SelectItem>

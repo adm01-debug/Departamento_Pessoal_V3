@@ -16,13 +16,13 @@ export function useCargos() {
     successMessages: {
       create: 'Cargo criado com sucesso',
       update: 'Cargo atualizado',
-      delete: 'Cargo excluído'
-    }
+      delete: 'Cargo excluído',
+    },
   });
 
   return {
     ...crud,
     cargos: crud.items,
-    criar: (data: any) => crud.criar({ ...data, empresa_id: empresaId }),
+    criar: (data: Record<string, unknown>) => crud.criar({ ...data, empresa_id: empresaId }),
   };
 }
