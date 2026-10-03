@@ -1,9 +1,10 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
 }));
 
@@ -51,21 +52,21 @@ describe('FolhaAuditTimeline', () => {
 
   it('renders log tipo_evento badge when logs provided', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as never);
     render(<FolhaAuditTimeline competencia="2026-07" />);
     expect(screen.getByText('CALCULO')).toBeInTheDocument();
   });
 
   it('renders Sistema when colaborador is null', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as never);
     render(<FolhaAuditTimeline competencia="2026-07" />);
     expect(screen.getByText('Sistema')).toBeInTheDocument();
   });
 
   it('renders log mensagem when provided', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as never);
     render(<FolhaAuditTimeline competencia="2026-07" />);
     expect(screen.getByText('Folha calculada com sucesso')).toBeInTheDocument();
   });
@@ -77,7 +78,7 @@ describe('FolhaAuditTimeline', () => {
 
   it('does not show empty state when logs exist', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as never);
     render(<FolhaAuditTimeline competencia="2026-07" />);
     expect(screen.queryByText('Nenhum registro de processamento para este período.')).not.toBeInTheDocument();
   });

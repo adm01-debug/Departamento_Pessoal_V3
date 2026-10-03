@@ -1,15 +1,35 @@
 import { useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell } from 'recharts';
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  PieChart,
+  Pie,
+  Cell,
+} from 'recharts';
 import { ClipboardList, Target, Users, TrendingUp, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export function PerformanceDashboard({ stats, feedbacks, metas }: { stats: any, feedbacks: any[], metas: any[] }) {
+export function PerformanceDashboard({
+  stats,
+  feedbacks,
+  metas,
+}: {
+  stats: { ciclos?: number; competencias?: number; feedbacks?: number; metas?: number; pdis?: number };
+  feedbacks: { nota_geral?: number | null }[];
+  metas: { titulo?: string | null; valor_atual?: number | null; valor_objetivo?: number | null }[];
+}) {
   const COLORS = ['#10b981', '#f59e0b', '#ef4444', '#6366f1', '#8b5cf6'];
 
   const feedbackDistrib = useMemo(() => {
-    const counts: any = {};
-    feedbacks.forEach(f => {
+    const counts: Record<string, number> = {};
+    feedbacks.forEach((f) => {
       const nota = Math.round(f.nota_geral || 0);
       counts[nota] = (counts[nota] || 0) + 1;
     });
@@ -17,9 +37,9 @@ export function PerformanceDashboard({ stats, feedbacks, metas }: { stats: any, 
   }, [feedbacks]);
 
   const metasProgress = useMemo(() => {
-    return metas.slice(0, 5).map(m => ({
-      name: m.titulo.length > 20 ? m.titulo.substring(0, 20) + '...' : m.titulo,
-      progresso: m.valor_objetivo > 0 ? (m.valor_atual / m.valor_objetivo) * 100 : 0
+    return metas.slice(0, 5).map((m) => ({
+      name: (m.titulo ?? '').length > 20 ? (m.titulo ?? '').substring(0, 20) + '...' : (m.titulo ?? ''),
+      progresso: (m.valor_objetivo ?? 0) > 0 ? ((m.valor_atual ?? 0) / (m.valor_objetivo ?? 1)) * 100 : 0,
     }));
   }, [metas]);
 
@@ -27,13 +47,48 @@ export function PerformanceDashboard({ stats, feedbacks, metas }: { stats: any, 
     <div className="space-y-6">
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {[
-          { label: 'Ciclos', value: stats.ciclos, icon: ClipboardList, color: 'text-primary', gradient: 'from-primary to-primary-glow' },
-          { label: 'Metas', value: stats.metas, icon: Target, color: 'text-success', gradient: 'from-success to-success/70' },
-          { label: 'Feedbacks', value: stats.feedbacks, icon: Users, color: 'text-info', gradient: 'from-info to-info/70' },
-          { label: 'PDIs', value: stats.pdis, icon: TrendingUp, color: 'text-warning', gradient: 'from-warning to-warning/70' },
-          { label: 'Competências', value: stats.competencias, icon: Star, color: 'text-destructive', gradient: 'from-destructive to-destructive/70' },
+          {
+            label: 'Ciclos',
+            value: stats.ciclos,
+            icon: ClipboardList,
+            color: 'text-primary',
+            gradient: 'from-primary to-primary-glow',
+          },
+          {
+            label: 'Metas',
+            value: stats.metas,
+            icon: Target,
+            color: 'text-success',
+            gradient: 'from-success to-success/70',
+          },
+          {
+            label: 'Feedbacks',
+            value: stats.feedbacks,
+            icon: Users,
+            color: 'text-info',
+            gradient: 'from-info to-info/70',
+          },
+          {
+            label: 'PDIs',
+            value: stats.pdis,
+            icon: TrendingUp,
+            color: 'text-warning',
+            gradient: 'from-warning to-warning/70',
+          },
+          {
+            label: 'Competências',
+            value: stats.competencias,
+            icon: Star,
+            color: 'text-destructive',
+            gradient: 'from-destructive to-destructive/70',
+          },
         ].map((kpi, i) => (
-          <motion.div key={kpi.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
+          <motion.div
+            key={kpi.label}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.05 }}
+          >
             <Card className="border border-border/30 rounded-2xl overflow-hidden text-center hover:shadow-elevated transition-all">
               <div className={`h-[2px] bg-gradient-to-r ${kpi.gradient}`} />
               <CardContent className="pt-4">

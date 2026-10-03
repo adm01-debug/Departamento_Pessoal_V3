@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { deepChain } from '@/test/deepChain';
 import { recrutamentoService } from '../recrutamentoService';
 
-const EMPRESA_ID = 'test-empresa-id';
+const EMPRESA_ID = '00000000-0000-4000-8000-000000000001';
 
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
@@ -15,9 +15,9 @@ function setupListChain(data: any[], error: any = null) {
   const chain: any = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, chain };
@@ -44,7 +44,12 @@ function setupUpdateChain(data: any, error: any = null) {
 
 function setupDeleteChain(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  const __delChain = {
+    then: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).then(r),
+    catch: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).catch(r),
+    finally: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).finally(r),
+    eq: eqFn,
+  };
   eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
@@ -54,16 +59,18 @@ function setupDeleteChain(error: any = null) {
 // ─── Vagas ────────────────────────────────────────────────────────────────────
 
 describe('recrutamentoService.listarVagas', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns vagas without empresa filter', async () => {
-    const records = [{ id: 'v1', titulo: 'Dev Senior' }];
+    const records = [{ id: '00000000-0000-4000-8000-000000000008', titulo: 'Dev Senior' }];
     setupListChain(records);
     expect(await recrutamentoService.listarVagas(EMPRESA_ID)).toEqual(records);
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as any);
+    setupListChain(null as never);
     expect(await recrutamentoService.listarVagas(EMPRESA_ID)).toEqual([]);
   });
 
@@ -80,7 +87,9 @@ describe('recrutamentoService.listarVagas', () => {
 });
 
 describe('recrutamentoService.criarVaga', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new vaga', async () => {
     const created = { id: 'v-new', titulo: 'Analista' };
@@ -97,40 +106,52 @@ describe('recrutamentoService.criarVaga', () => {
 });
 
 describe('recrutamentoService.atualizarVaga', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates and returns vaga', async () => {
-    const updated = { id: 'v1', status: 'fechada' };
+    const updated = { id: '00000000-0000-4000-8000-000000000008', status: 'fechada' };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    const result = await recrutamentoService.atualizarVaga('v1', { status: 'fechada' }, EMPRESA_ID);
+    const result = await recrutamentoService.atualizarVaga(
+      '00000000-0000-4000-8000-000000000008',
+      { status: 'fechada' },
+      EMPRESA_ID
+    );
     expect(updateFn).toHaveBeenCalledWith({ status: 'fechada' });
-    expect(eqFn).toHaveBeenCalledWith('id', 'v1');
+    expect(eqFn).toHaveBeenCalledWith('id', '00000000-0000-4000-8000-000000000008');
     expect(result).toEqual(updated);
   });
 
   it('throws when data is null', async () => {
     setupUpdateChain(null);
-    await expect(recrutamentoService.atualizarVaga('v1', {}, EMPRESA_ID)).rejects.toThrow();
+    await expect(
+      recrutamentoService.atualizarVaga('00000000-0000-4000-8000-000000000008', {}, EMPRESA_ID)
+    ).rejects.toThrow();
   });
 });
 
 describe('recrutamentoService.excluirVaga', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes vaga by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await recrutamentoService.excluirVaga('v1', EMPRESA_ID);
-    expect(eqFn).toHaveBeenCalledWith('id', 'v1');
+    await recrutamentoService.excluirVaga('00000000-0000-4000-8000-000000000008', EMPRESA_ID);
+    expect(eqFn).toHaveBeenCalledWith('id', '00000000-0000-4000-8000-000000000008');
   });
 });
 
 // ─── Candidatos ───────────────────────────────────────────────────────────────
 
 describe('recrutamentoService.listarCandidatos', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns candidatos without empresa filter', async () => {
-    const records = [{ id: 'ca1', nome: 'João' }];
+    const records = [{ id: '00000000-0000-4000-8000-000000000009', nome: 'João' }];
     setupListChain(records);
     expect(await recrutamentoService.listarCandidatos(EMPRESA_ID)).toEqual(records);
   });
@@ -142,13 +163,15 @@ describe('recrutamentoService.listarCandidatos', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as any);
+    setupListChain(null as never);
     expect(await recrutamentoService.listarCandidatos(EMPRESA_ID)).toEqual([]);
   });
 });
 
 describe('recrutamentoService.criarCandidato', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new candidato', async () => {
     const created = { id: 'ca-new', nome: 'Maria' };
@@ -164,32 +187,42 @@ describe('recrutamentoService.criarCandidato', () => {
 });
 
 describe('recrutamentoService.atualizarCandidato', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates and returns candidato', async () => {
-    const updated = { id: 'ca1', status: 'aprovado' };
+    const updated = { id: '00000000-0000-4000-8000-000000000009', status: 'aprovado' };
     const { updateFn, eqFn } = setupUpdateChain(updated);
-    const result = await recrutamentoService.atualizarCandidato('ca1', { status: 'aprovado' }, EMPRESA_ID);
+    const result = await recrutamentoService.atualizarCandidato(
+      '00000000-0000-4000-8000-000000000009',
+      { status: 'aprovado' },
+      EMPRESA_ID
+    );
     expect(updateFn).toHaveBeenCalledWith({ status: 'aprovado' });
-    expect(eqFn).toHaveBeenCalledWith('id', 'ca1');
+    expect(eqFn).toHaveBeenCalledWith('id', '00000000-0000-4000-8000-000000000009');
     expect(result).toEqual(updated);
   });
 });
 
 describe('recrutamentoService.excluirCandidato', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes candidato by id', async () => {
     const { eqFn } = setupDeleteChain();
-    await recrutamentoService.excluirCandidato('ca1', EMPRESA_ID);
-    expect(eqFn).toHaveBeenCalledWith('id', 'ca1');
+    await recrutamentoService.excluirCandidato('00000000-0000-4000-8000-000000000009', EMPRESA_ID);
+    expect(eqFn).toHaveBeenCalledWith('id', '00000000-0000-4000-8000-000000000009');
   });
 });
 
 // ─── Candidaturas ─────────────────────────────────────────────────────────────
 
 describe('recrutamentoService.listarCandidaturas', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns candidaturas without vaga filter', async () => {
     const records = [{ id: 'cu1' }];
@@ -199,35 +232,42 @@ describe('recrutamentoService.listarCandidaturas', () => {
 
   it('filters by vaga_id when provided', async () => {
     const { chain } = setupListChain([]);
-    await recrutamentoService.listarCandidaturas(EMPRESA_ID, 'v1');
-    expect(chain.eq).toHaveBeenCalledWith('vaga_id', 'v1');
+    await recrutamentoService.listarCandidaturas(EMPRESA_ID, '00000000-0000-4000-8000-000000000008');
+    expect(chain.eq).toHaveBeenCalledWith('vaga_id', '00000000-0000-4000-8000-000000000008');
   });
 
   it('includes candidato and vaga joins', async () => {
     const { selectFn } = setupListChain([]);
     await recrutamentoService.listarCandidaturas(EMPRESA_ID);
-    expect(selectFn).toHaveBeenCalledWith(
-      expect.stringContaining('candidato:candidatos')
-    );
-    expect(selectFn).toHaveBeenCalledWith(
-      expect.stringContaining('vaga:vagas')
-    );
+    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('candidato:candidatos'));
+    expect(selectFn).toHaveBeenCalledWith(expect.stringContaining('vaga:vagas'));
   });
 });
 
 describe('recrutamentoService.criarCandidatura', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new candidatura', async () => {
-    const created = { id: 'cu-new', vaga_id: 'v1', candidato_id: 'ca1' };
+    const created = {
+      id: 'cu-new',
+      vaga_id: '00000000-0000-4000-8000-000000000008',
+      candidato_id: '00000000-0000-4000-8000-000000000009',
+    };
     const { insertFn } = setupInsertChain(created);
-    const result = await recrutamentoService.criarCandidatura({ vaga_id: 'v1', candidato_id: 'ca1' });
+    const result = await recrutamentoService.criarCandidatura({
+      vaga_id: '00000000-0000-4000-8000-000000000008',
+      candidato_id: '00000000-0000-4000-8000-000000000009',
+    });
     expect(result).toEqual(created);
   });
 });
 
 describe('recrutamentoService.atualizarCandidatura', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates and returns candidatura', async () => {
     const updated = { id: 'cu1', etapa: 'entrevista' };
@@ -240,7 +280,9 @@ describe('recrutamentoService.atualizarCandidatura', () => {
 });
 
 describe('recrutamentoService.excluirCandidatura', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes candidatura by id', async () => {
     const { eqFn } = setupDeleteChain();
@@ -252,7 +294,9 @@ describe('recrutamentoService.excluirCandidatura', () => {
 // ─── Entrevistas / Testes / Anotações ────────────────────────────────────────
 
 describe('recrutamentoService.agendarEntrevista', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new entrevista', async () => {
     const created = { id: 'e-new', data: '2026-07-30' };
@@ -263,7 +307,9 @@ describe('recrutamentoService.agendarEntrevista', () => {
 });
 
 describe('recrutamentoService.registrarTeste', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new teste', async () => {
     const created = { id: 't-new', tipo: 'tecnico' };
@@ -274,7 +320,9 @@ describe('recrutamentoService.registrarTeste', () => {
 });
 
 describe('recrutamentoService.adicionarAnotacao', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new anotacao', async () => {
     const created = { id: 'a-new', texto: 'Bom candidato' };

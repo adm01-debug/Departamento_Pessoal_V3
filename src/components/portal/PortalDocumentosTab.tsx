@@ -14,8 +14,9 @@ import {
 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { documentoService } from '@/services';
+import type { DocumentoListItem } from '@/services/documentoService';
 import { supabase } from '@/integrations/supabase/client';
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { validateUploadFile } from '@/utils/uploadValidation';
@@ -25,7 +26,6 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SignatureCanvas } from '@/components/ui/signature/SignatureCanvas';
-import type { LooseRow } from '@/types/db';
 const BUCKET = 'documentos';
 const TIPOS_DOCUMENTO = ['Atestado', 'Certificado', 'Comprovante', 'Contrato', 'RG', 'CPF', 'Outro'];
 
@@ -40,15 +40,38 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
   const [uploading, setUploading] = useState(false);
   const [tipo, setTipo] = useState('');
   const [file, setFile] = useState<File | null>(null);
-  const [docToSign, setDocToSign] = useState<LooseRow<'documentos'> | null>(null);
+  const [docToSign, setDocToSign] = useState<DocumentoListItem | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
 
-  const { data: documentos, isLoading } = useQuery<any[]>({
+  const { data: documentos, isLoading } = useQuery({
     queryKey: ['portal-documentos', empresaId, colaboradorId],
     queryFn: () => documentoService.listarDocumentos(empresaId!, colaboradorId),
     enabled: !!colaboradorId && !!empresaId,
   });
+
+  const { data: assinaturas = [] } = useQuery({
+    queryKey: ['portal-assinaturas', colaboradorId],
+    enabled: !!colaboradorId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('documentos_assinatura')
+        .select('conteudo_url')
+        .eq('colaborador_id', colaboradorId!);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  // `documentos` não tem coluna de storage — o path vem da URL assinada gravada em `url`.
+  const docPath = (doc: DocumentoListItem) => doc.url?.split(`${BUCKET}/`).pop()?.split('?')[0];
+  const signedPaths = useMemo(
+    () =>
+      new Set(
+        assinaturas.map((a) => a.conteudo_url?.split(`${BUCKET}/`).pop()?.split('?')[0]).filter((p): p is string => !!p)
+      ),
+    [assinaturas]
+  );
 
   const handleUpload = async () => {
     if (!file || !tipo || !colaboradorId || !empresaId) {
@@ -74,13 +97,10 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
 
       await documentoService.criar({
         nome: file.name,
-        nome_arquivo: file.name,
         tipo,
         url: urlData?.signedUrl || storagePath,
-        tamanho: file.size,
-        mime_type: file.type,
-        storage_path: storagePath,
         colaborador_id: colaboradorId,
+        empresa_id: empresaId,
       });
 
       queryClient.invalidateQueries({ queryKey: ['portal-documentos'] });
@@ -97,10 +117,11 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
   };
 
   const deleteMutation = useMutation({
-    mutationFn: async (doc: any) => {
+    mutationFn: async (doc: DocumentoListItem) => {
       if (!empresaId) throw new Error('Empresa não identificada');
-      if (doc.storage_path) {
-        await supabase.storage.from(BUCKET).remove([doc.storage_path]);
+      const path = doc.storage_path || docPath(doc);
+      if (path) {
+        await supabase.storage.from(BUCKET).remove([path]);
       }
       await documentoService.excluir(doc.id, empresaId);
     },
@@ -110,16 +131,16 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
     },
   });
 
-  const handleDownload = async (doc: any) => {
+  const handleDownload = async (doc: DocumentoListItem) => {
     try {
-      const path = doc.storage_path || doc.url?.split(`${BUCKET}/`).pop();
+      const path = doc.storage_path || docPath(doc);
       if (!path) return;
       const { data, error } = await supabase.storage.from(BUCKET).download(path);
       if (error) throw error;
       const url = URL.createObjectURL(data);
       const a = document.createElement('a');
       a.href = url;
-      a.download = doc.nome_arquivo || doc.nome || 'documento';
+      a.download = doc.nome || 'documento';
       a.click();
       URL.revokeObjectURL(url);
     } catch (e: unknown) {
@@ -127,8 +148,11 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
     }
   };
 
+  const [signing, setSigning] = useState(false);
+
   const handleSaveSignature = async (base64: string) => {
-    if (!docToSign || !colaboradorId) return;
+    if (!docToSign || !colaboradorId || signing) return;
+    setSigning(true);
 
     try {
       // 1. Upload signature image
@@ -141,23 +165,43 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
         .upload(fileName, binary, { contentType: 'image/png' });
       if (uploadErr) throw uploadErr;
 
-      // 2. Mark document as signed
-      await (supabase as any).from('documentos_assinatura').insert({
-        documento_id: docToSign.id,
+      // 2. Register the signature (documentos_assinatura is the signing ledger;
+      // `documentos` has no status/documento_id columns, so the link to the
+      // original document is `conteudo_url` = the document's own storage URL).
+      // Dedupe: a ledger row for the same document already marks it signed.
+      const { data: alreadySigned } = await supabase
+        .from('documentos_assinatura')
+        .select('id')
+        .eq('colaborador_id', colaboradorId)
+        .eq('conteudo_url', docToSign.url)
+        .limit(1);
+      if (alreadySigned && alreadySigned.length > 0) {
+        toast.success('Documento já assinado anteriormente.');
+        setDocToSign(null);
+        return;
+      }
+
+      const { error: signErr } = await supabase.from('documentos_assinatura').insert({
+        titulo: docToSign.nome,
+        tipo_documento: docToSign.tipo,
+        status: 'assinado',
         colaborador_id: colaboradorId,
+        empresa_id: empresaId,
+        conteudo_url: docToSign.url,
         assinatura_base64: base64,
         ip_assinatura: '127.0.0.1', // Mock IP
         assinado_em: new Date().toISOString(),
       });
-
-      // Update status if column exists
-      await (supabase as any).from('documentos').update({ status: 'assinado' }).eq('id', docToSign.id);
+      if (signErr) throw signErr;
 
       queryClient.invalidateQueries({ queryKey: ['portal-documentos'] });
+      queryClient.invalidateQueries({ queryKey: ['portal-assinaturas'] });
       toast.success('Documento assinado com sucesso!');
       setDocToSign(null);
     } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao assinar documento.'));
+    } finally {
+      setSigning(false);
     }
   };
 
@@ -223,7 +267,7 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
             </div>
           ) : (
             <div className="divide-y divide-border/20">
-              {documentos.map((doc: any) => (
+              {documentos.map((doc) => (
                 <div
                   key={doc.id}
                   className="flex items-center justify-between p-4 hover:bg-accent/20 transition-colors"
@@ -239,13 +283,13 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
                           {doc.tipo}
                         </Badge>
                         <span className="text-[10px] text-muted-foreground">
-                          {new Date(doc.created_at).toLocaleDateString('pt-BR')}
+                          {doc.created_at ? new Date(doc.created_at).toLocaleDateString('pt-BR') : '—'}
                         </span>
                       </div>
                     </div>
                   </div>
                   <div className="flex gap-1">
-                    {doc.tipo === 'Contrato' && doc.status !== 'assinado' && (
+                    {doc.tipo === 'Contrato' && !signedPaths.has(docPath(doc) ?? '') && (
                       <Button
                         variant="ghost"
                         size="icon"
@@ -357,7 +401,7 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
               <span className="font-semibold text-foreground">{docToSign?.nome}</span>. Sua assinatura manuscrita será
               vinculada a este registro com validade jurídica interna.
             </p>
-            <SignatureCanvas onSave={handleSaveSignature} onCancel={() => setDocToSign(null)} />
+            <SignatureCanvas onSave={handleSaveSignature} onCancel={() => setDocToSign(null)} disabled={signing} />
           </div>
         </DialogContent>
       </Dialog>

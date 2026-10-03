@@ -31,7 +31,7 @@ describe('controleAcessoService.listar', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListarChain(null as any);
+    setupListarChain(null as never);
     expect(await controleAcessoService.listar(EMPRESA_ID)).toEqual([]);
   });
 

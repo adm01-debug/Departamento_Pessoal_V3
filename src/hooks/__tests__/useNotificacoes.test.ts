@@ -36,9 +36,9 @@ function buildSelectChain(data: any[] = []) {
   chain.delete = vi.fn().mockReturnValue(chain);
   chain.lt = vi.fn().mockReturnValue(chain);
   chain.insert = vi.fn().mockResolvedValue({ error: null });
-  chain.then = (fn: any) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
   mockFrom.mockReturnValue(chain);
   return chain;
 }
@@ -116,9 +116,9 @@ describe('useNotificacoes', () => {
         order: vi.fn().mockReturnThis(),
         limit: vi.fn().mockReturnThis(),
         insert: insertFn,
-        then: (fn: any) => Promise.resolve({ data: [], error: null }).then(fn),
-        catch: (fn: any) => Promise.resolve({ data: [], error: null }).catch(fn),
-        finally: (fn: any) => Promise.resolve({ data: [], error: null }).finally(fn),
+        then: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).then(fn),
+        catch: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).catch(fn),
+        finally: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).finally(fn),
       };
       return chain;
     });
@@ -136,8 +136,6 @@ describe('useNotificacoes', () => {
       });
     });
 
-    expect(insertFn).toHaveBeenCalledWith(
-      expect.objectContaining({ tipo: 'ferias_aprovada', lida: false })
-    );
+    expect(insertFn).toHaveBeenCalledWith(expect.objectContaining({ tipo: 'ferias_aprovada', lida: false }));
   });
 });

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -23,9 +24,9 @@ vi.mock('@/hooks/useRealTimeSubscription', () => ({
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
+  AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
 }));
 
 import { useQuery } from '@tanstack/react-query';
@@ -52,26 +53,26 @@ const MOCK_EVENTS = [
 
 describe('EventTimeline', () => {
   it('shows empty state when no events', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, error: null } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, error: null } as never);
     render(<EventTimeline events={[]} />);
     expect(screen.getByText(/Nenhum evento recente/)).toBeInTheDocument();
   });
 
   it('renders event titles', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, error: null } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, error: null } as never);
     render(<EventTimeline events={MOCK_EVENTS} />);
     expect(screen.getByText('Admissão: João')).toBeInTheDocument();
     expect(screen.getByText('Alerta de Ponto')).toBeInTheDocument();
   });
 
   it('renders event descriptions', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, error: null } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, error: null } as never);
     render(<EventTimeline events={MOCK_EVENTS} />);
     expect(screen.getByText('Novo colaborador')).toBeInTheDocument();
   });
 
   it('renders filter badges', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, error: null } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, error: null } as never);
     render(<EventTimeline events={MOCK_EVENTS} />);
     expect(screen.getByText('Tudo')).toBeInTheDocument();
     expect(screen.getByText('admissao')).toBeInTheDocument();
@@ -79,7 +80,7 @@ describe('EventTimeline', () => {
 
   it('filters events when badge clicked', async () => {
     const user = userEvent.setup();
-    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, error: null } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, error: null } as never);
     render(<EventTimeline events={MOCK_EVENTS} />);
     await user.click(screen.getByText('alerta'));
     expect(screen.queryByText('Admissão: João')).not.toBeInTheDocument();
@@ -87,13 +88,13 @@ describe('EventTimeline', () => {
   });
 
   it('renders sort button', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, error: null } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, error: null } as never);
     render(<EventTimeline events={MOCK_EVENTS} />);
     expect(screen.getByRole('button', { name: /Ordenar/ })).toBeInTheDocument();
   });
 
   it('uses dbEvents from useQuery when empresaId provided', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_EVENTS, isLoading: false, error: null } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_EVENTS, isLoading: false, error: null } as never);
     render(<EventTimeline empresaId="emp-1" />);
     expect(screen.getByText('Admissão: João')).toBeInTheDocument();
   });
@@ -105,7 +106,7 @@ describe('EventTimeline', () => {
       isLoading: false,
       error: new Error('database unavailable'),
       refetch,
-    } as any);
+    } as never);
     render(<EventTimeline empresaId="emp-1" />);
 
     expect(screen.getByRole('alert')).toHaveTextContent('Falha ao carregar os eventos recentes');

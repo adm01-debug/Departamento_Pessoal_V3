@@ -5,7 +5,7 @@ export const logEnvioRelatoriosService = {
   // BUG corrigido (E51-026): `log_envio_relatorios` não tem coluna
   // `empresa_id` (só `agendamento_id`, FK para `relatorios_agendados`, que
   // sim tem `empresa_id`) — o `.eq('empresa_id', ...)` original vinha
-  // forçado com `as any` porque o compilador já reprovava, e o PostgREST
+  // forçado com cast genérico porque o compilador já reprovava, e o PostgREST
   // rejeitaria o SELECT em runtime. Filtramos em duas etapas: primeiro os
   // agendamentos da empresa, depois os logs desses agendamentos.
   listar: async (empresaId?: string): Promise<Tables<'log_envio_relatorios'>[]> => {

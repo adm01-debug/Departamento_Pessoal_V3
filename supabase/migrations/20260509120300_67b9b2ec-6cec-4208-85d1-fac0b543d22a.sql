@@ -37,6 +37,7 @@ CREATE POLICY "Gestores podem ver logs de provisão"
 ON public.provisao_logs FOR SELECT 
 USING (true); -- Idealmente filtraria por empresa_id do perfil do usuário
 
+DROP POLICY IF EXISTS "Gestores podem ver auditoria de provisão" ON public.provisao_auditoria;
 CREATE POLICY "Gestores podem ver auditoria de provisão" 
 ON public.provisao_auditoria FOR SELECT 
 USING (true);

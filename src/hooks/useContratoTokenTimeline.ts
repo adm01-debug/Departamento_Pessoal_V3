@@ -30,7 +30,7 @@ export function useContratoTokenTimeline(tokenId: string | null | undefined) {
     queryFn: async (): Promise<ContratoTokenEvento[]> => {
       if (!tokenId) return [];
       const { data, error } = await supabase
-        .from('v_contrato_token_timeline' as any)
+        .from('v_contrato_token_timeline')
         .select('*')
         .eq('token_id', tokenId)
         .order('created_at', { ascending: false })

@@ -32,6 +32,7 @@ import { cn } from '@/lib/utils';
 import { useESocial } from '@/hooks/useESocial';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { getEventoDescricao, validarAnteDeEnviar } from '@/services/esocialService';
+import type { ESocialEvento } from '@/services/esocialService';
 import { useState, useMemo } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -50,7 +51,6 @@ import { ESocialTimeline } from '@/components/esocial/ESocialTimeline';
 import { ESocialAuditDialog } from '@/components/esocial/ESocialAuditDialog';
 import { ESocialLogsTab, ESocialConfigTab, ESocialEventDetailsDialog } from '@/components/esocial/tabs';
 import { currentCompetenciaLocal } from '@/utils/dateLocal';
-import type { UiRecord } from '@/types/uiRecord';
 
 const tiposEvento = [
   'S-1000',
@@ -96,7 +96,7 @@ export default function ESocialPage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [novoTipo, setNovoTipo] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedEvento, setSelectedEvento] = useState<UiRecord | null>(null);
+  const [selectedEvento, setSelectedEvento] = useState<ESocialEvento | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [selectedCompetencia, setSelectedCompetencia] = useState(currentCompetenciaLocal());
@@ -116,11 +116,11 @@ export default function ESocialPage() {
     });
   }, [eventos, searchTerm, filterStatus]);
 
-  const handleValidar = async (evento: any) => {
+  const handleValidar = async (evento: ESocialEvento) => {
     if (!evento.dados) return;
     setIsValidating(evento.id);
     try {
-      const result = await validarAnteDeEnviar(evento.tipo_evento, evento.dados as any);
+      const result = await validarAnteDeEnviar(evento.tipo_evento, evento.dados ?? {});
       if (result.valid) {
         toast.success(`Evento ${evento.tipo_evento} válido para transmissão!`);
       } else {
@@ -133,7 +133,7 @@ export default function ESocialPage() {
     }
   };
 
-  const handleExportXML = (evento: any) => {
+  const handleExportXML = (evento: ESocialEvento) => {
     if (!evento.xml) {
       toast.error('XML não disponível. Envie o evento primeiro.');
       return;
@@ -151,6 +151,17 @@ export default function ESocialPage() {
   };
 
   const statusVariant = (s: string) => (s === 'enviado' ? 'success' : s === 'erro' ? 'error' : 'warning');
+  const errosObj = (erros: ESocialEvento['erros']): Record<string, unknown> | null =>
+    erros && typeof erros === 'object' && !Array.isArray(erros) ? (erros as Record<string, unknown>) : null;
+  const errosMensagem = (erros: ESocialEvento['erros']): string => {
+    const o = errosObj(erros);
+    const validacao = Array.isArray(o?.validacao) ? (o.validacao[0] as Record<string, unknown> | undefined) : undefined;
+    return String(o?.mensagem ?? validacao?.mensagem ?? o?.detalhes ?? 'Falha na recepção pelo Governo');
+  };
+  const errosCodigo = (erros: ESocialEvento['erros']): string | null => {
+    const c = errosObj(erros)?.codigo;
+    return c == null ? null : String(c);
+  };
   const statusIcon = (s: string) => {
     if (s === 'enviado') return <CheckCircle className="h-5 w-5 text-success" />;
     if (s === 'erro') return <AlertCircle className="h-5 w-5 text-destructive" />;
@@ -159,7 +170,7 @@ export default function ESocialPage() {
 
   const handleCriar = () => {
     if (!novoTipo || !empresaAtual?.id) return;
-    criarEvento({ empresa_id: empresaAtual.id, tipo_evento: novoTipo });
+    void criarEvento({ empresa_id: empresaAtual.id, tipo_evento: novoTipo });
     setNovoTipo('');
     setDialogOpen(false);
   };
@@ -519,15 +530,10 @@ export default function ESocialPage() {
                                           </TooltipTrigger>
                                           <TooltipContent className="bg-destructive text-destructive-foreground border-none max-w-[300px] p-3 rounded-xl shadow-glow">
                                             <p className="font-bold mb-1">Erro de Transmissão:</p>
-                                            <p className="max-w-xs text-xs">
-                                              {(e.erros as any)?.mensagem ||
-                                                (e.erros as any)?.validacao?.[0]?.mensagem ||
-                                                (e.erros as any)?.detalhes ||
-                                                'Falha na recepção pelo Governo'}
-                                            </p>
-                                            {(e.erros as any)?.codigo && (
+                                            <p className="max-w-xs text-xs">{errosMensagem(e.erros)}</p>
+                                            {errosCodigo(e.erros) && (
                                               <p className="text-[10px] mt-2 opacity-80">
-                                                Código: {(e.erros as any).codigo}
+                                                Código: {errosCodigo(e.erros)}
                                               </p>
                                             )}
                                           </TooltipContent>
@@ -552,7 +558,7 @@ export default function ESocialPage() {
                               <div className="flex items-center gap-2">
                                 <StatusBadge
                                   status={e.status || 'pendente'}
-                                  variant={statusVariant(e.status || 'pendente') as any}
+                                  variant={statusVariant(e.status || 'pendente')}
                                 />
                                 <div className="flex gap-1">
                                   <TooltipProvider>

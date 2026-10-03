@@ -30,7 +30,7 @@ export async function readWorkbookRows(buffer: ArrayBuffer): Promise<unknown[][]
   const sheet = wb.worksheets[0];
   if (!sheet) throw new Error('Planilha vazia');
   const rows: unknown[][] = [];
-  sheet.eachRow({ includeEmpty: false }, (row: any) => {
+  sheet.eachRow({ includeEmpty: false }, (row: ExcelJS.Row) => {
     // row.values is 1-indexed; drop the leading undefined slot
     rows.push((row.values as unknown[]).slice(1));
   });
@@ -41,10 +41,7 @@ export async function readWorkbookRows(buffer: ArrayBuffer): Promise<unknown[][]
  * Convert raw sheet rows into validated ParsedImportRow[].
  * Throws when the sheet is empty or lacks a recognizable "Nome" column.
  */
-export function parseRows(
-  rawData: unknown[][],
-  opts: ParseOptions = {}
-): ParsedImportRow[] {
+export function parseRows(rawData: unknown[][], opts: ParseOptions = {}): ParsedImportRow[] {
   if (!rawData || rawData.length < 2) throw new Error('Planilha vazia');
 
   const headers = (rawData[0] as unknown[]).map((h) => String(h ?? ''));
@@ -99,10 +96,7 @@ export function parseRows(
 }
 
 /** Convenience: read + parse an .xlsx buffer in one call. */
-export async function parseWorkbookBuffer(
-  buffer: ArrayBuffer,
-  opts: ParseOptions = {}
-): Promise<ParsedImportRow[]> {
+export async function parseWorkbookBuffer(buffer: ArrayBuffer, opts: ParseOptions = {}): Promise<ParsedImportRow[]> {
   const rows = await readWorkbookRows(buffer);
   return parseRows(rows, opts);
 }

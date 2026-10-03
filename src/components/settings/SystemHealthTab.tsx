@@ -22,7 +22,7 @@ import {
   Clock,
 } from 'lucide-react';
 
-// P2-051 (batch 2026-07-26): tipos explícitos substituem `useState<any>` em todos
+// P2-051 (batch 2026-07-26): tipos explícitos substituem useState untyped em todos
 // os estados do SystemHealthTab. Antes, qualquer typo em `result.foo` passava
 // silenciosamente pelo compilador — agora erros de campo são detectados.
 
@@ -248,7 +248,7 @@ export function SystemHealthTab() {
               </div>
             </CardHeader>
             <CardContent className="space-y-1">
-              {Object.entries(healthData.services || {}).map(([name, svc]: [string, any]) => (
+              {Object.entries(healthData.services || {}).map(([name, svc]: [string, HealthServiceStatus]) => (
                 <div
                   key={name}
                   className="flex items-center justify-between py-3 border-b border-border/10 last:border-0 hover:bg-muted/10 transition-colors px-2 rounded-lg"
@@ -285,7 +285,7 @@ export function SystemHealthTab() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-1">
-              {Object.entries(cleanupResult.results || {}).map(([key, val]: [string, any]) => (
+              {Object.entries(cleanupResult.results || {}).map(([key, val]: [string, number]) => (
                 <div
                   key={key}
                   className="flex justify-between py-2 border-b border-border/10 last:border-0 text-sm font-body px-2"
@@ -313,14 +313,16 @@ export function SystemHealthTab() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                {Object.entries(backupResult.tables || {}).map(([table, info]: [string, any]) => (
-                  <div key={table} className="p-3 rounded-xl bg-muted/20 border border-border/30 flex flex-col gap-1">
-                    <span className="text-[10px] font-bold text-muted-foreground truncate uppercase">{table}</span>
-                    <span className="text-sm font-mono font-bold">
-                      {info.error ? <span className="text-destructive">ERRO</span> : info.count}
-                    </span>
-                  </div>
-                ))}
+                {Object.entries(backupResult.tables || {}).map(
+                  ([table, info]: [string, { count?: number; error?: string }]) => (
+                    <div key={table} className="p-3 rounded-xl bg-muted/20 border border-border/30 flex flex-col gap-1">
+                      <span className="text-[10px] font-bold text-muted-foreground truncate uppercase">{table}</span>
+                      <span className="text-sm font-mono font-bold">
+                        {info.error ? <span className="text-destructive">ERRO</span> : info.count}
+                      </span>
+                    </div>
+                  )
+                )}
               </div>
               <div className="pt-6 mt-4 flex items-center justify-between border-t border-border/10">
                 <div className="space-y-1">

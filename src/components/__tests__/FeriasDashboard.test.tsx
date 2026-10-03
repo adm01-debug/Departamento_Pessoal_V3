@@ -1,28 +1,32 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('recharts', () => ({
-  ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
-  BarChart: ({ children }: any) => <div>{children}</div>,
+  ResponsiveContainer: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  BarChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   Bar: () => null,
   XAxis: () => null,
   YAxis: () => null,
   CartesianGrid: () => null,
   Tooltip: () => null,
-  PieChart: ({ children }: any) => <div>{children}</div>,
+  PieChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   Pie: () => null,
   Cell: () => null,
   Legend: () => null,
 }));
 
 import { FeriasDashboard } from '../ferias/FeriasDashboard';
+import type { Ferias } from '@/types/entities';
 
 const FUTURE_DATE = '2027-01-15';
 const FUTURE_END = '2027-02-14';
 
-const MOCK_DATA = [
+const MOCK_DATA: Ferias[] = [
   {
     id: 'f1',
+    colaborador_id: 'c1',
+    empresa_id: 'e1',
     data_inicio: FUTURE_DATE,
     data_fim: FUTURE_END,
     status: 'aprovada',
@@ -31,6 +35,8 @@ const MOCK_DATA = [
   },
   {
     id: 'f2',
+    colaborador_id: 'c2',
+    empresa_id: 'e1',
     data_inicio: '2026-03-01',
     data_fim: '2026-03-30',
     status: 'concluida',

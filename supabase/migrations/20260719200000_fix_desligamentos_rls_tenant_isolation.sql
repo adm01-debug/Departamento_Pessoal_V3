@@ -17,28 +17,33 @@ $$;
 -- Replace all four desligamentos policies with empresa-scoped equivalents.
 
 DROP POLICY IF EXISTS "Authenticated users can view desligamentos" ON public.desligamentos;
+DROP POLICY IF EXISTS "desligamentos_select_by_empresa" ON public.desligamentos;
 CREATE POLICY "desligamentos_select_by_empresa"
   ON public.desligamentos FOR SELECT
   USING (empresa_id IN (SELECT public.get_user_empresa_ids()));
 
 DROP POLICY IF EXISTS "Authenticated users can insert desligamentos" ON public.desligamentos;
+DROP POLICY IF EXISTS "desligamentos_insert_by_empresa" ON public.desligamentos;
 CREATE POLICY "desligamentos_insert_by_empresa"
   ON public.desligamentos FOR INSERT
   WITH CHECK (empresa_id IN (SELECT public.get_user_empresa_ids()));
 
 DROP POLICY IF EXISTS "Authenticated users can update desligamentos" ON public.desligamentos;
+DROP POLICY IF EXISTS "desligamentos_update_by_empresa" ON public.desligamentos;
 CREATE POLICY "desligamentos_update_by_empresa"
   ON public.desligamentos FOR UPDATE
   USING  (empresa_id IN (SELECT public.get_user_empresa_ids()))
   WITH CHECK (empresa_id IN (SELECT public.get_user_empresa_ids()));
 
 DROP POLICY IF EXISTS "Authenticated users can delete desligamentos" ON public.desligamentos;
+DROP POLICY IF EXISTS "desligamentos_delete_by_empresa" ON public.desligamentos;
 CREATE POLICY "desligamentos_delete_by_empresa"
   ON public.desligamentos FOR DELETE
   USING (empresa_id IN (SELECT public.get_user_empresa_ids()));
 
 -- Also fix homologacoes_rescisao: scope through desligamentos.empresa_id
 DROP POLICY IF EXISTS "Acesso homologacoes por empresa" ON public.homologacoes_rescisao;
+DROP POLICY IF EXISTS "homologacoes_rescisao_by_empresa" ON public.homologacoes_rescisao;
 CREATE POLICY "homologacoes_rescisao_by_empresa"
   ON public.homologacoes_rescisao FOR ALL
   USING (

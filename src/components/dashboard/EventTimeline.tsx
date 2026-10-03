@@ -71,7 +71,7 @@ export const EventTimeline = memo(function EventTimeline({
       // Fetch audit logs and compliance alerts
       const [auditLogs, complianceResponse] = await Promise.all([
         auditoriaService.listarTrilha({ empresa_id: empresaId!, limite: 10 }),
-        (supabase as any)
+        supabase
           .from('conformidade_ponto_logs')
           .select('*')
           .eq('empresa_id', empresaId!)
@@ -97,18 +97,18 @@ export const EventTimeline = memo(function EventTimeline({
                 : 'alerta',
       }));
 
-      const complianceEvents = (complianceResponse.data || []).map((log: any) => ({
+      const complianceEvents = (complianceResponse.data || []).map((log) => ({
         id: log.id,
         title: `Alerta Portaria 671: ${log.tipo_alerta.toUpperCase()}`,
         description: log.descricao,
-        time: format(new Date(log.timestamp), 'HH:mm, dd MMM', { locale: ptBR }),
-        raw_time: log.timestamp,
+        time: log.timestamp ? format(new Date(log.timestamp), 'HH:mm, dd MMM', { locale: ptBR }) : '—',
+        raw_time: log.timestamp ?? '',
         type:
           log.tipo_alerta === 'geofencing' ? 'geofencing' : log.tipo_alerta === 'timezone' ? 'timezone' : 'compliance',
       }));
 
       return [...auditEvents, ...complianceEvents].sort(
-        (a, b) => new Date(b.raw_time).getTime() - new Date(a.raw_time).getTime()
+        (a, b) => new Date(b.raw_time ?? 0).getTime() - new Date(a.raw_time ?? 0).getTime()
       );
     },
   });

@@ -175,13 +175,14 @@ BEGIN
       deleted  := COALESCE(result.deleted, 0);
       batches  := COALESCE(result.batches, 0);
       cutoff   := result.cutoff;
-      RETURN NEXT;
 
       -- Log de execução
       INSERT INTO public.lgpd_purge_log (tabela, records_deleted, batch_count, cursor_date, status)
       VALUES (rec.tabela, COALESCE(result.deleted, 0), COALESCE(result.batches, 0), result.cutoff,
               CASE WHEN result.deleted IS NULL THEN 'error' ELSE 'success' END)
       ON CONFLICT DO NOTHING;
+
+      RETURN NEXT;
 
     EXCEPTION WHEN OTHERS THEN
       -- Não paralisa as outras tabelas

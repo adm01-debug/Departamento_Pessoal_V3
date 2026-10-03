@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import type { Tables } from '@/integrations/supabase/types';
 import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { format } from 'date-fns';
 import { useState } from 'react';
@@ -36,7 +37,7 @@ function usePortalCompleto(userId: string | undefined, colaboradorId: string | n
     staleTime: 3 * 60 * 1000,
     queryFn: async () => {
       const hoje = format(new Date(), 'yyyy-MM-dd');
-      const db = supabase as any;
+      const db = supabase;
 
       // Consultas que dependem apenas do login.
       const basePromises = [
@@ -63,7 +64,7 @@ function usePortalCompleto(userId: string | undefined, colaboradorId: string | n
               .maybeSingle(),
             db
               .from('ferias')
-              .select('data_inicio, data_fim, status, dias_total')
+              .select('data_inicio, data_fim, status, dias_gozo')
               .eq('colaborador_id', colaboradorId)
               .in('status', ['pendente', 'aprovada'])
               .order('data_inicio', { ascending: true })
@@ -102,7 +103,21 @@ function usePortalCompleto(userId: string | undefined, colaboradorId: string | n
       ]);
 
       const [{ data: profile }, { data: notificacoes }] = base;
-      const [pontoRes, feriasRes, holeritesRes, beneficiosRes] = colab as any[];
+      type PontoHoje = Pick<
+        Tables<'registros_ponto'>,
+        'entrada_1' | 'saida_1' | 'entrada_2' | 'saida_2' | 'horas_trabalhadas' | 'horas_extras' | 'atraso_minutos'
+      >;
+      type FeriasResumo = Pick<Tables<'ferias'>, 'data_inicio' | 'data_fim' | 'status' | 'dias_gozo'>;
+      type HoleriteJoin = Pick<Tables<'holerites'>, 'liquido' | 'total_proventos' | 'created_at'> & {
+        folha: { competencia: string } | null;
+      };
+      type BeneficioResumo = Pick<Tables<'beneficios'>, 'nome' | 'tipo' | 'valor' | 'status'>;
+      const [pontoRes, feriasRes, holeritesRes, beneficiosRes] = colab as unknown as [
+        { data: PontoHoje | null },
+        { data: FeriasResumo[] | null },
+        { data: HoleriteJoin[] | null },
+        { data: BeneficioResumo[] | null },
+      ];
 
       // E-036 (LGPD art.37): trilha de leitura do próprio holerite
       if (Array.isArray(holeritesRes?.data) && holeritesRes.data.length > 0) {
@@ -115,7 +130,7 @@ function usePortalCompleto(userId: string | undefined, colaboradorId: string | n
 
       // Normaliza o holerite para o formato consumido pela aba financeira,
       // que espera `competencia`/`total_liquido`.
-      const holerites = ((holeritesRes?.data as any[]) || []).map((h) => ({
+      const holerites = (holeritesRes?.data ?? []).map((h) => ({
         competencia: h.folha?.competencia ?? '—',
         total_liquido: h.liquido,
         total_proventos: h.total_proventos,
@@ -149,8 +164,8 @@ export default function PortalPage() {
 
   const completude = (() => {
     if (!data?.profile) return 0;
-    const campos = ['nome', 'telefone', 'cargo', 'departamento'];
-    return Math.round((campos.filter((c) => (data.profile as any)?.[c]).length / campos.length) * 100);
+    const campos = ['nome', 'telefone', 'cargo', 'departamento'] as const;
+    return Math.round((campos.filter((c) => data.profile?.[c]).length / campos.length) * 100);
   })();
 
   return (
@@ -202,7 +217,7 @@ export default function PortalPage() {
             <PortalMeusDadosTab
               nome={nome}
               email={user?.email || ''}
-              profile={data?.profile}
+              profile={data?.profile ?? null}
               userId={user?.id || ''}
               navigate={navigate}
             />

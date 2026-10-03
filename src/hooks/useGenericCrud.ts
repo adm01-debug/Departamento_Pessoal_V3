@@ -72,27 +72,27 @@ export function useGenericCrud<T>({
         const result = await service.listar({ search, page, pageSize, filters, searchColumn });
         return result;
       } catch (e) {
-        loggerService.error(`Error fetching ${queryKey}`, { filters, search, page }, e as Error);
+        void loggerService.error(`Error fetching ${queryKey}`, { filters, search, page }, e as Error);
         throw e;
       }
     },
   });
 
   const criarMutation = useMutation({
-    mutationFn: (data: any) => service.criar(data),
+    mutationFn: (data: unknown) => service.criar(data),
     onSuccess: (data) => {
       void queryClient.invalidateQueries({ queryKey: [queryKey] });
       toast.success(successMessages.create || 'Registro criado com sucesso');
-      loggerService.info(`${queryKey} created`, { id: (data as any)?.id });
+      void loggerService.info(`${queryKey} created`, { id: (data as { id?: string } | null)?.id });
     },
     onError: (err: Error) => {
-      loggerService.error(`Failed to create ${queryKey}`, {}, err);
+      void loggerService.error(`Failed to create ${queryKey}`, {}, err);
       toast.error(safeErrorMessage(err, 'Erro ao criar registro.'));
     },
   });
 
   const atualizarMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => {
+    mutationFn: ({ id, data }: { id: string; data: unknown }) => {
       if (requireEmpresaId && !empresaId) {
         throw new Error('empresaId obrigatório para atualizar (isolamento de tenant).');
       }
@@ -104,10 +104,10 @@ export function useGenericCrud<T>({
     onSuccess: (_, variables) => {
       void queryClient.invalidateQueries({ queryKey: [queryKey] });
       toast.success(successMessages.update || 'Registro atualizado com sucesso');
-      loggerService.info(`${queryKey} updated`, { id: variables.id });
+      void loggerService.info(`${queryKey} updated`, { id: variables.id });
     },
     onError: (err: Error) => {
-      loggerService.error(`Failed to update ${queryKey}`, {}, err);
+      void loggerService.error(`Failed to update ${queryKey}`, {}, err);
       toast.error(safeErrorMessage(err, 'Erro ao atualizar registro.'));
     },
   });
@@ -122,11 +122,11 @@ export function useGenericCrud<T>({
     onSuccess: (_, id) => {
       void queryClient.invalidateQueries({ queryKey: [queryKey] });
       toast.success(successMessages.delete || 'Registro excluído com sucesso');
-      loggerService.info(`${queryKey} deleted`, { id });
+      void loggerService.info(`${queryKey} deleted`, { id });
       void auditLogger.log({ tabela: queryKey, registro_id: id, acao: 'DELETE', empresa_id: empresaId });
     },
     onError: (err: Error) => {
-      loggerService.error(`Failed to delete ${queryKey}`, {}, err);
+      void loggerService.error(`Failed to delete ${queryKey}`, {}, err);
       toast.error(safeErrorMessage(err, 'Erro ao excluir registro.'));
     },
   });
@@ -155,6 +155,9 @@ export function useGenericCrud<T>({
     criar: criarMutation.mutateAsync,
     atualizar: atualizarMutation.mutateAsync,
     excluir: excluirMutation.mutateAsync,
+    criarMutate: criarMutation.mutate,
+    atualizarMutate: atualizarMutation.mutate,
+    excluirMutate: excluirMutation.mutate,
     refetch,
     isRefreshing,
     isCreating: criarMutation.isPending,

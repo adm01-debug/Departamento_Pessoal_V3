@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 
@@ -9,21 +10,25 @@ vi.mock('react-router-dom', () => ({
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, onClick, className }: any) => (
-      <div onClick={onClick} className={className}>{children}</div>
+    div: ({ children, onClick, className }: { children?: ReactNode; onClick?: () => void; className?: string }) => (
+      <div onClick={onClick} className={className}>
+        {children}
+      </div>
     ),
-    button: ({ children, onClick }: any) => (
+    button: ({ children, onClick }: { children?: ReactNode; onClick?: () => void }) => (
       <button onClick={onClick}>{children}</button>
     ),
   },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
+  AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
 }));
 
 vi.mock('@/lib/utils', () => ({ cn: (...c: any[]) => c.filter(Boolean).join(' ') }));
 
 vi.mock('@/components/ui/button', () => ({
   Button: ({ children, onClick, 'aria-label': ariaLabel }: any) => (
-    <button onClick={onClick} aria-label={ariaLabel}>{children}</button>
+    <button onClick={onClick} aria-label={ariaLabel}>
+      {children}
+    </button>
   ),
 }));
 
@@ -107,9 +112,7 @@ describe('MobileQuickActions', () => {
   it('calls onOpenChange(false) when backdrop clicked', () => {
     const onOpenChange = vi.fn();
     render(<MobileQuickActions open onOpenChange={onOpenChange} />);
-    const backdrop = screen.getAllByRole('generic').find(el =>
-      el.className?.includes('fixed inset-0')
-    );
+    const backdrop = screen.getAllByRole('generic').find((el) => el.className?.includes('fixed inset-0'));
     if (backdrop) fireEvent.click(backdrop);
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });

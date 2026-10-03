@@ -15,19 +15,21 @@ vi.mock('@/utils/dateLocal', async (importOriginal) => ({
 function makeChain(data: any = [], error: any = null) {
   const result = { data, error };
   const order = vi.fn().mockResolvedValue(result);
-  const eqResult: any = { order, then: (fn: any) => Promise.resolve(result).then(fn) };
+  const eqResult: any = { order, then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn) };
   const eq = vi.fn().mockReturnValue(eqResult);
   eqResult.eq = eq;
-  const deleteEqResult: any = { then: (fn: any) => Promise.resolve(result).then(fn) };
+  const deleteEqResult: any = { then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn) };
   const deleteEq = vi.fn().mockReturnValue(deleteEqResult);
   deleteEqResult.eq = deleteEq;
   const delete_ = vi.fn().mockReturnValue({ eq: deleteEq });
-  const updateEqResult: any = { then: (fn: any) => Promise.resolve(result).then(fn) };
+  const updateEqResult: any = { then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn) };
   const updateEq = vi.fn().mockReturnValue(updateEqResult);
   updateEqResult.eq = updateEq;
   const update = vi.fn().mockReturnValue({ eq: updateEq });
   const insert = vi.fn().mockResolvedValue(result);
-  const select = vi.fn().mockReturnValue({ eq, order, then: (fn: any) => Promise.resolve(result).then(fn) });
+  const select = vi
+    .fn()
+    .mockReturnValue({ eq, order, then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn) });
   return { select, eq, order, insert, delete: delete_, update };
 }
 

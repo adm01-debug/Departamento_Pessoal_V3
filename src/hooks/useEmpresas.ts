@@ -3,7 +3,7 @@
  * @module hooks/useEmpresas
  */
 import { useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, type UseMutationResult } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -12,6 +12,7 @@ import { persist } from 'zustand/middleware';
 import { safeErrorMessage } from '@/utils/safeError';
 
 import type { RegimeTributario } from '@/constants/regimes';
+import type { Tables } from '@/integrations/supabase/types';
 
 export interface Empresa {
   id: string;
@@ -117,10 +118,10 @@ interface UseEmpresasReturn {
   setModo: (modo: EmpresaModo) => void;
   loadingEmpresas: boolean;
   loadingTodas: boolean;
-  criarEmpresa: any;
-  atualizarEmpresa: any;
-  associarUsuario: any;
-  definirEmpresaPadrao: any;
+  criarEmpresa: UseMutationResult<Tables<'empresas'>, Error, Partial<Empresa>>;
+  atualizarEmpresa: UseMutationResult<Tables<'empresas'>, Error, Partial<Empresa> & { id: string }>;
+  associarUsuario: UseMutationResult<unknown, Error, { userId: string; empresaId: string; isDefault?: boolean }>;
+  definirEmpresaPadrao: UseMutationResult<void, Error, string>;
   trocarEmpresa: (empresaId: string) => void;
   temMultiplasEmpresas: boolean;
 }

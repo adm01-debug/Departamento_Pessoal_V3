@@ -14,7 +14,7 @@ import type { Ferias } from '@/types/entities';
 
 // P2-051 (batch 2026-07-26): tipo concreto do tipo Ferias (já definido em entities.ts)
 // é usado em vez de um novo local. Mantém o componente em sync com o schema.
-// Substitui `useState<any>(null)` — props acessadas sem checagem geravam
+// Substitui `useState` sem tipo — props acessadas sem checagem geravam
 // vulnerabilidade silenciosa (typos não eram detectados).
 export type FeriasItem = Ferias & {
   dias_ferias?: number;
@@ -37,24 +37,31 @@ export function CalendarioFerias() {
   const nextMonth = () => setCurrentDate(addMonths(currentDate, 1));
   const prevMonth = () => setCurrentDate(subMonths(currentDate, 1));
 
-  const feriasNoMes = (ferias as FeriasItem[]).filter((f) => {
-    if (f.status === 'cancelada' || f.status === 'rejeitada') return false;
-    const start = new Date(f.data_inicio);
-    const end = new Date(f.data_fim);
-    return (
-      isWithinInterval(start, { start: monthStart, end: monthEnd }) ||
-      isWithinInterval(end, { start: monthStart, end: monthEnd }) ||
-      (start < monthStart && end > monthEnd)
-    );
-  }).sort((a, b) => new Date(a.data_inicio).getTime() - new Date(b.data_inicio).getTime());
+  const feriasNoMes = (ferias as FeriasItem[])
+    .filter((f) => {
+      if (f.status === 'cancelada' || f.status === 'rejeitada') return false;
+      const start = new Date(f.data_inicio);
+      const end = new Date(f.data_fim);
+      return (
+        isWithinInterval(start, { start: monthStart, end: monthEnd }) ||
+        isWithinInterval(end, { start: monthStart, end: monthEnd }) ||
+        (start < monthStart && end > monthEnd)
+      );
+    })
+    .sort((a, b) => new Date(a.data_inicio).getTime() - new Date(b.data_inicio).getTime());
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'aprovada': return 'bg-success/10 border-success/30 text-success';
-      case 'em_gozo': return 'bg-info/10 border-info/30 text-info';
-      case 'pendente': return 'bg-warning/10 border-warning/30 text-warning';
-      case 'concluida': return 'bg-muted/50 border-border/40 text-muted-foreground';
-      default: return 'bg-muted/10 border-border/20';
+      case 'aprovada':
+        return 'bg-success/10 border-success/30 text-success';
+      case 'em_gozo':
+        return 'bg-info/10 border-info/30 text-info';
+      case 'pendente':
+        return 'bg-warning/10 border-warning/30 text-warning';
+      case 'concluida':
+        return 'bg-muted/50 border-border/40 text-muted-foreground';
+      default:
+        return 'bg-muted/10 border-border/20';
     }
   };
 
@@ -67,13 +74,25 @@ export function CalendarioFerias() {
             Calendário de Férias
           </CardTitle>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" aria-label="Mês anterior" onClick={prevMonth} className="h-8 w-8 rounded-full">
+            <Button
+              variant="outline"
+              size="icon"
+              aria-label="Mês anterior"
+              onClick={prevMonth}
+              className="h-8 w-8 rounded-full"
+            >
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <span className="text-sm font-display font-medium min-w-[120px] text-center capitalize">
               {format(currentDate, 'MMMM yyyy', { locale: ptBR })}
             </span>
-            <Button variant="outline" size="icon" aria-label="Próximo mês" onClick={nextMonth} className="h-8 w-8 rounded-full">
+            <Button
+              variant="outline"
+              size="icon"
+              aria-label="Próximo mês"
+              onClick={nextMonth}
+              className="h-8 w-8 rounded-full"
+            >
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
@@ -90,10 +109,10 @@ export function CalendarioFerias() {
               const start = new Date(f.data_inicio);
               const end = new Date(f.data_fim);
               return (
-                <div 
-                  key={f.id} 
+                <div
+                  key={f.id}
                   className={cn(
-                    "flex items-start gap-4 p-4 rounded-xl border transition-all hover:shadow-md cursor-pointer",
+                    'flex items-start gap-4 p-4 rounded-xl border transition-all hover:shadow-md cursor-pointer',
                     getStatusColor(f.status)
                   )}
                   onClick={() => setSelectedEvent(f)}
@@ -109,7 +128,7 @@ export function CalendarioFerias() {
                       </div>
                     </div>
                     <p className="text-xs font-body opacity-80">
-                      {format(start, 'dd/MM/yyyy', { locale: ptBR })} até {format(end, 'dd/MM/yyyy', { locale: ptBR })} 
+                      {format(start, 'dd/MM/yyyy', { locale: ptBR })} até {format(end, 'dd/MM/yyyy', { locale: ptBR })}
                       <span className="mx-2">•</span>
                       {f.dias_ferias} dias
                     </p>
@@ -125,7 +144,7 @@ export function CalendarioFerias() {
           <DialogContent className="max-w-md rounded-2xl">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 font-display">
-                <FileText className="h-5 w-5 text-primary" /> 
+                <FileText className="h-5 w-5 text-primary" />
                 Detalhes das Férias
               </DialogTitle>
             </DialogHeader>
@@ -137,18 +156,24 @@ export function CalendarioFerias() {
                   </div>
                   <div>
                     <h3 className="font-display font-bold text-base">{selectedEvent.colaborador?.nome_completo}</h3>
-                    <p className="text-sm text-muted-foreground font-body">{selectedEvent.colaborador?.cargo?.nome || 'Cargo não definido'}</p>
+                    <p className="text-sm text-muted-foreground font-body">
+                      {selectedEvent.colaborador?.cargo?.nome || 'Cargo não definido'}
+                    </p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-1">
                     <p className="text-xs text-muted-foreground font-body">Data Início</p>
-                    <p className="font-display font-semibold">{format(new Date(selectedEvent.data_inicio), 'dd/MM/yyyy')}</p>
+                    <p className="font-display font-semibold">
+                      {format(new Date(selectedEvent.data_inicio), 'dd/MM/yyyy')}
+                    </p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-xs text-muted-foreground font-body">Data Fim</p>
-                    <p className="font-display font-semibold">{format(new Date(selectedEvent.data_fim), 'dd/MM/yyyy')}</p>
+                    <p className="font-display font-semibold">
+                      {format(new Date(selectedEvent.data_fim), 'dd/MM/yyyy')}
+                    </p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-xs text-muted-foreground font-body">Total de Dias</p>
@@ -165,19 +190,23 @@ export function CalendarioFerias() {
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Abono Pecuniário</span>
-                    <Badge variant={selectedEvent.abono_pecuniario ? "default" : "secondary"}>
+                    <Badge variant={selectedEvent.abono_pecuniario ? 'default' : 'secondary'}>
                       {selectedEvent.abono_pecuniario ? 'Sim' : 'Não'}
                     </Badge>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Adiantamento 13º</span>
-                    <Badge variant={selectedEvent.adiantamento_13 ? "default" : "secondary"}>
+                    <Badge variant={selectedEvent.adiantamento_13 ? 'default' : 'secondary'}>
                       {selectedEvent.adiantamento_13 ? 'Sim' : 'Não'}
                     </Badge>
                   </div>
                 </div>
 
-                <Button className="w-full rounded-xl font-body" variant="outline" onClick={() => setSelectedEvent(null)}>
+                <Button
+                  className="w-full rounded-xl font-body"
+                  variant="outline"
+                  onClick={() => setSelectedEvent(null)}
+                >
                   Fechar
                 </Button>
               </div>

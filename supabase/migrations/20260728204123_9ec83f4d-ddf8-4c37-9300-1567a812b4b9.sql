@@ -8,6 +8,7 @@ DROP POLICY IF EXISTS "Testes acessíveis por empresa" ON public.recrutamento_te
 DROP POLICY IF EXISTS "Users can view their company's delivery logs" ON public.log_envio_relatorios;
 
 -- Anotacoes: escopo de empresa + respeito ao flag "privada"
+DROP POLICY IF EXISTS "recrutamento_anotacoes_tenant_select" ON public.recrutamento_anotacoes;
 CREATE POLICY "recrutamento_anotacoes_tenant_select"
 ON public.recrutamento_anotacoes FOR SELECT TO authenticated
 USING (
@@ -19,6 +20,7 @@ USING (
   AND (privada IS NOT TRUE OR usuario_id = auth.uid() OR public.is_admin(auth.uid()))
 );
 
+DROP POLICY IF EXISTS "recrutamento_anotacoes_tenant_write" ON public.recrutamento_anotacoes;
 CREATE POLICY "recrutamento_anotacoes_tenant_write"
 ON public.recrutamento_anotacoes FOR ALL TO authenticated
 USING (
@@ -37,6 +39,7 @@ WITH CHECK (
   )
 );
 
+DROP POLICY IF EXISTS "recrutamento_entrevistas_tenant_all" ON public.recrutamento_entrevistas;
 CREATE POLICY "recrutamento_entrevistas_tenant_all"
 ON public.recrutamento_entrevistas FOR ALL TO authenticated
 USING (
@@ -54,6 +57,7 @@ WITH CHECK (
   )
 );
 
+DROP POLICY IF EXISTS "recrutamento_testes_tenant_all" ON public.recrutamento_testes;
 CREATE POLICY "recrutamento_testes_tenant_all"
 ON public.recrutamento_testes FOR ALL TO authenticated
 USING (
@@ -71,6 +75,7 @@ WITH CHECK (
   )
 );
 
+DROP POLICY IF EXISTS "log_envio_relatorios_tenant_select" ON public.log_envio_relatorios;
 CREATE POLICY "log_envio_relatorios_tenant_select"
 ON public.log_envio_relatorios FOR SELECT TO authenticated
 USING (

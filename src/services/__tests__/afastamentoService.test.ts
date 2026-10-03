@@ -23,9 +23,9 @@ function setupListarChain(data: any[], count: number, error: any = null) {
   // `.order(...)` é aguardado direto ou seguido de `.returns<T>()` (tipagem do supabase-js).
   const ordered: any = {
     returns: vi.fn(() => ordered),
-    then: (fn: any) => Promise.resolve(response).then(fn),
-    catch: (fn: any) => Promise.resolve(response).catch(fn),
-    finally: (fn: any) => Promise.resolve(response).finally(fn),
+    then: (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn),
+    catch: (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn),
+    finally: (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn),
   };
   const orderFn = vi.fn().mockReturnValue(ordered);
   const baseQuery: any = { order: orderFn };
@@ -45,11 +45,11 @@ function setupThenabledChain(data: any[], error: any = null) {
   chain.or = vi.fn().mockReturnValue(chain);
   chain.limit = vi.fn().mockReturnValue(chain);
   chain.returns = vi.fn().mockReturnValue(chain);
-  chain.maybeSingle = vi.fn().mockResolvedValue({ data: (data as any[])?.[0] ?? null, error });
+  chain.maybeSingle = vi.fn().mockResolvedValue({ data: (data as never[])?.[0] ?? null, error });
   chain.order = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { chain };
@@ -71,7 +71,7 @@ describe('afastamentoService.listar', () => {
   });
 
   it('returns empty data when supabase returns null', async () => {
-    setupListarChain(null as any, null as any);
+    setupListarChain(null as never, null as never);
     const result = await afastamentoService.listar({ filters: { empresa_id: EMPRESA_ID } });
     expect(result.data).toEqual([]);
     expect(result.total).toBe(0);
@@ -79,7 +79,7 @@ describe('afastamentoService.listar', () => {
 
   it('filters by empresa_id from options.empresaId', async () => {
     const { eqFn } = setupListarChain([], 0);
-    await afastamentoService.listar({ empresaId: 'emp-1' } as any);
+    await afastamentoService.listar({ empresaId: 'emp-1' } as never);
     expect(eqFn).toHaveBeenCalledWith('empresa_id', 'emp-1');
   });
 
@@ -123,7 +123,7 @@ describe('afastamentoService.listarHistoricoRecente', () => {
   });
 
   it('returns empty array when no records', async () => {
-    setupThenabledChain(null as any);
+    setupThenabledChain(null as never);
     const result = await afastamentoService.listarHistoricoRecente('c1', EMPRESA_ID);
     expect(result).toEqual([]);
   });
@@ -152,7 +152,7 @@ describe('afastamentoService.buscarCID', () => {
     const { chain } = setupThenabledChain(cids);
     chain.limit = vi.fn().mockReturnValue(chain);
     chain.returns = vi.fn().mockReturnValue(chain);
-    chain.then = (fn: any) => Promise.resolve({ data: cids, error: null }).then(fn);
+    chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve({ data: cids, error: null }).then(fn);
     const result = await afastamentoService.buscarCID('J00');
     expect(result).toEqual(cids);
   });
@@ -161,7 +161,7 @@ describe('afastamentoService.buscarCID', () => {
     const { chain } = setupThenabledChain([]);
     chain.limit = vi.fn().mockReturnValue(chain);
     chain.returns = vi.fn().mockReturnValue(chain);
-    chain.then = (fn: any) => Promise.resolve({ data: [], error: null }).then(fn);
+    chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).then(fn);
     await afastamentoService.buscarCID('tosse');
     expect(chain.or).toHaveBeenCalledWith(expect.stringContaining('ilike.%tosse%'));
   });
@@ -170,16 +170,16 @@ describe('afastamentoService.buscarCID', () => {
     const { chain } = setupThenabledChain([]);
     chain.limit = vi.fn().mockReturnValue(chain);
     chain.returns = vi.fn().mockReturnValue(chain);
-    chain.then = (fn: any) => Promise.resolve({ data: [], error: null }).then(fn);
+    chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).then(fn);
     await afastamentoService.buscarCID('abc');
     expect(chain.limit).toHaveBeenCalledWith(10);
   });
 
   it('returns empty array when no results', async () => {
-    const { chain } = setupThenabledChain(null as any);
+    const { chain } = setupThenabledChain(null as never);
     chain.limit = vi.fn().mockReturnValue(chain);
     chain.returns = vi.fn().mockReturnValue(chain);
-    chain.then = (fn: any) => Promise.resolve({ data: null, error: null }).then(fn);
+    chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve({ data: null, error: null }).then(fn);
     const result = await afastamentoService.buscarCID('xyz');
     expect(result).toEqual([]);
   });
@@ -188,7 +188,7 @@ describe('afastamentoService.buscarCID', () => {
     const { chain } = setupThenabledChain([]);
     chain.limit = vi.fn().mockReturnValue(chain);
     chain.returns = vi.fn().mockReturnValue(chain);
-    chain.then = (fn: any) => Promise.resolve({ data: null, error: { message: 'fail' } }).then(fn);
+    chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve({ data: null, error: { message: 'fail' } }).then(fn);
     await expect(afastamentoService.buscarCID('err')).rejects.toBeDefined();
   });
 });

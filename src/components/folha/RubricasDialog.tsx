@@ -306,7 +306,13 @@ export function RubricasDialog() {
                                 ) {
                                   supabase
                                     .from('rubricas_folha')
-                                    .update(corrigida)
+                                    .update({
+                                      tipo: corrigida.tipo as 'provento' | 'desconto' | 'informativo',
+                                      incide_inss: corrigida.incide_inss,
+                                      incide_fgts: corrigida.incide_fgts,
+                                      incide_irrf: corrigida.incide_irrf,
+                                      descricao: corrigida.descricao,
+                                    })
                                     .eq('id', rubrica.id)
                                     .then(() => {
                                       queryClient.invalidateQueries({ queryKey: ['rubricas_folha'] });

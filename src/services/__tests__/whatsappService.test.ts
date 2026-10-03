@@ -89,23 +89,22 @@ describe('whatsappService', () => {
       const { upsertFn } = setupUpsert(null);
 
       await expect(
-        whatsappService.saveConfig({ empresa_id: 'emp-1', habilitado: true } as any)
+        whatsappService.saveConfig({ empresa_id: 'emp-1', habilitado: true } as never)
       ).resolves.toBeUndefined();
 
       expect(mockFrom).toHaveBeenCalledWith('whatsapp_config');
-      expect(upsertFn).toHaveBeenCalledWith(
-        expect.objectContaining({ empresa_id: 'emp-1', habilitado: true }),
-        { onConflict: 'empresa_id' }
-      );
+      expect(upsertFn).toHaveBeenCalledWith(expect.objectContaining({ empresa_id: 'emp-1', habilitado: true }), {
+        onConflict: 'empresa_id',
+      });
     });
 
     it('throws when supabase returns an error', async () => {
       const dbError = new Error('Upsert failed');
       setupUpsert(dbError);
 
-      await expect(
-        whatsappService.saveConfig({ empresa_id: 'emp-1', habilitado: false } as any)
-      ).rejects.toThrow('Upsert failed');
+      await expect(whatsappService.saveConfig({ empresa_id: 'emp-1', habilitado: false } as never)).rejects.toThrow(
+        'Upsert failed'
+      );
     });
   });
 
@@ -172,7 +171,7 @@ describe('whatsappService', () => {
     });
 
     it('returns empty array when data is null', async () => {
-      setupSelectEq(null as any);
+      setupSelectEq(null as never);
 
       const result = await whatsappService.listTemplates('emp-1');
 
@@ -197,9 +196,7 @@ describe('whatsappService', () => {
 
   describe('listLogs', () => {
     it('returns logs array on success', async () => {
-      const logs = [
-        { id: 'log-1', empresa_id: 'emp-1', status: 'sent', colaborador: { nome_completo: 'João' } },
-      ];
+      const logs = [{ id: 'log-1', empresa_id: 'emp-1', status: 'sent', colaborador: { nome_completo: 'João' } }];
       setupSelectEqOrder(logs);
 
       const result = await whatsappService.listLogs('emp-1');
@@ -209,7 +206,7 @@ describe('whatsappService', () => {
     });
 
     it('returns empty array when data is null', async () => {
-      setupSelectEqOrder(null as any);
+      setupSelectEqOrder(null as never);
 
       const result = await whatsappService.listLogs('emp-1');
 
@@ -244,9 +241,9 @@ describe('whatsappService', () => {
     let setTimeoutSpy: ReturnType<typeof vi.spyOn>;
 
     beforeEach(() => {
-      setTimeoutSpy = vi.spyOn(global, 'setTimeout').mockImplementation((fn: any) => {
+      setTimeoutSpy = vi.spyOn(global, 'setTimeout').mockImplementation((fn: (v?: unknown) => unknown) => {
         fn();
-        return 0 as any;
+        return 0 as never;
       });
     });
 
@@ -263,9 +260,7 @@ describe('whatsappService', () => {
       const eqUpdate = vi.fn().mockReturnValue({ eq: eqUpdate2 });
       const updateFn = vi.fn().mockReturnValue({ eq: eqUpdate });
 
-      mockFrom
-        .mockReturnValueOnce({ insert: insertFn })
-        .mockReturnValueOnce({ update: updateFn });
+      mockFrom.mockReturnValueOnce({ insert: insertFn }).mockReturnValueOnce({ update: updateFn });
 
       const result = await whatsappService.sendTemplateMessage({
         empresaId: 'emp-1',
@@ -286,9 +281,7 @@ describe('whatsappService', () => {
       const eqUpdate = vi.fn().mockReturnValue({ eq: eqUpdate2 });
       const updateFn = vi.fn().mockReturnValue({ eq: eqUpdate });
 
-      mockFrom
-        .mockReturnValueOnce({ insert: insertFn })
-        .mockReturnValueOnce({ update: updateFn });
+      mockFrom.mockReturnValueOnce({ insert: insertFn }).mockReturnValueOnce({ update: updateFn });
 
       await whatsappService.sendTemplateMessage({
         empresaId: 'emp-1',
@@ -317,9 +310,7 @@ describe('whatsappService', () => {
       const eqUpdate = vi.fn().mockReturnValue({ eq: eqUpdate2 });
       const updateFn = vi.fn().mockReturnValue({ eq: eqUpdate });
 
-      mockFrom
-        .mockReturnValueOnce({ insert: insertFn })
-        .mockReturnValueOnce({ update: updateFn });
+      mockFrom.mockReturnValueOnce({ insert: insertFn }).mockReturnValueOnce({ update: updateFn });
 
       await whatsappService.sendTemplateMessage({
         empresaId: 'emp-1',
@@ -328,9 +319,7 @@ describe('whatsappService', () => {
         phone: '+5511999999999',
       });
 
-      expect(updateFn).toHaveBeenCalledWith(
-        expect.objectContaining({ status: 'sent' })
-      );
+      expect(updateFn).toHaveBeenCalledWith(expect.objectContaining({ status: 'sent' }));
       expect(eqUpdate).toHaveBeenCalledWith('id', 'log-3');
       expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), 1000);
     });

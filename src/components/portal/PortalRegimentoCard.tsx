@@ -115,7 +115,7 @@ export function PortalRegimentoCard() {
     }
     setSaving(true);
     try {
-      const { error } = await (supabase as any).rpc('sst_regimento_assinar', {
+      const { error } = await supabase.rpc('sst_regimento_assinar', {
         p_documento_id: documento.id,
         p_colaborador_id: colaboradorId,
       });

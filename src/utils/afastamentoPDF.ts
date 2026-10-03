@@ -15,9 +15,9 @@ interface AfastamentoPDFData {
 }
 
 export async function gerarAfastamentosPDF(
-  titulo: string, 
-  dados: AfastamentoPDFData[], 
-  filtros: any = {}
+  titulo: string,
+  dados: AfastamentoPDFData[],
+  filtros: { cid?: string; status?: string; tipo?: string } = {}
 ) {
   try {
     const { default: jsPDF } = await import('jspdf');
@@ -29,12 +29,12 @@ export async function gerarAfastamentosPDF(
     // Cabeçalho Profissional
     doc.setFillColor(240, 240, 240);
     doc.rect(0, 0, pageWidth, 40, 'F');
-    
+
     doc.setFontSize(22);
     doc.setTextColor(40, 40, 40);
     doc.setFont('helvetica', 'bold');
     doc.text('ERP DP - Módulo de Afastamentos', 14, 20);
-    
+
     doc.setFontSize(14);
     doc.setTextColor(100, 100, 100);
     doc.setFont('helvetica', 'normal');
@@ -42,7 +42,9 @@ export async function gerarAfastamentosPDF(
 
     // Info do Relatório
     doc.setFontSize(9);
-    doc.text(`Gerado em: ${format(new Date(), "dd/MM/yyyy HH:mm:ss", { locale: ptBR })}`, pageWidth - 14, 20, { align: 'right' });
+    doc.text(`Gerado em: ${format(new Date(), 'dd/MM/yyyy HH:mm:ss', { locale: ptBR })}`, pageWidth - 14, 20, {
+      align: 'right',
+    });
     doc.text(`Total de registros: ${dados.length}`, pageWidth - 14, 26, { align: 'right' });
 
     // Filtros Aplicados
@@ -51,19 +53,19 @@ export async function gerarAfastamentosPDF(
     doc.setFont('helvetica', 'bold');
     doc.text('Filtros aplicados:', 14, yPos);
     doc.setFont('helvetica', 'normal');
-    
+
     const activeFilters = [];
     if (filtros.cid) activeFilters.push(`CID: ${filtros.cid}`);
     if (filtros.status) activeFilters.push(`Status: ${filtros.status}`);
     if (filtros.tipo) activeFilters.push(`Tipo: ${filtros.tipo}`);
-    
+
     const filterText = activeFilters.length > 0 ? activeFilters.join(' | ') : 'Nenhum filtro específico aplicado';
     doc.text(filterText, 45, yPos);
 
     // Totais
     const totalDias = dados.reduce((acc, curr) => acc + curr.dias, 0);
     const totalInss = dados.reduce((acc, curr) => acc + curr.diasInss, 0);
-    
+
     yPos += 10;
     doc.setFillColor(245, 247, 250);
     doc.rect(14, yPos - 5, pageWidth - 28, 12, 'F');
@@ -75,38 +77,38 @@ export async function gerarAfastamentosPDF(
     autoTable(doc, {
       startY: yPos + 15,
       head: [['Colaborador', 'Tipo/CID', 'Período', 'Dias', 'Status', 'INSS', 'Perícia']],
-      body: dados.map(item => [
+      body: dados.map((item) => [
         item.colaborador,
         `${item.tipo}\n(CID: ${item.cid})`,
         `${item.inicio} - ${item.fim}`,
         item.dias,
         item.status.toUpperCase(),
         item.diasInss > 0 ? `${item.diasInss}d` : '-',
-        item.pericia
+        item.pericia,
       ]),
-      styles: { 
+      styles: {
         fontSize: 8,
         cellPadding: 3,
-        overflow: 'linebreak'
+        overflow: 'linebreak',
       },
-      headStyles: { 
+      headStyles: {
         fillColor: [220, 38, 38], // Red-600 to match Afastamentos theme
         textColor: 255,
-        fontStyle: 'bold'
+        fontStyle: 'bold',
       },
       alternateRowStyles: {
-        fillColor: [250, 250, 250]
+        fillColor: [250, 250, 250],
       },
       columnStyles: {
         0: { cellWidth: 45 },
         2: { cellWidth: 35 },
         3: { halign: 'center' },
-        5: { halign: 'center' }
-      }
+        5: { halign: 'center' },
+      },
     });
 
     // Rodapé
-    const pageCount = (doc as any).internal.getNumberOfPages();
+    const pageCount = doc.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i);
       doc.setFontSize(8);

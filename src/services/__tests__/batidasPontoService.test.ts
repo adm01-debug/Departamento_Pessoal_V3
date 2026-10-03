@@ -26,9 +26,9 @@ function setupListChain(data: any[], error: any = null) {
   chain.gte = vi.fn().mockReturnValue(chain);
   chain.lte = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, chain };
@@ -57,7 +57,7 @@ describe('batidasPontoService.listar', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as any);
+    setupListChain(null as never);
     const result = await batidasPontoService.listar('c1', EMPRESA_ID);
     expect(result).toEqual([]);
   });
@@ -108,7 +108,7 @@ describe('batidasPontoService.listarPorData', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as any);
+    setupListChain(null as never);
     const result = await batidasPontoService.listarPorData('2026-07-24', EMPRESA_ID);
     expect(result).toEqual([]);
   });

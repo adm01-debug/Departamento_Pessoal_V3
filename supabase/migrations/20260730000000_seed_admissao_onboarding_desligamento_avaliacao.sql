@@ -86,6 +86,12 @@ DECLARE
   wf uuid := gen_random_uuid();
 BEGIN
 
+  -- Seed específico de um tenant: pula quando a empresa não existe (replay/ambiente novo)
+  IF NOT EXISTS (SELECT 1 FROM public.empresas WHERE id = emp) THEN
+    RAISE NOTICE 'Seed: empresa % ausente — pulando seed de onboarding/admissão', emp;
+    RETURN;
+  END IF;
+
   -- ── 0. Workflow de admissão ──────────────────────────────
   INSERT INTO workflows_definicoes (id,nome,descricao,tipo,ativo,empresa_id)
   VALUES (wf,'Workflow Padrao Admissao',

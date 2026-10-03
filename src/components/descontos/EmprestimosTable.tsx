@@ -1,8 +1,15 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import type { EmprestimoItem } from '@/types/descontos';
 
-export function EmprestimosTable({ emprestimos, fmt }: any) {
+export function EmprestimosTable({
+  emprestimos,
+  fmt,
+}: {
+  emprestimos: EmprestimoItem[];
+  fmt: (v: number | null) => string;
+}) {
   return (
     <Table>
       <TableHeader>
@@ -16,7 +23,7 @@ export function EmprestimosTable({ emprestimos, fmt }: any) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {emprestimos.map((e: any) => (
+        {emprestimos.map((e) => (
           <TableRow key={e.id}>
             <TableCell className="font-medium">{e.colaborador?.nome_completo}</TableCell>
             <TableCell>{e.instituicao_financeira || '-'}</TableCell>
@@ -25,16 +32,16 @@ export function EmprestimosTable({ emprestimos, fmt }: any) {
             <TableCell className="w-[200px]">
               <div className="space-y-1">
                 <div className="flex justify-between text-[10px] uppercase font-bold text-muted-foreground">
-                  <span>{e.parcelas_pagas || 0} / {e.numero_parcelas}</span>
-                  <span>{Math.round(((e.parcelas_pagas || 0) / e.numero_parcelas) * 100)}%</span>
+                  <span>
+                    {e.parcelas_pagas || 0} / {e.numero_parcelas}
+                  </span>
+                  <span>{Math.round(((e.parcelas_pagas || 0) / (e.numero_parcelas || 1)) * 100)}%</span>
                 </div>
-                <Progress value={((e.parcelas_pagas || 0) / e.numero_parcelas) * 100} className="h-1" />
+                <Progress value={((e.parcelas_pagas || 0) / (e.numero_parcelas || 1)) * 100} className="h-1" />
               </div>
             </TableCell>
             <TableCell>
-              <Badge variant={e.status === 'ativo' ? 'default' : 'secondary'}>
-                {e.status}
-              </Badge>
+              <Badge variant={e.status === 'ativo' ? 'default' : 'secondary'}>{e.status}</Badge>
             </TableCell>
           </TableRow>
         ))}

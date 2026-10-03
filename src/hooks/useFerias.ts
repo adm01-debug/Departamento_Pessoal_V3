@@ -3,6 +3,7 @@ import { feriasService } from '@/services';
 import { useEmpresas } from './useEmpresas';
 import { auditLogger } from '@/utils/auditLogger';
 import { toast } from 'sonner';
+import type { Insertable, Updatable } from '@/integrations/supabase/database.types';
 import { safeErrorMessage } from '@/utils/safeError';
 
 export function useFerias(params?: { page?: number; limit?: number; search?: string; status?: string }) {
@@ -20,13 +21,13 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
   });
 
   const createMutation = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: Insertable<'ferias'>) => {
       return await feriasService.criar({ ...data, empresa_id: empresaId });
     },
     onSuccess: (data) => {
       qc.invalidateQueries({ queryKey: ['ferias', empresaId] });
       qc.invalidateQueries({ queryKey: ['periodos-aquisitivos'] });
-      auditLogger.log({
+      void auditLogger.log({
         tabela: 'ferias',
         registro_id: data.id,
         acao: 'INSERT',
@@ -35,18 +36,18 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
       });
       toast.success('Solicitação de férias criada com sucesso');
     },
-    onError: (error: any) => toast.error(safeErrorMessage(error, 'Erro ao criar solicitação de férias.')),
+    onError: (error) => toast.error(safeErrorMessage(error, 'Erro ao criar solicitação de férias.')),
   });
 
   const updateMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: any }) => {
+    mutationFn: async ({ id, data }: { id: string; data: Updatable<'ferias'> }) => {
       if (!empresaId) throw new Error('empresa_id obrigatório para atualizar ferias (isolamento de tenant)');
       return await feriasService.atualizar(id, data, empresaId);
     },
     onSuccess: (_, variables) => {
       qc.invalidateQueries({ queryKey: ['ferias', empresaId] });
       qc.invalidateQueries({ queryKey: ['periodos-aquisitivos'] });
-      auditLogger.log({
+      void auditLogger.log({
         tabela: 'ferias',
         registro_id: variables.id,
         acao: 'UPDATE',
@@ -55,7 +56,7 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
       });
       toast.success('Solicitação de férias atualizada');
     },
-    onError: (error: any) => toast.error(safeErrorMessage(error, 'Erro ao atualizar férias.')),
+    onError: (error) => toast.error(safeErrorMessage(error, 'Erro ao atualizar férias.')),
   });
 
   const deleteMutation = useMutation({
@@ -66,7 +67,7 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
     onSuccess: (_, id) => {
       qc.invalidateQueries({ queryKey: ['ferias', empresaId] });
       qc.invalidateQueries({ queryKey: ['periodos-aquisitivos'] });
-      auditLogger.log({
+      void auditLogger.log({
         tabela: 'ferias',
         registro_id: id,
         acao: 'DELETE',
@@ -74,7 +75,7 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
       });
       toast.success('Solicitação de férias excluída');
     },
-    onError: (error: any) => toast.error(safeErrorMessage(error, 'Erro ao excluir férias.')),
+    onError: (error) => toast.error(safeErrorMessage(error, 'Erro ao excluir férias.')),
   });
 
   const aprovarGestorMutation = useMutation({
@@ -85,7 +86,7 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
       qc.invalidateQueries({ queryKey: ['ferias', empresaId] });
       toast.success('Férias aprovadas pelo gestor');
     },
-    onError: (error: any) => toast.error(safeErrorMessage(error, 'Erro ao aprovar férias.')),
+    onError: (error) => toast.error(safeErrorMessage(error, 'Erro ao aprovar férias.')),
   });
 
   const aprovarRHMutation = useMutation({
@@ -96,7 +97,7 @@ export function useFerias(params?: { page?: number; limit?: number; search?: str
       qc.invalidateQueries({ queryKey: ['ferias', empresaId] });
       toast.success('Férias aprovadas pelo RH e finalizadas');
     },
-    onError: (error: any) => toast.error(safeErrorMessage(error, 'Erro ao aprovar férias.')),
+    onError: (error) => toast.error(safeErrorMessage(error, 'Erro ao aprovar férias.')),
   });
 
   return {

@@ -1,5 +1,21 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables, Insertable, Updatable } from '@/integrations/supabase/database.types';
+import { validateInput } from '@/schemas/validate';
+import {
+  dependenteSchema,
+  contatoEmergenciaSchema,
+  historicoSalarialSchema,
+  asoSchema,
+  formacaoSchema,
+  dadosEstrangeiroSchema,
+  deficienciaSchema,
+  periodoExperienciaSchema,
+  anotacaoSchema,
+  timeSchema,
+  webhookConfigSchema,
+  feriasColetivaSchema,
+  campoCustomizadoSchema,
+} from '@/schemas/colaboradorDetalhes';
 
 // =============================================
 // Dependentes
@@ -34,6 +50,7 @@ export async function listarDependentes(colaboradorId: string, empresaId: string
 }
 
 export async function criarDependente(dependente: Insertable<'dependentes'>): Promise<Tables<'dependentes'> | null> {
+  validateInput(dependenteSchema, dependente, 'criarDependente');
   const { data, error } = await supabase.from('dependentes').insert([dependente]).select().maybeSingle();
   if (error) throw error;
   return data;
@@ -46,6 +63,7 @@ export async function atualizarDependente(
 ): Promise<void> {
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
   await verificarDependenteDaEmpresa(id, empresaId);
+  validateInput(dependenteSchema, dados, 'atualizarDependente');
   const { error } = await supabase.from('dependentes').update(dados).eq('id', id);
   if (error) throw error;
 }
@@ -73,6 +91,7 @@ export async function listarContatosEmergencia(colaboradorId: string): Promise<T
 export async function criarContatoEmergencia(
   contato: Insertable<'contatos_emergencia'>
 ): Promise<Tables<'contatos_emergencia'> | null> {
+  validateInput(contatoEmergenciaSchema, contato, 'criarContatoEmergencia');
   const { data, error } = await supabase.from('contatos_emergencia').insert([contato]).select().maybeSingle();
   if (error) throw error;
   return data;
@@ -108,6 +127,7 @@ export async function listarHistoricoSalarial(
 export async function criarRegistroSalarial(
   registro: Insertable<'historico_salarial'>
 ): Promise<Tables<'historico_salarial'> | null> {
+  validateInput(historicoSalarialSchema, registro, 'criarRegistroSalarial');
   const { data, error } = await supabase.from('historico_salarial').insert([registro]).select().maybeSingle();
   if (error) throw error;
   return data;
@@ -129,6 +149,7 @@ export async function listarASOs(colaboradorId: string, empresaId: string): Prom
 }
 
 export async function criarASO(aso: Insertable<'asos'>): Promise<Tables<'asos'> | null> {
+  validateInput(asoSchema, aso, 'criarASO');
   const { data, error } = await supabase.from('asos').insert([aso]).select().maybeSingle();
   if (error) throw error;
   return data;
@@ -150,6 +171,7 @@ export async function listarFormacoes(colaboradorId: string): Promise<Tables<'fo
 export async function criarFormacao(
   formacao: Insertable<'formacoes_academicas'>
 ): Promise<Tables<'formacoes_academicas'> | null> {
+  validateInput(formacaoSchema, formacao, 'criarFormacao');
   const { data, error } = await supabase.from('formacoes_academicas').insert([formacao]).select().maybeSingle();
   if (error) throw error;
   return data;
@@ -181,6 +203,7 @@ export async function salvarDadosEstrangeiro(
   colaboradorId: string,
   dados: Updatable<'dados_estrangeiro'>
 ): Promise<Tables<'dados_estrangeiro'> | null> {
+  validateInput(dadosEstrangeiroSchema, { ...dados, colaborador_id: colaboradorId }, 'salvarDadosEstrangeiro');
   const { data, error } = await supabase
     .from('dados_estrangeiro')
     .upsert({ ...dados, colaborador_id: colaboradorId }, { onConflict: 'colaborador_id' })
@@ -207,6 +230,7 @@ export async function salvarDeficiencia(
   colaboradorId: string,
   dados: Omit<Insertable<'deficiencias'>, 'colaborador_id'>
 ): Promise<Tables<'deficiencias'> | null> {
+  validateInput(deficienciaSchema, { ...dados, colaborador_id: colaboradorId }, 'salvarDeficiencia');
   const { data, error } = await supabase
     .from('deficiencias')
     .upsert({ ...dados, colaborador_id: colaboradorId }, { onConflict: 'colaborador_id' })
@@ -233,6 +257,7 @@ export async function salvarPeriodoExperiencia(
   colaboradorId: string,
   dados: Omit<Insertable<'periodos_experiencia'>, 'colaborador_id'>
 ): Promise<Tables<'periodos_experiencia'> | null> {
+  validateInput(periodoExperienciaSchema, { ...dados, colaborador_id: colaboradorId }, 'salvarPeriodoExperiencia');
   const existing = await obterPeriodoExperiencia(colaboradorId);
   if (existing) {
     const { data, error } = await supabase
@@ -271,6 +296,7 @@ export async function listarAnotacoes(colaboradorId: string): Promise<Tables<'an
 export async function criarAnotacao(
   anotacao: Insertable<'anotacoes_colaborador'>
 ): Promise<Tables<'anotacoes_colaborador'> | null> {
+  validateInput(anotacaoSchema, anotacao, 'criarAnotacao');
   const { data, error } = await supabase.from('anotacoes_colaborador').insert([anotacao]).select().maybeSingle();
   if (error) throw error;
   return data;
@@ -322,6 +348,7 @@ export async function criarTime(time: Insertable<'times'>): Promise<Tables<'time
   // devolve uma mensagem util em vez do erro cru do Postgres — e espelha a
   // mesma exigencia que `listarTimes` ja faz.
   if (!time?.empresa_id) throw new Error('empresa_id obrigatório para isolamento de tenant');
+  validateInput(timeSchema, time, 'criarTime');
   const { data, error } = await supabase.from('times').insert([time]).select().maybeSingle();
   if (error) throw error;
   return data;
@@ -373,6 +400,7 @@ export async function listarWebhooks(empresaId: string): Promise<Tables<'webhook
 }
 
 export async function criarWebhook(webhook: Insertable<'webhooks_config'>): Promise<Tables<'webhooks_config'> | null> {
+  validateInput(webhookConfigSchema, webhook, 'criarWebhook');
   const { data, error } = await supabase.from('webhooks_config').insert([webhook]).select().maybeSingle();
   if (error) throw error;
   return data;
@@ -401,6 +429,7 @@ export async function listarFeriasColetivas(empresaId: string): Promise<Tables<'
 export async function criarFeriasColetivas(
   ferias: Insertable<'ferias_coletivas'>
 ): Promise<Tables<'ferias_coletivas'> | null> {
+  validateInput(feriasColetivaSchema, ferias, 'criarFeriasColetivas');
   const { data, error } = await supabase.from('ferias_coletivas').insert([ferias]).select().maybeSingle();
   if (error) throw error;
   return data;
@@ -421,6 +450,7 @@ export async function listarCamposCustomizados(empresaId: string): Promise<Table
 export async function criarCampoCustomizado(
   campo: Insertable<'campos_customizados'>
 ): Promise<Tables<'campos_customizados'> | null> {
+  validateInput(campoCustomizadoSchema, campo, 'criarCampoCustomizado');
   const { data, error } = await supabase.from('campos_customizados').insert([campo]).select().maybeSingle();
   if (error) throw error;
   return data;

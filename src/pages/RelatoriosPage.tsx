@@ -124,8 +124,8 @@ async function fetchReportData(id: string, empresaId?: string) {
       return {
         title: 'Férias Próximas (30 dias)',
         rows: (data || []).map((f) => ({
-          colaborador: (f.colaborador as any)?.nome_completo,
-          departamento: (f.colaborador as any)?.departamento,
+          colaborador: f.colaborador?.nome_completo,
+          departamento: f.colaborador?.departamento,
           inicio: f.data_inicio,
           fim: f.data_fim,
           status: f.status,
@@ -179,13 +179,13 @@ async function fetchReportData(id: string, empresaId?: string) {
 
       const ativos = ativosRes.count ?? 0;
       const byMes = new Map<string, { admissoes: number; desligamentos: number }>();
-      (desligRes.data || []).forEach((d: any) => {
+      (desligRes.data || []).forEach((d) => {
         const m = String(d.data_desligamento).slice(0, 7);
         const cur = byMes.get(m) || { admissoes: 0, desligamentos: 0 };
         cur.desligamentos += 1;
         byMes.set(m, cur);
       });
-      (admRes.data || []).forEach((a: any) => {
+      (admRes.data || []).forEach((a) => {
         const m = String(a.data_admissao).slice(0, 7);
         const cur = byMes.get(m) || { admissoes: 0, desligamentos: 0 };
         cur.admissoes += 1;
@@ -226,7 +226,7 @@ async function fetchReportData(id: string, empresaId?: string) {
   }
 }
 
-function exportCSV(title: string, rows: any[], columns: string[]) {
+function exportCSV(title: string, rows: Record<string, unknown>[], columns: string[]) {
   if (!rows.length) {
     toast.info('Sem dados');
     return;

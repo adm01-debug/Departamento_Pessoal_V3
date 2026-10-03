@@ -2,32 +2,10 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders, createErrorResponse } from '../_shared/contract.ts';
 import { captureException } from '../_shared/sentry.ts';
-
-const ipBuckets = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT = 10;
-const WINDOW_MS = 60_000;
-
-function checkInMemoryRate(ip: string): boolean {
-  const now = Date.now();
-  const bucket = ipBuckets.get(ip);
-  if (!bucket || bucket.resetAt <= now) {
-    ipBuckets.set(ip, { count: 1, resetAt: now + WINDOW_MS });
-    return true;
-  }
-  bucket.count++;
-  return bucket.count <= RATE_LIMIT;
-}
+import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
 
 serve(async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders });
-
-  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
-  if (!checkInMemoryRate(ip)) {
-    return new Response(JSON.stringify({ error: 'Too many requests' }), {
-      status: 429,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': '60' },
-    });
-  }
 
   try {
     const supabase = createClient(
@@ -35,6 +13,12 @@ serve(async (req: Request): Promise<Response> => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
       { auth: { persistSession: false, autoRefreshToken: false } },
     );
+
+    // Rate limit distribuído (tabela rate_limits via RPC atômico) — compartilhado
+    // entre instâncias de edge function; fallback em memória se o RPC falhar.
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+    const rl = await checkRateLimit(supabase, { key: `healthcheck:${ip}`, limit: 10, windowSec: 60 });
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     // P3-056: checks internos paralelos. Latência reportada por check.
     const t0 = Date.now();
@@ -80,7 +64,7 @@ serve(async (req: Request): Promise<Response> => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
     });
   } catch (error: unknown) {
-    captureException(error, { fn: 'healthcheck' });
+    await captureException(error, { fn: 'healthcheck' });
     return createErrorResponse('Erro interno', 500, 'INTERNAL_SERVER_ERROR');
   }
 });

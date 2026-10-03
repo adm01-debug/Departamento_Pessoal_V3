@@ -107,7 +107,7 @@ describe('listarEventos', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    buildEventosChain(null as any);
+    buildEventosChain(null as never);
     const result = await listarEventos(EMPRESA_ID);
     expect(result).toEqual([]);
   });

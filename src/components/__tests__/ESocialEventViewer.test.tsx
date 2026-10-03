@@ -1,14 +1,15 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('../esocial/S1200Remuneracao', () => ({
-  S1200Remuneracao: ({ dados }: any) => <div data-testid="s1200">{JSON.stringify(dados)}</div>,
+  S1200Remuneracao: ({ dados }: { dados?: unknown }) => <div data-testid="s1200">{JSON.stringify(dados)}</div>,
 }));
 vi.mock('../esocial/S2200Admissao', () => ({
-  S2200Admissao: ({ dados }: any) => <div data-testid="s2200">{JSON.stringify(dados)}</div>,
+  S2200Admissao: ({ dados }: { dados?: unknown }) => <div data-testid="s2200">{JSON.stringify(dados)}</div>,
 }));
 vi.mock('../esocial/S2299Desligamento', () => ({
-  S2299Desligamento: ({ dados }: any) => <div data-testid="s2299">{JSON.stringify(dados)}</div>,
+  S2299Desligamento: ({ dados }: { dados?: unknown }) => <div data-testid="s2299">{JSON.stringify(dados)}</div>,
 }));
 vi.mock('../esocial/S1210Pagamentos', () => ({ S1210Pagamentos: () => <div /> }));
 vi.mock('../esocial/S2205AlteracaoCadastral', () => ({ S2205AlteracaoCadastral: () => <div /> }));

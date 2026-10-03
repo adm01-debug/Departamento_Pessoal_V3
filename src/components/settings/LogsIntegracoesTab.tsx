@@ -36,7 +36,9 @@ export function LogsIntegracoesTab() {
         </CardHeader>
         <CardContent className="p-0">
           {isLoading ? (
-            <div className="p-8 flex justify-center"><Spinner /></div>
+            <div className="p-8 flex justify-center">
+              <Spinner />
+            </div>
           ) : (
             <Table>
               <TableHeader>
@@ -49,10 +51,10 @@ export function LogsIntegracoesTab() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {logs.map((l: any) => (
+                {logs.map((l) => (
                   <TableRow key={l.id}>
-                    <TableCell className="font-medium">{l.integracao_nome || l.integracao_id || '-'}</TableCell>
-                    <TableCell className="text-sm">{l.acao || l.action || '-'}</TableCell>
+                    <TableCell className="font-medium">{l.integracao_id || '-'}</TableCell>
+                    <TableCell className="text-sm">{l.tipo || '-'}</TableCell>
                     <TableCell>
                       <Badge
                         variant={l.status === 'sucesso' || l.status === 'success' ? 'default' : 'destructive'}
@@ -61,7 +63,7 @@ export function LogsIntegracoesTab() {
                         {l.status || '-'}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-sm">{l.registros_processados || l.records || 0}</TableCell>
+                    <TableCell className="text-sm">{l.mensagem || '-'}</TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {l.created_at ? new Date(l.created_at).toLocaleString('pt-BR') : '-'}
                     </TableCell>

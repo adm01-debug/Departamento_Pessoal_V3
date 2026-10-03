@@ -50,7 +50,7 @@ export function DonutChart({ segments, size = 140, strokeWidth = 16, className }
           strokeWidth={strokeWidth}
           opacity={0.3}
         />
-        {segmentsWithOffsets.map((seg: any, i: number) => {
+        {segmentsWithOffsets.map((seg, i) => {
           const gap = segments.length > 1 ? 3 : 0;
           const dashArray = `${Math.max(seg.segLength - gap, 0)} ${circumference - seg.segLength + gap}`;
           const strokeOffset = -seg.offset + circumference * 0.25; // start from top
@@ -74,8 +74,12 @@ export function DonutChart({ segments, size = 140, strokeWidth = 16, className }
           );
         })}
         {/* Center text */}
-        <text x={center} y={center - 6} textAnchor="middle" className="fill-foreground font-display text-xl font-bold">{total}</text>
-        <text x={center} y={center + 12} textAnchor="middle" className="fill-muted-foreground font-body text-[10px]">Total</text>
+        <text x={center} y={center - 6} textAnchor="middle" className="fill-foreground font-display text-xl font-bold">
+          {total}
+        </text>
+        <text x={center} y={center + 12} textAnchor="middle" className="fill-muted-foreground font-body text-[10px]">
+          Total
+        </text>
       </svg>
 
       {/* Legend */}

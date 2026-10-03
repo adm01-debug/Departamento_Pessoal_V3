@@ -42,5 +42,5 @@ window.ResizeObserver = ResizeObserver;
 // Mock URL.createObjectURL / revokeObjectURL for jsdom (used by Excel/PDF exports).
 // Always override: jsdom's own implementation (present since jsdom 30.1) expects its
 // internal Blob shape and throws on Blobs built from ExcelJS/PDF buffers in tests.
-(URL as any).createObjectURL = vi.fn(() => 'blob:mock');
-(URL as any).revokeObjectURL = vi.fn();
+(URL as unknown as { createObjectURL: () => string }).createObjectURL = vi.fn(() => 'blob:mock');
+(URL as unknown as { revokeObjectURL: () => void }).revokeObjectURL = vi.fn();

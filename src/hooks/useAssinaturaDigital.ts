@@ -7,20 +7,14 @@ export function useAssinaturaDigital() {
   const queryClient = useQueryClient();
 
   const assinarContrato = useMutation({
-    mutationFn: async ({ tokenId, ip, userAgent }: { tokenId: string, ip?: string, userAgent?: string }) => {
+    mutationFn: async ({ tokenId, ip, userAgent }: { tokenId: string; ip?: string; userAgent?: string }) => {
       const { data, error } = await supabase
         .from('admissao_tokens')
         .update({
           contrato_assinado: true,
           assinado_em: new Date().toISOString(),
-          metadata: {
-            assinatura_digital: {
-              ip: ip || 'unknown',
-              userAgent: userAgent || navigator.userAgent,
-              timestamp: new Date().toISOString()
-            }
-          }
-        } as any)
+          ip_assinatura: ip || null,
+        })
         .eq('id', tokenId)
         .select()
         .single();

@@ -28,8 +28,10 @@
     "audit:secdef": "node scripts/audit-secdef-authz.mjs",
     "audit:embeds": "node scripts/audit-embed-hints.mjs",
     "audit:ratchet-any": "node scripts/ratchet-any.mjs",
+    "audit:ratchet-any-tests": "node scripts/ratchet-any-tests.mjs",
     "audit:ratchet-warnings": "node scripts/ratchet-lint-warnings.mjs",
-    "lint:ci": "eslint src --ext ts,tsx --max-warnings=881",
+    "audit:types-drift": "node scripts/audit-types-drift.mjs",
+    "lint:ci": "eslint src --ext ts,tsx --max-warnings=4",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json,md}\"",
     "format:check:changed": "bash scripts/format-check-changed.sh",
     "format:write": "prettier --write \"src/**/*.{ts,tsx,css,json,md}\"",
@@ -38,10 +40,14 @@
     "typecheck:e2e": "tsc --noEmit -p tsconfig.e2e.json",
     "audit:edge-syntax": "node scripts/audit-edge-syntax.mjs",
     "typecheck:edge": "bash scripts/typecheck-edge.sh",
-    "ci:verify": "bun run audit:plan50 && bun run audit:canonical-project && bun run audit:bridge-contract && bun run audit:edge-audit-log && bun run audit:edge-syntax && bun run typecheck:edge && bun run test:rebaseline && bun run typecheck && bun run typecheck:tests && bun run typecheck:e2e && bun run lint:ci && bun run audit:ratchet-any && bun run format:check:changed",
+    "ci:verify": "bun run audit:plan50 && bun run audit:canonical-project && bun run audit:bridge-contract && bun run audit:edge-audit-log && bun run audit:edge-syntax && bun run typecheck:edge && bun run test:rebaseline && bun run typecheck && bun run typecheck:tests && bun run typecheck:e2e && bun run lint:ci && bun run audit:ratchet-any && bun run audit:types-drift && bun run format:check:changed",
     "test": "vitest",
+    "graph:update": "graphify update .",
+    "graph:rebuild": "graphify update . --force",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
+    "test:lighthouse": "npm run build && npx -y @lhci/cli@0.14.0 autorun",
+    "audit:bundle": "node scripts/check-bundle-budget.mjs",
     "test:e2e:ui": "playwright test --ui",
     "test:migrations": "bash scripts/tests/migrations-plano100.sh",
     "test:migrations:p0": "bash scripts/tests/migrations-p0-hash-search-path.sh",
@@ -163,13 +169,13 @@
     "vitest": "^4.1.11"
   },
   "overrides": {
-    "brace-expansion@<1.1.18": "1.1.18",
-    "brace-expansion@>=2.0.0 <2.1.4": "2.1.4",
-    "brace-expansion@>=4.0.0 <5.0.9": "5.0.9",
     "exceljs": {
       "uuid": "14.0.2"
     },
-    "fast-uri@>=3.0.0 <3.1.5": "3.1.6",
-    "sharp": ">=0.35.4"
+    "fast-uri@>=3.0.0 <=3.1.6": "3.1.8",
+    "sharp": ">=0.35.4",
+    "brace-expansion@<1.1.21": "1.1.21",
+    "brace-expansion@>=2.0.0 <2.1.7": "2.1.7",
+    "brace-expansion@>=4.0.0 <5.0.12": "5.0.12"
   }
 }

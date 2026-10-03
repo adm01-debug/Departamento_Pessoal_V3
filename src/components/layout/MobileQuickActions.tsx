@@ -1,8 +1,18 @@
-import { 
-  Zap, UserPlus, DollarSign, Clock, Calendar, 
-  FileText, BarChart3, X, 
-  ClipboardList, Calculator, Settings, Network
+import {
+  Zap,
+  UserPlus,
+  DollarSign,
+  Clock,
+  Calendar,
+  FileText,
+  BarChart3,
+  X,
+  ClipboardList,
+  Calculator,
+  Settings,
+  Network,
 } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -10,22 +20,76 @@ import { cn } from '@/lib/utils';
 
 interface QuickAction {
   label: string;
-  icon: any;
+  icon: LucideIcon;
   path: string;
   desc: string;
   gradient: string;
 }
 
 const actions: QuickAction[] = [
-  { label: 'Novo Colaborador', icon: UserPlus, gradient: 'from-primary to-primary-glow', path: '/colaboradores/novo', desc: 'Cadastrar funcionário' },
-  { label: 'Calcular Folha', icon: DollarSign, gradient: 'from-primary/80 to-primary', path: '/folha/calcular', desc: 'Processamento mensal' },
-  { label: 'Registrar Ponto', icon: Clock, gradient: 'from-primary/60 to-primary/90', path: '/ponto', desc: 'Batida manual' },
-  { label: 'Solicitar Férias', icon: Calendar, gradient: 'from-primary-glow to-primary', path: '/ferias', desc: 'Nova solicitação' },
-  { label: 'Obrigações Fiscais', icon: FileText, gradient: 'from-info to-info/70', path: '/obrigacoes-fiscais', desc: 'S-1000, S-2200, etc' },
-  { label: 'Relatórios DP', icon: BarChart3, gradient: 'from-primary to-primary-glow', path: '/relatorios', desc: 'Extração de dados' },
-  { label: 'Pesquisas Clima', icon: ClipboardList, gradient: 'from-info to-info/70', path: '/pesquisas-clima', desc: 'Feedbacks equipe' },
-  { label: 'Rescisão', icon: Calculator, gradient: 'from-destructive/80 to-destructive', path: '/calculadora-rescisao', desc: 'Simulador' },
-  { label: 'Configurações', icon: Settings, gradient: 'from-muted-foreground to-foreground', path: '/configuracoes', desc: 'Ajustes sistema' },
+  {
+    label: 'Novo Colaborador',
+    icon: UserPlus,
+    gradient: 'from-primary to-primary-glow',
+    path: '/colaboradores/novo',
+    desc: 'Cadastrar funcionário',
+  },
+  {
+    label: 'Calcular Folha',
+    icon: DollarSign,
+    gradient: 'from-primary/80 to-primary',
+    path: '/folha/calcular',
+    desc: 'Processamento mensal',
+  },
+  {
+    label: 'Registrar Ponto',
+    icon: Clock,
+    gradient: 'from-primary/60 to-primary/90',
+    path: '/ponto',
+    desc: 'Batida manual',
+  },
+  {
+    label: 'Solicitar Férias',
+    icon: Calendar,
+    gradient: 'from-primary-glow to-primary',
+    path: '/ferias',
+    desc: 'Nova solicitação',
+  },
+  {
+    label: 'Obrigações Fiscais',
+    icon: FileText,
+    gradient: 'from-info to-info/70',
+    path: '/obrigacoes-fiscais',
+    desc: 'S-1000, S-2200, etc',
+  },
+  {
+    label: 'Relatórios DP',
+    icon: BarChart3,
+    gradient: 'from-primary to-primary-glow',
+    path: '/relatorios',
+    desc: 'Extração de dados',
+  },
+  {
+    label: 'Pesquisas Clima',
+    icon: ClipboardList,
+    gradient: 'from-info to-info/70',
+    path: '/pesquisas-clima',
+    desc: 'Feedbacks equipe',
+  },
+  {
+    label: 'Rescisão',
+    icon: Calculator,
+    gradient: 'from-destructive/80 to-destructive',
+    path: '/calculadora-rescisao',
+    desc: 'Simulador',
+  },
+  {
+    label: 'Configurações',
+    icon: Settings,
+    gradient: 'from-muted-foreground to-foreground',
+    path: '/configuracoes',
+    desc: 'Ajustes sistema',
+  },
   { label: 'Organograma', icon: Network, gradient: 'from-primary to-info', path: '/organograma', desc: 'Estrutura' },
 ];
 
@@ -71,7 +135,13 @@ export function MobileQuickActions({ open, onOpenChange }: { open: boolean; onOp
                   <p className="text-caption text-muted-foreground">O que você deseja fazer agora?</p>
                 </div>
               </div>
-              <Button variant="ghost" size="icon" onClick={() => onOpenChange(false)} className="rounded-full bg-muted/30" aria-label="Fechar">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => onOpenChange(false)}
+                className="rounded-full bg-muted/30"
+                aria-label="Fechar"
+              >
                 <X className="h-5 w-5" />
               </Button>
             </div>
@@ -86,7 +156,9 @@ export function MobileQuickActions({ open, onOpenChange }: { open: boolean; onOp
                   onClick={() => handleAction(action.path)}
                   className="flex items-center gap-3 p-4 rounded-2xl border border-border/40 bg-muted/20 hover:bg-muted/40 transition-all text-left active:scale-95"
                 >
-                  <div className={cn("shrink-0 p-2.5 rounded-xl bg-gradient-to-br shadow-md text-white", action.gradient)}>
+                  <div
+                    className={cn('shrink-0 p-2.5 rounded-xl bg-gradient-to-br shadow-md text-white', action.gradient)}
+                  >
                     <action.icon className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
@@ -97,8 +169,8 @@ export function MobileQuickActions({ open, onOpenChange }: { open: boolean; onOp
               ))}
             </div>
 
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="w-full h-12 rounded-2xl border-dashed border-primary/30 text-primary hover:bg-primary/5 mt-2"
               onClick={() => onOpenChange(false)}
             >

@@ -35,7 +35,7 @@ export const ajustesPontoService = {
 // qualquer authenticated e restringe escrita a admin (migration
 // 20260317222200_...sql). O filtro `.eq('empresa_id', ...)` que existia
 // aqui antes referenciava uma coluna inexistente — sob a tipagem antiga
-// (`any`/sem tipos) isso compilava, mas o PostgREST teria recusado a query
+// (sem tipos) isso compilava, mas o PostgREST teria recusado a query
 // em runtime; não há chamador real hoje (0 usos fora deste arquivo), então
 // nunca foi exercitado. Corrigido para o desenho real da tabela em vez de
 // forçar um parâmetro de tenant que não existe aqui.

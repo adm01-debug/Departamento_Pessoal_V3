@@ -1,9 +1,10 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('@dnd-kit/core', () => ({
-  DndContext: ({ children }: any) => <div>{children}</div>,
-  DragOverlay: ({ children }: any) => <div>{children}</div>,
+  DndContext: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DragOverlay: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   DragStartEvent: {},
   DragEndEvent: {},
   PointerSensor: class {},
@@ -19,11 +20,11 @@ vi.mock('@dnd-kit/core', () => ({
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+  Card: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
 }));
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children }: any) => <span>{children}</span>,
+  Badge: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
 }));
 
 vi.mock('@tanstack/react-query', () => ({

@@ -32,7 +32,12 @@ function setupSelectEqOrder(data: any[], error: any = null) {
 // update → eq → resolvedValue
 function setupUpdateEq(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  const __delChain = {
+    then: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).then(r),
+    catch: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).catch(r),
+    finally: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).finally(r),
+    eq: eqFn,
+  };
   eqFn.mockReturnValue(__delChain);
   const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ update: updateFn });
@@ -49,7 +54,9 @@ function setupInsert(error: any = null) {
 // ─── getConfig ────────────────────────────────────────────────────────────────
 
 describe('cnabService.getConfig', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns config when found', async () => {
     const config = { banco_codigo: '001', agencia: '1234', conta: '00001', conta_digito: '5', convenio: 'CON001' };
@@ -73,7 +80,9 @@ describe('cnabService.getConfig', () => {
 // ─── saveConfig ───────────────────────────────────────────────────────────────
 
 describe('cnabService.saveConfig', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   const config = { banco_codigo: '001', agencia: '1234', conta: '00001', conta_digito: '5', convenio: 'CON001' };
 
@@ -90,9 +99,7 @@ describe('cnabService.saveConfig', () => {
     const update2 = upChain.update;
     const eq2 = upChain.eq;
 
-    mockFrom
-      .mockReturnValueOnce({ select: select1 })
-      .mockReturnValueOnce(upChain);
+    mockFrom.mockReturnValueOnce({ select: select1 }).mockReturnValueOnce(upChain);
 
     await cnabService.saveConfig('emp-1', config);
     expect(update2).toHaveBeenCalledWith(config);
@@ -107,9 +114,7 @@ describe('cnabService.saveConfig', () => {
 
     // Second call: insert → success
     const insertFn = vi.fn().mockResolvedValue({ error: null });
-    mockFrom
-      .mockReturnValueOnce({ select: select1 })
-      .mockReturnValueOnce({ insert: insertFn });
+    mockFrom.mockReturnValueOnce({ select: select1 }).mockReturnValueOnce({ insert: insertFn });
 
     await cnabService.saveConfig('emp-1', config);
     expect(insertFn).toHaveBeenCalledWith([expect.objectContaining({ empresa_id: 'emp-1', ...config })]);
@@ -123,9 +128,7 @@ describe('cnabService.saveConfig', () => {
 
     const upChain = makeChain({ error: { message: 'fail' } });
     const update2 = upChain.update;
-    mockFrom
-      .mockReturnValueOnce({ select: select1 })
-      .mockReturnValueOnce(upChain);
+    mockFrom.mockReturnValueOnce({ select: select1 }).mockReturnValueOnce(upChain);
 
     await expect(cnabService.saveConfig('emp-1', config)).rejects.toBeDefined();
   });
@@ -134,7 +137,9 @@ describe('cnabService.saveConfig', () => {
 // ─── listRemessas ─────────────────────────────────────────────────────────────
 
 describe('cnabService.listRemessas', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns remessas ordered by created_at desc', async () => {
     const records = [{ id: 'r1', status: 'enviado', valor_total: 5000 }];
@@ -145,7 +150,7 @@ describe('cnabService.listRemessas', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupSelectEqOrder(null as any);
+    setupSelectEqOrder(null as never);
     expect(await cnabService.listRemessas('emp-1')).toEqual([]);
   });
 
@@ -158,7 +163,9 @@ describe('cnabService.listRemessas', () => {
 // ─── listPixLotes ─────────────────────────────────────────────────────────────
 
 describe('cnabService.listPixLotes', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns PIX lotes ordered by created_at desc', async () => {
     const records = [{ id: 'pl1', status: 'gerado' }];
@@ -169,7 +176,7 @@ describe('cnabService.listPixLotes', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupSelectEqOrder(null as any);
+    setupSelectEqOrder(null as never);
     expect(await cnabService.listPixLotes('emp-1')).toEqual([]);
   });
 });
@@ -177,14 +184,16 @@ describe('cnabService.listPixLotes', () => {
 // ─── parseRetornoCNAB ─────────────────────────────────────────────────────────
 
 describe('cnabService.parseRetornoCNAB', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   function makeSegmentALine(seuNumero: string, ocorrencia: string): string {
     // CNAB 240: tipoRegistro at index 7, segmento at index 13, seuNumero at 73-93, ocorrencia at 230-232
     const line = ' '.repeat(240);
     const chars = line.split('');
-    chars[7] = '3';       // tipoRegistro === '3'
-    chars[13] = 'A';      // segmento === 'A'
+    chars[7] = '3'; // tipoRegistro === '3'
+    chars[13] = 'A'; // segmento === 'A'
     // seuNumero: positions 73-92 (20 chars)
     const numPadded = seuNumero.padEnd(20, ' ');
     for (let i = 0; i < 20; i++) chars[73 + i] = numPadded[i];
@@ -218,19 +227,18 @@ describe('cnabService.parseRetornoCNAB', () => {
     const folhaChain = makeChain({ error: null });
     const updateFolha = folhaChain.update;
 
-    mockFrom
-      .mockReturnValueOnce(selChain)
-      .mockReturnValueOnce(updChain)
-      .mockReturnValueOnce(folhaChain);
+    mockFrom.mockReturnValueOnce(selChain).mockReturnValueOnce(updChain).mockReturnValueOnce(folhaChain);
 
     const result = await cnabService.parseRetornoCNAB('emp-1', line);
     expect(result.sucesso).toBe(1);
     expect(result.erro).toBe(0);
-    expect(result.detalhes[0]).toEqual(expect.objectContaining({
-      nome: 'João',
-      status: 'pago',
-      ocorrencia: '00',
-    }));
+    expect(result.detalhes[0]).toEqual(
+      expect.objectContaining({
+        nome: 'João',
+        status: 'pago',
+        ocorrencia: '00',
+      })
+    );
   });
 
   it('processes error ocorrencia and counts erro', async () => {
@@ -245,9 +253,7 @@ describe('cnabService.parseRetornoCNAB', () => {
     const updChain = makeChain({ error: null });
     const updateCnab = updChain.update;
 
-    mockFrom
-      .mockReturnValueOnce(selChain)
-      .mockReturnValueOnce(updChain);
+    mockFrom.mockReturnValueOnce(selChain).mockReturnValueOnce(updChain);
 
     const result = await cnabService.parseRetornoCNAB('emp-1', line);
     expect(result.erro).toBe(1);

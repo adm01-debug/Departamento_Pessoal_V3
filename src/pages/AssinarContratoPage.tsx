@@ -51,12 +51,9 @@ export default function AssinarContratoPage() {
     if (!token) return;
     setPreviewLoading(true);
     try {
-      const { data, error } = await supabase.rpc(
-        'contrato_preview_url_por_token' as any,
-        {
-          p_token: token,
-        } as any
-      );
+      const { data, error } = await supabase.rpc('contrato_preview_url_por_token', {
+        p_token: token,
+      });
       if (error) throw error;
       const res = data as unknown as { signed_url: string };
       if (!res?.signed_url) throw new Error('URL não disponível.');
@@ -71,7 +68,7 @@ export default function AssinarContratoPage() {
 
   useEffect(() => {
     let cancel = false;
-    (async () => {
+    void (async () => {
       if (!token || token.length < 16) {
         setErro('Token de assinatura inválido.');
         setErroTipo('invalido');
@@ -79,12 +76,9 @@ export default function AssinarContratoPage() {
         return;
       }
       try {
-        const { data, error } = await supabase.rpc(
-          'contrato_consultar_por_token' as any,
-          {
-            p_token: token,
-          } as any
-        );
+        const { data, error } = await supabase.rpc('contrato_consultar_por_token', {
+          p_token: token,
+        });
         if (cancel) return;
         if (error) throw error;
         setInfo(data as unknown as ContratoInfo);
@@ -124,16 +118,13 @@ export default function AssinarContratoPage() {
       } catch {
         /* silencioso */
       }
-      const { data, error } = await supabase.rpc(
-        'contrato_assinar_por_token' as any,
-        {
-          p_token: token,
-          p_cpf: cpf.replace(/\D/g, ''),
-          p_nome_completo: nome.trim(),
-          p_ip: ip,
-          p_user_agent: navigator.userAgent,
-        } as any
-      );
+      const { data, error } = await supabase.rpc('contrato_assinar_por_token', {
+        p_token: token,
+        p_cpf: cpf.replace(/\D/g, ''),
+        p_nome_completo: nome.trim(),
+        p_ip: ip,
+        p_user_agent: navigator.userAgent,
+      });
       if (error) throw error;
       const res = data as unknown as {
         success: boolean;
@@ -305,7 +296,7 @@ export default function AssinarContratoPage() {
                   });
                   toast.success('Recibo baixado');
                 } catch (e) {
-                  loggerService.error(
+                  void loggerService.error(
                     'Erro ao gerar PDF do recibo',
                     { hash: assinado.hash },
                     e instanceof Error ? e : new Error(String(e))

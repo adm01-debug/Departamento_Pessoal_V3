@@ -1,11 +1,26 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
     circle: (props: any) => <circle {...props} />,
-    span: ({ children, ...props }: any) => <span {...props}>{children}</span>,
-    button: ({ children, onClick, ...props }: any) => <button onClick={onClick} {...props}>{children}</button>,
+    span: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
+      <span {...props}>{children}</span>
+    ),
+    button: ({
+      children,
+      onClick,
+      ...props
+    }: {
+      children?: ReactNode;
+      onClick?: () => void;
+      [key: string]: unknown;
+    }) => (
+      <button onClick={onClick} {...props}>
+        {children}
+      </button>
+    ),
   },
   useInView: () => true,
 }));
@@ -36,12 +51,28 @@ describe('WorkforceHealthScore', () => {
   });
 
   it('renders score label when excellent', () => {
-    render(<WorkforceHealthScore turnover={0} absenteismo={0} cadastrosCompletos={100} totalColaboradores={100} feriasPendentes={0} />);
+    render(
+      <WorkforceHealthScore
+        turnover={0}
+        absenteismo={0}
+        cadastrosCompletos={100}
+        totalColaboradores={100}
+        feriasPendentes={0}
+      />
+    );
     expect(screen.getByText('Excelente')).toBeInTheDocument();
   });
 
   it('renders score label when critical', () => {
-    render(<WorkforceHealthScore turnover={20} absenteismo={10} cadastrosCompletos={0} totalColaboradores={100} feriasPendentes={20} />);
+    render(
+      <WorkforceHealthScore
+        turnover={20}
+        absenteismo={10}
+        cadastrosCompletos={0}
+        totalColaboradores={100}
+        feriasPendentes={20}
+      />
+    );
     expect(screen.getByText('Crítico')).toBeInTheDocument();
   });
 

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -18,14 +19,14 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children }: any) => <div>{children}</div>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
-  CardHeader: ({ children }: any) => <div>{children}</div>,
-  CardTitle: ({ children }: any) => <h3>{children}</h3>,
+  Card: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardTitle: ({ children }: { children?: ReactNode }) => <h3>{children}</h3>,
 }));
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children }: any) => <span>{children}</span>,
+  Badge: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
 }));
 
 vi.mock('@/components/ui/skeleton', () => ({
@@ -33,7 +34,7 @@ vi.mock('@/components/ui/skeleton', () => ({
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick }: any) => (
+  Button: ({ children, onClick }: { children?: ReactNode; onClick?: () => void }) => (
     <button onClick={onClick}>{children}</button>
   ),
 }));
@@ -84,7 +85,7 @@ describe('UnifiedAuditSection', () => {
       isLoading: false,
       isError: false,
       refetch: vi.fn(),
-    } as any);
+    } as never);
     // Simulate enabled state by rendering with data
     render(<UnifiedAuditSection />);
     // Click Buscar to enable
@@ -94,7 +95,7 @@ describe('UnifiedAuditSection', () => {
       isLoading: false,
       isError: false,
       refetch: vi.fn(),
-    } as any);
+    } as never);
   });
 
   it('shows skeleton while loading', async () => {
@@ -104,7 +105,7 @@ describe('UnifiedAuditSection', () => {
       isLoading: true,
       isError: false,
       refetch: vi.fn(),
-    } as any);
+    } as never);
     // Click Buscar to enable loading state
     render(<UnifiedAuditSection />);
     await userEvent.click(screen.getByText('Buscar'));
@@ -117,7 +118,7 @@ describe('UnifiedAuditSection', () => {
       isLoading: false,
       isError: true,
       refetch: vi.fn(),
-    } as any);
+    } as never);
     render(<UnifiedAuditSection />);
     await userEvent.click(screen.getByText('Buscar'));
     expect(screen.queryByText(/Falha ao carregar/i) || screen.getByText(/Clique em Buscar/i)).toBeTruthy();

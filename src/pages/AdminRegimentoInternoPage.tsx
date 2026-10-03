@@ -94,14 +94,14 @@ const AdminRegimentoInternoPage = () => {
   const pendentes = regimentoQuery.data?.pendentes ?? EMPTY_PEND;
   const loading = regimentoQuery.isPending && !!empresaId;
 
-  const carregar = () => { void regimentoQuery.refetch(); };
+  const carregar = () => {
+    void regimentoQuery.refetch();
+  };
 
   const proximaVersao = useMemo(
     () => (documentos.length ? Math.max(...documentos.map((d) => d.versao)) + 1 : 1),
     [documentos]
   );
-
-
 
   const criarDocumento = async () => {
     if (!empresaAtual?.id) return;
@@ -125,7 +125,11 @@ const AdminRegimentoInternoPage = () => {
       setNovoConteudo('');
       carregar();
     } catch (err) {
-      loggerService.error('Falha ao criar documento', { empresaId: empresaAtual?.id }, err instanceof Error ? err : new Error(String(err)));
+      loggerService.error(
+        'Falha ao criar documento',
+        { empresaId: empresaAtual?.id },
+        err instanceof Error ? err : new Error(String(err))
+      );
       toast.error('Falha ao criar documento');
     } finally {
       setSaving(false);
@@ -139,7 +143,11 @@ const AdminRegimentoInternoPage = () => {
       toast.success('Documento publicado e vigente');
       carregar();
     } catch (err) {
-      loggerService.error('Falha ao publicar documento', { documentoId: id }, err instanceof Error ? err : new Error(String(err)));
+      loggerService.error(
+        'Falha ao publicar documento',
+        { documentoId: id },
+        err instanceof Error ? err : new Error(String(err))
+      );
       toast.error('Falha ao publicar');
     }
   };
@@ -151,7 +159,7 @@ const AdminRegimentoInternoPage = () => {
         p_empresa_id: empresaAtual.id,
       });
       if (error) throw error;
-      const row = Array.isArray(data) ? data[0] : (data as any);
+      const row = Array.isArray(data) ? data[0] : data;
       const notif = row?.notificados ?? 0;
       const semUser = row?.sem_user ?? 0;
       if (notif === 0) {
@@ -160,7 +168,11 @@ const AdminRegimentoInternoPage = () => {
         toast.success(`${notif} colaborador(es) notificado(s)${semUser ? ` · ${semUser} sem usuário` : ''}`);
       }
     } catch (err) {
-      loggerService.error('Falha ao notificar pendentes', { empresaId: empresaAtual?.id }, err instanceof Error ? err : new Error(String(err)));
+      loggerService.error(
+        'Falha ao notificar pendentes',
+        { empresaId: empresaAtual?.id },
+        err instanceof Error ? err : new Error(String(err))
+      );
       toast.error(safeErrorMessage(err, 'Falha ao notificar pendentes.'));
     } finally {
       setNotificando(false);

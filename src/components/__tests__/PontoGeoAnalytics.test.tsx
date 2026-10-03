@@ -1,15 +1,16 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
 }));
 
 vi.mock('recharts', () => ({
-  ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
-  ScatterChart: ({ children }: any) => <div>{children}</div>,
+  ResponsiveContainer: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  ScatterChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   Scatter: () => null,
   XAxis: () => null,
   YAxis: () => null,
@@ -20,6 +21,7 @@ vi.mock('recharts', () => ({
 }));
 
 import { PontoGeoAnalytics } from '../ponto/PontoGeoAnalytics';
+import type { BatidaGeo } from '../ponto/PontoGeoAnalytics';
 
 const MOCK_BATIDAS = [
   {
@@ -34,8 +36,8 @@ const MOCK_BATIDAS = [
   {
     id: 'bat-002',
     dentro_raio: false,
-    latitude: -23.5510,
-    longitude: -46.6340,
+    latitude: -23.551,
+    longitude: -46.634,
     distancia_local_metros: 250,
     hora: '17:30',
     colaborador: { nome_completo: 'Maria Souza' },
@@ -43,13 +45,13 @@ const MOCK_BATIDAS = [
   {
     id: 'bat-003',
     dentro_raio: true,
-    latitude: -23.5500,
-    longitude: -46.6330,
+    latitude: -23.55,
+    longitude: -46.633,
     distancia_local_metros: 30,
     hora: '09:00',
     colaborador: { nome_completo: 'Carlos Lima' },
   },
-];
+] as unknown as BatidaGeo[];
 
 describe('PontoGeoAnalytics', () => {
   it('returns null when batidas is empty', () => {

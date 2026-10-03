@@ -11,7 +11,9 @@ function makeSelectChain(data: any = [], error: any = null) {
   const result = { data, error };
   const eq = vi.fn().mockResolvedValue(result);
   const limit = vi.fn().mockResolvedValue(result);
-  const select = vi.fn().mockReturnValue({ then: (fn: any) => Promise.resolve(result).then(fn), eq, limit });
+  const select = vi
+    .fn()
+    .mockReturnValue({ then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn), eq, limit });
   return { select };
 }
 

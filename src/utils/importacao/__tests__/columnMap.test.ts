@@ -21,8 +21,8 @@ describe('normalizeHeader', () => {
   });
 
   it('handles null/undefined gracefully', () => {
-    expect(normalizeHeader(null as any)).toBe('');
-    expect(normalizeHeader(undefined as any)).toBe('');
+    expect(normalizeHeader(null as never)).toBe('');
+    expect(normalizeHeader(undefined as never)).toBe('');
   });
 });
 

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
@@ -7,14 +8,14 @@ vi.mock('@/hooks/useAfastamentos', () => ({
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children }: any) => <div>{children}</div>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
-  CardHeader: ({ children }: any) => <div>{children}</div>,
-  CardTitle: ({ children }: any) => <h3>{children}</h3>,
+  Card: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardTitle: ({ children }: { children?: ReactNode }) => <h3>{children}</h3>,
 }));
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children }: any) => <span>{children}</span>,
+  Badge: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
 }));
 
 vi.mock('@/components/ui/spinner', () => ({
@@ -40,7 +41,7 @@ import { AfastamentoTimeline } from '../afastamentos/AfastamentoTimeline';
 describe('AfastamentoTimeline', () => {
   it('renders Spinner when loading', async () => {
     const { useProrrogacoesAfastamento } = await import('@/hooks/useAfastamentos');
-    vi.mocked(useProrrogacoesAfastamento).mockReturnValueOnce({ prorrogacoes: [], isLoading: true } as any);
+    vi.mocked(useProrrogacoesAfastamento).mockReturnValueOnce({ prorrogacoes: [], isLoading: true } as never);
     render(<AfastamentoTimeline afastamentoId="af-001" />);
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
   });
@@ -78,7 +79,7 @@ describe('AfastamentoTimeline', () => {
 
   it('renders carregando text in loading state', async () => {
     const { useProrrogacoesAfastamento } = await import('@/hooks/useAfastamentos');
-    vi.mocked(useProrrogacoesAfastamento).mockReturnValueOnce({ prorrogacoes: [], isLoading: true } as any);
+    vi.mocked(useProrrogacoesAfastamento).mockReturnValueOnce({ prorrogacoes: [], isLoading: true } as never);
     render(<AfastamentoTimeline afastamentoId="af-001" />);
     expect(screen.getByText(/Carregando histórico/i)).toBeInTheDocument();
   });

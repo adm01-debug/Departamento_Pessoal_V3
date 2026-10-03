@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as esocialService from '@/services/esocialService';
+import type { ESocialTransmissionResult } from '@/services/esocialService';
 import { toast } from 'sonner';
 import { useServerValidation } from './useServerValidation';
 import { useEmpresas } from './useEmpresas';
@@ -43,7 +44,7 @@ export function useESocial() {
       }
       invalidate();
     },
-    onError: (err: any) => handleServerError(err),
+    onError: (err) => handleServerError(err),
   });
 
   const reenviarMutation = useMutation({
@@ -58,7 +59,7 @@ export function useESocial() {
       }
       invalidate();
     },
-    onError: (err: any) => handleServerError(err),
+    onError: (err) => handleServerError(err),
   });
 
   const gerarEventosMutation = useMutation({
@@ -69,7 +70,7 @@ export function useESocial() {
       toast.success(`Geração concluída: ${data.criados} criados, ${data.pulados} já existentes.`);
       invalidate();
     },
-    onError: (err: any) => handleServerError(err),
+    onError: (err) => handleServerError(err),
   });
 
   const configQuery = useQuery({
@@ -92,7 +93,7 @@ export function useESocial() {
 
   const enviarLoteMutation = useMutation({
     mutationFn: async ({ eventoIds, empresaId }: { eventoIds: string[]; empresaId: string }) => {
-      const results: any[] = [];
+      const results: ESocialTransmissionResult[] = [];
       for (const id of eventoIds) {
         results.push(await esocialService.enviarEvento(id, empresaId));
       }
@@ -111,7 +112,7 @@ export function useESocial() {
       }
       invalidate();
     },
-    onError: (err: any) => handleServerError(err),
+    onError: (err) => handleServerError(err),
   });
 
   return {

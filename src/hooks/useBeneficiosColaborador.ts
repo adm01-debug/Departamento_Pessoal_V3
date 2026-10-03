@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import type { Insertable } from '@/integrations/supabase/database.types';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 
@@ -12,10 +13,12 @@ export function useBeneficiosColaborador(colaboradorId?: string) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('beneficios_colaborador')
-        .select(`
+        .select(
+          `
           *,
-          beneficio:beneficios(nome, tipo)
-        `)
+          tipo_beneficio:tipos_beneficio(nome, codigo)
+        `
+        )
         .eq('colaborador_id', colaboradorId!);
 
       if (error) throw error;
@@ -24,10 +27,10 @@ export function useBeneficiosColaborador(colaboradorId?: string) {
   });
 
   const vincularBeneficio = useMutation({
-    mutationFn: async (dados: any) => {
+    mutationFn: async (dados: Omit<Insertable<'beneficios_colaborador'>, 'colaborador_id'>) => {
       const { data, error } = await supabase
         .from('beneficios_colaborador')
-        .insert([{ ...dados, colaborador_id: colaboradorId }])
+        .insert([{ ...dados, colaborador_id: colaboradorId! }])
         .select()
         .single();
 
@@ -38,7 +41,7 @@ export function useBeneficiosColaborador(colaboradorId?: string) {
       queryClient.invalidateQueries({ queryKey: ['beneficios-colaborador', colaboradorId] });
       toast.success('Benefício vinculado com sucesso!');
     },
-    onError: (error: any) => {
+    onError: (error) => {
       toast.error(safeErrorMessage(error, 'Erro ao vincular benefício.'));
     },
   });
@@ -57,7 +60,7 @@ export function useBeneficiosColaborador(colaboradorId?: string) {
       queryClient.invalidateQueries({ queryKey: ['beneficios-colaborador', colaboradorId] });
       toast.success('Benefício removido!');
     },
-    onError: (error: any) => {
+    onError: (error) => {
       toast.error(safeErrorMessage(error, 'Erro ao remover benefício.'));
     },
   });

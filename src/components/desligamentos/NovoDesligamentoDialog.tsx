@@ -46,7 +46,7 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
     saldo_fgts: '',
   });
 
-  const set = (k: string, v: any) => setForm((p) => ({ ...p, [k]: v }));
+  const set = (k: string, v: unknown) => setForm((p) => ({ ...p, [k]: v }));
 
   // Load colaboradores when dialog opens
   // eslint-disable-next-line react-hooks/preserve-manual-memoization

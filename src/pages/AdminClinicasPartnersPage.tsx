@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import type { Tables } from '@/integrations/supabase/database.types';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { PageTitle } from '@/components/PageTitle';
 import { PageLayout } from '@/components/layout';
@@ -17,32 +18,7 @@ import { Building2, MapPin, Plus, Search, Trash2, Pencil, Stethoscope } from 'lu
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 
-type Clinica = {
-  id: string;
-  empresa_id: string;
-  razao_social: string;
-  nome_fantasia: string | null;
-  cnpj: string;
-  email: string | null;
-  telefone: string | null;
-  responsavel_tecnico: string | null;
-  crm_responsavel: string | null;
-  cep: string | null;
-  logradouro: string | null;
-  numero: string | null;
-  bairro: string | null;
-  cidade: string | null;
-  uf: string | null;
-  geo_lat: number | null;
-  geo_lng: number | null;
-  especialidades: string[];
-  tipos_exame: string[];
-  sla_medio_min: number | null;
-  rating: number | null;
-  aceita_convenio: boolean;
-  status: 'ativo' | 'inativo' | 'suspenso';
-  observacoes: string | null;
-};
+type Clinica = Tables<'clinicas_partners'>;
 
 type FormState = Partial<Clinica> & { especialidades_str?: string; tipos_exame_str?: string };
 
@@ -71,16 +47,16 @@ export default function AdminClinicasPartnersPage() {
     enabled: !!empresaId,
     staleTime: 60_000,
     queryFn: async () => {
-      let q = (supabase as any)
+      let q = supabase
         .from('clinicas_partners')
         .select('*')
-        .eq('empresa_id', empresaId)
+        .eq('empresa_id', empresaId!)
         .order('razao_social', { ascending: true })
         .limit(500);
       if (statusFilter !== 'todos') q = q.eq('status', statusFilter);
       const { data, error } = await q;
       if (error) throw error;
-      return (data ?? []) as Clinica[];
+      return data ?? [];
     },
   });
 
@@ -93,7 +69,7 @@ export default function AdminClinicasPartnersPage() {
         c.razao_social.toLowerCase().includes(s) ||
         c.cnpj.includes(s) ||
         (c.cidade ?? '').toLowerCase().includes(s) ||
-        (c.nome_fantasia ?? '').toLowerCase().includes(s),
+        (c.nome_fantasia ?? '').toLowerCase().includes(s)
     );
   }, [data, search]);
 
@@ -109,14 +85,18 @@ export default function AdminClinicasPartnersPage() {
     mutationFn: async (payload: FormState) => {
       if (!empresaId) throw new Error('Empresa não selecionada');
       const especialidades = (payload.especialidades_str ?? '')
-        .split(',').map((s) => s.trim()).filter(Boolean);
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean);
       const tipos_exame = (payload.tipos_exame_str ?? '')
-        .split(',').map((s) => s.trim()).filter(Boolean);
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean);
       const row = {
         empresa_id: empresaId,
-        razao_social: payload.razao_social,
+        razao_social: payload.razao_social!,
         nome_fantasia: payload.nome_fantasia || null,
-        cnpj: payload.cnpj,
+        cnpj: payload.cnpj!,
         email: payload.email || null,
         telefone: payload.telefone || null,
         responsavel_tecnico: payload.responsavel_tecnico || null,
@@ -137,10 +117,14 @@ export default function AdminClinicasPartnersPage() {
         observacoes: payload.observacoes || null,
       };
       if (editingId) {
-        const { error } = await (supabase as any).from('clinicas_partners').update(row).eq('id', editingId).eq('empresa_id', empresaId);
+        const { error } = await supabase
+          .from('clinicas_partners')
+          .update(row)
+          .eq('id', editingId)
+          .eq('empresa_id', empresaId!);
         if (error) throw error;
       } else {
-        const { error } = await (supabase as any).from('clinicas_partners').insert(row);
+        const { error } = await supabase.from('clinicas_partners').insert(row);
         if (error) throw error;
       }
     },
@@ -151,19 +135,19 @@ export default function AdminClinicasPartnersPage() {
       setForm(EMPTY_FORM);
       setEditingId(null);
     },
-    onError: (e: any) => toast.error(safeErrorMessage(e, 'Erro ao salvar clínica.')),
+    onError: (e) => toast.error(safeErrorMessage(e, 'Erro ao salvar clínica.')),
   });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await (supabase as any).from('clinicas_partners').delete().eq('id', id).eq('empresa_id', empresaId);
+      const { error } = await supabase.from('clinicas_partners').delete().eq('id', id).eq('empresa_id', empresaId!);
       if (error) throw error;
     },
     onSuccess: () => {
       toast.success('Clínica removida');
       qc.invalidateQueries({ queryKey: ['clinicas-partners'] });
     },
-    onError: (e: any) => toast.error(safeErrorMessage(e, 'Erro ao remover clínica.')),
+    onError: (e) => toast.error(safeErrorMessage(e, 'Erro ao remover clínica.')),
   });
 
   const openEdit = (c: Clinica) => {
@@ -192,10 +176,38 @@ export default function AdminClinicasPartnersPage() {
         gradient="from-primary to-success"
       >
         <div className="grid gap-4 md:grid-cols-4 mb-6">
-          <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Total</CardTitle></CardHeader><CardContent><p className="text-3xl font-bold">{kpis.total}</p></CardContent></Card>
-          <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Ativas</CardTitle></CardHeader><CardContent><p className="text-3xl font-bold text-success">{kpis.ativas}</p></CardContent></Card>
-          <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Cidades cobertas</CardTitle></CardHeader><CardContent><p className="text-3xl font-bold">{kpis.cidades}</p></CardContent></Card>
-          <Card><CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground">Com geolocalização</CardTitle></CardHeader><CardContent><p className="text-3xl font-bold">{kpis.comGeo}</p></CardContent></Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm text-muted-foreground">Total</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">{kpis.total}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm text-muted-foreground">Ativas</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold text-success">{kpis.ativas}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm text-muted-foreground">Cidades cobertas</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">{kpis.cidades}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm text-muted-foreground">Com geolocalização</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-3xl font-bold">{kpis.comGeo}</p>
+            </CardContent>
+          </Card>
         </div>
 
         <Card>
@@ -209,7 +221,9 @@ export default function AdminClinicasPartnersPage() {
                 className="max-w-md"
               />
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="w-36">
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="todos">Todos</SelectItem>
                   <SelectItem value="ativo">Ativas</SelectItem>
@@ -220,7 +234,9 @@ export default function AdminClinicasPartnersPage() {
             </div>
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
-                <Button onClick={openNew}><Plus className="mr-2 h-4 w-4" /> Nova clínica</Button>
+                <Button onClick={openNew}>
+                  <Plus className="mr-2 h-4 w-4" /> Nova clínica
+                </Button>
               </DialogTrigger>
               <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
@@ -229,27 +245,116 @@ export default function AdminClinicasPartnersPage() {
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="md:col-span-2">
                     <Label>Razão social *</Label>
-                    <Input value={form.razao_social ?? ''} onChange={(e) => setForm({ ...form, razao_social: e.target.value })} />
+                    <Input
+                      value={form.razao_social ?? ''}
+                      onChange={(e) => setForm({ ...form, razao_social: e.target.value })}
+                    />
                   </div>
-                  <div><Label>Nome fantasia</Label><Input value={form.nome_fantasia ?? ''} onChange={(e) => setForm({ ...form, nome_fantasia: e.target.value })} /></div>
-                  <div><Label>CNPJ *</Label><Input value={form.cnpj ?? ''} onChange={(e) => setForm({ ...form, cnpj: e.target.value })} /></div>
-                  <div><Label>E-mail</Label><Input type="email" value={form.email ?? ''} onChange={(e) => setForm({ ...form, email: e.target.value })} /></div>
-                  <div><Label>Telefone</Label><Input value={form.telefone ?? ''} onChange={(e) => setForm({ ...form, telefone: e.target.value })} /></div>
-                  <div><Label>Responsável técnico</Label><Input value={form.responsavel_tecnico ?? ''} onChange={(e) => setForm({ ...form, responsavel_tecnico: e.target.value })} /></div>
-                  <div><Label>CRM responsável</Label><Input value={form.crm_responsavel ?? ''} onChange={(e) => setForm({ ...form, crm_responsavel: e.target.value })} /></div>
-                  <div><Label>CEP</Label><Input value={form.cep ?? ''} onChange={(e) => setForm({ ...form, cep: e.target.value })} /></div>
-                  <div className="md:col-span-2"><Label>Logradouro</Label><Input value={form.logradouro ?? ''} onChange={(e) => setForm({ ...form, logradouro: e.target.value })} /></div>
-                  <div><Label>Número</Label><Input value={form.numero ?? ''} onChange={(e) => setForm({ ...form, numero: e.target.value })} /></div>
-                  <div><Label>Bairro</Label><Input value={form.bairro ?? ''} onChange={(e) => setForm({ ...form, bairro: e.target.value })} /></div>
-                  <div><Label>Cidade</Label><Input value={form.cidade ?? ''} onChange={(e) => setForm({ ...form, cidade: e.target.value })} /></div>
-                  <div><Label>UF</Label><Input maxLength={2} value={form.uf ?? ''} onChange={(e) => setForm({ ...form, uf: e.target.value })} /></div>
-                  <div><Label>Latitude</Label><Input type="number" step="0.0000001" value={form.geo_lat ?? ''} onChange={(e) => setForm({ ...form, geo_lat: e.target.value ? Number(e.target.value) : null })} /></div>
-                  <div><Label>Longitude</Label><Input type="number" step="0.0000001" value={form.geo_lng ?? ''} onChange={(e) => setForm({ ...form, geo_lng: e.target.value ? Number(e.target.value) : null })} /></div>
-                  <div><Label>SLA médio (min)</Label><Input type="number" value={form.sla_medio_min ?? ''} onChange={(e) => setForm({ ...form, sla_medio_min: e.target.value ? Number(e.target.value) : null })} /></div>
+                  <div>
+                    <Label>Nome fantasia</Label>
+                    <Input
+                      value={form.nome_fantasia ?? ''}
+                      onChange={(e) => setForm({ ...form, nome_fantasia: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label>CNPJ *</Label>
+                    <Input value={form.cnpj ?? ''} onChange={(e) => setForm({ ...form, cnpj: e.target.value })} />
+                  </div>
+                  <div>
+                    <Label>E-mail</Label>
+                    <Input
+                      type="email"
+                      value={form.email ?? ''}
+                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label>Telefone</Label>
+                    <Input
+                      value={form.telefone ?? ''}
+                      onChange={(e) => setForm({ ...form, telefone: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label>Responsável técnico</Label>
+                    <Input
+                      value={form.responsavel_tecnico ?? ''}
+                      onChange={(e) => setForm({ ...form, responsavel_tecnico: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label>CRM responsável</Label>
+                    <Input
+                      value={form.crm_responsavel ?? ''}
+                      onChange={(e) => setForm({ ...form, crm_responsavel: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label>CEP</Label>
+                    <Input value={form.cep ?? ''} onChange={(e) => setForm({ ...form, cep: e.target.value })} />
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label>Logradouro</Label>
+                    <Input
+                      value={form.logradouro ?? ''}
+                      onChange={(e) => setForm({ ...form, logradouro: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label>Número</Label>
+                    <Input value={form.numero ?? ''} onChange={(e) => setForm({ ...form, numero: e.target.value })} />
+                  </div>
+                  <div>
+                    <Label>Bairro</Label>
+                    <Input value={form.bairro ?? ''} onChange={(e) => setForm({ ...form, bairro: e.target.value })} />
+                  </div>
+                  <div>
+                    <Label>Cidade</Label>
+                    <Input value={form.cidade ?? ''} onChange={(e) => setForm({ ...form, cidade: e.target.value })} />
+                  </div>
+                  <div>
+                    <Label>UF</Label>
+                    <Input
+                      maxLength={2}
+                      value={form.uf ?? ''}
+                      onChange={(e) => setForm({ ...form, uf: e.target.value })}
+                    />
+                  </div>
+                  <div>
+                    <Label>Latitude</Label>
+                    <Input
+                      type="number"
+                      step="0.0000001"
+                      value={form.geo_lat ?? ''}
+                      onChange={(e) => setForm({ ...form, geo_lat: e.target.value ? Number(e.target.value) : null })}
+                    />
+                  </div>
+                  <div>
+                    <Label>Longitude</Label>
+                    <Input
+                      type="number"
+                      step="0.0000001"
+                      value={form.geo_lng ?? ''}
+                      onChange={(e) => setForm({ ...form, geo_lng: e.target.value ? Number(e.target.value) : null })}
+                    />
+                  </div>
+                  <div>
+                    <Label>SLA médio (min)</Label>
+                    <Input
+                      type="number"
+                      value={form.sla_medio_min ?? ''}
+                      onChange={(e) =>
+                        setForm({ ...form, sla_medio_min: e.target.value ? Number(e.target.value) : null })
+                      }
+                    />
+                  </div>
                   <div>
                     <Label>Status</Label>
-                    <Select value={form.status ?? 'ativo'} onValueChange={(v) => setForm({ ...form, status: v as any })}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
+                    <Select value={form.status ?? 'ativo'} onValueChange={(v) => setForm({ ...form, status: v })}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="ativo">Ativa</SelectItem>
                         <SelectItem value="inativo">Inativa</SelectItem>
@@ -257,12 +362,34 @@ export default function AdminClinicasPartnersPage() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="md:col-span-2"><Label>Especialidades (separadas por vírgula)</Label><Input placeholder="Cardiologia, Ortopedia, Oftalmologia" value={form.especialidades_str ?? ''} onChange={(e) => setForm({ ...form, especialidades_str: e.target.value })} /></div>
-                  <div className="md:col-span-2"><Label>Tipos de exame (separados por vírgula)</Label><Input placeholder="Admissional, Periódico, Demissional, Mudança de função" value={form.tipos_exame_str ?? ''} onChange={(e) => setForm({ ...form, tipos_exame_str: e.target.value })} /></div>
-                  <div className="md:col-span-2"><Label>Observações</Label><Textarea value={form.observacoes ?? ''} onChange={(e) => setForm({ ...form, observacoes: e.target.value })} /></div>
+                  <div className="md:col-span-2">
+                    <Label>Especialidades (separadas por vírgula)</Label>
+                    <Input
+                      placeholder="Cardiologia, Ortopedia, Oftalmologia"
+                      value={form.especialidades_str ?? ''}
+                      onChange={(e) => setForm({ ...form, especialidades_str: e.target.value })}
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label>Tipos de exame (separados por vírgula)</Label>
+                    <Input
+                      placeholder="Admissional, Periódico, Demissional, Mudança de função"
+                      value={form.tipos_exame_str ?? ''}
+                      onChange={(e) => setForm({ ...form, tipos_exame_str: e.target.value })}
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label>Observações</Label>
+                    <Textarea
+                      value={form.observacoes ?? ''}
+                      onChange={(e) => setForm({ ...form, observacoes: e.target.value })}
+                    />
+                  </div>
                 </div>
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancelar</Button>
+                  <Button variant="outline" onClick={() => setDialogOpen(false)}>
+                    Cancelar
+                  </Button>
                   <Button
                     onClick={() => saveMutation.mutate(form)}
                     disabled={saveMutation.isPending || !form.razao_social || !form.cnpj}
@@ -304,7 +431,10 @@ export default function AdminClinicasPartnersPage() {
                       <TableCell className="font-mono text-xs">{c.cnpj}</TableCell>
                       <TableCell>
                         {c.cidade ? (
-                          <span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" />{c.cidade}/{c.uf}</span>
+                          <span className="inline-flex items-center gap-1">
+                            <MapPin className="h-3 w-3" />
+                            {c.cidade}/{c.uf}
+                          </span>
                         ) : (
                           <span className="text-muted-foreground">—</span>
                         )}
@@ -312,9 +442,15 @@ export default function AdminClinicasPartnersPage() {
                       <TableCell>
                         <div className="flex flex-wrap gap-1 max-w-xs">
                           {c.tipos_exame?.slice(0, 3).map((t) => (
-                            <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>
+                            <Badge key={t} variant="secondary" className="text-xs">
+                              {t}
+                            </Badge>
                           ))}
-                          {c.tipos_exame?.length > 3 && <Badge variant="outline" className="text-xs">+{c.tipos_exame.length - 3}</Badge>}
+                          {c.tipos_exame?.length > 3 && (
+                            <Badge variant="outline" className="text-xs">
+                              +{c.tipos_exame.length - 3}
+                            </Badge>
+                          )}
                         </div>
                       </TableCell>
                       <TableCell>{c.sla_medio_min ? `${c.sla_medio_min} min` : '—'}</TableCell>

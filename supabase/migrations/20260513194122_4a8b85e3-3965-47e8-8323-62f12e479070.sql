@@ -23,7 +23,8 @@ ALTER TABLE public.holerites ENABLE ROW LEVEL SECURITY;
 DO $$ 
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Colaboradores podem ver seus próprios holerites') THEN
-        CREATE POLICY "Colaboradores podem ver seus próprios holerites" 
+        DROP POLICY IF EXISTS "Colaboradores podem ver seus próprios holerites" ON public.holerites;
+CREATE POLICY "Colaboradores podem ver seus próprios holerites" 
         ON public.holerites 
         FOR SELECT 
         USING (auth.uid() = colaborador_id);

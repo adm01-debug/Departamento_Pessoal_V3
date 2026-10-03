@@ -2,8 +2,19 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2, XCircle } from 'lucide-react';
+import type { AdiantamentoItem } from '@/types/descontos';
 
-export function AdiantamentosTable({ adiantamentos, fmt, onUpdateStatus, cn }: any) {
+export function AdiantamentosTable({
+  adiantamentos,
+  fmt,
+  onUpdateStatus,
+  cn,
+}: {
+  adiantamentos: AdiantamentoItem[];
+  fmt: (v: number | null) => string;
+  onUpdateStatus: (v: { id: string; status: string }) => void;
+  cn: (...inputs: unknown[]) => string;
+}) {
   return (
     <Table>
       <TableHeader>
@@ -17,30 +28,44 @@ export function AdiantamentosTable({ adiantamentos, fmt, onUpdateStatus, cn }: a
         </TableRow>
       </TableHeader>
       <TableBody>
-        {adiantamentos.map((a: any) => (
+        {adiantamentos.map((a) => (
           <TableRow key={a.id}>
             <TableCell className="font-medium">{a.colaborador?.nome_completo}</TableCell>
-            <TableCell>{new Date(a.data_solicitacao).toLocaleDateString('pt-BR')}</TableCell>
+            <TableCell>{new Date(a.data_solicitacao ?? '').toLocaleDateString('pt-BR')}</TableCell>
             <TableCell>{fmt(a.valor_solicitado)}</TableCell>
             <TableCell>{a.competencia_desconto}</TableCell>
             <TableCell>
-              <Badge className={cn(
-                "font-bold uppercase text-[10px] tracking-widest",
-                a.status === 'pendente' && "bg-warning/20 text-warning border-warning/30",
-                a.status === 'aprovado' && "bg-success/20 text-success border-success/30",
-                a.status === 'rejeitado' && "bg-destructive/20 text-destructive border-destructive/30",
-                a.status === 'pago' && "bg-primary/20 text-primary border-primary/30"
-              )}>
+              <Badge
+                className={cn(
+                  'font-bold uppercase text-[10px] tracking-widest',
+                  a.status === 'pendente' && 'bg-warning/20 text-warning border-warning/30',
+                  a.status === 'aprovado' && 'bg-success/20 text-success border-success/30',
+                  a.status === 'rejeitado' && 'bg-destructive/20 text-destructive border-destructive/30',
+                  a.status === 'pago' && 'bg-primary/20 text-primary border-primary/30'
+                )}
+              >
                 {a.status}
               </Badge>
             </TableCell>
             <TableCell className="text-right">
               {a.status === 'pendente' && (
                 <div className="flex justify-end gap-2">
-                  <Button size="icon" variant="ghost" aria-label="Aprovar" className="h-8 w-8 text-success hover:bg-success/10" onClick={() => onUpdateStatus({ id: a.id, status: 'aprovado' })}>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    aria-label="Aprovar"
+                    className="h-8 w-8 text-success hover:bg-success/10"
+                    onClick={() => onUpdateStatus({ id: a.id, status: 'aprovado' })}
+                  >
                     <CheckCircle2 className="h-4 w-4" />
                   </Button>
-                  <Button size="icon" variant="ghost" aria-label="Rejeitar" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={() => onUpdateStatus({ id: a.id, status: 'rejeitado' })}>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    aria-label="Rejeitar"
+                    className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                    onClick={() => onUpdateStatus({ id: a.id, status: 'rejeitado' })}
+                  >
                     <XCircle className="h-4 w-4" />
                   </Button>
                 </div>

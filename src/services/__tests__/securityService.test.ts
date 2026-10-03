@@ -42,9 +42,9 @@ function setupSelectOrderChain(data: any[], error: any = null) {
 function setupDeleteEqChain(error: any = null) {
   const eqFn = vi.fn();
   const __delChain = {
-    then: (r: any) => Promise.resolve({ error }).then(r),
-    catch: (r: any) => Promise.resolve({ error }).catch(r),
-    finally: (r: any) => Promise.resolve({ error }).finally(r),
+    then: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).then(r),
+    catch: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).catch(r),
+    finally: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).finally(r),
     eq: eqFn,
   };
   eqFn.mockReturnValue(__delChain);
@@ -69,7 +69,7 @@ describe('securityService.getBlockedIps', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupSelectOrderChain(null as any);
+    setupSelectOrderChain(null as never);
     expect(await securityService.getBlockedIps()).toEqual([]);
   });
 
@@ -117,7 +117,7 @@ describe('securityService.getLoginAttempts', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupSelectOrderLimitChain(null as any);
+    setupSelectOrderLimitChain(null as never);
     expect(await securityService.getLoginAttempts()).toEqual([]);
   });
 
@@ -143,7 +143,7 @@ describe('securityService.getSecurityAlerts', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupSelectOrderLimitChain(null as any);
+    setupSelectOrderLimitChain(null as never);
     expect(await securityService.getSecurityAlerts()).toEqual([]);
   });
 
@@ -188,7 +188,7 @@ describe('securityService.getRateLimitLogs', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupSelectOrderLimitChain(null as any);
+    setupSelectOrderLimitChain(null as never);
     expect(await securityService.getRateLimitLogs()).toEqual([]);
   });
 });

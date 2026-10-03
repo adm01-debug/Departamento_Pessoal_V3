@@ -1,9 +1,10 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
 }));
 
@@ -21,7 +22,7 @@ vi.mock('@/hooks/useEmpresas', () => ({
 }));
 
 vi.mock('@/components/ui/spinner', () => ({
-  Spinner: ({ size }: any) => <div data-testid="spinner" data-size={size} />,
+  Spinner: ({ size }: { size?: string }) => <div data-testid="spinner" data-size={size} />,
 }));
 
 import { useEmpresas } from '@/hooks/useEmpresas';
@@ -53,7 +54,7 @@ describe('EmpresaSettingsTab', () => {
       empresaAtual: null,
       loadingEmpresas: true,
       atualizarEmpresa: { mutate: vi.fn(), isPending: false },
-    } as any);
+    } as never);
     render(<EmpresaSettingsTab />);
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
   });
@@ -63,7 +64,7 @@ describe('EmpresaSettingsTab', () => {
       empresaAtual: null,
       loadingEmpresas: false,
       atualizarEmpresa: { mutate: vi.fn(), isPending: false },
-    } as any);
+    } as never);
     render(<EmpresaSettingsTab />);
     expect(screen.getByText('Dados da Empresa')).toBeInTheDocument();
   });
@@ -73,7 +74,7 @@ describe('EmpresaSettingsTab', () => {
       empresaAtual: null,
       loadingEmpresas: false,
       atualizarEmpresa: { mutate: vi.fn(), isPending: false },
-    } as any);
+    } as never);
     render(<EmpresaSettingsTab />);
     expect(screen.getByText('Razão Social')).toBeInTheDocument();
     expect(screen.getByText('Nome Fantasia')).toBeInTheDocument();
@@ -85,7 +86,7 @@ describe('EmpresaSettingsTab', () => {
       empresaAtual: null,
       loadingEmpresas: false,
       atualizarEmpresa: { mutate: vi.fn(), isPending: false },
-    } as any);
+    } as never);
     render(<EmpresaSettingsTab />);
     expect(screen.getByText('Salvar Alterações')).toBeInTheDocument();
   });
@@ -95,7 +96,7 @@ describe('EmpresaSettingsTab', () => {
       empresaAtual: MOCK_EMPRESA,
       loadingEmpresas: false,
       atualizarEmpresa: { mutate: vi.fn(), isPending: false },
-    } as any);
+    } as never);
     render(<EmpresaSettingsTab />);
     const input = screen.getByDisplayValue('Empresa Teste Ltda');
     expect(input).toBeInTheDocument();
@@ -106,7 +107,7 @@ describe('EmpresaSettingsTab', () => {
       empresaAtual: null,
       loadingEmpresas: false,
       atualizarEmpresa: { mutate: vi.fn(), isPending: false },
-    } as any);
+    } as never);
     render(<EmpresaSettingsTab />);
     expect(screen.getByText('E-mail Corporativo')).toBeInTheDocument();
   });
@@ -116,7 +117,7 @@ describe('EmpresaSettingsTab', () => {
       empresaAtual: null,
       loadingEmpresas: false,
       atualizarEmpresa: { mutate: vi.fn(), isPending: false },
-    } as any);
+    } as never);
     render(<EmpresaSettingsTab />);
     expect(screen.getByText('Cidade')).toBeInTheDocument();
     expect(screen.getByText('UF')).toBeInTheDocument();
@@ -128,7 +129,7 @@ describe('EmpresaSettingsTab', () => {
       empresaAtual: MOCK_EMPRESA,
       loadingEmpresas: false,
       atualizarEmpresa: { mutate, isPending: false },
-    } as any);
+    } as never);
     render(<EmpresaSettingsTab />);
     fireEvent.click(screen.getByText('Salvar Alterações'));
     expect(mutate).toHaveBeenCalledWith(
@@ -155,7 +156,7 @@ describe('EmpresaSettingsTab', () => {
       },
       loadingEmpresas: false,
       atualizarEmpresa: { mutate, isPending: false },
-    } as any);
+    } as never);
     render(<EmpresaSettingsTab />);
     fireEvent.click(screen.getByText('Salvar Alterações'));
     expect(mutate).not.toHaveBeenCalled();

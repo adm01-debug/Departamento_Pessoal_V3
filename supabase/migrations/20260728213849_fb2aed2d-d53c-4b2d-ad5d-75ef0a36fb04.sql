@@ -16,10 +16,12 @@ CREATE POLICY cnab_remessas_tenant_select ON public.cnab_remessas
 CREATE POLICY cnab_remessas_tenant_insert ON public.cnab_remessas
   FOR INSERT TO authenticated
   WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "cnab_remessas_tenant_update" ON public.cnab_remessas;
 CREATE POLICY cnab_remessas_tenant_update ON public.cnab_remessas
   FOR UPDATE TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())))
   WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "cnab_remessas_tenant_delete" ON public.cnab_remessas;
 CREATE POLICY cnab_remessas_tenant_delete ON public.cnab_remessas
   FOR DELETE TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
@@ -38,10 +40,12 @@ CREATE POLICY pix_lotes_tenant_select ON public.pix_lotes
 CREATE POLICY pix_lotes_tenant_insert ON public.pix_lotes
   FOR INSERT TO authenticated
   WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "pix_lotes_tenant_update" ON public.pix_lotes;
 CREATE POLICY pix_lotes_tenant_update ON public.pix_lotes
   FOR UPDATE TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())))
   WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "pix_lotes_tenant_delete" ON public.pix_lotes;
 CREATE POLICY pix_lotes_tenant_delete ON public.pix_lotes
   FOR DELETE TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
@@ -57,11 +61,13 @@ CREATE POLICY cnab_itens_tenant_select ON public.cnab_itens
   USING (EXISTS (SELECT 1 FROM public.cnab_remessas r
     WHERE r.id = cnab_itens.remessa_id
       AND r.empresa_id IN (SELECT public.get_user_empresas(auth.uid()))));
+DROP POLICY IF EXISTS "cnab_itens_tenant_insert" ON public.cnab_itens;
 CREATE POLICY cnab_itens_tenant_insert ON public.cnab_itens
   FOR INSERT TO authenticated
   WITH CHECK (EXISTS (SELECT 1 FROM public.cnab_remessas r
     WHERE r.id = cnab_itens.remessa_id
       AND r.empresa_id IN (SELECT public.get_user_empresas(auth.uid()))));
+DROP POLICY IF EXISTS "cnab_itens_tenant_update" ON public.cnab_itens;
 CREATE POLICY cnab_itens_tenant_update ON public.cnab_itens
   FOR UPDATE TO authenticated
   USING (EXISTS (SELECT 1 FROM public.cnab_remessas r
@@ -70,6 +76,7 @@ CREATE POLICY cnab_itens_tenant_update ON public.cnab_itens
   WITH CHECK (EXISTS (SELECT 1 FROM public.cnab_remessas r
     WHERE r.id = cnab_itens.remessa_id
       AND r.empresa_id IN (SELECT public.get_user_empresas(auth.uid()))));
+DROP POLICY IF EXISTS "cnab_itens_tenant_delete" ON public.cnab_itens;
 CREATE POLICY cnab_itens_tenant_delete ON public.cnab_itens
   FOR DELETE TO authenticated
   USING (EXISTS (SELECT 1 FROM public.cnab_remessas r
@@ -86,11 +93,13 @@ CREATE POLICY pix_itens_tenant_select ON public.pix_itens
   USING (EXISTS (SELECT 1 FROM public.pix_lotes l
     WHERE l.id = pix_itens.lote_id
       AND l.empresa_id IN (SELECT public.get_user_empresas(auth.uid()))));
+DROP POLICY IF EXISTS "pix_itens_tenant_insert" ON public.pix_itens;
 CREATE POLICY pix_itens_tenant_insert ON public.pix_itens
   FOR INSERT TO authenticated
   WITH CHECK (EXISTS (SELECT 1 FROM public.pix_lotes l
     WHERE l.id = pix_itens.lote_id
       AND l.empresa_id IN (SELECT public.get_user_empresas(auth.uid()))));
+DROP POLICY IF EXISTS "pix_itens_tenant_update" ON public.pix_itens;
 CREATE POLICY pix_itens_tenant_update ON public.pix_itens
   FOR UPDATE TO authenticated
   USING (EXISTS (SELECT 1 FROM public.pix_lotes l
@@ -99,6 +108,7 @@ CREATE POLICY pix_itens_tenant_update ON public.pix_itens
   WITH CHECK (EXISTS (SELECT 1 FROM public.pix_lotes l
     WHERE l.id = pix_itens.lote_id
       AND l.empresa_id IN (SELECT public.get_user_empresas(auth.uid()))));
+DROP POLICY IF EXISTS "pix_itens_tenant_delete" ON public.pix_itens;
 CREATE POLICY pix_itens_tenant_delete ON public.pix_itens
   FOR DELETE TO authenticated
   USING (EXISTS (SELECT 1 FROM public.pix_lotes l

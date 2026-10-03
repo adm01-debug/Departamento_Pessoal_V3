@@ -20,7 +20,7 @@ interface Check {
   detail?: string;
 }
 
-const CRITICAL_TABLES = ['colaboradores', 'empresas', 'user_roles', 'folhas_pagamento', 'profiles'];
+const CRITICAL_TABLES = ['colaboradores', 'empresas', 'user_roles', 'folhas_pagamento', 'profiles'] as const;
 const EDGE_FUNCTIONS = ['healthcheck', 'metricas', 'external-db-bridge'];
 const EXPECTED_BUCKETS = [
   'afastamentos',
@@ -106,7 +106,7 @@ export default function AdminDiagnosticoMigracaoPage() {
       CRITICAL_TABLES.map(async (t) => {
         const start = performance.now();
         try {
-          const { error, count } = await (supabase.from(t) as any).select('*', { count: 'exact', head: true }).limit(1);
+          const { error, count } = await supabase.from(t).select('*', { count: 'exact', head: true }).limit(1);
           const ms = Math.round(performance.now() - start);
           if (error) update(`tab:${t}`, { status: 'fail', detail: error.message });
           else update(`tab:${t}`, { status: 'ok', detail: `${count ?? 0} regs • ${ms}ms` });
@@ -140,13 +140,11 @@ export default function AdminDiagnosticoMigracaoPage() {
 
     // 5. cron jobs — comparar com allowlist esperada
     try {
-      const { data, error } = await (supabase as any).rpc('get_cron_jobs_health');
+      const { data, error } = await supabase.rpc('get_cron_jobs_health');
       if (error) {
         update('cron', { status: 'warn', detail: 'RPC get_cron_jobs_health indisponível' });
       } else {
-        const names = new Set<string>(
-          Array.isArray(data) ? data.map((j: any) => String(j.jobname || j.name || '').trim()).filter(Boolean) : []
-        );
+        const names = new Set<string>(Array.isArray(data) ? data.map((j) => j.jobname.trim()).filter(Boolean) : []);
         const missing = EXPECTED_CRON_JOBS.filter((j) => !names.has(j));
         if (missing.length === 0) {
           update('cron', { status: 'ok', detail: `${names.size} jobs (todos esperados presentes)` });
@@ -167,7 +165,7 @@ export default function AdminDiagnosticoMigracaoPage() {
       if (error) {
         update('storage', { status: 'fail', detail: error.message });
       } else {
-        const names = new Set((data || []).map((b: any) => b.name));
+        const names = new Set((data || []).map((b) => b.name));
         const missing = EXPECTED_BUCKETS.filter((b) => !names.has(b));
         if (missing.length === 0) {
           update('storage', { status: 'ok', detail: `${names.size} buckets (todos presentes)` });

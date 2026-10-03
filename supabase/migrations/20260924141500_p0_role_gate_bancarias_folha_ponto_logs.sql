@@ -28,6 +28,7 @@ $preflight$;
 -- ============================================================
 DROP POLICY IF EXISTS "tenant_contas_bancarias" ON public.contas_bancarias;
 
+DROP POLICY IF EXISTS "contas_bancarias_rh_manage" ON public.contas_bancarias;
 CREATE POLICY "contas_bancarias_rh_manage" ON public.contas_bancarias
   FOR ALL TO authenticated
   USING (public.pode_gerir_rh(empresa_id))
@@ -38,6 +39,7 @@ CREATE POLICY "contas_bancarias_rh_manage" ON public.contas_bancarias
 -- ============================================================
 DROP POLICY IF EXISTS "Folha itens scoped via folha" ON public.folha_itens;
 
+DROP POLICY IF EXISTS "folha_itens_rh_manage" ON public.folha_itens;
 CREATE POLICY "folha_itens_rh_manage" ON public.folha_itens
   FOR ALL TO authenticated
   USING (
@@ -65,11 +67,13 @@ DROP POLICY IF EXISTS "empresa_isolation_folhas" ON public.folhas_pagamento;
 DROP POLICY IF EXISTS "folhas_pagamento_tenant_select" ON public.folhas_pagamento;
 DROP POLICY IF EXISTS "tenant_folhas_pagamento" ON public.folhas_pagamento;
 
+DROP POLICY IF EXISTS "folhas_rh_manage" ON public.folhas_pagamento;
 CREATE POLICY "folhas_rh_manage" ON public.folhas_pagamento
   FOR ALL TO authenticated
   USING (public.pode_gerir_rh(empresa_id))
   WITH CHECK (public.pode_gerir_rh(empresa_id));
 
+DROP POLICY IF EXISTS "folhas_gestor_read" ON public.folhas_pagamento;
 CREATE POLICY "folhas_gestor_read" ON public.folhas_pagamento
   FOR SELECT TO authenticated
   USING (public.pode_gerir_pessoas(empresa_id));
@@ -86,6 +90,7 @@ DROP POLICY IF EXISTS "empresa_isolation_ponto" ON public.registros_ponto;
 -- ============================================================
 DROP POLICY IF EXISTS "Apenas admin pode ver logs de integração" ON public.integracao_logs;
 
+DROP POLICY IF EXISTS "integracao_logs_admin_read" ON public.integracao_logs;
 CREATE POLICY "integracao_logs_admin_read" ON public.integracao_logs
   FOR SELECT TO authenticated
   USING (public.is_admin(auth.uid()));
