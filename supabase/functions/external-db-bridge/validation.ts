@@ -81,6 +81,8 @@ export const TABLE_DENYLIST = new Set<string>([
   "audit_log_unified",
   "pii_access_logs",
   "pii_access_alerts",
+  // PINs de quiosque de ponto — mutação só via RPCs dedicadas.
+  "colaboradores_pin",
   "geo_blocking_config",
   "geo_allowed_countries",
   "govbr_auth_state",
@@ -161,6 +163,10 @@ export const RPC_ALLOWLIST = new Set<string>([
   // onboarding público (candidato) — lookup exato por token, ver
   // 20260718220000_rls_remediacao_auditoria.sql (achado L3 da auditoria)
   "get_admissao_por_token",
+  // escritas do portal público /contratacao — SECURITY DEFINER token-scoped,
+  // ver 20261002103000_p0_fix_audit_critical_gaps.sql; precisam estar em
+  // PUBLIC_RPCS (access.ts) porque o portal roda sem sessão
+  "admissao_salvar_dados", "admissao_marcar_documentos", "admissao_assinar_contrato",
   // E50-33: segundo fator do quiosque de ponto — hash nunca sai do banco,
   // as duas verificam permissão/lockout por dentro (ver
   // 20260924160000_e50_33_pin_quiosque_ponto.sql)

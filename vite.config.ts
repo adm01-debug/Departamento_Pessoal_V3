@@ -33,6 +33,14 @@ export default defineConfig(({ mode }) => ({
     },
   },
   plugins: [
+    // CSP do <meta> em index.html protege o build de produção em hosts sem
+    // headers (Vercel/Netlify já os enviam). Em dev ela bloquearia o preamble
+    // inline do react-refresh e quebraria o HMR — removemos só em `vite dev`.
+    {
+      name: 'strip-csp-meta-in-dev',
+      apply: 'serve',
+      transformIndexHtml: (html: string) => html.replace(/\s*<meta http-equiv="Content-Security-Policy"[^>]*>/, ''),
+    },
     // P1-022: Babel-based plugin required for React Compiler
     react({
       // React Compiler: compila automaticamente components/hooks com dependências

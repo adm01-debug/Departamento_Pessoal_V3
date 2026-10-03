@@ -42,11 +42,11 @@ serve(async (req: Request): Promise<Response> => {
       database: {
         status: dbOk ? 'ok' : 'error',
         latency_ms: dbCheck.status === 'fulfilled' ? Date.now() - t0 : undefined,
-        error: dbCheck.status === 'rejected' ? String(dbCheck.reason) : (dbCheck.value.error?.message),
+        error: dbOk ? undefined : 'check_failed',
       },
       telemetry: {
         status: telOk ? 'ok' : 'error',
-        error: telemetryCheck.status === 'rejected' ? String(telemetryCheck.reason) : (telemetryCheck.value.error?.message),
+        error: telOk ? undefined : 'check_failed',
       },
       bridge: {
         status: brOk ? 'ok' : 'unavailable',

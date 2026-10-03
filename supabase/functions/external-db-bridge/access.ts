@@ -7,6 +7,12 @@ export const PUBLIC_RPCS = new Set<string>([
   // operation here: the bridge would otherwise turn a public route into a
   // generic data-access primitive.
   "get_admissao_por_token",
+  // escritas do portal público /contratacao — todas SECURITY DEFINER e
+  // validam o token de admissão (entropia >= 16, não expirado) por dentro;
+  // ver 20261002103000_p0_fix_audit_critical_gaps.sql
+  "admissao_salvar_dados",
+  "admissao_marcar_documentos",
+  "admissao_assinar_contrato",
   "contrato_consultar_por_token",
   "contrato_preview_url_por_token",
   "contrato_assinar_por_token",

@@ -182,6 +182,7 @@ jobs:
         # Estático (não precisa de DATABASE_URL) — roda em todo PR.
         run: |
           node scripts/audit-security-config.mjs
+          node scripts/audit-required-checks.mjs
           node scripts/audit-bridge-frontend-contract.mjs
           node scripts/validate-plan-50.mjs
           node scripts/audit-canonical-project.mjs

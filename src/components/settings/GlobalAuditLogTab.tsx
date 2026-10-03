@@ -35,7 +35,7 @@ export function GlobalAuditLogTab() {
       l.tabela?.toLowerCase().includes(search.toLowerCase()) ||
       l.user_email?.toLowerCase().includes(search.toLowerCase()) ||
       l.acao?.toLowerCase().includes(search.toLowerCase()) ||
-      JSON.stringify(l.dados_novos || {})
+      JSON.stringify(pii.deep(l.dados_novos) || {})
         .toLowerCase()
         .includes(search.toLowerCase())
   );
@@ -47,7 +47,7 @@ export function GlobalAuditLogTab() {
       acao: l.acao,
       tabela: l.tabela,
       id_registro: l.registro_id,
-      dados: JSON.stringify(l.dados_novos),
+      dados: JSON.stringify(pii.deep(l.dados_novos)),
     }));
     exportPontoCSV(data, 'auditoria-global-dp.csv');
   };
@@ -163,7 +163,7 @@ export function GlobalAuditLogTab() {
                       </TableCell>
                       <TableCell>
                         <div className="text-[10px] text-muted-foreground max-w-[250px] truncate group-hover:whitespace-normal group-hover:overflow-visible group-hover:max-w-none transition-all">
-                          {log.dados_novos ? JSON.stringify(log.dados_novos) : '-'}
+                          {log.dados_novos ? JSON.stringify(pii.deep(log.dados_novos)) : '-'}
                         </div>
                       </TableCell>
                     </TableRow>

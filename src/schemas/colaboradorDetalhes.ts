@@ -119,7 +119,11 @@ export const timeSchema = z.object({
 
 export const webhookConfigSchema = z.object({
   empresa_id: uuid.nullable().optional(),
-  url: z.string().url('URL de webhook inválida').max(2048),
+  url: z
+    .string()
+    .url('URL de webhook inválida')
+    .max(2048)
+    .refine((u) => u.startsWith('https://'), 'Webhook exige HTTPS (SSRF/javascript: bloqueados)'),
   eventos: z.array(z.string().max(100)).max(50).optional(),
   secret: z.string().max(200).nullable().optional(),
 });

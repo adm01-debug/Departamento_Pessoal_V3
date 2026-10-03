@@ -36,7 +36,7 @@ vi.mock('@/components/ui/select', () => ({
 
 import { useContasBancarias } from '@/hooks/useTabelasReferencia';
 import { ContasBancariasTab } from '../colaborador-detalhes/ContasBancariasTab';
-import { maskBankAccount } from '@/utils/piiMask';
+import { maskBankAccount, maskCpfDisplay } from '@/utils/piiMask';
 
 const MOCK_CONTAS = [
   {
@@ -93,10 +93,12 @@ describe('ContasBancariasTab', () => {
     expect(screen.queryByText('56789-0')).not.toBeInTheDocument();
   });
 
-  it('renders pix info', () => {
+  it('renders pix info mascarada para papel sem PII (LGPD)', () => {
     vi.mocked(useContasBancarias).mockReturnValue({ data: MOCK_CONTAS, isLoading: false } as never);
     render(<ContasBancariasTab colaboradorId="col-1" />);
-    expect(screen.getByText(/CPF: 123\.456/)).toBeInTheDocument();
+    // Chave PIX tipo CPF é PII: sem papel admin/moderator renderiza mascarada.
+    expect(screen.getByText(`CPF: ${maskCpfDisplay('123.456.789-00')}`)).toBeInTheDocument();
+    expect(screen.queryByText(/123\.456\.789-00/)).not.toBeInTheDocument();
   });
 
   it('renders principal badge', () => {

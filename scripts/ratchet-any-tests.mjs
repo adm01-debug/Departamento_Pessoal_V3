@@ -32,13 +32,20 @@ const results = await eslint.lintFiles([
   'src/**/*.spec.{ts,tsx}',
   'src/**/__tests__/**/*.{ts,tsx}',
   'src/**/__mocks__/**/*.{ts,tsx}',
+  // Helpers/fixtures fora dos padrões *.test/__tests__ — antes uma zona
+  // cega onde `any` crescia invisível (src/test/, src/tests/).
+  'src/test/**/*.{ts,tsx}',
+  'src/tests/**/*.{ts,tsx}',
 ]);
 
 const RULE = '@typescript-eslint/no-explicit-any';
 /** @type {Record<string, number>} */
 const current = {};
+const seen = new Set();
 
 for (const result of results) {
+  if (seen.has(result.filePath)) continue;
+  seen.add(result.filePath);
   const anyMessages = result.messages.filter((m) => m.ruleId === RULE);
   if (anyMessages.length === 0) continue;
   const parts = relative(root, result.filePath).split('/');

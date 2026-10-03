@@ -189,7 +189,7 @@ export function ContasBancariasTab({ colaboradorId }: { colaboradorId: string })
                   <TableCell>{pii.bankAccount(c.agencia)}</TableCell>
                   <TableCell>{pii.bankAccount(c.conta)}</TableCell>
                   <TableCell>{c.tipo_conta}</TableCell>
-                  <TableCell>{c.pix_tipo ? `${c.pix_tipo}: ${c.pix_chave}` : '-'}</TableCell>
+                  <TableCell>{c.pix_tipo ? `${c.pix_tipo}: ${pii.pix(c.pix_tipo, c.pix_chave)}` : '-'}</TableCell>
                   <TableCell>{c.principal ? <Badge>Sim</Badge> : 'Não'}</TableCell>
                   <TableCell>
                     <Button

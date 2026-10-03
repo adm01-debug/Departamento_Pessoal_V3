@@ -7,8 +7,23 @@ import { z } from 'zod';
  * exigidos aqui — essa responsabilidade é do banco — o que evita falsas
  * rejeições em payloads de updates e callers com shapes parciais.
  */
-export function validateInput(schema: z.ZodObject<z.ZodRawShape>, payload: object, contexto: string): void {
-  const result = schema.partial().safeParse(payload);
+/**
+ * `.partial()` não existe em objetos com refinamentos (.superRefine):
+ * reconstrói um objeto a partir do shape base nesse caso.
+ */
+function toPartials(schema: z.ZodType): z.ZodType {
+  const s = schema as {
+    def?: { shape?: z.ZodRawShape | (() => z.ZodRawShape) };
+    _def?: { shape?: z.ZodRawShape | (() => z.ZodRawShape) };
+  };
+  const def = s.def ?? s._def;
+  const raw = typeof def?.shape === 'function' ? def.shape() : def?.shape;
+  const base = raw ? z.object(raw) : schema;
+  return (base as z.ZodObject<z.ZodRawShape>).partial();
+}
+
+export function validateInput(schema: z.ZodType, payload: object, contexto: string): void {
+  const result = toPartials(schema).safeParse(payload);
   if (!result.success) {
     const issue = result.error.issues[0];
     const campo = issue?.path.join('.') || 'payload';
