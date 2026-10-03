@@ -17,9 +17,9 @@ function setupListChain(data: any[], error: any = null) {
   const chain: any = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, chain };
@@ -47,9 +47,9 @@ function setupUpdateChain(data: any, error: any = null) {
 function setupDeleteChain(error: any = null) {
   const eqFn = vi.fn();
   const __delChain = {
-    then: (r: any) => Promise.resolve({ error }).then(r),
-    catch: (r: any) => Promise.resolve({ error }).catch(r),
-    finally: (r: any) => Promise.resolve({ error }).finally(r),
+    then: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).then(r),
+    catch: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).catch(r),
+    finally: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).finally(r),
     eq: eqFn,
   };
   eqFn.mockReturnValue(__delChain);
@@ -73,7 +73,7 @@ describe('faltasService.listar', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as any);
+    setupListChain(null as never);
     const result = await faltasService.listar(EMPRESA_ID);
     expect(result).toEqual([]);
   });
@@ -118,7 +118,7 @@ describe('faltasService.buscarPorColaborador', () => {
   });
 
   it('returns empty array when no faltas', async () => {
-    setupListChain(null as any);
+    setupListChain(null as never);
     const result = await faltasService.buscarPorColaborador('c-x', EMPRESA_ID);
     expect(result).toEqual([]);
   });

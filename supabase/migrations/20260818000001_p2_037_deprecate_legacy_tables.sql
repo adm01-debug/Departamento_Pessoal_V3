@@ -51,9 +51,11 @@ BEGIN
   IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'ferias' AND table_schema = 'public') THEN
     -- Verificar se a coluna empresa_id existe (003) vs data_inicio (20250102)
     -- Se tem empresa_id, é a tabela legado 003
-    IF EXISTS (
+    -- Tabela legacy 003 NÃO tem data_inicio (usa periodo_aquisitivo_inicio);
+    -- a moderna (20250102+) tem data_inicio + periodo_aquisitivo_id.
+    IF NOT EXISTS (
       SELECT 1 FROM information_schema.columns
-      WHERE table_name = 'ferias' AND column_name = 'empresa_id'
+      WHERE table_name = 'ferias' AND column_name = 'data_inicio'
     ) THEN
       SELECT count(*) INTO ferias_count FROM public.ferias;
       RAISE NOTICE 'ferias (003 legacy) has % rows', ferias_count;
@@ -62,7 +64,7 @@ BEGIN
         RAISE NOTICE 'Renamed ferias -> ferias_legacy_003 (was empty)';
       ELSE
         -- Manter como backup — não renomear automaticamente
-        RAISE WARNING 'ferias (003 legacy) has % rows — NOT renamed automatically. Review before renaming.';
+        RAISE WARNING 'ferias (003 legacy) has % rows — NOT renamed automatically. Review before renaming.', ferias_count;
       END IF;
     ELSE
       RAISE NOTICE 'ferias is the modern table (20250102+ schema) — skipping rename.';
@@ -77,5 +79,40 @@ COMMENT ON TABLE public.folha_pagamento_legacy_003 IS
   'P2-037: Legado schema 003 — não é mais usada pelo app desde 2025. Aguardando DROP após 30d.';
 COMMENT ON TABLE public.ponto_registros_legacy_003 IS
   'P2-037: Legado schema 003 — não é mais usada pelo app desde 2025. Aguardando DROP após 30d.';
-COMMENT ON TABLE public.ferias_legacy_003 IS
-  'P2-037: Legado schema 003 — só renomeada se confirmada vazia. Aguardando DROP após 30d.';
+DO $$
+BEGIN
+  IF to_regclass('public.ferias_legacy_003') IS NOT NULL THEN
+    EXECUTE 'COMMENT ON TABLE public.ferias_legacy_003 IS ''P2-037: Legado schema 003 — só renomeada se confirmada vazia. Aguardando DROP após 30d.''';
+  END IF;
+END $$;
+
+-- Recria a tabela canônica `ferias` (schema 20250102+) caso o rename acima a
+-- tenha removido — o CREATE original é IF NOT EXISTS e rodou antes do rename.
+CREATE TABLE IF NOT EXISTS public.ferias (
+  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+  colaborador_id UUID NOT NULL REFERENCES public.colaboradores(id) ON DELETE CASCADE,
+  empresa_id UUID REFERENCES public.empresas(id) ON DELETE CASCADE,
+  periodo_aquisitivo_id UUID,
+  data_inicio DATE NOT NULL,
+  data_fim DATE NOT NULL,
+  dias_gozo INTEGER NOT NULL,
+  dias_abono INTEGER DEFAULT 0,
+  vender_abono BOOLEAN DEFAULT false,
+  data_pagamento DATE,
+  salario_base NUMERIC(12,2) NOT NULL,
+  valor_ferias NUMERIC(12,2) NOT NULL,
+  valor_terco NUMERIC(12,2) NOT NULL,
+  valor_abono NUMERIC(12,2) DEFAULT 0,
+  valor_terco_abono NUMERIC(12,2) DEFAULT 0,
+  valor_total NUMERIC(12,2) NOT NULL,
+  descontos_inss NUMERIC(12,2) DEFAULT 0,
+  descontos_irrf NUMERIC(12,2) DEFAULT 0,
+  valor_liquido NUMERIC(12,2) NOT NULL,
+  status VARCHAR(20) DEFAULT 'programada' CHECK (status IN ('programada', 'aprovada', 'em_gozo', 'concluida', 'cancelada')),
+  aprovado_por UUID,
+  aprovado_em TIMESTAMPTZ,
+  observacoes TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  created_by UUID,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);

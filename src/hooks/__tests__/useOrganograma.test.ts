@@ -24,9 +24,9 @@ function buildChain(data: any[]) {
   chain.select = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
   chain.eq = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve({ data, error: null }).then(fn);
-  chain.catch = (fn: any) => Promise.resolve({ data, error: null }).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve({ data, error: null }).finally(fn);
+  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve({ data, error: null }).then(fn);
+  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve({ data, error: null }).catch(fn);
+  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve({ data, error: null }).finally(fn);
   return chain;
 }
 

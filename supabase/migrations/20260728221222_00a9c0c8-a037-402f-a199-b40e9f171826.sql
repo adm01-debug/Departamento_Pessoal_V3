@@ -44,7 +44,12 @@ END;
 $$;
 
 REVOKE ALL ON FUNCTION public.vincular_colaborador_ao_usuario() FROM PUBLIC, anon;
-GRANT EXECUTE ON FUNCTION public.vincular_colaborador_ao_usuario() TO authenticated;
+DO $guard$
+BEGIN
+  IF to_regprocedure('public.vincular_colaborador_ao_usuario()') IS NOT NULL THEN
+    EXECUTE $sql$GRANT EXECUTE ON FUNCTION public.vincular_colaborador_ao_usuario() TO authenticated;$sql$;
+  END IF;
+END $guard$;
 
 COMMENT ON FUNCTION public.vincular_colaborador_ao_usuario() IS
   'Vincula a conta logada aos cadastros de colaborador com o mesmo e-mail. E-mail derivado de auth.uid(), nunca de parâmetro.';

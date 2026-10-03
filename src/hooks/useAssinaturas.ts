@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import type { Tables } from '@/integrations/supabase/types';
 
 export interface DocumentoAssinatura {
   id: string;
@@ -13,7 +14,11 @@ export interface DocumentoAssinatura {
   admissaoId: string;
 }
 
-function mapTokenToDoc(token: any): DocumentoAssinatura {
+type TokenComAdmissao = Tables<'admissao_tokens'> & {
+  admissoes?: { nome?: string | null; cargo?: string | null; departamento?: string | null } | null;
+};
+
+function mapTokenToDoc(token: TokenComAdmissao): DocumentoAssinatura {
   const now = new Date();
   const expira = new Date(token.data_expiracao);
   const assinado = !!token.contrato_assinado;
@@ -23,13 +28,10 @@ function mapTokenToDoc(token: any): DocumentoAssinatura {
   if (assinado) status = 'assinado';
   else if (expirado) status = 'expirado';
 
-  const nomeColaborador =
-    token.admissoes?.nome || token.email_candidato || 'Colaborador';
+  const nomeColaborador = token.admissoes?.nome || token.email_candidato || 'Colaborador';
 
   const cargo = token.admissoes?.cargo || '';
-  const titulo = cargo
-    ? `Contrato de Trabalho - ${cargo}`
-    : 'Contrato de Trabalho';
+  const titulo = cargo ? `Contrato de Trabalho - ${cargo}` : 'Contrato de Trabalho';
 
   return {
     id: token.id,
@@ -64,9 +66,9 @@ export function useAssinaturas() {
 
   const stats = {
     total: docs.length,
-    pendentes: docs.filter(d => d.status === 'pendente').length,
-    assinados: docs.filter(d => d.status === 'assinado').length,
-    expirados: docs.filter(d => d.status === 'expirado').length,
+    pendentes: docs.filter((d) => d.status === 'pendente').length,
+    assinados: docs.filter((d) => d.status === 'assinado').length,
+    expirados: docs.filter((d) => d.status === 'expirado').length,
   };
 
   return {

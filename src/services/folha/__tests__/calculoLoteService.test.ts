@@ -66,7 +66,7 @@ function buildSupabaseChain(overrides: Record<string, any> = {}) {
       table === 'folha_itens' ? mockItemUpsert.mockResolvedValue(result) : vi.fn().mockResolvedValue(result);
     const insert = vi.fn().mockReturnValue({
       select: vi.fn().mockReturnValue({ single }),
-      then: (fn: any) => Promise.resolve(result).then(fn),
+      then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
     });
     const gte = vi.fn().mockReturnValue({ lte: vi.fn().mockResolvedValue(result) });
     const lte = vi.fn().mockResolvedValue(result);
@@ -75,15 +75,15 @@ function buildSupabaseChain(overrides: Record<string, any> = {}) {
         eq: vi.fn().mockReturnValue({ maybeSingle }),
         maybeSingle,
         gte,
-        then: (fn: any) => Promise.resolve(result).then(fn),
+        then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
       }),
       maybeSingle,
       gte,
-      then: (fn: any) => Promise.resolve(result).then(fn),
+      then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
     });
     const select = vi.fn().mockReturnValue({
       eq,
-      then: (fn: any) => Promise.resolve(result).then(fn),
+      then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
     });
     return { select, upsert, insert, eq };
   };

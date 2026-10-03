@@ -4,20 +4,20 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { UserPlus, Clock, CheckCircle, AlertCircle, TrendingUp, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
+export function OnboardingDashboard({ admissoes }: { admissoes: Array<{ etapa: string }> }) {
   const stats = useMemo(() => {
     const total = admissoes.length;
-    const concluidas = admissoes.filter(a => a.etapa === 'concluida').length;
-    const pendentes = admissoes.filter(a => a.etapa !== 'concluida' && a.etapa !== 'cancelada').length;
-    const canceladas = admissoes.filter(a => a.etapa === 'cancelada').length;
-    
-    const etapaData = admissoes.reduce((acc: any, a) => {
+    const concluidas = admissoes.filter((a) => a.etapa === 'concluida').length;
+    const pendentes = admissoes.filter((a) => a.etapa !== 'concluida' && a.etapa !== 'cancelada').length;
+    const canceladas = admissoes.filter((a) => a.etapa === 'cancelada').length;
+
+    const etapaData = admissoes.reduce<Record<string, number>>((acc, a) => {
       acc[a.etapa] = (acc[a.etapa] || 0) + 1;
       return acc;
     }, {});
 
     const chartData = Object.entries(etapaData).map(([name, value]) => ({ name, value }));
-    
+
     // Time to hire (mocked for demo)
     const timeToHire = [
       { month: 'Jan', days: 12 },
@@ -36,9 +36,19 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
           { label: 'Total Iniciadas', value: stats.total, icon: UserPlus, gradient: 'from-primary to-primary-glow' },
           { label: 'Em Andamento', value: stats.pendentes, icon: Clock, gradient: 'from-info to-info/70' },
           { label: 'Finalizadas', value: stats.concluidas, icon: CheckCircle, gradient: 'from-success to-success/70' },
-          { label: 'Canceladas', value: stats.canceladas, icon: AlertCircle, gradient: 'from-destructive to-destructive/70' },
+          {
+            label: 'Canceladas',
+            value: stats.canceladas,
+            icon: AlertCircle,
+            gradient: 'from-destructive to-destructive/70',
+          },
         ].map((kpi, i) => (
-          <motion.div key={kpi.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
+          <motion.div
+            key={kpi.label}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.05 }}
+          >
             <Card className="border border-border/30 rounded-2xl overflow-hidden">
               <div className={`h-[2px] bg-gradient-to-r ${kpi.gradient}`} />
               <CardContent className="p-4">
@@ -70,7 +80,13 @@ export function OnboardingDashboard({ admissoes }: { admissoes: any[] }) {
                   <XAxis dataKey="month" fontSize={10} />
                   <YAxis fontSize={10} />
                   <Tooltip />
-                  <Line type="monotone" dataKey="days" stroke="hsl(var(--primary))" strokeWidth={3} dot={{ fill: 'hsl(var(--primary))' }} />
+                  <Line
+                    type="monotone"
+                    dataKey="days"
+                    stroke="hsl(var(--primary))"
+                    strokeWidth={3}
+                    dot={{ fill: 'hsl(var(--primary))' }}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>

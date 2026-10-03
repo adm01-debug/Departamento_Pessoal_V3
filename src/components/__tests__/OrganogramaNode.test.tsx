@@ -1,33 +1,31 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
+    div: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <div {...rest}>{children}</div>,
   },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
+  AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
 }));
 
 import { OrganogramaNode } from '../organograma/OrganogramaNode';
+import type { OrganogramaNodeData } from '@/hooks/useOrganograma';
 
 const LEAF_NODE = {
   id: '1',
   nome: 'Recursos Humanos',
-  colaboradores: [
-    { id: 'c1', nome_completo: 'Ana Lima', cargo: 'Analista', email: 'ana@example.com', foto_url: null },
-  ],
+  colaboradores: [{ id: 'c1', nome_completo: 'Ana Lima', cargo: 'Analista', email: 'ana@example.com', foto_url: null }],
   sub_departamentos: [],
-};
+} as unknown as OrganogramaNodeData;
 
 const NODE_WITH_SUBS = {
   id: '2',
   nome: 'TI',
   colaboradores: [],
-  sub_departamentos: [
-    { id: '3', nome: 'Desenvolvimento', colaboradores: [], sub_departamentos: [] },
-  ],
-};
+  sub_departamentos: [{ id: '3', nome: 'Desenvolvimento', colaboradores: [], sub_departamentos: [] }],
+} as unknown as OrganogramaNodeData;
 
 describe('OrganogramaNode', () => {
   it('renders department name', () => {

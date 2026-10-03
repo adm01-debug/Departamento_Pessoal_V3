@@ -49,10 +49,10 @@ CREATE MATERIALIZED VIEW mv_kpi_turnover_absenteismo AS
       empresa_id,
       DATE_TRUNC('month', data_desligamento) AS mes,
       COUNT(*)                                AS total_desligamentos,
-      -- Desligamentos por motivo
-      COUNT(*) FILTER (WHERE motivo_desligamento IN ('dispensa','dispensa sem justa causa')) AS por_contrato,
-      COUNT(*) FILTER (WHERE motivo_desligamento IN ('pedido demissao','rescisao amigavel')) AS por_colaborador,
-      COUNT(*) FILTER (WHERE motivo_desligamento IN ('justa causa','abandono','termino_contrato')) AS por_outros
+      -- Desligamentos por categoria (tipo enum persistido pelo formulário)
+      COUNT(*) FILTER (WHERE tipo IN ('sem_justa_causa','fim_contrato')) AS por_contrato,
+      COUNT(*) FILTER (WHERE tipo IN ('pedido_demissao','acordo'))      AS por_colaborador,
+      COUNT(*) FILTER (WHERE tipo IN ('justa_causa','falecimento'))     AS por_outros
     FROM desligamentos
     WHERE data_desligamento >= CURRENT_DATE - INTERVAL '12 months'
       AND data_desligamento < CURRENT_DATE + INTERVAL '1 day'
@@ -99,10 +99,8 @@ WITH NO DATA;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_turnover_pk
   ON mv_kpi_turnover_absenteismo(empresa_id, mes);
 
--- RLS: view materializada ainda precisa de security_invoker
+-- security_invoker não é suportado em MATERIALIZED VIEW (nem em PG17): omitido em mv_kpi_turnover_absenteismo.
 -- (dados de salário são agregados, não individuais)
-ALTER MATERIALIZED VIEW mv_kpi_turnover_absenteismo
-  SET (security_invoker = true);
 
 
 -- ── 2. MV: Dashboard de headcount + department breakdown ───────
@@ -131,9 +129,9 @@ CREATE MATERIALIZED VIEW mv_dashboard_headcount AS
     COUNT(*) FILTER (WHERE tipo_contrato = 'estagio')          AS tipo_estagio,
     COUNT(*) FILTER (WHERE tipo_contrato = 'temporario')       AS tipo_temporario,
     -- Por gênero (para métricas D&I)
-    COUNT(*) FILTER (WHERE genero = 'F') AS genero_f,
-    COUNT(*) FILTER (WHERE genero = 'M') AS genero_m,
-    COUNT(*) FILTER (WHERE genero = 'O') AS genero_outros,
+    COUNT(*) FILTER (WHERE sexo = 'feminino') AS genero_f,
+    COUNT(*) FILTER (WHERE sexo = 'masculino') AS genero_m,
+    COUNT(*) FILTER (WHERE sexo IS NULL) AS genero_outros,
     -- Faixa etária
     COUNT(*) FILTER (WHERE
       DATE_PART('year', AGE(data_nascimento)) BETWEEN 18 AND 25) AS faixa_18_25,
@@ -151,8 +149,7 @@ WITH NO DATA;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_headcount_pk
   ON mv_dashboard_headcount(empresa_id, mes);
 
-ALTER MATERIALIZED VIEW mv_dashboard_headcount
-  SET (security_invoker = true);
+-- security_invoker não é suportado em MATERIALIZED VIEW (nem em PG17): omitido em mv_dashboard_headcount.
 
 
 -- ── 3. MV: Passivo trabalhista consolidado ─────────────────────
@@ -164,29 +161,34 @@ CREATE MATERIALIZED VIEW mv_passivo_trabalhista AS
       competencia,
       total_liquido
     FROM folhas_pagamento
-    WHERE status IN ('calculado', 'pago', 'fechado')
+    WHERE status IN ('calculada', 'paga', 'fechada')
     ORDER BY empresa_id, competencia DESC
   ),
   ferias_vencidas AS (
     SELECT
       c.empresa_id,
-      COUNT(*)                                       AS qtde_colabs_vencidas,
-      SUM(f.dias_vencidos * (c.salario_base / 30))       AS provisoes_ferias,
-      SUM(f.dias_vencidos * (c.salario_base / 30) * 0.3333) AS provisoes_terco,
+      COUNT(DISTINCT pa.colaborador_id)                       AS qtde_colabs_vencidas,
+      SUM(pa_dias * (c.salario_base / 30))                    AS provisoes_ferias,
+      SUM(pa_dias * (c.salario_base / 30) * 0.3333)           AS provisoes_terco,
       SUM(
-        (f.dias_vencidos * (c.salario_base / 30))
-        + (f.dias_vencidos * (c.salario_base / 30) * 0.3333)
-      ) * 0.08                                       AS provisoes_fgts_ferias
-    FROM ferias f
-    JOIN colaboradores c ON c.id = f.colaborador_id
-    WHERE f.status NOT IN ('concluida', 'cancelada')
-      AND f.dias_vencidos > 0
+        (pa_dias * (c.salario_base / 30))
+        + (pa_dias * (c.salario_base / 30) * 0.3333)
+      ) * 0.08                                              AS provisoes_fgts_ferias
+    FROM (
+      SELECT
+        colaborador_id,
+        GREATEST(dias_direito - COALESCE(dias_descontados, 0), 0) AS pa_dias
+      FROM periodos_aquisitivos
+      WHERE status = 'vencido'
+    ) pa
+    JOIN colaboradores c ON c.id = pa.colaborador_id
+    WHERE pa.pa_dias > 0
     GROUP BY c.empresa_id
   ),
   ultimo_dezembro AS (
     SELECT
       empresa_id,
-      SUM(valor_base) AS provisoes_13_ultimo_dezembro
+      SUM(valor_13_salario) AS provisoes_13_ultimo_dezembro
     FROM provisoes_folha
     WHERE competencia = TO_CHAR(CURRENT_DATE - INTERVAL '1 year', 'YYYY-12')
     GROUP BY empresa_id
@@ -217,15 +219,14 @@ CREATE MATERIALIZED VIEW mv_passivo_trabalhista AS
   LEFT JOIN ultimo_dezembro   ud ON ud.empresa_id = uf.empresa_id
   LEFT JOIN colaboradores c ON c.empresa_id = uf.empresa_id
   GROUP BY uf.empresa_id, uf.competencia, fv.qtde_colabs_vencidas,
-           fv.provisoes_ferias, fv.provisoes_terco,
+           fv.provisoes_ferias, fv.provisoes_terco, fv.provisoes_fgts_ferias,
            ud.provisoes_13_ultimo_dezembro
 WITH NO DATA;
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_passivo_pk
   ON mv_passivo_trabalhista(empresa_id);
 
-ALTER MATERIALIZED VIEW mv_passivo_trabalhista
-  SET (security_invoker = true);
+-- security_invoker não é suportado em MATERIALIZED VIEW (nem em PG17): omitido em mv_passivo_trabalhista.
 
 
 -- ── 4. MV: eSocial — status de envio por evento ─────────────
@@ -235,26 +236,25 @@ CREATE MATERIALIZED VIEW mv_esocial_status AS
     empresa_id,
     competencia,
     tipo_evento,
-    status_envio,
+    status,
     COUNT(*)                    AS quantidade,
-    MIN(data_criacao)           AS primeira_criacao,
-    MAX(data_criacao)           AS ultima_criacao,
+    MIN(created_at)           AS primeira_criacao,
+    MAX(created_at)           AS ultima_criacao,
     -- Rejeitados com erro específico
-    COUNT(*) FILTER (WHERE status_envio = 'rejeitado') AS total_rejeitados,
-    COUNT(*) FILTER (WHERE status_envio = 'pendente'
-                    AND data_criacao < CURRENT_DATE - INTERVAL '3 days')
+    COUNT(*) FILTER (WHERE status = 'rejeitado') AS total_rejeitados,
+    COUNT(*) FILTER (WHERE status = 'pendente'
+                    AND created_at < CURRENT_DATE - INTERVAL '3 days')
                                     AS pendentes_acima_3dias
   FROM esocial_eventos
   WHERE competencia >= TO_CHAR(CURRENT_DATE - INTERVAL '12 months', 'YYYY-MM')
     AND competencia <= TO_CHAR(CURRENT_DATE, 'YYYY-MM')
-  GROUP BY empresa_id, competencia, tipo_evento, status_envio
+  GROUP BY empresa_id, competencia, tipo_evento, status
 WITH NO DATA;
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_esocial_pk
-  ON mv_esocial_status(empresa_id, competencia, tipo_evento, status_envio);
+  ON mv_esocial_status(empresa_id, competencia, tipo_evento, status);
 
-ALTER MATERIALIZED VIEW mv_esocial_status
-  SET (security_invoker = true);
+-- security_invoker não é suportado em MATERIALIZED VIEW (nem em PG17): omitido em mv_esocial_status.
 
 
 -- ── TABELA DE FERIADOS BRASILEIROS (P4-072) ───────────────────
@@ -263,7 +263,7 @@ ALTER MATERIALIZED VIEW mv_esocial_status
 -- Mantida pelo time de DP;种子 dados em seguida.
 CREATE TABLE IF NOT EXISTS feriados_brasileiros (
   id          BIGSERIAL PRIMARY KEY,
-  empresa_id  TEXT,                          -- NULL = aplica a todas
+  empresa_id  UUID,                          -- NULL = aplica a todas
   data        DATE        NOT NULL,
   nome        TEXT        NOT NULL,
   tipo        TEXT        NOT NULL DEFAULT 'nacional'  -- nacional|estadual|municipal
@@ -293,43 +293,46 @@ DROP MATERIALIZED VIEW IF EXISTS mv_absenteismo_mensal CASCADE;
 CREATE MATERIALIZED VIEW mv_absenteismo_mensal AS
   WITH dias_uteis AS (
     SELECT
-      empresa_id,
+      e.id AS empresa_id,
       DATE_TRUNC('month', CURRENT_DATE)::DATE AS mes,
       COUNT(*) AS dias_uteis_mes
-    FROM generate_series(
+    FROM empresas e
+    CROSS JOIN generate_series(
       DATE_TRUNC('month', CURRENT_DATE),
       DATE_TRUNC('month', CURRENT_DATE) + INTERVAL '1 month' - INTERVAL '1 day',
       '1 day'
     ) AS d(data)
-    CROSS JOIN LATERAL (
-      SELECT CURRENT_DATE AS hoje) AS h
     WHERE EXTRACT(DOW FROM d.data) BETWEEN 1 AND 5  -- seg-sex
       AND NOT EXISTS (
         SELECT 1 FROM feriados_brasileiros fb
         WHERE fb.data = d.data
-          AND (fb.empresa_id IS NULL OR fb.empresa_id = empresa_id)
+          AND (fb.empresa_id IS NULL OR fb.empresa_id = e.id)
       )
     GROUP BY 1, 2
   ),
   ausencias AS (
     SELECT
       c.empresa_id,
-      DATE_TRUNC('month', rp.data_hora)::DATE AS mes,
+      DATE_TRUNC('month', rp.data)::DATE AS mes,
       COUNT(DISTINCT c.id) AS colabs_ausentes,
       COUNT(*)              AS total_ausencias,
-      COUNT(*) FILTER (WHERE f.tipo = 'falta_injustificada') AS faltas_injustificadas,
-      COUNT(*) FILTER (WHERE f.tipo = 'falta_justificada')    AS faltas_justificadas,
-      COUNT(*) FILTER (WHERE af.tipo IN ('inss','acidente_trabalho'))
+      COUNT(*) FILTER (WHERE rp.tipo_dia = 'falta'
+                        AND COALESCE(f.justificada, false) = false)
+                                           AS faltas_injustificadas,
+      COUNT(*) FILTER (WHERE f.justificada IS TRUE)
+                                           AS faltas_justificadas,
+      COUNT(*) FILTER (WHERE af.tipo IN ('doenca','acidente_trabalho'))
                                            AS dias_afastados
     FROM registros_ponto rp
     JOIN colaboradores c ON c.id = rp.colaborador_id
     LEFT JOIN faltas f ON f.colaborador_id = c.id
-      AND DATE_TRUNC('month', f.data) = DATE_TRUNC('month', rp.data_hora)
+      AND f.data = rp.data
     LEFT JOIN afastamentos af ON af.colaborador_id = c.id
-      AND rp.data_hora BETWEEN af.data_inicio AND COALESCE(af.data_fim, CURRENT_DATE)
-    WHERE rp.data_hora >= CURRENT_DATE - INTERVAL '12 months'
-      AND rp.data_hora < CURRENT_DATE + INTERVAL '1 day'
-      AND rp.tipo = 'ausencia'
+      AND rp.data BETWEEN af.data_inicio
+        AND COALESCE(af.data_fim_real, af.data_fim_prevista)
+    WHERE rp.data >= CURRENT_DATE - INTERVAL '12 months'
+      AND rp.data <= CURRENT_DATE
+      AND rp.tipo_dia IN ('falta', 'afastamento')
     GROUP BY 1, 2
   )
   SELECT
@@ -359,8 +362,7 @@ WITH NO DATA;
 CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_absenteismo_pk
   ON mv_absenteismo_mensal(empresa_id, mes);
 
-ALTER MATERIALIZED VIEW mv_absenteismo_mensal
-  SET (security_invoker = true);
+-- security_invoker não é suportado em MATERIALIZED VIEW (nem em PG17): omitido em mv_absenteismo_mensal.
 
 
 -- ── REFRESH INICIAL (síncrono — primeira criação) ──────────────
@@ -422,8 +424,8 @@ BEGIN
           rows = EXCLUDED.rows, status = 'success';
   END LOOP;
 EXCEPTION WHEN OTHERS THEN
-  -- Se CONCURRENTLY falhar (sem unique index), tenta sem concurrently
-  GET DIAGNOSTICS v_name = MESSAGE_TEXT;
+  -- Se CONCURRENTLY falhar (sem unique index), tenta sem concurrently.
+  -- v_name já contém o nome da view em iteração.
   INSERT INTO mv_refresh_log (view_name, last_refresh, duration_ms, rows, status)
   VALUES (COALESCE(v_name, 'unknown'), NOW(), 0, 0, 'error: ' || SQLERRM)
   ON CONFLICT (view_name) DO UPDATE

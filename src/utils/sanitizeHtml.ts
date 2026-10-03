@@ -31,7 +31,7 @@ function ensureAnchorHook(): void {
     if (node.tagName === 'A' && node.hasAttribute('target')) {
       node.setAttribute('rel', 'noopener noreferrer');
     }
-    // (2) CSS-level XSS: DOMPurify keeps `style` values verbatim. Strip any
+    // (2) CSS-level XSS: DOMPurify keeps `style` values verbatim. Strip all
     //     value containing a URL-injection scheme or CSS `expression()`.
     //     Applies only when the style attribute survived (contract preset).
     if (node.hasAttribute('style')) {
@@ -53,8 +53,7 @@ function ensureAnchorHook(): void {
 }
 
 /** Protocols we allow inside href/src. Everything else is stripped. */
-const SAFE_URI_REGEXP =
-  /^(?:(?:https?|mailto|tel):|[#/](?!\/)|\?|[a-z0-9\-_.]+(?:$|[?#/]))/i;
+const SAFE_URI_REGEXP = /^(?:(?:https?|mailto|tel):|[#/](?!\/)|\?|[a-z0-9\-_.]+(?:$|[?#/]))/i;
 
 const BASE_FORBID_TAGS = [
   'script',
@@ -76,17 +75,82 @@ const BASE_FORBID_TAGS = [
 // All known HTML event handler attributes. Belt-and-suspenders — DOMPurify
 // already filters most, but pinning the list here makes the policy auditable.
 const EVENT_HANDLER_ATTRS = [
-  'onabort','onauxclick','onblur','oncancel','oncanplay','oncanplaythrough','onchange',
-  'onclick','onclose','oncontextmenu','oncopy','oncuechange','oncut','ondblclick','ondrag',
-  'ondragend','ondragenter','ondragleave','ondragover','ondragstart','ondrop','ondurationchange',
-  'onemptied','onended','onerror','onfocus','onformdata','oninput','oninvalid','onkeydown',
-  'onkeypress','onkeyup','onload','onloadeddata','onloadedmetadata','onloadstart','onmousedown',
-  'onmouseenter','onmouseleave','onmousemove','onmouseout','onmouseover','onmouseup','onpaste',
-  'onpause','onplay','onplaying','onpointercancel','onpointerdown','onpointerenter','onpointerleave',
-  'onpointermove','onpointerout','onpointerover','onpointerup','onprogress','onratechange','onreset',
-  'onresize','onscroll','onsecuritypolicyviolation','onseeked','onseeking','onselect','onslotchange',
-  'onstalled','onsubmit','onsuspend','ontimeupdate','ontoggle','onvolumechange','onwaiting',
-  'onwebkitanimationend','onwebkitanimationiteration','onwebkitanimationstart','onwebkittransitionend',
+  'onabort',
+  'onauxclick',
+  'onblur',
+  'oncancel',
+  'oncanplay',
+  'oncanplaythrough',
+  'onchange',
+  'onclick',
+  'onclose',
+  'oncontextmenu',
+  'oncopy',
+  'oncuechange',
+  'oncut',
+  'ondblclick',
+  'ondrag',
+  'ondragend',
+  'ondragenter',
+  'ondragleave',
+  'ondragover',
+  'ondragstart',
+  'ondrop',
+  'ondurationchange',
+  'onemptied',
+  'onended',
+  'onerror',
+  'onfocus',
+  'onformdata',
+  'oninput',
+  'oninvalid',
+  'onkeydown',
+  'onkeypress',
+  'onkeyup',
+  'onload',
+  'onloadeddata',
+  'onloadedmetadata',
+  'onloadstart',
+  'onmousedown',
+  'onmouseenter',
+  'onmouseleave',
+  'onmousemove',
+  'onmouseout',
+  'onmouseover',
+  'onmouseup',
+  'onpaste',
+  'onpause',
+  'onplay',
+  'onplaying',
+  'onpointercancel',
+  'onpointerdown',
+  'onpointerenter',
+  'onpointerleave',
+  'onpointermove',
+  'onpointerout',
+  'onpointerover',
+  'onpointerup',
+  'onprogress',
+  'onratechange',
+  'onreset',
+  'onresize',
+  'onscroll',
+  'onsecuritypolicyviolation',
+  'onseeked',
+  'onseeking',
+  'onselect',
+  'onslotchange',
+  'onstalled',
+  'onsubmit',
+  'onsuspend',
+  'ontimeupdate',
+  'ontoggle',
+  'onvolumechange',
+  'onwaiting',
+  'onwebkitanimationend',
+  'onwebkitanimationiteration',
+  'onwebkitanimationstart',
+  'onwebkittransitionend',
   'onwheel',
 ];
 
@@ -105,13 +169,9 @@ export function sanitizeHtml(dirty: unknown, options: SanitizeOptions = {}): str
   if (typeof dirty !== 'string' || dirty.length === 0) return '';
   ensureAnchorHook();
 
-  const forbidTags = options.extraForbidTags
-    ? [...BASE_FORBID_TAGS, ...options.extraForbidTags]
-    : BASE_FORBID_TAGS;
+  const forbidTags = options.extraForbidTags ? [...BASE_FORBID_TAGS, ...options.extraForbidTags] : BASE_FORBID_TAGS;
 
-  const forbidAttr = options.allowStyle
-    ? EVENT_HANDLER_ATTRS
-    : [...EVENT_HANDLER_ATTRS, 'style'];
+  const forbidAttr = options.allowStyle ? EVENT_HANDLER_ATTRS : [...EVENT_HANDLER_ATTRS, 'style'];
 
   return DOMPurify.sanitize(dirty, {
     FORBID_TAGS: forbidTags,

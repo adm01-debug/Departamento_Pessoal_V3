@@ -1,17 +1,30 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
 }));
 
 import { SSTEPIsTab } from '../sst/SSTEPIsTab';
 
 const MOCK_EPIS = [
-  { id: 'epi-001', nome: 'Capacete de Segurança', ca: 'CA-12345', categoria: 'Proteção da Cabeça', validade_meses: 24 },
-  { id: 'epi-002', nome: 'Luva de Proteção', ca: 'CA-67890', categoria: 'Proteção das Mãos', validade_meses: 12 },
+  {
+    id: 'epi-001',
+    nome: 'Capacete de Segurança',
+    ca: 'CA-12345',
+    categoria: 'Proteção da Cabeça',
+    ca_validade: '2028-01-01',
+  },
+  {
+    id: 'epi-002',
+    nome: 'Luva de Proteção',
+    ca: 'CA-67890',
+    categoria: 'Proteção das Mãos',
+    ca_validade: '2027-01-01',
+  },
 ];
 
 const MOCK_ENTREGAS = [

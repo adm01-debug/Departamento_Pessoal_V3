@@ -67,7 +67,7 @@ describe('BaseService.listar', () => {
   });
 
   it('returns empty data with total 0 when supabase returns null', async () => {
-    setupListChain(null as any, null as any);
+    setupListChain(null as never, null as never);
     const result = await service.listar({ empresaId: 'emp-1' });
     expect(result.data).toEqual([]);
     expect(result.total).toBe(0);
@@ -139,7 +139,7 @@ describe('BaseService.criar', () => {
     const insertFn = vi.fn().mockReturnValue({ select: selectFn });
     mockFrom.mockReturnValue({ insert: insertFn });
 
-    const result = await service.criar({ nome: 'Carol' } as any);
+    const result = await service.criar({ nome: 'Carol' } as never);
     expect(insertFn).toHaveBeenCalledWith({ nome: 'Carol' });
     expect(result).toEqual(created);
   });
@@ -150,7 +150,7 @@ describe('BaseService.criar', () => {
     const insertFn = vi.fn().mockReturnValue({ select: selectFn });
     mockFrom.mockReturnValue({ insert: insertFn });
 
-    await expect(service.criar({} as any)).rejects.toThrow();
+    await expect(service.criar({} as never)).rejects.toThrow();
   });
 
   it('throws and logs on DB error', async () => {
@@ -159,7 +159,7 @@ describe('BaseService.criar', () => {
     const insertFn = vi.fn().mockReturnValue({ select: selectFn });
     mockFrom.mockReturnValue({ insert: insertFn });
 
-    await expect(service.criar({} as any)).rejects.toBeDefined();
+    await expect(service.criar({} as never)).rejects.toBeDefined();
     expect(mockLoggerError).toHaveBeenCalled();
   });
 });

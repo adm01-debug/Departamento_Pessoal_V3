@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
@@ -7,7 +8,11 @@ vi.mock('@/hooks/useEmpresas', () => ({
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
-    functions: { invoke: vi.fn().mockResolvedValue({ data: { signed_url: 'https://example.com/doc.pdf', versao: 1 }, error: null }) },
+    functions: {
+      invoke: vi
+        .fn()
+        .mockResolvedValue({ data: { signed_url: 'https://example.com/doc.pdf', versao: 1 }, error: null }),
+    },
   },
 }));
 
@@ -16,18 +21,32 @@ vi.mock('@/utils/safeUrl', () => ({ safeHref: vi.fn((u: string) => u) }));
 vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, disabled, variant, ...p }: any) => (
-    <button onClick={onClick} disabled={disabled} data-variant={variant} {...p}>{children}</button>
+  Button: ({
+    children,
+    onClick,
+    disabled,
+    variant,
+    ...p
+  }: {
+    children?: ReactNode;
+    onClick?: () => void;
+    disabled?: boolean;
+    variant?: string;
+    [key: string]: unknown;
+  }) => (
+    <button onClick={onClick} disabled={disabled} data-variant={variant} {...p}>
+      {children}
+    </button>
   ),
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children }: any) => <div>{children}</div>,
-  DialogTrigger: ({ children }: any) => <div data-testid="trigger">{children}</div>,
-  DialogContent: ({ children }: any) => <div data-testid="dialog-content">{children}</div>,
-  DialogHeader: ({ children }: any) => <div>{children}</div>,
-  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
-  DialogDescription: ({ children }: any) => <p>{children}</p>,
+  Dialog: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogTrigger: ({ children }: { children?: ReactNode }) => <div data-testid="trigger">{children}</div>,
+  DialogContent: ({ children }: { children?: ReactNode }) => <div data-testid="dialog-content">{children}</div>,
+  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
+  DialogDescription: ({ children }: { children?: ReactNode }) => <p>{children}</p>,
 }));
 
 vi.mock('@/components/ui/input', () => ({
@@ -35,7 +54,7 @@ vi.mock('@/components/ui/input', () => ({
 }));
 
 vi.mock('@/components/ui/label', () => ({
-  Label: ({ children }: any) => <label>{children}</label>,
+  Label: ({ children }: { children?: ReactNode }) => <label>{children}</label>,
 }));
 
 vi.mock('@/components/ui/textarea', () => ({
@@ -43,13 +62,25 @@ vi.mock('@/components/ui/textarea', () => ({
 }));
 
 vi.mock('@/components/ui/select', () => ({
-  Select: ({ children, onValueChange, value }: any) => (
-    <select value={value} onChange={(e) => onValueChange?.(e.target.value)}>{children}</select>
+  Select: ({
+    children,
+    onValueChange,
+    value,
+  }: {
+    children?: ReactNode;
+    onValueChange?: (value: string) => void;
+    value?: string;
+  }) => (
+    <select value={value} onChange={(e) => onValueChange?.(e.target.value)}>
+      {children}
+    </select>
   ),
-  SelectTrigger: ({ children }: any) => <>{children}</>,
-  SelectContent: ({ children }: any) => <>{children}</>,
+  SelectTrigger: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  SelectContent: ({ children }: { children?: ReactNode }) => <>{children}</>,
   SelectValue: () => null,
-  SelectItem: ({ value, children }: any) => <option value={value}>{children}</option>,
+  SelectItem: ({ value, children }: { value?: string; children?: ReactNode }) => (
+    <option value={value}>{children}</option>
+  ),
 }));
 
 vi.mock('lucide-react', () => ({ FileText: () => <span />, Loader2: () => <span /> }));
@@ -71,7 +102,7 @@ describe('GerarLtcatOsButton', () => {
     render(<GerarLtcatOsButton />);
     // O termo aparece também na opção do select; ancoramos no texto descritivo.
     expect(
-      screen.getByText(/Ordem de Serviço \(NR-01\) ou Laudo Técnico das Condições Ambientais do Trabalho/),
+      screen.getByText(/Ordem de Serviço \(NR-01\) ou Laudo Técnico das Condições Ambientais do Trabalho/)
     ).toBeTruthy();
   });
 
@@ -101,10 +132,12 @@ describe('GerarLtcatOsButton', () => {
     const btn = screen.getByText('Gerar e assinar documento').closest('button')!;
     fireEvent.click(btn);
 
-    await waitFor(() => expect(supabase.functions.invoke).toHaveBeenCalledWith(
-      'gerar-ltcat-os',
-      expect.objectContaining({ body: expect.objectContaining({ tipo: 'os' }) })
-    ));
+    await waitFor(() =>
+      expect(supabase.functions.invoke).toHaveBeenCalledWith(
+        'gerar-ltcat-os',
+        expect.objectContaining({ body: expect.objectContaining({ tipo: 'os' }) })
+      )
+    );
   });
 
   it('shows success toast after successful generation', async () => {

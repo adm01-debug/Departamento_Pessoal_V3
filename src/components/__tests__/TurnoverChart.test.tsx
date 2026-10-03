@@ -1,16 +1,17 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
+    div: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <div {...rest}>{children}</div>,
   },
 }));
 
 vi.mock('recharts', () => ({
-  ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
-  ComposedChart: ({ children }: any) => <div>{children}</div>,
-  BarChart: ({ children }: any) => <div>{children}</div>,
+  ResponsiveContainer: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  ComposedChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  BarChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   Bar: () => null,
   Line: () => null,
   XAxis: () => null,
@@ -21,15 +22,16 @@ vi.mock('recharts', () => ({
 }));
 
 import { TurnoverChart } from '../desligamentos/TurnoverChart';
+import type { DesligamentoComColaborador } from '@/services/desligamentoService';
 
 const NOW = new Date();
 const THIS_MONTH_KEY = `${NOW.getFullYear()}-${String(NOW.getMonth() + 1).padStart(2, '0')}`;
 
-const DESLIGAMENTOS = [
+const DESLIGAMENTOS: Pick<DesligamentoComColaborador, 'tipo' | 'data_desligamento'>[] = [
   { tipo: 'sem_justa_causa', data_desligamento: `${THIS_MONTH_KEY}-05` },
-  { tipo: 'com_justa_causa', data_desligamento: `${THIS_MONTH_KEY}-10` },
+  { tipo: 'justa_causa', data_desligamento: `${THIS_MONTH_KEY}-10` },
   { tipo: 'pedido_demissao', data_desligamento: `${THIS_MONTH_KEY}-15` },
-  { tipo: 'acordo_mutuo', data_desligamento: '2020-01-01' },
+  { tipo: 'acordo', data_desligamento: '2020-01-01' },
 ];
 
 describe('TurnoverChart', () => {

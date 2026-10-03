@@ -102,7 +102,7 @@ export const contratacaoService = {
     // contrato assinado) sempre caíam nesse guard e retornavam "Tipo de
     // documento inválido" antes de tocar o banco; só `ctps` por coincidência
     // batia com a allowlist antiga E com uma coluna real. Corrigido para os
-    // 5 tipos reais, mapeados explicitamente (sem chave computada + `as any`).
+    // 5 tipos reais, mapeados explicitamente (sem chave computada nem casts genéricos).
     const validado = status === 'validado';
     let checklistUpdate: Partial<Tables<'admissoes'>>;
     switch (docType) {

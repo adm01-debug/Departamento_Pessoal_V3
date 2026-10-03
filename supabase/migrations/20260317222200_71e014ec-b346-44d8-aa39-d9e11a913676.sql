@@ -26,6 +26,7 @@ DROP POLICY IF EXISTS "Usuários podem inserir colaboradores na sua empresa" ON 
 DROP POLICY IF EXISTS "Usuários podem atualizar colaboradores da sua empresa" ON public.colaboradores;
 DROP POLICY IF EXISTS "Usuários podem deletar colaboradores da sua empresa" ON public.colaboradores;
 
+DROP POLICY IF EXISTS "Usuários podem ver colaboradores da sua empresa" ON public.colaboradores;
 CREATE POLICY "Usuários podem ver colaboradores da sua empresa" ON public.colaboradores
   FOR SELECT TO authenticated
   USING (empresa_id IN (SELECT get_user_empresas(auth.uid())));

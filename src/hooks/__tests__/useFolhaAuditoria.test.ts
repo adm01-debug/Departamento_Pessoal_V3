@@ -24,9 +24,9 @@ function buildChains(selectData: any[] = []) {
     select: vi.fn().mockReturnThis(),
     eq: vi.fn().mockReturnThis(),
     order: vi.fn().mockReturnThis(),
-    then: (fn: any) => Promise.resolve(response).then(fn),
-    catch: (fn: any) => Promise.resolve(response).catch(fn),
-    finally: (fn: any) => Promise.resolve(response).finally(fn),
+    then: (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn),
+    catch: (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn),
+    finally: (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn),
   };
   const singleFn = vi.fn().mockResolvedValue({ data: { id: 'a1' }, error: null });
   const insertSelectFn = vi.fn().mockReturnValue({ single: singleFn });

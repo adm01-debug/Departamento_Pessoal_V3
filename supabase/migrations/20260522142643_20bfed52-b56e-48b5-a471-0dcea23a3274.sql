@@ -3,7 +3,8 @@ DO $$
 BEGIN
     -- ponto_auditoria
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'ponto_auditoria' AND policyname = 'Users can view their own point audit') THEN
-        CREATE POLICY "Users can view their own point audit" ON public.ponto_auditoria 
+        DROP POLICY IF EXISTS "Users can view their own point audit" ON public.ponto_auditoria;
+CREATE POLICY "Users can view their own point audit" ON public.ponto_auditoria 
         FOR SELECT TO authenticated USING (
             usuario_id = auth.uid() OR 
             EXISTS (
@@ -17,7 +18,8 @@ BEGIN
 
     -- auditoria_contratual
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'auditoria_contratual' AND policyname = 'Users can view their company contract audit') THEN
-        CREATE POLICY "Users can view their company contract audit" ON public.auditoria_contratual 
+        DROP POLICY IF EXISTS "Users can view their company contract audit" ON public.auditoria_contratual;
+CREATE POLICY "Users can view their company contract audit" ON public.auditoria_contratual 
         FOR SELECT TO authenticated USING (
             EXISTS (
                 SELECT 1 FROM colaboradores c 
@@ -29,25 +31,29 @@ BEGIN
 
     -- logs_sincronizacao
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'logs_sincronizacao' AND policyname = 'Users can view their company sync logs') THEN
-        CREATE POLICY "Users can view their company sync logs" ON public.logs_sincronizacao 
+        DROP POLICY IF EXISTS "Users can view their company sync logs" ON public.logs_sincronizacao;
+CREATE POLICY "Users can view their company sync logs" ON public.logs_sincronizacao 
         FOR SELECT TO authenticated USING (empresa_id IN (SELECT get_user_empresas(auth.uid())));
     END IF;
 
     -- permissao_perfis
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'permissao_perfis' AND policyname = 'Users can view profiles') THEN
-        CREATE POLICY "Users can view profiles" ON public.permissao_perfis 
+        DROP POLICY IF EXISTS "Users can view profiles" ON public.permissao_perfis;
+CREATE POLICY "Users can view profiles" ON public.permissao_perfis 
         FOR SELECT TO authenticated USING (true);
     END IF;
 
     -- parametros_sistema
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'parametros_sistema' AND policyname = 'Users can view system parameters') THEN
-        CREATE POLICY "Users can view system parameters" ON public.parametros_sistema 
+        DROP POLICY IF EXISTS "Users can view system parameters" ON public.parametros_sistema;
+CREATE POLICY "Users can view system parameters" ON public.parametros_sistema 
         FOR SELECT TO authenticated USING (true);
     END IF;
 
     -- tarefas_onboarding
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'tarefas_onboarding' AND policyname = 'Tenant scoped onboarding tasks') THEN
-        CREATE POLICY "Tenant scoped onboarding tasks" ON public.tarefas_onboarding 
+        DROP POLICY IF EXISTS "Tenant scoped onboarding tasks" ON public.tarefas_onboarding;
+CREATE POLICY "Tenant scoped onboarding tasks" ON public.tarefas_onboarding 
         FOR ALL TO authenticated USING (
             EXISTS (
                 SELECT 1 FROM admissoes a
@@ -87,12 +93,14 @@ ALTER TABLE public.query_telemetry ENABLE ROW LEVEL SECURITY;
 DO $$ 
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'query_telemetry' AND policyname = 'Service role and admins can view telemetry') THEN
-        CREATE POLICY "Service role and admins can view telemetry" ON public.query_telemetry 
+        DROP POLICY IF EXISTS "Service role and admins can view telemetry" ON public.query_telemetry;
+CREATE POLICY "Service role and admins can view telemetry" ON public.query_telemetry 
         FOR SELECT TO authenticated USING (is_admin(auth.uid()));
     END IF;
     
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'query_telemetry' AND policyname = 'Authenticated users can insert telemetry') THEN
-        CREATE POLICY "Authenticated users can insert telemetry" ON public.query_telemetry 
+        DROP POLICY IF EXISTS "Authenticated users can insert telemetry" ON public.query_telemetry;
+CREATE POLICY "Authenticated users can insert telemetry" ON public.query_telemetry 
         FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
     END IF;
 END $$;

@@ -1,13 +1,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import type { Tables } from '@/integrations/supabase/types';
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface PontoWeekSummaryProps {
-  registrosSemana: any[];
+  registrosSemana: Pick<
+    Tables<'registros_ponto'>,
+    'id' | 'data' | 'horas_trabalhadas' | 'horas_extras' | 'atraso_minutos'
+  >[];
 }
 
-function formatInterval(val: any) {
+function formatInterval(val: string | null | undefined) {
   if (!val) return '00:00';
   if (typeof val === 'string') {
     const match = val.match(/(\d+):(\d+)/);
@@ -29,20 +33,31 @@ export function PontoWeekSummary({ registrosSemana }: PontoWeekSummaryProps) {
         <CardContent>
           {registrosSemana.length > 0 ? (
             <div className="space-y-2">
-              {registrosSemana.slice(0, 7).map((r: any) => (
-                <div key={r.id} className="flex items-center justify-between p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+              {registrosSemana.slice(0, 7).map((r) => (
+                <div
+                  key={r.id}
+                  className="flex items-center justify-between p-2 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors"
+                >
                   <div>
                     <p className="text-sm font-body font-medium">
-                      {new Date(r.data + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' })}
+                      {new Date(r.data + 'T12:00:00').toLocaleDateString('pt-BR', {
+                        weekday: 'short',
+                        day: '2-digit',
+                        month: '2-digit',
+                      })}
                     </p>
                   </div>
                   <div className="flex items-center gap-3 text-xs font-body">
                     <span className="text-success font-medium">{formatInterval(r.horas_trabalhadas)}</span>
                     {r.horas_extras && formatInterval(r.horas_extras) !== '00:00' && (
-                      <Badge variant="outline" className="text-[10px] h-5 px-1.5 text-info">+{formatInterval(r.horas_extras)}</Badge>
+                      <Badge variant="outline" className="text-[10px] h-5 px-1.5 text-info">
+                        +{formatInterval(r.horas_extras)}
+                      </Badge>
                     )}
-                    {r.atraso_minutos > 0 && (
-                      <Badge variant="destructive" className="text-[10px] h-5 px-1.5">{r.atraso_minutos}m</Badge>
+                    {(r.atraso_minutos ?? 0) > 0 && (
+                      <Badge variant="destructive" className="text-[10px] h-5 px-1.5">
+                        {r.atraso_minutos}m
+                      </Badge>
                     )}
                   </div>
                 </div>

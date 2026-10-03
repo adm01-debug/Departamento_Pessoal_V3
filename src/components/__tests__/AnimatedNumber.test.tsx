@@ -1,9 +1,14 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    span: ({ children, className, ...props }: any) => <span className={className} {...props}>{children}</span>,
+    span: ({ children, className, ...props }: { children?: ReactNode; className?: string; [key: string]: unknown }) => (
+      <span className={className} {...props}>
+        {children}
+      </span>
+    ),
   },
   useInView: vi.fn(() => false),
 }));

@@ -136,9 +136,9 @@ describe('downloadBlob', () => {
   it('triggers anchor click and revokes URL', () => {
     const mockClick = vi.fn();
     const mockAnchor = { href: '', download: '', click: mockClick };
-    vi.spyOn(document, 'createElement').mockReturnValue(mockAnchor as any);
-    vi.spyOn(document.body, 'appendChild').mockImplementation(() => mockAnchor as any);
-    vi.spyOn(document.body, 'removeChild').mockImplementation(() => mockAnchor as any);
+    vi.spyOn(document, 'createElement').mockReturnValue(mockAnchor as never);
+    vi.spyOn(document.body, 'appendChild').mockImplementation(() => mockAnchor as never);
+    vi.spyOn(document.body, 'removeChild').mockImplementation(() => mockAnchor as never);
     const mockCreate = vi.fn().mockReturnValue('blob:url');
     const mockRevoke = vi.fn();
     vi.spyOn(URL, 'createObjectURL').mockImplementation(mockCreate);

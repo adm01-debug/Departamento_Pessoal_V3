@@ -27,6 +27,7 @@ DROP POLICY IF EXISTS "Empresa vê suas próprias rubricas" ON public.rubricas_f
 --    portanto bloqueada para authenticated (só service_role atravessa).
 DROP POLICY IF EXISTS "Users can view system parameters" ON public.parametros_sistema;
 
+DROP POLICY IF EXISTS "parametros_sistema_read" ON public.parametros_sistema;
 CREATE POLICY "parametros_sistema_read"
   ON public.parametros_sistema
   FOR SELECT

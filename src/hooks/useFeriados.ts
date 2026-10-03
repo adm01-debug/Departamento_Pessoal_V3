@@ -1,3 +1,4 @@
+import type { TablesInsert } from '@/integrations/supabase/types';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresa } from '@/contexts/EmpresaContext';
@@ -21,11 +22,11 @@ export function useFeriados() {
 
   const criarFeriado = useMutation({
     mutationFn: async (feriado: { nome: string; data: string; tipo: string }) => {
-      const insertData: any = {
+      const insertData: TablesInsert<'feriados'> = {
         data: feriado.data,
         descricao: feriado.nome,
         tipo: feriado.tipo,
-        empresa_id: feriado.tipo === 'empresa' ? empresaAtual?.id : null,
+        empresa_id: feriado.tipo === 'empresa' ? (empresaAtual?.id ?? null) : null,
       };
       const { error } = await supabase.from('feriados').insert(insertData);
       if (error) throw error;

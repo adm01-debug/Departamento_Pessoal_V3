@@ -1,11 +1,12 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
+  AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
 }));
 
 vi.mock('sonner', () => ({
@@ -36,25 +37,25 @@ const MOCK_EVENTOS = [
 
 describe('FolhaESocialSync', () => {
   it('renders Integração eSocial title', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, refetch: vi.fn() } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, refetch: vi.fn() } as never);
     render(<FolhaESocialSync competencia="07/2026" />);
     expect(screen.getByText('Integração eSocial')).toBeInTheDocument();
   });
 
   it('renders refresh button', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, refetch: vi.fn() } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, refetch: vi.fn() } as never);
     render(<FolhaESocialSync competencia="07/2026" />);
     expect(screen.getByRole('button', { name: /Atualizar/i })).toBeInTheDocument();
   });
 
   it('renders Progresso Geral de Transmissão label', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, refetch: vi.fn() } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, refetch: vi.fn() } as never);
     render(<FolhaESocialSync competencia="07/2026" />);
     expect(screen.getByText('Progresso Geral de Transmissão')).toBeInTheDocument();
   });
 
   it('renders S-1200, S-1210, S-1299 events', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, refetch: vi.fn() } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, refetch: vi.fn() } as never);
     render(<FolhaESocialSync competencia="07/2026" />);
     expect(screen.getByText('S-1200 - Remuneração')).toBeInTheDocument();
     expect(screen.getByText('S-1210 - Pagamentos')).toBeInTheDocument();
@@ -62,26 +63,26 @@ describe('FolhaESocialSync', () => {
   });
 
   it('renders Painel Geral button', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, refetch: vi.fn() } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, refetch: vi.fn() } as never);
     render(<FolhaESocialSync competencia="07/2026" />);
     expect(screen.getByRole('button', { name: /Painel Geral/i })).toBeInTheDocument();
   });
 
   it('renders Conciliar button', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, refetch: vi.fn() } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, refetch: vi.fn() } as never);
     render(<FolhaESocialSync competencia="07/2026" />);
     expect(screen.getByRole('button', { name: /Conciliar/i })).toBeInTheDocument();
   });
 
   it('shows Pendente badges when no data', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, refetch: vi.fn() } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: false, refetch: vi.fn() } as never);
     render(<FolhaESocialSync competencia="07/2026" />);
     const badges = screen.getAllByText('Pendente');
     expect(badges.length).toBeGreaterThanOrEqual(3);
   });
 
   it('renders correct processed counts when data provided', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_EVENTOS, isLoading: false, refetch: vi.fn() } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_EVENTOS, isLoading: false, refetch: vi.fn() } as never);
     render(<FolhaESocialSync competencia="07/2026" />);
     expect(screen.getByText(/2 de 2 colaboradores/)).toBeInTheDocument();
   });

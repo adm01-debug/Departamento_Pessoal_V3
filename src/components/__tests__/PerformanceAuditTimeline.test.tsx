@@ -1,25 +1,26 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children }: any) => <div>{children}</div>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
-  CardHeader: ({ children }: any) => <div>{children}</div>,
-  CardTitle: ({ children }: any) => <h3>{children}</h3>,
+  Card: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardTitle: ({ children }: { children?: ReactNode }) => <h3>{children}</h3>,
 }));
 
 vi.mock('@/components/ui/scroll-area', () => ({
-  ScrollArea: ({ children }: any) => <div>{children}</div>,
+  ScrollArea: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children }: any) => <span>{children}</span>,
+  Badge: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
 }));
 
 vi.mock('@/hooks/useEmpresas', () => ({
@@ -71,21 +72,21 @@ const MOCK_LOGS = [
 describe('PerformanceAuditTimeline', () => {
   it('renders Trilha de Desempenho title', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false } as never);
     render(<PerformanceAuditTimeline />);
     expect(screen.getByText(/Trilha de Desempenho/i)).toBeInTheDocument();
   });
 
   it('renders empty state message when no logs', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false } as never);
     render(<PerformanceAuditTimeline />);
     expect(screen.getByText(/Nenhum registro de auditoria/i)).toBeInTheDocument();
   });
 
   it('distinguishes a query failure from an empty audit trail', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false, error: new Error('denied') } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: false, error: new Error('denied') } as never);
     render(<PerformanceAuditTimeline />);
     expect(screen.getByRole('alert')).toHaveTextContent(/Não foi possível carregar/);
     expect(screen.queryByText(/Nenhum registro de auditoria/i)).not.toBeInTheDocument();
@@ -93,42 +94,42 @@ describe('PerformanceAuditTimeline', () => {
 
   it('renders acao badge when logs exist', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as never);
     render(<PerformanceAuditTimeline />);
     expect(screen.getByText(/UPDATE/i)).toBeInTheDocument();
   });
 
   it('renders tabela name in badge', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as never);
     render(<PerformanceAuditTimeline />);
     expect(screen.getByText(/metas okrs/i)).toBeInTheDocument();
   });
 
   it('renders user email', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as never);
     render(<PerformanceAuditTimeline />);
     expect(screen.getByText('gestor@empresa.com')).toBeInTheDocument();
   });
 
   it('renders Sistema when user_email is null', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as never);
     render(<PerformanceAuditTimeline />);
     expect(screen.getByText('Sistema')).toBeInTheDocument();
   });
 
   it('renders dados_novos JSON when present', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as never);
     const { container } = render(<PerformanceAuditTimeline />);
     expect(container.textContent).toContain('progresso');
   });
 
   it('renders no empty state when logs exist', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: MOCK_LOGS, isLoading: false } as never);
     render(<PerformanceAuditTimeline />);
     expect(screen.queryByText(/Nenhum registro/i)).toBeNull();
   });

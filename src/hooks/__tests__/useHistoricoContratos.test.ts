@@ -21,10 +21,7 @@ vi.mock('sonner', () => ({
 
 import { useHistoricoContratos } from '../useHistoricoContratos';
 
-vi.mock('@/hooks/useEmpresas', async () =>
-  (await import('@/test/empresaMock')).useEmpresasMockModule()
-);
-
+vi.mock('@/hooks/useEmpresas', async () => (await import('@/test/empresaMock')).useEmpresasMockModule());
 
 function wrapper({ children }: { children: React.ReactNode }) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
@@ -63,13 +60,15 @@ describe('useHistoricoContratos', () => {
     const { result } = renderHook(() => useHistoricoContratos('col-1'), { wrapper });
 
     await act(async () => {
-      await result.current.criar({ tipo: 'promocao', salario: 5000 });
+      await result.current.criar({ tipo_contrato: 'promocao', salario: 5000, data_inicio: '2024-01-01' });
     });
 
-    expect(mockCriar).toHaveBeenCalledWith(expect.objectContaining({
-      colaborador_id: 'col-1',
-      tipo: 'promocao',
-    }));
+    expect(mockCriar).toHaveBeenCalledWith(
+      expect.objectContaining({
+        colaborador_id: 'col-1',
+        tipo_contrato: 'promocao',
+      })
+    );
   });
 
   it('criar shows success toast', async () => {
@@ -77,7 +76,7 @@ describe('useHistoricoContratos', () => {
     const { result } = renderHook(() => useHistoricoContratos('col-1'), { wrapper });
 
     await act(async () => {
-      await result.current.criar({ tipo: 'promocao' });
+      await result.current.criar({ tipo_contrato: 'promocao', data_inicio: '2024-01-01' });
     });
 
     await waitFor(() => expect(mockToastSuccess).toHaveBeenCalledWith('Alteração contratual registrada'));
@@ -100,7 +99,7 @@ describe('useHistoricoContratos', () => {
     const { result } = renderHook(() => useHistoricoContratos('col-1'), { wrapper });
 
     await act(async () => {
-      await result.current.criar({ tipo: 'promocao' }).catch(() => {});
+      await result.current.criar({ tipo_contrato: 'promocao', data_inicio: '2024-01-01' }).catch(() => {});
     });
 
     await waitFor(() => expect(mockToastError).toHaveBeenCalledWith('fail'));

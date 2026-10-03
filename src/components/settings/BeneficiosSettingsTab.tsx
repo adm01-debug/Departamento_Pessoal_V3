@@ -22,16 +22,14 @@ export function BeneficiosSettingsTab() {
   const { data: regras = [], isLoading } = useQuery({
     queryKey: ['configuracoes-beneficios'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('beneficios')
-        .select('*')
-        .order('nome');
+      const { data, error } = await supabase.from('beneficios').select('*').order('nome');
       if (error) {
         if (error.code === '42P01') return [];
         throw error;
       }
       return data || [];
-    }});
+    },
+  });
 
   const criar = useMutation({
     mutationFn: async (d: typeof form) => {
@@ -45,7 +43,7 @@ export function BeneficiosSettingsTab() {
         nome,
         tipo,
         valor,
-        ativo: true
+        ativo: true,
       });
       if (error) throw error;
     },
@@ -55,7 +53,8 @@ export function BeneficiosSettingsTab() {
       setForm({ nome: '', tipo: '', valor: '' });
       toast.success('Regra de benefício criada');
     },
-    onError: (e: any) => toast.error(safeErrorMessage(e, 'Erro ao criar regra de benefício.'))});
+    onError: (e) => toast.error(safeErrorMessage(e, 'Erro ao criar regra de benefício.')),
+  });
 
   const alternarStatus = useMutation({
     mutationFn: async ({ id, ativo }: { id: string; ativo: boolean }) => {
@@ -65,7 +64,8 @@ export function BeneficiosSettingsTab() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['configuracoes-beneficios'] });
       toast.success('Status atualizado');
-    }});
+    },
+  });
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
@@ -88,21 +88,40 @@ export function BeneficiosSettingsTab() {
                 </Button>
               </DialogTrigger>
               <DialogContent>
-                <DialogHeader><DialogTitle>Novo Plano de Benefício</DialogTitle></DialogHeader>
+                <DialogHeader>
+                  <DialogTitle>Novo Plano de Benefício</DialogTitle>
+                </DialogHeader>
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label>Nome do Plano</Label>
-                    <Input value={form.nome} onChange={e => setForm(p => ({ ...p, nome: e.target.value }))} placeholder="Ex: VR Master" />
+                    <Input
+                      value={form.nome}
+                      onChange={(e) => setForm((p) => ({ ...p, nome: e.target.value }))}
+                      placeholder="Ex: VR Master"
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Tipo</Label>
-                    <Input value={form.tipo} onChange={e => setForm(p => ({ ...p, tipo: e.target.value }))} placeholder="Ex: Alimentação" />
+                    <Input
+                      value={form.tipo}
+                      onChange={(e) => setForm((p) => ({ ...p, tipo: e.target.value }))}
+                      placeholder="Ex: Alimentação"
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Valor Mensal (R$)</Label>
-                    <Input type="number" value={form.valor} onChange={e => setForm(p => ({ ...p, valor: e.target.value }))} placeholder="0.00" />
+                    <Input
+                      type="number"
+                      value={form.valor}
+                      onChange={(e) => setForm((p) => ({ ...p, valor: e.target.value }))}
+                      placeholder="0.00"
+                    />
                   </div>
-                  <Button onClick={() => criar.mutate(form)} disabled={!form.nome || criar.isPending} className="w-full rounded-xl">
+                  <Button
+                    onClick={() => criar.mutate(form)}
+                    disabled={!form.nome || criar.isPending}
+                    className="w-full rounded-xl"
+                  >
                     {criar.isPending ? 'Salvando...' : 'Salvar Plano'}
                   </Button>
                 </div>
@@ -112,7 +131,9 @@ export function BeneficiosSettingsTab() {
         </CardHeader>
         <CardContent className="p-0">
           {isLoading ? (
-            <div className="p-8 flex justify-center"><Spinner /></div>
+            <div className="p-8 flex justify-center">
+              <Spinner />
+            </div>
           ) : (
             <Table>
               <TableHeader>
@@ -125,7 +146,7 @@ export function BeneficiosSettingsTab() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {regras.map((regra: any) => (
+                {regras.map((regra) => (
                   <TableRow key={regra.id} className="hover:bg-accent/30 transition-colors">
                     <TableCell className="font-medium font-body">{regra.nome}</TableCell>
                     <TableCell className="text-muted-foreground font-body text-xs">{regra.tipo}</TableCell>
@@ -133,9 +154,9 @@ export function BeneficiosSettingsTab() {
                       {regra.valor?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                     </TableCell>
                     <TableCell>
-                      <FormSwitch 
+                      <FormSwitch
                         label=""
-                        checked={regra.ativo} 
+                        checked={regra.ativo ?? false}
                         onCheckedChange={(v) => alternarStatus.mutate({ id: regra.id, ativo: v })}
                       />
                     </TableCell>

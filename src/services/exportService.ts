@@ -153,7 +153,7 @@ export const exportPontoPDF = (data: Record<string, unknown>[], title = 'Relató
   }
 };
 
-interface Portaria671Solicitacao {
+export interface Portaria671Solicitacao {
   id: string;
   data_ponto: string;
   tipo_ponto?: string;

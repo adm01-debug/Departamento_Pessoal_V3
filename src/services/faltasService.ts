@@ -4,9 +4,10 @@ import type { Insertable, Tables, Updatable } from '@/integrations/supabase/data
 type Falta = Tables<'faltas'>;
 type FaltaInsert = Insertable<'faltas'>;
 type FaltaUpdate = Updatable<'faltas'>;
+export type FaltaComColaborador = Falta & { colaborador: { nome_completo: string } | null };
 
 export const faltasService = {
-  async listar(empresaId: string): Promise<Falta[]> {
+  async listar(empresaId: string): Promise<FaltaComColaborador[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
     let q = (
@@ -15,7 +16,7 @@ export const faltasService = {
     q = q.eq('empresa_id', empresaId);
     const { data, error } = await q;
     if (error) throw error;
-    return (data as Falta[] | null) || [];
+    return (data as FaltaComColaborador[] | null) || [];
   },
 
   async buscarPorColaborador(colaboradorId: string, empresaId: string): Promise<Falta[]> {

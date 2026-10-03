@@ -1,11 +1,21 @@
-import { useMemo } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-  BarChart, Bar, AreaChart, Area,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, Legend,
-} from "recharts";
-import { BarChart3, PieChart as PieChartIcon, TrendingUp, Layers } from "lucide-react";
+  BarChart,
+  Bar,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
+} from 'recharts';
+import { BarChart3, PieChart as PieChartIcon, TrendingUp, Layers } from 'lucide-react';
 
 interface TelemetryRow {
   id: string;
@@ -23,25 +33,29 @@ interface TelemetryChartsProps {
 }
 
 const SEVERITY_COLORS: Record<string, string> = {
-  slow: "hsl(45, 93%, 47%)",
-  very_slow: "hsl(0, 84%, 60%)",
-  error: "hsl(0, 72%, 51%)",
-  normal: "hsl(142, 71%, 45%)",
+  slow: 'hsl(45, 93%, 47%)',
+  very_slow: 'hsl(0, 84%, 60%)',
+  error: 'hsl(0, 72%, 51%)',
+  normal: 'hsl(142, 71%, 45%)',
 };
 
 function formatBucketTime(ts: number, timeFilter: string): string {
   const d = new Date(ts);
-  if (timeFilter === "7d") {
-    return d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+  if (timeFilter === '7d') {
+    return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
   }
-  return d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 }
 
 export function TelemetryCharts({ rows, timeFilter }: TelemetryChartsProps) {
-  const bucketMs = timeFilter === "1h" ? 5 * 60 * 1000
-    : timeFilter === "6h" ? 30 * 60 * 1000
-    : timeFilter === "24h" ? 60 * 60 * 1000
-    : 6 * 60 * 60 * 1000;
+  const bucketMs =
+    timeFilter === '1h'
+      ? 5 * 60 * 1000
+      : timeFilter === '6h'
+        ? 30 * 60 * 1000
+        : timeFilter === '24h'
+          ? 60 * 60 * 1000
+          : 6 * 60 * 60 * 1000;
 
   // 1. Alertas ao longo do tempo (stacked bar)
   const timeSeriesData = useMemo(() => {
@@ -51,9 +65,9 @@ export function TelemetryCharts({ rows, timeFilter }: TelemetryChartsProps) {
       const ts = new Date(r.created_at).getTime();
       const bucket = Math.floor(ts / bucketMs) * bucketMs;
       const prev = buckets.get(bucket) || { slow: 0, very_slow: 0, error: 0 };
-      if (r.severity === "slow") prev.slow++;
-      else if (r.severity === "very_slow") prev.very_slow++;
-      else if (r.severity === "error") prev.error++;
+      if (r.severity === 'slow') prev.slow++;
+      else if (r.severity === 'very_slow') prev.very_slow++;
+      else if (r.severity === 'error') prev.error++;
       buckets.set(bucket, prev);
     }
     return [...buckets.entries()]
@@ -92,7 +106,7 @@ export function TelemetryCharts({ rows, timeFilter }: TelemetryChartsProps) {
     if (rows.length === 0) return [];
     const stats = new Map<string, number>();
     for (const r of rows) {
-      const key = r.rpc_name || r.table_name || "unknown";
+      const key = r.rpc_name || r.table_name || 'unknown';
       stats.set(key, (stats.get(key) || 0) + 1);
     }
     return [...stats.entries()]
@@ -131,13 +145,13 @@ export function TelemetryCharts({ rows, timeFilter }: TelemetryChartsProps) {
                 <YAxis tick={{ fontSize: 10 }} className="text-muted-foreground" allowDecimals={false} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "hsl(var(--popover))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "8px",
-                    fontSize: "12px",
+                    backgroundColor: 'hsl(var(--popover))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px',
+                    fontSize: '12px',
                   }}
                 />
-                <Legend wrapperStyle={{ fontSize: "11px" }} />
+                <Legend wrapperStyle={{ fontSize: '11px' }} />
                 <Bar dataKey="slow" stackId="a" fill={SEVERITY_COLORS.slow} name="Lentas" />
                 <Bar dataKey="very_slow" stackId="a" fill={SEVERITY_COLORS.very_slow} name="Muito Lentas" />
                 <Bar dataKey="error" stackId="a" fill={SEVERITY_COLORS.error} name="Erros" radius={[4, 4, 0, 0]} />
@@ -167,7 +181,7 @@ export function TelemetryCharts({ rows, timeFilter }: TelemetryChartsProps) {
                   label={({ name, value }) => `${name} (${value})`}
                 >
                   {severityDistribution.map((entry) => (
-                    <Cell key={entry.name} fill={SEVERITY_COLORS[entry.name] || "hsl(var(--muted))"} />
+                    <Cell key={entry.name} fill={SEVERITY_COLORS[entry.name] || 'hsl(var(--muted))'} />
                   ))}
                 </Pie>
                 <Tooltip />
@@ -191,19 +205,38 @@ export function TelemetryCharts({ rows, timeFilter }: TelemetryChartsProps) {
               <AreaChart data={durationData}>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-border/30" />
                 <XAxis dataKey="time" tick={{ fontSize: 10 }} />
-                <YAxis tick={{ fontSize: 10 }} tickFormatter={(v) => v >= 1000 ? `${(v / 1000).toFixed(0)}s` : `${v}ms`} />
+                <YAxis
+                  tick={{ fontSize: 10 }}
+                  tickFormatter={(v) => (v >= 1000 ? `${(v / 1000).toFixed(0)}s` : `${v}ms`)}
+                />
                 <Tooltip
-                  formatter={(value: any) => Number(value) >= 1000 ? `${(value / 1000).toFixed(1)}s` : `${value}ms`}
+                  formatter={(value) =>
+                    Number(value) >= 1000 ? `${(Number(value) / 1000).toFixed(1)}s` : `${value}ms`
+                  }
                   contentStyle={{
-                    backgroundColor: "hsl(var(--popover))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "8px",
-                    fontSize: "12px",
+                    backgroundColor: 'hsl(var(--popover))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px',
+                    fontSize: '12px',
                   }}
                 />
-                <Legend wrapperStyle={{ fontSize: "11px" }} />
-                <Area type="monotone" dataKey="maxMs" stroke={SEVERITY_COLORS.very_slow} fill={SEVERITY_COLORS.very_slow} fillOpacity={0.15} name="Máxima" />
-                <Area type="monotone" dataKey="mediaMs" stroke={SEVERITY_COLORS.slow} fill={SEVERITY_COLORS.slow} fillOpacity={0.2} name="Média" />
+                <Legend wrapperStyle={{ fontSize: '11px' }} />
+                <Area
+                  type="monotone"
+                  dataKey="maxMs"
+                  stroke={SEVERITY_COLORS.very_slow}
+                  fill={SEVERITY_COLORS.very_slow}
+                  fillOpacity={0.15}
+                  name="Máxima"
+                />
+                <Area
+                  type="monotone"
+                  dataKey="mediaMs"
+                  stroke={SEVERITY_COLORS.slow}
+                  fill={SEVERITY_COLORS.slow}
+                  fillOpacity={0.2}
+                  name="Média"
+                />
               </AreaChart>
             </ResponsiveContainer>
           </CardContent>
@@ -224,10 +257,10 @@ export function TelemetryCharts({ rows, timeFilter }: TelemetryChartsProps) {
                 <YAxis type="category" dataKey="name" tick={{ fontSize: 10 }} width={55} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "hsl(var(--popover))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "8px",
-                    fontSize: "12px",
+                    backgroundColor: 'hsl(var(--popover))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px',
+                    fontSize: '12px',
                   }}
                 />
                 <Bar dataKey="alertas" fill={SEVERITY_COLORS.very_slow} name="Alertas" radius={[0, 4, 4, 0]} />

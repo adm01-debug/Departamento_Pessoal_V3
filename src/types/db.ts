@@ -1,7 +1,7 @@
 /**
  * Aliases ergonômicos para linhas do banco.
  *
- * Objetivo: eliminar `useState<any>` em componentes que armazenam registros
+ * Objetivo: eliminar `useState` sem tipo em componentes que armazenam registros
  * do Supabase, restaurando type-safety sem exigir refatoração de cada consumo.
  *
  * Uso:
@@ -26,7 +26,7 @@ export type Insert<T extends TableName> = Database['public']['Tables'][T]['Inser
 export type Update<T extends TableName> = Database['public']['Tables'][T]['Update'];
 
 /**
- * Registro de shape dinâmico. Preferível a `any` porque força o consumidor
+ * Registro de shape dinâmico. Preferível à tipagem solta porque força o consumidor
  * a fazer narrowing explícito (`if ('foo' in x)` ou cast `as Row<'x'>`)
  * antes de ler propriedades — impede o típico `obj.foo.bar` que quebra
  * silenciosamente quando a API responde em outro formato.
@@ -44,4 +44,3 @@ export type UnknownRecord = Record<string, unknown>;
  * atalho para evitar tipar corretamente.
  */
 export type LooseRow<T extends TableName> = Partial<Row<T>> & Record<string, unknown>;
-

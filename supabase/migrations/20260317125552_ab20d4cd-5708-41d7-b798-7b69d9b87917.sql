@@ -74,12 +74,16 @@ DROP POLICY IF EXISTS "Authenticated users can insert admissoes" ON public.admis
 DROP POLICY IF EXISTS "Authenticated users can update admissoes" ON public.admissoes;
 DROP POLICY IF EXISTS "Authenticated users can delete admissoes" ON public.admissoes;
 
+DROP POLICY IF EXISTS "tenant_admissoes_select" ON public.admissoes;
 CREATE POLICY "tenant_admissoes_select" ON public.admissoes FOR SELECT TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "tenant_admissoes_insert" ON public.admissoes;
 CREATE POLICY "tenant_admissoes_insert" ON public.admissoes FOR INSERT TO authenticated
   WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "tenant_admissoes_update" ON public.admissoes;
 CREATE POLICY "tenant_admissoes_update" ON public.admissoes FOR UPDATE TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "tenant_admissoes_delete" ON public.admissoes;
 CREATE POLICY "tenant_admissoes_delete" ON public.admissoes FOR DELETE TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
 
@@ -89,17 +93,22 @@ DROP POLICY IF EXISTS "Authenticated users can insert desligamentos" ON public.d
 DROP POLICY IF EXISTS "Authenticated users can update desligamentos" ON public.desligamentos;
 DROP POLICY IF EXISTS "Authenticated users can delete desligamentos" ON public.desligamentos;
 
+DROP POLICY IF EXISTS "tenant_desligamentos_select" ON public.desligamentos;
 CREATE POLICY "tenant_desligamentos_select" ON public.desligamentos FOR SELECT TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "tenant_desligamentos_insert" ON public.desligamentos;
 CREATE POLICY "tenant_desligamentos_insert" ON public.desligamentos FOR INSERT TO authenticated
   WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "tenant_desligamentos_update" ON public.desligamentos;
 CREATE POLICY "tenant_desligamentos_update" ON public.desligamentos FOR UPDATE TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "tenant_desligamentos_delete" ON public.desligamentos;
 CREATE POLICY "tenant_desligamentos_delete" ON public.desligamentos FOR DELETE TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
 
 -- documento_templates
 DROP POLICY IF EXISTS "Authenticated users can manage documento_templates" ON public.documento_templates;
+DROP POLICY IF EXISTS "tenant_documento_templates" ON public.documento_templates;
 CREATE POLICY "tenant_documento_templates" ON public.documento_templates FOR ALL TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())))
   WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
@@ -108,12 +117,14 @@ CREATE POLICY "tenant_documento_templates" ON public.documento_templates FOR ALL
 DROP POLICY IF EXISTS "Authenticated users can view documentos_assinatura" ON public.documentos_assinatura;
 DROP POLICY IF EXISTS "Authenticated users can insert documentos_assinatura" ON public.documentos_assinatura;
 DROP POLICY IF EXISTS "Authenticated users can update documentos_assinatura" ON public.documentos_assinatura;
+DROP POLICY IF EXISTS "tenant_documentos_assinatura" ON public.documentos_assinatura;
 CREATE POLICY "tenant_documentos_assinatura" ON public.documentos_assinatura FOR ALL TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())))
   WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
 
 -- onboarding_templates
 DROP POLICY IF EXISTS "Authenticated users can manage onboarding_templates" ON public.onboarding_templates;
+DROP POLICY IF EXISTS "tenant_onboarding_templates" ON public.onboarding_templates;
 CREATE POLICY "tenant_onboarding_templates" ON public.onboarding_templates FOR ALL TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())))
   WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
@@ -123,6 +134,7 @@ DROP POLICY IF EXISTS "Usuários autenticados podem ver agendamentos" ON public.
 DROP POLICY IF EXISTS "Usuários autenticados podem inserir agendamentos" ON public.relatorios_agendados;
 DROP POLICY IF EXISTS "Usuários autenticados podem atualizar agendamentos" ON public.relatorios_agendados;
 DROP POLICY IF EXISTS "Usuários autenticados podem deletar agendamentos" ON public.relatorios_agendados;
+DROP POLICY IF EXISTS "tenant_relatorios_agendados" ON public.relatorios_agendados;
 CREATE POLICY "tenant_relatorios_agendados" ON public.relatorios_agendados FOR ALL TO authenticated
   USING (empresa_id IN (SELECT public.get_user_empresas(auth.uid())))
   WITH CHECK (empresa_id IN (SELECT public.get_user_empresas(auth.uid())));
@@ -130,8 +142,10 @@ CREATE POLICY "tenant_relatorios_agendados" ON public.relatorios_agendados FOR A
 -- auditoria (empresa_id é TEXT, precisa cast)
 DROP POLICY IF EXISTS "Authenticated users can read auditoria" ON public.auditoria;
 DROP POLICY IF EXISTS "Authenticated users can insert auditoria" ON public.auditoria;
+DROP POLICY IF EXISTS "tenant_auditoria_select" ON public.auditoria;
 CREATE POLICY "tenant_auditoria_select" ON public.auditoria FOR SELECT TO authenticated
   USING (empresa_id::uuid IN (SELECT public.get_user_empresas(auth.uid())));
+DROP POLICY IF EXISTS "tenant_auditoria_insert" ON public.auditoria;
 CREATE POLICY "tenant_auditoria_insert" ON public.auditoria FOR INSERT TO authenticated
   WITH CHECK (empresa_id::uuid IN (SELECT public.get_user_empresas(auth.uid())));
 

@@ -1,32 +1,41 @@
 import { criarEvento } from '@/services/esocialService';
 
-export async function gerarEventosSST(empresaId: string, dados: any) {
+export async function gerarEventosSST(
+  empresaId: string,
+  dados: { acidente?: Record<string, unknown>; exame?: Record<string, unknown>; riscos?: Record<string, unknown> }
+) {
   // Mapeamento de eventos de Saúde e Segurança do Trabalho
   const eventos = [];
-  
+
   if (dados.acidente) {
-    eventos.push(await criarEvento({
-      empresa_id: empresaId,
-      tipo_evento: 'S-2210',
-      dados: dados.acidente
-    }));
+    eventos.push(
+      await criarEvento({
+        empresa_id: empresaId,
+        tipo_evento: 'S-2210',
+        dados: dados.acidente,
+      })
+    );
   }
-  
+
   if (dados.exame) {
-    eventos.push(await criarEvento({
-      empresa_id: empresaId,
-      tipo_evento: 'S-2220',
-      dados: dados.exame
-    }));
+    eventos.push(
+      await criarEvento({
+        empresa_id: empresaId,
+        tipo_evento: 'S-2220',
+        dados: dados.exame,
+      })
+    );
   }
-  
+
   if (dados.riscos) {
-    eventos.push(await criarEvento({
-      empresa_id: empresaId,
-      tipo_evento: 'S-2240',
-      dados: dados.riscos
-    }));
+    eventos.push(
+      await criarEvento({
+        empresa_id: empresaId,
+        tipo_evento: 'S-2240',
+        dados: dados.riscos,
+      })
+    );
   }
-  
+
   return eventos;
 }

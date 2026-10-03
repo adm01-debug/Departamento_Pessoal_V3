@@ -48,6 +48,4 @@ CREATE POLICY "Inserção por empresa historico" ON public.historico_calculos_fo
 
 -- Comentário
 COMMENT ON FUNCTION public.get_auth_empresa_id() IS
-  '[P0-003] Helper canônica para tenant isolation. ' ||
-  'SEMPRE preferir esta função a paths inline no JWT. ' ||
-  'Lê de app_metadata (imutável pelo usuário, só service_role).';
+  '[P0-003] Helper canônica para tenant isolation. SEMPRE preferir esta função a paths inline no JWT. Lê de app_metadata (imutável pelo usuário, só service_role).';

@@ -91,5 +91,4 @@ DROP FUNCTION public._ensure_search_path(TEXT, TEXT, TEXT);
 
 -- Comentário de auditoria
 COMMENT ON SCHEMA public IS
-  '[P0-006] Todas funções SECURITY DEFINER têm SET search_path = public. ' ||
-  'Vetado: search path injection via schema manipulation.';
+  '[P0-006] Todas funções SECURITY DEFINER têm SET search_path = public. Vetado: search path injection via schema manipulation.';

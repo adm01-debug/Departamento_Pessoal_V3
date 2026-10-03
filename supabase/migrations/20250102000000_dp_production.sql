@@ -93,8 +93,11 @@ ALTER TABLE public.folhas ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Allow all" ON public.colaboradores;
 CREATE POLICY "Allow all" ON public.colaboradores FOR ALL USING (true);
+DROP POLICY IF EXISTS "Allow all" ON public.ferias;
 CREATE POLICY "Allow all" ON public.ferias FOR ALL USING (true);
+DROP POLICY IF EXISTS "Allow all" ON public.pontos;
 CREATE POLICY "Allow all" ON public.pontos FOR ALL USING (true);
+DROP POLICY IF EXISTS "Allow all" ON public.folhas;
 CREATE POLICY "Allow all" ON public.folhas FOR ALL USING (true);
 
 -- Trigger para updated_at

@@ -14,6 +14,12 @@
 -- 20260924200000) — este gate exige apenas correlação com o solicitante
 -- (pertence_a_empresa/auth.uid()), não necessariamente papel de RH.
 
+-- Reconcilia coluna de tenant canônica ausente em schemas legados.
+ALTER TABLE public.recrutamento_anotacoes  ADD COLUMN IF NOT EXISTS empresa_id uuid;
+ALTER TABLE public.recrutamento_entrevistas ADD COLUMN IF NOT EXISTS empresa_id uuid;
+ALTER TABLE public.recrutamento_testes     ADD COLUMN IF NOT EXISTS empresa_id uuid;
+ALTER TABLE public.treinamento_instancias  ADD COLUMN IF NOT EXISTS empresa_id uuid;
+
 -- ── Tabelas com empresa_id direto ──────────────────────────────────────
 DROP POLICY IF EXISTS "Arquivos acessíveis por empresa" ON public.beneficio_arquivos;
 CREATE POLICY "Arquivos acessíveis por empresa" ON public.beneficio_arquivos

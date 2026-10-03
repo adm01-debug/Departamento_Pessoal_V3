@@ -1,5 +1,7 @@
 import { BaseService, ListOptions, ListResponse } from './baseService';
 import { Colaborador } from '@/types/entities';
+import { colaboradorSchema } from '@/schemas/colaborador';
+import { validateInput } from '@/schemas/validate';
 import { supabase } from '@/integrations/supabase/client';
 import { registrarAcessoPII } from './piiAccessLogService';
 
@@ -120,6 +122,7 @@ class ColaboradorService extends BaseService<Colaborador> {
   }
 
   async criar(payload: Record<string, unknown>): Promise<Colaborador> {
+    validateInput(colaboradorSchema, payload, 'colaboradorService.criar');
     try {
       return await super.criar(payload);
     } catch (e) {
@@ -128,6 +131,7 @@ class ColaboradorService extends BaseService<Colaborador> {
   }
 
   async atualizar(id: string, payload: Record<string, unknown>, empresaId: string): Promise<Colaborador> {
+    validateInput(colaboradorSchema, payload, 'colaboradorService.atualizar');
     try {
       return await super.atualizar(id, payload, empresaId);
     } catch (e) {

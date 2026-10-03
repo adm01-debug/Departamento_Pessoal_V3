@@ -1,17 +1,18 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children }: any) => <div>{children}</div>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
+  Card: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children }: any) => <span>{children}</span>,
+  Badge: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
 }));
 
 vi.mock('@/components/ui/skeleton', () => ({
-  Skeleton: ({ className }: any) => <div className={className} data-testid="skeleton" />,
+  Skeleton: ({ className }: { className?: string }) => <div className={className} data-testid="skeleton" />,
 }));
 
 import { TelemetryTable } from '../admin/telemetry/TelemetryTable';

@@ -21,8 +21,8 @@ type Filter = (column: string, value: unknown) => LooseQueryBuilder;
 
 /**
  * Contrato estrutural mínimo do query builder do PostgREST usado pelo
- * `BaseService`. Substitui o antigo `(supabase as any).from(...)`, que
- * propagava `any` para 40+ serviços — qualquer erro de digitação em `.eq()`,
+ * `BaseService`. Substitui o antigo `.from(...)` sem tipo, que
+ * propagava tipagem solta para 40+ serviços — qualquer erro de digitação em `.eq()`,
  * `.range()` ou no destructuring da resposta passava batido no compilador.
  */
 export interface LooseQueryBuilder extends PromiseLike<LooseQueryResponse> {
@@ -46,7 +46,10 @@ export interface LooseQueryBuilder extends PromiseLike<LooseQueryResponse> {
   or(filters: string, options?: { foreignTable?: string; referencedTable?: string }): LooseQueryBuilder;
   not(column: string, operator: string, value: unknown): LooseQueryBuilder;
 
-  order(column: string, options?: { ascending?: boolean; nullsFirst?: boolean; referencedTable?: string }): LooseQueryBuilder;
+  order(
+    column: string,
+    options?: { ascending?: boolean; nullsFirst?: boolean; referencedTable?: string }
+  ): LooseQueryBuilder;
   range(from: number, to: number): LooseQueryBuilder;
   limit(count: number, options?: { referencedTable?: string }): LooseQueryBuilder;
 

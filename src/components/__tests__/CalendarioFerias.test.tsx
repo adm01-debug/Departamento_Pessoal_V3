@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { format, startOfMonth, addDays } from 'date-fns';
@@ -7,14 +8,15 @@ vi.mock('@/hooks/useFerias', () => ({
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children, open }: any) => open ? <div role="dialog">{children}</div> : null,
-  DialogContent: ({ children }: any) => <div>{children}</div>,
-  DialogHeader: ({ children }: any) => <div>{children}</div>,
-  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
+  Dialog: ({ children, open }: { children?: ReactNode; open?: boolean }) =>
+    open ? <div role="dialog">{children}</div> : null,
+  DialogContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
 }));
 
 vi.mock('@/components/ui/status-badge', () => ({
-  StatusBadge: ({ status }: any) => <span data-testid="status-badge">{status}</span>,
+  StatusBadge: ({ status }: { status?: string }) => <span data-testid="status-badge">{status}</span>,
 }));
 
 vi.mock('@/components/ui/separator', () => ({
@@ -52,47 +54,47 @@ const MOCK_FERIAS = [
 
 describe('CalendarioFerias', () => {
   it('renders Calendário de Férias title', () => {
-    vi.mocked(useFerias).mockReturnValue({ ferias: [] } as any);
+    vi.mocked(useFerias).mockReturnValue({ ferias: [] } as never);
     render(<CalendarioFerias />);
     expect(screen.getByText('Calendário de Férias')).toBeInTheDocument();
   });
 
   it('renders month navigation buttons', () => {
-    vi.mocked(useFerias).mockReturnValue({ ferias: [] } as any);
+    vi.mocked(useFerias).mockReturnValue({ ferias: [] } as never);
     render(<CalendarioFerias />);
     expect(screen.getByLabelText('Mês anterior')).toBeInTheDocument();
     expect(screen.getByLabelText('Próximo mês')).toBeInTheDocument();
   });
 
   it('shows empty state message when no ferias this month', () => {
-    vi.mocked(useFerias).mockReturnValue({ ferias: [] } as any);
+    vi.mocked(useFerias).mockReturnValue({ ferias: [] } as never);
     render(<CalendarioFerias />);
     expect(screen.getByText('Nenhuma férias programada para este mês.')).toBeInTheDocument();
   });
 
   it('renders colaborador names from ferias data', () => {
-    vi.mocked(useFerias).mockReturnValue({ ferias: MOCK_FERIAS } as any);
+    vi.mocked(useFerias).mockReturnValue({ ferias: MOCK_FERIAS } as never);
     render(<CalendarioFerias />);
     expect(screen.getByText('João Silva')).toBeInTheDocument();
     expect(screen.getByText('Maria Souza')).toBeInTheDocument();
   });
 
   it('renders status badges for ferias', () => {
-    vi.mocked(useFerias).mockReturnValue({ ferias: MOCK_FERIAS } as any);
+    vi.mocked(useFerias).mockReturnValue({ ferias: MOCK_FERIAS } as never);
     render(<CalendarioFerias />);
     const badges = screen.getAllByTestId('status-badge');
     expect(badges.length).toBeGreaterThanOrEqual(2);
   });
 
   it('renders dias count for each ferias entry', () => {
-    vi.mocked(useFerias).mockReturnValue({ ferias: MOCK_FERIAS } as any);
+    vi.mocked(useFerias).mockReturnValue({ ferias: MOCK_FERIAS } as never);
     render(<CalendarioFerias />);
     expect(screen.getByText(/30 dias/)).toBeInTheDocument();
     expect(screen.getByText(/10 dias/)).toBeInTheDocument();
   });
 
   it('displays current month label', () => {
-    vi.mocked(useFerias).mockReturnValue({ ferias: [] } as any);
+    vi.mocked(useFerias).mockReturnValue({ ferias: [] } as never);
     render(<CalendarioFerias />);
     // Should show a month/year string
     const monthLabel = screen.getByText(/2026/i);

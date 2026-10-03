@@ -2,6 +2,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { format, subDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import type { Tables } from '@/integrations/supabase/database.types';
 
 /**
  * Aviso de Férias (padrão MTE / CLT arts. 135 e 145)
@@ -9,9 +10,24 @@ import { ptBR } from 'date-fns/locale';
  * A assinatura é ELETRÔNICA (MP 2.200-2/2001 §2º) — trilha probatória: hash + timestamp + IP + UA.
  */
 export interface AvisoFeriasInput {
-  ferias: any;
-  colaborador: any;
-  empresa: any;
+  ferias: Partial<Tables<'ferias'>>;
+  colaborador: Partial<
+    Pick<
+      Tables<'colaboradores'>,
+      'nome_completo' | 'cpf' | 'pis_pasep' | 'ctps_numero' | 'ctps_serie' | 'data_admissao'
+    >
+  > & {
+    cargo?: string | { nome: string | null } | null;
+    departamento?: string | { nome: string | null } | null;
+    cargo_nome?: string | null;
+    departamento_nome?: string | null;
+  };
+  empresa: Partial<
+    Pick<
+      Tables<'empresas'>,
+      'id' | 'razao_social' | 'nome_fantasia' | 'cnpj' | 'logradouro' | 'numero' | 'bairro' | 'cidade' | 'uf'
+    >
+  >;
   assinatura?: {
     hash?: string;
     assinadoEm?: string;
@@ -28,14 +44,20 @@ export interface AvisoFeriasResult {
   filename: string;
 }
 
-const fmtDate = (d?: string | Date | null) =>
-  d ? format(new Date(d), 'dd/MM/yyyy', { locale: ptBR }) : '—';
+const fmtDate = (d?: string | Date | null) => (d ? format(new Date(d), 'dd/MM/yyyy', { locale: ptBR }) : '—');
+
+function lastAutoTableY(doc: jsPDF): number {
+  return (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY;
+}
 
 const fmtCurrency = (v?: number | null) =>
   (Number(v) || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
 async function sha256Hex(bytes: Uint8Array): Promise<string> {
-  const buf = await crypto.subtle.digest('SHA-256', bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer);
+  const buf = await crypto.subtle.digest(
+    'SHA-256',
+    bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer
+  );
   return Array.from(new Uint8Array(buf))
     .map((b) => b.toString(16).padStart(2, '0'))
     .join('');
@@ -53,7 +75,7 @@ export async function gerarAvisoFeriasPDF(input: AvisoFeriasInput): Promise<Avis
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
   doc.text(`CNPJ: ${empresa?.cnpj || '—'}`, 14, 21);
-  const endereco = [empresa?.endereco, empresa?.numero, empresa?.bairro, empresa?.cidade, empresa?.uf]
+  const endereco = [empresa?.logradouro, empresa?.numero, empresa?.bairro, empresa?.cidade, empresa?.uf]
     .filter(Boolean)
     .join(', ');
   if (endereco) doc.text(endereco, 14, 26);
@@ -74,10 +96,20 @@ export async function gerarAvisoFeriasPDF(input: AvisoFeriasInput): Promise<Avis
     body: [
       ['Nome', colaborador?.nome_completo || '—'],
       ['CPF', colaborador?.cpf || '—'],
-      ['CTPS / Série', `${colaborador?.ctps || '—'} / ${colaborador?.ctps_serie || '—'}`],
-      ['PIS/PASEP', colaborador?.pis || '—'],
-      ['Cargo', colaborador?.cargo?.nome || colaborador?.cargo_nome || '—'],
-      ['Departamento', colaborador?.departamento?.nome || colaborador?.departamento_nome || '—'],
+      ['CTPS / Série', `${colaborador?.ctps_numero || '—'} / ${colaborador?.ctps_serie || '—'}`],
+      ['PIS/PASEP', colaborador?.pis_pasep || '—'],
+      [
+        'Cargo',
+        (typeof colaborador?.cargo === 'object' ? colaborador.cargo?.nome : colaborador?.cargo) ||
+          colaborador?.cargo_nome ||
+          '—',
+      ],
+      [
+        'Departamento',
+        (typeof colaborador?.departamento === 'object' ? colaborador.departamento?.nome : colaborador?.departamento) ||
+          colaborador?.departamento_nome ||
+          '—',
+      ],
       ['Data de admissão', fmtDate(colaborador?.data_admissao)],
     ],
     styles: { fontSize: 9, cellPadding: 2 },
@@ -88,10 +120,10 @@ export async function gerarAvisoFeriasPDF(input: AvisoFeriasInput): Promise<Avis
   // Período e valores
   const dataPagamento = ferias?.data_pagamento
     ? new Date(ferias.data_pagamento)
-    : subDays(new Date(ferias.data_inicio), 2); // CLT art. 145: até 2 dias antes
+    : subDays(ferias.data_inicio ? new Date(ferias.data_inicio) : new Date(), 2); // CLT art. 145: até 2 dias antes
 
   autoTable(doc, {
-    startY: (doc as any).lastAutoTable.finalY + 4,
+    startY: lastAutoTableY(doc) + 4,
     theme: 'grid',
     head: [['PERÍODO DE FÉRIAS', '']],
     body: [
@@ -99,16 +131,11 @@ export async function gerarAvisoFeriasPDF(input: AvisoFeriasInput): Promise<Avis
         'Período aquisitivo',
         `${fmtDate(ferias?.periodo_aquisitivo_inicio)} a ${fmtDate(ferias?.periodo_aquisitivo_fim)}`,
       ],
-      [
-        'Período de gozo',
-        `${fmtDate(ferias?.data_inicio)} a ${fmtDate(ferias?.data_fim)}`,
-      ],
+      ['Período de gozo', `${fmtDate(ferias?.data_inicio)} a ${fmtDate(ferias?.data_fim)}`],
       ['Dias de gozo', String(ferias?.dias_gozo ?? '—')],
       [
         'Abono pecuniário (art. 143)',
-        ferias?.abono_pecuniario || (ferias?.dias_abono ?? 0) > 0
-          ? `Sim — ${ferias?.dias_abono ?? 10} dias`
-          : 'Não',
+        ferias?.abono_pecuniario || (ferias?.dias_abono ?? 0) > 0 ? `Sim — ${ferias?.dias_abono ?? 10} dias` : 'Não',
       ],
       ['Adiantamento 13º (art. 7º Lei 4.749/65)', ferias?.adiantamento_13 || ferias?.adiantamento_13o ? 'Sim' : 'Não'],
       ['Data de pagamento (art. 145)', fmtDate(dataPagamento)],
@@ -120,7 +147,7 @@ export async function gerarAvisoFeriasPDF(input: AvisoFeriasInput): Promise<Avis
 
   // Valores
   autoTable(doc, {
-    startY: (doc as any).lastAutoTable.finalY + 4,
+    startY: lastAutoTableY(doc) + 4,
     theme: 'grid',
     head: [['DEMONSTRATIVO', 'VALOR']],
     body: [
@@ -149,7 +176,7 @@ export async function gerarAvisoFeriasPDF(input: AvisoFeriasInput): Promise<Avis
   });
 
   // Texto legal
-  const yTexto = (doc as any).lastAutoTable.finalY + 8;
+  const yTexto = lastAutoTableY(doc) + 8;
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
   const texto =

@@ -53,7 +53,7 @@ export function ColaboradorHistory({ colaboradorId }: ColaboradorHistoryProps) {
               {/* Linha vertical central */}
               <div className="absolute left-[27px] top-8 bottom-8 w-px bg-border/40" />
 
-              {logs.map((log: any, index: number) => (
+              {logs.map((log, index) => (
                 <motion.div
                   key={log.id}
                   initial={{ opacity: 0, x: -10 }}

@@ -11,9 +11,10 @@ import { auditoriaService } from '@/services/auditoriaService';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import { exportPontoCSV } from '@/services/exportService';
-import { maskEmail } from '@/utils/piiMask';
+import { usePiiMask } from '@/hooks/usePiiMask';
 
 export function GlobalAuditLogTab() {
+  const pii = usePiiMask();
   const [search, setSearch] = useState('');
   const [tabelaFilter, setTabelaFilter] = useState('todas');
 
@@ -29,7 +30,7 @@ export function GlobalAuditLogTab() {
   });
 
   const filtered = logs.filter(
-    (l: any) =>
+    (l) =>
       !search ||
       l.tabela?.toLowerCase().includes(search.toLowerCase()) ||
       l.user_email?.toLowerCase().includes(search.toLowerCase()) ||
@@ -40,7 +41,7 @@ export function GlobalAuditLogTab() {
   );
 
   const handleExport = () => {
-    const data = filtered.map((l: any) => ({
+    const data = filtered.map((l) => ({
       data: format(new Date(l.created_at), 'dd/MM/yyyy HH:mm:ss'),
       usuario: l.user_email || 'Sistema',
       acao: l.acao,
@@ -52,7 +53,7 @@ export function GlobalAuditLogTab() {
   };
 
   const getTabelas = () => {
-    const set = new Set(logs.map((l: any) => l.tabela));
+    const set = new Set(logs.map((l) => l.tabela));
     return Array.from(set);
   };
 
@@ -96,7 +97,7 @@ export function GlobalAuditLogTab() {
                 className="bg-transparent border-none text-xs font-body focus:ring-0 outline-hidden"
               >
                 <option value="todas">Todas as Entidades</option>
-                {getTabelas().map((t: any) => (
+                {getTabelas().map((t) => (
                   <option key={String(t)} value={String(t)}>
                     {String(t)}
                   </option>
@@ -122,7 +123,7 @@ export function GlobalAuditLogTab() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filtered.map((log: any) => (
+                  {filtered.map((log) => (
                     <TableRow key={log.id} className="hover:bg-accent/30 transition-colors group">
                       <TableCell className="font-mono text-[10px] whitespace-nowrap">
                         <div className="flex items-center gap-1.5">
@@ -136,7 +137,7 @@ export function GlobalAuditLogTab() {
                             <User className="h-3 w-3 text-primary" />
                           </div>
                           <span className="text-xs font-medium truncate max-w-[150px]">
-                            {log.user_email ? maskEmail(log.user_email) : 'Sistema'}
+                            {log.user_email ? pii.email(log.user_email) : 'Sistema'}
                           </span>
                         </div>
                       </TableCell>

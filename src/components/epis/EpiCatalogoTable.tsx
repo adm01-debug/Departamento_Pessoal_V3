@@ -1,3 +1,5 @@
+import type { Tables } from '@/integrations/supabase/types';
+import { format, parseISO } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -7,12 +9,19 @@ import { motion } from 'framer-motion';
 import { Trash2, ShieldCheck, ShieldAlert, HardHat } from 'lucide-react';
 
 const categoryLabels: Record<string, string> = {
-  cabeca: 'Cabeça', olhos: 'Olhos/Face', auditiva: 'Auditiva', respiratoria: 'Respiratória',
-  maos: 'Mãos', pes: 'Pés', corpo: 'Corpo', queda: 'Queda', outros: 'Outros',
+  cabeca: 'Cabeça',
+  olhos: 'Olhos/Face',
+  auditiva: 'Auditiva',
+  respiratoria: 'Respiratória',
+  maos: 'Mãos',
+  pes: 'Pés',
+  corpo: 'Corpo',
+  queda: 'Queda',
+  outros: 'Outros',
 };
 
 interface EpiCatalogoTableProps {
-  data: any[];
+  data: Tables<'epis'>[];
   onExcluir: (id: string) => void;
 }
 
@@ -61,29 +70,43 @@ export function EpiCatalogoTable({ data, onExcluir }: EpiCatalogoTableProps) {
                             <ShieldAlert className="h-2.5 w-2.5" /> Sem CA
                           </Badge>
                         )}
-                        {e.fabricante && <span className="text-[10px] text-muted-foreground truncate max-w-[120px]">{e.fabricante}</span>}
+                        {e.fabricante && (
+                          <span className="text-[10px] text-muted-foreground truncate max-w-[120px]">
+                            {e.fabricante}
+                          </span>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline" className="text-[10px]">
-                        {categoryLabels[e.categoria] || e.categoria || '—'}
+                        {categoryLabels[e.categoria ?? ''] || e.categoria || '—'}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-col">
-                        <span className={`text-sm font-medium ${e.estoque_atual <= e.estoque_minimo ? 'text-destructive' : 'text-foreground'}`}>
-                          {e.estoque_atual} {e.unidade_medida || 'un'}
+                        <span
+                          className={`text-sm font-medium ${(e.estoque_atual ?? 0) <= (e.estoque_minimo ?? 0) ? 'text-destructive' : 'text-foreground'}`}
+                        >
+                          {e.estoque_atual ?? 0} {e.unidade_medida || 'un'}
                         </span>
-                        {e.estoque_minimo > 0 && <span className="text-[10px] text-muted-foreground">Mín: {e.estoque_minimo}</span>}
+                        {(e.estoque_minimo ?? 0) > 0 && (
+                          <span className="text-[10px] text-muted-foreground">Mín: {e.estoque_minimo ?? 0}</span>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell className="text-xs font-body">
-                      {e.validade_meses ? `${e.validade_meses} meses` : '—'}
+                      {e.ca_validade ? format(parseISO(e.ca_validade), 'dd/MM/yyyy') : '—'}
                     </TableCell>
                     <TableCell className="pr-6">
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Button size="icon" variant="ghost" aria-label="Excluir" className="h-7 w-7 rounded-lg" onClick={() => onExcluir(e.id)}>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            aria-label="Excluir"
+                            className="h-7 w-7 rounded-lg"
+                            onClick={() => onExcluir(e.id)}
+                          >
                             <Trash2 className="h-3.5 w-3.5 text-destructive" />
                           </Button>
                         </TooltipTrigger>
@@ -123,21 +146,33 @@ export function EpiCatalogoTable({ data, onExcluir }: EpiCatalogoTableProps) {
                     {e.fabricante && <span className="text-[10px] text-muted-foreground">{e.fabricante}</span>}
                   </div>
                   {e.ca ? (
-                    <Badge variant="secondary" className="text-[10px]">CA {e.ca}</Badge>
+                    <Badge variant="secondary" className="text-[10px]">
+                      CA {e.ca}
+                    </Badge>
                   ) : (
-                    <Badge variant="destructive" className="text-[10px]">Sem CA</Badge>
+                    <Badge variant="destructive" className="text-[10px]">
+                      Sem CA
+                    </Badge>
                   )}
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex gap-2">
                     <Badge variant="outline" className="text-[10px]">
-                      {categoryLabels[e.categoria] || '—'}
+                      {categoryLabels[e.categoria ?? ''] || '—'}
                     </Badge>
-                    <span className={`text-[10px] font-medium ${e.estoque_atual <= e.estoque_minimo ? 'text-destructive' : 'text-muted-foreground'}`}>
-                      Estoque: {e.estoque_atual}
+                    <span
+                      className={`text-[10px] font-medium ${(e.estoque_atual ?? 0) <= (e.estoque_minimo ?? 0) ? 'text-destructive' : 'text-muted-foreground'}`}
+                    >
+                      Estoque: {e.estoque_atual ?? 0}
                     </span>
                   </div>
-                  <Button size="icon" variant="ghost" aria-label="Excluir" className="h-7 w-7" onClick={() => onExcluir(e.id)}>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    aria-label="Excluir"
+                    className="h-7 w-7"
+                    onClick={() => onExcluir(e.id)}
+                  >
                     <Trash2 className="h-3.5 w-3.5 text-destructive" />
                   </Button>
                 </div>

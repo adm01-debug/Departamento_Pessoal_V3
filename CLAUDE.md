@@ -5,14 +5,16 @@
 > Mantenedor: Hermes Agent (AtomicaBR Ops/Dev)
 
 > ⚠️ **Correções de auditoria (23/07/2026)** — revisão do batch anterior:
+>
 > - `typescript` **re-pinado 7.0.2 → 6.0.3**. TS 7 quebrava o `typescript-eslint` (peer `>=4.8.4 <6.1.0`) → `lint:ci` abortava (CI vermelho). **NÃO re-bumpar `typescript` para ≥6.1.0** até o typescript-eslint suportar. O `tsgo` (typecheck) vem do pacote separado `@typescript/native-preview`, não afetado.
 > - Bucket de storage **`ferias-avisos` criado** (migração `20260723113000`). O batch da feature de assinatura criou as policies RLS mas nunca o bucket → upload do PDF falhava em runtime ("Bucket not found").
 > - Corrigidos 3 erros de tipo de mock em `loggerService.test.ts` (vitest 4).
-> ✅ **Resolvido (28/07/2026)** — `tsconfig.app.json` foi removido (era órfão). O único config é `tsconfig.json` (raiz), o mesmo que o CI roda via `tsgo --noEmit`, agora com **`strict: true` + `noImplicitAny: true`** e **0 erros** (17 erros reais corrigidos em 7 arquivos).
-> ✅ **Resolvido (28/07/2026)** — `build.minify` migrado para a forma de objeto do Vite 8/OXC (`{ type: 'oxc', compress: { dropConsole: [...] } }`). Auditoria do bundle: os `console.*` remanescentes são **100% de vendor chunks** (jspdf, vendor-react, vendor-supabase), sem PII e sem origem no nosso código.
-> ✅ **Resolvido (29/09/2026)** — `typecheck:tests` roda limpo (0 erros); nota de 232 erros latentes removida.
+>   ✅ **Resolvido (28/07/2026)** — `tsconfig.app.json` foi removido (era órfão). O único config é `tsconfig.json` (raiz), o mesmo que o CI roda via `tsgo --noEmit`, agora com **`strict: true` + `noImplicitAny: true`** e **0 erros** (17 erros reais corrigidos em 7 arquivos).
+>   ✅ **Resolvido (28/07/2026)** — `build.minify` migrado para a forma de objeto do Vite 8/OXC (`{ type: 'oxc', compress: { dropConsole: [...] } }`). Auditoria do bundle: os `console.*` remanescentes são **100% de vendor chunks** (jspdf, vendor-react, vendor-supabase), sem PII e sem origem no nosso código.
+>   ✅ **Resolvido (29/09/2026)** — `typecheck:tests` roda limpo (0 erros); nota de 232 erros latentes removida.
 
 ## 📋 Sumário
+
 1. [Stack & Arquitetura](#-stack--arquitetura)
 2. [Histórico de Sessões](#-histórico-de-sessões)
 3. [Estado Atual](#-estado-atual)
@@ -26,19 +28,21 @@
 ## 🏗 Stack & Arquitetura
 
 ### Stack Principal
-| Camada | Tecnologia | Versão |
-|--------|-----------|--------|
-| **Runtime** | Node.js (Docker) | 22 LTS |
-| **Linguagem** | TypeScript (strict) | 6.0.3 |
-| **Framework** | React | 19.2.8 |
-| **Build** | Vite | 8.1.4 |
-| **Bundler** | Bun | 1.3.14 |
-| **Testes** | Vitest | 4.1.10 |
-| **E2E** | Playwright | 1.61.1 |
-| **Estilos** | Tailwind CSS | 4.3.3 |
-| **Banco** | Supabase (self-hosted) + External DB Bridge |
+
+| Camada        | Tecnologia                                  | Versão |
+| ------------- | ------------------------------------------- | ------ |
+| **Runtime**   | Node.js (Docker)                            | 22 LTS |
+| **Linguagem** | TypeScript (strict)                         | 6.0.3  |
+| **Framework** | React                                       | 19.2.8 |
+| **Build**     | Vite                                        | 8.1.4  |
+| **Bundler**   | Bun                                         | 1.3.14 |
+| **Testes**    | Vitest                                      | 4.1.10 |
+| **E2E**       | Playwright                                  | 1.61.1 |
+| **Estilos**   | Tailwind CSS                                | 4.3.3  |
+| **Banco**     | Supabase (self-hosted) + External DB Bridge |
 
 ### Estrutura de Pastas
+
 ```
 /
 ├── src/                          # Código fonte (React + TS)
@@ -84,24 +88,26 @@
 ```
 
 ### Pipelines CI/CD
-| Workflow | Gatilho | Ações |
-|----------|---------|-------|
-| **ci.yml** | push/PR/workflow_dispatch | typecheck, lint, test:coverage, deno check, security-config, migrations P0/P1, db-integrity |
-| **deploy.yml** | PR / workflow_dispatch | Valida build (Vercel deploy via integração Git) |
-| **security.yml** | push/PR/schedule/workflow_dispatch | CodeQL + npm audit |
-| **e2e.yml** | push/PR | Playwright público (PR) + autenticado (main only) |
-| **healthcheck.yml** | schedule (*/6h) | Healthcheck de produção + abre issue se falhar |
-| **canonical-probes.yml** | workflow_dispatch | Probes RV-01–04 no canônico |
-| **canonical-migrations.yml** | workflow_dispatch | Migrations no canônico (dry-run ou apply) |
-| **canonical-edge-functions.yml** | workflow_dispatch | Deploy Edge Functions no canônico |
-| **db-tests.yml** | push/PR | Testes de migrations em Postgres 17 descartável |
-| **branch-protection.yml** | CONGELADO (if: false) | E01 — não executar até E04+E07 |
+
+| Workflow                         | Gatilho                            | Ações                                                                                       |
+| -------------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------- |
+| **ci.yml**                       | push/PR/workflow_dispatch          | typecheck, lint, test:coverage, deno check, security-config, migrations P0/P1, db-integrity |
+| **deploy.yml**                   | PR / workflow_dispatch             | Valida build (Vercel deploy via integração Git)                                             |
+| **security.yml**                 | push/PR/schedule/workflow_dispatch | CodeQL + npm audit                                                                          |
+| **e2e.yml**                      | push/PR                            | Playwright público (PR) + autenticado (main only)                                           |
+| **healthcheck.yml**              | schedule (*/6h)                    | Healthcheck de produção + abre issue se falhar                                              |
+| **canonical-probes.yml**         | workflow_dispatch                  | Probes RV-01–04 no canônico                                                                 |
+| **canonical-migrations.yml**     | workflow_dispatch                  | Migrations no canônico (dry-run ou apply)                                                   |
+| **canonical-edge-functions.yml** | workflow_dispatch                  | Deploy Edge Functions no canônico                                                           |
+| **db-tests.yml**                 | push/PR                            | Testes de migrations em Postgres 17 descartável                                             |
+| **branch-protection.yml**        | CONGELADO (if: false)              | E01 — não executar até E04+E07                                                              |
 
 **Regras do merge (E09 — via API 27/09/2026):** squash-only, delete branch on merge, allow update branch.
 
 **Ruleset main (ID 21934736):** 7 required_status_checks — baseline em `infra/github/ruleset-main.json`.
 
 ### Segurança do Bridge (external-db-bridge)
+
 ```
 POST-only gateway (32KB file, 729 lines)
 ├── JWT validation (getClaims) para writes
@@ -123,9 +129,11 @@ POST-only gateway (32KB file, 729 lines)
 ## 📜 Histórico de Sessões
 
 ### Sessão 1 — 22-23/07/2026 (Hermes Agent)
+
 **Duração:** 4h30min | **Commits:** 38 | **PRs:** 24
 
 #### O que foi feito:
+
 ```
 🔧 INFRAESTRUTURA (7 entregas)
 ├── Dockerfile: Node 18 → 22 LTS
@@ -190,9 +198,11 @@ POST-only gateway (32KB file, 729 lines)
 ```
 
 ### Sessão 2 — 27/09/2026 (Claude Sonnet 4.6)
+
 **Branch:** `claude/great-rubin-c50zcx` | **PR:** #145 (draft) | **Plano:** 100 etapas
 
 #### O que foi feito:
+
 ```
 🔒 WORKFLOWS AUDIT — plano docs/auditoria/PLANO_100_WORKFLOWS_2026-09-27.md
 ├── E01 — branch-protection.yml congelado (if: false); evita destruir ruleset
@@ -217,9 +227,11 @@ POST-only gateway (32KB file, 729 lines)
 ```
 
 ### Sessão 3 — 28/09/2026 (Claude Sonnet 4.6)
+
 **Branch:** `claude/chore-e03-e48-260928` | **PR:** #153
 
 #### O que foi feito:
+
 ```
 🔒 E03 — Branch protection em main ativada via API
 │   required_pull_request_reviews (count=0, sem aprovação obrigatória)
@@ -240,9 +252,11 @@ POST-only gateway (32KB file, 729 lines)
 ```
 
 ### Sessão 4 — 28/09/2026 (Claude Sonnet 4.6)
+
 **Branches:** `claude/fix-e2e-bun-lockfile-260928` (PR #154, merged) · `claude/feat-sonarcloud-260928-0045` (PR #155, CI verde, aguardando merge) · `claude/great-rubin-c50zcx` (este arquivo)
 
 #### O que foi feito:
+
 ```
 🔧 MELHORIA 2 — bun lockfile + patch segurança (PR #154 → merged SHA 50e29626)
 ├── e2e.yml: bun-version: latest → 1.3.14 (nos 2 jobs playwright)
@@ -268,9 +282,11 @@ POST-only gateway (32KB file, 729 lines)
 ```
 
 ### Sessão 5 — 29/09/2026 (Claude Sonnet 4.6)
+
 **Branches:** `claude/fix-sonarcloud-autoscan-conflict-260929-1250` (PR #162, merged) · `claude/fix-fast-uri-audit-260929-1400` (PR #163, merged)
 
 #### O que foi feito:
+
 ```
 🔒 PR #163 — fast-uri 3.1.6 → 3.1.8 (segurança alta, merged SHA 2b4e053)
 │   GHSA-qw65-cvwx-89v3 + GHSA-58mr-gqgx-xq4g (high severity)
@@ -297,6 +313,7 @@ POST-only gateway (32KB file, 729 lines)
 ## ✅ Estado Atual
 
 ### Status dos Workflows
+
 ```
 CI (ci.yml)              → 7 jobs, todos com timeout, trigger master removido ✅
 Security (security.yml)  → CodeQL ativo, permissions top-level adicionado ✅
@@ -311,34 +328,39 @@ Branch protection (main) → PRs obrigatórias, force-push bloqueado ✅
 ```
 
 ### Métricas (29/09/2026)
-| Indicador | Valor |
-|-----------|-------|
-| Open PRs | 7 dependabot |
-| TypeScript strict | ✅ strict: true + noImplicitAny (0 erros no src) |
-| Testes com tipo | ✅ 0 erros (typecheck:tests runs clean) |
-| Cobertura | ✅ v8 configurada |
-| Merge strategy | ✅ squash-only (allow_merge_commit=false) |
-| Branch delete | ✅ delete_branch_on_merge=true |
-| Ruleset | ✅ 21934736 — 7 required checks — baseline em infra/github/ |
-| Workflows com timeout | ✅ 100% (12 jobs adicionados na sessão 2) |
-| supply chain (SHA-pin) | ✅ Todas as actions fixadas por SHA (E66 — sessão 2) |
-| Branch protection | ✅ Ativo via API (sessão 3) — PRs obrigatórias |
-| E2E secrets | ✅ Rotacionados (sessão 3) — ⚠️ usuários E2E ainda não criados em frjbfeamybqsejlvmqbl |
-| bun-version | ✅ Fixado em 1.3.14 no e2e.yml (sessão 4) — lockfile estável |
-| fast-uri | ✅ 3.1.8 (sessão 5, PR #163) — 0 vulns high/critical |
+
+| Indicador              | Valor                                                                                  |
+| ---------------------- | -------------------------------------------------------------------------------------- |
+| Open PRs               | 7 dependabot                                                                           |
+| TypeScript strict      | ✅ strict: true + noImplicitAny (0 erros no src)                                       |
+| Testes com tipo        | ✅ 0 erros (typecheck:tests runs clean)                                                |
+| Cobertura              | ✅ v8 configurada                                                                      |
+| Merge strategy         | ✅ squash-only (allow_merge_commit=false)                                              |
+| Branch delete          | ✅ delete_branch_on_merge=true                                                         |
+| Ruleset                | ✅ 21934736 — 7 required checks — baseline em infra/github/                            |
+| Workflows com timeout  | ✅ 100% (12 jobs adicionados na sessão 2)                                              |
+| supply chain (SHA-pin) | ✅ Todas as actions fixadas por SHA (E66 — sessão 2)                                   |
+| Branch protection      | ✅ Ativo via API (sessão 3) — PRs obrigatórias                                         |
+| E2E secrets            | ✅ Rotacionados (sessão 3) — ⚠️ usuários E2E ainda não criados em frjbfeamybqsejlvmqbl |
+| bun-version            | ✅ Fixado em 1.3.14 no e2e.yml (sessão 4) — lockfile estável                           |
+| fast-uri               | ✅ 3.1.8 (sessão 5, PR #163) — 0 vulns high/critical                                   |
 
 ---
 
 ## 🔧 Decisões Técnicas
 
 ### Por que Bun + Node fallback?
+
 O `oven-sh/setup-bun@v2` action não funciona em repositórios privados do GitHub (restrição de actions de terceiros). Solução: fallback para `actions/setup-node@v4` com Node.js 22.
 
 ### Por que npm install em vez de npm ci?
+
 O projeto usa `bun.lock` como lockfile, não `package-lock.json`. `npm ci` requer lockfile. `npm install` funciona sem.
 
 ### TypeScript strict — estado real (28/07/2026)
+
 `strict: true` e `noImplicitAny: true` estão ligados no **`tsconfig.json` raiz**, que é exatamente o config executado pelo CI (`tsgo --noEmit`). Medição por flag antes de ligar: `strictNullChecks` isolado = 60 erros, `noImplicitAny` = 9, `strictPropertyInitialization` = 1, `useUnknownInCatchVariables` = 2; **strict completo = 17** (as flags se reforçam e eliminam falsos positivos de inferência). Os 17 foram corrigidos na fonte — sem `any`, sem `@ts-ignore`, sem supressão:
+
 - `FinanceiroBancarioPage`: interfaces locais divergiam do schema (`| null` do Postgres modelado como `| undefined`).
 - `AfastamentosPage`: `status: null` em filtro tipado como opcional + export sem guarda de `empresa_id`.
 - `LoginPage`: narrowing defensivo do erro de login (removido `as any` no caminho de MFA).
@@ -347,6 +369,7 @@ O projeto usa `bun.lock` como lockfile, não `package-lock.json`. `npm ci` reque
 Regra: verificar sempre o config que o CI de fato roda antes de declarar verde.
 
 ### Bridge external-db-bridge
+
 Gateway hardening com JWT validation, CSRF fail-closed, rate limiting, tenant isolation, denylist de tabelas, allowlist de RPCs, regex de SQL injection, validação de ORDER BY, e telemetria com batch. Código em `supabase/functions/external-db-bridge/index.ts` (729 linhas).
 
 ---
@@ -354,21 +377,24 @@ Gateway hardening com JWT validation, CSRF fail-closed, rate limiting, tenant is
 ## ⚠️ Gaps Conhecidos
 
 ### Críticos
-| Gap | Impacto | Solução |
-|-----|---------|--------|
-| CI não roda em repo privado | Pipeline não executa | Settings → Actions → Allow |
-| Branch protection inativo | Push direto p/ main sem review | Settings → Branches → Add rule |
+
+| Gap                         | Impacto                        | Solução                        |
+| --------------------------- | ------------------------------ | ------------------------------ |
+| CI não roda em repo privado | Pipeline não executa           | Settings → Actions → Allow     |
+| Branch protection inativo   | Push direto p/ main sem review | Settings → Branches → Add rule |
 
 ### Médios
-| Gap | Impacto | Solução |
-|-----|---------|----------|
-| `bun.lock` — bun-version pinado | Risco de lockfile divergir resolvido em e2e.yml (sessão 4) | Cron sync-bun-lock cobre cenários restantes |
-| Usuários E2E inexistentes | E2E autenticado falha em produção | Criar admin@teste.local + user@teste.local em frjbfeamybqsejlvmqbl.supabase.co/auth |
-| Deploy Netlify sem secrets | Preview não deploya | Adicionar NETLIFY_AUTH_TOKEN + SITE_ID |
+
+| Gap                             | Impacto                                                    | Solução                                                                             |
+| ------------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `bun.lock` — bun-version pinado | Risco de lockfile divergir resolvido em e2e.yml (sessão 4) | Cron sync-bun-lock cobre cenários restantes                                         |
+| Usuários E2E inexistentes       | E2E autenticado falha em produção                          | Criar admin@teste.local + user@teste.local em frjbfeamybqsejlvmqbl.supabase.co/auth |
+| Deploy Netlify sem secrets      | Preview não deploya                                        | Adicionar NETLIFY_AUTH_TOKEN + SITE_ID                                              |
 
 ### Baixos
-| Gap | Impacto | Solução |
-|-----|---------|--------|
+
+| Gap                                | Impacto           | Solução           |
+| ---------------------------------- | ----------------- | ----------------- |
 | `noUnusedLocals:true` pode alertar | Warnings no build | Aceitar ou limpar |
 
 ---
@@ -376,11 +402,13 @@ Gateway hardening com JWT validation, CSRF fail-closed, rate limiting, tenant is
 ## 🚀 Próximos Passos Recomendados
 
 ### Imediatos (settings do GitHub)
+
 1. **Settings → Actions → General → Allow GitHub Actions** ✅ Habilita CI
 2. **Settings → Branches → Add rule → main** ✅ Protege branch
 3. **Adicionar secrets**: NETLIFY_AUTH_TOKEN, NETLIFY_SITE_ID
 
 ### Curto Prazo
+
 1. Criar usuários E2E em frjbfeamybqsejlvmqbl.supabase.co Auth (admin@teste.local + user@teste.local)
 2. Revisar Bridge runbook (`infra/runbooks/BRIDGE_PERFORMANCE.md`)
 3. Adicionar query timeout no external-db-bridge (AbortController)
@@ -388,6 +416,7 @@ Gateway hardening com JWT validation, CSRF fail-closed, rate limiting, tenant is
 5. Adicionar Content Security Policy headers no nginx
 
 ### Médio Prazo
+
 1. Revisar todos os `any` restantes no código (via `grep -rn ": any" src/`)
 2. Adicionar testes unitários para o Bridge
 3. Cache de resultados para tabelas estáticas
@@ -420,19 +449,31 @@ git branch -d <branch>     # Deletar branch local
 # Docker
 docker build -t dp-v2 .    # Build imagem
 docker compose up          # Subir ambiente
+
+# Graphify (grafo de conhecimento do repo)
+pip install "graphifyy[sql]"   # instalação (uma vez; extra [sql] p/ parse das migrations)
+npm run graph:update           # atualização incremental do grafo
+npm run graph:rebuild          # rebuild completo
+graphify query "quem chama episService"   # perguntas sobre o código
+graphify path "App" "supabase"            # caminho entre dois nós
+graphify explain "useEmpresas"            # explica um nó
+# saída: graphify-out/ (gitignored; GRAPH_REPORT.md + manifest.json são commitados)
 ```
 
 ---
 
-*Documentação gerada por Hermes Agent v0.19.0 em 23/07/2026*
-*Mantenedor: Hermes (AtomicaBR Ops/Dev) — abner.silva@atomicabr.com.br*
+_Documentação gerada por Hermes Agent v0.19.0 em 23/07/2026_
+_Mantenedor: Hermes (AtomicaBR Ops/Dev) — abner.silva@atomicabr.com.br_
 
 ## Frescura do Grafo
+
 Antes de consultar graphify, verifique se o grafo esta atualizado:
+
 ```sh
 git rev-parse --short HEAD
 grep "Built from commit" graphify-out/GRAPH_REPORT.md
 ```
+
 Se divergirem, o auto-sync via N8N deve ter corrigido em ate 15 min.
 Para forcar rebuild manual: `graphify update . --force`
 
@@ -441,6 +482,7 @@ Para forcar rebuild manual: `graphify update . --force`
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
 
 Rules:
+
 - For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
 - If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
 - Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.

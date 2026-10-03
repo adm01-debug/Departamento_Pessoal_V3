@@ -81,14 +81,8 @@ function useDashboardStats(enabled: boolean) {
         supabase.from('admissoes').select('id', { count: 'exact', head: true }).gte('data_prevista', inicioMes),
         supabase.from('desligamentos').select('id', { count: 'exact', head: true }).gte('data_desligamento', inicioMes),
         supabase.from('colaboradores').select('departamento').eq('status', 'ativo'),
-        supabase
-          .from('vw_kpi_turnover' as any)
-          .select('taxa_turnover')
-          .limit(1),
-        supabase
-          .from('vw_kpi_absenteismo' as any)
-          .select('taxa_absenteismo')
-          .limit(1),
+        supabase.from('vw_kpi_turnover').select('taxa_turnover, mes').order('mes', { ascending: false }).limit(1),
+        supabase.from('vw_kpi_absenteismo').select('dias_faltados, mes').order('mes', { ascending: false }).limit(1),
         supabase.from('colaboradores').select('id, salario_base, data_admissao').eq('status', 'ativo'),
         supabase.from('ferias').select('colaborador_id, data_fim').neq('status', 'cancelado'),
       ]);
@@ -111,9 +105,9 @@ function useDashboardStats(enabled: boolean) {
         .sort((a, b) => b.count - a.count)
         .slice(0, 6);
 
-      const turnoverVal =
-        (turnoverData as any)?.[0]?.taxa_turnover ?? ((demissoesMes || 0) / (colaboradoresAtivos || 1)) * 100;
-      const absenteismoVal = (absenteismoData as any)?.[0]?.taxa_absenteismo ?? 0;
+      const turnoverVal = turnoverData?.[0]?.taxa_turnover ?? ((demissoesMes || 0) / (colaboradoresAtivos || 1)) * 100;
+      // Absenteísmo = dias faltados no mês / (ativos × 22 dias úteis) × 100
+      const absenteismoVal = ((absenteismoData?.[0]?.dias_faltados ?? 0) / ((colaboradoresAtivos || 1) * 22)) * 100;
 
       // Passivo Total Estimation (Simplified from PassivoTrabalhistaPage)
       let passivoTotal = 0;
@@ -182,10 +176,7 @@ function usePendencias(enabled: boolean) {
           .select('*', { count: 'exact', head: true })
           .filter('etapa', 'not.in', '("concluida","cancelada")'),
         supabase.from('documentos_assinatura').select('*', { count: 'exact', head: true }).eq('status', 'pendente'),
-        supabase
-          .from('solicitacoes_ajuste_ponto' as any)
-          .select('*', { count: 'exact', head: true })
-          .eq('status', 'pendente'),
+        supabase.from('solicitacoes_ajuste_ponto').select('*', { count: 'exact', head: true }).eq('status', 'pendente'),
       ]);
       const pendencias: Pendencia[] = [];
       if (feriasPendentes && feriasPendentes > 0)

@@ -23,6 +23,7 @@ CREATE POLICY "provisoes_folha_insert" ON public.provisoes_folha
   );
 
 -- UPDATE: apenas admins/RH (imutabilidade para histórico fiscal)
+DROP POLICY IF EXISTS "provisoes_folha_update" ON public.provisoes_folha;
 CREATE POLICY "provisoes_folha_update" ON public.provisoes_folha
   FOR UPDATE TO authenticated
   USING (
@@ -40,6 +41,7 @@ CREATE POLICY "provisoes_folha_update" ON public.provisoes_folha
   );
 
 -- DELETE: apenas admin (auditoria)
+DROP POLICY IF EXISTS "provisoes_folha_delete" ON public.provisoes_folha;
 CREATE POLICY "provisoes_folha_delete" ON public.provisoes_folha
   FOR DELETE TO authenticated
   USING (

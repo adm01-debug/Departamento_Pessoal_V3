@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import type { TipoAfastamento, StatusAfastamento } from '@/types/afastamentos';
+import type { TipoAfastamento, StatusAfastamento, AfastamentoCrudItem } from '@/types/afastamentos';
 import { useAfastamentos, useProrrogacoesAfastamento } from '@/hooks/useAfastamentos';
 import { usePDFExport } from '@/hooks/usePDFExport';
 import { gerarAfastamentosPDF } from '@/utils/afastamentoPDF';
@@ -10,7 +10,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Heart, Plus, Search, Filter, Download, Calendar as CalendarIcon, Clock, AlertCircle, FileText, TrendingUp } from 'lucide-react';
+import {
+  Heart,
+  Plus,
+  Search,
+  Filter,
+  Download,
+  Calendar as CalendarIcon,
+  Clock,
+  AlertCircle,
+  FileText,
+  TrendingUp,
+} from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { AfastamentoStats } from '@/components/afastamentos/AfastamentoStats';
 import { AfastamentoTable } from '@/components/afastamentos/AfastamentoTable';
@@ -22,11 +33,18 @@ import { Badge } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
 import { EmptyList } from '@/components/ui/empty-state';
 import { format } from 'date-fns';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { BarChart, Bar, XAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell } from 'recharts';
-import type { UiRecord } from '@/types/uiRecord';
+
 const tipoLabels: Partial<Record<TipoAfastamento, string>> = {
   doenca: 'Doença',
   acidente_trabalho: 'Acidente Trabalho',
@@ -39,69 +57,74 @@ const tipoLabels: Partial<Record<TipoAfastamento, string>> = {
   servico_militar: 'Serviço Militar',
   mandato_sindical: 'Mandato Sindical',
   suspensao_disciplinar: 'Suspensão Disc.',
-  outros: 'Outros'};
+  outros: 'Outros',
+};
 
 export default function AfastamentosPage() {
   const { afastamentos, isLoading, filtros, setFiltros } = useAfastamentos();
   const { prorrogacoes, isLoading: loadProrr } = useProrrogacoesAfastamento(undefined);
   const { exportarPDF } = usePDFExport();
-  
+
   const [activeTab, setActiveTab] = useState('afastamentos');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTipo, setSelectedTipo] = useState<TipoAfastamento | null>(null);
-  
+
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDocOpen, setIsDocOpen] = useState(false);
   const [isTimelineOpen, setIsTimelineOpen] = useState(false);
-  const [selectedAfastamento, setSelectedAfastamento] = useState<UiRecord | null>(null);
+  const [selectedAfastamento, setSelectedAfastamento] = useState<AfastamentoCrudItem | null>(null);
 
   const stats = {
     total: afastamentos.length,
-    ativos: afastamentos.filter((a: any) => a.status === 'ativo').length,
-    pendentes: afastamentos.filter((a: any) => a.status === 'pendente').length,
-    finalizados: afastamentos.filter((a: any) => a.status === 'finalizado' || a.status === 'concluido').length,
-    diasTotais: afastamentos.reduce<number>((sum, a: any) => sum + Number(a.dias_total || 0), 0)};
+    ativos: afastamentos.filter((a) => a.status === 'ativo').length,
+    pendentes: afastamentos.filter((a) => a.status === 'ativo' && a.data_pericia != null).length,
+    finalizados: afastamentos.filter((a) => a.status === 'encerrado').length,
+    diasTotais: afastamentos.reduce<number>((sum, a) => sum + Number(a.dias_total || 0), 0),
+  };
 
-  const filteredAfastamentos = afastamentos.filter((a: any) => {
-    const matchSearch = 
-      !searchTerm || a.colaborador?.nome_completo?.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchCID = 
-      !filtros.cid || 
-      a.cid?.codigo?.toLowerCase().includes(filtros.cid.toLowerCase()) ||
-      a.cid?.descricao?.toLowerCase().includes(filtros.cid.toLowerCase());
-    
+  const filteredAfastamentos = afastamentos.filter((a) => {
+    const matchSearch = !searchTerm || a.colaborador?.nome_completo?.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchCID =
+      !filtros.cid ||
+      a.cid?.toLowerCase().includes(filtros.cid.toLowerCase()) ||
+      a.cid_descricao?.toLowerCase().includes(filtros.cid.toLowerCase());
+
     const matchTipo = !selectedTipo || a.tipo === selectedTipo;
-    const matchStatus = !filtros.status || a.status === filtros.status;
-    
+    const matchStatus =
+      !filtros.status ||
+      (filtros.status === 'aguardando_inss'
+        ? a.status === 'ativo' && a.data_pericia != null
+        : a.status === filtros.status);
+
     return matchSearch && matchCID && matchTipo && matchStatus;
   });
 
   const chartData = useMemo(() => {
     const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-    const data = months.map(m => ({ name: m, total: 0 }));
-    
-    afastamentos.forEach((af: any) => {
+    const data = months.map((m) => ({ name: m, total: 0 }));
+
+    afastamentos.forEach((af) => {
       const date = new Date(af.data_inicio);
       const monthIndex = date.getMonth();
       data[monthIndex].total += 1;
     });
-    
+
     return data;
   }, [afastamentos]);
 
-  const handleEdit = (af: any) => {
-    setSelectedAfastamento(af);
+  const handleEdit = (af: AfastamentoCrudItem) => {
+    setSelectedAfastamento({ ...af });
     setIsFormOpen(true);
   };
 
-  const handleDocuments = (af: any) => {
-    setSelectedAfastamento(af);
+  const handleDocuments = (af: AfastamentoCrudItem) => {
+    setSelectedAfastamento({ ...af });
     setIsDocOpen(true);
   };
 
-  const handleTimeline = (af: any) => {
-    setSelectedAfastamento(af);
+  const handleTimeline = (af: AfastamentoCrudItem) => {
+    setSelectedAfastamento({ ...af });
     setIsTimelineOpen(true);
   };
 
@@ -117,7 +140,7 @@ export default function AfastamentosPage() {
       icon={<Heart className="h-5 w-5 text-white" />}
       gradient="from-red-500 to-orange-500"
       actions={
-        <Button 
+        <Button
           onClick={handleNew}
           className="rounded-xl bg-gradient-to-r from-red-600 to-orange-600 hover:opacity-90 shadow-md font-medium"
         >
@@ -130,27 +153,31 @@ export default function AfastamentosPage() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <TabsList className="bg-muted/50 p-1">
-            <TabsTrigger value="afastamentos" className="rounded-lg">Afastamentos</TabsTrigger>
-            <TabsTrigger value="prorrogacoes" className="rounded-lg">Prorrogações</TabsTrigger>
+            <TabsTrigger value="afastamentos" className="rounded-lg">
+              Afastamentos
+            </TabsTrigger>
+            <TabsTrigger value="prorrogacoes" className="rounded-lg">
+              Prorrogações
+            </TabsTrigger>
           </TabsList>
 
           <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
             <div className="relative flex-1 min-w-[200px] md:w-64">
               <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input 
-                placeholder="Buscar por colaborador..." 
+              <Input
+                placeholder="Buscar por colaborador..."
                 className="pl-9 bg-card shadow-xs border-primary/20 focus:border-primary transition-all"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            
+
             <div className="relative flex-1 min-w-[150px] md:w-48 group">
               <div className="absolute left-3 top-2.5 h-4 w-4 text-primary/60 group-focus-within:text-primary transition-colors">
                 <FileText className="h-4 w-4" />
               </div>
-              <Input 
-                placeholder="Filtrar por CID-10..." 
+              <Input
+                placeholder="Filtrar por CID-10..."
                 className="pl-9 bg-card shadow-xs border-orange-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all"
                 value={filtros.cid || ''}
                 onChange={(e) => setFiltros({ ...filtros, cid: e.target.value })}
@@ -165,16 +192,42 @@ export default function AfastamentosPage() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 p-2">
-                <DropdownMenuLabel className="text-xs uppercase text-muted-foreground font-bold">Status do Afastamento</DropdownMenuLabel>
+                <DropdownMenuLabel className="text-xs uppercase text-muted-foreground font-bold">
+                  Status do Afastamento
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setFiltros({ ...filtros, status: undefined })}>Todos Status</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFiltros({ ...filtros, status: 'ativo' })} className="text-green-600 font-medium">Ativos</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFiltros({ ...filtros, status: 'pendente' })} className="text-orange-600 font-medium">Pendentes (INSS)</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFiltros({ ...filtros, status: 'finalizado' })} className="text-gray-600 font-medium">Finalizados</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setFiltros({ ...filtros, status: 'prorrogado' })} className="text-blue-600 font-medium">Prorrogados</DropdownMenuItem>
-                
+                <DropdownMenuItem onClick={() => setFiltros({ ...filtros, status: undefined })}>
+                  Todos Status
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setFiltros({ ...filtros, status: 'ativo' })}
+                  className="text-green-600 font-medium"
+                >
+                  Ativos
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setFiltros({ ...filtros, status: 'aguardando_inss' })}
+                  className="text-orange-600 font-medium"
+                >
+                  Pendentes (INSS)
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setFiltros({ ...filtros, status: 'encerrado' })}
+                  className="text-gray-600 font-medium"
+                >
+                  Finalizados
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setFiltros({ ...filtros, status: 'prorrogado' })}
+                  className="text-blue-600 font-medium"
+                >
+                  Prorrogados
+                </DropdownMenuItem>
+
                 <DropdownMenuSeparator />
-                <DropdownMenuLabel className="text-xs uppercase text-muted-foreground font-bold">Tipo de Licença</DropdownMenuLabel>
+                <DropdownMenuLabel className="text-xs uppercase text-muted-foreground font-bold">
+                  Tipo de Licença
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => setSelectedTipo(null)}>Todos Tipos</DropdownMenuItem>
                 <ScrollArea className="h-48">
@@ -195,44 +248,48 @@ export default function AfastamentosPage() {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Exportar Relatório</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={async () => {
-                  if (!filtros.empresa_id) {
-                    toast.error('Selecione uma empresa para exportar o relatório');
-                    return;
-                  }
-                  await afastamentoService.exportarRelatorio(filtros.empresa_id, {
-                    empresa_id: filtros.empresa_id,
-                    status: filtros.status as StatusAfastamento | undefined,
-                    tipo: selectedTipo ?? undefined,
-                  });
-                  toast.success('Relatório exportado com sucesso em CSV');
-                }}>
+                <DropdownMenuItem
+                  onClick={async () => {
+                    if (!filtros.empresa_id) {
+                      toast.error('Selecione uma empresa para exportar o relatório');
+                      return;
+                    }
+                    await afastamentoService.exportarRelatorio(filtros.empresa_id, {
+                      empresa_id: filtros.empresa_id,
+                      status: filtros.status as StatusAfastamento | undefined,
+                      tipo: selectedTipo ?? undefined,
+                    });
+                    toast.success('Relatório exportado com sucesso em CSV');
+                  }}
+                >
                   <Download className="h-4 w-4 mr-2" /> CSV (Planilha)
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={async () => {
-                  const dataToExport = filteredAfastamentos.map((af: any) => ({
-                    colaborador: af.colaborador?.nome_completo || '-',
-                    tipo: tipoLabels[af.tipo as TipoAfastamento] || af.tipo,
-                    cid: af.cid?.codigo || af.cid || '-',
-                    inicio: format(new Date(af.data_inicio), 'dd/MM/yyyy'),
-                    fim: format(new Date(af.data_fim_prevista), 'dd/MM/yyyy'),
-                    dias: af.dias_total,
-                    status: af.status,
-                    diasInss: af.dias_inss || 0,
-                    pericia: af.data_pericia ? format(new Date(af.data_pericia), 'dd/MM/yyyy') : '-'
-                  }));
-                  
-                  try {
-                    await gerarAfastamentosPDF(
-                      'Relatório de Afastamentos e Auditoria Detalhada',
-                      dataToExport,
-                      { cid: filtros.cid, status: filtros.status, tipo: selectedTipo }
-                    );
-                    toast.success('Exportação PDF concluída com excelência');
-                  } catch (e) {
-                    toast.error('Erro ao gerar PDF avançado');
-                  }
-                }}>
+                <DropdownMenuItem
+                  onClick={async () => {
+                    const dataToExport = filteredAfastamentos.map((af) => ({
+                      colaborador: af.colaborador?.nome_completo || '-',
+                      tipo: tipoLabels[af.tipo as TipoAfastamento] || af.tipo,
+                      cid: af.cid || '-',
+                      inicio: format(new Date(af.data_inicio), 'dd/MM/yyyy'),
+                      fim: format(new Date(af.data_fim_prevista), 'dd/MM/yyyy'),
+                      dias: af.dias_total ?? 0,
+                      status: af.status ?? '-',
+                      diasInss: af.dias_inss || 0,
+                      pericia: af.data_pericia ? format(new Date(af.data_pericia), 'dd/MM/yyyy') : '-',
+                    }));
+
+                    try {
+                      await gerarAfastamentosPDF('Relatório de Afastamentos e Auditoria Detalhada', dataToExport, {
+                        cid: filtros.cid,
+                        status: filtros.status,
+                        tipo: selectedTipo ?? undefined,
+                      });
+                      toast.success('Exportação PDF concluída com excelência');
+                    } catch (e) {
+                      toast.error('Erro ao gerar PDF avançado');
+                    }
+                  }}
+                >
                   <FileText className="h-4 w-4 mr-2" /> PDF (Auditoria Detalhada 10/10)
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -244,12 +301,14 @@ export default function AfastamentosPage() {
           <div className="lg:col-span-3">
             <TabsContent value="afastamentos" className="mt-0">
               {isLoading ? (
-                <div className="flex justify-center p-12"><Spinner size="lg" /></div>
+                <div className="flex justify-center p-12">
+                  <Spinner size="lg" />
+                </div>
               ) : filteredAfastamentos.length === 0 ? (
                 <EmptyList entityName="afastamento" />
               ) : (
-                <AfastamentoTable 
-                  data={filteredAfastamentos} 
+                <AfastamentoTable
+                  data={filteredAfastamentos}
                   onEdit={handleEdit}
                   onDocuments={handleDocuments}
                   onProrrogacao={handleEdit}
@@ -265,7 +324,9 @@ export default function AfastamentosPage() {
                 </CardHeader>
                 <CardContent className="p-0">
                   {loadProrr ? (
-                    <div className="p-12 flex justify-center"><Spinner /></div>
+                    <div className="p-12 flex justify-center">
+                      <Spinner />
+                    </div>
                   ) : prorrogacoes.length === 0 ? (
                     <div className="text-center py-12 text-muted-foreground">Nenhuma prorrogação registrada.</div>
                   ) : (
@@ -280,16 +341,22 @@ export default function AfastamentosPage() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {prorrogacoes.map((p: any) => (
+                        {prorrogacoes.map((p) => (
                           <TableRow key={p.id}>
-                            <TableCell className="font-medium">{p.afastamento?.colaborador?.nome_completo || '-'}</TableCell>
+                            <TableCell className="font-medium">
+                              {p.afastamento?.colaborador?.nome_completo || '-'}
+                            </TableCell>
                             <TableCell>
                               <Badge variant="secondary" className="font-normal">
                                 {tipoLabels[p.afastamento?.tipo as TipoAfastamento] || p.afastamento?.tipo || '-'}
                               </Badge>
                             </TableCell>
-                            <TableCell>{p.data_fim_antiga ? format(new Date(p.data_fim_antiga), 'dd/MM/yyyy') : '-'}</TableCell>
-                            <TableCell className="font-semibold text-primary">{p.data_fim_nova ? format(new Date(p.data_fim_nova), 'dd/MM/yyyy') : '-'}</TableCell>
+                            <TableCell>
+                              {p.data_fim_anterior ? format(new Date(p.data_fim_anterior), 'dd/MM/yyyy') : '-'}
+                            </TableCell>
+                            <TableCell className="font-semibold text-primary">
+                              {p.data_fim_nova ? format(new Date(p.data_fim_nova), 'dd/MM/yyyy') : '-'}
+                            </TableCell>
                             <TableCell className="text-center text-xs text-muted-foreground">
                               {format(new Date(p.created_at), 'dd/MM/yyyy')}
                             </TableCell>
@@ -314,12 +381,12 @@ export default function AfastamentosPage() {
               <CardContent>
                 <ScrollArea className="h-[400px] pr-4">
                   <div className="space-y-4">
-                    {afastamentos.filter((a: any) => a.data_pericia || a.dias_inss > 0).length === 0 ? (
+                    {afastamentos.filter((a) => a.data_pericia || (a.dias_inss ?? 0) > 0).length === 0 ? (
                       <p className="text-xs text-muted-foreground text-center py-4">Sem eventos agendados.</p>
                     ) : (
                       afastamentos
-                        .filter((a: any) => a.data_pericia || a.dias_inss > 0)
-                        .map((af: any) => (
+                        .filter((a) => a.data_pericia || (a.dias_inss ?? 0) > 0)
+                        .map((af) => (
                           <div key={af.id} className="relative pl-6 pb-4 border-l border-muted last:pb-0">
                             <div className="absolute left-[-5px] top-1 h-2.5 w-2.5 rounded-full bg-primary" />
                             <div className="space-y-1">
@@ -360,16 +427,21 @@ export default function AfastamentosPage() {
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={chartData}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                      <XAxis 
-                        dataKey="name" 
-                        axisLine={false} 
-                        tickLine={false} 
-                        tick={{fontSize: 9, fill: '#888'}} 
+                      <XAxis
+                        dataKey="name"
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fontSize: 9, fill: '#888' }}
                         interval={1}
                       />
-                      <RechartsTooltip 
-                        contentStyle={{ fontSize: '10px', borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                        cursor={{fill: '#f5f5f5'}}
+                      <RechartsTooltip
+                        contentStyle={{
+                          fontSize: '10px',
+                          borderRadius: '8px',
+                          border: 'none',
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                        }}
+                        cursor={{ fill: '#f5f5f5' }}
                       />
                       <Bar dataKey="total" radius={[4, 4, 0, 0]}>
                         {chartData.map((entry, index) => (
@@ -382,11 +454,15 @@ export default function AfastamentosPage() {
                 <div className="mt-4 space-y-3 pt-2 border-t">
                   <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-wider">
                     <span className="text-muted-foreground">Impacto Direto</span>
-                    <span className="text-foreground">{afastamentos.reduce<number>((acc, a: any) => acc + Number(a.dias_empresa || 0), 0)} dias pagos</span>
+                    <span className="text-foreground">
+                      {afastamentos.reduce<number>((acc, a) => acc + Number(a.dias_empresa || 0), 0)} dias pagos
+                    </span>
                   </div>
                   <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-wider">
                     <span className="text-muted-foreground">Previdência</span>
-                    <span className="text-orange-600">{afastamentos.filter((a: any) => (a.dias_inss || 0) > 0).length} casos ativos</span>
+                    <span className="text-orange-600">
+                      {afastamentos.filter((a) => (a.dias_inss || 0) > 0).length} casos ativos
+                    </span>
                   </div>
                 </div>
               </CardContent>
@@ -398,16 +474,14 @@ export default function AfastamentosPage() {
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
-              {selectedAfastamento ? 'Editar Afastamento' : 'Novo Registro de Afastamento'}
-            </DialogTitle>
+            <DialogTitle>{selectedAfastamento ? 'Editar Afastamento' : 'Novo Registro de Afastamento'}</DialogTitle>
           </DialogHeader>
-          <AfastamentoForm 
-            initialData={selectedAfastamento} 
+          <AfastamentoForm
+            initialData={selectedAfastamento ? { ...selectedAfastamento, cid: null } : undefined}
             onSuccess={() => {
               setIsFormOpen(false);
               setSelectedAfastamento(null);
-            }} 
+            }}
           />
         </DialogContent>
       </Dialog>
@@ -420,9 +494,7 @@ export default function AfastamentosPage() {
               Afastamento de: {selectedAfastamento?.colaborador?.nome_completo}
             </div>
           </DialogHeader>
-          {selectedAfastamento && (
-            <AfastamentoDocumentManager afastamentoId={selectedAfastamento.id} />
-          )}
+          {selectedAfastamento && <AfastamentoDocumentManager afastamentoId={selectedAfastamento.id} />}
         </DialogContent>
       </Dialog>
 
@@ -434,9 +506,7 @@ export default function AfastamentosPage() {
               Acompanhamento completo de: {selectedAfastamento?.colaborador?.nome_completo}
             </div>
           </DialogHeader>
-          {selectedAfastamento && (
-            <AfastamentoTimeline afastamentoId={selectedAfastamento.id} />
-          )}
+          {selectedAfastamento && <AfastamentoTimeline afastamentoId={selectedAfastamento.id} />}
         </DialogContent>
       </Dialog>
     </PageLayout>

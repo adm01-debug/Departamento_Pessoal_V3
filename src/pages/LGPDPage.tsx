@@ -30,24 +30,28 @@ import {
   XCircle,
   Database,
   Eye,
-  Clock} from 'lucide-react';
+  Clock,
+} from 'lucide-react';
 
 const statusColors: Record<string, string> = {
   pendente: 'bg-warning/15 text-warning border-0',
   em_andamento: 'bg-info/15 text-info border-0',
   concluida: 'bg-success/15 text-success border-0',
-  recusada: 'bg-destructive/15 text-destructive border-0'};
+  recusada: 'bg-destructive/15 text-destructive border-0',
+};
 const tipoConsentimento: Record<string, string> = {
   dados_pessoais: 'Dados Pessoais',
   dados_sensiveis: 'Dados Sensíveis',
   compartilhamento: 'Compartilhamento',
-  marketing: 'Marketing'};
+  marketing: 'Marketing',
+};
 const tipoSolicitacao: Record<string, string> = {
   acesso: 'Acesso aos Dados',
   retificacao: 'Retificação',
   exclusao: 'Exclusão',
   portabilidade: 'Portabilidade',
-  revogacao: 'Revogação de Consentimento'};
+  revogacao: 'Revogação de Consentimento',
+};
 
 const MAPEAMENTO_DADOS = [
   {
@@ -55,37 +59,43 @@ const MAPEAMENTO_DADOS = [
     tabela: 'colaboradores',
     campos: ['nome_completo', 'cpf', 'rg', 'data_nascimento', 'email', 'telefone'],
     base_legal: 'Execução de Contrato (Art. 7°, V)',
-    finalidade: 'Gestão de RH e cumprimento de obrigações trabalhistas'},
+    finalidade: 'Gestão de RH e cumprimento de obrigações trabalhistas',
+  },
   {
     categoria: 'Dados Bancários',
     tabela: 'colaboradores',
     campos: ['banco', 'agencia', 'conta', 'pix'],
     base_legal: 'Execução de Contrato (Art. 7°, V)',
-    finalidade: 'Pagamento de salários e benefícios'},
+    finalidade: 'Pagamento de salários e benefícios',
+  },
   {
     categoria: 'Dados de Saúde',
     tabela: 'asos',
     campos: ['tipo_exame', 'resultado', 'cid', 'medico_nome'],
     base_legal: 'Obrigação Legal (Art. 7°, II)',
-    finalidade: 'Cumprimento de NRs e saúde ocupacional'},
+    finalidade: 'Cumprimento de NRs e saúde ocupacional',
+  },
   {
     categoria: 'Dados de Dependentes',
     tabela: 'dependentes',
     campos: ['nome', 'cpf', 'parentesco', 'data_nascimento'],
     base_legal: 'Obrigação Legal (Art. 7°, II)',
-    finalidade: 'IRRF, salário-família, plano de saúde'},
+    finalidade: 'IRRF, salário-família, plano de saúde',
+  },
   {
     categoria: 'Dados Biométricos',
     tabela: 'batidas_ponto',
     campos: ['latitude', 'longitude', 'ip_address'],
     base_legal: 'Legítimo Interesse (Art. 7°, IX)',
-    finalidade: 'Controle de jornada de trabalho'},
+    finalidade: 'Controle de jornada de trabalho',
+  },
   {
     categoria: 'Dados de Candidatos',
     tabela: 'candidatos',
     campos: ['nome', 'email', 'curriculo_url', 'pretensao_salarial'],
     base_legal: 'Consentimento (Art. 7°, I)',
-    finalidade: 'Processo seletivo'},
+    finalidade: 'Processo seletivo',
+  },
 ];
 
 export default function LGPDPage() {
@@ -95,36 +105,63 @@ export default function LGPDPage() {
   const [openSol, setOpenSol] = useState(false);
   const [formSol, setFormSol] = useState({ colaborador_id: '', tipo: 'acesso', descricao: '' });
 
-  const { data: consentimentos = [], isLoading: loadCons } = useQuery({ queryKey: ['lgpd_consentimentos', empresaAtual?.id], queryFn: () => lgpdService.listarConsentimentos(empresaAtual!.id), enabled: !!empresaAtual?.id });
-  const { data: solicitacoes = [], isLoading: loadSol } = useQuery({ queryKey: ['lgpd_solicitacoes', empresaAtual?.id], queryFn: () => lgpdService.listarSolicitacoes(empresaAtual!.id), enabled: !!empresaAtual?.id });
-  const { data: colaboradores = [] } = useQuery({ queryKey: ['colaboradores', empresaAtual?.id], queryFn: () => colaboradorService.list(empresaAtual!.id), enabled: !!empresaAtual?.id });
+  const { data: consentimentos = [], isLoading: loadCons } = useQuery({
+    queryKey: ['lgpd_consentimentos', empresaAtual?.id],
+    queryFn: () => lgpdService.listarConsentimentos(empresaAtual!.id),
+    enabled: !!empresaAtual?.id,
+  });
+  const { data: solicitacoes = [], isLoading: loadSol } = useQuery({
+    queryKey: ['lgpd_solicitacoes', empresaAtual?.id],
+    queryFn: () => lgpdService.listarSolicitacoes(empresaAtual!.id),
+    enabled: !!empresaAtual?.id,
+  });
+  const { data: colaboradores = [] } = useQuery({
+    queryKey: ['colaboradores', empresaAtual?.id],
+    queryFn: () => colaboradorService.list(empresaAtual!.id),
+    enabled: !!empresaAtual?.id,
+  });
 
   const criarSol = useMutation({
     mutationFn: () =>
       lgpdService.criarSolicitacao({
         ...formSol,
         empresa_id: empresaAtual?.id,
-        prazo_legal: formatDateLocalISO(addDaysLocal(new Date(), 15))}),
+        prazo_legal: formatDateLocalISO(addDaysLocal(new Date(), 15)),
+      }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['lgpd_solicitacoes'] });
       setOpenSol(false);
       toast.success('Solicitação LGPD registrada!');
       setFormSol({ colaborador_id: '', tipo: 'acesso', descricao: '' });
     },
-    onError: () => toast.error('Erro ao registrar')});
+    onError: () => toast.error('Erro ao registrar'),
+  });
 
   const concluirSol = useMutation({
-    mutationFn: (id: string) => lgpdService.atualizarSolicitacao(id, { status: 'concluida', concluida_em: new Date().toISOString() }, empresaAtual!.id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['lgpd_solicitacoes'] }); toast.success('Solicitação concluída!'); }});
+    mutationFn: (id: string) =>
+      lgpdService.atualizarSolicitacao(
+        id,
+        { status: 'concluida', concluida_em: new Date().toISOString() },
+        empresaAtual!.id
+      ),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['lgpd_solicitacoes'] });
+      toast.success('Solicitação concluída!');
+    },
+  });
 
   const revogar = useMutation({
     mutationFn: (id: string) => lgpdService.revogarConsentimento(id, empresaAtual!.id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['lgpd_consentimentos'] }); toast.success('Consentimento revogado'); }});
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['lgpd_consentimentos'] });
+      toast.success('Consentimento revogado');
+    },
+  });
 
-  const aceitos = consentimentos.filter((c: any) => c.aceito).length;
-  const pendentes = solicitacoes.filter((s: any) => s.status === 'pendente').length;
-  const vencendo = solicitacoes.filter((s: any) => {
-    if (s.status !== 'pendente') return false;
+  const aceitos = consentimentos.filter((c) => c.aceito).length;
+  const pendentes = solicitacoes.filter((s) => s.status === 'pendente').length;
+  const vencendo = solicitacoes.filter((s) => {
+    if (s.status !== 'pendente' || !s.prazo_legal) return false;
     const prazo = new Date(s.prazo_legal);
     const diff = (prazo.getTime() - now) / (1000 * 60 * 60 * 24);
     return diff <= 5 && diff >= 0;
@@ -161,7 +198,7 @@ export default function LGPDPage() {
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
-                      {colaboradores.map((c: any) => (
+                      {colaboradores.map((c) => (
                         <SelectItem key={c.id} value={c.id}>
                           {c.nome_completo}
                         </SelectItem>
@@ -217,7 +254,8 @@ export default function LGPDPage() {
               label: 'Consentimentos',
               value: consentimentos.length,
               icon: ShieldCheck,
-              gradient: 'from-primary to-primary-glow'},
+              gradient: 'from-primary to-primary-glow',
+            },
             { label: 'Aceitos', value: aceitos, icon: CheckCircle, gradient: 'from-success to-success/70' },
             { label: 'Solicitações', value: solicitacoes.length, icon: FileSearch, gradient: 'from-info to-info/70' },
             { label: 'Pendentes', value: pendentes, icon: AlertTriangle, gradient: 'from-warning to-warning/70' },
@@ -292,11 +330,9 @@ export default function LGPDPage() {
                         </TableCell>
                       </TableRow>
                     ) : (
-                      consentimentos.map((c: any) => (
+                      consentimentos.map((c) => (
                         <TableRow key={c.id} className="hover:bg-accent/30 transition-colors">
-                          <TableCell className="font-body font-medium">
-                            {(c as any).colaborador?.nome_completo || '—'}
-                          </TableCell>
+                          <TableCell className="font-body font-medium">{c.colaborador?.nome_completo || '—'}</TableCell>
                           <TableCell className="font-body text-sm">{tipoConsentimento[c.tipo] || c.tipo}</TableCell>
                           <TableCell>
                             {c.aceito ? (
@@ -363,7 +399,7 @@ export default function LGPDPage() {
                         </TableCell>
                       </TableRow>
                     ) : (
-                      solicitacoes.map((s: any) => {
+                      solicitacoes.map((s) => {
                         const prazoCritico =
                           s.status === 'pendente' &&
                           s.prazo_legal &&
@@ -374,12 +410,15 @@ export default function LGPDPage() {
                             className={cn('hover:bg-accent/30 transition-colors', prazoCritico && 'bg-destructive/5')}
                           >
                             <TableCell className="font-body font-medium">
-                              {(s as any).colaborador?.nome_completo || '—'}
+                              {s.colaborador?.nome_completo || '—'}
                             </TableCell>
                             <TableCell className="font-body text-sm">{tipoSolicitacao[s.tipo] || s.tipo}</TableCell>
                             <TableCell>
                               <Badge
-                                className={cn('font-body text-xs', statusColors[s.status] || statusColors.pendente)}
+                                className={cn(
+                                  'font-body text-xs',
+                                  (s.status && statusColors[s.status]) || statusColors.pendente
+                                )}
                               >
                                 {s.status}
                               </Badge>
@@ -391,7 +430,7 @@ export default function LGPDPage() {
                               {prazoCritico && ' ⚠️'}
                             </TableCell>
                             <TableCell className="text-xs font-body">
-                              {new Date(s.created_at).toLocaleDateString('pt-BR')}
+                              {s.created_at ? new Date(s.created_at).toLocaleDateString('pt-BR') : '—'}
                             </TableCell>
                             <TableCell>
                               {s.status === 'pendente' && (

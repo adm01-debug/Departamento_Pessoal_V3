@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -7,9 +8,25 @@ const mockNavigate = vi.fn();
 
 vi.mock('framer-motion', () => ({
   motion: {
-    create: (Component: any) => ({ children, ...rest }: any) => <Component {...rest}>{children}</Component>,
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-    button: ({ children, onClick, ...props }: any) => <button onClick={onClick} {...props}>{children}</button>,
+    create:
+      (Component: any) =>
+      ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => (
+        <Component {...rest}>{children}</Component>
+      ),
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
+    button: ({
+      children,
+      onClick,
+      ...props
+    }: {
+      children?: ReactNode;
+      onClick?: () => void;
+      [key: string]: unknown;
+    }) => (
+      <button onClick={onClick} {...props}>
+        {children}
+      </button>
+    ),
   },
   useInView: () => true,
 }));

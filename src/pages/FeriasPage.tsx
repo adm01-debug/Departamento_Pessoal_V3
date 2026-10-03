@@ -113,10 +113,10 @@ export default function FeriasPage() {
         dias_ferias: parseInt(calcForm.diasFerias) || 30,
         dias_abono: parseInt(calcForm.diasAbono) || 0,
       });
-      setCalcResult(result as Record<string, any>);
+      setCalcResult(result as UiRecord);
       toast.success('Cálculo validado pelo servidor');
     } catch (err) {
-      loggerService.error(
+      void loggerService.error(
         'Erro no cálculo server-side de férias',
         { empresaId: empresaAtual?.id },
         err instanceof Error ? err : new Error(String(err))
@@ -130,11 +130,11 @@ export default function FeriasPage() {
 
   const stats = {
     total: totalCount,
-    pendentes: ferias?.filter((s: any) => s.status === 'pendente').length || 0, // This is local but we might want global stats
-    aprovadas: ferias?.filter((s: any) => s.status === 'aprovada' || s.aprovado_rh).length || 0,
-    emGozo: ferias?.filter((s: any) => s.status === 'em_gozo').length || 0,
-    abonoPecuniario: ferias?.filter((s: any) => s.abono_pecuniario).length || 0,
-    vencidas: ferias?.filter((s: any) => s.status === 'vencida').length || 0,
+    pendentes: ferias?.filter((s) => s.status === 'pendente').length || 0, // This is local but we might want global stats
+    aprovadas: ferias?.filter((s) => s.status === 'aprovada' || s.aprovado_rh).length || 0,
+    emGozo: ferias?.filter((s) => s.status === 'em_gozo').length || 0,
+    abonoPecuniario: ferias?.filter((s) => s.abono_pecuniario).length || 0,
+    vencidas: ferias?.filter((s) => s.status === 'vencida').length || 0,
   };
 
   return (

@@ -1,3 +1,4 @@
+import type { Tables } from '@/integrations/supabase/types';
 import { CheckCircle2, Circle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
@@ -14,7 +15,7 @@ const CHECKLIST_ITEMS = [
 ] as const;
 
 interface ChecklistProps {
-  desligamento: any;
+  desligamento: Tables<'desligamentos'>;
   onToggle?: (key: string, value: boolean) => void;
   readOnly?: boolean;
 }
@@ -30,7 +31,9 @@ export function DesligamentoChecklist({ desligamento, onToggle, readOnly }: Chec
       <div className="space-y-1.5">
         <div className="flex items-center justify-between text-xs font-body">
           <span className="text-muted-foreground">Progresso do Checklist</span>
-          <span className="font-semibold text-foreground">{completed}/{total}</span>
+          <span className="font-semibold text-foreground">
+            {completed}/{total}
+          </span>
         </div>
         <div className="h-2 bg-muted rounded-full overflow-hidden">
           <motion.div

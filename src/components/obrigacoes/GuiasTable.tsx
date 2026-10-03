@@ -5,6 +5,16 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { CheckCircle, Download } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+export type GuiaTabela = 'guias_fgts' | 'guias_inss';
+
+export type GuiaLinha = {
+  id: string;
+  competencia: string | null;
+  valor_total: number | null;
+  data_vencimento: string | null;
+  status: string | null;
+};
+
 const statusColors: Record<string, string> = {
   pendente: 'bg-warning/15 text-warning border-0',
   gerada: 'bg-info/15 text-info border-0',
@@ -17,10 +27,10 @@ function formatCurrency(v: number) {
 }
 
 interface GuiasTableProps {
-  guias: any[];
-  tabela: string;
+  guias: GuiaLinha[];
+  tabela: GuiaTabela;
   emptyMessage: string;
-  onMarcarPaga: (id: string, tabela: string) => void;
+  onMarcarPaga: (id: string, tabela: GuiaTabela) => void;
 }
 
 export function GuiasTable({ guias, tabela, emptyMessage, onMarcarPaga }: GuiasTableProps) {
@@ -40,38 +50,61 @@ export function GuiasTable({ guias, tabela, emptyMessage, onMarcarPaga }: GuiasT
         </TableHeader>
         <TableBody>
           {guias.length === 0 ? (
-            <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8 font-body">{emptyMessage}</TableCell></TableRow>
-          ) : guias.map((g: any) => {
-            const vencida = g.status !== 'paga' && g.data_vencimento && new Date(g.data_vencimento) < hoje;
-            return (
-              <TableRow key={g.id} className="hover:bg-accent/30 transition-colors">
-                <TableCell className="font-body font-medium">{g.competencia}</TableCell>
-                <TableCell className="font-body font-semibold">{g.valor ? formatCurrency(Number(g.valor)) : '—'}</TableCell>
-                <TableCell className="font-body text-sm">
-                  {g.data_vencimento ? (
-                    <span className={cn(vencida && 'text-destructive font-semibold')}>
-                      {new Date(g.data_vencimento).toLocaleDateString('pt-BR')}
-                    </span>
-                  ) : '—'}
-                </TableCell>
-                <TableCell>
-                  <Badge className={cn("font-body text-xs", statusColors[vencida ? 'vencida' : g.status] || statusColors.pendente)}>
-                    {vencida ? 'Vencida' : g.status?.charAt(0).toUpperCase() + g.status?.slice(1)}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <div className="flex gap-1">
-                    {g.status !== 'paga' && (
-                      <Button size="sm" variant="outline" className="rounded-lg text-xs h-7" onClick={() => onMarcarPaga(g.id, tabela)}>
-                        <CheckCircle className="h-3 w-3 mr-1" />Paga
-                      </Button>
+            <TableRow>
+              <TableCell colSpan={5} className="text-center text-muted-foreground py-8 font-body">
+                {emptyMessage}
+              </TableCell>
+            </TableRow>
+          ) : (
+            guias.map((g) => {
+              const vencida = g.status !== 'paga' && g.data_vencimento && new Date(g.data_vencimento) < hoje;
+              return (
+                <TableRow key={g.id} className="hover:bg-accent/30 transition-colors">
+                  <TableCell className="font-body font-medium">{g.competencia}</TableCell>
+                  <TableCell className="font-body font-semibold">
+                    {g.valor_total ? formatCurrency(Number(g.valor_total)) : '—'}
+                  </TableCell>
+                  <TableCell className="font-body text-sm">
+                    {g.data_vencimento ? (
+                      <span className={cn(vencida && 'text-destructive font-semibold')}>
+                        {new Date(g.data_vencimento).toLocaleDateString('pt-BR')}
+                      </span>
+                    ) : (
+                      '—'
                     )}
-                    <Button size="sm" variant="ghost" className="rounded-lg text-xs h-7"><Download className="h-3 w-3" /></Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            );
-          })}
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      className={cn(
+                        'font-body text-xs',
+                        (vencida ? statusColors.vencida : g.status && statusColors[g.status]) || statusColors.pendente
+                      )}
+                    >
+                      {vencida ? 'Vencida' : g.status ? g.status.charAt(0).toUpperCase() + g.status.slice(1) : '—'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-1">
+                      {g.status !== 'paga' && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="rounded-lg text-xs h-7"
+                          onClick={() => onMarcarPaga(g.id, tabela)}
+                        >
+                          <CheckCircle className="h-3 w-3 mr-1" />
+                          Paga
+                        </Button>
+                      )}
+                      <Button size="sm" variant="ghost" className="rounded-lg text-xs h-7">
+                        <Download className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })
+          )}
         </TableBody>
       </Table>
     </Card>

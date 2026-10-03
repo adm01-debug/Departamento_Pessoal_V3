@@ -7,6 +7,7 @@
 
 -- beneficios
 DROP POLICY IF EXISTS "Authenticated users can manage beneficios" ON public.beneficios;
+DROP POLICY IF EXISTS "beneficios_tenant_all" ON public.beneficios;
 CREATE POLICY "beneficios_tenant_all" ON public.beneficios
   FOR ALL TO authenticated
   USING (
@@ -26,6 +27,7 @@ CREATE POLICY "beneficios_tenant_all" ON public.beneficios
 
 -- workflows_definicoes
 DROP POLICY IF EXISTS "Authenticated users can manage workflows" ON public.workflows_definicoes;
+DROP POLICY IF EXISTS "workflows_definicoes_tenant_all" ON public.workflows_definicoes;
 CREATE POLICY "workflows_definicoes_tenant_all" ON public.workflows_definicoes
   FOR ALL TO authenticated
   USING (empresa_id = public.get_auth_empresa_id())
@@ -33,6 +35,7 @@ CREATE POLICY "workflows_definicoes_tenant_all" ON public.workflows_definicoes
 
 -- workflows_execucoes
 DROP POLICY IF EXISTS "Authenticated users can manage workflow_execucoes" ON public.workflows_execucoes;
+DROP POLICY IF EXISTS "workflows_execucoes_tenant_all" ON public.workflows_execucoes;
 CREATE POLICY "workflows_execucoes_tenant_all" ON public.workflows_execucoes
   FOR ALL TO authenticated
   USING (
@@ -52,6 +55,7 @@ CREATE POLICY "workflows_execucoes_tenant_all" ON public.workflows_execucoes
 
 -- esocial_eventos
 DROP POLICY IF EXISTS "Authenticated users can manage esocial_eventos" ON public.esocial_eventos;
+DROP POLICY IF EXISTS "esocial_eventos_tenant_all" ON public.esocial_eventos;
 CREATE POLICY "esocial_eventos_tenant_all" ON public.esocial_eventos
   FOR ALL TO authenticated
   USING (empresa_id = public.get_auth_empresa_id())
@@ -59,20 +63,32 @@ CREATE POLICY "esocial_eventos_tenant_all" ON public.esocial_eventos
 
 -- esocial_lotes
 DROP POLICY IF EXISTS "Authenticated users can manage esocial_lotes" ON public.esocial_lotes;
+DROP POLICY IF EXISTS "esocial_lotes_tenant_all" ON public.esocial_lotes;
 CREATE POLICY "esocial_lotes_tenant_all" ON public.esocial_lotes
   FOR ALL TO authenticated
   USING (empresa_id = public.get_auth_empresa_id())
   WITH CHECK (empresa_id = public.get_auth_empresa_id());
 
 -- guias_impostos
-DROP POLICY IF EXISTS "Authenticated users can manage guias_impostos" ON public.guias_impostos;
-CREATE POLICY "guias_impostos_tenant_all" ON public.guias_impostos
-  FOR ALL TO authenticated
-  USING (empresa_id = public.get_auth_empresa_id())
-  WITH CHECK (empresa_id = public.get_auth_empresa_id());
+DO $$
+BEGIN
+  IF to_regclass('public.guias_impostos') IS NOT NULL THEN
+    EXECUTE 'DROP POLICY IF EXISTS "Authenticated users can manage guias_impostos" ON public.guias_impostos';
+    EXECUTE 'DROP POLICY IF EXISTS "guias_impostos_tenant_all" ON public.guias_impostos';
+    EXECUTE $pol$
+      CREATE POLICY "guias_impostos_tenant_all" ON public.guias_impostos
+        FOR ALL TO authenticated
+        USING (empresa_id = public.get_auth_empresa_id())
+        WITH CHECK (empresa_id = public.get_auth_empresa_id())
+    $pol$;
+  ELSE
+    RAISE NOTICE 'guias_impostos ausente (drift) — policies não aplicadas';
+  END IF;
+END $$;
 
 -- documentos
 DROP POLICY IF EXISTS "Authenticated users can manage documentos" ON public.documentos;
+DROP POLICY IF EXISTS "documentos_tenant_all" ON public.documentos;
 CREATE POLICY "documentos_tenant_all" ON public.documentos
   FOR ALL TO authenticated
   USING (

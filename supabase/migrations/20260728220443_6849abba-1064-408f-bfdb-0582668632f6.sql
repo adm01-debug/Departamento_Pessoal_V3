@@ -61,19 +61,64 @@ $function$;
 -- 3) Rotinas puramente internas: nenhuma é chamada pelo frontend nem por
 --    edge function com JWT de usuário. Ficam restritas ao service_role e
 --    às rotinas agendadas (pg_cron), que rodam como owner.
-REVOKE EXECUTE ON FUNCTION public.sec_audit_policies_scan()        FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.sec_verify_seals()               FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.sec_policy_regressions_purge()   FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.cleanup_ciencia_rate_limits()    FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.check_ciencia_rate_limit(text, text, integer, integer)
-  FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.consumir_pendencias_medida_no_holerite(uuid, uuid, text)
-  FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.garantir_rubrica_suspensao(uuid) FROM anon, authenticated;
+DO $guard$
+BEGIN
+  IF to_regprocedure('public.sec_audit_policies_scan()') IS NOT NULL THEN
+    EXECUTE $sql$REVOKE EXECUTE ON FUNCTION public.sec_audit_policies_scan() FROM anon, authenticated;$sql$;
+  END IF;
+END $guard$;
+DO $guard$
+BEGIN
+  IF to_regprocedure('public.sec_verify_seals()') IS NOT NULL THEN
+    EXECUTE $sql$REVOKE EXECUTE ON FUNCTION public.sec_verify_seals() FROM anon, authenticated;$sql$;
+  END IF;
+END $guard$;
+DO $guard$
+BEGIN
+  IF to_regprocedure('public.sec_policy_regressions_purge()') IS NOT NULL THEN
+    EXECUTE $sql$REVOKE EXECUTE ON FUNCTION public.sec_policy_regressions_purge() FROM anon, authenticated;$sql$;
+  END IF;
+END $guard$;
+DO $$
+BEGIN
+  IF to_regprocedure('public.cleanup_ciencia_rate_limits()') IS NOT NULL THEN
+    EXECUTE 'REVOKE EXECUTE ON FUNCTION public.cleanup_ciencia_rate_limits() FROM anon, authenticated';
+  END IF;
+  IF to_regprocedure('public.check_ciencia_rate_limit(text,text,integer,integer)') IS NOT NULL THEN
+    EXECUTE 'REVOKE EXECUTE ON FUNCTION public.check_ciencia_rate_limit(text, text, integer, integer) FROM anon, authenticated';
+  END IF;
+END $$;
+DO $guard$
+BEGIN
+  IF to_regprocedure('public.consumir_pendencias_medida_no_holerite(uuid,uuid,text)') IS NOT NULL THEN
+    EXECUTE $sql$REVOKE EXECUTE ON FUNCTION public.consumir_pendencias_medida_no_holerite(uuid, uuid, text) FROM anon, authenticated;$sql$;
+  END IF;
+END $guard$;
+DO $guard$
+BEGIN
+  IF to_regprocedure('public.garantir_rubrica_suspensao(uuid)') IS NOT NULL THEN
+    EXECUTE $sql$REVOKE EXECUTE ON FUNCTION public.garantir_rubrica_suspensao(uuid) FROM anon, authenticated;$sql$;
+  END IF;
+END $guard$;
 
 -- Função de gatilho: jamais deve ser invocável diretamente pela API.
-REVOKE EXECUTE ON FUNCTION public.fn_colaborador_sync_cargo_texto() FROM anon, authenticated;
+DO $guard$
+BEGIN
+  IF to_regprocedure('public.fn_colaborador_sync_cargo_texto()') IS NOT NULL THEN
+    EXECUTE $sql$REVOKE EXECUTE ON FUNCTION public.fn_colaborador_sync_cargo_texto() FROM anon, authenticated;$sql$;
+  END IF;
+END $guard$;
 
 -- anon não precisa das duas rotinas corrigidas acima
-REVOKE EXECUTE ON FUNCTION public.clinicas_proximas(uuid, numeric, numeric, text, numeric, integer) FROM anon;
-REVOKE EXECUTE ON FUNCTION public.get_user_roles(uuid) FROM anon;
+DO $guard$
+BEGIN
+  IF to_regprocedure('public.clinicas_proximas(uuid,numeric,numeric,text,numeric,integer)') IS NOT NULL THEN
+    EXECUTE $sql$REVOKE EXECUTE ON FUNCTION public.clinicas_proximas(uuid, numeric, numeric, text, numeric, integer) FROM anon;$sql$;
+  END IF;
+END $guard$;
+DO $guard$
+BEGIN
+  IF to_regprocedure('public.get_user_roles(uuid)') IS NOT NULL THEN
+    EXECUTE $sql$REVOKE EXECUTE ON FUNCTION public.get_user_roles(uuid) FROM anon;$sql$;
+  END IF;
+END $guard$;

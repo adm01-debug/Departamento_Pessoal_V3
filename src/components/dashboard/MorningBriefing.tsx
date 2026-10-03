@@ -127,18 +127,18 @@ function useMorningBriefing(empresaId?: string) {
         .map((c) => ({ nome: c.nome_completo, dia: parseISO(c.data_nascimento!).getDate() }))
         .sort((a, b) => a.dia - b.dia);
 
-      const feriasPeriodo = (feriasData || []).map((f: any) => ({
+      const feriasPeriodo = (feriasData || []).map((f) => ({
         nome: f.colaboradores?.nome_completo || 'Colaborador',
         inicio: f.data_inicio,
         fim: f.data_fim,
       }));
-      const afastadosHoje = (afastData || []).map((a: any) => ({
+      const afastadosHoje = (afastData || []).map((a) => ({
         nome: a.colaboradores?.nome_completo || 'Colaborador',
         tipo: a.tipo,
       }));
       const admissoesHoje = (admData || []).map((a) => ({ nome: a.nome, cargo: a.cargo }));
-      const vencimentosHoje = (asoData || []).map((a: any) => ({
-        descricao: `Exame ${a.tipo} de ${a.colaboradores?.nome_completo || 'Colaborador'} - ${format(parseISO(a.data_validade), 'dd/MM')}`,
+      const vencimentosHoje = (asoData || []).map((a) => ({
+        descricao: `Exame ${a.tipo} de ${a.colaboradores?.nome_completo || 'Colaborador'} - ${a.data_validade ? format(parseISO(a.data_validade), 'dd/MM') : '—'}`,
         tipo: 'exame',
       }));
 
@@ -197,7 +197,7 @@ export function MorningBriefing({ empresaId }: { empresaId?: string }) {
   const [runningAction, setRunningAction] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const handleAction = async (id: string, fn: () => Promise<any>, successMsg: string) => {
+  const handleAction = async (id: string, fn: () => Promise<unknown>, successMsg: string) => {
     setRunningAction(id);
     try {
       await fn();

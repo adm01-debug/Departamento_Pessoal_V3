@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 
@@ -10,14 +11,18 @@ vi.mock('react-router-dom', () => ({
 }));
 
 vi.mock('@/components/ui/alert-dialog', () => ({
-  AlertDialog: ({ children }: any) => children,
-  AlertDialogContent: ({ children }: any) => children,
-  AlertDialogHeader: ({ children }: any) => children,
-  AlertDialogTitle: ({ children }: any) => children,
-  AlertDialogDescription: ({ children }: any) => children,
-  AlertDialogFooter: ({ children }: any) => children,
-  AlertDialogCancel: ({ children, onClick }: any) => <button onClick={onClick}>{children}</button>,
-  AlertDialogAction: ({ children, onClick }: any) => <button onClick={onClick}>{children}</button>,
+  AlertDialog: ({ children }: { children?: ReactNode }) => children,
+  AlertDialogContent: ({ children }: { children?: ReactNode }) => children,
+  AlertDialogHeader: ({ children }: { children?: ReactNode }) => children,
+  AlertDialogTitle: ({ children }: { children?: ReactNode }) => children,
+  AlertDialogDescription: ({ children }: { children?: ReactNode }) => children,
+  AlertDialogFooter: ({ children }: { children?: ReactNode }) => children,
+  AlertDialogCancel: ({ children, onClick }: { children?: ReactNode; onClick?: () => void }) => (
+    <button onClick={onClick}>{children}</button>
+  ),
+  AlertDialogAction: ({ children, onClick }: { children?: ReactNode; onClick?: () => void }) => (
+    <button onClick={onClick}>{children}</button>
+  ),
 }));
 
 import { useNavigationGuard } from '../useNavigationGuard';

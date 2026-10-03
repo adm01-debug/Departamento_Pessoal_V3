@@ -56,10 +56,15 @@ ALTER TABLE public.premiacoes_roi_cenarios ENABLE ROW LEVEL SECURITY;
 DO $$ 
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Permissive access for rewards') THEN
-        CREATE POLICY "Permissive access for rewards" ON public.premiacoes_campanhas FOR ALL USING (true);
-        CREATE POLICY "Permissive access for rewards" ON public.premiacoes_pagamentos FOR ALL USING (true);
-        CREATE POLICY "Permissive access for rewards" ON public.premiacoes_regras FOR ALL USING (true);
-        CREATE POLICY "Permissive access for rewards" ON public.premiacoes_auditoria FOR ALL USING (true);
-        CREATE POLICY "Permissive access for rewards" ON public.premiacoes_roi_cenarios FOR ALL USING (true);
+        DROP POLICY IF EXISTS "Permissive access for rewards" ON public.premiacoes_campanhas;
+CREATE POLICY "Permissive access for rewards" ON public.premiacoes_campanhas FOR ALL USING (true);
+        DROP POLICY IF EXISTS "Permissive access for rewards" ON public.premiacoes_pagamentos;
+CREATE POLICY "Permissive access for rewards" ON public.premiacoes_pagamentos FOR ALL USING (true);
+        DROP POLICY IF EXISTS "Permissive access for rewards" ON public.premiacoes_regras;
+CREATE POLICY "Permissive access for rewards" ON public.premiacoes_regras FOR ALL USING (true);
+        DROP POLICY IF EXISTS "Permissive access for rewards" ON public.premiacoes_auditoria;
+CREATE POLICY "Permissive access for rewards" ON public.premiacoes_auditoria FOR ALL USING (true);
+        DROP POLICY IF EXISTS "Permissive access for rewards" ON public.premiacoes_roi_cenarios;
+CREATE POLICY "Permissive access for rewards" ON public.premiacoes_roi_cenarios FOR ALL USING (true);
     END IF;
 END $$;

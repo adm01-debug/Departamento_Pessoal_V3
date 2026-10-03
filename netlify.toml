@@ -24,7 +24,7 @@
     Cross-Origin-Resource-Policy = "same-origin"
     X-Permitted-Cross-Domain-Policies = "none"
     X-Robots-Tag = "noindex, nofollow, noarchive"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://*.lovable.app https://*.lovable.dev https://*.sentry.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.lovable.app https://*.lovable.dev https://api.pwnedpasswords.com https://*.sentry.io https://viacep.com.br https://brasilapi.com.br; worker-src 'self' blob:; manifest-src 'self'; media-src 'self' blob: data:; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests;"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' https://*.lovable.app https://*.lovable.dev https://*.sentry.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.lovable.app https://*.lovable.dev https://api.pwnedpasswords.com https://*.sentry.io https://viacep.com.br https://brasilapi.com.br; worker-src 'self' blob:; manifest-src 'self'; media-src 'self' blob: data:; frame-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests;"
 
 [[headers]]
   for = "/assets/*"

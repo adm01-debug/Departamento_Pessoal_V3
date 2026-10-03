@@ -14,6 +14,7 @@
 -- ── audit_logs ────────────────────────────────────────────────────────────────
 DROP POLICY IF EXISTS "Multi-tenant access for audit_logs" ON public.audit_logs;
 
+DROP POLICY IF EXISTS "audit_logs_user_isolation" ON public.audit_logs;
 CREATE POLICY "audit_logs_user_isolation"
   ON public.audit_logs
   FOR ALL
@@ -24,6 +25,7 @@ CREATE POLICY "audit_logs_user_isolation"
 -- ── auditoria_logs ────────────────────────────────────────────────────────────
 DROP POLICY IF EXISTS "Multi-tenant access for auditoria_logs" ON public.auditoria_logs;
 
+DROP POLICY IF EXISTS "auditoria_logs_empresa_isolation" ON public.auditoria_logs;
 CREATE POLICY "auditoria_logs_empresa_isolation"
   ON public.auditoria_logs
   FOR ALL

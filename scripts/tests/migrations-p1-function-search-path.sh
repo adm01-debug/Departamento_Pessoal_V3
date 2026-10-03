@@ -17,6 +17,11 @@ docker run -d --name "$NAME" -e POSTGRES_PASSWORD=test "$IMAGE" >/dev/null
 bash "$REPO_ROOT/scripts/tests/wait-for-postgres-container.sh" "$NAME"
 docker cp "$MIGRATION" "$NAME":/tmp/p1-function-path.sql
 
+# A migration depende do helper criado em 20260912150000 (aplicada antes na
+# cadeia real). Instala só a definição do helper extraída daquela migration.
+awk '/^CREATE OR REPLACE FUNCTION public\.dp_mig_set_search_path/,/^\$fn\$;$/' \
+  "$REPO_ROOT/supabase/migrations/20260912150000_p0_secdef_search_path.sql" | psql_run >/dev/null
+
 psql_run <<'SQL'
 CREATE SCHEMA extensions;
 CREATE FUNCTION public.dp_assert_rls(text) RETURNS void LANGUAGE plpgsql AS $$ BEGIN END $$;

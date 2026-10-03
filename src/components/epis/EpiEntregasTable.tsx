@@ -1,3 +1,4 @@
+import type { Tables } from '@/integrations/supabase/types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -5,24 +6,33 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
 import { Package, RotateCcw } from 'lucide-react';
-import { format, parseISO, addMonths, isBefore } from 'date-fns';
+import { addMonths, format, parseISO, isBefore } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 interface EpiEntregasTableProps {
-  data: any[];
+  data: (Tables<'epis_entregas'> & {
+    epi?: { ca_validade?: string | null; nome?: string | null; ca?: string | null } | null;
+    colaborador?: { nome_completo?: string | null } | null;
+  })[];
   onDevolver?: (id: string) => void;
 }
 
 export function EpiEntregasTable({ data, onDevolver }: EpiEntregasTableProps) {
   const formatDate = (d: string) => {
-    try { return format(parseISO(d), 'dd/MM/yyyy', { locale: ptBR }); } catch { return d; }
+    try {
+      return format(parseISO(d), 'dd/MM/yyyy', { locale: ptBR });
+    } catch {
+      return d;
+    }
   };
 
-  const getVencimento = (entrega: any) => {
-    if (!entrega.data_entrega || !entrega.epi?.validade_meses) return null;
+  const getVencimento = (entrega: { epi?: { ca_validade?: string | null } | null }) => {
+    if (!entrega.epi?.ca_validade) return null;
     try {
-      return addMonths(parseISO(entrega.data_entrega), entrega.epi.validade_meses);
-    } catch { return null; }
+      return parseISO(entrega.epi.ca_validade);
+    } catch {
+      return null;
+    }
   };
 
   return (
@@ -42,7 +52,9 @@ export function EpiEntregasTable({ data, onDevolver }: EpiEntregasTableProps) {
                   <TableHead className="font-display font-semibold text-xs">Vencimento</TableHead>
                   <TableHead className="font-display font-semibold text-xs">Qtd</TableHead>
                   <TableHead className="font-display font-semibold text-xs">Status</TableHead>
-                  {onDevolver && <TableHead className="font-display font-semibold text-xs w-[80px] pr-6">Ações</TableHead>}
+                  {onDevolver && (
+                    <TableHead className="font-display font-semibold text-xs w-[80px] pr-6">Ações</TableHead>
+                  )}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -60,27 +72,27 @@ export function EpiEntregasTable({ data, onDevolver }: EpiEntregasTableProps) {
                       transition={{ delay: i * 0.02 }}
                       className={`border-b border-border/20 hover:bg-accent/20 transition-colors ${isVencido ? 'bg-destructive/5' : ''}`}
                     >
-                      <TableCell className="font-body font-medium text-sm pl-6">
-                        {e.epi?.nome || '—'}
-                      </TableCell>
-                      <TableCell className="text-xs font-mono text-muted-foreground">
-                        {e.epi?.ca || '—'}
-                      </TableCell>
-                      <TableCell className="font-body text-sm">
-                        {e.colaborador?.nome_completo || '—'}
-                      </TableCell>
+                      <TableCell className="font-body font-medium text-sm pl-6">{e.epi?.nome || '—'}</TableCell>
+                      <TableCell className="text-xs font-mono text-muted-foreground">{e.epi?.ca || '—'}</TableCell>
+                      <TableCell className="font-body text-sm">{e.colaborador?.nome_completo || '—'}</TableCell>
                       <TableCell className="text-xs font-body">{formatDate(e.data_entrega)}</TableCell>
                       <TableCell>
                         {vencimento ? (
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <span className={`text-xs font-body ${isVencido ? 'text-destructive font-medium' : isProximo ? 'text-warning font-medium' : 'text-muted-foreground'}`}>
+                              <span
+                                className={`text-xs font-body ${isVencido ? 'text-destructive font-medium' : isProximo ? 'text-warning font-medium' : 'text-muted-foreground'}`}
+                              >
                                 {format(vencimento, 'dd/MM/yyyy')}
                                 {isVencido && ' ⚠️'}
                               </span>
                             </TooltipTrigger>
                             <TooltipContent className="text-xs">
-                              {isVencido ? 'EPI vencido — substituir imediatamente' : isProximo ? 'Vencimento próximo — agendar substituição' : 'Dentro do prazo de validade'}
+                              {isVencido
+                                ? 'EPI vencido — substituir imediatamente'
+                                : isProximo
+                                  ? 'Vencimento próximo — agendar substituição'
+                                  : 'Dentro do prazo de validade'}
                             </TooltipContent>
                           </Tooltip>
                         ) : (
@@ -90,11 +102,17 @@ export function EpiEntregasTable({ data, onDevolver }: EpiEntregasTableProps) {
                       <TableCell className="text-xs font-body">{e.quantidade}</TableCell>
                       <TableCell>
                         {isDevolvido ? (
-                          <Badge variant="secondary" className="text-[10px]">Devolvido</Badge>
+                          <Badge variant="secondary" className="text-[10px]">
+                            Devolvido
+                          </Badge>
                         ) : isVencido ? (
-                          <Badge variant="destructive" className="text-[10px]">Vencido</Badge>
+                          <Badge variant="destructive" className="text-[10px]">
+                            Vencido
+                          </Badge>
                         ) : (
-                          <Badge variant="outline" className="text-[10px] text-primary border-primary/30">Em uso</Badge>
+                          <Badge variant="outline" className="text-[10px] text-primary border-primary/30">
+                            Em uso
+                          </Badge>
                         )}
                       </TableCell>
                       {onDevolver && (
@@ -102,7 +120,13 @@ export function EpiEntregasTable({ data, onDevolver }: EpiEntregasTableProps) {
                           {!isDevolvido && (
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button size="icon" variant="ghost" aria-label="Registrar devolução" className="h-7 w-7 rounded-lg" onClick={() => onDevolver(e.id)}>
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  aria-label="Registrar devolução"
+                                  className="h-7 w-7 rounded-lg"
+                                  onClick={() => onDevolver(e.id)}
+                                >
                                   <RotateCcw className="h-3.5 w-3.5 text-muted-foreground" />
                                 </Button>
                               </TooltipTrigger>
@@ -144,11 +168,17 @@ export function EpiEntregasTable({ data, onDevolver }: EpiEntregasTableProps) {
                   <div className="flex items-center justify-between">
                     <span className="font-body font-medium text-sm">{e.epi?.nome || '—'}</span>
                     {isVencido ? (
-                      <Badge variant="destructive" className="text-[10px]">Vencido</Badge>
+                      <Badge variant="destructive" className="text-[10px]">
+                        Vencido
+                      </Badge>
                     ) : e.data_devolucao ? (
-                      <Badge variant="secondary" className="text-[10px]">Devolvido</Badge>
+                      <Badge variant="secondary" className="text-[10px]">
+                        Devolvido
+                      </Badge>
                     ) : (
-                      <Badge variant="outline" className="text-[10px]">Em uso</Badge>
+                      <Badge variant="outline" className="text-[10px]">
+                        Em uso
+                      </Badge>
                     )}
                   </div>
                   <p className="text-xs text-muted-foreground">{e.colaborador?.nome_completo}</p>

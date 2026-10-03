@@ -11,12 +11,14 @@ CREATE POLICY documentos_afastamento_tenant_select ON public.documentos_afastame
     WHERE a.id = documentos_afastamento.afastamento_id
       AND a.empresa_id IN (SELECT public.get_user_empresas(auth.uid()))));
 
+DROP POLICY IF EXISTS "documentos_afastamento_tenant_insert" ON public.documentos_afastamento;
 CREATE POLICY documentos_afastamento_tenant_insert ON public.documentos_afastamento
   FOR INSERT TO authenticated
   WITH CHECK (EXISTS (SELECT 1 FROM public.afastamentos a
     WHERE a.id = documentos_afastamento.afastamento_id
       AND a.empresa_id IN (SELECT public.get_user_empresas(auth.uid()))));
 
+DROP POLICY IF EXISTS "documentos_afastamento_tenant_update" ON public.documentos_afastamento;
 CREATE POLICY documentos_afastamento_tenant_update ON public.documentos_afastamento
   FOR UPDATE TO authenticated
   USING (EXISTS (SELECT 1 FROM public.afastamentos a
@@ -26,6 +28,7 @@ CREATE POLICY documentos_afastamento_tenant_update ON public.documentos_afastame
     WHERE a.id = documentos_afastamento.afastamento_id
       AND a.empresa_id IN (SELECT public.get_user_empresas(auth.uid()))));
 
+DROP POLICY IF EXISTS "documentos_afastamento_tenant_delete" ON public.documentos_afastamento;
 CREATE POLICY documentos_afastamento_tenant_delete ON public.documentos_afastamento
   FOR DELETE TO authenticated
   USING (EXISTS (SELECT 1 FROM public.afastamentos a
@@ -45,12 +48,14 @@ CREATE POLICY prorrogacoes_afastamento_tenant_select ON public.prorrogacoes_afas
     WHERE a.id = prorrogacoes_afastamento.afastamento_id
       AND a.empresa_id IN (SELECT public.get_user_empresas(auth.uid()))));
 
+DROP POLICY IF EXISTS "prorrogacoes_afastamento_tenant_insert" ON public.prorrogacoes_afastamento;
 CREATE POLICY prorrogacoes_afastamento_tenant_insert ON public.prorrogacoes_afastamento
   FOR INSERT TO authenticated
   WITH CHECK (EXISTS (SELECT 1 FROM public.afastamentos a
     WHERE a.id = prorrogacoes_afastamento.afastamento_id
       AND a.empresa_id IN (SELECT public.get_user_empresas(auth.uid()))));
 
+DROP POLICY IF EXISTS "prorrogacoes_afastamento_tenant_update" ON public.prorrogacoes_afastamento;
 CREATE POLICY prorrogacoes_afastamento_tenant_update ON public.prorrogacoes_afastamento
   FOR UPDATE TO authenticated
   USING (EXISTS (SELECT 1 FROM public.afastamentos a
@@ -60,6 +65,7 @@ CREATE POLICY prorrogacoes_afastamento_tenant_update ON public.prorrogacoes_afas
     WHERE a.id = prorrogacoes_afastamento.afastamento_id
       AND a.empresa_id IN (SELECT public.get_user_empresas(auth.uid()))));
 
+DROP POLICY IF EXISTS "prorrogacoes_afastamento_tenant_delete" ON public.prorrogacoes_afastamento;
 CREATE POLICY prorrogacoes_afastamento_tenant_delete ON public.prorrogacoes_afastamento
   FOR DELETE TO authenticated
   USING (EXISTS (SELECT 1 FROM public.afastamentos a

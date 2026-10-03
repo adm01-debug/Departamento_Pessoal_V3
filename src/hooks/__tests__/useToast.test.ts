@@ -9,10 +9,13 @@ describe('useToast reducer', () => {
   describe('ADD_TOAST', () => {
     it('adds a toast to an empty state', () => {
       const state: State = { toasts: [] };
-      const next = reducer(state as any, {
-        type: 'ADD_TOAST',
-        toast: { id: '1', title: 'Hello', open: true },
-      } as any);
+      const next = reducer(
+        state as never,
+        {
+          type: 'ADD_TOAST',
+          toast: { id: '1', title: 'Hello', open: true },
+        } as never
+      );
       expect(next.toasts).toHaveLength(1);
       expect(next.toasts[0].id).toBe('1');
       expect(next.toasts[0].title).toBe('Hello');
@@ -20,19 +23,25 @@ describe('useToast reducer', () => {
 
     it('prepends the newest toast (newest first)', () => {
       const state: State = { toasts: [{ id: '1', open: true }] };
-      const next = reducer(state as any, {
-        type: 'ADD_TOAST',
-        toast: { id: '2', title: 'Second', open: true },
-      } as any);
+      const next = reducer(
+        state as never,
+        {
+          type: 'ADD_TOAST',
+          toast: { id: '2', title: 'Second', open: true },
+        } as never
+      );
       expect(next.toasts[0].id).toBe('2');
     });
 
     it('respects TOAST_LIMIT = 1 (oldest toast is dropped)', () => {
       const state: State = { toasts: [{ id: '1', open: true }] };
-      const next = reducer(state as any, {
-        type: 'ADD_TOAST',
-        toast: { id: '2', title: 'Second', open: true },
-      } as any);
+      const next = reducer(
+        state as never,
+        {
+          type: 'ADD_TOAST',
+          toast: { id: '2', title: 'Second', open: true },
+        } as never
+      );
       expect(next.toasts).toHaveLength(1);
       expect(next.toasts[0].id).toBe('2');
     });
@@ -41,19 +50,25 @@ describe('useToast reducer', () => {
   describe('UPDATE_TOAST', () => {
     it('updates matching toast by id', () => {
       const state: State = { toasts: [{ id: '1', title: 'Old', open: true }] };
-      const next = reducer(state as any, {
-        type: 'UPDATE_TOAST',
-        toast: { id: '1', title: 'New' },
-      } as any);
+      const next = reducer(
+        state as never,
+        {
+          type: 'UPDATE_TOAST',
+          toast: { id: '1', title: 'New' },
+        } as never
+      );
       expect(next.toasts[0].title).toBe('New');
     });
 
     it('does not affect non-matching toasts', () => {
       const state: State = { toasts: [{ id: '1', title: 'Keep', open: true }] };
-      const next = reducer(state as any, {
-        type: 'UPDATE_TOAST',
-        toast: { id: '99', title: 'Changed' },
-      } as any);
+      const next = reducer(
+        state as never,
+        {
+          type: 'UPDATE_TOAST',
+          toast: { id: '99', title: 'Changed' },
+        } as never
+      );
       expect(next.toasts[0].title).toBe('Keep');
     });
   });
@@ -61,10 +76,13 @@ describe('useToast reducer', () => {
   describe('DISMISS_TOAST', () => {
     it('sets open=false for the specified toast', () => {
       const state: State = { toasts: [{ id: '1', open: true }] };
-      const next = reducer(state as any, {
-        type: 'DISMISS_TOAST',
-        toastId: '1',
-      } as any);
+      const next = reducer(
+        state as never,
+        {
+          type: 'DISMISS_TOAST',
+          toastId: '1',
+        } as never
+      );
       expect(next.toasts[0].open).toBe(false);
     });
 
@@ -75,8 +93,8 @@ describe('useToast reducer', () => {
           { id: '2', open: true },
         ],
       };
-      const next = reducer(state as any, { type: 'DISMISS_TOAST' } as any);
-      expect(next.toasts.every((t: any) => !t.open)).toBe(true);
+      const next = reducer(state as never, { type: 'DISMISS_TOAST' } as never);
+      expect(next.toasts.every((t: { id?: string; open?: boolean }) => !t.open)).toBe(true);
     });
 
     it('leaves other toasts open when dismissing by id', () => {
@@ -86,12 +104,15 @@ describe('useToast reducer', () => {
           { id: '2', open: true },
         ],
       };
-      const next = reducer(state as any, {
-        type: 'DISMISS_TOAST',
-        toastId: '1',
-      } as any);
-      const t1 = next.toasts.find((t: any) => t.id === '1');
-      const t2 = next.toasts.find((t: any) => t.id === '2');
+      const next = reducer(
+        state as never,
+        {
+          type: 'DISMISS_TOAST',
+          toastId: '1',
+        } as never
+      );
+      const t1 = next.toasts.find((t: { id?: string; open?: boolean }) => t.id === '1');
+      const t2 = next.toasts.find((t: { id?: string; open?: boolean }) => t.id === '2');
       expect(t1?.open).toBe(false);
       expect(t2?.open).toBe(true);
     });
@@ -105,26 +126,32 @@ describe('useToast reducer', () => {
           { id: '2', open: false },
         ],
       };
-      const next = reducer(state as any, {
-        type: 'REMOVE_TOAST',
-        toastId: '1',
-      } as any);
+      const next = reducer(
+        state as never,
+        {
+          type: 'REMOVE_TOAST',
+          toastId: '1',
+        } as never
+      );
       expect(next.toasts).toHaveLength(1);
       expect(next.toasts[0].id).toBe('2');
     });
 
     it('clears all toasts when toastId is undefined', () => {
       const state: State = { toasts: [{ id: '1', open: false }] };
-      const next = reducer(state as any, { type: 'REMOVE_TOAST' } as any);
+      const next = reducer(state as never, { type: 'REMOVE_TOAST' } as never);
       expect(next.toasts).toHaveLength(0);
     });
 
     it('keeps toasts when id not found', () => {
       const state: State = { toasts: [{ id: '1', open: false }] };
-      const next = reducer(state as any, {
-        type: 'REMOVE_TOAST',
-        toastId: '99',
-      } as any);
+      const next = reducer(
+        state as never,
+        {
+          type: 'REMOVE_TOAST',
+          toastId: '99',
+        } as never
+      );
       expect(next.toasts).toHaveLength(1);
       expect(next.toasts[0].id).toBe('1');
     });

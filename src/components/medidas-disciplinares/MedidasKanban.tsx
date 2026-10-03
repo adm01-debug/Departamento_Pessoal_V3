@@ -35,19 +35,18 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 type Status =
-  | 'rascunho'
-  | 'aguardando_gestor'
-  | 'aguardando_rh'
-  | 'aguardando_juridico'
-  | 'aplicada'
-  | 'rejeitada'
-  | 'arquivada';
+  'rascunho' | 'aguardando_gestor' | 'aguardando_rh' | 'aguardando_juridico' | 'aplicada' | 'rejeitada' | 'arquivada';
 
 type Medida = MedidaDisciplinarComColaborador;
 
 const STATUS_VALIDOS: readonly Status[] = [
-  'rascunho', 'aguardando_gestor', 'aguardando_rh', 'aguardando_juridico',
-  'aplicada', 'rejeitada', 'arquivada',
+  'rascunho',
+  'aguardando_gestor',
+  'aguardando_rh',
+  'aguardando_juridico',
+  'aplicada',
+  'rejeitada',
+  'arquivada',
 ];
 
 /** Normaliza o status vindo do banco (nullable/texto livre) para o domínio do Kanban. */
@@ -57,13 +56,13 @@ function statusDe(m: Medida): Status {
 }
 
 const COLUNAS: Array<{ id: Status; titulo: string; icon: typeof ClipboardList; cor: string }> = [
-  { id: 'rascunho',            titulo: 'Rascunho',            icon: ClipboardList, cor: 'border-muted-foreground/30' },
-  { id: 'aguardando_gestor',   titulo: 'Gestor',              icon: UserCheck,     cor: 'border-blue-500/50' },
-  { id: 'aguardando_rh',       titulo: 'RH',                  icon: ShieldCheck,   cor: 'border-purple-500/50' },
-  { id: 'aguardando_juridico', titulo: 'Jurídico',            icon: Gavel,         cor: 'border-orange-500/50' },
-  { id: 'aplicada',            titulo: 'Aplicada',            icon: Check,         cor: 'border-primary/60' },
-  { id: 'rejeitada',           titulo: 'Rejeitada',           icon: X,             cor: 'border-destructive/60' },
-  { id: 'arquivada',           titulo: 'Arquivada',           icon: Archive,       cor: 'border-muted-foreground/20' },
+  { id: 'rascunho', titulo: 'Rascunho', icon: ClipboardList, cor: 'border-muted-foreground/30' },
+  { id: 'aguardando_gestor', titulo: 'Gestor', icon: UserCheck, cor: 'border-blue-500/50' },
+  { id: 'aguardando_rh', titulo: 'RH', icon: ShieldCheck, cor: 'border-purple-500/50' },
+  { id: 'aguardando_juridico', titulo: 'Jurídico', icon: Gavel, cor: 'border-orange-500/50' },
+  { id: 'aplicada', titulo: 'Aplicada', icon: Check, cor: 'border-primary/60' },
+  { id: 'rejeitada', titulo: 'Rejeitada', icon: X, cor: 'border-destructive/60' },
+  { id: 'arquivada', titulo: 'Arquivada', icon: Archive, cor: 'border-muted-foreground/20' },
 ];
 
 const TIPO_LABEL: Record<string, string> = {
@@ -82,15 +81,16 @@ function CardMedida({ medida }: { medida: Medida }) {
       {...attributes}
       className={cn(
         'rounded-md border border-border bg-card p-3 shadow-sm cursor-grab active:cursor-grabbing transition-opacity',
-        isDragging && 'opacity-30',
+        isDragging && 'opacity-30'
       )}
     >
       <div className="flex items-start justify-between gap-2">
-        <span className="text-xs font-medium text-muted-foreground">
-          {TIPO_LABEL[medida.tipo] ?? medida.tipo}
-        </span>
+        <span className="text-xs font-medium text-muted-foreground">{TIPO_LABEL[medida.tipo] ?? medida.tipo}</span>
         {medida.gravidade && (
-          <Badge variant={medida.gravidade === 'gravissima' || medida.gravidade === 'grave' ? 'destructive' : 'secondary'} className="text-[10px]">
+          <Badge
+            variant={medida.gravidade === 'gravissima' || medida.gravidade === 'grave' ? 'destructive' : 'secondary'}
+            className="text-[10px]"
+          >
             {medida.gravidade}
           </Badge>
         )}
@@ -100,7 +100,7 @@ function CardMedida({ medida }: { medida: Medida }) {
       </p>
       <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{medida.descricao}</p>
       <p className="mt-2 text-[10px] text-muted-foreground">
-        {format(new Date(medida.data_ocorrencia), "dd/MM/yyyy", { locale: ptBR })}
+        {format(new Date(medida.data_ocorrencia), 'dd/MM/yyyy', { locale: ptBR })}
       </p>
     </div>
   );
@@ -121,7 +121,10 @@ function Coluna({
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: status });
   return (
-    <Card ref={setNodeRef} className={cn('flex min-w-[260px] flex-1 flex-col border-t-4', cor, isOver && 'ring-2 ring-primary')}>
+    <Card
+      ref={setNodeRef}
+      className={cn('flex min-w-[260px] flex-1 flex-col border-t-4', cor, isOver && 'ring-2 ring-primary')}
+    >
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center justify-between text-sm">
           <span className="flex items-center gap-2">
@@ -163,8 +166,13 @@ export function MedidasKanban() {
 
   const grupos = useMemo(() => {
     const g: Record<Status, Medida[]> = {
-      rascunho: [], aguardando_gestor: [], aguardando_rh: [], aguardando_juridico: [],
-      aplicada: [], rejeitada: [], arquivada: [],
+      rascunho: [],
+      aguardando_gestor: [],
+      aguardando_rh: [],
+      aguardando_juridico: [],
+      aplicada: [],
+      rejeitada: [],
+      arquivada: [],
     };
     for (const m of medidas) {
       g[statusDe(m)].push(m);
@@ -176,23 +184,37 @@ export function MedidasKanban() {
 
   const enviar = useMutation({
     mutationFn: (id: string) => medidasDisciplinaresService.enviarAprovacao(id),
-    onSuccess: () => { toast.success('Enviado para aprovação do gestor'); invalidar(); },
-    onError: (e: any) => toast.error(e?.message ?? 'Erro ao enviar'),
+    onSuccess: () => {
+      toast.success('Enviado para aprovação do gestor');
+      invalidar();
+    },
+    onError: (e: Error) => toast.error(e?.message ?? 'Erro ao enviar'),
   });
   const aprovar = useMutation({
     mutationFn: (id: string) => medidasDisciplinaresService.aprovar(id),
-    onSuccess: (r: any) => { toast.success(`Aprovado → ${r?.status ?? 'próxima etapa'}`); invalidar(); },
-    onError: (e: any) => toast.error(e?.message ?? 'Erro ao aprovar'),
+    onSuccess: (r) => {
+      toast.success(`Aprovado → ${r?.status ?? 'próxima etapa'}`);
+      invalidar();
+    },
+    onError: (e: Error) => toast.error(e?.message ?? 'Erro ao aprovar'),
   });
   const rejeitar = useMutation({
     mutationFn: ({ id, m }: { id: string; m: string }) => medidasDisciplinaresService.rejeitar(id, m),
-    onSuccess: () => { toast.success('Medida rejeitada'); invalidar(); setRejeitarOpen(null); setMotivo(''); },
-    onError: (e: any) => toast.error(e?.message ?? 'Erro ao rejeitar'),
+    onSuccess: () => {
+      toast.success('Medida rejeitada');
+      invalidar();
+      setRejeitarOpen(null);
+      setMotivo('');
+    },
+    onError: (e: Error) => toast.error(e?.message ?? 'Erro ao rejeitar'),
   });
   const arquivar = useMutation({
     mutationFn: (id: string) => medidasDisciplinaresService.arquivar(id),
-    onSuccess: () => { toast.success('Medida arquivada'); invalidar(); },
-    onError: (e: any) => toast.error(e?.message ?? 'Erro ao arquivar'),
+    onSuccess: () => {
+      toast.success('Medida arquivada');
+      invalidar();
+    },
+    onError: (e: Error) => toast.error(e?.message ?? 'Erro ao arquivar'),
   });
 
   function onDragStart(e: DragStartEvent) {
@@ -212,10 +234,11 @@ export function MedidasKanban() {
     // Transições suportadas via drag
     if (origem === 'rascunho' && alvo === 'aguardando_gestor') return enviar.mutate(id);
     if (origem === 'aguardando_gestor' && alvo === 'aguardando_rh') return aprovar.mutate(id);
-    if (origem === 'aguardando_rh' && (alvo === 'aguardando_juridico' || alvo === 'aplicada')) return aprovar.mutate(id);
+    if (origem === 'aguardando_rh' && (alvo === 'aguardando_juridico' || alvo === 'aplicada'))
+      return aprovar.mutate(id);
     if (origem === 'aguardando_juridico' && alvo === 'aplicada') return aprovar.mutate(id);
     if ((origem === 'aplicada' || origem === 'rejeitada') && alvo === 'arquivada') return arquivar.mutate(id);
-    if (['aguardando_gestor','aguardando_rh','aguardando_juridico'].includes(origem) && alvo === 'rejeitada') {
+    if (['aguardando_gestor', 'aguardando_rh', 'aguardando_juridico'].includes(origem) && alvo === 'rejeitada') {
       setRejeitarOpen(id);
       return;
     }
@@ -240,18 +263,26 @@ export function MedidasKanban() {
             <Coluna key={c.id} status={c.id} titulo={c.titulo} Icon={c.icon} cor={c.cor} medidas={grupos[c.id]} />
           ))}
         </div>
-        <DragOverlay>
-          {draggedMedida ? <CardMedida medida={draggedMedida} /> : null}
-        </DragOverlay>
+        <DragOverlay>{draggedMedida ? <CardMedida medida={draggedMedida} /> : null}</DragOverlay>
       </DndContext>
 
       {isLoading && <p className="mt-2 text-xs text-muted-foreground">Carregando…</p>}
 
       <p className="mt-3 text-xs text-muted-foreground">
-        Dica: arraste para <strong>Gestor → RH → Jurídico → Aplicada</strong>. Suspensões e casos graves/gravíssimos passam pelo Jurídico automaticamente. Arraste para <strong>Rejeitada</strong> para informar o motivo. Aplicadas ou rejeitadas podem ser <strong>Arquivadas</strong>.
+        Dica: arraste para <strong>Gestor → RH → Jurídico → Aplicada</strong>. Suspensões e casos graves/gravíssimos
+        passam pelo Jurídico automaticamente. Arraste para <strong>Rejeitada</strong> para informar o motivo. Aplicadas
+        ou rejeitadas podem ser <strong>Arquivadas</strong>.
       </p>
 
-      <Dialog open={!!rejeitarOpen} onOpenChange={(o) => { if (!o) { setRejeitarOpen(null); setMotivo(''); } }}>
+      <Dialog
+        open={!!rejeitarOpen}
+        onOpenChange={(o) => {
+          if (!o) {
+            setRejeitarOpen(null);
+            setMotivo('');
+          }
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Rejeitar medida disciplinar</DialogTitle>
@@ -270,7 +301,13 @@ export function MedidasKanban() {
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => { setRejeitarOpen(null); setMotivo(''); }}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setRejeitarOpen(null);
+                setMotivo('');
+              }}
+            >
               Cancelar
             </Button>
             <Button

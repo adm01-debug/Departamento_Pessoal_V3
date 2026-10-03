@@ -1,9 +1,10 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
 }));
 
@@ -66,7 +67,7 @@ describe('SSTRiscosTab', () => {
 
   it('shows spinner when loading', async () => {
     const { useQuery } = await import('@tanstack/react-query');
-    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: true } as any);
+    vi.mocked(useQuery).mockReturnValueOnce({ data: [], isLoading: true } as never);
     const { container } = render(<SSTRiscosTab />);
     expect(container.querySelector('.animate-spin')).toBeInTheDocument();
   });

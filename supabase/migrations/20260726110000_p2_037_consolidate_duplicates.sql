@@ -17,53 +17,60 @@
 -- PROPOSTA DE CONSOLIDAÇÃO: VIEWS UNIFICADAS
 -- =============================================================================
 
+-- Tenant persistente para documentos gerais (tabela canônica não tem empresa_id)
+ALTER TABLE public.documentos
+  ADD COLUMN IF NOT EXISTS empresa_id UUID REFERENCES public.empresas(id);
+
 -- View unificada de documentos (não destrutivo - não migra dados)
 CREATE OR REPLACE VIEW public.v_documentos_unificado AS
 SELECT
   'admissao'::TEXT as contexto,
-  id,
-  empresa_id,
-  admissao_id as referencia_id,
-  tipo_documento as tipo,
+  d.id,
+  a.empresa_id,
+  d.admissao_id as referencia_id,
+  d.tipo,
   NULL::TEXT as titulo,
-  arquivo_url,
+  d.url as arquivo_url,
   NULL::TEXT as conteudo_html,
-  status,
-  created_at,
-  updated_at
-FROM public.documentos_admissao
+  NULL::TEXT as status,
+  d.created_at,
+  NULL::TIMESTAMPTZ as updated_at
+FROM public.documentos_admissao d
+JOIN public.admissoes a ON a.id = d.admissao_id
 
 UNION ALL
 
 SELECT
   'afastamento'::TEXT as contexto,
-  id,
-  empresa_id,
-  afastamento_id as referencia_id,
-  tipo_documento as tipo,
+  d.id,
+  af.empresa_id,
+  d.afastamento_id as referencia_id,
+  d.tipo,
   NULL::TEXT as titulo,
-  arquivo_url,
+  d.url as arquivo_url,
   NULL::TEXT as conteudo_html,
   NULL::TEXT as status,
-  created_at,
-  updated_at
-FROM public.documentos_afastamento
+  d.created_at,
+  NULL::TIMESTAMPTZ as updated_at
+FROM public.documentos_afastamento d
+JOIN public.afastamentos af ON af.id = d.afastamento_id
 
 UNION ALL
 
 SELECT
   'geral'::TEXT as contexto,
-  id,
-  empresa_id,
+  d.id,
+  COALESCE(d.empresa_id, c.empresa_id),
   NULL::UUID as referencia_id,
-  tipo,
-  titulo,
-  arquivo_url,
-  conteudo_html,
-  status,
-  created_at,
-  updated_at
-FROM public.documentos
+  d.tipo,
+  d.nome as titulo,
+  d.url as arquivo_url,
+  NULL::TEXT as conteudo_html,
+  NULL::TEXT as status,
+  d.created_at,
+  d.updated_at
+FROM public.documentos d
+LEFT JOIN public.colaboradores c ON c.id = d.colaborador_id
 
 UNION ALL
 
@@ -89,7 +96,7 @@ CREATE OR REPLACE FUNCTION public.documento_registrar(
   p_contexto TEXT,
   p_empresa_id UUID,
   p_referencia_id UUID DEFAULT NULL,
-  p_tipo TEXT,
+  p_tipo TEXT DEFAULT 'outro',
   p_titulo TEXT DEFAULT NULL,
   p_arquivo_url TEXT DEFAULT NULL,
   p_conteudo_html TEXT DEFAULT NULL,
@@ -101,19 +108,38 @@ SECURITY DEFINER
 AS $$
 DECLARE
   v_id UUID;
+  v_empresa UUID := p_empresa_id;
 BEGIN
+  -- Deriva o tenant a partir da referência quando não informado
+  IF v_empresa IS NULL AND p_contexto = 'admissao' THEN
+    SELECT empresa_id INTO v_empresa FROM public.admissoes WHERE id = p_referencia_id;
+  ELSIF v_empresa IS NULL AND p_contexto = 'afastamento' THEN
+    SELECT empresa_id INTO v_empresa FROM public.afastamentos WHERE id = p_referencia_id;
+  END IF;
+
+  -- SECURITY DEFINER: exige membership no tenant (service role passa com uid NULL)
+  IF auth.uid() IS NOT NULL THEN
+    IF v_empresa IS NULL THEN
+      RAISE EXCEPTION 'empresa_id não identificado para o contexto informado';
+    END IF;
+    IF NOT public.is_admin(auth.uid())
+       AND NOT (v_empresa = ANY (SELECT public.get_user_empresas(auth.uid()))) THEN
+      RAISE EXCEPTION 'Acesso negado para a empresa informada';
+    END IF;
+  END IF;
+
   -- Direciona para a tabela correta baseada no contexto
   CASE p_contexto
     WHEN 'admissao' THEN
       INSERT INTO public.documentos_admissao
-        (empresa_id, admissao_id, tipo_documento, arquivo_url, status)
-      VALUES (p_empresa_id, p_referencia_id, p_tipo, p_arquivo_url, p_status)
+        (admissao_id, tipo, url)
+      VALUES (p_referencia_id, p_tipo, p_arquivo_url)
       RETURNING id INTO v_id;
 
     WHEN 'afastamento' THEN
       INSERT INTO public.documentos_afastamento
-        (empresa_id, afastamento_id, tipo_documento, arquivo_url)
-      VALUES (p_empresa_id, p_referencia_id, p_tipo, p_arquivo_url)
+        (afastamento_id, tipo, url)
+      VALUES (p_referencia_id, p_tipo, p_arquivo_url)
       RETURNING id INTO v_id;
 
     WHEN 'sst_regimento' THEN
@@ -124,8 +150,8 @@ BEGIN
 
     ELSE
       INSERT INTO public.documentos
-        (empresa_id, tipo, titulo, arquivo_url, conteudo_html, status)
-      VALUES (p_empresa_id, p_tipo, p_titulo, p_arquivo_url, p_conteudo_html, p_status)
+        (empresa_id, colaborador_id, tipo, nome, url)
+      VALUES (v_empresa, p_referencia_id, p_tipo, p_titulo, p_arquivo_url)
       RETURNING id INTO v_id;
   END CASE;
 
@@ -165,6 +191,13 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
 BEGIN
+  -- SECURITY DEFINER: exige membership no tenant (service role passa com uid NULL)
+  IF auth.uid() IS NOT NULL
+     AND NOT public.is_admin(auth.uid())
+     AND NOT (p_empresa_id = ANY (SELECT public.get_user_empresas(auth.uid()))) THEN
+    RAISE EXCEPTION 'Acesso negado para a empresa informada';
+  END IF;
+
   RETURN QUERY
   SELECT * FROM public.v_documentos_unificado
   WHERE empresa_id = p_empresa_id

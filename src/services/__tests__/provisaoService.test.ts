@@ -23,7 +23,7 @@ describe('provisaoService', () => {
       const mockOrder = vi.fn().mockReturnValue({ eq: mockEq });
       const mockSelect = vi.fn().mockReturnValue({ order: mockOrder });
 
-      vi.mocked(supabase.from).mockReturnValue({ select: mockSelect } as any);
+      vi.mocked(supabase.from).mockReturnValue({ select: mockSelect } as never);
 
       const result = await provisaoService.list('empresa-123');
       expect(mockSelect).toHaveBeenCalledWith('*, colaborador:colaboradores(nome_completo, salario_base)');
@@ -38,11 +38,11 @@ describe('provisaoService', () => {
       const mockQuery = {
         eq: vi.fn().mockReturnThis(),
         order: vi.fn().mockReturnThis(),
-        then: vi.fn().mockImplementation((onSuccess) => onSuccess({ data: null, error: { message: 'DB Error' } }))
+        then: vi.fn().mockImplementation((onSuccess) => onSuccess({ data: null, error: { message: 'DB Error' } })),
       };
-      
+
       const mockSelect = vi.fn().mockReturnValue(mockQuery);
-      vi.mocked(supabase.from).mockReturnValue({ select: mockSelect } as any);
+      vi.mocked(supabase.from).mockReturnValue({ select: mockSelect } as never);
 
       await expect(provisaoService.list('1', '2026-05')).rejects.toMatchObject({ message: 'DB Error' });
     });
@@ -50,11 +50,11 @@ describe('provisaoService', () => {
 
   describe('calcular', () => {
     it('should invoke the correct edge function with parameters', async () => {
-      vi.mocked(supabase.functions.invoke).mockResolvedValue({ data: { success: true }, error: null } as any);
+      vi.mocked(supabase.functions.invoke).mockResolvedValue({ data: { success: true }, error: null } as never);
       const result = await provisaoService.calcular('empresa-123', '2026-05');
-      
+
       expect(supabase.functions.invoke).toHaveBeenCalledWith('calcular-provisoes', {
-        body: { empresa_id: 'empresa-123', competencia: '2026-05' }
+        body: { empresa_id: 'empresa-123', competencia: '2026-05' },
       });
       expect(result).toEqual({ success: true });
     });
