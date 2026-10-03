@@ -9,7 +9,9 @@ const { MockJsPDF, mockSave, mockText, mockLine, mockAutoTable } = vi.hoisted(()
   const mockSetFont = vi.fn();
   const mockSetFillColor = vi.fn();
   const mockRect = vi.fn();
-  const mockSplitTextToSize = vi.fn(function(t: string) { return [t]; });
+  const mockSplitTextToSize = vi.fn(function (t: string) {
+    return [t];
+  });
   const mockDoc = {
     setFontSize: mockSetFontSize,
     setTextColor: mockSetTextColor,
@@ -20,12 +22,23 @@ const { MockJsPDF, mockSave, mockText, mockLine, mockAutoTable } = vi.hoisted(()
     line: mockLine,
     save: mockSave,
     splitTextToSize: mockSplitTextToSize,
-    internal: { pageSize: { getWidth: function() { return 210; }, getHeight: function() { return 297; } } },
+    internal: {
+      pageSize: {
+        getWidth: function () {
+          return 210;
+        },
+        getHeight: function () {
+          return 297;
+        },
+      },
+    },
     lastAutoTable: { finalY: 100 },
     addPage: vi.fn(),
   };
-  const MockJsPDF = vi.fn().mockImplementation(function() { return mockDoc; });
-  const mockAutoTable = vi.fn().mockImplementation(function(doc: any) {
+  const MockJsPDF = vi.fn().mockImplementation(function () {
+    return mockDoc;
+  });
+  const mockAutoTable = vi.fn().mockImplementation(function (doc: any) {
     doc.lastAutoTable = { finalY: 100 };
   });
   return { MockJsPDF, mockSave, mockText, mockLine, mockAutoTable };
@@ -35,9 +48,14 @@ vi.mock('jspdf', () => ({ default: MockJsPDF }));
 vi.mock('jspdf-autotable', () => ({ default: mockAutoTable }));
 
 import { feriasPDF } from '../feriasPDF';
+import type { Ferias } from '@/types/entities';
 
-const sampleSolicitacao = {
-  colaborador: { nome_completo: 'João Silva', cpf: '123.456.789-00', cargo: { nome: 'Dev' }, departamento: { nome: 'TI' } },
+const sampleSolicitacao: Ferias = {
+  id: 'f1',
+  colaborador_id: 'c1',
+  empresa_id: 'e1',
+  status: 'pendente',
+  colaborador: { nome_completo: 'João Silva', cpf: '123.456.789-00', cargo: 'Dev', departamento: 'TI' },
   data_inicio: '2024-07-01',
   data_fim: '2024-07-30',
   dias_ferias: 30,
@@ -49,14 +67,22 @@ describe('feriasPDF.gerarRecibo', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     const mockDoc = {
-      setFontSize: vi.fn(), setTextColor: vi.fn(), setFont: vi.fn(),
-      setFillColor: vi.fn(), rect: vi.fn(), text: mockText, line: mockLine,
-      save: mockSave, splitTextToSize: vi.fn((t: string) => [t]),
+      setFontSize: vi.fn(),
+      setTextColor: vi.fn(),
+      setFont: vi.fn(),
+      setFillColor: vi.fn(),
+      rect: vi.fn(),
+      text: mockText,
+      line: mockLine,
+      save: mockSave,
+      splitTextToSize: vi.fn((t: string) => [t]),
       internal: { pageSize: { getWidth: () => 210 } },
       lastAutoTable: { finalY: 100 },
     };
-    MockJsPDF.mockImplementation(function() { return mockDoc as any; });
-    mockAutoTable.mockImplementation(function(doc: any) {
+    MockJsPDF.mockImplementation(function () {
+      return mockDoc as never;
+    });
+    mockAutoTable.mockImplementation(function (doc: any) {
       doc.lastAutoTable = { finalY: 100 };
     });
   });
@@ -74,7 +100,7 @@ describe('feriasPDF.gerarRecibo', () => {
   it('includes colaborador name in text calls', () => {
     feriasPDF.gerarRecibo(sampleSolicitacao);
     const allTextCalls = mockText.mock.calls.map((c: any[]) => String(c[0]));
-    expect(allTextCalls.some(t => t.includes('Aviso'))).toBe(true);
+    expect(allTextCalls.some((t) => t.includes('Aviso'))).toBe(true);
   });
 
   it('calls autoTable to build the info table', () => {

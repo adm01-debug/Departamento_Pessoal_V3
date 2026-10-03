@@ -66,7 +66,7 @@ export function RelatoriosAgendadosTab({ empresaId }: { empresaId: string }) {
       setOpen(false);
       toast.success('Relatório agendado com sucesso!');
     },
-    onError: (e: any) => toast.error(safeErrorMessage(e, 'Erro ao agendar relatório.')),
+    onError: (e) => toast.error(safeErrorMessage(e, 'Erro ao agendar relatório.')),
   });
 
   const excluir = useMutation({

@@ -20,6 +20,7 @@ GRANT ALL ON public.contrato_token_eventos TO service_role;
 
 ALTER TABLE public.contrato_token_eventos ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "contrato_token_eventos_read" ON public.contrato_token_eventos;
 CREATE POLICY "contrato_token_eventos_read"
   ON public.contrato_token_eventos FOR SELECT
   TO authenticated

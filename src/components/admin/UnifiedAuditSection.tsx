@@ -1,3 +1,4 @@
+import type { Json } from '@/integrations/supabase/types';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -19,7 +20,7 @@ export interface AuditRow {
   action: string | null;
   entity: string | null;
   entity_id: string | null;
-  payload: any;
+  payload: Json;
   ip_address: string | null;
   occurred_at: string;
 }

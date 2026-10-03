@@ -1,18 +1,20 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
+    div: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <div {...rest}>{children}</div>,
   },
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children }: any) => <div>{children}</div>,
-  DialogContent: ({ children }: any) => <div>{children}</div>,
-  DialogHeader: ({ children }: any) => <div>{children}</div>,
-  DialogTitle: ({ children }: any) => <div>{children}</div>,
-  DialogTrigger: ({ children, asChild }: any) => (asChild ? children : <div>{children}</div>),
+  Dialog: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogTitle: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogTrigger: ({ children, asChild }: { children?: ReactNode; asChild?: boolean }) =>
+    asChild ? children : <div>{children}</div>,
 }));
 
 const { mutateMock } = vi.hoisted(() => ({ mutateMock: vi.fn() }));

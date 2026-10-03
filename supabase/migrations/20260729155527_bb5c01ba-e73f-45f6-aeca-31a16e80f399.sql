@@ -7,6 +7,7 @@
 -- 1) documentos_historico -> documentos -> colaboradores.empresa_id
 DROP POLICY IF EXISTS "Documentos historico authenticated" ON public.documentos_historico;
 
+DROP POLICY IF EXISTS "tenant_documentos_historico" ON public.documentos_historico;
 CREATE POLICY "tenant_documentos_historico"
 ON public.documentos_historico
 FOR ALL
@@ -33,6 +34,7 @@ WITH CHECK (
 -- 2) treinamento_instancias -> catalogo_cursos.empresa_id
 DROP POLICY IF EXISTS "Treinamento instancias authenticated" ON public.treinamento_instancias;
 
+DROP POLICY IF EXISTS "tenant_treinamento_instancias" ON public.treinamento_instancias;
 CREATE POLICY "tenant_treinamento_instancias"
 ON public.treinamento_instancias
 FOR ALL
@@ -55,6 +57,7 @@ WITH CHECK (
 -- 3) treinamento_feedback -> inscricoes_cursos.empresa_id
 DROP POLICY IF EXISTS "Treinamento feedback authenticated" ON public.treinamento_feedback;
 
+DROP POLICY IF EXISTS "tenant_treinamento_feedback" ON public.treinamento_feedback;
 CREATE POLICY "tenant_treinamento_feedback"
 ON public.treinamento_feedback
 FOR ALL
@@ -77,6 +80,7 @@ WITH CHECK (
 -- 4) premiacoes_pagamentos -> campanha OU colaborador
 DROP POLICY IF EXISTS "Premiacoes pagamentos scoped" ON public.premiacoes_pagamentos;
 
+DROP POLICY IF EXISTS "tenant_premiacoes_pagamentos_select" ON public.premiacoes_pagamentos;
 CREATE POLICY "tenant_premiacoes_pagamentos_select"
 ON public.premiacoes_pagamentos
 FOR SELECT
@@ -97,6 +101,7 @@ USING (
 -- 5) premiacoes_regras -> premiacoes_campanhas.empresa_id
 DROP POLICY IF EXISTS "Premiacoes regras scoped" ON public.premiacoes_regras;
 
+DROP POLICY IF EXISTS "tenant_premiacoes_regras_select" ON public.premiacoes_regras;
 CREATE POLICY "tenant_premiacoes_regras_select"
 ON public.premiacoes_regras
 FOR SELECT
@@ -112,6 +117,7 @@ USING (
 -- 6) trilha_auditoria_ponto -> batidas_ponto.empresa_id
 DROP POLICY IF EXISTS "Acesso à trilha de auditoria" ON public.trilha_auditoria_ponto;
 
+DROP POLICY IF EXISTS "tenant_trilha_auditoria_ponto_select" ON public.trilha_auditoria_ponto;
 CREATE POLICY "tenant_trilha_auditoria_ponto_select"
 ON public.trilha_auditoria_ponto
 FOR SELECT
@@ -128,6 +134,7 @@ USING (
 --    Sem correlacao possivel -> restringe a admin/rh.
 DROP POLICY IF EXISTS "Usuários autenticados podem ver auditoria de premiações" ON public.premiacoes_auditoria;
 
+DROP POLICY IF EXISTS "premiacoes_auditoria_admin_rh_select" ON public.premiacoes_auditoria;
 CREATE POLICY "premiacoes_auditoria_admin_rh_select"
 ON public.premiacoes_auditoria
 FOR SELECT

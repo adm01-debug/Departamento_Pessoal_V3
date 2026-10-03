@@ -252,6 +252,9 @@ BEGIN
 END
 $constraint$;
 
+-- trg_pcs_recalc_pontos usa UPDATE OF pontuacoes — bloqueia ALTER TYPE;
+-- é recriado adiante neste mesmo arquivo.
+DROP TRIGGER IF EXISTS trg_pcs_recalc_pontos ON public.pcs_avaliacoes_cargo;
 ALTER TABLE public.pcs_avaliacoes_cargo
   ALTER COLUMN pontuacoes TYPE jsonb USING pontuacoes::jsonb,
   ALTER COLUMN pontuacoes SET DEFAULT '{}'::jsonb,

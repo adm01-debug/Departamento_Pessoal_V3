@@ -39,11 +39,11 @@ function buildListChain(data: any[], error: any = null) {
   chain.order = vi.fn().mockReturnValue(chain);
   chain.limit = vi.fn().mockReturnValue(chain);
   chain.eq = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
-  mockFrom.mockReturnValue(deepChain({ select: selectFn }) as any);
+  mockFrom.mockReturnValue(deepChain({ select: selectFn }) as never);
   return chain;
 }
 
@@ -80,7 +80,21 @@ describe('useDocumentos', () => {
     const selectFn = vi.fn().mockReturnValue({ maybeSingle: maybeSingleFn });
     const insertFn = vi.fn().mockReturnValue({ select: selectFn });
     mockFrom.mockImplementation((table: string) => {
-      if (table === 'documentos') return { select: vi.fn().mockReturnValue({ order: vi.fn().mockReturnValue({ limit: vi.fn().mockReturnValue({ eq: vi.fn().mockReturnValue({ then: (fn: any) => Promise.resolve({ data: [], error: null }).then(fn), catch: (fn: any) => Promise.resolve({ data: [], error: null }).catch(fn), finally: (fn: any) => Promise.resolve({ data: [], error: null }).finally(fn) }) }) }) }), insert: insertFn };
+      if (table === 'documentos')
+        return {
+          select: vi.fn().mockReturnValue({
+            order: vi.fn().mockReturnValue({
+              limit: vi.fn().mockReturnValue({
+                eq: vi.fn().mockReturnValue({
+                  then: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).then(fn),
+                  catch: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).catch(fn),
+                  finally: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).finally(fn),
+                }),
+              }),
+            }),
+          }),
+          insert: insertFn,
+        };
       return { select: vi.fn() };
     });
 
@@ -91,10 +105,12 @@ describe('useDocumentos', () => {
       await result.current.criarDocumento.mutateAsync({ nome: 'Doc', tipo: 'contrato' });
     });
 
-    expect(insertFn).toHaveBeenCalledWith(expect.objectContaining({
-      nome: 'Doc',
-      empresa_id: 'emp-1',
-    }));
+    expect(insertFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        nome: 'Doc',
+        empresa_id: 'emp-1',
+      })
+    );
   });
 
   it('criarDocumento shows success toast', async () => {
@@ -103,10 +119,21 @@ describe('useDocumentos', () => {
     const selectFn = vi.fn().mockReturnValue({ maybeSingle: maybeSingleFn });
     const insertFn = vi.fn().mockReturnValue({ select: selectFn });
     mockFrom.mockImplementation((table: string) => {
-      if (table === 'documentos') return {
-        select: vi.fn().mockReturnValue({ order: vi.fn().mockReturnValue({ limit: vi.fn().mockReturnValue({ eq: vi.fn().mockReturnValue({ then: (fn: any) => Promise.resolve({ data: [], error: null }).then(fn), catch: (fn: any) => Promise.resolve({ data: [], error: null }).catch(fn), finally: (fn: any) => Promise.resolve({ data: [], error: null }).finally(fn) }) }) }) }),
-        insert: insertFn,
-      };
+      if (table === 'documentos')
+        return {
+          select: vi.fn().mockReturnValue({
+            order: vi.fn().mockReturnValue({
+              limit: vi.fn().mockReturnValue({
+                eq: vi.fn().mockReturnValue({
+                  then: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).then(fn),
+                  catch: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).catch(fn),
+                  finally: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).finally(fn),
+                }),
+              }),
+            }),
+          }),
+          insert: insertFn,
+        };
       return {};
     });
 
@@ -123,10 +150,21 @@ describe('useDocumentos', () => {
     const eqFn = vi.fn().mockResolvedValue({ error: null });
     const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockImplementation((table: string) => {
-      if (table === 'documentos') return {
-        select: vi.fn().mockReturnValue({ order: vi.fn().mockReturnValue({ limit: vi.fn().mockReturnValue({ eq: vi.fn().mockReturnValue({ then: (fn: any) => Promise.resolve({ data: [], error: null }).then(fn), catch: (fn: any) => Promise.resolve({ data: [], error: null }).catch(fn), finally: (fn: any) => Promise.resolve({ data: [], error: null }).finally(fn) }) }) }) }),
-        delete: deleteFn,
-      };
+      if (table === 'documentos')
+        return {
+          select: vi.fn().mockReturnValue({
+            order: vi.fn().mockReturnValue({
+              limit: vi.fn().mockReturnValue({
+                eq: vi.fn().mockReturnValue({
+                  then: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).then(fn),
+                  catch: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).catch(fn),
+                  finally: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).finally(fn),
+                }),
+              }),
+            }),
+          }),
+          delete: deleteFn,
+        };
       return {};
     });
 

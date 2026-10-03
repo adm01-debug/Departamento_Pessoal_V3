@@ -29,40 +29,55 @@ const MOCK_HISTORICO = [
 describe('HistoricoContratosTab', () => {
   it('shows loading state', () => {
     vi.mocked(useHistoricoContratos).mockReturnValue({
-      historico: [], isLoading: true, criar: vi.fn(), excluir: vi.fn(),
-    } as any);
+      historico: [],
+      isLoading: true,
+      criar: vi.fn(),
+      excluir: vi.fn(),
+    } as never);
     render(<HistoricoContratosTab colaboradorId="col-1" />);
     expect(screen.getByText('Carregando...')).toBeInTheDocument();
   });
 
   it('renders Histórico de Contratos title', () => {
     vi.mocked(useHistoricoContratos).mockReturnValue({
-      historico: [], isLoading: false, criar: vi.fn(), excluir: vi.fn(),
-    } as any);
+      historico: [],
+      isLoading: false,
+      criar: vi.fn(),
+      excluir: vi.fn(),
+    } as never);
     render(<HistoricoContratosTab colaboradorId="col-1" />);
     expect(screen.getByText('Histórico de Contratos')).toBeInTheDocument();
   });
 
   it('renders Nova Alteração button', () => {
     vi.mocked(useHistoricoContratos).mockReturnValue({
-      historico: [], isLoading: false, criar: vi.fn(), excluir: vi.fn(),
-    } as any);
+      historico: [],
+      isLoading: false,
+      criar: vi.fn(),
+      excluir: vi.fn(),
+    } as never);
     render(<HistoricoContratosTab colaboradorId="col-1" />);
     expect(screen.getByText('Nova Alteração')).toBeInTheDocument();
   });
 
   it('shows empty state message', () => {
     vi.mocked(useHistoricoContratos).mockReturnValue({
-      historico: [], isLoading: false, criar: vi.fn(), excluir: vi.fn(),
-    } as any);
+      historico: [],
+      isLoading: false,
+      criar: vi.fn(),
+      excluir: vi.fn(),
+    } as never);
     render(<HistoricoContratosTab colaboradorId="col-1" />);
     expect(screen.getByText('Nenhuma alteração contratual')).toBeInTheDocument();
   });
 
   it('renders historico row data', () => {
     vi.mocked(useHistoricoContratos).mockReturnValue({
-      historico: MOCK_HISTORICO, isLoading: false, criar: vi.fn(), excluir: vi.fn(),
-    } as any);
+      historico: MOCK_HISTORICO,
+      isLoading: false,
+      criar: vi.fn(),
+      excluir: vi.fn(),
+    } as never);
     render(<HistoricoContratosTab colaboradorId="col-1" />);
     expect(screen.getByText('2023-01-01')).toBeInTheDocument();
     expect(screen.getByText('Analista')).toBeInTheDocument();
@@ -71,16 +86,22 @@ describe('HistoricoContratosTab', () => {
 
   it('renders salário formatted as BRL', () => {
     vi.mocked(useHistoricoContratos).mockReturnValue({
-      historico: MOCK_HISTORICO, isLoading: false, criar: vi.fn(), excluir: vi.fn(),
-    } as any);
+      historico: MOCK_HISTORICO,
+      isLoading: false,
+      criar: vi.fn(),
+      excluir: vi.fn(),
+    } as never);
     render(<HistoricoContratosTab colaboradorId="col-1" />);
     expect(screen.getByText(/5\.000/)).toBeInTheDocument();
   });
 
   it('renders carga horária with h suffix', () => {
     vi.mocked(useHistoricoContratos).mockReturnValue({
-      historico: MOCK_HISTORICO, isLoading: false, criar: vi.fn(), excluir: vi.fn(),
-    } as any);
+      historico: MOCK_HISTORICO,
+      isLoading: false,
+      criar: vi.fn(),
+      excluir: vi.fn(),
+    } as never);
     render(<HistoricoContratosTab colaboradorId="col-1" />);
     expect(screen.getByText('40h')).toBeInTheDocument();
   });
@@ -88,8 +109,11 @@ describe('HistoricoContratosTab', () => {
   it('shows form when Nova Alteração is clicked', async () => {
     const user = userEvent.setup();
     vi.mocked(useHistoricoContratos).mockReturnValue({
-      historico: [], isLoading: false, criar: vi.fn(), excluir: vi.fn(),
-    } as any);
+      historico: [],
+      isLoading: false,
+      criar: vi.fn(),
+      excluir: vi.fn(),
+    } as never);
     render(<HistoricoContratosTab colaboradorId="col-1" />);
     await user.click(screen.getByText('Nova Alteração'));
     expect(screen.getByText('Data Início *')).toBeInTheDocument();

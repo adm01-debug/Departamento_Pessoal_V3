@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import type { TablesInsert } from '@/integrations/supabase/types';
 import { intervaloService } from '@/services/intervaloService';
 import { useEmpresas } from './useEmpresas';
 import { toast } from 'sonner';
@@ -16,7 +17,8 @@ export function useConfiguracoesIntervalo() {
   });
 
   const criarMutation = useMutation({
-    mutationFn: (data: any) => intervaloService.criar({ ...data, empresa_id: empresaId }),
+    mutationFn: (data: Omit<TablesInsert<'configuracoes_intervalo'>, 'empresa_id'>) =>
+      intervaloService.criar({ ...data, empresa_id: empresaId ?? null }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['configuracoes_intervalo'] });
       toast.success('Configuração de intervalo criada');
@@ -25,7 +27,8 @@ export function useConfiguracoesIntervalo() {
   });
 
   const atualizarMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => intervaloService.atualizar(empresaId!, id, data),
+    mutationFn: ({ id, data }: { id: string; data: Record<string, unknown> }) =>
+      intervaloService.atualizar(empresaId!, id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['configuracoes_intervalo'] });
       toast.success('Configuração atualizada');

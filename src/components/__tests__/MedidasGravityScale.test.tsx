@@ -1,27 +1,30 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
+    div: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <div {...rest}>{children}</div>,
   },
 }));
 
 vi.mock('@/components/ui/tooltip', () => ({
-  TooltipProvider: ({ children }: any) => <>{children}</>,
-  Tooltip: ({ children }: any) => <>{children}</>,
-  TooltipTrigger: ({ children, asChild }: any) => asChild ? children : <div>{children}</div>,
-  TooltipContent: ({ children }: any) => <div>{children}</div>,
+  TooltipProvider: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  Tooltip: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  TooltipTrigger: ({ children, asChild }: { children?: ReactNode; asChild?: boolean }) =>
+    asChild ? children : <div>{children}</div>,
+  TooltipContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 import { MedidasGravityScale } from '../medidas-disciplinares/MedidasGravityScale';
+import type { MedidaDisciplinarComColaborador } from '@/types/medidasDisciplinares';
 
 const MEDIDAS = [
   { tipo: 'advertencia_verbal' },
   { tipo: 'advertencia_verbal' },
   { tipo: 'suspensao' },
   { tipo: 'justa_causa' },
-];
+] as unknown as MedidaDisciplinarComColaborador[];
 
 describe('MedidasGravityScale', () => {
   it('renders Distribuição por Gravidade title', () => {

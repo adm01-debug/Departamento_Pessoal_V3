@@ -16,20 +16,20 @@ describe('calculoBeneficiosService', () => {
   describe('valeTransporteService.calcularCustoMensal', () => {
     it('should calculate VT correctly respecting 6% limit', async () => {
       // Mock colaborador salary
-      const mockSingle = vi.fn().mockResolvedValue({ 
-        data: { salario_base: 5000 }, 
-        error: null 
+      const mockSingle = vi.fn().mockResolvedValue({
+        data: { salario_base: 5000 },
+        error: null,
       });
 
       // Mock routes (VT benefits)
-      const mockSelectRoutes = vi.fn().mockResolvedValue({ 
+      const mockSelectRoutes = vi.fn().mockResolvedValue({
         data: [
-          { 
-            beneficio: { tipo: 'transporte', valor: 5.0 }, 
-            quantidade_diaria: 2 
-          }
-        ], 
-        error: null 
+          {
+            beneficio: { tipo: 'transporte', valor: 5.0 },
+            quantidade_diaria: 2,
+          },
+        ],
+        error: null,
       });
 
       (supabase.from as unknown as ReturnType<typeof vi.fn>).mockImplementation((table: string) => {
@@ -40,45 +40,46 @@ describe('calculoBeneficiosService', () => {
           return { select: vi.fn().mockReturnThis(), eq: vi.fn().mockReturnThis(), eq2: vi.fn().mockReturnThis() };
         }
         return {
-           select: vi.fn().mockReturnThis(),
-           eq: vi.fn().mockReturnThis(),
-           single: mockSingle,
-           // Handle the chain for benefits
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          single: mockSingle,
+          // Handle the chain for benefits
         };
       });
-      
+
       // Override for specific chain
       (supabase.from as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
         single: mockSingle,
         not: vi.fn().mockReturnThis(),
-        neq: vi.fn().mockReturnThis()
+        neq: vi.fn().mockReturnThis(),
       });
 
       // Simpler way for this specific test case
       (supabase.from as unknown as ReturnType<typeof vi.fn>).mockImplementation((table: string) => {
-          const chain = {
-              select: vi.fn().mockReturnThis(),
-              eq: vi.fn().mockReturnThis(),
-              single: vi.fn(),
-          };
-          
-          if (table === 'colaboradores') {
-              chain.single.mockResolvedValue({ data: { salario_base: 3000 }, error: null });
-          } else if (table === 'beneficios_colaborador') {
-              chain.eq.mockReturnThis();
-              chain.single = undefined as any; // No single for this one
-              (chain as any).then = (resolve: any) => resolve({ 
-                  data: [{ beneficio: { tipo: 'transporte', valor: 5.0 }, quantidade_diaria: 2 }], 
-                  error: null 
-              });
-          }
-          return chain;
+        const chain = {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          single: vi.fn(),
+        };
+
+        if (table === 'colaboradores') {
+          chain.single.mockResolvedValue({ data: { salario_base: 3000 }, error: null });
+        } else if (table === 'beneficios_colaborador') {
+          chain.eq.mockReturnThis();
+          chain.single = undefined as never; // No single for this one
+          (chain as any).then = (resolve: any) =>
+            resolve({
+              data: [{ beneficio: { tipo: 'transporte', valor: 5.0 }, quantidade_diaria: 2 }],
+              error: null,
+            });
+        }
+        return chain;
       });
 
       const result = await valeTransporteService.calcularCustoMensal('colab-1', 20);
-      
+
       // Total cost: 5.0 * 2 * 20 = 200
       // Max discount: 3000 * 0.06 = 180
       // Effective discount: min(200, 180) = 180
@@ -94,7 +95,7 @@ describe('calculoBeneficiosService', () => {
       (supabase.from as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
-        single: vi.fn().mockResolvedValue({ data: { valor: 25, tipo: 'refeicao' }, error: null })
+        single: vi.fn().mockResolvedValue({ data: { valor: 25, tipo: 'refeicao' }, error: null }),
       });
 
       const result = await valeAlimentacaoService.calcularCredito('benef-1', 20);
@@ -105,7 +106,7 @@ describe('calculoBeneficiosService', () => {
       (supabase.from as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
-        single: vi.fn().mockResolvedValue({ data: { valor: 800, tipo: 'alimentacao' }, error: null })
+        single: vi.fn().mockResolvedValue({ data: { valor: 800, tipo: 'alimentacao' }, error: null }),
       });
 
       const result = await valeAlimentacaoService.calcularCredito('benef-1', 20);

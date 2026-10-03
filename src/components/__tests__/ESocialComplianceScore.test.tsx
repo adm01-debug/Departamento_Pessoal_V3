@@ -1,10 +1,11 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
     circle: (props: any) => <circle {...props} />,
-    div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
+    div: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <div {...rest}>{children}</div>,
   },
 }));
 

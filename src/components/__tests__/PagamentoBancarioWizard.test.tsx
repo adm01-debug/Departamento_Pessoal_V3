@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
@@ -29,28 +30,32 @@ vi.mock('@/utils/safeError', () => ({ safeErrorMessage: vi.fn((e: any, d: string
 vi.mock('@/lib/utils', () => ({ cn: (...a: string[]) => a.filter(Boolean).join(' ') }));
 
 vi.mock('framer-motion', () => ({
-  motion: { div: ({ children }: any) => <div>{children}</div> },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
+  motion: { div: ({ children }: { children?: ReactNode }) => <div>{children}</div> },
+  AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children }: any) => <div>{children}</div>,
-  DialogContent: ({ children }: any) => <div>{children}</div>,
-  DialogHeader: ({ children }: any) => <div>{children}</div>,
-  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
-  DialogTrigger: ({ children }: any) => <div>{children}</div>,
-  DialogFooter: ({ children }: any) => <div>{children}</div>,
+  Dialog: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
+  DialogTrigger: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogFooter: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, disabled }: any) => (
-    <button onClick={onClick} disabled={disabled}>{children}</button>
+  Button: ({ children, onClick, disabled }: { children?: ReactNode; onClick?: () => void; disabled?: boolean }) => (
+    <button onClick={onClick} disabled={disabled}>
+      {children}
+    </button>
   ),
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children, onClick }: any) => <div onClick={onClick}>{children}</div>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
+  Card: ({ children, onClick }: { children?: ReactNode; onClick?: () => void }) => (
+    <div onClick={onClick}>{children}</div>
+  ),
+  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 import { PagamentoBancarioWizard } from '../folha/PagamentoBancarioWizard';

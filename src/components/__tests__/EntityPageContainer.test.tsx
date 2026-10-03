@@ -1,18 +1,21 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('@/lib/utils', () => ({ cn: (...c: any[]) => c.filter(Boolean).join(' ') }));
 vi.mock('framer-motion', () => ({
-  motion: { div: ({ children, ...p }: any) => <div {...p}>{children}</div> },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
+  motion: {
+    div: ({ children, ...p }: { children?: ReactNode; [key: string]: unknown }) => <div {...p}>{children}</div>,
+  },
+  AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
 }));
 
 vi.mock('@/components/PageTitle', () => ({
-  PageTitle: ({ title }: any) => <title>{title}</title>,
+  PageTitle: ({ title }: { title?: string }) => <title>{title}</title>,
 }));
 
 vi.mock('@/components/layout', () => ({
-  PageLayout: ({ children, title }: any) => (
+  PageLayout: ({ children, title }: { children?: ReactNode; title?: string }) => (
     <div data-testid="page-layout">
       <h1>{title}</h1>
       {children}
@@ -21,29 +24,35 @@ vi.mock('@/components/layout', () => ({
 }));
 
 vi.mock('@/components/ui/data-table-toolbar', () => ({
-  DataTableToolbar: ({ search, onSearchChange, onAdd }: any) => (
+  DataTableToolbar: ({
+    search,
+    onSearchChange,
+    onAdd,
+  }: {
+    search?: string;
+    onSearchChange?: (q: string) => void;
+    onAdd?: () => void;
+  }) => (
     <div data-testid="toolbar">
-      <input
-        data-testid="search-input"
-        value={search}
-        onChange={e => onSearchChange(e.target.value)}
-      />
+      <input data-testid="search-input" value={search} onChange={(e) => onSearchChange?.(e.target.value)} />
       {onAdd && <button onClick={onAdd}>Add</button>}
     </div>
   ),
 }));
 
 vi.mock('@/components/ui/table', () => ({
-  Table: ({ children }: any) => <table>{children}</table>,
-  TableBody: ({ children }: any) => <tbody>{children}</tbody>,
-  TableHeader: ({ children }: any) => <thead>{children}</thead>,
-  TableRow: ({ children }: any) => <tr>{children}</tr>,
-  TableHead: ({ children }: any) => <th>{children}</th>,
+  Table: ({ children }: { children?: ReactNode }) => <table>{children}</table>,
+  TableBody: ({ children }: { children?: ReactNode }) => <tbody>{children}</tbody>,
+  TableHeader: ({ children }: { children?: ReactNode }) => <thead>{children}</thead>,
+  TableRow: ({ children }: { children?: ReactNode }) => <tr>{children}</tr>,
+  TableHead: ({ children }: { children?: ReactNode }) => <th>{children}</th>,
 }));
 
 vi.mock('@/components/ui/empty-state', () => ({
-  EmptyList: ({ entityName }: any) => <div data-testid="empty-list">No {entityName}</div>,
-  EmptySearch: ({ search }: any) => <div data-testid="empty-search">No results for {search}</div>,
+  EmptyList: ({ entityName }: { entityName?: string }) => <div data-testid="empty-list">No {entityName}</div>,
+  EmptySearch: ({ search }: { children?: ReactNode; search?: string }) => (
+    <div data-testid="empty-search">No results for {search}</div>
+  ),
 }));
 
 vi.mock('@/components/ui/spinner', () => ({
@@ -51,7 +60,7 @@ vi.mock('@/components/ui/spinner', () => ({
 }));
 
 vi.mock('@/components/ui/sync-error-state', () => ({
-  SyncErrorState: ({ entityName }: any) => (
+  SyncErrorState: ({ entityName }: { entityName?: string }) => (
     <div data-testid="sync-error">Error loading {entityName}</div>
   ),
 }));
@@ -62,7 +71,9 @@ vi.mock('@/components/ui/module-skeleton', () => ({
 
 vi.mock('@/components/ui/data-table-pagination', () => ({
   DataTablePagination: ({ currentPage, totalPages }: any) => (
-    <div data-testid="pagination">Page {currentPage} of {totalPages}</div>
+    <div data-testid="pagination">
+      Page {currentPage} of {totalPages}
+    </div>
   ),
 }));
 
@@ -93,7 +104,11 @@ const DEFAULT_PROPS = {
   onRefetch: vi.fn(),
   entityName: 'colaborador',
   columns: [{ header: 'Nome' }, { header: 'Status' }],
-  renderRow: (item: any) => <tr key={item.id}><td>{item.id}</td></tr>,
+  renderRow: (item: any) => (
+    <tr key={item.id}>
+      <td>{item.id}</td>
+    </tr>
+  ),
 };
 
 describe('EntityPageContainer', () => {
@@ -133,7 +148,11 @@ describe('EntityPageContainer', () => {
         {...DEFAULT_PROPS}
         items={items}
         total={2}
-        renderRow={item => <tr key={item.id}><td>{item.id}</td></tr>}
+        renderRow={(item) => (
+          <tr key={item.id}>
+            <td>{item.id}</td>
+          </tr>
+        )}
       />
     );
     expect(screen.getByText('col-1')).toBeTruthy();
@@ -148,7 +167,11 @@ describe('EntityPageContainer', () => {
         items={items}
         total={1}
         columns={[{ header: 'Nome' }, { header: 'Status' }]}
-        renderRow={item => <tr key={item.id}><td>{item.id}</td></tr>}
+        renderRow={(item) => (
+          <tr key={item.id}>
+            <td>{item.id}</td>
+          </tr>
+        )}
       />
     );
     expect(screen.getByText('Nome')).toBeTruthy();
@@ -164,7 +187,11 @@ describe('EntityPageContainer', () => {
         total={20}
         page={1}
         pageSize={10}
-        renderRow={item => <tr key={item.id}><td>{item.id}</td></tr>}
+        renderRow={(item) => (
+          <tr key={item.id}>
+            <td>{item.id}</td>
+          </tr>
+        )}
       />
     );
     expect(screen.getByTestId('pagination')).toBeTruthy();
@@ -178,21 +205,13 @@ describe('EntityPageContainer', () => {
   });
 
   it('renders custom stats when provided', () => {
-    render(
-      <EntityPageContainer
-        {...DEFAULT_PROPS}
-        stats={<div data-testid="stats">Stats Widget</div>}
-      />
-    );
+    render(<EntityPageContainer {...DEFAULT_PROPS} stats={<div data-testid="stats">Stats Widget</div>} />);
     expect(screen.getByTestId('stats')).toBeTruthy();
   });
 
   it('renders custom filters when provided', () => {
     render(
-      <EntityPageContainer
-        {...DEFAULT_PROPS}
-        customFilters={<div data-testid="custom-filters">Custom Filters</div>}
-      />
+      <EntityPageContainer {...DEFAULT_PROPS} customFilters={<div data-testid="custom-filters">Custom Filters</div>} />
     );
     expect(screen.getByTestId('custom-filters')).toBeTruthy();
   });
@@ -206,7 +225,11 @@ describe('EntityPageContainer', () => {
         total={1}
         isFetching
         isLoading={false}
-        renderRow={item => <tr key={item.id}><td>{item.id}</td></tr>}
+        renderRow={(item) => (
+          <tr key={item.id}>
+            <td>{item.id}</td>
+          </tr>
+        )}
       />
     );
     expect(screen.getByTestId('spinner')).toBeTruthy();

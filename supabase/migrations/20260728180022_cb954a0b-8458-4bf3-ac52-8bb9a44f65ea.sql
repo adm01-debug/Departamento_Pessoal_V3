@@ -13,6 +13,10 @@
 -- ---------------------------------------------------------------------------
 -- 1) Consulta de bloqueio (contrato: TABLE(is_locked, locked_until))
 -- ---------------------------------------------------------------------------
+-- A definição anterior (20260719192000) retorna 3 colunas (inclui
+-- attempts_remaining); CREATE OR REPLACE não pode mudar o return type.
+DROP FUNCTION IF EXISTS public.check_account_lockout(text);
+
 CREATE OR REPLACE FUNCTION public.check_account_lockout(p_email text)
 RETURNS TABLE(is_locked boolean, locked_until timestamptz)
 LANGUAGE plpgsql

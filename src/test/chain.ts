@@ -52,9 +52,7 @@ export function makeChain<T = unknown>(result: ChainResult<T> = { data: null, er
 
       const key = prop as string;
       if (!fns.has(key)) {
-        const fn = TERMINAL.has(key)
-          ? vi.fn(() => Promise.resolve(resolved))
-          : vi.fn(() => proxy);
+        const fn = TERMINAL.has(key) ? vi.fn(() => Promise.resolve(resolved)) : vi.fn(() => proxy);
         fns.set(key, fn);
       }
       return fns.get(key);
@@ -69,8 +67,8 @@ export function makeChain<T = unknown>(result: ChainResult<T> = { data: null, er
  * Retorna o chain para asserções.
  */
 export function mockFromChain<T = unknown>(
-  mockFrom: { mockReturnValue: (v: unknown) => unknown },
-  result: ChainResult<T> = { data: null, error: null },
+  mockFrom: { mockReturnValue: (v?: unknown) => unknown },
+  result: ChainResult<T> = { data: null, error: null }
 ): Chain {
   const chain = makeChain(result);
   mockFrom.mockReturnValue(chain);

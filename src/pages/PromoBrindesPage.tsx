@@ -15,49 +15,42 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { Plus, Gift, Trash2, Edit2, Search, Package } from 'lucide-react';
-import type { UiRecord } from '@/types/uiRecord';
+import type { Tables } from '@/integrations/supabase/types';
 export default function PromoBrindesPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [editingItem, setEditingItem] = useState<UiRecord | null>(null);
+  const [editingItem, setEditingItem] = useState<Tables<'promo_brindes'> | null>(null);
   const [form, setForm] = useState({
     nome: '',
     descricao: '',
     preco: 0,
     estoque: 0,
-    categoria: ''
+    categoria: '',
   });
 
   const { data: brindes = [], isLoading } = useQuery({
     queryKey: ['promo_brindes'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('promo_brindes')
-        .select('*')
-        .order('nome');
+      const { data, error } = await supabase.from('promo_brindes').select('*').order('nome');
       if (error) throw error;
       return data || [];
     },
   });
 
-  const filteredBrindes = brindes.filter((b: any) => 
-    b.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (b.categoria && b.categoria.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredBrindes = brindes.filter(
+    (b) =>
+      b.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (b.categoria && b.categoria.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const handleSubmit = useMutation({
-    mutationFn: async (d: any) => {
+    mutationFn: async (d: { nome: string; descricao: string; preco: number; estoque: number; categoria: string }) => {
       if (editingItem) {
-        const { error } = await supabase
-          .from('promo_brindes')
-          .update(d)
-          .eq('id', editingItem.id);
+        const { error } = await supabase.from('promo_brindes').update(d).eq('id', editingItem.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase
-          .from('promo_brindes')
-          .insert(d);
+        const { error } = await supabase.from('promo_brindes').insert(d);
         if (error) throw error;
       }
     },
@@ -73,10 +66,7 @@ export default function PromoBrindesPage() {
 
   const excluir = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from('promo_brindes')
-        .delete()
-        .eq('id', id);
+      const { error } = await supabase.from('promo_brindes').delete().eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -90,19 +80,24 @@ export default function PromoBrindesPage() {
     setForm({ nome: '', descricao: '', preco: 0, estoque: 0, categoria: '' });
   };
 
-  const handleEdit = (item: any) => {
+  const handleEdit = (item: Tables<'promo_brindes'>) => {
     setEditingItem(item);
     setForm({
       nome: item.nome,
       descricao: item.descricao || '',
       preco: item.preco || 0,
       estoque: item.estoque || 0,
-      categoria: item.categoria || ''
+      categoria: item.categoria || '',
     });
     setOpen(true);
   };
 
-  if (isLoading) return <PageLayout title="Promo Brindes"><Spinner /></PageLayout>;
+  if (isLoading)
+    return (
+      <PageLayout title="Promo Brindes">
+        <Spinner />
+      </PageLayout>
+    );
 
   return (
     <>
@@ -112,22 +107,28 @@ export default function PromoBrindesPage() {
           <div className="flex flex-col md:flex-row justify-between gap-4">
             <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input 
-                placeholder="Buscar por nome ou categoria..." 
+              <Input
+                placeholder="Buscar por nome ou categoria..."
                 className="pl-9"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <Dialog open={open} onOpenChange={(val) => {
-              setOpen(val);
-              if (!val) {
-                setEditingItem(null);
-                resetForm();
-              }
-            }}>
+            <Dialog
+              open={open}
+              onOpenChange={(val) => {
+                setOpen(val);
+                if (!val) {
+                  setEditingItem(null);
+                  resetForm();
+                }
+              }}
+            >
               <DialogTrigger asChild>
-                <Button><Plus className="h-4 w-4 mr-2" />Novo Brinde</Button>
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Novo Brinde
+                </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[500px]">
                 <DialogHeader>
@@ -136,53 +137,55 @@ export default function PromoBrindesPage() {
                 <div className="grid gap-4 py-4">
                   <div className="grid gap-2">
                     <Label htmlFor="nome">Nome *</Label>
-                    <Input 
-                      id="nome" 
-                      value={form.nome} 
-                      onChange={e => setForm(p => ({ ...p, nome: e.target.value }))} 
+                    <Input
+                      id="nome"
+                      value={form.nome}
+                      onChange={(e) => setForm((p) => ({ ...p, nome: e.target.value }))}
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="grid gap-2">
                       <Label htmlFor="categoria">Categoria</Label>
-                      <Input 
-                        id="categoria" 
-                        value={form.categoria} 
-                        onChange={e => setForm(p => ({ ...p, categoria: e.target.value }))} 
+                      <Input
+                        id="categoria"
+                        value={form.categoria}
+                        onChange={(e) => setForm((p) => ({ ...p, categoria: e.target.value }))}
                       />
                     </div>
                     <div className="grid gap-2">
                       <Label htmlFor="estoque">Estoque</Label>
-                      <Input 
-                        id="estoque" 
+                      <Input
+                        id="estoque"
                         type="number"
-                        value={form.estoque} 
-                        onChange={e => setForm(p => ({ ...p, estoque: parseInt(e.target.value) || 0 }))} 
+                        value={form.estoque}
+                        onChange={(e) => setForm((p) => ({ ...p, estoque: parseInt(e.target.value) || 0 }))}
                       />
                     </div>
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="preco">Preço Sugerido (R$)</Label>
-                    <Input 
-                      id="preco" 
+                    <Input
+                      id="preco"
                       type="number"
                       step="0.01"
-                      value={form.preco} 
-                      onChange={e => setForm(p => ({ ...p, preco: parseFloat(e.target.value) || 0 }))} 
+                      value={form.preco}
+                      onChange={(e) => setForm((p) => ({ ...p, preco: parseFloat(e.target.value) || 0 }))}
                     />
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="descricao">Descrição</Label>
-                    <Textarea 
-                      id="descricao" 
+                    <Textarea
+                      id="descricao"
                       rows={3}
-                      value={form.descricao} 
-                      onChange={e => setForm(p => ({ ...p, descricao: e.target.value }))} 
+                      value={form.descricao}
+                      onChange={(e) => setForm((p) => ({ ...p, descricao: e.target.value }))}
                     />
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
+                  <Button variant="outline" onClick={() => setOpen(false)}>
+                    Cancelar
+                  </Button>
                   <Button onClick={() => handleSubmit.mutate(form)} disabled={!form.nome || handleSubmit.isPending}>
                     {handleSubmit.isPending ? <Spinner className="mr-2" /> : null}
                     {editingItem ? 'Salvar Alterações' : 'Criar Brinde'}
@@ -205,7 +208,7 @@ export default function PromoBrindesPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredBrindes.map((item: any) => (
+                  {filteredBrindes.map((item) => (
                     <TableRow key={item.id}>
                       <TableCell>
                         <div className="flex items-center gap-3">
@@ -214,7 +217,9 @@ export default function PromoBrindesPage() {
                           </div>
                           <div>
                             <div className="font-medium">{item.nome}</div>
-                            <div className="text-xs text-muted-foreground line-clamp-1">{item.descricao || 'Sem descrição'}</div>
+                            <div className="text-xs text-muted-foreground line-clamp-1">
+                              {item.descricao || 'Sem descrição'}
+                            </div>
                           </div>
                         </div>
                       </TableCell>
@@ -223,10 +228,14 @@ export default function PromoBrindesPage() {
                         {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.preco || 0)}
                       </TableCell>
                       <TableCell className="text-center">
-                        <span className={cn(
-                          "px-2 py-1 rounded-full text-xs font-medium",
-                          item.estoque <= 5 ? "bg-destructive/10 text-destructive" : "bg-success/10 text-success"
-                        )}>
+                        <span
+                          className={cn(
+                            'px-2 py-1 rounded-full text-xs font-medium',
+                            (item.estoque ?? 0) <= 5
+                              ? 'bg-destructive/10 text-destructive'
+                              : 'bg-success/10 text-success'
+                          )}
+                        >
                           {item.estoque} un
                         </span>
                       </TableCell>
@@ -235,9 +244,14 @@ export default function PromoBrindesPage() {
                           <Button size="icon" variant="ghost" aria-label="Editar" onClick={() => handleEdit(item)}>
                             <Edit2 className="h-4 w-4 text-muted-foreground" />
                           </Button>
-                          <Button size="icon" variant="ghost" aria-label="Excluir" onClick={() => {
-                            if (confirm('Deseja excluir este brinde?')) excluir.mutate(item.id);
-                          }}>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            aria-label="Excluir"
+                            onClick={() => {
+                              if (confirm('Deseja excluir este brinde?')) excluir.mutate(item.id);
+                            }}
+                          >
                             <Trash2 className="h-4 w-4 text-destructive" />
                           </Button>
                         </div>

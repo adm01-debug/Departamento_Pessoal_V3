@@ -59,6 +59,10 @@ ON CONFLICT (tabela) DO NOTHING;
 -- ---------------------------------------------------------------------------
 -- 2) Expurgo em lotes (contrato: TABLE(tabela, deleted, batches))
 -- ---------------------------------------------------------------------------
+-- A definição de p3_065 retorna 4 colunas (inclui cutoff); CREATE OR
+-- REPLACE não pode mudar o return type. Contrato canônico = 3 colunas.
+DROP FUNCTION IF EXISTS public.run_lgpd_purge(boolean);
+
 CREATE OR REPLACE FUNCTION public.run_lgpd_purge(p_dry_run boolean DEFAULT false)
 RETURNS TABLE(tabela text, deleted integer, batches integer)
 LANGUAGE plpgsql

@@ -1,3 +1,20 @@
+-- Reconcilia tabela canônica ausente do replay (criada fora de migrations).
+CREATE TABLE IF NOT EXISTS public.medidas_disciplinares_integracao (
+  id uuid DEFAULT gen_random_uuid() NOT NULL PRIMARY KEY,
+  medida_id uuid NOT NULL,
+  empresa_id uuid NOT NULL,
+  colaborador_id uuid NOT NULL,
+  tipo_integracao text NOT NULL,
+  ref_id uuid,
+  competencia text,
+  valor numeric(12,2),
+  dias integer,
+  status text DEFAULT 'pendente'::text NOT NULL,
+  detalhes jsonb DEFAULT '{}'::jsonb,
+  created_at timestamptz DEFAULT now() NOT NULL,
+  updated_at timestamptz DEFAULT now() NOT NULL
+);
+
 CREATE INDEX IF NOT EXISTS idx_contrato_assinatura_tokens_created_by ON public.contrato_assinatura_tokens (created_by);
 CREATE INDEX IF NOT EXISTS idx_contrato_assinatura_tokens_empresa_id ON public.contrato_assinatura_tokens (empresa_id);
 CREATE INDEX IF NOT EXISTS idx_contrato_assinatura_tokens_revogado_por ON public.contrato_assinatura_tokens (revogado_por);

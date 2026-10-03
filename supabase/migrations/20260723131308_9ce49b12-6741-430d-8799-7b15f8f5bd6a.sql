@@ -47,18 +47,22 @@ GRANT ALL ON public.catalogo_infracoes TO service_role;
 
 ALTER TABLE public.catalogo_infracoes ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "catalogo_infracoes_select" ON public.catalogo_infracoes;
 CREATE POLICY "catalogo_infracoes_select" ON public.catalogo_infracoes
   FOR SELECT TO authenticated
   USING (empresa_id IN (SELECT get_user_empresas(auth.uid())));
 
+DROP POLICY IF EXISTS "catalogo_infracoes_insert" ON public.catalogo_infracoes;
 CREATE POLICY "catalogo_infracoes_insert" ON public.catalogo_infracoes
   FOR INSERT TO authenticated
   WITH CHECK (empresa_id IN (SELECT get_user_empresas(auth.uid())));
 
+DROP POLICY IF EXISTS "catalogo_infracoes_update" ON public.catalogo_infracoes;
 CREATE POLICY "catalogo_infracoes_update" ON public.catalogo_infracoes
   FOR UPDATE TO authenticated
   USING (empresa_id IN (SELECT get_user_empresas(auth.uid())));
 
+DROP POLICY IF EXISTS "catalogo_infracoes_delete" ON public.catalogo_infracoes;
 CREATE POLICY "catalogo_infracoes_delete" ON public.catalogo_infracoes
   FOR DELETE TO authenticated
   USING (empresa_id IN (SELECT get_user_empresas(auth.uid())));

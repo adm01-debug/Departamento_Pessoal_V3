@@ -1,14 +1,16 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
+    div: ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => <div {...rest}>{children}</div>,
   },
 }));
 
 import { MedidasKPIs } from '../medidas-disciplinares/MedidasKPIs';
 import { MedidasGravityScale } from '../medidas-disciplinares/MedidasGravityScale';
+import type { MedidaDisciplinarComColaborador } from '@/types/medidasDisciplinares';
 
 const STATS = {
   total: 20,
@@ -27,7 +29,7 @@ const MEDIDAS = [
   { id: '3', tipo: 'advertencia_escrita' },
   { id: '4', tipo: 'suspensao' },
   { id: '5', tipo: 'justa_causa' },
-];
+] as unknown as MedidaDisciplinarComColaborador[];
 
 describe('MedidasKPIs', () => {
   it('renders Total Registros label', () => {

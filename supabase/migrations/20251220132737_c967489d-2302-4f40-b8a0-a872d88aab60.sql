@@ -19,7 +19,8 @@ ALTER TABLE public.audit_log ENABLE ROW LEVEL SECURITY;
 
 -- Policies (idempotent)
 DO $$ BEGIN
-  CREATE POLICY "Authenticated users can view audit_log"
+  DROP POLICY IF EXISTS "Authenticated users can view audit_log" ON public.audit_log;
+CREATE POLICY "Authenticated users can view audit_log"
   ON public.audit_log FOR SELECT USING (auth.role() = 'authenticated');
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 

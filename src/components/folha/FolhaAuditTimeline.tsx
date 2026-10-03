@@ -12,14 +12,14 @@ export function FolhaAuditTimeline({ competencia }: { competencia: string }) {
   const { data: logs = [], isLoading } = useQuery({
     queryKey: ['folha-audit-logs', competencia],
     queryFn: async () => {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('folha_auditoria')
         .select('*, colaborador:colaboradores(nome_completo)')
         .order('created_at', { ascending: false })
         .limit(20);
       if (error) throw error;
       return data || [];
-    }
+    },
   });
 
   return (
@@ -37,34 +37,37 @@ export function FolhaAuditTimeline({ competencia }: { competencia: string }) {
                 Nenhum registro de processamento para este período.
               </div>
             ) : (
-              logs.map((log: any, idx: number) => (
-                <motion.div 
-                  key={log.id} 
-                  initial={{ opacity: 0, x: -5 }} 
-                  animate={{ opacity: 1, x: 0 }} 
+              logs.map((log, idx) => (
+                <motion.div
+                  key={log.id}
+                  initial={{ opacity: 0, x: -5 }}
+                  animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: idx * 0.05 }}
                   className="flex gap-3 relative before:absolute before:left-[11px] before:top-6 before:bottom-[-16px] before:w-[1px] before:bg-border/40 last:before:hidden"
                 >
                   <div className="h-6 w-6 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 z-10">
-                    {log.tipo_evento === 'CALCULO' ? <ShieldCheck className="h-3.5 w-3.5 text-primary" /> : <Tag className="h-3.5 w-3.5 text-primary" />}
+                    {log.tipo_evento === 'CALCULO' ? (
+                      <ShieldCheck className="h-3.5 w-3.5 text-primary" />
+                    ) : (
+                      <Tag className="h-3.5 w-3.5 text-primary" />
+                    )}
                   </div>
-                  
+
                   <div className="flex-1 space-y-1">
                     <div className="flex items-center justify-between">
                       <Badge variant="outline" className="text-[9px] h-4 bg-background uppercase font-bold">
                         {log.tipo_evento}
                       </Badge>
                       <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                        <Calendar className="h-3 w-3" /> {format(new Date(log.created_at), "dd/MM HH:mm", { locale: ptBR })}
+                        <Calendar className="h-3 w-3" />{' '}
+                        {format(new Date(log.created_at), 'dd/MM HH:mm', { locale: ptBR })}
                       </span>
                     </div>
                     <p className="text-[11px] font-medium leading-snug">
                       {log.colaborador?.nome_completo || 'Sistema'}
                     </p>
                     {log.mensagem && (
-                       <p className="text-[10px] text-muted-foreground italic truncate max-w-[300px]">
-                         {log.mensagem}
-                       </p>
+                      <p className="text-[10px] text-muted-foreground italic truncate max-w-[300px]">{log.mensagem}</p>
                     )}
                   </div>
                 </motion.div>

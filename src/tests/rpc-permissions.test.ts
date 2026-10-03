@@ -86,7 +86,7 @@ describe.skipIf(!runLivePermissions)('RLS — anon não enxerga dados de tenants
     'tabela %s retorna zero linhas para anon',
     async (table) => {
       const { data, error } = await anon
-        .from(table as any)
+        .from(table as never)
         .select('id')
         .limit(1);
       // Algumas policies consultam helpers não executáveis por anon; a negação

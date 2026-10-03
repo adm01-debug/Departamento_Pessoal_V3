@@ -1,16 +1,18 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { maskEmail } from '@/utils/piiMask';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
 }));
 
-vi.mock('@tanstack/react-query', () => ({
-  useQuery: vi.fn(),
-}));
+vi.mock('@tanstack/react-query', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@tanstack/react-query')>();
+  return { ...actual, useQuery: vi.fn() };
+});
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
@@ -28,51 +30,67 @@ vi.mock('@/services/exportService', () => ({
 }));
 
 vi.mock('@/components/ui/spinner', () => ({
-  Spinner: ({ size }: any) => <div data-testid="spinner" data-size={size} />,
+  Spinner: ({ size }: { size?: string }) => <div data-testid="spinner" data-size={size} />,
 }));
 
 import { useQuery } from '@tanstack/react-query';
 import { GlobalAuditLogTab } from '../settings/GlobalAuditLogTab';
 
 const MOCK_LOGS = [
-  { id: 'l1', created_at: '2024-06-15T10:30:00Z', user_email: 'admin@empresa.com', acao: 'UPDATE', tabela: 'colaboradores', registro_id: 'col-1', dados_novos: { nome: 'João' } },
-  { id: 'l2', created_at: '2024-06-14T08:00:00Z', user_email: null, acao: 'DELETE', tabela: 'ferias', registro_id: 'fer-2', dados_novos: null },
+  {
+    id: 'l1',
+    created_at: '2024-06-15T10:30:00Z',
+    user_email: 'admin@empresa.com',
+    acao: 'UPDATE',
+    tabela: 'colaboradores',
+    registro_id: 'col-1',
+    dados_novos: { nome: 'João' },
+  },
+  {
+    id: 'l2',
+    created_at: '2024-06-14T08:00:00Z',
+    user_email: null,
+    acao: 'DELETE',
+    tabela: 'ferias',
+    registro_id: 'fer-2',
+    dados_novos: null,
+  },
 ];
 
 describe('GlobalAuditLogTab', () => {
   it('shows spinner when loading', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: true } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: true } as never);
     render(<GlobalAuditLogTab />);
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
   });
 
   it('renders Central de Auditoria title', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
     render(<GlobalAuditLogTab />);
     expect(screen.getByText(/Central de Auditoria/)).toBeInTheDocument();
   });
 
   it('renders Exportar CSV button', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
     render(<GlobalAuditLogTab />);
     expect(screen.getByText('Exportar CSV')).toBeInTheDocument();
   });
 
   it('renders search input', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
     render(<GlobalAuditLogTab />);
     expect(screen.getByPlaceholderText(/Buscar por usuário/)).toBeInTheDocument();
   });
 
   it('renders ação badges from log data', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_LOGS, isLoading: false } as never);
     render(<GlobalAuditLogTab />);
     expect(screen.getByText('UPDATE')).toBeInTheDocument();
     expect(screen.getByText('DELETE')).toBeInTheDocument();
   });
 
   it('renders user_email in table', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_LOGS, isLoading: false } as never);
     render(<GlobalAuditLogTab />);
     // E-mail é PII: a tabela exibe apenas a versão mascarada.
     expect(screen.getByText(maskEmail('admin@empresa.com'))).toBeInTheDocument();
@@ -80,7 +98,7 @@ describe('GlobalAuditLogTab', () => {
   });
 
   it('renders Sistema fallback for null user_email', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_LOGS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_LOGS, isLoading: false } as never);
     render(<GlobalAuditLogTab />);
     expect(screen.getByText('Sistema')).toBeInTheDocument();
   });

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
@@ -39,37 +40,46 @@ vi.mock('@/utils/safeError', () => ({
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children, open }: any) => open ? <div role="dialog">{children}</div> : null,
-  DialogContent: ({ children }: any) => <div>{children}</div>,
-  DialogHeader: ({ children }: any) => <div>{children}</div>,
-  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
-  DialogDescription: ({ children }: any) => <p>{children}</p>,
-  DialogFooter: ({ children }: any) => <div>{children}</div>,
+  Dialog: ({ children, open }: { children?: ReactNode; open?: boolean }) =>
+    open ? <div role="dialog">{children}</div> : null,
+  DialogContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
+  DialogDescription: ({ children }: { children?: ReactNode }) => <p>{children}</p>,
+  DialogFooter: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, disabled }: any) => (
-    <button onClick={onClick} disabled={disabled}>{children}</button>
+  Button: ({ children, onClick, disabled }: { children?: ReactNode; onClick?: () => void; disabled?: boolean }) => (
+    <button onClick={onClick} disabled={disabled}>
+      {children}
+    </button>
   ),
 }));
 
 vi.mock('@/components/ui/textarea', () => ({
-  Textarea: ({ value, onChange, ...rest }: any) => (
-    <textarea value={value} onChange={onChange} {...rest} />
-  ),
+  Textarea: ({
+    value,
+    onChange,
+    ...rest
+  }: {
+    value?: string;
+    onChange?: (e: unknown) => void;
+    [key: string]: unknown;
+  }) => <textarea value={value} onChange={onChange} {...rest} />,
 }));
 
 vi.mock('@/components/ui/label', () => ({
-  Label: ({ children }: any) => <label>{children}</label>,
+  Label: ({ children }: { children?: ReactNode }) => <label>{children}</label>,
 }));
 
 vi.mock('@/components/ui/alert', () => ({
-  Alert: ({ children }: any) => <div role="alert">{children}</div>,
-  AlertDescription: ({ children }: any) => <span>{children}</span>,
+  Alert: ({ children }: { children?: ReactNode }) => <div role="alert">{children}</div>,
+  AlertDescription: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
 }));
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children }: any) => <span>{children}</span>,
+  Badge: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
 }));
 
 vi.mock('@/components/ui/separator', () => ({
@@ -77,9 +87,7 @@ vi.mock('@/components/ui/separator', () => ({
 }));
 
 vi.mock('../medidas-disciplinares/MedidaWorkflowTimeline', () => ({
-  MedidaWorkflowTimeline: ({ medidaId }: any) => (
-    <div data-testid="workflow-timeline" data-medida-id={medidaId} />
-  ),
+  MedidaWorkflowTimeline: ({ medidaId }: any) => <div data-testid="workflow-timeline" data-medida-id={medidaId} />,
 }));
 
 // Substitui cada ícone real por um <svg /> leve, preservando a lista de
@@ -92,7 +100,6 @@ vi.mock('lucide-react', async (importOriginal) => {
   return stubs;
 });
 
-
 vi.mock('date-fns', () => ({
   format: vi.fn().mockReturnValue('01/07/2026 10:00'),
   parseISO: vi.fn((s: string) => new Date(s)),
@@ -102,21 +109,23 @@ vi.mock('date-fns', () => ({
 vi.mock('date-fns/locale', () => ({ ptBR: {} }));
 
 import { MedidaContestacaoDialog } from '../medidas-disciplinares/MedidaContestacaoDialog';
+import type { MedidaDisciplinarComColaborador } from '@/types/medidasDisciplinares';
 
 const DEFAULT_MUTATION = { mutate: vi.fn(), mutateAsync: vi.fn(), isPending: false };
 
-const makeMedida = (overrides = {}) => ({
-  id: 'm-1',
-  empresa_id: 'emp-1',
-  descricao: 'Falta injustificada',
-  status_workflow: 'aplicada',
-  contestacao_texto: null,
-  contestacao_resposta: null,
-  contestacao_prazo_ate: null,
-  contestacao_data: null,
-  contestacao_aceita: null,
-  ...overrides,
-});
+const makeMedida = (overrides = {}) =>
+  ({
+    id: 'm-1',
+    empresa_id: 'emp-1',
+    descricao: 'Falta injustificada',
+    status_workflow: 'aplicada',
+    contestacao_texto: null,
+    contestacao_resposta: null,
+    contestacao_prazo_ate: null,
+    contestacao_data: null,
+    contestacao_aceita: null,
+    ...overrides,
+  }) as unknown as MedidaDisciplinarComColaborador;
 
 describe('MedidaContestacaoDialog', () => {
   const onOpenChange = vi.fn();
@@ -129,48 +138,28 @@ describe('MedidaContestacaoDialog', () => {
 
   it('returns null when medida is null', () => {
     const { container } = render(
-      <MedidaContestacaoDialog
-        medida={null}
-        open={true}
-        onOpenChange={onOpenChange}
-        isRHOrAdmin={false}
-      />
+      <MedidaContestacaoDialog medida={null} open={true} onOpenChange={onOpenChange} isRHOrAdmin={false} />
     );
     expect(container.firstChild).toBeNull();
   });
 
   it('does not render dialog content when open is false', () => {
     render(
-      <MedidaContestacaoDialog
-        medida={makeMedida()}
-        open={false}
-        onOpenChange={onOpenChange}
-        isRHOrAdmin={false}
-      />
+      <MedidaContestacaoDialog medida={makeMedida()} open={false} onOpenChange={onOpenChange} isRHOrAdmin={false} />
     );
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 
   it('renders dialog when open is true with medida', () => {
     render(
-      <MedidaContestacaoDialog
-        medida={makeMedida()}
-        open={true}
-        onOpenChange={onOpenChange}
-        isRHOrAdmin={false}
-      />
+      <MedidaContestacaoDialog medida={makeMedida()} open={true} onOpenChange={onOpenChange} isRHOrAdmin={false} />
     );
     expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 
   it('renders the dialog title', () => {
     render(
-      <MedidaContestacaoDialog
-        medida={makeMedida()}
-        open={true}
-        onOpenChange={onOpenChange}
-        isRHOrAdmin={false}
-      />
+      <MedidaContestacaoDialog medida={makeMedida()} open={true} onOpenChange={onOpenChange} isRHOrAdmin={false} />
     );
     expect(screen.getByText('Contestação de Medida Disciplinar')).toBeInTheDocument();
   });
@@ -239,12 +228,7 @@ describe('MedidaContestacaoDialog', () => {
   it('shows "Nenhum anexo." when no attachments', () => {
     mockUseQuery.mockReturnValue({ data: [], isLoading: false });
     render(
-      <MedidaContestacaoDialog
-        medida={makeMedida()}
-        open={true}
-        onOpenChange={onOpenChange}
-        isRHOrAdmin={false}
-      />
+      <MedidaContestacaoDialog medida={makeMedida()} open={true} onOpenChange={onOpenChange} isRHOrAdmin={false} />
     );
     expect(screen.getByText('Nenhum anexo.')).toBeInTheDocument();
   });

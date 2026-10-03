@@ -1,6 +1,6 @@
 import { useEmpresas } from './useEmpresas';
 import { useGenericCrud } from './useGenericCrud';
-import { desligamentoService } from '@/services/desligamentoService';
+import { desligamentoService, type DesligamentoComColaborador } from '@/services/desligamentoService';
 
 export function useDesligamentos() {
   const { empresaAtual } = useEmpresas();
@@ -11,7 +11,7 @@ export function useDesligamentos() {
   // dentro de `filters`) e dentro de `filters` apenas quando definido (o
   // desligamentoService exige `empresa_id` explícito em listar()).
   // Sem isso, a query nunca dispara e a página exibe lista vazia.
-  const crud = useGenericCrud<unknown>({
+  const crud = useGenericCrud<DesligamentoComColaborador>({
     queryKey: 'desligamentos',
     service: desligamentoService,
     filters: empresaId ? { empresa_id: empresaId } : {},

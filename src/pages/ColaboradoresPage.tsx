@@ -35,10 +35,10 @@ export default function ColaboradoresPage() {
   const { exportarPDF } = usePDFExport();
   const { empresaAtual } = useEmpresas();
 
-  const { 
-    colaboradores, 
+  const {
+    colaboradores,
     total,
-    isLoading, 
+    isLoading,
     isFetching,
     error,
     page,
@@ -53,33 +53,48 @@ export default function ColaboradoresPage() {
     cargo,
     setCargo,
     refetch,
-    summary
+    summary,
   } = useColaboradores();
 
-  const handlePageChange = useCallback((p: number) => {
-    setPage(p);
-  }, [setPage]);
+  const handlePageChange = useCallback(
+    (p: number) => {
+      setPage(p);
+    },
+    [setPage]
+  );
 
   // Reset page when search or filters change
-  const handleSearchChange = useCallback((val: string) => {
-    setSearch(val);
-    setPage(1);
-  }, [setSearch, setPage]);
+  const handleSearchChange = useCallback(
+    (val: string) => {
+      setSearch(val);
+      setPage(1);
+    },
+    [setSearch, setPage]
+  );
 
-  const handleStatusChange = useCallback((val: string) => {
-    setStatus(val);
-    setPage(1);
-  }, [setStatus, setPage]);
+  const handleStatusChange = useCallback(
+    (val: string) => {
+      setStatus(val);
+      setPage(1);
+    },
+    [setStatus, setPage]
+  );
 
-  const handleDeptoChange = useCallback((val: string) => {
-    setDepartamento(val);
-    setPage(1);
-  }, [setDepartamento, setPage]);
+  const handleDeptoChange = useCallback(
+    (val: string) => {
+      setDepartamento(val);
+      setPage(1);
+    },
+    [setDepartamento, setPage]
+  );
 
-  const handleCargoChange = useCallback((val: string) => {
-    setCargo(val);
-    setPage(1);
-  }, [setCargo, setPage]);
+  const handleCargoChange = useCallback(
+    (val: string) => {
+      setCargo(val);
+      setPage(1);
+    },
+    [setCargo, setPage]
+  );
 
   const statusOptions = [
     { value: 'ativo', label: 'Ativos' },
@@ -93,18 +108,18 @@ export default function ColaboradoresPage() {
     if (!empresaAtual?.id) return;
     try {
       toast.info('Preparando exportação completa...', {
-        description: 'Isso pode levar alguns segundos dependendo do tamanho da base.'
+        description: 'Isso pode levar alguns segundos dependendo do tamanho da base.',
       });
-      
+
       const { data } = await colaboradorService.listar({
         pageSize: 5000,
         filters: {
           empresaId: empresaAtual.id,
           status: status === 'all' ? undefined : status,
           departamento: departamento === 'all' ? undefined : departamento,
-          cargo: cargo === 'all' ? undefined : cargo
+          cargo: cargo === 'all' ? undefined : cargo,
         },
-        search: search || undefined
+        search: search || undefined,
       });
 
       if (!data.length) {
@@ -112,11 +127,15 @@ export default function ColaboradoresPage() {
         return;
       }
 
-      exportarExcel(
-        'Relatório de Colaboradores',
-        data,
-        ['nome_completo', 'cpf', 'cargo', 'departamento', 'status', 'data_admissao', 'email']
-      );
+      exportarExcel('Relatório de Colaboradores', data as unknown as Record<string, unknown>[], [
+        'nome_completo',
+        'cpf',
+        'cargo',
+        'departamento',
+        'status',
+        'data_admissao',
+        'email',
+      ]);
     } catch (err) {
       loggerService.error('Falha ao exportar dados', {}, err instanceof Error ? err : new Error(String(err)));
       toast.error('Falha ao exportar dados');
@@ -127,7 +146,7 @@ export default function ColaboradoresPage() {
     if (!empresaAtual?.id) return;
     try {
       toast.info('Preparando PDF...', {
-        description: 'Gerando documento com os filtros atuais.'
+        description: 'Gerando documento com os filtros atuais.',
       });
 
       const { data } = await colaboradorService.listar({
@@ -136,9 +155,9 @@ export default function ColaboradoresPage() {
           empresaId: empresaAtual.id,
           status: status === 'all' ? undefined : status,
           departamento: departamento === 'all' ? undefined : departamento,
-          cargo: cargo === 'all' ? undefined : cargo
+          cargo: cargo === 'all' ? undefined : cargo,
         },
-        search: search || undefined
+        search: search || undefined,
       });
 
       if (!data.length) {
@@ -146,13 +165,19 @@ export default function ColaboradoresPage() {
         return;
       }
 
-      exportarPDF(
-        'Relatório de Colaboradores',
-        data,
-        ['nome_completo', 'cpf', 'cargo', 'departamento', 'status']
-      );
+      exportarPDF('Relatório de Colaboradores', data as unknown as Record<string, unknown>[], [
+        'nome_completo',
+        'cpf',
+        'cargo',
+        'departamento',
+        'status',
+      ]);
     } catch (err) {
-      loggerService.error('Falha ao exportar PDF', { empresaId: empresaAtual?.id }, err instanceof Error ? err : new Error(String(err)));
+      loggerService.error(
+        'Falha ao exportar PDF',
+        { empresaId: empresaAtual?.id },
+        err instanceof Error ? err : new Error(String(err))
+      );
       toast.error('Falha ao exportar PDF');
     }
   };
@@ -197,8 +222,8 @@ export default function ColaboradoresPage() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          
-          <Button 
+
+          <Button
             onClick={() => navigate('/colaboradores/novo')}
             className="h-11 rounded-xl px-6 gap-2 bg-primary text-primary-foreground shadow-glow hover:shadow-glow-lg transition-all"
           >
@@ -212,11 +237,11 @@ export default function ColaboradoresPage() {
           {statusOptions.map((opt, i) => {
             const statusKey = opt.value;
             const isActive = status === statusKey;
-            
+
             if (!summary && isLoading) return <StatCardSkeleton key={i} />;
-            
-            const count = summary ? (summary as any)[statusKey] || 0 : 0;
-            
+
+            const count = summary ? (summary as Record<string, number | undefined>)[statusKey] || 0 : 0;
+
             return (
               <motion.button
                 key={statusKey}
@@ -225,32 +250,25 @@ export default function ColaboradoresPage() {
                 transition={{ delay: i * 0.1 }}
                 onClick={() => setStatus(isActive ? 'all' : statusKey)}
                 className={cn(
-                  "p-4 rounded-2xl border transition-all text-left group relative overflow-hidden",
-                  isActive 
-                    ? "bg-primary/5 border-primary shadow-xs" 
-                    : "bg-card/50 border-border/40 hover:border-primary/20 hover:bg-card"
+                  'p-4 rounded-2xl border transition-all text-left group relative overflow-hidden',
+                  isActive
+                    ? 'bg-primary/5 border-primary shadow-xs'
+                    : 'bg-card/50 border-border/40 hover:border-primary/20 hover:bg-card'
                 )}
               >
                 {isActive && (
-                  <motion.div 
-                    layoutId="active-indicator"
-                    className="absolute top-0 left-0 w-[2px] h-full bg-primary"
-                  />
+                  <motion.div layoutId="active-indicator" className="absolute top-0 left-0 w-[2px] h-full bg-primary" />
                 )}
                 <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
                   {opt.label}
                 </p>
                 <div className="flex items-end justify-between">
-                  <p className={cn(
-                    "text-2xl font-display font-bold",
-                    isActive ? "text-primary" : "text-foreground"
-                  )}>
+                  <p className={cn('text-2xl font-display font-bold', isActive ? 'text-primary' : 'text-foreground')}>
                     {count}
                   </p>
-                  <Users className={cn(
-                    "h-4 w-4 transition-colors",
-                    isActive ? "text-primary" : "text-muted-foreground/30"
-                  )} />
+                  <Users
+                    className={cn('h-4 w-4 transition-colors', isActive ? 'text-primary' : 'text-muted-foreground/30')}
+                  />
                 </div>
               </motion.button>
             );
@@ -269,7 +287,7 @@ export default function ColaboradoresPage() {
             search,
             status,
             departamento,
-            cargo
+            cargo,
           }}
         />
       }
@@ -278,7 +296,7 @@ export default function ColaboradoresPage() {
         { header: 'Identificação', hidden: 'sm' },
         { header: 'Posição', hidden: 'md' },
         { header: 'Status' },
-        { header: 'Ações', className: 'pr-6 text-right', width: '120px' }
+        { header: 'Ações', className: 'pr-6 text-right', width: '120px' },
       ]}
       renderRow={(c) => (
         <TableRow
@@ -288,9 +306,15 @@ export default function ColaboradoresPage() {
         >
           <TableCell className="py-4 pl-6">
             <div className="flex items-center gap-4">
-              <UserAvatar name={c.nome_completo} size="md" className="rounded-xl shadow-xs group-hover:scale-110 transition-transform" />
+              <UserAvatar
+                name={c.nome_completo}
+                size="md"
+                className="rounded-xl shadow-xs group-hover:scale-110 transition-transform"
+              />
               <div>
-                <p className="font-display font-bold text-base leading-tight group-hover:text-primary transition-colors">{c.nome_completo}</p>
+                <p className="font-display font-bold text-base leading-tight group-hover:text-primary transition-colors">
+                  {c.nome_completo}
+                </p>
                 <p className="text-xs text-muted-foreground font-body mt-0.5">{c.email || 'Sem e-mail cadastrado'}</p>
               </div>
             </div>
@@ -298,7 +322,9 @@ export default function ColaboradoresPage() {
           <TableCell className="hidden sm:table-cell">
             <div className="flex flex-col">
               <span className="font-body font-medium text-sm">CPF: {c.cpf}</span>
-              <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">MAT: {c.matricula || 'N/A'}</span>
+              <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
+                MAT: {c.matricula || 'N/A'}
+              </span>
             </div>
           </TableCell>
           <TableCell className="hidden md:table-cell">
@@ -307,7 +333,9 @@ export default function ColaboradoresPage() {
               <span className="text-[10px] text-primary font-bold uppercase tracking-wider">{c.departamento}</span>
             </div>
           </TableCell>
-          <TableCell><ColaboradorStatus status={c.status} /></TableCell>
+          <TableCell>
+            <ColaboradorStatus status={c.status} />
+          </TableCell>
           <TableCell className="pr-6 text-right">
             <div className="flex justify-end gap-1 opacity-40 group-hover:opacity-100 transition-opacity">
               <Button
@@ -315,7 +343,10 @@ export default function ColaboradoresPage() {
                 size="icon"
                 aria-label="Visualizar"
                 className="h-9 w-9 rounded-xl hover:bg-info/10 text-info"
-                onClick={(e) => { e.stopPropagation(); navigate(`/colaboradores/${c.id}`); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/colaboradores/${c.id}`);
+                }}
                 title="Ver Perfil"
               >
                 <Eye className="h-4.5 w-4.5" />
@@ -325,7 +356,10 @@ export default function ColaboradoresPage() {
                 size="icon"
                 aria-label="Editar"
                 className="h-9 w-9 rounded-xl hover:bg-primary/10 text-primary"
-                onClick={(e) => { e.stopPropagation(); navigate(`/colaboradores/editar/${c.id}`); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/colaboradores/editar/${c.id}`);
+                }}
                 title="Editar"
               >
                 <Edit className="h-4.5 w-4.5" />

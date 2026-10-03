@@ -7,6 +7,7 @@
 
 -- departamentos
 DROP POLICY IF EXISTS "Auth users manage departamentos" ON public.departamentos;
+DROP POLICY IF EXISTS "departamentos_tenant_all" ON public.departamentos;
 CREATE POLICY "departamentos_tenant_all" ON public.departamentos
   FOR ALL TO authenticated
   USING (empresa_id = public.get_auth_empresa_id())
@@ -14,6 +15,7 @@ CREATE POLICY "departamentos_tenant_all" ON public.departamentos
 
 -- cargos
 DROP POLICY IF EXISTS "Auth users manage cargos" ON public.cargos;
+DROP POLICY IF EXISTS "cargos_tenant_all" ON public.cargos;
 CREATE POLICY "cargos_tenant_all" ON public.cargos
   FOR ALL TO authenticated
   USING (empresa_id = public.get_auth_empresa_id())
@@ -21,6 +23,7 @@ CREATE POLICY "cargos_tenant_all" ON public.cargos
 
 -- vinculos
 DROP POLICY IF EXISTS "Auth users manage vinculos" ON public.vinculos;
+DROP POLICY IF EXISTS "vinculos_tenant_all" ON public.vinculos;
 CREATE POLICY "vinculos_tenant_all" ON public.vinculos
   FOR ALL TO authenticated
   USING (
@@ -40,6 +43,7 @@ CREATE POLICY "vinculos_tenant_all" ON public.vinculos
 
 -- treinamentos
 DROP POLICY IF EXISTS "Auth users manage treinamentos" ON public.treinamentos;
+DROP POLICY IF EXISTS "treinamentos_tenant_all" ON public.treinamentos;
 CREATE POLICY "treinamentos_tenant_all" ON public.treinamentos
   FOR ALL TO authenticated
   USING (empresa_id = public.get_auth_empresa_id())
@@ -51,23 +55,22 @@ DROP POLICY IF EXISTS "Authenticated users can read auditoria" ON public.auditor
 
 -- ferias_audit_log
 DROP POLICY IF EXISTS "Authenticated users can view ferias_audit" ON public.ferias_audit_log;
+DROP POLICY IF EXISTS "ferias_audit_log_tenant_select" ON public.ferias_audit_log;
 CREATE POLICY "ferias_audit_log_tenant_select" ON public.ferias_audit_log
   FOR SELECT TO authenticated
   USING (
-    EXISTS (
-      SELECT 1 FROM public.ferias f
-      JOIN public.colaboradores c ON c.id = f.colaborador_id
-      WHERE f.id = ferias_audit_log.ferias_id
-        AND c.empresa_id = public.get_auth_empresa_id()
-    )
+    empresa_id = public.get_auth_empresa_id()
+    OR empresa_id IS NULL
   );
 
 -- feriados
 DROP POLICY IF EXISTS "Authenticated users can view feriados" ON public.feriados;
 DROP POLICY IF EXISTS "Authenticated users can manage feriados" ON public.feriados;
+DROP POLICY IF EXISTS "feriados_tenant_select" ON public.feriados;
 CREATE POLICY "feriados_tenant_select" ON public.feriados
   FOR SELECT TO authenticated
   USING (empresa_id = public.get_auth_empresa_id() OR empresa_id IS NULL);
+DROP POLICY IF EXISTS "feriados_tenant_write" ON public.feriados;
 CREATE POLICY "feriados_tenant_write" ON public.feriados
   FOR ALL TO authenticated
   USING (empresa_id = public.get_auth_empresa_id())
@@ -75,6 +78,7 @@ CREATE POLICY "feriados_tenant_write" ON public.feriados
 
 -- admissoes
 DROP POLICY IF EXISTS "Authenticated users can manage admissoes" ON public.admissoes;
+DROP POLICY IF EXISTS "admissoes_tenant_all" ON public.admissoes;
 CREATE POLICY "admissoes_tenant_all" ON public.admissoes
   FOR ALL TO authenticated
   USING (empresa_id = public.get_auth_empresa_id())
@@ -82,6 +86,7 @@ CREATE POLICY "admissoes_tenant_all" ON public.admissoes
 
 -- candidaturas
 DROP POLICY IF EXISTS "Authenticated users can manage candidaturas" ON public.candidaturas;
+DROP POLICY IF EXISTS "candidaturas_tenant_all" ON public.candidaturas;
 CREATE POLICY "candidaturas_tenant_all" ON public.candidaturas
   FOR ALL TO authenticated
   USING (

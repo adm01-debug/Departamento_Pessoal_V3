@@ -92,7 +92,7 @@ export default function ColaboradorFormPage() {
 
   const { data: colaborador, isLoading } = useQuery({
     queryKey: ['colaborador', id, empresaAtual?.id],
-    queryFn: () => (colaboradorService as any).buscarPorId(id!, empresaAtual!.id),
+    queryFn: () => colaboradorService.buscarPorId(id!, empresaAtual!.id),
     enabled: isEditing && !!empresaAtual?.id,
   });
 
@@ -119,7 +119,7 @@ export default function ColaboradorFormPage() {
 
   useEffect(() => {
     if (colaborador) {
-      reset(colaborador as any);
+      reset(colaborador as unknown as FormInput);
     }
   }, [colaborador, reset]);
 
@@ -127,8 +127,8 @@ export default function ColaboradorFormPage() {
     mutationFn: (data: FormData) => {
       if (!empresaAtual?.id) throw new Error('Empresa atual não identificada');
       return isEditing
-        ? (colaboradorService as any).atualizar(id!, data as any, empresaAtual.id)
-        : (colaboradorService as any).criar({ ...data, empresa_id: empresaAtual.id } as any);
+        ? colaboradorService.atualizar(id!, data, empresaAtual.id)
+        : colaboradorService.criar({ ...data, empresa_id: empresaAtual.id });
     },
 
     onSuccess: () => {
@@ -136,7 +136,7 @@ export default function ColaboradorFormPage() {
       success(isEditing ? 'Colaborador atualizado!' : 'Colaborador criado!');
       navigate('/colaboradores');
     },
-    onError: (err: any) => handleServerError(err, setError),
+    onError: (err: unknown) => handleServerError(err, setError),
   });
 
   const handleAddressFound = (addr: Address) => {
@@ -285,7 +285,7 @@ export default function ColaboradorFormPage() {
                         { value: 'feminino', label: 'Feminino' },
                         { value: 'outro', label: 'Outro' },
                       ]}
-                      onChange={(v) => setValue('sexo', v as any)}
+                      onChange={(v) => setValue('sexo', v as FormData['sexo'])}
                     />
                     <FormSelect
                       label="Estado Civil"
@@ -297,7 +297,7 @@ export default function ColaboradorFormPage() {
                         { value: 'viuvo', label: 'Viúvo(a)' },
                         { value: 'uniao_estavel', label: 'União Estável' },
                       ]}
-                      onChange={(v) => setValue('estado_civil', v as any)}
+                      onChange={(v) => setValue('estado_civil', v as FormData['estado_civil'])}
                     />
                     <FormField label="Matrícula Interna" {...register('matricula')} placeholder="Ex: 0001" />
                   </div>
@@ -341,7 +341,7 @@ export default function ColaboradorFormPage() {
                         { value: 'estagio', label: 'Estágio' },
                         { value: 'temporario', label: 'Temporário' },
                       ]}
-                      onChange={(v) => setValue('tipo_contrato', v as any)}
+                      onChange={(v) => setValue('tipo_contrato', v as FormData['tipo_contrato'])}
                     />
                   </div>
 

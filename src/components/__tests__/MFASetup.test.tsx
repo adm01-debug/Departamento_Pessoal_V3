@@ -1,9 +1,10 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
 }));
 
@@ -42,12 +43,13 @@ vi.mock('@/contexts/AuthContext', () => ({
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children, open }: any) => open ? <div role="dialog">{children}</div> : null,
-  DialogContent: ({ children }: any) => <div>{children}</div>,
-  DialogHeader: ({ children }: any) => <div>{children}</div>,
-  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
-  DialogDescription: ({ children }: any) => <p>{children}</p>,
-  DialogFooter: ({ children }: any) => <div>{children}</div>,
+  Dialog: ({ children, open }: { children?: ReactNode; open?: boolean }) =>
+    open ? <div role="dialog">{children}</div> : null,
+  DialogContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
+  DialogDescription: ({ children }: { children?: ReactNode }) => <p>{children}</p>,
+  DialogFooter: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 import { useQuery } from '@tanstack/react-query';
@@ -55,25 +57,25 @@ import { MFASetup } from '../settings/MFASetup';
 
 describe('MFASetup', () => {
   it('shows loading spinner when loading', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: true } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: true } as never);
     const { container } = render(<MFASetup />);
     expect(container.querySelector('.animate-spin')).toBeInTheDocument();
   });
 
   it('renders 2FA title', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: { totp: [] }, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: { totp: [] }, isLoading: false } as never);
     render(<MFASetup />);
     expect(screen.getByText(/Autenticação de Dois Fatores/)).toBeInTheDocument();
   });
 
   it('shows Desativado badge when no factors', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: { totp: [] }, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: { totp: [] }, isLoading: false } as never);
     render(<MFASetup />);
     expect(screen.getByText('Desativado')).toBeInTheDocument();
   });
 
   it('shows Ativar 2FA button when disabled', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: { totp: [] }, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: { totp: [] }, isLoading: false } as never);
     render(<MFASetup />);
     expect(screen.getByText('Ativar 2FA')).toBeInTheDocument();
   });
@@ -82,7 +84,7 @@ describe('MFASetup', () => {
     vi.mocked(useQuery).mockReturnValue({
       data: { totp: [{ id: 'f1', status: 'verified', created_at: '2024-01-01T00:00:00Z', friendly_name: 'App' }] },
       isLoading: false,
-    } as any);
+    } as never);
     render(<MFASetup />);
     expect(screen.getByText('Ativado')).toBeInTheDocument();
   });
@@ -91,19 +93,19 @@ describe('MFASetup', () => {
     vi.mocked(useQuery).mockReturnValue({
       data: { totp: [{ id: 'f1', status: 'verified', created_at: '2024-01-01T00:00:00Z', friendly_name: 'App' }] },
       isLoading: false,
-    } as any);
+    } as never);
     render(<MFASetup />);
     expect(screen.getByText('Desativar')).toBeInTheDocument();
   });
 
   it('renders Dicas de Segurança section', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: { totp: [] }, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: { totp: [] }, isLoading: false } as never);
     render(<MFASetup />);
     expect(screen.getByText('Dicas de Segurança')).toBeInTheDocument();
   });
 
   it('renders App Autenticador description', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: { totp: [] }, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: { totp: [] }, isLoading: false } as never);
     render(<MFASetup />);
     expect(screen.getByText('App Autenticador (TOTP)')).toBeInTheDocument();
   });

@@ -1,31 +1,53 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { UserMinus, Clock, DollarSign, TrendingDown, BarChart3 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import type { DesligamentoComColaborador } from '@/services/desligamentoService';
 
 interface KPIProps {
-  desligamentos: any[];
+  desligamentos: Pick<DesligamentoComColaborador, 'status' | 'valor_liquido' | 'data_desligamento'>[];
 }
 
 export function DesligamentoKPIs({ desligamentos }: KPIProps) {
   const total = desligamentos.length;
   const pendentes = desligamentos.filter((d) => d.status === 'pendente' || d.status === 'em_andamento').length;
   const concluidos = desligamentos.filter((d) => d.status === 'concluido' || d.status === 'finalizado').length;
-  const valorTotal = desligamentos.reduce((acc: number, d: any) => acc + (d.valor_liquido || 0), 0);
+  const valorTotal = desligamentos.reduce((acc: number, d) => acc + (d.valor_liquido || 0), 0);
 
   // Turnover rate this month
   const now = new Date();
-  const thisMonth = desligamentos.filter((d: any) => {
+  const thisMonth = desligamentos.filter((d) => {
     if (!d.data_desligamento) return false;
     const dt = new Date(d.data_desligamento);
     return dt.getMonth() === now.getMonth() && dt.getFullYear() === now.getFullYear();
   }).length;
 
   const kpis = [
-    { label: 'Total Desligamentos', value: total, icon: UserMinus, color: 'text-destructive', bg: 'bg-destructive/10', shadow: 'shadow-glow-warning' },
+    {
+      label: 'Total Desligamentos',
+      value: total,
+      icon: UserMinus,
+      color: 'text-destructive',
+      bg: 'bg-destructive/10',
+      shadow: 'shadow-glow-warning',
+    },
     { label: 'Pendentes', value: pendentes, icon: Clock, color: 'text-warning', bg: 'bg-warning/10', shadow: '' },
-    { label: 'Concluídos', value: concluidos, icon: TrendingDown, color: 'text-success', bg: 'bg-success/10', shadow: '' },
+    {
+      label: 'Concluídos',
+      value: concluidos,
+      icon: TrendingDown,
+      color: 'text-success',
+      bg: 'bg-success/10',
+      shadow: '',
+    },
     { label: 'Este Mês', value: thisMonth, icon: BarChart3, color: 'text-info', bg: 'bg-info/10', shadow: '' },
-    { label: 'Valor Total Rescisões', value: `R$ ${valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, icon: DollarSign, color: 'text-foreground', bg: 'bg-primary/10', shadow: '' },
+    {
+      label: 'Valor Total Rescisões',
+      value: `R$ ${valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`,
+      icon: DollarSign,
+      color: 'text-foreground',
+      bg: 'bg-primary/10',
+      shadow: '',
+    },
   ];
 
   return (

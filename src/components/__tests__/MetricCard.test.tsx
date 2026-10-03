@@ -1,12 +1,19 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Users } from 'lucide-react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    create: (Component: any) => ({ children, ...rest }: any) => <Component {...rest}>{children}</Component>,
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-    span: ({ children, ...props }: any) => <span {...props}>{children}</span>,
+    create:
+      (Component: any) =>
+      ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => (
+        <Component {...rest}>{children}</Component>
+      ),
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
+    span: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
+      <span {...props}>{children}</span>
+    ),
     polygon: (props: any) => <polygon {...props} />,
     polyline: (props: any) => <polyline {...props} />,
   },
@@ -14,8 +21,8 @@ vi.mock('framer-motion', () => ({
 }));
 
 vi.mock('@/components/dashboard/AnimatedNumber', () => ({
-  AnimatedNumber: ({ value, format }: any) => (
-    <span>{format ? format(value) : String(value)}</span>
+  AnimatedNumber: ({ value, format }: { value?: number; format?: (v: number) => string }) => (
+    <span>{format ? format(value ?? 0) : String(value)}</span>
   ),
 }));
 
@@ -37,32 +44,68 @@ describe('MetricCard', () => {
   });
 
   it('renders AnimatedNumber when rawValue is provided', () => {
-    render(<MetricCard title="Folha Mensal" value="150000" rawValue={150000} icon={Users} gradient="from-success to-success/70" />);
+    render(
+      <MetricCard
+        title="Folha Mensal"
+        value="150000"
+        rawValue={150000}
+        icon={Users}
+        gradient="from-success to-success/70"
+      />
+    );
     expect(screen.getByText('150000')).toBeInTheDocument();
   });
 
   it('renders description text', () => {
-    render(<MetricCard title="Teste" value="5" icon={Users} gradient="from-primary to-primary-glow" description="Este mês" />);
+    render(
+      <MetricCard title="Teste" value="5" icon={Users} gradient="from-primary to-primary-glow" description="Este mês" />
+    );
     expect(screen.getByText('Este mês')).toBeInTheDocument();
   });
 
   it('renders trend percentage', () => {
-    render(<MetricCard title="Teste" value="5" icon={Users} gradient="from-primary to-primary-glow" trend={{ value: 12, label: 'vs mês anterior' }} />);
+    render(
+      <MetricCard
+        title="Teste"
+        value="5"
+        icon={Users}
+        gradient="from-primary to-primary-glow"
+        trend={{ value: 12, label: 'vs mês anterior' }}
+      />
+    );
     expect(screen.getByText(/12%/)).toBeInTheDocument();
   });
 
   it('renders trend label', () => {
-    render(<MetricCard title="Teste" value="5" icon={Users} gradient="from-primary to-primary-glow" trend={{ value: 12, label: 'vs mês anterior' }} />);
+    render(
+      <MetricCard
+        title="Teste"
+        value="5"
+        icon={Users}
+        gradient="from-primary to-primary-glow"
+        trend={{ value: 12, label: 'vs mês anterior' }}
+      />
+    );
     expect(screen.getByText('vs mês anterior')).toBeInTheDocument();
   });
 
   it('renders sparkline when provided', () => {
-    render(<MetricCard title="Teste" value="5" icon={Users} gradient="from-primary to-primary-glow" sparkline={[1, 2, 3, 4, 5]} />);
+    render(
+      <MetricCard
+        title="Teste"
+        value="5"
+        icon={Users}
+        gradient="from-primary to-primary-glow"
+        sparkline={[1, 2, 3, 4, 5]}
+      />
+    );
     expect(screen.getByTestId('mini-sparkline')).toBeInTheDocument();
   });
 
   it('renders without optional props without crashing', () => {
-    const { container } = render(<MetricCard title="Minimal" value="0" icon={Users} gradient="from-primary to-primary-glow" />);
+    const { container } = render(
+      <MetricCard title="Minimal" value="0" icon={Users} gradient="from-primary to-primary-glow" />
+    );
     expect(container.firstChild).toBeInTheDocument();
   });
 });

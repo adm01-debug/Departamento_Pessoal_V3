@@ -11,15 +11,32 @@ function makeChain(data: any = [], error: any = null) {
   const result = { data, error };
   const maybeSingle = vi.fn().mockResolvedValue(result);
   const limit = vi.fn().mockResolvedValue(result);
-  const order = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue(result), maybeSingle, limit, then: (fn: any) => Promise.resolve(result).then(fn) });
+  const order = vi.fn().mockReturnValue({
+    eq: vi.fn().mockResolvedValue(result),
+    maybeSingle,
+    limit,
+    then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
+  });
   // eqResult needs a self-reference so multiple .eq().eq() chains work
-  const eqResult: any = { order, maybeSingle, then: (fn: any) => Promise.resolve(result).then(fn) };
+  const eqResult: any = {
+    order,
+    maybeSingle,
+    then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
+  };
   const eq = vi.fn().mockReturnValue(eqResult);
   eqResult.eq = eq;
   const upsert = vi.fn().mockResolvedValue(result);
-  const insert = vi.fn().mockReturnValue({ select: vi.fn().mockReturnValue({ maybeSingle }), then: (fn: any) => Promise.resolve(result).then(fn) });
+  const insert = vi.fn().mockReturnValue({
+    select: vi.fn().mockReturnValue({ maybeSingle }),
+    then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
+  });
   const update = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue(result) });
-  const select = vi.fn().mockReturnValue({ order, eq, maybeSingle, then: (fn: any) => Promise.resolve(result).then(fn) });
+  const select = vi.fn().mockReturnValue({
+    order,
+    eq,
+    maybeSingle,
+    then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
+  });
   return { select, eq, order, upsert, insert, update, maybeSingle };
 }
 
@@ -33,7 +50,9 @@ import {
 } from '../rhService';
 
 describe('configAfastamentosService', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('obter calls from config_afastamentos', async () => {
     const chain = makeChain({ id: 'c1' });
@@ -44,7 +63,9 @@ describe('configAfastamentosService', () => {
 
   it('obter throws on error', async () => {
     const chain = makeChain(null, new Error('db error'));
-    chain.select.mockReturnValue({ maybeSingle: vi.fn().mockResolvedValue({ data: null, error: new Error('db error') }) });
+    chain.select.mockReturnValue({
+      maybeSingle: vi.fn().mockResolvedValue({ data: null, error: new Error('db error') }),
+    });
     mockFrom.mockReturnValue(chain);
     await expect(configAfastamentosService.obter()).rejects.toThrow('db error');
   });
@@ -59,7 +80,9 @@ describe('configAfastamentosService', () => {
 });
 
 describe('feriasSolicitacoesService', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('listar returns data array', async () => {
     const data = [{ id: 'f1' }];
@@ -80,7 +103,7 @@ describe('feriasSolicitacoesService', () => {
     const chain = makeChain();
     mockFrom.mockReturnValue(chain);
     await feriasSolicitacoesService.criar({
-      colaborador_id: 'c1',
+      colaborador_id: '00000000-0000-4000-8000-000000000002',
       data_inicio: '2026-01-10',
       data_fim: '2026-01-20',
     });
@@ -89,7 +112,9 @@ describe('feriasSolicitacoesService', () => {
 });
 
 describe('historicoCargoService', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('listar queries historico_cargo', async () => {
     const chain = makeChain([]);
@@ -100,7 +125,9 @@ describe('historicoCargoService', () => {
 });
 
 describe('linhasTransporteService', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('listar returns array', async () => {
     const chain = makeChain([{ id: 'l1', nome: 'Linha A' }]);
@@ -111,7 +138,9 @@ describe('linhasTransporteService', () => {
 });
 
 describe('notificacoesAdmissaoService', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('listar queries notificacoes_admissao', async () => {
     const chain = makeChain([]);
@@ -122,7 +151,9 @@ describe('notificacoesAdmissaoService', () => {
 });
 
 describe('onboardingService', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('listarTemplates queries onboarding_templates', async () => {
     const chain = makeChain([]);

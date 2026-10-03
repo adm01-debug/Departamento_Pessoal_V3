@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
@@ -15,22 +16,24 @@ vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 vi.mock('@/utils/safeError', () => ({ safeErrorMessage: vi.fn((e: any, d: string) => d) }));
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children }: any) => <div>{children}</div>,
-  DialogContent: ({ children }: any) => <div>{children}</div>,
-  DialogHeader: ({ children }: any) => <div>{children}</div>,
-  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
-  DialogTrigger: ({ children }: any) => <div>{children}</div>,
+  Dialog: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
+  DialogTrigger: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, disabled }: any) => (
-    <button onClick={onClick} disabled={disabled}>{children}</button>
+  Button: ({ children, onClick, disabled }: { children?: ReactNode; onClick?: () => void; disabled?: boolean }) => (
+    <button onClick={onClick} disabled={disabled}>
+      {children}
+    </button>
   ),
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children }: any) => <div>{children}</div>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
+  Card: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 import { RelatorioContabilDialog } from '../folha/RelatorioContabilDialog';

@@ -8,15 +8,22 @@ import { Plus, Info, AlertCircle } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { todayLocalISO } from '@/utils/dateLocal';
+import type { ColaboradorResumoBasico, NovoEmprestimoInput } from '@/types/descontos';
 
-export function NewLoanDialog({ colaboradores, onSave }: any) {
+export function NewLoanDialog({
+  colaboradores,
+  onSave,
+}: {
+  colaboradores: ColaboradorResumoBasico[];
+  onSave: (v: NovoEmprestimoInput) => void;
+}) {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
     colaborador_id: '',
     instituicao_financeira: '',
     valor_total: '',
     numero_parcelas: '',
-    data_inicio: todayLocalISO()
+    data_inicio: todayLocalISO(),
   });
 
   // Compliance Engine: Calculate Margin
@@ -32,7 +39,7 @@ export function NewLoanDialog({ colaboradores, onSave }: any) {
       if (error) throw error;
       return data;
     },
-    enabled: !!form.colaborador_id
+    enabled: !!form.colaborador_id,
   });
 
   const marginData = useMemo(() => {
@@ -44,7 +51,7 @@ export function NewLoanDialog({ colaboradores, onSave }: any) {
     return {
       margin,
       percent: currentPercent,
-      isValid: valor_parcela <= margin
+      isValid: valor_parcela <= margin,
     };
   }, [colaboradorData, form.valor_total, form.numero_parcelas]);
 
@@ -55,7 +62,7 @@ export function NewLoanDialog({ colaboradores, onSave }: any) {
       ...form,
       valor_total: Number(form.valor_total),
       numero_parcelas: Number(form.numero_parcelas),
-      valor_parcela
+      valor_parcela,
     });
     setOpen(false);
   };
@@ -63,44 +70,68 @@ export function NewLoanDialog({ colaboradores, onSave }: any) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="gap-2 rounded-xl"><Plus className="h-4 w-4" /> Novo Empréstimo</Button>
+        <Button className="gap-2 rounded-xl">
+          <Plus className="h-4 w-4" /> Novo Empréstimo
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             Registrar Empréstimo Consignado
-            <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-wider">Compliance L10.820</Badge>
+            <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-wider">
+              Compliance L10.820
+            </Badge>
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
             <Label>Colaborador</Label>
-            <Select value={form.colaborador_id} onValueChange={(v) => setForm(p => ({ ...p, colaborador_id: v }))}>
-              <SelectTrigger><SelectValue placeholder="Selecione o colaborador" /></SelectTrigger>
+            <Select value={form.colaborador_id} onValueChange={(v) => setForm((p) => ({ ...p, colaborador_id: v }))}>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione o colaborador" />
+              </SelectTrigger>
               <SelectContent>
-                {colaboradores.map((c: any) => <SelectItem key={c.id} value={c.id}>{c.nome_completo}</SelectItem>)}
+                {colaboradores.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.nome_completo}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
             <Label>Instituição Financeira</Label>
-            <Input value={form.instituicao_financeira} onChange={e => setForm(p => ({ ...p, instituicao_financeira: e.target.value }))} placeholder="Ex: Banco do Brasil" />
+            <Input
+              value={form.instituicao_financeira}
+              onChange={(e) => setForm((p) => ({ ...p, instituicao_financeira: e.target.value }))}
+              placeholder="Ex: Banco do Brasil"
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Valor Total (R$)</Label>
-              <Input type="number" value={form.valor_total} onChange={e => setForm(p => ({ ...p, valor_total: e.target.value }))} />
+              <Input
+                type="number"
+                value={form.valor_total}
+                onChange={(e) => setForm((p) => ({ ...p, valor_total: e.target.value }))}
+              />
             </div>
             <div className="space-y-2">
               <Label>Número de Parcelas</Label>
-              <Input type="number" value={form.numero_parcelas} onChange={e => setForm(p => ({ ...p, numero_parcelas: e.target.value }))} />
+              <Input
+                type="number"
+                value={form.numero_parcelas}
+                onChange={(e) => setForm((p) => ({ ...p, numero_parcelas: e.target.value }))}
+              />
             </div>
           </div>
 
           {form.colaborador_id && (
-            <div className={`p-3 rounded-lg border flex flex-col gap-2 ${marginData.isValid ? 'bg-success/5 border-success/20' : 'bg-destructive/5 border-destructive/20'}`}>
+            <div
+              className={`p-3 rounded-lg border flex flex-col gap-2 ${marginData.isValid ? 'bg-success/5 border-success/20' : 'bg-destructive/5 border-destructive/20'}`}
+            >
               <div className="flex items-center justify-between text-xs font-semibold">
                 <span className="flex items-center gap-1">
                   <Info className="h-3 w-3" /> Margem Consignável (30%)
@@ -108,8 +139,8 @@ export function NewLoanDialog({ colaboradores, onSave }: any) {
                 <span>Max: R$ {marginData.margin.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
               </div>
               <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                <div 
-                  className={`h-full transition-all duration-500 ${marginData.isValid ? 'bg-success' : 'bg-destructive'}`} 
+                <div
+                  className={`h-full transition-all duration-500 ${marginData.isValid ? 'bg-success' : 'bg-destructive'}`}
                   style={{ width: `${Math.min(marginData.percent, 100)}%` }}
                 />
               </div>
@@ -123,11 +154,17 @@ export function NewLoanDialog({ colaboradores, onSave }: any) {
 
           <div className="space-y-2">
             <Label>Data de Início</Label>
-            <Input type="date" value={form.data_inicio} onChange={e => setForm(p => ({ ...p, data_inicio: e.target.value }))} />
+            <Input
+              type="date"
+              value={form.data_inicio}
+              onChange={(e) => setForm((p) => ({ ...p, data_inicio: e.target.value }))}
+            />
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>Cancelar</Button>
+          <Button variant="outline" onClick={() => setOpen(false)}>
+            Cancelar
+          </Button>
           <Button onClick={handleSubmit} disabled={!marginData.isValid || !form.colaborador_id}>
             Confirmar Registro
           </Button>
@@ -137,10 +174,18 @@ export function NewLoanDialog({ colaboradores, onSave }: any) {
   );
 }
 
-function Badge({ children, variant, className }: any) {
-  const variants: any = {
-    outline: "border border-muted-foreground/30 text-muted-foreground",
-    default: "bg-primary text-primary-foreground"
+function Badge({
+  children,
+  variant,
+  className,
+}: {
+  children: React.ReactNode;
+  variant?: 'outline' | 'default';
+  className?: string;
+}) {
+  const variants: Record<'outline' | 'default', string> = {
+    outline: 'border border-muted-foreground/30 text-muted-foreground',
+    default: 'bg-primary text-primary-foreground',
   };
-  return <span className={`px-2 py-0.5 rounded-full ${variants[variant] || variants.default} ${className}`}>{children}</span>;
+  return <span className={`px-2 py-0.5 rounded-full ${variants[variant ?? 'default']} ${className}`}>{children}</span>;
 }

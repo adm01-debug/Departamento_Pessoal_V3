@@ -1,10 +1,35 @@
 import { toast } from 'sonner';
 import { RescisaoResult, fmt } from './rescisaoCalc';
-import { auditoriaService } from '@/services/auditoriaService';
+import { auditoriaService, type TrilhaAuditoriaRegistro } from '@/services/auditoriaService';
 
-export async function gerarPDFRescisao(form: any, result: RescisaoResult, auditoriaParam?: any) {
+interface RescisaoPdfForm {
+  id?: string;
+  empresa_id?: string;
+  nome?: string | null;
+  nomeColaborador?: string | null;
+  cpf?: string | null;
+  cargo?: string | null;
+  dataAdmissao?: string | null;
+  dataDesligamento?: string | null;
+  tipo?: string | null;
+  checklist_comunicacao?: boolean | null;
+  checklist_documentacao?: boolean | null;
+  checklist_calculo_rescisao?: boolean | null;
+  checklist_devolucao_equipamentos?: boolean | null;
+  checklist_homologacao?: boolean | null;
+  checklist_pagamento?: boolean | null;
+  [key: string]: unknown;
+}
+
+export type AuditoriaPdf = TrilhaAuditoriaRegistro & { hash?: string };
+
+export async function gerarPDFRescisao(
+  form: RescisaoPdfForm,
+  result: RescisaoResult,
+  auditoriaParam?: AuditoriaPdf | null
+) {
   const { default: jsPDF } = await import('jspdf');
-  await import('jspdf-autotable');
+  const { default: autoTable } = await import('jspdf-autotable');
 
   // Buscar trilha de auditoria se não fornecida
   let auditoria = auditoriaParam;
@@ -64,7 +89,7 @@ export async function gerarPDFRescisao(form: any, result: RescisaoResult, audito
   );
   y += 10;
 
-  (doc as any).autoTable({
+  autoTable(doc, {
     startY: y,
     head: [['Verba', 'Referência', 'Valor (R$)']],
     body: [
@@ -87,7 +112,7 @@ export async function gerarPDFRescisao(form: any, result: RescisaoResult, audito
     styles: { fontSize: 9 },
   });
 
-  y = (doc as any).lastAutoTable.finalY + 15;
+  y = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 15;
 
   // Checklist de Homologação se disponível no form (desligamento object)
   if (form.checklist_homologacao !== undefined) {

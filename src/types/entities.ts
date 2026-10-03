@@ -44,9 +44,10 @@ export interface Empresa {
   updated_at?: string;
 }
 
-
 export interface Colaborador {
   id: string;
+  /** Vínculo com `auth.users` quando o colaborador tem acesso ao sistema. */
+  user_id?: string | null;
   nome_completo: string;
   cpf: string;
   email: string;
@@ -65,21 +66,60 @@ export interface Colaborador {
   matricula?: string;
 }
 
-
 export interface Ferias {
   id: string;
   colaborador_id: string;
   data_inicio: string;
   data_fim: string;
-  status: 'pendente' | 'aprovada' | 'rejeitada' | 'cancelada';
+  status:
+    | 'pendente'
+    | 'solicitada'
+    | 'programada'
+    | 'aprovada'
+    | 'aprovado'
+    | 'rejeitada'
+    | 'em_gozo'
+    | 'gozando'
+    | 'em_andamento'
+    | 'concluida'
+    | 'vencida'
+    | 'cancelada'
+    | 'paga';
   empresa_id: string;
   created_at?: string;
   colaborador_nome?: string;
+  aprovado_rh?: boolean | null;
+  aprovado_gestor?: boolean | null;
+  abono_pecuniario?: boolean | null;
+  adiantamento_13?: boolean | null;
+  adiantamento_13o?: boolean | null;
+  aviso_pdf_url?: string | null;
+  enviado_contabilidade?: boolean | null;
+  cancelado?: boolean | null;
+  pagamento_confirmado_em?: string | null;
+  dias_gozo?: number;
+  dias_ferias?: number | null;
   colaborador?: {
     nome_completo: string;
-    foto_url: string | null;
-  };
+    foto_url?: string | null;
+    cpf?: string;
+    cargo?: string | null;
+    departamento?: string | null;
+  } | null;
 }
+
+/** ASO com embed de colaborador (select `colaborador:colaboradores(nome_completo, departamento)`). */
+export type AsoComColaborador = import('@/integrations/supabase/database.types').Tables<'asos'> & {
+  colaborador?: { nome_completo: string; departamento: string | null } | null;
+};
+
+/** Subconjunto de ASO usado em listagens/gráficos (fixtures de teste parciais compilam). */
+export type AsoResumo = Pick<
+  import('@/integrations/supabase/database.types').Tables<'asos'>,
+  'id' | 'tipo' | 'data_exame' | 'data_validade' | 'medico_nome'
+> & {
+  colaborador?: { nome_completo?: string | null; departamento?: string | null } | null;
+};
 
 export interface Documento {
   id: string;
@@ -127,4 +167,3 @@ export interface Periodo {
   dataInicio: string;
   dataFim: string;
 }
-

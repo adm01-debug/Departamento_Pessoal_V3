@@ -19,9 +19,9 @@ function buildChain(data: any[] = []) {
   const chain: any = {};
   chain.select = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve({ data, error: null }).then(fn);
-  chain.catch = (fn: any) => Promise.resolve({ data, error: null }).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve({ data, error: null }).finally(fn);
+  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve({ data, error: null }).then(fn);
+  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve({ data, error: null }).catch(fn);
+  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve({ data, error: null }).finally(fn);
   mockFrom.mockReturnValue(chain);
   return chain;
 }
@@ -32,8 +32,34 @@ function wrapper({ children }: { children: React.ReactNode }) {
 }
 
 const sampleEmpresas = [
-  { id: 'e1', razao_social: 'Empresa A', nome_fantasia: 'A', cnpj: '11.222.333/0001-81', ativa: true, regime_tributario: 'simples', aliquota_simples: 6, fap: 1, rat: 1, terceiros: 5.8, cor_identificacao: '#f00', ordem_exibicao: 1 },
-  { id: 'e2', razao_social: 'Empresa B', nome_fantasia: null, cnpj: '22.333.444/0001-00', ativa: false, regime_tributario: 'lucro_presumido', aliquota_simples: null, fap: 1, rat: 2, terceiros: 5.8, cor_identificacao: null, ordem_exibicao: 2 },
+  {
+    id: 'e1',
+    razao_social: 'Empresa A',
+    nome_fantasia: 'A',
+    cnpj: '11.222.333/0001-81',
+    ativa: true,
+    regime_tributario: 'simples',
+    aliquota_simples: 6,
+    fap: 1,
+    rat: 1,
+    terceiros: 5.8,
+    cor_identificacao: '#f00',
+    ordem_exibicao: 1,
+  },
+  {
+    id: 'e2',
+    razao_social: 'Empresa B',
+    nome_fantasia: null,
+    cnpj: '22.333.444/0001-00',
+    ativa: false,
+    regime_tributario: 'lucro_presumido',
+    aliquota_simples: null,
+    fap: 1,
+    rat: 2,
+    terceiros: 5.8,
+    cor_identificacao: null,
+    ordem_exibicao: 2,
+  },
 ];
 
 describe('useGrupo', () => {

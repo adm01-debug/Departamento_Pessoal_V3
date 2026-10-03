@@ -17,15 +17,17 @@ export default function OnboardingPageContent() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('admissoes')
-        .select(`
+        .select(
+          `
           *,
           tarefas:tarefas_onboarding(*)
-        `)
+        `
+        )
         .order('created_at', { ascending: false });
-      
+
       if (error) throw error;
       return data || [];
-    }
+    },
   });
 
   const concluirTarefa = useMutation({
@@ -39,24 +41,28 @@ export default function OnboardingPageContent() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['onboarding-list'] });
       toast.success('Tarefa concluída!');
-    }
+    },
   });
 
-  const getProgresso = (tarefas: any[]) => {
+  const getProgresso = (tarefas?: { concluida?: boolean | null }[]) => {
     if (!tarefas || tarefas.length === 0) return 0;
-    const concluidas = tarefas.filter(t => t.concluida).length;
+    const concluidas = tarefas.filter((t) => t.concluida).length;
     return Math.round((concluidas / tarefas.length) * 100);
   };
 
   if (isLoading) {
-    return <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
+    return (
+      <div className="flex justify-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
   }
 
   return (
     <div className="space-y-6">
       <div className="grid gap-6 md:grid-cols-2">
         {onboarding
-          .filter(o => getProgresso(o.tarefas) < 100)
+          .filter((o) => getProgresso(o.tarefas) < 100)
           .map((colab) => (
             <motion.div key={colab.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
               <Card className="border-border/40 hover:shadow-elevated transition-all overflow-hidden">
@@ -65,7 +71,9 @@ export default function OnboardingPageContent() {
                   <div className="flex justify-between items-start">
                     <div>
                       <CardTitle className="text-lg font-display">{colab.nome}</CardTitle>
-                      <CardDescription>{colab.cargo} • {colab.departamento}</CardDescription>
+                      <CardDescription>
+                        {colab.cargo} • {colab.departamento}
+                      </CardDescription>
                     </div>
                     <Badge variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-200">
                       Início em: {new Date(colab.data_prevista).toLocaleDateString('pt-BR')}
@@ -85,23 +93,33 @@ export default function OnboardingPageContent() {
                     <p className="text-xs font-bold flex items-center gap-1.5 text-muted-foreground uppercase">
                       <ListTodo className="h-3 w-3" /> Tarefas Críticas
                     </p>
-                    {colab.tarefas?.map((tarefa: any) => (
-                      <div key={tarefa.id} className="flex items-center justify-between p-2.5 rounded-lg bg-muted/30 border border-border/10 group">
+                    {colab.tarefas?.map((tarefa) => (
+                      <div
+                        key={tarefa.id}
+                        className="flex items-center justify-between p-2.5 rounded-lg bg-muted/30 border border-border/10 group"
+                      >
                         <div className="flex items-center gap-3">
-                          <div className={cn(
-                            "h-4 w-4 rounded-full border-2 flex items-center justify-center transition-colors",
-                            tarefa.concluida ? "bg-success border-success" : "border-muted-foreground/30"
-                          )}>
+                          <div
+                            className={cn(
+                              'h-4 w-4 rounded-full border-2 flex items-center justify-center transition-colors',
+                              tarefa.concluida ? 'bg-success border-success' : 'border-muted-foreground/30'
+                            )}
+                          >
                             {tarefa.concluida && <CheckCircle2 className="h-3 w-3 text-white" />}
                           </div>
-                          <span className={cn("text-xs font-medium", tarefa.concluida && "line-through text-muted-foreground")}>
+                          <span
+                            className={cn(
+                              'text-xs font-medium',
+                              tarefa.concluida && 'line-through text-muted-foreground'
+                            )}
+                          >
                             {tarefa.titulo}
                           </span>
                         </div>
                         {!tarefa.concluida && (
-                          <Button 
-                            size="sm" 
-                            variant="ghost" 
+                          <Button
+                            size="sm"
+                            variant="ghost"
                             className="h-7 text-[10px] hover:bg-success/10 hover:text-success opacity-0 group-hover:opacity-100 transition-opacity"
                             onClick={() => concluirTarefa.mutate(tarefa.id)}
                           >
@@ -111,7 +129,9 @@ export default function OnboardingPageContent() {
                       </div>
                     ))}
                     {(!colab.tarefas || colab.tarefas.length === 0) && (
-                      <p className="text-[10px] text-muted-foreground text-center py-2">Nenhuma tarefa pendente para esta etapa.</p>
+                      <p className="text-[10px] text-muted-foreground text-center py-2">
+                        Nenhuma tarefa pendente para esta etapa.
+                      </p>
                     )}
                   </div>
 
@@ -123,7 +143,7 @@ export default function OnboardingPageContent() {
             </motion.div>
           ))}
       </div>
-      
+
       {onboarding.length === 0 && (
         <Card className="rounded-2xl border-dashed border-2 p-12 text-center text-muted-foreground">
           <Rocket className="h-12 w-12 mx-auto mb-4 opacity-20" />

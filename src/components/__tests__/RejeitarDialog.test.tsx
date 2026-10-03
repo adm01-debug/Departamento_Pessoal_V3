@@ -1,28 +1,47 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ open, children }: any) => open ? <div>{children}</div> : null,
-  DialogContent: ({ children }: any) => <div>{children}</div>,
-  DialogHeader: ({ children }: any) => <div>{children}</div>,
-  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
-  DialogFooter: ({ children }: any) => <div>{children}</div>,
+  Dialog: ({ open, children }: { open?: boolean; children?: ReactNode }) => (open ? <div>{children}</div> : null),
+  DialogContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
+  DialogFooter: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, disabled, variant }: any) => (
-    <button onClick={onClick} disabled={disabled} data-variant={variant}>{children}</button>
+  Button: ({
+    children,
+    onClick,
+    disabled,
+    variant,
+  }: {
+    children?: ReactNode;
+    onClick?: () => void;
+    disabled?: boolean;
+    variant?: string;
+  }) => (
+    <button onClick={onClick} disabled={disabled} data-variant={variant}>
+      {children}
+    </button>
   ),
 }));
 
 vi.mock('@/components/ui/label', () => ({
-  Label: ({ children }: any) => <label>{children}</label>,
+  Label: ({ children }: { children?: ReactNode }) => <label>{children}</label>,
 }));
 
 vi.mock('@/components/ui/textarea', () => ({
-  Textarea: ({ value, onChange, placeholder }: any) => (
-    <textarea value={value} onChange={onChange} placeholder={placeholder} />
-  ),
+  Textarea: ({
+    value,
+    onChange,
+    placeholder,
+  }: {
+    value?: string;
+    onChange?: (e: unknown) => void;
+    placeholder?: string;
+  }) => <textarea value={value} onChange={onChange} placeholder={placeholder} />,
 }));
 
 import { RejeitarDialog } from '../ferias/programacao/RejeitarDialog';

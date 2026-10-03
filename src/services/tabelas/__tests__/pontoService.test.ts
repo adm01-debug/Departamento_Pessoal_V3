@@ -10,14 +10,20 @@ vi.mock('@/integrations/supabase/client', () => ({
 function makeChain(data: any = [], error: any = null) {
   const result = { data, error };
   const order = vi.fn().mockResolvedValue(result);
-  const eq = vi.fn().mockReturnValue({ order, then: (fn: any) => Promise.resolve(result).then(fn) });
-  const updateEqResult: any = { then: (fn: any) => Promise.resolve(result).then(fn) };
+  const eq = vi
+    .fn()
+    .mockReturnValue({ order, then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn) });
+  const updateEqResult: any = { then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn) };
   const updateEq = vi.fn().mockReturnValue(updateEqResult);
   updateEqResult.eq = updateEq;
   const update = vi.fn().mockReturnValue({ eq: updateEq });
   const insert = vi.fn().mockResolvedValue(result);
-  const in_ = vi.fn().mockReturnValue({ order, then: (fn: any) => Promise.resolve(result).then(fn) });
-  const select = vi.fn().mockReturnValue({ order, eq, in: in_, then: (fn: any) => Promise.resolve(result).then(fn) });
+  const in_ = vi
+    .fn()
+    .mockReturnValue({ order, then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn) });
+  const select = vi
+    .fn()
+    .mockReturnValue({ order, eq, in: in_, then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn) });
   return { select, eq, order, insert, update, in: in_ };
 }
 

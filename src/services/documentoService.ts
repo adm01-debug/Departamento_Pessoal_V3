@@ -1,6 +1,15 @@
 import { BaseService, ListOptions, ListResponse } from './baseService';
 import { Documento } from '@/types/entities';
 
+/** Documento com o join de colaborador e metadados de storage opcionais retornados pelo Supabase. */
+export interface DocumentoListItem extends Documento {
+  nome_arquivo?: string | null;
+  mime_type?: string | null;
+  storage_path?: string | null;
+  tamanho?: number | null;
+  colaborador?: { id: string; nome_completo: string | null; cpf?: string | null } | null;
+}
+
 class DocumentoService extends BaseService<Documento> {
   constructor() {
     super('documentos', {
@@ -18,7 +27,7 @@ class DocumentoService extends BaseService<Documento> {
     return { data, total: data.length };
   }
 
-  async listarDocumentos(empresaId: string, colaboradorId?: string): Promise<Documento[]> {
+  async listarDocumentos(empresaId: string, colaboradorId?: string): Promise<DocumentoListItem[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     let query = this.getQuery()
       .select('*, colaborador:colaboradores(id, nome_completo, cpf)')
@@ -30,7 +39,7 @@ class DocumentoService extends BaseService<Documento> {
 
     const { data, error } = await query;
     if (error) throw error;
-    return (data as Documento[]) || [];
+    return (data as DocumentoListItem[]) || [];
   }
 }
 

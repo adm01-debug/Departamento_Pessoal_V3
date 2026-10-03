@@ -25,7 +25,9 @@ function setupListarChain(data: any[], count: number, error: any = null) {
 // ─── empresaService.listar ────────────────────────────────────────────────────
 
 describe('empresaService.listar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns data and total from supabase', async () => {
     const records = [{ id: 'e1', razao_social: 'Empresa A' }];
@@ -36,7 +38,7 @@ describe('empresaService.listar', () => {
   });
 
   it('returns empty data with total 0 when supabase returns null', async () => {
-    setupListarChain(null as any, null as any);
+    setupListarChain(null as never, null as never);
     const result = await empresaService.listar();
     expect(result.data).toEqual([]);
     expect(result.total).toBe(0);
@@ -45,9 +47,7 @@ describe('empresaService.listar', () => {
   it('adds or() filter when search is provided', async () => {
     const { orFn } = setupListarChain([], 0);
     await empresaService.listar({ search: 'Promo' });
-    expect(orFn).toHaveBeenCalledWith(
-      expect.stringContaining('ilike.%Promo%')
-    );
+    expect(orFn).toHaveBeenCalledWith(expect.stringContaining('ilike.%Promo%'));
   });
 
   it('search filter includes razao_social, nome_fantasia, and cnpj', async () => {
@@ -98,7 +98,9 @@ describe('empresaService.listar', () => {
 // ─── empresaService.list (alias) ──────────────────────────────────────────────
 
 describe('empresaService.list', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('delegates to listar and returns the same result', async () => {
     const records = [{ id: 'e2', razao_social: 'Empresa B' }];

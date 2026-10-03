@@ -1,36 +1,56 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('recharts', () => ({
-  ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
-  BarChart: ({ children }: any) => <div>{children}</div>,
+  ResponsiveContainer: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  BarChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   Bar: () => null,
   XAxis: () => null,
   YAxis: () => null,
   CartesianGrid: () => null,
   Tooltip: () => null,
-  PieChart: ({ children }: any) => <div>{children}</div>,
+  PieChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   Pie: () => null,
   Cell: () => null,
   Legend: () => null,
-  LineChart: ({ children }: any) => <div>{children}</div>,
+  LineChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   Line: () => null,
-  AreaChart: ({ children }: any) => <div>{children}</div>,
+  AreaChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   Area: () => null,
 }));
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
 }));
 
 import { GestaoPontoAnalytics } from '../ponto/GestaoPontoAnalytics';
+import type { Tables } from '@/integrations/supabase/types';
 
 const DEFAULT_REGISTROS = [
-  { colaborador_id: 'col-1', data: '2026-07-01', entrada_1: '08:00', saida_1: '17:00', horas_trabalhadas: '08:00', atraso_minutos: 0, saida_intervalo: null, retorno_intervalo: null },
-  { colaborador_id: 'col-1', data: '2026-07-02', entrada_1: '08:15', saida_1: '17:00', horas_trabalhadas: '07:45', atraso_minutos: 15, saida_intervalo: null, retorno_intervalo: null },
-];
+  {
+    colaborador_id: 'col-1',
+    data: '2026-07-01',
+    entrada_1: '08:00',
+    saida_1: '17:00',
+    horas_trabalhadas: '08:00',
+    atraso_minutos: 0,
+    saida_intervalo: null,
+    retorno_intervalo: null,
+  },
+  {
+    colaborador_id: 'col-1',
+    data: '2026-07-02',
+    entrada_1: '08:15',
+    saida_1: '17:00',
+    horas_trabalhadas: '07:45',
+    atraso_minutos: 15,
+    saida_intervalo: null,
+    retorno_intervalo: null,
+  },
+] as unknown as Tables<'registros_ponto'>[];
 
 describe('GestaoPontoAnalytics', () => {
   it('renders Painel de Gestão Estratégica title', () => {

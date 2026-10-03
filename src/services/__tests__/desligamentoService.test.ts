@@ -45,7 +45,10 @@ describe('desligamentoService', () => {
     it('should call select with colaborador join', () => {
       mockEq.mockResolvedValue({ data: [], error: null });
       desligamentoService.listar({ filters: { empresa_id: EMPRESA_ID } });
-      expect(mockSelect).toHaveBeenCalledWith('*, colaborador:colaboradores(nome_completo)', { count: 'exact' });
+      expect(mockSelect).toHaveBeenCalledWith(
+        '*, colaborador:colaboradores(nome_completo, cpf, cargo, data_admissao)',
+        { count: 'exact' }
+      );
     });
 
     it('should apply limit of 500', () => {

@@ -11,6 +11,7 @@
 -- migration não cobria os nomes legados "folhas"/"pontos", então a policy
 -- "Allow all" sobreviveu.
 DROP POLICY IF EXISTS "Allow all" ON public.folhas;
+DROP POLICY IF EXISTS "empresa_isolation_folhas_legado" ON public.folhas;
 CREATE POLICY "empresa_isolation_folhas_legado" ON public.folhas
   FOR ALL TO authenticated
   USING (
@@ -27,6 +28,7 @@ CREATE POLICY "empresa_isolation_folhas_legado" ON public.folhas
   );
 
 DROP POLICY IF EXISTS "Allow all" ON public.pontos;
+DROP POLICY IF EXISTS "empresa_isolation_pontos_legado" ON public.pontos;
 CREATE POLICY "empresa_isolation_pontos_legado" ON public.pontos
   FOR ALL TO authenticated
   USING (
@@ -61,6 +63,7 @@ CREATE POLICY "empresa_isolation_pontos_legado" ON public.pontos
 -- continuaria lendo tudo pela outra. As duas precisam ser removidas.
 DROP POLICY IF EXISTS "Users can view versions" ON public.entity_versions;
 DROP POLICY IF EXISTS "Authenticated users can view versions" ON public.entity_versions;
+DROP POLICY IF EXISTS "entity_versions_admin_only_select" ON public.entity_versions;
 CREATE POLICY "entity_versions_admin_only_select" ON public.entity_versions
   FOR SELECT TO authenticated
   USING (public.is_admin(auth.uid()));

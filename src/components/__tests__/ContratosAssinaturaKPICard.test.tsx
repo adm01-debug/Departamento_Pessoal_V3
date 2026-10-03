@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
@@ -30,20 +31,22 @@ vi.mock('../contratos/ContratoTokenTimelineDialog', () => ({
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children }: any) => <div>{children}</div>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
-  CardHeader: ({ children }: any) => <div>{children}</div>,
-  CardTitle: ({ children }: any) => <h3>{children}</h3>,
-  CardDescription: ({ children }: any) => <p>{children}</p>,
+  Card: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardTitle: ({ children }: { children?: ReactNode }) => <h3>{children}</h3>,
+  CardDescription: ({ children }: { children?: ReactNode }) => <p>{children}</p>,
 }));
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children }: any) => <span>{children}</span>,
+  Badge: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, disabled }: any) => (
-    <button onClick={onClick} disabled={disabled}>{children}</button>
+  Button: ({ children, onClick, disabled }: { children?: ReactNode; onClick?: () => void; disabled?: boolean }) => (
+    <button onClick={onClick} disabled={disabled}>
+      {children}
+    </button>
   ),
 }));
 
@@ -67,7 +70,7 @@ describe('ContratosAssinaturaKPICard', () => {
       revogar: { isPending: false, mutate: vi.fn() },
       reenviar: { isPending: false, mutate: vi.fn() },
       estender: { isPending: false, mutate: vi.fn() },
-    } as any);
+    } as never);
     render(<ContratosAssinaturaKPICard />);
     expect(screen.getByTestId('skeleton')).toBeInTheDocument();
   });

@@ -1,9 +1,10 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
 }));
 
@@ -30,20 +31,20 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children }: any) => <div>{children}</div>,
-  DialogContent: ({ children }: any) => <div role="dialog">{children}</div>,
-  DialogHeader: ({ children }: any) => <div>{children}</div>,
-  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
-  DialogTrigger: ({ children }: any) => children,
+  Dialog: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogContent: ({ children }: { children?: ReactNode }) => <div role="dialog">{children}</div>,
+  DialogHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DialogTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
+  DialogTrigger: ({ children }: { children?: ReactNode }) => children,
 }));
 
 vi.mock('@/components/ui/spinner', () => ({
-  Spinner: ({ size }: any) => <div data-testid="spinner" data-size={size} />,
+  Spinner: ({ size }: { size?: string }) => <div data-testid="spinner" data-size={size} />,
 }));
 
 vi.mock('@/components/ui/switch', () => ({
-  Switch: ({ checked, onCheckedChange }: any) => (
-    <input type="checkbox" role="switch" checked={checked} onChange={e => onCheckedChange(e.target.checked)} />
+  Switch: ({ checked, onCheckedChange }: { checked?: boolean; onCheckedChange?: (checked: boolean) => void }) => (
+    <input type="checkbox" role="switch" checked={checked} onChange={(e) => onCheckedChange?.(e.target.checked)} />
   ),
 }));
 
@@ -57,31 +58,31 @@ const MOCK_IPS = [
 
 describe('IPBlockingTab', () => {
   it('shows spinner when loading', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: true } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: undefined, isLoading: true } as never);
     render(<IPBlockingTab />);
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
   });
 
   it('renders IPs Bloqueados title', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
     render(<IPBlockingTab />);
     expect(screen.getByText('IPs Bloqueados')).toBeInTheDocument();
   });
 
   it('renders Bloquear IP button', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
     render(<IPBlockingTab />);
     expect(screen.getAllByText('Bloquear IP').length).toBeGreaterThanOrEqual(1);
   });
 
   it('shows empty state when no ips', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: [], isLoading: false } as never);
     render(<IPBlockingTab />);
     expect(screen.getByText('Nenhum IP bloqueado')).toBeInTheDocument();
   });
 
   it('renders stat labels', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_IPS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_IPS, isLoading: false } as never);
     render(<IPBlockingTab />);
     expect(screen.getByText('Total Bloqueados')).toBeInTheDocument();
     expect(screen.getByText('Ativos')).toBeInTheDocument();
@@ -89,14 +90,14 @@ describe('IPBlockingTab', () => {
   });
 
   it('renders ip_address in table', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_IPS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_IPS, isLoading: false } as never);
     render(<IPBlockingTab />);
     expect(screen.getByText('192.168.1.100')).toBeInTheDocument();
     expect(screen.getByText('10.0.0.5')).toBeInTheDocument();
   });
 
   it('renders Permanente and Temporário badges', () => {
-    vi.mocked(useQuery).mockReturnValue({ data: MOCK_IPS, isLoading: false } as any);
+    vi.mocked(useQuery).mockReturnValue({ data: MOCK_IPS, isLoading: false } as never);
     render(<IPBlockingTab />);
     expect(screen.getByText('Permanente')).toBeInTheDocument();
     expect(screen.getByText('Temporário')).toBeInTheDocument();

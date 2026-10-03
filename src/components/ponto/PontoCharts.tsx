@@ -6,11 +6,18 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts';
 import { motion } from 'framer-motion';
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  BarChart, Bar, Cell,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  Cell,
 } from 'recharts';
 import { formatDateLocalISO } from '@/utils/dateLocal';
-
 
 export function PontoCharts() {
   const { user } = useAuth();
@@ -19,11 +26,15 @@ export function PontoCharts() {
     queryKey: ['registros-ponto-30d', user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
-      const { data: colab } = await supabase.from('colaboradores').select('id').eq('email', user.email || '').maybeSingle();
+      const { data: colab } = await supabase
+        .from('colaboradores')
+        .select('id')
+        .eq('email', user.email || '')
+        .maybeSingle();
       if (!colab) return [];
       const d = new Date();
       d.setDate(d.getDate() - 30);
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('registros_ponto')
         .select('data, atraso_minutos, horas_trabalhadas, entrada_1, entrada_esperada')
         .eq('colaborador_id', colab.id)
@@ -38,10 +49,10 @@ export function PontoCharts() {
   // Weekly trend data
   const weeklyTrend = useMemo(() => {
     const weeks: Record<string, { pontual: number; total: number }> = {};
-    registros30d.forEach((r: any) => {
+    registros30d.forEach((r) => {
       if (!r.entrada_1) return;
       const date = new Date(r.data + 'T12:00:00');
-      const weekNum = Math.ceil((date.getDate()) / 7);
+      const weekNum = Math.ceil(date.getDate() / 7);
       const key = `Sem ${weekNum}`;
       if (!weeks[key]) weeks[key] = { pontual: 0, total: 0 };
       weeks[key].total++;
@@ -56,9 +67,9 @@ export function PontoCharts() {
   // Check-in times data
   const checkInData = useMemo(() => {
     return registros30d
-      .filter((r: any) => r.entrada_1)
+      .filter((r) => r.entrada_1)
       .slice(-7)
-      .map((r: any) => {
+      .map((r) => {
         const date = new Date(r.data + 'T12:00:00');
         const [h, m] = (r.entrada_1 as string).split(':').map(Number);
         const timeInMin = h * 60 + (m || 0);
@@ -74,7 +85,12 @@ export function PontoCharts() {
   if (registros30d.length === 0) return null;
 
   return (
-    <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="mt-6">
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.35 }}
+      className="mt-6"
+    >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Weekly Trend */}
         <Card className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden">
@@ -92,7 +108,7 @@ export function PontoCharts() {
                   <XAxis dataKey="week" tick={{ fontSize: 12 }} />
                   <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} />
                   <Tooltip
-                    formatter={(value: any) => [`${value}%`, 'Taxa']}
+                    formatter={(value) => [`${value}%`, 'Taxa']}
                     contentStyle={{
                       backgroundColor: 'hsl(var(--popover))',
                       border: '1px solid hsl(var(--border))',
@@ -132,7 +148,7 @@ export function PontoCharts() {
                     tick={{ fontSize: 10 }}
                   />
                   <Tooltip
-                    formatter={(_: any, __: any, props: any) => [props.payload.displayTime, 'Horário']}
+                    formatter={(_, __, props) => [(props.payload as { displayTime?: string }).displayTime, 'Horário']}
                     contentStyle={{
                       backgroundColor: 'hsl(var(--popover))',
                       border: '1px solid hsl(var(--border))',
@@ -140,7 +156,7 @@ export function PontoCharts() {
                     }}
                   />
                   <Bar dataKey="time" radius={[4, 4, 0, 0]}>
-                    {checkInData.map((entry: any, i: number) => (
+                    {checkInData.map((entry, i) => (
                       <Cell
                         key={`cell-${i}`}
                         fill={entry.isPunctual ? 'hsl(var(--success))' : 'hsl(var(--destructive))'}
@@ -150,9 +166,7 @@ export function PontoCharts() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <p className="text-xs text-muted-foreground font-body text-center mt-2">
-              🟢 Pontual &nbsp; 🔴 Atrasado
-            </p>
+            <p className="text-xs text-muted-foreground font-body text-center mt-2">🟢 Pontual &nbsp; 🔴 Atrasado</p>
           </CardContent>
         </Card>
       </div>

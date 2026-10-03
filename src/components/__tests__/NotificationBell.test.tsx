@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
@@ -11,9 +12,9 @@ vi.mock('@/hooks/useNotificacoes', () => ({
 }));
 
 vi.mock('@/components/ui/popover', () => ({
-  Popover: ({ children }: any) => <div>{children}</div>,
-  PopoverTrigger: ({ children }: any) => children,
-  PopoverContent: ({ children }: any) => <div>{children}</div>,
+  Popover: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  PopoverTrigger: ({ children }: { children?: ReactNode }) => children,
+  PopoverContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 import { NotificationBell } from '../notifications/NotificationBell';
@@ -73,48 +74,74 @@ describe('NotificationBell', () => {
 
   it('renders unread badge when naoLidas > 0', async () => {
     const { useNotificacoes } = await import('@/hooks/useNotificacoes');
-    vi.mocked(useNotificacoes).mockReturnValueOnce(hookValue({
-      notificacoes: [],
-      naoLidas: 3,
-      marcarComoLida: vi.fn(),
-      marcarTodasComoLidas: vi.fn(),
-    }));
+    vi.mocked(useNotificacoes).mockReturnValueOnce(
+      hookValue({
+        notificacoes: [],
+        naoLidas: 3,
+        marcarComoLida: vi.fn(),
+        marcarTodasComoLidas: vi.fn(),
+      })
+    );
     render(<NotificationBell />);
     expect(screen.getByText('3')).toBeInTheDocument();
   });
 
   it('renders notification item when notificacoes provided', async () => {
     const { useNotificacoes } = await import('@/hooks/useNotificacoes');
-    vi.mocked(useNotificacoes).mockReturnValueOnce(hookValue({
-      notificacoes: [notif({ id: 'n1', titulo: 'Teste de notificação', mensagem: 'Mensagem', lida: false, created_at: new Date().toISOString() })],
-      naoLidas: 1,
-      marcarComoLida: vi.fn(),
-      marcarTodasComoLidas: vi.fn(),
-    }));
+    vi.mocked(useNotificacoes).mockReturnValueOnce(
+      hookValue({
+        notificacoes: [
+          notif({
+            id: 'n1',
+            titulo: 'Teste de notificação',
+            mensagem: 'Mensagem',
+            lida: false,
+            created_at: new Date().toISOString(),
+          }),
+        ],
+        naoLidas: 1,
+        marcarComoLida: vi.fn(),
+        marcarTodasComoLidas: vi.fn(),
+      })
+    );
     render(<NotificationBell />);
     expect(screen.getByText('Teste de notificação')).toBeInTheDocument();
   });
 
   it('renders Ver todas button when notifications exist', async () => {
     const { useNotificacoes } = await import('@/hooks/useNotificacoes');
-    vi.mocked(useNotificacoes).mockReturnValueOnce(hookValue({
-      notificacoes: [notif({ id: 'n1', titulo: 'Teste', mensagem: 'Mensagem', lida: true, created_at: new Date().toISOString() })],
-      naoLidas: 0,
-      marcarComoLida: vi.fn(),
-      marcarTodasComoLidas: vi.fn(),
-    }));
+    vi.mocked(useNotificacoes).mockReturnValueOnce(
+      hookValue({
+        notificacoes: [
+          notif({ id: 'n1', titulo: 'Teste', mensagem: 'Mensagem', lida: true, created_at: new Date().toISOString() }),
+        ],
+        naoLidas: 0,
+        marcarComoLida: vi.fn(),
+        marcarTodasComoLidas: vi.fn(),
+      })
+    );
     render(<NotificationBell />);
     expect(screen.getByText('Ver todas as notificações')).toBeInTheDocument();
   });
 
   it('renders Marcar lidas button when naoLidas > 0', async () => {
     const { useNotificacoes } = await import('@/hooks/useNotificacoes');
-    vi.mocked(useNotificacoes).mockReturnValueOnce(hookValue({
-      notificacoes: [notif({ id: 'n1', titulo: 'Alerta', mensagem: 'Mensagem', lida: false, created_at: new Date().toISOString() })],
-      naoLidas: 1,
-      marcarComoLida: vi.fn(),
-      marcarTodasComoLidas: vi.fn(),
-    }));
+    vi.mocked(useNotificacoes).mockReturnValueOnce(
+      hookValue({
+        notificacoes: [
+          notif({
+            id: 'n1',
+            titulo: 'Alerta',
+            mensagem: 'Mensagem',
+            lida: false,
+            created_at: new Date().toISOString(),
+          }),
+        ],
+        naoLidas: 1,
+        marcarComoLida: vi.fn(),
+        marcarTodasComoLidas: vi.fn(),
+      })
+    );
     render(<NotificationBell />);
     expect(screen.getByRole('button', { name: /Marcar lidas/i })).toBeInTheDocument();
   });

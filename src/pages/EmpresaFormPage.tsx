@@ -18,10 +18,7 @@ import { Empresa } from '@/types/entities';
 import { empresaSchema, type EmpresaSchema, type EmpresaSchemaInput } from '@/schemas';
 
 import { useNotification } from '@/contexts';
-import { 
-  Building2, MapPin, Phone, Mail, 
-  ArrowLeft, Save, Loader2, Camera, ShieldCheck
-} from 'lucide-react';
+import { Building2, MapPin, Phone, Mail, ArrowLeft, Save, Loader2, Camera, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -38,14 +35,21 @@ export default function EmpresaFormPage() {
   const [activeTab, setActiveTab] = useState('geral');
   const isEditing = !!id;
 
-  const { data: empresa, isLoading } = useQuery<Empresa>({
+  const { data: empresa, isLoading } = useQuery<Empresa | null>({
     queryKey: ['empresa', id],
-    queryFn: () => (empresaService as any).buscarPorId(id!),
+    queryFn: () => empresaService.buscarPorId(id!),
     enabled: isEditing,
   });
 
-
-  const { register, handleSubmit, setValue, reset, watch, setError, formState: { errors, isDirty } } = useForm<EmpresaSchemaInput, unknown, EmpresaSchema>({
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    watch,
+    setError,
+    formState: { errors, isDirty },
+  } = useForm<EmpresaSchemaInput, unknown, EmpresaSchema>({
     resolver: zodResolver(empresaSchema),
     defaultValues: { ativa: true },
   });
@@ -74,13 +78,13 @@ export default function EmpresaFormPage() {
   }, [empresa, reset]);
 
   const mutation = useMutation({
-    mutationFn: (data: EmpresaSchema) => isEditing ? empresaService.atualizar(id!, data as any) : empresaService.criar(data as any),
+    mutationFn: (data: EmpresaSchema) => (isEditing ? empresaService.atualizar(id!, data) : empresaService.criar(data)),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['empresas'] });
       success(isEditing ? 'Empresa atualizada!' : 'Empresa criada!');
       navigate('/empresas');
     },
-    onError: (err: any) => handleServerError(err, setError),
+    onError: (err) => handleServerError(err, setError),
   });
 
   const handleAddressFound = (addr: Address) => {
@@ -91,7 +95,12 @@ export default function EmpresaFormPage() {
     setValue('cep', addr.cep);
   };
 
-  if (isLoading) return <div className="flex justify-center p-12"><Spinner size="lg" /></div>;
+  if (isLoading)
+    return (
+      <div className="flex justify-center p-12">
+        <Spinner size="lg" />
+      </div>
+    );
 
   const tabs = [
     { id: 'geral', label: 'Dados Cadastrais', icon: Building2 },
@@ -112,13 +121,17 @@ export default function EmpresaFormPage() {
             <Button variant="outline" size="sm" className="rounded-xl" onClick={() => navigate('/empresas')}>
               <ArrowLeft className="h-4 w-4 mr-1.5" /> Voltar
             </Button>
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               className="rounded-xl bg-gradient-to-r from-primary to-primary-glow shadow-glow"
               onClick={handleSubmit((data) => mutation.mutate(data))}
               disabled={mutation.isPending}
             >
-              {mutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-1.5" /> : <Save className="h-4 w-4 mr-1.5" />}
+              {mutation.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-1.5" />
+              ) : (
+                <Save className="h-4 w-4 mr-1.5" />
+              )}
               {isEditing ? 'Salvar Alterações' : 'Cadastrar Empresa'}
             </Button>
           </div>
@@ -126,10 +139,10 @@ export default function EmpresaFormPage() {
       >
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="bg-muted/50 rounded-xl p-1 border border-border/30 w-full justify-start overflow-x-auto no-scrollbar">
-            {tabs.map(tab => (
-              <TabsTrigger 
-                key={tab.id} 
-                value={tab.id} 
+            {tabs.map((tab) => (
+              <TabsTrigger
+                key={tab.id}
+                value={tab.id}
                 className="rounded-lg font-body data-[state=active]:bg-card data-[state=active]:shadow-xs px-6 gap-2"
               >
                 <tab.icon className="h-4 w-4" />
@@ -154,13 +167,18 @@ export default function EmpresaFormPage() {
                           <span className="text-[10px] font-bold uppercase text-primary">Logo Empresa</span>
                         </div>
                       </div>
-                      <Badge variant="outline" className="rounded-full">PNG / SVG</Badge>
+                      <Badge variant="outline" className="rounded-full">
+                        PNG / SVG
+                      </Badge>
                     </div>
                     <div className="flex-1 space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                         <div className="space-y-2">
                           <Label className="text-sm font-medium flex items-center gap-1.5">
-                            CNPJ <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter bg-muted px-1.5 rounded-md">Busca Automática</span>
+                            CNPJ{' '}
+                            <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter bg-muted px-1.5 rounded-md">
+                              Busca Automática
+                            </span>
                           </Label>
                           <CNPJInput
                             // eslint-disable-next-line react-hooks/incompatible-library
@@ -183,20 +201,36 @@ export default function EmpresaFormPage() {
                         </div>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <FormField label="Razão Social" {...register('razao_social')} error={errors.razao_social?.message} placeholder="Nome jurídico completo" />
+                        <FormField
+                          label="Razão Social"
+                          {...register('razao_social')}
+                          error={errors.razao_social?.message}
+                          placeholder="Nome jurídico completo"
+                        />
                         <FormField label="Nome Fantasia" {...register('nome_fantasia')} placeholder="Nome comercial" />
                       </div>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-border/20">
-                    <FormField label="Inscrição Estadual" {...register('inscricao_estadual')} placeholder="Apenas números" />
+                    <FormField
+                      label="Inscrição Estadual"
+                      {...register('inscricao_estadual')}
+                      placeholder="Apenas números"
+                    />
                     <div className="flex items-center justify-between p-4 bg-muted/20 rounded-xl border border-border/30">
                       <div className="space-y-0.5">
                         <Label className="font-display font-semibold">Empresa Ativa</Label>
-                        <p className="text-[11px] text-muted-foreground">Define se a empresa aparece nos filtros e dashboards</p>
+                        <p className="text-[11px] text-muted-foreground">
+                          Define se a empresa aparece nos filtros e dashboards
+                        </p>
                       </div>
-                      <ShieldCheck className={cn("h-6 w-6 transition-colors", watch('ativa') ? "text-success" : "text-muted-foreground/30")} />
+                      <ShieldCheck
+                        className={cn(
+                          'h-6 w-6 transition-colors',
+                          watch('ativa') ? 'text-success' : 'text-muted-foreground/30'
+                        )}
+                      />
                     </div>
                   </div>
                 </CardContent>
@@ -244,7 +278,10 @@ export default function EmpresaFormPage() {
                 <CardContent className="space-y-6">
                   <div className="max-w-xs space-y-2">
                     <Label className="text-sm font-medium flex items-center gap-1.5">
-                      CEP <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter bg-muted px-1.5 rounded-md">Busca Automática</span>
+                      CEP{' '}
+                      <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter bg-muted px-1.5 rounded-md">
+                        Busca Automática
+                      </span>
                     </Label>
                     <CEPInput value={watch('cep')} onAddressFound={handleAddressFound} />
                   </div>
@@ -274,7 +311,7 @@ export default function EmpresaFormPage() {
           <Button type="button" variant="outline" className="rounded-xl px-8" onClick={() => navigate('/empresas')}>
             Descartar Alterações
           </Button>
-          <Button 
+          <Button
             className="rounded-xl bg-gradient-to-r from-primary to-primary-glow px-12 shadow-glow"
             onClick={handleSubmit((data) => mutation.mutate(data))}
             disabled={mutation.isPending}

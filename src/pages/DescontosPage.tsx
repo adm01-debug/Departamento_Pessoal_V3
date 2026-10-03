@@ -6,11 +6,15 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
+import type {
+  EmprestimoComColaborador,
+  AdiantamentoComColaborador,
+  NovoEmprestimoInput,
+  NovoAdiantamentoInput,
+} from '@/types/descontos';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
-import {
-  TrendingDown, Landmark, Wallet, Sparkles
-} from 'lucide-react';
+import { TrendingDown, Landmark, Wallet, Sparkles } from 'lucide-react';
 import { Spinner } from '@/components/ui/spinner';
 import { FinancialSummaryCards } from '@/components/descontos/FinancialSummaryCards';
 import { EmprestimosTable } from '@/components/descontos/EmprestimosTable';
@@ -26,7 +30,11 @@ export default function DescontosPage() {
   const { data: colaboradores = [] } = useQuery({
     queryKey: ['colaboradores-descontos', empresaAtual?.id],
     queryFn: async () => {
-      const { data, error } = await supabase.from('colaboradores').select('id, nome_completo').eq('empresa_id', empresaAtual?.id as string).eq('status', 'ativo');
+      const { data, error } = await supabase
+        .from('colaboradores')
+        .select('id, nome_completo')
+        .eq('empresa_id', empresaAtual?.id as string)
+        .eq('status', 'ativo');
       if (error) throw error;
       return data || [];
     },
@@ -41,7 +49,7 @@ export default function DescontosPage() {
         .select('*, colaborador:colaboradores(nome_completo)')
         .eq('empresa_id', empresaAtual?.id as string);
       if (error) throw error;
-      return data || [];
+      return (data || []) as EmprestimoComColaborador[];
     },
     enabled: !!empresaAtual?.id,
   });
@@ -54,17 +62,17 @@ export default function DescontosPage() {
         .select('*, colaborador:colaboradores(nome_completo)')
         .eq('empresa_id', empresaAtual?.id as string);
       if (error) throw error;
-      return data || [];
+      return (data || []) as AdiantamentoComColaborador[];
     },
     enabled: !!empresaAtual?.id,
   });
 
   const criarEmprestimo = useMutation({
-    mutationFn: async (values: any) => {
+    mutationFn: async (values: NovoEmprestimoInput) => {
       const { error } = await supabase.from('emprestimos_consignados').insert({
         ...values,
-        empresa_id: empresaAtual?.id,
-        status: 'ativo'
+        empresa_id: empresaAtual!.id,
+        status: 'ativo',
       });
       if (error) throw error;
     },
@@ -72,15 +80,16 @@ export default function DescontosPage() {
       qc.invalidateQueries({ queryKey: ['emprestimos-consignados'] });
       toast.success('Empréstimo registrado com sucesso!');
     },
-    onError: (err: any) => toast.error(safeErrorMessage(err, 'Erro ao registrar empréstimo.')),
+    onError: (err) => toast.error(safeErrorMessage(err, 'Erro ao registrar empréstimo.')),
   });
 
   const criarAdiantamento = useMutation({
-    mutationFn: async (values: any) => {
+    mutationFn: async (values: NovoAdiantamentoInput) => {
       const { error } = await supabase.from('adiantamentos_salariais').insert({
         ...values,
-        empresa_id: empresaAtual?.id,
-        status: 'pendente'
+        valor_solicitado: Number(values.valor_solicitado),
+        empresa_id: empresaAtual!.id,
+        status: 'pendente',
       });
       if (error) throw error;
     },
@@ -88,48 +97,44 @@ export default function DescontosPage() {
       qc.invalidateQueries({ queryKey: ['adiantamentos-salariais'] });
       toast.success('Solicitação de adiantamento enviada!');
     },
-    onError: (err: any) => toast.error(safeErrorMessage(err, 'Erro ao solicitar adiantamento.')),
+    onError: (err) => toast.error(safeErrorMessage(err, 'Erro ao solicitar adiantamento.')),
   });
 
   const atualizarStatusAdiantamento = useMutation({
-    mutationFn: async ({ id, status }: { id: string, status: string }) => {
-      const { error } = await supabase
-        .from('adiantamentos_salariais')
-        .update({ status })
-        .eq('id', id);
+    mutationFn: async ({ id, status }: { id: string; status: string }) => {
+      const { error } = await supabase.from('adiantamentos_salariais').update({ status }).eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['adiantamentos-salariais'] });
       toast.success('Status atualizado');
-    }
+    },
   });
 
-  const fmt = (v: number | null) => v ? `R$ ${Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : 'R$ 0,00';
+  const fmt = (v: number | null) =>
+    v ? `R$ ${Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : 'R$ 0,00';
 
-  const cn = (...inputs: any[]) => inputs.filter(Boolean).join(' ');
+  const cn = (...inputs: unknown[]) => inputs.filter(Boolean).join(' ');
 
   return (
     <>
-      <PageTitle 
-        title="Saúde Financeira" 
-        description="Gestão de consignados, adiantamentos e bem-estar do colaborador" 
+      <PageTitle
+        title="Saúde Financeira"
+        description="Gestão de consignados, adiantamentos e bem-estar do colaborador"
       />
-      <PageLayout 
-        title="Hub de Descontos Estratégicos" 
+      <PageLayout
+        title="Hub de Descontos Estratégicos"
         description="Controle de margem consignável e conformidade com a Lei 10.820"
         icon={<TrendingDown className="h-5 w-5 text-primary-foreground" />}
       >
         <div className="flex items-center gap-2 mb-6 p-3 bg-primary/5 rounded-xl border border-primary/10">
           <Sparkles className="h-4 w-4 text-primary animate-pulse" />
-          <span className="text-xs font-bold text-primary uppercase tracking-tighter">Financial Wellness Hub 10/10 Ativado</span>
+          <span className="text-xs font-bold text-primary uppercase tracking-tighter">
+            Financial Wellness Hub 10/10 Ativado
+          </span>
         </div>
 
-        <FinancialSummaryCards 
-          emprestimos={emprestimos as any} 
-          adiantamentos={adiantamentos as any} 
-          fmt={fmt} 
-        />
+        <FinancialSummaryCards emprestimos={emprestimos} adiantamentos={adiantamentos} fmt={fmt} />
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <div className="flex items-center justify-between">
@@ -144,9 +149,9 @@ export default function DescontosPage() {
 
             <div className="flex gap-2">
               {activeTab === 'emprestimos' ? (
-                <NewLoanDialog colaboradores={colaboradores} onSave={(v: any) => criarEmprestimo.mutate(v)} />
+                <NewLoanDialog colaboradores={colaboradores} onSave={(v) => criarEmprestimo.mutate(v)} />
               ) : (
-                <NewAdvanceDialog colaboradores={colaboradores} onSave={(v: any) => criarAdiantamento.mutate(v)} />
+                <NewAdvanceDialog colaboradores={colaboradores} onSave={(v) => criarAdiantamento.mutate(v)} />
               )}
             </div>
           </div>
@@ -154,7 +159,11 @@ export default function DescontosPage() {
           <TabsContent value="emprestimos" className="space-y-4">
             <Card className="border-none shadow-xs overflow-hidden rounded-2xl">
               <CardContent className="p-0">
-                {loadEmp ? <div className="p-12 flex justify-center"><Spinner /></div> : (
+                {loadEmp ? (
+                  <div className="p-12 flex justify-center">
+                    <Spinner />
+                  </div>
+                ) : (
                   <EmprestimosTable emprestimos={emprestimos} fmt={fmt} />
                 )}
               </CardContent>
@@ -164,11 +173,15 @@ export default function DescontosPage() {
           <TabsContent value="adiantamentos" className="space-y-4">
             <Card className="border-none shadow-xs overflow-hidden rounded-2xl">
               <CardContent className="p-0">
-                {loadAdi ? <div className="p-12 flex justify-center"><Spinner /></div> : (
-                  <AdiantamentosTable 
-                    adiantamentos={adiantamentos} 
-                    fmt={fmt} 
-                    onUpdateStatus={(v: any) => atualizarStatusAdiantamento.mutate(v)} 
+                {loadAdi ? (
+                  <div className="p-12 flex justify-center">
+                    <Spinner />
+                  </div>
+                ) : (
+                  <AdiantamentosTable
+                    adiantamentos={adiantamentos}
+                    fmt={fmt}
+                    onUpdateStatus={(v) => atualizarStatusAdiantamento.mutate(v)}
                     cn={cn}
                   />
                 )}

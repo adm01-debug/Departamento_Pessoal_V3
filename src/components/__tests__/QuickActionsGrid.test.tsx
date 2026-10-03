@@ -1,14 +1,31 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    button: ({ children, onClick, className, ...props }: any) => (
-      <button onClick={onClick} className={className} {...props}>{children}</button>
+    button: ({
+      children,
+      onClick,
+      className,
+      ...props
+    }: {
+      children?: ReactNode;
+      onClick?: () => void;
+      className?: string;
+      [key: string]: unknown;
+    }) => (
+      <button onClick={onClick} className={className} {...props}>
+        {children}
+      </button>
     ),
-    create: (Component: any) => ({ children, ...props }: any) => <Component {...props}>{children}</Component>,
+    create:
+      (Component: any) =>
+      ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
+        <Component {...props}>{children}</Component>
+      ),
   },
-  AnimatePresence: ({ children }: any) => <>{children}</>,
+  AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
 }));
 
 vi.mock('react-router-dom', () => ({
@@ -16,10 +33,10 @@ vi.mock('react-router-dom', () => ({
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
-  CardHeader: ({ children }: any) => <div>{children}</div>,
-  CardTitle: ({ children }: any) => <h3>{children}</h3>,
+  Card: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
+  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardTitle: ({ children }: { children?: ReactNode }) => <h3>{children}</h3>,
 }));
 
 import { QuickActionsGrid } from '../dashboard/QuickActionsGrid';

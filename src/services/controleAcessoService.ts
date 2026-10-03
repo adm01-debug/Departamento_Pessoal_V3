@@ -1,7 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables, Insertable } from '@/integrations/supabase/database.types';
 
-type ControleAcessoComColaborador = Tables<'controle_acesso'> & {
+export type ControleAcessoComColaborador = Tables<'controle_acesso'> & {
   colaborador: Pick<Tables<'colaboradores'>, 'nome_completo'> | null;
 };
 

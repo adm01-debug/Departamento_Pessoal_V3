@@ -1,13 +1,12 @@
 // Bridge contract validator (P0-008: zero hardcoded secrets).
 // Lê credenciais exclusivamente de variáveis de ambiente.
 const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_PUBLISHABLE_KEY =
-  process.env.SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY;
+const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_ANON_KEY;
 
 if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
   throw new Error(
     '[validateBridgeContract] Defina SUPABASE_URL e SUPABASE_PUBLISHABLE_KEY ' +
-      '(ou SUPABASE_ANON_KEY) no ambiente antes de executar.',
+      '(ou SUPABASE_ANON_KEY) no ambiente antes de executar.'
   );
 }
 
@@ -19,17 +18,17 @@ async function validateBridge() {
   const tests = [
     {
       name: 'SELECT Simples (Empresas)',
-      payload: { action: 'select', table: 'empresas', limit: 1 }
+      payload: { action: 'select', table: 'empresas', limit: 1 },
     },
     {
       name: 'SELECT com Filtros (Colaboradores)',
-      payload: { 
-        action: 'select', 
-        table: 'colaboradores', 
+      payload: {
+        action: 'select',
+        table: 'colaboradores',
         filters: [{ column: 'status', op: 'eq', value: 'ativo' }],
-        limit: 1 
-      }
-    }
+        limit: 1,
+      },
+    },
   ];
 
   for (const test of tests) {
@@ -39,16 +38,19 @@ async function validateBridge() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'apikey': SUPABASE_PUBLISHABLE_KEY,
-          'Authorization': `Bearer ${SUPABASE_PUBLISHABLE_KEY}`
+          apikey: SUPABASE_PUBLISHABLE_KEY,
+          Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
         } as Record<string, string>,
-        body: JSON.stringify(test.payload)
+        body: JSON.stringify(test.payload),
       });
 
-      const json: any = await res.json();
+      const json = (await res.json()) as Record<string, unknown>;
 
       if (!res.ok) {
-        throw new Error(json.error || `HTTP ${res.status}`);
+        throw new Error(
+          (typeof json === 'object' && json !== null && 'error' in json ? String(json.error) : null) ||
+            `HTTP ${res.status}`
+        );
       }
 
       if (!('data' in json)) {

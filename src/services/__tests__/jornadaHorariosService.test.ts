@@ -47,7 +47,12 @@ function setupUpdateChain(data: any, error: any = null) {
 
 function setupDeleteChain(error: any = null) {
   const eqFn = vi.fn();
-  const __delChain = { then: (r: any) => Promise.resolve({ error }).then(r), catch: (r: any) => Promise.resolve({ error }).catch(r), finally: (r: any) => Promise.resolve({ error }).finally(r), eq: eqFn };
+  const __delChain = {
+    then: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).then(r),
+    catch: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).catch(r),
+    finally: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).finally(r),
+    eq: eqFn,
+  };
   eqFn.mockReturnValue(__delChain);
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
@@ -57,7 +62,9 @@ function setupDeleteChain(error: any = null) {
 // ─── listar ───────────────────────────────────────────────────────────────────
 
 describe('jornadaHorariosService.listar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns horarios for jornada', async () => {
     const records = [{ id: 'h1', jornada_id: 'j1', dia_semana: 1 }];
@@ -67,7 +74,7 @@ describe('jornadaHorariosService.listar', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as any);
+    setupListChain(null as never);
     const result = await jornadaHorariosService.listar('j1');
     expect(result).toEqual([]);
   });
@@ -93,7 +100,9 @@ describe('jornadaHorariosService.listar', () => {
 // ─── criar ────────────────────────────────────────────────────────────────────
 
 describe('jornadaHorariosService.criar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('inserts and returns new horario', async () => {
     const created = { id: 'h-new', jornada_id: 'j1', dia_semana: 2 };
@@ -117,7 +126,9 @@ describe('jornadaHorariosService.criar', () => {
 // ─── atualizar ────────────────────────────────────────────────────────────────
 
 describe('jornadaHorariosService.atualizar', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('updates and returns horario', async () => {
     const updated = { id: 'h1', entrada: '09:00' };
@@ -137,7 +148,9 @@ describe('jornadaHorariosService.atualizar', () => {
 // ─── excluir ──────────────────────────────────────────────────────────────────
 
 describe('jornadaHorariosService.excluir', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('deletes horario by id', async () => {
     const { deleteFn, eqFn } = setupDeleteChain();
@@ -155,7 +168,9 @@ describe('jornadaHorariosService.excluir', () => {
 // ─── salvarGrade ──────────────────────────────────────────────────────────────
 
 describe('jornadaHorariosService.salvarGrade', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns empty array when no horarios provided', async () => {
     // delete existing, then no insert needed
@@ -179,10 +194,9 @@ describe('jornadaHorariosService.salvarGrade', () => {
     mockFrom.mockReturnValueOnce(upsertChain).mockReturnValueOnce(trimChain);
 
     const result = await jornadaHorariosService.salvarGrade('j1', horarios);
-    expect(upsertChain.upsert).toHaveBeenCalledWith(
-      [{ dia_semana: 1, entrada: '08:00', jornada_id: 'j1' }],
-      { onConflict: 'jornada_id,dia_semana' },
-    );
+    expect(upsertChain.upsert).toHaveBeenCalledWith([{ dia_semana: 1, entrada: '08:00', jornada_id: 'j1' }], {
+      onConflict: 'jornada_id,dia_semana',
+    });
     expect(result).toEqual(inserted);
   });
 

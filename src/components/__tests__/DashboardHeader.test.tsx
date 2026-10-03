@@ -1,19 +1,20 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
   },
 }));
 
 vi.mock('@/components/ui/dropdown-menu', () => ({
-  DropdownMenu: ({ children }: any) => <div>{children}</div>,
-  DropdownMenuTrigger: ({ children }: any) => children,
-  DropdownMenuContent: ({ children }: any) => <div>{children}</div>,
-  DropdownMenuLabel: ({ children }: any) => <div>{children}</div>,
+  DropdownMenu: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DropdownMenuTrigger: ({ children }: { children?: ReactNode }) => children,
+  DropdownMenuContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DropdownMenuLabel: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   DropdownMenuSeparator: () => <hr />,
-  DropdownMenuItem: ({ children }: any) => <div role="menuitem">{children}</div>,
+  DropdownMenuItem: ({ children }: { children?: ReactNode }) => <div role="menuitem">{children}</div>,
 }));
 
 import { DashboardHeader } from '../dashboard/DashboardHeader';

@@ -5,15 +5,27 @@ import { DollarSign, User, History, AlertTriangle } from 'lucide-react';
 import { format, differenceInCalendarDays } from 'date-fns';
 
 type SeveridadePgto = { label: string; className: string } | null;
-function calcularSeveridadePagamento(s: Record<string, any>): SeveridadePgto {
-  if (s?.cancelado || s?.pagamento_confirmado) return null;
+function calcularSeveridadePagamento(s: Ferias): SeveridadePgto {
+  if (s?.cancelado || s?.pagamento_confirmado_em) return null;
   const inicio = s?.data_inicio ? new Date(s.data_inicio) : null;
   if (!inicio || Number.isNaN(inicio.getTime())) return null;
   const dias = differenceInCalendarDays(inicio, new Date());
   if (dias < 0) return null;
-  if (dias <= 2) return { label: `Pgto D-${dias} (crítico)`, className: 'bg-destructive text-destructive-foreground border-destructive' };
-  if (dias <= 5) return { label: `Pgto D-${dias}`, className: 'bg-orange-500/15 text-orange-600 border-orange-500/40 dark:text-orange-400' };
-  if (dias <= 10) return { label: `Pgto D-${dias}`, className: 'bg-yellow-500/15 text-yellow-700 border-yellow-500/40 dark:text-yellow-400' };
+  if (dias <= 2)
+    return {
+      label: `Pgto D-${dias} (crítico)`,
+      className: 'bg-destructive text-destructive-foreground border-destructive',
+    };
+  if (dias <= 5)
+    return {
+      label: `Pgto D-${dias}`,
+      className: 'bg-orange-500/15 text-orange-600 border-orange-500/40 dark:text-orange-400',
+    };
+  if (dias <= 10)
+    return {
+      label: `Pgto D-${dias}`,
+      className: 'bg-yellow-500/15 text-yellow-700 border-yellow-500/40 dark:text-yellow-400',
+    };
   return null;
 }
 import { motion } from 'framer-motion';
@@ -24,9 +36,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useAuth } from '@/contexts';
+import type { Ferias } from '@/types/entities';
 
 interface FeriasTableProps {
-  data: Record<string, any>[];
+  data: Ferias[];
   onAprovarGestor: (id: string) => void;
   onAprovarRH: (id: string) => void;
   onEnviarContabilidade: (id: string) => void;
@@ -69,14 +82,19 @@ export function FeriasTable({ data, ...actions }: FeriasTableProps) {
               <TableCell className="font-body font-medium">
                 <div className="flex items-center gap-3">
                   <Avatar className="h-8 w-8 border border-border/50">
-                    <AvatarImage src={s.colaborador?.foto_url} />
+                    <AvatarImage src={s.colaborador?.foto_url ?? undefined} />
                     <AvatarFallback className="bg-primary/5 text-primary text-[10px]">
-                      {s.colaborador?.nome_completo?.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase() || <User className="h-3 w-3" />}
+                      {s.colaborador?.nome_completo
+                        ?.split(' ')
+                        .map((n: string) => n[0])
+                        .join('')
+                        .slice(0, 2)
+                        .toUpperCase() || <User className="h-3 w-3" />}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col">
                     <span className="text-sm font-bold">{s.colaborador?.nome_completo || '-'}</span>
-                    <span className="text-[10px] text-muted-foreground">{s.colaborador?.cargo?.nome || 'Colaborador'}</span>
+                    <span className="text-[10px] text-muted-foreground">{s.colaborador?.cargo || 'Colaborador'}</span>
                   </div>
                 </div>
               </TableCell>
@@ -94,7 +112,9 @@ export function FeriasTable({ data, ...actions }: FeriasTableProps) {
               <TableCell>
                 <div className="flex flex-col gap-1">
                   {s.cancelado ? (
-                    <Badge variant="destructive" className="text-xs w-fit">Cancelada</Badge>
+                    <Badge variant="destructive" className="text-xs w-fit">
+                      Cancelada
+                    </Badge>
                   ) : (
                     <StatusBadge status={s.status} />
                   )}
@@ -102,8 +122,13 @@ export function FeriasTable({ data, ...actions }: FeriasTableProps) {
                     const sev = calcularSeveridadePagamento(s);
                     if (!sev) return null;
                     return (
-                      <Badge variant="outline" className={`text-[10px] gap-1 w-fit font-body ${sev.className}`} title="Art. 145 CLT — pagamento devido até 2 dias antes do início">
-                        <AlertTriangle className="h-3 w-3" />{sev.label}
+                      <Badge
+                        variant="outline"
+                        className={`text-[10px] gap-1 w-fit font-body ${sev.className}`}
+                        title="Art. 145 CLT — pagamento devido até 2 dias antes do início"
+                      >
+                        <AlertTriangle className="h-3 w-3" />
+                        {sev.label}
                       </Badge>
                     );
                   })()}
@@ -113,7 +138,11 @@ export function FeriasTable({ data, ...actions }: FeriasTableProps) {
                 {podeVerAuditoria ? (
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button variant="ghost" size="sm" className="h-8 gap-1.5 text-xs font-body rounded-lg hover:bg-primary/10 hover:text-primary">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 gap-1.5 text-xs font-body rounded-lg hover:bg-primary/10 hover:text-primary"
+                      >
                         <History className="h-3.5 w-3.5" /> Ver Trilha
                       </Button>
                     </DialogTrigger>
@@ -139,11 +168,14 @@ export function FeriasTable({ data, ...actions }: FeriasTableProps) {
                 <div className="flex gap-1">
                   {s.abono_pecuniario && (
                     <Badge variant="outline" className="text-xs gap-1 border-border/30">
-                      <DollarSign className="h-3 w-3" />Abono
+                      <DollarSign className="h-3 w-3" />
+                      Abono
                     </Badge>
                   )}
                   {s.adiantamento_13 && (
-                    <Badge variant="outline" className="text-xs border-border/30">13°</Badge>
+                    <Badge variant="outline" className="text-xs border-border/30">
+                      13°
+                    </Badge>
                   )}
                 </div>
               </TableCell>

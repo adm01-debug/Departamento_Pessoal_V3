@@ -37,9 +37,9 @@ function makeCountChain(count: number, error: any = null) {
   const response = { count, error };
   const chain: any = {};
   chain.eq = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue({ eq: vi.fn().mockReturnValue(chain) });
   return { select: selectFn };
 }
@@ -60,7 +60,7 @@ describe('colaboradorService.listar', () => {
   });
 
   it('returns empty data with total 0 when supabase returns null', async () => {
-    setupListarChain(null as any, null as any);
+    setupListarChain(null as never, null as never);
     const result = await colaboradorService.listar({ filters: { empresaId: EMP } });
     expect(result.data).toEqual([]);
     expect(result.total).toBe(0);

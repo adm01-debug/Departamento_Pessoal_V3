@@ -19,9 +19,9 @@ function setupListChain(data: any[], error: any = null) {
   const chain: any = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
-  chain.then = (fn: any) => Promise.resolve(response).then(fn);
-  chain.catch = (fn: any) => Promise.resolve(response).catch(fn);
-  chain.finally = (fn: any) => Promise.resolve(response).finally(fn);
+  chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
+  chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
+  chain.finally = (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn);
   const selectFn = vi.fn().mockReturnValue(chain);
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, chain };
@@ -63,7 +63,7 @@ describe('lgpdService.listarConsentimentos', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as any);
+    setupListChain(null as never);
     const result = await lgpdService.listarConsentimentos(EMPRESA_ID);
     expect(result).toEqual([]);
   });
@@ -162,7 +162,7 @@ describe('lgpdService.listarSolicitacoes', () => {
   });
 
   it('returns empty array when data is null', async () => {
-    setupListChain(null as any);
+    setupListChain(null as never);
     const result = await lgpdService.listarSolicitacoes(EMPRESA_ID);
     expect(result).toEqual([]);
   });

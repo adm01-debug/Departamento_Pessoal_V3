@@ -1,3 +1,4 @@
+import type { Tables } from '@/integrations/supabase/types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -13,17 +14,37 @@ const tipoLabels: Record<string, string> = {
   periodico: 'Periódico',
   retorno_trabalho: 'Retorno ao Trabalho',
   mudanca_funcao: 'Mudança de Função',
-  demissional: 'Demissional'};
+  demissional: 'Demissional',
+};
 
 const resultadoBadge = (resultado: string | null) => {
-  if (!resultado) return <Badge variant="outline" className="text-[10px]">Pendente</Badge>;
-  if (resultado === 'apto') return <Badge className="text-[10px] bg-primary/10 text-primary border-primary/20" variant="outline">Apto</Badge>;
-  if (resultado === 'inapto') return <Badge variant="destructive" className="text-[10px]">Inapto</Badge>;
-  return <Badge variant="secondary" className="text-[10px]">Apto c/ Restrição</Badge>;
+  if (!resultado)
+    return (
+      <Badge variant="outline" className="text-[10px]">
+        Pendente
+      </Badge>
+    );
+  if (resultado === 'apto')
+    return (
+      <Badge className="text-[10px] bg-primary/10 text-primary border-primary/20" variant="outline">
+        Apto
+      </Badge>
+    );
+  if (resultado === 'inapto')
+    return (
+      <Badge variant="destructive" className="text-[10px]">
+        Inapto
+      </Badge>
+    );
+  return (
+    <Badge variant="secondary" className="text-[10px]">
+      Apto c/ Restrição
+    </Badge>
+  );
 };
 
 interface ExameTableProps {
-  data: any[];
+  data: (Tables<'exames'> & { colaborador?: { nome_completo?: string | null } | null })[];
   onExcluir: (id: string) => void;
 }
 
@@ -32,12 +53,20 @@ export function ExameTable({ data, onExcluir }: ExameTableProps) {
 
   const formatDate = (d: string | null) => {
     if (!d) return '—';
-    try { return format(parseISO(d), 'dd/MM/yyyy', { locale: ptBR }); } catch { return d; }
+    try {
+      return format(parseISO(d), 'dd/MM/yyyy', { locale: ptBR });
+    } catch {
+      return d;
+    }
   };
 
   const isVencido = (d: string | null) => {
     if (!d) return false;
-    try { return isBefore(parseISO(d), now); } catch { return false; }
+    try {
+      return isBefore(parseISO(d), now);
+    } catch {
+      return false;
+    }
   };
 
   return (
@@ -80,7 +109,9 @@ export function ExameTable({ data, onExcluir }: ExameTableProps) {
                       </TableCell>
                       <TableCell className="text-xs font-body">{formatDate(r.data_exame)}</TableCell>
                       <TableCell>
-                        <span className={`text-xs font-body ${vencido ? 'text-destructive font-medium' : 'text-muted-foreground'}`}>
+                        <span
+                          className={`text-xs font-body ${vencido ? 'text-destructive font-medium' : 'text-muted-foreground'}`}
+                        >
                           {formatDate(r.data_validade)}
                           {vencido && ' ⚠️'}
                         </span>
@@ -96,12 +127,20 @@ export function ExameTable({ data, onExcluir }: ExameTableProps) {
                               {r.crm ? `CRM: ${r.crm}` : 'CRM não informado'}
                             </TooltipContent>
                           </Tooltip>
-                        ) : '—'}
+                        ) : (
+                          '—'
+                        )}
                       </TableCell>
                       <TableCell className="pr-6">
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Button size="icon" variant="ghost" aria-label="Excluir" className="h-7 w-7 rounded-lg" onClick={() => onExcluir(r.id)}>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              aria-label="Excluir"
+                              className="h-7 w-7 rounded-lg"
+                              onClick={() => onExcluir(r.id)}
+                            >
                               <Trash2 className="h-3.5 w-3.5 text-destructive" />
                             </Button>
                           </TooltipTrigger>
@@ -143,14 +182,22 @@ export function ExameTable({ data, onExcluir }: ExameTableProps) {
                     {resultadoBadge(r.resultado)}
                   </div>
                   <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-                    <Badge variant="outline" className="text-[10px]">{tipoLabels[r.tipo] || r.tipo}</Badge>
+                    <Badge variant="outline" className="text-[10px]">
+                      {tipoLabels[r.tipo] || r.tipo}
+                    </Badge>
                     <span>Data: {formatDate(r.data_exame)}</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] text-muted-foreground">
                       {r.medico || '—'} {r.crm ? `(CRM: ${r.crm})` : ''}
                     </span>
-                    <Button size="icon" variant="ghost" aria-label="Excluir" className="h-7 w-7" onClick={() => onExcluir(r.id)}>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      aria-label="Excluir"
+                      className="h-7 w-7"
+                      onClick={() => onExcluir(r.id)}
+                    >
                       <Trash2 className="h-3.5 w-3.5 text-destructive" />
                     </Button>
                   </div>

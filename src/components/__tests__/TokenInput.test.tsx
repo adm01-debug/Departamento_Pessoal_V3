@@ -1,35 +1,58 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-    p: ({ children, ...props }: any) => <p {...props}>{children}</p>,
+    div: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
+    p: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <p {...props}>{children}</p>,
   },
 }));
 
 vi.mock('@/components/ui/card', () => ({
-  Card: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  CardContent: ({ children }: any) => <div>{children}</div>,
-  CardHeader: ({ children }: any) => <div>{children}</div>,
-  CardTitle: ({ children }: any) => <h2>{children}</h2>,
-  CardDescription: ({ children }: any) => <p>{children}</p>,
+  Card: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <div {...props}>{children}</div>,
+  CardContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardHeader: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  CardTitle: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
+  CardDescription: ({ children }: { children?: ReactNode }) => <p>{children}</p>,
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, disabled, ...props }: any) => (
-    <button onClick={onClick} disabled={disabled} {...props}>{children}</button>
+  Button: ({
+    children,
+    onClick,
+    disabled,
+    ...props
+  }: {
+    children?: ReactNode;
+    onClick?: () => void;
+    disabled?: boolean;
+    [key: string]: unknown;
+  }) => (
+    <button onClick={onClick} disabled={disabled} {...props}>
+      {children}
+    </button>
   ),
 }));
 
 vi.mock('@/components/ui/input', () => ({
-  Input: ({ value, onChange, onKeyDown, placeholder, ...props }: any) => (
-    <input value={value} onChange={onChange} onKeyDown={onKeyDown} placeholder={placeholder} {...props} />
-  ),
+  Input: ({
+    value,
+    onChange,
+    onKeyDown,
+    placeholder,
+    ...props
+  }: {
+    value?: string;
+    onChange?: (e: unknown) => void;
+    onKeyDown?: (e: unknown) => void;
+    placeholder?: string;
+    [key: string]: unknown;
+  }) => <input value={value} onChange={onChange} onKeyDown={onKeyDown} placeholder={placeholder} {...props} />,
 }));
 
 vi.mock('@/components/ui/label', () => ({
-  Label: ({ children }: any) => <label>{children}</label>,
+  Label: ({ children }: { children?: ReactNode }) => <label>{children}</label>,
 }));
 
 vi.mock('@/assets/govbr-logo.svg', () => ({ default: 'govbr-logo.svg' }));

@@ -29,7 +29,8 @@ ALTER TABLE public.ponto_espelhos_assinados ENABLE ROW LEVEL SECURITY;
 DO $$ 
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Colaboradores podem ver seus próprios espelhos') THEN
-        CREATE POLICY "Colaboradores podem ver seus próprios espelhos" 
+        DROP POLICY IF EXISTS "Colaboradores podem ver seus próprios espelhos" ON public.ponto_espelhos_assinados;
+CREATE POLICY "Colaboradores podem ver seus próprios espelhos" 
         ON public.ponto_espelhos_assinados 
         FOR SELECT 
         USING (auth.uid() = colaborador_id);

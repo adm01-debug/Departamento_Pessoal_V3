@@ -18,6 +18,7 @@ DROP POLICY IF EXISTS "Instâncias acessíveis por empresa"    ON public.treinam
 DROP POLICY IF EXISTS "Premiacoes pagamentos scoped"          ON public.treinamento_instancias;
 DROP POLICY IF EXISTS "Treinamento instancias authenticated"  ON public.treinamento_instancias;
 
+DROP POLICY IF EXISTS "treinamento_instancias_tenant" ON public.treinamento_instancias;
 CREATE POLICY "treinamento_instancias_tenant"
   ON public.treinamento_instancias
   FOR ALL
@@ -41,6 +42,7 @@ ALTER TABLE public.treinamento_feedback ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Feedbacks acessíveis por inscrição"   ON public.treinamento_feedback;
 DROP POLICY IF EXISTS "Treinamento feedback authenticated"    ON public.treinamento_feedback;
 
+DROP POLICY IF EXISTS "treinamento_feedback_tenant" ON public.treinamento_feedback;
 CREATE POLICY "treinamento_feedback_tenant"
   ON public.treinamento_feedback
   FOR ALL

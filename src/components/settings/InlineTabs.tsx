@@ -307,7 +307,7 @@ export function AlertasKpiTab() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {alertasConfig.map((a: any) => (
+                  {alertasConfig.map((a) => (
                     <TableRow key={a.id} className="hover:bg-accent/10 transition-colors group">
                       <TableCell className="font-body font-bold capitalize pl-6 py-4">
                         {a.tipo?.replace(/_/g, ' ')}
@@ -510,20 +510,22 @@ export function IntegracoesTab() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {integracoes.map((i: any) => (
+                  {integracoes.map((i) => (
                     <TableRow key={i.id} className="hover:bg-accent/10 transition-colors group">
                       <TableCell className="font-body font-bold pl-6 py-4">{i.nome}</TableCell>
                       <TableCell className="text-xs text-muted-foreground font-mono">{i.tipo || '-'}</TableCell>
                       <TableCell className="text-center">
                         <Badge
-                          variant={i.ativo ? 'default' : 'secondary'}
-                          className={`rounded-lg text-[10px] font-bold px-2 py-0.5 ${i.ativo ? 'bg-success/20 text-success border-success/30' : ''}`}
+                          variant={i.ativa ? 'default' : 'secondary'}
+                          className={`rounded-lg text-[10px] font-bold px-2 py-0.5 ${i.ativa ? 'bg-success/20 text-success border-success/30' : ''}`}
                         >
-                          {i.ativo ? 'ATIVO' : 'INATIVO'}
+                          {i.ativa ? 'ATIVO' : 'INATIVO'}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-[10px] text-muted-foreground font-mono hidden sm:table-cell">
-                        {i.ultima_sync ? new Date(i.ultima_sync).toLocaleString('pt-BR') : 'Nunca sincronizado'}
+                        {i.ultima_sincronizacao
+                          ? new Date(i.ultima_sincronizacao).toLocaleString('pt-BR')
+                          : 'Nunca sincronizado'}
                       </TableCell>
                       <TableCell>
                         <Button
@@ -574,6 +576,20 @@ export function WebhooksLogsTab() {
     },
   });
 
+  const { data: webhookConfigs = [] } = useQuery({
+    queryKey: ['webhooks-config-urls'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('webhooks_config').select('id, url');
+      if (error) {
+        if (error.code === '42P01') return [];
+        throw error;
+      }
+      return data || [];
+    },
+  });
+
+  const urlByWebhookId = new Map(webhookConfigs.map((c) => [c.id, c.url]));
+
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
       <Card className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden bg-card">
@@ -605,18 +621,18 @@ export function WebhooksLogsTab() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {webhooksLogs.map((w: any) => (
+                  {webhooksLogs.map((w) => (
                     <TableRow key={w.id} className="hover:bg-accent/10 transition-colors">
                       <TableCell className="font-mono text-[10px] max-w-[200px] truncate pl-6 py-4 text-muted-foreground">
-                        {w.url || w.webhook_url || '-'}
+                        {urlByWebhookId.get(w.webhook_id ?? '') || '-'}
                       </TableCell>
-                      <TableCell className="text-xs font-bold text-foreground">{w.evento || w.event || '-'}</TableCell>
+                      <TableCell className="text-xs font-bold text-foreground">{w.evento || '-'}</TableCell>
                       <TableCell className="text-center">
                         <Badge
                           variant={w.status_code === 200 ? 'outline' : 'destructive'}
                           className={`rounded-lg text-[10px] font-bold px-2 py-0.5 ${w.status_code === 200 ? 'bg-success/10 text-success border-success/30' : ''}`}
                         >
-                          {w.status_code || w.status || '-'}
+                          {w.status_code || '-'}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-[11px] text-muted-foreground font-body hidden sm:table-cell pr-6 text-right">

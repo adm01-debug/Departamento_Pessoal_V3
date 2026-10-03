@@ -39,14 +39,14 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
   });
 
   const filteredLogs = auditLogs.filter(
-    (log: any) =>
+    (log) =>
       (log.acao || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (log.tabela || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (log.user_email || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleExportAudit = () => {
-    const exportData = filteredLogs.map((log: any) => ({
+    const exportData = filteredLogs.map((log) => ({
       data: format(new Date(log.created_at), 'dd/MM/yyyy HH:mm:ss'),
       usuario: log.user_email || 'Sistema',
       acao: log.acao,
@@ -98,7 +98,7 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
             </div>
           ) : (
             <div className="space-y-6 relative before:absolute before:inset-0 before:left-[11px] before:w-px before:bg-gradient-to-b before:from-primary/50 before:via-border/50 before:to-transparent">
-              {filteredLogs.map((log: any, idx: number) => {
+              {filteredLogs.map((log, idx) => {
                 return (
                   <motion.div
                     key={log.id}

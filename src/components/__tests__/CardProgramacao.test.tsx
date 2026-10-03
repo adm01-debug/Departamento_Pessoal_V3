@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 
@@ -18,34 +19,40 @@ vi.mock('@dnd-kit/utilities', () => ({
 vi.mock('@/lib/utils', () => ({ cn: (...c: any[]) => c.filter(Boolean).join(' ') }));
 
 vi.mock('@/components/ui/avatar', () => ({
-  Avatar: ({ children }: any) => <div>{children}</div>,
-  AvatarFallback: ({ children }: any) => <span>{children}</span>,
+  Avatar: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  AvatarFallback: ({ children }: { children?: ReactNode }) => <span>{children}</span>,
   AvatarImage: () => null,
 }));
 
 vi.mock('@/components/ui/badge', () => ({
-  Badge: ({ children, className }: any) => <span className={className}>{children}</span>,
+  Badge: ({ children, className }: { children?: ReactNode; className?: string }) => (
+    <span className={className}>{children}</span>
+  ),
 }));
 
 vi.mock('@/components/ui/button', () => ({
   Button: ({ children, onClick, 'aria-label': ariaLabel }: any) => (
-    <button onClick={onClick} aria-label={ariaLabel}>{children}</button>
+    <button onClick={onClick} aria-label={ariaLabel}>
+      {children}
+    </button>
   ),
 }));
 
 vi.mock('@/components/ui/dropdown-menu', () => ({
-  DropdownMenu: ({ children }: any) => <div>{children}</div>,
-  DropdownMenuTrigger: ({ children }: any) => <div>{children}</div>,
-  DropdownMenuContent: ({ children }: any) => <div>{children}</div>,
-  DropdownMenuItem: ({ children, onClick }: any) => <button onClick={onClick}>{children}</button>,
+  DropdownMenu: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DropdownMenuTrigger: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DropdownMenuContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  DropdownMenuItem: ({ children, onClick }: { children?: ReactNode; onClick?: () => void }) => (
+    <button onClick={onClick}>{children}</button>
+  ),
   DropdownMenuSeparator: () => <hr />,
 }));
 
 vi.mock('@/components/ui/tooltip', () => ({
-  TooltipProvider: ({ children }: any) => <>{children}</>,
-  Tooltip: ({ children }: any) => <>{children}</>,
-  TooltipTrigger: ({ children }: any) => <>{children}</>,
-  TooltipContent: ({ children }: any) => <div>{children}</div>,
+  TooltipProvider: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  Tooltip: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  TooltipTrigger: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  TooltipContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
 }));
 
 vi.mock('lucide-react', () => ({
@@ -71,7 +78,7 @@ function makeCard(overrides: Partial<ProgramacaoFerias> = {}): ProgramacaoFerias
     status: 'rascunho',
     created_at: '2026-01-01T00:00:00Z',
     updated_at: '2026-01-01T00:00:00Z',
-    colaborador: { id: 'col-1', nome_completo: 'Maria Costa', foto_url: null } as any,
+    colaborador: { id: 'col-1', nome_completo: 'Maria Costa', foto_url: null } as never,
     periodo_aquisitivo: null,
     data_inicio_prevista: null,
     ...overrides,
@@ -124,12 +131,17 @@ describe('CardProgramacao', () => {
   });
 
   it('uses "?" initials when colaborador is null', () => {
-    render(<CardProgramacao programacao={makeCard({ colaborador: null as any })} {...defaultProps} />);
+    render(<CardProgramacao programacao={makeCard({ colaborador: null as never })} {...defaultProps} />);
     expect(screen.getByText('?')).toBeTruthy();
   });
 
   it('shows "Colaborador" fallback when nome_completo is null', () => {
-    render(<CardProgramacao programacao={makeCard({ colaborador: { id: 'x', nome_completo: null, foto_url: null } as any })} {...defaultProps} />);
+    render(
+      <CardProgramacao
+        programacao={makeCard({ colaborador: { id: 'x', nome_completo: null, foto_url: null } as never })}
+        {...defaultProps}
+      />
+    );
     expect(screen.getByText('Colaborador')).toBeTruthy();
   });
 
@@ -150,7 +162,14 @@ describe('CardProgramacao', () => {
 
   it('calls onAprovarGestor when clicked', () => {
     const onAprovarGestor = vi.fn();
-    render(<CardProgramacao programacao={makeCard({ status: 'sugerido_gestor' })} {...defaultProps} canManage onAprovarGestor={onAprovarGestor} />);
+    render(
+      <CardProgramacao
+        programacao={makeCard({ status: 'sugerido_gestor' })}
+        {...defaultProps}
+        canManage
+        onAprovarGestor={onAprovarGestor}
+      />
+    );
     fireEvent.click(screen.getByText(/Aprovar \(Gestor\)/));
     expect(onAprovarGestor).toHaveBeenCalledWith('p-1');
   });
@@ -162,7 +181,15 @@ describe('CardProgramacao', () => {
 
   it('calls onAprovarRH when clicked', () => {
     const onAprovarRH = vi.fn();
-    render(<CardProgramacao programacao={makeCard({ status: 'aprovado_gestor' })} {...defaultProps} canManage isRH onAprovarRH={onAprovarRH} />);
+    render(
+      <CardProgramacao
+        programacao={makeCard({ status: 'aprovado_gestor' })}
+        {...defaultProps}
+        canManage
+        isRH
+        onAprovarRH={onAprovarRH}
+      />
+    );
     fireEvent.click(screen.getByText(/Aprovar \(RH\)/));
     expect(onAprovarRH).toHaveBeenCalledWith('p-1');
   });
@@ -194,7 +221,7 @@ describe('CardProgramacao', () => {
     const card = makeCard({
       ano: 2024,
       mes_previsto: 7,
-      periodo_aquisitivo: { data_limite_concessao: '2024-01-01' } as any,
+      periodo_aquisitivo: { data_limite_concessao: '2024-01-01' } as never,
     });
     render(<CardProgramacao programacao={card} {...defaultProps} />);
     expect(screen.getByText('Dobra')).toBeTruthy();
@@ -204,7 +231,7 @@ describe('CardProgramacao', () => {
     const card = makeCard({
       ano: 2022,
       mes_previsto: 3,
-      periodo_aquisitivo: { data_limite_concessao: '2025-12-31' } as any,
+      periodo_aquisitivo: { data_limite_concessao: '2025-12-31' } as never,
     });
     render(<CardProgramacao programacao={card} {...defaultProps} />);
     expect(screen.queryByText('Dobra')).toBeNull();

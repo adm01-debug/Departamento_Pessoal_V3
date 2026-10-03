@@ -2,9 +2,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Download, ExternalLink, FileText, X } from 'lucide-react';
 import { safeHref } from '@/utils/safeUrl';
+import type { DocumentoListItem } from '@/services/documentoService';
+
+/** Campos usados pelo preview — superset estrutural de DocumentoListItem e de fixtures leves. */
+type DocumentoPreviewDoc = Pick<
+  DocumentoListItem,
+  'nome' | 'nome_arquivo' | 'tipo' | 'mime_type' | 'url' | 'created_at'
+>;
 
 interface DocumentoPreviewProps {
-  documento: any;
+  documento: DocumentoPreviewDoc | null;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -26,11 +33,18 @@ export function DocumentoPreview({ documento, isOpen, onClose }: DocumentoPrevie
             </div>
             <div>
               <DialogTitle className="font-display text-base">{documento.nome || documento.nome_arquivo}</DialogTitle>
-              <p className="text-xs text-muted-foreground capitalize">{documento.tipo} • {new Date(documento.created_at).toLocaleDateString('pt-BR')}</p>
+              <p className="text-xs text-muted-foreground capitalize">
+                {documento.tipo} • {new Date(documento.created_at ?? '').toLocaleDateString('pt-BR')}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" className="rounded-xl h-8 text-xs" onClick={() => window.open(url, '_blank', 'noopener')}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="rounded-xl h-8 text-xs"
+              onClick={() => window.open(url, '_blank', 'noopener')}
+            >
               <ExternalLink className="h-3.5 w-3.5 mr-1.5" /> Abrir Original
             </Button>
             <Button variant="outline" size="icon" aria-label="Fechar" className="rounded-xl h-8 w-8" onClick={onClose}>
@@ -48,17 +62,15 @@ export function DocumentoPreview({ documento, isOpen, onClose }: DocumentoPrevie
               title="Preview PDF"
             />
           ) : isImage ? (
-            <img
-              src={url}
-              alt={documento.nome}
-              className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
-            />
+            <img src={url} alt={documento.nome} className="max-w-full max-h-full object-contain rounded-lg shadow-lg" />
           ) : (
             <div className="text-center space-y-4 p-12 bg-background rounded-3xl border border-dashed shadow-xs">
               <FileText className="h-16 w-16 mx-auto text-muted-foreground/30" />
               <div>
                 <h3 className="font-display font-semibold">Visualização não disponível</h3>
-                <p className="text-sm text-muted-foreground mt-1">Este tipo de arquivo não pode ser visualizado diretamente no navegador.</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Este tipo de arquivo não pode ser visualizado diretamente no navegador.
+                </p>
               </div>
               <Button className="rounded-xl" onClick={() => window.open(url, '_blank', 'noopener')}>
                 <Download className="h-4 w-4 mr-2" /> Baixar para Ver

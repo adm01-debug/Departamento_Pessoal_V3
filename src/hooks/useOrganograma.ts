@@ -1,6 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import type { Tables } from '@/integrations/supabase/types';
 import { useEmpresas } from './useEmpresas';
+
+type OrganogramaColab = Pick<
+  Tables<'colaboradores'>,
+  'id' | 'nome_completo' | 'departamento' | 'email' | 'foto_url' | 'cargo'
+>;
+
+export interface OrganogramaNodeData extends Tables<'departamentos'> {
+  colaboradores: OrganogramaColab[];
+  sub_departamentos: OrganogramaNodeData[];
+}
 
 export function useOrganograma() {
   const { empresaAtual } = useEmpresas();
@@ -12,49 +23,46 @@ export function useOrganograma() {
     queryFn: async () => {
       // Buscar departamentos com informações de parentesco
       // Removido filtro de empresa_id para departamentos pois não existe no schema externo
-      const { data: deps, error: depsError } = await supabase
-        .from('departamentos')
-        .select('*')
-        .order('nome');
+      const { data: deps, error: depsError } = await supabase.from('departamentos').select('*').order('nome');
 
       if (depsError) throw depsError;
 
       // Buscar todos os colaboradores ativos para distribuir nos departamentos
       const { data: cols, error: colsError } = await supabase
         .from('colaboradores')
-        .select('id, nome_completo, departamento, email, foto_url')
-        .eq('status', 'ativo' as any); // Type cast for status
+        .select('id, nome_completo, departamento, email, foto_url, cargo')
+        .eq('status', 'ativo');
 
       if (colsError) throw colsError;
 
       // Montar estrutura hierárquica
-      const departamentosMap = new Map();
-      const rootDepartamentos: any[] = [];
+      const departamentosMap = new Map<string, OrganogramaNodeData>();
+      const rootDepartamentos: OrganogramaNodeData[] = [];
 
-      deps?.forEach(d => {
+      deps?.forEach((d) => {
         departamentosMap.set(d.id, {
           ...d,
-          colaboradores: cols?.filter(c => c.departamento === d.nome) || [],
-          sub_departamentos: []
+          colaboradores: cols?.filter((c) => c.departamento === d.nome) || [],
+          sub_departamentos: [],
         });
       });
 
-      departamentosMap.forEach(d => {
+      departamentosMap.forEach((d) => {
         if (d.departamento_pai_id && departamentosMap.has(d.departamento_pai_id)) {
-          departamentosMap.get(d.departamento_pai_id).sub_departamentos.push(d);
+          departamentosMap.get(d.departamento_pai_id)!.sub_departamentos.push(d);
         } else {
           rootDepartamentos.push(d);
         }
       });
 
       return rootDepartamentos;
-    }
+    },
   });
 
   return {
     dados: query.data || [],
     isLoading: query.isLoading,
     error: query.error,
-    refetch: query.refetch
+    refetch: query.refetch,
   };
 }
