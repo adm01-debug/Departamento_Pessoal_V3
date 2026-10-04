@@ -44,12 +44,14 @@ function collect(dir) {
 
 const allSql = collect(resolve(root, 'supabase/migrations')) + '\n' + collect(resolve(root, 'supabase/baseline'));
 
+// Nomes com aspas duplas ("public"."tabela", formato do baseline canônico)
+// ou sem — sem suportar aspas, toda tabela do baseline ficava invisível.
 const created = new Set();
-for (const m of allSql.matchAll(/CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(?:public\.)?(\w+)/gi)) {
+for (const m of allSql.matchAll(/CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(?:"?public"?\.)?"?(\w+)"?/gi)) {
   created.add(m[1].toLowerCase());
 }
 const dropped = new Set();
-for (const m of allSql.matchAll(/DROP\s+TABLE\s+(?:IF\s+EXISTS\s+)?(?:public\.)?(\w+)/gi)) {
+for (const m of allSql.matchAll(/DROP\s+TABLE\s+(?:IF\s+EXISTS\s+)?(?:"?public"?\.)?"?(\w+)"?/gi)) {
   dropped.add(m[1].toLowerCase());
 }
 const live = [...created].filter((t) => !dropped.has(t) && !KEYWORDS.has(t)).sort((a, b) => a.localeCompare(b));

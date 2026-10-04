@@ -72,6 +72,12 @@ jobs:
         # baseline próprio (scripts/.any-tests-baseline.json), mesma regra
         # por diretório: só pode descer.
         run: npm run audit:ratchet-any-tests
+      - name: Orçamento de warnings por regra (E43)
+        # lint:ci limita o TOTAL mas não por regra: um PR pode trocar 20
+        # warnings de `any` por 20 de outra regra sem estourar o teto. Este
+        # gate falha se QUALQUER regra subir (baseline .eslint-warnings-
+        # budget.json). Existia desde a auditoria mas nunca rodava no CI.
+        run: npm run audit:ratchet-warnings
       - name: Drift de tipos × migrations
         # Tabela criada por migration sem entrada em types.ts abre janela para
         # queries untyped. Ratchet: baseline lista divergências conhecidas,

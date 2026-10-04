@@ -79,5 +79,3 @@ export function DesligamentoChecklist({ desligamento, onToggle, readOnly }: Chec
     </div>
   );
 }
-
-export { CHECKLIST_ITEMS };

@@ -23,6 +23,11 @@ function toPartials(schema: z.ZodType): z.ZodType {
 }
 
 export function validateInput(schema: z.ZodType, payload: object, contexto: string): void {
+  // {} passa por qualquer .partial() sem campo obrigatório — um update/insert
+  // vazio nunca escreve nada útil e esconde bug no caller.
+  if (Object.keys(payload).length === 0) {
+    throw new Error(`${contexto}: payload vazio — nenhum campo informado`);
+  }
   const result = toPartials(schema).safeParse(payload);
   if (!result.success) {
     const issue = result.error.issues[0];

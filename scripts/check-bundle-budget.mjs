@@ -19,11 +19,19 @@ if (!existsSync(distAssets)) {
 }
 
 function dirBytes(dir, ext) {
+  // Recursivo: bundlers podem emitir subdiretórios dentro de assets —
+  // arquivos aninhados ficavam invisíveis ao orçamento.
   let total = 0;
   let max = { name: '', bytes: 0 };
   for (const f of readdirSync(dir)) {
     const p = join(dir, f);
-    if (!statSync(p).isFile() || !f.endsWith(ext)) continue;
+    if (statSync(p).isDirectory()) {
+      const sub = dirBytes(p, ext);
+      total += sub.total;
+      if (sub.max.bytes > max.bytes) max = sub.max;
+      continue;
+    }
+    if (!f.endsWith(ext)) continue;
     const b = statSync(p).size;
     total += b;
     if (b > max.bytes) max = { name: f, bytes: b };

@@ -66,25 +66,11 @@ export default defineConfig(({ mode }) => ({
       }),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
-      manifest: {
-        name: 'Lovable RH Expert',
-        short_name: 'LovableRH',
-        description: 'Gestão Inteligente de RH e Departamento Pessoal',
-        theme_color: '#3b82f6',
-        icons: [
-          {
-            src: 'pwa-192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
-          },
-          {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-          },
-        ],
-      },
+      // Manifest vem de public/manifest.json (branding real, ícones SVG
+      // inline) — o manifest gerado aqui tinha restos de Lovable e
+      // apontava para ícones que não existem.
+      includeAssets: ['favicon.ico', 'manifest.json'],
+      manifest: false,
       workbox: {
         runtimeCaching: [
           {
@@ -102,7 +88,11 @@ export default defineConfig(({ mode }) => ({
             },
           },
           {
-            urlPattern: /\.(?:png|jpg|jpeg|svg|gif)$/,
+            // Same-origin apenas: o padrão anterior (qualquer URL .png/.jpg)
+            // cacheava imagens do Supabase Storage — docs com PII ficavam no
+            // cache do SW mesmo com URL assinada expirada (E-037).
+            urlPattern: ({ url }: { url: URL }) =>
+              url.origin === self.location.origin && /\.(?:png|jpg|jpeg|svg|gif)$/.test(url.pathname),
             handler: 'CacheFirst',
             options: {
               cacheName: 'image-cache',

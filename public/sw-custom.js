@@ -223,8 +223,8 @@ self.addEventListener('push', (event) => {
         typeof data.body === 'string'
           ? data.body.slice(0, 300)
           : 'Você tem uma nova notificação do Departamento Pessoal.',
-      icon: 'https://raw.githubusercontent.com/lovable-dev/lovable-preview-assets/main/dp-icon-192.png',
-      badge: 'https://raw.githubusercontent.com/lovable-dev/lovable-preview-assets/main/dp-icon-192.png',
+      icon: '/favicon.ico',
+      badge: '/favicon.ico',
       vibrate: [100, 50, 100],
       data: { url: notifUrl },
       actions: [
