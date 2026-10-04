@@ -2,8 +2,6 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import { imagetools } from 'vite-imagetools';
-import { componentTagger } from 'lovable-tagger';
-import { VitePWA } from 'vite-plugin-pwa';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 
 export default defineConfig(({ mode }) => ({
@@ -52,7 +50,6 @@ export default defineConfig(({ mode }) => ({
       },
     }),
     imagetools(),
-    mode === 'development' && componentTagger(),
     // P3-053: source maps upload automático para Sentry em builds de prod
     mode === 'production' &&
       process.env.VITE_SENTRY_DSN &&
@@ -64,57 +61,11 @@ export default defineConfig(({ mode }) => ({
         setCommits: { auto: true },
         deploy: { env: mode },
       }),
-    VitePWA({
-      registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
-      manifest: {
-        name: 'Lovable RH Expert',
-        short_name: 'LovableRH',
-        description: 'Gestão Inteligente de RH e Departamento Pessoal',
-        theme_color: '#3b82f6',
-        icons: [
-          {
-            src: 'pwa-192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
-          },
-          {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-          },
-        ],
-      },
-      workbox: {
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts-cache',
-              expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365, // <== 365 days
-              },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
-          },
-          {
-            urlPattern: /\.(?:png|jpg|jpeg|svg|gif)$/,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'image-cache',
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 30, // <== 30 days
-              },
-            },
-          },
-        ],
-      },
-    }),
+    // Service worker único: public/sw-custom.js (allowlist E-037, fail-closed).
+    // O vite-plugin-pwa gerava um segundo SW (workbox sw.js) + registerSW.js —
+    // os dois disputavam o escopo '/' e o sw-custom vencia sempre, então o
+    // workbox nunca ativava (REDUNDANT) e seu cache de imagens era código
+    // morto. Plugin removido: um SW só, registrado por main.tsx.
   ].filter(Boolean),
   resolve: {
     alias: {

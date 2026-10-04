@@ -22,7 +22,11 @@ function pass(msg) {
 }
 
 const USES_RE = /uses:\s+(\S+)/g;
-const RUN_INTERPOLATION_RE = /\$\{\{\s*github\.event\.|inputs\./;
+// Campos controlados por quem abre a PR/issue: interpolá-los em run: é
+// injeção de script (github.event.*, head_ref, ref, actor, inputs).
+const RUN_INTERPOLATION_RE = /\$\{\{\s*(github\.event\.|github\.head_ref|github\.ref|github\.actor|github\.triggering_actor|inputs\.)/;
+// Job no nível `  nome:` dentro de `jobs:`.
+const JOB_HEADER_RE = /^  ([\w-]+):\s*$/gm;
 
 for (const file of files) {
   const path = join(WORKFLOWS_DIR, file);
@@ -31,14 +35,38 @@ for (const file of files) {
 
   console.log(`\n── ${file}`);
 
-  // 1. Todos os jobs têm timeout-minutes (salvo jobs desabilitados com if:false)
-  const hasTimeout = raw.includes('timeout-minutes');
-  // Heurística: workflows com jobs reais devem ter pelo menos 1 timeout-minutes
-  const hasIfFalse = raw.includes('if: false');
-  if (!hasTimeout && !hasIfFalse) {
-    fail(`${file}: nenhum timeout-minutes encontrado (D11)`);
-  } else {
-    pass(`timeout-minutes presente (ou job desabilitado)`);
+  // 1. TODO job tem timeout-minutes — antes era 1 ocorrência por arquivo,
+  // então um job sem timeout passava se outro o tivesse (bypass).
+  {
+    const jobsIdx = raw.search(/^jobs:\s*$/m);
+    if (jobsIdx !== -1) {
+      const jobsSection = raw.slice(jobsIdx);
+      const heads = [...jobsSection.matchAll(JOB_HEADER_RE)];
+      let missing = [];
+      for (let i = 0; i < heads.length; i++) {
+        const start = heads[i].index;
+        const end = i + 1 < heads.length ? heads[i + 1].index : jobsSection.length;
+        const body = jobsSection.slice(start, end);
+        if (body.includes('if: false')) continue; // job desabilitado
+        if (!body.includes('timeout-minutes')) missing.push(heads[i][1]);
+      }
+      if (missing.length > 0) {
+        fail(`${file}: jobs sem timeout-minutes: ${missing.join(', ')} (D11)`);
+      } else if (heads.length > 0) {
+        pass(`timeout-minutes em todos os ${heads.length} job(s)`);
+      } else {
+        // Sem jobs declarados (workflow só de triggers) — mantém checagem antiga
+        if (!raw.includes('timeout-minutes') && !raw.includes('if: false')) {
+          fail(`${file}: nenhum timeout-minutes encontrado (D11)`);
+        } else {
+          pass(`timeout-minutes presente (ou job desabilitado)`);
+        }
+      }
+    } else if (!raw.includes('timeout-minutes') && !raw.includes('if: false')) {
+      fail(`${file}: nenhum timeout-minutes encontrado (D11)`);
+    } else {
+      pass(`timeout-minutes presente (ou job desabilitado)`);
+    }
   }
 
   // 2. Todo uses: tem SHA de 40 chars (salvo local ./ ou reusable workflows)
@@ -84,9 +112,15 @@ for (const file of files) {
   }
 
   // 5. concurrency: presente em workflows com pull_request trigger
-  // Usa regex para distinguir o trigger YAML de usos do texto em run:/env:
-  const hasPrTrigger = /^\s{0,4}pull_request:/m.test(raw);
-  if (hasPrTrigger && !raw.includes('concurrency:')) {
+  // Detecta também flow-style `on: [pull_request]` e `- pull_request` e
+  // exige `concurrency:` como chave YAML real — antes um comentário
+  // `# concurrency:` já satisfazia a checagem.
+  const hasPrTrigger =
+    /^\s{0,4}pull_request:/m.test(raw) ||
+    /^\s*-\s*pull_request\b/m.test(raw) ||
+    /on:\s*\[[^\]]*pull_request\b/.test(raw);
+  const hasConcurrency = /^\s*concurrency:/m.test(raw);
+  if (hasPrTrigger && !hasConcurrency) {
     fail(`${file}: trigger pull_request sem concurrency: (cancelamento de runs duplicadas)`);
   } else if (hasPrTrigger) {
     pass(`concurrency: presente`);

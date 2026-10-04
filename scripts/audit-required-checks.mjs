@@ -44,7 +44,9 @@ for (const file of workflows) {
 
 let failures = 0;
 for (const check of requiredChecks) {
-  const found = [...jobNames].some(j => j === check || check.includes(j) || j.includes(check));
+  // Match EXATO: substring criava falso-verde — um job "Lint" satisfazia o
+  // check "Lint Edge Functions" mesmo após renomear/remover o job real.
+  const found = jobNames.has(check);
   if (found) {
     console.log(`  ok: "${check}" → job encontrado`);
   } else {

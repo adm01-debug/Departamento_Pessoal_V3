@@ -31,26 +31,43 @@ const KEYWORDS = new Set([
 ]);
 
 function stripComments(sql) {
-  return sql.replace(/--[^\n]*/g, '').replace(/\/\*[\s\S]*?\*\//g, '');
+  return sql
+    .replace(/--[^\n]*/g, '')
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    // Literais '...': COMMENT ON FUNCTION IS '... CREATE TABLE no schema ...'
+    // gerava falso positivo de tabela. '' escapado é preservado.
+    .replace(/'(?:[^']|'')*'/g, "''");
 }
 
 function collect(dir) {
   const sqls = [];
-  for (const f of readdirSync(dir)) {
-    if (f.endsWith('.sql')) sqls.push(readFileSync(resolve(dir, f), 'utf8'));
-  }
+  const walk = (d) => {
+    for (const e of readdirSync(d, { withFileTypes: true })) {
+      const p = resolve(d, e.name);
+      if (e.isDirectory()) walk(p);
+      else if (e.name.endsWith('.sql')) sqls.push(readFileSync(p, 'utf8'));
+    }
+  };
+  walk(dir);
   return sqls.map(stripComments).join('\n');
 }
 
 const allSql = collect(resolve(root, 'supabase/migrations')) + '\n' + collect(resolve(root, 'supabase/baseline'));
 
+// Nomes com aspas duplas ("public"."tabela", formato do baseline canônico)
+// ou sem — sem suportar aspas, toda tabela do baseline ficava invisível.
+// Captura o schema quando qualificado: só tabelas de `public` (ou sem
+// schema, que resolvem em public) têm tipo gerado em types.ts — objetos
+// de auth./storage./partições internas não entram no `created`.
 const created = new Set();
-for (const m of allSql.matchAll(/CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(?:public\.)?(\w+)/gi)) {
-  created.add(m[1].toLowerCase());
+for (const m of allSql.matchAll(/CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(?:"?(\w+)"?\.)?"?(\w+)"?/gi)) {
+  if (m[1] && m[1].toLowerCase() !== 'public') continue;
+  created.add(m[2].toLowerCase());
 }
 const dropped = new Set();
-for (const m of allSql.matchAll(/DROP\s+TABLE\s+(?:IF\s+EXISTS\s+)?(?:public\.)?(\w+)/gi)) {
-  dropped.add(m[1].toLowerCase());
+for (const m of allSql.matchAll(/DROP\s+TABLE\s+(?:IF\s+EXISTS\s+)?(?:"?(\w+)"?\.)?"?(\w+)"?/gi)) {
+  if (m[1] && m[1].toLowerCase() !== 'public') continue;
+  dropped.add(m[2].toLowerCase());
 }
 const live = [...created].filter((t) => !dropped.has(t) && !KEYWORDS.has(t)).sort((a, b) => a.localeCompare(b));
 

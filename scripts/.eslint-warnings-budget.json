@@ -1,5 +1,5 @@
 {
   "_comment": "Orçamento de warnings ESLint por regra. Atualizar com: node scripts/ratchet-lint-warnings.mjs --write",
-  "_total": 881,
-  "@typescript-eslint/no-explicit-any": 881
+  "_total": 3,
+  "@typescript-eslint/no-explicit-any": 3
 }
