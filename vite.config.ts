@@ -2,7 +2,6 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import { imagetools } from 'vite-imagetools';
-import { componentTagger } from 'lovable-tagger';
 import { VitePWA } from 'vite-plugin-pwa';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 
@@ -52,7 +51,6 @@ export default defineConfig(({ mode }) => ({
       },
     }),
     imagetools(),
-    mode === 'development' && componentTagger(),
     // P3-053: source maps upload automático para Sentry em builds de prod
     mode === 'production' &&
       process.env.VITE_SENTRY_DSN &&
