@@ -13,4 +13,17 @@ BEGIN
   CREATE POLICY "auditoria_bancario_insert" ON public.auditoria_acesso_bancario
     FOR INSERT TO service_role
     WITH CHECK (true);
+
+  -- fail-closed: a policy tem que existir restrita a service_role. Se o
+  -- drop falhou silenciosamente ou a policy ficou com roles diferentes,
+  -- a migration aborta em vez de parecer aplicada (A-036).
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public'
+      AND tablename = 'auditoria_acesso_bancario'
+      AND policyname = 'auditoria_bancario_insert'
+      AND roles = '{service_role}'::name[]
+  ) THEN
+    RAISE EXCEPTION 'policy "auditoria_bancario_insert" em "auditoria_acesso_bancario" não ficou restrita a service_role';
+  END IF;
 END $$;
