@@ -2,7 +2,6 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import { imagetools } from 'vite-imagetools';
-import { VitePWA } from 'vite-plugin-pwa';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 
 export default defineConfig(({ mode }) => ({
@@ -62,47 +61,11 @@ export default defineConfig(({ mode }) => ({
         setCommits: { auto: true },
         deploy: { env: mode },
       }),
-    VitePWA({
-      registerType: 'autoUpdate',
-      // Manifest vem de public/manifest.json (branding real, ícones SVG
-      // inline) — o manifest gerado aqui tinha restos de Lovable e
-      // apontava para ícones que não existem.
-      includeAssets: ['favicon.ico', 'manifest.json'],
-      manifest: false,
-      workbox: {
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts-cache',
-              expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365, // <== 365 days
-              },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
-          },
-          {
-            // Same-origin apenas: o padrão anterior (qualquer URL .png/.jpg)
-            // cacheava imagens do Supabase Storage — docs com PII ficavam no
-            // cache do SW mesmo com URL assinada expirada (E-037).
-            urlPattern: ({ url }: { url: URL }) =>
-              url.origin === self.location.origin && /\.(?:png|jpg|jpeg|svg|gif)$/.test(url.pathname),
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'image-cache',
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 30, // <== 30 days
-              },
-            },
-          },
-        ],
-      },
-    }),
+    // Service worker único: public/sw-custom.js (allowlist E-037, fail-closed).
+    // O vite-plugin-pwa gerava um segundo SW (workbox sw.js) + registerSW.js —
+    // os dois disputavam o escopo '/' e o sw-custom vencia sempre, então o
+    // workbox nunca ativava (REDUNDANT) e seu cache de imagens era código
+    // morto. Plugin removido: um SW só, registrado por main.tsx.
   ].filter(Boolean),
   resolve: {
     alias: {
