@@ -6,9 +6,8 @@ import { loggerService } from '@/services/loggerService';
 import { queryClient } from '@/lib/queryClient';
 import { validatePasswordFull } from '@/utils/passwordPolicy';
 
-// Enum canônico do banco: ('admin','gestor','rh','user'). 'moderator' não
-// existe no enum — mantido apenas para compat com checks legados (ex.: usePiiMask).
-export type AppRole = 'admin' | 'gestor' | 'rh' | 'moderator' | 'user';
+// Enum canônico do banco (migrations 20251220135248): ('admin','gestor','rh','user').
+export type AppRole = 'admin' | 'gestor' | 'rh' | 'user';
 
 export interface User {
   id: string;
