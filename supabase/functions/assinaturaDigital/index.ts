@@ -104,9 +104,8 @@ serve(async (req: Request): Promise<Response> => {
         .map((b) => b.toString(16).padStart(2, '0')).join('');
 
       // IP real do cliente: último elemento de XFF (anexado pelo gateway).
-      // body.ipAddress só como último recurso — é auto-reportado, não prova.
-      const headerIp = getClientIp(req);
-      const clientIp = headerIp !== 'unknown' ? headerIp : (body.ipAddress ?? 'unknown');
+      // body.ipAddress é auto-reportado e forjável — nunca entra como evidência.
+      const clientIp = getClientIp(req);
 
       const { data: updated, error: updateErr } = await supabase
         .from('admissao_tokens')

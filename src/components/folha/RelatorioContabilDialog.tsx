@@ -27,6 +27,11 @@ export function RelatorioContabilDialog({ folhaId }: RelatorioContabilDialogProp
   const pii = usePiiMask();
 
   const handleExport = async () => {
+    // O CSV usa CPF como chave de conciliação no ERP — mascarado não serve.
+    if (!pii.canViewPii) {
+      toast.error('Apenas administradores podem exportar o relatório contábil (contém CPF integral).');
+      return;
+    }
     setLoading(true);
     try {
       // Fetch folha items (detailed)

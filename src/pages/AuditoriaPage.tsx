@@ -93,7 +93,7 @@ export default function AuditoriaPage() {
     exportarExcel(
       'Log de Auditoria',
       filtered.map((l) => ({
-        ...(l as Record<string, unknown>),
+        ...(pii.deep(l) as Record<string, unknown>),
         data: new Date(l.created_at ?? '').toLocaleString('pt-BR'),
         dados_anteriores: JSON.stringify(pii.deep(l.dados_anteriores)),
         dados_novos: JSON.stringify(pii.deep(l.dados_novos)),

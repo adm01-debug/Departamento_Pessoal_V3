@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import type { TipoAfastamento, StatusAfastamento, AfastamentoCrudItem } from '@/types/afastamentos';
 import { useAfastamentos, useProrrogacoesAfastamento } from '@/hooks/useAfastamentos';
+import { useEmpresas } from '@/hooks/useEmpresas';
 import { usePDFExport } from '@/hooks/usePDFExport';
 import { gerarAfastamentosPDF } from '@/utils/afastamentoPDF';
 import { afastamentoService } from '@/services/afastamentoService';
@@ -63,6 +64,7 @@ const tipoLabels: Partial<Record<TipoAfastamento, string>> = {
 
 export default function AfastamentosPage() {
   const { afastamentos, isLoading, filtros, setFiltros } = useAfastamentos();
+  const { empresaAtual } = useEmpresas();
   const { prorrogacoes, isLoading: loadProrr } = useProrrogacoesAfastamento(undefined);
   const { exportarPDF } = usePDFExport();
 
@@ -251,15 +253,15 @@ export default function AfastamentosPage() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={async () => {
-                    if (!filtros.empresa_id) {
+                    if (!empresaAtual?.id) {
                       toast.error('Selecione uma empresa para exportar o relatório');
                       return;
                     }
                     void registrarAcessoPII('afastamentos', 'export', {
-                      empresaId: filtros.empresa_id,
+                      empresaId: empresaAtual?.id,
                     });
-                    await afastamentoService.exportarRelatorio(filtros.empresa_id, {
-                      empresa_id: filtros.empresa_id,
+                    await afastamentoService.exportarRelatorio(empresaAtual!.id, {
+                      empresa_id: empresaAtual!.id,
                       status: filtros.status as StatusAfastamento | undefined,
                       tipo: selectedTipo ?? undefined,
                     });
@@ -283,7 +285,7 @@ export default function AfastamentosPage() {
                     }));
 
                     void registrarAcessoPII('afastamentos', 'export', {
-                      empresaId: filtros.empresa_id,
+                      empresaId: empresaAtual?.id,
                       registroCount: dataToExport.length,
                     });
                     try {
