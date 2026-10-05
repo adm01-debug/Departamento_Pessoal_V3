@@ -43,6 +43,7 @@ import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { exportPontoCSV, exportPontoPDF } from '@/services/exportService';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { currentCompetenciaLocal } from '@/utils/dateLocal';
@@ -112,6 +113,11 @@ export default function ProvisoesPage() {
       toast.error('Não há dados para exportar.');
       return;
     }
+
+    void registrarAcessoPII('provisoes_mensais', 'export', {
+      empresaId: empresaAtual?.id,
+      registroCount: provisoes.length,
+    });
 
     const dataToExport = provisoes.map((p) => ({
       colaborador: p.colaborador?.nome_completo || 'N/A',

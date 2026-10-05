@@ -26,6 +26,11 @@ vi.mock('@/components/admissao/AdmissaoChecklist', () => ({
 
 vi.mock('@/utils/piiMask', () => ({
   maskCpfDisplay: vi.fn((cpf: string) => `***.***.${cpf?.slice(-5) || '***-**'}`),
+  maskPisDisplay: vi.fn((v: string) => `***.${v?.slice(-5) || '***'}`),
+  maskBankAccount: vi.fn((v: string) => `***${v?.slice(-4) || '***'}`),
+  maskEmail: vi.fn((v: string) => `m***@***.${v?.split('.').pop() || '***'}`),
+  maskGeneric: vi.fn((v: string) => `***${v?.slice(-4) || '***'}`),
+  maskPiiDeep: vi.fn((v: unknown) => v),
 }));
 
 vi.mock('date-fns', () => ({ format: vi.fn(() => '24 de julho') }));

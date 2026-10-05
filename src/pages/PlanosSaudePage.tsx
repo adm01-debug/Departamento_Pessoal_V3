@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { beneficiariosPlanoService } from '@/services/tabelasComplementaresService';
 import { useEmpresas } from '@/hooks';
+import { usePiiMask } from '@/hooks/usePiiMask';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { Plus, Heart, Shield, Trash2, Users } from 'lucide-react';
@@ -24,6 +25,7 @@ import { validateTablePayload } from '@/schemas/validate';
 // ========== Beneficiários de um Plano ==========
 function BeneficiariosPlanoSection({ planoId }: { planoId: string }) {
   const qc = useQueryClient();
+  const pii = usePiiMask();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ nome: '', cpf: '', parentesco: '', tipo: 'dependente' });
 
@@ -123,7 +125,7 @@ function BeneficiariosPlanoSection({ planoId }: { planoId: string }) {
             {ativos.map((b) => (
               <div key={b.id} className="flex items-center gap-2 text-sm p-1.5 rounded bg-background">
                 <span className="flex-1">
-                  {b.nome} {b.cpf ? `(${b.cpf})` : ''}
+                  {b.nome} {b.cpf ? `(${pii.cpf(b.cpf)})` : ''}
                 </span>
                 <Badge variant="outline" className="text-xs">
                   {b.tipo || b.parentesco || '—'}

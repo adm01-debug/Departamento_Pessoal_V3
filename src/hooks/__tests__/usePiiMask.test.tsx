@@ -70,7 +70,8 @@ describe('usePiiMask', () => {
     expect(out.id).toBe('x');
     expect(out.cpf).toBe('••••');
     const meta = out.meta as Record<string, unknown>;
-    expect(meta.salario).toBe('••••');
+    // salário não é mascarado: as telas já o exibem a todos os papéis (política de produto)
+    expect(meta.salario).toBe(5000);
     expect(meta.nome).toBe('Ana');
     const lista = out.lista as Array<Record<string, unknown>>;
     expect(lista[0].email).toBe('••••');

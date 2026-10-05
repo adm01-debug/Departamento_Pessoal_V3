@@ -41,8 +41,10 @@ export function maskGeneric(value: string | null | undefined): string {
 
 // Chaves cujo conteúdo é PII/segredo independente do formato — usada para
 // mascarar payloads arbitrários (trilha de auditoria, exports).
+// salario/salario_base NÃO entram: as telas já exibem salário a todos os
+// papéis (decisão de produto) — o export deve carregar a mesma visão da tela.
 const PII_KEY =
-  /^(cpf|cnpj|pis|pasep|rg|email|telefone|celular|salario|salario_base|conta|conta_bancaria|agencia|digito|pix_chave|chave_pix|data_nascimento|nome_mae|endereco|logradouro|cep|banco_nome|assinatura_base64|senha|password|token|api_key|secret)/i;
+  /^(cpf|cnpj|pis|pasep|rg|email|telefone|celular|conta|conta_bancaria|agencia|digito|pix_chave|chave_pix|data_nascimento|nome_mae|endereco|logradouro|cep|banco_nome|assinatura_base64|senha|password|token|api_key|secret)/i;
 
 /**
  * Mascara recursivamente valores de chaves sensíveis em payloads

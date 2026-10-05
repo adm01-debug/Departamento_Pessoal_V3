@@ -13,6 +13,8 @@ import { usePDFExport } from '@/hooks/usePDFExport';
 import { useDepartamentos } from '@/hooks/useDepartamentos';
 import { useCargos } from '@/hooks/useCargos';
 import { useColaboradores } from '@/hooks/useColaboradores';
+import { usePiiMask } from '@/hooks/usePiiMask';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { colaboradorService } from '@/services/colaboradorService';
 import { toast } from 'sonner';
@@ -34,6 +36,7 @@ export default function ColaboradoresPage() {
   const { exportarExcel } = useExcelExport();
   const { exportarPDF } = usePDFExport();
   const { empresaAtual } = useEmpresas();
+  const pii = usePiiMask();
 
   const {
     colaboradores,
@@ -127,7 +130,13 @@ export default function ColaboradoresPage() {
         return;
       }
 
-      exportarExcel('Relatório de Colaboradores', data as unknown as Record<string, unknown>[], [
+      void registrarAcessoPII('colaboradores', 'export', {
+        empresaId: empresaAtual.id,
+        registroCount: data.length,
+      });
+      // Sem papel de PII o export leva a mesma visão mascarada da tela.
+      const linhas = data.map((r) => pii.deep(r) as Record<string, unknown>);
+      exportarExcel('Relatório de Colaboradores', linhas, [
         'nome_completo',
         'cpf',
         'cargo',
@@ -165,13 +174,12 @@ export default function ColaboradoresPage() {
         return;
       }
 
-      exportarPDF('Relatório de Colaboradores', data as unknown as Record<string, unknown>[], [
-        'nome_completo',
-        'cpf',
-        'cargo',
-        'departamento',
-        'status',
-      ]);
+      void registrarAcessoPII('colaboradores', 'export', {
+        empresaId: empresaAtual.id,
+        registroCount: data.length,
+      });
+      const linhas = data.map((r) => pii.deep(r) as Record<string, unknown>);
+      exportarPDF('Relatório de Colaboradores', linhas, ['nome_completo', 'cpf', 'cargo', 'departamento', 'status']);
     } catch (err) {
       loggerService.error(
         'Falha ao exportar PDF',
@@ -315,13 +323,15 @@ export default function ColaboradoresPage() {
                 <p className="font-display font-bold text-base leading-tight group-hover:text-primary transition-colors">
                   {c.nome_completo}
                 </p>
-                <p className="text-xs text-muted-foreground font-body mt-0.5">{c.email || 'Sem e-mail cadastrado'}</p>
+                <p className="text-xs text-muted-foreground font-body mt-0.5">
+                  {c.email ? pii.email(c.email) : 'Sem e-mail cadastrado'}
+                </p>
               </div>
             </div>
           </TableCell>
           <TableCell className="hidden sm:table-cell">
             <div className="flex flex-col">
-              <span className="font-body font-medium text-sm">CPF: {c.cpf}</span>
+              <span className="font-body font-medium text-sm">CPF: {c.cpf ? pii.cpf(c.cpf) : '—'}</span>
               <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
                 MAT: {c.matricula || 'N/A'}
               </span>

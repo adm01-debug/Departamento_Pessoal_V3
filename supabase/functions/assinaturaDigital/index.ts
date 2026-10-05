@@ -2,6 +2,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://esm.sh/zod@3.23.8';
 import { verifyCsrf } from '../_shared/csrf.ts';
+import { getClientIp } from '../_shared/clientIp.ts';
 import { getCorsHeaders, parseJsonBody } from '../_shared/contract.ts';
 import { captureException } from '../_shared/sentry.ts';
 
@@ -50,9 +51,7 @@ serve(async (req: Request): Promise<Response> => {
 
     // Rate limit por IP — endpoints públicos (assinar/verificar) precisam de proteção
     // contra brute force de tokens: 20 req / min / IP
-    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
-      || req.headers.get('x-real-ip')
-      || 'anon';
+    const ip = getClientIp(req);
     const { checkRateLimit, rateLimitResponse } = await import('../_shared/rateLimit.ts');
     const rl = await checkRateLimit(supabase, { key: `assinatura:${body.action}:${ip}`, limit: 20, windowSec: 60 });
     if (!rl.allowed) return rateLimitResponse(rl, req);
@@ -104,13 +103,9 @@ serve(async (req: Request): Promise<Response> => {
       const hashHex = Array.from(new Uint8Array(hashBuffer))
         .map((b) => b.toString(16).padStart(2, '0')).join('');
 
-      // IP real do cliente (não confiar em body.ipAddress puro — usar como fallback)
-      const clientIp =
-        req.headers.get('cf-connecting-ip') ??
-        req.headers.get('x-real-ip') ??
-        req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-        body.ipAddress ??
-        'unknown';
+      // IP real do cliente: último elemento de XFF (anexado pelo gateway).
+      // body.ipAddress é auto-reportado e forjável — nunca entra como evidência.
+      const clientIp = getClientIp(req);
 
       const { data: updated, error: updateErr } = await supabase
         .from('admissao_tokens')

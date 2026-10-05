@@ -3,6 +3,7 @@ import { PageTitle } from '@/components/PageTitle';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDataAccessLog } from '@/hooks/useDataAccessLog';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { usePiiMask } from '@/hooks/usePiiMask';
 import { useQuery } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -54,6 +55,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 export default function ColaboradorDetalhesPage() {
+  const pii = usePiiMask();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { empresaAtual } = useEmpresas();
@@ -154,7 +156,7 @@ export default function ColaboradorDetalhesPage() {
                 </div>
                 <div className="space-y-1">
                   <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Documento</p>
-                  <p className="font-mono text-sm">{colaborador.cpf}</p>
+                  <p className="font-mono text-sm">{colaborador.cpf ? pii.cpf(colaborador.cpf) : '—'}</p>
                 </div>
               </div>
             </div>
@@ -212,7 +214,9 @@ export default function ColaboradorDetalhesPage() {
                       <div className="space-y-4">
                         <div className="p-4 bg-muted/20 rounded-2xl border border-border/30">
                           <p className="text-xs text-muted-foreground mb-1">Email Profissional</p>
-                          <p className="font-semibold text-sm truncate">{colaborador.email || 'Não informado'}</p>
+                          <p className="font-semibold text-sm truncate">
+                            {colaborador.email ? pii.email(colaborador.email) : 'Não informado'}
+                          </p>
                         </div>
                         <div className="p-4 bg-muted/20 rounded-2xl border border-border/30">
                           <p className="text-xs text-muted-foreground mb-1">Gestor Direto</p>

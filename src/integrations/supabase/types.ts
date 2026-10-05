@@ -22547,6 +22547,21 @@ export type Database = {
       _is_admin_bypass: { Args: never; Returns: boolean }
       _purge_audit_log_internal: { Args: { _dias?: number }; Returns: number }
       _scan_status_anomalies_global: { Args: never; Returns: number }
+      admin_list_profiles: {
+        Args: never
+        Returns: {
+          avatar_url: string | null
+          cargo: string | null
+          created_at: string
+          departamento: string | null
+          id: string
+          nome: string
+          role_display: string | null
+          telefone: string | null
+          updated_at: string
+          user_id: string
+        }[]
+      }
       admin_list_security_definer_rpcs: {
         Args: never
         Returns: {

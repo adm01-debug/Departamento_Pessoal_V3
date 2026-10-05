@@ -12,10 +12,12 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { useImportacaoColaboradores } from '@/hooks/useImportacaoColaboradores';
+import { usePiiMask } from '@/hooks/usePiiMask';
 import { downloadTemplate as downloadImportTemplate } from '@/utils/importacao/template';
 import { loggerService } from '@/services/loggerService';
 
 export default function ImportacaoPage() {
+  const pii = usePiiMask();
   const fileRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState<'upload' | 'preview' | 'importing' | 'done'>('upload');
   const { rows, progress, isImporting, processarArquivo, importar, setRows } = useImportacaoColaboradores();
@@ -208,7 +210,7 @@ export default function ImportacaoPage() {
                         </Badge>
                       </TableCell>
                       <TableCell className="font-body text-sm font-medium">{row.nome_completo || '—'}</TableCell>
-                      <TableCell className="font-body text-xs">{row.cpf || '—'}</TableCell>
+                      <TableCell className="font-body text-xs">{row.cpf ? pii.cpf(row.cpf) : '—'}</TableCell>
                       <TableCell className="font-body text-xs">{row.cargo || '—'}</TableCell>
                       <TableCell className="font-body text-xs">{row.departamento || '—'}</TableCell>
                       <TableCell className="font-body text-xs">

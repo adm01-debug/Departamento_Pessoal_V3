@@ -12,6 +12,7 @@ import { z } from 'https://esm.sh/zod@3.23.8';
 import { corsHeaders, createErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { requireRh } from '../_shared/authz.ts';
+import { getClientIp } from '../_shared/clientIp.ts';
 import { captureException } from '../_shared/sentry.ts';
 
 const NO_STORE = { 'Cache-Control': 'no-store' };
@@ -49,15 +50,6 @@ function json(body: unknown, status = 200): Response {
     status,
     headers: { ...corsHeaders, ...NO_STORE, 'Content-Type': 'application/json' },
   });
-}
-
-function clientIp(req: Request): string {
-  return (
-    req.headers.get('cf-connecting-ip') ??
-    req.headers.get('x-real-ip') ??
-    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-    'unknown'
-  );
 }
 
 serve(async (req: Request): Promise<Response> => {
@@ -127,7 +119,7 @@ serve(async (req: Request): Promise<Response> => {
         descricao: d.descricao ?? null,
         dados_anteriores: d.dados_anteriores ?? null,
         dados_novos: d.dados_novos ?? null,
-        ip_address: clientIp(req),
+        ip_address: getClientIp(req),
       });
       if (error) throw error;
       return json({ success: true });

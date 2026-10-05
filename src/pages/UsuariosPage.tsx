@@ -10,10 +10,12 @@ import { UserCog } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function UsuariosPage() {
+  // RLS de profiles só retorna a própria linha — a listagem admin sai por
+  // RPC SECURITY DEFINER estreita (verifica is_admin dentro do banco).
   const { data: profiles, isLoading } = useQuery({
     queryKey: ['usuarios-profiles'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('profiles').select('*').order('nome');
+      const { data, error } = await supabase.rpc('admin_list_profiles');
       if (error) throw error;
       return data || [];
     },
@@ -45,7 +47,7 @@ export default function UsuariosPage() {
                 <TableRow className="bg-muted/30 hover:bg-muted/30">
                   <TableHead className="font-display font-semibold">Nome</TableHead>
                   <TableHead className="font-display font-semibold">Telefone</TableHead>
-                  <TableHead className="font-display font-semibold">Status</TableHead>
+                  <TableHead className="font-display font-semibold">Papel</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -54,8 +56,8 @@ export default function UsuariosPage() {
                     <TableCell className="font-body font-medium">{u.nome || 'Sem nome'}</TableCell>
                     <TableCell className="font-body">{u.telefone || '-'}</TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="bg-success/10 text-success">
-                        Ativo
+                      <Badge variant="outline" className="bg-primary/10 text-primary">
+                        {u.role_display || 'Usuário'}
                       </Badge>
                     </TableCell>
                   </TableRow>

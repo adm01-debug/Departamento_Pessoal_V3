@@ -3,6 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders, createErrorResponse } from '../_shared/contract.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
+import { getClientIp } from '../_shared/clientIp.ts';
 
 serve(async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: corsHeaders });
@@ -16,7 +17,7 @@ serve(async (req: Request): Promise<Response> => {
 
     // Rate limit distribuído (tabela rate_limits via RPC atômico) — compartilhado
     // entre instâncias de edge function; fallback em memória se o RPC falhar.
-    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+    const ip = getClientIp(req);
     const rl = await checkRateLimit(supabase, { key: `healthcheck:${ip}`, limit: 10, windowSec: 60 });
     if (!rl.allowed) return rateLimitResponse(rl, req);
 

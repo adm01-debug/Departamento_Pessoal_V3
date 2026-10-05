@@ -18,6 +18,8 @@ import { useExcelExport } from '@/hooks/useExcelExport';
 import { usePDFExport } from '@/hooks/usePDFExport';
 import { RelatoriosAnalyticsTab } from '@/components/relatorios/RelatoriosAnalyticsTab';
 import { RelatoriosExportTab, type ReportDef } from '@/components/relatorios/RelatoriosExportTab';
+import { usePiiMask } from '@/hooks/usePiiMask';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { RelatoriosAgendadosTab } from '@/components/relatorios/RelatoriosAgendadosTab';
 import { currentCompetenciaLocal, formatDateLocalISO } from '@/utils/dateLocal';
 import { auditoriaService } from '@/services/auditoriaService';
@@ -249,6 +251,7 @@ export default function RelatoriosPage() {
   const [generating, setGenerating] = useState<string | null>(null);
   const { exportarExcel } = useExcelExport();
   const { exportarPDF } = usePDFExport();
+  const pii = usePiiMask();
   const [exportFormat, setExportFormat] = useState('csv');
   const [emailDialog, setEmailDialog] = useState<string | null>(null);
   const [emailTo, setEmailTo] = useState('');
@@ -325,12 +328,18 @@ export default function RelatoriosPage() {
     setGenerating(id);
     try {
       const r = await fetchReportData(id, empresaAtual.id);
+      // Export carrega dados pessoais: trilha LGPD + mesma visão mascarada da tela.
+      void registrarAcessoPII('relatorios', 'export', {
+        empresaId: empresaAtual.id,
+        registroCount: r.rows.length,
+      });
+      const rows = r.rows.map((row) => pii.deep(row) as Record<string, unknown>);
       if (exportFormat === 'excel') {
-        exportarExcel(r.title, r.rows, r.columns);
+        exportarExcel(r.title, rows, r.columns);
       } else if (exportFormat === 'pdf') {
-        exportarPDF(r.title, r.rows, r.columns);
+        exportarPDF(r.title, rows, r.columns);
       } else {
-        exportCSV(r.title, r.rows, r.columns);
+        exportCSV(r.title, rows, r.columns);
       }
 
       await auditoriaService.registrarEvento({

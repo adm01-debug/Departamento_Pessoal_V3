@@ -12,6 +12,9 @@ initialize: |
   echo "PATH=$HOME/.local/bin:$PATH" >> "$ENVRC"
   # graphify: grafo de conhecimento do repo (parser SQL das migrations exige extra [sql])
   python3 -m pip install --quiet "graphifyy[sql]"
+  # deno: obrigatório para `deno check supabase/functions/<fn>/index.ts` (edge functions)
+  curl -fsSL https://deno.land/install.sh | sh -s -- -y
+  echo "PATH=$HOME/.deno/bin:$PATH" >> "$ENVRC"
 maintenance: |
   export NVM_DIR="$HOME/.nvm"
   . "$NVM_DIR/nvm.sh"

@@ -12,6 +12,18 @@ vi.mock('sonner', () => ({
   toast: { success: vi.fn(), error: vi.fn() },
 }));
 
+// Visão de admin: testes verificam que os campos renderizam, não a política
+// de máscara (coberta em usePiiMask.test.tsx).
+vi.mock('@/hooks/usePiiMask', () => ({
+  usePiiMask: () => ({
+    canViewPii: true,
+    phone: (v: string) => v,
+    email: (v: string) => v,
+    cpf: (v: string) => v,
+    deep: (v: unknown) => v,
+  }),
+}));
+
 vi.mock('@/components/ui/dialog', () => ({
   Dialog: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   DialogContent: ({ children }: { children?: ReactNode }) => <div role="dialog">{children}</div>,

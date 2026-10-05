@@ -3,6 +3,8 @@ import { crypto } from 'https://deno.land/std@0.177.0/crypto/mod.ts';
 import { validateRequest, corsHeaders, createErrorResponse } from '../_shared/contract.ts';
 import { webhookSchema } from '../_shared/schemas/common.ts';
 import { withMonitoring } from '../_shared/monitor.ts';
+import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
+import { getClientIp } from '../_shared/clientIp.ts';
 
 async function verifySignature(payload: string, signature: string | null, secret: string | undefined): Promise<boolean> {
   if (!signature || !secret) return false;
@@ -36,20 +38,9 @@ async function verifySignature(payload: string, signature: string | null, secret
 const MAX_PAYLOAD_BYTES = 1_048_576; // 1 MiB
 const REPLAY_TTL_SECONDS = 300; // 5 min
 
-const ipBuckets = new Map<string, { count: number; resetAt: number }>();
 const IP_RATE_LIMIT = 60;
-const IP_RATE_WINDOW = 60_000;
+const IP_RATE_WINDOW_SEC = 60;
 
-function checkIpRate(ip: string): boolean {
-  const now = Date.now();
-  const b = ipBuckets.get(ip);
-  if (!b || b.resetAt <= now) {
-    ipBuckets.set(ip, { count: 1, resetAt: now + IP_RATE_WINDOW });
-    return true;
-  }
-  b.count++;
-  return b.count <= IP_RATE_LIMIT;
-}
 const REQUIRE_TIMESTAMP = (Deno.env.get('WEBHOOK_REQUIRE_TIMESTAMP') ?? 'true').toLowerCase() === 'true';
 const SENSITIVE_HEADERS = new Set([
   'authorization', 'cookie', 'set-cookie', 'x-api-key', 'apikey',
@@ -70,10 +61,9 @@ serve(async (req: Request): Promise<Response> => {
   }
 
   return withMonitoring(req, 'webhook', async (supabase) => {
-    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
-    if (!checkIpRate(ip)) {
-      return createErrorResponse('Too many requests', 429, 'RATE_LIMITED');
-    }
+    const ip = getClientIp(req);
+    const rl = await checkRateLimit(supabase, { key: `webhook:${ip}`, limit: IP_RATE_LIMIT, windowSec: IP_RATE_WINDOW_SEC });
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     const secret = Deno.env.get('WEBHOOK_SECRET');
     const signature = req.headers.get('x-hub-signature-256');

@@ -16,6 +16,9 @@ import { AnimatedNumber } from '@/components/dashboard/AnimatedNumber';
 import { toast } from 'sonner';
 import { currentCompetenciaLocal } from '@/utils/dateLocal';
 import { DistribuirHoleritesButton } from '@/components/folha/DistribuirHoleritesButton';
+import { usePiiMask } from '@/hooks/usePiiMask';
+import { useEmpresas } from '@/hooks/useEmpresas';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import type { Tables } from '@/integrations/supabase/database.types';
 
 type HoleriteRow = Tables<'folha_itens'> & {
@@ -28,6 +31,8 @@ function formatCurrency(value: number): string {
 }
 
 export default function HoleritesPage() {
+  const pii = usePiiMask();
+  const { empresaAtual } = useEmpresas();
   const [busca, setBusca] = useState('');
   const [mesFiltro, setMesFiltro] = useState(currentCompetenciaLocal());
 
@@ -76,9 +81,13 @@ export default function HoleritesPage() {
       const colab = h.colaborador;
       const folha = h.folha;
 
+      void registrarAcessoPII('folha_itens', 'download', {
+        empresaId: empresaAtual?.id,
+        registroId: h.id,
+      });
       gerarPDFHolerite({
         colaborador_nome: colab?.nome_completo || 'N/A',
-        colaborador_cpf: colab?.cpf || 'N/A',
+        colaborador_cpf: colab?.cpf ? pii.cpf(colab.cpf) : 'N/A',
         colaborador_cargo: colab?.cargo || 'N/A',
         competencia: folha?.competencia || mesFiltro,
         salario_base: Number(h.salario_base),
@@ -213,7 +222,7 @@ export default function HoleritesPage() {
                                   <div className="flex flex-col">
                                     <span className="font-bold text-slate-800">{colab?.nome_completo || 'N/A'}</span>
                                     <span className="text-[10px] text-muted-foreground uppercase tracking-tighter">
-                                      {colab?.cargo || 'CARGO N/D'} • CPF: {colab?.cpf || '---'}
+                                      {colab?.cargo || 'CARGO N/D'} • CPF: {colab?.cpf ? pii.cpf(colab.cpf) : '---'}
                                     </span>
                                   </div>
                                 </TableCell>

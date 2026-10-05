@@ -4,6 +4,7 @@ import { corsHeaders, createErrorResponse, getCorsHeaders, handlePreflight, enfo
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
+import { getClientIp } from '../_shared/clientIp.ts';
 
 /**
  * admissao-publica — upload de documentos do portal público /contratacao.
@@ -39,7 +40,7 @@ serve(async (req: Request): Promise<Response> => {
       { auth: { persistSession: false, autoRefreshToken: false } },
     );
 
-    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown';
+    const ip = getClientIp(req);
     const rl = await checkRateLimit(supabase, { key: `admissao-publica:${ip}`, limit: 30, windowSec: 60 });
     if (!rl.allowed) return rateLimitResponse(rl, req);
 

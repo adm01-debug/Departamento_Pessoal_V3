@@ -16,6 +16,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { beneficiariosSeguroService, segurosColaboradoresService } from '@/services/tabelasComplementaresService';
 import { useEmpresas } from '@/hooks';
+import { usePiiMask } from '@/hooks/usePiiMask';
 import { toast } from 'sonner';
 import { Plus, ShieldCheck, Trash2, Users, UserPlus } from 'lucide-react';
 import { validateTablePayload } from '@/schemas/validate';
@@ -23,6 +24,7 @@ import { validateTablePayload } from '@/schemas/validate';
 // ========== Beneficiários de um Seguro ==========
 function BeneficiariosSeguroSection({ seguroId }: { seguroId: string }) {
   const qc = useQueryClient();
+  const pii = usePiiMask();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ nome: '', cpf: '', parentesco: '', percentual: '' });
 
@@ -111,7 +113,7 @@ function BeneficiariosSeguroSection({ seguroId }: { seguroId: string }) {
             {ativos.map((b) => (
               <div key={b.id} className="flex items-center gap-2 text-sm p-1.5 rounded bg-background">
                 <span className="flex-1">
-                  {b.nome} {b.cpf ? `(${b.cpf})` : ''}
+                  {b.nome} {b.cpf ? `(${pii.cpf(b.cpf)})` : ''}
                 </span>
                 <Badge variant="outline" className="text-xs">
                   {b.parentesco || '—'}

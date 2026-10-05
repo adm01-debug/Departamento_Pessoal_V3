@@ -15,6 +15,18 @@ vi.mock('@/integrations/supabase/client', () => ({
 vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
 vi.mock('@/utils/safeError', () => ({ safeErrorMessage: vi.fn((e: any, d: string) => d) }));
 
+vi.mock('@/hooks/useEmpresas', () => ({
+  useEmpresas: () => ({ empresaAtual: { id: 'emp-1' }, empresas: [], loading: false }),
+}));
+
+vi.mock('@/hooks/usePiiMask', () => ({
+  usePiiMask: () => ({ canViewPii: true, cpf: (v: string) => v, deep: (v: unknown) => v }),
+}));
+
+vi.mock('@/services/piiAccessLogService', () => ({
+  registrarAcessoPII: vi.fn(),
+}));
+
 vi.mock('@/components/ui/dialog', () => ({
   Dialog: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   DialogContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,

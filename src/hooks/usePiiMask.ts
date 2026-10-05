@@ -15,6 +15,7 @@ export function usePiiMask() {
       pis: (v: string | null | undefined) => (canViewPii ? (v ?? '') : maskPisDisplay(v)),
       bankAccount: (v: string | null | undefined) => (canViewPii ? (v ?? '') : maskBankAccount(v)),
       email: (v: string | null | undefined) => (canViewPii ? (v ?? '') : maskEmail(v)),
+      phone: (v: string | null | undefined) => (canViewPii ? (v ?? '') : maskGeneric(v)),
       // Chave PIX varia por tipo: CPF, Email, Telefone, CNPJ ou aleatória.
       pix: (tipo: string | null | undefined, chave: string | null | undefined) => {
         if (canViewPii) return chave ?? '';
