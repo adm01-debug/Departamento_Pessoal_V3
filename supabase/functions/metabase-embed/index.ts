@@ -24,6 +24,7 @@ import { log } from '../_shared/logger.ts';
 import { safeFetch } from '../_shared/safe-fetch.ts';
 import { metabaseUnavailablePayload } from './availability.ts';
 import { isConfiguredDashboard } from './dashboardAccess.ts';
+import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
 
 const METABASE_URL   = Deno.env.get('METABASE_URL')          ?? '';
 const METABASE_SECRET = Deno.env.get('METABASE_SECRET_KEY')   ?? '';
@@ -133,12 +134,18 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     // ── 2. Extrair empresa_id do JWT ───────────────────────────
-    const empresaId = (user.app_metadata?.empresa_id ?? user.user_metadata?.empresa_id) as string | undefined;
+    // APENAS app_metadata: user_metadata é editável pelo próprio usuário
+    // (updateUser) — aceitar o fallback reabre escalonamento de tenant.
+    const empresaId = user.app_metadata?.empresa_id as string | undefined;
     if (!empresaId) {
       return new Response(JSON.stringify({ error: 'Empresa nao encontrada no token' }), {
         status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+
+    // Throttle por usuário — cada request gera/renova um JWT assinado.
+    const rl = await checkRateLimit(supabase as never, { key: `metabase-embed:${user.id}`, limit: 20, windowSec: 60 });
+    if (!rl.allowed) return rateLimitResponse(rl, req);
 
     // ── 3. Parse body ──────────────────────────────────────────
     let body: { dashboardId?: unknown; params?: Record<string, string | string[]>; forceRefresh?: boolean };
@@ -212,8 +219,9 @@ serve(async (req: Request): Promise<Response> => {
     const jwtPayload = {
       resource:   { dashboard: { id: dashId } },
       params: {
-        empresa_id: empresaId,
         ...params,
+        // Pinned por último: o caller não pode sobrescrever o tenant assinado.
+        empresa_id: empresaId,
       },
       exp: Math.floor((Date.now() + TOKEN_TTL_MS) / 1000),
     };

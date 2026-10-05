@@ -128,7 +128,9 @@ serve(async (req: Request): Promise<Response> => {
       password,
     });
     const success = !authErr && !!authData?.session?.access_token;
-    const errorMessage = authErr?.message ?? 'Credenciais inválidas';
+    // Nunca repassar authErr.message ao cliente — mensagens distintas
+    // revelam se o e-mail existe (enumeração de usuários).
+    const errorMessage = 'Credenciais inválidas';
 
 
     // 6. Persist outcome before answering. A background thenable can be

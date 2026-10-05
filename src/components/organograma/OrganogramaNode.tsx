@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronRight, Mail, Building2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { usePiiMask } from '@/hooks/usePiiMask';
 import type { OrganogramaNodeData } from '@/hooks/useOrganograma';
 
 interface OrganogramaNodeProps {
@@ -26,6 +27,7 @@ function getInitials(name: string) {
 
 export function OrganogramaNode({ node, level = 0 }: OrganogramaNodeProps) {
   const [isExpanded, setIsExpanded] = useState(level < 1);
+  const pii = usePiiMask();
   const hasChildren = node.sub_departamentos?.length > 0 || node.colaboradores?.length > 0;
 
   return (
@@ -96,7 +98,8 @@ export function OrganogramaNode({ node, level = 0 }: OrganogramaNodeProps) {
                             {col.cargo || 'Membro'}
                           </p>
                         </div>
-                        {col.email && (
+                        {/* mailto embute o e-mail real no href — só para quem pode ver PII */}
+                        {col.email && pii.canViewPii && (
                           <a
                             href={`mailto:${col.email}`}
                             className="text-muted-foreground hover:text-primary transition-colors"

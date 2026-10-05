@@ -10,6 +10,21 @@ vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
 }));
 
+// Visão privilegiada — o mailto só renderiza com canViewPii; a lógica de
+// máscara é coberta em usePiiMask.test.tsx.
+vi.mock('@/hooks/usePiiMask', () => ({
+  usePiiMask: () => ({
+    canViewPii: true,
+    deep: <T,>(v: T) => v,
+    email: (v: string) => v,
+    cpf: (v: string) => v,
+    pis: (v: string) => v,
+    phone: (v: string) => v,
+    bankAccount: (v: string) => v,
+    pix: (_t: string, v: string) => v,
+  }),
+}));
+
 import { OrganogramaNode } from '../organograma/OrganogramaNode';
 import type { OrganogramaNodeData } from '@/hooks/useOrganograma';
 

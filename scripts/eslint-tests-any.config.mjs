@@ -14,11 +14,18 @@ export default tseslint.config(
   },
   {
     extends: [tseslint.configs.base],
+    // noInlineConfig: um `eslint-disable` dentro do teste não pode esconder
+    // `any` do ratchet — sem isso a contagem era burlável com um comentário.
+    linterOptions: { noInlineConfig: true },
     files: [
       'src/**/*.test.{ts,tsx}',
       'src/**/*.spec.{ts,tsx}',
       'src/**/__tests__/**/*.{ts,tsx}',
       'src/**/__mocks__/**/*.{ts,tsx}',
+      // Helpers/fixtures fora dos padrões *.test/__tests__ — antes uma zona
+      // cega onde `any` crescia invisível (src/test/, src/tests/).
+      'src/test/**/*.{ts,tsx}',
+      'src/tests/**/*.{ts,tsx}',
     ],
     rules: {
       '@typescript-eslint/no-explicit-any': 'warn',

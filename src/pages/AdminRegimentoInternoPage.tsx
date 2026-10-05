@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { loggerService } from '@/services/loggerService';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { Loader2, FileText, ShieldCheck, Users, CheckCircle2, Plus, Send, Bell, UserX, Download } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { validateTablePayload } from '@/schemas/validate';
@@ -313,6 +314,11 @@ const AdminRegimentoInternoPage = () => {
               a.download = `regimento-pendentes-${todayLocalISO()}.csv`;
               a.click();
               URL.revokeObjectURL(url);
+              // Trilha LGPD — o CSV carrega nome/e-mail dos colaboradores.
+              void registrarAcessoPII('regimento_pendentes', 'export', {
+                empresaId,
+                registroCount: pendentes.length || 1,
+              });
             }}
           >
             <Download className="h-3 w-3" /> Exportar CSV

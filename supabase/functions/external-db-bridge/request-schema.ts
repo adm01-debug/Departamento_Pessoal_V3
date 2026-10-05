@@ -44,6 +44,10 @@ export const BodySchema = z.object({
   data: z.union([z.record(z.unknown()), z.array(z.record(z.unknown()))]).optional(),
   params: z.record(z.unknown()).optional(),
   userId: z.string().max(64).optional(),
+  // Correlação distribuída — era rejeitada pelo .strict() e o trace_id
+  // nunca chegava à telemetria.
+  trace_id: z.string().max(64).optional(),
+  traceId: z.string().max(64).optional(),
 }).strict();
 
 /** Maps a validated bridge field to the supabase-js upsert options object. */

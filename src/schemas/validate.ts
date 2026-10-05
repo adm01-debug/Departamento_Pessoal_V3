@@ -24,12 +24,58 @@ function toPartials(schema: z.ZodType): z.ZodType {
   return (base as z.ZodObject<z.ZodRawShape>).partial();
 }
 
+function shapeOf(schema: z.ZodType): z.ZodRawShape | undefined {
+  const s = schema as {
+    def?: { shape?: z.ZodRawShape | (() => z.ZodRawShape) };
+    _def?: { shape?: z.ZodRawShape | (() => z.ZodRawShape) };
+  };
+  const def = s.def ?? s._def;
+  return typeof def?.shape === 'function' ? def.shape() : def?.shape;
+}
+
+/**
+ * Campos top-level que rejeitam `undefined` (obrigatórios do schema).
+ * Quando o payload cobre TODOS eles (típico de create/insert), o schema
+ * completo — incluindo .superRefine/.check — pode rodar; updates parciais
+ * seguem pelo caminho .partial() para não exigir campos ausentes.
+ */
+function requiredKeys(raw: z.ZodRawShape): string[] {
+  const req: string[] = [];
+  for (const [k, field] of Object.entries(raw)) {
+    try {
+      if (!(field as z.ZodType).safeParse(undefined).success) req.push(k);
+    } catch {
+      /* campo sem safeParse — ignora */
+    }
+  }
+  return req;
+}
+
 export function validateInput(schema: z.ZodType, payload: object, contexto: string): void {
   // {} passa por qualquer .partial() sem campo obrigatório — um update/insert
   // vazio nunca escreve nada útil e esconde bug no caller.
   if (Object.keys(payload).length === 0) {
     throw new Error(`${contexto}: payload vazio — nenhum campo informado`);
   }
+
+  // Payload completo (todas as chaves obrigatórias presentes): roda o schema
+  // INTEIRO — refinamentos cross-field (ex.: data_inicio < data_fim no
+  // feriasSchema) só existem no schema original; o .partial() os descarta.
+  const raw = shapeOf(schema);
+  if (raw) {
+    const payloadKeys = new Set(Object.keys(payload));
+    const complete = requiredKeys(raw).every((k) => payloadKeys.has(k));
+    if (complete) {
+      const full = schema.safeParse(payload);
+      if (!full.success) {
+        const issue = full.error.issues[0];
+        const campo = issue?.path.join('.') || 'payload';
+        throw new Error(`${contexto}: campo "${campo}" inválido — ${issue?.message ?? 'valor fora do domínio'}`);
+      }
+      return;
+    }
+  }
+
   const result = toPartials(schema).safeParse(payload);
   if (!result.success) {
     const issue = result.error.issues[0];

@@ -180,7 +180,10 @@ export const RPC_ALLOWLIST = new Set<string>([
 // -------------------- Allowlist de operadores --------------------
 export const FILTER_OPS = new Set([
   "eq", "neq", "gt", "gte", "lt", "lte",
-  "like", "ilike", "in", "is", "or", "not", "contains", "match",
+  "like", "ilike", "in", "is", "or", "not", "contains",
+  // "match" removido: era aceito aqui mas nunca aplicado no query builder —
+  // um filtro 'match' era silenciosamente ignorado, retornando conjunto mais
+  // amplo que o solicitado. Rejeitar é fail-closed.
 ]);
 export const NOT_EXTRA_OPS = new Set(["eq", "neq", "gt", "gte", "lt", "lte", "in", "is"]);
 

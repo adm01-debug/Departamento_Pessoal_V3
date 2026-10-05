@@ -15,6 +15,7 @@ import { StatusBadge } from '@/components/ui/status-badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { formatDate } from '@/utils/format';
 import { loggerService } from '@/services/loggerService';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 export default function ContabilidadePage() {
   const { empresaAtual } = useEmpresas();
   /** Espelha `contabil_lancamentos` (campos opcionais = nem sempre projetados) */
@@ -86,8 +87,9 @@ export default function ContabilidadePage() {
   const folhas = contabilQuery.data?.folhas ?? EMPTY_FLS;
   const loading = contabilQuery.isPending && !!empresaId;
 
-  const loadData = () => { void contabilQuery.refetch(); };
-
+  const loadData = () => {
+    void contabilQuery.refetch();
+  };
 
   const gerarLancamentos = async () => {
     if (!selectedFolha) {
@@ -116,13 +118,19 @@ export default function ContabilidadePage() {
       a.href = url;
       a.download = `SPED_CONTABIL_${new Date().getFullYear()}.txt`;
       a.click();
+      // Trilha LGPD — o SPED carrega lançamentos de folha com dados de colaboradores.
+      void registrarAcessoPII('lancamentos_contabeis', 'export', {
+        empresaId: empresaAtual!.id,
+        registroId: selectedFolha || null,
+      });
       toast.success('Arquivo SPED exportado com sucesso');
     } catch (error) {
       toast.error('Erro ao exportar SPED');
     }
   };
 
-  const formatCurrency = (val: number) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+  const formatCurrency = (val: number) =>
+    new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
 
   return (
     <>
@@ -145,22 +153,28 @@ export default function ContabilidadePage() {
                   <SelectValue placeholder="Selecionar Folha" />
                 </SelectTrigger>
                 <SelectContent>
-                  {folhas.map(f => (
-                    <SelectItem key={f.id} value={f.id}>{f.competencia}</SelectItem>
+                  {folhas.map((f) => (
+                    <SelectItem key={f.id} value={f.id}>
+                      {f.competencia}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              <Button 
-                onClick={gerarLancamentos} 
-                disabled={processing || !selectedFolha} 
+              <Button
+                onClick={gerarLancamentos}
+                disabled={processing || !selectedFolha}
                 className="rounded-xl gap-2 bg-gradient-to-r from-primary to-primary-glow font-body shadow-lg hover:opacity-90"
               >
-                {processing ? <Loader2 className="h-4 w-4 animate-spin text-primary-foreground" /> : <Zap className="h-4 w-4" />} 
+                {processing ? (
+                  <Loader2 className="h-4 w-4 animate-spin text-primary-foreground" />
+                ) : (
+                  <Zap className="h-4 w-4" />
+                )}
                 Gerar Lançamentos
               </Button>
-              <Button 
-                variant="outline" 
-                onClick={exportarSPED} 
+              <Button
+                variant="outline"
+                onClick={exportarSPED}
                 className="rounded-xl gap-2 font-body border-border/40 hover:bg-muted/30"
               >
                 <Download className="h-4 w-4" /> Exportar SPED
@@ -209,7 +223,7 @@ export default function ContabilidadePage() {
               <TabsTrigger value="lancamentos">Lançamentos</TabsTrigger>
               <TabsTrigger value="plano">Plano de Contas</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="lancamentos">
               <Card className="border border-border/30 rounded-2xl overflow-hidden shadow-elevated">
                 <CardHeader className="flex flex-row items-center justify-between">
@@ -236,29 +250,49 @@ export default function ContabilidadePage() {
                     </TableHeader>
                     <TableBody>
                       {loading ? (
-                        <TableRow><TableCell colSpan={5} className="text-center py-12"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" /></TableCell></TableRow>
-                      ) : lancamentos.length === 0 ? (
-                        <TableRow><TableCell colSpan={5} className="text-center py-12 text-muted-foreground">Nenhum lançamento contábil encontrado</TableCell></TableRow>
-                      ) : lancamentos.map(l => (
-                        <TableRow key={l.id} className="hover:bg-accent/30 transition-colors">
-                          <TableCell className="font-body">{formatDate(l.data_lancamento)}</TableCell>
-                          <TableCell className="font-body max-w-[200px] truncate" title={l.descricao}>{l.descricao}</TableCell>
-                          <TableCell>
-                            <div className="flex flex-col gap-1">
-                              <div className="flex items-center gap-1.5 text-xs">
-                                <span className="text-success font-bold uppercase w-4">D:</span>
-                                <span className="text-muted-foreground">{l.conta_debito?.codigo} - {l.conta_debito?.nome}</span>
-                              </div>
-                              <div className="flex items-center gap-1.5 text-xs">
-                                <span className="text-destructive font-bold uppercase w-4">C:</span>
-                                <span className="text-muted-foreground">{l.conta_credito?.codigo} - {l.conta_credito?.nome}</span>
-                              </div>
-                            </div>
+                        <TableRow>
+                          <TableCell colSpan={5} className="text-center py-12">
+                            <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
                           </TableCell>
-                          <TableCell className="text-right font-display font-bold">{formatCurrency(l.valor ?? 0)}</TableCell>
-                          <TableCell><StatusBadge status={l.status ?? 'desconhecido'} variant="success" /></TableCell>
                         </TableRow>
-                      ))}
+                      ) : lancamentos.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={5} className="text-center py-12 text-muted-foreground">
+                            Nenhum lançamento contábil encontrado
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        lancamentos.map((l) => (
+                          <TableRow key={l.id} className="hover:bg-accent/30 transition-colors">
+                            <TableCell className="font-body">{formatDate(l.data_lancamento)}</TableCell>
+                            <TableCell className="font-body max-w-[200px] truncate" title={l.descricao}>
+                              {l.descricao}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-1.5 text-xs">
+                                  <span className="text-success font-bold uppercase w-4">D:</span>
+                                  <span className="text-muted-foreground">
+                                    {l.conta_debito?.codigo} - {l.conta_debito?.nome}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-1.5 text-xs">
+                                  <span className="text-destructive font-bold uppercase w-4">C:</span>
+                                  <span className="text-muted-foreground">
+                                    {l.conta_credito?.codigo} - {l.conta_credito?.nome}
+                                  </span>
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-right font-display font-bold">
+                              {formatCurrency(l.valor ?? 0)}
+                            </TableCell>
+                            <TableCell>
+                              <StatusBadge status={l.status ?? 'desconhecido'} variant="success" />
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
                     </TableBody>
                   </Table>
                 </CardContent>
@@ -284,7 +318,7 @@ export default function ContabilidadePage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {planoContas.map(p => (
+                      {planoContas.map((p) => (
                         <TableRow key={p.id}>
                           <TableCell className="font-mono font-bold">{p.codigo}</TableCell>
                           <TableCell className="font-body">{p.nome}</TableCell>

@@ -32,6 +32,7 @@ import { cn } from '@/lib/utils';
 import { useESocial } from '@/hooks/useESocial';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { getEventoDescricao, validarAnteDeEnviar } from '@/services/esocialService';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import type { ESocialEvento } from '@/services/esocialService';
 import { useState, useMemo } from 'react';
 import { Badge } from '@/components/ui/badge';
@@ -147,6 +148,11 @@ export default function ESocialPage() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    // Trilha LGPD — o XML do eSocial carrega CPF/PIS/dados do trabalhador.
+    void registrarAcessoPII('esocial_eventos', 'export', {
+      empresaId: empresaAtual?.id,
+      registroId: evento.id,
+    });
     toast.success('XML exportado com sucesso');
   };
 

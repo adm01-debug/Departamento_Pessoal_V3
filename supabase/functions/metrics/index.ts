@@ -19,6 +19,8 @@ import {
   calculateMetricsHttpStatus,
   calculateOverallHealthStatus,
 } from './metricsMath.ts';
+import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
+import { getClientIp } from '../_shared/clientIp.ts';
 
 const METRICS_PREFIX = 'departamento_pessoal_';
 const METRICS_VERSION = '1.0.0';
@@ -227,6 +229,20 @@ serve(async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Endpoint público — throttle por IP para impedir abuso das consultas
+    // service-role (cada request dispara várias queries agregadas no banco).
+    const rlAdmin = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      { auth: { persistSession: false, autoRefreshToken: false } },
+    );
+    const rl = await checkRateLimit(rlAdmin as never, {
+      key: `metrics:${getClientIp(req)}`,
+      limit: 60,
+      windowSec: 60,
+    });
+    if (!rl.allowed) return rateLimitResponse(rl, req);
+
     const [health, bridge] = await Promise.all([
       collectMetrics(),
       collectBridgeMetrics(),

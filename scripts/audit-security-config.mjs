@@ -12,11 +12,14 @@
  *   4. Segredo hardcoded no padrão do migrate-helper (A-015): string hex
  *      longa atribuída a constante com nome de chave/segredo.
  *   5. Service Worker cacheando rota de PII (regressão do E-037).
+ *   6. Bypass do bridge: PostgREST cru via `client.base` fora da allowlist —
+ *      import relativo, namespace (`import * as`) ou arquivo novo que use o
+ *      cliente sem validação do gateway.
  *
  * Uso: node scripts/audit-security-config.mjs   (exit 1 = reprovado)
  */
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, relative, sep } from 'node:path';
 
 const ROOT = process.cwd();
 const failures = [];
@@ -97,6 +100,59 @@ if (existsSync(swPath)) {
 } else {
   console.log('  ⏭️  sw-custom.js ausente — nada a verificar');
 }
+
+// ── 6. Bypass do bridge via client.base ────────────────────────────────────
+// client.base é o PostgREST CRU — sem verifyCsrf, denylist de tabelas nem
+// allowlist de RPC do external-db-bridge. Só os casos abaixo são legítimos
+// (auth, logs de auditoria que passam por RPC comentada, IP blocking).
+// Qualquer NOVO consumidor precisa de revisão de segurança antes de entrar aqui.
+section('6. client.base (bypass do bridge)');
+const CLIENT_BASE_ALLOWLIST = new Set([
+  'src/integrations/supabase/client.ts',        // o próprio wrapper principal
+  'src/pages/AdminSecurityPage.tsx',            // auditoria/segurança (IP blocking, logs)
+  'src/hooks/useDataAccessLog.ts',              // trilha LGPD — RPC commentada
+  'src/services/securityService.ts',            // IP blocking / sessões
+  'src/services/piiAccessLogService.ts',        // record_pii_access via RPC
+  'src/components/settings/IPBlockingTab.tsx',  // bloqueio de IPs
+]);
+function* walkTs(dir) {
+  for (const e of readdirSync(dir, { withFileTypes: true })) {
+    const p = join(dir, e.name);
+    if (e.isDirectory()) {
+      if (e.name === 'node_modules' || e.name.startsWith('.')) continue;
+      yield* walkTs(p);
+    } else if (/\.(ts|tsx)$/.test(e.name) && !/\.(test|spec|d)\./.test(e.name)) {
+      yield p;
+    }
+  }
+}
+// Casa import de client.base por qualquer forma: alias '@/...', caminho
+// relativo ('../client.base', './client.base') e namespace ('import * as').
+const baseImportRe = /import\s+(?:\*|[^'"]+?)\s+from\s+['"][^'"]*client\.base['"]/;
+let baseConsumers = 0;
+for (const file of walkTs(join(ROOT, 'src'))) {
+  const rel = relative(ROOT, file).split(sep).join('/');
+  const src = readFileSync(file, 'utf8');
+  if (!baseImportRe.test(src)) continue;
+  baseConsumers++;
+  if (!CLIENT_BASE_ALLOWLIST.has(rel)) {
+    fail(`${rel} importa client.base (PostgREST cru, sem bridge) — fora da allowlist do E-077`);
+  }
+}
+// Também flaga acesso direto a supabaseBase exportado do client.ts principal,
+// se aparecer .from() nele fora da allowlist (indicativo de PostgREST cru).
+const baseAliasRe = /\.from\(\s*['"]/g;
+for (const file of walkTs(join(ROOT, 'src'))) {
+  const rel = relative(ROOT, file).split(sep).join('/');
+  if (CLIENT_BASE_ALLOWLIST.has(rel)) continue;
+  const src = readFileSync(file, 'utf8');
+  if (!/import\s*\{[^}]*supabaseBase[^}]*\}\s*from\s*['"][^'"]*supabase\/client['"]/.test(src)) continue;
+  // importou supabaseBase do client principal — verifica se usa .from()
+  if (baseAliasRe.test(src)) {
+    fail(`${rel} usa supabaseBase.from() — PostgREST cru que bypassa a bridge`);
+  }
+}
+sectionClean(`client.base restrito a ${baseConsumers} arquivo(s) da allowlist`);
 
 // ── Resultado ──────────────────────────────────────────────────────────────
 if (failures.length) {

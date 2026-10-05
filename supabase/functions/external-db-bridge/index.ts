@@ -9,6 +9,7 @@ import { createClient, type SupabaseClient } from "https://esm.sh/@supabase/supa
 import { verifyCsrf } from "../_shared/csrf.ts";
 import { logRpcError } from "../_shared/rpc-error-logging.ts";
 import { corsHeaders, enforceOrigin, handlePreflight } from '../_shared/contract.ts';
+import { getClientIp } from '../_shared/clientIp.ts';
 import {
   isSafeTableName, isSafeColumnsExpr, isSafeOrderColumn, isSafeOrExpression, isSafeFilterColumn,
   TABLE_DENYLIST, TENANT_SCOPED_TABLES, ADMIN_ONLY_WRITE_TABLES, RPC_ALLOWLIST, FILTER_OPS, NOT_EXTRA_OPS,
@@ -427,7 +428,9 @@ Deno.serve(async (req) => {
     // Hierarquia: user_id (autenticado) > IP (anon).
     // IP entra como segundo fator — evita que um usuário autenticado abuse
     // da cota se compartilhar IP (NAT, VPN compartilhada, escritório).
-    const ip = req.headers.get('cf-connecting-ip') || req.headers.get('x-real-ip') || 'anon';
+    // cf-connecting-ip/x-real-ip são headers que o cliente pode injetar
+    // livremente — usar o IP observado pelo gateway (rightmost XFF).
+    const ip = getClientIp(req);
     const rlIdentity = user ? `${user.id}|${ip}` : ip;
     const rlKey = isWrite ? `bridge-write:${rlIdentity}` : `bridge-read:${rlIdentity}`;
     const rlLimit = isWrite ? 30 : (user ? 100 : 20);

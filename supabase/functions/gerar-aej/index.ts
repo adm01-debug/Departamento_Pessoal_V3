@@ -5,6 +5,7 @@ import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { parseJsonBody } from '../_shared/contract.ts';
 import { verifyCsrf } from '../_shared/csrf.ts';
 import { captureException } from '../_shared/sentry.ts';
+import { getClientIp } from '../_shared/clientIp.ts';
 
 const TZ = "America/Sao_Paulo";
 const CRLF = "\r\n";
@@ -79,6 +80,18 @@ Deno.serve(async (req) => {
     const rl = await checkRateLimit(rlAdmin, { key: `gerar-aej:${userId}`, limit: 5, windowSec: 60 });
     if (!rl.allowed) return rateLimitResponse(rl, req);
 
+    // AEJ contém PIS/jornada de TODOS os colaboradores da empresa — qualquer
+    // membro do tenant podia baixar (mass PII export sem gate nem trilha).
+    // Restringe a admin/rh e registra o acesso na trilha LGPD.
+    const { data: roleRows } = await rlAdmin
+      .from("user_roles").select("role").eq("user_id", userId);
+    const roles = (roleRows ?? []).map((r: { role: string }) => r.role);
+    if (!roles.includes("admin") && !roles.includes("rh")) {
+      return new Response(JSON.stringify({ error: "forbidden — AEJ restrito a admin/rh" }), {
+        status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const { body: _pb, errorResponse: _pe } = await parseJsonBody(req);
     if (_pe) return _pe;
     const body = (_pb ?? {}) as Record<string, unknown>;
@@ -106,6 +119,19 @@ Deno.serve(async (req) => {
         status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    // Trilha LGPD — export massivo de PIS/jornada deve ficar registrado.
+    // Best-effort: falha no log não bloqueia a geração.
+    const { error: piiLogErr } = await admin.from("pii_access_logs").insert({
+      user_id: userId,
+      empresa_id,
+      tabela: "aej_jornada",
+      acao: "export",
+      registro_count: 1,
+      ip: getClientIp(req),
+      user_agent: req.headers.get("user-agent"),
+    });
+    if (piiLogErr) console.warn("[gerar-aej] pii_access_logs insert falhou:", piiLogErr.message);
 
     // Empresa
     const { data: empresa, error: eEmp } = await admin

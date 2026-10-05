@@ -52,7 +52,7 @@ export const holeriteSchema = z.object({
 
 export const calcularFolhaSchema = z.object({
   empresa_id: uuidPg('ID da empresa inválido'),
-  competencia: z.string().regex(/^\d{4}-\d{2}$/, 'Formato de competência inválido (AAAA-MM)'),
+  competencia: z.string().regex(/^\d{4}-(?:0[1-9]|1[0-2])$/, 'Formato de competência inválido (AAAA-MM)'),
 });
 
 export const notificacaoSchema = z.discriminatedUnion('action', [

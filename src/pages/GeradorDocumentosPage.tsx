@@ -12,6 +12,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
 import { useEmpresa } from '@/contexts';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { FileText, Download, Eye, FileSignature, ScrollText, Shield, UserCheck, Loader2, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -276,6 +277,11 @@ export default function GeradorDocumentosPage() {
 
       if (action === 'download') {
         pdf.save(`${templateName.replace(/\s/g, '_')}_${colaborador?.nome_completo?.replace(/\s/g, '_') || 'doc'}.pdf`);
+        // Trilha LGPD — documento gerado carrega dados do colaborador.
+        void registrarAcessoPII('documentos_gerados', 'export', {
+          empresaId: empresaAtual?.id,
+          registroId: selectedColaborador,
+        });
         toast.success('Documento gerado com sucesso!');
       } else {
         const blob = pdf.output('blob');

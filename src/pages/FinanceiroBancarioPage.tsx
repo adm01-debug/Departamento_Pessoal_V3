@@ -18,6 +18,7 @@ import {
 import { useState, useEffect, useCallback } from 'react';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { cnabService, CNABConfig, folhaService } from '@/services';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { loggerService } from '@/services/loggerService';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
@@ -158,6 +159,12 @@ export default function FinanceiroBancarioPage() {
       a.download = `REMESSA_${config.banco_codigo}_${todayLocalISO()}.rem`;
       a.click();
 
+      // Trilha LGPD — a remessa carrega conta bancária de toda a folha.
+      void registrarAcessoPII('folha_pagamentos', 'export', {
+        empresaId: empresaAtual!.id,
+        registroId: selectedFolha,
+      });
+
       toast.success('Remessa CNAB gerada com sucesso');
       loadData();
     } catch (error) {
@@ -184,6 +191,12 @@ export default function FinanceiroBancarioPage() {
       a.href = url;
       a.download = `PIX_LOTE_${todayLocalISO()}.csv`;
       a.click();
+
+      // Trilha LGPD — o lote carrega chaves PIX de toda a folha.
+      void registrarAcessoPII('folha_pagamentos', 'export', {
+        empresaId: empresaAtual!.id,
+        registroId: selectedFolha,
+      });
 
       toast.success('Lote PIX gerado com sucesso');
       loadData();

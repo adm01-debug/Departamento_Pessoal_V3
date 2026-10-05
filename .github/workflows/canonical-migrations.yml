@@ -112,7 +112,14 @@ jobs:
           # statements and fail with "policy already exists". Each dispatch
           # of this workflow targets only the NEW migrations for that batch.
           for migration in \
-            20260924310000_p0_batidas_ponto_role_gate.sql
+            20261001140000_p1_rls_status_hardening.sql \
+            20261002102900_p0_rls_tenant_or_admin_helper.sql \
+            20261002103000_p0_fix_audit_critical_gaps.sql \
+            20261003100000_p0_tighten_audit_bancario_insert.sql \
+            20261003110000_p1_drift_cols_workflows_sla_cnab.sql \
+            20261005120000_get_empresa_admin_ids_privileged_callers.sql \
+            20261005140000_admin_list_profiles_rpc.sql \
+            20261005160000_wave7_audit_fixes.sql
           do
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
           done

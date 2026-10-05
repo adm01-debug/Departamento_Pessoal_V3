@@ -5,22 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
-import {
-  contratoTemplateService,
-  type ContratoGerado,
-} from '@/services/contratoTemplateService';
+import { contratoTemplateService, type ContratoGerado } from '@/services/contratoTemplateService';
 import { toast } from 'sonner';
 import {
   Copy,
@@ -37,6 +27,7 @@ import {
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { loggerService } from '@/services/loggerService';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 
 type EventoContrato = {
   id: string;
@@ -93,7 +84,11 @@ export default function ContratosGeradosPage() {
       const data = await contratoTemplateService.listarEventos(c.id);
       setEventos(data);
     } catch (e) {
-      loggerService.error('Erro ao carregar eventos de contrato', { contratoId: c.id }, e instanceof Error ? e : new Error(String(e)));
+      loggerService.error(
+        'Erro ao carregar eventos de contrato',
+        { contratoId: c.id },
+        e instanceof Error ? e : new Error(String(e))
+      );
       toast.error('Falha ao carregar histórico');
     } finally {
       setLoadingEventos(false);
@@ -108,9 +103,10 @@ export default function ContratosGeradosPage() {
     enabled: !!empresaId,
     queryFn: async () => {
       const gerados = await contratoTemplateService.listarGerados(empresaId!);
-      const ids = Array.from(
-        new Set(gerados.map((g) => g.colaborador_id).filter((v): v is string => !!v)),
-      ).slice(0, 500);
+      const ids = Array.from(new Set(gerados.map((g) => g.colaborador_id).filter((v): v is string => !!v))).slice(
+        0,
+        500
+      );
       const map: Record<string, ColaboradorLite> = {};
       if (ids.length) {
         const { data, error } = await supabase
@@ -141,12 +137,13 @@ export default function ContratosGeradosPage() {
   const colaboradores = contratosQuery.data?.colaboradores ?? EMPTY_COLS;
   const loading = contratosQuery.isPending && !!empresaId;
 
-  const carregar = () => { void contratosQuery.refetch(); };
+  const carregar = () => {
+    void contratosQuery.refetch();
+  };
 
   // Instante do último carregamento: usado como "agora" nos filtros por período,
   // mantendo o render puro (sem Date.now() durante a renderização).
   const agora = contratosQuery.dataUpdatedAt || contratosQuery.errorUpdatedAt || 0;
-
 
   const filtrados = useMemo(() => {
     const term = busca.trim().toLowerCase();
@@ -168,10 +165,7 @@ export default function ContratosGeradosPage() {
   // Página reinicia sempre que os filtros mudam (estado derivado, sem efeito).
   const [pagina, setPagina] = useSyncedState(`${status}|${busca}|${periodo}`, () => 1);
   const totalPaginas = Math.max(1, Math.ceil(filtrados.length / PAGE_SIZE));
-  const paginados = useMemo(
-    () => filtrados.slice((pagina - 1) * PAGE_SIZE, pagina * PAGE_SIZE),
-    [filtrados, pagina],
-  );
+  const paginados = useMemo(() => filtrados.slice((pagina - 1) * PAGE_SIZE, pagina * PAGE_SIZE), [filtrados, pagina]);
 
   const kpis = useMemo(() => {
     const total = contratos.length;
@@ -203,7 +197,11 @@ export default function ContratosGeradosPage() {
       toast.success('Novo link gerado e copiado (válido por 7 dias)');
       void carregar();
     } catch (e) {
-      loggerService.error('Erro ao reenviar link de assinatura', { contratoId }, e instanceof Error ? e : new Error(String(e)));
+      loggerService.error(
+        'Erro ao reenviar link de assinatura',
+        { contratoId },
+        e instanceof Error ? e : new Error(String(e))
+      );
       toast.error('Falha ao gerar link de assinatura');
     }
   };
@@ -213,21 +211,12 @@ export default function ContratosGeradosPage() {
       toast.error('Nenhum contrato para exportar');
       return;
     }
-    const headers = [
-      'Colaborador',
-      'CPF',
-      'Status',
-      'Gerado em',
-      'Assinado em',
-      'Hash SHA-256',
-      'Link Público',
-    ];
+    const headers = ['Colaborador', 'CPF', 'Status', 'Gerado em', 'Assinado em', 'Hash SHA-256', 'Link Público'];
     const escape = (v: string) => `"${v.replace(/"/g, '""')}"`;
     const linhas = filtrados.map((c) => {
       const col = c.colaborador_id ? colaboradores[c.colaborador_id] : undefined;
-      const linkPublico = c.sha256 && c.status === 'assinado'
-        ? `${window.location.origin}/verificar-contrato/${c.sha256}`
-        : '';
+      const linkPublico =
+        c.sha256 && c.status === 'assinado' ? `${window.location.origin}/verificar-contrato/${c.sha256}` : '';
       return [
         col?.nome_completo ?? '',
         col?.cpf ?? '',
@@ -236,7 +225,9 @@ export default function ContratosGeradosPage() {
         c.assinado_em ? format(new Date(c.assinado_em), 'dd/MM/yyyy HH:mm', { locale: ptBR }) : '',
         c.sha256 ?? '',
         linkPublico,
-      ].map(escape).join(';');
+      ]
+        .map(escape)
+        .join(';');
     });
     const csv = '\uFEFF' + [headers.map(escape).join(';'), ...linhas].join('\r\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -246,6 +237,11 @@ export default function ContratosGeradosPage() {
     a.download = `contratos-${format(new Date(), 'yyyy-MM-dd-HHmm')}.csv`;
     a.click();
     URL.revokeObjectURL(url);
+    // Trilha LGPD — o CSV carrega nomes e dados de contrato dos colaboradores.
+    void registrarAcessoPII('contratos', 'export', {
+      empresaId,
+      registroCount: filtrados.length || 1,
+    });
     toast.success(`${filtrados.length} contrato(s) exportado(s)`);
   };
 
@@ -310,27 +306,15 @@ export default function ContratosGeradosPage() {
               />
             </div>
             <div className="flex gap-1 flex-wrap">
-              {(['todos', 'rascunho', 'gerado', 'enviado', 'assinado', 'cancelado'] as const).map(
-                (s) => (
-                  <Button
-                    key={s}
-                    size="sm"
-                    variant={status === s ? 'default' : 'outline'}
-                    onClick={() => setStatus(s)}
-                  >
-                    {s === 'todos' ? 'Todos' : STATUS_META[s].label}
-                  </Button>
-                ),
-              )}
+              {(['todos', 'rascunho', 'gerado', 'enviado', 'assinado', 'cancelado'] as const).map((s) => (
+                <Button key={s} size="sm" variant={status === s ? 'default' : 'outline'} onClick={() => setStatus(s)}>
+                  {s === 'todos' ? 'Todos' : STATUS_META[s].label}
+                </Button>
+              ))}
             </div>
             <div className="flex gap-1 flex-wrap ml-auto">
               {(['todos', '30', '90', '365'] as const).map((p) => (
-                <Button
-                  key={p}
-                  size="sm"
-                  variant={periodo === p ? 'default' : 'outline'}
-                  onClick={() => setPeriodo(p)}
-                >
+                <Button key={p} size="sm" variant={periodo === p ? 'default' : 'outline'} onClick={() => setPeriodo(p)}>
                   {p === 'todos' ? 'Todo período' : `${p} dias`}
                 </Button>
               ))}
@@ -368,22 +352,16 @@ export default function ContratosGeradosPage() {
                       <TableRow key={c.id}>
                         <TableCell>
                           <div className="font-medium">{col?.nome_completo ?? '—'}</div>
-                          <div className="text-[11px] text-muted-foreground font-mono">
-                            {col?.cpf ?? ''}
-                          </div>
+                          <div className="text-[11px] text-muted-foreground font-mono">{col?.cpf ?? ''}</div>
                         </TableCell>
                         <TableCell>
-                          <Badge variant={STATUS_META[c.status].variant}>
-                            {STATUS_META[c.status].label}
-                          </Badge>
+                          <Badge variant={STATUS_META[c.status].variant}>{STATUS_META[c.status].label}</Badge>
                         </TableCell>
                         <TableCell className="text-xs">
-                          {format(new Date(c.created_at), "dd/MM/yy HH:mm", { locale: ptBR })}
+                          {format(new Date(c.created_at), 'dd/MM/yy HH:mm', { locale: ptBR })}
                         </TableCell>
                         <TableCell className="text-xs">
-                          {c.assinado_em
-                            ? format(new Date(c.assinado_em), "dd/MM/yy HH:mm", { locale: ptBR })
-                            : '—'}
+                          {c.assinado_em ? format(new Date(c.assinado_em), 'dd/MM/yy HH:mm', { locale: ptBR }) : '—'}
                         </TableCell>
                         <TableCell className="font-mono text-[10px]">
                           {c.sha256 ? `${c.sha256.substring(0, 12)}…` : '—'}
@@ -427,17 +405,8 @@ export default function ContratosGeradosPage() {
                               >
                                 <Copy className="h-4 w-4" />
                               </Button>
-                              <Button
-                                size="icon"
-                                variant="ghost"
-                                title="Abrir portal público"
-                                asChild
-                              >
-                                <a
-                                  href={`/verificar-contrato/${c.sha256}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                >
+                              <Button size="icon" variant="ghost" title="Abrir portal público" asChild>
+                                <a href={`/verificar-contrato/${c.sha256}`} target="_blank" rel="noopener noreferrer">
                                   <ExternalLink className="h-4 w-4" />
                                 </a>
                               </Button>
@@ -454,8 +423,8 @@ export default function ContratosGeradosPage() {
           {!loading && filtrados.length > PAGE_SIZE && (
             <div className="flex items-center justify-between mt-4 text-xs">
               <span className="text-muted-foreground">
-                Mostrando {(pagina - 1) * PAGE_SIZE + 1}–
-                {Math.min(pagina * PAGE_SIZE, filtrados.length)} de {filtrados.length}
+                Mostrando {(pagina - 1) * PAGE_SIZE + 1}–{Math.min(pagina * PAGE_SIZE, filtrados.length)} de{' '}
+                {filtrados.length}
               </span>
               <div className="flex gap-1">
                 <Button
@@ -484,8 +453,8 @@ export default function ContratosGeradosPage() {
       </Card>
 
       <p className="text-xs text-muted-foreground flex items-center gap-1 justify-center">
-        <ShieldCheck className="h-3 w-3" /> Contratos assinados possuem verificação pública por hash
-        SHA-256 (MP 2.200-2/2001)
+        <ShieldCheck className="h-3 w-3" /> Contratos assinados possuem verificação pública por hash SHA-256 (MP
+        2.200-2/2001)
       </p>
 
       <Sheet open={!!drawerContrato} onOpenChange={(o) => !o && setDrawerContrato(null)}>
@@ -494,9 +463,7 @@ export default function ContratosGeradosPage() {
             <SheetTitle className="flex items-center gap-2">
               <History className="h-5 w-5" /> Histórico de Eventos
             </SheetTitle>
-            <SheetDescription>
-              Trilha de auditoria completa (últimos 200 eventos).
-            </SheetDescription>
+            <SheetDescription>Trilha de auditoria completa (últimos 200 eventos).</SheetDescription>
           </SheetHeader>
           {drawerContrato && (
             <div className="mt-4 space-y-4">
@@ -505,7 +472,7 @@ export default function ContratosGeradosPage() {
                   <span className="text-muted-foreground">Colaborador: </span>
                   <span className="font-medium">
                     {drawerContrato.colaborador_id
-                      ? colaboradores[drawerContrato.colaborador_id]?.nome_completo ?? '—'
+                      ? (colaboradores[drawerContrato.colaborador_id]?.nome_completo ?? '—')
                       : '—'}
                   </span>
                 </div>
@@ -530,17 +497,13 @@ export default function ContratosGeradosPage() {
                   ))}
                 </div>
               ) : eventos.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-8">
-                  Nenhum evento registrado ainda.
-                </p>
+                <p className="text-sm text-muted-foreground text-center py-8">Nenhum evento registrado ainda.</p>
               ) : (
                 <ol className="relative border-l border-border pl-4 space-y-3">
                   {eventos.map((ev) => (
                     <li key={ev.id} className="relative">
                       <span className="absolute -left-[21px] top-1 h-3 w-3 rounded-full bg-primary ring-2 ring-background" />
-                      <div className="text-sm font-medium">
-                        {EVENTO_LABELS[ev.evento] ?? ev.evento}
-                      </div>
+                      <div className="text-sm font-medium">{EVENTO_LABELS[ev.evento] ?? ev.evento}</div>
                       <div className="text-[11px] text-muted-foreground">
                         {format(new Date(ev.created_at), "dd/MM/yyyy 'às' HH:mm:ss", { locale: ptBR })}
                         {ev.ip && <> · IP {ev.ip}</>}

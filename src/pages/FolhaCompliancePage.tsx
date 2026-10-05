@@ -271,7 +271,7 @@ export default function FolhaCompliancePage() {
                     <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
                       {r.holerites_count != null && <span>{r.holerites_count} holerite(s)</span>}
                       {r.itens_count != null && <span>{r.itens_count} item(ns)</span>}
-                      {r.user_email && <span>por {r.user_email}</span>}
+                      {r.user_email && <span>por {pii.email(r.user_email)}</span>}
                     </div>
 
                     {r.motivo && (
