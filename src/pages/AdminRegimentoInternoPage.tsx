@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { todayLocalISO } from '@/utils/dateLocal';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { usePiiMask } from '@/hooks/usePiiMask';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -47,6 +48,7 @@ type Pendente = {
 
 const AdminRegimentoInternoPage = () => {
   const { empresaAtual } = useEmpresas();
+  const pii = usePiiMask();
   const [showNew, setShowNew] = useState(false);
   const [novoTitulo, setNovoTitulo] = useState('');
   const [novoConteudo, setNovoConteudo] = useState('');
@@ -338,7 +340,7 @@ const AdminRegimentoInternoPage = () => {
                     <TableRow key={p.colaborador_id}>
                       <TableCell>
                         <div className="font-medium">{p.nome}</div>
-                        <div className="text-xs text-muted-foreground">{p.email ?? '—'}</div>
+                        <div className="text-xs text-muted-foreground">{p.email ? pii.email(p.email) : '—'}</div>
                       </TableCell>
                       <TableCell className="text-sm">{p.cargo ?? '—'}</TableCell>
                       <TableCell className="text-sm">{p.departamento ?? '—'}</TableCell>

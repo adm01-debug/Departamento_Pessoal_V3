@@ -16,6 +16,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
 import { getCorsHeaders, createErrorResponse, parseJsonBody } from '../_shared/contract.ts';
 import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
+import { getClientIp } from '../_shared/clientIp.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { parseLockoutState } from './lockoutContract.ts';
 
@@ -34,16 +35,6 @@ const ANON_KEY =
 const IP_RATE_LIMIT = 30;       // requests per window
 const IP_WINDOW_SEC = 5 * 60;   // 5 minutes
 
-/** Extract the best-effort client IP from headers (Cloudflare, Netlify, AWS). */
-function getClientIP(req: Request): string {
-  return (
-    req.headers.get('cf-connecting-ip') ??
-    req.headers.get('x-real-ip') ??
-    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-    'unknown'
-  );
-}
-
 serve(async (req: Request): Promise<Response> => {
   // CORS por requisição: a spec exige eco exato do Origin (um valor fixo
   // quebraria o preview e qualquer domínio permitido que não fosse o primeiro).
@@ -55,7 +46,7 @@ serve(async (req: Request): Promise<Response> => {
     return createErrorResponse('Método não permitido', 405, 'METHOD_NOT_ALLOWED', undefined, req);
   }
 
-  const ip = getClientIP(req);
+  const ip = getClientIp(req);
 
   // Admin client (service-role) for lockout checks and attempt recording.
   const admin = createClient(SUPABASE_URL, SERVICE_KEY, {

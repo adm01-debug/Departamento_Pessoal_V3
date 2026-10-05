@@ -13,6 +13,8 @@ import { PageLayout } from '@/components/layout';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { usePiiMask } from '@/hooks/usePiiMask';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -89,6 +91,7 @@ function toCSV(rows: ComplianceRow[]): string {
 
 export default function FolhaCompliancePage() {
   const { empresaAtualId } = useEmpresas();
+  const pii = usePiiMask();
   const [competencia, setCompetencia] = useState<string>('all');
   const [acao, setAcao] = useState<string>('all');
   const [q, setQ] = useState('');
@@ -132,7 +135,12 @@ export default function FolhaCompliancePage() {
       toast.warning('Nenhum evento para exportar');
       return;
     }
-    const blob = new Blob([toCSV(filtered)], { type: 'text/csv;charset=utf-8;' });
+    void registrarAcessoPII('folha_auditoria', 'export', {
+      empresaId: empresaAtualId,
+      registroCount: filtered.length,
+    });
+    const masked = filtered.map((r) => ({ ...r, user_email: r.user_email ? pii.email(r.user_email) : r.user_email }));
+    const blob = new Blob([toCSV(masked)], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;

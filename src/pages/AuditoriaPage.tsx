@@ -11,6 +11,8 @@ import { auditoriaService } from '@/services/auditoriaService';
 import { Shield, Eye, Clock, User, Database, FileSpreadsheet } from 'lucide-react';
 import { useExcelExport } from '@/hooks/useExcelExport';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { usePiiMask } from '@/hooks/usePiiMask';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -49,6 +51,7 @@ export default function AuditoriaPage() {
 
   const { exportarExcel } = useExcelExport();
   const { empresaAtual } = useEmpresas();
+  const pii = usePiiMask();
   const empresaId = empresaAtual?.id || '';
 
   const { data: logs, isLoading } = useQuery({
@@ -83,13 +86,18 @@ export default function AuditoriaPage() {
 
   const handleExport = () => {
     if (!filtered.length) return;
+    void registrarAcessoPII('auditoria', 'export', {
+      empresaId,
+      registroCount: filtered.length,
+    });
     exportarExcel(
       'Log de Auditoria',
       filtered.map((l) => ({
-        ...l,
+        ...(l as Record<string, unknown>),
         data: new Date(l.created_at ?? '').toLocaleString('pt-BR'),
-        dados_anteriores: JSON.stringify(l.dados_anteriores),
-        dados_novos: JSON.stringify(l.dados_novos),
+        dados_anteriores: JSON.stringify(pii.deep(l.dados_anteriores)),
+        dados_novos: JSON.stringify(pii.deep(l.dados_novos)),
+        user_email: l.user_email ? pii.email(l.user_email) : l.user_email,
       })),
       ['data', 'tabela', 'acao', 'user_email', 'ip_address', 'dados_anteriores', 'dados_novos']
     );

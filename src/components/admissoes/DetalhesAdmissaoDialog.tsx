@@ -167,11 +167,15 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
                     <div className="grid gap-3 bg-muted/20 p-4 rounded-2xl border border-border/5">
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">E-mail:</span>
-                        <span className="font-medium text-foreground">{admissao.email || 'Não informado'}</span>
+                        <span className="font-medium text-foreground">
+                          {admissao.email ? pii.email(admissao.email) : 'Não informado'}
+                        </span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Telefone:</span>
-                        <span className="font-medium text-foreground">{admissao.telefone || 'Não informado'}</span>
+                        <span className="font-medium text-foreground">
+                          {admissao.telefone ? pii.phone(admissao.telefone) : 'Não informado'}
+                        </span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">CPF:</span>

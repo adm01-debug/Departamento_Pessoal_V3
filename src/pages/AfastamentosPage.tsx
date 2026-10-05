@@ -4,6 +4,7 @@ import { useAfastamentos, useProrrogacoesAfastamento } from '@/hooks/useAfastame
 import { usePDFExport } from '@/hooks/usePDFExport';
 import { gerarAfastamentosPDF } from '@/utils/afastamentoPDF';
 import { afastamentoService } from '@/services/afastamentoService';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { toast } from 'sonner';
 import { PageLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -254,6 +255,9 @@ export default function AfastamentosPage() {
                       toast.error('Selecione uma empresa para exportar o relatório');
                       return;
                     }
+                    void registrarAcessoPII('afastamentos', 'export', {
+                      empresaId: filtros.empresa_id,
+                    });
                     await afastamentoService.exportarRelatorio(filtros.empresa_id, {
                       empresa_id: filtros.empresa_id,
                       status: filtros.status as StatusAfastamento | undefined,
@@ -278,6 +282,10 @@ export default function AfastamentosPage() {
                       pericia: af.data_pericia ? format(new Date(af.data_pericia), 'dd/MM/yyyy') : '-',
                     }));
 
+                    void registrarAcessoPII('afastamentos', 'export', {
+                      empresaId: filtros.empresa_id,
+                      registroCount: dataToExport.length,
+                    });
                     try {
                       await gerarAfastamentosPDF('Relatório de Afastamentos e Auditoria Detalhada', dataToExport, {
                         cid: filtros.cid,

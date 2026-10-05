@@ -8,6 +8,9 @@ import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import type { Tables } from '@/integrations/supabase/database.types';
 import type { FolhaItemDetalhes } from '@/services/folhaPagamentoService';
+import { useEmpresas } from '@/hooks/useEmpresas';
+import { usePiiMask } from '@/hooks/usePiiMask';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 
 type ItemContabil = Tables<'folha_itens'> & {
   colaborador: Pick<Tables<'colaboradores'>, 'nome_completo' | 'departamento' | 'centro_custo' | 'cpf'> | null;
@@ -20,6 +23,8 @@ interface RelatorioContabilDialogProps {
 export function RelatorioContabilDialog({ folhaId }: RelatorioContabilDialogProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { empresaAtual } = useEmpresas();
+  const pii = usePiiMask();
 
   const handleExport = async () => {
     setLoading(true);
@@ -30,7 +35,7 @@ export function RelatorioContabilDialog({ folhaId }: RelatorioContabilDialogProp
         .select(
           `
           *,
-          colaborador:colaboradores(nome_completo, departamento, centro_custo)
+          colaborador:colaboradores(nome_completo, departamento, centro_custo, cpf)
         `
         )
         .eq('folha_id', folhaId);
@@ -40,6 +45,11 @@ export function RelatorioContabilDialog({ folhaId }: RelatorioContabilDialogProp
       if (!itensTyped || itensTyped.length === 0) throw new Error('Nenhum dado encontrado para esta folha.');
 
       // Header para Reconciliação Contábil Analítica (Padrão SPED/ERP)
+      void registrarAcessoPII('folha_itens', 'export', {
+        empresaId: empresaAtual?.id,
+        registroCount: itensTyped.length,
+      });
+
       const csvLines = ['Data;Conta Contabil;Centro de Custo;Debito;Credito;Descricao;Colaborador;CPF'];
       const dataHoje = new Date().toLocaleDateString('pt-BR');
 
@@ -54,18 +64,18 @@ export function RelatorioContabilDialog({ folhaId }: RelatorioContabilDialogProp
           // Lançamento de Provento (D: Despesa Salarial, C: Salários a Pagar)
           if (isProvento) {
             csvLines.push(
-              `${dataHoje};DESPESA_SALARIAL;${cc};${ev.valor.toFixed(2)};0;${ev.descricao};${colab?.nome_completo};${colab?.cpf || ''}`
+              `${dataHoje};DESPESA_SALARIAL;${cc};${ev.valor.toFixed(2)};0;${ev.descricao};${colab?.nome_completo};${colab?.cpf ? pii.cpf(colab.cpf) : ''}`
             );
             csvLines.push(
-              `${dataHoje};SALARIOS_A_PAGAR;${cc};0;${ev.valor.toFixed(2)};${ev.descricao};${colab?.nome_completo};${colab?.cpf || ''}`
+              `${dataHoje};SALARIOS_A_PAGAR;${cc};0;${ev.valor.toFixed(2)};${ev.descricao};${colab?.nome_completo};${colab?.cpf ? pii.cpf(colab.cpf) : ''}`
             );
           } else {
             // Lançamento de Desconto (D: Salários a Pagar, C: Conta de Passivo/Desconto)
             csvLines.push(
-              `${dataHoje};SALARIOS_A_PAGAR;${cc};${ev.valor.toFixed(2)};0;${ev.descricao};${colab?.nome_completo};${colab?.cpf || ''}`
+              `${dataHoje};SALARIOS_A_PAGAR;${cc};${ev.valor.toFixed(2)};0;${ev.descricao};${colab?.nome_completo};${colab?.cpf ? pii.cpf(colab.cpf) : ''}`
             );
             csvLines.push(
-              `${dataHoje};PASSIVO_${ev.descricao.toUpperCase().replace(/\s/g, '_')};${cc};0;${ev.valor.toFixed(2)};Retencao ${ev.descricao};${colab?.nome_completo};${colab?.cpf || ''}`
+              `${dataHoje};PASSIVO_${ev.descricao.toUpperCase().replace(/\s/g, '_')};${cc};0;${ev.valor.toFixed(2)};Retencao ${ev.descricao};${colab?.nome_completo};${colab?.cpf ? pii.cpf(colab.cpf) : ''}`
             );
           }
         });
@@ -74,10 +84,10 @@ export function RelatorioContabilDialog({ folhaId }: RelatorioContabilDialogProp
         const fgts = Number(item.fgts_mes);
         if (fgts > 0) {
           csvLines.push(
-            `${dataHoje};DESPESA_FGTS;${cc};${fgts.toFixed(2)};0;Provisao FGTS;${colab?.nome_completo};${colab?.cpf || ''}`
+            `${dataHoje};DESPESA_FGTS;${cc};${fgts.toFixed(2)};0;Provisao FGTS;${colab?.nome_completo};${colab?.cpf ? pii.cpf(colab.cpf) : ''}`
           );
           csvLines.push(
-            `${dataHoje};FGTS_A_RECOLHER;${cc};0;${fgts.toFixed(2)};FGTS Mes;${colab?.nome_completo};${colab?.cpf || ''}`
+            `${dataHoje};FGTS_A_RECOLHER;${cc};0;${fgts.toFixed(2)};FGTS Mes;${colab?.nome_completo};${colab?.cpf ? pii.cpf(colab.cpf) : ''}`
           );
         }
       });

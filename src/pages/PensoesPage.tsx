@@ -14,12 +14,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { colaboradorService } from '@/services';
 import { useEmpresas } from '@/hooks';
+import { usePiiMask } from '@/hooks/usePiiMask';
 import { toast } from 'sonner';
 import { Plus, Scale, Trash2 } from 'lucide-react';
 import { validateTablePayload } from '@/schemas/validate';
 
 export default function PensoesPage() {
   const { empresaAtual } = useEmpresas();
+  const pii = usePiiMask();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
@@ -232,7 +234,7 @@ export default function PensoesPage() {
                     <TableRow key={r.id}>
                       <TableCell className="font-medium">{r.colaboradores?.nome_completo || '-'}</TableCell>
                       <TableCell>{r.beneficiario}</TableCell>
-                      <TableCell>{r.cpf_beneficiario || '-'}</TableCell>
+                      <TableCell>{r.cpf_beneficiario ? pii.cpf(r.cpf_beneficiario) : '-'}</TableCell>
                       <TableCell className="capitalize">{r.tipo || '-'}</TableCell>
                       <TableCell>
                         {r.percentual

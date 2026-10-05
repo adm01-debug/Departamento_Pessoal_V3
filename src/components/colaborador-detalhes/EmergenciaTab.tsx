@@ -14,6 +14,7 @@ import {
   useCriarContatoEmergencia,
   useExcluirContatoEmergencia,
 } from '@/hooks/useColaboradorDetalhes';
+import { usePiiMask } from '@/hooks/usePiiMask';
 
 const PARENTESCOS = ['Pai/Mãe', 'Cônjuge', 'Irmão/Irmã', 'Filho(a)', 'Amigo(a)', 'Outro'];
 const initialForm = { nome: '', parentesco: '', telefone: '', celular: '', email: '' };
@@ -24,6 +25,7 @@ export function EmergenciaTab({ colaboradorId }: { colaboradorId: string }) {
   const excluir = useExcluirContatoEmergencia(colaboradorId);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState(initialForm);
+  const pii = usePiiMask();
 
   const handleSubmit = async () => {
     if (!form.nome.trim()) {
@@ -124,9 +126,9 @@ export function EmergenciaTab({ colaboradorId }: { colaboradorId: string }) {
                 <TableRow key={c.id}>
                   <TableCell>{c.nome}</TableCell>
                   <TableCell>{c.parentesco || '-'}</TableCell>
-                  <TableCell>{c.telefone || '-'}</TableCell>
-                  <TableCell>{c.celular || '-'}</TableCell>
-                  <TableCell>{c.email || '-'}</TableCell>
+                  <TableCell>{c.telefone ? pii.phone(c.telefone) : '-'}</TableCell>
+                  <TableCell>{c.celular ? pii.phone(c.celular) : '-'}</TableCell>
+                  <TableCell>{c.email ? pii.email(c.email) : '-'}</TableCell>
                   <TableCell>
                     <Button
                       variant="ghost"
