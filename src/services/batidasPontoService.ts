@@ -94,10 +94,27 @@ export const batidasPontoService = {
     }
   },
   async fecharPeriodo(empresaId: string, dataInicio: string, dataFim: string): Promise<PeriodoPonto> {
+    // periodos_ponto é um calendário GLOBAL de competências (sem empresa_id):
+    // um registro 'fechado' vale para todas as empresas. Por isso só aceita
+    // intervalo que cubra o mês civil inteiro — gravar um recorte (ex.: um
+    // dia) como competencia YYYY-MM sugeriria o mês inteiro fechado para todos.
+    const ini = new Date(`${dataInicio}T00:00:00Z`);
+    const fim = new Date(`${dataFim}T00:00:00Z`);
+    const ultimoDia = new Date(Date.UTC(ini.getUTCFullYear(), ini.getUTCMonth() + 1, 0));
+    const mesCivilInteiro =
+      ini.getUTCDate() === 1 &&
+      ini.getUTCFullYear() === fim.getUTCFullYear() &&
+      ini.getUTCMonth() === fim.getUTCMonth() &&
+      fim.getUTCDate() === ultimoDia.getUTCDate();
+    if (!mesCivilInteiro) {
+      throw new Error(
+        `Fechamento exige a competência completa: ${dataInicio}–${dataFim} não cobre o mês civil inteiro ` +
+          `(informe o 1º e o último dia de ${dataInicio.slice(0, 7)}).`
+      );
+    }
+
     const { data, error } = await supabase
       .from('periodos_ponto')
-      // periodos_ponto é tabela global (sem empresa_id): a chave é a
-      // competencia YYYY-MM derivada do início do período.
       .insert(
         validateTablePayload(
           'periodos_ponto',

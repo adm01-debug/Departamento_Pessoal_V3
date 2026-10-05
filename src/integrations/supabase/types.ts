@@ -3463,11 +3463,13 @@ export type Database = {
       }
       cnab_remessas: {
         Row: {
+          arquivo_remessa: string | null
           arquivo_url: string | null
           banco_codigo: string
           created_at: string | null
           data_geracao: string | null
           empresa_id: string
+          folha_id: string | null
           hash_integridade: string | null
           id: string
           sequencial_arquivo: number
@@ -3477,11 +3479,13 @@ export type Database = {
           valor_total: number | null
         }
         Insert: {
+          arquivo_remessa?: string | null
           arquivo_url?: string | null
           banco_codigo: string
           created_at?: string | null
           data_geracao?: string | null
           empresa_id: string
+          folha_id?: string | null
           hash_integridade?: string | null
           id?: string
           sequencial_arquivo: number
@@ -3491,11 +3495,13 @@ export type Database = {
           valor_total?: number | null
         }
         Update: {
+          arquivo_remessa?: string | null
           arquivo_url?: string | null
           banco_codigo?: string
           created_at?: string | null
           data_geracao?: string | null
           empresa_id?: string
+          folha_id?: string | null
           hash_integridade?: string | null
           id?: string
           sequencial_arquivo?: number
@@ -3510,6 +3516,13 @@ export type Database = {
             columns: ["empresa_id"]
             isOneToOne: false
             referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cnab_remessas_folha_id_fkey"
+            columns: ["folha_id"]
+            isOneToOne: false
+            referencedRelation: "folhas_pagamento"
             referencedColumns: ["id"]
           },
         ]
@@ -20967,6 +20980,7 @@ export type Database = {
           log_execucao: Json | null
           metadata: Json | null
           metadata_automacao: Json | null
+          sla_iniciado_em: string | null
           solicitante_id: string | null
           status: string | null
           updated_at: string | null
@@ -20983,6 +20997,7 @@ export type Database = {
           log_execucao?: Json | null
           metadata?: Json | null
           metadata_automacao?: Json | null
+          sla_iniciado_em?: string | null
           solicitante_id?: string | null
           status?: string | null
           updated_at?: string | null
@@ -20999,6 +21014,7 @@ export type Database = {
           log_execucao?: Json | null
           metadata?: Json | null
           metadata_automacao?: Json | null
+          sla_iniciado_em?: string | null
           solicitante_id?: string | null
           status?: string | null
           updated_at?: string | null

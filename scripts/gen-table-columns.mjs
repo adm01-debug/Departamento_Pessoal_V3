@@ -9,6 +9,7 @@
  *   node scripts/gen-table-columns.mjs --check   # falha se o gerado estiver stale (CI)
  */
 import { readFileSync, writeFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 
 const TYPES = 'src/integrations/supabase/types.ts';
 const OUT = 'src/schemas/tableColumns.ts';
@@ -40,7 +41,23 @@ const body = Object.entries(tables)
   .map(([t, cols]) => `  ${JSON.stringify(t)}: [${cols.map((c) => JSON.stringify(c)).join(', ')}],`)
   .join('\n');
 
-const out = `${header}${body}\n} as const;\n`;
+// O arquivo commitado passa pelo prettier (hook de format:check), então o
+// conteúdo gerado precisa ser formatado igual — senão --check e o pre-commit
+// discordam eternamente.
+function prettierFormat(input) {
+  try {
+    return execFileSync('npx', ['prettier', '--stdin-filepath', OUT], {
+      input,
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+    });
+  } catch {
+    // Sem prettier no ambiente (ex.: CI minimal) — compara sem formatar.
+    return input;
+  }
+}
+
+const out = prettierFormat(`${header}${body}\n} as const;\n`);
 
 if (process.argv.includes('--check')) {
   let current = '';

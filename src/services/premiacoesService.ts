@@ -313,24 +313,54 @@ export const premiacoesService = {
     if (import.meta.env.DEV) {
       console.log(`[Notification] ${tipo}:`, payload);
     }
-    // Em um cenário real, chamaria uma Edge Function para enviar e-mail/WhatsApp
+
+    // Destinatários concretos: sem user_id a linha ficava invisível
+    // (NotificacoesPage filtra pelo usuário autenticado). Resolve a empresa
+    // via pagamento → campanha e notifica os admins/gestores/RH dela; sem
+    // destinatário resolvido, insere com user_id null para manter a trilha.
+    let destinatarios: string[] = payload.user_id ? [payload.user_id as string] : [];
+    let empresaId: string | null = null;
+    const pagamentoId = payload.id as string | undefined;
+    if (destinatarios.length === 0 && pagamentoId) {
+      const { data: pag } = await supabase
+        .from('premiacoes_pagamentos')
+        .select('campanha:premiacoes_campanhas!inner(empresa_id)')
+        .eq('id', pagamentoId)
+        .maybeSingle();
+      empresaId = (pag as { campanha?: { empresa_id?: string } | null } | null)?.campanha?.empresa_id ?? null;
+      if (empresaId) {
+        const { data: membros } = await supabase.from('user_empresas').select('user_id').eq('empresa_id', empresaId);
+        const membroIds = (membros ?? []).map((m) => m.user_id as string);
+        if (membroIds.length > 0) {
+          const { data: admins } = await supabase
+            .from('user_roles')
+            .select('user_id')
+            .in('user_id', membroIds)
+            .in('role', ['admin', 'gestor', 'rh']);
+          destinatarios = [...new Set((admins ?? []).map((a) => a.user_id as string))];
+        }
+      }
+    }
+
     // Não espalhar `payload`: notificacoes não tem coluna metadata e chaves
     // arbitrárias (status, valorAprovado…) eram rejeitadas pelo PostgREST —
     // a notificação nunca era gravada. O contexto vai inteiro na mensagem.
-    const { error } = await supabase.from('notificacoes').insert(
-      validateTablePayload(
-        'notificacoes',
-        {
-          tipo: 'premiacao_critica',
-          titulo: `Evento Crítico: ${tipo.replace('_', ' ').toUpperCase()}`,
-          mensagem: `Ação detectada no módulo de premiações: ${JSON.stringify(payload)}`,
-          user_id: (payload.user_id as string | null) ?? null,
-          entidade_tipo: (payload.entidade_tipo as string | null) ?? 'premiacao',
-          entidade_id: (payload.id as string | null) ?? null,
-        } as TablesInsert<'notificacoes'>,
-        'premiacoesService:notificacoes'
-      )
-    );
+    const base = {
+      tipo: 'premiacao_critica',
+      titulo: `Evento Crítico: ${tipo.replace('_', ' ').toUpperCase()}`,
+      mensagem: `Ação detectada no módulo de premiações: ${JSON.stringify(payload)}`,
+      entidade_tipo: (payload.entidade_tipo as string | null) ?? 'premiacao',
+      entidade_id: (payload.id as string | null) ?? null,
+      empresa_id: empresaId,
+    };
+    const linhas =
+      destinatarios.length > 0 ? destinatarios.map((uid) => ({ ...base, user_id: uid })) : [{ ...base, user_id: null }];
+
+    const { error } = await supabase
+      .from('notificacoes')
+      .insert(
+        validateTablePayload('notificacoes', linhas as TablesInsert<'notificacoes'>[], 'premiacoesService:notificacoes')
+      );
 
     if (error) loggerService.error('Erro ao registrar notificação crítica', { tipo, payload }, error as Error);
     return true;
