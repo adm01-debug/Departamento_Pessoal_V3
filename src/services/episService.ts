@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables, TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
+import { validateTablePayload } from '@/schemas/validate';
 
 type Epi = Tables<'epis'>;
 type EpiInsert = TablesInsert<'epis'>;
@@ -24,7 +25,11 @@ export const episService = {
   },
 
   async criar(d: EpiInsert): Promise<Epi> {
-    const { data, error } = await supabase.from('epis').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('epis')
+      .insert(validateTablePayload('epis', d, 'episService:epis'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de EPI foi retornado.');
     return data;
@@ -34,7 +39,7 @@ export const episService = {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('epis')
-      .update(d)
+      .update(validateTablePayload('epis', d, 'episService:epis'))
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()
@@ -77,7 +82,11 @@ export const episEntregasService = {
   },
 
   async criar(d: EpiEntregaInsert): Promise<EpiEntrega> {
-    const { data, error } = await supabase.from('epis_entregas').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('epis_entregas')
+      .insert(validateTablePayload('epis_entregas', d, 'episService:epis_entregas'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de entrega de EPI foi retornado.');
     return data;
@@ -87,7 +96,7 @@ export const episEntregasService = {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('epis_entregas')
-      .update({ data_devolucao: dataDevolucao })
+      .update(validateTablePayload('epis_entregas', { data_devolucao: dataDevolucao }, 'episService:epis_entregas'))
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()

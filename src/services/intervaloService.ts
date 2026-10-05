@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables, Insertable, Updatable } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 export const intervaloService = {
   async listar(empresaId: string): Promise<Tables<'configuracoes_intervalo'>[]> {
@@ -13,7 +14,11 @@ export const intervaloService = {
   },
 
   async criar(d: Insertable<'configuracoes_intervalo'>): Promise<Tables<'configuracoes_intervalo'>> {
-    const { data, error } = await supabase.from('configuracoes_intervalo').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('configuracoes_intervalo')
+      .insert(validateTablePayload('configuracoes_intervalo', d, 'intervaloService:configuracoes_intervalo'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de configuração de intervalo foi retornado.');
     return data;
@@ -26,7 +31,7 @@ export const intervaloService = {
   ): Promise<Tables<'configuracoes_intervalo'>> {
     const { data, error } = await supabase
       .from('configuracoes_intervalo')
-      .update(d)
+      .update(validateTablePayload('configuracoes_intervalo', d, 'intervaloService:configuracoes_intervalo'))
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()

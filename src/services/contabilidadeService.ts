@@ -1,6 +1,7 @@
 import { todayLocalISO } from '@/utils/dateLocal';
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables, Insertable } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 export type LancamentoComContas = Tables<'lancamentos_contabeis'> & {
   conta_debito: Tables<'plano_contas'> | null;
@@ -68,7 +69,11 @@ export const contabilidadeService = {
         },
       ];
 
-      const { error: lError } = await supabase.from('lancamentos_contabeis').insert(lancamentos);
+      const { error: lError } = await supabase
+        .from('lancamentos_contabeis')
+        .insert(
+          validateTablePayload('lancamentos_contabeis', lancamentos, 'contabilidadeService:lancamentos_contabeis')
+        );
 
       if (lError) throw lError;
       return undefined;

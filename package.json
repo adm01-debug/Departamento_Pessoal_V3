@@ -35,6 +35,7 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json,md}\"",
     "format:check:changed": "bash scripts/format-check-changed.sh",
     "format:write": "prettier --write \"src/**/*.{ts,tsx,css,json,md}\"",
+    "gen:table-columns": "node scripts/gen-table-columns.mjs",
     "typecheck": "tsc --noEmit",
     "typecheck:tests": "tsc --noEmit -p tsconfig.tests.json",
     "typecheck:e2e": "tsc --noEmit -p tsconfig.e2e.json",

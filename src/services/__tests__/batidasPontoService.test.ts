@@ -227,7 +227,7 @@ describe('batidasPontoService.fecharPeriodo', () => {
 
     const result = await batidasPontoService.fecharPeriodo('emp-1', '2026-07-01', '2026-07-31');
     const insertArg = insertFn.mock.calls[0][0];
-    expect(insertArg.empresa_id).toBe('emp-1');
+    expect(insertArg.competencia).toBe('2026-07');
     expect(insertArg.data_inicio).toBe('2026-07-01');
     expect(insertArg.data_fim).toBe('2026-07-31');
     expect(insertArg.status).toBe('fechado');

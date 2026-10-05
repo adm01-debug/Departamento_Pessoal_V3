@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { loggerService } from './loggerService';
 import type { Json } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 export const pushNotificationService = {
   async isSupported(): Promise<boolean> {
@@ -47,16 +48,22 @@ export const pushNotificationService = {
       const { endpoint } = subscription.toJSON();
       if (!endpoint) throw new Error('Endpoint de push inválido');
 
-      const { error } = await supabase.from('push_subscriptions').insert({
-        user_id: userId,
-        subscription: subscription.toJSON() as unknown as Json,
-        active: true,
-        device_info: JSON.stringify({
-          userAgent: navigator.userAgent,
-          language: navigator.language,
-          platform: (navigator as unknown as { platform?: string }).platform,
-        }),
-      });
+      const { error } = await supabase.from('push_subscriptions').insert(
+        validateTablePayload(
+          'push_subscriptions',
+          {
+            user_id: userId,
+            subscription: subscription.toJSON() as unknown as Json,
+            active: true,
+            device_info: JSON.stringify({
+              userAgent: navigator.userAgent,
+              language: navigator.language,
+              platform: (navigator as unknown as { platform?: string }).platform,
+            }),
+          },
+          'pushNotificationService:push_subscriptions'
+        )
+      );
 
       if (error) throw error;
       return true;
@@ -76,7 +83,12 @@ export const pushNotificationService = {
         // Não há coluna `endpoint` nem constraint única em `subscription`
         // para localizar a assinatura exata deste dispositivo (ver nota em
         // `subscribeUser`); desativa todas as assinaturas push do usuário.
-        await supabase.from('push_subscriptions').update({ active: false }).eq('user_id', userId);
+        await supabase
+          .from('push_subscriptions')
+          .update(
+            validateTablePayload('push_subscriptions', { active: false }, 'pushNotificationService:push_subscriptions')
+          )
+          .eq('user_id', userId);
       }
       return true;
     } catch (e: unknown) {

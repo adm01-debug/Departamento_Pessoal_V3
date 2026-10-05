@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { parsePgIntervalToHours } from '@/utils/pgInterval';
 import type { Tables, Insertable } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 export const bancoHorasService = {
   async listarPorColaborador(colaboradorId: string, empresaId: string): Promise<Tables<'banco_horas'>[]> {
@@ -37,7 +38,11 @@ export const bancoHorasService = {
 
   async registrar(d: Insertable<'banco_horas'>): Promise<Tables<'banco_horas'> | null> {
     if (!d.empresa_id) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data, error } = await supabase.from('banco_horas').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('banco_horas')
+      .insert(validateTablePayload('banco_horas', d, 'bancoHorasService:banco_horas'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     return data;
   },

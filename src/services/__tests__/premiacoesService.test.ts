@@ -243,6 +243,8 @@ describe('premiacoesService.atualizarStatusPagamento', () => {
     const notifInsertFn = notifChain.insert;
     mockFrom.mockReturnValueOnce(fetchMock.chain);
     mockFrom.mockReturnValueOnce(updateMock.chain);
+    // Lookup de empresa via pagamento → campanha (sem empresa → destinatário null)
+    mockFrom.mockReturnValueOnce(makeChain({ data: null, error: null }));
     mockFrom.mockReturnValueOnce(notifChain);
 
     await premiacoesService.atualizarStatusPagamento('pg1', 'rejeitado', EMPRESA_ID);

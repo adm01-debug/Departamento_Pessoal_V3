@@ -9,6 +9,7 @@ import {
   failEventoAdmissaoESocial,
 } from './esocialService';
 
+import { validateTablePayload } from '@/schemas/validate';
 // Escapa HTML para prevenir XSS em dados vindos do usuário/candidato.
 const esc = (v: unknown): string => {
   if (v === null || v === undefined) return '—';
@@ -128,13 +129,19 @@ export const contratacaoService = {
     try {
       const { error } = await supabase
         .from('admissoes')
-        .update({
-          ...checklistUpdate,
-          metadata: {
-            obs: observacao,
-            last_validation: new Date().toISOString(),
-          },
-        })
+        .update(
+          validateTablePayload(
+            'admissoes',
+            {
+              ...checklistUpdate,
+              metadata: {
+                obs: observacao,
+                last_validation: new Date().toISOString(),
+              },
+            },
+            'contratacaoService:admissoes'
+          )
+        )
         .eq('id', admissaoId)
         .eq('empresa_id', empresaId);
 
@@ -165,12 +172,18 @@ export const contratacaoService = {
 
     const { data, error } = await supabase
       .from('admissao_tokens')
-      .insert({
-        admissao_id: admissaoId,
-        token: token,
-        email_candidato: email,
-        data_expiracao: expiracao.toISOString(),
-      })
+      .insert(
+        validateTablePayload(
+          'admissao_tokens',
+          {
+            admissao_id: admissaoId,
+            token: token,
+            email_candidato: email,
+            data_expiracao: expiracao.toISOString(),
+          },
+          'contratacaoService:admissao_tokens'
+        )
+      )
       .select()
       .single();
 
@@ -207,13 +220,19 @@ export const contratacaoService = {
         window.open(`https://wa.me/55${telefone.replace(/\D/g, '')}?text=${mensagem}`, '_blank', 'noopener');
       }
 
-      await supabase.from('notificacoes_admissao').insert({
-        admissao_id: admissaoId,
-        tipo: 'whatsapp',
-        canal: 'whatsapp',
-        status: 'enviado',
-        mensagem: `Link de contratação enviado via WhatsApp`,
-      });
+      await supabase.from('notificacoes_admissao').insert(
+        validateTablePayload(
+          'notificacoes_admissao',
+          {
+            admissao_id: admissaoId,
+            tipo: 'whatsapp',
+            canal: 'whatsapp',
+            status: 'enviado',
+            mensagem: `Link de contratação enviado via WhatsApp`,
+          },
+          'contratacaoService:notificacoes_admissao'
+        )
+      );
       return undefined;
     } catch (e) {
       throw new Error('Falha ao enviar notificação via WhatsApp', { cause: e });

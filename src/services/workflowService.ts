@@ -1,7 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { QueryBuilderType } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
-import { validateInput } from '@/schemas/validate';
+import { validateInput, validateTablePayload } from '@/schemas/validate';
 import { workflowDefinicaoSchema, workflowEtapaSchema } from '@/schemas/workflowsPremiacoesCnab';
 
 // ── Tipos ───────────────────────────────────────────────────────────────────
@@ -136,7 +136,13 @@ export const workflowService = {
     validateInput(workflowDefinicaoSchema, d, 'workflows.criarDefinicao');
     const { data, error } = await supabase
       .from('workflows_definicoes')
-      .insert(d as WorkflowsDefinicoesInsert)
+      .insert(
+        validateTablePayload(
+          'workflows_definicoes',
+          d as WorkflowsDefinicoesInsert,
+          'workflowService:workflows_definicoes'
+        )
+      )
       .select()
       .maybeSingle();
     if (error) throw error;
@@ -149,7 +155,13 @@ export const workflowService = {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('workflows_definicoes')
-      .update({ ...d, updated_at: new Date().toISOString() } as WorkflowsDefinicoesUpdate)
+      .update(
+        validateTablePayload(
+          'workflows_definicoes',
+          { ...d, updated_at: new Date().toISOString() } as WorkflowsDefinicoesUpdate,
+          'workflowService:workflows_definicoes'
+        )
+      )
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()
@@ -179,7 +191,7 @@ export const workflowService = {
     validateInput(workflowEtapaSchema, d, 'workflows.criarEtapa');
     const { data, error } = await supabase
       .from('workflows_etapas')
-      .insert(d as WorkflowsEtapasInsert)
+      .insert(validateTablePayload('workflows_etapas', d as WorkflowsEtapasInsert, 'workflowService:workflows_etapas'))
       .select()
       .maybeSingle();
     if (error) throw error;
@@ -207,7 +219,13 @@ export const workflowService = {
   async criarExecucao(d: Record<string, unknown>): Promise<unknown> {
     const { data, error } = await supabase
       .from('workflows_execucoes')
-      .insert(d as WorkflowsExecucoesInsert)
+      .insert(
+        validateTablePayload(
+          'workflows_execucoes',
+          d as WorkflowsExecucoesInsert,
+          'workflowService:workflows_execucoes'
+        )
+      )
       .select()
       .maybeSingle();
     if (error) throw error;
@@ -219,7 +237,13 @@ export const workflowService = {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('workflows_execucoes')
-      .update({ ...d, updated_at: new Date().toISOString() } as WorkflowsExecucoesUpdate)
+      .update(
+        validateTablePayload(
+          'workflows_execucoes',
+          { ...d, updated_at: new Date().toISOString() } as WorkflowsExecucoesUpdate,
+          'workflowService:workflows_execucoes'
+        )
+      )
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()
@@ -232,7 +256,13 @@ export const workflowService = {
   async registrarHistorico(d: Record<string, unknown>): Promise<Historico> {
     const { data, error } = await supabase
       .from('workflows_historico')
-      .insert(d as WorkflowsHistoricoInsert)
+      .insert(
+        validateTablePayload(
+          'workflows_historico',
+          d as WorkflowsHistoricoInsert,
+          'workflowService:workflows_historico'
+        )
+      )
       .select()
       .maybeSingle();
     if (error) throw error;
@@ -306,20 +336,32 @@ export const workflowService = {
     // sla_iniciado_em existe no banco (usado pelo SLA) mas não no types.ts gerado → cast via unknown
     const { data: execucao, error: execError } = await supabase
       .from('workflows_execucoes')
-      .insert(execData as unknown as WorkflowsExecucoesInsert)
+      .insert(
+        validateTablePayload(
+          'workflows_execucoes',
+          execData as unknown as WorkflowsExecucoesInsert,
+          'workflowService:workflows_execucoes'
+        )
+      )
       .select()
       .maybeSingle();
     if (execError) throw execError;
     if (!execucao) throw new Error('Falha ao criar execução.');
 
     // Log de início
-    await supabase.from('workflows_historico').insert({
-      execucao_id: execucao.id,
-      etapa_id: primeiraEtapa.id,
-      acao: 'iniciou',
-      usuario_id: solicitanteId,
-      observacoes: idempotencyKey ? `idempotencyKey=${idempotencyKey}` : null,
-    });
+    await supabase.from('workflows_historico').insert(
+      validateTablePayload(
+        'workflows_historico',
+        {
+          execucao_id: execucao.id,
+          etapa_id: primeiraEtapa.id,
+          acao: 'iniciou',
+          usuario_id: solicitanteId,
+          observacoes: idempotencyKey ? `idempotencyKey=${idempotencyKey}` : null,
+        },
+        'workflowService:workflows_historico'
+      )
+    );
 
     return execucao as unknown as Execucao;
   },
@@ -396,7 +438,13 @@ export const workflowService = {
 
     const { data: updated, error: updateError } = await supabase
       .from('workflows_execucoes')
-      .update({ ...updatePayload, updated_at: now } as WorkflowsExecucoesUpdate)
+      .update(
+        validateTablePayload(
+          'workflows_execucoes',
+          { ...updatePayload, updated_at: now } as WorkflowsExecucoesUpdate,
+          'workflowService:workflows_execucoes'
+        )
+      )
       .eq('id', execucaoId)
       .eq('empresa_id', empresaId)
       .select()
@@ -407,13 +455,19 @@ export const workflowService = {
     // Registra histórico
     const { data: historico } = await supabase
       .from('workflows_historico')
-      .insert({
-        execucao_id: execucaoId,
-        etapa_id: etapaId,
-        acao,
-        usuario_id: usuarioId,
-        observacoes: observacao ?? null,
-      })
+      .insert(
+        validateTablePayload(
+          'workflows_historico',
+          {
+            execucao_id: execucaoId,
+            etapa_id: etapaId,
+            acao,
+            usuario_id: usuarioId,
+            observacoes: observacao ?? null,
+          },
+          'workflowService:workflows_historico'
+        )
+      )
       .select()
       .maybeSingle();
 

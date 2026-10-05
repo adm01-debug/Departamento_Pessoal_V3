@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables, TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
 import { pontoAuditService } from './pontoAuditService';
+import { validateTablePayload } from '@/schemas/validate';
 
 type BatidaPonto = Tables<'batidas_ponto'>;
 type PeriodoPonto = Tables<'periodos_ponto'>;
@@ -38,7 +39,11 @@ export const batidasPontoService = {
     return (result || []) as unknown as BatidaComColaborador[];
   },
   async registrar(d: TablesInsert<'batidas_ponto'>): Promise<BatidaPonto> {
-    const { data, error } = await supabase.from('batidas_ponto').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('batidas_ponto')
+      .insert(validateTablePayload('batidas_ponto', d, 'batidasPontoService:batidas_ponto'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de batida de ponto foi retornado.');
     return data as unknown as BatidaPonto;
@@ -55,7 +60,7 @@ export const batidasPontoService = {
 
       const { data, error } = await supabase
         .from('batidas_ponto')
-        .update({ ...d, ajustado: true })
+        .update(validateTablePayload('batidas_ponto', { ...d, ajustado: true }, 'batidasPontoService:batidas_ponto'))
         .eq('id', id)
         .eq('empresa_id', empresaId)
         .select()
@@ -89,15 +94,40 @@ export const batidasPontoService = {
     }
   },
   async fecharPeriodo(empresaId: string, dataInicio: string, dataFim: string): Promise<PeriodoPonto> {
+    // periodos_ponto é um calendário GLOBAL de competências (sem empresa_id):
+    // um registro 'fechado' vale para todas as empresas. Por isso só aceita
+    // intervalo que cubra o mês civil inteiro — gravar um recorte (ex.: um
+    // dia) como competencia YYYY-MM sugeriria o mês inteiro fechado para todos.
+    const ini = new Date(`${dataInicio}T00:00:00Z`);
+    const fim = new Date(`${dataFim}T00:00:00Z`);
+    const ultimoDia = new Date(Date.UTC(ini.getUTCFullYear(), ini.getUTCMonth() + 1, 0));
+    const mesCivilInteiro =
+      ini.getUTCDate() === 1 &&
+      ini.getUTCFullYear() === fim.getUTCFullYear() &&
+      ini.getUTCMonth() === fim.getUTCMonth() &&
+      fim.getUTCDate() === ultimoDia.getUTCDate();
+    if (!mesCivilInteiro) {
+      throw new Error(
+        `Fechamento exige a competência completa: ${dataInicio}–${dataFim} não cobre o mês civil inteiro ` +
+          `(informe o 1º e o último dia de ${dataInicio.slice(0, 7)}).`
+      );
+    }
+
     const { data, error } = await supabase
       .from('periodos_ponto')
-      .insert({
-        empresa_id: empresaId,
-        data_inicio: dataInicio,
-        data_fim: dataFim,
-        status: 'fechado',
-        fechado_em: new Date().toISOString(),
-      } as unknown as TablesInsert<'periodos_ponto'>)
+      .insert(
+        validateTablePayload(
+          'periodos_ponto',
+          {
+            competencia: dataInicio.slice(0, 7),
+            data_inicio: dataInicio,
+            data_fim: dataFim,
+            status: 'fechado',
+            fechado_em: new Date().toISOString(),
+          } as unknown as TablesInsert<'periodos_ponto'>,
+          'batidasPontoService:periodos_ponto'
+        )
+      )
       .select()
       .single();
 

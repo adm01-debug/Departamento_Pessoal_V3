@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Json } from '@/integrations/supabase/types';
+import { validateTablePayload } from '@/schemas/validate';
 
 /**
  * Auditoria — leitura e escrita são feitas exclusivamente via RPCs
@@ -161,14 +162,18 @@ export const notificacaoService = {
   async marcarComoLida(userId: string, id: string) {
     if (!id) throw new Error('id obrigatório');
     if (!userId) throw new Error('user_id obrigatório para isolamento de tenant');
-    const { error } = await supabase.from('notificacoes').update({ lida: true }).eq('id', id).eq('user_id', userId);
+    const { error } = await supabase
+      .from('notificacoes')
+      .update(validateTablePayload('notificacoes', { lida: true }, 'auditoriaService:notificacoes'))
+      .eq('id', id)
+      .eq('user_id', userId);
     if (error) throw error;
   },
   async marcarTodasComoLidas(userId: string) {
     if (!userId) throw new Error('user_id obrigatório');
     const { error } = await supabase
       .from('notificacoes')
-      .update({ lida: true })
+      .update(validateTablePayload('notificacoes', { lida: true }, 'auditoriaService:notificacoes'))
       .eq('user_id', userId)
       .eq('lida', false);
     if (error) throw error;

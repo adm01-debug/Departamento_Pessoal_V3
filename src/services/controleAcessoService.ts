@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables, Insertable } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 export type ControleAcessoComColaborador = Tables<'controle_acesso'> & {
   colaborador: Pick<Tables<'colaboradores'>, 'nome_completo'> | null;
@@ -18,7 +19,11 @@ export const controleAcessoService = {
   },
 
   async registrar(d: Insertable<'controle_acesso'>): Promise<Tables<'controle_acesso'>> {
-    const { data, error } = await supabase.from('controle_acesso').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('controle_acesso')
+      .insert(validateTablePayload('controle_acesso', d, 'controleAcessoService:controle_acesso'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de acesso foi retornado.');
     return data;

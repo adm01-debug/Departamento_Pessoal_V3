@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { validateUploadFile } from '@/utils/uploadValidation';
 import type { Json, Tables, TablesUpdate } from '@/integrations/supabase/types';
+import { validateTablePayload } from '@/schemas/validate';
 
 export type ThreadStatus = 'aberto' | 'respondido' | 'resolvido' | 'arquivado';
 export type ThreadCategoria = 'folha' | 'esocial' | 'admissao' | 'rescisao' | 'tributos' | 'ferias' | 'outro';
@@ -27,7 +28,13 @@ export const canalContabilidadeService = {
   ) {
     const { data, error } = await supabase
       .from('contabilidade_contatos')
-      .insert({ ...payload, empresa_id: empresaId })
+      .insert(
+        validateTablePayload(
+          'contabilidade_contatos',
+          { ...payload, empresa_id: empresaId },
+          'canalContabilidadeService:contabilidade_contatos'
+        )
+      )
       .select()
       .maybeSingle();
     if (error) throw error;
@@ -35,7 +42,13 @@ export const canalContabilidadeService = {
   },
 
   async toggleContato(empresaId: string, id: string, ativo: boolean) {
-    const { error } = await supabase.from('contabilidade_contatos').update({ ativo }).eq('id', id).eq('empresa_id', empresaId);
+    const { error } = await supabase
+      .from('contabilidade_contatos')
+      .update(
+        validateTablePayload('contabilidade_contatos', { ativo }, 'canalContabilidadeService:contabilidade_contatos')
+      )
+      .eq('id', id)
+      .eq('empresa_id', empresaId);
     if (error) throw error;
   },
 
@@ -66,14 +79,20 @@ export const canalContabilidadeService = {
     const { data: user } = await supabase.auth.getUser();
     const { data: thread, error } = await supabase
       .from('contabilidade_threads')
-      .insert({
-        empresa_id: empresaId,
-        assunto: payload.assunto,
-        categoria: payload.categoria,
-        prioridade: payload.prioridade || 'normal',
-        contato_id: payload.contato_id || null,
-        aberto_por: user.user?.id ?? null,
-      })
+      .insert(
+        validateTablePayload(
+          'contabilidade_threads',
+          {
+            empresa_id: empresaId,
+            assunto: payload.assunto,
+            categoria: payload.categoria,
+            prioridade: payload.prioridade || 'normal',
+            contato_id: payload.contato_id || null,
+            aberto_por: user.user?.id ?? null,
+          },
+          'canalContabilidadeService:contabilidade_threads'
+        )
+      )
       .select()
       .maybeSingle();
     if (error) throw error;
@@ -85,7 +104,11 @@ export const canalContabilidadeService = {
   async atualizarStatus(empresaId: string, threadId: string, status: ThreadStatus) {
     const patch: TablesUpdate<'contabilidade_threads'> = { status };
     if (status === 'resolvido') patch.resolvido_em = new Date().toISOString();
-    const { error } = await supabase.from('contabilidade_threads').update(patch).eq('id', threadId).eq('empresa_id', empresaId);
+    const { error } = await supabase
+      .from('contabilidade_threads')
+      .update(validateTablePayload('contabilidade_threads', patch, 'canalContabilidadeService:contabilidade_threads'))
+      .eq('id', threadId)
+      .eq('empresa_id', empresaId);
     if (error) throw error;
   },
 
@@ -111,15 +134,21 @@ export const canalContabilidadeService = {
     const { data: user } = await supabase.auth.getUser();
     const { data, error } = await supabase
       .from('contabilidade_mensagens')
-      .insert({
-        thread_id: threadId,
-        empresa_id: empresaId,
-        corpo: corpo.trim(),
-        autor_tipo: autorTipo,
-        autor_id: user.user?.id ?? null,
-        autor_nome: user.user?.email ?? null,
-        anexos,
-      })
+      .insert(
+        validateTablePayload(
+          'contabilidade_mensagens',
+          {
+            thread_id: threadId,
+            empresa_id: empresaId,
+            corpo: corpo.trim(),
+            autor_tipo: autorTipo,
+            autor_id: user.user?.id ?? null,
+            autor_nome: user.user?.email ?? null,
+            anexos,
+          },
+          'canalContabilidadeService:contabilidade_mensagens'
+        )
+      )
       .select()
       .maybeSingle();
     if (error) throw error;

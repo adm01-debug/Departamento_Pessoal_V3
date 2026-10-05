@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { loggerService } from './loggerService';
+import { validateTablePayload } from '@/schemas/validate';
 import type { LooseQueryBuilder } from '@/types/queryBuilder';
 
 export interface ListOptions {
@@ -125,7 +126,7 @@ export class BaseService<
   async criar(payload: CreateDTO): Promise<T> {
     try {
       const { data, error } = await this.getQuery()
-        .insert(payload as CreateDTO)
+        .insert(validateTablePayload(this.table, payload as CreateDTO, `base.criar:${this.table}`) as CreateDTO)
         .select()
         .maybeSingle();
 
@@ -145,7 +146,7 @@ export class BaseService<
         throw new Error(`empresa_id obrigatório para atualizar ${this.table} (isolamento de tenant)`);
       }
       let query = this.getQuery()
-        .update(payload as Record<string, unknown>)
+        .update(validateTablePayload(this.table, payload as Record<string, unknown>, `base.atualizar:${this.table}`))
         .eq('id', id);
       if (empresaId) query = query.eq('empresa_id', empresaId);
 

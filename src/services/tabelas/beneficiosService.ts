@@ -1,6 +1,7 @@
 import { todayLocalISO } from '@/utils/dateLocal';
 import { supabase, type QueryBuilderType } from '@/integrations/supabase/client';
 import type { Insertable, Tables } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 export const beneficiariosPlanoService = {
   listar: async (planoId: string): Promise<Tables<'beneficiarios_plano'>[]> => {
@@ -13,13 +14,21 @@ export const beneficiariosPlanoService = {
     return (data as Tables<'beneficiarios_plano'>[] | null) || [];
   },
   criar: async (d: Insertable<'beneficiarios_plano'>): Promise<void> => {
-    const { error } = await supabase.from('beneficiarios_plano').insert(d);
+    const { error } = await supabase
+      .from('beneficiarios_plano')
+      .insert(validateTablePayload('beneficiarios_plano', d, 'beneficiosService:beneficiarios_plano'));
     if (error) throw error;
   },
   excluir: async (planoId: string, id: string): Promise<void> => {
     const { error } = await supabase
       .from('beneficiarios_plano')
-      .update({ status: 'excluido', data_exclusao: todayLocalISO() })
+      .update(
+        validateTablePayload(
+          'beneficiarios_plano',
+          { status: 'excluido', data_exclusao: todayLocalISO() },
+          'beneficiosService:beneficiarios_plano'
+        )
+      )
       .eq('id', id)
       .eq('plano_saude_id', planoId);
     if (error) throw error;
@@ -37,13 +46,17 @@ export const beneficiariosSeguroService = {
     return (data as Tables<'beneficiarios_seguro'>[] | null) || [];
   },
   criar: async (d: Insertable<'beneficiarios_seguro'>): Promise<void> => {
-    const { error } = await supabase.from('beneficiarios_seguro').insert(d);
+    const { error } = await supabase
+      .from('beneficiarios_seguro')
+      .insert(validateTablePayload('beneficiarios_seguro', d, 'beneficiosService:beneficiarios_seguro'));
     if (error) throw error;
   },
   excluir: async (seguroId: string, id: string): Promise<void> => {
     const { error } = await supabase
       .from('beneficiarios_seguro')
-      .update({ status: 'inativo' })
+      .update(
+        validateTablePayload('beneficiarios_seguro', { status: 'inativo' }, 'beneficiosService:beneficiarios_seguro')
+      )
       .eq('id', id)
       .eq('seguro_vida_id', seguroId);
     if (error) throw error;
@@ -77,7 +90,9 @@ export const segurosColaboradoresService = {
     return (data as SeguroColaboradorVinculo[] | null) || [];
   },
   vincular: async (d: Insertable<'seguros_colaboradores'>): Promise<void> => {
-    const { error } = await supabase.from('seguros_colaboradores').insert(d);
+    const { error } = await supabase
+      .from('seguros_colaboradores')
+      .insert(validateTablePayload('seguros_colaboradores', d, 'beneficiosService:seguros_colaboradores'));
     if (error) throw error;
   },
   desvincular: async (seguroVidaId: string, id: string): Promise<void> => {

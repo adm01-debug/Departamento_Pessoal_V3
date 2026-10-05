@@ -1,6 +1,6 @@
 import { supabase, type QueryBuilderType } from '@/integrations/supabase/client';
 import { formatDateLocalISO } from '@/utils/dateLocal';
-import { validateInput } from '@/schemas/validate';
+import { validateInput, validateTablePayload } from '@/schemas/validate';
 import { cnabConfiguracaoSchema } from '@/schemas/workflowsPremiacoesCnab';
 
 export interface CNABConfig {
@@ -101,12 +101,20 @@ export const cnabService = {
       const existingRecord = existing as DataRecord;
       const { error } = await supabase
         .from('cnab_configuracoes')
-        .update(config)
+        .update(validateTablePayload('cnab_configuracoes', config, 'cnabService:cnab_configuracoes'))
         .eq('id', String(existingRecord.id))
         .eq('empresa_id', empresaId);
       if (error) throw error;
     } else {
-      const { error } = await supabase.from('cnab_configuracoes').insert([{ empresa_id: empresaId, ...config }]);
+      const { error } = await supabase
+        .from('cnab_configuracoes')
+        .insert(
+          validateTablePayload(
+            'cnab_configuracoes',
+            [{ empresa_id: empresaId, ...config }],
+            'cnabService:cnab_configuracoes'
+          )
+        );
       if (error) throw error;
     }
   },
@@ -182,16 +190,22 @@ export const cnabService = {
       remessaRecord = existingRemessa as CnabRemessaRecord;
     } else {
       const { data: remessa, error: rError } = await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
-        .insert([
-          {
-            empresa_id: empresaId,
-            folha_id: folhaId,
-            banco_codigo: config.banco_codigo,
-            status: 'pendente',
-            valor_total: typedItens.reduce((acc, i) => acc + Number(i.total_liquido), 0),
-            total_pagamentos: typedItens.length,
-          },
-        ])
+        .insert(
+          validateTablePayload(
+            'cnab_remessas',
+            [
+              {
+                empresa_id: empresaId,
+                folha_id: folhaId,
+                banco_codigo: config.banco_codigo,
+                status: 'pendente',
+                valor_total: typedItens.reduce((acc, i) => acc + Number(i.total_liquido), 0),
+                total_pagamentos: typedItens.length,
+              },
+            ],
+            'cnabService:cnab_remessas'
+          )
+        )
         .select()
         .single();
 
@@ -368,16 +382,24 @@ export const cnabService = {
     // would appear sent but have no payment records. Insert items first so the
     // DB is always consistent — a pending remessa with items is recoverable.
     if (cnabItensToInsert.length > 0) {
-      await (supabase.from('cnab_itens') as unknown as QueryBuilderType).insert(cnabItensToInsert);
+      await (supabase.from('cnab_itens') as unknown as QueryBuilderType).insert(
+        validateTablePayload('cnab_itens', cnabItensToInsert, 'cnabService:cnab_itens')
+      );
     }
 
     // Only after items are persisted, mark remessa as sent with the full file
     await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
-      .update({
-        arquivo_remessa: fullFile,
-        status: 'enviado',
-        sequencial_arquivo: sequence,
-      } as Partial<CnabRemessaRecord>)
+      .update(
+        validateTablePayload(
+          'cnab_remessas',
+          {
+            arquivo_remessa: fullFile,
+            status: 'enviado',
+            sequencial_arquivo: sequence,
+          } as Partial<CnabRemessaRecord>,
+          'cnabService:cnab_remessas'
+        )
+      )
       .eq('id', remessaRecord.id)
       .eq('empresa_id', empresaId);
 
@@ -414,17 +436,23 @@ export const cnabService = {
           const status = isSuccess ? 'pago' : 'erro';
 
           await (supabase.from('cnab_itens') as unknown as QueryBuilderType)
-            .update({
-              status,
-              codigo_ocorrencia: codigoOcorrencia,
-              mensagem_ocorrencia: isSuccess ? 'Confirmado' : 'Rejeitado pelo banco',
-            })
+            .update(
+              validateTablePayload(
+                'cnab_itens',
+                {
+                  status,
+                  codigo_ocorrencia: codigoOcorrencia,
+                  mensagem_ocorrencia: isSuccess ? 'Confirmado' : 'Rejeitado pelo banco',
+                },
+                'cnabService:cnab_itens'
+              )
+            )
             .eq('id', itemRecord.id)
             .eq('empresa_id', empresaId);
 
           if (isSuccess && itemRecord.folha_item_id) {
             await (supabase.from('folha_itens') as unknown as QueryBuilderType)
-              .update({ status_pagamento: 'pago' })
+              .update(validateTablePayload('folha_itens', { status_pagamento: 'pago' }, 'cnabService:folha_itens'))
               .eq('id', itemRecord.folha_item_id)
               .eq('empresa_id', empresaId);
             results.sucesso++;
@@ -561,16 +589,22 @@ export const cnabService = {
     // ── 4. Criar remessa pendente ────────────────────────────────────
     const valorTotal = typedItens.reduce((acc, i) => acc + Number(i.total_liquido), 0);
     const { data: remessa, error: rError } = await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
-      .insert([
-        {
-          empresa_id: empresaId,
-          folha_id: folhaId,
-          banco_codigo: config.banco_codigo,
-          status: 'pendente',
-          valor_total: valorTotal,
-          total_pagamentos: typedItens.length,
-        },
-      ])
+      .insert(
+        validateTablePayload(
+          'cnab_remessas',
+          [
+            {
+              empresa_id: empresaId,
+              folha_id: folhaId,
+              banco_codigo: config.banco_codigo,
+              status: 'pendente',
+              valor_total: valorTotal,
+              total_pagamentos: typedItens.length,
+            },
+          ],
+          'cnabService:cnab_remessas'
+        )
+      )
       .select()
       .single();
 
@@ -798,17 +832,25 @@ export const cnabService = {
 
     // ── 9. Persistir e retornar ──────────────────────────────────────
     if (itensParaInsert.length > 0) {
-      await (supabase.from('cnab_itens') as unknown as QueryBuilderType).insert(itensParaInsert);
+      await (supabase.from('cnab_itens') as unknown as QueryBuilderType).insert(
+        validateTablePayload('cnab_itens', itensParaInsert, 'cnabService:cnab_itens')
+      );
     }
 
     const fullFile = lines.join('\r\n');
 
     await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
-      .update({
-        arquivo_remessa: fullFile,
-        status: 'enviado',
-        sequencial_arquivo: Number(seqFile),
-      })
+      .update(
+        validateTablePayload(
+          'cnab_remessas',
+          {
+            arquivo_remessa: fullFile,
+            status: 'enviado',
+            sequencial_arquivo: Number(seqFile),
+          },
+          'cnabService:cnab_remessas'
+        )
+      )
       .eq('id', remessaRecord.id)
       .eq('empresa_id', empresaId);
 

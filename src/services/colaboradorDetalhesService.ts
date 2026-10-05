@@ -1,6 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables, Insertable, Updatable } from '@/integrations/supabase/database.types';
-import { validateInput } from '@/schemas/validate';
+import { validateInput, validateTablePayload } from '@/schemas/validate';
 import {
   dependenteSchema,
   contatoEmergenciaSchema,
@@ -51,7 +51,11 @@ export async function listarDependentes(colaboradorId: string, empresaId: string
 
 export async function criarDependente(dependente: Insertable<'dependentes'>): Promise<Tables<'dependentes'> | null> {
   validateInput(dependenteSchema, dependente, 'criarDependente');
-  const { data, error } = await supabase.from('dependentes').insert([dependente]).select().maybeSingle();
+  const { data, error } = await supabase
+    .from('dependentes')
+    .insert(validateTablePayload('dependentes', [dependente], 'colaboradorDetalhesService:dependentes'))
+    .select()
+    .maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -64,7 +68,10 @@ export async function atualizarDependente(
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
   await verificarDependenteDaEmpresa(id, empresaId);
   validateInput(dependenteSchema, dados, 'atualizarDependente');
-  const { error } = await supabase.from('dependentes').update(dados).eq('id', id);
+  const { error } = await supabase
+    .from('dependentes')
+    .update(validateTablePayload('dependentes', dados, 'colaboradorDetalhesService:dependentes'))
+    .eq('id', id);
   if (error) throw error;
 }
 
@@ -92,7 +99,11 @@ export async function criarContatoEmergencia(
   contato: Insertable<'contatos_emergencia'>
 ): Promise<Tables<'contatos_emergencia'> | null> {
   validateInput(contatoEmergenciaSchema, contato, 'criarContatoEmergencia');
-  const { data, error } = await supabase.from('contatos_emergencia').insert([contato]).select().maybeSingle();
+  const { data, error } = await supabase
+    .from('contatos_emergencia')
+    .insert(validateTablePayload('contatos_emergencia', [contato], 'colaboradorDetalhesService:contatos_emergencia'))
+    .select()
+    .maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -128,7 +139,11 @@ export async function criarRegistroSalarial(
   registro: Insertable<'historico_salarial'>
 ): Promise<Tables<'historico_salarial'> | null> {
   validateInput(historicoSalarialSchema, registro, 'criarRegistroSalarial');
-  const { data, error } = await supabase.from('historico_salarial').insert([registro]).select().maybeSingle();
+  const { data, error } = await supabase
+    .from('historico_salarial')
+    .insert(validateTablePayload('historico_salarial', [registro], 'colaboradorDetalhesService:historico_salarial'))
+    .select()
+    .maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -150,7 +165,11 @@ export async function listarASOs(colaboradorId: string, empresaId: string): Prom
 
 export async function criarASO(aso: Insertable<'asos'>): Promise<Tables<'asos'> | null> {
   validateInput(asoSchema, aso, 'criarASO');
-  const { data, error } = await supabase.from('asos').insert([aso]).select().maybeSingle();
+  const { data, error } = await supabase
+    .from('asos')
+    .insert(validateTablePayload('asos', [aso], 'colaboradorDetalhesService:asos'))
+    .select()
+    .maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -172,7 +191,11 @@ export async function criarFormacao(
   formacao: Insertable<'formacoes_academicas'>
 ): Promise<Tables<'formacoes_academicas'> | null> {
   validateInput(formacaoSchema, formacao, 'criarFormacao');
-  const { data, error } = await supabase.from('formacoes_academicas').insert([formacao]).select().maybeSingle();
+  const { data, error } = await supabase
+    .from('formacoes_academicas')
+    .insert(validateTablePayload('formacoes_academicas', [formacao], 'colaboradorDetalhesService:formacoes_academicas'))
+    .select()
+    .maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -206,7 +229,14 @@ export async function salvarDadosEstrangeiro(
   validateInput(dadosEstrangeiroSchema, { ...dados, colaborador_id: colaboradorId }, 'salvarDadosEstrangeiro');
   const { data, error } = await supabase
     .from('dados_estrangeiro')
-    .upsert({ ...dados, colaborador_id: colaboradorId }, { onConflict: 'colaborador_id' })
+    .upsert(
+      validateTablePayload(
+        'dados_estrangeiro',
+        { ...dados, colaborador_id: colaboradorId },
+        'colaboradorDetalhesService:dados_estrangeiro'
+      ),
+      { onConflict: 'colaborador_id' }
+    )
     .select()
     .maybeSingle();
   if (error) throw error;
@@ -233,7 +263,14 @@ export async function salvarDeficiencia(
   validateInput(deficienciaSchema, { ...dados, colaborador_id: colaboradorId }, 'salvarDeficiencia');
   const { data, error } = await supabase
     .from('deficiencias')
-    .upsert({ ...dados, colaborador_id: colaboradorId }, { onConflict: 'colaborador_id' })
+    .upsert(
+      validateTablePayload(
+        'deficiencias',
+        { ...dados, colaborador_id: colaboradorId },
+        'colaboradorDetalhesService:deficiencias'
+      ),
+      { onConflict: 'colaborador_id' }
+    )
     .select()
     .maybeSingle();
   if (error) throw error;
@@ -262,7 +299,7 @@ export async function salvarPeriodoExperiencia(
   if (existing) {
     const { data, error } = await supabase
       .from('periodos_experiencia')
-      .update(dados)
+      .update(validateTablePayload('periodos_experiencia', dados, 'colaboradorDetalhesService:periodos_experiencia'))
       .eq('id', existing.id)
       .eq('colaborador_id', colaboradorId)
       .select()
@@ -272,7 +309,13 @@ export async function salvarPeriodoExperiencia(
   } else {
     const { data, error } = await supabase
       .from('periodos_experiencia')
-      .insert([{ ...dados, colaborador_id: colaboradorId }])
+      .insert(
+        validateTablePayload(
+          'periodos_experiencia',
+          [{ ...dados, colaborador_id: colaboradorId }],
+          'colaboradorDetalhesService:periodos_experiencia'
+        )
+      )
       .select()
       .maybeSingle();
     if (error) throw error;
@@ -297,7 +340,13 @@ export async function criarAnotacao(
   anotacao: Insertable<'anotacoes_colaborador'>
 ): Promise<Tables<'anotacoes_colaborador'> | null> {
   validateInput(anotacaoSchema, anotacao, 'criarAnotacao');
-  const { data, error } = await supabase.from('anotacoes_colaborador').insert([anotacao]).select().maybeSingle();
+  const { data, error } = await supabase
+    .from('anotacoes_colaborador')
+    .insert(
+      validateTablePayload('anotacoes_colaborador', [anotacao], 'colaboradorDetalhesService:anotacoes_colaborador')
+    )
+    .select()
+    .maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -349,7 +398,11 @@ export async function criarTime(time: Insertable<'times'>): Promise<Tables<'time
   // mesma exigencia que `listarTimes` ja faz.
   if (!time?.empresa_id) throw new Error('empresa_id obrigatório para isolamento de tenant');
   validateInput(timeSchema, time, 'criarTime');
-  const { data, error } = await supabase.from('times').insert([time]).select().maybeSingle();
+  const { data, error } = await supabase
+    .from('times')
+    .insert(validateTablePayload('times', [time], 'colaboradorDetalhesService:times'))
+    .select()
+    .maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -401,7 +454,11 @@ export async function listarWebhooks(empresaId: string): Promise<Tables<'webhook
 
 export async function criarWebhook(webhook: Insertable<'webhooks_config'>): Promise<Tables<'webhooks_config'> | null> {
   validateInput(webhookConfigSchema, webhook, 'criarWebhook');
-  const { data, error } = await supabase.from('webhooks_config').insert([webhook]).select().maybeSingle();
+  const { data, error } = await supabase
+    .from('webhooks_config')
+    .insert(validateTablePayload('webhooks_config', [webhook], 'colaboradorDetalhesService:webhooks_config'))
+    .select()
+    .maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -430,7 +487,11 @@ export async function criarFeriasColetivas(
   ferias: Insertable<'ferias_coletivas'>
 ): Promise<Tables<'ferias_coletivas'> | null> {
   validateInput(feriasColetivaSchema, ferias, 'criarFeriasColetivas');
-  const { data, error } = await supabase.from('ferias_coletivas').insert([ferias]).select().maybeSingle();
+  const { data, error } = await supabase
+    .from('ferias_coletivas')
+    .insert(validateTablePayload('ferias_coletivas', [ferias], 'colaboradorDetalhesService:ferias_coletivas'))
+    .select()
+    .maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -451,7 +512,11 @@ export async function criarCampoCustomizado(
   campo: Insertable<'campos_customizados'>
 ): Promise<Tables<'campos_customizados'> | null> {
   validateInput(campoCustomizadoSchema, campo, 'criarCampoCustomizado');
-  const { data, error } = await supabase.from('campos_customizados').insert([campo]).select().maybeSingle();
+  const { data, error } = await supabase
+    .from('campos_customizados')
+    .insert(validateTablePayload('campos_customizados', [campo], 'colaboradorDetalhesService:campos_customizados'))
+    .select()
+    .maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -475,7 +540,11 @@ export async function salvarValorCampoCustomizado(
   const { data, error } = await supabase
     .from('valores_campos_customizados')
     .upsert(
-      { campo_customizado_id: campoId, colaborador_id: colaboradorId, valor },
+      validateTablePayload(
+        'valores_campos_customizados',
+        { campo_customizado_id: campoId, colaborador_id: colaboradorId, valor },
+        'colaboradorDetalhesService:valores_campos_customizados'
+      ),
       { onConflict: 'campo_customizado_id,colaborador_id' }
     )
     .select()

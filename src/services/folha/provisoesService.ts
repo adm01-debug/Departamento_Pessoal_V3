@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { validateTablePayload } from '@/schemas/validate';
 
 /**
  * Serviço de provisões mensais de folha (13º salário e férias + encargos).
@@ -139,7 +140,9 @@ export const provisoesService = {
 
       const { error: upsertError } = await supabase
         .from('provisoes_folha')
-        .upsert(payload, { onConflict: 'empresa_id,colaborador_id,competencia' });
+        .upsert(validateTablePayload('provisoes_folha', payload, 'provisoesService:provisoes_folha'), {
+          onConflict: 'empresa_id,colaborador_id,competencia',
+        });
 
       if (upsertError) throw upsertError;
     }

@@ -1,7 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables, TablesInsert } from '@/integrations/supabase/types';
 import { loggerService } from './loggerService';
-import { validateInput } from '@/schemas/validate';
+import { validateInput, validateTablePayload } from '@/schemas/validate';
 import { premiacaoRegraSchema, cenarioRoiInputSchema } from '@/schemas/workflowsPremiacoesCnab';
 
 export interface CenarioROIInput {
@@ -75,14 +75,22 @@ export const premiacoesService = {
   },
 
   async criarCampanha(d: TablesInsert<'premiacoes_campanhas'>) {
-    const { data, error } = await supabase.from('premiacoes_campanhas').insert(d).select().single();
+    const { data, error } = await supabase
+      .from('premiacoes_campanhas')
+      .insert(validateTablePayload('premiacoes_campanhas', d, 'premiacoesService:premiacoes_campanhas'))
+      .select()
+      .single();
     if (error) throw error;
     return data;
   },
 
   async criarRegra(d: TablesInsert<'premiacoes_regras'>) {
     validateInput(premiacaoRegraSchema, d, 'premiacoes.criarRegra');
-    const { data, error } = await supabase.from('premiacoes_regras').insert(d).select().single();
+    const { data, error } = await supabase
+      .from('premiacoes_regras')
+      .insert(validateTablePayload('premiacoes_regras', d, 'premiacoesService:premiacoes_regras'))
+      .select()
+      .single();
     if (error) throw error;
     return data;
   },
@@ -107,14 +115,20 @@ export const premiacoesService = {
 
     const { data, error } = await supabase
       .from('premiacoes_pagamentos')
-      .update({
-        status,
-        valor_aprovado: valorAprovado,
-        historico_mudancas: [
-          ...currentHistory,
-          { status, data: new Date().toISOString(), comentario, user: 'current_user' },
-        ],
-      })
+      .update(
+        validateTablePayload(
+          'premiacoes_pagamentos',
+          {
+            status,
+            valor_aprovado: valorAprovado,
+            historico_mudancas: [
+              ...currentHistory,
+              { status, data: new Date().toISOString(), comentario, user: 'current_user' },
+            ],
+          },
+          'premiacoesService:premiacoes_pagamentos'
+        )
+      )
       .eq('id', id)
       .eq('campanha_id', original.campanha_id)
       .select()
@@ -146,22 +160,28 @@ export const premiacoesService = {
 
     const { data, error } = await supabase
       .from('premiacoes_pagamentos')
-      .update({
-        valor_folha_real: valorFolha,
-        status_conciliacao,
-        justificativa_divergencia: justificativa,
-        status: status_conciliacao === 'conciliado' ? 'pago' : 'divergente_em_revisao',
-        historico_mudancas: [
-          ...currentHistory,
+      .update(
+        validateTablePayload(
+          'premiacoes_pagamentos',
           {
+            valor_folha_real: valorFolha,
+            status_conciliacao,
+            justificativa_divergencia: justificativa,
             status: status_conciliacao === 'conciliado' ? 'pago' : 'divergente_em_revisao',
-            data: new Date().toISOString(),
-            comentario: `Conciliação: ${status_conciliacao}. ${justificativa || ''}`,
-            valor_folha: valorFolha,
-            user: 'current_user',
+            historico_mudancas: [
+              ...currentHistory,
+              {
+                status: status_conciliacao === 'conciliado' ? 'pago' : 'divergente_em_revisao',
+                data: new Date().toISOString(),
+                comentario: `Conciliação: ${status_conciliacao}. ${justificativa || ''}`,
+                valor_folha: valorFolha,
+                user: 'current_user',
+              },
+            ],
           },
-        ],
-      })
+          'premiacoesService:premiacoes_pagamentos'
+        )
+      )
       .eq('id', id)
       .eq('campanha_id', original.campanha_id)
       .select()
@@ -170,12 +190,19 @@ export const premiacoesService = {
     if (error) throw error;
 
     // Log to audit table
-    await supabase.from('premiacoes_auditoria').insert({
-      entidade_tipo: 'pagamento',
-      entidade_id: id,
-      acao: 'conciliacao_folha',
-      detalhes: { valor_aprovado: valorAprovado, valor_folha: valorFolha, status_conciliacao, justificativa },
-    } as TablesInsert<'premiacoes_auditoria'>);
+    await supabase.from('premiacoes_auditoria').insert(
+      validateTablePayload(
+        'premiacoes_auditoria',
+        {
+          entidade_tipo: 'pagamento',
+          entidade_id: id,
+          acao: 'conciliacao_folha',
+          motivo: justificativa,
+          dados_novos: { valor_aprovado: valorAprovado, valor_folha: valorFolha, status_conciliacao },
+        } as TablesInsert<'premiacoes_auditoria'>,
+        'premiacoesService:premiacoes_auditoria'
+      )
+    );
 
     if (status_conciliacao === 'divergente') {
       await this.enviarNotificacaoCritica('conciliacao_divergente', { id, valorAprovado, valorFolha, justificativa });
@@ -238,25 +265,31 @@ export const premiacoesService = {
     validateInput(cenarioRoiInputSchema, cenario, 'premiacoes.salvarCenarioROI');
     const { data, error } = await supabase
       .from('premiacoes_roi_cenarios')
-      .insert({
-        nome: cenario.name,
-        configuracoes: {
-          employees: cenario.employees,
-          avgSalary: cenario.avgSalary,
-          bonusPercent: cenario.bonusPercent,
-          performanceLevel: cenario.performanceLevel,
-          retentionImpact: cenario.retentionImpact,
-        },
-        resultados: {
-          totalBudget: cenario.totalBudget,
-          savings: cenario.savings,
-          roi: cenario.roi,
-        },
-        snapshot_logs: {
-          timestamp: new Date().toISOString(),
-          version: '1.0',
-        },
-      } as TablesInsert<'premiacoes_roi_cenarios'>)
+      .insert(
+        validateTablePayload(
+          'premiacoes_roi_cenarios',
+          {
+            nome: cenario.name,
+            configuracoes: {
+              employees: cenario.employees,
+              avgSalary: cenario.avgSalary,
+              bonusPercent: cenario.bonusPercent,
+              performanceLevel: cenario.performanceLevel,
+              retentionImpact: cenario.retentionImpact,
+            },
+            resultados: {
+              totalBudget: cenario.totalBudget,
+              savings: cenario.savings,
+              roi: cenario.roi,
+            },
+            snapshot_logs: {
+              timestamp: new Date().toISOString(),
+              version: '1.0',
+            },
+          } as TablesInsert<'premiacoes_roi_cenarios'>,
+          'premiacoesService:premiacoes_roi_cenarios'
+        )
+      )
       .select()
       .single();
     if (error) throw error;
@@ -280,15 +313,47 @@ export const premiacoesService = {
     if (import.meta.env.DEV) {
       console.log(`[Notification] ${tipo}:`, payload);
     }
-    // Em um cenário real, chamaria uma Edge Function para enviar e-mail/WhatsApp
-    const { error } = await supabase.from('notificacoes').insert({
+
+    // Destinatários concretos: sem user_id a linha ficava invisível
+    // (NotificacoesPage filtra pelo usuário autenticado). Resolve a empresa
+    // via pagamento → campanha e notifica os admins/gestores/RH dela; sem
+    // destinatário resolvido, insere com user_id null para manter a trilha.
+    let destinatarios: string[] = payload.user_id ? [payload.user_id as string] : [];
+    let empresaId: string | null = null;
+    const pagamentoId = payload.id as string | undefined;
+    if (destinatarios.length === 0 && pagamentoId) {
+      const { data: pag } = await supabase
+        .from('premiacoes_pagamentos')
+        .select('campanha:premiacoes_campanhas!inner(empresa_id)')
+        .eq('id', pagamentoId)
+        .maybeSingle();
+      empresaId = (pag as { campanha?: { empresa_id?: string } | null } | null)?.campanha?.empresa_id ?? null;
+      if (empresaId) {
+        // user_empresas/user_roles são denylisted — membership só via RPC.
+        const { data: admins } = await supabase.rpc('get_empresa_admin_ids', { p_empresa_id: empresaId });
+        destinatarios = [...new Set((admins ?? []).map((a) => a.user_id))];
+      }
+    }
+
+    // Não espalhar `payload`: notificacoes não tem coluna metadata e chaves
+    // arbitrárias (status, valorAprovado…) eram rejeitadas pelo PostgREST —
+    // a notificação nunca era gravada. O contexto vai inteiro na mensagem.
+    const base = {
       tipo: 'premiacao_critica',
       titulo: `Evento Crítico: ${tipo.replace('_', ' ').toUpperCase()}`,
       mensagem: `Ação detectada no módulo de premiações: ${JSON.stringify(payload)}`,
-      user_id: payload.user_id as string | null,
-      metadata: payload.metadata as Record<string, unknown> | null,
-      ...payload,
-    } as TablesInsert<'notificacoes'>);
+      entidade_tipo: (payload.entidade_tipo as string | null) ?? 'premiacao',
+      entidade_id: (payload.id as string | null) ?? null,
+      empresa_id: empresaId,
+    };
+    const linhas =
+      destinatarios.length > 0 ? destinatarios.map((uid) => ({ ...base, user_id: uid })) : [{ ...base, user_id: null }];
+
+    const { error } = await supabase
+      .from('notificacoes')
+      .insert(
+        validateTablePayload('notificacoes', linhas as TablesInsert<'notificacoes'>[], 'premiacoesService:notificacoes')
+      );
 
     if (error) loggerService.error('Erro ao registrar notificação crítica', { tipo, payload }, error as Error);
     return true;

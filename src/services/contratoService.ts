@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Insertable, Tables, Updatable } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 export const contratoService = {
   async listar(empresaId: string): Promise<Tables<'contratos'>[]> {
@@ -40,7 +41,11 @@ export const contratoService = {
   },
 
   async criar(d: Insertable<'contratos'>): Promise<Tables<'contratos'>> {
-    const { data, error } = await supabase.from('contratos').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('contratos')
+      .insert(validateTablePayload('contratos', d, 'contratoService:contratos'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de contrato foi retornado.');
     return data;
@@ -50,7 +55,7 @@ export const contratoService = {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('contratos')
-      .update(d)
+      .update(validateTablePayload('contratos', d, 'contratoService:contratos'))
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()

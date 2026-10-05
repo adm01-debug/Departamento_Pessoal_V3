@@ -6,6 +6,7 @@ import type { ESocialData } from '@/schemas/esocial/helpers';
 import { gerarXmlESocial, type ESocialDados } from '@/utils/esocialXmlGenerator';
 import { loggerService } from './loggerService';
 import type { Json, Tables } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 export interface ESocialEvento {
   id: string;
   empresa_id: string | null;
@@ -126,16 +127,22 @@ export async function criarEvento(evento: {
 
   const { data, error } = await supabase
     .from('esocial_eventos')
-    .insert([
-      {
-        empresa_id: evento.empresa_id,
-        tipo_evento: evento.tipo_evento,
-        competencia: evento.competencia || currentCompetenciaLocal(),
-        dados: (evento.dados || {}) as Json,
-        status: 'pendente',
-        xml: xml,
-      },
-    ])
+    .insert(
+      validateTablePayload(
+        'esocial_eventos',
+        [
+          {
+            empresa_id: evento.empresa_id,
+            tipo_evento: evento.tipo_evento,
+            competencia: evento.competencia || currentCompetenciaLocal(),
+            dados: (evento.dados || {}) as Json,
+            status: 'pendente',
+            xml: xml,
+          },
+        ],
+        'esocialService:esocial_eventos'
+      )
+    )
     .select()
     .maybeSingle();
 
@@ -409,7 +416,11 @@ export async function salvarConfig(config: {
   ambiente: string;
   certificado_id?: string;
 }): Promise<void> {
-  const { error } = await supabase.from('configuracoes_esocial').upsert(config, { onConflict: 'empresa_id' });
+  const { error } = await supabase
+    .from('configuracoes_esocial')
+    .upsert(validateTablePayload('configuracoes_esocial', config, 'esocialService:configuracoes_esocial'), {
+      onConflict: 'empresa_id',
+    });
   if (error) throw error;
 }
 
@@ -431,7 +442,9 @@ export async function adicionarCertificado(cert: {
 }): Promise<Tables<'certificados_digitais'>> {
   const { data, error } = await supabase
     .from('certificados_digitais')
-    .insert([{ ...cert, ativo: true }])
+    .insert(
+      validateTablePayload('certificados_digitais', [{ ...cert, ativo: true }], 'esocialService:certificados_digitais')
+    )
     .select()
     .single();
   if (error) throw error;

@@ -1,5 +1,6 @@
 import { supabase, type QueryBuilderType } from '@/integrations/supabase/client';
 import type { Insertable, Tables } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 export const ajustesPontoService = {
   listar: async (empresaId: string): Promise<Tables<'ajustes_ponto'>[]> => {
@@ -15,14 +16,22 @@ export const ajustesPontoService = {
     return (data as Tables<'ajustes_ponto'>[] | null) || [];
   },
   criar: async (d: Insertable<'ajustes_ponto'>): Promise<void> => {
-    const { error } = await supabase.from('ajustes_ponto').insert(d);
+    const { error } = await supabase
+      .from('ajustes_ponto')
+      .insert(validateTablePayload('ajustes_ponto', d, 'pontoService:ajustes_ponto'));
     if (error) throw error;
   },
   aprovar: async (colaboradorId: string, id: string, userId: string): Promise<void> => {
     if (!colaboradorId) throw new Error('colaborador_id obrigatório para isolamento de tenant');
     const { error } = await supabase
       .from('ajustes_ponto')
-      .update({ status: 'aprovado', aprovado_por: userId, aprovado_em: new Date().toISOString() })
+      .update(
+        validateTablePayload(
+          'ajustes_ponto',
+          { status: 'aprovado', aprovado_por: userId, aprovado_em: new Date().toISOString() },
+          'pontoService:ajustes_ponto'
+        )
+      )
       .eq('id', id)
       .eq('colaborador_id', colaboradorId);
     if (error) throw error;
@@ -49,13 +58,21 @@ export const periodosPontoService = {
     return (data as Tables<'periodos_ponto'>[] | null) || [];
   },
   criar: async (d: Insertable<'periodos_ponto'>): Promise<void> => {
-    const { error } = await supabase.from('periodos_ponto').insert(d);
+    const { error } = await supabase
+      .from('periodos_ponto')
+      .insert(validateTablePayload('periodos_ponto', d, 'pontoService:periodos_ponto'));
     if (error) throw error;
   },
   fechar: async (id: string): Promise<void> => {
     const { error } = await supabase
       .from('periodos_ponto')
-      .update({ status: 'fechado', fechado_em: new Date().toISOString() })
+      .update(
+        validateTablePayload(
+          'periodos_ponto',
+          { status: 'fechado', fechado_em: new Date().toISOString() },
+          'pontoService:periodos_ponto'
+        )
+      )
       .eq('id', id);
     if (error) throw error;
   },

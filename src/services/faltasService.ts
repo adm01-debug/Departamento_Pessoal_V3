@@ -1,5 +1,6 @@
 import { supabase, type QueryBuilderType } from '@/integrations/supabase/client';
 import type { Insertable, Tables, Updatable } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 type Falta = Tables<'faltas'>;
 type FaltaInsert = Insertable<'faltas'>;
@@ -30,7 +31,11 @@ export const faltasService = {
   },
 
   async criar(d: FaltaInsert): Promise<Falta> {
-    const { data, error } = await supabase.from('faltas').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('faltas')
+      .insert(validateTablePayload('faltas', d, 'faltasService:faltas'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de falta foi retornado.');
     return data;
@@ -38,7 +43,11 @@ export const faltasService = {
 
   async atualizar(id: string, d: FaltaUpdate, empresaId: string): Promise<Falta> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { data, error } = await (supabase.from('faltas').update(d) as unknown as QueryBuilderType)
+    const { data, error } = await (
+      supabase
+        .from('faltas')
+        .update(validateTablePayload('faltas', d, 'faltasService:faltas')) as unknown as QueryBuilderType
+    )
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()

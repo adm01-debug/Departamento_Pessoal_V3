@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Insertable, Tables, Updatable } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 export const comunicacaoService = {
   async listarComunicados(empresaId: string): Promise<Tables<'comunicados'>[]> {
@@ -14,7 +15,11 @@ export const comunicacaoService = {
   },
 
   async criarComunicado(d: Insertable<'comunicados'>): Promise<Tables<'comunicados'>> {
-    const { data, error } = await supabase.from('comunicados').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('comunicados')
+      .insert(validateTablePayload('comunicados', d, 'comunicacaoService:comunicados'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de comunicado foi retornado.');
     return data;
@@ -28,7 +33,7 @@ export const comunicacaoService = {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('comunicados')
-      .update(d)
+      .update(validateTablePayload('comunicados', d, 'comunicacaoService:comunicados'))
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()
@@ -47,7 +52,13 @@ export const comunicacaoService = {
   async marcarLido(comunicadoId: string, usuarioId: string): Promise<Tables<'comunicados_leituras'>> {
     const { data, error } = await supabase
       .from('comunicados_leituras')
-      .insert({ comunicado_id: comunicadoId, usuario_id: usuarioId })
+      .insert(
+        validateTablePayload(
+          'comunicados_leituras',
+          { comunicado_id: comunicadoId, usuario_id: usuarioId },
+          'comunicacaoService:comunicados_leituras'
+        )
+      )
       .select()
       .maybeSingle();
     if (error) throw error;
@@ -67,7 +78,11 @@ export const comunicacaoService = {
   },
 
   async criarDenuncia(d: Insertable<'canal_etica'>): Promise<Tables<'canal_etica'>> {
-    const { data, error } = await supabase.from('canal_etica').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('canal_etica')
+      .insert(validateTablePayload('canal_etica', d, 'comunicacaoService:canal_etica'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de denúncia foi retornado.');
     return data;
@@ -77,7 +92,7 @@ export const comunicacaoService = {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('canal_etica')
-      .update(d)
+      .update(validateTablePayload('canal_etica', d, 'comunicacaoService:canal_etica'))
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()

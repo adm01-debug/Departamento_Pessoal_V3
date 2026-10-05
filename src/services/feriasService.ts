@@ -4,7 +4,7 @@ import { supabase, type QueryBuilderType } from '@/integrations/supabase/client'
 import type { Insertable, Tables, Updatable } from '@/integrations/supabase/database.types';
 import { parseCursor } from '@/lib/cursor';
 import { feriasSchema } from '@/schemas/ferias';
-import { validateInput } from '@/schemas/validate';
+import { validateInput, validateTablePayload } from '@/schemas/validate';
 
 type PeriodoAquisitivo = Tables<'periodos_aquisitivos'>;
 type PeriodoAquisitivoInsert = Insertable<'periodos_aquisitivos'>;
@@ -124,7 +124,11 @@ class FeriasService extends BaseService<Ferias> {
   }
 
   async criarPeriodoAquisitivo(d: PeriodoAquisitivoInsert): Promise<PeriodoAquisitivo | null> {
-    const { data, error } = await supabase.from('periodos_aquisitivos').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('periodos_aquisitivos')
+      .insert(validateTablePayload('periodos_aquisitivos', d, 'feriasService:periodos_aquisitivos'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     return data;
   }
@@ -136,7 +140,7 @@ class FeriasService extends BaseService<Ferias> {
   ): Promise<PeriodoAquisitivo | null> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await (supabase.from('periodos_aquisitivos') as unknown as QueryBuilderType)
-      .update(d)
+      .update(validateTablePayload('periodos_aquisitivos', d, 'feriasService:periodos_aquisitivos'))
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()

@@ -3,6 +3,7 @@ import { calcularRescisao } from '@/utils/rescisaoCalc';
 import { auditLogger } from '@/utils/auditLogger';
 import { loggerService } from './loggerService';
 import type { Tables } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 async function sha256Hex(data: string): Promise<string> {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(data));
@@ -135,7 +136,7 @@ export const rescisaoService = {
 
       const { data: novo, error: updateError } = await supabase
         .from('desligamentos')
-        .update(dadosAtualizados)
+        .update(validateTablePayload('desligamentos', dadosAtualizados, 'rescisaoService:desligamentos'))
         .eq('id', id)
         .eq('empresa_id', empresaId)
         .select()
@@ -185,14 +186,18 @@ export const rescisaoService = {
 
       const { data: userData } = await supabase.auth.getUser();
       const { error: homError } = await supabase.from('homologacoes_rescisao').upsert(
-        {
-          desligamento_id: id,
-          etapa,
-          status: 'aprovado',
-          parecer,
-          usuario_id: userData?.user?.id,
-          data_decisao: new Date().toISOString(),
-        },
+        validateTablePayload(
+          'homologacoes_rescisao',
+          {
+            desligamento_id: id,
+            etapa,
+            status: 'aprovado',
+            parecer,
+            usuario_id: userData?.user?.id,
+            data_decisao: new Date().toISOString(),
+          },
+          'rescisaoService:homologacoes_rescisao'
+        ),
         { onConflict: 'desligamento_id,etapa' }
       );
 
@@ -210,11 +215,17 @@ export const rescisaoService = {
 
       const { data, error } = await supabase
         .from('desligamentos')
-        .update({
-          status: novoStatus,
-          etapa: proximaEtapa === 'finalizado' ? 'pagamento' : 'homologacao',
-          checklist_homologacao: proximaEtapa === 'finalizado',
-        })
+        .update(
+          validateTablePayload(
+            'desligamentos',
+            {
+              status: novoStatus,
+              etapa: proximaEtapa === 'finalizado' ? 'pagamento' : 'homologacao',
+              checklist_homologacao: proximaEtapa === 'finalizado',
+            },
+            'rescisaoService:desligamentos'
+          )
+        )
         .eq('id', id)
         .eq('empresa_id', empresaId)
         .select()
@@ -298,12 +309,18 @@ export const rescisaoService = {
 
       const { data, error } = await supabase
         .from('desligamentos')
-        .update({
-          status: 'pago',
-          etapa: 'finalizado',
-          checklist_pagamento: true,
-          data_pagamento: new Date().toISOString(),
-        })
+        .update(
+          validateTablePayload(
+            'desligamentos',
+            {
+              status: 'pago',
+              etapa: 'finalizado',
+              checklist_pagamento: true,
+              data_pagamento: new Date().toISOString(),
+            },
+            'rescisaoService:desligamentos'
+          )
+        )
         .eq('id', id)
         .eq('empresa_id', empresaId)
         .select()
@@ -313,10 +330,16 @@ export const rescisaoService = {
 
       const { error: colabError } = await supabase
         .from('colaboradores')
-        .update({
-          status: 'desligado',
-          data_desligamento: d.data_desligamento,
-        })
+        .update(
+          validateTablePayload(
+            'colaboradores',
+            {
+              status: 'desligado',
+              data_desligamento: d.data_desligamento,
+            },
+            'rescisaoService:colaboradores'
+          )
+        )
         .eq('id', d.colaborador_id)
         .eq('empresa_id', empresaId);
 

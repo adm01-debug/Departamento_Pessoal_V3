@@ -2,6 +2,7 @@ import { BaseService, ListOptions, ListResponse } from './baseService';
 import { auditLogger } from '@/utils/auditLogger';
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables, TablesInsert } from '@/integrations/supabase/types';
+import { validateTablePayload } from '@/schemas/validate';
 
 type BeneficioRow = Tables<'beneficios'>;
 type BeneficioVinculoRow = Tables<'beneficios_colaborador'> & {
@@ -106,11 +107,17 @@ class BeneficioService extends BaseService<
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('beneficios_colaborador')
-      .insert({
-        tipo_beneficio_id: tipoBeneficioId,
-        colaborador_id: colaboradorId,
-        ...dados,
-      })
+      .insert(
+        validateTablePayload(
+          'beneficios_colaborador',
+          {
+            tipo_beneficio_id: tipoBeneficioId,
+            colaborador_id: colaboradorId,
+            ...dados,
+          },
+          'beneficioService:beneficios_colaborador'
+        )
+      )
       .select()
       .single();
     if (error) throw error;

@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { validateUploadFile } from '@/utils/uploadValidation';
 import type { Database, Insertable, Tables } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 export type DespesaStatus =
   'rascunho' | 'pendente' | 'aprovado' | 'rejeitado' | 'integrado_folha' | 'pago' | 'cancelado';
@@ -36,7 +37,11 @@ export const despesaService = {
 
   async criar(d: Insertable<'despesas'>): Promise<Tables<'despesas'>> {
     const payload: Insertable<'despesas'> = { ...d, status: d.status || 'pendente', tipo: d.tipo || 'reembolso' };
-    const { data, error } = await supabase.from('despesas').insert(payload).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('despesas')
+      .insert(validateTablePayload('despesas', payload, 'despesaService:despesas'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de despesa foi retornado.');
     return data;
@@ -80,7 +85,13 @@ export const despesaService = {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('despesas')
-      .update({ status: 'pago', updated_at: new Date().toISOString() })
+      .update(
+        validateTablePayload(
+          'despesas',
+          { status: 'pago', updated_at: new Date().toISOString() },
+          'despesaService:despesas'
+        )
+      )
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()
@@ -93,12 +104,18 @@ export const despesaService = {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('despesas')
-      .update({
-        status: 'integrado_folha',
-        folha_id: folhaId,
-        integrado_folha_em: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
+      .update(
+        validateTablePayload(
+          'despesas',
+          {
+            status: 'integrado_folha',
+            folha_id: folhaId,
+            integrado_folha_em: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+          'despesaService:despesas'
+        )
+      )
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .eq('status', 'aprovado')
@@ -123,7 +140,13 @@ export const despesaService = {
     if (upErr) throw upErr;
     const { error: updErr } = await supabase
       .from('despesas')
-      .update({ comprovante_url: path, updated_at: new Date().toISOString() })
+      .update(
+        validateTablePayload(
+          'despesas',
+          { comprovante_url: path, updated_at: new Date().toISOString() },
+          'despesaService:despesas'
+        )
+      )
       .eq('id', despesaId)
       .eq('empresa_id', empresaId);
     if (updErr) throw updErr;

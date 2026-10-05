@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { TABLE_COLUMNS } from './tableColumns';
+import { loggerService } from '@/services/loggerService';
 
 /**
  * Validação defensiva na fronteira dos services: valida somente os campos
@@ -34,4 +36,50 @@ export function validateInput(schema: z.ZodType, payload: object, contexto: stri
     const campo = issue?.path.join('.') || 'payload';
     throw new Error(`${contexto}: campo "${campo}" inválido — ${issue?.message ?? 'valor fora do domínio'}`);
   }
+}
+
+const warnedTables = new Set<string>();
+
+/**
+ * Validação estrutural genérica para QUALQUER escrita, mesmo sem schema de
+ * domínio: rejeita payload vazio e chaves que não são colunas da tabela
+ * (typos de coluna chegavam ao PostgREST e falhavam — ou piores, escreviam
+ * em coluna errada por similaridade). Não valida valores: isso é papel dos
+ * schemas de domínio via validateInput.
+ *
+ * Tabela fora do mapa (types.ts atrás do schema): loga uma vez e deixa
+ * passar — fail-open, porque o banco rejeita coluna inexistente de qualquer
+ * forma. Retorna o payload inalterado para uso inline:
+ *   .insert(validateTablePayload('ferias', payload, 'ferias.criar'))
+ */
+export function validateTablePayload<T>(table: string, payload: T, contexto: string): T {
+  const cols = TABLE_COLUMNS[table];
+  if (!cols) {
+    if (!warnedTables.has(table)) {
+      warnedTables.add(table);
+      loggerService.warn(`validateTablePayload: tabela "${table}" fora do mapa gerado (regenerar types.ts)`, {
+        contexto,
+      });
+    }
+    return payload;
+  }
+  const valid = new Set(cols);
+  const items = (Array.isArray(payload) ? payload : [payload]) as unknown[];
+  if (items.length === 0) {
+    throw new Error(`${contexto}: payload vazio — array [] não escreve nada`);
+  }
+  for (const item of items) {
+    if (typeof item !== 'object' || item === null || Array.isArray(item)) {
+      throw new Error(`${contexto}: payload inválido — esperado objeto ou array de objetos`);
+    }
+    const keys = Object.keys(item);
+    if (keys.length === 0) {
+      throw new Error(`${contexto}: payload vazio — nenhum campo informado`);
+    }
+    const bad = keys.filter((k) => !valid.has(k));
+    if (bad.length > 0) {
+      throw new Error(`${contexto}: coluna(s) desconhecida(s) em "${table}": ${bad.join(', ')}`);
+    }
+  }
+  return payload;
 }
