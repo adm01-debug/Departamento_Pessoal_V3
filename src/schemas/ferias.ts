@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { uuidPg } from './common';
 
 /**
  * Schema de Férias — espelho das validações CLT do banco.
@@ -11,14 +12,14 @@ import { z } from 'zod';
  * (indisponível em schemas com .superRefine).
  */
 export const feriasSchemaBase = z.object({
-  colaborador_id: z.string().uuid('Colaborador obrigatório'),
-  periodo_aquisitivo_id: z.string().uuid('Período aquisitivo obrigatório').optional(),
+  colaborador_id: uuidPg('Colaborador obrigatório'),
+  periodo_aquisitivo_id: uuidPg('Período aquisitivo obrigatório').optional(),
   data_inicio: z.string().min(1, 'Data de início obrigatória'),
   data_fim: z.string().min(1, 'Data de fim obrigatória'),
   dias_gozo: z.number().min(5, 'Mínimo de 5 dias por período (Art. 134 §1º CLT)').max(30, 'Máximo de 30 dias'),
   dias_abono: z.number().min(0).max(10, 'Abono pecuniário máximo: 10 dias (Art. 143 CLT)').default(0),
   observacoes: z.string().optional(),
-  empresa_id: z.string().uuid().optional(),
+  empresa_id: uuidPg().optional(),
 });
 
 export const feriasSchema = feriasSchemaBase.superRefine((data, ctx) => {

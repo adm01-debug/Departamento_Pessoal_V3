@@ -5,6 +5,7 @@ import { ListOptions, ListResponse } from '@/services/baseService';
 import { loggerService } from '@/services/loggerService';
 import { auditLogger } from '@/utils/auditLogger';
 import { safeErrorMessage } from '@/utils/safeError';
+import { TABLE_COLUMNS } from '@/schemas/tableColumns';
 
 interface ServiceInterface<T> {
   listar(options: ListOptions): Promise<ListResponse<T>>;
@@ -32,6 +33,13 @@ interface UseGenericCrudOptions<T> {
    * de compilação que o BaseService dá — achado de auditoria adversarial (24/09/2026).
    */
   requireEmpresaId?: boolean;
+  /**
+   * Fallback para services que não expõem `table` (objetos fora do
+   * BaseService): força a injeção de `empresa_id: empresaId` no create quando
+   * o caller não o passou. Services do BaseService já têm injeção automática
+   * via TABLE_COLUMNS quando a tabela tem a coluna empresa_id.
+   */
+  injectEmpresaIdOnCreate?: boolean;
 }
 
 export function useGenericCrud<T>({
@@ -43,6 +51,7 @@ export function useGenericCrud<T>({
   searchColumn,
   empresaId,
   requireEmpresaId = true,
+  injectEmpresaIdOnCreate = false,
 }: UseGenericCrudOptions<T>) {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
@@ -79,7 +88,20 @@ export function useGenericCrud<T>({
   });
 
   const criarMutation = useMutation({
-    mutationFn: (data: unknown) => service.criar(data),
+    mutationFn: (data: unknown) => {
+      const table = (service as { table?: string }).table;
+      const hasEmpresaCol = !!table && (TABLE_COLUMNS[table]?.includes('empresa_id') ?? false);
+      if (
+        (injectEmpresaIdOnCreate || hasEmpresaCol) &&
+        empresaId &&
+        typeof data === 'object' &&
+        data !== null &&
+        !('empresa_id' in data)
+      ) {
+        return service.criar({ ...(data as Record<string, unknown>), empresa_id: empresaId });
+      }
+      return service.criar(data);
+    },
     onSuccess: (data) => {
       void queryClient.invalidateQueries({ queryKey: [queryKey] });
       toast.success(successMessages.create || 'Registro criado com sucesso');

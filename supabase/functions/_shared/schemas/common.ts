@@ -11,8 +11,17 @@
  */
 import { z } from 'https://deno.land/x/zod@v3.23.8/mod.ts';
 
+/**
+ * Forma de uuid aceita pelo Postgres — `z.string().uuid()` (zod v4) exige os
+ * nibbles de versão/variante do RFC 9562 e rejeitaria ids legados válidos para
+ * o banco (ex.: seeds `11110000-...`). Use para campos alimentados por dados
+ * vindos do banco.
+ */
+export const uuidPg = (message = 'UUID inválido') =>
+  z.string().regex(/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/, message);
+
 export const metricasSchema = z.object({
-  empresaId: z.string().uuid('ID da empresa deve ser um UUID válido'),
+  empresaId: uuidPg('ID da empresa deve ser um UUID válido'),
 });
 
 export const webhookSchema = z.object({
@@ -34,7 +43,7 @@ export const cnpjSchema = z.object({
 });
 
 export const holeriteSchema = z.object({
-  colaboradorId: z.string().uuid('ID do colaborador deve ser um UUID válido'),
+  colaboradorId: uuidPg('ID do colaborador deve ser um UUID válido'),
   competencia: z.string()
     .regex(/^\d{4}-(?:0[1-9]|1[0-2])$/, 'Competência deve estar no formato AAAA-MM')
     .refine((value) => value.startsWith('2025-') || value.startsWith('2026-'), {
@@ -43,30 +52,30 @@ export const holeriteSchema = z.object({
 });
 
 export const calcularFolhaSchema = z.object({
-  empresa_id: z.string().uuid('ID da empresa inválido'),
+  empresa_id: uuidPg('ID da empresa inválido'),
   competencia: z.string().regex(/^\d{4}-\d{2}$/, 'Formato de competência inválido (AAAA-MM)'),
 });
 
 export const notificacaoSchema = z.discriminatedUnion('action', [
   z.object({
     action: z.literal('enviar'),
-    empresaId: z.string().uuid(),
+    empresaId: uuidPg(),
     tipo: z.enum(['info', 'aviso', 'erro', 'sucesso']).default('info'),
     destinatarios: z.array(
-      z.object({ user_id: z.string().uuid() }).strict()
+      z.object({ user_id: uuidPg() }).strict()
     ).min(1).max(500),
     assunto: z.string().trim().min(1).max(200),
     conteudo: z.string().trim().min(1).max(5000),
   }).strict(),
   z.object({
     action: z.literal('listar'),
-    empresaId: z.string().uuid().optional(),
+    empresaId: uuidPg().optional(),
   }).strict(),
 ]);
 
 export const auditoriaSchema = z.object({
   action: z.enum(['registrar', 'listar', 'resumo']),
-  empresaId: z.string().uuid().optional(),
+  empresaId: uuidPg().optional(),
   data: z.object({
     acao: z.string(),
     entidade: z.string(),

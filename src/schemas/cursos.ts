@@ -1,6 +1,7 @@
 import { z } from 'zod';
+import { uuidPg } from './common';
 
-const uuid = z.string().uuid('UUID inválido');
+const uuid = uuidPg('UUID inválido');
 const dataISO = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Data deve estar em formato ISO (AAAA-MM-DD)');
 
 /** Schemas de treinamentos e cursos. validateInput aplica .partial(). */

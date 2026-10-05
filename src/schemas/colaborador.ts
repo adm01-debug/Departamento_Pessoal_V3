@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { uuidPg } from './common';
 
 // For local development, we keep the schema here but it matches the shared version
 export const colaboradorSchema = z.object({
@@ -26,7 +27,7 @@ export const colaboradorSchema = z.object({
   data_admissao: z.string().min(1, 'Data de admissão obrigatória'),
   salario_base: z.number().min(0, 'Salário deve ser positivo'),
   tipo_contrato: z.enum(['clt', 'pj', 'estagiario', 'temporario', 'intermitente', 'aprendiz']),
-  empresa_id: z.string().uuid().optional(),
+  empresa_id: uuidPg().optional(),
 });
 
 export type ColaboradorSchema = z.infer<typeof colaboradorSchema>;
