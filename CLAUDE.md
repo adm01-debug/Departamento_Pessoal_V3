@@ -474,8 +474,11 @@ git rev-parse --short HEAD
 grep "Built from commit" graphify-out/GRAPH_REPORT.md
 ```
 
-Se divergirem, o auto-sync via N8N deve ter corrigido em ate 15 min.
-Para forcar rebuild manual: `graphify update . --force`
+Não existe sync automático: se divergirem, rode `npm run graph:update` (incremental)
+ou `npm run graph:rebuild` (completo). Após o rebuild, commite
+`graphify-out/GRAPH_REPORT.md` e `graphify-out/manifest.json` — são os únicos
+artefatos versionados; `graph.json`/`graph.html`/cache são regeneráveis e ficam
+fora do git (ver `.gitignore`).
 
 ## graphify
 
@@ -487,3 +490,19 @@ Rules:
 - If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
 - Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
 - After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+
+Notas operacionais:
+
+- O grafo tem ~20k nós (>5.000), então `graph.html` abre em modo agregado (nós de
+  comunidade). Para detalhe por arquivo, use `graphify update . --obsidian` ou
+  consulte `graph.json`/`query`/`path`/`explain` diretamente.
+- `graphify query/path/explain` funcionam offline sobre `graph.json` — sem custo de API.
+  `graphify label` (nomes semânticos das comunidades) é opcional e exige
+  `GEMINI_API_KEY`/`GOOGLE_API_KEY`.
+- `.graphifyignore` exclui secrets, baselines JSON e artefatos gerados — mantenha-o
+  alinhado ao `.gitignore`.
+- 2 arquivos não são extraídos por completo (limitação do parser, não bug do código):
+  `src/types/entities.ts` (tipos `import()` inline) e
+  `src/utils/__tests__/cursorPagination.test.ts` (string com null byte).
+- Instalação: `pip install "graphifyy[sql]"` — o extra `sql` é obrigatório para
+  parsear as ~730 migrations; sem ele elas entram vazias no grafo.
