@@ -474,8 +474,10 @@ git rev-parse --short HEAD
 grep "Built from commit" graphify-out/GRAPH_REPORT.md
 ```
 
-Não existe sync automático: se divergirem, rode `npm run graph:update` (incremental)
-ou `npm run graph:rebuild` (completo). Após o rebuild, commite
+Não existe sync automático: em clone novo (sem `graphify-out/graph.json` local),
+rode `npm run graph:rebuild` primeiro — o incremental depende do grafo local.
+Com o grafo já construído, `npm run graph:update` atualiza incrementalmente e
+`npm run graph:rebuild` refaz tudo. Após o rebuild, commite
 `graphify-out/GRAPH_REPORT.md` e `graphify-out/manifest.json` — são os únicos
 artefatos versionados; `graph.json`/`graph.html`/cache são regeneráveis e ficam
 fora do git (ver `.gitignore`).
