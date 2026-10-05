@@ -1,6 +1,7 @@
 import { z } from 'zod';
+import { uuidPg } from './common';
 
-const uuid = z.string().uuid('UUID inválido');
+const uuid = uuidPg('UUID inválido');
 
 /** Schemas de workflows, premiações e CNAB. validateInput aplica .partial(). */
 

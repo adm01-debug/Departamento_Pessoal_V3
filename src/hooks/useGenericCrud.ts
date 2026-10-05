@@ -32,6 +32,13 @@ interface UseGenericCrudOptions<T> {
    * de compilação que o BaseService dá — achado de auditoria adversarial (24/09/2026).
    */
   requireEmpresaId?: boolean;
+  /**
+   * Quando true, injeta `empresa_id: empresaId` no payload de criação caso o
+   * caller não o tenha passado — tabelas tenant-scoped precisam dele para o
+   * registro ficar visível na listagem. Usar apenas em services cuja tabela
+   * tem coluna empresa_id.
+   */
+  injectEmpresaIdOnCreate?: boolean;
 }
 
 export function useGenericCrud<T>({
@@ -43,6 +50,7 @@ export function useGenericCrud<T>({
   searchColumn,
   empresaId,
   requireEmpresaId = true,
+  injectEmpresaIdOnCreate = false,
 }: UseGenericCrudOptions<T>) {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
@@ -79,7 +87,18 @@ export function useGenericCrud<T>({
   });
 
   const criarMutation = useMutation({
-    mutationFn: (data: unknown) => service.criar(data),
+    mutationFn: (data: unknown) => {
+      if (
+        injectEmpresaIdOnCreate &&
+        empresaId &&
+        typeof data === 'object' &&
+        data !== null &&
+        !('empresa_id' in data)
+      ) {
+        return service.criar({ ...(data as Record<string, unknown>), empresa_id: empresaId });
+      }
+      return service.criar(data);
+    },
     onSuccess: (data) => {
       void queryClient.invalidateQueries({ queryKey: [queryKey] });
       toast.success(successMessages.create || 'Registro criado com sucesso');

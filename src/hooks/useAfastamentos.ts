@@ -29,6 +29,7 @@ export function useAfastamentos() {
     queryKey: 'afastamentos',
     service: afastamentoService,
     empresaId,
+    injectEmpresaIdOnCreate: true,
     filters: { ...filtros, empresaId },
     successMessages: {
       create: 'Afastamento registrado com sucesso',
