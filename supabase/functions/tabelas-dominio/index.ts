@@ -136,7 +136,9 @@ serve(async (req) => {
         {
           headers: {
             'Content-Type': 'application/json',
-            ...cachePublic(60),
+            // no-store: resposta autenticada não pode ser replayada por cache
+            // compartilhado para um cliente sem token.
+            'Cache-Control': 'no-store',
             ...getCorsHeaders(req),
           },
         }

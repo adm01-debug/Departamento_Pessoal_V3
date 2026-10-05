@@ -40,8 +40,19 @@ interface CachedToken {
 }
 const tokenCache = new Map<string, CachedToken>();
 
-function cacheKey(userId: string, empresaId: string, dashboardId: string) {
-  return `${userId}|${empresaId}|${dashboardId}`;
+function stableStringify(v: unknown): string {
+  if (v === null || typeof v !== 'object') return JSON.stringify(v);
+  if (Array.isArray(v)) return '[' + v.map(stableStringify).join(',') + ']';
+  const o = v as Record<string, unknown>;
+  return '{' + Object.keys(o).sort()
+    .map((k) => JSON.stringify(k) + ':' + stableStringify(o[k]))
+    .join(',') + '}';
+}
+
+function cacheKey(userId: string, empresaId: string, dashboardId: string, params: unknown) {
+  // params faz parte da chave: um token assinado com filtros amplos não pode
+  // ser replayado para um pedido com filtros diferentes.
+  return `${userId}|${empresaId}|${dashboardId}|${stableStringify(params)}`;
 }
 
 function getCachedToken(key: string): string | null {
@@ -192,7 +203,7 @@ serve(async (req: Request): Promise<Response> => {
     }
 
     // ── 7. Verificar cache ─────────────────────────────────────
-    const ck = cacheKey(user.id, empresaId, String(dashId));
+    const ck = cacheKey(user.id, empresaId, String(dashId), params);
     if (!forceRefresh) {
       const cached = getCachedToken(ck);
       if (cached) {
