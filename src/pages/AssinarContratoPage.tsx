@@ -109,20 +109,12 @@ export default function AssinarContratoPage() {
     if (!canSubmit) return;
     setSubmitting(true);
     try {
-      // best-effort captura de IP público
-      let ip: string | null = null;
-      try {
-        const r = await fetch('https://api.ipify.org?format=json');
-        const j = await r.json();
-        ip = j.ip ?? null;
-      } catch {
-        /* silencioso */
-      }
+      // IP derivado server-side pelo gateway — o cliente não envia p_ip
+      // (evidência legal não pode depender de valor forjável).
       const { data, error } = await supabase.rpc('contrato_assinar_por_token', {
         p_token: token,
         p_cpf: cpf.replace(/\D/g, ''),
         p_nome_completo: nome.trim(),
-        p_ip: ip,
         p_user_agent: navigator.userAgent,
       });
       if (error) throw error;

@@ -239,3 +239,215 @@ BEGIN
   END IF;
 END;
 $$;
+
+-- ----------------------------------------------------------------------------
+-- 8. IP derivado server-side nas RPCs de assinatura/verificação de contrato
+--    Mesma classe de bug da seção 5: p_ip fornecido pelo chamador virava
+--    evidência legal (assinado_ip / metadata.ip) e chave de rate-limit — ambos
+--    forjáveis. Agora honra p_ip só quando o caller é service_role; caso
+--    contrário deriva do rightmost XFF que o gateway anexa.
+-- ----------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.contrato_assinar_por_token(
+  p_token TEXT,
+  p_cpf TEXT,
+  p_nome_completo TEXT,
+  p_ip INET DEFAULT NULL,
+  p_user_agent TEXT DEFAULT NULL
+)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_hash TEXT;
+  v_tok RECORD;
+  v_assinatura_hash TEXT;
+  v_cpf_limpo TEXT;
+  v_ip INET;
+  v_xff TEXT;
+  v_jwt_role TEXT;
+BEGIN
+  IF p_token IS NULL OR length(p_token) < 16 THEN RAISE EXCEPTION 'Token inválido'; END IF;
+  IF p_nome_completo IS NULL OR length(trim(p_nome_completo)) < 5 THEN
+    RAISE EXCEPTION 'Nome completo obrigatório';
+  END IF;
+
+  v_cpf_limpo := regexp_replace(COALESCE(p_cpf,''), '\D', '', 'g');
+  IF length(v_cpf_limpo) <> 11 THEN RAISE EXCEPTION 'CPF inválido'; END IF;
+
+  -- IP confiável: p_ip só é honrado para service_role; demais callers usam o
+  -- rightmost XFF do gateway (elemento que o gateway anexa — não forjável).
+  BEGIN
+    v_jwt_role := current_setting('request.jwt.claims', true)::jsonb ->> 'role';
+  EXCEPTION WHEN OTHERS THEN
+    v_jwt_role := NULL;
+  END;
+  IF current_user = 'service_role' OR v_jwt_role = 'service_role' THEN
+    v_ip := p_ip;
+  ELSE
+    BEGIN
+      v_xff := current_setting('request.headers', true)::jsonb ->> 'x-forwarded-for';
+    EXCEPTION WHEN OTHERS THEN
+      v_xff := NULL;
+    END;
+    BEGIN
+      v_ip := NULLIF(btrim(split_part(v_xff, ',', -1)), '')::inet;
+    EXCEPTION WHEN OTHERS THEN
+      v_ip := NULL;
+    END;
+  END IF;
+
+  v_hash := encode(digest(p_token, 'sha256'), 'hex');
+
+  SELECT * INTO v_tok FROM public.contrato_assinatura_tokens
+  WHERE token_hash = v_hash FOR UPDATE;
+
+  IF v_tok IS NULL THEN RAISE EXCEPTION 'Token não encontrado'; END IF;
+  IF v_tok.usado_em IS NOT NULL THEN RAISE EXCEPTION 'Token já utilizado'; END IF;
+  IF v_tok.expira_em < now() THEN RAISE EXCEPTION 'Token expirado'; END IF;
+
+  IF v_tok.cpf_esperado IS NOT NULL
+    AND regexp_replace(v_tok.cpf_esperado, '\D', '', 'g') <> v_cpf_limpo THEN
+    RAISE EXCEPTION 'CPF não confere com o destinatário';
+  END IF;
+
+  -- Hash de assinatura: contrato_sha256 + cpf + nome + timestamp + ip
+  v_assinatura_hash := encode(digest(
+    COALESCE((SELECT sha256 FROM public.contratos_gerados WHERE id = v_tok.contrato_id),'') ||
+    v_cpf_limpo || upper(trim(p_nome_completo)) ||
+    now()::text || COALESCE(v_ip::text,''),
+    'sha256'
+  ), 'hex');
+
+  UPDATE public.contrato_assinatura_tokens
+  SET usado_em = now(),
+      assinado_ip = v_ip,
+      assinado_ua = p_user_agent,
+      assinatura_hash = v_assinatura_hash
+  WHERE id = v_tok.id;
+
+  UPDATE public.contratos_gerados
+  SET status = 'assinado',
+      assinado_em = now(),
+      assinatura_metadata = jsonb_build_object(
+        'cpf', v_cpf_limpo,
+        'nome', upper(trim(p_nome_completo)),
+        'ip', v_ip::text,
+        'user_agent', p_user_agent,
+        'assinatura_hash', v_assinatura_hash,
+        'assinado_em', now()
+      )
+  WHERE id = v_tok.contrato_id;
+
+  RETURN jsonb_build_object(
+    'success', true,
+    'contrato_id', v_tok.contrato_id,
+    'assinatura_hash', v_assinatura_hash,
+    'assinado_em', now()
+  );
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.contrato_verificar_autenticidade_v2(
+  p_hash text,
+  p_ip text DEFAULT NULL
+)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_hash text;
+  v_row record;
+  v_ip text;
+  v_xff text;
+  v_jwt_role text;
+  v_count integer;
+BEGIN
+  IF p_hash IS NULL OR length(p_hash) < 32 THEN
+    RETURN jsonb_build_object('valido', false, 'motivo', 'Hash inválido');
+  END IF;
+
+  -- Rate-limit pela fonte real da conexão: p_ip só para service_role; demais
+  -- callers são limitados pelo rightmost XFF (chave não forjável).
+  BEGIN
+    v_jwt_role := current_setting('request.jwt.claims', true)::jsonb ->> 'role';
+  EXCEPTION WHEN OTHERS THEN
+    v_jwt_role := NULL;
+  END;
+  IF current_user = 'service_role' OR v_jwt_role = 'service_role' THEN
+    v_ip := COALESCE(p_ip, 'unknown');
+  ELSE
+    BEGIN
+      v_xff := current_setting('request.headers', true)::jsonb ->> 'x-forwarded-for';
+    EXCEPTION WHEN OTHERS THEN
+      v_xff := NULL;
+    END;
+    v_ip := COALESCE(NULLIF(btrim(split_part(v_xff, ',', -1)), ''), 'unknown');
+  END IF;
+
+  SELECT COUNT(*) INTO v_count
+  FROM public.ciencia_rate_limits
+  WHERE identifier = 'verif_contrato:' || v_ip
+    AND created_at > now() - interval '10 minutes';
+
+  IF v_count >= 20 THEN
+    RETURN jsonb_build_object(
+      'valido', false,
+      'motivo', 'Muitas tentativas. Aguarde 10 minutos e tente novamente.'
+    );
+  END IF;
+
+  INSERT INTO public.ciencia_rate_limits (identifier, rpc_name, ip_address, success)
+  VALUES ('verif_contrato:' || v_ip, 'contrato_verificar_autenticidade_v2', v_ip::inet, true);
+
+  v_hash := lower(trim(p_hash));
+
+  SELECT
+    cg.id, cg.status, cg.assinado_em,
+    cg.sha256 AS documento_hash,
+    cg.data_inicio, cg.data_fim,
+    e.razao_social AS empresa_nome,
+    c.nome_completo AS colaborador_nome,
+    c.cpf AS colaborador_cpf,
+    t.assinatura_hash
+  INTO v_row
+  FROM public.contratos_gerados cg
+  LEFT JOIN public.contrato_assinatura_tokens t ON t.contrato_id = cg.id AND t.usado_em IS NOT NULL
+  LEFT JOIN public.empresas e ON e.id = cg.empresa_id
+  LEFT JOIN public.colaboradores c ON c.id = cg.colaborador_id
+  WHERE lower(cg.sha256) = v_hash
+     OR lower(t.assinatura_hash) = v_hash
+  ORDER BY cg.assinado_em DESC NULLS LAST
+  LIMIT 1;
+
+  IF NOT FOUND THEN
+    RETURN jsonb_build_object('valido', false, 'motivo', 'Contrato não encontrado');
+  END IF;
+
+  RETURN jsonb_build_object(
+    'valido', v_row.status = 'assinado' AND v_row.assinado_em IS NOT NULL,
+    'status', v_row.status,
+    'assinado_em', v_row.assinado_em,
+    'documento_hash', v_row.documento_hash,
+    'assinatura_hash', v_row.assinatura_hash,
+    'empresa', v_row.empresa_nome,
+    'data_inicio', v_row.data_inicio,
+    'data_fim', v_row.data_fim,
+    'signatario_nome', CASE
+      WHEN v_row.colaborador_nome IS NULL THEN NULL
+      ELSE regexp_replace(v_row.colaborador_nome, '(\S+)(\s+\S)?.*', '\1\2***')
+    END,
+    'signatario_cpf_mascarado', CASE
+      WHEN v_row.colaborador_cpf IS NULL THEN NULL
+      ELSE '***.' || substr(regexp_replace(v_row.colaborador_cpf, '\D', '', 'g'), 4, 3)
+           || '.' || substr(regexp_replace(v_row.colaborador_cpf, '\D', '', 'g'), 7, 3) || '-**'
+    END
+  );
+EXCEPTION WHEN OTHERS THEN
+  -- Se falhar o insert do rate-limit (ex.: IP inválido), degrada com segurança
+  RETURN jsonb_build_object('valido', false, 'motivo', 'Erro na verificação. Tente novamente.');
+END;
+$$;
