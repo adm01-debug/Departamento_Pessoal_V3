@@ -389,7 +389,7 @@ ALTER FUNCTION "public"."dp_run_retention"("p_id" "uuid") OWNER TO "postgres";
 -- Name: dp_set_updated_at(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
-CREATE FUNCTION "public"."dp_set_updated_at"() RETURNS "trigger"
+CREATE OR REPLACE FUNCTION "public"."dp_set_updated_at"() RETURNS "trigger"
     LANGUAGE "plpgsql"
     AS $$
 BEGIN
@@ -616,5 +616,93 @@ $function$;
 
 REVOKE ALL ON FUNCTION public.contrato_assinar_por_token(text,text,text,inet,text) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.contrato_assinar_por_token(text,text,text,inet,text) TO anon, authenticated, service_role;
+
+
+-- ----------------------------------------------------------------------------
+-- ACLs canônicas (da seção de privileges do dump rebaseline): reproduzem a
+-- superfície real do canônico — REVOKE FROM PUBLIC + GRANTs explícitos.
+-- Grants para "dp_mcp_role" são omitidos de propósito: o papel é infra interna
+-- do canônico e não existe nos ambientes de preview/replay (GRANT falharia);
+-- lá os grants já estão aplicados e esta seção é no-op semanticamente.
+-- ----------------------------------------------------------------------------
+REVOKE ALL ON FUNCTION "public"."dp_assert_rls"("p_table" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."dp_assert_rls"("p_table" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."dp_assert_rls"("p_table" "text") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."dp_assert_rls"("p_table" "text") TO "service_role";
+
+REVOKE ALL ON FUNCTION "public"."dp_audit_log_immutable"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."dp_audit_log_immutable"() TO "service_role";
+
+REVOKE ALL ON FUNCTION "public"."dp_audit_log_prevent_future"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."dp_audit_log_prevent_future"() TO "service_role";
+
+REVOKE ALL ON FUNCTION "public"."dp_catalog_pii"("p_table" "text", "p_column" "text", "p_sensitivity" "public"."dp_pii_sensitivity", "p_category" "text", "p_basis" "text", "p_retention" integer) FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."dp_catalog_pii"("p_table" "text", "p_column" "text", "p_sensitivity" "public"."dp_pii_sensitivity", "p_category" "text", "p_basis" "text", "p_retention" integer) TO "service_role";
+
+REVOKE ALL ON FUNCTION "public"."dp_check_log_rotation"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."dp_check_log_rotation"() TO "service_role";
+
+REVOKE ALL ON FUNCTION "public"."dp_check_rls_index_coverage"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."dp_check_rls_index_coverage"() TO "service_role";
+
+REVOKE ALL ON FUNCTION "public"."dp_connection_health"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."dp_connection_health"() TO "service_role";
+
+REVOKE ALL ON FUNCTION "public"."dp_create_next_partition"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."dp_create_next_partition"() TO "service_role";
+
+REVOKE ALL ON FUNCTION "public"."dp_decrypt_pii"("p_ciphertext" "text", "p_key" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."dp_decrypt_pii"("p_ciphertext" "text", "p_key" "text") TO "service_role";
+
+REVOKE ALL ON FUNCTION "public"."dp_encrypt_pii"("p_plaintext" "text", "p_key" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."dp_encrypt_pii"("p_plaintext" "text", "p_key" "text") TO "service_role";
+
+REVOKE ALL ON FUNCTION "public"."dp_has_role"("p_role" "public"."dp_user_role") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."dp_has_role"("p_role" "public"."dp_user_role") TO "service_role";
+
+REVOKE ALL ON FUNCTION "public"."dp_hash_pii"("p_value" "text", "p_context" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."dp_hash_pii"("p_value" "text", "p_context" "text") TO "service_role";
+
+REVOKE ALL ON FUNCTION "public"."dp_missing_indexes"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."dp_missing_indexes"() TO "service_role";
+
+REVOKE ALL ON FUNCTION "public"."dp_post_migration_check"("p_expected_version" "text") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."dp_post_migration_check"("p_expected_version" "text") TO "service_role";
+
+REVOKE ALL ON FUNCTION "public"."dp_pre_deploy_gate"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."dp_pre_deploy_gate"() TO "service_role";
+
+REVOKE ALL ON FUNCTION "public"."dp_require_role"("p_role" "public"."dp_user_role") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."dp_require_role"("p_role" "public"."dp_user_role") TO "service_role";
+
+REVOKE ALL ON FUNCTION "public"."dp_run_retention"("p_id" "uuid") FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."dp_run_retention"("p_id" "uuid") TO "service_role";
+
+GRANT ALL ON FUNCTION "public"."dp_set_updated_at"() TO "anon";
+GRANT ALL ON FUNCTION "public"."dp_set_updated_at"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."dp_set_updated_at"() TO "service_role";
+
+GRANT ALL ON FUNCTION "public"."dp_soft_delete_trigger"() TO "anon";
+GRANT ALL ON FUNCTION "public"."dp_soft_delete_trigger"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."dp_soft_delete_trigger"() TO "service_role";
+
+GRANT ALL ON FUNCTION "public"."dp_table_template"("p_name" "text") TO "anon";
+GRANT ALL ON FUNCTION "public"."dp_table_template"("p_name" "text") TO "authenticated";
+GRANT ALL ON FUNCTION "public"."dp_table_template"("p_name" "text") TO "service_role";
+
+REVOKE ALL ON FUNCTION "public"."dp_track_pii_access"() FROM PUBLIC;
+GRANT ALL ON FUNCTION "public"."dp_track_pii_access"() TO "service_role";
+
+GRANT ALL ON FUNCTION "public"."fill_recrutamento_child_empresa"() TO "anon";
+GRANT ALL ON FUNCTION "public"."fill_recrutamento_child_empresa"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."fill_recrutamento_child_empresa"() TO "service_role";
+
+GRANT ALL ON FUNCTION "public"."fill_treinamento_certificados_empresa"() TO "anon";
+GRANT ALL ON FUNCTION "public"."fill_treinamento_certificados_empresa"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."fill_treinamento_certificados_empresa"() TO "service_role";
+
+GRANT ALL ON FUNCTION "public"."fill_treinamento_instancias_empresa"() TO "anon";
+GRANT ALL ON FUNCTION "public"."fill_treinamento_instancias_empresa"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."fill_treinamento_instancias_empresa"() TO "service_role";
 
 SET check_function_bodies = on;
