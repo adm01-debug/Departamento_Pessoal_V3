@@ -21,8 +21,8 @@ describe('usePiiMask', () => {
     expect(result.current.pis('12345678901')).toBe('12345678901');
   });
 
-  it('retorna valores completos para moderator', () => {
-    const { result } = renderHook(() => usePiiMask(), { wrapper: withRoles(['moderator']) });
+  it('retorna valores completos para rh', () => {
+    const { result } = renderHook(() => usePiiMask(), { wrapper: withRoles(['rh']) });
     expect(result.current.canViewPii).toBe(true);
     expect(result.current.cpf('12345678901')).toBe('12345678901');
   });

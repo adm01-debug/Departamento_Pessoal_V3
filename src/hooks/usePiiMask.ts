@@ -2,13 +2,12 @@ import { useContext, useMemo } from 'react';
 import { AuthContext } from '@/contexts/AuthContext';
 import { maskBankAccount, maskCpfDisplay, maskEmail, maskGeneric, maskPiiDeep, maskPisDisplay } from '@/utils/piiMask';
 
-// Autorização por campo (LGPD): admin/rh/moderator veem PII completo —
-// RH precisa de CPF/PIS para operar folha/admissão; 'moderator' é legado
-// (não existe no enum do banco). Demais papéis — e qualquer contexto sem
-// auth — recebem a versão mascarada.
+// Autorização por campo (LGPD): admin/rh veem PII completo —
+// RH precisa de CPF/PIS para operar folha/admissão. Demais papéis —
+// e qualquer contexto sem auth — recebem a versão mascarada.
 export function usePiiMask() {
   const auth = useContext(AuthContext);
-  const canViewPii = auth?.hasRole('admin') || auth?.hasRole('rh') || auth?.hasRole('moderator') || false;
+  const canViewPii = auth?.hasRole('admin') || auth?.hasRole('rh') || false;
 
   return useMemo(
     () => ({

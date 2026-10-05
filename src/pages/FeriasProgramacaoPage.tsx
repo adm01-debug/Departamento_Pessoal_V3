@@ -28,7 +28,7 @@ const STATUS_OPTIONS: Array<{ value: ProgramacaoStatus | 'all'; label: string }>
 
 export default function FeriasProgramacaoPage() {
   const { hasRole } = useAuth();
-  const isRH = hasRole('admin') || hasRole('moderator');
+  const isRH = hasRole('admin') || hasRole('rh');
   const canManage = isRH;
 
   const [ano, setAno] = useState<number>(new Date().getFullYear());

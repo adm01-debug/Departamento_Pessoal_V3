@@ -96,7 +96,7 @@ describe('ContasBancariasTab', () => {
   it('renders pix info mascarada para papel sem PII (LGPD)', () => {
     vi.mocked(useContasBancarias).mockReturnValue({ data: MOCK_CONTAS, isLoading: false } as never);
     render(<ContasBancariasTab colaboradorId="col-1" />);
-    // Chave PIX tipo CPF é PII: sem papel admin/moderator renderiza mascarada.
+    // Chave PIX tipo CPF é PII: sem papel admin/rh renderiza mascarada.
     expect(screen.getByText(`CPF: ${maskCpfDisplay('123.456.789-00')}`)).toBeInTheDocument();
     expect(screen.queryByText(/123\.456\.789-00/)).not.toBeInTheDocument();
   });
