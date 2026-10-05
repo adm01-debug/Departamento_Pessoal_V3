@@ -5,6 +5,7 @@ import { ListOptions, ListResponse } from '@/services/baseService';
 import { loggerService } from '@/services/loggerService';
 import { auditLogger } from '@/utils/auditLogger';
 import { safeErrorMessage } from '@/utils/safeError';
+import { TABLE_COLUMNS } from '@/schemas/tableColumns';
 
 interface ServiceInterface<T> {
   listar(options: ListOptions): Promise<ListResponse<T>>;
@@ -33,10 +34,10 @@ interface UseGenericCrudOptions<T> {
    */
   requireEmpresaId?: boolean;
   /**
-   * Quando true, injeta `empresa_id: empresaId` no payload de criação caso o
-   * caller não o tenha passado — tabelas tenant-scoped precisam dele para o
-   * registro ficar visível na listagem. Usar apenas em services cuja tabela
-   * tem coluna empresa_id.
+   * Fallback para services que não expõem `table` (objetos fora do
+   * BaseService): força a injeção de `empresa_id: empresaId` no create quando
+   * o caller não o passou. Services do BaseService já têm injeção automática
+   * via TABLE_COLUMNS quando a tabela tem a coluna empresa_id.
    */
   injectEmpresaIdOnCreate?: boolean;
 }
@@ -88,8 +89,10 @@ export function useGenericCrud<T>({
 
   const criarMutation = useMutation({
     mutationFn: (data: unknown) => {
+      const table = (service as { table?: string }).table;
+      const hasEmpresaCol = !!table && (TABLE_COLUMNS[table]?.includes('empresa_id') ?? false);
       if (
-        injectEmpresaIdOnCreate &&
+        (injectEmpresaIdOnCreate || hasEmpresaCol) &&
         empresaId &&
         typeof data === 'object' &&
         data !== null &&

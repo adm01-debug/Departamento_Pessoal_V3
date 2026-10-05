@@ -37,7 +37,7 @@ export class BaseService<
   RequireEmpresa extends boolean = true,
 > {
   constructor(
-    protected table: string,
+    readonly table: string,
     protected options: {
       searchColumn?: string;
       defaultOrderBy?: string;

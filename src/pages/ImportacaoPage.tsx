@@ -80,12 +80,12 @@ export default function ImportacaoPage() {
                 >
                   <FileSpreadsheet className="h-16 w-16 mx-auto text-primary/40 mb-4" />
                   <p className="font-display font-semibold">Arraste ou clique para selecionar</p>
-                  <p className="text-sm text-muted-foreground font-body mt-1">Formatos: .xlsx, .xls</p>
+                  <p className="text-sm text-muted-foreground font-body mt-1">Formato: .xlsx</p>
                   <p className="text-xs text-muted-foreground/60 font-body mt-1">
                     Máximo 1000 registros por importação
                   </p>
                 </div>
-                <input ref={fileRef} type="file" accept=".xlsx,.xls" className="hidden" onChange={handleFile} />
+                <input ref={fileRef} type="file" accept=".xlsx" className="hidden" onChange={handleFile} />
               </CardContent>
             </Card>
 
