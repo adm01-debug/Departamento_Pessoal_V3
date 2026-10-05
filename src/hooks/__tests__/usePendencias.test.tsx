@@ -125,11 +125,9 @@ describe('usePendencias', () => {
       if (table === 'pendencias') {
         // distinguish select vs update by checking if code calls select or update
         return {
-          select: vi
-            .fn()
-            .mockReturnValue({
-              eq: vi.fn().mockReturnValue({ order: vi.fn().mockResolvedValue({ data: mockPendencias, error: null }) }),
-            }),
+          select: vi.fn().mockReturnValue({
+            eq: vi.fn().mockReturnValue({ order: vi.fn().mockResolvedValue({ data: mockPendencias, error: null }) }),
+          }),
           update,
         };
       }
