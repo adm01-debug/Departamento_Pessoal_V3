@@ -114,6 +114,9 @@ export const RPC_ALLOWLIST = new Set<string>([
   // tabela está na TABLE_DENYLIST); as funções verificam is_admin(auth.uid())
   // por dentro. Ver 20260718230000_admin_role_management_rpc.sql (achado R1).
   "admin_set_user_role", "admin_list_user_roles", "admin_associar_usuario_empresa",
+  // membership privilegiado da empresa para notificações críticas (user_empresas
+  // e user_roles são denylisted; autorização fina dentro da SECURITY DEFINER)
+  "get_empresa_admin_ids",
   // observabilidade / auditoria — todas fazem a autorização fina no banco
   "get_dlq_stats", "folha_conflict_stats", "get_query_telemetry",
   "get_idempotency_health", "get_cron_jobs_health",

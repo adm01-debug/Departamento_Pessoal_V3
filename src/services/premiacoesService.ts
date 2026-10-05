@@ -329,16 +329,9 @@ export const premiacoesService = {
         .maybeSingle();
       empresaId = (pag as { campanha?: { empresa_id?: string } | null } | null)?.campanha?.empresa_id ?? null;
       if (empresaId) {
-        const { data: membros } = await supabase.from('user_empresas').select('user_id').eq('empresa_id', empresaId);
-        const membroIds = (membros ?? []).map((m) => m.user_id as string);
-        if (membroIds.length > 0) {
-          const { data: admins } = await supabase
-            .from('user_roles')
-            .select('user_id')
-            .in('user_id', membroIds)
-            .in('role', ['admin', 'gestor', 'rh']);
-          destinatarios = [...new Set((admins ?? []).map((a) => a.user_id as string))];
-        }
+        // user_empresas/user_roles são denylisted — membership só via RPC.
+        const { data: admins } = await supabase.rpc('get_empresa_admin_ids', { p_empresa_id: empresaId });
+        destinatarios = [...new Set(((admins ?? []) as { user_id: string }[]).map((a) => a.user_id))];
       }
     }
 
