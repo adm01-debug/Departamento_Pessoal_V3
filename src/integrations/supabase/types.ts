@@ -22998,6 +22998,10 @@ export type Database = {
           ultimo_erro_sample: string
         }[]
       }
+      get_empresa_admin_ids: {
+        Args: { p_empresa_id: string }
+        Returns: { user_id: string }[]
+      }
       get_idempotency_health: {
         Args: never
         Returns: {

@@ -331,7 +331,7 @@ export const premiacoesService = {
       if (empresaId) {
         // user_empresas/user_roles são denylisted — membership só via RPC.
         const { data: admins } = await supabase.rpc('get_empresa_admin_ids', { p_empresa_id: empresaId });
-        destinatarios = [...new Set(((admins ?? []) as { user_id: string }[]).map((a) => a.user_id))];
+        destinatarios = [...new Set((admins ?? []).map((a) => a.user_id))];
       }
     }
 
