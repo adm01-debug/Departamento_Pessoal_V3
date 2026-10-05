@@ -1,5 +1,6 @@
 import { supabase, type QueryBuilderType } from '@/integrations/supabase/client';
 import type { Insertable, Tables, Updatable } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 export const esocialLotesService = {
   listar: async (empresaId?: string): Promise<Tables<'esocial_lotes'>[]> => {
@@ -10,7 +11,9 @@ export const esocialLotesService = {
     return (data as Tables<'esocial_lotes'>[] | null) || [];
   },
   criar: async (d: Insertable<'esocial_lotes'>): Promise<void> => {
-    const { error } = await supabase.from('esocial_lotes').insert(d);
+    const { error } = await supabase
+      .from('esocial_lotes')
+      .insert(validateTablePayload('esocial_lotes', d, 'folhaService:esocial_lotes'));
     if (error) throw error;
   },
 };
@@ -31,7 +34,9 @@ export const eventosVariaveisService = {
     return (data as Tables<'eventos_variaveis'>[] | null) || [];
   },
   criar: async (d: Insertable<'eventos_variaveis'>): Promise<void> => {
-    const { error } = await supabase.from('eventos_variaveis').insert(d);
+    const { error } = await supabase
+      .from('eventos_variaveis')
+      .insert(validateTablePayload('eventos_variaveis', d, 'folhaService:eventos_variaveis'));
     if (error) throw error;
   },
   excluir: async (id: string, empresaId: string): Promise<void> => {
@@ -58,7 +63,9 @@ export const lancamentosFolhaService = {
     return (data as Tables<'lancamentos_folha'>[] | null) || [];
   },
   criar: async (d: Insertable<'lancamentos_folha'>): Promise<void> => {
-    const { error } = await supabase.from('lancamentos_folha').insert(d);
+    const { error } = await supabase
+      .from('lancamentos_folha')
+      .insert(validateTablePayload('lancamentos_folha', d, 'folhaService:lancamentos_folha'));
     if (error) throw error;
   },
 };
@@ -75,12 +82,18 @@ export const rubricasFolhaService = {
     return (data as Tables<'rubricas_folha'>[] | null) || [];
   },
   criar: async (d: Insertable<'rubricas_folha'>): Promise<void> => {
-    const { error } = await supabase.from('rubricas_folha').insert(d);
+    const { error } = await supabase
+      .from('rubricas_folha')
+      .insert(validateTablePayload('rubricas_folha', d, 'folhaService:rubricas_folha'));
     if (error) throw error;
   },
   atualizar: async (id: string, d: Updatable<'rubricas_folha'>, empresaId: string): Promise<void> => {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    const { error } = await supabase.from('rubricas_folha').update(d).eq('id', id).eq('empresa_id', empresaId);
+    const { error } = await supabase
+      .from('rubricas_folha')
+      .update(validateTablePayload('rubricas_folha', d, 'folhaService:rubricas_folha'))
+      .eq('id', id)
+      .eq('empresa_id', empresaId);
     if (error) throw error;
   },
 };
@@ -95,7 +108,9 @@ export const parametrosFiscaisService = {
     return (data as Tables<'parametros_fiscais'>[] | null) || [];
   },
   criar: async (d: Insertable<'parametros_fiscais'>): Promise<void> => {
-    const { error } = await supabase.from('parametros_fiscais').insert(d);
+    const { error } = await supabase
+      .from('parametros_fiscais')
+      .insert(validateTablePayload('parametros_fiscais', d, 'folhaService:parametros_fiscais'));
     if (error) throw error;
   },
 };

@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { Database } from '@/integrations/supabase/types';
+import { validateTablePayload } from '@/schemas/validate';
 
 type WhatsAppConfigTable = Database['public']['Tables']['whatsapp_config'];
 type WhatsAppLogTable = Database['public']['Tables']['whatsapp_mensagens_logs'];
@@ -29,7 +30,7 @@ export const whatsappService = {
       .select('*')
       .eq('empresa_id', empresaId)
       .maybeSingle();
-    
+
     if (error) throw error;
     return data;
   },
@@ -37,8 +38,10 @@ export const whatsappService = {
   async saveConfig(config: WhatsAppConfigTable['Insert']): Promise<void> {
     const { error } = await supabase
       .from('whatsapp_config')
-      .upsert(config, { onConflict: 'empresa_id' });
-    
+      .upsert(validateTablePayload('whatsapp_config', config, 'whatsappService:whatsapp_config'), {
+        onConflict: 'empresa_id',
+      });
+
     if (error) throw error;
   },
 
@@ -48,26 +51,27 @@ export const whatsappService = {
     phone: string;
     message: string;
   }): Promise<{ success: boolean }> {
-    const { error } = await supabase
-      .from('whatsapp_mensagens_logs')
-      .insert({
-        empresa_id: params.empresaId,
-        colaborador_id: params.colaboradorId,
-        telefone: params.phone,
-        status: 'sent',
-        mensagem_id_externo: `wa_direct_${Date.now()}`
-      });
-    
+    const { error } = await supabase.from('whatsapp_mensagens_logs').insert(
+      validateTablePayload(
+        'whatsapp_mensagens_logs',
+        {
+          empresa_id: params.empresaId,
+          colaborador_id: params.colaboradorId,
+          telefone: params.phone,
+          status: 'sent',
+          mensagem_id_externo: `wa_direct_${Date.now()}`,
+        },
+        'whatsappService:whatsapp_mensagens_logs'
+      )
+    );
+
     if (error) throw error;
     return { success: true };
   },
-  
+
   async listTemplates(empresaId: string): Promise<WhatsAppTemplate[]> {
-    const { data, error } = await supabase
-      .from('whatsapp_templates')
-      .select('*')
-      .eq('empresa_id', empresaId);
-    
+    const { data, error } = await supabase.from('whatsapp_templates').select('*').eq('empresa_id', empresaId);
+
     if (error) throw error;
     return (data || []) as WhatsAppTemplate[];
   },
@@ -78,7 +82,7 @@ export const whatsappService = {
       .select('*, colaborador:colaboradores(nome_completo)')
       .eq('empresa_id', empresaId)
       .order('created_at', { ascending: false });
-    
+
     if (error) throw error;
     return (data || []) as WhatsAppLog[];
   },
@@ -91,32 +95,44 @@ export const whatsappService = {
   }): Promise<{ success: boolean; logId: string }> {
     try {
       const { empresaId, colaboradorId, templateId, phone } = params;
-      
+
       const { data: log, error: logErr } = await supabase
         .from('whatsapp_mensagens_logs')
-        .insert({
-          empresa_id: empresaId,
-          colaborador_id: colaboradorId,
-          template_id: templateId,
-          telefone: phone,
-          status: 'pending'
-        })
+        .insert(
+          validateTablePayload(
+            'whatsapp_mensagens_logs',
+            {
+              empresa_id: empresaId,
+              colaborador_id: colaboradorId,
+              template_id: templateId,
+              telefone: phone,
+              status: 'pending',
+            },
+            'whatsappService:whatsapp_mensagens_logs'
+          )
+        )
         .select()
         .single();
 
       if (logErr) throw logErr;
 
-      await new Promise(r => setTimeout(r, 1000));
-      
-      await supabase.from('whatsapp_mensagens_logs')
-        .update({ status: 'sent', mensagem_id_externo: `wa_${Date.now()}` })
+      await new Promise((r) => setTimeout(r, 1000));
+
+      await supabase
+        .from('whatsapp_mensagens_logs')
+        .update(
+          validateTablePayload(
+            'whatsapp_mensagens_logs',
+            { status: 'sent', mensagem_id_externo: `wa_${Date.now()}` },
+            'whatsappService:whatsapp_mensagens_logs'
+          )
+        )
         .eq('id', log.id)
         .eq('empresa_id', empresaId);
-        
-      return ({ success: true, logId: log.id });
+
+      return { success: true, logId: log.id };
     } catch (e) {
       throw new Error('Falha ao enviar mensagem de template do WhatsApp', { cause: e });
     }
-  }
+  },
 };
-

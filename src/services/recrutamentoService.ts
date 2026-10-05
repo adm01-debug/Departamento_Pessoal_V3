@@ -1,7 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 import type { VagaRow, CandidatoRow, CandidaturaRow, CandidaturaComRelacoes } from '@/types/recrutamento';
-import { validateInput } from '@/schemas/validate';
+import { validateInput, validateTablePayload } from '@/schemas/validate';
 import { vagaSchema, candidatoSchema, candidaturaSchema } from '@/schemas/recrutamento';
 
 type Tables = Database['public']['Tables'];
@@ -23,7 +23,7 @@ export const recrutamentoService = {
 
     const { data, error } = await supabase
       .from('vagas')
-      .insert(d as Tables['vagas']['Insert'])
+      .insert(validateTablePayload('vagas', d as Tables['vagas']['Insert'], 'recrutamentoService:vagas'))
       .select()
       .maybeSingle();
     if (error) throw error;
@@ -36,7 +36,7 @@ export const recrutamentoService = {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('vagas')
-      .update(d as Tables['vagas']['Update'])
+      .update(validateTablePayload('vagas', d as Tables['vagas']['Update'], 'recrutamentoService:vagas'))
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()
@@ -68,7 +68,7 @@ export const recrutamentoService = {
 
     const { data, error } = await supabase
       .from('candidatos')
-      .insert(d as Tables['candidatos']['Insert'])
+      .insert(validateTablePayload('candidatos', d as Tables['candidatos']['Insert'], 'recrutamentoService:candidatos'))
       .select()
       .maybeSingle();
     if (error) throw error;
@@ -81,7 +81,7 @@ export const recrutamentoService = {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('candidatos')
-      .update(d as Tables['candidatos']['Update'])
+      .update(validateTablePayload('candidatos', d as Tables['candidatos']['Update'], 'recrutamentoService:candidatos'))
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()
@@ -116,7 +116,9 @@ export const recrutamentoService = {
 
     const { data, error } = await supabase
       .from('candidaturas')
-      .insert(d as Tables['candidaturas']['Insert'])
+      .insert(
+        validateTablePayload('candidaturas', d as Tables['candidaturas']['Insert'], 'recrutamentoService:candidaturas')
+      )
       .select()
       .maybeSingle();
     if (error) throw error;
@@ -129,7 +131,9 @@ export const recrutamentoService = {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('candidaturas')
-      .update(d as Tables['candidaturas']['Update'])
+      .update(
+        validateTablePayload('candidaturas', d as Tables['candidaturas']['Update'], 'recrutamentoService:candidaturas')
+      )
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()
@@ -149,7 +153,13 @@ export const recrutamentoService = {
   async agendarEntrevista(d: Record<string, unknown>): Promise<Tables['recrutamento_entrevistas']['Row'] | null> {
     const { data, error } = await supabase
       .from('recrutamento_entrevistas')
-      .insert(d as Tables['recrutamento_entrevistas']['Insert'])
+      .insert(
+        validateTablePayload(
+          'recrutamento_entrevistas',
+          d as Tables['recrutamento_entrevistas']['Insert'],
+          'recrutamentoService:recrutamento_entrevistas'
+        )
+      )
       .select()
       .maybeSingle();
     if (error) throw error;
@@ -159,7 +169,13 @@ export const recrutamentoService = {
   async registrarTeste(d: Record<string, unknown>): Promise<Tables['recrutamento_testes']['Row'] | null> {
     const { data, error } = await supabase
       .from('recrutamento_testes')
-      .insert(d as Tables['recrutamento_testes']['Insert'])
+      .insert(
+        validateTablePayload(
+          'recrutamento_testes',
+          d as Tables['recrutamento_testes']['Insert'],
+          'recrutamentoService:recrutamento_testes'
+        )
+      )
       .select()
       .maybeSingle();
     if (error) throw error;
@@ -169,7 +185,13 @@ export const recrutamentoService = {
   async adicionarAnotacao(d: Record<string, unknown>): Promise<Tables['recrutamento_anotacoes']['Row'] | null> {
     const { data, error } = await supabase
       .from('recrutamento_anotacoes')
-      .insert(d as Tables['recrutamento_anotacoes']['Insert'])
+      .insert(
+        validateTablePayload(
+          'recrutamento_anotacoes',
+          d as Tables['recrutamento_anotacoes']['Insert'],
+          'recrutamentoService:recrutamento_anotacoes'
+        )
+      )
       .select()
       .maybeSingle();
     if (error) throw error;

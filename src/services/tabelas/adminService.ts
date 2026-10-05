@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables, Insertable } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 export const logEnvioRelatoriosService = {
   // BUG corrigido (E51-026): `log_envio_relatorios` não tem coluna
@@ -37,7 +38,9 @@ export const relatoriosAgendadosService = {
     return data || [];
   },
   criar: async (d: Insertable<'relatorios_agendados'>) => {
-    const { error } = await supabase.from('relatorios_agendados').insert(d);
+    const { error } = await supabase
+      .from('relatorios_agendados')
+      .insert(validateTablePayload('relatorios_agendados', d, 'adminService:relatorios_agendados'));
     if (error) throw error;
   },
   excluir: async (id: string, empresaId: string) => {
@@ -58,7 +61,9 @@ export const savedFiltersService = {
     return data || [];
   },
   criar: async (d: Insertable<'saved_filters'>) => {
-    const { error } = await supabase.from('saved_filters').insert(d);
+    const { error } = await supabase
+      .from('saved_filters')
+      .insert(validateTablePayload('saved_filters', d, 'adminService:saved_filters'));
     if (error) throw error;
   },
   excluir: async (id: string, userId: string) => {
@@ -75,7 +80,9 @@ export const bitrix24Service = {
     return data;
   },
   saveConfig: async (d: Insertable<'bitrix24_config'>) => {
-    const { error } = await supabase.from('bitrix24_config').upsert(d);
+    const { error } = await supabase
+      .from('bitrix24_config')
+      .upsert(validateTablePayload('bitrix24_config', d, 'adminService:bitrix24_config'));
     if (error) throw error;
   },
   getLogs: async (): Promise<Tables<'bitrix24_sync_logs'>[]> => {

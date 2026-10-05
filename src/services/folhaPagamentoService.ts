@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { CalculoResultado } from '@/utils/folhaCalc';
 import type { Tables } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 export interface FolhaItemDetalhes {
   horasExtras?: number;
@@ -131,17 +132,21 @@ export const folhaPagamentoService = {
       const { data, error } = await supabase
         .from('holerites')
         .upsert(
-          {
-            folha_id: folhaId,
-            colaborador_id: colaboradorId,
-            colaborador_nome: colab?.nome_completo || 'N/A',
-            colaborador_cpf: colab?.cpf || 'N/A',
-            colaborador_cargo: colab?.cargo || 'N/A',
-            colaborador_departamento: colab?.departamento || 'N/A',
-            salario_base: colab?.salario_base ?? 0,
-            data_assinatura: new Date().toISOString(),
-            assinado: true,
-          },
+          validateTablePayload(
+            'holerites',
+            {
+              folha_id: folhaId,
+              colaborador_id: colaboradorId,
+              colaborador_nome: colab?.nome_completo || 'N/A',
+              colaborador_cpf: colab?.cpf || 'N/A',
+              colaborador_cargo: colab?.cargo || 'N/A',
+              colaborador_departamento: colab?.departamento || 'N/A',
+              salario_base: colab?.salario_base ?? 0,
+              data_assinatura: new Date().toISOString(),
+              assinado: true,
+            },
+            'folhaPagamentoService:holerites'
+          ),
           { onConflict: 'folha_id,colaborador_id' }
         )
         .select('hash_assinatura')

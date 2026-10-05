@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables, Insertable } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 type SolicitacaoComColaborador = Tables<'solicitacoes_hora_extra'> & {
   colaborador: Pick<Tables<'colaboradores'>, 'nome_completo'> | null;
@@ -20,7 +21,11 @@ export const horaExtraService = {
   },
 
   async criar(d: Insertable<'solicitacoes_hora_extra'>): Promise<Tables<'solicitacoes_hora_extra'>> {
-    const { data, error } = await supabase.from('solicitacoes_hora_extra').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('solicitacoes_hora_extra')
+      .insert(validateTablePayload('solicitacoes_hora_extra', d, 'horaExtraService:solicitacoes_hora_extra'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de solicitação de hora extra foi retornado.');
     return data;
@@ -35,12 +40,18 @@ export const horaExtraService = {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('solicitacoes_hora_extra')
-      .update({
-        status: 'aprovada',
-        aprovado_por: aprovadoPor,
-        aprovado_em: new Date().toISOString(),
-        observacoes_aprovador: obs,
-      })
+      .update(
+        validateTablePayload(
+          'solicitacoes_hora_extra',
+          {
+            status: 'aprovada',
+            aprovado_por: aprovadoPor,
+            aprovado_em: new Date().toISOString(),
+            observacoes_aprovador: obs,
+          },
+          'horaExtraService:solicitacoes_hora_extra'
+        )
+      )
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()
@@ -59,12 +70,18 @@ export const horaExtraService = {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('solicitacoes_hora_extra')
-      .update({
-        status: 'rejeitada',
-        aprovado_por: aprovadoPor,
-        aprovado_em: new Date().toISOString(),
-        observacoes_aprovador: obs,
-      })
+      .update(
+        validateTablePayload(
+          'solicitacoes_hora_extra',
+          {
+            status: 'rejeitada',
+            aprovado_por: aprovadoPor,
+            aprovado_em: new Date().toISOString(),
+            observacoes_aprovador: obs,
+          },
+          'horaExtraService:solicitacoes_hora_extra'
+        )
+      )
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()

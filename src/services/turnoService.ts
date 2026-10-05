@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables, Insertable, Updatable } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 type EscalaComColaboradorETurno = Tables<'escalas_trabalho'> & {
   colaborador: Pick<Tables<'colaboradores'>, 'nome_completo'> | null;
@@ -18,7 +19,11 @@ export const turnoService = {
   },
 
   async criarTurno(d: Insertable<'turnos'>): Promise<Tables<'turnos'>> {
-    const { data, error } = await supabase.from('turnos').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('turnos')
+      .insert(validateTablePayload('turnos', d, 'turnoService:turnos'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de turno foi retornado.');
     return data;
@@ -28,7 +33,7 @@ export const turnoService = {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('turnos')
-      .update(d)
+      .update(validateTablePayload('turnos', d, 'turnoService:turnos'))
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()
@@ -59,7 +64,11 @@ export const turnoService = {
   },
 
   async criarEscala(d: Insertable<'escalas_trabalho'>): Promise<Tables<'escalas_trabalho'>> {
-    const { data, error } = await supabase.from('escalas_trabalho').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('escalas_trabalho')
+      .insert(validateTablePayload('escalas_trabalho', d, 'turnoService:escalas_trabalho'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de escala foi retornado.');
     return data;

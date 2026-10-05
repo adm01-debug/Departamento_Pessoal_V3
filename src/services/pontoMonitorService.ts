@@ -2,19 +2,26 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { loggerService } from './loggerService';
 import type { Json } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 export const pontoMonitorService = {
   logEvent: async (eventName: string, details: Json): Promise<void> => {
     try {
       // Usando a tabela de auditoria para monitoramento técnico também
-      const { error } = await supabase.from('ponto_auditoria').insert({
-        tabela_nome: 'SYSTEM_EVENT',
-        registro_id: '00000000-0000-0000-0000-000000000000',
-        acao: eventName,
-        dados_novos: details,
-        usuario_id: (await supabase.auth.getUser()).data.user?.id,
-        user_agent: navigator.userAgent,
-      });
+      const { error } = await supabase.from('ponto_auditoria').insert(
+        validateTablePayload(
+          'ponto_auditoria',
+          {
+            tabela_nome: 'SYSTEM_EVENT',
+            registro_id: '00000000-0000-0000-0000-000000000000',
+            acao: eventName,
+            dados_novos: details,
+            usuario_id: (await supabase.auth.getUser()).data.user?.id,
+            user_agent: navigator.userAgent,
+          },
+          'pontoMonitorService:ponto_auditoria'
+        )
+      );
       if (error) throw error;
     } catch (err: unknown) {
       loggerService.error(

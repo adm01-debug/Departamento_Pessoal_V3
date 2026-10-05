@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables, Insertable } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 export const historicoContratoService = {
   async listar(colaboradorId: string, empresaId: string): Promise<Tables<'historico_contratos'>[]> {
@@ -15,7 +16,11 @@ export const historicoContratoService = {
   },
 
   async criar(d: Insertable<'historico_contratos'>): Promise<Tables<'historico_contratos'>> {
-    const { data, error } = await supabase.from('historico_contratos').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('historico_contratos')
+      .insert(validateTablePayload('historico_contratos', d, 'historicoContratoService:historico_contratos'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de histórico de contrato foi retornado.');
     return data;

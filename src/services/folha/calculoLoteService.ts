@@ -7,7 +7,7 @@ import { safeErrorMessage } from '@/utils/safeError';
 import { formatDateLocalISO } from '@/utils/dateLocal';
 import { loggerService } from '../loggerService';
 import { folhaSchema } from '@/schemas/folha';
-import { validateInput } from '@/schemas/validate';
+import { validateInput, validateTablePayload } from '@/schemas/validate';
 
 export interface BatchProgress {
   total: number;
@@ -93,12 +93,18 @@ export const calculoLoteService = {
         );
         const { data: newHeader, error: createError } = await supabase
           .from('folhas_pagamento')
-          .insert({
-            empresa_id: empresaId,
-            competencia,
-            status: 'aberta',
-            tipo: 'mensal',
-          })
+          .insert(
+            validateTablePayload(
+              'folhas_pagamento',
+              {
+                empresa_id: empresaId,
+                competencia,
+                status: 'aberta',
+                tipo: 'mensal',
+              },
+              'calculoLoteService:folhas_pagamento'
+            )
+          )
           .select('id')
           .single();
 
@@ -251,22 +257,30 @@ export const calculoLoteService = {
 
           const { error: itemUpsertError } = await supabase
             .from('folha_itens')
-            .upsert(itemData, { onConflict: 'folha_id,colaborador_id' });
+            .upsert(validateTablePayload('folha_itens', itemData, 'calculoLoteService:folha_itens'), {
+              onConflict: 'folha_id,colaborador_id',
+            });
           if (itemUpsertError) throw itemUpsertError;
 
           // Auditoria analítica
-          await supabase.from('folha_auditoria').insert({
-            folha_id: folhaId,
-            colaborador_id: colab.id,
-            tipo_evento: 'CALCULO',
-            mensagem: `Cálculo analítico processado para ${colab.nome_completo}. Eventos: ${res.detalheEventos?.length || 0}. Integração Ponto: ${res.horasExtras?.toFixed(1)}h extras.`,
-            severidade: 'INFO',
-            detalhes: {
-              timestamp: new Date().toISOString(),
-              liquido: res.liquido,
-              compliance: 'Portaria 671 MTP',
-            },
-          });
+          await supabase.from('folha_auditoria').insert(
+            validateTablePayload(
+              'folha_auditoria',
+              {
+                folha_id: folhaId,
+                colaborador_id: colab.id,
+                tipo_evento: 'CALCULO',
+                mensagem: `Cálculo analítico processado para ${colab.nome_completo}. Eventos: ${res.detalheEventos?.length || 0}. Integração Ponto: ${res.horasExtras?.toFixed(1)}h extras.`,
+                severidade: 'INFO',
+                detalhes: {
+                  timestamp: new Date().toISOString(),
+                  liquido: res.liquido,
+                  compliance: 'Portaria 671 MTP',
+                },
+              },
+              'calculoLoteService:folha_auditoria'
+            )
+          );
 
           progress.success++;
           onProgress?.({ ...progress });

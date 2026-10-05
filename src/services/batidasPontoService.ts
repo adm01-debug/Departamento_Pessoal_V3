@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables, TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
 import { pontoAuditService } from './pontoAuditService';
+import { validateTablePayload } from '@/schemas/validate';
 
 type BatidaPonto = Tables<'batidas_ponto'>;
 type PeriodoPonto = Tables<'periodos_ponto'>;
@@ -38,7 +39,11 @@ export const batidasPontoService = {
     return (result || []) as unknown as BatidaComColaborador[];
   },
   async registrar(d: TablesInsert<'batidas_ponto'>): Promise<BatidaPonto> {
-    const { data, error } = await supabase.from('batidas_ponto').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('batidas_ponto')
+      .insert(validateTablePayload('batidas_ponto', d, 'batidasPontoService:batidas_ponto'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de batida de ponto foi retornado.');
     return data as unknown as BatidaPonto;
@@ -55,7 +60,7 @@ export const batidasPontoService = {
 
       const { data, error } = await supabase
         .from('batidas_ponto')
-        .update({ ...d, ajustado: true })
+        .update(validateTablePayload('batidas_ponto', { ...d, ajustado: true }, 'batidasPontoService:batidas_ponto'))
         .eq('id', id)
         .eq('empresa_id', empresaId)
         .select()
@@ -91,13 +96,21 @@ export const batidasPontoService = {
   async fecharPeriodo(empresaId: string, dataInicio: string, dataFim: string): Promise<PeriodoPonto> {
     const { data, error } = await supabase
       .from('periodos_ponto')
-      .insert({
-        empresa_id: empresaId,
-        data_inicio: dataInicio,
-        data_fim: dataFim,
-        status: 'fechado',
-        fechado_em: new Date().toISOString(),
-      } as unknown as TablesInsert<'periodos_ponto'>)
+      // periodos_ponto é tabela global (sem empresa_id): a chave é a
+      // competencia YYYY-MM derivada do início do período.
+      .insert(
+        validateTablePayload(
+          'periodos_ponto',
+          {
+            competencia: dataInicio.slice(0, 7),
+            data_inicio: dataInicio,
+            data_fim: dataFim,
+            status: 'fechado',
+            fechado_em: new Date().toISOString(),
+          } as unknown as TablesInsert<'periodos_ponto'>,
+          'batidasPontoService:periodos_ponto'
+        )
+      )
       .select()
       .single();
 

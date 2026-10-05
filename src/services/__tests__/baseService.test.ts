@@ -5,9 +5,10 @@ import { makeChain } from '@/test/chain';
 
 // ─── shared mock setup ────────────────────────────────────────────────────────
 
-const { mockFrom, mockLoggerError } = vi.hoisted(() => ({
+const { mockFrom, mockLoggerError, mockLoggerWarn } = vi.hoisted(() => ({
   mockFrom: vi.fn(),
   mockLoggerError: vi.fn(),
+  mockLoggerWarn: vi.fn(),
 }));
 
 vi.mock('@/integrations/supabase/client', () => ({
@@ -15,7 +16,7 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 vi.mock('../loggerService', () => ({
-  loggerService: { error: mockLoggerError },
+  loggerService: { error: mockLoggerError, warn: mockLoggerWarn },
 }));
 
 // Concrete subclass for testing

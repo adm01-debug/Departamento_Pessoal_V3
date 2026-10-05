@@ -11,6 +11,7 @@ import type {
   SugestaoProximaMedida,
 } from '@/types/medidasDisciplinares';
 
+import { validateTablePayload } from '@/schemas/validate';
 /**
  * Serviço de Medidas Disciplinares (CLT).
  * Todas as leituras/escritas são escopadas por `empresa_id` (defesa em profundidade
@@ -46,7 +47,7 @@ export const medidasDisciplinaresService = {
   async criar(d: MedidaDisciplinarInsert): Promise<MedidaDisciplinarRow> {
     const { data, error } = await supabase
       .from('medidas_disciplinares')
-      .insert(d)
+      .insert(validateTablePayload('medidas_disciplinares', d, 'medidasDisciplinaresService:medidas_disciplinares'))
       .select()
       .maybeSingle<MedidaDisciplinarRow>();
     if (error) throw error;
@@ -58,7 +59,7 @@ export const medidasDisciplinaresService = {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('medidas_disciplinares')
-      .update(d)
+      .update(validateTablePayload('medidas_disciplinares', d, 'medidasDisciplinaresService:medidas_disciplinares'))
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()
@@ -183,16 +184,22 @@ export const medidasDisciplinaresService = {
     const { data: userData } = await supabase.auth.getUser();
     const { data, error } = await supabase
       .from('medidas_disciplinares_contestacao_anexos')
-      .insert({
-        medida_id: medidaId,
-        empresa_id: empresaId,
-        storage_path: path,
-        nome_arquivo: file.name,
-        mime_type: file.type,
-        tamanho_bytes: file.size,
-        hash_sha256: hash,
-        uploaded_by: userData.user?.id ?? null,
-      })
+      .insert(
+        validateTablePayload(
+          'medidas_disciplinares_contestacao_anexos',
+          {
+            medida_id: medidaId,
+            empresa_id: empresaId,
+            storage_path: path,
+            nome_arquivo: file.name,
+            mime_type: file.type,
+            tamanho_bytes: file.size,
+            hash_sha256: hash,
+            uploaded_by: userData.user?.id ?? null,
+          },
+          'medidasDisciplinaresService:medidas_disciplinares_contestacao_anexos'
+        )
+      )
       .select()
       .maybeSingle<MedidaContestacaoAnexoRow>();
     if (error) throw error;

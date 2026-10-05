@@ -1,6 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables, Insertable, Updatable } from '@/integrations/supabase/database.types';
-import { validateInput } from '@/schemas/validate';
+import { validateInput, validateTablePayload } from '@/schemas/validate';
 import {
   centroCustoSchema,
   contaBancariaSchema,
@@ -49,7 +49,11 @@ export async function listarCentrosCusto(empresaId: string): Promise<unknown[]> 
 
 export async function criarCentroCusto(centro: Insertable<'centros_custo'>): Promise<Tables<'centros_custo'>> {
   validateInput(centroCustoSchema, centro, 'criarCentroCusto');
-  const { data, error } = await supabase.from('centros_custo').insert([centro]).select().maybeSingle();
+  const { data, error } = await supabase
+    .from('centros_custo')
+    .insert(validateTablePayload('centros_custo', [centro], 'tabelasReferenciaService:centros_custo'))
+    .select()
+    .maybeSingle();
   if (error) throw error;
   if (!data) throw new Error('Nenhum registro de centro de custo foi retornado.');
   return data;
@@ -62,7 +66,11 @@ export async function atualizarCentroCusto(
 ): Promise<void> {
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
   validateInput(centroCustoSchema, dados, 'atualizarCentroCusto');
-  const { error } = await supabase.from('centros_custo').update(dados).eq('id', id).eq('empresa_id', empresaId);
+  const { error } = await supabase
+    .from('centros_custo')
+    .update(validateTablePayload('centros_custo', dados, 'tabelasReferenciaService:centros_custo'))
+    .eq('id', id)
+    .eq('empresa_id', empresaId);
   if (error) throw error;
 }
 
@@ -92,7 +100,11 @@ export async function listarContasBancarias(
 
 export async function criarContaBancaria(conta: Insertable<'contas_bancarias'>): Promise<Tables<'contas_bancarias'>> {
   validateInput(contaBancariaSchema, conta, 'criarContaBancaria');
-  const { data, error } = await supabase.from('contas_bancarias').insert([conta]).select().maybeSingle();
+  const { data, error } = await supabase
+    .from('contas_bancarias')
+    .insert(validateTablePayload('contas_bancarias', [conta], 'tabelasReferenciaService:contas_bancarias'))
+    .select()
+    .maybeSingle();
   if (error) throw error;
   if (!data) throw new Error('Nenhum registro de conta bancária foi retornado.');
   return data;
@@ -105,7 +117,11 @@ export async function atualizarContaBancaria(
 ): Promise<void> {
   if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
   validateInput(contaBancariaSchema, dados, 'atualizarContaBancaria');
-  const { error } = await supabase.from('contas_bancarias').update(dados).eq('id', id).eq('empresa_id', empresaId);
+  const { error } = await supabase
+    .from('contas_bancarias')
+    .update(validateTablePayload('contas_bancarias', dados, 'tabelasReferenciaService:contas_bancarias'))
+    .eq('id', id)
+    .eq('empresa_id', empresaId);
   if (error) throw error;
 }
 
@@ -139,7 +155,7 @@ export async function salvarDadosEstagiario(
     if (existing) {
       const { data, error } = await supabase
         .from('dados_estagiario')
-        .update(dados)
+        .update(validateTablePayload('dados_estagiario', dados, 'tabelasReferenciaService:dados_estagiario'))
         .eq('id', existing.id)
         .select()
         .maybeSingle();
@@ -149,7 +165,13 @@ export async function salvarDadosEstagiario(
     } else {
       const { data, error } = await supabase
         .from('dados_estagiario')
-        .insert([{ ...dados, colaborador_id: colaboradorId }])
+        .insert(
+          validateTablePayload(
+            'dados_estagiario',
+            [{ ...dados, colaborador_id: colaboradorId }],
+            'tabelasReferenciaService:dados_estagiario'
+          )
+        )
         .select()
         .maybeSingle();
       if (error) throw error;
@@ -181,7 +203,17 @@ export async function criarDocumentoPessoal(
   doc: Insertable<'documentos_pessoais_arquivos'>
 ): Promise<Tables<'documentos_pessoais_arquivos'>> {
   validateInput(documentoPessoalSchema, doc, 'criarDocumentoPessoal');
-  const { data, error } = await supabase.from('documentos_pessoais_arquivos').insert([doc]).select().maybeSingle();
+  const { data, error } = await supabase
+    .from('documentos_pessoais_arquivos')
+    .insert(
+      validateTablePayload(
+        'documentos_pessoais_arquivos',
+        [doc],
+        'tabelasReferenciaService:documentos_pessoais_arquivos'
+      )
+    )
+    .select()
+    .maybeSingle();
   if (error) throw error;
   if (!data) throw new Error('Nenhum registro de documento pessoal foi retornado.');
   return data;
@@ -214,7 +246,11 @@ export async function criarFeriasAprovacao(
   aprovacao: Insertable<'ferias_aprovacoes'>
 ): Promise<Tables<'ferias_aprovacoes'>> {
   validateInput(feriasAprovacaoSchema, aprovacao, 'criarFeriasAprovacao');
-  const { data, error } = await supabase.from('ferias_aprovacoes').insert([aprovacao]).select().maybeSingle();
+  const { data, error } = await supabase
+    .from('ferias_aprovacoes')
+    .insert(validateTablePayload('ferias_aprovacoes', [aprovacao], 'tabelasReferenciaService:ferias_aprovacoes'))
+    .select()
+    .maybeSingle();
   if (error) throw error;
   if (!data) throw new Error('Nenhum registro de aprovação de férias foi retornado.');
   return data;
@@ -226,7 +262,11 @@ export async function atualizarFeriasAprovacao(
   dados: Updatable<'ferias_aprovacoes'>
 ): Promise<void> {
   if (!feriasId) throw new Error('ferias_id obrigatório para isolamento de tenant');
-  const { error } = await supabase.from('ferias_aprovacoes').update(dados).eq('id', id).eq('ferias_id', feriasId);
+  const { error } = await supabase
+    .from('ferias_aprovacoes')
+    .update(validateTablePayload('ferias_aprovacoes', dados, 'tabelasReferenciaService:ferias_aprovacoes'))
+    .eq('id', id)
+    .eq('ferias_id', feriasId);
   if (error) throw error;
 }
 
@@ -245,7 +285,11 @@ export async function listarFeriasArquivos(feriasId: string): Promise<unknown[]>
 
 export async function criarFeriasArquivo(arquivo: Insertable<'ferias_arquivos'>): Promise<Tables<'ferias_arquivos'>> {
   validateInput(feriasArquivoSchema, arquivo, 'criarFeriasArquivo');
-  const { data, error } = await supabase.from('ferias_arquivos').insert([arquivo]).select().maybeSingle();
+  const { data, error } = await supabase
+    .from('ferias_arquivos')
+    .insert(validateTablePayload('ferias_arquivos', [arquivo], 'tabelasReferenciaService:ferias_arquivos'))
+    .select()
+    .maybeSingle();
   if (error) throw error;
   if (!data) throw new Error('Nenhum registro de arquivo de férias foi retornado.');
   return data;
@@ -265,7 +309,10 @@ export async function vincularDependenteBeneficio(
 ): Promise<Tables<'dependentes_beneficios'>> {
   const { data, error } = await supabase
     .from('dependentes_beneficios')
-    .upsert([vinculo], { onConflict: 'dependente_id,beneficio_id' })
+    .upsert(
+      validateTablePayload('dependentes_beneficios', [vinculo], 'tabelasReferenciaService:dependentes_beneficios'),
+      { onConflict: 'dependente_id,beneficio_id' }
+    )
     .select()
     .maybeSingle();
   if (error) throw error;

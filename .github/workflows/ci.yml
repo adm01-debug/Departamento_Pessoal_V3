@@ -83,6 +83,11 @@ jobs:
         # queries untyped. Ratchet: baseline lista divergências conhecidas,
         # qualquer divergência nova reprova o PR.
         run: npm run audit:types-drift
+      - name: Frescura do mapa de colunas (validateTablePayload)
+        # src/schemas/tableColumns.ts é gerado de types.ts; se types.ts mudar e o
+        # mapa não for regerado, o validador estrutural valida contra colunas
+        # desatualizadas. Regenerar com: npm run gen:table-columns
+        run: npm run gen:table-columns -- --check
       - name: Lint Edge Functions
         run: npm run lint:edge
       - name: Format changed source files

@@ -1,5 +1,6 @@
 import { supabase, type QueryBuilderType } from '@/integrations/supabase/client';
 import type { Insertable, Tables, Updatable } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 const ensure = <T>(d: T | null, e: string): T => {
   if (!d) throw new Error(`Nenhum registro de ${e} retornado.`);
@@ -20,7 +21,15 @@ export const bancoHorasConfigService = {
     const existing = d.empresa_id ? await bancoHorasConfigService.buscar(d.empresa_id) : null;
     if (existing) {
       const { data, error } = await (
-        supabase.from('banco_horas_config').update(d as Updatable<'banco_horas_config'>) as unknown as QueryBuilderType
+        supabase
+          .from('banco_horas_config')
+          .update(
+            validateTablePayload(
+              'banco_horas_config',
+              d as Updatable<'banco_horas_config'>,
+              'bancoHorasConfigService:banco_horas_config'
+            )
+          ) as unknown as QueryBuilderType
       )
         .eq('id', existing.id)
         .eq('empresa_id', d.empresa_id as string)
@@ -29,7 +38,11 @@ export const bancoHorasConfigService = {
       if (error) throw error;
       return ensure(data as Tables<'banco_horas_config'> | null, 'configuração banco de horas');
     }
-    const { data, error } = await supabase.from('banco_horas_config').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('banco_horas_config')
+      .insert(validateTablePayload('banco_horas_config', d, 'bancoHorasConfigService:banco_horas_config'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     return ensure(data, 'configuração banco de horas');
   },

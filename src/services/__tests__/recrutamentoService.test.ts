@@ -192,14 +192,14 @@ describe('recrutamentoService.atualizarCandidato', () => {
   });
 
   it('updates and returns candidato', async () => {
-    const updated = { id: '00000000-0000-4000-8000-000000000009', status: 'aprovado' };
+    const updated = { id: '00000000-0000-4000-8000-000000000009', observacoes: 'aprovado' };
     const { updateFn, eqFn } = setupUpdateChain(updated);
     const result = await recrutamentoService.atualizarCandidato(
       '00000000-0000-4000-8000-000000000009',
-      { status: 'aprovado' },
+      { observacoes: 'aprovado' },
       EMPRESA_ID
     );
-    expect(updateFn).toHaveBeenCalledWith({ status: 'aprovado' });
+    expect(updateFn).toHaveBeenCalledWith({ observacoes: 'aprovado' });
     expect(eqFn).toHaveBeenCalledWith('id', '00000000-0000-4000-8000-000000000009');
     expect(result).toEqual(updated);
   });
@@ -299,9 +299,9 @@ describe('recrutamentoService.agendarEntrevista', () => {
   });
 
   it('inserts and returns new entrevista', async () => {
-    const created = { id: 'e-new', data: '2026-07-30' };
+    const created = { id: 'e-new', data_hora: '2026-07-30T10:00:00Z' };
     const { insertFn } = setupInsertChain(created);
-    const result = await recrutamentoService.agendarEntrevista({ data: '2026-07-30' });
+    const result = await recrutamentoService.agendarEntrevista({ data_hora: '2026-07-30T10:00:00Z' });
     expect(result).toEqual(created);
   });
 });
@@ -312,9 +312,9 @@ describe('recrutamentoService.registrarTeste', () => {
   });
 
   it('inserts and returns new teste', async () => {
-    const created = { id: 't-new', tipo: 'tecnico' };
+    const created = { id: 't-new', nome_teste: 'tecnico' };
     const { insertFn } = setupInsertChain(created);
-    const result = await recrutamentoService.registrarTeste({ tipo: 'tecnico' });
+    const result = await recrutamentoService.registrarTeste({ nome_teste: 'tecnico' });
     expect(result).toEqual(created);
   });
 });
@@ -325,9 +325,9 @@ describe('recrutamentoService.adicionarAnotacao', () => {
   });
 
   it('inserts and returns new anotacao', async () => {
-    const created = { id: 'a-new', texto: 'Bom candidato' };
+    const created = { id: 'a-new', anotacao: 'Bom candidato' };
     const { insertFn } = setupInsertChain(created);
-    const result = await recrutamentoService.adicionarAnotacao({ texto: 'Bom candidato' });
+    const result = await recrutamentoService.adicionarAnotacao({ anotacao: 'Bom candidato' });
     expect(result).toEqual(created);
   });
 });

@@ -115,7 +115,7 @@ describe('episService.criar', () => {
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(episService.criar({} as TablesInsert<'epis'>)).rejects.toThrow(
+    await expect(episService.criar({ nome: 'Luva' } as TablesInsert<'epis'>)).rejects.toThrow(
       'Nenhum registro de EPI foi retornado.'
     );
   });
@@ -137,7 +137,9 @@ describe('episService.atualizar', () => {
 
   it('throws when data is null', async () => {
     setupUpdateChain(null);
-    await expect(episService.atualizar('e1', {}, EMPRESA_ID)).rejects.toThrow('Nenhum registro de EPI foi retornado.');
+    await expect(episService.atualizar('e1', { nome: 'x' }, EMPRESA_ID)).rejects.toThrow(
+      'Nenhum registro de EPI foi retornado.'
+    );
   });
 });
 
@@ -212,7 +214,7 @@ describe('episEntregasService.criar', () => {
 
   it('throws when data is null', async () => {
     setupInsertChain(null);
-    await expect(episEntregasService.criar({} as TablesInsert<'epis_entregas'>)).rejects.toThrow(
+    await expect(episEntregasService.criar({ epi_id: 'e1' } as TablesInsert<'epis_entregas'>)).rejects.toThrow(
       'Nenhum registro de entrega de EPI foi retornado.'
     );
   });

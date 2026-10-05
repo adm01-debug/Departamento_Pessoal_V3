@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables, Insertable } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 type ComColaborador = { colaborador: Pick<Tables<'colaboradores'>, 'nome_completo'> | null };
 type ComAvaliadoAvaliador = {
@@ -18,7 +19,11 @@ export const avaliacaoService = {
     return data || [];
   },
   async criarCiclo(d: Insertable<'ciclos_avaliacao'>): Promise<Tables<'ciclos_avaliacao'> | null> {
-    const { data, error } = await supabase.from('ciclos_avaliacao').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('ciclos_avaliacao')
+      .insert(validateTablePayload('ciclos_avaliacao', d, 'avaliacaoService:ciclos_avaliacao'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -41,7 +46,11 @@ export const avaliacaoService = {
     return (data as (Tables<'metas_okrs'> & ComColaborador)[]) || [];
   },
   async criarMeta(d: Insertable<'metas_okrs'>): Promise<Tables<'metas_okrs'> | null> {
-    const { data, error } = await supabase.from('metas_okrs').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('metas_okrs')
+      .insert(validateTablePayload('metas_okrs', d, 'avaliacaoService:metas_okrs'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -64,7 +73,11 @@ export const avaliacaoService = {
     return (data as (Tables<'pdi_plano_desenvolvimento'> & ComColaborador)[]) || [];
   },
   async criarPDI(d: Insertable<'pdi_plano_desenvolvimento'>): Promise<Tables<'pdi_plano_desenvolvimento'> | null> {
-    const { data, error } = await supabase.from('pdi_plano_desenvolvimento').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('pdi_plano_desenvolvimento')
+      .insert(validateTablePayload('pdi_plano_desenvolvimento', d, 'avaliacaoService:pdi_plano_desenvolvimento'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -97,7 +110,11 @@ export const avaliacaoService = {
     return (data as (Tables<'feedbacks_360'> & ComAvaliadoAvaliador)[]) || [];
   },
   async criarFeedback(d: Insertable<'feedbacks_360'>): Promise<Tables<'feedbacks_360'> | null> {
-    const { data, error } = await supabase.from('feedbacks_360').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('feedbacks_360')
+      .insert(validateTablePayload('feedbacks_360', d, 'avaliacaoService:feedbacks_360'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -117,7 +134,11 @@ export const avaliacaoService = {
     return data || [];
   },
   async criarCompetencia(d: Insertable<'competencias_config'>): Promise<Tables<'competencias_config'> | null> {
-    const { data, error } = await supabase.from('competencias_config').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('competencias_config')
+      .insert(validateTablePayload('competencias_config', d, 'avaliacaoService:competencias_config'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     return data;
   },

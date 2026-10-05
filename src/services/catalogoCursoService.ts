@@ -1,6 +1,6 @@
 import { supabase, type QueryBuilderType } from '@/integrations/supabase/client';
 import type { Insertable, Tables, Updatable } from '@/integrations/supabase/database.types';
-import { validateInput } from '@/schemas/validate';
+import { validateInput, validateTablePayload } from '@/schemas/validate';
 import { cursoSchema, trilhaSchema, inscricaoCursoSchema } from '@/schemas/cursos';
 
 /** Linha de trilhas_cursos com o join `curso` retornado por `listarTrilhasCursos`. */
@@ -43,7 +43,11 @@ export const catalogoCursoService = {
   async criarCurso(d: Insertable<'catalogo_cursos'>): Promise<Tables<'catalogo_cursos'>> {
     if (!d.empresa_id) throw new Error('empresa_id obrigatório');
     validateInput(cursoSchema, d, 'catalogo.criarCurso');
-    const { data, error } = await supabase.from('catalogo_cursos').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('catalogo_cursos')
+      .insert(validateTablePayload('catalogo_cursos', d, 'catalogoCursoService:catalogo_cursos'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     return ensure(data, 'curso');
   },
@@ -56,7 +60,7 @@ export const catalogoCursoService = {
     validateInput(cursoSchema, d, 'catalogo.atualizarCurso');
     const { data, error } = await supabase
       .from('catalogo_cursos')
-      .update(d)
+      .update(validateTablePayload('catalogo_cursos', d, 'catalogoCursoService:catalogo_cursos'))
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()
@@ -82,7 +86,11 @@ export const catalogoCursoService = {
   async criarTrilha(d: Insertable<'trilhas_aprendizado'>): Promise<Tables<'trilhas_aprendizado'>> {
     if (!d.empresa_id) throw new Error('empresa_id obrigatório');
     validateInput(trilhaSchema, d, 'catalogo.criarTrilha');
-    const { data, error } = await supabase.from('trilhas_aprendizado').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('trilhas_aprendizado')
+      .insert(validateTablePayload('trilhas_aprendizado', d, 'catalogoCursoService:trilhas_aprendizado'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     return ensure(data, 'trilha');
   },
@@ -106,7 +114,11 @@ export const catalogoCursoService = {
   async criarInscricao(d: Insertable<'inscricoes_cursos'>): Promise<Tables<'inscricoes_cursos'>> {
     if (!d.empresa_id) throw new Error('empresa_id obrigatório');
     validateInput(inscricaoCursoSchema, d, 'catalogo.criarInscricao');
-    const { data, error } = await supabase.from('inscricoes_cursos').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('inscricoes_cursos')
+      .insert(validateTablePayload('inscricoes_cursos', d, 'catalogoCursoService:inscricoes_cursos'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     return ensure(data, 'inscrição');
   },
@@ -119,7 +131,7 @@ export const catalogoCursoService = {
     validateInput(inscricaoCursoSchema, d, 'catalogo.atualizarInscricao');
     const { data, error } = await supabase
       .from('inscricoes_cursos')
-      .update(d)
+      .update(validateTablePayload('inscricoes_cursos', d, 'catalogoCursoService:inscricoes_cursos'))
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()
@@ -143,7 +155,11 @@ export const catalogoCursoService = {
     ordem?: number;
     obrigatorio?: boolean;
   }): Promise<Tables<'trilhas_cursos'> | null> {
-    const { data, error } = await supabase.from('trilhas_cursos').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('trilhas_cursos')
+      .insert(validateTablePayload('trilhas_cursos', d, 'catalogoCursoService:trilhas_cursos'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -175,7 +191,11 @@ export const catalogoCursoService = {
     return (data as InstanciaComJoins[] | null) || [];
   },
   async criarInstancia(d: Insertable<'treinamento_instancias'>): Promise<Tables<'treinamento_instancias'> | null> {
-    const { data, error } = await supabase.from('treinamento_instancias').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('treinamento_instancias')
+      .insert(validateTablePayload('treinamento_instancias', d, 'catalogoCursoService:treinamento_instancias'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -183,7 +203,12 @@ export const catalogoCursoService = {
     id: string,
     d: Updatable<'treinamento_instancias'>
   ): Promise<Tables<'treinamento_instancias'> | null> {
-    const { data, error } = await supabase.from('treinamento_instancias').update(d).eq('id', id).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('treinamento_instancias')
+      .update(validateTablePayload('treinamento_instancias', d, 'catalogoCursoService:treinamento_instancias'))
+      .eq('id', id)
+      .select()
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -194,7 +219,11 @@ export const catalogoCursoService = {
     comentario?: string;
     aplicabilidade_nota?: number;
   }): Promise<Tables<'treinamento_feedback'> | null> {
-    const { data, error } = await supabase.from('treinamento_feedback').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('treinamento_feedback')
+      .insert(validateTablePayload('treinamento_feedback', d, 'catalogoCursoService:treinamento_feedback'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     return data;
   },

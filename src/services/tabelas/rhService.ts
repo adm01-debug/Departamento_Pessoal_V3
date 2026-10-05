@@ -1,6 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables, TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
-import { validateInput } from '@/schemas/validate';
+import { validateInput, validateTablePayload } from '@/schemas/validate';
 import {
   configAfastamentoSchema,
   feriasSolicitacaoSchema,
@@ -30,7 +30,9 @@ export const configAfastamentosService = {
   },
   salvar: async (d: TablesInsert<'config_afastamentos'>) => {
     validateInput(configAfastamentoSchema, d, 'configAfastamentos.salvar');
-    const { error } = await supabase.from('config_afastamentos').upsert(d, { onConflict: 'tipo' });
+    const { error } = await supabase
+      .from('config_afastamentos')
+      .upsert(validateTablePayload('config_afastamentos', d, 'rhService:config_afastamentos'), { onConflict: 'tipo' });
     if (error) throw error;
   },
 };
@@ -48,13 +50,19 @@ export const feriasSolicitacoesService = {
   },
   criar: async (d: TablesInsert<'ferias_solicitacoes'>) => {
     validateInput(feriasSolicitacaoSchema, d, 'feriasSolicitacoes.criar');
-    const { error } = await supabase.from('ferias_solicitacoes').insert(d);
+    const { error } = await supabase
+      .from('ferias_solicitacoes')
+      .insert(validateTablePayload('ferias_solicitacoes', d, 'rhService:ferias_solicitacoes'));
     if (error) throw error;
   },
   atualizar: async (id: string, d: TablesUpdate<'ferias_solicitacoes'>, empresaId: string) => {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     validateInput(feriasSolicitacaoSchema, d, 'feriasSolicitacoes.atualizar');
-    const { error } = await supabase.from('ferias_solicitacoes').update(d).eq('id', id).eq('empresa_id', empresaId);
+    const { error } = await supabase
+      .from('ferias_solicitacoes')
+      .update(validateTablePayload('ferias_solicitacoes', d, 'rhService:ferias_solicitacoes'))
+      .eq('id', id)
+      .eq('empresa_id', empresaId);
     if (error) throw error;
   },
 };
@@ -93,7 +101,9 @@ export const linhasTransporteService = {
   },
   criar: async (d: TablesInsert<'linhas_transporte'>) => {
     validateInput(linhaTransporteSchema, d, 'linhasTransporte.criar');
-    const { error } = await supabase.from('linhas_transporte').insert(d);
+    const { error } = await supabase
+      .from('linhas_transporte')
+      .insert(validateTablePayload('linhas_transporte', d, 'rhService:linhas_transporte'));
     if (error) throw error;
   },
 };
@@ -120,7 +130,11 @@ export const onboardingService = {
   },
   criarTemplate: async (d: TablesInsert<'onboarding_templates'>): Promise<OnboardingTemplateRow | null> => {
     validateInput(onboardingTemplateSchema, d, 'onboarding.criarTemplate');
-    const { data, error } = await supabase.from('onboarding_templates').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('onboarding_templates')
+      .insert(validateTablePayload('onboarding_templates', d, 'rhService:onboarding_templates'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -135,7 +149,9 @@ export const onboardingService = {
   },
   criarTemplateTarefa: async (d: TablesInsert<'onboarding_template_tarefas'>) => {
     validateInput(onboardingTemplateTarefaSchema, d, 'onboarding.criarTemplateTarefa');
-    const { error } = await supabase.from('onboarding_template_tarefas').insert(d);
+    const { error } = await supabase
+      .from('onboarding_template_tarefas')
+      .insert(validateTablePayload('onboarding_template_tarefas', d, 'rhService:onboarding_template_tarefas'));
     if (error) throw error;
   },
   listarColaboradores: async (empresaId?: string): Promise<OnboardingColaboradorRow[]> => {
@@ -150,7 +166,11 @@ export const onboardingService = {
   },
   iniciarOnboarding: async (d: TablesInsert<'onboarding_colaborador'>): Promise<OnboardingColaboradorRow | null> => {
     validateInput(onboardingColaboradorSchema, d, 'onboarding.iniciarOnboarding');
-    const { data, error } = await supabase.from('onboarding_colaborador').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('onboarding_colaborador')
+      .insert(validateTablePayload('onboarding_colaborador', d, 'rhService:onboarding_colaborador'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -167,7 +187,13 @@ export const onboardingService = {
     if (!onboardingId) throw new Error('onboarding_id obrigatório para isolamento de tenant');
     const { error } = await supabase
       .from('onboarding_tarefas')
-      .update({ concluida: true, data_conclusao: new Date().toISOString() })
+      .update(
+        validateTablePayload(
+          'onboarding_tarefas',
+          { concluida: true, data_conclusao: new Date().toISOString() },
+          'rhService:onboarding_tarefas'
+        )
+      )
       .eq('id', id)
       .eq('onboarding_id', onboardingId);
     if (error) throw error;
@@ -189,7 +215,9 @@ export const treinamentoParticipantesService = {
     if (!treinamentoId) throw new Error('treinamento_id obrigatório para isolamento de tenant');
     const { error } = await supabase
       .from('treinamento_participantes')
-      .update({ presente: true })
+      .update(
+        validateTablePayload('treinamento_participantes', { presente: true }, 'rhService:treinamento_participantes')
+      )
       .eq('id', id)
       .eq('treinamento_id', treinamentoId);
     if (error) throw error;

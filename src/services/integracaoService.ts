@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables, Insertable } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 export type CnabConfig = Tables<'cnab_configuracoes'>;
 export type WebhookConfig = Tables<'webhooks_config'>;
@@ -24,7 +25,15 @@ export const cnabService = {
 
   async saveConfig(empresaId: string, d: Insertable<'cnab_configuracoes'>): Promise<void> {
     if (!empresaId) throw new Error('empresa_id obrigatório');
-    const { error } = await supabase.from('cnab_configuracoes').upsert({ ...d, empresa_id: empresaId });
+    const { error } = await supabase
+      .from('cnab_configuracoes')
+      .upsert(
+        validateTablePayload(
+          'cnab_configuracoes',
+          { ...d, empresa_id: empresaId },
+          'integracaoService:cnab_configuracoes'
+        )
+      );
     if (error) throw error;
   },
 
@@ -60,7 +69,11 @@ export const webhookService = {
 
   async criar(empresaId: string, d: Insertable<'webhooks_config'>): Promise<void> {
     if (!empresaId) throw new Error('empresa_id obrigatório');
-    const { error } = await supabase.from('webhooks_config').insert({ ...d, empresa_id: empresaId });
+    const { error } = await supabase
+      .from('webhooks_config')
+      .insert(
+        validateTablePayload('webhooks_config', { ...d, empresa_id: empresaId }, 'integracaoService:webhooks_config')
+      );
     if (error) throw error;
   },
 

@@ -15,6 +15,7 @@ import type {
   ProrrogacaoComAfastamento,
 } from '@/types/afastamentos';
 
+import { validateTablePayload } from '@/schemas/validate';
 /** Evita que o supabase-js parseie a select string no nível de tipo. */
 const sel = (s: string): string => s;
 
@@ -145,18 +146,24 @@ class AfastamentoService extends BaseService<AfastamentoRow> {
 
       const { data, error } = await supabase
         .from('documentos_afastamento')
-        .insert({
-          afastamento_id: afastamentoId,
-          tipo,
-          nome_arquivo: file.name,
-          url: fileUrl,
-          metadados: {
-            size: file.size,
-            type: file.type,
-            lastModified: file.lastModified,
-            uploadedAt: new Date().toISOString(),
-          },
-        })
+        .insert(
+          validateTablePayload(
+            'documentos_afastamento',
+            {
+              afastamento_id: afastamentoId,
+              tipo,
+              nome_arquivo: file.name,
+              url: fileUrl,
+              metadados: {
+                size: file.size,
+                type: file.type,
+                lastModified: file.lastModified,
+                uploadedAt: new Date().toISOString(),
+              },
+            },
+            'afastamentoService:documentos_afastamento'
+          )
+        )
         .select()
         .maybeSingle<DocumentoAfastamentoRow>();
 
@@ -188,7 +195,7 @@ class AfastamentoService extends BaseService<AfastamentoRow> {
 
     const { data, error } = await supabase
       .from('documentos_afastamento')
-      .update({ validado })
+      .update(validateTablePayload('documentos_afastamento', { validado }, 'afastamentoService:documentos_afastamento'))
       .eq('id', id)
       .eq('afastamento_id', doc.afastamento_id)
       .select()
@@ -251,7 +258,7 @@ class AfastamentoService extends BaseService<AfastamentoRow> {
     try {
       const { data, error } = await supabase
         .from('prorrogacoes_afastamento')
-        .insert(d)
+        .insert(validateTablePayload('prorrogacoes_afastamento', d, 'afastamentoService:prorrogacoes_afastamento'))
         .select()
         .maybeSingle<ProrrogacaoAfastamentoRow>();
 

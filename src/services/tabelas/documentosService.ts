@@ -1,5 +1,6 @@
 import { supabase, type QueryBuilderType } from '@/integrations/supabase/client';
 import type { Insertable, Tables } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 export const documentoTemplatesService = {
   listar: async (empresaId?: string): Promise<Tables<'documento_templates'>[]> => {
@@ -10,7 +11,9 @@ export const documentoTemplatesService = {
     return (data as Tables<'documento_templates'>[] | null) || [];
   },
   criar: async (d: Insertable<'documento_templates'>): Promise<void> => {
-    const { error } = await supabase.from('documento_templates').insert(d);
+    const { error } = await supabase
+      .from('documento_templates')
+      .insert(validateTablePayload('documento_templates', d, 'documentosService:documento_templates'));
     if (error) throw error;
   },
 };
@@ -26,7 +29,9 @@ export const documentosAdmissaoService = {
     return (data as Tables<'documentos_admissao'>[] | null) || [];
   },
   criar: async (d: Insertable<'documentos_admissao'>): Promise<void> => {
-    const { error } = await supabase.from('documentos_admissao').insert(d);
+    const { error } = await supabase
+      .from('documentos_admissao')
+      .insert(validateTablePayload('documentos_admissao', d, 'documentosService:documentos_admissao'));
     if (error) throw error;
   },
 };
@@ -42,7 +47,9 @@ export const documentosAfastamentoService = {
     return (data as Tables<'documentos_afastamento'>[] | null) || [];
   },
   criar: async (d: Insertable<'documentos_afastamento'>): Promise<void> => {
-    const { error } = await supabase.from('documentos_afastamento').insert(d);
+    const { error } = await supabase
+      .from('documentos_afastamento')
+      .insert(validateTablePayload('documentos_afastamento', d, 'documentosService:documentos_afastamento'));
     if (error) throw error;
   },
 };
@@ -56,7 +63,9 @@ export const documentosAssinaturaService = {
     return (data as Tables<'documentos_assinatura'>[] | null) || [];
   },
   criar: async (d: Insertable<'documentos_assinatura'>): Promise<void> => {
-    const { error } = await supabase.from('documentos_assinatura').insert(d);
+    const { error } = await supabase
+      .from('documentos_assinatura')
+      .insert(validateTablePayload('documentos_assinatura', d, 'documentosService:documentos_assinatura'));
     if (error) throw error;
   },
 };
@@ -72,7 +81,9 @@ export const documentosColaboradorService = {
     return (data as Tables<'documentos_colaborador'>[] | null) || [];
   },
   criar: async (d: Insertable<'documentos_colaborador'>): Promise<void> => {
-    const { error } = await supabase.from('documentos_colaborador').insert(d);
+    const { error } = await supabase
+      .from('documentos_colaborador')
+      .insert(validateTablePayload('documentos_colaborador', d, 'documentosService:documentos_colaborador'));
     if (error) throw error;
   },
 };

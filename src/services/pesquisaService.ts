@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Insertable, Tables, Updatable } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 export const pesquisaService = {
   async listar(empresaId: string): Promise<Tables<'pesquisas'>[]> {
@@ -13,7 +14,11 @@ export const pesquisaService = {
   },
 
   async criar(d: Insertable<'pesquisas'>): Promise<Tables<'pesquisas'>> {
-    const { data, error } = await supabase.from('pesquisas').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('pesquisas')
+      .insert(validateTablePayload('pesquisas', d, 'pesquisaService:pesquisas'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de pesquisa foi retornado.');
     return data;
@@ -23,7 +28,7 @@ export const pesquisaService = {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     const { data, error } = await supabase
       .from('pesquisas')
-      .update(d)
+      .update(validateTablePayload('pesquisas', d, 'pesquisaService:pesquisas'))
       .eq('id', id)
       .eq('empresa_id', empresaId)
       .select()
@@ -50,7 +55,11 @@ export const pesquisaService = {
   },
 
   async criarPergunta(d: Insertable<'pesquisas_perguntas'>): Promise<Tables<'pesquisas_perguntas'>> {
-    const { data, error } = await supabase.from('pesquisas_perguntas').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('pesquisas_perguntas')
+      .insert(validateTablePayload('pesquisas_perguntas', d, 'pesquisaService:pesquisas_perguntas'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de pergunta foi retornado.');
     return data;
@@ -76,7 +85,11 @@ export const pesquisaService = {
   },
 
   async enviarResposta(d: Insertable<'pesquisas_respostas'>): Promise<Tables<'pesquisas_respostas'>> {
-    const { data, error } = await supabase.from('pesquisas_respostas').insert(d).select().maybeSingle();
+    const { data, error } = await supabase
+      .from('pesquisas_respostas')
+      .insert(validateTablePayload('pesquisas_respostas', d, 'pesquisaService:pesquisas_respostas'))
+      .select()
+      .maybeSingle();
     if (error) throw error;
     if (!data) throw new Error('Nenhum registro de resposta foi retornado.');
     return data;

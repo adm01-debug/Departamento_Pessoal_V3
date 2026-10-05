@@ -89,11 +89,11 @@ describe('whatsappService', () => {
       const { upsertFn } = setupUpsert(null);
 
       await expect(
-        whatsappService.saveConfig({ empresa_id: 'emp-1', habilitado: true } as never)
+        whatsappService.saveConfig({ empresa_id: 'emp-1', status: 'active' } as never)
       ).resolves.toBeUndefined();
 
       expect(mockFrom).toHaveBeenCalledWith('whatsapp_config');
-      expect(upsertFn).toHaveBeenCalledWith(expect.objectContaining({ empresa_id: 'emp-1', habilitado: true }), {
+      expect(upsertFn).toHaveBeenCalledWith(expect.objectContaining({ empresa_id: 'emp-1', status: 'active' }), {
         onConflict: 'empresa_id',
       });
     });
@@ -102,7 +102,7 @@ describe('whatsappService', () => {
       const dbError = new Error('Upsert failed');
       setupUpsert(dbError);
 
-      await expect(whatsappService.saveConfig({ empresa_id: 'emp-1', habilitado: false } as never)).rejects.toThrow(
+      await expect(whatsappService.saveConfig({ empresa_id: 'emp-1', status: 'active' } as never)).rejects.toThrow(
         'Upsert failed'
       );
     });
