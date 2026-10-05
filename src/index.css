@@ -652,35 +652,35 @@
   }
 }
 
-/* 1. CRESCIMENTO — a coluna sobe do rodapé até o topo (700ms), uma após a outra
-      (140ms por coluna). `both` mantém o `from` durante o delay e o `to` no fim. */
+/* 1. CRESCIMENTO — a coluna sobe do rodapé até o topo (900ms), uma após a outra
+      (180ms por coluna). `both` mantém o `from` durante o delay e o `to` no fim. */
 .kanban-em-entrada {
-  animation: kanban-column-grow 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: calc(var(--kanban-index, 0) * 140ms);
+  animation: kanban-column-grow 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--kanban-index, 0) * 180ms);
 }
 
 /* 2. COR (degradê) — só depois que a coluna praticamente cresceu. */
 .kanban-em-entrada .kb-gradient {
-  animation: kanban-gradient-in 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: calc(var(--kanban-index, 0) * 140ms + 620ms);
+  animation: kanban-gradient-in 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--kanban-index, 0) * 180ms + 820ms);
 }
 
 /* 3. CABEÇALHO. */
 .kanban-em-entrada .kb-header {
-  animation: kanban-header-in 250ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: calc(var(--kanban-index, 0) * 140ms + 780ms);
+  animation: kanban-header-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--kanban-index, 0) * 180ms + 1040ms);
 }
 
-/* 4. CARDS — descem de cima para baixo, 80ms entre um e outro. */
+/* 4. CARDS — descem de cima para baixo, 100ms entre um e outro. */
 .kanban-em-entrada .kanban-card {
-  animation: kanban-card-in 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: calc(var(--kanban-index, 0) * 140ms + 980ms + var(--card-index, 0) * 80ms);
+  animation: kanban-card-in 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--kanban-index, 0) * 180ms + 1300ms + var(--card-index, 0) * 100ms);
 }
 
 /* 5. RODAPÉ — por último (o delay considera a quantidade de cards). */
 .kanban-em-entrada .kb-footer {
-  animation: kanban-footer-in 250ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: calc(var(--kanban-index, 0) * 140ms + var(--kanban-footer-delay, 1300ms));
+  animation: kanban-footer-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--kanban-index, 0) * 180ms + var(--kanban-footer-delay, 1700ms));
 }
 
 /* Depois da entrada: altura final estável e tudo visível (sem depender de fill da
@@ -696,25 +696,25 @@
 @media (prefers-reduced-motion: reduce) {
   .kanban-em-entrada {
     animation-name: kanban-column-grow;
-    animation-duration: 380ms;
+    animation-duration: 500ms;
     animation-timing-function: ease-out;
     animation-fill-mode: both;
-    animation-delay: calc(var(--kanban-index, 0) * 60ms);
+    animation-delay: calc(var(--kanban-index, 0) * 80ms);
   }
   .kanban-em-entrada .kb-gradient {
-    animation: kanban-gradient-in 200ms ease-out both;
-    animation-delay: calc(var(--kanban-index, 0) * 60ms + 320ms);
+    animation: kanban-gradient-in 260ms ease-out both;
+    animation-delay: calc(var(--kanban-index, 0) * 80ms + 420ms);
   }
   .kanban-em-entrada .kb-header {
-    animation: kanban-gradient-in 180ms ease-out both;
-    animation-delay: calc(var(--kanban-index, 0) * 60ms + 400ms);
+    animation: kanban-gradient-in 240ms ease-out both;
+    animation-delay: calc(var(--kanban-index, 0) * 80ms + 540ms);
   }
   .kanban-em-entrada .kanban-card {
-    animation: kanban-gradient-in 180ms ease-out both;
-    animation-delay: calc(var(--kanban-index, 0) * 60ms + 460ms + var(--card-index, 0) * 40ms);
+    animation: kanban-gradient-in 240ms ease-out both;
+    animation-delay: calc(var(--kanban-index, 0) * 80ms + 620ms + var(--card-index, 0) * 50ms);
   }
   .kanban-em-entrada .kb-footer {
-    animation: kanban-gradient-in 180ms ease-out both;
-    animation-delay: calc(var(--kanban-index, 0) * 60ms + var(--kanban-footer-delay-reduzido, 560ms));
+    animation: kanban-gradient-in 240ms ease-out both;
+    animation-delay: calc(var(--kanban-index, 0) * 80ms + var(--kanban-footer-delay-reduzido, 620ms));
   }
 }

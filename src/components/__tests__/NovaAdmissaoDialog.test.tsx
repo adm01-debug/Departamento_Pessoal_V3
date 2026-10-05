@@ -4,22 +4,31 @@ import { render, screen } from '@testing-library/react';
 vi.mock('@/hooks/useAdmissoes', () => ({
   useAdmissoes: vi.fn(() => ({
     criar: vi.fn(() => Promise.resolve()),
+    atualizar: vi.fn(() => Promise.resolve()),
     admissoes: [],
     isLoading: false,
   })),
 }));
 
-vi.mock('@/components/ui/dialog', () => ({
-  Dialog: ({ children }: any) => <div>{children}</div>,
-  DialogContent: ({ children }: any) => <div>{children}</div>,
-  DialogHeader: ({ children }: any) => <div>{children}</div>,
-  DialogTitle: ({ children }: any) => <h2>{children}</h2>,
-  DialogTrigger: ({ children }: any) => <div>{children}</div>,
+// Radix em duble: o conteúdo agora só existe com `open` (como no navegador — o
+// modal usa a MESMA montagem do popup "Pendências": Portal/Overlay/Content com
+// `forceMount` + `AnimatePresence`). O duble evita focus-trap/portais no jsdom.
+vi.mock('@radix-ui/react-dialog', () => ({
+  Root: ({ children }: any) => <div>{children}</div>,
+  Trigger: ({ children }: any) => <div>{children}</div>,
+  Portal: ({ children }: any) => <div>{children}</div>,
+  Overlay: ({ children }: any) => <div>{children}</div>,
+  Content: ({ children }: any) => <div>{children}</div>,
+  Close: ({ children }: any) => <button>{children}</button>,
+  Title: ({ children }: any) => <h2>{children}</h2>,
+  Description: ({ children }: any) => <p>{children}</p>,
 }));
 
 vi.mock('@/components/ui/button', () => ({
   Button: ({ children, onClick, disabled, type }: any) => (
-    <button onClick={onClick} disabled={disabled} type={type}>{children}</button>
+    <button onClick={onClick} disabled={disabled} type={type}>
+      {children}
+    </button>
   ),
 }));
 
@@ -45,6 +54,9 @@ vi.mock('@/components/ui/textarea', () => ({
 
 import { NovaAdmissaoDialog } from '../admissoes/NovaAdmissaoDialog';
 
+/** Abre o diálogo (controlado) — o conteúdo só é montado com `open`. */
+const renderAberto = () => render(<NovaAdmissaoDialog open onOpenChange={() => {}} />);
+
 describe('NovaAdmissaoDialog', () => {
   it('renders Nova Admissão trigger button by default', () => {
     render(<NovaAdmissaoDialog />);
@@ -52,47 +64,47 @@ describe('NovaAdmissaoDialog', () => {
   });
 
   it('renders Nova Admissão dialog title', () => {
-    render(<NovaAdmissaoDialog />);
+    renderAberto();
     expect(screen.getAllByText('Nova Admissão').length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders Nome completo label', () => {
-    render(<NovaAdmissaoDialog />);
+    renderAberto();
     expect(screen.getByText(/Nome completo/i)).toBeInTheDocument();
   });
 
   it('renders Cargo label', () => {
-    render(<NovaAdmissaoDialog />);
+    renderAberto();
     expect(screen.getByText(/^Cargo \*$/)).toBeInTheDocument();
   });
 
   it('renders Departamento label', () => {
-    render(<NovaAdmissaoDialog />);
+    renderAberto();
     expect(screen.getByText(/Departamento/i)).toBeInTheDocument();
   });
 
   it('renders Salário proposto label', () => {
-    render(<NovaAdmissaoDialog />);
+    renderAberto();
     expect(screen.getByText(/Salário proposto/i)).toBeInTheDocument();
   });
 
   it('renders Criar Admissão submit button', () => {
-    render(<NovaAdmissaoDialog />);
+    renderAberto();
     expect(screen.getByText('Criar Admissão')).toBeInTheDocument();
   });
 
   it('renders Cancelar button', () => {
-    render(<NovaAdmissaoDialog />);
+    renderAberto();
     expect(screen.getByText('Cancelar')).toBeInTheDocument();
   });
 
   it('renders RH department option', () => {
-    render(<NovaAdmissaoDialog />);
+    renderAberto();
     expect(screen.getByText('RH')).toBeInTheDocument();
   });
 
   it('renders TI department option', () => {
-    render(<NovaAdmissaoDialog />);
+    renderAberto();
     expect(screen.getByText('TI')).toBeInTheDocument();
   });
 
@@ -103,5 +115,18 @@ describe('NovaAdmissaoDialog', () => {
       </NovaAdmissaoDialog>
     );
     expect(screen.getByText('Custom Trigger')).toBeInTheDocument();
+  });
+
+  it('usa a MESMA coreografia do popup "Pendências" (cascade-motion)', () => {
+    const { container } = renderAberto();
+    // Véu: mesmas classes do AnimatedCascadeDialog.
+    expect(container.querySelector('.backdrop-blur-sm')).toBeTruthy();
+    expect(container.querySelector('.bg-black\\/60')).toBeTruthy();
+    // Casca com `transform-origin: top center` (a caixa que nasce pequena e estica).
+    const shell = container.querySelector('div[style*="transform-origin: top center"]') as HTMLElement;
+    expect(shell).toBeTruthy();
+    expect(shell.className).toContain('max-w-lg');
+    // X igual ao da referência.
+    expect(screen.getByText('Fechar')).toBeInTheDocument();
   });
 });

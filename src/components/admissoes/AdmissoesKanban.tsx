@@ -25,7 +25,7 @@
  * apareceria muito longe do cursor. No body o overlay fica preso ao ponteiro.
  *
  * ENTRADA (CSS puro — ver o bloco `KANBAN … ENTRADA DAS COLUNAS` no `index.css`): o
- * board só entrega `indice` (→ `--kanban-index`, onda de 140ms) e `isActive` a cada
+ * board só entrega `indice` (→ `--kanban-index`, onda de 180ms) e `isActive` a cada
  * coluna; quem anima são keyframes CSS (`height 0 → 100%` + degradê → header → cards
  * → rodapé). Nada de Framer Motion aqui. A animação só é aplicada com a aba ativa, e
  * a `key` da coluna inclui `isActive` — entrar/sair da aba remonta a coluna e as
@@ -127,7 +127,7 @@ export function AdmissoesKanban({ admissoes, isActive = true, ...acoes }: Admiss
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         {/* ENTRADA em CSS puro (ver o bloco `KANBAN … ENTRADA DAS COLUNAS` no
             `index.css`): a faixa é um `<div>` e cada `KanbanColumn` recebe o `indice`
-            (→ `--kanban-index`, onda de 140ms) e `isActive`. A `key` remonta a coluna
+            (→ `--kanban-index`, onda de 180ms) e `isActive`. A `key` remonta a coluna
             a cada entrada/saída da aba — as keyframes tocam de novo do zero.
             `items-end` alinha as colunas pelo RODAPÉ (o slot tem a altura final e a
             coluna cresce por `height`, então a borda superior sobe).

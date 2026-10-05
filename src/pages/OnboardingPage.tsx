@@ -1,25 +1,46 @@
+/**
+ * Rota `/onboarding` (item "Onboarding" da sidebar).
+ *
+ * REDESENHO: a listagem deixou de ser uma pilha de cards ALTOS com o checklist
+ * sempre aberto e passou a ser a MESMA grade de cards compactos da aba
+ * "Onboarding" do módulo de Admissões — reusa `OnboardingCard` (dashboard de
+ * acompanhamento) e `OnboardingDetalheDialog` (checklist completo, aberto por
+ * "Ver onboarding"). Assim as duas portas da área de onboarding mostram a mesma
+ * linguagem, sem uma segunda cópia que pudesse divergir.
+ *
+ * As abas "Em Andamento" e "Concluídos" dividem o MESMO dado por progresso; o
+ * mock demonstrativo continua alimentando as duas. A aba "Gestão de Kits"
+ * segue como estava (fora do escopo do redesenho).
+ */
 import { PageTitle } from '@/components/PageTitle';
-import { cn } from '@/lib/utils';
 import { PageLayout } from '@/components/layout';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Rocket, CheckCircle2, Clock, UserPlus, Package, Mail, ListTodo, Loader2 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Rocket, CheckCircle2, Clock, UserPlus, Package, Loader2 } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { Progress } from '@/components/ui/progress';
+import { cardVariants } from '@/components/dashboard/MetricCard';
 // MOCK VISUAL — ver src/mocks/admissoesMock.ts
 import { isAdmissoesMockEnabled, getMockOnboarding, mockConcluirTarefaOnboarding } from '@/mocks/admissoesMock';
+import { OnboardingCard, type OnboardingAcoes } from '@/components/admissoes/OnboardingCard';
+import { OnboardingDetalheDialog } from '@/components/admissoes/OnboardingDetalheDialog';
+import { progressoOnboarding, type ColaboradorOnboarding } from '@/components/admissoes/onboardingDerivacoes';
+
+/** Teto do `custom` da cascata (mesma trava das outras grades do produto). */
+const MAX_STAGGER_INDEX = 5;
 
 export default function OnboardingPage() {
   const [activeTab, setActiveTab] = useState('ativos');
   const qc = useQueryClient();
   // MOCK VISUAL — ver src/mocks/admissoesMock.ts (dev + VITE_ADMISSOES_MOCK=true).
   const mockAtivo = isAdmissoesMockEnabled();
+
+  const [colaboradorDetalhe, setColaboradorDetalhe] = useState<ColaboradorOnboarding | null>(null);
+  const [tarefaConcluindo, setTarefaConcluindo] = useState<string | null>(null);
 
   const { data: onboarding = [], isLoading } = useQuery({
     queryKey: ['onboarding-list'],
@@ -28,15 +49,17 @@ export default function OnboardingPage() {
       if (mockAtivo) return getMockOnboarding();
       const { data, error } = await supabase
         .from('admissoes')
-        .select(`
+        .select(
+          `
           *,
           tarefas:tarefas_onboarding(*)
-        `)
+        `
+        )
         .order('created_at', { ascending: false });
-      
+
       if (error) throw error;
       return data || [];
-    }
+    },
   });
 
   const concluirTarefa = useMutation({
@@ -52,17 +75,33 @@ export default function OnboardingPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['onboarding-list'] });
       toast.success('Tarefa concluída!');
-    }
+    },
+    onSettled: () => setTarefaConcluindo(null),
   });
 
-  const getProgresso = (tarefas: any[]) => {
-    if (!tarefas || tarefas.length === 0) return 0;
-    const concluidas = tarefas.filter(t => t.concluida).length;
-    return Math.round((concluidas / tarefas.length) * 100);
+  const concluir = (tarefaId: string) => {
+    setTarefaConcluindo(tarefaId);
+    concluirTarefa.mutate(tarefaId);
   };
 
-  // MOCK VISUAL — integrações fictícias 100% concluídas (aba "Concluídos").
-  const concluidosMock = mockAtivo ? onboarding.filter((o) => getProgresso(o.tarefas) === 100) : [];
+  const enviarEmail = (colaborador: ColaboradorOnboarding) => {
+    toast.success(`E-mail de boas-vindas enviado para ${colaborador.nome ?? 'o colaborador'}.`);
+  };
+
+  const acoes: OnboardingAcoes = {
+    onVerOnboarding: (colaborador) => setColaboradorDetalhe(colaborador),
+    onEnviarEmail: enviarEmail,
+    onConcluirProxima: (tarefa) => {
+      if (tarefa.id != null) concluir(String(tarefa.id));
+    },
+  };
+
+  const lista = onboarding as ColaboradorOnboarding[];
+  const emAndamento = lista.filter((o) => progressoOnboarding(o.tarefas).valor < 100);
+  const concluidos = lista.filter((o) => {
+    const p = progressoOnboarding(o.tarefas);
+    return p.total > 0 && p.valor >= 100;
+  });
 
   return (
     <>
@@ -86,153 +125,94 @@ export default function OnboardingPage() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="ativos">
-            {isLoading ? (
-              <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
-            ) : (
-              <div className="grid gap-6 md:grid-cols-2">
-                {onboarding
-                  .filter(o => getProgresso(o.tarefas) < 100)
-                  .map((colab) => (
-                    <motion.div key={colab.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                      <Card className="border-border/40 hover:shadow-elevated transition-all overflow-hidden">
-                        <div className="h-1 bg-gradient-to-r from-indigo-500 to-purple-500" />
-                        <CardHeader className="pb-3">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <CardTitle className="text-lg font-display">{colab.nome}</CardTitle>
-                              <CardDescription>{colab.cargo} • {colab.departamento}</CardDescription>
-                            </div>
-                            <Badge variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-200">
-                              D-{Math.ceil((new Date(colab.data_prevista).getTime() - new Date().getTime()) / (1000 * 3600 * 24))} dias
-                            </Badge>
-                          </div>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                          <div className="space-y-1.5">
-                            <div className="flex justify-between text-[11px] font-medium uppercase text-muted-foreground">
-                              <span>Progresso do Onboarding</span>
-                              <span>{getProgresso(colab.tarefas)}%</span>
-                            </div>
-                            <Progress value={getProgresso(colab.tarefas)} className="h-1.5 bg-muted" />
-                          </div>
-
-                          <div className="space-y-2 pt-2">
-                            <p className="text-xs font-medium flex items-center gap-1.5 text-muted-foreground uppercase">
-                              <ListTodo className="h-3 w-3" /> Tarefas Críticas
-                            </p>
-                            {colab.tarefas?.map((tarefa: any) => (
-                              <div key={tarefa.id} className="flex items-center justify-between p-2.5 rounded-lg bg-muted/30 border border-border/10 group">
-                                <div className="flex items-center gap-3">
-                                  <div className={cn(
-                                    "h-4 w-4 rounded-full border-2 flex items-center justify-center transition-colors",
-                                    tarefa.concluida ? "bg-success border-success" : "border-muted-foreground/30"
-                                  )}>
-                                    {tarefa.concluida && <CheckCircle2 className="h-3 w-3 text-white" />}
-                                  </div>
-                                  <span className={cn("text-xs font-medium", tarefa.concluida && "line-through text-muted-foreground")}>
-                                    {tarefa.titulo}
-                                  </span>
-                                </div>
-                                {!tarefa.concluida && (
-                                  <Button 
-                                    size="sm" 
-                                    variant="ghost" 
-                                    className="h-7 text-[10px] hover:bg-success/10 hover:text-success opacity-0 group-hover:opacity-100 transition-opacity"
-                                    onClick={() => concluirTarefa.mutate(tarefa.id)}
-                                  >
-                                    Concluir
-                                  </Button>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-
-                          <Button variant="outline" className="w-full rounded-xl text-xs gap-2 border-dashed">
-                            <Mail className="h-3.5 w-3.5" /> Enviar E-mail de Boas-Vindas
-                          </Button>
-                        </CardContent>
-                      </Card>
+          {/* `AnimatePresence` local (ver comentário em OnboardingPageContent). */}
+          <AnimatePresence>
+            <TabsContent value="ativos">
+              {isLoading ? (
+                <div className="flex justify-center py-20">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
+              ) : emAndamento.length > 0 ? (
+                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                  {emAndamento.map((colaborador, index) => (
+                    <motion.div
+                      key={String(colaborador.id)}
+                      custom={Math.min(index, MAX_STAGGER_INDEX)}
+                      variants={cardVariants}
+                      initial="hidden"
+                      animate="visible"
+                      className="h-full"
+                    >
+                      <OnboardingCard colaborador={colaborador} acoes={acoes} />
                     </motion.div>
                   ))}
-              </div>
-            )}
-          </TabsContent>
+                </div>
+              ) : (
+                <Card className="rounded-2xl border-2 border-dashed border-border/50 p-12 text-center text-muted-foreground">
+                  <Rocket className="mx-auto mb-4 h-12 w-12 opacity-20" />
+                  <p className="font-display font-medium">Nenhum onboarding ativo</p>
+                  <p className="text-sm">Inicie uma nova admissão para ver a jornada aqui.</p>
+                </Card>
+              )}
+            </TabsContent>
 
-          <TabsContent value="concluidos">
-            {/* MOCK VISUAL — com o modo demonstrativo ligado lista as integrações 100% concluídas. */}
-            {concluidosMock.length > 0 ? (
-              <div className="grid gap-6 md:grid-cols-2">
-                {concluidosMock.map((colab) => (
-                  <motion.div key={colab.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                    <Card className="border-border/40 overflow-hidden">
-                      <div className="h-1 bg-gradient-to-r from-success to-emerald-400" />
-                      <CardHeader className="pb-3">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <CardTitle className="text-lg font-display">{colab.nome}</CardTitle>
-                            <CardDescription>{colab.cargo} • {colab.departamento}</CardDescription>
-                          </div>
-                          <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
-                            Integrado em: {new Date(colab.data_prevista).toLocaleDateString('pt-BR')}
-                          </Badge>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="space-y-3">
-                        <div className="space-y-1.5">
-                          <div className="flex justify-between text-[11px] font-medium uppercase text-muted-foreground">
-                            <span>Progresso do Onboarding</span>
-                            <span>100%</span>
-                          </div>
-                          <Progress value={100} className="h-1.5 bg-muted" />
-                        </div>
-                        <div className="space-y-2 pt-2">
-                          <p className="text-xs font-medium flex items-center gap-1.5 text-muted-foreground uppercase">
-                            <ListTodo className="h-3 w-3" /> Etapas concluídas
-                          </p>
-                          {colab.tarefas?.map((tarefa: any) => (
-                            <div key={tarefa.id} className="flex items-center gap-3 p-2.5 rounded-lg bg-muted/30 border border-border/10">
-                              <div className="h-4 w-4 rounded-full bg-success border-2 border-success flex items-center justify-center">
-                                <CheckCircle2 className="h-3 w-3 text-white" />
-                              </div>
-                              <span className="text-xs font-medium text-muted-foreground line-through">{tarefa.titulo}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-            ) : (
-              <Card className="rounded-2xl border-dashed border-2 p-12 text-center text-muted-foreground">
-                <CheckCircle2 className="h-12 w-12 mx-auto mb-4 opacity-20 text-success" />
-                <p className="font-display font-medium">Histórico de Integrações Concluídas</p>
-                <p className="text-sm">Todos os colaboradores recentes já estão 100% integrados.</p>
-              </Card>
-            )}
-          </TabsContent>
+            <TabsContent value="concluidos">
+              {concluidos.length > 0 ? (
+                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                  {concluidos.map((colaborador, index) => (
+                    <motion.div
+                      key={String(colaborador.id)}
+                      custom={Math.min(index, MAX_STAGGER_INDEX)}
+                      variants={cardVariants}
+                      initial="hidden"
+                      animate="visible"
+                      className="h-full"
+                    >
+                      <OnboardingCard colaborador={colaborador} acoes={acoes} />
+                    </motion.div>
+                  ))}
+                </div>
+              ) : (
+                <Card className="rounded-2xl border-2 border-dashed border-border/50 p-12 text-center text-muted-foreground">
+                  <CheckCircle2 className="mx-auto mb-4 h-12 w-12 opacity-20 text-success" />
+                  <p className="font-display font-medium">Histórico de Integrações Concluídas</p>
+                  <p className="text-sm">Todos os colaboradores recentes já estão 100% integrados.</p>
+                </Card>
+              )}
+            </TabsContent>
 
-          <TabsContent value="kits">
-             <div className="grid gap-6 md:grid-cols-3">
-               <Card className="p-6 flex flex-col items-center text-center gap-3 border-border/40 bg-card/50">
-                 <div className="h-12 w-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
-                   <Package className="h-6 w-6" />
-                 </div>
-                 <div>
-                   <h3 className="font-medium">Kit Desenvolvedor</h3>
-                   <p className="text-xs text-muted-foreground">MacBook M3, Monitor 27", Headset</p>
-                 </div>
-                 <Button variant="outline" size="sm" className="rounded-xl w-full">Gerenciar Kit</Button>
-               </Card>
-               <button className="border-2 border-dashed rounded-2xl p-6 flex flex-col items-center justify-center gap-2 hover:border-primary/40 hover:bg-primary/5 transition-all text-muted-foreground">
-                 <UserPlus className="h-8 w-8 opacity-20" />
-                 <span className="text-sm font-medium">Novo Perfil de Kit</span>
-               </button>
-             </div>
-          </TabsContent>
+            <TabsContent value="kits">
+              <div className="grid gap-6 md:grid-cols-3">
+                <Card className="flex flex-col items-center gap-3 border-border/40 bg-card/50 p-6 text-center">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/15 text-primary">
+                    <Package className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">Kit Desenvolvedor</h3>
+                    <p className="text-xs text-muted-foreground">MacBook M3, Monitor 27", Headset</p>
+                  </div>
+                  <Button variant="outline" size="sm" className="w-full rounded-xl">
+                    Gerenciar Kit
+                  </Button>
+                </Card>
+                <button className="flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed p-6 text-muted-foreground transition-all hover:border-primary/40 hover:bg-primary/5">
+                  <UserPlus className="h-8 w-8 opacity-20" />
+                  <span className="text-sm font-medium">Novo Perfil de Kit</span>
+                </button>
+              </div>
+            </TabsContent>
+          </AnimatePresence>
         </Tabs>
       </PageLayout>
+
+      <OnboardingDetalheDialog
+        colaborador={colaboradorDetalhe}
+        open={!!colaboradorDetalhe}
+        onOpenChange={(aberto) => !aberto && setColaboradorDetalhe(null)}
+        onConcluirTarefa={concluir}
+        tarefaConcluindo={tarefaConcluindo}
+        onEnviarEmail={enviarEmail}
+      />
     </>
   );
 }

@@ -21,15 +21,15 @@
  * `kanban-column-grow` (0px → `--kanban-final-height`, a altura REAL do slot) quando
  * a aba está ativa — como o slot é
  * `items-end` e tem a ALTURA FINAL, a coluna cresce do RODAPÉ até o topo. Depois:
- * degradê → header → cards (80ms) → rodapé, tudo por `animation-delay` calculado com
+ * degradê → header → cards (100ms) → rodapé, tudo por `animation-delay` calculado com
  * `--kanban-index`. O slot não tem fundo/borda/sombra: a ÚNICA superfície é a coluna.
  *
  * O único JS é o `setTimeout` que troca `kanban-em-entrada` por
  * `kanban-coluna-concluida` depois que as keyframes terminam (altura 100% estável e
  * cards novos/movidos entram JÁ visíveis). Ele NÃO anima nada.
  *
- * Com `prefers-reduced-motion` o crescimento CONTINUA (380ms, `ease-out`, onda de
- * 60ms), só mais rápido, e o conteúdo entra em fade simples — nunca `animation: none`
+ * Com `prefers-reduced-motion` o crescimento CONTINUA (500ms, `ease-out`, onda de
+ * 80ms), só mais rápido, e o conteúdo entra em fade simples — nunca `animation: none`
  * nem `height: 100%` (a coluna jamais aparece pronta).
  *
  * `isActive` (de `AdmissoesPage`, `activeTab === 'kanban'`) é o disparo: sem ele
@@ -45,15 +45,15 @@ import { DraggableCard, type KanbanAcoes } from './KanbanCard';
 import { TOM_KANBAN, type AdmissaoKanban, type ColunaKanban } from './kanbanComum';
 
 /** ms entre colunas (MESMO valor do `animation-delay` em `index.css`). */
-const PASSO_COLUNA_MS = 140;
+const PASSO_COLUNA_MS = 180;
 /** Teto do stagger dos cards (igual ao usado no `calc(...)` do CSS). */
 const MAX_CARDS_ESCALONADOS = 8;
-/** Início do rodapé (ms) dado o nº de cards — casa com o `calc(... + 980ms + i*80ms)`. */
-const delayRodapeMs = (cards: number) => 980 + (Math.min(cards, MAX_CARDS_ESCALONADOS) + 1) * 80;
-/** Passo entre colunas no `prefers-reduced-motion` (casa com o `calc(… * 60ms)`). */
-const PASSO_COLUNA_REDUZIDO_MS = 60;
-/** Rodapé no `prefers-reduced-motion` (casa com o `calc(… + 460ms + i*40ms)`). */
-const delayRodapeReduzidoMs = (cards: number) => 460 + (Math.min(cards, MAX_CARDS_ESCALONADOS) + 1) * 40;
+/** Início do rodapé (ms) dado o nº de cards — casa com o `calc(... + 1300ms + i*100ms)`. */
+const delayRodapeMs = (cards: number) => 1300 + (Math.min(cards, MAX_CARDS_ESCALONADOS) + 1) * 100;
+/** Passo entre colunas no `prefers-reduced-motion` (casa com o `calc(… * 80ms)`). */
+const PASSO_COLUNA_REDUZIDO_MS = 80;
+/** Rodapé no `prefers-reduced-motion` (casa com o `calc(… + 620ms + i*50ms)`). */
+const delayRodapeReduzidoMs = (cards: number) => 620 + (Math.min(cards, MAX_CARDS_ESCALONADOS) + 1) * 50;
 
 /**
  * O elemento está REALMENTE visível/pintado? Percorre a CADEIA de ancestrais e
@@ -82,7 +82,7 @@ type VarsEntrada = CSSProperties &
 export interface KanbanColumnProps {
   coluna: ColunaKanban;
   items: AdmissaoKanban[];
-  /** Posição da coluna no board — vira `--kanban-index` (onda de 140ms). */
+  /** Posição da coluna no board — vira `--kanban-index` (onda de 180ms). */
   indice: number;
   /** A aba do Kanban está ativa? Só então a classe de animação é aplicada. */
   isActive: boolean;
@@ -164,8 +164,8 @@ export function KanbanColumn({ coluna, items, indice, isActive, acoes, onAdicion
     // `prefers-reduced-motion` encurta TUDO (ver o bloco do Kanban no `index.css`).
     const reduzido = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
     const total = reduzido
-      ? indice * PASSO_COLUNA_REDUZIDO_MS + delayRodapeReduzidoMs(items.length) + 180 + 150
-      : indice * PASSO_COLUNA_MS + delayRodapeMs(items.length) + 250 + 150;
+      ? indice * PASSO_COLUNA_REDUZIDO_MS + delayRodapeReduzidoMs(items.length) + 240 + 150
+      : indice * PASSO_COLUNA_MS + delayRodapeMs(items.length) + 380 + 150;
     const id = window.setTimeout(() => setEntradaConcluida(true), total);
     return () => window.clearTimeout(id);
   }, [isActive, podeAnimar, indice, items.length]);
