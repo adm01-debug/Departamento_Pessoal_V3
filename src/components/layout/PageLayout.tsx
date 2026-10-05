@@ -18,6 +18,16 @@ interface PageLayoutProps {
   gradient?: string;
   /** Override the default back behavior. Pass false to hide the back button. */
   backTo?: string | false;
+  /**
+   * Animação de ENTRADA do container da página. Default `true` (comportamento de
+   * sempre). Com `false`, o conteúdo entra já no estado final — `opacity: 1` e
+   * `transform: none` desde o 1º frame, sem fade nem subida do bloco inteiro.
+   * Usado pela Auditoria (`AuditoriaPage`), cujo ÚNICO movimento de entrada deve
+   * ser a cascata das linhas da tabela (`ui/table-row-reveal.ts`): se o
+   * container da página animasse, o card + cabeçalho + tabela piscariam juntos,
+   * competindo com a cascata. Não muda nada para as demais páginas.
+   */
+  animate?: boolean;
 }
 
 export function PageLayout({
@@ -30,6 +40,7 @@ export function PageLayout({
   icon,
   gradient = 'from-primary to-primary-glow',
   backTo,
+  animate = true,
 }: PageLayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -56,13 +67,8 @@ export function PageLayout({
     );
   }
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className={cn('space-y-6 max-w-[1400px] mx-auto', className)}
-    >
+  const conteudo = (
+    <>
       {(title || actions) && (
         <div className="space-y-2">
           <Breadcrumbs className="mb-2" />
@@ -88,11 +94,7 @@ export function PageLayout({
                   </Tooltip>
                 </TooltipProvider>
               )}
-              {icon && (
-                <div className={cn('p-2.5 rounded-xl bg-gradient-to-br shadow-lg', gradient)}>
-                  {icon}
-                </div>
-              )}
+              {icon && <div className={cn('p-2.5 rounded-xl bg-gradient-to-br shadow-lg', gradient)}>{icon}</div>}
               <div>
                 {title && <h1 className="text-2xl font-display font-medium tracking-tight">{title}</h1>}
                 {description && <p className="text-muted-foreground font-body mt-0.5">{description}</p>}
@@ -103,6 +105,24 @@ export function PageLayout({
         </div>
       )}
       {children}
+    </>
+  );
+
+  // Sem animação de container (ver prop `animate`): entra no estado final desde
+  // o 1º frame — sem fade, sem subida. O wrapper é um `div` puro para não deixar
+  // nenhum `motion` na árvore (a única fonte de movimento fica nas linhas).
+  if (!animate) {
+    return <div className={cn('space-y-6 max-w-[1400px] mx-auto', className)}>{conteudo}</div>;
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className={cn('space-y-6 max-w-[1400px] mx-auto', className)}
+    >
+      {conteudo}
     </motion.div>
   );
 }

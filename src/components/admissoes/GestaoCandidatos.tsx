@@ -24,7 +24,7 @@
  * ============================================================================
  */
 import { useMemo, useState, useTransition, type ElementType } from 'react';
-import { AnimatePresence, motion, type Variants } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   AlertCircle,
   ArrowUpDown,
@@ -68,7 +68,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Table, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { CascadeTableBody, CascadeTableRow } from '@/components/ui/cascade-table';
 import { EmptyList, EmptySearch } from '@/components/ui/empty-state';
 import { Spinner } from '@/components/ui/spinner';
 import { MetricCard, cardVariants } from '@/components/dashboard/MetricCard';
@@ -153,7 +154,7 @@ const MAX_STAGGER = 5;
  *   FILTROS   início 0,05s · stagger 28ms
  *   CHIPS     início 0,18s · stagger 22ms
  *   CARD      início 0,38s
- *   LINHAS    início 0,52s · stagger 40ms
+ *   LINHAS    início 0,52s · stagger 40ms (valores em `ui/table-row-reveal.ts`)
  *
  * Os KPIs (acima) rodam a própria animação, intactos, em paralelo.
  * `cardVariants` calcula `delay = custom × 0.08s`; `slot()` converte o atraso em
@@ -163,8 +164,6 @@ const PASSO_FILTROS = 0.028;
 const INICIO_CHIPS = 0.18;
 const PASSO_CHIPS = 0.022;
 const INICIO_CARD = 0.38;
-const INICIO_LINHAS = 0.52;
-const PASSO_LINHAS = 0.04;
 
 const PASSO_CARD_VARIANTS = 0.08; // == passo de delay da `cardVariants`
 const slot = (segundos: number) => segundos / PASSO_CARD_VARIANTS;
@@ -174,38 +173,9 @@ const slotFiltro = (i: number) => slot(INICIO_FILTROS + i * PASSO_FILTROS);
 /** `custom` da `cardVariants` para o chip `j` da onda de CHIPS. */
 const slotChip = (j: number) => slot(INICIO_CHIPS + j * PASSO_CHIPS);
 
-/**
- * Cascata de entrada das linhas da tabela. Cada linha "nasce de DENTRO PARA
- * FORA": abre do centro (`scaleX: 0.94 → 1`, com `transform-origin: center`
- * pela classe `origin-center` no `<tr>`), sobe 10px (`y: 10 → 0`) e aparece de
- * `opacity: 0 → 1`.
- *
- * Onda própria: `delay = INICIO_LINHAS (0,52s) + i × 40ms`. Ela entra ~140ms
- * depois de o card "Candidatos" COMEÇAR a subir (overlap suave) — a tela ganha
- * vida rápido, sem a tabela "esperar a vez".
- *
- * Só `opacity` e `transform` animam (nada de width/height/left/top → sem
- * reflow). SEM `clip-path`: animar `clip-path` num `table-row` é inconsistente
- * entre navegadores — o efeito de "abrir do centro" vem do `scaleX` com
- * `origin-center`.
- *
- * NÃO usamos `useReducedMotion()` aqui de propósito (decisão explícita do
- * produto): queremos a cascata visível MESMO com `prefers-reduced-motion`
- * ligado no sistema.
- */
-const linhaTabelaVariants: Variants = {
-  hidden: { opacity: 0, y: 10, scaleX: 0.94 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    scaleX: 1,
-    transition: {
-      duration: 0.8,
-      delay: INICIO_LINHAS + i * PASSO_LINHAS,
-      ease: [0.22, 1, 0.36, 1] as const,
-    },
-  }),
-};
+/* A cascata de ENTRADA das linhas da tabela (variant + timings) vem de
+ * `ui/table-row-reveal.ts` — FONTE ÚNICA compartilhada com a Auditoria Global,
+ * para que as duas listas nunca divirjam. */
 
 /** `Card` animável pela MESMA `cardVariants` dos KPIs — `motion.create(Card)`,
  *  exatamente o caminho do `DashboardExecutivoPage`. */
@@ -730,80 +700,68 @@ function TabelaCandidatos({
           <TableHead className={cn(HEAD_CLASS, 'w-[96px] text-right')}>Ações</TableHead>
         </TableRow>
       </TableHeader>
-      {/* `AnimatePresence` LOCAL sem props: a troca Tabela/Cards publica
-          `initial={false}` (o `AnimatePresence mode="wait"` que envolve as duas
-          visões) e esse valor viaja por CONTEXTO até cada `motion.tr` — que então
-          PULARIA o keyframe `hidden` e as linhas apareceriam prontas, sem
-          cascata. Um contexto de presença novo (sem props, `initial`
-          verdadeiro) devolve a cascata a esta subárvore — mesmo recurso do
-          `CardsEntrada` de `AdmissoesPage`. Não renderiza DOM.
-          `key={chaveCascata}`: quando a lista muda de identidade (página,
-          ordenação, filtros) o tbody remonta e a cascata toca de novo — sem
-          reanimar a cada hover/tecla (a busca fica FORA da chave). */}
-      <AnimatePresence>
-        <TableBody key={chaveCascata}>
-          {itens.map((a, i) => {
-            const id = chaveDe(a);
-            const marcado = selecionados.has(id);
-            return (
-              <motion.tr
-                key={id}
-                custom={i}
-                variants={linhaTabelaVariants}
-                initial="hidden"
-                animate="visible"
-                data-state={marcado ? 'selected' : undefined}
-                className={cn(
-                  // Classes BASE do `TableRow` (ui/table) + os ajustes desta tela.
-                  // `motion.tr` puro (não `motion.create(TableRow)`) preserva o
-                  // ref/forwardRef — mesmo motivo documentado no `ColaboradorTable`.
-                  // `origin-center`: o `scaleX` abre a linha a partir do CENTRO.
-                  'border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted',
-                  'border-border/20 hover:bg-muted/30',
-                  'origin-center'
-                )}
-              >
-                <TableCell className="py-3 pr-0">
-                  <Checkbox
-                    checked={marcado}
-                    onCheckedChange={(v) => onToggleLinha(id, v === true)}
-                    aria-label={`Selecionar ${a.nome ?? 'candidato'}`}
-                  />
-                </TableCell>
-                <TableCell className="py-3">
-                  <div className="flex items-center gap-2.5">
-                    <CandidatoAvatar nome={a.nome} />
-                    <span className="truncate text-sm font-medium text-foreground">{a.nome || 'Candidato sem nome'}</span>
-                  </div>
-                </TableCell>
-                <TableCell className="py-3 text-xs text-muted-foreground">{a.cargo || '—'}</TableCell>
-                <TableCell className="py-3 text-xs text-muted-foreground">{a.departamento || '—'}</TableCell>
-                <TableCell className="py-3">
-                  <EtapaBadge etapa={a.etapa} />
-                </TableCell>
-                <TableCell className="py-3">
-                  <ProgressoBar admissao={a} />
-                </TableCell>
-                <TableCell className="py-3">
-                  <PrazoCell admissao={a} hoje={hoje} />
-                </TableCell>
-                <TableCell className="py-3">
-                  <ResponsavelCell nome={responsavelDe(a)} />
-                </TableCell>
-                <TableCell className="py-3 text-right">
-                  <AcoesCandidato
-                    admissao={a}
-                    sendingLink={sendingLink}
-                    onEnviarLink={onEnviarLink}
-                    onEnviarWhatsApp={onEnviarWhatsApp}
-                    onOpenDetalhes={onOpenDetalhes}
-                  />
-                </TableCell>
-              </motion.tr>
-            );
-          })}
-        </TableBody>
-      </AnimatePresence>
+      {/* MECANISMO da cascata de entrada das linhas: `CascadeTableBody` +
+          `CascadeTableRow` (ui/cascade-table.tsx) — a MESMA unidade usada pela
+          lista da Auditoria, então as duas nunca divergem. A moldura
+          (`AnimatePresence` sem props + `TableBody key={chaveCascata}`) e a
+          linha (`motion.tr` com o variant compartilhado) vêm prontas de lá;
+          aqui só passamos o `key` da cascata, o índice e o visual desta tela. */}
+      <CascadeTableBody cascadeKey={chaveCascata}>
+        {itens.map((a, i) => {
+          const id = chaveDe(a);
+          const marcado = selecionados.has(id);
+          return (
+            <CascadeTableRow
+              key={id}
+              index={i}
+              data-state={marcado ? 'selected' : undefined}
+              // Classes BASE do `TableRow` (ui/table) + ajustes desta tela.
+              // (O `origin-center` do mecanismo fica no componente compartilhado.)
+              className={cn(
+                'border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted',
+                'border-border/20 hover:bg-muted/30'
+              )}
+            >
+              <TableCell className="py-3 pr-0">
+                <Checkbox
+                  checked={marcado}
+                  onCheckedChange={(v) => onToggleLinha(id, v === true)}
+                  aria-label={`Selecionar ${a.nome ?? 'candidato'}`}
+                />
+              </TableCell>
+              <TableCell className="py-3">
+                <div className="flex items-center gap-2.5">
+                  <CandidatoAvatar nome={a.nome} />
+                  <span className="truncate text-sm font-medium text-foreground">{a.nome || 'Candidato sem nome'}</span>
+                </div>
+              </TableCell>
+              <TableCell className="py-3 text-xs text-muted-foreground">{a.cargo || '—'}</TableCell>
+              <TableCell className="py-3 text-xs text-muted-foreground">{a.departamento || '—'}</TableCell>
+              <TableCell className="py-3">
+                <EtapaBadge etapa={a.etapa} />
+              </TableCell>
+              <TableCell className="py-3">
+                <ProgressoBar admissao={a} />
+              </TableCell>
+              <TableCell className="py-3">
+                <PrazoCell admissao={a} hoje={hoje} />
+              </TableCell>
+              <TableCell className="py-3">
+                <ResponsavelCell nome={responsavelDe(a)} />
+              </TableCell>
+              <TableCell className="py-3 text-right">
+                <AcoesCandidato
+                  admissao={a}
+                  sendingLink={sendingLink}
+                  onEnviarLink={onEnviarLink}
+                  onEnviarWhatsApp={onEnviarWhatsApp}
+                  onOpenDetalhes={onOpenDetalhes}
+                />
+              </TableCell>
+            </CascadeTableRow>
+          );
+        })}
+      </CascadeTableBody>
     </Table>
   );
 }

@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { MainLayout } from '@/components/layout';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { AdminRoute } from '@/components/AdminRoute';
+import { PermissionRoute } from '@/components/PermissionRoute';
 import { RouteErrorBoundary, clearChunkReloadGuard } from '@/components/RouteErrorBoundary';
 import { lazy, Suspense, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -196,7 +197,6 @@ export default function App() {
       <Route path="/ciencia-medida/:token" element={<LazyPage Component={CienciaMedidaPage} />} />
       <Route path="/__measure-test" element={<MeasureTestPage />} />
 
-
       <Route
         path="/"
         element={
@@ -266,21 +266,67 @@ export default function App() {
         <Route path="esocial" element={<LazyPage Component={ESocialPage} />} />
         <Route path="obrigacoes-fiscais" element={<LazyPage Component={ObrigacoesFiscaisPage} />} />
         <Route path="sst" element={<LazyPage Component={SSTPage} />} />
-        <Route path="auditoria" element={<AdminRoute><LazyPage Component={AuditoriaPage} /></AdminRoute>} />
+        {/* Auditoria: NÃO é exclusividade de admin — a matriz `public.permissions`
+            concede `('admin'|'gestor'|'rh', 'auditoria', 'read')`, então esta rota
+            usa o guard POR PERMISSÃO (que preserva o MFA via `MfaGate`); quem não
+            tem a permissão continua vendo "Acesso Restrito". */}
+        <Route
+          path="auditoria"
+          element={
+            <PermissionRoute permission="auditoria.read">
+              <LazyPage Component={AuditoriaPage} />
+            </PermissionRoute>
+          }
+        />
         <Route path="canal-etica" element={<LazyPage Component={CanalEticaPage} />} />
-        <Route path="lgpd" element={<AdminRoute><LazyPage Component={LGPDPage} /></AdminRoute>} />
-        <Route path="seguranca" element={<AdminRoute><LazyPage Component={SegurancaPage} /></AdminRoute>} />
-        
+        <Route
+          path="lgpd"
+          element={
+            <AdminRoute>
+              <LazyPage Component={LGPDPage} />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="seguranca"
+          element={
+            <AdminRoute>
+              <LazyPage Component={SegurancaPage} />
+            </AdminRoute>
+          }
+        />
+
         {/* Utilitários */}
         <Route path="assistente-ia" element={<LazyPage Component={AssistenteIAPage} />} />
         <Route path="calculadora-rescisao" element={<LazyPage Component={CalculadoraRescisaoPage} />} />
         <Route path="importacao" element={<LazyPage Component={ImportacaoPage} />} />
-        <Route path="backup" element={<AdminRoute><LazyPage Component={BackupPage} /></AdminRoute>} />
+        <Route
+          path="backup"
+          element={
+            <AdminRoute>
+              <LazyPage Component={BackupPage} />
+            </AdminRoute>
+          }
+        />
         <Route path="notificacoes" element={<LazyPage Component={NotificacoesPage} />} />
-        <Route path="usuarios" element={<AdminRoute><LazyPage Component={UsuariosPage} /></AdminRoute>} />
+        <Route
+          path="usuarios"
+          element={
+            <AdminRoute>
+              <LazyPage Component={UsuariosPage} />
+            </AdminRoute>
+          }
+        />
         <Route path="perfil" element={<LazyPage Component={PerfilPage} />} />
-        <Route path="configuracoes" element={<AdminRoute><LazyPage Component={ConfiguracoesPage} /></AdminRoute>} />
-        
+        <Route
+          path="configuracoes"
+          element={
+            <AdminRoute>
+              <LazyPage Component={ConfiguracoesPage} />
+            </AdminRoute>
+          }
+        />
+
         {/* Admin */}
         <Route
           path="admin/telemetria"
@@ -430,8 +476,22 @@ export default function App() {
         <Route path="relatorios" element={<LazyPage Component={RelatoriosPage} />} />
 
         <Route path="premiacoes" element={<LazyPage Component={PremiacoesPage} />} />
-        <Route path="configuracoes/contratos-templates" element={<AdminRoute><LazyPage Component={ContratoTemplatesPage} /></AdminRoute>} />
-        <Route path="contratos-gerados" element={<AdminRoute><LazyPage Component={ContratosGeradosPage} /></AdminRoute>} />
+        <Route
+          path="configuracoes/contratos-templates"
+          element={
+            <AdminRoute>
+              <LazyPage Component={ContratoTemplatesPage} />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="contratos-gerados"
+          element={
+            <AdminRoute>
+              <LazyPage Component={ContratosGeradosPage} />
+            </AdminRoute>
+          }
+        />
         <Route path="*" element={<LazyPage Component={NotFoundPage} />} />
       </Route>
 

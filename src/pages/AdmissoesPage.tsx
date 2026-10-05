@@ -1,20 +1,17 @@
 import { PageTitle } from '@/components/PageTitle';
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useAdmissoes } from '@/hooks/useAdmissoes';
 import { PageLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import { NovaAdmissaoDialog } from '@/components/admissoes/NovaAdmissaoDialog';
 import { DetalhesAdmissaoDialog } from '@/components/admissoes/DetalhesAdmissaoDialog';
-import { UserPlus, Search, LayoutDashboard, List, History, Rocket, Kanban } from 'lucide-react';
+import { UserPlus, LayoutDashboard, List, History, Rocket, Kanban } from 'lucide-react';
 import { AdmissoesKanban } from '@/components/admissoes/AdmissoesKanban';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cardVariants } from '@/components/dashboard/MetricCard';
-import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import {
@@ -38,36 +35,22 @@ import {
 } from '@/components/colaboradores/AnimatedDossieTabs';
 import { OnboardingDashboard } from '@/components/admissoes/OnboardingDashboard';
 import OnboardingPageContent from '@/components/admissoes/OnboardingPageContent';
+import AuditoriaAdmissoesContent from '@/components/admissoes/AuditoriaAdmissoesContent';
 import { GestaoCandidatos } from '@/components/admissoes/GestaoCandidatos';
 import type { LooseRow } from '@/types/db';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-// MOCK VISUAL — ver src/mocks/admissoesMock.ts
-import { isAdmissoesMockEnabled, isMockId, getMockAuditoria } from '@/mocks/admissoesMock';
+// MOCK VISUAL — ver src/mocks/admissoesMock.ts. A trilha de auditoria em si mora
+// em `AuditoriaAdmissoesContent` (é lá que `getMockAuditoria()` é lida); esta
+// página só usa `isMockId` para não disparar e-mail/WhatsApp reais no demo.
+import { isMockId } from '@/mocks/admissoesMock';
 
-const etapaLabels: Record<string, string> = {
-  solicitacao: 'Solicitação',
-  documentos: 'Docs Pendentes',
-  validacao: 'Em Validação',
-  exame: 'Aguardando Exame',
-  contrato: 'Contrato Gerado',
-  assinatura: 'Assinatura',
-  esocial: 'eSocial',
-  concluida: 'Concluída',
-  cancelada: 'Cancelada',
-};
-
-// Vermelho dos estados críticos desta área (cancelada / falha / atrasado):
-// variante VIBRANTE `destructive-vivid` — o `--destructive` do tema fica
-// apagado sobre o navy do dark (ver `src/index.css`).
-const etapaGradients: Record<string, string> = {
-  documentos: 'bg-warning/15 text-warning border-0',
-  validacao: 'bg-info/15 text-info border-0',
-  exame: 'bg-warning/15 text-warning border-0',
-  contrato: 'bg-info/15 text-info border-0',
-  concluida: 'bg-success/15 text-success border-0',
-  cancelada: 'bg-destructive-vivid/15 text-destructive-vivid border-0',
-  esocial: 'bg-primary/15 text-primary border-0',
-};
+/**
+ * Rótulos de etapa, badges e cores de status da trilha de auditoria SAÍRAM daqui:
+ * eles moram em `auditoriaComum.ts` (que reusa `ETAPA_LABELS`/`ETAPA_BADGE` de
+ * `admissoesComum.ts` e os tons de `kanbanComum.ts`) — nada de uma terceira
+ * cópia. A trilha inteira (cards, filtros, chips e tabela) vive em
+ * `AuditoriaAdmissoesContent`.
+ */
 
 /**
  * Cards de Admissões com a MESMA animação de entrada dos KPI Cards do Dashboard
@@ -110,13 +93,6 @@ const abasAdmissoes = [
   { value: 'auditoria', label: 'Auditoria', icon: History },
 ] as const;
 
-/** Cores de status usadas na trilha de auditoria (MOCK VISUAL). */
-const auditoriaStatusClasses: Record<string, string> = {
-  sucesso: 'bg-success/15 text-success',
-  pendente: 'bg-warning/15 text-warning',
-  falha: 'bg-destructive-vivid/15 text-destructive-vivid',
-};
-
 export default function AdmissoesPage() {
   const navigate = useNavigate();
 
@@ -139,27 +115,8 @@ export default function AdmissoesPage() {
    */
   const [admissaoDoModal, setAdmissaoDoModal] = useState<LooseRow<'admissoes'> | null>(null);
 
-  // MOCK VISUAL — ver src/mocks/admissoesMock.ts (dev + VITE_ADMISSOES_MOCK=true).
-  const [auditoriaBusca, setAuditoriaBusca] = useState('');
-  const auditoria = useMemo(() => (isAdmissoesMockEnabled() ? getMockAuditoria() : []), []);
-  const auditoriaFiltrada = useMemo(() => {
-    const termo = auditoriaBusca.trim().toLowerCase();
-    if (!termo) return auditoria;
-    return auditoria.filter((evento) =>
-      [evento.candidato, evento.cargo, evento.departamento, evento.acao, evento.responsavel, evento.protocolo]
-        .filter(Boolean)
-        .some((valor) => String(valor).toLowerCase().includes(termo))
-    );
-  }, [auditoria, auditoriaBusca]);
-  const auditoriaResumo = useMemo(
-    () => ({
-      total: auditoria.length,
-      sucesso: auditoria.filter((evento) => evento.status === 'sucesso').length,
-      pendente: auditoria.filter((evento) => evento.status === 'pendente').length,
-      falha: auditoria.filter((evento) => evento.status === 'falha').length,
-    }),
-    [auditoria]
-  );
+  // MOCK VISUAL — a trilha de auditoria (fetch, busca, filtros e resumo) mora em
+  // `AuditoriaAdmissoesContent`, que é quem lê `getMockAuditoria()`.
 
   const handleEnviarLink = async (admissao: any) => {
     if (!admissao.email) {
@@ -318,165 +275,12 @@ export default function AdmissoesPage() {
           </TabsContent>
 
           <TabsContent value="auditoria" className="mt-6">
-            {/* MOCK VISUAL — com o modo demonstrativo ligado exibe a trilha de auditoria fictícia completa. */}
-            {/* `CardsEntrada` (ver comentário no topo do arquivo): o card desta aba monta
-              depois do primeiro paint — o Radix desmonta a aba inativa — e por isso
-              precisa do contexto de presença local para não herdar o `initial={false}`
-              que a rota publica (`PageTransition.tsx`). */}
+            {/* `CardsEntrada` (ver comentário no topo do arquivo): o painel desta aba
+                monta depois do primeiro paint — o Radix desmonta a aba inativa — e por
+                isso precisa do contexto de presença local para não herdar o
+                `initial={false}` que a rota publica (`PageTransition.tsx`). */}
             <CardsEntrada>
-              {auditoria.length > 0 ? (
-                <div className="space-y-4">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <div className="relative flex-1 min-w-[220px] max-w-sm">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        placeholder="Buscar por candidato, ação, responsável ou protocolo..."
-                        value={auditoriaBusca}
-                        onChange={(e) => setAuditoriaBusca(e.target.value)}
-                        className="pl-9 rounded-xl border-border/30 bg-card"
-                      />
-                    </div>
-                    {[
-                      { label: 'Eventos', value: auditoriaResumo.total, className: 'bg-muted/50 text-foreground' },
-                      { label: 'Sucesso', value: auditoriaResumo.sucesso, className: 'bg-success/15 text-success' },
-                      { label: 'Pendentes', value: auditoriaResumo.pendente, className: 'bg-warning/15 text-warning' },
-                      {
-                        label: 'Falhas',
-                        value: auditoriaResumo.falha,
-                        className: 'bg-destructive-vivid/15 text-destructive-vivid',
-                      },
-                    ].map((item) => (
-                      <span
-                        key={item.label}
-                        className={cn(
-                          'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-caption font-body font-medium',
-                          item.className
-                        )}
-                      >
-                        {item.label}
-                        <span className="font-semibold">{item.value}</span>
-                      </span>
-                    ))}
-                  </div>
-
-                  <MotionCard
-                    custom={0}
-                    variants={cardVariants}
-                    initial="hidden"
-                    animate="visible"
-                    className="border border-border/30 rounded-2xl overflow-hidden shadow-xs"
-                  >
-                    <CardHeader className="bg-muted/30">
-                      <CardTitle className="text-sm font-display flex items-center gap-2">
-                        <History className="h-4 w-4 text-primary" /> Histórico de Auditoria - Admissões
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-0">
-                      <div className="max-h-[560px] overflow-auto">
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead className="w-[150px]">Data/Hora</TableHead>
-                              <TableHead>Candidato</TableHead>
-                              <TableHead>Ação</TableHead>
-                              <TableHead className="w-[130px]">Etapa</TableHead>
-                              <TableHead className="w-[150px]">eSocial</TableHead>
-                              <TableHead className="w-[110px]">Status</TableHead>
-                              <TableHead className="w-[160px]">Responsável</TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {auditoriaFiltrada.map((evento) => (
-                              <TableRow key={evento.id}>
-                                <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
-                                  {new Date(evento.data_hora).toLocaleString('pt-BR')}
-                                </TableCell>
-                                <TableCell className="text-xs">
-                                  <span className="font-medium text-foreground">{evento.candidato}</span>
-                                  <span className="block text-muted-foreground">
-                                    {evento.cargo} • {evento.departamento}
-                                  </span>
-                                </TableCell>
-                                <TableCell className="text-xs">
-                                  <span className="font-medium text-foreground">{evento.acao}</span>
-                                  <span className="block text-muted-foreground">{evento.detalhe}</span>
-                                </TableCell>
-                                <TableCell className="text-xs">
-                                  <Badge
-                                    variant="outline"
-                                    className={cn(
-                                      'border-0',
-                                      etapaGradients[evento.etapa] || 'bg-muted/50 text-muted-foreground'
-                                    )}
-                                  >
-                                    {etapaLabels[evento.etapa] || evento.etapa}
-                                  </Badge>
-                                </TableCell>
-                                <TableCell className="text-xs">
-                                  {evento.evento_esocial ? (
-                                    <>
-                                      <span className="font-medium text-foreground">{evento.evento_esocial}</span>
-                                      <span className="block text-muted-foreground">
-                                        {evento.protocolo || 'aguardando recibo'}
-                                      </span>
-                                    </>
-                                  ) : (
-                                    <span className="text-muted-foreground">—</span>
-                                  )}
-                                </TableCell>
-                                <TableCell className="text-xs">
-                                  <span
-                                    className={cn(
-                                      'inline-flex items-center px-2 py-0.5 rounded-md text-overline font-body font-medium uppercase',
-                                      auditoriaStatusClasses[evento.status] || 'bg-muted/50 text-muted-foreground'
-                                    )}
-                                  >
-                                    {evento.status}
-                                  </span>
-                                </TableCell>
-                                <TableCell className="text-xs text-muted-foreground">{evento.responsavel}</TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-
-                        {auditoriaFiltrada.length === 0 && (
-                          <p className="text-caption font-body text-muted-foreground text-center py-8">
-                            Nenhum evento encontrado para a busca informada.
-                          </p>
-                        )}
-                      </div>
-                    </CardContent>
-                  </MotionCard>
-                </div>
-              ) : (
-                <MotionCard
-                  custom={0}
-                  variants={cardVariants}
-                  initial="hidden"
-                  animate="visible"
-                  className="border border-border/30 rounded-2xl overflow-hidden shadow-xs"
-                >
-                  <CardHeader className="bg-muted/30">
-                    <CardTitle className="text-sm font-display flex items-center gap-2">
-                      <History className="h-4 w-4 text-primary" /> Histórico de Auditoria - Admissões
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="py-8 text-center">
-                    <History className="h-12 w-12 text-muted-foreground/20 mx-auto mb-3" />
-                    <p className="text-sm text-muted-foreground">
-                      O monitoramento de auditoria eSocial e admissão digital está ativo.
-                    </p>
-                    <Button
-                      variant="link"
-                      className="text-xs text-primary mt-2"
-                      onClick={() => navigate('/configuracoes/logs')}
-                    >
-                      Ver Logs Globais
-                    </Button>
-                  </CardContent>
-                </MotionCard>
-              )}
+              <AuditoriaAdmissoesContent />
             </CardsEntrada>
           </TabsContent>
         </Tabs>

@@ -145,6 +145,8 @@ export interface MockAuditoriaAdmissao {
   protocolo: string | null;
   status: StatusAuditoria;
   responsavel: string;
+  /** Função do responsável — ver `CARGO_RESPONSAVEL` (a trilha só guarda o nome). */
+  responsavel_cargo: string;
   detalhe: string;
 }
 
@@ -376,6 +378,29 @@ const RESPONSAVEIS_RH = [
   'Elaine Prado',
   'Bruno Cardoso',
 ];
+
+/**
+ * Função fictícia de cada pessoa do time de DP/RH. `tarefas_onboarding` e a
+ * trilha de auditoria só guardam o NOME do responsável; a coluna "Responsável"
+ * da tela de Auditoria mostra nome + função (padrão das tabelas do módulo),
+ * então o mock precisa desta régua — mesmo espírito de `RESPONSAVEIS_RH`:
+ * dado de demonstração, nunca inventado pela UI.
+ */
+const CARGO_RESPONSAVEL: Record<string, string> = {
+  'Bruno Cardoso': 'Gestor de RH',
+  'Patrícia Nogueira': 'Coordenadora de RH',
+  'Elaine Prado': 'Gestora de Departamento Pessoal',
+  'Camila Ribeiro': 'Analista de RH Sênior',
+  'Marcos Tavares': 'Analista de RH',
+  'Thiago Barros': 'Analista de Departamento Pessoal',
+  'Diego Martins': 'Analista de DP',
+  'Renata Alves': 'Especialista em eSocial',
+};
+
+/** Função do responsável pelo nome (fallback: o time inteiro de DP). */
+function cargoDoResponsavel(nome: string): string {
+  return CARGO_RESPONSAVEL[nome] ?? 'Equipe de Departamento Pessoal';
+}
 
 const OBSERVACOES_POR_ETAPA: Record<EtapaAdmissao, string> = {
   solicitacao: 'Requisição de vaga aprovada pelo gestor — aguardando triagem de currículos.',
@@ -856,6 +881,7 @@ function buildAuditoria(): MockAuditoriaAdmissao[] {
       protocolo: null,
       status: 'sucesso',
       responsavel: admissao.metadata.responsavel,
+      responsavel_cargo: cargoDoResponsavel(admissao.metadata.responsavel),
       detalhe: `Requisição de vaga registrada para ${admissao.cargo} (${admissao.departamento}).`,
     });
 
@@ -872,6 +898,7 @@ function buildAuditoria(): MockAuditoriaAdmissao[] {
       protocolo: admissao.protocolo_esocial,
       status: eventoAtual.status,
       responsavel: admissao.metadata.responsavel,
+      responsavel_cargo: cargoDoResponsavel(admissao.metadata.responsavel),
       detalhe: admissao.metadata.pendencia ?? eventoAtual.detalhe,
     });
   });
