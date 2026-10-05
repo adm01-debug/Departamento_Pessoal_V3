@@ -32,6 +32,7 @@ import { validateUploadFile } from '@/utils/uploadValidation';
 import { motion } from 'framer-motion';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { validateTablePayload } from '@/schemas/validate';
 
 export default function PerfilPage() {
   const { user } = useAuth();
@@ -113,7 +114,10 @@ export default function PerfilPage() {
       await supabase.auth.updateUser({ data: { name: nome } });
       const updateData = { nome, telefone: telefone || null, cargo: cargo || null, departamento: departamento || null };
       if (profile) {
-        const { error } = await supabase.from('profiles').update(updateData).eq('id', profile.id);
+        const { error } = await supabase
+          .from('profiles')
+          .update(validateTablePayload('profiles', updateData, 'PerfilPage:profiles'))
+          .eq('id', profile.id);
         if (error) throw error;
       }
       queryClient.invalidateQueries({ queryKey: ['meu-perfil'] });
@@ -153,7 +157,7 @@ export default function PerfilPage() {
       } = supabase.storage.from('avatars').getPublicUrl(path);
       const { error: updateError } = await supabase
         .from('profiles')
-        .update({ avatar_url: `${publicUrl}?t=${Date.now()}` })
+        .update(validateTablePayload('profiles', { avatar_url: `${publicUrl}?t=${Date.now()}` }, 'PerfilPage:profiles'))
         .eq('id', profile.id);
       if (updateError) throw updateError;
 
@@ -313,7 +317,7 @@ export default function PerfilPage() {
                   <Input
                     value={cargo}
                     onChange={(e) => setCargo(e.target.value)}
-                    placeholder="Ex: Analista de DP"
+                    placeholder="E: Analista de DP"
                     className="rounded-xl"
                   />
                 </div>
@@ -325,7 +329,7 @@ export default function PerfilPage() {
                   <Input
                     value={departamento}
                     onChange={(e) => setDepartamento(e.target.value)}
-                    placeholder="Ex: Recursos Humanos"
+                    placeholder="E: Recursos Humanos"
                     className="rounded-xl"
                   />
                 </div>

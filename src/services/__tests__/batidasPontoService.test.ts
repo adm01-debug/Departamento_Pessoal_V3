@@ -234,6 +234,20 @@ describe('batidasPontoService.fecharPeriodo', () => {
     expect(result).toEqual(periodo);
   });
 
+  it('expands a partial range to the full competencia month', async () => {
+    const periodo = { id: 'p1', status: 'fechado' };
+    const singleFn = vi.fn().mockResolvedValue({ data: periodo, error: null });
+    const selectFn = vi.fn().mockReturnValue({ single: singleFn });
+    const insertFn = vi.fn().mockReturnValue({ select: selectFn });
+    mockFrom.mockReturnValue({ insert: insertFn });
+
+    await batidasPontoService.fecharPeriodo('emp-1', '2026-07-15', '2026-07-15');
+    const insertArg = insertFn.mock.calls[0][0];
+    expect(insertArg.competencia).toBe('2026-07');
+    expect(insertArg.data_inicio).toBe('2026-07-01');
+    expect(insertArg.data_fim).toBe('2026-07-31');
+  });
+
   it('throws on DB error', async () => {
     const singleFn = vi.fn().mockResolvedValue({ data: null, error: { message: 'fail' } });
     const selectFn = vi.fn().mockReturnValue({ single: singleFn });

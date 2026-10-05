@@ -14,6 +14,7 @@ import { safeErrorMessage } from '@/utils/safeError';
 import { loggerService } from '@/services/loggerService';
 import { Loader2, FileText, ShieldCheck, Users, CheckCircle2, Plus, Send, Bell, UserX, Download } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { validateTablePayload } from '@/schemas/validate';
 
 type Documento = {
   id: string;
@@ -111,13 +112,19 @@ const AdminRegimentoInternoPage = () => {
     }
     setSaving(true);
     try {
-      const { error } = await supabase.from('sst_regimento_documentos').insert({
-        empresa_id: empresaAtual.id,
-        titulo: novoTitulo.trim(),
-        conteudo_html: novoConteudo,
-        versao: proximaVersao,
-        status: 'RASCUNHO',
-      });
+      const { error } = await supabase.from('sst_regimento_documentos').insert(
+        validateTablePayload(
+          'sst_regimento_documentos',
+          {
+            empresa_id: empresaAtual.id,
+            titulo: novoTitulo.trim(),
+            conteudo_html: novoConteudo,
+            versao: proximaVersao,
+            status: 'RASCUNHO',
+          },
+          'AdminRegimentoInternoPage:sst_regimento_documentos'
+        )
+      );
       if (error) throw error;
       toast.success('Rascunho criado');
       setShowNew(false);

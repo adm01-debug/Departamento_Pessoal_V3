@@ -4,6 +4,8 @@ import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import type { Insertable, Updatable } from '@/integrations/supabase/database.types';
+import { validateInput, validateTablePayload } from '@/schemas/validate';
+import { documentoSchema } from '@/schemas/documento';
 
 export function useDocumentos(colaboradorId?: string) {
   const queryClient = useQueryClient();
@@ -24,9 +26,11 @@ export function useDocumentos(colaboradorId?: string) {
 
   const criarDocumento = useMutation({
     mutationFn: async (doc: Omit<Insertable<'documentos'>, 'empresa_id'>) => {
+      const payload = { ...doc, ...(empresaAtualId ? { empresa_id: empresaAtualId } : {}) };
+      validateInput(documentoSchema, payload, 'useDocumentos:criarDocumento');
       const { data, error } = await supabase
         .from('documentos')
-        .insert({ ...doc, ...(empresaAtualId ? { empresa_id: empresaAtualId } : {}) })
+        .insert(validateTablePayload('documentos', payload, 'useDocumentos:documentos'))
         .select()
         .maybeSingle();
       if (error) throw error;
@@ -55,7 +59,7 @@ export function useDocumentos(colaboradorId?: string) {
     mutationFn: async ({ id, ...updates }: Updatable<'documentos'> & { id: string }) => {
       const { data, error } = await supabase
         .from('documentos')
-        .update(updates)
+        .update(validateTablePayload('documentos', updates, 'useDocumentos:documentos'))
         .eq('id', id)
         .eq('empresa_id', empresaAtualId!)
         .select()

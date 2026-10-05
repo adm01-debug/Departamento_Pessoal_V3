@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import type { Json } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 export type AuditoriaEvento = 'CALCULO' | 'CONFERENCIA' | 'ESOCIAL' | 'AJUSTE';
 export type AuditoriaSeveridade = 'INFO' | 'AVISO' | 'ERRO' | 'CRITICO';
@@ -45,7 +46,11 @@ export function useFolhaAuditoria(folhaId?: string) {
 
   const registrarMutation = useMutation({
     mutationFn: async (evento: Omit<FolhaAuditoria, 'id' | 'created_at'>) => {
-      const { data, error } = await supabase.from('folha_auditoria').insert([evento]).select().single();
+      const { data, error } = await supabase
+        .from('folha_auditoria')
+        .insert(validateTablePayload('folha_auditoria', [evento], 'useFolhaAuditoria:folha_auditoria'))
+        .select()
+        .single();
 
       if (error) throw error;
       return data;

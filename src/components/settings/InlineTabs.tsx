@@ -16,6 +16,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Spinner } from '@/components/ui/spinner';
 import { FormField, FormSelect, FormSwitch } from '@/components/forms';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { validateTablePayload } from '@/schemas/validate';
 
 type AuthUser = { name?: string } | null | undefined;
 
@@ -125,7 +126,7 @@ export function PontoConfigTab() {
       if (!empresaAtual?.id) throw new Error('Nenhuma empresa selecionada');
       const { error } = await supabase
         .from('empresas')
-        .update({ exigir_pin_quiosque: exigir })
+        .update(validateTablePayload('empresas', { exigir_pin_quiosque: exigir }, 'InlineTabs:empresas'))
         .eq('id', empresaAtual.id);
       if (error) throw error;
     },
@@ -187,11 +188,17 @@ export function AlertasKpiTab() {
 
   const criar = useMutation({
     mutationFn: async (d: typeof form) => {
-      const { error } = await supabase.from('config_alertas_indicadores').insert({
-        tipo: d.tipo,
-        limite_atencao: Number(d.limite_atencao),
-        limite_critico: Number(d.limite_critico),
-      });
+      const { error } = await supabase.from('config_alertas_indicadores').insert(
+        validateTablePayload(
+          'config_alertas_indicadores',
+          {
+            tipo: d.tipo,
+            limite_atencao: Number(d.limite_atencao),
+            limite_critico: Number(d.limite_critico),
+          },
+          'InlineTabs:config_alertas_indicadores'
+        )
+      );
       if (error) throw error;
     },
     onSuccess: () => {
@@ -246,7 +253,7 @@ export function AlertasKpiTab() {
                     <Input
                       value={form.tipo}
                       onChange={(e) => setForm((p) => ({ ...p, tipo: e.target.value }))}
-                      placeholder="Ex: turnover, absenteismo, horas_extras"
+                      placeholder="E: turnover, absenteismo, horas_extras"
                       className="rounded-xl border-border/40"
                     />
                   </div>
@@ -259,7 +266,7 @@ export function AlertasKpiTab() {
                         type="number"
                         value={form.limite_atencao}
                         onChange={(e) => setForm((p) => ({ ...p, limite_atencao: e.target.value }))}
-                        placeholder="Ex: 10"
+                        placeholder="E: 10"
                         className="rounded-xl border-border/40"
                       />
                     </div>
@@ -271,7 +278,7 @@ export function AlertasKpiTab() {
                         type="number"
                         value={form.limite_critico}
                         onChange={(e) => setForm((p) => ({ ...p, limite_critico: e.target.value }))}
-                        placeholder="Ex: 20"
+                        placeholder="E: 20"
                         className="rounded-xl border-border/40"
                       />
                     </div>

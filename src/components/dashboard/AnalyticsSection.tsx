@@ -67,6 +67,7 @@ import {
   ESocialMonitorWidget,
   type PendenciaSummary,
 } from './analytics/widgets';
+import { validateTablePayload } from '@/schemas/validate';
 export type { PendenciaSummary } from './analytics/widgets';
 
 /* ─── Exports ─── */
@@ -181,13 +182,20 @@ export function AnalyticsSection({
   }, [empresaId]);
 
   const markNotifRead = async (id: string) => {
-    await supabase.from('notificacoes').update({ lida: true }).eq('id', id);
+    await supabase
+      .from('notificacoes')
+      .update(validateTablePayload('notificacoes', { lida: true }, 'AnalyticsSection:notificacoes'))
+      .eq('id', id);
     setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, lida: true } : n)));
   };
 
   const markAllRead = async () => {
     if (!empresaId) return;
-    await supabase.from('notificacoes').update({ lida: true }).eq('empresa_id', empresaId).eq('lida', false);
+    await supabase
+      .from('notificacoes')
+      .update(validateTablePayload('notificacoes', { lida: true }, 'AnalyticsSection:notificacoes'))
+      .eq('empresa_id', empresaId)
+      .eq('lida', false);
     setNotifications((prev) => prev.map((n) => ({ ...n, lida: true })));
   };
 

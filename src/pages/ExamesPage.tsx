@@ -11,6 +11,7 @@ import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { Stethoscope } from 'lucide-react';
+import { validateTablePayload } from '@/schemas/validate';
 
 const tipoOptions = [
   { value: 'admissional', label: 'Admissional' },
@@ -61,15 +62,21 @@ export default function ExamesPage() {
       crm?: string;
       resultado?: string;
     }) => {
-      const { error } = await supabase.from('exames').insert({
-        colaborador_id: d.colaborador_id,
-        tipo: d.tipo,
-        data_exame: d.data_exame || null,
-        data_validade: d.data_validade || null,
-        medico: d.medico || null,
-        crm: d.crm || null,
-        resultado: d.resultado || null,
-      });
+      const { error } = await supabase.from('exames').insert(
+        validateTablePayload(
+          'exames',
+          {
+            colaborador_id: d.colaborador_id,
+            tipo: d.tipo,
+            data_exame: d.data_exame || null,
+            data_validade: d.data_validade || null,
+            medico: d.medico || null,
+            crm: d.crm || null,
+            resultado: d.resultado || null,
+          },
+          'ExamesPage:exames'
+        )
+      );
       if (error) throw error;
     },
     onSuccess: () => {

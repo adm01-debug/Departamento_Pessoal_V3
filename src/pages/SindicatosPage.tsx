@@ -14,6 +14,7 @@ import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { Plus, Trash2 } from 'lucide-react';
+import { validateTablePayload } from '@/schemas/validate';
 
 export default function SindicatosPage() {
   const { empresaAtual } = useEmpresas();
@@ -33,7 +34,11 @@ export default function SindicatosPage() {
 
   const criar = useMutation({
     mutationFn: async (d: { nome: string; cnpj: string; telefone: string; email: string; data_base: string }) => {
-      const { data, error } = await supabase.from('sindicatos').insert(d).select().maybeSingle();
+      const { data, error } = await supabase
+        .from('sindicatos')
+        .insert(validateTablePayload('sindicatos', d, 'SindicatosPage:sindicatos'))
+        .select()
+        .maybeSingle();
       if (error) throw error;
       return data;
     },
@@ -109,7 +114,7 @@ export default function SindicatosPage() {
                       <Input
                         value={form.data_base}
                         onChange={(e) => setForm((p) => ({ ...p, data_base: e.target.value }))}
-                        placeholder="Ex: Janeiro"
+                        placeholder="E: Janeiro"
                       />
                     </div>
                     <Button className="w-full" onClick={() => criar.mutate(form)} disabled={!form.nome}>

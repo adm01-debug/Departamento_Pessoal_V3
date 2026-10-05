@@ -16,6 +16,7 @@ import type {
 } from '@/types/afastamentos';
 
 import { validateTablePayload } from '@/schemas/validate';
+import { afastamentoSchema } from '@/schemas/afastamento';
 /** Evita que o supabase-js parseie a select string no nível de tipo. */
 const sel = (s: string): string => s;
 
@@ -23,6 +24,7 @@ class AfastamentoService extends BaseService<AfastamentoRow> {
   constructor() {
     super('afastamentos', {
       defaultOrderBy: 'data_inicio',
+      schema: afastamentoSchema,
     });
   }
 

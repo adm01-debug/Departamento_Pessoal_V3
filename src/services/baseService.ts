@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { loggerService } from './loggerService';
-import { validateTablePayload } from '@/schemas/validate';
+import { validateInput, validateTablePayload } from '@/schemas/validate';
+import { z } from 'zod';
 import type { LooseQueryBuilder } from '@/types/queryBuilder';
 
 export interface ListOptions {
@@ -42,6 +43,10 @@ export class BaseService<
       defaultOrderBy?: string;
       useVersioning?: boolean;
       requireEmpresaId?: RequireEmpresa;
+      /** Schema Zod de domínio — quando presente, criar/atualizar rodam
+       * validateInput (parcial: campos presentes validados) antes do check
+       * estrutural de colunas. */
+      schema?: z.ZodType;
     } = {}
   ) {
     if (this.options.requireEmpresaId === undefined) {
@@ -125,6 +130,9 @@ export class BaseService<
 
   async criar(payload: CreateDTO): Promise<T> {
     try {
+      if (this.options.schema) {
+        validateInput(this.options.schema, payload as object, `base.criar:${this.table}`);
+      }
       const { data, error } = await this.getQuery()
         .insert(validateTablePayload(this.table, payload as CreateDTO, `base.criar:${this.table}`) as CreateDTO)
         .select()
@@ -144,6 +152,9 @@ export class BaseService<
     try {
       if (this.options.requireEmpresaId && !empresaId) {
         throw new Error(`empresa_id obrigatório para atualizar ${this.table} (isolamento de tenant)`);
+      }
+      if (this.options.schema) {
+        validateInput(this.options.schema, payload as object, `base.atualizar:${this.table}`);
       }
       let query = this.getQuery()
         .update(validateTablePayload(this.table, payload as Record<string, unknown>, `base.atualizar:${this.table}`))

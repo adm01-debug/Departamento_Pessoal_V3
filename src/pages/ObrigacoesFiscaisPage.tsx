@@ -33,6 +33,7 @@ import { ObrigacoesKPIs } from '@/components/obrigacoes/ObrigacoesKPIs';
 import { GuiasTable, type GuiaTabela } from '@/components/obrigacoes/GuiasTable';
 import { DctfTable, SefipTable } from '@/components/obrigacoes/DeclaracoesTable';
 import { DarfTab } from '@/components/obrigacoes/DarfTab';
+import { validateTablePayload } from '@/schemas/validate';
 
 function formatCurrency(v: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
@@ -140,13 +141,19 @@ export default function ObrigacoesFiscaisPage() {
     mutationFn: async () => {
       const [mes, ano] = competencia.split('/');
       const table: GuiaTabela = guiaForm.tipo === 'fgts' ? 'guias_fgts' : 'guias_inss';
-      const { error } = await supabase.from(table).insert({
-        empresa_id: empresaAtual?.id,
-        competencia: `${ano}-${mes}`,
-        valor_total: parseFloat(guiaForm.valor) || 0,
-        data_vencimento: guiaForm.vencimento || null,
-        status: 'gerada',
-      });
+      const { error } = await supabase.from(table).insert(
+        validateTablePayload(
+          table,
+          {
+            empresa_id: empresaAtual?.id,
+            competencia: `${ano}-${mes}`,
+            valor_total: parseFloat(guiaForm.valor) || 0,
+            data_vencimento: guiaForm.vencimento || null,
+            status: 'gerada',
+          },
+          'ObrigacoesFiscaisPage:table'
+        )
+      );
       if (error) throw error;
     },
     onSuccess: () => {
@@ -163,7 +170,13 @@ export default function ObrigacoesFiscaisPage() {
     mutationFn: async ({ id, tabela }: { id: string; tabela: GuiaTabela }) => {
       const { error } = await supabase
         .from(tabela)
-        .update({ status: 'paga', data_pagamento: new Date().toISOString() })
+        .update(
+          validateTablePayload(
+            tabela,
+            { status: 'paga', data_pagamento: new Date().toISOString() },
+            'ObrigacoesFiscaisPage:tabela'
+          )
+        )
         .eq('id', id)
         .eq('empresa_id', empresaAtual!.id);
       if (error) throw error;

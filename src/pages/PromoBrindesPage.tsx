@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { Plus, Gift, Trash2, Edit2, Search, Package } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/types';
+import { validateTablePayload } from '@/schemas/validate';
 export default function PromoBrindesPage() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -47,10 +48,15 @@ export default function PromoBrindesPage() {
   const handleSubmit = useMutation({
     mutationFn: async (d: { nome: string; descricao: string; preco: number; estoque: number; categoria: string }) => {
       if (editingItem) {
-        const { error } = await supabase.from('promo_brindes').update(d).eq('id', editingItem.id);
+        const { error } = await supabase
+          .from('promo_brindes')
+          .update(validateTablePayload('promo_brindes', d, 'PromoBrindesPage:promo_brindes'))
+          .eq('id', editingItem.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from('promo_brindes').insert(d);
+        const { error } = await supabase
+          .from('promo_brindes')
+          .insert(validateTablePayload('promo_brindes', d, 'PromoBrindesPage:promo_brindes'));
         if (error) throw error;
       }
     },

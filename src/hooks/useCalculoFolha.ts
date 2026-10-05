@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { loggerService } from '@/services/loggerService';
 import type { Json } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 export function useCalculoFolha() {
   const [resultado, setResultado] = useState<CalculoResultado | null>(null);
@@ -50,12 +51,18 @@ export function useCalculoFolha() {
         if (!folhaId) {
           const { data: newHeader, error: createError } = await supabase
             .from('folhas_pagamento')
-            .insert({
-              empresa_id: empresaId,
-              competencia,
-              status: 'aberta',
-              tipo: 'mensal',
-            })
+            .insert(
+              validateTablePayload(
+                'folhas_pagamento',
+                {
+                  empresa_id: empresaId,
+                  competencia,
+                  status: 'aberta',
+                  tipo: 'mensal',
+                },
+                'useCalculoFolha:folhas_pagamento'
+              )
+            )
             .select('id')
             .single();
 
@@ -67,18 +74,22 @@ export function useCalculoFolha() {
         const { data, error } = await supabase
           .from('folha_itens')
           .upsert(
-            {
-              folha_id: folhaId,
-              colaborador_id: colaboradorId,
-              salario_base: salarioBase,
-              total_proventos: res.proventos,
-              total_descontos: res.descontos,
-              total_liquido: res.liquido,
-              inss_mes: res.inss,
-              irrf_mes: res.irrf,
-              fgts_mes: res.fgts,
-              detalhes: res as unknown as Json,
-            },
+            validateTablePayload(
+              'folha_itens',
+              {
+                folha_id: folhaId,
+                colaborador_id: colaboradorId,
+                salario_base: salarioBase,
+                total_proventos: res.proventos,
+                total_descontos: res.descontos,
+                total_liquido: res.liquido,
+                inss_mes: res.inss,
+                irrf_mes: res.irrf,
+                fgts_mes: res.fgts,
+                detalhes: res as unknown as Json,
+              },
+              'useCalculoFolha:folha_itens'
+            ),
             { onConflict: 'folha_id,colaborador_id' }
           )
           .select()
@@ -87,18 +98,24 @@ export function useCalculoFolha() {
         if (error) throw error;
 
         // 3. Registrar auditoria
-        await supabase.from('folha_auditoria').insert({
-          folha_id: folhaId,
-          colaborador_id: colaboradorId,
-          tipo_evento: 'CALCULO',
-          mensagem: 'Cálculo de folha individual realizado com sucesso',
-          severidade: 'INFO',
-          detalhes: {
-            liquido: res.liquido,
-            base: salarioBase,
-            params_used: params,
-          } as unknown as Json,
-        });
+        await supabase.from('folha_auditoria').insert(
+          validateTablePayload(
+            'folha_auditoria',
+            {
+              folha_id: folhaId,
+              colaborador_id: colaboradorId,
+              tipo_evento: 'CALCULO',
+              mensagem: 'Cálculo de folha individual realizado com sucesso',
+              severidade: 'INFO',
+              detalhes: {
+                liquido: res.liquido,
+                base: salarioBase,
+                params_used: params,
+              } as unknown as Json,
+            },
+            'useCalculoFolha:folha_auditoria'
+          )
+        );
 
         return data;
       } catch (err: unknown) {

@@ -19,6 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { validateTablePayload } from '@/schemas/validate';
 
 export default function FeriadosPage() {
   const { empresaAtual } = useEmpresa();
@@ -47,7 +48,9 @@ export default function FeriadosPage() {
         tipo,
         empresa_id: tipo === 'empresa' ? (empresaAtual?.id ?? null) : null,
       };
-      const { error } = await supabase.from('feriados').insert(insertData);
+      const { error } = await supabase
+        .from('feriados')
+        .insert(validateTablePayload('feriados', insertData, 'FeriadosPage:feriados'));
       if (error) throw error;
     },
     onSuccess: () => {

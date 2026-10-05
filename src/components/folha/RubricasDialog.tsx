@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils';
 import { validarRubricaESocial, sugerirCorrecaoRubrica } from '@/schemas/esocial';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+import { validateTablePayload } from '@/schemas/validate';
 
 export function RubricasDialog() {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,7 +48,9 @@ export function RubricasDialog() {
         throw new Error(`Divergência eSocial: ${errorMsg}`);
       }
 
-      const { error } = await supabase.from('rubricas_folha').insert(rubrica);
+      const { error } = await supabase
+        .from('rubricas_folha')
+        .insert(validateTablePayload('rubricas_folha', rubrica, 'RubricasDialog:rubricas_folha'));
       if (error) throw error;
     },
     onSuccess: () => {
@@ -129,7 +132,7 @@ export function RubricasDialog() {
                 <Label htmlFor="codigo">Código</Label>
                 <Input
                   id="codigo"
-                  placeholder="Ex: 101"
+                  placeholder="E: 101"
                   value={newRubrica.codigo}
                   onChange={(e) => setNewRubrica({ ...newRubrica, codigo: e.target.value })}
                   className="rounded-xl"
@@ -155,7 +158,7 @@ export function RubricasDialog() {
               <Label htmlFor="descricao">Descrição</Label>
               <Input
                 id="descricao"
-                placeholder="Ex: Salário Base"
+                placeholder="E: Salário Base"
                 value={newRubrica.descricao}
                 onChange={(e) => setNewRubrica({ ...newRubrica, descricao: e.target.value })}
                 className="rounded-xl"
@@ -306,13 +309,19 @@ export function RubricasDialog() {
                                 ) {
                                   supabase
                                     .from('rubricas_folha')
-                                    .update({
-                                      tipo: corrigida.tipo as 'provento' | 'desconto' | 'informativo',
-                                      incide_inss: corrigida.incide_inss,
-                                      incide_fgts: corrigida.incide_fgts,
-                                      incide_irrf: corrigida.incide_irrf,
-                                      descricao: corrigida.descricao,
-                                    })
+                                    .update(
+                                      validateTablePayload(
+                                        'rubricas_folha',
+                                        {
+                                          tipo: corrigida.tipo as 'provento' | 'desconto' | 'informativo',
+                                          incide_inss: corrigida.incide_inss,
+                                          incide_fgts: corrigida.incide_fgts,
+                                          incide_irrf: corrigida.incide_irrf,
+                                          descricao: corrigida.descricao,
+                                        },
+                                        'RubricasDialog:rubricas_folha'
+                                      )
+                                    )
                                     .eq('id', rubrica.id)
                                     .then(() => {
                                       queryClient.invalidateQueries({ queryKey: ['rubricas_folha'] });

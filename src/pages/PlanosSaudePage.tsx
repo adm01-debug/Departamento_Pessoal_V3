@@ -19,6 +19,7 @@ import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { Plus, Heart, Shield, Trash2, Users } from 'lucide-react';
+import { validateTablePayload } from '@/schemas/validate';
 
 // ========== Beneficiários de um Plano ==========
 function BeneficiariosPlanoSection({ planoId }: { planoId: string }) {
@@ -91,7 +92,7 @@ function BeneficiariosPlanoSection({ planoId }: { planoId: string }) {
                   <Input
                     value={form.parentesco}
                     onChange={(e) => setForm((p) => ({ ...p, parentesco: e.target.value }))}
-                    placeholder="Ex: Cônjuge, Filho(a)"
+                    placeholder="E: Cônjuge, Filho(a)"
                   />
                 </div>
                 <div>
@@ -195,15 +196,21 @@ export default function PlanosSaudePage() {
     mutationFn: async (d: typeof formPlano) => {
       const { data, error } = await supabase
         .from('planos_saude')
-        .insert({
-          operadora: d.operadora || null,
-          tipo_plano: d.tipo || null,
-          ans_registro: d.ans_registro || null,
-          numero_carteirinha: d.numero_carteirinha || null,
-          empresa_id: empresaAtual?.id,
-          valor_mensal: d.valor_mensal ? Number(d.valor_mensal) : null,
-          percentual_colaborador: d.coparticipacao ? Number(d.coparticipacao) : null,
-        })
+        .insert(
+          validateTablePayload(
+            'planos_saude',
+            {
+              operadora: d.operadora || null,
+              tipo_plano: d.tipo || null,
+              ans_registro: d.ans_registro || null,
+              numero_carteirinha: d.numero_carteirinha || null,
+              empresa_id: empresaAtual?.id,
+              valor_mensal: d.valor_mensal ? Number(d.valor_mensal) : null,
+              percentual_colaborador: d.coparticipacao ? Number(d.coparticipacao) : null,
+            },
+            'PlanosSaudePage:planos_saude'
+          )
+        )
         .select()
         .maybeSingle();
       if (error) throw error;
@@ -221,14 +228,20 @@ export default function PlanosSaudePage() {
     mutationFn: async (d: typeof formSeguro) => {
       const { data, error } = await supabase
         .from('seguros_vida')
-        .insert({
-          seguradora: d.seguradora || null,
-          numero_apolice: d.apolice_numero || null,
-          data_vencimento_apolice: d.data_vencimento_apolice || null,
-          empresa_id: empresaAtual?.id,
-          premio_mensal: d.valor_mensal ? Number(d.valor_mensal) : null,
-          capital_segurado: d.capital_segurado ? Number(d.capital_segurado) : null,
-        })
+        .insert(
+          validateTablePayload(
+            'seguros_vida',
+            {
+              seguradora: d.seguradora || null,
+              numero_apolice: d.apolice_numero || null,
+              data_vencimento_apolice: d.data_vencimento_apolice || null,
+              empresa_id: empresaAtual?.id,
+              premio_mensal: d.valor_mensal ? Number(d.valor_mensal) : null,
+              capital_segurado: d.capital_segurado ? Number(d.capital_segurado) : null,
+            },
+            'PlanosSaudePage:seguros_vida'
+          )
+        )
         .select()
         .maybeSingle();
       if (error) throw error;

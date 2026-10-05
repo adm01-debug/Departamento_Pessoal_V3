@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEmpresa } from '@/contexts/EmpresaContext';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+import { validateTablePayload } from '@/schemas/validate';
 
 export function useFeriados() {
   const { empresaAtual } = useEmpresa();
@@ -28,7 +29,9 @@ export function useFeriados() {
         tipo: feriado.tipo,
         empresa_id: feriado.tipo === 'empresa' ? (empresaAtual?.id ?? null) : null,
       };
-      const { error } = await supabase.from('feriados').insert(insertData);
+      const { error } = await supabase
+        .from('feriados')
+        .insert(validateTablePayload('feriados', insertData, 'useFeriados:feriados'));
       if (error) throw error;
     },
     onSuccess: () => {

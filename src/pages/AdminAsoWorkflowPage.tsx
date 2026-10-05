@@ -16,6 +16,7 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { FileCheck, Clock, ShieldCheck, XCircle, Inbox, Archive, Stethoscope } from 'lucide-react';
+import { validateTablePayload } from '@/schemas/validate';
 
 type StatusAso = 'rascunho' | 'emitido_clinica' | 'recebido_rh' | 'validado' | 'arquivado' | 'cancelado';
 
@@ -38,7 +39,10 @@ interface AsoRow {
   clinicas_partners?: { razao_social: string } | null;
 }
 
-const STATUS_META: Record<StatusAso, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline'; icon: typeof FileCheck }> = {
+const STATUS_META: Record<
+  StatusAso,
+  { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline'; icon: typeof FileCheck }
+> = {
   rascunho: { label: 'Rascunho', variant: 'outline', icon: FileCheck },
   emitido_clinica: { label: 'Emitido pela Clínica', variant: 'secondary', icon: Stethoscope },
   recebido_rh: { label: 'Recebido pelo RH', variant: 'secondary', icon: Inbox },
@@ -74,7 +78,9 @@ export default function AdminAsoWorkflowPage() {
     queryFn: async () => {
       let q = supabase
         .from('asos')
-        .select('id,colaborador_id,tipo,status,resultado,data_exame,data_validade,restricoes_descricao,restricao_data_fim,medico_nome,medico_crm,clinica_partner_id,agendamento_id,observacoes,colaboradores(nome_completo),clinicas_partners(razao_social)')
+        .select(
+          'id,colaborador_id,tipo,status,resultado,data_exame,data_validade,restricoes_descricao,restricao_data_fim,medico_nome,medico_crm,clinica_partner_id,agendamento_id,observacoes,colaboradores(nome_completo),clinicas_partners(razao_social)'
+        )
         .eq('empresa_id', empresaId!)
         .order('created_at', { ascending: false })
         .limit(500);
@@ -89,9 +95,9 @@ export default function AdminAsoWorkflowPage() {
     const list = asos ?? [];
     return {
       total: list.length,
-      pendentes_rh: list.filter(a => a.status === 'emitido_clinica').length,
-      recebidos: list.filter(a => a.status === 'recebido_rh').length,
-      validados: list.filter(a => a.status === 'validado').length,
+      pendentes_rh: list.filter((a) => a.status === 'emitido_clinica').length,
+      recebidos: list.filter((a) => a.status === 'recebido_rh').length,
+      validados: list.filter((a) => a.status === 'validado').length,
     };
   }, [asos]);
 
@@ -123,7 +129,11 @@ export default function AdminAsoWorkflowPage() {
         if (restricoesEdit.trim().length >= 5) patch.restricoes_descricao = restricoesEdit;
         if (restricaoDataFim) patch.restricao_data_fim = restricaoDataFim;
       }
-      const { error } = await supabase.from('asos').update(patch).eq('id', aso.id).eq('empresa_id', empresaAtual!.id);
+      const { error } = await supabase
+        .from('asos')
+        .update(validateTablePayload('asos', patch, 'AdminAsoWorkflowPage:asos'))
+        .eq('id', aso.id)
+        .eq('empresa_id', empresaAtual!.id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -149,26 +159,53 @@ export default function AdminAsoWorkflowPage() {
       <header className="flex items-start justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">ASO Digital</h1>
-          <p className="text-muted-foreground mt-1">Workflow entre clínica parceira e RH — recebimento, validação e arquivamento</p>
+          <p className="text-muted-foreground mt-1">
+            Workflow entre clínica parceira e RH — recebimento, validação e arquivamento
+          </p>
         </div>
       </header>
 
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground">Total</CardTitle></CardHeader>
-          <CardContent><div className="text-3xl font-bold">{kpis.total}</div></CardContent>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{kpis.total}</div>
+          </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Clock className="h-4 w-4"/>Aguardando RH</CardTitle></CardHeader>
-          <CardContent><div className="text-3xl font-bold">{kpis.pendentes_rh}</div></CardContent>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              Aguardando RH
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{kpis.pendentes_rh}</div>
+          </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><Inbox className="h-4 w-4"/>Para validar</CardTitle></CardHeader>
-          <CardContent><div className="text-3xl font-bold">{kpis.recebidos}</div></CardContent>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+              <Inbox className="h-4 w-4" />
+              Para validar
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{kpis.recebidos}</div>
+          </CardContent>
         </Card>
         <Card>
-          <CardHeader className="pb-2"><CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2"><ShieldCheck className="h-4 w-4"/>Validados</CardTitle></CardHeader>
-          <CardContent><div className="text-3xl font-bold">{kpis.validados}</div></CardContent>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4" />
+              Validados
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold">{kpis.validados}</div>
+          </CardContent>
         </Card>
       </div>
 
@@ -176,18 +213,26 @@ export default function AdminAsoWorkflowPage() {
         <CardHeader className="flex-row items-center justify-between space-y-0">
           <CardTitle>ASOs</CardTitle>
           <Select value={filtroStatus} onValueChange={(v) => setFiltroStatus(v as typeof filtroStatus)}>
-            <SelectTrigger className="w-56"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-56">
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="todos">Todos os status</SelectItem>
               {Object.entries(STATUS_META).map(([k, v]) => (
-                <SelectItem key={k} value={k}>{v.label}</SelectItem>
+                <SelectItem key={k} value={k}>
+                  {v.label}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="space-y-2">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-12 w-full" />)}</div>
+            <div className="space-y-2">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-12 w-full" />
+              ))}
+            </div>
           ) : (
             <Table>
               <TableHeader>
@@ -202,7 +247,7 @@ export default function AdminAsoWorkflowPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {(asos ?? []).map(aso => {
+                {(asos ?? []).map((aso) => {
                   const meta = STATUS_META[aso.status];
                   const Icon = meta.icon;
                   return (
@@ -210,17 +255,30 @@ export default function AdminAsoWorkflowPage() {
                       <TableCell className="font-medium">{aso.colaboradores?.nome_completo ?? '—'}</TableCell>
                       <TableCell className="capitalize">{aso.tipo}</TableCell>
                       <TableCell>{new Date(aso.data_exame).toLocaleDateString('pt-BR')}</TableCell>
-                      <TableCell>{aso.data_validade ? new Date(aso.data_validade).toLocaleDateString('pt-BR') : '—'}</TableCell>
+                      <TableCell>
+                        {aso.data_validade ? new Date(aso.data_validade).toLocaleDateString('pt-BR') : '—'}
+                      </TableCell>
                       <TableCell>{aso.clinicas_partners?.razao_social ?? '—'}</TableCell>
-                      <TableCell><Badge variant={meta.variant} className="gap-1"><Icon className="h-3 w-3" />{meta.label}</Badge></TableCell>
+                      <TableCell>
+                        <Badge variant={meta.variant} className="gap-1">
+                          <Icon className="h-3 w-3" />
+                          {meta.label}
+                        </Badge>
+                      </TableCell>
                       <TableCell className="text-right">
-                        <Button size="sm" variant="outline" onClick={() => openDetail(aso)}>Abrir</Button>
+                        <Button size="sm" variant="outline" onClick={() => openDetail(aso)}>
+                          Abrir
+                        </Button>
                       </TableCell>
                     </TableRow>
                   );
                 })}
                 {(asos ?? []).length === 0 && (
-                  <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground py-8">Nenhum ASO encontrado</TableCell></TableRow>
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                      Nenhum ASO encontrado
+                    </TableCell>
+                  </TableRow>
                 )}
               </TableBody>
             </Table>
@@ -236,10 +294,24 @@ export default function AdminAsoWorkflowPage() {
           {selected && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4 text-sm">
-                <div><Label className="text-muted-foreground">Tipo</Label><div className="capitalize font-medium">{selected.tipo}</div></div>
-                <div><Label className="text-muted-foreground">Resultado</Label><div className="capitalize font-medium">{selected.resultado ?? '—'}</div></div>
-                <div><Label className="text-muted-foreground">Médico</Label><div>{selected.medico_nome ?? '—'} {selected.medico_crm ? `(CRM ${selected.medico_crm})` : ''}</div></div>
-                <div><Label className="text-muted-foreground">Clínica</Label><div>{selected.clinicas_partners?.razao_social ?? '—'}</div></div>
+                <div>
+                  <Label className="text-muted-foreground">Tipo</Label>
+                  <div className="capitalize font-medium">{selected.tipo}</div>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Resultado</Label>
+                  <div className="capitalize font-medium">{selected.resultado ?? '—'}</div>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Médico</Label>
+                  <div>
+                    {selected.medico_nome ?? '—'} {selected.medico_crm ? `(CRM ${selected.medico_crm})` : ''}
+                  </div>
+                </div>
+                <div>
+                  <Label className="text-muted-foreground">Clínica</Label>
+                  <div>{selected.clinicas_partners?.razao_social ?? '—'}</div>
+                </div>
               </div>
 
               {selected.resultado === 'apto_com_restricoes' && (
@@ -258,12 +330,16 @@ export default function AdminAsoWorkflowPage() {
               {NEXT_STATUS[selected.status].includes('cancelado') && (
                 <div>
                   <Label>Motivo (obrigatório para cancelar)</Label>
-                  <Input value={motivoCancelamento} onChange={(e) => setMotivoCancelamento(e.target.value)} placeholder="Descreva o motivo do cancelamento..." />
+                  <Input
+                    value={motivoCancelamento}
+                    onChange={(e) => setMotivoCancelamento(e.target.value)}
+                    placeholder="Descreva o motivo do cancelamento..."
+                  />
                 </div>
               )}
 
               <div className="flex flex-wrap gap-2">
-                {NEXT_STATUS[selected.status].map(next => {
+                {NEXT_STATUS[selected.status].map((next) => {
                   const meta = STATUS_META[next];
                   const Icon = meta.icon;
                   return (
@@ -273,18 +349,23 @@ export default function AdminAsoWorkflowPage() {
                       onClick={() => transitionMut.mutate({ aso: selected, next })}
                       disabled={transitionMut.isPending}
                     >
-                      <Icon className="h-4 w-4 mr-2" />Mover para {meta.label}
+                      <Icon className="h-4 w-4 mr-2" />
+                      Mover para {meta.label}
                     </Button>
                   );
                 })}
                 {NEXT_STATUS[selected.status].length === 0 && (
-                  <p className="text-sm text-muted-foreground">Este ASO está em estado final e não permite novas transições.</p>
+                  <p className="text-sm text-muted-foreground">
+                    Este ASO está em estado final e não permite novas transições.
+                  </p>
                 )}
               </div>
             </div>
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setSelected(null)}>Fechar</Button>
+            <Button variant="outline" onClick={() => setSelected(null)}>
+              Fechar
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

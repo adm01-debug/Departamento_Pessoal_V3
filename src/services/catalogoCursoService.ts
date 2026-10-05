@@ -1,7 +1,7 @@
 import { supabase, type QueryBuilderType } from '@/integrations/supabase/client';
 import type { Insertable, Tables, Updatable } from '@/integrations/supabase/database.types';
 import { validateInput, validateTablePayload } from '@/schemas/validate';
-import { cursoSchema, trilhaSchema, inscricaoCursoSchema } from '@/schemas/cursos';
+import { cursoSchema, trilhaSchema, inscricaoCursoSchema, trilhaCursoSchema } from '@/schemas/cursos';
 
 /** Linha de trilhas_cursos com o join `curso` retornado por `listarTrilhasCursos`. */
 export type InscricaoComJoins = Tables<'inscricoes_cursos'> & {
@@ -155,6 +155,7 @@ export const catalogoCursoService = {
     ordem?: number;
     obrigatorio?: boolean;
   }): Promise<Tables<'trilhas_cursos'> | null> {
+    validateInput(trilhaCursoSchema, d, 'catalogoCursoService:vincularCursoTrilha');
     const { data, error } = await supabase
       .from('trilhas_cursos')
       .insert(validateTablePayload('trilhas_cursos', d, 'catalogoCursoService:trilhas_cursos'))

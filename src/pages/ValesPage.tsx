@@ -17,6 +17,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { UtensilsCrossed, Bus, CreditCard, Plus, RefreshCw } from 'lucide-react';
+import { validateTablePayload } from '@/schemas/validate';
 
 export default function ValesPage() {
   const { empresaAtual } = useEmpresas();
@@ -81,13 +82,19 @@ export default function ValesPage() {
 
   const criarRecarga = useMutation({
     mutationFn: async (d: typeof recForm) => {
-      const { error } = await supabase.from('recargas_vale').insert({
-        colaborador_id: d.colaborador_id || null,
-        vale_id: d.vale_id || null,
-        valor: Number(d.valor),
-        data_recarga: d.data_recarga || todayLocalISO(),
-        status: 'processado',
-      });
+      const { error } = await supabase.from('recargas_vale').insert(
+        validateTablePayload(
+          'recargas_vale',
+          {
+            colaborador_id: d.colaborador_id || null,
+            vale_id: d.vale_id || null,
+            valor: Number(d.valor),
+            data_recarga: d.data_recarga || todayLocalISO(),
+            status: 'processado',
+          },
+          'ValesPage:recargas_vale'
+        )
+      );
       if (error) throw error;
     },
     onSuccess: () => {

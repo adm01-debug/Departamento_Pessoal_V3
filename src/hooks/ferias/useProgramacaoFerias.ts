@@ -3,15 +3,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+import { validateTablePayload } from '@/schemas/validate';
 
 export type ProgramacaoStatus =
-  | 'rascunho'
-  | 'sugerido_gestor'
-  | 'aprovado_gestor'
-  | 'aprovado_rh'
-  | 'convertido'
-  | 'rejeitado'
-  | 'cancelado';
+  'rascunho' | 'sugerido_gestor' | 'aprovado_gestor' | 'aprovado_rh' | 'convertido' | 'rejeitado' | 'cancelado';
 
 export interface ProgramacaoFerias {
   id: string;
@@ -106,8 +101,7 @@ export function useProgramacaoMutations(ano: number) {
   const { empresaAtual } = useEmpresas();
   const empresaId = empresaAtual?.id;
 
-  const invalidate = () =>
-    qc.invalidateQueries({ queryKey: ['ferias-programacao', empresaId, ano] });
+  const invalidate = () => qc.invalidateQueries({ queryKey: ['ferias-programacao', empresaId, ano] });
 
   const criar = useMutation({
     mutationFn: async (input: {
@@ -120,7 +114,13 @@ export function useProgramacaoMutations(ano: number) {
     }) => {
       const { data, error } = await supabase
         .from('ferias_programacao')
-        .insert({ ...input, empresa_id: empresaId!, status: 'sugerido_gestor' })
+        .insert(
+          validateTablePayload(
+            'ferias_programacao',
+            { ...input, empresa_id: empresaId!, status: 'sugerido_gestor' },
+            'useProgramacaoFerias:ferias_programacao'
+          )
+        )
         .select()
         .single();
       if (error) throw error;

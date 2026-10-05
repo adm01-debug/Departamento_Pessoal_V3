@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { Plus, Trash2, Edit2 } from 'lucide-react';
 import type { LooseRow } from '@/types/db';
+import { validateTablePayload } from '@/schemas/validate';
 export default function TimesPage() {
   const { empresaAtual } = useEmpresas();
   const qc = useQueryClient();
@@ -40,12 +41,14 @@ export default function TimesPage() {
       if (editingItem) {
         const { error } = await supabase
           .from('times')
-          .update(d)
+          .update(validateTablePayload('times', d, 'TimesPage:times'))
           .eq('id', editingItem.id!)
           .eq('empresa_id', empresaAtual?.id ?? '');
         if (error) throw error;
       } else {
-        const { error } = await supabase.from('times').insert({ ...d, empresa_id: empresaAtual?.id ?? '' });
+        const { error } = await supabase
+          .from('times')
+          .insert(validateTablePayload('times', { ...d, empresa_id: empresaAtual?.id ?? '' }, 'TimesPage:times'));
         if (error) throw error;
       }
     },

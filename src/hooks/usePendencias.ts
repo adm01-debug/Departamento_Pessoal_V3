@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/useToast';
 import { loggerService } from '@/services/loggerService';
+import { validateTablePayload } from '@/schemas/validate';
 
 export interface Pendencia {
   id: string;
@@ -29,14 +30,21 @@ export function usePendencias(empresaId?: string) {
 
       if (error) throw error;
       return data as Pendencia[];
-    }});
+    },
+  });
 
   const { toast } = useToast();
   const updateStatus = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: Pendencia['status'] }) => {
       const { error } = await supabase
         .from('pendencias')
-        .update({ status, atualizado_at: new Date().toISOString() })
+        .update(
+          validateTablePayload(
+            'pendencias',
+            { status, atualizado_at: new Date().toISOString() },
+            'usePendencias:pendencias'
+          )
+        )
         .eq('id', id)
         .eq('empresa_id', empresaId!);
 
@@ -44,12 +52,16 @@ export function usePendencias(empresaId?: string) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pendencias', empresaId] });
-      toast({ title: "Sucesso", description: "Status da pendência atualizado." });
+      toast({ title: 'Sucesso', description: 'Status da pendência atualizado.' });
     },
     onError: (error: unknown, variables) => {
-      loggerService.error('Erro ao atualizar pendência', { id: variables?.id }, error instanceof Error ? error : undefined);
-      toast({ title: "Erro", description: "Não foi possível atualizar a pendência.", variant: "destructive" });
-    }
+      loggerService.error(
+        'Erro ao atualizar pendência',
+        { id: variables?.id },
+        error instanceof Error ? error : undefined
+      );
+      toast({ title: 'Erro', description: 'Não foi possível atualizar a pendência.', variant: 'destructive' });
+    },
   });
 
   return { ...query, updateStatus };

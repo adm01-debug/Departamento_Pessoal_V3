@@ -12,6 +12,7 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Progress } from '@/components/ui/progress';
+import { validateTablePayload } from '@/schemas/validate';
 
 export default function OnboardingPage() {
   const [activeTab, setActiveTab] = useState('ativos');
@@ -39,7 +40,13 @@ export default function OnboardingPage() {
     mutationFn: async (tarefaId: string) => {
       const { error } = await supabase
         .from('tarefas_onboarding')
-        .update({ concluida: true, concluida_em: new Date().toISOString() })
+        .update(
+          validateTablePayload(
+            'tarefas_onboarding',
+            { concluida: true, concluida_em: new Date().toISOString() },
+            'OnboardingPage:tarefas_onboarding'
+          )
+        )
         .eq('id', tarefaId);
       if (error) throw error;
     },

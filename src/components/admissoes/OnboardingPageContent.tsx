@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
+import { validateTablePayload } from '@/schemas/validate';
 
 export default function OnboardingPageContent() {
   const queryClient = useQueryClient();
@@ -34,7 +35,13 @@ export default function OnboardingPageContent() {
     mutationFn: async (tarefaId: string) => {
       const { error } = await supabase
         .from('tarefas_onboarding')
-        .update({ concluida: true, concluida_em: new Date().toISOString() })
+        .update(
+          validateTablePayload(
+            'tarefas_onboarding',
+            { concluida: true, concluida_em: new Date().toISOString() },
+            'OnboardingPageContent:tarefas_onboarding'
+          )
+        )
         .eq('id', tarefaId);
       if (error) throw error;
     },

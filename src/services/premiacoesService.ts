@@ -2,7 +2,11 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Tables, TablesInsert } from '@/integrations/supabase/types';
 import { loggerService } from './loggerService';
 import { validateInput, validateTablePayload } from '@/schemas/validate';
-import { premiacaoRegraSchema, cenarioRoiInputSchema } from '@/schemas/workflowsPremiacoesCnab';
+import {
+  premiacaoRegraSchema,
+  cenarioRoiInputSchema,
+  premiacaoRoiCenarioSchema,
+} from '@/schemas/workflowsPremiacoesCnab';
 
 export interface CenarioROIInput {
   name: string;
@@ -263,33 +267,29 @@ export const premiacoesService = {
   async salvarCenarioROI(cenario: CenarioROIInput, empresaId: string) {
     if (!empresaId) throw new Error('empresaId é obrigatório');
     validateInput(cenarioRoiInputSchema, cenario, 'premiacoes.salvarCenarioROI');
+    const row = {
+      nome: cenario.name,
+      configuracoes: {
+        employees: cenario.employees,
+        avgSalary: cenario.avgSalary,
+        bonusPercent: cenario.bonusPercent,
+        performanceLevel: cenario.performanceLevel,
+        retentionImpact: cenario.retentionImpact,
+      },
+      resultados: {
+        totalBudget: cenario.totalBudget,
+        savings: cenario.savings,
+        roi: cenario.roi,
+      },
+      snapshot_logs: {
+        timestamp: new Date().toISOString(),
+        version: '1.0',
+      },
+    } as TablesInsert<'premiacoes_roi_cenarios'>;
+    validateInput(premiacaoRoiCenarioSchema, row, 'premiacoes.salvarCenarioROI:row');
     const { data, error } = await supabase
       .from('premiacoes_roi_cenarios')
-      .insert(
-        validateTablePayload(
-          'premiacoes_roi_cenarios',
-          {
-            nome: cenario.name,
-            configuracoes: {
-              employees: cenario.employees,
-              avgSalary: cenario.avgSalary,
-              bonusPercent: cenario.bonusPercent,
-              performanceLevel: cenario.performanceLevel,
-              retentionImpact: cenario.retentionImpact,
-            },
-            resultados: {
-              totalBudget: cenario.totalBudget,
-              savings: cenario.savings,
-              roi: cenario.roi,
-            },
-            snapshot_logs: {
-              timestamp: new Date().toISOString(),
-              version: '1.0',
-            },
-          } as TablesInsert<'premiacoes_roi_cenarios'>,
-          'premiacoesService:premiacoes_roi_cenarios'
-        )
-      )
+      .insert(validateTablePayload('premiacoes_roi_cenarios', row, 'premiacoesService:premiacoes_roi_cenarios'))
       .select()
       .single();
     if (error) throw error;
