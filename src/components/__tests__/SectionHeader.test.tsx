@@ -9,7 +9,7 @@ vi.mock('framer-motion', () => ({
 }));
 
 vi.mock('@/lib/utils', () => ({
-  cn: (...args: any[]) => args.filter(Boolean).join(' '),
+  cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
 }));
 
 import { Users } from 'lucide-react';

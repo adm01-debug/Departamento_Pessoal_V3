@@ -33,7 +33,7 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // select → order → resolvedValue  (reference tables via listarReferencia)
-function setupReferenceChain(data: any[], error: any = null) {
+function setupReferenceChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const orderFn = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ order: orderFn });
   mockFrom.mockReturnValue({ select: selectFn });
@@ -41,9 +41,9 @@ function setupReferenceChain(data: any[], error: any = null) {
 }
 
 // Thenable chain with optional eq (listarCentrosCusto)
-function setupListChain(data: any[], error: any = null) {
+function setupListChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const response = { data, error };
-  const chain: any = {};
+  const chain: Record<string, unknown> = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
   chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
@@ -55,7 +55,7 @@ function setupListChain(data: any[], error: any = null) {
 }
 
 // select → eq → order → resolvedValue
-function setupEqOrderChain(data: any[], error: any = null) {
+function setupEqOrderChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const orderFn = vi.fn().mockResolvedValue({ data, error });
   const eqFn = vi.fn().mockReturnValue({ order: orderFn });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
@@ -64,7 +64,7 @@ function setupEqOrderChain(data: any[], error: any = null) {
 }
 
 // select → eq → resolvedValue  (listarDependentesBeneficios)
-function setupEqResolveChain(data: any[], error: any = null) {
+function setupEqResolveChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const eqFn = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ select: selectFn });
@@ -72,7 +72,7 @@ function setupEqResolveChain(data: any[], error: any = null) {
 }
 
 // select → eq → maybeSingle  (obterDadosEstagiario)
-function setupEqMaybeSingleChain(data: any, error: any = null) {
+function setupEqMaybeSingleChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const eqFn = vi.fn().mockReturnValue({ maybeSingle });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
@@ -81,7 +81,7 @@ function setupEqMaybeSingleChain(data: any, error: any = null) {
 }
 
 // insert([...]).select().maybeSingle()
-function setupInsertChain(data: any, error: any = null) {
+function setupInsertChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const insertFn = vi.fn().mockReturnValue({ select: selectFn });
@@ -90,7 +90,7 @@ function setupInsertChain(data: any, error: any = null) {
 }
 
 // upsert([...], opts).select().maybeSingle()
-function setupUpsertChain(data: any, error: any = null) {
+function setupUpsertChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const upsertFn = vi.fn().mockReturnValue({ select: selectFn });
@@ -99,7 +99,7 @@ function setupUpsertChain(data: any, error: any = null) {
 }
 
 // update(dados).eq('id', id) → resolvedValue
-function setupUpdateEqChain(error: any = null) {
+function setupUpdateEqChain(error: { message: string; code?: string } | null = null) {
   const eqFn = vi.fn().mockResolvedValue({ error });
   const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ update: updateFn });
@@ -107,7 +107,7 @@ function setupUpdateEqChain(error: any = null) {
 }
 
 // update(dados).eq('id', id).eq('...', ...) → resolvedValue
-function setupUpdateDoubleEqChain(error: any = null) {
+function setupUpdateDoubleEqChain(error: { message: string; code?: string } | null = null) {
   const eq2Fn = vi.fn().mockResolvedValue({ error });
   const eq1Fn = vi.fn().mockReturnValue({ eq: eq2Fn });
   const updateFn = vi.fn().mockReturnValue({ eq: eq1Fn });
@@ -116,7 +116,7 @@ function setupUpdateDoubleEqChain(error: any = null) {
 }
 
 // delete().eq('id', id) → resolvedValue
-function setupDeleteEqChain(error: any = null) {
+function setupDeleteEqChain(error: { message: string; code?: string } | null = null) {
   const eqFn = vi.fn().mockResolvedValue({ error });
   const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ delete: deleteFn });
@@ -124,7 +124,7 @@ function setupDeleteEqChain(error: any = null) {
 }
 
 // delete().eq(...).eq(...) → resolvedValue
-function setupDeleteDoubleEqChain(error: any = null) {
+function setupDeleteDoubleEqChain(error: { message: string; code?: string } | null = null) {
   const eq2Fn = vi.fn().mockResolvedValue({ error });
   const eq1Fn = vi.fn().mockReturnValue({ eq: eq2Fn });
   const deleteFn = vi.fn().mockReturnValue({ eq: eq1Fn });
@@ -133,7 +133,7 @@ function setupDeleteDoubleEqChain(error: any = null) {
 }
 
 // select → eq1 → eq2 → order → resolve (for functions filtering by two fields)
-function setupDoubleEqOrderChain(data: any[], error: any = null) {
+function setupDoubleEqOrderChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const orderFn = vi.fn().mockResolvedValue({ data, error });
   const eq2Fn = vi.fn().mockReturnValue({ order: orderFn });
   const eq1Fn = vi.fn().mockReturnValue({ eq: eq2Fn, order: orderFn });

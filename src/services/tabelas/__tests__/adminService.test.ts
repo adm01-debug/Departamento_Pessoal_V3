@@ -7,7 +7,7 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
-function makeChain(data: any = [], error: any = null) {
+function makeChain(data: unknown = [], error: { message: string; code?: string } | null = null) {
   const result = { data, error };
   const maybeSingle = vi.fn().mockResolvedValue(result);
   const limit = vi
@@ -21,7 +21,9 @@ function makeChain(data: any = [], error: any = null) {
   const eq = vi
     .fn()
     .mockReturnValue({ order, maybeSingle, then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn) });
-  const deleteEqResult: any = { then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn) };
+  const deleteEqResult: Record<string, unknown> = {
+    then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
+  };
   const deleteEq = vi.fn().mockReturnValue(deleteEqResult);
   deleteEqResult.eq = deleteEq;
   const delete_ = vi.fn().mockReturnValue({ eq: deleteEq });

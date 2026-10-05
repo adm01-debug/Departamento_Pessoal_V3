@@ -24,7 +24,7 @@ vi.mock('@/validators/esocial', () => ({
 }));
 
 vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
-vi.mock('@/utils/safeError', () => ({ safeErrorMessage: vi.fn((e: any, d: string) => d) }));
+vi.mock('@/utils/safeError', () => ({ safeErrorMessage: vi.fn((e: unknown, d: string) => d) }));
 vi.mock('@/lib/utils', () => ({ cn: (...a: string[]) => a.filter(Boolean).join(' ') }));
 
 vi.mock('@/components/ui/dialog', () => ({
@@ -57,7 +57,7 @@ vi.mock('@/components/ui/badge', () => ({
 }));
 
 vi.mock('@/components/ui/input', () => ({
-  Input: (props: any) => <input {...props} />,
+  Input: (props: React.ComponentProps<'input'>) => <input {...props} />,
 }));
 
 vi.mock('@/components/ui/label', () => ({
@@ -65,7 +65,7 @@ vi.mock('@/components/ui/label', () => ({
 }));
 
 vi.mock('@/components/ui/checkbox', () => ({
-  Checkbox: (props: any) => <input type="checkbox" {...props} />,
+  Checkbox: (props: React.ComponentProps<'input'>) => <input type="checkbox" {...props} />,
 }));
 
 vi.mock('@/components/ui/select', () => ({

@@ -10,7 +10,7 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // Helper: build a minimal folha item
-function makeItem(overrides: Record<string, any> = {}) {
+function makeItem(overrides: Record<string, unknown> = {}) {
   return {
     id: 'item-1',
     folha_id: 'folha-1',
@@ -32,7 +32,7 @@ function makeItem(overrides: Record<string, any> = {}) {
 }
 
 // Sets up mocks for folha_itens and rubricas_folha queries
-function setupMocks(itens: any[], rubricas: any[] = [], itenError: any = null) {
+function setupMocks(itens: unknown[], rubricas: unknown[] = [], itenError: { message: string } | null = null) {
   mockFrom.mockImplementation((table: string) => {
     if (table === 'folha_itens') {
       const eqFn = vi.fn().mockResolvedValue({ data: itens, error: itenError });

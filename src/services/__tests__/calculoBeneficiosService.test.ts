@@ -69,11 +69,13 @@ describe('calculoBeneficiosService', () => {
         } else if (table === 'beneficios_colaborador') {
           chain.eq.mockReturnThis();
           chain.single = undefined as never; // No single for this one
-          (chain as any).then = (resolve: any) =>
-            resolve({
-              data: [{ beneficio: { tipo: 'transporte', valor: 5.0 }, quantidade_diaria: 2 }],
-              error: null,
-            });
+          Object.assign(chain, {
+            then: (resolve: (v: unknown) => unknown) =>
+              resolve({
+                data: [{ beneficio: { tipo: 'transporte', valor: 5.0 }, quantidade_diaria: 2 }],
+                error: null,
+              }),
+          });
         }
         return chain;
       });

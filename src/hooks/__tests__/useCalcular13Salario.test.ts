@@ -94,7 +94,7 @@ describe('useCalcular13Salario', () => {
     mockInvoke.mockResolvedValue({ data: null, error: new Error('invoke fail') });
 
     const { result } = renderHook(() => useCalcular13Salario());
-    let returnValue: any;
+    let returnValue: unknown;
 
     await act(async () => {
       returnValue = await result.current.calcular(dados);
@@ -108,7 +108,7 @@ describe('useCalcular13Salario', () => {
     mockInvoke.mockResolvedValue({ data: { success: false, error: 'Cálculo inválido' }, error: null });
 
     const { result } = renderHook(() => useCalcular13Salario());
-    let returnValue: any;
+    let returnValue: unknown;
 
     await act(async () => {
       returnValue = await result.current.calcular(dados);

@@ -9,7 +9,7 @@ vi.mock('@dnd-kit/core', () => ({
   DragEndEvent: {},
   PointerSensor: class {},
   useSensor: vi.fn(() => ({})),
-  useSensors: vi.fn((...s: any[]) => s),
+  useSensors: vi.fn((...s: unknown[]) => s),
   useDroppable: vi.fn(() => ({ setNodeRef: vi.fn(), isOver: false })),
   useDraggable: vi.fn(() => ({
     attributes: {},
@@ -40,7 +40,7 @@ vi.mock('@/utils/format', () => ({
 }));
 
 vi.mock('@/utils/safeError', () => ({
-  safeErrorMessage: vi.fn((e: any) => String(e)),
+  safeErrorMessage: vi.fn((e: unknown) => String(e)),
 }));
 
 vi.mock('@/services/admissaoService', () => ({

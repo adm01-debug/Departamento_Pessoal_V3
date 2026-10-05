@@ -25,19 +25,19 @@ vi.mock('sonner', () => ({
 
 import { useBeneficiosColaborador } from '../useBeneficiosColaborador';
 
-function buildChains(selectData: any[] = [], insertData: any = null) {
+function buildChains(selectData: unknown[] = [], insertData: unknown = null) {
   const selectResponse = { data: selectData, error: null };
-  const selectChain: any = {
+  const selectChain = {
     eq: vi.fn().mockReturnThis(),
     then: (fn: (v?: unknown) => unknown) => Promise.resolve(selectResponse).then(fn),
     catch: (fn: (v?: unknown) => unknown) => Promise.resolve(selectResponse).catch(fn),
     finally: (fn: (v?: unknown) => unknown) => Promise.resolve(selectResponse).finally(fn),
   };
-  const insertChain: any = {
+  const insertChain = {
     select: vi.fn().mockReturnThis(),
     single: vi.fn().mockResolvedValue({ data: insertData, error: null }),
   };
-  const deleteChain: any = {
+  const deleteChain = {
     eq: vi.fn().mockResolvedValue({ error: null }),
   };
   mockFrom.mockReturnValue(
@@ -92,7 +92,7 @@ describe('useBeneficiosColaborador', () => {
           single: vi.fn().mockResolvedValue({ data: { id: 'b1' }, error: null }),
         }),
       });
-      const selectChain: any = {
+      const selectChain = {
         eq: vi.fn().mockReturnThis(),
         then: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).then(fn),
         catch: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).catch(fn),
@@ -113,7 +113,7 @@ describe('useBeneficiosColaborador', () => {
     const eqFn = vi.fn().mockResolvedValue({ error: null });
     const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockImplementation(() => {
-      const selectChain: any = {
+      const selectChain = {
         eq: vi.fn().mockReturnThis(),
         then: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).then(fn),
         catch: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).catch(fn),

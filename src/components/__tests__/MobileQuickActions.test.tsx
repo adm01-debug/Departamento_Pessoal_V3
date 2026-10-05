@@ -22,10 +22,10 @@ vi.mock('framer-motion', () => ({
   AnimatePresence: ({ children }: { children?: ReactNode }) => <>{children}</>,
 }));
 
-vi.mock('@/lib/utils', () => ({ cn: (...c: any[]) => c.filter(Boolean).join(' ') }));
+vi.mock('@/lib/utils', () => ({ cn: (...c: unknown[]) => c.filter(Boolean).join(' ') }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, 'aria-label': ariaLabel }: any) => (
+  Button: ({ children, onClick, 'aria-label': ariaLabel }: React.ComponentProps<'button'>) => (
     <button onClick={onClick} aria-label={ariaLabel}>
       {children}
     </button>

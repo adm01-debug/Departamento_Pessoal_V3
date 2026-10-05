@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    circle: (props: any) => <circle {...props} />,
+    circle: (props: React.ComponentProps<'circle'>) => <circle {...props} />,
     span: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
       <span {...props}>{children}</span>
     ),

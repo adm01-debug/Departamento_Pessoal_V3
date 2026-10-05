@@ -21,7 +21,9 @@ vi.mock('@/hooks/useEmpresas', () => ({
 }));
 
 vi.mock('@/components/admissao/AdmissaoChecklist', () => ({
-  AdmissaoChecklist: ({ documentos }: any) => <div data-testid="checklist">{documentos?.length} docs</div>,
+  AdmissaoChecklist: ({ documentos }: { documentos?: (v: unknown) => void }) => (
+    <div data-testid="checklist">{documentos?.length} docs</div>
+  ),
 }));
 
 vi.mock('@/utils/piiMask', () => ({

@@ -18,9 +18,9 @@ vi.mock('sonner', () => ({
 
 import { useFolhaAuditoria } from '../useFolhaAuditoria';
 
-function buildChains(selectData: any[] = []) {
+function buildChains(selectData: unknown[] = []) {
   const response = { data: selectData, error: null };
-  const chain: any = {
+  const chain = {
     select: vi.fn().mockReturnThis(),
     eq: vi.fn().mockReturnThis(),
     order: vi.fn().mockReturnThis(),

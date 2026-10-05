@@ -14,7 +14,7 @@ type InsertChain = {
   catch: (fn: unknown) => unknown;
 };
 
-const { mockFrom } = vi.hoisted<{ mockFrom: Mock<(...args: any[]) => any> }>(() => ({
+const { mockFrom } = vi.hoisted<{ mockFrom: Mock }>(() => ({
   mockFrom: vi.fn<
     (table: string) => {
       select: () => SelectChain;
@@ -33,7 +33,7 @@ vi.mock('@/integrations/supabase/client', () => ({
  * qualquer profundidade de encadeamento do PostgREST. Isso evita que a suíte
  * quebre sempre que um serviço ganha um novo `.eq()` (ex.: isolamento de tenant).
  */
-function setupChain(data: any, error: any = null) {
+function setupChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const chain = makeChain({ data, error });
   mockFrom.mockReturnValue(chain);
   return {
@@ -52,10 +52,10 @@ const setupPagamentosChain = setupChain;
 const setupEqResolveChain = setupChain;
 const setupSelectOrderChain = setupChain;
 const setupInsertSingleChain = setupChain;
-const setupInsertDirectChain = (error: any = null) => setupChain(null, error);
+const setupInsertDirectChain = (error: { message: string; code?: string } | null = null) => setupChain(null, error);
 
 /** Chain isolado (não registrado no mockFrom) para uso com mockReturnValueOnce. */
-function makeStandaloneChain(data: any, error: any = null) {
+function makeStandaloneChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const chain = makeChain({ data, error });
   return { chain, selectFn: chain.select, eqFn: chain.eq, singleFn: chain.single, updateFn: chain.update };
 }

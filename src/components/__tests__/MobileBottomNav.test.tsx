@@ -5,7 +5,12 @@ import { render, screen, fireEvent } from '@testing-library/react';
 const mockLocation = { pathname: '/dashboard' };
 vi.mock('react-router-dom', () => ({
   useLocation: () => mockLocation,
-  Link: ({ children, to, 'aria-label': ariaLabel, 'aria-current': ariaCurrent }: any) => (
+  Link: ({
+    children,
+    to,
+    'aria-label': ariaLabel,
+    'aria-current': ariaCurrent,
+  }: React.ComponentProps<'a'> & { to?: string }) => (
     <a href={to} aria-label={ariaLabel} aria-current={ariaCurrent}>
       {children}
     </a>
@@ -16,7 +21,7 @@ vi.mock('@/hooks/useAuth', () => ({
   useAuth: vi.fn(() => ({ isAdmin: true })),
 }));
 
-vi.mock('@/lib/utils', () => ({ cn: (...c: any[]) => c.filter(Boolean).join(' ') }));
+vi.mock('@/lib/utils', () => ({ cn: (...c: unknown[]) => c.filter(Boolean).join(' ') }));
 
 vi.mock('framer-motion', () => ({
   motion: {
@@ -101,7 +106,7 @@ describe('MobileBottomNav', () => {
   });
 
   it('hides Mais link when isAdmin=false', () => {
-    (useAuth as any).mockReturnValueOnce({ isAdmin: false });
+    vi.mocked(useAuth).mockReturnValueOnce({ isAdmin: false } as ReturnType<typeof useAuth>);
     render(<MobileBottomNav />);
     expect(screen.queryByLabelText('Mais')).toBeNull();
   });

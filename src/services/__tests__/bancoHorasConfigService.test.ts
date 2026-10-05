@@ -8,7 +8,7 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
-function setupMaybeSingleChain(data: any, error: any = null) {
+function setupMaybeSingleChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const eqFn = vi.fn().mockReturnValue({ maybeSingle });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
@@ -16,7 +16,7 @@ function setupMaybeSingleChain(data: any, error: any = null) {
   return { selectFn, eqFn, maybeSingle };
 }
 
-function setupInsertChain(data: any, error: any = null) {
+function setupInsertChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const insertFn = vi.fn().mockReturnValue({ select: selectFn });
@@ -24,7 +24,7 @@ function setupInsertChain(data: any, error: any = null) {
   return { insertFn, selectFn, maybeSingle };
 }
 
-function setupUpdateChain(data: any, error: any = null) {
+function setupUpdateChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const eqFn = vi.fn();

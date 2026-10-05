@@ -1,10 +1,11 @@
+import React from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CurrencyInput } from '../ui/currency-input';
 
 vi.mock('@/lib/utils', () => ({ cn: (...c: string[]) => c.filter(Boolean).join(' ') }));
 vi.mock('../ui/input', () => ({
-  Input: (props: any) => <input {...props} data-testid="currency-input" />,
+  Input: (props: React.ComponentProps<'input'>) => <input {...props} data-testid="currency-input" />,
 }));
 
 describe('CurrencyInput', () => {

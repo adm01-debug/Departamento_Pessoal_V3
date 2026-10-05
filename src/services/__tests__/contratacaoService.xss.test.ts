@@ -61,7 +61,7 @@ function mockAdmissaoRow(overrides: Partial<MaliciousAdmissao>): MaliciousAdmiss
   };
 }
 
-function setupSupabaseMock(row: MaliciousAdmissao | null, error: unknown = null) {
+function setupSupabaseMock(row: MaliciousAdmissao | null, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data: row, error });
   const eq = vi.fn(() => ({ maybeSingle }));
   const select = vi.fn(() => ({ eq }));
@@ -87,26 +87,23 @@ describe('contratacaoService.gerarTemplateContrato — regressão XSS', () => {
     vi.clearAllMocks();
   });
 
-  it.each(XSS_PAYLOADS)(
-    'escapa payload malicioso em admissao.nome: %s',
-    async (payload) => {
-      setupSupabaseMock(mockAdmissaoRow({ nome: payload }));
+  it.each(XSS_PAYLOADS)('escapa payload malicioso em admissao.nome: %s', async (payload) => {
+    setupSupabaseMock(mockAdmissaoRow({ nome: payload }));
 
-      const html = await contratacaoService.gerarTemplateContrato('id-1');
+    const html = await contratacaoService.gerarTemplateContrato('id-1');
 
-      // 1) O payload literal NÃO deve aparecer executável no HTML
-      expect(html).not.toContain(payload);
-      // 2) Deve aparecer sua versão escapada (pelo menos '&lt;' quando começa com '<')
-      if (payload.startsWith('<')) {
-        expect(html).toContain('&lt;');
-      }
-      // 3) Nenhuma tag <script> executável
-      expect(html.toLowerCase()).not.toMatch(/<script\b/);
-      // 4) Nenhum handler on* injetado pelo payload
-      // 4) Nenhum handler on* dentro de uma tag REAL (texto escapado é inofensivo)
-      expect(html).not.toMatch(/<[a-z][^>]*\son\w+=/i);
+    // 1) O payload literal NÃO deve aparecer executável no HTML
+    expect(html).not.toContain(payload);
+    // 2) Deve aparecer sua versão escapada (pelo menos '&lt;' quando começa com '<')
+    if (payload.startsWith('<')) {
+      expect(html).toContain('&lt;');
     }
-  );
+    // 3) Nenhuma tag <script> executável
+    expect(html.toLowerCase()).not.toMatch(/<script\b/);
+    // 4) Nenhum handler on* injetado pelo payload
+    // 4) Nenhum handler on* dentro de uma tag REAL (texto escapado é inofensivo)
+    expect(html).not.toMatch(/<[a-z][^>]*\son\w+=/i);
+  });
 
   it('escapa payload em admissao.cargo e admissao.departamento', async () => {
     setupSupabaseMock(
@@ -152,14 +149,14 @@ describe('contratacaoService.gerarTemplateContrato — regressão XSS', () => {
 
   it('propaga erro quando admissão não é encontrada (sem vazar HTML parcial)', async () => {
     setupSupabaseMock(null);
-    await expect(contratacaoService.gerarTemplateContrato('inexistente')).rejects.toThrow(
-      /não encontrada/i
-    );
+    await expect(contratacaoService.gerarTemplateContrato('inexistente')).rejects.toThrow(/não encontrada/i);
   });
 });
 
 describe('DOMPurify (defesa em profundidade da renderização) ', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('mesmo que o template produzisse <script>, DOMPurify removeria', () => {
     const dirty = '<div><script>alert(1)</script><p>ok</p></div>';

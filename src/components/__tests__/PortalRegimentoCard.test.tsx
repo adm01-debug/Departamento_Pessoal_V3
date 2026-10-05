@@ -39,7 +39,7 @@ vi.mock('@/hooks/useColaboradorVinculo', () => ({
 }));
 
 // Mutable call tracking for maybySingle responses
-let maybeResponses: any[] = [];
+let maybeResponses: unknown[] = [];
 let callIdx = 0;
 
 vi.mock('@/integrations/supabase/client', () => ({

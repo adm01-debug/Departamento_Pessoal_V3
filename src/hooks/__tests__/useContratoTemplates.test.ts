@@ -30,7 +30,7 @@ vi.mock('@/services/contratoTemplateService', () => ({
 }));
 
 vi.mock('@/utils/safeError', () => ({
-  safeErrorMessage: vi.fn((e: any, fallback: string) => fallback),
+  safeErrorMessage: vi.fn((e: unknown, fallback: string) => fallback),
 }));
 
 import { useContratoTemplates } from '../useContratoTemplates';
@@ -86,8 +86,6 @@ describe('useContratoTemplates', () => {
   it('queries with empresa_id key', () => {
     mockUseQuery.mockReturnValue({ data: [], isLoading: false });
     renderHook(() => useContratoTemplates());
-    expect(mockUseQuery).toHaveBeenCalledWith(
-      expect.objectContaining({ queryKey: ['contrato-templates', 'emp-1'] })
-    );
+    expect(mockUseQuery).toHaveBeenCalledWith(expect.objectContaining({ queryKey: ['contrato-templates', 'emp-1'] }));
   });
 });

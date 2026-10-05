@@ -33,7 +33,7 @@ vi.mock('@/components/ui/button', () => ({
 }));
 
 vi.mock('@/components/ui/input', () => ({
-  Input: (props: any) => <input {...props} />,
+  Input: (props: React.ComponentProps<'input'>) => <input {...props} />,
 }));
 
 vi.mock('@/components/ui/label', () => ({

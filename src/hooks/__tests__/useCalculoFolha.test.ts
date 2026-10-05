@@ -14,7 +14,7 @@ const mockFolhaItemUpsert = vi.fn(() => ({
 
 vi.mock('@/utils/folhaCalc', () => ({
   folhaCalc: {
-    processar: (...args: any[]) => mockProcessar(...args),
+    processar: (...args: unknown[]) => mockProcessar(...args),
   },
 }));
 
@@ -55,7 +55,7 @@ vi.mock('@/integrations/supabase/client', () => ({
           insert: () => Promise.resolve({ error: null }),
         };
       }
-      const chain: any = {
+      const chain = {
         select: () => chain,
         eq: () => chain,
         maybeSingle: () => Promise.resolve({ data: null, error: null }),

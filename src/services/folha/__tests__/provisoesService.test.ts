@@ -18,7 +18,7 @@ const lucroReal = {
   aliquota_encargos_folha: null,
 };
 
-function makeColabChain(data: any[] | null, error: any = null) {
+function makeColabChain(data: unknown | null, error: { message: string; code?: string } | null = null) {
   const result = { data, error };
   const eq2 = vi.fn().mockResolvedValue(result);
   const eq1 = vi.fn().mockReturnValue({ eq: eq2 });
@@ -26,12 +26,12 @@ function makeColabChain(data: any[] | null, error: any = null) {
   return { select };
 }
 
-function makeUpsertChain(error: any = null) {
+function makeUpsertChain(error: { message: string; code?: string } | null = null) {
   const upsert = vi.fn().mockResolvedValue({ data: null, error });
   return { upsert };
 }
 
-function makeEmpresaChain(data: any = lucroReal, error: any = null) {
+function makeEmpresaChain(data: unknown = lucroReal, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const eq = vi.fn().mockReturnValue({ maybeSingle });
   const select = vi.fn().mockReturnValue({ eq });
@@ -81,12 +81,12 @@ describe('provisoesService.calcularProvisoesMensais', () => {
 
   it('upserts correct provisão values for a 3000 salary', async () => {
     const colaboradores = [{ id: 'c1', salario_base: 3000, nome_completo: 'Test' }];
-    let capturedUpsert: any = null;
+    let capturedUpsert: Record<string, unknown> = {};
     mockFrom.mockImplementation((table: string) => {
       if (table === 'empresas') return makeEmpresaChain();
       if (table === 'colaboradores') return makeColabChain(colaboradores);
       if (table === 'provisoes_folha') {
-        const upsert = vi.fn().mockImplementation((data: any) => {
+        const upsert = vi.fn().mockImplementation((data: Record<string, unknown>) => {
           capturedUpsert = data;
           return Promise.resolve({ data: null, error: null });
         });

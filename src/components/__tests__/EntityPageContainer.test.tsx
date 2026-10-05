@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
-vi.mock('@/lib/utils', () => ({ cn: (...c: any[]) => c.filter(Boolean).join(' ') }));
+vi.mock('@/lib/utils', () => ({ cn: (...c: unknown[]) => c.filter(Boolean).join(' ') }));
 vi.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...p }: { children?: ReactNode; [key: string]: unknown }) => <div {...p}>{children}</div>,
@@ -70,7 +70,13 @@ vi.mock('@/components/ui/module-skeleton', () => ({
 }));
 
 vi.mock('@/components/ui/data-table-pagination', () => ({
-  DataTablePagination: ({ currentPage, totalPages }: any) => (
+  DataTablePagination: ({
+    currentPage,
+    totalPages,
+  }: {
+    currentPage?: React.ReactNode;
+    totalPages?: React.ReactNode;
+  }) => (
     <div data-testid="pagination">
       Page {currentPage} of {totalPages}
     </div>
@@ -104,7 +110,7 @@ const DEFAULT_PROPS = {
   onRefetch: vi.fn(),
   entityName: 'colaborador',
   columns: [{ header: 'Nome' }, { header: 'Status' }],
-  renderRow: (item: any) => (
+  renderRow: (item: { id: string }) => (
     <tr key={item.id}>
       <td>{item.id}</td>
     </tr>

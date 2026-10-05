@@ -13,9 +13,9 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // Thenable chain for select → order → limit → (optional eq) → await
-function setupListChain(data: any[], error: any = null) {
+function setupListChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const response = { data, error };
-  const chain: any = {};
+  const chain: Record<string, unknown> = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
   chain.limit = vi.fn().mockReturnValue(chain);

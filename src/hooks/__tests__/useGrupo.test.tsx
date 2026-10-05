@@ -12,7 +12,7 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: mockFrom },
 }));
 
-function buildChain(response: { data: any; error: any }) {
+function buildChain(response: { data: unknown; error: { message: string } | null }) {
   const finalOrder = vi.fn().mockResolvedValue(response);
   const firstOrder = vi.fn().mockReturnValue({ order: finalOrder });
   const select = vi.fn().mockReturnValue({ order: firstOrder });
@@ -100,7 +100,7 @@ describe('useGrupo', () => {
     await waitFor(() => expect(result.current.isLoading).toBe(false));
     expect(result.current.empresasAtivas).toHaveLength(2);
     expect(result.current.totalAtivas).toBe(2);
-    expect(result.current.empresasAtivas.every(e => e.ativa)).toBe(true);
+    expect(result.current.empresasAtivas.every((e) => e.ativa)).toBe(true);
   });
 
   it('totalAtivas equals count of ativa=true entries', async () => {

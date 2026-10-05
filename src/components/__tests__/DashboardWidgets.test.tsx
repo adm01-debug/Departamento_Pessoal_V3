@@ -9,7 +9,7 @@ const mockNavigate = vi.fn();
 vi.mock('framer-motion', () => ({
   motion: {
     create:
-      (Component: any) =>
+      (Component: React.ElementType) =>
       ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => (
         <Component {...rest}>{children}</Component>
       ),

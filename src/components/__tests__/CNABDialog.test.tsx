@@ -25,7 +25,7 @@ vi.mock('@/utils/dateLocal', () => ({
 }));
 
 vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
-vi.mock('@/utils/safeError', () => ({ safeErrorMessage: vi.fn((e: any, d: string) => d) }));
+vi.mock('@/utils/safeError', () => ({ safeErrorMessage: vi.fn((e: unknown, d: string) => d) }));
 
 vi.mock('@/components/ui/dialog', () => ({
   Dialog: ({ children, onOpenChange }: { children?: ReactNode; onOpenChange?: (open: boolean) => void }) => {
@@ -47,7 +47,7 @@ vi.mock('@/components/ui/button', () => ({
 }));
 
 vi.mock('@/components/ui/input', () => ({
-  Input: (props: any) => <input {...props} />,
+  Input: (props: React.ComponentProps<'input'>) => <input {...props} />,
 }));
 
 vi.mock('@/components/ui/label', () => ({
@@ -61,6 +61,7 @@ vi.mock('@/components/ui/card', () => ({
 
 import { CNABDialog } from '../folha/CNABDialog';
 import { cnabService } from '@/services/cnabService';
+import type { CNABConfig } from '@/services/cnabService';
 import { toast } from 'sonner';
 
 function deferred<T>() {
@@ -132,8 +133,8 @@ describe('CNABDialog', () => {
   });
 
   it('descarta resposta atrasada após fechar e reabrir na mesma empresa (ABA)', async () => {
-    const antiga = deferred<any>();
-    const atual = deferred<any>();
+    const antiga = deferred<CNABConfig | null>();
+    const atual = deferred<CNABConfig | null>();
     vi.mocked(cnabService.getConfig)
       .mockImplementationOnce(() => antiga.promise)
       .mockImplementationOnce(() => atual.promise);

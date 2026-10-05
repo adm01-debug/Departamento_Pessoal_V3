@@ -52,7 +52,7 @@ vi.mock('@/components/ui/dialog', () => ({
 }));
 
 vi.mock('@/components/ui/input', () => ({
-  Input: (props: any) => <input data-testid="input" {...props} />,
+  Input: (props: React.ComponentProps<'input'>) => <input data-testid="input" {...props} />,
 }));
 
 vi.mock('@/components/ui/label', () => ({
@@ -60,7 +60,7 @@ vi.mock('@/components/ui/label', () => ({
 }));
 
 vi.mock('@/components/ui/textarea', () => ({
-  Textarea: (props: any) => <textarea data-testid="textarea" {...props} />,
+  Textarea: (props: React.ComponentProps<'textarea'>) => <textarea data-testid="textarea" {...props} />,
 }));
 
 vi.mock('@/components/ui/select', () => ({

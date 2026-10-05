@@ -13,7 +13,7 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
-vi.mock('@/utils/safeError', () => ({ safeErrorMessage: vi.fn((e: any, d: string) => d) }));
+vi.mock('@/utils/safeError', () => ({ safeErrorMessage: vi.fn((e: unknown, d: string) => d) }));
 
 vi.mock('@/hooks/useEmpresas', () => ({
   useEmpresas: () => ({ empresaAtual: { id: 'emp-1' }, empresas: [], loading: false }),

@@ -15,12 +15,19 @@ import { gerarPDIPDF } from '../evaluationPDF';
 
 function makeDocMock() {
   const doc = {
-    setFontSize: vi.fn(), setTextColor: vi.fn(), setFont: vi.fn(),
-    setFillColor: vi.fn(), rect: vi.fn(), text: vi.fn(), line: vi.fn(),
+    setFontSize: vi.fn(),
+    setTextColor: vi.fn(),
+    setFont: vi.fn(),
+    setFillColor: vi.fn(),
+    rect: vi.fn(),
+    text: vi.fn(),
+    line: vi.fn(),
     save: mockSave,
     internal: { pageSize: { getWidth: () => 210 } },
     lastAutoTable: { finalY: 100 },
-    autoTable: vi.fn().mockImplementation(function(this: any) { this.lastAutoTable = { finalY: 100 }; }),
+    autoTable: vi.fn().mockImplementation(function (this: Record<string, unknown>) {
+      this.lastAutoTable = { finalY: 100 };
+    }),
   };
   return doc;
 }
@@ -28,11 +35,19 @@ function makeDocMock() {
 describe('gerarPDIPDF', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    MockJsPDF.mockImplementation(function() { return makeDocMock(); });
+    MockJsPDF.mockImplementation(function () {
+      return makeDocMock();
+    });
   });
 
   it('creates a jsPDF instance', async () => {
-    await gerarPDIPDF('João', { titulo: 'Dev Skills', competencia: 'Liderança', acao: 'Treinamento', prazo: '2024-12-31', status: 'pendente' });
+    await gerarPDIPDF('João', {
+      titulo: 'Dev Skills',
+      competencia: 'Liderança',
+      acao: 'Treinamento',
+      prazo: '2024-12-31',
+      status: 'pendente',
+    });
     expect(MockJsPDF).toHaveBeenCalledTimes(1);
   });
 

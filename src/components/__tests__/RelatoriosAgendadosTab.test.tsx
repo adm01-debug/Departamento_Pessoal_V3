@@ -37,7 +37,7 @@ vi.mock('sonner', () => ({
 }));
 
 vi.mock('@/utils/safeError', () => ({
-  safeErrorMessage: vi.fn((e: any, fallback: string) => fallback),
+  safeErrorMessage: vi.fn((e: unknown, fallback: string) => fallback),
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
@@ -89,7 +89,7 @@ vi.mock('@/components/ui/select', () => ({
 }));
 
 vi.mock('@/components/ui/input', () => ({
-  Input: (props: any) => <input {...props} />,
+  Input: (props: React.ComponentProps<'input'>) => <input {...props} />,
 }));
 
 vi.mock('@/components/ui/label', () => ({

@@ -43,7 +43,7 @@ describe('contratacaoService.validarDocumento', () => {
     mockLog.mockResolvedValue(undefined);
   });
 
-  function setupUpdateEqChain(error: any = null) {
+  function setupUpdateEqChain(error: { message: string; code?: string } | null = null) {
     const eqFn = vi.fn().mockResolvedValue({ error });
     const updateFn = vi.fn().mockReturnValue({ eq: eqFn });
     mockFrom.mockReturnValue({ update: updateFn });
@@ -106,7 +106,7 @@ describe('contratacaoService.enviarLinkCandidato', () => {
     vi.clearAllMocks();
   });
 
-  function setupInsertSingleChain(data: any, error: any = null) {
+  function setupInsertSingleChain(data: unknown, error: { message: string; code?: string } | null = null) {
     const singleFn = vi.fn().mockResolvedValue({ data, error });
     const selectFn = vi.fn().mockReturnValue({ single: singleFn });
     const insertFn = vi.fn().mockReturnValue({ select: selectFn });
@@ -131,7 +131,7 @@ describe('contratacaoService.enviarLinkCandidato', () => {
   });
 
   it('generates a non-empty token string', async () => {
-    let capturedPayload: any;
+    let capturedPayload: { token?: string } = {};
     const singleFn = vi.fn().mockResolvedValue({ data: {}, error: null });
     const selectFn = vi.fn().mockReturnValue({ single: singleFn });
     const insertFn = vi.fn().mockImplementation((payload) => {
@@ -141,8 +141,8 @@ describe('contratacaoService.enviarLinkCandidato', () => {
     mockFrom.mockReturnValue({ insert: insertFn });
 
     await contratacaoService.enviarLinkCandidato('adm-1', 'a@b.com');
-    expect(typeof capturedPayload.token).toBe('string');
-    expect(capturedPayload.token.length).toBeGreaterThan(0);
+    expect(typeof capturedPayload.token!).toBe('string');
+    expect(capturedPayload.token!.length).toBeGreaterThan(0);
   });
 
   it('throws on DB error', async () => {

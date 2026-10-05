@@ -22,7 +22,7 @@ const { MockJsPDF, mockAutoTable } = vi.hoisted(() => {
   const MockJsPDF = vi.fn().mockImplementation(function () {
     return mockDoc;
   });
-  const mockAutoTable = vi.fn().mockImplementation((doc: any) => {
+  const mockAutoTable = vi.fn().mockImplementation((doc: Record<string, unknown>) => {
     doc.lastAutoTable = { finalY: 80 };
   });
   return { MockJsPDF, mockAutoTable };
@@ -77,7 +77,7 @@ describe('gerarAvisoFeriasPDF', () => {
     MockJsPDF.mockImplementation(function () {
       return freshDoc;
     });
-    mockAutoTable.mockImplementation((doc: any) => {
+    mockAutoTable.mockImplementation((doc: Record<string, unknown>) => {
       doc.lastAutoTable = { finalY: 80 };
     });
   });

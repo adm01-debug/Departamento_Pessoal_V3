@@ -31,8 +31,8 @@ vi.mock('sonner', () => ({ toast: { success: mockToastSuccess, error: mockToastE
 
 import { useImportacaoColaboradores } from '../useImportacaoColaboradores';
 
-function buildSelectChain(data: any[]) {
-  const chain: any = {};
+function buildSelectChain(data: unknown) {
+  const chain: Record<string, unknown> = {};
   chain.select = vi.fn().mockReturnValue(chain);
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve({ data, error: null }).then(fn);
@@ -142,8 +142,8 @@ describe('useImportacaoColaboradores', () => {
     await act(async () => {
       try {
         await result.current.processarArquivo(mockFile);
-      } catch (err: any) {
-        caught = err;
+      } catch (err: unknown) {
+        caught = err as { message?: string } | null;
       }
     });
 

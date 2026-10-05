@@ -24,9 +24,9 @@ vi.mock('sonner', () => ({
 
 import { useFeriados } from '../useFeriados';
 
-function buildSelectChain(data: any[] = []) {
+function buildSelectChain(data: unknown = []) {
   const response = { data, error: null };
-  const chain: any = {};
+  const chain: Record<string, unknown> = {};
   chain.select = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
   chain.or = vi.fn().mockReturnValue(chain);
@@ -74,7 +74,7 @@ describe('useFeriados', () => {
 
   it('criarFeriado inserts into feriados and shows success toast', async () => {
     const insertFn = vi.fn().mockResolvedValue({ error: null });
-    const selectChain: any = {
+    const selectChain = {
       order: vi.fn().mockReturnThis(),
       or: vi.fn().mockReturnThis(),
       then: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).then(fn),
@@ -97,7 +97,7 @@ describe('useFeriados', () => {
   it('excluirFeriado deletes by id and shows success toast', async () => {
     const eqFn = vi.fn().mockResolvedValue({ error: null });
     const deleteFn = vi.fn().mockReturnValue({ eq: eqFn });
-    const selectChain: any = {
+    const selectChain = {
       order: vi.fn().mockReturnThis(),
       or: vi.fn().mockReturnThis(),
       then: (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).then(fn),

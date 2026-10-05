@@ -29,9 +29,9 @@ const EMPRESA_ID = 'emp-1';
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
-function makeListChain(data: any[], error: any = null) {
+function makeListChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const response = { data, error };
-  const chain: any = {};
+  const chain: Record<string, unknown> = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
   chain.limit = vi.fn().mockReturnValue(chain);
@@ -43,10 +43,10 @@ function makeListChain(data: any[], error: any = null) {
   return { selectFn, chain };
 }
 
-function makeSingleChain(data: any, error: any = null) {
+function makeSingleChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const single = vi.fn().mockResolvedValue({ data, error });
-  const chain: any = { maybeSingle, single };
+  const chain: Record<string, unknown> = { maybeSingle, single };
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.select = vi.fn().mockReturnValue(chain);
   const selectFn = vi.fn().mockReturnValue(chain);

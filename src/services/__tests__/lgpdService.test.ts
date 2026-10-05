@@ -14,9 +14,9 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // Thenable list chain (select → order → optional eq → await)
-function setupListChain(data: any[], error: any = null) {
+function setupListChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const response = { data, error };
-  const chain: any = {};
+  const chain: Record<string, unknown> = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
   chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
@@ -28,7 +28,7 @@ function setupListChain(data: any[], error: any = null) {
 }
 
 // Insert chain (insert → select → maybeSingle)
-function setupInsertChain(data: any, error: any = null) {
+function setupInsertChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const insertFn = vi.fn().mockReturnValue({ select: selectFn });
@@ -37,7 +37,7 @@ function setupInsertChain(data: any, error: any = null) {
 }
 
 // Update chain (update → eq → select → maybeSingle)
-function setupUpdateChain(data: any, error: any = null) {
+function setupUpdateChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const eqFn = vi.fn();
@@ -130,7 +130,7 @@ describe('lgpdService.revogarConsentimento', () => {
     const updated = { id: 'lgc-1', aceito: false };
     const { updateFn, eqFn } = setupUpdateChain(updated);
     await lgpdService.revogarConsentimento('lgc-1', EMPRESA_ID);
-    const updateArgs = (updateFn as any).mock.calls[0][0];
+    const updateArgs = vi.mocked(updateFn).mock.calls[0][0];
     expect(updateArgs.aceito).toBe(false);
     expect(updateArgs.revogado_em).toBeDefined();
     expect(eqFn).toHaveBeenCalledWith('id', 'lgc-1');

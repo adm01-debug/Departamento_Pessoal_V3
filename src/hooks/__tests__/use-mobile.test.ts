@@ -12,7 +12,7 @@ describe('useIsMobile', () => {
       writable: true,
       value: vi.fn().mockReturnValue({
         matches,
-        addEventListener: vi.fn((event: string, fn: any) => listeners.push(fn)),
+        addEventListener: vi.fn((event: string, fn: (e: MediaQueryListEvent) => void) => listeners.push(fn)),
         removeEventListener: vi.fn(),
       }),
     });

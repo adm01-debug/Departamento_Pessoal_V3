@@ -27,13 +27,13 @@ class TestService extends BaseService<{ id: string; nome: string }> {
 }
 
 // Helper: build a range → data/count/error chain for listar
-function setupListChain(data: any[], count: number, error: any = null) {
+function setupListChain(data: unknown, count: number, error: { message: string; code?: string } | null = null) {
   const rangeFn = vi.fn().mockResolvedValue({ data, count, error });
   const orderFn = vi.fn().mockReturnValue({ range: rangeFn });
   const eqFn = vi.fn();
   const ilikeFn = vi.fn();
 
-  const baseQuery: any = { order: orderFn, eq: eqFn, ilike: ilikeFn };
+  const baseQuery = { order: orderFn, eq: eqFn, ilike: ilikeFn };
   eqFn.mockReturnValue(baseQuery);
   ilikeFn.mockReturnValue(baseQuery);
 
@@ -43,7 +43,7 @@ function setupListChain(data: any[], count: number, error: any = null) {
 }
 
 // Helper: build maybeSingle chain
-function setupMaybeSingleChain(data: any, error: any = null) {
+function setupMaybeSingleChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const eqFn = vi.fn().mockReturnValue({ maybeSingle });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });

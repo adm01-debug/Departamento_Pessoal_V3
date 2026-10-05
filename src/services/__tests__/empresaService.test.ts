@@ -11,10 +11,10 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // Helper: build select → or → order → range chain for listar
-function setupListarChain(data: any[], count: number, error: any = null) {
+function setupListarChain(data: unknown, count: number, error: { message: string; code?: string } | null = null) {
   const rangeFn = vi.fn().mockResolvedValue({ data, count, error });
   const orderFn = vi.fn().mockReturnValue({ range: rangeFn });
-  const baseQuery: any = { order: orderFn };
+  const baseQuery = { order: orderFn };
   const orFn = vi.fn().mockReturnValue(baseQuery);
   Object.assign(baseQuery, { or: orFn });
   const selectFn = vi.fn().mockReturnValue(baseQuery);
@@ -53,7 +53,7 @@ describe('empresaService.listar', () => {
   it('search filter includes razao_social, nome_fantasia, and cnpj', async () => {
     const { orFn } = setupListarChain([], 0);
     await empresaService.listar({ search: 'test' });
-    const orArg: string = (orFn as any).mock.calls[0][0];
+    const orArg: string = vi.mocked(orFn).mock.calls[0][0];
     expect(orArg).toContain('razao_social.ilike');
     expect(orArg).toContain('nome_fantasia.ilike');
     expect(orArg).toContain('cnpj.ilike');

@@ -15,7 +15,7 @@ type UpdateChain = { eq: ReturnType<typeof vi.fn> };
 type DeleteChain = { eq: ReturnType<typeof vi.fn> };
 
 const { mockFrom, mockLog, mockLoggerError } = vi.hoisted<{
-  mockFrom: Mock<(...args: any[]) => any>;
+  mockFrom: Mock;
   mockLog: ReturnType<typeof vi.fn>;
   mockLoggerError: ReturnType<typeof vi.fn>;
 }>(() => ({
@@ -49,7 +49,7 @@ vi.mock('../loggerService', () => ({
  * encadeamento PostgREST — inclusive os `.eq()` extras introduzidos pelo
  * isolamento multi-tenant.
  */
-function setupChain(data: any = null, extra: Record<string, unknown> = {}) {
+function setupChain(data: unknown = null, extra: Record<string, unknown> = {}) {
   const chain = makeChain({ data, ...extra } as never);
   mockFrom.mockReturnValue(chain);
   return {
@@ -67,7 +67,7 @@ function setupChain(data: any = null, extra: Record<string, unknown> = {}) {
 }
 
 /** Chain isolado, para uso com `mockReturnValueOnce`. */
-function standaloneChain(data: any = null, error: any = null) {
+function standaloneChain(data: unknown = null, error: { message: string; code?: string } | null = null) {
   const chain = makeChain({ data, error });
   return {
     chain,
@@ -82,14 +82,17 @@ function standaloneChain(data: any = null, error: any = null) {
   };
 }
 
-const setupListarChain = (data: any[], count = 0, error: any = null) => setupChain(data, { count, error });
-const setupListComAdesaoChain = (data: any[], error: any = null) => setupChain(data, { error });
+const setupListarChain = (data: unknown, count = 0, error: { message: string; code?: string } | null = null) =>
+  setupChain(data, { count, error });
+const setupListComAdesaoChain = (data: unknown, error: { message: string; code?: string } | null = null) =>
+  setupChain(data, { error });
 const makeInsertMaybeSingleMock = standaloneChain;
 const makeBuscarMock = standaloneChain;
 const makeUpdateMaybeSingleMock = standaloneChain;
-const makeDeleteEqMock = (error: any = null) => standaloneChain(null, error);
+const makeDeleteEqMock = (error: { message: string; code?: string } | null = null) => standaloneChain(null, error);
 const makeInsertSingleMock = standaloneChain;
-const makeSelectEqMock = (data: any[], error: any = null, _eqCount = 1) => standaloneChain(data, error);
+const makeSelectEqMock = (data: unknown, error: { message: string; code?: string } | null = null, _eqCount = 1) =>
+  standaloneChain(data, error);
 
 // ─── listar ───────────────────────────────────────────────────────────────────
 
@@ -326,7 +329,7 @@ describe('beneficioService.obterResumoCustos', () => {
     vi.resetAllMocks();
   });
 
-  function setupResumoCustos(data: any[], error: any = null) {
+  function setupResumoCustos(data: unknown, error: { message: string; code?: string } | null = null) {
     const { chain, selectFn } = setupChain(data, { error });
     return { selectFn, eq1Fn: chain.eq, eq2Fn: chain.eq };
   }

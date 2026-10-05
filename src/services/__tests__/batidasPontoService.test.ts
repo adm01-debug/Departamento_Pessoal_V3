@@ -19,9 +19,9 @@ vi.mock('../pontoAuditService', () => ({
 }));
 
 // select → eq → order×2 → optional gte/lte → await (thenable)
-function setupListChain(data: any[], error: any = null) {
+function setupListChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const response = { data, error };
-  const chain: any = {};
+  const chain: Record<string, unknown> = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.gte = vi.fn().mockReturnValue(chain);
   chain.lte = vi.fn().mockReturnValue(chain);
@@ -34,7 +34,7 @@ function setupListChain(data: any[], error: any = null) {
   return { selectFn, chain };
 }
 
-function setupInsertChain(data: any, error: any = null) {
+function setupInsertChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const insertFn = vi.fn().mockReturnValue({ select: selectFn });

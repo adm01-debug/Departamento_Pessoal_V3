@@ -47,8 +47,8 @@ const colaboradoresMock = [
   },
 ];
 
-function buildSupabaseChain(overrides: Record<string, any> = {}) {
-  const defaults: Record<string, any> = {
+function buildSupabaseChain(overrides: Record<string, unknown> = {}) {
+  const defaults: Record<string, unknown> = {
     colaboradores: { data: colaboradoresMock, error: null },
     folhas_pagamento: { data: { id: 'folha-1', status: 'aberta' }, error: null },
     registros_ponto: { data: [], error: null },

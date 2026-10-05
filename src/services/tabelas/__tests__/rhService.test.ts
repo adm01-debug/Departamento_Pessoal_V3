@@ -7,7 +7,7 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
-function makeChain(data: any = [], error: any = null) {
+function makeChain(data: unknown = [], error: { message: string; code?: string } | null = null) {
   const result = { data, error };
   const maybeSingle = vi.fn().mockResolvedValue(result);
   const limit = vi.fn().mockResolvedValue(result);
@@ -18,7 +18,7 @@ function makeChain(data: any = [], error: any = null) {
     then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
   });
   // eqResult needs a self-reference so multiple .eq().eq() chains work
-  const eqResult: any = {
+  const eqResult: Record<string, unknown> = {
     order,
     maybeSingle,
     then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),

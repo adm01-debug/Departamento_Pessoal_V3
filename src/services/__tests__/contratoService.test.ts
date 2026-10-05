@@ -14,9 +14,9 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // Thenable list chain (select → order → optional eq → await)
-function setupListChain(data: any[], error: any = null) {
+function setupListChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const response = { data, error };
-  const chain: any = {};
+  const chain: Record<string, unknown> = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
   chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
@@ -28,7 +28,7 @@ function setupListChain(data: any[], error: any = null) {
 }
 
 // Insert chain
-function setupInsertChain(data: any, error: any = null) {
+function setupInsertChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const insertFn = vi.fn().mockReturnValue({ select: selectFn });
@@ -37,7 +37,7 @@ function setupInsertChain(data: any, error: any = null) {
 }
 
 // Update chain
-function setupUpdateChain(data: any, error: any = null) {
+function setupUpdateChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const eqFn = vi.fn();
@@ -212,7 +212,7 @@ describe('contratoService.encerrar', () => {
   it('calls atualizar with status=encerrado and motivo as observacoes', async () => {
     const { updateFn } = setupUpdateChain({ id: 'c1', status: 'encerrado' });
     await contratoService.encerrar('c1', 'Demissão sem justa causa', EMPRESA_ID);
-    const updateArgs = (updateFn as any).mock.calls[0][0];
+    const updateArgs = vi.mocked(updateFn).mock.calls[0][0];
     expect(updateArgs.status).toBe('encerrado');
     expect(updateArgs.observacoes).toBe('Demissão sem justa causa');
   });
@@ -228,7 +228,7 @@ describe('contratoService.renovar', () => {
   it('calls atualizar with new data_fim and status=ativo', async () => {
     const { updateFn, eqFn } = setupUpdateChain({ id: 'c1', status: 'ativo' });
     await contratoService.renovar('c1', '2027-12-31', EMPRESA_ID);
-    const updateArgs = (updateFn as any).mock.calls[0][0];
+    const updateArgs = vi.mocked(updateFn).mock.calls[0][0];
     expect(updateArgs.data_fim).toBe('2027-12-31');
     expect(updateArgs.status).toBe('ativo');
     expect(eqFn).toHaveBeenCalledWith('id', 'c1');

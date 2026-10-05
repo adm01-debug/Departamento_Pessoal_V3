@@ -40,7 +40,7 @@ vi.mock('sonner', () => ({
 }));
 
 vi.mock('@/utils/safeError', () => ({
-  safeErrorMessage: vi.fn((e: any) => String(e)),
+  safeErrorMessage: vi.fn((e: unknown) => String(e)),
 }));
 
 import { ImportarAFDTDialog } from '../ponto/ImportarAFDTDialog';

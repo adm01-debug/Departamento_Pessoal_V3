@@ -54,7 +54,7 @@ vi.mock('@/components/ui/badge', () => ({
 }));
 
 vi.mock('@/lib/utils', () => ({
-  cn: (...args: any[]) => args.filter(Boolean).join(' '),
+  cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
 }));
 
 import { useQuery } from '@tanstack/react-query';

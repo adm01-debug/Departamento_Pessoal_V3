@@ -22,7 +22,7 @@ const { MockJsPDF, mockSave, mockAutoTable } = vi.hoisted(() => {
       lastAutoTable: { finalY: 80 },
     };
   });
-  const mockAutoTable = vi.fn().mockImplementation(function (doc: any) {
+  const mockAutoTable = vi.fn().mockImplementation(function (doc: Record<string, unknown>) {
     doc.lastAutoTable = { finalY: 80 };
   });
   return { MockJsPDF, mockSave, mockAutoTable };
@@ -71,7 +71,7 @@ describe('gerarAfastamentosPDF', () => {
     MockJsPDF.mockImplementation(function () {
       return mockDoc as never;
     });
-    mockAutoTable.mockImplementation(function (doc: any) {
+    mockAutoTable.mockImplementation(function (doc: Record<string, unknown>) {
       doc.lastAutoTable = { finalY: 80 };
     });
   });

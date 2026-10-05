@@ -47,7 +47,7 @@ vi.mock('@/components/ui/dialog', () => ({
 }));
 
 vi.mock('@/utils/safeError', () => ({
-  safeErrorMessage: vi.fn((e: any) => String(e)),
+  safeErrorMessage: vi.fn((e: unknown) => String(e)),
 }));
 
 import { PontoAdjustmentRequests } from '../ponto/PontoAdjustmentRequests';

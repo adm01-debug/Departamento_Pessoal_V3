@@ -24,14 +24,14 @@ vi.mock('@/contexts', () => ({
 }));
 
 const { supabaseSelectResult, insertMock } = vi.hoisted(() => ({
-  supabaseSelectResult: { data: [] as any[], error: null as any },
-  insertMock: vi.fn(async (_payload: any) => ({ error: null })),
+  supabaseSelectResult: { data: [] as unknown[], error: null },
+  insertMock: vi.fn(async (_payload: unknown) => ({ error: null })),
 }));
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: () => ({
       select: () => ({ eq: async () => supabaseSelectResult }),
-      insert: (payload: any) => insertMock(payload),
+      insert: (payload: unknown) => insertMock(payload),
     }),
   },
 }));

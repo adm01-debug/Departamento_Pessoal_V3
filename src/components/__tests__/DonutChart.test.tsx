@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 
 vi.mock('framer-motion', () => ({
   motion: {
-    circle: (props: any) => <circle {...props} />,
+    circle: (props: React.ComponentProps<'circle'>) => <circle {...props} />,
   },
   useInView: vi.fn(() => true),
 }));
@@ -18,9 +18,7 @@ const MOCK_SEGMENTS = [
 
 describe('DonutChart', () => {
   it('returns null when total is 0', () => {
-    const { container } = render(
-      <DonutChart segments={[{ label: 'A', value: 0, color: '#fff' }]} />
-    );
+    const { container } = render(<DonutChart segments={[{ label: 'A', value: 0, color: '#fff' }]} />);
     expect(container.firstChild).toBeNull();
   });
 

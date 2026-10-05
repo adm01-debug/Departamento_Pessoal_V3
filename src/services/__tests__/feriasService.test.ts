@@ -13,10 +13,10 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // Helper: build select → eq/ilike → order → range chain for listSolicitacoes
-function setupListChain(data: any[], count: number, error: any = null) {
+function setupListChain(data: unknown, count: number, error: { message: string; code?: string } | null = null) {
   const rangeFn = vi.fn().mockResolvedValue({ data, count, error });
   const orderFn = vi.fn().mockReturnValue({ range: rangeFn });
-  const baseQuery: any = { order: orderFn };
+  const baseQuery = { order: orderFn };
   const eqFn = vi.fn().mockReturnValue(baseQuery);
   const ilikeFn = vi.fn().mockReturnValue(baseQuery);
   Object.assign(baseQuery, { eq: eqFn, ilike: ilikeFn });
@@ -26,7 +26,7 @@ function setupListChain(data: any[], count: number, error: any = null) {
 }
 
 // Helper: build a simple update → eq chain (resolves to { error })
-function setupUpdateChain(error: any = null) {
+function setupUpdateChain(error: { message: string; code?: string } | null = null) {
   const eqFn = vi.fn();
   const __delChain = {
     then: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).then(r),
@@ -175,7 +175,7 @@ describe('feriasService.cancelar', () => {
   it('calls update with cancelado=true and status=cancelada', async () => {
     const { updateFn } = setupUpdateChain();
     await feriasService.cancelar('ferias-3', EMPRESA_ID, 'user-1');
-    const updateArgs = (updateFn as any).mock.calls[0][0];
+    const updateArgs = vi.mocked(updateFn).mock.calls[0][0];
     expect(updateArgs.cancelado).toBe(true);
     expect(updateArgs.status).toBe('cancelada');
     expect(updateArgs.cancelado_por).toBe('user-1');
@@ -184,7 +184,7 @@ describe('feriasService.cancelar', () => {
   it('sets cancelado_por to null when userId not provided', async () => {
     const { updateFn } = setupUpdateChain();
     await feriasService.cancelar('ferias-3', EMPRESA_ID);
-    const updateArgs = (updateFn as any).mock.calls[0][0];
+    const updateArgs = vi.mocked(updateFn).mock.calls[0][0];
     expect(updateArgs.cancelado_por).toBeNull();
   });
 
@@ -204,7 +204,7 @@ describe('feriasService.aprovarGestor', () => {
   it('calls update with aprovado_gestor=true and userId', async () => {
     const { updateFn } = setupUpdateChain();
     await feriasService.aprovarGestor('ferias-1', EMPRESA_ID, 'gestor-1');
-    const updateArgs = (updateFn as any).mock.calls[0][0];
+    const updateArgs = vi.mocked(updateFn).mock.calls[0][0];
     expect(updateArgs.aprovado_gestor).toBe(true);
     expect(updateArgs.status_aprovacao_gestor).toBe('aprovado');
     expect(updateArgs.aprovado_gestor_por).toBe('gestor-1');
@@ -226,7 +226,7 @@ describe('feriasService.aprovarRH', () => {
   it('calls update with aprovado_rh=true and status aprovada', async () => {
     const { updateFn } = setupUpdateChain();
     await feriasService.aprovarRH('ferias-1', EMPRESA_ID, 'rh-1');
-    const updateArgs = (updateFn as any).mock.calls[0][0];
+    const updateArgs = vi.mocked(updateFn).mock.calls[0][0];
     expect(updateArgs.aprovado_rh).toBe(true);
     expect(updateArgs.status).toBe('aprovada');
     expect(updateArgs.aprovado_rh_por).toBe('rh-1');
@@ -364,7 +364,7 @@ describe('feriasService.excluirPeriodoAquisitivo', () => {
 
   it('calls delete with the given id', async () => {
     const eqFn = vi.fn();
-    const delChain: any = { eq: eqFn, then: (r: (v?: unknown) => unknown) => Promise.resolve({ error: null }).then(r) };
+    const delChain = { eq: eqFn, then: (r: (v?: unknown) => unknown) => Promise.resolve({ error: null }).then(r) };
     eqFn.mockReturnValue(delChain);
     const deleteFn = vi.fn().mockReturnValue(delChain);
     mockFrom.mockReturnValue({ delete: deleteFn });
@@ -376,7 +376,7 @@ describe('feriasService.excluirPeriodoAquisitivo', () => {
 
   it('throws on DB error', async () => {
     const eqFn = vi.fn();
-    const delChain: any = {
+    const delChain = {
       eq: eqFn,
       then: (r: (v?: unknown) => unknown) => Promise.resolve({ error: { message: 'fail' } }).then(r),
     };

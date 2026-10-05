@@ -7,17 +7,24 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
-function makeChain(data: any = [], error: any = null) {
+function makeChain(data: unknown = [], error: { message: string; code?: string } | null = null) {
   const result = { data, error };
   const order = vi.fn().mockResolvedValue(result);
-  const eqResult: any = { order, then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn) };
+  const eqResult: Record<string, unknown> = {
+    order,
+    then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
+  };
   const eq = vi.fn().mockReturnValue(eqResult);
   eqResult.eq = eq;
-  const deleteEqResult: any = { then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn) };
+  const deleteEqResult: Record<string, unknown> = {
+    then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
+  };
   const deleteEq = vi.fn().mockReturnValue(deleteEqResult);
   deleteEqResult.eq = deleteEq;
   const delete_ = vi.fn().mockReturnValue({ eq: deleteEq });
-  const updateEqResult: any = { then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn) };
+  const updateEqResult: Record<string, unknown> = {
+    then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
+  };
   const updateEq = vi.fn().mockReturnValue(updateEqResult);
   updateEqResult.eq = updateEq;
   const update = vi.fn().mockReturnValue({ eq: updateEq });

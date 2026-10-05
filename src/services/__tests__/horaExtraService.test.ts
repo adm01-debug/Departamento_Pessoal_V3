@@ -14,9 +14,9 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // Helper: thenable chain for select → order → (optional eq) → await
-function setupListarChain(data: any[], error: any = null) {
+function setupListarChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const response = { data, error };
-  const chain: any = {};
+  const chain: Record<string, unknown> = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
   chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
@@ -28,7 +28,7 @@ function setupListarChain(data: any[], error: any = null) {
 }
 
 // Helper: update → eq → select → maybeSingle chain
-function setupUpdateChain(data: any, error: any = null) {
+function setupUpdateChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const eqFn = vi.fn();
@@ -143,7 +143,7 @@ describe('horaExtraService.aprovar', () => {
     const updated = { id: 'he-1', status: 'aprovada' };
     const { updateFn, eqFn } = setupUpdateChain(updated);
     await horaExtraService.aprovar('he-1', 'user-1', EMPRESA_ID);
-    const updateArgs = (updateFn as any).mock.calls[0][0];
+    const updateArgs = vi.mocked(updateFn).mock.calls[0][0];
     expect(updateArgs.status).toBe('aprovada');
     expect(updateArgs.aprovado_por).toBe('user-1');
     expect(eqFn).toHaveBeenCalledWith('id', 'he-1');
@@ -152,7 +152,7 @@ describe('horaExtraService.aprovar', () => {
   it('includes observacoes_aprovador when obs is provided', async () => {
     const { updateFn } = setupUpdateChain({ id: 'he-1', status: 'aprovada' });
     await horaExtraService.aprovar('he-1', 'user-1', EMPRESA_ID, 'Autorizado pelo gestor');
-    const updateArgs = (updateFn as any).mock.calls[0][0];
+    const updateArgs = vi.mocked(updateFn).mock.calls[0][0];
     expect(updateArgs.observacoes_aprovador).toBe('Autorizado pelo gestor');
   });
 
@@ -177,7 +177,7 @@ describe('horaExtraService.rejeitar', () => {
   it('updates status to rejeitada', async () => {
     const { updateFn } = setupUpdateChain({ id: 'he-1', status: 'rejeitada' });
     await horaExtraService.rejeitar('he-1', 'user-1', EMPRESA_ID);
-    const updateArgs = (updateFn as any).mock.calls[0][0];
+    const updateArgs = vi.mocked(updateFn).mock.calls[0][0];
     expect(updateArgs.status).toBe('rejeitada');
     expect(updateArgs.aprovado_por).toBe('user-1');
   });
@@ -185,7 +185,7 @@ describe('horaExtraService.rejeitar', () => {
   it('includes motivo as observacoes_aprovador when provided', async () => {
     const { updateFn } = setupUpdateChain({ id: 'he-1', status: 'rejeitada' });
     await horaExtraService.rejeitar('he-1', 'user-1', EMPRESA_ID, 'Limite mensal atingido');
-    const updateArgs = (updateFn as any).mock.calls[0][0];
+    const updateArgs = vi.mocked(updateFn).mock.calls[0][0];
     expect(updateArgs.observacoes_aprovador).toBe('Limite mensal atingido');
   });
 

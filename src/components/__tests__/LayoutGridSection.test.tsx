@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 
-vi.mock('@/lib/utils', () => ({ cn: (...c: any[]) => c.filter(Boolean).join(' ') }));
+vi.mock('@/lib/utils', () => ({ cn: (...c: unknown[]) => c.filter(Boolean).join(' ') }));
 
 vi.mock('@/components/ui/card', () => ({
   Card: ({ children, id, className }: { children?: ReactNode; id?: string; className?: string }) => (

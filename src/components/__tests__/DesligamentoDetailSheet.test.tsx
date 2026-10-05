@@ -21,7 +21,7 @@ vi.mock('react-router-dom', () => ({
 }));
 
 vi.mock('sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }));
-vi.mock('@/utils/safeError', () => ({ safeErrorMessage: vi.fn((e: any, d: string) => d) }));
+vi.mock('@/utils/safeError', () => ({ safeErrorMessage: vi.fn((e: unknown, d: string) => d) }));
 
 vi.mock('@/components/ui/sheet', () => ({
   Sheet: ({ children }: { children?: ReactNode }) => <div>{children}</div>,

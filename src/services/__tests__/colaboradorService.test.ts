@@ -20,10 +20,10 @@ vi.mock('../loggerService', () => ({
 }));
 
 // Helper: build select → eq/or → order → range chain for listar
-function setupListarChain(data: any[], count: number, error: any = null) {
+function setupListarChain(data: unknown, count: number, error: { message: string; code?: string } | null = null) {
   const rangeFn = vi.fn().mockResolvedValue({ data, count, error });
   const orderFn = vi.fn().mockReturnValue({ range: rangeFn });
-  const baseQuery: any = { order: orderFn };
+  const baseQuery = { order: orderFn };
   const eqFn = vi.fn().mockReturnValue(baseQuery);
   const orFn = vi.fn().mockReturnValue(baseQuery);
   Object.assign(baseQuery, { eq: eqFn, or: orFn });
@@ -33,9 +33,9 @@ function setupListarChain(data: any[], count: number, error: any = null) {
 }
 
 // Helper: build a thenable count chain for getSummary
-function makeCountChain(count: number, error: any = null) {
+function makeCountChain(count: number, error: { message: string; code?: string } | null = null) {
   const response = { count, error };
-  const chain: any = {};
+  const chain: Record<string, unknown> = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
   chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
@@ -188,7 +188,7 @@ describe('colaboradorService.list', () => {
 
 // ─── criar — mapeamento de duplicidade (E50-41) ────────────────────────────────
 
-function setupCriarChain(error: any) {
+function setupCriarChain(error: unknown) {
   const maybeSingleFn = vi.fn().mockResolvedValue({ data: null, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle: maybeSingleFn });
   const insertFn = vi.fn().mockReturnValue({ select: selectFn });
