@@ -239,6 +239,8 @@ BEGIN
     RETURN jsonb_build_object('valido', false, 'motivo', 'Contrato não encontrado');
   END IF;
 
+  -- A página de verificação lê signatario_nome/signatario_cpf_mascarado;
+  -- colaborador_* é mantido para consumidores do formato da versão 20260723210000.
   RETURN jsonb_build_object(
     'valido',           v_row.status = 'assinado' AND v_row.assinado_em IS NOT NULL,
     'status',           v_row.status,
@@ -248,6 +250,11 @@ BEGIN
     'empresa',          v_row.empresa_nome,
     'colaborador_nome', v_row.colaborador_nome,
     'colaborador_cpf',  v_row.colaborador_cpf,
+    'signatario_nome',  CASE
+      WHEN v_row.colaborador_nome IS NULL THEN NULL
+      ELSE regexp_replace(v_row.colaborador_nome, '(\S+)(\s+\S)?.*', '\1\2***')
+    END,
+    'signatario_cpf_mascarado', v_row.colaborador_cpf,
     'data_inicio',      v_row.data_inicio,
     'data_fim',         v_row.data_fim
   );
