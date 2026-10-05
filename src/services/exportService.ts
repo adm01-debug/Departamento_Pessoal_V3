@@ -104,7 +104,7 @@ export const exportPontoPDF = (data: Record<string, unknown>[], title = 'Relató
     const body: string[][] = data.map((item) =>
       columns.map((col) => {
         const val = item[col];
-        if (val === '00:00' || !val) return '-';
+        if (val === '00:00' || val === null || val === undefined || val === '') return '-';
         return String(val);
       })
     );

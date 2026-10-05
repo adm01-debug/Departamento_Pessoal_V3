@@ -60,6 +60,10 @@ vi.mock('@/hooks/useRealTimeSubscription', () => ({
   useRealTimeSubscription: vi.fn(),
 }));
 
+vi.mock('@/hooks/useEmpresas', () => ({
+  useEmpresas: vi.fn(() => ({ empresaAtual: null })),
+}));
+
 vi.mock('@/services/tabelasComplementaresService', () => ({
   viewsService: { listar: vi.fn() },
 }));

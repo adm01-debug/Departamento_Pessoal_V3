@@ -91,3 +91,18 @@ describe('validateTablePayload', () => {
     expect(validateTablePayload('tabela_que_nao_existe_xyz', p, 'ctx')).toBe(p);
   });
 });
+
+describe('validateInput — schema sem shape (não-objeto)', () => {
+  const unionSchema = z.union([
+    z.object({ tipo: z.literal('a'), valor: z.string() }),
+    z.object({ tipo: z.literal('b'), valor: z.number() }),
+  ]);
+
+  it('não lança TypeError — usa parse completo quando não há shape', () => {
+    expect(() => validateInput(unionSchema, { tipo: 'a', valor: 'x' }, 'ctx')).not.toThrow();
+  });
+
+  it('rejeita variant inválida', () => {
+    expect(() => validateInput(unionSchema, { tipo: 'a', valor: 5 }, 'ctx')).toThrow();
+  });
+});

@@ -46,6 +46,8 @@ import {
   Briefcase,
 } from 'lucide-react';
 import { exportPortaria671PDF, exportPontoCSV, type Portaria671Solicitacao } from '@/services/exportService';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
+import { useEmpresas } from '@/hooks/useEmpresas';
 import type { Pendencia } from '@/hooks/usePendencias';
 
 export type PendenciaListItem = Pendencia & { source: 'db' | 'ponto'; raw?: Portaria671Solicitacao };
@@ -108,6 +110,7 @@ export function PendenciasDetailDialog({
   onPontoRespond,
   onPendenciaStatus,
 }: PendenciasDetailDialogProps) {
+  const { empresaAtual } = useEmpresas();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0 gap-0 rounded-2xl border-border/40 shadow-2xl glass">
@@ -439,7 +442,13 @@ export function PendenciasDetailDialog({
                               variant="outline"
                               size="sm"
                               className="h-8 text-[10px] gap-2 rounded-lg hover:bg-primary/5 transition-colors"
-                              onClick={() => exportPortaria671PDF(item.raw!)}
+                              onClick={() => {
+                                void registrarAcessoPII('ponto_registros', 'export', {
+                                  empresaId: empresaAtual?.id,
+                                  registroId: item.id,
+                                });
+                                exportPortaria671PDF(item.raw!);
+                              }}
                             >
                               <Download className="h-3 w-3" /> Exportar PDF (Portaria 671)
                             </Button>
@@ -447,12 +456,16 @@ export function PendenciasDetailDialog({
                               variant="ghost"
                               size="sm"
                               className="h-8 text-[10px] gap-2 rounded-lg"
-                              onClick={() =>
+                              onClick={() => {
+                                void registrarAcessoPII('ponto_registros', 'export', {
+                                  empresaId: empresaAtual?.id,
+                                  registroId: item.id,
+                                });
                                 exportPontoCSV(
                                   [item.raw as unknown as Record<string, unknown>],
                                   `conformidade-${item.id.slice(0, 8)}.csv`
-                                )
-                              }
+                                );
+                              }}
                             >
                               <FileJson className="h-3 w-3" /> Exportar CSV
                             </Button>

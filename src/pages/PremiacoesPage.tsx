@@ -29,6 +29,9 @@ import { RewardsSimulator } from '@/components/premiacoes/RewardsSimulator';
 import { RewardsApprovalHub } from '@/components/premiacoes/RewardsApprovalHub';
 import { CampaignWizard } from '@/components/premiacoes/CampaignWizard';
 import { formatDate, formatDateTime } from '@/utils/format';
+import { todayLocalISO } from '@/utils/dateLocal';
+import { exportPontoCSV, exportPontoPDF } from '@/services/exportService';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { toast } from 'sonner';
 
 const formatCurrency = (val: number) =>
@@ -73,16 +76,44 @@ export default function PremiacoesPage() {
 
   const handleExport = async (format: 'csv' | 'pdf') => {
     toast.promise(
-      premiacoesService.exportarRelatorio({
-        empresaId: empresaAtual?.id,
-        periodo: periodoFiltro,
-        unidade: unidadeFiltro,
-        faixaMeta: faixaMetaFiltro,
-        versao: '1.2.5-stable',
-      }),
+      (async () => {
+        const pagamentos = (await premiacoesService.exportarRelatorio({
+          empresaId: empresaAtual?.id,
+          periodo: periodoFiltro,
+          unidade: unidadeFiltro,
+          faixaMeta: faixaMetaFiltro,
+          versao: '1.2.5-stable',
+        })) as {
+          valor_aprovado?: number | null;
+          valor_folha_real?: number | null;
+          status_conciliacao?: string | null;
+          created_at?: string | null;
+          colaborador?: { nome_completo?: string | null } | null;
+          campanha?: { nome?: string | null } | null;
+        }[];
+        const linhas = pagamentos.map((p) => ({
+          colaborador: p.colaborador?.nome_completo ?? null,
+          campanha: p.campanha?.nome ?? null,
+          valor_aprovado: p.valor_aprovado ?? null,
+          valor_folha: p.valor_folha_real ?? null,
+          status_conciliacao: p.status_conciliacao ?? null,
+          created_at: p.created_at ?? null,
+        }));
+        if (linhas.length === 0) throw new Error('Nenhum pagamento para exportar.');
+        // Trilha LGPD (art. 37) — export carrega nomes e valores por colaborador.
+        void registrarAcessoPII('premiacoes_pagamentos', 'export', {
+          empresaId: empresaAtual?.id,
+          registroCount: linhas.length,
+        });
+        if (format === 'csv') {
+          exportPontoCSV(linhas, `premiacoes-${todayLocalISO()}.csv`);
+        } else {
+          exportPontoPDF(linhas, 'Relatório de Premiações', Object.keys(linhas[0]));
+        }
+      })(),
       {
         loading: `Gerando relatório ${format.toUpperCase()} com filtros aplicados...`,
-        success: 'Relatório gerado com sucesso! Trilha de auditoria incluída.',
+        success: 'Relatório gerado e baixado com sucesso!',
         error: 'Erro ao gerar relatório.',
       }
     );
