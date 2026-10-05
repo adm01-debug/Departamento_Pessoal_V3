@@ -99,7 +99,7 @@ for (const file of walk(join(root, 'src'))) {
   }
 
   for (const alias of collectSupabaseAliases(source)) {
-    const escaped = alias.name.replace(/\./g, '\\.');
+    const escaped = alias.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const tablePattern = new RegExp(
       `(?:\\b${escaped}|\\(${escaped}\\s+as\\s+[^)]+\\))\\s*\\.\\s*from\\s*\\(\\s*["']([A-Za-z0-9_]+)["']`,
       'g'
