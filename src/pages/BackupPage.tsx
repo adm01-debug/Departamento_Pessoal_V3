@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { cn } from '@/lib/utils';
 import { exportarBackupCSV, exportarBackupJSON, downloadBlob } from '@/services/backupService';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { useEmpresa } from '@/contexts/EmpresaContext';
 
 interface BackupHistoryItem {
@@ -33,11 +34,16 @@ export default function BackupPage() {
     }
     setBacking(formato);
     try {
-      const result = formato === 'csv'
-        ? await exportarBackupCSV(empresaAtual.id)
-        : await exportarBackupJSON(empresaAtual.id);
+      const result =
+        formato === 'csv' ? await exportarBackupCSV(empresaAtual.id) : await exportarBackupJSON(empresaAtual.id);
 
       downloadBlob(result.blob, result.fileName);
+
+      // Trilha LGPD — backup exporta TODAS as tabelas com PII da empresa.
+      void registrarAcessoPII('backup_completo', 'export', {
+        empresaId: empresaAtual.id,
+        registroCount: result.stats.registros || 1,
+      });
 
       const entry: BackupHistoryItem = {
         id: crypto.randomUUID(),
@@ -45,8 +51,9 @@ export default function BackupPage() {
         tamanho: result.stats.tamanho,
         formato: formato.toUpperCase(),
         registros: result.stats.registros,
-        tabelas: result.stats.tabelas};
-      setHistorico(prev => [entry, ...prev]);
+        tabelas: result.stats.tabelas,
+      };
+      setHistorico((prev) => [entry, ...prev]);
 
       toast.success(
         `Backup ${formato.toUpperCase()} concluído! ${result.stats.registros} registros de ${result.stats.tabelas} tabelas (${result.stats.tamanho})`
@@ -74,7 +81,11 @@ export default function BackupPage() {
               variant="outline"
               className="rounded-xl font-body"
             >
-              {backing === 'csv' ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <FileSpreadsheet className="h-4 w-4 mr-2" />}
+              {backing === 'csv' ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <FileSpreadsheet className="h-4 w-4 mr-2" />
+              )}
               Exportar CSV
             </Button>
             <Button
@@ -82,7 +93,11 @@ export default function BackupPage() {
               disabled={!!backing}
               className="rounded-xl bg-gradient-to-r from-primary-glow to-primary hover:opacity-90 shadow-lg font-body"
             >
-              {backing === 'json' ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <FileJson className="h-4 w-4 mr-2" />}
+              {backing === 'json' ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <FileJson className="h-4 w-4 mr-2" />
+              )}
               Exportar JSON
             </Button>
           </div>
@@ -90,11 +105,26 @@ export default function BackupPage() {
       >
         <div className="grid gap-4 md:grid-cols-3 mb-6">
           {[
-            { label: 'Backups Realizados', value: String(historico.length), icon: Clock, gradient: 'from-primary to-primary-glow' },
+            {
+              label: 'Backups Realizados',
+              value: String(historico.length),
+              icon: Clock,
+              gradient: 'from-primary to-primary-glow',
+            },
             { label: 'Tabelas Cobertas', value: '10', icon: HardDrive, gradient: 'from-primary to-primary-glow' },
-            { label: 'Status', value: backing ? 'Exportando...' : 'Pronto', icon: Shield, gradient: 'from-primary to-primary-glow' },
+            {
+              label: 'Status',
+              value: backing ? 'Exportando...' : 'Pronto',
+              icon: Shield,
+              gradient: 'from-primary to-primary-glow',
+            },
           ].map((stat, i) => (
-            <motion.div key={stat.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+            >
               <Card className="border border-border/30 rounded-2xl overflow-hidden relative">
                 <div className={cn('absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r', stat.gradient)} />
                 <CardContent className="p-4 flex items-center gap-3">

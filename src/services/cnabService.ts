@@ -111,7 +111,7 @@ export const cnabService = {
         .insert(
           validateTablePayload(
             'cnab_configuracoes',
-            [{ empresa_id: empresaId, ...config }],
+            [{ ...config, empresa_id: empresaId }],
             'cnabService:cnab_configuracoes'
           )
         );

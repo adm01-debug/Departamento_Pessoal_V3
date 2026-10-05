@@ -156,21 +156,11 @@ function ContratacaoWorkflow({ token, onInvalidToken }: { token: string; onInval
   const signContract = useMutation({
     mutationFn: async () => {
       if (!tokenData?.id || !signature) return;
-      // IP real do signatário para a trilha de auditoria; falha na
-      // consulta não bloqueia a assinatura.
-      let ipAssinatura: string | null = null;
-      try {
-        const res = await fetch('https://api.ipify.org?format=json');
-        const body = (await res.json()) as { ip?: string };
-        ipAssinatura = body.ip ?? null;
-      } catch {
-        /* consulta de IP é best-effort */
-      }
-
+      // O IP da assinatura é derivado server-side a partir do XFF real do
+      // gateway — um IP enviado pelo cliente não vale como evidência (forjável).
       const { error } = await supabase.rpc('admissao_assinar_contrato', {
         _token: token,
         _assinatura_base64: signature,
-        _ip: ipAssinatura,
       });
       if (error) throw error;
     },

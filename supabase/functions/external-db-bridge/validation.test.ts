@@ -148,7 +148,9 @@ Deno.test("coluna de filtro: básico", () => {
 // 7. Operadores — apenas allowlist; 'not' exige extraOp válido
 // ---------------------------------------------------------------------------
 Deno.test("operadores: allowlist", () => {
-  for (const op of ["eq","neq","gt","gte","lt","lte","like","ilike","in","is","or","not","contains","match"]) ok(FILTER_OPS.has(op), `op permitido: ${op}`);
+  for (const op of ["eq","neq","gt","gte","lt","lte","like","ilike","in","is","or","not","contains"]) ok(FILTER_OPS.has(op), `op permitido: ${op}`);
+  // 'match' era aceito mas nunca aplicado — deve ser rejeitado (fail-closed).
+  ok(!FILTER_OPS.has("match"), "op 'match' rejeitado");
   for (const op of ["exec","drop","select","union",";","--","sql","raw","cast","any","all"]) ok(!FILTER_OPS.has(op), `op proibido: ${op}`);
   for (const op of ["eq","neq","gt","gte","lt","lte","in","is"]) ok(NOT_EXTRA_OPS.has(op), `not.extraOp válido: ${op}`);
   for (const op of ["like","ilike","or","not","contains","match"]) ok(!NOT_EXTRA_OPS.has(op), `not.extraOp inválido: ${op}`);

@@ -17,6 +17,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { cachePublic, cachedFetch, getCacheStats } from '../_shared/cache.ts';
 import { getCorsHeaders, handlePreflight } from '../_shared/contract.ts';
+import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts';
+import { getClientIp } from '../_shared/clientIp.ts';
 
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos
 
@@ -77,6 +79,18 @@ serve(async (req) => {
   }
 
   try {
+    // Endpoint público — throttle por IP (tabelas de domínio são estáticas;
+    // 120/min por IP é folgado para uso legítimo e barre scraping agressivo).
+    const rlAdmin = createClient(supabaseUrl, supabaseKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const rl = await checkRateLimit(rlAdmin as never, {
+      key: `tabelas-dominio:${getClientIp(req)}`,
+      limit: 120,
+      windowSec: 60,
+    });
+    if (!rl.allowed) return rateLimitResponse(rl, req);
+
     const cacheKey = `domain:${type}`;
     const table = TABLE_MAP[type];
     const columns = COLUMNS_MAP[type];
@@ -96,8 +110,21 @@ serve(async (req) => {
       CACHE_TTL_MS
     );
 
-    // Endpoint de stats para monitoramento
+    // Endpoint de stats para monitoramento — exige usuário autenticado
+    // (expõe internals do cache; o path público fica sem rate limit pesado
+    // mas o de stats é gated).
     if (url.searchParams.get('stats') === 'true') {
+      const authHeader = req.headers.get('Authorization') ?? '';
+      const token = authHeader.replace(/^Bearer\s+/i, '').trim();
+      const { data: authData, error: authErr } = token
+        ? await supabase.auth.getUser(token)
+        : { data: { user: null }, error: null };
+      if (authErr || !authData?.user) {
+        return new Response(JSON.stringify({ error: 'Autenticacao obrigatoria para stats' }), {
+          status: 401,
+          headers: { 'Content-Type': 'application/json', ...getCorsHeaders(req) },
+        });
+      }
       return new Response(
         JSON.stringify({
           data,
@@ -109,7 +136,9 @@ serve(async (req) => {
         {
           headers: {
             'Content-Type': 'application/json',
-            ...cachePublic(60),
+            // no-store: resposta autenticada não pode ser replayada por cache
+            // compartilhado para um cliente sem token.
+            'Cache-Control': 'no-store',
             ...getCorsHeaders(req),
           },
         }

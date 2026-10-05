@@ -188,14 +188,18 @@ const callBridge = async <T = unknown>(
     const json: {
       data?: unknown;
       count?: number;
-      error?: string;
+      error?: string | { code?: string; message?: string };
       duration_ms?: number;
     } = secureJsonParse(rawText);
 
     // 409 = idempotency key reutilizada com payload diferente → não retryable aqui
     // (o cliente que gerou a key deve evitar reuse). Fail fast.
     if (!res.ok || json.error) {
-      const errorMsg = json.error || `Erro HTTP ${res.status}`;
+      // O bridge pode retornar `error` como objeto {code,message} — normalizar
+      // para string antes do .test()/toast (objeto virava "[object Object]").
+      const rawErr = json.error;
+      const errorMsg =
+        typeof rawErr === 'string' ? rawErr : (rawErr?.message ?? rawErr?.code ?? `Erro HTTP ${res.status}`);
       loggerService.error('BRIDGE_SCHEMA_ERROR', { action, target, errorMsg });
 
       // Erros de função/tabela/coluna ausente NÃO devem poluir a UI com toast.

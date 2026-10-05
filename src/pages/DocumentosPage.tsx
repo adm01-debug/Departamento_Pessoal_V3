@@ -22,6 +22,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { documentoService, colaboradorService } from '@/services';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { usePiiMask } from '@/hooks/usePiiMask';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import {
   FileText,
   Upload,
@@ -88,6 +90,7 @@ export default function DocumentosPage() {
   const [selectedDocForPreview, setSelectedDocForPreview] = useState<DocumentoListItem | null>(null);
   const { empresaAtual } = useEmpresas();
   const empresaId = empresaAtual?.id;
+  const pii = usePiiMask();
   const queryClient = useQueryClient();
 
   const { data: documentos, isLoading } = useQuery({
@@ -101,7 +104,7 @@ export default function DocumentosPage() {
     // Chave inclui a empresa: evita vazamento de cache entre tenants.
     queryKey: ['colaboradores-simples', empresaId],
     enabled: !!empresaId,
-    queryFn: () => colaboradorService.listar({ pageSize: 1000 }),
+    queryFn: () => colaboradorService.listar({ pageSize: 1000, filters: { empresaId: empresaId! } }),
   });
   const colaboradores = colaboradoresRes?.data || [];
 
@@ -207,6 +210,11 @@ export default function DocumentosPage() {
       a.download = doc.nome_arquivo || doc.nome || 'documento';
       a.click();
       URL.revokeObjectURL(url);
+      // Trilha LGPD — documentos de colaborador carregam PII (RG/CPF/CTPS...).
+      void registrarAcessoPII('documentos', 'download', {
+        empresaId,
+        registroId: doc.id,
+      });
     } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao processar documento.'));
     }
@@ -346,7 +354,7 @@ export default function DocumentosPage() {
                           {doc.colaborador?.nome_completo || 'Empresa (Geral)'}
                         </span>
                         {doc.colaborador?.cpf && (
-                          <span className="text-[10px] text-muted-foreground">{doc.colaborador.cpf}</span>
+                          <span className="text-[10px] text-muted-foreground">{pii.cpf(doc.colaborador.cpf)}</span>
                         )}
                       </div>
                     </TableCell>

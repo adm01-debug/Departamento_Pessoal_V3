@@ -10,7 +10,9 @@ export function maskCpfDisplay(cpf: string | null | undefined): string {
 export function maskBankAccount(account: string | null | undefined): string {
   if (!account) return '';
   const clean = account.replace(/\D/g, '');
-  if (clean.length < 4) return MASK_CHAR.repeat(clean.length);
+  // <=4 dígitos mascara tudo — mostrar "últimos 4" de uma agência de 4
+  // dígitos exporia o valor inteiro (incoerente com a máscara profunda).
+  if (clean.length <= 4) return MASK_CHAR.repeat(clean.length);
   return MASK_CHAR.repeat(clean.length - 4) + clean.slice(-4);
 }
 
@@ -43,8 +45,11 @@ export function maskGeneric(value: string | null | undefined): string {
 // mascarar payloads arbitrários (trilha de auditoria, exports).
 // salario/salario_base NÃO entram: as telas já exibem salário a todos os
 // papéis (decisão de produto) — o export deve carregar a mesma visão da tela.
+// Casa prefixo E sufixo com fronteira de `_` (conjuge_cpf, colaborador_cpf,
+// numero_pis, user_email, telefone_contato...), sem casar substring (cargo,
+// contador, orgao não batem).
 const PII_KEY =
-  /^(cpf|cnpj|pis|pasep|rg|email|telefone|celular|conta|conta_bancaria|agencia|digito|pix_chave|chave_pix|data_nascimento|nome_mae|endereco|logradouro|cep|banco_nome|assinatura_base64|senha|password|token|api_key|secret)/i;
+  /(^|_)(cpf|cnpj|pis|pasep|rg|email|telefone|celular|whatsapp|conta|conta_bancaria|agencia|digito|pix_chave|chave_pix|data_nascimento|nome_mae|nome_pai|nome_nascimento|endereco|logradouro|cep|bairro|cidade|ctps|cnh|titulo_eleitor|banco_nome|assinatura_base64|senha|password|token|api_key|secret)(_|$)/i;
 
 /**
  * Mascara recursivamente valores de chaves sensíveis em payloads

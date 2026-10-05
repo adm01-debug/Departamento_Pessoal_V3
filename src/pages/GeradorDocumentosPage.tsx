@@ -12,6 +12,8 @@ import { Spinner } from '@/components/ui/spinner';
 import { supabase } from '@/integrations/supabase/client';
 import type { Tables } from '@/integrations/supabase/types';
 import { useEmpresa } from '@/contexts';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
+import { usePiiMask } from '@/hooks/usePiiMask';
 import { FileText, Download, Eye, FileSignature, ScrollText, Shield, UserCheck, Loader2, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -244,6 +246,7 @@ function gerarPDF(
 
 export default function GeradorDocumentosPage() {
   const { empresaAtual } = useEmpresa();
+  const pii = usePiiMask();
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [selectedColaborador, setSelectedColaborador] = useState<string>('');
   const [generating, setGenerating] = useState(false);
@@ -276,6 +279,11 @@ export default function GeradorDocumentosPage() {
 
       if (action === 'download') {
         pdf.save(`${templateName.replace(/\s/g, '_')}_${colaborador?.nome_completo?.replace(/\s/g, '_') || 'doc'}.pdf`);
+        // Trilha LGPD — documento gerado carrega dados do colaborador.
+        void registrarAcessoPII('documentos_gerados', 'export', {
+          empresaId: empresaAtual?.id,
+          registroId: selectedColaborador,
+        });
         toast.success('Documento gerado com sucesso!');
       } else {
         const blob = pdf.output('blob');
@@ -404,7 +412,7 @@ export default function GeradorDocumentosPage() {
                     return c ? (
                       <>
                         <p className="text-xs font-body">
-                          <span className="text-muted-foreground">CPF:</span> {c.cpf || '—'}
+                          <span className="text-muted-foreground">CPF:</span> {pii.cpf(c.cpf) || '—'}
                         </p>
                         <p className="text-xs font-body">
                           <span className="text-muted-foreground">Cargo:</span> {c.cargo || '—'}

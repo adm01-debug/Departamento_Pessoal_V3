@@ -20,6 +20,7 @@ import { useEmpresas } from '@/hooks/useEmpresas';
 import { edgeFunctionsService } from '@/services/edgeFunctionsService';
 import { useQuery } from '@tanstack/react-query';
 import { useDataAccessLog } from '@/hooks/useDataAccessLog';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import type { Json, Database } from '@/integrations/supabase/types';
 import { validateTablePayload } from '@/schemas/validate';
 
@@ -438,7 +439,14 @@ export default function CalculadoraRescisaoPage() {
 
                     <div className="flex gap-2">
                       <Button
-                        onClick={() => gerarPDFRescisao(form, result)}
+                        onClick={() => {
+                          gerarPDFRescisao(form, result);
+                          // Trilha LGPD — o TRCT carrega dados rescisórios do colaborador.
+                          void registrarAcessoPII('rescisoes', 'export', {
+                            empresaId: empresaAtual?.id,
+                            registroId: selectedColabId ?? null,
+                          });
+                        }}
                         className="flex-1 rounded-xl bg-gradient-to-r from-primary to-primary-glow font-body"
                       >
                         <Download className="h-4 w-4 mr-2" />
