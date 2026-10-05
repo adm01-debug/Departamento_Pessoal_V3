@@ -16,7 +16,7 @@ vi.mock('@dnd-kit/utilities', () => ({
   CSS: { Translate: { toString: () => '' } },
 }));
 
-vi.mock('@/lib/utils', () => ({ cn: (...c: any[]) => c.filter(Boolean).join(' ') }));
+vi.mock('@/lib/utils', () => ({ cn: (...c: unknown[]) => c.filter(Boolean).join(' ') }));
 
 vi.mock('@/components/ui/avatar', () => ({
   Avatar: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
@@ -31,7 +31,7 @@ vi.mock('@/components/ui/badge', () => ({
 }));
 
 vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, onClick, 'aria-label': ariaLabel }: any) => (
+  Button: ({ children, onClick, 'aria-label': ariaLabel }: React.ComponentProps<'button'>) => (
     <button onClick={onClick} aria-label={ariaLabel}>
       {children}
     </button>

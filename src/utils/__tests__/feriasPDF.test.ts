@@ -38,7 +38,7 @@ const { MockJsPDF, mockSave, mockText, mockLine, mockAutoTable } = vi.hoisted(()
   const MockJsPDF = vi.fn().mockImplementation(function () {
     return mockDoc;
   });
-  const mockAutoTable = vi.fn().mockImplementation(function (doc: any) {
+  const mockAutoTable = vi.fn().mockImplementation(function (doc: Record<string, unknown>) {
     doc.lastAutoTable = { finalY: 100 };
   });
   return { MockJsPDF, mockSave, mockText, mockLine, mockAutoTable };
@@ -82,7 +82,7 @@ describe('feriasPDF.gerarRecibo', () => {
     MockJsPDF.mockImplementation(function () {
       return mockDoc as never;
     });
-    mockAutoTable.mockImplementation(function (doc: any) {
+    mockAutoTable.mockImplementation(function (doc: Record<string, unknown>) {
       doc.lastAutoTable = { finalY: 100 };
     });
   });
@@ -99,7 +99,7 @@ describe('feriasPDF.gerarRecibo', () => {
 
   it('includes colaborador name in text calls', () => {
     feriasPDF.gerarRecibo(sampleSolicitacao);
-    const allTextCalls = mockText.mock.calls.map((c: any[]) => String(c[0]));
+    const allTextCalls = mockText.mock.calls.map((c: unknown[]) => String(c[0]));
     expect(allTextCalls.some((t) => t.includes('Aviso'))).toBe(true);
   });
 

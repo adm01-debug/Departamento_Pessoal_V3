@@ -50,7 +50,7 @@ const sampleEmpresa = {
   logo_url: null,
 };
 
-function buildSelectChain(data: any, error: any = null) {
+function buildSelectChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const result = { data, error };
   const maybeSingle = vi.fn().mockResolvedValue(result);
   const single = vi.fn().mockResolvedValue(result);

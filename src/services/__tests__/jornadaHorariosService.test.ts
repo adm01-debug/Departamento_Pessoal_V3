@@ -10,7 +10,7 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // select → eq → order → await
-function setupListChain(data: any[], error: any = null) {
+function setupListChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const orderFn = vi.fn().mockResolvedValue({ data, error });
   const eqFn = vi.fn().mockReturnValue({ order: orderFn });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
@@ -18,7 +18,7 @@ function setupListChain(data: any[], error: any = null) {
   return { selectFn, eqFn, orderFn };
 }
 
-function setupInsertChain(data: any, error: any = null) {
+function setupInsertChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const insertFn = vi.fn().mockReturnValue({ select: selectFn });
@@ -27,14 +27,14 @@ function setupInsertChain(data: any, error: any = null) {
 }
 
 // insert (salvarGrade multi-row) → select → data[]
-function setupInsertMultiChain(data: any[], error: any = null) {
+function setupInsertMultiChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const selectFn = vi.fn().mockResolvedValue({ data, error });
   const insertFn = vi.fn().mockReturnValue({ select: selectFn });
   mockFrom.mockReturnValue({ insert: insertFn });
   return { insertFn, selectFn };
 }
 
-function setupUpdateChain(data: any, error: any = null) {
+function setupUpdateChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const eqFn = vi.fn();
@@ -45,7 +45,7 @@ function setupUpdateChain(data: any, error: any = null) {
   return { updateFn, eqFn, selectFn, maybeSingle };
 }
 
-function setupDeleteChain(error: any = null) {
+function setupDeleteChain(error: { message: string; code?: string } | null = null) {
   const eqFn = vi.fn();
   const __delChain = {
     then: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).then(r),
@@ -187,9 +187,9 @@ describe('jornadaHorariosService.salvarGrade', () => {
     const inserted = [{ id: 'h-new', jornada_id: 'j1', dia_semana: 1, entrada: '08:00' }];
 
     // 1ª chamada: upsert(onConflict) → select
-    const upsertChain: any = makeChain({ data: inserted, error: null });
+    const upsertChain = makeChain({ data: inserted, error: null });
     // 2ª chamada: delete de trim dos dias que saíram da grade
-    const trimChain: any = makeChain({ error: null });
+    const trimChain = makeChain({ error: null });
 
     mockFrom.mockReturnValueOnce(upsertChain).mockReturnValueOnce(trimChain);
 

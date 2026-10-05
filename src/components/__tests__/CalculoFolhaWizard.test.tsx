@@ -96,7 +96,7 @@ vi.mock('@/utils/safeUrl', () => ({
 }));
 
 vi.mock('@/utils/safeError', () => ({
-  safeErrorMessage: vi.fn((e: any) => String(e)),
+  safeErrorMessage: vi.fn((e: unknown) => String(e)),
 }));
 
 import { CalculoFolhaWizard } from '../folha/CalculoFolhaWizard';

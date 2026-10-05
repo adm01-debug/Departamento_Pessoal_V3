@@ -32,7 +32,7 @@ vi.mock('@/services/contratoTemplateService', () => ({
 }));
 
 vi.mock('@/utils/safeError', () => ({
-  safeErrorMessage: vi.fn((e: any, fallback: string) => fallback),
+  safeErrorMessage: vi.fn((e: unknown, fallback: string) => fallback),
 }));
 
 import { useContratosAssinaturaKPI } from '../useContratosAssinaturaKPI';
@@ -49,9 +49,10 @@ describe('useContratosAssinaturaKPI', () => {
   it('queries kpi with empresa_id', () => {
     renderHook(() => useContratosAssinaturaKPI());
     const calls = mockUseQuery.mock.calls;
-    const kpiCall = calls.find(([opts]: any) =>
-      Array.isArray(opts.queryKey) && opts.queryKey[0] === 'contratos-assinatura-kpi'
-    );
+    const kpiCall = calls.find((callArgs) => {
+      const opts = callArgs[0] as { queryKey?: unknown[] };
+      return Array.isArray(opts.queryKey) && opts.queryKey[0] === 'contratos-assinatura-kpi';
+    });
     expect(kpiCall).toBeDefined();
     expect(kpiCall![0].queryKey).toEqual(['contratos-assinatura-kpi', 'emp-1']);
   });
@@ -59,9 +60,10 @@ describe('useContratosAssinaturaKPI', () => {
   it('queries pendentes with empresa_id', () => {
     renderHook(() => useContratosAssinaturaKPI());
     const calls = mockUseQuery.mock.calls;
-    const pendentesCall = calls.find(([opts]: any) =>
-      Array.isArray(opts.queryKey) && opts.queryKey[0] === 'contratos-tokens-pendentes'
-    );
+    const pendentesCall = calls.find((callArgs) => {
+      const opts = callArgs[0] as { queryKey?: unknown[] };
+      return Array.isArray(opts.queryKey) && opts.queryKey[0] === 'contratos-tokens-pendentes';
+    });
     expect(pendentesCall).toBeDefined();
     expect(pendentesCall![0].queryKey).toEqual(['contratos-tokens-pendentes', 'emp-1']);
   });

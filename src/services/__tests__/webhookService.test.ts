@@ -17,9 +17,9 @@ vi.mock('@/utils/auditLogger', () => ({
 
 import { webhookService } from '../webhookService';
 
-function setupListarChain(data: any[], count: number = 0, error: any = null) {
+function setupListarChain(data: unknown, count: number = 0, error: { message: string; code?: string } | null = null) {
   const response = { data, count, error };
-  const chain: any = {
+  const chain = {
     eq: vi.fn(),
     ilike: vi.fn(),
     order: vi.fn().mockResolvedValue(response),

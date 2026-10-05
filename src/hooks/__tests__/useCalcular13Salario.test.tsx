@@ -58,12 +58,21 @@ describe('useCalcular13Salario', () => {
   });
 
   it('sets loading=true while calculating', async () => {
-    let resolve: (v: any) => void = () => {};
-    mockInvoke.mockImplementation(() => new Promise(r => { resolve = r; }));
+    let resolve: (v: unknown) => void = () => {};
+    mockInvoke.mockImplementation(
+      () =>
+        new Promise((r) => {
+          resolve = r;
+        })
+    );
     const { result } = renderHook(() => useCalcular13Salario());
-    act(() => { void result.current.calcular(baseDados); });
+    act(() => {
+      void result.current.calcular(baseDados);
+    });
     expect(result.current.loading).toBe(true);
-    act(() => { resolve({ data: { success: true, resultado: mockResultado }, error: null }); });
+    act(() => {
+      resolve({ data: { success: true, resultado: mockResultado }, error: null });
+    });
     await waitFor(() => expect(result.current.loading).toBe(false));
   });
 
@@ -73,7 +82,9 @@ describe('useCalcular13Salario', () => {
       error: null,
     });
     const { result } = renderHook(() => useCalcular13Salario());
-    await act(async () => { await result.current.calcular(baseDados); });
+    await act(async () => {
+      await result.current.calcular(baseDados);
+    });
     expect(result.current.resultado).toEqual(mockResultado);
   });
 
@@ -83,7 +94,9 @@ describe('useCalcular13Salario', () => {
       error: null,
     });
     const { result } = renderHook(() => useCalcular13Salario());
-    await act(async () => { await result.current.calcular(baseDados); });
+    await act(async () => {
+      await result.current.calcular(baseDados);
+    });
     expect(mockInvoke).toHaveBeenCalledWith('calcular-13-salario', { body: baseDados });
   });
 
@@ -94,7 +107,9 @@ describe('useCalcular13Salario', () => {
       error: null,
     });
     const { result } = renderHook(() => useCalcular13Salario());
-    await act(async () => { await result.current.calcular(baseDados); });
+    await act(async () => {
+      await result.current.calcular(baseDados);
+    });
     expect(toast.success).toHaveBeenCalledWith('13º Salário (2ª parcela) calculado!');
   });
 
@@ -104,8 +119,10 @@ describe('useCalcular13Salario', () => {
       error: null,
     });
     const { result } = renderHook(() => useCalcular13Salario());
-    let returned: any;
-    await act(async () => { returned = await result.current.calcular(baseDados); });
+    let returned: unknown;
+    await act(async () => {
+      returned = await result.current.calcular(baseDados);
+    });
     expect(returned).toEqual(mockResultado);
   });
 
@@ -116,8 +133,10 @@ describe('useCalcular13Salario', () => {
       error: { message: 'Edge function unavailable' },
     });
     const { result } = renderHook(() => useCalcular13Salario());
-    let returned: any;
-    await act(async () => { returned = await result.current.calcular(baseDados); });
+    let returned: unknown;
+    await act(async () => {
+      returned = await result.current.calcular(baseDados);
+    });
     expect(returned).toBeNull();
     expect(toast.error).toHaveBeenCalledWith('Erro ao calcular 13º: Edge function unavailable');
   });
@@ -129,8 +148,10 @@ describe('useCalcular13Salario', () => {
       error: null,
     });
     const { result } = renderHook(() => useCalcular13Salario());
-    let returned: any;
-    await act(async () => { returned = await result.current.calcular(baseDados); });
+    let returned: unknown;
+    await act(async () => {
+      returned = await result.current.calcular(baseDados);
+    });
     expect(returned).toBeNull();
     expect(toast.error).toHaveBeenCalledWith('Erro ao calcular 13º: Meses insuficientes');
   });
@@ -141,7 +162,9 @@ describe('useCalcular13Salario', () => {
       error: { message: 'Timeout' },
     });
     const { result } = renderHook(() => useCalcular13Salario());
-    await act(async () => { await result.current.calcular(baseDados); });
+    await act(async () => {
+      await result.current.calcular(baseDados);
+    });
     expect(result.current.resultado).toBeNull();
   });
 
@@ -151,7 +174,9 @@ describe('useCalcular13Salario', () => {
       error: { message: 'Timeout' },
     });
     const { result } = renderHook(() => useCalcular13Salario());
-    await act(async () => { await result.current.calcular(baseDados); });
+    await act(async () => {
+      await result.current.calcular(baseDados);
+    });
     expect(result.current.loading).toBe(false);
   });
 });

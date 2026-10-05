@@ -47,7 +47,7 @@ vi.mock('@/components/ui/button', () => ({
 }));
 
 vi.mock('@/components/ui/input', () => ({
-  Input: (props: any) => <input {...props} />,
+  Input: (props: React.ComponentProps<'input'>) => <input {...props} />,
 }));
 
 vi.mock('@/components/ui/label', () => ({
@@ -65,14 +65,14 @@ vi.mock('@/components/ui/select', () => ({
 }));
 
 vi.mock('@/components/ui/textarea', () => ({
-  Textarea: (props: any) => <textarea {...props} />,
+  Textarea: (props: React.ComponentProps<'textarea'>) => <textarea {...props} />,
 }));
 
 vi.mock('@/components/ui/switch', () => ({
   Switch: ({ checked }: { checked?: boolean }) => <input type="checkbox" readOnly checked={!!checked} />,
 }));
 
-vi.mock('@/utils/safeError', () => ({ safeErrorMessage: vi.fn((e: any, d: string) => d) }));
+vi.mock('@/utils/safeError', () => ({ safeErrorMessage: vi.fn((e: unknown, d: string) => d) }));
 
 import { NovoDesligamentoDialog } from '../desligamentos/NovoDesligamentoDialog';
 

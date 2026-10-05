@@ -1,14 +1,21 @@
 import { describe, it, expect } from 'vitest';
 
 // Simulating RLS policy logic from migrations/006_rls_policies.sql
-const auth_user_empresa_id = (jwt: any) => jwt?.user_metadata?.empresa_id;
+const auth_user_empresa_id = (jwt: { user_metadata?: { empresa_id?: string }; role?: string } | null | undefined) =>
+  jwt?.user_metadata?.empresa_id;
 
-const can_select_empresa = (jwt: any, empresa: { id: string }) => {
+const can_select_empresa = (
+  jwt: { user_metadata?: { empresa_id?: string }; role?: string } | null | undefined,
+  empresa: { id: string }
+) => {
   const empresa_id = auth_user_empresa_id(jwt);
   return empresa.id === empresa_id || jwt?.role === 'super_admin';
 };
 
-const can_select_colaborador = (jwt: any, colaborador: { empresa_id: string }) => {
+const can_select_colaborador = (
+  jwt: { user_metadata?: { empresa_id?: string }; role?: string } | null | undefined,
+  colaborador: { empresa_id: string }
+) => {
   const empresa_id = auth_user_empresa_id(jwt);
   return colaborador.empresa_id === empresa_id;
 };

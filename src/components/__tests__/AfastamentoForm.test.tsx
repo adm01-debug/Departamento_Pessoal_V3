@@ -48,7 +48,9 @@ vi.mock('@/components/ui/command', () => ({
       {children}
     </div>
   ),
-  CommandInput: (props: any) => <input placeholder={props.placeholder} onChange={props.onValueChange} />,
+  CommandInput: (
+    props: React.ComponentProps<'input'> & { onValueChange?: React.ChangeEventHandler<HTMLInputElement> }
+  ) => <input placeholder={props.placeholder} onChange={props.onValueChange} />,
   CommandItem: ({ children, onSelect }: { children?: ReactNode; onSelect?: (v: unknown) => void }) => (
     <div onClick={onSelect}>{children}</div>
   ),
@@ -104,7 +106,7 @@ vi.mock('@/components/ui/button', () => ({
 }));
 
 vi.mock('@/components/ui/input', () => ({
-  Input: (props: any) => <input {...props} />,
+  Input: (props: React.ComponentProps<'input'>) => <input {...props} />,
 }));
 
 vi.mock('@/components/ui/label', () => ({
@@ -112,11 +114,11 @@ vi.mock('@/components/ui/label', () => ({
 }));
 
 vi.mock('@/components/ui/textarea', () => ({
-  Textarea: (props: any) => <textarea {...props} />,
+  Textarea: (props: React.ComponentProps<'textarea'>) => <textarea {...props} />,
 }));
 
 vi.mock('@/lib/utils', () => ({
-  cn: (...args: any[]) => args.filter(Boolean).join(' '),
+  cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
 }));
 
 import { AfastamentoForm } from '../afastamentos/AfastamentoForm';

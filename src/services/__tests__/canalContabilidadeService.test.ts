@@ -17,7 +17,7 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // select → eq → order → resolvedValue
-function setupSelectEqOrder(data: any[], error: any = null) {
+function setupSelectEqOrder(data: unknown, error: { message: string; code?: string } | null = null) {
   const orderFn = vi.fn().mockResolvedValue({ data, error });
   const eqFn = vi.fn().mockReturnValue({ order: orderFn });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
@@ -26,7 +26,7 @@ function setupSelectEqOrder(data: any[], error: any = null) {
 }
 
 // insert → select → maybeSingle → resolvedValue
-function setupInsertSelectMaybeSingle(data: any, error: any = null) {
+function setupInsertSelectMaybeSingle(data: unknown, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const insertFn = vi.fn().mockReturnValue({ select: selectFn });
@@ -35,7 +35,7 @@ function setupInsertSelectMaybeSingle(data: any, error: any = null) {
 }
 
 // update → eq → resolvedValue
-function setupUpdateEq(error: any = null) {
+function setupUpdateEq(error: { message: string; code?: string } | null = null) {
   const eqFn = vi.fn();
   const __delChain = {
     then: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).then(r),
@@ -50,9 +50,9 @@ function setupUpdateEq(error: any = null) {
 }
 
 // thenable chain for listThreads
-function setupListThreadsChain(data: any[], error: any = null) {
+function setupListThreadsChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const response = { data, error };
-  const chain: any = {};
+  const chain: Record<string, unknown> = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
   chain.limit = vi.fn().mockReturnValue(chain);
@@ -158,7 +158,7 @@ describe('canalContabilidadeService.listThreads', () => {
     expect(chain.limit).toHaveBeenCalledWith(200);
     // no second eq call for status
     const eqCalls = (chain.eq as ReturnType<typeof vi.fn>).mock.calls;
-    expect(eqCalls.some((c: any[]) => c[0] === 'status')).toBe(false);
+    expect(eqCalls.some((c: unknown[]) => c[0] === 'status')).toBe(false);
   });
 
   it('applies status filter when filtroStatus is provided', async () => {
@@ -167,7 +167,7 @@ describe('canalContabilidadeService.listThreads', () => {
     const result = await canalContabilidadeService.listThreads('emp-1', 'resolvido');
     expect(result).toEqual(records);
     const eqCalls = (chain.eq as ReturnType<typeof vi.fn>).mock.calls;
-    expect(eqCalls.some((c: any[]) => c[0] === 'status' && c[1] === 'resolvido')).toBe(true);
+    expect(eqCalls.some((c: unknown[]) => c[0] === 'status' && c[1] === 'resolvido')).toBe(true);
   });
 
   it('returns empty array when data is null', async () => {

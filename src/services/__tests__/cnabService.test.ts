@@ -12,7 +12,7 @@ vi.mock('@/integrations/supabase/client', () => ({
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
 // select → eq → maybeSingle
-function setupSelectEqMaybeSingle(data: any, error: any = null) {
+function setupSelectEqMaybeSingle(data: unknown, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const eqFn = vi.fn().mockReturnValue({ maybeSingle });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
@@ -21,7 +21,7 @@ function setupSelectEqMaybeSingle(data: any, error: any = null) {
 }
 
 // select → eq → order → resolvedValue
-function setupSelectEqOrder(data: any[], error: any = null) {
+function setupSelectEqOrder(data: unknown, error: { message: string; code?: string } | null = null) {
   const orderFn = vi.fn().mockResolvedValue({ data, error });
   const eqFn = vi.fn().mockReturnValue({ order: orderFn });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
@@ -30,7 +30,7 @@ function setupSelectEqOrder(data: any[], error: any = null) {
 }
 
 // update → eq → resolvedValue
-function setupUpdateEq(error: any = null) {
+function setupUpdateEq(error: { message: string; code?: string } | null = null) {
   const eqFn = vi.fn();
   const __delChain = {
     then: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).then(r),
@@ -45,7 +45,7 @@ function setupUpdateEq(error: any = null) {
 }
 
 // insert → resolvedValue
-function setupInsert(error: any = null) {
+function setupInsert(error: { message: string; code?: string } | null = null) {
   const insertFn = vi.fn().mockResolvedValue({ error });
   mockFrom.mockReturnValue({ insert: insertFn });
   return { insertFn };

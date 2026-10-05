@@ -7,10 +7,13 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
-function makeChain(data: any = [], error: any = null) {
+function makeChain(data: unknown = [], error: { message: string; code?: string } | null = null) {
   const result = { data, error };
   const order = vi.fn().mockResolvedValue(result);
-  const eqResult: any = { order, then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn) };
+  const eqResult: Record<string, unknown> = {
+    order,
+    then: (fn: (v?: unknown) => unknown) => Promise.resolve(result).then(fn),
+  };
   const eq = vi.fn().mockReturnValue(eqResult);
   eqResult.eq = eq;
   const insert = vi.fn().mockResolvedValue(result);

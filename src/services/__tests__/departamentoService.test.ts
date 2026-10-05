@@ -17,15 +17,17 @@ describe('departamentoService', () => {
   });
 
   it('targets the departamentos table', () => {
-    expect((departamentoService as any).table).toBe('departamentos');
+    expect((departamentoService as unknown as { table: string }).table).toBe('departamentos');
   });
 
   it('orders by nome by default', () => {
-    expect((departamentoService as any).options.defaultOrderBy).toBe('nome');
+    expect((departamentoService as unknown as { options: Record<string, unknown> }).options.defaultOrderBy).toBe(
+      'nome'
+    );
   });
 
   it('searches by nome column', () => {
-    expect((departamentoService as any).options.searchColumn).toBe('nome');
+    expect((departamentoService as unknown as { options: Record<string, unknown> }).options.searchColumn).toBe('nome');
   });
 
   it('exposes listar method', () => {

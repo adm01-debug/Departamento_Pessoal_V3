@@ -14,7 +14,7 @@ vi.mock('@/utils/dateLocal', async (importOriginal) => ({
 }));
 
 // select → eq → order → resolvedValue
-function setupSelectEqOrder(data: any[], error: any = null) {
+function setupSelectEqOrder(data: unknown, error: { message: string; code?: string } | null = null) {
   const orderFn = vi.fn().mockResolvedValue({ data, error });
   const eqFn = vi.fn().mockReturnValue({ order: orderFn });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
@@ -23,7 +23,7 @@ function setupSelectEqOrder(data: any[], error: any = null) {
 }
 
 // select → eq → resolvedValue (no order)
-function setupSelectEq(data: any[], error: any = null) {
+function setupSelectEq(data: unknown, error: { message: string; code?: string } | null = null) {
   const eqFn = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ select: selectFn });
@@ -89,7 +89,7 @@ describe('contabilidadeService.gerarLancamentosFolha', () => {
     vi.clearAllMocks();
   });
 
-  function setupGerarMocks(folha: any, plano: any[], insertError: any = null) {
+  function setupGerarMocks(folha: unknown, plano: unknown[], insertError: { message: string } | null = null) {
     // 1st call: folhas_pagamento.select.eq.single
     const singleFn = vi.fn().mockResolvedValue({ data: folha, error: null });
     const eqFolha = vi.fn().mockReturnValue({ single: singleFn });

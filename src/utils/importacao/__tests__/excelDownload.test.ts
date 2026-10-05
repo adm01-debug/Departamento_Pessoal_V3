@@ -9,7 +9,7 @@ const { mockWriteBuffer, mockAddWorksheet, mockAddRow, MockWorkbook } = vi.hoist
   const mockWriteBuffer = vi.fn().mockResolvedValue(new ArrayBuffer(8));
   const mockAddWorksheet = vi.fn().mockReturnValue(mockWs);
   // Vitest 4 requires 'function' or 'class' (not arrow) for constructor mocks
-  const MockWorkbook = vi.fn().mockImplementation(function (this: any) {
+  const MockWorkbook = vi.fn().mockImplementation(function (this: Record<string, unknown>) {
     this.addWorksheet = mockAddWorksheet;
     this.xlsx = { writeBuffer: mockWriteBuffer };
   });
@@ -70,7 +70,7 @@ describe('buildTabularWorkbook', () => {
     vi.clearAllMocks();
     const mockWs = { columns: [] as never[], addRow: mockAddRow };
     mockAddWorksheet.mockReturnValue(mockWs);
-    MockWorkbook.mockImplementation(function (this: any) {
+    MockWorkbook.mockImplementation(function (this: Record<string, unknown>) {
       this.addWorksheet = mockAddWorksheet;
       this.xlsx = { writeBuffer: mockWriteBuffer };
     });

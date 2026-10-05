@@ -30,7 +30,7 @@ vi.mock('@/components/ui/progress', () => ({
 }));
 
 vi.mock('@/lib/utils', () => ({
-  cn: (...args: any[]) => args.filter(Boolean).join(' '),
+  cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
 }));
 
 import { ESocialAuditDialog } from '../esocial/ESocialAuditDialog';

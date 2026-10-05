@@ -90,9 +90,9 @@ describe('pontoService.buscarRegistroHoje', () => {
     vi.clearAllMocks();
   });
 
-  function setupBatidaChain(data: any[], error: any = null) {
+  function setupBatidaChain(data: unknown, error: { message: string; code?: string } | null = null) {
     const orderFn = vi.fn().mockResolvedValue({ data, error });
-    const baseQuery: any = {};
+    const baseQuery: Record<string, unknown> = {};
     const eqFn = vi.fn().mockReturnValue(baseQuery);
     Object.assign(baseQuery, { eq: eqFn, order: orderFn });
     const selectFn = vi.fn().mockReturnValue(baseQuery);
@@ -138,9 +138,9 @@ describe('pontoService.buscarRegistrosSemana', () => {
     vi.clearAllMocks();
   });
 
-  function setupSemanaChain(data: any[], error: any = null) {
+  function setupSemanaChain(data: unknown, error: { message: string; code?: string } | null = null) {
     const orderFn = vi.fn().mockResolvedValue({ data, error });
-    const baseQuery: any = {};
+    const baseQuery: Record<string, unknown> = {};
     const eqFn = vi.fn().mockReturnValue(baseQuery);
     const gteFn = vi.fn().mockReturnValue(baseQuery);
     Object.assign(baseQuery, { eq: eqFn, gte: gteFn, order: orderFn });
@@ -219,7 +219,7 @@ describe('pontoService.registrar', () => {
   it('throws when colaborador is not found', async () => {
     // Call 1: no duplicate (null)
     const noDupMaybe = vi.fn().mockResolvedValue({ data: null, error: null });
-    const noDupQuery: any = {};
+    const noDupQuery: Record<string, unknown> = {};
     const noDupEq = vi.fn().mockReturnValue(noDupQuery);
     Object.assign(noDupQuery, { eq: noDupEq, maybeSingle: noDupMaybe });
     const selectDup = vi.fn().mockReturnValue(noDupQuery);
@@ -227,7 +227,7 @@ describe('pontoService.registrar', () => {
 
     // Call 2: colaborador query returns null
     const colabMaybe = vi.fn().mockResolvedValue({ data: null, error: null });
-    const colabQuery: any = {};
+    const colabQuery: Record<string, unknown> = {};
     const colabEq = vi.fn().mockReturnValue(colabQuery);
     Object.assign(colabQuery, { eq: colabEq, maybeSingle: colabMaybe });
     const selectColab = vi.fn().mockReturnValue(colabQuery);

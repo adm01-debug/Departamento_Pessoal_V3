@@ -36,7 +36,7 @@ vi.mock('@/hooks', () => ({
 vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
 vi.mock('@/utils/safeError', () => ({
-  safeErrorMessage: vi.fn((e: any, fallback: string) => fallback),
+  safeErrorMessage: vi.fn((e: unknown, fallback: string) => fallback),
 }));
 
 vi.mock('@/components/ui/dialog', () => ({
@@ -87,7 +87,9 @@ vi.mock('@/components/ui/separator', () => ({
 }));
 
 vi.mock('../medidas-disciplinares/MedidaWorkflowTimeline', () => ({
-  MedidaWorkflowTimeline: ({ medidaId }: any) => <div data-testid="workflow-timeline" data-medida-id={medidaId} />,
+  MedidaWorkflowTimeline: ({ medidaId }: { medidaId?: (v: unknown) => void }) => (
+    <div data-testid="workflow-timeline" data-medida-id={medidaId} />
+  ),
 }));
 
 // Substitui cada ícone real por um <svg /> leve, preservando a lista de

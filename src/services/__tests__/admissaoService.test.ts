@@ -22,9 +22,9 @@ vi.mock('../loggerService', () => ({
 
 // Helper: select → order → (optional eq) → await
 // The chain must be both awaitable and chainable for .eq()
-function setupListarAdmissoesChain(data: any[], error: any = null) {
+function setupListarAdmissoesChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const response = { data, error };
-  const chain: any = {};
+  const chain: Record<string, unknown> = {};
   chain.eq = vi.fn().mockResolvedValue(response);
   chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
   chain.catch = (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn);
@@ -36,7 +36,7 @@ function setupListarAdmissoesChain(data: any[], error: any = null) {
 }
 
 // Helper for criar (insert → select → maybeSingle)
-function setupCriarChain(data: any, error: any = null) {
+function setupCriarChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const insertFn = vi.fn().mockReturnValue({ select: selectFn });
@@ -45,7 +45,7 @@ function setupCriarChain(data: any, error: any = null) {
 }
 
 // Helper for atualizar without versioning (update → eq → select → maybeSingle)
-function setupAtualizarChain(data: any, error: any = null) {
+function setupAtualizarChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const eqFn = vi.fn();

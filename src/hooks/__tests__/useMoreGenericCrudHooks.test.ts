@@ -77,7 +77,7 @@ import { useAfastamentos } from '../useAfastamentos';
 import { useBeneficios } from '../useBeneficios';
 import { useColaboradores } from '../useColaboradores';
 
-function makeCrudReturn(overrides: Record<string, any> = {}) {
+function makeCrudReturn(overrides: Record<string, unknown> = {}) {
   return {
     items: [],
     isLoading: false,

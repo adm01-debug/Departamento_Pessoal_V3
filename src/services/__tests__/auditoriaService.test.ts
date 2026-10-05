@@ -91,7 +91,7 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // Chain canônico (suporta encadeamento arbitrário do PostgREST)
-function setupListChain(data: any[], error: any = null) {
+function setupListChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const chain = makeChain({ data, error });
   mockFrom.mockReturnValue(chain);
   return { selectFn: chain.select, chain };

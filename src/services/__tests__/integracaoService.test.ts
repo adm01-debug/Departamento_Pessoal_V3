@@ -17,7 +17,7 @@ vi.mock('@/integrations/supabase/client', () => ({
  * Chain canônico: cobre qualquer combinação de select/eq/order/limit/maybeSingle
  * sem precisar espelhar a forma exata da query do serviço.
  */
-function setupChain(data: any = null, error: any = null) {
+function setupChain(data: unknown = null, error: { message: string; code?: string } | null = null) {
   const chain = makeChain({ data, error });
   mockFrom.mockReturnValue(chain);
   return {
@@ -36,7 +36,7 @@ function setupChain(data: any = null, error: any = null) {
 const setupMaybeSingleChain = setupChain;
 const setupOrderLimitChain = setupChain;
 const setupOrderChain = setupChain;
-const setupDirectChain = (error: any = null) => setupChain(null, error);
+const setupDirectChain = (error: { message: string; code?: string } | null = null) => setupChain(null, error);
 
 // ─── cnabService.getConfig ────────────────────────────────────────────────────
 

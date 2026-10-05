@@ -28,7 +28,7 @@ vi.mock('@/integrations/supabase/client', () => ({
  * Chain canônico: aceita qualquer encadeamento (`select → order → limit → eq`,
  * `select → eq → eq`, etc.) sem precisar prever a forma exata da query.
  */
-function buildChain(data: any, error: any = null) {
+function buildChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const chain = makeChain({ data, error });
   mockFrom.mockReturnValue(chain);
   return {

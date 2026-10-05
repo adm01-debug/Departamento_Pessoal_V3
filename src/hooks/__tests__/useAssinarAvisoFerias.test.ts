@@ -37,7 +37,7 @@ vi.mock('@/utils/avisoFeriasPDF', () => ({
 }));
 
 vi.mock('@/utils/safeError', () => ({
-  safeErrorMessage: vi.fn((e: any, fallback: string) => fallback),
+  safeErrorMessage: vi.fn((e: unknown, fallback: string) => fallback),
 }));
 
 import { useAssinarAvisoFerias } from '../useAssinarAvisoFerias';
@@ -73,22 +73,18 @@ describe('useAssinarAvisoFerias', () => {
 
   it('calls useMutation to set up the signing mutation', () => {
     renderHook(() => useAssinarAvisoFerias());
-    expect(mockUseMutation).toHaveBeenCalledWith(
-      expect.objectContaining({ mutationFn: expect.any(Function) })
-    );
+    expect(mockUseMutation).toHaveBeenCalledWith(expect.objectContaining({ mutationFn: expect.any(Function) }));
   });
 
   it('invalidates ferias queries on mutation success', () => {
-    let capturedOnSuccess: Function;
-    mockUseMutation.mockImplementation(({ onSuccess }: any) => {
+    let capturedOnSuccess: (...args: unknown[]) => void = () => {};
+    mockUseMutation.mockImplementation(({ onSuccess }: { onSuccess: (...args: unknown[]) => void }) => {
       capturedOnSuccess = onSuccess;
       return { mutateAsync: vi.fn(), isPending: false };
     });
     renderHook(() => useAssinarAvisoFerias());
     capturedOnSuccess!();
-    expect(mockInvalidate).toHaveBeenCalledWith(
-      expect.objectContaining({ queryKey: ['ferias'] })
-    );
+    expect(mockInvalidate).toHaveBeenCalledWith(expect.objectContaining({ queryKey: ['ferias'] }));
   });
 
   it('isSigning is false by default', () => {

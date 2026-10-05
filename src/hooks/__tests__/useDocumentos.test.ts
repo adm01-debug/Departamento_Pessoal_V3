@@ -33,9 +33,9 @@ vi.mock('sonner', () => ({
 
 import { useDocumentos } from '../useDocumentos';
 
-function buildListChain(data: any[], error: any = null) {
+function buildListChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const response = { data, error };
-  const chain: any = {};
+  const chain: Record<string, unknown> = {};
   chain.order = vi.fn().mockReturnValue(chain);
   chain.limit = vi.fn().mockReturnValue(chain);
   chain.eq = vi.fn().mockReturnValue(chain);

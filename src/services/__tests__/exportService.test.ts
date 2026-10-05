@@ -93,7 +93,7 @@ describe('exportPontoCSV', () => {
 describe('exportPontoPDF', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    const autoTableFn = vi.fn().mockImplementation(function (this: any) {
+    const autoTableFn = vi.fn().mockImplementation(function (this: Record<string, unknown>) {
       this.lastAutoTable = { finalY: 100 };
     });
     const docMock = {

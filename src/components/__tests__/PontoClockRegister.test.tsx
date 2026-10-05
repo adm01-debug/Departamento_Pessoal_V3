@@ -35,7 +35,7 @@ vi.mock('@/services/pontoOfflineService', () => ({
 }));
 
 vi.mock('@/utils/safeError', () => ({
-  safeErrorMessage: vi.fn((e: any) => String(e)),
+  safeErrorMessage: vi.fn((e: unknown) => String(e)),
 }));
 
 vi.mock('@/components/ui/dialog', () => ({

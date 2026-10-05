@@ -7,7 +7,7 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
-function makeSelectChain(data: any = [], error: any = null) {
+function makeSelectChain(data: unknown = [], error: { message: string; code?: string } | null = null) {
   const result = { data, error };
   const eq = vi.fn().mockResolvedValue(result);
   const limit = vi.fn().mockResolvedValue(result);

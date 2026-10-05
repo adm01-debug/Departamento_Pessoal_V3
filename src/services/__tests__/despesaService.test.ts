@@ -30,7 +30,7 @@ interface ChainSpy {
  * Monta a chain fluente do supabase-js para .from().select().eq().order().range()
  * retornando os spies de cada elo para asserção posterior.
  */
-function buildListarChain(result: { data: unknown[] | null; error: unknown }): ChainSpy {
+function buildListarChain(result: { data: unknown | null; error: unknown }): ChainSpy {
   const range = vi.fn().mockResolvedValue(result);
   const order = vi.fn(() => ({ range }));
   const eq = vi.fn(() => ({ order, range }));
@@ -41,26 +41,28 @@ function buildListarChain(result: { data: unknown[] | null; error: unknown }): C
 }
 
 describe('despesaService.listar — isolamento multi-tenant', () => {
-  beforeEach(() => { vi.clearAllMocks(); });
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('lança erro quando empresaId é string vazia (multi-tenant guard)', async () => {
     await expect(despesaService.listar('')).rejects.toThrow(/empresaId é obrigatório/i);
     // Nenhuma query deve ter sido disparada
-    expect((supabase.from as unknown as ReturnType<typeof vi.fn>)).not.toHaveBeenCalled();
+    expect(supabase.from as unknown as ReturnType<typeof vi.fn>).not.toHaveBeenCalled();
   });
 
   it('lança erro quando empresaId é undefined (via bypass de tipo)', async () => {
-    await expect(
-      (despesaService.listar as unknown as (id?: string) => Promise<unknown[]>)(undefined)
-    ).rejects.toThrow(/empresaId é obrigatório/i);
-    expect((supabase.from as unknown as ReturnType<typeof vi.fn>)).not.toHaveBeenCalled();
+    await expect((despesaService.listar as unknown as (id?: string) => Promise<unknown[]>)(undefined)).rejects.toThrow(
+      /empresaId é obrigatório/i
+    );
+    expect(supabase.from as unknown as ReturnType<typeof vi.fn>).not.toHaveBeenCalled();
   });
 
   it('lança erro quando empresaId é null (via bypass de tipo)', async () => {
-    await expect(
-      (despesaService.listar as unknown as (id: unknown) => Promise<unknown[]>)(null)
-    ).rejects.toThrow(/empresaId é obrigatório/i);
-    expect((supabase.from as unknown as ReturnType<typeof vi.fn>)).not.toHaveBeenCalled();
+    await expect((despesaService.listar as unknown as (id: unknown) => Promise<unknown[]>)(null)).rejects.toThrow(
+      /empresaId é obrigatório/i
+    );
+    expect(supabase.from as unknown as ReturnType<typeof vi.fn>).not.toHaveBeenCalled();
   });
 
   it('filtra por empresa_id EXATO fornecido', async () => {

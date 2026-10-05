@@ -38,7 +38,7 @@ const MOCK_EMPRESA = {
   ativa: true,
 };
 
-function setupEmpresas(overrides: any = {}) {
+function setupEmpresas(overrides: Record<string, unknown> = {}) {
   vi.mocked(useEmpresas).mockReturnValue({
     empresaAtual: MOCK_EMPRESA,
     empresaAtualId: 'e1',

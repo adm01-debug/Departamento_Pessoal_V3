@@ -9,7 +9,7 @@ vi.mock('@/integrations/supabase/client', () => ({
 
 import { whatsappService } from '../whatsappService';
 
-function setupSelectEqMaybeSingle(data: any, error: any = null) {
+function setupSelectEqMaybeSingle(data: unknown, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const eqFn = vi.fn().mockReturnValue({ maybeSingle });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
@@ -17,26 +17,26 @@ function setupSelectEqMaybeSingle(data: any, error: any = null) {
   return { selectFn, eqFn, maybeSingle };
 }
 
-function setupUpsert(error: any = null) {
+function setupUpsert(error: { message: string; code?: string } | null = null) {
   const upsertFn = vi.fn().mockResolvedValue({ error });
   mockFrom.mockReturnValue({ upsert: upsertFn });
   return { upsertFn };
 }
 
-function setupInsert(error: any = null) {
+function setupInsert(error: { message: string; code?: string } | null = null) {
   const insertFn = vi.fn().mockResolvedValue({ error });
   mockFrom.mockReturnValue({ insert: insertFn });
   return { insertFn };
 }
 
-function setupSelectEq(data: any[], error: any = null) {
+function setupSelectEq(data: unknown, error: { message: string; code?: string } | null = null) {
   const eqFn = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ select: selectFn });
   return { selectFn, eqFn };
 }
 
-function setupSelectEqOrder(data: any[], error: any = null) {
+function setupSelectEqOrder(data: unknown, error: { message: string; code?: string } | null = null) {
   const orderFn = vi.fn().mockResolvedValue({ data, error });
   const eqFn = vi.fn().mockReturnValue({ order: orderFn });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });

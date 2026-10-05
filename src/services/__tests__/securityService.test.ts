@@ -22,7 +22,7 @@ vi.mock('../loggerService', () => ({
 }));
 
 // select → order → [optional limit] → resolvedValue
-function setupSelectOrderLimitChain(data: any[], error: any = null) {
+function setupSelectOrderLimitChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const limitFn = vi.fn().mockResolvedValue({ data, error });
   const orderFn = vi.fn().mockReturnValue({ limit: limitFn });
   const selectFn = vi.fn().mockReturnValue({ order: orderFn });
@@ -31,7 +31,7 @@ function setupSelectOrderLimitChain(data: any[], error: any = null) {
 }
 
 // select → order → resolvedValue (no limit)
-function setupSelectOrderChain(data: any[], error: any = null) {
+function setupSelectOrderChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const orderFn = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ order: orderFn });
   mockFrom.mockReturnValue({ select: selectFn });
@@ -39,7 +39,7 @@ function setupSelectOrderChain(data: any[], error: any = null) {
 }
 
 // delete → eq → resolvedValue
-function setupDeleteEqChain(error: any = null) {
+function setupDeleteEqChain(error: { message: string; code?: string } | null = null) {
   const eqFn = vi.fn();
   const __delChain = {
     then: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).then(r),

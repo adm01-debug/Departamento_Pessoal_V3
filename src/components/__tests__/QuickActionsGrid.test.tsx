@@ -20,7 +20,7 @@ vi.mock('framer-motion', () => ({
       </button>
     ),
     create:
-      (Component: any) =>
+      (Component: React.ElementType) =>
       ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
         <Component {...props}>{children}</Component>
       ),

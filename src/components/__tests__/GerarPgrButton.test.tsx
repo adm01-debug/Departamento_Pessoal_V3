@@ -9,7 +9,11 @@ vi.mock('@tanstack/react-query', () => ({
   // Mock fiel ao contrato do useMutation: `mutate` executa a mutationFn e
   // encaminha sucesso/erro para onSuccess/onError, permitindo testar as
   // validações que vivem dentro da mutation.
-  useMutation: (opts: any) => ({
+  useMutation: (opts: {
+    mutationFn?: (vars?: unknown) => Promise<unknown>;
+    onSuccess?: (data: unknown, vars: unknown, ctx: unknown) => void;
+    onError?: (err: unknown, vars: unknown, ctx: unknown) => void;
+  }) => ({
     mutate: (vars?: unknown) => {
       mockMutate(opts);
       Promise.resolve()
@@ -60,7 +64,7 @@ vi.mock('@/integrations/supabase/client', () => ({
   },
 }));
 
-vi.mock('@/utils/safeError', () => ({ safeErrorMessage: vi.fn((_e: any, f: string) => f) }));
+vi.mock('@/utils/safeError', () => ({ safeErrorMessage: vi.fn((_e: unknown, f: string) => f) }));
 vi.mock('@/utils/safeUrl', () => ({ safeHref: vi.fn((u: string) => u) }));
 vi.mock('sonner', () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
@@ -100,7 +104,7 @@ vi.mock('@/components/ui/dialog', () => ({
 }));
 
 vi.mock('@/components/ui/input', () => ({
-  Input: (props: any) => <input data-testid="input" {...props} />,
+  Input: (props: React.ComponentProps<'input'>) => <input data-testid="input" {...props} />,
 }));
 
 vi.mock('@/components/ui/label', () => ({

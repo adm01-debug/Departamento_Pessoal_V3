@@ -24,7 +24,7 @@ vi.mock('@/utils/auditLogger', () => ({
 }));
 
 vi.mock('@/utils/safeError', () => ({
-  safeErrorMessage: vi.fn((_e: any, fallback: string) => fallback),
+  safeErrorMessage: vi.fn((_e: unknown, fallback: string) => fallback),
 }));
 
 import { useGenericCrud } from '../useGenericCrud';
@@ -36,7 +36,13 @@ const mockService = {
   excluir: vi.fn().mockResolvedValue(undefined),
 };
 
-const DEFAULT_QUERY = { data: { data: [{ id: '1' }], total: 1 }, isLoading: false, isFetching: false, error: null, refetch: vi.fn() };
+const DEFAULT_QUERY = {
+  data: { data: [{ id: '1' }], total: 1 },
+  isLoading: false,
+  isFetching: false,
+  error: null,
+  refetch: vi.fn(),
+};
 const DEFAULT_MUTATION = { mutateAsync: vi.fn(), isPending: false };
 
 describe('useGenericCrud', () => {
@@ -98,7 +104,9 @@ describe('useGenericCrud', () => {
   });
 
   it('uses initialPageSize option', () => {
-    const { result } = renderHook(() => useGenericCrud({ queryKey: 'test', service: mockService, initialPageSize: 25 }));
+    const { result } = renderHook(() =>
+      useGenericCrud({ queryKey: 'test', service: mockService, initialPageSize: 25 })
+    );
     expect(result.current.pageSize).toBe(25);
   });
 

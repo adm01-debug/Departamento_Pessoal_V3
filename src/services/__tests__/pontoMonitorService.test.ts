@@ -19,7 +19,7 @@ vi.mock('sonner', () => ({
   toast: { error: mockToastError },
 }));
 
-function setupInsert(error: any = null) {
+function setupInsert(error: { message: string; code?: string } | null = null) {
   const insertFn = vi.fn().mockResolvedValue({ error });
   mockFrom.mockReturnValue({ insert: insertFn });
   return { insertFn };
@@ -37,19 +37,23 @@ describe('pontoMonitorService.logEvent', () => {
     const { insertFn } = setupInsert();
     await pontoMonitorService.logEvent('TEST_EVENT', { key: 'val' });
     expect(mockFrom).toHaveBeenCalledWith('ponto_auditoria');
-    expect(insertFn).toHaveBeenCalledWith(expect.objectContaining({
-      tabela_nome: 'SYSTEM_EVENT',
-      acao: 'TEST_EVENT',
-      dados_novos: { key: 'val' },
-    }));
+    expect(insertFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        tabela_nome: 'SYSTEM_EVENT',
+        acao: 'TEST_EVENT',
+        dados_novos: { key: 'val' },
+      })
+    );
   });
 
   it('includes usuario_id from auth.getUser', async () => {
     const { insertFn } = setupInsert();
     await pontoMonitorService.logEvent('EV', {});
-    expect(insertFn).toHaveBeenCalledWith(expect.objectContaining({
-      usuario_id: 'user-1',
-    }));
+    expect(insertFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        usuario_id: 'user-1',
+      })
+    );
   });
 
   it('swallows DB errors silently (no throw)', async () => {
@@ -78,14 +82,16 @@ describe('pontoMonitorService.trackGeofenceFailure', () => {
   it('calls logEvent with GEOFENCE_FAILURE and correct payload', async () => {
     const { insertFn } = setupInsert();
     await pontoMonitorService.trackGeofenceFailure('col-1', -23.5, -46.6, 100);
-    expect(insertFn).toHaveBeenCalledWith(expect.objectContaining({
-      acao: 'GEOFENCE_FAILURE',
-      dados_novos: expect.objectContaining({
-        colaboradorId: 'col-1',
-        coords: { lat: -23.5, lng: -46.6 },
-        radius: 100,
-      }),
-    }));
+    expect(insertFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        acao: 'GEOFENCE_FAILURE',
+        dados_novos: expect.objectContaining({
+          colaboradorId: 'col-1',
+          coords: { lat: -23.5, lng: -46.6 },
+          radius: 100,
+        }),
+      })
+    );
   });
 });
 
@@ -100,10 +106,12 @@ describe('pontoMonitorService.trackOfflineSync', () => {
   it('calls logEvent with OFFLINE_SYNC_COMPLETE', async () => {
     const { insertFn } = setupInsert();
     await pontoMonitorService.trackOfflineSync(5, 0);
-    expect(insertFn).toHaveBeenCalledWith(expect.objectContaining({
-      acao: 'OFFLINE_SYNC_COMPLETE',
-      dados_novos: expect.objectContaining({ syncedCount: 5, errorCount: 0 }),
-    }));
+    expect(insertFn).toHaveBeenCalledWith(
+      expect.objectContaining({
+        acao: 'OFFLINE_SYNC_COMPLETE',
+        dados_novos: expect.objectContaining({ syncedCount: 5, errorCount: 0 }),
+      })
+    );
   });
 
   it('shows toast.error when errorCount > 0', async () => {

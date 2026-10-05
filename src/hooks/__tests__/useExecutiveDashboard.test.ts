@@ -14,8 +14,8 @@ vi.mock('@/integrations/supabase/client', () => ({
 
 import { useExecutiveKPIs, useStrategicFinancials } from '../useExecutiveDashboard';
 
-function makeChain(result: any) {
-  const chain: any = {};
+function makeChain(result: unknown) {
+  const chain: Record<string, unknown> = {};
   chain.select = vi.fn().mockReturnValue(chain);
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.in = vi.fn().mockReturnValue(chain);

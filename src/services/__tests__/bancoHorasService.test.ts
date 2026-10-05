@@ -23,9 +23,9 @@ describe('bancoHorasService', () => {
   // listarPorColaborador
   describe('listarPorColaborador', () => {
     // Mock encadeável: o serviço aplica .eq(colaborador_id).eq(empresa_id).order()
-    function setupList(data: any[], error: any = null) {
+    function setupList(data: unknown, error: { message: string; code?: string } | null = null) {
       const order = vi.fn().mockResolvedValue({ data, error });
-      const eq: any = vi.fn();
+      const eq = vi.fn();
       eq.mockReturnValue({ eq, order });
       const select = vi.fn().mockReturnValue({ eq });
       mockFrom.mockReturnValue({ select });
@@ -63,8 +63,8 @@ describe('bancoHorasService', () => {
   // getSaldo
   describe('getSaldo', () => {
     // .eq() precisa ser encadeável E aguardável (tenant isolation usa 2 eq).
-    function setupSaldo(data: any[] | null, error: any = null) {
-      const eq: any = vi.fn();
+    function setupSaldo(data: unknown | null, error: { message: string; code?: string } | null = null) {
+      const eq = vi.fn();
       eq.mockImplementation(() => ({
         eq,
         then: (resolve: (v?: unknown) => unknown) => Promise.resolve({ data, error }).then(resolve),
@@ -249,7 +249,7 @@ describe('bancoHorasConfigService', () => {
     it('calls UPDATE when config already exists for empresa_id', async () => {
       const existing = { id: 'cfg-1', empresa_id: 'emp-1' };
       const updateMaybeSingle = vi.fn().mockResolvedValue({ data: { ...existing, nome: 'updated' }, error: null });
-      const updateEq: any = vi.fn();
+      const updateEq = vi.fn();
       updateEq.mockReturnValue({ eq: updateEq, select: vi.fn().mockReturnValue({ maybeSingle: updateMaybeSingle }) });
       const update = vi.fn().mockReturnValue({ eq: updateEq });
 

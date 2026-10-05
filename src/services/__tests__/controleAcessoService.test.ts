@@ -12,8 +12,8 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // listar: select → order → [optional eq] → resolvedValue (thenable chain)
-function setupListarChain(data: any[], error: any = null) {
-  const chain: any = makeChain({ data, error });
+function setupListarChain(data: unknown, error: { message: string; code?: string } | null = null) {
+  const chain = makeChain({ data, error });
   mockFrom.mockReturnValue(chain);
   return { selectFn: chain.select, orderFn: chain.order, chain };
 }

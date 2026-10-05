@@ -6,7 +6,7 @@ import { Users } from 'lucide-react';
 vi.mock('framer-motion', () => ({
   motion: {
     create:
-      (Component: any) =>
+      (Component: React.ElementType) =>
       ({ children, ...rest }: { children?: ReactNode; [key: string]: unknown }) => (
         <Component {...rest}>{children}</Component>
       ),
@@ -14,8 +14,8 @@ vi.mock('framer-motion', () => ({
     span: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
       <span {...props}>{children}</span>
     ),
-    polygon: (props: any) => <polygon {...props} />,
-    polyline: (props: any) => <polyline {...props} />,
+    polygon: (props: React.ComponentProps<'polygon'>) => <polygon {...props} />,
+    polyline: (props: React.ComponentProps<'polyline'>) => <polyline {...props} />,
   },
   useInView: () => true,
 }));

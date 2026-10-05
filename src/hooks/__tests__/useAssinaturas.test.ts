@@ -18,8 +18,8 @@ vi.mock('@/hooks/useAuth', () => ({
 
 import { useAssinaturas } from '../useAssinaturas';
 
-function buildChain(data: any[]) {
-  const chain: any = {};
+function buildChain(data: unknown) {
+  const chain: Record<string, unknown> = {};
   chain.select = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
   chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve({ data, error: null }).then(fn);

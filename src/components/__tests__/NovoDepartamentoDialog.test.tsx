@@ -20,7 +20,7 @@ vi.mock('@/components/ui/button', () => ({
 }));
 
 vi.mock('@/components/ui/input', () => ({
-  Input: (props: any) => <input {...props} />,
+  Input: (props: React.ComponentProps<'input'>) => <input {...props} />,
 }));
 
 vi.mock('@/components/ui/label', () => ({
@@ -28,7 +28,7 @@ vi.mock('@/components/ui/label', () => ({
 }));
 
 vi.mock('@/components/ui/textarea', () => ({
-  Textarea: (props: any) => <textarea {...props} />,
+  Textarea: (props: React.ComponentProps<'textarea'>) => <textarea {...props} />,
 }));
 
 vi.mock('@/components/ui/switch', () => ({

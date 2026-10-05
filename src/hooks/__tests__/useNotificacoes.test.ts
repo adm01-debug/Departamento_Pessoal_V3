@@ -25,9 +25,9 @@ vi.mock('@/contexts/AuthContext', () => ({
 
 import { useNotificacoes } from '../useNotificacoes';
 
-function buildSelectChain(data: any[] = []) {
+function buildSelectChain(data: unknown = []) {
   const response = { data, error: null };
-  const chain: any = {};
+  const chain: Record<string, unknown> = {};
   chain.select = vi.fn().mockReturnValue(chain);
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
@@ -110,7 +110,7 @@ describe('useNotificacoes', () => {
   it('criarNotificacao calls supabase insert', async () => {
     const insertFn = vi.fn().mockResolvedValue({ error: null });
     mockFrom.mockImplementation(() => {
-      const chain: any = {
+      const chain = {
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
         order: vi.fn().mockReturnThis(),

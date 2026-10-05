@@ -18,17 +18,17 @@ vi.mock('@/utils/dateLocal', () => ({
 }));
 
 // Helper: select → eq → order chain (order resolves directly, no range)
-function setupListarChain(data: any[], count: number, error: any = null) {
+function setupListarChain(data: unknown, count: number, error: { message: string; code?: string } | null = null) {
   const response = { data, count, error };
   // `.order(...)` é aguardado direto ou seguido de `.returns<T>()` (tipagem do supabase-js).
-  const ordered: any = {
+  const ordered = {
     returns: vi.fn(() => ordered),
     then: (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn),
     catch: (fn: (v?: unknown) => unknown) => Promise.resolve(response).catch(fn),
     finally: (fn: (v?: unknown) => unknown) => Promise.resolve(response).finally(fn),
   };
   const orderFn = vi.fn().mockReturnValue(ordered);
-  const baseQuery: any = { order: orderFn };
+  const baseQuery = { order: orderFn };
   const eqFn = vi.fn().mockReturnValue(baseQuery);
   Object.assign(baseQuery, { eq: eqFn });
   const selectFn = vi.fn().mockReturnValue(baseQuery);
@@ -37,9 +37,9 @@ function setupListarChain(data: any[], count: number, error: any = null) {
 }
 
 // Helper: thenable chain for select → eq → (optional eq) → await
-function setupThenabledChain(data: any[], error: any = null) {
+function setupThenabledChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const response = { data, error };
-  const chain: any = {};
+  const chain: Record<string, unknown> = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.gte = vi.fn().mockReturnValue(chain);
   chain.or = vi.fn().mockReturnValue(chain);

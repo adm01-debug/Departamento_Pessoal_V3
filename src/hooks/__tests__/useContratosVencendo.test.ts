@@ -28,7 +28,7 @@ vi.mock('@/services/contratoTemplateService', () => ({
 }));
 
 vi.mock('@/utils/safeError', () => ({
-  safeErrorMessage: vi.fn((e: any, fallback: string) => fallback),
+  safeErrorMessage: vi.fn((e: unknown, fallback: string) => fallback),
 }));
 
 import { useContratosVencendo } from '../useContratosVencendo';
@@ -36,9 +36,33 @@ import { useContratosVencendo } from '../useContratosVencendo';
 const DEFAULT_MUTATION = { mutate: vi.fn(), isPending: false, isError: false };
 
 const MOCK_CONTRATOS = [
-  { id: 'c1', data_fim: '2026-08-01', severidade: 'critico' as const, empresa_id: 'emp-1', tipo_contrato: 'clt_indeterminado', template_nome: 'CLT', dias_para_vencer: 7 },
-  { id: 'c2', data_fim: '2026-07-24', severidade: 'vencido' as const, empresa_id: 'emp-1', tipo_contrato: 'pj', template_nome: 'PJ', dias_para_vencer: -1 },
-  { id: 'c3', data_fim: '2026-09-01', severidade: 'ok' as const, empresa_id: 'emp-1', tipo_contrato: 'clt_indeterminado', template_nome: 'CLT', dias_para_vencer: 40 },
+  {
+    id: 'c1',
+    data_fim: '2026-08-01',
+    severidade: 'critico' as const,
+    empresa_id: 'emp-1',
+    tipo_contrato: 'clt_indeterminado',
+    template_nome: 'CLT',
+    dias_para_vencer: 7,
+  },
+  {
+    id: 'c2',
+    data_fim: '2026-07-24',
+    severidade: 'vencido' as const,
+    empresa_id: 'emp-1',
+    tipo_contrato: 'pj',
+    template_nome: 'PJ',
+    dias_para_vencer: -1,
+  },
+  {
+    id: 'c3',
+    data_fim: '2026-09-01',
+    severidade: 'ok' as const,
+    empresa_id: 'emp-1',
+    tipo_contrato: 'clt_indeterminado',
+    template_nome: 'CLT',
+    dias_para_vencer: 40,
+  },
 ];
 
 describe('useContratosVencendo', () => {
@@ -50,17 +74,13 @@ describe('useContratosVencendo', () => {
   it('queries with empresa_id key', () => {
     mockUseQuery.mockReturnValue({ data: [], isLoading: false });
     renderHook(() => useContratosVencendo());
-    expect(mockUseQuery).toHaveBeenCalledWith(
-      expect.objectContaining({ queryKey: ['contratos-vencendo', 'emp-1'] })
-    );
+    expect(mockUseQuery).toHaveBeenCalledWith(expect.objectContaining({ queryKey: ['contratos-vencendo', 'emp-1'] }));
   });
 
   it('is enabled when empresaId is defined', () => {
     mockUseQuery.mockReturnValue({ data: [], isLoading: false });
     renderHook(() => useContratosVencendo());
-    expect(mockUseQuery).toHaveBeenCalledWith(
-      expect.objectContaining({ enabled: true })
-    );
+    expect(mockUseQuery).toHaveBeenCalledWith(expect.objectContaining({ enabled: true }));
   });
 
   it('returns isLoading from query', () => {

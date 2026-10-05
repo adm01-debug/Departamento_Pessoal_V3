@@ -19,8 +19,8 @@ vi.mock('@/contexts/AuthContext', () => ({
 
 import { useOrganograma } from '../useOrganograma';
 
-function buildChain(data: any[]) {
-  const chain: any = {};
+function buildChain(data: unknown) {
+  const chain: Record<string, unknown> = {};
   chain.select = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
   chain.eq = vi.fn().mockReturnValue(chain);

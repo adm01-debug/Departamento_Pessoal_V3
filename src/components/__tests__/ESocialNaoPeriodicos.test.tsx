@@ -19,7 +19,7 @@ vi.mock('@/utils/piiMask', () => ({
   maskCpfDisplay: vi.fn((cpf: string) => '***.' + (cpf || '').slice(-6)),
 }));
 
-vi.mock('@/lib/utils', () => ({ cn: (...args: any[]) => args.filter(Boolean).join(' ') }));
+vi.mock('@/lib/utils', () => ({ cn: (...args: unknown[]) => args.filter(Boolean).join(' ') }));
 
 import { S2200Admissao, S2230Afastamento } from '../esocial/NaoPeriodicos';
 

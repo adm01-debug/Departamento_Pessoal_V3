@@ -21,8 +21,8 @@ vi.mock('sonner', () => ({ toast: { success: mockToastSuccess, error: mockToastE
 
 import { useAdmissaoWorkflow } from '../useAdmissaoWorkflow';
 
-function buildSelectChain(data: any) {
-  const chain: any = {};
+function buildSelectChain(data: unknown) {
+  const chain: Record<string, unknown> = {};
   chain.select = vi.fn().mockReturnValue(chain);
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.maybeSingle = vi.fn().mockResolvedValue({ data, error: null });

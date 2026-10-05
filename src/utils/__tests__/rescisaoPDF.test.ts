@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 const { MockJsPDF, mockSave, mockToastSuccess, mockListarTrilha } = vi.hoisted(() => {
   const mockSave = vi.fn();
   // Vitest 4 requires 'function' or 'class' (not arrow) for constructor mocks
-  const MockJsPDF = vi.fn().mockImplementation(function (this: any) {
+  const MockJsPDF = vi.fn().mockImplementation(function (this: Record<string, unknown>) {
     this.setFontSize = vi.fn();
     this.setTextColor = vi.fn();
     this.setFont = vi.fn();
@@ -15,7 +15,7 @@ const { MockJsPDF, mockSave, mockToastSuccess, mockListarTrilha } = vi.hoisted((
     this.splitTextToSize = vi.fn((t: string) => [t]);
     this.internal = { pageSize: { getWidth: () => 210 } };
     this.lastAutoTable = { finalY: 100 };
-    this.autoTable = vi.fn().mockImplementation(function (this: any) {
+    this.autoTable = vi.fn().mockImplementation(function (this: Record<string, unknown>) {
       this.lastAutoTable = { finalY: 100 };
     });
   });
@@ -78,7 +78,7 @@ describe('gerarPDFRescisao', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockListarTrilha.mockResolvedValue([]);
-    MockJsPDF.mockImplementation(function (this: any) {
+    MockJsPDF.mockImplementation(function (this: Record<string, unknown>) {
       this.setFontSize = vi.fn();
       this.setTextColor = vi.fn();
       this.setFont = vi.fn();
@@ -90,7 +90,7 @@ describe('gerarPDFRescisao', () => {
       this.splitTextToSize = vi.fn((t: string) => [t]);
       this.internal = { pageSize: { getWidth: () => 210 } };
       this.lastAutoTable = { finalY: 100 };
-      this.autoTable = vi.fn().mockImplementation(function (this: any) {
+      this.autoTable = vi.fn().mockImplementation(function (this: Record<string, unknown>) {
         this.lastAutoTable = { finalY: 100 };
       });
     });

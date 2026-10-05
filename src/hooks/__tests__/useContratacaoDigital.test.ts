@@ -26,7 +26,7 @@ import { useContratacaoDigital } from '../useContratacaoDigital';
 
 vi.mock('@/hooks/useEmpresas', async () => (await import('@/test/empresaMock')).useEmpresasMockModule());
 
-function buildUpdateChain(returnData: any = { id: 't1' }) {
+function buildUpdateChain(returnData: unknown = { id: 't1' }) {
   const singleFn = vi.fn().mockResolvedValue({ data: returnData, error: null });
   const selectFn = vi.fn().mockReturnValue({ single: singleFn });
   const eqFn = vi.fn().mockReturnValue({ select: selectFn });

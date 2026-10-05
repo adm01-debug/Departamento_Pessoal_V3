@@ -13,9 +13,9 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // Helper: thenable list chain (select → order → optional eq → await)
-function setupListChain(data: any[], error: any = null) {
+function setupListChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const response = { data, error };
-  const chain: any = {};
+  const chain: Record<string, unknown> = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
   chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
@@ -27,20 +27,20 @@ function setupListChain(data: any[], error: any = null) {
 }
 
 // Helper: insert/update → ... → maybeSingle
-function setupWriteChain(data: any, error: any = null) {
+function setupWriteChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   return { maybeSingle, selectFn };
 }
 
-function setupInsertChain(data: any, error: any = null) {
+function setupInsertChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const { maybeSingle, selectFn } = setupWriteChain(data, error);
   const insertFn = vi.fn().mockReturnValue({ select: selectFn });
   mockFrom.mockReturnValue({ insert: insertFn });
   return { insertFn, selectFn, maybeSingle };
 }
 
-function setupUpdateChain(data: any, error: any = null) {
+function setupUpdateChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const { maybeSingle, selectFn } = setupWriteChain(data, error);
   const eqFn = vi.fn();
   const __eqChain = { select: selectFn, eq: eqFn };
@@ -50,7 +50,7 @@ function setupUpdateChain(data: any, error: any = null) {
   return { updateFn, eqFn, selectFn, maybeSingle };
 }
 
-function setupDeleteChain(error: any = null) {
+function setupDeleteChain(error: { message: string; code?: string } | null = null) {
   const eqFn = vi.fn();
   const __delChain = {
     then: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).then(r),

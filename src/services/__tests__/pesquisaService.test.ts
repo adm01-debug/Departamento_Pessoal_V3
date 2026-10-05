@@ -12,9 +12,9 @@ vi.mock('@/integrations/supabase/client', () => ({
   supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
 }));
 
-function setupListChain(data: any[], error: any = null) {
+function setupListChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const response = { data, error };
-  const chain: any = {};
+  const chain: Record<string, unknown> = {};
   chain.eq = vi.fn().mockReturnValue(chain);
   chain.order = vi.fn().mockReturnValue(chain);
   chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve(response).then(fn);
@@ -25,7 +25,7 @@ function setupListChain(data: any[], error: any = null) {
   return { selectFn, chain };
 }
 
-function setupInsertChain(data: any, error: any = null) {
+function setupInsertChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const insertFn = vi.fn().mockReturnValue({ select: selectFn });
@@ -33,7 +33,7 @@ function setupInsertChain(data: any, error: any = null) {
   return { insertFn, selectFn, maybeSingle };
 }
 
-function setupUpdateChain(data: any, error: any = null) {
+function setupUpdateChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ maybeSingle });
   const eqFn = vi.fn();
@@ -44,7 +44,7 @@ function setupUpdateChain(data: any, error: any = null) {
   return { updateFn, eqFn, selectFn, maybeSingle };
 }
 
-function setupDeleteChain(error: any = null) {
+function setupDeleteChain(error: { message: string; code?: string } | null = null) {
   const eqFn = vi.fn();
   const __delChain = {
     then: (r: (v?: unknown) => unknown) => Promise.resolve({ error }).then(r),
@@ -59,7 +59,7 @@ function setupDeleteChain(error: any = null) {
 }
 
 // Eq chain for listarPerguntas/listarRespostas (select → eq → order → await)
-function setupEqOrderChain(data: any[], error: any = null) {
+function setupEqOrderChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const orderFn = vi.fn().mockResolvedValue({ data, error });
   const eqFn = vi.fn().mockReturnValue({ order: orderFn });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
@@ -68,7 +68,7 @@ function setupEqOrderChain(data: any[], error: any = null) {
 }
 
 // Simple eq chain (select → eq → await)
-function setupEqChain(data: any[], error: any = null) {
+function setupEqChain(data: unknown, error: { message: string; code?: string } | null = null) {
   const eqFn = vi.fn().mockResolvedValue({ data, error });
   const selectFn = vi.fn().mockReturnValue({ eq: eqFn });
   mockFrom.mockReturnValue({ select: selectFn });
@@ -220,9 +220,9 @@ describe('pesquisaService.excluirPergunta', () => {
 
   it('deletes pergunta by id after cross-tenant ownership check', async () => {
     // 1) pergunta → pesquisa_id | 2) pesquisa → empresa_id | 3) delete
-    const pergChain: any = makeChain({ data: { pesquisa_id: 'p1' }, error: null });
-    const pesqChain: any = makeChain({ data: { empresa_id: EMPRESA_ID }, error: null });
-    const delChain: any = makeChain({ error: null });
+    const pergChain = makeChain({ data: { pesquisa_id: 'p1' }, error: null });
+    const pesqChain = makeChain({ data: { empresa_id: EMPRESA_ID }, error: null });
+    const delChain = makeChain({ error: null });
     mockFrom.mockReturnValueOnce(pergChain).mockReturnValueOnce(pesqChain).mockReturnValueOnce(delChain);
 
     await pesquisaService.excluirPergunta('q1', EMPRESA_ID);
@@ -231,8 +231,8 @@ describe('pesquisaService.excluirPergunta', () => {
   });
 
   it('fail-closed: rejeita pergunta de outro tenant', async () => {
-    const pergChain: any = makeChain({ data: { pesquisa_id: 'p1' }, error: null });
-    const pesqChain: any = makeChain({ data: { empresa_id: 'outra-empresa' }, error: null });
+    const pergChain = makeChain({ data: { pesquisa_id: 'p1' }, error: null });
+    const pesqChain = makeChain({ data: { empresa_id: 'outra-empresa' }, error: null });
     mockFrom.mockReturnValueOnce(pergChain).mockReturnValueOnce(pesqChain);
 
     await expect(pesquisaService.excluirPergunta('q1', EMPRESA_ID)).rejects.toThrow(/outro tenant/);
