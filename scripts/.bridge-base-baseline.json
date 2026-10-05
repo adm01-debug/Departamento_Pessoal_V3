@@ -1,8 +1,32 @@
 [
-  { "file": "src/services/securityService.ts", "table": "blocked_ips" },
-  { "file": "src/services/securityService.ts", "table": "login_attempts" },
-  { "file": "src/services/securityService.ts", "table": "security_alerts" },
-  { "file": "src/services/securityService.ts", "table": "rate_limit_logs" },
-  { "file": "src/pages/AdminSecurityPage.tsx", "table": "security_alerts" },
-  { "file": "src/components/settings/IPBlockingTab.tsx", "table": "blocked_ips" }
+  {
+    "file": "src/services/securityService.ts",
+    "table": "blocked_ips",
+    "count": 2
+  },
+  {
+    "file": "src/services/securityService.ts",
+    "table": "login_attempts",
+    "count": 1
+  },
+  {
+    "file": "src/services/securityService.ts",
+    "table": "security_alerts",
+    "count": 1
+  },
+  {
+    "file": "src/services/securityService.ts",
+    "table": "rate_limit_logs",
+    "count": 1
+  },
+  {
+    "file": "src/pages/AdminSecurityPage.tsx",
+    "table": "security_alerts",
+    "count": 1
+  },
+  {
+    "file": "src/components/settings/IPBlockingTab.tsx",
+    "table": "blocked_ips",
+    "count": 3
+  }
 ]

@@ -85,7 +85,7 @@ export default function PremiacoesPage() {
           versao: '1.2.5-stable',
         })) as {
           valor_aprovado?: number | null;
-          valor_folha?: number | null;
+          valor_folha_real?: number | null;
           status_conciliacao?: string | null;
           created_at?: string | null;
           colaborador?: { nome_completo?: string | null } | null;
@@ -95,7 +95,7 @@ export default function PremiacoesPage() {
           colaborador: p.colaborador?.nome_completo ?? null,
           campanha: p.campanha?.nome ?? null,
           valor_aprovado: p.valor_aprovado ?? null,
-          valor_folha: p.valor_folha ?? null,
+          valor_folha: p.valor_folha_real ?? null,
           status_conciliacao: p.status_conciliacao ?? null,
           created_at: p.created_at ?? null,
         }));

@@ -50,7 +50,9 @@ function lineAt(source, index) {
   return source.slice(0, index).split('\n').length;
 }
 
-// Aliases {supabase, supabaseBase, ns.supabase} -> lane 'bridge' | 'base'.
+// Aliases {supabase, supabaseBase, ns.supabase, ns.supabaseBase} -> lane
+// 'bridge' | 'base'. `supabaseBase` é SEMPRE lane 'base' — client.ts também o
+// reexporta, e importá-lo de lá ignora o proxy igual ao client.base.
 function collectSupabaseAliases(source) {
   const aliases = [];
   for (const imp of source.matchAll(
@@ -58,16 +60,21 @@ function collectSupabaseAliases(source) {
   )) {
     const [, clause, spec] = imp;
     if (!/integrations\/supabase\/client(?:\.base)?$/.test(spec)) continue;
-    const lane = spec.endsWith('.base') ? 'base' : 'bridge';
+    const specBase = spec.endsWith('.base');
     const named = clause.match(/\{([^}]+)\}/);
     if (named) {
       for (const part of named[1].split(',')) {
-        const m = part.trim().match(/^supabase(?:\s+as\s+([A-Za-z_$][\w$]*))?$/);
-        if (m) aliases.push({ name: m[1] ?? 'supabase', lane });
+        const m = part.trim().match(/^(supabase|supabaseBase)(?:\s+as\s+([A-Za-z_$][\w$]*))?$/);
+        if (!m) continue;
+        const lane = m[1] === 'supabaseBase' || specBase ? 'base' : 'bridge';
+        aliases.push({ name: m[2] ?? m[1], lane });
       }
     }
     const ns = clause.match(/\*\s+as\s+([A-Za-z_$][\w$]*)/);
-    if (ns) aliases.push({ name: `${ns[1]}.supabase`, lane });
+    if (ns) {
+      aliases.push({ name: `${ns[1]}.supabase`, lane: specBase ? 'base' : 'bridge' });
+      aliases.push({ name: `${ns[1]}.supabaseBase`, lane: 'base' });
+    }
   }
   return aliases;
 }
@@ -94,7 +101,7 @@ for (const file of walk(join(root, 'src'))) {
   for (const alias of collectSupabaseAliases(source)) {
     const escaped = alias.name.replace(/\./g, '\\.');
     const tablePattern = new RegExp(
-      `(?:\\b${escaped}|\\(${escaped}\\s+as\\s+[^)]+\\))\\.from\\s*\\(\\s*["']([A-Za-z0-9_]+)["']`,
+      `(?:\\b${escaped}|\\(${escaped}\\s+as\\s+[^)]+\\))\\s*\\.\\s*from\\s*\\(\\s*["']([A-Za-z0-9_]+)["']`,
       'g'
     );
     for (const match of source.matchAll(tablePattern)) {
@@ -115,12 +122,15 @@ const denylist = exportedSet(validation, 'TABLE_DENYLIST');
 const publicRpcs = exportedSet(access, 'PUBLIC_RPCS');
 const failures = [];
 
-// Baseline ratchet: acessos diretos (client.base) a tabelas denylisted que já
-// existiam quando o gate ganhou a lane 'base'. Cada entrada é aprovada porque
-// a tabela tem policy RLS admin-equivalente — novas entradas exigem revisão.
-const baseBaseline = existsSync(baselinePath)
-  ? new Set(JSON.parse(readFileSync(baselinePath, 'utf8')).map((e) => `${e.file}:${e.table}`))
-  : new Set();
+// Baseline ratchet: {file, table, count} — acessos diretos (client.base) a
+// tabelas denylisted que já existiam quando o gate ganhou a lane 'base'. Cada
+// entrada é aprovada porque a tabela tem policy RLS admin-equivalente; `count`
+// pinha os call sites — um novo `.from(<denylisted>)` num arquivo já aprovado
+// falha quando excede a contagem registrada.
+const baseBaselineMap = existsSync(baselinePath)
+  ? new Map(JSON.parse(readFileSync(baselinePath, 'utf8')).map((e) => [`${e.file}:${e.table}`, e.count ?? 1]))
+  : new Map();
+const baseBaseline = new Set(baseBaselineMap.keys());
 
 if (directLegacyAuditCalls.length) {
   failures.push(
@@ -144,8 +154,11 @@ for (const call of bridgeTableCalls) {
     failures.push(`Tabela sensível roteada pelo gateway genérico: ${call.table} (${call.location})`);
   }
 }
+const baseCurrent = new Map();
 for (const call of baseTableCalls) {
-  if (denylist.has(call.table) && !baseBaseline.has(`${call.file}:${call.table}`)) {
+  const key = `${call.file}:${call.table}`;
+  baseCurrent.set(key, (baseCurrent.get(key) ?? 0) + 1);
+  if (denylist.has(call.table) && (baseCurrent.get(key) ?? 0) > (baseBaselineMap.get(key) ?? 0)) {
     failures.push(
       `Acesso direto (client.base) a tabela denylisted fora do baseline: ${call.table} (${call.location}) — use RPC dedicada ou aprove no baseline`
     );
