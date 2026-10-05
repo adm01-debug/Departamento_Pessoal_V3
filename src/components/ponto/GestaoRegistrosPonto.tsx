@@ -25,6 +25,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
 import { motion, AnimatePresence } from 'framer-motion';
 import { exportPontoCSV, exportPontoPDF } from '@/services/exportService';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { batidasPontoService } from '@/services/batidasPontoService';
 import { GestaoPontoAnalytics } from './GestaoPontoAnalytics';
 import { PontoGeoAnalytics } from './PontoGeoAnalytics';
@@ -128,6 +129,10 @@ export function GestaoRegistrosPonto() {
       horas_extras: formatInterval(r.horas_extras),
     }));
 
+    void registrarAcessoPII('ponto_registros', 'export', {
+      empresaId: empresaAtual?.id,
+      registroCount: dataToExport.length,
+    });
     if (format === 'csv') {
       exportPontoCSV(dataToExport, `ponto-${filtroData}.csv`);
     } else {

@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { exportPortaria671PDF } from '@/services/exportService';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { format, parseISO } from 'date-fns';
@@ -462,7 +463,13 @@ export function PontoAdjustmentRequests() {
                         variant="outline"
                         size="sm"
                         className="gap-2"
-                        onClick={() => exportPortaria671PDF(selectedRequest)}
+                        onClick={() => {
+                          void registrarAcessoPII('ponto_registros', 'export', {
+                            empresaId: empresaAtual?.id,
+                            registroId: selectedRequest.id,
+                          });
+                          exportPortaria671PDF(selectedRequest);
+                        }}
                       >
                         <Download className="h-4 w-4" /> Exportar PDF
                       </Button>

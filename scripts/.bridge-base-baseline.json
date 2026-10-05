@@ -1,0 +1,8 @@
+[
+  { "file": "src/services/securityService.ts", "table": "blocked_ips" },
+  { "file": "src/services/securityService.ts", "table": "login_attempts" },
+  { "file": "src/services/securityService.ts", "table": "security_alerts" },
+  { "file": "src/services/securityService.ts", "table": "rate_limit_logs" },
+  { "file": "src/pages/AdminSecurityPage.tsx", "table": "security_alerts" },
+  { "file": "src/components/settings/IPBlockingTab.tsx", "table": "blocked_ips" }
+]

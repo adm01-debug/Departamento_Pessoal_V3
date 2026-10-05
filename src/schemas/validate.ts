@@ -10,17 +10,15 @@ import { loggerService } from '@/services/loggerService';
  * rejeições em payloads de updates e callers com shapes parciais.
  */
 /**
- * `.partial()` não existe em objetos com refinamentos (.superRefine):
- * reconstrói um objeto a partir do shape base nesse caso.
+ * `.partial()` não existe em objetos com refinamentos (.superRefine) nem em
+ * schemas não-objeto (union/record/array): reconstrói um objeto a partir do
+ * shape base quando ele existe; sem shape, devolve o schema intacto — parse
+ * completo é a única opção e `.partial()` lançaria TypeError.
  */
 function toPartials(schema: z.ZodType): z.ZodType {
-  const s = schema as {
-    def?: { shape?: z.ZodRawShape | (() => z.ZodRawShape) };
-    _def?: { shape?: z.ZodRawShape | (() => z.ZodRawShape) };
-  };
-  const def = s.def ?? s._def;
-  const raw = typeof def?.shape === 'function' ? def.shape() : def?.shape;
-  const base = raw ? z.object(raw) : schema;
+  const raw = shapeOf(schema);
+  if (!raw) return schema;
+  const base = z.object(raw);
   return (base as z.ZodObject<z.ZodRawShape>).partial();
 }
 

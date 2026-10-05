@@ -22,6 +22,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useDataAccessLog } from '@/hooks/useDataAccessLog';
 import { useEmpresas } from '@/hooks/useEmpresas';
 import { exportarDesligamentosExcel } from '@/utils/desligamentoExcel';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PontoAuditTimeline } from '@/components/ponto/PontoAuditTimeline';
 import { loggerService } from '@/services/loggerService';
@@ -100,7 +101,13 @@ export default function DesligamentosPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => exportarDesligamentosExcel(filtered)}
+              onClick={() => {
+                void registrarAcessoPII('desligamentos', 'export', {
+                  empresaId: empresaAtual?.id,
+                  registroCount: filtered.length,
+                });
+                exportarDesligamentosExcel(filtered);
+              }}
               className="rounded-xl font-body"
               disabled={filtered.length === 0}
             >
