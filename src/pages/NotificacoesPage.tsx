@@ -32,6 +32,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useState, useEffect, useMemo } from 'react';
 import { useNotificacoes } from '@/hooks/useNotificacoes';
+import { validateTablePayload } from '@/schemas/validate';
 
 const tipoIcon: Record<string, React.ElementType> = {
   info: Info,
@@ -137,7 +138,11 @@ export default function NotificacoesPage() {
 
   const marcarLida = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from('notificacoes').update({ lida: true }).eq('id', id).eq('user_id', user!.id);
+      const { error } = await supabase
+        .from('notificacoes')
+        .update(validateTablePayload('notificacoes', { lida: true }, 'NotificacoesPage:notificacoes'))
+        .eq('id', id)
+        .eq('user_id', user!.id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -150,7 +155,7 @@ export default function NotificacoesPage() {
     mutationFn: async () => {
       const { error } = await supabase
         .from('notificacoes')
-        .update({ lida: true })
+        .update(validateTablePayload('notificacoes', { lida: true }, 'NotificacoesPage:notificacoes'))
         .eq('user_id', user!.id)
         .eq('lida', false);
       if (error) throw error;

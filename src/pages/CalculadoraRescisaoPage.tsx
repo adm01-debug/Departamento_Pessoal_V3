@@ -21,6 +21,7 @@ import { edgeFunctionsService } from '@/services/edgeFunctionsService';
 import { useQuery } from '@tanstack/react-query';
 import { useDataAccessLog } from '@/hooks/useDataAccessLog';
 import type { Json, Database } from '@/integrations/supabase/types';
+import { validateTablePayload } from '@/schemas/validate';
 
 export default function CalculadoraRescisaoPage() {
   const { user } = useAuth();
@@ -146,24 +147,30 @@ export default function CalculadoraRescisaoPage() {
       // 1. Save to History
       const { data: historico, error: histError } = await supabase
         .from('historico_rescisoes')
-        .insert({
-          empresa_id: empresaAtual.id,
-          created_by: user.id,
-          nome_colaborador: form.nomeColaborador || null,
-          cpf: form.cpf || null,
-          cargo: form.cargo || null,
-          salario: Number(form.salario),
-          data_admissao: form.dataAdmissao,
-          data_desligamento: form.dataDesligamento,
-          tipo_rescisao: form.tipo,
-          aviso_trabalhado: form.avisoTrabalhado,
-          ferias_vencidas: form.feriasVencidas,
-          saldo_fgts: Number(form.saldoFGTS || 0),
-          total_proventos: result.totalProventos,
-          total_descontos: result.totalDescontos,
-          total_liquido: result.totalLiquido,
-          resultado: result as unknown as Json,
-        })
+        .insert(
+          validateTablePayload(
+            'historico_rescisoes',
+            {
+              empresa_id: empresaAtual.id,
+              created_by: user.id,
+              nome_colaborador: form.nomeColaborador || null,
+              cpf: form.cpf || null,
+              cargo: form.cargo || null,
+              salario: Number(form.salario),
+              data_admissao: form.dataAdmissao,
+              data_desligamento: form.dataDesligamento,
+              tipo_rescisao: form.tipo,
+              aviso_trabalhado: form.avisoTrabalhado,
+              ferias_vencidas: form.feriasVencidas,
+              saldo_fgts: Number(form.saldoFGTS || 0),
+              total_proventos: result.totalProventos,
+              total_descontos: result.totalDescontos,
+              total_liquido: result.totalLiquido,
+              resultado: result as unknown as Json,
+            },
+            'CalculadoraRescisaoPage:historico_rescisoes'
+          )
+        )
         .select()
         .single();
 
@@ -172,16 +179,22 @@ export default function CalculadoraRescisaoPage() {
       // 2. Integration with Desligamentos Table
       const colabDesl = colaboradores.find((c) => c.nome_completo === form.nomeColaborador);
       if (form.dataDesligamento && colabDesl) {
-        const { error: deslError } = await supabase.from('desligamentos').insert({
-          empresa_id: empresaAtual.id,
-          colaborador_id: colabDesl.id,
-          data_desligamento: form.dataDesligamento,
-          tipo: form.tipo as Database['public']['Enums']['tipo_desligamento'],
-          motivo: form.tipo.replace(/_/g, ' '),
-          valor_liquido: result.totalLiquido,
-          status: 'pendente',
-          created_by: user.id,
-        });
+        const { error: deslError } = await supabase.from('desligamentos').insert(
+          validateTablePayload(
+            'desligamentos',
+            {
+              empresa_id: empresaAtual.id,
+              colaborador_id: colabDesl.id,
+              data_desligamento: form.dataDesligamento,
+              tipo: form.tipo as Database['public']['Enums']['tipo_desligamento'],
+              motivo: form.tipo.replace(/_/g, ' '),
+              valor_liquido: result.totalLiquido,
+              status: 'pendente',
+              created_by: user.id,
+            },
+            'CalculadoraRescisaoPage:desligamentos'
+          )
+        );
 
         if (!deslError) {
           toast.success('Desligamento registrado no módulo de Pessoas!');

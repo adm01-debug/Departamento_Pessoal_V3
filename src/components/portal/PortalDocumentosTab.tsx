@@ -26,6 +26,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SignatureCanvas } from '@/components/ui/signature/SignatureCanvas';
+import { validateTablePayload } from '@/schemas/validate';
 const BUCKET = 'documentos';
 const TIPOS_DOCUMENTO = ['Atestado', 'Certificado', 'Comprovante', 'Contrato', 'RG', 'CPF', 'Outro'];
 
@@ -181,17 +182,23 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
         return;
       }
 
-      const { error: signErr } = await supabase.from('documentos_assinatura').insert({
-        titulo: docToSign.nome,
-        tipo_documento: docToSign.tipo,
-        status: 'assinado',
-        colaborador_id: colaboradorId,
-        empresa_id: empresaId,
-        conteudo_url: docToSign.url,
-        assinatura_base64: base64,
-        ip_assinatura: '127.0.0.1', // Mock IP
-        assinado_em: new Date().toISOString(),
-      });
+      const { error: signErr } = await supabase.from('documentos_assinatura').insert(
+        validateTablePayload(
+          'documentos_assinatura',
+          {
+            titulo: docToSign.nome,
+            tipo_documento: docToSign.tipo,
+            status: 'assinado',
+            colaborador_id: colaboradorId,
+            empresa_id: empresaId,
+            conteudo_url: docToSign.url,
+            assinatura_base64: base64,
+            ip_assinatura: '127.0.0.1', // Mock IP
+            assinado_em: new Date().toISOString(),
+          },
+          'PortalDocumentosTab:documentos_assinatura'
+        )
+      );
       if (signErr) throw signErr;
 
       queryClient.invalidateQueries({ queryKey: ['portal-documentos'] });

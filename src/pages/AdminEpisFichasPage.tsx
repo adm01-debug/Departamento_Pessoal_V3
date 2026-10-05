@@ -11,6 +11,7 @@ import { useEmpresas } from '@/hooks/useEmpresas';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { SignaturePad } from '@/components/sst/SignaturePad';
+import { validateTablePayload } from '@/schemas/validate';
 
 async function sha256(text: string) {
   const buf = new TextEncoder().encode(text);
@@ -53,21 +54,33 @@ export default function AdminEpisFichasPage() {
   const assinar = async (fichaId: string, dataUrl: string) => {
     try {
       const hash = await sha256(dataUrl);
-      const { error: sigErr } = await supabase.from('epis_fichas_assinaturas').insert({
-        ficha_id: fichaId,
-        assinatura_tipo: 'canvas',
-        assinatura_dados: dataUrl,
-        hash_sha256: hash,
-        user_agent: navigator.userAgent,
-      });
+      const { error: sigErr } = await supabase.from('epis_fichas_assinaturas').insert(
+        validateTablePayload(
+          'epis_fichas_assinaturas',
+          {
+            ficha_id: fichaId,
+            assinatura_tipo: 'canvas',
+            assinatura_dados: dataUrl,
+            hash_sha256: hash,
+            user_agent: navigator.userAgent,
+          },
+          'AdminEpisFichasPage:epis_fichas_assinaturas'
+        )
+      );
       if (sigErr) throw sigErr;
       const { error: updErr } = await supabase
         .from('epis_fichas')
-        .update({
-          status: 'assinada',
-          assinada_em: new Date().toISOString(),
-          hash_sha256: hash,
-        })
+        .update(
+          validateTablePayload(
+            'epis_fichas',
+            {
+              status: 'assinada',
+              assinada_em: new Date().toISOString(),
+              hash_sha256: hash,
+            },
+            'AdminEpisFichasPage:epis_fichas'
+          )
+        )
         .eq('id', fichaId);
       if (updErr) throw updErr;
       toast.success('Ficha assinada — hash registrado para integridade');

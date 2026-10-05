@@ -16,6 +16,7 @@ import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { Plus, Trash2 } from 'lucide-react';
+import { validateTablePayload } from '@/schemas/validate';
 
 export default function CentrosCustoPage() {
   const { empresaAtual } = useEmpresas();
@@ -39,7 +40,13 @@ export default function CentrosCustoPage() {
     mutationFn: async (d: { nome: string; codigo: string; descricao: string }) => {
       const { data, error } = await supabase
         .from('centros_custo')
-        .insert({ ...d, empresa_id: empresaAtual?.id })
+        .insert(
+          validateTablePayload(
+            'centros_custo',
+            { ...d, empresa_id: empresaAtual?.id },
+            'CentrosCustoPage:centros_custo'
+          )
+        )
         .select()
         .maybeSingle();
       if (error) throw error;
@@ -100,7 +107,7 @@ export default function CentrosCustoPage() {
                       <Input
                         value={form.codigo}
                         onChange={(e) => setForm((p) => ({ ...p, codigo: e.target.value }))}
-                        placeholder="Ex: CC-001"
+                        placeholder="E: CC-001"
                       />
                     </div>
                     <div>

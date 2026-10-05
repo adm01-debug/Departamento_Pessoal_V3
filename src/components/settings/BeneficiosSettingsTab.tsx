@@ -13,6 +13,8 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { validateInput, validateTablePayload } from '@/schemas/validate';
+import { beneficioSchema } from '@/schemas/beneficio';
 
 export function BeneficiosSettingsTab() {
   const qc = useQueryClient();
@@ -39,12 +41,19 @@ export function BeneficiosSettingsTab() {
       if (!nome) throw new Error('Nome do plano é obrigatório.');
       if (valor < 0 || valor > 99999.99 || isNaN(valor)) throw new Error('Valor inválido (entre 0 e 99.999,99).');
 
-      const { error } = await supabase.from('beneficios').insert({
-        nome,
-        tipo,
-        valor,
-        ativo: true,
-      });
+      validateInput(beneficioSchema, { nome, tipo, valor }, 'BeneficiosSettingsTab:beneficios');
+      const { error } = await supabase.from('beneficios').insert(
+        validateTablePayload(
+          'beneficios',
+          {
+            nome,
+            tipo,
+            valor,
+            ativo: true,
+          },
+          'BeneficiosSettingsTab:beneficios'
+        )
+      );
       if (error) throw error;
     },
     onSuccess: () => {
@@ -58,7 +67,10 @@ export function BeneficiosSettingsTab() {
 
   const alternarStatus = useMutation({
     mutationFn: async ({ id, ativo }: { id: string; ativo: boolean }) => {
-      const { error } = await supabase.from('beneficios').update({ ativo }).eq('id', id);
+      const { error } = await supabase
+        .from('beneficios')
+        .update(validateTablePayload('beneficios', { ativo }, 'BeneficiosSettingsTab:beneficios'))
+        .eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -97,7 +109,7 @@ export function BeneficiosSettingsTab() {
                     <Input
                       value={form.nome}
                       onChange={(e) => setForm((p) => ({ ...p, nome: e.target.value }))}
-                      placeholder="Ex: VR Master"
+                      placeholder="E: VR Master"
                     />
                   </div>
                   <div className="space-y-2">
@@ -105,7 +117,7 @@ export function BeneficiosSettingsTab() {
                     <Input
                       value={form.tipo}
                       onChange={(e) => setForm((p) => ({ ...p, tipo: e.target.value }))}
-                      placeholder="Ex: Alimentação"
+                      placeholder="E: Alimentação"
                     />
                   </div>
                   <div className="space-y-2">

@@ -20,6 +20,7 @@ import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Plus, Edit2, Trash2, Hash, TrendingUp, TrendingDown, Info, CheckCircle, XCircle } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { validateTablePayload } from '@/schemas/validate';
 
 type TipoEvento = 'provento' | 'desconto' | 'informativo';
 
@@ -85,12 +86,14 @@ export default function RubricasPage() {
       if (editId) {
         const { error } = await supabase
           .from('rubricas_folha')
-          .update(payload)
+          .update(validateTablePayload('rubricas_folha', payload, 'RubricasPage:rubricas_folha'))
           .eq('id', editId)
           .eq('empresa_id', empresaAtual!.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from('rubricas_folha').insert(payload);
+        const { error } = await supabase
+          .from('rubricas_folha')
+          .insert(validateTablePayload('rubricas_folha', payload, 'RubricasPage:rubricas_folha'));
         if (error) throw error;
       }
     },
@@ -108,7 +111,7 @@ export default function RubricasPage() {
     mutationFn: async ({ id, ativo }: { id: string; ativo: boolean }) => {
       const { error } = await supabase
         .from('rubricas_folha')
-        .update({ ativo })
+        .update(validateTablePayload('rubricas_folha', { ativo }, 'RubricasPage:rubricas_folha'))
         .eq('id', id)
         .eq('empresa_id', empresaAtual!.id);
       if (error) throw error;

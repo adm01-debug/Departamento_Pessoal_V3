@@ -17,6 +17,7 @@ import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { loggerService } from '@/services/loggerService';
 import { z } from 'zod';
+import { validateTablePayload } from '@/schemas/validate';
 
 interface Dashboard {
   total: number;
@@ -43,7 +44,7 @@ interface Extintor {
 
 const extintorSchema = z.object({
   codigo_patrimonio: z.string().trim().min(1).max(50),
-  tipo: z.enum(['AGUA','PO_QUIMICO_ABC','PO_QUIMICO_BC','CO2','ESPUMA','CLASSE_K']),
+  tipo: z.enum(['AGUA', 'PO_QUIMICO_ABC', 'PO_QUIMICO_BC', 'CO2', 'ESPUMA', 'CLASSE_K']),
   capacidade_kg: z.number().positive().max(999),
   localizacao: z.string().trim().min(1).max(255),
   data_proxima_recarga: z.string().min(1),
@@ -77,9 +78,14 @@ export default function AdminExtintoresPage() {
   });
 
   const [insp, setInsp] = useState({
-    lacre_ok: true, pressao_ok: true, mangueira_ok: true,
-    sinalizacao_ok: true, acesso_desobstruido: true,
-    altura_correta: true, corpo_integro: true, observacoes: '',
+    lacre_ok: true,
+    pressao_ok: true,
+    mangueira_ok: true,
+    sinalizacao_ok: true,
+    acesso_desobstruido: true,
+    altura_correta: true,
+    corpo_integro: true,
+    observacoes: '',
   });
 
   const empresaId = empresaAtual?.id;
@@ -91,14 +97,17 @@ export default function AdminExtintoresPage() {
     queryFn: async () => {
       const [{ data: dash, error: e1 }, { data: exts, error: e2 }] = await Promise.all([
         supabase.rpc('sst_extintores_dashboard', { p_empresa_id: empresaId! }),
-        supabase.from('sst_extintores')
-          .select('id,codigo_patrimonio,tipo,capacidade_kg,localizacao,data_proxima_recarga,data_proximo_teste_hidrostatico,status,qr_code')
+        supabase
+          .from('sst_extintores')
+          .select(
+            'id,codigo_patrimonio,tipo,capacidade_kg,localizacao,data_proxima_recarga,data_proximo_teste_hidrostatico,status,qr_code'
+          )
           .eq('empresa_id', empresaId!)
           .is('deleted_at', null)
           .order('codigo_patrimonio')
           .limit(500),
       ]);
-      if (e1 || e2) throw (e1 ?? e2);
+      if (e1 || e2) throw e1 ?? e2;
       return {
         dashboard: dash as unknown as Dashboard,
         extintores: (exts as Extintor[] | null) ?? [],
@@ -119,8 +128,9 @@ export default function AdminExtintoresPage() {
   const extintores = extintoresQuery.data?.extintores ?? EMPTY_EXT;
   const loading = extintoresQuery.isPending && !!empresaId;
 
-  const carregar = () => { void extintoresQuery.refetch(); };
-
+  const carregar = () => {
+    void extintoresQuery.refetch();
+  };
 
   const criarExtintor = async () => {
     if (!empresaAtual?.id) return;
@@ -129,34 +139,74 @@ export default function AdminExtintoresPage() {
       toast.error('Preencha todos os campos corretamente');
       return;
     }
-    const { error } = await supabase.from('sst_extintores').insert({
-      ...parsed.data,
-      empresa_id: empresaAtual.id,
-    });
-    if (error) { toast.error(safeErrorMessage(error, 'Erro ao salvar extintor.')); return; }
+    const { error } = await supabase.from('sst_extintores').insert(
+      validateTablePayload(
+        'sst_extintores',
+        {
+          ...parsed.data,
+          empresa_id: empresaAtual.id,
+        },
+        'AdminExtintoresPage:sst_extintores'
+      )
+    );
+    if (error) {
+      toast.error(safeErrorMessage(error, 'Erro ao salvar extintor.'));
+      return;
+    }
     toast.success('Extintor cadastrado');
     setOpenNovo(false);
-    setForm({ codigo_patrimonio: '', tipo: 'PO_QUIMICO_ABC', capacidade_kg: 6, localizacao: '', data_proxima_recarga: '', data_proximo_teste_hidrostatico: '' });
+    setForm({
+      codigo_patrimonio: '',
+      tipo: 'PO_QUIMICO_ABC',
+      capacidade_kg: 6,
+      localizacao: '',
+      data_proxima_recarga: '',
+      data_proximo_teste_hidrostatico: '',
+    });
     carregar();
   };
 
   const registrarInspecao = async () => {
     if (!openInsp || !empresaAtual?.id) return;
     const { data: userRes } = await supabase.auth.getUser();
-    const conforme = insp.lacre_ok && insp.pressao_ok && insp.mangueira_ok
-      && insp.sinalizacao_ok && insp.acesso_desobstruido && insp.altura_correta && insp.corpo_integro;
-    const { error } = await supabase.from('sst_extintores_inspecoes').insert({
-      extintor_id: openInsp.id,
-      empresa_id: empresaAtual.id,
-      inspetor_id: userRes.user?.id,
-      inspetor_nome: userRes.user?.email ?? 'Inspetor',
-      ...insp,
-      resultado: conforme ? 'CONFORME' : 'NAO_CONFORME',
-    });
-    if (error) { toast.error(safeErrorMessage(error, 'Erro ao salvar extintor.')); return; }
+    const conforme =
+      insp.lacre_ok &&
+      insp.pressao_ok &&
+      insp.mangueira_ok &&
+      insp.sinalizacao_ok &&
+      insp.acesso_desobstruido &&
+      insp.altura_correta &&
+      insp.corpo_integro;
+    const { error } = await supabase.from('sst_extintores_inspecoes').insert(
+      validateTablePayload(
+        'sst_extintores_inspecoes',
+        {
+          extintor_id: openInsp.id,
+          empresa_id: empresaAtual.id,
+          inspetor_id: userRes.user?.id,
+          inspetor_nome: userRes.user?.email ?? 'Inspetor',
+          ...insp,
+          resultado: conforme ? 'CONFORME' : 'NAO_CONFORME',
+        },
+        'AdminExtintoresPage:sst_extintores_inspecoes'
+      )
+    );
+    if (error) {
+      toast.error(safeErrorMessage(error, 'Erro ao salvar extintor.'));
+      return;
+    }
     toast.success('Inspeção registrada');
     setOpenInsp(null);
-    setInsp({ lacre_ok: true, pressao_ok: true, mangueira_ok: true, sinalizacao_ok: true, acesso_desobstruido: true, altura_correta: true, corpo_integro: true, observacoes: '' });
+    setInsp({
+      lacre_ok: true,
+      pressao_ok: true,
+      mangueira_ok: true,
+      sinalizacao_ok: true,
+      acesso_desobstruido: true,
+      altura_correta: true,
+      corpo_integro: true,
+      observacoes: '',
+    });
     carregar();
   };
 
@@ -181,28 +231,47 @@ export default function AdminExtintoresPage() {
         </div>
         <Dialog open={openNovo} onOpenChange={setOpenNovo}>
           <DialogTrigger asChild>
-            <Button><Plus className="h-4 w-4 mr-2" />Novo Extintor</Button>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Novo Extintor
+            </Button>
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader><DialogTitle>Cadastrar Extintor</DialogTitle></DialogHeader>
+            <DialogHeader>
+              <DialogTitle>Cadastrar Extintor</DialogTitle>
+            </DialogHeader>
             <div className="space-y-3">
               <div>
                 <Label>Código de patrimônio</Label>
-                <Input value={form.codigo_patrimonio} onChange={(e) => setForm({ ...form, codigo_patrimonio: e.target.value })} />
+                <Input
+                  value={form.codigo_patrimonio}
+                  onChange={(e) => setForm({ ...form, codigo_patrimonio: e.target.value })}
+                />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label>Tipo</Label>
                   <Select value={form.tipo} onValueChange={(v) => setForm({ ...form, tipo: v })}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
-                      {TIPOS.map((t) => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
+                      {TIPOS.map((t) => (
+                        <SelectItem key={t.value} value={t.value}>
+                          {t.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
                   <Label>Capacidade (kg)</Label>
-                  <Input type="number" step="0.5" value={form.capacidade_kg} onChange={(e) => setForm({ ...form, capacidade_kg: Number(e.target.value) })} />
+                  <Input
+                    type="number"
+                    step="0.5"
+                    value={form.capacidade_kg}
+                    onChange={(e) => setForm({ ...form, capacidade_kg: Number(e.target.value) })}
+                  />
                 </div>
               </div>
               <div>
@@ -212,16 +281,26 @@ export default function AdminExtintoresPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <Label>Próxima recarga</Label>
-                  <Input type="date" value={form.data_proxima_recarga} onChange={(e) => setForm({ ...form, data_proxima_recarga: e.target.value })} />
+                  <Input
+                    type="date"
+                    value={form.data_proxima_recarga}
+                    onChange={(e) => setForm({ ...form, data_proxima_recarga: e.target.value })}
+                  />
                 </div>
                 <div>
                   <Label>Próximo hidrostático</Label>
-                  <Input type="date" value={form.data_proximo_teste_hidrostatico} onChange={(e) => setForm({ ...form, data_proximo_teste_hidrostatico: e.target.value })} />
+                  <Input
+                    type="date"
+                    value={form.data_proximo_teste_hidrostatico}
+                    onChange={(e) => setForm({ ...form, data_proximo_teste_hidrostatico: e.target.value })}
+                  />
                 </div>
               </div>
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setOpenNovo(false)}>Cancelar</Button>
+              <Button variant="outline" onClick={() => setOpenNovo(false)}>
+                Cancelar
+              </Button>
               <Button onClick={criarExtintor}>Cadastrar</Button>
             </DialogFooter>
           </DialogContent>
@@ -243,7 +322,9 @@ export default function AdminExtintoresPage() {
       </div>
 
       <Card>
-        <CardHeader><CardTitle>Inventário</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>Inventário</CardTitle>
+        </CardHeader>
         <CardContent>
           {loading ? (
             <p className="text-muted-foreground">Carregando...</p>
@@ -273,11 +354,19 @@ export default function AdminExtintoresPage() {
                     <TableCell>{e.localizacao}</TableCell>
                     <TableCell>{new Date(e.data_proxima_recarga).toLocaleDateString('pt-BR')}</TableCell>
                     <TableCell>{new Date(e.data_proximo_teste_hidrostatico).toLocaleDateString('pt-BR')}</TableCell>
-                    <TableCell><Badge variant={statusVariant(e.status)}>{e.status}</Badge></TableCell>
-                    <TableCell><span className="text-xs font-mono text-muted-foreground flex items-center gap-1"><QrCode className="h-3 w-3" />{e.qr_code?.slice(-6)}</span></TableCell>
+                    <TableCell>
+                      <Badge variant={statusVariant(e.status)}>{e.status}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-xs font-mono text-muted-foreground flex items-center gap-1">
+                        <QrCode className="h-3 w-3" />
+                        {e.qr_code?.slice(-6)}
+                      </span>
+                    </TableCell>
                     <TableCell>
                       <Button size="sm" variant="outline" onClick={() => setOpenInsp(e)}>
-                        <ClipboardCheck className="h-4 w-4 mr-1" />Inspecionar
+                        <ClipboardCheck className="h-4 w-4 mr-1" />
+                        Inspecionar
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -317,7 +406,9 @@ export default function AdminExtintoresPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setOpenInsp(null)}>Cancelar</Button>
+            <Button variant="outline" onClick={() => setOpenInsp(null)}>
+              Cancelar
+            </Button>
             <Button onClick={registrarInspecao}>Registrar Inspeção</Button>
           </DialogFooter>
         </DialogContent>

@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from './useEmpresas';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+import { validateTablePayload } from '@/schemas/validate';
 
 export function useAdmissaoWorkflow(admissaoId?: string) {
   const queryClient = useQueryClient();
@@ -35,15 +36,21 @@ export function useAdmissaoWorkflow(admissaoId?: string) {
 
       const { data: execucao, error: execError } = await supabase
         .from('workflows_execucoes')
-        .insert({
-          workflow_id: dados.workflow_id,
-          empresa_id: empresaAtualId,
-          entidade_id: admissaoId || '',
-          entidade_tipo: 'admissao',
-          status: 'em_andamento',
-          etapa_atual_id: primeiraEtapa?.id ?? null,
-          metadata: { iniciado_em: new Date().toISOString() },
-        })
+        .insert(
+          validateTablePayload(
+            'workflows_execucoes',
+            {
+              workflow_id: dados.workflow_id,
+              empresa_id: empresaAtualId,
+              entidade_id: admissaoId || '',
+              entidade_tipo: 'admissao',
+              status: 'em_andamento',
+              etapa_atual_id: primeiraEtapa?.id ?? null,
+              metadata: { iniciado_em: new Date().toISOString() },
+            },
+            'useAdmissaoWorkflow:workflows_execucoes'
+          )
+        )
         .select()
         .single();
 
@@ -53,9 +60,15 @@ export function useAdmissaoWorkflow(admissaoId?: string) {
       if (admissaoId) {
         const { error: admissaoUpdateError } = await supabase
           .from('admissoes')
-          .update({
-            etapa: 'documentos',
-          })
+          .update(
+            validateTablePayload(
+              'admissoes',
+              {
+                etapa: 'documentos',
+              },
+              'useAdmissaoWorkflow:admissoes'
+            )
+          )
           .eq('id', admissaoId)
           .eq('empresa_id', empresaAtualId!);
         if (admissaoUpdateError) throw admissaoUpdateError;
@@ -76,21 +89,33 @@ export function useAdmissaoWorkflow(admissaoId?: string) {
         const expiracao = new Date();
         expiracao.setDate(expiracao.getDate() + 7);
 
-        const { error: tokenError } = await supabase.from('admissao_tokens').insert({
-          admissao_id: admissaoId || '',
-          token: token,
-          email_candidato: admissao.email,
-          data_expiracao: expiracao.toISOString(),
-        });
+        const { error: tokenError } = await supabase.from('admissao_tokens').insert(
+          validateTablePayload(
+            'admissao_tokens',
+            {
+              admissao_id: admissaoId || '',
+              token: token,
+              email_candidato: admissao.email,
+              data_expiracao: expiracao.toISOString(),
+            },
+            'useAdmissaoWorkflow:admissao_tokens'
+          )
+        );
         if (tokenError) throw tokenError;
       }
 
       // Registra o início no histórico
-      await supabase.from('workflows_historico').insert({
-        execucao_id: execucao.id,
-        acao: 'Workflow iniciado',
-        observacoes: 'Workflow de admissão iniciado automaticamente.',
-      });
+      await supabase.from('workflows_historico').insert(
+        validateTablePayload(
+          'workflows_historico',
+          {
+            execucao_id: execucao.id,
+            acao: 'Workflow iniciado',
+            observacoes: 'Workflow de admissão iniciado automaticamente.',
+          },
+          'useAdmissaoWorkflow:workflows_historico'
+        )
+      );
 
       return execucao;
     },
@@ -130,10 +155,16 @@ export function useAdmissaoWorkflow(admissaoId?: string) {
 
       const { data: execucao, error: execError } = await supabase
         .from('workflows_execucoes')
-        .update({
-          etapa_atual_id: etapa?.id ?? null,
-          updated_at: new Date().toISOString(),
-        })
+        .update(
+          validateTablePayload(
+            'workflows_execucoes',
+            {
+              etapa_atual_id: etapa?.id ?? null,
+              updated_at: new Date().toISOString(),
+            },
+            'useAdmissaoWorkflow:workflows_execucoes'
+          )
+        )
         .eq('id', execucaoId)
         .eq('empresa_id', empresaAtualId!)
         .select()
@@ -141,11 +172,17 @@ export function useAdmissaoWorkflow(admissaoId?: string) {
 
       if (execError) throw execError;
 
-      await supabase.from('workflows_historico').insert({
-        execucao_id: execucaoId,
-        acao: `Mudança para Etapa ${proximaEtapa}`,
-        observacoes: observacao || `Avanço para a etapa ${proximaEtapa}`,
-      });
+      await supabase.from('workflows_historico').insert(
+        validateTablePayload(
+          'workflows_historico',
+          {
+            execucao_id: execucaoId,
+            acao: `Mudança para Etapa ${proximaEtapa}`,
+            observacoes: observacao || `Avanço para a etapa ${proximaEtapa}`,
+          },
+          'useAdmissaoWorkflow:workflows_historico'
+        )
+      );
 
       return execucao;
     },

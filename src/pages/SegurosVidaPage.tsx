@@ -18,6 +18,7 @@ import { beneficiariosSeguroService, segurosColaboradoresService } from '@/servi
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { Plus, ShieldCheck, Trash2, Users, UserPlus } from 'lucide-react';
+import { validateTablePayload } from '@/schemas/validate';
 
 // ========== Beneficiários de um Seguro ==========
 function BeneficiariosSeguroSection({ seguroId }: { seguroId: string }) {
@@ -156,15 +157,21 @@ export default function SegurosVidaPage() {
 
   const criar = useMutation({
     mutationFn: async (d: typeof form) => {
-      const { error } = await supabase.from('seguros_vida').insert({
-        seguradora: d.seguradora,
-        numero_apolice: d.numero_apolice || null,
-        capital_segurado: d.capital_segurado ? Number(d.capital_segurado) : null,
-        premio_mensal: d.premio_mensal ? Number(d.premio_mensal) : null,
-        data_inicio: d.data_inicio || null,
-        data_fim: d.data_fim || null,
-        empresa_id: empresaAtual?.id,
-      });
+      const { error } = await supabase.from('seguros_vida').insert(
+        validateTablePayload(
+          'seguros_vida',
+          {
+            seguradora: d.seguradora,
+            numero_apolice: d.numero_apolice || null,
+            capital_segurado: d.capital_segurado ? Number(d.capital_segurado) : null,
+            premio_mensal: d.premio_mensal ? Number(d.premio_mensal) : null,
+            data_inicio: d.data_inicio || null,
+            data_fim: d.data_fim || null,
+            empresa_id: empresaAtual?.id,
+          },
+          'SegurosVidaPage:seguros_vida'
+        )
+      );
       if (error) throw error;
     },
     onSuccess: () => {
@@ -220,14 +227,20 @@ export default function SegurosVidaPage() {
 
   const criarSinistro = useMutation({
     mutationFn: async (d: typeof sinForm) => {
-      const { error } = await supabase.from('sinistros_seguro').insert({
-        seguro_vida_id: d.seguro_vida_id || null,
-        colaborador_id: d.colaborador_id || null,
-        tipo: d.tipo || null,
-        data_sinistro: d.data_sinistro || null,
-        descricao: d.descricao || null,
-        status: 'aberto',
-      });
+      const { error } = await supabase.from('sinistros_seguro').insert(
+        validateTablePayload(
+          'sinistros_seguro',
+          {
+            seguro_vida_id: d.seguro_vida_id || null,
+            colaborador_id: d.colaborador_id || null,
+            tipo: d.tipo || null,
+            data_sinistro: d.data_sinistro || null,
+            descricao: d.descricao || null,
+            status: 'aberto',
+          },
+          'SegurosVidaPage:sinistros_seguro'
+        )
+      );
       if (error) throw error;
     },
     onSuccess: () => {

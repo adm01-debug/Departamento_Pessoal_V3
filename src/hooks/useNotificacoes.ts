@@ -6,6 +6,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { differenceInDays, parseISO, addDays, format } from 'date-fns';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { validateTablePayload } from '@/schemas/validate';
 
 interface ColaboradorRelation {
   id: string;
@@ -58,7 +59,7 @@ export function useNotificacoes() {
     mutationFn: async (id: string) => {
       const { error } = await supabase
         .from('notificacoes')
-        .update({ lida: true })
+        .update(validateTablePayload('notificacoes', { lida: true }, 'useNotificacoes:notificacoes'))
         .eq('id', id)
         .eq('empresa_id', empresaAtualId!);
       if (error) throw error;
@@ -70,7 +71,7 @@ export function useNotificacoes() {
     mutationFn: async () => {
       const { error } = await supabase
         .from('notificacoes')
-        .update({ lida: true })
+        .update(validateTablePayload('notificacoes', { lida: true }, 'useNotificacoes:notificacoes'))
         .eq('lida', false)
         .eq('empresa_id', empresaAtualId!);
       if (error) throw error;
@@ -119,7 +120,9 @@ export function useNotificacoes() {
         empresa_id: data.empresa_id || empresaAtualId,
         lida: false,
       };
-      const { error } = await supabase.from('notificacoes').insert(payload);
+      const { error } = await supabase
+        .from('notificacoes')
+        .insert(validateTablePayload('notificacoes', payload, 'useNotificacoes:notificacoes'));
       if (error) throw error;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notificacoes'] }),
@@ -296,7 +299,9 @@ export function useNotificacoes() {
       }
 
       if (notificacoesParaCriar.length > 0) {
-        const { error } = await supabase.from('notificacoes').insert(notificacoesParaCriar);
+        const { error } = await supabase
+          .from('notificacoes')
+          .insert(validateTablePayload('notificacoes', notificacoesParaCriar, 'useNotificacoes:notificacoes'));
         if (error) throw error;
       }
 

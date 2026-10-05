@@ -19,6 +19,7 @@ import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { Plus, ArrowRightLeft, TrendingUp } from 'lucide-react';
 import type { Tables, Insertable } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 type TransferenciaComJoins = Tables<'transferencias'> & {
   colaborador: { nome_completo: string; empresa_id: string | null } | null;
@@ -132,7 +133,11 @@ export default function MovimentacoesPage() {
         data_vigencia: d.data_vigencia,
         motivo: d.motivo || null,
       };
-      const { data, error } = await supabase.from('transferencias').insert(payload).select().maybeSingle();
+      const { data, error } = await supabase
+        .from('transferencias')
+        .insert(validateTablePayload('transferencias', payload, 'MovimentacoesPage:transferencias'))
+        .select()
+        .maybeSingle();
       if (error) throw error;
       return data;
     },
@@ -155,7 +160,11 @@ export default function MovimentacoesPage() {
         data_vigencia: d.data_vigencia,
         motivo: d.motivo || null,
       };
-      const { data, error } = await supabase.from('promocoes').insert(payload).select().maybeSingle();
+      const { data, error } = await supabase
+        .from('promocoes')
+        .insert(validateTablePayload('promocoes', payload, 'MovimentacoesPage:promocoes'))
+        .select()
+        .maybeSingle();
       if (error) throw error;
       return data;
     },

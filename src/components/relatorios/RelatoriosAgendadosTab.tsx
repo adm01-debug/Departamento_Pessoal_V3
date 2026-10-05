@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { motion } from 'framer-motion';
 import { buildReportScheduleInsert, isReportScheduleType, type ReportScheduleForm } from './reportScheduleContract';
+import { validateTablePayload } from '@/schemas/validate';
 
 const DIAS_SEMANA = [
   { value: 0, label: 'Domingo' },
@@ -57,7 +58,11 @@ export function RelatoriosAgendadosTab({ empresaId }: { empresaId: string }) {
   const criar = useMutation({
     mutationFn: async (d: ReportScheduleForm) => {
       const payload = buildReportScheduleInsert(d, empresaId);
-      const { data, error } = await supabase.from('relatorios_agendados').insert([payload]).select().single();
+      const { data, error } = await supabase
+        .from('relatorios_agendados')
+        .insert(validateTablePayload('relatorios_agendados', [payload], 'RelatoriosAgendadosTab:relatorios_agendados'))
+        .select()
+        .single();
       if (error) throw error;
       return data;
     },
@@ -126,7 +131,7 @@ export function RelatoriosAgendadosTab({ empresaId }: { empresaId: string }) {
                 <Input
                   value={form.nome}
                   onChange={(e) => setForm((p) => ({ ...p, nome: e.target.value }))}
-                  placeholder="Ex: Headcount Semanal"
+                  placeholder="E: Headcount Semanal"
                   className="rounded-xl"
                 />
               </div>

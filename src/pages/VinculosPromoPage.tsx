@@ -14,6 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { Link, Trash2, Plus, Users, Gift, ArrowRight } from 'lucide-react';
+import { validateTablePayload } from '@/schemas/validate';
 
 export default function VinculosPromoPage() {
   const qc = useQueryClient();
@@ -63,11 +64,17 @@ export default function VinculosPromoPage() {
 
   const criarVinculo = useMutation({
     mutationFn: async (d: { time_id: string; brinde_id: string; quantidade: number }) => {
-      const { error } = await supabase.from('times_brindes').insert({
-        time_id: d.time_id,
-        brinde_id: d.brinde_id,
-        quantidade_alocada: d.quantidade,
-      });
+      const { error } = await supabase.from('times_brindes').insert(
+        validateTablePayload(
+          'times_brindes',
+          {
+            time_id: d.time_id,
+            brinde_id: d.brinde_id,
+            quantidade_alocada: d.quantidade,
+          },
+          'VinculosPromoPage:times_brindes'
+        )
+      );
       if (error) throw error;
     },
     onSuccess: () => {

@@ -20,6 +20,7 @@ import { TrilhaCursosSection } from '@/components/treinamentos/TrilhaCursosSecti
 import { toast } from 'sonner';
 import { GraduationCap, Plus, BookOpen, Award, Users, Trash2, Link, Calendar, Video } from 'lucide-react';
 import type { Tables } from '@/integrations/supabase/database.types';
+import { validateTablePayload } from '@/schemas/validate';
 
 // === Treinamentos Service (tabela treinamentos) ===
 const treinamentosService = {
@@ -37,7 +38,9 @@ const treinamentosService = {
     carga_horaria?: number;
     empresa_id?: string;
   }) => {
-    const { error } = await supabase.from('treinamentos').insert(d);
+    const { error } = await supabase
+      .from('treinamentos')
+      .insert(validateTablePayload('treinamentos', d, 'TreinamentosPage:treinamentos'));
     if (error) throw error;
   },
   excluir: async (id: string, empresaId?: string) => {
@@ -451,7 +454,7 @@ export default function TreinamentosPage() {
                         <Input
                           value={cursoForm.categoria}
                           onChange={(e) => setCursoForm((p) => ({ ...p, categoria: e.target.value }))}
-                          placeholder="Ex: SST, Técnico"
+                          placeholder="E: SST, Técnico"
                         />
                       </div>
                       <div>
@@ -485,7 +488,7 @@ export default function TreinamentosPage() {
                         <Input
                           value={cursoForm.nr_relacionada}
                           onChange={(e) => setCursoForm((p) => ({ ...p, nr_relacionada: e.target.value }))}
-                          placeholder="Ex: NR-35"
+                          placeholder="E: NR-35"
                         />
                       </div>
                     </div>

@@ -21,6 +21,7 @@ import { EmprestimosTable } from '@/components/descontos/EmprestimosTable';
 import { AdiantamentosTable } from '@/components/descontos/AdiantamentosTable';
 import { NewLoanDialog } from '@/components/descontos/NewLoanDialog';
 import { NewAdvanceDialog } from '@/components/descontos/NewAdvanceDialog';
+import { validateTablePayload } from '@/schemas/validate';
 
 export default function DescontosPage() {
   const { empresaAtual } = useEmpresas();
@@ -69,11 +70,17 @@ export default function DescontosPage() {
 
   const criarEmprestimo = useMutation({
     mutationFn: async (values: NovoEmprestimoInput) => {
-      const { error } = await supabase.from('emprestimos_consignados').insert({
-        ...values,
-        empresa_id: empresaAtual!.id,
-        status: 'ativo',
-      });
+      const { error } = await supabase.from('emprestimos_consignados').insert(
+        validateTablePayload(
+          'emprestimos_consignados',
+          {
+            ...values,
+            empresa_id: empresaAtual!.id,
+            status: 'ativo',
+          },
+          'DescontosPage:emprestimos_consignados'
+        )
+      );
       if (error) throw error;
     },
     onSuccess: () => {
@@ -85,12 +92,18 @@ export default function DescontosPage() {
 
   const criarAdiantamento = useMutation({
     mutationFn: async (values: NovoAdiantamentoInput) => {
-      const { error } = await supabase.from('adiantamentos_salariais').insert({
-        ...values,
-        valor_solicitado: Number(values.valor_solicitado),
-        empresa_id: empresaAtual!.id,
-        status: 'pendente',
-      });
+      const { error } = await supabase.from('adiantamentos_salariais').insert(
+        validateTablePayload(
+          'adiantamentos_salariais',
+          {
+            ...values,
+            valor_solicitado: Number(values.valor_solicitado),
+            empresa_id: empresaAtual!.id,
+            status: 'pendente',
+          },
+          'DescontosPage:adiantamentos_salariais'
+        )
+      );
       if (error) throw error;
     },
     onSuccess: () => {
@@ -102,7 +115,10 @@ export default function DescontosPage() {
 
   const atualizarStatusAdiantamento = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const { error } = await supabase.from('adiantamentos_salariais').update({ status }).eq('id', id);
+      const { error } = await supabase
+        .from('adiantamentos_salariais')
+        .update(validateTablePayload('adiantamentos_salariais', { status }, 'DescontosPage:adiantamentos_salariais'))
+        .eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {

@@ -16,6 +16,7 @@ import { Plus, Trash2, ShieldBan, ShieldCheck, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { safeErrorMessage } from '@/utils/safeError';
+import { validateTablePayload } from '@/schemas/validate';
 
 const IP_V4_REGEX = /^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$/;
 const IP_V4_CIDR_REGEX = /^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)\/(3[0-2]|[12]?\d)$/;
@@ -58,7 +59,9 @@ export function IPBlockingTab() {
         expires.setHours(expires.getHours() + hours);
         payload.expires_at = expires.toISOString();
       }
-      const { error } = await supabase.from('blocked_ips').insert(payload);
+      const { error } = await supabase
+        .from('blocked_ips')
+        .insert(validateTablePayload('blocked_ips', payload, 'IPBlockingTab:blocked_ips'));
       if (error) throw error;
     },
     onSuccess: () => {

@@ -95,23 +95,16 @@ export const batidasPontoService = {
   },
   async fecharPeriodo(empresaId: string, dataInicio: string, dataFim: string): Promise<PeriodoPonto> {
     // periodos_ponto é um calendário GLOBAL de competências (sem empresa_id):
-    // um registro 'fechado' vale para todas as empresas. Por isso só aceita
-    // intervalo que cubra o mês civil inteiro — gravar um recorte (ex.: um
-    // dia) como competencia YYYY-MM sugeriria o mês inteiro fechado para todos.
+    // um registro 'fechado' vale para todas as empresas. O período gravado é
+    // sempre a competência inteira do mês de data_inicio — um recorte (ex.: um
+    // dia) não pode ser gravado como período porque sugeriria fechamento
+    // parcial. Callers que passam um filtro qualquer (ex.: hoje–hoje) fecham a
+    // competência corrente.
     const ini = new Date(`${dataInicio}T00:00:00Z`);
-    const fim = new Date(`${dataFim}T00:00:00Z`);
-    const ultimoDia = new Date(Date.UTC(ini.getUTCFullYear(), ini.getUTCMonth() + 1, 0));
-    const mesCivilInteiro =
-      ini.getUTCDate() === 1 &&
-      ini.getUTCFullYear() === fim.getUTCFullYear() &&
-      ini.getUTCMonth() === fim.getUTCMonth() &&
-      fim.getUTCDate() === ultimoDia.getUTCDate();
-    if (!mesCivilInteiro) {
-      throw new Error(
-        `Fechamento exige a competência completa: ${dataInicio}–${dataFim} não cobre o mês civil inteiro ` +
-          `(informe o 1º e o último dia de ${dataInicio.slice(0, 7)}).`
-      );
-    }
+    const competencia = dataInicio.slice(0, 7);
+    const inicioMes = `${competencia}-01`;
+    const ultimoDia = new Date(Date.UTC(ini.getUTCFullYear(), ini.getUTCMonth() + 1, 0)).getUTCDate();
+    const fimMes = `${competencia}-${String(ultimoDia).padStart(2, '0')}`;
 
     const { data, error } = await supabase
       .from('periodos_ponto')
@@ -119,9 +112,9 @@ export const batidasPontoService = {
         validateTablePayload(
           'periodos_ponto',
           {
-            competencia: dataInicio.slice(0, 7),
-            data_inicio: dataInicio,
-            data_fim: dataFim,
+            competencia,
+            data_inicio: inicioMes,
+            data_fim: fimMes,
             status: 'fechado',
             fechado_em: new Date().toISOString(),
           } as unknown as TablesInsert<'periodos_ponto'>,

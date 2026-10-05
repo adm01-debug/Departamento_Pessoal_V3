@@ -4,13 +4,21 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Shield, ShieldCheck, ShieldAlert, Copy, Key, Smartphone, Loader2, Trash2, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+import { validateTablePayload } from '@/schemas/validate';
 
 export function MFASetup() {
   const { user } = useAuth();
@@ -23,14 +31,19 @@ export function MFASetup() {
   const [enrolling, setEnrolling] = useState(false);
 
   // Check MFA factors
-  const { data: factors, isLoading, refetch } = useQuery({
+  const {
+    data: factors,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ['mfa-factors', user?.id],
     enabled: !!user?.id,
     queryFn: async () => {
       const { data, error } = await supabase.auth.mfa.listFactors();
       if (error) throw error;
       return data;
-    }});
+    },
+  });
 
   // Get user_mfa record
   const { data: mfaRecord } = useQuery({
@@ -39,9 +52,10 @@ export function MFASetup() {
     queryFn: async () => {
       const { data } = await supabase.from('user_mfa').select('*').eq('user_id', user!.id).maybeSingle();
       return data;
-    }});
+    },
+  });
 
-  const activeFactor = factors?.totp?.find(f => f.status === 'verified');
+  const activeFactor = factors?.totp?.find((f) => f.status === 'verified');
   const isEnabled = !!activeFactor;
 
   const handleEnroll = async () => {
@@ -49,13 +63,15 @@ export function MFASetup() {
     try {
       const { data, error } = await supabase.auth.mfa.enroll({
         factorType: 'totp',
-        friendlyName: 'Authenticator App'});
+        friendlyName: 'Authenticator App',
+      });
       if (error) throw error;
       setEnrollData({
         id: data.id,
         qr: data.totp.qr_code,
         secret: data.totp.secret,
-        uri: data.totp.uri});
+        uri: data.totp.uri,
+      });
       setShowEnrollDialog(true);
     } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao iniciar configuração MFA.'));
@@ -74,14 +90,25 @@ export function MFASetup() {
       const verify = await supabase.auth.mfa.verify({
         factorId: enrollData.id,
         challengeId: challenge.data.id,
-        code: verifyCode});
+        code: verifyCode,
+      });
       if (verify.error) throw verify.error;
 
-      await supabase.from('user_mfa').upsert([{
-        user_id: user!.id,
-        mfa_enabled: true,
-        mfa_type: 'totp',
-        mfa_secret: null}], { onConflict: 'user_id' });
+      await supabase.from('user_mfa').upsert(
+        validateTablePayload(
+          'user_mfa',
+          [
+            {
+              user_id: user!.id,
+              mfa_enabled: true,
+              mfa_type: 'totp',
+              mfa_secret: null,
+            },
+          ],
+          'MFASetup:user_mfa'
+        ),
+        { onConflict: 'user_id' }
+      );
 
       toast.success('Autenticação de dois fatores ativada com sucesso!');
       setShowEnrollDialog(false);
@@ -103,11 +130,21 @@ export function MFASetup() {
       const { error } = await supabase.auth.mfa.unenroll({ factorId: activeFactor.id });
       if (error) throw error;
 
-      await supabase.from('user_mfa').upsert([{
-        user_id: user!.id,
-        mfa_enabled: false,
-        mfa_type: null,
-        mfa_secret: null}], { onConflict: 'user_id' });
+      await supabase.from('user_mfa').upsert(
+        validateTablePayload(
+          'user_mfa',
+          [
+            {
+              user_id: user!.id,
+              mfa_enabled: false,
+              mfa_type: null,
+              mfa_secret: null,
+            },
+          ],
+          'MFASetup:user_mfa'
+        ),
+        { onConflict: 'user_id' }
+      );
 
       toast.success('Autenticação de dois fatores desativada');
       setShowDisableDialog(false);
@@ -140,7 +177,9 @@ export function MFASetup() {
       <div className="space-y-6">
         {/* Status Card */}
         <Card className="border border-border/30 shadow-elevated rounded-2xl overflow-hidden">
-          <div className={`h-[2px] bg-gradient-to-r ${isEnabled ? 'from-success to-success/70' : 'from-warning to-destructive'}`} />
+          <div
+            className={`h-[2px] bg-gradient-to-r ${isEnabled ? 'from-success to-success/70' : 'from-warning to-destructive'}`}
+          />
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -160,7 +199,10 @@ export function MFASetup() {
                   </CardDescription>
                 </div>
               </div>
-              <Badge variant={isEnabled ? 'default' : 'destructive'} className={`${isEnabled ? 'bg-success/10 text-success border-success/30' : ''} rounded-lg`}>
+              <Badge
+                variant={isEnabled ? 'default' : 'destructive'}
+                className={`${isEnabled ? 'bg-success/10 text-success border-success/30' : ''} rounded-lg`}
+              >
                 {isEnabled ? 'Ativado' : 'Desativado'}
               </Badge>
             </div>
@@ -172,7 +214,8 @@ export function MFASetup() {
                 <div>
                   <p className="font-body text-sm font-medium">App Autenticador (TOTP)</p>
                   <p className="font-body text-sm text-muted-foreground">
-                    Use um aplicativo como Google Authenticator, Authy ou 1Password para gerar códigos temporários de 6 dígitos.
+                    Use um aplicativo como Google Authenticator, Authy ou 1Password para gerar códigos temporários de 6
+                    dígitos.
                   </p>
                 </div>
               </div>
@@ -185,16 +228,27 @@ export function MFASetup() {
                   <div>
                     <p className="font-body text-sm font-medium">Authenticator App</p>
                     <p className="font-body text-xs text-muted-foreground">
-                      Configurado em {activeFactor?.created_at ? new Date(activeFactor.created_at).toLocaleDateString('pt-BR') : '—'}
+                      Configurado em{' '}
+                      {activeFactor?.created_at ? new Date(activeFactor.created_at).toLocaleDateString('pt-BR') : '—'}
                     </p>
                   </div>
                 </div>
-                <Button variant="destructive" size="sm" className="rounded-xl" onClick={() => setShowDisableDialog(true)}>
-                  <Trash2 className="h-4 w-4 mr-1" />Desativar
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="rounded-xl"
+                  onClick={() => setShowDisableDialog(true)}
+                >
+                  <Trash2 className="h-4 w-4 mr-1" />
+                  Desativar
                 </Button>
               </div>
             ) : (
-              <Button onClick={handleEnroll} disabled={enrolling} className="rounded-xl bg-gradient-to-r from-primary to-primary-glow hover:opacity-90 font-body">
+              <Button
+                onClick={handleEnroll}
+                disabled={enrolling}
+                className="rounded-xl bg-gradient-to-r from-primary to-primary-glow hover:opacity-90 font-body"
+              >
                 {enrolling ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Shield className="h-4 w-4 mr-2" />}
                 Ativar 2FA
               </Button>
@@ -202,7 +256,8 @@ export function MFASetup() {
 
             {mfaRecord?.backup_codes && mfaRecord.backup_codes.length > 0 && (
               <Button variant="outline" size="sm" className="rounded-xl" onClick={() => setShowBackupCodes(true)}>
-                <Eye className="h-4 w-4 mr-1" />Ver Códigos de Recuperação
+                <Eye className="h-4 w-4 mr-1" />
+                Ver Códigos de Recuperação
               </Button>
             )}
           </CardContent>
@@ -216,11 +271,21 @@ export function MFASetup() {
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 font-body text-sm text-muted-foreground">
-              <li className="flex items-start gap-2"><span className="text-success mt-0.5">✓</span>Use senhas fortes com pelo menos 12 caracteres</li>
-              <li className="flex items-start gap-2"><span className="text-success mt-0.5">✓</span>Ative a autenticação de dois fatores (2FA)</li>
-              <li className="flex items-start gap-2"><span className="text-success mt-0.5">✓</span>Não reutilize senhas entre serviços</li>
-              <li className="flex items-start gap-2"><span className="text-success mt-0.5">✓</span>Guarde seus códigos de recuperação em local seguro</li>
-              <li className="flex items-start gap-2"><span className="text-success mt-0.5">✓</span>Revise as sessões ativas regularmente</li>
+              <li className="flex items-start gap-2">
+                <span className="text-success mt-0.5">✓</span>Use senhas fortes com pelo menos 12 caracteres
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-success mt-0.5">✓</span>Ative a autenticação de dois fatores (2FA)
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-success mt-0.5">✓</span>Não reutilize senhas entre serviços
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-success mt-0.5">✓</span>Guarde seus códigos de recuperação em local seguro
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-success mt-0.5">✓</span>Revise as sessões ativas regularmente
+              </li>
             </ul>
           </CardContent>
         </Card>
@@ -231,7 +296,8 @@ export function MFASetup() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="font-display flex items-center gap-2">
-              <Shield className="h-5 w-5 text-primary" />Configurar 2FA
+              <Shield className="h-5 w-5 text-primary" />
+              Configurar 2FA
             </DialogTitle>
             <DialogDescription className="font-body">
               Escaneie o QR code abaixo com seu app autenticador
@@ -252,7 +318,13 @@ export function MFASetup() {
                   <code className="flex-1 p-2 bg-muted/50 rounded-lg text-xs font-mono break-all select-all">
                     {enrollData.secret}
                   </code>
-                  <Button variant="ghost" size="icon" onClick={() => copySecret(enrollData.secret)} className="shrink-0" aria-label="Copiar chave secreta">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => copySecret(enrollData.secret)}
+                    className="shrink-0"
+                    aria-label="Copiar chave secreta"
+                  >
                     <Copy className="h-4 w-4" />
                   </Button>
                 </div>
@@ -263,21 +335,26 @@ export function MFASetup() {
                 <Label className="font-body">Código de verificação</Label>
                 <Input
                   value={verifyCode}
-                  onChange={e => setVerifyCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  onChange={(e) => setVerifyCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   placeholder="000000"
                   className="rounded-xl text-center text-2xl tracking-[0.5em] font-mono"
                   maxLength={6}
                   autoFocus
                 />
-                <p className="font-body text-xs text-muted-foreground">
-                  Digite o código de 6 dígitos gerado pelo app
-                </p>
+                <p className="font-body text-xs text-muted-foreground">Digite o código de 6 dígitos gerado pelo app</p>
               </div>
             </div>
           )}
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => { setShowEnrollDialog(false); setVerifyCode(''); }} className="rounded-xl">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowEnrollDialog(false);
+                setVerifyCode('');
+              }}
+              className="rounded-xl"
+            >
               Cancelar
             </Button>
             <Button
@@ -297,14 +374,17 @@ export function MFASetup() {
         <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle className="font-display text-destructive flex items-center gap-2">
-              <ShieldAlert className="h-5 w-5" />Desativar 2FA
+              <ShieldAlert className="h-5 w-5" />
+              Desativar 2FA
             </DialogTitle>
             <DialogDescription className="font-body">
               Tem certeza? Sua conta ficará menos segura sem a autenticação de dois fatores.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowDisableDialog(false)} className="rounded-xl">Cancelar</Button>
+            <Button variant="outline" onClick={() => setShowDisableDialog(false)} className="rounded-xl">
+              Cancelar
+            </Button>
             <Button variant="destructive" onClick={handleDisable} disabled={enrolling} className="rounded-xl">
               {enrolling ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Trash2 className="h-4 w-4 mr-2" />}
               Desativar
@@ -318,7 +398,8 @@ export function MFASetup() {
         <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle className="font-display flex items-center gap-2">
-              <Key className="h-5 w-5 text-warning" />Códigos de Recuperação
+              <Key className="h-5 w-5 text-warning" />
+              Códigos de Recuperação
             </DialogTitle>
             <DialogDescription className="font-body">
               Guarde estes códigos em local seguro. Cada código pode ser usado apenas uma vez.
@@ -326,11 +407,15 @@ export function MFASetup() {
           </DialogHeader>
           <div className="grid grid-cols-2 gap-2 p-3 bg-muted/30 rounded-xl">
             {mfaRecord?.backup_codes?.map((code: string, i: number) => (
-              <code key={i} className="text-sm font-mono p-1.5 bg-card rounded-lg text-center">{code}</code>
+              <code key={i} className="text-sm font-mono p-1.5 bg-card rounded-lg text-center">
+                {code}
+              </code>
             ))}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowBackupCodes(false)} className="rounded-xl">Fechar</Button>
+            <Button variant="outline" onClick={() => setShowBackupCodes(false)} className="rounded-xl">
+              Fechar
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

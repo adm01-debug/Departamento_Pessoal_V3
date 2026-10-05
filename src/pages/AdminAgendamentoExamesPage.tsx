@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { CalendarClock, MapPin, Navigation, Plus, Stethoscope, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+import { validateTablePayload } from '@/schemas/validate';
 
 type Agend = {
   id: string;
@@ -140,18 +141,24 @@ export default function AdminAgendamentoExamesPage() {
         throw new Error('Preencha colaborador, clínica e data.');
       }
       const { data: userRes } = await supabase.auth.getUser();
-      const { error } = await supabase.from('exames_agendamentos').insert({
-        empresa_id: empresaId,
-        colaborador_id: colaboradorId,
-        clinica_id: clinicaEscolhida.id,
-        tipo_exame: tipoExame,
-        data_agendada: dataAgendada,
-        distancia_km: clinicaEscolhida.distancia_km,
-        colaborador_lat: Number(lat),
-        colaborador_lng: Number(lng),
-        observacoes: obs || null,
-        criado_por: userRes.user?.id,
-      });
+      const { error } = await supabase.from('exames_agendamentos').insert(
+        validateTablePayload(
+          'exames_agendamentos',
+          {
+            empresa_id: empresaId,
+            colaborador_id: colaboradorId,
+            clinica_id: clinicaEscolhida.id,
+            tipo_exame: tipoExame,
+            data_agendada: dataAgendada,
+            distancia_km: clinicaEscolhida.distancia_km,
+            colaborador_lat: Number(lat),
+            colaborador_lng: Number(lng),
+            observacoes: obs || null,
+            criado_por: userRes.user?.id,
+          },
+          'AdminAgendamentoExamesPage:exames_agendamentos'
+        )
+      );
       if (error) throw error;
     },
     onSuccess: () => {

@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
+import { validateTablePayload } from '@/schemas/validate';
 
 interface PortalMeusDadosTabProps {
   nome: string;
@@ -42,10 +43,16 @@ export function PortalMeusDadosTab({ nome, email, profile, userId, navigate }: P
 
   const updateSettings = useMutation({
     mutationFn: async (newSettings: Omit<TablesInsert<'portal_notificacoes_settings'>, 'user_id'>) => {
-      const { error } = await supabase.from('portal_notificacoes_settings').upsert({
-        user_id: userId,
-        ...newSettings,
-      });
+      const { error } = await supabase.from('portal_notificacoes_settings').upsert(
+        validateTablePayload(
+          'portal_notificacoes_settings',
+          {
+            user_id: userId,
+            ...newSettings,
+          },
+          'PortalMeusDadosTab:portal_notificacoes_settings'
+        )
+      );
       if (error) throw error;
     },
     onSuccess: () => {
@@ -58,9 +65,15 @@ export function PortalMeusDadosTab({ nome, email, profile, userId, navigate }: P
     mutationFn: async () => {
       const { error } = await supabase
         .from('profiles')
-        .update({
-          telefone: editForm.telefone || undefined,
-        })
+        .update(
+          validateTablePayload(
+            'profiles',
+            {
+              telefone: editForm.telefone || undefined,
+            },
+            'PortalMeusDadosTab:profiles'
+          )
+        )
         .eq('user_id', userId);
       if (error) throw error;
     },

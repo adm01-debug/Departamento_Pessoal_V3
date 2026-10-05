@@ -16,6 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { AlertTriangle, FileText, Plus, Send, ShieldAlert, Clock, Skull } from 'lucide-react';
+import { validateTablePayload } from '@/schemas/validate';
 
 const catSchema = z.object({
   colaborador_id: z.string().uuid('Colaborador obrigatório'),
@@ -81,19 +82,21 @@ export default function AdminCatPage() {
       const [{ data: cs, error: e1 }, { data: cols, error: e2 }, { data: dash, error: e3 }] = await Promise.all([
         supabase
           .from('sst_cat')
-          .select('id,numero_cat,data_acidente,tipo_acidente,tipo_cat,cid_principal,houve_obito,houve_afastamento,status_esocial,prazo_limite_envio,data_envio_esocial,protocolo_esocial,colaborador_id')
+          .select(
+            'id,numero_cat,data_acidente,tipo_acidente,tipo_cat,cid_principal,houve_obito,houve_afastamento,status_esocial,prazo_limite_envio,data_envio_esocial,protocolo_esocial,colaborador_id'
+          )
           .eq('empresa_id', empresaId!)
           .order('data_acidente', { ascending: false })
           .limit(500),
         supabase.from('colaboradores').select('id,nome_completo').eq('empresa_id', empresaId!).limit(500),
         supabase.rpc('sst_cat_dashboard', { p_empresa_id: empresaId! }),
       ]);
-      if (e1 || e2 || e3) throw (e1 ?? e2 ?? e3);
+      if (e1 || e2 || e3) throw e1 ?? e2 ?? e3;
       const colsData = (cols as { id: string; nome_completo: string }[] | null) ?? [];
       return {
-        cats: ((cs as CatRow[] | null) ?? []),
+        cats: (cs as CatRow[] | null) ?? [],
         colaboradores: colsData.map((c) => ({ id: c.id, nome: c.nome_completo })),
-        dashboard: ((dash as Record<string, unknown> | null) ?? {}),
+        dashboard: (dash as Record<string, unknown> | null) ?? {},
       };
     },
   });
@@ -106,17 +109,24 @@ export default function AdminCatPage() {
   const dashboard = catsQuery.data?.dashboard ?? EMPTY_DASH;
   const loading = catsQuery.isPending && !!empresaId;
 
-  const carregar = () => { void catsQuery.refetch(); };
-
+  const carregar = () => {
+    void catsQuery.refetch();
+  };
 
   const onSubmit = async (values: CatForm) => {
     if (!empresaId) return;
     try {
-      const { error } = await supabase.from('sst_cat').insert({
-        ...values,
-        empresa_id: empresaId,
-        data_acidente: new Date(values.data_acidente).toISOString(),
-      });
+      const { error } = await supabase.from('sst_cat').insert(
+        validateTablePayload(
+          'sst_cat',
+          {
+            ...values,
+            empresa_id: empresaId,
+            data_acidente: new Date(values.data_acidente).toISOString(),
+          },
+          'AdminCatPage:sst_cat'
+        )
+      );
       if (error) throw error;
       toast.success('CAT registrada. Prazo legal calculado automaticamente.');
       setOpen(false);
@@ -127,7 +137,7 @@ export default function AdminCatPage() {
     }
   };
 
-  const nomeColab = useMemo(() => new Map(colaboradores.map(c => [c.id, c.nome])), [colaboradores]);
+  const nomeColab = useMemo(() => new Map(colaboradores.map((c) => [c.id, c.nome])), [colaboradores]);
 
   const kpi = (label: string, value: unknown, Icon: typeof AlertTriangle, tone: string) => (
     <Card>
@@ -135,7 +145,9 @@ export default function AdminCatPage() {
         <CardTitle className="text-sm font-medium text-muted-foreground">{label}</CardTitle>
         <Icon className={`h-4 w-4 ${tone}`} />
       </CardHeader>
-      <CardContent><div className="text-2xl font-bold">{String(value ?? 0)}</div></CardContent>
+      <CardContent>
+        <div className="text-2xl font-bold">{String(value ?? 0)}</div>
+      </CardContent>
     </Card>
   );
 
@@ -143,27 +155,54 @@ export default function AdminCatPage() {
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2"><ShieldAlert className="h-7 w-7 text-destructive" />CAT Eletrônica (S-2210)</h1>
-          <p className="text-muted-foreground text-sm">Comunicação de Acidente de Trabalho — envio ao eSocial dentro do prazo legal.</p>
+          <h1 className="text-3xl font-bold flex items-center gap-2">
+            <ShieldAlert className="h-7 w-7 text-destructive" />
+            CAT Eletrônica (S-2210)
+          </h1>
+          <p className="text-muted-foreground text-sm">
+            Comunicação de Acidente de Trabalho — envio ao eSocial dentro do prazo legal.
+          </p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild><Button><Plus className="h-4 w-4 mr-2" />Nova CAT</Button></DialogTrigger>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Nova CAT
+            </Button>
+          </DialogTrigger>
           <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader><DialogTitle>Registrar CAT</DialogTitle></DialogHeader>
+            <DialogHeader>
+              <DialogTitle>Registrar CAT</DialogTitle>
+            </DialogHeader>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>Colaborador *</Label>
                   <Select onValueChange={(v) => form.setValue('colaborador_id', v)}>
-                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                    <SelectContent>{colaboradores.map(c => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}</SelectContent>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {colaboradores.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          {c.nome}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
                   </Select>
-                  {form.formState.errors.colaborador_id && <p className="text-xs text-destructive">{form.formState.errors.colaborador_id.message}</p>}
+                  {form.formState.errors.colaborador_id && (
+                    <p className="text-xs text-destructive">{form.formState.errors.colaborador_id.message}</p>
+                  )}
                 </div>
                 <div>
                   <Label>Tipo de CAT *</Label>
-                  <Select defaultValue="inicial" onValueChange={(v) => form.setValue('tipo_cat', v as CatForm['tipo_cat'])}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                  <Select
+                    defaultValue="inicial"
+                    onValueChange={(v) => form.setValue('tipo_cat', v as CatForm['tipo_cat'])}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="inicial">Inicial</SelectItem>
                       <SelectItem value="reabertura">Reabertura</SelectItem>
@@ -177,8 +216,13 @@ export default function AdminCatPage() {
                 </div>
                 <div>
                   <Label>Tipo de acidente *</Label>
-                  <Select defaultValue="tipico" onValueChange={(v) => form.setValue('tipo_acidente', v as CatForm['tipo_acidente'])}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                  <Select
+                    defaultValue="tipico"
+                    onValueChange={(v) => form.setValue('tipo_acidente', v as CatForm['tipo_acidente'])}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="tipico">Típico</SelectItem>
                       <SelectItem value="trajeto">Trajeto</SelectItem>
@@ -188,8 +232,10 @@ export default function AdminCatPage() {
                 </div>
                 <div>
                   <Label>CID Principal *</Label>
-                  <Input placeholder="Ex: S60.9" {...form.register('cid_principal')} />
-                  {form.formState.errors.cid_principal && <p className="text-xs text-destructive">{form.formState.errors.cid_principal.message}</p>}
+                  <Input placeholder="E: S60.9" {...form.register('cid_principal')} />
+                  {form.formState.errors.cid_principal && (
+                    <p className="text-xs text-destructive">{form.formState.errors.cid_principal.message}</p>
+                  )}
                 </div>
                 <div>
                   <Label>Parte do corpo atingida</Label>
@@ -202,7 +248,9 @@ export default function AdminCatPage() {
                 <div>
                   <Label>Tipo de local</Label>
                   <Select onValueChange={(v) => form.setValue('tipo_local', v as NonNullable<CatForm['tipo_local']>)}>
-                    <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="estabelecimento_empregador">Estabelecimento do empregador</SelectItem>
                       <SelectItem value="via_publica">Via pública</SelectItem>
@@ -227,7 +275,8 @@ export default function AdminCatPage() {
                   <Input type="number" min={0} {...form.register('dias_afastamento_estimado')} />
                 </div>
                 <div className="flex items-center gap-2">
-                  <input type="checkbox" {...form.register('houve_obito')} /> <Label className="text-destructive">Óbito (prazo 24h)</Label>
+                  <input type="checkbox" {...form.register('houve_obito')} />{' '}
+                  <Label className="text-destructive">Óbito (prazo 24h)</Label>
                 </div>
                 <div className="flex items-center gap-2">
                   <input type="checkbox" {...form.register('houve_internacao')} /> <Label>Houve internação</Label>
@@ -238,8 +287,12 @@ export default function AdminCatPage() {
                 </div>
               </div>
               <div className="flex justify-end gap-2">
-                <Button type="button" variant="ghost" onClick={() => setOpen(false)}>Cancelar</Button>
-                <Button type="submit" disabled={form.formState.isSubmitting}>Registrar CAT</Button>
+                <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button type="submit" disabled={form.formState.isSubmitting}>
+                  Registrar CAT
+                </Button>
               </div>
             </form>
           </DialogContent>
@@ -256,38 +309,52 @@ export default function AdminCatPage() {
       </div>
 
       <Card>
-        <CardHeader><CardTitle>CATs registradas</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>CATs registradas</CardTitle>
+        </CardHeader>
         <CardContent>
-          {loading ? <p className="text-muted-foreground">Carregando…</p> : cats.length === 0 ? (
+          {loading ? (
+            <p className="text-muted-foreground">Carregando…</p>
+          ) : cats.length === 0 ? (
             <p className="text-muted-foreground text-sm">Nenhuma CAT registrada.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="text-left border-b">
                   <tr>
-                    <th className="py-2">Número</th><th>Colaborador</th><th>Data</th><th>Tipo</th><th>CID</th>
-                    <th>Prazo</th><th>Status</th>
+                    <th className="py-2">Número</th>
+                    <th>Colaborador</th>
+                    <th>Data</th>
+                    <th>Tipo</th>
+                    <th>CID</th>
+                    <th>Prazo</th>
+                    <th>Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {cats.map(c => {
-                    const atrasada = !c.data_envio_esocial && c.prazo_limite_envio && new Date(c.prazo_limite_envio) < new Date();
+                  {cats.map((c) => {
+                    const atrasada =
+                      !c.data_envio_esocial && c.prazo_limite_envio && new Date(c.prazo_limite_envio) < new Date();
                     return (
                       <tr key={c.id} className="border-b hover:bg-muted/50">
                         <td className="py-2 font-mono text-xs">{c.numero_cat}</td>
-                        <td>{c.colaborador_id ? nomeColab.get(c.colaborador_id) ?? '—' : '—'}</td>
+                        <td>{c.colaborador_id ? (nomeColab.get(c.colaborador_id) ?? '—') : '—'}</td>
                         <td>{new Date(c.data_acidente).toLocaleString('pt-BR')}</td>
-                        <td><Badge variant="outline">{c.tipo_acidente}</Badge></td>
+                        <td>
+                          <Badge variant="outline">{c.tipo_acidente}</Badge>
+                        </td>
                         <td className="font-mono text-xs">{c.cid_principal ?? '—'}</td>
                         <td className={atrasada ? 'text-destructive font-medium' : ''}>
                           {c.prazo_limite_envio ? new Date(c.prazo_limite_envio).toLocaleString('pt-BR') : '—'}
                         </td>
                         <td>
-                          {c.data_envio_esocial
-                            ? <Badge className="bg-success text-success-foreground">Transmitida</Badge>
-                            : atrasada
-                              ? <Badge variant="destructive">Em atraso</Badge>
-                              : <Badge variant="secondary">Pendente</Badge>}
+                          {c.data_envio_esocial ? (
+                            <Badge className="bg-success text-success-foreground">Transmitida</Badge>
+                          ) : atrasada ? (
+                            <Badge variant="destructive">Em atraso</Badge>
+                          ) : (
+                            <Badge variant="secondary">Pendente</Badge>
+                          )}
                         </td>
                       </tr>
                     );

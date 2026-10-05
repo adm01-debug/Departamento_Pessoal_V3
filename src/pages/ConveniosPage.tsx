@@ -16,6 +16,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { Plus, Handshake, Trash2 } from 'lucide-react';
+import { validateTablePayload } from '@/schemas/validate';
 
 export default function ConveniosPage() {
   const { empresaAtual } = useEmpresas();
@@ -40,12 +41,18 @@ export default function ConveniosPage() {
 
   const criar = useMutation({
     mutationFn: async (d: typeof form) => {
-      const { error } = await supabase.from('convenios').insert({
-        nome: d.nome,
-        tipo: d.tipo || null,
-        limite_global: d.limite_global ? Number(d.limite_global) : null,
-        empresa_id: empresaAtual?.id,
-      });
+      const { error } = await supabase.from('convenios').insert(
+        validateTablePayload(
+          'convenios',
+          {
+            nome: d.nome,
+            tipo: d.tipo || null,
+            limite_global: d.limite_global ? Number(d.limite_global) : null,
+            empresa_id: empresaAtual?.id,
+          },
+          'ConveniosPage:convenios'
+        )
+      );
       if (error) throw error;
     },
     onSuccess: () => {
@@ -96,12 +103,18 @@ export default function ConveniosPage() {
 
   const criarVinculo = useMutation({
     mutationFn: async (d: typeof vincForm) => {
-      const { error } = await supabase.from('convenios_colaboradores').insert({
-        convenio_id: d.convenio_id,
-        colaborador_id: d.colaborador_id,
-        limite_individual: d.limite_individual ? Number(d.limite_individual) : null,
-        ativo: true,
-      });
+      const { error } = await supabase.from('convenios_colaboradores').insert(
+        validateTablePayload(
+          'convenios_colaboradores',
+          {
+            convenio_id: d.convenio_id,
+            colaborador_id: d.colaborador_id,
+            limite_individual: d.limite_individual ? Number(d.limite_individual) : null,
+            ativo: true,
+          },
+          'ConveniosPage:convenios_colaboradores'
+        )
+      );
       if (error) throw error;
     },
     onSuccess: () => {

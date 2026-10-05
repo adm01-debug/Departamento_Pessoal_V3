@@ -8,6 +8,7 @@ import { parseWorkbookBuffer, type ParsedImportRow } from '@/utils/importacao/pa
 import { normalizarCPF } from '@/utils/importacao/validators';
 import { safeErrorMessage } from '@/utils/safeError';
 import { loggerService } from '@/services/loggerService';
+import { validateTablePayload } from '@/schemas/validate';
 
 export type ImportRow = ParsedImportRow;
 
@@ -48,12 +49,19 @@ export function useImportacaoColaboradores() {
     for (let i = 0; i < validos.length; i++) {
       const row = validos[i];
       try {
-        const { error } = await supabase.from('colaboradores').insert({
-          ...row,
-          empresa_id: empresaAtual?.id,
-          status: 'ativo',
-          erros: undefined,
-        } as unknown as TablesInsert<'colaboradores'>);
+        // `erros` é metadado do parser — não é coluna da tabela.
+        const { erros: _erros, ...dados } = row;
+        const { error } = await supabase.from('colaboradores').insert(
+          validateTablePayload(
+            'colaboradores',
+            {
+              ...dados,
+              empresa_id: empresaAtual?.id,
+              status: 'ativo',
+            } as unknown as TablesInsert<'colaboradores'>,
+            'useImportacaoColaboradores:colaboradores'
+          )
+        );
         if (error) throw error;
         successCount++;
       } catch (err: unknown) {

@@ -24,10 +24,7 @@ vi.mock('sonner', () => ({
 
 import { useContratacaoDigital } from '../useContratacaoDigital';
 
-vi.mock('@/hooks/useEmpresas', async () =>
-  (await import('@/test/empresaMock')).useEmpresasMockModule()
-);
-
+vi.mock('@/hooks/useEmpresas', async () => (await import('@/test/empresaMock')).useEmpresasMockModule());
 
 function buildUpdateChain(returnData: any = { id: 't1' }) {
   const singleFn = vi.fn().mockResolvedValue({ data: returnData, error: null });
@@ -53,11 +50,11 @@ describe('useContratacaoDigital', () => {
     const { result } = renderHook(() => useContratacaoDigital(), { wrapper });
 
     await act(async () => {
-      await result.current.atualizarEtapa.mutateAsync({ tokenId: 'tok-1', campos: { etapa: 'documentos' } });
+      await result.current.atualizarEtapa.mutateAsync({ tokenId: 'tok-1', campos: { dados_preenchidos: true } });
     });
 
     expect(mockFrom).toHaveBeenCalledWith('admissao_tokens');
-    expect(updateFn).toHaveBeenCalledWith(expect.objectContaining({ etapa: 'documentos' }));
+    expect(updateFn).toHaveBeenCalledWith(expect.objectContaining({ dados_preenchidos: true }));
     expect(eqFn).toHaveBeenCalledWith('id', 'tok-1');
   });
 
@@ -90,7 +87,13 @@ describe('useContratacaoDigital', () => {
       });
     });
 
-    expect(mockValidarDocumento).toHaveBeenCalledWith('adm-1', 'rg', 'validado', 'ok', '00000000-0000-0000-0000-0000000000e1');
+    expect(mockValidarDocumento).toHaveBeenCalledWith(
+      'adm-1',
+      'rg',
+      'validado',
+      'ok',
+      '00000000-0000-0000-0000-0000000000e1'
+    );
     await waitFor(() => expect(mockToastSuccess).toHaveBeenCalledWith('Validação do documento atualizada'));
   });
 });

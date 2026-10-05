@@ -16,6 +16,7 @@ import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
 import { Plus, Trash2 } from 'lucide-react';
+import { validateTablePayload } from '@/schemas/validate';
 
 export default function JornadasPage() {
   const { empresaAtual } = useEmpresas();
@@ -53,12 +54,18 @@ export default function JornadasPage() {
     }) => {
       const { data, error } = await supabase
         .from('jornadas')
-        .insert({
-          ...d,
-          empresa_id: empresaAtual?.id,
-          carga_horaria_semanal: Number(d.carga_horaria_semanal),
-          intervalo_minutos: Number(d.intervalo_minutos),
-        })
+        .insert(
+          validateTablePayload(
+            'jornadas',
+            {
+              ...d,
+              empresa_id: empresaAtual?.id,
+              carga_horaria_semanal: Number(d.carga_horaria_semanal),
+              intervalo_minutos: Number(d.intervalo_minutos),
+            },
+            'JornadasPage:jornadas'
+          )
+        )
         .select()
         .maybeSingle();
       if (error) throw error;
@@ -115,7 +122,7 @@ export default function JornadasPage() {
                       <Input
                         value={form.nome}
                         onChange={(e) => setForm((p) => ({ ...p, nome: e.target.value }))}
-                        placeholder="Ex: Comercial 44h"
+                        placeholder="E: Comercial 44h"
                       />
                     </div>
                     <div>

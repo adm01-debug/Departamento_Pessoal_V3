@@ -24,6 +24,7 @@ import { exportPortaria671PDF } from '@/services/exportService';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { format, parseISO } from 'date-fns';
+import { validateTablePayload } from '@/schemas/validate';
 
 interface SolicitacaoAjustePonto {
   id: string;
@@ -103,11 +104,17 @@ export function PontoAdjustmentRequests() {
 
       const { error: updateError } = await supabase
         .from('solicitacoes_ajuste_ponto')
-        .update({
-          status: finalStatus,
-          observacoes_gestor: observacoes,
-          updated_at: new Date().toISOString(),
-        })
+        .update(
+          validateTablePayload(
+            'solicitacoes_ajuste_ponto',
+            {
+              status: finalStatus,
+              observacoes_gestor: observacoes,
+              updated_at: new Date().toISOString(),
+            },
+            'PontoAdjustmentRequests:solicitacoes_ajuste_ponto'
+          )
+        )
         .eq('id', id);
 
       if (updateError) throw updateError;

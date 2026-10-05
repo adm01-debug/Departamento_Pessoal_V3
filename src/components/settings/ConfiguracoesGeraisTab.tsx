@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+import { validateTablePayload } from '@/schemas/validate';
 
 export function ConfiguracoesGeraisTab() {
   const qc = useQueryClient();
@@ -38,10 +39,16 @@ export function ConfiguracoesGeraisTab() {
       if (!chave) throw new Error('Chave é obrigatória.');
       if (!/^[a-zA-Z0-9_.-]+$/.test(chave)) throw new Error('Chave deve conter apenas letras, números, _ . e -');
 
-      const { error } = await supabase.from('configuracoes').insert({
-        chave,
-        valor,
-      });
+      const { error } = await supabase.from('configuracoes').insert(
+        validateTablePayload(
+          'configuracoes',
+          {
+            chave,
+            valor,
+          },
+          'ConfiguracoesGeraisTab:configuracoes'
+        )
+      );
       if (error) throw error;
     },
     onSuccess: () => {
@@ -94,7 +101,7 @@ export function ConfiguracoesGeraisTab() {
                     <Input
                       value={form.chave}
                       onChange={(e) => setForm((p) => ({ ...p, chave: e.target.value }))}
-                      placeholder="Ex: app.timezone"
+                      placeholder="E: app.timezone"
                       className="rounded-xl border-border/40"
                     />
                   </div>
@@ -103,7 +110,7 @@ export function ConfiguracoesGeraisTab() {
                     <Input
                       value={form.valor}
                       onChange={(e) => setForm((p) => ({ ...p, valor: e.target.value }))}
-                      placeholder="Ex: America/Sao_Paulo"
+                      placeholder="E: America/Sao_Paulo"
                       className="rounded-xl border-border/40"
                     />
                   </div>

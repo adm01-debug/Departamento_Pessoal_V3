@@ -17,6 +17,7 @@ import { toast } from 'sonner';
 import { Plus, Trash2, Edit2, CheckCircle, XCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { safeErrorMessage } from '@/utils/safeError';
+import { validateTablePayload } from '@/schemas/validate';
 
 const TIPOS_CAMPO = [
   { value: 'texto', label: 'Texto' },
@@ -84,11 +85,16 @@ export function CamposCustomizadosTab() {
       };
 
       if (editId) {
-        const { error } = await supabase.from('campos_customizados').update(payload).eq('id', editId);
+        const { error } = await supabase
+          .from('campos_customizados')
+          .update(validateTablePayload('campos_customizados', payload, 'CamposCustomizadosTab:campos_customizados'))
+          .eq('id', editId);
         if (error) throw error;
       } else {
         payload.ordem = campos.length + 1;
-        const { error } = await supabase.from('campos_customizados').insert(payload);
+        const { error } = await supabase
+          .from('campos_customizados')
+          .insert(validateTablePayload('campos_customizados', payload, 'CamposCustomizadosTab:campos_customizados'));
         if (error) throw error;
       }
     },
@@ -104,7 +110,10 @@ export function CamposCustomizadosTab() {
 
   const toggleAtivo = useMutation({
     mutationFn: async ({ id, ativo }: { id: string; ativo: boolean }) => {
-      const { error } = await supabase.from('campos_customizados').update({ ativo }).eq('id', id);
+      const { error } = await supabase
+        .from('campos_customizados')
+        .update(validateTablePayload('campos_customizados', { ativo }, 'CamposCustomizadosTab:campos_customizados'))
+        .eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ['campos-customizados'] }),
@@ -172,7 +181,7 @@ export function CamposCustomizadosTab() {
                   <Input
                     value={form.nome}
                     onChange={(e) => setForm((p) => ({ ...p, nome: e.target.value }))}
-                    placeholder="Ex: Número do Crachá"
+                    placeholder="E: Número do Crachá"
                     className="rounded-xl"
                   />
                 </div>

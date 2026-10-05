@@ -31,6 +31,7 @@ import { folhaPagamentoService } from '@/services/folhaPagamentoService';
 import { FolhaComposicao } from './FolhaComposicao';
 import { CalculoResultado } from '@/utils/folhaCalc';
 import { cnabService } from '@/services/cnabService';
+import { validateTablePayload } from '@/schemas/validate';
 
 interface StepProps {
   isActive: boolean;
@@ -134,19 +135,25 @@ export function CalculoFolhaWizard({ competencia }: { competencia: string }) {
         setCurrentFolhaId(itens[0].folha_id);
 
         // 3. Registrar fechamento automático da fase de processamento na auditoria
-        await supabase.from('folha_auditoria').insert({
-          folha_id: itens[0].folha_id,
-          tipo_evento: 'CALCULO',
-          mensagem: `Assistente de cálculo finalizado para a competência ${competencia}. Todos os colaboradores foram processados com conformidade eSocial e integração de benefícios.`,
-          severidade: 'INFO',
-          detalhes: {
-            wizard: 'CalculoFolhaWizard',
-            timestamp: new Date().toISOString(),
-            versao_motor: '2.0.26',
-            compliance: '100%',
-            integracao: ['Ponto', 'Beneficios'],
-          },
-        });
+        await supabase.from('folha_auditoria').insert(
+          validateTablePayload(
+            'folha_auditoria',
+            {
+              folha_id: itens[0].folha_id,
+              tipo_evento: 'CALCULO',
+              mensagem: `Assistente de cálculo finalizado para a competência ${competencia}. Todos os colaboradores foram processados com conformidade eSocial e integração de benefícios.`,
+              severidade: 'INFO',
+              detalhes: {
+                wizard: 'CalculoFolhaWizard',
+                timestamp: new Date().toISOString(),
+                versao_motor: '2.0.26',
+                compliance: '100%',
+                integracao: ['Ponto', 'Beneficios'],
+              },
+            },
+            'CalculoFolhaWizard:folha_auditoria'
+          )
+        );
         const detalhes = itens[0].detalhes as unknown as CalculoResultado;
         setResultadoCalculo({
           ...detalhes,

@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Insertable } from '@/integrations/supabase/database.types';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+import { validateTablePayload } from '@/schemas/validate';
 
 export function useBeneficiosColaborador(colaboradorId?: string) {
   const queryClient = useQueryClient();
@@ -30,7 +31,13 @@ export function useBeneficiosColaborador(colaboradorId?: string) {
     mutationFn: async (dados: Omit<Insertable<'beneficios_colaborador'>, 'colaborador_id'>) => {
       const { data, error } = await supabase
         .from('beneficios_colaborador')
-        .insert([{ ...dados, colaborador_id: colaboradorId! }])
+        .insert(
+          validateTablePayload(
+            'beneficios_colaborador',
+            [{ ...dados, colaborador_id: colaboradorId! }],
+            'useBeneficiosColaborador:beneficios_colaborador'
+          )
+        )
         .select()
         .single();
 

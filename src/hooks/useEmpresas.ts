@@ -13,6 +13,7 @@ import { safeErrorMessage } from '@/utils/safeError';
 
 import type { RegimeTributario } from '@/constants/regimes';
 import type { Tables } from '@/integrations/supabase/types';
+import { validateTablePayload } from '@/schemas/validate';
 
 export interface Empresa {
   id: string;
@@ -230,7 +231,11 @@ export function useEmpresas(): UseEmpresasReturn {
         ativa: empresa.ativa ?? true,
       };
 
-      const { data, error } = await supabase.from('empresas').insert(insertData).select().maybeSingle();
+      const { data, error } = await supabase
+        .from('empresas')
+        .insert(validateTablePayload('empresas', insertData, 'useEmpresas:empresas'))
+        .select()
+        .maybeSingle();
 
       if (error) throw error;
       return ensureSingleResult(data, 'empresa');
@@ -249,7 +254,12 @@ export function useEmpresas(): UseEmpresasReturn {
   const atualizarEmpresa = useMutation({
     mutationFn: async ({ id, ...dados }: Partial<Empresa> & { id: string }) => {
       if (!isAdmin) throw new Error('Apenas administradores podem atualizar empresas.');
-      const { data, error } = await supabase.from('empresas').update(dados).eq('id', id).select().maybeSingle();
+      const { data, error } = await supabase
+        .from('empresas')
+        .update(validateTablePayload('empresas', dados, 'useEmpresas:empresas'))
+        .eq('id', id)
+        .select()
+        .maybeSingle();
 
       if (error) throw error;
       return ensureSingleResult(data, 'empresa');

@@ -4,19 +4,27 @@ import { toast } from 'sonner';
 import { contratacaoService } from '@/services/contratacaoService';
 import { safeErrorMessage } from '@/utils/safeError';
 import { useEmpresas } from '@/hooks/useEmpresas';
+import { validateTablePayload } from '@/schemas/validate';
+import type { Updatable } from '@/integrations/supabase/database.types';
 
 export function useContratacaoDigital() {
   const queryClient = useQueryClient();
   const { empresaAtual } = useEmpresas();
 
   const atualizarEtapa = useMutation({
-    mutationFn: async ({ tokenId, campos }: { tokenId: string; campos: Record<string, unknown> }) => {
+    mutationFn: async ({ tokenId, campos }: { tokenId: string; campos: Updatable<'admissao_tokens'> }) => {
       const { data, error } = await supabase
         .from('admissao_tokens')
-        .update({
-          ...campos,
-          updated_at: new Date().toISOString(),
-        })
+        .update(
+          validateTablePayload(
+            'admissao_tokens',
+            {
+              ...campos,
+              updated_at: new Date().toISOString(),
+            },
+            'useContratacaoDigital:admissao_tokens'
+          )
+        )
         .eq('id', tokenId)
         .select()
         .single();

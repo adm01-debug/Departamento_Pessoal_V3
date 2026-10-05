@@ -17,6 +17,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Building2, MapPin, Plus, Search, Trash2, Pencil, Stethoscope } from 'lucide-react';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+import { validateTablePayload } from '@/schemas/validate';
 
 type Clinica = Tables<'clinicas_partners'>;
 
@@ -119,12 +120,14 @@ export default function AdminClinicasPartnersPage() {
       if (editingId) {
         const { error } = await supabase
           .from('clinicas_partners')
-          .update(row)
+          .update(validateTablePayload('clinicas_partners', row, 'AdminClinicasPartnersPage:clinicas_partners'))
           .eq('id', editingId)
           .eq('empresa_id', empresaId!);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from('clinicas_partners').insert(row);
+        const { error } = await supabase
+          .from('clinicas_partners')
+          .insert(validateTablePayload('clinicas_partners', row, 'AdminClinicasPartnersPage:clinicas_partners'));
         if (error) throw error;
       }
     },
