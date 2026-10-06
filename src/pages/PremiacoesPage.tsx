@@ -62,6 +62,12 @@ export default function PremiacoesPage() {
     enabled: !!empresaAtual?.id,
   });
 
+  // Troca de empresa invalida o período — o mês da empresa anterior pode não
+  // existir nas opções da nova e o filtro ficaria invisível.
+  React.useEffect(() => {
+    setPeriodoFiltro('');
+  }, [empresaAtual?.id]);
+
   // Opções de período derivadas dos dados reais (data_pagamento, 'YYYY-MM').
   const periodosDisponiveis = React.useMemo(() => {
     const mapa = new Map<string, string>();
@@ -119,7 +125,7 @@ export default function PremiacoesPage() {
           exportPontoPDF(linhas, 'Relatório de Premiações', Object.keys(linhas[0]), {
             seloSistema: 'DEPARTAMENTO PESSOAL v2.0',
             statusGeral: 'EXPORTADO',
-            notaRodape: 'Documento gerado automaticamente — dados conciliados com a folha',
+            notaRodape: 'Documento gerado automaticamente — consulte o status de conciliação por pagamento',
           });
         }
       })(),
