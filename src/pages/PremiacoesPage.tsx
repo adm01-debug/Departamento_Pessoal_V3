@@ -62,12 +62,6 @@ export default function PremiacoesPage() {
     enabled: !!empresaAtual?.id,
   });
 
-  // Troca de empresa invalida o período — o mês da empresa anterior pode não
-  // existir nas opções da nova e o filtro ficaria invisível.
-  React.useEffect(() => {
-    setPeriodoFiltro('');
-  }, [empresaAtual?.id]);
-
   // Opções de período derivadas dos dados reais (data_pagamento, 'YYYY-MM').
   const periodosDisponiveis = React.useMemo(() => {
     const mapa = new Map<string, string>();
@@ -80,6 +74,11 @@ export default function PremiacoesPage() {
     }
     return [...mapa.entries()].sort((a, b) => b[0].localeCompare(a[0]));
   }, [pagamentos]);
+
+  // Troca de empresa pode invalidar o período escolhido — o mês da empresa
+  // anterior pode não existir nas opções da nova. Estado derivado em vez de
+  // effect: o valor efetivo cai para "todos" quando a escolha não é opção.
+  const periodoEfetivo = periodosDisponiveis.some(([ym]) => ym === periodoFiltro) ? periodoFiltro : '';
 
   const updateStatusMutation = useMutation({
     mutationFn: ({ id, status, valor }: { id: string; status: string; valor?: number }) =>
@@ -96,7 +95,7 @@ export default function PremiacoesPage() {
       (async () => {
         const pagamentos = (await premiacoesService.exportarRelatorio({
           empresaId: empresaAtual?.id,
-          periodo: periodoFiltro || undefined,
+          periodo: periodoEfetivo || undefined,
         })) as {
           valor_aprovado?: number | null;
           valor_folha_real?: number | null;
@@ -130,7 +129,7 @@ export default function PremiacoesPage() {
         }
       })(),
       {
-        loading: `Gerando relatório ${format.toUpperCase()}${periodoFiltro ? ' do período selecionado' : ''}...`,
+        loading: `Gerando relatório ${format.toUpperCase()}${periodoEfetivo ? ' do período selecionado' : ''}...`,
         success: 'Relatório gerado e baixado com sucesso!',
         error: 'Erro ao gerar relatório.',
       }
@@ -384,7 +383,7 @@ export default function PremiacoesPage() {
                       <Filter className="h-3 w-3 text-muted-foreground" />
                       <select
                         className="bg-transparent text-[10px] font-bold outline-hidden border-none"
-                        value={periodoFiltro}
+                        value={periodoEfetivo}
                         onChange={(e) => setPeriodoFiltro(e.target.value)}
                         aria-label="Filtrar exportação por período"
                       >

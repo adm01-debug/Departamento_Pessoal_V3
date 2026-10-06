@@ -113,7 +113,8 @@ jobs:
           # "policy already exists". Each dispatch of this workflow targets
           # only the NEW migrations for that batch.
           for migration in \
-            20261006110000_fix_contrato_assinar_search_path.sql
+            20261006110000_fix_contrato_assinar_search_path.sql \
+            20261006120000_revoke_admissao_token_row_helper.sql
           do
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
           done
@@ -169,7 +170,7 @@ jobs:
           SELECT jsonb_build_object(
             'ledger_count', (
               SELECT count(*) FROM supabase_migrations.schema_migrations
-              WHERE version IN ('20261006110000')
+              WHERE version IN ('20261006110000','20261006120000')
             ),
             'search_path_ok', EXISTS (
               SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
@@ -187,6 +188,9 @@ jobs:
               SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
               WHERE n.nspname = 'public' AND NOT c.relrowsecurity
                 AND c.relname IN ('eventos_rh','folha_pagamento','ponto_registros','rubricas')
+            ),
+            'token_helper_locked', NOT has_function_privilege(
+              'anon', 'public._admissao_token_row(text)', 'EXECUTE'
             )
           );
           SQL
@@ -195,13 +199,14 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 1 &&
+              Number(r.ledger_count) === 2 &&
               r.search_path_ok === true &&
               r.rls_helper_ok === true &&
               r.admin_list_ok === true &&
               r.get_admin_ids_ok === true &&
               r.competencia_fmt_ok === true &&
-              Number(r.legacy_rls_missing) === 0;
+              Number(r.legacy_rls_missing) === 0 &&
+              r.token_helper_locked === true;
             if (!ok) process.exit(1);
           ' "$result"
           echo 'CANONICAL_SCOPED_MIGRATIONS_OK'
