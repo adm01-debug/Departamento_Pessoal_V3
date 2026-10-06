@@ -1,6 +1,5 @@
 import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
-import type { UserOptions } from 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import Papa from 'papaparse';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -8,14 +7,11 @@ import { loggerService } from './loggerService';
 import { toError } from '@/utils/toError';
 
 /**
- * `jspdf-autotable` corrige o protótipo de `jsPDF` em runtime (efeito
- * colateral do `import 'jspdf-autotable'` acima) mas não publica uma
- * augmentação de tipos para esse padrão — só a função standalone
- * `autoTable(doc, opts)`. Este tipo local cobre o uso real (`doc.autoTable`
- * como método + `doc.lastAutoTable`).
+ * jspdf-autotable v5 removeu o método de protótipo `doc.autoTable()` — só
+ * existe a função standalone `autoTable(doc, opts)` (que segue populando
+ * `doc.lastAutoTable`). Este tipo local cobre o uso real.
  */
 type JsPdfWithAutoTable = jsPDF & {
-  autoTable: (options: UserOptions) => jsPDF;
   lastAutoTable: { finalY: number };
   internal: jsPDF['internal'] & { getNumberOfPages: () => number };
 };
@@ -126,7 +122,7 @@ export const exportPontoPDF = (
       })
     );
 
-    doc.autoTable({
+    autoTable(doc, {
       startY: 75,
       head: [columns.map((c) => c.replace('_', ' ').toUpperCase())],
       body: body,
@@ -215,7 +211,7 @@ export const exportPortaria671PDF = (solicitacao: Portaria671Solicitacao) => {
       ['Motivo', solicitacao.motivo || 'N/A'],
     ];
 
-    doc.autoTable({
+    autoTable(doc, {
       startY: 48,
       body: adjustmentData,
       theme: 'plain',
@@ -235,7 +231,7 @@ export const exportPortaria671PDF = (solicitacao: Portaria671Solicitacao) => {
       ['Status Portaria 671', relatorio.portaria_671_conformidade ? 'CONFORME' : 'EM ANÁLISE'],
     ];
 
-    doc.autoTable({
+    autoTable(doc, {
       startY: nextY + 3,
       body: complianceData,
       theme: 'grid',
