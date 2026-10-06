@@ -80,6 +80,10 @@ const CORRELACIONADORES = [
   /\bpertence_a_empresa\b/i,
   /\bget_user_empresas\b/i,
   /\buser_belongs_to_empresa\b/i,
+  // Helper canônico (migration 20261002102900): wrappeia
+  // user_belongs_to_empresa(auth.uid(), id) OR is_admin(auth.uid()) —
+  // ambos já correlacionadores nesta lista.
+  /\brls_tenant_or_admin\b/i,
   /\bpode_gerir_rh\b/i,
   /\bpode_gerir_pessoas\b/i,
   /\bsou_o_colaborador\b/i,
