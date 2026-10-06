@@ -131,14 +131,16 @@ export default function ProvisoesPage() {
     if (format === 'csv') {
       exportPontoCSV(dataToExport, `provisoes-${competencia}.csv`);
     } else {
-      exportPontoPDF(dataToExport, `Relatório de Provisões - ${competencia}`, [
-        'colaborador',
-        'tipo',
-        'valor_principal',
-        'encargos_inss',
-        'encargos_fgts',
-        'total',
-      ]);
+      exportPontoPDF(
+        dataToExport,
+        `Relatório de Provisões - ${competencia}`,
+        ['colaborador', 'tipo', 'valor_principal', 'encargos_inss', 'encargos_fgts', 'total'],
+        {
+          seloSistema: 'DEPARTAMENTO PESSOAL v2.0',
+          statusGeral: 'EXPORTADO',
+          notaRodape: 'Documento gerado automaticamente — sem valor fiscal',
+        }
+      );
     }
     toast.success('Relatório exportado com sucesso!');
   };

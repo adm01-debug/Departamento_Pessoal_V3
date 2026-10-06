@@ -91,6 +91,7 @@ describe('exportPontoCSV', () => {
 });
 
 describe('exportPontoPDF', () => {
+  let lastDocMock: { text: ReturnType<typeof vi.fn> } | undefined;
   beforeEach(() => {
     vi.clearAllMocks();
     const autoTableFn = vi.fn().mockImplementation(function (this: Record<string, unknown>) {
@@ -117,6 +118,7 @@ describe('exportPontoPDF', () => {
     MockJsPDF.mockImplementation(function () {
       return docMock;
     });
+    lastDocMock = docMock;
   });
 
   it('creates jsPDF and saves a file', () => {
@@ -131,5 +133,26 @@ describe('exportPontoPDF', () => {
 
   it('throws when data is empty', () => {
     expect(() => exportPontoPDF([], 'Relatório', ['colaborador'])).toThrow('Nenhum dado disponível');
+  });
+
+  it('usa rótulos padrão de ponto quando labels não são passados', () => {
+    exportPontoPDF(sampleData, 'Relatório', ['colaborador', 'data']);
+    const texts = lastDocMock!.text.mock.calls.map((c) => String(c[0]));
+    expect(texts).toContain('SISTEMA DE PONTO ELETRÔNICO v2.0');
+    expect(texts).toContain('CONFORME (MTP 671)');
+  });
+
+  it('usa rótulos customizados e omite selos de ponto', () => {
+    exportPontoPDF(sampleData, 'Relatório de Premiações', ['colaborador'], {
+      seloSistema: 'DEPARTAMENTO PESSOAL v2.0',
+      statusGeral: 'EXPORTADO',
+      notaRodape: 'Documento gerado automaticamente',
+    });
+    const texts = lastDocMock!.text.mock.calls.map((c) => String(c[0]));
+    expect(texts).toContain('DEPARTAMENTO PESSOAL v2.0');
+    expect(texts).toContain('EXPORTADO');
+    expect(texts.some((t) => t.includes('PONTO ELETRÔNICO'))).toBe(false);
+    expect(texts.some((t) => t.includes('MTP 671'))).toBe(false);
+    expect(texts.some((t) => t.includes('MP 2.200-2/2001'))).toBe(false);
   });
 });

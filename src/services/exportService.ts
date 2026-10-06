@@ -57,11 +57,28 @@ export const exportPontoCSV = (data: Record<string, unknown>[], filename = 'regi
   }
 };
 
-export const exportPontoPDF = (data: Record<string, unknown>[], title = 'Relatório de Ponto', columns: string[]) => {
+export interface PontoPdfLabels {
+  /** Selo do canto superior direito (ex.: 'SISTEMA DE PONTO ELETRÔNICO v2.0') */
+  seloSistema?: string;
+  /** Texto do cartão de status geral (ex.: 'CONFORME (MTP 671)') */
+  statusGeral?: string;
+  /** Nota do rodapé (ex.: conformidade MP 2.200-2/2001) */
+  notaRodape?: string;
+}
+
+export const exportPontoPDF = (
+  data: Record<string, unknown>[],
+  title = 'Relatório de Ponto',
+  columns: string[],
+  labels: PontoPdfLabels = {}
+) => {
   try {
     validateExportData(data);
     const doc = new jsPDF() as JsPdfWithAutoTable;
     const now = new Date();
+    const seloSistema = labels.seloSistema ?? 'SISTEMA DE PONTO ELETRÔNICO v2.0';
+    const statusGeral = labels.statusGeral ?? 'CONFORME (MTP 671)';
+    const notaRodape = labels.notaRodape ?? 'Documento assinado digitalmente conforme MP 2.200-2/2001';
 
     // Header Styling
     doc.setFillColor(34, 197, 94); // Primary Green
@@ -79,7 +96,7 @@ export const exportPontoPDF = (data: Record<string, unknown>[], title = 'Relató
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(9);
     doc.text(`EMISSÃO: ${format(now, 'dd/MM/yyyy HH:mm', { locale: ptBR })}`, 160, 20);
-    doc.text('SISTEMA DE PONTO ELETRÔNICO v2.0', 160, 25);
+    doc.text(seloSistema, 160, 25);
 
     // Statistics Summary (Cards in PDF)
     doc.setFillColor(248, 250, 252);
@@ -99,7 +116,7 @@ export const exportPontoPDF = (data: Record<string, unknown>[], title = 'Relató
     doc.setTextColor(30, 41, 59);
     doc.text(String(data.length), 18, 60);
     doc.text(String(uniqueColabs), 80, 60);
-    doc.text('CONFORME (MTP 671)', 142, 60);
+    doc.text(statusGeral, 142, 60);
 
     const body: string[][] = data.map((item) =>
       columns.map((col) => {
@@ -140,7 +157,7 @@ export const exportPontoPDF = (data: Record<string, unknown>[], title = 'Relató
       doc.setPage(i);
       doc.setFontSize(8);
       doc.setTextColor(150);
-      doc.text(`Página ${i} de ${totalPages} - Documento assinado digitalmente conforme MP 2.200-2/2001`, 105, 285, {
+      doc.text(`Página ${i} de ${totalPages} - ${notaRodape}`, 105, 285, {
         align: 'center',
       });
     }

@@ -258,10 +258,24 @@ export const premiacoesService = {
     return data || [];
   },
 
-  async exportarRelatorio(filtros: Record<string, unknown>) {
-    const pagamentos = await this.listarPagamentos(undefined, filtros.empresaId as string);
-    // Real logic to export would be here
-    return pagamentos;
+  async exportarRelatorio(filtros: { empresaId?: string; periodo?: string }) {
+    if (!filtros.empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    let q = supabase.from('premiacoes_pagamentos').select(`
+      *,
+      colaborador:colaboradores(nome_completo, salario_base),
+      campanha:premiacoes_campanhas!inner(nome, empresa_id)
+    `);
+    q = q.eq('campanha.empresa_id', filtros.empresaId);
+    // Período no formato 'YYYY-MM' filtra por data_pagamento dentro do mês.
+    if (filtros.periodo && /^\d{4}-\d{2}$/.test(filtros.periodo)) {
+      const [ano, mes] = filtros.periodo.split('-').map(Number);
+      const inicio = `${filtros.periodo}-01`;
+      const fim = mes === 12 ? `${ano + 1}-01-01` : `${ano}-${String(mes + 1).padStart(2, '0')}-01`;
+      q = q.gte('data_pagamento', inicio).lt('data_pagamento', fim);
+    }
+    const { data, error } = await q;
+    if (error) throw error;
+    return data || [];
   },
 
   async salvarCenarioROI(cenario: CenarioROIInput, empresaId: string) {
