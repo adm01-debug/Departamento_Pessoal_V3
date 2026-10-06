@@ -27,9 +27,8 @@
  *   • src/services/admissaoService.ts
  *   • src/services/contratacaoService.ts
  *   • src/pages/AdmissoesPage.tsx            (aba Auditoria + envio de link)
- *   • src/pages/OnboardingPage.tsx           (rota /onboarding)
- *   • src/components/admissoes/OnboardingPageContent.tsx
- *   • src/components/admissoes/OnboardingDashboard.tsx
+ *   • src/pages/OnboardingPage.tsx           (rota /onboarding — Jornada)
+ *   • src/components/admissoes/AdmissoesDashboard.tsx
  *
  * CENÁRIO: mesma empresa fictícia do restante dos mocks (`mock-empresa-1`) e a
  * mesma carteira de nomes do seed `20260730000000_seed_admissao_onboarding_...`
@@ -798,6 +797,139 @@ export function getMockOnboarding(): Array<MockAdmissao & { tarefas: MockTarefaO
     .sort((a, b) => b.created_at.localeCompare(a.created_at));
 }
 
+/* ─── "Gestão de Kits" (aba da Jornada de Onboarding) ─────────────────────── */
+
+/** Perfil de kit exibido na grade de "Gestão de Kits". */
+export interface MockKitOnboarding {
+  id: string;
+  nome: string;
+  /** Equipamentos/acessos do kit, na ordem em que o card os exibe. */
+  itens: string[];
+  /** Status no gerenciador (ausente = ativo). Alimenta o filtro por status. */
+  ativo?: boolean;
+  /** ISO — usado SOMENTE pela ordenação "Mais recentes" da grade. */
+  created_at?: string;
+}
+
+/**
+ * Perfis de kit FICTÍCIOS para pré-visualizar a GRADE de "Gestão de Kits"
+ * (Jornada de Onboarding). Com o mock DESLIGADO a tela lê a tabela real
+ * (`public.onboarding_kits`, migração `20260513191939`) — este conjunto só existe
+ * no modo demonstrativo, nunca como fallback silencioso.
+ *
+ * A quantidade de itens varia de 3 a 5 de propósito: é assim que se confere
+ * como a grade se comporta com descrições de alturas diferentes (o botão
+ * "Gerenciar Kit" fica alinhado no rodapé do card).
+ */
+export const MOCK_KITS_ONBOARDING: MockKitOnboarding[] = [
+  {
+    id: 'mock-kit-dev',
+    nome: 'Kit Desenvolvedor',
+    itens: ['MacBook Pro M3', 'Monitor 27"', 'Headset com cancelamento', 'Teclado mecânico', 'Mouse ergonômico'],
+  },
+  { id: 'mock-kit-comercial', nome: 'Kit Comercial', itens: ['Notebook Dell i5', 'Headset USB', 'Ramal VoIP'] },
+  {
+    id: 'mock-kit-suporte',
+    nome: 'Kit Suporte',
+    itens: ['Notebook Lenovo', 'Headset PTT', 'Celular corporativo', 'Chip de dados'],
+  },
+  {
+    id: 'mock-kit-marketing',
+    nome: 'Kit Marketing',
+    itens: ['MacBook Air M2', 'iPad', 'Câmera DSLR', 'Microfone de lapela'],
+  },
+  {
+    id: 'mock-kit-financeiro',
+    nome: 'Kit Financeiro',
+    itens: ['Notebook HP', 'Monitor 24"', 'Leitor de código de barras'],
+  },
+  { id: 'mock-kit-rh', nome: 'Kit RH', itens: ['Notebook Acer', 'Webcam Full HD', 'Headset'] },
+  {
+    id: 'mock-kit-design',
+    nome: 'Kit Designer',
+    itens: ['MacBook Pro 16"', 'Monitor 4K', 'Mesa digitalizadora', 'Caneta stylus'],
+  },
+];
+
+/* ─── Kits: estado em memória (permite criar/editar no demo) ──────────────── */
+
+/**
+ * Estado MUTÁVEL dos kits fictícios.
+ *
+ * Existe para o modo demonstração permitir CRIAR e EDITAR perfis na própria
+ * tela (inclusive com imagem de sessão) sem tocar no banco: o que o usuário
+ * salva aparece na grade até recarregar a página — e o toast da tela diz
+ * exatamente isso. Sem este estado, o único caminho seria BLOQUEAR a escrita
+ * (comportamento anterior), o que impedia testar o formulário e a imagem.
+ */
+interface MockKitsState {
+  kits: Required<MockKitOnboarding>[];
+  sequencia: number;
+}
+
+let estadoKits: MockKitsState | null = null;
+
+function garantirKits(): MockKitsState {
+  if (!estadoKits) {
+    estadoKits = {
+      kits: MOCK_KITS_ONBOARDING.map((kit, i) => ({
+        id: kit.id,
+        nome: kit.nome,
+        itens: [...kit.itens],
+        ativo: true,
+        created_at: new Date(Date.UTC(2026, 0, 1 + i)).toISOString(),
+      })),
+      sequencia: 0,
+    };
+  }
+  return estadoKits;
+}
+
+/** Cópia dos kits fictícios — o consumidor nunca recebe a referência interna. */
+export function getMockKitsOnboarding(): MockKitOnboarding[] {
+  return garantirKits().kits.map((kit) => ({ ...kit, itens: [...kit.itens] }));
+}
+
+/**
+ * Cria um perfil de kit no estado em memória (demo). Devolve o registro criado
+ * — ou `undefined` quando o mock está desligado (o chamador cai no serviço real).
+ */
+export function mockCriarKit(entrada: {
+  nome: string;
+  itens: string[];
+  ativo?: boolean;
+}): MockKitOnboarding | undefined {
+  if (!isAdmissoesMockEnabled()) return undefined;
+  const estado = garantirKits();
+  estado.sequencia += 1;
+  const novo: Required<MockKitOnboarding> = {
+    id: `mock-kit-${estado.sequencia}`,
+    nome: entrada.nome,
+    itens: [...entrada.itens],
+    ativo: entrada.ativo ?? true,
+    created_at: new Date().toISOString(),
+  };
+  estado.kits.unshift(novo);
+  return { ...novo, itens: [...novo.itens] };
+}
+
+/**
+ * Edita um perfil de kit no estado em memória (demo). Devolve o registro
+ * atualizado — ou `undefined` quando o mock está desligado / o id não existe.
+ */
+export function mockAtualizarKit(
+  id: string,
+  entrada: { nome: string; itens: string[]; ativo?: boolean }
+): MockKitOnboarding | undefined {
+  if (!isAdmissoesMockEnabled()) return undefined;
+  const kit = garantirKits().kits.find((item) => item.id === id);
+  if (!kit) return undefined;
+  kit.nome = entrada.nome;
+  kit.itens = [...entrada.itens];
+  if (entrada.ativo !== undefined) kit.ativo = entrada.ativo;
+  return { ...kit, itens: [...kit.itens] };
+}
+
 /** Execução de workflow + histórico para a aba "Histórico" do drawer. */
 export function getMockWorkflow(admissaoId?: string | null): MockWorkflowExecucao | undefined {
   const admissao = findMockAdmissao(admissaoId);
@@ -844,7 +976,7 @@ export function getMockWorkflow(admissaoId?: string | null): MockWorkflowExecuca
 
 /* ─── Gráfico "Tempo Médio de Admissão" (série de 12 meses) ───────────────── */
 
-/** Formato esperado por `OnboardingDashboard` (`month`/`days`). */
+/** Formato esperado por `AdmissoesDashboard` (`month`/`days`). */
 export const MOCK_TEMPO_MEDIO_ADMISSAO: { month: string; days: number }[] = [
   { month: 'Jan', days: 14 },
   { month: 'Fev', days: 12 },
@@ -1004,8 +1136,8 @@ export function mockAdmissaoAtualizada(id: string, payload: Record<string, any>)
 }
 
 /**
- * Absorve o "Concluir" de tarefa de onboarding (OnboardingPage /
- * OnboardingPageContent). Retorna `true` quando a tarefa fictícia foi baixada.
+ * Absorve o "Concluir" de tarefa de onboarding (Jornada de Onboarding, rota
+ * `/onboarding`). Retorna `true` quando a tarefa fictícia foi baixada.
  */
 export function mockConcluirTarefaOnboarding(tarefaId?: string | null): boolean {
   if (!isAdmissoesMockEnabled() || !isMockId(tarefaId)) return false;

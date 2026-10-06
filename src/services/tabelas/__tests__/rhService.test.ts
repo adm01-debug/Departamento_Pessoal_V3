@@ -118,15 +118,13 @@ describe('notificacoesAdmissaoService', () => {
   });
 });
 
-describe('onboardingService', () => {
+describe('onboardingService (MODELO B — DEPRECATED, somente leitura de compatibilidade)', () => {
   beforeEach(() => { vi.clearAllMocks(); });
 
-  it('listarTemplates queries onboarding_templates', async () => {
-    const chain = makeChain([]);
-    mockFrom.mockReturnValue(chain);
-    await onboardingService.listarTemplates();
-    expect(mockFrom).toHaveBeenCalledWith('onboarding_templates');
-  });
+  // `listarTemplates`/`criarTemplate`/`listarTemplateTarefas`/`criarTemplateTarefa`/
+  // `listarColaboradores`/`iniciarOnboarding` foram REMOVIDOS (nenhum consumidor);
+  // o domínio canônico é `onboardingJornadaService`. Só as DUAS leituras do
+  // fallback seguem vivas — ver docs/ONBOARDING_MODELO_B_DEPRECATED.md.
 
   it('listarTarefas queries onboarding_tarefas by onboardingId', async () => {
     const chain = makeChain([]);

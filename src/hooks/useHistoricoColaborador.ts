@@ -20,6 +20,12 @@ import { useMedidasDisciplinaresColaborador } from './useNovasTabelas';
 import { useTreinamentosColaborador, useFeedbacksColaborador, useOnboardingColaborador } from './useDesenvolvimentoColaborador';
 import { useEmpresas } from './useEmpresas';
 import { vinculoService } from '@/services/vinculoService';
+// EVENTOS DA JORNADA (FASE 10) — derivados do domínio canônico do onboarding.
+import {
+  eventosLegiveisDaJornada,
+  type JornadaCompat,
+  type TarefaJornadaCompat,
+} from '@/services/onboardingJornadaService';
 import { mockOr, getMockTimelineFuncional, getMockAuditLog } from '@/mocks/colaboradoresMock';
 import type { TimelineEvent } from '@/types/timelineEvent';
 
@@ -268,15 +274,21 @@ export function useHistoricoColaborador(colaboradorId: string) {
       });
     }
 
-    for (const tarefa of onboarding.concluidas as { id?: string; data_conclusao?: string; titulo?: string; categoria?: string }[]) {
-      if (!tarefa.data_conclusao) continue;
+    // EVENTOS DA JORNADA DE ONBOARDING (FASE 10) — "jornada iniciada",
+    // "tarefa concluída" e "jornada concluída" DERIVADOS do modelo canônico.
+    // Substitui o laço antigo que listava apenas as tarefas concluídas do
+    // MODELO B: agora o início e o fechamento da jornada também aparecem, sem
+    // nenhum evento duplicado (1 ação = 1 evento lógico). A trilha técnica
+    // campo-a-campo continua em `public.audit_log`.
+    const registroJornada = (onboarding as { onboarding?: unknown }).onboarding as JornadaCompat | null | undefined;
+    for (const evento of eventosLegiveisDaJornada(registroJornada, onboarding.tarefas as TarefaJornadaCompat[])) {
       out.push({
-        id: `onboarding-${tarefa.id ?? tarefa.data_conclusao}`,
-        date: tarefa.data_conclusao,
+        id: evento.id,
+        date: evento.date,
         type: 'onboarding',
-        title: `Onboarding: ${tarefa.titulo ?? 'tarefa concluída'}`,
-        description: tarefa.categoria || undefined,
-        source: 'onboarding_tarefas',
+        title: evento.title,
+        description: evento.description,
+        source: evento.source,
       });
     }
 

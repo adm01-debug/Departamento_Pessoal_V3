@@ -5,6 +5,8 @@ import { useQuery } from '@tanstack/react-query';
 import { avaliacaoService } from '@/services/avaliacaoService';
 import { catalogoCursoService } from '@/services/catalogoCursoService';
 import { onboardingService, treinamentoParticipantesService } from '@/services/tabelas/rhService';
+// FONTE CANÔNICA do onboarding (modelo A) — ver `onboardingJornadaService.ts`.
+import { buscarJornadaDoColaborador, listarTarefasDaAdmissao } from '@/services/onboardingJornadaService';
 import { useEmpresas } from './useEmpresas';
 import { todayLocalISO } from '@/utils/dateLocal';
 import {
@@ -74,17 +76,45 @@ export function useTreinamentosColaborador(colaboradorId: string) {
 export function useOnboardingColaborador(colaboradorId: string) {
   const { empresaAtual } = useEmpresas();
 
+  /**
+   * FONTE CANÔNICA (modelo A) — FASE 9.3 da consolidação: o dossiê do
+   * colaborador passa a ler a MESMA jornada da `/onboarding`. O vínculo é o CPF
+   * (`admissoes.cpf` ↔ `colaboradores.cpf`), porque `admissoes` não tem
+   * `colaborador_id`.
+   *
+   * COMPAT TEMPORÁRIO (somente LEITURA): se o colaborador não tiver admissão
+   * localizável, ainda lemos o modelo B (`onboarding_colaborador`) para que
+   * NENHUM histórico já gravado desapareça. Isso NÃO é dual write — nada é
+   * escrito nos dois lados — e sai assim que a conferência de dados do modelo B
+   * for concluída (ver `docs/ONBOARDING_MODELO_B_DEPRECATED.md`).
+   */
   const { data: onboarding, isLoading: isLoadingOnboarding } = useQuery({
     queryKey: ['onboarding-colaborador', colaboradorId, empresaAtual?.id],
-    queryFn: async () => mockOr(getMockOnboardingRegistro(colaboradorId)) ?? onboardingService.buscarPorColaborador(colaboradorId, empresaAtual!.id),
+    queryFn: async () => {
+      const doMock = mockOr(getMockOnboardingRegistro(colaboradorId));
+      if (doMock) return doMock;
+
+      const canonica = await buscarJornadaDoColaborador(colaboradorId);
+      if (canonica) return canonica;
+
+      const legado = await onboardingService.buscarPorColaborador(colaboradorId, empresaAtual!.id);
+      return legado ? { ...legado, fonte: 'legado' as const } : null;
+    },
     enabled: !!colaboradorId && !!empresaAtual?.id,
   });
 
   const onboardingId = (onboarding as { id?: string } | null | undefined)?.id;
+  const fonte = (onboarding as { fonte?: 'jornada' | 'legado' } | null | undefined)?.fonte ?? 'jornada';
 
   const { data: tarefas, isLoading: isLoadingTarefas } = useQuery({
     queryKey: ['onboarding-tarefas-colaborador', onboardingId],
-    queryFn: async () => mockOr(getMockOnboardingTarefas(onboardingId)) ?? onboardingService.listarTarefas(onboardingId!),
+    queryFn: async () => {
+      const doMock = mockOr(getMockOnboardingTarefas(onboardingId));
+      if (doMock) return doMock;
+      return fonte === 'legado'
+        ? onboardingService.listarTarefas(onboardingId!)
+        : listarTarefasDaAdmissao(onboardingId!);
+    },
     enabled: !!onboardingId,
   });
 

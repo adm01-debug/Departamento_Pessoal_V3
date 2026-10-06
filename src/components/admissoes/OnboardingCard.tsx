@@ -46,6 +46,7 @@ import {
   progressoOnboarding,
   proximaTarefa,
   resumoOnboarding,
+  ultimaConclusao,
   type ColaboradorOnboarding,
   type EstadoMarco,
   type TarefaOnboarding,
@@ -55,8 +56,8 @@ import {
 export interface OnboardingAcoes {
   /** Abre o detalhe com a jornada completa (checklist). */
   onVerOnboarding: (colaborador: ColaboradorOnboarding) => void;
-  /** Dispara o e-mail de boas-vindas (mesma ação do card antigo). */
-  onEnviarEmail: (colaborador: ColaboradorOnboarding) => void;
+  /** Copia a mensagem de boas-vindas para a área de transferência (não há infra de e-mail: nada de "enviado"). */
+  onCopiarMensagemBoasVindas: (colaborador: ColaboradorOnboarding) => void;
   /** Baixa a próxima tarefa pendente (mesma mutation de "Concluir"). */
   onConcluirProxima?: (tarefa: TarefaOnboarding) => void;
 }
@@ -204,8 +205,8 @@ function MenuAcoes({
           </DropdownMenuItem>
         )}
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="gap-2 text-xs" onSelect={() => acoes.onEnviarEmail(colaborador)}>
-          <Mail className="h-3.5 w-3.5" /> Enviar e-mail de boas-vindas
+        <DropdownMenuItem className="gap-2 text-xs" onSelect={() => acoes.onCopiarMensagemBoasVindas(colaborador)}>
+          <Mail className="h-3.5 w-3.5" /> Copiar mensagem de boas-vindas
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -398,13 +399,4 @@ export function OnboardingCard({ colaborador, acoes }: OnboardingCardProps) {
   );
 }
 
-/** Data da última conclusão registrada (para o estado 100% concluído). */
-function ultimaConclusao(tarefas: TarefaOnboarding[]): Date | null {
-  const datas = tarefas
-    .map((t) => t.concluida_em)
-    .filter((v): v is string => !!v)
-    .map((v) => new Date(v))
-    .filter((d) => !Number.isNaN(d.getTime()));
-  if (datas.length === 0) return null;
-  return new Date(Math.max(...datas.map((d) => d.getTime())));
-}
+/** Data da última conclusão registrada — vive em `onboardingDerivacoes.ts`. */

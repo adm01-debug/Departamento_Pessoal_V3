@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { NovaAdmissaoDialog } from '@/components/admissoes/NovaAdmissaoDialog';
 import { DetalhesAdmissaoDialog } from '@/components/admissoes/DetalhesAdmissaoDialog';
-import { UserPlus, LayoutDashboard, List, History, Rocket, Kanban } from 'lucide-react';
+import { UserPlus, LayoutDashboard, List, History, Kanban, ExternalLink } from 'lucide-react';
 import { AdmissoesKanban } from '@/components/admissoes/AdmissoesKanban';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -33,8 +33,7 @@ import {
   AnimatedDossieTabsList as AnimatedTabsList,
   AnimatedDossieTabsTrigger as AnimatedTabsTrigger,
 } from '@/components/colaboradores/AnimatedDossieTabs';
-import { OnboardingDashboard } from '@/components/admissoes/OnboardingDashboard';
-import OnboardingPageContent from '@/components/admissoes/OnboardingPageContent';
+import { AdmissoesDashboard } from '@/components/admissoes/AdmissoesDashboard';
 import AuditoriaAdmissoesContent from '@/components/admissoes/AuditoriaAdmissoesContent';
 import { GestaoCandidatos } from '@/components/admissoes/GestaoCandidatos';
 import type { LooseRow } from '@/types/db';
@@ -74,7 +73,7 @@ const MotionCard = motion.create(Card);
  * herdavam o `initial={false}` (apareciam prontos, sem cascata). Um
  * `AnimatePresence` local, sem props — contexto novo, com `initial` verdadeiro,
  * exatamente como em `OrganogramaTree.tsx`, `HistoricoColaborador.tsx`,
- * `HeadcountOverviewCard.tsx` e `OnboardingDashboard.tsx` — devolve o keyframe
+ * `HeadcountOverviewCard.tsx` e `AdmissoesDashboard.tsx` — devolve o keyframe
  * `hidden` a cada montagem. Ele não renderiza DOM.
  */
 function CardsEntrada({ children }: { children: React.ReactNode }) {
@@ -83,13 +82,17 @@ function CardsEntrada({ children }: { children: React.ReactNode }) {
 
 /**
  * Abas internas do módulo. A ordem é a mesma da navegação: visão geral →
- * operação (candidatos/kanban) → jornada (onboarding) → conformidade.
+ * operação (candidatos/kanban) → conformidade.
+ *
+ * A aba "Onboarding" SAIU DAQUI (consolidação do domínio): Admissões termina no
+ * processo admissionAL e a integração do colaborador é operada SÓ na Jornada de
+ * Onboarding (`/onboarding`). O vínculo entre os dois módulos é o atalho do
+ * cabeçalho — não uma segunda lista de onboarding dentro daqui.
  */
 const abasAdmissoes = [
   { value: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { value: 'gestao', label: 'Gestão de Candidatos', icon: List },
   { value: 'kanban', label: 'Kanban', icon: Kanban },
-  { value: 'onboarding', label: 'Onboarding', icon: Rocket },
   { value: 'auditoria', label: 'Auditoria', icon: History },
 ] as const;
 
@@ -172,7 +175,22 @@ export default function AdmissoesPage() {
         description="Gerencie o processo de admissão de colaboradores"
         icon={<UserPlus className="h-5 w-5 text-primary-foreground" />}
         gradient="from-primary to-primary-glow"
-        actions={<NovaAdmissaoDialog />}
+        actions={
+          // ATALHO CONTEXTUAL (consolidação): Admissões NÃO reproduz onboarding —
+          // apenas leva à Jornada, que é a única área que opera a integração
+          // depois da admissão formal. `navigate` mantém o SPA (sem reload).
+          <>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate('/onboarding')}
+              className="h-9 gap-1.5 rounded-xl border-border/40 px-3 text-xs"
+            >
+              <ExternalLink className="h-3.5 w-3.5" /> Jornada de Onboarding
+            </Button>
+            <NovaAdmissaoDialog />
+          </>
+        }
       >
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           {/* Tablist com a MESMA aparência da área de Colaboradores: a skin vem
@@ -240,12 +258,8 @@ export default function AdmissoesPage() {
               // contratação). Sem essa prop os modais continuam funcionando: eles
               // apenas não exibem o botão quando o único destino seria uma aba
               // interna do próprio módulo.
-              <OnboardingDashboard admissoes={admissoes || []} onAbrirAba={(aba) => setActiveTab(aba)} />
+              <AdmissoesDashboard admissoes={admissoes || []} onAbrirAba={(aba) => setActiveTab(aba)} />
             )}
-          </TabsContent>
-
-          <TabsContent value="onboarding" className="mt-6 space-y-6">
-            <OnboardingPageContent />
           </TabsContent>
 
           <TabsContent value="gestao" className="mt-6 space-y-6">

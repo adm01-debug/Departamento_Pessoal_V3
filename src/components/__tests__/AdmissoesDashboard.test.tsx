@@ -76,17 +76,17 @@ vi.mock('@/components/ui/animated-cascade-dialog', () => ({
     ) : null,
 }));
 
-import { OnboardingDashboard } from '../admissoes/OnboardingDashboard';
+import { AdmissoesDashboard } from '../admissoes/AdmissoesDashboard';
 
 /**
  * O dashboard navega a partir dos modais ("Resolver agora" → `/exames`,
  * `/esocial`), então `useNavigate` exige um Router no teste — mesmo caminho de
  * `ColaboradoresPage.test.tsx`.
  */
-const renderDashboard = (admissoes: any[], props: Partial<ComponentProps<typeof OnboardingDashboard>> = {}) =>
+const renderDashboard = (admissoes: any[], props: Partial<ComponentProps<typeof AdmissoesDashboard>> = {}) =>
   render(
     <MemoryRouter>
-      <OnboardingDashboard admissoes={admissoes} {...props} />
+      <AdmissoesDashboard admissoes={admissoes} {...props} />
     </MemoryRouter>
   );
 
@@ -196,7 +196,7 @@ const MOCK_ADMISSOES_SLA = [
   },
 ];
 
-describe('OnboardingDashboard', () => {
+describe('AdmissoesDashboard', () => {
   it('renders Total Iniciadas KPI', () => {
     renderDashboard(MOCK_ADMISSOES);
     expect(screen.getByText('Total Iniciadas')).toBeInTheDocument();

@@ -644,10 +644,14 @@ const LEGENDA_AREA = 'text-[10px] leading-tight @max-[240px]:text-[9px]';
  * Abas internas de Admissões para onde os modais podem levar o RH. O módulo não
  * cria rota nova: as ações dos modais só existem quando há um destino REAL —
  * uma aba desta própria página, `/exames` ou `/esocial`.
+ *
+ * A aba "onboarding" SAIU do tipo junto com a aba (consolidação do domínio):
+ * nenhum destino interno de Admissões aponta mais para onboarding — a Jornada de
+ * Onboarding é rota própria (`/onboarding`), alcançada pelo atalho do cabeçalho.
  */
-export type AbaAdmissoes = 'gestao' | 'kanban' | 'onboarding';
+export type AbaAdmissoes = 'gestao' | 'kanban';
 
-export function OnboardingDashboard({
+export function AdmissoesDashboard({
   admissoes,
   onAbrirAba,
 }: {

@@ -74,49 +74,25 @@ export const notificacoesAdmissaoService = {
   },
 };
 
+/**
+ * ONBOARDING — MODELO B: **DEPRECATED**, somente LEITURA de compatibilidade.
+ *
+ * O domínio canônico do onboarding é a **Jornada de Onboarding** (modelo A:
+ * `admissoes` + `tarefas_onboarding`), operado por
+ * `services/onboardingJornadaService.ts`. Este objeto existe APENAS para o
+ * fallback de leitura descrito em `docs/ONBOARDING_MODELO_B_DEPRECATED.md`.
+ *
+ * As escritas e as leituras SEM consumidor foram removidas
+ * (`listarTemplates`, `criarTemplate`, `listarTemplateTarefas`,
+ * `criarTemplateTarefa`, `listarColaboradores`, `iniciarOnboarding`,
+ * `concluirTarefa` — nenhuma tinha chamador). Sobraram só as DUAS leituras que o
+ * fallback usa; ambas saem quando a conferência de dados do modelo B terminar.
+ */
 export const onboardingService = {
-  listarTemplates: async (empresaId?: string) => {
-    let q = supabase.from('onboarding_templates').select('*').order('created_at', { ascending: false });
-    if (empresaId) q = q.eq('empresa_id', empresaId);
-    const { data, error } = await q;
-    if (error) throw error;
-    return data || [];
-  },
-  criarTemplate: async (d: any) => {
-    const { data, error } = await supabase.from('onboarding_templates').insert(d).select().maybeSingle();
-    if (error) throw error;
-    return data;
-  },
-  listarTemplateTarefas: async (templateId: string) => {
-    const { data, error } = await supabase.from('onboarding_template_tarefas').select('*').eq('template_id', templateId).order('ordem');
-    if (error) throw error;
-    return data || [];
-  },
-  criarTemplateTarefa: async (d: any) => {
-    const { error } = await supabase.from('onboarding_template_tarefas').insert(d);
-    if (error) throw error;
-  },
-  listarColaboradores: async (empresaId?: string) => {
-    let q = supabase.from('onboarding_colaborador').select('*, colaborador:colaboradores(nome_completo)').order('created_at', { ascending: false });
-    if (empresaId) q = q.eq('empresa_id', empresaId);
-    const { data, error } = await q;
-    if (error) throw error;
-    return data || [];
-  },
-  iniciarOnboarding: async (d: any) => {
-    const { data, error } = await supabase.from('onboarding_colaborador').insert(d).select().maybeSingle();
-    if (error) throw error;
-    return data;
-  },
   listarTarefas: async (onboardingId: string) => {
     const { data, error } = await supabase.from('onboarding_tarefas').select('*').eq('onboarding_id', onboardingId).order('ordem');
     if (error) throw error;
     return data || [];
-  },
-  concluirTarefa: async (onboardingId: string, id: string) => {
-    if (!onboardingId) throw new Error('onboarding_id obrigatório para isolamento de tenant');
-    const { error } = await supabase.from('onboarding_tarefas').update({ concluida: true, concluida_em: new Date().toISOString() } as any).eq('id', id).eq('onboarding_id', onboardingId);
-    if (error) throw error;
   },
   // PARTE G (Dossiê — Desenvolvimento): acha o onboarding_colaborador de UM
   // colaborador, para depois buscar suas tarefas (onboarding_tarefas.onboarding_id).

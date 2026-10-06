@@ -71,6 +71,7 @@ import {
 import { Table, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { CascadeTableBody, CascadeTableRow } from '@/components/ui/cascade-table';
 import { EmptyList, EmptySearch } from '@/components/ui/empty-state';
+import { SlidingIndicator } from '@/components/ui/sliding-indicator';
 import { Spinner } from '@/components/ui/spinner';
 import { MetricCard, cardVariants } from '@/components/dashboard/MetricCard';
 import { cn } from '@/lib/utils';
@@ -609,16 +610,10 @@ function VisualizacaoToggle({
 
   return (
     <div className="relative grid grid-cols-2 rounded-xl border border-border/40 bg-card/50 p-1">
-      {/* UM contorno único e permanente — CSS puro, só `transform` (GPU). */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute top-1 bottom-1 left-1 w-[calc(50%_-_4px)] rounded-lg border border-primary"
-        style={{
-          transform: visual === 'cards' ? 'translate3d(100%,0,0)' : 'translate3d(0,0,0)',
-          transition: 'transform 420ms cubic-bezier(0.22, 1, 0.36, 1)',
-          willChange: 'transform',
-        }}
-      />
+      {/* UM contorno único e permanente — CSS puro, só `transform` (GPU).
+          Peça COMPARTILHADA (`SlidingIndicator`): a MESMA animação também roda
+          nos tabs de status da Jornada de Onboarding. */}
+      <SlidingIndicator atual={visual === 'cards' ? 1 : 0} />
       {opcoes.map(({ value: v, label, icon: Icon }) => {
         const ativo = visual === v;
         return (

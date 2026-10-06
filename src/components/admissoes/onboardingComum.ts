@@ -1,6 +1,6 @@
 /**
- * Contrato visual da área de Onboarding (aba "Onboarding" do módulo de
- * Admissões): rótulos dos marcos, paleta do avatar e tints dos micro status.
+ * Contrato visual da JORNADA DE ONBOARDING (rota `/onboarding`): rótulos dos
+ * marcos, paleta do avatar e tints dos micro status.
  *
  * Mesma separação de `admissoesComum.ts`: aqui só mora o que é APRESENTAÇÃO
  * (texto de marco, classe de cor, tint de prazo). A matemática fica em

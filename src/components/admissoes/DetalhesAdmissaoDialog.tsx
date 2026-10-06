@@ -1248,6 +1248,23 @@ export function DetalhesAdmissaoDialog({ admissao, open, onOpenChange }: Detalhe
                         <Trash2 className="h-4 w-4" /> Cancelar admissão
                       </Button>
                       <div className="flex items-center gap-2">
+                        {/* ATALHO CONTEXTUAL (FASE 17): quando a admissão está
+                            CONCLUÍDA, o processo admissionAL terminou e o que
+                            importa é a integração — abre a Jornada já focada
+                            neste colaborador (`?colaborador=<id da admissão>`).
+                            Admissões NÃO reproduz o onboarding: só aponta. */}
+                        {admissao?.etapa === 'concluida' && (
+                          <Button
+                            variant="outline"
+                            className="gap-2"
+                            onClick={() => {
+                              onOpenChange(false);
+                              navigate(`/onboarding?colaborador=${admissao.id}`);
+                            }}
+                          >
+                            <ExternalLink className="h-4 w-4" /> Abrir Jornada
+                          </Button>
+                        )}
                         <Button variant="outline" onClick={() => onOpenChange(false)}>
                           Fechar
                         </Button>

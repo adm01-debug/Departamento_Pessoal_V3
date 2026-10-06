@@ -11,7 +11,7 @@
  * entrada/saída (`cascadeItemVariants`). Nada de coreografia nova.
  *
  * FUNCIONALIDADE: cada tarefa pendente tem "Concluir" (a MESMA mutation do
- * módulo) e o rodapé tem "Enviar e-mail de boas-vindas" + "Fechar".
+ * módulo) e o rodapé tem "Copiar mensagem de boas-vindas" + "Fechar".
  */
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -49,8 +49,8 @@ export interface OnboardingDetalheDialogProps {
   onConcluirTarefa: (tarefaId: string) => void;
   /** Id da tarefa cuja gravação está em andamento (spinner + bloqueio). */
   tarefaConcluindo?: string | null;
-  /** Envia o e-mail de boas-vindas do colaborador do modal. */
-  onEnviarEmail: (colaborador: ColaboradorOnboarding) => void;
+  /** Copia a mensagem de boas-vindas do colaborador do modal. */
+  onCopiarMensagemBoasVindas: (colaborador: ColaboradorOnboarding) => void;
 }
 
 /** Linha de tarefa do checklist (com "Concluir" quando ainda pendente). */
@@ -129,7 +129,7 @@ export function OnboardingDetalheDialog({
   onOpenChange,
   onConcluirTarefa,
   tarefaConcluindo,
-  onEnviarEmail,
+  onCopiarMensagemBoasVindas,
 }: OnboardingDetalheDialogProps) {
   const tarefas = colaborador?.tarefas ?? [];
   const progresso = progressoOnboarding(tarefas);
@@ -254,9 +254,9 @@ export function OnboardingDetalheDialog({
                       variant="outline"
                       size="sm"
                       className="h-9 gap-2 text-xs"
-                      onClick={() => onEnviarEmail(colaborador)}
+                      onClick={() => onCopiarMensagemBoasVindas(colaborador)}
                     >
-                      <Mail className="h-4 w-4" /> Enviar e-mail de boas-vindas
+                      <Mail className="h-4 w-4" /> Copiar mensagem de boas-vindas
                     </Button>
                     <DialogPrimitive.Close asChild>
                       <Button variant="ghost" size="sm" className="h-9 text-xs">
