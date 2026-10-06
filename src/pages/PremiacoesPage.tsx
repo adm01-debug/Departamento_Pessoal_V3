@@ -42,7 +42,7 @@ export default function PremiacoesPage() {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = React.useState('campanhas');
   const [isWizardOpen, setIsWizardOpen] = React.useState(false);
-  const [periodoFiltro, setPeriodoFiltro] = React.useState('');
+  const [periodoFiltro, setPeriodoFiltro] = React.useState<{ ym: string; empresaId: string | undefined } | null>(null);
 
   const { data: campanhas = [], isLoading: loadCampanhas } = useQuery({
     queryKey: ['premiacoes_campanhas', empresaAtual?.id],
@@ -75,10 +75,15 @@ export default function PremiacoesPage() {
     return [...mapa.entries()].sort((a, b) => b[0].localeCompare(a[0]));
   }, [pagamentos]);
 
-  // Troca de empresa pode invalidar o período escolhido — o mês da empresa
-  // anterior pode não existir nas opções da nova. Estado derivado em vez de
-  // effect: o valor efetivo cai para "todos" quando a escolha não é opção.
-  const periodoEfetivo = periodosDisponiveis.some(([ym]) => ym === periodoFiltro) ? periodoFiltro : '';
+  // A escolha pertence à empresa em que foi feita: trocar de empresa zera o
+  // filtro mesmo quando a nova tem o mesmo mês, e a opção precisa existir nos
+  // dados atuais. Estado derivado em vez de effect.
+  const periodoEfetivo =
+    periodoFiltro !== null &&
+    periodoFiltro.empresaId === empresaAtual?.id &&
+    periodosDisponiveis.some(([ym]) => ym === periodoFiltro.ym)
+      ? periodoFiltro.ym
+      : '';
 
   const updateStatusMutation = useMutation({
     mutationFn: ({ id, status, valor }: { id: string; status: string; valor?: number }) =>
@@ -384,7 +389,11 @@ export default function PremiacoesPage() {
                       <select
                         className="bg-transparent text-[10px] font-bold outline-hidden border-none"
                         value={periodoEfetivo}
-                        onChange={(e) => setPeriodoFiltro(e.target.value)}
+                        onChange={(e) =>
+                          setPeriodoFiltro(
+                            e.target.value === '' ? null : { ym: e.target.value, empresaId: empresaAtual?.id }
+                          )
+                        }
                         aria-label="Filtrar exportação por período"
                       >
                         <option value="">Todos os Períodos</option>
