@@ -410,7 +410,9 @@ describe('premiacoesService.exportarRelatorio — período', () => {
   it('período sem-data filtra por data_pagamento IS NULL', async () => {
     const { chain } = setupPagamentosChain([]);
     await premiacoesService.exportarRelatorio({ empresaId: EMPRESA_ID, periodo: PERIODO_SEM_DATA });
-    expect(chain.is).toHaveBeenCalledWith('data_pagamento', null);
+    // `.or()` em vez de `.is()`: o bridge deployado descarta {op:'is',value:null}.
+    expect(chain.or).toHaveBeenCalledWith('data_pagamento.is.null');
+    expect(chain.is).not.toHaveBeenCalled();
     expect(chain.gte).not.toHaveBeenCalled();
     expect(chain.lt).not.toHaveBeenCalled();
   });

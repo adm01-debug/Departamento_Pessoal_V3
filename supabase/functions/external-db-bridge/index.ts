@@ -391,7 +391,17 @@ Deno.serve(async (req) => {
   const data = sanitizeData(body.data) as Record<string, unknown> | Record<string, unknown>[] | undefined;
   const filters = (body.filters ?? [])
     .map((f) => ({ ...f, value: sanitizeData(f.value) }))
-    .filter((f) => f.op === "or" || (f.value !== null && f.value !== undefined && f.value !== "" && f.value !== "all"));
+    .filter((f) => {
+      if (f.op === "or") return true;
+      // 'is' (e 'not' com extraOp 'is') só opera sobre null/boolean — null é
+      // um valor legítimo, não ausência de filtro. Sem a exceção, o filtro era
+      // descartado e a query voltava não filtrada (ex.: "sem data" retornava
+      // todas as linhas da empresa em vez de só as sem data_pagamento).
+      if (f.op === "is" || (f.op === "not" && f.extraOp === "is")) {
+        return f.value === null || typeof f.value === "boolean";
+      }
+      return f.value !== null && f.value !== undefined && f.value !== "" && f.value !== "all";
+    });
   // Telemetria empresarial só é atribuída quando o tenant é inequívoco.
   // Ausência/ambiguidade permanece NULL e nunca entra em KPIs por empresa.
   let telemetryEmpresaId = (() => {

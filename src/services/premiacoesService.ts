@@ -88,7 +88,11 @@ export const premiacoesService = {
     if (campanhaId) q = q.eq('campanha_id', campanhaId);
     q = q.eq('campanha.empresa_id', empresaId);
     if (periodo === PERIODO_SEM_DATA) {
-      q = q.is('data_pagamento', null);
+      // Vai por `.or()` e não `.is()`: o bridge deployado descarta filtros
+      // {op:'is',value:null} — a correção no index.ts só vale após redeploy.
+      // Filtros 'or' não passam pelo drop de null e 'data_pagamento.is.null'
+      // é aceito pelo isSafeOrExpression.
+      q = q.or('data_pagamento.is.null');
     } else if (periodo && /^\d{4}-\d{2}$/.test(periodo)) {
       // Período 'YYYY-MM' filtra por data_pagamento dentro do mês.
       const [ano, mes] = periodo.split('-').map(Number);

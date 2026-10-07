@@ -110,7 +110,7 @@
     "brace-expansion@>=2.0.0 <2.1.7": "2.1.7",
     "brace-expansion@>=4.0.0 <5.0.12": "5.0.12",
     "fast-uri@>=3.0.0 <=3.1.6": "3.1.8",
-    "sharp": ">=0.35.4",
+    "sharp": ">=0.35.5",
   },
   "packages": {
     "@adobe/css-tools": ["@adobe/css-tools@4.5.0", "", {}, "sha512-6OzddxPio9UiWTCemp4N8cYLV2ZN1ncRnV1cVGtve7dhPOtRkleRyx32GQCYSwDYgaHU3USMm84tNsvKzRCa1Q=="],
