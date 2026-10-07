@@ -106,20 +106,15 @@ jobs:
           mkdir -p "$stage_dir/supabase/migrations"
           cp supabase/config.toml "$stage_dir/supabase/config.toml"
           # NOTE: this list is intentionally replaced on every scoped batch,
-          # not accumulated. The previous batch (20260924192541) is already
-          # applied and recorded in supabase_migrations.schema_migrations;
-          # re-listing it here would re-run non-idempotent CREATE POLICY
-          # statements and fail with "policy already exists". Each dispatch
-          # of this workflow targets only the NEW migrations for that batch.
+          # not accumulated. The previous batch (8 migrations, up to
+          # 20261005160000_wave7_audit_fixes) is already applied and recorded
+          # in supabase_migrations.schema_migrations; re-listing it here would
+          # re-run non-idempotent CREATE POLICY statements and fail with
+          # "policy already exists". Each dispatch of this workflow targets
+          # only the NEW migrations for that batch.
           for migration in \
-            20261001140000_p1_rls_status_hardening.sql \
-            20261002102900_p0_rls_tenant_or_admin_helper.sql \
-            20261002103000_p0_fix_audit_critical_gaps.sql \
-            20261003100000_p0_tighten_audit_bancario_insert.sql \
-            20261003110000_p1_drift_cols_workflows_sla_cnab.sql \
-            20261005120000_get_empresa_admin_ids_privileged_callers.sql \
-            20261005140000_admin_list_profiles_rpc.sql \
-            20261005160000_wave7_audit_fixes.sql
+            20261006110000_fix_contrato_assinar_search_path.sql \
+            20261006120000_revoke_admissao_token_row_helper.sql
           do
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
           done
@@ -168,14 +163,20 @@ jobs:
           # Verifica as 8 versões DESTE lote no ledger + os objetos/invariantes
           # que cada migration cria (antes conferia só a versão do lote anterior,
           # que podia não existir e falhar após um COMMIT bem-sucedido).
+          # legacy_rls_missing conta tabelas legacy EXISTENTES sem RLS — a
+          # versão anterior esperava === 4, que falha quando a tabela não
+          # existe no canônico (to_regclass NULL faz o DO da migration pular).
           result="$(psql "$SUPABASE_DB_URL" -X -v ON_ERROR_STOP=1 -At <<'SQL'
           SELECT jsonb_build_object(
             'ledger_count', (
               SELECT count(*) FROM supabase_migrations.schema_migrations
-              WHERE version IN (
-                '20261001140000','20261002102900','20261002103000','20261003100000',
-                '20261003110000','20261005120000','20261005140000','20261005160000'
-              )
+              WHERE version IN ('20261006110000','20261006120000')
+            ),
+            'search_path_ok', EXISTS (
+              SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+              WHERE n.nspname = 'public' AND p.proname = 'contrato_assinar_por_token'
+                AND p.pronargs = 5
+                AND array_to_string(p.proconfig, ',') LIKE '%extensions%'
             ),
             'rls_helper_ok', to_regproc('public.rls_tenant_or_admin') IS NOT NULL,
             'admin_list_ok', to_regproc('public.admin_list_profiles') IS NOT NULL,
@@ -183,10 +184,13 @@ jobs:
             'competencia_fmt_ok', EXISTS (
               SELECT 1 FROM pg_constraint WHERE conname = 'folhas_pagamento_competencia_fmt'
             ),
-            'legacy_rls_enabled', (
+            'legacy_rls_missing', (
               SELECT count(*) FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
-              WHERE n.nspname = 'public' AND c.relrowsecurity
+              WHERE n.nspname = 'public' AND NOT c.relrowsecurity
                 AND c.relname IN ('eventos_rh','folha_pagamento','ponto_registros','rubricas')
+            ),
+            'token_helper_locked', NOT has_function_privilege(
+              'anon', 'public._admissao_token_row(text)', 'EXECUTE'
             )
           );
           SQL
@@ -195,12 +199,14 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 8 &&
+              Number(r.ledger_count) === 2 &&
+              r.search_path_ok === true &&
               r.rls_helper_ok === true &&
               r.admin_list_ok === true &&
               r.get_admin_ids_ok === true &&
               r.competencia_fmt_ok === true &&
-              Number(r.legacy_rls_enabled) === 4;
+              Number(r.legacy_rls_missing) === 0 &&
+              r.token_helper_locked === true;
             if (!ok) process.exit(1);
           ' "$result"
           echo 'CANONICAL_SCOPED_MIGRATIONS_OK'

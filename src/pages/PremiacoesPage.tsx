@@ -42,9 +42,7 @@ export default function PremiacoesPage() {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = React.useState('campanhas');
   const [isWizardOpen, setIsWizardOpen] = React.useState(false);
-  const [periodoFiltro, setPeriodoFiltro] = React.useState('Todos os Períodos');
-  const [unidadeFiltro, setUnidadeFiltro] = React.useState('Todas as Unidades');
-  const [faixaMetaFiltro, setFaixaMetaFiltro] = React.useState('Todas');
+  const [periodoFiltro, setPeriodoFiltro] = React.useState<{ ym: string; empresaId: string | undefined } | null>(null);
 
   const { data: campanhas = [], isLoading: loadCampanhas } = useQuery({
     queryKey: ['premiacoes_campanhas', empresaAtual?.id],
@@ -64,6 +62,29 @@ export default function PremiacoesPage() {
     enabled: !!empresaAtual?.id,
   });
 
+  // Opções de período derivadas dos dados reais (data_pagamento, 'YYYY-MM').
+  const periodosDisponiveis = React.useMemo(() => {
+    const mapa = new Map<string, string>();
+    for (const p of pagamentos) {
+      const dp = (p as { data_pagamento?: string | null }).data_pagamento;
+      if (!dp) continue;
+      const ym = dp.slice(0, 7);
+      const label = new Date(`${ym}-02T12:00:00`).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+      mapa.set(ym, label.charAt(0).toUpperCase() + label.slice(1));
+    }
+    return [...mapa.entries()].sort((a, b) => b[0].localeCompare(a[0]));
+  }, [pagamentos]);
+
+  // A escolha pertence à empresa em que foi feita: trocar de empresa zera o
+  // filtro mesmo quando a nova tem o mesmo mês, e a opção precisa existir nos
+  // dados atuais. Estado derivado em vez de effect.
+  const periodoEfetivo =
+    periodoFiltro !== null &&
+    periodoFiltro.empresaId === empresaAtual?.id &&
+    periodosDisponiveis.some(([ym]) => ym === periodoFiltro.ym)
+      ? periodoFiltro.ym
+      : '';
+
   const updateStatusMutation = useMutation({
     mutationFn: ({ id, status, valor }: { id: string; status: string; valor?: number }) =>
       premiacoesService.atualizarStatusPagamento(id, status, empresaAtual!.id, valor),
@@ -79,10 +100,7 @@ export default function PremiacoesPage() {
       (async () => {
         const pagamentos = (await premiacoesService.exportarRelatorio({
           empresaId: empresaAtual?.id,
-          periodo: periodoFiltro,
-          unidade: unidadeFiltro,
-          faixaMeta: faixaMetaFiltro,
-          versao: '1.2.5-stable',
+          periodo: periodoEfetivo || undefined,
         })) as {
           valor_aprovado?: number | null;
           valor_folha_real?: number | null;
@@ -108,11 +126,15 @@ export default function PremiacoesPage() {
         if (format === 'csv') {
           exportPontoCSV(linhas, `premiacoes-${todayLocalISO()}.csv`);
         } else {
-          exportPontoPDF(linhas, 'Relatório de Premiações', Object.keys(linhas[0]));
+          exportPontoPDF(linhas, 'Relatório de Premiações', Object.keys(linhas[0]), {
+            seloSistema: 'DEPARTAMENTO PESSOAL v2.0',
+            statusGeral: 'EXPORTADO',
+            notaRodape: 'Documento gerado automaticamente — consulte o status de conciliação por pagamento',
+          });
         }
       })(),
       {
-        loading: `Gerando relatório ${format.toUpperCase()} com filtros aplicados...`,
+        loading: `Gerando relatório ${format.toUpperCase()}${periodoEfetivo ? ' do período selecionado' : ''}...`,
         success: 'Relatório gerado e baixado com sucesso!',
         error: 'Erro ao gerar relatório.',
       }
@@ -366,34 +388,20 @@ export default function PremiacoesPage() {
                       <Filter className="h-3 w-3 text-muted-foreground" />
                       <select
                         className="bg-transparent text-[10px] font-bold outline-hidden border-none"
-                        value={periodoFiltro}
-                        onChange={(e) => setPeriodoFiltro(e.target.value)}
+                        value={periodoEfetivo}
+                        onChange={(e) =>
+                          setPeriodoFiltro(
+                            e.target.value === '' ? null : { ym: e.target.value, empresaId: empresaAtual?.id }
+                          )
+                        }
+                        aria-label="Filtrar exportação por período"
                       >
-                        <option>Todos os Períodos</option>
-                        <option>Maio 2026</option>
-                        <option>Abril 2026</option>
-                      </select>
-                    </div>
-                    <div className="flex items-center gap-2 bg-background border border-border/50 rounded-xl px-3 py-1.5">
-                      <select
-                        className="bg-transparent text-[10px] font-bold outline-hidden border-none"
-                        value={unidadeFiltro}
-                        onChange={(e) => setUnidadeFiltro(e.target.value)}
-                      >
-                        <option>Todas as Unidades</option>
-                        <option>Matriz</option>
-                        <option>Filial Sul</option>
-                      </select>
-                    </div>
-                    <div className="flex items-center gap-2 bg-background border border-border/50 rounded-xl px-3 py-1.5">
-                      <select
-                        className="bg-transparent text-[10px] font-bold outline-hidden border-none"
-                        value={faixaMetaFiltro}
-                        onChange={(e) => setFaixaMetaFiltro(e.target.value)}
-                      >
-                        <option>Todas as Metas</option>
-                        <option>Meta {'>'} 100%</option>
-                        <option>Meta {'>'} 120%</option>
+                        <option value="">Todos os Períodos</option>
+                        {periodosDisponiveis.map(([ym, label]) => (
+                          <option key={ym} value={ym}>
+                            {label}
+                          </option>
+                        ))}
                       </select>
                     </div>
                     <Button

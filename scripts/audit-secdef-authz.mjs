@@ -76,6 +76,18 @@ const ALLOWLIST = new Map([
   ['contrato_verificar_autenticidade', 'Portal público de verificação por hash.'],
   ['contrato_verificar_autenticidade_v2', 'Portal público de verificação por hash.'],
   ['get_admissao_por_token', 'Formulário de admissão acessado por link antes de haver conta.'],
+  [
+    'admissao_salvar_dados',
+    'Portal de admissão por link; valida token opaco via _admissao_token_row (>=16 chars, não expirado).',
+  ],
+  [
+    'admissao_marcar_documentos',
+    'Portal de admissão por link; valida token opaco via _admissao_token_row (>=16 chars, não expirado).',
+  ],
+  [
+    'admissao_registrar_documento',
+    'Portal de admissão por link; valida token via _admissao_token_row e path prefixado pela admissão do próprio token.',
+  ],
   ['medida_consultar_por_token', 'Ciência de medida disciplinar por link; valida token.'],
   ['medida_registrar_ciencia_publica', 'Ciência de medida disciplinar por link; valida token.'],
   ['medida_verificar_ciencia_hash', 'Portal público de verificação por hash.'],

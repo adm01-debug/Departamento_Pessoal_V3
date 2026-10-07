@@ -63,6 +63,14 @@ export const premiacoesService = {
 
   async listarPagamentos(campanhaId: string | undefined, empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    return this.buscarPagamentosTodos(campanhaId, empresaId);
+  },
+
+  // O bridge limita cada leitura a 100 linhas (default) e MAX_LIMIT=1000:
+  // pagina em blocos de 1000 ordenados por id até esgotar, senão listas e
+  // exports truncam silenciosamente empresas com muitos pagamentos.
+  async buscarPagamentosTodos(campanhaId: string | undefined, empresaId: string, periodo?: string) {
+    const PAGE = 1000;
     // !inner on campanha enables .eq() filtering on the embedded empresa_id column
     let q = supabase.from('premiacoes_pagamentos').select(`
       *,
@@ -72,10 +80,24 @@ export const premiacoesService = {
 
     if (campanhaId) q = q.eq('campanha_id', campanhaId);
     q = q.eq('campanha.empresa_id', empresaId);
+    // Período 'YYYY-MM' filtra por data_pagamento dentro do mês.
+    if (periodo && /^\d{4}-\d{2}$/.test(periodo)) {
+      const [ano, mes] = periodo.split('-').map(Number);
+      const inicio = `${periodo}-01`;
+      const fim = mes === 12 ? `${ano + 1}-01-01` : `${ano}-${String(mes + 1).padStart(2, '0')}-01`;
+      q = q.gte('data_pagamento', inicio).lt('data_pagamento', fim);
+    }
 
-    const { data, error } = await q;
-    if (error) throw error;
-    return data || [];
+    const fetchPage = (offset: number) => q.order('id', { ascending: true }).range(offset, offset + PAGE - 1);
+    type Page = Awaited<ReturnType<typeof fetchPage>>;
+    const rows: NonNullable<Page['data']> = [];
+    for (let offset = 0; ; offset += PAGE) {
+      const { data, error } = await fetchPage(offset);
+      if (error) throw error;
+      if (data) rows.push(...data);
+      if (!data || data.length < PAGE) break;
+    }
+    return rows;
   },
 
   async criarCampanha(d: TablesInsert<'premiacoes_campanhas'>) {
@@ -258,10 +280,9 @@ export const premiacoesService = {
     return data || [];
   },
 
-  async exportarRelatorio(filtros: Record<string, unknown>) {
-    const pagamentos = await this.listarPagamentos(undefined, filtros.empresaId as string);
-    // Real logic to export would be here
-    return pagamentos;
+  async exportarRelatorio(filtros: { empresaId?: string; periodo?: string }) {
+    if (!filtros.empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
+    return this.buscarPagamentosTodos(undefined, filtros.empresaId, filtros.periodo);
   },
 
   async salvarCenarioROI(cenario: CenarioROIInput, empresaId: string) {
