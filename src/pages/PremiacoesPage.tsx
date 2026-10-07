@@ -22,7 +22,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { premiacoesService } from '@/services/premiacoesService';
+import { premiacoesService, PERIODO_SEM_DATA } from '@/services/premiacoesService';
 import { useEmpresas } from '@/hooks';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RewardsSimulator } from '@/components/premiacoes/RewardsSimulator';
@@ -63,16 +63,24 @@ export default function PremiacoesPage() {
   });
 
   // Opções de período derivadas dos dados reais (data_pagamento, 'YYYY-MM').
+  // Pagamentos sem data entram como opção própria — ficariam invisíveis para
+  // qualquer mês (data_pagamento é nullable e não é preenchida na aprovação).
   const periodosDisponiveis = React.useMemo(() => {
     const mapa = new Map<string, string>();
+    let temSemData = false;
     for (const p of pagamentos) {
       const dp = (p as { data_pagamento?: string | null }).data_pagamento;
-      if (!dp) continue;
+      if (!dp) {
+        temSemData = true;
+        continue;
+      }
       const ym = dp.slice(0, 7);
       const label = new Date(`${ym}-02T12:00:00`).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
       mapa.set(ym, label.charAt(0).toUpperCase() + label.slice(1));
     }
-    return [...mapa.entries()].sort((a, b) => b[0].localeCompare(a[0]));
+    const entradas = [...mapa.entries()].sort((a, b) => b[0].localeCompare(a[0]));
+    if (temSemData) entradas.push([PERIODO_SEM_DATA, 'Sem data de pagamento']);
+    return entradas;
   }, [pagamentos]);
 
   // A escolha pertence à empresa em que foi feita: trocar de empresa zera o

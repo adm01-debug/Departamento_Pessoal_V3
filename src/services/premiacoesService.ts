@@ -8,6 +8,13 @@ import {
   premiacaoRoiCenarioSchema,
 } from '@/schemas/workflowsPremiacoesCnab';
 
+/**
+ * Período especial para pagamentos sem `data_pagamento` (nullable — não é
+ * preenchida na aprovação nem na conciliação). Sem esta opção eles ficavam
+ * invisíveis para qualquer mês selecionado no filtro de exportação.
+ */
+export const PERIODO_SEM_DATA = 'sem-data';
+
 export interface CenarioROIInput {
   name: string;
   employees: number;
@@ -80,8 +87,14 @@ export const premiacoesService = {
 
     if (campanhaId) q = q.eq('campanha_id', campanhaId);
     q = q.eq('campanha.empresa_id', empresaId);
-    // Período 'YYYY-MM' filtra por data_pagamento dentro do mês.
-    if (periodo && /^\d{4}-\d{2}$/.test(periodo)) {
+    if (periodo === PERIODO_SEM_DATA) {
+      // Vai por `.or()` e não `.is()`: o bridge deployado descarta filtros
+      // {op:'is',value:null} — a correção no index.ts só vale após redeploy.
+      // Filtros 'or' não passam pelo drop de null e 'data_pagamento.is.null'
+      // é aceito pelo isSafeOrExpression.
+      q = q.or('data_pagamento.is.null');
+    } else if (periodo && /^\d{4}-\d{2}$/.test(periodo)) {
+      // Período 'YYYY-MM' filtra por data_pagamento dentro do mês.
       const [ano, mes] = periodo.split('-').map(Number);
       const inicio = `${periodo}-01`;
       const fim = mes === 12 ? `${ano + 1}-01-01` : `${ano}-${String(mes + 1).padStart(2, '0')}-01`;
