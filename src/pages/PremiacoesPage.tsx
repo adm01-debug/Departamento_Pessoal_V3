@@ -20,6 +20,15 @@ import { RewardsApprovalHub } from '@/components/premiacoes/RewardsApprovalHub';
 import { CampaignWizard } from '@/components/premiacoes/CampaignWizard';
 import { formatDate, formatDateTime } from '@/utils/format';
 import { toast } from 'sonner';
+// MOCK VISUAL — ver src/mocks/premiacoesMock.ts.
+import {
+  bloquearEscritaPremiacoes,
+  getMockAuditoriaPremiacoes,
+  getMockCampanhas,
+  getMockPagamentos,
+  isPremiacoesMockEnabled,
+  simularExportacaoPremiacoes,
+} from '@/mocks/premiacoesMock';
 
 const formatCurrency = (val: number) => 
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
@@ -33,27 +42,33 @@ export default function PremiacoesPage() {
   const [unidadeFiltro, setUnidadeFiltro] = React.useState('Todas as Unidades');
   const [faixaMetaFiltro, setFaixaMetaFiltro] = React.useState('Todas');
   
+  // MOCK VISUAL — ver src/mocks/premiacoesMock.ts. Com o mock ligado, cada
+  // leitura curto-circuita o Supabase e `enabled` também vale sem empresa ativa.
+  const mockAtivo = isPremiacoesMockEnabled();
   const { data: campanhas = [], isLoading: loadCampanhas } = useQuery({
     queryKey: ['premiacoes_campanhas', empresaAtual?.id],
-    queryFn: () => premiacoesService.listarCampanhas(empresaAtual!.id),
-    enabled: !!empresaAtual?.id
+    queryFn: async (): Promise<any[]> => getMockCampanhas() ?? (await premiacoesService.listarCampanhas(empresaAtual!.id)),
+    enabled: !!empresaAtual?.id || mockAtivo
   });
 
   const { data: pagamentos = [], isLoading: loadPagamentos } = useQuery({
     queryKey: ['premiacoes_pagamentos', empresaAtual?.id],
-    queryFn: () => premiacoesService.listarPagamentos(undefined, empresaAtual!.id),
-    enabled: !!empresaAtual?.id
+    queryFn: async (): Promise<any[]> => getMockPagamentos() ?? (await premiacoesService.listarPagamentos(undefined, empresaAtual!.id)),
+    enabled: !!empresaAtual?.id || mockAtivo
   });
 
   const { data: auditoria = [], isLoading: loadAuditoria } = useQuery({
     queryKey: ['premiacoes_auditoria', empresaAtual?.id],
-    queryFn: () => premiacoesService.listarAuditoria(undefined, empresaAtual!.id),
-    enabled: !!empresaAtual?.id
+    queryFn: async (): Promise<any[]> => getMockAuditoriaPremiacoes() ?? (await premiacoesService.listarAuditoria(undefined, empresaAtual!.id)),
+    enabled: !!empresaAtual?.id || mockAtivo
   });
 
   const updateStatusMutation = useMutation({
-    mutationFn: ({ id, status, valor }: { id: string, status: string, valor?: number }) =>
-      premiacoesService.atualizarStatusPagamento(id, status, empresaAtual!.id, valor),
+    // MOCK VISUAL — ver src/mocks/premiacoesMock.ts. Aborta a escrita no modo demo.
+    mutationFn: ({ id, status, valor }: { id: string, status: string, valor?: number }) => {
+      if (bloquearEscritaPremiacoes('Atualizar status do pagamento')) return Promise.reject(new Error('mock'));
+      return premiacoesService.atualizarStatusPagamento(id, status, empresaAtual!.id, valor);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['premiacoes_pagamentos'] });
       queryClient.invalidateQueries({ queryKey: ['premiacoes_auditoria'] });
@@ -62,6 +77,15 @@ export default function PremiacoesPage() {
   });
 
   const handleExport = async (format: 'csv' | 'pdf') => {
+    // MOCK VISUAL — ver src/mocks/premiacoesMock.ts. Evita chamar
+    // `listarPagamentos` com empresa inexistente; apenas confirma no toast.
+    const totalFicticio = simularExportacaoPremiacoes();
+    if (totalFicticio !== undefined) {
+      toast.success(`Relatório ${format.toUpperCase()} gerado (demonstração).`, {
+        description: `${totalFicticio} registros fictícios exportados.`,
+      });
+      return;
+    }
     toast.promise(
       premiacoesService.exportarRelatorio({ 
         empresaId: empresaAtual?.id,

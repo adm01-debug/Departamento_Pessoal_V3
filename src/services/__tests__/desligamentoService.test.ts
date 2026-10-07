@@ -13,16 +13,20 @@ const mockOrder = vi.fn();
 const mockLimit = vi.fn();
 const mockMaybeSingle = vi.fn();
 
-vi.mock('@/integrations/supabase/client', () => ({
-  supabase: {
+// `baseService` importa `supabaseBase` (cliente direto do PostgREST), e o
+// `loggerService` também — por isso o mock precisa exportar OS DOIS nomes com o
+// mesmo objeto (o client real faz `export const supabase = supabaseBase`).
+vi.mock('@/integrations/supabase/client', () => {
+  const client = {
     from: vi.fn(() => ({
       select: mockSelect,
       insert: mockInsert,
       update: mockUpdate,
       delete: mockDelete,
     })),
-  },
-}));
+  };
+  return { supabase: client, supabaseBase: client };
+});
 
 describe('desligamentoService', () => {
   beforeEach(() => {
@@ -44,7 +48,7 @@ describe('desligamentoService', () => {
     it('should call select with colaborador join', () => {
       mockEq.mockResolvedValue({ data: [], error: null });
       desligamentoService.listar({ filters: { empresa_id: EMPRESA_ID } });
-      expect(mockSelect).toHaveBeenCalledWith('*, colaborador:colaboradores(nome_completo)', { count: 'exact' });
+      expect(mockSelect).toHaveBeenCalledWith('*, colaborador:colaboradores(nome_completo, cargo, departamento)', { count: 'exact' });
     });
 
     it('should apply limit of 500', () => {

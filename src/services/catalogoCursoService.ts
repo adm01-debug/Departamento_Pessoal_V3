@@ -1,4 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
+// MOCK VISUAL — ver src/mocks/treinamentosMock.ts.
+import { getMockTrilhasCursos } from '@/mocks/treinamentosMock';
 
 const ensure = <T>(d: T | null, e: string): T => { if (!d) throw new Error(`Nenhum registro de ${e} retornado.`); return d; };
 
@@ -77,6 +79,10 @@ export const catalogoCursoService = {
   },
 
   async listarTrilhasCursos(trilhaId: string) {
+    // MOCK VISUAL — ver src/mocks/treinamentosMock.ts. `[]` (trilha sem cursos)
+    // é truthy, então curto-circuita também nesse caso.
+    const mock = getMockTrilhasCursos(trilhaId);
+    if (mock) return mock;
     const { data, error } = await supabase
       .from('trilhas_cursos')
       .select('*, curso:catalogo_cursos(id, nome, carga_horaria)')

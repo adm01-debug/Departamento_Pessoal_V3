@@ -12,15 +12,25 @@ import { ptBR } from 'date-fns/locale';
 import { exportPontoCSV } from '@/services/exportService';
 import { motion } from 'framer-motion';
 import { useEmpresas } from '@/hooks/useEmpresas';
+// MOCK VISUAL — ver src/mocks/desligamentosMock.ts.
+import { getMockTrilhaAuditoriaDesligamentos, isDesligamentosMockEnabled } from '@/mocks/desligamentosMock';
 
 export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) {
   const [searchTerm, setSearchTerm] = useState('');
   const { empresaAtual } = useEmpresas();
 
   const queryClient = useQueryClient();
+  // MOCK VISUAL — ver src/mocks/desligamentosMock.ts. Vale SÓ para a trilha da aba
+  // de desligamentos; nas demais (Ponto) `filterTabela` é outro valor e o mock
+  // segue desligado, mantendo a consulta real.
+  const mockAtivo = filterTabela === 'desligamentos' && isDesligamentosMockEnabled();
   const { data: auditLogs = [], isLoading, error } = useQuery({
     queryKey: ['ponto-audit-logs', filterTabela],
     queryFn: async () => {
+      if (mockAtivo) {
+        const mockLogs = getMockTrilhaAuditoriaDesligamentos();
+        if (mockLogs) return mockLogs;
+      }
       try {
         let query = (supabase as any)
           .from('audit_log')
@@ -45,7 +55,7 @@ export function PontoAuditTimeline({ filterTabela }: { filterTabela?: string }) 
         return [];
       }
     },
-    enabled: !!empresaAtual?.id,
+    enabled: !!empresaAtual?.id || mockAtivo,
   });
 
   // Real-time listener for audit logs — useEffect because useMemo must not have side effects

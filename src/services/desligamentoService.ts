@@ -14,7 +14,10 @@ class DesligamentoService extends BaseService<any> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
 
     let query = this.getQuery()
-      .select('*, colaborador:colaboradores(nome_completo)', { count: 'exact' })
+      // `cargo`/`departamento` alimentam a coluna "Cargo / Departamento" e o
+      // filtro de Departamento da Gestão de Desligamentos (colunas reais de
+      // `colaboradores`). É só um SELECT aditivo — não altera contrato nenhum.
+      .select('*, colaborador:colaboradores(nome_completo, cargo, departamento)', { count: 'exact' })
       .order('data_desligamento', { ascending: false })
       .limit(500);
 

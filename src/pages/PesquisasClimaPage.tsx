@@ -17,6 +17,8 @@ import { pesquisaService } from '@/services/pesquisaService';
 import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { Plus, BarChart3, ClipboardList, TrendingUp, Users, Trash2 } from 'lucide-react';
+// MOCK VISUAL — ver src/mocks/pesquisasClimaMock.ts.
+import { bloquearEscritaPesquisas, getMockPesquisas, isPesquisasMockEnabled } from '@/mocks/pesquisasClimaMock';
 
 const statusColors: Record<string, string> = { rascunho: 'secondary', ativa: 'default', encerrada: 'outline' };
 const tipoLabels: Record<string, string> = { clima: 'Clima Organizacional', enps: 'eNPS', satisfacao: 'Satisfação', custom: 'Personalizada' };
@@ -27,10 +29,13 @@ export default function PesquisasClimaPage() {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ titulo: '', descricao: '', tipo: 'clima', anonima: true, data_inicio: '', data_fim: '' });
 
+  // MOCK VISUAL — ver src/mocks/pesquisasClimaMock.ts. Com o mock ligado, a
+  // leitura curto-circuita o Supabase e `enabled` também vale sem empresa ativa.
+  const mockAtivo = isPesquisasMockEnabled();
   const { data: pesquisas = [], isLoading } = useQuery({
     queryKey: ['pesquisas', empresaAtual?.id],
-    queryFn: () => pesquisaService.listar(empresaAtual!.id),
-    enabled: !!empresaAtual?.id,
+    queryFn: async (): Promise<any[]> => getMockPesquisas() ?? (await pesquisaService.listar(empresaAtual!.id)),
+    enabled: !!empresaAtual?.id || mockAtivo,
   });
 
   const criar = useMutation({
@@ -89,7 +94,7 @@ export default function PesquisasClimaPage() {
               </div>
               <div className="flex items-center gap-2"><Switch checked={form.anonima} onCheckedChange={v => setForm(p => ({ ...p, anonima: v }))} /><Label>Respostas anônimas</Label></div>
               <div className="flex justify-end pt-1">
-                <Button size="sm" className="rounded-lg px-4" onClick={() => criar.mutate()} disabled={!form.titulo || criar.isPending}>{criar.isPending ? 'Criando...' : 'Criar Pesquisa'}</Button>
+                <Button size="sm" className="rounded-lg px-4" onClick={() => { if (bloquearEscritaPesquisas('Criar pesquisa')) return; criar.mutate(); }} disabled={!form.titulo || criar.isPending}>{criar.isPending ? 'Criando...' : 'Criar Pesquisa'}</Button>
               </div>
             </div>
           </DialogContent>
@@ -117,8 +122,8 @@ export default function PesquisasClimaPage() {
                 </div>
                 <div className="flex items-center gap-1 text-xs"><Users className="h-3 w-3" />{p.anonima ? 'Anônima' : 'Identificada'}</div>
                 <div className="flex gap-2 pt-2">
-                  {p.status === 'rascunho' && <Button size="sm" variant="outline" onClick={() => ativar.mutate(p.id)}>Ativar</Button>}
-                  <Button size="sm" variant="ghost" className="text-destructive ml-auto" onClick={() => excluir.mutate(p.id)}><Trash2 className="h-4 w-4" /></Button>
+                  {p.status === 'rascunho' && <Button size="sm" variant="outline" onClick={() => { if (bloquearEscritaPesquisas('Ativar pesquisa')) return; ativar.mutate(p.id); }}>Ativar</Button>}
+                  <Button size="sm" variant="ghost" className="text-destructive ml-auto" onClick={() => { if (bloquearEscritaPesquisas('Excluir pesquisa')) return; excluir.mutate(p.id); }}><Trash2 className="h-4 w-4" /></Button>
                 </div>
               </CardContent>
             </Card>

@@ -65,6 +65,17 @@ interface MetricCardProps {
    * outro call site muda de aparência.
    */
   vividRed?: boolean;
+  /**
+   * Variante DENSE (faixa de KPI de 5 colunas, como o Dashboard Executivo): o
+   * card mantém ícone, valor e padding no tamanho PADRÃO (mesma altura dos KPIs
+   * do Dashboard Executivo) e apenas a LINHA DE APOIO fica um pouco menor (11px,
+   * seta de 10px, gap menor) para caber em UMA linha — sem isso "vs. período
+   * anterior" quebra em duas linhas e o card fica mais alto que a faixa
+   * Executiva. Sem mudar textos, valores, cores, ordem ou comportamento.
+   * Default `false`: nenhum outro call site muda de aparência. Usada hoje só
+   * pela faixa de KPIs de Desligamentos (`DesligamentoKPIs`).
+   */
+  dense?: boolean;
 }
 
 const defaultRoutes: Record<string, string> = {
@@ -89,6 +100,7 @@ export function MetricCard({
   tooltip,
   className,
   vividRed = false,
+  dense = false,
 }: MetricCardProps) {
   const isPositive = trend && trend.value >= 0;
   const target = route ?? defaultRoutes[title];
@@ -136,7 +148,7 @@ export function MetricCard({
               </span>
             )}
           </p>
-          <div className="text-data truncate mt-1.5">
+          <div className={cn('text-data truncate', dense ? 'mt-1' : 'mt-1.5')}>
             {rawValue !== undefined ? (
               <AnimatedNumber
                 value={rawValue}
@@ -155,16 +167,30 @@ export function MetricCard({
             // quebra para a linha seguinte se a largura não bastar, em vez de
             // virar reticências cortando o sentido ("processos encerrados no
             // período" → "processos encerr…").
-            <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5 text-left">
+            <div
+              className={cn(
+                'flex min-w-0 flex-wrap items-center gap-y-0.5 text-left mt-1',
+                dense ? 'gap-x-1' : 'gap-x-1.5'
+              )}
+            >
               {trend && (
                 // Sem `cn()`: combinada com `text-success`/`text-destructive` na
                 // mesma chamada, o tailwind-merge derrubava `text-overline` e o
                 // selo de tendência renderizava no tamanho padrão do navegador
                 // (16px) em vez do token de 10px.
+                // Modo DENSE (faixa 5-up): selo menor (10px, seta 10px) para a
+                // linha de apoio caber em UMA linha ("150% vs. período
+                // anterior") na largura de ~146px do card — em 11/12px a frase
+                // quebra em duas linhas e o card fica mais alto que os KPIs do
+                // Dashboard Executivo (que também usam uma linha de apoio pequena).
                 <span
-                  className={`inline-flex items-center gap-0.5 text-xs font-medium tracking-normal leading-snug shrink-0 ${isPositive ? 'text-success' : red}`}
+                  className={`inline-flex items-center ${dense ? 'gap-0 text-[10px]' : 'gap-0.5 text-xs'} font-medium tracking-normal leading-snug shrink-0 ${isPositive ? 'text-success' : red}`}
                 >
-                  {isPositive ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+                  {isPositive ? (
+                    <ArrowUpRight className={dense ? 'h-2.5 w-2.5' : 'h-3 w-3'} />
+                  ) : (
+                    <ArrowDownRight className={dense ? 'h-2.5 w-2.5' : 'h-3 w-3'} />
+                  )}
                   {Math.abs(trend.value)}%
                 </span>
               )}
@@ -173,7 +199,12 @@ export function MetricCard({
                   período" → "processos encerrados / no período"). Não altera
                   fonte nem tamanho; em navegador sem suporte o texto apenas
                   segue o quebra-linha padrão. */}
-              <span className="text-pretty text-xs font-normal tracking-wide leading-snug text-muted-foreground normal-case">
+              <span
+                className={cn(
+                  'text-pretty font-normal tracking-wide leading-snug text-muted-foreground normal-case',
+                  dense ? 'text-[10px]' : 'text-xs'
+                )}
+              >
                 {description || trend?.label}
               </span>
             </div>

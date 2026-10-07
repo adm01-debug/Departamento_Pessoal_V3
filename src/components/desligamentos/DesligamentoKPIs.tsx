@@ -1,58 +1,106 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { UserMinus, Clock, DollarSign, TrendingDown, BarChart3 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { useMemo } from 'react';
+import { UserMinus, Clock, CheckCircle2, CalendarDays, DollarSign } from 'lucide-react';
+import { MetricCard, type MetricTone } from '@/components/dashboard/MetricCard';
+import {
+  concluido,
+  emAberto,
+  formatCurrencyBRL,
+  pendente,
+  variacaoRecente,
+  dataValida,
+  type DesligamentoLike,
+} from './desligamentosDerivacoes';
 
 interface KPIProps {
-  desligamentos: any[];
+  desligamentos: DesligamentoLike[];
 }
 
+/**
+ * Faixa de 5 KPIs do módulo — MESMO `MetricCard` do Dashboard
+ * Executivo/Admissões (ícone circular, título, valor e linha de apoio com
+ * tendência), porém na variante `dense` (`MetricCard` com `dense`): ícone, valor
+ * e padding ficam no TAMANHO PADRÃO (mesma altura dos KPIs do Dashboard
+ * Executivo) e só a linha de apoio encolhe o suficiente para caber em UMA linha
+ * — sem isso "vs. período anterior" quebra e o card passa da altura da faixa
+ * Executiva. A entrada em cascata vem do próprio card (`cardVariants`), com o
+ * `index` do `.map` alimentando o `custom`. Nenhum dado é inventado: a tendência
+ * só aparece quando há base real de comparação (30 dias vs. 30 anteriores).
+ */
 export function DesligamentoKPIs({ desligamentos }: KPIProps) {
-  const total = desligamentos.length;
-  const pendentes = desligamentos.filter((d) => d.status === 'pendente' || d.status === 'em_andamento').length;
-  const concluidos = desligamentos.filter((d) => d.status === 'concluido' || d.status === 'finalizado').length;
-  const valorTotal = desligamentos.reduce((acc: number, d: any) => acc + (d.valor_liquido || 0), 0);
+  const kpis = useMemo(() => {
+    const agora = new Date();
+    const referencia = agora.getTime();
+    const mes = agora.getMonth();
+    const ano = agora.getFullYear();
 
-  // Turnover rate this month
-  const now = new Date();
-  const thisMonth = desligamentos.filter((d: any) => {
-    if (!d.data_desligamento) return false;
-    const dt = new Date(d.data_desligamento);
-    return dt.getMonth() === now.getMonth() && dt.getFullYear() === now.getFullYear();
-  }).length;
+    const pendentes = desligamentos.filter(pendente);
+    const concluidos = desligamentos.filter(concluido);
+    const esteMes = desligamentos.filter((d) => {
+      const dt = dataValida(d.data_desligamento);
+      return dt ? dt.getMonth() === mes && dt.getFullYear() === ano : false;
+    });
+    const valorTotal = desligamentos.reduce((acc, d) => acc + (d.valor_liquido || 0), 0);
 
-  const kpis = [
-    { label: 'Total Desligamentos', value: total, icon: UserMinus, color: 'text-destructive', bg: 'bg-destructive/10', shadow: 'shadow-glow-warning' },
-    { label: 'Pendentes', value: pendentes, icon: Clock, color: 'text-warning', bg: 'bg-warning/10', shadow: '' },
-    { label: 'Concluídos', value: concluidos, icon: TrendingDown, color: 'text-success', bg: 'bg-success/10', shadow: '' },
-    { label: 'Este Mês', value: thisMonth, icon: BarChart3, color: 'text-info', bg: 'bg-info/10', shadow: '' },
-    { label: 'Valor Total Rescisões', value: `R$ ${valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, icon: DollarSign, color: 'text-foreground', bg: 'bg-primary/10', shadow: '' },
-  ];
+    return [
+      {
+        label: 'Total Desligamentos',
+        value: String(desligamentos.length),
+        icon: UserMinus,
+        tone: 'destructive' as MetricTone,
+        amostra: desligamentos,
+        descricao: 'processos no período',
+      },
+      {
+        label: 'Pendentes',
+        value: String(pendentes.length),
+        icon: Clock,
+        tone: 'warning' as MetricTone,
+        amostra: pendentes,
+        descricao: 'aguardando tratativa',
+      },
+      {
+        label: 'Concluídos',
+        value: String(concluidos.length),
+        icon: CheckCircle2,
+        tone: 'success' as MetricTone,
+        amostra: concluidos,
+        descricao: 'processos encerrados',
+      },
+      {
+        label: 'Este Mês',
+        value: String(esteMes.length),
+        icon: CalendarDays,
+        tone: 'info' as MetricTone,
+        amostra: esteMes,
+        descricao: 'desligamentos no mês',
+      },
+      {
+        label: 'Valor Total Rescisões',
+        value: formatCurrencyBRL(valorTotal),
+        icon: DollarSign,
+        tone: 'primary' as MetricTone,
+        amostra: [],
+        descricao: `${desligamentos.filter(emAberto).length} em aberto`,
+      },
+    ].map((kpi) => ({ ...kpi, trend: variacaoRecente(kpi.amostra, referencia) }));
+  }, [desligamentos]);
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
-      {kpis.map((kpi, i) => (
-        <motion.div
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+      {kpis.map((kpi, index) => (
+        <MetricCard
           key={kpi.label}
-          initial={{ opacity: 0, y: 16, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ delay: i * 0.06, type: 'spring', stiffness: 300, damping: 24 }}
-          whileHover={{ y: -2, transition: { duration: 0.2 } }}
-        >
-          <Card className="border-border/30 rounded-2xl hover:shadow-elevated transition-all duration-normal">
-            <CardContent className="p-4 flex items-center gap-3">
-              <motion.div
-                className={`rounded-xl p-2.5 ${kpi.bg}`}
-                whileHover={{ rotate: [0, -8, 8, 0], transition: { duration: 0.4 } }}
-              >
-                <kpi.icon className={`h-5 w-5 ${kpi.color}`} />
-              </motion.div>
-              <div className="min-w-0">
-                <p className="text-[10px] text-muted-foreground font-body truncate">{kpi.label}</p>
-                <p className="text-lg font-display font-semibold truncate">{kpi.value}</p>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+          index={index}
+          title={kpi.label}
+          value={kpi.value}
+          icon={kpi.icon}
+          tone={kpi.tone}
+          vividRed
+          trend={kpi.trend}
+          description={kpi.trend ? undefined : kpi.descricao}
+          dense
+          className="rounded-2xl border-border/40 shadow-elevated"
+        />
       ))}
     </div>
   );

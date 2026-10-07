@@ -7,6 +7,8 @@ import { Calendar, User, Clock, MessageSquare, Video, Phone, MapPin, CheckCircle
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+// MOCK VISUAL — ver src/mocks/recrutamentoMock.ts.
+import { getMockTimeline } from '@/mocks/recrutamentoMock';
 
 interface CandidatoTimelineProps {
   candidaturaId: string;
@@ -16,6 +18,9 @@ export function CandidatoTimeline({ candidaturaId }: CandidatoTimelineProps) {
   const { data: timeline, isLoading } = useQuery({
     queryKey: ['candidato-timeline', candidaturaId],
     queryFn: async () => {
+      // MOCK VISUAL — ver src/mocks/recrutamentoMock.ts.
+      const mock = getMockTimeline(candidaturaId);
+      if (mock) return mock;
       const [entrevistas, testes, anotacoes] = await Promise.all([
         supabase.from('recrutamento_entrevistas').select('*').eq('candidatura_id', candidaturaId).order('created_at', { ascending: false }),
         supabase.from('recrutamento_testes').select('*').eq('candidatura_id', candidaturaId).order('created_at', { ascending: false }),

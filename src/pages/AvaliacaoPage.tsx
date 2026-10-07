@@ -18,6 +18,16 @@ import { NineBoxMatrix } from '@/components/avaliacao/NineBoxMatrix';
 import { PerformanceAuditTimeline } from '@/components/avaliacao/PerformanceAuditTimeline';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
+// MOCK VISUAL — ver src/mocks/desempenhoMock.ts.
+import {
+  bloquearEscritaDesempenho,
+  getMockCiclos,
+  getMockCompetencias,
+  getMockFeedbacks,
+  getMockMetas,
+  getMockPdis,
+  isDesempenhoMockEnabled,
+} from '@/mocks/desempenhoMock';
 
 const statusColors: Record<string, string> = { 
   rascunho: 'secondary', 
@@ -34,24 +44,40 @@ export default function AvaliacaoPage() {
   const [tab, setTab] = useState('ciclos');
 
   // === Queries ===
-  const { data: ciclos = [], isLoading: loadCiclos } = useQuery({ queryKey: ['ciclos_avaliacao', empresaAtual?.id], queryFn: () => avaliacaoService.listarCiclos(empresaAtual!.id), enabled: !!empresaAtual?.id });
-  const { data: metas = [], isLoading: loadMetas } = useQuery({ queryKey: ['metas_okrs', empresaAtual?.id], queryFn: () => avaliacaoService.listarMetas(empresaAtual!.id), enabled: !!empresaAtual?.id });
-  const { data: feedbacks = [], isLoading: loadFeedbacks } = useQuery({ queryKey: ['feedbacks_360', empresaAtual?.id], queryFn: () => avaliacaoService.listarFeedbacks(empresaAtual!.id), enabled: !!empresaAtual?.id });
-  const { data: pdis = [], isLoading: loadPDIs } = useQuery({ queryKey: ['pdis', empresaAtual?.id], queryFn: () => avaliacaoService.listarPDIs(empresaAtual!.id), enabled: !!empresaAtual?.id });
-  const { data: competencias = [], isLoading: loadComp } = useQuery({ queryKey: ['competencias', empresaAtual?.id], queryFn: () => avaliacaoService.listarCompetencias(empresaAtual!.id), enabled: !!empresaAtual?.id });
+  // MOCK VISUAL — ver src/mocks/desempenhoMock.ts. Com o mock ligado, cada
+  // leitura curto-circuita a chamada ao Supabase; `enabled` também passa a
+  // valer sem empresa ativa (a área mostra os dados fictícios de demonstração).
+  const mockAtivo = isDesempenhoMockEnabled();
+  const { data: ciclos = [], isLoading: loadCiclos } = useQuery({ queryKey: ['ciclos_avaliacao', empresaAtual?.id], queryFn: async (): Promise<any[]> => getMockCiclos() ?? (await avaliacaoService.listarCiclos(empresaAtual!.id)), enabled: !!empresaAtual?.id || mockAtivo });
+  const { data: metas = [], isLoading: loadMetas } = useQuery({ queryKey: ['metas_okrs', empresaAtual?.id], queryFn: async (): Promise<any[]> => getMockMetas() ?? (await avaliacaoService.listarMetas(empresaAtual!.id)), enabled: !!empresaAtual?.id || mockAtivo });
+  const { data: feedbacks = [], isLoading: loadFeedbacks } = useQuery({ queryKey: ['feedbacks_360', empresaAtual?.id], queryFn: async (): Promise<any[]> => getMockFeedbacks() ?? (await avaliacaoService.listarFeedbacks(empresaAtual!.id)), enabled: !!empresaAtual?.id || mockAtivo });
+  const { data: pdis = [], isLoading: loadPDIs } = useQuery({ queryKey: ['pdis', empresaAtual?.id], queryFn: async (): Promise<any[]> => getMockPdis() ?? (await avaliacaoService.listarPDIs(empresaAtual!.id)), enabled: !!empresaAtual?.id || mockAtivo });
+  const { data: competencias = [], isLoading: loadComp } = useQuery({ queryKey: ['competencias', empresaAtual?.id], queryFn: async (): Promise<any[]> => getMockCompetencias() ?? (await avaliacaoService.listarCompetencias(empresaAtual!.id)), enabled: !!empresaAtual?.id || mockAtivo });
   const { data: colaboradores = [] } = useQuery({ queryKey: ['colaboradores', empresaAtual?.id], queryFn: () => colaboradorService.list(empresaAtual!.id), enabled: !!empresaAtual?.id });
 
   // === Mutations ===
+  // MOCK VISUAL — ver src/mocks/desempenhoMock.ts. Cada escrita é abortada com
+  // um toast de demonstração quando o mock está ligado (os `colaborador_id`
+  // fictícios não existem no banco); o `throw` evita o toast de sucesso.
   const criarCiclo = useMutation({
-    mutationFn: (d: any) => avaliacaoService.criarCiclo({ ...d, empresa_id: empresaAtual?.id }),
+    mutationFn: (d: any) => {
+      if (bloquearEscritaDesempenho('Criar ciclo de avaliação')) return Promise.reject(new Error('mock'));
+      return avaliacaoService.criarCiclo({ ...d, empresa_id: empresaAtual?.id });
+    },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['ciclos_avaliacao'] }); toast.success('Ciclo criado!'); }});
 
   const criarMeta = useMutation({
-    mutationFn: (d: any) => avaliacaoService.criarMeta({ ...d, empresa_id: empresaAtual?.id }),
+    mutationFn: (d: any) => {
+      if (bloquearEscritaDesempenho('Criar meta/OKR')) return Promise.reject(new Error('mock'));
+      return avaliacaoService.criarMeta({ ...d, empresa_id: empresaAtual?.id });
+    },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['metas_okrs'] }); toast.success('Meta criada!'); }});
 
   const criarPDI = useMutation({
-    mutationFn: (d: any) => avaliacaoService.criarPDI({ ...d, empresa_id: empresaAtual?.id }),
+    mutationFn: (d: any) => {
+      if (bloquearEscritaDesempenho('Criar PDI')) return Promise.reject(new Error('mock'));
+      return avaliacaoService.criarPDI({ ...d, empresa_id: empresaAtual?.id });
+    },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['pdis'] }); toast.success('PDI criado!'); }});
 
   const isLoading = loadCiclos || loadMetas || loadFeedbacks || loadPDIs || loadComp;

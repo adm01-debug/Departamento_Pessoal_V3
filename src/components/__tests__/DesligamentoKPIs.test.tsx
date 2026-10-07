@@ -4,7 +4,11 @@ import { render, screen } from '@testing-library/react';
 vi.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
+    span: ({ children, ...rest }: any) => <span {...rest}>{children}</span>,
+    create: (c: any) => c,
   },
+  AnimatePresence: ({ children }: any) => <>{children}</>,
+  useInView: () => true,
 }));
 
 import { DesligamentoKPIs } from '../desligamentos/DesligamentoKPIs';

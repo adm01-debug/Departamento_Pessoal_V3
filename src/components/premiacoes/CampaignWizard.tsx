@@ -8,6 +8,8 @@ import { Trophy, Plus, Trash2, Sparkles } from 'lucide-react';
 import { premiacoesService } from '@/services/premiacoesService';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
+// MOCK VISUAL — ver src/mocks/premiacoesMock.ts.
+import { bloquearEscritaPremiacoes } from '@/mocks/premiacoesMock';
 
 interface CampaignWizardProps {
   isOpen: boolean;
@@ -33,6 +35,8 @@ export function CampaignWizard({ isOpen, onClose, empresaId }: CampaignWizardPro
   ]);
 
   const handleSave = async () => {
+    // MOCK VISUAL — ver src/mocks/premiacoesMock.ts. Aborta a escrita no modo demo.
+    if (bloquearEscritaPremiacoes('Criar campanha')) return;
     try {
       const campanha = await premiacoesService.criarCampanha({
         ...formData,

@@ -7,11 +7,18 @@ import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { motion } from 'framer-motion';
+// MOCK VISUAL — ver src/mocks/desempenhoMock.ts.
+import { getMockDesempenhoAudit } from '@/mocks/desempenhoMock';
 
 export function PerformanceAuditTimeline() {
   const { data: logs = [], isLoading } = useQuery({
     queryKey: ['performance-audit-logs'],
     queryFn: async () => {
+      // MOCK VISUAL — ver src/mocks/desempenhoMock.ts. Sem isto a trilha ficaria
+      // vazia no modo demonstração (a `audit_log` real não tem registros do módulo).
+      const ficticios = getMockDesempenhoAudit();
+      if (ficticios) return ficticios;
+
       const { data, error } = await (supabase as any)
         .from('audit_log')
         .select('*')

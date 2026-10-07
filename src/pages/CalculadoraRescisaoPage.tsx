@@ -20,6 +20,14 @@ import { useEmpresas } from '@/hooks/useEmpresas';
 import { edgeFunctionsService } from '@/services/edgeFunctionsService';
 import { useQuery } from '@tanstack/react-query';
 import { useDataAccessLog } from '@/hooks/useDataAccessLog';
+// MOCK VISUAL — ver src/mocks/calculadoraRescisaoMock.ts.
+import {
+  bloquearEscritaCalculadora,
+  ehColaboradorFicticio,
+  getMockColaboradorParaRescisao,
+  getMockColaboradoresParaRescisao,
+  isCalculadoraMockEnabled,
+} from '@/mocks/calculadoraRescisaoMock';
 
 export default function CalculadoraRescisaoPage() {
   const { user } = useAuth();
@@ -27,7 +35,13 @@ export default function CalculadoraRescisaoPage() {
   const [loadingColab, setLoadingColab] = useState(false);
   const [selectedColabId, setSelectedColabId] = useState<string | undefined>(undefined);
 
-  useDataAccessLog('colaboradores', selectedColabId, empresaAtual?.id);
+  // MOCK VISUAL — ver src/mocks/calculadoraRescisaoMock.ts. O RPC de auditoria
+  // GRAVA de verdade: um id fictício não pode virar registro em `audit_log`.
+  useDataAccessLog(
+    'colaboradores',
+    ehColaboradorFicticio(selectedColabId) ? undefined : selectedColabId,
+    empresaAtual?.id
+  );
 
   const [form, setForm] = useState({
     nomeColaborador: '',
@@ -41,7 +55,8 @@ export default function CalculadoraRescisaoPage() {
     feriasVencidas: false,
     saldoFGTS: '',
     motivoDesligamento: '',
-    observacoes: ''});
+    observacoes: '',
+  });
   const [result, setResult] = useState<RescisaoResult | null>(null);
   const [saving, setSaving] = useState(false);
   const [calcServidor, setCalcServidor] = useState(false);
@@ -51,16 +66,24 @@ export default function CalculadoraRescisaoPage() {
     setLoadingColab(true);
     setSelectedColabId(id);
     try {
-      const { data, error } = await supabase.from('colaboradores').select('*').eq('id', id).single();
-      if (error) throw error;
+      // MOCK VISUAL — ver src/mocks/calculadoraRescisaoMock.ts. Sem isto, escolher
+      // um colaborador fictício falharia no Supabase (o id não existe no banco).
+      let dados: Record<string, any> | null = getMockColaboradorParaRescisao(id) ?? null;
+      if (!dados) {
+        const { data, error } = await supabase.from('colaboradores').select('*').eq('id', id).single();
+        if (error) throw error;
+        dados = data as Record<string, any>;
+      }
+
       setForm((p) => ({
         ...p,
-        nomeColaborador: data.nome_completo,
-        cpf: data.cpf || '',
-        cargo: data.cargo || '',
-        salario: data.salario_base?.toString() || '',
-        dataAdmissao: data.data_admissao || '',
-        saldoFGTS: (data as Record<string, unknown>).saldo_fgts_estimado?.toString() || ''}));
+        nomeColaborador: dados.nome_completo,
+        cpf: dados.cpf || '',
+        cargo: dados.cargo || '',
+        salario: dados.salario_base?.toString() || '',
+        dataAdmissao: dados.data_admissao || '',
+        saldoFGTS: dados.saldo_fgts_estimado?.toString() || '',
+      }));
       toast.success('Dados do colaborador importados!');
     } catch (err) {
       toast.error('Erro ao buscar colaborador');
@@ -72,6 +95,10 @@ export default function CalculadoraRescisaoPage() {
   const { data: colaboradores = [] } = useQuery({
     queryKey: ['colaboradores-select', empresaAtual?.id],
     queryFn: async () => {
+      // MOCK VISUAL — ver src/mocks/calculadoraRescisaoMock.ts.
+      const ficticios = getMockColaboradoresParaRescisao();
+      if (ficticios) return ficticios;
+
       if (!empresaAtual?.id) return [];
       const { data, error } = await supabase
         .from('colaboradores')
@@ -82,7 +109,8 @@ export default function CalculadoraRescisaoPage() {
       if (error) throw error;
       return data || [];
     },
-    enabled: !!empresaAtual?.id});
+    enabled: !!empresaAtual?.id || isCalculadoraMockEnabled(),
+  });
 
   const handleCalcServidor = async () => {
     if (!form.salario || !form.dataAdmissao || !form.dataDesligamento) {
@@ -99,7 +127,8 @@ export default function CalculadoraRescisaoPage() {
         aviso_previo: form.avisoTrabalhado ? 'trabalhado' : 'indenizado',
         saldo_fgts: Number(form.saldoFGTS || 0),
         ferias_vencidas: form.feriasVencidas,
-        dependentes_irrf: 0});
+        dependentes_irrf: 0,
+      });
 
       const data = result as any;
       if (data?.resultado) {
@@ -128,7 +157,8 @@ export default function CalculadoraRescisaoPage() {
       tipo: form.tipo,
       avisoTrabalhado: form.avisoTrabalhado,
       feriasVencidas: form.feriasVencidas,
-      saldoFGTS: Number(form.saldoFGTS || 0)});
+      saldoFGTS: Number(form.saldoFGTS || 0),
+    });
 
     setResult(result);
     toast.success('Rescisão calculada com sucesso!');
@@ -136,6 +166,12 @@ export default function CalculadoraRescisaoPage() {
 
   const salvarHistorico = useCallback(async () => {
     if (!result || !user || !empresaAtual) return;
+
+    // MOCK VISUAL — ver src/mocks/calculadoraRescisaoMock.ts. Sem esta guarda o
+    // clique gravaria em `historico_rescisoes` E em `desligamentos` na empresa
+    // ativa, deixando histórico órfão de um colaborador que não existe no banco.
+    if (bloquearEscritaCalculadora('Salvar o cálculo')) return;
+
     setSaving(true);
     try {
       // 1. Save to History
@@ -157,7 +193,8 @@ export default function CalculadoraRescisaoPage() {
           total_proventos: result.totalProventos,
           total_descontos: result.totalDescontos,
           total_liquido: result.totalLiquido,
-          resultado: result as any})
+          resultado: result as any,
+        })
         .select()
         .single();
 
@@ -172,7 +209,8 @@ export default function CalculadoraRescisaoPage() {
           motivo: form.tipo.replace(/_/g, ' '),
           valor_rescisao: result.totalLiquido,
           status: 'pendente',
-          created_by: user.id} as any);
+          created_by: user.id,
+        } as any);
 
         if (!deslError) {
           toast.success('Desligamento registrado no módulo de Pessoas!');
@@ -185,7 +223,7 @@ export default function CalculadoraRescisaoPage() {
     } finally {
       setSaving(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result, form, user]);
   const set = (k: string, v: any) => setForm((p) => ({ ...p, [k]: v }));
 

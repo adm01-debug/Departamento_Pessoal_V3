@@ -19,6 +19,8 @@ import {
 import { premiacoesService } from '@/services/premiacoesService';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+// MOCK VISUAL — ver src/mocks/premiacoesMock.ts.
+import { bloquearEscritaPremiacoes } from '@/mocks/premiacoesMock';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEmpresas } from '@/hooks';
 import type { UiRecord } from '@/types/uiRecord';
@@ -51,6 +53,13 @@ export function RewardsApprovalHub({ pagamentos }: ApprovalHubProps) {
 
   const confirmApproval = async () => {
     if (!pendingAction) return;
+    // MOCK VISUAL — ver src/mocks/premiacoesMock.ts. Aborta a escrita no modo demo.
+    if (bloquearEscritaPremiacoes(pendingAction.nextStatus === 'rejeitado' ? 'Rejeitar pagamento' : 'Aprovar pagamento')) {
+      setIsApprovalDialogOpen(false);
+      setPendingAction(null);
+      setComentario('');
+      return;
+    }
     try {
       await premiacoesService.atualizarStatusPagamento(
         pendingAction.id,
@@ -71,6 +80,13 @@ export function RewardsApprovalHub({ pagamentos }: ApprovalHubProps) {
 
   const handleReconcile = async () => {
     if (!selectedPagamento) return;
+    // MOCK VISUAL — ver src/mocks/premiacoesMock.ts. Aborta a escrita no modo demo.
+    if (bloquearEscritaPremiacoes('Salvar conciliação com a folha')) {
+      setIsReconcileOpen(false);
+      setValorFolha('');
+      setComentario('');
+      return;
+    }
     try {
       await premiacoesService.reconciliarFolha(selectedPagamento.id, Number(valorFolha), empresaAtual!.id, comentario);
       queryClient.invalidateQueries({ queryKey: ['premiacoes_pagamentos'] });
@@ -139,6 +155,8 @@ export function RewardsApprovalHub({ pagamentos }: ApprovalHubProps) {
                               size="sm" 
                               className="flex-1 h-7 text-[10px] bg-primary/10 text-primary hover:bg-primary/20 rounded-lg border border-primary/20"
                               onClick={async () => {
+                                // MOCK VISUAL — ver src/mocks/premiacoesMock.ts.
+                                if (bloquearEscritaPremiacoes('Conciliar automaticamente com a folha')) return;
                                 try {
                                   await premiacoesService.autoConciliarComFolha(p.id);
                                   queryClient.invalidateQueries({ queryKey: ['premiacoes_pagamentos'] });

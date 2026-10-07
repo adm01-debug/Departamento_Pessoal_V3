@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +13,8 @@ import { useEmpresas } from '@/hooks/useEmpresas';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+// MOCK VISUAL — ver src/mocks/desligamentosMock.ts.
+import { bloquearEscritaDesligamento, getMockColaboradoresParaDesligamento } from '@/mocks/desligamentosMock';
 interface Props {
   open: boolean;
   onClose: () => void;
@@ -48,6 +50,15 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
   // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const loadColaboradores = useCallback(async () => {
     if (!empresaAtual?.id) return;
+
+    // MOCK VISUAL — ver src/mocks/desligamentosMock.ts. Sem isto o select fica
+    // vazio no modo demonstração (a empresa fictícia não existe no banco).
+    const ficticios = getMockColaboradoresParaDesligamento();
+    if (ficticios) {
+      setColaboradores(ficticios);
+      return;
+    }
+
     setLoadingColab(true);
     const { data } = await supabase
       .from('colaboradores')
@@ -60,9 +71,20 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
     setLoadingColab(false);
   }, [empresaAtual?.id]);
 
+  /**
+   * Carrega os colaboradores QUANDO O DIÁLOGO ABRE.
+   *
+   * O `onOpenChange` do Radix só dispara em interação do usuário (Esc/clique
+   * fora). Como `open` é CONTROLADO pelo pai (DesligamentosPage), abrir pelo
+   * botão "Novo Desligamento" não passava por ele — o select abria vazio.
+   */
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- o setState da lista só ocorre depois do await (ou já vem pronto no modo demonstração): é sincronização com o banco, não estado derivado de props.
+    if (open) void loadColaboradores();
+  }, [open, loadColaboradores]);
+
   const handleOpenChange = (v: boolean) => {
-    if (v) loadColaboradores();
-    else onClose();
+    if (!v) onClose();
   };
 
   const handleSubmit = async () => {
@@ -70,6 +92,10 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
       toast.error('Selecione o colaborador e a data de desligamento');
       return;
     }
+
+    // MOCK VISUAL — ver src/mocks/desligamentosMock.ts. Sem esta guarda o clique
+    // gravaria um desligamento real apontando para colaborador/empresa fictícios.
+    if (bloquearEscritaDesligamento('Registrar desligamento')) return;
 
     const colaborador = colaboradores.find((c) => c.id === form.colaborador_id);
     setLoading(true);
@@ -91,16 +117,16 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
       queryClient.invalidateQueries({ queryKey: ['desligamentos'] });
       toast.success('Desligamento registrado com sucesso');
       onClose();
-      setForm({ 
-        colaborador_id: '', 
-        data_desligamento: '', 
-        tipo: 'sem_justa_causa', 
-        motivo: '', 
-        data_aviso_previo: '', 
-        quebra_contrato: false, 
+      setForm({
+        colaborador_id: '',
+        data_desligamento: '',
+        tipo: 'sem_justa_causa',
+        motivo: '',
+        data_aviso_previo: '',
+        quebra_contrato: false,
         remover_beneficios: true,
         aviso_trabalhado: false,
-        saldo_fgts: ''
+        saldo_fgts: '',
       });
     } catch (e: unknown) {
       toast.error(safeErrorMessage(e, 'Erro ao criar desligamento.'));
@@ -117,12 +143,16 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
             <UserMinus className="h-5 w-5 text-destructive" />
             Novo Desligamento
           </DialogTitle>
-          <DialogDescription className="font-body text-xs">Registre um novo desligamento de colaborador</DialogDescription>
+          <DialogDescription className="font-body text-xs">
+            Registre um novo desligamento de colaborador
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 mt-2">
           <div>
-            <Label htmlFor="desl-colaborador" className="font-body text-xs">Colaborador *</Label>
+            <Label htmlFor="desl-colaborador" className="font-body text-xs">
+              Colaborador *
+            </Label>
             <Select value={form.colaborador_id} onValueChange={(v) => set('colaborador_id', v)}>
               <SelectTrigger id="desl-colaborador">
                 <SelectValue placeholder={loadingColab ? 'Carregando...' : 'Selecione o colaborador'} />
@@ -139,13 +169,24 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label htmlFor="desl-data" className="font-body text-xs">Data Desligamento *</Label>
-              <Input id="desl-data" type="date" value={form.data_desligamento} onChange={(e) => set('data_desligamento', e.target.value)} />
+              <Label htmlFor="desl-data" className="font-body text-xs">
+                Data Desligamento *
+              </Label>
+              <Input
+                id="desl-data"
+                type="date"
+                value={form.data_desligamento}
+                onChange={(e) => set('data_desligamento', e.target.value)}
+              />
             </div>
             <div>
-              <Label htmlFor="desl-tipo" className="font-body text-xs">Tipo de Rescisão *</Label>
+              <Label htmlFor="desl-tipo" className="font-body text-xs">
+                Tipo de Rescisão *
+              </Label>
               <Select value={form.tipo} onValueChange={(v) => set('tipo', v)}>
-                <SelectTrigger id="desl-tipo"><SelectValue /></SelectTrigger>
+                <SelectTrigger id="desl-tipo">
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="sem_justa_causa">Sem Justa Causa</SelectItem>
                   <SelectItem value="com_justa_causa">Com Justa Causa</SelectItem>
@@ -159,37 +200,83 @@ export function NovoDesligamentoDialog({ open, onClose }: Props) {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label htmlFor="desl-aviso-trabalhado" className="font-body text-xs">Aviso Prévio Trabalhado?</Label>
+              <Label htmlFor="desl-aviso-trabalhado" className="font-body text-xs">
+                Aviso Prévio Trabalhado?
+              </Label>
               <div className="flex items-center h-10">
-                <Switch id="desl-aviso-trabalhado" checked={form.aviso_trabalhado} onCheckedChange={(v) => set('aviso_trabalhado', v)} />
+                <Switch
+                  id="desl-aviso-trabalhado"
+                  checked={form.aviso_trabalhado}
+                  onCheckedChange={(v) => set('aviso_trabalhado', v)}
+                />
               </div>
             </div>
             <div>
-              <Label htmlFor="desl-saldo-fgts" className="font-body text-xs">Saldo FGTS Estimado (R$)</Label>
-              <Input id="desl-saldo-fgts" type="number" value={form.saldo_fgts} onChange={(e) => set('saldo_fgts', e.target.value)} placeholder="0.00" />
+              <Label htmlFor="desl-saldo-fgts" className="font-body text-xs">
+                Saldo FGTS Estimado (R$)
+              </Label>
+              <Input
+                id="desl-saldo-fgts"
+                type="number"
+                value={form.saldo_fgts}
+                onChange={(e) => set('saldo_fgts', e.target.value)}
+                placeholder="0.00"
+              />
             </div>
           </div>
 
           <div>
-            <Label htmlFor="desl-aviso-previo" className="font-body text-xs">Data Aviso Prévio</Label>
-            <Input id="desl-aviso-previo" type="date" value={form.data_aviso_previo} onChange={(e) => set('data_aviso_previo', e.target.value)} />
+            <Label htmlFor="desl-aviso-previo" className="font-body text-xs">
+              Data Aviso Prévio
+            </Label>
+            <Input
+              id="desl-aviso-previo"
+              type="date"
+              value={form.data_aviso_previo}
+              onChange={(e) => set('data_aviso_previo', e.target.value)}
+            />
           </div>
 
           <div>
-            <Label htmlFor="desl-motivo" className="font-body text-xs">Motivo</Label>
-            <Textarea id="desl-motivo" value={form.motivo} onChange={(e) => set('motivo', e.target.value)} className="resize-none" rows={2} placeholder="Descreva o motivo do desligamento..." />
+            <Label htmlFor="desl-motivo" className="font-body text-xs">
+              Motivo
+            </Label>
+            <Textarea
+              id="desl-motivo"
+              value={form.motivo}
+              onChange={(e) => set('motivo', e.target.value)}
+              className="resize-none"
+              rows={2}
+              placeholder="Descreva o motivo do desligamento..."
+            />
           </div>
 
           <div className="flex items-center justify-between">
-            <Label htmlFor="desl-quebra" className="font-body text-xs">Quebra de contrato?</Label>
-            <Switch id="desl-quebra" checked={form.quebra_contrato} onCheckedChange={(v) => set('quebra_contrato', v)} />
+            <Label htmlFor="desl-quebra" className="font-body text-xs">
+              Quebra de contrato?
+            </Label>
+            <Switch
+              id="desl-quebra"
+              checked={form.quebra_contrato}
+              onCheckedChange={(v) => set('quebra_contrato', v)}
+            />
           </div>
           <div className="flex items-center justify-between">
-            <Label htmlFor="desl-remover-beneficios" className="font-body text-xs">Remover benefícios automaticamente?</Label>
-            <Switch id="desl-remover-beneficios" checked={form.remover_beneficios} onCheckedChange={(v) => set('remover_beneficios', v)} />
+            <Label htmlFor="desl-remover-beneficios" className="font-body text-xs">
+              Remover benefícios automaticamente?
+            </Label>
+            <Switch
+              id="desl-remover-beneficios"
+              checked={form.remover_beneficios}
+              onCheckedChange={(v) => set('remover_beneficios', v)}
+            />
           </div>
 
-          <Button onClick={handleSubmit} disabled={loading} className="w-full bg-gradient-to-r from-destructive to-destructive/70 font-body">
+          <Button
+            onClick={handleSubmit}
+            disabled={loading}
+            className="w-full bg-gradient-to-r from-destructive to-destructive/70 font-body"
+          >
             {loading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UserMinus className="h-4 w-4 mr-2" />}
             Registrar Desligamento
           </Button>

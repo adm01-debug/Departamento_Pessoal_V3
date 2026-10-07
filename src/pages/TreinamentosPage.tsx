@@ -19,6 +19,17 @@ import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { GraduationCap, Plus, BookOpen, Award, Users, Trash2, Link, Calendar, Video } from 'lucide-react';
 import { motion } from 'framer-motion';
+// MOCK VISUAL — ver src/mocks/treinamentosMock.ts.
+import {
+  bloquearEscritaTreinamentos,
+  getMockCertificados,
+  getMockCursos,
+  getMockInscricoes,
+  getMockInstancias,
+  getMockTreinamentosLista,
+  getMockTrilhas,
+  isTreinamentosMockEnabled,
+} from '@/mocks/treinamentosMock';
 
 // === Treinamentos Service (tabela treinamentos) ===
 const treinamentosService = {
@@ -107,7 +118,7 @@ function TrilhaCursosSection({ trilhaId, cursos }: { trilhaId: string; cursos: a
                 <Button
                   size="sm"
                   className="rounded-lg px-4"
-                  onClick={() => vincular.mutate()}
+                  onClick={() => { if (bloquearEscritaTreinamentos('Vincular curso à trilha')) return; vincular.mutate(); }}
                   disabled={!selCurso || vincular.isPending}
                 >
                   {vincular.isPending ? 'Vinculando...' : 'Vincular à Trilha'}
@@ -145,7 +156,7 @@ function TrilhaCursosSection({ trilhaId, cursos }: { trilhaId: string; cursos: a
                 size="icon"
                 aria-label="Excluir"
                 className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10 hover:text-destructive"
-                onClick={() => desvincular.mutate(v.id)}
+                onClick={() => { if (bloquearEscritaTreinamentos('Desvincular curso da trilha')) return; desvincular.mutate(v.id); }}
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </Button>
@@ -163,12 +174,15 @@ export default function TreinamentosPage() {
   const [tab, setTab] = useState('treinamentos');
 
   // === Queries ===
-  const { data: treinamentos = [], isLoading: loadTrein } = useQuery({ queryKey: ['treinamentos', empresaAtual?.id], queryFn: () => treinamentosService.listar(empresaAtual?.id), enabled: !!empresaAtual?.id });
-  const { data: cursos = [], isLoading: loadCursos } = useQuery({ queryKey: ['catalogo_cursos', empresaAtual?.id], queryFn: () => catalogoCursoService.listarCursos(empresaAtual!.id), enabled: !!empresaAtual?.id });
-  const { data: trilhas = [], isLoading: loadTrilhas } = useQuery({ queryKey: ['trilhas', empresaAtual?.id], queryFn: () => catalogoCursoService.listarTrilhas(empresaAtual!.id), enabled: !!empresaAtual?.id });
-  const { data: inscricoes = [], isLoading: loadInsc } = useQuery({ queryKey: ['inscricoes_cursos', empresaAtual?.id], queryFn: () => catalogoCursoService.listarInscricoes(empresaAtual!.id), enabled: !!empresaAtual?.id });
-  const { data: instancias = [], isLoading: loadInst } = useQuery({ queryKey: ['treinamento_instancias', empresaAtual?.id], queryFn: () => catalogoCursoService.listarInstancias(empresaAtual!.id), enabled: !!empresaAtual?.id });
-  const { data: certificados = [], isLoading: loadCert } = useQuery({ queryKey: ['treinamento_certificados', empresaAtual?.id], queryFn: () => catalogoCursoService.listarCertificados(empresaAtual!.id), enabled: !!empresaAtual?.id });
+  // MOCK VISUAL — ver src/mocks/treinamentosMock.ts. Com o mock ligado, cada
+  // leitura curto-circuita o Supabase e `enabled` também vale sem empresa ativa.
+  const mockAtivo = isTreinamentosMockEnabled();
+  const { data: treinamentos = [], isLoading: loadTrein } = useQuery({ queryKey: ['treinamentos', empresaAtual?.id], queryFn: async (): Promise<any[]> => getMockTreinamentosLista() ?? (await treinamentosService.listar(empresaAtual?.id)), enabled: !!empresaAtual?.id || mockAtivo });
+  const { data: cursos = [], isLoading: loadCursos } = useQuery({ queryKey: ['catalogo_cursos', empresaAtual?.id], queryFn: async (): Promise<any[]> => getMockCursos() ?? (await catalogoCursoService.listarCursos(empresaAtual!.id)), enabled: !!empresaAtual?.id || mockAtivo });
+  const { data: trilhas = [], isLoading: loadTrilhas } = useQuery({ queryKey: ['trilhas', empresaAtual?.id], queryFn: async (): Promise<any[]> => getMockTrilhas() ?? (await catalogoCursoService.listarTrilhas(empresaAtual!.id)), enabled: !!empresaAtual?.id || mockAtivo });
+  const { data: inscricoes = [], isLoading: loadInsc } = useQuery({ queryKey: ['inscricoes_cursos', empresaAtual?.id], queryFn: async (): Promise<any[]> => getMockInscricoes() ?? (await catalogoCursoService.listarInscricoes(empresaAtual!.id)), enabled: !!empresaAtual?.id || mockAtivo });
+  const { data: instancias = [], isLoading: loadInst } = useQuery({ queryKey: ['treinamento_instancias', empresaAtual?.id], queryFn: async (): Promise<any[]> => getMockInstancias() ?? (await catalogoCursoService.listarInstancias(empresaAtual!.id)), enabled: !!empresaAtual?.id || mockAtivo });
+  const { data: certificados = [], isLoading: loadCert } = useQuery({ queryKey: ['treinamento_certificados', empresaAtual?.id], queryFn: async (): Promise<any[]> => getMockCertificados() ?? (await catalogoCursoService.listarCertificados(empresaAtual!.id)), enabled: !!empresaAtual?.id || mockAtivo });
   const { data: colaboradores = [] } = useQuery({ queryKey: ['colaboradores', empresaAtual?.id], queryFn: () => colaboradorService.list(empresaAtual!.id), enabled: !!empresaAtual?.id });
 
   // === Treinamentos ===
@@ -246,7 +260,7 @@ export default function TreinamentosPage() {
                     </div>
                     <div><Label>Descrição</Label><Textarea value={treinForm.descricao} onChange={e => setTreinForm(p => ({ ...p, descricao: e.target.value }))} /></div>
                     <div className="flex justify-end pt-1">
-                      <Button size="sm" className="rounded-lg px-4" onClick={() => criarTrein.mutate()} disabled={!treinForm.nome || criarTrein.isPending}>{criarTrein.isPending ? 'Salvando...' : 'Salvar'}</Button>
+                      <Button size="sm" className="rounded-lg px-4" onClick={() => { if (bloquearEscritaTreinamentos('Criar treinamento')) return; criarTrein.mutate(); }} disabled={!treinForm.nome || criarTrein.isPending}>{criarTrein.isPending ? 'Salvando...' : 'Salvar'}</Button>
                     </div>
                   </div>
                 </DialogContent>
@@ -262,7 +276,7 @@ export default function TreinamentosPage() {
                         <TableCell>{t.data || '—'}</TableCell>
                         <TableCell>{t.carga_horaria ? `${t.carga_horaria}h` : '—'}</TableCell>
                         <TableCell className="max-w-[200px] truncate">{t.descricao || '—'}</TableCell>
-                        <TableCell><Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => excluirTrein.mutate(t.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
+                        <TableCell><Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => { if (bloquearEscritaTreinamentos('Excluir treinamento')) return; excluirTrein.mutate(t.id); }}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
                       </TableRow>
                     ))
                   }
@@ -346,7 +360,7 @@ export default function TreinamentosPage() {
                     <div className="flex items-center gap-2"><Switch checked={cursoForm.obrigatorio} onCheckedChange={v => setCursoForm(p => ({ ...p, obrigatorio: v }))} /><Label>Obrigatório</Label></div>
                     <div><Label>Descrição</Label><Textarea value={cursoForm.descricao} onChange={e => setCursoForm(p => ({ ...p, descricao: e.target.value }))} /></div>
                     <div className="flex justify-end pt-1">
-                      <Button size="sm" className="rounded-lg px-4" onClick={() => criarCurso.mutate()} disabled={!cursoForm.nome || criarCurso.isPending}>{criarCurso.isPending ? 'Salvando...' : 'Salvar'}</Button>
+                      <Button size="sm" className="rounded-lg px-4" onClick={() => { if (bloquearEscritaTreinamentos('Criar curso')) return; criarCurso.mutate(); }} disabled={!cursoForm.nome || criarCurso.isPending}>{criarCurso.isPending ? 'Salvando...' : 'Salvar'}</Button>
                     </div>
                   </div>
                 </DialogContent>
@@ -363,7 +377,7 @@ export default function TreinamentosPage() {
                         <TableCell>{c.modalidade || '—'}</TableCell>
                         <TableCell>{c.carga_horaria ? `${c.carga_horaria}h` : '—'}</TableCell>
                         <TableCell><Badge variant={c.obrigatorio ? 'default' : 'secondary'}>{c.obrigatorio ? 'Sim' : 'Não'}</Badge></TableCell>
-                        <TableCell><Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => excluirCurso.mutate(c.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
+                        <TableCell><Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => { if (bloquearEscritaTreinamentos('Excluir curso')) return; excluirCurso.mutate(c.id); }}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
                       </TableRow>
                     ))
                   }
@@ -389,7 +403,7 @@ export default function TreinamentosPage() {
                     </div>
                     <div><Label>Descrição</Label><Textarea value={trilhaForm.descricao} onChange={e => setTrilhaForm(p => ({ ...p, descricao: e.target.value }))} /></div>
                     <div className="flex justify-end pt-1">
-                      <Button size="sm" className="rounded-lg px-4" onClick={() => criarTrilha.mutate()} disabled={!trilhaForm.titulo || criarTrilha.isPending}>{criarTrilha.isPending ? 'Salvando...' : 'Salvar'}</Button>
+                      <Button size="sm" className="rounded-lg px-4" onClick={() => { if (bloquearEscritaTreinamentos('Criar trilha')) return; criarTrilha.mutate(); }} disabled={!trilhaForm.titulo || criarTrilha.isPending}>{criarTrilha.isPending ? 'Salvando...' : 'Salvar'}</Button>
                     </div>
                   </div>
                 </DialogContent>
@@ -403,7 +417,7 @@ export default function TreinamentosPage() {
                       <p className="font-medium">{t.titulo}</p>
                       <p className="text-xs text-muted-foreground">{t.nivel || '—'} • {t.descricao || 'Sem descrição'}</p>
                     </div>
-                    <Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => excluirTrilha.mutate(t.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                    <Button variant="ghost" size="icon" aria-label="Excluir" onClick={() => { if (bloquearEscritaTreinamentos('Excluir trilha')) return; excluirTrilha.mutate(t.id); }}><Trash2 className="h-4 w-4 text-destructive" /></Button>
                   </div>
                   <TrilhaCursosSection trilhaId={t.id} cursos={cursos} />
                 </CardContent>
@@ -434,7 +448,7 @@ export default function TreinamentosPage() {
                     </div>
                     <div><Label>Data Início</Label><Input type="date" value={inscForm.data_inicio} onChange={e => setInscForm(p => ({ ...p, data_inicio: e.target.value }))} /></div>
                     <div className="flex justify-end pt-1">
-                      <Button size="sm" className="rounded-lg px-4" onClick={() => criarInsc.mutate()} disabled={!inscForm.colaborador_id || !inscForm.curso_id || criarInsc.isPending}>{criarInsc.isPending ? 'Salvando...' : 'Inscrever'}</Button>
+                      <Button size="sm" className="rounded-lg px-4" onClick={() => { if (bloquearEscritaTreinamentos('Criar inscrição')) return; criarInsc.mutate(); }} disabled={!inscForm.colaborador_id || !inscForm.curso_id || criarInsc.isPending}>{criarInsc.isPending ? 'Salvando...' : 'Inscrever'}</Button>
                     </div>
                   </div>
                 </DialogContent>

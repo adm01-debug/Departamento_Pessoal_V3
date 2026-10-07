@@ -11,6 +11,8 @@ import { premiacoesService } from '@/services/premiacoesService';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { formatCurrency, formatDateTime } from '@/utils/format';
 import { useEmpresas } from '@/hooks/useEmpresas';
+// MOCK VISUAL — ver src/mocks/premiacoesMock.ts.
+import { bloquearEscritaPremiacoes, getMockCenariosRoi, isPremiacoesMockEnabled } from '@/mocks/premiacoesMock';
 
 export function RewardsSimulator() {
   const queryClient = useQueryClient();
@@ -25,12 +27,17 @@ export function RewardsSimulator() {
 
   const { data: scenarios = [] } = useQuery({
     queryKey: ['premiacoes_cenarios_roi', empresaId],
-    queryFn: () => premiacoesService.listarCenariosROI(empresaId),
-    enabled: !!empresaId
+    // MOCK VISUAL — ver src/mocks/premiacoesMock.ts.
+    queryFn: async (): Promise<any[]> => getMockCenariosRoi() ?? (await premiacoesService.listarCenariosROI(empresaId)),
+    enabled: !!empresaId || isPremiacoesMockEnabled()
   });
 
   const saveMutation = useMutation({
-    mutationFn: (cenario: any) => premiacoesService.salvarCenarioROI(cenario, empresaId),
+    // MOCK VISUAL — ver src/mocks/premiacoesMock.ts. Aborta a escrita no modo demo.
+    mutationFn: (cenario: any) => {
+      if (bloquearEscritaPremiacoes('Salvar cenário de ROI')) return Promise.reject(new Error('mock'));
+      return premiacoesService.salvarCenarioROI(cenario, empresaId);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['premiacoes_cenarios_roi', empresaId] });
       toast.success("Cenário salvo no banco de dados estrategicamente!");

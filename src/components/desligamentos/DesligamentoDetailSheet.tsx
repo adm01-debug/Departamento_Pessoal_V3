@@ -14,8 +14,9 @@ import { gerarPDFRescisao } from '@/utils/rescisaoPDF';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { safeErrorMessage } from '@/utils/safeError';
+// MOCK VISUAL — ver src/mocks/desligamentosMock.ts.
+import { bloquearEscritaDesligamento } from '@/mocks/desligamentosMock';
 import { useState } from 'react';
-
 
 interface DetailSheetProps {
   desligamento: any | null;
@@ -39,9 +40,11 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
 
   const handleChecklistToggle = async (key: string, value: boolean) => {
     try {
+      // MOCK VISUAL — ver src/mocks/desligamentosMock.ts.
+      if (bloquearEscritaDesligamento('Atualizar o checklist')) return;
       // Regras de transição de etapa baseadas no checklist
       const updates: any = { [key]: value };
-      
+
       if (key === 'checklist_comunicacao' && value) {
         updates.etapa = 'documentacao';
         updates.status = 'comunicado';
@@ -58,24 +61,28 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
     }
   };
 
-
-
   const handleCalcular = async () => {
     if (!d.salario_base || !d.data_desligamento) {
       toast.error('Salário base e data de desligamento são obrigatórios para o cálculo');
       return;
     }
+    // MOCK VISUAL — ver src/mocks/desligamentosMock.ts.
+    if (bloquearEscritaDesligamento('Calcular a rescisão')) return;
     setCalculating(true);
     try {
-      await rescisaoService.calcularESalvar(d.id, {
-        salario_base: d.salario_base,
-        data_admissao: d.colaborador?.data_admissao || d.data_admissao, // Fallback
-        data_desligamento: d.data_desligamento,
-        tipo: d.tipo || 'sem_justa_causa',
-        aviso_trabalhado: (d as Record<string, unknown>).aviso_trabalhado ?? false,
-        ferias_vencidas: (d as Record<string, unknown>).ferias_vencidas_check ?? false,
-        saldo_fgts: (d as Record<string, unknown>).saldo_fgts ?? 0,
-      }, d.empresa_id);
+      await rescisaoService.calcularESalvar(
+        d.id,
+        {
+          salario_base: d.salario_base,
+          data_admissao: d.colaborador?.data_admissao || d.data_admissao, // Fallback
+          data_desligamento: d.data_desligamento,
+          tipo: d.tipo || 'sem_justa_causa',
+          aviso_trabalhado: (d as Record<string, unknown>).aviso_trabalhado ?? false,
+          ferias_vencidas: (d as Record<string, unknown>).ferias_vencidas_check ?? false,
+          saldo_fgts: (d as Record<string, unknown>).saldo_fgts ?? 0,
+        },
+        d.empresa_id
+      );
       queryClient.invalidateQueries({ queryKey: ['desligamentos'] });
       toast.success('Rescisão calculada com sucesso');
     } catch (err) {
@@ -86,6 +93,8 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
   };
 
   const handleHomologar = async () => {
+    // MOCK VISUAL — ver src/mocks/desligamentosMock.ts.
+    if (bloquearEscritaDesligamento('Homologar a rescisão')) return;
     setHomologating(true);
     try {
       await rescisaoService.homologar(d.id, d.empresa_id);
@@ -97,7 +106,6 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
       setHomologating(false);
     }
   };
-
 
   return (
     <Sheet open={open} onOpenChange={(v) => !v && onClose()}>
@@ -112,17 +120,31 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
 
         <Tabs defaultValue="detalhes" className="w-full">
           <TabsList className="w-full">
-            <TabsTrigger value="detalhes" className="flex-1 rounded-lg text-xs font-body">Detalhes</TabsTrigger>
-            <TabsTrigger value="checklist" className="flex-1 rounded-lg text-xs font-body">Checklist</TabsTrigger>
-            <TabsTrigger value="rescisao" className="flex-1 rounded-lg text-xs font-body">Rescisão</TabsTrigger>
+            <TabsTrigger value="detalhes" className="flex-1 rounded-lg text-xs font-body">
+              Detalhes
+            </TabsTrigger>
+            <TabsTrigger value="checklist" className="flex-1 rounded-lg text-xs font-body">
+              Checklist
+            </TabsTrigger>
+            <TabsTrigger value="rescisao" className="flex-1 rounded-lg text-xs font-body">
+              Rescisão
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="detalhes" className="mt-4 space-y-4">
             <Card className="border-border/30">
               <CardContent className="p-4 space-y-3">
                 <InfoRow icon={User} label="Colaborador" value={d.colaborador?.nome_completo || '—'} />
-                <InfoRow icon={Calendar} label="Data Desligamento" value={d.data_desligamento ? new Date(d.data_desligamento).toLocaleDateString('pt-BR') : '—'} />
-                <InfoRow icon={Calendar} label="Data Aviso Prévio" value={d.data_aviso_previo ? new Date(d.data_aviso_previo).toLocaleDateString('pt-BR') : '—'} />
+                <InfoRow
+                  icon={Calendar}
+                  label="Data Desligamento"
+                  value={d.data_desligamento ? new Date(d.data_desligamento).toLocaleDateString('pt-BR') : '—'}
+                />
+                <InfoRow
+                  icon={Calendar}
+                  label="Data Aviso Prévio"
+                  value={d.data_aviso_previo ? new Date(d.data_aviso_previo).toLocaleDateString('pt-BR') : '—'}
+                />
                 <InfoRow icon={DollarSign} label="Salário Base" value={fmt(d.salario_base)} />
                 {d.motivo && <InfoRow icon={FileText} label="Motivo" value={d.motivo} />}
               </CardContent>
@@ -158,7 +180,9 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
                 <RescisaoRow label="Total Proventos" value={d.total_proventos} bold className="text-success" />
                 <RescisaoRow label="Total Descontos" value={d.total_descontos} bold className="text-destructive" />
                 <div className="flex justify-between text-[10px] font-body text-muted-foreground px-1">
-                  <span>(INSS: {fmt((d as any).inss)} / IRRF: {fmt((d as any).irrf)})</span>
+                  <span>
+                    (INSS: {fmt((d as any).inss)} / IRRF: {fmt((d as any).irrf)})
+                  </span>
                 </div>
                 <RescisaoRow label="Multa FGTS" value={d.multa_fgts} />
                 <Separator className="my-2" />
@@ -175,7 +199,11 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
                 disabled={calculating || d.status === 'homologado' || d.status === 'finalizado'}
                 className="font-body bg-primary hover:bg-primary-glow"
               >
-                {calculating ? <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> : <Calculator className="h-4 w-4 mr-2" />}
+                {calculating ? (
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Calculator className="h-4 w-4 mr-2" />
+                )}
                 {d.valor_liquido ? 'Recalcular' : 'Calcular Agora'}
               </Button>
 
@@ -185,7 +213,11 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
                 variant="outline"
                 className="font-body border-success/50 hover:bg-success/10 text-success"
               >
-                {homologating ? <RefreshCw className="h-4 w-4 mr-2 animate-spin" /> : <CheckCircle className="h-4 w-4 mr-2" />}
+                {homologating ? (
+                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                )}
                 Homologar
               </Button>
             </div>
@@ -193,16 +225,16 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
             {d.valor_liquido && (
               <Button
                 onClick={() => {
-                   const form = {
-                      nomeColaborador: d.colaborador?.nome_completo,
-                      cpf: d.colaborador?.cpf,
-                      cargo: d.colaborador?.cargo,
-                      dataAdmissao: d.colaborador?.data_admissao,
-                      dataDesligamento: d.data_desligamento,
-                      tipo: d.tipo,
-                      ...d
-                   };
-                   gerarPDFRescisao(form, d.detalhes_calculo || d);
+                  const form = {
+                    nomeColaborador: d.colaborador?.nome_completo,
+                    cpf: d.colaborador?.cpf,
+                    cargo: d.colaborador?.cargo,
+                    dataAdmissao: d.colaborador?.data_admissao,
+                    dataDesligamento: d.data_desligamento,
+                    tipo: d.tipo,
+                    ...d,
+                  };
+                  gerarPDFRescisao(form, d.detalhes_calculo || d);
                 }}
                 variant="outline"
                 className="w-full font-body gap-2"
@@ -211,7 +243,6 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
               </Button>
             )}
 
-
             <Button
               onClick={() => navigate('/calculadora-rescisao')}
               variant="ghost"
@@ -219,7 +250,6 @@ export function DesligamentoDetailSheet({ desligamento, open, onClose }: DetailS
             >
               Abrir Calculadora Avançada
             </Button>
-
           </TabsContent>
         </Tabs>
       </SheetContent>
@@ -239,7 +269,17 @@ function InfoRow({ icon: Icon, label, value }: { icon: any; label: string; value
   );
 }
 
-function RescisaoRow({ label, value, bold, className }: { label: string; value: number | null; bold?: boolean; className?: string }) {
+function RescisaoRow({
+  label,
+  value,
+  bold,
+  className,
+}: {
+  label: string;
+  value: number | null;
+  bold?: boolean;
+  className?: string;
+}) {
   return (
     <div className="flex justify-between text-xs font-body">
       <span className={bold ? 'font-medium' : ''}>{label}</span>
@@ -264,7 +304,9 @@ function EtapaStepper({ etapa }: { etapa: string }) {
     <div className="flex items-center gap-1">
       {ETAPAS.map((e, i) => (
         <div key={e} className="flex items-center gap-1 flex-1">
-          <div className={`h-1.5 flex-1 rounded-full transition-colors ${i <= currentIndex ? 'bg-primary' : 'bg-muted'}`} />
+          <div
+            className={`h-1.5 flex-1 rounded-full transition-colors ${i <= currentIndex ? 'bg-primary' : 'bg-muted'}`}
+          />
         </div>
       ))}
       <span className="text-[10px] font-body text-muted-foreground ml-2">{ETAPA_LABELS[etapa] || etapa}</span>

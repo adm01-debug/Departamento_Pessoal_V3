@@ -19,6 +19,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { cn } from '@/lib/utils';
 import { CandidatoTimeline } from '@/components/recrutamento/CandidatoTimeline';
 import type { CandidaturaComRelacoes, VagaRow, CandidatoRow } from '@/types/recrutamento';
+// MOCK VISUAL — ver src/mocks/recrutamentoMock.ts.
+import {
+  bloquearEscritaRecrutamento,
+  getMockCandidatos,
+  getMockCandidaturas,
+  getMockVagas,
+  isRecrutamentoMockEnabled,
+} from '@/mocks/recrutamentoMock';
 const ETAPAS = [
   { id: 'triagem', label: 'Triagem', color: 'bg-slate-100 border-slate-200' },
   { id: 'entrevista', label: 'Entrevista', color: 'bg-blue-50 border-blue-200' },
@@ -34,22 +42,25 @@ export default function RecrutamentoPage() {
   const [selectedVagaId, setSelectedVagaId] = useState<string>('all');
   const [selectedCandidatura, setSelectedCandidatura] = useState<CandidaturaComRelacoes | null>(null);
 
-  const { data: vagas = [], isLoading: loadVagas } = useQuery({
+  // MOCK VISUAL — ver src/mocks/recrutamentoMock.ts. Com o mock ligado, cada
+  // leitura curto-circuita o Supabase e `enabled` também vale sem empresa ativa.
+  const mockAtivo = isRecrutamentoMockEnabled();
+  const { data: vagas = [], isLoading: loadVagas } = useQuery<VagaRow[]>({
     queryKey: ['vagas', empresaAtual?.id],
-    queryFn: () => recrutamentoService.listarVagas(empresaAtual!.id),
-    enabled: !!empresaAtual?.id
+    queryFn: async () => (getMockVagas() as VagaRow[] | undefined) ?? recrutamentoService.listarVagas(empresaAtual!.id),
+    enabled: !!empresaAtual?.id || mockAtivo
   });
 
-  const { data: candidaturas = [], isLoading: loadCandidaturas } = useQuery({
+  const { data: candidaturas = [], isLoading: loadCandidaturas } = useQuery<CandidaturaComRelacoes[]>({
     queryKey: ['candidaturas', empresaAtual?.id, selectedVagaId],
-    queryFn: () => recrutamentoService.listarCandidaturas(empresaAtual!.id, selectedVagaId === 'all' ? undefined : selectedVagaId),
-    enabled: !!empresaAtual?.id
+    queryFn: async () => (getMockCandidaturas(selectedVagaId === 'all' ? undefined : selectedVagaId) as CandidaturaComRelacoes[] | undefined) ?? recrutamentoService.listarCandidaturas(empresaAtual!.id, selectedVagaId === 'all' ? undefined : selectedVagaId),
+    enabled: !!empresaAtual?.id || mockAtivo
   });
 
-  const { data: candidatos = [], isLoading: loadCandidatos } = useQuery({
+  const { data: candidatos = [], isLoading: loadCandidatos } = useQuery<CandidatoRow[]>({
     queryKey: ['candidatos', empresaAtual?.id],
-    queryFn: () => recrutamentoService.listarCandidatos(empresaAtual!.id),
-    enabled: !!empresaAtual?.id
+    queryFn: async () => (getMockCandidatos() as CandidatoRow[] | undefined) ?? recrutamentoService.listarCandidatos(empresaAtual!.id),
+    enabled: !!empresaAtual?.id || mockAtivo
   });
 
   const updateEtapa = useMutation({
@@ -179,7 +190,7 @@ export default function RecrutamentoPage() {
                                       <Mail className="h-3.5 w-3.5" />
                                     </Button>
                                     <Select 
-                                      onValueChange={(val) => updateEtapa.mutate({ id: cand.id, etapa: val })}
+                                      onValueChange={(val) => { if (bloquearEscritaRecrutamento('Mover candidatura de etapa')) return; updateEtapa.mutate({ id: cand.id, etapa: val }); }}
                                       defaultValue={etapa.id}
                                     >
                                       <SelectTrigger className="h-7 text-[9px] w-28 rounded-lg border-primary/20 bg-primary/5">
