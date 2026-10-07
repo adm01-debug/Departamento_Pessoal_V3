@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Mock } from 'vitest';
 import { deepChain } from '@/test/deepChain';
-import { premiacoesService } from '../premiacoesService';
+import { premiacoesService, PERIODO_SEM_DATA } from '../premiacoesService';
 import { makeChain } from '@/test/chain';
 import type { CenarioROIInput } from '../premiacoesService';
 
@@ -362,5 +362,93 @@ describe('premiacoesService.enviarNotificacaoCritica', () => {
     const result = await premiacoesService.enviarNotificacaoCritica('pagamento_aprovado', { id: 'pg1' });
     expect(insertFn).toHaveBeenCalled();
     expect(result).toBe(true);
+  });
+});
+
+// ─── exportarRelatorio — filtro de período e paginação ───────────────────────
+
+/** Builder mínimo com `range` que resolve uma página diferente por chamada. */
+function makePagedBuilder(pages: { data: unknown[] }[]) {
+  const range = vi.fn();
+  for (const page of pages) range.mockResolvedValueOnce({ data: page.data, error: null });
+  const generated = new Map<string, ReturnType<typeof vi.fn>>();
+  const proxy = new Proxy({} as Record<string, unknown>, {
+    get(_t, prop) {
+      if (typeof prop === 'symbol' || prop === 'then') return undefined;
+      if (prop === 'range') return range;
+      const key = prop as string;
+      if (!generated.has(key))
+        generated.set(
+          key,
+          vi.fn(() => proxy)
+        );
+      return generated.get(key);
+    },
+  });
+  return { proxy, range, generated };
+}
+
+describe('premiacoesService.exportarRelatorio — período', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
+
+  it('aplica fronteira do mês no filtro YYYY-MM (Dez→Jan)', async () => {
+    const { chain } = setupPagamentosChain([]);
+    await premiacoesService.exportarRelatorio({ empresaId: EMPRESA_ID, periodo: '2026-12' });
+    expect(chain.gte).toHaveBeenCalledWith('data_pagamento', '2026-12-01');
+    expect(chain.lt).toHaveBeenCalledWith('data_pagamento', '2027-01-01');
+  });
+
+  it('aplica fronteira do mês em mês não-dezembro', async () => {
+    const { chain } = setupPagamentosChain([]);
+    await premiacoesService.exportarRelatorio({ empresaId: EMPRESA_ID, periodo: '2026-01' });
+    expect(chain.gte).toHaveBeenCalledWith('data_pagamento', '2026-01-01');
+    expect(chain.lt).toHaveBeenCalledWith('data_pagamento', '2026-02-01');
+  });
+
+  it('período sem-data filtra por data_pagamento IS NULL', async () => {
+    const { chain } = setupPagamentosChain([]);
+    await premiacoesService.exportarRelatorio({ empresaId: EMPRESA_ID, periodo: PERIODO_SEM_DATA });
+    expect(chain.is).toHaveBeenCalledWith('data_pagamento', null);
+    expect(chain.gte).not.toHaveBeenCalled();
+    expect(chain.lt).not.toHaveBeenCalled();
+  });
+
+  it('ignora período malformado (nenhum filtro de data)', async () => {
+    const { chain } = setupPagamentosChain([]);
+    await premiacoesService.exportarRelatorio({ empresaId: EMPRESA_ID, periodo: 'abc' });
+    expect(chain.gte).not.toHaveBeenCalled();
+    expect(chain.lt).not.toHaveBeenCalled();
+    expect(chain.is).not.toHaveBeenCalled();
+  });
+});
+
+describe('premiacoesService.buscarPagamentosTodos — paginação', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
+
+  it('busca a segunda página quando a primeira tem exatamente 1000 registros', async () => {
+    const pagina1 = Array.from({ length: 1000 }, (_, i) => ({ id: `pg-${i}` }));
+    const pagina2 = [{ id: 'pg-1000' }];
+    const { proxy, range } = makePagedBuilder([{ data: pagina1 }, { data: pagina2 }]);
+    mockFrom.mockReturnValue(proxy);
+
+    const result = await premiacoesService.exportarRelatorio({ empresaId: EMPRESA_ID });
+    expect(result).toHaveLength(1001);
+    expect(range).toHaveBeenCalledTimes(2);
+    expect(range).toHaveBeenNthCalledWith(1, 0, 999);
+    expect(range).toHaveBeenNthCalledWith(2, 1000, 1999);
+  });
+
+  it('para na primeira página quando vem menos de 1000', async () => {
+    const pagina1 = [{ id: 'pg-0' }, { id: 'pg-1' }];
+    const { proxy, range } = makePagedBuilder([{ data: pagina1 }]);
+    mockFrom.mockReturnValue(proxy);
+
+    const result = await premiacoesService.exportarRelatorio({ empresaId: EMPRESA_ID });
+    expect(result).toHaveLength(2);
+    expect(range).toHaveBeenCalledTimes(1);
   });
 });

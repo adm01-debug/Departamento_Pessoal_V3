@@ -160,9 +160,11 @@ jobs:
         if: inputs.mode == 'apply'
         run: |
           set -euo pipefail
-          # Verifica as 8 versões DESTE lote no ledger + os objetos/invariantes
-          # que cada migration cria (antes conferia só a versão do lote anterior,
-          # que podia não existir e falhar após um COMMIT bem-sucedido).
+          # Verifica no ledger as versões DESTE lote (uma por migration da
+          # lista fechada acima — conferidas pelo ledger_count no assert final)
+          # + os objetos/invariantes que cada migration cria (antes conferia
+          # só a versão do lote anterior, que podia não existir e falhar após
+          # um COMMIT bem-sucedido).
           # legacy_rls_missing conta tabelas legacy EXISTENTES sem RLS — a
           # versão anterior esperava === 4, que falha quando a tabela não
           # existe no canônico (to_regclass NULL faz o DO da migration pular).
