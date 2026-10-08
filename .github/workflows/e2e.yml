@@ -11,7 +11,9 @@ permissions:
 
 concurrency:
   group: e2e-${{ github.ref }}
-  cancel-in-progress: true
+  # E34: cancel-in-progress só em PR — cancelar o run de main ao chegar um push
+  # novo esconderia falhas do commit anterior (nunca aparece "main vermelha").
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   playwright-public:
@@ -94,6 +96,9 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      contents: read
+      issues: write
     env:
       VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
       VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
@@ -192,3 +197,31 @@ jobs:
           name: playwright-traces-${{ github.run_id }}
           path: test-results/**/trace.zip
           retention-days: 14
+
+      # E49/E80: falha de E2E autenticado na main abre/atualiza issue com label
+      # `e2e-main` (deduplicada) e a fecha automaticamente ao voltar a verde —
+      # antes, runs vermelhos em série passavam sem ninguém ser avisado (D5).
+      - name: Abrir issue em caso de falha na main
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TITLE="🔴 E2E autenticado falhou na main ($(date -u +%F\ %H:%M) UTC)"
+          EXISTING=$(gh issue list --label e2e-main --state open --json number --jq '.[0].number' || true)
+          BODY=$(printf 'O E2E autenticado falhou em push na main.\n\nRun: %s/%s/actions/runs/%s\n\nVerificar runbook: infra/runbooks/RESPOSTA_INCIDENTES.md' "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID")
+          gh label create e2e-main --force >/dev/null 2>&1 || true
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --body "$BODY"
+          else
+            gh issue create --title "$TITLE" --body "$BODY" --label e2e-main
+          fi
+
+      - name: Fechar issue ao recuperar
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          EXISTING=$(gh issue list --label e2e-main --state open --json number --jq '.[0].number' || true)
+          if [ -n "$EXISTING" ]; then
+            gh issue close "$EXISTING" --comment "E2E autenticado voltou ao verde. Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          fi

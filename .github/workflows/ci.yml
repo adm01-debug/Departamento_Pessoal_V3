@@ -100,7 +100,6 @@ jobs:
     env:
       VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || '' }}
       VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY || '' }}
-      RUN_LIVE_RLS_TESTS: 'true'
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -111,7 +110,71 @@ jobs:
       - name: Install
         run: npm install --no-audit --no-fund
       - name: Unit Tests
+        # E41: sem RUN_LIVE_RLS_TESTS aqui — o smoke contra o banco canônico
+        # vive no job `rls-live` (push main, não bloqueante), para o teste
+        # unitário de PR deixar de flutuar com a saúde do Supabase.
         run: npm run test:coverage
+      - name: Upload coverage report
+        # E42: artefato para inspeção sem abrir o log + resumo no step summary.
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        if: always()
+        with:
+          name: coverage-${{ github.run_id }}
+          path: coverage/
+          retention-days: 14
+          if-no-files-found: ignore
+      - name: Resumo de cobertura
+        if: always()
+        run: |
+          if [ -f coverage/coverage-summary.json ]; then
+            node -e '
+              const s = require("./coverage/coverage-summary.json").total;
+              const row = (k) => `| ${k} | ${s[k].pct}% (${s[k].covered}/${s[k].total}) |`;
+              console.log("| Métrica | Cobertura |\n|---|---|");
+              ["lines","statements","functions","branches"].forEach(k => console.log(row(k)));
+            ' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+  rls-live:
+    name: RLS live (pós-merge, não bloqueante)
+    # E41: smoke real contra o banco canônico, isolado do gate de PR. Roda só
+    # no SHA integrado em main; falha aqui não impede merge, mas abre issue.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write
+    env:
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
+      RUN_LIVE_RLS_TESTS: 'true'
+      REQUIRE_LIVE_RLS: 'true'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: '22'
+      - name: Install
+        run: npm install --no-audit --no-fund
+      - name: Smoke RLS/RPC contra o canônico
+        run: npx vitest run src/tests/rpc-permissions.test.ts
+      - name: Abrir issue em caso de falha na main
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TITLE="🔴 Smoke RLS live falhou na main ($(date -u +%F\ %H:%M) UTC)"
+          EXISTING=$(gh issue list --label ci --state open --json number --jq '.[0].number' || true)
+          BODY=$(printf 'O smoke de permissões/RLS contra o banco canônico falhou em push na main.\n\nRun: %s/%s/actions/runs/%s' "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID")
+          gh label create ci --force >/dev/null 2>&1 || true
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --body "$BODY"
+          else
+            gh issue create --title "$TITLE" --body "$BODY" --label ci
+          fi
 
   lighthouse:
     name: Lighthouse & orçamento de bundle (E51-030)
@@ -151,30 +214,17 @@ jobs:
       - uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
         with:
           deno-version: v2.x
-      - name: Type-check external-db-bridge (gate crítico)
-        # Verifica o bridge com zero tolerância — validado com 0 erros desde M6.
-        # Este é o único edge function com acesso a DB externo; erros de tipo
-        # aqui causam falhas silenciosas em produção.
-        run: deno check --no-lock --node-modules-dir=false supabase/functions/external-db-bridge/index.ts
-      - name: Testes unitários compartilhados das Edge Functions
-        run: deno test --allow-env --no-lock --node-modules-dir=false supabase/functions/_shared/*.test.ts supabase/functions/metrics/*.test.ts supabase/functions/metricas/*.test.ts supabase/functions/folha-metrics/*.test.ts supabase/functions/gerar-holerite/*.test.ts supabase/functions/auth-login/*.test.ts supabase/functions/backup-automatico/*.test.ts supabase/functions/alertas-dp/*.test.ts supabase/functions/enviar-esocial/*.test.ts supabase/functions/enviar-relatorio/*.test.ts supabase/functions/notificacao/*.test.ts supabase/functions/processar-agendamentos/*.test.ts supabase/functions/metabase-embed/*.test.ts supabase/functions/external-db-bridge/validation.test.ts supabase/functions/external-db-bridge/tenantScope.test.ts
       - name: Type-check de todas as Edge Functions (gate bloqueante)
-        # Toda Edge Function publicada precisa compilar. O loop preserva o
-        # inventário completo de falhas e só encerra com erro ao final, evitando
-        # o antigo falso-verde de `continue-on-error`.
-        run: |
-          ERRORS=0
-          for fn in supabase/functions/*/index.ts; do
-            dir=$(dirname "$fn")
-            name=$(basename "$dir")
-            if [ "$name" = "external-db-bridge" ]; then continue; fi
-            if ! deno check --no-lock --node-modules-dir=false "$fn"; then
-              ERRORS=$((ERRORS+1))
-              echo "::error file=$fn::Edge Function $name falhou no deno check"
-            fi
-          done
-          echo "Funções com erros de tipo (não-bridge): $ERRORS"
-          test "$ERRORS" -eq 0
+        # E40: fonte única — scripts/typecheck-edge.sh checa o bridge com zero
+        # tolerância e depois faz o loop em todas as funções, listando todo o
+        # inventário de falhas antes de encerrar com erro.
+        run: bash scripts/typecheck-edge.sh
+      - name: Testes unitários das Edge Functions
+        # E39: descoberta automática — `deno test` num diretório acha todo
+        # `*.test.ts` recursivamente; a lista de 15 globs hardcoded deixava
+        # fora do CI 8 arquivos (calcular-folha, fechar-folha, processar-ponto*,
+        # reabrir-folha, external-db-bridge/timeout, webhook).
+        run: deno test --allow-env --no-lock --node-modules-dir=false supabase/functions/
 
   security-config:
     name: Config de segurança (E-077, estático)

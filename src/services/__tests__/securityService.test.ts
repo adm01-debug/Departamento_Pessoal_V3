@@ -82,6 +82,9 @@ describe('securityService.getBlockedIps', () => {
 
 // ─── unblockIp ────────────────────────────────────────────────────────────────
 
+const BLOCKED_IP_ID = '11110000-0000-4000-8000-000000000001';
+const ALERT_ID = '11110000-0000-4000-8000-000000000002';
+
 describe('securityService.unblockIp', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -89,14 +92,20 @@ describe('securityService.unblockIp', () => {
 
   it('deletes blocked_ip by id and logs info', async () => {
     const { eqFn } = setupDeleteEqChain();
-    await securityService.unblockIp('ip-1');
-    expect(eqFn).toHaveBeenCalledWith('id', 'ip-1');
-    expect(mockLoggerInfo).toHaveBeenCalledWith('IP unblocked', { id: 'ip-1' });
+    await securityService.unblockIp(BLOCKED_IP_ID);
+    expect(eqFn).toHaveBeenCalledWith('id', BLOCKED_IP_ID);
+    expect(mockLoggerInfo).toHaveBeenCalledWith('IP unblocked', { id: BLOCKED_IP_ID });
+  });
+
+  it('rejects non-UUID ids before touching the database', async () => {
+    const { eqFn } = setupDeleteEqChain();
+    await expect(securityService.unblockIp('ip-1')).rejects.toBeDefined();
+    expect(eqFn).not.toHaveBeenCalled();
   });
 
   it('throws and logs error on DB failure', async () => {
     setupDeleteEqChain({ message: 'fail' });
-    await expect(securityService.unblockIp('ip-1')).rejects.toBeDefined();
+    await expect(securityService.unblockIp(BLOCKED_IP_ID)).rejects.toBeDefined();
     expect(mockLoggerError).toHaveBeenCalled();
   });
 });
@@ -201,17 +210,32 @@ describe('securityService.resolveAlert', () => {
   });
 
   it('resolves through the server-authored RPC', async () => {
-    mockRpc.mockResolvedValue({ data: { id: 'a1' }, error: null });
-    await securityService.resolveAlert('a1', 'legitimate alert');
+    mockRpc.mockResolvedValue({ data: { id: ALERT_ID }, error: null });
+    await securityService.resolveAlert(ALERT_ID, 'legitimate alert');
     expect(mockRpc).toHaveBeenCalledWith('resolve_security_alert', {
-      _alert_id: 'a1',
+      _alert_id: ALERT_ID,
       _note: 'legitimate alert',
     });
     expect(mockFrom).not.toHaveBeenCalledWith('security_alerts');
   });
 
+  it('treats blank note as absent and rejects overlong notes', async () => {
+    mockRpc.mockResolvedValue({ data: { id: ALERT_ID }, error: null });
+    await securityService.resolveAlert(ALERT_ID, '   ');
+    expect(mockRpc).toHaveBeenCalledWith('resolve_security_alert', {
+      _alert_id: ALERT_ID,
+      _note: undefined,
+    });
+    await expect(securityService.resolveAlert(ALERT_ID, 'x'.repeat(501))).rejects.toBeDefined();
+  });
+
+  it('rejects non-UUID alert ids', async () => {
+    await expect(securityService.resolveAlert('a1')).rejects.toBeDefined();
+    expect(mockRpc).not.toHaveBeenCalled();
+  });
+
   it('throws on DB error', async () => {
     mockRpc.mockResolvedValue({ data: null, error: { message: 'fail' } });
-    await expect(securityService.resolveAlert('a1')).rejects.toBeDefined();
+    await expect(securityService.resolveAlert(ALERT_ID)).rejects.toBeDefined();
   });
 });

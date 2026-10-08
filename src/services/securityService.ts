@@ -1,8 +1,12 @@
 // Tabelas de segurança estão deliberadamente fora do gateway genérico. Este
 // cliente fala com o PostgREST canônico usando o JWT do usuário, portanto as
 // policies RLS admin-only continuam sendo a fronteira de autorização.
+import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client.base';
+import { uuidPg } from '@/schemas/common';
 import { loggerService } from './loggerService';
+
+const resolutionNoteSchema = z.string().trim().min(1).max(500);
 
 export interface SecurityAlert {
   id: string;
@@ -64,8 +68,8 @@ export const securityService = {
   },
 
   async unblockIp(id: string) {
-    if (!id) throw new Error('ID é obrigatório');
-    const { error } = await supabase.from('blocked_ips').delete().eq('id', id);
+    const validId = uuidPg('ID do IP bloqueado inválido').parse(id);
+    const { error } = await supabase.from('blocked_ips').delete().eq('id', validId);
     if (error) {
       loggerService.error('Error unblocking IP', { id }, error);
       throw error;
@@ -126,12 +130,15 @@ export const securityService = {
   },
 
   async resolveAlert(id: string, note?: string) {
-    if (!id) throw new Error('ID do alerta é obrigatório');
+    const validId = uuidPg('ID do alerta inválido').parse(id);
+    // `note || undefined` preservado: string vazia/só espaços segue como
+    // ausência de nota, não como nota inválida.
+    const validNote = note?.trim() ? resolutionNoteSchema.parse(note) : undefined;
     // A autoria é derivada de auth.uid() dentro da RPC. Aceitar `resolved_by`
     // vindo do browser permitiria a um admin forjar o autor da resolução.
     const { error } = await supabase.rpc('resolve_security_alert', {
-      _alert_id: id,
-      _note: note || undefined,
+      _alert_id: validId,
+      _note: validNote,
     });
     if (error) {
       loggerService.error('Error resolving alert', { id }, error);
