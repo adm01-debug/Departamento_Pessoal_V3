@@ -35,7 +35,13 @@ const anon = runLivePermissions
   : (null as unknown as ReturnType<typeof createClient>);
 
 describe('Contrato do gate de permissões', () => {
-  it.skipIf(!isCI || isDependabotRun)('exige credenciais e opt-in explícito no CI', () => {
+  // E41: o gate fail-closed só é exigido no job dedicado `rls-live` (push main),
+  // que define REQUIRE_LIVE_RLS=true. No job de testes unitários a suíte roda
+  // sem backend real e este contrato é pulado — flakiness do Supabase não pode
+  // mais bloquear PR.
+  it.skipIf(process.env.REQUIRE_LIVE_RLS !== 'true')('exige credenciais e opt-in explícito no CI', () => {
+    expect(isCI).toBe(true);
+    expect(isDependabotRun).toBe(false);
     expect(hasCredentials).toBe(true);
     expect(process.env.RUN_LIVE_RLS_TESTS).toBe('true');
   });

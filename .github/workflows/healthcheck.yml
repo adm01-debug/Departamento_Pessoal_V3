@@ -39,10 +39,25 @@ jobs:
         run: |
           TITLE="🔴 Healthcheck falhou ($(date -u +%F\ %H:%M) UTC)"
           EXISTING=$(gh issue list --label healthcheck --state open --json number --jq '.[0].number' || true)
-          BODY="O healthcheck agendado falhou.\n\nRun: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\n\nVerificar runbook: infra/runbooks/RESPOSTA_INCIDENTES.md"
+          # E79: printf — a versão anterior escrevia `\n` literal no corpo.
+          BODY=$(printf 'O healthcheck agendado falhou.\n\nRun: %s/%s/actions/runs/%s\n\nVerificar runbook: infra/runbooks/RESPOSTA_INCIDENTES.md' "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID")
+          # Garante a label antes de criar — se `gh issue create --label` falha
+          # por label ausente, a issue era criada sem label e a deduplicação
+          # quebrava na rodada seguinte (D12).
+          gh label create healthcheck --force >/dev/null 2>&1 || true
           if [ -n "$EXISTING" ]; then
             gh issue comment "$EXISTING" --body "$BODY"
           else
-            gh issue create --title "$TITLE" --body "$BODY" --label healthcheck || \
-            gh issue create --title "$TITLE" --body "$BODY"
+            gh issue create --title "$TITLE" --body "$BODY" --label healthcheck
+          fi
+
+      - name: Fechar issue ao recuperar
+        # E80: ambiente voltou ao verde — encerra a issue aberta com evidência.
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          EXISTING=$(gh issue list --label healthcheck --state open --json number --jq '.[0].number' || true)
+          if [ -n "$EXISTING" ]; then
+            gh issue close "$EXISTING" --comment "Healthcheck voltou ao verde. Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
           fi

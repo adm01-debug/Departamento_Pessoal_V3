@@ -38,6 +38,17 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Gate de branch para apply
+        # E15/D4: DDL em produção só pode partir de código mergeado em main.
+        # Antes, `apply` era disparado de branches de feature — o DDL aplicado
+        # não correspondia a nenhum commit integrado.
+        if: inputs.mode == 'apply'
+        run: |
+          test "$GITHUB_REF" = 'refs/heads/main' || {
+            echo '::error::mode=apply só pode ser disparado a partir da branch main.'
+            exit 1
+          }
+
       - name: Validar confirmação e URL sem revelar segredo
         run: |
           set -euo pipefail
