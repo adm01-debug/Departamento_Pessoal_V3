@@ -1,5 +1,5 @@
 // V15-188: src/components/ui/currency-input.tsx
-import { useState } from 'react';
+import { useState, type HTMLAttributes } from 'react';
 import { cn } from '@/lib/utils';
 import { Input } from './input';
 
@@ -15,6 +15,14 @@ interface CurrencyInputProps {
    *  para não alterar a aparência dos usos existentes (ex.:
    *  RecontratarColaboradorDialog). */
   showPrefix?: boolean;
+  /**
+   * `inputMode` do `<input>` interno. Opcional e sem default: omitido, o
+   * atributo simplesmente não é renderizado e nada muda para os usos
+   * existentes. Usado pela Calculadora de Rescisão, cujos campos monetários
+   * precisam se anunciar como numéricos (teclado numérico no mobile e
+   * seletores `input[inputmode="numeric"]`).
+   */
+  inputMode?: HTMLAttributes<HTMLInputElement>['inputMode'];
 }
 
 const formatCurrency = (value: number): string => {
@@ -30,7 +38,15 @@ const parseCurrency = (value: string): number => {
   return parseInt(cleaned || '0', 10) / 100;
 };
 
-export function CurrencyInput({ value: controlledValue, onChange, placeholder = 'R$ 0,00', className, disabled, showPrefix }: CurrencyInputProps) {
+export function CurrencyInput({
+  value: controlledValue,
+  onChange,
+  placeholder = 'R$ 0,00',
+  className,
+  disabled,
+  showPrefix,
+  inputMode,
+}: CurrencyInputProps) {
   const format = showPrefix ? formatAmount : formatCurrency;
   const [displayValue, setDisplayValue] = useState(controlledValue !== undefined ? format(controlledValue) : '');
   const [lastControlled, setLastControlled] = useState(controlledValue);
@@ -38,7 +54,12 @@ export function CurrencyInput({ value: controlledValue, onChange, placeholder = 
   // Sincroniza com a prop controlada durante o render (sem useEffect/setState-in-effect).
   if (controlledValue !== lastControlled) {
     setLastControlled(controlledValue);
-    if (controlledValue !== undefined) setDisplayValue(format(controlledValue));
+    // `undefined` significa "campo vazio" (não "componente sem controle"): o
+    // display precisa VOLTAR ao placeholder, e não manter o último valor
+    // formatado — é o que um reset de formulário (ex.: "Limpar dados" da
+    // Calculadora de Rescisão) espera. Antes, o valor antigo ficava na tela
+    // mesmo com o pai já zerado.
+    setDisplayValue(controlledValue !== undefined ? format(controlledValue) : '');
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,19 +77,23 @@ export function CurrencyInput({ value: controlledValue, onChange, placeholder = 
         placeholder={placeholder}
         className={cn('text-right', className)}
         disabled={disabled}
+        inputMode={inputMode}
       />
     );
   }
 
   return (
     <div className="relative">
-      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground pointer-events-none">R$</span>
+      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground pointer-events-none">
+        R$
+      </span>
       <Input
         value={displayValue}
         onChange={handleChange}
         placeholder={placeholder.replace('R$ ', '')}
         className={cn('pl-9 text-left', className)}
         disabled={disabled}
+        inputMode={inputMode}
       />
     </div>
   );

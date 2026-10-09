@@ -11,6 +11,26 @@ vi.mock('framer-motion', () => ({
   useInView: () => true,
 }));
 
+// Os KPI agora contam de 0 até o valor com o `AnimatedNumber` do Dashboard
+// (mesmo mecanismo do `MetricCard`). Aqui interessa o VALOR FINAL resolvido, não
+// os quadros da contagem — então o contador é substituído pela própria saída
+// final, exatamente como em `MetricCard.test.tsx` (a animação em si é coberta
+// por `AnimatedNumber.test.tsx`).
+vi.mock('@/components/dashboard/AnimatedNumber', () => ({
+  AnimatedNumber: ({ value, format }: any) => (
+    <span>{format ? format(value) : String(value)}</span>
+  ),
+}));
+
+// O contador `AnimatedNumber` é um detalhe VISUAL (conta de 0 até o valor com
+// `requestAnimationFrame`); nos testes ele é substituído pela renderização do
+// valor FINAL, para a asserção continuar síncrona e determinística.
+vi.mock('@/components/dashboard/AnimatedNumber', () => ({
+  AnimatedNumber: ({ value, format }: { value: number; format?: (n: number) => string }) => (
+    <span>{format ? format(value) : String(value)}</span>
+  ),
+}));
+
 import { DesligamentoKPIs } from '../desligamentos/DesligamentoKPIs';
 
 const NOW = new Date();

@@ -41,6 +41,15 @@ export function isCalculadoraMockEnabled(): boolean {
 export interface ColaboradorDoSelectMock {
   id: string;
   nome_completo: string;
+  /**
+   * Campos EXTRAS da base fictícia, usados só para a busca do combobox aceitar
+   * nome/CPF/matrícula e para o card-resumo do colaborador selecionado. A
+   * consulta real continua lendo apenas `id, nome_completo` (`select` da tela
+   * não foi tocado), então estes dois vêm `undefined` fora do modo demo — o
+   * consumidor trata com fallback.
+   */
+  cpf?: string;
+  matricula?: string;
 }
 
 /**
@@ -52,6 +61,9 @@ export interface ColaboradorParaRescisaoMock {
   nome_completo: string;
   cpf: string;
   cargo: string;
+  departamento: string;
+  matricula: string;
+  foto_url: string | null;
   salario_base: number;
   data_admissao: string;
   saldo_fgts_estimado: number;
@@ -79,17 +91,20 @@ function ativosParaRescisao(): ColaboradorParaRescisaoMock[] {
     nome_completo: colaborador.nome_completo,
     cpf: colaborador.cpf,
     cargo: colaborador.cargo,
+    departamento: colaborador.departamento,
+    matricula: colaborador.matricula,
+    foto_url: colaborador.foto_url ?? null,
     salario_base: colaborador.salario_base,
     data_admissao: colaborador.data_admissao,
     saldo_fgts_estimado: fgtsEstimado(colaborador.salario_base, colaborador.data_admissao),
   }));
 }
 
-/** Opções do select, em ordem alfabética — `undefined` quando o mock está desligado. */
+/** Opções do combobox, em ordem alfabética — `undefined` quando o mock está desligado. */
 export function getMockColaboradoresParaRescisao(): ColaboradorDoSelectMock[] | undefined {
   if (!isCalculadoraMockEnabled()) return undefined;
   return ativosParaRescisao()
-    .map(({ id, nome_completo }) => ({ id, nome_completo }))
+    .map(({ id, nome_completo, cpf, matricula }) => ({ id, nome_completo, cpf, matricula }))
     .sort((a, b) => a.nome_completo.localeCompare(b.nome_completo));
 }
 

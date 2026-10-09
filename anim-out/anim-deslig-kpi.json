@@ -1,0 +1,30 @@
+{
+  "elementos": 5,
+  "inicio_ms": [
+    4421,
+    4475,
+    4553,
+    4610,
+    4688
+  ],
+  "stagger_ms": [
+    54,
+    78,
+    57,
+    78
+  ],
+  "textos_distintos_por_card": [
+    13,
+    5,
+    3,
+    4,
+    48
+  ],
+  "valores_finais": [
+    "Total Desligamentos12400%vs. perío",
+    "Pendentes4aguardando tratativa",
+    "Concluídos2processos encerrados",
+    "Este Mês3desligamentos no mês",
+    "Valor Total RescisõesR$ 56.098,759"
+  ]
+}

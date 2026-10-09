@@ -7,3 +7,4 @@ export { NovoDesligamentoDialog } from './NovoDesligamentoDialog';
 export { TurnoverChart } from './TurnoverChart';
 export { DesligamentoAtencaoBanner } from './DesligamentoAtencaoBanner';
 export { GestaoDesligamentos } from './GestaoDesligamentos';
+export { TrilhaAuditoriaDesligamentos } from './TrilhaAuditoriaDesligamentos';

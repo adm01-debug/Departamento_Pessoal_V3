@@ -14,7 +14,6 @@
  * ============================================================================
  */
 import { useMemo, useState, useTransition } from 'react';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -44,10 +43,11 @@ import {
   Trash2,
   UserMinus,
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { StatusBadge, TipoBadge } from './DesligamentoStatusBadge';
 import { DesligamentoFilters } from './DesligamentoFilters';
+import { MotionCard, entradaCard, EntradaPresenca } from './entradaCards';
 import { ETAPA_BADGE, ETAPA_LABELS, STATUS_LABELS } from './desligamentosComum';
 import {
   DIA_MS,
@@ -276,10 +276,13 @@ function EtapaPills({
   ativo,
   contagens,
   onSelecionar,
+  indexBase = 0,
 }: {
   ativo: string;
   contagens: Record<string, number>;
   onSelecionar: (v: string) => void;
+  /** Índice da primeira pill na cascata da seção (ver `entradaCard`). */
+  indexBase?: number;
 }) {
   return (
     // Ocupa 100% da largura do card "Processos" logo abaixo (mesmo pai). Em telas
@@ -287,12 +290,17 @@ function EtapaPills({
     // sem quebrar o texto nem estourar a página.
     <div className="w-full overflow-x-auto">
       <div className="grid w-full min-w-[640px] grid-cols-6 gap-2">
-        {ETAPA_PILULAS.map((p) => {
+        {ETAPA_PILULAS.map((p, i) => {
           const selecionada = ativo === p.value;
           return (
-            <button
+            // Entrada em cascata da faixa de etapas: `motion.button` é o MESMO
+            // nó `<button>` (mesmas classes, mesma geometria) — a faixa entra da
+            // esquerda para a direita e NÃO reanima ao trocar de etapa, porque a
+            // `key` de cada pill é estável (só monta uma vez).
+            <motion.button
               key={p.value}
               type="button"
+              {...entradaCard(indexBase + i)}
               onClick={() => onSelecionar(p.value)}
               className={cn(
                 'inline-flex w-full items-center justify-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1 text-xs font-body transition-colors',
@@ -311,7 +319,7 @@ function EtapaPills({
               >
                 {contagens[p.value] ?? 0}
               </span>
-            </button>
+            </motion.button>
           );
         })}
       </div>
@@ -525,14 +533,20 @@ function AcoesDropdown({ d, onOpenDetalhes, onCalcular, onExcluir }: { d: Deslig
 
 function CardsDesligamentos({ itens, hojeMs, ...acoes }: { itens: DesligamentoLike[]; hojeMs: number } & AcoesLinha) {
   return (
+    /* `EntradaPresenca` libera o keyframe `hidden` do grid inteiro (ver
+       entradaCards.tsx) — os cards de processo mantêm o próprio `index`. */
+    <EntradaPresenca>
     <div className="grid gap-3 p-3 sm:grid-cols-2 xl:grid-cols-3">
-      {itens.map((d) => {
+      {itens.map((d, indice) => {
         const data = dataValida(d.data_desligamento);
         return (
           <motion.div
             key={String(d.id)}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
+            // Entrada de referência (a mesma dos KPI do Dashboard), escalonada
+            // pela ordem do grid — `entradaCard` já limita o atraso a partir do
+            // 9º card. A `key` é o id do processo: filtrar/atualizar dados NÃO
+            // remonta quem já está na tela, então a entrada não reinicia.
+            {...entradaCard(indice)}
             onClick={() => acoes.onOpenDetalhes(d)}
             className="cursor-pointer rounded-xl border border-border/40 bg-card/60 p-3 transition-colors hover:border-primary/30 hover:bg-muted/20"
           >
@@ -571,6 +585,7 @@ function CardsDesligamentos({ itens, hojeMs, ...acoes }: { itens: DesligamentoLi
         );
       })}
     </div>
+    </EntradaPresenca>
   );
 }
 
@@ -679,7 +694,17 @@ export function GestaoDesligamentos({
   const inicioIdx = (paginaAtual - 1) * porPagina;
   const visiveis = useMemo(() => ordenados.slice(inicioIdx, inicioIdx + porPagina), [ordenados, inicioIdx, porPagina]);
 
-  const chaveCascata = `${paginaAtual}|${ordenacao}|${etapa}|${status}|${tipo}|${departamento}|${periodo}|${busca}|${visualizacao}`;
+  /**
+   * Chave da CASCATA de entrada da tabela: muda quando a LISTA muda de
+   * identidade — página, ordenação e filtros. É o `key` do `<tbody>` (via
+   * `CascadeTableBody`), então qualquer uma dessas trocas remonta as linhas e a
+   * cascata toca DE NOVO — mesma régua de `GestaoCandidatos.tsx`.
+   *
+   * A BUSCA textual fica FORA de propósito, igual à referência: reanimar a cada
+   * tecla faria a tabela PISCAR enquanto se digita (a lista continuaria sendo
+   * filtrada normalmente — só a cascata não reinicia).
+   */
+  const chaveCascata = `${paginaAtual}|${ordenacao}|${etapa}|${status}|${tipo}|${departamento}|${periodo}`;
 
   const toggleLinha = (id: string) => {
     setSelecionados((prev) => {
@@ -734,7 +759,21 @@ export function GestaoDesligamentos({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-start justify-between gap-3">
+      {/* ── CASCATA DA SEÇÃO ──────────────────────────────────────────────────
+          `EntradaPresenca` (ui/entrada-cards.tsx) devolve o keyframe inicial que
+          o `initial={false}` do `PageTransition` bloqueia; sem ela a barra de
+          filtros — que já trazia `custom/variants/initial/animate` — ficava com
+          animação MORTA (o elemento nascia na posição final). Não renderiza DOM:
+          cabeçalho, filtros e pills seguem filhos diretos do `space-y-4`.
+
+          HIERARQUIA (cada peça com UM único controle de entrada):
+            seção     cabeçalho 0 · filtros 1–4 · pills 5–10
+            painel    índice 7 da página (KPIs 0–4, alerta 5, gráfico 6)
+            lista     linhas do painel com a cascata própria do sistema
+                      (`CascadeTableBody`/`CascadeRow`), que toca DENTRO do
+                      painel já visível — uma camada, não duas no mesmo nó. */}
+      <EntradaPresenca>
+      <motion.div {...entradaCard(0)} className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex items-start gap-2">
           <UserMinus className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
           <div>
@@ -745,9 +784,10 @@ export function GestaoDesligamentos({
           </div>
         </div>
         <VisualizacaoToggle value={visualizacao} onChange={aoTrocarVisualizacao} />
-      </div>
+      </motion.div>
 
       <DesligamentoFilters
+        indexBase={1}
         search={busca}
         onSearchChange={comReset(setBusca)}
         statusFilter={status}
@@ -779,9 +819,16 @@ export function GestaoDesligamentos({
         </div>
       )}
 
-      <EtapaPills ativo={etapa} contagens={contagens} onSelecionar={comReset(setEtapa)} />
+      <EtapaPills indexBase={5} ativo={etapa} contagens={contagens} onSelecionar={comReset(setEtapa)} />
+      </EntradaPresenca>
 
-      <Card className="overflow-hidden rounded-2xl border-border/40 bg-card/60">
+      {/* Painel de gestão: mesmo `Card` de sempre (layout/dimensões intactos),
+          agora com a entrada de referência no CONTAINER — é o 7º bloco da
+          cascata da página (KPIs 0–4, alerta 5, gráfico 6, painel 7), na mesma
+          sequência em que aparecem na tela. `EntradaPresenca` é o que libera o
+          keyframe inicial bloqueado pelo `PageTransition`. */}
+      <EntradaPresenca>
+      <MotionCard {...entradaCard(7)} className="overflow-hidden rounded-2xl border-border/40 bg-card/60">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/30 px-4 py-3">
           <h3 className="flex items-center gap-2 font-display text-sm font-medium text-foreground">
             <List className="h-4 w-4 text-primary" />
@@ -820,27 +867,43 @@ export function GestaoDesligamentos({
           <EmptySearch search={busca} onClear={limparFiltros} />
         ) : (
           <>
-            {visualizacao === 'tabela' ? (
-              <TabelaDesligamentos
-                itens={visiveis}
-                hojeMs={hojeMs}
-                selecionados={selecionados}
-                onToggleTodos={toggleTodos}
-                onToggleLinha={toggleLinha}
-                chaveCascata={chaveCascata}
-                onOpenDetalhes={onOpenDetalhes}
-                onCalcular={onCalcular}
-                onExcluir={onExcluir}
-              />
-            ) : (
-              <CardsDesligamentos
-                itens={visiveis}
-                hojeMs={hojeMs}
-                onOpenDetalhes={onOpenDetalhes}
-                onCalcular={onCalcular}
-                onExcluir={onExcluir}
-              />
-            )}
+            {/* Transição discreta ao alternar Tabela/Cards — MESMA peça da
+                referência (`GestaoCandidatos`): um cross-fade curto (0.15s) que
+                troca a VISUALIZAÇÃO. Ela não anima as linhas: quem faz a cascata
+                da lista é o `CascadeTableBody`, que continua tocando por dentro
+                (o `AnimatePresence` local dele ignora o `initial={false}` deste
+                contexto, exatamente como na tabela Candidatos). */}
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={visualizacao}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+              >
+                {visualizacao === 'tabela' ? (
+                  <TabelaDesligamentos
+                    itens={visiveis}
+                    hojeMs={hojeMs}
+                    selecionados={selecionados}
+                    onToggleTodos={toggleTodos}
+                    onToggleLinha={toggleLinha}
+                    chaveCascata={chaveCascata}
+                    onOpenDetalhes={onOpenDetalhes}
+                    onCalcular={onCalcular}
+                    onExcluir={onExcluir}
+                  />
+                ) : (
+                  <CardsDesligamentos
+                    itens={visiveis}
+                    hojeMs={hojeMs}
+                    onOpenDetalhes={onOpenDetalhes}
+                    onCalcular={onCalcular}
+                    onExcluir={onExcluir}
+                  />
+                )}
+              </motion.div>
+            </AnimatePresence>
 
             <Paginacao
               inicio={inicioIdx + 1}
@@ -858,7 +921,8 @@ export function GestaoDesligamentos({
             />
           </>
         )}
-      </Card>
+      </MotionCard>
+      </EntradaPresenca>
     </div>
   );
 }

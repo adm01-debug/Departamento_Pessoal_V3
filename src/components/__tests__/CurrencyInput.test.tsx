@@ -42,6 +42,15 @@ describe('CurrencyInput', () => {
     expect(onChange).toHaveBeenCalledWith(0);
   });
 
+  it('volta ao placeholder quando o valor controlado vira undefined (reset)', () => {
+    const { rerender } = render(<CurrencyInput value={4500} />);
+    const input = () => screen.getByTestId('currency-input') as HTMLInputElement;
+    expect(input().value).toContain('4.500');
+
+    rerender(<CurrencyInput value={undefined} />);
+    expect(input().value).toBe('');
+  });
+
   it('is disabled when disabled prop is true', () => {
     render(<CurrencyInput disabled />);
     const input = screen.getByTestId('currency-input') as HTMLInputElement;

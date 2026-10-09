@@ -2,9 +2,11 @@ import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 're
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Line, ComposedChart } from 'recharts';
-import { AnimatePresence, motion, MotionConfig, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, motion, MotionConfig } from 'framer-motion';
+import { MOTION_REDUCED_MODE, useMovimentoReduzido } from '@/lib/motionMode';
 import { ChartColumn } from 'lucide-react';
 import { construirSerieMensal, type DesligamentoLike } from './desligamentosDerivacoes';
+import { entradaCard, EntradaPresenca } from './entradaCards';
 
 interface TurnoverChartProps {
   desligamentos: DesligamentoLike[];
@@ -113,15 +115,11 @@ function TooltipEvolucao({
 export function TurnoverChart({ desligamentos, index = 0 }: TurnoverChartProps) {
   const [meses, setMeses] = useState('12');
 
-  // Preferência de movimento reduzido do sistema (hook já existente).
-  const prefereReduzirMovimento = useReducedMotion() ?? false;
-  // Exceção EXCLUSIVA do ambiente de desenvolvimento: força a animação deste
-  // gráfico mesmo com "reduzir movimento" ligado no SO (para poder observá-la
-  // localmente). Em PRODUÇÃO a preferência de acessibilidade é respeitada.
-  const forcarAnimacaoLocal = import.meta.env.DEV;
-  // DECISÃO ÚNICA — usada por todas as séries; nenhuma delas consulta a
-  // preferência original diretamente.
-  const reduzMovimento = !forcarAnimacaoLocal && prefereReduzirMovimento;
+  // DECISÃO ÚNICA — FONTE ÚNICA de movimento reduzido (`src/lib/motionMode.ts`).
+  // O override de dev (movimento completo) agora é central; a antiga "exceção
+  // local" (`import.meta.env.DEV`) foi removida por ser implementação
+  // concorrente ao modo único. Usada por todas as séries do gráfico.
+  const reduzMovimento = useMovimentoReduzido();
 
   const serie = useMemo(() => construirSerieMensal(desligamentos, Number(meses), new Date()), [desligamentos, meses]);
   // Rótulo "Nov/25" derivado do `key` (ex.: "2025-11") — formatação só aqui, sem
@@ -329,15 +327,18 @@ export function TurnoverChart({ desligamentos, index = 0 }: TurnoverChartProps) 
 
 
   return (
-    <MotionConfig reducedMotion={forcarAnimacaoLocal ? 'never' : 'user'}>
+    <MotionConfig reducedMotion={MOTION_REDUCED_MODE}>
+      {/* `EntradaPresenca` (ver entradaCards.tsx): libera o keyframe `hidden` que o
+          `initial={false}` do PageTransition bloqueia. O `MotionConfig` de fora
+          segue mandando no movimento reduzido — a entrada respeita o sistema. */}
+      <EntradaPresenca>
       <motion.div
-        custom={index}
-        variants={{
-          hidden: { opacity: 0, y: 20 },
-          visible: (i: number) => ({ opacity: 1, y: 0, transition: { delay: i * 0.08, duration: 0.4 } }),
-        }}
-        initial="hidden"
-        animate="visible"
+        // Entrada de container = MESMA animação dos KPI do Dashboard (`cardVariants`).
+        // Só o CONTAINER do card anima: as animações internas do gráfico (linhas
+        // sendo desenhadas e revelação progressiva das áreas, controladas por
+        // `fase`/RAF abaixo) ficam intocadas — e, como o card não remonta em
+        // re-render/filtro, a entrada não reinicia o desenho.
+        {...entradaCard(index)}
       >
         <Card variant="flat" className="rounded-xl border-border/40">
           <div className="flex flex-wrap items-center justify-between gap-3 px-4 pb-2 pt-3">
@@ -473,6 +474,7 @@ export function TurnoverChart({ desligamentos, index = 0 }: TurnoverChartProps) 
           </CardContent>
         </Card>
       </motion.div>
+      </EntradaPresenca>
     </MotionConfig>
   );
 }

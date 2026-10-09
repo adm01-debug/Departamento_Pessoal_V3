@@ -77,6 +77,9 @@ export default {
         'glow-xp': '0 0 20px -5px hsl(var(--xp) / 0.4)',
         'glow-coins': '0 0 20px -5px hsl(var(--coins) / 0.4)',
         'glow-streak': '0 0 20px -5px hsl(var(--streak) / 0.4)',
+        // Glow vermelho do botão "Novo Desligamento" (Desligamentos) — mesma régua
+        // dos demais glows, na variante VIBRANTE do vermelho (`--destructive-vivid`).
+        'glow-destructive': '0 0 20px -5px hsl(var(--destructive-vivid) / 0.4)',
         elevated: '0 10px 30px -10px hsl(var(--foreground) / 0.1)',
         glass: '0 8px 32px 0 hsl(var(--foreground) / 0.06)',
       },

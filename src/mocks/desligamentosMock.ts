@@ -768,11 +768,18 @@ export interface TrilhaAuditoriaMockRow {
 /** Datas relativas a "agora" — mantém a trilha sempre com atividade recente. */
 const agoraTrilha = Date.now();
 const minAtras = (m: number) => new Date(agoraTrilha - m * 60_000).toISOString();
+/** Nº de dias atrás (mesma régua do mock inteiro: sempre relativo a "agora"). */
+const diasAtras = (d: number) => new Date(agoraTrilha - d * 86_400_000).toISOString();
 
 const EMAIL_RH = 'rh.promobrindes@empresa.com.br';
 const EMAIL_GESTOR = 'gestor.regional@empresa.com.br';
+/** Autores extras usados pelas linhas de LAYOUT (ver bloco abaixo). */
+const EMAIL_DP = 'ana.martins@empresa.com.br';
+const EMAIL_FINANCEIRO = 'simone.rodrigues@empresa.com.br';
 const UA_CHROME =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36';
+const UA_SAFARI =
+  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.1 Safari/605.1.15';
 
 /**
  * Registros fictícios da trilha — cobrem as ações do fluxo de desligamento
@@ -791,6 +798,20 @@ const TRILHA_DESLIGAMENTOS: TrilhaAuditoriaMockRow[] = [
   { id: 'log-dsl-0003', tabela: 'desligamentos', registro_id: 'dsl-2026-0035', acao: 'EXECUTE_CALC', user_id: null, user_email: null, ip_address: null, user_agent: null, dados_anteriores: null, dados_novos: { evento: 'S-2299', status: 'enviado', recibo: null, competencia: '2026-09' }, created_at: minAtras(892) },
   { id: 'log-dsl-0002', tabela: 'desligamentos', registro_id: 'dsl-2026-0034', acao: 'INSERT', user_id: 'usr-0002', user_email: EMAIL_GESTOR, ip_address: '177.92.4.108', user_agent: UA_CHROME, dados_anteriores: null, dados_novos: { colaborador: 'Marcos Antunes', tipo: 'termino_contrato', data_desligamento: '2026-10-30', status: 'pendente' }, created_at: minAtras(1080) },
   { id: 'log-dsl-0001', tabela: 'desligamentos', registro_id: 'dsl-2026-0033', acao: 'UPDATE', user_id: 'usr-0001', user_email: EMAIL_RH, ip_address: '191.36.14.22', user_agent: UA_CHROME, dados_anteriores: { status: 'em_aviso' }, dados_novos: { status: 'concluido', data_efetiva: '2026-10-01' }, created_at: minAtras(1265) },
+
+  /* ── Linhas de LAYOUT da Trilha de Auditoria ──────────────────────────────
+   * Cobrem as categorias que faltavam nos registros acima (visualização,
+   * exportação, simulação e geração de documento) para a faixa de chips e os
+   * três níveis da trilha terem dado REAL em todas as colunas. Mesmo contrato
+   * dos demais registros deste mock: só apresentação, nada de escrita. */
+  { id: 'log-dsl-0011', tabela: 'desligamentos', registro_id: 'dsl-2026-0041', acao: 'VIEW', user_id: 'usr-0004', user_email: EMAIL_DP, ip_address: '189.5.77.14', user_agent: UA_CHROME, dados_anteriores: null, dados_novos: { secao: 'Resumo do Desligamento', origem: 'Aplicação Web' }, created_at: minAtras(26) },
+  { id: 'log-dsl-0012', tabela: 'desligamentos', registro_id: 'dsl-2026-0040', acao: 'SIMULATION_CALC', user_id: 'usr-0005', user_email: EMAIL_FINANCEIRO, ip_address: '177.92.4.108', user_agent: UA_SAFARI, dados_anteriores: null, dados_novos: { valor_simulado: 5102.33, competencia: '2026-09' }, created_at: minAtras(96) },
+  { id: 'log-dsl-0013', tabela: 'desligamentos', registro_id: 'dsl-2026-0038', acao: 'UPDATE', user_id: 'usr-0002', user_email: EMAIL_GESTOR, ip_address: '177.92.4.108', user_agent: UA_CHROME, dados_anteriores: { responsavel: 'Camila Ribeiro' }, dados_novos: { responsavel: 'Bruno Cardoso' }, created_at: minAtras(340) },
+  { id: 'log-dsl-0014', tabela: 'desligamentos', registro_id: 'dsl-2026-0041', acao: 'UPDATE', user_id: 'usr-0004', user_email: EMAIL_DP, ip_address: '189.5.77.14', user_agent: UA_CHROME, dados_anteriores: { documentos_validados: 4 }, dados_novos: { documentos_validados: 6 }, created_at: minAtras(612) },
+  { id: 'log-dsl-0015', tabela: 'desligamentos', registro_id: 'dsl-2026-0041', acao: 'GENERATE_DOC', user_id: null, user_email: null, ip_address: null, user_agent: null, dados_anteriores: null, dados_novos: { documento: 'Carta de Rescisão', formato: 'PDF' }, created_at: minAtras(908) },
+  { id: 'log-dsl-0016', tabela: 'desligamentos', registro_id: 'dsl-2026-0037', acao: 'EXPORT', user_id: 'usr-0001', user_email: EMAIL_RH, ip_address: '191.36.14.22', user_agent: UA_CHROME, dados_anteriores: null, dados_novos: { formato: 'CSV' }, created_at: diasAtras(2) },
+  { id: 'log-dsl-0017', tabela: 'desligamentos', registro_id: 'dsl-2026-0035', acao: 'UPDATE', user_id: 'usr-0002', user_email: EMAIL_GESTOR, ip_address: '177.92.4.108', user_agent: UA_CHROME, dados_anteriores: { status: 'calculado' }, dados_novos: { status: 'cancelado' }, created_at: diasAtras(3) },
+  { id: 'log-dsl-0018', tabela: 'desligamentos', registro_id: 'dsl-2026-0034', acao: 'UPDATE', user_id: 'usr-0001', user_email: EMAIL_RH, ip_address: '191.36.14.22', user_agent: UA_CHROME, dados_anteriores: null, dados_novos: { documentos: 6 }, created_at: diasAtras(4) },
 ];
 
 /**

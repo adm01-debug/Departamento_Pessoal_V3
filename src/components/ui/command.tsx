@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Command as CommandPrimitive } from 'cmdk';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { useMovimentoReduzido } from '@/lib/motionMode';
 import { cn } from '@/lib/utils';
 import { Search } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -86,12 +87,17 @@ const CommandItem = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Item>
 >(({ className, children, ...props }, ref) => {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useMovimentoReduzido();
   return (
     <CommandPrimitive.Item
       ref={ref}
+      // `data-[disabled=true]` e não `data-[disabled]`: o cmdk grava o atributo
+      // SEMPRE (`data-disabled="false"` nos itens ativos), então a variante de
+      // presença (`data-[disabled]`) casava em TODOS os itens — `pointer-events:
+      // none` matava o clique do mouse em qualquer combobox cmdk do app. Só a
+      // variante com valor isola os itens realmente desabilitados.
       className={cn(
-        'relative flex cursor-default select-none items-center rounded-xs px-2 py-1.5 text-sm outline-hidden aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+        'relative flex cursor-default select-none items-center rounded-xs px-2 py-1.5 text-sm outline-hidden aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50',
         className,
       )}
       {...props}

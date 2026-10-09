@@ -1,0 +1,22 @@
+{
+  "elementos": 3,
+  "inicio_ms": [
+    6635,
+    6732,
+    6823
+  ],
+  "stagger_ms": [
+    97,
+    91
+  ],
+  "textos_distintos_por_card": [
+    40,
+    39,
+    40
+  ],
+  "valores_finais": [
+    "ProventosR$ 16.181,45",
+    "DescontosR$ 634,16",
+    "Valor líquidoR$ 25.585,09"
+  ]
+}

@@ -124,8 +124,8 @@ describe('DesligamentoDetailSheet', () => {
     expect(screen.getByText('Rescisão')).toBeInTheDocument();
   });
 
-  it('renders Etapa Atual card when etapa is set', () => {
+  it('renders Andamento do processo card when etapa is set', () => {
     render(<DesligamentoDetailSheet desligamento={MOCK_DESL} open={true} onClose={vi.fn()} />);
-    expect(screen.getByText('Etapa Atual')).toBeInTheDocument();
+    expect(screen.getByText('Andamento do processo')).toBeInTheDocument();
   });
 });

@@ -1,0 +1,16 @@
+{
+  "total": 18,
+  "finalCount": 18,
+  "caixaAntes": {
+    "x": 301,
+    "y": 417.3125,
+    "width": 1094,
+    "height": 108.5
+  },
+  "caixaDepois": {
+    "x": 301,
+    "y": 351.3125,
+    "width": 1094,
+    "height": 108.5
+  }
+}

@@ -76,6 +76,14 @@ interface MetricCardProps {
    * pela faixa de KPIs de Desligamentos (`DesligamentoKPIs`).
    */
   dense?: boolean;
+  /**
+   * Casas decimais PRESERVADAS na contagem do `AnimatedNumber` (padrão `0` =
+   * inteiro, o comportamento histórico). Use `2` quando o KPI for MONETÁRIO
+   * com centavos: sem isso a contagem arredondaria e o texto final divergiria
+   * do valor real. Opcional e com default que preserva o comportamento atual,
+   * então nenhum call site existente muda de aparência.
+   */
+  decimals?: number;
 }
 
 const defaultRoutes: Record<string, string> = {
@@ -101,6 +109,7 @@ export function MetricCard({
   className,
   vividRed = false,
   dense = false,
+  decimals = 0,
 }: MetricCardProps) {
   const isPositive = trend && trend.value >= 0;
   const target = route ?? defaultRoutes[title];
@@ -152,6 +161,7 @@ export function MetricCard({
             {rawValue !== undefined ? (
               <AnimatedNumber
                 value={rawValue}
+                decimals={decimals}
                 format={
                   formatFn || (typeof value === 'string' && value.includes('R$') ? (n) => formatCurrency(n) : undefined)
                 }

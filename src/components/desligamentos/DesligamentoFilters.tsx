@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, SlidersHorizontal, X } from 'lucide-react';
-import { cardVariants } from '@/components/dashboard/MetricCard';
+import { entradaCard } from '@/components/ui/entrada-cards';
 import { STATUS_LABELS, TIPO_LABELS } from './desligamentosComum';
 
 interface FiltersProps {
@@ -25,6 +25,12 @@ interface FiltersProps {
   onLimpar?: () => void;
   /** Há algum filtro ativo? Controla a visibilidade de "Limpar filtros". */
   filtroAtivo?: boolean;
+  /**
+   * Índice da PRIMEIRA peça da barra na cascata da seção (ver `entradaCard`):
+   * a busca é `indexBase`, o status `indexBase + 1` e assim por diante. Default
+   * `0` mantém o comportamento de quem já chamava o componente sem a prop.
+   */
+  indexBase?: number;
 }
 
 const STATUS_OPTIONS = [
@@ -97,6 +103,7 @@ export function DesligamentoFilters({
   onPeriodoChange,
   onLimpar,
   filtroAtivo = false,
+  indexBase = 0,
 }: FiltersProps) {
   const [maisFiltros, setMaisFiltros] = useState(false);
 
@@ -110,11 +117,11 @@ export function DesligamentoFilters({
   return (
     <div className="space-y-2.5">
       <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+        {/* Cada peça da barra recebe UM único controle de entrada, com o índice
+            corrido da seção (`entradaCard` — a MESMA régua dos KPI Cards do
+            Dashboard Executivo). O `motion.div` é o mesmo nó `div` de antes. */}
         <motion.div
-          custom={0}
-          variants={cardVariants}
-          initial="hidden"
-          animate="visible"
+          {...entradaCard(indexBase)}
           className="relative min-w-[140px] flex-1"
         >
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -127,13 +134,13 @@ export function DesligamentoFilters({
           />
         </motion.div>
 
-        <motion.div custom={1} variants={cardVariants} initial="hidden" animate="visible">
+        <motion.div {...entradaCard(indexBase + 1)}>
           <FiltroSelect label="Status" value={statusFilter} onChange={onStatusChange} options={STATUS_OPTIONS} className="w-[168px] min-w-[120px]" />
         </motion.div>
-        <motion.div custom={2} variants={cardVariants} initial="hidden" animate="visible">
+        <motion.div {...entradaCard(indexBase + 2)}>
           <FiltroSelect label="Tipo de Desligamento" value={tipoFilter} onChange={onTipoChange} options={TIPO_OPTIONS} className="w-[190px] min-w-[130px]" />
         </motion.div>
-        <motion.div custom={3} variants={cardVariants} initial="hidden" animate="visible">
+        <motion.div {...entradaCard(indexBase + 3)}>
           <FiltroSelect
             label="Departamento"
             value={departamentoFilter}
@@ -143,6 +150,16 @@ export function DesligamentoFilters({
           />
         </motion.div>
 
+        {/* Fecho da barra: os dois botões de AÇÃO entram como UM grupo (índice
+            seguinte ao do Departamento), mantendo a geometria original — em
+            coluna no mobile e em linha no desktop, como antes. O grupo monta uma
+            única vez, então "Limpar filtros" (que aparece/some conforme o estado
+            dos filtros) NÃO reanima a cada mudança: a animação é de
+            apresentação, não de estado. */}
+        <motion.div
+          {...entradaCard(indexBase + 4)}
+          className="flex flex-col gap-2 sm:flex-row sm:items-center"
+        >
         {filtroAtivo && onLimpar && (
           <Button
             variant="default"
@@ -165,6 +182,7 @@ export function DesligamentoFilters({
           <SlidersHorizontal className="h-3.5 w-3.5" />
           Mais filtros
         </Button>
+        </motion.div>
       </div>
 
       {maisFiltros && (

@@ -45,6 +45,8 @@ export function DesligamentoKPIs({ desligamentos }: KPIProps) {
       {
         label: 'Total Desligamentos',
         value: String(desligamentos.length),
+        rawValue: desligamentos.length,
+        moeda: false,
         icon: UserMinus,
         tone: 'destructive' as MetricTone,
         amostra: desligamentos,
@@ -53,6 +55,8 @@ export function DesligamentoKPIs({ desligamentos }: KPIProps) {
       {
         label: 'Pendentes',
         value: String(pendentes.length),
+        rawValue: pendentes.length,
+        moeda: false,
         icon: Clock,
         tone: 'warning' as MetricTone,
         amostra: pendentes,
@@ -61,6 +65,8 @@ export function DesligamentoKPIs({ desligamentos }: KPIProps) {
       {
         label: 'Concluídos',
         value: String(concluidos.length),
+        rawValue: concluidos.length,
+        moeda: false,
         icon: CheckCircle2,
         tone: 'success' as MetricTone,
         amostra: concluidos,
@@ -69,6 +75,8 @@ export function DesligamentoKPIs({ desligamentos }: KPIProps) {
       {
         label: 'Este Mês',
         value: String(esteMes.length),
+        rawValue: esteMes.length,
+        moeda: false,
         icon: CalendarDays,
         tone: 'info' as MetricTone,
         amostra: esteMes,
@@ -77,6 +85,8 @@ export function DesligamentoKPIs({ desligamentos }: KPIProps) {
       {
         label: 'Valor Total Rescisões',
         value: formatCurrencyBRL(valorTotal),
+        rawValue: valorTotal,
+        moeda: true,
         icon: DollarSign,
         tone: 'primary' as MetricTone,
         amostra: [],
@@ -93,6 +103,9 @@ export function DesligamentoKPIs({ desligamentos }: KPIProps) {
           index={index}
           title={kpi.label}
           value={kpi.value}
+          rawValue={kpi.rawValue}
+          formatFn={kpi.moeda ? formatCurrencyBRL : undefined}
+          decimals={kpi.moeda ? 2 : 0}
           icon={kpi.icon}
           tone={kpi.tone}
           vividRed

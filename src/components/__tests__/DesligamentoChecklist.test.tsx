@@ -6,7 +6,13 @@ vi.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...rest }: any) => <div {...rest}>{children}</div>,
     button: ({ children, ...rest }: any) => <button {...rest}>{children}</button>,
+    // `motion.create(Card)` e `AnimatePresence` entram via
+    // `desligamentos/entradaCards` (a entrada de referência do Dashboard):
+    // o mock precisa cobrir a API real que o módulo usa.
+    create: (c: any) => c,
   },
+  AnimatePresence: ({ children }: any) => <>{children}</>,
+  useReducedMotion: () => false,
 }));
 
 import { DesligamentoChecklist } from '../desligamentos/DesligamentoChecklist';

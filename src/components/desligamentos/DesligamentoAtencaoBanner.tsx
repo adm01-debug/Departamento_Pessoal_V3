@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { AlertTriangle, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cardVariants } from '@/components/dashboard/MetricCard';
+import { EntradaPresenca } from './entradaCards';
 import type { ResumoAtencao } from './desligamentosDerivacoes';
 
 interface Props {
@@ -30,11 +31,14 @@ export function DesligamentoAtencaoBanner({ resumo, onVerProcessos, index = 0 }:
   ];
 
   return (
-    <motion.div
-      custom={index}
-      variants={cardVariants}
-      initial="hidden"
-      animate="visible"
+    /* `EntradaPresenca`: sem ela o `initial={false}` do `PageTransition` bloqueia
+       o keyframe `hidden` e a faixa não entra (ver entradaCards.tsx). */
+    <EntradaPresenca>
+      <motion.div
+        custom={index}
+        variants={cardVariants}
+        initial="hidden"
+        animate="visible"
       className={
         temAlerta
           ? 'flex flex-col gap-3 rounded-2xl border border-destructive-vivid/30 bg-destructive-vivid/[0.07] px-4 py-3 sm:flex-row sm:items-center sm:justify-between'
@@ -102,5 +106,6 @@ export function DesligamentoAtencaoBanner({ resumo, onVerProcessos, index = 0 }:
         <ArrowRight className="h-3.5 w-3.5" />
       </Button>
     </motion.div>
+    </EntradaPresenca>
   );
 }

@@ -1,10 +1,9 @@
 import { PageTitle } from '@/components/PageTitle';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -14,6 +13,8 @@ import { useEmpresas } from '@/hooks';
 import { toast } from 'sonner';
 import { Target, Users, TrendingUp, Star, LayoutGrid, History, BarChart2, Calendar } from 'lucide-react';
 import { PerformanceDashboard } from '@/components/avaliacao/PerformanceDashboard';
+import { TodosCiclosTable } from '@/components/avaliacao/TodosCiclosTable';
+import { NovoCicloDialog } from '@/components/avaliacao/NovoCicloDialog';
 import { NineBoxMatrix } from '@/components/avaliacao/NineBoxMatrix';
 import { PerformanceAuditTimeline } from '@/components/avaliacao/PerformanceAuditTimeline';
 import { Progress } from '@/components/ui/progress';
@@ -29,19 +30,13 @@ import {
   isDesempenhoMockEnabled,
 } from '@/mocks/desempenhoMock';
 
-const statusColors: Record<string, string> = { 
-  rascunho: 'secondary', 
-  ativo: 'default', 
-  finalizado: 'outline', 
-  pendente: 'secondary', 
-  em_andamento: 'default', 
-  concluido: 'outline' 
-};
-
 export default function AvaliacaoPage() {
   const { empresaAtual } = useEmpresas();
   const qc = useQueryClient();
   const [tab, setTab] = useState('ciclos');
+  // Ciclo em destaque no painel; `undefined` = usuário ainda não escolheu
+  // (o padrão passa a ser o ciclo ativo detectado nos dados reais).
+  const [cicloSelecionadoId, setCicloSelecionadoId] = useState<string | undefined>(undefined);
 
   // === Queries ===
   // MOCK VISUAL — ver src/mocks/desempenhoMock.ts. Com o mock ligado, cada
@@ -80,65 +75,113 @@ export default function AvaliacaoPage() {
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['pdis'] }); toast.success('PDI criado!'); }});
 
+  const excluirCiclo = useMutation({
+    mutationFn: (c: any) => {
+      if (bloquearEscritaDesempenho('Excluir ciclo de avaliação')) return Promise.reject(new Error('mock'));
+      return avaliacaoService.excluirCiclo(c.id, empresaAtual!.id);
+    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['ciclos_avaliacao'] }); toast.success('Ciclo excluído!'); }});
+
   const isLoading = loadCiclos || loadMetas || loadFeedbacks || loadPDIs || loadComp;
+
+  // === Derivados ===
+  // Ciclo em destaque: prioriza o ATIVO real (`status='ativo'`), depois o que
+  // está `em_andamento` e, por fim, o mais recente — sem inventar seleção.
+  const cicloAtivo = useMemo(
+    () =>
+      ciclos.find((c: any) => c.status === 'ativo') ??
+      ciclos.find((c: any) => c.status === 'em_andamento') ??
+      ciclos[0] ??
+      null,
+    [ciclos],
+  );
+
+  const cicloSelecionado = useMemo(
+    () => ciclos.find((c: any) => c.id === cicloSelecionadoId) ?? cicloAtivo,
+    [ciclos, cicloSelecionadoId, cicloAtivo],
+  );
 
   return (
     <>
       <PageTitle title="Performance & Gestão 10/10" description="Acompanhamento estratégico de talentos" />
-      <PageLayout 
-        title="Gestão de Desempenho" 
-        description="Ciclos, Metas, Feedbacks e PDI integrados" 
-        icon={<Target className="h-5 w-5 text-primary-foreground" />} 
-        gradient="from-warning to-primary"
+      <PageLayout
+        title="Gestão de Desempenho"
+        description="Ciclos, Metas, Feedbacks e PDI integrados"
+        icon={<Target className="h-5 w-5 text-primary-foreground" />}
+        gradient="from-primary to-primary-glow"
       >
-        <Tabs value={tab} onValueChange={setTab} className="space-y-6">
-          <TabsList className="bg-muted/50 p-1 rounded-xl">
-            <TabsTrigger value="ciclos" className="rounded-lg gap-2"><BarChart2 className="h-4 w-4" /> Ciclos</TabsTrigger>
-            <TabsTrigger value="metas" className="rounded-lg gap-2"><Target className="h-4 w-4" /> Metas & OKRs</TabsTrigger>
-            <TabsTrigger value="feedbacks" className="rounded-lg gap-2"><Users className="h-4 w-4" /> Feedbacks</TabsTrigger>
-            <TabsTrigger value="pdis" className="rounded-lg gap-2"><TrendingUp className="h-4 w-4" /> PDI</TabsTrigger>
-          <TabsTrigger value="ninebox" className="rounded-lg gap-2"><LayoutGrid className="h-4 w-4" /> Nine-Box</TabsTrigger>
-          <TabsTrigger value="auditoria" className="rounded-lg gap-2"><History className="h-4 w-4" /> Auditoria</TabsTrigger>
-        </TabsList>
+        <Tabs value={tab} onValueChange={setTab} className="space-y-5">
+          {/* Faixa de navegação compacta + seletor de ciclo + ação principal */}
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+            <TabsList className="h-11 w-full justify-start gap-1 overflow-x-auto rounded-xl border border-border/30 bg-card/50 p-1 lg:min-w-0 lg:flex-1">
+              <TabsTrigger value="ciclos" className="group h-9 shrink-0 gap-1.5 rounded-lg px-3 text-xs lg:flex-1">
+                <BarChart2 className="h-3.5 w-3.5 text-muted-foreground transition-colors group-data-[state=active]:text-primary" />
+                <span className="text-muted-foreground transition-colors group-data-[state=active]:text-primary">Ciclos</span>
+              </TabsTrigger>
+              <TabsTrigger value="metas" className="group h-9 shrink-0 gap-1.5 rounded-lg px-3 text-xs lg:flex-1">
+                <Target className="h-3.5 w-3.5 text-muted-foreground transition-colors group-data-[state=active]:text-primary" />
+                <span className="text-muted-foreground transition-colors group-data-[state=active]:text-primary">Metas & OKRs</span>
+              </TabsTrigger>
+              <TabsTrigger value="feedbacks" className="group h-9 shrink-0 gap-1.5 rounded-lg px-3 text-xs lg:flex-1">
+                <Users className="h-3.5 w-3.5 text-muted-foreground transition-colors group-data-[state=active]:text-primary" />
+                <span className="text-muted-foreground transition-colors group-data-[state=active]:text-primary">Feedbacks</span>
+              </TabsTrigger>
+              <TabsTrigger value="pdis" className="group h-9 shrink-0 gap-1.5 rounded-lg px-3 text-xs lg:flex-1">
+                <TrendingUp className="h-3.5 w-3.5 text-muted-foreground transition-colors group-data-[state=active]:text-primary" />
+                <span className="text-muted-foreground transition-colors group-data-[state=active]:text-primary">PDI</span>
+              </TabsTrigger>
+              <TabsTrigger value="ninebox" className="group h-9 shrink-0 gap-1.5 rounded-lg px-3 text-xs lg:flex-1">
+                <LayoutGrid className="h-3.5 w-3.5 text-muted-foreground transition-colors group-data-[state=active]:text-primary" />
+                <span className="text-muted-foreground transition-colors group-data-[state=active]:text-primary">Nine-Box</span>
+              </TabsTrigger>
+              <TabsTrigger value="auditoria" className="group h-9 shrink-0 gap-1.5 rounded-lg px-3 text-xs lg:flex-1">
+                <History className="h-3.5 w-3.5 text-muted-foreground transition-colors group-data-[state=active]:text-primary" />
+                <span className="text-muted-foreground transition-colors group-data-[state=active]:text-primary">Auditoria</span>
+              </TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="ciclos" className="space-y-6">
-            <PerformanceDashboard 
-               stats={{ ciclos: ciclos.length, metas: metas.length, feedbacks: feedbacks.length, pdis: pdis.length, competencias: competencias.length }}
-               feedbacks={feedbacks}
-               metas={metas}
+            <div className="flex items-center gap-2 lg:shrink-0">
+              <Select value={cicloSelecionado?.id ?? ''} onValueChange={setCicloSelecionadoId}>
+                <SelectTrigger className="h-10 w-full gap-2 sm:w-[240px]">
+                  <Calendar className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                  <SelectValue placeholder="Selecionar ciclo" />
+                </SelectTrigger>
+                <SelectContent>
+                  {ciclos.length === 0 ? (
+                    <SelectItem value="__vazio" disabled>
+                      Nenhum ciclo cadastrado
+                    </SelectItem>
+                  ) : (
+                    ciclos.map((c: any) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.nome}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+              <NovoCicloDialog onSubmit={(dados) => criarCiclo.mutate(dados)} salvando={criarCiclo.isPending} />
+            </div>
+          </div>
+
+          <TabsContent value="ciclos" className="space-y-5">
+            <PerformanceDashboard
+              stats={{ ciclos: ciclos.length, metas: metas.length, feedbacks: feedbacks.length, pdis: pdis.length, competencias: competencias.length }}
+              feedbacks={feedbacks}
+              metas={metas}
+              pdis={pdis}
+              ciclo={cicloSelecionado}
+              onNavigate={setTab}
             />
 
-            <div className="rounded-2xl border border-border/30 overflow-hidden shadow-elevated bg-card">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-muted/30">
-                    <TableHead className="font-display font-semibold">Ciclo de Avaliação</TableHead>
-                    <TableHead className="font-display font-semibold">Tipo</TableHead>
-                    <TableHead className="font-display font-semibold">Período</TableHead>
-                    <TableHead className="font-display font-semibold">Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {ciclos.length === 0 ? <TableRow><TableCell colSpan={4} className="text-center py-12 text-muted-foreground">Nenhum ciclo cadastrado</TableCell></TableRow> :
-                    ciclos.map((c: any) => (
-                      <TableRow key={c.id} className="hover:bg-accent/20 transition-colors">
-                        <TableCell>
-                          <div className="flex flex-col">
-                            <span className="font-medium text-sm">{c.nome}</span>
-                            <span className="text-[10px] text-muted-foreground">{c.descricao}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="capitalize text-xs">{c.tipo}</TableCell>
-                        <TableCell className="text-xs text-muted-foreground">
-                          {new Date(c.data_inicio).toLocaleDateString('pt-BR')} - {new Date(c.data_fim).toLocaleDateString('pt-BR')}
-                        </TableCell>
-                        <TableCell><Badge variant={(statusColors[c.status] || 'secondary') as any}>{c.status}</Badge></TableCell>
-                      </TableRow>
-                    ))
-                  }
-                </TableBody>
-              </Table>
-            </div>
+            <TodosCiclosTable
+              ciclos={ciclos}
+              metas={metas}
+              cicloSelecionadoId={cicloSelecionado?.id}
+              onSelecionar={(c: any) => setCicloSelecionadoId(c.id)}
+              onExcluir={(c: any) => excluirCiclo.mutate(c)}
+              excluindo={excluirCiclo.isPending}
+            />
           </TabsContent>
 
           <TabsContent value="metas" className="space-y-6">
