@@ -1,0 +1,119 @@
+{
+  "width": 1600,
+  "tablist": {
+    "top": 162,
+    "bottom": 206,
+    "height": 44,
+    "left": 280,
+    "right": 1217,
+    "width": 937,
+    "className": "inline-flex items-center text-muted-foreground h-11 w-full justify-start gap-1 overflow-x-auto rounded-xl border border-border/30 bg-card/50 p-1 lg:grid lg:min-w-0 lg:flex-1 lg:grid-cols-6 lg:overflow-visible",
+    "overflowX": "visible",
+    "overflowY": "visible",
+    "clientHeight": 42,
+    "scrollHeight": 42,
+    "clientWidth": 935,
+    "scrollWidth": 935,
+    "scrollVertical": false,
+    "scrollHorizontal": false
+  },
+  "abas": [
+    {
+      "texto": "Ciclos",
+      "box": {
+        "top": 168,
+        "bottom": 200,
+        "height": 32,
+        "left": 285,
+        "right": 436,
+        "width": 151
+      },
+      "cortado": false
+    },
+    {
+      "texto": "Metas & OKRs",
+      "box": {
+        "top": 168,
+        "bottom": 200,
+        "height": 32,
+        "left": 440,
+        "right": 591,
+        "width": 151
+      },
+      "cortado": false
+    },
+    {
+      "texto": "Feedbacks",
+      "box": {
+        "top": 168,
+        "bottom": 200,
+        "height": 32,
+        "left": 595,
+        "right": 747,
+        "width": 151
+      },
+      "cortado": false
+    },
+    {
+      "texto": "PDI",
+      "box": {
+        "top": 168,
+        "bottom": 200,
+        "height": 32,
+        "left": 751,
+        "right": 902,
+        "width": 151
+      },
+      "cortado": false
+    },
+    {
+      "texto": "Nine-Box",
+      "box": {
+        "top": 168,
+        "bottom": 200,
+        "height": 32,
+        "left": 906,
+        "right": 1057,
+        "width": 151
+      },
+      "cortado": false
+    },
+    {
+      "texto": "Auditoria",
+      "box": {
+        "top": 168,
+        "bottom": 200,
+        "height": 32,
+        "left": 1061,
+        "right": 1212,
+        "width": 151
+      },
+      "cortado": false
+    }
+  ],
+  "seletorCiclo": {
+    "top": 162,
+    "bottom": 206,
+    "height": 44,
+    "left": 1229,
+    "right": 1459,
+    "width": 230
+  },
+  "novoCiclo": {
+    "top": 162,
+    "bottom": 206,
+    "height": 44,
+    "left": 1471,
+    "right": 1576,
+    "width": 105
+  },
+  "cardCicloAtivo": {
+    "top": 226,
+    "bottom": 399,
+    "height": 173,
+    "left": 280,
+    "right": 1576,
+    "width": 1296
+  },
+  "viewportWidth": 1600
+}

@@ -95,7 +95,10 @@ export function NovoCicloDialog({ onSubmit, salvando }: NovoCicloDialogProps) {
       }}
     >
       <DialogTrigger asChild>
-        <Button size="sm" className="h-10 gap-1.5 bg-gradient-to-r from-primary to-primary-glow text-primary-foreground shadow-glow-sm">
+        <Button
+          size="sm"
+          className="h-11 gap-1.5 rounded-xl bg-gradient-to-r from-primary to-primary-glow text-primary-foreground shadow-glow-sm"
+        >
           <Plus className="h-4 w-4" /> Novo Ciclo
         </Button>
       </DialogTrigger>
