@@ -20,7 +20,7 @@ function sessionWith(token = 'jwt-1') {
 
 const okRes = (body: string) => new Response(body, { status: 200, headers: { 'Content-Type': 'application/json' } });
 
-const req = { message: 'Como calcular férias?', empresaRegime: 'simples' };
+const req = { message: 'Como calcular férias?', empresaRegime: 'clt' as const };
 
 describe('assistenteIAService', () => {
   let fetchMock: ReturnType<typeof vi.fn>;
@@ -44,7 +44,7 @@ describe('assistenteIAService', () => {
     expect((init.headers as Record<string, string>).Authorization).toBe('Bearer jwt-1');
     const body = JSON.parse(init.body as string);
     expect(body.message).toBe('Como calcular férias?');
-    expect(body.regime).toBe('simples');
+    expect(body.regime).toBe('clt');
     expect(body.history).toHaveLength(10); // MAX_HISTORY
   });
 
