@@ -108,14 +108,20 @@ async function remessaConcorrente(
 // Claim atômico de remessa pendente: só o primeiro UPDATE que casa
 // status='pendente' leva a linha (o bridge devolve as linhas atualizadas).
 // 'processando' parado >10min é tentativa abortada e pode ser retomado.
-async function claimRemessa(remessaId: string): Promise<CnabRemessaRecord | null> {
+// O filtro de banco impede retomar remessa de outro banco (config trocada):
+// sem claim, cai no re-query que rejeita banco divergente.
+async function claimRemessa(remessaId: string, bancoCodigo: string): Promise<CnabRemessaRecord | null> {
   const payload = validateTablePayload(
     'cnab_remessas',
     { status: 'processando' } as Partial<CnabRemessaRecord>,
     'cnabService:cnab_remessas'
   );
   const table = () => supabase.from('cnab_remessas') as unknown as QueryBuilderType;
-  const fresh = await table().update(payload).eq('id', remessaId).eq('status', 'pendente');
+  const fresh = await table()
+    .update(payload)
+    .eq('id', remessaId)
+    .eq('status', 'pendente')
+    .eq('banco_codigo', bancoCodigo);
   const freshRows = (fresh.data ?? []) as CnabRemessaRecord[];
   if (freshRows.length > 0) return freshRows[0];
   const staleBefore = new Date(Date.now() - 10 * 60 * 1000).toISOString();
@@ -123,6 +129,7 @@ async function claimRemessa(remessaId: string): Promise<CnabRemessaRecord | null
     .update(payload)
     .eq('id', remessaId)
     .eq('status', 'processando')
+    .eq('banco_codigo', bancoCodigo)
     .lt('updated_at', staleBefore);
   const staleRows = (stale.data ?? []) as CnabRemessaRecord[];
   return staleRows[0] ?? null;
@@ -258,7 +265,7 @@ export const cnabService = {
     let remessaRecord: CnabRemessaRecord;
     const existingRec = existingRemessa as CnabRemessaRecord | null;
     if (existingRec && (existingRec.status === 'pendente' || existingRec.status === 'processando')) {
-      const claimed = await claimRemessa(existingRec.id);
+      const claimed = await claimRemessa(existingRec.id, config.banco_codigo);
       if (!claimed)
         return remessaConcorrente(empresaId, folhaId, new Error('Remessa em geração concorrente'), config.banco_codigo);
       remessaRecord = claimed;
@@ -672,7 +679,7 @@ export const cnabService = {
     let remessaRecord: CnabRemessaRecord;
     const existingRec400 = existingRemessa as CnabRemessaRecord | null;
     if (existingRec400 && (existingRec400.status === 'pendente' || existingRec400.status === 'processando')) {
-      const claimed = await claimRemessa(existingRec400.id);
+      const claimed = await claimRemessa(existingRec400.id, config.banco_codigo);
       if (!claimed)
         return remessaConcorrente(empresaId, folhaId, new Error('Remessa em geração concorrente'), config.banco_codigo);
       remessaRecord = claimed;
