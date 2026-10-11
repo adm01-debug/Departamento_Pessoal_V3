@@ -128,7 +128,8 @@ jobs:
             20261011161000_cnab_remessa_unica.sql \
             20261011170000_check_constraints_integridade.sql \
             20261011180000_check_constraints_financeiro.sql \
-            20261011190000_check_constraints_recursos.sql
+            20261011190000_check_constraints_recursos.sql \
+            20261011200000_check_constraints_operacional.sql
           do
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
           done
@@ -186,7 +187,7 @@ jobs:
           SELECT jsonb_build_object(
             'ledger_count', (
               SELECT count(*) FROM supabase_migrations.schema_migrations
-              WHERE version IN ('20261011160000','20261011161000','20261011170000','20261011180000','20261011190000')
+              WHERE version IN ('20261011160000','20261011161000','20261011170000','20261011180000','20261011190000','20261011200000')
             ),
             'cnab_seq_table_ok', to_regclass('public.cnab_sequencias') IS NOT NULL,
             'cnab_remessa_uniq_ok', to_regclass('public.cnab_remessas_empresa_folha_uniq') IS NOT NULL,
@@ -194,7 +195,8 @@ jobs:
               SELECT count(*) FROM pg_constraint WHERE conname IN (
                 'ferias_datas_coerentes','batidas_precisao_positiva',
                 'emprestimos_valor_total_positivo','benef_colab_vigencia_coerente',
-                'faixas_maximo_coerente','candidaturas_nota_faixa'
+                'faixas_maximo_coerente','candidaturas_nota_faixa',
+                'promocoes_salarios_nao_negativos'
               )
             ),
             'search_path_ok', EXISTS (
@@ -224,10 +226,10 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 5 &&
+              Number(r.ledger_count) === 6 &&
               r.cnab_seq_table_ok === true &&
               r.cnab_remessa_uniq_ok === true &&
-              Number(r.check_constraints_count) === 6 &&
+              Number(r.check_constraints_count) === 7 &&
               r.search_path_ok === true &&
               r.rls_helper_ok === true &&
               r.admin_list_ok === true &&
