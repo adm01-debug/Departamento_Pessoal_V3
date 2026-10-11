@@ -187,11 +187,12 @@ export const cnabService = {
     // Fetch monotonically increasing sequence per (empresa, banco) — fixes C46
     // hardcoded=1. Alocado antes do insert: sequencial_arquivo é NOT NULL sem
     // default no canônico.
-    const { data: seqData } = await supabase.rpc('next_cnab_sequencial', {
+    const { data: seqData, error: seqError } = await supabase.rpc('next_cnab_sequencial', {
       p_empresa_id: empresaId,
       p_banco_codigo: config.banco_codigo,
     });
-    const sequence = (seqData as number) || 1;
+    if (seqError || seqData == null) throw seqError ?? new Error('Falha ao alocar sequencial CNAB');
+    const sequence = seqData as number;
 
     // Re-use pending remessa from a failed previous attempt; otherwise create new.
     let remessaRecord: CnabRemessaRecord;
@@ -595,11 +596,12 @@ export const cnabService = {
     // ── 4. Sequencial + remessa pendente ────────────────────────────
     // sequencial_arquivo é NOT NULL sem default no canônico — alocar via RPC
     // monotônica por (empresa, banco), igual ao CNAB240.
-    const { data: seqData400 } = await supabase.rpc('next_cnab_sequencial', {
+    const { data: seqData400, error: seqError400 } = await supabase.rpc('next_cnab_sequencial', {
       p_empresa_id: empresaId,
       p_banco_codigo: config.banco_codigo,
     });
-    const sequence = (seqData400 as number) || 1;
+    if (seqError400 || seqData400 == null) throw seqError400 ?? new Error('Falha ao alocar sequencial CNAB');
+    const sequence = seqData400 as number;
 
     const valorTotal = typedItens.reduce((acc, i) => acc + Number(i.total_liquido), 0);
     const { data: remessa, error: rError } = await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)

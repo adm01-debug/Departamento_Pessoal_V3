@@ -464,6 +464,19 @@ describe('cnabService.generateCNAB240', () => {
     expect(mockFrom).toHaveBeenCalledTimes(2);
   });
 
+  it('propaga falha da RPC de sequencial em vez de reutilizar o número 1', async () => {
+    const updRemessa = makeChain({ data: null, error: null });
+    mockTables({
+      config: CONFIG,
+      itens: ITENS,
+      contas: CONTAS,
+      remessasSeq: [makeChain({ data: null, error: null }), makeChain({ data: REMESSA, error: null }), updRemessa],
+    });
+    mockRpc.mockResolvedValue({ data: null, error: { message: 'rpc down' } });
+    await expect(cnabService.generateCNAB240(EMP, FOLHA)).rejects.toThrow('rpc down');
+    expect(updRemessa.update).not.toHaveBeenCalled();
+  });
+
   it('reutiliza remessa pendente sem criar nova (recuperação de tentativa falha)', async () => {
     const updRemessa = makeChain({ data: null, error: null });
     mockTables({
@@ -672,5 +685,15 @@ describe('cnabService.generateCNAB400', () => {
       remessasSeq: [makeChain({ data: null, error: null })],
     });
     await expect(cnabService.generateCNAB400(EMP, FOLHA, { banco_codigo: '001' })).rejects.toThrow('Nenhum pagamento');
+  });
+
+  it('propaga falha da RPC de sequencial em vez de reutilizar o número 1', async () => {
+    mockTables({
+      itens: ITENS,
+      contas: CONTAS,
+      remessasSeq: [makeChain({ data: null, error: null }), makeChain({ data: REMESSA, error: null })],
+    });
+    mockRpc.mockResolvedValue({ data: null, error: { message: 'rpc down' } });
+    await expect(cnabService.generateCNAB400(EMP, FOLHA, { banco_codigo: '001' })).rejects.toThrow('rpc down');
   });
 });
