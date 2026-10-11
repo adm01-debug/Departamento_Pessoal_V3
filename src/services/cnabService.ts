@@ -721,9 +721,9 @@ export const cnabService = {
       fmt(config.nome_empresa ?? 'EMPRESA', 30, 'A'), // 023-052: nome empresa
       fmt('', 7, 'A'), // 053-059: brancos
       dateStr, // 060-065: data DDMMAA
-      fmt('', 294, 'A'), // 066-359: brancos
-      '000001', // 360-365: endereco banco? não — sequencial 6dig
-      seqFile, // 366-371: sequencial 5dig
+      fmt('', 295, 'A'), // 066-360: brancos
+      '000001', // 361-366: endereco banco? não — sequencial 6dig
+      seqFile, // 367-371: sequencial 5dig
       fmt('', 29, 'A'), // 372-400: brancos
     ].join('');
 
@@ -819,10 +819,10 @@ export const cnabService = {
     }
 
     // ── 8. Trailer de arquivo (tipo 9) ─────────────────────────────
-    // Layout: 1 ('9') + 392 brancos + 17 soma valores + 6 total registros = 400
+    // Layout: 1 ('9') + 376 brancos + 17 soma valores + 6 total registros = 400
     const somaFmt = fmt(String(Math.round(somaValores * 100)), 17, 'N');
     const totalRegistros = String(seqLine).padStart(6, '0');
-    const blanks = ''.padEnd(392, ' ');
+    const blanks = ''.padEnd(376, ' ');
     const trailer = '9' + blanks + somaFmt + totalRegistros;
     if (trailer.length !== 400) {
       lines.push(trailer.substring(0, 400).padEnd(400, ' '));
