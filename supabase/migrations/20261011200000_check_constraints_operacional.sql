@@ -18,7 +18,7 @@ BEGIN
       ('exames',                 'exames_validade_coerente',         'data_validade IS NULL OR data_exame IS NULL OR data_validade >= data_exame'),
       ('desligamentos',          'desligamentos_componentes_nao_neg','COALESCE(salario_base,0) >= 0 AND COALESCE(saldo_salario,0) >= 0 AND COALESCE(aviso_previo,0) >= 0 AND COALESCE(ferias_vencidas,0) >= 0 AND COALESCE(ferias_proporcionais,0) >= 0 AND COALESCE(terco_constitucional,0) >= 0 AND COALESCE(decimo_terceiro,0) >= 0 AND COALESCE(multa_fgts,0) >= 0'),
       ('cnab_itens',             'cnab_itens_valor_positivo',        'valor_pagamento > 0'),
-      ('escalas',                'escalas_ciclo_valido',             'dias_trabalho BETWEEN 1 AND 7 AND COALESCE(dias_folga,0) BETWEEN 0 AND 6 AND COALESCE(intervalo_minutos,0) >= 0'),
+      ('escalas',                'escalas_ciclo_valido',             '(dias_trabalho IS NULL OR dias_trabalho BETWEEN 1 AND 7) AND COALESCE(dias_folga,0) BETWEEN 0 AND 6 AND COALESCE(intervalo_minutos,0) >= 0'),
       ('jornadas',               'jornadas_carga_plausivel',         'carga_horaria_semanal IS NULL OR (carga_horaria_semanal > 0 AND carga_horaria_semanal <= 80)'),
       ('jornadas_horarios',      'jornadas_horarios_dia_valido',     'dia_semana BETWEEN 0 AND 7'),
       ('treinamentos',           'treinamentos_carga_nao_negativa',  'carga_horaria IS NULL OR carga_horaria >= 0'),
