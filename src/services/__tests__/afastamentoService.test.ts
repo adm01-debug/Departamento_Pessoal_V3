@@ -509,6 +509,7 @@ describe('afastamentoService.listarProrrogacoes / criarProrrogacao', () => {
     mockFrom.mockReturnValue(chain);
     const r = await afastamentoService.listarProrrogacoes('af-1', EMPRESA_ID);
     expect(r).toEqual([{ id: 'p1' }]);
+    expect(chain.select).toHaveBeenCalledWith(expect.stringContaining('afastamento:afastamentos!inner('));
     expect(chain.eq).toHaveBeenCalledWith('afastamento_id', 'af-1');
     expect(chain.eq).toHaveBeenCalledWith('afastamento.empresa_id', EMPRESA_ID);
   });
@@ -562,7 +563,7 @@ describe('afastamentoService.exportarRelatorio', () => {
         status: 'ativo',
       },
     ];
-    vi.spyOn(afastamentoService, 'listar').mockResolvedValue({ data: rows, total: 1 } as never);
+    const listar = vi.spyOn(afastamentoService, 'listar').mockResolvedValue({ data: rows, total: 1 } as never);
     const create = vi.fn(() => 'blob:x');
     const revoke = vi.fn();
     vi.stubGlobal('URL', { ...URL, createObjectURL: create, revokeObjectURL: revoke });
@@ -571,6 +572,15 @@ describe('afastamentoService.exportarRelatorio', () => {
     expect(r).toBe(rows);
     expect(click).toHaveBeenCalled();
     expect(revoke).toHaveBeenCalledWith('blob:x');
+    expect(listar).toHaveBeenCalledWith({
+      filters: { status: 'ativo', empresa_id: EMPRESA_ID },
+    });
+    const blob = create.mock.calls[0][0] as Blob;
+    const csv = await blob.text();
+    const linhas = csv.split('\n');
+    expect(linhas[0]).toContain('Colaborador');
+    expect(linhas[0]).toContain('INSS');
+    expect(linhas[1]).toBe('abcd,Ana,doenca,-,2026-01-01,2026-01-10,10,10,0,ativo');
     vi.unstubAllGlobals();
   });
 
