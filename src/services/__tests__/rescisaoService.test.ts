@@ -29,6 +29,20 @@ describe('rescisaoService', () => {
     (supabase.from as unknown as ReturnType<typeof vi.fn>).mockReset();
   });
 
+  // Chain padrão `select(...).eq().eq().single()` usada pelos fetches.
+  const fetchChain = (data: unknown, error: unknown = null) => ({
+    select: vi.fn().mockReturnThis(),
+    eq: vi.fn().mockReturnThis(),
+    single: vi.fn().mockResolvedValue({ data, error }),
+  });
+  // Chain `update(...).eq().eq().select().single()` dos updates finais.
+  const updateChain = (updateFn: ReturnType<typeof vi.fn>, row: unknown) => ({
+    update: updateFn,
+    eq: vi.fn().mockReturnThis(),
+    select: vi.fn().mockReturnThis(),
+    single: vi.fn().mockResolvedValue({ data: row, error: null }),
+  });
+
   describe('validarTransicao', () => {
     it('should block jumping more than one stage', async () => {
       (supabase.from as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
@@ -186,20 +200,11 @@ describe('rescisaoService', () => {
       const upsertFn = vi.fn().mockResolvedValue({ data: null, error: null });
       fromMock
         // 1) fetch do desligamento
-        .mockReturnValueOnce({
-          select: vi.fn().mockReturnThis(),
-          eq: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue({ data: desligRow, error: null }),
-        })
+        .mockReturnValueOnce(fetchChain(desligRow))
         // 2) upsert em homologacoes_rescisao
         .mockReturnValueOnce({ upsert: upsertFn })
         // 3) update do desligamento
-        .mockReturnValueOnce({
-          update: updateFn,
-          eq: vi.fn().mockReturnThis(),
-          select: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue({ data: updatedRow, error: null }),
-        });
+        .mockReturnValueOnce(updateChain(updateFn, updatedRow));
       return { updateFn, upsertFn };
     }
 
@@ -232,24 +237,13 @@ describe('rescisaoService', () => {
 
     it('rejeita homologar sem cálculo salvo', async () => {
       const fromMock = supabase.from as unknown as ReturnType<typeof vi.fn>;
-      fromMock.mockReturnValueOnce({
-        select: vi.fn().mockReturnThis(),
-        eq: vi.fn().mockReturnThis(),
-        single: vi.fn().mockResolvedValue({
-          data: { ...desligRow, valor_liquido: null },
-          error: null,
-        }),
-      });
+      fromMock.mockReturnValueOnce(fetchChain({ ...desligRow, valor_liquido: null }));
       await expect(rescisaoService.homologar('d1', EMP, 'rh')).rejects.toThrow(/exige que o cálculo/);
     });
 
     it('propaga erro do fetch', async () => {
       const fromMock = supabase.from as unknown as ReturnType<typeof vi.fn>;
-      fromMock.mockReturnValueOnce({
-        select: vi.fn().mockReturnThis(),
-        eq: vi.fn().mockReturnThis(),
-        single: vi.fn().mockResolvedValue({ data: null, error: { message: 'row not found' } }),
-      });
+      fromMock.mockReturnValueOnce(fetchChain(null, { message: 'row not found' }));
       // O catch de homologar embrulha erros não-Error na mensagem genérica.
       await expect(rescisaoService.homologar('d1', EMP, 'rh')).rejects.toThrow(/Erro ao processar homologação/);
     });
@@ -278,18 +272,9 @@ describe('rescisaoService', () => {
       const colabEq1 = vi.fn().mockReturnValue({ eq: colabEq2 });
       fromMock
         // 1) fetch do desligamento
-        .mockReturnValueOnce({
-          select: vi.fn().mockReturnThis(),
-          eq: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue({ data: opts.deslig ?? desligRow, error: null }),
-        })
+        .mockReturnValueOnce(fetchChain(opts.deslig ?? desligRow))
         // 2) update do desligamento → pago
-        .mockReturnValueOnce({
-          update: desligUpdate,
-          eq: vi.fn().mockReturnThis(),
-          select: vi.fn().mockReturnThis(),
-          single: vi.fn().mockResolvedValue({ data: opts.updateRow ?? { id: 'd1', status: 'pago' }, error: null }),
-        })
+        .mockReturnValueOnce(updateChain(desligUpdate, opts.updateRow ?? { id: 'd1', status: 'pago' }))
         // 3) update do colaborador → desligado
         .mockReturnValueOnce({ update: colabUpdate, eq: colabEq1 });
       return { desligUpdate, colabUpdate };
