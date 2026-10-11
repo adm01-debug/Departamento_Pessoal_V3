@@ -77,23 +77,71 @@ interface FolhaItemRecord {
 
 type DataRecord = Record<string, unknown>;
 
-function isUniqueViolation(e: unknown): boolean {
-  return (e as { code?: string } | null)?.code === '23505';
-}
-
-// Uma remessa por folha é garantida por índice único parcial — quem perde a
-// corrida do INSERT reusa o arquivo já publicado ou aborta com geração em
-// andamento, em vez de produzir um segundo arquivo bancário.
-async function remessaJaExistente(empresaId: string, folhaId: string): Promise<string> {
+// Uma remessa por folha é garantida por índice único parcial. O bridge troca o
+// código pg 23505 por INSERT_ERROR, então o detect da corrida é o re-query:
+// achou remessa do mesmo banco → reusa arquivo 'enviado' ou aborta com geração
+// em andamento; banco diferente → rejeita (nunca devolve arquivo de outro
+// banco); não achou → o erro era outro e volta a propagar.
+async function remessaConcorrente(
+  empresaId: string,
+  folhaId: string,
+  original: unknown,
+  bancoCodigo: string
+): Promise<string> {
   const { data } = await supabase
     .from('cnab_remessas')
-    .select('status, arquivo_remessa')
+    .select('status, arquivo_remessa, banco_codigo')
     .eq('empresa_id', empresaId)
     .eq('folha_id', folhaId)
     .maybeSingle();
-  const rec = data as Pick<CnabRemessaRecord, 'status' | 'arquivo_remessa'> | null;
-  if (rec?.status === 'enviado' && rec.arquivo_remessa) return rec.arquivo_remessa;
-  throw new Error('Remessa já está sendo gerada para esta folha — aguarde e tente novamente.');
+  const rec = data as Pick<CnabRemessaRecord, 'status' | 'arquivo_remessa' | 'banco_codigo'> | null;
+  if (rec?.status === 'enviado' && rec.arquivo_remessa && rec.banco_codigo === bancoCodigo) {
+    return rec.arquivo_remessa;
+  }
+  if (rec?.status === 'enviado') {
+    throw new Error(`Folha já possui remessa enviada para outro banco (${rec.banco_codigo}).`);
+  }
+  if (rec) throw new Error('Remessa já está sendo gerada para esta folha — aguarde e tente novamente.');
+  throw original instanceof Error ? original : new Error('Falha ao criar remessa');
+}
+
+// Claim atômico de remessa pendente: só o primeiro UPDATE que casa
+// status='pendente' leva a linha (o bridge devolve as linhas atualizadas).
+// 'processando' parado >10min é tentativa abortada e pode ser retomado.
+// O filtro de banco impede retomar remessa de outro banco (config trocada):
+// sem claim, cai no re-query que rejeita banco divergente.
+async function claimRemessa(remessaId: string, bancoCodigo: string): Promise<CnabRemessaRecord | null> {
+  const payload = validateTablePayload(
+    'cnab_remessas',
+    { status: 'processando' } as Partial<CnabRemessaRecord>,
+    'cnabService:cnab_remessas'
+  );
+  const table = () => supabase.from('cnab_remessas') as unknown as QueryBuilderType;
+  const fresh = await table()
+    .update(payload)
+    .eq('id', remessaId)
+    .eq('status', 'pendente')
+    .eq('banco_codigo', bancoCodigo);
+  const freshRows = (fresh.data ?? []) as CnabRemessaRecord[];
+  if (freshRows.length > 0) return freshRows[0];
+  const staleBefore = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+  const stale = await table()
+    .update(payload)
+    .eq('id', remessaId)
+    .eq('status', 'processando')
+    .eq('banco_codigo', bancoCodigo)
+    .lt('updated_at', staleBefore);
+  const staleRows = (stale.data ?? []) as CnabRemessaRecord[];
+  return staleRows[0] ?? null;
+}
+
+// Recovery de tentativa abortada pode ter deixado itens gravados; sob o claim
+// exclusivo, limpar e regravar mantém a remessa idempotente.
+async function limparItensRemessa(remessaId: string): Promise<void> {
+  const { error } = await (supabase.from('cnab_itens') as unknown as QueryBuilderType)
+    .delete()
+    .eq('remessa_id', remessaId);
+  if (error) throw error;
 }
 
 export const cnabService = {
@@ -215,8 +263,13 @@ export const cnabService = {
 
     // Re-use pending remessa from a failed previous attempt; otherwise create new.
     let remessaRecord: CnabRemessaRecord;
-    if (existingRemessa && (existingRemessa as CnabRemessaRecord).status === 'pendente') {
-      remessaRecord = existingRemessa as CnabRemessaRecord;
+    const existingRec = existingRemessa as CnabRemessaRecord | null;
+    if (existingRec && (existingRec.status === 'pendente' || existingRec.status === 'processando')) {
+      const claimed = await claimRemessa(existingRec.id, config.banco_codigo);
+      if (!claimed)
+        return remessaConcorrente(empresaId, folhaId, new Error('Remessa em geração concorrente'), config.banco_codigo);
+      remessaRecord = claimed;
+      await limparItensRemessa(remessaRecord.id);
     } else {
       const { data: remessa, error: rError } = await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
         .insert(
@@ -239,10 +292,7 @@ export const cnabService = {
         .select()
         .single();
 
-      if (rError || !remessa) {
-        if (isUniqueViolation(rError)) return remessaJaExistente(empresaId, folhaId);
-        throw rError || new Error('Falha ao criar remessa');
-      }
+      if (rError || !remessa) return remessaConcorrente(empresaId, folhaId, rError, config.banco_codigo);
       remessaRecord = remessa as CnabRemessaRecord;
     }
 
@@ -626,32 +676,39 @@ export const cnabService = {
     const sequence = seqData400 as number;
 
     const valorTotal = typedItens.reduce((acc, i) => acc + Number(i.total_liquido), 0);
-    const { data: remessa, error: rError } = await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
-      .insert(
-        validateTablePayload(
-          'cnab_remessas',
-          [
-            {
-              empresa_id: empresaId,
-              folha_id: folhaId,
-              banco_codigo: config.banco_codigo,
-              status: 'pendente',
-              valor_total: valorTotal,
-              total_pagamentos: typedItens.length,
-              sequencial_arquivo: sequence,
-            },
-          ],
-          'cnabService:cnab_remessas'
+    let remessaRecord: CnabRemessaRecord;
+    const existingRec400 = existingRemessa as CnabRemessaRecord | null;
+    if (existingRec400 && (existingRec400.status === 'pendente' || existingRec400.status === 'processando')) {
+      const claimed = await claimRemessa(existingRec400.id, config.banco_codigo);
+      if (!claimed)
+        return remessaConcorrente(empresaId, folhaId, new Error('Remessa em geração concorrente'), config.banco_codigo);
+      remessaRecord = claimed;
+      await limparItensRemessa(remessaRecord.id);
+    } else {
+      const { data: remessa, error: rError } = await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
+        .insert(
+          validateTablePayload(
+            'cnab_remessas',
+            [
+              {
+                empresa_id: empresaId,
+                folha_id: folhaId,
+                banco_codigo: config.banco_codigo,
+                status: 'pendente',
+                valor_total: valorTotal,
+                total_pagamentos: typedItens.length,
+                sequencial_arquivo: sequence,
+              },
+            ],
+            'cnabService:cnab_remessas'
+          )
         )
-      )
-      .select()
-      .single();
+        .select()
+        .single();
 
-    if (rError || !remessa) {
-      if (isUniqueViolation(rError)) return remessaJaExistente(empresaId, folhaId);
-      throw rError || new Error('Falha ao criar remessa');
+      if (rError || !remessa) return remessaConcorrente(empresaId, folhaId, rError, config.banco_codigo);
+      remessaRecord = remessa as CnabRemessaRecord;
     }
-    const remessaRecord = remessa as CnabRemessaRecord;
 
     // ── 5. Helpers de formatação CNAB 400 ─────────────────────────────
     /**
