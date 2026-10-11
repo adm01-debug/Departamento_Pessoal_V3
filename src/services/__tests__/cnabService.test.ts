@@ -477,6 +477,34 @@ describe('cnabService.generateCNAB240', () => {
     expect(updRemessa.update).not.toHaveBeenCalled();
   });
 
+  it('corrida de insert (23505) retorna o arquivo da remessa vencedora', async () => {
+    mockTables({
+      config: CONFIG,
+      itens: ITENS,
+      contas: CONTAS,
+      remessasSeq: [
+        makeChain({ data: null, error: null }),
+        makeChain({ data: null, error: { message: 'dup', code: '23505' } }),
+        makeChain({ data: { status: 'enviado', arquivo_remessa: 'ARQ_CONCORRENTE' }, error: null }),
+      ],
+    });
+    await expect(cnabService.generateCNAB240(EMP, FOLHA)).resolves.toBe('ARQ_CONCORRENTE');
+  });
+
+  it('corrida de insert (23505) com remessa pendente aborta com em-andamento', async () => {
+    mockTables({
+      config: CONFIG,
+      itens: ITENS,
+      contas: CONTAS,
+      remessasSeq: [
+        makeChain({ data: null, error: null }),
+        makeChain({ data: null, error: { message: 'dup', code: '23505' } }),
+        makeChain({ data: { status: 'pendente' }, error: null }),
+      ],
+    });
+    await expect(cnabService.generateCNAB240(EMP, FOLHA)).rejects.toThrow('sendo gerada');
+  });
+
   it('reutiliza remessa pendente sem criar nova (recuperação de tentativa falha)', async () => {
     const updRemessa = makeChain({ data: null, error: null });
     mockTables({
@@ -695,5 +723,18 @@ describe('cnabService.generateCNAB400', () => {
     });
     mockRpc.mockResolvedValue({ data: null, error: { message: 'rpc down' } });
     await expect(cnabService.generateCNAB400(EMP, FOLHA, { banco_codigo: '001' })).rejects.toThrow('rpc down');
+  });
+
+  it('corrida de insert (23505) retorna o arquivo da remessa vencedora', async () => {
+    mockTables({
+      itens: ITENS,
+      contas: CONTAS,
+      remessasSeq: [
+        makeChain({ data: null, error: null }),
+        makeChain({ data: null, error: { message: 'dup', code: '23505' } }),
+        makeChain({ data: { status: 'enviado', arquivo_remessa: 'ARQ_CONCORRENTE' }, error: null }),
+      ],
+    });
+    await expect(cnabService.generateCNAB400(EMP, FOLHA, { banco_codigo: '001' })).resolves.toBe('ARQ_CONCORRENTE');
   });
 });

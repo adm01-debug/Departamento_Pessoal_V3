@@ -77,6 +77,25 @@ interface FolhaItemRecord {
 
 type DataRecord = Record<string, unknown>;
 
+function isUniqueViolation(e: unknown): boolean {
+  return (e as { code?: string } | null)?.code === '23505';
+}
+
+// Uma remessa por folha é garantida por índice único parcial — quem perde a
+// corrida do INSERT reusa o arquivo já publicado ou aborta com geração em
+// andamento, em vez de produzir um segundo arquivo bancário.
+async function remessaJaExistente(empresaId: string, folhaId: string): Promise<string> {
+  const { data } = await supabase
+    .from('cnab_remessas')
+    .select('status, arquivo_remessa')
+    .eq('empresa_id', empresaId)
+    .eq('folha_id', folhaId)
+    .maybeSingle();
+  const rec = data as Pick<CnabRemessaRecord, 'status' | 'arquivo_remessa'> | null;
+  if (rec?.status === 'enviado' && rec.arquivo_remessa) return rec.arquivo_remessa;
+  throw new Error('Remessa já está sendo gerada para esta folha — aguarde e tente novamente.');
+}
+
 export const cnabService = {
   async getConfig(empresaId: string): Promise<CNABConfig | null> {
     const { data, error } = await supabase
@@ -220,7 +239,10 @@ export const cnabService = {
         .select()
         .single();
 
-      if (rError || !remessa) throw rError || new Error('Falha ao criar remessa');
+      if (rError || !remessa) {
+        if (isUniqueViolation(rError)) return remessaJaExistente(empresaId, folhaId);
+        throw rError || new Error('Falha ao criar remessa');
+      }
       remessaRecord = remessa as CnabRemessaRecord;
     }
 
@@ -625,7 +647,10 @@ export const cnabService = {
       .select()
       .single();
 
-    if (rError || !remessa) throw rError || new Error('Falha ao criar remessa');
+    if (rError || !remessa) {
+      if (isUniqueViolation(rError)) return remessaJaExistente(empresaId, folhaId);
+      throw rError || new Error('Falha ao criar remessa');
+    }
     const remessaRecord = remessa as CnabRemessaRecord;
 
     // ── 5. Helpers de formatação CNAB 400 ─────────────────────────────
