@@ -138,4 +138,181 @@ describe('useNotificacoes', () => {
 
     expect(insertFn).toHaveBeenCalledWith(expect.objectContaining({ tipo: 'ferias_aprovada', lida: false }));
   });
+
+  describe('mutations simples', () => {
+    it('marcarComoLida faz update lida=true no id e empresa', async () => {
+      const chain = buildSelectChain();
+      const { result } = renderHook(() => useNotificacoes(), { wrapper });
+      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await act(async () => {
+        await result.current.marcarComoLida('n1');
+      });
+      expect(chain.update).toHaveBeenCalledWith(expect.objectContaining({ lida: true }));
+      expect(chain.eq).toHaveBeenCalledWith('id', 'n1');
+      expect(chain.eq).toHaveBeenCalledWith('empresa_id', 'emp-1');
+    });
+
+    it('marcarTodasComoLidas filtra lida=false', async () => {
+      const chain = buildSelectChain();
+      const { result } = renderHook(() => useNotificacoes(), { wrapper });
+      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await act(async () => {
+        await result.current.marcarTodasComoLidas();
+      });
+      expect(chain.update).toHaveBeenCalledWith(expect.objectContaining({ lida: true }));
+      expect(chain.eq).toHaveBeenCalledWith('lida', false);
+    });
+
+    it('excluirNotificacao deleta por id e empresa', async () => {
+      const chain = buildSelectChain();
+      const { result } = renderHook(() => useNotificacoes(), { wrapper });
+      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await act(async () => {
+        await result.current.excluirNotificacao('n9');
+      });
+      expect(chain.delete).toHaveBeenCalled();
+      expect(chain.eq).toHaveBeenCalledWith('id', 'n9');
+    });
+
+    it('limparAntigas deleta registros anteriores a ~30 dias', async () => {
+      const chain = buildSelectChain();
+      const { result } = renderHook(() => useNotificacoes(), { wrapper });
+      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await act(async () => {
+        await result.current.limparAntigas();
+      });
+      expect(chain.delete).toHaveBeenCalled();
+      expect(chain.lt).toHaveBeenCalledWith('created_at', expect.stringMatching(/^\d{4}-\d{2}-\d{2}T/));
+      expect(chain.eq).toHaveBeenCalledWith('lida', true);
+    });
+  });
+
+  describe('gerarNotificacoesAutomaticas', () => {
+    // Encadeamento por tabela: periodos_aquisitivos, colaboradores (2 buscas
+    // distintas), ferias e notificacoes (dedup + insert final).
+    function setupGeracao(opts: {
+      periodos?: unknown[];
+      contratos?: unknown[];
+      cnh?: unknown[];
+      ferias?: unknown[];
+      existente?: unknown;
+    }) {
+      const insertFn = vi.fn().mockResolvedValue({ error: null });
+      const resolve = (data: unknown) => ({ data, error: null });
+      const makeList = (rows: unknown[]) => {
+        const c: Record<string, unknown> = {};
+        c.select = vi.fn().mockReturnValue(c);
+        c.eq = vi.fn().mockReturnValue(c);
+        c.in = vi.fn().mockReturnValue(c);
+        c.not = vi.fn().mockReturnValue(c);
+        c.then = (fn: (v?: unknown) => unknown) => Promise.resolve(resolve(rows)).then(fn);
+        return c;
+      };
+      const notifChain = makeList([]) as Record<string, unknown>;
+      notifChain.maybeSingle = vi.fn().mockResolvedValue({ data: opts.existente ?? null, error: null });
+      notifChain.insert = insertFn;
+
+      const periodoList = makeList(opts.periodos ?? []);
+      const contratoList = makeList(opts.contratos ?? []);
+      const cnhList = makeList(opts.cnh ?? []);
+      const feriasList = makeList(opts.ferias ?? []);
+      let colabCalls = 0;
+      mockFrom.mockImplementation((table: string) => {
+        if (table === 'periodos_aquisitivos') return periodoList;
+        if (table === 'colaboradores') {
+          colabCalls += 1;
+          return colabCalls === 1 ? contratoList : cnhList;
+        }
+        if (table === 'ferias') return feriasList;
+        return notifChain;
+      });
+      return { insertFn };
+    }
+
+    const addDaysIso = (days: number) => {
+      const d = new Date();
+      d.setDate(d.getDate() + days);
+      return d.toISOString().slice(0, 10);
+    };
+
+    it('gera notificações nos 4 grupos e insere uma única vez', async () => {
+      const { insertFn } = setupGeracao({
+        periodos: [
+          {
+            id: 'p1',
+            data_fim: addDaysIso(-335), // concessivo termina em ~30 dias
+            colaboradores: { id: 'c1', nome_completo: 'Ana', status: 'ativo', empresa_id: 'emp-1' },
+          },
+        ],
+        contratos: [{ id: 'c2', nome_completo: 'Beto', tipo_contrato: 'temporario', data_admissao: addDaysIso(-160) }],
+        cnh: [{ id: 'c3', nome_completo: 'Caio', cnh_validade: addDaysIso(15) }],
+        ferias: [
+          {
+            id: 'f1',
+            data_inicio: addDaysIso(3),
+            status: 'aprovada',
+            colaboradores: { id: 'c4', nome_completo: 'Duda' },
+          },
+        ],
+      });
+
+      const { result } = renderHook(() => useNotificacoes(), { wrapper });
+      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await act(async () => {
+        await result.current.gerarNotificacoesAutomaticas(undefined, {});
+      });
+      await waitFor(() => expect(insertFn).toHaveBeenCalled());
+
+      const payload = insertFn.mock.calls[0][0] as Array<{ tipo: string; entidade_id: string; lida: boolean }>;
+      expect(payload).toHaveLength(4);
+      expect(payload.map((n) => n.tipo).sort()).toEqual(
+        ['contrato_vencendo', 'documento_vencendo', 'ferias_vencendo', 'periodo_aquisitivo'].sort()
+      );
+      expect(payload.every((n) => n.lida === false)).toBe(true);
+    });
+
+    // Roda a mutação e confere que nada foi inserido (dedup ou janela fechada).
+    async function esperarSemInserir(insertFn: ReturnType<typeof vi.fn>) {
+      const { result } = renderHook(() => useNotificacoes(), { wrapper });
+      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await act(async () => {
+        await result.current.gerarNotificacoesAutomaticas(undefined, {});
+      });
+      await new Promise((r) => setTimeout(r, 50));
+      expect(insertFn).not.toHaveBeenCalled();
+    }
+
+    it('deduplica: notificação existente não é recriada e nada é inserido', async () => {
+      // dedup pegou o único candidato → nada a inserir → insert nunca chamado
+      const { insertFn } = setupGeracao({
+        existente: { id: 'n-existente' },
+        periodos: [
+          {
+            id: 'p1',
+            data_fim: addDaysIso(-335),
+            colaboradores: { id: 'c1', nome_completo: 'Ana', status: 'ativo', empresa_id: 'emp-1' },
+          },
+        ],
+      });
+      await esperarSemInserir(insertFn);
+    });
+
+    it('ignora candidatos fora da janela (férias >60d concessivo não notifica)', async () => {
+      const { insertFn } = setupGeracao({
+        periodos: [
+          {
+            id: 'p1',
+            data_fim: addDaysIso(-100), // concessivo ainda falta ~265 dias
+            colaboradores: { id: 'c1', nome_completo: 'Ana', status: 'ativo', empresa_id: 'emp-1' },
+          },
+          {
+            id: 'p2',
+            data_fim: addDaysIso(-335),
+            colaboradores: { id: 'c2', nome_completo: 'Inativo', status: 'desligado', empresa_id: 'emp-1' },
+          },
+        ],
+      });
+      await esperarSemInserir(insertFn);
+    });
+  });
 });
