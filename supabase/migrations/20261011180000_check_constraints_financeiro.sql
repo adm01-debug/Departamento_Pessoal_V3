@@ -37,7 +37,9 @@ BEGIN
     ) AS s(tabela, conname, expr)
   LOOP
     IF to_regclass(format('public.%I', r.tabela)) IS NULL THEN
-      RAISE WARNING 'CHECK %: tabela public.% ausente neste ambiente — ignorada', r.conname, r.tabela;
+      -- Tabela obrigatória ausente: fail-closed para não registrar a versão
+      -- no ledger sem aplicar a regra (ela nunca seria criada depois).
+      v_missing := v_missing || format('%I (tabela ausente)', r.conname);
       CONTINUE;
     END IF;
 
