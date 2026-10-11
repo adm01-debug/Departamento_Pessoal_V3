@@ -347,7 +347,7 @@ describe('medidasDisciplinaresService — anexos e histórico', () => {
   it('uploadAnexoContestacao: envia arquivo, calcula hash SHA-256 e grava a linha', async () => {
     mockStorageUpload.mockResolvedValue({ error: null });
     mockGetUser.mockResolvedValue({ data: { user: { id: 'u1' } } });
-    setupInsertChain({ id: 'anx-1', hash_sha256: 'h' });
+    const { insertFn } = setupInsertChain({ id: 'anx-1', hash_sha256: 'h' });
     const file = new File(['pdf'], 'anexo.pdf', { type: 'application/pdf' });
     const r = await medidasDisciplinaresService.uploadAnexoContestacao('m1', EMPRESA_ID, file);
     expect(r).toEqual({ id: 'anx-1', hash_sha256: 'h' });
@@ -356,6 +356,22 @@ describe('medidasDisciplinaresService — anexos e histórico', () => {
       file,
       { upsert: false, contentType: 'application/pdf' }
     );
+    // Payload inserido: hash real do conteúdo + uploaded_by do usuário autenticado
+    const hashBuf = await crypto.subtle.digest('SHA-256', await file.arrayBuffer());
+    const expectedHash = Array.from(new Uint8Array(hashBuf))
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+    const inserted = insertFn.mock.calls[0][0] as Record<string, unknown>;
+    expect(inserted).toMatchObject({
+      medida_id: 'm1',
+      empresa_id: EMPRESA_ID,
+      nome_arquivo: 'anexo.pdf',
+      mime_type: 'application/pdf',
+      tamanho_bytes: file.size,
+      hash_sha256: expectedHash,
+      uploaded_by: 'u1',
+    });
+    expect(inserted.storage_path).toMatch(/^test-empresa-id\/m1\/.+-anexo\.pdf$/);
   });
 
   it('uploadAnexoContestacao: exige empresaId', async () => {
