@@ -575,7 +575,7 @@ describe('afastamentoService.exportarRelatorio', () => {
     expect(listar).toHaveBeenCalledWith({
       filters: { status: 'ativo', empresa_id: EMPRESA_ID },
     });
-    const blob = create.mock.calls[0][0] as Blob;
+    const blob = (create.mock.calls[0] as unknown[])[0] as Blob;
     const csv = await blob.text();
     const linhas = csv.split('\n');
     expect(linhas[0]).toContain('Colaborador');
