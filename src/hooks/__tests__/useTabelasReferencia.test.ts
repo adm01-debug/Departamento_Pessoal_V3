@@ -1,7 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
-import React from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 vi.mock('@/hooks/useEmpresas', async () => (await import('@/test/empresaMock')).useEmpresasMockModule());
 
@@ -163,20 +161,7 @@ import {
   useDesvincularDependenteBeneficio,
 } from '../useTabelasReferencia';
 
-function wrapper({ children }: { children: React.ReactNode }) {
-  const qc = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
-  return React.createElement(QueryClientProvider, { client: qc }, children);
-}
-
-function createWrapper() {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
-  });
-  const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
-  const queryWrapper = ({ children }: { children: React.ReactNode }) =>
-    React.createElement(QueryClientProvider, { client: queryClient }, children);
-  return { wrapper: queryWrapper, invalidateSpy };
-}
+import { wrapper, createWrapper } from '@/test/queryWrapper';
 
 describe('useNacionalidades', () => {
   beforeEach(() => {
