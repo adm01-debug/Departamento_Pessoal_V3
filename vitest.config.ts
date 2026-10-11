@@ -19,10 +19,10 @@ export default defineConfig({
       // functions 53.88 / lines 65.51). Gate = baseline com folga mínima;
       // regra do time: só subir, nunca baixar (ratchet).
       thresholds: {
-        lines: 68,
-        functions: 55,
-        branches: 56,
-        statements: 63,
+        lines: 72,
+        functions: 57,
+        branches: 61,
+        statements: 68,
       },
     },
     testTimeout: 10000,
