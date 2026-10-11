@@ -485,10 +485,27 @@ describe('cnabService.generateCNAB240', () => {
       remessasSeq: [
         makeChain({ data: null, error: null }),
         makeChain({ data: null, error: { message: 'dup', code: '23505' } }),
-        makeChain({ data: { status: 'enviado', arquivo_remessa: 'ARQ_CONCORRENTE' }, error: null }),
+        makeChain({
+          data: { status: 'enviado', arquivo_remessa: 'ARQ_CONCORRENTE', banco_codigo: '001' },
+          error: null,
+        }),
       ],
     });
     await expect(cnabService.generateCNAB240(EMP, FOLHA)).resolves.toBe('ARQ_CONCORRENTE');
+  });
+
+  it('corrida de insert rejeita remessa enviada de outro banco', async () => {
+    mockTables({
+      config: CONFIG,
+      itens: ITENS,
+      contas: CONTAS,
+      remessasSeq: [
+        makeChain({ data: null, error: null }),
+        makeChain({ data: null, error: { message: 'dup', code: '23505' } }),
+        makeChain({ data: { status: 'enviado', arquivo_remessa: 'ARQ_OUTRO', banco_codigo: '237' }, error: null }),
+      ],
+    });
+    await expect(cnabService.generateCNAB240(EMP, FOLHA)).rejects.toThrow('outro banco');
   });
 
   it('corrida de insert (23505) com remessa pendente aborta com em-andamento', async () => {
@@ -507,15 +524,32 @@ describe('cnabService.generateCNAB240', () => {
 
   it('reutiliza remessa pendente sem criar nova (recuperação de tentativa falha)', async () => {
     const updRemessa = makeChain({ data: null, error: null });
+    const claim = makeChain({ data: [REMESSA], error: null });
     mockTables({
       config: CONFIG,
       itens: ITENS,
       contas: CONTAS,
-      remessasSeq: [makeChain({ data: REMESSA, error: null }), updRemessa],
+      remessasSeq: [makeChain({ data: REMESSA, error: null }), claim, updRemessa],
     });
     const file = await cnabService.generateCNAB240(EMP, FOLHA);
     expect(file.split('\r\n').length).toBeGreaterThan(0);
+    expect(claim.update).toHaveBeenCalledWith(expect.objectContaining({ status: 'processando' }));
     expect(updRemessa.update).toHaveBeenCalledWith(expect.objectContaining({ status: 'enviado' }));
+  });
+
+  it('retry concorrente sem claim aborta com em-andamento', async () => {
+    mockTables({
+      config: CONFIG,
+      itens: ITENS,
+      contas: CONTAS,
+      remessasSeq: [
+        makeChain({ data: REMESSA, error: null }),
+        makeChain({ data: [], error: null }), // claim pendente: perdeu
+        makeChain({ data: [], error: null }), // claim processando>10min: perdeu
+        makeChain({ data: { status: 'processando' }, error: null }), // re-query
+      ],
+    });
+    await expect(cnabService.generateCNAB240(EMP, FOLHA)).rejects.toThrow('sendo gerada');
   });
 
   it('lança erro quando não há configuração CNAB', async () => {
@@ -732,21 +766,43 @@ describe('cnabService.generateCNAB400', () => {
       remessasSeq: [
         makeChain({ data: null, error: null }),
         makeChain({ data: null, error: { message: 'dup', code: '23505' } }),
-        makeChain({ data: { status: 'enviado', arquivo_remessa: 'ARQ_CONCORRENTE' }, error: null }),
+        makeChain({
+          data: { status: 'enviado', arquivo_remessa: 'ARQ_CONCORRENTE', banco_codigo: '001' },
+          error: null,
+        }),
       ],
     });
     await expect(cnabService.generateCNAB400(EMP, FOLHA, { banco_codigo: '001' })).resolves.toBe('ARQ_CONCORRENTE');
   });
 
-  it('reutiliza remessa pendente no retry em vez de colidir com o índice único', async () => {
-    const updRemessa = makeChain({ data: null, error: null });
+  it('corrida de insert rejeita remessa enviada de outro banco', async () => {
     mockTables({
       itens: ITENS,
       contas: CONTAS,
-      remessasSeq: [makeChain({ data: REMESSA, error: null }), updRemessa],
+      remessasSeq: [
+        makeChain({ data: null, error: null }),
+        makeChain({ data: null, error: { message: 'dup', code: '23505' } }),
+        makeChain({ data: { status: 'enviado', arquivo_remessa: 'ARQ_OUTRO', banco_codigo: '237' }, error: null }),
+      ],
+    });
+    await expect(cnabService.generateCNAB400(EMP, FOLHA, { banco_codigo: '001' })).rejects.toThrow('outro banco');
+  });
+
+  it('reutiliza remessa pendente no retry em vez de colidir com o índice único', async () => {
+    const updRemessa = makeChain({ data: null, error: null });
+    const claim = makeChain({ data: [REMESSA], error: null });
+    const itensDel = makeChain({ data: null, error: null });
+    mockTables({
+      itens: ITENS,
+      contas: CONTAS,
+      remessasSeq: [makeChain({ data: REMESSA, error: null }), claim, updRemessa],
+      cnabItens: itensDel,
     });
     const file = await cnabService.generateCNAB400(EMP, FOLHA, { banco_codigo: '001' });
     expect(file.split('\r\n').length).toBeGreaterThan(0);
+    expect(claim.update).toHaveBeenCalledWith(expect.objectContaining({ status: 'processando' }));
+    expect(itensDel.delete).toHaveBeenCalled();
+    expect(itensDel.insert).toHaveBeenCalled();
     expect(updRemessa.update).toHaveBeenCalledWith(expect.objectContaining({ status: 'enviado' }));
   });
 });
