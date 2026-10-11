@@ -382,11 +382,12 @@ describe('cnabService.generateCNAB240', () => {
   it('gera arquivo CNAB 240 completo: header, lote, segmentos A/B e trailers de 240 colunas', async () => {
     const itensChain = makeChain({ data: REMESSA, error: null });
     const updRemessa = makeChain({ data: null, error: null });
+    const remessaInsert = makeChain({ data: REMESSA, error: null });
     mockTables({
       config: CONFIG,
       itens: ITENS,
       contas: CONTAS,
-      remessasSeq: [makeChain({ data: null, error: null }), makeChain({ data: REMESSA, error: null }), updRemessa],
+      remessasSeq: [makeChain({ data: null, error: null }), remessaInsert, updRemessa],
       cnabItens: itensChain,
     });
 
@@ -423,6 +424,7 @@ describe('cnabService.generateCNAB240', () => {
         colaborador_id: 'col-1',
         seu_numero: 'abcdef12-1',
         valor_pagamento: 1234.56,
+        data_pagamento: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
         status: 'processando',
       }),
       expect.objectContaining({
@@ -431,9 +433,24 @@ describe('cnabService.generateCNAB240', () => {
         valor_pagamento: 765.44,
       }),
     ]);
+    // remessa criada já com sequencial_arquivo (NOT NULL no canônico)
+    expect(remessaInsert.insert).toHaveBeenCalledWith([expect.objectContaining({ sequencial_arquivo: 7 })]);
     expect(updRemessa.update).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'enviado', sequencial_arquivo: 7, arquivo_remessa: file })
     );
+  });
+
+  it('aborta sem marcar enviado quando o insert de cnab_itens falha', async () => {
+    const updRemessa = makeChain({ data: null, error: null });
+    mockTables({
+      config: CONFIG,
+      itens: ITENS,
+      contas: CONTAS,
+      remessasSeq: [makeChain({ data: null, error: null }), makeChain({ data: REMESSA, error: null }), updRemessa],
+      cnabItens: makeChain({ data: null, error: { message: 'violates not-null' } }),
+    });
+    await expect(cnabService.generateCNAB240(EMP, FOLHA)).rejects.toThrow();
+    expect(updRemessa.update).not.toHaveBeenCalled();
   });
 
   it('retorna arquivo em cache quando remessa já está enviada (idempotência)', async () => {
@@ -530,15 +547,17 @@ describe('cnabService.generatePIXBatch', () => {
 describe('cnabService.generateCNAB400', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockRpc.mockResolvedValue({ data: 7, error: null });
   });
 
   it('gera arquivo CNAB 400 com todas as linhas de exatamente 400 colunas', async () => {
     const updRemessa = makeChain({ data: null, error: null });
     const itensChain = makeChain({ data: null, error: null });
+    const remessaInsert = makeChain({ data: REMESSA, error: null });
     mockTables({
       itens: ITENS,
       contas: CONTAS,
-      remessasSeq: [makeChain({ data: null, error: null }), makeChain({ data: REMESSA, error: null }), updRemessa],
+      remessasSeq: [makeChain({ data: null, error: null }), remessaInsert, updRemessa],
       cnabItens: itensChain,
     });
 
@@ -570,12 +589,30 @@ describe('cnabService.generateCNAB400', () => {
 
     // Itens persistidos e remessa marcada como enviada com o arquivo
     expect(itensChain.insert).toHaveBeenCalledWith([
-      expect.objectContaining({ seu_numero: 'abcdef120001', nome_favorecido: 'JOÃO SILVA' }),
+      expect.objectContaining({
+        seu_numero: 'abcdef120001',
+        nome_favorecido: 'JOÃO SILVA',
+        data_pagamento: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
+      }),
       expect.objectContaining({ seu_numero: 'abcdef120002', nome_favorecido: 'MARIA SOUZA' }),
     ]);
+    // remessa criada já com sequencial_arquivo vindo da RPC (não hardcoded)
+    expect(remessaInsert.insert).toHaveBeenCalledWith([expect.objectContaining({ sequencial_arquivo: 7 })]);
     expect(updRemessa.update).toHaveBeenCalledWith(
-      expect.objectContaining({ status: 'enviado', arquivo_remessa: file })
+      expect.objectContaining({ status: 'enviado', sequencial_arquivo: 7, arquivo_remessa: file })
     );
+  });
+
+  it('aborta sem marcar enviado quando o insert de cnab_itens falha', async () => {
+    const updRemessa = makeChain({ data: null, error: null });
+    mockTables({
+      itens: ITENS,
+      contas: CONTAS,
+      remessasSeq: [makeChain({ data: null, error: null }), makeChain({ data: REMESSA, error: null }), updRemessa],
+      cnabItens: makeChain({ data: null, error: { message: 'violates not-null' } }),
+    });
+    await expect(cnabService.generateCNAB400(EMP, FOLHA, { banco_codigo: '001' })).rejects.toThrow();
+    expect(updRemessa.update).not.toHaveBeenCalled();
   });
 
   it('busca config do banco quando opts.banco_codigo não informado', async () => {
