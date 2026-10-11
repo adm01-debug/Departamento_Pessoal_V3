@@ -55,8 +55,13 @@ export function NewLoanDialog({
     };
   }, [colaboradorData, form.valor_total, form.numero_parcelas]);
 
+  const parcelas = Number(form.numero_parcelas);
+  const total = Number(form.valor_total);
+  // numeric(12,2) no banco: parcela abaixo de 1 centavo arredonda para 0 e viola a CHECK
+  const valoresValidos = total >= 0.01 && Number.isInteger(parcelas) && parcelas >= 1 && total / parcelas >= 0.01;
+
   const handleSubmit = () => {
-    if (!marginData.isValid) return;
+    if (!marginData.isValid || !valoresValidos) return;
     const valor_parcela = Number(form.valor_total) / Number(form.numero_parcelas);
     onSave({
       ...form,
@@ -114,6 +119,8 @@ export function NewLoanDialog({
               <Label>Valor Total (R$)</Label>
               <Input
                 type="number"
+                min={0.01}
+                step="0.01"
                 value={form.valor_total}
                 onChange={(e) => setForm((p) => ({ ...p, valor_total: e.target.value }))}
               />
@@ -122,6 +129,8 @@ export function NewLoanDialog({
               <Label>Número de Parcelas</Label>
               <Input
                 type="number"
+                min={1}
+                step={1}
                 value={form.numero_parcelas}
                 onChange={(e) => setForm((p) => ({ ...p, numero_parcelas: e.target.value }))}
               />
@@ -165,7 +174,7 @@ export function NewLoanDialog({
           <Button variant="outline" onClick={() => setOpen(false)}>
             Cancelar
           </Button>
-          <Button onClick={handleSubmit} disabled={!marginData.isValid || !form.colaborador_id}>
+          <Button onClick={handleSubmit} disabled={!marginData.isValid || !valoresValidos || !form.colaborador_id}>
             Confirmar Registro
           </Button>
         </DialogFooter>

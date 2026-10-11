@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 
 vi.mock('@/components/ui/dialog', () => ({
   Dialog: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
@@ -28,7 +28,12 @@ vi.mock('@/components/ui/input', () => ({
 }));
 
 vi.mock('@/components/ui/select', () => ({
-  Select: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  Select: ({ children, onValueChange }: { children?: ReactNode; onValueChange?: (v: string) => void }) => (
+    <div>
+      <button onClick={() => onValueChange?.('c1')}>pick-c1</button>
+      {children}
+    </div>
+  ),
   SelectContent: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   SelectItem: ({ children, value }: { children?: ReactNode; value?: string }) => (
     <div data-value={value}>{children}</div>
@@ -98,6 +103,38 @@ describe('NewLoanDialog', () => {
   it('renders Número de Parcelas label', () => {
     render(<NewLoanDialog colaboradores={COLABORADORES} onSave={vi.fn()} />);
     expect(screen.getByText('Número de Parcelas')).toBeInTheDocument();
+  });
+
+  it('bloqueia o envio com parcelas < 1 ou valor ≤ 0 (CHECK do banco)', () => {
+    const onSave = vi.fn();
+    const { container } = render(<NewLoanDialog colaboradores={COLABORADORES} onSave={onSave} />);
+    const [valorTotal, parcelas] = Array.from(container.querySelectorAll('input[type="number"]'));
+    const confirmar = screen.getByText('Confirmar Registro');
+    fireEvent.click(screen.getByText('pick-c1'));
+
+    fireEvent.change(valorTotal, { target: { value: '1000' } });
+    fireEvent.change(parcelas, { target: { value: '0' } });
+    expect(confirmar).toBeDisabled();
+
+    fireEvent.change(parcelas, { target: { value: '2.5' } });
+    expect(confirmar).toBeDisabled();
+
+    fireEvent.change(valorTotal, { target: { value: '0' } });
+    fireEvent.change(parcelas, { target: { value: '10' } });
+    expect(confirmar).toBeDisabled();
+
+    // parcela < R$0,01 → numeric(12,2) arredonda para 0 e a CHECK rejeita
+    fireEvent.change(valorTotal, { target: { value: '0.01' } });
+    fireEvent.change(parcelas, { target: { value: '3' } });
+    expect(confirmar).toBeDisabled();
+
+    fireEvent.change(valorTotal, { target: { value: '1000' } });
+    fireEvent.change(parcelas, { target: { value: '10' } });
+    expect(confirmar).not.toBeDisabled();
+    fireEvent.click(confirmar);
+    expect(onSave).toHaveBeenCalledWith(
+      expect.objectContaining({ colaborador_id: 'c1', valor_total: 1000, numero_parcelas: 10, valor_parcela: 100 })
+    );
   });
 
   it('renders Cancelar and Confirmar Registro buttons', () => {
