@@ -184,6 +184,15 @@ export const cnabService = {
 
     if (cError) throw cError;
 
+    // Fetch monotonically increasing sequence per (empresa, banco) — fixes C46
+    // hardcoded=1. Alocado antes do insert: sequencial_arquivo é NOT NULL sem
+    // default no canônico.
+    const { data: seqData } = await supabase.rpc('next_cnab_sequencial', {
+      p_empresa_id: empresaId,
+      p_banco_codigo: config.banco_codigo,
+    });
+    const sequence = (seqData as number) || 1;
+
     // Re-use pending remessa from a failed previous attempt; otherwise create new.
     let remessaRecord: CnabRemessaRecord;
     if (existingRemessa && (existingRemessa as CnabRemessaRecord).status === 'pendente') {
@@ -201,6 +210,7 @@ export const cnabService = {
                 status: 'pendente',
                 valor_total: typedItens.reduce((acc, i) => acc + Number(i.total_liquido), 0),
                 total_pagamentos: typedItens.length,
+                sequencial_arquivo: sequence,
               },
             ],
             'cnabService:cnab_remessas'
@@ -214,12 +224,6 @@ export const cnabService = {
     }
 
     const lines: string[] = [];
-    // Fetch monotonically increasing sequence per (empresa, banco) — fixes C46 hardcoded=1
-    const { data: seqData } = await supabase.rpc('next_cnab_sequencial', {
-      p_empresa_id: empresaId,
-      p_banco_codigo: config.banco_codigo,
-    });
-    const sequence = (seqData as number) || 1;
 
     const pad = (val: unknown, len: number, char = ' ', side: 'left' | 'right' = 'right') => {
       const s = String(val || '').substring(0, len);
@@ -301,6 +305,7 @@ export const cnabService = {
         nome_favorecido: colab?.nome_completo ?? '',
         cpf_cnpj_favorecido: colab?.cpf ?? '',
         valor_pagamento: valor,
+        data_pagamento: formatDateLocalISO(today),
         seu_numero: seuNumero,
         status: 'processando',
       });
@@ -382,9 +387,10 @@ export const cnabService = {
     // would appear sent but have no payment records. Insert items first so the
     // DB is always consistent — a pending remessa with items is recoverable.
     if (cnabItensToInsert.length > 0) {
-      await (supabase.from('cnab_itens') as unknown as QueryBuilderType).insert(
+      const { error: itensError } = await (supabase.from('cnab_itens') as unknown as QueryBuilderType).insert(
         validateTablePayload('cnab_itens', cnabItensToInsert, 'cnabService:cnab_itens')
       );
+      if (itensError) throw itensError;
     }
 
     // Only after items are persisted, mark remessa as sent with the full file
@@ -586,7 +592,15 @@ export const cnabService = {
     if (cError) throw cError;
     const typedContas = (contas as ContaBancariaRecord[]) || [];
 
-    // ── 4. Criar remessa pendente ────────────────────────────────────
+    // ── 4. Sequencial + remessa pendente ────────────────────────────
+    // sequencial_arquivo é NOT NULL sem default no canônico — alocar via RPC
+    // monotônica por (empresa, banco), igual ao CNAB240.
+    const { data: seqData400 } = await supabase.rpc('next_cnab_sequencial', {
+      p_empresa_id: empresaId,
+      p_banco_codigo: config.banco_codigo,
+    });
+    const sequence = (seqData400 as number) || 1;
+
     const valorTotal = typedItens.reduce((acc, i) => acc + Number(i.total_liquido), 0);
     const { data: remessa, error: rError } = await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
       .insert(
@@ -600,6 +614,7 @@ export const cnabService = {
               status: 'pendente',
               valor_total: valorTotal,
               total_pagamentos: typedItens.length,
+              sequencial_arquivo: sequence,
             },
           ],
           'cnabService:cnab_remessas'
@@ -680,8 +695,8 @@ export const cnabService = {
     const dateStr = dd + mm + yy; // DDMMAA (6)
     const dateDMA = dd + mm + yy; // mesmo formato para data crédito
 
-    // Sequencial do arquivo (deveria vir de RPC em produção)
-    const seqFile = String(1).padStart(5, '0');
+    // Sequencial do arquivo via RPC monotônica (mesma do CNAB240)
+    const seqFile = String(sequence).padStart(5, '0');
 
     // Sequencial de linha (2..99999)
     let seqLine = 2;
@@ -721,9 +736,9 @@ export const cnabService = {
       fmt(config.nome_empresa ?? 'EMPRESA', 30, 'A'), // 023-052: nome empresa
       fmt('', 7, 'A'), // 053-059: brancos
       dateStr, // 060-065: data DDMMAA
-      fmt('', 294, 'A'), // 066-359: brancos
-      '000001', // 360-365: endereco banco? não — sequencial 6dig
-      seqFile, // 366-371: sequencial 5dig
+      fmt('', 295, 'A'), // 066-360: brancos
+      '000001', // 361-366: endereco banco? não — sequencial 6dig
+      seqFile, // 367-371: sequencial 5dig
       fmt('', 29, 'A'), // 372-400: brancos
     ].join('');
 
@@ -803,6 +818,7 @@ export const cnabService = {
         nome_favorecido: nomeFav,
         cpf_cnpj_favorecido: cpfFav,
         valor_pagamento: valor,
+        data_pagamento: formatDateLocalISO(today),
         seu_numero: seuNumero,
         status: 'processando',
       });
@@ -819,10 +835,10 @@ export const cnabService = {
     }
 
     // ── 8. Trailer de arquivo (tipo 9) ─────────────────────────────
-    // Layout: 1 ('9') + 392 brancos + 17 soma valores + 6 total registros = 400
+    // Layout: 1 ('9') + 376 brancos + 17 soma valores + 6 total registros = 400
     const somaFmt = fmt(String(Math.round(somaValores * 100)), 17, 'N');
     const totalRegistros = String(seqLine).padStart(6, '0');
-    const blanks = ''.padEnd(392, ' ');
+    const blanks = ''.padEnd(376, ' ');
     const trailer = '9' + blanks + somaFmt + totalRegistros;
     if (trailer.length !== 400) {
       lines.push(trailer.substring(0, 400).padEnd(400, ' '));
@@ -832,9 +848,10 @@ export const cnabService = {
 
     // ── 9. Persistir e retornar ──────────────────────────────────────
     if (itensParaInsert.length > 0) {
-      await (supabase.from('cnab_itens') as unknown as QueryBuilderType).insert(
+      const { error: itensError } = await (supabase.from('cnab_itens') as unknown as QueryBuilderType).insert(
         validateTablePayload('cnab_itens', itensParaInsert, 'cnabService:cnab_itens')
       );
+      if (itensError) throw itensError;
     }
 
     const fullFile = lines.join('\r\n');
@@ -846,7 +863,7 @@ export const cnabService = {
           {
             arquivo_remessa: fullFile,
             status: 'enviado',
-            sequencial_arquivo: Number(seqFile),
+            sequencial_arquivo: sequence,
           },
           'cnabService:cnab_remessas'
         )
