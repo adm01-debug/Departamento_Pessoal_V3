@@ -123,7 +123,13 @@ describe('NewLoanDialog', () => {
     fireEvent.change(parcelas, { target: { value: '10' } });
     expect(confirmar).toBeDisabled();
 
+    // parcela < R$0,01 → numeric(12,2) arredonda para 0 e a CHECK rejeita
+    fireEvent.change(valorTotal, { target: { value: '0.01' } });
+    fireEvent.change(parcelas, { target: { value: '3' } });
+    expect(confirmar).toBeDisabled();
+
     fireEvent.change(valorTotal, { target: { value: '1000' } });
+    fireEvent.change(parcelas, { target: { value: '10' } });
     expect(confirmar).not.toBeDisabled();
     fireEvent.click(confirmar);
     expect(onSave).toHaveBeenCalledWith(

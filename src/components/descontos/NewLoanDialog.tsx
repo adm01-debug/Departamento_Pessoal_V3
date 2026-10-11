@@ -56,7 +56,9 @@ export function NewLoanDialog({
   }, [colaboradorData, form.valor_total, form.numero_parcelas]);
 
   const parcelas = Number(form.numero_parcelas);
-  const valoresValidos = Number(form.valor_total) > 0 && Number.isInteger(parcelas) && parcelas >= 1;
+  const total = Number(form.valor_total);
+  // numeric(12,2) no banco: parcela abaixo de 1 centavo arredonda para 0 e viola a CHECK
+  const valoresValidos = total >= 0.01 && Number.isInteger(parcelas) && parcelas >= 1 && total / parcelas >= 0.01;
 
   const handleSubmit = () => {
     if (!marginData.isValid || !valoresValidos) return;
