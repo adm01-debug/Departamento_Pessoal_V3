@@ -14,8 +14,20 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { despesaService } from '../despesaService';
 import { supabase } from '@/integrations/supabase/client';
 
+const { mockRpc, mockUpload, mockSignedUrl } = vi.hoisted(() => ({
+  mockRpc: vi.fn(),
+  mockUpload: vi.fn(),
+  mockSignedUrl: vi.fn(),
+}));
+
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: vi.fn() },
+  supabase: {
+    from: vi.fn(),
+    rpc: mockRpc,
+    storage: {
+      from: vi.fn(() => ({ upload: mockUpload, createSignedUrl: mockSignedUrl })),
+    },
+  },
 }));
 
 interface ChainSpy {
@@ -39,6 +51,114 @@ function buildListarChain(result: { data: unknown | null; error: unknown }): Cha
   from.mockReturnValue({ select });
   return { from, select, eq, order, range };
 }
+
+// ─── métodos de escrita / RPC / storage (onda 12) ──────────────────────────
+
+import { makeChain } from '@/test/chain';
+
+describe('despesaService — escritas e storage', () => {
+  const from = () => supabase.from as unknown as ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('criar: aplica defaults de status/tipo e retorna o registro', async () => {
+    from().mockReturnValue(makeChain({ data: { id: 'd1' }, error: null }));
+    const d = await despesaService.criar({ empresa_id: 'e1', valor: 10 } as never);
+    expect(d.id).toBe('d1');
+  });
+
+  it('criar: lança quando insert não retorna registro', async () => {
+    from().mockReturnValue(makeChain({ data: null, error: null }));
+    await expect(despesaService.criar({ empresa_id: 'e1' } as never)).rejects.toThrow('Nenhum registro de despesa');
+  });
+
+  it('aprovar: exige empresaId', async () => {
+    await expect(despesaService.aprovar('d1', '')).rejects.toThrow('obrigatório');
+  });
+
+  it('aprovar: falha quando despesa não pertence à empresa', async () => {
+    from().mockReturnValue(makeChain({ data: null, error: null }));
+    await expect(despesaService.aprovar('d1', 'e1')).rejects.toThrow('não encontrada');
+  });
+
+  it('aprovar: chama RPC aprovar_despesa após o check de tenant', async () => {
+    from().mockReturnValue(makeChain({ data: { id: 'd1' }, error: null }));
+    mockRpc.mockResolvedValue({ data: { ok: true }, error: null });
+    const r = await despesaService.aprovar('d1', 'e1', 'ok');
+    expect(mockRpc).toHaveBeenCalledWith('aprovar_despesa', {
+      _despesa_id: 'd1',
+      _observacoes: 'ok',
+    });
+    expect(r).toEqual({ ok: true });
+  });
+
+  it('rejeitar: exige motivo com 3+ caracteres', async () => {
+    await expect(despesaService.rejeitar('d1', 'e1', 'x')).rejects.toThrow('mínimo 3');
+  });
+
+  it('rejeitar: chama RPC rejeitar_despesa', async () => {
+    from().mockReturnValue(makeChain({ data: { id: 'd1' }, error: null }));
+    mockRpc.mockResolvedValue({ data: { ok: true }, error: null });
+    await despesaService.rejeitar('d1', 'e1', 'fora da política');
+    expect(mockRpc).toHaveBeenCalledWith('rejeitar_despesa', {
+      _despesa_id: 'd1',
+      _motivo: 'fora da política',
+    });
+  });
+
+  it('marcarPago: atualiza status para pago e retorna a linha', async () => {
+    from().mockReturnValue(makeChain({ data: { id: 'd1', status: 'pago' }, error: null }));
+    const d = await despesaService.marcarPago('d1', 'e1');
+    expect(d?.status).toBe('pago');
+  });
+
+  it('integrarFolha: retorna null quando status não é aprovado (update sem match)', async () => {
+    from().mockReturnValue(makeChain({ data: null, error: null }));
+    const d = await despesaService.integrarFolha('d1', 'f1', 'e1');
+    expect(d).toBeNull();
+  });
+
+  it('excluir: propaga erro do delete', async () => {
+    from().mockReturnValue(makeChain({ data: null, error: { message: 'boom' } }));
+    await expect(despesaService.excluir('d1', 'e1')).rejects.toEqual({ message: 'boom' });
+  });
+
+  it('uploadComprovante: envia para o bucket e grava comprovante_url', async () => {
+    mockUpload.mockResolvedValue({ error: null });
+    from().mockReturnValue(makeChain({ data: null, error: null }));
+    const file = new File(['x'], 'nota.pdf', { type: 'application/pdf' });
+    const path = await despesaService.uploadComprovante('e1', 'd1', file);
+    expect(path).toMatch(/^e1\/d1\/.+\.pdf$/);
+    expect(mockUpload).toHaveBeenCalledWith(path, file, { upsert: false });
+  });
+
+  it('uploadComprovante: propaga erro do upload sem gravar no banco', async () => {
+    mockUpload.mockResolvedValue({ error: { message: 'quota' } });
+    const file = new File(['x'], 'nota.pdf', { type: 'application/pdf' });
+    await expect(despesaService.uploadComprovante('e1', 'd1', file)).rejects.toEqual({
+      message: 'quota',
+    });
+    expect(from()).not.toHaveBeenCalled();
+  });
+
+  it('getComprovanteUrl: devolve a URL assinada', async () => {
+    mockSignedUrl.mockResolvedValue({ data: { signedUrl: 'https://s' }, error: null });
+    expect(await despesaService.getComprovanteUrl('p')).toBe('https://s');
+  });
+
+  it('getComprovanteUrl: devolve null em erro', async () => {
+    mockSignedUrl.mockResolvedValue({ data: null, error: { message: 'x' } });
+    expect(await despesaService.getComprovanteUrl('p')).toBeNull();
+  });
+
+  it('listarLog: retorna o log da despesa', async () => {
+    from().mockReturnValue(makeChain({ data: [{ id: 'l1' }], error: null }));
+    const logs = await despesaService.listarLog('d1');
+    expect(logs).toEqual([{ id: 'l1' }]);
+  });
+});
 
 describe('despesaService.listar — isolamento multi-tenant', () => {
   beforeEach(() => {
