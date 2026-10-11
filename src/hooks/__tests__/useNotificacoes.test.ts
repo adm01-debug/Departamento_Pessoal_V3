@@ -140,22 +140,8 @@ describe('useNotificacoes', () => {
   });
 
   describe('mutations simples', () => {
-    function buildMutationChain() {
-      const chain: Record<string, unknown> = {};
-      chain.select = vi.fn().mockReturnValue(chain);
-      chain.eq = vi.fn().mockReturnValue(chain);
-      chain.order = vi.fn().mockReturnValue(chain);
-      chain.limit = vi.fn().mockReturnValue(chain);
-      chain.update = vi.fn().mockReturnValue(chain);
-      chain.delete = vi.fn().mockReturnValue(chain);
-      chain.lt = vi.fn().mockReturnValue(chain);
-      chain.then = (fn: (v?: unknown) => unknown) => Promise.resolve({ data: [], error: null }).then(fn);
-      mockFrom.mockReturnValue(chain);
-      return chain;
-    }
-
     it('marcarComoLida faz update lida=true no id e empresa', async () => {
-      const chain = buildMutationChain();
+      const chain = buildSelectChain();
       const { result } = renderHook(() => useNotificacoes(), { wrapper });
       await waitFor(() => expect(result.current.isLoading).toBe(false));
       await act(async () => {
@@ -167,7 +153,7 @@ describe('useNotificacoes', () => {
     });
 
     it('marcarTodasComoLidas filtra lida=false', async () => {
-      const chain = buildMutationChain();
+      const chain = buildSelectChain();
       const { result } = renderHook(() => useNotificacoes(), { wrapper });
       await waitFor(() => expect(result.current.isLoading).toBe(false));
       await act(async () => {
@@ -178,7 +164,7 @@ describe('useNotificacoes', () => {
     });
 
     it('excluirNotificacao deleta por id e empresa', async () => {
-      const chain = buildMutationChain();
+      const chain = buildSelectChain();
       const { result } = renderHook(() => useNotificacoes(), { wrapper });
       await waitFor(() => expect(result.current.isLoading).toBe(false));
       await act(async () => {
@@ -189,7 +175,7 @@ describe('useNotificacoes', () => {
     });
 
     it('limparAntigas deleta registros anteriores a ~30 dias', async () => {
-      const chain = buildMutationChain();
+      const chain = buildSelectChain();
       const { result } = renderHook(() => useNotificacoes(), { wrapper });
       await waitFor(() => expect(result.current.isLoading).toBe(false));
       await act(async () => {
@@ -222,9 +208,7 @@ describe('useNotificacoes', () => {
         c.then = (fn: (v?: unknown) => unknown) => Promise.resolve(resolve(rows)).then(fn);
         return c;
       };
-      const notifChain: Record<string, unknown> = {};
-      notifChain.select = vi.fn().mockReturnValue(notifChain);
-      notifChain.eq = vi.fn().mockReturnValue(notifChain);
+      const notifChain = makeList([]) as Record<string, unknown>;
       notifChain.maybeSingle = vi.fn().mockResolvedValue({ data: opts.existente ?? null, error: null });
       notifChain.insert = insertFn;
 
