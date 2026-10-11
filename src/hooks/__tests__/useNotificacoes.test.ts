@@ -271,7 +271,19 @@ describe('useNotificacoes', () => {
       expect(payload.every((n) => n.lida === false)).toBe(true);
     });
 
+    // Roda a mutação e confere que nada foi inserido (dedup ou janela fechada).
+    async function esperarSemInserir(insertFn: ReturnType<typeof vi.fn>) {
+      const { result } = renderHook(() => useNotificacoes(), { wrapper });
+      await waitFor(() => expect(result.current.isLoading).toBe(false));
+      await act(async () => {
+        await result.current.gerarNotificacoesAutomaticas(undefined, {});
+      });
+      await new Promise((r) => setTimeout(r, 50));
+      expect(insertFn).not.toHaveBeenCalled();
+    }
+
     it('deduplica: notificação existente não é recriada e nada é inserido', async () => {
+      // dedup pegou o único candidato → nada a inserir → insert nunca chamado
       const { insertFn } = setupGeracao({
         existente: { id: 'n-existente' },
         periodos: [
@@ -282,14 +294,7 @@ describe('useNotificacoes', () => {
           },
         ],
       });
-      const { result } = renderHook(() => useNotificacoes(), { wrapper });
-      await waitFor(() => expect(result.current.isLoading).toBe(false));
-      await act(async () => {
-        await result.current.gerarNotificacoesAutomaticas(undefined, {});
-      });
-      // dedup pegou o único candidato → nada a inserir → insert nunca chamado
-      await new Promise((r) => setTimeout(r, 50));
-      expect(insertFn).not.toHaveBeenCalled();
+      await esperarSemInserir(insertFn);
     });
 
     it('ignora candidatos fora da janela (férias >60d concessivo não notifica)', async () => {
@@ -307,13 +312,7 @@ describe('useNotificacoes', () => {
           },
         ],
       });
-      const { result } = renderHook(() => useNotificacoes(), { wrapper });
-      await waitFor(() => expect(result.current.isLoading).toBe(false));
-      await act(async () => {
-        await result.current.gerarNotificacoesAutomaticas(undefined, {});
-      });
-      await new Promise((r) => setTimeout(r, 50));
-      expect(insertFn).not.toHaveBeenCalled();
+      await esperarSemInserir(insertFn);
     });
   });
 });
