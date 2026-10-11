@@ -77,14 +77,11 @@ interface FolhaItemRecord {
 
 type DataRecord = Record<string, unknown>;
 
-function isUniqueViolation(e: unknown): boolean {
-  return (e as { code?: string } | null)?.code === '23505';
-}
-
-// Uma remessa por folha é garantida por índice único parcial — quem perde a
-// corrida do INSERT reusa o arquivo já publicado ou aborta com geração em
-// andamento, em vez de produzir um segundo arquivo bancário.
-async function remessaJaExistente(empresaId: string, folhaId: string): Promise<string> {
+// Uma remessa por folha é garantida por índice único parcial. O bridge troca o
+// código pg 23505 por INSERT_ERROR, então o detect da corrida é o re-query:
+// achou remessa → reusa arquivo 'enviado' ou aborta com geração em andamento;
+// não achou → o erro era outro e volta a propagar.
+async function remessaConcorrente(empresaId: string, folhaId: string, original: unknown): Promise<string> {
   const { data } = await supabase
     .from('cnab_remessas')
     .select('status, arquivo_remessa')
@@ -93,7 +90,8 @@ async function remessaJaExistente(empresaId: string, folhaId: string): Promise<s
     .maybeSingle();
   const rec = data as Pick<CnabRemessaRecord, 'status' | 'arquivo_remessa'> | null;
   if (rec?.status === 'enviado' && rec.arquivo_remessa) return rec.arquivo_remessa;
-  throw new Error('Remessa já está sendo gerada para esta folha — aguarde e tente novamente.');
+  if (rec) throw new Error('Remessa já está sendo gerada para esta folha — aguarde e tente novamente.');
+  throw original instanceof Error ? original : new Error('Falha ao criar remessa');
 }
 
 export const cnabService = {
@@ -239,10 +237,7 @@ export const cnabService = {
         .select()
         .single();
 
-      if (rError || !remessa) {
-        if (isUniqueViolation(rError)) return remessaJaExistente(empresaId, folhaId);
-        throw rError || new Error('Falha ao criar remessa');
-      }
+      if (rError || !remessa) return remessaConcorrente(empresaId, folhaId, rError);
       remessaRecord = remessa as CnabRemessaRecord;
     }
 
@@ -626,32 +621,34 @@ export const cnabService = {
     const sequence = seqData400 as number;
 
     const valorTotal = typedItens.reduce((acc, i) => acc + Number(i.total_liquido), 0);
-    const { data: remessa, error: rError } = await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
-      .insert(
-        validateTablePayload(
-          'cnab_remessas',
-          [
-            {
-              empresa_id: empresaId,
-              folha_id: folhaId,
-              banco_codigo: config.banco_codigo,
-              status: 'pendente',
-              valor_total: valorTotal,
-              total_pagamentos: typedItens.length,
-              sequencial_arquivo: sequence,
-            },
-          ],
-          'cnabService:cnab_remessas'
+    let remessaRecord: CnabRemessaRecord;
+    if (existingRemessa && (existingRemessa as CnabRemessaRecord).status === 'pendente') {
+      remessaRecord = existingRemessa as CnabRemessaRecord;
+    } else {
+      const { data: remessa, error: rError } = await (supabase.from('cnab_remessas') as unknown as QueryBuilderType)
+        .insert(
+          validateTablePayload(
+            'cnab_remessas',
+            [
+              {
+                empresa_id: empresaId,
+                folha_id: folhaId,
+                banco_codigo: config.banco_codigo,
+                status: 'pendente',
+                valor_total: valorTotal,
+                total_pagamentos: typedItens.length,
+                sequencial_arquivo: sequence,
+              },
+            ],
+            'cnabService:cnab_remessas'
+          )
         )
-      )
-      .select()
-      .single();
+        .select()
+        .single();
 
-    if (rError || !remessa) {
-      if (isUniqueViolation(rError)) return remessaJaExistente(empresaId, folhaId);
-      throw rError || new Error('Falha ao criar remessa');
+      if (rError || !remessa) return remessaConcorrente(empresaId, folhaId, rError);
+      remessaRecord = remessa as CnabRemessaRecord;
     }
-    const remessaRecord = remessa as CnabRemessaRecord;
 
     // ── 5. Helpers de formatação CNAB 400 ─────────────────────────────
     /**

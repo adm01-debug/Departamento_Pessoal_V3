@@ -737,4 +737,16 @@ describe('cnabService.generateCNAB400', () => {
     });
     await expect(cnabService.generateCNAB400(EMP, FOLHA, { banco_codigo: '001' })).resolves.toBe('ARQ_CONCORRENTE');
   });
+
+  it('reutiliza remessa pendente no retry em vez de colidir com o índice único', async () => {
+    const updRemessa = makeChain({ data: null, error: null });
+    mockTables({
+      itens: ITENS,
+      contas: CONTAS,
+      remessasSeq: [makeChain({ data: REMESSA, error: null }), updRemessa],
+    });
+    const file = await cnabService.generateCNAB400(EMP, FOLHA, { banco_codigo: '001' });
+    expect(file.split('\r\n').length).toBeGreaterThan(0);
+    expect(updRemessa.update).toHaveBeenCalledWith(expect.objectContaining({ status: 'enviado' }));
+  });
 });
