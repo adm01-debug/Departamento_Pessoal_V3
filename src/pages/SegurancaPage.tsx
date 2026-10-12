@@ -57,17 +57,22 @@ export default function SegurancaPage() {
     onError: () => toast.error('Erro ao desbloquear IP'),
   });
 
-  // Tentativas de login por dia (dados reais da última janela de 100 registros)
+  // Tentativas de login por dia (dados reais da última janela de 100 registros).
+  // Agrupa por data completa (yyyy-MM-dd) para não misturar anos na virada.
   const tentativasPorDia = useMemo(() => {
     const porDia = new Map<string, { dia: string; sucesso: number; falha: number }>();
     for (const a of loginAttempts ?? []) {
-      const dia = format(new Date(a.created_at), 'dd/MM', { locale: ptBR });
-      const entry = porDia.get(dia) ?? { dia, sucesso: 0, falha: 0 };
+      const key = format(new Date(a.created_at), 'yyyy-MM-dd');
+      const entry = porDia.get(key) ?? {
+        dia: format(new Date(a.created_at), 'dd/MM', { locale: ptBR }),
+        sucesso: 0,
+        falha: 0,
+      };
       if (a.success) entry.sucesso += 1;
       else entry.falha += 1;
-      porDia.set(dia, entry);
+      porDia.set(key, entry);
     }
-    return [...porDia.values()].reverse();
+    return [...porDia.keys()].sort().map((k) => porDia.get(k)!);
   }, [loginAttempts]);
 
   const resolveAlertMutation = useMutation({

@@ -32,6 +32,12 @@ function normalizarTelefone(telefone: string): string {
   return digits.length <= 11 ? `55${digits}` : digits;
 }
 
+// Erros de fetch carregam a URL configurada (que pode conter credenciais em
+// query params) — nunca persistimos/retornamos URLs em mensagens de erro.
+function sanitizarErro(msg: string, maxLen = 300): string {
+  return msg.replace(/https?:\/\/\S+/g, '[url]').slice(0, maxLen);
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
@@ -120,7 +126,7 @@ serve(async (req) => {
       const logId = await registrarLog({
         status: 'failed',
         error_message: 'WhatsApp não configurado para a empresa (instância Evolution API ausente)',
-      });
+      }).catch(() => null);
       return new Response(
         JSON.stringify({ success: false, status: 'failed', log_id: logId, motivo: 'not_configured' }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
@@ -142,19 +148,37 @@ serve(async (req) => {
         },
       );
       if (res.ok) {
-        const payload = await res.json().catch(() => null) as { key?: { id?: string } } | null;
-        mensagemIdExterno = payload?.key?.id ?? null;
+        const raw = await res.text().catch(() => '');
+        let payload: { key?: { id?: string } } | null = null;
+        try {
+          payload = raw ? (JSON.parse(raw) as { key?: { id?: string } }) : null;
+        } catch { /* resposta não-JSON com status 2xx — tratada como falha abaixo */ }
+        if (payload?.key?.id) {
+          mensagemIdExterno = payload.key.id;
+        } else {
+          // HTTP 2xx sem o envelope de sucesso documentado ({key:{id}}) — a
+          // instância rejeitou ou respondeu algo inesperado; não é 'sent'.
+          status = 'failed';
+          errorMessage = `Evolution API respondeu ${res.status} sem confirmação de envio${raw ? `: ${sanitizarErro(raw, 200)}` : ''}`;
+        }
       } else {
         status = 'failed';
         const detail = await res.text().catch(() => '');
-        errorMessage = `Evolution API respondeu ${res.status}${detail ? `: ${detail.slice(0, 200)}` : ''}`;
+        errorMessage = `Evolution API respondeu ${res.status}${detail ? `: ${sanitizarErro(detail, 200)}` : ''}`;
       }
     } catch (e) {
       status = 'failed';
-      errorMessage = e instanceof Error ? e.message.slice(0, 300) : 'Falha de rede ao chamar Evolution API';
+      errorMessage = e instanceof Error ? sanitizarErro(e.message) : 'Falha de rede ao chamar Evolution API';
     }
 
-    const logId = await registrarLog({ status, mensagem_id_externo: mensagemIdExterno, error_message: errorMessage });
+    // Entrega à Evolution e persistência do log são desfechos independentes:
+    // se o insert falhar depois de 'sent', a mensagem JÁ foi entregue — devolver
+    // 500 aqui faria o cliente disparar o fallback wa.me e duplicar o envio.
+    const logId = await registrarLog({ status, mensagem_id_externo: mensagemIdExterno, error_message: errorMessage })
+      .catch((e) => {
+        captureException(e);
+        return null;
+      });
 
     return new Response(
       JSON.stringify({ success: status === 'sent', status, log_id: logId, error: errorMessage }),

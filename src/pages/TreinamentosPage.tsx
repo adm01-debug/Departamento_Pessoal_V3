@@ -21,6 +21,7 @@ import { TrilhaCursosSection } from '@/components/treinamentos/TrilhaCursosSecti
 import { toast } from 'sonner';
 import { GraduationCap, Plus, BookOpen, Award, Users, Trash2, Link, Calendar, Video, ExternalLink } from 'lucide-react';
 import { jsPDF } from 'jspdf';
+import { parseISO } from 'date-fns';
 import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import type { Tables } from '@/integrations/supabase/database.types';
 import { validateTablePayload } from '@/schemas/validate';
@@ -87,9 +88,9 @@ function gerarCertificadoPdf(cert: CertificadoComJoins, empresaNome?: string) {
 
   doc.setFontSize(11);
   const linhas = [
-    `Emitido em ${new Date(cert.data_emissao).toLocaleDateString('pt-BR')}`,
+    `Emitido em ${parseISO(cert.data_emissao).toLocaleDateString('pt-BR')}`,
     cert.data_validade
-      ? `Válido até ${new Date(cert.data_validade).toLocaleDateString('pt-BR')}`
+      ? `Válido até ${parseISO(cert.data_validade).toLocaleDateString('pt-BR')}`
       : 'Validade: vitalício',
     empresaNome ? `Empresa: ${empresaNome}` : '',
   ].filter(Boolean);
@@ -108,7 +109,9 @@ export default function TreinamentosPage() {
   const { empresaAtual } = useEmpresas();
 
   const abrirCertificado = (cert: CertificadoComJoins) => {
-    if (cert.arquivo_url) {
+    // Só abrimos URLs http(s) — um arquivo_url 'javascript:' gravado no banco
+    // executaria script na origem do app; nesse caso caímos no PDF gerado.
+    if (cert.arquivo_url && /^https?:\/\//i.test(cert.arquivo_url)) {
       window.open(cert.arquivo_url, '_blank', 'noopener,noreferrer');
     } else {
       gerarCertificadoPdf(cert, empresaAtual?.nome_fantasia ?? empresaAtual?.razao_social).save(
