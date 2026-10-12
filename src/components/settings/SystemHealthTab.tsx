@@ -47,9 +47,11 @@ export interface CleanupResult {
 }
 
 export interface BackupResult {
-  message?: string;
-  total_records: number;
-  tables: Record<string, { count?: number; error?: string }>;
+  counts: Record<string, number>;
+  path: string | null;
+  signed_url?: string | null;
+  sha256: string;
+  integrity_verified: boolean;
 }
 
 export function SystemHealthTab() {
@@ -58,7 +60,7 @@ export function SystemHealthTab() {
   const [loading, setLoading] = useState<string | null>(null);
   const [cleanupResult, setCleanupResult] = useState<CleanupResult | null>(null);
   const [backupResult, setBackupResult] = useState<BackupResult | null>(null);
-  const [backupId, setBackupId] = useState('');
+  const backupTotal = Object.values(backupResult?.counts ?? {}).reduce((acc, n) => acc + (n || 0), 0);
 
   const runHealthcheck = async () => {
     setLoading('health');
@@ -89,12 +91,19 @@ export function SystemHealthTab() {
   };
 
   const runBackup = async () => {
+    if (!empresaAtualId) {
+      toast.error('Selecione uma empresa antes de gerar o backup.');
+      return;
+    }
     setLoading('backup');
     try {
-      const result = (await edgeFunctionsService.backupServidor()) as BackupResult;
+      const result = (await edgeFunctionsService.backupServidor(empresaAtualId)) as BackupResult;
       setBackupResult(result);
-      setBackupId(crypto.randomUUID().slice(0, 8).toUpperCase());
-      toast.success(result.message || 'Backup processado');
+      if (result.integrity_verified) {
+        toast.success('Backup salvo e conferido.');
+      } else {
+        toast.warning('Backup salvo, mas a conferência de integridade do arquivo falhou.');
+      }
     } catch (err: unknown) {
       const error = err instanceof Error ? err : new Error(String(err));
       toast.error(safeErrorMessage(error, 'Erro na operação.'));
@@ -313,27 +322,40 @@ export function SystemHealthTab() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                {Object.entries(backupResult.tables || {}).map(
-                  ([table, info]: [string, { count?: number; error?: string }]) => (
-                    <div key={table} className="p-3 rounded-xl bg-muted/20 border border-border/30 flex flex-col gap-1">
-                      <span className="text-[10px] font-bold text-muted-foreground truncate uppercase">{table}</span>
-                      <span className="text-sm font-mono font-bold">
-                        {info.error ? <span className="text-destructive">ERRO</span> : info.count}
-                      </span>
-                    </div>
-                  )
-                )}
+                {Object.entries(backupResult.counts || {}).map(([table, count]) => (
+                  <div key={table} className="p-3 rounded-xl bg-muted/20 border border-border/30 flex flex-col gap-1">
+                    <span className="text-[10px] font-bold text-muted-foreground truncate uppercase">{table}</span>
+                    <span className="text-sm font-mono font-bold">{count}</span>
+                  </div>
+                ))}
               </div>
               <div className="pt-6 mt-4 flex items-center justify-between border-t border-border/10">
                 <div className="space-y-1">
-                  <p className="text-sm font-bold text-primary">
-                    {backupResult.message || 'Backup processado com sucesso'}
+                  <p
+                    className={cn(
+                      'text-sm font-bold',
+                      backupResult.integrity_verified ? 'text-primary' : 'text-warning'
+                    )}
+                  >
+                    {backupResult.integrity_verified ? 'Arquivo salvo e conferido' : 'Arquivo salvo sem conferência'}
                   </p>
-                  <p className="text-[10px] text-muted-foreground font-mono">ID: {backupId}</p>
+                  <p className="text-[10px] text-muted-foreground font-mono">
+                    SHA-256: {backupResult.sha256.slice(0, 16)}… · {backupResult.path}
+                  </p>
+                  {backupResult.signed_url && (
+                    <a
+                      href={backupResult.signed_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] text-primary underline"
+                    >
+                      Baixar arquivo (link válido por 24h)
+                    </a>
+                  )}
                 </div>
                 <div className="text-right">
                   <p className="text-xs text-muted-foreground uppercase font-bold tracking-widest">Registros Totais</p>
-                  <p className="text-3xl font-display font-black text-blue-600">{backupResult.total_records}</p>
+                  <p className="text-3xl font-display font-black text-blue-600">{backupTotal}</p>
                 </div>
               </div>
             </CardContent>
