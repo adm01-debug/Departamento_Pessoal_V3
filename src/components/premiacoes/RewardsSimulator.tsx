@@ -73,18 +73,20 @@ export function RewardsSimulator() {
     retentionImpact
   );
 
+  const buildCenarioInput = (
+    name: string,
+    cfg: Pick<CenarioROIInput, 'employees' | 'avgSalary' | 'bonusPercent' | 'performanceLevel' | 'retentionImpact'>,
+    res: Pick<CenarioROIInput, 'totalBudget' | 'savings' | 'roi'>
+  ): CenarioROIInput => ({ name, ...cfg, ...res });
+
   const saveScenario = () => {
-    saveMutation.mutate({
-      name: `Cenário ${scenarios.length + 1}`,
-      employees,
-      avgSalary,
-      bonusPercent,
-      performanceLevel,
-      retentionImpact,
-      totalBudget,
-      savings,
-      roi,
-    });
+    saveMutation.mutate(
+      buildCenarioInput(
+        `Cenário ${scenarios.length + 1}`,
+        { employees, avgSalary, bonusPercent, performanceLevel, retentionImpact },
+        { totalBudget, savings, roi }
+      )
+    );
   };
 
   const loadScenario = (s: CenarioROI) => {
@@ -352,17 +354,23 @@ export function RewardsSimulator() {
                       disabled={saveMutation.isPending}
                       onClick={(e) => {
                         e.stopPropagation();
-                        saveMutation.mutate({
-                          name: `${s.nome} (cópia)`,
-                          employees: s.configuracoes.employees ?? 0,
-                          avgSalary: s.configuracoes.avgSalary ?? 0,
-                          bonusPercent: s.configuracoes.bonusPercent ?? 0,
-                          performanceLevel: s.configuracoes.performanceLevel ?? 0,
-                          retentionImpact: s.configuracoes.retentionImpact ?? 0,
-                          totalBudget: s.resultados.totalBudget ?? 0,
-                          savings: s.resultados.savings ?? 0,
-                          roi: s.resultados.roi ?? 0,
-                        });
+                        saveMutation.mutate(
+                          buildCenarioInput(
+                            `${s.nome} (cópia)`,
+                            {
+                              employees: s.configuracoes.employees ?? 0,
+                              avgSalary: s.configuracoes.avgSalary ?? 0,
+                              bonusPercent: s.configuracoes.bonusPercent ?? 0,
+                              performanceLevel: s.configuracoes.performanceLevel ?? 0,
+                              retentionImpact: s.configuracoes.retentionImpact ?? 0,
+                            },
+                            {
+                              totalBudget: s.resultados.totalBudget ?? 0,
+                              savings: s.resultados.savings ?? 0,
+                              roi: s.resultados.roi ?? 0,
+                            }
+                          )
+                        );
                       }}
                     >
                       <Copy className="h-2 w-2" />

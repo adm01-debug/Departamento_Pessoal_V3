@@ -331,9 +331,12 @@ export const premiacoesService = {
   },
 
   async excluirCenariosROI(ids: string[]) {
-    if (!ids.length) return;
-    const { error } = await supabase.from('premiacoes_roi_cenarios').delete().in('id', ids);
-    if (error) throw error;
+    // O bridge só aceita filtros `eq` em writes — `.in()` é rejeitado
+    // (UNSUPPORTED_FILTER_FOR_WRITE), então deleta um a um.
+    for (const id of ids) {
+      const { error } = await supabase.from('premiacoes_roi_cenarios').delete().eq('id', id);
+      if (error) throw error;
+    }
   },
 
   async listarCenariosROI(empresaId: string): Promise<CenarioROI[]> {

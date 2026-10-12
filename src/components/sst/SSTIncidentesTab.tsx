@@ -19,13 +19,25 @@ export function SSTIncidentesTab() {
     queryKey: ['sst_incidentes', empresaAtual?.id],
     enabled: !!empresaAtual?.id,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('sst_incidentes')
-        .select('*')
-        .eq('empresa_id', empresaAtual!.id)
-        .order('data_hora', { ascending: false });
-      if (error) throw error;
-      return data || [];
+      // O bridge limita cada leitura a 100 linhas — pagina até esgotar,
+      // senão KPIs e export truncam silenciosamente em empresas grandes.
+      const PAGE = 1000;
+      const fetchPage = (offset: number) =>
+        supabase
+          .from('sst_incidentes')
+          .select('*')
+          .eq('empresa_id', empresaAtual!.id)
+          .order('data_hora', { ascending: false })
+          .range(offset, offset + PAGE - 1);
+      type Page = Awaited<ReturnType<typeof fetchPage>>;
+      const rows: NonNullable<Page['data']> = [];
+      for (let offset = 0; ; offset += PAGE) {
+        const { data, error } = await fetchPage(offset);
+        if (error) throw error;
+        if (data) rows.push(...data);
+        if (!data || data.length < PAGE) break;
+      }
+      return rows;
     },
   });
 
@@ -52,7 +64,7 @@ export function SSTIncidentesTab() {
   };
 
   const hoje = new Date();
-  const acidentes = incidentes.filter((i) => i.tipo !== 'quase_acidente');
+  const acidentes = incidentes.filter((i) => i.tipo === 'acidente_leve' || i.tipo === 'acidente_grave');
   const incidentesMes = incidentes.filter((i) => {
     const d = new Date(i.data_hora);
     return d.getFullYear() === hoje.getFullYear() && d.getMonth() === hoje.getMonth();
@@ -102,45 +114,44 @@ export function SSTIncidentesTab() {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="rounded-2xl border-border/30 bg-gradient-to-br from-card to-accent/5">
-          <CardContent className="p-4 flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-destructive/10 text-destructive">
-              <ShieldAlert className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold font-display">{acidentes.length}</p>
-              <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">
-                Acidentes Registrados
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="rounded-2xl border-border/30">
-          <CardContent className="p-4 flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-warning/10 text-warning">
-              <AlertCircle className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold font-display">{incidentesMes}</p>
-              <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">
-                Incidentes este mês
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="rounded-2xl border-border/30">
-          <CardContent className="p-4 flex items-center gap-4">
-            <div className="p-3 rounded-xl bg-success/10 text-success">
-              <CheckCircle2 className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold font-display">{diasSemAcidente ?? '—'}</p>
-              <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">
-                Dias sem acidentes
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        {[
+          {
+            valor: acidentes.length,
+            rotulo: 'Acidentes Registrados',
+            Icone: ShieldAlert,
+            classeIcone: 'bg-destructive/10 text-destructive',
+            destaque: true,
+          },
+          {
+            valor: incidentesMes,
+            rotulo: 'Incidentes este mês',
+            Icone: AlertCircle,
+            classeIcone: 'bg-warning/10 text-warning',
+            destaque: false,
+          },
+          {
+            valor: diasSemAcidente ?? '—',
+            rotulo: 'Dias sem acidentes',
+            Icone: CheckCircle2,
+            classeIcone: 'bg-success/10 text-success',
+            destaque: false,
+          },
+        ].map(({ valor, rotulo, Icone, classeIcone, destaque }) => (
+          <Card
+            key={rotulo}
+            className={`rounded-2xl border-border/30 ${destaque ? 'bg-gradient-to-br from-card to-accent/5' : ''}`}
+          >
+            <CardContent className="p-4 flex items-center gap-4">
+              <div className={`p-3 rounded-xl ${classeIcone}`}>
+                <Icone className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold font-display">{valor}</p>
+                <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">{rotulo}</p>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       <Card className="rounded-2xl border-border/30 overflow-hidden">
