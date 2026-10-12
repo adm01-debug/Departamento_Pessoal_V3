@@ -17,6 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { workflowService } from '@/services/workflowService';
 import { WorkflowDesigner } from '@/components/workflows/WorkflowDesigner';
+import { ordenarNosPorConexoes } from '@/components/workflows/ordenarEtapas';
 import { useEmpresas } from '@/hooks';
 import { formatDateTime } from '@/utils/format';
 import { toast } from 'sonner';
@@ -572,32 +573,15 @@ export default function WorkflowsPage() {
                   desligamento: 'desligamento',
                 };
                 const tipo = tipoMap[form.tipo] ?? 'custom';
-                // Ordem das etapas segue as conexões do canvas a partir do nó
-                // inicial (BFS) — não a ordem de criação dos nós.
-                const adj = new Map<string, string[]>();
-                for (const c of connections) {
-                  const list = adj.get(c.from) ?? [];
-                  list.push(c.to);
-                  adj.set(c.from, list);
+                let ordenados: typeof nodes;
+                try {
+                  ordenados = ordenarNosPorConexoes(nodes, connections);
+                } catch (e: unknown) {
+                  toast.error(e instanceof Error ? e.message : 'Fluxo inválido');
+                  return;
                 }
-                const nodeById = new Map(nodes.map((n) => [n.id, n]));
-                const visited = new Set<string>();
-                const orderedIds: string[] = [];
-                const startNode = nodes.find((n) => n.type === 'start');
-                const queue = startNode ? [startNode.id] : [];
-                while (queue.length > 0) {
-                  const cur = queue.shift() as string;
-                  if (visited.has(cur)) continue;
-                  visited.add(cur);
-                  orderedIds.push(cur);
-                  for (const next of adj.get(cur) ?? []) queue.push(next);
-                }
-                for (const n of nodes) {
-                  if (!visited.has(n.id)) orderedIds.push(n.id);
-                }
-                const etapas = orderedIds
-                  .map((id) => nodeById.get(id))
-                  .filter((n): n is (typeof nodes)[number] => n?.type === 'aprovador')
+                const etapas = ordenados
+                  .filter((n) => n.type === 'aprovador')
                   .map((n, i) => ({
                     nome: n.label,
                     ordem: i + 1,
