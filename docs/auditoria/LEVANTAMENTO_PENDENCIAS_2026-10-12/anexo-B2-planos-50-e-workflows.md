@@ -7,10 +7,22 @@ Repo HEAD bb6756cb5 (11/10/2026). Auditor: camada B2. Somente leitura.
 Nota: o checkout foi avançado por fast-forward de f1bbbe8 para bb6756cb5 (origin/main, PRs #198-#205) durante a auditoria; todas as evidências foram re-conferidas contra bb6756cb5 (único workflow alterado: canonical-migrations.yml).
 
 ## Cobertura
-em andamento
+- **Lido integralmente:** PLANO_100_WORKFLOWS_2026-09-27 (E01..E100), REVISAO_IMPLEMENTACAO_PLANO_100_WORKFLOWS, E47_TRIAGE_E2E, PLANO_MELHORIAS_50_ETAPAS_2026-09-10 (E50-001..050), PLANO_MELHORIAS_50_ETAPAS_2026-09-13 (E51-001..050), SIMULACAO_E_EXECUCAO_E51, REVISAO_IMPLEMENTACAO_PLANO_50 (10/09) §4 e REVISAO_POS_EXECUCAO_PLANO_50 (12/09).
+- **Verificado no código:** .github/workflows/*, infra/github/ruleset-main.json, scripts/ (gates e testes), package.json, vitest/playwright config, edge functions citadas pelas etapas; git log dos PRs #166–#205.
+- **Produção (MCP somente leitura, 11/10):** buckets, funções do schema public, ledger, policies de `medidas_ciencia_tokens`.
+- **Não coberto aqui (coberto em outros anexos):** 01_FALHAS_E_GAPS, 04_AUDITORIA_MASTER e estado/01..11 → anexo B1 (Parte 2); GitHub Settings/Environments/rulesets vivos → NAO_VERIFICADO.
 
 ## Top 10 lacunas
-em andamento
+1. **Proteção da main incompleta** — ruleset com 7 checks, bypass `always`, sem P0 nem Playwright; branch protection clássica coexistindo (W-01).
+2. **URL admin do banco de produção usada em job de PR** e "verde por omissão" para Dependabot/forks (W-02, W-03).
+3. **E2E autenticado vermelho desde 24/09** — identidades E2E sem papéis/seed; script de provisionamento órfão (W-09, ORF-03).
+4. **Integrações legais e financeiras simuladas/bloqueadas** — eSocial sem ICP-Brasil/SOAP; FGTS Digital, DCTFWeb, PIX, consignado e adiantamento só locais (P-05, P-06).
+5. **Telas que fingem sucesso** — WhatsApp "enviado", PDF de holerite com link falso, incidente SST não gravado, dashboard executivo com números fixos (P-01..P-04).
+6. **Engine de folha não unificada** — float no servidor × decimal no front; sem tabela legal por vigência nem casos homologados (P-13, E51-021).
+7. **Gates escritos e desligados** — `audit-edge-authz.mjs` e `audit-schema-drift.mjs` não rodam no CI (ORF-01, ORF-02).
+8. **Sem step-up MFA no servidor, sem upload seguro, sem gitleaks/SBOM** (P-10, P-11, P-16).
+9. **Workflows canônicos manuais e hardcoded por lote; deploy de edge sem token** (W-13, W-14).
+10. **Planos sem painel de progresso** — 4/700 e 3/703 checkboxes; revisão com numeração divergente; CLAUDE.md defasado (DOC-50-01, DOC-W01..W04).
 
 
 ---
@@ -328,3 +340,13 @@ Marcação no plano: apenas 3 `[x]` em 703 checkboxes (`grep -c`); a SIMULACAO (
 | DOC-50-02 | REVISAO_POS_EXECUCAO (12/09) afirma ausentes: RPCs de vínculo/authz RH, rate limiter, PCS, bucket `backups`, funções `sec_*` — ao vivo (11/10) existem | REVISAO_POS_EXECUCAO:154-160,244-246 | DOC_DESATUALIZADA | MCP read-only 11/10 | Retrabalho evitável | P |
 | DOC-50-03 | REVISAO 09-10 §4.2 lista como pendentes "protocolo eSocial `PROTO-${Math.random()}`", "Backup por tabela allSettled", "syncWithHub", "Status eSocial 124ms", "Contatos de emergência" — já corrigidos | REVISAO_50_2026-09-10:§4.2 | DOC_DESATUALIZADA | `grep PROTO- src` vazio; `backupService.ts:83` Promise.all + checagem de completude (`:74`); `syncWithHub` removido | idem | P |
 
+
+## Métricas
+
+| Plano | Total | Feito | Parcial | Não iniciado | Bloqueado | Doc desatualizada | Não verificado |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Plano 100 Workflows (E01..E100) | 100 | 35 | 11 | 37 | 15 | 2 | — |
+| Plano 50 etapas E50 (E50-001..050) | 50 | 1 | 33 | 10 | 4 | 2 | — |
+| Ciclo E51 (E51-001..050) | 50 | 9 | 23 | 12 | 4 | 1 | 1 |
+
+Achados consolidados em formato padrão: W-01..W-20 (Plano 100 Workflows), P-01..P-19 e ORF-01..ORF-03 (planos 50), DOC-W01..W07 e DOC-50-01..03 (documentação a corrigir).

@@ -13,7 +13,7 @@ Este documento é o **consolidado**. A prova linha a linha de cada achado (arqui
 1. [Veredito](#1-veredito)
 2. [Legenda e método](#2-legenda-e-método)
 3. [Placar](#3-placar)
-4. [As 40 lacunas de maior impacto no negócio](#4-as-40-lacunas-de-maior-impacto-no-negócio)
+4. [As 43 lacunas de maior impacto no negócio](#4-as-43-lacunas-de-maior-impacto-no-negócio)
 5. [Planejado que não chegou à produção](#5-planejado-que-não-chegou-à-produção)
 6. [Pendências por módulo de negócio](#6-pendências-por-módulo-de-negócio)
 7. [Situação de cada plano](#7-situação-de-cada-plano)
@@ -62,6 +62,7 @@ O sistema tem **muita tela e muita estrutura**, mas os fluxos que movem dinheiro
    - A criptografia de dados bancários está no repo mas não em produção: agência, conta e PIX estão em texto puro `[I] [A-023]`.
    - 3 telas existem sem rota: Faltas, EPIs e Centros de Custo. O link do dashboard para Faltas dá 404 `[A-008/009]`.
    - 22 telas só são acessíveis digitando a URL `[I]`.
+   - Colunas usadas pelo app não existem em produção: o vínculo login ↔ colaborador do Portal e o `empresa_id` de Documentos `[P2-01/02]`.
 
 **Uso real em produção, em 12/10/2026:**
 
@@ -109,8 +110,8 @@ Esforço: **P** ≤ 1 dia · **M** 2–5 dias · **G** > 5 dias.
 
 | Anexo | Camada | Itens com achado | Principais status |
 |---|---|---:|---|
-| A | Planos da raiz (ROADMAP, BACKLOG, CODE_TODOS, ESTADO_ATUAL, CLAUDE.md, PLANO_100/50/MELHORIAS, relatórios) | 90+ | ver anexo |
-| B1 | Plano mestre de 100 etapas (10/09) | 100 etapas | 7 concluídas, 61 parciais, 26 não iniciadas, 5 bloqueadas (E-001..E-077 conferidas em detalhe) |
+| A | Planos da raiz (ROADMAP, BACKLOG, CODE_TODOS, ESTADO_ATUAL, CLAUDE.md, PLANO_100/50/MELHORIAS, PLANO_REFATORACAO_TIPOS, AUDITORIA, SECURITY_AUDIT_REPORT e demais relatórios) | 131 | 43 PARCIAL · 32 NAO_INIC. · 21 DOC · 13 ORFAO · 13 BLOQ. · 8 SIMUL. · 1 não verif. |
+| B1 | Plano mestre de 100 etapas (10/09) + itens abertos das auditorias de 10/09 e do estado de 16/08 | 100 etapas + 40 itens | Etapas: 7 concluídas, 61 parciais, 27 não iniciadas, 5 bloqueadas. Itens: 18 PARCIAL · 11 NAO_INIC. · 6 DOC · 2 SIMUL. · 2 ORFAO · 1 BLOQ. |
 | B2 | Planos de 50 etapas (E50, E51) e de 100 workflows | 200 etapas + 30 achados | ver §7 |
 | C | Docs de produto, `docs/api`, guias, catálogo histórico V2–V19 | 203 | 113 PARCIAL · 53 NAO_INICIADO · 20 DOC · 12 SIMULADO · 4 ORFAO · 1 BLOQ. |
 | E | Frontend, cálculos trabalhistas, fluxos ponta a ponta, páginas, integrações | 79 + matriz de 35 regras + 25 integrações + 66 páginas | 38 PARCIAL · 16 NAO_INIC. · 9 SIMUL. · 7 ORFAO · 4 BLOQ. · 5 DOC |
@@ -118,7 +119,7 @@ Esforço: **P** ≤ 1 dia · **M** 2–5 dias · **G** > 5 dias.
 | H | Infra, CI, runbooks, agendamentos, observabilidade, testes, scripts | 126 | 46 PARCIAL · 30 NAO_INIC. · 17 ORFAO · 13 BLOQ. · 5 SIMUL. · 15 DOC |
 | I | Banco de produção ao vivo e varredura mecânica | inventários | ver §5 e §8 |
 
-**Total:** mais de **800 itens rastreados** (os anexos se sobrepõem em alguns temas; os itens de §4 e §6 já estão deduplicados).
+**Total:** mais de **900 itens rastreados** (os anexos se sobrepõem em alguns temas; os itens de §4 e §6 já estão deduplicados).
 
 ### 3.2 Regras trabalhistas (matriz de 35 regras, anexo E §1.1)
 
@@ -138,7 +139,7 @@ Esforço: **P** ≤ 1 dia · **M** 2–5 dias · **G** > 5 dias.
 
 ---
 
-## 4. As 40 lacunas de maior impacto no negócio
+## 4. As 43 lacunas de maior impacto no negócio
 
 Ordenadas pelo efeito sobre dinheiro, obrigação legal e confiança no sistema.
 
@@ -184,6 +185,9 @@ Ordenadas pelo efeito sobre dinheiro, obrigação legal e confiança no sistema.
 | 38 | E2E autenticado vermelho desde 24/09 (identidades E2E sem papéis/seed); E2E nunca calcula nem fecha folha; 40 de 59 edge functions sem nenhum teste | Testes | BLOQUEADO/PARCIAL | Regressões em folha, férias e rescisão chegam ao usuário | `[A-079] [H-TST-02/03/10]` | M |
 | 39 | Repositório não reconstrói o banco: 735 migrations × 421 no ledger; RPC usada pelo app que só existe no baseline; 3 buckets sem migration; sem staging | Dados/Infra | PARCIAL | Um desastre exige reconstrução manual | `[I] [A-033] [E-030] [H-RUN-16..19]` | G |
 | 40 | Telas escondidas: 3 páginas sem rota (Faltas, EPIs, Centros de Custo) e 22 telas sem item de menu (Holerites, Rubricas, Provisões, Vales, Pensões, Sindicatos, Planos de saúde…) | UX | ORFAO | Funcionalidade pronta que o usuário não encontra | `src/App.tsx:71-75`, `AppSidebar.tsx:92+` `[A-008/009] [I]` | P |
+| 41 | Vínculo conta de login ↔ colaborador inexistente em produção: coluna `colaboradores.user_id` e RPC `vincular_colaborador_ao_usuario` ausentes (reconferido: erro 42703); migrations existem só no repo | Portal | PARCIAL | O Portal do Colaborador não identifica quem está logado | `src/hooks/useColaboradorVinculo.ts:17-49` `[P2-01]` | M |
+| 42 | `documentos.empresa_id` inexistente em produção (reconferido: erro 42703), embora o código filtre e grave por empresa; tabelas e view lidas por edge functions também não existem (`health_checks`, `mv_folha_summary`, `cbo`, `cnae`, `faixas_irrf`, `faixas_inss`, `v_login_anomalies`) | Documentos/Operação | PARCIAL | Documentos sem isolamento por empresa; métricas, CBO/CNAE e alertas quebrados | `src/services/documentoService.ts:31-34` `[P2-02] [P2-03]` | M |
+| 43 | LGPD só no papel: sem RoPA nem DPIA; retenção cobre só 16 tabelas de log e a função de execução (`run_lgpd_purge`/`drenar_fila_limpeza_lgpd`) não existe em produção; score de conformidade da `LGPDPage` com `ok:true` fixo; 0 solicitações de titular processadas | LGPD | SIMULADO/NAO_INICIADO | Não há como demonstrar conformidade à ANPD | `[E-098/099] [H-AGD-08]` | M |
 
 ---
 
@@ -201,6 +205,10 @@ Confronto do repositório com o banco real (consulta somente leitura em 11–12/
 | Tabelas planejadas e nunca criadas em produção | `adicionais`, `comissoes`, `gratificacoes`, `darfs`, `grrf`, `trct`, `recibos_ferias`, `recibos_rescisao`, `homologacoes`, `exames_medicos`, `eventos_rh` | inexistentes | Modelos de dados de verbas, guias e documentos rescisórios nunca saíram do papel |
 | Buckets | 3 sem migration (`medidas-disciplinares`, `medidas-contestacoes`, `contratos-trabalho`) | existem (criados à mão em 11/09); 14 sem limite de tamanho ou tipo de arquivo; `avatars` público | Ambiente reconstruído falha com "Bucket not found" `[A-006] [E-025]` |
 | RPC `aplicar_medida_folha_ponto` | só no baseline `canonical_schema.sql:555` | — | Ambiente recriado só por migrations perde a função usada pelo app |
+| Vínculo usuário ↔ colaborador | `colaboradores.user_id` (migration `20260728221052_…`) + RPC `vincular_colaborador_ao_usuario` (`20260728221222_…`) | **ausentes** (42703) | Portal do Colaborador não vincula a pessoa logada `[P2-01]` |
+| Isolamento de documentos | `documentos.empresa_id` (`20260712214642_fixup_documentos_empresa_id.sql`) | **ausente** (42703) | Documentos sem filtro por empresa no banco `[P2-02]` |
+| Objetos lidos por edge functions | `health_checks`, `mv_folha_summary`, `cbo`, `cnae`, `faixas_irrf`, `faixas_inss`, view `v_login_anomalies` | inexistentes | `/metrics` sempre 503; CBO/CNAE/faixas vazias; `alertas-dp` falha 100% `[P2-03] [G-038/057]` |
+| Rotinas LGPD | `run_lgpd_purge`, `drenar_fila_limpeza_lgpd` | inexistentes | Retenção e limpeza LGPD não executam `[E-098]` |
 | Uso real | — | 13 colaboradores, 1 empresa, 0 holerites, 0 eventos eSocial, 0 batidas, 0 contratos gerados, 0 guias, 0 DCTFWeb, 0 certificados | Nenhum módulo de negócio tem prova de uso real |
 
 ---
@@ -282,7 +290,7 @@ Cada tabela traz o essencial. A lista completa, com evidência, está nos anexos
 | Encerrar ou cancelar admissão | PARCIAL (quebrado) | O enum do banco não tem os estados | `[ADM-02]` |
 | Pré-admissão pública por link | PARCIAL | Link por e-mail/WhatsApp não é enviado de verdade | `[E-FLX-12]` |
 | OCR de documentos da admissão | PARCIAL/BLOQUEADO | Depende de chave de IA; sem classificação de documento | `[G-027] [CAT-20]` |
-| Login gov.br | PARCIAL | Edge existe; a tela mostra "Em breve: Acesso via Gov.br" | `[G-033] [I]` |
+| Login gov.br | PARCIAL | Edge existe; o botão do login chama uma função que exige sessão; o callback lê um campo que a função não devolve; a tela de contratação mostra "Em breve: Acesso via Gov.br" | `[G-033] [A-119] [I]` |
 | Contrato: geração, assinatura, verificação | PARCIAL | RPCs de token existem; `contratos_gerados` com 0 linhas; geração sem acionador; assinatura sem ICP-Brasil | `[E-FLX-16] [E50-027]` |
 | S-2200 da admissão | PARCIAL (erro) | Chamado com o id da admissão no lugar do id do evento | `[E-FLX-15]` |
 | Onboarding (kits, documentos obrigatórios) | NAO_INICIADO | Tabelas `onboarding_kits`/`onboarding_documentos_obrigatorios` sem uso; "time to hire" inventado | `[I] [ADM-03]` |
@@ -343,7 +351,7 @@ Cada tabela traz o essencial. A lista completa, com evidência, está nos anexos
 
 | Funcionalidade | Status | Detalhe | Ref. |
 |---|---|---|---|
-| Portal (5 abas) | PARCIAL | Sem holerite em PDF; sem solicitações completas | `[A-031] [POR-01/02]` |
+| Portal (5 abas) | PARCIAL | Sem holerite em PDF; sem solicitações completas; o vínculo login ↔ colaborador não existe em produção | `[A-031] [POR-01/02] [P2-01]` |
 | WhatsApp, e-mail, push | SIMULADO/PARCIAL | Ver §4 #15–16; push sem chave VAPID | `[POR-05..07]` |
 | Botão "Suporte" | SIMULADO | Só toast | `AppSidebar.tsx:610` |
 | Chat interno, helpdesk, enquetes | NAO_INICIADO | — | `[CAT-16]` |
@@ -390,7 +398,7 @@ Cada tabela traz o essencial. A lista completa, com evidência, está nos anexos
 | Funcionalidade | Status | Detalhe | Ref. |
 |---|---|---|---|
 | Criptografia de PII | PARCIAL | Dados bancários só no repo; CPF, RG e salário sem cifra; `decrypt` liberado a qualquer usuário logado | `[A-023]` |
-| Atendimento ao titular (LGPD) | PARCIAL | CRUD existe; sem prazo, exportação ou anonimização acionada pela solicitação; purga falhando | `[E50-029] [H-AGD-06]` |
+| Atendimento ao titular (LGPD) | PARCIAL | CRUD existe; sem prazo, exportação ou anonimização acionada pela solicitação; purga falhando; score de conformidade fixo (`ok:true`); sem RoPA/DPIA | `[E50-029] [H-AGD-06] [E-098/099]` |
 | Política de retenção (`run_lgpd_purge`) | NAO_INICIADO em produção | — | `[H-AGD-08]` |
 | Matriz de papéis aprovada (quem vê salário) | NAO_INICIADO | `docs/security/` não existe; papéis financeiro e auditor inexistentes | `[A-064] [E-018]` |
 | Isolamento entre empresas provado (matriz T1/T2) | NAO_INICIADO | — | `[E-021/049]` |
@@ -441,8 +449,9 @@ Cada tabela traz o essencial. A lista completa, com evidência, está nos anexos
 | **Plano 100 Workflows** (27/09) — `docs/auditoria/PLANO_100_WORKFLOWS_2026-09-27.md` | 100 | 35 | 11 | 37 | 15 | 2 | A revisão do plano usa numeração diferente a partir de E49; o CLAUDE.md herdou o erro `[B2 DOC-W04]` |
 | **Plano de 50 etapas E50** (10/09) | 50 | 1 | 33 | 10 | 4 | 2 | Só 4 de 700 checkboxes marcados `[B2 DOC-50-01]` |
 | **Ciclo E51** (13/09) | 50 | 9 | 23 | 12 | 4 | 1 | 1 não verificado; os IDs "E51-0xx" no código não batem com o plano |
-| **Plano mestre de 100 etapas** (10/09) | 100 | 7 | ~61 | ~26 | 5 | — | Contagem parcial (E-001..E-099); detalhe no anexo B1 |
-| **PLANO_100.md** (raiz, 106 etapas, 30/08) | 106 | ~45 confirmadas no repo | — | — | — | — | Pendências A-055..A-090 no anexo A |
+| **Plano mestre de 100 etapas** (10/09) — `docs/auditoria/PLANO_100_ETAPAS_2026-09-10.md` | 100 | 7 | 61 | 27 | 5 | — | Detalhe etapa a etapa e mapa de equivalência no anexo B1 |
+| **PLANO_100.md** (raiz, 106 etapas, 30/08) | 106 | ~49 confirmadas no repo | — | — | — | — | Pendências A-055..A-092 no anexo A |
+| **PLANO_MELHORIAS.md** (raiz) | 47 itens "feito" amostrados | 26 confirmados | 13 | — | 1 | 2 falsos "feito" | P4-068 (read replica) e P5-077 (passivo trabalhista) marcados ✅ sem estar feitos; 5 órfãos `[A §5b]` |
 | **BACKLOG_11_ITEMS** | 2 pendentes declarados | 0 | 1 (P5-083 workflow) | 1 (P5-084 contábil) | — | P5-086 Metabase dado como feito, mas está órfão | `[A-017/018/021]` |
 | **ROADMAP.md / docs/ROADMAP.md** | — | — | — | Q2–Q4/2025 sem marcação real | — | Inúteis como planejamento | `[A-041]` |
 | **VISAO_FUTURA (E-100)** | 5 eixos | — | Operabilidade parcial | Ponte por domínio, cálculo no servidor, integrações governamentais | — | Indicador "migrations = repo 100%" não atingido | `[C §Visão]` |
@@ -571,7 +580,7 @@ Critério: primeiro o que **impede a folha real** e o que **engana o usuário**;
 - Consertar `alertas-dp` e o remetente de e-mail `[#16, #37]`.
 
 **Onda 4 — Reconciliar banco × repositório e segurança (1–2 semanas; envolve DDL em produção, com sua aprovação)**
-- Aplicar a criptografia bancária e a correção LGPD pendentes.
+- Aplicar a criptografia bancária, a correção LGPD, o vínculo login ↔ colaborador e o `empresa_id` de Documentos, todos pendentes `[#41–43]`.
 - Reconciliar o ledger.
 - Fechar as policies `USING(true)` e as funções expostas a `anon`.
 - Corrigir `is_admin`.
@@ -602,8 +611,8 @@ Critério: primeiro o que **impede a folha real** e o que **engana o usuário**;
 
 | Anexo | Conteúdo | Prefixos de ID |
 |---|---|---|
-| [A — Planos da raiz](./LEVANTAMENTO_PENDENCIAS_2026-10-12/anexo-A-planos-raiz.md) | ROADMAP, BACKLOG, CODE_TODOS, ESTADO_ATUAL, CLAUDE.md, PLANO_100/50/MELHORIAS, relatórios de auditoria da raiz | `A-0xx` |
-| [B1 — Plano de 100 etapas](./LEVANTAMENTO_PENDENCIAS_2026-10-12/anexo-B1-plano-100-etapas.md) | Tabela E-001..E-100 + itens abertos das auditorias de 10/09 e do estado de 16/08 | `E-0xx` |
+| [A — Planos da raiz](./LEVANTAMENTO_PENDENCIAS_2026-10-12/anexo-A-planos-raiz.md) | ROADMAP, BACKLOG, CODE_TODOS, ESTADO_ATUAL, CLAUDE.md, PLANO_100/50/MELHORIAS, PLANO_REFATORACAO_TIPOS, relatórios de auditoria da raiz | `A-0xx`, `AUD-0xx` |
+| [B1 — Plano de 100 etapas](./LEVANTAMENTO_PENDENCIAS_2026-10-12/anexo-B1-plano-100-etapas.md) | Tabela E-001..E-100 + 40 itens abertos das auditorias de 10/09, do HANDOFF, de 01_FALHAS_E_GAPS e do estado de 16/08 | `E-0xx`, `P2-xx` |
 | [B2 — Planos de 50 etapas e workflows](./LEVANTAMENTO_PENDENCIAS_2026-10-12/anexo-B2-planos-50-e-workflows.md) | Tabelas E01..E100 (workflows), E50-001..050, E51-001..050 | `W-`, `P-`, `ORF-`, `DOC-` |
 | [C — Docs de produto](./LEVANTAMENTO_PENDENCIAS_2026-10-12/anexo-C-docs-produto.md) | 17 módulos, docs/api, guias, catálogo histórico V2–V19 | `ESO-`, `FOL-`, `FER-`, `RES-`, `PON-`, `GUI-`, `ADM-`, `BEN-`, `POR-`, `REC-`, `REL-`, `INT-`, `OPE-`, `CAT-` |
 | [E — Frontend, cálculos e fluxos](./LEVANTAMENTO_PENDENCIAS_2026-10-12/anexo-E-frontend-calculos-fluxos.md) | Mapa dos 8 motores, matriz de 35 regras, 5 fluxos ponta a ponta, 66 páginas, 25 integrações | `E-CAL-`, `E-FLX-`, `E-INT-`, `E-PAG-` |
