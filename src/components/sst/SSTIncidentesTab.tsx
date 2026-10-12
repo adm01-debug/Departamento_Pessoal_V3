@@ -8,6 +8,9 @@ import { toast } from 'sonner';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresa } from '@/contexts';
+import { exportPontoCSV } from '@/services/exportService';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
+import { formatDateLocalISO } from '@/utils/dateLocal';
 
 export function SSTIncidentesTab() {
   const { empresaAtual } = useEmpresa();
@@ -25,6 +28,40 @@ export function SSTIncidentesTab() {
       return data || [];
     },
   });
+
+  const exportarOcorrencias = () => {
+    if (!incidentes.length) {
+      toast.info('Nenhuma ocorrência para exportar');
+      return;
+    }
+    const linhas = incidentes.map((i) => ({
+      data: formatDateLocalISO(new Date(i.data_hora)),
+      tipo: i.tipo,
+      local: i.local,
+      descricao: i.descricao,
+      gravidade: i.gravidade ?? '',
+      status: i.status ?? '',
+      medidas_tomadas: i.medidas_tomadas ?? '',
+    }));
+    exportPontoCSV(linhas, `sst-ocorrencias-${formatDateLocalISO(hoje)}.csv`);
+    void registrarAcessoPII('sst_incidentes', 'export', {
+      empresaId: empresaAtual?.id,
+      registroCount: linhas.length,
+    });
+    toast.success(`${linhas.length} ocorrência(s) exportada(s)`);
+  };
+
+  const hoje = new Date();
+  const acidentes = incidentes.filter((i) => i.tipo !== 'quase_acidente');
+  const incidentesMes = incidentes.filter((i) => {
+    const d = new Date(i.data_hora);
+    return d.getFullYear() === hoje.getFullYear() && d.getMonth() === hoje.getMonth();
+  }).length;
+  // Lista vem ordenada desc por data_hora — o primeiro acidente é o mais recente
+  const ultimoAcidente = acidentes.length ? new Date(acidentes[0].data_hora) : null;
+  const diasSemAcidente = ultimoAcidente
+    ? Math.max(0, Math.floor((hoje.getTime() - ultimoAcidente.getTime()) / 86_400_000))
+    : null;
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -71,9 +108,9 @@ export function SSTIncidentesTab() {
               <ShieldAlert className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-2xl font-bold font-display">0</p>
+              <p className="text-2xl font-bold font-display">{acidentes.length}</p>
               <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">
-                Acidentes com Afastamento
+                Acidentes Registrados
               </p>
             </div>
           </CardContent>
@@ -84,7 +121,7 @@ export function SSTIncidentesTab() {
               <AlertCircle className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-2xl font-bold font-display">2</p>
+              <p className="text-2xl font-bold font-display">{incidentesMes}</p>
               <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">
                 Incidentes este mês
               </p>
@@ -97,7 +134,7 @@ export function SSTIncidentesTab() {
               <CheckCircle2 className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-2xl font-bold font-display">425</p>
+              <p className="text-2xl font-bold font-display">{diasSemAcidente ?? '—'}</p>
               <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">
                 Dias sem acidentes
               </p>
@@ -109,13 +146,8 @@ export function SSTIncidentesTab() {
       <Card className="rounded-2xl border-border/30 overflow-hidden">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-sm font-display">Histórico de Ocorrências</CardTitle>
-          <Button
-            size="sm"
-            variant="ghost"
-            className="text-xs h-8"
-            onClick={() => toast.info('Funcionalidade de exportação em breve')}
-          >
-            Exportar CAT
+          <Button size="sm" variant="ghost" className="text-xs h-8" onClick={exportarOcorrencias}>
+            Exportar CSV
           </Button>
         </CardHeader>
         <Table>

@@ -48,6 +48,15 @@ export function RewardsSimulator() {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (ids: string[]) => premiacoesService.excluirCenariosROI(ids),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['premiacoes_cenarios_roi', empresaId] });
+      toast.success('Snapshots excluídos.');
+    },
+    onError: () => toast.error('Erro ao excluir snapshots'),
+  });
+
   const calculateMetrics = (emp: number, sal: number, bonus: number, perf: number, ret: number) => {
     const totalBudget = emp * sal * (bonus / 100) * (perf / 100);
     const turnoverCost = sal * 3 * emp * 0.15;
@@ -299,7 +308,8 @@ export function RewardsSimulator() {
                   variant="ghost"
                   size="icon"
                   className="h-6 w-6"
-                  onClick={() => {}}
+                  disabled={deleteMutation.isPending}
+                  onClick={() => deleteMutation.mutate(scenarios.map((s) => s.id))}
                   aria-label="Excluir snapshots"
                 >
                   <Trash2 className="h-3 w-3 text-muted-foreground" />
@@ -339,6 +349,21 @@ export function RewardsSimulator() {
                       size="icon"
                       className="absolute -right-2 -top-2 h-5 w-5 bg-background border border-border rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                       aria-label="Copiar cenário"
+                      disabled={saveMutation.isPending}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        saveMutation.mutate({
+                          name: `${s.nome} (cópia)`,
+                          employees: s.configuracoes.employees ?? 0,
+                          avgSalary: s.configuracoes.avgSalary ?? 0,
+                          bonusPercent: s.configuracoes.bonusPercent ?? 0,
+                          performanceLevel: s.configuracoes.performanceLevel ?? 0,
+                          retentionImpact: s.configuracoes.retentionImpact ?? 0,
+                          totalBudget: s.resultados.totalBudget ?? 0,
+                          savings: s.resultados.savings ?? 0,
+                          roi: s.resultados.roi ?? 0,
+                        });
+                      }}
                     >
                       <Copy className="h-2 w-2" />
                     </Button>

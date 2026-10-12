@@ -330,6 +330,12 @@ export const premiacoesService = {
     return data;
   },
 
+  async excluirCenariosROI(ids: string[]) {
+    if (!ids.length) return;
+    const { error } = await supabase.from('premiacoes_roi_cenarios').delete().in('id', ids);
+    if (error) throw error;
+  },
+
   async listarCenariosROI(empresaId: string): Promise<CenarioROI[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     // Nota: premiacoes_roi_cenarios não tem coluna empresa_id (só user_id);
