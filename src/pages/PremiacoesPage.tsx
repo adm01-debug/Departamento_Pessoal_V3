@@ -149,17 +149,6 @@ export default function PremiacoesPage() {
     );
   };
 
-  const handleSyncFolha = () => {
-    toast.info('Iniciando sincronização com a Folha de Pagamento...', {
-      description: 'Os pagamentos aprovados serão integrados ao próximo ciclo disponível.',
-    });
-    setTimeout(() => {
-      toast.success('Sincronização concluída!', {
-        description: '12 registros foram enviados para a folha de Maio/2026.',
-      });
-    }, 2000);
-  };
-
   const stats = {
     totalAprovado: pagamentos.reduce((acc, p) => acc + (Number(p.valor_aprovado) || 0), 0),
     totalRealFolha: pagamentos.reduce((acc, p) => acc + (Number(p.valor_folha_real) || 0), 0),

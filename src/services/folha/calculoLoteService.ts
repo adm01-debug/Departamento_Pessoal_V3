@@ -29,15 +29,22 @@ interface ColaboradorFolha {
   salario_base: number | null;
   jornada_horas_mensais?: string | null;
   tipo_contrato?: string | null;
-  dependentes?: Array<{ id: string; tipo?: string | null }> | null;
-  eventos_variaveis?: EventoFolha[] | null;
+  dependentes?: Array<{ id: string; para_irrf?: boolean | null }> | null;
 }
 
 export const COLABORADOR_FOLHA_SELECT = `
   *,
-  dependentes (id, tipo),
-  eventos_variaveis (codigo, descricao, tipo, valor)
+  dependentes (id, para_irrf)
 `;
+
+// Código, descrição e natureza do evento vêm da rubrica, não do lançamento.
+export const EVENTO_VARIAVEL_SELECT = 'colaborador_id, valor, rubrica:rubricas_folha(codigo, descricao, tipo)';
+
+interface EventoVariavelRow {
+  colaborador_id: string;
+  valor: number | string;
+  rubrica: { codigo: string; descricao: string; tipo: string } | null;
+}
 
 interface BeneficioVinculo {
   valor: number;
@@ -112,6 +119,25 @@ export const calculoLoteService = {
         folhaId = newHeader.id;
       }
 
+      // 2.1 Eventos variáveis da competência. A geração automática de férias
+      // grava a competência como data (YYYY-MM-01); o lançamento manual, YYYY-MM.
+      const { data: eventosData, error: eventosError } = await (
+        supabase.from('eventos_variaveis') as unknown as QueryBuilderType
+      )
+        .select(EVENTO_VARIAVEL_SELECT)
+        .eq('empresa_id', empresaId)
+        .in('competencia', [competencia, dataInicio]);
+
+      if (eventosError) throw eventosError;
+      const eventosPorColaborador = new Map<string, EventoFolha[]>();
+      for (const ev of (eventosData ?? []) as unknown as EventoVariavelRow[]) {
+        const tipo = ev.rubrica?.tipo;
+        if (!ev.rubrica || (tipo !== 'provento' && tipo !== 'desconto')) continue;
+        const lista = eventosPorColaborador.get(ev.colaborador_id) ?? [];
+        lista.push({ codigo: ev.rubrica.codigo, descricao: ev.rubrica.descricao, tipo, valor: Number(ev.valor) });
+        eventosPorColaborador.set(ev.colaborador_id, lista);
+      }
+
       const progress: BatchProgress = {
         total: colaboradores.length,
         current: 0,
@@ -122,9 +148,8 @@ export const calculoLoteService = {
       // 3. Processar cada colaborador
       for (const colab of colaboradores) {
         try {
-          const dependentesCount =
-            colab.dependentes?.filter((d) => d.tipo === 'filho' || d.tipo === 'enteado').length || 0;
-          const eventosVariaveis = colab.eventos_variaveis || [];
+          const dependentesCount = colab.dependentes?.filter((d) => d.para_irrf === true).length || 0;
+          const eventosVariaveis = eventosPorColaborador.get(colab.id) ?? [];
           const jornadaInformada = Number(colab.jornada_horas_mensais);
           const jornada = Number.isFinite(jornadaInformada) && jornadaInformada > 0 ? jornadaInformada : 220;
 
@@ -296,6 +321,31 @@ export const calculoLoteService = {
 
         progress.current++;
       }
+
+      // 4. Totais do cabeçalho = soma dos itens (o fechamento exige que batam)
+      const { data: itensFolha, error: itensError } = await supabase
+        .from('folha_itens')
+        .select('total_proventos, total_descontos, total_liquido, fgts_mes')
+        .eq('folha_id', folhaId);
+
+      if (itensError) throw itensError;
+      const somar = (campo: 'total_proventos' | 'total_descontos' | 'total_liquido' | 'fgts_mes') =>
+        Math.round((itensFolha ?? []).reduce((acc, i) => acc + Number(i[campo] ?? 0), 0) * 100) / 100;
+
+      const { error: totaisError } = await supabase
+        .from('folhas_pagamento')
+        .update({
+          total_proventos: somar('total_proventos'),
+          total_descontos: somar('total_descontos'),
+          total_liquido: somar('total_liquido'),
+          total_fgts: somar('fgts_mes'),
+          total_colaboradores: itensFolha?.length ?? 0,
+          data_calculo: new Date().toISOString(),
+        })
+        .eq('id', folhaId)
+        .eq('status', 'aberta');
+
+      if (totaisError) throw totaisError;
 
       return progress;
     } catch (error) {

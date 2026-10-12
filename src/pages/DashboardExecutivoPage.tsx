@@ -28,7 +28,6 @@ import {
   AlertTriangle,
   ShieldCheck,
   Landmark,
-  Wallet,
   Activity,
   UserPlus,
 } from 'lucide-react';
@@ -504,57 +503,6 @@ export default function DashboardExecutivoPage() {
                     <Button variant="ghost" size="sm" className="h-7 text-[10px] text-primary">
                       Ajustar Metas
                     </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Strategic Analysis */}
-              <Card className="border border-border/30 rounded-2xl bg-slate-900 text-white lg:col-span-2 overflow-hidden relative">
-                <div className="absolute top-0 right-0 p-8 opacity-10">
-                  <ShieldCheck className="h-32 w-32" />
-                </div>
-                <CardHeader>
-                  <CardTitle className="text-lg font-display flex items-center gap-2 text-primary-glow">
-                    <Target className="h-5 w-5" /> Plano de Sustentabilidade de Pessoal (PSP)
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="space-y-4">
-                      <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400">Score de Risco</h4>
-                      <div className="flex items-end gap-2">
-                        <span className="text-4xl font-display font-bold text-success">9.2</span>
-                        <span className="text-sm text-slate-400 mb-1">/ 10.0</span>
-                      </div>
-                      <p className="text-[10px] text-slate-400">
-                        Excelente saúde financeira. Custos fixos representam 42% da receita bruta projetada.
-                      </p>
-                    </div>
-
-                    <div className="space-y-4">
-                      <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400">Próximo Milestone</h4>
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-xl bg-primary/20 flex items-center justify-center border border-primary/30">
-                          <Wallet className="h-5 w-5 text-primary-glow" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold">Fechamento 13º Salário</p>
-                          <p className="text-[10px] text-slate-400">Impacto previsto: + R$ 128k em Dez/26</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400">
-                        Recomendação Estratégica
-                      </h4>
-                      <div className="p-3 rounded-xl bg-white/5 border border-white/10">
-                        <p className="text-xs italic text-slate-300">
-                          "Otimizar escalas no Depto Logística para reduzir horas extras em 15%, economizando R$
-                          12k/mês."
-                        </p>
-                      </div>
-                    </div>
                   </div>
                 </CardContent>
               </Card>

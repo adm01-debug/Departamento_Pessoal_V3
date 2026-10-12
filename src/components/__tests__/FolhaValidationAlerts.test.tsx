@@ -31,9 +31,9 @@ describe('FolhaValidationAlerts', () => {
     expect(screen.getByText(/Score:/)).toBeInTheDocument();
   });
 
-  it('renders eSocial success alert', () => {
+  it('does not claim eSocial S-1010 sync it never checked', () => {
     render(<FolhaValidationAlerts resumo={BASE_RESUMO} />);
-    expect(screen.getByText(/S-1010/)).toBeInTheDocument();
+    expect(screen.queryByText(/S-1010/)).not.toBeInTheDocument();
   });
 
   it('renders warning when no colaboradores', () => {
@@ -56,8 +56,8 @@ describe('FolhaValidationAlerts', () => {
     expect(screen.getByText(/Descontos totais elevados/)).toBeInTheDocument();
   });
 
-  it('renders variation alert always present', () => {
+  it('does not raise a salary variation alert without a previous payroll to compare', () => {
     render(<FolhaValidationAlerts resumo={BASE_RESUMO} />);
-    expect(screen.getByText(/Variação salarial atípica/)).toBeInTheDocument();
+    expect(screen.queryByText(/Variação salarial atípica/)).not.toBeInTheDocument();
   });
 });
