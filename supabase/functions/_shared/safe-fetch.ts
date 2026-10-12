@@ -38,7 +38,7 @@ export interface SafeFetchOptions extends RequestInit {
  * revalidando cada redirect, porque o host pode ter sido trocado por
  * qualquer coisa depois da última checagem.
  */
-const SSRF_GUARDED_TAGS = new Set(['webhook']);
+const SSRF_GUARDED_TAGS = new Set(['webhook', 'whatsapp']);
 const MAX_REDIRECTS = 5;
 
 export class FetchTimeoutError extends Error {

@@ -1,5 +1,5 @@
 import { PageTitle } from '@/components/PageTitle';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,6 +12,16 @@ import { securityService } from '@/services/securityService';
 import { PolicyAuditPanel } from '@/components/seguranca/PolicyAuditPanel';
 
 import { ShieldAlert, Lock, Unlock, Globe, AlertTriangle, CheckCircle, History, ShieldCheck } from 'lucide-react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+  ResponsiveContainer,
+  Legend,
+} from 'recharts';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -46,6 +56,19 @@ export default function SegurancaPage() {
     },
     onError: () => toast.error('Erro ao desbloquear IP'),
   });
+
+  // Tentativas de login por dia (dados reais da última janela de 100 registros)
+  const tentativasPorDia = useMemo(() => {
+    const porDia = new Map<string, { dia: string; sucesso: number; falha: number }>();
+    for (const a of loginAttempts ?? []) {
+      const dia = format(new Date(a.created_at), 'dd/MM', { locale: ptBR });
+      const entry = porDia.get(dia) ?? { dia, sucesso: 0, falha: 0 };
+      if (a.success) entry.sucesso += 1;
+      else entry.falha += 1;
+      porDia.set(dia, entry);
+    }
+    return [...porDia.values()].reverse();
+  }, [loginAttempts]);
 
   const resolveAlertMutation = useMutation({
     mutationFn: ({ id }: { id: string }) => securityService.resolveAlert(id),
@@ -196,11 +219,41 @@ export default function SegurancaPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-[300px] w-full flex items-center justify-center bg-muted/10 rounded-xl border border-dashed border-border/30">
-                    <p className="text-sm text-muted-foreground italic text-center px-8">
-                      Gráfico de tendências de tentativas de login por IP e horário disponível em breve
-                    </p>
-                  </div>
+                  {loadLogins ? (
+                    <div className="h-[300px] flex items-center justify-center">
+                      <Spinner />
+                    </div>
+                  ) : tentativasPorDia.length === 0 ? (
+                    <div className="h-[300px] w-full flex items-center justify-center bg-muted/10 rounded-xl border border-dashed border-border/30">
+                      <p className="text-sm text-muted-foreground text-center px-8">
+                        Nenhuma tentativa de login registrada no período
+                      </p>
+                    </div>
+                  ) : (
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={tentativasPorDia}>
+                        <CartesianGrid strokeDasharray="3 3" className="stroke-border/40" />
+                        <XAxis dataKey="dia" className="text-xs" />
+                        <YAxis allowDecimals={false} className="text-xs" />
+                        <RechartsTooltip />
+                        <Legend />
+                        <Bar
+                          dataKey="sucesso"
+                          name="Sucesso"
+                          stackId="a"
+                          fill="hsl(var(--success))"
+                          radius={[0, 0, 0, 0]}
+                        />
+                        <Bar
+                          dataKey="falha"
+                          name="Falha"
+                          stackId="a"
+                          fill="hsl(var(--destructive))"
+                          radius={[4, 4, 0, 0]}
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  )}
                 </CardContent>
               </Card>
             </div>
