@@ -124,6 +124,7 @@ jobs:
           # "policy already exists". Each dispatch of this workflow targets
           # only the NEW migrations for that batch.
           for migration in \
+            20261012120000_holerites_espelho_folha_itens.sql \
             20261012130000_rotinas_agendadas_falhando.sql
           do
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
@@ -182,7 +183,22 @@ jobs:
           SELECT jsonb_build_object(
             'ledger_count', (
               SELECT count(*) FROM supabase_migrations.schema_migrations
-              WHERE version IN ('20261012130000')
+              WHERE version IN ('20261012120000','20261012130000')
+            ),
+            'holerite_sync_trigger_ok', EXISTS (
+              SELECT 1 FROM pg_trigger
+              WHERE tgname = 'trg_sync_holerite_folha_item'
+                AND tgrelid = 'public.folha_itens'::regclass AND NOT tgisinternal
+            ),
+            'notify_fn_fixed', NOT EXISTS (
+              SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+              WHERE n.nspname = 'public' AND p.proname = 'fn_enqueue_notification'
+                AND p.prosrc LIKE '%NEW.competencia%'
+            ),
+            'self_read_requires_closed', EXISTS (
+              SELECT 1 FROM pg_policies
+              WHERE schemaname = 'public' AND tablename = 'holerites'
+                AND policyname = 'holerites_self_read' AND qual LIKE '%fechada%'
             ),
             'cron_routines_ok', (
               SELECT count(*) FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
@@ -237,7 +253,10 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 1 &&
+              Number(r.ledger_count) === 2 &&
+              r.holerite_sync_trigger_ok === true &&
+              r.notify_fn_fixed === true &&
+              r.self_read_requires_closed === true &&
               Number(r.cron_routines_ok) === 3 &&
               r.ferias_status_job_ok === true &&
               r.notif_tipo_d5_ok === true &&
