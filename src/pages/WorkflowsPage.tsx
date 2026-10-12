@@ -572,8 +572,32 @@ export default function WorkflowsPage() {
                   desligamento: 'desligamento',
                 };
                 const tipo = tipoMap[form.tipo] ?? 'custom';
-                const etapas = nodes
-                  .filter((n) => n.type === 'aprovador')
+                // Ordem das etapas segue as conexões do canvas a partir do nó
+                // inicial (BFS) — não a ordem de criação dos nós.
+                const adj = new Map<string, string[]>();
+                for (const c of connections) {
+                  const list = adj.get(c.from) ?? [];
+                  list.push(c.to);
+                  adj.set(c.from, list);
+                }
+                const nodeById = new Map(nodes.map((n) => [n.id, n]));
+                const visited = new Set<string>();
+                const orderedIds: string[] = [];
+                const startNode = nodes.find((n) => n.type === 'start');
+                const queue = startNode ? [startNode.id] : [];
+                while (queue.length > 0) {
+                  const cur = queue.shift() as string;
+                  if (visited.has(cur)) continue;
+                  visited.add(cur);
+                  orderedIds.push(cur);
+                  for (const next of adj.get(cur) ?? []) queue.push(next);
+                }
+                for (const n of nodes) {
+                  if (!visited.has(n.id)) orderedIds.push(n.id);
+                }
+                const etapas = orderedIds
+                  .map((id) => nodeById.get(id))
+                  .filter((n): n is (typeof nodes)[number] => n?.type === 'aprovador')
                   .map((n, i) => ({
                     nome: n.label,
                     ordem: i + 1,
@@ -586,7 +610,9 @@ export default function WorkflowsPage() {
                     nome: nodes.find((n) => n.type === 'start')?.label ?? 'Workflow sem nome',
                     tipo,
                     descricao: `Workflow com ${nodes.length} nós e ${connections.length} conexões`,
-                    ativo: true,
+                    // Inativa até todas as etapas gravarem: uma definição ativa sem
+                    // etapas executaria aprovações incompletas.
+                    ativo: false,
                   })
                   .then(async (definicao) => {
                     const definicaoId = (definicao as { id?: string } | null)?.id;
@@ -594,10 +620,14 @@ export default function WorkflowsPage() {
                     for (const etapa of etapas) {
                       await workflowService.criarEtapa({ ...etapa, workflow_id: definicaoId });
                     }
+                    if (empresaAtual?.id) {
+                      await workflowService.atualizarDefinicao(definicaoId, { ativo: true }, empresaAtual.id);
+                    }
+                    qc.invalidateQueries({ queryKey: ['workflows_def'] });
                     toast.success('Workflow salvo!');
                   })
                   .catch(() => {
-                    toast.error('Erro ao salvar workflow');
+                    toast.error('Erro ao salvar workflow — definição mantida inativa');
                   });
               }}
             />
