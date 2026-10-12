@@ -36,7 +36,6 @@ import {
   SimuladorWhatIf,
   CNABDialog,
   RelatorioContabilDialog,
-  FGTSDigitalDashboard,
   RubricasDialog,
   CalculoFolhaWizard,
   PagamentoBancarioWizard,
@@ -281,8 +280,6 @@ export default function FolhaPagamentoPage() {
             </Card>
           </div>
         </div>
-
-        <FGTSDigitalDashboard />
       </PageLayout>
     </>
   );

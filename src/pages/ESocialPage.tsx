@@ -103,6 +103,13 @@ export default function ESocialPage() {
   const [selectedCompetencia, setSelectedCompetencia] = useState(currentCompetenciaLocal());
   const [isValidating, setIsValidating] = useState<string | null>(null);
   const [auditOpen, setAuditOpen] = useState(false);
+  const [agora] = useState(() => Date.now());
+
+  const certificadoAtivo = certificados.find((c) => c.ativo);
+  const diasCertificado = certificadoAtivo?.valid_to
+    ? Math.ceil((new Date(certificadoAtivo.valid_to).getTime() - agora) / 86_400_000)
+    : null;
+  const certificadoValido = diasCertificado !== null && diasCertificado >= 0;
 
   const filteredEventos = useMemo(() => {
     return eventos.filter((e) => {
@@ -406,10 +413,15 @@ export default function ESocialPage() {
                             <Button
                               variant="outline"
                               size="sm"
-                              className="rounded-xl gap-1.5 font-body border-success/30 hover:bg-success/5 text-success"
+                              className={cn(
+                                'rounded-xl gap-1.5 font-body',
+                                certificadoValido
+                                  ? 'border-success/30 hover:bg-success/5 text-success'
+                                  : 'border-warning/30 hover:bg-warning/5 text-warning'
+                              )}
                             >
                               <ShieldCheck className="h-4 w-4" />
-                              Certificado Ativo
+                              {certificadoValido ? 'Certificado Ativo' : 'Sem certificado válido'}
                             </Button>
                           </DialogTrigger>
                           <DialogContent>
@@ -418,23 +430,51 @@ export default function ESocialPage() {
                               <CardDescription>Gerencie seus certificados ICP-Brasil (A1/A3)</CardDescription>
                             </DialogHeader>
                             <div className="space-y-4 pt-4">
-                              <div className="p-4 rounded-xl border border-success/20 bg-success/5 flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                  <Key className="h-8 w-8 text-success" />
-                                  <div>
-                                    <p className="font-bold text-sm">e-CNPJ: {empresaAtual?.razao_social}</p>
-                                    <p className="text-xs text-muted-foreground">
-                                      Vencimento: 12/12/2026 (Em 224 dias)
-                                    </p>
+                              {certificadoAtivo ? (
+                                <div
+                                  className={cn(
+                                    'p-4 rounded-xl border flex items-center justify-between',
+                                    certificadoValido
+                                      ? 'border-success/20 bg-success/5'
+                                      : 'border-destructive/20 bg-destructive/5'
+                                  )}
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <Key
+                                      className={cn('h-8 w-8', certificadoValido ? 'text-success' : 'text-destructive')}
+                                    />
+                                    <div>
+                                      <p className="font-bold text-sm">
+                                        {certificadoAtivo.subject ||
+                                          certificadoAtivo.cnpj_cpf ||
+                                          empresaAtual?.razao_social}
+                                      </p>
+                                      <p className="text-xs text-muted-foreground">
+                                        {certificadoAtivo.valid_to
+                                          ? `Vencimento: ${formatDate(certificadoAtivo.valid_to)}${
+                                              certificadoValido ? ` (em ${diasCertificado} dias)` : ' (vencido)'
+                                            }`
+                                          : 'Vencimento não informado'}
+                                      </p>
+                                    </div>
                                   </div>
+                                  <Badge
+                                    variant="outline"
+                                    className={
+                                      certificadoValido
+                                        ? 'text-success border-success/30'
+                                        : 'text-destructive border-destructive/30'
+                                    }
+                                  >
+                                    {certificadoValido ? 'Válido' : 'Vencido'}
+                                  </Badge>
                                 </div>
-                                <Badge variant="outline" className="text-success border-success/30">
-                                  Válido
-                                </Badge>
-                              </div>
-                              <Button variant="outline" className="w-full rounded-xl border-dashed">
-                                <Plus className="h-4 w-4 mr-2" /> Upload Novo Certificado (.pfx)
-                              </Button>
+                              ) : (
+                                <p className="text-sm text-muted-foreground font-body">
+                                  Nenhum certificado digital ativo cadastrado para esta empresa. Sem certificado válido
+                                  os eventos não podem ser assinados nem transmitidos.
+                                </p>
+                              )}
                             </div>
                           </DialogContent>
                         </Dialog>
