@@ -1,6 +1,6 @@
 import { PageTitle } from '@/components/PageTitle';
 import { useState, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PageLayout } from '@/components/layout';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -12,6 +12,8 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useEmpresa } from '@/contexts';
 import { toast } from 'sonner';
+import { safeErrorMessage } from '@/utils/safeError';
+import { validateTablePayload } from '@/schemas/validate';
 import { Shield, Plus } from 'lucide-react';
 import {
   SSTKPIs,
@@ -36,12 +38,44 @@ const RISCO_LEVELS = [
 
 export default function SSTPage() {
   const { empresaAtual } = useEmpresa();
+  const qc = useQueryClient();
   const [openIncidente, setOpenIncidente] = useState(false);
   const [incidenteForm, setIncidenteForm] = useState({
     tipo: 'quase_acidente',
     descricao: '',
     local: '',
     gravidade: '3',
+  });
+
+  const registrarIncidente = useMutation({
+    mutationFn: async () => {
+      if (!empresaAtual?.id) throw new Error('Selecione uma empresa.');
+      if (!incidenteForm.local.trim() || !incidenteForm.descricao.trim()) {
+        throw new Error('Informe o local e a descrição do incidente.');
+      }
+      const { error } = await supabase.from('sst_incidentes').insert(
+        validateTablePayload(
+          'sst_incidentes',
+          {
+            empresa_id: empresaAtual.id,
+            tipo: incidenteForm.tipo,
+            local: incidenteForm.local.trim(),
+            gravidade: Number(incidenteForm.gravidade),
+            descricao: incidenteForm.descricao.trim(),
+          },
+          'SSTPage:sst_incidentes'
+        )
+      );
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success('Incidente registrado!');
+      qc.invalidateQueries({ queryKey: ['sst_incidentes'] });
+      qc.invalidateQueries({ queryKey: ['sst_kpi_incidentes'] });
+      setOpenIncidente(false);
+      setIncidenteForm({ tipo: 'quase_acidente', descricao: '', local: '', gravidade: '3' });
+    },
+    onError: (e) => toast.error(safeErrorMessage(e, 'Falha ao registrar incidente.')),
   });
 
   const { data: asos = [], isLoading: loadAsos } = useQuery({
@@ -183,12 +217,10 @@ export default function SSTPage() {
                   </div>
                   <Button
                     className="w-full rounded-xl bg-gradient-to-r from-destructive to-warning"
-                    onClick={() => {
-                      toast.success('Incidente registrado!');
-                      setOpenIncidente(false);
-                    }}
+                    disabled={registrarIncidente.isPending}
+                    onClick={() => registrarIncidente.mutate()}
                   >
-                    Registrar Incidente
+                    {registrarIncidente.isPending ? 'Registrando...' : 'Registrar Incidente'}
                   </Button>
                 </div>
               </DialogContent>

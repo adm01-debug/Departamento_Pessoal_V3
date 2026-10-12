@@ -186,8 +186,33 @@ export const edgeFunctionsService = {
   /** Limpeza de dados expirados */
   limpezaDados: async () => handleInvoke('limpeza', { body: {} }),
 
-  /** Backup server-side */
-  backupServidor: async (empresaId?: string) => handleInvoke('backup', { body: { empresaId } }),
+  /**
+   * Backup server-side em arquivo (bucket `backups`, SHA-256 conferido). A edge
+   * `backup` só contava linhas e respondia "concluído". holerites e documentos
+   * ficam fora: no canônico não têm empresa_id, e a exportação é por empresa.
+   */
+  backupServidor: async (empresaId: string) =>
+    handleInvoke('backup-automatico', {
+      body: {
+        action: 'run',
+        empresaId,
+        tables: [
+          'colaboradores',
+          'folhas_pagamento',
+          'ferias',
+          'afastamentos',
+          'departamentos',
+          'cargos',
+          'admissoes',
+          'desligamentos',
+          'batidas_ponto',
+          'beneficios',
+          'esocial_eventos',
+          'guias_fgts',
+          'guias_inss',
+        ],
+      },
+    }),
 
   /** OCR de documentos via AI (bucket restrito a documentos/documentos-admissao) */
   ocrDocumento: async (params: {
