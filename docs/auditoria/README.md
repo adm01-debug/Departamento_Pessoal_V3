@@ -1,5 +1,7 @@
 # Auditoria Exaustiva do Sistema — Departamento Pessoal v2
 
+> **Levantamento de pendências de 12/10/2026:** [`LEVANTAMENTO_PENDENCIAS_2026-10-12.md`](./LEVANTAMENTO_PENDENCIAS_2026-10-12.md) consolida tudo o que foi planejado (planos, docs, tabelas, telas, edge functions) e não foi executado, ou foi só parcialmente ou de forma simulada, conferido contra o código de `bb6756cb5` e o banco de produção. Evidência completa nos anexos em [`LEVANTAMENTO_PENDENCIAS_2026-10-12/`](./LEVANTAMENTO_PENDENCIAS_2026-10-12/).
+
 > **Atualização canônica de 10/09/2026:** a auditoria abaixo, de 18/07, é histórica. A avaliação atual acessou diretamente o banco `frjbfeamybqsejlvmqbl`, reduziu a nota para **4,11/10** e bloqueou dados reais por vazamentos anônimos, RPCs privilegiadas, falhas de hash e drift de schema. Use estes documentos como fonte corrente:
 >
 > - [`AUDITORIA_TECNICA_EXAUSTIVA_2026-09-10.md`](./AUDITORIA_TECNICA_EXAUSTIVA_2026-09-10.md);

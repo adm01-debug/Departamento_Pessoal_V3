@@ -1,0 +1,352 @@
+> **Anexo B2 — Planos de 50 etapas (E50/E51) e de 100 workflows** do [Levantamento exaustivo de pendências (12/10/2026)](../LEVANTAMENTO_PENDENCIAS_2026-10-12.md). Análise somente leitura do commit `bb6756cb5` e do banco de produção. Status: NAO_INICIADO · PARCIAL · SIMULADO · ORFAO · BLOQUEADO · DOC_DESATUALIZADA (ver §2 do documento principal).
+
+# B2 — Planos de 50 etapas (09-10, 09-13/E51), Plano 100 Workflows, Falhas/Gaps, Matriz E2E, Master e Estado 16/08
+
+Repo HEAD bb6756cb5 (11/10/2026). Auditor: camada B2. Somente leitura.
+
+Nota: o checkout foi avançado por fast-forward de f1bbbe8 para bb6756cb5 (origin/main, PRs #198-#205) durante a auditoria; todas as evidências foram re-conferidas contra bb6756cb5 (único workflow alterado: canonical-migrations.yml).
+
+## Cobertura
+- **Lido integralmente:** PLANO_100_WORKFLOWS_2026-09-27 (E01..E100), REVISAO_IMPLEMENTACAO_PLANO_100_WORKFLOWS, E47_TRIAGE_E2E, PLANO_MELHORIAS_50_ETAPAS_2026-09-10 (E50-001..050), PLANO_MELHORIAS_50_ETAPAS_2026-09-13 (E51-001..050), SIMULACAO_E_EXECUCAO_E51, REVISAO_IMPLEMENTACAO_PLANO_50 (10/09) §4 e REVISAO_POS_EXECUCAO_PLANO_50 (12/09).
+- **Verificado no código:** .github/workflows/*, infra/github/ruleset-main.json, scripts/ (gates e testes), package.json, vitest/playwright config, edge functions citadas pelas etapas; git log dos PRs #166–#205.
+- **Produção (MCP somente leitura, 11/10):** buckets, funções do schema public, ledger, policies de `medidas_ciencia_tokens`.
+- **Não coberto aqui (coberto em outros anexos):** 01_FALHAS_E_GAPS, 04_AUDITORIA_MASTER e estado/01..11 → anexo B1 (Parte 2); GitHub Settings/Environments/rulesets vivos → NAO_VERIFICADO.
+
+## Top 10 lacunas
+1. **Proteção da main incompleta** — ruleset com 7 checks, bypass `always`, sem P0 nem Playwright; branch protection clássica coexistindo (W-01).
+2. **URL admin do banco de produção usada em job de PR** e "verde por omissão" para Dependabot/forks (W-02, W-03).
+3. **E2E autenticado vermelho desde 24/09** — identidades E2E sem papéis/seed; script de provisionamento órfão (W-09, ORF-03).
+4. **Integrações legais e financeiras simuladas/bloqueadas** — eSocial sem ICP-Brasil/SOAP; FGTS Digital, DCTFWeb, PIX, consignado e adiantamento só locais (P-05, P-06).
+5. **Telas que fingem sucesso** — WhatsApp "enviado", PDF de holerite com link falso, incidente SST não gravado, dashboard executivo com números fixos (P-01..P-04).
+6. **Engine de folha não unificada** — float no servidor × decimal no front; sem tabela legal por vigência nem casos homologados (P-13, E51-021).
+7. **Gates escritos e desligados** — `audit-edge-authz.mjs` e `audit-schema-drift.mjs` não rodam no CI (ORF-01, ORF-02).
+8. **Sem step-up MFA no servidor, sem upload seguro, sem gitleaks/SBOM** (P-10, P-11, P-16).
+9. **Workflows canônicos manuais e hardcoded por lote; deploy de edge sem token** (W-13, W-14).
+10. **Planos sem painel de progresso** — 4/700 e 3/703 checkboxes; revisão com numeração divergente; CLAUDE.md defasado (DOC-50-01, DOC-W01..W04).
+
+
+---
+# PARTE 1 — PLANO 100 WORKFLOWS (PLANO_100_WORKFLOWS_2026-09-27.md) — tabela E01..E100
+
+Fonte do plano: `docs/auditoria/PLANO_100_WORKFLOWS_2026-09-27.md` (E01..E100 nas linhas 41-167). Revisão: `REVISAO_IMPLEMENTACAO_PLANO_100_WORKFLOWS_2026-09-27.md`; triagem E2E: `E47_TRIAGE_E2E_2026-09-27.md`.
+
+**ATENÇÃO — DOC_DESATUALIZADA / numeração divergente (registrar para correção de docs):** a `REVISAO_IMPLEMENTACAO_PLANO_100_WORKFLOWS_2026-09-27.md` usa uma NUMERAÇÃO DIFERENTE da do plano a partir de E49 (ex.: "E49 = E2E check obrigatório", "E57 = falso-positivo sign_before_send", "E61 = Dependabot docker", "E65 = branch-protection lê permissões", "E92 = CLAUDE.md", "E91 = badges"). O CLAUDE.md herda a numeração da revisão ("E66 = SHA-pinning", "E91 = README badges", "E62-E64 = dependabot", "E53/E54" OK). No plano, SHA-pin é E23, E66 é OSSF Scorecard, E92 é badges e E91 é CLAUDE.md. A tabela abaixo usa SEMPRE a numeração DO PLANO. Legenda de status: FEITO (verificado no código) | demais rótulos do formato.
+Observação: o `CLAUDE.md` não lista E30/E34/E36/E39/E40/E41/E42/E49/E79/E80/E15 como feitos, mas o commit `56a3a44` (PR #185, 08/10/2026) os executou — o CLAUDE.md está desatualizado nesses pontos (ver DOC-W01).
+Observação 2: a `REVISAO...` afirma "62 etapas bloqueadas / 26 executadas"; o estado real em 11/10 é bem diferente (ver Métricas da Parte 1).
+
+## Tabela E01..E100 (estado REAL em 11/10/2026, HEAD f1bbbe8)
+
+| Etapa | Descrição curta (plano) | Status | Evidência (arquivo:linha) |
+|---|---|---|---|
+| E01 | Congelar branch-protection.yml | FEITO | `.github/workflows/branch-protection.yml:14` `if: false` |
+| E02 | Exportar ruleset como baseline | FEITO | `infra/github/ruleset-main.json` (7 checks; NÃO inclui `P0 database migration simulations` nem `Playwright público (PR)`) |
+| E03 | Fonte única: ruleset; remover branch protection clássica | BLOQUEADO | ação GitHub-side (`delete_branch_protection`); CLAUDE.md:Sessão 3 diz que branch protection clássica foi ATIVADA (E03 "feito") — contradiz o plano (plano pedia REMOVER a clássica). Estado vivo NAO_VERIFICADO |
+| E04 | Reescrever payload do ruleset (união dos checks + Playwright + strict) | NAO_INICIADO | `infra/github/ruleset-main.json:1-45` ainda com 7 checks, `strict_required_status_checks_policy:false`; sem `P0`, sem `Playwright público (PR)` |
+| E05 | Aprovação obrigatória compatível c/ dono único; bypass `pull_request` | BLOQUEADO | decisão de negócio; baseline `ruleset-main.json:44` ainda `bypass_mode:"always"`, `required_approving_review_count:1` |
+| E06 | branch-protection.yml lê o JSON de arquivo | NAO_INICIADO | `branch-protection.yml:41-77` ainda monta payload via heredoc `jq -n` (sem `required_status_checks`) |
+| E07 | Modo `diff/apply` no workflow de proteção | NAO_INICIADO | `branch-protection.yml:8-9` só `workflow_dispatch` sem inputs |
+| E08 | Guard job⇄required check | FEITO | `scripts/audit-required-checks.mjs`; ligado em `ci.yml:246` (job security-config) |
+| E09 | Settings do repo (squash-only etc.) | FEITO (GitHub-side, NAO_VERIFICADO no código) | CLAUDE.md "Regras do merge (E09)"; só verificável via API |
+| E10 | enforce_admins/bypass documentado em runbook | DOC_DESATUALIZADA | REVISAO diz "Documentado em runbook"; `grep bypass infra/runbooks/*.md` não acha nada (BREAK_GLASS.md trata outro assunto) |
+| E11 | Role Postgres `ci_auditor` read-only | NAO_INICIADO | nenhuma migration/role `ci_auditor` em `supabase/migrations` (grep); BLOQUEADO por DDL em produção |
+| E12 | Secret `SUPABASE_DB_URL_READONLY` | BLOQUEADO | depende de E11; `ci.yml:314` ainda usa `secrets.SUPABASE_DB_URL` |
+| E13 | Mover `SUPABASE_DB_URL` p/ environment Production | BLOQUEADO | GitHub-side; `ci.yml:314` e `canonical-migrations.yml:31` ainda leem do repo |
+| E14 | Proteger environment `Production` (reviewers, branch policy) | BLOQUEADO | GitHub-side NAO_VERIFICADO; `canonical-*.yml` usam `environment: production` |
+| E15 | `apply` só a partir de `main` | FEITO | `canonical-migrations.yml:41-52` (commit 56a3a44) |
+| E16 | db-integrity PR usa URL read-only / main usa admin | NAO_INICIADO | `ci.yml:307-314` job único com `SUPABASE_DB_URL` (admin) em PR interno |
+| E17 | Eliminar "verde por omissão" (job pulado = sucesso) | NAO_INICIADO | `ci.yml:307` `if: ... head.repo.full_name == github.repository && github.actor != 'dependabot[bot]'` continua; D8 aberto |
+| E18 | Repo privado | BLOQUEADO | decisão de negócio; README/CLAUDE.md ainda tratam como privado/público de forma inconsistente |
+| E19 | Política de forks | BLOQUEADO | depende de E18 (GitHub-side) |
+| E20 | Eliminar `${{ }}` em `run:` | PARCIAL | `canonical-migrations.yml:142,156` ainda `stage_dir="${{ steps.stage.outputs.dir }}"` em `run:`; `workflows-contract.test.mjs:27-30` só barra `github.event.*/inputs.*`, não `steps.*.outputs`; gate `audit-workflow-hygiene.mjs` inexistente |
+| E21 | Remover fallback `VITE_SUPABASE_ANON_KEY` | FEITO | `grep ANON_KEY .github` vazio |
+| E22 | Fonte única vars vs secrets p/ URL/key públicas | NAO_INICIADO | `ci.yml:101-102,149-150,184-185` secrets; `e2e.yml:28-29` vars (público) mas `e2e.yml:103-104` secrets (main); `healthcheck.yml:29-30` secrets — mistura persiste |
+| E23 | Pinar actions por SHA | FEITO | todas as `uses:` com SHA40; reforçado por `scripts/tests/workflows-contract.test.mjs:73-92` |
+| E24 | `sha_pinning_required=true`, `allowed_actions: selected` | BLOQUEADO | GitHub-side NAO_VERIFICADO |
+| E25 | Fixar `bun-version`; remover continue-on-error | FEITO | `deploy.yml:51` `bun-version: 1.3.14`; `e2e.yml:48,147` idem; sem `continue-on-error` (commit 56a3a44) |
+| E26 | Um gerenciador só (npm) | BLOQUEADO | decisão de negócio; `bun.lock` + `package-lock.json` coexistem (raiz); `ci.yml` usa `npm install`, `e2e.yml`/`deploy.yml` usam `bun install --frozen-lockfile`; `package.json:44` `ci:verify` usa `bun run` |
+| E27 | `npm ci` em todo lugar | NAO_INICIADO | `ci.yml:34,61,111,161,194` `npm install --no-audit --no-fund` (mutável) |
+| E28 | Cache de dependências npm | NAO_INICIADO | `ci.yml` sem `cache: npm` em nenhum `setup-node` |
+| E29 | `deno.lock` + remover `--no-lock` | PARCIAL | `deno.lock` existe na RAIZ do repo, mas `ci.yml:227`, `canonical-edge-functions.yml:62`, `scripts/typecheck-edge.sh:25,32` ainda usam `--no-lock`; não há `supabase/functions/deno.lock` |
+| E30 | Pinar postgres:17-alpine por digest (var única `_lib.sh`) | PARCIAL | digest `@sha256:b0f9560a...` em 27 scripts `scripts/tests/*.sh`; PORÉM duplicado em cada arquivo — `scripts/tests/_lib.sh` não existe |
+| E31 | engines + packageManager | PARCIAL | `package.json:6-9` `engines.node "22.x"`, `packageManager "npm@10.x"` (corepack exige versão exata `npm@10.x.y`; valor inválido) |
+| E32 | Dependabot actions semanal + grupo | FEITO | `.github/dependabot.yml` (github-actions semanal, grupo `actions`) |
+| E33 | timeout-minutes em todos os jobs | FEITO | todos os jobs; `workflows-contract.test.mjs:38-60` |
+| E34 | cancel-in-progress só em PR | FEITO | `ci.yml:10`, `e2e.yml:16`, `security.yml:15`, `deploy.yml:12` |
+| E35 | Remover `master` dos triggers | FEITO | `ci.yml:3-7` só `main` |
+| E36 | fetch-depth:0 só no lint | FEITO | `ci.yml:55` (só `lint`); `typecheck` sem |
+| E37 | Filtro de caminhos (dorny/paths-filter) | NAO_INICIADO | nenhum `paths-filter` em `.github` (grep); `p0-database-migrations` roda em todo PR |
+| E38 | Paralelizar 26 scripts P0 (matrix/shards) | NAO_INICIADO | `ci.yml:272-297` 26 `bash scripts/tests/...` seriais num único step |
+| E39 | Descoberta automática de testes Deno | FEITO | `ci.yml:227` `deno test ... supabase/functions/` (commit 56a3a44) |
+| E40 | Reusar `typecheck-edge.sh` | PARCIAL | `ci.yml:221` usa o script; `canonical-edge-functions.yml:56-67` continua com loop próprio (duplicado) |
+| E41 | Job `rls-live` separado | FEITO | `ci.yml:138-177` |
+| E42 | Coverage como artifact + summary | FEITO | `ci.yml:119-135`; `vitest.config.ts` reporter `json-summary` |
+| E43 | Baseline versionado de `--max-warnings` | FEITO | `scripts/.eslint-warnings-budget.json` + `ratchet-lint-warnings.mjs` + `ci.yml:75-80`; `package.json:34` `--max-warnings=1` (número ainda literal no script npm) |
+| E44 | `permissions:` em todo workflow | FEITO | todos têm `permissions:` (contract test `:128-134`) |
+| E45 | `$GITHUB_STEP_SUMMARY` nos gates | PARCIAL | só em coverage (`ci.yml:126-135`); `security-config`, `db-integrity`, `p0` sem summary |
+| E46 | Absorver `db-tests.yml` no P0 | NAO_INICIADO | `.github/workflows/db-tests.yml` ainda existe (path-filter de plano encerrado `plano100_*`) |
+| E47 | Triagem dos 18 testes E2E vermelhos | PARCIAL | `docs/auditoria/E47_TRIAGE_E2E_2026-09-27.md` existe, mas a causa raiz é só "hipótese" — o próprio doc diz que exige leitura do trace (`:76`); nunca confirmada |
+| E48 | Corrigir causa raiz E2E (usuários E2E) | BLOQUEADO | CLAUDE.md "Usuários E2E inexistentes" em `frjbfeamybqsejlvmqbl`; `scripts/provision-e2e-users.mjs` existe (requer `SUPABASE_SERVICE_ROLE_KEY`) mas nunca executado — ação externa |
+| E49 | Falha de E2E na main abre issue | FEITO | `e2e.yml:204-228` (commit 56a3a44) |
+| E50 | `Playwright público (PR)` como check obrigatório | NAO_INICIADO | depende de E04; `ruleset-main.json` não lista |
+| E51 | `workflow_dispatch` no e2e.yml com input `project` | NAO_INICIADO | `e2e.yml:3-6` só pull_request/push |
+| E52 | Mailosaur: decidir | BLOQUEADO | `e2e.yml:110-112` referencia `MAILOSAUR_*` (secrets inexistentes por D3 do plano) — spec segue pulado |
+| E53 | Retenção de artifacts 14/7 dias | FEITO | `e2e.yml:89,191,199` |
+| E54 | `retries:0` em PR, 2 em main | FEITO | `playwright.config.ts:26` |
+| E55 | `post-deploy-smoke.yml` (deployment_status) | NAO_INICIADO | arquivo inexistente; grep `deployment_status` vazio |
+| E56 | `vars.CANONICAL_SUPABASE_REF/URL` única | NAO_INICIADO | literal `frjbfeamybqsejlvmqbl` em `e2e.yml:43,142` e `CANONICAL_REF:` em `canonical-edge-functions.yml:25`, `canonical-migrations.yml:32`, `canonical-probes.yml:35` |
+| E57 | Triar 30 alertas CodeQL | BLOQUEADO | GitHub-side (code-scanning); NAO_VERIFICADO |
+| E58 | CodeQL só `security-extended` | NAO_INICIADO | `security.yml:32` `queries: security-and-quality` |
+| E59 | `concurrency` + timeout no security.yml | FEITO | `security.yml:12-15,19` |
+| E60 | `dependency-review-action` | NAO_INICIADO | grep vazio |
+| E61 | `npm audit` com `--omit=dev` + exceções | NAO_INICIADO | `security.yml:40` `npm audit --audit-level=high` (sem `--omit=dev`, sem allowlist) |
+| E62 | Dependabot ignore TS>=6.1.0 | FEITO | `dependabot.yml` bloco `ignore` |
+| E63 | Dependabot docker | FEITO | `dependabot.yml` ecossistema `docker` |
+| E64 | Grupo catch-all minor-patch | FEITO | `dependabot.yml` grupo `minor-patch` |
+| E65 | secret_scanning non_provider/validity | BLOQUEADO | GitHub-side NAO_VERIFICADO |
+| E66 | OSSF Scorecard | NAO_INICIADO | grep `scorecard` vazio |
+| E67 | `canonical-migrations` lista por input | NAO_INICIADO | `canonical-migrations.yml:126-132` lista literal no YAML (agora 6 migrations do lote 20261011; o lote 20261006 foi sobrescrito — padrão 'editar o YAML a cada lote' se repetiu no PR #203) |
+| E68 | Derivar lista do drift repo⇄ledger | NAO_INICIADO | idem; a detecção do PR #132 existe em outro lugar (`scripts/`), não ligada ao workflow |
+| E69 | Verificação pós-apply genérica | NAO_INICIADO | `canonical-migrations.yml:179-229` hardcoded para o lote atual (`ledger_count===6`, `check_constraints_count===7`, nomes de constraints do lote 20261011) e ainda carrega invariantes do lote 20261006 |
+| E70 | `canonical-probes` schedule diário + workflow_call + issue | NAO_INICIADO | `canonical-probes.yml:13` só `workflow_dispatch` |
+| E71 | Probes em `scripts/` (SQL+mjs) | FEITO | `scripts/probes/run-probes.mjs` + `rv-probes.sql` (nomes diferem do plano `canonical-probes.*`) |
+| E72 | Triar RV-02/RV-04 | PARCIAL (triagem factual feita aqui; nunca registrada em doc) | Verificação ao vivo 11/10 (MCP Supabase DEPARTAMENTO PESSOAL, somente leitura): `medidas_ciencia_tokens` tem só 2 policies (INSERT/SELECT de RH, `authenticated`) — sem policy de anon (RV-02 fechado nas policies; ACL de coluna NAO_VERIFICADO); funções `get_my_user_empresas`, `set_own_default_empresa`, `admin_associar_usuario_empresa`, `pode_gerir_rh_para`, `pode_gerir_pessoas_para`, `edge_rate_limit_check`, `replace_monthly_provisions`, `claim_due_report_schedules`, `enforce_report_schedule_authorship`, `sec_audit_policies_scan`, `sec_policy_regressions_purge`, `sec_verify_seals_scan` e `pcs_*` existem em `public` (RV-04/05/07/08/09/15 aplicados). Logo o resultado `rv02:f/rv04:f` do run de 24/09 está superado; falta rodar `canonical-probes.yml` e registrar. `reset_login_attempts` ainda existe (ACL NAO_VERIFICADO). Migrations no repo: `20260912191000_p0_token_table_acl.sql`, `20260912190000_p0_identity_rls_authz.sql` |
+| E73 | `SUPABASE_ACCESS_TOKEN` no environment Production | BLOQUEADO | credencial/ação externa; `canonical-edge-functions.yml:48-49` falha sem ele |
+| E74 | Dry-run do deploy de Edge Functions | NAO_INICIADO | `canonical-edge-functions.yml:3-9` sem input `mode` |
+| E75 | Deploy de EF em push main c/ path filter | NAO_INICIADO | só `workflow_dispatch` |
+| E76 | Pós-deploy chama `healthcheck.sh REQUIRE_BACKEND=1` | NAO_INICIADO | `canonical-edge-functions.yml:80-96` só compara slugs |
+| E77 | Concurrency compartilhada `canonical-database` | NAO_INICIADO | grupos distintos: `canonical-database-migrations` (`canonical-migrations.yml:18`) vs `canonical-database-probes` (`canonical-probes.yml:21`) |
+| E78 | Runbook CANONICAL_WORKFLOWS.md | FEITO | `infra/runbooks/CANONICAL_WORKFLOWS.md` (afirma environment com reviewer — GitHub-side NAO_VERIFICADO) |
+| E79 | healthcheck: corpo com printf + label | FEITO | `healthcheck.yml:43-47` |
+| E80 | healthcheck: fechar issue ao voltar | FEITO | `healthcheck.yml:54-62` |
+| E81 | Alinhar APP_URL × homepage | BLOQUEADO | GitHub-side (`vars.APP_URL`) NAO_VERIFICADO |
+| E82 | deploy.yml → build.yml útil (npm ci, bundle budget, sem echo) | PARCIAL | `deploy.yml:62` ainda o step "Vercel preview handoff" = `echo`; ainda `bun install`; orçamento de bundle foi para o job `lighthouse` de `ci.yml:179-210` |
+| E83 | Não rodar build p/ Dependabot | NAO_INICIADO | `deploy.yml` sem `github.actor != 'dependabot[bot]'` |
+| E84 | `notify-main-failure.yml` → N8N/WhatsApp | NAO_INICIADO | inexistente; grep `workflow_run` vazio. BLOQUEADO em parte (webhook N8N) |
+| E85 | Registrar URL/SHA deployado no summary | NAO_INICIADO | nenhum workflow grava `deployment_status` |
+| E86 | `report-workflows.mjs` + WORKFLOWS_STATUS.md | NAO_INICIADO | `scripts/report-workflows.mjs` inexistente |
+| E87 | PR template único + "verificado de verdade" | FEITO | `.github/PULL_REQUEST_TEMPLATE.md` (duplicado minúsculo removido) |
+| E88 | Issue templates só `.yml` + config.yml | FEITO | `.github/ISSUE_TEMPLATE/{bug_report,feature_request,config}.yml`; link do config aponta `BRIDGE_PERFORMANCE.md` em vez de runbook de incidentes (`RESPOSTA_INCIDENTES.md`) — desvio menor |
+| E89 | Remover FUNDING.yml | FEITO | `git ls-files` sem FUNDING |
+| E90 | CODEOWNERS com efeito | NAO_INICIADO | `ruleset-main.json:35` `require_code_owner_review:false`; CODEOWNERS todo `@adm01-debug` (decorativo) |
+| E91 | Atualizar CLAUDE.md c/ estado real | DOC_DESATUALIZADA | ver DOC-W01..W04 abaixo: CLAUDE.md ainda lista "CI não roda em repo privado", "Branch protection inativo", "Deploy Netlify sem secrets", `bun install` etc. |
+| E92 | README com badges | FEITO | `README.md:5-8` 4 badges |
+| E93 | Labels padronizadas | FEITO (parcial NAO_VERIFICADO) | workflows criam `healthcheck`, `e2e-main`, `ci` com `gh label create --force` (`healthcheck.yml:47`; `e2e.yml` e `ci.yml` rls-live idem); `security`/`canonical`/`dependencies` só GitHub-side |
+| E94 | `actionlint` + `zizmor` no CI | NAO_INICIADO | grep vazio em `.github/`; só lint-staged local |
+| E95 | lint-staged `actionlint` | PARCIAL | `.lintstagedrc.json:5` chama `actionlint`, mas o binário não é dependência (`package.json` sem `actionlint`) → falha/ignora no commit local se ausente |
+| E96 | Teste de contrato dos workflows | FEITO | `scripts/tests/workflows-contract.test.mjs`; roda em `ci.yml:253` |
+| E97 | Reexecutar branch-protection em modo diff | NAO_INICIADO | depende de E04/E07 |
+| E98 | Rodada E2E de validação (PR docs/PR migration) | NAO_INICIADO | nenhuma evidência no repo |
+| E99 | Revisar minutos consumidos antes/depois | NAO_INICIADO | nenhum registro em `docs/auditoria/estado/` |
+| E100 | Fechar ciclo com REVISAO_IMPLEMENTACAO | PARCIAL | `REVISAO_IMPLEMENTACAO_PLANO_100_WORKFLOWS_2026-09-27.md` existe, mas com numeração divergente do plano e já desatualizada (não reflete PR #185 de 08/10) |
+
+
+## Confirmação da lista do CLAUDE.md (feitos: E01,E02,E03,E08,E09,E21,E31,E32,E33,E35,E44,E48,E53,E54,E62-E64,E66,E87,E88,E89,E91,E93,E96)
+- Confirmados no código (numeração do plano): E01, E02, E08, E21, E32, E33, E35, E44, E53, E54, E62, E63, E64, E87, E88, E89, E93 (parcial), E96. 
+- E09: só verificável via API GitHub (NAO_VERIFICADO no repo).
+- E31: PARCIAL — `packageManager: "npm@10.x"` não é um valor válido para corepack.
+- NÃO confirmados / divergentes: **E03** (CLAUDE.md diz "ativada branch protection"; o plano pedia REMOVER a clássica e deixar só o ruleset → mantém D2 duas proteções divergentes); **E48** (CLAUDE.md diz "secrets atualizados" mas o próprio CLAUDE.md admite que os usuários E2E não existem → E2E autenticado continua vermelho; não foi "feito"); **E66** (CLAUDE.md usa a numeração da REVISAO: "SHA-pinning" = E23 no plano; E66 do plano = Scorecard, NAO_INICIADO); **E91** (CLAUDE.md "E91 = README badges" = E92 do plano; o E91 do plano — atualizar CLAUDE.md com estado real — está desatualizado).
+- Feitos além da lista do CLAUDE.md (PR #185, 08/10/2026): E15, E25, E34, E36, E39, E41, E42, E49, E59, E71, E79, E80 (+ E40, E30 parciais, E43 baseline, E78 runbook).
+
+## Achados consolidados do Plano 100 (somente itens NÃO concluídos; um por bloco lógico)
+
+| ID | Funcionalidade planejada | Fonte | Status | Evidência | Impacto no negócio | Esforço |
+|---|---|---|---|---|---|---|
+| W-01 | Proteção única e completa da `main` (ruleset com união dos checks + `P0` + `Playwright público`, strict, bypass só em PR; remover branch protection clássica; ler payload de arquivo; modo diff; CODEOWNERS com efeito) — E03,E04,E05,E06,E07,E50,E90,E97 | PLANO_100_WORKFLOWS:41-47,102,154,164 | NAO_INICIADO (E05/E03 BLOQUEADO por decisão) | `infra/github/ruleset-main.json:20-44` (7 checks, strict false, sem P0/Playwright; bypass `always`); `branch-protection.yml:14` congelado `if: false`, payload sem `required_status_checks` (`:41-77`); `ruleset-main.json:35` `require_code_owner_review:false` | Hoje dá para entrar código na versão principal sem passar em todos os testes de banco e sem revisão real; a proteção é "meio furada" e duas regras divergentes confundem quem opera | M |
+| W-02 | Credencial do banco de produção fora do alcance de código de PR (role read-only `ci_auditor`, secret `..._READONLY`, mover admin p/ environment protegido, 2 jobs db-integrity) — E11,E12,E13,E14,E16 | PLANO_100:54-60 | NAO_INICIADO / BLOQUEADO (DDL e secrets em produção) | `ci.yml:307-314` `DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}` (URL ADMIN) em job de PR; `canonical-migrations.yml:31`; role `ci_auditor` inexistente nas migrations | Um PR malicioso/descuidado poderia rodar código com a chave-mestra do banco de folha de pagamento antes de qualquer revisão | M |
+| W-03 | Eliminar "verde por omissão" do `db-integrity` (job pulado conta como aprovado em fork/Dependabot) — E17 | PLANO_100:60,26 (D8) | NAO_INICIADO | `ci.yml:307` `if: ... head.repo.full_name == github.repository && github.actor != 'dependabot[bot]'` | Atualizações automáticas de bibliotecas passam como "banco verificado" sem terem sido verificadas | P |
+| W-04 | Repositório privado + política de forks — E18,E19 | PLANO_100:61-62 | BLOQUEADO (decisão de negócio) | CLAUDE.md/README tratam repo como privado; plano D8 aponta `private:false` (GitHub-side NAO_VERIFICADO hoje) | Estrutura do banco, URLs e modelo de dados de RH ficam visíveis publicamente se o repo for público | P |
+| W-05 | Gerenciador de pacotes único (npm), `npm ci` e cache — E26,E27,E28 | PLANO_100:72-74 | NAO_INICIADO / BLOQUEADO (E26 decisão) | `bun.lock` e `package-lock.json` coexistem (raiz); `ci.yml:34,61,111,161,194` `npm install`; `e2e.yml:59,159`/`deploy.yml:54` `bun install --frozen-lockfile`; `package.json:44` `ci:verify` com `bun run` | O que é testado no CI pode não ser o que vai para produção (versões diferentes de bibliotecas); CI mais lento e caro | M |
+| W-06 | `deno.lock` usado de fato nas Edge Functions (sem `--no-lock`) — E29 | PLANO_100:75 | PARCIAL | `deno.lock` na raiz existe; `ci.yml:227`, `canonical-edge-functions.yml:62`, `scripts/typecheck-edge.sh:25,32` usam `--no-lock` | As funções do servidor podem passar nos testes com uma biblioteca e subir com outra | P |
+| W-07 | CI barato: path-filter, P0 em shards, absorver `db-tests.yml` — E37,E38,E46 | PLANO_100:83-92,95 | NAO_INICIADO | sem `paths-filter`; `ci.yml:272-297` 26 scripts seriais; `db-tests.yml` ainda existe com path de plano encerrado (`plano100_*`) | PR só de documentação gasta ~20 min de máquina; fila de revisão lenta | M |
+| W-08 | `$GITHUB_STEP_SUMMARY` nos gates `security-config`, `db-integrity`, `p0` — E45 | PLANO_100:94 | PARCIAL | só coverage tem summary (`ci.yml:126-135`) | Para saber qual verificação de segurança falhou é preciso abrir logs técnicos | P |
+| W-09 | E2E autenticado realmente verde: causa raiz confirmada, usuários E2E criados no canônico, `workflow_dispatch`, decisão Mailosaur — E47,E48,E51,E52 | PLANO_100:97-104; E47_TRIAGE:35-71; CLAUDE.md Sessões 4/5 | BLOQUEADO | `scripts/provision-e2e-users.mjs` existe mas exige `SUPABASE_SERVICE_ROLE_KEY` (ação manual); `e2e.yml:3-6` sem `workflow_dispatch`; `e2e.yml:110-112` Mailosaur sem secrets; `E47_TRIAGE...:76` "causa raiz definitiva requer o trace" | Os testes das telas autenticadas (folha, férias, ponto, eSocial) NÃO validam nada desde 24/09 — regressões nessas telas só aparecem para o usuário final | P (provisionar usuários) + M (reparar specs) |
+| W-10 | Smoke pós-deploy real (`post-deploy-smoke.yml` em `deployment_status`) — E55 | PLANO_100:107 | NAO_INICIADO | arquivo inexistente | Entre o merge e o healthcheck de 6h um deploy quebrado fica no ar sem alarme | M |
+| W-11 | Constante única do projeto canônico (`vars.CANONICAL_SUPABASE_REF/URL`) — E56 | PLANO_100:108 | NAO_INICIADO | literal em `e2e.yml:43,142`, `canonical-edge-functions.yml:25`, `canonical-migrations.yml:32`, `canonical-probes.yml:35` | Troca de projeto exige editar 5 pontos; esquecer um aponta teste para banco errado | P |
+| W-12 | Segurança contínua: CodeQL `security-extended`, triagem dos 30 alertas, dependency-review, política de `npm audit --omit=dev`, Scorecard, secret-scanning, `allowed_actions: selected` — E24,E57,E58,E60,E61,E65,E66 | PLANO_100:69-70,112-121 | NAO_INICIADO (E24/E57/E65 GitHub-side NAO_VERIFICADO) | `security.yml:32` `security-and-quality`; `security.yml:40` `npm audit --audit-level=high` sem `--omit=dev`; nenhum `dependency-review`/`scorecard` | Vulnerabilidades em dependências novas só são vistas depois do merge; ruído de alertas de qualidade nunca triado | M |
+| W-13 | Workflows canônicos reutilizáveis: lista de migrations por input, verificação pós-apply genérica, probes agendadas + issue, concurrency compartilhada, triagem RV-02/RV-04 — E67,E68,E69,E70,E72,E77 | PLANO_100:125-136 | NAO_INICIADO / BLOQUEADO (E72 precisa banco vivo) | `canonical-migrations.yml:126-132,179-229` hardcoded no lote `20261011*`; `canonical-probes.yml:13` só dispatch; grupos de concurrency distintos (`canonical-migrations.yml:18`, `canonical-probes.yml:21`) | Cada lote de correção de banco exige editar o fluxo na mão (erro humano em produção); probes de segurança não rodam sozinhas | M |
+| W-14 | Deploy de Edge Functions via CI (token, dry-run, push-main, pós-deploy healthcheck) — E73,E74,E75,E76 | PLANO_100:131-134 | BLOQUEADO (`SUPABASE_ACCESS_TOKEN` inexistente) | `canonical-edge-functions.yml:27,48-49` exige token; sem input `mode`; sem healthcheck pós-deploy (`:80-96`) | Funções de cálculo (folha, férias, rescisão) são publicadas por linha de comando sem rastro de auditoria | M |
+| W-15 | Observabilidade da `main`: `notify-main-failure.yml` → N8N/WhatsApp, URL/SHA deployado, dashboard de saúde, alinhar `APP_URL` — E81,E84,E85,E86 | PLANO_100:142,145-147 | NAO_INICIADO / BLOQUEADO (webhook N8N) | arquivos inexistentes; `scripts/report-workflows.mjs` inexistente | Falha na main só é notada por quem abre o GitHub (issues automáticas existem só para E2E/healthcheck/rls-live) | M |
+| W-16 | `deploy.yml` virar `build.yml` útil (npm ci, artifact `dist/`, sem `echo`) e não rodar para Dependabot — E82,E83 | PLANO_100:143-144 | PARCIAL | `deploy.yml:54` `bun install`, `:62` step "Vercel preview handoff" = `echo` | Minutos de CI gastos duplicando o build que o Vercel já faz | P |
+| W-17 | Meta-gates: `actionlint`+`zizmor` no CI; gate `audit-workflow-hygiene.mjs`; binário `actionlint` no pre-commit — E20,E94,E95 | PLANO_100:63,161-162 | NAO_INICIADO / PARCIAL | `.lintstagedrc.json:5` chama `actionlint` sem dependência declarada; `canonical-migrations.yml:142,156` interpolação `${{ steps.stage.outputs.dir }}` ainda em `run:`; nenhum job `workflow-lint` | Erros de configuração do pipeline só aparecem quando quebram | P |
+| W-18 | Validação ponta a ponta e métricas de custo — E98,E99,E100 | PLANO_100:165-167 | NAO_INICIADO / PARCIAL | nenhum registro de PR de teste ou `get_workflow_usage`; REVISAO existe mas numerada diferente | Sem prova de que as melhorias de CI reduziram custo/tempo | P |
+| W-19 | Centralizar imagem Postgres de teste (`PG_IMAGE` em `_lib.sh`) — E30 (resto) | PLANO_100:76 | PARCIAL | digest repetido em 27 scripts `scripts/tests/*.sh`; `_lib.sh` inexistente | Trocar a versão do banco de teste exige editar 27 arquivos | P |
+| W-20 | `engines/packageManager` válidos — E31 (resto) | PLANO_100:77 | PARCIAL | `package.json:9` `"packageManager": "npm@10.x"` (inválido p/ corepack) | Ferramentas de build podem rejeitar o projeto | P |
+
+### Documentação a corrigir (DOC_DESATUALIZADA) — Plano 100 / CLAUDE.md
+
+| ID | O que está desatualizado | Fonte | Status | Evidência | Impacto | Esforço |
+|---|---|---|---|---|---|---|
+| DOC-W01 | `CLAUDE.md` "Status dos Workflows" e "Métricas": diz "CI 7 jobs" (hoje 9 jobs: + `rls-live`, `lighthouse`), não cita PR #185 (E15/E34/E39/E40/E41/E42/E49/E79/E80) | CLAUDE.md "Estado Atual" | DOC_DESATUALIZADA | `ci.yml` (jobs: typecheck, lint, test, rls-live, lighthouse, edge-functions, security-config, p0, db-integrity) | Quem assume o projeto acha que mais coisa está pendente do que está | P |
+| DOC-W02 | `CLAUDE.md` "Gaps Conhecidos/Críticos": "CI não roda em repo privado", "Branch protection inativo" — contradiz o próprio "Estado Atual" (ativo) | CLAUDE.md "Gaps Conhecidos" | DOC_DESATUALIZADA | CLAUDE.md Sessão 3 (E03 ativada) vs tabela de gaps | idem | P |
+| DOC-W03 | `CLAUDE.md` "Deploy Netlify sem secrets"/"NETLIFY_AUTH_TOKEN" e "Decisões Técnicas: Bun + Node fallback" — Netlify foi removido do deploy.yml e o fallback Node foi removido no PR #185 | CLAUDE.md "Gaps Médios", "Decisões Técnicas" | DOC_DESATUALIZADA | `deploy.yml` (Vercel; sem `setup-node` fallback); `netlify.toml` ainda no repo (arquivo órfão) | idem | P |
+| DOC-W04 | `REVISAO_IMPLEMENTACAO_PLANO_100_WORKFLOWS_2026-09-27.md` usa numeração divergente do plano (E49-E100) e marca como "pendente/descartado" itens que o PR #185 entregou (E15, E34, E39-E42, E49, E79, E80) | REVISAO:94-101,139-140 | DOC_DESATUALIZADA | ver tabela E01..E100 acima | Planejamento errado das próximas ondas | P |
+| DOC-W05 | `README.md` "Quick Start" clona `departamento-pessoal-v2.git` e usa `bun install`; "Última atualização 27/09/2026" | README.md:11-26 | DOC_DESATUALIZADA | README.md | Onboarding falha | P |
+| DOC-W06 | `infra/runbooks/CANONICAL_WORKFLOWS.md` afirma "environment production requer aprovação de reviewer" e `SUPABASE_ACCESS_TOKEN` configurado — o plano D3/D7 diz que não há regras de proteção nem token | CANONICAL_WORKFLOWS.md:§2 | DOC_DESATUALIZADA (NAO_VERIFICADO no GitHub) | `canonical-edge-functions.yml:48-49` | Operador acredita que há aprovação humana antes de mexer em produção | P |
+| DOC-W07 | `netlify.toml` e referência a Netlify permanecem no repo sem workflow que o use | `netlify.toml` | ORFAO | `grep -il netlify .github` só acha comentário em `deploy.yml` | Configuração morta confunde | P |
+
+
+---
+# PARTE 2 — PLANO 50 ETAPAS (E50, 10/09/2026) — `PLANO_MELHORIAS_50_ETAPAS_2026-09-10.md`
+
+Fontes: plano (50 etapas × 10 subetapas × 4 checkpoints), `REVISAO_IMPLEMENTACAO_PLANO_50_2026-09-10/11/12.md`, `REVISAO_POS_EXECUCAO_PLANO_50_2026-09-12.md` (RV-01..RV-16). Linha do cabeçalho de cada etapa no plano: E50-001=:36, 002=:65, 003=:94, 004=:123, 005=:152, 006=:181, 007=:210, 008=:239, 009=:268, 010=:297, 011=:326, 012=:355, 013=:384, 014=:413, 015=:442, 016=:471, 017=:500, 018=:529, 019=:558, 020=:587, 021=:616, 022=:645, 023=:674, 024=:703, 025=:732, 026=:761, 027=:790, 028=:819, 029=:848, 030=:877, 031=:906, 032=:935, 033=:964, 034=:993, 035=:1022, 036=:1051, 037=:1080, 038=:1109, 039=:1138, 040=:1167, 041=:1196, 042=:1225, 043=:1254, 044=:1283, 045=:1312, 046=:1341, 047=:1370, 048=:1399, 049=:1428, 050=:1457.
+
+**Aviso estrutural (DOC):** as revisões de 12/09 classificam as 50 etapas como "P/B/NE, 0 C4". Hoje o plano tem apenas **4 checkboxes `[x]` e 696 `[ ]`** (`grep -c` em PLANO_MELHORIAS_50_ETAPAS_2026-09-10.md); o `[x]` nunca foi marcado nas etapas que de fato foram entregues (ex.: E50-004, 013, 020). Isso é aceitável pela regra "C4 exige staging/revisão dupla", mas torna o plano inútil como painel de progresso → DOC-50-01.
+
+**Verificação ao vivo (11/10/2026, MCP Supabase "DEPARTAMENTO PESSOAL", somente leitura):** 19 buckets (incl. `backups`, criado 15/09); 349 funções em `public` (incluindo RPCs de RV-04/05/07/08/09/15 e `pcs_*`); ledger com a migration mais recente `20261011200000` (CHECKs onda 16b); `medidas_ciencia_tokens` com 2 policies (só RH/authenticated).
+
+## Tabela das 50 etapas (estado em bb6756cb5)
+
+| Etapa | Título / objetivo | Status | Evidência atual |
+|---|---|---|---|
+| E50-001 | Rotacionar credenciais comprometidas | BLOQUEADO | ação externa (painel Supabase/secret managers); `infra/runbooks/ROTACAO_SEGREDOS.md` existe; nenhuma prova de revogação no repo. `.env` não está versionado (só `.env.example`). Resíduo: senhas E2E em claro no `CLAUDE.md` (Sessão 3) e fallback hardcoded `e2e/auth.setup.ts:8` (`'[REDACTED]'`), `e2e/auth-non-admin.setup.ts:7` |
+| E50-002 | Congelar dados reais e criar recuperação | PARCIAL | `docs/BACKUP.md`, `infra/runbooks/PROMOCAO_BANCO_PRODUCAO.md`, `ROLLBACK_SCHEMA.md`, bucket `backups` (live) + `backup-automatico`; `docs/ROLLBACK_DRILL.md:1-5` documenta rollback do CUTOVER antigo (`ciziy…`), não restore do estado atual; restore isolado nunca demonstrado; bloqueio de entrada de PII real não verificável |
+| E50-003 | Fixar Supabase canônico e sincronizar Git | PARCIAL | `scripts/audit-canonical-project.mjs` no CI (`ci.yml:249` (job security-config)); `e2e.yml:43,142`; resíduo: 21 branches remotas paradas (`git branch -r`: `codex/e50-*`, `sync/origin-main-20260907`, `muri`, `supabase-migracao`, `claude/*`) |
+| E50-004 | Fechar as views anônimas | PARCIAL | `migrations/20260911180000_p0_views_security_invoker.sql`, `20260911192000_p0_views_revoke_public.sql`; falta minimização de colunas e matriz funcional; `v_audit_trail`/`v_system_health` sem nenhum caller em `src` (só `types.ts:21273,21732`) → ORFAO (view órfã com decisão pendente) |
+| E50-005 | Endurecer SECURITY DEFINER | PARCIAL | `20260912150000_p0_secdef_search_path.sql`, `20260924220000_p0_secdef_authz_remediation.sql`, `20260924230000_p0_secdef_revoke_public_grant.sql`; gate `audit-secdef-authz.mjs` em `ci.yml` (db-integrity); revisão individual dos ~206 overloads não documentada; `scripts/audit-edge-authz.mjs` ORFAO (ver ORF-01) |
+| E50-006 | Reconstruir RLS e ACLs | PARCIAL | `20260924200000_p0_rls_least_privilege_remediation.sql`, `20260924210000_p0_rls_tenant_correlation_remediation.sql`, `20261001140000_p1_rls_status_hardening.sql`, `20261002102900_p0_rls_tenant_or_admin_helper.sql`; 3 auditores no `db-integrity` (`ci.yml`) — mas o job depende de segredo admin e é "verde por omissão" em Dependabot/fork (W-03); matriz CRUD/T1/T2 inexistente |
+| E50-007 | Restaurar hashes e triggers | PARCIAL | 13 funções `enforce_*_hash` presentes ao vivo; `scripts/tests/migrations-p0-hash-search-path.sh` no CI; SEM decisão para `trigger_alerta_divergencia` e `trigger_gerar_provisao` (existem em `folhas_pagamento`; única migration que os toca é de 05/2026: `20260511141842_…sql`/`20260511142002_…sql`); estado habilitado NAO_VERIFICADO (tool não expõe `tgenabled`) |
+| E50-008 | Lockout e rate limit de Auth | PARCIAL | `check_account_lockout`, `record_login_attempt`, `edge_rate_limit_check` presentes ao vivo; `20260911191000_p0_auth_lockout_contract.sql`; `reset_login_attempts` ainda existe (ACL NAO_VERIFICADO); CAPTCHA/WAF: nenhum (`src/contexts/AuthContext.tsx:177` apenas comenta "CAPTCHA/rate limits do Auth hospedado"); teste de concorrência remoto não feito |
+| E50-009 | Manifest físico determinístico | PARCIAL | `scripts/build-rebaseline.mjs`, `supabase/baseline/20260924/README.md`, `scripts/.types-drift-baseline.json`; sem fingerprint completo (ACL/policies/funções/triggers/cron/Storage/ledger) com diff bloqueante; `canonical-edge-functions.yml:80-96` só compara slugs |
+| E50-010 | Classificar todo drift técnico/funcional | PARCIAL | `docs/auditoria/drift/20260831-migration-classification.csv|summary.json|relatorio-drift.md` (de 31/08, anterior ao E50); classificação por capacidade (manter/implementar/substituir/arquivar) não atualizada |
+| E50-011 | ADR de baseline/squash | NAO_INICIADO | `docs/adr/` só tem 0001..0007 (stack, state, auth, testing, service pattern, result, arquitetura v18); nenhum ADR de baseline; só `infra/runbooks/RECONCILIACAO_DRIFT_MIGRATIONS.md` |
+| E50-012 | Construir baseline canônico | PARCIAL | `supabase/baseline/20260924/`, `scripts/tests/rebaseline-artifact.test.mjs` (estrutural, no CI); sem restauração vazia integral |
+| E50-013 | Restaurar RPCs/tabelas requeridas | DOC_DESATUALIZADA | REVISAO_POS_EXECUCAO:154-160 diz que `get_my_user_empresas`, `set_own_default_empresa`, `admin_associar_usuario_empresa`, `pode_gerir_rh_para`, `pode_gerir_pessoas_para`, `edge_rate_limit_check` NÃO existem; ao vivo (11/10) TODAS existem. Registrar como entregue |
+| E50-014 | Módulo PCS | DOC_DESATUALIZADA | REVISAO_POS_EXECUCAO:244 diz "nenhuma função `pcs_%`"; ao vivo: `pcs_enquadramento`, `pcs_gerar_grades`, `pcs_grades_mercado`, `pcs_pode_gerir_plano`, `pcs_pode_ver_plano`, `pcs_simular_impacto` etc. existem; `migrations/20260912202000_p1_pcs_contract.sql`; testes `usePcs.test.ts`, `pcsService.test.ts` (PRs #199/#202). Falta homologação funcional/jornada real |
+| E50-015 | Provisionar os 19 buckets | PARCIAL | ao vivo: 19/19 existem (RV-15 "18/19" superado). Resíduo contra o objetivo ("path tenant/owner/MIME/limite"): 14 buckets sem `allowed_mime_types` e 13 sem `file_size_limit` (afastamentos, assinaturas, contratacao, contratos-trabalho, documentos, documentos-admissao, ferias-avisos, ferias-coletivas-comunicados, medidas-*, ponto-biometria, recrutamento-curriculos; `documentos-colaboradores` só tem limite; `avatars` público sem limite/MIME). `20260912200000_p1_backup_storage_bucket.sql` só cobre `backups` |
+| E50-016 | Versionar cron e rotinas periódicas | PARCIAL | `20260912203000_p1_security_cron_contract.sql`; funções `sec_audit_policies_scan`, `sec_policy_regressions_purge`, `sec_verify_seals_scan` existem ao vivo (RV-15 superado); saúde dos 50 jobs (9 com falha em 7 dias, 29× `purge-rate-limits-hourly`) NAO_VERIFICADO hoje; `get_cron_jobs_health` existe mas sem alerta ligado |
+| E50-017 | Validar constraints e normalizar triggers | PARCIAL | PRs #196/#203/#204/#205: `20261011170000/180000/190000/200000_check_constraints_*.sql` criam CHECKs `NOT VALID` + validate defensivo (nunca abortam; deixam NOT VALID se houver legado → fixtures nunca saneadas); decisão dos 2 triggers desabilitados e PK do archive: sem migration; os "12 CHECK NOT VALID" antigos sem evidência de VALIDATE |
+| E50-018 | Corrigir índices com EXPLAIN | NAO_INICIADO | só inventário (`dp_missing_indexes`, `dp_check_rls_index_coverage` no banco); nenhum benchmark antes/depois, nem migration de índices de 24 FKs/31 duplicados com EXPLAIN |
+| E50-019 | Restaurar 2× e reconciliar ledger | NAO_INICIADO | nenhum artefato de restauração dupla; ledger vivo 421+ versões × 735 arquivos locais sem reconciliação documentada (gate `audit-schema-drift.mjs` ORFAO — ORF-02) |
+| E50-020 | Regenerar tipos e contratos | FEITO (verificado) | `scripts/regenerate-supabase-types.sh`; gate `audit:types-drift` + `gen:table-columns --check` no `ci.yml` (job lint); `typecheck`, `typecheck:tests`, `typecheck:e2e` no CI; `any` de produção = 0 (`grep -rnE ": any\|as any\|<any>" src` fora de testes = 0) |
+| E50-021 | Camada de acesso a dados | PARCIAL | `viewsService` não tem mais `return []` em catch (0 ocorrências); porém 228 `select('*')` em `src` (fora de testes) e repositórios por domínio não existem (86 serviços ad hoc) |
+| E50-022 | Unificar sessão, login e MFA (step-up AAL2) | PARCIAL | `AdminRoute.tsx`/`ProtectedRoute.tsx` checam `aal2` só no cliente; `grep aal2 supabase/functions` = 0 → nenhuma operação sensível (folha, banco, rescisão, eSocial, roles, export) exige step-up no servidor; lógica de MFA duplicada (AuthContext, LoginPage, AdminRoute, ProtectedRoute) |
+| E50-023 | RBAC/ABAC server-side | PARCIAL | `get_user_roles`, `pode_gerir_rh_para`, `pode_gerir_pessoas_para` ao vivo; `_shared/authz.ts`; frontend continua com `AppRole` local; sem papéis financeiro/auditor separados |
+| E50-024 | Consolidar a engine de folha (decimal, transacional, versionada) | PARCIAL | 3 motores: `supabase/functions/calcular-folha/index.ts:42` `round2 = Math.round((n+Number.EPSILON)*100)/100` (float), `src/utils/folhaCalc.ts:1-7` (decimal.js), `src/services/folha/calculoLoteService.ts`; `calcular_provisao_mensal` e `replace_monthly_provisions` (DB); sem tabela legal versionada por vigência comprovada; sem casos homologados (E51-021) |
+| E50-025 | Ponto e banco de horas antifraude | PARCIAL | `detectar_fraude_ponto`, `registrar_batida_ponto`, `assinar_espelho_ponto`, `20260924160000_e50_33_pin_quiosque_ponto.sql`, `processar-ponto-offline` com teste; jornada real (offline/replay/dispositivo/fechamento concorrente) nunca executada em E2E |
+| E50-026 | Férias, afastamentos e benefícios | PARCIAL | `syncWithHub` removido (grep vazio) — RV-13 fechado por remoção, não por implementação; triggers de férias (`trg_ferias_*`) ao vivo; conciliação de fontes e benefícios não certificada |
+| E50-027 | Rescisões, contratos e assinaturas | PARCIAL | `contrato_gerar_token_assinatura`, `contrato_assinar_por_token`, `contrato_verificar_autenticidade_v2`, `trg_protect_assinatura_rescisao` ao vivo; `20261006110000/120000` aplicados; homologação/pagamento one-time ponta a ponta não executados; ICP-Brasil real ausente (ver E50-028) |
+| E50-028 | Obrigações legais, financeiro e integrações externas | BLOQUEADO / PARCIAL | eSocial: `supabase/functions/enviar-esocial/index.ts:143-150` falha fechado `ESOCIAL_TRANSPORT_UNAVAILABLE` (sem SOAP/ICP-Brasil real); modo `ESOCIAL_SIMULATE=true` gera `status:'simulado'` (`:208,220`); FGTS Digital, DCTFWeb, PIX, gov.br, Bitrix, ERP, BI, IA/OCR: existem funções (`fgts-digital`, `dctfweb`, `pix-lote`, `auth-gov-br`, `sincronizar-bitrix`, `process-document-ocr`) sem teste de handler e sem prova de provedor (detalhe: ver relatório da camada de Edge Functions / integrações) |
+| E50-029 | SST, disciplina e LGPD | PARCIAL | `lgpd_consentimentos`/`lgpd_solicitacoes` com CRUD (`src/services/lgpdService.ts`, `src/pages/LGPDPage.tsx`); `anonimizar_dados_pessoais`, `process_lgpd_cleanup_queue` ao vivo; sem workflow de atendimento do titular (prazo/export automático/anonimização acionada pela solicitação) comprovado; SST dashboards ao vivo |
+| E50-030 | Comparar Edge Functions implantadas | BLOQUEADO | `canonical-edge-functions.yml` com 0 execuções e sem `SUPABASE_ACCESS_TOKEN` (ver W-14); manifest nome/hash/verify_jwt/secrets inexistente |
+| E50-031 | Padronizar segurança das Edge Functions | PARCIAL | `_shared/{contract,csrf,authz,rateLimit,originSecurity}.ts` + `rateLimitResponse(rl, req)` propagado (ex.: `webhook/index.ts:66`); `reader.cancel()` não aguardado (`_shared/contract.ts:221-225`); gate `audit-edge-authz.mjs` não ligado e HOJE reprova `enviar-relatorio` (ORF-01) |
+| E50-032 | Uniformizar validação e uploads | NAO_INICIADO (uploads) / PARCIAL (validação) | `grep -i "magic.bytes\|clamav\|quarentena\|file-type" src supabase/functions` = vazio → sem magic bytes, quarentena ou scanner; validação Zod/`validateTablePayload` em 200+ writes (PRs #168/#169) |
+| E50-033 | Testes unitários por risco | PARCIAL | `vitest.config.ts:21-25` thresholds globais 72/57/61/68; sem meta por domínio crítico; sem mutation testing; 42 de 60 Edge Functions sem nenhum `*.test.ts` (ex.: `calcular-ferias`, `calcular-rescisao`, `calcular-13-salario`, `cnab-remessa`, `pix-lote`, `gerar-guias`, `dctfweb`, `fgts-digital`, `auth-gov-br`, `criptografia`) |
+| E50-034 | Integração com Supabase real | NAO_INICIADO | só 26+ fixtures Postgres 17 (`scripts/tests/migrations-*.sh`); nenhum ambiente efêmero com Auth/PostgREST/Storage/triggers |
+| E50-035 | Matriz RLS por papel/tenant | PARCIAL | `run_rls_tests` (DB), `src/tests/rls-logic.test.ts`, `src/tests/rpc-permissions.test.ts` (live, agora no job `rls-live` pós-merge `ci.yml:138`); matriz gerada anon/sem-empresa/T1/T2 × tabelas inexistente |
+| E50-036 | Concorrência e idempotência | PARCIAL | `supabase/functions/calcular-folha/e2e_concorrencia.test.ts`, `_shared/idempotency.ts`, `next_cnab_sequencial` (#192/#193), `cnab_remessa_unica`; sem suíte permanente para PIX, webhooks, filas, agenda sob carga |
+| E50-037 | E2E por papel e dispositivo | BLOQUEADO | E2E autenticado vermelho desde 24/09 (`E47_TRIAGE...`); usuários E2E não criados (`scripts/provision-e2e-users.mjs` exige service role); projeto `mobile-smoke` existe (`package.json:63`) mas depende das mesmas identidades |
+| E50-038 | Supply chain e segredos | PARCIAL | SHA-pin de actions (`workflows-contract.test.mjs`), `npm audit --audit-level=high` (`security.yml:40`), CodeQL; SEM gitleaks (`.gitleaks*` inexistente), SEM SBOM/licenças, lockfile duplo (`bun.lock` + `package-lock.json`), `Dockerfile:4` `npm install` não congelado |
+| E50-039 | Threat model e pentest | NAO_INICIADO | nenhum documento de threat model/STRIDE em `docs/`; só menções nos planos (`grep` em docs) |
+| E50-040 | Eliminar ciclos, god files e duplicação | NAO_INICIADO (gates) / PARCIAL (arquivos) | sem madge/dpdm/knip/ts-prune (`package.json`); god files restantes >700 linhas: `src/services/cnabService.ts` (960), `AnalyticsSection.tsx` (821), `WorkflowDesigner.tsx` (819), `periodicosValidators.ts` (791), `types.ts` 24.445 linhas monolítico; limpeza manual de ~870 linhas mortas (PR #201) |
+| E50-041 | Dívida de lint e tipos | PARCIAL (quase FEITO) | `any` de produção 0; testes `.any-tests-baseline.json` zerado (PR #180); `lint:ci --max-warnings=1` (`package.json:34`); `no-explicit-any` ainda "warn" (`eslint.config.js:45`) e "off" para testes (`:98`); 38 `eslint-disable` em `src`; `ban-ts-comment` "off" (`:107`) |
+| E50-042 | Bundle, PWA e mobile | PARCIAL | gate `check-bundle-budget.mjs` + `scripts/.bundle-budget.json` (`js_max_chunk_kb:2000`, `js_total_kb:12250` — teto frouxo, acima do chunk de 1,93 MB); LCP/INP/CLS reais sem medição (sem `web-vitals`); Capacitor: `capacitor.config.ts` + `scripts/capacitor-build.sh` sem decisão concluir/retirar |
+| E50-043 | Otimizar queries e paginação | PARCIAL | `AbortSignal.timeout` no bridge (`external-db-bridge/index.ts:40`); 228 `select('*')`; keyset só em util (`cursorPagination`), não no bridge; relatórios `limit(5000)` |
+| E50-044 | Redigir PII e padronizar logs | PARCIAL | `loggerService` com redator (testes `loggerService.test.ts`); `_shared/logger.ts` no Edge; não provado em todos os sinks/Sentry/retenção; request ID/sampling inexistente (NAO_VERIFICADO) |
+| E50-045 | Métricas, health, SLOs e alertas | PARCIAL | `monitoring/` (prometheus, alertmanager, grafana) + `monitoring/alerts/bridge.yml` e tabela SLI/SLO em `docs/MONITORING.md:211`; nenhum deles ligado a deploy real (NAO_VERIFICADO); `healthcheck.yml` é o único alerta efetivo |
+| E50-046 | Acessibilidade WCAG 2.2 AA | NAO_INICIADO (gate automatizado) | `docs/ACCESSIBILITY.md` existe; sem `axe-core`/`@axe-core/playwright` em `package.json`/`e2e/` |
+| E50-047 | CI hermético e proteger main | PARCIAL | ver Parte 1: W-01 (ruleset), W-03, W-05, W-06; `npm install` em `ci.yml` |
+| E50-048 | Staging, rollback e DR | NAO_INICIADO | nenhum staging, nenhum RTO/RPO/game day; só exceção de ambiente do owner (docs) |
+| E50-049 | Governança e documentação | PARCIAL | `docs/adr` (7 ADRs); sem ERD/dicionário de dados/OpenAPI/RoPA/DPIA (`ls docs`); `CLAUDE.md` desatualizado (DOC-W01..W03); catálogo honesto de capacidades inexistente |
+| E50-050 | Recertificar e decidir go-live | NAO_INICIADO | nenhuma recertificação no mesmo SHA; 4/700 checkboxes |
+
+
+---
+# PARTE 3 — CICLO E51 (PLANO_MELHORIAS_50_ETAPAS_2026-09-13.md + SIMULACAO_E_EXECUCAO_E51_2026-09-13.md)
+
+Cabeçalhos no plano: E51-001=:55, 002=:85, 003=:115, 004=:145, 005=:175, 006=:205, 007=:235, 008=:265, 009=:295, 010=:325, 011=:355, 012=:385, 013=:415, 014=:445, 015=:475, 016=:505, 017=:535, 018=:565, 019=:595, 020=:625, 021=:655, 022=:685, 023=:715, 024=:745, 025=:775, 026=:805, 027=:835, 028=:865, 029=:895, 030=:925, 031=:955, 032=:985, 033=:1015, 034=:1045, 035=:1075, 036=:1105, 037=:1135, 038=:1165, 039=:1195, 040=:1225, 041=:1255, 042=:1285, 043=:1315, 044=:1345, 045=:1375, 046=:1405, 047=:1435, 048=:1465, 049=:1495, 050=:1525.
+Marcação no plano: apenas 3 `[x]` em 703 checkboxes (`grep -c`); a SIMULACAO (:192-199) declara explicitamente "ondas 1–6 (42 das 50) não foram executadas". Desde então os PRs #166-#205 executaram várias delas sob outros rótulos.
+**Divergência de numeração:** o código usa IDs "E51-0xx" com significado diferente do plano (ex.: `ci.yml:64` "E51-025" = ratchet de `any` por diretório; `ci.yml:69` "E51-029" = ratchet de `any` em testes; `ci.yml:180,198` "E51-030" = Lighthouse+bundle — no plano E51-029 = zerar warnings/lint:edge e E51-030 = fragmentar god files). → DOC-51-01.
+
+| Etapa | Título | Status | Evidência atual |
+|---|---|---|---|
+| E51-001 | Publicar o lote local não commitado | FEITO | lote publicado (SIMULACAO:87; PRs #106..#205 em `git log`) |
+| E51-002 | Corrigir drift do contrato de ações de auditoria | FEITO | `scripts/audit-edge-audit-log-contract.mjs:61` `legacyReadOnlyActions = {CLOSE,REOPEN,BACKUP_RUN}`; `scripts/tests/audit-edge-audit-log-contract.test.mjs`; `ci.yml` job typecheck roda `audit:edge-audit-log` |
+| E51-003 | Prettier pré-commit | FEITO | `.husky/pre-commit` (`npx lint-staged`), `.lintstagedrc.json:2`; `format:check:changed` no job lint |
+| E51-004 | Ruleset: check obrigatório que nunca roda em PR | PARCIAL | `ci.yml:305-314` `db-integrity` passou a rodar em PR interno, desfazendo o bloqueio de PR; porém `infra/github/ruleset-main.json:44` (baseline) ainda lista `Integridade do banco…` e NÃO lista `P0 database migration simulations` (a troca que a SIMULACAO:98 deixou "bloqueada por classificador") — alteração em ruleset vivo NAO_VERIFICADO |
+| E51-005 | Healthcheck: APP_URL + deduplicar | PARCIAL | `healthcheck.yml:43-62` (label, comenta issue existente, fecha ao recuperar) FEITO; `vars.APP_URL` GitHub-side NAO_VERIFICADO; fechamento das 15 issues #66,67,92-97,101-105,107,108 NAO_VERIFICADO |
+| E51-006 | Unificar refs de projeto Supabase e remover integração Preview | PARCIAL | `scripts/audit-canonical-project.mjs` no CI (FEITO); integração GitHub App "Supabase Preview" (`jpcb…`) é externa → BLOQUEADO |
+| E51-007 | Higiene de branches/stashes/main local | NAO_INICIADO | `git branch -r` = 21 branches remotas além de main (`codex/e50-execution-20260911`, `codex/e50-preflight-20260910`, `codex/e50-remediation-20260912`, `sync/origin-main-20260907`, `muri`, `supabase-migracao`, `fix/seguranca-excelencia`, `fix/dev-local-proxy-origin`, 12× `claude/*`, 1× dependabot) |
+| E51-008 | PDF fora do versionamento + grafo atualizado | PARCIAL | `.gitignore:46` `AUDIT_REPORT.pdf` e `git ls-files` sem o PDF (FEITO); `graphify-out/GRAPH_REPORT.md:17` "Built from commit 8cac6463" ≠ HEAD bb6756cb5 (grafo stale) |
+| E51-009 | Reconciliar inventário migrations × ledger | PARCIAL | gate `scripts/audit-schema-drift.mjs` existe mas ORFAO (ORF-02); ao vivo o ledger contém até `20261011200000` e o repo tem 735 arquivos (sem manifesto documentado por versão/nome/hash) |
+| E51-010 | Workflow canônico em modo validate | PARCIAL | `canonical-migrations.yml` com validate; execuções não verificáveis a partir do repo (NAO_VERIFICADO); lista hardcoded a cada lote (W-13) |
+| E51-011 | Aplicar lote no canônico c/ ledger exato | FEITO (verificado ao vivo) | ao vivo: `supabase_migrations` contém `20261011160000..200000`, `20261006110000/120000` etc.; objetos do lote 0911/0912 existem (funções RV-04/05/07/08/09/15) |
+| E51-012 | Auditores vivos pós-lote | NAO_VERIFICADO | job `db-integrity` (`ci.yml:305-`) roda em push main; resultado do último run não consultável (API do Actions bloqueada) |
+| E51-013 | Publicar 60 Edge Functions e comparar inventário | BLOQUEADO | `SUPABASE_ACCESS_TOKEN` inexistente (`SIMULACAO_E51:126-129`, `canonical-edge-functions.yml:48-49`); 60 entrypoints locais (`ls supabase/functions` = 60 + `_shared`) vs remoto NAO_VERIFICADO |
+| E51-014 | Identidades sintéticas e secrets do E2E | BLOQUEADO | `scripts/provision-e2e-users.mjs` nunca executado (exige service role); CLAUDE.md "Usuários E2E inexistentes" |
+| E51-015 | E2E autenticado pós-deploy (17 reprovados) | BLOQUEADO | `E47_TRIAGE_E2E_2026-09-27.md` (18 vermelhos, causa raiz só hipótese) |
+| E51-016 | Provar rollback do lote em ambiente efêmero | NAO_INICIADO | nenhum artefato; `docs/ROLLBACK_DRILL.md` refere cutover antigo |
+| E51-017 | Aceite formal nas etapas E50 | NAO_INICIADO | 4+3 `[x]` apenas; nenhuma tabela `E50/subitem → SHA → ambiente → …` |
+| E51-018 | Fechar RV-01/RV-03 (tenant e policies, matriz) | PARCIAL | migrations `20260912190000_p0_identity_rls_authz.sql`, `20260924210000_p0_rls_tenant_correlation_remediation.sql`; matriz T1/T2 remota não executada |
+| E51-019 | Fechar RV-02 (tokens públicos) | PARCIAL | ao vivo `medidas_ciencia_tokens` sem policy anon; RPCs `medida_consultar_por_token`, `medida_registrar_ciencia_publica`, `contrato_consultar_por_token` existem; teste remoto de enumeração/replay não executado; `canonical-probes.yml:3-8` ainda é o "checkpoint" |
+| E51-020 | Fechar RV-05 (rate limiter / lockout sob carga) | PARCIAL | `edge_rate_limit_check` ao vivo; sem teste de concorrência remoto; reset legado `reset_login_attempts` ainda existe |
+| E51-021 | Fechar RV-07 (provisões × casos legais) | NAO_INICIADO | `replace_monthly_provisions` ao vivo; nenhum caso homologado de 13º/férias/encargos versionado (sem fixtures de contador) |
+| E51-022 | Fechar RV-09/10/11 no runtime implantado | PARCIAL | código: `processar-agendamentos/index.ts:149,172` (`claim_due_report_schedules`/`finish_report_schedule_claim`), `_shared/contract.ts:221-225` (cancel não aguardado), `CNABDialog.tsx:38-81` (openRef + contextVersionRef) + `CNABDialog.test.tsx` (PR #198); runtime implantado/teste de carga: NAO_VERIFICADO |
+| E51-023 | Fechar RV-12/RV-13 (CORS e E2E 2 empresas) | PARCIAL | `rateLimitResponse(rl, req)` propagado; `MorningBriefing.tsx:50` `queryKey:['morning-briefing', empresaId]`; probe CORS em deploy real e E2E duas empresas: BLOQUEADO (E2E) |
+| E51-024 | Fechar RV-15 (buckets 19/19, PCS, crons) | PARCIAL | 19/19 buckets (live) mas 14 sem MIME/13 sem limite; `pcs_*` ao vivo; 3 funções `sec_*` ao vivo; smoke real de jornada: ausente |
+| E51-025 | `no-explicit-any` com orçamento decrescente | FEITO | `scripts/ratchet-any.mjs` + `.any-baseline.json`; `ci.yml:64-67`; `eslint.config.js:45,91` |
+| E51-026 | Eliminar `any` em serviços/integrações | FEITO | `grep -rnE ": any\|as any\|<any>" src` fora de testes = 0 |
+| E51-027 | Eliminar `any` em páginas/componentes/hooks | FEITO | idem (0); testes: `.any-tests-baseline.json` zerado (PR #180) |
+| E51-028 | Remover supressões `eslint-disable`/`@ts-ignore` | PARCIAL | 38 `eslint-disable` restantes em `src` (de 41); `@ts-ignore`: 0 reais (2 ocorrências são comentário em `data-table.tsx:2` e `@ts-expect-error` de teste `dateLocal.test.ts:27`); `ban-ts-comment` ainda "off" (`eslint.config.js:107`) |
+| E51-029 | Zerar tolerância de warnings e `lint:edge` bloqueante | PARCIAL | `package.json:34` `--max-warnings=1`, `scripts/.eslint-warnings-budget.json` `no-explicit-any: 1`; `npm run lint:edge` roda no job lint (`ci.yml`) — falta zerar o último warning |
+| E51-030 | Fragmentar god files e `types.ts` por domínio | NAO_INICIADO | `src/integrations/supabase/types.ts` 24.445 linhas; `cnabService.ts` 960; `AnalyticsSection.tsx` 821; `WorkflowDesigner.tsx` 819; `periodicosValidators.ts` 791 |
+| E51-031 | Eliminar ciclos de import/código morto com gate | PARCIAL | limpeza manual de código morto (PRs #201/#202: -870 linhas); sem gate permanente (sem madge/dpdm/knip em `package.json`) |
+| E51-032 | Ambiente local reproduzível p/ suítes SQL | FEITO (premissa errada do plano) | scripts sobem `postgres:17-alpine@sha256…` via docker (SIMULACAO_E51:37); sem script único `test:migrations:all` (só `test:migrations`, `:p0`, `:p0:auth`, `:pcs`, `:security-cron` em `package.json:53-60` para 5 dos 27 scripts) |
+| E51-033 | Metas de cobertura por domínio de risco | NAO_INICIADO | `vitest.config.ts:21-25` thresholds globais 72/57/61/68 (sobem por onda via PRs #188-#205 mas sem domínio) |
+| E51-034 | Testar handlers HTTP das Edge Functions | PARCIAL | 18 de 60 funções têm `*.test.ts`; 42 sem nenhum (ver lista E50-033); `deno test` auto-descoberta em `ci.yml:227` |
+| E51-035 | Contrato bridge × frontend c/ Supabase efêmero | PARCIAL | contrato estático `scripts/audit-bridge-frontend-contract.mjs` (CI) e `src/tests/validateBridgeContract.ts`; sem Supabase local efêmero |
+| E51-036 | Matriz RLS automatizada por papel/tenant no CI | NAO_INICIADO | sem harness gerado; `run_rls_tests` (DB) não chamado em CI |
+| E51-037 | Suítes permanentes de concorrência/idempotência | PARCIAL | `calcular-folha/e2e_concorrencia.test.ts`, `migrations-p1-report-dispatch-idempotency.sh`, `migrations-p1-atomic-provisions.sh`; faltam CNAB/PIX/webhook/agenda sob carga |
+| E51-038 | Testes sob typecheck estrito + mocks tipados | FEITO | `ci.yml` job typecheck: `typecheck:tests`, `typecheck:e2e`; CLAUDE.md (29/09) 0 erros |
+| E51-039 | Supply chain hermético: lockfile único + actions pinadas | PARCIAL | actions pinadas por SHA (FEITO); lockfile duplo e `npm install` (W-05); `Dockerfile:4` `RUN npm install`, `Dockerfile.prod:5` `npm ci --legacy-peer-deps` |
+| E51-040 | Inventário e rotação de segredos com cadência | BLOQUEADO | `infra/runbooks/ROTACAO_SEGREDOS.md` existe; rotação/cadência sem prova (externa) |
+| E51-041 | Threat model e pentest | NAO_INICIADO | nenhum documento |
+| E51-042 | Reduzir bundle / divisão por rota | NAO_INICIADO | `scripts/.bundle-budget.json` `js_max_chunk_kb:2000` (≥ chunk de 1,93 MB que o plano quer cortar); gate existe mas não força redução |
+| E51-043 | Timeouts, keyset e cache no bridge | PARCIAL | timeout FEITO (`external-db-bridge/index.ts:40`, teste `timeout.test.ts`); keyset e cache de tabelas estáticas: ausentes (`Cache-Control: no-store` fixo `:26`) |
+| E51-044 | SLOs, alertas e dedupe de incidentes | PARCIAL | dedupe de issue em healthcheck/e2e/rls-live FEITO; SLOs por superfície: só tabela em `docs/MONITORING.md:211` e `monitoring/alerts/bridge.yml` |
+| E51-045 | Redação de PII, logs padronizados e CSP | PARCIAL | CSP/HSTS FEITO (`vercel.json:22-29`, `netlify.toml:21-27`, `index.html:16`); redação em Edge/bridge/frontend não provada |
+| E51-046 | Acessibilidade WCAG 2.2 AA com axe no E2E | NAO_INICIADO | sem `axe` em `package.json`/`e2e/` |
+| E51-047 | Atualizar CLAUDE.md/README/runbooks | DOC_DESATUALIZADA | ver DOC-W01..W06; CLAUDE.md "Última atualização 29/09" não registra PRs #166-#205 |
+| E51-048 | Staging, rollback e DR com RTO/RPO | NAO_INICIADO | nenhum |
+| E51-049 | Validador exige link de evidência em todo `[x]` | PARCIAL | `scripts/validate-plan-50.mjs:7-9` valida múltiplos ciclos; não há checagem de link de evidência por `[x]` (grep `evid` = 0) e não gera relatório de progresso; roda em `ci.yml` (job security-config) |
+| E51-050 | Recertificar e decidir go-live | NAO_INICIADO | nenhuma recertificação |
+
+## Achados de Parte 2/3 (itens abertos relevantes) — formato padrão
+
+| ID | Funcionalidade planejada | Fonte | Status | Evidência | Impacto no negócio | Esforço |
+|---|---|---|---|---|---|---|
+| P-01 | Envio real de WhatsApp (Evolution API) com recibo de entrega; hoje o sistema grava "enviado" sem enviar | REVISAO_50_2026-09-10:§4.2 (WhatsApp); E50-028 | SIMULADO | `src/services/whatsappService.ts:54-68` insere `status:'sent'`, `mensagem_id_externo:'wa_direct_'+Date.now()` sem chamar provedor; `:100-131` `await setTimeout(1000)` e marca `sent` com `wa_`+Date.now(); callers `contratacaoService.ts:213`, `automacaoService.ts:58,93`; não existe Edge Function de WhatsApp (`ls supabase/functions \| grep -i whats` vazio; grep `evolution` vazio) | Colaborador/candidato acredita-se avisado (convite de contratação, lembretes, alertas) e a mensagem nunca sai | M |
+| P-02 | PDF de holerite gerado, persistido e entregue por URL assinada | REVISAO_50_2026-09-10:§4.2 (PDF de holerite); E50-024/027 | SIMULADO | `src/services/folhaPagamentoService.ts:292-295` `emitirPDF` espera 1,5 s e retorna `https://storage.lovable.dev/holerites/holerite_${folhaId}.pdf` (URL inexistente); caller `src/components/folha/CalculoFolhaWizard.tsx:407` | Botão "emitir PDF" no fechamento da folha devolve link que não existe; operador crê que holerite foi emitido | M |
+| P-03 | Registro persistente de incidente de SST | REVISAO_50_2026-09-10:§4.2 (Incidente SST); E50-029 | SIMULADO | `src/pages/SSTPage.tsx:186-190` `onClick` só `toast.success('Incidente registrado!')` + fecha modal; `incidenteForm` (`:40`) nunca é enviado | Acidente/incidente informado ao sistema some — risco de passivo trabalhista e CAT sem registro | P |
+| P-04 | Dashboard executivo com custos/impacto de fonte auditável | REVISAO_50_2026-09-10:§4.2 (Dashboard executivo) | SIMULADO | `src/pages/DashboardExecutivoPage.tsx:526-543` "Score 9.2 / 10", "Custos fixos 42%…", "Impacto previsto: + R$ 128k em Dez/26" literais | Diretoria vê números inventados como se fossem projeção real | M |
+| P-05 | Assinatura ICP-Brasil e transmissão eSocial reais (certificado A1/A3, endpoint homologado) | REVISAO_50_2026-09-10:§4.2, §4.4; E50-028; E51 | BLOQUEADO | `enviar-esocial/index.ts:143-150` falha fechada; `utils/signer.ts:10` `assinarXmlSandboxNaoHomologado`; `:41` `ESOCIAL_SIMULATE`; eSocial S-3000/5001/5011: validadores (`src/schemas/esocial/periodicosValidators.ts`) sem transmissão | Nenhum evento chega ao governo; a empresa pode descumprir prazos do eSocial achando que enviou (hoje o sistema avisa "indisponível", o que é honesto) | G (+ certificado digital) |
+| P-06 | FGTS Digital, DCTFWeb, Pix em lote, Empréstimo consignado, Adiantamento: integração real | REVISAO_50_2026-09-10:§4.4; E50-028 | PARCIAL / BLOQUEADO | `supabase/functions/{fgts-digital,dctfweb,pix-lote,emprestimo-consignado,adiantamento-salarial}/index.ts` só persistem local (nenhum `fetch` a provedor; `grep -n "fetch(\|https://"` só acha imports); sem testes de handler | Guias e pagamentos "preparados" mas nunca transmitidos/liquidados; financeiro precisa fazer fora do sistema | G |
+| P-07 | Benefícios: tabela única | REVISAO_50_2026-09-10:§4.3 (split-brain); E50-026 | PARCIAL | `src` usa só `beneficios_colaborador` (`useBeneficiosColaborador.ts:16,33`); `beneficios_colaboradores` continua existindo no banco/tipos (types.ts) sem migração/descarte | Risco de dado de benefício em duas tabelas divergentes | P |
+| P-08 | Metabase/BI | REVISAO_50_2026-09-11:§4; E50-028 | PARCIAL / DOC_DESATUALIZADA | `src/services/metabaseService.ts` removido (PR #201) mas Edge `metabase-embed` (com teste) ainda deployável e sem UI consumidora → verificar `grep metabase-embed src` | BI executivo não utilizável | M |
+| P-09 | Decidir 20 Edge Functions sem caller (ligar/substituir/remover) | REVISAO_50_2026-09-10:§4.5; E50-010 | NAO_INICIADO (decisão por função) | lista `fgts-digital, dctfweb, pix-lote, cnab-remessa, emprestimo-consignado, adiantamento-salarial, gerar-holerite, assinaturaDigital, alertas-preditivos, notificacao, exportacao, importacao, criptografia, rateLimit, relatorio, auditoria, integracao, backup-automatico, metrics, warmup` continua toda em `supabase/functions/` (60 diretórios); nenhum doc de decisão | Superfície de ataque e custo de código morto implantável | M |
+| P-10 | Step-up MFA (AAL2) no servidor em operações sensíveis | E50-022; (B1 E-015) | NAO_INICIADO | `grep -rl aal2 supabase/functions` vazio; `aal2` só em `ProtectedRoute.tsx`/`AdminRoute.tsx`/`AuthContext.tsx` | Sessão roubada sem MFA pode fechar folha, mudar roles, exportar PII | M |
+| P-11 | Upload seguro (magic bytes, MIME/limite por bucket, quarentena/scanner) | E50-015/032 | NAO_INICIADO / PARCIAL | grep `magic bytes\|clamav\|quarentena` vazio; 14 buckets sem `allowed_mime_types` e 13 sem `file_size_limit` (live) | Arquivo malicioso ou gigante em documentos de colaboradores | M |
+| P-12 | Remoção dos 2 triggers desabilitados de folha ou ativação testada | E50-007/017 | NAO_INICIADO | `trigger_alerta_divergencia`, `trigger_gerar_provisao` ainda presentes (live); nenhuma migration pós-05/2026 trata | Divergência de folha não alerta; provisão automática pode não ser gerada | P |
+| P-13 | Engine de folha única, decimal, versionada por vigência | E50-024 | PARCIAL | `calcular-folha/index.ts:42` float; `src/utils/folhaCalc.ts:1-7` Decimal; `calculoLoteService.ts`; tabelas INSS/IRRF vigência | Diferença de centavos entre prévia na tela e folha oficial | G |
+| P-14 | Meta de cobertura por domínio + testes de handler para 42 Edge Functions | E50-033, E51-033/034 | PARCIAL | ver E50-033 | Cálculos de férias/rescisão/13º/CNAB/Pix sem teste automatizado de ponta a ponta no servidor | G |
+| P-15 | Matriz RLS automatizada + Supabase efêmero + pentest + threat model + axe + DR/staging + recertificação | E50-034/035/039/046/048/050; E51-035/036/041/046/048/050 | NAO_INICIADO | ver tabelas | Sem prova independente de isolamento entre empresas e de acessibilidade; sem plano de recuperação medido | G |
+| P-16 | Gitleaks/SBOM/licenças e lockfile único | E50-038; E51-039 | NAO_INICIADO | sem `.gitleaks*`, sem `cyclonedx/sbom` em `.github`/`package.json` | Segredo vazado em commit não é detectado automaticamente | P |
+| P-17 | Buckets/policies: MIME e limites por bucket (ver P-11) e público `avatars` sem limite | E50-015 | PARCIAL | live | idem | P |
+| P-18 | Bridge: keyset pagination e cache de tabelas estáticas | E51-043; CLAUDE.md "Curto Prazo 3-4" | PARCIAL | `external-db-bridge/index.ts:26,40` | Telas lentas com tabelas grandes | M |
+| P-19 | Quiosque/ponto: jornada real E2E (offline, replay, dispositivo) | E50-025 | PARCIAL | sem E2E (bloqueado) | Fraude de ponto não validada em condições reais | M |
+| ORF-01 | Gate `audit-edge-authz.mjs` (autorização de Edge Functions c/ service_role) ligado ao CI | E50-031 (gate previsto), docstring "Gate de CI" | ORFAO | `scripts/audit-edge-authz.mjs:1-18` descreve "Gate de CI"; `grep -rn audit-edge-authz .github package.json scripts/tests` = 0 referências; execução local hoje: `exit 1` — `enviar-relatorio: usa service_role sem autenticar o chamador` (provável falso positivo: autentica via `supabase.auth.getUser()` em `index.ts:266` e `requireRh` em `:277`) | O gate que impediria "estagiário lê folha via Edge" não roda; ao ligar, precisa ajustar o detector | P |
+| ORF-02 | Gate `audit-schema-drift.mjs` (migration no repo sem registro no ledger de produção) ligado ao CI | commit 74989e7 (#132) "feat(ci): detecta migration no repo sem registro"; E51-009 | ORFAO | `scripts/audit-schema-drift.mjs:1-30`; referências só em docs (`supabase/baseline/20260924/README.md:55`, `ROLLBACK_SCHEMA.md:80`, `PLANO_50.md:224`); 0 em `.github`/`package.json` | O incidente A-036 (lote de RLS nunca aplicado) pode se repetir sem alarme | P |
+| ORF-03 | `scripts/provision-e2e-users.mjs` nunca executado/ligado | E50-037, E51-014 | ORFAO/BLOQUEADO | 0 referências em workflows/package.json | E2E autenticado permanece vermelho | P |
+| DOC-50-01 | Planos E50/E51: checkboxes `[x]` 4/700 e 3/703 não refletem entregas | planos | DOC_DESATUALIZADA | `grep -c "\[x\]"` | Gestão não consegue medir progresso | P |
+| DOC-50-02 | REVISAO_POS_EXECUCAO (12/09) afirma ausentes: RPCs de vínculo/authz RH, rate limiter, PCS, bucket `backups`, funções `sec_*` — ao vivo (11/10) existem | REVISAO_POS_EXECUCAO:154-160,244-246 | DOC_DESATUALIZADA | MCP read-only 11/10 | Retrabalho evitável | P |
+| DOC-50-03 | REVISAO 09-10 §4.2 lista como pendentes "protocolo eSocial `PROTO-${Math.random()}`", "Backup por tabela allSettled", "syncWithHub", "Status eSocial 124ms", "Contatos de emergência" — já corrigidos | REVISAO_50_2026-09-10:§4.2 | DOC_DESATUALIZADA | `grep PROTO- src` vazio; `backupService.ts:83` Promise.all + checagem de completude (`:74`); `syncWithHub` removido | idem | P |
+
+
+## Métricas
+
+| Plano | Total | Feito | Parcial | Não iniciado | Bloqueado | Doc desatualizada | Não verificado |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Plano 100 Workflows (E01..E100) | 100 | 35 | 11 | 37 | 15 | 2 | — |
+| Plano 50 etapas E50 (E50-001..050) | 50 | 1 | 33 | 10 | 4 | 2 | — |
+| Ciclo E51 (E51-001..050) | 50 | 9 | 23 | 12 | 4 | 1 | 1 |
+
+Achados consolidados em formato padrão: W-01..W-20 (Plano 100 Workflows), P-01..P-19 e ORF-01..ORF-03 (planos 50), DOC-W01..W07 e DOC-50-01..03 (documentação a corrigir).
