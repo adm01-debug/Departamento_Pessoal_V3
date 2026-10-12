@@ -78,7 +78,9 @@ BEGIN
       FROM public.lgpd_fila_limpeza f
      WHERE f.executado = false
        AND f.data_programada <= current_date
-     ORDER BY f.data_programada
+     -- processed_at marca a última tentativa (executado diz se anonimizou):
+     -- item simulado ou que falhou vai para o fim e não trava os seguintes.
+     ORDER BY f.processed_at NULLS FIRST, f.data_programada
      LIMIT GREATEST(COALESCE(p_limite, 200), 1)
      FOR UPDATE SKIP LOCKED
   LOOP
@@ -90,6 +92,8 @@ BEGIN
     BEGIN
       IF item.dry_run THEN
         sucesso := true;   -- simulação: não toca no dado, não marca executado
+        UPDATE public.lgpd_fila_limpeza SET processed_at = now()
+         WHERE lgpd_fila_limpeza.id = item.id;
         RETURN NEXT;
         CONTINUE;
       END IF;
@@ -109,6 +113,8 @@ BEGIN
       -- Um item problemático não pode abortar a fila inteira.
       sucesso := false;
       erro    := SQLERRM;
+      UPDATE public.lgpd_fila_limpeza SET processed_at = now()
+       WHERE lgpd_fila_limpeza.id = item.id;
     END;
 
     RETURN NEXT;
@@ -166,20 +172,30 @@ DECLARE
   v_ok integer := 0;
   v_recusadas integer := 0;
 BEGIN
+  -- FOR UPDATE: um cancelamento concorrente espera (ou a linha fica para
+  -- amanhã) em vez de ser sobrescrito com um destino calculado antes dele.
   FOR r IN
-    SELECT f.id, f.status::text AS status
+    SELECT f.id, f.status::text AS status, f.data_fim
       FROM public.ferias f
      WHERE COALESCE(f.cancelado, false) = false
        AND (
-         (f.status = 'aprovada' AND CURRENT_DATE BETWEEN f.data_inicio AND f.data_fim)
+         (f.status = 'aprovada' AND CURRENT_DATE >= f.data_inicio)
          OR (f.status = 'em_gozo' AND CURRENT_DATE > f.data_fim)
        )
+     FOR UPDATE SKIP LOCKED
   LOOP
-    v_destino := CASE WHEN r.status = 'aprovada' THEN 'em_gozo' ELSE 'concluida' END;
+    v_destino := CASE WHEN CURRENT_DATE > r.data_fim THEN 'concluida' ELSE 'em_gozo' END;
     BEGIN
       -- Os gatilhos de transição/Art. 145 continuam valendo: férias sem
-      -- pagamento não entram em gozo; a recusa fica registrada.
-      UPDATE public.ferias SET status = v_destino WHERE id = r.id;
+      -- pagamento não entram em gozo; a recusa fica registrada. Aprovada cujo
+      -- período já passou (rotina parada) passa por em_gozo antes de concluir.
+      IF r.status = 'aprovada' THEN
+        UPDATE public.ferias SET status = 'em_gozo' WHERE id = r.id AND status = 'aprovada';
+      END IF;
+      IF v_destino = 'concluida' THEN
+        -- O gatilho tr_update_ferias_status pode já ter concluído a linha.
+        UPDATE public.ferias SET status = 'concluida' WHERE id = r.id AND status = 'em_gozo';
+      END IF;
       v_ok := v_ok + 1;
     EXCEPTION WHEN others THEN
       v_recusadas := v_recusadas + 1;

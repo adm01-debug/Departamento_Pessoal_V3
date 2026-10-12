@@ -195,7 +195,26 @@ INSERT INTO public.ferias (id, status, data_inicio, data_fim, cancelado, pago) V
   ('00000000-0000-0000-0000-0000000000f1', 'aprovada', CURRENT_DATE - 2, CURRENT_DATE + 10, false, true),
   ('00000000-0000-0000-0000-0000000000f2', 'aprovada', CURRENT_DATE - 2, CURRENT_DATE + 10, false, false),
   ('00000000-0000-0000-0000-0000000000f3', 'em_gozo',  CURRENT_DATE - 20, CURRENT_DATE - 6, false, true),
-  ('00000000-0000-0000-0000-0000000000f4', 'aprovada', CURRENT_DATE - 2, CURRENT_DATE + 10, true, true);
+  ('00000000-0000-0000-0000-0000000000f4', 'aprovada', CURRENT_DATE - 2, CURRENT_DATE + 10, true, true),
+  -- Aprovadas cujo período passou com a rotina parada.
+  ('00000000-0000-0000-0000-0000000000f5', 'aprovada', CURRENT_DATE - 20, CURRENT_DATE - 6, false, true),
+  ('00000000-0000-0000-0000-0000000000f6', 'aprovada', CURRENT_DATE - 20, CURRENT_DATE - 6, false, false);
+SQL
+
+# Gatilhos criados depois dos dados: as linhas acima representam férias gravadas
+# antes de as datas chegarem (é assim que ficaram presas no canônico).
+run_psql >/dev/null <<'SQL'
+-- Como no canônico: o gatilho por data também roda em todo UPDATE (e conclui
+-- sozinho uma férias em gozo já vencida) e férias concluída é imutável.
+CREATE TRIGGER tr_update_ferias_status BEFORE INSERT OR UPDATE ON public.ferias
+FOR EACH ROW EXECUTE FUNCTION public.fn_update_ferias_status_by_date();
+CREATE FUNCTION public.impedir_alteracao_ferias_concluidas() RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  IF OLD.status = 'concluida' THEN RAISE EXCEPTION 'férias concluídas não podem ser alteradas'; END IF;
+  RETURN NEW;
+END $$;
+CREATE TRIGGER trg_impedir_alteracao_ferias_concluidas BEFORE UPDATE ON public.ferias
+FOR EACH ROW EXECUTE FUNCTION public.impedir_alteracao_ferias_concluidas();
 SQL
 
 # Reproduz as quatro falhas vivas.
@@ -222,18 +241,25 @@ expect_eq 'colaborador anonimizado' "$(q "SELECT nome_completo FROM public.colab
 expect_eq 'falha registrada' \
   "$(q "SELECT jsonb_array_length(contexto->'falhas') FROM public.logs_sistema WHERE contexto->>'job' = 'lgpd_cleanup_queue'")" 1
 
-# 3) Férias: entra em gozo só se pago; conclui o que passou; ignora cancelada.
-expect_eq 'resultado do job de férias' "$(q 'SELECT public.fn_atualizar_status_ferias_diario()')" '{"recusadas": 1, "atualizadas": 2}'
+# Item que falhou ou foi simulado vai para o fim: um item novo é atendido antes dele.
+run_psql -c "INSERT INTO public.colaboradores VALUES ('00000000-0000-0000-0000-00000000c005', 'Eva')" >/dev/null
+run_psql -c "INSERT INTO public.lgpd_fila_limpeza (id, registro_id, tabela, data_programada) VALUES ('00000000-0000-0000-0000-00000000f005', '00000000-0000-0000-0000-00000000c005', 'colaboradores', CURRENT_DATE)" >/dev/null
+q 'SELECT count(*) FROM public.drenar_fila_limpeza_lgpd(1)' >/dev/null
+expect_eq 'fila não trava em item com falha' "$(q "SELECT executado FROM public.lgpd_fila_limpeza WHERE id = '00000000-0000-0000-0000-00000000f005'")" t
+
+# 3) Férias: entra em gozo só se pago; conclui o que passou (inclusive aprovada
+#    esquecida pela rotina parada, passando por em_gozo); ignora cancelada.
+expect_eq 'resultado do job de férias' "$(q 'SELECT public.fn_atualizar_status_ferias_diario()')" '{"recusadas": 2, "atualizadas": 3}'
 expect_eq 'status após o job' \
   "$(q "SELECT string_agg(right(id::text, 2) || ':' || status, ',' ORDER BY id) FROM public.ferias")" \
-  'f1:em_gozo,f2:aprovada,f3:concluida,f4:aprovada'
+  'f1:em_gozo,f2:aprovada,f3:concluida,f4:aprovada,f5:concluida,f6:aprovada'
 expect_eq 'recusa Art. 145 registrada' \
-  "$(q "SELECT count(*) FROM public.logs_sistema WHERE nivel = 'warning' AND contexto->>'job' = 'ferias_status_diario'")" 1
+  "$(q "SELECT count(*) FROM public.logs_sistema WHERE nivel = 'warning' AND contexto->>'job' = 'ferias_status_diario'")" 2
 
 # 4) Aviso D-5: grava e deduplica no mesmo dia.
 q 'SELECT public.notificar_ferias_pagamento_d5()' >/dev/null
 q 'SELECT public.notificar_ferias_pagamento_d5()' >/dev/null
-expect_eq 'notificação D-5 única por dia' "$(q "SELECT count(*) FROM public.notificacoes WHERE tipo = 'ferias_pagamento_d5'")" 1
+expect_eq 'notificação D-5 única por dia e por férias' "$(q "SELECT count(*) FROM public.notificacoes WHERE tipo = 'ferias_pagamento_d5'")" 2
 
 # Agenda: comandos novos, horários preservados, demais jobs intactos.
 expect_eq 'job rate-limit' "$(q "SELECT schedule || '|' || command FROM cron.job WHERE jobname = 'purge-rate-limits-hourly'")" '7 * * * *|SELECT public.purge_rate_limits(86400);'
