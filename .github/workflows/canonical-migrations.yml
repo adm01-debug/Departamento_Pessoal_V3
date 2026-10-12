@@ -118,18 +118,13 @@ jobs:
           cp supabase/config.toml "$stage_dir/supabase/config.toml"
           # NOTE: this list is intentionally replaced on every scoped batch,
           # not accumulated. Previous batches (up to
-          # 20261006120000_revoke_admissao_token_row_helper) are already applied and recorded
+          # 20261011200000_check_constraints_operacional) are already applied and recorded
           # in supabase_migrations.schema_migrations; re-listing it here would
           # re-run non-idempotent CREATE POLICY statements and fail with
           # "policy already exists". Each dispatch of this workflow targets
           # only the NEW migrations for that batch.
           for migration in \
-            20261011160000_cnab_sequencial_atomic.sql \
-            20261011161000_cnab_remessa_unica.sql \
-            20261011170000_check_constraints_integridade.sql \
-            20261011180000_check_constraints_financeiro.sql \
-            20261011190000_check_constraints_recursos.sql \
-            20261011200000_check_constraints_operacional.sql
+            20261012120000_holerites_espelho_folha_itens.sql
           do
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
           done
@@ -187,7 +182,22 @@ jobs:
           SELECT jsonb_build_object(
             'ledger_count', (
               SELECT count(*) FROM supabase_migrations.schema_migrations
-              WHERE version IN ('20261011160000','20261011161000','20261011170000','20261011180000','20261011190000','20261011200000')
+              WHERE version IN ('20261012120000')
+            ),
+            'holerite_sync_trigger_ok', EXISTS (
+              SELECT 1 FROM pg_trigger
+              WHERE tgname = 'trg_sync_holerite_folha_item'
+                AND tgrelid = 'public.folha_itens'::regclass AND NOT tgisinternal
+            ),
+            'notify_fn_fixed', NOT EXISTS (
+              SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+              WHERE n.nspname = 'public' AND p.proname = 'fn_enqueue_notification'
+                AND p.prosrc LIKE '%NEW.competencia%'
+            ),
+            'self_read_requires_closed', EXISTS (
+              SELECT 1 FROM pg_policies
+              WHERE schemaname = 'public' AND tablename = 'holerites'
+                AND policyname = 'holerites_self_read' AND qual LIKE '%fechada%'
             ),
             'cnab_seq_table_ok', to_regclass('public.cnab_sequencias') IS NOT NULL,
             'cnab_remessa_uniq_ok', to_regclass('public.cnab_remessas_empresa_folha_uniq') IS NOT NULL,
@@ -226,7 +236,10 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 6 &&
+              Number(r.ledger_count) === 1 &&
+              r.holerite_sync_trigger_ok === true &&
+              r.notify_fn_fixed === true &&
+              r.self_read_requires_closed === true &&
               r.cnab_seq_table_ok === true &&
               r.cnab_remessa_uniq_ok === true &&
               Number(r.check_constraints_count) === 7 &&
