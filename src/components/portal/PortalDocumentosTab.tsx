@@ -193,7 +193,7 @@ export function PortalDocumentosTab({ navigate, colaboradorId, empresaId }: Port
             empresa_id: empresaId,
             conteudo_url: docToSign.url,
             assinatura_base64: base64,
-            ip_assinatura: '127.0.0.1', // Mock IP
+            // IP real é registrado no servidor (audit_log/RPC); o cliente não conhece seu próprio IP de forma confiável.
             assinado_em: new Date().toISOString(),
           },
           'PortalDocumentosTab:documentos_assinatura'

@@ -215,6 +215,7 @@ export default function App() {
         <Route path="ferias" element={<LazyPage Component={FeriasPage} />} />
         <Route path="ferias/programacao" element={<LazyPage Component={FeriasProgramacaoPage} />} />
         <Route path="ponto" element={<LazyPage Component={PontoPage} />} />
+        <Route path="faltas" element={<LazyPage Component={FaltasPage} />} />
         <Route path="beneficios" element={<LazyPage Component={BeneficiosPage} />} />
         <Route path="beneficios/novo" element={<LazyPage Component={BeneficioFormPage} />} />
 
@@ -239,6 +240,7 @@ export default function App() {
         <Route path="departamentos" element={<LazyPage Component={DepartamentosPage} />} />
         <Route path="lotacoes" element={<LazyPage Component={LotacoesPage} />} />
         <Route path="locais-trabalho" element={<LazyPage Component={LocaisTrabalhoPage} />} />
+        <Route path="centros-custo" element={<LazyPage Component={CentrosCustoPage} />} />
         <Route path="times" element={<LazyPage Component={TimesPage} />} />
         <Route path="promo-brindes" element={<LazyPage Component={PromoBrindesPage} />} />
         <Route path="promo-brindes/vinculos" element={<LazyPage Component={VinculosPromoPage} />} />

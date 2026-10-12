@@ -32,7 +32,7 @@ import { OnboardingDashboard } from '../admissoes/OnboardingDashboard';
 const MOCK_ADMISSOES = [
   { id: '1', etapa: 'documentos' },
   { id: '2', etapa: 'documentos' },
-  { id: '3', etapa: 'concluida' },
+  { id: '3', etapa: 'concluida', created_at: '2026-03-01T00:00:00Z', updated_at: '2026-03-11T00:00:00Z' },
   { id: '4', etapa: 'cancelada' },
 ];
 

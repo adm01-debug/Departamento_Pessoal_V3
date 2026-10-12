@@ -572,23 +572,28 @@ export default function WorkflowsPage() {
                   desligamento: 'desligamento',
                 };
                 const tipo = tipoMap[form.tipo] ?? 'custom';
+                const etapas = nodes
+                  .filter((n) => n.type === 'aprovador')
+                  .map((n, i) => ({
+                    nome: n.label,
+                    ordem: i + 1,
+                    aprovador_tipo: (n.config.papel as string) ?? 'gestor',
+                    config: { sla_horas: (n.config.sla_horas as number) ?? 48 },
+                  }));
                 workflowService
                   .criarDefinicao({
                     empresa_id: empresaAtual?.id,
                     nome: nodes.find((n) => n.type === 'start')?.label ?? 'Workflow sem nome',
                     tipo,
                     descricao: `Workflow com ${nodes.length} nós e ${connections.length} conexões`,
-                    etapas: nodes
-                      .filter((n) => n.type === 'aprovador')
-                      .map((n, i) => ({
-                        nome: n.label,
-                        ordem: i + 1,
-                        sla_horas: (n.config.sla_horas as number) ?? 48,
-                        papel: (n.config.papel as string) ?? 'gestor',
-                      })),
                     ativo: true,
                   })
-                  .then(() => {
+                  .then(async (definicao) => {
+                    const definicaoId = (definicao as { id?: string } | null)?.id;
+                    if (!definicaoId) throw new Error('Definição salva sem id');
+                    for (const etapa of etapas) {
+                      await workflowService.criarEtapa({ ...etapa, workflow_id: definicaoId });
+                    }
                     toast.success('Workflow salvo!');
                   })
                   .catch(() => {
