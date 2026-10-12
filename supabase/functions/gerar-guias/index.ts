@@ -14,11 +14,11 @@ import { verifyCsrf } from '../_shared/csrf.ts';
 import { requireRh } from '../_shared/authz.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { corsHeaders, parseJsonBody } from '../_shared/contract.ts';
+import { calcularINSSCents } from '../_shared/inss.ts';
 
 const CHUNK = 500;
 const MAX_COLABS = 50_000;
 const MAX_GUIA_CENTS = 10_000_000_000n; // R$ 100.000.000,00
-const TETO_INSS_CENTS = 815_741n;
 
 // Códigos de receita permitidos por tipo
 const CODIGOS_RECEITA = {
@@ -50,19 +50,6 @@ async function sha256Hex(s: string): Promise<string> {
   const buf = new TextEncoder().encode(s);
   const hash = await crypto.subtle.digest('SHA-256', buf);
   return Array.from(new Uint8Array(hash)).map((b) => b.toString(16).padStart(2, '0')).join('');
-}
-
-function calcularINSSCents(baseCents: bigint): bigint {
-  if (baseCents <= 0n) return 0n;
-  const b = baseCents < TETO_INSS_CENTS ? baseCents : TETO_INSS_CENTS;
-  const F1 = 151_800n, F2 = 279_388n, F3 = 419_083n;
-  let inss: bigint;
-  if (b <= F1) inss = (b * 75n) / 1000n;
-  else if (b <= F2) inss = 11_385n + ((b - F1) * 90n) / 1000n;
-  else if (b <= F3) inss = 22_868n + ((b - F2) * 120n) / 1000n;
-  else inss = 39_631n + ((b - F3) * 140n) / 1000n;
-  const TETO_DESC = 95_163n;
-  return inss < TETO_DESC ? inss : TETO_DESC;
 }
 
 function calcularIRRFCents(baseCents: bigint): bigint {

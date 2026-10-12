@@ -14,15 +14,9 @@ import { requireRh, type AdminClient } from '../_shared/authz.ts';
 import { captureException } from '../_shared/sentry.ts';
 import { beginIdempotency, completeIdempotency, failIdempotency, extractIdempotencyKey } from '../_shared/idempotency.ts';
 import { integrityHash as computeIntegrityHash } from '../_shared/integrityHash.ts';
+import { calcularINSS } from '../_shared/inss.ts';
 import type { Database } from '../../../src/integrations/supabase/types.ts';
 
-
-const FAIXAS_INSS = [
-  { limite: 1518.00, aliquota: 0.075 },
-  { limite: 2793.88, aliquota: 0.09 },
-  { limite: 4190.83, aliquota: 0.12 },
-  { limite: 8157.41, aliquota: 0.14 },
-];
 
 const FAIXAS_IRRF = [
   { limite: 2259.20, aliquota: 0, deducao: 0 },
@@ -32,7 +26,6 @@ const FAIXAS_IRRF = [
   { limite: Infinity, aliquota: 0.275, deducao: 896.00 },
 ];
 
-const TETO_INSS = 8157.41;
 const DEDUCAO_SIMPLIFICADA_IRRF = 564.80; // Lei 14.663/2023
 const DEDUCAO_DEPENDENTE_IRRF = 189.59;
 const CHUNK_SIZE = 500;
@@ -45,24 +38,9 @@ const trunc2 = (n: number): number => Math.trunc(n * 100) / 100;
 
 
 
-function calcINSS(salario: number): number {
-  if (!Number.isFinite(salario) || salario <= 0) return 0;
-  let desc = 0;
-  const baseCalculo = Math.min(salario, TETO_INSS);
-  let rest = baseCalculo;
-  for (let i = 0; i < FAIXAS_INSS.length; i++) {
-    const limAnt = i === 0 ? 0 : FAIXAS_INSS[i - 1].limite;
-    const f = Math.min(rest, FAIXAS_INSS[i].limite - limAnt);
-    if (f <= 0) break;
-    desc += f * FAIXAS_INSS[i].aliquota;
-    rest -= f;
-  }
-  return trunc2(desc);
-}
-
 function calcIRRF(bruto: number, dependentes = 0): number {
   if (!Number.isFinite(bruto) || bruto <= 0) return 0;
-  const inss = calcINSS(bruto);
+  const inss = calcularINSS(bruto);
   const baseLegal = bruto - inss - dependentes * DEDUCAO_DEPENDENTE_IRRF;
   const baseSimplificada = bruto - DEDUCAO_SIMPLIFICADA_IRRF;
   const base = Math.max(0, Math.min(baseLegal, baseSimplificada));
@@ -281,7 +259,7 @@ Deno.serve(async (req) => {
 
       for (const c of colabs) {
         const bruto = Number(c.salario_base) || 0;
-        const inss = calcINSS(bruto);
+        const inss = calcularINSS(bruto);
         const dependentes = dependentesPorColaborador.get(c.id as string) ?? 0;
         const irrf = calcIRRF(bruto, dependentes);
         const fgts = trunc2(bruto * 0.08);

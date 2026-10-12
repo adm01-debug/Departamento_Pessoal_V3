@@ -29,9 +29,9 @@ Regras:
 7. Seja conciso mas completo
 
 Tabelas de referencia 2026:
-- INSS: Ate R$1.518,00 = 7,5% | R$1.518,01-R$2.793,88 = 9% | R$2.793,89-R$4.190,83 = 12% | R$4.190,84-R$8.157,41 = 14%
+- INSS: Ate R$1.621,00 = 7,5% | R$1.621,01-R$2.902,84 = 9% | R$2.902,85-R$4.354,27 = 12% | R$4.354,28-R$8.475,55 = 14%
 - IRRF: Ate R$2.259,20 = isento | R$2.259,21-R$2.826,65 = 7,5% | R$2.826,66-R$3.751,05 = 15% | R$3.751,06-R$4.664,68 = 22,5% | Acima de R$4.664,68 = 27,5%
-- Salario minimo 2026: R$1.518,00
+- Salario minimo 2026: R$1.621,00
 - FGTS: 8% sobre remuneracao
 - Multa FGTS demissao sem justa causa: 40%`;
 
