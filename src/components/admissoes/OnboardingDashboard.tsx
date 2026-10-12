@@ -4,7 +4,11 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { UserPlus, Clock, CheckCircle, AlertCircle, TrendingUp, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export function OnboardingDashboard({ admissoes }: { admissoes: Array<{ etapa: string }> }) {
+export function OnboardingDashboard({
+  admissoes,
+}: {
+  admissoes: Array<{ etapa: string; created_at?: string | null; updated_at?: string | null }>;
+}) {
   const stats = useMemo(() => {
     const total = admissoes.length;
     const concluidas = admissoes.filter((a) => a.etapa === 'concluida').length;
@@ -18,13 +22,24 @@ export function OnboardingDashboard({ admissoes }: { admissoes: Array<{ etapa: s
 
     const chartData = Object.entries(etapaData).map(([name, value]) => ({ name, value }));
 
-    // Time to hire (mocked for demo)
-    const timeToHire = [
-      { month: 'Jan', days: 12 },
-      { month: 'Fev', days: 10 },
-      { month: 'Mar', days: 15 },
-      { month: 'Abr', days: 9 },
-    ];
+    // Dias médios entre início (created_at) e conclusão (updated_at) das admissões
+    // concluídas, agrupados pelo mês de conclusão. Vazio quando não há dados.
+    const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    const porMes = new Map<number, { soma: number; n: number }>();
+    for (const a of admissoes) {
+      if (a.etapa !== 'concluida' || !a.created_at || !a.updated_at) continue;
+      const inicio = new Date(a.created_at).getTime();
+      const fim = new Date(a.updated_at).getTime();
+      if (!Number.isFinite(inicio) || !Number.isFinite(fim) || fim < inicio) continue;
+      const mes = new Date(a.updated_at).getMonth();
+      const bucket = porMes.get(mes) ?? { soma: 0, n: 0 };
+      bucket.soma += (fim - inicio) / 86400000;
+      bucket.n += 1;
+      porMes.set(mes, bucket);
+    }
+    const timeToHire = [...porMes.entries()]
+      .sort(([a], [b]) => a - b)
+      .map(([mes, { soma, n }]) => ({ month: MESES[mes], days: Math.round((soma / n) * 10) / 10 }));
 
     return { total, concluidas, pendentes, canceladas, chartData, timeToHire };
   }, [admissoes]);
@@ -74,21 +89,27 @@ export function OnboardingDashboard({ admissoes }: { admissoes: Array<{ etapa: s
           </CardHeader>
           <CardContent className="pt-6">
             <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={stats.timeToHire}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--muted))" />
-                  <XAxis dataKey="month" fontSize={10} />
-                  <YAxis fontSize={10} />
-                  <Tooltip />
-                  <Line
-                    type="monotone"
-                    dataKey="days"
-                    stroke="hsl(var(--primary))"
-                    strokeWidth={3}
-                    dot={{ fill: 'hsl(var(--primary))' }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              {stats.timeToHire.length === 0 ? (
+                <div className="h-full flex items-center justify-center text-sm text-muted-foreground font-body">
+                  Sem admissões concluídas para calcular o tempo médio.
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={stats.timeToHire}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--muted))" />
+                    <XAxis dataKey="month" fontSize={10} />
+                    <YAxis fontSize={10} />
+                    <Tooltip />
+                    <Line
+                      type="monotone"
+                      dataKey="days"
+                      stroke="hsl(var(--primary))"
+                      strokeWidth={3}
+                      dot={{ fill: 'hsl(var(--primary))' }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              )}
             </div>
           </CardContent>
         </Card>

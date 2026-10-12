@@ -195,8 +195,8 @@ export const folhaPagamentoService = {
 
       if (folhaErr) throw folhaErr;
       if (!folha) throw new Error('Folha não encontrada');
-      if (folha.status !== 'aberta') {
-        throw new Error(`Folha não está aberta (status: ${folha.status})`);
+      if (folha.status !== 'aberta' && folha.status !== 'calculada') {
+        throw new Error(`Folha não está aberta nem calculada (status: ${folha.status})`);
       }
 
       // 2) Delega para edge function autoritativa (locking + integridade + auditoria)

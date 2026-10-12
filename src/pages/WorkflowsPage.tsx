@@ -17,6 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { workflowService } from '@/services/workflowService';
 import { WorkflowDesigner } from '@/components/workflows/WorkflowDesigner';
+import { ordenarNosPorConexoes } from '@/components/workflows/ordenarEtapas';
 import { useEmpresas } from '@/hooks';
 import { formatDateTime } from '@/utils/format';
 import { toast } from 'sonner';
@@ -572,27 +573,45 @@ export default function WorkflowsPage() {
                   desligamento: 'desligamento',
                 };
                 const tipo = tipoMap[form.tipo] ?? 'custom';
+                let ordenados: typeof nodes;
+                try {
+                  ordenados = ordenarNosPorConexoes(nodes, connections);
+                } catch (e: unknown) {
+                  toast.error(e instanceof Error ? e.message : 'Fluxo inválido');
+                  return;
+                }
+                const etapas = ordenados
+                  .filter((n) => n.type === 'aprovador')
+                  .map((n, i) => ({
+                    nome: n.label,
+                    ordem: i + 1,
+                    aprovador_tipo: (n.config.papel as string) ?? 'gestor',
+                    config: { sla_horas: (n.config.sla_horas as number) ?? 48 },
+                  }));
                 workflowService
                   .criarDefinicao({
                     empresa_id: empresaAtual?.id,
                     nome: nodes.find((n) => n.type === 'start')?.label ?? 'Workflow sem nome',
                     tipo,
                     descricao: `Workflow com ${nodes.length} nós e ${connections.length} conexões`,
-                    etapas: nodes
-                      .filter((n) => n.type === 'aprovador')
-                      .map((n, i) => ({
-                        nome: n.label,
-                        ordem: i + 1,
-                        sla_horas: (n.config.sla_horas as number) ?? 48,
-                        papel: (n.config.papel as string) ?? 'gestor',
-                      })),
-                    ativo: true,
+                    // Inativa até todas as etapas gravarem: uma definição ativa sem
+                    // etapas executaria aprovações incompletas.
+                    ativo: false,
                   })
-                  .then(() => {
+                  .then(async (definicao) => {
+                    const definicaoId = (definicao as { id?: string } | null)?.id;
+                    if (!definicaoId) throw new Error('Definição salva sem id');
+                    for (const etapa of etapas) {
+                      await workflowService.criarEtapa({ ...etapa, workflow_id: definicaoId });
+                    }
+                    if (empresaAtual?.id) {
+                      await workflowService.atualizarDefinicao(definicaoId, { ativo: true }, empresaAtual.id);
+                    }
+                    qc.invalidateQueries({ queryKey: ['workflows_def'] });
                     toast.success('Workflow salvo!');
                   })
                   .catch(() => {
-                    toast.error('Erro ao salvar workflow');
+                    toast.error('Erro ao salvar workflow — definição mantida inativa');
                   });
               }}
             />

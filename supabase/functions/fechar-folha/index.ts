@@ -102,9 +102,11 @@ serve(async (req: Request): Promise<Response> => {
 
     if (folhaErr) return createErrorResponse('Erro ao carregar folha', 500, 'FOLHA_LOAD_ERROR');
     if (!folha) return createErrorResponse('Folha não encontrada', 404, 'FOLHA_NOT_FOUND');
-    if (folha.status !== 'aberta') {
+    // Fechamento aceita 'aberta' (manual) e 'calculada' (pós calcular-folha):
+    // sem a segunda, toda folha calculada no servidor ficaria impossível de fechar.
+    if (folha.status !== 'aberta' && folha.status !== 'calculada') {
       return createErrorResponse(
-        `Folha não está aberta (status atual: ${folha.status})`,
+        `Folha não está aberta nem calculada (status atual: ${folha.status})`,
         409, 'FOLHA_NOT_OPEN',
       );
     }
@@ -161,7 +163,7 @@ serve(async (req: Request): Promise<Response> => {
       })
       .eq('id', folhaId)
       .eq('version', folha.version)
-      .eq('status', 'aberta')
+      .in('status', ['aberta', 'calculada'])
       .select('id, version')
       .maybeSingle();
 
@@ -192,7 +194,7 @@ serve(async (req: Request): Promise<Response> => {
       folhaId,
       empresaId,
       competencia: folha.competencia,
-      status_anterior: 'aberta',
+      status_anterior: folha.status,
       status_novo: 'fechada',
       version_anterior: folha.version,
       version_nova: updated.version,
@@ -211,7 +213,7 @@ serve(async (req: Request): Promise<Response> => {
       tabela: 'folhas_pagamento',
       registro_id: folhaId,
       acao: 'PAYROLL_CLOSE',
-      dados_anteriores: { status: 'aberta', version: folha.version },
+      dados_anteriores: { status: folha.status, version: folha.version },
       dados_novos: { ...snapshot, audit_hash: auditHash },
       user_id: userId,
       user_email: userEmail || null,
@@ -219,7 +221,7 @@ serve(async (req: Request): Promise<Response> => {
     if (auditErr) {
       // Reverter fechamento para preservar consistência da trilha
       await admin.from('folhas_pagamento').update({
-        status: 'aberta',
+        status: folha.status,
         data_fechamento: null,
         fechada_por: null,
         version: folha.version,

@@ -244,6 +244,7 @@ export function WorkflowDesigner({ initialNodes = [], initialConnections = [], o
   const deleteNode = (id: string) => {
     setNodes((prev) => prev.filter((n) => n.id !== id));
     setConnections((prev) => prev.filter((c) => c.from !== id && c.to !== id));
+    setPendingFrom((prev) => (prev === id ? null : prev));
     setSelectedId(null);
   };
 
@@ -419,6 +420,8 @@ export function WorkflowDesigner({ initialNodes = [], initialConnections = [], o
             onClick={() => {
               setNodes([]);
               setConnections([]);
+              setPendingFrom(null);
+              setSelectedId(null);
               setValidationErrors(new Set());
             }}
           >
@@ -522,7 +525,8 @@ export function WorkflowDesigner({ initialNodes = [], initialConnections = [], o
               {pendingFrom &&
                 connectPreview &&
                 (() => {
-                  const fromNode = getNode(pendingFrom)!;
+                  const fromNode = getNode(pendingFrom);
+                  if (!fromNode) return null;
                   const fromPos = getPortPos(fromNode, 'right');
                   const path = bezierPath(fromPos.x, fromPos.y, connectPreview.mx, connectPreview.my);
                   return (
@@ -557,7 +561,7 @@ export function WorkflowDesigner({ initialNodes = [], initialConnections = [], o
                         className="cursor-crosshair"
                         onPointerDown={(e) => {
                           e.stopPropagation();
-                          startConnection(node.id);
+                          if (pendingFrom) completeConnection(node.id);
                         }}
                       />
                       {/* Diamond shape */}
@@ -688,7 +692,7 @@ export function WorkflowDesigner({ initialNodes = [], initialConnections = [], o
                         className="cursor-crosshair"
                         onPointerDown={(e) => {
                           e.stopPropagation();
-                          startConnection(node.id);
+                          if (pendingFrom) completeConnection(node.id);
                         }}
                       />
                       {hasError && <circle cx={NODE_W} cy={0} r="6" fill="#ef4444" />}
@@ -716,7 +720,7 @@ export function WorkflowDesigner({ initialNodes = [], initialConnections = [], o
                       className="cursor-crosshair"
                       onPointerDown={(e) => {
                         e.stopPropagation();
-                        startConnection(node.id);
+                        if (pendingFrom) completeConnection(node.id);
                       }}
                     />
                     {/* Card body */}

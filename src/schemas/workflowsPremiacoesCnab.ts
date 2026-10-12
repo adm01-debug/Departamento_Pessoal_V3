@@ -20,6 +20,7 @@ export const workflowEtapaSchema = z.object({
   tipo: z.string().max(50).nullable().optional(),
   aprovador_tipo: z.string().max(50).nullable().optional(),
   aprovador_id: uuid.nullable().optional(),
+  config: z.record(z.string(), z.unknown()).nullable().optional(),
 });
 
 export const premiacaoRegraSchema = z.object({
