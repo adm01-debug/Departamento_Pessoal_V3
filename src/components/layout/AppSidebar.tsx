@@ -607,7 +607,11 @@ export function AppSidebar({ onSearchOpen }: AppSidebarProps) {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => toast.info('Abertura de ticket de suporte...')}
+            onClick={() => {
+              window.location.href =
+                'mailto:suporte@promobrindes.com.br?subject=' +
+                encodeURIComponent('Feedback — Departamento Pessoal V3');
+            }}
             className={cn(
               'w-full gap-2 text-muted-foreground hover:text-primary rounded-xl',
               collapsed && 'px-0 justify-center'

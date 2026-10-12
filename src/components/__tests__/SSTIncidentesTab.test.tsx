@@ -33,9 +33,9 @@ vi.mock('@/integrations/supabase/client', () => ({
 import { SSTIncidentesTab } from '../sst/SSTIncidentesTab';
 
 describe('SSTIncidentesTab', () => {
-  it('renders Acidentes com Afastamento KPI card', () => {
+  it('renders Acidentes Registrados KPI card', () => {
     render(<SSTIncidentesTab />);
-    expect(screen.getByText('Acidentes com Afastamento')).toBeInTheDocument();
+    expect(screen.getByText('Acidentes Registrados')).toBeInTheDocument();
   });
 
   it('renders Incidentes este mês KPI card', () => {
@@ -48,9 +48,10 @@ describe('SSTIncidentesTab', () => {
     expect(screen.getByText('Dias sem acidentes')).toBeInTheDocument();
   });
 
-  it('renders 425 days without accidents', () => {
+  it('renders KPI values computed from real data (empty → zero/dash)', () => {
     render(<SSTIncidentesTab />);
-    expect(screen.getByText('425')).toBeInTheDocument();
+    expect(screen.getAllByText('0')).toHaveLength(2);
+    expect(screen.getByText('—')).toBeInTheDocument();
   });
 
   it('renders Histórico de Ocorrências section title', () => {
@@ -68,8 +69,8 @@ describe('SSTIncidentesTab', () => {
     expect(screen.getByText('Tipo')).toBeInTheDocument();
   });
 
-  it('renders Exportar CAT button', () => {
+  it('renders Exportar CSV button', () => {
     render(<SSTIncidentesTab />);
-    expect(screen.getByRole('button', { name: /Exportar CAT/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Exportar CSV/i })).toBeInTheDocument();
   });
 });

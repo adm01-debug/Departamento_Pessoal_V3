@@ -40,6 +40,8 @@ import { format, addMonths, differenceInDays, parseISO, differenceInMonths } fro
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { ChartSkeleton, KPICardSkeleton } from '@/components/ui/module-skeleton';
+import { exportPontoPDF } from '@/services/exportService';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#0088FE', '#00C49F'];
 
@@ -247,7 +249,45 @@ export default function PassivoTrabalhistaPage() {
           <Button
             size="sm"
             className="rounded-xl shadow-lg bg-destructive hover:bg-destructive/90"
-            onClick={() => toast.info('Gerando relatório detalhado...')}
+            disabled={!data?.riskEmployees?.length}
+            onClick={() => {
+              const linhas = (data?.riskEmployees ?? []).map((e: RiskEmp) => ({
+                colaborador: e.nome,
+                salario: formatCurrency(e.salario),
+                dias_atraso: e.diasAtraso,
+                ferias: formatCurrency(e.valorFerias + e.terco),
+                decimo_terceiro: formatCurrency(e.valor13),
+                fgts: formatCurrency(e.fgtsFerias + e.fgts13),
+                multa: formatCurrency(e.multa),
+                total: formatCurrency(e.totalProvisionado),
+                vencimento: e.dataVencimento,
+              }));
+              exportPontoPDF(
+                linhas,
+                `Passivo Trabalhista ${competenciaLabel}`,
+                [
+                  'colaborador',
+                  'salario',
+                  'dias_atraso',
+                  'ferias',
+                  'decimo_terceiro',
+                  'fgts',
+                  'multa',
+                  'total',
+                  'vencimento',
+                ],
+                {
+                  seloSistema: 'DEPARTAMENTO PESSOAL V3',
+                  statusGeral: `${linhas.length} EM RISCO`,
+                  notaRodape: 'Documento gerado eletronicamente para fins gerenciais',
+                }
+              );
+              void registrarAcessoPII('passivo_trabalhista', 'export', {
+                empresaId: empresaAtualId,
+                registroCount: linhas.length,
+              });
+              toast.success('Relatório gerado');
+            }}
           >
             <Download className="h-4 w-4 mr-2" />
             Relatório PDF

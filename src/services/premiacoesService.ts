@@ -330,6 +330,15 @@ export const premiacoesService = {
     return data;
   },
 
+  async excluirCenariosROI(ids: string[]) {
+    // O bridge só aceita filtros `eq` em writes — `.in()` é rejeitado
+    // (UNSUPPORTED_FILTER_FOR_WRITE), então deleta um a um.
+    for (const id of ids) {
+      const { error } = await supabase.from('premiacoes_roi_cenarios').delete().eq('id', id);
+      if (error) throw error;
+    }
+  },
+
   async listarCenariosROI(empresaId: string): Promise<CenarioROI[]> {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
     // Nota: premiacoes_roi_cenarios não tem coluna empresa_id (só user_id);
