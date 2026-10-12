@@ -31,9 +31,9 @@ const FAIXAS_IRRF = [
 // combinada (saldo+13º); ignorava a dedução simplificada e dependentes.
 // Replica src/calculators/impostos.ts::calcularIRRF (base mais benéfica ao
 // contribuinte: legal com deduções vs. simplificada).
-function calcIRRF(bruto: number, dependentes = 0): number {
+function calcIRRF(bruto: number, dependentes = 0, referencia: string): number {
   if (!Number.isFinite(bruto) || bruto <= 0) return 0;
-  const inss = calcularINSS(bruto);
+  const inss = calcularINSS(bruto, referencia);
   const baseLegal = bruto - inss - dependentes * DEDUCAO_DEPENDENTE_IRRF;
   const baseSimplificada = bruto - DEDUCAO_SIMPLIFICADA_IRRF;
   const base = Math.max(0, Math.min(baseLegal, baseSimplificada));
@@ -225,11 +225,11 @@ Deno.serve(async (req) => {
     const totalProventos = round2(saldoSalario + avisoIndenizado + feriasVencidasValor + feriasProporcional + tercoFerias + decimoTerceiro);
     // IN RFB 2110/2022: truncar na 2ª casa por base. Soma em inteiros de centavos
     // para evitar underflow IEEE754 (ex: 0.1+0.7=0.7999... → trunc2 droparia 1 centavo).
-    const inssA = calcularINSS(saldoSalario);
-    const inssB = calcularINSS(decimoTerceiro);
+    const inssA = calcularINSS(saldoSalario, data_desligamento);
+    const inssB = calcularINSS(decimoTerceiro, data_desligamento);
     const inss = (Math.round(inssA * 100) + Math.round(inssB * 100)) / 100;
-    const irrfA = calcIRRF(saldoSalario, dependentes_irrf);
-    const irrfB = calcIRRF(decimoTerceiro, 0);
+    const irrfA = calcIRRF(saldoSalario, dependentes_irrf, data_desligamento);
+    const irrfB = calcIRRF(decimoTerceiro, 0, data_desligamento);
     const irrf = (Math.round(irrfA * 100) + Math.round(irrfB * 100)) / 100;
     const totalDescontos = round2(inss + irrf);
     const totalLiquido = round2(totalProventos - totalDescontos + multaFGTS);

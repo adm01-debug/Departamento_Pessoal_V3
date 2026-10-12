@@ -38,9 +38,9 @@ const trunc2 = (n: number): number => Math.trunc(n * 100) / 100;
 
 
 
-function calcIRRF(bruto: number, dependentes = 0): number {
+function calcIRRF(bruto: number, dependentes = 0, competencia: string): number {
   if (!Number.isFinite(bruto) || bruto <= 0) return 0;
-  const inss = calcularINSS(bruto);
+  const inss = calcularINSS(bruto, competencia);
   const baseLegal = bruto - inss - dependentes * DEDUCAO_DEPENDENTE_IRRF;
   const baseSimplificada = bruto - DEDUCAO_SIMPLIFICADA_IRRF;
   const base = Math.max(0, Math.min(baseLegal, baseSimplificada));
@@ -259,9 +259,9 @@ Deno.serve(async (req) => {
 
       for (const c of colabs) {
         const bruto = Number(c.salario_base) || 0;
-        const inss = calcularINSS(bruto);
+        const inss = calcularINSS(bruto, competencia);
         const dependentes = dependentesPorColaborador.get(c.id as string) ?? 0;
-        const irrf = calcIRRF(bruto, dependentes);
+        const irrf = calcIRRF(bruto, dependentes, competencia);
         const fgts = trunc2(bruto * 0.08);
         const descontos = round2(inss + irrf);
         const liquido = round2(bruto - descontos);

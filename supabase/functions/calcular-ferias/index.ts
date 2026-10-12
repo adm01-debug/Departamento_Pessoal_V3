@@ -28,9 +28,9 @@ const FAIXAS_IRRF = [
   { l: Infinity, a: 0.275, d: 896.00 },
 ];
 
-function calcIRRF(bruto: number, dependentes = 0): number {
+function calcIRRF(bruto: number, dependentes = 0, referencia: string): number {
   if (!Number.isFinite(bruto) || bruto <= 0) return 0;
-  const inss = calcularINSS(bruto);
+  const inss = calcularINSS(bruto, referencia);
   const baseLegal = bruto - inss - dependentes * DEDUCAO_DEPENDENTE_IRRF;
   const baseSimplificada = bruto - DEDUCAO_SIMPLIFICADA_IRRF;
   const base = Math.max(0, Math.min(baseLegal, baseSimplificada));
@@ -46,6 +46,9 @@ const BodySchema = z.object({
   dias_ferias: z.number().int().min(1).max(30).default(30),
   dias_abono: z.number().int().min(0).max(10).default(0), // Art. 143 CLT
   dependentes_irrf: z.number().int().min(0).max(30).optional().default(0),
+  // Competência 'YYYY-MM' das férias — seleciona a tabela INSS do ano.
+  // Opcional: simulações sem competência usam o mês corrente.
+  competencia: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/).optional(),
   colaborador_id: z.string().uuid().optional(),
   empresa_id: z.string().uuid().optional(),
 }).refine((d) => d.dias_ferias + d.dias_abono <= 30, {
@@ -85,7 +88,7 @@ Deno.serve(async (req) => {
 
     const parsed = BodySchema.safeParse(raw);
     if (!parsed.success) return createValidationErrorResponse(parsed.error, req);
-    const { salario_base, dias_ferias, dias_abono, dependentes_irrf, colaborador_id, empresa_id } = parsed.data;
+    const { salario_base, dias_ferias, dias_abono, dependentes_irrf, colaborador_id, empresa_id, competencia } = parsed.data;
 
     const admin = createClient(supabaseUrl, serviceKey, {
       auth: { persistSession: false, autoRefreshToken: false },
@@ -126,8 +129,11 @@ Deno.serve(async (req) => {
 
     // INSS/IRRF incidem sobre férias + 1/3, NÃO sobre abono pecuniário (art. 7º § único Lei 8.212)
     const baseTributavel = round2(vf + tc);
-    const inss = calcularINSS(baseTributavel);
-    const irrf = calcIRRF(baseTributavel, dependentes_irrf);
+    // Competência das férias define a tabela INSS; sem ela, usa o mês corrente
+    // (o cálculo é sempre para um gozo próximo, nunca histórico).
+    const inssRef = competencia ?? new Date().toISOString().slice(0, 7);
+    const inss = calcularINSS(baseTributavel, inssRef);
+    const irrf = calcIRRF(baseTributavel, dependentes_irrf, inssRef);
     const liquido = round2(bruto - inss - irrf);
 
     // Auditoria (não-bloqueante)

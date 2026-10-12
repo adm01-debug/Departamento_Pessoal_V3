@@ -162,7 +162,7 @@ serve(async (req: Request): Promise<Response> => {
       for (const c of colabs) {
         const sc = reaisToCents(Number(c.salario_base) || 0);
         if (sc <= 0n) continue;
-        const inssEmp = calcularINSSCents(sc);
+        const inssEmp = calcularINSSCents(sc, competencia);
         totSalariosCents += sc;
         totINSSEmpCents += inssEmp;
         totINSSPatCents += (sc * 200n) / 1000n;

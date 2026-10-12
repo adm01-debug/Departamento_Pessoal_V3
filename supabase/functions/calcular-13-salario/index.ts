@@ -181,13 +181,13 @@ serve(async (req: Request): Promise<Response> => {
       dataLimite = `${anoRef}-11-30`;
     } else if (d.parcela === '2') {
       adiantamento1Cents = brutoIntegralCents / 2n;
-      inssCents = calcularINSSCents(brutoIntegralCents);
+      inssCents = calcularINSSCents(brutoIntegralCents, d.competencia);
       irrfCents = calcularIRRFCents(brutoIntegralCents - inssCents, d.dependentes_irrf);
       valorParcelaCents = brutoIntegralCents - adiantamento1Cents;
       dataLimite = `${anoRef}-12-20`;
     } else {
       // integral: única tributação (rescisão etc.)
-      inssCents = calcularINSSCents(brutoIntegralCents);
+      inssCents = calcularINSSCents(brutoIntegralCents, d.competencia);
       irrfCents = calcularIRRFCents(brutoIntegralCents - inssCents, d.dependentes_irrf);
       valorParcelaCents = brutoIntegralCents;
       dataLimite = `${anoRef}-12-20`;
