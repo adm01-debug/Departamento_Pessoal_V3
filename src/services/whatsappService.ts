@@ -45,28 +45,31 @@ export const whatsappService = {
     if (error) throw error;
   },
 
+  // O envio real é feito pela edge function `whatsapp-send`, que chama a
+  // Evolution API no servidor (api_key nunca vai para o browser) e grava o
+  // status verdadeiro no log. Erros propagam para o caller decidir o
+  // fallback (ex.: wa.me no envio de link de admissão).
   async sendMessage(params: {
     empresaId: string;
     colaboradorId?: string;
     phone: string;
     message: string;
-  }): Promise<{ success: boolean }> {
-    const { error } = await supabase.from('whatsapp_mensagens_logs').insert(
-      validateTablePayload(
-        'whatsapp_mensagens_logs',
-        {
-          empresa_id: params.empresaId,
-          colaborador_id: params.colaboradorId,
-          telefone: params.phone,
-          status: 'sent',
-          mensagem_id_externo: `wa_direct_${Date.now()}`,
-        },
-        'whatsappService:whatsapp_mensagens_logs'
-      )
-    );
+  }): Promise<{ success: boolean; logId?: string }> {
+    const { data, error } = await supabase.functions.invoke('whatsapp-send', {
+      body: {
+        empresa_id: params.empresaId,
+        colaborador_id: params.colaboradorId,
+        telefone: params.phone,
+        mensagem: params.message,
+      },
+    });
 
-    if (error) throw error;
-    return { success: true };
+    if (error) throw new Error(error.message || 'Falha ao enviar WhatsApp');
+    const result = data as { success?: boolean; status?: string; log_id?: string; error?: string } | null;
+    if (!result?.success) {
+      throw new Error(result?.error || 'Envio de WhatsApp falhou');
+    }
+    return { success: true, logId: result.log_id };
   },
 
   async listTemplates(empresaId: string): Promise<WhatsAppTemplate[]> {
@@ -87,6 +90,9 @@ export const whatsappService = {
     return (data || []) as WhatsAppLog[];
   },
 
+  // A edge function resolve o conteúdo do template no servidor e envia de
+  // verdade — nada de marcar 'sent' sem entrega (o UPDATE que fingia isso
+  // além de tudo era bloqueado pela trilha append-only do banco).
   async sendTemplateMessage(params: {
     empresaId: string;
     colaboradorId: string;
@@ -94,43 +100,21 @@ export const whatsappService = {
     phone: string;
   }): Promise<{ success: boolean; logId: string }> {
     try {
-      const { empresaId, colaboradorId, templateId, phone } = params;
+      const { data, error } = await supabase.functions.invoke('whatsapp-send', {
+        body: {
+          empresa_id: params.empresaId,
+          colaborador_id: params.colaboradorId,
+          telefone: params.phone,
+          template_id: params.templateId,
+        },
+      });
 
-      const { data: log, error: logErr } = await supabase
-        .from('whatsapp_mensagens_logs')
-        .insert(
-          validateTablePayload(
-            'whatsapp_mensagens_logs',
-            {
-              empresa_id: empresaId,
-              colaborador_id: colaboradorId,
-              template_id: templateId,
-              telefone: phone,
-              status: 'pending',
-            },
-            'whatsappService:whatsapp_mensagens_logs'
-          )
-        )
-        .select()
-        .single();
-
-      if (logErr) throw logErr;
-
-      await new Promise((r) => setTimeout(r, 1000));
-
-      await supabase
-        .from('whatsapp_mensagens_logs')
-        .update(
-          validateTablePayload(
-            'whatsapp_mensagens_logs',
-            { status: 'sent', mensagem_id_externo: `wa_${Date.now()}` },
-            'whatsappService:whatsapp_mensagens_logs'
-          )
-        )
-        .eq('id', log.id)
-        .eq('empresa_id', empresaId);
-
-      return { success: true, logId: log.id };
+      if (error) throw new Error(error.message || 'Falha ao enviar WhatsApp');
+      const result = data as { success?: boolean; log_id?: string; error?: string } | null;
+      if (!result?.success || !result.log_id) {
+        throw new Error(result?.error || 'Envio de WhatsApp falhou');
+      }
+      return { success: true, logId: result.log_id };
     } catch (e) {
       throw new Error('Falha ao enviar mensagem de template do WhatsApp', { cause: e });
     }

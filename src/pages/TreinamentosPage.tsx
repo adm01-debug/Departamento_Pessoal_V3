@@ -15,10 +15,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Switch } from '@/components/ui/switch';
 import { supabase } from '@/integrations/supabase/client';
 import { catalogoCursoService, colaboradorService } from '@/services';
+import type { CertificadoComJoins } from '@/services/catalogoCursoService';
 import { useEmpresas } from '@/hooks';
 import { TrilhaCursosSection } from '@/components/treinamentos/TrilhaCursosSection';
 import { toast } from 'sonner';
-import { GraduationCap, Plus, BookOpen, Award, Users, Trash2, Link, Calendar, Video } from 'lucide-react';
+import { GraduationCap, Plus, BookOpen, Award, Users, Trash2, Link, Calendar, Video, ExternalLink } from 'lucide-react';
+import { jsPDF } from 'jspdf';
+import { parseISO } from 'date-fns';
+import { registrarAcessoPII } from '@/services/piiAccessLogService';
 import type { Tables } from '@/integrations/supabase/database.types';
 import { validateTablePayload } from '@/schemas/validate';
 
@@ -51,8 +55,75 @@ const treinamentosService = {
   },
 };
 
+// Certificado sem arquivo digitalizado é gerado em PDF com os dados do
+// registro — "Ver" sempre produz um documento real, nunca um toast fake.
+function gerarCertificadoPdf(cert: CertificadoComJoins, empresaNome?: string) {
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+  const cx = doc.internal.pageSize.getWidth() / 2;
+
+  doc.setDrawColor(60);
+  doc.setLineWidth(1.2);
+  doc.rect(12, 12, doc.internal.pageSize.getWidth() - 24, doc.internal.pageSize.getHeight() - 24);
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(30);
+  doc.text('CERTIFICADO', cx, 45, { align: 'center' });
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(13);
+  doc.text('Certificamos que', cx, 65, { align: 'center' });
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(20);
+  doc.text(cert.colaborador?.nome_completo ?? '—', cx, 80, { align: 'center' });
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(13);
+  doc.text(
+    `concluiu o treinamento "${cert.curso?.nome ?? '—'}"${cert.curso?.carga_horaria ? `, com carga horária de ${cert.curso.carga_horaria} horas` : ''}.`,
+    cx,
+    95,
+    { align: 'center', maxWidth: 240 }
+  );
+
+  doc.setFontSize(11);
+  const linhas = [
+    `Emitido em ${parseISO(cert.data_emissao).toLocaleDateString('pt-BR')}`,
+    cert.data_validade
+      ? `Válido até ${parseISO(cert.data_validade).toLocaleDateString('pt-BR')}`
+      : 'Validade: vitalício',
+    empresaNome ? `Empresa: ${empresaNome}` : '',
+  ].filter(Boolean);
+  doc.text(linhas.join('   ·   '), cx, 120, { align: 'center' });
+
+  doc.setFontSize(9);
+  doc.setTextColor(100);
+  doc.text(`Código de autenticação: ${cert.codigo_autenticacao}`, cx, doc.internal.pageSize.getHeight() - 20, {
+    align: 'center',
+  });
+
+  return doc;
+}
+
 export default function TreinamentosPage() {
   const { empresaAtual } = useEmpresas();
+
+  const abrirCertificado = (cert: CertificadoComJoins) => {
+    // Só abrimos URLs http(s) — um arquivo_url 'javascript:' gravado no banco
+    // executaria script na origem do app; nesse caso caímos no PDF gerado.
+    if (cert.arquivo_url && /^https?:\/\//i.test(cert.arquivo_url)) {
+      window.open(cert.arquivo_url, '_blank', 'noopener,noreferrer');
+    } else {
+      gerarCertificadoPdf(cert, empresaAtual?.nome_fantasia ?? empresaAtual?.razao_social).save(
+        `certificado-${cert.codigo_autenticacao}.pdf`
+      );
+    }
+    void registrarAcessoPII('treinamento_certificados', 'download', {
+      empresaId: empresaAtual?.id,
+      registroId: cert.id,
+    });
+  };
+
   const qc = useQueryClient();
   const [tab, setTab] = useState('treinamentos');
 
@@ -412,9 +483,14 @@ export default function TreinamentosPage() {
                               variant="ghost"
                               size="sm"
                               className="h-8 gap-1.5"
-                              onClick={() => toast.info('Impressão em breve')}
+                              onClick={() => abrirCertificado(cert)}
                             >
-                              <Link className="h-3.5 w-3.5" /> Ver
+                              {cert.arquivo_url ? (
+                                <ExternalLink className="h-3.5 w-3.5" />
+                              ) : (
+                                <Link className="h-3.5 w-3.5" />
+                              )}{' '}
+                              Ver
                             </Button>
                           </TableCell>
                         </TableRow>

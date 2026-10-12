@@ -2,9 +2,13 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { deepChain } from '@/test/deepChain';
 
 const mockFrom = vi.hoisted(() => vi.fn());
+const mockInvoke = vi.hoisted(() => vi.fn());
 
 vi.mock('@/integrations/supabase/client', () => ({
-  supabase: { from: (...a: unknown[]) => deepChain(mockFrom(...a)) },
+  supabase: {
+    from: (...a: unknown[]) => deepChain(mockFrom(...a)),
+    functions: { invoke: mockInvoke },
+  },
 }));
 
 import { whatsappService } from '../whatsappService';
@@ -109,8 +113,8 @@ describe('whatsappService', () => {
   });
 
   describe('sendMessage', () => {
-    it('returns { success: true } on success', async () => {
-      setupInsert(null);
+    it('invokes whatsapp-send edge function and returns success', async () => {
+      mockInvoke.mockResolvedValue({ data: { success: true, status: 'sent', log_id: 'log-1' }, error: null });
 
       const result = await whatsappService.sendMessage({
         empresaId: 'emp-1',
@@ -118,41 +122,29 @@ describe('whatsappService', () => {
         message: 'hello',
       });
 
-      expect(result).toEqual({ success: true });
-      expect(mockFrom).toHaveBeenCalledWith('whatsapp_mensagens_logs');
+      expect(result).toEqual({ success: true, logId: 'log-1' });
+      expect(mockInvoke).toHaveBeenCalledWith('whatsapp-send', {
+        body: { empresa_id: 'emp-1', colaborador_id: undefined, telefone: '+5511999999999', mensagem: 'hello' },
+      });
     });
 
-    it('inserts with correct fields', async () => {
-      const { insertFn } = setupInsert(null);
-
-      await whatsappService.sendMessage({
-        empresaId: 'emp-1',
-        colaboradorId: 'col-1',
-        phone: '+5511999999999',
-        message: 'test',
+    it('throws when the edge function reports failure', async () => {
+      mockInvoke.mockResolvedValue({
+        data: { success: false, status: 'failed', error: 'Evolution API respondeu 500' },
+        error: null,
       });
 
-      expect(insertFn).toHaveBeenCalledWith(
-        expect.objectContaining({
-          empresa_id: 'emp-1',
-          colaborador_id: 'col-1',
-          telefone: '+5511999999999',
-          status: 'sent',
-        })
+      await expect(whatsappService.sendMessage({ empresaId: 'emp-1', phone: '+55', message: 'hi' })).rejects.toThrow(
+        'Evolution API respondeu 500'
       );
     });
 
-    it('throws when supabase returns an error', async () => {
-      const dbError = new Error('Insert failed');
-      setupInsert(dbError);
+    it('throws on invoke error', async () => {
+      mockInvoke.mockResolvedValue({ data: null, error: { message: 'Edge error' } });
 
-      await expect(
-        whatsappService.sendMessage({
-          empresaId: 'emp-1',
-          phone: '+55',
-          message: 'hi',
-        })
-      ).rejects.toThrow('Insert failed');
+      await expect(whatsappService.sendMessage({ empresaId: 'emp-1', phone: '+55', message: 'hi' })).rejects.toThrow(
+        'Edge error'
+      );
     });
   });
 
@@ -238,29 +230,8 @@ describe('whatsappService', () => {
   });
 
   describe('sendTemplateMessage', () => {
-    let setTimeoutSpy: ReturnType<typeof vi.spyOn>;
-
-    beforeEach(() => {
-      setTimeoutSpy = vi.spyOn(global, 'setTimeout').mockImplementation((fn: (v?: unknown) => unknown) => {
-        fn();
-        return 0 as never;
-      });
-    });
-
-    afterEach(() => {
-      setTimeoutSpy.mockRestore();
-    });
-
-    it('returns { success: true, logId } on success', async () => {
-      const singleFn = vi.fn().mockResolvedValue({ data: { id: 'log-1' }, error: null });
-      const selectFn1 = vi.fn().mockReturnValue({ single: singleFn });
-      const insertFn = vi.fn().mockReturnValue({ select: selectFn1 });
-
-      const eqUpdate2 = vi.fn().mockResolvedValue({ error: null });
-      const eqUpdate = vi.fn().mockReturnValue({ eq: eqUpdate2 });
-      const updateFn = vi.fn().mockReturnValue({ eq: eqUpdate });
-
-      mockFrom.mockReturnValueOnce({ insert: insertFn }).mockReturnValueOnce({ update: updateFn });
+    it('invokes whatsapp-send with template_id and returns logId', async () => {
+      mockInvoke.mockResolvedValue({ data: { success: true, status: 'sent', log_id: 'log-9' }, error: null });
 
       const result = await whatsappService.sendTemplateMessage({
         empresaId: 'emp-1',
@@ -269,68 +240,32 @@ describe('whatsappService', () => {
         phone: '+5511999999999',
       });
 
-      expect(result).toEqual({ success: true, logId: 'log-1' });
-    });
-
-    it('inserts log with pending status', async () => {
-      const singleFn = vi.fn().mockResolvedValue({ data: { id: 'log-2' }, error: null });
-      const selectFn1 = vi.fn().mockReturnValue({ single: singleFn });
-      const insertFn = vi.fn().mockReturnValue({ select: selectFn1 });
-
-      const eqUpdate2 = vi.fn().mockResolvedValue({ error: null });
-      const eqUpdate = vi.fn().mockReturnValue({ eq: eqUpdate2 });
-      const updateFn = vi.fn().mockReturnValue({ eq: eqUpdate });
-
-      mockFrom.mockReturnValueOnce({ insert: insertFn }).mockReturnValueOnce({ update: updateFn });
-
-      await whatsappService.sendTemplateMessage({
-        empresaId: 'emp-1',
-        colaboradorId: 'col-1',
-        templateId: 'tpl-1',
-        phone: '+5511999999999',
-      });
-
-      expect(insertFn).toHaveBeenCalledWith(
-        expect.objectContaining({
+      expect(result).toEqual({ success: true, logId: 'log-9' });
+      expect(mockInvoke).toHaveBeenCalledWith('whatsapp-send', {
+        body: {
           empresa_id: 'emp-1',
           colaborador_id: 'col-1',
-          template_id: 'tpl-1',
           telefone: '+5511999999999',
-          status: 'pending',
-        })
-      );
-    });
-
-    it('updates log status to sent after delay', async () => {
-      const singleFn = vi.fn().mockResolvedValue({ data: { id: 'log-3' }, error: null });
-      const selectFn1 = vi.fn().mockReturnValue({ single: singleFn });
-      const insertFn = vi.fn().mockReturnValue({ select: selectFn1 });
-
-      const eqUpdate2 = vi.fn().mockResolvedValue({ error: null });
-      const eqUpdate = vi.fn().mockReturnValue({ eq: eqUpdate2 });
-      const updateFn = vi.fn().mockReturnValue({ eq: eqUpdate });
-
-      mockFrom.mockReturnValueOnce({ insert: insertFn }).mockReturnValueOnce({ update: updateFn });
-
-      await whatsappService.sendTemplateMessage({
-        empresaId: 'emp-1',
-        colaboradorId: 'col-1',
-        templateId: 'tpl-1',
-        phone: '+5511999999999',
+          template_id: 'tpl-1',
+        },
       });
-
-      expect(updateFn).toHaveBeenCalledWith(expect.objectContaining({ status: 'sent' }));
-      expect(eqUpdate).toHaveBeenCalledWith('id', 'log-3');
-      expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), 1000);
     });
 
-    it('throws wrapped error when insert fails', async () => {
-      const dbError = new Error('Insert failed');
-      const singleFn = vi.fn().mockResolvedValue({ data: null, error: dbError });
-      const selectFn1 = vi.fn().mockReturnValue({ single: singleFn });
-      const insertFn = vi.fn().mockReturnValue({ select: selectFn1 });
+    it('throws wrapped error when edge function fails', async () => {
+      mockInvoke.mockResolvedValue({ data: { success: false, error: 'Evolution API respondeu 500' }, error: null });
 
-      mockFrom.mockReturnValueOnce({ insert: insertFn });
+      await expect(
+        whatsappService.sendTemplateMessage({
+          empresaId: 'emp-1',
+          colaboradorId: 'col-1',
+          templateId: 'tpl-1',
+          phone: '+5511999999999',
+        })
+      ).rejects.toThrow('Falha ao enviar mensagem de template do WhatsApp');
+    });
+
+    it('throws wrapped error on invoke error', async () => {
+      mockInvoke.mockResolvedValue({ data: null, error: { message: 'Edge error' } });
 
       await expect(
         whatsappService.sendTemplateMessage({

@@ -16,13 +16,12 @@ export const automacaoService = {
    * Monitora eventos críticos e dispara automações (Notificações + WhatsApp)
    */
   async processarAutomacoes(empresaId: string) {
-    
     // 1. Notificar Aniversariantes do Dia
     await this.notificarAniversariantes(empresaId);
-    
+
     // 2. Notificar Exames Médicos (ASO) Vencendo
     await this.notificarASOVencendo(empresaId);
-    
+
     // 3. Notificar Término de Experiência
     await this.notificarTerminoExperiencia(empresaId);
   },
@@ -30,7 +29,7 @@ export const automacaoService = {
   async notificarAniversariantes(empresaId: string) {
     const hoje = new Date();
     const diaMes = `${String(hoje.getDate()).padStart(2, '0')}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
-    
+
     const { data: aniversariantes } = await supabase
       .from('colaboradores')
       .select('id, nome_completo, telefone, empresa_id')
@@ -42,7 +41,7 @@ export const automacaoService = {
 
     for (const colab of aniversariantes) {
       const mensagem = `Parabéns, ${colab.nome_completo}! 🎂 A equipe da empresa deseja a você um feliz aniversário e muito sucesso!`;
-      
+
       // Notificação no sistema
       await criarNotificacao({
         titulo: 'Aniversariante do Dia',
@@ -50,12 +49,22 @@ export const automacaoService = {
         tipo: 'info',
         empresa_id: empresaId,
         entidade_tipo: 'colaborador',
-        entidade_id: colab.id
+        entidade_id: colab.id,
       });
 
-      // WhatsApp (se configurado)
+      // WhatsApp (se configurado) — best-effort: falha no envio não aborta
+      // as demais notificações; a edge function já registra o erro no log.
       if (colab.telefone) {
-        await whatsappService.sendMessage({ empresaId, colaboradorId: colab.id, phone: colab.telefone, message: mensagem });
+        try {
+          await whatsappService.sendMessage({
+            empresaId,
+            colaboradorId: colab.id,
+            phone: colab.telefone,
+            message: mensagem,
+          });
+        } catch {
+          /* WhatsApp indisponível/não configurado — notificação in-app já foi criada */
+        }
       }
     }
   },
@@ -77,20 +86,29 @@ export const automacaoService = {
     for (const aso of asos) {
       const colab = aso.colaborador;
       if (!colab) continue;
-      
+
       const mensagem = `Olá ${colab.nome_completo}, seu exame médico (ASO) vence em 30 dias (${dataAlerta.toLocaleDateString('pt-BR')}). Favor agendar com o RH.`;
-      
+
       await criarNotificacao({
         titulo: 'ASO Vencendo',
         mensagem: `O exame médico de ${colab.nome_completo} vence em 30 dias.`,
         tipo: 'alerta',
         empresa_id: empresaId,
         entidade_tipo: 'colaborador',
-        entidade_id: colab.id
+        entidade_id: colab.id,
       });
 
       if (colab.telefone) {
-        await whatsappService.sendMessage({ empresaId, colaboradorId: colab.id, phone: colab.telefone, message: mensagem });
+        try {
+          await whatsappService.sendMessage({
+            empresaId,
+            colaboradorId: colab.id,
+            phone: colab.telefone,
+            message: mensagem,
+          });
+        } catch {
+          /* WhatsApp indisponível/não configurado — notificação in-app já foi criada */
+        }
       }
     }
   },
@@ -117,15 +135,14 @@ export const automacaoService = {
       // (protege contra falha/alteração do filtro no join embedado do PostgREST).
       if (colab.empresa_id && colab.empresa_id !== empresaId) continue;
 
-
       await criarNotificacao({
         titulo: 'Término de Experiência Próximo',
         mensagem: `O período de experiência de ${colab.nome_completo} encerra em 7 dias. Avalie a continuidade.`,
         tipo: 'alerta',
         empresa_id: empresaId,
         entidade_tipo: 'colaborador',
-        entidade_id: colab.id
+        entidade_id: colab.id,
       });
     }
-  }
+  },
 };

@@ -24175,6 +24175,8 @@ export type Database = {
         | "contrato"
         | "assinatura"
         | "esocial"
+        | "concluida"
+        | "cancelada"
       programacao_ferias_status:
         | "rascunho"
         | "sugerido_gestor"

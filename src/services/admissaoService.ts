@@ -51,25 +51,13 @@ class AdmissaoService extends BaseService<Tables<'admissoes'>, Insertable<'admis
   async update(id: string, d: Updatable<'admissoes'>, empresaId: string) {
     return this.atualizar(id, d, empresaId);
   }
-  // BUG PRÉ-EXISTENTE (achado ao tipar, não corrigido): o enum
-  // `etapa_admissao` só tem 'solicitacao'|'documentos'|'validacao'|'pendente'|
-  // 'exame'|'contrato'|'assinatura'|'esocial' — não existe 'concluida' nem
-  // 'cancelada'. Chamar estes métodos contra o banco real sempre falharia
-  // (violação do enum do Postgres). Não há coluna de status separada em
-  // `admissoes` para representar esses dois estados. Nenhum lugar do app
-  // chama `concluir`/`cancelar` hoje (apenas testes que mockam o DB e por
-  // isso nunca pegaram o erro). Corrigir de verdade exige uma decisão de
-  // produto (nova coluna? novo valor de enum? reaproveitar 'esocial' como
-  // etapa final?) — fora do escopo de uma limpeza de tipos. O cast abaixo
-  // preserva o comportamento exato de antes (quebrado) sem inventar uma
-  // semântica nova.
   async concluir(id: string, empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    return this.atualizar(id, { etapa: 'concluida' as Tables<'admissoes'>['etapa'] }, empresaId);
+    return this.atualizar(id, { etapa: 'concluida' }, empresaId);
   }
   async cancelar(id: string, empresaId: string) {
     if (!empresaId) throw new Error('empresa_id obrigatório para isolamento de tenant');
-    return this.atualizar(id, { etapa: 'cancelada' as Tables<'admissoes'>['etapa'] }, empresaId);
+    return this.atualizar(id, { etapa: 'cancelada' }, empresaId);
   }
 }
 
