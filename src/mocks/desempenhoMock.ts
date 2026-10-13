@@ -155,6 +155,14 @@ export interface MetaMock {
   tipo: 'individual' | 'equipe' | 'empresa';
   valor_objetivo: number;
   valor_atual: number;
+  /**
+   * Histórico SIMULADO de progresso (%), usado SÓ para validar o layout do
+   * indicador de evolução dos cards Metas & OKRs. NÃO é coluna de `metas_okrs`:
+   * é exclusivo deste mock e nunca é gravado no banco (a área é só leitura e as
+   * escritas passam por `bloquearEscritaDesempenho`). Em produção o indicador
+   * continua dependendo de histórico real — sem ele, não é exibido.
+   */
+  progresso_anterior?: number;
   data_limite: string;
   status: string;
   colaborador: { nome_completo: string };
@@ -162,13 +170,18 @@ export interface MetaMock {
   updated_at: string;
 }
 
+/**
+ * `progresso_anterior` só aparece onde a referência mostra evolução (nem toda
+ * meta tem histórico). Os deltas resultam em +18/+15/+8/+12/+5 pontos
+ * percentuais — os mesmos da referência visual.
+ */
 const METAS: Omit<MetaMock, 'empresa_id' | 'colaborador'>[] = [
-  { id: 'mock-meta-1', colaborador_id: 'mock-2', ciclo_id: 'mock-ciclo-3', titulo: 'Reduzir tempo de resposta do frontend', descricao: 'Otimizar o tempo de carregamento das telas principais para menos de 2s.', tipo: 'individual', valor_objetivo: 100, valor_atual: 82, data_limite: diasAFrente(26), status: 'ativo', created_at: diasAtras(58), updated_at: diasAtras(3) },
-  { id: 'mock-meta-2', colaborador_id: 'mock-12', ciclo_id: 'mock-ciclo-3', titulo: 'Aumentar vendas da região Sudeste', descricao: 'Elevar o faturamento trimestral da carteira Sudeste em 15%.', tipo: 'equipe', valor_objetivo: 150, valor_atual: 138, data_limite: diasAFrente(18), status: 'ativo', created_at: diasAtras(55), updated_at: diasAtras(1) },
+  { id: 'mock-meta-1', colaborador_id: 'mock-2', ciclo_id: 'mock-ciclo-3', titulo: 'Reduzir tempo de resposta do frontend', descricao: 'Otimizar o tempo de carregamento das telas principais para menos de 2s.', tipo: 'individual', valor_objetivo: 100, valor_atual: 82, progresso_anterior: 64, data_limite: diasAFrente(26), status: 'ativo', created_at: diasAtras(58), updated_at: diasAtras(3) },
+  { id: 'mock-meta-2', colaborador_id: 'mock-12', ciclo_id: 'mock-ciclo-3', titulo: 'Aumentar vendas da região Sudeste', descricao: 'Elevar o faturamento trimestral da carteira Sudeste em 15%.', tipo: 'equipe', valor_objetivo: 150, valor_atual: 138, progresso_anterior: 77, data_limite: diasAFrente(18), status: 'ativo', created_at: diasAtras(55), updated_at: diasAtras(1) },
   { id: 'mock-meta-3', colaborador_id: 'mock-5', ciclo_id: 'mock-ciclo-3', titulo: 'Automatizar conciliação financeira', descricao: 'Reduzir em 60% o tempo gasto na conciliação bancária manual.', tipo: 'individual', valor_objetivo: 60, valor_atual: 24, data_limite: diasAFrente(40), status: 'ativo', created_at: diasAtras(50), updated_at: diasAtras(5) },
-  { id: 'mock-meta-4', colaborador_id: 'mock-13', ciclo_id: 'mock-ciclo-3', titulo: 'Reduzir turnover voluntário', descricao: 'Meta de empresa: reduzir o turnover voluntário anual para menos de 12%.', tipo: 'empresa', valor_objetivo: 12, valor_atual: 9, data_limite: diasAFrente(70), status: 'ativo', created_at: diasAtras(48), updated_at: diasAtras(7) },
-  { id: 'mock-meta-5', colaborador_id: 'mock-6', ciclo_id: 'mock-ciclo-3', titulo: 'Reformular identidade visual das campanhas', descricao: 'Criar novo kit visual para as campanhas sazonais do 2º semestre.', tipo: 'individual', valor_objetivo: 8, valor_atual: 5, data_limite: diasAFrente(12), status: 'ativo', created_at: diasAtras(40), updated_at: diasAtras(2) },
-  { id: 'mock-meta-6', colaborador_id: 'mock-9', ciclo_id: 'mock-ciclo-3', titulo: 'Certificar 3 analistas em Power BI', descricao: 'Concluir a trilha de certificação dos analistas do time de dados.', tipo: 'equipe', valor_objetivo: 3, valor_atual: 1, data_limite: diasAFrente(35), status: 'pausado', created_at: diasAtras(33), updated_at: diasAtras(10) },
+  { id: 'mock-meta-4', colaborador_id: 'mock-13', ciclo_id: 'mock-ciclo-3', titulo: 'Reduzir turnover voluntário', descricao: 'Meta de empresa: reduzir o turnover voluntário anual para menos de 12%.', tipo: 'empresa', valor_objetivo: 12, valor_atual: 9, progresso_anterior: 67, data_limite: diasAFrente(70), status: 'ativo', created_at: diasAtras(48), updated_at: diasAtras(7) },
+  { id: 'mock-meta-5', colaborador_id: 'mock-6', ciclo_id: 'mock-ciclo-3', titulo: 'Reformular identidade visual das campanhas', descricao: 'Criar novo kit visual para as campanhas sazonais do 2º semestre.', tipo: 'individual', valor_objetivo: 8, valor_atual: 5, progresso_anterior: 51, data_limite: diasAFrente(12), status: 'ativo', created_at: diasAtras(40), updated_at: diasAtras(2) },
+  { id: 'mock-meta-6', colaborador_id: 'mock-9', ciclo_id: 'mock-ciclo-3', titulo: 'Certificar 3 analistas em Power BI', descricao: 'Concluir a trilha de certificação dos analistas do time de dados.', tipo: 'equipe', valor_objetivo: 3, valor_atual: 1, progresso_anterior: 28, data_limite: diasAFrente(35), status: 'pausado', created_at: diasAtras(33), updated_at: diasAtras(10) },
   { id: 'mock-meta-7', colaborador_id: 'mock-4', ciclo_id: 'mock-ciclo-2', titulo: 'Implantar 5 melhorias no onboarding', descricao: 'Entrega das melhorias mapeadas no projeto de experiência do colaborador.', tipo: 'individual', valor_objetivo: 5, valor_atual: 5, data_limite: '2026-06-30', status: 'concluido', created_at: diasAtras(180), updated_at: diasAtras(105) },
   { id: 'mock-meta-8', colaborador_id: 'mock-10', ciclo_id: 'mock-ciclo-3', titulo: 'Reduzir absenteísmo na operação', descricao: 'Meta do time de operações para reduzir faltas injustificadas em 20%.', tipo: 'equipe', valor_objetivo: 20, valor_atual: 11, data_limite: diasAFrente(48), status: 'ativo', created_at: diasAtras(30), updated_at: diasAtras(4) },
 ];

@@ -6,7 +6,14 @@ import { ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { ArrowRight, BarChart3, Star, Target } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useMovimentoReduzido } from '@/lib/motionMode';
-import { gradienteProgresso, iniciais, limitarPercentual, normalizarStatus, progressoMeta, tintaProgresso } from './desempenhoComum';
+import {
+  gradienteProgresso,
+  iniciais,
+  limitarPercentual,
+  normalizarStatus,
+  progressoMeta,
+  tintaProgresso,
+} from './desempenhoComum';
 import { EntradaPresenca, MAX_ENTRADA_INDEX, MotionCard, entradaCard } from './entradaCards';
 import { BarraProgresso } from './barraProgresso';
 
@@ -38,7 +45,15 @@ const DONUT_PX = 140;
  * — o donut ficava parado enquanto a contagem rodava. Como componente separado,
  * o estado por quadro fica restrito a este `span` e o gráfico não é re-renderizado.
  */
-function PercentualCentral({ valor, ativo, reduzirMovimento }: { valor: number; ativo: boolean; reduzirMovimento: boolean }) {
+function PercentualCentral({
+  valor,
+  ativo,
+  reduzirMovimento,
+}: {
+  valor: number;
+  ativo: boolean;
+  reduzirMovimento: boolean;
+}) {
   const texto = useContadorCentral(valor, ativo, reduzirMovimento);
   return <span className={CLASSE_VALOR_DONUT}>{texto}</span>;
 }
@@ -108,11 +123,17 @@ function AcaoCard({ rotulo, onClick }: { rotulo: string; onClick?: () => void })
 /**
  * Cabeçalho padrão dos três cards (mesma hierarquia visual).
  *
- * Paddings enxutos de propósito: `pt-2 pb-1` envolvem só os 24 px do ícone — o
- * botão de ação (28 px) é quem manda na altura, então o cabeçalho fecha em 40 px
- * nos TRÊS cards (ícone alinhado ao título à esquerda, ação à direita), como
- * medido no navegador. Era `pt-3 pb-2` (48 px) — 8 px que, somados ao padding
- * vertical do conteúdo, deixavam os três cards visivelmente "esticados".
+ * Paddings enxutos de propósito: `pt-2 pb-1` envolvem só os 24 px do slot do
+ * ícone — o botão de ação (28 px) é quem manda na altura, então o cabeçalho fecha
+ * em 40 px nos TRÊS cards (ícone alinhado ao título à esquerda, ação à direita),
+ * como medido no navegador. Era `pt-3 pb-2` (48 px) — 8 px que, somados ao
+ * padding vertical do conteúdo, deixavam os três cards visivelmente "esticados".
+ *
+ * O ícone NÃO tem mais chip/quadrado colorido (o fundo `bg-*` foi removido):
+ * fica só o glifo, na cor da sua família (`corIcone` é apenas a cor agora) e um
+ * pouco maior (18 px — o `h-4.5` do Tailwind). O slot continua com 24 px
+ * (`h-6 w-6`, agora invisível) para o título começar exatamente na mesma coluna
+ * dos outros dois cards e a altura do cabeçalho seguir os 40 px já calibrados.
  */
 function CabecalhoCard({
   icone,
@@ -130,7 +151,7 @@ function CabecalhoCard({
   return (
     <CardHeader className="flex flex-row items-center justify-between space-y-0 px-4 pb-1 pt-2">
       <CardTitle className="flex items-center gap-2 text-sm font-display font-medium">
-        <span className={cn('flex h-6 w-6 items-center justify-center rounded-lg', corIcone)}>{icone}</span>
+        <span className={cn('flex h-6 w-6 shrink-0 items-center justify-center', corIcone)}>{icone}</span>
         {titulo}
       </CardTitle>
       {acao && <AcaoCard rotulo={acao} onClick={onAcao} />}
@@ -214,7 +235,9 @@ function LinhaLegenda({
       </span>
       <span className="flex shrink-0 items-center gap-3">
         <span className="w-6 text-right font-medium tabular-nums">{valor}</span>
-        {percentual !== undefined && <span className="w-9 text-right text-muted-foreground tabular-nums">{percentual}%</span>}
+        {percentual !== undefined && (
+          <span className="w-9 text-right text-muted-foreground tabular-nums">{percentual}%</span>
+        )}
       </span>
     </>
   );
@@ -265,7 +288,7 @@ function CardFeedbacksPorStatus({
       { nome: 'Concluídos', valor: concluidos, cor: 'hsl(var(--success))' },
       { nome: 'Pendentes', valor: pendentes, cor: 'hsl(var(--warning))' },
     ],
-    [concluidos, pendentes],
+    [concluidos, pendentes]
   );
 
   // ── GATILHO ÚNICO DA REVELAÇÃO ─────────────────────────────────────────
@@ -329,17 +352,13 @@ function CardFeedbacksPorStatus({
   //   'animar'     → desenho em curso: donut desenha, percentual conta, legendas entram.
   // `revelando` LATCHA: uma vez disparada, a sequência continua mesmo que o card
   // saia de cena no meio (não reinicia nem cancela no meio do desenho).
-  const estadoAnimacao: EstadoAnimacaoLegenda = reduzirMovimento
-    ? 'final'
-    : desenhoIniciado
-      ? 'animar'
-      : 'aguardando';
+  const estadoAnimacao: EstadoAnimacaoLegenda = reduzirMovimento ? 'final' : desenhoIniciado ? 'animar' : 'aguardando';
 
   return (
     <MotionCard {...entradaCard(indice)} className="flex h-full flex-col border-border/30">
       <CabecalhoCard
-        icone={<BarChart3 className="h-3.5 w-3.5" />}
-        corIcone="bg-primary/10 text-primary"
+        icone={<BarChart3 className="h-4.5 w-4.5" />}
+        corIcone="text-primary"
         titulo="Feedbacks por Status"
         acao="Ver feedbacks"
         onAcao={() => onNavigate?.('feedbacks')}
@@ -402,7 +421,11 @@ function CardFeedbacksPorStatus({
                 {estadoAnimacao === 'final' || revelacaoConcluida ? (
                   <span className={CLASSE_VALOR_DONUT}>{pctConcluido}%</span>
                 ) : desenhoIniciado ? (
-                  <PercentualCentral valor={pctConcluido} ativo={!revelacaoConcluida} reduzirMovimento={reduzirMovimento} />
+                  <PercentualCentral
+                    valor={pctConcluido}
+                    ativo={!revelacaoConcluida}
+                    reduzirMovimento={reduzirMovimento}
+                  />
                 ) : (
                   <span className={CLASSE_VALOR_DONUT}>0%</span>
                 )}
@@ -475,7 +498,12 @@ const FAIXAS_NOTA = [
   { nota: 4, rotulo: '4 estrelas', barra: 'bg-gradient-to-r from-success to-primary', tinta: 'text-success' },
   { nota: 3, rotulo: '3 estrelas', barra: 'bg-gradient-to-r from-primary to-warning', tinta: 'text-primary' },
   { nota: 2, rotulo: '2 estrelas', barra: 'bg-gradient-to-r from-warning/60 to-warning', tinta: 'text-warning' },
-  { nota: 1, rotulo: '1 estrela', barra: 'bg-gradient-to-r from-destructive/60 to-destructive-vivid', tinta: 'text-destructive-vivid' },
+  {
+    nota: 1,
+    rotulo: '1 estrela',
+    barra: 'bg-gradient-to-r from-destructive/60 to-destructive-vivid',
+    tinta: 'text-destructive-vivid',
+  },
 ];
 
 /** Card B — distribuição das notas dos feedbacks em barras horizontais. */
@@ -499,8 +527,8 @@ function CardDistribuicaoNotas({
   return (
     <MotionCard {...entradaCard(indice)} className="flex h-full flex-col border-border/30">
       <CabecalhoCard
-        icone={<Star className="h-3.5 w-3.5 fill-current" />}
-        corIcone="bg-warning/10 text-warning"
+        icone={<Star className="h-4.5 w-4.5 fill-current" />}
+        corIcone="text-warning"
         titulo="Distribuição das Notas"
         acao="Ver feedbacks"
         onAcao={() => onNavigate?.('feedbacks')}
@@ -606,8 +634,8 @@ function CardMetasTop5({
   return (
     <MotionCard {...entradaCard(indice)} className="flex h-full flex-col border-border/30">
       <CabecalhoCard
-        icone={<Target className="h-3.5 w-3.5" />}
-        corIcone="bg-primary/10 text-primary"
+        icone={<Target className="h-4.5 w-4.5" />}
+        corIcone="text-primary"
         titulo="Metas do Ciclo (Top 5)"
         acao="Ver todas"
         onAcao={() => onNavigate?.('metas')}
@@ -661,7 +689,12 @@ function CardMetasTop5({
                         reduzirMovimento={reduzirMovimento}
                         trilhoClassName="h-1.5 flex-1 bg-secondary"
                       />
-                      <span className={cn('w-8 shrink-0 text-right text-[11px] font-medium tabular-nums', tintaProgresso(pct))}>
+                      <span
+                        className={cn(
+                          'w-8 shrink-0 text-right text-[11px] font-medium tabular-nums',
+                          tintaProgresso(pct)
+                        )}
+                      >
                         {pct}%
                       </span>
                     </span>

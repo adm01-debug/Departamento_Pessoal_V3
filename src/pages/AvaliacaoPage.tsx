@@ -20,10 +20,9 @@ import { NovoCicloDialog } from '@/components/avaliacao/NovoCicloDialog';
 import { NineBoxMatrix } from '@/components/avaliacao/NineBoxMatrix';
 import { PerformanceAuditTimeline } from '@/components/avaliacao/PerformanceAuditTimeline';
 import { EntradaPresenca, MotionCard, entradaCard } from '@/components/avaliacao/entradaCards';
-import { BarraProgresso } from '@/components/avaliacao/barraProgresso';
-import { useMovimentoReduzido } from '@/lib/motionMode';
+import { MetasOKRsTab } from '@/components/avaliacao/MetasOKRsTab';
 import { cn } from '@/lib/utils';
-import { formatarPeriodo, gradienteProgresso, limitarPercentual } from '@/components/avaliacao/desempenhoComum';
+import { formatarPeriodo } from '@/components/avaliacao/desempenhoComum';
 // MOCK VISUAL — ver src/mocks/desempenhoMock.ts.
 import {
   bloquearEscritaDesempenho,
@@ -73,9 +72,6 @@ const CLASSE_ABA_TEXTO =
 export default function AvaliacaoPage() {
   const { empresaAtual } = useEmpresas();
   const qc = useQueryClient();
-  // Movimento reduzido (fonte única do app) — repassado às barras de progresso
-  // do módulo, que assim nascem já cheias quando a preferência está ligada.
-  const reduzirMovimento = useMovimentoReduzido();
   const [tab, setTab] = useState('ciclos');
   // Ciclo em destaque no painel; `undefined` = usuário ainda não escolheu
   // (o padrão passa a ser o ciclo ativo detectado nos dados reais).
@@ -198,14 +194,14 @@ export default function AvaliacaoPage() {
         {/* Presença de entrada: devolve o keyframe `hidden` a todo card do módulo
             (o `<AnimatePresence initial={false}>` do PageTransition o suprime). */}
         <EntradaPresenca>
-        <Tabs value={tab} onValueChange={setTab} className="space-y-5">
-          {/* Faixa de navegação compacta + seletor de ciclo + ação principal.
+          <Tabs value={tab} onValueChange={setTab} className="space-y-5">
+            {/* Faixa de navegação compacta + seletor de ciclo + ação principal.
               Os TRÊS controles compartilham a MESMA altura externa (`h-11` = 44px)
               e ficam centrados na mesma linha, com gaps de 12px. Só a LARGURA
               difere: a TabList flexiona, o seletor e a ação ficam no tamanho do
               próprio conteúdo. */}
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
-            {/* TabList — mecanismo de seleção IDÊNTICO ao de Admissões:
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+              {/* TabList — mecanismo de seleção IDÊNTICO ao de Admissões:
                 `AnimatedTabsList` (ui/animated-tabs → `TabsHighlight mode="parent"`)
                 mantém UM único indicador persistente, medido no trigger ativo e
                 movido pela mola `ANIMATED_TABS_SPRING` (stiffness 220 / damping 24
@@ -221,7 +217,7 @@ export default function AvaliacaoPage() {
                 as de trilha (`flex`/`grid` de 6 colunas/`gap`/`items-center`) na
                 lista interna. No desktop o grid de 6 colunas iguais + `h-8` dos
                 botões continua igual; abaixo de `lg` a faixa rola na horizontal. */}
-            {/* ⚠️ O wrapper abaixo é o ITEM FLEX da linha — e existe por um
+              {/* ⚠️ O wrapper abaixo é o ITEM FLEX da linha — e existe por um
                 detalhe do `AnimatedTabsList` (componente compartilhado, não
                 alterado): ele renderiza um `div` por fora das classes de
                 `containerClassName`, então o `lg:flex-1`/`lg:min-w-0` que estão
@@ -230,230 +226,193 @@ export default function AvaliacaoPage() {
                 vazia à direita do botão "Novo Ciclo". Com ele, quem flexiona é
                 o item flex de verdade e o botão encosta na borda direita da
                 área útil (a mesma dos cards abaixo). */}
-            <div className="min-w-0 lg:flex-1">
-              <AnimatedTabsList
-                value={tab}
-                onValueChange={setTab}
-                containerClassName="h-11 w-full rounded-xl border border-border/30 bg-card/50 p-1 overflow-x-auto lg:min-w-0 lg:flex-1 lg:overflow-visible"
-                highlightClassName="rounded-lg bg-background shadow-xs"
-                listClassName="flex h-full w-full items-center justify-start gap-1 text-muted-foreground lg:grid lg:grid-cols-6"
-              >
-                {ABAS.map(({ valor, rotulo, icone: Icone }) => (
-                  <AnimatedTabsTrigger key={valor} value={valor} className={CLASSE_ABA}>
-                    <Icone className={CLASSE_ABA_ICONE} />
-                    <span className={CLASSE_ABA_TEXTO}>{rotulo}</span>
-                  </AnimatedTabsTrigger>
-                ))}
-              </AnimatedTabsList>
-            </div>
+              <div className="min-w-0 lg:flex-1">
+                <AnimatedTabsList
+                  value={tab}
+                  onValueChange={setTab}
+                  containerClassName="h-11 w-full rounded-xl border border-border/30 bg-card/50 p-1 overflow-x-auto lg:min-w-0 lg:flex-1 lg:overflow-visible"
+                  highlightClassName="rounded-lg bg-background shadow-xs"
+                  listClassName="flex h-full w-full items-center justify-start gap-1 text-muted-foreground lg:grid lg:grid-cols-6"
+                >
+                  {ABAS.map(({ valor, rotulo, icone: Icone }) => (
+                    <AnimatedTabsTrigger key={valor} value={valor} className={CLASSE_ABA}>
+                      <Icone className={CLASSE_ABA_ICONE} />
+                      <span className={CLASSE_ABA_TEXTO}>{rotulo}</span>
+                    </AnimatedTabsTrigger>
+                  ))}
+                </AnimatedTabsList>
+              </div>
 
-            <div className="flex items-center gap-3 lg:shrink-0">
-              <Select value={cicloSelecionado?.id ?? ''} onValueChange={setCicloSelecionadoId}>
-                <SelectTrigger className="h-11 w-full gap-2 rounded-xl sm:w-[230px]">
-                  <Calendar className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                  {/* Duas linhas (nome + período do ciclo SELECIONADO, dado
+              <div className="flex items-center gap-3 lg:shrink-0">
+                <Select value={cicloSelecionado?.id ?? ''} onValueChange={setCicloSelecionadoId}>
+                  <SelectTrigger className="h-11 w-full gap-2 rounded-xl sm:w-[230px]">
+                    <Calendar className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                    {/* Duas linhas (nome + período do ciclo SELECIONADO, dado
                       real): mesma informação que a área já mostrava, só
                       reorganizada — o `Select`/`SelectItem` seguem intocados. */}
-                  <div className="flex min-w-0 flex-1 flex-col items-start gap-0.5 text-left leading-tight">
-                    <SelectValue
-                      className="max-w-full truncate text-[13px] font-medium"
-                      placeholder="Selecionar ciclo"
-                    />
-                    <span className="max-w-full truncate font-mono text-[10px] text-muted-foreground">
-                      {cicloSelecionado
-                        ? formatarPeriodo(cicloSelecionado.data_inicio, cicloSelecionado.data_fim)
-                        : 'Sem período definido'}
-                    </span>
-                  </div>
-                </SelectTrigger>
-                <SelectContent>
-                  {ciclos.length === 0 ? (
-                    <SelectItem value="__vazio" disabled>
-                      Nenhum ciclo cadastrado
-                    </SelectItem>
-                  ) : (
-                    ciclos.map((c: any) => (
-                      <SelectItem key={c.id} value={c.id}>
-                        {c.nome}
+                    <div className="flex min-w-0 flex-1 flex-col items-start gap-0.5 text-left leading-tight">
+                      <SelectValue
+                        className="max-w-full truncate text-[13px] font-medium"
+                        placeholder="Selecionar ciclo"
+                      />
+                      <span className="max-w-full truncate font-mono text-[10px] text-muted-foreground">
+                        {cicloSelecionado
+                          ? formatarPeriodo(cicloSelecionado.data_inicio, cicloSelecionado.data_fim)
+                          : 'Sem período definido'}
+                      </span>
+                    </div>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ciclos.length === 0 ? (
+                      <SelectItem value="__vazio" disabled>
+                        Nenhum ciclo cadastrado
                       </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
-              <NovoCicloDialog onSubmit={(dados) => criarCiclo.mutate(dados)} salvando={criarCiclo.isPending} />
+                    ) : (
+                      ciclos.map((c: any) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          {c.nome}
+                        </SelectItem>
+                      ))
+                    )}
+                  </SelectContent>
+                </Select>
+                <NovoCicloDialog onSubmit={(dados) => criarCiclo.mutate(dados)} salvando={criarCiclo.isPending} />
+              </div>
             </div>
-          </div>
 
-          <TabsContent value="ciclos" className="space-y-5">
-            <PerformanceDashboard
-              feedbacks={feedbacks}
-              metas={metas}
-              pdis={pdis}
-              ciclo={cicloSelecionado}
-              onNavigate={setTab}
-            />
+            <TabsContent value="ciclos" className="space-y-5">
+              <PerformanceDashboard
+                feedbacks={feedbacks}
+                metas={metas}
+                pdis={pdis}
+                ciclo={cicloSelecionado}
+                onNavigate={setTab}
+              />
 
-            <TodosCiclosTable
-              ciclos={ciclos}
-              metas={metas}
-              cicloSelecionadoId={cicloSelecionado?.id}
-              onSelecionar={(c: any) => setCicloSelecionadoId(c.id)}
-              onExcluir={(c: any) => excluirCiclo.mutate(c)}
-              excluindo={excluirCiclo.isPending}
-              indice={5}
-            />
-          </TabsContent>
+              <TodosCiclosTable
+                ciclos={ciclos}
+                metas={metas}
+                cicloSelecionadoId={cicloSelecionado?.id}
+                onSelecionar={(c: any) => setCicloSelecionadoId(c.id)}
+                onExcluir={(c: any) => excluirCiclo.mutate(c)}
+                excluindo={excluirCiclo.isPending}
+                indice={5}
+              />
+            </TabsContent>
 
-          <TabsContent value="metas" className="space-y-6">
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {metas.map((m: any, i: number) => {
-                // Mesmo percentual exibido na tela (atual ÷ objetivo), normalizado
-                // para a barra: `limitarPercentual` ignora objetivo ausente/zerado e
-                // trava em 0–100, exatamente como o `Progress` fazia.
-                const pctMeta = limitarPercentual((m.valor_atual / m.valor_objetivo) * 100);
-                return (
+            <TabsContent value="metas" className="space-y-6">
+              {/* Aba redesenhada: banner de metas críticas → busca/filtros →
+                filtros rápidos por status → grid de cards → paginação.
+                Toda a lógica é client-side sobre `metas` (a MESMA consulta que
+                a página já fazia) e a ação real de abrir o ciclo no painel é
+                repassada pela página. */}
+              <MetasOKRsTab
+                metas={metas}
+                ciclos={ciclos}
+                colaboradores={colaboradores}
+                onAbrirCiclo={(cicloId) => {
+                  setCicloSelecionadoId(cicloId);
+                  setTab('ciclos');
+                }}
+              />
+            </TabsContent>
+
+            <TabsContent value="feedbacks" className="space-y-6">
+              <motion.div {...entradaCard(0)} className="rounded-2xl border border-border/30 overflow-hidden bg-card">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/30">
+                      <TableHead className="font-display font-semibold text-xs">Avaliado</TableHead>
+                      <TableHead className="font-display font-semibold text-xs">Avaliador</TableHead>
+                      <TableHead className="font-display font-semibold text-xs">Tipo</TableHead>
+                      <TableHead className="font-display font-semibold text-xs text-center">Nota</TableHead>
+                      <TableHead className="font-display font-semibold text-xs">Data</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {feedbacks.map((f: any) => (
+                      <TableRow key={f.id} className="hover:bg-accent/10 transition-colors">
+                        <TableCell className="font-medium text-sm">{f.avaliado?.nome_completo}</TableCell>
+                        <TableCell className="text-sm text-muted-foreground">{f.avaliador?.nome_completo}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="text-[10px] uppercase font-medium">
+                            {f.tipo}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <Star className="h-3 w-3 text-warning fill-warning" />
+                            <span className="font-medium text-sm">{f.nota_geral}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-[10px] text-muted-foreground font-mono">
+                          {new Date(f.created_at).toLocaleDateString('pt-BR')}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </motion.div>
+            </TabsContent>
+
+            <TabsContent value="pdis" className="space-y-6">
+              <div className="grid gap-4">
+                {pdis.map((p: any, i: number) => (
                   <MotionCard
-                    key={m.id}
+                    key={p.id}
                     {...entradaCard(i)}
-                    className="border-border/30 hover:shadow-md transition-shadow rounded-2xl overflow-hidden"
+                    className="border-border/30 hover:border-primary/20 transition-all rounded-2xl"
                   >
-                    <div className="h-1 bg-primary/20" />
-                    <CardContent className="p-6">
-                      <div className="flex justify-between items-start mb-4">
-                        <Badge variant="outline" className="text-[10px] font-medium uppercase tracking-wide">
-                          {m.tipo}
+                    <CardContent className="p-4 flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="p-2 rounded-xl bg-success/10 text-success">
+                          <TrendingUp className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-sm">{p.titulo}</h4>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className="text-[10px] text-muted-foreground uppercase font-medium">
+                              {p.competencia_foco}
+                            </span>
+                            <span className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+                            <span className="text-[10px] text-muted-foreground font-medium">
+                              {p.colaborador?.nome_completo}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-6">
+                        <div className="text-right">
+                          <p className="text-[10px] text-muted-foreground uppercase font-medium tracking-wide">Prazo</p>
+                          <p className="text-xs font-mono font-medium">
+                            {new Date(p.prazo).toLocaleDateString('pt-BR')}
+                          </p>
+                        </div>
+                        <Badge
+                          className={cn(
+                            'text-[10px] font-medium uppercase',
+                            p.status === 'concluido'
+                              ? 'bg-success/10 text-success border-success/20'
+                              : 'bg-warning/10 text-warning border-warning/20'
+                          )}
+                        >
+                          {p.status.replace('_', ' ')}
                         </Badge>
-                        <span className="text-[10px] text-muted-foreground flex items-center gap-1 font-mono">
-                          <Calendar className="h-3 w-3" /> {new Date(m.data_limite).toLocaleDateString('pt-BR')}
-                        </span>
-                      </div>
-                      <h3 className="font-display font-medium text-sm mb-2">{m.titulo}</h3>
-                      <p className="text-xs text-muted-foreground line-clamp-2 mb-4">{m.descricao}</p>
-
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-[10px] font-medium">
-                          <span>Progresso</span>
-                          <span>{Math.round((m.valor_atual / m.valor_objetivo) * 100)}%</span>
-                        </div>
-                        {/* Barra com a MESMA animação/degradê das demais barras da
-                            área (padrão "Amplitude de Liderança"). */}
-                        <BarraProgresso
-                          percentual={pctMeta}
-                          indice={i}
-                          cor={gradienteProgresso(pctMeta)}
-                          reduzirMovimento={reduzirMovimento}
-                          trilhoClassName="h-1.5 w-full bg-secondary"
-                        />
-                      </div>
-
-                      <div className="mt-4 pt-4 border-t border-border/10 flex items-center gap-2">
-                        <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-medium text-primary">
-                          {m.colaborador?.nome_completo?.charAt(0)}
-                        </div>
-                        <span className="text-[10px] font-medium text-muted-foreground">
-                          {m.colaborador?.nome_completo}
-                        </span>
                       </div>
                     </CardContent>
                   </MotionCard>
-                );
-              })}
-            </div>
-          </TabsContent>
+                ))}
+              </div>
+            </TabsContent>
 
-          <TabsContent value="feedbacks" className="space-y-6">
-            <motion.div
-              {...entradaCard(0)}
-              className="rounded-2xl border border-border/30 overflow-hidden bg-card"
-            >
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-muted/30">
-                    <TableHead className="font-display font-semibold text-xs">Avaliado</TableHead>
-                    <TableHead className="font-display font-semibold text-xs">Avaliador</TableHead>
-                    <TableHead className="font-display font-semibold text-xs">Tipo</TableHead>
-                    <TableHead className="font-display font-semibold text-xs text-center">Nota</TableHead>
-                    <TableHead className="font-display font-semibold text-xs">Data</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {feedbacks.map((f: any) => (
-                    <TableRow key={f.id} className="hover:bg-accent/10 transition-colors">
-                      <TableCell className="font-medium text-sm">{f.avaliado?.nome_completo}</TableCell>
-                      <TableCell className="text-sm text-muted-foreground">{f.avaliador?.nome_completo}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="text-[10px] uppercase font-medium">
-                          {f.tipo}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <div className="flex items-center justify-center gap-1">
-                          <Star className="h-3 w-3 text-warning fill-warning" />
-                          <span className="font-medium text-sm">{f.nota_geral}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-[10px] text-muted-foreground font-mono">
-                        {new Date(f.created_at).toLocaleDateString('pt-BR')}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </motion.div>
-          </TabsContent>
+            <TabsContent value="ninebox" className="space-y-6">
+              <NineBoxMatrix data={feedbacks} />
+            </TabsContent>
 
-          <TabsContent value="pdis" className="space-y-6">
-            <div className="grid gap-4">
-              {pdis.map((p: any, i: number) => (
-                <MotionCard key={p.id} {...entradaCard(i)} className="border-border/30 hover:border-primary/20 transition-all rounded-2xl">
-                  <CardContent className="p-4 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="p-2 rounded-xl bg-success/10 text-success">
-                        <TrendingUp className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-sm">{p.titulo}</h4>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-[10px] text-muted-foreground uppercase font-medium">
-                            {p.competencia_foco}
-                          </span>
-                          <span className="h-1 w-1 rounded-full bg-muted-foreground/30" />
-                          <span className="text-[10px] text-muted-foreground font-medium">
-                            {p.colaborador?.nome_completo}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-6">
-                      <div className="text-right">
-                        <p className="text-[10px] text-muted-foreground uppercase font-medium tracking-wide">Prazo</p>
-                        <p className="text-xs font-mono font-medium">{new Date(p.prazo).toLocaleDateString('pt-BR')}</p>
-                      </div>
-                      <Badge
-                        className={cn(
-                          'text-[10px] font-medium uppercase',
-                          p.status === 'concluido'
-                            ? 'bg-success/10 text-success border-success/20'
-                            : 'bg-warning/10 text-warning border-warning/20'
-                        )}
-                      >
-                        {p.status.replace('_', ' ')}
-                      </Badge>
-                    </div>
-                  </CardContent>
-                </MotionCard>
-              ))}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="ninebox" className="space-y-6">
-            <NineBoxMatrix data={feedbacks} />
-          </TabsContent>
-
-          <TabsContent value="auditoria" className="space-y-6">
-            <PerformanceAuditTimeline />
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="auditoria" className="space-y-6">
+              <PerformanceAuditTimeline />
+            </TabsContent>
+          </Tabs>
         </EntradaPresenca>
       </PageLayout>
     </>
