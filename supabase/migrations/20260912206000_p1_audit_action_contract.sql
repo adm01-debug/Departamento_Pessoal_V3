@@ -30,7 +30,7 @@ ALTER TABLE public.audit_log ADD CONSTRAINT audit_log_acao_check CHECK (
     'CLOSE', 'REOPEN', 'BACKUP_RUN',
     'SYSTEM_ACTION', 'AUTH_ACTION',
     'EXPORT', 'IMPORT', 'VISUALIZACAO', 'EXECUTE_CALC', 'SIGN',
-    'STATUS_CHANGE'
+    'STATUS_CHANGE', 'AUTO_PURGE'
   )
 );
 

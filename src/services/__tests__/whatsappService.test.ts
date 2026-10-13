@@ -251,6 +251,22 @@ describe('whatsappService', () => {
       });
     });
 
+    it('returns success without logId when edge delivered but log insert failed', async () => {
+      // Regressão: a edge devolve {success:true, log_id:null} quando a
+      // mensagem foi entregue mas o insert do log falhou — rejeitar aqui
+      // faria o caller reenviar uma mensagem já entregue.
+      mockInvoke.mockResolvedValue({ data: { success: true, status: 'sent', log_id: null }, error: null });
+
+      const result = await whatsappService.sendTemplateMessage({
+        empresaId: 'emp-1',
+        colaboradorId: 'col-1',
+        templateId: 'tpl-1',
+        phone: '+5511999999999',
+      });
+
+      expect(result).toEqual({ success: true, logId: null });
+    });
+
     it('throws wrapped error when edge function fails', async () => {
       mockInvoke.mockResolvedValue({ data: { success: false, error: 'Evolution API respondeu 500' }, error: null });
 
