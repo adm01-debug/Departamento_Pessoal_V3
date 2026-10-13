@@ -12,7 +12,7 @@
  * Requires psql (postgresql-client) in PATH.
  */
 
-import { spawnSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
 
 const DB_URL = process.env.SUPABASE_DB_URL;
 const QUERY = (process.env.DIAG_QUERY ?? '').trim();
@@ -27,24 +27,28 @@ if (!QUERY) {
   process.exit(1);
 }
 
-// Single statement only: no semicolons except an optional trailing one.
+// Strip literals, dollar-quoted bodies and comments before token checks —
+// a `;` or keyword inside 'text' or -- comment is data, not syntax.
 const stripped = QUERY.replace(/;+\s*$/, '');
-if (stripped.includes(';')) {
+const codeOnly = stripped
+  .replace(/\$([A-Za-z_][A-Za-z0-9_]*)?\$[\s\S]*?\$\1\$/g, '$$')
+  .replace(/'(?:[^']|'')*'/g, "''")
+  .replace(/"(?:[^"]|"")*"/g, '""')
+  .replace(/--[^\n]*/g, ' ')
+  .replace(/\/\*[\s\S]*?\*\//g, ' ');
+
+// Single statement only: no semicolons except an optional trailing one.
+if (codeOnly.includes(';')) {
   console.error('::error::somente UMA instrução é permitida (sem ponto-e-vírgula interno)');
   process.exit(1);
 }
-if (!/^(select|with|explain|show)\b/i.test(stripped)) {
+if (!/^(select|with|explain|show)\b/i.test(codeOnly.trim())) {
   console.error('::error::somente SELECT/WITH/EXPLAIN/SHOW são permitidos');
   process.exit(1);
 }
 
 // Belt-and-suspenders on top of the READ ONLY transaction: obvious DDL/DML
 // keywords are rejected so accidental paste of a migration fails fast.
-// String literals and dollar-quoted bodies are stripped first — a legitimate
-// filter like `jobname LIKE '%update%'` must not trip the blocklist.
-const codeOnly = stripped
-  .replace(/\$([A-Za-z_][A-Za-z0-9_]*)?\$[\s\S]*?\$\1\$/g, '$$')
-  .replace(/'(?:[^']|'')*'/g, "''");
 const FORBIDDEN_RE =
   /\b(insert|update|delete|drop|alter|create|grant|revoke|truncate|call|copy|vacuum|cluster|reindex|comment|discard|prepare|execute|deallocate|declare|fetch|move|listen|unlisten|notify|import|checkpoint|load|refresh|lock|set|reset|begin|commit|rollback|start)\b/i;
 if (FORBIDDEN_RE.test(codeOnly)) {
@@ -53,29 +57,69 @@ if (FORBIDDEN_RE.test(codeOnly)) {
   process.exit(1);
 }
 
+// Calls that bypass READ ONLY protection or mutate outside the transaction:
+// cron.schedule writes survive ROLLBACK once dequeued by pg_cron workers;
+// pg_terminate/cancel affect live connections; dblink/pg_read_file/lo_*
+// reach outside the catalog. Reading cron.job / net queues stays allowed.
+const FORBIDDEN_CALL_RE =
+  /\b(cron|net)\s*\.\s*(schedule|unschedule|alter_job|http_post)\b|\b(pg_terminate_backend|pg_cancel_backend|pg_reload_conf|pg_promote|pg_read_file|pg_stat_file|pg_ls_dir|dblink_exec|dblink_send_query|lo_import|lo_export|lo_unlink)\b/i;
+if (FORBIDDEN_CALL_RE.test(codeOnly)) {
+  const fn = codeOnly.match(FORBIDDEN_CALL_RE)?.[0];
+  console.error(`::error::chamada não permitida em diagnóstico read-only: "${fn}"`);
+  process.exit(1);
+}
+
 // Hard guard: READ ONLY transaction — Postgres rejects any write attempt.
-const sql = `BEGIN TRANSACTION READ ONLY;\n${stripped};\nROLLBACK;`;
+// The terminator goes on its own line so a trailing `-- comment` cannot
+// swallow it and leave the statement unterminated before ROLLBACK.
+const sql = `BEGIN TRANSACTION READ ONLY;\n${stripped}\n;\nROLLBACK;`;
 
-const result = spawnSync(
-  'psql',
-  [DB_URL, '--no-psqlrc', '-X', '-q', '-P', 'pager=off', '-v', 'ON_ERROR_STOP=1', '-c', sql],
-  { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 },
-);
+// Stream stdout and truncate incrementally — buffering everything first
+// means a multi-MiB result dies on maxBuffer before the row cap can run.
+const MAX_BYTES = 256 * 1024;
+const child = spawn('psql', [
+  DB_URL, '--no-psqlrc', '-X', '-q', '-P', 'pager=off', '-v', 'ON_ERROR_STOP=1', '-c', sql,
+], { stdio: ['ignore', 'pipe', 'pipe'] });
 
-if (result.error) {
-  console.error(`::error::falha ao executar psql: ${result.error.message}`);
+let stdout = '';
+let stderr = '';
+let truncated = false;
+
+child.stdout.on('data', (chunk) => {
+  if (truncated) return;
+  stdout += chunk.toString('utf8');
+  if (stdout.length > MAX_BYTES) {
+    stdout = stdout.slice(0, MAX_BYTES);
+    truncated = true;
+    child.kill('SIGTERM');
+  }
+});
+child.stderr.on('data', (chunk) => {
+  if (stderr.length < 64 * 1024) stderr += chunk.toString('utf8');
+});
+
+const status = await new Promise((resolvePromise, rejectPromise) => {
+  child.on('error', rejectPromise);
+  child.on('close', (code) => resolvePromise(code));
+}).catch((err) => {
+  console.error(`::error::falha ao executar psql: ${err.message}`);
   process.exit(1);
-}
-if (result.status !== 0) {
+});
+
+if (status !== 0 && !truncated) {
   console.error('::error::a consulta falhou no canônico');
-  console.error(result.stderr);
+  console.error(stderr);
   process.exit(1);
 }
 
-const lines = result.stdout.split('\n');
+const lines = stdout.split('\n');
 if (lines.length > MAX_ROWS) {
   console.log(lines.slice(0, MAX_ROWS).join('\n'));
   console.log(`\n… saída truncada em ${MAX_ROWS} linhas (${lines.length} no total)`);
 } else {
-  console.log(result.stdout);
+  console.log(stdout);
 }
+if (truncated) {
+  console.log(`\n… saída truncada em ${MAX_BYTES / 1024} KiB`);
+}
+if (stderr.trim()) console.error(stderr);
