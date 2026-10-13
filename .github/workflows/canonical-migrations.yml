@@ -125,7 +125,7 @@ jobs:
           # only the NEW migrations for that batch.
           for migration in \
             20261012120000_holerites_espelho_folha_itens.sql \
-            20261013130000_fix_broken_cron_jobs.sql
+            20261013140000_ferias_status_daily_transitions.sql
           do
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
           done
@@ -183,7 +183,7 @@ jobs:
           SELECT jsonb_build_object(
             'ledger_count', (
               SELECT count(*) FROM supabase_migrations.schema_migrations
-              WHERE version IN ('20261012120000','20261013130000')
+              WHERE version IN ('20261012120000','20261013140000')
             ),
             'cron_fix_fns_ok', (
               SELECT count(*) FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
@@ -192,14 +192,10 @@ jobs:
                 'drenar_fila_limpeza_lgpd','process_lgpd_cleanup_queue'
               )
             ),
-            'cron_jobs_ok', (
-              SELECT count(*) FROM cron.job
-              WHERE jobname IN ('ferias-atualizar-status-diario','lgpd-fila-drenagem-daily')
-                AND command LIKE 'SELECT public.%'
-            ),
-            'ferias_job_uses_wrapper', EXISTS (
-              SELECT 1 FROM cron.job WHERE jobname = 'ferias-atualizar-status-diario'
-                AND command LIKE '%fn_atualizar_status_ferias_diario%'
+            'ferias_daily_no_direct_concluida', NOT EXISTS (
+              SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+              WHERE n.nspname = 'public' AND p.proname = 'fn_atualizar_status_ferias_diario'
+                AND p.prosrc LIKE '%status = ''aprovada''%data_fim%'
             ),
             'holerite_sync_trigger_ok', EXISTS (
               SELECT 1 FROM pg_trigger
@@ -255,8 +251,7 @@ jobs:
             const ok =
               Number(r.ledger_count) === 2 &&
               Number(r.cron_fix_fns_ok) === 4 &&
-              Number(r.cron_jobs_ok) === 2 &&
-              r.ferias_job_uses_wrapper === true &&
+              r.ferias_daily_no_direct_concluida === true &&
               r.holerite_sync_trigger_ok === true &&
               r.notify_fn_fixed === true &&
               r.self_read_requires_closed === true &&
