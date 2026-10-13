@@ -125,7 +125,8 @@ jobs:
           # only the NEW migrations for that batch.
           for migration in \
             20261013150000_onda4a_security_lockdown.sql \
-            20261013151000_onda4a_auditoria_fn_revoke.sql
+            20261013151000_onda4a_auditoria_fn_revoke.sql \
+            20261013152000_onda4b_vinculo_documentos_lgpd_crypto.sql
           do
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
           done
@@ -183,7 +184,7 @@ jobs:
           SELECT jsonb_build_object(
             'ledger_count', (
               SELECT count(*) FROM supabase_migrations.schema_migrations
-              WHERE version IN ('20261012120000','20261013140000','20261014120000','20261013150000','20261013151000')
+              WHERE version IN ('20261012120000','20261013140000','20261014120000','20261013150000','20261013151000','20261013152000')
             ),
             'notificacoes_chk_wide', EXISTS (
               SELECT 1 FROM pg_constraint
@@ -337,6 +338,25 @@ jobs:
             'audit_fn_locked', NOT has_function_privilege(
               'anon', 'public.provisao_auditoria_set_empresa()', 'EXECUTE'
             ),
+            'vinculo_col', EXISTS (
+              SELECT 1 FROM information_schema.columns
+              WHERE table_schema='public' AND table_name='colaboradores' AND column_name='user_id'
+            ),
+            'vinculo_fn_locked', NOT has_function_privilege(
+              'anon', 'public.vincular_colaborador_ao_usuario()', 'EXECUTE'
+            ) AND to_regprocedure('public.vincular_colaborador_ao_usuario()') IS NOT NULL,
+            'doc_empresa_col', EXISTS (
+              SELECT 1 FROM information_schema.columns
+              WHERE table_schema='public' AND table_name='documentos' AND column_name='empresa_id'
+            ),
+            'lgpd_fns_locked', to_regprocedure('public.run_lgpd_purge(boolean)') IS NOT NULL
+              AND to_regprocedure('public.drenar_fila_limpeza_lgpd(integer)') IS NOT NULL
+              AND NOT has_function_privilege('anon','public.run_lgpd_purge(boolean)','EXECUTE')
+              AND NOT has_function_privilege('anon','public.drenar_fila_limpeza_lgpd(integer)','EXECUTE'),
+            'banco_enc_cols', (SELECT count(*) FROM information_schema.columns
+              WHERE table_schema='public' AND column_name LIKE '%\_encrypted'
+                AND table_name IN ('contas_bancarias','pix_itens')) = 5,
+            'banco_view_scoped', to_regclass('public.contas_bancarias_decrypted') IS NOT NULL,
             'taxas_no_permissive', NOT EXISTS (
               SELECT 1 FROM pg_policies
               WHERE schemaname = 'public' AND tablename = 'taxas_cambio'
@@ -355,7 +375,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 5 &&
+              Number(r.ledger_count) === 6 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
@@ -390,6 +410,12 @@ jobs:
               r.auditoria_no_permissive === true &&
               r.taxas_no_permissive === true &&
               r.audit_fn_locked === true &&
+              r.vinculo_col === true &&
+              r.vinculo_fn_locked === true &&
+              r.doc_empresa_col === true &&
+              r.lgpd_fns_locked === true &&
+              r.banco_enc_cols === true &&
+              r.banco_view_scoped === true &&
               r.periodos_no_for_all === true;
             if (!ok) process.exit(1);
           ' "$result"
