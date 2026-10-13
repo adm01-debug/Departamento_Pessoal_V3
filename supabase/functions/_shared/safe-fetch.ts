@@ -116,7 +116,8 @@ export async function safeFetch(
   // e abortar o signal no finally matava o res.text()/json() do caller.
   const bufferBody = async (res: Response): Promise<Response> => {
     const body = await res.arrayBuffer();
-    return new Response(body, {
+    // 204/205/304 proíbem body — Response() rejeita se passarmos o buffer.
+    return new Response([204, 205, 304].includes(res.status) ? null : body, {
       status: res.status,
       statusText: res.statusText,
       headers: res.headers,
