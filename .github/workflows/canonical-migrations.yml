@@ -124,7 +124,7 @@ jobs:
           # "policy already exists". Each dispatch of this workflow targets
           # only the NEW migrations for that batch.
           for migration in \
-            20261014120000_fix_cron_jobs_onda3b.sql
+            20261013150000_onda4a_security_lockdown.sql
           do
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
           done
@@ -182,7 +182,7 @@ jobs:
           SELECT jsonb_build_object(
             'ledger_count', (
               SELECT count(*) FROM supabase_migrations.schema_migrations
-              WHERE version IN ('20261012120000','20261013140000','20261014120000')
+              WHERE version IN ('20261012120000','20261013140000','20261014120000','20261013150000')
             ),
             'notificacoes_chk_wide', EXISTS (
               SELECT 1 FROM pg_constraint
@@ -293,6 +293,39 @@ jobs:
             ),
             'token_helper_locked', NOT has_function_privilege(
               'anon', 'public._admissao_token_row(text)', 'EXECUTE'
+            ),
+            'is_admin_self_scoped', EXISTS (
+              SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+              WHERE n.nspname = 'public' AND p.proname = 'is_admin'
+                AND p.prosrc LIKE '%auth.uid() IS NULL%'
+            ),
+            'is_admin_anon_locked', NOT has_function_privilege(
+              'anon', 'public.is_admin(uuid)', 'EXECUTE'
+            ),
+            'scope_fn_anon_locked', NOT has_function_privilege(
+              'anon', 'public.get_user_scope_empresas(uuid)', 'EXECUTE'
+            ),
+            'auditoria_empresa_col', EXISTS (
+              SELECT 1 FROM information_schema.columns
+              WHERE table_schema = 'public' AND table_name = 'provisao_auditoria'
+                AND column_name = 'empresa_id'
+            ),
+            'auditoria_tenant_trigger', EXISTS (
+              SELECT 1 FROM pg_trigger
+              WHERE tgname = 'trg_provisao_auditoria_empresa'
+                AND tgrelid = 'public.provisao_auditoria'::regclass
+                AND NOT tgisinternal
+            ),
+            'auditoria_policy_scoped', EXISTS (
+              SELECT 1 FROM pg_policies
+              WHERE schemaname = 'public' AND tablename = 'provisao_auditoria'
+                AND policyname = 'Auditoria de provisao para perfis internos'
+                AND qual LIKE '%empresa_id%'
+            ),
+            'taxas_policy_auth', EXISTS (
+              SELECT 1 FROM pg_policies
+              WHERE schemaname = 'public' AND tablename = 'taxas_cambio'
+                AND policyname = 'taxas_cambio_authenticated_select'
             )
           );
           SQL
@@ -301,7 +334,7 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 3 &&
+              Number(r.ledger_count) === 4 &&
               r.notificacoes_chk_wide === true &&
               r.logs_sistema_unlocked === true &&
               r.elr_uses_created_at === true &&
@@ -325,7 +358,14 @@ jobs:
               r.get_admin_ids_ok === true &&
               r.competencia_fmt_ok === true &&
               Number(r.legacy_rls_missing) === 0 &&
-              r.token_helper_locked === true;
+              r.token_helper_locked === true &&
+              r.is_admin_self_scoped === true &&
+              r.is_admin_anon_locked === true &&
+              r.scope_fn_anon_locked === true &&
+              r.auditoria_empresa_col === true &&
+              r.auditoria_tenant_trigger === true &&
+              r.auditoria_policy_scoped === true &&
+              r.taxas_policy_auth === true;
             if (!ok) process.exit(1);
           ' "$result"
           echo 'CANONICAL_SCOPED_MIGRATIONS_OK'
