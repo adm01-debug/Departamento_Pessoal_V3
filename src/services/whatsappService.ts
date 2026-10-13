@@ -98,7 +98,7 @@ export const whatsappService = {
     colaboradorId: string;
     templateId: string;
     phone: string;
-  }): Promise<{ success: boolean; logId: string }> {
+  }): Promise<{ success: boolean; logId?: string }> {
     try {
       const { data, error } = await supabase.functions.invoke('whatsapp-send', {
         body: {
@@ -111,7 +111,10 @@ export const whatsappService = {
 
       if (error) throw new Error(error.message || 'Falha ao enviar WhatsApp');
       const result = data as { success?: boolean; log_id?: string; error?: string } | null;
-      if (!result?.success || !result.log_id) {
+      // Entrega e persistência do log são desfechos independentes na edge:
+      // success:true pode vir com log_id null (insert falhou pós-entrega) e
+      // a mensagem JÁ foi entregue — tratar como erro faria o caller reenviar.
+      if (!result?.success) {
         throw new Error(result?.error || 'Envio de WhatsApp falhou');
       }
       return { success: true, logId: result.log_id };
