@@ -146,8 +146,70 @@ DROP POLICY IF EXISTS "auth_periodos_ponto" ON public.periodos_ponto;
 -- has_role é papel GLOBAL, então um gestor da empresa A lia a
 -- trilha da empresa B. Escopo correto: admin global OU
 -- (rh|gestor E a provisão auditada pertence a uma empresa do
--- usuário — resolvido via provisoes_mensais.empresa_id, já que
--- provisao_auditoria não tem coluna de tenant).
+-- usuário). O tenant é persistido em coluna própria, IMUTÁVEL —
+-- um join via provisao_id perderia o vínculo quando
+-- replace_monthly_provisions recalcula o mês (DELETE+INSERT com
+-- novos UUIDs órfã a auditoria histórica).
+ALTER TABLE public.provisao_auditoria
+  ADD COLUMN IF NOT EXISTS empresa_id uuid;
+
+-- Backfill do tenant a partir das provisões atuais. As triggers
+-- append-only bloqueiam UPDATE — desabilitadas só durante o
+-- backfill e religadas em seguida. Linhas já órfãs (provisão
+-- deletada por recálculo anterior) ficam NULL: sem fonte de
+-- tenant confiável, só admin as lê — melhor esconder da empresa
+-- errada do que vazar.
+DO $$
+DECLARE tg text;
+BEGIN
+  FOREACH tg IN ARRAY ARRAY['trg_provisao_auditoria_append_only','trg_provisao_auditoria_no_update'] LOOP
+    IF EXISTS (SELECT 1 FROM pg_trigger t JOIN pg_class c ON c.oid = t.tgrelid
+               WHERE c.relname = 'provisao_auditoria' AND t.tgname = tg
+                 AND NOT t.tgisinternal) THEN
+      EXECUTE format('ALTER TABLE public.provisao_auditoria DISABLE TRIGGER %I', tg);
+    END IF;
+  END LOOP;
+END $$;
+UPDATE public.provisao_auditoria pa
+SET empresa_id = pm.empresa_id
+FROM public.provisoes_mensais pm
+WHERE pa.provisao_id = pm.id
+  AND pa.empresa_id IS NULL;
+DO $$
+DECLARE tg text;
+BEGIN
+  FOREACH tg IN ARRAY ARRAY['trg_provisao_auditoria_append_only','trg_provisao_auditoria_no_update'] LOOP
+    IF EXISTS (SELECT 1 FROM pg_trigger t JOIN pg_class c ON c.oid = t.tgrelid
+               WHERE c.relname = 'provisao_auditoria' AND t.tgname = tg
+                 AND NOT t.tgisinternal) THEN
+      EXECUTE format('ALTER TABLE public.provisao_auditoria ENABLE TRIGGER %I', tg);
+    END IF;
+  END LOOP;
+END $$;
+
+-- Resolve empresa_id no INSERT — cobre qualquer writer futuro
+-- (service_role bypassa RLS, mas não triggers), garantindo o
+-- tenant imutável antes de qualquer recálculo órfã a provisão.
+CREATE OR REPLACE FUNCTION public.provisao_auditoria_set_empresa()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = pg_catalog, public, pg_temp
+AS $function$
+BEGIN
+  IF NEW.empresa_id IS NULL THEN
+    SELECT pm.empresa_id INTO NEW.empresa_id
+    FROM public.provisoes_mensais pm
+    WHERE pm.id = NEW.provisao_id;
+  END IF;
+  RETURN NEW;
+END
+$function$;
+
+CREATE OR REPLACE TRIGGER trg_provisao_auditoria_empresa
+  BEFORE INSERT ON public.provisao_auditoria
+  FOR EACH ROW EXECUTE FUNCTION public.provisao_auditoria_set_empresa();
+
 -- audit-migration-style: allow-silent-drop substituição idempotente — a policy é recriada logo abaixo no estado final
 DROP POLICY IF EXISTS "Gestores podem ver auditoria de provisão" ON public.provisao_auditoria;
 -- audit-migration-style: allow-silent-drop substituição idempotente — a policy é recriada logo abaixo no estado final
@@ -161,13 +223,8 @@ CREATE POLICY "Auditoria de provisao para perfis internos"
         public.has_role(auth.uid(), 'rh'::app_role)
         OR public.has_role(auth.uid(), 'gestor'::app_role)
       )
-      AND EXISTS (
-        SELECT 1
-        FROM public.provisoes_mensais pm
-        WHERE pm.id = provisao_auditoria.provisao_id
-          AND pm.empresa_id IN (
-            SELECT public.get_user_empresas(auth.uid())
-          )
+      AND provisao_auditoria.empresa_id IN (
+        SELECT public.get_user_empresas(auth.uid())
       )
     )
   );
