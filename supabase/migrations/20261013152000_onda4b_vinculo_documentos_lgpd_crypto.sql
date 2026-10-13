@@ -101,6 +101,51 @@ CREATE INDEX IF NOT EXISTS documentos_empresa_id_idx
   ON public.documentos (empresa_id)
   WHERE empresa_id IS NOT NULL;
 
+-- Documentos sem colaborador vinculado não têm empresa dedutível: ficam NULL
+-- (já eram invisíveis na policy tenant_documentos, que filtra via colaborador).
+-- A contagem sai no log do apply para reconciliação manual.
+DO $$
+DECLARE v_orfaos integer;
+BEGIN
+  SELECT count(*) INTO v_orfaos
+    FROM public.documentos
+   WHERE empresa_id IS NULL;
+  IF v_orfaos > 0 THEN
+    RAISE NOTICE 'documentos.empresa_id: % linha(s) sem empresa dedutível (colaborador_id nulo ou inexistente) — reconciliar manualmente', v_orfaos;
+  END IF;
+END $$;
+
+-- Trigger garante que empresa_id nunca diverge do colaborador do documento
+-- (a policy de acesso filtra via colaborador; divergência = leak cross-tenant).
+-- SECURITY DEFINER para ler o colaborador mesmo fora do escopo RLS do writer.
+CREATE OR REPLACE FUNCTION public.documentos_sync_empresa_id()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $fn$
+DECLARE v_emp uuid;
+BEGIN
+  IF NEW.colaborador_id IS NOT NULL THEN
+    SELECT c.empresa_id INTO v_emp
+      FROM public.colaboradores c
+     WHERE c.id = NEW.colaborador_id;
+    IF FOUND THEN
+      NEW.empresa_id := v_emp;
+    END IF;
+  END IF;
+  RETURN NEW;
+END;
+$fn$;
+
+REVOKE ALL ON FUNCTION public.documentos_sync_empresa_id() FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.documentos_sync_empresa_id() TO service_role;
+
+DROP TRIGGER IF EXISTS trg_documentos_sync_empresa_id ON public.documentos;
+CREATE TRIGGER trg_documentos_sync_empresa_id
+  BEFORE INSERT OR UPDATE OF colaborador_id ON public.documentos
+  FOR EACH ROW EXECUTE FUNCTION public.documentos_sync_empresa_id();
+
 -- ─────────────────────────────────────────────────────────────────────────────
 -- 3. E-098 — LGPD: expurgo de logs + drenagem da fila de anonimização
 --    Fonte: 20260728180353_8aa2e680 (versão corrigida do contrato —
@@ -155,6 +200,23 @@ INSERT INTO public.lgpd_retencao_logs (tabela, coluna_data, dias, observacao) VA
   ('conformidade_ponto_logs',  'timestamp',  730,  'Conformidade de ponto (Portaria 671)')
 ON CONFLICT (tabela) DO NOTHING;
 
+-- O trigger genérico audit_log_append_only (migrations 20260712*) não honrava
+-- o GUC de bypass que prevent_audit_log_modification já honra — sem isso,
+-- NENHUMA tabela append-only poderia ser expurgada nem pela rotina autorizada.
+CREATE OR REPLACE FUNCTION public.audit_log_append_only()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $fn$
+BEGIN
+  -- Bypass autorizado e restrito: o expurgo LGPD (só service_role) liga o
+  -- GUC só nesta transação; qualquer outro UPDATE/DELETE segue proibido.
+  IF current_setting('app.audit_log_purge', true) = 'on' THEN
+    RETURN OLD;
+  END IF;
+  RAISE EXCEPTION 'Trilha de auditoria é append-only. UPDATE/DELETE não são permitidos em %.', TG_TABLE_NAME;
+END;
+$fn$;
+
 DROP FUNCTION IF EXISTS public.run_lgpd_purge(boolean);
 CREATE OR REPLACE FUNCTION public.run_lgpd_purge(p_dry_run boolean DEFAULT false)
 RETURNS TABLE(tabela text, deleted integer, batches integer)
@@ -171,6 +233,13 @@ DECLARE
   v_total      integer;
   v_batches    integer;
 BEGIN
+  IF NOT p_dry_run THEN
+    -- Bypass autorizado do append-only: só nesta transação (is_local) e só
+    -- por quem executa esta função (service_role). Tabelas cujo trigger não
+    -- honre o GUC caem no EXCEPTION por tabela abaixo — sem derrubar o lote.
+    PERFORM set_config('app.audit_log_purge', 'on', true);
+  END IF;
+
   FOR p IN
     SELECT r.tabela AS t, r.coluna_data AS c, r.dias AS d
       FROM public.lgpd_retencao_logs r
@@ -188,29 +257,41 @@ BEGIN
     v_total := 0;
     v_batches := 0;
 
-    IF p_dry_run THEN
-      EXECUTE format(
-        'SELECT count(*)::integer FROM public.%I WHERE %I < now() - ($1 || '' days'')::interval',
-        p.t, p.c
-      ) INTO v_total USING p.d;
-    ELSE
-      LOOP
-        EXIT WHEN v_batches >= v_max_batch;
+    BEGIN  -- subtransação por tabela: uma protegida não derruba o lote inteiro
+      IF p.t = 'audit_log'
+         AND NOT p_dry_run
+         AND to_regprocedure('public._purge_audit_log_internal(integer)') IS NOT NULL
+      THEN
+        -- audit_log tem rotina própria com mínimo de 30 dias + autolog.
+        v_total   := public._purge_audit_log_internal(GREATEST(p.d, 30));
+        v_batches := 1;
+      ELSIF p_dry_run THEN
         EXECUTE format(
-          'WITH vitimas AS (
-             SELECT ctid FROM public.%I
-              WHERE %I < now() - ($1 || '' days'')::interval
-              LIMIT %s
-           )
-           DELETE FROM public.%I x USING vitimas v WHERE x.ctid = v.ctid',
-          p.t, p.c, v_batch, p.t
-        ) USING p.d;
-        GET DIAGNOSTICS v_deleted = ROW_COUNT;
-        v_total   := v_total + v_deleted;
-        v_batches := v_batches + 1;
-        EXIT WHEN v_deleted < v_batch;
-      END LOOP;
-    END IF;
+          'SELECT count(*)::integer FROM public.%I WHERE %I < now() - ($1 || '' days'')::interval',
+          p.t, p.c
+        ) INTO v_total USING p.d;
+      ELSE
+        LOOP
+          EXIT WHEN v_batches >= v_max_batch;
+          EXECUTE format(
+            'WITH vitimas AS (
+               SELECT ctid FROM public.%I
+                WHERE %I < now() - ($1 || '' days'')::interval
+                LIMIT %s
+             )
+             DELETE FROM public.%I x USING vitimas v WHERE x.ctid = v.ctid',
+            p.t, p.c, v_batch, p.t
+          ) USING p.d;
+          GET DIAGNOSTICS v_deleted = ROW_COUNT;
+          v_total   := v_total + v_deleted;
+          v_batches := v_batches + 1;
+          EXIT WHEN v_deleted < v_batch;
+        END LOOP;
+      END IF;
+    EXCEPTION WHEN OTHERS THEN
+      RAISE WARNING 'run_lgpd_purge: tabela % falhou (%) — lote segue', p.t, SQLERRM;
+      v_total := 0;
+    END;
 
     tabela  := p.t;
     deleted := v_total;
@@ -250,7 +331,13 @@ BEGIN
 
     BEGIN
       IF item.dry_run THEN
-        sucesso := true;   -- simulação: não toca no dado, não marca executado
+        -- Simulação registrada uma única vez e marcada executada: sem isso
+        -- os itens dry_run voltavam a ser selecionados em todo run e
+        -- famintavam os itens reais da fila.
+        UPDATE public.lgpd_fila_limpeza
+           SET executado = true, processed_at = now()
+         WHERE lgpd_fila_limpeza.id = item.id;
+        sucesso := true;
         RETURN NEXT;
         CONTINUE;
       END IF;
@@ -373,8 +460,8 @@ BEGIN
   IF secret_key IS NULL OR secret_key = '' THEN
     secret_key := current_setting('app.encryption_key', true);
   END IF;
-  IF secret_key IS NULL OR secret_key = '' THEN
-    RAISE EXCEPTION 'Encryption key not configured. Set "app.encryption_key" or configure vault secret "dados_bancarios_key".';
+  IF secret_key IS NULL OR length(secret_key) < 32 THEN
+    RAISE EXCEPTION 'Encryption key not configured or too weak (>=32 chars). Set "app.encryption_key" or configure vault secret "dados_bancarios_key".';
   END IF;
 
   -- pgcrypto aceita 'aes256' (sem hífen); 'aes-256' lança "Unsupported cipher".
@@ -498,8 +585,17 @@ UPDATE public.pix_itens
  WHERE chave_pix_encrypted IS NULL
    AND chave_pix IS NOT NULL;
 
--- View de leitura descriptografada, com o mesmo escopo de tenant das policies
--- da tabela (a view roda com privilégio do owner — o WHERE é o que isola).
+-- View de leitura descriptografada com o MESMO gate da policy da tabela
+-- (pode_gerir_rh, não só membership de empresa) — a view roda como owner,
+-- então o WHERE é o que isola. Preflight garante que as funções existem.
+DO $$
+BEGIN
+  IF to_regprocedure('public.pode_gerir_rh(uuid)') IS NULL
+     OR to_regprocedure('public.is_admin(uuid)') IS NULL THEN
+    RAISE EXCEPTION 'onda4b requer pode_gerir_rh(uuid) e is_admin(uuid) em produção';
+  END IF;
+END $$;
+
 CREATE OR REPLACE VIEW public.contas_bancarias_decrypted AS
 SELECT
   id, colaborador_id, empresa_id,
@@ -511,7 +607,7 @@ SELECT
   public.decrypt_dados_bancarios(pix_chave_encrypted) AS pix_chave,
   pix_tipo, modalidade, principal, ativo, created_at, updated_at
 FROM public.contas_bancarias
-WHERE empresa_id IN (SELECT public.get_user_empresas(auth.uid()))
+WHERE public.pode_gerir_rh(empresa_id)
    OR public.is_admin(auth.uid());
 
 REVOKE ALL ON public.contas_bancarias_decrypted FROM PUBLIC, anon;
