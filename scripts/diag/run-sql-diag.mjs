@@ -29,13 +29,64 @@ if (!QUERY) {
 
 // Strip literals, dollar-quoted bodies and comments before token checks —
 // a `;` or keyword inside 'text' or -- comment is data, not syntax.
+// Sequential scanner mirroring the Postgres lexer: regex stripping in ANY
+// order can be bypassed (a '--' inside /* */ hides the rest of the line; a
+// '/*' inside -- hides a block-comment span and swallows real statements).
+// Block comments nest in Postgres, so depth is tracked.
+function stripSqlComments(input) {
+  let out = '';
+  let i = 0;
+  const n = input.length;
+  while (i < n) {
+    const c = input[i];
+    const two = input.slice(i, i + 2);
+    if (two === '--') {
+      while (i < n && input[i] !== '\n') i++;
+      continue;
+    }
+    if (two === '/*') {
+      i += 2;
+      let depth = 1;
+      while (i < n && depth > 0) {
+        if (input.slice(i, i + 2) === '/*') { depth++; i += 2; }
+        else if (input.slice(i, i + 2) === '*/') { depth--; i += 2; }
+        else i++;
+      }
+      continue;
+    }
+    if (c === "'") {
+      i++;
+      while (i < n) {
+        if (input.slice(i, i + 2) === "''") { i += 2; continue; }
+        if (input[i] === "'") { i++; break; }
+        i++;
+      }
+      continue;
+    }
+    if (c === '"') {
+      i++;
+      while (i < n) {
+        if (input.slice(i, i + 2) === '""') { i += 2; continue; }
+        if (input[i] === '"') { i++; break; }
+        i++;
+      }
+      continue;
+    }
+    const dollar = input.slice(i).match(/^\$([A-Za-z_][A-Za-z0-9_]*)?\$/);
+    if (dollar) {
+      const tag = dollar[0];
+      const end = input.indexOf(tag, i + tag.length);
+      i = end === -1 ? n : end + tag.length;
+      continue;
+    }
+    out += c;
+    i++;
+  }
+  return out;
+}
+
 const stripped = QUERY.replace(/;+\s*$/, '');
-const codeOnly = stripped
-  .replace(/\$([A-Za-z_][A-Za-z0-9_]*)?\$[\s\S]*?\$\1\$/g, '$$')
-  .replace(/'(?:[^']|'')*'/g, "''")
-  .replace(/"(?:[^"]|"")*"/g, '""')
-  .replace(/\/\*[\s\S]*?\*\//g, ' ')
-  .replace(/--[^\n]*/g, ' ');
+const codeOnly = stripSqlComments(stripped);
 
 // Single statement only: no semicolons except an optional trailing one.
 if (codeOnly.includes(';')) {
