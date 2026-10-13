@@ -23,6 +23,16 @@ GRANT EXECUTE ON FUNCTION public.purge_rate_limits(integer) TO service_role;
 
 -- ── 2) Status diário das férias: job chama função de TRIGGER (7/7, H-AGD-03)
 -- Wrapper void que replica as transições do trigger para a tabela toda.
+-- Três regras, todas respeitando o gatilho CLT Art. 145
+-- (ferias_bloquear_gozo_sem_pagamento exige pagamento_confirmado_em):
+--   a) aprovada paga dentro da janela       -> em_gozo
+--   b) em_gozo com fim ultrapassado         -> concluida
+--   c) aprovada PAGA com fim ultrapassado   -> concluida (reconciliação:
+--      enquanto o job esteve quebrado, férias pagas venceram sem nunca
+--      terem passado por em_gozo e ficariam 'aprovada' para sempre)
+-- Férias aprovadas SEM pagamento ficam intocadas em qualquer caso: são a
+-- violação que a v_ferias_alerta_pagamento_d2 sinaliza ('violacao_grave')
+-- e não devem nem entrar em gozo nem ser marcadas como concluídas.
 CREATE OR REPLACE FUNCTION public.fn_atualizar_status_ferias_diario()
 RETURNS integer
 LANGUAGE plpgsql VOLATILE SECURITY DEFINER
@@ -31,10 +41,17 @@ AS $$
 DECLARE v_total integer := 0; v_n integer;
 BEGIN
   UPDATE public.ferias SET status = 'em_gozo'
-   WHERE status = 'aprovada' AND CURRENT_DATE BETWEEN data_inicio AND data_fim;
+   WHERE status = 'aprovada'
+     AND pagamento_confirmado_em IS NOT NULL
+     AND CURRENT_DATE BETWEEN data_inicio AND data_fim;
   GET DIAGNOSTICS v_n = ROW_COUNT; v_total := v_total + v_n;
   UPDATE public.ferias SET status = 'concluida'
    WHERE status = 'em_gozo' AND CURRENT_DATE > data_fim;
+  GET DIAGNOSTICS v_n = ROW_COUNT; v_total := v_total + v_n;
+  UPDATE public.ferias SET status = 'concluida'
+   WHERE status = 'aprovada'
+     AND pagamento_confirmado_em IS NOT NULL
+     AND CURRENT_DATE > data_fim;
   GET DIAGNOSTICS v_n = ROW_COUNT; v_total := v_total + v_n;
   RETURN v_total;
 END;
@@ -134,6 +151,8 @@ END;
 $$;
 
 -- ── 5) Re-agendamentos + dedupe (H-AGD-03/08/11/15) ────────────────────────
+-- Condicionado ao pg_cron: ambientes de replay/preview sem a extensão
+-- pulam o agendamento em vez de abortar a migration.
 DO $$
 DECLARE
   -- jobs redundantes (mesma função sob nome lovable-* / duplicado)
@@ -150,6 +169,11 @@ DECLARE
   ];
   j text;
 BEGIN
+  IF to_regnamespace('cron') IS NULL THEN
+    RAISE NOTICE 'pg_cron ausente — agendamentos pulados neste ambiente';
+    RETURN;
+  END IF;
+
   FOREACH j IN ARRAY dupes LOOP
     BEGIN
       PERFORM cron.unschedule(j);
@@ -193,6 +217,10 @@ DECLARE
   ];
   j text;
 BEGIN
+  IF to_regnamespace('cron') IS NULL THEN
+    RETURN;
+  END IF;
+
   FOREACH j IN ARRAY required_jobs LOOP
     IF NOT EXISTS (SELECT 1 FROM cron.job WHERE jobname = j) THEN
       RAISE EXCEPTION 'job "%" não foi agendado', j;
