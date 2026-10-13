@@ -34,8 +34,8 @@ const codeOnly = stripped
   .replace(/\$([A-Za-z_][A-Za-z0-9_]*)?\$[\s\S]*?\$\1\$/g, '$$')
   .replace(/'(?:[^']|'')*'/g, "''")
   .replace(/"(?:[^"]|"")*"/g, '""')
-  .replace(/--[^\n]*/g, ' ')
-  .replace(/\/\*[\s\S]*?\*\//g, ' ');
+  .replace(/\/\*[\s\S]*?\*\//g, ' ')
+  .replace(/--[^\n]*/g, ' ');
 
 // Single statement only: no semicolons except an optional trailing one.
 if (codeOnly.includes(';')) {
@@ -83,19 +83,25 @@ const child = spawn('psql', [
 
 let stdout = '';
 let stderr = '';
+let stdoutBytes = 0;
 let truncated = false;
+
+// setEncoding keeps the UTF-8 decoder state across chunks — raw toString()
+// per chunk corrupts multibyte chars that straddle a chunk boundary.
+child.stdout.setEncoding('utf8');
+child.stderr.setEncoding('utf8');
 
 child.stdout.on('data', (chunk) => {
   if (truncated) return;
-  stdout += chunk.toString('utf8');
-  if (stdout.length > MAX_BYTES) {
-    stdout = stdout.slice(0, MAX_BYTES);
+  stdout += chunk;
+  stdoutBytes += Buffer.byteLength(chunk, 'utf8');
+  if (stdoutBytes > MAX_BYTES) {
     truncated = true;
     child.kill('SIGTERM');
   }
 });
 child.stderr.on('data', (chunk) => {
-  if (stderr.length < 64 * 1024) stderr += chunk.toString('utf8');
+  if (stderr.length < 64 * 1024) stderr += chunk;
 });
 
 const status = await new Promise((resolvePromise, rejectPromise) => {
