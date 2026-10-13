@@ -124,7 +124,9 @@ jobs:
           # "policy already exists". Each dispatch of this workflow targets
           # only the NEW migrations for that batch.
           for migration in \
-            20261012120000_holerites_espelho_folha_itens.sql
+            20261013150000_onda4a_security_lockdown.sql \
+            20261013151000_onda4a_auditoria_fn_revoke.sql \
+            20261013152000_onda4b_vinculo_documentos_lgpd_crypto.sql
           do
             cp "supabase/migrations/$migration" "$stage_dir/supabase/migrations/$migration"
           done
@@ -182,7 +184,72 @@ jobs:
           SELECT jsonb_build_object(
             'ledger_count', (
               SELECT count(*) FROM supabase_migrations.schema_migrations
-              WHERE version IN ('20261012120000')
+              WHERE version IN ('20261012120000','20261013140000','20261014120000','20261013150000','20261013151000','20261013152000')
+            ),
+            'notificacoes_chk_wide', EXISTS (
+              SELECT 1 FROM pg_constraint
+              WHERE conname = 'chk_notificacoes_tipo'
+                AND pg_get_constraintdef(oid) LIKE '%ferias_pagamento_d5%'
+            ),
+            'logs_sistema_unlocked', NOT EXISTS (
+              SELECT 1 FROM pg_trigger
+              WHERE tgrelid = 'public.logs_sistema'::regclass AND NOT tgisinternal
+                AND tgname IN ('trg_logs_sistema_no_delete','trg_logs_sistema_no_update')
+            ),
+            'elr_uses_created_at', NOT EXISTS (
+              SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+              WHERE n.nspname = 'public' AND p.proname = 'enforce_log_retention'
+                AND p.prosrc LIKE '%attempted_at%'
+            ),
+            'd5_fn_uses_contexto', EXISTS (
+              SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+              WHERE n.nspname = 'public' AND p.proname = 'notificar_ferias_pagamento_d5'
+                AND p.prosrc LIKE '%nivel, mensagem, contexto%'
+            ),
+            'auto_purge_allowed', EXISTS (
+              SELECT 1 FROM pg_constraint
+              WHERE conname = 'audit_log_acao_check'
+                AND pg_get_constraintdef(oid) LIKE '%AUTO_PURGE%'
+            ),
+            'onda3b_jobs_ok', (
+              SELECT count(*) FROM cron.job WHERE jobname IN (
+                'audit_log_monthly_purge','cleanup-ciencia-rate-limits',
+                'cleanup-logs-sistema-daily','dp-health-snapshot',
+                'dp-log-rotation-check','dp-partition-monthly',
+                'dp-retention-anonymize-90d','dp-retention-delete-730d',
+                'ferias-recalcular-dobra-diario','gerar-alertas-preditivos-ia-daily',
+                'lovable-audit-retention-daily','lovable-log-retention',
+                'notificar-ferias-pagamento-d5','purgar_ferias_reconciliacao_logs_diario',
+                'lgpd-retention-dry-run'
+              )
+            ),
+            'onda3b_dupes_gone', NOT EXISTS (
+              SELECT 1 FROM cron.job WHERE jobname IN (
+                'update-despesa-updated-at-daily','check-idempotency-anomalies-hourly',
+                'cleanup-old-logs-weekly','purge-idempotency-keys-daily',
+                'lovable-ia-provisao-alertas','gerar-alertas-ia-diario',
+                'ia-provisao-alertas-diario'
+              )
+            ),
+            'cron_fix_fns_ok', (
+              SELECT count(*) FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+              WHERE n.nspname = 'public' AND p.proname IN (
+                'purge_rate_limits','fn_atualizar_status_ferias_diario',
+                'drenar_fila_limpeza_lgpd','process_lgpd_cleanup_queue'
+              )
+            ),
+            'ferias_daily_no_direct_concluida', NOT EXISTS (
+              SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+              WHERE n.nspname = 'public' AND p.proname = 'fn_atualizar_status_ferias_diario'
+                AND p.prosrc LIKE '%status = ''aprovada''%data_fim%'
+            ),
+            'cron_jobs_ok', (
+              SELECT count(*) FROM cron.job
+              WHERE jobname IN ('ferias-atualizar-status-diario','lgpd-fila-drenagem-daily')
+            ),
+            'ferias_job_uses_wrapper', EXISTS (
+              SELECT 1 FROM cron.job WHERE jobname = 'ferias-atualizar-status-diario'
+                AND command LIKE '%fn_atualizar_status_ferias_diario%'
             ),
             'holerite_sync_trigger_ok', EXISTS (
               SELECT 1 FROM pg_trigger
@@ -228,6 +295,78 @@ jobs:
             ),
             'token_helper_locked', NOT has_function_privilege(
               'anon', 'public._admissao_token_row(text)', 'EXECUTE'
+            ),
+            'is_admin_self_scoped', EXISTS (
+              SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+              WHERE n.nspname = 'public' AND p.proname = 'is_admin'
+                AND p.prosrc LIKE '%auth.uid() IS NULL%'
+            ),
+            'is_admin_anon_locked', NOT has_function_privilege(
+              'anon', 'public.is_admin(uuid)', 'EXECUTE'
+            ),
+            'scope_fn_anon_locked', NOT has_function_privilege(
+              'anon', 'public.get_user_scope_empresas(uuid)', 'EXECUTE'
+            ),
+            'auditoria_empresa_col', EXISTS (
+              SELECT 1 FROM information_schema.columns
+              WHERE table_schema = 'public' AND table_name = 'provisao_auditoria'
+                AND column_name = 'empresa_id'
+            ),
+            'auditoria_tenant_trigger', EXISTS (
+              SELECT 1 FROM pg_trigger
+              WHERE tgname = 'trg_provisao_auditoria_empresa'
+                AND tgrelid = 'public.provisao_auditoria'::regclass
+                AND NOT tgisinternal
+            ),
+            'auditoria_policy_scoped', EXISTS (
+              SELECT 1 FROM pg_policies
+              WHERE schemaname = 'public' AND tablename = 'provisao_auditoria'
+                AND policyname = 'Auditoria de provisao para perfis internos'
+                AND qual LIKE '%empresa_id%'
+            ),
+            'taxas_policy_auth', EXISTS (
+              SELECT 1 FROM pg_policies
+              WHERE schemaname = 'public' AND tablename = 'taxas_cambio'
+                AND policyname = 'taxas_cambio_authenticated_select'
+            ),
+            'auditoria_no_permissive', NOT EXISTS (
+              SELECT 1 FROM pg_policies
+              WHERE schemaname = 'public' AND tablename = 'provisao_auditoria'
+                AND NOT (policyname = 'Auditoria de provisao para perfis internos'
+                         AND roles = '{authenticated}'::name[] AND cmd = 'SELECT')
+            ),
+            'audit_fn_locked', NOT has_function_privilege(
+              'anon', 'public.provisao_auditoria_set_empresa()', 'EXECUTE'
+            ),
+            'vinculo_col', EXISTS (
+              SELECT 1 FROM information_schema.columns
+              WHERE table_schema='public' AND table_name='colaboradores' AND column_name='user_id'
+            ),
+            'vinculo_fn_locked', NOT has_function_privilege(
+              'anon', 'public.vincular_colaborador_ao_usuario()', 'EXECUTE'
+            ) AND to_regprocedure('public.vincular_colaborador_ao_usuario()') IS NOT NULL,
+            'doc_empresa_col', EXISTS (
+              SELECT 1 FROM information_schema.columns
+              WHERE table_schema='public' AND table_name='documentos' AND column_name='empresa_id'
+            ),
+            'lgpd_fns_locked', to_regprocedure('public.run_lgpd_purge(boolean)') IS NOT NULL
+              AND to_regprocedure('public.drenar_fila_limpeza_lgpd(integer)') IS NOT NULL
+              AND NOT has_function_privilege('anon','public.run_lgpd_purge(boolean)','EXECUTE')
+              AND NOT has_function_privilege('anon','public.drenar_fila_limpeza_lgpd(integer)','EXECUTE'),
+            'banco_enc_cols', (SELECT count(*) FROM information_schema.columns
+              WHERE table_schema='public' AND column_name LIKE '%\_encrypted'
+                AND table_name IN ('contas_bancarias','pix_itens')) = 5,
+            'banco_view_scoped', to_regclass('public.contas_bancarias_decrypted') IS NOT NULL,
+            'taxas_no_permissive', NOT EXISTS (
+              SELECT 1 FROM pg_policies
+              WHERE schemaname = 'public' AND tablename = 'taxas_cambio'
+                AND NOT (policyname = 'taxas_cambio_authenticated_select'
+                         AND roles = '{authenticated}'::name[] AND cmd = 'SELECT')
+            ),
+            'periodos_no_for_all', NOT EXISTS (
+              SELECT 1 FROM pg_policies
+              WHERE schemaname = 'public' AND tablename = 'periodos_ponto'
+                AND policyname = 'auth_periodos_ponto'
             )
           );
           SQL
@@ -236,7 +375,18 @@ jobs:
           node -e '
             const r = JSON.parse(process.argv[1]);
             const ok =
-              Number(r.ledger_count) === 1 &&
+              Number(r.ledger_count) === 6 &&
+              r.notificacoes_chk_wide === true &&
+              r.logs_sistema_unlocked === true &&
+              r.elr_uses_created_at === true &&
+              r.d5_fn_uses_contexto === true &&
+              r.auto_purge_allowed === true &&
+              Number(r.onda3b_jobs_ok) === 15 &&
+              r.onda3b_dupes_gone === true &&
+              Number(r.cron_fix_fns_ok) === 4 &&
+              r.ferias_daily_no_direct_concluida === true &&
+              Number(r.cron_jobs_ok) === 2 &&
+              r.ferias_job_uses_wrapper === true &&
               r.holerite_sync_trigger_ok === true &&
               r.notify_fn_fixed === true &&
               r.self_read_requires_closed === true &&
@@ -249,7 +399,24 @@ jobs:
               r.get_admin_ids_ok === true &&
               r.competencia_fmt_ok === true &&
               Number(r.legacy_rls_missing) === 0 &&
-              r.token_helper_locked === true;
+              r.token_helper_locked === true &&
+              r.is_admin_self_scoped === true &&
+              r.is_admin_anon_locked === true &&
+              r.scope_fn_anon_locked === true &&
+              r.auditoria_empresa_col === true &&
+              r.auditoria_tenant_trigger === true &&
+              r.auditoria_policy_scoped === true &&
+              r.taxas_policy_auth === true &&
+              r.auditoria_no_permissive === true &&
+              r.taxas_no_permissive === true &&
+              r.audit_fn_locked === true &&
+              r.vinculo_col === true &&
+              r.vinculo_fn_locked === true &&
+              r.doc_empresa_col === true &&
+              r.lgpd_fns_locked === true &&
+              r.banco_enc_cols === true &&
+              r.banco_view_scoped === true &&
+              r.periodos_no_for_all === true;
             if (!ok) process.exit(1);
           ' "$result"
           echo 'CANONICAL_SCOPED_MIGRATIONS_OK'
